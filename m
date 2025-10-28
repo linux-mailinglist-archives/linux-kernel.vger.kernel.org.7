@@ -1,1294 +1,657 @@
-Return-Path: <linux-kernel+bounces-872989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C0EC12C97
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:41:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15034C12C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97674E630E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6C23B37DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4851117C21E;
-	Tue, 28 Oct 2025 03:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F3627877D;
+	Tue, 28 Oct 2025 03:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="O4Bvlhrp"
-Received: from mail-m49207.qiye.163.com (mail-m49207.qiye.163.com [45.254.49.207])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H8ihm4/V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A1227877D;
-	Tue, 28 Oct 2025 03:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E162138DD8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761622895; cv=none; b=PMh/ourE8pJ3z+MgWd5EIzaDJhac6zb0958mz0pRfme8Zw9X6g98+31314RYERSwLc6H5V9Qq2hbHT7COxoYXdhXQF+pP0MeSgGRp2WEVRj/8Vbb6u5R0dVXeipckHt2bogpxV3tJZ3HBrACsF5Z4qc+wg/29I6bWijJA35TgDA=
+	t=1761622624; cv=none; b=eARwK/4+phBWFFD98oX+vRTtdEjFHK/buK0tK17k1huduxGoH503Shf2lGfS3W1EBugX3IyPYVQHvt0/NAYEaetSjYQ0O2KPtJ7QxUVYlxLSqAk55UoA6OtL9lYcbaLJltGKKEHryC3ycsfUtczybziLxo/sm29GcHXWkkPNcZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761622895; c=relaxed/simple;
-	bh=2rF5qR2mz+L8RgjMiMeRME4iD/NzLjyueCcENqEwVao=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Y5vKk9HT3oIOGLTiluJ5ihcWgQiog/yQaL/jNbPZwy8oeSd16PchsbPnPkN0rCPMBhVLqA1qvRewe1q9+24b9hscWsoD/RPkaifzEOeui0It1wTakdluJFsRlc5jvBUxjAg3uShLnP1bXBxKhkBHWlgVnRrk/5UE7xv/d+I92M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=O4Bvlhrp; arc=none smtp.client-ip=45.254.49.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 276b9cb1b;
-	Tue, 28 Oct 2025 11:36:11 +0800 (GMT+08:00)
-Message-ID: <fb7c9db4-fb22-4145-84f4-49d7e53d17fb@rock-chips.com>
-Date: Tue, 28 Oct 2025 11:36:11 +0800
+	s=arc-20240116; t=1761622624; c=relaxed/simple;
+	bh=S3BmcgS4xVcrE3ZC38o3OVCMEPwsQA0vndgMWf1I4Ek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tzynYcT8RB7h3MbhL3GUiqCaMV5GpE6XTRpsIeKGUwquii9y4QtYKEPSSbYTGAeO8PpcX+4058b6QGXLBEXGuj6O+yOwSzv52GjuuTSnNahG0Qo1+PZRFZqERcGj/bDaEzyB1lLVYsScl7vPtU6j1/JBrmMBJdW+BJEq5yfZyN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H8ihm4/V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64581C116B1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:37:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761622623;
+	bh=S3BmcgS4xVcrE3ZC38o3OVCMEPwsQA0vndgMWf1I4Ek=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=H8ihm4/V3h9J2U4g0hfadXd4Cc6DODYIq1QBgalD6djU5uEsML+jXMGW8DhrWEVQy
+	 NW98eHrdmfM9/DwZ91vZxLXLHDzLcYcXRjJGYgWGbFXREejTySlhXsnFCiXFtQErL4
+	 c+9atFs654XulqEB/EO+ojCI0D/0c5FlWdDGBXABZ4B4OGQ4dCcGRbHuV9rlXJ21sT
+	 W1+sfEucdt/SxKfiPP/xvWObsEHfV/9UBy1/WITQ4zQDjcDz5K1vfDITGKcuR3qcC1
+	 JBCyVxBZxwcE6usw0EEJ9LalLT0D+PJjzSmhrxus2VU60HR/FvsLTPISCaRcJMIlmB
+	 6Tjg9LN1Q0dWQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c45c11be7so8919818a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:37:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgLpwWW8Xp6fOG002ZoUWeogF5y6CH31rc6t5S+ooRYxPdj+9Lia/2JXajslhntpgDjZqP+rQHGOgushU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMav9oanr34JpvZeaNawiOKi7B2YxFqwiD7eoZ4tOhn1ZH3rci
+	cGn8bVpAUcyyDl2u4orehwBGxqCG7XQ8dVZFPh4gcQR5Bd5H4MusOFaScbshrL6CyPHzcDeu8ZI
+	Cjh546hLVWvP/RwsdB5g0PiwgwuwsKyA=
+X-Google-Smtp-Source: AGHT+IHIm46+EoccTTJ5LnW+elU8mE73TC/7E0vTFszkgP2ZgToxfoPROYnBRseXtqF0pE20R3X5xIKpkYBvp1uv0vk=
+X-Received: by 2002:a05:6402:1e8a:b0:634:9121:7a2d with SMTP id
+ 4fb4d7f45d1cf-63ed8260271mr1838920a12.26.1761622621939; Mon, 27 Oct 2025
+ 20:37:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: Add devicetree for the X3568 v4
-To: Coia Prant <coiaprant@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>
-References: <20251025203711.3859240-1-coiaprant@gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20251025203711.3859240-1-coiaprant@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a28e33aad09cckunm3c7a7795f0454
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRpPGlYeS0kZShgeGR4fTB1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=O4BvlhrpsOEJdUqSkAI4vnEXLWk+ZA+XJ0bCeiYorcBJ/CDKny+i3TO3TRQvRTWVGjyTguIKHpbZuABC3oa7VrXFy6fsfSmCeFbfAv1mK/GVbpfGyJWyRZFeE/iS2Uo4mgjn1GDhtiGw8dHME6Jom3Jcp4hybrLz2eDBXS7LT38=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=XxfJ+cZwH3QgvhVaJGaYCbrSp2F0wdmzWMP7vl3XNKQ=;
-	h=date:mime-version:subject:message-id:from;
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev> <20251027071316.3468472-7-chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <20251027071316.3468472-7-chenxiaosong.chenxiaosong@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 28 Oct 2025 12:36:49 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd_LqhpKCJAPKm0yBC-G+tTJpVQJSoTCbEN7Gdz1kMnQDg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmNYe8oXKy2T2g_T5KFFqjGidYceYDSvLqYsh4hZZ6mEEN0MLYMd3Vg8Q0
+Message-ID: <CAKYAXd_LqhpKCJAPKm0yBC-G+tTJpVQJSoTCbEN7Gdz1kMnQDg@mail.gmail.com>
+Subject: Re: [PATCH v4 06/24] smb: move file access permission bits
+ definitions to common/smb1pdu.h
+To: chenxiaosong.chenxiaosong@linux.dev
+Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org, 
+	christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/10/26 星期日 4:37, Coia Prant 写道:
-> Specification:
-> - SoC: RockChip RK3568 ARM64 (4 cores)
-> - eMMC: 16-128 GB
-> - RAM: 2-8 GB
-> - Power: DC 12V 2A
-> - Ethernet: 2x YT8521SC RGMII (10/100/1000 Mbps)
-> - Wireless radio: 802.11b/g/n/ac/ax dual-band
-> - LED:
->    Power: AlwaysOn
->    User: GPIO
-> - Button:
->    VOL+: SARADC/0 <35k µV>
->    VOL-: SARADC/0 <450k µV>
->    Power/Reset: PMIC RK809
-> - CAN
->    CAN/1: 4-pin (PH 2.0)
-> - PWM
->    PWM/4: Backlight DSI/0 DSI/1
->    PWM/7: IR Receiver [may not install]
-> - UART:
->    UART/2: Debug TTL - 1500000 8N1 (1.25mm)
->    UART/3: TTL (PH 2.0)
->    UART/4: TTL (PH 2.0)
->    UART/8: AP6275S Bluetooth
->    UART/9: TTL (PH 2.0)
-> - I2C:
->    I2C/0: PMIC RK809
->    I2C/1: Touchscreen DSI/0 DSI/1
->    I2C/4: Camera
->    I2C/5: RTC@51 PCF8563
-> - I2S:
->    I2S/0: miniHDMI Sound
->    I2S/1: RK809 Audio Codec
->    I2S/3: AP6275S Bluetooth Sound
-> - SDMMC:
->    SDMMC/0: microSD (TF) slot
->    SDMMC/2: AP6275S SDIO WiFi card
-> - Camera: 1x CSI
-> - Video: miniHDMI / DSI0 (MIPI/LVDS) / DSI1 (MIPI/EDP)
-> - Audio: miniHDMI / MIC on-board / Speaker / SPDIF / 3.5mm Headphones / AP6275S Bluetooth
-> - USB:
->    USB 2.0 HOST x2
->    USB 2.0 HOST x3 (4-pin)
->    USB 2.0 OTG x1 (shared with USB 3.0 OTG/HOST) [slot may not install]
->    USB 3.0 HOST x1
->    USB 3.0 OTG/HOST x1
-> - SATA: 1x SATA 3.0 with Power/4-pin [slot may not install]
-> - PCIe: 1x PCIe 3.0 x2 (x4 connecter) [clock/slot may not install]
-
-A side note: AFAICT, if clock may not be installed, you shouldn't
-enable pcie3x2 or pcie3x4.. Otherwise it can't boot at all..
-
-> 
-> Link:
-> - https://appletsapi.52solution.com/media/X3568V4%E5%BC%80%E5%8F%91%E6%9D%BF%E7%A1%AC%E4%BB%B6%E6%89%8B%E5%86%8C.pdf
-> - https://blog.gov.cooking/archives/research-ninetripod-x3568-v4-and-flash.html
-> 
-> Signed-off-by: Coia Prant <coiaprant@gmail.com>
-> Tested-by: Coia Prant <coiaprant@gmail.com>
+On Mon, Oct 27, 2025 at 4:15=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
+v> wrote:
+>
+> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>
+> There are only 2 different definitions between the client and server:
+>
+>   - SET_FILE_READ_RIGHTS:
+>     - client: rename to CLIENT_SET_FILE_READ_RIGHTS
+>     - server: rename to SERVER_SET_FILE_READ_RIGHTS
+>   - SET_FILE_WRITE_RIGHTS
+>     - client: rename to CLIENT_SET_FILE_WRITE_RIGHTS
+>     - server: rename to SERVER_SET_FILE_WRITE_RIGHTS
+>
+> Perhaps in the future we can change them to be the same, move them to
+> common header file.
+>
+> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 > ---
->   arch/arm64/boot/dts/rockchip/Makefile         |  11 +
->   .../rockchip/rk3568-x3568-camera-demo.dtso    |  82 ++
->   .../boot/dts/rockchip/rk3568-x3568-v4.dts     | 884 ++++++++++++++++++
->   .../dts/rockchip/rk3568-x3568-video-demo.dtso | 141 +++
->   4 files changed, 1118 insertions(+)
->   create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-x3568-camera-demo.dtso
->   create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-x3568-v4.dts
->   create mode 100644 arch/arm64/boot/dts/rockchip/rk3568-x3568-video-demo.dtso
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-> index ad684e383..ea36334bb 100644
-> --- a/arch/arm64/boot/dts/rockchip/Makefile
-> +++ b/arch/arm64/boot/dts/rockchip/Makefile
-> @@ -150,6 +150,9 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-rock-3b.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-display-vz.dtbo
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-wolfvision-pf5-io-expander.dtbo
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-x3568-v4.dtb
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-x3568-camera-demo.dtso
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-x3568-video-demo.dtso
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5.dtb
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5-v1.2-wifibt.dtbo
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-evb1-v10.dtb
-> @@ -252,6 +255,14 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3576-armsom-sige5-v1.2-wifibt.dtb
->   rk3576-armsom-sige5-v1.2-wifibt-dtbs := rk3576-armsom-sige5.dtb \
->   	rk3576-armsom-sige5-v1.2-wifibt.dtbo
->   
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-x3568-v4-camera-demo.dtb
-> +rk3568-x3568-v4-camera-demo-dtbs := rk3568-x3568-v4.dtb \
-> +	rk3568-x3568-camera-demo.dtso
-> +
-> +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-x3568-v4-video-demo.dtb
-> +rk3568-x3568-v4-video-demo-dtbs := rk3568-x3568-v4.dtb \
-> +	rk3568-x3568-video-demo.dtso
-> +
->   dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588-edgeble-neu6a-wifi.dtb
->   rk3588-edgeble-neu6a-wifi-dtbs := rk3588-edgeble-neu6a-io.dtb \
->   	rk3588-edgeble-neu6a-wifi.dtbo
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-x3568-camera-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3568-x3568-camera-demo.dtso
-> new file mode 100644
-> index 000000000..b144d0010
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-x3568-camera-demo.dtso
-> @@ -0,0 +1,82 @@
-> +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-> +
-> +// This is a sample reference, due to lack of hardware can not be tested, at your own risk
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/rk3568-cru.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +
-> +&{/} {
-> +	vcc_cam: regulator-vcc-cam {
-> +		compatible = "regulator-fixed";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		enable-active-high;
-> +		gpio = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
-> +		regulator-name = "vcc_cam";
-> +		vin-supply = <&vcc3v3_sys>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc_cam_en>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	cam {
-> +		vcc_cam_en: vcc_cam_en {
-> +			rockchip,pins =	<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +};
-> +
-> +&csi_dphy {
-> +	status = "okay";
-> +
-> +	ports {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		port@0 {
-> +			reg = <0>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			mipi_in_ucam: endpoint@2 {
-> +				reg = <2>;
-> +				remote-endpoint = <&ucam_out>;
-> +				data-lanes = <1 2 3 4>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&i2c4 {
-> +	status = "okay";
-> +
-> +	camera@37 {
-> +		compatible = "ovti,ov5695";
-> +		reg = <0x37>;
-> +		clocks = <&cru CLK_CIF_OUT>;
-> +		clock-names = "xvclk";
-> +		avdd-supply = <&vcc_cam>;
-> +		dvdd-supply = <&vcc_cam>;
-> +		dovdd-supply = <&vcc_cam>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&cif_clk>;
-> +		reset-gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
-> +		pwdn-gpios = <&gpio4 RK_PB4 GPIO_ACTIVE_LOW>;
-> +
-> +		port {
-> +			ucam_out: endpoint {
-> +				remote-endpoint = <&mipi_in_ucam>;
-> +				data-lanes = <1 2 3 4>;
-> +			};
-> +		};
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-x3568-v4.dts b/arch/arm64/boot/dts/rockchip/rk3568-x3568-v4.dts
-> new file mode 100644
-> index 000000000..901735c6f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-x3568-v4.dts
-> @@ -0,0 +1,884 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +
-> +/dts-v1/;
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +#include <dt-bindings/soc/rockchip,vop2.h>
-> +#include "rk3568.dtsi"
-> +
-> +/ {
-> +	model = "NineTripod X3568 v4";
-> +	compatible = "ninetripod,x3568-v4", "rockchip,rk3568";
-> +
-> +	aliases {
-> +		ethernet0 = &gmac0;
-> +		ethernet1 = &gmac1;
-> +		mmc0 = &sdhci;
-> +		mmc1 = &sdmmc0;
-> +		mmc2 = &sdmmc2;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial2:1500000n8";
-> +	};
-> +
-> +	adc-keys {
-> +		compatible = "adc-keys";
-> +		io-channels = <&saradc 0>;
-> +		io-channel-names = "buttons";
-> +		keyup-threshold-microvolt = <1800000>;
-> +		poll-interval = <100>;
-> +
-> +		button-vol-up {
-> +			label = "volume up";
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			press-threshold-microvolt = <50000>;
-> +		};
-> +
-> +		button-vol-down {
-> +			label = "volume down";
-> +			linux,code = <KEY_VOLUMEDOWN>;
-> +			press-threshold-microvolt = <500000>;
-> +		};
-> +	};
-> +
-> +	hdmi-con {
-> +		compatible = "hdmi-connector";
-> +		type = "a";
-> +
-> +		port {
-> +			hdmi_con_in: endpoint {
-> +				remote-endpoint = <&hdmi_out_con>;
-> +			};
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led_work: led-0 {
-> +			gpios = <&gpio0 RK_PC0 GPIO_ACTIVE_HIGH>;
-> +			function = LED_FUNCTION_HEARTBEAT;
-> +			color = <LED_COLOR_ID_BLUE>;
-> +			linux,default-trigger = "heartbeat";
-> +			pinctrl-names = "default";
-> +			pinctrl-0 = <&led_work_en>;
-> +		};
-> +	};
-> +
-> +	rk809-sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,format = "i2s";
-> +		simple-audio-card,name = "Analog RK809";
-> +		simple-audio-card,mclk-fs = <256>;
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai = <&i2s1_8ch>;
-> +		};
-> +		simple-audio-card,codec {
-> +			sound-dai = <&rk809>;
-> +		};
-> +	};
-> +
-> +	pdm_codec: pdm-codec {
-> +		compatible = "dmic-codec";
-> +		num-channels = <2>;
-> +		#sound-dai-cells = <0>;
-> +	};
-> +
-> +	pdm_sound: pdm-sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "microphone";
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai = <&pdm>;
-> +		};
-> +
-> +		simple-audio-card,codec {
-> +			sound-dai = <&pdm_codec>;
-> +		};
-> +	};
-> +
-> +	spdif_dit: spdif-dit {
-> +		compatible = "linux,spdif-dit";
-> +		#sound-dai-cells = <0>;
-> +	};
-> +
-> +	spdif_sound: spdif-sound {
-> +		compatible = "simple-audio-card";
-> +		simple-audio-card,name = "SPDIF";
-> +
-> +		simple-audio-card,cpu {
-> +			sound-dai = <&spdif>;
-> +		};
-> +		simple-audio-card,codec {
-> +			sound-dai = <&spdif_dit>;
-> +		};
-> +	};
-> +
-> +	sdio_pwrseq: sdio-pwrseq {
-> +		compatible = "mmc-pwrseq-simple";
-> +		clocks = <&rk809 1>;
-> +		clock-names = "ext_clock";
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&wifi_enable>;
-> +		post-power-on-delay-ms = <100>;
-> +		power-off-delay-us = <300>;
-> +		reset-gpios = <&gpio3 RK_PD5 GPIO_ACTIVE_LOW>;
-> +	};
-> +
-> +	dc_12v: regulator-dc-12v {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "dc_12v";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <12000000>;
-> +		regulator-max-microvolt = <12000000>;
-> +	};
-> +
-> +	pcie30_avdd0v9: regulator-pcie30-avdd0v9 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "pcie30_avdd0v9";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <900000>;
-> +		regulator-max-microvolt = <900000>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +	};
-> +
-> +	pcie30_avdd1v8: regulator-pcie30-avdd1v8 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "pcie30_avdd1v8";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +	};
-> +
-> +	vcc3v3_sys: regulator-vcc3v3-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		vin-supply = <&dc_12v>;
-> +	};
-> +
-> +	vcc3v3_pcie: regulator-vcc3v3-pcie {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_pcie";
-> +		enable-active-high;
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc3v3_pcie_en_pin>;
-> +		gpio = <&gpio0 RK_PD4 GPIO_ACTIVE_HIGH>;
-> +		startup-delay-us = <5000>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +	};
-> +
-> +	vcc5v0_sys: regulator-vcc5v0-sys {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_sys";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&dc_12v>;
-> +	};
-> +
-> +	vcc5v0_usb: regulator-vcc5v0-usb {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc5v0_usb";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&dc_12v>;
-> +	};
-> +
-> +	vcc5v0_usb_host: regulator-vcc5v0-usb-host {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio0 RK_PA6 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc5v0_usb_host_en>;
-> +		regulator-name = "vcc5v0_usb_host";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vcc5v0_usb>;
-> +	};
-> +
-> +	vcc5v0_usb_otg: regulator-vcc5v0-usb-otg {
-> +		compatible = "regulator-fixed";
-> +		enable-active-high;
-> +		gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc5v0_usb_otg_en>;
-> +		regulator-name = "vcc5v0_usb_otg";
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		vin-supply = <&vcc5v0_usb>;
-> +	};
-> +};
-> +
-> +&can1 {
-> +	assigned-clocks = <&cru CLK_CAN1>;
-> +	assigned-clock-rates = <150000000>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&can1m1_pins>;
-> +	status = "okay";
-> +};
-> +
-> +/* used for usb_host0_xhci */
-> +&combphy0 {
-> +	status = "okay";
-> +};
-> +
-> +/* used for usb_host1_xhci */
-> +&combphy1 {
-> +	status = "okay";
-> +};
-> +
-> +/* connected to sata2 */
-> +&combphy2 {
-> +	status = "okay";
-> +};
-> +
-> +&cpu0 {
-> +	cpu-supply = <&vdd_cpu>;
-> +};
-> +
-> +&cpu1 {
-> +	cpu-supply = <&vdd_cpu>;
-> +};
-> +
-> +&cpu2 {
-> +	cpu-supply = <&vdd_cpu>;
-> +};
-> +
-> +&cpu3 {
-> +	cpu-supply = <&vdd_cpu>;
-> +};
-> +
-> +&gmac0 {
-> +	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
-> +	assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>;
-> +	assigned-clock-rates = <0>, <125000000>;
-> +	clock_in_out = "output";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac0_miim
-> +			&gmac0_tx_bus2
-> +			&gmac0_rx_bus2
-> +			&gmac0_rgmii_clk
-> +			&gmac0_rgmii_bus
-> +			&gmac0_clkinout>;
-> +	phy-handle = <&rgmii_phy0>;
-> +	phy-mode = "rgmii-id";
-> +	status = "okay";
-> +};
-> +
-> +&gmac1 {
-> +	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
-> +	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
-> +	assigned-clock-rates = <0>, <125000000>;
-> +	clock_in_out = "output";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&gmac1m1_miim
-> +			&gmac1m1_tx_bus2
-> +			&gmac1m1_rx_bus2
-> +			&gmac1m1_rgmii_clk
-> +			&gmac1m1_rgmii_bus
-> +			&gmac1m1_clkinout>;
-> +	phy-handle = <&rgmii_phy1>;
-> +	phy-mode = "rgmii-id";
-> +	status = "okay";
-> +};
-> +
-> +&gpu {
-> +	mali-supply = <&vdd_gpu>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi {
-> +	avdd-0v9-supply = <&vdda0v9_image>;
-> +	avdd-1v8-supply = <&vcca1v8_image>;
-> +	status = "okay";
-> +};
-> +
-> +&hdmi_in {
-> +	hdmi_in_vp0: endpoint {
-> +		remote-endpoint = <&vp0_out_hdmi>;
-> +	};
-> +};
-> +
-> +&hdmi_out {
-> +	hdmi_out_con: endpoint {
-> +		remote-endpoint = <&hdmi_con_in>;
-> +	};
-> +};
-> +
-> +&hdmi_sound {
-> +	status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +
-> +	vdd_cpu: regulator@1c {
-> +		compatible = "tcs,tcs4525";
-> +		reg = <0x1c>;
-> +		fcs,suspend-voltage-selector = <1>;
-> +		regulator-name = "vdd_cpu";
-> +		regulator-always-on;
-> +		regulator-boot-on;
-> +		regulator-min-microvolt = <800000>;
-> +		regulator-max-microvolt = <1150000>;
-> +		regulator-ramp-delay = <2300>;
-> +		vin-supply = <&vcc5v0_sys>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +
-> +	rk809: pmic@20 {
-> +		compatible = "rockchip,rk809";
-> +		reg = <0x20>;
-> +		interrupt-parent = <&gpio0>;
-> +		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
-> +		assigned-clocks = <&cru I2S1_MCLKOUT_TX>;
-> +		assigned-clock-parents = <&cru CLK_I2S1_8CH_TX>;
-> +		#clock-cells = <1>;
-> +		clock-names = "mclk";
-> +		clocks = <&cru I2S1_MCLKOUT_TX>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&pmic_int>, <&i2s1m0_mclk>;
-> +		system-power-controller;
-> +		#sound-dai-cells = <0>;
-> +		vcc1-supply = <&vcc3v3_sys>;
-> +		vcc2-supply = <&vcc3v3_sys>;
-> +		vcc3-supply = <&vcc3v3_sys>;
-> +		vcc4-supply = <&vcc3v3_sys>;
-> +		vcc5-supply = <&vcc3v3_sys>;
-> +		vcc6-supply = <&vcc3v3_sys>;
-> +		vcc7-supply = <&vcc3v3_sys>;
-> +		vcc8-supply = <&vcc3v3_sys>;
-> +		vcc9-supply = <&vcc3v3_sys>;
-> +		wakeup-source;
-> +
-> +		regulators {
-> +			vdd_logic: DCDC_REG1 {
-> +				regulator-name = "vdd_logic";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-initial-mode = <0x2>;
-> +				regulator-min-microvolt = <500000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdd_gpu: DCDC_REG2 {
-> +				regulator-name = "vdd_gpu";
-> +				regulator-always-on;
-> +				regulator-initial-mode = <0x2>;
-> +				regulator-min-microvolt = <500000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_ddr: DCDC_REG3 {
-> +				regulator-name = "vcc_ddr";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-initial-mode = <0x2>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdd_npu: DCDC_REG4 {
-> +				regulator-name = "vdd_npu";
-> +				regulator-initial-mode = <0x2>;
-> +				regulator-min-microvolt = <500000>;
-> +				regulator-max-microvolt = <1350000>;
-> +				regulator-ramp-delay = <6001>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_1v8: DCDC_REG5 {
-> +				regulator-name = "vcc_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdda0v9_image: LDO_REG1 {
-> +				regulator-name = "vdda0v9_image";
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <900000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdda_0v9: LDO_REG2 {
-> +				regulator-name = "vdda_0v9";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <900000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vdda0v9_pmu: LDO_REG3 {
-> +				regulator-name = "vdda0v9_pmu";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <900000>;
-> +				regulator-max-microvolt = <900000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <900000>;
-> +				};
-> +			};
-> +
-> +			vccio_acodec: LDO_REG4 {
-> +				regulator-name = "vccio_acodec";
-> +				regulator-always-on;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vccio_sd: LDO_REG5 {
-> +				regulator-name = "vccio_sd";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <3300000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc3v3_pmu: LDO_REG6 {
-> +				regulator-name = "vcc3v3_pmu";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-max-microvolt = <3300000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <3300000>;
-> +				};
-> +			};
-> +
-> +			vcca_1v8: LDO_REG7 {
-> +				regulator-name = "vcca_1v8";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcca1v8_pmu: LDO_REG8 {
-> +				regulator-name = "vcca1v8_pmu";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-on-in-suspend;
-> +					regulator-suspend-microvolt = <1800000>;
-> +				};
-> +			};
-> +
-> +			vcca1v8_image: LDO_REG9 {
-> +				regulator-name = "vcca1v8_image";
-> +				regulator-min-microvolt = <1800000>;
-> +				regulator-max-microvolt = <1800000>;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc_3v3: SWITCH_REG1 {
-> +				regulator-name = "vcc_3v3";
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +
-> +			vcc3v3_sd: SWITCH_REG2 {
-> +				regulator-name = "vcc3v3_sd";
-> +
-> +				regulator-state-mem {
-> +					regulator-off-in-suspend;
-> +				};
-> +			};
-> +		};
-> +
-> +		codec {
-> +			rockchip,mic-in-differential;
-> +		};
-> +	};
-> +};
-> +
-> +&i2c5 {
-> +	status = "okay";
-> +
-> +	rtc@51 {
-> +		compatible = "nxp,pcf8563";
-> +		reg = <0x51>;
-> +		#clock-cells = <0>;
-> +	};
-> +};
-> +
-> +&i2s0_8ch {
-> +	status = "okay";
-> +};
-> +
-> +&i2s1_8ch {
-> +	pinctrl-0 = <&i2s1m0_sclktx &i2s1m0_lrcktx &i2s1m0_sdi0 &i2s1m0_sdo0>;
-> +	rockchip,trcm-sync-tx-only;
-> +	status = "okay";
-> +};
-> +
-> +/* used for AP6275S Bluetooth Sound */
-> +&i2s3_2ch {
-> +	status = "okay";
-> +};
-> +
-> +&mdio0 {
-> +	rgmii_phy0: ethernet-phy@0 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x0>;
-> +		reset-assert-us = <20000>;
-> +		reset-deassert-us = <100000>;
-> +		reset-gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@1 {
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_LAN;
-> +				default-state = "keep";
-> +			};
-> +
-> +			led@2 {
-> +				reg = <2>;
-> +				color = <LED_COLOR_ID_AMBER>;
-> +				function = LED_FUNCTION_LAN;
-> +				default-state = "keep";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdio1 {
-> +	rgmii_phy1: ethernet-phy@0 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x0>;
-> +		reset-assert-us = <20000>;
-> +		reset-deassert-us = <100000>;
-> +		reset-gpios = <&gpio2 RK_PD1 GPIO_ACTIVE_LOW>;
-> +
-> +		leds {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			led@1 {
-> +				reg = <1>;
-> +				color = <LED_COLOR_ID_GREEN>;
-> +				function = LED_FUNCTION_LAN;
-> +				default-state = "keep";
-> +			};
-> +
-> +			led@2 {
-> +				reg = <2>;
-> +				color = <LED_COLOR_ID_AMBER>;
-> +				function = LED_FUNCTION_LAN;
-> +				default-state = "keep";
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&pcie30phy {
-> +	status = "okay";
-> +};
-> +
-> +&pcie3x2 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pcie_reset_pin>;
-> +	reset-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_HIGH>;
-> +	vpcie3v3-supply = <&vcc3v3_pcie>;
-> +	status = "okay";
-> +};
-> +
-> +&pdm {
-> +	status = "okay";
-> +};
-> +
-> +&pinctrl {
-> +	leds {
-> +		led_work_en: led_work_en {
-> +			rockchip,pins = <0 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	pmic {
-> +		pmic_int: pmic_int {
-> +			rockchip,pins =
-> +				<0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +	};
-> +
-> +	sdio-pwrseq {
-> +		wifi_enable: wifi-enable {
-> +			rockchip,pins = <3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	usb {
-> +		vcc5v0_usb_host_en: vcc5v0_usb_host_en {
-> +			rockchip,pins = <0 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +		vcc5v0_usb_otg_en: vcc5v0_usb_otg_en {
-> +			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	pcie {
-> +		pcie_reset_pin: pcie-reset-pin {
-> +			rockchip,pins = <2 RK_PD6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +		vcc3v3_pcie_en_pin: vcc3v3-pcie-en-pin {
-> +			rockchip,pins = <0 RK_PD4 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +};
-> +
-> +&pmu_io_domains {
-> +	pmuio1-supply = <&vcc3v3_pmu>;
-> +	pmuio2-supply = <&vcc3v3_pmu>;
-> +	vccio1-supply = <&vccio_acodec>;
-> +	vccio2-supply = <&vcc_1v8>;
-> +	vccio3-supply = <&vccio_sd>;
-> +	vccio4-supply = <&vcc_1v8>;
-> +	vccio5-supply = <&vcc_3v3>;
-> +	vccio6-supply = <&vcc_1v8>;
-> +	vccio7-supply = <&vcc_3v3>;
-> +	status = "okay";
-> +};
-> +
-> +&pwm4 {
-> +	status = "okay";
-> +};
-> +
-> +/* Required remotectl for IR receiver */
-> +&pwm7 {
-> +	status = "disabled";
-> +};
-> +
-> +&saradc {
-> +	vref-supply = <&vcca_1v8>;
-> +	status = "okay";
-> +};
-> +
-> +&sata2 {
-> +	status = "okay";
-> +};
-> +
-> +/* used for eMMC */
-> +&sdhci {
-> +	bus-width = <8>;
-> +	max-frequency = <200000000>;
-> +	mmc-hs200-1_8v;
-> +	non-removable;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
-> +	status = "okay";
-> +};
-> +
-> +/* used for microSD (TF) Slot */
-> +&sdmmc0 {
-> +	bus-width = <4>;
-> +	cap-sd-highspeed;
-> +	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
-> +	disable-wp;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
-> +	sd-uhs-sdr104;
-> +	vmmc-supply = <&vcc3v3_sd>;
-> +	vqmmc-supply = <&vccio_sd>;
-> +	status = "okay";
-> +};
-> +
-> +/* used for AP6275S WiFi */
-> +&sdmmc2 {
-> +	bus-width = <4>;
-> +	disable-wp;
-> +	cap-sd-highspeed;
-> +	cap-sdio-irq;
-> +	keep-power-in-suspend;
-> +	mmc-pwrseq = <&sdio_pwrseq>;
-> +	non-removable;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&sdmmc2m0_bus4 &sdmmc2m0_cmd &sdmmc2m0_clk>;
-> +	sd-uhs-sdr12;
-> +	sd-uhs-sdr25;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	vmmc-supply = <&vcc3v3_sys>;
-> +	vqmmc-supply = <&vcc_1v8>;
-> +	status = "okay";
-> +};
-> +
-> +&spdif {
-> +	status = "okay";
-> +};
-> +
-> +&tsadc {
-> +	rockchip,hw-tshut-mode = <1>;
-> +	rockchip,hw-tshut-polarity = <0>;
-> +	status = "okay";
-> +};
-> +
-> +/* used for Debug */
-> +&uart2 {
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	pinctrl-0 = <&uart3m1_xfer>;
-> +	status = "okay";
-> +};
-> +
-> +&uart4 {
-> +	pinctrl-0 = <&uart4m1_xfer>;
-> +	status = "okay";
-> +};
-> +
-> +/* used for WiFi/BT AP6275S */
-> +&uart8 {
-> +	pinctrl-0 = <&uart8m0_xfer &uart8m0_ctsn>;
-> +	status = "okay";
-> +};
-> +
-> +&uart9 {
-> +	pinctrl-0 = <&uart9m1_xfer>;
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_ohci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host0_xhci {
-> +	extcon = <&usb2phy0>;
-> +	status = "okay";
-> +};
-> +
-> +&usb_host1_ehci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host1_ohci {
-> +	status = "okay";
-> +};
-> +
-> +&usb_host1_xhci {
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy0 {
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy0_host {
-> +	phy-supply = <&vcc5v0_usb_host>;
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy0_otg {
-> +	phy-supply = <&vcc5v0_usb_otg>;
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy1 {
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy1_host {
-> +	phy-supply = <&vcc5v0_usb_host>;
-> +	status = "okay";
-> +};
-> +
-> +&usb2phy1_otg {
-> +	phy-supply = <&vcc5v0_usb_host>;
-> +	status = "okay";
-> +};
-> +
-> +&vop {
-> +	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
-> +	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
-> +	status = "okay";
-> +};
-> +
-> +&vop_mmu {
-> +	status = "okay";
-> +};
-> +
-> +&vp0 {
-> +	vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
-> +		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
-> +		remote-endpoint = <&hdmi_in_vp0>;
-> +	};
-> +};
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568-x3568-video-demo.dtso b/arch/arm64/boot/dts/rockchip/rk3568-x3568-video-demo.dtso
-> new file mode 100644
-> index 000000000..f819eff8f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568-x3568-video-demo.dtso
-> @@ -0,0 +1,141 @@
-> +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-> +
-> +// This is a sample reference, due to lack of hardware can not be tested, at your own risk
-> +
-> +/dts-v1/;
-> +/plugin/;
-> +
-> +#include <dt-bindings/clock/rk3568-cru.h>
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/pinctrl/rockchip.h>
-> +
-> +&{/} {	
-> +	backlight: backlight {
-> +		compatible = "pwm-backlight";
-> +		brightness-levels = <20 220>;
-> +		default-brightness-level = <100>;
-> +		num-interpolated-steps = <200>;
-> +		power-supply = <&vcc3v3_sys>;
-> +		pwms = <&pwm4 0 25000 0>;
-> +	};
-> +
-> +	vcc3v3_lcd0_n: regulator-vcc3v3-lcd0-n {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_lcd0_n";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		enable-active-high;
-> +		gpio = <&gpio0 RK_PC7 GPIO_ACTIVE_HIGH>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc3v3_lcd0_n_en>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +
-> +	vcc3v3_lcd1_n: regulator-vcc3v3-lcd1-n {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vcc3v3_lcd1_n";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		enable-active-high;
-> +		gpio = <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
-> +		vin-supply = <&vcc3v3_sys>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&vcc3v3_lcd1_n_en>;
-> +
-> +		regulator-state-mem {
-> +			regulator-off-in-suspend;
-> +		};
-> +	};
-> +};
-> +
-> +&pinctrl {
-> +	display {
-> +		vcc3v3_lcd0_n_en: vcc3v3_lcd0_n_en {
-> +			rockchip,pins = <0 RK_PC7 0 &pcfg_pull_none>;
-> +		};
-> +		vcc3v3_lcd1_n_en: vcc3v3_lcd1_n_en {
-> +			rockchip,pins = <0 RK_PC5 0 &pcfg_pull_none>;
-> +		};
-> +	};
-> +
-> +	touchscreen {
-> +		touch_int: touch_int {
-> +			rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>;
-> +		};
-> +		touch_rst: touch_rst {
-> +			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
-> +		};
-> +	};
-> +};
-> +
-> +&dsi0 {
-> +	clock-master;
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +	status = "okay";
-> +
-> +	panel@0 {
-> +		compatible = "wanchanglong,w552793baa", "raydium,rm67200";
-> +		reg = <0>;
-> +		backlight = <&backlight>;
-> +		iovcc-supply = <&vcc3v3_lcd0_n>;
-> +		reset-gpios = <&gpio0 RK_PA6 GPIO_ACTIVE_LOW>;
-> +		vdd-supply = <&vcc3v3_lcd0_n>;
-> +		vsn-supply = <&vcc5v0_sys>;
-> +		vsp-supply = <&vcc5v0_sys>;
-> +
-> +		port {
-> +			panel_in_dsi: endpoint {
-> +				remote-endpoint = <&dsi0_out_panel>;
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&dsi0_in {
-> +	dsi0_in_vp1: endpoint {
-> +		remote-endpoint = <&vp1_out_dsi0>;
-> +	};
-> +};
-> +
-> +&dsi0_out {
-> +	dsi0_out_panel: endpoint {
-> +		remote-endpoint = <&panel_in_dsi>;
-> +	};
-> +};
-> +
-> +&dsi_dphy0 {
-> +	status = "okay";
-> +};
-> +
-> +&pwm4 {
-> +	status = "okay";
-> +};
-> +
-> +&i2c1 {
-> +	status = "okay";
-> +
-> +	touchscreen0: goodix@14 {
-> +		compatible = "goodix,gt1151";
-> +		reg = <0x14>;
-> +		interrupt-parent = <&gpio0>;
-> +		interrupts = <RK_PB5 IRQ_TYPE_EDGE_FALLING>;
-> +		AVDD28-supply = <&vcc3v3_lcd0_n>;
-> +		irq-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_LOW>;
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&touch_int &touch_rst>;
-> +		reset-gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_LOW>;
-> +		VDDIO-supply = <&vcc3v3_lcd0_n>;
-> +	};
-> +};
-> +
-> +&vp1 {
-> +	vp1_out_dsi0: endpoint@ROCKCHIP_VOP2_EP_MIPI0 {
-> +		reg = <ROCKCHIP_VOP2_EP_MIPI0>;
-> +		remote-endpoint = <&dsi0_in_vp1>;
-> +	};
-> +};
-
+>  fs/smb/client/cifsacl.c    |   4 +-
+>  fs/smb/client/cifspdu.h    | 112 ---------------------------------
+>  fs/smb/common/smb1pdu.h    | 123 ++++++++++++++++++++++++++++++++++++-
+>  fs/smb/common/smb2pdu.h    |   6 --
+>  fs/smb/server/smb_common.h |  55 -----------------
+>  fs/smb/server/smbacl.c     |   2 +-
+>  6 files changed, 125 insertions(+), 177 deletions(-)
+>
+> diff --git a/fs/smb/client/cifsacl.c b/fs/smb/client/cifsacl.c
+> index ce2ebc213a1d..5c3d8eb68868 100644
+> --- a/fs/smb/client/cifsacl.c
+> +++ b/fs/smb/client/cifsacl.c
+> @@ -654,9 +654,9 @@ static void mode_to_access_flags(umode_t mode, umode_=
+t bits_to_use,
+>            is this but we have cleared all the bits sans RWX for
+>            either user or group or other as per bits_to_use */
+>         if (mode & S_IRUGO)
+> -               *pace_flags |=3D SET_FILE_READ_RIGHTS;
+> +               *pace_flags |=3D CLIENT_SET_FILE_READ_RIGHTS;
+>         if (mode & S_IWUGO)
+> -               *pace_flags |=3D SET_FILE_WRITE_RIGHTS;
+> +               *pace_flags |=3D CLIENT_SET_FILE_WRITE_RIGHTS;
+>         if (mode & S_IXUGO)
+>                 *pace_flags |=3D SET_FILE_EXEC_RIGHTS;
+>
+> diff --git a/fs/smb/client/cifspdu.h b/fs/smb/client/cifspdu.h
+> index 86167875574c..a063c98683bc 100644
+> --- a/fs/smb/client/cifspdu.h
+> +++ b/fs/smb/client/cifspdu.h
+> @@ -117,118 +117,6 @@
+>  #define SMBOPEN_OTRUNC        0x0002
+>  #define SMBOPEN_OAPPEND       0x0001
+>
+> -/*
+> - * These are the file access permission bits defined in CIFS for the
+> - * NTCreateAndX as well as the level 0x107
+> - * TRANS2_QUERY_PATH_INFORMATION API.  The level 0x107, SMB_QUERY_FILE_A=
+LL_INFO
+> - * responds with the AccessFlags.
+> - * The AccessFlags specifies the access permissions a caller has to the
+> - * file and can have any suitable combination of the following values:
+> - */
+> -
+> -#define FILE_READ_DATA        0x00000001  /* Data can be read from the f=
+ile   */
+> -                                         /* or directory child entries c=
+an   */
+> -                                         /* be listed together with the =
+     */
+> -                                         /* associated child attributes =
+     */
+> -                                         /* (so the FILE_READ_ATTRIBUTES=
+ on  */
+> -                                         /* the child entry is not neede=
+d)   */
+> -#define FILE_WRITE_DATA       0x00000002  /* Data can be written to the =
+file  */
+> -                                         /* or new file can be created i=
+n    */
+> -                                         /* the directory               =
+     */
+> -#define FILE_APPEND_DATA      0x00000004  /* Data can be appended to the=
+ file */
+> -                                         /* (for non-local files over SM=
+B it */
+> -                                         /* is same as FILE_WRITE_DATA) =
+     */
+> -                                         /* or new subdirectory can be  =
+     */
+> -                                         /* created in the directory    =
+     */
+> -#define FILE_READ_EA          0x00000008  /* Extended attributes associa=
+ted   */
+> -                                         /* with the file can be read   =
+     */
+> -#define FILE_WRITE_EA         0x00000010  /* Extended attributes associa=
+ted   */
+> -                                         /* with the file can be written=
+     */
+> -#define FILE_EXECUTE          0x00000020  /*Data can be read into memory=
+ from */
+> -                                         /* the file using system paging=
+ I/O */
+> -                                         /* for executing the file / scr=
+ipt  */
+> -                                         /* or right to traverse directo=
+ry   */
+> -                                         /* (but by default all users ha=
+ve   */
+> -                                         /* directory bypass traverse   =
+     */
+> -                                         /* privilege and do not need th=
+is   */
+> -                                         /* permission on directories at=
+ all)*/
+> -#define FILE_DELETE_CHILD     0x00000040  /* Child entry can be deleted =
+from  */
+> -                                         /* the directory (so the DELETE=
+ on  */
+> -                                         /* the child entry is not neede=
+d)   */
+> -#define FILE_READ_ATTRIBUTES  0x00000080  /* Attributes associated with =
+the   */
+> -                                         /* file or directory can be rea=
+d    */
+> -#define FILE_WRITE_ATTRIBUTES 0x00000100  /* Attributes associated with =
+the   */
+> -                                         /* file or directory can be wri=
+tten */
+> -#define DELETE                0x00010000  /* The file or dir can be dele=
+ted   */
+> -#define READ_CONTROL          0x00020000  /* The discretionary access co=
+ntrol */
+> -                                         /* list and ownership associate=
+d    */
+> -                                         /* with the file or dir can be =
+read */
+> -#define WRITE_DAC             0x00040000  /* The discretionary access co=
+ntrol */
+> -                                         /* list associated with the fil=
+e or */
+> -                                         /* directory can be written    =
+     */
+> -#define WRITE_OWNER           0x00080000  /* Ownership information assoc=
+iated */
+> -                                         /* with the file/dir can be wri=
+tten */
+> -#define SYNCHRONIZE           0x00100000  /* The file handle can waited =
+on to */
+> -                                         /* synchronize with the complet=
+ion  */
+> -                                         /* of an input/output request  =
+     */
+> -#define SYSTEM_SECURITY       0x01000000  /* The system access control l=
+ist   */
+> -                                         /* associated with the file or =
+     */
+> -                                         /* directory can be read or wri=
+tten */
+> -                                         /* (cannot be in DACL, can in S=
+ACL) */
+> -#define MAXIMUM_ALLOWED       0x02000000  /* Maximal subset of GENERIC_A=
+LL    */
+> -                                         /* permissions which can be gra=
+nted */
+> -                                         /* (cannot be in DACL nor SACL)=
+     */
+> -#define GENERIC_ALL           0x10000000  /* Same as: GENERIC_EXECUTE | =
+      */
+> -                                         /*          GENERIC_WRITE |    =
+     */
+> -                                         /*          GENERIC_READ |     =
+     */
+> -                                         /*          FILE_DELETE_CHILD |=
+     */
+> -                                         /*          DELETE |           =
+     */
+> -                                         /*          WRITE_DAC |        =
+     */
+> -                                         /*          WRITE_OWNER        =
+     */
+> -                                         /* So GENERIC_ALL contains all =
+bits */
+> -                                         /* mentioned above except these=
+ two */
+> -                                         /* SYSTEM_SECURITY  MAXIMUM_ALL=
+OWED */
+> -#define GENERIC_EXECUTE       0x20000000  /* Same as: FILE_EXECUTE |    =
+      */
+> -                                         /*          FILE_READ_ATTRIBUTE=
+S |  */
+> -                                         /*          READ_CONTROL |     =
+     */
+> -                                         /*          SYNCHRONIZE        =
+     */
+> -#define GENERIC_WRITE         0x40000000  /* Same as: FILE_WRITE_DATA | =
+      */
+> -                                         /*          FILE_APPEND_DATA | =
+     */
+> -                                         /*          FILE_WRITE_EA |    =
+     */
+> -                                         /*          FILE_WRITE_ATTRIBUT=
+ES | */
+> -                                         /*          READ_CONTROL |     =
+     */
+> -                                         /*          SYNCHRONIZE        =
+     */
+> -#define GENERIC_READ          0x80000000  /* Same as: FILE_READ_DATA |  =
+      */
+> -                                         /*          FILE_READ_EA |     =
+     */
+> -                                         /*          FILE_READ_ATTRIBUTE=
+S |  */
+> -                                         /*          READ_CONTROL |     =
+     */
+> -                                         /*          SYNCHRONIZE        =
+     */
+> -
+> -#define FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FILE_READ_ATTR=
+IBUTES)
+> -#define FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
+> -                               | FILE_WRITE_EA | FILE_WRITE_ATTRIBUTES)
+> -#define FILE_EXEC_RIGHTS (FILE_EXECUTE)
+> -
+> -#define SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FILE_WRITE=
+_EA \
+> -                               | FILE_READ_ATTRIBUTES \
+> -                               | FILE_WRITE_ATTRIBUTES \
+> -                               | DELETE | READ_CONTROL | WRITE_DAC \
+> -                               | WRITE_OWNER | SYNCHRONIZE)
+> -#define SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
+> -                               | FILE_READ_EA | FILE_WRITE_EA \
+> -                               | FILE_READ_ATTRIBUTES \
+> -                               | FILE_WRITE_ATTRIBUTES \
+> -                               | DELETE | READ_CONTROL | WRITE_DAC \
+> -                               | WRITE_OWNER | SYNCHRONIZE)
+> -#define SET_FILE_EXEC_RIGHTS (FILE_READ_EA | FILE_WRITE_EA | FILE_EXECUT=
+E \
+> -                               | FILE_READ_ATTRIBUTES \
+> -                               | FILE_WRITE_ATTRIBUTES \
+> -                               | DELETE | READ_CONTROL | WRITE_DAC \
+> -                               | WRITE_OWNER | SYNCHRONIZE)
+> -
+> -#define SET_MINIMUM_RIGHTS (FILE_READ_EA | FILE_READ_ATTRIBUTES \
+> -                               | READ_CONTROL | SYNCHRONIZE)
+> -
+>  /*
+>   * Invalid readdir handle
+>   */
+> diff --git a/fs/smb/common/smb1pdu.h b/fs/smb/common/smb1pdu.h
+> index f14d3d9aac22..9fe6fc4b05a7 100644
+> --- a/fs/smb/common/smb1pdu.h
+> +++ b/fs/smb/common/smb1pdu.h
+> @@ -75,7 +75,128 @@
+>  #define SMBFLG2_UNICODE cpu_to_le16(0x8000)
+>
+>  /*
+> - * File Attribute flags
+> + * These are the file access permission bits defined in CIFS for the
+> + * NTCreateAndX as well as the level 0x107
+> + * TRANS2_QUERY_PATH_INFORMATION API.  The level 0x107, SMB_QUERY_FILE_A=
+LL_INFO
+> + * responds with the AccessFlags.
+> + * The AccessFlags specifies the access permissions a caller has to the
+> + * file and can have any suitable combination of the following values:
+> + */
+> +
+> +#define FILE_READ_DATA        0x00000001  /* Data can be read from the f=
+ile   */
+Please don't move them to smb1pdu.h.
+These are common definitions that are also defined in the smb2 specificatio=
+n.
+> +                                         /* or directory child entries c=
+an   */
+> +                                         /* be listed together with the =
+     */
+> +                                         /* associated child attributes =
+     */
+> +                                         /* (so the FILE_READ_ATTRIBUTES=
+ on  */
+> +                                         /* the child entry is not neede=
+d)   */
+> +#define FILE_WRITE_DATA       0x00000002  /* Data can be written to the =
+file  */
+> +                                         /* or new file can be created i=
+n    */
+> +                                         /* the directory               =
+     */
+> +#define FILE_APPEND_DATA      0x00000004  /* Data can be appended to the=
+ file */
+> +                                         /* (for non-local files over SM=
+B it */
+> +                                         /* is same as FILE_WRITE_DATA) =
+     */
+> +                                         /* or new subdirectory can be  =
+     */
+> +                                         /* created in the directory    =
+     */
+> +#define FILE_READ_EA          0x00000008  /* Extended attributes associa=
+ted   */
+> +                                         /* with the file can be read   =
+     */
+> +#define FILE_WRITE_EA         0x00000010  /* Extended attributes associa=
+ted   */
+> +                                         /* with the file can be written=
+     */
+> +#define FILE_EXECUTE          0x00000020  /*Data can be read into memory=
+ from */
+> +                                         /* the file using system paging=
+ I/O */
+> +                                         /* for executing the file / scr=
+ipt  */
+> +                                         /* or right to traverse directo=
+ry   */
+> +                                         /* (but by default all users ha=
+ve   */
+> +                                         /* directory bypass traverse   =
+     */
+> +                                         /* privilege and do not need th=
+is   */
+> +                                         /* permission on directories at=
+ all)*/
+> +#define FILE_DELETE_CHILD     0x00000040  /* Child entry can be deleted =
+from  */
+> +                                         /* the directory (so the DELETE=
+ on  */
+> +                                         /* the child entry is not neede=
+d)   */
+> +#define FILE_READ_ATTRIBUTES  0x00000080  /* Attributes associated with =
+the   */
+> +                                         /* file or directory can be rea=
+d    */
+> +#define FILE_WRITE_ATTRIBUTES 0x00000100  /* Attributes associated with =
+the   */
+> +                                         /* file or directory can be wri=
+tten */
+> +#define DELETE                0x00010000  /* The file or dir can be dele=
+ted   */
+> +#define READ_CONTROL          0x00020000  /* The discretionary access co=
+ntrol */
+> +                                         /* list and ownership associate=
+d    */
+> +                                         /* with the file or dir can be =
+read */
+> +#define WRITE_DAC             0x00040000  /* The discretionary access co=
+ntrol */
+> +                                         /* list associated with the fil=
+e or */
+> +                                         /* directory can be written    =
+     */
+> +#define WRITE_OWNER           0x00080000  /* Ownership information assoc=
+iated */
+> +                                         /* with the file/dir can be wri=
+tten */
+> +#define SYNCHRONIZE           0x00100000  /* The file handle can waited =
+on to */
+> +                                         /* synchronize with the complet=
+ion  */
+> +                                         /* of an input/output request  =
+     */
+> +#define SYSTEM_SECURITY       0x01000000  /* The system access control l=
+ist   */
+> +                                         /* associated with the file or =
+     */
+> +                                         /* directory can be read or wri=
+tten */
+> +                                         /* (cannot be in DACL, can in S=
+ACL) */
+> +#define MAXIMUM_ALLOWED       0x02000000  /* Maximal subset of GENERIC_A=
+LL    */
+> +                                         /* permissions which can be gra=
+nted */
+> +                                         /* (cannot be in DACL nor SACL)=
+     */
+> +#define GENERIC_ALL           0x10000000  /* Same as: GENERIC_EXECUTE | =
+      */
+> +                                         /*          GENERIC_WRITE |    =
+     */
+> +                                         /*          GENERIC_READ |     =
+     */
+> +                                         /*          FILE_DELETE_CHILD |=
+     */
+> +                                         /*          DELETE |           =
+     */
+> +                                         /*          WRITE_DAC |        =
+     */
+> +                                         /*          WRITE_OWNER        =
+     */
+> +                                         /* So GENERIC_ALL contains all =
+bits */
+> +                                         /* mentioned above except these=
+ two */
+> +                                         /* SYSTEM_SECURITY  MAXIMUM_ALL=
+OWED */
+> +#define GENERIC_EXECUTE       0x20000000  /* Same as: FILE_EXECUTE |    =
+      */
+> +                                         /*          FILE_READ_ATTRIBUTE=
+S |  */
+> +                                         /*          READ_CONTROL |     =
+     */
+> +                                         /*          SYNCHRONIZE        =
+     */
+> +#define GENERIC_WRITE         0x40000000  /* Same as: FILE_WRITE_DATA | =
+      */
+> +                                         /*          FILE_APPEND_DATA | =
+     */
+> +                                         /*          FILE_WRITE_EA |    =
+     */
+> +                                         /*          FILE_WRITE_ATTRIBUT=
+ES | */
+> +                                         /*          READ_CONTROL |     =
+     */
+> +                                         /*          SYNCHRONIZE        =
+     */
+> +#define GENERIC_READ          0x80000000  /* Same as: FILE_READ_DATA |  =
+      */
+> +                                         /*          FILE_READ_EA |     =
+     */
+> +                                         /*          FILE_READ_ATTRIBUTE=
+S |  */
+> +                                         /*          READ_CONTROL |     =
+     */
+> +                                         /*          SYNCHRONIZE        =
+     */
+> +
+> +#define FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FILE_READ_ATTR=
+IBUTES)
+> +#define FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
+> +                               | FILE_WRITE_EA | FILE_WRITE_ATTRIBUTES)
+> +#define FILE_EXEC_RIGHTS (FILE_EXECUTE)
+> +
+> +#define CLIENT_SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA | FIL=
+E_WRITE_EA \
+> +                               | FILE_READ_ATTRIBUTES \
+> +                               | FILE_WRITE_ATTRIBUTES \
+> +                               | DELETE | READ_CONTROL | WRITE_DAC \
+> +                               | WRITE_OWNER | SYNCHRONIZE)
+> +#define SERVER_SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA \
+> +                               | FILE_READ_ATTRIBUTES \
+> +                               | DELETE | READ_CONTROL | WRITE_DAC \
+> +                               | WRITE_OWNER | SYNCHRONIZE)
+> +#define CLIENT_SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA=
+ \
+> +                               | FILE_READ_EA | FILE_WRITE_EA \
+> +                               | FILE_READ_ATTRIBUTES \
+> +                               | FILE_WRITE_ATTRIBUTES \
+> +                               | DELETE | READ_CONTROL | WRITE_DAC \
+> +                               | WRITE_OWNER | SYNCHRONIZE)
+> +#define SERVER_SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA=
+ \
+> +                               | FILE_WRITE_EA \
+> +                               | FILE_DELETE_CHILD \
+> +                               | FILE_WRITE_ATTRIBUTES \
+> +                               | DELETE | READ_CONTROL | WRITE_DAC \
+> +                               | WRITE_OWNER | SYNCHRONIZE)
+> +#define SET_FILE_EXEC_RIGHTS (FILE_READ_EA | FILE_WRITE_EA | FILE_EXECUT=
+E \
+> +                               | FILE_READ_ATTRIBUTES \
+> +                               | FILE_WRITE_ATTRIBUTES \
+> +                               | DELETE | READ_CONTROL | WRITE_DAC \
+> +                               | WRITE_OWNER | SYNCHRONIZE)
+> +#define SET_MINIMUM_RIGHTS (FILE_READ_EA | FILE_READ_ATTRIBUTES \
+> +                               | READ_CONTROL | SYNCHRONIZE)
+> +
+> +/*
+> + * File Attribute flags - see MS-SMB 2.2.1.4.1
+>   */
+>  #define ATTR_READONLY  0x0001
+>  #define ATTR_HIDDEN    0x0002
+> diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
+> index f79a5165a7cc..f2fbd651ab8f 100644
+> --- a/fs/smb/common/smb2pdu.h
+> +++ b/fs/smb/common/smb2pdu.h
+> @@ -1149,12 +1149,6 @@ struct smb2_server_client_notification {
+>  #define FILE_OVERWRITE_IF_LE           cpu_to_le32(0x00000005)
+>  #define FILE_CREATE_MASK_LE             cpu_to_le32(0x00000007)
+>
+> -#define FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA \
+> -                       | FILE_READ_ATTRIBUTES)
+> -#define FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
+> -                       | FILE_WRITE_EA | FILE_WRITE_ATTRIBUTES)
+> -#define FILE_EXEC_RIGHTS (FILE_EXECUTE)
+> -
+>  /* CreateOptions Flags */
+>  #define FILE_DIRECTORY_FILE_LE         cpu_to_le32(0x00000001)
+>  /* same as #define CREATE_NOT_FILE_LE  cpu_to_le32(0x00000001) */
+> diff --git a/fs/smb/server/smb_common.h b/fs/smb/server/smb_common.h
+> index 810fad0303d7..df67b370025d 100644
+> --- a/fs/smb/server/smb_common.h
+> +++ b/fs/smb/server/smb_common.h
+> @@ -38,61 +38,6 @@
+>  #define F_CREATED      2
+>  #define F_OVERWRITTEN  3
+>
+> -#define FILE_READ_DATA        0x00000001  /* Data can be read from the f=
+ile   */
+> -#define FILE_WRITE_DATA       0x00000002  /* Data can be written to the =
+file  */
+> -#define FILE_APPEND_DATA      0x00000004  /* Data can be appended to the=
+ file */
+> -#define FILE_READ_EA          0x00000008  /* Extended attributes associa=
+ted   */
+> -/* with the file can be read        */
+> -#define FILE_WRITE_EA         0x00000010  /* Extended attributes associa=
+ted   */
+> -/* with the file can be written     */
+> -#define FILE_EXECUTE          0x00000020  /*Data can be read into memory=
+ from */
+> -/* the file using system paging I/O */
+> -#define FILE_DELETE_CHILD     0x00000040
+> -#define FILE_READ_ATTRIBUTES  0x00000080  /* Attributes associated with =
+the   */
+> -/* file can be read                 */
+> -#define FILE_WRITE_ATTRIBUTES 0x00000100  /* Attributes associated with =
+the   */
+> -/* file can be written              */
+> -#define DELETE                0x00010000  /* The file can be deleted    =
+      */
+> -#define READ_CONTROL          0x00020000  /* The access control list and=
+      */
+> -/* ownership associated with the    */
+> -/* file can be read                 */
+> -#define WRITE_DAC             0x00040000  /* The access control list and=
+      */
+> -/* ownership associated with the    */
+> -/* file can be written.             */
+> -#define WRITE_OWNER           0x00080000  /* Ownership information assoc=
+iated */
+> -/* with the file can be written     */
+> -#define SYNCHRONIZE           0x00100000  /* The file handle can waited =
+on to */
+> -/* synchronize with the completion  */
+> -/* of an input/output request       */
+> -#define GENERIC_ALL           0x10000000
+> -#define GENERIC_EXECUTE       0x20000000
+> -#define GENERIC_WRITE         0x40000000
+> -#define GENERIC_READ          0x80000000
+> -/* In summary - Relevant file       */
+> -/* access flags from CIFS are       */
+> -/* file_read_data, file_write_data  */
+> -/* file_execute, file_read_attributes*/
+> -/* write_dac, and delete.           */
+> -
+> -#define SET_FILE_READ_RIGHTS (FILE_READ_DATA | FILE_READ_EA \
+> -               | FILE_READ_ATTRIBUTES \
+> -               | DELETE | READ_CONTROL | WRITE_DAC \
+> -               | WRITE_OWNER | SYNCHRONIZE)
+> -#define SET_FILE_WRITE_RIGHTS (FILE_WRITE_DATA | FILE_APPEND_DATA \
+> -               | FILE_WRITE_EA \
+> -               | FILE_DELETE_CHILD \
+> -               | FILE_WRITE_ATTRIBUTES \
+> -               | DELETE | READ_CONTROL | WRITE_DAC \
+> -               | WRITE_OWNER | SYNCHRONIZE)
+> -#define SET_FILE_EXEC_RIGHTS (FILE_READ_EA | FILE_WRITE_EA | FILE_EXECUT=
+E \
+> -               | FILE_READ_ATTRIBUTES \
+> -               | FILE_WRITE_ATTRIBUTES \
+> -               | DELETE | READ_CONTROL | WRITE_DAC \
+> -               | WRITE_OWNER | SYNCHRONIZE)
+> -
+> -#define SET_MINIMUM_RIGHTS (FILE_READ_EA | FILE_READ_ATTRIBUTES \
+> -               | READ_CONTROL | SYNCHRONIZE)
+> -
+>  /* generic flags for file open */
+>  #define GENERIC_READ_FLAGS     (READ_CONTROL | FILE_READ_DATA | \
+>                 FILE_READ_ATTRIBUTES | \
+> diff --git a/fs/smb/server/smbacl.c b/fs/smb/server/smbacl.c
+> index 5aa7a66334d9..b70ba50f1f10 100644
+> --- a/fs/smb/server/smbacl.c
+> +++ b/fs/smb/server/smbacl.c
+> @@ -180,7 +180,7 @@ static void mode_to_access_flags(umode_t mode, umode_=
+t bits_to_use,
+>          * either user or group or other as per bits_to_use
+>          */
+>         if (mode & 0444)
+> -               *pace_flags |=3D SET_FILE_READ_RIGHTS;
+> +               *pace_flags |=3D SERVER_SET_FILE_READ_RIGHTS;
+>         if (mode & 0222)
+>                 *pace_flags |=3D FILE_WRITE_RIGHTS;
+>         if (mode & 0111)
+> --
+> 2.43.0
+>
 
