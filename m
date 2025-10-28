@@ -1,181 +1,129 @@
-Return-Path: <linux-kernel+bounces-874773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F02EEC17112
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:40:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5408BC170F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:38:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 70DFD502F48
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:35:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1523018907DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C2B2DE71A;
-	Tue, 28 Oct 2025 21:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600F62D5C95;
+	Tue, 28 Oct 2025 21:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Pq77o6HD"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phmrTVky"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEFEA2DC76C;
-	Tue, 28 Oct 2025 21:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B829B2D63F6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761687252; cv=none; b=PDm35IatnvPDRQu02M/VBrRFlM8/mCt1RhvDx/LCnUMNCNLl325iN1QspKKa3RFExUEk7+rcGfTs/MfyC8ZNuqU1DhacvyA0WySpTnBqHuFG5L80QSpbRvVIsesiqaVBUtlJTr79j1voL8ZVaV1G8GASX5sY4AHoAE3hzqiHLlM=
+	t=1761687235; cv=none; b=U1CsDtFhsQPq6UUeXxYujqo48xqd/YOxXTK0fofbUp4TDdj81GwNTMqc0eMRDZUW+oxMjeZASqk7QJasZ4+IQ0/YOmp9hsIeB5Kb1c/8+ZCmdksfpRxK8o8G9GuDyo9cNLfDHDOLF9rzhe6x9kgip1/XJCyYxt/hDaz7wf92FPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761687252; c=relaxed/simple;
-	bh=6z2zAHcHQRUUS1xGpWBDBRVkHZNTkAWeQeys2SgyWgE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Bt+mf+i4kJ6PRfarNIA8Rn8OJfaqe4Ha24mkNdjmvr7BcJbCvbvmzfhS0LDKc+99Lcq8unwiKEYJXuPaan/XyuQm1nE74/X69vuwJss493Xpjnp36oT9LkXXtAcZ8/QtiOZXE2dKne12sHz+q0dh6JKyBtrtuD9hoNKQ1+Gk4/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Pq77o6HD; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 63F6B40D1C;
-	Tue, 28 Oct 2025 22:33:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1761687241; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OaeV3ReOG98zpsdwkv/9umMpI5IPraCJeVtVuXAToME=;
-	b=Pq77o6HDo9/OSHrQ6/4t3Dekd4Q49eaGkoic01K1yveOMuxs2bsV2H3d/whs55vA1RyDCx
-	ln0HayR5AoExJ7Wbfga9ma11rsONrEU9oNlFPw9SCS83lUocgFw8EHTxi5RN8wabT4y2Bk
-	EeivFgTwt9Re5mbQKNby3HqAN9OvLEKOa6SiiNQDfthFfsW6FeSPh4ZBd3UmQMmdS1aw59
-	u71NY+SwqsDrt/PCLeKunLGWcO2gBl24d8WGsVD298qayTt4K2qP2w3cu1hBaYCPj73MwS
-	7lPDhjLxRc9kgJ5MvzAUH6/XZ0N2E363TB02zrWCv/sQCb7DgndQLWjExOo+kQ==
-From: Dragan Simic <dsimic@manjaro.org>
-To: nicolas.frattaroli@collabora.com
-Cc: alexandre.belloni@bootlin.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dmitry.torokhov@gmail.com,
-	heiko@sntech.de,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org
-Subject: [PATCH 2/4] Input: adc-keys - support types that aren't just keyboard keys
-Date: Tue, 28 Oct 2025 22:32:09 +0100
-Message-Id: <20251028213209.2646838-1-dsimic@manjaro.org>
-X-Mailer: git-send-email 2.33.1
-In-Reply-To: <20250630-rock4d-audio-v1-2-0b3c8e8fda9c@collabora.com>
-References: <20250630-rock4d-audio-v1-2-0b3c8e8fda9c@collabora.com>
+	s=arc-20240116; t=1761687235; c=relaxed/simple;
+	bh=iFWP7xxMJgkbRCwFD/Ow8yzZAuMAdW311BwnuPvp2SA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UtocNgkq/+ayGujzwZAhGw23uiFAr/kiCgHIJnhWuT/5gkcCD68Kzva4KbwhqpDKyGFqwL48dGEteU0TwQrURunjpDo7JgPZdWk7Ylt9gNMwe/Icoap0cvQ3hVI/ssXpfelzffQ8qAL0/RZA4JREt/pjYuo8FOjn843BWWexmPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phmrTVky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AA0C4CEFF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:33:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761687235;
+	bh=iFWP7xxMJgkbRCwFD/Ow8yzZAuMAdW311BwnuPvp2SA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=phmrTVkyk/RJJ+EFRqA64SJtzZw1RrTXF0Jy7f1CXc/pvZLehllXnDr4sgfEh9lXA
+	 2/twG9h2eNIdBfauTgXEQuIRcS4YaIBUHDFnASGVKVGIr9PViTjDz3uHg1aUHndGnm
+	 JfmMrIDVcmMtfhGvsEaRyHNrcNHVVSFVyWqW7mc2lxSIew6H7Ge6bK3IDkKkVZFTE+
+	 ckLbL07VYqopMUKqVW/aEdK3rZ1Vhdn7Jx2oYQrh9yRmC9zb2iiksD6jhqrAr/U6XF
+	 BoaOIR9Ixch8dADOEBUFirZRLio3iFt5cOVoN7gFFs9TvytO8YcKQnFMJVdWxBjyCE
+	 nG+tulYpts/hw==
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-78f30dac856so73672196d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:33:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0YHO9vkCJnKqkD9xsxweFJbkJGl3Fc1MynrOH2hG71VfpYKTrr57N+v/Gt4SlB7NPayeLv8IVnReAAJo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC/pkewP1JgKn6WTCjHPYFJQHRm0aVHDOjbtilZkCudtz/kOyP
+	VojiBy5dmKmhkEOzCKG6T/R/TtMwd6YJt3tE0QAOYWuEW15Kh9Jjdk+U8xEh1/7U5bwdn5lP9ry
+	nWkO4X5DDXi8xvrlQ8HnOYSqofcTWmz4=
+X-Google-Smtp-Source: AGHT+IESUEc3eeZzEWwxs00NmoTrW71KQg0jPt0Nsondh+RQEdb4dLarCNV80h0sV/jj5ri8Uz9bMzHY51U++MLe3GA=
+X-Received: by 2002:a05:6214:2129:b0:807:ca4f:5666 with SMTP id
+ 6a1803df08f44-88009ad0903mr10291646d6.2.1761687234390; Tue, 28 Oct 2025
+ 14:33:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-7-roman.gushchin@linux.dev>
+In-Reply-To: <20251027231727.472628-7-roman.gushchin@linux.dev>
+From: Song Liu <song@kernel.org>
+Date: Tue, 28 Oct 2025 14:33:43 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_vrNZpEbBuHLhHwHaGzLaF3QEeKWz-VikCm0bYrFBq4UA@mail.gmail.com>
+X-Gm-Features: AWmQ_bn4FJi2CLDbiuBc051gpuUbvflP1rY5GJvh4T7UtMPVn-sJ9ZXRwYG7Zb8
+Message-ID: <CAHzjS_vrNZpEbBuHLhHwHaGzLaF3QEeKWz-VikCm0bYrFBq4UA@mail.gmail.com>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Nicolas,
+On Mon, Oct 27, 2025 at 4:18=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+[...]
+> +
+> +struct bpf_oom_ops {
+> +       /**
+> +        * @handle_out_of_memory: Out of memory bpf handler, called befor=
+e
+> +        * the in-kernel OOM killer.
+> +        * @ctx: Execution context
+> +        * @oc: OOM control structure
+> +        *
+> +        * Should return 1 if some memory was freed up, otherwise
+> +        * the in-kernel OOM killer is invoked.
+> +        */
+> +       int (*handle_out_of_memory)(struct bpf_oom_ctx *ctx, struct oom_c=
+ontrol *oc);
+> +
+> +       /**
+> +        * @handle_cgroup_offline: Cgroup offline callback
+> +        * @ctx: Execution context
+> +        * @cgroup_id: Id of deleted cgroup
+> +        *
+> +        * Called if the cgroup with the attached bpf_oom_ops is deleted.
+> +        */
+> +       void (*handle_cgroup_offline)(struct bpf_oom_ctx *ctx, u64 cgroup=
+_id);
 
-On Monday, June 30, 2025, 12:19:24 Nicolas Frattaroli wrote:
-> Instead of doing something like what gpio-keys is doing, adc-keys
-> hardcodes that all keycodes must be of type EV_KEY.
-> 
-> This limits the usefulness of adc-keys, and overcomplicates the code
-> with manual bit-setting logic.
-> 
-> Instead, refactor the code to read the linux,input-type fwnode property,
-> and get rid of the custom bit setting logic, replacing it with
-> input_set_capability instead. input_report_key is replaced with
-> input_event, which allows us to explicitly pass the type.
+handle_out_of_memory() and handle_cgroup_offline() takes bpf_oom_ctx,
+which is just cgroup_id for now. Shall we pass in struct mem_cgroup, which
+should be easier to use?
 
-Thanks for this patch, it's indeed very useful!  Please see some
-comments below.
+Thanks,
+Song
 
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  drivers/input/keyboard/adc-keys.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/adc-keys.c b/drivers/input/keyboard/adc-keys.c
-> index f1753207429db02ce6510e5ec0da9b24d9edb61d..339dd4d4a0842108da2c6136b1e0098cd1f6a3cd 100644
-> --- a/drivers/input/keyboard/adc-keys.c
-> +++ b/drivers/input/keyboard/adc-keys.c
-> @@ -19,12 +19,14 @@
->  struct adc_keys_button {
->  	u32 voltage;
->  	u32 keycode;
-> +	u32 type;
->  };
->  
->  struct adc_keys_state {
->  	struct iio_channel *channel;
->  	u32 num_keys;
->  	u32 last_key;
-> +	u32 last_type;
->  	u32 keyup_voltage;
->  	const struct adc_keys_button *map;
->  };
-> @@ -35,6 +37,7 @@ static void adc_keys_poll(struct input_dev *input)
->  	int i, value, ret;
->  	u32 diff, closest = 0xffffffff;
->  	int keycode = 0;
-> +	u32 type = EV_KEY;
->  
->  	ret = iio_read_channel_processed(st->channel, &value);
->  	if (unlikely(ret < 0)) {
-> @@ -46,6 +49,7 @@ static void adc_keys_poll(struct input_dev *input)
->  			if (diff < closest) {
->  				closest = diff;
->  				keycode = st->map[i].keycode;
-> +				type = st->map[i].type;
->  			}
->  		}
->  	}
-> @@ -54,13 +58,14 @@ static void adc_keys_poll(struct input_dev *input)
->  		keycode = 0;
->  
->  	if (st->last_key && st->last_key != keycode)
-> -		input_report_key(input, st->last_key, 0);
-> +		input_event(input, st->last_type, st->last_key, 0);
->  
->  	if (keycode)
-> -		input_report_key(input, keycode, 1);
-> +		input_event(input, type, keycode, 1);
-
-When EV_ABS is defined in the DT as the key type, which happens with
-joysticks and whatnot, separate handling is needed, by requiring the
-actual associated button values to be reported in the input_event()
-invocations, more specifically on the keypresses only.
-
-That's also visible in the gpio_keys_gpio_report_event() function in
-drivers/input/keyboard/gpio_keys.c.
-
->  	input_sync(input);
->  	st->last_key = keycode;
-> +	st->last_type = type;
->  }
->  
->  static int adc_keys_load_keymap(struct device *dev, struct adc_keys_state *st)
-> @@ -93,6 +98,10 @@ static int adc_keys_load_keymap(struct device *dev, struct adc_keys_state *st)
->  			return -EINVAL;
->  		}
->  
-> +		if (fwnode_property_read_u32(child, "linux,input-type",
-> +					     &map[i].type))
-> +			map[i].type = EV_KEY;
-
-Going along with the remarks above, it will also be needed to read
-and record the values of "linux,input-value" DT properties here, and
-to extend the associated binding to define their presence.
-
->  		i++;
->  	}
->  
-> @@ -156,9 +165,8 @@ static int adc_keys_probe(struct platform_device *pdev)
->  	input->id.product = 0x0001;
->  	input->id.version = 0x0100;
->  
-> -	__set_bit(EV_KEY, input->evbit);
->  	for (i = 0; i < st->num_keys; i++)
-> -		__set_bit(st->map[i].keycode, input->keybit);
-> +		input_set_capability(input, st->map[i].type, st->map[i].keycode);
->  
->  	if (device_property_read_bool(dev, "autorepeat"))
->  		__set_bit(EV_REP, input->evbit);
+> +
+> +       /**
+> +        * @name: BPF OOM policy name
+> +        */
+> +       char name[BPF_OOM_NAME_MAX_LEN];
+> +};
+> +
+> +#ifdef CONFIG_BPF_SYSCALL
+> +/**
+> + * @bpf_handle_oom: handle out of memory condition using bpf
+> + * @oc: OOM control structure
+> + *
+> + * Returns true if some memory was freed.
+> + */
+> +bool bpf_handle_oom(struct oom_control *oc);
+> +
 
