@@ -1,503 +1,354 @@
-Return-Path: <linux-kernel+bounces-874356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE77C161DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:22:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B3DC161ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E22DA4F2EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:22:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 135534FC4D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3F634B1A2;
-	Tue, 28 Oct 2025 17:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75EA34A766;
+	Tue, 28 Oct 2025 17:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C73AZuOZ"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JfVpsfKc";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xnVksArM"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D307234A766
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761672124; cv=none; b=oPwRPg/B32kTmzca0h1VLkd4FrtCDzC01rHmdo1XM7VZJjrrw/osSU0gxpP20oT0SYG666OQUfP2Speid9FJDvojphTJIQ4vqcm3L/ylDwvBZKaw7hPZTa+LknWAdwrsqU5ASkpVRtp7bwOF2NXGLWtPMcjvmifENy3POBH8Ltw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761672124; c=relaxed/simple;
-	bh=2WfCIauAeO/IafVNMn762pL+WqvpKOkad1Pqpqj+dNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hcF+e6mHL8WUxrU6RhqpCjhzXJChGAGe6OMG8SgEQv3Z95QtgvAEvLNfP6Psg8L5zYV5bdHHTvhbwmyAimTN8CjyMSYIa/GeBkRQOWAGTX6YJmUocl3a/0VzL+DCXijS4fI50qWyHdsmXdKuWze//2xAvUQ6gf6w4VxYfHOLcww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C73AZuOZ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7930132f59aso8254682b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:22:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D643D1B4F1F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761672174; cv=fail; b=ZDhXG0e//JEKRwWyT9Gu4+5xZFTZTtfnxo4YR0c0Wrrmr3aUQoGlvJ0x2w7PXqo4hIf0wm6YMuaJYC3Aegwsx9smdxHbUzQSOcmgfacTjJp7mfY78Ht/EuXSK3u5hqxDGmLD+iiPpWyN4O9Gx13tuT4V3oHnsnSTDAAeARG3w1A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761672174; c=relaxed/simple;
+	bh=iohVHudi29XRseTS8HhpyxyzI9Z2VqnjMWyPLWI8SOI=;
+	h=References:From:To:Cc:Subject:In-reply-to:Date:Message-ID:
+	 Content-Type:MIME-Version; b=nirBGixPkixoza7cNf0GmS5KR5veiAJ4wI9nbm3OWWB7xp/p0wwgWwXOfVQcP5KEF2eaU/fckiI858wFEsD0wN4n8ckN5GA+jNaj8M2jfyfZjXgrifhP93+QsoV7/U1mDqgfkPnVs9MVNQRcKg+Or/M8kH7Xhi2P5HN+CHmZTME=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JfVpsfKc; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xnVksArM; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SBDX1J029091;
+	Tue, 28 Oct 2025 17:22:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=IcAu3qp0OPt8IBiaj5
+	MUAsokjaoJj2ohwuEmhm8oKRI=; b=JfVpsfKcSYOfElK6QQCEqw5BHQ/vH2B5ka
+	3pdX+a19nGSrBXbTY1K7j4y0YZON9vWdoT7PrVKxuna6Tn6wDvTdRr8sJvoZKlLD
+	5DO994IfkS59RZIiyzOafBK7gC/66lNEy6ahG3ah8Rpib6EaoR6PXEtoRNmOmGFf
+	aSLQeHo61/CPIL5RDLHfcOWnL2z9hm/S6q4DZoPy+fVMSuyHldlqkJIupF6ffy22
+	Qb9GWuitjRIZ6WyccIge5/oJKt1v3zWnnHqfhMv6R429tJAHbWP6pl3VQ/GnCwoG
+	XNa+yNBmxevM4H2sEWiEnXuH/DOss0KnLwDnFB2F6tvh1c8w0xKA==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a22uuc50t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 17:22:12 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SG70p4037432;
+	Tue, 28 Oct 2025 17:22:11 GMT
+Received: from sn4pr0501cu005.outbound.protection.outlook.com (mail-southcentralusazon11011037.outbound.protection.outlook.com [40.93.194.37])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n08gxyd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 17:22:11 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PU0I/PdFyZ3MW2jXGWR9KGm4igBpYl7BCPmRS9h4we7rcfRMeK4oHxjR+YsGabS17JW2qQAJqAT6uWufCfWUW0XjleEVHJuO/3PNcbiGKAp7D1EkPPqVRlkAE1tXvTUMTqVpHZXG8p86oYaW9Z5fpRfhruPUg9pKrgSvyZDOvtgoH2WeVfUprtYcuw4gKjZ5mqhxmUlkpPBbvlZWPclyvtZXuMS2kG624yK3E1vnJYhvQetbSIcHG2Vtfvu/rG8VnE9MxDk+98Q/F2m8JeBT8/kWC4iZwkWdBEG4+vXL5Rbwida+aozLylydln1S1V2nDw+nVvh2xM+fEPO755etWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IcAu3qp0OPt8IBiaj5MUAsokjaoJj2ohwuEmhm8oKRI=;
+ b=p2Gct/uEKgp/nZKjGqpCcxCZ2dNTRj88TgRWYMihWLUhuihlI8VIZ5MVP+K/YvCCE67FU7AIQQj83e6svhJ3yqQnL9E20aW3IAkQTip/kV6m7H90TxfiOK+/mMdUgZTqVlpBgZycnxY1FIvcIPGqlW+jG4wbLILZTxWjgw9/m0HtAO7BcTsET3P+xBZGUDehq/Ov272wrK0O81iPWFVmlUJGxXUU/z9TINDDzA8fHRYjh6DO6r8tRPExf0M1QLvFWXbKCtOOznFqOPgFCV4inbdjguoQOhv/fbBSSxxg38Np78T0YVYM/HYfR59g1A4tR4LELRMKVWLUP3/mAU/VbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761672120; x=1762276920; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Ji9p+5aFdf+kyAe4VXVfYLigSD8K9niEZ0dfK3EfFg=;
-        b=C73AZuOZCu8HxIY9o7zqNTwV1yKbNLrTso/jLMhiiaSLIt9AOtgrp7TBosoATmCYw1
-         /wYMiXkU6FFroMSYCHOkSbrglguNPIlm6kpdojfvOwRV666zJvYXV909riQlXMUocygS
-         7qZEsVBGUyKrx+XORYKr3/+yue3agFKJ4zmoLYkQKG9l9CIt/0a3mUUmsvpl2AU/vgJA
-         +mbIAc7g8C8xO+iQRKvcIvlxNC0boH/L1LhiH2FBjfXfyJmErEXELxITmsZV3YNtXVjA
-         ZEoeUKY1fdP3sZXFram8/qFMbYgqtbnEckvgMMocnYfo1n+/dolBNWYdloixUW05a9ax
-         c3qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761672120; x=1762276920;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Ji9p+5aFdf+kyAe4VXVfYLigSD8K9niEZ0dfK3EfFg=;
-        b=l8BzvsauItfF1PoG+utj9495q1tinkzYzmwY/lOE5IywemIpc2lAo/x18kkNCNPJMt
-         U4VdPnguUJf1dLnytMtYyAA6jRQZyl3ozhRJ9xNpaLh19Fnls9uObS0eq3h8t0N/F3P/
-         0/q9vvxXCocRtILKQAAnhvucTQmLUiSmU4O2sENQExLnCvNPipL3IfOrNa33c50sX2Ao
-         uCrDpyvBaFruXXLiAX8owTM8VPp1f2Xeqk7Y0QzsEmMyDzkO0tBrNBrjXM2HVjDF+wpA
-         O12rMqVrbrKZ0h/w9PeUXDOoH0xIF0qbpHmPC3aQmLU5zLiGno3PmIsIm5BI9jFwkTWi
-         qHsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW1f6fuKk9eQFRr6h/rmIEH0vob4LJRQGkUVSQfPrr4rzVNdtotTPW+bCQ6MRSFl15b/JFdcGUSpSaQr6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKpB6NwahaW3rXe9hIyx3aLbm0uLLVxkZqV58j5Jh+gCEZOSPV
-	b+QWU+hJXBUhzXltAYCBpW7YMcJaPYDOjC32wZSN4yTjmhOLC8QnkM9E
-X-Gm-Gg: ASbGncvtrbg7CYAVacTt8W8+OGedSLjVCBkowcBNRpuSqIeog3zhdudZHlZMThrRtUa
-	12DJgL7x0/HaB9JkHU09gIvSanOxldzmB7+ly47KGaCnjyUUjBAEiwK4sJEDypjvDgQ5TBeNpUa
-	o+txB2kytkv7Db3zyvKabbBX1PtrJBq8lRfNjBMJCN+6EC1YhlWLpmNLvULsY0QTw+va1SLyYuX
-	Ly96OihAYtbdimver7X+dYmIAtAH66NwsWMl1WQfOvDeiQsSlDVAYKtKs3rBWA5HxvV6Xh0EHAY
-	nVPKrfxyE+Ke8JmMbbUSJMxyLWmM2oN8xg2GFMZM4GiFORkhupVkYO6WMtXyxHdJ3aiSOy4YSQx
-	8ZWVeDgoOPfxTPfAN5x8HQwzKZbXveuf2exY4ukF+tzUDoeFyIcc2xqvG0Dd5E2dtItZNSvcEAb
-	11ZimMFVAx67Ou6jBPd/JJqe4ITgvMObTyv86Fde46O1LvS8PNfFk=
-X-Google-Smtp-Source: AGHT+IFtZbks/LCgEhtL7Zva/ZYA9CYkpa381vRQPs+p+XdXEi0Ofj/XtgImdGrU8z8bq87Mfrq5xA==
-X-Received: by 2002:a17:902:f68f:b0:265:47:a7bd with SMTP id d9443c01a7336-294cb3765f7mr43053915ad.4.1761672119918;
-        Tue, 28 Oct 2025 10:21:59 -0700 (PDT)
-Received: from ?IPV6:2405:201:8000:a149:4670:c55c:fe13:754d? ([2405:201:8000:a149:4670:c55c:fe13:754d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e416a2sm122441205ad.97.2025.10.28.10.21.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 10:21:59 -0700 (PDT)
-Message-ID: <79c65e1c-dbc9-4a16-b718-af8e227b6290@gmail.com>
-Date: Tue, 28 Oct 2025 22:51:53 +0530
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IcAu3qp0OPt8IBiaj5MUAsokjaoJj2ohwuEmhm8oKRI=;
+ b=xnVksArMKQZ3dWZElAJAx+6AxzWYSrxjm95+NvSUwnen8v5NGBvqWpteL9fvsojO0J5EZzGcEl0fBIuLE6S7L7/yW0FJBgoAfpKNQLc3O523PJsxyGCYfgY8BpSesBfZBq3j38zHoG5BTGLb/gXRFTQBRinOZVLwdEuWvMyJYGc=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by CH2PR10MB4133.namprd10.prod.outlook.com (2603:10b6:610:a6::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 17:22:08 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 17:22:08 +0000
+References: <20251027202109.678022-1-ankur.a.arora@oracle.com>
+ <20251027143309.4331a65f38f05ea95d9e46ad@linux-foundation.org>
+User-agent: mu4e 1.4.10; emacs 27.2
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, x86@kernel.org, david@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com,
+        mjguzik@gmail.com, luto@kernel.org, peterz@infradead.org,
+        acme@kernel.org, namhyung@kernel.org, tglx@linutronix.de,
+        willy@infradead.org, raghavendra.kt@amd.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH v8 0/7] mm: folio_zero_user: clear contiguous pages
+In-reply-to: <20251027143309.4331a65f38f05ea95d9e46ad@linux-foundation.org>
+Date: Tue, 28 Oct 2025 10:22:07 -0700
+Message-ID: <87qzunq6v4.fsf@oracle.com>
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR04CA0106.namprd04.prod.outlook.com
+ (2603:10b6:303:83::21) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: ethernet: emulex: benet: fix adapter->fw_on_flash
- truncation warning
-To: David Hunter <david.hunter.linux@gmail.com>, ajit.khaparde@broadcom.com,
- sriharsha.basavapatna@broadcom.com, somnath.kotur@broadcom.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, khalid@kernel.org,
- linux-kernel-mentees@lists.linux.dev
-References: <20251024180926.3842-1-spyjetfayed@gmail.com>
- <370bb59c-ff99-449d-a3ae-f091bb33f029@gmail.com>
-Content-Language: en-US
-From: Ankan Biswas <spyjetfayed@gmail.com>
-Autocrypt: addr=spyjetfayed@gmail.com; keydata=
- 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
- TRpGew2ozniUMliyaLH9UH6/e9Us
-In-Reply-To: <370bb59c-ff99-449d-a3ae-f091bb33f029@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|CH2PR10MB4133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 954578c9-b3e1-4d15-b139-08de164685c7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jaTl8yXp2TLE5g26dUjDIiIxtf4SlMPextu3GunQMZK+v67EXZDZbO2DeVqp?=
+ =?us-ascii?Q?QXG/hnJ486oVl5k75gVY0ENTMDYf+xuzP+JSlG/Vz0ZNmdUVDD4wgsn+xdVQ?=
+ =?us-ascii?Q?j9b9bbS3lH1pz6BNPnSY+0v2zXrYt9KMnWNWmGtLUjOi+k6MIfFVUSOrO/Dk?=
+ =?us-ascii?Q?IL38cAtSSx3PgHe5BNfP2DAx8iOJ50H5r5FSiwRh/vzTk8tKStW18FvkTi3d?=
+ =?us-ascii?Q?SpAmo26ha6wtE/8lG4zEzDvPTyqF+9IuLYNf779HuBRBuBq776QvJ2Dyveh3?=
+ =?us-ascii?Q?cR+uXozVT0HLt5tAgc4y7uPMqvuStCbf1Yqudb0aoT0mJnfzKR1lN4OqVYb6?=
+ =?us-ascii?Q?lCOS/xPFIsWMzbCHlklmBxwpZkrSYQjIZt5FMKFX8toH16t9bK5wdRVMV8+e?=
+ =?us-ascii?Q?7DVa/6dwgy5DimDVBbrOUvDD4OrM+NK/5ZmcjbtrrhRHOJKYBi1bXVhMl3ei?=
+ =?us-ascii?Q?cTgk1RSkx45AHfBk6vlodBC7yhhYgPIQi7uoB78b6+q9Ua6UWDGIi/v1+N7Q?=
+ =?us-ascii?Q?gRdiHtlcZp3ATvlROM9uA29kCeNG2zuW773XDFeHx3f8ZGMksT5QoN6+ov12?=
+ =?us-ascii?Q?cosqapkt4wMvZ4LDGvNbmAF52YKstOR8TgYywuXp0iL0gTmL043lphesv2wi?=
+ =?us-ascii?Q?CssBZffeUJI5hf8rYyjswHwOA364JHDI2jl0m9Az0bVWn6MAU4OZ6AgTFm7n?=
+ =?us-ascii?Q?iM2xx/SHL9jVtW5NOb4N0E1moJIGysC0A1vhOYesbcz0wTHucaAsP81SpeTV?=
+ =?us-ascii?Q?oRNY1C7VORI20RljrjZCYi/RPzoKRmgdwELdFxWfuMlRLqhLVcx63kVwtTuO?=
+ =?us-ascii?Q?VYGPDNUGASKNSClinUysVbZJuwB1SVTRk58Kg8uYxoFiKMXyo7mJNhOQ6PQ7?=
+ =?us-ascii?Q?7+7sdholSWdF/2ShRC9Osc0WIf3BbE+LoM+qySlhULFFnZBN1raVARxqLrgU?=
+ =?us-ascii?Q?XmXaMBGXUyPXDqb8LUeVDQx5Y4/o4dkEzYYR6SM8r13dIGT/OuNUaeibHvyL?=
+ =?us-ascii?Q?NKr046DZis2iQVy2nKHDvziOHpmV2M3uTKehjL9dDzgBcVqZrUsjTuMLZxgg?=
+ =?us-ascii?Q?OF4PbMmfFPUUwNq1f3SzwU7ohZjtmEfPRPNzUCrcO5hKY8LpkZMuxgFv4wpq?=
+ =?us-ascii?Q?Ph6r7V+TeFLRKOtKBHtQb/H1UL3jQjQjWBKlZBCH6dAgD3AMD57uGe8mCF5I?=
+ =?us-ascii?Q?hf75WwCRDmJptMXXjV3KWu+fCvyULLTRHTqFaVJdjaQ2t+JPuxu1wUr7HCB1?=
+ =?us-ascii?Q?ApvY8XboxN/P8td7/jJ5Y/+vfyZA6R2gdwHWiMyNB5efxJbgD92guPp8pUBM?=
+ =?us-ascii?Q?2J+KjA5bZZ9JiJ1xkUnci/HSuZ+U5tt5nSEHi/oDOO2eZxnXHXzVlgbdyxpU?=
+ =?us-ascii?Q?SFrndAtvOLFQLyxiCxsGfWWnsFc0ejPrPSdULTWhJy/opUDqYt3SJ9BrhFUv?=
+ =?us-ascii?Q?37KFGGVwlw1gnIsriPL5FAh/ZoKrWNUdlGEDo4iDcru25j7FwhCt4A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HvJtYumVX+yRJfqdRm2p2c+julgGuhcD1ZQDMtwnX+Alo4FD/L5x+WtrHU+Y?=
+ =?us-ascii?Q?ciywRuOt2lmOqyJqqE+vc+j7XzPMnIIEevcFLq/bIg5saxZbztTGPSISom9M?=
+ =?us-ascii?Q?YXfaFgRsPCHCn8slOELdgbiXAqkcAAu56xy7x7va7ofK0pZshX3q4mA06FaX?=
+ =?us-ascii?Q?0QM0gWzQBVuVeoFrTcWDlOD5Qkx6wNIIQ5nrpqeWqfc8x0Rzo+5EGfvPcLFF?=
+ =?us-ascii?Q?DWId+selLjGE5zpBsRJ4he4YAYltAQ32sOJ5aDYdMkgfPa7QSSb3a4M1FA+x?=
+ =?us-ascii?Q?WNhzplCEyTUl+OKHBSWOCMEaKZw3ELEEcNudR6MXJ4Lx86UtWvzcpJlAAOU+?=
+ =?us-ascii?Q?b0b3wCw8J+1Fcv1b3PnjMrXkSDYuFz+3ZbtLRWB0kISLO3/p8eTDsHbP4/Qc?=
+ =?us-ascii?Q?VB1oj7EQmuPqaWhZEMU2oFe+v+bYKKWmdcmSHCm3YlFnclQLYzBN4K7PJEW3?=
+ =?us-ascii?Q?BH2ett3vBE8Cr7tFHOLMgNRJcHSfWjIe3ABZs0+Ej3J9GtmN1/VDeoFD6KNY?=
+ =?us-ascii?Q?/cnvVDLH/GD88sDgY20c3pzNuVy/eZDImMH36V22jjoSHR+pLh3N/QIJv5yU?=
+ =?us-ascii?Q?DuTOHe6Wm054NkPxanjJNLgLeT9imDKyPOb2+vAY5uAAZ0KmGwQ10xQzPLkL?=
+ =?us-ascii?Q?n+XyVn4W7C/mpNLTvUTqiK0hJCHIT2r/3FXmnUMuGOmOSfbdr5K/PWujukZ9?=
+ =?us-ascii?Q?NqeM6KYiNCZBKAHL8qgFUCRWIRGISH1wx4EhaQeOK4auKMAo8spUhLZv8n4n?=
+ =?us-ascii?Q?t1h5mr97AvHhuXTxJkO1Ygt8A3feEi2wgimIQ+hSHZHhwmDqGklxN8t/x63K?=
+ =?us-ascii?Q?ba7HlahTj8Rwc3LYbNHCgMb8hQoCrWmOU8HJLD8wFj2iwr4y80XqjAog//GG?=
+ =?us-ascii?Q?cgNzhvgglhoVdtg8HySDEPKvby8ePx3eQJcnoDWLOhIEWA9t8XByvMGqbGVx?=
+ =?us-ascii?Q?PTQYOBNLogQ3s/QGMO1n4fuA4OdNpa2LBtWV1rgyUXUWmNxml7Nf0MM0POis?=
+ =?us-ascii?Q?O9REAmsMYY5wUh3QiCb55Ap1ocFW/Y0A25F7s26ji220gBVhr9vx6WPAhuWm?=
+ =?us-ascii?Q?SrYkYq2oTCZN7AjaJN/vnRTbJfgIbFBPrhiTGUBFcWdze8ZVT25uICAv3lrZ?=
+ =?us-ascii?Q?bvsP/PCAz3Iy453elXFrnPymJLMlZDM56nj+3kmY2DPFLQCnHZqODnMipZyA?=
+ =?us-ascii?Q?eF97tK29GaKUXBrXnogMxunjYiVKaxT9d0fsx34SMYI/2RuzgFLll/b0FTr+?=
+ =?us-ascii?Q?d/o+2W0gyLshS7B3DF5a1ThkQxaGNpRWqhxsa3a7r0OshnQkBpr1MbcyzAo2?=
+ =?us-ascii?Q?v8bbNtoB0nlc3dPHAOEPogZjpcUzYUmgswlV+VXJoW1W0XlZibJLLt1BtrNq?=
+ =?us-ascii?Q?f9yjGVqdGlOw4JUZLr7RfKCtNeFuVYV/wyETM32jWjt0hfX4/Wa5GSHx4XBj?=
+ =?us-ascii?Q?KTDfugv2yN6HSYSn+i2jhEoc/7bdZIyutVhhadvZf+6ZapKYRthP0o/sVcmU?=
+ =?us-ascii?Q?8a+SzaLUGnpeW9SMRlwDx4KExVVUokt8vn8ufqQl0xLIWxqm5URwox7yPKTQ?=
+ =?us-ascii?Q?GJYdGWH607qQUQSRyhfbwcOv0n6fm+4HH9C8NvYh4IzIL9RP+NUIv3c8MDgd?=
+ =?us-ascii?Q?/w=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	TKHimIpZbY3tFaH6RZ1LAV0oirGjeGBafhkaL829DvtxwC873L3hg+5svaGg+2nbV3d8MW2eHdC2EH5kyUf5fV8yg0FK7ApF30bvH+QjNHqhoaLE1aN0lUaQdbR6h5XcYZNGm26j3+IksdwF9b44gU30v3F46vYTl9jwEMv5Vtfxv1n7OeVe2wkN6YlsrPm5lfS0hF6vpViRoNaBet8wIWE4QIw1NDlYPXQAOoD3gCh9wpWL0jh3CvTfT2NZbO1DX2GlBFpv3RPYurvs0aDp2+JYIMZROeeFE3WuKZ/tkI2vP9FamEae4wyLsZ3DTMmnIjsmUeJLZJVcHGVtw8eZNKqQirRC4T23rqJGuepkRCTQTxXr+AsPFiTcBZ2wxfxm/vHknsVFDh5xWD718mp6bzoFfPhZtO44JSkXVB6H0UDctGVC7fZ97fLawciKJf8XJmKojorsyeo43v2mjyI7Q9uE9fsreNOKJlGbJ+r9K10gdeIqT7v9tcSd+3/vs+9KZH5mHKT88eVDMDMk8assTYGV349JNfjG7wpO/aSNAPHbFOg+N/ZFTrnXIqmCpsUXlW9skhZq5ziIZ7MmNv7ivheoS4oewOlHrUeqaa7Egqc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 954578c9-b3e1-4d15-b139-08de164685c7
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 17:22:08.3100
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 82V9gr2Ey9vHT3UP5TK2gJBopNy/dnijgkwh1OkylI6JdbwB5jcZqV7DCyM7DysqnaA36n1/Nt7S4uZ9GFLo+sDDKhJIVZ34IyU2QLbmRIc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4133
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
+ malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510280147
+X-Proofpoint-GUID: xphWvurT9qLVucx_ktKjvG30x7IWR-9Y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MSBTYWx0ZWRfXzXXD7WxvJGma
+ MXxwbZosGMXKw01gUt06WGUEhuPoHvtslaCcBBacsonWVvT134lSBI63cS/ytXP9ydrIiT6xOjA
+ ABR8TPM4ekRr3QAE9Vauu4leZoepfys/dpHUxkwiScCb3hcfV+qLgSUIHrK/oaHV5mDpnfLwYCS
+ Xh4X3qPU4o97CkzFYRv0Eu0ig9IyAnm2ZRFjDvXHQH5mHmr29flI96ympnZGhc5bEOK/3GoJrJW
+ 9UC43wQmenZot7+ubbMQr3lpYcMaeRb4j+AwvenzTEdZ3ZRKA68RWqPX6T++CsIIhV5ROI2yUs1
+ 6BjHkrws2q5ACARzKyktLgSOnCnW05NiG7s6LBJpy6unG6MARb9NueHAQ8QIi4lJveK40ZKx08W
+ uB2S4VOM8E8G/lTI+HG7EkNjqFKOOA==
+X-Authority-Analysis: v=2.4 cv=Xe+EDY55 c=1 sm=1 tr=0 ts=6900fbc4 cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=Z4Rwk6OoAAAA:8 a=aG1s7GWeUViGCKzFW9AA:9 a=HkZW87K1Qel5hWWM3VKY:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: xphWvurT9qLVucx_ktKjvG30x7IWR-9Y
 
 
+[ My earlier reply to this ate up some of the headers and broke out of
+the thread. Resending. ]
 
-On 10/27/25 11:31 PM, David Hunter wrote:
-> On 10/24/25 14:09, Ankan Biswas wrote:
->> The benet driver copies both fw_ver (32 bytes) and fw_on_flash (32 bytes)
->> into ethtool_drvinfo->fw_version (32 bytes), leading to a potential
->> string truncation warning when built with W=1.
+Andrew Morton <akpm@linux-foundation.org> writes:
+
+> On Mon, 27 Oct 2025 13:21:02 -0700 Ankur Arora <ankur.a.arora@oracle.com> wrote:
+>
+>> This series adds clearing of contiguous page ranges for hugepages,
+>> improving on the current page-at-a-time approach in two ways:
 >>
->> Store fw_on_flash in ethtool_drvinfo->erom_version instead, which some
->> drivers use to report secondary firmware information.
->> send
->> Signed-off-by: Ankan Biswas <spyjetfayed@gmail.com>
->> ---
-> 
-> Hey Ankan,
-> When submitting patches with version 2 or afterwards, you should
-> generally put information about what changed from version 1 to version
-> 2. This changelog helps people keep track of what changed in subsequent
-> versions.
-> 
-> Also, did you do any testing for this patch?
-> 
-
-Hi David,
-
-I had used the wrong formatting command which resulted in a bunch of 
-changes, most of the changes are due to formatting issues which is why I 
-had to send a [PATCH v3].
-
-As for testing the warning during the build is suppressed by this patch.
-It was not tested on the actual hardware.
-
-Should I send a [PATCH net v4] with the changelogs added?
-
-
-Best Regards,
-Ankan Biswas
-
->>   .../net/ethernet/emulex/benet/be_ethtool.c    | 100 ++++++++++--------
->>   1 file changed, 54 insertions(+), 46 deletions(-)
+>>  - amortizes the per-page setup cost over a larger extent
+>>  - when using string instructions, exposes the real region size
+>>    to the processor.
 >>
->> diff --git a/drivers/net/ethernet/emulex/benet/be_ethtool.c b/drivers/net/ethernet/emulex/benet/be_ethtool.c
->> index f9216326bdfe..42803999ea1d 100644
->> --- a/drivers/net/ethernet/emulex/benet/be_ethtool.c
->> +++ b/drivers/net/ethernet/emulex/benet/be_ethtool.c
->> @@ -221,12 +221,20 @@ static void be_get_drvinfo(struct net_device *netdev,
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   
->>   	strscpy(drvinfo->driver, DRV_NAME, sizeof(drvinfo->driver));
->> -	if (!memcmp(adapter->fw_ver, adapter->fw_on_flash, FW_VER_LEN))
->> +	if (!memcmp(adapter->fw_ver, adapter->fw_on_flash, FW_VER_LEN)) {
->>   		strscpy(drvinfo->fw_version, adapter->fw_ver,
->>   			sizeof(drvinfo->fw_version));
->> -	else
->> -		snprintf(drvinfo->fw_version, sizeof(drvinfo->fw_version),
->> -			 "%s [%s]", adapter->fw_ver, adapter->fw_on_flash);
->> +
->> +	} else {
->> +		strscpy(drvinfo->fw_version, adapter->fw_ver,
->> +			sizeof(drvinfo->fw_version));
->> +
->> +		/*
->> +		 * Report fw_on_flash in ethtool's erom_version field.
->> +		 */
->> +		strscpy(drvinfo->erom_version, adapter->fw_on_flash,
->> +			sizeof(drvinfo->erom_version));
->> +	}
->>   
->>   	strscpy(drvinfo->bus_info, pci_name(adapter->pdev),
->>   		sizeof(drvinfo->bus_info));
->> @@ -241,7 +249,7 @@ static u32 lancer_cmd_get_file_len(struct be_adapter *adapter, u8 *file_name)
->>   	memset(&data_len_cmd, 0, sizeof(data_len_cmd));
->>   	/* data_offset and data_size should be 0 to get reg len */
->>   	lancer_cmd_read_object(adapter, &data_len_cmd, 0, 0, file_name,
->> -			       &data_read, &eof, &addn_status);
->> +				   &data_read, &eof, &addn_status);
->>   
->>   	return data_read;
->>   }
->> @@ -252,7 +260,7 @@ static int be_get_dump_len(struct be_adapter *adapter)
->>   
->>   	if (lancer_chip(adapter))
->>   		dump_size = lancer_cmd_get_file_len(adapter,
->> -						    LANCER_FW_DUMP_FILE);
->> +							LANCER_FW_DUMP_FILE);
-> 
-> Also, are you simply changing the tab length here? Any particular reason?
-> 
->>   	else
->>   		dump_size = adapter->fat_dump_len;
->>   
->> @@ -301,13 +309,13 @@ static int lancer_cmd_read_file(struct be_adapter *adapter, u8 *file_name,
->>   }
->>   
->>   static int be_read_dump_data(struct be_adapter *adapter, u32 dump_len,
->> -			     void *buf)
->> +				 void *buf)
->>   {
->>   	int status = 0;
->>   
->>   	if (lancer_chip(adapter))
->>   		status = lancer_cmd_read_file(adapter, LANCER_FW_DUMP_FILE,
->> -					      dump_len, buf);
->> +						  dump_len, buf);
->>   	else
->>   		status = be_cmd_get_fat_dump(adapter, dump_len, buf);
->>   
->> @@ -635,8 +643,8 @@ static int be_get_link_ksettings(struct net_device *netdev,
->>   
->>   			supported =
->>   				convert_to_et_setting(adapter,
->> -						      auto_speeds |
->> -						      fixed_speeds);
->> +							  auto_speeds |
->> +							  fixed_speeds);
->>   			advertising =
->>   				convert_to_et_setting(adapter, auto_speeds);
->>   
->> @@ -683,9 +691,9 @@ static int be_get_link_ksettings(struct net_device *netdev,
->>   }
->>   
->>   static void be_get_ringparam(struct net_device *netdev,
->> -			     struct ethtool_ringparam *ring,
->> -			     struct kernel_ethtool_ringparam *kernel_ring,
->> -			     struct netlink_ext_ack *extack)
->> +				 struct ethtool_ringparam *ring,
->> +				 struct kernel_ethtool_ringparam *kernel_ring,
->> +				 struct netlink_ext_ack *extack)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   
->> @@ -737,7 +745,7 @@ static int be_set_phys_id(struct net_device *netdev,
->>   						 &adapter->beacon_state);
->>   		if (status)
->>   			return be_cmd_status(status);
->> -		return 1;       /* cycle on/off once per second */
->> +		return 1;		/* cycle on/off once per second */
-> 
-> I'm not sure, but it looks like you are adding formatting changes to
-> code that you are not necessarily changing. Is my interpetation correct?>
->>   	case ETHTOOL_ID_ON:
->>   		status = be_cmd_set_beacon_state(adapter, adapter->hba_port_num,
->> @@ -764,7 +772,7 @@ static int be_set_dump(struct net_device *netdev, struct ethtool_dump *dump)
->>   	int status;
->>   
->>   	if (!lancer_chip(adapter) ||
->> -	    !check_privilege(adapter, MAX_PRIVILEGES))
->> +		!check_privilege(adapter, MAX_PRIVILEGES))
->>   		return -EOPNOTSUPP;
->>   
->>   	switch (dump->flag) {
->> @@ -873,7 +881,7 @@ static int be_test_ddr_dma(struct be_adapter *adapter)
->>   }
->>   
->>   static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
->> -			    u64 *status)
->> +				u64 *status)
->>   {
->>   	int ret;
->>   
->> @@ -883,7 +891,7 @@ static u64 be_loopback_test(struct be_adapter *adapter, u8 loopback_type,
->>   		return ret;
->>   
->>   	*status = be_cmd_loopback_test(adapter, adapter->hba_port_num,
->> -				       loopback_type, 1500, 2, 0xabc);
->> +					   loopback_type, 1500, 2, 0xabc);
->>   
->>   	ret = be_cmd_set_loopback(adapter, adapter->hba_port_num,
->>   				  BE_NO_LOOPBACK, 1);
->> @@ -920,7 +928,7 @@ static void be_self_test(struct net_device *netdev, struct ethtool_test *test,
->>   
->>   		if (test->flags & ETH_TEST_FL_EXTERNAL_LB) {
->>   			if (be_loopback_test(adapter, BE_ONE_PORT_EXT_LOOPBACK,
->> -					     &data[2]) != 0)
->> +						 &data[2]) != 0)
->>   				test->flags |= ETH_TEST_FL_FAILED;
->>   			test->flags |= ETH_TEST_FL_EXTERNAL_LB_DONE;
->>   		}
->> @@ -999,10 +1007,10 @@ static int be_get_eeprom_len(struct net_device *netdev)
->>   	if (lancer_chip(adapter)) {
->>   		if (be_physfn(adapter))
->>   			return lancer_cmd_get_file_len(adapter,
->> -						       LANCER_VPD_PF_FILE);
->> +							   LANCER_VPD_PF_FILE);
->>   		else
->>   			return lancer_cmd_get_file_len(adapter,
->> -						       LANCER_VPD_VF_FILE);
->> +							   LANCER_VPD_VF_FILE);
->>   	} else {
->>   		return BE_READ_SEEPROM_LEN;
->>   	}
->> @@ -1022,10 +1030,10 @@ static int be_read_eeprom(struct net_device *netdev,
->>   	if (lancer_chip(adapter)) {
->>   		if (be_physfn(adapter))
->>   			return lancer_cmd_read_file(adapter, LANCER_VPD_PF_FILE,
->> -						    eeprom->len, data);
->> +							eeprom->len, data);
->>   		else
->>   			return lancer_cmd_read_file(adapter, LANCER_VPD_VF_FILE,
->> -						    eeprom->len, data);
->> +							eeprom->len, data);
->>   	}
->>   
->>   	eeprom->magic = BE_VENDOR_ID | (adapter->pdev->device<<16);
->> @@ -1074,7 +1082,7 @@ static void be_set_msg_level(struct net_device *netdev, u32 level)
->>   }
->>   
->>   static int be_get_rxfh_fields(struct net_device *netdev,
->> -			      struct ethtool_rxfh_fields *cmd)
->> +				  struct ethtool_rxfh_fields *cmd)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   	u64 flow_type = cmd->flow_type;
->> @@ -1140,8 +1148,8 @@ static int be_get_rxnfc(struct net_device *netdev, struct ethtool_rxnfc *cmd,
->>   }
->>   
->>   static int be_set_rxfh_fields(struct net_device *netdev,
->> -			      const struct ethtool_rxfh_fields *cmd,
->> -			      struct netlink_ext_ack *extack)
->> +				  const struct ethtool_rxfh_fields *cmd,
->> +				  struct netlink_ext_ack *extack)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   	u32 rss_flags = adapter->rss_info.rss_flags;
->> @@ -1154,7 +1162,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
->>   	}
->>   
->>   	if (cmd->data != L3_RSS_FLAGS &&
->> -	    cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
->> +		cmd->data != (L3_RSS_FLAGS | L4_RSS_FLAGS))
->>   		return -EINVAL;
->>   
->>   	switch (cmd->flow_type) {
->> @@ -1174,7 +1182,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
->>   		break;
->>   	case UDP_V4_FLOW:
->>   		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
->> -		    BEx_chip(adapter))
->> +			BEx_chip(adapter))
->>   			return -EINVAL;
->>   
->>   		if (cmd->data == L3_RSS_FLAGS)
->> @@ -1185,7 +1193,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
->>   		break;
->>   	case UDP_V6_FLOW:
->>   		if ((cmd->data == (L3_RSS_FLAGS | L4_RSS_FLAGS)) &&
->> -		    BEx_chip(adapter))
->> +			BEx_chip(adapter))
->>   			return -EINVAL;
->>   
->>   		if (cmd->data == L3_RSS_FLAGS)
->> @@ -1211,7 +1219,7 @@ static int be_set_rxfh_fields(struct net_device *netdev,
->>   }
->>   
->>   static void be_get_channels(struct net_device *netdev,
->> -			    struct ethtool_channels *ch)
->> +				struct ethtool_channels *ch)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   	u16 num_rx_irqs = max_t(u16, adapter->num_rss_qs, 1);
->> @@ -1237,14 +1245,14 @@ static int be_set_channels(struct net_device  *netdev,
->>   	 * combined and either RX-only or TX-only channels.
->>   	 */
->>   	if (ch->other_count || !ch->combined_count ||
->> -	    (ch->rx_count && ch->tx_count))
->> +		(ch->rx_count && ch->tx_count))
->>   		return -EINVAL;
->>   
->>   	if (ch->combined_count > be_max_qp_irqs(adapter) ||
->> -	    (ch->rx_count &&
->> -	     (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
->> -	    (ch->tx_count &&
->> -	     (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
->> +		(ch->rx_count &&
->> +		 (ch->rx_count + ch->combined_count) > be_max_rx_irqs(adapter)) ||
->> +		(ch->tx_count &&
->> +		 (ch->tx_count + ch->combined_count) > be_max_tx_irqs(adapter)))
->>   		return -EINVAL;
->>   
->>   	adapter->cfg_num_rx_irqs = ch->combined_count + ch->rx_count;
->> @@ -1265,7 +1273,7 @@ static u32 be_get_rxfh_key_size(struct net_device *netdev)
->>   }
->>   
->>   static int be_get_rxfh(struct net_device *netdev,
->> -		       struct ethtool_rxfh_param *rxfh)
->> +			   struct ethtool_rxfh_param *rxfh)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   	int i;
->> @@ -1285,8 +1293,8 @@ static int be_get_rxfh(struct net_device *netdev,
->>   }
->>   
->>   static int be_set_rxfh(struct net_device *netdev,
->> -		       struct ethtool_rxfh_param *rxfh,
->> -		       struct netlink_ext_ack *extack)
->> +			   struct ethtool_rxfh_param *rxfh,
->> +			   struct netlink_ext_ack *extack)
->>   {
->>   	int rc = 0, i, j;
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->> @@ -1295,7 +1303,7 @@ static int be_set_rxfh(struct net_device *netdev,
->>   
->>   	/* We do not allow change in unsupported parameters */
->>   	if (rxfh->hfunc != ETH_RSS_HASH_NO_CHANGE &&
->> -	    rxfh->hfunc != ETH_RSS_HASH_TOP)
->> +		rxfh->hfunc != ETH_RSS_HASH_TOP)
->>   		return -EOPNOTSUPP;
->>   
->>   	if (rxfh->indir) {
->> @@ -1309,27 +1317,27 @@ static int be_set_rxfh(struct net_device *netdev,
->>   		}
->>   	} else {
->>   		memcpy(rsstable, adapter->rss_info.rsstable,
->> -		       RSS_INDIR_TABLE_LEN);
->> +			   RSS_INDIR_TABLE_LEN);
->>   	}
->>   
->>   	if (!hkey)
->> -		hkey =  adapter->rss_info.rss_hkey;
->> +		hkey =	adapter->rss_info.rss_hkey;
->>   
->>   	rc = be_cmd_rss_config(adapter, rsstable,
->> -			       adapter->rss_info.rss_flags,
->> -			       RSS_INDIR_TABLE_LEN, hkey);
->> +				   adapter->rss_info.rss_flags,
->> +				   RSS_INDIR_TABLE_LEN, hkey);
->>   	if (rc) {
->>   		adapter->rss_info.rss_flags = RSS_ENABLE_NONE;
->>   		return -EIO;
->>   	}
->>   	memcpy(adapter->rss_info.rss_hkey, hkey, RSS_HASH_KEY_LEN);
->>   	memcpy(adapter->rss_info.rsstable, rsstable,
->> -	       RSS_INDIR_TABLE_LEN);
->> +		   RSS_INDIR_TABLE_LEN);
->>   	return 0;
->>   }
->>   
->>   static int be_get_module_info(struct net_device *netdev,
->> -			      struct ethtool_modinfo *modinfo)
->> +				  struct ethtool_modinfo *modinfo)
->>   {
->>   	struct be_adapter *adapter = netdev_priv(netdev);
->>   	u8 page_data[PAGE_DATA_LEN];
->> @@ -1417,8 +1425,8 @@ static int be_set_priv_flags(struct net_device *netdev, u32 flags)
->>   
->>   const struct ethtool_ops be_ethtool_ops = {
->>   	.supported_coalesce_params = ETHTOOL_COALESCE_USECS |
->> -				     ETHTOOL_COALESCE_USE_ADAPTIVE |
->> -				     ETHTOOL_COALESCE_USECS_LOW_HIGH,
->> +					 ETHTOOL_COALESCE_USE_ADAPTIVE |
->> +					 ETHTOOL_COALESCE_USECS_LOW_HIGH,
->>   	.get_drvinfo = be_get_drvinfo,
->>   	.get_wol = be_get_wol,
->>   	.set_wol = be_set_wol,
-> 
+>> A processor could use a knowledge of the extent to optimize the
+>> clearing. AMD Zen uarchs, as an example, elide allocation of
+>> cachelines for regions larger than L3-size.
+>>
+>> Demand faulting a 64GB region shows performance improvements:
+>>
+>>  $ perf bench mem map -p $pg-sz -f demand -s 64GB -l 5
+>>
+>>                        baseline              +series             change
+>>
+>>                   (GB/s  +- %stdev)     (GB/s  +- %stdev)
+>>
+>>    pg-sz=2MB       12.92  +- 2.55%        17.03  +-  0.70%       + 31.8%	preempt=*
+>>
+>>    pg-sz=1GB       17.14  +- 2.27%        18.04  +-  1.05% [#]   +  5.2%	preempt=none|voluntary
+>>    pg-sz=1GB       17.26  +- 1.24%        42.17  +-  4.21%       +144.3%	preempt=full|lazy
+>>
+>> [#] Milan uses a threshold of LLC-size (~32MB) for eliding cacheline
+>> allocation, which is higher than the maximum extent used on x86
+>> (ARCH_CONTIG_PAGE_NR=8MB), so preempt=none|voluntary sees no improvement
+>> with pg-sz=1GB.
+>
+> I wasn't understanding this preemption thing at all, but then I saw this
+> in the v4 series changelogging:
+>
+> : [#] Only with preempt=full|lazy because cooperatively preempted models
+> : need regular invocations of cond_resched(). This limits the extent
+> : sizes that can be cleared as a unit.
+>
+> Please put this back in!!
 
+/me facepalms. Sorry you had to go that far back.
+Yeah, that doesn't make any kind of sense standalone. Will fix.
+
+
+> It's possible that we're being excessively aggressive with those
+> cond_resched()s.  Have you investigating tuning their frequency so we
+> can use larger extent sizes with these preemption models?
+
+
+folio_zero_user() does a small part of that: for 2MB pages the clearing
+is split in three parts with an intervening cond_resched() for each.
+
+This is of course much simpler than the process_huge_page() approach where
+we do a left right dance around the faulting page.
+
+I had implemented a version of process_huge_page() with larger extent
+sizes that narrowed as we got closer to the faulting page in [a] (x86
+performance was similar to the current series. See [b]).
+
+In hindsight however, that felt too elaborate and probably unnecessary
+on most modern systems where you have reasonably large caches.
+Where it might help, however, is on more cache constrained systems where
+the spatial locality really does matter.
+
+So, my idea was to start with a simple version, get some testing and
+then fill in the gaps instead of starting with something like [a].
+
+
+[a] https://lore.kernel.org/lkml/20220606203725.1313715-1-ankur.a.arora@oracle.com/#r
+[b] https://lore.kernel.org/lkml/20220606202109.1306034-1-ankur.a.arora@oracle.com/
+
+>> The anon-w-seq test in the vm-scalability benchmark, however, does show
+>> worse performance with utime increasing by ~9%:
+>>
+>>                          stime                  utime
+>>
+>>   baseline         1654.63 ( +- 3.84% )     811.00 ( +- 3.84% )
+>>   +series          1630.32 ( +- 2.73% )     886.37 ( +- 5.19% )
+>>
+>> In part this is because anon-w-seq runs with 384 processes zeroing
+>> anonymously mapped memory which they then access sequentially. As
+>> such this is a likely uncommon pattern where the memory bandwidth
+>> is saturated while also being cache limited because we access the
+>> entire region.
+>>
+>> Raghavendra also tested previous version of the series on AMD Genoa [1].
+>
+> I suggest you paste Raghavendra's results into this [0/N] - it's
+> important material.
+
+Thanks. Will do.
+
+>>
+>> ...
+>>
+>>  arch/alpha/include/asm/page.h      |  1 -
+>>  arch/arc/include/asm/page.h        |  2 +
+>>  arch/arm/include/asm/page-nommu.h  |  1 -
+>>  arch/arm64/include/asm/page.h      |  1 -
+>>  arch/csky/abiv1/inc/abi/page.h     |  1 +
+>>  arch/csky/abiv2/inc/abi/page.h     |  7 ---
+>>  arch/hexagon/include/asm/page.h    |  1 -
+>>  arch/loongarch/include/asm/page.h  |  1 -
+>>  arch/m68k/include/asm/page_mm.h    |  1 +
+>>  arch/m68k/include/asm/page_no.h    |  1 -
+>>  arch/microblaze/include/asm/page.h |  1 -
+>>  arch/mips/include/asm/page.h       |  1 +
+>>  arch/nios2/include/asm/page.h      |  1 +
+>>  arch/openrisc/include/asm/page.h   |  1 -
+>>  arch/parisc/include/asm/page.h     |  1 -
+>>  arch/powerpc/include/asm/page.h    |  1 +
+>>  arch/riscv/include/asm/page.h      |  1 -
+>>  arch/s390/include/asm/page.h       |  1 -
+>>  arch/sparc/include/asm/page_32.h   |  2 +
+>>  arch/sparc/include/asm/page_64.h   |  1 +
+>>  arch/um/include/asm/page.h         |  1 -
+>>  arch/x86/include/asm/page.h        |  6 ---
+>>  arch/x86/include/asm/page_32.h     |  6 +++
+>>  arch/x86/include/asm/page_64.h     | 64 ++++++++++++++++++-----
+>>  arch/x86/lib/clear_page_64.S       | 39 +++-----------
+>>  arch/xtensa/include/asm/page.h     |  1 -
+>>  include/linux/highmem.h            | 29 +++++++++++
+>>  include/linux/mm.h                 | 69 +++++++++++++++++++++++++
+>>  mm/memory.c                        | 82 ++++++++++++++++++++++--------
+>>  mm/util.c                          | 13 +++++
+>>  30 files changed, 247 insertions(+), 91 deletions(-)
+>
+> I guess this is an mm.git thing, with x86 acks (please).
+
+Ack that.
+
+> The documented review activity is rather thin at this time so I'll sit
+> this out for a while.  Please ping me next week and we can reassess,
+
+Will do. And, thanks for the quick look!
+
+--
+ankur
 
