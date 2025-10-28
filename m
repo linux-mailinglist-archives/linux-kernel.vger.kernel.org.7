@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-874271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514A0C15EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:49:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C003FC15E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3A5405797
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:41:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3E36135569C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24CB346784;
-	Tue, 28 Oct 2025 16:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED27F28D8E8;
+	Tue, 28 Oct 2025 16:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="66mPCvAI"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcRPyPBJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665AC305E31;
-	Tue, 28 Oct 2025 16:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4438D7081E;
+	Tue, 28 Oct 2025 16:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669698; cv=none; b=TFdRe3XL0khaPjuWln+eSbuO5okP/KqlZcGvp0JJ/aAfUiTq3xAf90GuAAuPqqFNHLiX0DcA/benMPfoGE/Reon/ciO6/z3VFKolIWkBUlwDiKuNCYo0uTsdDHC5/um7caSzgZHTRvshv2G+jO7Ep794iwo1gAQGszyv4IrZirQ=
+	t=1761669665; cv=none; b=kp1ZZL9WYuWcv56tCE3hhXuzj1EDJVzRw0Z8oIbZKj9jHtSgnJ65WoV3ReLnGGuIx/tYJK+wUO5vYvtUAQYA4Cx4od6GIB2AdasnoaVJ1Q0te+78lD8Yk+20cEH9/aJBpT7H3ecvRuIsXX9LkdrFeryFd3vTxFNqgdyHm+waT6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669698; c=relaxed/simple;
-	bh=ecnA0KG481FICL1IxqZl/Uq99VZDiX0xPco/otlm9Gw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DPMicen05DXG3cNz1QiZGca3Jp1ZPIKWYGsR9mjEny/nMgC9xsBKsyzk2YSff1gEYEal8tZGifY53r8rLqoC54uxBrGvbVZVesLas6KmN+hoUMH2FS1wvUtRBy/0G5GACtJ4IAAt2ksfO03VVbLWbyEoL37sesBxdEGQDo40570=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=66mPCvAI; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1761669691; bh=ecnA0KG481FICL1IxqZl/Uq99VZDiX0xPco/otlm9Gw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=66mPCvAIA9hoc9ACXaoEmKAXo4oK0mTdFFeT+MrBYeoJbYOwojrRpcCzv/SXpZQ63
-	 Qjb+n+2BhOTYM4F78vTpVjcIHRZ1JQ9hw0EXyJf/mX5ff3sC0mpiUNa0Hq6da9Alkw
-	 yPXHve/7WKAWNVpbftwcjoo6RM5MMBTpdAh5WcLc=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Tue, 28 Oct 2025 17:40:52 +0100
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sdm632-fairphone-fp3: Enable CCI
- and add EEPROM
+	s=arc-20240116; t=1761669665; c=relaxed/simple;
+	bh=R6EqvPPGUzfa/LHCSbVi9wWH6TxJb6kPWE0xNt3lVUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KkUUjBbtXXKJCj9qBj+1p89cJocexVfQOEjVCvBDdegcAVC+kRbNGx/KPKY/sCOdFk/+Ms87COThRabm8lN8af76SHM8XBXOdkhRkPXfSOxOYg/+NAmxZFmNnm9Kq7l/23837RGSJxL/8Jh8T/v349x1ELulIVyRyYtIc1h+r7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcRPyPBJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1ECEC4CEFF;
+	Tue, 28 Oct 2025 16:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761669663;
+	bh=R6EqvPPGUzfa/LHCSbVi9wWH6TxJb6kPWE0xNt3lVUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XcRPyPBJsWNL4ulwib1TPrTANoVykXmKtYl0rPKtYohQprUFdg52mVaR5UXvyMEJ4
+	 h/ZSHblJnSlOFs6EvRzVS8EzlJR17iKrIbhMDxOTYzKzipgBrDEdZ6Ujcirjr+rf1K
+	 eT9bHYu2SreZZKDifzCrR5+Rlb4UrfZOCKuLCurIpRfbU02UdXzdaFx7AtC+2cE9TA
+	 K6GA7urIBn+2WQrt/keODjiHvLRGdjRmGx37JVe+Q5rCkGVpigkSv+FgM8sRg5OiWe
+	 AxXOvzLAafrNr4U9/n3cwpZk89J0D19vJqkNn3Djvd/OeMSWCUvROiJx3LZSttkhly
+	 RZRH+FVoXCr/A==
+Date: Tue, 28 Oct 2025 16:40:58 +0000
+From: Simon Horman <horms@kernel.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest: net: fix socklen_t type mismatch in
+ sctp_collision test
+Message-ID: <aQDyGhMehBxVL1Sy@horms.kernel.org>
+References: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-msm8953-cci-v2-7-b5f9f7135326@lucaweiss.eu>
-References: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
-In-Reply-To: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Loic Poulain <loic.poulain@oss.qualcomm.com>, 
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1084; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=ecnA0KG481FICL1IxqZl/Uq99VZDiX0xPco/otlm9Gw=;
- b=kA0DAAoBcthDuJ1N11YByyZiAGkA8jSiCLgFvBfKbtvhOkmqKYyjXVuShnNWYUFYagZabQwKq
- IkCMwQAAQoAHRYhBDm60i8ILNqRuhWP+nLYQ7idTddWBQJpAPI0AAoJEHLYQ7idTddWZxcQAJCk
- JEwXQxPtkGNZDs9S6+lMY5j+Z9Hsp3k1Dv75lc2X1YdQ41FRxglzq7pHTiv1YxYbo1vnPmiGkjt
- O9oA+HnoFpo1U46RMb/OgM+p/o9RshEruUSFvrSYofT3uD7yU1CLMw0rOuc6lBao62EIeZSurtj
- OOvHNyHuDekxk/1DQmwN+VNueqp9iqVHFvsqvepg/PeEPTDuLSW6WzXY1gANgeUjR0lRA7asnaT
- 9JQzv1EP/hvFK7rSnFuUKUXJoKsp8ipnuahUz6zam3yrhuzq0rm7RQDCS6LieCm4YdIJIvPhqyw
- SiK4Qc4cN/bZjQrZuJ+Efep3TMjYvrxnLgVDTadjcIvu6UDvODkuRrvGFT+dabKbrrOTgnvWzZL
- ODw2E5fnnbRYVwwr3OPU4Dsc4Oo2XITPUUjvHzS0kwn+OxBfc187eCC7U9GZB9BOid56+M/9eKu
- 93FbNAfnuGz5bZxc2f/5+iCb/YcB3IWFhOC26V8V4tKsJ1i5rPNPcqoPNfYYrsnaYaR2MyKoZ3U
- SBqVumaV/mo8unXTSOy8ntjzICYK3Al7uBUnciLFsrDZfgO/qqodyHPrSfSDkhnHw0bqwb6UqMO
- xBUUFQhlmaIAUeByjLnTYYQEDdBVg9PdIAKVVGXY1hMkptp1023YBBA4ftoyamPuIDp7MBm4dNp
- lzZse
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
 
-Enable the CCI where the camera modules are connected to, and add a node
-for the EEPROM found next to the IMX363 rear camera.
+On Sun, Oct 26, 2025 at 11:16:49PM +0530, Ankit Khushwaha wrote:
+> Socket APIs like recvfrom(), accept(), and getsockname() expect socklen_t*
+> arg, but tests were using int variables. This causes -Wpointer-sign 
+> warnings on platforms where socklen_t is unsigned.
+> 
+> Change the variable type from int to socklen_t to resolve the warning and
+> ensure type safety across platforms.
+> 
+> warning fixed:
+> 
+> sctp_collision.c:62:70: warning: passing 'int *' to parameter of 
+> type 'socklen_t *' (aka 'unsigned int *') converts between pointers to 
+> integer types with different sign [-Wpointer-sign]
+>    62 |                 ret = recvfrom(sd, buf, sizeof(buf), 
+> 									0, (struct sockaddr *)&daddr, &len);
+>       |                                                           ^~~~
+> /usr/include/sys/socket.h:165:27: note: passing argument to 
+> parameter '__addr_len' here
+>   165 |                          socklen_t *__restrict __addr_len);
+>       |                                                ^
+> 
+> Signed-off-by: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+> ---
+>  tools/testing/selftests/net/netfilter/sctp_collision.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/net/netfilter/sctp_collision.c b/tools/testing/selftests/net/netfilter/sctp_collision.c
+> index 21bb1cfd8a85..91df996367e9 100644
+> --- a/tools/testing/selftests/net/netfilter/sctp_collision.c
+> +++ b/tools/testing/selftests/net/netfilter/sctp_collision.c
+> @@ -9,7 +9,8 @@
+>  int main(int argc, char *argv[])
+>  {
+>  	struct sockaddr_in saddr = {}, daddr = {};
+> -	int sd, ret, len = sizeof(daddr);
+> +	int sd, ret;
+> +	socklen_t len = sizeof(daddr);
+>  	struct timeval tv = {25, 0};
+>  	char buf[] = "hello";
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
- arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Hi Ankit,
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-index 557925a66276..0edb2992b902 100644
---- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
-@@ -88,6 +88,27 @@ vph_pwr: vph-pwr-regulator {
- 	};
- };
- 
-+&cci {
-+	status = "okay";
-+};
-+
-+&cci_i2c0 {
-+	/* Sony IMX363 (rear) @ 0x10 */
-+
-+	eeprom@50 {
-+		compatible = "belling,bl24s64", "atmel,24c64";
-+		reg = <0x50>;
-+		vcc-supply = <&vreg_cam_io_1p8>;
-+		read-only;
-+	};
-+
-+	/* ON Semi LC898217 VCM @ 0x72 */
-+};
-+
-+&cci_i2c1 {
-+	/* Samsung S5K4H7YX (front) @ 0x10 */
-+};
-+
- &gpu {
- 	status = "okay";
- };
+Please preserve reverse xmas tree order - longest line to shortest - for
+local variable declarations in Networking code.
+
+In this case, I think that would be as follows (completely untested).
+
+	struct sockaddr_in saddr = {}, daddr = {};
+	socklen_t len = sizeof(daddr);
+	struct timeval tv = {25, 0};
+	char buf[] = "hello";
+	int sd, ret;
+
+...
 
 -- 
-2.51.2
-
+pw-bot: changes-requested
 
