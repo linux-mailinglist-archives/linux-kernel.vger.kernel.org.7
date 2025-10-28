@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-873199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC916C135A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:44:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFD6C1357A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:43:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4497C56498B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:38:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C3958053C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048AD2DCF50;
-	Tue, 28 Oct 2025 07:36:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8382DF121;
+	Tue, 28 Oct 2025 07:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="rfsVXFd4"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pwm5w9qB"
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1392DAFA1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D2DCBE0;
+	Tue, 28 Oct 2025 07:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761636992; cv=none; b=QZKLODxWWn/HB4pXCi3CU4RUUmrQci+v9jdaqguoDwHlBjlpRiveyL9eiv2VxbUasvu7dRAvdQN2UZPgi6cb3+GMPZoavUTLVbRWsbPwz0G2J/7eEKaR09z6C0wtc+6L0fGVpMB2sHV184WnRSK8QkMFIre9tHRFoYgUbWeIAcA=
+	t=1761636994; cv=none; b=DLZH0cZ8FMYozFRth2zj8yslw8DS8RxYBhkaEVZRtvrMZWGHhYiHn9tlTU8ClJyJP7RaD5mO0sgSZwBIrAPcIUO2yhuPW536PcZclFH38/IxM20TKqt0lar8IBWeLg1UIJziZD/Jv1minx+d3O7IYxr6LSGqO4ZXX+n/Uc/r5+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761636992; c=relaxed/simple;
-	bh=QJ64sYKNruGXYNfbyxWJS1AocK29X2WeYdH+/tjhSag=;
+	s=arc-20240116; t=1761636994; c=relaxed/simple;
+	bh=IQ0jxXBANj0eYGblfbtV7T5vlo/q/4e0Wizzu5MwZmw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qQ9taRKkbqkz9ZB2vvA4L0j8fCCeyl20Dni1O9ZBHpXWwlPfeCb0VgII85dJmqT35fEEM8ZJg6H7oEpd93M/eVj17ago5kEx8HKn3ID2dqWrs+ivys1GXzMe6ikfx9G2C4jL1O1uXUuIRXDqsaP8ULphbrLwG6PjddNn+ejpb3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=rfsVXFd4; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version; b=oeoOCwyFf1ZxMDbW2u4w2p62nYR7jWzeqo0nERvetEXHAiY18lkOT9QreZT/a93gMa/L5n/7W7r4Gt/QujqAZr8OV70CRYatit1BKfJKtZPqmEk0QaLo29g95zj/9yljn4dTk30HfiAxR9wOSu91CkD/4D+BabGTyU0DMrKBVqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pwm5w9qB; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 479C51A16F4;
-	Tue, 28 Oct 2025 07:36:29 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 5F5091A16F6;
+	Tue, 28 Oct 2025 07:36:31 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 1C763606AB;
-	Tue, 28 Oct 2025 07:36:29 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2BF00102F251A;
-	Tue, 28 Oct 2025 08:36:26 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 34F5C606AB;
+	Tue, 28 Oct 2025 07:36:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 848B7102F2511;
+	Tue, 28 Oct 2025 08:36:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761636988; h=from:subject:date:message-id:to:cc:mime-version:
+	t=1761636990; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=GReBwZzRVKk7Epo3GYEv3pecUjJOBDXWn4hVS9Iwm34=;
-	b=rfsVXFd45fk7gwJAPYCqgpHBX9wYQakW1PCykrYfTZHM4iuQTpXOFeH6aa+90nZMAx81nZ
-	zH44HCdcceMvqvaWNtXCD7mDMFpF5FaPe4vOE0/LSrFzLi44hUTze+3SJHk/CqMmJm0UJ8
-	iPdWqmDOtLtLE2R6VY0vQva3AhpOlQuLTTxEVFxq3F6hywS0yVyO6jPLcmzN283bVIubqe
-	DGNCe72DOrX6bNvwjMsC1xSHJ9YeF32S8vXrNyUnFF+rrFuej297FBGJ+nG8tMvE0beeXQ
-	AP1rg2oh7HfF4Q/wBPqBhBXDWVG8Py1+u0wjn3pgMuteZkr78xYhlRMW6UhGuA==
+	bh=7Hbgp8bd/DeeOTuugPgZrEt/sqnKL0G9WqhIRxBy9gs=;
+	b=pwm5w9qBLnOQqhM0uXGJP49ujZ0+/phFyHsLoukSxchAoAEfQHXh9LprjNuAwJaOtDE9IR
+	Ga2g7+2k3wvXAn1wgMKmo0qanzGaGQ2xj7sFEvREytD4N9EKn0oqDgFsN8of+WA35xQLBr
+	g1G/pEMJgaIPqz/TQu2F5i5A9QLiyGuQJnDPLL8ygFPTS5p/7JDb6T83ia0HtqhzTarDge
+	MwcSZfHjGOMBwm8CsCxbZsGUebu6xmRH/nBgILxFVxesa0qCz/xn5aTY4t+HUOFWDDBwQ5
+	WkkUh7H2XulC8R4iBRyTD5hniLVzkso/gSUp0kl1vRVrG6IMkVJPKrLvN6EtrA==
 From: Richard Genoud <richard.genoud@bootlin.com>
 To: Miquel Raynal <miquel.raynal@bootlin.com>,
 	Richard Weinberger <richard@nod.at>,
@@ -68,9 +68,9 @@ Cc: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	Richard Genoud <richard.genoud@bootlin.com>
-Subject: [PATCH v4 13/16] mtd: rawnand: sunxi: introduce ecc_err_mask in sunxi_nfc_caps
-Date: Tue, 28 Oct 2025 08:35:06 +0100
-Message-ID: <20251028073534.526992-14-richard.genoud@bootlin.com>
+Subject: [PATCH v4 14/16] mtd: rawnand: sunxi: introduce sram_size in sunxi_nfc_caps
+Date: Tue, 28 Oct 2025 08:35:07 +0100
+Message-ID: <20251028073534.526992-15-richard.genoud@bootlin.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20251028073534.526992-1-richard.genoud@bootlin.com>
 References: <20251028073534.526992-1-richard.genoud@bootlin.com>
@@ -83,70 +83,88 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-The H6/H616 error mask register is bigger than the A10/A23 one, so move
-its mask into sunxi_nfc_caps.
+The H6/H616 the SRAM is bigger than the A10/A23 one, so move its size
+into sunxi_nfc_caps.
 
 No functional change
 
 Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
 ---
- drivers/mtd/nand/raw/sunxi_nand.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/raw/sunxi_nand.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sunxi_nand.c
-index d2e5bcb76925..0a9ac75bb229 100644
+index 0a9ac75bb229..5e030fc2fde5 100644
 --- a/drivers/mtd/nand/raw/sunxi_nand.c
 +++ b/drivers/mtd/nand/raw/sunxi_nand.c
-@@ -155,7 +155,7 @@
+@@ -167,8 +167,6 @@
  
- /* define bit use in NFC_ECC_ST */
- #define NFC_ECC_ERR(x)		BIT(x)
--#define NFC_ECC_ERR_MSK		GENMASK(15, 0)
-+#define NFC_ECC_ERR_MSK(nfc)	(nfc->caps->ecc_err_mask)
+ #define NFC_DEFAULT_TIMEOUT_MS	1000
+ 
+-#define NFC_SRAM_SIZE		1024
+-
+ #define NFC_MAX_CS		7
  
  /*
-  * define bit use in NFC_REG_PAT_FOUND
-@@ -246,6 +246,7 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
-  * @random_en_mask:	RANDOM_EN mask in NFC_ECC_CTL register
-  * @random_dir_mask:	RANDOM_DIRECTION mask in NFC_ECC_CTL register
-  * @ecc_mode_mask:	ECC_MODE mask in NFC_ECC_CTL register
-+ * @ecc_err_mask:	NFC_ECC_ERR mask in NFC_ECC_ST register
-  * @pat_found_mask:	ECC_PAT_FOUND mask in NFC_REG_PAT_FOUND register
+@@ -251,6 +249,7 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(struct nand_chip *nand)
   * @dma_maxburst:	DMA maxburst
   * @ecc_strengths:	Available ECC strengths array
-@@ -263,6 +264,7 @@ struct sunxi_nfc_caps {
- 	unsigned int random_en_mask;
- 	unsigned int random_dir_mask;
- 	unsigned int ecc_mode_mask;
-+	unsigned int ecc_err_mask;
- 	unsigned int pat_found_mask;
+  * @nstrengths:		Size of @ecc_strengths
++ * @sram_size:		Size of the NAND controller SRAM
+  */
+ struct sunxi_nfc_caps {
+ 	bool has_mdma;
+@@ -269,6 +268,7 @@ struct sunxi_nfc_caps {
  	unsigned int dma_maxburst;
  	const u8 *ecc_strengths;
-@@ -1040,7 +1042,7 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct nand_chip *nand, uint8_t *buf
- 		sunxi_nfc_hw_ecc_update_stats(nand, &max_bitflips, ret);
- 	}
+ 	unsigned int nstrengths;
++	int sram_size;
+ };
  
--	if (status & NFC_ECC_ERR_MSK) {
-+	if (status & NFC_ECC_ERR_MSK(nfc)) {
- 		for (i = 0; i < nchunks; i++) {
- 			int data_off = i * ecc->size;
- 			int oob_off = i * (ecc->bytes + USER_DATA_SZ);
-@@ -2245,6 +2247,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
- 	.random_en_mask = BIT(9),
- 	.random_dir_mask = BIT(10),
- 	.ecc_mode_mask = GENMASK(15, 12),
-+	.ecc_err_mask = GENMASK(15, 0),
- 	.pat_found_mask = GENMASK(31, 16),
+ /**
+@@ -506,7 +506,7 @@ static void sunxi_nfc_read_buf(struct nand_chip *nand, uint8_t *buf, int len)
+ 	while (len > offs) {
+ 		bool poll = false;
+ 
+-		cnt = min(len - offs, NFC_SRAM_SIZE);
++		cnt = min(len - offs, nfc->caps->sram_size);
+ 
+ 		ret = sunxi_nfc_wait_cmd_fifo_empty(nfc);
+ 		if (ret)
+@@ -544,7 +544,7 @@ static void sunxi_nfc_write_buf(struct nand_chip *nand, const uint8_t *buf,
+ 	while (len > offs) {
+ 		bool poll = false;
+ 
+-		cnt = min(len - offs, NFC_SRAM_SIZE);
++		cnt = min(len - offs, nfc->caps->sram_size);
+ 
+ 		ret = sunxi_nfc_wait_cmd_fifo_empty(nfc);
+ 		if (ret)
+@@ -1871,7 +1871,7 @@ static int sunxi_nfc_exec_subop(struct nand_chip *nand,
+ 		case NAND_OP_DATA_OUT_INSTR:
+ 			start = nand_subop_get_data_start_off(subop, i);
+ 			remaining = nand_subop_get_data_len(subop, i);
+-			cnt = min_t(u32, remaining, NFC_SRAM_SIZE);
++			cnt = min_t(u32, remaining, nfc->caps->sram_size);
+ 			cmd |= NFC_DATA_TRANS | NFC_DATA_SWAP_METHOD;
+ 
+ 			if (instr->type == NAND_OP_DATA_OUT_INSTR) {
+@@ -2252,6 +2252,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_caps = {
  	.dma_maxburst = 4,
  	.ecc_strengths = sunxi_ecc_strengths_a10,
-@@ -2263,6 +2266,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
- 	.random_en_mask = BIT(9),
- 	.random_dir_mask = BIT(10),
- 	.ecc_mode_mask = GENMASK(15, 12),
-+	.ecc_err_mask = GENMASK(15, 0),
- 	.pat_found_mask = GENMASK(31, 16),
+ 	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
++	.sram_size = 1024,
+ };
+ 
+ static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
+@@ -2271,6 +2272,7 @@ static const struct sunxi_nfc_caps sunxi_nfc_a23_caps = {
  	.dma_maxburst = 8,
  	.ecc_strengths = sunxi_ecc_strengths_a10,
+ 	.nstrengths = ARRAY_SIZE(sunxi_ecc_strengths_a10),
++	.sram_size = 1024,
+ };
+ 
+ static const struct of_device_id sunxi_nfc_ids[] = {
 -- 
 2.47.3
 
