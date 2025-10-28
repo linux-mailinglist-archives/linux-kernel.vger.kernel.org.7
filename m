@@ -1,271 +1,106 @@
-Return-Path: <linux-kernel+bounces-873792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D713DC14BB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:59:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B8AC14BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:59:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6145F3449BC
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2C8E4E5B0D
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A395330B0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD39A330B1C;
 	Tue, 28 Oct 2025 12:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cWtoP9Rc"
-Received: from mail-ot1-f97.google.com (mail-ot1-f97.google.com [209.85.210.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NE7okjrh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O66dcqLc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7F2D94A4
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAE52E540C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761656357; cv=none; b=iOrpNpHvmlltPVqVjVClIOprUfFKKsKNEk75ckF1abGqRNgRVx2IPZiiSzka2d+a95iGcgTSgoxIkPlyluJYRJNoT7jIq0nXpbQx2sz3Rg6LQrTMYfgWB2G9t3FFw+wUTszx6vZSHPdVz4SwYK0PKjiOytIXfrzF3JfoWCpby2k=
+	t=1761656358; cv=none; b=H7JNMOZZqUNM0PsUAiimJDnvtMrGlnh0yUWCg8ND/SbhHXD097Zk9d1z4zRPoDle2GIHAlZ6ZiExw4G9NwWl9NEeA7Wd4K0RGsGSGGaIZShve6gYkSZ1OgwcAs0Xlpl6yUQ59x8PNWpBnJD0Kgs1SAnUW9ji4USYS7lOJq41Mrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761656357; c=relaxed/simple;
-	bh=64jqUJKd39O4+Bi0c7e21iyWI1Zjsl227gBTQ8J6Wb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyncnmaZocscfQR8cTFb57SgcE8CzApOHQ0Kooe7URPvXFd9LpKuqeXQy5BMt5Irau3m8mLO5R62cKUK29+ydbxzH1v2QYw15w6vm9ljC6uS6XHv2ScaGInvIZ+ShOlJUTlmwb1vm8gDQZj1pUMP+ucKUe6yNk5vRD9YVjXCy9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cWtoP9Rc; arc=none smtp.client-ip=209.85.210.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f97.google.com with SMTP id 46e09a7af769-7c531445439so1087707a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:59:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761656355; x=1762261155;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8XejSGWXRjH/RUq9IYuFeJxGxcwtkVWIH602LCCMNhE=;
-        b=i3iCz7qccPcnaw/eKjm0rtZoBuj2ju2sHA/hFrA/JijXwlcMuKdYay4krUS9NpNk6P
-         hSw+5XKQZHcKqthkkS2pK1xy6BFmfDdNDCHd6K0bh1We8uIgJ2G8mUYQzSyaGZfntpW5
-         chrB0glVxspJkfOGR3FbkqviUUjcUw+7mz5gVC/WmP6NdsIRT1kJlLm0FXVuFkWHFu/P
-         V9frYxGp5Emd/4Ax90hUrEYslCgTuybbk3JsGVcw61QqFwVK42mEQRVvraFuUSSoNbLg
-         +iDg1H7gqt1UXHCCGIhFjJwY/WwVU0e2bgSApl1h8HO/9wNl5AqlRNzDO32O601spg0p
-         RTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW58BpsCVPken8IAvK0R8LLJTDJyLI923fBRaCt/kDoacZuuOc0xmFBE/gkLmjzr5921dG7y/5PYftEQfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6glcYMSggA2DmTIDOCYSDSPTb+UlyRFUaM7gGjHF7V3Lx1+iC
-	icQfjU4QBAW9SxUm1wbL4HUF+ufnmt0UcdQXXIWmuHIu4qOODUXyqZ4hh3ZuYW0A+mEYJ5t2ESb
-	9x0/pFtWvFRW/Wj0E4ep1wI/7IgbSwA7WiMqxMCL6Aw1oAFe47/MM4eyxeOSx5vHGNQlBZ9AUmT
-	g/mu2S8Obmyr28xQO2uFVMdOO9vPHza2+aTS4m/ezkSGskRpFILJC6B5nsubvnJ3DYn1KZj3F/F
-	YLquJOWGsGDekTDnqM=
-X-Gm-Gg: ASbGnct4GgwdhhfC6DJNpmsJoKUivYx6l/5ULjKyNKQIsJ8zMrTZvzb405kOinhUkUB
-	EcewzhC92jM2joDMBIQmlm5bK4Sb3V4dPqqzoKTdkzQ1hXnZZNBVQ3Tuc5wakEREyYKlJFcB4+F
-	3pcL9VJPWgKq0/kP8CNa3qpC8rpjknsbDNyN3a3wXyBd3JDBgWnfNLS9gw2zxn0w1WKBL6HZrK+
-	gwJHJx/ZceDu/LrGLYhlnH6ZE+rujkHBZFUYzyd7JLh289X6oInyPN0ZWSJRzBOVM7J/jjHynUE
-	0W8fMCT+lvhkd9GIuuI2w0v/9uhsnEls78nUe3c3KP27fn74uoQ6KK+aYO9Q46myLnKqLmbkPQd
-	O25w2UTtW1AQZsnPnqnuUcXGLXPRXExNbp9jIDZkqPTpGOcbqEiaTKFst6bdVDkTGZsJTkEBItZ
-	Q5zdlmjAF/IJp1ksIKEYQInYu0qxd2+7yOVA==
-X-Google-Smtp-Source: AGHT+IGZMXccbHqpvV3WPmR5P5i/fAw+nb0VP7AQ7FpxCmCl3Uba5XTQHwPYS1ywnMQ9i+QHSIQ3HNjDx5LK
-X-Received: by 2002:a05:6830:3489:b0:7ae:9100:a4f7 with SMTP id 46e09a7af769-7c6782d056bmr1554500a34.34.1761656354741;
-        Tue, 28 Oct 2025 05:59:14 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-19.dlp.protect.broadcom.com. [144.49.247.19])
-        by smtp-relay.gmail.com with ESMTPS id 46e09a7af769-7c5301b40d8sm938643a34.4.2025.10.28.05.59.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 28 Oct 2025 05:59:14 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-33bcb779733so5227555a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761656353; x=1762261153; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8XejSGWXRjH/RUq9IYuFeJxGxcwtkVWIH602LCCMNhE=;
-        b=cWtoP9RcHU59xtHz2MP0R5adJarPH/wLsCxmXWGYi++cPbvaFINAx5J5/N81URpejg
-         8ckfJBKIpdWVWB1wA2YsKo/sLAd/FMPHuwfEXSYprAyQMxOz3vB5FBTKu9kkSR9Ob6w4
-         A5hIjak5+iIbTZd2F0LbNuArfkBuFBBNld5yw=
-X-Forwarded-Encrypted: i=1; AJvYcCVjoEs6D5zX14gD8XiB4XA8rFi6oAQSV3RrFZ2u6+tVl1ELQ18TV2KbdL0O9Xldd2nTx0P2P2AmE0qbJXs=@vger.kernel.org
-X-Received: by 2002:a17:90b:1f8d:b0:32e:6019:5d19 with SMTP id 98e67ed59e1d1-34027c07822mr3659655a91.34.1761656353122;
-        Tue, 28 Oct 2025 05:59:13 -0700 (PDT)
-X-Received: by 2002:a17:90b:1f8d:b0:32e:6019:5d19 with SMTP id
- 98e67ed59e1d1-34027c07822mr3659583a91.34.1761656352207; Tue, 28 Oct 2025
- 05:59:12 -0700 (PDT)
+	s=arc-20240116; t=1761656358; c=relaxed/simple;
+	bh=AwkQtituwoqJVBz3LGUua0hN38Hc5KZuAmLhRrMQIaY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hqn3Kzcm1ihrsVFtjF54Iw5gG9KZmiGA9qt/d2QPyAUm5X+HOcPvz+yfJ0B4bdKuahtPsUV//l+faxgjP6ykAQMPVbbJ9iVOpi7/uzWGnl8mVIGaTzYi3s6NQDpRyYe+CahpQTdfozyLV034/Cqp8H1ysUCJryhMwfrrXU+UAzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NE7okjrh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O66dcqLc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761656352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qv3GohWqQgrGHwaxj2d2Xaf/EkkHHeIVB+/xSV7yFv4=;
+	b=NE7okjrhYT+Phe6z31Nw+rc4ReQOJbVOhEpDE0z7KFgiM3Q/3cN/zek9aIeCo9gGbJyX1y
+	M671Iw2qv7qi0MON7KLZwUOZ4cdId0WZ4M+ZFIzoLHPMGkqKg1TCfV5Q73lhXEZ+bFI05v
+	ZG6b+y7VoJfXX8OIuowC6DaTFd2R64VkaaTYrzEWfyfVDHKIytM0z+oUWbawWDu5GkVfj8
+	+XaFEcHKI0p/bAHWnBVxH6dRoDRvZA3uFm0qZktS9YQl3Vdwmd/5rZOYXSB7c9BDQ4Rg0u
+	7XJz0ljMHA71Uz+Zxv6/yctqaAjEuQJtKO2xcvKv50oJZJtbBMbClt8samzpCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761656352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qv3GohWqQgrGHwaxj2d2Xaf/EkkHHeIVB+/xSV7yFv4=;
+	b=O66dcqLcRsfw63bXuc/kWIr3HD97R+qJW70ShL4pAweT0heNzZ124tHYRZqer8Z4SUGdP/
+	WElduijmtsTraaAQ==
+To: Pingfan Liu <piliu@redhat.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org, Waiman Long
+ <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+ <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>, "Rafael
+ J. Wysocki" <rafael.j.wysocki@intel.com>, Joel Granados
+ <joel.granados@kernel.org>
+Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when
+ shutting down nonboot cpus
+In-Reply-To: <aQAvnjVvJOUx78Nk@fedora>
+References: <20251022121345.23496-1-piliu@redhat.com>
+ <20251022121345.23496-3-piliu@redhat.com> <877bwgw9yf.ffs@tglx>
+ <aQAvnjVvJOUx78Nk@fedora>
+Date: Tue, 28 Oct 2025 13:59:11 +0100
+Message-ID: <87qzunuqqo.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028095143.396385-1-junjie.cao@intel.com>
-In-Reply-To: <20251028095143.396385-1-junjie.cao@intel.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Tue, 28 Oct 2025 18:28:58 +0530
-X-Gm-Features: AWmQ_blv4IicVDAg6PPYGOl-mWcn34kwei6gDaU69BZlRovT_QyM3SNIr65PP6o
-Message-ID: <CALs4sv0V7Tu9VKgopUZJZfQZA=B1ijnEA5jiqG47wvvsxpTrxA@mail.gmail.com>
-Subject: Re: [PATCH] ptp: guard ptp_clock_gettime() if neither gettimex64 nor
-To: Junjie Cao <junjie.cao@intel.com>
-Cc: Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000002c59f40642379504"
+Content-Type: text/plain
 
---0000000000002c59f40642379504
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 28 2025 at 10:51, Pingfan Liu wrote:
+> On Mon, Oct 27, 2025 at 06:06:32PM +0100, Thomas Gleixner wrote:
+>> When kexec() is in progress, then running user space tasks at all is a
+>> completely pointless exercise.
+>> 
+>> So the obvious solution to the problem is to freeze all user space tasks
+>
+> I agree, but what about a less intrusive approach? Simply stopping the 
+> DL tasks should suffice, as everything works correctly without them.
 
-On Tue, Oct 28, 2025 at 3:22=E2=80=AFPM Junjie Cao <junjie.cao@intel.com> w=
-rote:
->
-> Syzbot reports a NULL function pointer call on arm64 when
-> ptp_clock_gettime() falls back to ->gettime64() and the driver provides
-> neither ->gettimex64() nor ->gettime64(). This leads to a crash in the
-> posix clock gettime path.
->
-> Return -EOPNOTSUPP when both callbacks are missing, avoiding the crash
-> and matching the defensive style used in the posix clock layer.
->
-> Reported-by: syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3Dc8c0e7ccabd456541612
-> Signed-off-by: Junjie Cao <junjie.cao@intel.com>
-> ---
->  drivers/ptp/ptp_clock.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(
-> diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-> index ef020599b771..764bd25220c1 100644
-> --- a/drivers/ptp/ptp_clock.c
-> +++ b/drivers/ptp/ptp_clock.c
-> @@ -110,12 +110,14 @@ static int ptp_clock_settime(struct posix_clock *pc=
-, const struct timespec64 *tp
->  static int ptp_clock_gettime(struct posix_clock *pc, struct timespec64 *=
-tp)
->  {
->         struct ptp_clock *ptp =3D container_of(pc, struct ptp_clock, cloc=
-k);
-> -       int err;
-> +       int err =3D -EOPNOTSUPP;
->
->         if (ptp->info->gettimex64)
-> -               err =3D ptp->info->gettimex64(ptp->info, tp, NULL);
-> -       else
-> -               err =3D ptp->info->gettime64(ptp->info, tp);
-> +               return ptp->info->gettimex64(ptp->info, tp, NULL);
-> +
-> +       if (ptp->info->gettime64)
-> +               return ptp->info->gettime64(ptp->info, tp);
-> +
->         return err;
->  }
+What's intrusive about that? Task freezing exists already.
 
-Patch looks valid to me. But a similar situation exists right above
-this function where ptp_clock_settime() is calling
-ptp->info->settime64() unconditionally.
-Maybe that can be guarded also?
-Also this looks like a patch meant for "net" with an improved title IMO.
-
+> I have a draft patch ready. Let's discuss it and go from there.
 >
-> --
-> 2.43.0
+>> when kexec() is invoked. No horrible hacks in the deadline scheduler and
+>> elsewhere required to make that work. No?
 >
->
+> To clarify, skipping the dl_bw_deactivate() validation is necessary 
+> because it prevents CPU hot-removal.
 
---0000000000002c59f40642379504
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+If you freeze stuff there is nothing to do. Hibernation works exactly
+that way without any magic hacks in a particular scheduling class, no?
 
-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
-/HTPxpDrr4vzZL0yoc9XefyCbdiwfyFl99oBekp+1ZxXc5bZsVhRPVyEWFtCys66nqu5cU2GPT3a
-ySQEHOtIKyGGgzMVvitOzO2suQkoMvu/swsftfgCY/PObdlBZhv0BD97+WwR6CQJh/YEuDDEHYCy
-NDeiVtF3/jwT04bHB7lR9n+AiCSLr9wlgBHGdBFIOmT/XMX3K8fuMMGLq9PpGQEMvYa9QTkE9+zc
-MddiNNh1xtCTG0+kC7KIttdXTnffisXKsX44B8ECAwEAAaOCAd0wggHZMA4GA1UdDwEB/wQEAwIF
-oDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3Nl
-Y3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEF
-BQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1Ud
-IAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIB
-FiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDagNKAy
-hjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNVHQ4EFgQUxJ6fps/yOGneJRYDWUKPuLPk
-miYwDQYJKoZIhvcNAQELBQADggIBAI2j2qBMKYV8SLK1ysjOOS54Lpm3geezjBYrWor/BAKGP7kT
-QN61VWg3QlZqiX21KLNeBWzJH7r+zWiS8ykHApTnBlTjfNGF8ihZz7GkpBTa3xDW5rT/oLfyVQ5k
-Wr2OZ268FfZPyAgHYnrfhmojupPS4c7bT9fQyep3P0sAm6TQxmhLDh/HcsloIn7w1QywGRyesbRw
-CFkRbTnhhTS9Tz3pYs5kHbphHY5oF3HNdKgFPrfpF9ei6dL4LlwvQgNlRB6PhdUBL80CJ0UlY2Oz
-jIAKPusiSluFH+NvwqsI8VuId34ug+B5VOM2dWXR/jY0as0Va5Fpjpn1G+jG2pzr1FQu2OHR5GAh
-6Uw50Yh3H77mYK67fCzQVcHrl0qdOLSZVsz/T3qjRGjAZlIDyFRjewxLNunJl/TGtu1jk1ij7Uzh
-PtF4nfZaVnWJowp/gE+Hr21BXA1nj+wBINHA0eufDHd/Y0/MLK+++i3gPTermGBIfadXUj8NGCGe
-eIj4fd2b29HwMCvfX78QR4JQM9dkDoD1ZFClV17bxRPtxhwEU8DzzcGlLfKJhj8IxkLoww9hqNul
-Md+LwA5kUTLPBBl9irP7Rn3jfftdK1MgrNyomyZUZSI1pisbv0Zn/ru3KD3QZLE17esvHAqCfXAZ
-a2vE+o+ZbomB5XkihtQpb/DYrfjAMYICVzCCAlMCAQEwYjBSMQswCQYDVQQGEwJCRTEZMBcGA1UE
-ChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0Eg
-MjAyMwIMClwVCDIzIfrgd31IMA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCDZhVyL
-KLpmdv0Oi8CMH14UwrDzH8QuAClQmoDOf5WCJzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
-CSqGSIb3DQEJBTEPFw0yNTEwMjgxMjU5MTNaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEq
-MAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCG
-SAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQC9RLuziJKOKjvXe3qpIxM9IWCRnrcsxvzAXKxkKX6f
-wPmPmpSQvgL2N5JmHRswhFhUxhdWkSRFP4dmedV761PUd+WUjI/nXuw84NzacziryefEJHiRINe8
-GNsgnH/QwamvBW7oFwD5G4fwQhJXuxOJl7gHb5qRK1n96cDxO+qbBuQq/imb6N1qW+/6DIlBTF0E
-5KNGs9lSk+EyV42K2j0YDXbX7S1OLXgKAvteKkMh7aMWIwAmPBNvVXVCOrU7r/ZV2CNp9gwliYl0
-5X/54fPIToze2S67rc6q6APKmdFjSsKDkt1P9lehW983SXx0XZn6pC2/4uden/Gb9HLRsmuu
---0000000000002c59f40642379504--
+Thanks,
+
+        tglx
 
