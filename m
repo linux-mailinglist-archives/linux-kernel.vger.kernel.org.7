@@ -1,80 +1,64 @@
-Return-Path: <linux-kernel+bounces-873736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F2CC1490B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:15:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299E5C14914
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858771AA4BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:15:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8E01AA4C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AB832BF48;
-	Tue, 28 Oct 2025 12:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EFE32B9A5;
+	Tue, 28 Oct 2025 12:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OGNTTMMv"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QOCD6XDa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D15532A3E1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:15:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D816DC28;
+	Tue, 28 Oct 2025 12:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761653711; cv=none; b=U/TEUUC159dLPQ9WsAnq65qBsDYQWp9vh4nc4vjk/jJuTt6XasnfaNiFAcumh5lwvLai4+55YHmNjPV32GAB6p7iIXTNtfNAxumxmWjVr5wX5QB+IhOrm/zrow0tn4oF+apt7Dqv7FE51CcVyCynTnQTkW422YpLv1QuNp0Q2bM=
+	t=1761653736; cv=none; b=FIlecJs36zHwl1273XRPLBQTu7BIVS6x+egdtw44VU26VN3vGPfwLepbEZnWm3kq1reVrsRa7a7E7lrx3UobTjsePTrj/a1KLE4NjcoQB5SLgMJVcQSOraFAUZpsR/YqEA4kwMita8q1n3kBsNlniVTHgagVl8aXr/iTT8wxf/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761653711; c=relaxed/simple;
-	bh=HZb1NJk9EiYvwXWi/VvLTVxzoQi8tgU2qAmxFsu1Zc8=;
+	s=arc-20240116; t=1761653736; c=relaxed/simple;
+	bh=9O8Dv73cqeiMHr34ohoGC3ZLMBjgNNoJIYPYXf9HsrQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vurve7uxkSBpXRottuCj+gfaxV7Mj6r7g2lyyADdt3dbsDVrHWQcGCglgRP7hY2Q1u9yCtj5pu06CIuN/p6CxFxwYnLRug9V+s+IdwrGuxOkv+BoNizboyDMnGA7nP/bOR0v2FTfK4/o/PZ1GsIOC+cvhcYhVK8P0Hlk86kgS80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OGNTTMMv; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-376466f1280so88806821fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:15:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761653708; x=1762258508; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YJAViX7/B9WZe7f1Z9+bJz1YrkYOWWpEGINZC+5C01E=;
-        b=OGNTTMMvq9mX9viB1m+SEvr09ftMEf4mZlIh6mPUu2Kl4jT7TzH0JKAVa1hkbBT95s
-         Jl/2AKGuhPk+msvyGTvLVBRQmiMuvi5REZRjhgCLmAQMhpafvhw3fwmmn8coiqFpYaKz
-         Hoz3h2kkEQ1+b+l87rEvw3m4er572kbDuMWOEcRm1TxgGgBp4uu9iYa9Bxo0ljwwl+Om
-         uBhrsxxVI6cWf5OMgCjfBLoSmGB9nja51sjPoUPjqYxeaei7lbrbjWP1X5ICgWMbraIf
-         c9UpwrOvlKTsDoDBYNfTQVcIkMyYYNjvnZKBH3C9XdRFi3CyfyHNb+jeIGcT50haDOWP
-         sNsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761653708; x=1762258508;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YJAViX7/B9WZe7f1Z9+bJz1YrkYOWWpEGINZC+5C01E=;
-        b=U0+n0V6klM14jMVa3MFZC+b1swMKmiQrULLUOHO6G8is3dLquqkKDA3AXrU2YzCpFN
-         +F0XNd2ZBjQjcg5AtKrmERG3+6UIKaG0rl18iWaEoObKbbWFDWKJQluT4sr+gciPSQRV
-         DsmMz/yQoQwUaM+Bb1wxahWVv5mR1f1ikzJCVjjME5Hlyp86VaQ4N8Xy8NHh8TjzHwSy
-         na8SxGZgzZs+HHIXSHuYkQ8uArkBHayMLpQrFFWKzwq9HPJtLSahx/79qL6x7xIhTudp
-         ci7RFGNPjuia8J33suAuoECmKXbSVFm7JWk2JAb9mSYre+9LcvMEPxDGBQuEDZATI0xP
-         //aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv3bYV8lNulwV78yKsgwmQLeir8p1xnb7zBpmXuzdH7Qffb8HBsig65Fp22gYdIEesT4/6t2Exz2oa7V8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYSsMX1P4taymGhUIsrdPBJQV6/xjGAN2iuK4cCYRA2Tr3E7W3
-	QhBuOvpjTIJXN9StNfRpTBJv7N7QOtGeVmJXxsEDYYraE6vw2XFohpGz
-X-Gm-Gg: ASbGncvqPwHJ3s/pqlz+HxmVhBqn+E51ePjsxNbe+byAaFREH+jFzwsGt5GdEOdm86E
-	eWuRDeI4nhOjORNwMjNlEPJtue1LsL5ywn9/TIo3EDy+LNSoNEbSURnnSScvawokKBDe7q5WPMv
-	THmSaOd6obs3CueQ6UsAV0ZdxhltU7lDnZ/UDQ2e6ZIde2Clj93gv6jvxal3/ksOlpFHg3q2BZz
-	4uYjj9VjvG1luet12k2xS+U74cVYvqdJl3DinU7JOM7Ssx1Prm1Cl0gPCDdsVZvZiCZP43oEUYN
-	pvlXkXAsx3o4+7JfxHRFQcK0W4zv+rXa98eoF3ER7mFXPvefRkQkq4Waf4OVFJa+AmT+wlqa/27
-	6OSFBIJ91NYfLnZVFr3BeWELZ/u11S18ToPwk8vWDOYd4c/q2Sw2YCYEEYBv62Pq7RCMtRKz+CC
-	CJs2wfiYFgzEAgXkqCRtctdlpqFoPh3TXGZAY+FHW0NEzNfIDiz2Osxrcjrg==
-X-Google-Smtp-Source: AGHT+IFB+EXEALL0lVPB7zL+t0ISwe5rbBYFS+A45wiTOhrUz5I795qhcCG4TnO4o8BABiT+ozftyw==
-X-Received: by 2002:a05:651c:20cb:20b0:378:ddbe:2d95 with SMTP id 38308e7fff4ca-379076c11aemr8817671fa.20.1761653707262;
-        Tue, 28 Oct 2025 05:15:07 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee09204esm28490401fa.8.2025.10.28.05.15.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 05:15:06 -0700 (PDT)
-Message-ID: <a7012995-c2a8-48a3-abe1-5c227272f21c@gmail.com>
-Date: Tue, 28 Oct 2025 14:15:05 +0200
+	 In-Reply-To:Content-Type; b=cpIz/u4p3v6fsTAcSxTGLrhKkwvi0gsdS7tueruRAG8eVn7Ot3G9pH6X93LPGc0lh6Ih8OzMnv1suzyuJGjNctJdOMOwfvZ/l5oUbtqOxhj9tJZB+wrvtrD0WY8psEOiNvGpCJwNQIrqBLXpzXoYgYVMQ/mIevqyds5Ja0uhhbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QOCD6XDa; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761653735; x=1793189735;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9O8Dv73cqeiMHr34ohoGC3ZLMBjgNNoJIYPYXf9HsrQ=;
+  b=QOCD6XDaUYnzrau9fmZ6L3Qm5jk5tBpm9HJYN1kUi0ElHN6zmI+9SOot
+   /4RFjkDdFGEEyyOhLZzl31m5Qp7yAo40JwWwYktOKA89B4QgTV5vypuGz
+   Okk5/tAdHDOWXPs0ocuX3sjLNX58THeCYoxFU6mUOH3I/WEJYahZKzGmT
+   luR71rOXia5hZrJmStF/w9pYfrDAS/8wCLQt1DJVyYmgoOg9Yz/SNtm5s
+   c0jnee6UyHOc6YbvUVzubmqWU7hhPv7Pfaez9llmNC4vwP5tP2kZDGy6f
+   bkoSvvLWHc4S7eEN3aVaPilz94yPtlnRk78hUo5oEPzeurVhCThZKVgnk
+   Q==;
+X-CSE-ConnectionGUID: exNRZD4wRhKFDgHoQ3bLIA==
+X-CSE-MsgGUID: xsvPHLodSAi1Z7918vw2Xw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86377309"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="86377309"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 05:15:34 -0700
+X-CSE-ConnectionGUID: FL0fjhCXSbSqJuWpZ95QHg==
+X-CSE-MsgGUID: f959LzMNS9e4iVk5oicfFw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="189686396"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO [10.245.244.148]) ([10.245.244.148])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 05:15:31 -0700
+Message-ID: <51ca2248-5699-4c6d-b037-a57c90ed44ac@linux.intel.com>
+Date: Tue, 28 Oct 2025 14:15:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,133 +66,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] arm64: dts: freescale: add Ka-Ro Electronics
- tx8m-1610 COM
-To: maudspierings@gocontroll.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20251022-mini_iv-v2-0-20af8f9aac14@gocontroll.com>
- <20251022-mini_iv-v2-3-20af8f9aac14@gocontroll.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20251022-mini_iv-v2-3-20af8f9aac14@gocontroll.com>
+Subject: Re: [PATCH] xhci: sideband: Fix race condition in sideband unregister
+To: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Mathias Nyman <mathias.nyman@intel.com>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ wesley.cheng@oss.qualcomm.com
+References: <20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Maud,
-
-Thanks for the upstreaming work! :)
-
-On 22/10/2025 10:22, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
+On 10/28/25 10:00, Uttkarsh Aggarwal wrote:
+> A kernel panic was observed due to a race condition between un-registering
+> sideband and creating sideband interrupters. The issue occurrs when thread
+> T1 runs uaudio_disconnect() and released sb->xhci via sideband_unregister,
+> while thread T2 simultaneously accessed the now-NULL sb->xhci in
+> xhci_sideband_create_interrupter() resulting in a crash.
 > 
-> The Ka-Ro Electronics tx8m-1610 is a COM based on the imx8mm SOC. It has
-> 1 GB of ram and 4 GB of eMMC storage on board.
+> By locking the mutex before modifying sb->xhci, any thread calling
+> xhci_sideband_create_interrupter() will either see a valid sb->xhci or wait
+> until xhci_sideband_unregister() completes.
 > 
-> Add it to enable boards based on this module
-> 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
-> ---
->   .../arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi | 439 +++++++++++++++++++++
->   1 file changed, 439 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi
-> new file mode 100644
-> index 0000000000000..46d3ad80942cc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-tx8m-1610.dtsi
-> @@ -0,0 +1,439 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright (C) 2021 Lothar Waßmann <LW@KARO-electronics.de>
-> + * 2025 Maud Spierings <maudspierings@gocontroll.com>
-> + */
-> +
-> +#include "imx8mm.dtsi"
-> +
 
-// snip
+Looks like there is a bigger issue with xhci_sideband_unregister() and the mutex.
+New endpoints and interrupter can be added to the sideband after
+xhci_sideband_unregister() cleared the existing ones, and released the mutex.
 
-> +	pmic: pmic@4b {
-> +		compatible = "rohm,bd71847";
-> +		reg = <0x4b>;
-> +		interrupt-parent = <&gpio1>;
-> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-> +		pinctrl-0 = <&pinctrl_pmic>;
-> +		pinctrl-names = "default";
-> +		rohm,reset-snvs-powered;
-> +
-> +		regulators {
-> +			reg_vdd_soc: BUCK1 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <900000>;
-> +				regulator-min-microvolt = <780000>;
-> +				regulator-name = "buck1";
-> +				regulator-ramp-delay = <1250>;
-> +			};
-> +
-> +			reg_vdd_arm: BUCK2 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <950000>;
-> +				regulator-min-microvolt = <805000>;
-> +				regulator-name = "buck2";
-> +				regulator-ramp-delay = <1250>;
-> +				rohm,dvs-run-voltage = <950000>;
-> +				rohm,dvs-idle-voltage = <810000>;
-> +			};
-> +
-> +			reg_vdd_dram: BUCK3 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <900000>;
-> +				regulator-min-microvolt = <805000>;
-> +				regulator-name = "buck3";
-> +			};
-> +
-> +			reg_vdd_3v3: BUCK4 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <3300000>;
-> +				regulator-min-microvolt = <3300000>;
-> +				regulator-name = "buck4";
-> +			};
-> +
-> +			reg_vdd_1v8: BUCK5 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				regulator-max-microvolt = <1950000>;
-> +				regulator-min-microvolt = <1700000>;
-> +				regulator-name = "buck5";
-> +			};
-> +
-> +			BUCK6 {
-> +				regulator-always-on;
-> +				regulator-boot-on;
-> +				/*
-> +				 * The default output voltage is 1.1V, bumped
-> +				 * to 1.35V in HW by a 499R/2.2K voltage divider in the
-> +				 * feedback path.
-> +				 */
+We should avoid taking and releasing the mutex several times in unregister,
+and make sure we set a flag during first time unregister takes the muxtex, and make
+sure no new endpoints and interrupter are added if this flag is set.
+Also avoid creating unnecessary locking dependencies between mutex and xhci spinlock.
 
-Could/Should this be described using the:
-'rohm,feedback-pull-up-r1-ohms' and
-'rohm,feedback-pull-up-r2-ohms'? If I understand the comment correctly, 
-that might allow the driver to be able to use correctly scaled voltages.
+the xhci->lock looks correct
 
-https://elixir.bootlin.com/linux/v6.18-rc1/source/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.yaml#L108
+Maybe we can use sb->vdev as a flag, I'll look into this.
 
-> +				regulator-max-microvolt = <1100000>;
-> +				regulator-min-microvolt = <1100000>;
-> +				regulator-name = "buck6";
-> +			};
+Thanks
+Mathias
 
-Yours,
-	-- Matti
+
 
