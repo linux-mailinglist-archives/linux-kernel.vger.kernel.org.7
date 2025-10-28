@@ -1,109 +1,125 @@
-Return-Path: <linux-kernel+bounces-874610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A247C16AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:54:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C34F1C16B03
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:55:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18DA1C22B78
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:55:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C281403AB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798802C15A5;
-	Tue, 28 Oct 2025 19:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4643502A2;
+	Tue, 28 Oct 2025 19:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HS45+suS"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En50DAfU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122052D0625
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BDF2D0625
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681282; cv=none; b=N9/stI99sd8MG35Mssos21LRrxgiyEvPcA5a97glVHA2rIQGHcn+10hOHuoc0RFaTUsvd0YUDa8qMmVsQ5gFA+geU2i4vltnzPx1UsJLpzeEfnrgBahAAPw/acUCmRMrWvYgykeOLEQQU8KBn7TMmh4p/2IjugXOzvnnsTaK7wQ=
+	t=1761681286; cv=none; b=CVxdSHpFIYg/Gzr/WPLCzaiClg/lfLAMtKGNGpBbZFrgrjFexx9k+AHpipgdXNUIgmDq9Lg3s1W6sm+Me5+b5EeEOj2jC6m6B6FGkGIE//2LIUWzB5UOiZzuCt2hXcnJM9JbpyxvRgglbBaxnUe3m1fOWIRXQQwVsjVZZWSWNAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681282; c=relaxed/simple;
-	bh=GhznppW5jwYDRcAihiwYTPNGnL0pOvsU68n6vWbNcPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QADzsR+EwdityBYWWvPSU+HIvMI38oiWjgPiapETUk97z7DeIyfARG8RZ/k46Ryts+aq2s1QvBfqU5kjKhNqNwwvdRN7cku048mIiK0yKLiEN9++J3t/G9f0eMqdUoi0r1+SeyC3LlFd2/xHpJZMTHbUkegzB+xEPDQASfdKiS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HS45+suS; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 28 Oct 2025 12:54:29 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761681277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bb0C3VyuAmSiKsi2qlBRx/pFXIP36IO29vP/bFyjw0g=;
-	b=HS45+suSm2rzrJQMMkE+ycYcgEd0ql+2mj/3Lex3TN7T7ZQvpXI25hP3pXR3WsB0zcaUNK
-	uiEipqPSyA+Q2udnhlpK792HxTJ2Mp/Q/kHXIOwPZubUX60qkv7f5jqoZbW18g6cQajOUP
-	D0wHWOIWHS9q0agqXQNk/58Ej7bERuk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: oom-killer not invoked on systems with multiple memory-tiers
-Message-ID: <o3gxx5uipm53gccoccjjdvtvv6gkyx4r7qexzdkg3uqtqc7wsv@yd3rqfsy2bpz>
-References: <20251022135735.246203-1-akinobu.mita@gmail.com>
+	s=arc-20240116; t=1761681286; c=relaxed/simple;
+	bh=sLuFwvAwHUNO/skdE7BzrktYPRAzXyoh3REUgst9oAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LvTvnjWdxxLMfdXiA8oWpis+lU9aJrg8nx/cOgpgCdCCkwb39qkUuOob4CJRswLXgdzX8DJyO5U/fES3qjtvJJXFug5Dzfv+Irb9lS0+AQwm3xWFHAt5zgN5k90UUwlYHleZKNgtMTHnItaRHYr2Vp60RK6WgUbSQlEWb6gQnZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En50DAfU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8B7C4CEE7;
+	Tue, 28 Oct 2025 19:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761681286;
+	bh=sLuFwvAwHUNO/skdE7BzrktYPRAzXyoh3REUgst9oAM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=En50DAfURMwXsnoO7ty2KsDNFEjyMIKRKv83LzWhaGEwphyfErYT9jDhE8kZx78vh
+	 kvCCpMWW4uLtZN/bi9mSSJtQw7/wNqe6HrW53e40W6gEV8Y2tJ3fDMVHsa/zyQcWsL
+	 rW2NHErauKIyGnpIezZG0fLiURuQpLtXiwHKIE+MvpS8/qdP9pmI8Y0Hbmu06OFrmG
+	 j/wDKnOUVaM3PsQ8VwsK0m+w9wYdUdqLM18ioVCkjbz6+7cYI31ABz42zaOZSa++os
+	 1RmG0YjIihIRyTs9Fp+9/eWg7c+4eMJeb/fqS3FSMC7iy6B8KvzktN/rK4ZGeeQehb
+	 Fm0nChBPrKTsA==
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Subject: [PATCH] f2fs: add fadvise tracepoint
+Date: Tue, 28 Oct 2025 19:54:44 +0000
+Message-ID: <20251028195444.3181203-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251022135735.246203-1-akinobu.mita@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Hi Akinobu,
+This adds a tracepoint in the fadvise call path.
 
-On Wed, Oct 22, 2025 at 10:57:35PM +0900, Akinobu Mita wrote:
-> On systems with multiple memory-tiers consisting of DRAM and CXL memory,
-> the OOM killer is not invoked properly.
-> 
-> Here's the command to reproduce:
-> 
-> $ stress-ng --oomable -v --memrate 20 --memrate-bytes 10G \
->     --memrate-rd-mbs 1 --memrate-wr-mbs 1
-> 
-> The memory usage is the number of workers specified with the --memrate
-> option multiplied by the buffer size specified with the --memrate-bytes
-> option, so please adjust it so that it exceeds the total size of the
-> installed DRAM and CXL memory.
-> 
-> If swap is disabled, you can usually expect the OOM killer to terminate
-> the stress-ng process when memory usage approaches the installed memory size.
-> 
-> However, if multiple memory-tiers exist (multiple
-> /sys/devices/virtual/memory_tiering/memory_tier<N> directories exist),
-> and /sys/kernel/mm/numa/demotion_enabled is true and
-> /sys/kernel/mm/lru_gen/min_ttl_ms is 0, the OOM killer will not be invoked
-> and the system will become inoperable.
-> 
-> If /sys/kernel/mm/numa/demotion_enabled is false, or if demotion_enabled
-> is true but /sys/kernel/mm/lru_gen/min_ttl_ms is set to a non-zero value
-> such as 1000, the OOM killer will be invoked properly.
-> 
-> This issue can be reproduced using NUMA emulation even on systems with
-> only DRAM. However, to configure multiple memory-tiers using fake nodes,
-> you must apply the attached patch.
-> 
-> You can create two-fake memory-tiers by booting a single-node system with
-> the following boot options:
-> 
-> numa=fake=2
-> numa_emulation.default_dram=1,0
-> numa_emulation.read_latency=100,1000
-> numa_emulation.write_latency=100,1000
-> numa_emulation.read_bandwidth=100000,10000
-> numa_emulation.write_bandwidth=100000,10000
-> 
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/file.c              |  2 ++
+ include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
-Thanks for the report. Can you try to repro this with traditional LRU
-i.e. not MGLRU? I just want to see if this is MGLRU only issue or more
-general.
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 6d42e2d28861..4a81089c5df3 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5288,6 +5288,8 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
+ 	struct inode *inode = file_inode(filp);
+ 	int err;
+ 
++	trace_f2fs_fadvise(inode, offset, len, advice);
++
+ 	if (advice == POSIX_FADV_SEQUENTIAL) {
+ 		if (S_ISFIFO(inode->i_mode))
+ 			return -ESPIPE;
+diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+index edbbd869078f..b7f5317b5980 100644
+--- a/include/trace/events/f2fs.h
++++ b/include/trace/events/f2fs.h
+@@ -586,6 +586,38 @@ TRACE_EVENT(f2fs_file_write_iter,
+ 		__entry->ret)
+ );
+ 
++TRACE_EVENT(f2fs_fadvise,
++
++	TP_PROTO(struct inode *inode, loff_t offset, loff_t len, int advice),
++
++	TP_ARGS(inode, offset, len, advice),
++
++	TP_STRUCT__entry(
++		__field(dev_t,	dev)
++		__field(ino_t,	ino)
++		__field(loff_t, size)
++		__field(loff_t,	offset)
++		__field(loff_t,	len)
++		__field(int,	advice)
++	),
++
++	TP_fast_assign(
++		__entry->dev	= inode->i_sb->s_dev;
++		__entry->ino	= inode->i_ino;
++		__entry->size	= inode->i_size;
++		__entry->offset	= offset;
++		__entry->len	= len;
++		__entry->advice	= advice;
++	),
++
++	TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld offset:%llu, len:%llu, advise:%d",
++		show_dev_ino(__entry),
++		(unsigned long long)__entry->size,
++		__entry->offset,
++		__entry->len,
++		__entry->advice)
++);
++
+ TRACE_EVENT(f2fs_map_blocks,
+ 	TP_PROTO(struct inode *inode, struct f2fs_map_blocks *map, int flag,
+ 		 int ret),
+-- 
+2.51.1.851.g4ebd6896fd-goog
+
 
