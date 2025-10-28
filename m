@@ -1,223 +1,196 @@
-Return-Path: <linux-kernel+bounces-874143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3720DC159D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:54:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F96BC159D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:55:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A9E3A43B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:49:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0C3E1C2219F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A43491D4;
-	Tue, 28 Oct 2025 15:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DCC6345727;
+	Tue, 28 Oct 2025 15:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l6Q5cKk5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tHThKcag"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34B3344025
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D6D34320A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666371; cv=none; b=XlwMtofsFOqYvZZ1pJ8OuccLKOnQKXsCsFyX7sWBB9MBThNPjC9l9KrmWhMI8ieZjuttoPEMhXAvm2usqvIieGT61nnvMf4cl3iUCOW8Qub37uDVvhGydZxM9T5oFPh2+0lFfCfaXDPsB+9fsbOsUwdMVNZ/BjvKIBQRjPNB+Hw=
+	t=1761666438; cv=none; b=iOxgSzp1dX2qKiuOQKsSe16dHf6gCUp+Np2y/dzWpDWEt/g7yzk55Ua6DvhC6kQDjVu0LkPzwIzC07TuOsJPbcEqVRmfoQ9QAN3f23fcM04+ztQ/ZAO6MGr2DCcWLm07nz4iqexARYnOVRZd5x2mXWuH9q0uZ7WkQR1+FXzWDZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666371; c=relaxed/simple;
-	bh=vudeAFdG/TweTfpCxpKZnI09ZoHlayFDbzLAnUlNrM8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Bba3cdquursOZadp9Y1S4E47LS0ujmwt1E08GfT5qhFX7l9bzody4WoeuKb8+/Vu9o5BUjgnYLEl8oalGOPmQmu+1gCFpZNfZWBmYxAMjCpX1mTcCLiyLRuRsm0JxjlhSPMdQGABK0x8rZMlKpLACLp1igUbWBByFj2V70NRJ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l6Q5cKk5; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761666369; x=1793202369;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=vudeAFdG/TweTfpCxpKZnI09ZoHlayFDbzLAnUlNrM8=;
-  b=l6Q5cKk59Yoby1qoAQ5ZLodKkoaNCO7kWzg9QyE1TnIzoDL4dKumX3he
-   8WZExMsIj4gbrpzg14jEOkwJbpeJ9O+WxVmvdTpGKb0bZEDpidcB01st5
-   7bL/2SVYMydgvbJm6PyPVdeUQ8JSfaI4n0exF3n5tCWQi7m8k4jGY7wEV
-   htp9GLdHVqBd7VTGl7RcGd/1g9ICZgh8XPYAuxBDXBmPHNgTqz4X7FzfF
-   5NnJ8ggryWY6YzEsZK5jM/okgdRTjJSNo1YOrRyK+VtjVd+jsPMOTBSDe
-   eFl43u43cC9TR8aTyd80J8JvgCUK4eS9PI992Xfio44KgFdbvT6BHKpnM
-   A==;
-X-CSE-ConnectionGUID: ZlE2h5zPQeyD0J8vX3gfvg==
-X-CSE-MsgGUID: SPr+R4yIRmq/L32/IZQ5ig==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75114036"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="75114036"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:46:09 -0700
-X-CSE-ConnectionGUID: 90yFm0WrQye2V8wWzV0WkA==
-X-CSE-MsgGUID: EA8cVz2rSO6DMYmusTtJxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="190506694"
-Received: from schen9-mobl4.amr.corp.intel.com (HELO [10.125.109.151]) ([10.125.109.151])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:46:06 -0700
-Message-ID: <094de5bd4f1b5cd4552ae024f9254df26c9e47be.camel@linux.intel.com>
-Subject: Re: [PATCH 07/19] sched/fair: Track LLC-preferred tasks per runqueue
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
- <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
- <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
- <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
- <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
- <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Adam Li	
- <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo
- Molnar	 <mingo@redhat.com>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>
-Date: Tue, 28 Oct 2025 08:46:06 -0700
-In-Reply-To: <ab01cb87-71f6-4893-833e-136e7acd777d@intel.com>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
-	 <ccbfda37200b66177a1c1add4715a49b863ac84d.1760206683.git.tim.c.chen@linux.intel.com>
-	 <fe5eeffc-ff8f-4bfb-b0a1-5b25731afb88@amd.com>
-	 <ab01cb87-71f6-4893-833e-136e7acd777d@intel.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1761666438; c=relaxed/simple;
+	bh=9Y6cuup2ygOkn1D+mhXdhwDZmH2FNUNmnj6uiwVUQJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxAoCXkYFaZB490G5G5YswvL4jamLODpdgv6bJBnBf0Lm3BzvY9w/Duq+rVaoFqixtjA8HW9JvFV9D4eNIKePAYhmBWdedX5l5hMw0c8p9quK8owlz+SumrDzn8TCxEGxfo2Lfb5xJF9IEMg/8NYWD0AmINgimQTG1CQxm5sR3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tHThKcag; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4710c507f47so1927995e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:47:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761666434; x=1762271234; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ly7igO6UUojvT0L2mrFQ2G8pxDYiFWGNFbACO3M5+Qg=;
+        b=tHThKcagI7Z0p3EP2uB3JS0FBrV7N7EWFzN63OFRRCX6WKJaUukWynvT+ySRj6FZ8Y
+         pPLPCp81oUko4KJy/GDd7uwhtcIb2k6dWyb/62DYcythxCcVI73UFyOqIL3cQahUcSqP
+         V+m0R0CZS5f0Ae51X9AGGgzvgd+Mf01TPadcS5djDXjj9TW96mC9Lon9Ls7p2UiLFTIH
+         DKWfl1+oOq1J5BsdpqFjqhCQN3wmxQ3+NMHFWSlsTFXQ5d76/ZizniaHaO72Fj81ZJN3
+         N6zdXqBogJ0DIkaelcMVSHJ8YBKE9RGyUqS3w2PZkUWLyWAct9Xnah1X4b6E7846sd/a
+         spsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761666434; x=1762271234;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ly7igO6UUojvT0L2mrFQ2G8pxDYiFWGNFbACO3M5+Qg=;
+        b=lp7QEXMPJvWplKkzWFtm7RyUeypSLT7t5zv94yi7OtOHFBmVWD7VNomGGTFEyxve0c
+         EFmToyILR3XRx0ADWKsxH0j2Vn9mnAawQW1LisLQIdiYVy+YbVIrRMa2C8giYHqMSUQR
+         ZYOMZ6VjseqHoadrCUcB1NsY33JZG5BP/CoyQK1r+Qse9yo3SZRef875WBc/2Xcnn5uT
+         PLmrkJHnA6uOj5JZsJAxjlF8HY43QCSdXG+v48b6SEm6wV0lvyUTNlbucIbzFvaJ9Kl4
+         rjyuTlM9HloHPMDSsQRhrDpwvPmnl9t5zgjDLpffoBF5qEx1QwA+jpEaFMKfD5H5wpuI
+         tpDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUqawgYtOq3bV+8w5Rc84krf6S+kvuCUX4IIRXcD0jdTRWPYJBgw89WjsGpN9/zEu5S9+TUFaS+vALP5nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmLMLCCBJ1cOiuNYO6s+jbjwU7TPEJbnUqcl0B8CPr1Le22dt8
+	MjSrWPqw+SYXnRjzKeNrBjdADVxzBiQ0v+SusRrt6AxTyDIpDTaTneR/hBuXdBJ+//g=
+X-Gm-Gg: ASbGnct4m55BkcV3iZ6vo9sb0eHt8SOMfUmM/BbvWRXfT9L7uQnZtsW/2gOXi8M0s+3
+	k786AKTAl55oTi3UcniT/9l6iVOyElVv2EwO+cZj356x925lJghWonfWGd9swb1dulL24G68NdB
+	uto0X2QUbUKSBxsw2jAhTPmhRicY1h0U5fhjLPp8uhEdT8DuJ5hgTbTc5UCl7ztnivuizqcl2av
+	givWqonTeLdFA9GLR4T8ruDidplGDV1gclxaLcP+uYFhte/ddomvmY38dYiQMWOb5v6xGwjvoCC
+	8pGEkAv2I3h6fgzbVYoYVhd+4ocRWTJd+FvN+MQ/rn7zp6nOvvfuo2BGlzceXDKC82VqKl8xUVh
+	tq82YjYVCqualCWMsJ/ZwSgJH7nkRo0sWgXIK87wU6VaTF5NiFo+Z5soPiLGlWJ0XHzoo9nS8It
+	6PeWk5ukRrPOeu1YcKu6PS
+X-Google-Smtp-Source: AGHT+IGKgXwlOvIehOvpFN7gEcO/B/7FmJXLc3na7usvqcT8HRKr9yeuOhth8NNWw1FimUvqgwzEIw==
+X-Received: by 2002:a05:600c:3513:b0:475:dca0:d457 with SMTP id 5b1f17b1804b1-47717e7f4b9mr18168985e9.8.1761666434496;
+        Tue, 28 Oct 2025 08:47:14 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475de57b156sm192684785e9.13.2025.10.28.08.47.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 08:47:13 -0700 (PDT)
+Message-ID: <bd5bb1f2-a8ba-4828-9d04-2e1d433ecadb@linaro.org>
+Date: Tue, 28 Oct 2025 16:47:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/12] Bluetooth: MAINTAINERS: Orphan Qualcomm hci_qca
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
+ Rocky Liao <quic_rjliao@quicinc.com>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org>
+ <20251028-dt-bindings-qcom-bluetooth-v1-1-524a978e3cda@linaro.org>
+ <CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-10-28 at 23:15 +0800, Chen, Yu C wrote:
-> On 10/27/2025 2:04 PM, K Prateek Nayak wrote:
-> > Hello Tim,
-> >=20
-> > On 10/11/2025 11:54 PM, Tim Chen wrote:
-> > > @@ -3999,6 +4038,7 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, s=
-truct sched_entity *se)
-> > >   		struct rq *rq =3D rq_of(cfs_rq);
-> > >  =20
-> > >   		account_numa_enqueue(rq, task_of(se));
-> > > +		account_llc_enqueue(rq, task_of(se));
-> > >   		list_add(&se->group_node, &rq->cfs_tasks);
-> > >   	}
-> > >   	cfs_rq->nr_queued++;
-> > > @@ -4010,9 +4050,14 @@ account_entity_dequeue(struct cfs_rq *cfs_rq, =
-struct sched_entity *se)
-> > >   	update_load_sub(&cfs_rq->load, se->load.weight);
-> > >   	if (entity_is_task(se)) {
-> > >   		account_numa_dequeue(rq_of(cfs_rq), task_of(se));
-> > > +		account_llc_dequeue(rq_of(cfs_rq), task_of(se));
-> > >   		list_del_init(&se->group_node);
-> > >   	}
-> > >   	cfs_rq->nr_queued--;
-> > > +
-> > > +	/* safeguard to clear the cache aware data */
-> > > +	if (!parent_entity(se) && !cfs_rq->nr_queued)
-> > > +		reset_llc_stats(rq_of(cfs_rq));
-> >=20
-> > Instead of relying on reset_llc_stats() hack, I think a better approach
-> > would be to have a "p->se.llc_sched_active" flag similar to how uclamp
-> > has "uc_se->active" and we set this in account_llc_enqueue() which will
-> > still check for sched_cache_enabled() but account_llc_dequeue() would
-> > only check for "p->se.llc_sched_active" to decrement the stats and then
-> > unset the flag.
-> >=20
-> > That way, we cannot have an imbalanced accounting. Thoughts?
-> >=20
->=20
-> I suppose what you mean is to avoid the race condition between
-> enabling sched_cache and EQ/DE_LLC, similar to uclamp:
->=20
->          enqueue(taskA)
->          // sched_cache gets enabled
->          enqueue(taskB)
->          dequeue(taskA)
->          // Must not decrement rq->llc_pref for taskA
+On 28/10/2025 16:43, Bartosz Golaszewski wrote:
+> On Tue, Oct 28, 2025 at 4:33 PM Krzysztof Kozlowski
+> <krzysztof.kozlowski@linaro.org> wrote:
+>>
+>> There are no maintainers of Qualcomm hci_qca Bluetooth driver, so make
+>> it explicit that driver was orphaned and no one cares to keep it
+>> maintained.  That's also indication for future removal from the Linux
+>> kernel.
+>>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>  MAINTAINERS | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 8abdc0e50699..be637b9dc7c0 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -21146,7 +21146,7 @@ F:      drivers/net/wwan/qcom_bam_dmux.c
+>>
+>>  QUALCOMM BLUETOOTH DRIVER
+>>  L:     linux-arm-msm@vger.kernel.org
+>> -S:     Maintained
+>> +S:     Orphan
+>>  F:     drivers/bluetooth/btqca.[ch]
+>>  F:     drivers/bluetooth/btqcomsmd.c
+>>  F:     drivers/bluetooth/hci_qca.c
+>>
+>> --
+>> 2.48.1
+>>
+>>
+> 
+> Actually, I added that entry so that the arm-msm list can get Cc'ed on
 
-For this case, task A is already on rq when sched cache get
-enabled. But task A's preferred_llc is still -1.=20
+Ahaha, nice :)
 
-If we dequeue it while its preferred_llc is still -1, it won't
-affect rq->llc_pref.
+> patches. The fact it didn't use to, caused some regressions. I have
 
-If we change its preferred_llc to llc_i before we dequeue it,
-then rq->llc_pref[llc_i] will be incremented first.
+It also points out that drivers do not have a maintainer.
 
-Then when we dequeue task A, we will decrement it. We are
-still accounting rq->llc_pref[llc_i] correctly with current
-code.
+> done some work on it, so I can take it over as maintainer.
+Sure, I'll send separate patch for that replacing this one. Shall I add
+you to the bindings as well? All or only some?
 
-The trickier case is if we need to dynamically resize
-rq->llc_pref[]. We need to make sure that we lock the rq
-to prevent enqueue/dequeue, switch it to a larger size
-rq->llc_pref[], copy the old data over, then switch over
-to the larger sized rq->llc_pref[] and unlock rq to keep
-the accounting straight.
-
-Tim=20
-
->          dequeue(taskB)
->=20
-> We'll think more about this.
-
-
-
-
->=20
-> thanks,
-> Chenyu
+Best regards,
+Krzysztof
 
