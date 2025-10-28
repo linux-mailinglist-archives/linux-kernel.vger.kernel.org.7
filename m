@@ -1,252 +1,187 @@
-Return-Path: <linux-kernel+bounces-874199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B6BC15C0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:21:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98234C15C14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:21:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2F5189A82A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8E1A3BE86B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A000133EB07;
-	Tue, 28 Oct 2025 16:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87151345CAC;
+	Tue, 28 Oct 2025 16:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Inie8l0R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="qouoAfNW"
+Received: from YT6PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11022086.outbound.protection.outlook.com [40.107.193.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD4E331A4A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668036; cv=none; b=LIV6FQYj8tuzWBts9Oiv4Lg74H9suER8K0oldY4n6hYuCbs5UQywqrV9exxpT5VTx+NuzjhCnn/8rgHprP40uXO8JXeY1bCd1MZm/ItWSSjVVXJJPGs4eCuXRjhHZSIbfRTjF8g/5dwNvx302Cf+76WajD7jd0Ka+Cbnp5tk9AE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668036; c=relaxed/simple;
-	bh=BiRQH6wQneeuEFAtj7/AZRUajcc/8rS/qi1d4KyuDvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LCENGFwyLpuQlgM8WLBpHl6GnNkqUBD3c72fyK8k8XgG4juDY51sqc0+hlLpFyL4OAIfhMeuvD8BDUbW2bmWc3y97C49tiKaAayB9ce0HzUudP8TGxs9EL8t37Gt3+nHmJmJ/ioKhF4EQC2vt4kYFaX8WXB+ELC7RbrEqdFLcyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Inie8l0R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761668034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KvvpFK250LHbofQ0y9+Mb287YMhgXcSSFNTTgJ2zzcM=;
-	b=Inie8l0R9zFnexBGtdO0fRU5uVH6xtlCepoU+rXCgLNJwDgYenPkZb1H0UGoWJa5D7156z
-	KvjZIHgPwyttfmXQa0556W3c/H6QQkyIDy7R3TIl4tUbXe/9OGdvTMkTqwW7Q7JC6LDOBn
-	HiW9vaBNY6Nsu3opgI5t5S4JrAL2lQc=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-315-GnufGNZFMf6WG1nkSPTLyQ-1; Tue, 28 Oct 2025 12:13:52 -0400
-X-MC-Unique: GnufGNZFMf6WG1nkSPTLyQ-1
-X-Mimecast-MFC-AGG-ID: GnufGNZFMf6WG1nkSPTLyQ_1761668031
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471001b980eso39412125e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:13:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761668031; x=1762272831;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KvvpFK250LHbofQ0y9+Mb287YMhgXcSSFNTTgJ2zzcM=;
-        b=GA9Ou/FTfCYSKV1ESzrI9CI2K6mZtcRQZCKMDYzlBpzjUyHYs5l1bSbAQTfvVwgeq+
-         O/hGlnug5R88B1RMH+4OWwQ7A8ofInqP+fSF0rW0Nk2oANBuRO0+ry2jCJ+Bpo8Bnmqe
-         xpvzRQBWtGwoISE7vH9STKc8af5tLnCaI0hVdbjuOX6Uh+PtXTOV/+VG5DQmLHVt0MRp
-         2rPUEKfXdYpPO9AxPmO7Dyvkv1lK9wtCQoJ8PqpuskJH7E1FThbeQCE451Ap9YCwnxIT
-         +AqcsgTBpeoAFHTLWh7bV3z61APe9PTzQJYR+A31bxUJt8X2PFPNkZ+dMyB0m4nmYavs
-         4hKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+zQNe93n7Rl9oWMDM751NhnlCZZdjBvipyihLSlWtXADP0bCvybs3QKGESeQIwSdq0RZPdUy5oYMSHWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvOITHjEfSbtXDtuj+tXf++vlUiFSOmNKFb0GKnYI8Sv6Jnw6v
-	in4hoE0gzIUCv4mNWP1PcgXujMp3PyMy6zNjxd3Ws3FDavqiaaGzD7eGaWM9naYzPu5A/nOOLR9
-	yNz1Ol4AnIEsiNpVpx9/bH3j+Hy4UZuSZaogRRRm2aoPFGsMM7qo8u/JPFfCYLwjfLw==
-X-Gm-Gg: ASbGnctEO2MWOV9pPcj6/qiZXYMAgqwvLcetMB7Be8SAptoP5ZvH9VFZe3i5dqIVBcK
-	VNxphAgp8YHzRaOMuVT+DMbt2Ll+a+oIHG8h+R9907JJgrJAbxrWJ495LwZHYB/Cndx834ZD6ZD
-	QiQPUmXMd6nd74yAPOjjfG7ao+3lngBeWHxtT7Tfy56R6/QLN4cPZSVdlnhDcqDjASbm4XF3zOY
-	ZpDwSuaAq+2s81LBxvXdHkCsvmowe6JmME05ej/txqAK/9uGllm9D6RBItPzw0UEj0wgzvZgv2R
-	mejG7A8c+cm0ZvFFgHoOMAp60biGBbISyEuNiziCV6RGt2M8L7OlmavDIKSAe2BT7WOWx731Zrn
-	j83Z0SL+ol7f6qop/47luvJtFVLWW6Nzw
-X-Received: by 2002:a05:600c:3b27:b0:475:da13:2575 with SMTP id 5b1f17b1804b1-4771e1ab8a0mr264345e9.35.1761668031176;
-        Tue, 28 Oct 2025 09:13:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHYLMRn+FNd6v1pe6gevrEN6O2ueeH/AKghCdZ+vk7Py4/AlR9hq5U2B0FyPXLgVOsHfXK9hw==
-X-Received: by 2002:a05:600c:3b27:b0:475:da13:2575 with SMTP id 5b1f17b1804b1-4771e1ab8a0mr264115e9.35.1761668030728;
-        Tue, 28 Oct 2025 09:13:50 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db80fsm20703850f8f.31.2025.10.28.09.13.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 09:13:50 -0700 (PDT)
-Message-ID: <c1c9aedf-fb1b-47c8-8204-dbc28e9da4f3@redhat.com>
-Date: Tue, 28 Oct 2025 17:13:49 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E8233A024
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.86
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761668053; cv=fail; b=pe71JJZw4p99JPxKWPMP/Bs9Q1WZFJpDAsjDDTydPBM8MRkOL0nzI2Mb1OL7kU+ahrDdHQfdhnwmYC/oUTBlR+TpW9ynoNSLSWLtrSyqSiw1O7o7GRIjqSiOGqxbtI0jKI9UT4mGt58J/CYH88Nz06IC2AAPYkCKfZ3OryUwGhM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761668053; c=relaxed/simple;
+	bh=47b3v2tqWJ2LEiwoLMVq3eErD8s3Jx/gAYKrr5pnI0g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d0t5jveRENwuKEbMIJ/LmUdsBn6hVZhaO4rI9eUF4Tpz6BJi6XRYSd88oIjCiz+3kqgPfMe87hzQ+VLs9Yi91vKjh2AAcxMIfig+nBFNTCGlGKAWH+ftiDGBwivugyh3A8YWm2+5ky2qyU4X615mImN+tbfDri1LfHO8WfyMos8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=qouoAfNW; arc=fail smtp.client-ip=40.107.193.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MUMcA3W8usG1PFRQvsB0HNJSW/rlfEsgn6hPknFn/44d18/JK8YkkO55zbENaWTdwZ/7uyRGtotbC+hsJg0dykuhIzLDxpkzZYcBCor2YOaRZ7jCX8Ew0HTJY3uu3mUevKUQRaZ9cl2GlvFkNFcygXti67wgw+mX3kU5ufw5xUyhL3S3IMv0M+0t2QLMowx3fIAsnOIoADCNsbG53/0XNzix/SYflRUzwa0caTpT4TXbb31WgLel9uJXQdsqeEc/eff3TNu9uizlq/QsPc/boSjoYye7VOASA+p/W706efTisgRY78vcMGGYCeqDfBNFIXp2gn0c6hZT27WSLG6Bww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yxOeVLFtqedJI9ndHyyAZA/XqMwRg6VRPs++u2BLYKE=;
+ b=FJJSyeI0WYPCDbJrnzhi30HDF8V5Jr+fIrlfyMiw9WgoRtMd/n8pbSWYMwV7kqakFuZmL3fgcLl7hxuMce90dUJvXwPT37G12xhWIRRrili0VmAdUPpM7RZMajD0lFJPVvdqcdOUiGp/RH4wvjaze7Kc3/5OfdF3crCgL8bHb6nSUayvOeaKbujJBAF1Xmia3DhV9798w3mwOh1VHxLrH3h7scyyFXJmtRt2RDxwrqJd0YAbRJE3QI6vbuFU57H/bW9xTKASIPCAvkdMlqKLKvgi9PqkeXWjDdW4LCFdStoaHM/HA9NROpUe1kWXSlpdwEBS2KpXIOW8d/m1rN6UCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yxOeVLFtqedJI9ndHyyAZA/XqMwRg6VRPs++u2BLYKE=;
+ b=qouoAfNWyo/Pg82NnbRnlo5L6YuqbiXhKv3UhmWL/55/erYrAqsV7UPrlgnQb7KTmk5GeQqjjNCvHMV8ZA+CnckzpvpVHXjD7P28UF/AjiSHAsOcW4vqgF/z+16KCGwj2r9n4Xc9UIBSciP60f8M5VEIUDgm3yTxlov3gHYNsNnMjd8lMb6rNPB9778tZV+sPvsRDoeSf/46QwNOftc/CioGZGHdpypy+gyVkVl9L+ZYedE8bBtrl+2ydgwJOFUi1Dsiva0vYWpIVsM8njHBY57wBLt3K4c5fCUpcuNHFOQMGNdxh/awzRh8lLQEniapEP2LrJ8LwX7ol3e0eaEHnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT3PR01MB8356.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:9d::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 16:14:08 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 16:14:08 +0000
+Message-ID: <e0ce68df-1ca3-416a-839c-8f4d8981707c@efficios.com>
+Date: Tue, 28 Oct 2025 12:14:06 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V6 28/31] rseq: Switch to fast path processing on exit to
+ user
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, x86@kernel.org, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
+References: <20251027084220.785525188@linutronix.de>
+ <20251027084307.701201365@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251027084307.701201365@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR01CA0013.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01::21)
+ To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: hugetlb: fix HVO crash on s390
-To: Joao Martins <joao.m.martins@oracle.com>,
- Luiz Capitulino <luizcap@redhat.com>
-Cc: osalvador@suse.de, akpm@linux-foundation.org, aneesh.kumar@kernel.org,
- hca@linux.ibm.com, borntraeger@linux.ibm.com, mike.kravetz@oracle.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org
-References: <20251028153930.37107-1-luizcap@redhat.com>
- <50d815a1-8384-4eaa-8515-19d6c92425b3@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <50d815a1-8384-4eaa-8515-19d6c92425b3@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT3PR01MB8356:EE_
+X-MS-Office365-Filtering-Correlation-Id: 053c006c-7739-42ac-53e9-08de163d0584
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mnl4TjNXS1JKbFRrMnpURjRlOVYrZ0Y4eDJJMk9IQW91OUJuMmtmK3VmZ05V?=
+ =?utf-8?B?bG43T2R1SEVndjFjTWc5ZjVkeUQ0L0w5Wm90OXVxTGx5Rk5yWG80VTd3dHZy?=
+ =?utf-8?B?V3h4eWdHTXZ2dDY5bVlMT0Fpak1JRUpUZCtJWHhFdGF4RlUxaXRJK2t3UGNX?=
+ =?utf-8?B?NGFGNEM4bnRjaWFPblRFcVFQcUxYTUFkb3J2cXVycVdIVTZoTE01SUxoeHA2?=
+ =?utf-8?B?NFNadUtmZDN2N09LcnpVcEk3UjN5ajB6Y2FsVnV5RE92ZlhKMk9vTUZ1b2x6?=
+ =?utf-8?B?SHNLcy9yK3JjdmNRcDVqT2p4UkxYTDFLVFVXaFo0ZUQvcjBaR2FUTzJoQWNC?=
+ =?utf-8?B?RlBSOFQ1M21ZK0RTek42R2JmczlVZVNyaFd0Y0lrbDNqVHd6eHdIbVFPMVJ4?=
+ =?utf-8?B?VzdXcStlNXVXYW96MEhBN0JMK2tmM20vZHRlb2IzQjEyYWR3eGZtYWhvQ1ZX?=
+ =?utf-8?B?dlpmblR6dGczNUlOQmNkS1AzdUNRdUVzY3R1TG45b0pGOTErOTFkSlFYK0ZI?=
+ =?utf-8?B?aTNRWGNnNFRqVHhDcFpvczgxSStBcm5HZWV0TnhrcG5xWDZyYVUxMDJNd2to?=
+ =?utf-8?B?KzU1U1hSdUhSYkRtZmtFbVArU0ZyMUZadFRiOTZSVzNzVWlIdHFuclZET3M2?=
+ =?utf-8?B?dXE0OVBZa25IYzdOTkgwNmlNUUNKSkg5K3ZQanI2VXh2TlI3ZHNGYndIL2Vi?=
+ =?utf-8?B?RDBwSFJkTjBJdjJlYTZwcFk4bVVWbGZwc1F3d01MKzZHa3ZoaEk2cFpaV0Zq?=
+ =?utf-8?B?MnFWc1BLaFpQUkpqcUZUMlIzRHNRejZEUjROSUd1YklVMXkwU0VSRXhRWllw?=
+ =?utf-8?B?YnNmRFFGSTV4QWhuQXZWVGRESGRrRU8rR3hwcnBaaU4wT29uT0szYnpLYjhW?=
+ =?utf-8?B?SDJZWDFzUS9LRjNUek9QNUoyYWpobEZnYTNGMGlQd08zbGdvSXB1ZlFObXJv?=
+ =?utf-8?B?Skl4UVp2MDhlWnJmanJmcDU3NlJxMTFXallJTC9FUUcyNk5QbWdNeDc2clU3?=
+ =?utf-8?B?MHZOZ3J6VkxqeU1MQUxEOXlDdnBNR0dBZmhwS2NXbkI5cHJJeVRpSk5IRGx2?=
+ =?utf-8?B?MmNzRVJSN0M3NHhIS3g1SWFYYVZFaW1BM2xFSXpFTTJNV2xpUFFua2xTMlht?=
+ =?utf-8?B?YzZpUFVmTTBSWFMwYUYrL1hHQ0JodmxKRHdzQzJTcjhvZk1jLzJVZk00ZTA2?=
+ =?utf-8?B?dTQ0bG1DcExvWFhoUGthcDQ3Mmh2cWdva2pNVmg0TlRFR2VJUzIzK0E3eFRv?=
+ =?utf-8?B?WWM5LzAwOS9BeW9mNnNOOFhSUEZRWG1XMmtYRmtSamJRUExGQXJIeks4VlYz?=
+ =?utf-8?B?N0FpdGxRSlNuL3FUNGRGN1ptTkZUKzMweXpkWTJ1ZW5VT0JEYmlyNFVWaTRk?=
+ =?utf-8?B?VnV1RVJodFgyZjh3elpZT0g3RmZ1U3pUU2dFWXpkeU9PUnBKd1Z4emNibHF5?=
+ =?utf-8?B?RkFJVmUvUFlML0FhcVhlZEdhc1N1U2xmcSsvdkQvK0ttZHNCZjZnd1lYbVZY?=
+ =?utf-8?B?MldFWlVRbTl3dzVleEYxQkFlaWhHZGVQQzUzRGhIZ2VYSGdEbkUyMGhHMkZL?=
+ =?utf-8?B?NDVhdDN1ODZLTTFKWWFIMjJXZWdsRWdWTXFQM2F3L0FWY1JYd1ZkWEc3djN6?=
+ =?utf-8?B?dnVGTHZhdnpJeFZ1QWNDQzFIbTl3TlBnYlVZbTVueDJ6ZmxJemZIejBYK0JM?=
+ =?utf-8?B?TVFNVm9aSjcxNWtJQTFYZVJ4T3hma01ucHJhUE52dzFjbWFhQkxraENCK25F?=
+ =?utf-8?B?UVNsQlA0MDFyTmdxcmtySU9MY1VrS0kwZmNFVWx5clpicE0wMmUwRUQ0K2lG?=
+ =?utf-8?B?QVBabjN3NFBJWnZwcHppSmM4NjlOYld4cUdWQ2VpQXlISENPR1ZzekpTTWFV?=
+ =?utf-8?B?dEdSVm40SmRHVFArakkyS2lpdFVib25SVWtzTmRmQzBDQlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y2lianFFNWkrUVNaMUh4TllpRnZETjBNbDBNcGF1RHZpRXZ3ajV1NzZ2TWFN?=
+ =?utf-8?B?M2t0SkNZcTJrb1R5RTJoMVBVNFo0TUdLdnptWVhNcWJGVTI5dTEyblkyc1Bt?=
+ =?utf-8?B?TS83ekVsbmRzeWJDajZ2ajZ3Q2prcXJCcDl1azYvOURFTkt6OXdJTmk1OXJF?=
+ =?utf-8?B?MDhlNzdYVEpiL2lRRkxoVVBPVXhEWmQxSTRKWU5kK0Q1NG4xTDhKM2ZVcGpz?=
+ =?utf-8?B?Zktha3N2VVBiZmZNNkUxRmRZU1NrV3FMeUhuZ1JuUnlnTDg2R1EySUdHVEFQ?=
+ =?utf-8?B?M29TN3Vudm4zOVVQY2pRUDB6NFArRTVpM0s0MzVXaHl1VW9FZWtwR09jQW9P?=
+ =?utf-8?B?dU5uTlh4K1U0RlJOSHlFTE4vUVZzcENLNFA3MTVCR0ZSdnZYYXlEZjNtMTBn?=
+ =?utf-8?B?UFVURFg0VXZuUUdNajJxalUrSW9MSVk2bHVwT0NVYlhUSmVIU1Z2TGt5Z2Zv?=
+ =?utf-8?B?dVV3QzBSSU51Q1lqeXNrSEdiOGx1cTU1NzNpNzVJMHRXMlpvNkt5U2RNYldO?=
+ =?utf-8?B?M0JLVGJlczJ3SmxPZ282T2htc3ZJdU4zUHBHZTI1dWlyWGtCaUJxVCtmTm84?=
+ =?utf-8?B?VFhab1E2eGVScU1BdWZZVFVIaUhCbzhQMzd5cHQ2RXlibURzMkwzN2Ftdk9k?=
+ =?utf-8?B?UUt5Zkl5MDlQM1ZIcXFQbEhkSlE0c0dIOTg5Y2hPMXJub2hGVWZLTmpJeW41?=
+ =?utf-8?B?NVlJanVCb0ZlMEovRTByc3MwRFQvcE9mTlJuMmJaZ1RXdlo4Q0JycWp5YXh0?=
+ =?utf-8?B?RnpMMFhNZlZhMDlNMHlCQ0dqUCtvQ2dPSDltN2VhckIvaWdPTThtTDFZTmhh?=
+ =?utf-8?B?d0RCV0lkbCtuZS9zbE5GYU10SmtLWWNWeG9yamJXRDVZelRFaHFsY2hwNzQ5?=
+ =?utf-8?B?bUpLajQycmJDanhBYnE0VHJNNTZ4WUV4YysyTTJyeGxTR25oRE1kOStNYkZI?=
+ =?utf-8?B?ZlZJamwvdU9FQysvZ3E2U09FaVROWVpBZUwxbXdmaDNuVVQzYmNEakduZmxo?=
+ =?utf-8?B?bnREM0tRcVFDRng1ci9Gb3dsWWNtc3Z3cUpWc25rcE5MOUVpQ2QvZ3QyMDE0?=
+ =?utf-8?B?cVg5ei9aeTh6TW5GVmdIYnQyM0ZzQ0NDTG9SRGlQN1loMml1NmdMVHQ0ZTlQ?=
+ =?utf-8?B?d2d4R2Y3TTZrZ3c0b3hYL1RmcDYzcDM4dFRvWVYraG8xNmErN3VsR3IyR2xw?=
+ =?utf-8?B?Y3lNUVl4SFFOV25CTFhiZHNCOERjN2ZMc3dnb1pueE0xRENOT2ErdjZKNlo1?=
+ =?utf-8?B?Q243eEt4dUtTMzg1bk5pWE1uam5FVm81SFRFNlhBUGZVTzI0MEdpK0pRNlRr?=
+ =?utf-8?B?aSsySUxQWnJHa0w5akdZcmtmejJSZmdUdXV6UDFtamZMd1g4YkIyZy9pVlRw?=
+ =?utf-8?B?cDc4dVlQMjdBaUw1Q1Fab21NQktjTmMzQXNDakszck5EUXhnZ3JPZHVmUDV0?=
+ =?utf-8?B?dU5oM2pudTd0WUN6TklnMTFqU0IxUkhtbXdtQ25jeFdVMXI4NnRPeWxLRGxp?=
+ =?utf-8?B?V1RTdi9DK3MrSkNna0hpbkRsVHJ2bXVkbVBlWFdVYTVoVVR5UUY3V0RzcXRZ?=
+ =?utf-8?B?UVBZYWkvVFlhU3h1bTR1N2ZEbHF2N2M3Zm8rYUtMSmY2ck5Zbksvc2IvSEpJ?=
+ =?utf-8?B?TmRmNzZubnBaYjMrYnRFQmpqNnFGaU1mUnVtTDlvQ3hYbUZKMTRuNlhYdnBj?=
+ =?utf-8?B?ZzZiMXc2M09rZ1M2QWpTdXFFOEU1emhkSE85d1ZRY0J4NEJtaVVYdythUVpr?=
+ =?utf-8?B?bEIrNUJxbGhPRy93M25YZ0twUFVEMnZ4aGZjaUVlWENXeWZkMW1icm9RdTVa?=
+ =?utf-8?B?S2NqK2lOMkdTUFJDMnI2U0RQVWp6eTg1a2J3bnArRHQyNUgwdXhDSkxvNnFW?=
+ =?utf-8?B?MXZERlVoOUlrUzBxZTJwbUQrSFU4aEFCSmt5TjFuMzR0S1QzVVRhLzNZU2dF?=
+ =?utf-8?B?UjVxZks5emxha3lTZHQ5Yk1PREhVUFdQc3d4aEM0d0l1ZU9uR2d5MGVsRUZL?=
+ =?utf-8?B?TUxGTHI3RnN4WXZRaE8yWXFGT3dPV1R3NHpZamhtUUpKOWEyU25KSjYzOFBL?=
+ =?utf-8?B?cUFJWFEzbnNHMjZBUElFQTJXbTMydE9QZHRJWUxod25JNC9iRHd5MzNOMXAw?=
+ =?utf-8?B?bWFuOVQrSDgwQ0d3eVVqeXI3cDRVeG9FU2tsNTlCL3hIZlNHWVJ0VEd5TDMr?=
+ =?utf-8?Q?IKf6ShuPJF4vEeUDh2bH35A=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 053c006c-7739-42ac-53e9-08de163d0584
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 16:14:08.0894
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IESJqEeyjTLXK2xkPcDOo9Un0mHIwYS2Xq0akuGzxw8O35jePEpb9B5p8jg0E5iJPWd3RlZwTHsidnuc3yMz7I2DB1+mzpB4cptImXxnB/U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB8356
 
-On 28.10.25 17:05, Joao Martins wrote:
-> On 28/10/2025 15:39, Luiz Capitulino wrote:
->> A reproducible crash occurs when enabling HVO on s390. The crash and the
->> proposed fix were worked on an s390 KVM guest running on an older
->> hypervisor, as I don't have access to an LPAR. However, the same
->> issue should occur on bare-metal.
->>
->> Reproducer (it may take a few runs to trigger):
->>
->>   # sysctl vm.hugetlb_optimize_vmemmap=1
->>   # echo 1 > /proc/sys/vm/nr_hugepages
->>   # echo 0 > /proc/sys/vm/nr_hugepages
->>
->> Crash log:
->>
->> [   52.340369] list_del corruption. prev->next should be 000000d382110008, but was 000000d7116d3880. (prev=000000d7116d3910)
->> [   52.340420] ------------[ cut here ]------------
->> [   52.340424] kernel BUG at lib/list_debug.c:62!
->> [   52.340566] monitor event: 0040 ilc:2 [#1]SMP
->> [   52.340573] Modules linked in: ctcm fsm qeth ccwgroup zfcp scsi_transport_fc qdio dasd_fba_mod dasd_eckd_mod dasd_mod xfs ghash_s390 prng des_s390 libdes sha3_512_s390 sha3_256_s390 virtio_net virtio_blk net_failover sha_common failover dm_mirror dm_region_hash dm_log dm_mod paes_s390 crypto_engine pkey_cca pkey_ep11 zcrypt pkey_pckmo pkey aes_s390
->> [   52.340606] CPU: 1 UID: 0 PID: 1672 Comm: root-rep2 Kdump: loaded Not tainted 6.18.0-rc3 #1 NONE
->> [   52.340610] Hardware name: IBM 3931 LA1 400 (KVM/Linux)
->> [   52.340611] Krnl PSW : 0704c00180000000 0000015710cda7fe (__list_del_entry_valid_or_report+0xfe/0x128)
->> [   52.340619]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
->> [   52.340622] Krnl GPRS: c0000000ffffefff 0000000100000027 000000000000006d 0000000000000000
->> [   52.340623]            000000d7116d35d8 000000d7116d35d0 0000000000000002 000000d7116d39b0
->> [   52.340625]            000000d7116d3880 000000d7116d3910 000000d7116d3910 000000d382110008
->> [   52.340626]            000003ffac1ccd08 000000d7116d39b0 0000015710cda7fa 000000d7116d37d0
->> [   52.340632] Krnl Code: 0000015710cda7ee: c020003e496f	larl	%r2,00000157114a3acc
->>             0000015710cda7f4: c0e5ffd5280e	brasl	%r14,000001571077f810
->>            #0000015710cda7fa: af000000		mc	0,0
->>            >0000015710cda7fe: b9040029		lgr	%r2,%r9
->>             0000015710cda802: c0e5ffe5e193	brasl	%r14,0000015710996b28
->>             0000015710cda808: e34090080004	lg	%r4,8(%r9)
->>             0000015710cda80e: b9040059		lgr	%r5,%r9
->>             0000015710cda812: b9040038		lgr	%r3,%r8
->> [   52.340643] Call Trace:
->> [   52.340645]  [<0000015710cda7fe>] __list_del_entry_valid_or_report+0xfe/0x128
->> [   52.340649] ([<0000015710cda7fa>] __list_del_entry_valid_or_report+0xfa/0x128)
->> [   52.340652]  [<0000015710a30b2e>] hugetlb_vmemmap_restore_folios+0x96/0x138
->> [   52.340655]  [<0000015710a268ac>] update_and_free_pages_bulk+0x64/0x150
->> [   52.340659]  [<0000015710a26f8a>] set_max_huge_pages+0x4ca/0x6f0
->> [   52.340662]  [<0000015710a273ba>] hugetlb_sysctl_handler_common+0xea/0x120
->> [   52.340665]  [<0000015710a27484>] hugetlb_sysctl_handler+0x44/0x50
->> [   52.340667]  [<0000015710b53ffa>] proc_sys_call_handler+0x17a/0x280
->> [   52.340672]  [<0000015710a90968>] vfs_write+0x2c8/0x3a0
->> [   52.340676]  [<0000015710a90bd2>] ksys_write+0x72/0x100
->> [   52.340679]  [<00000157111483a8>] __do_syscall+0x150/0x318
->> [   52.340682]  [<0000015711153a5e>] system_call+0x6e/0x90
->> [   52.340684] Last Breaking-Event-Address:
->> [   52.340684]  [<000001571077f85c>] _printk+0x4c/0x58
->> [   52.340690] Kernel panic - not syncing: Fatal exception: panic_on_oops
->>
->> This issue was introduced by commit f13b83fdd996 ("hugetlb: batch TLB
->> flushes when freeing vmemmap"). Before that change, the HVO
->> implementation called flush_tlb_kernel_range() each time a vmemmap
->> PMD split and remapping was performed. The mentioned commit changed this
->> to issue a few flush_tlb_all() calls after performing all remappings.
->>
->> However, on s390, flush_tlb_kernel_range() expands to
->> __tlb_flush_kernel() while flush_tlb_all() is not implemented. As a
->> result, we went from flushing the TLB for every remapping to no flushing
->> at all.
->>
->> This commit fixes this by introducing vmemmap_flush_tlb_all(), which
->> expands to __tlb_flush_kernel() on s390 and to flush_tlb_all() on other
->> archs.
->>
->> Fixes: f13b83fdd996 ("hugetlb: batch TLB flushes when freeing vmemmap")>
-> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
->> ---
->>   mm/hugetlb_vmemmap.c | 17 +++++++++++++----
->>   1 file changed, 13 insertions(+), 4 deletions(-)
->>
->> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
->> index ba0fb1b6a5a8..5819a3088850 100644
->> --- a/mm/hugetlb_vmemmap.c
->> +++ b/mm/hugetlb_vmemmap.c
->> @@ -48,6 +48,15 @@ struct vmemmap_remap_walk {
->>   	unsigned long		flags;
->>   };
->>   
->> +static inline void vmemmap_flush_tlb_all(void)
->> +{
->> +#ifdef CONFIG_S390
->> +	__tlb_flush_kernel();
->> +#else
->> +	flush_tlb_all();
->> +#endif
->> +}
->> +
-> 
-> Wouldn't a better fix be to implement flush_tlb_all() in
-> s390/include/asm/tlbflush.h since that aliases to __tlb_flush_kernel()?
+On 2025-10-27 04:45, Thomas Gleixner wrote:
+> This results in the following improvements:
 
-Agreed, that feels cleaner and avoids this ifdef here.
+Awesome! :-)
+
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
 -- 
-Cheers
-
-David / dhildenb
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
