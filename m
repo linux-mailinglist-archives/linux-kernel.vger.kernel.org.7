@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-873724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FD5C148AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA8BC148AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B750048263A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10110482ACC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F852D5957;
-	Tue, 28 Oct 2025 12:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0199329C57;
+	Tue, 28 Oct 2025 12:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qKQXrRO6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gocl/jMn"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="a6gopqrF"
+Received: from omta40.uswest2.a.cloudfilter.net (omta40.uswest2.a.cloudfilter.net [35.89.44.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164FA328616;
-	Tue, 28 Oct 2025 12:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A55C2EA473
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761653217; cv=none; b=RgLhDfI7Q0s+65o5tNLi2hzOnN+xoIMVjnJolgXGqa2SnOaF7yNDAHKsRKBv0CwzyBJZTtxaXz6AUMRrDLDdLfP4iaKTc5mtx5/cqrzbSgqHSM4X4I+0LJt3I9p/Z8GyWoZNRKn6f0Z7qv3r64ldSydSWNHQ4fVoijv8cjPO670=
+	t=1761653252; cv=none; b=leLhd4Ls2Xs12Wjya0hnWccADVu0M77N/2HfXc4yT1D4saUMjyBS8GFgNJf/pCx0emc/ZeIQMJ1IwvjsZp2ShLFpGb9MsnaGHdVkU5RWiZbdDa2OXZ7atJSljfhZ81JsMti4+TOLJZKxhHkDhckJK7YIpFYmohaJ3+CsBc2ipPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761653217; c=relaxed/simple;
-	bh=ei+CA+ZBh3hHsRnekGA32bPDegEeVgJXMO6rrJReISs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pC95RjOqBd64nzlT5czh9AyjHwqEaAu2u6KXIC6dfgUyWihD5MvL9LZRTYMana08RentDQCVmx+uSBB0Va/xUQk6mV2QoEB2GrhlLY3sgln3fMyDevOHze33KVbGHqabcxTnO+eRmlFpzaxnbemdbkzSgboPf477JwIe3/yPBak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qKQXrRO6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gocl/jMn; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 13:06:52 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761653214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=crnGWfJ7+UbK0li8dGHZvc/h9PGKn2eAY0mmwg0N528=;
-	b=qKQXrRO6OVuHEcDSuInE5tNxabxKnup1VtOzPffIvExXjuF4xJEmj38AHd0xhxDPKZp7kE
-	MtM4/DZfqTPTSvLn6unZ520+2ok48bF8Ek0tfUKLejEKelVGlrIiXA3SMxx0AVIMpASl46
-	x4nffQQ8rOedTcEBYrHQ3OXaW6CewuEHIw41zuIVFVJ5Sm9YqVfWWjo0qenTh7JF4zTcex
-	NO+hEkwFLKbcVirJ/M/yvm0plZxdM3aTOSx5FcOh3nAeHQXpxuIqstMTSDl+zfKJN2szwv
-	LvMykX7eBEdO+HCKpeRp98X8YHANIxFgq51nxx7QrZPlRDSF+8BJP+g3lCa3Pw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761653214;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=crnGWfJ7+UbK0li8dGHZvc/h9PGKn2eAY0mmwg0N528=;
-	b=gocl/jMnijFGp8u7+eYJkexAu4wF08rf5SfQNrcx5prs3WeJ9NFbyzWKcoQZjQi1SFSen7
-	hpKTIBmKXAqe5MDw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Crystal Wood <crwood@redhat.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
-	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver OHalloran <oohall@gmail.com>
-Subject: Re: [PATCH v2] genirq/manage: Reduce priority of forced secondary
- interrupt handler
-Message-ID: <20251028120652.AJUTgtwZ@linutronix.de>
-References: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
+	s=arc-20240116; t=1761653252; c=relaxed/simple;
+	bh=Fcfh6kaZo7yeS/1uDHoLfMDPZOkkiTRUJGyoBH2vHQM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jSZNEe5J2FNl7sxJ1WNtSve1qg3tV3bxxcAyFzTZNawpxkLLiYacieQPtNn1M9oKbF+qaZDZRep8tCDDiDLJbC+zprKBE5GCQ2YD1wHnfkcEe7t9nhNJ2ZHVC3zdwVVEcZTLCj0eWEXsTYSpjJdCQ9i8yVhCt1JQzGxpg7YZEmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=a6gopqrF; arc=none smtp.client-ip=35.89.44.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5002b.ext.cloudfilter.net ([10.0.29.226])
+	by cmsmtp with ESMTPS
+	id DVG0vxMu8aPqLDiU5vvQrL; Tue, 28 Oct 2025 12:07:30 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id DiTwvHxHmniktDiTwvwv67; Tue, 28 Oct 2025 12:07:21 +0000
+X-Authority-Analysis: v=2.4 cv=FOIbx/os c=1 sm=1 tr=0 ts=6900b201
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=mI5VrmPg0CdlQwlRe4cA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=n6O6DBKd53+BXK2/d2bLFquIW/SCEivimwCxbLzKvNo=; b=a6gopqrFfstda5UFx408ef7Jsm
+	4NNyF5rN1w69kPpF6+4gpRidDqgQuLh1HdgwVUg8r563rk3f3eYgRjhNNzT78mOglB1GfFMz0WZa5
+	5tT9VvH+aWG6an/+UwRzJtupomMNII5k049Bb8b5bUB0CAm3jmFsiclR+Lx/w9RPgQbOjYfgS4GKt
+	d6GejDA2D3GSe/hjuS6qsGHXuaWxMbR9+q4w2QkxERnZQOq8LK22LaVi10p6Y+slXvYCXfUzuAdwC
+	y3oHNXYBnJmTKcOHD+4yDWMMUgC4n8IH4vdUurdNft8S1HFMUjffXMrS+ZqS2A9K9P2cLXd3X8uUD
+	unJXU++g==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:43268 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1vDiTw-00000002IRs-0eSs;
+	Tue, 28 Oct 2025 06:07:20 -0600
+Message-ID: <096e6b1e-71b8-4738-8f91-1bc508273f18@w6rz.net>
+Date: Tue, 28 Oct 2025 05:07:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/117] 5.15.196-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com
+References: <20251028092823.507383588@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251028092823.507383588@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1vDiTw-00000002IRs-0eSs
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:43268
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfEdCwUbhwUJHoq7HIv7gAUB52b27UVIg2OHjS0UPf3ZH2tZ2Py2faAciNvqaNgNCvgqggVgB6xEPVUDlaLtmGG46VzpsuUklkc/B2R2Bj/gLRjeNgOKA
+ 4EbN7C9D+/sOJ9CyXAjjm5ev3L8Rwsf/FunHe99ebjfNKI+7eCNwPNHp5ky3cwl83VdDhvT1rSCCB10ZOfM/tGTQ/nKSmd7Lqf8=
 
-On 2025-10-27 13:59:31 [+0100], Lukas Wunner wrote:
-> Crystal reports that the PCIe Advanced Error Reporting driver gets stuck
-> in an infinite loop on PREEMPT_RT:
-> 
-> Both the primary interrupt handler aer_irq() as well as the secondary
-> handler aer_isr() are forced into threads with identical priority.
-> Crystal writes that on the ARM system in question, the primary handler
-> has to clear an error in the Root Error Status register...
-> 
->    "before the next error happens, or else the hardware will set the
->     Multiple ERR_COR Received bit.  If that bit is set, then aer_isr()
->     can't rely on the Error Source Identification register, so it scans
->     through all devices looking for errors -- and for some reason, on
->     this system, accessing the AER registers (or any Config Space above
->     0x400, even though there are capabilities located there) generates
->     an Unsupported Request Error (but returns valid data).  Since this
->     happens more than once, without aer_irq() preempting, it causes
->     another multi error and we get stuck in a loop."
-> 
-> The issue does not show on non-PREEMPT_RT because the primary handler
-> runs in hardirq context and thus can preempt the threaded secondary
-> handler, clear the Root Error Status register and prevent the secondary
-> handler from getting stuck.
+On 10/28/25 02:29, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.196 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Not sure if I mentioned it before but this is due to forced threaded
-IRQs which can also be enabled on non-PREEMPT_RT systems via `threadirqs`.
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-> Emulate the same behavior on PREEMPT_RT by assigning a lower default
-> priority to the secondary handler if the primary handler is forced into
-> a thread.
-> 
-> Reported-by: Crystal Wood <crwood@redhat.com>
-> Tested-by: Crystal Wood <crwood@redhat.com>
-> Closes: https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
-> Signed-off-by: Lukas Wunner <lukas@wunner.de>
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -856,6 +856,19 @@ void sched_set_fifo_low(struct task_struct *p)
->  }
->  EXPORT_SYMBOL_GPL(sched_set_fifo_low);
->  
-> +/*
-> + * For when the primary interrupt handler is forced into a thread, in addition
-> + * to the (always threaded) secondary handler.  The secondary handler gets a
-> + * slightly lower priority so that the primary handler can preempt it, thereby
-> + * emulating the behavior of a non-PREEMPT_RT system where the primary handler
-> + * runs in hardirq context.
+Tested-by: Ron Economos <re@w6rz.net>
 
-s/non-PREEMPT_RT/non-forced threaded/ ?
-
-Other than that,
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-
-Sebastian
 
