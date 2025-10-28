@@ -1,52 +1,49 @@
-Return-Path: <linux-kernel+bounces-873008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA54C12D3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:01:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C2BC12D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 61B3D4F2CEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA5F1A25B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD0227E1C5;
-	Tue, 28 Oct 2025 04:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36310286D57;
+	Tue, 28 Oct 2025 04:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FNXgeylu"
-Received: from outbound.ms.icloud.com (p-west3-cluster4-host8-snip4-5.eps.apple.com [57.103.74.146])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FtpWpfHH"
+Received: from outbound.ms.icloud.com (p-west3-cluster6-host8-snip4-10.eps.apple.com [57.103.75.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CBB38DD8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.74.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5017827877D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.75.63
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761624052; cv=none; b=Ec1h67CWXajKzGx0Bzqcv07+Hw0wPFaP+9syIiqCsTpyHEaOKTyo+FkIHNPul7uIE12f5qKwTzsZarW8QWFFvALabY9Og5+kmHIWuo8wpQc9O1LhPavfwRuzeM0SJPrxL34wMkGc04aFpdBM+Fn9+CQtAVLbnJf2a+xntHU7vAE=
+	t=1761624115; cv=none; b=pFpiQyLdxLgqJS7VTaHqC/7uA8aHiSAHqMASCAmKw1RSVRNmVmXxOjlk7zNYa4Y3aoTBmHT8cCX9oQ/ZZF9Di4FiFEeMeKPsiiYjRxo3PpvPwBsM8OXOcNZULgJjatUpyE/GhCsMGRs6q1R2umpdCnrX/aX0QlO1BO/BtJKChzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761624052; c=relaxed/simple;
-	bh=QgTCoX8qo/SLFHQ2dG8+BUWQyjIhaj/HhIl7y6MNAAk=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=aZXQUSNqhgPmezVaCUtUOYCXnMiVvJglwhUKHW+tjXmRHhMIShGB1mVTgXiI92iturGGjMudhUF5uC77eovTBwIgX4FKeiXtvCJ17cFXzfgkaKK+D/C29XgGXiTw3uVHbntSYbk6vhCDllaXbCRO/6xb/MaLl9th5DHvIRVTdpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FNXgeylu; arc=none smtp.client-ip=57.103.74.146
+	s=arc-20240116; t=1761624115; c=relaxed/simple;
+	bh=NmdtqEn/HsKHv1qTNYIolhmtNyLZLW2J0KOaF1TeJZQ=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=YrIzDT/nMZDSHlg1FpSilXjdyjFF3o0VBcD/3nctGckLmIFVIVzakF1oxyJfj4j6NbkGLM6MOMzcdN0MUyD/QQXFkJafCQDzq8C93DC2Wr8eB4Arm4VdkzWULSolSZxPW+0Qi8nX/ahbNND16VTc48qPvujkzYBTxrppFf5uYrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FtpWpfHH; arc=none smtp.client-ip=57.103.75.63
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 Received: from outbound.ms.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-3a-60-percent-7 (Postfix) with ESMTPS id 71D261800135;
-	Tue, 28 Oct 2025 04:00:47 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=XiKJhFcVH3GBeZzyLQX9HZdUzIp8uSwZB2eZvvT/sSk=; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:x-icloud-hme; b=FNXgeylunTt9jK0P2M0it3dMvrLXHyI25HfKp5rICPOjjmM0wufvRH/U5SsgfRjsrFxtvi47VmrofpXrva/nJ+Y6KhFdeztNWghiVkf19YUDhYyA6tbVC6EP0tDL+x9Y1Pg0u85qWBBP8l67yl+GaWbvxgxqxnE5FlajywsR8884OOYc1fCv4bDpwL/2OHxW3yahyAXtMy90PO696C6neByquoxryGPkA2ieXLqp5KWbR63APXSOK1G+RscmEK6jSiABTUh3KjMRdqQjjDzmbI3wgrVNvaIOvJlTm6so2i/z4fSQPHOVl77yxpcVnCs0S/sZeVWa9BW+BarD6Cqmpw==
+	by p00-icloudmta-asmtp-us-west-3a-20-percent-1 (Postfix) with ESMTPS id 57E18180042B;
+	Tue, 28 Oct 2025 04:01:52 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=8ermkc3OwB7sxfPhqxOVTMMuINyEAMCqaJ7n07ZN4mY=; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:x-icloud-hme; b=FtpWpfHH9T3rJAz80+X5uqzS7BMm2s92q/GbHcojJqR9wUG8Z9TpC3WnMCCHPNdO/30PCcBnQGXZYh6KwcemuLdMSsxSnwKqB7S/ys2YmxYxB4N0kgZmeTNRQBqD1mPD2XnqnbumhRv1jncvm4eroEq7EFRSVxsUFK3O9lzg93zn5mC6DrV/an+XhYzWxezRfCxnoxB0a9ln2icYSI4qT/sAG8MTE1usohobSWU2dFVa4Vl87kc7dpSN4gyRnVDBoucAi2g18pJ/m9foY6Xg1af+dUywnCorwpzoJPxsxl3GX0v699AoXBZbszgEKEB4NM1jlxzlY7awT2s2b6+2eg==
 Received: from [192.168.4.116] (unknown [17.57.154.37])
-	by p00-icloudmta-asmtp-us-west-3a-60-percent-7 (Postfix) with ESMTPSA id 35A1D1800122;
-	Tue, 28 Oct 2025 04:00:45 +0000 (UTC)
-Message-ID: <6b7c6221032fe9ca888d9905479d0bd502f583f7.camel@icloud.com>
-Subject: [PATCH 1/3] perf trace: Fix filter expansion length typo
+	by p00-icloudmta-asmtp-us-west-3a-20-percent-1 (Postfix) with ESMTPSA id AA91518000BE;
+	Tue, 28 Oct 2025 04:01:51 +0000 (UTC)
+Message-ID: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
+Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
 From: Zoe Gates <zoe.blair.gates@icloud.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- namhyung@kernel.org
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
- jolsa@kernel.org, 	irogers@google.com, adrian.hunter@intel.com,
- zoe@zeocities.dev, 	yujie.liu@intel.com, sandipan.das@amd.com,
- leo.yan@arm.com, 	linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 27 Oct 2025 23:00:33 -0500
+To: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
+	borntraeger@linux.ibm.com, svens@linux.ibm.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, linux-s390@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 27 Oct 2025 23:01:49 -0500
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.58.1 (by Flathub.org) 
@@ -56,92 +53,59 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-ORIG-GUID: WPGfsYmprXv-07iSOgifEUNSLsakzONp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDAzMyBTYWx0ZWRfXzuFq2uqQ87Ar
- CcfFup3OpQvNTdErZjXh8aav7njV91dyfhIckKXGVkGbiIVebyyaKGBRHZ2x99vlhL8DLj3RLV/
- gAs1mtYwzesRhkw6sg5OV9YL25Fa4jpHmDKo5TD+V5AKurPsF3sTY/21VgGN/ykGzu8Ek5aDDG6
- yXFzH3YlqcQk5xm2YqMYxXESjTSiyhr0mvZLSBTpcxOBEH+NBk19PtpbXEhu9HNoxlHksrvsd3S
- V7ND1ok7VVASoclLkY/gpTONxDIqpnNO2KseT8tUKyHHmWG4F0x3BRRAI/2HNPZzPpHq5kyco=
-X-Proofpoint-GUID: WPGfsYmprXv-07iSOgifEUNSLsakzONp
+X-Proofpoint-ORIG-GUID: 57_eBduBDHM8mNf4alYf1Xrzr6U3GuN0
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDAzMiBTYWx0ZWRfX5dtEQdUSylpj
+ QZo3IfapPWrHrA3SFiuIeMxzJD+ZJtsA5rkI0t6z7IZgOR4job6YO9+ksLRTg2iKaSDNrIhTbo/
+ aQbrGvvsMLKUVz32kf4WsO8glxhtTkV1ChhhK+F4TAKd0GUOxPaoaGCY/xJ6UX7dk8ROv1MUpFq
+ OQ19jM0q2owuAaYoThseDzmnZWmsMr8jp5xpWnHws1yqkVCy5KYhnSv8u627XCbsclZtp5PCinp
+ cYTEqUcZIrTGEp6iKA1q/4RZwoEnxCP+3KcOBpdHHCXBCGoEG2T/GixIaZNDRfNrcXhr3Oa3k=
+X-Proofpoint-GUID: 57_eBduBDHM8mNf4alYf1Xrzr6U3GuN0
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
- phishscore=0 adultscore=0 bulkscore=0 suspectscore=0 clxscore=1015 mlxscore=0
- spamscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.22.0-2506270000 definitions=main-2510280033
-X-JNJ: AAAAAAABrRe3sbH4g6hZZm1ptChxtS25a0jbrbm/bKjXZQXPs0yXNerFrJcNbNRDIDTR24w2AwE5qlL6dAb+y5Q3CE3iUv3bXzYxlso+30YQ94O+hbdQxhzkiQ041uAfc64C6sjd/M1W8JMGPl336rAxJPyiqh8bt58U123OWx9t60Co3+69rfervJPa+kadI70HRtBNIRRkNUCve5mpjskJBvWVuKqiQHR0QOzWRpPfPuebRPfkKwxWK4Gp8GSqr0nlllEXBQ5imPBzqgYevopmXYD0kIM68c8Wh70UgrwW9L4LoUYzVIdY2Lmru6TLwAf4V3DgTncNMazzSTjFjGHvlbEY9HXXBSFrGSzQrWLo61uSrILuGI49fTEMudyZn/bDfv6GHvU80IgKBntrAJXU66363B2nRzVpzLlk8aFNB4g2la4EIZ46bUu6UGcirh/u1nNMIsdWxL92CEeSHx+V/Ooy6s3pkvI5aehFli9pJwzmzS6JKYo5Z7NZ04cnXEQX/8VFMveuE5mrNb4vz49t03PYOX7Vma7yRfObI1XgSz2J28hjLpumySAAz+QkEhH66XA25P+fzymmNAm4mX6XfC9QAE09EKK0PL2g8R/HuecXHiOhQph+aYSvONcT6nreyHvA7ZGfm1WDTILRRUQFSfLMzJjErLFl2/TCqapIXGnYTgmCKqtQRnb9G9W5+bVBmv6YEFACHTmcP4V391FqDCVr8mKBWzaINblgYe98SLXR8SR03BOwVAeZqws5/bXXXxZCAfpsmEObN7koz8lL8OFjYko9iJWHpdxzIzXl+U1LAmaimEn6JF0eEIyTobjmFwHUjuTRFzl5hOiKy4sSPi9z2QSkAhQKpIKhIESsWGs=
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
+ mlxlogscore=999 clxscore=1015 spamscore=0 malwarescore=0 bulkscore=0
+ adultscore=0 suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2510280032
+X-JNJ: AAAAAAAB7TovGJXjaCsIxm1GtFqn7cxdgFTav+RuKK927tWKT0VEDeesyalppjyEMSgVHvo/CiVASfKX5OZhmSsyddf9kRk+rmUL+ZvkJDZsZ8YL7tErvpRnzaGmyRghQY5yaEaoeERi4Bj2h7lhr+pgp8gNDMiGtw6N0+x2Weg9stJYUrl4nW3b77DqcoIxoCUXsmhSB7zKGgSrgMgKKM4ZEFteWEZ2ZvVALwKAGB8f1Kh9+BKVWHSAzmYh5WAMdSIPD9vu43So+6QxoT5w/cEPhtBccMRZ8YdKj8DbhIu2tNzBq9t1xs19cnsI5Al1Mhrqb/RfeYfPYiFU+7046dlg+vvU7n5XlKn/FVDWISmUamx3bTnk9iktWoE/9f5e3qy+lnPYA0yQhcMK0sHkc8B0MEnBqRE/Ic1RVsay29x87Q9kfF9EUrGIqZtGv+GU3ctu8TGT7FxLF66XAUqCabxeCE/86BPvzaLQ8VQC6dPZXVrLgWW5W7UiH0NX/F5SpU/w40jxwVLYW3fRdx31Jxh+jYSh8NX++DSBRNKfMNatH33GGBzNyKNV0NifN3p45gzecOCBacKHaJCu53cvcqIPeuRzWBIa6x0z7imX7Eozk9Fhlp7LfOBB7JdOHlJ+ZUH8KYeYDr7AptvvJ0Jo/S4+Uyh6MK88cH+tJClsSADe6y/uMPbD8DPspkYj0s6Mo59zrsV6sIVzKV364zQGO46GzbgY4NJ5RaiH5x7zMrJ1V+4lc3ffwQbReR8HcTpGJnpAwWUm0N8=
 
-From 08185c5be135eb83194a49e593be9258cec78d77 Mon Sep 17 00:00:00 2001
+From ebec904b22077c3ebd0a18956397a9b0540a2714 Mon Sep 17 00:00:00 2001
 From: Zoe Gates <zoe@zeocities.dev>
-Date: Mon, 27 Oct 2025 22:14:24 -0500
-Subject: [PATCH 1/3] perf trace: Fix filter expansion length typo
+Date: Mon, 27 Oct 2025 22:14:50 -0500
+Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
 
-Keep the filter expansion helper readable by using
-expansion_length everywhere and wrapping the scnprintf call.
+Correct spelling and capitalizaion in the header comment so the
+documentation reads cleanly.
 
 Signed-off-by: Zoe Gates <zoe@zeocities.dev>
 ---
- tools/perf/Documentation/perf-script.txt | 2 +-
- tools/perf/builtin-trace.c               | 7 +++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/watchdog/diag288_wdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt
-b/tools/perf/Documentation/perf-script.txt
-index 28bec7e78bc8..e136ca35d380 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -262,7 +262,7 @@ OPTIONS
- 	is printed. This is the full execution path leading to the
-sample. This is only supported when the
- 	sample was recorded with perf record -b or -j any.
-=20
--	Use brstackinsnlen to print the brstackinsn lenght. For
-example, you
-+	Use brstackinsnlen to print the brstackinsn length. For
-example, you
- 	can=E2=80=99t know the next sequential instruction after an
-unconditional branch unless
- 	you calculate that based on its length.
-=20
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index c607f39b8c8b..ae5fabf91c96 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -4291,7 +4291,10 @@ static int trace__expand_filter(struct trace
-*trace, struct evsel *evsel)
-=20
- 				if (fmt->strtoul(right, right_size,
-&syscall_arg, &val)) {
- 					char *n, expansion[19];
--					int expansion_lenght =3D
-scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
-+					int expansion_length;
-+
-+					expansion_length =3D
-scnprintf(expansion, sizeof(expansion),
-+								   =20
-"%#" PRIx64, val);
- 					int expansion_offset =3D right -
-new_filter;
-=20
- 					pr_debug("%s", expansion);
-@@ -4303,7 +4306,7 @@ static int trace__expand_filter(struct trace
-*trace, struct evsel *evsel)
- 					}
- 					if (new_filter !=3D evsel-
->filter)
- 						free(new_filter);
--					left =3D n + expansion_offset +
-expansion_lenght;
-+					left =3D n + expansion_offset +
-expansion_length;
- 					new_filter =3D n;
- 				} else {
- 					pr_err("\"%.*s\" not found for
-\"%s\" in \"%s\", can't set filter \"%s\"\n",
-
-base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
+diff --git a/drivers/watchdog/diag288_wdt.c
+b/drivers/watchdog/diag288_wdt.c
+index 887d5a6c155b..656b937f7653 100644
+--- a/drivers/watchdog/diag288_wdt.c
++++ b/drivers/watchdog/diag288_wdt.c
+@@ -6,10 +6,10 @@
+  * to CP.
+  *
+  * The command can be altered using the module parameter "cmd". This
+is
+- * not recommended because it's only supported on z/VM but not whith
+LPAR.
++ * not recommended because it's only supported on z/VM but not with
+LPAR.
+  *
+- * On LPAR, the watchdog will always trigger a system restart. the
+module
+- * paramter cmd is meaningless here.
++ * On LPAR, the watchdog will always trigger a system restart. The
+module
++ * parameter cmd is meaningless here.
+  *
+  *
+  * Copyright IBM Corp. 2004, 2013
 --=20
 2.51.1
 
