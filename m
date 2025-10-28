@@ -1,91 +1,122 @@
-Return-Path: <linux-kernel+bounces-873006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4219C12D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:59:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCDF3C12D12
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:55:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E3C460792
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:58:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE9804F1A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B087227A461;
-	Tue, 28 Oct 2025 03:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A442877DA;
+	Tue, 28 Oct 2025 03:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U3b+S8O6"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbRLEqh3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631328726D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8200D286426;
+	Tue, 28 Oct 2025 03:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623893; cv=none; b=hpXCmoly02dv95VekISABqmECFjmbpU2F4LVripQeeHe1UOt07GuptB2lQl9fw22YAJ2rLIdYUuKVCKa1G+HeWaMv7LLhvBEO7X2qj9uE93TzxiWk574KmiFf6Q8lBTW0qzMqoj0Zl4bB9NpBpc7p9P1XTyCI+X8beTdhV5C8Nk=
+	t=1761623724; cv=none; b=gvzHx/SAX+hmpzY8cRrDV+dC/ABTokyUYkwutLcHoG5uK2tGm56UOWz7794lMQ+YuobTlKnA5hliDkcpj+rNcDwk/lLMMl7ekAa2QU/GAFxjd5z+KgP5JIJq3aP0SF2x0d0HcbXO4zKynYYHSag1tb6eYns/LPgN02m8dJ3lrQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623893; c=relaxed/simple;
-	bh=VP4T6rUdU/ddECsl/aZycZiR5lezQ2/cHMQj9C56QzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CLpUbLerLDJ38TgAFLogL7m/i/FrqLbZyeND8wXYArVCpNhSfC5jpQS6qp5/9VZJwKbIji4qYmSyPHMrVx3DBlRMySHzaG6kyyEvTtEY6ob1rOGHCWpu6BWQ/V4cAcG/MQKdREhiCild/w7EIQ/H4t2FeuiG7pvdLUJSu5DY7QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U3b+S8O6; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761623889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IZL1/VUO7eAG2V742XYwsgahCIY/duuttonLMJA+0L8=;
-	b=U3b+S8O6KyRSZCsC9CN8qtEDQE5VagMVloKv9HsoIwk1rLt1+o3rdywLZ/eQnga+u3yGov
-	uX/h3+YwSnx9RKdDpnymXZLp9kXxixifYR5F1MxgdxRiKEptSXUjQdCPyOJVtxmC3v6cne
-	+j1vMNP+a1M7oBWayBqq/aSmiGSISgo=
-Date: Tue, 28 Oct 2025 11:57:19 +0800
+	s=arc-20240116; t=1761623724; c=relaxed/simple;
+	bh=dDXQDxxY8lRWIpUbLl6a0HHlcgShkDugrbP6Xi3mWSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8RFc+rw91GwSB9wcfvWV7TaIz2iV9FCDA/9DdueFVpOdlgTq7YXPsSJAJgtFFAPRhi4WkrbCmNs6hXoGY63euYDPEyJwCrGKtzize675hUXEgtjFeKkP4fvxSiJauJJR2dxqJVtU5mNsnjmWhkxvnxSw6HZUoeXVOGfB0cegSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbRLEqh3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FC02C4CEE7;
+	Tue, 28 Oct 2025 03:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761623723;
+	bh=dDXQDxxY8lRWIpUbLl6a0HHlcgShkDugrbP6Xi3mWSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tbRLEqh3OKPeAdCoe3L8lyhKJXQDmJVCxY/hwVkRr9/1QUDbSShRX9qAMpEcqc1R5
+	 Mjtb0kNXQpAW3r8gNgTR+6SS8rjbZhlXHDfs3crbTDBSnJk+WDDBA+SitPFtNO6Ahb
+	 dcyU55bkAAe5TjNPCY5MfkCWXJvxgKQfXZ7t8jIZWOAsA+NJoDbVc23V2PB7RQh4pw
+	 wjodNbr7hBnP6RKWsENhZ480CQeMeOhZctB0MvfyzwpvpIj06mCijHkl9XYcO2k8J2
+	 sHNMiZ+kAV3Ucg+VnGETZcum9mO7l+I9dYnJ/rwKvcE18zfOJcMQIznwOHI6UbD3zH
+	 wjh+2IUeDRsIQ==
+Date: Mon, 27 Oct 2025 22:58:19 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add
+ Kaanapali and Glymur compatibles
+Message-ID: <xlf7ubya3qq4nehugwbdjkx755m5zhmkbezs2w4hzlanooeomo@3wgf37cypvie>
+References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
+ <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 05/24] smb: move some duplicate definitions to
- common/smb1pdu.h
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
- christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251027071316.3468472-6-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
 
-Would it be harder to maintain if only part of the definitions are moved?
+On Mon, Oct 27, 2025 at 02:22:49PM -0700, Anjelique Melendez wrote:
+> Document the Kaanapali and Glymur compatibles used to describe the PMIC
+> glink on each platform.
+> Kaanapali will have the same battery supply properties as sm8550 platforms
+> so define qcom,sm8550-pmic-glink as fallback for Kaanapali.
+> Glymur will have the same battery supply properties as x1e80100 platforms
+> so define qcom,x1e80100-pmic-glink as fallback for Glymur.
+> 
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml      | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> index 7085bf88afab..c57022109419 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> @@ -37,12 +37,19 @@ properties:
+>            - const: qcom,pmic-glink
+>        - items:
+>            - enum:
+> +              - qcom,kaanapali-pmic-glink
 
-Moving the related definitions together would make maintenance easier, 
-that's just my personal opinion.
+This seems pretty reasonable, kaanapali-pmic-glink being "the same" as
+sm8550-pmic-glink, just moved to a different core - with the changes
+that implies.
 
-On 10/28/25 11:42 AM, Namjae Jeon wrote:
-> On Mon, Oct 27, 2025 at 4:15 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
->>
->> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->>
->> In order to maintain the code more easily, move duplicate definitions to
->> new common header file.
->>
->> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
->> Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
-> ksmbd does not use all smb1 pdus. Instead of moving all smb1 definitions,
-> move the ones ksmbd uses to smb1pdu.h.
-> Thanks.
+>                - qcom,milos-pmic-glink
+>                - qcom,sm8650-pmic-glink
+>                - qcom,sm8750-pmic-glink
+>                - qcom,x1e80100-pmic-glink
 
--- 
-Thanks,
-ChenXiaoSong.
+Why did we say x1e80100-pmic-glink is "the same" as sm8550-pmic-glink?
 
+>            - const: qcom,sm8550-pmic-glink
+>            - const: qcom,pmic-glink
+> +      - items:
+> +          - enum:
+> +              - qcom,glymur-pmic-glink
+> +          - const: qcom,x1e80100-pmic-glink
+
+glymur-pmic-glink indeed has parts in common with x1e80100-pmic-glink,
+so I guess that makes sense.
+
+> +          - const: qcom,sm8550-pmic-glink
+
+I don't think this should be here.
+
+Regards,
+Bjorn
+
+> +          - const: qcom,pmic-glink
+>  
+>    '#address-cells':
+>      const: 1
+> -- 
+> 2.34.1
+> 
 
