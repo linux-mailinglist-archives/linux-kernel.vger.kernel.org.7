@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-873490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF4ECC140D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:19:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C618C140E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 967B2563247
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:17:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26EDA4FA943
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B11304963;
-	Tue, 28 Oct 2025 10:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B593081B0;
+	Tue, 28 Oct 2025 10:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pWDCE+fn"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NJsb70WG"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D322D4813
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1BE307AF2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761646612; cv=none; b=StphUVpMbLUhWukn9qmtWb1eJEk728Dsc+KmXEPppBtauNRge8RL7TSHTQtiKLjr97KcpmT8/DVOIjHw7IyV6am8Q91HTXzFVdbYwK20OFNxR7lwVum70hcsZiaPId70nJfXDBmf51KzbaSpjaOFLImKOcVhXBjNSvZ8orr7Yg4=
+	t=1761646615; cv=none; b=qysNyG11N6IIgd26Gq4aXM6bNWj/cA3rQ5DMhiE6BVxq+UiUxBglu4w6ww9KVMxPJtFEV2hJ6qq5U26mZIQIUA3y1CWA1ql8Xl1A4GkGQ9BVqWwaFkB8TBSqGSwB6ddtN9N6wWuk+3dgwiphuAQn7XqIfs5Ay5W5IO6Q8kngIug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761646612; c=relaxed/simple;
-	bh=HNNcUjBlE2ezDrpCkSt1TAM29s3v4NT9WLUuWNfS/KY=;
+	s=arc-20240116; t=1761646615; c=relaxed/simple;
+	bh=azBQ3OWrgMDeqzBKXjWG/3P66Ru0UGjGqS7Tm81ePBI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S+f+Ih1X0dPdicwolHxhgtY3ultR05V9fC2pPR5IwN9YVIPydSA5CuviW7/Bf/ZcC3SRLALY2s3RHwdMPzFUkCoWMkrBGyGH7cEfJCNGMBSehudxNgAOpNWb/PK8gz02DQDmOfyMCYyuv5Oe2+1Wp13SAQBZ8AUYpxJVpqH10po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pWDCE+fn; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=YcoWReoHNKxzEXNdmMFd4fnM1b/0BQIpiAkMFB1lX8o2vfFuK5n4JpisQIQ5CjBioFG2HXmYeC6yfNSBqm2udhkfJmAHB0gIGyXkLKemmFAKuoucy0y2/DcawuVZWq+xV4XK/jGD6TcTuVDL9YaDh+nVdFWHx6WnSuMoWxvYr4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NJsb70WG; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 64568C0BE9C;
-	Tue, 28 Oct 2025 10:16:27 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 9453A4E41393;
+	Tue, 28 Oct 2025 10:16:50 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id A16BC606AB;
-	Tue, 28 Oct 2025 10:16:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 126151179B191;
-	Tue, 28 Oct 2025 11:16:43 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 61E8F606AB;
+	Tue, 28 Oct 2025 10:16:50 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2A1731179B1A0;
+	Tue, 28 Oct 2025 11:16:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761646606; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761646609; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=vdYNl+jUov2A+6UN1VU5gxICmAEu5JVGl0RzN3EysYI=;
-	b=pWDCE+fnq8i9VUHvOlzUK8F0XX42hsC0TBdhfPAc52Yq0huRzaEVKhDRn849CHnXrxmYl6
-	nyow7QVbg+7gID4HfgcCAZChnRystZb9Jyn9GE3xyOgLzH4kDHKnnMsImZXTOAeSx97US+
-	VE+L3tB48aVLcFz96hOWoreKCYkN05t8k0WG420X8vHVKWSOBHJnwgwc0zWpOZ9cerIcZz
-	IpbdZ5Skw7bSZftXLEoZm3JWMTf+SHoCnk2SBmPyrv8hUAc1Hx5N+pqhi5ceWJqwlYkBmB
-	aGDwdiybj15TolwWmRF/3myX5YPvOtInsnUnCkV9hzCRK3Bd7UEJaCBv3aibJw==
+	bh=+OuXZMnaZ4fecFxPcq14M2NVMZIWpSpSGN4BrirylB4=;
+	b=NJsb70WGj3gzFkkHQ9peasIqc9ipmU2eFTBxN8RViZloU3PbUejLbAfegZxMQrRJ9pbQeA
+	jFEtjUGrbDob/mQD3Pc8W8/iktEPQ+7opkZCyPE6OrxgODiOudGzeZMFVZfWRj4nyDHyDq
+	v/FAH0o7JLITPliZLxdofG/N0asK7GVTO8pP+qxcama1CZNYkw9X7QTb2vAIp9ZLogx2hY
+	M8m9GdiXvnn9W+Fh2UxnDZ5E2x71+rkREBoFLqNJPnHhOxLGGlWNNYJtvAzqn+8iAKd7Xx
+	gqP2Aq49d4l5YmAFKBcsw377SOb1j6jfIuzhTTYy36W1As6negm8txob1Y3F2g==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 28 Oct 2025 11:15:46 +0100
-Subject: [PATCH v3 5/6] drm/bridge: add warning for bridges using neither
- devm_drm_bridge_alloc() nor drm_bridge_add()
+Date: Tue, 28 Oct 2025 11:15:47 +0100
+Subject: [PATCH v3 6/6] drm/bridge: synopsys: dw-dp: add bridge before
+ attaching
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-5-bb8611acbbfb@bootlin.com>
+Message-Id: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-6-bb8611acbbfb@bootlin.com>
 References: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-0-bb8611acbbfb@bootlin.com>
 In-Reply-To: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-0-bb8611acbbfb@bootlin.com>
 To: Alain Volmat <alain.volmat@foss.st.com>, 
@@ -79,54 +79,32 @@ Cc: Hui Pu <Hui.Pu@gehealthcare.com>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-The correct sequence for bridge initialization is:
-
- 1. devm_drm_bridge_alloc()
- 2. drm_bridge_add()
- 3. drm_bridge_attach()
-
-For bridges missing either 1 or 2 there are warnings in place already,
-presenting an explanatory error message.
-
-Bridges missing both 1 and 2 would still face a poorly understandable
-message, as reported in a recent regression report [0]:
-
-  WARNING: [...] at [...]/lib/refcount.c:25 drm_bridge_attach+0x2c/0x1dc
-  ...
-  Call trace:
-  ...
-   drm_bridge_attach
-  ...
-
-Add a new warning to ensure an understandable message is logged in such
-cases. Use the same message and warning message already in place in
-drm_bridge_add().
-
-[0] https://lore.kernel.org/all/hlf4wdopapxnh4rekl5s3kvoi6egaga3lrjfbx6r223ar3txri@3ik53xw5idyh/
+DRM bridges should be always added to the global bridge list before being
+attached.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
 ---
 
-This patch was added in v2 after having received regression report [0].
+This patch was added in v3 after searching for any remaining bridges not
+using drm_bridge_add().
 ---
- drivers/gpu/drm/drm_bridge.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 6dba601a056bb3cff8b8dd5b1ec46299235b2d85..8f355df883d8ac8de9d361ec302f4ccbf3bca0d6 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -441,6 +441,9 @@ int drm_bridge_attach(struct drm_encoder *encoder, struct drm_bridge *bridge,
- 	if (!encoder || !bridge)
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+index 9bbfe8da3de0264acbf8725d54f2f9627662e595..82aaf74e1bc070603bdda0be3a1c6dc631ff00da 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
+@@ -2049,6 +2049,8 @@ struct dw_dp *dw_dp_bind(struct device *dev, struct drm_encoder *encoder,
+ 	bridge->type = DRM_MODE_CONNECTOR_DisplayPort;
+ 	bridge->ycbcr_420_allowed = true;
  
-+	if (!bridge->container)
-+		DRM_WARN("DRM bridge corrupted or not allocated by devm_drm_bridge_alloc()\n");
++	devm_drm_bridge_add(dev, bridge);
 +
- 	if (list_empty(&bridge->list))
- 		DRM_WARN("Missing drm_bridge_add() before attach\n");
- 
+ 	dp->aux.dev = dev;
+ 	dp->aux.drm_dev = encoder->dev;
+ 	dp->aux.name = dev_name(dev);
 
 -- 
 2.51.0
