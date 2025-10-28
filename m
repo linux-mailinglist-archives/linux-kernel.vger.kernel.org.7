@@ -1,338 +1,302 @@
-Return-Path: <linux-kernel+bounces-872997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB762C12CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:46:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADE0C12CD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5EE1F354487
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2892A18926AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0D42798F3;
-	Tue, 28 Oct 2025 03:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87E9283C9D;
+	Tue, 28 Oct 2025 03:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Veshu2V1"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KGBSvwZ1"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FCB27A93C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A8B19D092
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623150; cv=none; b=IGYLuKOPK45r8CMTNpklxmxPkw0llzzO6MpAteffc9Jc+u+RQIn00QtZQRUjpoWbrMfcO/vvaLmBi/horZd1e02OZeSH/K4xUcTHPURuEAPAIrKwiZY/Stx0e5vqK8vi2hK1RnxPbDa0jgMLF3jRlL5sihuhZ7iwuiqVeijLw7c=
+	t=1761623132; cv=none; b=EAsGJoKfRekU04vOCQrT6LMdbMt1x9G7hUixrlHXrhwLhkiyWyItRPVxWzknSgjaFABhdIBa0/dWnty+QyfCqMDGzqUO1L28cfAfusPf/Rh0aDbGsPD2YzK8m8zGHKAdKLs+6Kh8DDuYrVTbHWsEpLbDxWSlH0op3WPruLISWr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623150; c=relaxed/simple;
-	bh=8X7+djckz8qvZbXGeuo8MkGK5Q5O+A+menBRyrcAjwQ=;
+	s=arc-20240116; t=1761623132; c=relaxed/simple;
+	bh=gx3z6574tADBoClifYJVynXrj9kPfmAQfct1OCm71xM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cgelRw07wCKtGg/BidIEoh+Hc4iV5mwZwDmoMA4veNNhx2La1RSdC3oeVngtNNmIM92RgUyjy1CcC/evclRibq7DIruoeWT96QtStwxVps880TAirKcapjKcC1U65DQzfYSF01IDNpqEOzuqOUYM9J60t0Go/A+ZCi4oYnrLedE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Veshu2V1; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761623134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C5Pi/MoPJGYSa9PpvlvLW9NetB22nOP2t8J0Mto24cA=;
-	b=Veshu2V13TCLK5s+B3ZXjCM8uceV/g1f/j+0l+NnK5T9gkf0TDbWnmudXhc3DuQgMNS35F
-	DsmDAqzvIDt/1WNgT0qytf/+/DneTnS2hywHWwnrGkgfREqpfRg3hHLKlPgesCbKGvlYlJ
-	iodJ8n/iByyGx3TY6FfVB4SOV2zlzNg=
-Date: Mon, 27 Oct 2025 20:45:25 -0700
+	 In-Reply-To:Content-Type; b=TTEDfL3k/KMUGdeZLd4BPhTHm8VuPjs9j5lCy8ixkidgLbnf5zDlSMiXu/h9KesjJNg87JfcUYrQP1/OoSubm6OWSHX30+oTYKeCwyoEECI65gT5RLs4wQQ3Yr110E4KrtCeoJkZflPJHrGnHmB0+cGN3LuW1BKSudUtCxcsv7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KGBSvwZ1; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=ICh+mcNvPsoPkCVr6IYYtsTCCNwWjIV6JOF8t26dINY=; b=KGBSvwZ1E6jAFq0EredJDx4Z+C
+	+0jL1eh2ti7KB5oIEJewYV1A0ZwJI+vnWXdzE4NRzv/VkiNlTum2GILzffWcOOervhX9aCCYQceJ0
+	b/fTY5A8b/lsXzcvrZ+2oJDP8y5/KSY9aPOcm1rzhkOQUrdKdengNlUrPMrm4FfB8pIW3qaY0VMxJ
+	kqdlYz9IEQ01C7oiUjDq4Cp9Br20oqofBgu3dZWUFuZzHFTmgZkwrrP99iuZ1FO7v0xhYKC1R8lbd
+	hGCDGzJBuKvHssSmi5yYDWt7LKzwlzcvbCnBRAHIuaSzox/YlVuMOSi14FXLvbqSttB+X4ixZcFHd
+	k707SQRg==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDaeF-0000000FBO7-3i5J;
+	Tue, 28 Oct 2025 03:45:27 +0000
+Message-ID: <2813380c-f5d1-4472-a0a8-78215d9c656f@infradead.org>
+Date: Mon, 27 Oct 2025 20:45:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
-Content-Language: en-GB
-To: Sahil Chandna <chandna.sahil@gmail.com>
-Cc: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com, andrii@kernel.org,
- ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net,
- eddyz87@gmail.com, haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, linux-kernel@vger.kernel.org,
- listout@listout.xyz, martin.lau@linux.dev, netdev@vger.kernel.org,
- sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
- linux-rt-devel@lists.linux.dev, bigeasy@linutronix.de
-References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
- <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
- <aPklOxw0W-xUbMEI@chandna.localdomain>
- <8dd359dd-b42f-4676-bb94-07288b38fac1@linux.dev>
- <aP5_JbddrpnDs-WN@chandna.localdomain>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <aP5_JbddrpnDs-WN@chandna.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+To: Fei Li <fei1.li@intel.com>, linux-kernel@vger.kernel.org
+Cc: acrn-dev@lists.projectacrn.org, gregkh@linuxfoundation.org
+References: <20251024044226.480531-1-rdunlap@infradead.org>
+ <SJ1PR11MB615389E066F50BBB68686A26BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <213c918b-b4aa-4174-af89-a4d17e8c30dc@infradead.org>
+ <SJ1PR11MB61536DC1E7A32387FCA400E5BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <8950bbb2-f1a7-4ae8-971f-7331c7eceff0@infradead.org>
+ <SJ1PR11MB6153A77684F68B592851A32EBFFCA@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <be3819fe-c17e-4ce1-83ec-5ae23cfabac4@infradead.org>
+ <aQA2Qr2Z8UyaCLO8@louislifei-OptiPlex-7090>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <aQA2Qr2Z8UyaCLO8@louislifei-OptiPlex-7090>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
 
 
-On 10/26/25 1:05 PM, Sahil Chandna wrote:
-> On Wed, Oct 22, 2025 at 12:56:25PM -0700, Yonghong Song wrote:
+On 10/27/25 8:19 PM, Fei Li wrote:
+> On 2025-10-26 at 23:11:07 -0700, Randy Dunlap wrote:
+> 
+> Hi Randy
+> 
+>> Hi--
+>>
+>> On 10/26/25 10:54 PM, Li, Fei1 wrote:
+>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>> Sent: Saturday, October 25, 2025 3:44 AM
+>>>> To: Li, Fei1 <fei1.li@intel.com>; linux-kernel@vger.kernel.org
+>>>> Cc: acrn-dev@lists.projectacrn.org; Greg Kroah-Hartman
+>>>> <gregkh@linuxfoundation.org>
+>>>> Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+>>>>
+>>>> Hi,
+>>>>
+>>>> On 10/23/25 11:22 PM, Li, Fei1 wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 10/23/25 11:00 PM, Li, Fei1 wrote:
+>>>>>>>> From: Randy Dunlap <rdunlap@infradead.org>
+>>>>>>>> Sent: Friday, October 24, 2025 12:42 PM
+>>>>>>>> To: linux-kernel@vger.kernel.org
+>>>>>>>> Cc: Randy Dunlap <rdunlap@infradead.org>; Li, Fei1
+>>>>>>>> <fei1.li@intel.com>; acrn-dev@lists.projectacrn.org; Greg
+>>>>>>>> Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>>>> Subject: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+>>>>>>>>
+>>>>>>>> Fix the kernel-doc comments for struct acrn_mmiodev so that all
+>>>>>>>> struct members are rendered correctly.
+>>>>>>>> Correct io_base to io_addr in struct acrn_vdev.
+>>>>>>>>
+>>>>>>>> acrn.h:441: warning: Function parameter or struct member 'res'
+>>>>>>>>  not described in 'acrn_mmiodev'
+>>>>>>>> acrn.h:479: warning: Function parameter or struct member 'io_addr'
+>>>>>>>>  not described in 'acrn_vdev'
+>>>>>>>> acrn.h:479: warning: Excess struct member 'io_base' description  in
+>>>>>>>> 'acrn_vdev'
+>>>>>>>>
+>>>>>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+>>>>>>>> ---
+>>>>>>>> Cc: Fei Li <fei1.li@intel.com>
+>>>>>>>> Cc: acrn-dev@lists.projectacrn.org
+>>>>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>>>> ---
+>>>>>>>>  include/uapi/linux/acrn.h |   11 ++++++-----
+>>>>>>>>  1 file changed, 6 insertions(+), 5 deletions(-)
+>>>>>>>>
+>>>>>>>> --- linux-next-20251022.orig/include/uapi/linux/acrn.h
+>>>>>>>> +++ linux-next-20251022/include/uapi/linux/acrn.h
+>>>>>>>> @@ -420,12 +420,13 @@ struct acrn_pcidev {
+>>>>>>>>  /**
+>>>>>>>>   * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO
+>>>> device
+>>>>>>>>   * @name:			Name of the MMIO device.
+>>>>>>>> - * @res[].user_vm_pa:		Physical address of User VM of the
+>>>>>> MMIO
+>>>>>>>> region
+>>>>>>>> + * @res:			MMIO resource descriptor info.
+>>>>>>>
+>>>>>>> Hi Randy
+>>>>>>>
+>>>>>>> Thanks for cooking this patch to help fix these warning.
+>>>>>>> Could you just add the comment for `res` and keep the other comments
+>>>>>>> for
+>>>>>> the fields of ` struct acrn_mmiodev ` ?
+>>>>>>>
+>>>>>>
+>>>>>> Do you mean leave the [] square brackets in the field name?
+>>>>> yes
+>>>>>> If that's what you mean, that's not valid kernel-doc notation.
+>>>>> Would you please post the quote how kernel-doc prefer to add this
+>>>>> comments ? I didn't see an example in the kernel-doc.rst
+>>>>
+>>>> There is not anything in kernel-doc that indicates arrays so I can't post a quote
+>>>> that shows that.
+>>>> The patch shows the preferred kernel-doc here.
+>>>
+>>> Hi Randy
+>>>
+>>> IMHO,  the patch shows here is an example of `Nested structs/unions`, not an example of
+>>> `Nested structs/unions array`. 
+>>> For the ` Nested structs/unions array `, the `In-line member documentation comments`
+>>> style is more suitable, or could we just keep what it is for: (1) there're many kernels' codes
+>>> still use this comment style for theirs function comments, I.E., in kernel/rcu/srcutree.c
+>>
+>> but that is not in kernel-doc comments.
+>>
+>>> (2) the kernel-doc doesn't complain about this warning.
+>>
+>> Yes, it's just wrong about that. As soon as it sees the "[]",
+>> it seems to become confused and omits all struct members
+>> after @name.  Here's struct acrn_mmiodev
+>> after I rendered it in man format:
+>>
+>> NAME
+>>        struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
+>>
+>> SYNOPSIS
+>>        struct acrn_mmiodev {
+>>            __u8 name[8];
+>>            struct {
+>>              __u64 user_vm_pa;
+>>              __u64 service_vm_pa;
+>>              __u64 size;
+>>              __u64 mem_type;
+>>            } res[ACRN_MMIODEV_RES_NUM];
+>>         };
+>>
+>> Members
+>>        name        Name of the MMIO device.  res[].user_vm_pa:           Physi‐
+>>                    cal  address  of User VM of the MMIO region for the MMIO de‐
+>>                    vice.  res[].service_vm_pa:        Physical address of  Ser‐
+>>                    vice VM of the MMIO region for the MMIO device.  res[].size:
+>>                    Size   of   the   MMIO   region   for   the   MMIO   device.
+>>                    res[].mem_type:             Memory type of the  MMIO  region
+>>                    for the MMIO device.
+>>
+>> Description
+>>        This structure will be passed to hypervisor directly.
+>>
+>> SEE ALSO
+>>        Kernel   file   include/uapi/linux/acrn.h  struct  acrn_mmio_request(9),
+>>        struct   acrn_pio_request(9),   struct    acrn_pci_request(9),    struct
+>>        acrn_io_request(9),  struct  acrn_ioreq_notify(9),  struct  acrn_vm_cre‐
+>>        ation(9), struct acrn_gp_regs(9), struct acrn_descriptor_ptr(9),  struct
+>>        acrn_regs(9), struct acrn_vcpu_regs(9), struct acrn_vm_memmap(9), struct
+>>        acrn_ptdev_irq(9),  struct  acrn_pcidev(9),  struct acrn_vdev(9), struct
+>>        acrn_msi_entry(9),       struct       acrn_cstate_data(9),        struct
+>>        acrn_pstate_data(9), struct acrn_ioeventfd(9), struct acrn_irqfd(9)
 >>
 >>
->> On 10/22/25 11:40 AM, Sahil Chandna wrote:
->>> On Wed, Oct 22, 2025 at 09:57:22AM -0700, Yonghong Song wrote:
->>>>
->>>>
->>>> On 10/20/25 2:08 PM, syzbot wrote:
->>>>> Hello,
->>>>>
->>>>> syzbot found the following issue on:
->>>>>
->>>>> HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition of 
->>>>> 'off' as d..
->>>>> git tree:       bpf
->>>>> console output: 
->>>>> https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
->>>>> kernel config: 
->>>>> https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
->>>>> dashboard link: 
->>>>> https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
->>>>> compiler:       Debian clang version 20.1.8 
->>>>> (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian 
->>>>> LLD 20.1.8
->>>>> syz repro: https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
->>>>> C reproducer: 
->>>>> https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
->>>>>
->>>>> Downloadable assets:
->>>>> disk image: 
->>>>> https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
->>>>> vmlinux: 
->>>>> https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
->>>>> kernel image: 
->>>>> https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
->>>>>
->>>>> The issue was bisected to:
->>>>>
->>>>> commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
->>>>> Author: Sahil Chandna <chandna.sahil@gmail.com>
->>>>> Date:   Tue Oct 14 18:56:35 2025 +0000
->>>>>
->>>>>     bpf: Do not disable preemption in bpf_test_run().
->>>>>
->>>>> bisection log: 
->>>>> https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
->>>>> final oops: 
->>>>> https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
->>>>> console output: 
->>>>> https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
->>>>>
->>>>> IMPORTANT: if you fix the issue, please add the following tag to 
->>>>> the commit:
->>>>> Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
->>>>> Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in 
->>>>> bpf_test_run().")
->>>>>
->>>>> ------------[ cut here ]------------
->>>>> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
->>>>> bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
->>>>> WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
->>>>> bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
->>>>
->>>> Okay, the warning is due to the following WARN_ON_ONCE:
->>>>
->>>> static DEFINE_PER_CPU(struct 
->>>> bpf_bprintf_buffers[MAX_BPRINTF_NEST_LEVEL], bpf_bprintf_bufs);
->>>> static DEFINE_PER_CPU(int, bpf_bprintf_nest_level);
->>>>
->>>> int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
->>>> {
->>>>        int nest_level;
->>>>
->>>>        nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
->>>>        if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
->>>>                this_cpu_dec(bpf_bprintf_nest_level);
->>>>                return -EBUSY;
->>>>        }
->>>>        *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
->>>>
->>>>        return 0;
->>>> }
->>>>
->>>> Basically without preempt disable, at process level, it is possible
->>>> more than one process may trying to take bpf_bprintf_buffers.
->>>> Adding softirq and nmi, it is totally likely to have more than 3
->>>> level for buffers. Also, more than one process with 
->>>> bpf_bprintf_buffers
->>>> will cause problem in releasing buffers, so we need to have
->>>> preempt_disable surrounding bpf_try_get_buffers() and
->>>> bpf_put_buffers().
->>> Right, but using preempt_disable() may impact builds with
->>> CONFIG_PREEMPT_RT=y, similar to bug[1]? Do you think local_lock() 
->>> could be used here
+>> and here is the Members section after my patch:
 >>
->> We should be okay. for all the kfuncs/helpers I mentioned below,
->> with the help of AI, I didn't find any spin_lock in the code path
->> and all these helpers although they try to *print* some contents,
->> but the kfuncs/helpers itself is only to deal with buffers and
->> actual print will happen asynchronously.
+>> Members
+>>        name        Name of the MMIO device.
 >>
->>> as nest level is per cpu variable and local lock semantics can work
->>> for both RT and non rt builds ?
+>>        res         MMIO resource descriptor info.
 >>
->> I am not sure about local_lock() in RT as for RT, local_lock() could
->> be nested and the release may not in proper order. See
->>  https://www.kernel.org/doc/html/v5.8/locking/locktypes.html
+>>        res.user_vm_pa
+>>                    Physical  address of User VM of the MMIO region for the MMIO
+>>                    device.
 >>
->>  local_lock is not suitable to protect against preemption or 
->> interrupts on a
->>  PREEMPT_RT kernel due to the PREEMPT_RT specific spinlock_t semantics.
+>>        res.service_vm_pa
+>>                    Physical address of Service VM of the MMIO  region  for  the
+>>                    MMIO device.
 >>
->> So I suggest to stick to preempt_disable/enable approach.
+>>        res.size    Size of the MMIO region for the MMIO device.
 >>
->>>>
->>>> There are some kfuncs/helpers need such preempt_disable
->>>> protection, e.g. bpf_stream_printk, bpf_snprintf,
->>>> bpf_trace_printk, bpf_trace_vprintk, bpf_seq_printf.
->>>> But please double check.
->>>>
->>> Sure, thanks!
->
-> Since these helpers eventually call bpf_bprintf_prepare(),
-> I figured adding protection around bpf_try_get_buffers(),
-> which triggers the original warning, should be sufficient.
-> I tried a few approaches to address the warning as below :
->
-> 1. preempt_disable() / preempt_enable() around bpf_prog_run_pin_on_cpu()
-> diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-> index 1b61bb25ba0e..6a128179a26f 100644
-> --- a/net/core/flow_dissector.c
-> +++ b/net/core/flow_dissector.c
-> @@ -1021,7 +1021,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
-> struct bpf_flow_dissector *ctx,
->                (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
->       flow_keys->flags = flags;
->
-> +    preempt_disable();
->       result = bpf_prog_run_pin_on_cpu(prog, ctx);
-> +    preempt_enable();
->
->       flow_keys->nhoff = clamp_t(u16, flow_keys->nhoff, nhoff, hlen);
->       flow_keys->thoff = clamp_t(u16, flow_keys->thoff,
-> This fixes the original WARN_ON in both PREEMPT_FULL and RT builds.
-> However, when tested with the syz reproducer of the original bug [1], it
-> still triggers the expected 
-> DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt)) warning from 
-> __local_bh_disable_ip(), due to the preempt_disable() interacting with 
-> RT spinlock semantics.
-> [1] 
-> [https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8](https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8)
-> So this approach avoids the buffer nesting issue, but re-introduces 
-> the following issue:
-> [  363.968103][T21257] 
-> DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt))
-> [  363.968922][T21257] WARNING: CPU: 0 PID: 21257 at 
-> kernel/softirq.c:176 __local_bh_disable_ip+0x3d9/0x540
-> [  363.969046][T21257] Modules linked in:
-> [  363.969176][T21257] Call Trace:
-> [  363.969181][T21257]  <TASK>
-> [  363.969186][T21257]  ? __local_bh_disable_ip+0xa1/0x540
-> [  363.969197][T21257]  ? sock_map_delete_elem+0xa2/0x170
-> [  363.969209][T21257]  ? preempt_schedule_common+0x83/0xd0
-> [  363.969252][T21257]  ? rt_spin_unlock+0x161/0x200
-> [  363.969269][T21257]  sock_map_delete_elem+0xaf/0x170
-> [  363.969280][T21257]  bpf_prog_464bc2be3fc7c272+0x43/0x47
-> [  363.969289][T21257]  bpf_flow_dissect+0x22b/0x750
-> [  363.969299][T21257] bpf_prog_test_run_flow_dissector+0x37c/0x5c0
->
-> 2. preempt_disable() inside bpf_try_get_buffers() and bpf_put_buffers()
->
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index 8eb117c52817..bc8630833a94 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -777,12 +777,14 @@ int bpf_try_get_buffers(struct 
-> bpf_bprintf_buffers **bufs)
->  {
->         int nest_level;
->
-> +       preempt_disable();
->         nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
->         if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
->                 this_cpu_dec(bpf_bprintf_nest_level);
->                 return -EBUSY;
->         }
->         *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
-> +       preempt_enable();
->
->         return 0;
->  }
-> @@ -791,7 +793,10 @@ void bpf_put_buffers(void)
->  {
->         if (WARN_ON_ONCE(this_cpu_read(bpf_bprintf_nest_level) == 0))
->                 return;
-> +
-> +       preempt_disable();
->         this_cpu_dec(bpf_bprintf_nest_level);
-> +       preempt_enable();
->  }
-> This *still* reproduces the original syz issue, so the protection 
-> needs to be placed around the entire program run, not inside the 
-> helper itself as
-> in above experiment.
+>>        res.mem_type
+>>                    Memory type of the MMIO region for the MMIO device.
+>>
+>>
+>>> What do you think ?
+>>
+>> Sure, if you want to leave the file as is, that's your choice.
+>> Consider this patch dropped.
+> 
+> Yes, you are right. The `dump_struct` in `linux/scripts/kernel-doc.pl` can't pasre
+> the `[]` properly since it can't tell this is for comment or for a struct_members.
+> 
+> So before kernel-doc.pl could handle the Nested structure array properly, maybe
+> define a structure for `res` maybe the better way to avoid the confusing.
 
-This does not work. See my earlier suggestions.
+We no longer use kernel-doc.pl. It has been rewritten in Python. The new
+script is scripts/kernel-doc.py.
 
-> Basically without preempt disable, at process level, it is possible
-> more than one process may trying to take bpf_bprintf_buffers.
-> Adding softirq and nmi, it is totally likely to have more than 3
-> level for buffers. Also, more than one process with bpf_bprintf_buffers
-> will cause problem in releasing buffers, so we need to have
-> preempt_disable surrounding bpf_try_get_buffers() and
-> bpf_put_buffers().
+> Would you please help to define a `structure acrn_mmio_dev_res` just before
+> `structure acrn_mmio_dev` ?
+See below. Is that what you mean?
+---
+ include/uapi/linux/acrn.h |   36 +++++++++++++++++++++---------------
+ 1 file changed, 21 insertions(+), 15 deletions(-)
 
-That is,
-   preempt_disable();
-   ...
-   bpf_try_get_buffers()
-   ...
-   bpf_put_buffers()
-   ...
-   preempt_enable();
-
->
-> 3. Using a per-CPU local_lock
-> Finally, I tested with a per-CPU local_lock around 
-> bpf_prog_run_pin_on_cpu():
-> +struct bpf_cpu_lock {
-> +    local_lock_t lock;
-> +};
-> +
-> +static DEFINE_PER_CPU(struct bpf_cpu_lock, bpf_cpu_lock) = {
-> +    .lock = INIT_LOCAL_LOCK(),
-> +};
-> @@ -1021,7 +1030,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
-> struct bpf_flow_dissector *ctx,
->                      (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
->         flow_keys->flags = flags;
->
-> +       local_lock(&bpf_cpu_lock.lock);
->         result = bpf_prog_run_pin_on_cpu(prog, ctx);
-> +       local_unlock(&bpf_cpu_lock.lock);
->
-> This approach avoid the warning on both RT and non-RT builds, with 
-> both the syz reproducer. The intention of introducing the per-CPU 
-> local_lock is to maintain consistent per-CPU execution semantics 
-> between RT and non-RT kernels.
-> On non-RT builds, local_lock maps to preempt_disable()/enable(),
-> which provides the same semantics as before.
-> On RT builds, it maps to an RT-safe per-CPU spinlock, avoiding the
-> softirq_ctrl.cnt issue.
-
-This should work, but local lock disable interrupts which could have
-negative side effects on the system. We don't want this.
-That is the reason we have 3 nested level for bpf_bprintf_buffers.
-
-Please try my above preempt_disalbe/enable() solution.
-
->
-> Let me know if you’d like me to run some more experiments on this.
+--- linux-next-20251024.orig/include/uapi/linux/acrn.h
++++ linux-next-20251024/include/uapi/linux/acrn.h
+@@ -418,26 +418,32 @@ struct acrn_pcidev {
+ };
+ 
+ /**
+- * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
+- * @name:			Name of the MMIO device.
+- * @res[].user_vm_pa:		Physical address of User VM of the MMIO region
+- *				for the MMIO device.
+- * @res[].service_vm_pa:	Physical address of Service VM of the MMIO
+- *				region for the MMIO device.
+- * @res[].size:			Size of the MMIO region for the MMIO device.
+- * @res[].mem_type:		Memory type of the MMIO region for the MMIO
+- *				device.
++ * struct acrn_mmio_dev_res - MMIO device resource description
++ * @user_vm_pa:		Physical address of User VM of the MMIO region
++ *			for the MMIO device.
++ * @service_vm_pa:	Physical address of Service VM of the MMIO
++ *			region for the MMIO device.
++ * @size:		Size of the MMIO region for the MMIO device.
++ * @mem_type:		Memory type of the MMIO region for the MMIO
++ *			device.
++ */
++struct acrn_mmio_dev_res {
++	__u64	user_vm_pa;
++	__u64	service_vm_pa;
++	__u64	size;
++	__u64	mem_type;
++};
++
++/**
++ * struct acrn_mmiodev - Info for assigning or de-assigning an MMIO device
++ * @name:	Name of the MMIO device.
++ * @res:	Array of MMIO device descriptions
+  *
+  * This structure will be passed to hypervisor directly.
+  */
+ struct acrn_mmiodev {
+ 	__u8	name[8];
+-	struct {
+-		__u64	user_vm_pa;
+-		__u64	service_vm_pa;
+-		__u64	size;
+-		__u64	mem_type;
+-	} res[ACRN_MMIODEV_RES_NUM];
++	struct acrn_mmio_dev_res res[ACRN_MMIODEV_RES_NUM];
+ };
+ 
+ /**
 
 
