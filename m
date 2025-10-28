@@ -1,298 +1,190 @@
-Return-Path: <linux-kernel+bounces-874166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EBAC15A9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:04:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2840FC15A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 506BE188E131
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8887A3BA91D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:57:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9A434574B;
-	Tue, 28 Oct 2025 15:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4285F342CB0;
+	Tue, 28 Oct 2025 15:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kEu5Ksnc"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012005.outbound.protection.outlook.com [52.101.48.5])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cknRZfDl"
+Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021088.outbound.protection.outlook.com [40.107.192.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229443451CD;
-	Tue, 28 Oct 2025 15:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4FC340A6D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.88
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667076; cv=fail; b=VLc+83zBvuGWxTuryuKnJNMykzEFRVx+QF7D612DTzaCxWgp8rsUmXV5pMsJ5+5C6FSCc+S54RlZ9CVMHaF+emrW7SEs4yWe2kIQfnijqSlHbdwiInbltmT78m94IEptbZAc1MkbPRU3sV29RevKoB2ruWILjSZdCIkakhaJkH0=
+	t=1761667061; cv=fail; b=kPzkz57GJUUCerZRT2878OcWe5KdqAUsfPPPMilER68AMEzo81LEWc29F42tejPnx2Z8WEUUmJDuLFTOusP3aWiTkwO+jLWD3a08N8pd+3dCG8MqxUDxRmBFBfHOpaxm2vuoF68Wfl9ZygInCCfpckcKovRnKiROp5vYlgYh1LE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667076; c=relaxed/simple;
-	bh=whIfqwR3n5bzGGxprJSjfBGxAnkw8946MW3SCf6r6sw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hmdn5IrEy//53L8TYk5LnoeWT30dX5inGnaHYOgvFVS2l4OGTNqkCYRP2N8uaHzuF85lHuFWDmiwhJbDmlOJ7OTX+QzlbWXWZ9z0rXdh6NMUFamyrs0gbXcqihpsOl3xWJ8v12ISGfjFkXOfIZSS7aYS39w31+4oGGK2mwschnM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kEu5Ksnc; arc=fail smtp.client-ip=52.101.48.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1761667061; c=relaxed/simple;
+	bh=8ZZrclI9tTMHYZ2DWm9/rluHMsBS51dBlBKp2M2BNQU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hKvceZvTSYuN4qBtR2TgZAsGPO/2g+nYEICYqHj8MSGWJxWL4QIANLTsQ/HBc82wiVLSneJE+0LDyi2qhkX1wSm7nMSewpjnkP2aj/yaqwfnPNsCuqcsPcMx0rWvYPWF8dLadGN//ymYjrtyb3RdMQYXeL8Juqi+MqbawN8gnhI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=cknRZfDl; arc=fail smtp.client-ip=40.107.192.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O3CInKhX8lpKOHFb7P8cK0Y5KoEbLkoLlQDT6eAKbYYpDqga3LvEGbEaZWwyrcNjZMdgTThA4UUaNAiBoKkv1PttWGD8lG0wpjuceJxY2RvMByA5IXFXdWJJlsrn3KWEXLf8gMqLGpPmbuuDOIlRJZtZ9pmuCWXCH6V2jPmzJ9YCienmBPgjV4xUnbZYSdlURgNV4+oVmW0hsGu9uUCbwK2uK+N4wRXSrM84XAO2LsdfSjO6K74Ehkiijcg8fyTCCjU+LFwfId9iN8oMLygVOkgfb+F/fXX0VZJ7iBB+/07nr4e/qmWXO/67ZVbOfjBQDIf5ccl9C/MOMNRWF4N1CQ==
+ b=GQ9wOYo9gGj2vu+vqZI7V/ER3DlrnPffTtmonHSUt2y2RfTm7scneTO/bwrslceiwRfkvzdr70K9HInp9U5hbvBLM3kiqVzLOe1U6Kdvsl40gaZaOb+bJr9/Uf9+DvxB7AIM4wE+TtagXHRqPX3VK/jqlNQWU2z0yfRNKJxoZV+CtlVe/mlGRpQ+y1UhCucv8jKSzPus210JHYJ4YLeLJXnlanx9kuaxsjrejwcjhTrh7GOrboGZxzexIu3byOc0AF11Z3OFDxjgu/F6kCFteuLlG3nTK2xcgwPjXWmjQRuZKxbvRwJjY66p7kbSv+4cYUDf0/saucGv7GV3a5fNBg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/tCjSBuUryYOM8imQmAcR08yeziUoZvmzheD+np5jb8=;
- b=kQtQDsjr56QnjqiAb0kAe9NTdPWaRjqTfHNNo5Tev1EcVIhEP3Yvd3oi8KGXaVABH8XkLutWRIgjkykJi/710Tsa0jy0s+nNxazHki4o4oIOWKRkVGBndZOEAZzTYaW6Co4xsY61MdbS7qBwCmvfUCcg7ylK16ju3Fxi7VFOONx00XK6J1N7eD7KKAZ9WM3UR0r3wKWZlR/E1dFzgGmv/mrodlBBAdK2XYhpH8xJOCBFgDZdRcIocc8yGo1qENa1EzoyL1pCwTpgF0uZGc4Fyjd4PgFX162Arg5gacbM77J0fApskNblXRTewmuK49GIeuZkmsoDhOfrq12C6ArgJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ bh=F6EqojRNLNo0Z8jH59kgAndEk0WuiVxcmh/szM2uosg=;
+ b=TN6xb338MuNf/msL5OPsC3V4aFqmBAX1hW7txTIXyUfEvxS5C6+FiffIwShshS89MfLCf03JpLZAnioeaB2oCt8GnPww8Bp8mOKRxSoI7syX0D7Z7jFv2z7IGYVQ/wwcEyYi+cnXO+mQwI3H5c/pByKuNwIaR3pEB+vKk5E1VqoqPZu6PM9nk1LuOEtYEYJ1gaLHRklpywlvj+pe+wyBzeWs+hP17iiD72CvgAsynS4CE5f+D8xb0Fnd14fa3CO/C9XluIrBsbRcgY4N/bi1TdkQHGEhLP3jyDSAZ7u9VSBbTbKrfwxP4YAzV7Fu9YbkObeu0kQRBG69qZhLWuv2ZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/tCjSBuUryYOM8imQmAcR08yeziUoZvmzheD+np5jb8=;
- b=kEu5KsncLk8ulpFnUd61IaQcM27A3vKI31iVvj4uDSBaeUUsE9kGz3YKu5eCb7Zp0erOZBcvdHvrCFH59mfmu4J5MbNHGOzdbByMv12YEGucdrb9JPunwpl4lbeYYUnLV/2A/G3UGIt7Kq9UtKLdHQnZG0KJb0lL9l+CdWp3xsYtyOg+vJzrOFEnxtx7Ipt3ncoXng+D8TWNBmlpRIXZqg/rLJFtv3VxUnRhZ3wofrPnO/ZDMtv4GZVkk8hpmpe/lb6D1pO2t+rP9+sJ2IjtPdsfNbyaUD9Veb5u4ooSS6mpn6TNWSYad1ylPWnVIHbNI3GAVxkwz7zTCPFWzIroqw==
-Received: from MW4PR04CA0202.namprd04.prod.outlook.com (2603:10b6:303:86::27)
- by MW4PR12MB7032.namprd12.prod.outlook.com (2603:10b6:303:1e9::12) with
+ bh=F6EqojRNLNo0Z8jH59kgAndEk0WuiVxcmh/szM2uosg=;
+ b=cknRZfDla3aL27T0z6lnsgnuOZSkr3DBKkHFKdsb9KPoT7gzrn5TF4a1tNzriwLSV15EqIMSfqt2zT0bwJs/IBimNa9nOf5sO6k57/ZzhGvX9l9fmWVmW7v6pmHUYo3BduiM4OGa54tXxtiQVMd+3PbbjBnKdfUMhMEARwD3KEYeAkbKpmJJBRX3uHLkbDquc9M+kyIu8Qcse06hjOm8uavW6Ib8mR69KF/tKOVcoD682r3H9qYfJ+XvWYUcgxjlj8/8/BGJvTSyFI4G4mmB96VBKUoS0LjUOArnPk9pmiRksUAzeDChMM08CgDthBE93jlAFPZPIgnefYyWmkWn1A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB11271.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:147::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
- 2025 15:57:49 +0000
-Received: from CO1PEPF000044FB.namprd21.prod.outlook.com
- (2603:10b6:303:86:cafe::c3) by MW4PR04CA0202.outlook.office365.com
- (2603:10b6:303:86::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.18 via Frontend Transport; Tue,
- 28 Oct 2025 15:57:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- CO1PEPF000044FB.mail.protection.outlook.com (10.167.241.201) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.0 via Frontend Transport; Tue, 28 Oct 2025 15:57:49 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Tue, 28 Oct
- 2025 08:57:29 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Oct
- 2025 08:57:28 -0700
-Received: from build-va-bionic-20241022.nvidia.com (10.127.8.12) by
- mail.nvidia.com (10.129.68.6) with Microsoft SMTP Server id 15.2.2562.20 via
- Frontend Transport; Tue, 28 Oct 2025 08:57:24 -0700
-From: Vishwaroop A <va@nvidia.com>
-To: Mark Brown <broonie@kernel.org>, Thierry Reding
-	<thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, "Sowjanya
- Komatineni" <skomatineni@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>,
-	<smangipudi@nvidia.com>, <kyarlagadda@nvidia.com>
-CC: Vishwaroop A <va@nvidia.com>, <linux-spi@vger.kernel.org>,
-	<linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 3/3] spi: tegra210-quad: Check hardware status on timeout
-Date: Tue, 28 Oct 2025 15:57:03 +0000
-Message-ID: <20251028155703.4151791-4-va@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20251028155703.4151791-1-va@nvidia.com>
-References: <20251028155703.4151791-1-va@nvidia.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Tue, 28 Oct
+ 2025 15:57:35 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 15:57:35 +0000
+Message-ID: <097af80d-a05f-4178-a73e-d59a56ad672a@efficios.com>
+Date: Tue, 28 Oct 2025 11:57:34 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V6 26/31] rseq: Optimize event setting
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, x86@kernel.org, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
+References: <20251027084220.785525188@linutronix.de>
+ <20251027084307.578058898@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251027084307.578058898@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0417.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:10b::21) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FB:EE_|MW4PR12MB7032:EE_
-X-MS-Office365-Filtering-Correlation-Id: 39e6e66e-a37a-4653-1ac2-08de163abe9e
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB11271:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1d44109-61a2-425f-baa4-08de163ab5da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gNcdp7W7FO9CCMK0L7Xidi2pS0jbrawBNyXG5McSbAfzg2xO/mzjwZSHcWsf?=
- =?us-ascii?Q?tgISxPMfr70bu+zl9IzXbYpV06kQ9HklDWX0lNPjlUlCbcGe6ewiVTykG7Je?=
- =?us-ascii?Q?HFF7CKInZXATB3N19SW06BBya9UF8HVmt0GV7TprojECLWJbQ2EM+Z067eap?=
- =?us-ascii?Q?wPTLkWkw6bGND8cqB5kBwxwrWAl/tLQOIcVpi2eRjd/F8hYoNrWS/I18wq/r?=
- =?us-ascii?Q?3wfpWollpriuB5LPoDKNSvj1jYNvxJt2yUbEkbB2AHSEDEit0fZV635qb3lT?=
- =?us-ascii?Q?MwJ8JibRhqD3K15Og5yCNElZklyXiPzP+6mVJYMw4k1fFj2vzgobVhzqrp/X?=
- =?us-ascii?Q?a8nqsRnsFGAlil4DXkyDEV/Tui+vY0prxb7seKioNol1Wp2wNu2yxRzl+9B4?=
- =?us-ascii?Q?jhrzOLTjuIDRjejgll6atnbbwowezVkWGH0LN/RiN2jAgKTofuDfVAdt8LDs?=
- =?us-ascii?Q?w+3QS+C1rEUQUh966ZWzgwKrd6RRXPyYDIvUzH4nS1xeiPhrF+tZf0s8LLRa?=
- =?us-ascii?Q?5Zb/ACFCmQ51edyfl7XJvGS24GtysvA/j+OYrAx2YnvhdiQhvtBBggFnIN2U?=
- =?us-ascii?Q?vavuiuDaP+um3lNc5yGBzxbNuHIu5eHLnFHKGbPeU9RRI+zyrBGfX+3l98ff?=
- =?us-ascii?Q?1Wl1mbJ4Up0Dlt8EFpYFnus49j50hWHlc+Eo4aigC5bhjTn+QgWcBkTQzCKw?=
- =?us-ascii?Q?oPeLNb0YeVMduTCdzu41bxAqr0urvI5HJwlDrc7td9mwDOYjNaSJMTV7Ggs8?=
- =?us-ascii?Q?IO6QLdNH1Z2jMWB56uInPlXe/AgqPPcP2hrsys82z7F+V56AWUN4QqriWkTg?=
- =?us-ascii?Q?JONDo0zd6i0Wq9RErPG2FgoZL+Slrjlgt2RecU1N+WiCEw4UKN0HdLdioK9+?=
- =?us-ascii?Q?IUu0uJ0gOwhz6G9muUnE/8yeN8HtdM6lFr8gp4YuVIIw5BEPImmoXCnS0j0H?=
- =?us-ascii?Q?mco7lg3WbU6efCcKlEsSiZKdY4kve/I9Z8cARE+YRKxqOtEQHIL7nzHAwcSp?=
- =?us-ascii?Q?TKCUsH05wVP3+8h6mLHE70DXhx3UVHA4pX1SY/yMBGopwu+eIgZoWYo5V+9+?=
- =?us-ascii?Q?FyWqDsF41phof8iMtjA7ijVOst9ZFYV/0a4Cvh2c0mjVBhk5FJ1qYYQRk1dF?=
- =?us-ascii?Q?og21Y9hDrDTOEOeRXwxmUcoUL6JXuIRvRtFmU4WGwpNuif4q1TwzJdILgMQx?=
- =?us-ascii?Q?TDpTbAVvdPd68BVzImBvKrBNWvp9ARlM5T2PBNGddxp+E0Jv4xrOoYM3og9O?=
- =?us-ascii?Q?G9Jb2IOpD/zGlQVRbWbkYRRebSTh7JrNnsXKKqgVIf64RuPE8060dNR7HeBT?=
- =?us-ascii?Q?agQ2IRJ+bHbkX1KwqA2Xw1TcEackRej0sGqqilYALvrRrAu85+x8Oh3AQcM4?=
- =?us-ascii?Q?0gTt5LpG/AoNv/+SNSK6Mzui3vFwnLyk8r9V1jlMa+UqlY7K+oq4E7qbFO2j?=
- =?us-ascii?Q?3fJdXWp4ktzILUf+kOuT7w3UyXGv1Cl8mue1FQsfMA7CFkvVqfCMg3Hg2H2K?=
- =?us-ascii?Q?APHNEnu5nsyRirKyIp7N8VRH4JeBENv2/yiF2AbzssZEQqy9gVtDpFDUKREE?=
- =?us-ascii?Q?YukokPQuBL18RbsgY/w=3D?=
+	=?utf-8?B?cmxuTG9zb3V2YnRheVJtMFd6VUF0S3UyMk5QMHFpdHVEQmFQc2lQMXBMKzdz?=
+ =?utf-8?B?QkVqMTZYVkcwUCtnQWZQZzJPNGplOVV6Q29CSkJNVlpQaEFNeklseERUTzJK?=
+ =?utf-8?B?UHJLT294SWNrTS9uWC9ZanlXRjhKQUFTT2U5VTNScVVjZ3hBYVJpOHU3b0Zu?=
+ =?utf-8?B?ZzYzOW5IUG92M0VsVFpYTWVaWDFkSng0RysrVlBXZWQrMEpZanQxL2N1VkVh?=
+ =?utf-8?B?Q0MwZW9MRVZ0dkgrVlpqbnlKeXMzbkx1QXRWc3hTZW50Q1pjK0RkN21vbWY3?=
+ =?utf-8?B?QmFhZHk3RDdvQVNmTzE3L1hEUzhuSVpQemM2eUh1MXJmRWFNWmFqWjNLMDJQ?=
+ =?utf-8?B?TnZPSlhIeDJSb1AwbFFXVkVVczNwTUd3eUJKZlpSSnNXNWY3VU9uVFE0YWdE?=
+ =?utf-8?B?RXpwVjRjVHRHWVJ4VEFsZnpVdkFFZk9GMjN6KzUxYkJMMGJySHRhd21MWlRE?=
+ =?utf-8?B?Rnc2Y2dxUm0raUhiRG1DOElQNXYyMXhpTVBXdW9jZU5ueksyZGM1TFZYaUEx?=
+ =?utf-8?B?NEk4dElIU0xwcXZYSDBIMUN1Z25yTEZTRG12RWJES3ozUVNsaWFEQStOSWp1?=
+ =?utf-8?B?WnpiaHZzb3N2dXpPb2d0UVNBdk9DNWY4ZkswbE11WFRZL2hBSWM2QktrSzBi?=
+ =?utf-8?B?MWQzZTR0OVdKb0xnRS82alh6SnZROTd3NU9NVGZGK0JsNDdoK0VNanZMdFRn?=
+ =?utf-8?B?S0FXaUtBd0VaZjgrUzFLV01OMXVKZkpheHRqUWNPN3RiWGtVRFJKRjYzdUpD?=
+ =?utf-8?B?RkJPL25aNWtpcG1qWHcrYTA5MHlPSjF3TysxR1ppeEdqekdZUmN1dGcwTFp3?=
+ =?utf-8?B?eEpvRElmY0tPUUJwOEp0cElIZVNaV0RMMGVhWVgxWTVoa2paVUJDM1dDVGJE?=
+ =?utf-8?B?Y1B6OWhlSlN0YmNzdVdKTERXMVpDc2xhdit6M0lKd1RyMk05NUFPbWFrMFpN?=
+ =?utf-8?B?NkRibkRzYzQvOCtObzV2bWMyelZEcEQwS2FmVWFJTGwxZ2VWdFVqc2ozMWFV?=
+ =?utf-8?B?RjY0d0RXSER2N0NpbGtzZit3bS8zd0pQME45d09ZL1piWnJJeWhWNlRMVGFD?=
+ =?utf-8?B?cU5MVUZidnZQS1ZRbXAyNGxKTmNmbm1xRHBEQkpUTWE5Wit6MDFHWm1RRXNZ?=
+ =?utf-8?B?cVZ6M1RaV0xwamJzaXd4dk9KUk9nbHVqbFNkaGtEZDNnUEFXZERHcTdMenFJ?=
+ =?utf-8?B?RiswanFYUEFlTG1zb1oxTjlJbjR5REdONkUwVmtwa2ZQL294ckVEVlJHaVdU?=
+ =?utf-8?B?cmF0WjkzYitpdFFHWWtGLzBYQk9DYkRPaytaUk5FTWV1bU9Kb0xNY3IzTURs?=
+ =?utf-8?B?SVladnJPYVFSenY3WC8wakpSRGd3WFYrOUxOZDBqRGxBVFN0NG93OElwbE40?=
+ =?utf-8?B?OHFudlF1bjdSUVBEdHRzbU1UMGE4UjJLOGxKOGJ4S1IxR0dNb2VYQ01Ld1Qv?=
+ =?utf-8?B?c29haHIzdzYzYkVTWVVLM0tuKzVNWVBSZDI1M1V0TllWMXZvZUF1TEpjNDhW?=
+ =?utf-8?B?aDcwWW92bWpJUmFzMnR2QytsbmZhQk43LytIZkVQQ1RkbWd2Ry9BOTRtY285?=
+ =?utf-8?B?UzZUWGcrOWZFNWZJN0FYV2Vkak92ZGowakllcDNPTEVnMXZQc3hQbGFJWFZ2?=
+ =?utf-8?B?Y3B1RS9OcVdDNlFFWkVlVnplSXoyNGtqWFN4T2NRS2RpRk80WDhqVkJHK01R?=
+ =?utf-8?B?OUxoRGR2YU1NOGx5OFZnbkFtNWozQzdhcFM5ZjJYSUQza29ac0dFUDZ1WXpH?=
+ =?utf-8?B?KzQ3Vm9YQmJLMi9rck1EQ3BHTVpZaFhTczhHS0VleS9jMUpQY0NRNEx3SWxz?=
+ =?utf-8?B?K3RDMG1TQ1JHRC9iZ0FlMmEyNlRia2lKSks2cWFFa245MjdWejJMeGI1ZTZr?=
+ =?utf-8?B?czhDL3c3US9McDJKelhZbzdlaVcyNFV3MjJwNVoxSTZKa2c9PQ==?=
 X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:57:49.4170
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RWtLZG53MUZLSC9oV28wMEJpVWpVUENQemNOeXE0MGtENDdERW8yTXFJb0hX?=
+ =?utf-8?B?bzBqTU11bWZla0dYYUlzWmZRcjM1OVFUZEQrM1FMaHlIdzJ1emdtL2E5OXJH?=
+ =?utf-8?B?L3RqV3NtZGY0aUlYQlNEYXhsaUE5ZTlMUC9xWW9SOXNZbEJLWHdnNDQyWTdi?=
+ =?utf-8?B?U09GVldLM0hJUFJrNWZITUUrK29veDJ0V0RJNUdmM3ovei82NjB1RktiNjBx?=
+ =?utf-8?B?TmNtWnl5QzVZT21GRWlsVE44bEcvOUxpZzRjR2FVNXpOdTIzOGJSeFR3UUIw?=
+ =?utf-8?B?dUhGSldTa0VkTTMzYm1PTXZ2c25FVXlRQWZ5U2lYdmx3cmlXaUpUbUFRTkF0?=
+ =?utf-8?B?dVViL3NvbHN5VUthdDJxdy95MCtERFhTdlA3OVJ4cUlYaEZYRDBsVXBEd3Nx?=
+ =?utf-8?B?SVpLRk1MOXBHeW5RVWIxM3Mza081aVNEVkZLQkxWK0ltZHRVdlBKZUNWbzJs?=
+ =?utf-8?B?R1hsRDJ4T2JrMU5aTUpPalJqN1lROGttZzBMWGkzc0xzQnNaWXFLUllPUWRK?=
+ =?utf-8?B?a2huN1JnVUR2RXpQWnhmSkJMeFRaOUMzU0FjNC9qaVVsbDZYZU5JbnMwZ05J?=
+ =?utf-8?B?cThpa1ZmZVc1cFVlWlFaS29OdzI0UEtYR3hXd1FJcmcrS3h3UGhVdU0zY3pT?=
+ =?utf-8?B?WThmUmRaaUtMT0N3NnphVEdNc2ROcGx2YVUwc2VpTVRiaEFjQ2cvaHByS0V4?=
+ =?utf-8?B?ek94SWN2N3lsbEF6SW45Q3A2cWFBS0tUR2htVUZHajVUNTVtdVBMVmFURDhW?=
+ =?utf-8?B?R3g4TTQ5MnJydm80NzRha3Q5TVVqMEZFblVLR2pQM25IRWlPdWlPUldpenhp?=
+ =?utf-8?B?dE1lN29GNHVZNUhlTytQT2RqempJRFlwWG1UUWc0dDRUYmRqWGl5d0p3OVJt?=
+ =?utf-8?B?a2l1bmNlWlhiYkpDZ0VxNlRnbDhaRmZwR1cvMndsY2xBeHV3K3JzdDF5UE00?=
+ =?utf-8?B?RlVaU0l5bjBWbmdFU1grNDBaK2ZneVdCNXh6eXNHQnRCVzYva3R5L3NuSWwz?=
+ =?utf-8?B?YkZFUEpycUxWZnRFMzFIUjVyRERwT3VnNXpSamtDaW9haHBJUG5ZVHdDQ04z?=
+ =?utf-8?B?VGoyMjBFb2hPMVBkSWUzRHhoeW5pV21yQVF6TGUvRVBkd3kyQkFqY00ydCtC?=
+ =?utf-8?B?bUVPSVdHQ2V0QTREQXhaSDMwZ1VFL3FMWVI4Y2w1WHVYdEY5bWkxRnJxRVZ2?=
+ =?utf-8?B?K2RaekEwMmNSSmJYV2grY3NhOW9yb3hoWFBzdlhia05oUkhwQkpEcGRMOW9O?=
+ =?utf-8?B?TXNQL1BSTUF6eWdpRGdJbXBRdXZETFhzbjlyaTFONklQaEgyc0V2dlM4bVVQ?=
+ =?utf-8?B?b3IxZTdrdW9QRWNLUzRaeTRQcXhtTVRKdkNndmNnZEpqNS9ZaXRsRTJmTCtI?=
+ =?utf-8?B?V3h0MGRnTlZUVzVZdjlnaU5LaUttZFI5TXZWQnJUWDZjVkF4S2Q2OHRnbEll?=
+ =?utf-8?B?OGdOZy9ob0gvUDE2c051eUJGU2hiQnZTMFczT2NpSkFMSDlxLzVDNmVDUlVk?=
+ =?utf-8?B?WlFJVTU3ZE11dGwxTjlaUjJsOWVLY0xOeWozQnE1SXpaZVZXVlFVSnJROU12?=
+ =?utf-8?B?TWJCM0UxM1QvN3pYSDZoT3JuYVk0dEpxNDd5L010dEtwUGFDMzJVRTVKM0RE?=
+ =?utf-8?B?OEtuUGoraUt4cDdKb3A2T2VNTEY4R0lYNTNHbElNSkpKZVVFZ0FKUmIxN05y?=
+ =?utf-8?B?MDVyc2V1SEpVdWthb0doY2d5RkJUNGFzejB0amFmY2xIN3FiNWlFQ2dwRkk1?=
+ =?utf-8?B?VTJtaVdwamM2OVRCaENrNnkvU2NkMmZQNzZabGowUlo0OUFPdjR4WEFWNC9H?=
+ =?utf-8?B?S0xtVnVXRFpwQnVxMGtzRjB0MzZib0hXYXFid21HdFcybmhqMjBicGlPQkhU?=
+ =?utf-8?B?cEtvTUVkd00wb2RMVjkyeG9nMDFnb0RJNWlIeXM5SjRERmdTVlpWQXl6ZjZH?=
+ =?utf-8?B?dXowZG1KYm1Xd3BYYkVrWmpWSDRwZUpvNi9Oc1NGV0k4OWdDS2xiN09lVG5O?=
+ =?utf-8?B?UnhDU2RlVFpVNnhrdmpqNzRwem9WUnN1Z3ZBYWphMU5rUTZaWHFES2Z5a1lF?=
+ =?utf-8?B?YytzTnA1L2Z3M1d4ZExLUHc3THRXb3dmU0lBQVdSdHJwZExWWUZFRmw5T3hw?=
+ =?utf-8?B?OWFzUlgwMHdSd0xaaExpN3RvOEZHanJBd0ozL3g2WGJyUFllbmxRYzZvQkQv?=
+ =?utf-8?Q?//oaEDDCg6ZqoT0cPTvH5po=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1d44109-61a2-425f-baa4-08de163ab5da
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:57:35.0381
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39e6e66e-a37a-4653-1ac2-08de163abe9e
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FB.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7032
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UgE0pr4fxawq9WVwH4YjBvJttoKao0vmKijaN/Jn1/sGXPCM6mYsPJtnc2JPw8zEoVDuJzeWGlT7rUZhUTqf+7tfWkwhwgaAUh99Ck4RTNE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB11271
 
-Under high system load, QSPI interrupts can be delayed or blocked on the
-target CPU, causing wait_for_completion_timeout() to report failure even
-though the hardware successfully completed the transfer.
+On 2025-10-27 04:45, Thomas Gleixner wrote:
+[...]
+> Add a event flag, which is set when the CPU or MM CID or both change.
 
-When a timeout occurs, check the QSPI_RDY bit in QSPI_TRANS_STATUS to
-determine if the hardware actually completed the transfer. If so, manually
-invoke the completion handler to process the transfer successfully instead
-of failing it.
+"Add an event flag...".
 
-This distinguishes lost/delayed interrupts from real hardware timeouts,
-preventing unnecessary failures of transfers that completed successfully.
+Other than this nit:
 
-Signed-off-by: Vishwaroop A <va@nvidia.com>
----
- drivers/spi/spi-tegra210-quad.c | 100 +++++++++++++++++++++++++-------
- 1 file changed, 80 insertions(+), 20 deletions(-)
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-diff --git a/drivers/spi/spi-tegra210-quad.c b/drivers/spi/spi-tegra210-quad.c
-index 69defb4ffe49..cdc3cb7c01f9 100644
---- a/drivers/spi/spi-tegra210-quad.c
-+++ b/drivers/spi/spi-tegra210-quad.c
-@@ -1048,6 +1048,49 @@ static void tegra_qspi_transfer_end(struct spi_device *spi)
- 	tegra_qspi_writel(tqspi, tqspi->def_command1_reg, QSPI_COMMAND1);
- }
- 
-+static irqreturn_t handle_cpu_based_xfer(struct tegra_qspi *tqspi);
-+static irqreturn_t handle_dma_based_xfer(struct tegra_qspi *tqspi);
-+
-+/**
-+ * tegra_qspi_handle_timeout - Handle transfer timeout with hardware check
-+ * @tqspi: QSPI controller instance
-+ *
-+ * When a timeout occurs but hardware has completed the transfer (interrupt
-+ * was lost or delayed), manually trigger transfer completion processing.
-+ * This avoids failing transfers that actually succeeded.
-+ *
-+ * Returns: 0 if transfer was completed, -ETIMEDOUT if real timeout
-+ */
-+static int tegra_qspi_handle_timeout(struct tegra_qspi *tqspi)
-+{
-+	irqreturn_t ret;
-+	u32 status;
-+
-+	/* Check if hardware actually completed the transfer */
-+	status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
-+	if (!(status & QSPI_RDY))
-+		return -ETIMEDOUT;
-+
-+	/*
-+	 * Hardware completed but interrupt was lost/delayed. Manually
-+	 * process the completion by calling the appropriate handler.
-+	 */
-+	dev_warn_ratelimited(tqspi->dev,
-+			     "QSPI interrupt timeout, but transfer complete\n");
-+
-+	/* Clear the transfer status */
-+	status = tegra_qspi_readl(tqspi, QSPI_TRANS_STATUS);
-+	tegra_qspi_writel(tqspi, status, QSPI_TRANS_STATUS);
-+
-+	/* Manually trigger completion handler */
-+	if (!tqspi->is_curr_dma_xfer)
-+		ret = handle_cpu_based_xfer(tqspi);
-+	else
-+		ret = handle_dma_based_xfer(tqspi);
-+
-+	return (ret == IRQ_HANDLED) ? 0 : -EIO;
-+}
-+
- static u32 tegra_qspi_cmd_config(bool is_ddr, u8 bus_width, u8 len)
- {
- 	u32 cmd_config = 0;
-@@ -1177,20 +1220,28 @@ static int tegra_qspi_combined_seq_xfer(struct tegra_qspi *tqspi,
- 					QSPI_DMA_TIMEOUT);
- 
- 			if (WARN_ON_ONCE(ret == 0)) {
--				dev_err_ratelimited(tqspi->dev,
--						    "QSPI Transfer failed with timeout\n");
--
--				/* Abort transfer by resetting pio/dma bit */
--				if (tqspi->is_curr_dma_xfer)
--					tegra_qspi_dma_stop(tqspi);
--				else
--					tegra_qspi_pio_stop(tqspi);
--
--				/* Reset controller if timeout happens */
--				tegra_qspi_reset(tqspi);
--
--				ret = -EIO;
--				goto exit;
-+				/*
-+				 * Check if hardware completed the transfer
-+				 * even though interrupt was lost or delayed.
-+				 * If so, process the completion and continue.
-+				 */
-+				ret = tegra_qspi_handle_timeout(tqspi);
-+				if (ret < 0) {
-+					/* Real timeout - clean up and fail */
-+					dev_err(tqspi->dev, "transfer timeout\n");
-+
-+					/* Abort transfer by resetting pio/dma bit */
-+					if (tqspi->is_curr_dma_xfer)
-+						tegra_qspi_dma_stop(tqspi);
-+					else
-+						tegra_qspi_pio_stop(tqspi);
-+
-+					/* Reset controller if timeout happens */
-+					tegra_qspi_reset(tqspi);
-+
-+					ret = -EIO;
-+					goto exit;
-+				}
- 			}
- 
- 			if (tqspi->tx_status ||  tqspi->rx_status) {
-@@ -1281,14 +1332,23 @@ static int tegra_qspi_non_combined_seq_xfer(struct tegra_qspi *tqspi,
- 		ret = wait_for_completion_timeout(&tqspi->xfer_completion,
- 						  QSPI_DMA_TIMEOUT);
- 		if (WARN_ON(ret == 0)) {
--			dev_err(tqspi->dev, "transfer timeout\n");
-+			/*
-+			 * Check if hardware completed the transfer even though
-+			 * interrupt was lost or delayed. If so, process the
-+			 * completion and continue.
-+			 */
-+			ret = tegra_qspi_handle_timeout(tqspi);
-+			if (ret < 0) {
-+				/* Real timeout - clean up and fail */
-+				dev_err(tqspi->dev, "transfer timeout\n");
- 
--			if (tqspi->is_curr_dma_xfer)
--				tegra_qspi_dma_stop(tqspi);
-+				if (tqspi->is_curr_dma_xfer)
-+					tegra_qspi_dma_stop(tqspi);
- 
--			tegra_qspi_handle_error(tqspi);
--			ret = -EIO;
--			goto complete_xfer;
-+				tegra_qspi_handle_error(tqspi);
-+				ret = -EIO;
-+				goto complete_xfer;
-+			}
- 		}
- 
- 		if (tqspi->tx_status ||  tqspi->rx_status) {
 -- 
-2.17.1
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
