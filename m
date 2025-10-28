@@ -1,237 +1,149 @@
-Return-Path: <linux-kernel+bounces-874239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5966AC15D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:31:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2794AC15CE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EBEF74E8556
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:27:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C71FE5061E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56AA128CF41;
-	Tue, 28 Oct 2025 16:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914F5271A6D;
+	Tue, 28 Oct 2025 16:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a0PCiNY5"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gT6/ILOP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D5E286415
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2FCB27B4E1;
+	Tue, 28 Oct 2025 16:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668810; cv=none; b=XqeHeDN1D1Mqj3c3ANHAcKa5YHY1v8xbQYmWpJKuVvWdZqm1A1Zs8GG9dXrMFCOzZhVEhYKWjpPXlObXAvk9EYras0LiVhj6Hj5OHn5lVGEbd86tPMVvlsTzkt1cmyUbUoiOrShz9T3o644ygSLPd9p/O6daU1O/9qmpR0DnqeY=
+	t=1761668713; cv=none; b=YFM1QDdwfBxFSZDhaJtUEzD24qYuRVU4GiEAX+gsU2HJZY7e1KdZEFUR6AAHJhB15FzOXUecytFSvxTFP/tm479JhaGhSJIQpG+cbiYPp4jjm2xt0Jhtp5t8J0oCV8ureVHAgYzipa0KtYoDts5jPuGcCr1yybUU0w5AWyC+Kl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668810; c=relaxed/simple;
-	bh=C77mCOcYKZDT1tjjWTbER/wZyL1dVdsIKBcn719SqSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bA0mIOmTtWDemGbT836Mh5vpnSorojQbSm8tMdyIId11KaQJ/wVUKoL6n0OMZ+JvdDnOheErugtjFkasHqcc5pJDmbv/0uR3MjICm7QN6hRjZa3l8CClHuSUuc/fYA2EiQluBINS7qmRZmWC+pvqfz2mb8pxojtLpYwFvY9yd2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a0PCiNY5; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761668805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K3lqjGd6Xn2XO6sjJZ+0OWHHK1rsFpO56tXY2t0cYhs=;
-	b=a0PCiNY5lQxcHytYeRlIhR7nevUi+ijJoAYHK+qLd1TLrzdawejupjN6sogsllFKiSQeAn
-	4bULc/bSvMz6MnUftVg13hbmMM9VqgOjoH8gIYqMxd9ae7QuTEVljlbvPjZy19zS5qtV+A
-	YP7mC8PAUdlB/KflPDUOvUWtd9XNsxo=
-From: Tao Chen <chen.dylane@linux.dev>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	song@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next v4 2/2] bpf: Hold the perf callchain entry until used completely
-Date: Wed, 29 Oct 2025 00:25:02 +0800
-Message-ID: <20251028162502.3418817-3-chen.dylane@linux.dev>
-In-Reply-To: <20251028162502.3418817-1-chen.dylane@linux.dev>
-References: <20251028162502.3418817-1-chen.dylane@linux.dev>
+	s=arc-20240116; t=1761668713; c=relaxed/simple;
+	bh=g+HYr74fOIJBF8//IeX1u6hGkpfR/MyO8jpC8AyplAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O2D2fUGFBAk5AyDSjceTQvtH6vrBhia2jZIq3qc8XVJdL09x04qU2tNpsVXrUhZMnbKPgaDZsJUKPo1dlMA+TB1pQ3bQVOs0pZGcY1R0ReratD875aLst3NlXV0bpJfwX6gs03tiF0Ggir7uKa0fv2B2TrW1bKkL8gluQj/iUK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gT6/ILOP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDAFC4CEE7;
+	Tue, 28 Oct 2025 16:25:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761668710;
+	bh=g+HYr74fOIJBF8//IeX1u6hGkpfR/MyO8jpC8AyplAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gT6/ILOPpDox4LIC0P6mrQkn27cKKS8sqA59JphgtIkj6muwgaA3Fo1qkj+3hwr0x
+	 Lec8ctwO62yUgf5b+f8NOys9+imyW63Awoi+zjDc6vUMX7ItNvFhAbXVixsle20+AM
+	 DCYjg9wWsW+BmN8WmVOnXKeoK7KRXl7UfDuM55FDXrP20wubQGruqEIuyl7uN1vem3
+	 z1RjIXGmQ+jItDnSIQZ94NMGu9r4D1Cc2Yx7w4rRGmNHf87sUEhnNQJTnZxj1eJJBt
+	 Bp2v2DXxUkTbIAPy+fj+FmsmIlW78U0n3bUpKvn+IC4BArPQhxPUJb7TwK5EWFOiU5
+	 OFSj9z0ZySqFA==
+Date: Tue, 28 Oct 2025 17:25:07 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>, Phil Auld <pauld@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
+	Jann Horn <jannh@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [PATCH v6 00/29] context_tracking,x86: Defer some IPIs until a
+ user->kernel transition
+Message-ID: <aQDuY3rgOK-L8D04@localhost.localdomain>
+References: <20251010153839.151763-1-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20251010153839.151763-1-vschneid@redhat.com>
 
-As Alexei noted, get_perf_callchain() return values may be reused
-if a task is preempted after the BPF program enters migrate disable
-mode. The perf_callchain_entres has a small stack of entries, and
-we can reuse it as follows:
++Cc Phil Auld
 
-1. get the perf callchain entry
-2. BPF use...
-3. put the perf callchain entry
+Le Fri, Oct 10, 2025 at 05:38:10PM +0200, Valentin Schneider a écrit :
+> Patches
+> =======
+> 
+> o Patches 1-2 are standalone objtool cleanups.
 
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- kernel/bpf/stackmap.c | 61 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 48 insertions(+), 13 deletions(-)
+Would be nice to get these merged.
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index e28b35c7e0b..70d38249083 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -188,13 +188,12 @@ static void stack_map_get_build_id_offset(struct bpf_stack_build_id *id_offs,
- }
+> o Patches 3-4 add an RCU testing feature.
+
+I'm taking this one.
+
+> 
+> o Patches 5-6 add infrastructure for annotating static keys and static calls
+>   that may be used in noinstr code (courtesy of Josh).
+> o Patches 7-20 use said annotations on relevant keys / calls.
+> o Patch 21 enforces proper usage of said annotations (courtesy of Josh).
+> 
+> o Patch 22 deals with detecting NOINSTR text in modules
+
+Not sure how to route those. If we wait for each individual subsystem,
+this may take a while.
+
+> o Patches 23-24 deal with kernel text sync IPIs
+
+I would be fine taking those (the concerns I had are just details)
+but they depend on all the annotations. Alternatively I can take the whole
+thing but then we'll need some acks.
  
- static struct perf_callchain_entry *
--get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
-+get_callchain_entry_for_task(int *rctx, struct task_struct *task, u32 max_depth)
- {
- #ifdef CONFIG_STACKTRACE
- 	struct perf_callchain_entry *entry;
--	int rctx;
- 
--	entry = get_callchain_entry(&rctx);
-+	entry = get_callchain_entry(rctx);
- 
- 	if (!entry)
- 		return NULL;
-@@ -216,8 +215,6 @@ get_callchain_entry_for_task(struct task_struct *task, u32 max_depth)
- 			to[i] = (u64)(from[i]);
- 	}
- 
--	put_callchain_entry(rctx);
--
- 	return entry;
- #else /* CONFIG_STACKTRACE */
- 	return NULL;
-@@ -297,6 +294,31 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 	return id;
- }
- 
-+static struct perf_callchain_entry *
-+bpf_get_perf_callchain(int *rctx, struct pt_regs *regs, bool kernel, bool user,
-+		       int max_stack, bool crosstask)
-+{
-+	struct perf_callchain_entry_ctx ctx;
-+	struct perf_callchain_entry *entry;
-+
-+	entry = get_callchain_entry(rctx);
-+	if (unlikely(!entry))
-+		return NULL;
-+
-+	__init_perf_callchain_ctx(&ctx, entry, max_stack, false);
-+	if (kernel)
-+		__get_perf_callchain_kernel(&ctx, regs);
-+	if (user && !crosstask)
-+		__get_perf_callchain_user(&ctx, regs);
-+
-+	return entry;
-+}
-+
-+static void bpf_put_callchain_entry(int rctx)
-+{
-+	put_callchain_entry(rctx);
-+}
-+
- BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	   u64, flags)
- {
-@@ -305,6 +327,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	bool user = flags & BPF_F_USER_STACK;
- 	struct perf_callchain_entry *trace;
- 	bool kernel = !user;
-+	int rctx, ret;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_FAST_STACK_CMP | BPF_F_REUSE_STACKID)))
-@@ -314,14 +337,15 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
- 	if (max_depth > sysctl_perf_event_max_stack)
- 		max_depth = sysctl_perf_event_max_stack;
- 
--	trace = get_perf_callchain(regs, kernel, user, max_depth,
--				   false);
--
-+	trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth, false);
- 	if (unlikely(!trace))
- 		/* couldn't fetch the stack trace */
- 		return -EFAULT;
- 
--	return __bpf_get_stackid(map, trace, flags);
-+	ret = __bpf_get_stackid(map, trace, flags);
-+	bpf_put_callchain_entry(rctx);
-+
-+	return ret;
- }
- 
- const struct bpf_func_proto bpf_get_stackid_proto = {
-@@ -415,6 +439,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	bool kernel = !user;
- 	int err = -EINVAL;
- 	u64 *ips;
-+	int rctx;
- 
- 	if (unlikely(flags & ~(BPF_F_SKIP_FIELD_MASK | BPF_F_USER_STACK |
- 			       BPF_F_USER_BUILD_ID)))
-@@ -449,17 +474,24 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	if (trace_in)
- 		trace = trace_in;
- 	else if (kernel && task)
--		trace = get_callchain_entry_for_task(task, max_depth);
-+		trace = get_callchain_entry_for_task(&rctx, task, max_depth);
- 	else
--		trace = get_perf_callchain(regs, kernel, user, max_depth,
--					   crosstask);
-+		trace = bpf_get_perf_callchain(&rctx, regs, kernel, user, max_depth, crosstask);
- 
--	if (unlikely(!trace) || trace->nr < skip) {
-+	if (unlikely(!trace)) {
- 		if (may_fault)
- 			rcu_read_unlock();
- 		goto err_fault;
- 	}
- 
-+	if (trace->nr < skip) {
-+		if (may_fault)
-+			rcu_read_unlock();
-+		if (!trace_in)
-+			bpf_put_callchain_entry(rctx);
-+		goto err_fault;
-+	}
-+
- 	trace_nr = trace->nr - skip;
- 	trace_nr = (trace_nr <= num_elem) ? trace_nr : num_elem;
- 	copy_len = trace_nr * elem_size;
-@@ -479,6 +511,9 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
- 	if (may_fault)
- 		rcu_read_unlock();
- 
-+	if (!trace_in)
-+		bpf_put_callchain_entry(rctx);
-+
- 	if (user_build_id)
- 		stack_map_get_build_id_offset(buf, trace_nr, user, may_fault);
- 
+> o Patches 25-29 deal with kernel range TLB flush IPIs
+
+I'll leave these more time for now ;o)
+And if they ever go somewhere, it should be through x86 tree.
+
+Also, here is another candidate usecase for this deferral thing.
+I remember Phil Auld complaining that stop_machine() on CPU offlining was
+a big problem for nohz_full. Especially while we are working on
+a cpuset interface to toggle nohz_full but this will require the CPUs
+to be offline.
+
+So my point is that when a CPU goes offline, stop_machine() puts all
+CPUs into a loop with IRQs disabled. CPUs in userspace could possibly
+escape that since they don't touch the kernel anyway. But as soon as
+they enter the kernel, they should either acquire the final state of
+stop_machine if completed or join the global loop if in the middle.
+
+Thanks.
+
 -- 
-2.48.1
-
+Frederic Weisbecker
+SUSE Labs
 
