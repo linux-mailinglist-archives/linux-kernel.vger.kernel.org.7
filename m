@@ -1,125 +1,295 @@
-Return-Path: <linux-kernel+bounces-874397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE37C163D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:41:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498FEC163A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:40:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7A13AE6FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:38:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD7E31C26FE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:39:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4722C259CA9;
-	Tue, 28 Oct 2025 17:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691A619E82A;
+	Tue, 28 Oct 2025 17:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tRf0bAvU"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H1QFlI4U"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE6034A771
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFFF199FAC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673076; cv=none; b=Ol+hRwBkIK/uJ6Lo1Ol16sklv0w/sEHUHgtMhJD6qUsUidwu6BtSx9/8OnXE6q5yUYmxyJCgcLe4fphH2mWiVfPzqh5WRR3s0Z1L4Us7uYSbjnj/g9ZzJ+q/gPSCjAxvHGJrcijb6egxS3/M5oN35uvHrXsZ9NX5j+439Fr2NY8=
+	t=1761673165; cv=none; b=FaasvYrJEIy+w1XkYqM1ZolC1jZ4AXnIU7xYuQmDfum9+t26YodqZNu3IQ3JfBp8D0vkHo2jfXKYvkKyAxZOUtTL4cK7TWoAvZZjd6IGvtFP7qdoBOh1v5xHmWorzt0Q+ztyBi7IvrMRX/1A4c5EY8U+N5AG4txAbcVnZogd8ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673076; c=relaxed/simple;
-	bh=WCMg7UUnl6IMP5RsK5bXZua1oQz6K1bVCjhQkkqx5ms=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=C2Jh6e7KdOrqJToRJMk1U8owUXMjRu1eoWzxUwjMLg0YDTztI9yj4QLYV2F8q106+6aGGft6jUHlvn7aD0xjKWZmcIgTj2uZkYH33s//3uIAjlTupFd+zm03L0TaaXotW8GyPHK4IbZYzHMZvM93EgyvzPgWVwaZwvI7tn2cky0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tRf0bAvU; arc=none smtp.client-ip=209.85.214.201
+	s=arc-20240116; t=1761673165; c=relaxed/simple;
+	bh=e5GKgH/UTKYoqeaateNe5qxhNdabeLnlG8oSSdUoad4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZEP07QsLl01vTNl8GcfwwZ44Oyt5CIBb8Sspj+1ruqCP8R7jH+lslSOdmKWyrJaapwdv21BJwd4vc7bEn+UGQrIWT57UHkWHLd/MWrxVFobJoc3iBczjGKdM9ScOlF8qVoZxXne30s6Wo96c+225JbHfYdVJZrdooYMRbQl2Mr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H1QFlI4U; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-290b13c5877so127258785ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:37:54 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-87be45cba29so56101416d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:39:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761673074; x=1762277874; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8T4o8duS8kLdi84UueGHzy38mnS8VEpOnZiB5sHhaeI=;
-        b=tRf0bAvUAUTSp33Yt3tFnqg5tTnMoOcrM+iA1gfhIIAUknLfs/3w/AEMKzaqifFkRy
-         GxzIM8x7gBENFZliOQvIBf5epa5qQ5xxJ2x8qYVxWux4P9aSKxHSWUdOUaMlvGhpmfeu
-         gPZe5US1VyE7AQZiWrgaNiyYAw7FsbfuqmZK7I13+uL0HXpJrOUcoPP0MpFuFu+HPR4P
-         Iy3Mgv60UelSQhZzE+z/HKCzEIN5L0keOAXpB+zxUgQB5A3v5+7wHY2hGwaDqGLoUA5A
-         PyviehO+MT6kslaopuRZPENzj1E16IgkPQPjw3bVtfISjJ7sEMgQNudwnVpIAteQcl3S
-         gGsg==
+        d=google.com; s=20230601; t=1761673162; x=1762277962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e5GKgH/UTKYoqeaateNe5qxhNdabeLnlG8oSSdUoad4=;
+        b=H1QFlI4UXJWp4xwUcmHqd/Npb30gF81hDIFSfgIwdncH0eREcuJtRH0jg0mw0hjjAR
+         4ayhnC5xy6phB304/qUK2PUygSMxQGTwAZxtN3xZC81SYSmPhfY0TyFr1JTdcMkU1wc5
+         PwS178q7xp8qRH6VseV4BfmG1j6K3fbGr/Ji72nVxt8nZxXc7zJhaBIyK/Ka/UxEijfk
+         bq4RS3SGTCl5L4m0h3+3+rCs+t2A9OrUv7G4LtkOBQo/bXF+OdkTAi5UEgcDL59MD/6c
+         u40BCJSLQBL5UL+ICVs85AX/ivVJ8YYr54UWQhzcQ427SsguU7UNIOiUFYvh8m6R17Vq
+         d36Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761673074; x=1762277874;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8T4o8duS8kLdi84UueGHzy38mnS8VEpOnZiB5sHhaeI=;
-        b=fv2Ihge7KLhM9YUJOMabScSueyO6cncAUy6AKgUiLRx4XKCuFoug5DOL84zRdx2mUD
-         khhvZc2grZuOzQuGGYcOBGfXql0DaMpgG7K4JN5bWykUan3sNkpbo9ytV8zu2Ax0AigW
-         z6XAigjffCVwR/Zyn7upO1OzSe64y2B4i7yFRotVJSb/Svh7qBb8bNbb9P7Jy15g13qk
-         C0fsjdq5sPLNqQSYLm4LnS/OyqjWUMtWsGCoMvLQDU5+rYfmN0Qd7KccatypKScB19sZ
-         g/kopJ7tom/A6w4cbRGb1BVrkSeaRvby1+SKsE0UGhkNgimRAMDPpWT1Dz9HAbZOe46w
-         /NNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDe9BxQUbynvCdSGr+pRjDA8NUljLZQP3+PzaWWdeY4FdPXe/P0J8cZ4En2yIdOJNBzw/M1LFLcu66zbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6GZFsYOLe4/hY+fndBl9xhZc6jorF9wRswEBPW4p/4IBlspUC
-	FdPAGWt9cVFnqlrjxFPVCdQlO8lgUkCvUb1YYJ+lfjlWWBK2aE7SmBIn1iGU+ltYeKvhIZDzzin
-	EJq6PVQ==
-X-Google-Smtp-Source: AGHT+IFos7dmlHc5zgyuKwSvkzMGrICMFJHNR7QI6Hf+TJ3vKWf9u68Fb2sJjv7IaagPEHKeX48Q/hD6mEQ=
-X-Received: from plpp9.prod.google.com ([2002:a17:902:c709:b0:292:4a9c:44cf])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:246:b0:27e:e1f3:f853
- with SMTP id d9443c01a7336-294dedd4181mr189615ad.8.1761673074418; Tue, 28 Oct
- 2025 10:37:54 -0700 (PDT)
-Date: Tue, 28 Oct 2025 10:37:53 -0700
-In-Reply-To: <aEeAl9Hp7sSizrl8@intel.com>
+        d=1e100.net; s=20230601; t=1761673162; x=1762277962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e5GKgH/UTKYoqeaateNe5qxhNdabeLnlG8oSSdUoad4=;
+        b=kgmzLneSfbF7/5Ee3ruVhSKziVK2368kZ+or0seevo9LMiwCKWn3Z48ZRhyr34wMrj
+         yFxJCDEY6o8w21+BSsVJ39/felUkn6yu0kcnGjsEInj5EdTuKlcF2aWrWGzeR5+kkz0V
+         4qycOf0OpOkjL8T3ynyhrpgYUQuaaA8CTmyw9nHTSh9Q4qiCGD1lLcLDmX19+rvlei0c
+         7qHEI6Pmn7AfcEEzUagsy/FY21vlEuko6ZnLAOAKql+IXYvCSMFjdA1bOHvBQOlmzNn/
+         IhkMDGEe8prqpBNTfx5eR4q43K5xUvmSERgfGelHk39rnDTcjvNBZ8hvxk8YFabpbzFy
+         YqFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/3dOv6Nt6Z3wWw5BZx+dthwECdbUZQ3HCiAziA/wYAk+KhMBpAb8hN6a0z7zaXrXzNarnUPlxmm5z54o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/q3mTdPTH84VYUrg6ovieCuYmknE8XNgxY8dAjAGEQ6+j5ki7
+	ct5ifQSI2uf0GmEuxgRyFGToeFKnHjUsbgXb9sTIHQThVzPS6lWc7WUgVSWbAHfoV1xMYyvBYnd
+	8kPYuwvlgmg4z/ebT94mRvqTg4QnJ9xUB7X9kCYN5
+X-Gm-Gg: ASbGncvG3d6THhoci0zfiJIkxDcnw3vhAaj97XAXhWPeSITgZbylAmNmDueFyvl+jN2
+	wbikjQq5y4Ox80Xg5k15g3+R8l26UjXZwiQye+Rd7ILuDa0/d3a3DV680gY9IyavgK/jmdykF8o
+	x3pawyPNmSJGZvHguTVEovl2QkzU+UtjBUSZAQ2N+x6fZC2dz2kJwlEftf1dojbWYKW3HnLpJ77
+	/wSmzZjmT7uZVwJNfGOug8sQ9bw7PLVycZ5DZwmu9gXa8aOQmPii2b62PXolRbjjpHTvq6lY+Kp
+	c9bkKeCoYikne3cjV9uBqCFQyQ==
+X-Google-Smtp-Source: AGHT+IEzLhRvjAVm4Cta7u3gqBbuXxGfYAu/L56wiWh0qQYwqjYD99avpLnvK5jAgeVXmSt4Qiq0dgGWWZjR3bNU3C4=
+X-Received: by 2002:a05:6214:40d:b0:87c:2b29:2613 with SMTP id
+ 6a1803df08f44-87ffb13ae3fmr67954756d6.50.1761673161744; Tue, 28 Oct 2025
+ 10:39:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250610001700.4097-1-chang.seok.bae@intel.com> <aEeAl9Hp7sSizrl8@intel.com>
-Message-ID: <aQD_cZzqml1vindY@google.com>
-Subject: Re: [PATCH] x86/fpu: Ensure XFD state on signal delivery
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, mingo@redhat.com, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de, 
-	bp@alien8.de, dave.hansen@linux.intel.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20250919145750.3448393-1-ethan.w.s.graham@gmail.com>
+ <3562eeeb276dc9cc5f3b238a3f597baebfa56bad.camel@sipsolutions.net>
+ <CANgxf6xOJgP6254S8EgSdiivrfE-aJDEQbDdXzWi7K4BCTdrXg@mail.gmail.com> <438ff89e22a815c81406c3c8761a951b0c7e6916.camel@sipsolutions.net>
+In-Reply-To: <438ff89e22a815c81406c3c8761a951b0c7e6916.camel@sipsolutions.net>
+From: Alexander Potapenko <glider@google.com>
+Date: Tue, 28 Oct 2025 18:38:43 +0100
+X-Gm-Features: AWmQ_bnW72aQYooWWGflqdYTwRU7KZczsY8iNyINpHaHoghSdwZyWmyrA5jTR-Q
+Message-ID: <CAG_fn=XSUw=4tVpKE7Q+R2qsBzbA5+_XC1xH=goxAUZiRD7iyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/10] KFuzzTest: a new kernel fuzzing framework
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com, 
+	andreyknvl@gmail.com, andy@kernel.org, brauner@kernel.org, 
+	brendan.higgins@linux.dev, davem@davemloft.net, davidgow@google.com, 
+	dhowells@redhat.com, dvyukov@google.com, elver@google.com, 
+	herbert@gondor.apana.org.au, ignat@cloudflare.com, jack@suse.cz, 
+	jannh@google.com, kasan-dev@googlegroups.com, kees@kernel.org, 
+	kunit-dev@googlegroups.com, linux-crypto@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lukas@wunner.de, 
+	rmoar@google.com, shuah@kernel.org, sj@kernel.org, tarasmadan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 10, 2025, Chao Gao wrote:
-> On Mon, Jun 09, 2025 at 05:16:59PM -0700, Chang S. Bae wrote:
-> >Sean reported [1] the following splat when running KVM tests:
-> >
-> >   WARNING: CPU: 232 PID: 15391 at xfd_validate_state+0x65/0x70
-> >   Call Trace:
-> >    <TASK>
-> >    fpu__clear_user_states+0x9c/0x100
-> >    arch_do_signal_or_restart+0x142/0x210
-> >    exit_to_user_mode_loop+0x55/0x100
-> >    do_syscall_64+0x205/0x2c0
-> >    entry_SYSCALL_64_after_hwframe+0x4b/0x53
-> >
-> >Chao further identified [2] a reproducible scenarios involving signal
-> >delivery: a non-AMX task is preempted by an AMX-enabled task which
-> >modifies the XFD MSR.
-> >
-> >When the non-AMX task resumes and reloads XSTATE with init values,
-> >a warning is triggered due to a mismatch between fpstate::xfd and the
-> >CPU's current XFD state. fpu__clear_user_states() does not currently
-> >re-synchronize the XFD state after such preemption.
-> >
-> >Invoke xfd_update_state() which detects and corrects the mismatch if the
-> >dynamic feature is enabled.
-> >
-> >This also benefits the sigreturn path, as fpu__restore_sig() may call
-> >fpu__clear_user_states() when the sigframe is inaccessible.
-> >
-> >Fixes: 672365477ae8a ("x86/fpu: Update XFD state where required")
-> >Reported-by: Sean Christopherson <seanjc@google.com>
-> >Closes: https://lore.kernel.org/lkml/aDCo_SczQOUaB2rS@google.com [1]
-> >Tested-by: Chao Gao <chao.gao@intel.com>
-> >Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> >Cc: stable@vger.kernel.org
-> >Link: https://lore.kernel.org/all/aDWbctO%2FRfTGiCg3@intel.com [2]
-> 
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> 
-> Thanks for looking into this issue.
+On Fri, Oct 24, 2025 at 10:38=E2=80=AFAM Johannes Berg
+<johannes@sipsolutions.net> wrote:
+>
+> Hi Ethan, all,
 
-Ping.  I _think_ this is still needed?  AFAICT, it just fell through the cracks.
+
+Hi Johannes,
+
+> > I would argue that it only depends on syzkaller because it is currently
+> > the only fuzzer that implements support for KFuzzTest. The communicatio=
+n
+> > interface itself is agnostic.
+>
+> Yeah I can see how you could argue that. However, syzkaller is also
+> effectively the only fuzzer now that supports what you later call "smart
+> input generation", and adding it to any other fuzzer is really not
+> straight-forward, at least to me. No other fuzzer seems to really have
+> felt a need to have this, and there are ... dozens?
+
+Structure-aware fuzzing is not unique to syzkaller, nor are domain
+constraints for certain values.
+https://github.com/google/fuzztest is one example of a fuzzer that
+supports both.
+libFuzzer also supports custom mutators
+(https://github.com/google/fuzzing/blob/master/docs/structure-aware-fuzzing=
+.md)
+
+> > Since a KFuzzTest target is
+> > invoked when you write encoded data into its debugfs input file, any
+> > fuzzer that is able to do this is able to fuzz it - this is what syzkal=
+ler
+> > does. The bridge tool was added to provide an out-of-the-box tool
+> > for fuzzing KFuzzTest targets with arbitrary data that doesn't depend
+> > on syzkaller at all.
+>
+> Yes, I understand, I guess it just feels a bit like a fig-leaf to me to
+> paper over "you need syzkaller" because there's no way to really
+> (efficiently) use it for fuzzing.
+
+When designing KFuzzTest, we anticipated two potential user scenarios:
+1. The code author develops the fuzz test and runs it locally to
+ensure its sanity and catch obvious errors.
+2. The fuzz test lands upstream and syzkaller runs it continuously.
+
+Ethan initially developed tools for both scenarios on the syzkaller
+side, prioritizing simplicity of use over the diversity of potential
+non-default fuzzing engines.
+However, because smoke testing does not require a syzkaller
+dependency, he added the bridge utility (I believe David Gow suggested
+it).
+That utility is easy to use for smoke testing, as it requires only a
+one-line structure description.
+I understand it may not be suitable for users who want to extensively
+fuzz a particular test on their own machine without involving
+syzkaller.
+
+I agree we can do a better job by implementing some of the following option=
+s:
+1. For tests without nested structures, or for tests that request it
+explicitly, allow a simpler input format via a separate debugfs file.
+2. Export the constraints/annotations via debugfs in a string format
+so that fuzzers do not need vmlinux access to obtain them.
+3. Export the fuzz test input structure as a string. (We've looked
+into this and deemed it infeasible because test inputs may reference C
+structures, and we don't have a reflection mechanism that would allow
+us to dump the contents of existing structs).
+
+
+> > This is exactly right. It's not used by syzkaller, but this is how it's
+> > intended to work when it's used as a standalone tool, or for bridging
+> > between KFuzzTest targets and an arbitrary fuzzer that doesn't
+> > implement the required encoding logic.
+>
+> Yeah I guess, but that still requires hand-coding the descriptions (or
+> writing a separate parser), and notably doesn't work with a sort of in-
+> process fuzzing I was envisioning for ARCH=3Dum. Which ought to be much
+> faster, and even combinable with fork() as I alluded to in earlier
+> emails.
+
+Can you describe the interface between the fuzz test and the fuzzing
+engine that you have in mind?
+For ARCH=3Dum, if you don't need structure awareness, I think the
+easiest solution would be to make FUZZ_TEST wrap the code into
+something akin to LLVMFuzzerTestOneInput()
+(https://llvm.org/docs/LibFuzzer.html) that would directly pass random
+data into the function under test. The debugfs interface is probably
+excessive in this case.
+
+But let's say we want to run in-kernel fuzzing with e.g. AFL++ - will
+a simplified debugfs interface solve the problem?
+What special cases can we omit to simplify the interface?
+
+> I mean, yeah, I guess but ... Is there a fuzzer that is able generate
+> such input? I haven't seen one. And running the bridge tool separately
+> is going to be rather expensive (vs. in-process like I'm thinking
+> about), and some form of data extraction is needed to make this scale at
+> all.
+>
+> Sure, I can do it all manually for a single test, but is it really a
+> good idea that syzkaller is the only thing that could possibly run this
+> at scale?
+
+Adding more fuzzing engines will not automatically allow us to run
+this at scale.
+For that, we'll need a continuous fuzzing system to manage the kernels
+and corpora, report bugs, find reproducers, and bisect the causes.
+I don't think building one for another fuzzing engine will be worth it.
+That said, we can help developers better fuzz their code during local
+runs by not always requiring the serialization format.
+
+> > You're right that the provided examples don't leverage the feature of
+> > being able to pass more complex nested data into the kernel. Perhaps
+> > for a future iteration, it might be worth adding a target for a functio=
+n
+> > that takes more complex input. What do you think?
+>
+> Well, I guess my thought is that there isn't actually going to be a good
+> example that really _requires_ all this flexibility. We're going to want
+> to test (mostly?) functions that consume untrusted data, but untrusted
+> data tends to come in the form of a linear blob, via the network, from a
+> file, from userspace, etc. Pretty much only the syscall boundary has
+> highly structured untrusted data, but syzkaller already fuzzes that and
+> we're not likely to write special kfuzztests for syscalls?
+
+We are not limited to fuzzing parsers of untrusted data. The idea
+behind KFuzzTest is to validate that a piece of code can cope with any
+input satisfying the constraints.
+We could just as well fuzz a sorting algorithm or the bitops.
+E.g. Will Deacon had the idea of fuzzing a hypervisor, which
+potentially has many parameters, not all of which are necessarily
+blobs.
+
+> > I'm not sure how much of the kernel complexity really could be reduced
+> > if we decided to support only simpler inputs (e.g., linear buffers).
+> > It would certainly simplify the fuzzer implementation, but the kernel
+> > code would likely be similar if not the same.
+>
+> Well, you wouldn't need the whole custom serialization format and
+> deserialization code for a start, nor the linker changes around
+> KFUZZTEST_TABLE since run-time discovery would likely be sufficient,
+> though of course those are trivial. And the deserialization is almost
+> half of the overall infrastructure code?
+
+We could indeed organize the code so that simpler test cases (e.g. the
+examples provided in this series) do not require the custom
+serialization format.
+I am still not convinced the whole serialization idea is useless, but
+perhaps having a simplified version will unblock more users.
+
+>
+> Anyway, I don't really know what to do. Maybe this has even landed by
+> now ;-) I certainly would've preferred something that was easier to use
+> with other fuzzers and in-process fuzzing in ARCH=3Dum, but then that'd
+> now mean I need to plug it in at a completely different level, or write
+> a DWARF parser and serializer if I don't want to have to hand-code each
+> target.
+>
+> I really do want to do fuzz testing on wifi, but with kfuzztest it
+> basically means I rely on syzbot to actually run it or have to run
+> syzkaller myself, rather than being able to integrate it with other
+> fuzzers say in ARCH=3Dum. Personally, I think it'd be worthwhile to have
+> that, but I don't see how to integrate it well with this infrastructure.
+
+Can you please share some potential entry points you have in mind?
+Understanding which functions you want to fuzz will help us simplify the fo=
+rmat.
+
+Thank you for your input!
+
+> Also, more generally, it seems unlikely that _anyone_ would ever do
+> this, and then it's basically only syzbot that will ever run it.
+>
+> johannes
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to kasan-dev+unsubscribe@googlegroups.com.
+> To view this discussion visit https://groups.google.com/d/msgid/kasan-dev=
+/438ff89e22a815c81406c3c8761a951b0c7e6916.camel%40sipsolutions.net.
+
+
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Liana Sebastian
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
 
