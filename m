@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-874109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF8DBC15841
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:39:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AA0C15943
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:47:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3881885C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CCD3A58E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312DB342CB4;
-	Tue, 28 Oct 2025 15:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705BD3469F6;
+	Tue, 28 Oct 2025 15:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fauo+yoi"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGxEJAQM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88193431E6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:35:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BF1343201
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665702; cv=none; b=tR+LVkPl6Ymv+fkA2bApFMVQEDec1QUV3Yr7Zwilzn6VXPRG/gOR0MOIfGPYoqnKQ+mADN4je4BhNIQyvvi3R8UPA9jab6EH6A6TLbNTTMR26Uzw3BqxljUuVCU0EJhs+4ndl2/mykNCrSb5U1M5j69/7M3T6euawDrrMJ257AE=
+	t=1761665720; cv=none; b=hvWiBGmS3pPUEI+2MbNH5/gMbameNuKt+TNe1Mn9fBXF27wIIrEyakQo3UC/5P7Z0zH1JuhUmEwkMNFszqsMr4R1tiprU2EL1rAi9T/C6BhczHOu2ZbXVmvAyiSTg0bTAxlLSk+Rskg3KnxVCnAGD6ezVGYJb8TsMucVZjMoJ+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665702; c=relaxed/simple;
-	bh=+zf/L6+BpO5HiQmCsVmEtAAefad0gqPlx28ytnkqVYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QioKwnK3pwUtbPMcuDUch8GualuGgG84ci5w/DhJ8o2T/9Iw7pGxdvhEu7MZ+6RwxSGEYgCqTydpPJQh4pPzCAsxO43EM151JCT6MtnzBbpLa62Z+/P5pk188yCnVIdd/IueWUiGMOoUrMH9lTmLypN/uR0WxGzOp3LlCtX9iO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fauo+yoi; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-4270491e9easo5067401f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:35:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761665699; x=1762270499; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+zf/L6+BpO5HiQmCsVmEtAAefad0gqPlx28ytnkqVYY=;
-        b=fauo+yoirp03eUxij6gsr0LAqqhr/HhWKvaC3FIuh8uwj8SyK7IfDi3X4a+MqQyQj6
-         vsQuvXZfX6bSyFJNf607+vBKeGsgRQ2hYTKOifWoFwNmmkA9DgKFWwltOXJld95CzFl0
-         sbdcmF3MVEKm7YadjCGHP2sPQQ9g27OFgU0tXedTRn81zYb4wQ3nF5s8VfxJ8I5U6MFS
-         fhXinAeMvKVjHrCkqfjQcwlTKTYdWLXVy8Pak27fT0BtcHHxyfR32xJ+uyPsfwJkRZQw
-         yKPYCK+DaLxieqOfk5YvWxjOE3Mou/Tdly/sgBDneytVJVl8SjR4S7KyaC1oltILMsKb
-         EHHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761665699; x=1762270499;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+zf/L6+BpO5HiQmCsVmEtAAefad0gqPlx28ytnkqVYY=;
-        b=jKINgkI4u+ThjVv7JruCqSaIEi8V+JiKC31GNYFW/yhoxUbqPrGk4MVHDcmF1IOb+d
-         PwZVNNDuDM6gQbqX6V5zDq7t0mRXtYmjjzsu8l99Vy7n9tXFXM4hvthihsPQ+ZjD7M4A
-         nGYSSq0QXGw+TjlTWEbgpKd6Nycy7F42oUX31YkKekw536johk3W+e7/QYu2scqhjhug
-         lHrRcucg98da6nADmRdYiu+/ga28BYxNIBOeEzaCWl/OflAg+IJvVbTGP4r+Tg70TYeb
-         Fmq44jr42TlYnz4rVXuX17MHjxTDqRabGOH1LRp31HdVPk/0N1B0SVlSY/LuyrF5RV8b
-         2heA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+r2qvnFbpUz51Q8ayFf+sRj7Tgs711+09LMyzRGvB42N1vb1A59y8blDbQmBV/lj5Ph2usRRiBPsWZ6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdv2VQvJbxVhu83kjv14RPz13zUY7ZaK5WmfAGN6d7nsCNGD18
-	j9SchzOnthzmGgPmx6mjrh/DaXjcEpgshoUx6vly1vxa3/7wTCuLb2KN
-X-Gm-Gg: ASbGncswyY5VvWRi1p3yJqNlWsTd0pujKtUT9dXxMgrcPpyKYLU3x2eJPxHvS+dQAx8
-	WQkkHGkJyWaif+wdtp+OykxQ7e7cnNglQyIWnJ4+QEqUsOPiW+Bp8jYZ02Gy8R+fqrrp+aWgb8z
-	y0Ro8nm67vqe4e8sQRVsauL8y1buhdKuRNf6f0KsJayrxMIketMdb2mFU5C6HtHQbxFLeK1TEGD
-	gRsSz1U848hNYmu4+QyQ5ZM5OrMpq1zlhMyqizu20mHwRoJ0225PLrhJ66zMApPRgfUFP3mpfRT
-	VEPSGgU6yWLpRxVT15FLQki0VuwNBSIhrsqnGhhU9+IIOqJNK3Cg4FWF2fvAqM2WPqeI6UeAtDo
-	avYLqn9FwNZPa9hieyO2n/s6+hGuX+bEu8OZwWY9n13IAYnh3zfglXSLZez4stASsqB5ePZ4jKr
-	ARL0LIIHsQJWJSuC60x+be+Esbkf4AFmQjj7xAWx+tiqD1+xjkE2SZ/+o1RQ==
-X-Google-Smtp-Source: AGHT+IHQaqAyFKg0dIVlFNzHvuX0zpZSii67laWQ5yWofyqAlv0IPJ4MzzJSDYza6+cEoyhxJ1y+9w==
-X-Received: by 2002:a5d:5c89:0:b0:428:3f7c:bcf3 with SMTP id ffacd0b85a97d-429a7e86b07mr3600391f8f.49.1761665698923;
-        Tue, 28 Oct 2025 08:34:58 -0700 (PDT)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b43sm21334532f8f.6.2025.10.28.08.34.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 08:34:58 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Richard Genoud <richard.genoud@bootlin.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Richard Genoud <richard.genoud@bootlin.com>
-Subject:
- Re: [PATCH v4 03/16] mtd: rawnand: sunxi: Replace hard coded value by a
- define
-Date: Tue, 28 Oct 2025 16:34:57 +0100
-Message-ID: <2017172.PYKUYFuaPT@jernej-laptop>
-In-Reply-To: <20251028073534.526992-4-richard.genoud@bootlin.com>
-References:
- <20251028073534.526992-1-richard.genoud@bootlin.com>
- <20251028073534.526992-4-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1761665720; c=relaxed/simple;
+	bh=idLuRWoO+38vK6VRnFxiDUoDHFUs+D0A09Hb5MHGJrA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6bJXRJjAzN/+M8UEmczUMKAdgG+oBZIkOBpqYTqvqhCt7nJsGBehaKz8gwwWLXfa5BsuEAi+wPdN9i7KG588O5W0MNQDuxDOHZzVdJsBNC+ILhi5qeuX3+ko+LuIxooBWkgjppv2T6Ta4jC82eGxLWIBIoNOFtcHAHm44Id2sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGxEJAQM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF3FC4CEE7;
+	Tue, 28 Oct 2025 15:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761665720;
+	bh=idLuRWoO+38vK6VRnFxiDUoDHFUs+D0A09Hb5MHGJrA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JGxEJAQMRAoubDH7yBud7nIGS2ACn25Z+fPf0wgYi87/LQq+3Mft4971TG3JdvGJZ
+	 S02RRI+YPvB0Y978BvnLdGQ/h8yqR6Ss3Qee6PjNLc9vuiKZ5e5vaP34ouiEpIayua
+	 BZwZ91iaLAZVj1u4xWnKFEFFiKarFCIbdweVC/DQ6AdApS2sg9vsXO+POiPfaCss0g
+	 GOwKF7vKNKpu6spb36aJ0TJQRDlsAQgelhAEL34MeC0z4bAnV8XdjG2W3qpy33D917
+	 seipQ2KgA8N1N+XV9/MitQ2UPPsRx/SNhwIdz8aY5in3awlN2+2K225/MT8Gn/8o64
+	 mryuNFfc5QVQw==
+Date: Tue, 28 Oct 2025 15:35:11 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Sandy Huang <hjc@rock-chips.com>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, kernel@collabora.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Algea Cao <algea.cao@rock-chips.com>,
+	Derek Foreman <derek.foreman@collabora.com>,
+	Daniel Stone <daniels@collabora.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
+ SoCs
+Message-ID: <21eb9cb1-18b2-4cad-9422-c8e995183d53@sirena.org.uk>
+References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
+ <6f3f126d-72c1-48cb-a9c8-8d354af2a3d5@sirena.org.uk>
+ <410fa913-e86b-4ffd-9d79-ce804f0271ff@collabora.com>
+ <63003a7e-8d3d-433a-8a44-54fe8740bc3a@collabora.com>
+ <5678895e-2647-42db-b3f0-86a21b9bc225@sirena.org.uk>
+ <13c3810b-8197-4a42-9089-d20a78b8126f@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-
-Dne torek, 28. oktober 2025 ob 08:34:56 Srednjeevropski standardni =C4=8Das=
- je Richard Genoud napisal(a):
-> The user data length (4) used all over the code hard coded.
-> And sometimes, it's not that trivial to know that it's the user data
-> length and not something else.
-> Moreover, for the H6/H616 this value is no more fixed by hardware, but
-> could be modified.
->=20
-> Using a define here makes the code more readable.
->=20
-> Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Lf6kj6LVwO02h80q"
+Content-Disposition: inline
+In-Reply-To: <13c3810b-8197-4a42-9089-d20a78b8126f@collabora.com>
+X-Cookie: Your canceled check is your receipt.
 
 
+--Lf6kj6LVwO02h80q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 28, 2025 at 05:24:42PM +0200, Cristian Ciocaltea wrote:
+> On 10/28/25 5:08 PM, Mark Brown wrote:
+> > On Tue, Oct 28, 2025 at 04:57:03PM +0200, Cristian Ciocaltea wrote:
+
+> >> This seems to have been already addressed:
+
+> >> https://lore.kernel.org/all/20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com/
+
+> > Ah, good.  Hopefully that lands soon, do you have any idea what's
+> > holding it up?
+
+> I guess it's just the complexity, since that is part of a larger work concerning DRM bridges:
+
+> https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
+
+Oh dear, I'll perhaps follow up there - sometimes this breaks boot
+entirely depending on which way we hit the issue so at least getting the
+revert in would be good.
+
+--Lf6kj6LVwO02h80q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkA4q4ACgkQJNaLcl1U
+h9Cw9Qf/biFN62QMrYgXYDbDsegoqDqqsXcMbeehM/Q3ysme4lJKK5trLO/dF7Tx
+AQavE6VnzV0RUdLDEI58E+gA4bQGo+Ox5jnuocJ6P9xN9Bkb1lalO2qQ4WFNWAom
+Tn7WNQxynhmHv55tadxwM7oz/24FsvaI5u5y9CY4TlI7KSPhlps7npoBBusvGZkW
+RHf2O6oHFI9ARVozT57pYoSmiaaa/F7Kf6JBO9okHu6fouEEWBRDnaaXkDt+ooSF
+g7/E8yU8MyapkQCuWdOTsV8DXr0qucasdaAfODubHxv3Y9nRjYt0tL0pyvXKUvCc
+irvr/g+8r0jxqUIgrCg2LbfnyEWDWg==
+=4VOq
+-----END PGP SIGNATURE-----
+
+--Lf6kj6LVwO02h80q--
 
