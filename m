@@ -1,210 +1,193 @@
-Return-Path: <linux-kernel+bounces-873107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4CB1C131FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:24:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6B78C131F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FA458076B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:24:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F41A631B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C244261581;
-	Tue, 28 Oct 2025 06:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB362BDC05;
+	Tue, 28 Oct 2025 06:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="DzpX4aL2"
-Received: from cp2.siel.si (cp2.siel.si [46.19.12.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Z0g6+QaN"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9D8286430;
-	Tue, 28 Oct 2025 06:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.12.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7359286430;
+	Tue, 28 Oct 2025 06:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761632642; cv=none; b=snb8odlHRwICkLMuPO6CYusAoualZ4TIVq458Ih9/YkizSy4fIPQGQ9CJnvWVa3Ht8T0bdF2yUe83nGX4BP3NrNu0JutEcsVX0i3WnLmAcLj7scFc8VmDxaSaF/wcmI+NSfZRL5i751+xFq4PbSHuwjPElTTu+Rsws8eTiXxdxk=
+	t=1761632652; cv=none; b=bf1FQUZBH8mGW4vsuux1eYBBQNvdc8A/VktRgW/g4Rd8xl4aQ7xSfCloxGJrAJo3KlPBGwzhQNLarEHQf9rNlS0d1DOEZMq1o3923mWZq4Hlvkd7dzwrNydFD+dpFVUbIKihVry4dCjNb373cbVawf6qThduIZQDRT27z5rptFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761632642; c=relaxed/simple;
-	bh=qF862YQMhxHIqNRrfdOcFjxmmmh3u96he0/heE39e9M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IrEXllt4DV0eDy8ny5w4BTJ/mN0picNkgF9TePv9BUbaqTjz/FVZwebjDy0ysg79C4xYawtgjJC0rui6SWUJ/IviCk3uL9dJkm3dEZIKQQPqLmKGk7C4/ESGoQ1UsMnCky5HAiFYa7BfPEdGlBSRaDhTTCN42+OW63BFicldH90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=DzpX4aL2; arc=none smtp.client-ip=46.19.12.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/bwZX8NaNeCjNz5xtFo8tTrg/X/6uhvhX7RQ2Ckv/pw=; b=DzpX4aL2ITM/2aTmP4HaOK3Skk
-	wTcJ89CRbii5D/gvPXFoKNH5Ab8K7X8773FNTdXsHUY7Drthck2gkZIFWLJO9pNh+z0wZJZqm4Cuh
-	E3iUhLZiFJQ8xQysNymfEPT96bzPdRhOU0dd3Nuut8Z459Zz0xLn+OQID2z0MtFXFJflKKQXRt3UT
-	M1WxICLWC3tkgyuohcLxdPpSzwLOChJ0inZiXFu1isLMkEWE/D3kN31ytbxWXMiRnMC+RVBwm3s/f
-	Etbagn0/Unb064upBEmBd5HffwW3zmgeZnkLKunyWs6NiF8JmF1UY1Qv+9tB2yobUfGrHssH9SlwT
-	1avj86Ew==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:46904 helo=[192.168.69.116])
-	by cp2.siel.si with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
-	(Exim 4.98.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1vDd7h-00000009FJT-023f;
-	Tue, 28 Oct 2025 07:23:59 +0100
-Message-ID: <658fa62e-cc80-436a-9812-c67b0dc8de03@norik.com>
-Date: Tue, 28 Oct 2025 07:23:57 +0100
+	s=arc-20240116; t=1761632652; c=relaxed/simple;
+	bh=RB/62kND96OGn8w2NViVi5fzTBHYYbkWkfWMVBqOwC8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aPqN3L5qziJFVw8JByM7VT3GMdO1QYrmiUMNwiNHRgLjjSV+fFj31sxM8qKcxv8PAG9+CJPQRwmLmHZOzcWpsUewFRlXjd3sCBq7BJYJm3ZB3SuL7HX03+8bPOx+fGqKYxt0n+MeYrxaOp5FXp4YQ1GCijSzmWVmCriIP7K9HIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Z0g6+QaN; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59S6NuBhA1978419, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1761632636; bh=Po8oHuwmQJTLFa57Ll66nhGvC8Z3t2WGmjA9WLSfruA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=Z0g6+QaNu7dNjaAOpgfwB59+DGUY1zycxKjxtQmY7xFAO5JfJIMxTpHl6RodXgAS3
+	 XCegJXcuBfQTzanGI2Kq+iq2QmdA9Y9qOXWTX5Up34Iw/HUV+CRRYvOSxpGOzzm4z7
+	 UlgLBUfCYt7hfVdmvdaIS9oprrk5ufDhnmfhvLo8RaYs0NOfqCM5SMUonKuiGl2lIh
+	 C+ubTLac4d2ZRbCDlFd0fGxPpeb2aRiesiYj166Q1KmNkGgavT0vvg/zQdt31/P5zz
+	 +ttDNfxjhUoEDyon3+J9iE+xQ76dAqes4ONlNXtj2Fm9iFWLBv9S415cTs9UteHGLn
+	 oEmA9an233gYA==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59S6NuBhA1978419
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 14:23:56 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 28 Oct 2025 14:23:56 +0800
+Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Tue, 28 Oct 2025 14:23:55 +0800
+Received: from localhost.localhost (172.24.54.48) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server id
+ 15.2.1544.27 via Frontend Transport; Tue, 28 Oct 2025 14:23:55 +0800
+From: Max Chou <max.chou@realtek.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz
+	<luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
+        <niall_ni@realsil.com.cn>, <zhu_qing@realsil.com.cn>,
+        Chih-Hsiang Wang
+	<wangchihhs@realtek.com>, <brenda.li@ublnx.com>,
+        Max Chou
+	<max.chou@realtek.com>
+Subject: [PATCH v2] Bluetooth: btrtl: Add the support for RTL8761CUV
+Date: Tue, 28 Oct 2025 14:24:13 +0800
+Message-ID: <20251028062413.252504-1-max.chou@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: freescale: imx93-phyboard-nash: Add jtag
- overlay
-To: Frank Li <Frank.li@nxp.com>, Alberto Merciai <alb3rt0.m3rciai@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-References: <20251007084028.1125185-1-primoz.fiser@norik.com>
- <aPt/d9svTeUIRljW@lizhi-Precision-Tower-5810>
- <aPuO+FCeeIFv3bQm@alb3rt0-ThinkPad-P15-Gen-1>
- <aPuvYwwG5N84MwGA@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Primoz Fiser <primoz.fiser@norik.com>
-Autocrypt: addr=primoz.fiser@norik.com; keydata=
- xjMEZrROOxYJKwYBBAHaRw8BAQdAADVOb5tiLVTUAC9nu/FUl4gj/+4fDLqbc3mk0Vz8riTN
- JVByaW1veiBGaXNlciA8cHJpbW96LmZpc2VyQG5vcmlrLmNvbT7CiQQTFggAMRYhBK2YFSAH
- ExsBZLCwJGoLbQEHbnBPBQJmtE47AhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQagttAQducE+T
- gAD+K4fKlIuvH75fAFwGYG/HT3F9mN64majvqJqvp3gTB9YBAL12gu+cm11m9JMyOyN0l6Os
- jStsQFghPkzBSDWSDN0NzjgEZrROPBIKKwYBBAGXVQEFAQEHQP2xtEOhbgA+rfzvvcFkV1zK
- 6ym3/c/OUQObCp50BocdAwEIB8J4BBgWCAAgFiEErZgVIAcTGwFksLAkagttAQducE8FAma0
- TjwCGwwACgkQagttAQducE8ucAD9F1sXtQD4iA7Qu+SwNUAp/9x7Cqr37CSb2p6hbRmPJP8B
- AMYR91JYlFmOJ+ScPhQ8/MgFO+V6pa7K2ebk5xYqsCgA
-Organization: Norik systems d.o.o.
-In-Reply-To: <aPuvYwwG5N84MwGA@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cp2.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cp2.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cp2.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi both,
+Add support for RTL8761CUV BT controller on the USB interface.
+Do not apply IC_MATCH_FL_HCIVER when hci_ver is 0 in the ic_id_table.
 
-On 24. 10. 25 18:54, Frank Li wrote:
-> On Fri, Oct 24, 2025 at 04:36:40PM +0200, Alberto Merciai wrote:
->> On Fri, Oct 24, 2025 at 09:30:31AM -0400, Frank Li wrote:
->>> On Tue, Oct 07, 2025 at 10:40:27AM +0200, Primoz Fiser wrote:
->>>> Add overlay to enable JTAG pins on the board's JTAG (X41) connector.
->>>>
->>>> Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
->>>> ---
->>>>  arch/arm64/boot/dts/freescale/Makefile        |  2 ++
->>>>  .../freescale/imx93-phyboard-nash-jtag.dtso   | 26 +++++++++++++++++++
->>>>  2 files changed, 28 insertions(+)
->>>>  create mode 100644 arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
->>>>
->>>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
->>>> index 525ef180481d..c72a6fdc5412 100644
->>>> --- a/arch/arm64/boot/dts/freescale/Makefile
->>>> +++ b/arch/arm64/boot/dts/freescale/Makefile
->>>> @@ -356,10 +356,12 @@ dtb-$(CONFIG_ARCH_MXC) += imx93-kontron-bl-osm-s.dtb
->>>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash.dtb
->>>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin.dtb
->>>>
->>>> +imx93-phyboard-nash-jtag-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-nash-jtag.dtbo
->>>>  imx93-phyboard-nash-peb-wlbt-07-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-nash-peb-wlbt-07.dtbo
->>>>  imx93-phyboard-segin-peb-eval-01-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-eval-01.dtbo
->>>>  imx93-phyboard-segin-peb-wlbt-05-dtbs += imx93-phyboard-segin.dtb imx93-phyboard-segin-peb-wlbt-05.dtbo
->>>>  imx93-phycore-rpmsg-dtbs += imx93-phyboard-nash.dtb imx93-phyboard-segin.dtb imx93-phycore-rpmsg.dtbo
->>>> +dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash-jtag.dtb
->>>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-nash-peb-wlbt-07.dtb
->>>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-eval-01.dtb
->>>>  dtb-$(CONFIG_ARCH_MXC) += imx93-phyboard-segin-peb-wlbt-05.dtb
->>>> diff --git a/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
->>>> new file mode 100644
->>>> index 000000000000..4744eabf95f3
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/freescale/imx93-phyboard-nash-jtag.dtso
->>>> @@ -0,0 +1,26 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>>> +/*
->>>> + * Copyright (C) 2025 PHYTEC Messtechnik GmbH
->>>> + * Author: Primoz Fiser <primoz.fiser@norik.com>
->>>> + */
->>>> +
->>>> +#include "imx93-pinfunc.h"
->>>> +
->>>> +/dts-v1/;
->>>> +/plugin/;
->>>> +
->>>> +&gpio2 {
->>>> +	pinctrl-names = "default";
->>>> +	pinctrl-0 = <&pinctrl_jtag>;
->>>> +};
->>>
->>> Use gpio to set pinctrl to no-gpio mode is strange. I am not sure if there
->>> are better method, but at need comments here to show why have to do that.
->>>
->>
->> In old imx6 platform we use pinctrl_hog for that purpose, is not?
-> 
-> It'd better than gpio, but I am not sure if pinctrl_hog still be supported
-> because I have not seen it for the long time.
-> 
+The device info from /sys/kernel/debug/usb/devices as below.
 
-I am OK with both suggestions:
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 13 Spd=12   MxCh= 0
+D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0bda ProdID=c761 Rev= 2.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Controller
+S:  SerialNumber=10000
+C:* #Ifs= 2 Cfg#= 1 Atr=a0 MxPwr=100mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
 
-1) adding an explanation comment
-2) Using pinctrl_hog method
+Signed-off-by: Max Chou <max.chou@realtek.com>
+---
+Changes in V2:
+- Do not apply IC_MATCH_FL_HCIVER when hci_ver is 0 in the ic_id_table.
+---
+ drivers/bluetooth/btrtl.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-Personally however, I would prefer method 1) since it would be better in
-this case because base customer dts can already contain default
-pinctrl_hog which would be overwritten by this overlay.
-
-Not that common, but can still happen.
-
-What do you suggest for v2?
-
-BR,
-Primoz
-
-> Frank
->>
->>> Frank
->>>> +
->>>> +&iomuxc {
->>>> +	pinctrl_jtag: jtaggrp {
->>>> +		fsl,pins = <
->>>> +			MX93_PAD_GPIO_IO24__JTAG_MUX_TDO	0x31e
->>>> +			MX93_PAD_GPIO_IO25__JTAG_MUX_TCK	0x31e
->>>> +			MX93_PAD_GPIO_IO26__JTAG_MUX_TDI	0x31e
->>>> +			MX93_PAD_GPIO_IO27__JTAG_MUX_TMS	0x31e
->>>> +		>;
->>>> +	};
->>>> +};
->>>> --
->>>> 2.34.1
->>>>
->>>
-
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 6abd962502e3..29bd3cd28e39 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -72,6 +72,7 @@ enum btrtl_chip_id {
+ 	CHIP_ID_8851B = 36,
+ 	CHIP_ID_8922A = 44,
+ 	CHIP_ID_8852BT = 47,
++	CHIP_ID_8761C = 51,
+ };
+ 
+ struct id_table {
+@@ -230,6 +231,14 @@ static const struct id_table ic_id_table[] = {
+ 	  .cfg_name = "rtl_bt/rtl8761bu_config",
+ 	  .hw_info  = "rtl8761bu" },
+ 
++	/* 8761CU */
++	{ IC_INFO(RTL_ROM_LMP_8761A, 0x0e, 0, HCI_USB),
++	  .config_needed = false,
++	  .has_rom_version = true,
++	  .fw_name  = "rtl_bt/rtl8761cu_fw",
++	  .cfg_name = "rtl_bt/rtl8761cu_config",
++	  .hw_info  = "rtl8761cu" },
++
+ 	/* 8822C with UART interface */
+ 	{ IC_INFO(RTL_ROM_LMP_8822B, 0xc, 0x8, HCI_UART),
+ 	  .config_needed = true,
+@@ -344,7 +353,8 @@ static const struct id_table *btrtl_match_ic(u16 lmp_subver, u16 hci_rev,
+ 		    (ic_id_table[i].hci_rev != hci_rev))
+ 			continue;
+ 		if ((ic_id_table[i].match_flags & IC_MATCH_FL_HCIVER) &&
+-		    (ic_id_table[i].hci_ver != hci_ver))
++		    (ic_id_table[i].hci_ver != hci_ver) &&
++		    (ic_id_table[i].hci_ver != 0))
+ 			continue;
+ 		if ((ic_id_table[i].match_flags & IC_MATCH_FL_HCIBUS) &&
+ 		    (ic_id_table[i].hci_bus != hci_bus))
+@@ -668,6 +678,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
+ 		{ RTL_ROM_LMP_8851B, 36 },	/* 8851B */
+ 		{ RTL_ROM_LMP_8922A, 44 },	/* 8922A */
+ 		{ RTL_ROM_LMP_8852A, 47 },	/* 8852BT */
++		{ RTL_ROM_LMP_8761A, 51 },	/* 8761C */
+ 	};
+ 
+ 	if (btrtl_dev->fw_len <= 8)
+@@ -1301,6 +1312,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
+ 	case CHIP_ID_8851B:
+ 	case CHIP_ID_8922A:
+ 	case CHIP_ID_8852BT:
++	case CHIP_ID_8761C:
+ 		hci_set_quirk(hdev, HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED);
+ 
+ 		/* RTL8852C needs to transmit mSBC data continuously without
+@@ -1520,6 +1532,8 @@ MODULE_FIRMWARE("rtl_bt/rtl8761b_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761b_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761bu_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8761bu_config.bin");
++MODULE_FIRMWARE("rtl_bt/rtl8761cu_fw.bin");
++MODULE_FIRMWARE("rtl_bt/rtl8761cu_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821a_fw.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821a_config.bin");
+ MODULE_FIRMWARE("rtl_bt/rtl8821c_fw.bin");
 -- 
-Primoz Fiser
-phone: +386-41-390-545
-email: primoz.fiser@norik.com
---
-Norik systems d.o.o.
-Your embedded software partner
-Slovenia, EU
-phone: +386-41-540-545
-email: info@norik.com
+2.43.0
 
 
