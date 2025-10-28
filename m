@@ -1,102 +1,175 @@
-Return-Path: <linux-kernel+bounces-873366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C474C13C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:22:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14799C13C77
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 520114EE0B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B0A3A5E32
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F34A2FE054;
-	Tue, 28 Oct 2025 09:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBBF2FFDDE;
+	Tue, 28 Oct 2025 09:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZbvQb/um"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdVRDT6u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF082C0294;
-	Tue, 28 Oct 2025 09:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AB22D5C91;
+	Tue, 28 Oct 2025 09:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761643246; cv=none; b=u2i7oyoTpCL6v+fo0rozWCjnlAnlDuau2/xZkacsinU+yvLTE/Q9wCbxi3Qfs6lmznW9RlGc9c+0gOY9ApwpltKi7BitRlRhemDeyoiuVnTxTd//m+bCvWwWjIZ6DIYiSv1zO19l1huhVCdENNILq9quGTv8Rt27fL5msO1wNFA=
+	t=1761643309; cv=none; b=Wziqc50Kr2uqWwKhhuS06p8XiTPhzSFouutWrz50HPkZssewb38ek7/2PJaYLGLhejCWsj8XC7N31Cdn2/0tZoE3L2YnSh6cUW2DhYkD1z73qYbY3RoJl/J8cmCYR9Txuwpn8ZlbUa6oCK/TlfP+X/nIiZMfH3KMM6Dy1vXKnqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761643246; c=relaxed/simple;
-	bh=SKHL9sv+geSvfdC16ZXGX9bi5INVTRDZqvPMpldezFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoF6wuVkzgz0yc3lA2pS1JzBOhWVUDbwMLS0hxPA4FdpKAd9spg39axmOCHez3r+f690cxr0cHfsC+OdjmcBoMDsslN01e+xOG4lZRhuaEbf/6LYMKBZF0Kf0C7ttQ7KC81ZHZirCnNamUCEOity3DgxxVU6vtyqqopd0OOhG7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZbvQb/um; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761643245; x=1793179245;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SKHL9sv+geSvfdC16ZXGX9bi5INVTRDZqvPMpldezFc=;
-  b=ZbvQb/umtOO0JeBGmKNr3H9JWOGjKAsi10NgGon5V1BTirVNGXwhiJ4k
-   wZlBvMCMd7mMMR9pJfW2VE0MFhnk8Hqp7g2bqAiovTtS24u1EAeJTg3n6
-   cAo6Q5Hlz0iLkBsJ2D34T47qc/ZlNLJl7xIAGBYMZmJmnVGZgZY97VFcH
-   khX1TeuX/v7ThD/N0wlGg9XMxGkcEABmxT98KJHH4EescVHWcMCvaJKqa
-   Am+U1cPbs+KtTYce1Nft6hwr3n+/j9qjrGEIgPxRqdbQHsDgjffNSpGMu
-   /TSdteJBUyUW6SnxFLDIQZ/eFo3GiY+74neVSqBuFjDdgnmeqsLzKot4x
-   A==;
-X-CSE-ConnectionGUID: llKcOKx9RFeOHm8lJeyQlg==
-X-CSE-MsgGUID: /sxHajxRREWyL0i2S7Am/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66354539"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="66354539"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:20:45 -0700
-X-CSE-ConnectionGUID: pklLLn3aThG7RGCwZZ2E4A==
-X-CSE-MsgGUID: zb9QtwiZQzGfwXOBe74dDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="184527887"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:20:42 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vDfsd-00000003GXG-3rdH;
-	Tue, 28 Oct 2025 11:20:39 +0200
-Date: Tue, 28 Oct 2025 11:20:39 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: ACPI: i2c-muxes: fix I2C device references
-Message-ID: <aQCK56FcZSCZdmgE@smile.fi.intel.com>
-References: <20251027192628.130998-1-jonas.gorski@gmail.com>
+	s=arc-20240116; t=1761643309; c=relaxed/simple;
+	bh=giBaXL/1YHwzI7tYI85Yh1QShi1cRB4A2qcfltKoY5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sTlhmmrtYh+X5GCIgIF2yOy0L2Vcf0+5ayqGZyvtXPbvNgbjDUJRVfQm7wcYh+7dWZQoIT2rcXToCTiLLzp+JGLguQMoH+sNcrYnn5Au1/38cWHyQdsOi75tdbiUY8dtTbJSC5eamH6dION+kbmt1vQd3Z3Kh1WA/C60KgMf2rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdVRDT6u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F1CC4CEE7;
+	Tue, 28 Oct 2025 09:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761643308;
+	bh=giBaXL/1YHwzI7tYI85Yh1QShi1cRB4A2qcfltKoY5g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TdVRDT6uuw7Zq6Gy9QNizD2AQudzIUelaLYgtrG17FzNSJ55NNQIL/kb3rA9cNNOb
+	 VFpcb9fmD++PWSUbOar9bctmuvkyG1cb1Hj/4I7zaF5gr3ERCfyB6LQNbPeBEZlK4R
+	 7XMd206J/B4yfqObHobac7NjPqw2AwL1HyPqNbUQ5oprZXgqoira7oVwcgGEKn17/G
+	 IyejNWZwbEUYQPuhsa155RuqNtcDlVy4xu8tiAoPPtGfnqAGBy0qnO2cRDqOJAvzQZ
+	 lFzcbYTWPuh0POEWyb4/h+oFlmn8wTG3CzOc3NkDY+8Z/2BQLua86P9an5hYrBsRpz
+	 mi0EKer1cmI/Q==
+Message-ID: <4e7f4211-3194-409a-b33c-e47bfdfdb203@kernel.org>
+Date: Tue, 28 Oct 2025 10:21:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027192628.130998-1-jonas.gorski@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add
+ Kaanapali and Glymur compatibles
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
+ <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
+ <20251028-private-chirpy-earthworm-6fccfe@kuoka>
+ <4cb41e69-fb32-4331-a989-529b5af0081c@kernel.org>
+ <918fc9d3-2cd5-4442-8bc6-b930596d95c1@oss.qualcomm.com>
+ <ba760468-ac41-48e0-a56e-a675c3c0d5b7@kernel.org>
+ <2676d88f-89a9-4b1f-895b-3bdc048f6fbf@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2676d88f-89a9-4b1f-895b-3bdc048f6fbf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 08:26:28PM +0100, Jonas Gorski wrote:
-> When the device references were changed from relative to absolute in
-> commit e65cb011349e ("Documentation: ACPI: Fix parent device
-> references"), the MUX0 device was omitted from the paths.
+On 28/10/2025 10:19, Konrad Dybcio wrote:
+>>>
+>>>>>>
+>>>>>> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+>>>>>> ---
+>>>>>>  .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml      | 7 +++++++
+>>>>>>  1 file changed, 7 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>>>> index 7085bf88afab..c57022109419 100644
+>>>>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+>>>>>> @@ -37,12 +37,19 @@ properties:
+>>>>>>            - const: qcom,pmic-glink
+>>>>>>        - items:
+>>>>>>            - enum:
+>>>>>> +              - qcom,kaanapali-pmic-glink
+>>>>>>                - qcom,milos-pmic-glink
+>>>>>>                - qcom,sm8650-pmic-glink
+>>>>>>                - qcom,sm8750-pmic-glink
+>>>>>
+>>>>> Why qcom,kaanapali-pmic-glink is not compatible with
+>>>>> qcom,sm8750-pmic-glink? If Glymur is compatible with previous
+>>>>> generation, I would expect that here too.
+>>>>
+>>>> And again to re-iterate:
+>>>>
+>>>> If X1E is compatible with SM8550 AND:
+>>>> SM8750 is compatible with SM8550 THEN
+>>>> WHY Glymur is compatible with previous generation but Kaanapali is not
+>>>> compatible with previous generation?
+>>>
+>>> The announcement date does not directly correlate to 'generation'
+>> I don't know exactly this IP block/component, but in general these SoCs
+>> follow some sort of previous design, thus term "generation" is correct
+>> in many cases. Anyway don't be picky about wording.
+>>
+>> You can remove the generation and statement will be the same.
+>>
+>> If A is compatible with B AND
+>> C is compatible with B
+>> THEN
+>>
+>> WHY D is compatible with (A and B) but E is not
+>> compatible with (C and B)?
+>>
+>> Easier for you?
+>>
+>> Why nitpicking on wording "generation" instead of explaining the
+>> problems or issues with bindings...
 > 
-> So add it to fix the references.
-
-> Fixes: e65cb011349e ("Documentation: ACPI: Fix parent device references")
-
-Closes: https://lore.kernel.org/all/48d0fb45-096c-4caa-b51c-753c2f17f018@gmail.com/
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
--- 
-With Best Regards,
-Andy Shevchenko
+> What I'm saying is that Kaanapali and Glymur are disjoint projects
+> that shouldn't be thought of as having a common base
 
 
+No, please go through my A B C D E list to understand the problem. I did
+not suggest what you reply here.
+
+Best regards,
+Krzysztof
 
