@@ -1,196 +1,184 @@
-Return-Path: <linux-kernel+bounces-874196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6836C15BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:19:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89CB8C15BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29503BA0C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF881C262F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82B13446BA;
-	Tue, 28 Oct 2025 16:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FB433033A;
+	Tue, 28 Oct 2025 16:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KjJPEYPJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gw2QrTQ4";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KjJPEYPJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Gw2QrTQ4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fP8aN+1n"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590533EB07
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE4B278E5D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668004; cv=none; b=RzaNevAj9EW2e2uqYAocvi8cYfXLTYJGV8rIEYsVhKFwpAiNtAiyCilS7jrHRUQ1XeEkilSa56ICoOo56m3LuJ0lWZWqkEURpLD357LkjWKO0QiIKuNuf4Mev5wbRSDO7RKyf9c1Sz52BAQV/1KIUHp1G1vnCimWYEI8qZ8+4OY=
+	t=1761668021; cv=none; b=caTAqeWSxLayJVT3oT9MdxK1Q4GhBHta2NKtGuMpRnTjb8yFarK3iyLtop66NbkPKXyaWZnN201Wu7URc2LJNQWsTToT5ZDqehMlofmKTFyJ2ycbKBKKu1qN9/ctyFo8Lgq9DBQdrC5Pj7O5w3BxqbINhOAo8/GIz22DKmzr8jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668004; c=relaxed/simple;
-	bh=AqmDL9HYwKlOC1v96mDTpURTB0eXu0WZp5/vnGerPw4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RGBZGnUY0OlZdC+OErR6d0jgBeQqi95nwwkzeDA4QB2bWZNjiXardl03ePgL6hJ3il1m767nmYclPJ5hHIf8t2KfgZ1eyPMqb7/5f9wGmDXl9BkZeNT5MkupJvoVkHMLo02QWvc+x3GGJnAi2kSTDJvejsM3S8cPCjoYCxL8MPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KjJPEYPJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gw2QrTQ4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KjJPEYPJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Gw2QrTQ4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C99BD21A64;
-	Tue, 28 Oct 2025 16:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761667999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1761668021; c=relaxed/simple;
+	bh=1FMr40Wyu3AEU5OL8LlXUIHcjSkACHNNJ/reBeLQWaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbPJrjx4J2+5SquSpqtweBmlIX5X8OhCJqycZKLdmzbsDMozxfVy5c1SYFtePI1+MVb3/X8TCpFiTyasTf2v63Gp0kxdPgZPYzHNXdMUgB9sR/gcSg5MhVQxzxaRhG0WZkFsxIer9k4EWeer7O0mGfedifwjv6kuCrLkc/2gpV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fP8aN+1n; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <91ebba8f-6960-46f7-854a-6bab3d0bbd5b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761668018;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pSosvxi5dPFtdhC5U0/TTS2WAyGF8TeP5oXRsKZhx7U=;
-	b=KjJPEYPJ7HZdpBT02TjYQ61cQjBJIEBgA6xrd5hVWW6xAJANi0wiYFNW6d5v7xV2N7YmlE
-	h6SetL0FQi/IqvkJSpicxJI7317JmcnGp5XrGSNF69XjHib4Xs4pSezxRpirGmBaonvMPF
-	xG/ODKCnE+Q8Gml9lNP6EM6O/Lt0Fag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761667999;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSosvxi5dPFtdhC5U0/TTS2WAyGF8TeP5oXRsKZhx7U=;
-	b=Gw2QrTQ427yrPNuYnSYVl0sYdSQd5/RgHd0ptf3XwxfdMZudizoPqUBaiHtRb5cqG4Is5B
-	5/rgTt+d8ttytfBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1761667999; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSosvxi5dPFtdhC5U0/TTS2WAyGF8TeP5oXRsKZhx7U=;
-	b=KjJPEYPJ7HZdpBT02TjYQ61cQjBJIEBgA6xrd5hVWW6xAJANi0wiYFNW6d5v7xV2N7YmlE
-	h6SetL0FQi/IqvkJSpicxJI7317JmcnGp5XrGSNF69XjHib4Xs4pSezxRpirGmBaonvMPF
-	xG/ODKCnE+Q8Gml9lNP6EM6O/Lt0Fag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1761667999;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pSosvxi5dPFtdhC5U0/TTS2WAyGF8TeP5oXRsKZhx7U=;
-	b=Gw2QrTQ427yrPNuYnSYVl0sYdSQd5/RgHd0ptf3XwxfdMZudizoPqUBaiHtRb5cqG4Is5B
-	5/rgTt+d8ttytfBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D26E13A7D;
-	Tue, 28 Oct 2025 16:13:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id udwmHJ7rAGmPCAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 28 Oct 2025 16:13:18 +0000
-Date: Tue, 28 Oct 2025 17:13:18 +0100
-Message-ID: <87o6prf1i9.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,	Stephen Boyd
- <sboyd@kernel.org>,	Nicolas Ferre <nicolas.ferre@microchip.com>,	Alexandre
- Belloni <alexandre.belloni@bootlin.com>,	Claudiu Beznea
- <claudiu.beznea@tuxon.dev>,	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,	David Miller
- <davem@davemloft.net>,	Linus Walleij <linus.walleij@linaro.org>,	Bartosz
- Golaszewski <brgl@bgdev.pl>,	Joel Stanley <joel@jms.id.au>,	Andrew Jeffery
- <andrew@codeconstruct.com.au>,	Crt Mori <cmo@melexis.com>,	Jonathan Cameron
- <jic23@kernel.org>,	Lars-Peter Clausen <lars@metafoo.de>,	Jacky Huang
- <ychuang3@nuvoton.com>,	Shan-Chun Hung <schung@nuvoton.com>,	Yury Norov
- <yury.norov@gmail.com>,	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jaroslav Kysela <perex@perex.cz>,	Takashi Iwai <tiwai@suse.com>,	Johannes
- Berg <johannes@sipsolutions.net>,	Jakub Kicinski <kuba@kernel.org>,	Alex
- Elder <elder@ieee.org>,	David Laight <david.laight.linux@gmail.com>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,	Jason Baron
- <jbaron@akamai.com>,	Borislav Petkov <bp@alien8.de>,	Tony Luck
- <tony.luck@intel.com>,	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Kim Seer Paller <kimseer.paller@analog.com>,	David Lechner
- <dlechner@baylibre.com>,	Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,	Richard Genoud
- <richard.genoud@bootlin.com>,	Cosmin Tanislav <demonsingur@gmail.com>,	Biju
- Das <biju.das.jz@bp.renesas.com>,	Jianping Shen
- <Jianping.Shen@de.bosch.com>,	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-renesas-soc@vger.kernel.org,
-	linux-crypto@vger.kernel.org,	linux-edac@vger.kernel.org,
-	qat-linux@intel.com,	linux-gpio@vger.kernel.org,
-	linux-aspeed@lists.ozlabs.org,	linux-iio@vger.kernel.org,
-	linux-sound@vger.kernel.org,	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 09/23] ALSA: usb-audio: #undef field_{get,prep}() before local definition
-In-Reply-To: <8f19d783dd783df5510408ffe9664dc6ef0d9434.1761588465.git.geert+renesas@glider.be>
-References: <cover.1761588465.git.geert+renesas@glider.be>
-	<8f19d783dd783df5510408ffe9664dc6ef0d9434.1761588465.git.geert+renesas@glider.be>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	bh=k6hFEseP+AK2f/a81hSP487sZcnRCpMeyAI0dHmU+Gc=;
+	b=fP8aN+1nMFWAupOIls4HnUnlF9HtUlZL0o8l+1djP+YfdNfdJ3J/Cia9HJk1DLE2MjIDXu
+	NE9SrXnAlosd61D6n3fbZg3bmkoXv24Mz2Tn7binXtKafWMMVkPuU/93T27jM6N8KarUyo
+	OPTFKjSShHeTIA1HBbBj+pksZsl3vEk=
+Date: Tue, 28 Oct 2025 09:13:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[renesas];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,wanadoo.fr];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[baylibre.com,kernel.org,microchip.com,bootlin.com,tuxon.dev,intel.com,gondor.apana.org.au,davemloft.net,linaro.org,bgdev.pl,jms.id.au,codeconstruct.com.au,melexis.com,metafoo.de,nuvoton.com,gmail.com,rasmusvillemoes.dk,perex.cz,suse.com,sipsolutions.net,ieee.org,wanadoo.fr,akamai.com,alien8.de,analog.com,bp.renesas.com,de.bosch.com,vger.kernel.org,lists.infradead.org,lists.ozlabs.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLr5uiezb5xkkwytzfr8x566qh)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[50];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -1.80
-X-Spam-Level: 
-
-On Mon, 27 Oct 2025 19:41:43 +0100,
-Geert Uytterhoeven wrote:
-> 
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
-> 
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> --
-> v5:
->   - New.
-> ---
->  sound/usb/mixer_quirks.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
-> index 828af3095b86ee0a..713a8498b975e1ac 100644
-> --- a/sound/usb/mixer_quirks.c
-> +++ b/sound/usb/mixer_quirks.c
-> @@ -3312,7 +3312,9 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
->  #define RME_DIGIFACE_INVERT BIT(31)
->  
->  /* Nonconst helpers */
-> +#undef field_get
->  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#undef field_prep
->  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
->  
->  static int snd_rme_digiface_write_reg(struct snd_kcontrol *kcontrol, int item, u16 mask, u16 val)
-
-Acked-by: Takashi Iwai <tiwai@suse.de>
+MIME-Version: 1.0
+Subject: Re: [PATCH] RISC-V: Enable HOTPLUG_PARALLEL for secondary CPUs
+To: Anup Patel <anup@brainfault.org>
+Cc: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Alexandre Ghiti <alex@ghiti.fr>, Sunil V L <sunilvl@ventanamicro.com>,
+ Andrew Jones <ajones@ventanamicro.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250905122512.71684-1-apatel@ventanamicro.com>
+ <0f7e6be5-f9ac-4019-93c6-295a068046a8@linux.dev>
+ <CAAhSdy1uGQaPc2SkcX5oHF-aP4dOS1gu5iHor5O8zmz-XWUtBA@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+Content-Language: en-US
+In-Reply-To: <CAAhSdy1uGQaPc2SkcX5oHF-aP4dOS1gu5iHor5O8zmz-XWUtBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-thanks,
+On 10/28/25 1:48 AM, Anup Patel wrote:
+> On Tue, Oct 28, 2025 at 2:05 PM Atish Patra <atish.patra@linux.dev> wrote:
+>>
+>> On 9/5/25 5:25 AM, Anup Patel wrote:
+>>> The core kernel already supports parallel bringup of secondary
+>>> CPUs (aka HOTPLUG_PARALLEL). The x86 and MIPS architectures
+>>> already use HOTPLUG_PARALLEL and ARM is also moving toward it.
+>>>
+>>> On RISC-V, there is no arch specific global data accessed in the
+>>> RISC-V secondary CPU bringup path so enabling HOTPLUG_PARALLEL for
+>>> RISC-V would only requires:
+>>> 1) Providing RISC-V specific arch_cpuhp_kick_ap_alive()
+>>> 2) Calling cpuhp_ap_sync_alive() from smp_callin()
+>>>
+>>> This patch is tested natively with OpenSBI on QEMU RV64 virt machine
+>>> with 64 cores and also tested with KVM RISC-V guest with 32 VCPUs.
+>>>
+>>> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+>>> ---
+>>>    arch/riscv/Kconfig          |  2 +-
+>>>    arch/riscv/kernel/smpboot.c | 15 +++++++++++++++
+>>>    2 files changed, 16 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>>> index a4b233a0659e..d5800d6f9a15 100644
+>>> --- a/arch/riscv/Kconfig
+>>> +++ b/arch/riscv/Kconfig
+>>> @@ -196,7 +196,7 @@ config RISCV
+>>>        select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+>>>        select HAVE_STACKPROTECTOR
+>>>        select HAVE_SYSCALL_TRACEPOINTS
+>>> -     select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
+>>> +     select HOTPLUG_PARALLEL if HOTPLUG_CPU
+>>>        select IRQ_DOMAIN
+>>>        select IRQ_FORCED_THREADING
+>>>        select KASAN_VMALLOC if KASAN
+>>> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+>>> index 601a321e0f17..d85916a3660c 100644
+>>> --- a/arch/riscv/kernel/smpboot.c
+>>> +++ b/arch/riscv/kernel/smpboot.c
+>>> @@ -39,7 +39,9 @@
+>>>
+>>>    #include "head.h"
+>>>
+>>> +#ifndef CONFIG_HOTPLUG_PARALLEL
+>>>    static DECLARE_COMPLETION(cpu_running);
+>>> +#endif
+>>>
+>>>    void __init smp_prepare_cpus(unsigned int max_cpus)
+>>>    {
+>>> @@ -179,6 +181,12 @@ static int start_secondary_cpu(int cpu, struct task_struct *tidle)
+>>>        return -EOPNOTSUPP;
+>>>    }
+>>>
+>>> +#ifdef CONFIG_HOTPLUG_PARALLEL
+>>> +int arch_cpuhp_kick_ap_alive(unsigned int cpu, struct task_struct *tidle)
+>>> +{
+>>> +     return start_secondary_cpu(cpu, tidle);
+>>> +}
+>>> +#else
+>>>    int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>>>    {
+>>>        int ret = 0;
+>>> @@ -199,6 +207,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>>>
+>>>        return ret;
+>>>    }
+>>> +#endif
+>>>
+>>>    void __init smp_cpus_done(unsigned int max_cpus)
+>>>    {
+>>> @@ -225,6 +234,10 @@ asmlinkage __visible void smp_callin(void)
+>>>        mmgrab(mm);
+>>>        current->active_mm = mm;
+>>>
+>>> +#ifdef CONFIG_HOTPLUG_PARALLEL
+>>> +     cpuhp_ap_sync_alive();
+>>> +#endif
+>>> +
+>>>        store_cpu_topology(curr_cpuid);
+>>>        notify_cpu_starting(curr_cpuid);
+>>>
+>>> @@ -243,7 +256,9 @@ asmlinkage __visible void smp_callin(void)
+>>>         */
+>>>        local_flush_icache_all();
+>>>        local_flush_tlb_all();
+>>> +#ifndef CONFIG_HOTPLUG_PARALLEL
+>>>        complete(&cpu_running);
+>>> +#endif
+>> LGTM.
+>>
+>> Reviewed-by: Atish Patra <atishp@rivosinc.com>
+>>
+>> Have you tried with 128 harts ? I was not able to boot 128 harts in Qemu
+>> with NR_CPUS=256.
+>> This is unrelated to this patch though. I can reproduce the issue on
+>> upstream with 6.18-rc3.
+> I have tried upto 96 harts and that works fine.
 
-Takashi
+Yeah. I had tried upto 92 as well.
+
+> For 128 harts, the memory used by OpenSBI goes beyond 2MB so
+> OpenSBI can't run from the first 2MB of DRAM (0x80000000) as the
+> first booting stage. Try with U-Boot SPL loading OpenSBI from FIT image.
+
+Ahh yes. That makes sense. I will try with U-Boot SPL.
+
+> Regards,
+> Anup
+>
+>>
+>>>        /*
+>>>         * Disable preemption before enabling interrupts, so we don't try to
+>>>         * schedule a CPU that hasn't actually started yet.
 
