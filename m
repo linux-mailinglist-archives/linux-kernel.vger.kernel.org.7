@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-873762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769ACC14A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:33:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E654C14ABC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 64EDB4FEDA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE401B221F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3818032C323;
-	Tue, 28 Oct 2025 12:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C904C32E6B5;
+	Tue, 28 Oct 2025 12:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m/AO2EjB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b="VNx6oLH0"
+Received: from out198-9.us.a.mail.aliyun.com (out198-9.us.a.mail.aliyun.com [47.90.198.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BC72C15AE;
-	Tue, 28 Oct 2025 12:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0261032D7DA;
+	Tue, 28 Oct 2025 12:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654754; cv=none; b=d/1rHTi3Jdf2X8EQN15P4Yf+ti9KowL2lcxj7kqC/v9kd3zsKzMrZWEDxKCSau1zcO+oODTwGIOfgObQksnHD3Esds6ThylMbAhg9nX5iNphOcAhDYpJgPpk5afZcm59SgYH1clovSkg4Vu4Q2FFVHidRk2S5R+D0H0qiW/EDfI=
+	t=1761655180; cv=none; b=d5BomGDJfmMIbN6FI704PacYLdx9aZ5Hmespgu5AZQffO99Mq684U3pUNdz2b5psK5GZu6EZ9Zu4SB1IPku7s4r52crXP/Ly+J7uaMTDMX06JEZ14bFHXPoFtP2fP8vY0qC313kd3g4PV326uldll8Jk1yJM4pmfsYQPafGg8Cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761654754; c=relaxed/simple;
-	bh=2A7U/X5bLGA6vGpMY0H0RP01Pafks7/ACnaqbh4msvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H5ITYMXX05w90IhUu3c/DNmjB7XK1ZAgdVDcFUXCwos7Ng1+WJlWsMsy6i0Y+bFJkRH80dFYs3j+kmhx02gM6q+SeyZfAL+mvAkVbWsaCSzA1ZsNISxMUhVnWA88Nu2/D96P8wymMU2WTBkwNM19k83qpdwxP/vWRLZXGXTFxHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m/AO2EjB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C9A1C4CEE7;
-	Tue, 28 Oct 2025 12:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761654754;
-	bh=2A7U/X5bLGA6vGpMY0H0RP01Pafks7/ACnaqbh4msvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/AO2EjBDdD6gU1Al30ZhJgdqArLSUE1GQM9Qq1GmqLdi0GFH0LacO5Q0lEDq7X5D
-	 Cphkdqw7x+iz/xNRGByikfeXX2EPUFNpOwEbToHhF+g2xXK0uZjfY8Z4bHPezTcNHb
-	 mFmjAkEE+AW2dVhrSAZeV00RWGEyPNrtEWokM2JwTTiv4+tFGugD5l8YUCCtdJE4IZ
-	 x0LDu5gIsFPPdgGsZz36Hv3VtMef7jcKdZfXBboPYsss6tTKr78VIXBetLxo80q3PB
-	 a3T6f2SWkWRNv/lDCacUQhuC1w3UBjfThbff8dcE3+SJBUwewiOIhIoV4+/tR4xy/k
-	 s4VUtDyTGZkOw==
-Date: Tue, 28 Oct 2025 12:32:31 +0000
-From: Simon Horman <horms@kernel.org>
-To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-Cc: isdn@linux-pingi.de, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] isdn: mISDN: hfcsusb: fix memory leak in
- hfcsusb_probe()
-Message-ID: <aQC333bzOkMNOFAG@horms.kernel.org>
-References: <20251024173458.283837-1-nihaal@cse.iitm.ac.in>
+	s=arc-20240116; t=1761655180; c=relaxed/simple;
+	bh=tIBFUfB6QlsKoLYSLzx7JqIy3Ba4v25jwlLLmDYWlmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8Vpv1EwT51qb/0WBpzMW/BbbAxrXoVmfQxBpLd1tyID/KVk0p+8I/h3sUty3tUQ/bQNe8ZJwAFQewgmllPXCI5Vh6wPNoF+P8BA9yqFfzfemh9vuhNvbSlgyUN9LWYBxWI4c1+YMXyzA3HEMvNWWoJtobs7n9vOGJBAz3ose3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; dkim=pass (2048-bit key) header.d=awinic.com header.i=@awinic.com header.b=VNx6oLH0; arc=none smtp.client-ip=47.90.198.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=awinic.com; s=default;
+	t=1761655163; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=8rFH4thlQmElnslr1bW600elt3sgQ3K0TLP6mKWzDnc=;
+	b=VNx6oLH0Gz8KP+ODdcFX7JgcAC0rR4oEgDe+L2EcJoDWtsvxN3Iyqho5dv+Z7CrJQ9TyjTCo6TnROKlTNjNI6Oe9LL5ovpwZrMiHPXmnG+HW+s+c3HeHkGfufkYyc0wG0+eL5v3ED9DVK17BNpe8xKXUfzBZBAq2EJ7Z5foiwX56uhCXcVi/NHjBRZgmbprMmV87SdnzUa/65A6PJxHPbsO9r3cNMqhd1B3QGhnQi52gt8UjFeq+1YvwKrATvUvPDQmaKeUZ7M5W08OpnP3lGGh1I39r8qJ4Z1MXAsrb9q9Sc+hYR5uzCJfNhH+sR3GE/omkL6OF9IrD8/OnMffnLw==
+Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.f9Oy78H_1761654839 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Tue, 28 Oct 2025 20:34:01 +0800
+From: wangweidong.a@awinic.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	srinivas.kandagatla@oss.qualcomm.com,
+	wangweidong.a@awinic.com,
+	arnd@arndb.de,
+	cy_huang@richtek.com,
+	nick.li@foursemi.com,
+	shenghao-ding@ti.com,
+	alexey.klimov@linaro.org,
+	niranjan.hy@ti.com,
+	linux@treblig.org,
+	zhangyi@everest-semi.com,
+	thorsten.blum@linux.dev,
+	kuninori.morimoto.gx@renesas.com,
+	yesanishhere@gmail.com,
+	marco.crivellari@suse.com,
+	ebiggers@google.com,
+	ardb@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Cc: yijiangtao@awinic.com
+Subject: [PATCH V3 0/7] Rework the awinic driver
+Date: Tue, 28 Oct 2025 20:33:50 +0800
+Message-ID: <20251028123357.46161-1-wangweidong.a@awinic.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024173458.283837-1-nihaal@cse.iitm.ac.in>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 24, 2025 at 11:04:55PM +0530, Abdun Nihaal wrote:
-> In hfcsusb_probe(), the memory allocated for ctrl_urb gets leaked when
-> setup_instance() fails with an error code. Fix that by freeing the urb
-> before freeing the hw structure.
-> 
-> Fixes: 69f52adb2d53 ("mISDN: Add HFC USB driver")
-> Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+From: Weidong Wang <wangweidong.a@awinic.com>
 
-Thanks,
+Rework the awinic driver, extracting common components into 
+separate aw-commmon-firmware.c and aw-common-device.c files.
 
-I agree that this is a bug, and that it was introduced in the cited commit.
+v2 -> v3: Change the tree to
+          https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
 
-I think it would be good to add something to the commit message
-regarding how the problem was found, e.g. which tool was used, or
-by inspection; and what testing has been done, e.g. compile tested only.
+Weidong Wang (7):
+  ASoC: codecs:Rework the awinic driver lib
+  ASoC: codecs: Rework the aw88395 driver
+  ASoC: codecs: Rework the aw87390 driver
+  ASoC: codecs: Rework the aw88081 driver
+  ASoC: codecs: Rework the aw88166 driver
+  ASoC: codecs: Rework the aw88261 driver
+  ASoC: codecs: Rework the aw88399 driver
 
-> ---
->  drivers/isdn/hardware/mISDN/hfcsusb.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+ sound/soc/codecs/Kconfig                      |   14 +-
+ sound/soc/codecs/Makefile                     |    8 +-
+ sound/soc/codecs/aw-common-device.c           |  507 +++++
+ sound/soc/codecs/aw-common-device.h           |  204 ++
+ .../aw88395_lib.c => aw-common-firmware.c}    |  150 +-
+ sound/soc/codecs/aw-common-firmware.h         |  211 ++
+ sound/soc/codecs/aw87390.c                    |  118 +-
+ sound/soc/codecs/aw87390.h                    |   16 -
+ sound/soc/codecs/aw88081.c                    |  357 +---
+ sound/soc/codecs/aw88081.h                    |   33 -
+ sound/soc/codecs/aw88166.c                    |  819 ++------
+ sound/soc/codecs/aw88166.h                    |   58 -
+ sound/soc/codecs/aw88261.c                    |  427 +---
+ sound/soc/codecs/aw88261.h                    |   52 -
+ sound/soc/codecs/aw88395.c                    | 1333 +++++++++++++
+ .../{aw88395/aw88395_reg.h => aw88395.h}      |   58 +-
+ sound/soc/codecs/aw88395/aw88395.c            |  576 ------
+ sound/soc/codecs/aw88395/aw88395.h            |   58 -
+ sound/soc/codecs/aw88395/aw88395_data_type.h  |  142 --
+ sound/soc/codecs/aw88395/aw88395_device.c     | 1720 -----------------
+ sound/soc/codecs/aw88395/aw88395_device.h     |  214 --
+ sound/soc/codecs/aw88395/aw88395_lib.h        |   92 -
+ sound/soc/codecs/aw88399.c                    | 1027 ++--------
+ sound/soc/codecs/aw88399.h                    |   93 +-
+ 24 files changed, 2926 insertions(+), 5361 deletions(-)
+ create mode 100644 sound/soc/codecs/aw-common-device.c
+ create mode 100644 sound/soc/codecs/aw-common-device.h
+ rename sound/soc/codecs/{aw88395/aw88395_lib.c => aw-common-firmware.c} (89%)
+ create mode 100644 sound/soc/codecs/aw-common-firmware.h
+ create mode 100644 sound/soc/codecs/aw88395.c
+ rename sound/soc/codecs/{aw88395/aw88395_reg.h => aw88395.h} (91%)
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395.c
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_data_type.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_device.c
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_device.h
+ delete mode 100644 sound/soc/codecs/aw88395/aw88395_lib.h
 
-...
 
-> @@ -2109,8 +2108,11 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
->  		hw->name, __func__, driver_info->vend_name,
->  		conf_str[small_match], ifnum, alt_used);
->  
-> -	if (setup_instance(hw, dev->dev.parent))
-> +	if (setup_instance(hw, dev->dev.parent)) {
-> +		usb_free_urb(hw->ctrl_urb);
-> +		kfree(hw);
->  		return -EIO;
-> +	}
->  
->  	hw->intf = intf;
->  	usb_set_intfdata(hw->intf, hw);
+base-commit: 2103a2df654868faf4ac0924ce529b11cca729bc
+-- 
+2.47.0
 
-I think it would be best to follow the idiomatic pattern and
-introduce a ladder of goto statements to handle unwind on error.
-
-Something like this (compile tested only!):
-
-diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
-@@ -1921,6 +1920,7 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 		probe_alt_setting, vend_idx, cfg_used, *vcf, attr, cfg_found,
- 		ep_addr, cmptbl[16], small_match, iso_packet_size, packet_size,
- 		alt_used = 0;
-+	int err;
- 
- 	vend_idx = 0xffff;
- 	for (i = 0; hfcsusb_idtab[i].idVendor; i++) {
-@@ -2101,20 +2101,28 @@ hfcsusb_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	if (!hw->ctrl_urb) {
- 		pr_warn("%s: No memory for control urb\n",
- 			driver_info->vend_name);
--		kfree(hw);
--		return -ENOMEM;
-+		err = -ENOMEM;
-+		goto err_free_urb;
- 	}
- 
- 	pr_info("%s: %s: detected \"%s\" (%s, if=%d alt=%d)\n",
- 		hw->name, __func__, driver_info->vend_name,
- 		conf_str[small_match], ifnum, alt_used);
- 
--	if (setup_instance(hw, dev->dev.parent))
--		return -EIO;
-+	if (setup_instance(hw, dev->dev.parent)) {
-+		err = -EIO;
-+		goto err_free_hw;
-+	}
- 
- 	hw->intf = intf;
- 	usb_set_intfdata(hw->intf, hw);
- 	return 0;
-+
-+err_free_urb:
-+	usb_free_urb(hw->ctrl_urb);
-+err_free_hw:
-+	kfree(hw);
-+	return err;
- }
- 
- /* function called when an active device is removed */
 
