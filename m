@@ -1,243 +1,164 @@
-Return-Path: <linux-kernel+bounces-873899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B415BC150B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:05:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB16C1506D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:02:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9206644CA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8416189742E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1129D2FF679;
-	Tue, 28 Oct 2025 13:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD8E226CF9;
+	Tue, 28 Oct 2025 14:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BxA5Qo0Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Tv6x6GDA"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE601E1A33;
-	Tue, 28 Oct 2025 13:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659899; cv=fail; b=tmWkh2chVjDxYjxm/dEygDRphMN7c30uQBSYydpHMi+7Tn5zXEaaSbydQPxLpY+QVx81ipVm3AlPErPdAubD5rlOAsOFMCrdonEnxff93Z/PRbQFvDWShDiI4H/e58ryrx78MBBZezPzjcIzDh2rKhP4oPSBd8dHXULvnreKTFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659899; c=relaxed/simple;
-	bh=B/NpB/VyiXjNTBiyamXvx1jVA2ZDWpspB15ewT4l+LQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YspYy2V1/skZQtdlb8YOPEkxuyve2reuR2iWtSI2BzzxQITeqqlTX4s9dB4uCYj5iZbQmSQ8rfhxLpM4bsWyEJRa43slqE7lshWJj/e5JVGhi8h182sRhaLcpyLhZpINxVsQpEbJgc5oau36q05Xwh8YCftZtQka7Ay2LXXY/OA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BxA5Qo0Q; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761659897; x=1793195897;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=B/NpB/VyiXjNTBiyamXvx1jVA2ZDWpspB15ewT4l+LQ=;
-  b=BxA5Qo0Q3R3dyQ/WqNT2e29Bj/Tih8uzcSOjgX8VBuYdUpO4TKrkUvhK
-   hUP4tK5UamVYcAr/U3+lWAbyXipNQSTkkSkuY6ghjfHPPEsN5l8TNkBvC
-   +kbqZ6cRdW4GGcTiNi18l6dgc8JdeQX0erDUc9xd7nN3/lkqZF3sx6Y3O
-   wC7FR6S+2gWj58A/sLA7uZ3e6nnSfbmsf7BduRDX9fgaxxHjznqQSlyW0
-   Q91yO3w7oCS0oNpLpEs3iEPYC1pZXzO7bdjNQaJdzQFvJY6gNG5PEuz0J
-   egCT/UgnKsBBSMQWR8AryyCJNxT2MLmp1jZ3q0o1qOv7HJ6Uprt0bOp/R
-   g==;
-X-CSE-ConnectionGUID: G15peV90RuuBn8v5nE2URw==
-X-CSE-MsgGUID: kIyW1qCMRj6xT7S+f/yZQw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="62964019"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="62964019"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 06:58:16 -0700
-X-CSE-ConnectionGUID: 7WmipuT5QSGn+RvWyTpZBg==
-X-CSE-MsgGUID: agA/kxJVTZa+GqQT4NBbRw==
-X-ExtLoop1: 1
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 06:58:16 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 06:58:15 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 06:58:15 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.58) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 06:58:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RkdEJtbwLJzFkCYpqDeSDelBsBaid3Cs6xH+I8wq4t3LjlY0WNSXVvevGiXEyz3GyEe9NaJsKcUJZjLGH6g8FCDz3y7QgaMsBaQWg169jtk0poYgorwJv6O85xcqQD60WmZmlefhQ1y1HVGVU3Mhuyk3MYHtrhWlqNh7F0hGmegBqWgx9TRdCkJDcGg5bh4PbNrd4jjEQD7p02xryWHGNrZbPR1fzzHF0ZtneK+M42132qyLQodn0aNyYgahwmm9if/c3vpGKSaUZGuf38O3aS1c0C6vYCel7heCT2FC5hSrvGqSe/fmeo7YSQjCnA6DyjnWEu4TGat/efebBVFunQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xvnyn5hAOJpHnSz8i3Lnnfnu9U0KiBpXVpX6AZJsJ1Y=;
- b=hGomlaiOVBp2RLLoFvCwnwENnsRmQkaoFx9aOgMNbl8pEZO6EJw62qRVXfdDhQQux3tBIQud0e459kIfmePzTZLhH4UVNAF4K9VhhNFQvSoVtJVsZNZ5id+IRxttdGL/o2aExVrChOoxwJ2IPFAIlV60c7GpSztpqat18T/fkgxYQiA5h7w73chPo0Ffq0UjZisVjnixIXDBhUY9+Hrql/PnUZQf9hJFrBXZ6+Ii2+s5i+PkDiG9dMDPpGTiL3m8r20YDhh59dAXuZ832+HXImntBH6GFXhIF9+n3PMCb+yyjPfws9i8cwAtyaC2NQca8kLPKc0dEOybY89eKqIgAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by DM4PR11MB6192.namprd11.prod.outlook.com (2603:10b6:8:a9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 13:58:13 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
- 13:58:13 +0000
-Message-ID: <010a2743-b732-4e4f-b877-fed340ab3b8f@intel.com>
-Date: Tue, 28 Oct 2025 14:58:09 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] selftests: net: use BASH for bareudp testing
-To: <shuah@kernel.org>, Po-Hsu Lin <po-hsu.lin@canonical.com>,
-	<linux-kselftest@vger.kernel.org>, <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <edoardo.canepa@canonical.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20251027095710.2036108-1-po-hsu.lin@canonical.com>
- <20251027095710.2036108-2-po-hsu.lin@canonical.com>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251027095710.2036108-2-po-hsu.lin@canonical.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZP191CA0011.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:4f9::9) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F12D3EDE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761660128; cv=none; b=JxgHF5Gk8FO+ETjwZlKthZWdSOEd/xWTj6PfRu+2Q1ZgPAJAX3H3vGHQi4CDFHxfOTnye9qKV4rzG/WupldoMQBLkV8o3TrVOcPxwCX4ycZX6LCQf3QCLLvmPnZv0leREKuXuwFgK+Kbf9SKI98uPQhkRA9eF85CpormHWWHbJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761660128; c=relaxed/simple;
+	bh=ooW75H3+SHCpn0lkn6GMdTyVIqxWbZ5VXGcIqrRC97U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IJzgP3PzS3dTDIzED+fhNfnrtkHvXOzW69mnaZFh/HpmwFdH/Zx6UdRqA/i1eHCNawlJUD7dFs5yykq9osduGqDThbfDr+5/nJeNU8fZOmfWMoGI/I3azD/70nAwvBwPPdlqwqIiqcqNMfbO8P4HAGQ22n6vGyy825xl1mshFAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Tv6x6GDA; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761660119;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8HLDo8n6coWUrWdqlQjN8qAiPeJQK26USUMmC8y9OKQ=;
+	b=Tv6x6GDAu6ty+Y6P8qlVzDiLQ+tdMFZ85wcxZ9qX6iiFWS45iB+Kt4UVSDQZ3CRi6wczLH
+	oaPoIRqMaIdEzYwyyNDfYz76VUSwt+xk2zKcS/ug38emiAeNnfsuzEisrQ2i5P5VbVkVvh
+	gV18JBY4odaD6/ihxL5yuVChikMG1KQ=
+From: Qi Zheng <qi.zheng@linux.dev>
+To: hannes@cmpxchg.org,
+	hughd@google.com,
+	mhocko@suse.com,
+	roman.gushchin@linux.dev,
+	shakeel.butt@linux.dev,
+	muchun.song@linux.dev,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	ziy@nvidia.com,
+	harry.yoo@oracle.com,
+	imran.f.khan@oracle.com,
+	kamalesh.babulal@oracle.com,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	weixugc@google.com,
+	akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Qi Zheng <zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 00/26] Eliminate Dying Memory Cgroup
+Date: Tue, 28 Oct 2025 21:58:13 +0800
+Message-ID: <cover.1761658310.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|DM4PR11MB6192:EE_
-X-MS-Office365-Filtering-Correlation-Id: c10ddf8e-2af6-472f-3b41-08de162a094b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MkQ3d0VIMWFvOHdUYmpzYkxQRk45ZHpzcnlHbVVDYjZJU3V3WGI3SmN6UG5j?=
- =?utf-8?B?dnkxZFZIS3lzU3c3WnZ6dEFPVGliVGxocTllMTgrcUpseDFYOGMzcVMwUEdV?=
- =?utf-8?B?VjJNN1dtZUFOSjJLaVpLNVo5ZUZkc1U4RlMyd0FRbno3RU1SUGFwa3E3OHRS?=
- =?utf-8?B?d3VpOVBWMndISkxmWFJOSFpya2lDOWpFVG9vVHV6QXhtcFB3SU1DTXVmLzJD?=
- =?utf-8?B?M1R2UmZmdDd4aFdCRjlIUGlucFdNNER5VlhWaFBJWkl6UnQwNFAvbUJqeXEw?=
- =?utf-8?B?aUpwMDFoblVMRU9aalYyTjlTbkh2aXJrRllVNEVPeit4SUFQNEdGWi9OalRS?=
- =?utf-8?B?dFJVUmVQQkpsclhKTE9xS3kyS2dBWXkwYmN2dTZLTnBLQnhId2pmeHdISExE?=
- =?utf-8?B?QkZqNEJkVk56SlZ2bkxZVkN4OFhCZnFQOVpxOFVQY2o0aGNKWmlydkpWSExF?=
- =?utf-8?B?cFVPQ3hobEV6NnpOU2F2Z3d6eTVnTVZnNUYrZkM2bURvMjJTYWYzSkdPNnhi?=
- =?utf-8?B?WDlUMDhvaXJrRVo5SzdqQXR6QVpBTCt5YVFoVWpUUVl2MGNYUTRVNFNBZCtS?=
- =?utf-8?B?TkNuWDRwMWJ5VVZHMVBKOEFJc3F6SHlFV3RqWTNLNzVBeXQxN3MvbXRuYlVV?=
- =?utf-8?B?RTg0UDkrRjlzK0E1eTFGS0ZCbGdXUUNFcjdFTll5dzFaR3Rvbk9kblBPV3NY?=
- =?utf-8?B?TDNtMVdHSXJqOGNMSHlyRlo1eFZnYTlKMEI5aml0WENrbnlJVU9BdU95VkNj?=
- =?utf-8?B?TVl1TFJkR25vZ0JPbFErYjNBbVpQVGpYMHpJOERCSGVFQXZmYnJsYUxPUFRO?=
- =?utf-8?B?ZFJWWWJkei8ya01QaWxWSXcwTzUyTnJaZzlTMi80TkVHQ1lOcFRCak00YUFx?=
- =?utf-8?B?c2dCVUlCUUhaQkV0ZDgycEVvVXZOR2RDZE5qM0M0Nk1pVTdHSUdWejV3Tzhv?=
- =?utf-8?B?VUF6L1JnWEdMMkNZcE5Vd2NkaFd5TWVncjJBRUtRWUs3ZE10b1E4N0t6cUtV?=
- =?utf-8?B?LzFRN1hoSmFnbTZ0Mk4yRXRpbVpiMjdyRTJ3ZGFkWnkweTl2Y0tDNSthQ0Ra?=
- =?utf-8?B?WXJKUGRzSUVOR0RFdU95M3ozZkRsakpmOGNUQlA3bnJIVjR5TzFrd2RlaVFv?=
- =?utf-8?B?RDZFYW5kdlVQT3o5MGtzY1hiQzY2ekFVT09rZHhpTkU3R1diNHRUVk1HQ0ow?=
- =?utf-8?B?SDh1eE5peXpxL1lCWTExK3pic2JQcmVpZWZKalhNY1ROandkNnk4YzNyQnJw?=
- =?utf-8?B?TTF0RXhUQ1RjbE1RUFJ2UkRoT2JSNkVqVHJvRUtIL1pHcTI0b29td2NTQzR0?=
- =?utf-8?B?M2hZajdkVXpiU2RmLzRSNlpncGRvT2ZLayswVUlldGpRN2Fnc1F1YWdkMUt1?=
- =?utf-8?B?U0FRd2tzQnc4dHFabjZTb0pPK1N0Tk12bHU0SVBrN0tjRnFQNldhZ05NaWdL?=
- =?utf-8?B?ODUyYnl5dVZ2dEdFcEtrWGdGNnZpM0VFQ0FQK2VJcHBQd2hJN0dNamU0ZEVB?=
- =?utf-8?B?SGlxZDBYTmp2NnZTZFVkcXhxbktUb1ZHTGtzdXEzbExkb2N3WUhsWVBlb21w?=
- =?utf-8?B?aXVCMTdmZVNFbGxCeFQveUdreDVQNlVlbmk5R216M05UTE5oSFRVR1JVV1BH?=
- =?utf-8?B?QUpHTW5vWVlCTlI2VlREczFXemlUTjVDR2pCTFFyNDFiWkR1T3Q1T3hMNmZ4?=
- =?utf-8?B?NEhqVERHSDVYZUM5TE9lbi83N0psS1lWS0pHWDBqMzdFcWxMTEVzdHFCY3ps?=
- =?utf-8?B?cEpCLzllWnBUMlRNSVBRZUNXMEkyQ0R4SGJBMkk5VlBIT0FIV2pGWnV0T2VX?=
- =?utf-8?B?Wlh2enRobEpoLzA0aGdiM3R6NVNVdGorRjJGcGt6cnRVWFgzTDF0cDgxZHJJ?=
- =?utf-8?B?ZGJyMjRNc1dOM0dDN1NSdXk0eml0K2RpWmpGZTJPK0x6TEE9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RmVxeWlXdjJhVnZhZmZDSkpGRXZ3WkNrRlFXNVNZOHRRMzh4T1ZlRFZJeWNt?=
- =?utf-8?B?YmJwZE9HQmU3SEd4cGtTRXEwVDhhOWsxbmNzYklkZHlqeFhZZDhKNVk5aHU2?=
- =?utf-8?B?TjlMUWZGNERvdjBDamxHelVBTkJESFlaVUFydjEwa3Nmakc2UDdkOVNrZjN4?=
- =?utf-8?B?TG1pNHArYjArdTR6REJtN0YvMFJuUGhGNDlaYzN5SlAvc2pPOGpLSkl4WDZj?=
- =?utf-8?B?QWp0YUZIVjhST2tXbHUvdG1yYWh5c0QxY3VlWXdCVFJ4OGpZV2xtVk1iakFp?=
- =?utf-8?B?UjU2U0IzSXl6cEE0eXkzT3FXekd6UnJJUnF1MHlhSkVXREJFR0lXdzRza0Y1?=
- =?utf-8?B?eGpQcnp1RHI0RUN5b0FHaC9wdHN5L0pweExzRm1FbW9XeDdlUVJHVmtNNTdX?=
- =?utf-8?B?L3puanUyZGNobUQ0TkhsV0U4QThUNjdyNkR4WjdkWWpwaEdCSGF0TEprM0Q3?=
- =?utf-8?B?UHYwL1FCVUhKdmdqaDVzVUpWNzBWbThnL2x2cG81cGFWODFPWFBJbWhZcHpt?=
- =?utf-8?B?Ly9ZUkxYbllEdjQ0azlTNnFITTNjeWpBZU4wZmRsVmZaRFVVbHJ4Y282cW11?=
- =?utf-8?B?bVQwczEvdkw4bGJab0ZhOUMyd2hxdVd0d1ExVDJ5R0ExMXByZVYrTC9veTAz?=
- =?utf-8?B?Mk4ra2dsTktab2o1V2cxL00wdmVTZGFNUWxsOTJyZ1pPcnBqdS9vNzZPNmlU?=
- =?utf-8?B?QWhYUVlyS2NqOEV0QzV2RnFURXNaZ0NoR1BveDVqNHJqdVpma3l0TGUxWFcy?=
- =?utf-8?B?OXIwYmtvc0w3Q0pmZTZTT3d5MnZacFpiNlVuUlN3S0R0NnluaWpHaXNrSEdy?=
- =?utf-8?B?Z1I1WTI3TVJwZnRZdlh1NUlsc000V09jL04yNDhjdyswOUpNRHJhcDJ6QzBU?=
- =?utf-8?B?Tnp3a09OVk5CK05sdU5YSFVROXhxT0Rmc1BCYjNJQysxQnJtVnNXaENvenp5?=
- =?utf-8?B?eDBEdlc2WlowSXd1WDB1N3lEVVZQeXJvQ1VrUE9ONy9kZ0kxaGg3RXpKQ0VI?=
- =?utf-8?B?UmFPWWhDM0FETFJPTU4zd09hMHhnZ1ZMYW5oSUh5VG5Hb25oVmZmL1lITURR?=
- =?utf-8?B?R1ZKeDVLWGRrYk8vL1RLRm5TQ1BYSkludGNkY1NXQjZxMUdIeVJ6bkxkaXp5?=
- =?utf-8?B?dFNqVWlCMDFoWmtHekJsRWh4UzU0SEdmVGJLVkUwQlFSa0gwRDZEcUlXRlpG?=
- =?utf-8?B?dURISGtaWnZWVjBodUl2RENRS2R1L3N3UmpNNzAxSFVYZ1pWaFFSZmVObWYy?=
- =?utf-8?B?Q1ZiMTYyWXozN2J5Q3BIWktwNEt2ZW1zRkVld283RmlwN1pCZGw5a1A1RFND?=
- =?utf-8?B?OFhZWVpNUFk2bEwvdytXS3gvQ1FZcnV5YURRUUl5ZFV6blB0UFZ3ekhSOUpS?=
- =?utf-8?B?ZkZScGVGN3RzdzVNd3FmWlk3OHlXeDcyVjN0NEt1OVJ4RDNWR0xkbTF5SlAz?=
- =?utf-8?B?MERsNnFVUjZxTDNRNHBEaHRLTXFjd1lhNlhHcmdzbGJSTkcrS3RSdE5SSnZF?=
- =?utf-8?B?WTB2M0ZzejcyQ0lneW55NEVXUSs5TnZxTWFKZ2RmUmtxZmJsRFZjUlNpempz?=
- =?utf-8?B?MU1iK1hjT0VESk1IVmIrOXBZRER6WlBTd0IzMDJrZG1NVTA5ZlJmVnN5OHM0?=
- =?utf-8?B?OWRVTTZvNUZxTFN4VjI0OG5zTG1xbUdyd0FwTmpVZFYraU15QzJuVkVnMUxD?=
- =?utf-8?B?L003ZE10bU5wUDE2Z3JERjNPL2dReXFTM3ViM05nSUZBanc5L1Y1b1owZ3VC?=
- =?utf-8?B?T3JqNUxjN1lpOXBwbDZkMzRobTZqL1JvWDlMcGllbTVZN1BIcEtKekk2T2Zs?=
- =?utf-8?B?UG5ML0RkRjFOeHdpanJOTnF5NDREK1B6OEw0eS9ubFpob3ZITHRzdllXQjZo?=
- =?utf-8?B?WVZyQjZiOGtLeDh2VHpFeGNUTmdQcmJxOW15b2F3R0tYNXhrdE12YnVGK1ov?=
- =?utf-8?B?N3lIT29SZGFKYXdLYkp2WnNMNnVmZy9lNUthdHlnRW1VcnJPd3NxQUIzNjlm?=
- =?utf-8?B?MTBQZ25KMXM2dkVORExJMlpncG85VCtmSFlhKzNPR29xMjJUSUhsNEQ2dGZU?=
- =?utf-8?B?SzhWZlFUeWc2VE0zY0JKVmlVYXJaemlVenkvR251WHM2STlpcWdhcmUzcVRv?=
- =?utf-8?B?MW5TRXM2TGFJcEhNa2EyTUE4aDQ2YlZCWWYvNWZzRFdyQmhOeGM0OVQ2bVo4?=
- =?utf-8?B?N2c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: c10ddf8e-2af6-472f-3b41-08de162a094b
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 13:58:13.5833
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zmONnlh3qlAYIShJqezLp5s7LYuHtBo/P4b1PT7OIidCIe9xgzEE3SD8/XkorYKymf0RHbB2Bo3k24/HfbxeRO2VZWCvxv61Zdh1gaTCILI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6192
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/27/25 10:57, Po-Hsu Lin wrote:
-> In bareudp.sh, this script uses /bin/sh and it will load another lib.sh
-> BASH script at the very beginning.
-> 
-> But on some operating systems like Ubuntu, /bin/sh is actually pointed to
-> DASH, thus it will try to run BASH commands with DASH and consequently
-> leads to syntax issues:
->    # ./bareudp.sh: 4: ./lib.sh: Bad substitution
->    # ./bareudp.sh: 5: ./lib.sh: source: not found
->    # ./bareudp.sh: 24: ./lib.sh: Syntax error: "(" unexpected
-> 
-> Fix this by explicitly using BASH for bareudp.sh. This fixes test
-> execution failures on systems where /bin/sh is not BASH.
-> 
-> Reported-by: Edoardo Canepa <edoardo.canepa@canonical.com>
-> Link: https://bugs.launchpad.net/bugs/2129812
-> Signed-off-by: Po-Hsu Lin <po-hsu.lin@canonical.com>
-> ---
->   tools/testing/selftests/net/bareudp.sh | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/net/bareudp.sh b/tools/testing/selftests/net/bareudp.sh
-> index 4046131e7888..d9e5b967f815 100755
-> --- a/tools/testing/selftests/net/bareudp.sh
-> +++ b/tools/testing/selftests/net/bareudp.sh
-> @@ -1,4 +1,4 @@
-> -#!/bin/sh
-> +#!/bin/bash
->   # SPDX-License-Identifier: GPL-2.0
->   
->   # Test various bareudp tunnel configurations.
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 
-this is of course a correct fix,
-Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Hi all,
 
-what about extending checkpatch to avoid such issues in the future?
-I remember at least a few such cases fixes, and I don't pay that much
-attention
+This series aims to eliminate the problem of dying memory cgroup. It completes
+the adaptation to the MGLRU scenarios based on the Muchun Song's patchset[1].
+
+The adaptation method was discussed with Harry Yoo. For more details, please
+refer to the commit message of [PATCH v1 23/26].
+
+The changes are as follows:
+ - drop [PATCH RFC 02/28]
+ - drop THP split queue related part, which has been merged as a separate
+   patchset[2]
+ - prevent memory cgroup release in folio_split_queue_lock{_irqsave}() in
+   [PATCH v1 16/26]
+ - Separate the reparenting function of traditional LRU folios to [PATCH v1 22/26]
+ - adapted to the MGLRU scenarios in [PATCH v1 23/26]
+ - refactor memcg_reparent_objcgs() in [PATCH v1 24/26]
+ - collect Acked-bys and Reviewed-bys
+ - rebase onto the next-20251028
+
+Comments and suggestions are welcome!
+
+Thanks,
+Qi
+
+[1]. https://lore.kernel.org/all/20250415024532.26632-1-songmuchun@bytedance.com/
+[2]. https://lore.kernel.org/all/cover.1760509767.git.zhengqi.arch@bytedance.com
+
+Muchun Song (22):
+  mm: memcontrol: remove dead code of checking parent memory cgroup
+  mm: workingset: use folio_lruvec() in workingset_refault()
+  mm: rename unlock_page_lruvec_irq and its variants
+  mm: vmscan: refactor move_folios_to_lru()
+  mm: memcontrol: allocate object cgroup for non-kmem case
+  mm: memcontrol: return root object cgroup for root memory cgroup
+  mm: memcontrol: prevent memory cgroup release in
+    get_mem_cgroup_from_folio()
+  buffer: prevent memory cgroup release in folio_alloc_buffers()
+  writeback: prevent memory cgroup release in writeback module
+  mm: memcontrol: prevent memory cgroup release in
+    count_memcg_folio_events()
+  mm: page_io: prevent memory cgroup release in page_io module
+  mm: migrate: prevent memory cgroup release in folio_migrate_mapping()
+  mm: mglru: prevent memory cgroup release in mglru
+  mm: memcontrol: prevent memory cgroup release in
+    mem_cgroup_swap_full()
+  mm: workingset: prevent memory cgroup release in lru_gen_eviction()
+  mm: workingset: prevent lruvec release in workingset_refault()
+  mm: zswap: prevent lruvec release in zswap_folio_swapin()
+  mm: swap: prevent lruvec release in swap module
+  mm: workingset: prevent lruvec release in workingset_activation()
+  mm: memcontrol: prepare for reparenting LRU pages for lruvec lock
+  mm: memcontrol: eliminate the problem of dying memory cgroup for LRU
+    folios
+  mm: lru: add VM_WARN_ON_ONCE_FOLIO to lru maintenance helpers
+
+Qi Zheng (4):
+  mm: thp: prevent memory cgroup release in
+    folio_split_queue_lock{_irqsave}()
+  mm: vmscan: prepare for reparenting traditional LRU folios
+  mm: vmscan: prepare for reparenting MGLRU folios
+  mm: memcontrol: refactor memcg_reparent_objcgs()
+
+ fs/buffer.c                      |   4 +-
+ fs/fs-writeback.c                |  22 +-
+ include/linux/memcontrol.h       | 159 ++++++------
+ include/linux/mm_inline.h        |   6 +
+ include/linux/mmzone.h           |  20 ++
+ include/trace/events/writeback.h |   3 +
+ mm/compaction.c                  |  43 +++-
+ mm/huge_memory.c                 |  18 +-
+ mm/memcontrol-v1.c               |  15 +-
+ mm/memcontrol.c                  | 405 ++++++++++++++++++-------------
+ mm/migrate.c                     |   2 +
+ mm/mlock.c                       |   2 +-
+ mm/page_io.c                     |   8 +-
+ mm/percpu.c                      |   2 +-
+ mm/shrinker.c                    |   6 +-
+ mm/swap.c                        |  20 +-
+ mm/vmscan.c                      | 198 ++++++++++++---
+ mm/workingset.c                  |  26 +-
+ mm/zswap.c                       |   2 +
+ 19 files changed, 612 insertions(+), 349 deletions(-)
+
+-- 
+2.20.1
+
 
