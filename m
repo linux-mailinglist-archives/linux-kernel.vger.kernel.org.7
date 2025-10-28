@@ -1,166 +1,206 @@
-Return-Path: <linux-kernel+bounces-874354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6CEC161A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:19:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A1EC16202
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:24:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 556EC4ECDCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:19:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7439C3ADB41
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BAC34BA42;
-	Tue, 28 Oct 2025 17:18:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 553993491F2;
+	Tue, 28 Oct 2025 17:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGuRx9Na"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rW1MW/YY"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7615234A3DB
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3F423C505
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671934; cv=none; b=o4qx7n+V8wwHbLq16vThFxuYXO9T/Oem0emogiCosZTTjF0+ycWE02x0JipGbefEhy33EvnD0DuAFRv1fmVsXyeUUbuJtXwTZIczY5xlC/Y9RnQkbbtN6NLjCqJs4hidYLccycGdFBVwwcSWfVYrnP3APTf52e8+puidU0qcUfc=
+	t=1761672019; cv=none; b=HzbSWkSAIusPzBzu678+Fps/xNArqWzOPYOLLcvaS1lm2/l3SrrPtsXfJ2f+Rhcy0LImNusxFugnPuJqSsZervZhmQNavys3cnNAi5U7ow99Cr7OI8BSJIZG6fvACGu1blqHriPJyPZkw4PBSjgP0Yzrosqjz4fLPA2L+XOQDJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671934; c=relaxed/simple;
-	bh=UYwxvkY2zdm/DyH3ka2ma9lDVPuQqvHwI04Qpd7l7vg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GAggCLwYnzQz0yx5dnN9HfcaV67nI3qMRjVzK7yR+kh0/Lrc9IFmnNknXUZ2SGDS8PXQkZSRnUW3pfD7vBA1QSgBsP81OE4sKx83dF6TioEXwLAYfL1Bm5W8a/RsHvcigmD6hGnhfiXF1MvjDx0o4QS+wdvPTPAgdSNDSmZ9F6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGuRx9Na; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-290c2b6a6c2so65831875ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:18:49 -0700 (PDT)
+	s=arc-20240116; t=1761672019; c=relaxed/simple;
+	bh=ne+oS5H6z7JHWav73oVglAywE3vtySrxSDIgfblNIW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTmM2zP9o+0OiSl44bRSP67fetvWikgPfoj48rCrqciprsfuyNHbWfb0QfR4cFvtVE/dIPGFAWS42f1gXEMNMPF2Yom28Mpn92c5ChMM+uFdwP9w/WS46R/0j57SlfUoZ7fJ9fe/8Zjwnc+tlnA8zcyRoDYQtGrU1BSIiMaw+l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rW1MW/YY; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-426f1574a14so4111343f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:20:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761671929; x=1762276729; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=D4n1AXwmY/rwCKDx/cQZwkmGhjBWLLIwBisORqaR6Wo=;
-        b=bGuRx9NaTGJ62kAPYH+q5pqRoO0ej+L5PiwZYUnuW43y6S9i5KN7+nHFW6oZc2wOu4
-         FZlibd73IiEPZfuvWpSTm/JaNqBHfFLzzIdATnRmA06gSLlNRFGzaqyOInGITFI5B6yB
-         CE4f8ONvwmarcuUW7HGLq5pVFaTwAHkMOWN82IvZfegT0XYAuJI0wFXa5DGDQoKfQrtS
-         bSCAvXWtgE55awhMVG+hrlQ14Grt8+X8510FipZNE9RuZhKXlJ0BU3R3RZHGNCa4N7Ka
-         7CGvYSRl8/q/76q1JbyGooGlGkAdP0vuKPwG+yIsoMS5eNE6ib2ckN0PQ3nLBIgDUmc+
-         TBEw==
+        d=linaro.org; s=google; t=1761672016; x=1762276816; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFNR+yqQDNKQ0KUWuXjjm3zqWjAn6Hk7JWkoBuP7tog=;
+        b=rW1MW/YYiUVs7KqNWW5S/wzwzAjVgMFN72mwu1dgDqGdZjwXhMNiqXeP/EmrrhJHvx
+         ln1GVWiGYgqr0QGP/M0sS/cSneBYSd+Gu23MEM5bPZmG+YSiZvv4SU84un9Q9fE5pICB
+         QCp5d3CZ6C6wdRdm8tOhQBjjD0raXvWio7Crl9gyRzuYVMoPaXeHskjP25K0SJ/jQwI6
+         R38AQwmt59slAd3ge7LO1B023I0INudwQGHxSgMtMOv+qlazbsvM1s+VMRSiATZTf5eP
+         Xix123DVpvLOdf/3y2pB8Zpf1Yds11RgsTxu3ta5HbKR0ZvX2z/gAfl3ECrcSKO1iZan
+         7hww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761671929; x=1762276729;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D4n1AXwmY/rwCKDx/cQZwkmGhjBWLLIwBisORqaR6Wo=;
-        b=UFAwLx8F5pO2xRy1xSVTZ6YE95xtsuC/JZDNso0z414ziGc8idTTeKDCL++5uAq5cN
-         hwEVVW0lMaLXbNtxQTyLk7M0wMZoF+Sn8eub6hLPxx87Lzc4C9ilHtew1QGMjbx9B0RN
-         bvrquT/OhtW28Ox0kIzpjjPw19/r1f4oIejoa3jsdjFJhsI2T6Z/tt8pFTZGrlR1ixgT
-         cDx85Z2U3j6kLT/KP04R7QmbBYIIKiR9419H+ifnVVL84D2eIddSrtpQHbaAEM2rqfhT
-         7NxIJcfmWD4mm6UOEVKhdCeJVJdoUwbu6tXPlV+9y7fIqZtC1ZT9KwqMzc4lNitNMoGh
-         COIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrM5TNh72d/aCHANtPDz50V60FhgQ7GcmpR2ylwqq5FMNcqYaQkgeB6J+lkZbVPnFgYDo4Pk7TjD1Zndg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzBqd3YaJdYGr2lILqE2G4MbZ5G7jfdZuKJLg2qpWrPXSRp5IH
-	ULCbZWqWwiOFah1SsplQtmMTG5mOMEw0iwTzhxhrNiqIotA+OamdQ1PG
-X-Gm-Gg: ASbGncvYxGEhVYd31R+12MYapA/rkfKpBzNaaHuXgIsgyzclptgiDt1jjTYhiLnByN1
-	rtSKTRsoBC6tIsO/p7coN94JWeGbKqmVU7rZwVXDA6dj+mL+EGd0uujlDOjfw0+KlXc5jyss0fM
-	JY4QZyDtlmICAWPx8ZGVFzaonvf8pDOng86AVa0jKiVgA1DFmx9Wkxt3tJA86FWPCj8f7roATU8
-	kQtUMOS+1snzkiJx21fE5qkZrskm3LMYwvFTry5YeUWIxmtdrO7t5gr5SeqeaGFmo3OJfvxetMS
-	jD6Tn2QPONJ9wyK29wBw9+0DNswOPUYwRhK303GakXer9RTFpoaSJN5EcDR/8qaxzClq3Utcx5i
-	4qEGmjZkRKXbHPm7CVRTe4ul5KKM7SwoJBszPPijnjkKSuQPTLu62/HoQIcQ0fmyZ44mjFYtqip
-	yXD4N7Ve6x4bdqbkXEhVOL/Yk3kECOt5DW8qtf
-X-Google-Smtp-Source: AGHT+IGzWUp6pB0RrxfOplxKt3YLhG+4AtzqD0EnJQYft/iHYC0j5K1snUzrTanQqB8W/931TN3xVA==
-X-Received: by 2002:a17:903:1c2:b0:27e:ef09:4ab6 with SMTP id d9443c01a7336-294cac96c6fmr55866035ad.0.1761671928527;
-        Tue, 28 Oct 2025 10:18:48 -0700 (PDT)
-Received: from ?IPv6:2a03:83e0:115c:1:3f28:abaa:8fee:bfa5? ([2620:10d:c090:500::7:f7b9])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0827fsm121791055ad.31.2025.10.28.10.18.45
+        d=1e100.net; s=20230601; t=1761672016; x=1762276816;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uFNR+yqQDNKQ0KUWuXjjm3zqWjAn6Hk7JWkoBuP7tog=;
+        b=GNJzcXzz/p03Ds2kbB3I5LAMZyofP7IPSELCFg8d6AGNPoyDEHxohQP3wKxQdHqZ2L
+         2jc/yqCK/N5Qa++wu4MzTWqPPTQTCFV3tZEGlNNiCmHVENWXKzeue/ydhyPaVg52+/F6
+         l1TQFngm0s5XZnhksgnLyOh5qVo7f9RLX5zXsEuRzdgsmrHG2kWnWuIFA0yj7ZfX+C4b
+         Z0YoCC/g7q+bSRI6VX49m6hiB+SBxYenXYT3otaCDYK8Ui/tyxBmBUkcXlUHIpj9gWgb
+         ldVIjUmZ4j+pSPD3li45jt3NEBGdsgZcWwDrflTX+0zHmM6JGK3w6YkGPZyMJ3kYmD3D
+         rs0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVukKcRco4+Snv4xDHGFZQq/YZ2L8XNs5k7/KN4e3wHft2zpbMjZHU7HtJLlLMs1Ba3N3qHaRSE7C13K9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi3RvlzRzRD4ScXd2RXvSJ/j5JzapncWy4VK64lIS6IEOo8wQl
+	6X8xMw4trrs+Qjuf12hCaBZ1yCkpo1vxzHXPxlZYU9l4hmtNot4nPMcEzl0mhgaVyGmNxdrKLfy
+	1Pyg3
+X-Gm-Gg: ASbGncs5Li1tAvrzeatAeYVa2fw6xviEO4/O72ZIEgl+1GB4MmXBzstjccZOIu1kmpp
+	5pecdT5Z8EO9ZtuMmTgmhTT+GVKdFF03tZEAd+KV96h2mylvkwim01goBRh59gWkOI2x57AH79S
+	5NBlq7zxp4jMCgLF7wTGh9X2RbohcyX0pZB9+PzEhgR5hYpW3apuZ4iiU9zVZEw3Vum/AtA0KYZ
+	t6h+dH6eeWNRTuAxUcv19UGAiu4pirGrjgX7x/HSPEUitg86yNrrsgFAtLcJYdWsdG4aw0kLr+2
+	kmynMNLVg3adjVTvIFbdImRzrUydyJZ1Z/oCOiHQ92JcuWe71FUPjJPz7fZHNjT2QsS/Mn/grCw
+	MwMat4RCXN4xN4r5NDIlAcA+/baq6wUsfdiAqkN/zPPrL6do5lZva8qNxy/VNxhW85N5eTB14
+X-Google-Smtp-Source: AGHT+IHcdJ1fq9ADGcrcW4ZZKZhaA9eWlkrpV7+uDO6SDMKBeox7ZwKnGdmhFMB9LLUGwuioqWc7tw==
+X-Received: by 2002:a05:6000:2c05:b0:428:4354:aa36 with SMTP id ffacd0b85a97d-429a7e919f2mr3775348f8f.58.1761672015770;
+        Tue, 28 Oct 2025 10:20:15 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db99asm21844711f8f.32.2025.10.28.10.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:18:48 -0700 (PDT)
-Message-ID: <bf1de6a8291d2607b8c77674af899551607bdb79.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v2 1/2] bpf: Fix tnum_overlap to check for zero
- mask intersection
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: bot+bpf-ci@kernel.org, kafai.wan@linux.dev, ast@kernel.org, 
-	daniel@iogearbox.net, john.fastabend@gmail.com, andrii@kernel.org, 
-	martin.lau@linux.dev, song@kernel.org, yonghong.song@linux.dev,
- kpsingh@kernel.org, 	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- shuah@kernel.org, 	paul.chaignon@gmail.com, m.shachnai@gmail.com, 
-	harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
- luis.gerhorst@fau.de, 	shung-hsi.yu@suse.com, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	linux-kselftest@vger.kernel.org
-Cc: syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com, 
-	martin.lau@kernel.org, clm@meta.com, ihor.solodrai@linux.dev
-Date: Tue, 28 Oct 2025 10:18:45 -0700
-In-Reply-To: <da8e2759ad57dd96dcc722cfd781141b045ee718df316cec8705e2908e0cb948@mail.kernel.org>
-References: <20251028151938.3872003-2-kafai.wan@linux.dev>
-	 <da8e2759ad57dd96dcc722cfd781141b045ee718df316cec8705e2908e0cb948@mail.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Tue, 28 Oct 2025 10:20:14 -0700 (PDT)
+Date: Tue, 28 Oct 2025 19:20:13 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] soc: qcom: pmic_glink: Add charger PDR service
+ path and service name to client data
+Message-ID: <5uyhz4uv7ccsj7cevimqrsoywne6f5ax5j2t4uosz6a7due4ac@3x4ouutt5nwy>
+References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
+ <20251027212250.3847537-3-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027212250.3847537-3-anjelique.melendez@oss.qualcomm.com>
 
-On Tue, 2025-10-28 at 15:45 +0000, bot+bpf-ci@kernel.org wrote:
-> ```
-> commit 16cbc4520eb13d2065d145c76b97fb93035d81e8
-> Author: KaFai Wan <kafai.wan@linux.dev>
->=20
-> bpf: Fix tnum_overlap to check for zero mask intersection
->=20
-> This patch adds an early return check in tnum_overlap() to detect
-> non-overlapping tnums when their masks have no overlapping bits. The
-> fix addresses a syzbot report where the verifier failed to recognize
-> that two tnums couldn't represent the same value.
->=20
-> Reported-by: syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com
->=20
-> > diff --git a/kernel/bpf/tnum.c b/kernel/bpf/tnum.c
-> > index f8e70e9c3..1a75b7c9a 100644
-> > --- a/kernel/bpf/tnum.c
-> > +++ b/kernel/bpf/tnum.c
-> > @@ -163,6 +163,8 @@ bool tnum_overlap(struct tnum a, struct tnum b)
-> >  {
-> >  	u64 mu;
-> >=20
-> > +	if (a.mask && b.mask && !(a.mask & b.mask))
-> > +		return false;
->                               ^^^^^
->=20
-> Does this logic correctly detect non-overlapping tnums? Consider this
-> counter-example:
->=20
->   a =3D (value=3D0x5, mask=3D0xA)  // binary: value=3D0101, mask=3D1010
->   b =3D (value=3D0xA, mask=3D0x5)  // binary: value=3D1010, mask=3D0101
->=20
-> The masks are disjoint: (0xA & 0x5) =3D=3D 0, so the new check returns
-> false (no overlap).
->=20
-> However, these tnums actually represent overlapping sets:
->   a represents: {5, 7, 13, 15}  // 0b0101, 0b0111, 0b1101, 0b1111
->   b represents: {10, 11, 14, 15} // 0b1010, 0b1011, 0b1110, 0b1111
->=20
-> Both sets contain 15, so they do overlap. Can this cause incorrect
-> verifier behavior when is_branch_taken() calls tnum_overlap() to
-> determine if JEQ/JNE branches are reachable?
-
-This is a legit bug, please address.
-
-> >  	mu =3D ~a.mask & ~b.mask;
-> >  	return (a.value & mu) =3D=3D (b.value & mu);
-> >  }
->=20
->=20
-> ```
->=20
+On 25-10-27 14:22:50, Anjelique Melendez wrote:
+> Currently, the charger PD service path and service name are hard coded
+> however these paths are not guaranteed to be the same between PMICs. For
+> example, on Kaanapali and Glymur, Charger FW runs on SOCCP(another subsystem)
+> which does not have any specific charger PDs defined.
+> 
+> Define charger PDR service path and service name as client data so that
+> each PMIC generation can properly define these paths.
+> 
+> While at it, add the qcom,kaanapali-pmic-glink and
+> qcom,glymur-pmic-glink compatible strings.
+> 
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 > ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a =
-bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
-E.md
->=20
-> In-Reply-To-Subject: `bpf: Fix tnum_overlap to check for zero mask inters=
-ection`
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/188801=
-08453
+>  drivers/soc/qcom/pmic_glink.c | 66 ++++++++++++++++++++++-------------
+>  1 file changed, 42 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+> index c0a4be5df926..aa5ba9a0285e 100644
+> --- a/drivers/soc/qcom/pmic_glink.c
+> +++ b/drivers/soc/qcom/pmic_glink.c
+> @@ -23,13 +23,19 @@ enum {
+>  	PMIC_GLINK_CLIENT_UCSI,
+>  };
+>  
+> +struct pmic_glink_data {
+> +	unsigned long	client_mask;
+> +	char		*charger_pdr_service_name;
+> +	char		*charger_pdr_service_path;
+> +};
+> +
+>  struct pmic_glink {
+>  	struct device *dev;
+>  	struct pdr_handle *pdr;
+>  
+>  	struct rpmsg_endpoint *ept;
+>  
+> -	unsigned long client_mask;
+> +	const struct pmic_glink_data *data;
+>  
+>  	struct auxiliary_device altmode_aux;
+>  	struct auxiliary_device ps_aux;
+> @@ -285,7 +291,6 @@ static struct rpmsg_driver pmic_glink_rpmsg_driver = {
+>  
+>  static int pmic_glink_probe(struct platform_device *pdev)
+>  {
+> -	const unsigned long *match_data;
+>  	struct pdr_service *service;
+>  	struct pmic_glink *pg;
+>  	int ret;
+> @@ -302,12 +307,10 @@ static int pmic_glink_probe(struct platform_device *pdev)
+>  	spin_lock_init(&pg->client_lock);
+>  	mutex_init(&pg->state_lock);
+>  
+> -	match_data = (unsigned long *)of_device_get_match_data(&pdev->dev);
+> -	if (!match_data)
+> +	pg->data = of_device_get_match_data(&pdev->dev);
+> +	if (!pg->data)
+>  		return -EINVAL;
+>  
+> -	pg->client_mask = *match_data;
+> -
+>  	pg->pdr = pdr_handle_alloc(pmic_glink_pdr_callback, pg);
+>  	if (IS_ERR(pg->pdr)) {
+>  		ret = dev_err_probe(&pdev->dev, PTR_ERR(pg->pdr),
+> @@ -315,27 +318,30 @@ static int pmic_glink_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>  
+> -	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI)) {
+> +	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_UCSI)) {
+>  		ret = pmic_glink_add_aux_device(pg, &pg->ucsi_aux, "ucsi");
+>  		if (ret)
+>  			goto out_release_pdr_handle;
+>  	}
+> -	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE)) {
+> +	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_ALTMODE)) {
+>  		ret = pmic_glink_add_aux_device(pg, &pg->altmode_aux, "altmode");
+>  		if (ret)
+>  			goto out_release_ucsi_aux;
+>  	}
+> -	if (pg->client_mask & BIT(PMIC_GLINK_CLIENT_BATT)) {
+> +	if (pg->data->client_mask & BIT(PMIC_GLINK_CLIENT_BATT)) {
+>  		ret = pmic_glink_add_aux_device(pg, &pg->ps_aux, "power-supply");
+>  		if (ret)
+>  			goto out_release_altmode_aux;
+>  	}
+>  
+> -	service = pdr_add_lookup(pg->pdr, "tms/servreg", "msm/adsp/charger_pd");
+> -	if (IS_ERR(service)) {
+> -		ret = dev_err_probe(&pdev->dev, PTR_ERR(service),
+> -				    "failed adding pdr lookup for charger_pd\n");
+> -		goto out_release_aux_devices;
+> +	if (pg->data->charger_pdr_service_name && pg->data->charger_pdr_service_path) {
+> +		service = pdr_add_lookup(pg->pdr, pg->data->charger_pdr_service_name,
+> +					 pg->data->charger_pdr_service_path);
+> +		if (IS_ERR(service)) {
+> +			ret = dev_err_probe(&pdev->dev, PTR_ERR(service),
+> +					    "failed adding pdr lookup for charger_pd\n");
+> +			goto out_release_aux_devices;
+> +		}
+>  	}
+
+But this does nothing on Kaanapali and Glymur. Am I wrong?
+
+Yes, you do not have a charger PD on Glymur, but you do have an ssr,
+for which you do need to register a notifier instead.
+
+You need to be doing something like this:
+https://gitlab.com/Linaro/arm64-laptops/linux/-/commit/2cd84e303d263d8fd5de3730714a16c29cc6788b
 
