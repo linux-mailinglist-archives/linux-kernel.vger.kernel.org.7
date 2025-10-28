@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-873163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28549C13499
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:29:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C263AC1348D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A78189926C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:27:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C8244E2DB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFE3221F17;
-	Tue, 28 Oct 2025 07:27:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75A5248886;
+	Tue, 28 Oct 2025 07:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jsZuXJxN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D715F1EA65
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F6239E63;
+	Tue, 28 Oct 2025 07:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761636424; cv=none; b=UTKzGJRb5twgFoXnrxxgB51ZKspbf15jCxiW9zIHTnNgqA6izHbGw2Y6W/ap1NTlvLLV31pqnVU23fs3F1S5AAPvSkNjrhelk9+y135iRlI9wya37zHwDqrILOtxhpMDJpl9kAmsrf+z5bnDQYjhQCXlRdkIfJPK4MpefnejKMo=
+	t=1761636480; cv=none; b=QlfdMKGu2vjb+S1yY8yG2+cqfL92axtntyINmlZMicpKIYOH4Cmiq42pn3u3Tp5CFdSqXSdboTSTvut22YAMA9KfgJRr65FGdawUXIpBWOUEAXf6Xxy/+TaFUV3CuUXoBFiLCU9pebtBLXjvG7CmB2hwNCDTXIyh54g6rNBu2y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761636424; c=relaxed/simple;
-	bh=0vYIXc9VqSwzsNjenXbN0TZIuPpNCS28ifXpvtYyOGE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RkcjN440tHmNBeJVFjPc1lEIwsfNwAHO2IwNSNqy3qln+D3I9LUOLrbqbGVJO0aZFUiYF80nH5Hl7DXeWRxGVDT1zzC8s5yhzo2xBJmvh465E5kBkEMh6tWn2aHAJNgYKGoN7y0ho9nFnWHxyTe2H2T8ju2uXiswe6E7L6l6WwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-431d999ebe8so179717245ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:27:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761636422; x=1762241222;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3xnoOb/6gAl/fjy6E3Y6qCDAkwIA162zpzUFco2f5I0=;
-        b=o1n/ORofEYHpm0AUSBV1HXeh5f4Q0IkwTpecIIEuLMWFA5Q/QgnU6EK0hlg7SvBjt6
-         1ZoyTZQj9fXVhbXkn5xAGbvo7ty8lxxV6T8yAtFrZP1rYgS4PRo8A7aDu85OyFIjSzPA
-         lv5xu2m10jy4bNEFB0VPC7J4cdscoB0118SxDSbC80R/HDMgNBj+qB5PhkJmL6ulkJxo
-         85KfjQi4bvdcRuG4fbK7QD4simhoE5Kz0LyEabMw2N56LxGaHtHLdTl1jgEQvYSMGgMs
-         vYeH3YmdETGrc3R57ZwLypGnzFI5RUVweU3zpwrLxfwz0jb/D96szJA7SNpQKIZjj8LZ
-         L1mA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5OfUTUorNnXYC+dMX53yjfzHcEaGiJofccQahs53i+JJ2fi6xHVYc7hAAlr6KPJ3hiZ1OCZjHTpFYbAE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFvKaOvz8cEOvaj86d6fOQ4byMeJdqB+bQYdy7lUXDZMpm38Xa
-	2KIJ3M9FymDr//6U+Tsh1vQC2XP4BTpEjbE+SJL+rDcOU2QVOLhpX0SMgLf+TCQkVl7Xmvmr/Rd
-	dorpfCFEDAvcK/7yj5p0Od/An6O1JUFhSRMESuQ74wfXY4JKuT5alNk3wQf0=
-X-Google-Smtp-Source: AGHT+IFdMiWzHawotJ08hvAjcIloi7MSRj63t2bqcXQra/nDM8ut5R0SoWUrfdHQHk6e+o0TLHNleB1DTQgM41O+FI4+AaHvzUVD
+	s=arc-20240116; t=1761636480; c=relaxed/simple;
+	bh=2jeuwD+92Ty8xl8EjL6u5v1fH1GF4t7XvbCzvRoygtU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=EsTrxCtTLh/Ah8ThemDBLl4tQHe4u52g6KwsN+/KL4gdEiOieyQgyuAzCATMFv7RNSRXOu8pSzPahnVtPIENijZRDAL1vpYRHwKxIRS4JkMIIMjQ75PLNHhTt77MR7bvzLX4aBiJfJAugIOzZHdjrU6SrKbnja+XEEodY5Y+DUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jsZuXJxN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9176416CD;
+	Tue, 28 Oct 2025 08:26:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761636368;
+	bh=2jeuwD+92Ty8xl8EjL6u5v1fH1GF4t7XvbCzvRoygtU=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jsZuXJxN7pibm7CapdyEsg3MohHfvDdEsE9/5MJEW7xL/je55JnJ2o713PwtJxr9J
+	 JiAF3AfUPeswx7yK4IUDjZ5Hiu4KE70fkqX8FPZVxMShDgABjKgqNzLgkWvO5QHpWe
+	 HdNH3UXZXVu8hx+15de2ZJKbknpJR+jbrCioPAgM=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH 00/13] media: i2c: Miscellaneous features and fixes for
+ OV5647
+Date: Tue, 28 Oct 2025 12:57:11 +0530
+Message-Id: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc6:b0:42f:9dd5:3ebb with SMTP id
- e9e14a558f8ab-4320f8434afmr37147765ab.24.1761636422149; Tue, 28 Oct 2025
- 00:27:02 -0700 (PDT)
-Date: Tue, 28 Oct 2025 00:27:02 -0700
-In-Reply-To: <20251028070215.sc5KX%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69007046.050a0220.32483.012d.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
-From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE9wAGkC/x3MPQqAMAxA4auUzAbS0h/xKuJgNWoWLS0UQby7x
+ fEb3nugcBYuMKgHMlcpcp0NulOwHPO5M8raDIaM02QsRos5CV7VeRuQXPREwfXBG2hNyrzJ/f/
+ G6X0/ZXlcU18AAAA=
+X-Change-ID: 20251024-b4-rpi-ov5647-05b600758762
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Jacopo Mondi <jacopo@jmondi.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ David Plowman <david.plowman@raspberrypi.com>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
+ "Ivan T. Ivanov" <iivanov@suse.de>, 
+ Jai Luthra <jai.luthra@ideasonboard.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1627;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=2jeuwD+92Ty8xl8EjL6u5v1fH1GF4t7XvbCzvRoygtU=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpAHBfgmEmSBJUHo9bTK0bgElGntxNlnjbMR+9Q
+ i+eJRFSO3SJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQBwXwAKCRBD3pH5JJpx
+ RV5/D/9uWxbp4Sjh81IiZWOxLMC1ZRF5gqhNfDC8YiWC71DnDmsO/RfMjzGEEvyM4hBuCgN100L
+ WVRtskizruUbGxtV2Od7FfcqgEk+IW8HTaA4XoMrjHQFWe/r7GfZMwia64QlBAc1o51NCqzNNKM
+ nufV6phW9nFWAnYhDcvsWTNSIdq27p8gvA7wEkYnuYKsSS6Y6TqpJr57B8PyBScpa9YbdGaGj6f
+ U/mAR4jZwSEvZ9b9Y+8bH8T5aPJCZz8g4d7jRs2tERZhM3nCr4K9BJGSKxzjoekVPAZ5bgzGZ5k
+ U34HUAF+mPiImtZtFhkRuc4G7Q2INw1BfpRYGmtzlNtAjEdyBQ4TQTCJiM74d80HDli8lofQnNq
+ wygMTRrnO0TEfc0X0mfwSLAqwweQ35xRJtEmutXPJmsH6NqGWvv8slzZFYYcGNc+tMUnMqHaj3q
+ GePW/kXda4+FBiow0dnHeQW1uhCFCSXItIET45+5kJJyyPcIouyMrKhUpMcQ8wSN1M81fTUXFzL
+ Dx2vD4FkswE7zHXOaTQQdDx8vt+w3Vw59UGD2mMAiJbNCymhAJnNbB8apNuWs1ablZQ4d0EkHyv
+ ZDHL5hv5bFyPCg2XDjEQ/lfiBaT2g26UaX1dEX9nsjYuxjOogcgTuszOaKfLJ0dVCy0+2juvS06
+ CfBirRxpjGPhajQ==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Hello,
+This series adds support for some important features, like controls for
+H/VFLIP, horizontal blanking, regulator controls etc. that are present
+in the downstream raspberry pi kernel, to support their v1 camera
+module.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Additionally, it also fixes some known issues with streaming lockups,
+wrong pixel array size and compliance tests.
 
-Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
-Tested-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Dave Stevenson (7):
+      media: i2c: ov5647: Add support for regulator control.
+      media: i2c: ov5647: Use v4l2_async_register_subdev_sensor for lens binding
+      media: i2c: ov5647: Add control of V4L2_CID_HBLANK
+      media: i2c: ov5647: Tidy up mode registers to make the order common
+      media: i2c: ov5647: Separate out the common registers.
+      media: i2c: ov5647: Use the same PLL config for full, 1080p, and binned modes
+      media: i2c: ov5647: Add V4L2_CID_LINK_FREQUENCY control
 
-Tested on:
+David Plowman (5):
+      media: i2c: ov5647: Correct pixel array offset
+      media: i2c: ov5647: Correct minimum VBLANK value
+      media: i2c: ov5647: Fix v4l2-compliance failure subscribing to events
+      media: i2c: ov5647: Sensor should report RAW color space
+      media: i2c: ov5647: Support HFLIP and VFLIP
 
-commit:         fd575722 Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=111c77e2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0fd60646ed018d
-dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12ac3614580000
+Laurent Pinchart (1):
+      media: i2c: ov5647: Parse and register properties
 
-Note: testing is done by a robot and is best-effort only.
+ drivers/media/i2c/ov5647.c | 447 ++++++++++++++++++++++-----------------------
+ 1 file changed, 216 insertions(+), 231 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251024-b4-rpi-ov5647-05b600758762
+
+Best regards,
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
+
 
