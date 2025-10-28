@@ -1,111 +1,108 @@
-Return-Path: <linux-kernel+bounces-873009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C2BC12D43
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:02:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1804CC12D54
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDA5F1A25B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340321AA57C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36310286D57;
-	Tue, 28 Oct 2025 04:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF55D29AAFA;
+	Tue, 28 Oct 2025 04:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FtpWpfHH"
-Received: from outbound.ms.icloud.com (p-west3-cluster6-host8-snip4-10.eps.apple.com [57.103.75.63])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQZcFttU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5017827877D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.75.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48319298CCF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761624115; cv=none; b=pFpiQyLdxLgqJS7VTaHqC/7uA8aHiSAHqMASCAmKw1RSVRNmVmXxOjlk7zNYa4Y3aoTBmHT8cCX9oQ/ZZF9Di4FiFEeMeKPsiiYjRxo3PpvPwBsM8OXOcNZULgJjatUpyE/GhCsMGRs6q1R2umpdCnrX/aX0QlO1BO/BtJKChzI=
+	t=1761624179; cv=none; b=ee4ZlvR2xNq6vvvb/gl6ZvQVhsCrq/74dFarSm+StRuAHfAziHl3HyIZCa90mVcLZbIX+lSCT/ERvxoGoaVo4ZgUJI4mzLEYUW4mlEm357MaxM1dFfZb022aRhDrcdJnZSj37QJAVDUmB215uyrOgc0xf9Q9A3zT86kPuadgags=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761624115; c=relaxed/simple;
-	bh=NmdtqEn/HsKHv1qTNYIolhmtNyLZLW2J0KOaF1TeJZQ=;
-	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=YrIzDT/nMZDSHlg1FpSilXjdyjFF3o0VBcD/3nctGckLmIFVIVzakF1oxyJfj4j6NbkGLM6MOMzcdN0MUyD/QQXFkJafCQDzq8C93DC2Wr8eB4Arm4VdkzWULSolSZxPW+0Qi8nX/ahbNND16VTc48qPvujkzYBTxrppFf5uYrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FtpWpfHH; arc=none smtp.client-ip=57.103.75.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-Received: from outbound.ms.icloud.com (unknown [127.0.0.2])
-	by p00-icloudmta-asmtp-us-west-3a-20-percent-1 (Postfix) with ESMTPS id 57E18180042B;
-	Tue, 28 Oct 2025 04:01:52 +0000 (UTC)
-Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=8ermkc3OwB7sxfPhqxOVTMMuINyEAMCqaJ7n07ZN4mY=; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:x-icloud-hme; b=FtpWpfHH9T3rJAz80+X5uqzS7BMm2s92q/GbHcojJqR9wUG8Z9TpC3WnMCCHPNdO/30PCcBnQGXZYh6KwcemuLdMSsxSnwKqB7S/ys2YmxYxB4N0kgZmeTNRQBqD1mPD2XnqnbumhRv1jncvm4eroEq7EFRSVxsUFK3O9lzg93zn5mC6DrV/an+XhYzWxezRfCxnoxB0a9ln2icYSI4qT/sAG8MTE1usohobSWU2dFVa4Vl87kc7dpSN4gyRnVDBoucAi2g18pJ/m9foY6Xg1af+dUywnCorwpzoJPxsxl3GX0v699AoXBZbszgEKEB4NM1jlxzlY7awT2s2b6+2eg==
-Received: from [192.168.4.116] (unknown [17.57.154.37])
-	by p00-icloudmta-asmtp-us-west-3a-20-percent-1 (Postfix) with ESMTPSA id AA91518000BE;
-	Tue, 28 Oct 2025 04:01:51 +0000 (UTC)
-Message-ID: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
-Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
-From: Zoe Gates <zoe.blair.gates@icloud.com>
-To: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com, 
-	borntraeger@linux.ibm.com, svens@linux.ibm.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, linux-s390@vger.kernel.org,
- linux-watchdog@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 27 Oct 2025 23:01:49 -0500
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 (by Flathub.org) 
+	s=arc-20240116; t=1761624179; c=relaxed/simple;
+	bh=tQ76DelEERQRex/jtJZfPH2Uwy7MZJd5BE1h4O3y61o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YyEzW3E15Jlap8xNLNPDX0oGedsfJ+eVsVtHL2owAExqJLEPzTmluxcEpvRUeFAk9SHO3qoaSg0oCIBzCNlNOGuu94H7aSs35e0Ir1pl3Mr38d1a5rVp+XOauakZGCkRqdug0gO2pgdBHchEgyUg8HEtH8RdmXh+z1Si1fWuO2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQZcFttU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BF4C116C6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:02:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761624178;
+	bh=tQ76DelEERQRex/jtJZfPH2Uwy7MZJd5BE1h4O3y61o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AQZcFttUAejCsBupzSJxXGQwIiKwwVZiJy7/3JYhRuyc6iJnRbNUt4Cr1G3n3FkQt
+	 U+dSY6I00YwT1wjJA4LjPvKSO5H10uN5kAIBvMu6vNcdZaRGiUrWOXLvd3UwBTWcU9
+	 zqI34c+Yfkp1/7w8GEIOHG4DKi8v0amTuXLqYMHt2ztYvtNL2yzyrTj7gEHZzntN48
+	 Wiv2h2MiIysSCYtEbNVmIYKH1XVec67pnLk6NC5yr0vGtnHJ6xM/VftmcMMGn6AubP
+	 rsNt9UHwtd2RfMXjY25Lz/UyE57019QBtqU/CA0Sbcpa5MxTYO9cBQ2AKsZON9D+da
+	 prSGmeG+d1I8A==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c2d72582cso8824209a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:02:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPbRD2BbXG8lECPKTmYy9vU2vWyvdJ4fZTuhgMBy1rzYnk5jGTKZL/iLZjd16BMWHOjcLE7PY4s1HQRRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/5s6zKo+SJjWzgOzgxMfIXpK3OsWoVJT5HF+HflrTXW1Iqg+2
+	AOh0Gb4xR6pZUIYerapEWNJ5r7AilzxfxPFP7jiy6h2eTnaLkPsUV72QRck+M/S+twht8Zv0Z68
+	G67C97Aa8/WSGGdc+LQwqj1JJT5FOA/s=
+X-Google-Smtp-Source: AGHT+IHXAMLyGd3ViihkM7YWAwqC60GP3yExiGkJKKlISyVAqClcK8DRhTQvl1yvQUUGcMgAouco7qij1IZFRq6GO4Q=
+X-Received: by 2002:a05:6402:280a:b0:634:c377:e188 with SMTP id
+ 4fb4d7f45d1cf-63ed7f0f51cmr2040695a12.6.1761624177528; Mon, 27 Oct 2025
+ 21:02:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-ORIG-GUID: 57_eBduBDHM8mNf4alYf1Xrzr6U3GuN0
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDAzMiBTYWx0ZWRfX5dtEQdUSylpj
- QZo3IfapPWrHrA3SFiuIeMxzJD+ZJtsA5rkI0t6z7IZgOR4job6YO9+ksLRTg2iKaSDNrIhTbo/
- aQbrGvvsMLKUVz32kf4WsO8glxhtTkV1ChhhK+F4TAKd0GUOxPaoaGCY/xJ6UX7dk8ROv1MUpFq
- OQ19jM0q2owuAaYoThseDzmnZWmsMr8jp5xpWnHws1yqkVCy5KYhnSv8u627XCbsclZtp5PCinp
- cYTEqUcZIrTGEp6iKA1q/4RZwoEnxCP+3KcOBpdHHCXBCGoEG2T/GixIaZNDRfNrcXhr3Oa3k=
-X-Proofpoint-GUID: 57_eBduBDHM8mNf4alYf1Xrzr6U3GuN0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0
- mlxlogscore=999 clxscore=1015 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.22.0-2506270000 definitions=main-2510280032
-X-JNJ: AAAAAAAB7TovGJXjaCsIxm1GtFqn7cxdgFTav+RuKK927tWKT0VEDeesyalppjyEMSgVHvo/CiVASfKX5OZhmSsyddf9kRk+rmUL+ZvkJDZsZ8YL7tErvpRnzaGmyRghQY5yaEaoeERi4Bj2h7lhr+pgp8gNDMiGtw6N0+x2Weg9stJYUrl4nW3b77DqcoIxoCUXsmhSB7zKGgSrgMgKKM4ZEFteWEZ2ZvVALwKAGB8f1Kh9+BKVWHSAzmYh5WAMdSIPD9vu43So+6QxoT5w/cEPhtBccMRZ8YdKj8DbhIu2tNzBq9t1xs19cnsI5Al1Mhrqb/RfeYfPYiFU+7046dlg+vvU7n5XlKn/FVDWISmUamx3bTnk9iktWoE/9f5e3qy+lnPYA0yQhcMK0sHkc8B0MEnBqRE/Ic1RVsay29x87Q9kfF9EUrGIqZtGv+GU3ctu8TGT7FxLF66XAUqCabxeCE/86BPvzaLQ8VQC6dPZXVrLgWW5W7UiH0NX/F5SpU/w40jxwVLYW3fRdx31Jxh+jYSh8NX++DSBRNKfMNatH33GGBzNyKNV0NifN3p45gzecOCBacKHaJCu53cvcqIPeuRzWBIa6x0z7imX7Eozk9Fhlp7LfOBB7JdOHlJ+ZUH8KYeYDr7AptvvJ0Jo/S4+Uyh6MK88cH+tJClsSADe6y/uMPbD8DPspkYj0s6Mo59zrsV6sIVzKV364zQGO46GzbgY4NJ5RaiH5x7zMrJ1V+4lc3ffwQbReR8HcTpGJnpAwWUm0N8=
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027071316.3468472-6-chenxiaosong.chenxiaosong@linux.dev>
+ <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com> <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
+In-Reply-To: <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Tue, 28 Oct 2025 13:02:45 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8zuJsy5FZxsEQtPCm1OqJ6Usr-6CPkVgoRPYnX3NiQ9g@mail.gmail.com>
+X-Gm-Features: AWmQ_bkIhrtor2FjpadxESdE_tFAx0KuAPo1GLwDErGKEJHKMeO6tthrhAVNJOk
+Message-ID: <CAKYAXd8zuJsy5FZxsEQtPCm1OqJ6Usr-6CPkVgoRPYnX3NiQ9g@mail.gmail.com>
+Subject: Re: [PATCH v4 05/24] smb: move some duplicate definitions to common/smb1pdu.h
+To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org, 
+	christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From ebec904b22077c3ebd0a18956397a9b0540a2714 Mon Sep 17 00:00:00 2001
-From: Zoe Gates <zoe@zeocities.dev>
-Date: Mon, 27 Oct 2025 22:14:50 -0500
-Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
+On Tue, Oct 28, 2025 at 12:58=E2=80=AFPM ChenXiaoSong
+<chenxiaosong.chenxiaosong@linux.dev> wrote:
+>
+> Would it be harder to maintain if only part of the definitions are moved?
+>
+> Moving the related definitions together would make maintenance easier,
+> that's just my personal opinion.
+Please check Steve's reply on another mail thread.
+If you think it looks weird, don't move them.
 
-Correct spelling and capitalizaion in the header comment so the
-documentation reads cleanly.
-
-Signed-off-by: Zoe Gates <zoe@zeocities.dev>
----
- drivers/watchdog/diag288_wdt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/watchdog/diag288_wdt.c
-b/drivers/watchdog/diag288_wdt.c
-index 887d5a6c155b..656b937f7653 100644
---- a/drivers/watchdog/diag288_wdt.c
-+++ b/drivers/watchdog/diag288_wdt.c
-@@ -6,10 +6,10 @@
-  * to CP.
-  *
-  * The command can be altered using the module parameter "cmd". This
-is
-- * not recommended because it's only supported on z/VM but not whith
-LPAR.
-+ * not recommended because it's only supported on z/VM but not with
-LPAR.
-  *
-- * On LPAR, the watchdog will always trigger a system restart. the
-module
-- * paramter cmd is meaningless here.
-+ * On LPAR, the watchdog will always trigger a system restart. The
-module
-+ * parameter cmd is meaningless here.
-  *
-  *
-  * Copyright IBM Corp. 2004, 2013
---=20
-2.51.1
+>
+> On 10/28/25 11:42 AM, Namjae Jeon wrote:
+> > On Mon, Oct 27, 2025 at 4:15=E2=80=AFPM <chenxiaosong.chenxiaosong@linu=
+x.dev> wrote:
+> >>
+> >> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> >>
+> >> In order to maintain the code more easily, move duplicate definitions =
+to
+> >> new common header file.
+> >>
+> >> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+> >> Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
+> > ksmbd does not use all smb1 pdus. Instead of moving all smb1 definition=
+s,
+> > move the ones ksmbd uses to smb1pdu.h.
+> > Thanks.
+>
+> --
+> Thanks,
+> ChenXiaoSong.
+>
 
