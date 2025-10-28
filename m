@@ -1,223 +1,101 @@
-Return-Path: <linux-kernel+bounces-874156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F354C15A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:01:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88270C15A3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8363F5673DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:53:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED4CE3BBD14
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A03634575E;
-	Tue, 28 Oct 2025 15:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E5C33FE0A;
+	Tue, 28 Oct 2025 15:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b="sU3vrLm8"
-Received: from mail.hostpark.net (mail.hostpark.net [212.243.197.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zD7qzO2c"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95480343D8E;
-	Tue, 28 Oct 2025 15:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.243.197.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AC8331A52
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666721; cv=none; b=AyeZRTZa6JzQREsSnlo2RVd8Nf8NL9nLAmWAUPX9PT4g2meArdiQylUPsH/smDXwL5DttgBM9yX0VAvi5AYSKIBacoSxkQva/e734+kGJFNW7zBV0HMjbRLo+FOFYKflxmRbdq+DjQVQjeQR3uYJAOEkQuwLu/RvOHykQprkqcE=
+	t=1761666802; cv=none; b=mX6iqte13dOOPZGCxS5C2/XZaYgoSN+plpoJ9JXHbzH3nnGqyv+hIam1cWuL6zQlngdR5xwmJioO8XT/EN/rWnCiU9mPajjE1wApCRJy1StkmL9wFGgD5jRMBaB6CvKQDWg1T55fyu7l9L/z7NRCZaCduuFIrh3+Y3JBTAxUAUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666721; c=relaxed/simple;
-	bh=UF7eSuEBBdlXuSqT26s0+lsJpdaez8Svv47ZTzarpIs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LMDnC24/VQSzhLsgMfgs2X4dBkLPyZTC8K5rON2FdT1KL9nrKaGdrb9UARHMoBrHsgaTs+WpH4aA+RuoLC9dhCUwOXUwlNOWqz0ruqz47gbhQ3fVpXq+7yptxEZT1H+Kigv6v50cj/akFEVDaewzv4/+qC+QOB47dUT+WRcMiV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li; spf=pass smtp.mailfrom=klarinett.li; dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b=sU3vrLm8; arc=none smtp.client-ip=212.243.197.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=klarinett.li
-Received: from localhost (localhost [127.0.0.1])
-	by mail.hostpark.net (Postfix) with ESMTP id C604216671;
-	Tue, 28 Oct 2025 16:51:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=klarinett.li; h=
-	content-transfer-encoding:content-type:content-type:mime-version
-	:x-mailer:message-id:date:date:subject:subject:from:from; s=
-	sel2011a; t=1761666710; bh=UF7eSuEBBdlXuSqT26s0+lsJpdaez8Svv47ZT
-	zarpIs=; b=sU3vrLm8D70pJncbAaulxbwjFz7FSfJo+BF/6B9QHXWUoFcuKc/KA
-	L23GlfowfHJKrE58uW7CVirHmDp32MC9mBu5b556XLy00wbq0YRXzjjSNhqdeNFt
-	aNKlS1cLIQ5LGeyiiXXumhltjppkXASLisc/swV+KNemMhqjf2VaaM=
-X-Virus-Scanned: by Hostpark/NetZone Mailprotection at hostpark.net
-Received: from mail.hostpark.net ([127.0.0.1])
- by localhost (mail1.hostpark.net [127.0.0.1]) (amavis, port 10224) with ESMTP
- id KygcuKzd1zPM; Tue, 28 Oct 2025 16:51:50 +0100 (CET)
-Received: from customer (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.hostpark.net (Postfix) with ESMTPSA id 5F3AF16148;
-	Tue, 28 Oct 2025 16:51:48 +0100 (CET)
-From: Christian Hitz <christian@klarinett.li>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Dan Murphy <dmurphy@ti.com>
-Cc: Christian Hitz <christian.hitz@bbv.ch>,
-	stable@vger.kernel.org,
-	Pavel Machek <pavel@ucw.cz>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] leds: leds-lp50xx: enable chip before any communication
-Date: Tue, 28 Oct 2025 16:51:40 +0100
-Message-ID: <20251028155141.1603193-1-christian@klarinett.li>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1761666802; c=relaxed/simple;
+	bh=bvubLNry8i2KgFkZtrgq5oxD9xLD4eBmItr1+AV//cQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mTC4d+U3p9vJVLwT7vbu789dbwrwpTFXb+3ytjvgny1iI5pMKUMnsEiywou7gbdc6uWva9pboj+A7eGqY1YO0i623MQ/eXmYgtxPLUuZuTKMlOGxBzazuZMaUFAoM0cN1+cArir3NBkIGs7nMn+49eiUzJm1jZmH52sqLDWdqro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zD7qzO2c; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kuniyu.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-340299fd99dso1151859a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:53:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761666800; x=1762271600; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghHNPpIkVrYu62/YqFMFKRWudpG1mODk+3kt3NmNBok=;
+        b=zD7qzO2cJnFg9n+oilba0f/J69xmkMPbY/mbMWM6V9Pf69cL7kWebvmq/BK3PCBWze
+         BMfiRW8uiuumUlyRvm/Um0ih9HFx0ecFiUwle4RetUGUGt8/S8myskPuUKMid5GoPuUG
+         OMvHYsQms202Czb+FvR1ttrm31VUlHesNhgW6g6Uc/P05IpGyms0MXpj5ACk/mewW4KE
+         toabygEvXx4GJMSGbx6DFUHZdmtPqEgB/x0Ow+aCTibpviTSy+hqLUfdjNaRXecq4JsN
+         U/cnt6Cn5EY76Av6wRk9mZOOpmvw9O+hmj54eLptI8uteBa8nlkwbVF8X2fv191MB7GX
+         XEHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761666800; x=1762271600;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghHNPpIkVrYu62/YqFMFKRWudpG1mODk+3kt3NmNBok=;
+        b=SAb91PEy9jE9nLqupK81zI7ELsY+myzs7Q2bLKKiTouKVrVI5R1gXCe+7CyhO08H+I
+         joB70TRuHnZc3oud57SdioAnsVv/ZZO8HdDEgvSH88pcERrMbGBcbqBWMdzDYmeXb5aX
+         ahfoUslnEFn72hIEEVfSPKzQjp1nqoHq1Rnniaj/Uwh4C2ja1ZJR7XbTt69XKuXwBcXa
+         W7oVFw1B5ZxxUkOA3u3uFa5ouEM9/nB9r3ivyR3zq3PoS0+/dXELjObViQz6RG/pPiJ1
+         e015YU98SCuUNN17kq8c1k7GXyuk0DX4P3q8hu9WHPpNNugisI09ckt0uEBoer+lZG0A
+         5P2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2HMhoaSVIrTTCokbA8ZgXciPL6ubHO2Q1/L6qNifgJ+P5HO4vBB21AHwK40/ipCc4oX8AhqA+K5wd6/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc0eaXD1qmH8HbOydVaFx95rDHqPQOQW9RHUpB8RE7E6xSEafW
+	3dLL4dvL4ejVoYKDXUHQ6h0MVsVrtmc0hTyUvOeyb9HyiKXE+nO3qU4q5DeRnHEGE2A94t0ZH8J
+	ziyK84w==
+X-Google-Smtp-Source: AGHT+IHFuR5DYWudiyV7h1agovuZqNOF3NC0YcpaGD25SCPgJSDGq9HjUwprk8+VKQsrML4GoiDI522EkQ0=
+X-Received: from pjbsb7.prod.google.com ([2002:a17:90b:50c7:b0:33b:51fe:1a94])
+ (user=kuniyu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1c8c:b0:33f:eca0:47c6
+ with SMTP id 98e67ed59e1d1-34027aac14fmr4416665a91.30.1761666800026; Tue, 28
+ Oct 2025 08:53:20 -0700 (PDT)
+Date: Tue, 28 Oct 2025 15:51:50 +0000
+In-Reply-To: <aQDOpeQIU1G4nA1F@hoboy.vegasvil.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <aQDOpeQIU1G4nA1F@hoboy.vegasvil.org>
+X-Mailer: git-send-email 2.51.1.838.g19442a804e-goog
+Message-ID: <20251028155318.2537122-1-kuniyu@google.com>
+Subject: Re: [PATCH] ptp: guard ptp_clock_gettime() if neither gettimex64 nor
+From: Kuniyuki Iwashima <kuniyu@google.com>
+To: richardcochran@gmail.com
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	junjie.cao@intel.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, kuniyu@google.com, thostet@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Christian Hitz <christian.hitz@bbv.ch>
+From: Richard Cochran <richardcochran@gmail.com>
+Date: Tue, 28 Oct 2025 07:09:41 -0700
+> On Tue, Oct 28, 2025 at 05:51:43PM +0800, Junjie Cao wrote:
+> > Syzbot reports a NULL function pointer call on arm64 when
+> > ptp_clock_gettime() falls back to ->gettime64() and the driver provides
+> > neither ->gettimex64() nor ->gettime64(). This leads to a crash in the
+> > posix clock gettime path.
+> 
+> Drivers must provide a gettime method.
+> 
+> If they do not, then that is a bug in the driver.
 
-If a GPIO is used to control the chip's enable pin, it needs to be pulled
-high before any i2c communication is attempted.
-
-Currently, the enable GPIO handling is not correct.
-
-Assume the enable GPIO is low when the probe function is entered. In this
-case the device is in SHUTDOWN mode and does not react to i2c commands.
-
-During probe the following sequence happens:
- 1. The call to lp50xx_reset() on line 548 has no effect as i2c is not
-    possible yet.
- 2. Then - on line 552 - lp50xx_enable_disable() is called. As
-    "priv->enable_gpio“ has not yet been initialized, setting the GPIO has
-    no effect. Also the i2c enable command is not executed as the device
-    is still in SHUTDOWN.
- 3. On line 556 the call to lp50xx_probe_dt() finally parses the rest of
-    the DT and the configured priv->enable_gpio is set up.
-
-As a result the device is still in SHUTDOWN mode and not ready for
-operation.
-
-Split lp50xx_enable_disable() into distinct enable and disable functions
-to enforce correct ordering between enable_gpio manipulations and i2c
-commands.
-Read enable_gpio configuration from DT before attempting to manipulate
-enable_gpio.
-Add delays to observe correct wait timing after manipulating enable_gpio
-and before any i2c communication.
-
-Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
----
-Changes in v2:
- - Unconditionally reset in lp50xx_enable
- - Define magic numbers
- - Improve log message
----
- drivers/leds/leds-lp50xx.c | 55 +++++++++++++++++++++++++++-----------
- 1 file changed, 40 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
-index 94f8ef6b482c..d3485d814cf4 100644
---- a/drivers/leds/leds-lp50xx.c
-+++ b/drivers/leds/leds-lp50xx.c
-@@ -50,6 +50,12 @@
- 
- #define LP50XX_SW_RESET		0xff
- #define LP50XX_CHIP_EN		BIT(6)
-+#define LP50XX_CHIP_DISABLE	0x00
-+#define LP50XX_START_TIME_US	500
-+#define LP50XX_RESET_TIME_US	3
-+
-+#define LP50XX_EN_GPIO_LOW	0
-+#define LP50XX_EN_GPIO_HIGH	1
- 
- /* There are 3 LED outputs per bank */
- #define LP50XX_LEDS_PER_MODULE	3
-@@ -371,19 +377,42 @@ static int lp50xx_reset(struct lp50xx *priv)
- 	return regmap_write(priv->regmap, priv->chip_info->reset_reg, LP50XX_SW_RESET);
- }
- 
--static int lp50xx_enable_disable(struct lp50xx *priv, int enable_disable)
-+static int lp50xx_enable(struct lp50xx *priv)
- {
- 	int ret;
- 
--	ret = gpiod_direction_output(priv->enable_gpio, enable_disable);
-+	if (priv->enable_gpio) {
-+		ret = gpiod_direction_output(priv->enable_gpio, LP50XX_EN_GPIO_HIGH);
-+		if (ret)
-+			return ret;
-+
-+		udelay(LP50XX_START_TIME_US);
-+	}
-+
-+	ret = lp50xx_reset(priv);
- 	if (ret)
- 		return ret;
- 
--	if (enable_disable)
--		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
--	else
--		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
-+	return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
-+}
- 
-+static int lp50xx_disable(struct lp50xx *priv)
-+{
-+	int ret;
-+
-+	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_DISABLE);
-+	if (ret)
-+		return ret;
-+
-+	if (priv->enable_gpio) {
-+		ret = gpiod_direction_output(priv->enable_gpio, LP50XX_EN_GPIO_LOW);
-+		if (ret)
-+			return ret;
-+
-+		udelay(LP50XX_RESET_TIME_US);
-+	}
-+
-+	return 0;
- }
- 
- static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
-@@ -447,6 +476,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
- 		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
- 				     "Failed to get enable GPIO\n");
- 
-+	ret = lp50xx_enable(priv);
-+	if (ret)
-+		return ret;
-+
- 	priv->regulator = devm_regulator_get(priv->dev, "vled");
- 	if (IS_ERR(priv->regulator))
- 		priv->regulator = NULL;
-@@ -547,14 +580,6 @@ static int lp50xx_probe(struct i2c_client *client)
- 		return ret;
- 	}
- 
--	ret = lp50xx_reset(led);
--	if (ret)
--		return ret;
--
--	ret = lp50xx_enable_disable(led, 1);
--	if (ret)
--		return ret;
--
- 	return lp50xx_probe_dt(led);
- }
- 
-@@ -563,7 +588,7 @@ static void lp50xx_remove(struct i2c_client *client)
- 	struct lp50xx *led = i2c_get_clientdata(client);
- 	int ret;
- 
--	ret = lp50xx_enable_disable(led, 0);
-+	ret = lp50xx_disable(led);
- 	if (ret)
- 		dev_err(led->dev, "Failed to disable chip\n");
- 
--- 
-2.51.1
-
+AFAICT, only GVE does not have gettime() and settime(), and
+Tim (CCed) was preparing a fix and mostly ready to post it.
 
