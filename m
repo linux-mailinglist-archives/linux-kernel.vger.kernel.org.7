@@ -1,277 +1,172 @@
-Return-Path: <linux-kernel+bounces-874532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29830C16861
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:42:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E41C16873
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:43:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84AF1B25BA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:42:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4E2401947
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396BB34B424;
-	Tue, 28 Oct 2025 18:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4C734F260;
+	Tue, 28 Oct 2025 18:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8PVxhrf"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="IBcgLS0V"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA48433C508
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655AB20013A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676939; cv=none; b=PgroOchHM47Jh2wZybQd31zys5EBTbvpMElrK8Ih5molic+XKVROuI06WzHPVWZyMlOx1CIstfOBuytZIui1JXY4xwVquCAxGDM2yFRvp4qniP+Dg1mal8rHCvI0UXTrlGR8luJTc8jqVccWV32tysTwNvNG/MEzr2cqVCrtU7Q=
+	t=1761676953; cv=none; b=IPZwegKrFIy7aMViuI5/f3hNe5ALb2L/bCCW9DA9BOYISkyuqSS3iXHnhg6n5lv5MnPvkd4mT//9JX6P9FWVcUIek9Dr7kXxwiNb8oNiHnPmrQdxoqN0tQU5btmuDyReedkBVGF4fMYkKQRu2nlYFNb+LhHA61CWOvSAbiqUTAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676939; c=relaxed/simple;
-	bh=tCacBRzjsKwZvRFsSMRSacQ2Z3LTZten0W9yqG+MUKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZkNL21tM3LG9mfESbMDu3S11gdWLohw5CrqXD1cAf+iLCDST3glsneljZJcDQdMFArWux5PObipkDlv5x9ahAlJVmMTrCswje67TedqYlAYWYxJ6ArnDilZhwVXed1DWud1xmnq3i8GEE63L7OzGH99GkX1IdN95pay15GrxHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8PVxhrf; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-88f239686f2so608279785a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761676937; x=1762281737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2zI8xfo23DXKdkAZWfysLvv7Qvo46Wn0x4mNLIIsmQI=;
-        b=O8PVxhrfSk41qZNnkzgjMy15UjlW/li4UMx/LAchV4tUeMGaTOQMmRAabYEPm9Yhih
-         6MhZcOcfsKLKiaAxVb5i5O1nkkCcXlWga4J8iyeiMzSbTP4MKm1X0syZasSZeVauDouS
-         QO/wWoUpaIqs7zKOaLLRT98zxliWg8BXKvOJs32O8NAx25IdG/yzw3+LPE4Ew2ut8okp
-         IKrIfbjM8AnYZa+n1OCyNpj6S4zFu7EnehE7f+f7BktCs2ACl8bOXOfgG1956fZiL3L9
-         fazbkwYYBH0PRCs0Kxxu/cJYi94GnQSxMpvcH8q2V8B/I68D78fVwAjyk4ejQsjMBuJx
-         gNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761676937; x=1762281737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2zI8xfo23DXKdkAZWfysLvv7Qvo46Wn0x4mNLIIsmQI=;
-        b=eHTMlLq7hdn1FWK0ourKTyw5KBTqfdtueza65YVNmEcKH34rLBQz63MFic5DOaU6Xo
-         kNIYCE5UgiEKaR+YxqclIGWHrINa0YA/7RSazpXRrkP4g2Id7pApgb2R4wo7Zhssw6q3
-         N+V6mBcpjHUEBVveaXkKFz+aU/IM72Z3jSr3yj05ytl8yqG9N/+vKPyrg6T/aqm4e+46
-         UxLra8/oHOl/nnJuMhgmQjlxALnGXe8jyTWeortlQAOtStZFXZANp/2+qUUluEIvECRz
-         8B/ktjjZ92CUzJuIh5758TBadxlTyb6r9l261GRoU/gWaKU5sG45NTC/oGGUbZF2dVy9
-         EsWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBgsF35vjnAxLMHHtltZZdTNIytFOQJZ6bGD/AUmTO0C+nLPCZf+aORg/i1NDC+Aw0U7Kg/kipVrrQf2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO4hvGdE3hFZhSW1BZNRYpIebhF8lPG+fWmzc3cCxhdi9Asoos
-	9OfBfYgEsMLh4RbESnZ1vxtX6RGxV6F6L7lGA4iL1HIsg8Buwv+8LmXS
-X-Gm-Gg: ASbGnculXm1k6ywreRO3tydbE39W9FtDwzSAOGajiwKMb2FQ/M8ObjKnkgjyexUni8H
-	jr+ICUQPQLpcMlWdk4GtlXMxlj++5BROV1jwdPWFnG5SoGcm0r7yJIQ2TsYOS9APuXw3F6SGXdC
-	CBA/fTZcvYKDUpqFKLHZqc6qPHdabL2r3tjdy76BFrbtb0ge9Yybp5Ak10nHLIOKAc5BkVKeB/d
-	aN0P3IyDOUsgjCh+7ykSnftSv7xgWvTPBgLwGCXPwa9cub2DvNHS15I4jTS/vC7TemJxfUy7Yxw
-	eNMlMuPRDvTqVwZ7sBeT6vXmQXWRjssEWXcDcdAzyFMXdPutKLxdEuQcNVGx+WGH5eeF1lkMTSq
-	Mi75eOifSQfBz9E2a+FnS1f65h0sZXOXqwKlc1G/zegbtGxpILYDKA1L1fTSK6qZZbnPmJwud
-X-Google-Smtp-Source: AGHT+IEg7Mq735wL5t+CMOqtpgy8vO9otE7lMN+JW91xqffpJH8NVRJuKTKpDMxIJrV87mte4Pl4AQ==
-X-Received: by 2002:a05:620a:3723:b0:89e:e5d9:f434 with SMTP id af79cd13be357-8a8e4e010d3mr61187485a.51.1761676936668;
-        Tue, 28 Oct 2025 11:42:16 -0700 (PDT)
-Received: from localhost ([12.22.141.131])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f247fe594sm873446885a.16.2025.10.28.11.42.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 11:42:15 -0700 (PDT)
-Date: Tue, 28 Oct 2025 14:42:13 -0400
-From: Yury Norov <yury.norov@gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/5] rust: id_pool: do not immediately acquire new ids
-Message-ID: <aQEOhS8VVrAgae3C@yury>
-References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
- <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
+	s=arc-20240116; t=1761676953; c=relaxed/simple;
+	bh=HL4Jsmiqq3qZinNDgEWhWXSE9m4WVT1UgDC8ewCAwvI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYK25IWyauCL67D3R3m4Owm0nqkPbZovmjXMRKxAkQLuw0GWzqyB8kO2qDObLf1dBEtyxEdYq2Hkg+njqeiQEQvkw6bcgmx4kfQ49MTMHLMbQPK7uyAuE5cSkUc0jZCeO38olG7BrtjkFohVjYDr1WlPY6nauTiXcqSU8xMC9mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=IBcgLS0V; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SILeXJ1469959
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:30 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=O0D22jbflGl1QZqxbJJ1
+	lyaMPVaagUGQk+kZCnolltM=; b=IBcgLS0VKenZW7H8cSVqNHwonnmiclflTEMv
+	3jaM+H3bmXl1sO+txvPwPozjFnVhcUWTOYV0x1/5g+ACVy82IsFrqtvoFBthK3sg
+	ZnbU+oclh08BbfGRbnvIGKON3SfKUL7IdTiYKiuHN6AHF11KXe43zc3dFW0l4Zo6
+	8maptMbFtInJ1ODUHuk+mm9qfuPKf0tlPkPgczFWgXFzxxkfYb6r+KMCCjGPLP/s
+	yLuTkIvyhw/cvNI9yM2ERWT6r07OmHDBss+nkvdhzI+6B0zJdcNYwguEVg9yprkv
+	3GnAZgKYv3sHHMY/L/vrI4pL0yqTGDQY6ygmzdEBBpVITTaQeQ==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a2xt6b86t-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:30 -0700 (PDT)
+Received: from twshared82436.15.frc2.facebook.com (2620:10d:c085:108::150d) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 28 Oct 2025 18:42:28 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
+	id 77C8E53948D; Tue, 28 Oct 2025 11:42:15 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:42:15 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+CC: Alex Williamson <alex.williamson@redhat.com>,
+        Alejandro Jimenez
+	<alejandro.j.jimenez@oracle.com>,
+        David Matlack <dmatlack@google.com>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <aQEOhyYQKW4unEfZ@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+ <aP0S5ZF9l3sWkJ1G@devgpu012.nha5.facebook.com>
+ <20251027133904.GE760669@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
+In-Reply-To: <20251027133904.GE760669@ziepe.ca>
+X-FB-Internal: Safe
+X-Authority-Analysis: v=2.4 cv=VK3QXtPX c=1 sm=1 tr=0 ts=69010e96 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yJsSUgGDADgjvR2qnwgA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: BE_5KnfNYtMSidEXWmc1rk5MisDx5mlf
+X-Proofpoint-GUID: BE_5KnfNYtMSidEXWmc1rk5MisDx5mlf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE1OCBTYWx0ZWRfX1NgMI9E6xnY6
+ 2urGWvw3CA8jo/4gWb/6KoMW/BENDUer9UR7PBzotVS3qDt2NByg9AS0RS0whkmOVzRoeQ7l4Yl
+ mHuWhliJpB4+b/VJcWQ8Zfux0pm2dSAMeK42p2nu1XySlx8Hf66u5hzRo3jjMjvh7N4gYD2VSl+
+ /8NpepZIQPgc/KGPYnvSgTyhTUrqrlzXkH/Dwwi/fck90sZ1HR3yoy//eGVHl3lTzF2fB9bW0W5
+ yrEROH7isQvcBPOgEFKl1FpTJpzjxPw0V1c58mLGSXC+x8KVqg5Ef4jI2fCNdmNeiMq+DLJkKX9
+ K53lHLLS1YGcENQTDefhcst4PKOJCvOWS5rE8OSUYB9LyXaVJ7wpv07XG0MVsSDQu/1kOVjbzyQ
+ xfCJu71yxuqG38ZC4mXLMfqAx87g+Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
 
-On Tue, Oct 28, 2025 at 10:55:17AM +0000, Alice Ryhl wrote:
-> When Rust Binder assigns a new ID, it performs various fallible
-> operations before it "commits" to actually using the new ID. To support
-> this pattern, change acquire_next_id() so that it does not immediately
-> call set_bit(), but instead returns an object that may be used to call
-> set_bit() later.
+On Mon, Oct 27, 2025 at 10:39:04AM -0300, Jason Gunthorpe wrote:
+> On Sat, Oct 25, 2025 at 11:11:49AM -0700, Alex Mastro wrote:
+> > Alex and Jason, during my testing, I found that the behavior of range-based
+> > (!VFIO_DMA_UNMAP_FLAG_ALL) VFIO_IOMMU_UNMAP_DMA differs slightly when using
+> > /dev/iommu as the container.
+> > 
+> > iommufd treats range-based unmap where there are no hits in the range as an
+> > error, and the ioctl fails with ENOENT.
 > 
-> The UnusedId type holds a exclusive reference to the IdPool, so it's
-> guaranteed that nobody else can call find_unused_id() while the UnusedId
-> object is live.
-
-Hi Alice,
-
-I'm not sure about this change, but it looks like a lock wrapping
-acquire_next_id().
-
-If so, we don't protect functions with locks, we protect data
-structures.
-
-If the above is wrong, and this new UnusedId type serializes all
-accesses to a bitmap (lock-like), or write-accesses (rw-lock like),
-then this is still questionable.
-
-Bitmaps are widely adopted as a lockless data structure among the
-kernel. If you modify bitmaps with set_bit() and clear_bit() only,
-with some precautions you are running race-proof. The kernel lacks
-for atomic bit-aquire function, but you can implement it youself.
-
-I actually proposed atomic acquire API, but it was rejected:
-
-https://lore.kernel.org/all/20240620175703.605111-2-yury.norov@gmail.com/
-
-You can check the above series for a number of examples.
-
-Bitmaps are widely used because they allow to implement lockless data
-access so cheap with just set_bit() and clear_bit(). There's nothing
-wrong to allocate a bit and release it shortly in case of some error
-just because it's really cheap.
-
-So, with all the above said, I've nothing against this UnusedId,
-but if you need it to only serialize the access to an underlying
-bitmap, can you explain in more details what's wrong with the existing
-pattern? If you have a performance impact in mind, can you show any
-numbers?
-
-Thanks,
-Yury
-
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/id_pool.rs | 67 ++++++++++++++++++++++++++++++++++++++------------
->  1 file changed, 51 insertions(+), 16 deletions(-)
+> > vfio_iommu_type1.c treats this as a success and reports zero bytes unmapped in
+> > vfio_iommu_type1_dma_unmap.size.
 > 
-> diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
-> index d53628a357ed84a6e00ef9dfd03a75e85a87532c..e5651162db084f5dc7c16a493aa69ee253fe4885 100644
-> --- a/rust/kernel/id_pool.rs
-> +++ b/rust/kernel/id_pool.rs
-> @@ -25,24 +25,24 @@
->  /// Basic usage
->  ///
->  /// ```
-> -/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
-> -/// use kernel::id_pool::IdPool;
-> +/// use kernel::alloc::AllocError;
-> +/// use kernel::id_pool::{IdPool, UnusedId};
->  ///
->  /// let mut pool = IdPool::new();
->  /// let cap = pool.capacity();
->  ///
->  /// for i in 0..cap {
-> -///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
-> +///     assert_eq!(i, pool.find_unused_id(i).ok_or(ENOSPC)?.acquire());
->  /// }
->  ///
->  /// pool.release_id(5);
-> -/// assert_eq!(5, pool.acquire_next_id(0).ok_or(ENOSPC)?);
-> +/// assert_eq!(5, pool.find_unused_id(0).ok_or(ENOSPC)?.acquire());
->  ///
-> -/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
-> +/// assert!(pool.find_unused_id(0).is_none());  // time to realloc.
->  /// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
->  /// pool.grow(resizer);
->  ///
-> -/// assert_eq!(pool.acquire_next_id(0), Some(cap));
-> +/// assert_eq!(pool.find_unused_id(0).ok_or(ENOSPC)?.acquire(), cap);
->  /// # Ok::<(), Error>(())
->  /// ```
->  ///
-> @@ -56,8 +56,8 @@
->  /// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
->  ///     let mut pool = guarded_pool.lock();
->  ///     loop {
-> -///         match pool.acquire_next_id(0) {
-> -///             Some(index) => return Ok(index),
-> +///         match pool.find_unused_id(0) {
-> +///             Some(index) => return Ok(index.acquire()),
->  ///             None => {
->  ///                 let alloc_request = pool.grow_request();
->  ///                 drop(pool);
-> @@ -187,18 +187,17 @@ pub fn grow(&mut self, mut resizer: PoolResizer) {
->          self.map = resizer.new;
->      }
->  
-> -    /// Acquires a new ID by finding and setting the next zero bit in the
-> -    /// bitmap.
-> +    /// Finds an unused ID in the bitmap.
->      ///
->      /// Upon success, returns its index. Otherwise, returns [`None`]
->      /// to indicate that a [`Self::grow_request`] is needed.
->      #[inline]
-> -    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
-> -        let next_zero_bit = self.map.next_zero_bit(offset);
-> -        if let Some(nr) = next_zero_bit {
-> -            self.map.set_bit(nr);
-> -        }
-> -        next_zero_bit
-> +    #[must_use]
-> +    pub fn find_unused_id(&mut self, offset: usize) -> Option<UnusedId<'_>> {
-> +        Some(UnusedId {
-> +            id: self.map.next_zero_bit(offset)?,
-> +            pool: self,
-> +        })
->      }
->  
->      /// Releases an ID.
-> @@ -208,6 +207,42 @@ pub fn release_id(&mut self, id: usize) {
->      }
->  }
->  
-> +/// Represents an unused id in an [`IdPool`].
-> +pub struct UnusedId<'pool> {
-> +    id: usize,
-> +    pool: &'pool mut IdPool,
-> +}
-> +
-> +impl<'pool> UnusedId<'pool> {
-> +    /// Get the unused id as an usize.
-> +    ///
-> +    /// Be aware that the id has not yet been acquired in the pool. The
-> +    /// [`acquire`] method must be called to prevent others from taking the id.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn as_usize(&self) -> usize {
-> +        self.id
-> +    }
-> +
-> +    /// Get the unused id as an u32.
-> +    ///
-> +    /// Be aware that the id has not yet been acquired in the pool. The
-> +    /// [`acquire`] method must be called to prevent others from taking the id.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn as_u32(&self) -> u32 {
-> +        // CAST: The maximum possible value in an IdPool is i32::MAX.
-> +        self.id as u32
-> +    }
-> +
-> +    /// Acquire the unused id.
-> +    #[inline]
-> +    pub fn acquire(self) -> usize {
-> +        self.pool.map.set_bit(self.id);
-> +        self.id
-> +    }
-> +}
-> +
->  impl Default for IdPool {
->      #[inline]
->      fn default() -> Self {
+> Oh, weird...
 > 
-> -- 
-> 2.51.1.838.g19442a804e-goog
+> What do you think about this:
+> 
+> diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
+> index c0360c450880b8..1124f68ec9020d 100644
+> --- a/drivers/iommu/iommufd/io_pagetable.c
+> +++ b/drivers/iommu/iommufd/io_pagetable.c
+> @@ -707,7 +707,8 @@ static int iopt_unmap_iova_range(struct io_pagetable *iopt, unsigned long start,
+>  	struct iopt_area *area;
+>  	unsigned long unmapped_bytes = 0;
+>  	unsigned int tries = 0;
+> -	int rc = -ENOENT;
+> +	/* If there are no mapped entries then success */
+> +	int rc = 0;
+>  
+>  	/*
+>  	 * The domains_rwsem must be held in read mode any time any area->pages
+> diff --git a/drivers/iommu/iommufd/ioas.c b/drivers/iommu/iommufd/ioas.c
+> index 1542c5fd10a85c..ef5e56672dea56 100644
+> --- a/drivers/iommu/iommufd/ioas.c
+> +++ b/drivers/iommu/iommufd/ioas.c
+> @@ -367,6 +367,8 @@ int iommufd_ioas_unmap(struct iommufd_ucmd *ucmd)
+>  				     &unmapped);
+>  		if (rc)
+>  			goto out_put;
+> +		if (!unmapped)
+> +			rc = -ENOENT;
+>  	}
+>  
+>  	cmd->length = unmapped;
+
+Seems reasonable to me. The only affected callers are 
+
+drivers/iommu/iommufd/ioas.c
+366:            rc = iopt_unmap_iova(&ioas->iopt, cmd->iova, cmd->length,
+
+drivers/iommu/iommufd/vfio_compat.c
+244:            rc = iopt_unmap_iova(&ioas->iopt, unmap.iova, unmap.size,
+
+So your proposal should get vfio_compat.c into good shape.
+
+I think these locations need more scrutiny after your change
+
+diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
+index c0360c450880..e271696f726f 100644
+--- a/drivers/iommu/iommufd/io_pagetable.c
++++ b/drivers/iommu/iommufd/io_pagetable.c
+@@ -777,6 +777,7 @@ static int iopt_unmap_iova_range(struct io_pagetable *iopt, unsigned long start,
+ 
+ 		down_write(&iopt->iova_rwsem);
+ 	}
++	// redundant?
+ 	if (unmapped_bytes)
+ 		rc = 0;
+ 
+@@ -818,6 +819,7 @@ int iopt_unmap_all(struct io_pagetable *iopt, unsigned long *unmapped)
+ 	int rc;
+ 
+ 	rc = iopt_unmap_iova_range(iopt, 0, ULONG_MAX, unmapped);
++	// intent still holds?
+ 	/* If the IOVAs are empty then unmap all succeeds */
+ 	if (rc == -ENOENT)
+ 		return 0;
 
