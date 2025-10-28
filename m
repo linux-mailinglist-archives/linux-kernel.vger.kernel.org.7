@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-873821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D328C14D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:25:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF24EC14D30
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:26:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3249A1B26C08
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6BE5E2980
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F8732863F;
-	Tue, 28 Oct 2025 13:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ucPQCc0C"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26AB933E7;
-	Tue, 28 Oct 2025 13:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CD432ED57;
+	Tue, 28 Oct 2025 13:25:59 +0000 (UTC)
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F394204F8B;
+	Tue, 28 Oct 2025 13:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761657912; cv=none; b=SW6noalhAzn3g8I6DtLhR1LqRp45QRJ9MbLT8StS/7N7g9ifLmmkQDoxA3v9JpszseDtqrXOD55wgaRq8mmMJjf6ktxGKtyGOwZsQUgSR8hbDROFR2XrWwwEynfJZfvumCR710u3DVdbJUxWeO2qeWrBHeKaO16aKEbKrvRN2w0=
+	t=1761657959; cv=none; b=rwSYD9QDYSYu5UQUqewu3YL4qdZVWXUwxJSBV5W7NO0buWRZqlJ0kzdBAUIP0BYzkUKToPGKnRS/amm8+zl2/PzAGgYCbPgBg1VQ7y0h4UjXYacyoRyU1OlbxXRN85o3QZRwLMZdA2s+HwmHA5QJ6RpNavSzsB3F4HZlFPYxdvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761657912; c=relaxed/simple;
-	bh=+73ES3vFky/WtRPYBzIKEqLPdiDRYFGkszb9lqjt6Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H94d8XHLYNZlqZRWt9Fk89VhL5s3JWFCedXKThbH9V+ilQY6vCYrwfzXJawW/qx+fEdJ9KShEU48z2TVTPc334LWWp/iePWf0oeIMd2AJ4rAfuqjOdULvnEHWPYmrIUSiFc8DPugnaio0l8n+xGtDW8OBP4mQQKt2JmuY1qce64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=ucPQCc0C; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=LcpMDj9tWoxdju0hl6lEoaXx3jgSRxXpNSpSh7vQ4CM=; b=ucPQCc0CUvKJvPqiLRZcdJ8be9
-	rzZDWziELaVIRjEiEoDeM1AsK30jqmeI1nlTVCEdrrcDVtax8U4bgM3r/CnYYFWEYHmR4e/9Zg4Mk
-	e6IMXrNZbe3HSmJ/KpChTYGn5zAa6lWz5YaLB5P0pG1qpjJJSQeXq5c/+qvx8O6Wpbxk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vDjh2-00CIUx-T4; Tue, 28 Oct 2025 14:24:56 +0100
-Date: Tue, 28 Oct 2025 14:24:56 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Dharanitharan R <dharanitharan725@gmail.com>
-Cc: sammy@sammy.net, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: i825xx: replace printk() with pr_*() macros for
- cleaner logging
-Message-ID: <fcb18197-af45-4f7d-a435-39796c51c1e7@lunn.ch>
-References: <20251028100127.14839-1-dharanitharan725@gmail.com>
+	s=arc-20240116; t=1761657959; c=relaxed/simple;
+	bh=1BBU9WDw7qdTRE7UOJ91zXlUXSSF4iWrmf0R5SGfxVQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LBbnhNVZ63/WUFPkO6Uctku1l+uegFzFpzsB+x8J1cGnwwpOqN+CxmkiA3krj4qq1PMLiLkR4DS8eEtlFDwCif6dtX8moxPeVg08YPBMYmjMcdNBxc/1xX3ckI7fi+GRtxwxXabNUuUq+SsIOsz2rDvQooSTcYZaFqEImE3Ryzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+X-CSE-ConnectionGUID: +4XZSKA7RsW2Owz6ieAiaQ==
+X-CSE-MsgGUID: 32MqCp2zRUK8ycUwMlo8Ng==
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 28 Oct 2025 22:25:54 +0900
+Received: from demon-pc.localdomain (unknown [10.226.92.5])
+	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A740940078A8;
+	Tue, 28 Oct 2025 22:25:49 +0900 (JST)
+From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+To: 
+Cc: John Madieu <john.madieu.xa@bp.renesas.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Subject: [PATCH v2 0/9] Add TSU support for RZ/T2H and RZ/N2H
+Date: Tue, 28 Oct 2025 15:25:08 +0200
+Message-ID: <20251028132519.1472676-1-cosmin-gabriel.tanislav.xa@renesas.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028100127.14839-1-dharanitharan725@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 10:01:27AM +0000, Dharanitharan R wrote:
-> This patch replaces printk() calls in sun3_82586.c with appropriate pr_*()
-> macros (pr_err, pr_info, etc.) according to Linux kernel logging conventions.
+Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs expose the
+temperature calibration via SMC SIP and do not have a reset for the
+TSU peripheral, and use different minimum and maximum temperature values
+compared to RZ/G3E.
 
-You have a Sun3? I've not seen one in maybe 25 years.
+Although the calibration data is stored in an OTP memory, the OTP itself
+is not memory-mapped, and instead, access to it is done through an OTP
+controller. The OTP controller is only accessible from the secure world,
+but the temperature calibration data stored in the OTP is exposed via
+SMC.
 
-https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+V2:
+ * drop clk patch already present in linux-next
+ * dt-bindings: merge two items into a single enum
 
-says:
+Cosmin Tanislav (9):
+  thermal: renesas: rzg3e: make reset optional
+  thermal: renesas: rzg3e: make min and max temperature per-chip
+  thermal: renesas: rzg3e: make calibration value retrieval per-chip
+  dt-bindings: thermal: r9a09g047-tsu: document RZ/T2H and RZ/N2H
+  thermal: renesas: rzg3e: add support for RZ/T2H and RZ/N2H
+  arm64: dts: renesas: r9a09g077: add OPP table
+  arm64: dts: renesas: r9a09g087: add OPP table
+  arm64: dts: renesas: r9a09g077: add TSU and thermal zones support
+  arm64: dts: renesas: r9a09g087: add TSU and thermal zones support
 
-1.6.6. Clean-up patches
+ .../thermal/renesas,r9a09g047-tsu.yaml        |  21 ++-
+ arch/arm64/boot/dts/renesas/r9a09g077.dtsi    |  65 +++++++++
+ arch/arm64/boot/dts/renesas/r9a09g087.dtsi    |  65 +++++++++
+ drivers/thermal/renesas/rzg3e_thermal.c       | 125 ++++++++++++------
+ 4 files changed, 230 insertions(+), 46 deletions(-)
 
-Netdev discourages patches which perform simple clean-ups, which are
-not in the context of other work. For example:
+-- 
+2.51.1
 
-Addressing checkpatch.pl, and other trivial coding style warnings
-
-Addressing Local variable ordering issues
-
-Conversions to device-managed APIs (devm_ helpers)
-
-This is because it is felt that the churn that such changes produce
-comes at a greater cost than the value of such clean-ups.
-
-Please state in the commit message if you have run these patches on
-hardware, and plan to do other work on the Sun3 driver, new features
-etc.
-
-    Andrew
-
----
-pw-bot: cr
 
