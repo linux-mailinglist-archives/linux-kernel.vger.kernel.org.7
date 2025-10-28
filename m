@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-874812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E2A3C1725E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:14:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03FB7C1724C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9042B4F67FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12C11B269DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F7357735;
-	Tue, 28 Oct 2025 22:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3DB3570AD;
+	Tue, 28 Oct 2025 22:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gSxSKruF"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Jq0KGiXO"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CC3355811;
-	Tue, 28 Oct 2025 22:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ED43563C7;
+	Tue, 28 Oct 2025 22:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761689433; cv=none; b=qJqRWABvf44JjdyE9wCdxbx4v33xXwnAupUPXiCJp4rXl4BgNpSgJYhVx26SCIqvnjv6qThOG3fvWQqk7IKcYSH3wM6odu77fr/JF5sUndIFh+69HR7AAGZaGEatKsh7ICVx1G8nRfOnR+oRYpGuVEIoOjYxmLZi2Oa+WNGEQSQ=
+	t=1761689430; cv=none; b=gwKQ6Wt8BGvkYMxo7Q/4uEX4lZ9wCY2LcJWRu7QlL3iCusDq7zCtZn/6OLhFqUsFuFx9zIkRw+K0Z2yGrEWrXEnvTAxCMxlnNCaY6RE6hZ4l+JAxq7k/aEl/oM/ZbdwBrhLe2lVn772Q0NJA7yMP/OZ1pmbDMw0cviSNMpJpSk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761689433; c=relaxed/simple;
-	bh=BGJrmBz+LlEN/JX0JNDCunWcL198n52vvjEnUgzCzao=;
+	s=arc-20240116; t=1761689430; c=relaxed/simple;
+	bh=4YC2m0DRLgYN0aq3nayIIz2Nlxt4xSQLR+XrLklRCZA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZdL8CtSC3NteNLNEIemq6zamE0UwSirnA26mUHMULJtT0UyizAkGC39+8im17t8TOU7sz4k9/cPm8TpmTo9hJwqZZJCugAdwTLAD8iDbvJEXx0555HtnoW+RdEMDCtT9BNxgkalvSA9YhFgF4TivMfMO7lZrUAdd+PxhTHR249k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gSxSKruF; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=m986NZnyvdeBWKq5EvELr+rRzBOR2Z2mqmUX+rgFSsMZVeAJxCpJLPegW1iIzw/Ae0UDx/ER+YNiTQ6kuV3XOj/6xoEGRlhy+3MdYWyg9J5gnSwQDT0HbEB+kGx+6ACxC/cMOopK0L+dkjdf0A66XgXODI/nbwafCDOIBg1TyyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Jq0KGiXO; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E59AF40B45
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9F3BA40C2B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761689427; bh=R4IKlDLI/49ZAIPAg6XecBoRQ7zpdNfvZA7OZO2keFI=;
+	t=1761689428; bh=mdlWTppuyklykN6x72Eo8ijQSx0enYM+/VHzFAQVi+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gSxSKruFe5+cYOFwKqatb8u5uASypNczdc0YGqAVe5cwPeQvCb2+8JzBShB3WmUe3
-	 E8HLQEBJ9/NHYmWR3b5YtIopbo44S33SCd17uk0YELjkHRNizxV1H7VqtIMf4y6KSb
-	 NzBeb1FAinplH318JNbKxcSfvnNAGVIAG3jEKdThttMcAvScHyo277lUJxmejphRey
-	 EQz/yzhQeaRFLcA4k+/lS+nDUMu2GVHAfLuG5v0KmshUtJUJS+E06pp2hoKhvIU9ty
-	 8RZxRPm7mo0OP07CTA2mTsxtViemOSG//kyI1GbqtCnheADZoeOp57dq1FUTXuIp1H
-	 bz8kZFunvW97w==
+	b=Jq0KGiXOMQh89phOvmgrt8Bp8pQRMBLUzrTqKRCd4PrZwR/N5I9PdCMZ3g1Dx4FLR
+	 5pxGjqu0iEK1NN43i3Rr8fsfX3RL0hzgUQ2J31v5zFpMJar3vIVTvWOo0M8XqFRZ3a
+	 rz904GPhqzJ13WrFZ9xNLw0Z2hnn75iLFN/CULMWYst9d0VJBOEqFyHhVNmZ6oV3/j
+	 8KNcJHnCjDamgR/iY300Hu2cFJhiC5ZzBeB89XeqTV8jZGxYrJa1Qw2qONEwuYEngt
+	 YjNaSZX7/DQIVyy4F9z0fUkVAxP+WjwNO1NZknymh4UeJBI3bQo/ImU6Ly/ST9LfuK
+	 mUhkRWHZ8mggA==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id E59AF40B45;
-	Tue, 28 Oct 2025 22:10:26 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 9F3BA40C2B;
+	Tue, 28 Oct 2025 22:10:27 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Jani Nikula <jani.nikula@linux.intel.com>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH v4 4/7] docs: move get_abi.py to tools/docs
-Date: Tue, 28 Oct 2025 16:10:12 -0600
-Message-ID: <20251028221017.5785-5-corbet@lwn.net>
+Subject: [PATCH v4 5/7] docs: move test_doc_build.py to tools/docs
+Date: Tue, 28 Oct 2025 16:10:13 -0600
+Message-ID: <20251028221017.5785-6-corbet@lwn.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251028221017.5785-1-corbet@lwn.net>
 References: <20251028221017.5785-1-corbet@lwn.net>
@@ -66,79 +66,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Move this tool out of scripts/ to join the other documentation tools; fix
-up a couple of erroneous references in the process.
-
-It's worth noting that this script will fail badly unless one has a
-PYTHONPATH referencing scripts/lib/abi.
+Add this tool to tools/docs.
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Acked-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/Kconfig              | 2 +-
- Documentation/Makefile             | 2 +-
- Documentation/sphinx/kernel_abi.py | 2 +-
- MAINTAINERS                        | 1 -
- {scripts => tools/docs}/get_abi.py | 0
- 5 files changed, 3 insertions(+), 4 deletions(-)
- rename {scripts => tools/docs}/get_abi.py (100%)
+ Documentation/doc-guide/sphinx.rst        | 2 +-
+ {scripts => tools/docs}/test_doc_build.py | 0
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+ rename {scripts => tools/docs}/test_doc_build.py (100%)
 
-diff --git a/Documentation/Kconfig b/Documentation/Kconfig
-index 3a0e7ac0c4e3..8b6c4b84b218 100644
---- a/Documentation/Kconfig
-+++ b/Documentation/Kconfig
-@@ -19,7 +19,7 @@ config WARN_ABI_ERRORS
- 	  described at Documentation/ABI/README. Yet, as they're manually
- 	  written, it would be possible that some of those files would
- 	  have errors that would break them for being parsed by
--	  scripts/get_abi.pl. Add a check to verify them.
-+	  tools/docs/get_abi.py. Add a check to verify them.
+diff --git a/Documentation/doc-guide/sphinx.rst b/Documentation/doc-guide/sphinx.rst
+index 932f68c53075..51c370260f3b 100644
+--- a/Documentation/doc-guide/sphinx.rst
++++ b/Documentation/doc-guide/sphinx.rst
+@@ -149,7 +149,7 @@ a venv with it with, and install minimal requirements with::
  
- 	  If unsure, select 'N'.
+ A more comprehensive test can be done by using:
  
-diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 1476aa1701ce..734ec9c9a62c 100644
---- a/Documentation/Makefile
-+++ b/Documentation/Makefile
-@@ -13,7 +13,7 @@ endif
+-	scripts/test_doc_build.py
++	tools/docs/test_doc_build.py
  
- # Check for broken ABI files
- ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
--$(shell $(srctree)/scripts/get_abi.py --dir $(srctree)/Documentation/ABI validate)
-+$(shell $(srctree)/tools/docs/get_abi.py --dir $(srctree)/Documentation/ABI validate)
- endif
- endif
- 
-diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
-index 4c4375201b9e..32e39fb8bc3b 100644
---- a/Documentation/sphinx/kernel_abi.py
-+++ b/Documentation/sphinx/kernel_abi.py
-@@ -14,7 +14,7 @@
-     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
- 
-     The ``kernel-abi`` (:py:class:`KernelCmd`) directive calls the
--    scripts/get_abi.py script to parse the Kernel ABI files.
-+    AbiParser class to parse the Kernel ABI files.
- 
-     Overview of directive's argument and options.
- 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fc1da52433b6..5c632cd3902c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7411,7 +7411,6 @@ S:	Maintained
- P:	Documentation/doc-guide/maintainer-profile.rst
- T:	git git://git.lwn.net/linux.git docs-next
- F:	Documentation/
--F:	scripts/get_abi.py
- F:	scripts/kernel-doc*
- F:	scripts/lib/abi/*
- F:	scripts/lib/kdoc/*
-diff --git a/scripts/get_abi.py b/tools/docs/get_abi.py
+ Such script create one Python venv per supported version,
+ optionally building documentation for a range of Sphinx versions.
+diff --git a/scripts/test_doc_build.py b/tools/docs/test_doc_build.py
 similarity index 100%
-rename from scripts/get_abi.py
-rename to tools/docs/get_abi.py
+rename from scripts/test_doc_build.py
+rename to tools/docs/test_doc_build.py
 -- 
 2.51.0
 
