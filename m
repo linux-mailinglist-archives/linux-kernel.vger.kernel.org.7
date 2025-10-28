@@ -1,138 +1,179 @@
-Return-Path: <linux-kernel+bounces-872850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF23C122D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:36:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B245BC122FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC58B353B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BF10565A1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4361F0E2E;
-	Tue, 28 Oct 2025 00:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03B120DD72;
+	Tue, 28 Oct 2025 00:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MHZ8Agea"
-Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgGyZuxZ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3D2F5E;
-	Tue, 28 Oct 2025 00:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045381F4CB3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611807; cv=none; b=HKTwCuOkQgH/h8I4YERzh33v6wbWo1AZsXEWv9bEHv7VOOLzOKoIMfJMs6fym8z0nc1te1mOVBJzC4N7rkEVU+1V838X8G/im9cy5cMtkvWCDjy27nMszdYW5GqQQn9Ygh3OnLJ1I/9l0KqZOZ0VJQ+mNTkTms1BSv8yhrSxFvE=
+	t=1761611829; cv=none; b=FS7StRtVwI0oKbTQwZ8gWXZ3dYCo0nhhOIb2SLWkjPA+Xdf6Z0NHy6bMlDEaFmcPGiicvZre334Cn6BlBucDObYXXO+xnA7bHQhBAcXunJ6MdJi8nTLxAmmUeOwkjsblxVVtTt815h9Bwf+Vc0jUkprOyv1DwDH16eE2Vm/yu48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611807; c=relaxed/simple;
-	bh=IOVvQiJpGvp6+xA294rJerEG3dTHQnXxn46jZXjb5wY=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hF027/aeHCZEzFmw1zhdl/5jIKmpzlaXvB3QfX9wGPi9w9b9Trp0lJtWo/OkFNzP+5RIMiYe2QYMqmRTZIyoHe7YX0aTaWlUpQ2B9A6wgU7LR/A8srVYSBOXcOPftspN4Fi6kADSwxqyd/2SOMAnmvR2lmRc0NfIBKXZirt/pH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MHZ8Agea; arc=none smtp.client-ip=35.83.148.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1761611829; c=relaxed/simple;
+	bh=QdkEAMsGYBzU3fN0cne5qZg46IOFvPzz9xbD2HV7VAQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=t/3LUOjxEVrGhRtAyRd667FFNhXNHv/pd1kuPlFGJQD96/+oRt1dvSA6Q4a3rKZCa3pnUePn+HOWHl+N6Uafwp0vCKimXxqPe5dKOWJHRwNz9GnOOqGEjl0qby7pD23L9wZhRbZvWJ+MaGYti/HjAeDtRuNCKCqsaCgHUcfDzaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fgGyZuxZ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so4969845a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1761611806; x=1793147806;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=IOVvQiJpGvp6+xA294rJerEG3dTHQnXxn46jZXjb5wY=;
-  b=MHZ8AgeaCjyEt2/ATdpHwmTnzSYo8MP7fOnjyRwzmDQBBJWr2AwL2OLp
-   s9+fwuixAILG0J8SRyEJKjNZGLQswAOUc3nOQ4eNUNdEeEDKJsCTlJf5/
-   jgTud9+aUzM9NC+fw2h+I0jWcxkMG8muetGGae0Z/4Hb9nhCEOm595rvC
-   HOTO6oorRX/oO6f6FAfElIPw3i7/vUs+4uybcEEzj24+kgyM7x8MMXyRx
-   /u4KaEG9+tqwftjuHPxdNyHFqaBVV0kunad3ityFFQ+Nfc8Oqc18kBIGO
-   y4towwEQlTPgZvEBvCuqmIQNfWdM5yLUK5NO4duHRC5R4n4OkXDc1r0N3
-   Q==;
-X-CSE-ConnectionGUID: 26SJ8qqZRE+FNdoNM3ro3g==
-X-CSE-MsgGUID: YiTQtjjxR1CtkjkcG+NhGw==
-X-IronPort-AV: E=Sophos;i="6.19,260,1754956800"; 
-   d="scan'208";a="5635122"
-Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Thread-Topic: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
-Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
-  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 00:36:45 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:26105]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
- id 9f41d556-68c3-4916-acdf-260b786a1eb9; Tue, 28 Oct 2025 00:36:45 +0000 (UTC)
-X-Farcaster-Flow-ID: 9f41d556-68c3-4916-acdf-260b786a1eb9
-Received: from EX19D032UWA004.ant.amazon.com (10.13.139.56) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Tue, 28 Oct 2025 00:36:37 +0000
-Received: from EX19D032UWA003.ant.amazon.com (10.13.139.37) by
- EX19D032UWA004.ant.amazon.com (10.13.139.56) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
- Tue, 28 Oct 2025 00:36:37 +0000
-Received: from EX19D032UWA003.ant.amazon.com ([fe80::8e94:8f60:9531:c497]) by
- EX19D032UWA003.ant.amazon.com ([fe80::8e94:8f60:9531:c497%5]) with mapi id
- 15.02.2562.029; Tue, 28 Oct 2025 00:36:37 +0000
-From: "Bandi, Ravi Kumar" <ravib@amazon.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, Manivannan Sadhasivam
-	<mani@kernel.org>
-CC: "thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "bhelgaas@google.com"
-	<bhelgaas@google.com>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "kwilczynski@kernel.org"
-	<kwilczynski@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"michal.simek@amd.com" <michal.simek@amd.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>, Stefan Roese <stefan.roese@mailbox.org>, "Musham,
- Sai Krishna" <sai.krishna.musham@amd.com>, Sean Anderson
-	<sean.anderson@linux.dev>, "Yeleswarapu, Nagaradhesh"
-	<nagaradhesh.yeleswarapu@amd.com>
-Thread-Index: AQHcKoFWBnk90o/gZUOv7QYU+iHxwrTJOZeAgA2kSICAABLnAA==
-Date: Tue, 28 Oct 2025 00:36:36 +0000
-Message-ID: <C863FB65-E6B8-48B8-A2FF-779330D9BE5A@amazon.com>
-References: <20251027232847.GA1488235@bhelgaas>
-In-Reply-To: <20251027232847.GA1488235@bhelgaas>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <34DBB2AF1B6DC649B354F3E881A47C26@amazon.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20230601; t=1761611825; x=1762216625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J3mxOKer4OGfyDxlfqvGDsZ/A3KYgtdet3LczK0ONqE=;
+        b=fgGyZuxZxoFhZUStZEOkgSnMD24ZyWXS2V3OZAAoEIpZKU8UWL7ea7jebGj8oXRZvS
+         ptJemZcBakmkJS9N0IfXOYbmFs227noHivg6R3O20yPkmSfN6CO3Z+ztmApH78+V4wmt
+         05pOWnwPEevb+e4h2Kj2Wd6JDa9GkI1IV2nTOjdHOibYwC0gFwibdcoXY05UV62Pw4Jt
+         R0EnzB+vHuohh8eubyLliqqfKvzIt796M3KNC4/Nk9AWUG+hg0xldQGNUzvRsLXI1D5d
+         xlbZ9Aet7yAYgIk9a05o0KkrC2b3Kd/i7/JMRWGgCcPAqXVm8r1nF3ed8R5ApIm/AU0E
+         O50Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761611825; x=1762216625;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J3mxOKer4OGfyDxlfqvGDsZ/A3KYgtdet3LczK0ONqE=;
+        b=XXA5/5K6Sn0adJ2JImfQhntDX97OmFYIryLihBHaMGInytoa0yDp90G91knvAF1pd2
+         /MFBfXjhoja5Lx5P7MaG32IaotWC2L2GpN7BlkdZny5mnBi4WAa9PhEZa44hINIIn9Xh
+         K9UbgIxftP1yoR/XLZ5gmmHy92xS9FWyliJNbXdEUYB0EerBkL4qeQe9wiKdArBnxIB1
+         x7SC8A+5t346SYXTvsxjAhPm6mKWkDJ4f+t7aYMxELYIvNVClbkxbbk1uGNkr2kNlEcZ
+         0HmNRuYpTQs21eCKPv2U6nectszyJcwInrDys3DnLfI+Jo2pqh+a3GDTkq3G0aW6sQZQ
+         Rs6g==
+X-Forwarded-Encrypted: i=1; AJvYcCWa/KIkn+rv1hgegs6UgTPEpM1ZrrRi+ebKMCv018PmBV6r/0OnbOwncT7mLzyTXMDsSCMY/oA3kmP8U/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy32Pp89JaF+JRtxu8mlj2xciBCYPmdqYLCKHp/KFRIvE8Oykoq
+	SrhG0EoEjuRTek1YtXVKSW6BMaxYRkwrGTvj2lYy8qRWQlKRBfsPFXeAsz5as7clcs8qgGTDelx
+	PnFSdVQ==
+X-Google-Smtp-Source: AGHT+IGoxyiEdJHjsguM4HhfYAa3a3WGl9IwGzua+OMwKu3+3dxnKcX9NeqRP2yYPcwFhiCcHGTefjSDvqI=
+X-Received: from pjcc13.prod.google.com ([2002:a17:90b:574d:b0:33d:813f:6829])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5241:b0:329:cb75:fef2
+ with SMTP id 98e67ed59e1d1-340279e5c84mr1590788a91.3.1761611825209; Mon, 27
+ Oct 2025 17:37:05 -0700 (PDT)
+Date: Mon, 27 Oct 2025 17:37:03 -0700
+In-Reply-To: <55461c549803e08db97528127c29e092c597adc5.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-25-seanjc@google.com>
+ <55461c549803e08db97528127c29e092c597adc5.camel@intel.com>
+Message-ID: <aQAQLzxyGFooGtNV@google.com>
+Subject: Re: [PATCH v3 24/25] KVM: TDX: Guard VM state transitions with "all"
+ the locks
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "chenhuacai@kernel.org" <chenhuacai@kernel.org>, "frankja@linux.ibm.com" <frankja@linux.ibm.com>, 
+	"maz@kernel.org" <maz@kernel.org>, "borntraeger@linux.ibm.com" <borntraeger@linux.ibm.com>, 
+	"pjw@kernel.org" <pjw@kernel.org>, "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, 
+	"kas@kernel.org" <kas@kernel.org>, "maobibo@loongson.cn" <maobibo@loongson.cn>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "maddy@linux.ibm.com" <maddy@linux.ibm.com>, 
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "imbrenda@linux.ibm.com" <imbrenda@linux.ibm.com>, 
+	"zhaotianrui@loongson.cn" <zhaotianrui@loongson.cn>, "anup@brainfault.org" <anup@brainfault.org>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ira Weiny <ira.weiny@intel.com>, 
+	"loongarch@lists.linux.dev" <loongarch@lists.linux.dev>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, Vishal Annapurve <vannapurve@google.com>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "x86@kernel.org" <x86@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gT2N0IDI3LCAyMDI1LCBhdCA0OjI44oCvUE0sIEJqb3JuIEhlbGdhYXMgPGhlbGdh
-YXNAa2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiBDQVVUSU9OOiBUaGlzIGVtYWlsIG9yaWdpbmF0
-ZWQgZnJvbSBvdXRzaWRlIG9mIHRoZSBvcmdhbml6YXRpb24uIERvIG5vdCBjbGljayBsaW5rcyBv
-ciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgY2FuIGNvbmZpcm0gdGhlIHNlbmRlciBhbmQg
-a25vdyB0aGUgY29udGVudCBpcyBzYWZlLg0KPiANCj4gDQo+IA0KPiBbK2NjIFN0ZWZhbiBldCBh
-bF0NCj4gDQo+IE9uIFN1biwgT2N0IDE5LCAyMDI1IGF0IDEyOjM5OjI1UE0gKzA1MzAsIE1hbml2
-YW5uYW4gU2FkaGFzaXZhbSB3cm90ZToNCj4+IE9uIFNhdCwgMjAgU2VwIDIwMjUgMjI6NTI6MzIg
-KzAwMDAsIFJhdmkgS3VtYXIgQmFuZGkgd3JvdGU6DQo+Pj4gVGhlIHBjaWUteGlsaW54LWRtYS1w
-bCBkcml2ZXIgZG9lcyBub3QgZW5hYmxlIElOVHggaW50ZXJydXB0cw0KPj4+IGFmdGVyIGluaXRp
-YWxpemluZyB0aGUgcG9ydCwgcHJldmVudGluZyBJTlR4IGludGVycnVwdHMgZnJvbQ0KPj4+IFBD
-SWUgZW5kcG9pbnRzIGZyb20gZmxvd2luZyB0aHJvdWdoIHRoZSBYaWxpbnggWERNQSByb290IHBv
-cnQNCj4+PiBicmlkZ2UuIFRoaXMgaXNzdWUgYWZmZWN0cyBrZXJuZWwgNi42LjAgYW5kIGxhdGVy
-IHZlcnNpb25zLg0KPj4+IA0KPj4+IFRoaXMgcGF0Y2ggYWxsb3dzIElOVHggaW50ZXJydXB0cyBn
-ZW5lcmF0ZWQgYnkgUENJZSBlbmRwb2ludHMNCj4+PiB0byBmbG93IHRocm91Z2ggdGhlIHJvb3Qg
-cG9ydC4gVGVzdGVkIHRoZSBmaXggb24gYSBib2FyZCB3aXRoDQo+Pj4gdHdvIGVuZHBvaW50cyBn
-ZW5lcmF0aW5nIElOVHggaW50ZXJydXB0cy4gSW50ZXJydXB0cyBhcmUNCj4+PiBwcm9wZXJseSBk
-ZXRlY3RlZCBhbmQgc2VydmljZWQuIFRoZSAvcHJvYy9pbnRlcnJ1cHRzIG91dHB1dA0KPj4+IHNo
-b3dzOg0KPj4+IA0KPj4+IFsuLi5dDQo+PiANCj4+IEFwcGxpZWQsIHRoYW5rcyENCj4+IA0KPj4g
-WzEvMV0gUENJOiB4aWxpbngteGRtYTogRW5hYmxlIElOVHggaW50ZXJydXB0cw0KPj4gICAgICBj
-b21taXQ6IGMwOThjMTNmNDM2NWU2NzUwMDA5YmU0ZDkwZGJhMzZmYTRhMTliNGUNCj4gDQo+IFBy
-ZXR0eSBzdXJlIHdlIGhhdmUgY29uZmlybWF0aW9uIHRoYXQgd2UgZG9uJ3QgbmVlZCBlaXRoZXIg
-dGhpcyBwYXRjaA0KPiBvciBTdGVmYW4ncyBwYXRjaCwgc28gSSByZW1vdmVkIHRoZSBwY2kvY29u
-dHJvbGxlci94aWxpbngtZG1hIGJyYW5jaC4NCj4gDQo+IEl0IHdhcyBhdCAyMDAyNDc4ZTUwMzQg
-KCJQQ0k6IHhpbGlueC14ZG1hOiBFbmFibGUgSU5UeCBpbnRlcnJ1cHRzIikgaW4NCj4gY2FzZSB3
-ZSBuZWVkIHRvIHJlc3VycmVjdCBpdC4NCj4gDQo+IElJVUMsIFN0ZWZhbiBjb25maXJtZWQgdGhh
-dCBoZSBkaWRuJ3QgbmVlZCB0aGlzIHBhdGNoIChSYXZpJ3MpIFsxXSwNCj4gYW5kIHRoYXQgYWZ0
-ZXIgVml2YWRvIGlzIGZpeGVkIHRvIGdlbmVyYXRlIHRoZSBjb3JyZWN0IGludGVycnVwdC1tYXAs
-DQo+IGhpcyBwYXRjaCAoU3RlZmFuJ3MpIHdvbid0IGJlIG5lZWRlZCBlaXRoZXIgWzJdLg0KPiAN
-Cj4gWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjliYzVlOTItMDRjOS00NzVhLWJhM2Qt
-YTVlYTI2ZjFjOTVhQG1haWxib3gub3JnDQo+IFsyXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9y
-LzljN2U0M2MzLTI0ZTktNGIwOC1hNmNlLTIwMzViNTAyMjZmNEBtYWlsYm94Lm9yZw0KDQpIZWxs
-byBCam9ybiwgYW5kIE1hbmkgZXQgYWwuLA0KDQpUaGFuayB5b3UgZm9yIHRha2luZyB0aGUgdGlt
-ZSB0byByZXZpZXcgdGhlIHBhdGNoIGFuZCBleHBsYWluIHRoZSByZWFzb25pbmcuDQoNClNpbmNl
-cmx5LA0KUmF2aQ0KDQo=
+On Tue, Oct 28, 2025, Kai Huang wrote:
+> On Thu, 2025-10-16 at 17:32 -0700, Sean Christopherson wrote:
+> > @@ -2781,8 +2827,6 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *ar=
+gp)
+> > =C2=A0	if (r)
+> > =C2=A0		return r;
+> > =C2=A0
+> > -	guard(mutex)(&kvm->lock);
+> > -
+> > =C2=A0	switch (tdx_cmd.id) {
+> > =C2=A0	case KVM_TDX_CAPABILITIES:
+> > =C2=A0		r =3D tdx_get_capabilities(&tdx_cmd);
+>=20
+> IIRC, this patch removes grabbing the kvm->lock in tdx_vm_ioctl() but onl=
+y
+> adds the "big hammer" to tdx_td_init() and tdx_td_finalize(), so the
+> tdx_get_capabilities() lost holding the kvm->lock.
+
+Ooh, yeah, nice catch, that is indeed silly and unnecessary churn.
+
+> As replied earlier, I think we can just hold the "big hammer" in
+> tdx_vm_ioctl()?
+
+Actually, I think we can have our cake and eat it too.  With this slotted i=
+n as
+a prep patch, the big hammer can land directly in tdx_vm_ioctl(), without a=
+ny
+change in functionality for KVM_TDX_CAPABILITIES.
+
+--
+From: Sean Christopherson <seanjc@google.com>
+Date: Mon, 27 Oct 2025 17:32:34 -0700
+Subject: [PATCH] KVM: TDX: Don't copy "cmd" back to userspace for
+ KVM_TDX_CAPABILITIES
+
+Don't copy the kvm_tdx_cmd structure back to userspace when handling
+KVM_TDX_CAPABILITIES, as tdx_get_capabilities() doesn't modify hw_error or
+any other fields.
+
+Opportunistically hoist the call to tdx_get_capabilities() outside of the
+kvm->lock critical section, as getting the capabilities doesn't touch the
+VM in any way, e.g. doesn't even take @kvm.
+
+Suggested-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+ arch/x86/kvm/vmx/tdx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 1642da9c1fa9..43c0c3f6a8c0 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -2807,12 +2807,12 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp=
+)
+ 	if (r)
+ 		return r;
+=20
++	if (tdx_cmd.id =3D=3D KVM_TDX_CAPABILITIES)
++		return tdx_get_capabilities(&tdx_cmd);
++
+ 	guard(mutex)(&kvm->lock);
+=20
+ 	switch (tdx_cmd.id) {
+-	case KVM_TDX_CAPABILITIES:
+-		r =3D tdx_get_capabilities(&tdx_cmd);
+-		break;
+ 	case KVM_TDX_INIT_VM:
+ 		r =3D tdx_td_init(kvm, &tdx_cmd);
+ 		break;
+
+base-commit: 672537233b8da2c29dca7154bf3a3211af7f6128
+--
 
