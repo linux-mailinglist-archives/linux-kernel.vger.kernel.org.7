@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-873506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C69C1416E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:24:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E4FC14174
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BEA23AC2CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:22:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F853AE7D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E34E2E6CD2;
-	Tue, 28 Oct 2025 10:22:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35434302161;
+	Tue, 28 Oct 2025 10:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P+zSjRqn";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dyAY4zFr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nK6B7cYK"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A812D4813;
-	Tue, 28 Oct 2025 10:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F27302152
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761646934; cv=none; b=UQxYDaFrIcY4awQ8QA5QueWJ62fiQT2+3MBcFyOnv/vOmbLB11WBkmu+85aTxQfI/N4eaBtErNa/d6j68ggtPdSaSZuZH3IMwPaANStrlxNu2BMfndYcJueoP6FOgSn4eyYI/axJURygzOzYXAovXo9i+0tEBx9v3BLhR6MbrlE=
+	t=1761646988; cv=none; b=mp82vErNEClej8qMoqd0PMz4NXR6exfkxFWdnedMRFAdIhlNWkD7A5tU4/ygvd35T+5XNdkLJoV3QoMaIm/XeZpbW7N6CHCDCZAZpcW9SxZ+qH2MGPoQHv5NAjpfN6zGjgXiw++0csWXDfmoWcHccaV2KOB4ZhiY0Y6Yo9l2o34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761646934; c=relaxed/simple;
-	bh=RxDH30hTWVyGK3YAycsQ7zhxP8UKcyJwKW0kR40f58Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQQ9xrAgOt6CCBxZI5VNVqi9BS2dF1gH9vWj4pBMK11SySgxc1/u2mSwJC9ALZk6R3oGkx7Ij31jAMW76hAlTgtYz+81zB5hWF7mCvxAeuHvtbbM4nVGqoGUk3HqeyA8YPV+hPuIPJ1Y7ITbQ5TOVnBVs8bKvvd4ObE1bSEFKMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P+zSjRqn; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dyAY4zFr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 11:22:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761646926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9/8xBGz5vf17dmWUq7pyomEgCiv9Yum+FNVxKn7fT0=;
-	b=P+zSjRqnaBKeiQp+nsMAzYo3RYJrGgB4Gnlc/yIPw4se7dPutXjBWt9nL0NUaXFnzld6P9
-	D7yFxkOW35UWm7Z2/CmvIgAK9pywHesynzTquDYaaI+iEDTVFKQY76kw7zQYLcgIUymtfD
-	rhJyfrdWqi5v/7HIA4fhXgcdEfUNyx7kgqdtTQl3+KcJAksZJGFAbnMsNO+7ZIbrIeFD7S
-	vnicJebONxRLFR6uU4Jr0hB98T3qA7DsCSS/oviRQ4L0tgS7LFkBWa+ckv3H9XnpTCANJl
-	+ZjrGxsnx1yk/thfz1HEqpYty641LI7TJi/MbdjkVUivwDRIui3joTRf9/JR/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761646926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o9/8xBGz5vf17dmWUq7pyomEgCiv9Yum+FNVxKn7fT0=;
-	b=dyAY4zFr3tJGnduAAjOk4V6V7Zv6eQncLt2+aMrzc6QQnlObaYK61mTE8LrlLFBvajbsiR
-	Y+fZ33rYjpI0cTDQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
- enforcement timer
-Message-ID: <20251028102205.D6mh4eAL@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.406689298@linutronix.de>
- <20251027113822.UfDZz0mf@linutronix.de>
- <87cy68wbt6.ffs@tglx>
- <20251028083356.cDl403Q9@linutronix.de>
- <db7f7264-6ccf-4f55-929a-4c2e813dd8f5@amd.com>
- <20251028090015.hcvhq9YP@linutronix.de>
- <f27bc532-f87b-4a46-9ffb-b38409b02c97@amd.com>
+	s=arc-20240116; t=1761646988; c=relaxed/simple;
+	bh=+jYHO2zNNdgUJXuN8ugHExdRSw1IDTNhRJAWZCcSHBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KcVQd68aEENsFDiSdUEfrUhRQujJJtMIHIJ3pWRz+oihmiHgsbuTRjDNfViRSdbt13VW4/B3iEx2t8gyL3IAubdgiOz+dG4V/qrLxJYdin3rRIcx9sy9gbEuuRNiB0ExJuxOmTOQSbnzrJ3x5GJNS7+jiygzZ5QbQmwP4NozIuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nK6B7cYK; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 55FA84E41394;
+	Tue, 28 Oct 2025 10:22:40 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 29ADA606AB;
+	Tue, 28 Oct 2025 10:22:40 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 793401179B966;
+	Tue, 28 Oct 2025 11:22:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761646959; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=pqtOZsRtH9DHGRp6LR0r+HDjzdovCcKVPZfJ3ZtDVJY=;
+	b=nK6B7cYKJ8nuSOGm8w0gYH5wDdp25LHCaubantKLWhuFoVISMm8EGXquu74Kb946JMhzA6
+	8f+ZDjnPAWAtaDrwF8uwJ3lUb/DfTRkGRWB22/glf005AU2F4Tv11IIQq3NFtfEqs1da6s
+	loVmktq3OPX7tamdJC5q4xkSS8y7C4Mlp1JpOkRQ2brRrD6MgkdH4jnFiF4y76qcbSX6DW
+	psf5paisErJ4C2IbAgrJck42vG1sVny6XXWhZM6L2f89LxmMMPZtL/on8kUOJx9LM1oE7r
+	FizfJrf66JrdTB9hV2VkDwLRnHHwjKBbcP2yP249y/blS8qO6YIbCf46e5QcRg==
+Message-ID: <ce3f0f1a-9cb3-4721-9774-0b73f461a6e9@bootlin.com>
+Date: Tue, 28 Oct 2025 11:22:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f27bc532-f87b-4a46-9ffb-b38409b02c97@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] gpio: add gpio-line-mux driver
+To: Peter Rosin <peda@axentia.se>, Jonas Jelonek <jelonek.jonas@gmail.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251026231754.2368904-1-jelonek.jonas@gmail.com>
+ <20251026231754.2368904-3-jelonek.jonas@gmail.com>
+ <50646b88-5746-4665-8085-09e394aa291f@bootlin.com>
+ <db36ee25-8a1e-f95c-4ac9-867379a1a5e3@axentia.se>
+Content-Language: en-US
+From: Thomas Richard <thomas.richard@bootlin.com>
+In-Reply-To: <db36ee25-8a1e-f95c-4ac9-867379a1a5e3@axentia.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025-10-28 14:52:09 [+0530], K Prateek Nayak wrote:
-> On 10/28/2025 2:30 PM, Sebastian Andrzej Siewior wrote:
-> >>> Without an interrupt on the target CPU, there is nothing stopping the
-> >>> task from overstepping its fair share.
-> >>
-> >> When the task moves CPU, the rseq_exit_user_update() would clear all
-> >> of the slice extension state before running the task again. The task
-> >> will start off again with "rseq->slice_ctrl.request" and
-> >> "rseq->slice_ctrl.granted" both at 0 signifying the task was
-> >> rescheduled.
-> > 
-> > I wasn't aware this is done once the task is in userland and then
-> > relocated to another CPU.
-> 
-> The exact path based on my understanding is:
-> 
->   /* Task migrates to another CPU; Has to resume from kernel. */
->   __schedule()
->     context_switch()
->       rseq_sched_switch_event()
->         t->rseq.event.sched_switch = true;
->         set_tsk_thread_flag(t, TIF_RSEQ);
-> 
->     ...
->     exit_to_user_mode_loop()
->       rseq_exit_to_user_mode_restart()
->         __rseq_exit_to_user_mode_restart()
->           /* Sees t->rseq.event.sched_switch to be true. */
->           rseq_exit_user_update()
->             if (rseq_slice_extension_enabled())
->               unsafe_put_user(0U, &rseq->slice_ctrl.all, efault); /* Unconditionally clears all of "rseq_ctrl" */
+Hi Peter,
 
-You are right. The migration thread preempts it on the old CPU and then
-it gets scheduled in on the new CPU.
+On 10/28/25 11:09 AM, Peter Rosin wrote:
+> Hi!
+> 
+> 2025-10-28 at 10:45, Thomas Richard wrote:
+>> On 10/27/25 12:17 AM, Jonas Jelonek wrote:
+>>> +	ret = mux_control_select(glm->mux, glm->gpio_mux_states[offset]);
+>>> +	if (ret < 0)
+>>> +		return ret;
+>>> +
+>>> +	ret = gpiod_get_raw_value_cansleep(glm->shared_gpio);
+>>
+>> Why ignoring ACTIVE_LOW status ?
+>> And cansleep depends on your shared_gpio line, maybe it is not the case.
+>>
+>>> +	mux_control_deselect(glm->mux);
+> 
+> *snip*
+> 
+>>> +	glm->gc.can_sleep = true;
+>>
+>> depends on your shared_gpio line.
+> 
+> Does it? In this case, the gpio will always need to be able to
+> sleep, since mux_control_select() may sleep. Or, what am I
+> missing?
 
-Sebastian
+Oh yes you're right, I forgot the mux part.
+
+Best Regards,
+Thomas
+
 
