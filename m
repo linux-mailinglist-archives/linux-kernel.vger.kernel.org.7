@@ -1,262 +1,127 @@
-Return-Path: <linux-kernel+bounces-874177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BF2C15AF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:08:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B68C15AF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C56AA42624B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B7C1C23E29
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F90342C88;
-	Tue, 28 Oct 2025 16:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxGZ2I06"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEDC33032A;
+	Tue, 28 Oct 2025 16:01:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC93333CEB7
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667255; cv=fail; b=CGHlj03kXjjkdmCjqkfTBH2Vx0rAp09QfQJH5W1IVcdF6xP9OzMVw7+WuN+ixDxc4kbZPGBIG6PhHJNzGVLwSNO5yaDy7If/imfQZrA3B77EhcLC1OsTzbqHJ+F2ttLpszMqsgY5aOTyZCwro6bj3tMVqh2J1DgI+NPygjVwHlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667255; c=relaxed/simple;
-	bh=vo2NQ+0xejdvx26o4nTX/IMZmiED+mJMRdqlEeSYQhQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FudtxqodHlvkyKvooQ33ZtXvfqea7kxFpExtptTON4rwhQVrrlXanb7KMBbq+cWNcH1QDqQYDxHuLcneK2wEE8SJ9pldEZxfupStQ0oi7JBYPLEifM6xmeJvLoVGdBRTRX/5YjGH8i3QAKSO+AD3S93ibD5OGXTXkLF/nBBW3WA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxGZ2I06; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761667254; x=1793203254;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=vo2NQ+0xejdvx26o4nTX/IMZmiED+mJMRdqlEeSYQhQ=;
-  b=YxGZ2I06FmeO3K4kPIzC9eG00/Y/6RMIPKZzCewfMIRbc9cftLvntvAR
-   IBoJZH4zUc3mHHjPeUfTlH/LtGpGEKS5AbDu/dt9z5ntQw9zX/5ws50E8
-   M+BZDQUUkQhs520Z6S90J8h1arm6ApilGz1xTOcqn7iTHIn9aaa+B7PcG
-   MHY6HeACmr39z+GvCrmpNhGZ2SveWQgTkGS/SExdkDdplcXW11O5Trz3Q
-   qixH+TQEJtt/rfkna18Rj4eycdCuvhbRudtDfsSKuFj1OJz5GVbWpvx/G
-   wfVK+jkawSEnsy7TCnFafy4I7tecRGj8CQxZzpp2r+DC0WPFJff3ZCKdh
-   A==;
-X-CSE-ConnectionGUID: OzvjUfiRSBGgIqYNOxsiGQ==
-X-CSE-MsgGUID: bQnsIG5vSsqWfRFf4nvRvw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75115787"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="75115787"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:00:53 -0700
-X-CSE-ConnectionGUID: pDnjVAtFTpCBsaMOGJp+Bg==
-X-CSE-MsgGUID: msjIMJsYQbyH0+jdLSMu/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185719939"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:00:53 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 09:00:52 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 09:00:52 -0700
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.21) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 09:00:51 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oRtB0FJ9RBxgoxuMhDGuA3p9MZsoUmzFSxWWSdXqLZ2LLbjLkOYCaGHbiJJk/H5can4rADRi07xUOiViAbZqWEpU9wOuj+CE5fb+nu8K13NJEhT8smqY4N33CbjNI+6R3jP31d9XHDlRh8B/AWjVLFKzNWTH9xwRLflck8sFVmcAHzllwQbka5QXrgO1a0nDWYUo0pzO2jp1Yg2QxgxVEp8zrAsdSnqQ4AppeUELJ7g6XaL86MbGrWlcjLHT8GX8xI7Q+e0tI6AuzjIUmUgZH8+IFUfmazMgmnMNeVOmN9Xft+8Ww1uGzRFIW4teRFih3W64RzNcG2nXGqwvvfzc8Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9lgp6KRY1m0TkG2ansgIgRfaGbam9oVwJvBUNWU0GhA=;
- b=Wk3XqxopJHmkKGL+6aeofJDKxzy7/3OtTFNubwiuPWC+TRyF/lq1UjC54j1AX187yLm1d3pFAVyOvtaVZ9EFwiAgQq0oIQCzYW5EOsmSmJIv8xzRh/etOpJ2+W2zG8837Ochp2tFvInKc90K17mPDWGCzRQ1aJjobUoUJj5fmUQco0LTj6bxCKX64+1xer8uYd9S0Zv+lsBNTkaQFX4nLxtQp4bEZ9vlRyXEVMhxGp4mgKl548ZobCHAlgKTr2FY0O1nrUYu2tonxezn8Y+ibls+mfIisNd2rRFF5M/AcALnpz1HoC0P2wjUwwCm7K2riJi4UGxWvF7n6dhN5K0zNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SA3PR11MB7612.namprd11.prod.outlook.com (2603:10b6:806:31b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
- 2025 16:00:49 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Tue, 28 Oct 2025
- 16:00:49 +0000
-Message-ID: <b4921b96-3f86-45d8-a353-471c8f20e2b1@intel.com>
-Date: Tue, 28 Oct 2025 09:00:46 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 20/31] fs/resctrl: Refactor mkdir_mondata_subdir()
-To: "Luck, Tony" <tony.luck@intel.com>
-CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
-	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
- Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
-	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20251013223348.103390-1-tony.luck@intel.com>
- <20251013223348.103390-21-tony.luck@intel.com>
- <4bcb8320-687f-4c43-b4b7-150d503b9890@intel.com>
- <aP_5eW_GHwXebeyq@agluck-desk3>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <aP_5eW_GHwXebeyq@agluck-desk3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0204.namprd04.prod.outlook.com
- (2603:10b6:303:86::29) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F231862A;
+	Tue, 28 Oct 2025 16:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761667300; cv=none; b=kXsS5sljeYSjQ+A7jpNfeMBP//Z1wW2h+wMY1w1VQGdxIi0dxoQdTFSBqx4r2kSJ8ULXg2ldSkju7LVQr4c2PaGL15MfdkldWzelkG7pVjW9OnZFifpGlsbE9NyY7qiqZFamYx8s6klUT8AmF0IpvAoSJJSnK4VuHBiNi8lBDMk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761667300; c=relaxed/simple;
+	bh=Dx687kzusllViaObMvR4QwPo8tHehrbtHSv9Iud7y8Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nDkNwth2Z1DzQkDHrnTGVpJVoEWQJg3WD4eEAIWrURlPYlmms5sBEqB3KXzkokpJu+bwjaOXF+w8g7zHXBZzbhwlRDWmPpS4T1c7aVttGIU45lSFpDhh8lnRZtX0wIKhkJAmTwBTXpRnlHaD714o8frzalOt4V5d5pOozNMUwDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cww7C6ThYz6L4sZ;
+	Tue, 28 Oct 2025 23:59:51 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E4B11402FF;
+	Wed, 29 Oct 2025 00:01:35 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
+ 2025 16:01:34 +0000
+Date: Tue, 28 Oct 2025 16:01:33 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Gregory Price <gourry@gourry.net>
+CC: <linux-cxl@vger.kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <corbet@lwn.net>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Documentation/driver-api/cxl: remove page-allocator
+ quirk section
+Message-ID: <20251028160133.000004ca@huawei.com>
+In-Reply-To: <20251003143233.1985150-1-gourry@gourry.net>
+References: <20251003143233.1985150-1-gourry@gourry.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA3PR11MB7612:EE_
-X-MS-Office365-Filtering-Correlation-Id: b9e415d5-8430-44d9-7110-08de163b298e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Qm5KVnFsc1AxaFEyeEI0R3BqZmJmWmM2SnVpZGhXNmptYjFNUzdYQXdFMFNp?=
- =?utf-8?B?SHV0UUJQS1VSc1hUSWdKdTJDbFVrQXA2RmxoVmV6ZUd1TTBqeHRsR0ZtQThD?=
- =?utf-8?B?Q0paZkJqSUdXanZLUjVYVTkxUFlscDFYYWlMU1JHNTBQMk5HNHNucWJ4RWVp?=
- =?utf-8?B?ZHp4czZYRldlVWRVaG5pT09sMWxSbTJybEtuaDNscTdTVFJuM0dReEdsV2sv?=
- =?utf-8?B?TldZNHRqVEgrNnV0dXdWV3VHMjFONEd4VTg2RUJlRjR2a3VOZFArVnVUd2Z6?=
- =?utf-8?B?d1ZteW5DNTl0NUVMK0dWQk5zamdaNnNpSXgvZzVYbGZPNUVhRjlGSi81cmVx?=
- =?utf-8?B?NkhOeXlVQWpzcU1EVzY5UWpWTHFJSDljZGl1ZXlkamwxWDdZK0dHR3A5Q1Z6?=
- =?utf-8?B?UmFqUEQ0WmhYTkxzbXRqdGxJVEplZ2o5MFBvU2NBOUlSOExLanZIN2ZHRFN2?=
- =?utf-8?B?R1VkTXRoTzBZbzFXSEpINDVtVGlMT2R4NC9JUzBtUmM3LzRMOUhCNUl4OGxv?=
- =?utf-8?B?c2YzVVRsV1lONXZSdVpvNHRzMHhySUlQTkx1aUU1MHJaUlB1b3FjNkd6anNV?=
- =?utf-8?B?QmxWcGVycE9lc010Q1V6Rlg0bkFvTVBTdXFyd05rWlBWTWM3K0xlVzlTK05l?=
- =?utf-8?B?QkZwUCtlZWVmODA0aWlrSDhzOWRYcXRQbGEwR1Y1UEtST1BtQU1icmpxV1hB?=
- =?utf-8?B?VFZUWE5VS2w0M0UvZkgraFc0dTYyeUlNUzF3MFZNTVNmRHFYTmxXSFFncEpi?=
- =?utf-8?B?dVF6b2FOSFN2clE5dUNVTForc2NYWDFraHo3UWJ3cStNSXpmb3A1N2JOY01w?=
- =?utf-8?B?eHhWN2JyeUNFd0xxdXExbjlUaXAxalFqbkFGSW1Kb3JBcndQcDFuMkg1Ky8y?=
- =?utf-8?B?M05wQXVHNmRmRE9JckhYWWRmOEFER0dNOHA0cWxObU5mNktFZ3RMQ0VhRy9x?=
- =?utf-8?B?TUFhOWV0SjNIZGtET1FhM1NGb2JVNnRNVGRzMEZMVjVCMThCRGtBTFNxNXdZ?=
- =?utf-8?B?UVZ2akNKZUYrZ0Qwb1U1L0QzamswOGx2TWFjd084U3IvY3BOR3BDdW15TlZa?=
- =?utf-8?B?UUd2Tk1ha2xncEZ4dnh0Tml2STR0K09mSmdEVndMbjdPUlloQ0NXdDNQY0NI?=
- =?utf-8?B?VTJBT2xzQjE5TDFJb2E4SW9HRVVVQmRIdlp6UFRMcTYrbDEzc3kza25lTmNJ?=
- =?utf-8?B?V3NWZHZMcXR6eFdZN21nTkdqN0Y2MlB4eDRpY3ZobGQ5eis3SG5uWG9RNmQy?=
- =?utf-8?B?TTBXcjJocUJ4OHhYdHM0Wkc1WnFUT0dYSjdhN29uSjVJWGZJSlZwUUd1ZEQ2?=
- =?utf-8?B?cjM1c0xLQS9iUGZYYjkxL3FoSHdtUVVTQm5RZkNpZGp1UWlURm9KRFRHYjRp?=
- =?utf-8?B?anN1N2FSNWloclRBMmNMMWlzN2UzZC9OMmFKQVVGcFJnVEg0eC9UL0xzd05H?=
- =?utf-8?B?ZEJEVmNSQ1FNTmJvS0JZYlpZaWtMQXAxTXF0akMwVjVVVmFQcUJ1VGRuc3RC?=
- =?utf-8?B?N1NlaHBOQmxMdTNZcndDOWZGTEFrUEJXMC9jcnZtek4rV3RkUzdaZjBVM3JR?=
- =?utf-8?B?WVB0ODA0Q0FwVEJoRjdFY2h2aE9FQnZoS3RyRmxEMXcya2FIbEdUa1diSlp5?=
- =?utf-8?B?SkkwVTRBekhOZzR6QzNVRTFSNGUvUEV3UnI0eVNYYjYrczVlOGdHSUMydGJt?=
- =?utf-8?B?R0plQkR3cHR2d2NqR0lZM2hNQ0svaUN0Z2VxR2pZQlIyMFBZRkpMZzRDcUdz?=
- =?utf-8?B?RXI2NXJqc3pxOVlZRnpDNFFvczYyaHJJV1BnREt2QmtHVTNMcjUrYmx5WEJp?=
- =?utf-8?B?YWROTkozclE0U095bW8ybzV1NkNuSnlzQWZNdUZIbGovM3BEYTliTUtRY3Yv?=
- =?utf-8?B?WE5XcWlWVk81ZzNpVDBKQjBWdHY5S0E2M09qdVE3RUtHOWdEcmVoSklieUwy?=
- =?utf-8?Q?wrX8itNXee3ID5JguXeiIR8AsA7ph8Uf?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VXBveG9RbzBLbDI3VGlaOE9LNGY0TE1QMjRvdDR6NVQ1TzJBaWhJTDM2VHRC?=
- =?utf-8?B?VlRnakd4SnJIZTNza1VJTHRoK1dURlRRUnNGZ05QNWpzaTZKQ0RQdnpMTzBJ?=
- =?utf-8?B?b0t3K0NQVzlEWU1CNnpIS1M5cEJXOWtYVWU0RlUyMUpXWktEVXdFRXUxeXo0?=
- =?utf-8?B?WndQbFplTHF2a3NvUHlzOThGeVJoU0F2QkFKNnhjNUoxMXppQUF1TGFJVkVY?=
- =?utf-8?B?MjVlRFp4TVFSYkxOcHFWWW9ac2MyY2JxeGhnMHRaUkN2K3c4bXVjejFERDFo?=
- =?utf-8?B?NEkvVWM1aUU1UGZ5dkZQdjlZNzAwV2dGQUcvMThicHZOY0Jad05yTFFtRElM?=
- =?utf-8?B?NmdiSlVyYlB2SVpxSnVKM2hUejFXSEVPYUd1aTBEd2xMWUsvR2lHSmY2Nnpo?=
- =?utf-8?B?WVVWMmJheTFxMGIzMXFzQXlHb3JPS0hIY2FZNGh5TUNMZmE0b0JURVNSdWV0?=
- =?utf-8?B?YmozSjNSaTVraGVFV2xyTVNzZHY3dE56TkNKRVl2ZURMVHphUTI4ZE1RM0lj?=
- =?utf-8?B?OGVQbWs3VEJBYkl5MGxqSVBxT1l2ZUp2Q2xpS1hFaUcrb2Mzb2NRb3hveU5s?=
- =?utf-8?B?MW1HeEFmKzFralBHRFAwWkFsMVVGTjlTZllHQzZ3ZXhrVVM1cmZzQmlybnJC?=
- =?utf-8?B?dmRLMUxYU0VXWE0yaVBtWDZMSlVuS2Y4MTJmbUtFekZDZ05CRFdxM1MzbS9J?=
- =?utf-8?B?emY0ZW10d1dHKy84dTR2cHlZdkRIZnk0QzYvdm0yS1JYME9kMGlsSXZZUzdx?=
- =?utf-8?B?bFJBR1JudzEvVHVEalpscHYxZENSZm5nWkF4V0hZVjB1bVhGKytPR1E5QVdS?=
- =?utf-8?B?UzRCcUE2bStGcWVDR0tQMng2aStPbEJ1d2J2Q1lxcklYRFl3VURxcnRvZWcy?=
- =?utf-8?B?dk81QXh2RkdKS21ENERNalM1STYvdlYrZ2RpemZhWWdBMERleUVNdjkrY1J1?=
- =?utf-8?B?Yi92cWQzTkJxQTIzNEZvNENsaUVDaXUzRGZ6cmU0aGhqQk9ZekRwWlpDYzhV?=
- =?utf-8?B?R3IrVTNZTEcxTGI0TGxmVmVRdWN3RVdDcTJuV3JtUWhaZGN0RUtaYzBuTk53?=
- =?utf-8?B?eG9iZ3hEN3A4SzZMdFZnQmxON3RvNzVJR1ZLVFlLWExHUmRKTll6UTg1YzU5?=
- =?utf-8?B?VU42N3BzbkN2RVZwWjRRNWloMG9Ebi9GL1I2dEdxUkdTdDNuTUZES2FHMlhj?=
- =?utf-8?B?K2VNb0NhdUtpbWlxTFkxZFhVeVhmczYvRzJPQUN6QnhwSmNVZXFyUkFhYXIx?=
- =?utf-8?B?eVVxR2NXaXZ0YkFYN1NGVkh5dGFtMTUvOGFEVERSTjZxQ0dScG5kb2ZIdUJ5?=
- =?utf-8?B?RmpKWG9KSUpDbmk4eUlMVnVUb01DUXRMb2haZlZjWWJBQXR3YmtlcXdiNmpZ?=
- =?utf-8?B?M0hMbTFjSDM4elYydEhrbnhJWHo1UWNQZDF1WHBxL1d2YnZ1cUhScWZtdUxR?=
- =?utf-8?B?UXBrczZNcTlNMVhkWTZWNmM1NjhEUmRHYXBlMkNTYW1QRktMK08rbzUyUkk3?=
- =?utf-8?B?NFltNEZBeWpxWDNLcnR4ZmJlRE9Td01rYTlISHFRVmNOSnFGMjd5OGFzRHlv?=
- =?utf-8?B?Zm03MFJ4cXFXTTJVeWZLU2M4cmpMd3JvVWV2cmoxQXJFMjkwdUxvd1JETXBX?=
- =?utf-8?B?R1dadjFzL28yNXhpNXZ3K0poOFVaSGsySlNCNHJVYjBFbGtiUW1VeTNISXFy?=
- =?utf-8?B?UnRhNERJWnlMTXFwemlwL0Y2cUFzbmtPaFQ0K0p2eHZHTmwyLzg5bm5hTjJY?=
- =?utf-8?B?NWljRFBYYnFlTkcwcThEaWVNYUZJUlVhWHZvREpabUNjWmVYWHBDaUF2K2U3?=
- =?utf-8?B?bStudTZxd3JFd2lvOXhSaWlsMysvVnFJcldyUUFHZ3VyQ1hOTzQvTmIxdzAv?=
- =?utf-8?B?WmJDbmZoYm51MWdFZSswelZhaGlCTGNrUTlvb3JJRWp2YTB2T3RVRkZiLyty?=
- =?utf-8?B?Sm90Q2pXTVBGaGpNVnlucXVwd1FoL2JtTURBMzlnWUpkUk84NDhHeEFJRnow?=
- =?utf-8?B?cDFNWjdiRjRXOU51bXRMVEFMMWQxM0piWjZXMnQ1OE91TStWdHVhN25KNlBF?=
- =?utf-8?B?MnEzL1NpbFcwK09CNUVuWFJYcUZZU0t0WmF2TlpudUhjVGtNMFppVXgxVGhV?=
- =?utf-8?B?Vis3OXF0SUZ4UFEwMzlvVTZQZ2gyZDJlTE1NaXRETVVYUENUTWdBWVFJdjlZ?=
- =?utf-8?B?ZGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b9e415d5-8430-44d9-7110-08de163b298e
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 16:00:49.0837
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aG16LXts1kY4fgx5XQzGlslz2HMLN9P0T8mOHZgGXE6GIGjgysYIfUq+m+gTQ6d1KJcPZ7ZMaMjIy6DA7rGq1N3Yo5aIYPYTg4YxqlmVMbs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7612
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Tony,
+On Fri,  3 Oct 2025 10:32:32 -0400
+Gregory Price <gourry@gourry.net> wrote:
 
-On 10/27/25 4:00 PM, Luck, Tony wrote:
-> On Thu, Oct 23, 2025 at 10:45:06AM -0700, Reinette Chatre wrote:
->>> +	sprintf(name, "mon_sub_%s_%02d", r->name, hdr->id);
->>> +	ckn = kernfs_create_dir(kn, name, parent_kn->mode, prgrp);
->>
->> Noting here that kn was created earlier with mode of parent_kn->mode. It thus looks to me like
->> above can also be written as:
->> 	ckn = kernfs_create_dir(kn, name, kn->mode, prgrp);
->>
->> The reason I mention this is that this patch adds a third copy of a very similar code snippet
->> (kernfs_create_dir(), rdtgroup_kn_set_ugid(), mon_add_all_files()) that looks like a good
->> candidate for a helper?
+> The node/zone quirk section of the cxl documentation is incorrect.
+> The actual reason for fallback allocation misbehavior in the
+> described configuration is due to a kswapd/reclaim thrashing scenario
+> fixed by the linked patch.  Remove this section.
 > 
-> I looked at this. But the helper needs a lot of arguments to cover these
-> three cases. Something like:
+> Link: https://lore.kernel.org/linux-mm/20250919162134.1098208-1-hannes@cmpxchg.org/
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+Not looked into it in detail but I'll take your word for it that
+the text below is wrong.
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> ---
+>  .../cxl/allocation/page-allocator.rst         | 31 -------------------
+>  1 file changed, 31 deletions(-)
 > 
-> static struct kernfs_node *make_and_fill_mondir(struct kernfs_node *parent_kn,
-> 						char *name, umode_t mode,
+> diff --git a/Documentation/driver-api/cxl/allocation/page-allocator.rst b/Documentation/driver-api/cxl/allocation/page-allocator.rst
+> index 7b8fe1b8d5bb..3fa584a248bd 100644
+> --- a/Documentation/driver-api/cxl/allocation/page-allocator.rst
+> +++ b/Documentation/driver-api/cxl/allocation/page-allocator.rst
+> @@ -41,37 +41,6 @@ To simplify this, the page allocator will prefer :code:`ZONE_MOVABLE` over
+>  will fallback to allocate from :code:`ZONE_NORMAL`.
+>  
+>  
+> -Zone and Node Quirks
+> -====================
+> -Let's consider a configuration where the local DRAM capacity is largely onlined
+> -into :code:`ZONE_NORMAL`, with no :code:`ZONE_MOVABLE` capacity present. The
+> -CXL capacity has the opposite configuration - all onlined in
+> -:code:`ZONE_MOVABLE`.
+> -
+> -Under the default allocation policy, the page allocator will completely skip
+> -:code:`ZONE_MOVABLE` as a valid allocation target.  This is because, as of
+> -Linux v6.15, the page allocator does (approximately) the following: ::
+> -
+> -  for (each zone in local_node):
+> -
+> -    for (each node in fallback_order):
+> -
+> -      attempt_allocation(gfp_flags);
+> -
+> -Because the local node does not have :code:`ZONE_MOVABLE`, the CXL node is
+> -functionally unreachable for direct allocation.  As a result, the only way
+> -for CXL capacity to be used is via `demotion` in the reclaim path.
+> -
+> -This configuration also means that if the DRAM ndoe has :code:`ZONE_MOVABLE`
+> -capacity - when that capacity is depleted, the page allocator will actually
+> -prefer CXL :code:`ZONE_MOVABLE` pages over DRAM :code:`ZONE_NORMAL` pages.
+> -
+> -We may wish to invert this priority in future Linux versions.
+> -
+> -If `demotion` and `swap` are disabled, Linux will begin to cause OOM crashes
+> -when the DRAM nodes are depleted. See the reclaim section for more details.
+> -
+> -
+>  CGroups and CPUSets
+>  ===================
+>  Finally, assuming CXL memory is reachable via the page allocation (i.e. onlined
 
-I aimed to preempt a response like this in the text you quoted that notes that
-a "mode" argument does not seem necessary. Are you hinting that mode is indeed
-required? If not, without "mode" there are six arguments which is just one more
-than mon_add_all_files() that will be called by it.
-What is the threshold for there being too many arguments? This series does not seem
-to have trouble pushing an arch API call resctrl_arch_rmid_read() to eight arguments
-while there is a concern with the number of arguments of this static call that has
-fewer?
-
-> 						struct rdtgroup *prgrp,
-> 						struct rdt_domain_hdr *hdr,
-> 						struct rdt_resource *r,
-> 						int domid)
-> {
-> 	code here
-> }
-> 
-> A subset of this repeated pattern (just the kernfs_create_dir(),
-> rdtgroup_kn_set_ugid()) happens on every(?) mkdir. Perhaps a better helper (for
-> cleanup patch unrelated to this series) would build the rdtgroup_kn_set_ugid()
-> into a new rdtgroup_add_dir() helper?
-
-rdtgroup_add_dir() sounds like a useful helper. It is not clear to me how its motivation
-is unique though. That is, why use motivation "rdtgroup_add_dir() is a helper that supports
-two calls that are often repeated: kernfs_create_dir() followed by rdtgroup_kn_set_ugid()."
-while, what will follow, two calls that are often repeated rdtgroup_add_dir() followed by
-mon_add_all_files() does not need a helper?
-
-Reinette
 
