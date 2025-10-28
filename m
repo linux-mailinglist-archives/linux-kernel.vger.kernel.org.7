@@ -1,189 +1,108 @@
-Return-Path: <linux-kernel+bounces-874608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0957EC16AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:53:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8ABBC16AF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:54:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B0D21C215B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:54:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 118074E9FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448C32D0625;
-	Tue, 28 Oct 2025 19:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C1B336EDC;
+	Tue, 28 Oct 2025 19:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="izqZ1AVP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GokpmF4j"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FA211713;
-	Tue, 28 Oct 2025 19:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBA92BE04B;
+	Tue, 28 Oct 2025 19:54:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681213; cv=none; b=eSgHmBkZL0vkfIOL/fhZW+TSmvh8mcubjrzOtzf8bmn3h8THUOhD1yon/vK+RGxOcE6NPuiW+Yv6lFA2e2z3THy7QXJpK6h/1QGqIo9AZd+lCRKOHFpvocbZKBOPnGdcFDP+PG2w8IT6R4WFdHIbJsM7J0znUyJiWAhwoZOLesA=
+	t=1761681270; cv=none; b=Dv9DIwiU7AlO5oFABsrOZo4zXtZl9JmZcF5VHgp5+L47wsUrQQ8Z4Lrr8vfaBOaSiuqqR1veHJOgF5fwmHeNg/jOmSidALesZeuHgjfLapDlCIrbWIQLggyVFeVw1VHFkrwM04yjh+WmMum2wk/C+DMV/tiux5bRES3YeWhhPRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681213; c=relaxed/simple;
-	bh=50jNbJSIfsjrwnURWYy7zkQMXptHmNshM9nR/RRLDjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h+XJ8yqeH7QnseoJkFxKDZwJn6x8HwhOwdRFbm3TDrq8XTOiSixn25Q/zkNgRW9HgvmNKaRfHHygynrbcd3qW6xyyWb0mz5z6QCnYJKCht1eo612bbiLh8YAFaDOQWaOOvD0UbCg67BX06U9tdrXIa4HPyqgR5jshz91i5Fqqvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=izqZ1AVP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9C24C4CEE7;
-	Tue, 28 Oct 2025 19:53:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761681213;
-	bh=50jNbJSIfsjrwnURWYy7zkQMXptHmNshM9nR/RRLDjU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=izqZ1AVPcpfpqu/CHG6bJBdKPzx5yQwDBl/FuRhKqhr1jZwdTaMSl/Z4oZLbrsDVn
-	 ypm58/lPN4cvzD1KPRx/N5fhxVcOBVsqgK93TJm2iJ5ME5DQHWa2SLg+vzmHyeeA9H
-	 zZpImkGB5l68gjgLsHR+f2FWOWoL00X+JyPvkFccEr0SXmT8cJhEhmkbQ0YSekBjke
-	 lAVkoBchC9V5OBIeh2T9JAitm8spFr6gfjHXtEiszLzk/iG/2XCVQHQljMcarP0zQS
-	 BYnRa/glKB2XggJ0vQR2xYS+Iz97zZiqaTjnvcNmS9NUQY2uG3NPO3TDjnoBtLKpll
-	 Mj6KQkfnjRkUg==
-Date: Tue, 28 Oct 2025 19:53:28 +0000
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Intel-wired-lan] [PATCH iwl-next] ice: implement configurable
- header split for regular Rx
-Message-ID: <aQEfOEwOlG8SVMrh@horms.kernel.org>
-References: <20251006162053.3550824-1-aleksander.lobakin@intel.com>
- <aP-cgMiJ-y_PX7Xa@horms.kernel.org>
- <5800be3b-9347-452e-97df-d0e7d939fadf@intel.com>
+	s=arc-20240116; t=1761681270; c=relaxed/simple;
+	bh=PjuO3FlWFh2/k0xrW5JQXDEz6+CkeOl/301PZpppegE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OSuZRP3hsdtgwAuJhRjbD6fiFjCn66XykAjRsv3nwpBAfoo9AF2FdzeQg0PcuR24dzieR4BobtzU2rknVjL09kUQeyAj/E8k/gzbwzQd93T8m1ofs5jfe2sss2ABVDJBxjUucI3y+E1jlAAIgRvWrzgEq2szPr6NHRz2BEsNVJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GokpmF4j; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761681264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W1vfNH1OtxcVF1Jg9QAf61yzDR/63k5WefYxmSxcqt4=;
+	b=GokpmF4jfTl+pwsmQbtDT5ic/PNmqZi3UwNtLBQo6WzF05jogM1a4ra3TXZ0+gSmuQhSt9
+	0tM68yBrWrIn74Ess33qfXZCGPme1h6MljFE/w427Ce82/ru+IdWwypGezWDhGWJSCFv/D
+	y+QdscXaBfltrFgGplzm1qPNl8ODy0M=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Tejun Heo <tj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
+ <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
+ Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
+  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
+ <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,  Kumar Kartikeya
+ Dwivedi <memxor@gmail.com>
+Subject: Re: [PATCH v2 20/23] sched: psi: implement bpf_psi struct ops
+In-Reply-To: <aQEM7LXpZdOpsgvU@slm.duckdns.org> (Tejun Heo's message of "Tue,
+	28 Oct 2025 08:35:24 -1000")
+References: <20251027232206.473085-1-roman.gushchin@linux.dev>
+	<20251027232206.473085-10-roman.gushchin@linux.dev>
+	<aQD_-a8oWHfRKcrX@slm.duckdns.org> <877bweswvo.fsf@linux.dev>
+	<aQEM7LXpZdOpsgvU@slm.duckdns.org>
+Date: Tue, 28 Oct 2025 12:54:16 -0700
+Message-ID: <87cy66pztj.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5800be3b-9347-452e-97df-d0e7d939fadf@intel.com>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 27, 2025 at 06:18:01PM +0100, Alexander Lobakin wrote:
-> From: Simon Horman <horms@kernel.org>
-> Date: Mon, 27 Oct 2025 16:23:28 +0000
-> 
-> > On Mon, Oct 06, 2025 at 06:20:53PM +0200, Alexander Lobakin wrote:
-> >> Add second page_pool for header buffers to each Rx queue and ability
-> >> to toggle the header split on/off using Ethtool (default to off to
-> >> match the current behaviour).
-> >> Unlike idpf, all HW backed up by ice doesn't require any W/As and
-> >> correctly splits all types of packets as configured: after L4 headers
-> >> for TCP/UDP/SCTP, after L3 headers for other IPv4/IPv6 frames, after
-> >> the Ethernet header otherwise (in case of tunneling, same as above,
-> >> but after innermost headers).
-> >> This doesn't affect the XSk path as there are no benefits of having
-> >> it there.
-> >>
-> >> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> >> ---
-> >> Applies on top of Tony's next-queue, depends on Michał's Page Pool
-> >> conversion series.
-> >>
-> >> Sending for review and validation purposes.
-> >>
-> >> Testing hints: traffic testing with and without header split enabled.
-> >> The header split can be turned on/off using Ethtool:
-> >>
-> >> sudo ethtool -G <iface> tcp-data-split on (or off)
-> > 
-> > Nice, I'm very pleased to see this feature in the pipeline for the ice driver.
-> 
-> This is a prereq for io_uring/devmem support in ice which I'm currently
-> finishing :>
-> 
-> (I know it's a bit overdue already, but I couldn't find a free time slot
->  earlier to implement this)
+Tejun Heo <tj@kernel.org> writes:
 
-Great, I'm very pleased to hear io_uring/devmem support is in the pipeline.
+> Hello,
+>
+> On Tue, Oct 28, 2025 at 11:29:31AM -0700, Roman Gushchin wrote:
+>> > Here, too, I wonder whether it's necessary to build a hard-coded
+>> > infrastructure to hook into PSI's triggers. psi_avgs_work() is what triggers
+>> > these events and it's not that hot. Wouldn't a fexit attachment to that
+>> > function that reads the updated values be enough? We can also easily add a
+>> > TP there if a more structured access is desirable.
+>> 
+>> Idk, it would require re-implementing parts of the kernel PSI trigger code
+>> in BPF, without clear benefits.
+>> 
+>> Handling PSI in BPF might be quite useful outside of the OOM handling,
+>> e.g. it can be used for scheduling decisions, networking throttling,
+>> memory tiering, etc. So maybe I'm biased (and I'm obviously am here), but
+>> I'm not too concerned about adding infrastructure which won't be used.
+>> 
+>> But I understand your point. I personally feel that the added complexity of
+>> the infrastructure makes writing and maintaining BPF PSI programs
+>> simpler, but I'm open to other opinions here.
+>
+> Yeah, I mean, I'm not necessarily against adding infrastructure if the need
+> is justified - ie. it enables new things which isn't reasonably feasible
+> otherwise. However, it's also a good idea to start small, iterate and build
+> up. It's always easier to add new things than to remove stuff which is
+> already out there. Wouldn't it make more sense to add the minimum mechanism,
+> see how things develop and add what's identified as missing in the
+> process?
 
-> 
-> > 
-> > ...
-> > 
-> >> diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/ethernet/intel/ice/ice_txrx.c
-> > 
-> > ...
-> > 
-> >> @@ -836,6 +858,20 @@ bool ice_alloc_rx_bufs(struct ice_rx_ring *rx_ring, unsigned int cleaned_count)
-> >>  		 */
-> >>  		rx_desc->read.pkt_addr = cpu_to_le64(addr);
-> >>  
-> >> +		if (!hdr_fq.pp)
-> >> +			goto next;
-> >> +
-> >> +		addr = libeth_rx_alloc(&hdr_fq, ntu);
-> >> +		if (addr == DMA_MAPPING_ERROR) {
-> >> +			rx_ring->ring_stats->rx_stats.alloc_page_failed++;
-> >> +
-> >> +			libeth_rx_recycle_slow(fq.fqes[ntu].netmem);
-> >> +			break;
-> >> +		}
-> >> +
-> >> +		rx_desc->read.hdr_addr = cpu_to_le64(addr);
-> >> +
-> >> +next:
-> > 
-> > Is performance the reason that a goto is used here, rather than, say, putting
-> > the conditional code in an if condition? Likewise in ice_clean_rx_irq?
-> 
-> Not the performance, but the thing that I can avoid introducing +1
-> indentation level for 9 lines. I don't like big `if` blocks.
-> IIRC there's no strong rule regarding this?
-> 
-> (same for ice_clean_rx_irq)
+Ok, let me try the TP approach and see how it will look like.
+If there won't see any significant downsides, I'll drop the BPF PSI triggers
+infrastructure.
 
-Ok. I'd lean towards an if condition. But I don't feel strongly about it.
-
-> 
-> > 
-> >>  		rx_desc++;
-> >>  		ntu++;
-> >>  		if (unlikely(ntu == rx_ring->count)) {
-> >> @@ -933,14 +969,16 @@ static int ice_clean_rx_irq(struct ice_rx_ring *rx_ring, int budget)
-> >>  		unsigned int size;
-> >>  		u16 stat_err_bits;
-> >>  		u16 vlan_tci;
-> >> +		bool rxe;
-> >>  
-> >>  		/* get the Rx desc from Rx ring based on 'next_to_clean' */
-> >>  		rx_desc = ICE_RX_DESC(rx_ring, ntc);
-> >>  
-> >> -		/* status_error_len will always be zero for unused descriptors
-> >> -		 * because it's cleared in cleanup, and overlaps with hdr_addr
-> >> -		 * which is always zero because packet split isn't used, if the
-> >> -		 * hardware wrote DD then it will be non-zero
-> >> +		/*
-> >> +		 * The DD bit will always be zero for unused descriptors
-> >> +		 * because it's cleared in cleanup or when setting the DMA
-> >> +		 * address of the header buffer, which never uses the DD bit.
-> >> +		 * If the hardware wrote the descriptor, it will be non-zero.
-> >>  		 */
-> > 
-> > The update to this comment feels like it could be a separate patch.
-> > (I know, I often say something like that...)
-> 
-> But this update is tied closely to the header split itself. Before this
-> patch, this update would make no sense as there are no header buffers.
-> After this patch, this comment will be outdated already without this
-> update :D
-
-Thanks for the clarification, I was expecting you would say something like
-that.
-
-I think everything I mentioned in my previous email was
-covered by your response. So feel free to add:
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+Thanks!
 
