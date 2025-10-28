@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-874178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B68C15AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:08:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935B4C15B02
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9B7C1C23E29
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F8971C245D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEDC33032A;
-	Tue, 28 Oct 2025 16:01:40 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F231862A;
-	Tue, 28 Oct 2025 16:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323E2345CAC;
+	Tue, 28 Oct 2025 16:01:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1C6345739;
+	Tue, 28 Oct 2025 16:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667300; cv=none; b=kXsS5sljeYSjQ+A7jpNfeMBP//Z1wW2h+wMY1w1VQGdxIi0dxoQdTFSBqx4r2kSJ8ULXg2ldSkju7LVQr4c2PaGL15MfdkldWzelkG7pVjW9OnZFifpGlsbE9NyY7qiqZFamYx8s6klUT8AmF0IpvAoSJJSnK4VuHBiNi8lBDMk=
+	t=1761667315; cv=none; b=jH5YbtBiYiLVQwHyOnE+W6lqFqIvNBAIk+EkkP8os8sDicLyH5QE/HUghkK+SahZBb6v61YvewVb3KxrhEqLwUiQNkxyYz7CQrZqatjyx6qXQPGZRc4tPbvGwwaYAJP4oTeinPoQ1FSUYp3PgrxClHL5ZXChdvvZIb4xIm6Zupg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667300; c=relaxed/simple;
-	bh=Dx687kzusllViaObMvR4QwPo8tHehrbtHSv9Iud7y8Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nDkNwth2Z1DzQkDHrnTGVpJVoEWQJg3WD4eEAIWrURlPYlmms5sBEqB3KXzkokpJu+bwjaOXF+w8g7zHXBZzbhwlRDWmPpS4T1c7aVttGIU45lSFpDhh8lnRZtX0wIKhkJAmTwBTXpRnlHaD714o8frzalOt4V5d5pOozNMUwDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cww7C6ThYz6L4sZ;
-	Tue, 28 Oct 2025 23:59:51 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E4B11402FF;
-	Wed, 29 Oct 2025 00:01:35 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
- 2025 16:01:34 +0000
-Date: Tue, 28 Oct 2025 16:01:33 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Gregory Price <gourry@gourry.net>
-CC: <linux-cxl@vger.kernel.org>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <dan.j.williams@intel.com>, <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Documentation/driver-api/cxl: remove page-allocator
- quirk section
-Message-ID: <20251028160133.000004ca@huawei.com>
-In-Reply-To: <20251003143233.1985150-1-gourry@gourry.net>
-References: <20251003143233.1985150-1-gourry@gourry.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761667315; c=relaxed/simple;
+	bh=mkuXtx/SaDIkPn12CmnBubCR1rFT4XbZg3oz3XQqaIA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D3krEVufo4Prx+Ce5ZsAO5F0V5gtiC8ZsnwEQQIR8iqsLiiarwtYq1UB2uFgtwAonWJtFfWWpUXE/oUZqjLHIh3ic3FQ+UDbGIkSldZtdCDi8XAcUeIInutfbVzyWOu0jJOryeFwWw2ik8xW+eUEkJXm0fw361jSS4HEH1hoR/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1F4E168F;
+	Tue, 28 Oct 2025 09:01:44 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BECC53F63F;
+	Tue, 28 Oct 2025 09:01:47 -0700 (PDT)
+Message-ID: <56f7f2df-fd94-48c8-aaa0-97a71b3108cf@arm.com>
+Date: Tue, 28 Oct 2025 16:01:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mpam mpam/snapshot/v6.14-rc1] arm64/mpam: Fix MBWU monitor
+ overflow handling
+To: Zeng Heng <zengheng4@huawei.com>, james.morse@arm.com
+Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
+ baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
+ carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
+ dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
+ fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
+ guohanjun@huawei.com, jeremy.linton@arm.com, jonathan.cameron@huawei.com,
+ kobak@nvidia.com, lcherian@marvell.com, lenb@kernel.org,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, lpieralisi@kernel.org, peternewman@google.com,
+ quic_jiles@quicinc.com, rafael@kernel.org, robh@kernel.org,
+ rohit.mathew@arm.com, scott@os.amperecomputing.com, sdonthineni@nvidia.com,
+ sudeep.holla@arm.com, tan.shaopeng@fujitsu.com, will@kernel.org,
+ xhao@linux.alibaba.com, wangkefeng.wang@huawei.com, sunnanyong@huawei.com
+References: <20251017185645.26604-25-james.morse@arm.com>
+ <20251022133913.629859-1-zengheng4@huawei.com>
+ <8e22c81e-5e78-41e0-a81e-0f9826e5edf0@arm.com>
+ <1c037f72-485a-567b-bf8f-489255330de8@huawei.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <1c037f72-485a-567b-bf8f-489255330de8@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri,  3 Oct 2025 10:32:32 -0400
-Gregory Price <gourry@gourry.net> wrote:
+Hi Zeng,
 
-> The node/zone quirk section of the cxl documentation is incorrect.
-> The actual reason for fallback allocation misbehavior in the
-> described configuration is due to a kswapd/reclaim thrashing scenario
-> fixed by the linked patch.  Remove this section.
+On 10/25/25 10:01, Zeng Heng wrote:
+> Hi Ben,
 > 
-> Link: https://lore.kernel.org/linux-mm/20250919162134.1098208-1-hannes@cmpxchg.org/
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-Not looked into it in detail but I'll take your word for it that
-the text below is wrong.
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-> ---
->  .../cxl/allocation/page-allocator.rst         | 31 -------------------
->  1 file changed, 31 deletions(-)
+> On 2025/10/23 0:17, Ben Horgan wrote:
 > 
-> diff --git a/Documentation/driver-api/cxl/allocation/page-allocator.rst b/Documentation/driver-api/cxl/allocation/page-allocator.rst
-> index 7b8fe1b8d5bb..3fa584a248bd 100644
-> --- a/Documentation/driver-api/cxl/allocation/page-allocator.rst
-> +++ b/Documentation/driver-api/cxl/allocation/page-allocator.rst
-> @@ -41,37 +41,6 @@ To simplify this, the page allocator will prefer :code:`ZONE_MOVABLE` over
->  will fallback to allocate from :code:`ZONE_NORMAL`.
->  
->  
-> -Zone and Node Quirks
-> -====================
-> -Let's consider a configuration where the local DRAM capacity is largely onlined
-> -into :code:`ZONE_NORMAL`, with no :code:`ZONE_MOVABLE` capacity present. The
-> -CXL capacity has the opposite configuration - all onlined in
-> -:code:`ZONE_MOVABLE`.
-> -
-> -Under the default allocation policy, the page allocator will completely skip
-> -:code:`ZONE_MOVABLE` as a valid allocation target.  This is because, as of
-> -Linux v6.15, the page allocator does (approximately) the following: ::
-> -
-> -  for (each zone in local_node):
-> -
-> -    for (each node in fallback_order):
-> -
-> -      attempt_allocation(gfp_flags);
-> -
-> -Because the local node does not have :code:`ZONE_MOVABLE`, the CXL node is
-> -functionally unreachable for direct allocation.  As a result, the only way
-> -for CXL capacity to be used is via `demotion` in the reclaim path.
-> -
-> -This configuration also means that if the DRAM ndoe has :code:`ZONE_MOVABLE`
-> -capacity - when that capacity is depleted, the page allocator will actually
-> -prefer CXL :code:`ZONE_MOVABLE` pages over DRAM :code:`ZONE_NORMAL` pages.
-> -
-> -We may wish to invert this priority in future Linux versions.
-> -
-> -If `demotion` and `swap` are disabled, Linux will begin to cause OOM crashes
-> -when the DRAM nodes are depleted. See the reclaim section for more details.
-> -
-> -
->  CGroups and CPUSets
->  ===================
->  Finally, assuming CXL memory is reachable via the page allocation (i.e. onlined
+>>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+>>> ---
+>>>   drivers/resctrl/mpam_devices.c | 8 +++++---
+>>>   1 file changed, 5 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/
+>>> mpam_devices.c
+>>> index 0dd048279e02..06f3ec9887d2 100644
+>>> --- a/drivers/resctrl/mpam_devices.c
+>>> +++ b/drivers/resctrl/mpam_devices.c
+>>> @@ -1101,7 +1101,8 @@ static void __ris_msmon_read(void *arg)
+>>>       clean_msmon_ctl_val(&cur_ctl);
+>>>       gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+>>>       config_mismatch = cur_flt != flt_val ||
+>>> -              cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
+>>> +             (cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS) !=
+>>> +             (ctl_val | MSMON_CFG_x_CTL_EN);
+>>
+>> This only considers 31 bit counters. I would expect any change here to
+>> consider all lengths of counter.
+> 
+> Sorry, regardless of whether the counter is 32-bit or 64-bit, the
+> config_mismatch logic should be handled the same way here. Am I
+> wrong?
+
+Yes, they should be handled the same way. However, the overflow status
+bit for long counters is MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L.
+
+I now see that the existing code in the series has this covered.
+Both the overflow bits are masked out in clean_msmon_ctl_val(). No need
+for any additional masking.
+
+> 
+> Best Regards,
+> Zeng Heng
+> 
+> 
+
+Thanks,
+
+Ben
 
 
