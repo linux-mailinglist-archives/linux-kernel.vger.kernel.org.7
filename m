@@ -1,158 +1,143 @@
-Return-Path: <linux-kernel+bounces-874278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9773C15EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:47:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F96C15ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2FBB4E959E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:43:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06181889F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CCB344025;
-	Tue, 28 Oct 2025 16:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF423451CC;
+	Tue, 28 Oct 2025 16:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C9XyJNAQ"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e856YTH8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C1928D8E8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7F823FC4C;
+	Tue, 28 Oct 2025 16:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669829; cv=none; b=eP9Q8Bhl63alLl6XLIkRvbCZeUaIjPZLOz9DbeixsLQ4mO3Y04dgz6ACMbasbRDKoK2JIcorwNhkAqGHhAy2EpaY3UEOXoTqk40f5vvFT4IaU0eLyARAbK+Lu5DfCsGXBXO+PcW9G8nkmt11ytsq44lgcM3+zV3ld1Q5nXSy/jU=
+	t=1761669864; cv=none; b=OajnWh+tgDansVePBKQ0bvOyMGnBbPndilEaXZLvqNbs9e39zu9RePLumGt0cKXP0m7MyUESTjwN7VAKmaYSleorlFLpFoLvCBflwUPr6b8L7bUGnYouNp5YRHAY7dVyMlVrV9VdELuU0ra4lhSKrA7T7u41NdHGf5/xvulZt5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669829; c=relaxed/simple;
-	bh=nf40Jfi8RubCITdyh8WZ7pq2NikxPd5ZwWauOZT+p2A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r9U5AzyE1AxTZcypZOXHgXJxnzys5uOSK/qUlNFkxwj6M8v5A9iBe3fBQZe7Uporf3aWze7DqVt225LAq0tqi8T58D8zJsFhDUBS2v+PFNgncHHDehQcDJhd5GcgTGDYhjiInNlP5zKoXJqjf+GwQuO7R+QTiDBtSlrMGZkaqpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C9XyJNAQ; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761669824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kSNkRhOJhrPtd4Js2oBI0wr+MEc/sKamTAOCSggnfZY=;
-	b=C9XyJNAQbLdaKmF6tYaMQJgBraElANn8UZADDHK2VL+pgdD76IApnxrZRyQYAaT6rFTarg
-	tYoLJbg0VWb22xMZArp0wH2Ft+STPLO0i2hYX2TtGMWEJM/N10vBHM5tQfD5nGj0ItMa51
-	otG8PaOIqzlX0JNrVvhEtQ7NWlSELLQ=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: bot+bpf-ci@kernel.org
-Cc: akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
- ast@kernel.org, surenb@google.com, mhocko@kernel.org,
- shakeel.butt@linux.dev, hannes@cmpxchg.org, andrii@kernel.org,
- inwardvessel@gmail.com, linux-mm@kvack.org, cgroups@vger.kernel.org,
- bpf@vger.kernel.org, martin.lau@kernel.org, song@kernel.org,
- memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
-Subject: Re: [PATCH v2 13/23] mm: introduce bpf_out_of_memory() BPF kfunc
-In-Reply-To: <2b04ce21d82f2118c291c49ace22d685bcbbd45d203b2f676556d3e5a90eebd1@mail.kernel.org>
-	(bot's message of "Mon, 27 Oct 2025 23:57:21 +0000 (UTC)")
-References: <20251027232206.473085-3-roman.gushchin@linux.dev>
-	<2b04ce21d82f2118c291c49ace22d685bcbbd45d203b2f676556d3e5a90eebd1@mail.kernel.org>
-Date: Tue, 28 Oct 2025 09:43:36 -0700
-Message-ID: <87cy673rk7.fsf@linux.dev>
+	s=arc-20240116; t=1761669864; c=relaxed/simple;
+	bh=zxXbW5Locnu07OLXroomWcTdRtWA7t9d00BPeoFn8I4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NP4gz/PcbPEEJnAO8P7FMvsF+BZb6ZRXj4Su313myP9GWAPe/TiPfEM25OwUCt7umEJoA7y134GlabLvS1NGbwkt2oWeJBIcI1s9VTEI5UwCsyOa0hdKOL8Xxf1+woPng6vM9uh/ANrT8e4NbZ7ePSgq04wjGfwfFD+RA+RoFOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e856YTH8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE08C4CEE7;
+	Tue, 28 Oct 2025 16:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761669864;
+	bh=zxXbW5Locnu07OLXroomWcTdRtWA7t9d00BPeoFn8I4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e856YTH8ga1nNoXKKtqQK9PstLrviyqey/NE8YNROM4kl0gA2jRpWwiK/2aUZU913
+	 rvC5dmJCtDbwky/iA4LP8PX0qzbsUWAueJUHvX2bg214sUSbqmOJhnq82xJMecFpr4
+	 jH2ru8pQWpBR2r5IiWnvs8d7++X8h/eGjZQ5XvUdHHvQoqFj5b2EHAD9aeke/DMpnv
+	 dN9PlJijsPSUPiJpAbvpvGBBU9UaiJ9bGQjPbvnGs6fZHwbcx+GTOA409EykhKuxy2
+	 5PMdz0ed1wb5RvYG5XWzBV0EWIyeXBPIXbjy1tfcxjKm+HLxCP8z5rNnvmb/tqaNw5
+	 XH+nh0VBpjRvg==
+Message-ID: <ccd14d85-320d-4f6b-bafb-45476ff15987@kernel.org>
+Date: Tue, 28 Oct 2025 17:44:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+To: Guenter Roeck <linux@roeck-us.net>, hrishabh.rajput@oss.qualcomm.com,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <4659e69b-907a-49ba-8eb6-ac17232a5219@roeck-us.net>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <4659e69b-907a-49ba-8eb6-ac17232a5219@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-bot+bpf-ci@kernel.org writes:
-
-> ```
-> commit bce57b9b96e05731a14c7e10a364fdd9b733cda2
-> Author: Roman Gushchin <roman.gushchin@linux.dev>
->
-> mm: introduce bpf_out_of_memory() BPF kfunc
->
-> This patch introduces bpf_out_of_memory() BPF kfunc to allow BPF programs
-> to declare OOM events and trigger the kernel OOM handling mechanism. The
-> function accepts a nullable memcg pointer for system-wide or memcg-scoped
-> OOMs.
->
->> diff --git a/include/linux/oom.h b/include/linux/oom.h
->> index 721087952..3cbdcd013 100644
->> --- a/include/linux/oom.h
->> +++ b/include/linux/oom.h
->> @@ -21,6 +21,11 @@ enum oom_constraint {
->>  	CONSTRAINT_MEMCG,
->>  };
->>
->> +enum bpf_oom_flags {
->> +	BPF_OOM_FLAGS_WAIT_ON_OOM_LOCK = 1 << 0,
->> +	BPF_OOM_FLAGS_LAST = 1 << 1,
->> +};
+On 28/10/2025 17:06, Guenter Roeck wrote:
+> On 10/28/25 02:35, Hrishabh Rajput via B4 Relay wrote:
 >> +
->>  /*
->>   * Details of the page allocation that triggered the oom killer that are used to
->>   * determine what should be killed.
->> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
->> index 3c86cd755..d7fca4bf5 100644
->> --- a/mm/oom_kill.c
->> +++ b/mm/oom_kill.c
->
-> [ ... ]
->
->> +/**
->> + * bpf_out_of_memory - declare Out Of Memory state and invoke OOM killer
->> + * @memcg__nullable: memcg or NULL for system-wide OOMs
->> + * @order: order of page which wasn't allocated
->> + * @flags: flags
->> + * @constraint_text__nullable: custom constraint description for the OOM report
->> + *
->> + * Declares the Out Of Memory state and invokes the OOM killer.
->> + *
->> + * OOM handlers are synchronized using the oom_lock mutex. If wait_on_oom_lock
->> + * is true, the function will wait on it. Otherwise it bails out with -EBUSY
->> + * if oom_lock is contended.
->> + *
->> + * Generally it's advised to pass wait_on_oom_lock=false for global OOMs
->> + * and wait_on_oom_lock=true for memcg-scoped OOMs.
->> + *
->> + * Returns 1 if the forward progress was achieved and some memory was freed.
->> + * Returns a negative value if an error occurred.
->> + */
->> +__bpf_kfunc int bpf_out_of_memory(struct mem_cgroup *memcg__nullable,
->> +				  int order, u64 flags)
->> +{
->> +	struct oom_control oc = {
->> +		.memcg = memcg__nullable,
->> +		.order = order,
->> +	};
->
-> Can bpf_out_of_memory() work correctly for system-wide OOMs with
-> uninitialized gfp_mask?
->
-> Looking at out_of_memory():
->
->     if (!(oc->gfp_mask & __GFP_FS) && !is_memcg_oom(oc))
->         return true;
->
-> With gfp_mask=0 and memcg=NULL (system-wide OOM), this evaluates to:
-> !(0 & __GFP_FS) && !false = true, causing an early return without
-> invoking the OOM killer. The comment in out_of_memory() explains this
-> check is about allocation context: "The OOM killer does not compensate
-> for IO-less reclaim."
->
-> All other callers of out_of_memory() initialize gfp_mask:
-> - mm/page_alloc.c: .gfp_mask = gfp_mask
-> - mm/memcontrol.c: .gfp_mask = gfp_mask
->
-> For memcg OOMs, the code works because is_memcg_oom(oc) is true,
-> bypassing the check. But for system-wide OOMs (NULL memcg), won't this
-> cause the function to return immediately without killing any process?
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
+>> +	if (ret)
+>> +		return -ENODEV;
+>> +
+>> +	ret = platform_driver_register(&gunyah_wdt_driver);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	gunyah_wdt_dev = platform_device_register_simple(GUNYAH_WDT_DRV_NAME,
+>> +							 -1, NULL, 0);
+> 
+> I did not follow the discussion around this, so I may be missing something.
+> If so, apologies.
+> 
+> This is a highly unusual approach. What is the point of not instantiating
+> the watchdog device through devicetree and doing it in the init function
+> instead ? There should be a devicetree node which instantiates the device;
+> it should never be instantiated from the init function unless there _is_
+> no devicetree, which is obviously not the case here.
 
-This is a good catch! It must be .gfp_mask = GFP_KERNEL.
 
-Fixed.
+We told that to them already... Every iteration of gunyah feels like
+pushing their approach without regard to community feedback.
 
-Thanks!
+
+Best regards,
+Krzysztof
 
