@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-872851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56CAC122F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:39:30 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BF23C122D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082E94638F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:37:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC58B353B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF227212552;
-	Tue, 28 Oct 2025 00:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4361F0E2E;
+	Tue, 28 Oct 2025 00:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0GVgDpE4"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MHZ8Agea"
+Received: from pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com [35.83.148.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE520297E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3D2F5E;
+	Tue, 28 Oct 2025 00:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.83.148.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611812; cv=none; b=YJpqDgRpLKsbuWKibtcaiFYS4laRu0vx/OvVN9eRoYRPJMAcOvgLpVKPRWFtAbidRikPwfJmq3sOOFv65R3UufBaaI9K5QFEPk1UV0s4nyIbx16qDIJpplREu1P4gLiMENnAIH8gBVTF9O3FlLx96gpfqnerXh+tr7oB95wfZrU=
+	t=1761611807; cv=none; b=HKTwCuOkQgH/h8I4YERzh33v6wbWo1AZsXEWv9bEHv7VOOLzOKoIMfJMs6fym8z0nc1te1mOVBJzC4N7rkEVU+1V838X8G/im9cy5cMtkvWCDjy27nMszdYW5GqQQn9Ygh3OnLJ1I/9l0KqZOZ0VJQ+mNTkTms1BSv8yhrSxFvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611812; c=relaxed/simple;
-	bh=HfMKxWya+alo4HTeH/VJeMJH6ra+r5JHKOIwTNWoCcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DlgDw8Ub3+klmO2QPMaEZY9MYsOP31r+FOBoY4AvybL9FBxfrg1g2n87hBLJUpuUV1pmIUn+bNUaAvU7UoDGCHUlMHmh9EdRsT5yE1P/RPdaL6Y95BNFyr5XoNYzQ8O5zV/DruECMcvsUJ4ZhAYbpcqblrTP9+idzAoJEjlbNbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0GVgDpE4; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ecfd66059eso158661cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:36:50 -0700 (PDT)
+	s=arc-20240116; t=1761611807; c=relaxed/simple;
+	bh=IOVvQiJpGvp6+xA294rJerEG3dTHQnXxn46jZXjb5wY=;
+	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hF027/aeHCZEzFmw1zhdl/5jIKmpzlaXvB3QfX9wGPi9w9b9Trp0lJtWo/OkFNzP+5RIMiYe2QYMqmRTZIyoHe7YX0aTaWlUpQ2B9A6wgU7LR/A8srVYSBOXcOPftspN4Fi6kADSwxqyd/2SOMAnmvR2lmRc0NfIBKXZirt/pH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MHZ8Agea; arc=none smtp.client-ip=35.83.148.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761611809; x=1762216609; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i9airE2D5p1Y8Na0l8E2tZxHyd99hjP8VcmYGJ8nfrs=;
-        b=0GVgDpE49wQrtTRP2GiWnRfHni+5po3seRc/tXryRhv25DaEdfxD45cODcCAgL2NgX
-         fofdWTBVMTIED7xvQSvI2ZA7Xe3yGCvDcb/MbWIhNgRTh4fMMVyDaV7pcWUecevdA/ob
-         lbxzZdjaJpz+E1LYuR6X3T+uEbu0/qCbFlXojdxpcoY9zGQxxhIfOINHrTw3bJBow6Jc
-         yJ4B9akGwHy4zfkXZcPbc9WXX+J4hXNjhlS2XLlYHFV8k6zmayC3IEOUax+qdSJJCSol
-         FsWOa7f9yd/8WjNqo9/x89XnZOB2fZVzaxFTW4K6r11DE/BKNlyK5Dx2yduaoLZeDxEO
-         qnQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761611809; x=1762216609;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i9airE2D5p1Y8Na0l8E2tZxHyd99hjP8VcmYGJ8nfrs=;
-        b=DdrN+8fHs5phCYS3PqnSOz3rWLlbzdqOMWgN92fEtRnY5ZfHqFBkmfoKPMcOjyO2cD
-         QA4SubvNOhDL2H7UL9O7Q7NqTWucXrG8JpxVKRMKaHtEEGrvN9OTWyaYoSW8PCKjOGky
-         diLGtcl6tAt3Ne9dBSrmQms86Qac5ccmOSQbS0rMGymtktwJgOjVA3rcSFnBe7chq5Au
-         /D6d8I9L2FYi3qoacOHF6Tdb+GF6l+Aqa1lfd2910yY5192Ic+Q9Pa4zTz1g7lWFpdHk
-         rNNklvuWHz+aG56GofnbIO7NWSjvBepxKJW21wbpSwTUtKW4rq5nzz/Xcfwb3vK0nq1K
-         uqcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMBVefEFWpaKniILEnp+vxTzn9z0XcQ3wpCuboGn1lwh0phJCRoVQBR/CiGF+zkZG9zmmjAdE51+2/lmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxco/qLBt3CRKyfIeub4epjlWu51+8cecoddrt8WoGrWMiZCOLJ
-	k/eCJ8OzmPMBPf3cjbg/7xF/l9DzV8FaoBFwuBAjuisAGd0dj6s6gRUr4TbWgJ2tl0DIqqnRhYm
-	nsu/aRW0drRXIootGa1t2JZ/xJ0cFyZLhKFAkd2BF
-X-Gm-Gg: ASbGncvZ8nzldOL67g3w2hoLsEIGwBiksLOP99nIFjGrtE3Y1ujN9FeKeyIlao1Mb9g
-	xTJA3LXFPD/ZnhCml0STaBMCpqs2BizcDHbf2h/i6FU4ot/yv1wVNjHGfqpyPGQfon6/kYYLwSq
-	6ukfCgA6gmmU5scwXc2zee3zmZNXf3G/fd56HKehNmXKCcpUXPoODv9zG4JxXXYooTtgi/21+lT
-	0sL4c6IO62vOe9gNEJf3SwWEEMe0vHfnTfQeUD0EWI/udOEjPz6ziKF8TJr
-X-Google-Smtp-Source: AGHT+IGMk9j6UADKczeIdBycT7NeHvpUha15rA19nFLr68qYQwbYTKP3it0bS1on0J71a7haYB5nb6d1uLCJfAJbKPU=
-X-Received: by 2002:a05:622a:48d:b0:4b4:9590:e091 with SMTP id
- d75a77b69052e-4ed09f3e5cbmr1623131cf.5.1761611809252; Mon, 27 Oct 2025
- 17:36:49 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1761611806; x=1793147806;
+  h=from:to:cc:date:message-id:references:in-reply-to:
+   content-id:content-transfer-encoding:mime-version:subject;
+  bh=IOVvQiJpGvp6+xA294rJerEG3dTHQnXxn46jZXjb5wY=;
+  b=MHZ8AgeaCjyEt2/ATdpHwmTnzSYo8MP7fOnjyRwzmDQBBJWr2AwL2OLp
+   s9+fwuixAILG0J8SRyEJKjNZGLQswAOUc3nOQ4eNUNdEeEDKJsCTlJf5/
+   jgTud9+aUzM9NC+fw2h+I0jWcxkMG8muetGGae0Z/4Hb9nhCEOm595rvC
+   HOTO6oorRX/oO6f6FAfElIPw3i7/vUs+4uybcEEzj24+kgyM7x8MMXyRx
+   /u4KaEG9+tqwftjuHPxdNyHFqaBVV0kunad3ityFFQ+Nfc8Oqc18kBIGO
+   y4towwEQlTPgZvEBvCuqmIQNfWdM5yLUK5NO4duHRC5R4n4OkXDc1r0N3
+   Q==;
+X-CSE-ConnectionGUID: 26SJ8qqZRE+FNdoNM3ro3g==
+X-CSE-MsgGUID: YiTQtjjxR1CtkjkcG+NhGw==
+X-IronPort-AV: E=Sophos;i="6.19,260,1754956800"; 
+   d="scan'208";a="5635122"
+Subject: Re: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+Thread-Topic: [PATCH v2] PCI: xilinx-xdma: Enable INTx interrupts
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-014.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 00:36:45 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [205.251.233.111:26105]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.58.51:2525] with esmtp (Farcaster)
+ id 9f41d556-68c3-4916-acdf-260b786a1eb9; Tue, 28 Oct 2025 00:36:45 +0000 (UTC)
+X-Farcaster-Flow-ID: 9f41d556-68c3-4916-acdf-260b786a1eb9
+Received: from EX19D032UWA004.ant.amazon.com (10.13.139.56) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Tue, 28 Oct 2025 00:36:37 +0000
+Received: from EX19D032UWA003.ant.amazon.com (10.13.139.37) by
+ EX19D032UWA004.ant.amazon.com (10.13.139.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Tue, 28 Oct 2025 00:36:37 +0000
+Received: from EX19D032UWA003.ant.amazon.com ([fe80::8e94:8f60:9531:c497]) by
+ EX19D032UWA003.ant.amazon.com ([fe80::8e94:8f60:9531:c497%5]) with mapi id
+ 15.02.2562.029; Tue, 28 Oct 2025 00:36:37 +0000
+From: "Bandi, Ravi Kumar" <ravib@amazon.com>
+To: Bjorn Helgaas <helgaas@kernel.org>, Manivannan Sadhasivam
+	<mani@kernel.org>
+CC: "thippeswamy.havalige@amd.com" <thippeswamy.havalige@amd.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "bhelgaas@google.com"
+	<bhelgaas@google.com>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "kwilczynski@kernel.org"
+	<kwilczynski@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
+	"michal.simek@amd.com" <michal.simek@amd.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
+	<stable@vger.kernel.org>, Stefan Roese <stefan.roese@mailbox.org>, "Musham,
+ Sai Krishna" <sai.krishna.musham@amd.com>, Sean Anderson
+	<sean.anderson@linux.dev>, "Yeleswarapu, Nagaradhesh"
+	<nagaradhesh.yeleswarapu@amd.com>
+Thread-Index: AQHcKoFWBnk90o/gZUOv7QYU+iHxwrTJOZeAgA2kSICAABLnAA==
+Date: Tue, 28 Oct 2025 00:36:36 +0000
+Message-ID: <C863FB65-E6B8-48B8-A2FF-779330D9BE5A@amazon.com>
+References: <20251027232847.GA1488235@bhelgaas>
+In-Reply-To: <20251027232847.GA1488235@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <34DBB2AF1B6DC649B354F3E881A47C26@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-2-47cb85f5259e@meta.com>
-In-Reply-To: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-2-47cb85f5259e@meta.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 27 Oct 2025 17:36:35 -0700
-X-Gm-Features: AWmQ_bkLe3qJG0bwA6CrmauGWKqYZgOx7-sOTZCMpb-2yOZRyd8jDNdsw2rnu0o
-Message-ID: <CAHS8izNB6s97X8srfZQ1upUNOOx0vwj4Aa9gMUZvneoyefqdrw@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 2/4] net: devmem: refactor sock_devmem_dontneed
- for autorelease split
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 2:00=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmail=
-.com> wrote:
->
-> From: Bobby Eshleman <bobbyeshleman@meta.com>
->
-> Refactor sock_devmem_dontneed() in preparation for supporting both
-> autorelease and manual token release modes.
->
-> Split the function into two parts:
-> - sock_devmem_dontneed(): handles input validation, token allocation,
->   and copying from userspace
-> - sock_devmem_dontneed_autorelease(): performs the actual token release
->   via xarray lookup and page pool put
->
-> This separation allows a future commit to add a parallel
-> sock_devmem_dontneed_manual_release() function that uses a different
-> token tracking mechanism (per-niov reference counting) without
-> duplicating the input validation logic.
->
-> The refactoring is purely mechanical with no functional change. Only
-> intended to minimize the noise in subsequent patches.
->
-> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
-> ---
->  net/core/sock.c | 52 ++++++++++++++++++++++++++++++++-------------------=
--
->  1 file changed, 32 insertions(+), 20 deletions(-)
->
-> diff --git a/net/core/sock.c b/net/core/sock.c
-> index a99132cc0965..e7b378753763 100644
-> --- a/net/core/sock.c
-> +++ b/net/core/sock.c
-> @@ -1082,30 +1082,13 @@ static int sock_reserve_memory(struct sock *sk, i=
-nt bytes)
->  #define MAX_DONTNEED_FRAGS 1024
->
->  static noinline_for_stack int
-> -sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int opt=
-len)
-> +sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_token *t=
-okens,
-
-Kind of a misnomer. This helper doesn't seem to autorelease, but
-really release the provided tokens, I guess. I would have
-sock_devmem_dontneed_tokens, but naming is hard :D
-
-Either way, looks correct code move,
-
-Reviewed-by: Mina Almasry <almasrymina@google.com>
+DQoNCj4gT24gT2N0IDI3LCAyMDI1LCBhdCA0OjI44oCvUE0sIEJqb3JuIEhlbGdhYXMgPGhlbGdh
+YXNAa2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPiBDQVVUSU9OOiBUaGlzIGVtYWlsIG9yaWdpbmF0
+ZWQgZnJvbSBvdXRzaWRlIG9mIHRoZSBvcmdhbml6YXRpb24uIERvIG5vdCBjbGljayBsaW5rcyBv
+ciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgY2FuIGNvbmZpcm0gdGhlIHNlbmRlciBhbmQg
+a25vdyB0aGUgY29udGVudCBpcyBzYWZlLg0KPiANCj4gDQo+IA0KPiBbK2NjIFN0ZWZhbiBldCBh
+bF0NCj4gDQo+IE9uIFN1biwgT2N0IDE5LCAyMDI1IGF0IDEyOjM5OjI1UE0gKzA1MzAsIE1hbml2
+YW5uYW4gU2FkaGFzaXZhbSB3cm90ZToNCj4+IE9uIFNhdCwgMjAgU2VwIDIwMjUgMjI6NTI6MzIg
+KzAwMDAsIFJhdmkgS3VtYXIgQmFuZGkgd3JvdGU6DQo+Pj4gVGhlIHBjaWUteGlsaW54LWRtYS1w
+bCBkcml2ZXIgZG9lcyBub3QgZW5hYmxlIElOVHggaW50ZXJydXB0cw0KPj4+IGFmdGVyIGluaXRp
+YWxpemluZyB0aGUgcG9ydCwgcHJldmVudGluZyBJTlR4IGludGVycnVwdHMgZnJvbQ0KPj4+IFBD
+SWUgZW5kcG9pbnRzIGZyb20gZmxvd2luZyB0aHJvdWdoIHRoZSBYaWxpbnggWERNQSByb290IHBv
+cnQNCj4+PiBicmlkZ2UuIFRoaXMgaXNzdWUgYWZmZWN0cyBrZXJuZWwgNi42LjAgYW5kIGxhdGVy
+IHZlcnNpb25zLg0KPj4+IA0KPj4+IFRoaXMgcGF0Y2ggYWxsb3dzIElOVHggaW50ZXJydXB0cyBn
+ZW5lcmF0ZWQgYnkgUENJZSBlbmRwb2ludHMNCj4+PiB0byBmbG93IHRocm91Z2ggdGhlIHJvb3Qg
+cG9ydC4gVGVzdGVkIHRoZSBmaXggb24gYSBib2FyZCB3aXRoDQo+Pj4gdHdvIGVuZHBvaW50cyBn
+ZW5lcmF0aW5nIElOVHggaW50ZXJydXB0cy4gSW50ZXJydXB0cyBhcmUNCj4+PiBwcm9wZXJseSBk
+ZXRlY3RlZCBhbmQgc2VydmljZWQuIFRoZSAvcHJvYy9pbnRlcnJ1cHRzIG91dHB1dA0KPj4+IHNo
+b3dzOg0KPj4+IA0KPj4+IFsuLi5dDQo+PiANCj4+IEFwcGxpZWQsIHRoYW5rcyENCj4+IA0KPj4g
+WzEvMV0gUENJOiB4aWxpbngteGRtYTogRW5hYmxlIElOVHggaW50ZXJydXB0cw0KPj4gICAgICBj
+b21taXQ6IGMwOThjMTNmNDM2NWU2NzUwMDA5YmU0ZDkwZGJhMzZmYTRhMTliNGUNCj4gDQo+IFBy
+ZXR0eSBzdXJlIHdlIGhhdmUgY29uZmlybWF0aW9uIHRoYXQgd2UgZG9uJ3QgbmVlZCBlaXRoZXIg
+dGhpcyBwYXRjaA0KPiBvciBTdGVmYW4ncyBwYXRjaCwgc28gSSByZW1vdmVkIHRoZSBwY2kvY29u
+dHJvbGxlci94aWxpbngtZG1hIGJyYW5jaC4NCj4gDQo+IEl0IHdhcyBhdCAyMDAyNDc4ZTUwMzQg
+KCJQQ0k6IHhpbGlueC14ZG1hOiBFbmFibGUgSU5UeCBpbnRlcnJ1cHRzIikgaW4NCj4gY2FzZSB3
+ZSBuZWVkIHRvIHJlc3VycmVjdCBpdC4NCj4gDQo+IElJVUMsIFN0ZWZhbiBjb25maXJtZWQgdGhh
+dCBoZSBkaWRuJ3QgbmVlZCB0aGlzIHBhdGNoIChSYXZpJ3MpIFsxXSwNCj4gYW5kIHRoYXQgYWZ0
+ZXIgVml2YWRvIGlzIGZpeGVkIHRvIGdlbmVyYXRlIHRoZSBjb3JyZWN0IGludGVycnVwdC1tYXAs
+DQo+IGhpcyBwYXRjaCAoU3RlZmFuJ3MpIHdvbid0IGJlIG5lZWRlZCBlaXRoZXIgWzJdLg0KPiAN
+Cj4gWzFdIGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL3IvMjliYzVlOTItMDRjOS00NzVhLWJhM2Qt
+YTVlYTI2ZjFjOTVhQG1haWxib3gub3JnDQo+IFsyXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9y
+LzljN2U0M2MzLTI0ZTktNGIwOC1hNmNlLTIwMzViNTAyMjZmNEBtYWlsYm94Lm9yZw0KDQpIZWxs
+byBCam9ybiwgYW5kIE1hbmkgZXQgYWwuLA0KDQpUaGFuayB5b3UgZm9yIHRha2luZyB0aGUgdGlt
+ZSB0byByZXZpZXcgdGhlIHBhdGNoIGFuZCBleHBsYWluIHRoZSByZWFzb25pbmcuDQoNClNpbmNl
+cmx5LA0KUmF2aQ0KDQo=
 
