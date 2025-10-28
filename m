@@ -1,155 +1,144 @@
-Return-Path: <linux-kernel+bounces-875278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2F4C1894C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:04:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A2C189AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B02F18977AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:02:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8713BD5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189BF30C619;
-	Wed, 29 Oct 2025 07:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0622830F939;
+	Wed, 29 Oct 2025 07:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j29ntzDM"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RYucon6r"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B668C2ED846
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FA130DEC0;
+	Wed, 29 Oct 2025 07:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721333; cv=none; b=pfI9MsQAQ8gOCXDX+V7zEW8lB94487GC/rpixI3TULGHd27MmmThPoKx+vXkCCOPN1XD/GUg4jJJfVEnaS9V2VEiRQFqHcxC/nVlsJWJF3nIr/sEgllFt8cl4FaH5RmLJ91+7ihKGsIlauhQiQ7NfRpvlKBxCfleMEugHqGMpaY=
+	t=1761722007; cv=none; b=ofN6j9kEYpv/JeQRuzfGaK/PrZ9pCXetKh+V8pHWaqDz25SFiGS5wFGMHYAK4DQEN5kFp6znp1bCy9UIwR/LbwNLhcA36dGsUt/dm71XoApW7lt9n/W2SF6hAaE+ZOBh3a+baLVcj1+whT06wxZqhsNVtX+Vs1QIBnaQs+KqObg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721333; c=relaxed/simple;
-	bh=bOMMbexI6aDIrNtf5vFEnbq7xQbKAIAvzY9lE5k/XRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SI40E7IbcpC6c5xdGczifpJ4H1tgWaxSWz0Hnxf41PF+IOvqPrEUX2JHBExYgB7B+21u9oYfukShXy+9qjpyYxYn/ncqdq6om6mmehupwN/dc6oMONd8OlScx+ndqFR9DPyEp2DTrbceauVYu3/RMWsCqWnoOEK7S/AJTP+mx4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j29ntzDM; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b6d83bf1077so424227066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761721330; x=1762326130; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJozr33q7O27eAQclKBlJRIBGxacAxdnJElnx38SopM=;
-        b=j29ntzDMrMILNznyMnLaFNonyxUQlkI17x0SAIP+O3S3kkRi6A5wz4D8Sh4N6ipdP5
-         bXNJXLez1aVZ9szkbqccEd65LzvkN8QJFNy29rRUEaRL2S1fTqWSrAlNnLNLkx5AG+rk
-         Yh9Xg2JEralnbPrlvuVekssLc4/FLAxJBPNLj8K6NLZqJKv2mvsshXtIC+HRo+Hm5EH6
-         inOLl3GfFrmR/sEI7AD1KVrW29YDyiHfIUtSQkHRoG3gBQlu9w/RSkS3mLAG0SV4P7ol
-         q4O2r8FzF55Z4oFF63Pw/GV2F1psb4ALwL+c6Mqu8zS+Kcmixkt3E349qPGnB8v/pk/T
-         rciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761721330; x=1762326130;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WJozr33q7O27eAQclKBlJRIBGxacAxdnJElnx38SopM=;
-        b=hoq7hPMnV495SgFwWVWi8whcbc3/9O3XuODuvPREJ2zM0UhDdsDhAXoBGoPjFGAd8V
-         SJ4E+ol7Pd5Co4GUbqR0mExsF/8c5LvDYKkKl1Vk/wvTlLUWRsvaoAlZC2nOVzcVq1vq
-         nNLotMW6w71YR5dNq1mcPNSCL5mEWJK0MmxAVKcCO4b7ieEb5DoPaPcoCaRB62pM2BoD
-         EhOFts2QMCJiApXdqz1rYGdaAfkhUwuC46IWN/2wEgAju02v+3Px7t3TfsNBvqmCb9Iz
-         5ptQ+EnvewOdLJSej6WOHSMRhGGkxXkCEaopE3L2UciBsEhLj6T5YhqjkUOanZQJD76k
-         Yjug==
-X-Forwarded-Encrypted: i=1; AJvYcCU9CrbkHd01hNxIZmxKgePvo6BVV7of5waHNjW3VFGmSPwaJ1TGofyePYaUQWv227+lGgomGWAmFZLVqvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXm+kwYbB9szFpecNaKK77vwKdEr43FIB4lkoiYFt4XTTHseg5
-	+RwemdlgvXhuQzhEeCbCPiRepFWPndWBtTf5XcIMx8FolrAG4KdwdcvK
-X-Gm-Gg: ASbGncsJA2Pd4ItH4iPv2DP5pyTG1UyFJYy9auV5YN7EWCPhlpIV1SDxjrA+ZBAef51
-	+e6qb0D/Jv2moLyId7q51h7ATHiFNIUVqyhZ2/Ua8mc10YlaB9zudkpHpN+MdGxTIGrqpI6nq2Z
-	J4Hl7HR3JWwBS661ab9geGTXJpawRJlvrMHNb2d42Hs0HAR/cJ6a0j/7sxuIC0xqqovcTnwW7Ab
-	LdhuWymy6qIhcvOz0s6BbFceiH/oGUMi34pXKzSAmO4mLMPHvAeJfdgyo7bqHQWmGM0nIXXwQXJ
-	HLEonOa+sU0QF/5MdOOCLePwYJISGdv5eLovP1BTkBEasyoWlIp4piqYruCOdbN9hcrp4685sX/
-	/tLqS6W25usBAPRWW5rfP9G+EmhigOZhzTQ3nq+eeyQTxjzyH9p70evJd3GHQLmyB1gL7lxlm1t
-	tz
-X-Google-Smtp-Source: AGHT+IGTI1ZIZClWng4yye7JAJ7wCJzANK4Z/hes/dqfq35lpCLXUzEK0uKqA6TU/xduUI8nwCqpug==
-X-Received: by 2002:a17:907:971b:b0:b0d:ee43:d762 with SMTP id a640c23a62f3a-b703d2cdeadmr175477166b.4.1761721329730;
-        Wed, 29 Oct 2025 00:02:09 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6d853386d8sm1318508566b.18.2025.10.29.00.02.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 00:02:09 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: brauner@kernel.org
-Cc: amir73il@gmail.com,
-	arnd@arndb.de,
-	bpf@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	cyphar@cyphar.com,
-	daan.j.demeyer@gmail.com,
-	edumazet@google.com,
-	hannes@cmpxchg.org,
-	jack@suse.cz,
-	jannh@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	kuba@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	me@yhndnzj.com,
-	mzxreary@0pointer.de,
-	netdev@vger.kernel.org,
-	tglx@linutronix.de,
-	tj@kernel.org,
-	viro@zeniv.linux.org.uk,
-	zbyszek@in.waw.pl
-Subject: Re: [PATCH v3 11/70] ns: add active reference count
-Date: Wed, 29 Oct 2025 10:02:01 +0300
-Message-ID: <20251029070201.2327405-1-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
-References: <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
+	s=arc-20240116; t=1761722007; c=relaxed/simple;
+	bh=ukb8+zQXgoIv/RxchmgxmWgDizmIF+87yEdWqKqnMm0=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=Q+gdH5SToTLfjJvGJqebuiuz5Bt/EYhTRHpUH2F5FTN5xn+LzY7b8uBeiWnU8RoFu/Nl9vJPz830QB7LVUw0VYcdPh881vQUssSDj7xHcIcLPL2aZ36gQ/xQRjVk8V2zgaDWuqOX9hPubdWHZKdVTYQhky3rfi4bemBW/4BXk7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RYucon6r; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761722003;
+	bh=ukb8+zQXgoIv/RxchmgxmWgDizmIF+87yEdWqKqnMm0=;
+	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
+	b=RYucon6rtt1nM9lh6pAygFlWvSeUYhrdQ0qa0QkI4UX63ahJAX52EbW1EI7yhJffh
+	 ozhiAmimg3yoJ/IXSmztPtT1fVr2D5apaKuulfnpM7NRLoRKKYTED67k6nO6jMI85K
+	 ckEDWygEZkbLgPjd9ifPDTtJCoScXt8wD6+wkxRUUf+4zMuUzIUfA0Uc4yGeH7KWxO
+	 iGenvFd9FOmM1li1yiaVolBKruV1iIEALqwNKEzyxHxO/rohdTYuEvWjCibXqOJT5c
+	 lBYcNoNI8N3OHJuPu2xBJPhrdbt7la5XFoMQMubuh6HedQaFoVAy+msZFDsEEfp4Lg
+	 LZyRSSIpoaf6Q==
+Received: from [10.43.10.217] (cust-east-lon-46-193-228-77.cust.wifirst.net [46.193.228.77])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 535F317E013C;
+	Wed, 29 Oct 2025 08:13:19 +0100 (CET)
+Message-ID: <420ba3c838b7fe2a6f2414d09fe1226c581ca09d.camel@collabora.com>
+Subject: Re: [PATCH v2 1/2] media: chips-media: wave5: Fix conditional in
+ start_streaming
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Brandon Brnich <b-brnich@ti.com>, Nas Chung
+ <nas.chung@chipsnmedia.com>,  Jackson Lee <jackson.lee@chipsnmedia.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 	linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Darren Etheridge <detheridge@ti.com>
+In-Reply-To: <20251021204618.2441939-1-b-brnich@ti.com>
+References: <20251021204618.2441939-1-b-brnich@ti.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-ya/lnR4dF2hqC45jLuRZ"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Christian Brauner <brauner@kernel.org>:
-> Currently namespace file handles allow much broader access to namespaces
-> than what is currently possible via (1)-(4). The reason is that
-
-There is no any (4) here.
+Date: Tue, 28 Oct 2025 16:42:12 +0000
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 
 
-> On current kernels a namespace is visible to userspace in the
-> following cases:
-[...]
-> (3) The namespace is a hierarchical namespace type and is the parent of
->     a single or multiple child namespaces.
-[...]
-> To handle this nicely we introduce an active reference count which
-> tracks (1)-(3). This is easy to do as all of these things are already
-[...]
-> + * Inactive -> Active:
-> + *   When walking a hierarchical namespace tree upwards and reopening
-> + *   parent namespaces via NS_GET_PARENT that only exist because they
-> + *   are a parent of an actively used namespace it is possible to
-> + *   necrobump an inactive namespace back to the active state.
+--=-ya/lnR4dF2hqC45jLuRZ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-These quoted parts contradict to each other. You say "we introduce an
-active reference count which tracks (1)-(3)", and (3) says "The namespace
-is a hierarchical namespace type and is the parent of a single or multiple
-child namespaces". I. e. active reference will count such parents. But then
-in code you say:
+Le mardi 21 octobre 2025 =C3=A0 15:46 -0500, Brandon Brnich a =C3=A9crit=C2=
+=A0:
+> When STREAMON(CAP) is called after STREAMON(OUT), the driver was failing =
+to
+> switch states from VPU_INST_STATE_OPEN to VPU_INST_STATE_INIT_SEQ and
+> VPU_INST_STATE_PIC_RUN because the capture queue streaming boolean had no=
+t
+> yet been set to true. This led to a hang in the encoder since the state
+> was stuck in VPU_INST_STATE_OPEN. During the second call to
+> start_streaming, the sequence initialization and frame buffer allocation
+> should occur.
+>=20
+> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
 
-> + * Inactive -> Active:
-> + *   When walking a hierarchical namespace tree upwards and reopening
-> + *   parent namespaces via NS_GET_PARENT that only exist because they
-> + *   are a parent of an actively used namespace it is possible to
-> + *   necrobump an inactive namespace back to the active state.
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-I. e. now you say that such parents are inactive and can become active.
+> ---
+> =C2=A0drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 3 ++-
+> =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> index 1978551a28fa..0a2eab372913 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> @@ -1367,7 +1367,8 @@ static int wave5_vpu_enc_start_streaming(struct
+> vb2_queue *q, unsigned int count
+> =C2=A0		if (ret)
+> =C2=A0			goto return_buffers;
+> =C2=A0	}
+> -	if (inst->state =3D=3D VPU_INST_STATE_OPEN && m2m_ctx-
+> >cap_q_ctx.q.streaming) {
+> +	if (inst->state =3D=3D VPU_INST_STATE_OPEN && (m2m_ctx-
+> >cap_q_ctx.q.streaming ||
+> +		q->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)) {
+> =C2=A0		ret =3D initialize_sequence(inst);
+> =C2=A0		if (ret) {
+> =C2=A0			dev_warn(inst->dev->dev, "Sequence not found: %d\n",
+> ret);
 
+--=-ya/lnR4dF2hqC45jLuRZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQDyVwAKCRDZQZRRKWBy
+9Hi0AQDWWJIcFjRcJHYOVGM/K10PrfhqA3vCjVUEU66BEELihQD+Jv1PZSvragkO
+BhWOf5ZvgiHAtsE4im22SJg17TC+oQc=
+=6FGj
+-----END PGP SIGNATURE-----
 
--- 
-Askar Safin
+--=-ya/lnR4dF2hqC45jLuRZ--
 
