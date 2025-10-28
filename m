@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-874808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA98C17249
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:11:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2A3C1725E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D1B404118
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:11:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9042B4F67FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5983563E5;
-	Tue, 28 Oct 2025 22:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7F7357735;
+	Tue, 28 Oct 2025 22:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Rx5jrApX"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gSxSKruF"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 532C23557FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CC3355811;
 	Tue, 28 Oct 2025 22:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761689428; cv=none; b=ie3fQtzXGpTBLqoaknq9M5R9JJn2hXzcvDVbTDvItCZPYjgdH1Ih9Fi9rloJNN2hYdhfvQAcE5tc5t6lR/q9qOnkdl/nomW1SCrGWsf3LlRSH7HHSXScbLWIg3r0M9tykQeELjq4WKlIlOBu7k9mpN0sGSfCCcRsf76Hwoh95/4=
+	t=1761689433; cv=none; b=qJqRWABvf44JjdyE9wCdxbx4v33xXwnAupUPXiCJp4rXl4BgNpSgJYhVx26SCIqvnjv6qThOG3fvWQqk7IKcYSH3wM6odu77fr/JF5sUndIFh+69HR7AAGZaGEatKsh7ICVx1G8nRfOnR+oRYpGuVEIoOjYxmLZi2Oa+WNGEQSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761689428; c=relaxed/simple;
-	bh=+p4cARr4R8Bde1SloqE3PxCK7sYvxHLFI+eewvzwEEY=;
+	s=arc-20240116; t=1761689433; c=relaxed/simple;
+	bh=BGJrmBz+LlEN/JX0JNDCunWcL198n52vvjEnUgzCzao=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q0FD5zhTdxe72ZwHtU0XruR/k5HEqjxVpeP63xrPulUzhNHovZDuXxL8Y626iXz4AZBjrY8cFviZZMnZkBBaK/ew6ff5wKRFKbNvTX6N5TYcfErWLWJtCmev5uKFbxVkVlrIi+bj/149i5GSo3n4BkiqDlLfRwr0J+jP9zj1a8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Rx5jrApX; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version; b=ZdL8CtSC3NteNLNEIemq6zamE0UwSirnA26mUHMULJtT0UyizAkGC39+8im17t8TOU7sz4k9/cPm8TpmTo9hJwqZZJCugAdwTLAD8iDbvJEXx0555HtnoW+RdEMDCtT9BNxgkalvSA9YhFgF4TivMfMO7lZrUAdd+PxhTHR249k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gSxSKruF; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3ACEC40B3D
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net E59AF40B45
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761689426; bh=BAsEGL3KcKrI+xGyU+nw8dEQJHYyVk8KT7GgiOuSFN4=;
+	t=1761689427; bh=R4IKlDLI/49ZAIPAg6XecBoRQ7zpdNfvZA7OZO2keFI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Rx5jrApXCWKzkX1MAbEs4VdskN4K7Ov604Yq5fvXuciaUcEZtWBqvAsM+/x36ge74
-	 dVPmbyAm11PRjGJGmwoH5BmcI6WK0h/hVNrSw9xMLiX2tJq3e0j2WiORvhEulld+J+
-	 olzZrBjIDazSMips92jcU8J8+EjogxDWq3PYp8LQT9g2J1/SupIE8DgZgoJS1TFgWP
-	 bgWRbgs5qLz/xlYeXmfDXBmreoQhfIaI1lMAnYSApTWGFP+rGcQUVRZh7WK+uTaI0X
-	 oTLNYZSYcJJPC5bX/tewkPqCxqzMqOTFS4ncp2Jb5pXlazdIDsdZ6W0j7U4v3wWRgx
-	 vM+gTj/4yVPew==
+	b=gSxSKruFe5+cYOFwKqatb8u5uASypNczdc0YGqAVe5cwPeQvCb2+8JzBShB3WmUe3
+	 E8HLQEBJ9/NHYmWR3b5YtIopbo44S33SCd17uk0YELjkHRNizxV1H7VqtIMf4y6KSb
+	 NzBeb1FAinplH318JNbKxcSfvnNAGVIAG3jEKdThttMcAvScHyo277lUJxmejphRey
+	 EQz/yzhQeaRFLcA4k+/lS+nDUMu2GVHAfLuG5v0KmshUtJUJS+E06pp2hoKhvIU9ty
+	 8RZxRPm7mo0OP07CTA2mTsxtViemOSG//kyI1GbqtCnheADZoeOp57dq1FUTXuIp1H
+	 bz8kZFunvW97w==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id 3ACEC40B3D;
+	by ms.lwn.net (Postfix) with ESMTPA id E59AF40B45;
 	Tue, 28 Oct 2025 22:10:26 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Jani Nikula <jani.nikula@linux.intel.com>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH v4 3/7] docs: move scripts/documentation-file-ref-check to tools/docs
-Date: Tue, 28 Oct 2025 16:10:11 -0600
-Message-ID: <20251028221017.5785-4-corbet@lwn.net>
+Subject: [PATCH v4 4/7] docs: move get_abi.py to tools/docs
+Date: Tue, 28 Oct 2025 16:10:12 -0600
+Message-ID: <20251028221017.5785-5-corbet@lwn.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251028221017.5785-1-corbet@lwn.net>
 References: <20251028221017.5785-1-corbet@lwn.net>
@@ -66,90 +66,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add this script to the growing collection of documentation tools.
+Move this tool out of scripts/ to join the other documentation tools; fix
+up a couple of erroneous references in the process.
+
+It's worth noting that this script will fail badly unless one has a
+PYTHONPATH referencing scripts/lib/abi.
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Acked-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/Makefile                               | 4 ++--
- MAINTAINERS                                          | 2 --
- {scripts => tools/docs}/documentation-file-ref-check | 2 +-
- tools/docs/sphinx-pre-install                        | 2 +-
- 4 files changed, 4 insertions(+), 6 deletions(-)
- rename {scripts => tools/docs}/documentation-file-ref-check (99%)
+ Documentation/Kconfig              | 2 +-
+ Documentation/Makefile             | 2 +-
+ Documentation/sphinx/kernel_abi.py | 2 +-
+ MAINTAINERS                        | 1 -
+ {scripts => tools/docs}/get_abi.py | 0
+ 5 files changed, 3 insertions(+), 4 deletions(-)
+ rename {scripts => tools/docs}/get_abi.py (100%)
 
+diff --git a/Documentation/Kconfig b/Documentation/Kconfig
+index 3a0e7ac0c4e3..8b6c4b84b218 100644
+--- a/Documentation/Kconfig
++++ b/Documentation/Kconfig
+@@ -19,7 +19,7 @@ config WARN_ABI_ERRORS
+ 	  described at Documentation/ABI/README. Yet, as they're manually
+ 	  written, it would be possible that some of those files would
+ 	  have errors that would break them for being parsed by
+-	  scripts/get_abi.pl. Add a check to verify them.
++	  tools/docs/get_abi.py. Add a check to verify them.
+ 
+ 	  If unsure, select 'N'.
+ 
 diff --git a/Documentation/Makefile b/Documentation/Makefile
-index 65d184eab739..1476aa1701ce 100644
+index 1476aa1701ce..734ec9c9a62c 100644
 --- a/Documentation/Makefile
 +++ b/Documentation/Makefile
-@@ -8,7 +8,7 @@ subdir- := devicetree/bindings
- ifneq ($(MAKECMDGOALS),cleandocs)
- # Check for broken documentation file references
- ifeq ($(CONFIG_WARN_MISSING_DOCUMENTS),y)
--$(shell $(srctree)/scripts/documentation-file-ref-check --warn)
-+$(shell $(srctree)/tools/docs/documentation-file-ref-check --warn)
- endif
+@@ -13,7 +13,7 @@ endif
  
  # Check for broken ABI files
-@@ -78,7 +78,7 @@ htmldocs-redirects: $(srctree)/Documentation/.renames.txt
- 	@tools/docs/gen-redirects.py --output $(BUILDDIR) < $<
+ ifeq ($(CONFIG_WARN_ABI_ERRORS),y)
+-$(shell $(srctree)/scripts/get_abi.py --dir $(srctree)/Documentation/ABI validate)
++$(shell $(srctree)/tools/docs/get_abi.py --dir $(srctree)/Documentation/ABI validate)
+ endif
+ endif
  
- refcheckdocs:
--	$(Q)cd $(srctree);scripts/documentation-file-ref-check
-+	$(Q)cd $(srctree); tools/docs/documentation-file-ref-check
+diff --git a/Documentation/sphinx/kernel_abi.py b/Documentation/sphinx/kernel_abi.py
+index 4c4375201b9e..32e39fb8bc3b 100644
+--- a/Documentation/sphinx/kernel_abi.py
++++ b/Documentation/sphinx/kernel_abi.py
+@@ -14,7 +14,7 @@
+     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
  
- cleandocs:
- 	$(Q)rm -rf $(BUILDDIR)
+     The ``kernel-abi`` (:py:class:`KernelCmd`) directive calls the
+-    scripts/get_abi.py script to parse the Kernel ABI files.
++    AbiParser class to parse the Kernel ABI files.
+ 
+     Overview of directive's argument and options.
+ 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index cd187b9f1dc2..fc1da52433b6 100644
+index fc1da52433b6..5c632cd3902c 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
 @@ -7411,7 +7411,6 @@ S:	Maintained
  P:	Documentation/doc-guide/maintainer-profile.rst
  T:	git git://git.lwn.net/linux.git docs-next
  F:	Documentation/
--F:	scripts/documentation-file-ref-check
- F:	scripts/get_abi.py
+-F:	scripts/get_abi.py
  F:	scripts/kernel-doc*
  F:	scripts/lib/abi/*
-@@ -7451,7 +7450,6 @@ M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-doc@vger.kernel.org
- S:	Maintained
- F:	Documentation/sphinx/parse-headers.pl
--F:	scripts/documentation-file-ref-check
- F:	tools/docs/sphinx-pre-install
- 
- DOCUMENTATION/ITALIAN
-diff --git a/scripts/documentation-file-ref-check b/tools/docs/documentation-file-ref-check
-similarity index 99%
-rename from scripts/documentation-file-ref-check
-rename to tools/docs/documentation-file-ref-check
-index 408b1dbe7884..0cad42f6943b 100755
---- a/scripts/documentation-file-ref-check
-+++ b/tools/docs/documentation-file-ref-check
-@@ -17,7 +17,7 @@ my %false_positives = (
- );
- 
- my $scriptname = $0;
--$scriptname =~ s,.*/([^/]+/),$1,;
-+$scriptname =~ s,tools/docs/([^/]+/),$1,;
- 
- # Parse arguments
- my $help = 0;
-diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
-index 698989584b6a..647e1f60357f 100755
---- a/tools/docs/sphinx-pre-install
-+++ b/tools/docs/sphinx-pre-install
-@@ -313,7 +313,7 @@ class MissingCheckers(AncillaryMethods):
-         Right now, we still need Perl for doc build, as it is required
-         by some tools called at docs or kernel build time, like:
- 
--            scripts/documentation-file-ref-check
-+            tools/docs/documentation-file-ref-check
- 
-         Also, checkpatch is on Perl.
-         """
+ F:	scripts/lib/kdoc/*
+diff --git a/scripts/get_abi.py b/tools/docs/get_abi.py
+similarity index 100%
+rename from scripts/get_abi.py
+rename to tools/docs/get_abi.py
 -- 
 2.51.0
 
