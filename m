@@ -1,203 +1,139 @@
-Return-Path: <linux-kernel+bounces-873178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC37CC1355C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:41:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11CCC13496
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932001B20FA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:39:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80CF14F8D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDA52C375A;
-	Tue, 28 Oct 2025 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955681EA65;
+	Tue, 28 Oct 2025 07:28:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="T3AJvbia"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+mWph9L"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6635F2C0293;
-	Tue, 28 Oct 2025 07:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974B82C027C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761636547; cv=none; b=N8KlCFENGu4rLkj72d5EOjBSRalYG7vkZUUTMNdlUHCN2MsmFKQXjoNgYn5qExEGE54P9cC+9dSC+myVH+c9FBtUEYwRDhxnLBpBCvWkTMPhQHRd+V7mfBzififI7Zyg21zkdaLOhUlvxi+iZsFopuYnUtrH3PZbinWFjo2JePQ=
+	t=1761636494; cv=none; b=VTQoXXv6LEGg2YxSOcjlgMNfl3+pg2N4zzFN9gEBqYt891sCUjMyywGNe1HC96+vC0my7KPOrbgPw0JzpHGIMj4kQsQkrNRhfULOhAW4DVnYBtbzC1iaU3DHxQ6s8lq0CTWA3mPHR1N+pwH0VY1+S3doiR+RHcJOqdtNipo/FSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761636547; c=relaxed/simple;
-	bh=hvfA4Ah59qm/v8O8K2KW1GDfsB5vN1xxLwWQ74787r0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FjKGxIu10HrVuLO23UDR5uxzvLArAik4rb+uT/AxshfdfUXZBnvL6K5bElSCSv46M8o3TG28iXHNtVAxFo/O06fNbhJBX8/8GkvG+xvXymcWZ/MxAwxv7FByFpCjwUt8bQpQZmua/+NkfQD2u6TChrQEu3j1modJQXRYyqQcebw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=T3AJvbia; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5A48616CD;
-	Tue, 28 Oct 2025 08:27:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761636436;
-	bh=hvfA4Ah59qm/v8O8K2KW1GDfsB5vN1xxLwWQ74787r0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=T3AJvbiaG5sBLaw9ULddFdbsD8MjN7OolTKZw0pp5A7rISY4MjCWdD/Kdh5oowpt2
-	 xwWg50+PGWixPy1VAqA8N9wqp2Cj8P3sOVYQsN8tDhUo5XOz+uwgIedW+Uewm9+Ws2
-	 HTONtSHFba/G2h73g7MVlPLKngqkFxuDUxaXx9m0=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Tue, 28 Oct 2025 12:57:24 +0530
-Subject: [PATCH 13/13] media: i2c: ov5647: Add V4L2_CID_LINK_FREQUENCY
- control
+	s=arc-20240116; t=1761636494; c=relaxed/simple;
+	bh=5jvvcHxUgGRqbIUWaLiz/WJRrwTzEZ0ZYpj0wMUTbX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OwwvwLffcAhauKbp9w8sPCxkC9ZqUTslE/4LJRyDP0v0O2fUIj/CMqxx9H+64IRfp55HrcIHJxBsGjvcrGvc0lFii/4Vfrnssi12Ei0KJH4b+5Oc/w6seRcWlgQJ1eS5RNMwhzTdM4jbJnmLsqdYHp7NOpdXONC0kRV26UIpihc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+mWph9L; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-269639879c3so48475035ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:28:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761636492; x=1762241292; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nktWl2QE6KyxknjQKQbtrA/rvCmzEXqRlRqq7ZLB0co=;
+        b=k+mWph9LAkWqsZBmexAZ96zKggPU0iINXK80GFSGT65DZ6KoFVQtlIA6JfVvModYxV
+         mqpjTWIOj1XLh+L3FHcOwwmytBsawFyyijRm4WdOKQxp1GdM8SB5PswxPkyPhVsHdQLC
+         Va++92N3s9wJX8UTSl9l+iDbzbeCiznad3oW1o3/MS7hC8fKSC3CMEcihtEyhBuGQCt4
+         nEEYC3FE0J9PBJgZgEUMn6xiOftO6CoAnHX6eYCiXeDTEHj7C5yGxpI/IK2hxD7/aC0s
+         qWLZ+1yVjz0W7AN2pxcXKqbExNWDoz3Wd84PBookNjcSC/HVxCq1H7Zi1LdE5aApJwWf
+         qvYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761636492; x=1762241292;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nktWl2QE6KyxknjQKQbtrA/rvCmzEXqRlRqq7ZLB0co=;
+        b=MqbfrRtIjN0JfcQEOrjtF08X2wCbbxqAVT3rILYlIu7cjj7RLiWpCI6f5uhfHFATdN
+         p9JqlZbO3ZM2Qe5cY3SmhuRkCdOqD+NdCMv50tCVrs1TSSYVcEm/tmhWHcLW9EfZTX4D
+         UkbOcVEQYS55BGXuzkJ0hyRGIqvk5b+Bh4eGgdkYCueXEDVNz5LFzDk1+JRxVGV8r6yh
+         Du1J/8DpoXDbmnboYaZZjwo048Uh3jSCpxtrap4KsD2Doad6geMVAoUCel+S9iPC85QL
+         sCGRTxmCUHs+95CVadBce7dr3F3fjGGc8g/6Xae9+H8t0EcmKE5NfzuqSLM9ccD7l2uM
+         Padg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4OkkadPgmzAq8R6cxNlXJnB/uLB8Gt2yfxKPIyd40YOlP9kh7a3xMyYc/DdudMZtUqOf0akDywoccsKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd2WG75PktbKiB76s2iU2XXyw5+eWVXvdZBrGYd6Zsji3MD4e5
+	G1qItH6ZxYEMjOV8wUQxwh4qL7wlSyolV0nK35bkeliHOiQN362vcCX3
+X-Gm-Gg: ASbGncvciQxxfYb+j4fyCCSEWGMqv7TaMV9mkOu2UMDDmF8S9aqmRqmwTbjcy5pMjAN
+	pjYF/bLmkcycwMZ9QHDZbZ7c61ELJQgvt/C47YJDxplT62VfbV+PHhwjSSxunO1/Y//TxLETLPj
+	LDC4lIjD0CTTaSk+DmGEyWlbn+dyQM/AtNzhoecoTIYcWtP+Vxr4Yik61BinrAWehUA+6SlhIDO
+	ipRWJWdl0T2ni7AvymAFw65Fz9V33JoQ4pbYd2AABeSd8mD6ZbIoE7KAfnaBMjSf16AKJ17BpBo
+	07K3HCTi6Fcieh/Diwe5evjScU2sPBclRcp3/yTrYqniYQW6g/w2cc58h059mkWNV7v3QQssF1O
+	ZPtKZRrE8Xusk05DlMQDUg62mwMCELHm+9GddLKhOj1vl+IAH1IIBHhZ2tOio+ws4KaiOF8O3FT
+	wAxwlqAqZV3lwXxw==
+X-Google-Smtp-Source: AGHT+IEKTiLgH0R/bRPXbcPiopPoUMdKq0Is+SUv85mcT1iNGvD0tY2fXA7nq6m7Ri3Uue3XCkC79Q==
+X-Received: by 2002:a17:902:dac2:b0:27e:ed0d:f4ef with SMTP id d9443c01a7336-294cb51ac17mr34713495ad.41.1761636491819;
+        Tue, 28 Oct 2025 00:28:11 -0700 (PDT)
+Received: from localhost.localdomain ([240f:34:212d:1:7224:bdaa:f2c:3fc8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b7128e41c01sm9400361a12.23.2025.10.28.00.28.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 00:28:11 -0700 (PDT)
+From: Akinobu Mita <akinobu.mita@gmail.com>
+To: akinobu.mita@gmail.com
+Cc: linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	axelrasmussen@google.com,
+	yuanchu@google.com,
+	weixugc@google.com,
+	hannes@cmpxchg.org,
+	david@redhat.com,
+	mhocko@kernel.org,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	lorenzo.stoakes@oracle.com
+Subject: Re: oom-killer not invoked on systems with multiple memory-tiers
+Date: Tue, 28 Oct 2025 16:27:36 +0900
+Message-ID: <20251028072736.10455-1-akinobu.mita@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251022135735.246203-1-akinobu.mita@gmail.com>
+References: <20251022135735.246203-1-akinobu.mita@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-b4-rpi-ov5647-v1-13-098413454f5e@ideasonboard.com>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Jacopo Mondi <jacopo@jmondi.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
- Kieran Bingham <kieran.bingham@ideasonboard.com>, 
- David Plowman <david.plowman@raspberrypi.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
- "Ivan T. Ivanov" <iivanov@suse.de>, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3673;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=52a32CqFPvBiwD5Owyt1AoUV8v1FmZr4CihFE6NrvFo=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpAHB2YkPCA9SBw0Ha5S8iuboMj/AaSQmas5Bgz
- IeQMHLWctKJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQBwdgAKCRBD3pH5JJpx
- Re8qEADLonQ4dc68GpOKoazvhDQtjkLug5grwuIg0qbcey+qYhdqqHTSSVUqJF/8DeywQQ8Q6+Y
- KYnJZVe6WjO61hfRhPRWfO6lhHUSzdkGqyIBPFDNht4V5i+QApuuW7uDy1bQlr8PRaahi0W17O6
- Mg8Y/8qpoARS3YFhPhXhR2/zaXk/Et+RZO0JxUp57H3/RSLGStYCVie76jhBKVScfu/el0ZJdBv
- eJzevAYX2Agod7IsrpT6YuYIECorSgs5jTULD6bF/UZOJ5ydsEBlp5PaM5NgZRwt7I5fcJZtjXb
- 7Zt0JxZkoBoBaomHUhFQRlbo5iEP3fOAhlYh7YomO0MRisFR2E2q1d1QFKbHT1A8gRlIMnDjko+
- EgtCj24+XfBrjAE+DKBRAjp3yBEIz6RdaGHigbDfhIGqE+RHSSaHQzk01SlJd6tH0LHQHZvUsVZ
- uwOGPZyzDlLw2HtE6Hd4+a5ZmGlrUQCGjSwLR575TOZDomPBESwP0cmg7RukPJ9DuLZl21JQKYa
- sfMh8yWyylP/+6T8nt9lOWDbw1b5cx+pcmoPCu7+WrWKgjJZNeZpdMcPaTTA9g2RodcHBWcaQ2V
- dkFt7R1LGJHQ3yQP5bvhQ+OHukhLA7v2uG7GH6N/Q/+4O0NYRVYb3akqEckMpAIY3nK4e/NknFa
- lBAeBiQHMxHDcUw==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+Content-Transfer-Encoding: 8bit
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+lru_gen_age_node() checks the reclaimability of a node using
+lruvec_is_reclaimable() when min_ttl_ms is non-zero, but if min_ttl_ms
+is zero, it unconditionally determines that the node is reclaimable.
 
-The link frequency can vary between modes, so add it as a
-control.
+I think we should still call lruvec_is_reclaimable() to check
+reclaimability even if min_ttl_ms is zero.
+Otherwise, we'll miss the opportunity to trigger an OOM kill in
+lru_gen_age_node(), which will cause the problem I reported.
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+https://lore.kernel.org/linux-mm/20251022135735.246203-1-akinobu.mita@gmail.com/
+
+The attached patch made the changes mentioned above and worked around
+the problem.
+
 ---
- drivers/media/i2c/ov5647.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+ mm/vmscan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-index be0b96c4372ae0c6d8fc57280b195d6069dd7019..dea978305c3c868819780f7f631b225f4c1e7756 100644
---- a/drivers/media/i2c/ov5647.c
-+++ b/drivers/media/i2c/ov5647.c
-@@ -97,6 +97,13 @@ static const char * const ov5647_supply_names[] = {
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c922bad2b8fd..e1a88ed4e0b0 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -4148,7 +4148,7 @@ static void lru_gen_age_node(struct pglist_data *pgdat, struct scan_control *sc)
+ {
+ 	struct mem_cgroup *memcg;
+ 	unsigned long min_ttl = READ_ONCE(lru_gen_min_ttl);
+-	bool reclaimable = !min_ttl;
++	bool reclaimable = false;
  
- #define OV5647_NUM_SUPPLIES ARRAY_SIZE(ov5647_supply_names)
+ 	VM_WARN_ON_ONCE(!current_is_kswapd());
  
-+#define FREQ_INDEX_FULL		0
-+#define FREQ_INDEX_VGA		1
-+static const s64 ov5647_link_freqs[] = {
-+	[FREQ_INDEX_FULL]	= 218500000,
-+	[FREQ_INDEX_VGA]	= 208333000,
-+};
-+
- struct regval_list {
- 	u16 addr;
- 	u8 data;
-@@ -106,6 +113,7 @@ struct ov5647_mode {
- 	struct v4l2_mbus_framefmt	format;
- 	struct v4l2_rect		crop;
- 	u64				pixel_rate;
-+	unsigned int			link_freq_index;
- 	int				hts;
- 	int				vts;
- 	const struct regval_list	*reg_list;
-@@ -128,6 +136,7 @@ struct ov5647 {
- 	struct v4l2_ctrl		*exposure;
- 	struct v4l2_ctrl		*hflip;
- 	struct v4l2_ctrl		*vflip;
-+	struct v4l2_ctrl		*link_freq;
- };
- 
- static inline struct ov5647 *to_sensor(struct v4l2_subdev *sd)
-@@ -376,6 +385,7 @@ static const struct ov5647_mode ov5647_modes[] = {
- 			.height		= 1944
- 		},
- 		.pixel_rate	= 87500000,
-+		.link_freq_index = FREQ_INDEX_FULL,
- 		.hts		= 2844,
- 		.vts		= 0x7b0,
- 		.reg_list	= ov5647_2592x1944_10bpp,
-@@ -397,6 +407,7 @@ static const struct ov5647_mode ov5647_modes[] = {
- 			.height		= 1080,
- 		},
- 		.pixel_rate	= 87500000,
-+		.link_freq_index = FREQ_INDEX_FULL,
- 		.hts		= 2416,
- 		.vts		= 0x450,
- 		.reg_list	= ov5647_1080p30_10bpp,
-@@ -418,6 +429,7 @@ static const struct ov5647_mode ov5647_modes[] = {
- 			.height		= 1944,
- 		},
- 		.pixel_rate	= 87500000,
-+		.link_freq_index = FREQ_INDEX_FULL,
- 		.hts		= 1896,
- 		.vts		= 0x59b,
- 		.reg_list	= ov5647_2x2binned_10bpp,
-@@ -439,6 +451,7 @@ static const struct ov5647_mode ov5647_modes[] = {
- 			.height		= 1920,
- 		},
- 		.pixel_rate	= 55000000,
-+		.link_freq_index = FREQ_INDEX_VGA,
- 		.hts		= 1852,
- 		.vts		= 0x1f8,
- 		.reg_list	= ov5647_640x480_10bpp,
-@@ -925,6 +938,8 @@ static int ov5647_set_pad_fmt(struct v4l2_subdev *sd,
- 					 sensor->exposure->minimum,
- 					 exposure_max, sensor->exposure->step,
- 					 exposure_def);
-+
-+		__v4l2_ctrl_s_ctrl(sensor->link_freq, mode->link_freq_index);
- 	}
- 	*fmt = mode->format;
- 	/* The code we pass back must reflect the current h/vflips. */
-@@ -1230,7 +1245,7 @@ static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
- 	int hblank, exposure_max, exposure_def;
- 	struct v4l2_fwnode_device_properties props;
- 
--	v4l2_ctrl_handler_init(&sensor->ctrls, 9);
-+	v4l2_ctrl_handler_init(&sensor->ctrls, 10);
- 
- 	v4l2_ctrl_new_std(&sensor->ctrls, &ov5647_ctrl_ops,
- 			  V4L2_CID_AUTOGAIN, 0, 1, 1, 0);
-@@ -1290,6 +1305,14 @@ static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
- 	if (sensor->vflip)
- 		sensor->vflip->flags |= V4L2_CTRL_FLAG_MODIFY_LAYOUT;
- 
-+	sensor->link_freq =
-+		v4l2_ctrl_new_int_menu(&sensor->ctrls, &ov5647_ctrl_ops,
-+				       V4L2_CID_LINK_FREQ,
-+				       ARRAY_SIZE(ov5647_link_freqs) - 1, 0,
-+				       ov5647_link_freqs);
-+	if (sensor->link_freq)
-+		sensor->link_freq->flags |= V4L2_CTRL_FLAG_READ_ONLY;
-+
- 	v4l2_fwnode_device_parse(dev, &props);
- 
- 	v4l2_ctrl_new_fwnode_properties(&sensor->ctrls, &ov5647_ctrl_ops,
-
 -- 
-2.51.0
+2.43.0
 
 
