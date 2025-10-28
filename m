@@ -1,152 +1,124 @@
-Return-Path: <linux-kernel+bounces-874833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E89C17304
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:27:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6381C17423
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89F4C3A38CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D2854F6A16
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B63E63557FC;
-	Tue, 28 Oct 2025 22:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3370E36A60B;
+	Tue, 28 Oct 2025 22:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="So+JhCCZ"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rg5BM50R"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652162DE6EF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88259369997
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761690414; cv=none; b=OMtKcJjxwiqzgLDIVuZHgp3qyPEd0VbkUPwGuleyltcoSzmj0KCjJCWSn3rRkIGeH0/loje1UnhSPDZ2rPDYrPx2WE1ieYytpW0rubqlL2D54Dq2jj7HnHXFzuhigCJFriNynSb/wN36Raj24N0KGCD0dFEP15uUO3mky9MhHGQ=
+	t=1761692335; cv=none; b=lTaRJ5M0fsr5mNQCk7gYxkH7gnJk/tUxnIksw7bwYYUvdzNMpsJdIS2HL2p0zYkmFSh6HtRbfbXNWz/MelKNvxSXqOwDlQRnYCJv3FxVzEMS8EBlusbH2kb6o2hkjXgTFgKKQwBWeLBAYfpTkBB3Lo/N5/1fa3LIPNN8ZkQVL08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761690414; c=relaxed/simple;
-	bh=a6pAU7QlGKPQhiPVwBdKOoKYdXk/wLGXo3K7rfw5OnE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EJfJ3AXa1JHVKk6kGh/v+/6k27OINfyAYLRZ6IW42Q4dUm9MZa0uRq9W9Hf+hYQxZ5wAu1krjNyteOljcbJfasA0aDtJea2jwm+KQWrCe0y+Oqmso1lW4c186GwDIcZE0tWp+0emBVozg8Sy/ICA6Ea/i9hG5l3uBewJU58VYlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=So+JhCCZ; arc=none smtp.client-ip=209.85.222.51
+	s=arc-20240116; t=1761692335; c=relaxed/simple;
+	bh=NmfTEh2w90Vx1EUJhCoQ1DnPlLs96QxCb3TH8vg/crY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Xlj+IvCKJxBRzYAVMdrcl3WaZnvFr9IQFtb9/974WvSn7rlP2t9evOGdEHwLSiZlt+mN0YZUmAl7387sZbkOz3nOx/a81y4MjgoU64NWVQxUTu19zLihfpnVaTWU+5JrZSXjglUxorCWDMyFzofs5Urp4rpmzcj4HU+h34FaU7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rg5BM50R; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-934bbe85220so1896720241.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:52 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-26983c4d708so49624595ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:58:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761690411; x=1762295211; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a6pAU7QlGKPQhiPVwBdKOoKYdXk/wLGXo3K7rfw5OnE=;
-        b=So+JhCCZLdIJuk4b3ZOkPB7VqUML5XgowzjhZGP5es5v3QpHlTsJu/qluUGLS+Bwbd
-         bzn4Y6FXHxN9nyp1Ll89vKXL0suv2ZYnI+5nrGaAzuMoPFPcrcI9Nz3W8xhxcPTYvh4S
-         uE2ia/IfNu86D938donhdSMn73EdvSoNugCg0yrg1sQQl1wHzyHZftkHyUaCpzpaRoDQ
-         bsvpQqSBMP8zk7j5h0b+mhAmyrXTBjfDkB2kORbSkPt0Ovz/8D6AktICYSup/GxnVMiE
-         Op7KIS2FhegIKXxv13VQGYu1JlGl4Gsb5YjlEZEOautnmW6EJXz3MYo1xJ03q56EpeQz
-         LCQg==
+        d=google.com; s=20230601; t=1761692332; x=1762297132; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bafyIACgjKK14wqI7+UpK/XBf9Tl8hwNLLXvm7vBUiQ=;
+        b=rg5BM50RbDfzDUoax+0Rg/P1gDZJHGNwZo+CuD7g5t4F0GRiwLg66Hy4/obTCnfM/8
+         p2i1WBzwE5OR1dfm9erzIPV4PNgQzq0Z9+/OYVJQDGnYZYCiLOfqArpB4iTke4edxBOi
+         /GWhXs8sa5RITns1Pu4+qo+eUpC3LKSKKHlJnFigfjyOqW4oYELByesmYjOzfYLQwYMp
+         D0YyQO//FfiiHS52u/zh+LmI8o1Dnjg+jqUGYRGgG3olOFyGc/ONGVPLm2/No/FAzdqK
+         Zyuxrnp4/oxOQ7E4Qb1tQXUWFdyBVK57loc9EY/y01FOGGRAfWQ76UFE+Yuef6xEg2dJ
+         Op1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761690411; x=1762295211;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a6pAU7QlGKPQhiPVwBdKOoKYdXk/wLGXo3K7rfw5OnE=;
-        b=rkjffS503GpO4rRU3vab6W32Wj7xrv9NIwL93+OyLKKsLW6TSZrrK4ZN4FlLUZSrNN
-         cvBpdLrHnhwpY2uddxIwUO86ziAlIp2diFPLAuuX1vS5mLKqGnvqWre0iZvxYqKG80eW
-         3oValrZKf13c+mx9m3S1eWaZTaIYgT24VdTeQNhBgCHKnJc503BfpXXt1orLy/Eq3DbA
-         30ZFu1FeYMp8UEyQv1N07hsZH7mGepMM8g/XjUfb38YVC7QhZN84sl6tf6XUS0QiU06W
-         qPEvirQjAh09z2XUoU60VeKY1c46aKM5uUgjd/bu2vXN/RWYsmYcHXA0FgUv0InoGSGA
-         cHSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZcQbWur61IpsAbNg/vl6xk0rWwKSNQNU9pr4OJfeDPmOgey2T3R6zrAlVB5iXBzN/UdcJbkBJQcmmu9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqnJT7CrubOPK+uh2ZN5/ahjJXg/HRWTUalmx84POfc98DiO5C
-	E6UMqJ+ogXf4T9mpTV49NnslzpNUBJgXd2O9pvQBwuufmDw5GXzu30x84wXOqGlx21PX7/rmBGQ
-	XvNnVsbSTQpGVuTbz2rfoNjfcZuJSkmopooXbHiwO
-X-Gm-Gg: ASbGncudbQIPTqqLRm5FdvY6iBJDn2pq8ne0wMurb9N/tBsiso7y26ZoitGS3FvlJ4b
-	2xPs1wPTxuGloml4cQ1CCI/KlY6RQ0bDvRAsvawFepmCf++PtB+Q+lgKi/FUNJ2J15MaBZSzaU8
-	Q+5C8NbMMR3yopJ/NDgfxEnBrlvM25ZEyjrOwqVMcLR6vs+y0voSAj9cwAHG6CraFJersth4hir
-	2MSo/TyqrNfFWNeTwX3V79nVqcBQArwWfK+ppKwFdgUo80MtivyNm+uw8924M4/7hYbthWYNrQX
-	wXjj9SYNTs9e+uA=
-X-Google-Smtp-Source: AGHT+IEjN3kheu/BsYwRD1Y/T2LnlKP5NgGHnsSh37lbW6uUdo2JaXwBAfWg/cLk3xu6DsVoxTMt7V6+RGa+0uf1OWA=
-X-Received: by 2002:a05:6102:38cd:b0:5d5:f6ae:74b9 with SMTP id
- ada2fe7eead31-5db906ab2e7mr204584137.45.1761690410981; Tue, 28 Oct 2025
- 15:26:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761692332; x=1762297132;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bafyIACgjKK14wqI7+UpK/XBf9Tl8hwNLLXvm7vBUiQ=;
+        b=mhDGfEKbvNj+6zQv391QEvDVei07sIz8nhg3Jw8CLevlouy2/cTostjxonFmeyjrcJ
+         vAljwLHalDU+tT0/VZuw+SDBGtC0Y6wSEXiQkQq4yM70Bia2YWE3tyyx1TtfVhChH1U/
+         gJVlZ212k8KwqtXDQ5rTP3gKeEKkS7YO9ozpyO9B/FaivDFZuyCMAxGP/z/zNBkYKOld
+         lW14cnyGpq0sMp1Fc2c2sGEpSYvtGCL+2n+gioEs73v+V/J8FGxA8niCwF0zzRFHgdRz
+         z9StVyExwIpxZaUaneAanNOgpSOYoASYz5+IGD5QYxNoVGkna0oGUZUXtOm9OH0ouxDE
+         a0Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ2NdjILVrw1Tf1wp60dY2iKMJQtoqTVfh+WG0EJtq9rAbsb9JywxBiriHO+Kmzd/DRORHH5wstOpNVIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC1Met4PwdWi+s1KMrDeHiig8eBh0J5P4+ZV5IfD9MKenklTk7
+	J3MSM3FMld8hcqt/WxLdy9zUQrzIAHWzsn7+fzkherIyr2+fmr4h3EqwbpJHjK0CWX8pjWmRwnX
+	Fug0m7fkn+0gX3A==
+X-Google-Smtp-Source: AGHT+IHKY2pClvohg4IWDjCOvNKT01DkzF2lTStYT3sIYIsj1O8Psfszn4vksBsANMyqzlJojr3dGZ1p5DLaig==
+X-Received: from pjbgq17.prod.google.com ([2002:a17:90b:1051:b0:33d:acf4:5aac])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:e847:b0:293:e5f:85d7 with SMTP id d9443c01a7336-294def69091mr8641645ad.55.1761692331928;
+ Tue, 28 Oct 2025 15:58:51 -0700 (PDT)
+Date: Tue, 28 Oct 2025 15:30:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251028080348.2177469-1-blakejones@google.com>
- <20251028112901.GL3245006@noisy.programming.kicks-ass.net> <CAP_z_Cj_hVicedOGUCnXNVDXp_dWbG4az5J_w_g0xTMCTuuUrA@mail.gmail.com>
-In-Reply-To: <CAP_z_Cj_hVicedOGUCnXNVDXp_dWbG4az5J_w_g0xTMCTuuUrA@mail.gmail.com>
-From: Blake Jones <blakejones@google.com>
-Date: Tue, 28 Oct 2025 15:26:39 -0700
-X-Gm-Features: AWmQ_blQoQPwHzG23PJKtiySxwjrDH6r6KaDOQ49b62D18r0KLYcZmnGbQPNV8E
-Message-ID: <CAP_z_CgtWoJ8CAm=hAxJMcWrGMoi=OPj+Axsu+sMyZ_BuuHVxg@mail.gmail.com>
-Subject: Re: [PATCH v3] sched: reorder some fields in struct rq
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>, 
-	Josh Don <joshdon@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+Message-ID: <20251028225827.2269128-1-jmattson@google.com>
+Subject: [PATCH v2 0/4] KVM: selftests: Test SET_NESTED_STATE with 48-bit L2
+ on 57-bit L1
+From: Jim Mattson <jmattson@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Bibo Mao <maobibo@loongson.cn>, Jim Mattson <jmattson@google.com>, 
+	"Pratik R. Sampat" <prsampat@amd.com>, James Houghton <jthoughton@google.com>, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-[I thought I'd turned off HTML on my reply just now, but apparently not.
-Sorry about that. Re-sending so the list has context...]
+Prior to commit 9245fd6b8531 ("KVM: x86: model canonical checks more
+precisely"), KVM_SET_NESTED_STATE would fail if the state was captured
+with L2 active, L1 had CR4.LA57 set, L2 did not, and the
+VMCS12.HOST_GSBASE (or other host-state field checked for canonicality)
+had an address greater than 48 bits wide.
 
-Hi Peter,
+Add a regression test that reproduces the KVM_SET_NESTED_STATE failure
+conditions. To do so, the first three patches add support for 5-level
+paging in the selftest L1 VM.
 
-Thanks for your questions. Here are my thoughts:
+v1 -> v2
+  Ended the page walking loops before visiting 4K mappings [Yosry]
+  Changed VM_MODE_PXXV48_4K into VM_MODE_PXXVYY_4K;
+    use 5-level paging when possible                       [Sean] 
+  Removed the check for non-NULL vmx_pages in guest_code() [Yosry]
 
-On Tue, Oct 28, 2025 at 4:29 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> queue_mask is modified right along with nr_running -- every
-> enqueue/dequeue. It seems weird to move it away from nr_running.
+Jim Mattson (4):
+  KVM: selftests: Use a loop to create guest page tables
+  KVM: selftests: Use a loop to walk guest page tables
+  KVM: selftests: Change VM_MODE_PXXV48_4K to VM_MODE_PXXVYY_4K
+  KVM: selftests: Add a VMX test for LA57 nested state
 
-My main goal with this change is to optimize the first line for read-mostly
-usage - specifically, for the loop in update_sg_lb_stats(), which loads
-data from many rq's without locking them. Data from some Google fleet
-profilers showed about 38x as many loads as stores to these fields.
+ tools/testing/selftests/kvm/Makefile.kvm      |   1 +
+ .../testing/selftests/kvm/include/kvm_util.h  |   4 +-
+ .../selftests/kvm/include/x86/processor.h     |   2 +-
+ .../selftests/kvm/lib/arm64/processor.c       |   2 +-
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  30 ++--
+ .../testing/selftests/kvm/lib/x86/processor.c |  80 +++++------
+ tools/testing/selftests/kvm/lib/x86/vmx.c     |   6 +-
+ .../kvm/x86/vmx_la57_nested_state_test.c      | 134 ++++++++++++++++++
+ 8 files changed, 197 insertions(+), 62 deletions(-)
+ create mode 100644 tools/testing/selftests/kvm/x86/vmx_la57_nested_state_test.c
 
-From what I could tell from your patch, queue_mask is write-mostly -
-enqueue_task() and dequeue_task() update it, and sched_balance_newidle()
-stores to it and loads it later. That's why I didn't put it in the first
-line.
+-- 
+2.51.1.851.g4ebd6896fd-goog
 
-That said, the place where I relocated it to is somewhat arbitrary. I
-mostly put it there because it had some open space on that line, though
-its new neighbors prev_mm and next_balance are also updated somewhat
-frequently. If you have another suggestion I'm quite open to it.
-
-> Does it not make more sense to put the lock in the same cacheline as the
-> clock fields?
-
-Great question. When I was first playing around with this reordering, I did
-some more substantial movement within struct rq. But for the versions I've
-sent out, I decided to keep it focused on just a few areas where I could
-tell there was clustered usage. I didn't want to over-fit the placement of
-a whole lot of fields in struct rq, since the code inevitably changes.
-
-So I'd be open to moving the lock to the same line as the clock fields if
-you think it would be a perf win, but I don't personally have any perf
-numbers that could demonstrate the merits of doing that. WDYT?
-
-> nr_iowait has cross CPU updates and would be subject to false sharing.
-
-Mmm, good point. I moved it back before the clock-related cache line to
-balance out moving "clock" and "clock_update_flags" to that line, since
-otherwise it was going to add an extra line to the structure. But also,
-it had been on the same line as the various clock fields, so that false
-sharing was already not doing us any favors.
-
-The line that I've moved it to has your queue_mask, so that's probably not
-the best place. How about if I move it to the end of the structure, next to
-cfsb_csd and cfsb_csd_list, since those don't seem to get used very often?
-
-> Does the thing want a __no_randomize_layout ?
-
-Well, this is by far one of the hottest kernel data structures we see at
-Google, and it's not an obvious thing for a security vuln to target. So I'd
-be quite happy to add __no_randomize_layout; if you agree, I'll add it.
-
-Blake
 
