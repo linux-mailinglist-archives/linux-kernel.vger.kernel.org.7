@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-873765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D53DC14A6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:37:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F2DC14A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A559B19C3EA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:35:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 499034F3D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF79A32E159;
-	Tue, 28 Oct 2025 12:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FED3054DF;
+	Tue, 28 Oct 2025 12:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="B4kv3vN2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="JsE5mqYW"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C393C32B982
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4EA22D7392
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654886; cv=none; b=XdUnFNzHBGdZ2TYWJVM8EYvUuLkH7S2oVe0BAKqsD1jabkr7lZwYXUPvwmJ3WWCB/trUuCQY/rFdsclAujWGCw4amduuDbXe55XXwptRELefJmVwKbuckEjxxDnlEHLYdAMdvhfuccrkIaqrl81N15KNxVTv6xrvDb52DTRJWkM=
+	t=1761654990; cv=none; b=pUG+W07aGOBrLQIsNivEGCv3qJ3uGNXc1/QaY2mh0DBIu/cBTsK63W3iqdKhruecG8HrVVLgriQWI+miM4gtF1gQvXIl/ojkoBg5CF+PlBHEyZjld9TOiuu902B6rP8GPOxA+gWzz8OU3qbYlVrNbWXEt8Ct5tG0OVfTkY8husQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761654886; c=relaxed/simple;
-	bh=KyBNCgzXGkyMfGBWB7EOwo8zzP48TIxps6ZrPhg/LD4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPlfqS2nel17PHIDHMaGUCfcvM3Opo46tRrP1QjMbQH5e21t10wVROn6DWAJ8N6P4gdXn9hvwDWjeGclfWl1zTL/yD/d8+K+zXCcTjUCdihXlRm6AoijPq0CYw37kWSciMYbrWkZBJx9q90AB7KKMriYJ3vqEQBrkRyDwlTWJUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=B4kv3vN2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S7HP5E3813040
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:34:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M95gJXcFdZpIJCFc0EnHtF25lf7trZtvDZHldkLO1f0=; b=B4kv3vN2EwmWINN9
-	sZs9ldxIb139BIykET7LxTnr+S3DFN+TiahNLuZnetvaShrB+1nweAbWDRlmGUlh
-	FFygzEccaAa6mpG+ifBID/vXi41nt1FV4iGloT16EP6X1ldhBeOF0EREEfA4RgzJ
-	tlugQ2aqUlA5uMj7SvQ6Z1FyybpzDhQYUiGu4xfxOdmRTsJ0HS330u6a1u2rW4R+
-	MGTRKeL6VR2ld2Qkk54922zb1swUTy5/O/pnpI2YWaR1CQZND4htsgqtr+Rfg8PO
-	31Mv5OoQGpxwxZp7gIGNELqdtHGciBJAz2dNH73aROCPkvduq0bDIGaORAUeldwH
-	2UgjzQ==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2g2ftd5w-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:34:43 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7a2743995b2so9769553b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:34:43 -0700 (PDT)
+	s=arc-20240116; t=1761654990; c=relaxed/simple;
+	bh=XFtFTzB7nIubQK5+Jnuf6SOxgMcv7Qtuxa8kZNaB4YA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=AT5c3V8ffgEsjM3fXS5L60BSBNhZQRCp32hF1Ffb4gdpRrAwisuGwlvjtbYrcyjdDJ2TfphbR8LSKadOX14GSbYTbQk9Bm9wdq9zywpWonaGxTr5uZDMb/RHVIfs0ke5CuP/ozh8bKTl+jz9jg3OFMmQcy+Buu9KoF6wlsNuYWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=JsE5mqYW; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-427087fce27so788249f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:36:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1761654987; x=1762259787; darn=vger.kernel.org;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iQyOvbQrIsm+G0Ym24/Af4gfQ7jSESa1LluzqC9uUdU=;
+        b=JsE5mqYWeSgxhW+UQ7tdtopO+6gnFue7Nmv9XzA7LRnU6fmjaOgPKjW/kEL5ow1NKG
+         DZ3m6Yt9KyA3Bc7NCSbIQ+4iwY3hUI2FaQztgwdayh9UnNTLgqMPBDPkZAvlEXniMQKL
+         jLevFWYuMVsDAT4pWwISqFmYbs/sgxhfqx2iVhHQ9eub2782wEHxHjmw9MiFXi/HVsN+
+         TM/HA36VSvtgtuoA/irhIRsSR/lzmjAuV4o0KcmOhg+5jU+NQP2QWpCZJHLY5D4m7X9w
+         J+Gnc+1264RI71Vs0EaLsxP3KhYWJ7ugDgD2RfezcHY6sGRB55+tNmf6MPY3sGgewJ4Y
+         Hpww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761654883; x=1762259683;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M95gJXcFdZpIJCFc0EnHtF25lf7trZtvDZHldkLO1f0=;
-        b=jwIwo4LWD5XqQpdIa3YDh0mqTFv0YrYHNjY4S6g6/TI0RUc3w5J2HV2l2YSr8oLVzg
-         h0mSOJTaYjkr78pilLt/Y9+Iwwr8GkX4qYiVAYbPbeDUWBIzlHgF0RjHBgICQUhSLckv
-         VMw+P5XN9Y3rkoKe+1jhNH9dQicdwkOBkY+UzQG3igWpTxE/88moFPr/t5b8D91iH8Tt
-         YKYpX7wtPh6LXK2EjYrVfXW4tdmn+pjZiGXn+88oLQdu5+LbuLFkPZmk86ZTuurkGcJs
-         VnbZl/oH99xxAtcb1b+y5KRd4UVgEUIR+8xj9oDhhXU4PYFjouDDO7lCiQh2CZvwgoyj
-         3ujA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVYDfdiafllk6lSOtxDOYy0Xh4f+f2U4w8RXTcTLd9r/C9sjILeYI5LUCJbY9enisUYM+khpC01xRVCXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzcAcirT3yVETyZfGIy81RjVOEwUXNOQdG5D/vFr7AJ6TQUBJN
-	YrLyuiCRwC2jfuispFY3n7K9UVIJZrtLjsv2kEntec7B2uL6sKFHLRa9duHOP7J4wwojmn6rjve
-	7rDFrys8FijXbNmCHLLEhB7JE9bRbTmzwU8S87vcJl8U8gebX3tzsvQ1RwDcInEL7TwI=
-X-Gm-Gg: ASbGnctdLCju0jUyK+8iwdNUKgOY40R9AREiguReDcNCsk+YARk+GAOxqqN5PTuD9lo
-	eKANKeYpFyhOdf0XS4jpJrDrSlnr50nYU7QZTnBKGY9ZlyivVRxva5QgZ4zfBYZ9Ro8U4tpahZV
-	DJZY9v4McJh3SEK6fWgSQBdIEaVBxyeL2sxrvCTLWJAfG7Yh2F3d2FpY7IPE/DFGgn1rE2DZ/O1
-	EiRSkstWhL6LQ14N7xQoV/jhnGrutHqFaiP4UMyfOvF28nwKS99RWQWvYP8FdNIweSIeyxeurEh
-	QiUt5KtqBOU+ABPHXt06PXX81mTQKjjjX9cx0nKfL63UWPlsNvudISLg2frbQ0d3Af119yQveJa
-	/54uyGU+ZuVmDUsahnOAgT8H+55WlYbES
-X-Received: by 2002:a05:6a00:14c4:b0:7a2:7833:8b5d with SMTP id d2e1a72fcca58-7a441c36fd9mr4823916b3a.17.1761654882461;
-        Tue, 28 Oct 2025 05:34:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEDZgEIJrt0gDk5O/GM4oOTTTrpxlFBa6bU7qOKpY2eoQVr68fPqZaq01zJuj3yQEKGsGh9lQ==
-X-Received: by 2002:a05:6a00:14c4:b0:7a2:7833:8b5d with SMTP id d2e1a72fcca58-7a441c36fd9mr4823878b3a.17.1761654881999;
-        Tue, 28 Oct 2025 05:34:41 -0700 (PDT)
-Received: from [10.204.100.217] ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a427684bddsm8298102b3a.31.2025.10.28.05.34.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 05:34:41 -0700 (PDT)
-Message-ID: <bb39b556-dd70-ad95-3d29-1e2bf7f45380@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 18:04:36 +0530
+        d=1e100.net; s=20230601; t=1761654987; x=1762259787;
+        h=in-reply-to:references:to:cc:subject:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iQyOvbQrIsm+G0Ym24/Af4gfQ7jSESa1LluzqC9uUdU=;
+        b=B9IYaqvSs2zpujiYyDWlnS40sryo6FNNjwxRBCRmlgwVpVIo75VdATbDhFhSPHVQpN
+         DDTBOJ+I5LMqu88NxRB3trE82F+PRjRg/ljbkeGjy1kIo8GNGogen/gYToWb7tMUZf4k
+         P4l97V/Bh7/w+3UIw0ZG6KWHvXZ9kYvR3fHOmMUtAtgmyTT+Go5eAyaVQ6Fdzpa8yOTy
+         EVmyuc4yVwVigzsPsGd4sEcIiHFyaFDXPQFVOHkK+nguORRfeRJtqRY+f7/6/wUvdI1l
+         1jo7VTIBqoXbdK4Tv8rR2UB+aSfPspXV68Dn5UaU+tQoaX9BfS9XZ9rNvFc6R5p5Dvvv
+         EfQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKSs2H8EDF3n7baSIOGqkmgGJuvFsT4xEQx599a4uQbhnm37XPMBvJ7K7PPp7tKpcGW4BQ744BokRoEmE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznTac77S6kpRKCWn+32pCbj6YnI0AwNeDkCZOyflHWSG1CH3gg
+	PYiLjWQoK83Qbb2zl8qjiOQB/RoEdX3L3HOiVm1Z/ZfAUDIYSTAmBktTo/QNVBqLoVc=
+X-Gm-Gg: ASbGncuM+0dxgQZ2BPDMX3UfOwr2KPEqsSmU3HMdTa9pRMZTDnHLGLXQLkC+bNRrY+8
+	qcx8u4pDKmwNmli60VOdxCaKYiqsxCNseKcpYiHIgzHuy8YThOE6LV6X1i6spq8CCGh9cHlZWLd
+	fW1OwJ0t3ROfYUF5/ljcyNfYIvo063uMEB2mQEpN8lrWLeLKWd+eIXklsCweDY1CkZ/4xrDzMJA
+	p8tUfsgo+ibT72d6dqHKVhi4WYw/RXLoA5VcUOPu/r/tqExNFtv/wb0k28p0XCnuh3OXUtxcDUb
+	nBENjwtUw+wk6N7Ue0JP5pqEZuvUwwj2MsCNomc7RGcTikgpGa1eIdpLBfAY7lVVIVunvw3zbNu
+	UUW/xubUCV0xpB7deMvocXObYhRHTL4oJRY7JpcfbstL+uRU/yUG/4gTJEfqZ6qVE
+X-Google-Smtp-Source: AGHT+IERzNAPCuMV5ZEd056F4yvrhY3xaFUs/IZCciZzISu1FZ3xid6ZyglBvWFh7twn6bZPyUL+oQ==
+X-Received: by 2002:a05:6000:25c5:b0:425:6fb5:2ac8 with SMTP id ffacd0b85a97d-429a7e97509mr1501787f8f.9.1761654987044;
+        Tue, 28 Oct 2025 05:36:27 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200::3052])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952e2e06sm20285678f8f.46.2025.10.28.05.36.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 05:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH v6 6/6] media: iris: enable support for SC7280 platform
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251028-iris-sc7280-v6-0-48b1ea9169f6@oss.qualcomm.com>
- <20251028-iris-sc7280-v6-6-48b1ea9169f6@oss.qualcomm.com>
-From: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
-In-Reply-To: <20251028-iris-sc7280-v6-6-48b1ea9169f6@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEwNSBTYWx0ZWRfX6obLcNd3f9F9
- nPkQF77Ssfq9tuFU7f6VF/s5L77TGSqTNsIPFdL6EE1pe8ouIRWNpFAOt+xUGjfMYmTOhHxLmTC
- F2D58oshOla6zNuV3nBGuILZgo9TwAUxVvMnYMbGeJklWDg7uT73Z1rYiXq7dVP+KZd/+lcQ192
- cbxdfpriojVU4LTLfk5sD/4zI+X0XPuvRx2pWP3PPRcc7y7MxvDptKWAwwmmJYT62t63rw0EE7k
- O6YIFwrZXWe1bVxDtKVWXKkeltcLffs2t/rXVGEpxurS2hl7v9hTTe4ThOFS3gKOnLQIp/yDe/p
- x009HC5JfFf8gmVC/hR1FrdLC+yCAWTUG6YxuKe2vbZSbSw6lHBzQikzrY7YuHDL/TMEeT9NmG3
- kuH14HYL7R8zubCeGWxwAFuJ1UTz0g==
-X-Proofpoint-ORIG-GUID: UJvODDvRpxoMnb0Pb_JtPEfIyMd4zlyl
-X-Proofpoint-GUID: UJvODDvRpxoMnb0Pb_JtPEfIyMd4zlyl
-X-Authority-Analysis: v=2.4 cv=FIMWBuos c=1 sm=1 tr=0 ts=6900b864 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=fr3eplbp6RILtt3BeFwA:9 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 lowpriorityscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 adultscore=0 impostorscore=0 spamscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280105
+Date: Tue, 28 Oct 2025 13:36:20 +0100
+Message-Id: <DDTYKLFUE3M0.17GD0S4OSQG16@ventanamicro.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+Subject: Re: [PATCH 3/3] riscv: crash: use NMI to stop the CPU
+Cc: <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+ <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <luxu.kernel@bytedance.com>,
+ <atishp@rivosinc.com>, <cleger@rivosinc.com>, <ajones@ventanamicro.com>,
+ <apatel@ventanamicro.com>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <songshuaishuai@tinylab.org>,
+ <bjorn@rivosinc.com>, <charlie@rivosinc.com>, <masahiroy@kernel.org>,
+ <valentina.fernandezalanis@microchip.com>, <jassisinghbrar@gmail.com>,
+ <conor.dooley@microchip.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Conor Dooley" <conor@kernel.org>, "Yunhui Cui"
+ <cuiyunhui@bytedance.com>
+References: <20251027133431.15321-1-cuiyunhui@bytedance.com>
+ <20251027133431.15321-4-cuiyunhui@bytedance.com>
+ <20251028-scallion-list-c8aa5f350286@spud>
+In-Reply-To: <20251028-scallion-list-c8aa5f350286@spud>
 
+2025-10-28T10:42:12+00:00, Conor Dooley <conor@kernel.org>:
+> On Mon, Oct 27, 2025 at 09:34:31PM +0800, Yunhui Cui wrote:
+>> NMI is more robust than IPI for stopping CPUs during crashes,
+>> especially with interrupts disabled. Add SBI_SSE_EVENT_LOCAL_CRASH_NMI
+>> eventid to implement NMI for stopping CPUs.
+>>=20
+>> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> ---
+>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+>> @@ -487,6 +487,7 @@ enum sbi_sse_attr_id {
+>>  #define SBI_SSE_EVENT_GLOBAL_LOW_PRIO_RAS	0x00108000
+>>  #define SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED	0xffff0000
+>>  #define SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI		0xffff0001
+>> +#define SBI_SSE_EVENT_LOCAL_CRASH_NMI		0xffff0002
 
-On 10/28/2025 5:16 PM, Dmitry Baryshkov wrote:
-> As a part of migrating code from the old Venus driver to the new Iris
-> one, add support for the SC7280 platform. It is very similar to SM8250,
-> but it (currently) uses no reset controls (there is an optional
-> GCC-generated reset, it will be added later) and no AON registers
-> region. Extend the VPU ops to support optional clocks and skip the AON
-> shutdown for this platform.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This event isn't defined in the SBI pull request.
 
-Reviewed-by: Vikash Garodia <vikash.garodia@oss.qualcomm.com>
+I assume it's a pure software event that the platform shouldn't inject.
+If we want to reserve more events for software use, why not make them
+generic, like SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED?
+
+Thanks.
 
