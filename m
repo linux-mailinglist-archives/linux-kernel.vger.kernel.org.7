@@ -1,161 +1,154 @@
-Return-Path: <linux-kernel+bounces-873403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCA6C13DB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:38:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 819D7C13DB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99F842519D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:34:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B23A4226AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD7129ACD1;
-	Tue, 28 Oct 2025 09:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720EA302745;
+	Tue, 28 Oct 2025 09:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky9zI9Rf"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fb36uv5q"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1A627056B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E572BD5A8;
+	Tue, 28 Oct 2025 09:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644031; cv=none; b=mwEIlJ0ISDi/D4C2FWkLinJBGWsm+x8xFBwjU0CCtGcMZZpyBwdHbrpSf9ipMBK7aAiXL72pQGvxPSoT2298edzZx92EeO+Q22X1lvHHqkmtTIC32VfXkVSI/KxQRB4nVb8aphWgInM8vC43tyyYTDwBlUhpJ7Ln61/cUKuUIT0=
+	t=1761644030; cv=none; b=TMjxRSpVYd4AEg3M0WwZ3Uhh+Aos3bII25wUqrA9NUg+iPCjXtqLZiuB2Bxx1vHG0L5n+9Om4U7oOihG/PpwSvkH7ebouz0tWdlqJy/mGAnn3E0+YuhGl47n5M1HqxWk6bUdQK4EJFma9S3G6t66UY6WhKWUGhdfzXlQ05FENNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644031; c=relaxed/simple;
-	bh=1tBI1fKtiAUVvLhBl+QlinXByKOL31usMx/Gb+Ms4ZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=saAffoWIPUUDwvv+TXsEX9xHpT8G1uRYMppSnAENGjbZlOV3NyB2TVHNACuTi6GpjUhcy1NudfD7q1cUx+SsiyeFi92zOnCcd9NJdGiBILRV3j/kI3XhhIC2Gtq782clVESBYI8Tjh5E1+44nM+9jiFzpVU/HFojtnybOlMPFqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky9zI9Rf; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b6ce806af3eso5263529a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:33:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761644030; x=1762248830; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0XbbD0XUPOCx5w6Va6PKcmpMHJKzovEwVaWUKYe40hU=;
-        b=Ky9zI9RfQmP4NMnYPnvFtloEQ/nlVl3jFxFIBahG8iBYOJrkJA5loiRr9MhrmfO73E
-         D+IsFJKOqk08mb20DgytzosXwNDIkxEHfvFTj6J2O7mi3Z0NpG1rcAbD+/FrxAEcB6Qm
-         YEtsnweVd1oU8fHY736O0llKM7mr4VXPPh+36rE9W2igfpRVPMpie0YpM9qWu69DC6wA
-         ZoN/AoXg3qb67IuN+guSCO98cJXpUfa6rLuNPPzE56avxdl8ukEYuXW+yrH6yqoVuTnj
-         U2VFu6Vvn41H/x4uu7iDNQbGu8MLx6yFzWiAGhvMx2azNPN+o1roca4LiFTNaVrNyvxG
-         ubSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761644030; x=1762248830;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0XbbD0XUPOCx5w6Va6PKcmpMHJKzovEwVaWUKYe40hU=;
-        b=GoRy6+So1Aj43aC0uF1t3Pv8JIKD5AOCq2mlPtmPb9sM78ItfN3EcKF0BZc4KmCSlw
-         SVeuP/NaKMVtCiX8ygVJ7quJOMjiV46OMkaIE+MpvW5I7Y4VMkFwBWm1lyiDDgLFdIHb
-         8kdbvslNoaFNN4fsC+b16le/RRsKDqdlLp0/L14atBi+DRiONPjavrgts6w3/PEzfIc1
-         6WwCIfQRwjj5ZoHweB9mQ9V01vhHvWeyWzlEoGCSk5MlfFeAn6Qs4zzC/O0nkqKTix5g
-         ufRCVCUApNRbzEFjEJ+Y4+o9+VG1/VSoT1fPpqWfAekscUf3je7VhrbHNGlMKkTwzc6i
-         Usqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWa1VrIdTXCuQ9VskNPxfmXTeSYdMHsIyVb2eQB9xuUGU4pQ7SIptEwRDoNIB0Uv0mYscOAmKev6DyDnlY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6l5Cm3sO439Es1J0B6zf7kBOei+eNPQLsneSoVWAcDH/KcQN+
-	2TGlkeIfF5qWh64rd8t1R1mvSBZR8KMBIgZ+DWn7INfgbVGvYDhhuAwz
-X-Gm-Gg: ASbGncueOz+7Ksk7dnCwZwNgmWKuxlNB+sQpa+WUG9V3vqqSSsh3DYvyzIW2yThMSd0
-	EIfDqcLqW8ZxmKrdjZJHuebMF6q1NctzUPxw76X68yQ0CwMIce/NzL3NR5fptSfpaWE2mgsiyEE
-	0i25tcHxa+TYGHUW2sGvBcH8YtlBzVaJlKVGBCdTO06cIXgEg5bvPf3MKmXPCougeV+xn6Z7HoT
-	2k8l+WpqyaFQJ4pub6TON2qAD9RAVn7GQ5P4dbTAHz/zA33uYkOlIRga9RBS/FXgG3K7IlS9+vw
-	DKW0VAp/IbQoQModizB5ibDyKCsGuxiRxcJvNQGgtvcneKi2wWvCDAdRLpP9e1SYjMVj2asvcrE
-	Ut971Kjwbq2NeAlOdcKWMfOmCKD8ns/abuoKpw3EMjrJorXfLVdQdWtBGJagEIyRo/a5vwSfM29
-	b2sn4Z0A/l2wr0w/+U
-X-Google-Smtp-Source: AGHT+IGNqDKOcuei+TEE14MiEdWZNPbqqDIwZ5o9/TpCj1YrL3udLywKrVrz2O94Cfm+4TL2T6UXig==
-X-Received: by 2002:a17:902:e545:b0:290:b14c:4f37 with SMTP id d9443c01a7336-294cb524eafmr36342495ad.30.1761644029561;
-        Tue, 28 Oct 2025 02:33:49 -0700 (PDT)
-Received: from crl-3.node2.local ([125.63.65.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e4349fsm109367625ad.107.2025.10.28.02.33.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 02:33:49 -0700 (PDT)
-From: Kriish Sharma <kriish.sharma2006@gmail.com>
-To: nuno.sa@analog.com,
-	olivier.moysan@foss.st.com,
-	jic23@kernel.org,
-	dlechner@baylibre.com,
-	andy@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kriish Sharma <kriish.sharma2006@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v3] iio: backend: fix kernel-doc to avoid warnings and ensure consistency
-Date: Tue, 28 Oct 2025 09:33:26 +0000
-Message-Id: <20251028093326.1087660-1-kriish.sharma2006@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761644030; c=relaxed/simple;
+	bh=gNIoYwnPGl2poq9hJhXrlXgYqCYv7k4kBJYh6yVqD2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LBpmlq+++MugpFnIOc88bHSe/XWA4TUDYg7iBlTcVJtHlIstnfV2240XQvGhc/cqZaRNEMw4fEyhPiJYYQ1oJnj+mToFfsYiqBj0tP6Vt80o+RBVeCjijzn5xfHXdt49CqgrW8JH//8eVfgHTxQb0wlE4LhlYB9iciuJ7lCK49g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fb36uv5q; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S1jwrs012355;
+	Tue, 28 Oct 2025 09:33:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=QRyvVz
+	Y1aSZUvVTazOXD95pRWeNWcRO934GJDJqjh/w=; b=fb36uv5qukFk3JqFvVQvVI
+	GktXEJOPup1juHADYcyswf+EoH7DzRAwm0obR1OBlQb9Dm20auo9s2nluILsI4ew
+	UGIlt6juXUse+EDG8NxxY+KtJwlx/K8PSLpUIs4TmO1WqhduRkES0p9ug4lpDuVI
+	j9gJAD362d9eDnleVN80QTuDOp/53Z0/CLoRSfqkzxvV0csHK8V6nbA+p7KFbhaV
+	N/z+G2ZvwqUWvTac9W+vWp2gl+bTBcom1ONrb9kZlcs6n5BGagLeIlPWBhc4gDgJ
+	/o1uoFNjTd+ia7q9semQNgJ8883sqrOcVCUaQ+UZUtSElYtMgERJCIduUZnJFnDg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81u2g1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 09:33:41 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59S9Inhm017991;
+	Tue, 28 Oct 2025 09:33:41 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81u2fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 09:33:41 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59S8lXfG030187;
+	Tue, 28 Oct 2025 09:33:40 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a1acjswxn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 09:33:39 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59S9Xces2949800
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 09:33:38 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 962FD58061;
+	Tue, 28 Oct 2025 09:33:38 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4BCFE58057;
+	Tue, 28 Oct 2025 09:33:32 +0000 (GMT)
+Received: from [9.109.248.153] (unknown [9.109.248.153])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 28 Oct 2025 09:33:31 +0000 (GMT)
+Message-ID: <0f70d4ff-ad35-42ee-8b99-cf6e3da7c49e@linux.ibm.com>
+Date: Tue, 28 Oct 2025 15:03:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v6 1/2] net/smc: make wr buffer count
+ configurable
+To: Halil Pasic <pasic@linux.ibm.com>,
+        "David S. Miller"
+ <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Dust Li <dust.li@linux.alibaba.com>,
+        Sidraya Jayagond <sidraya@linux.ibm.com>,
+        Wenjia Zhang
+ <wenjia@linux.ibm.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
+Cc: Wen Gu <guwen@linux.alibaba.com>,
+        Guangguan Wang <guangguan.wang@linux.alibaba.com>,
+        Bagas Sanjaya <bagasdotme@gmail.com>
+References: <20251027224856.2970019-1-pasic@linux.ibm.com>
+ <20251027224856.2970019-2-pasic@linux.ibm.com>
+Content-Language: en-US
+From: Mahanta Jambigi <mjambigi@linux.ibm.com>
+In-Reply-To: <20251027224856.2970019-2-pasic@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=fIQ0HJae c=1 sm=1 tr=0 ts=69008df5 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VnNF1IyMAAAA:8 a=SRrdq9N9AAAA:8 a=ffDd5I00xDUYzGQUyCcA:9 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: iLJI276jkQYFSUAkCfrGJUpPke3vGuVq
+X-Proofpoint-GUID: bZgTWHVMeG6WvbqmK9wxllVKaM1ya5qo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX/RJ3mImZoIyY
+ aTH2y+Y8353xw54oqcdtwUceZzf7eWySn7fGScsF62TaXsiSpp2HZZd1IkjWjmzyS7KyUwHxw8t
+ YC4jJ8k9YjcQ/GJmDIR3UO/9cAFGxQHL9T5m2ht3f6U2wukpKiwmUvd5bqGkfRH9GUeKAlK67kv
+ iB0IGTY+WZnaz4/PNdhw3Bg/XUwiXj6mkmlb9DkSX1VjBaXySSPtugMS3aLdP4ij8gg+y0pQ8I8
+ S0gQEoJSUVzr3vwTxktDOJJrSeP32IFDVs5cNir/V49lsc5qj1yw118rbe4fHrBvEO/7RVSvidX
+ hC4hpP8kBQLJ9yGrmArlKwdUciWtqWz1IP0T+97clb1FMXhQKAlAQKdVpyBRhNO5jO94TmD4uMs
+ Eqs3tuEx+6vFve/NNyVDL5MH/qQxwQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
 
-Fix multiple kernel-doc warnings and make the documentation style
-consistent in drivers/iio/industrialio-backend.c.
 
-Changes include:
- - Add missing @chan parameter description in
-   iio_backend_oversampling_ratio_set().
- - Add missing RETURNS section in iio_backend_get_priv().
- - Replace Return: with “RETURNS:” across the file for consistency.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202506292344.HLJbrrgR-lkp@intel.com
-Suggested-by: Andy Shevchenko <andy@kernel.org>
-Suggested-by: David Lechner <dlechner@baylibre.com>
-Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
----
-v3:
- - Changed Return: to RETURNS: for consistency across the file as
-   suggested by David
+On 28/10/25 4:18 am, Halil Pasic wrote:
+> Think SMC_WR_BUF_CNT_SEND := SMC_WR_BUF_CNT used in send context and
+> SMC_WR_BUF_CNT_RECV := 3 * SMC_WR_BUF_CNT used in recv context. Those
+> get replaced with lgr->max_send_wr and lgr->max_recv_wr respective.
+> 
+> Please note that although with the default sysctl values
+> qp_attr.cap.max_send_wr ==  qp_attr.cap.max_recv_wr is maintained but
+> can not be assumed to be generally true any more. I see no downside to
+> that, but my confidence level is rather modest.
+> 
+> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+> Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
+> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+> ---
 
-v2: https://lore.kernel.org/all/20251027092159.918445-1-kriish.sharma2006@gmail.com
-
-v1: https://lore.kernel.org/all/20251025102008.253566-1-kriish.sharma2006@gmail.com
-
- drivers/iio/industrialio-backend.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
-index 23760652a046..447b694d6d5f 100644
---- a/drivers/iio/industrialio-backend.c
-+++ b/drivers/iio/industrialio-backend.c
-@@ -702,7 +702,7 @@ EXPORT_SYMBOL_NS_GPL(iio_backend_interface_type_get, "IIO_BACKEND");
-  * interface/data bus. Hence, the backend device needs to be aware of it so
-  * data can be correctly transferred.
-  *
-- * Return:
-+ * RETURNS:
-  * 0 on success, negative error number on failure.
-  */
- int iio_backend_data_size_set(struct iio_backend *back, unsigned int size)
-@@ -717,9 +717,10 @@ EXPORT_SYMBOL_NS_GPL(iio_backend_data_size_set, "IIO_BACKEND");
- /**
-  * iio_backend_oversampling_ratio_set - set the oversampling ratio
-  * @back: Backend device
-+ * @chan: Channel number
-  * @ratio: The oversampling ratio - value 1 corresponds to no oversampling.
-  *
-- * Return:
-+ * RETURNS:
-  * 0 on success, negative error number on failure.
-  */
- int iio_backend_oversampling_ratio_set(struct iio_backend *back,
-@@ -1064,6 +1065,9 @@ EXPORT_SYMBOL_NS_GPL(__devm_iio_backend_get_from_fwnode_lookup, "IIO_BACKEND");
- /**
-  * iio_backend_get_priv - Get driver private data
-  * @back: Backend device
-+ *
-+ * RETURNS:
-+ * Pointer to the driver private data associated with the backend.
-  */
- void *iio_backend_get_priv(const struct iio_backend *back)
- {
--- 
-2.34.1
-
+Tested-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
 
