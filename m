@@ -1,799 +1,447 @@
-Return-Path: <linux-kernel+bounces-873030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D40C12DCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:33:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEAEC12D03
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:53:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 347121A63101
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6634659D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855C529ACD1;
-	Tue, 28 Oct 2025 04:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3F427CCEE;
+	Tue, 28 Oct 2025 03:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=norik.com header.i=@norik.com header.b="l3sfA+MA"
-Received: from cp2.siel.si (cp2.siel.si [46.19.12.180])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCiW8wd6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5636D271;
-	Tue, 28 Oct 2025 04:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.19.12.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761625977; cv=none; b=kCWITYnz5Ev0zWcmKMN5J6dnfsMqk3FmuvVMJqnhyW8s2gM+70yTwdEC7oLhtO4xO+4QSfT0clqiR2/C9RvTNswydGnSxHbr/aX9DJOB+zaOeLJbrpMqZq0oMm6lbFSsz5VC3ABqrZX08Vru3YwB4BRYqRtSbmJIEveVfLtgQso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761625977; c=relaxed/simple;
-	bh=2QhUOp12fnANcqWVQ41yM3bjKTLPTy/tTt7WyIANVz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TF9JAb2Wt0n2hDB+jNTVVCkwydaqiM3s01Z1FD7STdbjyRbonznpiCewMgS9Lnm6M7ZMYULg8ir90Y+o9Q0ITPeO7IQAeCV3Lsbauqj7rQuTYHwHj+jAonwptgOAbKgPvGKF34SVr0EvM+lKrMMtIYMzBKIshlsJp3NoMpFo480=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com; spf=pass smtp.mailfrom=norik.com; dkim=pass (2048-bit key) header.d=norik.com header.i=@norik.com header.b=l3sfA+MA; arc=none smtp.client-ip=46.19.12.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=norik.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=norik.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=norik.com;
-	s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=gLSL7AOg1CKMbLC94rHWh8x+xAmFgIHmAXffGihWN+0=; b=l3sfA+MANHoeQ4oCp3Bpe0CPQm
-	8gRVqw2ee/sacN1LAyAkGGTuj2HsgLX00gxEso3isB4hcuyhDW+1hJemA7TijFl4l4kHvfaxtcTy9
-	o6Q7BZxrCoBEeAbtZ8VdjAyqWeaS9ZzrHTojvUZIFmjPqTn+VJsfm/3VJ2bs/qcjty9BJA3mWZtUC
-	xH180G7O+LELQm9fsAl8DvL1nggWOBS2T6OZXsaHZMfETF5m8V13sdbhvZ9mZHmOHGphpz1yhviwD
-	wivDZN4/gIY5yemY5EfR/GzUyBQbnMI+9GLEcXOK5xuxOjAEas4qE5K/BhcVTs+UDqHopkJ5M63i2
-	dkqOjDSg==;
-Received: from 89-212-21-243.static.t-2.net ([89.212.21.243]:36546 helo=localhost.localdomain)
-	by cp2.siel.si with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <primoz.fiser@norik.com>)
-	id 1vDbO3-000000099zL-2PhM;
-	Tue, 28 Oct 2025 05:32:46 +0100
-From: Primoz Fiser <primoz.fiser@norik.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	upstream@lists.phytec.de
-Subject: [PATCH v2 2/2] arm64: dts: freescale: Add phyBOARD-Segin-i.MX91 support
-Date: Tue, 28 Oct 2025 05:32:44 +0100
-Message-Id: <20251028043244.496662-2-primoz.fiser@norik.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251028043244.496662-1-primoz.fiser@norik.com>
-References: <20251028043244.496662-1-primoz.fiser@norik.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806BA23AE9B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761623572; cv=fail; b=TyxDTDNyifW7zyiSy15XJEpgIHm8jiuWtIn6FBGm2N9HKiurI+FYaPgTWg8Ol+TADfZEOeWaqbHmq5AErS45UuEMak/+QwDxcCf1PikbqRdgwBWenMqM9ApCiR5lp4Sq3EhQ54RPsIHTVuQYjvYqijTC34NHKyZ1tsCvRc4qmkM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761623572; c=relaxed/simple;
+	bh=/IuHzoOKYgutPqrMlTcOHToRqmz3vmyK9hRojlF1Rh8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=eutKonrGcqQot/v2kLKt9vnBh/e9prhgIP9g8Hi2mlJclLW3L/yuMNxoEsQ1bs6BQE1M9oYIxSk40boojBL75zI0NeSHGRXoPP9nuNgTJi6M7XplAmsKYmhQDwJxEgVn90MNnmn7Q5/U/9hO0ROGc17oYNfcVOmvLxFekwNyAqM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCiW8wd6; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761623570; x=1793159570;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=/IuHzoOKYgutPqrMlTcOHToRqmz3vmyK9hRojlF1Rh8=;
+  b=GCiW8wd6dobgJ6pIOTkVjKaQ70GpkzmNLztmannakueRZyV7eYP7QExM
+   GV/V70HhCTfhroWY15x1JvKxTbY7QPV7wG6h4NGsPZ4Kpr6ALeFiPkPd6
+   7QSoJsF0T1QqkybfaPDLAQywREPqDA939jx2MrNAvqLTslmBav4y9NnX4
+   EYzvHimQ6lsxDgDa7aqm+5iLGTRvfeGmg7nCb8tcOuJ+b9ZhVAxHphV5B
+   fZijLVEaa0oDfTl0kvRSEh38apz7WskdEXzT1tSEiq64opckfaTLLZV8s
+   BlPIx/HD6G/ese4Mdmgid0RLxggtGY7Utof9/TYpAuxI/h6fhqVkW8EII
+   Q==;
+X-CSE-ConnectionGUID: 5KGCNSVcSMaf6MCpv3DHjg==
+X-CSE-MsgGUID: rU3z9EIPRL+7y/UhRu7zoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="89184429"
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="89184429"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 20:52:50 -0700
+X-CSE-ConnectionGUID: nWSRehXuRMuq7eXxcgNv5A==
+X-CSE-MsgGUID: bEyMAHIjTUuWYgZNDmBfgQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="184460069"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 20:52:50 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 27 Oct 2025 20:52:49 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 27 Oct 2025 20:52:49 -0700
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.13) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 27 Oct 2025 20:52:49 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b9Qj3RydWiCv5cemQW3VXtoYhIzAFi9l4mbWoNbQJaNZhrqiy/gwr9MfOUm5Npjqw23E1/XGkriFuHDjBzHke8pKoWpFIZc4e8EUbG80nYrDwCaXFdJJYKM4/x6RFM6mz3VyyFFI94Uerx/UjgwN0jRPfNqy+t43hl+AzFo/E3765yYwRbpQmKYKvx0HmYZigVZVaA9xRJC68hK1+UdO08Cu/+AJR5b94KT7t/1t+OqNJBe+cDI5/NE1lPlwCnfF5Ch2zZEFW2aguJyCZiR4uvfbMHHKbXD6Z1MR5L7OpHmldVVltxm/YDSrkuOfKW4QZMBpKJO3nrKcE7BHBfH44g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dH+GMAjhlojvB8VzywFPh3NvsRqGB3tw7wQF3ZZMNKE=;
+ b=ppkhLtAY3h9HwRuGrn7eH7VhXmmF8Ab35QkiEwViPl3Oc68LFuBxDgk085cIwsvM+Jd703ix1FIpV+hBZDSxbARUCdA/9WbI2CJ7xNk68Df2teckWPqZLn+4lTiEsqkxLGTdlXPFgwzsbtSIT3/0AC2PImDAyM+YWse27OeFyzsxozZxq7nrKQjGgHOzJ+pHeHD/CFGo2AjAIx0ZByoWjmqxsy8OFlUKrsYXccMXNA1EpuaoFTNn+mrwcp+OeIzjCoGOLcRMVaz630uAdlwULipZOfeRD+e2Q2g5avgWyfMeCWP8VJDqHEx8BRMbB9e2xHaQO2TRFZyyoAEwZ41lKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6153.namprd11.prod.outlook.com (2603:10b6:a03:488::18)
+ by PH7PR11MB7429.namprd11.prod.outlook.com (2603:10b6:510:270::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 03:52:46 +0000
+Received: from SJ1PR11MB6153.namprd11.prod.outlook.com
+ ([fe80::9546:aa5b:ecae:4fd2]) by SJ1PR11MB6153.namprd11.prod.outlook.com
+ ([fe80::9546:aa5b:ecae:4fd2%4]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 03:52:46 +0000
+Date: Tue, 28 Oct 2025 12:36:26 +0800
+From: Fei Li <fei1.li@intel.com>
+To: Randy Dunlap <rdunlap@infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <acrn-dev@lists.projectacrn.org>, <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+Message-ID: <aQBISp9Bz++enU/o@louislifei-OptiPlex-7090>
+References: <20251024044226.480531-1-rdunlap@infradead.org>
+ <SJ1PR11MB615389E066F50BBB68686A26BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <213c918b-b4aa-4174-af89-a4d17e8c30dc@infradead.org>
+ <SJ1PR11MB61536DC1E7A32387FCA400E5BFF1A@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <8950bbb2-f1a7-4ae8-971f-7331c7eceff0@infradead.org>
+ <SJ1PR11MB6153A77684F68B592851A32EBFFCA@SJ1PR11MB6153.namprd11.prod.outlook.com>
+ <be3819fe-c17e-4ce1-83ec-5ae23cfabac4@infradead.org>
+ <aQA2Qr2Z8UyaCLO8@louislifei-OptiPlex-7090>
+ <2813380c-f5d1-4472-a0a8-78215d9c656f@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2813380c-f5d1-4472-a0a8-78215d9c656f@infradead.org>
+X-ClientProxiedBy: KUZPR03CA0011.apcprd03.prod.outlook.com
+ (2603:1096:d10:2a::8) To SJ1PR11MB6153.namprd11.prod.outlook.com
+ (2603:10b6:a03:488::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cp2.siel.si
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - norik.com
-X-Get-Message-Sender-Via: cp2.siel.si: authenticated_id: primoz.fiser@norik.com
-X-Authenticated-Sender: cp2.siel.si: primoz.fiser@norik.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6153:EE_|PH7PR11MB7429:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2258e83a-91b3-4596-46fe-08de15d574b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|42112799006|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aU4xU0lyTTRkd0k1MW1BeEpwZysxTWt5Q0R1dXAxMlVDQy9LRE54WFVCc3Bx?=
+ =?utf-8?B?UWNOdVpqczBGaUhLNmhKT1FHUVFDQk9yRzgxNTcrdXFadG1MaHo4M0hldjRr?=
+ =?utf-8?B?V1dLajJUQ0lMY1AvM0doMWRHdXBJZmZsb2pxMHdIRmNQSktXMVBZSDVmTHBm?=
+ =?utf-8?B?emc5Y1pGRzhPUUsxYWpRR01uRjZDTUxHR2VyZzVGRHJkWldWUlRqVG5leFFI?=
+ =?utf-8?B?TmRIN2dxT0tOd01PSFNua3orNUU2cFhHYzlWYTJsalZPVS9tck9yUzZyOHBN?=
+ =?utf-8?B?dTg1VGdiVFR1OTdnNEZyMmpWd0hETkZFeURLajNKK0pLUUpVUGtzNEx5OTVR?=
+ =?utf-8?B?aTJQZU84VUVDUE8zK3Q2d2FBVFYxUWFSUkNkUk84ZFNmQkRxamFRSWUrL2dJ?=
+ =?utf-8?B?MmV6Q2NKSGswdm9idXREb0gzeFJhWTlheWhwM2RXOXBlY0pGZVJTTEdjVFBj?=
+ =?utf-8?B?bUwrSnplRWtQMmE5YkF5aTJuVkI4MmZKZXVPWFdXVU90RjJpaDMrbEV0Mm9D?=
+ =?utf-8?B?QnNoVVRsRVEyNGRXUHZZTUdqOHFSRHFXTzZlQ2t3Q3RmYjhkSEtxSStVQXhM?=
+ =?utf-8?B?K2lsZ3JTaGlyeEl1TFNNZks4ekdiVjI4M1JQd3plSzRGV0h1aWRmVVUwMDRn?=
+ =?utf-8?B?Q3BZRnEvUzJDSS9jTUhselQ1cGdCV3AwcU9BVUZkMktPNlgwNVhXM1dhTzgx?=
+ =?utf-8?B?bXhSamdOT1FGbDV2QkZsYmYxOWR3SFNNUHNweFlQT0kxdnJJOTQ1YThqM3dZ?=
+ =?utf-8?B?OU9GbnRzclhQUkRlNGg2NWtnZFlOQ1htR0xFOCtrL1RuMEI0cm9BbkxncG1B?=
+ =?utf-8?B?VlZYU0FoMmlmMlVicUFESkFqb2YzT1hzMmhQYXVTcUh6bU9PeXg3VzlDVDlP?=
+ =?utf-8?B?KzZTWW45Sm5nNFhGN1JBT2ozVytiMkhyU1JvZVNudWRlM3JxM3ZuMXh2L3U2?=
+ =?utf-8?B?dXpSN3FDYTM1ekVsT2kybDVkUlZ4bUVnRG43Q1NHR2xnNDR3T1VZbjF6ZjFF?=
+ =?utf-8?B?REtYcmlTU3lMTTVncEwwdElvQkxiYjdSRXMwbHh2dkErbS9NSnpBVUJZSUlY?=
+ =?utf-8?B?TU1GUFY5SFMwc212bDNuc0hTNVpkN1RrR2JpZmtIYkJrbUIvTWxMTnIvbk13?=
+ =?utf-8?B?cWJFdzRmSXZOMzN2WDJMaWx3T09GdlpCQ2I4RXVXMHMzTjJVT0FiOStkREhQ?=
+ =?utf-8?B?UVZuT1JwKzV3VmlLYlJnbkE2UUFRSzErbUN6aTkyVzlVN1pOd0pJYmF4cE5r?=
+ =?utf-8?B?OEhZWms1WFZCNUxFNzdwQk9mYkZXMXcrQ0doSFJ5Zy9Ocjl4R2J2Z0FwYnpp?=
+ =?utf-8?B?UlhvVUFndFNRbUhXTXpOaGJqcjNFcldyT3dFRGVCUDlVdXRtczhLdW1XZzNp?=
+ =?utf-8?B?ZlVYZWFCbG5Mb0xHUXNGd2pKUk01WTV2VGV3QVdLUGxTWFNaZ3ZiazRzUzhz?=
+ =?utf-8?B?WG1iaGJpdy9qditHWVJOOEkzM0lKdm5PMDhlTXFvSGxIZ1BNaXpKdXJJNWxU?=
+ =?utf-8?B?aDVobjBNVEt5VzhKeFM1RFlWNElSOFhxSFdtczNReldJWXIySGdwazREZXdS?=
+ =?utf-8?B?V2dhdVFQMlV5NkZnaEpmaWRmK2JXSzZDMjU4Q0oxVjNHY1VON2E0UFphTUx0?=
+ =?utf-8?B?OEI4N1dkSjIyQUFxS1h4eWxLbjFvWEJxbm4zdW5RRUVURlE5KzV0eG9DTGlX?=
+ =?utf-8?B?dEZvV2g1VXhmNnBYUFVOWUJLL3A0RTdBRUtxdkNSaFR1TlNTMDR2R3dZbVZx?=
+ =?utf-8?B?cVVTc0JBSWxBQlNxVytHQ2M2SklGZUJ4a25UbWh5d0R4U0h3T2FRcEY3TTJU?=
+ =?utf-8?B?Sk14cldid05seFBIaTZMblAwRnRudW95MGdZZ25qN0NNSktXMTROY013ZWha?=
+ =?utf-8?B?b0lrcGQ4dXRNYzhxZm5TVEpHWUg2d2VudmdUSllOVjFYYXc9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6153.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(42112799006)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?NHVLbU1QN1BuWnBYMHZzZ3Q5T2taa3RENTZJNng4bEp2ZVRuTDdpWnN0L3Zr?=
+ =?utf-8?B?RkdwaDdyRHQ4MEFDQlZEekN6SkxtU1pOdFg0M1JaaU5pZXJsMXJKWjEzbU1Q?=
+ =?utf-8?B?NHllWExnd3Vuc2VCeHNTTktzUnhvbG1PSUxZQ3NWYU9oWjZMY0FrZktIL0FL?=
+ =?utf-8?B?dkZORFRWSVhHRW1jRTdrTkU2OFpqUGlPN0lTVFNOcVlNcVBjUXpwVFpqclpQ?=
+ =?utf-8?B?aUhVM01zYytoRnFES0x1RFVvV081VkREelBqaVkrODdKQ0xPaGpVdGEvZ2Ra?=
+ =?utf-8?B?dlNzbVhXQUNRQjBZOWVUU3A4a2l6WklpZnhUUXhWWjUzVDNqay9MQUNMNi9l?=
+ =?utf-8?B?c3BJQWJJV3ltTVJtdUFyOXJtWFVENGlpVFB2UEVPb3NhdHROTFdKb29EUG04?=
+ =?utf-8?B?SlNhR2lIR0FLOU9vcDROQTgxNmo3UStzTWlUT1B1NlZYNWJtNFU0Z2JtakIy?=
+ =?utf-8?B?ZVUvWUFvRGpVWkVTRGlTY0NtYVpaRzN2enpuZTNsMkxZUWFYYU9XZTFadk4v?=
+ =?utf-8?B?aXV2WkFidXhxQ3N4NFhrNkIrYVBsakw0WVB4UndGOHVsSGZ0TXlsbHZ3bXB2?=
+ =?utf-8?B?OVVLci93MU5qTUZUYlJuVG92NlY2MVZsVVBPQlRwbFNINkwyc2pRRGowRzlF?=
+ =?utf-8?B?cGNlUXBWODhRK2tlN2VpMWhpdWpoc1BmOWZMd0hLbTRFYkhXSG9KUzFSdGd0?=
+ =?utf-8?B?ZWltMHhiM3M5cXd5TU83VlRnaUFldjEremZoSlpadld3dGozQXUxSDY1MkN1?=
+ =?utf-8?B?SUUxYnZCUm9FUExxaVoxM1RWUm5rTzhXa3htcjRNdldXOFhwV3hhYWdveXJV?=
+ =?utf-8?B?YTdER1dSMG9uMm1UdmVDRkRKRS9rQjMwSlBNVFFLSWhFcldHTzM0Y3FNTGt1?=
+ =?utf-8?B?cXlUbEV5NHpmcWN2ZmE0TldIbFdVVDZZNzFNWThXWWVmbzk3QXR1WjFTUEdU?=
+ =?utf-8?B?R0JUdXVCK3dvUExiZVVzdjBmUTZkN042UUN3cEtYTVNMcFBjc3hoSFhzUFoy?=
+ =?utf-8?B?bSs1VjBkUVFxd1pHcGpMVUVabE1FSHZyQ21PelRxMGJ3S0xROGlMdms1YzJi?=
+ =?utf-8?B?NWF5R1EzdEM4UnJFZkJFSlcycUl1ak5ZbGRkdVFRM1MvQlBQd3ArRm5iWTdw?=
+ =?utf-8?B?RURsc0drRS9sVTVlakdqVUFoTmNLcUpSOHY3WlVtV3Yxd3Y3U203TFRhaEFL?=
+ =?utf-8?B?MERjamt4ZmhSNkIxVlFicmVjZS9yVGxObURTcStnVkRpYlVPaFdBdlpIR2U2?=
+ =?utf-8?B?aE1CMTdHa3g0UUR3cWVlSHpzQldUQW5wbXZidHVObGozbkE3WC9LSWN1bGxk?=
+ =?utf-8?B?VDVXTSs3WW5sUGJRYVhqQVpLT1hDQXFTZEE0blRTc3lFbkpSc1B2L2pBR3Uy?=
+ =?utf-8?B?Y1pjbXRHQlR5bUVyVXJMSU1FTWNnM29xTVNzbndCdFNPalM0NTBwUmpsMlJi?=
+ =?utf-8?B?TzhvRWhpZmJ6cHpKV0hBbkVieC9LZ3hOS3M0WDh6UUEzN0pBWW1vUnh5OUxQ?=
+ =?utf-8?B?L2M0Q3I4VkdoODZqYk85dzJ2bGtyY29ZeFhSQzdPd0dOSDdENDFPVnFhY2RO?=
+ =?utf-8?B?V3ZJbWN6UldFNzV0QWExVC8ycERDa0pWNkkrMlhqZ3VFZmo2bXIzMldnNGQr?=
+ =?utf-8?B?WE52Y3cyaGpIUmtpMDdBczFyampqWXd6RUN0NFBtRXpIbC9QTVJuQ1VjYm1n?=
+ =?utf-8?B?NU5VdmpjcEIyNWJITndxY1Z4WTJIS1Zac1UyRmlxOEZ2Zm9zeU9MZjBaUmYx?=
+ =?utf-8?B?ZThXWitzaDBtSmp2Vy9ySVdQWUNhRXZGYXU2MXM3SHVvN3h6SDVaT09rK0U0?=
+ =?utf-8?B?TUR2eWlPWHFPTkhHRTExelRET0lTNTZwZWgwekE2TWoyQmFseDY4UE5kRGtB?=
+ =?utf-8?B?d0ZObysvS0VIb2E1Q1Jpc1RtZVd6K1Q5N0plYVhGR0dZSlNPenpmN1lWb1ph?=
+ =?utf-8?B?ZjBwRW1zcUVpYi9mVE9YK2FzaHFXNjF3U3UvS3dBYVRBSjVjekRYRG1XNWRk?=
+ =?utf-8?B?NTRBc1pHSHZVRld5bzhJVi94WWJpMU9aWGFDQ0tLa0lmQmxxUlE1Smd0Ri9z?=
+ =?utf-8?B?VFRHMlRUandLN1FPUStLU21BN1pFSjJKelJScFBHVThGRTRrSVo0cXlHZi9D?=
+ =?utf-8?Q?/APS/cxWYkXP+dEa2oXsfQc9C?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2258e83a-91b3-4596-46fe-08de15d574b0
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6153.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 03:52:46.4363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d6kxdUmScs8MzB1L+znOe5oTBYYoqyDC+lJ+DkRBF5WGykqSxuRy7kXnw1xlo1jXhR2FvryxC47CZzOQWiL5nA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7429
+X-OriginatorOrg: intel.com
 
-Add initial support for the PHYTEC phyBOARD-Segin-i.MX91 board [1] based
-on the PHYTEC phyCORE-i.MX91 SoM (System-on-Module) [2].
+On 2025-10-27 at 20:45:27 -0700, Randy Dunlap wrote:
 
-Supported features:
-* Audio
-* CAN
-* eMMC
-* Ethernet
-* I2C
-* RTC
-* SD-Card
-* UART
-* USB
+Hi Randy
 
-For more details see the product pages for the development board and the
-SoM:
+> 
+> 
+> On 10/27/25 8:19 PM, Fei Li wrote:
+> > On 2025-10-26 at 23:11:07 -0700, Randy Dunlap wrote:
+> > 
+> > Hi Randy
+> > 
+> >> Hi--
+> >>
+> >> On 10/26/25 10:54 PM, Li, Fei1 wrote:
+> >>>> From: Randy Dunlap <rdunlap@infradead.org>
+> >>>> Sent: Saturday, October 25, 2025 3:44 AM
+> >>>> To: Li, Fei1 <fei1.li@intel.com>; linux-kernel@vger.kernel.org
+> >>>> Cc: acrn-dev@lists.projectacrn.org; Greg Kroah-Hartman
+> >>>> <gregkh@linuxfoundation.org>
+> >>>> Subject: Re: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+> >>>>
+> >>>> Hi,
+> >>>>
+> >>>> On 10/23/25 11:22 PM, Li, Fei1 wrote:
+> >>>>>>
+> >>>>>> Hi,
+> >>>>>>
+> >>>>>> On 10/23/25 11:00 PM, Li, Fei1 wrote:
+> >>>>>>>> From: Randy Dunlap <rdunlap@infradead.org>
+> >>>>>>>> Sent: Friday, October 24, 2025 12:42 PM
+> >>>>>>>> To: linux-kernel@vger.kernel.org
+> >>>>>>>> Cc: Randy Dunlap <rdunlap@infradead.org>; Li, Fei1
+> >>>>>>>> <fei1.li@intel.com>; acrn-dev@lists.projectacrn.org; Greg
+> >>>>>>>> Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>>>>>> Subject: [PATCH] virt: acrn: fix kernel-doc in <uapi/linux/acrn.h>
+> >>>>>>>>
+> >>>>>>>> Fix the kernel-doc comments for struct acrn_mmiodev so that all
+> >>>>>>>> struct members are rendered correctly.
+> >>>>>>>> Correct io_base to io_addr in struct acrn_vdev.
+> >>>>>>>>
+> >>>>>>>> acrn.h:441: warning: Function parameter or struct member 'res'
+> >>>>>>>>  not described in 'acrn_mmiodev'
+> >>>>>>>> acrn.h:479: warning: Function parameter or struct member 'io_addr'
+> >>>>>>>>  not described in 'acrn_vdev'
+> >>>>>>>> acrn.h:479: warning: Excess struct member 'io_base' description  in
+> >>>>>>>> 'acrn_vdev'
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> >>>>>>>> ---
+> >>>>>>>> Cc: Fei Li <fei1.li@intel.com>
+> >>>>>>>> Cc: acrn-dev@lists.projectacrn.org
+> >>>>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >>>>>>>> ---
+> >>>>>>>>  include/uapi/linux/acrn.h |   11 ++++++-----
+> >>>>>>>>  1 file changed, 6 insertions(+), 5 deletions(-)
+> >>>>>>>>
+> >>>>>>>> --- linux-next-20251022.orig/include/uapi/linux/acrn.h
+> >>>>>>>> +++ linux-next-20251022/include/uapi/linux/acrn.h
+> >>>>>>>> @@ -420,12 +420,13 @@ struct acrn_pcidev {
+> >>>>>>>>  /**
+> >>>>>>>>   * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO
+> >>>> device
+> >>>>>>>>   * @name:			Name of the MMIO device.
+> >>>>>>>> - * @res[].user_vm_pa:		Physical address of User VM of the
+> >>>>>> MMIO
+> >>>>>>>> region
+> >>>>>>>> + * @res:			MMIO resource descriptor info.
+> >>>>>>>
+> >>>>>>> Hi Randy
+> >>>>>>>
+> >>>>>>> Thanks for cooking this patch to help fix these warning.
+> >>>>>>> Could you just add the comment for `res` and keep the other comments
+> >>>>>>> for
+> >>>>>> the fields of ` struct acrn_mmiodev ` ?
+> >>>>>>>
+> >>>>>>
+> >>>>>> Do you mean leave the [] square brackets in the field name?
+> >>>>> yes
+> >>>>>> If that's what you mean, that's not valid kernel-doc notation.
+> >>>>> Would you please post the quote how kernel-doc prefer to add this
+> >>>>> comments ? I didn't see an example in the kernel-doc.rst
+> >>>>
+> >>>> There is not anything in kernel-doc that indicates arrays so I can't post a quote
+> >>>> that shows that.
+> >>>> The patch shows the preferred kernel-doc here.
+> >>>
+> >>> Hi Randy
+> >>>
+> >>> IMHO,  the patch shows here is an example of `Nested structs/unions`, not an example of
+> >>> `Nested structs/unions array`. 
+> >>> For the ` Nested structs/unions array `, the `In-line member documentation comments`
+> >>> style is more suitable, or could we just keep what it is for: (1) there're many kernels' codes
+> >>> still use this comment style for theirs function comments, I.E., in kernel/rcu/srcutree.c
+> >>
+> >> but that is not in kernel-doc comments.
+> >>
+> >>> (2) the kernel-doc doesn't complain about this warning.
+> >>
+> >> Yes, it's just wrong about that. As soon as it sees the "[]",
+> >> it seems to become confused and omits all struct members
+> >> after @name.  Here's struct acrn_mmiodev
+> >> after I rendered it in man format:
+> >>
+> >> NAME
+> >>        struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
+> >>
+> >> SYNOPSIS
+> >>        struct acrn_mmiodev {
+> >>            __u8 name[8];
+> >>            struct {
+> >>              __u64 user_vm_pa;
+> >>              __u64 service_vm_pa;
+> >>              __u64 size;
+> >>              __u64 mem_type;
+> >>            } res[ACRN_MMIODEV_RES_NUM];
+> >>         };
+> >>
+> >> Members
+> >>        name        Name of the MMIO device.  res[].user_vm_pa:           Physi‐
+> >>                    cal  address  of User VM of the MMIO region for the MMIO de‐
+> >>                    vice.  res[].service_vm_pa:        Physical address of  Ser‐
+> >>                    vice VM of the MMIO region for the MMIO device.  res[].size:
+> >>                    Size   of   the   MMIO   region   for   the   MMIO   device.
+> >>                    res[].mem_type:             Memory type of the  MMIO  region
+> >>                    for the MMIO device.
+> >>
+> >> Description
+> >>        This structure will be passed to hypervisor directly.
+> >>
+> >> SEE ALSO
+> >>        Kernel   file   include/uapi/linux/acrn.h  struct  acrn_mmio_request(9),
+> >>        struct   acrn_pio_request(9),   struct    acrn_pci_request(9),    struct
+> >>        acrn_io_request(9),  struct  acrn_ioreq_notify(9),  struct  acrn_vm_cre‐
+> >>        ation(9), struct acrn_gp_regs(9), struct acrn_descriptor_ptr(9),  struct
+> >>        acrn_regs(9), struct acrn_vcpu_regs(9), struct acrn_vm_memmap(9), struct
+> >>        acrn_ptdev_irq(9),  struct  acrn_pcidev(9),  struct acrn_vdev(9), struct
+> >>        acrn_msi_entry(9),       struct       acrn_cstate_data(9),        struct
+> >>        acrn_pstate_data(9), struct acrn_ioeventfd(9), struct acrn_irqfd(9)
+> >>
+> >>
+> >> and here is the Members section after my patch:
+> >>
+> >> Members
+> >>        name        Name of the MMIO device.
+> >>
+> >>        res         MMIO resource descriptor info.
+> >>
+> >>        res.user_vm_pa
+> >>                    Physical  address of User VM of the MMIO region for the MMIO
+> >>                    device.
+> >>
+> >>        res.service_vm_pa
+> >>                    Physical address of Service VM of the MMIO  region  for  the
+> >>                    MMIO device.
+> >>
+> >>        res.size    Size of the MMIO region for the MMIO device.
+> >>
+> >>        res.mem_type
+> >>                    Memory type of the MMIO region for the MMIO device.
+> >>
+> >>
+> >>> What do you think ?
+> >>
+> >> Sure, if you want to leave the file as is, that's your choice.
+> >> Consider this patch dropped.
+> > 
+> > Yes, you are right. The `dump_struct` in `linux/scripts/kernel-doc.pl` can't pasre
+> > the `[]` properly since it can't tell this is for comment or for a struct_members.
+> > 
+> > So before kernel-doc.pl could handle the Nested structure array properly, maybe
+> > define a structure for `res` maybe the better way to avoid the confusing.
+> 
+> We no longer use kernel-doc.pl. It has been rewritten in Python. The new
+> script is scripts/kernel-doc.py.
+> 
+> > Would you please help to define a `structure acrn_mmio_dev_res` just before
+> > `structure acrn_mmio_dev` ?
+> See below. Is that what you mean?
 
-[1] https://www.phytec.eu/en/produkte/development-kits/phyboard-segin-kit/
-[2] https://www.phytec.eu/en/produkte/system-on-modules/phycore-imx-91-93/
+Yes, that's exactly what I meant. Thanks!
 
-Signed-off-by: Primoz Fiser <primoz.fiser@norik.com>
----
-Changes in v2:
-- Add comment to CAN phy xceiver node
-- Fix order of regulator-{max,min}-microvolt properties
+Acked-by: Fei Li <fei1.li@intel.com>
 
-Link to v1: https://lore.kernel.org/all/20251021093704.690410-2-primoz.fiser@norik.com/
-
- arch/arm64/boot/dts/freescale/Makefile        |   1 +
- .../dts/freescale/imx91-phyboard-segin.dts    | 345 ++++++++++++++++++
- .../boot/dts/freescale/imx91-phycore-som.dtsi | 304 +++++++++++++++
- 3 files changed, 650 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx91-phyboard-segin.dts
- create mode 100644 arch/arm64/boot/dts/freescale/imx91-phycore-som.dtsi
-
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 525ef180481d..34a81d34de39 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -344,6 +344,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqps-mb-smarc-2.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-9x9-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx91-11x11-evk.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx91-phyboard-segin.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx91-tqma9131-mba91xxca.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
- 
-diff --git a/arch/arm64/boot/dts/freescale/imx91-phyboard-segin.dts b/arch/arm64/boot/dts/freescale/imx91-phyboard-segin.dts
-new file mode 100644
-index 000000000000..7b18a58024f5
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx91-phyboard-segin.dts
-@@ -0,0 +1,345 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ * Author: Christoph Stoidner <c.stoidner@phytec.de>
-+ *
-+ * Product homepage:
-+ * phyBOARD-Segin carrier board is reused for the i.MX91 design.
-+ * https://www.phytec.eu/en/produkte/single-board-computer/phyboard-segin-imx6ul/
-+ */
-+/dts-v1/;
-+
-+#include "imx91-phycore-som.dtsi"
-+
-+/{
-+	model = "PHYTEC phyBOARD-Segin-i.MX91";
-+	compatible = "phytec,imx91-phyboard-segin", "phytec,imx91-phycore-som",
-+		     "fsl,imx91";
-+
-+	aliases {
-+		ethernet1 = &eqos;
-+		gpio0 = &gpio1;
-+		gpio1 = &gpio2;
-+		gpio2 = &gpio3;
-+		gpio3 = &gpio4;
-+		i2c0 = &lpi2c1;
-+		i2c1 = &lpi2c2;
-+		mmc0 = &usdhc1;
-+		mmc1 = &usdhc2;
-+		rtc0 = &i2c_rtc;
-+		rtc1 = &bbnsm_rtc;
-+		serial0 = &lpuart1;
-+	};
-+
-+	chosen {
-+		stdout-path = &lpuart1;
-+	};
-+
-+	flexcan1_tc: can-phy0 {
-+		/* TI SN65HVD234D CAN-CC 1MBit/s */
-+		compatible = "ti,tcan1043";
-+		#phy-cells = <0>;
-+		max-bitrate = <1000000>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_flexcan1_tc>;
-+		enable-gpios = <&gpio4 16 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_sound_1v8: regulator-sound-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-max-microvolt = <1800000>;
-+		regulator-min-microvolt = <1800000>;
-+		regulator-name = "VCC1V8_AUDIO";
-+	};
-+
-+	reg_sound_3v3: regulator-sound-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "VCC3V3_ANALOG";
-+	};
-+
-+	reg_usb_otg1_vbus: regulator-usb-otg1-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB_OTG1_VBUS";
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_usb_otg2_vbus: regulator-usb-otg2-vbus {
-+		compatible = "regulator-fixed";
-+		regulator-name = "USB_OTG2_VBUS";
-+		regulator-max-microvolt = <5000000>;
-+		regulator-min-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
-+
-+	reg_usdhc2_vmmc: regulator-usdhc2 {
-+		compatible = "regulator-fixed";
-+		enable-active-high;
-+		gpio = <&gpio3 7 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-min-microvolt = <3300000>;
-+		regulator-name = "VCC_SD";
-+	};
-+
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "phyBOARD-Segin-TLV320AIC3007";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&dailink_master>;
-+		simple-audio-card,frame-master = <&dailink_master>;
-+		simple-audio-card,widgets =
-+			"Line", "Line In",
-+			"Line", "Line Out",
-+			"Speaker", "Speaker";
-+		simple-audio-card,routing =
-+			"Line Out", "LLOUT",
-+			"Line Out", "RLOUT",
-+			"Speaker", "SPOP",
-+			"Speaker", "SPOM",
-+			"LINE1L", "Line In",
-+			"LINE1R", "Line In";
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&sai1>;
-+		};
-+
-+		dailink_master: simple-audio-card,codec {
-+			sound-dai = <&audio_codec>;
-+			clocks = <&clk IMX93_CLK_SAI1>;
-+		};
-+	};
-+};
-+
-+/* Ethernet */
-+&eqos {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_eqos>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy2>;
-+	assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
-+				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
-+	assigned-clock-rates = <100000000>, <50000000>;
-+	status = "okay";
-+};
-+
-+&mdio {
-+	ethphy2: ethernet-phy@2 {
-+		compatible = "ethernet-phy-id0022.1561";
-+		reg = <2>;
-+		clocks = <&clk IMX91_CLK_ENET2_REGULAR>;
-+		clock-names = "rmii-ref";
-+		micrel,led-mode = <1>;
-+	};
-+};
-+
-+/* CAN */
-+&flexcan1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	phys = <&flexcan1_tc>;
-+	status = "okay";
-+};
-+
-+/* I2C2 */
-+&lpi2c2 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_lpi2c2>;
-+	pinctrl-1 = <&pinctrl_lpi2c2_gpio>;
-+	scl-gpios = <&gpio1 2 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	/* Codec */
-+	audio_codec: audio-codec@18 {
-+		compatible = "ti,tlv320aic3007";
-+		reg = <0x18>;
-+		#sound-dai-cells = <0>;
-+		AVDD-supply = <&reg_sound_3v3>;
-+		IOVDD-supply = <&reg_sound_3v3>;
-+		DRVDD-supply = <&reg_sound_3v3>;
-+		DVDD-supply = <&reg_sound_1v8>;
-+	};
-+
-+	/* RTC */
-+	i2c_rtc: rtc@68 {
-+		compatible = "microcrystal,rv4162";
-+		reg = <0x68>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_rtc>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <26 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+};
-+
-+/* Console */
-+&lpuart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart1>;
-+	status = "okay";
-+};
-+
-+/* Audio */
-+&sai1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_sai1>;
-+	assigned-clocks = <&clk IMX93_CLK_SAI1>;
-+	assigned-clock-parents = <&clk IMX93_CLK_AUDIO_PLL>;
-+	assigned-clock-rates = <19200000>;
-+	fsl,sai-mclk-direction-output;
-+	status = "okay";
-+};
-+
-+/* USB  */
-+&usbphynop1 {
-+	vbus-supply = <&reg_usb_otg1_vbus>;
-+};
-+
-+&usbphynop2 {
-+	vbus-supply = <&reg_usb_otg2_vbus>;
-+};
-+
-+&usbotg1 {
-+	disable-over-current;
-+	dr_mode = "otg";
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	disable-over-current;
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
-+/* SD-Card */
-+&usdhc2 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc2_default>, <&pinctrl_usdhc2_cd>;
-+	pinctrl-1 = <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_cd>;
-+	pinctrl-2 = <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_cd>;
-+	bus-width = <4>;
-+	cd-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
-+	disable-wp;
-+	no-mmc;
-+	no-sdio;
-+	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_eqos: eqosgrp {
-+		fsl,pins = <
-+			MX91_PAD_ENET1_TD2__ENET_QOS_CLOCK_GENERATE_CLK	0x4000050e
-+			MX91_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0		0x57e
-+			MX91_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1		0x57e
-+			MX91_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0		0x50e
-+			MX91_PAD_ENET1_TD1__ENET1_RGMII_TD1		0x50e
-+			MX91_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL	0x57e
-+			MX91_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL	0x50e
-+			MX91_PAD_ENET1_RXC__ENET_QOS_RX_ER		0x57e
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp {
-+		fsl,pins = <
-+			MX91_PAD_PDM_BIT_STREAM0__CAN1_RX	0x139e
-+			MX91_PAD_PDM_CLK__CAN1_TX		0x139e
-+		>;
-+	};
-+
-+	pinctrl_flexcan1_tc: flexcan1tcgrp {
-+		fsl,pins = <
-+			MX91_PAD_ENET2_TD3__GPIO4_IO16		0x31e
-+		>;
-+	};
-+
-+	pinctrl_lpi2c2: lpi2c2grp {
-+		fsl,pins = <
-+			MX91_PAD_I2C2_SCL__LPI2C2_SCL		0x40000b9e
-+			MX91_PAD_I2C2_SDA__LPI2C2_SDA		0x40000b9e
-+		>;
-+	};
-+
-+	pinctrl_lpi2c2_gpio: lpi2c2gpiogrp {
-+		fsl,pins = <
-+			MX91_PAD_I2C2_SCL__GPIO1_IO2		0x31e
-+			MX91_PAD_I2C2_SDA__GPIO1_IO3		0x31e
-+		>;
-+	};
-+
-+	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD2_RESET_B__GPIO3_IO7		0x31e
-+		>;
-+	};
-+
-+	pinctrl_rtc: rtcgrp {
-+		fsl,pins = <
-+			MX91_PAD_ENET2_RD2__GPIO4_IO26		0x31e
-+		>;
-+	};
-+
-+	pinctrl_sai1: sai1grp {
-+		fsl,pins = <
-+			MX91_PAD_UART2_RXD__SAI1_MCLK		0x1202
-+			MX91_PAD_SAI1_TXFS__SAI1_TX_SYNC	0x1202
-+			MX91_PAD_SAI1_TXC__SAI1_TX_BCLK		0x1202
-+			MX91_PAD_SAI1_TXD0__SAI1_TX_DATA0	0x1402
-+			MX91_PAD_SAI1_RXD0__SAI1_RX_DATA0	0x1402
-+		>;
-+	};
-+
-+	pinctrl_uart1: uart1grp {
-+		fsl,pins = <
-+			MX91_PAD_UART1_RXD__LPUART1_RX		0x31e
-+			MX91_PAD_UART1_TXD__LPUART1_TX		0x30e
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_cd: usdhc2cdgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD2_CD_B__GPIO3_IO0		0x31e
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_default: usdhc2grp {
-+		fsl,pins = <
-+			MX91_PAD_SD2_CLK__USDHC2_CLK		0x158e
-+			MX91_PAD_SD2_CMD__USDHC2_CMD		0x1382
-+			MX91_PAD_SD2_DATA0__USDHC2_DATA0	0x1386
-+			MX91_PAD_SD2_DATA1__USDHC2_DATA1	0x138e
-+			MX91_PAD_SD2_DATA2__USDHC2_DATA2	0x139e
-+			MX91_PAD_SD2_DATA3__USDHC2_DATA3	0x139e
-+			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD2_CLK__USDHC2_CLK		0x159e
-+			MX91_PAD_SD2_CMD__USDHC2_CMD		0x139e
-+			MX91_PAD_SD2_DATA0__USDHC2_DATA0	0x138e
-+			MX91_PAD_SD2_DATA1__USDHC2_DATA1	0x138e
-+			MX91_PAD_SD2_DATA2__USDHC2_DATA2	0x139e
-+			MX91_PAD_SD2_DATA3__USDHC2_DATA3	0x139e
-+			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-+		>;
-+	};
-+
-+	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD2_CLK__USDHC2_CLK		0x158e
-+			MX91_PAD_SD2_CMD__USDHC2_CMD		0x138e
-+			MX91_PAD_SD2_DATA0__USDHC2_DATA0	0x139e
-+			MX91_PAD_SD2_DATA1__USDHC2_DATA1	0x139e
-+			MX91_PAD_SD2_DATA2__USDHC2_DATA2	0x139e
-+			MX91_PAD_SD2_DATA3__USDHC2_DATA3	0x139e
-+			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT	0x51e
-+		>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/freescale/imx91-phycore-som.dtsi b/arch/arm64/boot/dts/freescale/imx91-phycore-som.dtsi
-new file mode 100644
-index 000000000000..29a428a052b0
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx91-phycore-som.dtsi
-@@ -0,0 +1,304 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2025 PHYTEC Messtechnik GmbH
-+ * Author: Christoph Stoidner <c.stoidner@phytec.de>
-+ *
-+ * Product homepage:
-+ * https://www.phytec.eu/en/produkte/system-on-modules/phycore-imx-91-93/
-+ */
-+
-+#include <dt-bindings/leds/common.h>
-+
-+#include "imx91.dtsi"
-+
-+/ {
-+	model = "PHYTEC phyCORE-i.MX91";
-+	compatible = "phytec,imx91-phycore-som", "fsl,imx91";
-+
-+	aliases {
-+		ethernet0 = &fec;
-+	};
-+
-+	reserved-memory {
-+		ranges;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			alloc-ranges = <0 0x80000000 0 0x40000000>;
-+			size = <0 0x10000000>;
-+			linux,cma-default;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_leds>;
-+
-+		led-0 {
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_HEARTBEAT;
-+			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+	};
-+
-+	reg_vdda_1v8: regulator-vdda-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDA_1V8";
-+		regulator-max-microvolt = <1800000>;
-+		regulator-min-microvolt = <1800000>;
-+		vin-supply = <&buck5>;
-+	};
-+};
-+
-+/* ADC */
-+&adc1 {
-+	vref-supply = <&reg_vdda_1v8>;
-+};
-+
-+/* Ethernet */
-+&fec {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_fec>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy1>;
-+
-+	assigned-clocks = <&clk IMX91_CLK_ENET_TIMER>,
-+			  <&clk IMX91_CLK_ENET2_REGULAR>;
-+	assigned-clock-parents = <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>,
-+				 <&clk IMX93_CLK_SYS_PLL_PFD1_DIV2>;
-+	assigned-clock-rates = <100000000>, <50000000>;
-+	status = "okay";
-+
-+	mdio: mdio {
-+		clock-frequency = <5000000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy1: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <1>;
-+			reset-gpios = <&gpio4 23 GPIO_ACTIVE_HIGH>;
-+			reset-assert-us = <30>;
-+		};
-+	};
-+};
-+
-+/* I2C3 */
-+&lpi2c3 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default", "gpio";
-+	pinctrl-0 = <&pinctrl_lpi2c3>;
-+	pinctrl-1 = <&pinctrl_lpi2c3_gpio>;
-+	scl-gpios = <&gpio2 29 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	sda-gpios = <&gpio2 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-+	status = "okay";
-+
-+	pmic@25 {
-+		compatible = "nxp,pca9451a";
-+		reg = <0x25>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pmic>;
-+		interrupt-parent = <&gpio4>;
-+		interrupts = <27 IRQ_TYPE_LEVEL_LOW>;
-+
-+		regulators {
-+			buck1: BUCK1 {
-+				regulator-name = "VDD_SOC";
-+				regulator-max-microvolt = <950000>;
-+				regulator-min-microvolt = <610000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+				regulator-ramp-delay = <3125>;
-+			};
-+
-+			buck2: BUCK2 {
-+				regulator-name = "VDDQ_0V6";
-+				regulator-max-microvolt = <600000>;
-+				regulator-min-microvolt = <600000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck4: BUCK4 {
-+				regulator-name = "VDD_3V3_BUCK";
-+				regulator-max-microvolt = <3300000>;
-+				regulator-min-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck5: BUCK5 {
-+				regulator-name = "VDD_1V8";
-+				regulator-max-microvolt = <1800000>;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			buck6: BUCK6 {
-+				regulator-name = "VDD_1V1";
-+				regulator-max-microvolt = <1100000>;
-+				regulator-min-microvolt = <1100000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo1: LDO1 {
-+				regulator-name = "PMIC_SNVS_1V8";
-+				regulator-max-microvolt = <1800000>;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo4: LDO4 {
-+				regulator-name = "VDD_0V8";
-+				regulator-max-microvolt = <800000>;
-+				regulator-min-microvolt = <800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo5: LDO5 {
-+				regulator-name = "NVCC_SD2";
-+				regulator-max-microvolt = <3300000>;
-+				regulator-min-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+
-+	/* EEPROM */
-+	eeprom@50 {
-+		compatible = "atmel,24c32";
-+		reg = <0x50>;
-+		pagesize = <32>;
-+		vcc-supply = <&buck4>;
-+	};
-+};
-+
-+/* eMMC */
-+&usdhc1 {
-+	pinctrl-names = "default", "state_100mhz", "state_200mhz";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
-+	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
-+	bus-width = <8>;
-+	non-removable;
-+	no-1-8-v;
-+	status = "okay";
-+};
-+
-+/* Watchdog */
-+&wdog3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdog>;
-+	fsl,ext-reset-output;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_fec: fecgrp {
-+		fsl,pins = <
-+			MX91_PAD_ENET2_MDC__ENET2_MDC			0x50e
-+			MX91_PAD_ENET2_MDIO__ENET2_MDIO			0x502
-+			/* the three pins below are connected to PHYs straps,
-+			 * that is what the pull-up/down setting is for.
-+			 */
-+			MX91_PAD_ENET2_RD0__ENET2_RGMII_RD0		0x37e
-+			MX91_PAD_ENET2_RD1__ENET2_RGMII_RD1		0x37e
-+			MX91_PAD_ENET2_RX_CTL__ENET2_RGMII_RX_CTL	0x57e
-+			MX91_PAD_ENET2_TD0__ENET2_RGMII_TD0		0x50e
-+			MX91_PAD_ENET2_TD1__ENET2_RGMII_TD1		0x50e
-+			MX91_PAD_ENET2_TX_CTL__ENET2_RGMII_TX_CTL	0x50e
-+			MX91_PAD_ENET2_TD2__ENET2_TX_CLK2		0x4000050e
-+			MX91_PAD_ENET2_RXC__GPIO4_IO23			0x51e
-+		>;
-+	};
-+
-+	pinctrl_leds: ledsgrp {
-+		fsl,pins = <
-+			MX91_PAD_I2C1_SDA__GPIO1_IO1		0x11e
-+		>;
-+	};
-+
-+	pinctrl_lpi2c3: lpi2c3grp {
-+		fsl,pins = <
-+			MX91_PAD_GPIO_IO28__LPI2C3_SDA		0x40000b9e
-+			MX91_PAD_GPIO_IO29__LPI2C3_SCL		0x40000b9e
-+		>;
-+	};
-+
-+	pinctrl_lpi2c3_gpio: lpi2c3gpiogrp {
-+		fsl,pins = <
-+			MX91_PAD_GPIO_IO28__GPIO2_IO28		0x31e
-+			MX91_PAD_GPIO_IO29__GPIO2_IO29		0x31e
-+		>;
-+	};
-+
-+	pinctrl_pmic: pmicgrp {
-+		fsl,pins = <
-+			MX91_PAD_ENET2_RD3__GPIO4_IO27		0x31e
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			MX91_PAD_SD1_CLK__USDHC1_CLK		0x179e
-+			MX91_PAD_SD1_CMD__USDHC1_CMD		0x1386
-+			MX91_PAD_SD1_DATA0__USDHC1_DATA0	0x138e
-+			MX91_PAD_SD1_DATA1__USDHC1_DATA1	0x1386
-+			MX91_PAD_SD1_DATA2__USDHC1_DATA2	0x138e
-+			MX91_PAD_SD1_DATA3__USDHC1_DATA3	0x1386
-+			MX91_PAD_SD1_DATA4__USDHC1_DATA4	0x1386
-+			MX91_PAD_SD1_DATA5__USDHC1_DATA5	0x1386
-+			MX91_PAD_SD1_DATA6__USDHC1_DATA6	0x1386
-+			MX91_PAD_SD1_DATA7__USDHC1_DATA7	0x1386
-+			MX91_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD1_CLK__USDHC1_CLK		0x17be
-+			MX91_PAD_SD1_CMD__USDHC1_CMD		0x139e
-+			MX91_PAD_SD1_DATA0__USDHC1_DATA0	0x138e
-+			MX91_PAD_SD1_DATA1__USDHC1_DATA1	0x139e
-+			MX91_PAD_SD1_DATA2__USDHC1_DATA2	0x13be
-+			MX91_PAD_SD1_DATA3__USDHC1_DATA3	0x139e
-+			MX91_PAD_SD1_DATA4__USDHC1_DATA4	0x139e
-+			MX91_PAD_SD1_DATA5__USDHC1_DATA5	0x139e
-+			MX91_PAD_SD1_DATA6__USDHC1_DATA6	0x139e
-+			MX91_PAD_SD1_DATA7__USDHC1_DATA7	0x139e
-+			MX91_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
-+		>;
-+	};
-+
-+	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
-+		fsl,pins = <
-+			MX91_PAD_SD1_CLK__USDHC1_CLK		0x17be
-+			MX91_PAD_SD1_CMD__USDHC1_CMD		0x139e
-+			MX91_PAD_SD1_DATA0__USDHC1_DATA0	0x139e
-+			MX91_PAD_SD1_DATA1__USDHC1_DATA1	0x13be
-+			MX91_PAD_SD1_DATA2__USDHC1_DATA2	0x13be
-+			MX91_PAD_SD1_DATA3__USDHC1_DATA3	0x13be
-+			MX91_PAD_SD1_DATA4__USDHC1_DATA4	0x13be
-+			MX91_PAD_SD1_DATA5__USDHC1_DATA5	0x13be
-+			MX91_PAD_SD1_DATA6__USDHC1_DATA6	0x13be
-+			MX91_PAD_SD1_DATA7__USDHC1_DATA7	0x13be
-+			MX91_PAD_SD1_STROBE__USDHC1_STROBE	0x179e
-+		>;
-+	};
-+
-+	pinctrl_wdog: wdoggrp {
-+		fsl,pins = <
-+			MX91_PAD_WDOG_ANY__WDOG1_WDOG_ANY	0x31e
-+		>;
-+	};
-+};
--- 
-2.34.1
-
+> ---
+>  include/uapi/linux/acrn.h |   36 +++++++++++++++++++++---------------
+>  1 file changed, 21 insertions(+), 15 deletions(-)
+> 
+> --- linux-next-20251024.orig/include/uapi/linux/acrn.h
+> +++ linux-next-20251024/include/uapi/linux/acrn.h
+> @@ -418,26 +418,32 @@ struct acrn_pcidev {
+>  };
+>  
+>  /**
+> - * struct acrn_mmiodev - Info for assigning or de-assigning a MMIO device
+> - * @name:			Name of the MMIO device.
+> - * @res[].user_vm_pa:		Physical address of User VM of the MMIO region
+> - *				for the MMIO device.
+> - * @res[].service_vm_pa:	Physical address of Service VM of the MMIO
+> - *				region for the MMIO device.
+> - * @res[].size:			Size of the MMIO region for the MMIO device.
+> - * @res[].mem_type:		Memory type of the MMIO region for the MMIO
+> - *				device.
+> + * struct acrn_mmio_dev_res - MMIO device resource description
+> + * @user_vm_pa:		Physical address of User VM of the MMIO region
+> + *			for the MMIO device.
+> + * @service_vm_pa:	Physical address of Service VM of the MMIO
+> + *			region for the MMIO device.
+> + * @size:		Size of the MMIO region for the MMIO device.
+> + * @mem_type:		Memory type of the MMIO region for the MMIO
+> + *			device.
+> + */
+> +struct acrn_mmio_dev_res {
+> +	__u64	user_vm_pa;
+> +	__u64	service_vm_pa;
+> +	__u64	size;
+> +	__u64	mem_type;
+> +};
+> +
+> +/**
+> + * struct acrn_mmiodev - Info for assigning or de-assigning an MMIO device
+> + * @name:	Name of the MMIO device.
+> + * @res:	Array of MMIO device descriptions
+>   *
+>   * This structure will be passed to hypervisor directly.
+>   */
+>  struct acrn_mmiodev {
+>  	__u8	name[8];
+> -	struct {
+> -		__u64	user_vm_pa;
+> -		__u64	service_vm_pa;
+> -		__u64	size;
+> -		__u64	mem_type;
+> -	} res[ACRN_MMIODEV_RES_NUM];
+> +	struct acrn_mmio_dev_res res[ACRN_MMIODEV_RES_NUM];
+>  };
+>  
+>  /**
+> 
 
