@@ -1,136 +1,203 @@
-Return-Path: <linux-kernel+bounces-872929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274DFC12A46
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:14:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9870EC12A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505AA1A636D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:14:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 090DA580538
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1611D2F42;
-	Tue, 28 Oct 2025 02:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="l9Asc189"
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A130A1E1DE7;
+	Tue, 28 Oct 2025 02:14:57 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AFD13D8B1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFC62DF68;
+	Tue, 28 Oct 2025 02:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761617661; cv=none; b=h+gJQMtfu6Gss3pWsjlY5tWJUVPA1Lq3wbRAKmEePBMcfsvDd4pUaH275lkPcFIe1N/jGn5IsFlqycqP/zNwnsxr3d2SzuaglAuPkE2FDYaFN19vvJc56p/RBL5Z91JQY4sceTjf9b7JGLBunvZFJdBYvUJk8Cf8OME/A7T4L68=
+	t=1761617697; cv=none; b=FWhT4rK7fivicgwX29GRmW5kBdkfQHPL4aa77JIAXNcA/qw7kwjyPw9INdA+hJVO2yHMDSXTRWS9onUBB8DNpWzch3fIJ0G/u5swmofT8kXl3rZigcmt2No3G0+mjxpoFmUSRhMERn1itjwNA4EQ6vixUy2me7VJPoWiJAK6Pw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761617661; c=relaxed/simple;
-	bh=/PaFBHy64rGgMWUqpYePTksCWVabf6Q+9Js0kI2d4iE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E3BOnlSP2SGThnzBJSdFgr8WfV8QCSpc0NB5yJohlhSkvJMsgnuuCk/yCaBgnTNsrtXuvLkG6DBA+KQHP0mPpIyPTRWrcnCroB8ye2sUJGER+lcspIrNtV9KKqfRpjD2pZn4/5voJKb1AlFZpvRUac9C1FpYMK6UcfWW0oL3bFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=l9Asc189; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1761617614;
-	bh=VlK3t/Xv5LLzjE0dV2jWA+/0FZqLNmRlJr1ryxluhxI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=l9Asc189MsUIXp3YcocZgX0MJUNFhVSjcAmrnULyelgwlqPyauzdbLxfwRw1iUIIi
-	 7QLu8lp+oJwytjidsrFn0T6bEgEdSBfh1aUInPSLZJNytuXQ2467U0yNmJbP3nFXYq
-	 yXKTCTWvu5P5FV5w8OstKMKICtaHS64Z+Oh3agCc=
-X-QQ-mid: zesmtpgz3t1761617612t81c82363
-X-QQ-Originating-IP: yLxr9FRtgkzgVlTzQxP8lK0+u8/dw0HzEMeRuqlfjhY=
-Received: from [198.18.0.1] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 28 Oct 2025 10:13:31 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17129082983056919779
-Message-ID: <2F51425F3E6D2182+7c76e5f7-bb24-4d39-aa00-33e486ff4cd9@uniontech.com>
-Date: Tue, 28 Oct 2025 10:13:31 +0800
+	s=arc-20240116; t=1761617697; c=relaxed/simple;
+	bh=8GA2HWQ3CnTTZU4f0v/SuliTNBNdDaZ0tSnmxpynxRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sVjRi2/fXIQvnWxN2s1dQ5pkolreFuBoPiZ9/bvifbRPSrmvSi0uCFLYEimwtq7Xr4TNGPbEh5bMaeKr4zlgPjw93h0wYSZSjJ6xLEU8IbT4Bjs287odqhrXpJ8tMIyzA6O6b4PJ+GmS95zU0zsSFNvIJcM3haO3aR4U9FP2vPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vDZEX-000000006K5-0QLG;
+	Tue, 28 Oct 2025 02:14:49 +0000
+Date: Tue, 28 Oct 2025 02:14:45 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v3 12/12] net: dsa: add driver for MaxLinear
+ GSW1xx switch family
+Message-ID: <aQAnFXYZXIe4VA0Q@makrotopia.org>
+References: <cover.1761521845.git.daniel@makrotopia.org>
+ <cover.1761521845.git.daniel@makrotopia.org>
+ <5055f997f3dea3c26d6a34f94ed06bceda020790.1761521845.git.daniel@makrotopia.org>
+ <5055f997f3dea3c26d6a34f94ed06bceda020790.1761521845.git.daniel@makrotopia.org>
+ <20251028012430.2khnl6hts2twyrz3@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of
- function 'outb'
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
-References: <202510240817.vt3eQ3qL-lkp@intel.com>
- <265B8FE9306198E5+0131c750-3995-4158-84e7-ad73792e6934@uniontech.com>
- <CAMuHMdUeE3xQKkyLWDxoaA_E=cukZSz6UvvjJF0vsbRtt0fVgw@mail.gmail.com>
-Content-Language: en-US
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-In-Reply-To: <CAMuHMdUeE3xQKkyLWDxoaA_E=cukZSz6UvvjJF0vsbRtt0fVgw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: NlWvLSkfVnGcWADTzbisGq6LfrQdYuhnI3Da359ZRVDa/pqlyUJY2vsR
-	L95ATwmckqwMNe+SnuYG2B20g+BK/9C4m7aYI2zjW9ceQ0TGwcgHhfB4patGV2ATG050ssM
-	SiPrLsl1f6Yu2MpW8RKUv/K1L/kPIAEL16melHa2p4nG0PlVq+cWdXialIk5lcfs69UMkjh
-	fN78WIWFwCgIFjtjMbrvQXldeiugp99KVAKdcpQ8dYoBQhs/bt2G5q5UeQd34qAGpw9dpia
-	2dgqLKzpBPPgPie9zPS4RjwPspHUMHUCrSZW2jWMsQffDtYWgYosUBZ7bdXR1QaMu307UEu
-	jQpHGsFuKCEfZZhJGhK6aD2URNV9uPx/WwMHUQAOJYkw5B8tVmKs7TAIAycHp7PFbrJegWS
-	wBP+eNmqy0U+UOHKg/ZwvJvqLgXxStf2jatiiEfik3VvbT+dZLlKMSQ7TuazYKmKJzFCKM1
-	JqJ0vSSQxWLsE4U50kwXNZyNoNEbMbc0vnDtNGZLKAXYkh50CPtCwGGcDO8HEa7trLCrCF8
-	D2q/cGTeTe+ImqkhyVnNm13/DfI2j3NdcWnwPoGRIaJ3Dopv2lo4RB06VQLUyODvTYdx5Ni
-	jrLs/Uc60V1V0K2fS5If3gyI8R/lsI2DXL1veoPlAe0AwBQEgsodqjfwYyl8wQ7SVWe9KVS
-	mgpIqbwdzm25/FsPbMdHizjqLAKFc+dxWkiY077FwC7zzjO86fGXm9Ou4zAWdt4hMqWh0JE
-	H5wOjhrmteo7FgsYBuOKLwHRPDocltLvxlO8HU4ztnJFOdEtMvzKc35ri9+c2sKOS0tr0wL
-	kd4Keybc2Ny0CeIj10tzK2hhnw2WqXX7l9LPVrs7h0WUfVGuOS+Ld7TsR1JiC9mgrVVRPEd
-	xchNC9TrfMUrwjDL94RAyOfRtVZOExcRlYEZ/o6oPh5PWiTvzWpwfX+cTrd649Gyo2FtEYk
-	udwu335jwoHRE+SsYXHijg4TJ3qW2+OKjZH4Z+SXf+EsTqSGSQ6HGFGzoTqZ7v3pbS+iD2w
-	cKmM2Pm4vvj/0fzN67q/ZAurfBByVZmpTuUS5HwQ==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028012430.2khnl6hts2twyrz3@skbuf>
 
-> Hi Cryolitia,
+On Tue, Oct 28, 2025 at 03:24:30AM +0200, Vladimir Oltean wrote:
+> On Sun, Oct 26, 2025 at 11:49:10PM +0000, Daniel Golle wrote:
+> > Add driver for the MaxLinear GSW1xx family of Ethernet switch ICs which
+> > are based on the same IP as the Lantiq/Intel GSWIP found in the Lantiq VR9
+> > and Intel GRX MIPS router SoCs. The main difference is that instead of
+> > using memory-mapped I/O to communicate with the host CPU these ICs are
+> > connected via MDIO (or SPI, which isn't supported by this driver).
+> > Implement the regmap API to access the switch registers over MDIO to allow
+> > reusing lantiq_gswip_common for all core functionality.
+> > 
+> > The GSW1xx also comes with a SerDes port capable of 1000Base-X, SGMII and
+> > 2500Base-X, which can either be used to connect an external PHY or SFP
+> > cage, or as the CPU port. Support for the SerDes interface is implemented
+> > in this driver using the phylink_pcs interface.
 > 
-> On Sat, 25 Oct 2025 at 15:49, Cryolitia PukNgae <cryolitia@uniontech.com> wrote:
->>> FYI, the error/warning still remains.
->>>
->>> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->>> head:   266ee584e55eed108583ab4f45b5de734522502d
->>> commit: 0ab88e2394392f475b8857ac82c0c987841217f8 hwmon: add GPD devices sensor driver
->>> date:   6 weeks ago
->>> config: i386-buildonly-randconfig-002-20251024 (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/config)
->>> compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
->>> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251024/202510240817.vt3eQ3qL-lkp@intel.com/reproduce)
->>>
->>> If you fix the issue in a separate patch/commit (i.e. not just a new version of
->>> the same patch/commit), kindly add following tags
->>> | Reported-by: kernel test robot <lkp@intel.com>
->>> | Closes: https://lore.kernel.org/oe-kbuild-all/202510240817.vt3eQ3qL-lkp@intel.com/
->>>
->>> All errors (new ones prefixed by >>):
->>>
->>>    drivers/hwmon/gpd-fan.c: In function 'gpd_ecram_read':
->>>>> drivers/hwmon/gpd-fan.c:231:9: error: implicit declaration of function 'outb' [-Wimplicit-function-declaration]
->>>      231 |         outb(0x2E, addr_port);
->>>          |         ^~~~
->>>>> drivers/hwmon/gpd-fan.c:244:16: error: implicit declaration of function 'inb' [-Wimplicit-function-declaration]
->>>      244 |         *val = inb(data_port);
->>>          |                ^~~
->>>
->>
->> I don't understand...... I have already added CONFIG_HAS_IOPORT to depends. If this is not enough, what else should I do?
+> I opened the GSW145 datasheet and it seems borderline in terms of what
+> I'd suggest to implement via MFD, keeping the DSA driver to be just for
+> the switch fabric, vs implementing everything in the DSA driver.
 > 
-> Missing #include <linux/io.h>?
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+> Just to know what to expect in the future. Are there higher-spec'd
+> switches with an embedded CPU, waiting to be supported by Linux?
 
-It has been fixed[1] a little earlier, thanks for your help
+In terms of dedicated switches the short answer is "no".
+The Lantiq/Intel/MaxLinear GSWIP family afaik ends with GSWIP 3.0 which
+can be found in some of the PON SoCs build around the Intel Atom which
+are marketed by MaxLinear. Supporting also those is on my agenda
+once I get hold of the hardware. The switch IP found in those SoCs
+generally is still just an improved and extended PCE, just with more
+tables and more table entries to implement layer-3 features like PPPoE,
+NAT and flow-offloading all within the switch-part of the SoC.
 
-1. https://lore.kernel.org/all/20251024202042.752160-1-krishnagopi487@gmail.com/
+> Linux running outside, but also potentially inside?
 
-Greetings,
-Cryolitia
+No. The GSW1xx switches and the switch IP found inside those SoCs are
+still basically programmable store-(modify-)and-forward ASICs rathern
+than general purpose processors with offloading paths.
 
+> Maybe you'll need full-fledged clock, pinmux, GPIO drivers, due to IPs
+> reused in other parts? Interrupt controller support? The SGMII "PHY"
+> block also seems distinct from the "PCS" block, more like a driver in
+> drivers/phy/ would control.
+
+I don't think we'll see those blocks in anything else than those
+dedicated switch ICs.
+
+Newer MaxLinear switches (with more than 1 Gbit/s TP ports) are
+completely different animals, they do run an RTOS on a general purpose
+CPU internally, and offer a complex API to be used by the host rather
+than allowing raw access to the internal registers. They can even be
+turned into a standalone web-managed switch, ie. the CPU is capable of
+providing a HTTP server, SNMP, ...
+
+It is, of course, possible that some parts of GSW1xx series may or may
+not have been reused, but as the RTOS running on those MxL862xx chips is
+proprietary and there is no documentation of the bare-metal hardware it
+is impossible for me to tell. What I can tell for sure that there isn't
+any external DRAM, so they won't ever run Linux for resource reasons.
+
+> 
+> > +
+> > +static int gsw1xx_pcs_phy_xaui_write(struct gsw1xx_priv *priv, u16 addr,
+> > +				     u16 data)
+> > +{
+> > +	int ret, val;
+> > +
+> > +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_D, data);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_A, addr);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = regmap_write(priv->sgmii, GSW1XX_SGMII_PHY_C,
+> > +			   GSW1XX_SGMII_PHY_WRITE |
+> > +			   GSW1XX_SGMII_PHY_RESET_N);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	return regmap_read_poll_timeout(priv->sgmii, GSW1XX_SGMII_PHY_C,
+> > +					val, val & GSW1XX_SGMII_PHY_STATUS,
+> > +					1000, 100000);
+> > +}
+> > +
+> > +static int gsw1xx_pcs_config(struct phylink_pcs *pcs, unsigned int neg_mode,
+> > +			     phy_interface_t interface,
+> > +			     const unsigned long *advertising,
+> > +			     bool permit_pause_to_mac)
+> > +{
+> > +	struct gsw1xx_priv *priv = pcs_to_gsw1xx(pcs);
+> > +	bool sgmii_mac_mode = dsa_is_user_port(priv->gswip.ds,
+> > +					       GSW1XX_SGMII_PORT);
+> 
+> In lack of the phy-mode = "revsgmii" that you also mention, can we just
+> assume that any port with phy-mode = "sgmii" is in "MAC mode"?
+
+That would result in SGMII generally not be useful for being used as
+interface mode for the CPU port, because in that case the switch would
+need to operate in "SGMII PHY mode". It is true, however, that in most
+cases it is likely possible to just use 1000Base-X or 2500Base-X instead
+of SGMII to connect the switch to the CPU.
+
+> > [...]
+> 
+> Can you split up this function in multiple smaller logical blocks?
+> The control flow with "reconf" and "skip_init_reset" is a bit difficult
+> to follow. I can't say I understood what's going on. Ideally
+> gsw1xx_pcs_config() fits in one-two screen.
+
+I think breaking out the intial reset and flush into a seperate
+function makes sense.
+
+> 
+> > +static int gsw1xx_probe(struct mdio_device *mdiodev)
+> > +{
+> > [...]
+> > +	/* configure GPIO pin-mux for MMDIO in case of external PHY connected to
+> 
+> Can you explain that MMDIO stands for MDIO master interface? On first
+> sight it looks like a typo.
+
+Yes, MMDIO = Master MDIO (ie. to connect external PHYs to the switch in
+this case, but also to access the built-in TP PHYs). As opposed to the
+MDIO Slave module which is used to allow the CPU to access the switch
+registers. I'll change the comment to make it more clear.
 
