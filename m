@@ -1,186 +1,586 @@
-Return-Path: <linux-kernel+bounces-872949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDD2C12B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:48:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25362C12B10
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:49:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71EB81896007
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964111AA4353
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8261B245021;
-	Tue, 28 Oct 2025 02:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BF4277C96;
+	Tue, 28 Oct 2025 02:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="d+l4HJ8N"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011034.outbound.protection.outlook.com [52.101.52.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AwHicbBY"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13111FBF6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.34
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761619599; cv=fail; b=XhQni06YO8+sj82SsWDit2uI77RGeEX4B7vUYoH5Zo1UAtPtoXMCnuxghUDAtl5y47T7OCgLBuj3c7dSyUalqZj51gIlV0h+xY0bvUizk+MHYKcrrraZAtIGXqIN2A5Dz99QgkmKVlJyw57cI6SjVGz4EMlHKqWLHqdCtw+9Oh8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761619599; c=relaxed/simple;
-	bh=/VID3Fd5mu0ugxVIOJE/kSTU4Yh9yVPRY9YnsWNn81Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RBxuZCM+fFlSo/+6o9uixLKgddpszVjzvBIZSU/+csB84uElLacQlQwf0QEitMwumeCjyG25OpnbKtLbYGks2EPCkmkw2TMMh/YImPZVSiaoofW4GTkDyPEkCfA+rYSAzux8146ToFSiwGQi4sWM3YAUASxsE3zPXyxnqmT2JVo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=d+l4HJ8N; arc=fail smtp.client-ip=52.101.52.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h8NBZ6QMzEeaVSpGNqI9mrFhtpH6TdNELhFqlWwmIjtxf1of/fIVnDlcv+4TaaHrvp3vP1ILqx7rC5QQGwZU70eRQPtJyUdkGQK+3vKej/2AtEeFDjGAes8PTBUmpGP/Vg9XBBBzdrKADFdKF6B05jPwEhRU+2jXmhxxEiC8PR5dw87A5g7gHhEd5V3Z/XItmmHC45NL1AfL6gOJ5lDTFk1h/mahXKt7w9mzvR20/a/WKtftEmZaglTB8RR7CPkrERWY9jBfwZzT/DmDbqLrMq/BLhxkPzHSteILv/Ow7NrL7m7+9UWyDz4aZeyx1vFZiQp4oPkcY1y7ULPx5ENJAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2/8yA3HxgcWNFoppK0jMrK2/qQt6uobJ0I8m4KmHgK8=;
- b=Q+29tQGRDavaRzft2lxiwBy5eg8xLLkwrH6Zok1C9EfWQK7soqw52GlsyFRZsN4icWtICAnG33hd9MbCs6CfBtQ7GsbZPgZJvMoSQZm9EbCZiqQr718aLsIY/op+6wcO+97QISV2qcwlwDRaYd/aZ4TU9IRrxLEhu+FT/iwmyHqS6IlOXDhBdSHUEb0i2+IW87cQ3KgQK+fue9DMQhk9M+rn1mJ+0iPW5zsW/802MWAF9Ty3SHlujrYEavO36zzOWJDtCIuwoLXr6SXAQ8zFbgto4jdXtkPZYYZSVQv2xRD/IpZLj3vOd9F9mtvHSe84LGWZntkiYYLXVz+D2BXXUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2/8yA3HxgcWNFoppK0jMrK2/qQt6uobJ0I8m4KmHgK8=;
- b=d+l4HJ8NP7L8OAsZFpCnQQofs2behXHCW20BlcVqUFre6YHs9mjaKn7rQS+heo3lGcKJP56ESNDeq2NKTKQrPN9r81Ar+bt4OLGHKhWrhQRscfJxxuDcWD1JiIa4XAhhi2XHfMbtwlI15X/Jv/zbtg+iDkwNXWTgdQkAn6OVwL4=
-Received: from SJ0PR13CA0149.namprd13.prod.outlook.com (2603:10b6:a03:2c6::34)
- by CH1PPFA0A5C3BCA.namprd12.prod.outlook.com (2603:10b6:61f:fc00::61f) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
- 2025 02:46:31 +0000
-Received: from SJ1PEPF000023D5.namprd21.prod.outlook.com
- (2603:10b6:a03:2c6:cafe::e9) by SJ0PR13CA0149.outlook.office365.com
- (2603:10b6:a03:2c6::34) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.12 via Frontend Transport; Tue,
- 28 Oct 2025 02:46:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF000023D5.mail.protection.outlook.com (10.167.244.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.0 via Frontend Transport; Tue, 28 Oct 2025 02:46:30 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 27 Oct
- 2025 19:46:30 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 27 Oct
- 2025 21:46:30 -0500
-Received: from [10.136.37.11] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Oct 2025 19:46:23 -0700
-Message-ID: <0a6fce4b-d96f-492e-ad7c-d1fde723cc33@amd.com>
-Date: Tue, 28 Oct 2025 08:16:23 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6AB274643
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761619689; cv=none; b=kgHr315y1/Qpd0ItS+Ar80RPZYss0jJjt2ycG8FAooYXljdiTaxi7Qm+Gjljq8J/UKCoBhEHm7gMbtet6b96zUksSzqfCvWfmBJzwWuxJMdP6WYTGfeEpx8FMojLn7t41IrnACj4gJjV1MBhDu5utKt/9oywWlbnQk93irGpqhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761619689; c=relaxed/simple;
+	bh=w+USCM3LY9ohDzmgy14e6xR4jWwooOa9gPxWLpvQy2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cY/50UWNKp8Hy87jR9XWoaxgpmAMdv/GrqdDpBQL7k7uhnn6G0f7RWrffhmdpgRs41szYdpYRzCx5epXp45sw7Knf/y+P+pmXtdbDMYLGu7d4qrAcVCZ/uXzRfDknXUcv98NqaucUtRkl+ibvHTVas9r0m6cSItkMt7spzSpqTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AwHicbBY; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-340299fe579so527066a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:48:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761619685; x=1762224485; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zt4TQfTwKB5E13fts+rBc3XV1AjtBFD3OMw1USrDzOk=;
+        b=AwHicbBYsLKzLMbc95HDoV8PnldE/PRGf/oqq6aX2iBgRKEomnvkdsAWevwFIGbZRl
+         BUNEzyQE+HkWthUKhwrIgryZmDdj1MlIOr9T7vD0LYJp/Fxsv2eXcWGo6FZpq0TXjLK5
+         Lh6cnumn02Z2cwUyU9GDnQKU2LAOgZWThi0Bm7ZoveVsUzvO3mE0gC4hyb0BoV6DcwJO
+         EBz8fQKTsL/bnYHNnkTpy4Yab6t2UJQDt/NBDn0lYSA1ObdDjaDQVp2hf6N3MKREs0//
+         qAz7fRCKslT7eKnpiWfSpOq34/sD0O23NFgcV24gcoFR4QC74fEaCmKemJUad+LGoNR4
+         z6NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761619685; x=1762224485;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zt4TQfTwKB5E13fts+rBc3XV1AjtBFD3OMw1USrDzOk=;
+        b=pPyIQBlyCopoLyBgJfeDX8MbuXKZrIkjxNgu4Q3qfpCM0RIADM4ZX2RRFpTQHj/bAw
+         Tv5l3L/ljeqOdlrONhl0AW9EoUBAvdC4wkdRM46Wocn6JpQEbxMp3FosMil09ODKVSY2
+         3BYeyy+F9Klh6xeROayzCTK0QWtJjmM6IcDNJmiyeNLEUP8vTlLTsISnT3uHu7tT4YtH
+         vCPjSVPqa5ecKEuO3ZWWZI75c93r0UHt6nMbFHBDXwiRDn94z+tthITYHr6CL8qGMiD1
+         teXizYbasXdmfHHd2hioX6G2UTnuhrWoAGx1R08Wux7xdZXqbP/KaSbQjvIb7yqlYror
+         E9GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVylhPJTypck3A+zeWH4PKGERejxp2Gy4swek+i1GkZlXfuQYiKAFmlSUmEDoUIFXUGf5g+AJKpTGaKmaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1duTMCcsmi99FprjewVNYuD08/QTHe9rJFpGdi9+e/DsGftY0
+	eaYj82EcpGVf9Eoubf2+nZJq2tMVmJy5kUzL15QhUNei5FfOYg3uRqNV6w5YCL6Oq2BojYQ12sC
+	Rli37x5D019jLJvRaM09TTGVoYUdRWSc=
+X-Gm-Gg: ASbGncuTPA9x80abMLgkDzWQ6ry/S4u7UQp3XAOeN4lLSinEJQn8dfSBxp81uVV6EnS
+	okHosWuOjZqJp8el+vCl0tW2ZAKfyBtQpxZ8EZ2OwbBg4ql0bs80ZIfgcr8HmlS1L4hfB/5MuBb
+	RcGjg3Qbb30EqlJzLBY5oUrr4mk1SwvplWORoMfNuwvvZY36JQNiJKb1iuqxs6s17wYDQBRjCFh
+	joVpHB0AOenPW7hXR9EnYjfGGFUR3R9KrSCcpmwsf/I+7HdC3FenHxca+vC
+X-Google-Smtp-Source: AGHT+IHoksvZgeUosGMyGToIs9kU4CnjCQxNfwX4jL6e/9vvFSUZfsCuQ29bbkLJxFe4e5wsTYHYyEwkZbzhrWxe9dI=
+X-Received: by 2002:a17:90b:3c08:b0:33e:1ed8:334d with SMTP id
+ 98e67ed59e1d1-34027a09e32mr2388732a91.16.1761619684841; Mon, 27 Oct 2025
+ 19:48:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/19] sched/fair: Introduce a static key to enable cache
- aware only for multi LLCs
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, "Steven
- Rostedt" <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, "Madadi Vineeth
- Reddy" <vineethr@linux.ibm.com>, Hillf Danton <hdanton@sina.com>, "Shrikanth
- Hegde" <sshegde@linux.ibm.com>, Jianyong Wu <jianyong.wu@outlook.com>, Yangyu
- Chen <cyy@cyyself.name>, Tingyin Duan <tingyin.duan@gmail.com>, "Vern Hao"
-	<vernhao@tencent.com>, Len Brown <len.brown@intel.com>, Aubrey Li
-	<aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>, Chen Yu
-	<yu.chen.surf@gmail.com>, Adam Li <adamli@os.amperecomputing.com>, Tim Chen
-	<tim.c.chen@intel.com>, <linux-kernel@vger.kernel.org>, Tim Chen
-	<tim.c.chen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, "Gautham
- R . Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar <mingo@redhat.com>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ef136e6a6f5a2ef840b1f9571c47411f04705b6a.1760206683.git.tim.c.chen@linux.intel.com>
- <7ff17661-05fe-4137-b7e1-c799fe318c9f@amd.com>
- <ebc82974-7fe5-4e9a-8dae-7964cfdff471@intel.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <ebc82974-7fe5-4e9a-8dae-7964cfdff471@intel.com>
+References: <20251018035738.4039621-1-xukuohai@huaweicloud.com> <20251018035738.4039621-2-xukuohai@huaweicloud.com>
+In-Reply-To: <20251018035738.4039621-2-xukuohai@huaweicloud.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 27 Oct 2025 19:47:52 -0700
+X-Gm-Features: AWmQ_bknZJdbbO-dNIjyRI-vSXHy6pG3q79FmoA3aU8EtGKMsB9z5kmP42gqD-I
+Message-ID: <CAEf4BzZqHo0kOa1Zc-syy9GZHUhEHEK0_0zLxFFpMhSZUc2_Qg@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/3] bpf: Add overwrite mode for BPF ring buffer
+To: Xu Kuohai <xukuohai@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yhs@fb.com>, 
+	Song Liu <song@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D5:EE_|CH1PPFA0A5C3BCA:EE_
-X-MS-Office365-Filtering-Correlation-Id: 887936bb-a501-4d96-8e94-08de15cc3344
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|30052699003|32650700017|36860700013|376014|82310400026|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UEF1SXRIeXduN1pEdmZhVTVSWjhUSkRYZWh4bXZpc0pDOE45bWZQT3BkVHFI?=
- =?utf-8?B?c2xBTDFWS3VFQk1aOVBoU29DNUJVaEZYOVVZWkxCMTVuTDNGNFE4cmFXNFl0?=
- =?utf-8?B?ZjlGY2lUb3l2VUo0bUJhNy9pUVJUcm84T0JkWCtGSDM0akxkTktNN1lwN2E3?=
- =?utf-8?B?TGx1NkdlV004ZnpRRUlqQ01iS011MkQ3M1NFaHJSbjdBTDZwaVFHaGNkOTFN?=
- =?utf-8?B?RnlLd1FLNU8xWk45ckVTMldOWGFUSWlMZ0N4cHZmdUR2bGlQZHJUZXF4LzVE?=
- =?utf-8?B?QkJVc1E0aDExbXd5eUgyQ25NajlhL2FNc2FIcUtNYkxjcGJDRHJ5VGhpNDRY?=
- =?utf-8?B?REVBNjlUYWpYaWI0b3JBOVZHdkVEeVduU3ZXNTM5ZDJ5NWZrTWRzRWRDRDVm?=
- =?utf-8?B?MktUUktYRVhHZmIrMVFkUFpEOFA3dVZtbEw1RUZZV1pZVVFlMXJtOGk1Zndt?=
- =?utf-8?B?ZCtwY0x6ZjNWdUZFR21EV25QMUhWbXhmTytoZnVBeGRxSGZsT2dGQzU4dEVK?=
- =?utf-8?B?TzE2dUYxcjUzUkMvVUxXc0JCZzA3VUlUZTh5OUlrMmFMaFQyRkRnYi9pRm9F?=
- =?utf-8?B?dG91K3EzY0phZG03YVJNMGc5SzR0NU5Hc1k3R2QxUXhNZ1BPeW4zdEFOMEVo?=
- =?utf-8?B?TWkwTXZueXpMZy94OGxwOWJPS0JzTTZFV2phQzlld1JkSlpYZVNaNmRacDNS?=
- =?utf-8?B?Q0VTNnVMdC8xQ1V4dlZZQUp6anpqeGZ3azN4eWZZamdoQjM4V1dtWkJhZDZ3?=
- =?utf-8?B?aG9Eb1loSHY3NXpVL1BtL1dhMzIvV0dZYytUNngwYmpBaFJiM3pQOHFFUkxw?=
- =?utf-8?B?OGU2enUvMjFnS21PaEROcXVkYmltN3I2dHN4dEU0M3lDR0tnQWo0cEFCbUNF?=
- =?utf-8?B?ajlJZ2ZLR0M1TGZ5VlJJRCtqeEwwb3pJSHBSQ1A4L2lwM0xiQmFyY1pjeFc2?=
- =?utf-8?B?MXFLV1Q0ZDEyamRnOGJXVit3VVIvWkNhOGcyOWNQNG1DV1ZsV2JjNDRZUlk5?=
- =?utf-8?B?NGprUHM3ZS8yeXYrK3FURXNzazdNRTBkSEhpUS9ReUVQZXNLNGVXMTQwRXpq?=
- =?utf-8?B?K3k3aTJIMDhQVzl2MEU2a1E2UzZNemNNRkFNcXFRNGM0bkNFdWFDMzN3Wi9m?=
- =?utf-8?B?aklrWjg2c1FSWkpwSWFzbTNoRVYvWWVPaU5FVnFFM3FuNFRjYXo5a3VvbDRa?=
- =?utf-8?B?OTBVQW0yUDlBeVovdE1rSW1QTGdNdytzS2pta1QwSldrdHRTVVNXbjZRanNu?=
- =?utf-8?B?c0NjSlZMMndZOWxsaUh5NzJXSm02N1ZrcmdYcTV3eUxpUTBGTmpuaDZvN1FT?=
- =?utf-8?B?ZmhYVmtoVXZQOE9teEt1R3o3Y2FyTmNSRGlmYlh5V1I5d1Y0YlhPelhjTE9Z?=
- =?utf-8?B?citWNCt4ZnR6Q256TTNOUmxjKzJHTTdIRXQwQzZtbk1kWGdobzVjZXFMU0Fv?=
- =?utf-8?B?YTUwVVJsYzFsMERrRFdLc29CSDNOa2Jka3F3T2VPREZvTE9FbXpjSExxVS9M?=
- =?utf-8?B?Ty9NZ1crOVdoVlVNUGpyZTZhWkRBQlFRWlNiVUdUd0d3NTRuKzZJaXhNQ1Ez?=
- =?utf-8?B?cnM2R1FhWmNkaFh4d3pXdEY1UHNFM1FhUWs3a3hyUGZycjRSYnpiUXZRVmJl?=
- =?utf-8?B?UlEzbXp4SHM5ZHVMQTdHM3Z3K1BQRzNVcHNQYTZSYjNGSnVFdE1IVW1RMkZT?=
- =?utf-8?B?NEZzcDRpVlllWlJIQW9TeWdiK2lQb2JDUWJJSUZ2MXhjYlJDWFJvU1ZRRlFM?=
- =?utf-8?B?RldoZlhwRVljTGs2VTVmK3NKcHhxZDJZMnhpdVQ1MjBPamZ1ZW5lcnpPTWtI?=
- =?utf-8?B?WksvU2NPb0N0WVViV1VJRWkzRVRaZTZJMjBJTkRTdG5SMUxGSjllZ1EzRlE2?=
- =?utf-8?B?NUsrSTk2NDVWZlBVVERQRjMxZVRtSnBmbHdJZFBUTU5RNHhPQjVyYmc3eWlJ?=
- =?utf-8?B?UGpCM2xNS0tVS1craUNWUy8yMEFTbEl3aFdnNkViakpBbExkWlI0ajU2eU14?=
- =?utf-8?B?dG1NUjc0bEgvdDJXRlRFdDJJYVJCVXRHYjFaKzJnV0l2blFLWWtzN2k5NURQ?=
- =?utf-8?B?SnNLN0d3cWVucUQ3cFovSlIwYWcyMjMrWVVldz09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(30052699003)(32650700017)(36860700013)(376014)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 02:46:30.9493
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 887936bb-a501-4d96-8e94-08de15cc3344
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D5.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PPFA0A5C3BCA
+Content-Transfer-Encoding: quoted-printable
 
-Hello Chenyu,
+On Fri, Oct 17, 2025 at 9:04=E2=80=AFPM Xu Kuohai <xukuohai@huaweicloud.com=
+> wrote:
+>
+> From: Xu Kuohai <xukuohai@huawei.com>
+>
+> When the BPF ring buffer is full, a new event cannot be recorded until on=
+e
+> or more old events are consumed to make enough space for it. In cases suc=
+h
+> as fault diagnostics, where recent events are more useful than older ones=
+,
+> this mechanism may lead to critical events being lost.
+>
+> So add overwrite mode for BPF ring buffer to address it. In this mode, th=
+e
+> new event overwrites the oldest event when the buffer is full.
+>
+> The basic idea is as follows:
+>
+> 1. producer_pos tracks the next position to record new event. When there
+>    is enough free space, producer_pos is simply advanced by producer to
+>    make space for the new event.
+>
+> 2. To avoid waiting for consumer when the buffer is full, a new variable,
+>    overwrite_pos, is introduced for producer. It points to the oldest eve=
+nt
+>    committed in the buffer. It is advanced by producer to discard one or =
+more
+>    oldest events to make space for the new event when the buffer is full.
+>
+> 3. pending_pos tracks the oldest event to be committed. pending_pos is ne=
+ver
+>    passed by producer_pos, so multiple producers never write to the same
+>    position at the same time.
+>
+> The following example diagrams show how it works in a 4096-byte ring buff=
+er.
+>
+> 1. At first, {producer,overwrite,pending,consumer}_pos are all set to 0.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |                                                                     =
+  |
+>    |                                                                     =
+  |
+>    |                                                                     =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^
+>    |
+>    |
+> producer_pos =3D 0
+> overwrite_pos =3D 0
+> pending_pos =3D 0
+> consumer_pos =3D 0
+>
+> 2. Now reserve a 512-byte event A.
+>
+>    There is enough free space, so A is allocated at offset 0. And produce=
+r_pos
+>    is advanced to 512, the end of A. Since A is not submitted, the BUSY b=
+it is
+>    set.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |        |                                                            =
+  |
+>    |   A    |                                                            =
+  |
+>    | [BUSY] |                                                            =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^        ^
+>    |        |
+>    |        |
+>    |    producer_pos =3D 512
+>    |
+> overwrite_pos =3D 0
+> pending_pos =3D 0
+> consumer_pos =3D 0
+>
+> 3. Reserve event B, size 1024.
+>
+>    B is allocated at offset 512 with BUSY bit set, and producer_pos is ad=
+vanced
+>    to the end of B.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |        |                 |                                          =
+  |
+>    |   A    |        B        |                                          =
+  |
+>    | [BUSY] |      [BUSY]     |                                          =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^                          ^
+>    |                          |
+>    |                          |
+>    |                   producer_pos =3D 1536
+>    |
+> overwrite_pos =3D 0
+> pending_pos =3D 0
+> consumer_pos =3D 0
+>
+> 4. Reserve event C, size 2048.
+>
+>    C is allocated at offset 1536, and producer_pos is advanced to 3584.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |        |                 |                                   |      =
+  |
+>    |    A   |        B        |                 C                 |      =
+  |
+>    | [BUSY] |      [BUSY]     |               [BUSY]              |      =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^                                                              ^
+>    |                                                              |
+>    |                                                              |
+>    |                                                    producer_pos =3D =
+3584
+>    |
+> overwrite_pos =3D 0
+> pending_pos =3D 0
+> consumer_pos =3D 0
+>
+> 5. Submit event A.
+>
+>    The BUSY bit of A is cleared. B becomes the oldest event to be committ=
+ed, so
+>    pending_pos is advanced to 512, the start of B.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |        |                 |                                   |      =
+  |
+>    |    A   |        B        |                 C                 |      =
+  |
+>    |        |      [BUSY]     |               [BUSY]              |      =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^        ^                                                     ^
+>    |        |                                                     |
+>    |        |                                                     |
+>    |   pending_pos =3D 512                                  producer_pos =
+=3D 3584
+>    |
+> overwrite_pos =3D 0
+> consumer_pos =3D 0
+>
+> 6. Submit event B.
+>
+>    The BUSY bit of B is cleared, and pending_pos is advanced to the start=
+ of C,
+>    which is now the oldest event to be committed.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |        |                 |                                   |      =
+  |
+>    |    A   |        B        |                 C                 |      =
+  |
+>    |        |                 |               [BUSY]              |      =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^                          ^                                   ^
+>    |                          |                                   |
+>    |                          |                                   |
+>    |                     pending_pos =3D 1536               producer_pos =
+=3D 3584
+>    |
+> overwrite_pos =3D 0
+> consumer_pos =3D 0
+>
+> 7. Reserve event D, size 1536 (3 * 512).
+>
+>    There are 2048 bytes not being written between producer_pos (currently=
+ 3584)
+>    and pending_pos, so D is allocated at offset 3584, and producer_pos is=
+ advanced
+>    by 1536 (from 3584 to 5120).
+>
+>    Since event D will overwrite all bytes of event A and the first 512 by=
+tes of
+>    event B, overwrite_pos is advanced to the start of event C, the oldest=
+ event
+>    that is not overwritten.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |                 |        |                                   |      =
+  |
+>    |      D End      |        |                 C                 | D Beg=
+in|
+>    |      [BUSY]     |        |               [BUSY]              | [BUSY=
+] |
+>    +---------------------------------------------------------------------=
+--+
+>    ^                 ^        ^
+>    |                 |        |
+>    |                 |   pending_pos =3D 1536
+>    |                 |   overwrite_pos =3D 1536
+>    |                 |
+>    |             producer_pos=3D5120
+>    |
+> consumer_pos =3D 0
+>
+> 8. Reserve event E, size 1024.
+>
+>    Although there are 512 bytes not being written between producer_pos an=
+d
+>    pending_pos, E cannot be reserved, as it would overwrite the first 512
+>    bytes of event C, which is still being written.
+>
+> 9. Submit event C and D.
+>
+>    pending_pos is advanced to the end of D.
+>
+>    0       512      1024    1536     2048     2560     3072     3584     =
+  4096
+>    +---------------------------------------------------------------------=
+--+
+>    |                 |        |                                   |      =
+  |
+>    |      D End      |        |                 C                 | D Beg=
+in|
+>    |                 |        |                                   |      =
+  |
+>    +---------------------------------------------------------------------=
+--+
+>    ^                 ^        ^
+>    |                 |        |
+>    |                 |   overwrite_pos =3D 1536
+>    |                 |
+>    |             producer_pos=3D5120
+>    |             pending_pos=3D5120
+>    |
+> consumer_pos =3D 0
+>
+> The performance data for overwrite mode will be provided in a follow-up
+> patch that adds overwrite-mode benchmarks.
+>
+> A sample of performance data for non-overwrite mode, collected on an x86_=
+64
+> CPU and an arm64 CPU, before and after this patch, is shown below. As we =
+can
+> see, no obvious performance regression occurs.
+>
+> - x86_64 (AMD EPYC 9654)
+>
+> Before:
+>
+> Ringbuf, multi-producer contention
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> rb-libbpf nr_prod 1  11.623 =C2=B1 0.027M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 2  15.812 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 3  7.871 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 4  6.703 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 8  2.896 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 12 2.054 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 16 1.864 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 20 1.580 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 24 1.484 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 28 1.369 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 32 1.316 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 36 1.272 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 40 1.239 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 44 1.226 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 48 1.213 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 52 1.193 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+>
+> After:
+>
+> Ringbuf, multi-producer contention
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> rb-libbpf nr_prod 1  11.845 =C2=B1 0.036M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 2  15.889 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 3  8.155 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 4  6.708 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 8  2.918 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 12 2.065 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 16 1.870 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 20 1.582 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 24 1.482 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 28 1.372 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 32 1.323 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 36 1.264 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 40 1.236 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 44 1.209 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 48 1.189 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 52 1.165 =C2=B1 0.002M/s (drops 0.000 =C2=B1 0.000M/s)
+>
+> - arm64 (HiSilicon Kunpeng 920)
+>
+> Before:
+>
+> Ringbuf, multi-producer contention
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> rb-libbpf nr_prod 1  11.310 =C2=B1 0.623M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 2  9.947 =C2=B1 0.004M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 3  6.634 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 4  4.502 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 8  3.888 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 12 3.372 =C2=B1 0.005M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 16 3.189 =C2=B1 0.010M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 20 2.998 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 24 3.086 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 28 2.845 =C2=B1 0.004M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 32 2.815 =C2=B1 0.008M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 36 2.771 =C2=B1 0.009M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 40 2.814 =C2=B1 0.011M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 44 2.752 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 48 2.695 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 52 2.710 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+>
+> After:
+>
+> Ringbuf, multi-producer contention
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> rb-libbpf nr_prod 1  11.283 =C2=B1 0.550M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 2  9.993 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 3  6.898 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 4  5.257 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 8  3.830 =C2=B1 0.005M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 12 3.528 =C2=B1 0.013M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 16 3.265 =C2=B1 0.018M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 20 2.990 =C2=B1 0.007M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 24 2.929 =C2=B1 0.014M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 28 2.898 =C2=B1 0.010M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 32 2.818 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 36 2.789 =C2=B1 0.012M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 40 2.770 =C2=B1 0.006M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 44 2.651 =C2=B1 0.007M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 48 2.669 =C2=B1 0.005M/s (drops 0.000 =C2=B1 0.000M/s)
+> rb-libbpf nr_prod 52 2.695 =C2=B1 0.009M/s (drops 0.000 =C2=B1 0.000M/s)
+>
+> Signed-off-by: Xu Kuohai <xukuohai@huawei.com>
+> ---
+>  include/uapi/linux/bpf.h       |   4 ++
+>  kernel/bpf/ringbuf.c           | 109 +++++++++++++++++++++++++++------
+>  tools/include/uapi/linux/bpf.h |   4 ++
+>  3 files changed, 98 insertions(+), 19 deletions(-)
+>
 
-On 10/27/2025 6:26 PM, Chen, Yu C wrote:
-> build_sched_domains() might get invoked to rebuild the corresponding sched
-> domains during CPU hotplug via cpuset subsystem. So if the CPU gets online
-> after bootup, we still have the chance to detect multiple LLCs I suppose?
+[...]
 
-Ah yes! Thank you for confirming.
+> @@ -72,6 +73,8 @@ struct bpf_ringbuf {
+>          */
+>         unsigned long consumer_pos __aligned(PAGE_SIZE);
+>         unsigned long producer_pos __aligned(PAGE_SIZE);
+> +       /* points to the record right after the last overwritten one */
+> +       unsigned long overwrite_pos;
 
--- 
-Thanks and Regards,
-Prateek
+I moved this after pending_pos, as all these fields are actually
+exposed to the user space, so didn't want to unnecessarily shift
+pending_pos.
 
+>         unsigned long pending_pos;
+>         char data[] __aligned(PAGE_SIZE);
+>  };
+> @@ -166,7 +169,7 @@ static void bpf_ringbuf_notify(struct irq_work *work)
+>   * considering that the maximum value of data_sz is (4GB - 1), there
+>   * will be no overflow, so just note the size limit in the comments.
+>   */
+> -static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_no=
+de)
+> +static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t data_sz, int numa_no=
+de, bool overwrite_mode)
+>  {
+>         struct bpf_ringbuf *rb;
+>
+> @@ -183,17 +186,25 @@ static struct bpf_ringbuf *bpf_ringbuf_alloc(size_t=
+ data_sz, int numa_node)
+>         rb->consumer_pos =3D 0;
+>         rb->producer_pos =3D 0;
+>         rb->pending_pos =3D 0;
+> +       rb->overwrite_mode =3D overwrite_mode;
+>
+>         return rb;
+>  }
+>
+>  static struct bpf_map *ringbuf_map_alloc(union bpf_attr *attr)
+>  {
+> +       bool overwrite_mode =3D false;
+>         struct bpf_ringbuf_map *rb_map;
+>
+>         if (attr->map_flags & ~RINGBUF_CREATE_FLAG_MASK)
+>                 return ERR_PTR(-EINVAL);
+>
+> +       if (attr->map_flags & BPF_F_RB_OVERWRITE) {
+> +               if (attr->map_type =3D=3D BPF_MAP_TYPE_USER_RINGBUF)
+
+this seemed error prone if we ever add another ringbuf type (unlikely,
+but still), so I inverted this all to allow BPF_F_RB_OVERWRITE only
+for BPF_MAP_TYPE_RINGBUF. We should try to be as strict as possible by
+default.
+
+> +                       return ERR_PTR(-EINVAL);
+> +               overwrite_mode =3D true;
+> +       }
+> +
+>         if (attr->key_size || attr->value_size ||
+>             !is_power_of_2(attr->max_entries) ||
+>             !PAGE_ALIGNED(attr->max_entries))
+> @@ -205,7 +216,7 @@ static struct bpf_map *ringbuf_map_alloc(union bpf_at=
+tr *attr)
+>
+>         bpf_map_init_from_attr(&rb_map->map, attr);
+>
+> -       rb_map->rb =3D bpf_ringbuf_alloc(attr->max_entries, rb_map->map.n=
+uma_node);
+> +       rb_map->rb =3D bpf_ringbuf_alloc(attr->max_entries, rb_map->map.n=
+uma_node, overwrite_mode);
+>         if (!rb_map->rb) {
+>                 bpf_map_area_free(rb_map);
+>                 return ERR_PTR(-ENOMEM);
+> @@ -293,13 +304,25 @@ static int ringbuf_map_mmap_user(struct bpf_map *ma=
+p, struct vm_area_struct *vma
+>         return remap_vmalloc_range(vma, rb_map->rb, vma->vm_pgoff + RINGB=
+UF_PGOFF);
+>  }
+>
+> +/* Return an estimate of the available data in the ring buffer.
+
+Fixed up comment style
+
+[...]
+
+>  static u32 ringbuf_total_data_sz(const struct bpf_ringbuf *rb)
+> @@ -402,11 +425,41 @@ bpf_ringbuf_restore_from_rec(struct bpf_ringbuf_hdr=
+ *hdr)
+>         return (void*)((addr & PAGE_MASK) - off);
+>  }
+>
+> +static bool bpf_ringbuf_has_space(const struct bpf_ringbuf *rb,
+> +                                 unsigned long new_prod_pos,
+> +                                 unsigned long cons_pos,
+> +                                 unsigned long pend_pos)
+> +{
+> +       /* no space if oldest not yet committed record until the newest
+> +        * record span more than (ringbuf_size - 1).
+> +        */
+
+same, keep in mind that we now use kernel-wide comment style with /*
+on separate line. Fixed up all other places as well.
+
+> +       if (new_prod_pos - pend_pos > rb->mask)
+> +               return false;
+> +
+> +       /* ok, we have space in overwrite mode */
+> +       if (unlikely(rb->overwrite_mode))
+> +               return true;
+> +
+> +       /* no space if producer position advances more than (ringbuf_size=
+ - 1)
+> +        * ahead of consumer position when not in overwrite mode.
+> +        */
+> +       if (new_prod_pos - cons_pos > rb->mask)
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+
+[...]
 
