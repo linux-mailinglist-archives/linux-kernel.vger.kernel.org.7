@@ -1,343 +1,145 @@
-Return-Path: <linux-kernel+bounces-873564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 025FFC142CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:47:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B725AC142DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:48:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BC9D19C530A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:46:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B011894314
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3D13090D7;
-	Tue, 28 Oct 2025 10:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12990309EF8;
+	Tue, 28 Oct 2025 10:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8jQ4rl/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCfHSVbn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035F03090CA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3323081C2;
+	Tue, 28 Oct 2025 10:42:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648139; cv=none; b=HY3Wupp0B5aY5FTJoKUgb7g4vVUMEajj6Uh8RC458DmyPlWFEKo+uaapngYDao53c3TmUY5k1kiNlu7MBWt1hmFZMAbQBF6BAtzxSWdJRgLPDomfBr9lEulEb2c8l+DpV3Qti5Z2wvQAAhKzkeV+a/6jqXyeI3EUx1f4JLjI6bs=
+	t=1761648146; cv=none; b=Lg/FLOOlLgPyqVbg4ehNTcERU0hVfdw1768SY5CUvxvYuUvLO5MBmSX7uTYwQ/b7yADy/t5SUfzPoHw97/emre/03ZkzUUC7p/cNkt4gNl0mIxZT6SWq4Gm+hFl4QtRh4BlsiG16n2aBfKqBfubCsfvOTCd4m9XSWSsSASllhFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648139; c=relaxed/simple;
-	bh=bfFL8z7d5MpCKCiHMN5NkMlSsk8b7+8P2j/JIFdEEDA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sgZ696Rczn30+ktbvaZXmSJuZlfphZglpAvcsI2/H1lEJBZQqmOfBlWsw6NW+PUzkh00kTHQlpa0YCKM4IPQQKfTcjTw0/slT3a19670MxW1B6XrqINnzfaztou00Htzp49PomJWnVxt1IHOT4VLaHqysHRY0iHNZFZI0NLd0lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8jQ4rl/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24094C4CEE7;
-	Tue, 28 Oct 2025 10:42:14 +0000 (UTC)
+	s=arc-20240116; t=1761648146; c=relaxed/simple;
+	bh=38wxE3g3XRLJs8huMWHMGaxxdwbTkUF7vehtIb5e760=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TNw6QUouUw0/GaK/ntfGvgSuBNluUV5X+VncHN+5VudmjPNRsZNUwk8KR2Z2Quo7ENdbnyzJiTLP6o5iUr064GLVx5lc05jF9v+iSkELkIyRxuLt71O+NWe5EJWn+Xq1tbqQCCT4Aj//Gquhk2bvM8YZI+qonqTideb/0vLoawY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCfHSVbn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFDFC4CEE7;
+	Tue, 28 Oct 2025 10:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761648138;
-	bh=bfFL8z7d5MpCKCiHMN5NkMlSsk8b7+8P2j/JIFdEEDA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J8jQ4rl/+LO2z92LpexjjXVhS++pW35U8H+pCNxZpVIstIuVjNHUA9L9jEwhjPkic
-	 x3TaH+c1ELN7h4OHoHzGGTQHmv0Z4uJcDDI22jfNCvaNOWhmsRZQ07a36X7Rq9tXEO
-	 ArzQC2loem1kj77EYwQlGVJ2YMljERAuJCHx8JGY76g0+15JH3NyYqnKnGA5lP2HSn
-	 qJ1x9HZdsCNDEOMM2bbON0tIqbGnjwVqKYMrz6/5PBOIny34uA8xEOAua6U0wHqvKa
-	 Yd4zI5g2cXyi1yt7FgBvEwS4xGA025XDUjauxM8ojqRdrHYfsk56tcW42IrRVfcmhp
-	 db3ROjJnMc0LA==
-Date: Tue, 28 Oct 2025 10:42:12 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	alex@ghiti.fr, luxu.kernel@bytedance.com, atishp@rivosinc.com,
-	cleger@rivosinc.com, ajones@ventanamicro.com,
-	apatel@ventanamicro.com, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, songshuaishuai@tinylab.org,
-	bjorn@rivosinc.com, charlie@rivosinc.com, masahiroy@kernel.org,
-	valentina.fernandezalanis@microchip.com, jassisinghbrar@gmail.com,
-	conor.dooley@microchip.com
-Subject: Re: [PATCH 3/3] riscv: crash: use NMI to stop the CPU
-Message-ID: <20251028-scallion-list-c8aa5f350286@spud>
-References: <20251027133431.15321-1-cuiyunhui@bytedance.com>
- <20251027133431.15321-4-cuiyunhui@bytedance.com>
+	s=k20201202; t=1761648145;
+	bh=38wxE3g3XRLJs8huMWHMGaxxdwbTkUF7vehtIb5e760=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=KCfHSVbnJHFUbKQ0dOh5bZo18QqtuQ11GmlCaUuORBW169eHEB8OXwvD917+cXf09
+	 BByH+nVdCZU7vqt7QxsXPAsxZOcCNMyqT79v917FfDD3eS5J8NgqPwurwZFqcv/HZA
+	 XzTEkhp76Z0gJ8ZAxpsVtdOk5Fsx1EpkIb8WRr8VJ7t03FNG21U4vVsSIhLlYjHSFx
+	 vH1t3pyImTGRnf2wuwOgbsjgQEqkopVLDSNG12SltITeqerxfPFx34mIwc9G/cGrz+
+	 O/ObIwHOu2wm8cU8UPHCmHG07EhMGZy5nYuDYDcpTO7ETsq554iQ7XbTXvb4lc9mB7
+	 5Zo0/+87cVCgw==
+Message-ID: <400d08a1-c373-4efa-8ec4-f535e74acd98@kernel.org>
+Date: Tue, 28 Oct 2025 11:42:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6OwQxgChySe/71JK"
-Content-Disposition: inline
-In-Reply-To: <20251027133431.15321-4-cuiyunhui@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: FUKAUMI Naoki <naoki@radxa.com>, Joseph Kogut <joseph.kogut@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Steve deRosier <derosier@cal-sierra.com>
+References: <174735136138.1544989.11909422896170025756.robh@kernel.org>
+ <20250528221823.2974653-1-joseph.kogut@gmail.com>
+ <20250528221823.2974653-2-joseph.kogut@gmail.com>
+ <20250529-impressive-real-monkey-a7818b@kuoka>
+ <6443BD03B4C4F1FE+d20c3903-e2dc-4c2b-8f6e-fac38f242898@radxa.com>
+ <2f4e7f94-2921-493c-94fa-45749a060bc0@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <2f4e7f94-2921-493c-94fa-45749a060bc0@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 28/10/2025 10:37, Krzysztof Kozlowski wrote:
+> On 28/10/2025 10:33, FUKAUMI Naoki wrote:
+>> Hi Krzysztof,
+>>
+>> https://patchwork.kernel.org/project/linux-rockchip/patch/20250528221823.2974653-2-joseph.kogut@gmail.com/
+>>
+>> On 5/29/25 18:19, Krzysztof Kozlowski wrote:
+>>> On Wed, May 28, 2025 at 03:18:21PM GMT, Joseph Kogut wrote:
+>>>> Add device tree binding for the Radxa CM5 IO board.
+>>>>
+>>>> This board is based on the rk3588s.
+>>>
+>>> Do not attach (thread) your patchsets to some other threads (unrelated
+>>> or older versions). This buries them deep in the mailbox and might
+>>> interfere with applying entire sets.
+>>>
+>>>
+>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Please explain the sorting rule used for this file. You must have known 
+>> the sorting rule; otherwise, how can you be sure this patch is correct?
+> 
+> Huh? I don't have a clue about sorting rule but if you mock my review
+> let's make it different:
+> 
+> NAK
 
---6OwQxgChySe/71JK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please ignore, I thought that's patch from FUKAUMI Naoki which code and
+then pokes about that.
 
-On Mon, Oct 27, 2025 at 09:34:31PM +0800, Yunhui Cui wrote:
-> NMI is more robust than IPI for stopping CPUs during crashes,
-> especially with interrupts disabled. Add SBI_SSE_EVENT_LOCAL_CRASH_NMI
-> eventid to implement NMI for stopping CPUs.
->=20
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  arch/riscv/include/asm/crash.h   |  1 +
->  arch/riscv/include/asm/sbi.h     |  1 +
->  arch/riscv/kernel/crash.c        | 31 +++++++++++++-
->  drivers/firmware/riscv/sse_nmi.c | 71 +++++++++++++++++++++++++++++++-
->  include/linux/sse_nmi.h          |  8 ++++
->  5 files changed, 109 insertions(+), 3 deletions(-)
->  create mode 100644 include/linux/sse_nmi.h
->=20
-> diff --git a/arch/riscv/include/asm/crash.h b/arch/riscv/include/asm/cras=
-h.h
-> index b64df919277d4..5076f297cbc15 100644
-> --- a/arch/riscv/include/asm/crash.h
-> +++ b/arch/riscv/include/asm/crash.h
-> @@ -5,6 +5,7 @@
-> =20
->  #ifdef CONFIG_KEXEC_CORE
->  void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs);
-> +void cpu_crash_stop(unsigned int cpu, struct pt_regs *regs);
->  #else
->  static inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *=
-regs)
->  {
-> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
-> index 52d3fdf2d4cc1..65cce85237879 100644
-> --- a/arch/riscv/include/asm/sbi.h
-> +++ b/arch/riscv/include/asm/sbi.h
-> @@ -487,6 +487,7 @@ enum sbi_sse_attr_id {
->  #define SBI_SSE_EVENT_GLOBAL_LOW_PRIO_RAS	0x00108000
->  #define SBI_SSE_EVENT_LOCAL_SOFTWARE_INJECTED	0xffff0000
->  #define SBI_SSE_EVENT_LOCAL_UNKNOWN_NMI		0xffff0001
-> +#define SBI_SSE_EVENT_LOCAL_CRASH_NMI		0xffff0002
->  #define SBI_SSE_EVENT_GLOBAL_SOFTWARE_INJECTED	0xffff8000
-> =20
->  #define SBI_SSE_EVENT_PLATFORM		BIT(14)
-> diff --git a/arch/riscv/kernel/crash.c b/arch/riscv/kernel/crash.c
-> index 12598bbc2df04..9f3f0becfdd95 100644
-> --- a/arch/riscv/kernel/crash.c
-> +++ b/arch/riscv/kernel/crash.c
-> @@ -3,14 +3,16 @@
->  #include <linux/cpu.h>
->  #include <linux/delay.h>
->  #include <linux/kexec.h>
-> +#include <linux/sse_nmi.h>
->  #include <linux/smp.h>
->  #include <linux/sched.h>
-> =20
-> +#include <asm/crash.h>
->  #include <asm/cpu_ops.h>
-> =20
->  static atomic_t waiting_for_crash_ipi =3D ATOMIC_INIT(0);
-> =20
-> -inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
-> +void cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
->  {
->  	crash_save_cpu(regs, cpu);
-> =20
-> @@ -27,6 +29,11 @@ inline void ipi_cpu_crash_stop(unsigned int cpu, struc=
-t pt_regs *regs)
->  		wait_for_interrupt();
->  }
-> =20
-> +inline void ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
-> +{
-> +	cpu_crash_stop(cpu, regs);
-> +}
-> +
->  /*
->   * The number of CPUs online, not counting this CPU (which may not be
->   * fully online and so not counted in num_online_cpus()).
-> @@ -38,6 +45,24 @@ static inline unsigned int num_other_online_cpus(void)
->  	return num_online_cpus() - this_cpu_online;
->  }
-> =20
-> +#ifdef CONFIG_RISCV_SSE_NMI
-> +static int send_nmi_stop_cpu(cpumask_t *mask)
-> +{
-> +	unsigned int cpu;
-> +	int ret =3D 0;
-> +
-> +	for_each_cpu(cpu, mask)
-> +		ret +=3D carsh_nmi_stop_cpu(cpu);
-
-+=3D ? I don't really get why this sort of overcomplication is needed, why
-not just return immediately here with a real error code, since you're
-going to have to go to the ipi fallback anyway?
-
-> +
-> +	return ret;
-> +}
-> +#else
-> +static inline int send_nmi_stop_cpu(cpumask_t *mask)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +
->  void crash_smp_send_stop(void)
->  {
->  	static int cpus_stopped;
-> @@ -66,7 +91,9 @@ void crash_smp_send_stop(void)
->  	atomic_set(&waiting_for_crash_ipi, num_other_online_cpus());
-> =20
->  	pr_crit("SMP: stopping secondary CPUs\n");
-> -	send_ipi_mask(&mask, IPI_CPU_CRASH_STOP);
-> +
-> +	if (send_nmi_stop_cpu(&mask))
-> +		send_ipi_mask(&mask, IPI_CPU_CRASH_STOP);
-> =20
->  	/* Wait up to one second for other CPUs to stop */
->  	timeout =3D USEC_PER_SEC;
-> diff --git a/drivers/firmware/riscv/sse_nmi.c b/drivers/firmware/riscv/ss=
-e_nmi.c
-> index 2c1eaea2bbabc..152d787075345 100644
-> --- a/drivers/firmware/riscv/sse_nmi.c
-> +++ b/drivers/firmware/riscv/sse_nmi.c
-> @@ -4,13 +4,16 @@
-> =20
->  #include <linux/nmi.h>
->  #include <linux/riscv_sbi_sse.h>
-> +#include <linux/sse_nmi.h>
->  #include <linux/sysctl.h>
-> =20
-> +#include <asm/crash.h>
->  #include <asm/irq_regs.h>
->  #include <asm/sbi.h>
-> =20
->  int unknown_nmi_panic;
->  static struct sse_event *unknown_nmi_evt;
-> +static struct sse_event *crash_nmi_evt;
->  static struct ctl_table_header *unknown_nmi_sysctl_header;
-> =20
->  static int __init setup_unknown_nmi_panic(char *str)
-> @@ -32,6 +35,12 @@ const struct ctl_table unknown_nmi_table[] =3D {
->  	},
->  };
-> =20
-> +static inline struct sbiret sbi_sse_ecall(int fid, unsigned long arg0,
-> +					  unsigned long arg1)
-> +{
-> +	return sbi_ecall(SBI_EXT_SSE, fid, arg0, arg1, 0, 0, 0, 0);
-> +}
-> +
->  static int unknown_nmi_handler(u32 evt, void *arg, struct pt_regs *regs)
->  {
->  	pr_emerg("NMI received for unknown on CPU %d.\n", smp_processor_id());
-> @@ -73,9 +82,69 @@ static int unknown_nmi_init(void)
->  	return ret;
->  }
-> =20
-> +#ifdef CONFIG_KEXEC_CORE
-> +int carsh_nmi_stop_cpu(unsigned int cpu)
-
-typo: crash
-
-> +{
-> +	unsigned int hart_id =3D cpuid_to_hartid_map(cpu);
-> +	u32 evt =3D SBI_SSE_EVENT_LOCAL_CRASH_NMI;
-> +	struct sbiret ret;
-> +
-> +	ret =3D sbi_sse_ecall(SBI_SSE_EVENT_INJECT, evt, hart_id);
-> +	if (ret.error) {
-> +		pr_err("Failed to signal event %x, error %ld\n", evt, ret.error);
-
-Isn't this going to emit pointless (and maybe confusing) error messages
-on systems that enable the option but don't support SSE? And it's going
-to be one for each secondary CPU too.
-
-> +		return sbi_err_map_linux_errno(ret.error);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int crash_nmi_handler(u32 evt, void *arg, struct pt_regs *regs)
-> +{
-> +	cpu_crash_stop(smp_processor_id(), regs);
-> +
-> +	return 0;
-> +}
-> +
-> +static int crash_nmi_init(void)
-> +{
-> +	int ret;
-> +
-> +	crash_nmi_evt =3D sse_event_register(SBI_SSE_EVENT_LOCAL_CRASH_NMI, 0,
-> +				 crash_nmi_handler, NULL);
-> +	if (IS_ERR(crash_nmi_evt))
-> +		return PTR_ERR(crash_nmi_evt);
-> +
-> +	ret =3D sse_event_enable(crash_nmi_evt);
-> +	if (ret) {
-> +		sse_event_unregister(crash_nmi_evt);
-> +		return ret;
-> +	}
-> +
-> +	pr_info("Using SSE for crash NMI event delivery\n");
-> +
-> +	return 0;
-> +}
-> +#endif
-> +
->  static int __init sse_nmi_init(void)
->  {
-> -	return unknown_nmi_init();
-> +	int ret;
-> +
-> +	ret =3D unknown_nmi_init();
-> +	if (ret) {
-> +		pr_err("Unknown_nmi_init failed with error %d\n", ret);
-> +		return ret;
-> +	}
-
-This change looks like it shouldn't be in this patch, if you want it to
-print an error, just do that from the start?
-
-> +
-> +#ifdef CONFIG_KEXEC_CORE
-
-Can this be IS_ENABLED() or does crash_nmi_init() not have a stub?
-
-> +	ret =3D crash_nmi_init();
-> +	if (ret) {
-> +		pr_err("Crash_nmi_init failed with error %d\n", ret);
-> +		return ret;
-> +	}
-> +#endif
-> +
-> +	return 0;
->  }
-> =20
->  late_initcall(sse_nmi_init);
-> diff --git a/include/linux/sse_nmi.h b/include/linux/sse_nmi.h
-> new file mode 100644
-> index 0000000000000..548a348ac0a46
-> --- /dev/null
-> +++ b/include/linux/sse_nmi.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +#ifndef __LINUX_RISCV_SSE_NMI_H
-> +#define __LINUX_RISCV_SSE_NMI_H
-> +
-> +int carsh_nmi_stop_cpu(unsigned int cpu);
-> +
-> +#endif
-> --=20
-> 2.39.5
->=20
-
---6OwQxgChySe/71JK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQCeBAAKCRB4tDGHoIJi
-0lVKAPwKqZzmnUW0NDeMoSRsiPO/MDNJnL1de1ZpgmT0PNCFbgEA7FylyUgvG4HX
-vGVOXl61Q6TUTd2p+0wZS6oKHu76RAY=
-=hh+F
------END PGP SIGNATURE-----
-
---6OwQxgChySe/71JK--
+Best regards,
+Krzysztof
 
