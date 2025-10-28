@@ -1,345 +1,239 @@
-Return-Path: <linux-kernel+bounces-874026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1FEC155B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:14:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88530C155C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 310E34E1B8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:08:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9AE114FD530
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD50633CEB2;
-	Tue, 28 Oct 2025 15:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE94933F8C3;
+	Tue, 28 Oct 2025 15:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dta2077t"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jKbeYWnU"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012068.outbound.protection.outlook.com [52.101.48.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E31E33B976
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664077; cv=none; b=OPOJGH2JGE46vDKr5zSX8VbPKjWJJ8i4LVVw/M3flHgmgH4yY0JvvobpK5R1CcfLWYeX0dzolpBV8VmJKPfn58/O7yiY96ybCe6kZ15pomkMRjowbGrh+GUW+P+qbA9hAwsmvcNyn6S8eBZw8a1uQpO4mvI8MOLA6+XzyClkZdM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664077; c=relaxed/simple;
-	bh=JneaelrWdxFtENso1+ZWLmQ3kgUcu7bUt5bdftwUKy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ElBnAlfBerA/sj5RCADtrJFxGP7/UOjWI1QMXG8GSDM0braYjq4kOuHga5E2NniM9I5nABBzvqwZs5n4qAkDo0ZlRIjIVSKuWSQ+wD4tR6L/QqTY2tlgbb4K9vY60Kc7ZDQbCB3j6VgWEP4hJRlPeTXUB+Y40IC8y11A/ewSW+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dta2077t; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27eeafd4882so240945ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:07:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761664072; x=1762268872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n3pdmXgfKnITH68QWyYdVu7Pdb87ggTAiSS8+raqM18=;
-        b=dta2077t7to0lmhUqw9JPhudVBu3zjvxIsuXMOu9VlCBl5ORs1XJF1w0YAVTg/xxKq
-         pjsnpDGaPdMQdPnEXo8LdTfpASNDpVPSt956Fur1fixdvGe2O8f8DQQWBKkhfo14o2nZ
-         XBmIgWgzEa2NPGVMK9jv9Cu5CePZwi1yMd7yS634ozAPnrEQihWEwCcH6Oresa9AVwRO
-         q9Hps9aS33IEuhzgW077QBBUqe76f134Su1udHOpD0qcHECP3v8KqSss71oMIjhHUgjx
-         ncAP2bkSjA8/Hya1GjdpBDdf+E7ZKzlu+OKtOxiG7juIxVOrUA7uq6NJan+Rrrx0iMek
-         BjVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761664073; x=1762268873;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n3pdmXgfKnITH68QWyYdVu7Pdb87ggTAiSS8+raqM18=;
-        b=S5GUgWmv+4tpwE57XGqSdbZH8tfYcpPiAyo5+jNNghiWUpFyj5lfsFfC9+khhAjlR1
-         98rdBQ/7dFy7UcEk3OuZehFwGPnh6uGHjf0E93ybGkb78vUx3jymX3A8wX1HGoW3WA2n
-         vg5/Vwp6sW2ImF6SBSOaJIDgWXcucjgI/rxDYieG8qFcuVgAZ5Hr54qovgPcr/8r93VZ
-         npzZT4HAZH3CaG3oQ+KdV/zOsmMavtQAEEl/GSlftv4z7a+llLc4S/NnWI0bb/uKs4PD
-         2qWt9HbFv3kKW7nO/b8AKrJ7IAKO0ew4cXENAohp399IYDG1VMo/iz6x1e9eTmRu6HO5
-         ZH1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVrk+d5jIQEU6nDgAbo5LX6zwGUPtF1/z3Zx4pgGDUC83idOnSTPrFj/K64P2mc+puFC7fyWkkOfZQsLO0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQX4EInGxY2ifcH3AJf0Jhx4/ArPMYkU6yhf35oqcrBCy/TLes
-	JK3Fa1D8Anr6pqdBiYcYf71TzKjc8325GJeZ7oHbIcNF+BqvEwljKRoMJUcL+O8GeviMTW4hkwd
-	qRQFmXcLognzeIQMRqiO+Ulwr/ce8UKpiFD+lHQSX
-X-Gm-Gg: ASbGncvldZfky0XzL+jS624vddu4gstj28hrP+Jl3Z0zRboiXwfBEN41UArxGneBo7M
-	YP4WyowcqQq//HHkQUiSN0dWMFj2tqDvGUO1PNlUMPV2D/5/KEs8TBa1vLKUs+Ue3m4+aVL9DBt
-	xT6NCQr0uIfeHrjedYV6xp6VvKxjMSWG2ZpyJivsfEvi7PgoraRRjzk75JFFEWmd15H6IFrKaWN
-	CnTLE270iuPJnnPCQ0mvYzM5FXhb5b09LjNLJtL4p0PECiROt3ujE1B3eCohjwt02XAw3/dWvf0
-	c7FyL4tElnvDMQQ=
-X-Google-Smtp-Source: AGHT+IEOlvVtwGNnqC8paYpbBBQKfjh0eLvOLkPByI+QC7ZQ5JRLxVmurG9wk/i3Am3u/Q+hzxpqeiezGwPQo9uD3M4=
-X-Received: by 2002:a17:902:e849:b0:292:b6a0:80df with SMTP id
- d9443c01a7336-294ccb34cf2mr4880225ad.10.1761664071643; Tue, 28 Oct 2025
- 08:07:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D1E33DEC6;
+	Tue, 28 Oct 2025 15:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761664080; cv=fail; b=Va5kLKnlDZT/bpGCO/Mu3vkszlZd+e3U5d+GIDBgpIkNfCDpxSVJm8yTPVbm8tvXDCa2OWA/BTMakMqX52U3DTzwkxWwUnWRkCA8ixpRC89HLxRC6qqW1wQcnolp0FRdOhZJhswGcfjg8BlbodhP5fA9vRjKB3MSCxzoDKXplWE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761664080; c=relaxed/simple;
+	bh=RtG/jRQAU9hYWCMZpNLo9ozlZmvSvt8QY3CBg0wlhKM=;
+	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
+	 To:Cc:MIME-Version; b=WmPtyTQBoaiWrp+DR+kaKFns9/nY89mdsEA9HEvM9rnFCkZ9H3IwwxtSWBYuq/wnkVBLwP7HVwRUz0tlPgHcGECU8Yv3gnJRbErbyD8c9WZ+Sqn0VfdacapaGNAnyGU7yA2RVKN9tVQH61Jec4CLOyxGPzlrQZPJ6ywlHJbKfBQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jKbeYWnU; arc=fail smtp.client-ip=52.101.48.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jyY7AOd+ttk3F65LMS48aJw3q2ADvV+52AJF2rrOKsU3ydLTS7W9BIb21PrPz6cKJOAmqBqM+ul2kL1gxJVu9IScOnPcDDF1MFdbz0/a9q+OGNnYHYXqP4wlDK0IeatfnGRuP0ADpm0P/g892AqfyCmcls0e6Wkdvvcw20B39nv4O4fLRrAQLiiAX79M9y2tg8ZQ54YK8JSAF2qKpuM71qs27SvFcWrodlGLuy8Wpn3XmjjsW0WxaPJkYBaQj3p34KvnESl/Qah7VYFmy3P3TQNxyFvVaUSdzGkrEsxettrOymDf7q5fDGVktrR5uXqyHSQkw12goXBkaAFpxwUTpg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oUsM3bdAzewwtEhA/Sa310RpDK4L/GVvwRgeZymV4MM=;
+ b=CezdHZWV6X5dyYADit+2pObdYtastTZZMBJtfYmsidHojP7xlpiAT6RafmJjsA8WQnZVMnVWCJ7uR6VAWiRcidaeVXsfNzWcNaGadiHJRmDD7hNloX80e5zyGDYbMeoesLvQPErfD3IuVGpEOg0EMUmhKZaTET5BRnmdZhqwRE3NOfPoenNklOfia3OdCuzsOd5O3SLvrROWkYZ5hkdx7gyJChA9c1bN7zNhkpHCySFbL3fm4RbVeThcBlQ6HFNSDNbOua/2icGmvwB7mnHypri5puCCcVaXhBJ2X6SA2EJwQ+0+vmF7RlgzACulfntrqysP9rUv9AuVY6qIuIFEXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oUsM3bdAzewwtEhA/Sa310RpDK4L/GVvwRgeZymV4MM=;
+ b=jKbeYWnUyH9y6zjmHkS6hrcSur7hPx0Vv5T3nlMGSOsT+IfGzFS8g39StoVc7itNaueqe9qG+t9JN/BNb8NkHPke4KlXRrN7j9HRDzCEEISpd9pimjEhbId+dvUrIcwf9Kda/CHOEv38OiY0e6Yy7A5gtWwrJBa10phOe4BdPm+pmgZL2eKUWt2BRD2X5J1hSW3WhZnHZ9H3LzoLI6qETI+iT0/3F2Nn9U08otT/ZQUDJIp1iPuinGxLDY5ilvlig+2GYkOZFRtLEpQTO2IaiWvy9OK+wqZvumHpxMEaJgFCwkGaDOwYTvLU+c/Kg9+zJ/m3QZYksxe0dKb4HwIVFw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CYYPR12MB8924.namprd12.prod.outlook.com (2603:10b6:930:bd::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 15:07:55 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 15:07:55 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Wed, 29 Oct 2025 00:07:39 +0900
+Subject: [PATCH 4/5] gpu: nova-core: vbios: use FromBytes for BitHeader
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-nova-vbios-frombytes-v1-4-ac441ebc1de3@nvidia.com>
+References: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+In-Reply-To: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>
+Cc: John Hubbard <jhubbard@nvidia.com>, 
+ Alistair Popple <apopple@nvidia.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+ Edwin Peer <epeer@nvidia.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: TY4P301CA0111.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:37b::10) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251022-james-perf-fix-dso-block-v1-1-c4faab150546@linaro.org>
- <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
- <aP1kSdZJKYIpnRia@google.com> <CAP-5=fUiO1uypnsw=G-FFj0xE=uCowG5FetaC9JGygOxybuGGA@mail.gmail.com>
- <17f00d4d-5cbf-4c9c-a51a-f0ae34f181cf@linaro.org>
-In-Reply-To: <17f00d4d-5cbf-4c9c-a51a-f0ae34f181cf@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 28 Oct 2025 08:07:38 -0700
-X-Gm-Features: AWmQ_bmcfb_MIHCzdYrjjAXAPPE4Yy-cOVHzUbX693z5ZFThEg6Ih8u-aGxe0v8
-Message-ID: <CAP-5=fV-g1CeJCoEnNnz_eFsks01JyUR3Fxz_H0X_rdTzOGuAw@mail.gmail.com>
-Subject: Re: [PATCH] perf dsos: Don't block when reading build IDs
-To: James Clark <james.clark@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CYYPR12MB8924:EE_
+X-MS-Office365-Filtering-Correlation-Id: a65c1340-a938-4ce2-cdd1-08de1633c601
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZzZ0Yk1SdXRpRkFITWc0Q1pzMEg1cWZTMytpZXNUczJzVmQ1WHJOYmpaUE1t?=
+ =?utf-8?B?RnZuQjl5S3dyaHF1dUFwZlZNQjNXbFY2WFpKS2lVQTNHckFMNnJDbTgycEZX?=
+ =?utf-8?B?SEhDeHh2MUlCWm5NeW5CdDFVZ051Q3YzS3UxMm9Ka09VRFNCZHA4dS8zUEd1?=
+ =?utf-8?B?R1BTMFhsK1dTTndJS3lsb2ltL3pFaDNsSDJ3OEJ3WnVkZ20xK3VaQ0gvc0dQ?=
+ =?utf-8?B?Q2RLaHpUVVZIc09KVWZYcCtCbUlhdkk3aTVmT0hNMXo2MG1xekN3akVOdHpa?=
+ =?utf-8?B?RzVlaGV5TzdnV2s4blFoUk1jOHYzNEVyN3prM2crb05lTkJtOUxqNWVxY3Y5?=
+ =?utf-8?B?SUNXeXA3d2NicnRySTRhaytrdjQ4SnNYMjFXR1lCNFUxYjRmL3dOZVpvN0FT?=
+ =?utf-8?B?Vm1KYmJxdnBFaTNLZ1NKYnBmNk1jb3RPU25FQWc1MXdkRDZWNzA3NUFwenZw?=
+ =?utf-8?B?NjV6V0pMYmtYNmxXcnVFV21VS0VBVENONXZnazFjTmtiNEZFRUVBY1ErUmVZ?=
+ =?utf-8?B?czdkTHBxL1A3QTVLdjRPbnh3TExvdXhHTWp1Y2lRWjlsQ0hDRHJxUGtlVHlH?=
+ =?utf-8?B?RSs4aC9nZStWMU43ODY4UGFGWmNVSGxUNWI0RER0Szk3SWN2Q09NcUJpQTAx?=
+ =?utf-8?B?QWZvSFpPOHZsRkFOSnNMQ3dkYmE2OGh2Z2FRUVk4S2pJdUtFdHRRNjdJYkdC?=
+ =?utf-8?B?M3dZamNXSzMvNXNxeW5HbXlRTFZHdVhlMDhabUxOTnpwTloxZ05mQXJuZ0pu?=
+ =?utf-8?B?MCtwNFBsSjdCa1FSamxsdU9pbU1raDlpSjdOTWR5ck9lcXJRWWxBL0FmWm9r?=
+ =?utf-8?B?cUVldXNDYk5KUW5VRVFOMjZUdEhia0xHQmY1SGY0bElYY2g5RmVxUnkxa2Zj?=
+ =?utf-8?B?NzJKTVl1OGhSTmtTZ3FYZ2pDQWE4S1JEeGpNRFRYT3dFMHRZU1ROSGZUd2NX?=
+ =?utf-8?B?MWgrbnpNYlhQeElPVEV1WjVIclZWQmg2SVJsVkhORmxPWElFV3UvQWcwOWZH?=
+ =?utf-8?B?SWxQcThyai9KZFpqeDlRV1RNRUdWRmIyUG1ZcEJuRHRuQnhwemdSUFFwUmlE?=
+ =?utf-8?B?RkdodW9NUUMrWWZWQWFSZEc5cjN5S1BzcnRPZk0yaTM2RWdvcTZuODN1VWpC?=
+ =?utf-8?B?cm5VZFV3cUFNeklDTHI3SmhRSjhQNjlSWkN4dVlRUG9DamVXeUZvdGgrSCsv?=
+ =?utf-8?B?S1NLMEhJbmhLMWo5L1NZbk12cW16andMQjJ1YUgvMjVDUXVnYU1ocFZ0WmtI?=
+ =?utf-8?B?TkFUZ21FNG9UbENrQlBJeDNLLzlUeVBaWkN6bUR0dit6TnJCVTRvVmYrbzh6?=
+ =?utf-8?B?a1VidWl3T01pek5obk12TEQvZE1SVEU5bktiWENFdmNxMDdHUm5mZ1QxYjFL?=
+ =?utf-8?B?NHlPZkthN1VoVXhjdGdFcG1QUWdxT0Nna1BjZ1ZsRjZYUGZmLzlmN1RuTlZk?=
+ =?utf-8?B?THFjUzV3NDlGbDlkRGJ1c1o3a3BqSzByb3VTcTQ2M2ZEUFBQUld2QzRLaFpE?=
+ =?utf-8?B?YktJK3pSdVFFQzRMMTZnTkZoMFJYQkp1aTh0dk11UjRzNitzL2hiUHI3TnIz?=
+ =?utf-8?B?d2l0MTM2U2hNcmxmdjlTY3JuWjdkVTF5djdoS0lvWDVOOWxESzh1S3dRM25F?=
+ =?utf-8?B?K3ZaMTNUYnN5MEd6UG14Uy9lU1BHUndDWGQwWlgzTFBmT2s0eHM3WnBBcVFm?=
+ =?utf-8?B?RXlGeitMVVZKTGo0c243aVJaZ3dNNFFSQ2NFZVB0YTdoVVk2dnl2bUhXSEh2?=
+ =?utf-8?B?WDFTZVJsckEvemZ3cmkvalRobnRMRWxhb0wyRktnZmxtQndEejJ2aG84WGlJ?=
+ =?utf-8?B?TEo3OGNBRlgxKzQvekpXYXFTVDBzVlhsZlhBUGI1NUdYdWFXZ0hkRHFhN1Mv?=
+ =?utf-8?B?MzFQNml0NGhFaDByM25aakRvem1yMnJVQnFkaWdtcnp6QmZRSGp6dnhXT09J?=
+ =?utf-8?B?TTFvRDExN0FXMlh6Z3Q2YklRWm9PQlJlRkt6YXJsWUVWRWxFb1VPWG12R3FZ?=
+ =?utf-8?Q?G98RgqHI5KH2xfdVRjiPDYIylK1gG8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WjZPOVNBWXlZVGwwbjdGU1dMdGdJMGJ6R1d5RnY1VlFrSmxWcjdJNy80b3NW?=
+ =?utf-8?B?LzFONDNsZzREVkk3aUUwU3FJOGtGai8vMjVLdGppWXI3d0RTZXVjckFYUlcw?=
+ =?utf-8?B?WXV3LzF0T2Yza0Q4Umh1UFB1YjlZL1pBWlhJREFlS2Q4dWVHL1B2U2Rib1RL?=
+ =?utf-8?B?d2ZpUGxGSWpkRUg3WW1kVnA2eUJOVlhnVlBJL1dQR2hickk0bTRoTlJwejcz?=
+ =?utf-8?B?RTJ3bFFPdW0wZlpUOTBHdUtQT2tVMDBRQ0dDZm1DRGFiK251aGcwOCsvLy9I?=
+ =?utf-8?B?ZU8zTzhzTTUzNTJBbC84ZXliQnFtTk1oNG5peVRPSm1hUTNiVDRCZEdEdFlO?=
+ =?utf-8?B?UzcyaHZRSDFkMGtLMTF4NDFBWDIxclVJWWJDelAwbkZ3N2dFQTNOOSt5UnhB?=
+ =?utf-8?B?K3FpNlV4ejFPSER5cENCZ08xWGJrYW1PN3FKODNkNjVlczZBQTEzQ29QR3JR?=
+ =?utf-8?B?cFk1Uk9ET3Z5a2pwam9aZjg4VUVPOHN2TnE0YU8rc0gxWS9XeTBEbXMwMXpL?=
+ =?utf-8?B?RzJWOCtNRE9yQ050YWdxMC8zVGREMXVkNmN6ODVWNTJOZ2plbXRvQVJOU3Ez?=
+ =?utf-8?B?VGlIMkF5NU1lTGV6VWtjRzMxTnQvNGNBdzdvT2VrRU14cVgvU2draEp0Nk13?=
+ =?utf-8?B?ZjRpT0tvNEJZTXp2MlZ5WUhPVDJqT2tIczVQV3VFYjBFNjVqaDFWZUdvd2Vl?=
+ =?utf-8?B?NytDQy8ydk44L2U1aFZyZ3FycmdZVDZ6STZHb0xYQjJXRStVdFVCMDJ5VzVs?=
+ =?utf-8?B?cHBKeFU2aFdmSDNRc1pZTjVFTFdoanZ6bGVicU1ISEdzdU1GTzBIYnRzKzdH?=
+ =?utf-8?B?bzgxNWZGTXZ6aTZUVTZBRGpqVW9SVzc4ZEdJbUVJNFhsMC9kZnY3UUpkaW9V?=
+ =?utf-8?B?RzVxa2NZZ0JQaHl1M1dxSWl1TEZxc0JTcnFvRHJzTFJOTlZaNUVnNlpYQjdq?=
+ =?utf-8?B?bW1EOW5TTGZMUldOSU5EbkNoUXNSU1BDQ25zdE5XczRWZldkQ3pFeXU0OGtH?=
+ =?utf-8?B?N1hhcnZpWSsveG51N0pRMWRHTUpOYkVzRUd3UDE4dVBqVll0ZGhIeXJNM2xs?=
+ =?utf-8?B?Q1dYY09vWDJjMGVoTEJuaUJPaGFWblUzeCswUU9HZUhiYVloUHZQMUVyRTdI?=
+ =?utf-8?B?Skk0bnFVS1hhU0VXMG1pYkY1ZnJ2QjlLdEVQU25Db3VUSi9mS1MyQlB1S0pP?=
+ =?utf-8?B?Mjl6VDdremorUHVtenJORC9Ga1RiUHB3ZWxWaUtScEMzOHBJNGo4QW9LSjIr?=
+ =?utf-8?B?RGR4b0FYVERzZFhNQXhGL1BqZXlVWEllWnNlK2pwSnlJSTZ3MmNCckxHUSsr?=
+ =?utf-8?B?MEhsSWV5dGJTZzR6OEx2NGhUT2dIbGdMR0I5Rzdjem9oRGVLdFIxY0tFV0Vp?=
+ =?utf-8?B?RHJ2dW5vb3hsM3ROQ3Bac0c2NEpBOFB5VExYNzJybTI4WEtMNHJsV0FSVjJ0?=
+ =?utf-8?B?TjVqcW41ZmZxVmFreFJzRlozVFZuZTlLeVZaMGNzdkFIcmhpZGl5SmlvR3RV?=
+ =?utf-8?B?NlZoZ0k1aEVJSXNkdE5DU2F3L0hJRlBMQ0hXWmJ3OGdhSGNvSHR6dW9EUjFH?=
+ =?utf-8?B?MzdIV1FOM3dMTFRHRlU2OFBhcUJWWmdFS1k3aGZIWStubFBUMTVGdDlaQmFn?=
+ =?utf-8?B?bHhWRnBFU3pZR1g2VXBEYzJEZTkvSWVHT3dpbVhDdUVpZnVQemRWbkdOY3Zu?=
+ =?utf-8?B?QTkyWXVrbHBVdlM1V28vMlRVTEVlZ1kxeGQ4clkzU1NOMWRMakJYRUpKNDNx?=
+ =?utf-8?B?KzJCTFFYaTZROU9xRUVXMEhhMHM1WGNHVEE4bURRUWR3eVdSam1kcUE1YjJC?=
+ =?utf-8?B?dEtkSHlIdUJsU21vWTYyRGhZeEdlOVZMVTY4cjNjMy85LzFIZ0lwbUUyVTFx?=
+ =?utf-8?B?VHFOTGVBaGZRU0xuUHZZVTdGTmZpWTJSa0lBZmRPMkcwVjd3b3poMTYrdWQy?=
+ =?utf-8?B?ZU9pbUdQdDE0RmdnWldQWU9nMkgzbTQvSURoSkpLSlJKRVg3blZMMzdMcTFJ?=
+ =?utf-8?B?a2dvYUNmMXEyRm9yZ2NNZmluT0pRQkNyckZiNU91WnJkKzVrOXZobDRtQmQ2?=
+ =?utf-8?B?MURyRzhDdFJsUldZRE5JQXhGcG44MStHeEpoSWxNZnloK1BtMFEvY1E1dzJJ?=
+ =?utf-8?B?c0lpSkhacjlGTGU5NDBZaFR2dGZiQldpeGpGdmFaRWwwSnZtMjcvT1hHZEhN?=
+ =?utf-8?Q?6aSz8NXc+Crz0v42mA4uPaNqd+eppJeIyZQPL3nFikIF?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a65c1340-a938-4ce2-cdd1-08de1633c601
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:07:55.5748
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gUZv+F5ii7s1zK/ntZtmC56NLOsNwHW8aaJHQpGeDEW7dfOtJJ51DmUroi4UwYDwlcilzMFtOWAuj1ZMJYbh4Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8924
 
-On Tue, Oct 28, 2025 at 3:33=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
-> On 26/10/2025 4:52 am, Ian Rogers wrote:
-> > On Sat, Oct 25, 2025 at 4:59=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
-rg> wrote:
-> >>
-> >> Hello,
-> >>
-> >> On Fri, Oct 24, 2025 at 11:26:18AM -0700, Ian Rogers wrote:
-> >>> On Wed, Oct 22, 2025 at 8:46=E2=80=AFAM James Clark <james.clark@lina=
-ro.org> wrote:
-> >>>>
-> >>>> The following command will hang consistently when the GPU is being u=
-sed
-> >>>> due to non regular files (e.g. /dev/dri/renderD129, /dev/dri/card2)
-> >>>> being opened to read build IDs:
-> >>>>
-> >>>>   $ perf record -asdg -e cpu-clock -- true
-> >>>>
-> >>>> Change to non blocking reads to avoid the hang here:
-> >>>>
-> >>>>    #0  __libc_pread64 (offset=3D<optimised out>, count=3D0, buf=3D0x=
-7fffffffa4a0, fd=3D237) at ../sysdeps/unix/sysv/linux/pread64.c:25
-> >>>>    #1  __libc_pread64 (fd=3D237, buf=3D0x7fffffffa4a0, count=3D0, of=
-fset=3D0) at ../sysdeps/unix/sysv/linux/pread64.c:23
-> >>>>    #2  ?? () from /lib/x86_64-linux-gnu/libelf.so.1
-> >>>>    #3  read_build_id (filename=3D0x5555562df333 "/dev/dri/card2", bi=
-d=3D0x7fffffffb680, block=3Dtrue) at util/symbol-elf.c:880
-> >>>>    #4  filename__read_build_id (filename=3D0x5555562df333 "/dev/dri/=
-card2", bid=3D0x7fffffffb680, block=3Dtrue) at util/symbol-elf.c:924
-> >>>>    #5  dsos__read_build_ids_cb (dso=3D0x5555562df1d0, data=3D0x7ffff=
-fffb750) at util/dsos.c:84
-> >>>>    #6  __dsos__for_each_dso (dsos=3D0x55555623de68, cb=3D0x5555557e7=
-030 <dsos__read_build_ids_cb>, data=3D0x7fffffffb750) at util/dsos.c:59
-> >>>>    #7  dsos__for_each_dso (dsos=3D0x55555623de68, cb=3D0x5555557e703=
-0 <dsos__read_build_ids_cb>, data=3D0x7fffffffb750) at util/dsos.c:503
-> >>>>    #8  dsos__read_build_ids (dsos=3D0x55555623de68, with_hits=3Dtrue=
-) at util/dsos.c:107
-> >>>>    #9  machine__read_build_ids (machine=3D0x55555623da58, with_hits=
-=3Dtrue) at util/build-id.c:950
-> >>>>    #10 perf_session__read_build_ids (session=3D0x55555623d840, with_=
-hits=3Dtrue) at util/build-id.c:956
-> >>>>    #11 write_build_id (ff=3D0x7fffffffb958, evlist=3D0x5555562323d0)=
- at util/header.c:327
-> >>>>    #12 do_write_feat (ff=3D0x7fffffffb958, type=3D2, p=3D0x7fffffffb=
-950, evlist=3D0x5555562323d0, fc=3D0x0) at util/header.c:3588
-> >>>>    #13 perf_header__adds_write (header=3D0x55555623d840, evlist=3D0x=
-5555562323d0, fd=3D3, fc=3D0x0) at util/header.c:3632
-> >>>>    #14 perf_session__do_write_header (session=3D0x55555623d840, evli=
-st=3D0x5555562323d0, fd=3D3, at_exit=3Dtrue, fc=3D0x0, write_attrs_after_da=
-ta=3Dfalse) at util/header.c:3756
-> >>>>    #15 perf_session__write_header (session=3D0x55555623d840, evlist=
-=3D0x5555562323d0, fd=3D3, at_exit=3Dtrue) at util/header.c:3796
-> >>>>    #16 record__finish_output (rec=3D0x5555561838d8 <record>) at buil=
-tin-record.c:1899
-> >>>>    #17 __cmd_record (rec=3D0x5555561838d8 <record>, argc=3D2, argv=
-=3D0x7fffffffe320) at builtin-record.c:2967
-> >>>>    #18 cmd_record (argc=3D2, argv=3D0x7fffffffe320) at builtin-recor=
-d.c:4453
-> >>>>    #19 run_builtin (p=3D0x55555618cbb0 <commands+288>, argc=3D9, arg=
-v=3D0x7fffffffe320) at perf.c:349
-> >>>>    #20 handle_internal_command (argc=3D9, argv=3D0x7fffffffe320) at =
-perf.c:401
-> >>>>    #21 run_argv (argcp=3D0x7fffffffe16c, argv=3D0x7fffffffe160) at p=
-erf.c:445
-> >>>>    #22 main (argc=3D9, argv=3D0x7fffffffe320) at perf.c:553
-> >>>>
-> >>>> Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
-> >>>> Signed-off-by: James Clark <james.clark@linaro.org>
-> >>>> ---
-> >>>> I'm not actually sure if this is the right fix for this. Commit
-> >>>> 2c369d91d093 ("perf symbol: Add blocking argument to
-> >>>> filename__read_build_id") which added the blocking argument says tha=
-t it
-> >>>> should be non-blocking reads for event synthesis, but the callstack =
-here
-> >>>> is when writing the header out.
-> >>>>
-> >>>> There was also an is_regular_file() check added in commit c21986d33d=
-6b
-> >>>> ("perf unwind-libdw: skip non-regular files"), which presumably fall=
-s
-> >>>> afoul of the "which unfortunately fails for symlinks" part of the ot=
-her
-> >>>> linked commit message?
-> >>>>
-> >>>> So I can't tell if we should add the is_regular_file() check here to=
-o,
-> >>>> or just set it to non-blocking, or it needs some extra state to be
-> >>>> passed all the way down to dsos__read_build_ids_cb() to do different
-> >>>> things.
-> >>>
-> >>> The fix lgtm but I worry about making all the build ID reading
-> >>> non-blocking meaning build IDs getting lost.
-> >>
-> >> I'm not sure what non-blocking means for regular file system operation=
-s
-> >> on a block device.  But it may have some impact on regular files on a
-> >> network filesystem.
->
-> It depends on the filesystem, but I think the assurances given by
-> O_NONBLOCK are very weak anyway. It can be practically ignored or do
-> different things in different situations. Especially as we don't handle
-> EAGAIN or do anything fancy we shouldn't use it.
->
-> For our case it looks like we should always do blocking reads but make
-> sure to not open a non-regular file.
->
-> >
-> > Agreed. Prior to using blocking we tried to imply from the file type
-> > from stat, but that skipped things like symlinks :-/
-> >
->
-> Am I missing something here? is_regular_file() uses stat() which returns
-> info about the target file, rather than the symlink, so they wouldn't be
-> skipped. lstat() is the one that returns info about the link file.
->
-> I tested is_regular_file() with links, links to links, pipes, files and
-> devices and it works as expected and would avoid the need to use O_NONBLO=
-CK.
+Use `from_bytes_copy_prefix` to create `BitHeader` instead of building
+it ourselves from the bytes stream. This lets us remove a few array
+accesses and results in shorter code.
 
-I don't mind we back out the use of the is_block parameter and use
-is_regular_file. In the code before the change to use is_block the
-callers would call is_regular_file and then call
-filename__read_build_id. This seemed error prone as some callers were
-doing the is_regular_file check and others not. I think I favor just
-getting rid of the argument but putting the is_regular_file check in
-filename__read_build_id. I'd switched to using O_NONBLOCK rather than
-is_regular_file not just because of symlinks but just because it
-wasn't clear that anything non-regular may still have a build id.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ drivers/gpu/nova-core/vbios.rs | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-There's the separate issue of why are we writing out buildids in the
-features when the buildid-mmaps contain the same data. It seems
-Namhyung has a patch just about optimizing that case :-)
+diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
+index b02a1997306f..ade99c90dd3d 100644
+--- a/drivers/gpu/nova-core/vbios.rs
++++ b/drivers/gpu/nova-core/vbios.rs
+@@ -374,30 +374,19 @@ struct BitHeader {
+     checksum: u8,
+ }
+ 
++// SAFETY: all bit patterns are valid for `BitHeader`.
++unsafe impl FromBytes for BitHeader {}
++
+ impl BitHeader {
+     fn new(data: &[u8]) -> Result<Self> {
+-        if data.len() < core::mem::size_of::<Self>() {
+-            return Err(EINVAL);
+-        }
+-
+-        let mut signature = [0u8; 4];
+-        signature.copy_from_slice(&data[2..6]);
++        let header = BitHeader::from_bytes_copy_prefix(data).ok_or(EINVAL)?.0;
+ 
+         // Check header ID and signature
+-        let id = u16::from_le_bytes([data[0], data[1]]);
+-        if id != 0xB8FF || &signature != b"BIT\0" {
++        if header.id != 0xB8FF || &header.signature != b"BIT\0" {
+             return Err(EINVAL);
+         }
+ 
+-        Ok(BitHeader {
+-            id,
+-            signature,
+-            bcd_version: u16::from_le_bytes([data[6], data[7]]),
+-            header_size: data[8],
+-            token_size: data[9],
+-            token_entries: data[10],
+-            checksum: data[11],
+-        })
++        Ok(header)
+     }
+ }
+ 
 
-Thanks,
-Ian
+-- 
+2.51.0
 
-> James
->
-> >>> It seems that generating
-> >>> the build ID feature table is unnecessary if we have build ID mmap
-> >>> events, including synthesized ones that will have read the build IDs.
-> >>> I wonder if a better "fix" is:
-> >>> ```
-> >>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.=
-c
-> >>> index cb52aea9607d..15f75c70eb76 100644
-> >>> --- a/tools/perf/builtin-record.c
-> >>> +++ b/tools/perf/builtin-record.c
-> >>> @@ -1842,7 +1842,7 @@ static void record__init_features(struct record=
- *rec)
-> >>>         for (feat =3D HEADER_FIRST_FEATURE; feat < HEADER_LAST_FEATUR=
-E; feat++)
-> >>>                 perf_header__set_feat(&session->header, feat);
-> >>>
-> >>> -       if (rec->no_buildid)
-> >>> +       if (rec->no_buildid || rec->buildid_mmap)
-> >>>                 perf_header__clear_feat(&session->header, HEADER_BUIL=
-D_ID);
-> >>>
-> >>>         if (!have_tracepoints(&rec->evlist->core.entries))
-> >>> ```
-> >>> that should disable the build ID feature table generation when build
-> >>> ID mmaps are in use (the default). Having the build IDs twice in the
-> >>> data file feels redundant. Or we could do your fix or both, wdyt?
-> >>
-> >> I'm ok to remove the header feature but I think it should update
-> >> build-ID cache even with this change.
-> >
-> > Yeah, dropping the feature writing also impacts updating the build ID
-> > cache because:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/header.c?h=3Dperf-tools-next#n338
-> > It is kind of strange that writing a header feature does this. What if
-> > I want to write a header with build IDs but not update the cache? It'd
-> > make more sense, I think, for perf_session__cache_build_ids to be
-> > called explicitly. There is also the global no_buildid_cache
-> > controlling behavior:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/build-id.c?h=3Dperf-tools-next#n43
-> > But that's kind of a hack as we may have >1 session such as with TPEBS.
-> >
-> >> I'm also curious if the device has samples actually.  It should be
-> >> checked by dso->hit.
-> >
-> > In this case the header writing is happening after the samples have
-> > been processed, but it looks like marking of samples doesn't consider
-> > data addresses:
-> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
-t.git/tree/tools/perf/util/build-id.c?h=3Dperf-tools-next#n55
-> > just sample->ip and the callchain. If the marking was updated for data
-> > pages then just writing build IDs for marked dsos would make sense.
-> > There could be callers not marking dsos so they'd need altering, or
-> > two versions of the code.
-> >
-> > Thanks,
-> > Ian
-> >
-> >> Thanks,
-> >> Namhyung
-> >>
-> >>>
-> >>> Thanks,
-> >>> Ian
-> >>>
-> >>>> ---
-> >>>>   tools/perf/util/dsos.c | 5 +++--
-> >>>>   1 file changed, 3 insertions(+), 2 deletions(-)
-> >>>>
-> >>>> diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
-> >>>> index 64c1d65b0149..5e1c815d7cb0 100644
-> >>>> --- a/tools/perf/util/dsos.c
-> >>>> +++ b/tools/perf/util/dsos.c
-> >>>> @@ -81,13 +81,14 @@ static int dsos__read_build_ids_cb(struct dso *d=
-so, void *data)
-> >>>>                  return 0;
-> >>>>          }
-> >>>>          nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
-> >>>> -       if (filename__read_build_id(dso__long_name(dso), &bid, /*blo=
-ck=3D*/true) > 0) {
-> >>>> +       /* Don't block in case path isn't for a regular file. */
-> >>>> +       if (filename__read_build_id(dso__long_name(dso), &bid, /*blo=
-ck=3D*/false) > 0) {
-> >>>>                  dso__set_build_id(dso, &bid);
-> >>>>                  args->have_build_id =3D true;
-> >>>>          } else if (errno =3D=3D ENOENT && dso__nsinfo(dso)) {
-> >>>>                  char *new_name =3D dso__filename_with_chroot(dso, d=
-so__long_name(dso));
-> >>>>
-> >>>> -               if (new_name && filename__read_build_id(new_name, &b=
-id, /*block=3D*/true) > 0) {
-> >>>> +               if (new_name && filename__read_build_id(new_name, &b=
-id, /*block=3D*/false) > 0) {
-> >>>>                          dso__set_build_id(dso, &bid);
-> >>>>                          args->have_build_id =3D true;
-> >>>>                  }
-> >>>>
-> >>>> ---
-> >>>> base-commit: a1d8548c23076c66d96647f5f6f25aa43567f247
-> >>>> change-id: 20251022-james-perf-fix-dso-block-ca1d8437bbc0
-> >>>>
-> >>>> Best regards,
-> >>>> --
-> >>>> James Clark <james.clark@linaro.org>
-> >>>>
->
 
