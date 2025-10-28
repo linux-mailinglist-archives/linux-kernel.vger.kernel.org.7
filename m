@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-874576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A03C169C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:28:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91CFC169D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77D9F3B2188
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:27:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C75C188CFFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5F9158857;
-	Tue, 28 Oct 2025 19:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE09285C9D;
+	Tue, 28 Oct 2025 19:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IraTZj/W"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfF4SApS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B32261581
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446DD261581;
+	Tue, 28 Oct 2025 19:28:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761679671; cv=none; b=YIH4GFhXwEvl5QSRMrRcBk3o8vQU1iKnZbdtYQgNp8aUX0UBW1BzdedAVTrfPUfpIwAphdagq9RX99CSOpUcp4ZNi6/9HsFjJIzb3Z3Cj/Xvux83moFN32/bDGP0Oz70tUmnSLHO1cX2uAA8LFt4yfTcqQ6wVyYvbzrPO6n2hwI=
+	t=1761679708; cv=none; b=V/rzbUoOH47ytPukOIobQtzoY1Zi0hoWl2XOW0/ak1A8cxEuJsonQXHRaaYc+YMGOhL4bI1AIBWzeSlgyt1QliyWRK1WzUDYUKMT/JKa2hevn7tfAy4MUbYhNXqS4TzV4Pqp8n2BO0F7x0czHgFg9mjWmzD9ecn0gZ71pzPeL/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761679671; c=relaxed/simple;
-	bh=e7za67gpaMzXAAnduU0aQ85fcHm086VfI4xydx3Us9c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T6KmfHjV/Sby4jdYKoKzcK3kx0F9z+GvCczbIBxtuM9MoGQWJ9a233kw2+GAVNTwIkf9b2hXGwSlUTF/DhgEzuU21Su+nx6/hiORwHYISkbb+ZrSvgxUSzXSPAI1g2BojMaz6LBzgRx1B9fAx3Jj2hkcSuXIrvb31FdgpS2Qn7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IraTZj/W; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-430bf3b7608so67532895ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:27:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1761679669; x=1762284469; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PV1bENIf0l3RXjjkTJnnKUbQWBjIIJGeXOMl9S4eqCQ=;
-        b=IraTZj/Wv9BoUoZuSYE4Ylut8J8Hj1DLpUzhFWE5Bmzxee5FVXzhHA1XbMdhncDrSL
-         JsG/StAvHnnn8s9FaNpzvbdQUtEqH36K95X6JOvdWqfaWkf4wM3/nBk+eEVcuKY7AZKl
-         gewz5yZmuShSq1rf3WDMsl8o263BCk/vu0k6Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761679669; x=1762284469;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PV1bENIf0l3RXjjkTJnnKUbQWBjIIJGeXOMl9S4eqCQ=;
-        b=VQvqaKqzQ86OJmdU1oN3crBJxRmoEOlMPqFLgUJSgYl679POdaXM+L5Iu9DtoNLFKt
-         cnhNvziuJ+Jk75eVpsl70D97jp0Wbm4hTuYO43H81gZXsZps/Y/slDzxg0akci99ugr2
-         elAlmrByDPoDwIb1vHDFJJ8rawGWoNN+/gm01nT5FBDOk6WVOpWS8vNj5fR1kv5G7Pb5
-         S4AmkwPxutru5T6KLVJrJkj/RnUa9ZNQTr4LBBB21mh6y3n7bSsvoMypCnYsMZUWszKa
-         P7GRaK6vFUF4Dd0Q3AeKCh/AhE/UG4m6D6cxNeAHLdq7/MPQAyWhx6URFfDqqvdDYDmc
-         icyA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5bAqbDs1cb9zOf5NWDMOQNiMS1+sPjyXF1b1tRK+3wq9a3+Ni2QWUW21awgkrM7zOtzmQ6tkJJuZW+kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7mNLr5nAiliL2cnOV1UP2pZt9Kc5IEv8Uzd3QutfdpZHN3dni
-	PgHw3cnVlJaYDi8DX+uJfhpYv1yv82hX/GRT4k3l2crNvc/SZ478QAozImsSWZZeKUs=
-X-Gm-Gg: ASbGnctkIc7cdZLY57ROJCVhw1UHz3tA5vle4g3GW2QQ2VEUqLX/Y20jJ29yZK1Za63
-	Z11izktxpfNXd8AdKUfEuVEB4fw+iV/PdgjEngJpMarqaDi89Jg+MSrbkApafd7JYV7tKvPW5Lo
-	im0KjQFxdgKd2vVpN31R+syR/T8esnoBElVWflpf8zdWEJANSVxIaD2tZa165BpCx5wOjRkz0AK
-	g40EhF5PfRAZgvbXhG89dQqLObqNbCllzXkFriR0tSc8hm+Lpa64AO8IhBJ8PDKgPJr6uxvs39E
-	FuzOjKjBs6YdWfV4JmYQ/jAYBPZZ+qxzIQ9jNxi65k+lW21rkYFpLS3WGvPILw5YxOdX8455sTD
-	IbfVIHh0PxCGt9BkbJ7eWpjdLLjUtfmQ4cYddkSFMPGVE3pA8uU48n5fNwX8DivLL20he9LSEqn
-	TjPTWYu/xGmBdx
-X-Google-Smtp-Source: AGHT+IGCnaJwEiI5H45X8uH7EHHZvYqawVyeXkrh+JuUvou4c5LieEIEgsLjfsVja/uVxA+aAgX1bA==
-X-Received: by 2002:a92:cd8c:0:b0:430:ab98:7b27 with SMTP id e9e14a558f8ab-432f9064bd6mr5104435ab.20.1761679669136;
-        Tue, 28 Oct 2025 12:27:49 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5aea73dc10bsm4734334173.7.2025.10.28.12.27.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 12:27:48 -0700 (PDT)
-Message-ID: <cafe791c-5f00-43f2-85eb-f083c499f978@linuxfoundation.org>
-Date: Tue, 28 Oct 2025 13:27:47 -0600
+	s=arc-20240116; t=1761679708; c=relaxed/simple;
+	bh=TsJiVu7tfPU5QNygJ6AqlG+Y4qq+GJW0tdIrv8h5l9o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BlEF2jCb/R0BXl3IauzuGdo48+v/7F1hRfsGgAsmlXH83qzobhQihWSL7HzUcG1EVuBNOt6NxvbDA+YHCJtsUHndsrcu6tQdyu3pNyPIRZg6kJza0nxWfWxvP63te7yuRkcy6G9Z5/154nzvxGZjzFr9WMXKAs0in/xKX/gH4BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfF4SApS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246A1C4CEE7;
+	Tue, 28 Oct 2025 19:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761679707;
+	bh=TsJiVu7tfPU5QNygJ6AqlG+Y4qq+GJW0tdIrv8h5l9o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sfF4SApSUDaWgAqHux/sZKL8rGKvF5aC9xIr0LZdA/DWukqRfpRXhZ5NpdGiQM/NZ
+	 hYxLcFVBbFn7lEZ34F/OFimfnnk7OG03JURHlQcVg9wmdt+ghiQaY1opjrx8RXv0V9
+	 Wws5J7hXfop8wNR3dw3ct57yR07K//BCoKuoqSeXhO7GAmnAaArYxpOneooV8JxGAD
+	 j6qTxVNgoY0SDjuQf/Eb/9mPVHw/W15LXv1uUr4RdjHIPVLzacl35NEHonun3jD/y+
+	 YVOGUk+ilcCcWEO10OjPOnuFaUa+Iv0c2ZdRw/7uKYMMVHMEek/gb/h+3R96awhXXS
+	 3QfGuik4m2Q3w==
+Date: Tue, 28 Oct 2025 19:28:22 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: Re: [PATCH 02/19] dt-bindings: serial: rsci: Drop "uart-has-rtscts:
+ false"
+Message-ID: <20251028-griminess-undocked-b6918de546fc@spud>
+References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
+ <20251027154615.115759-3-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.4 000/224] 5.4.301-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251027183508.963233542@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="D1Iw+TUx8nS+nqMu"
+Content-Disposition: inline
+In-Reply-To: <20251027154615.115759-3-biju.das.jz@bp.renesas.com>
 
-On 10/27/25 12:32, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.301 release.
-> There are 224 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.301-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+--D1Iw+TUx8nS+nqMu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+On Mon, Oct 27, 2025 at 03:45:49PM +0000, Biju Das wrote:
+> Drop "uart-has-rtscts: false" from binding as the IP support hardware
+> flow control.
 
-thanks,
--- Shuah
+Why is it being removed, rather than only being required for the
+existing devices? It's not clear to me that the comment about the IP
+supporting flow control excludes the integration on these particular
+devices from somehow having flow control disabled.
+
+>=20
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/serial/renesas,rsci.yaml | 2 --
+>  1 file changed, 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b=
+/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+> index f50d8e02f476..6b1f827a335b 100644
+> --- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+> +++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
+> @@ -54,8 +54,6 @@ properties:
+>    power-domains:
+>      maxItems: 1
+> =20
+> -  uart-has-rtscts: false
+> -
+>  required:
+>    - compatible
+>    - reg
+> --=20
+> 2.43.0
+>=20
+
+--D1Iw+TUx8nS+nqMu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEZVgAKCRB4tDGHoIJi
+0g1VAQDAsorsBQUBiytjGezt5B9ODmmBWiLhV7Aikg2Eb1NlcAEAr/RZE2msMsdZ
+1ge0LJZ0bqws73j19QI4et4h4LCbpQc=
+=3GfB
+-----END PGP SIGNATURE-----
+
+--D1Iw+TUx8nS+nqMu--
 
