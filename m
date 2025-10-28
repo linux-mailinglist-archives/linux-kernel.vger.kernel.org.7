@@ -1,338 +1,277 @@
-Return-Path: <linux-kernel+bounces-874534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38598C16870
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:43:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29830C16861
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 26DC23566E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84AF1B25BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E7634F461;
-	Tue, 28 Oct 2025 18:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 396BB34B424;
+	Tue, 28 Oct 2025 18:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fqwipMk1";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="JK/hKOFl"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O8PVxhrf"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD3434F47C;
-	Tue, 28 Oct 2025 18:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676955; cv=fail; b=G5aSi5bo9Zp4evZn2tc7yiCXKCBUFexQ4bVRa/MmwnhDNTEXXARcF1uPRVy3fPncDLue5+LEjwOSA05VegmyuUNRZ4tk4tPN4F8GvdI++tegfyN5elPYMXraMfdUIIVJlB28GZgaRQ53XOI5g6YBrXJZQC+Wl5Tcs1s1GPN8qKw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676955; c=relaxed/simple;
-	bh=n6srmYjbS6LoxbG+BxO2avBWvdLedMrLpP0MoKpd6Cc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=p/mqfu3xL+D/Ygfxf42wvXXpoQbL2VIDBxPknrpVF/uSBpFCcNUkDatf2PlRfEE1fU1atorx/iWyTKoIZVmJQuFCh16ZoYmhgOAQYEP742XJ+CkIKFxW9YW78wrOu2F6TFbdQyDBg+c1MMSs0xJaFOJSX4apvx4aZZ1Lrg8EKk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=fqwipMk1; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=JK/hKOFl; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SHq10D021132;
-	Tue, 28 Oct 2025 18:41:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=MNoUIZukuE1KzasA2Q
-	UtuzdQ35QygJxqgxkKD1NKEp4=; b=fqwipMk1821utQ6AFgti2QPRJ094FSzA4i
-	f6+MmXePEQ5utAOURimhJl6/ZvWkJdR//5Q5sL3whvZhHm5FBztFiplYz637zLBx
-	1Nby04+LAK4q6JqExokaMvj7R9o9W8AJcVSPLVfrZwcdbVKziBgwBiLeSVunH3Yb
-	Zmv7b/v+iXhJI9Xy1FCKrhbk1vMS7LqE4Eeb2l2TU9K3SO4q8lKC4o6PuvEBBXg7
-	Mqz09D3iGjV7c0avdl4Re5mYz1DzK9H4nMyTVuNfBQTWcjSKL/1jY1EH16mXQXPV
-	s6t8sf5Z8oaXHfnzc7aIQ3vZ4Q+B0Jvk8U3C+kKv9WM5yeactK1A==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a22uwmaae-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:41:28 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SI8FVt015237;
-	Tue, 28 Oct 2025 18:41:27 GMT
-Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazon11011057.outbound.protection.outlook.com [52.101.52.57])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n08kcbg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:41:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cFR0ddynuScdsfwKGQxszQSyrVUdVlh393dN8WdYKrDciF6PuNR5T3IP4TfvLwNQo1YdilSAXy2AkkVb6i6HoMhnn1ROvfKdkXTUvYH0yhGaUyVHFEo1VqK6k8bltt8H6gzqw9xDHLPQvwxD6SINhnc5qfejADGsEdHLH3S+cl2HviUFweoKUFBvyjSkZ/VJnMV2mFP9HuJ40BnITU+ULb9GuBH9Jak43uPyOqVzSFcheHqETUm+PKRALVUIg0jObUIji7P7ygpjZfimFA8SWmpIWjC10Kwl/TEx2DIya14A1MWxo8wKeWQHZ5iz6eQPCeOW02dT6k8eFEzdVUwNpw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MNoUIZukuE1KzasA2QUtuzdQ35QygJxqgxkKD1NKEp4=;
- b=cG/EV6ANEp3n9jtAOH1TeZAYd37kovSjTiLRYBlIoYaYcg60ua9id+9VhIhnoaJ+iHz5jmuO7NH30eCfokscDTjlJI65vFAxtJG21FJix5e6EH2i1W8LbesVSiQt3QBUHiXflD1uawo+va6XDdsKu/+L7C/HkIF6FJjbVQnw/kY22gVNGpAWA8lZWVZogxmrnNSjLgtXol/RxNrtWMwUuDVtYriKY/79Y+4I9vaY4aFGHrk4hbGe3t+pqzVJXIkYCjUetemr1+R3+s2O9Gnu9DBiShd4ZLA9AOQvRAmiS8fJ1RGiiALy7nRnjHVCnnWm+Zij/YDtbnk/+h3l4txA5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA48433C508
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761676939; cv=none; b=PgroOchHM47Jh2wZybQd31zys5EBTbvpMElrK8Ih5molic+XKVROuI06WzHPVWZyMlOx1CIstfOBuytZIui1JXY4xwVquCAxGDM2yFRvp4qniP+Dg1mal8rHCvI0UXTrlGR8luJTc8jqVccWV32tysTwNvNG/MEzr2cqVCrtU7Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761676939; c=relaxed/simple;
+	bh=tCacBRzjsKwZvRFsSMRSacQ2Z3LTZten0W9yqG+MUKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AZkNL21tM3LG9mfESbMDu3S11gdWLohw5CrqXD1cAf+iLCDST3glsneljZJcDQdMFArWux5PObipkDlv5x9ahAlJVmMTrCswje67TedqYlAYWYxJ6ArnDilZhwVXed1DWud1xmnq3i8GEE63L7OzGH99GkX1IdN95pay15GrxHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O8PVxhrf; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-88f239686f2so608279785a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MNoUIZukuE1KzasA2QUtuzdQ35QygJxqgxkKD1NKEp4=;
- b=JK/hKOFlTsUyTRSGfMwUQ/gajU92wYKAAZ/vHvuve4Nsq6Ku1ELtHZ86xPVYh6P86/lF2ARcMf5SWzjF5Z1kRboA2bDJQiSGtqAffG/KXle5ZUTUWudclM9zP3S7tJqw7wF/qf4HdsN8eSMpRZ5Jihdy7KkcXLuQI8VXoGVKcYQ=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DM3PPFB0C5EC304.namprd10.prod.outlook.com (2603:10b6:f:fc00::c43) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
- 2025 18:41:23 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
- 18:41:21 +0000
-Date: Tue, 28 Oct 2025 18:41:19 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
-        ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
-        rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
-        will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
-        cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
-        richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
-        rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-Message-ID: <a97780ab-6256-43b7-8c0a-80ecbdc3d52d@lucifer.local>
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
- <063f8369-96c7-4345-ab28-7265ed7214cb@linux.alibaba.com>
- <9a3f2d8d-abd1-488c-8550-21cd12efff3e@lucifer.local>
- <e2a89e74-1533-4a83-8d0f-3f4821750e25@redhat.com>
- <64b9a6cd-d2e4-4142-bf41-abe80bf1f61a@lucifer.local>
- <dc002ef9-53ee-4466-b963-baadfd5162b7@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <dc002ef9-53ee-4466-b963-baadfd5162b7@redhat.com>
-X-ClientProxiedBy: LO0P123CA0013.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:354::6) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1761676937; x=1762281737; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2zI8xfo23DXKdkAZWfysLvv7Qvo46Wn0x4mNLIIsmQI=;
+        b=O8PVxhrfSk41qZNnkzgjMy15UjlW/li4UMx/LAchV4tUeMGaTOQMmRAabYEPm9Yhih
+         6MhZcOcfsKLKiaAxVb5i5O1nkkCcXlWga4J8iyeiMzSbTP4MKm1X0syZasSZeVauDouS
+         QO/wWoUpaIqs7zKOaLLRT98zxliWg8BXKvOJs32O8NAx25IdG/yzw3+LPE4Ew2ut8okp
+         IKrIfbjM8AnYZa+n1OCyNpj6S4zFu7EnehE7f+f7BktCs2ACl8bOXOfgG1956fZiL3L9
+         fazbkwYYBH0PRCs0Kxxu/cJYi94GnQSxMpvcH8q2V8B/I68D78fVwAjyk4ejQsjMBuJx
+         gNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761676937; x=1762281737;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2zI8xfo23DXKdkAZWfysLvv7Qvo46Wn0x4mNLIIsmQI=;
+        b=eHTMlLq7hdn1FWK0ourKTyw5KBTqfdtueza65YVNmEcKH34rLBQz63MFic5DOaU6Xo
+         kNIYCE5UgiEKaR+YxqclIGWHrINa0YA/7RSazpXRrkP4g2Id7pApgb2R4wo7Zhssw6q3
+         N+V6mBcpjHUEBVveaXkKFz+aU/IM72Z3jSr3yj05ytl8yqG9N/+vKPyrg6T/aqm4e+46
+         UxLra8/oHOl/nnJuMhgmQjlxALnGXe8jyTWeortlQAOtStZFXZANp/2+qUUluEIvECRz
+         8B/ktjjZ92CUzJuIh5758TBadxlTyb6r9l261GRoU/gWaKU5sG45NTC/oGGUbZF2dVy9
+         EsWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBgsF35vjnAxLMHHtltZZdTNIytFOQJZ6bGD/AUmTO0C+nLPCZf+aORg/i1NDC+Aw0U7Kg/kipVrrQf2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzO4hvGdE3hFZhSW1BZNRYpIebhF8lPG+fWmzc3cCxhdi9Asoos
+	9OfBfYgEsMLh4RbESnZ1vxtX6RGxV6F6L7lGA4iL1HIsg8Buwv+8LmXS
+X-Gm-Gg: ASbGnculXm1k6ywreRO3tydbE39W9FtDwzSAOGajiwKMb2FQ/M8ObjKnkgjyexUni8H
+	jr+ICUQPQLpcMlWdk4GtlXMxlj++5BROV1jwdPWFnG5SoGcm0r7yJIQ2TsYOS9APuXw3F6SGXdC
+	CBA/fTZcvYKDUpqFKLHZqc6qPHdabL2r3tjdy76BFrbtb0ge9Yybp5Ak10nHLIOKAc5BkVKeB/d
+	aN0P3IyDOUsgjCh+7ykSnftSv7xgWvTPBgLwGCXPwa9cub2DvNHS15I4jTS/vC7TemJxfUy7Yxw
+	eNMlMuPRDvTqVwZ7sBeT6vXmQXWRjssEWXcDcdAzyFMXdPutKLxdEuQcNVGx+WGH5eeF1lkMTSq
+	Mi75eOifSQfBz9E2a+FnS1f65h0sZXOXqwKlc1G/zegbtGxpILYDKA1L1fTSK6qZZbnPmJwud
+X-Google-Smtp-Source: AGHT+IEg7Mq735wL5t+CMOqtpgy8vO9otE7lMN+JW91xqffpJH8NVRJuKTKpDMxIJrV87mte4Pl4AQ==
+X-Received: by 2002:a05:620a:3723:b0:89e:e5d9:f434 with SMTP id af79cd13be357-8a8e4e010d3mr61187485a.51.1761676936668;
+        Tue, 28 Oct 2025 11:42:16 -0700 (PDT)
+Received: from localhost ([12.22.141.131])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f247fe594sm873446885a.16.2025.10.28.11.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 11:42:15 -0700 (PDT)
+Date: Tue, 28 Oct 2025 14:42:13 -0400
+From: Yury Norov <yury.norov@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/5] rust: id_pool: do not immediately acquire new ids
+Message-ID: <aQEOhS8VVrAgae3C@yury>
+References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
+ <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM3PPFB0C5EC304:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddaf5104-5276-436d-a536-08de1651971b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?UArkg9gFPdYvBW4G4X0idFiroBzkm8es+XB7A/1uwo74bUzxm+js8Ep2sTOh?=
- =?us-ascii?Q?WrQoe6/Y98q/g9wNTXMdH+IeYrDN42aon0yqtAuCBQdcIjH/S5QVJVSd37kL?=
- =?us-ascii?Q?dPzAwB2B1R349MqCUvOWNlldKJ5kSXGGxtHr9JI2L36I69LYK1oi/Fmpo9Ea?=
- =?us-ascii?Q?rfABZeieIK3iYZp/Ahlce6eFvfuh/E6YDyr/7YhojkXnNPcRkm6x1KCA9EFR?=
- =?us-ascii?Q?xjFkaO94/XiRcSQNVZYpbUo2Sox2Xkm2bno/KrCWwhiutBHGSUnuDUKixftL?=
- =?us-ascii?Q?l+9UKQHD0nlVQOFQE07/8as8cUslmyGEpu9U9vx7bsNjrl9tkmsjrN7pdTKs?=
- =?us-ascii?Q?H1bcoG+pHpQGgvH7vVXRMz96tCoc0UvEqzrMi0Oy0S+sSWO0VD4fmUQEyGFo?=
- =?us-ascii?Q?JnozeYxNKaWxsY14sglMAivyJ0vnBE5ynLintBslX2JCue5GgIM/xuX+bsEC?=
- =?us-ascii?Q?i87XGFr+BCzqmtUBM3S+So9XXBOgaboBZqcQl5r74kx6nVzK/kOZMC7JrlFW?=
- =?us-ascii?Q?SInupIbKlIGEiKTOxrdqwxCzyYauOtM75+yeZBpj9B6X0hjr7AmHNBk/dUPt?=
- =?us-ascii?Q?uR5udVNnh9PjkQBkA2NuIjGw0nCRdGXv/iE1+sVTZMIIGOlBRqfHVDvSTTuM?=
- =?us-ascii?Q?Q+mvdwknDE2Q5J4QbputtHIST1vv1KU9krRmPZJBiGYY6GYz35hU2WPcDnlW?=
- =?us-ascii?Q?mV3aLWN5sj+Pvxw3yqPu72Uu9LaafeF8r2RHgloNoykxmReyIJH36mWndYG6?=
- =?us-ascii?Q?u6FHUtX7f02NYXduMVOJ1SIj5UnjAGY7VWIEsP3lRa+7rSDyYCebNp8yh49B?=
- =?us-ascii?Q?QeFVQhXfU3YmaLWHM1kJe0FIPfzAI8x0hHhJljKakLmPz/0MitkY2/rppYUZ?=
- =?us-ascii?Q?VQ16OxFMJX4cKerf5nkCVFFErRzKg3sC24McvHldvsodLgL9hDiZAyciLaUg?=
- =?us-ascii?Q?j/x4qrgEoU+wdv9j7VUNsF+r4aiXaygjnmMebIMFR+pT39cOwR8zTKtcokpL?=
- =?us-ascii?Q?HuPrw8fBphqvg7XpDrCXIM+ieZcDSrmf3GctVSar3svgewG8nO0ePGU/x7pB?=
- =?us-ascii?Q?YSWPBZDGOhSKoyOPtH4BGPIIdxtDe0tum8Xah8Qhgwp6+hY+Q3MT1Hq8cXW9?=
- =?us-ascii?Q?cqZYRRhXkXkoTMCf8UtZD+fxf3sxvFUafeUX8rrL5I4YcI1DwxJ7u44Fbb7r?=
- =?us-ascii?Q?lj4pv2hzEVWy71D3QXmGPuL1eQOrmJTXlN73GqmRJQ/sWCgVzTNFf7kigolw?=
- =?us-ascii?Q?FBqkgNGEc5GeqqVNaYTGHklfDEmh+bdfP7Bq6ed8184BsBBdMDCx5Z1TcWGi?=
- =?us-ascii?Q?f2/3WepmpLxanCei3kyq6Uc2kWjlpBn1/vG9ol0mTxYwTyEsX+Y9CbHkNB3a?=
- =?us-ascii?Q?EunC2go0w39JZVrBIHiccpfXr/cv0uGjEKizqG49+MyET6qMNmaAyl3PxVxZ?=
- =?us-ascii?Q?d6uYUPz1fmiz8Dz9+WSYqfdgB/iCkC4d?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2xD+lTlmsQNrUOZTjHhIBq3QmWgxYqVNKMzzTsQO5/TFj4DXGKF4vU1REQrE?=
- =?us-ascii?Q?hJNzorGHD+XzGT5dJIfz8jd/ocUKUrtz4nzAKgSp1WIwJX+GlZrk/pQ3OB54?=
- =?us-ascii?Q?xt2nzgYlOnGd3yLmJ+GeJMp1Z9BaFmoFGnFjybVd9mO5G+aejrnI9/SvIfKI?=
- =?us-ascii?Q?nTbqX3BaJPgI8lxlQ8vg4h4NnPFu04TSCxQqj3DvkcSLHK9BJ/uQEsXfPRh1?=
- =?us-ascii?Q?BvfzSsq1Ts+/GMmOypUKO/mNWLGDv9oLlMrqqyxCGmeQ5/nP9/GSGzgVJ0Gv?=
- =?us-ascii?Q?2o7SPe+3lcHlCNoxShOmMKrPEUzoNgEvv8ixTFZ73gY6DpYFs4j9WQa1c3du?=
- =?us-ascii?Q?OH5PWIaDHz52i3Ar7B4Hz7rs879OrSXhZoe5ELTsAGwE6L5tswcJ1y+WHKaL?=
- =?us-ascii?Q?FkuBEuveA2QAVkOonvY2/X5idli7hGMzoSwXpDNDY/arOvMxMRJfc4g6yFao?=
- =?us-ascii?Q?AXDI7HY69VDs0WB07mI5JMgQI5qbKzVrQEjnrQReSSS1opeiTkykZMLSd13U?=
- =?us-ascii?Q?ijlzRM3cG9R+/nOIwyuNsulfDNf+EtGR8G/sxym8Trk6vmYE2y2C4xKs+qkB?=
- =?us-ascii?Q?zFVZ6XMYLHm1D9o7ajgqExP72Fu+iYTpOwLDntd2aY2G034t8necl1qW1IH6?=
- =?us-ascii?Q?e465MV9iZDC9h5VwBR2VFMuZ+kiWIgJTrCJEHl44J7YT/imPRRbuNHNoyPdh?=
- =?us-ascii?Q?opBO1o8uIKMbBzmmT0PoocYm2yvk+mZh3VYYbqpW9Oak6hQ/gkRuPHG3OKkF?=
- =?us-ascii?Q?Uuo+Z1j5gRhi5qNIKayaSJWl5TuC8ruMOf9X5rGxBgUFkDTjwvqi9AwXkr5m?=
- =?us-ascii?Q?ivAej7BO3EJOmlJ5ESzvFAcnomF7PpAMvlw96b6HyAuf21bmBu9Jfs8AHnF0?=
- =?us-ascii?Q?B76ula0F85ApQJbgYuL4/v3X7lcsOWHcFBSj7rQSkF2DPTDFk7IALornJqxh?=
- =?us-ascii?Q?Ltx1FOY3bj1H/11BSDfKEK504xUJ8QZmxTw6e2OQ5L1zX4BaqAQEsQSRae73?=
- =?us-ascii?Q?K6Zq9hHGZiao0JjYBpMcO6hXEg6to0JqM7VTmlLV1pAwVBXvskzmzuph3Gam?=
- =?us-ascii?Q?wMsHKm/s1pIXSmM/7YeIePQ1om6LMUHC1hgKAwRbnL5/CRK3LaKlW1z5tWTx?=
- =?us-ascii?Q?pqn+49yao33Q1s1vHmpc3sjXuevlGfN6lUAzNhE6IKAl/CdKviTYcf9b+BqA?=
- =?us-ascii?Q?UmnWT1wV4DB9mEOzKXu123zcCtwaFXGMk5TCdOKmD/MuC1VtuXb/Tk/vOuiI?=
- =?us-ascii?Q?gbQHiNqxU7Y2AcnFfshOXUvrgLWDQIPHJ0iANlVG4IDHnHiT0/bbDzkBLB76?=
- =?us-ascii?Q?yAWX/yxYPN/epFmTGgiBhhGNkrkxL45mi2IOY5lvryjmZiDyQAE/HDfMEJ/Y?=
- =?us-ascii?Q?N9g9N5B+80g5nX3JwKNkd0AmLF0kMu3uhP66B/l5xEXZxym9Ng0J+O6ZLmXR?=
- =?us-ascii?Q?EBSPptbYV4oUapC/xE5oFX203lborbkykY7X92Y3fimy47ntEI9DaLsAqC43?=
- =?us-ascii?Q?u0x9ecQ1xbWFqhZUzYDIkm78bGCtTh4NJUfc8Een4NUo0fpRJoRECrvbQSqu?=
- =?us-ascii?Q?kKX9yCYKmckOO3uvkwhiA+z3KJcOkpXnsdE/BNk5+i6t86Hm00c+3ktfq1DT?=
- =?us-ascii?Q?eQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	B3hLOz8SXY0l1cz2WoPAvWCzh0fTa72vvTg2ICGpJZnQKcUWJJ5kNxw9K6WbFAk+UVKARuRJeT8zGAIY4Vj06te2SC30knr6yb9EO+0dk7PdyCEPnSY5zhO2HgfZBSSPoddCaYqjHFV7m8mSQ+cYPyTq3rnP+fv/96uyg/s3q+KLiRVZFv+242jEjG35pDyCOVtD3tmwqrHq8BmPnM0unacGSIokAW2g9bZ8G8sN/qt6X5xBpItApaN/QM4JJ9k825C4VNBs/hH2+IqTPrh+bhY06lefxm6N0E0frorshEYPZ62/1lWKyutw63nVf0U83kxRHlA7cnD+/T+K5LFJUHKzr8mTkrUq9xzHS3fjQtkLawKZYIivvi8mlM06i+za/4LzbHkeCfqyAA+MnGNVqeFMJZnPNd58BLP4YOMsdv0DGxTKU1AXF0O4UolxLsPlQOuZcZ4qDv1jZTRPsXP2YOCtoXkFJjCBjF9vsYv/+xy4/90kAy2GNeiIFqp3+YlGchWoIZt57srmvyhMJBLqrNhGDma8F67KlyEs9tzHLyzu/CeHU66vIkux+QB3KSwB2RFJMyoRAvLgQkMzHHSxtUDT4srmKejxdk9zMzvthM4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddaf5104-5276-436d-a536-08de1651971b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 18:41:21.8192
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kye2Y9CzyW9BoFvhib4/KbM6mHkisElDOkeGQnzxocfgIdDGcN1KSZeX2LV4KggAInG2Xw7EYhDU4LcKZQWi9PX6ZI3VvM/2uFEMiFFlI7I=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFB0C5EC304
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 suspectscore=0
- adultscore=0 bulkscore=0 phishscore=0 malwarescore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510280157
-X-Proofpoint-GUID: VMea90VCCUSVbs5vUcucYy9tBYNMvzGQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MSBTYWx0ZWRfX0u3M/7ulnhyK
- A8Oa6GcNlEv4bSt+Y/nzmDuBIPuHsEGdH0daXqsG73pclMFWWAaYXO6KSPz2ye595addeZbyCzp
- Yn6RZpMI5YJ0LYec6tDqzF+bvxmZfyz9YM8mXGuBdSzHXY4u3GanIvkRMBOAiJO6MORZHt3/LUC
- XH5Zfp4wXzqqblSFxzE+LnQW6wm2oHJQzXA+2fapKVzjuDzvA9fwBBCCoyVMt06dfHIAfKYxBeA
- dBAitKv87ZBKvQZoQAnfuJgLfwsSoh8Iuup8eiiHAq55D7FlhOXg9LDYZmD7mUAp3PUTi9Uxq1i
- qufHYzSJ4HVvsnwsYn8M0nDLNzFpJL45K3Xc0sYo4OOss6yCHfjVmYbHteKJ4asMyMPoNsg0N4K
- ekWKzvEANiJOWuDzOqxVyQxBCsfxkQ==
-X-Proofpoint-ORIG-GUID: VMea90VCCUSVbs5vUcucYy9tBYNMvzGQ
-X-Authority-Analysis: v=2.4 cv=Ae683nXG c=1 sm=1 tr=0 ts=69010e58 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=3CRimu3O46DWhcekXjoA:9 a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
 
-On Tue, Oct 28, 2025 at 07:17:16PM +0100, David Hildenbrand wrote:
-> On 28.10.25 19:09, Lorenzo Stoakes wrote:
-> > (It'd be good if we could keep all the 'solutions' in one thread as I made a
-> > detailed reply there and now all that will get lost across two threads but
-> > *sigh* never mind. Insert rant about email development here.)
->
-> Yeah, I focused in my other mails on things to avoid creep while allowing
-> for mTHP collapse.
->
-> >
-> > On Tue, Oct 28, 2025 at 06:56:10PM +0100, David Hildenbrand wrote:
-> > > [...]
-> > >
-> > > >
-> > > > > towards David's earlier simplified approach:
-> > > > > 	max_ptes_none == 511 -> collapse mTHP always
-> > > > > 	max_ptes_none != 511 -> collapse mTHP only if all PTEs are non-none/zero
-> > > >
-> > > > Pretty sure David's suggestion was that max_ptes_none would literally get set to
-> > > > 511 if you specified 511, or 0 if you specified anything else.
-> > >
-> > > We had multiple incarnations of this approach, but the first one really was:
-> > >
-> > > max_ptes_none == 511 -> collapse mTHP always
-> >
-> > But won't 511 mean we just 'creep' to maximum collapse again? Does that solve
-> > anything?
->
-> No creep, because you'll always collapse.
+On Tue, Oct 28, 2025 at 10:55:17AM +0000, Alice Ryhl wrote:
+> When Rust Binder assigns a new ID, it performs various fallible
+> operations before it "commits" to actually using the new ID. To support
+> this pattern, change acquire_next_id() so that it does not immediately
+> call set_bit(), but instead returns an object that may be used to call
+> set_bit() later.
+> 
+> The UnusedId type holds a exclusive reference to the IdPool, so it's
+> guaranteed that nobody else can call find_unused_id() while the UnusedId
+> object is live.
 
-OK so in the 511 scenario, do we simply immediately collapse to the largest
-possible _mTHP_ page size if based on adjacent none/zero page entries in the
-PTE, and _never_ collapse to PMD on this basis even if we do have sufficient
-none/zero PTE entries to do so?
+Hi Alice,
 
-And only collapse to PMD size if we have sufficient adjacent PTE entries that
-are populated?
+I'm not sure about this change, but it looks like a lock wrapping
+acquire_next_id().
 
-Let's really nail this down actually so we can be super clear what the issue is
-here.
+If so, we don't protect functions with locks, we protect data
+structures.
 
+If the above is wrong, and this new UnusedId type serializes all
+accesses to a bitmap (lock-like), or write-accesses (rw-lock like),
+then this is still questionable.
 
->
-> Creep only happens if you wouldn't collapse a PMD without prior mTHP
-> collapse, but suddenly would in the same scenario simply because you had
-> prior mTHP collapse.
->
-> At least that's my understanding.
+Bitmaps are widely adopted as a lockless data structure among the
+kernel. If you modify bitmaps with set_bit() and clear_bit() only,
+with some precautions you are running race-proof. The kernel lacks
+for atomic bit-aquire function, but you can implement it youself.
 
-OK, that makes sense, is the logic (this may be part of the bit I haven't
-reviewed yet tbh) then that for khugepaged mTHP we have the system where we
-always require prior mTHP collapse _first_?
+I actually proposed atomic acquire API, but it was rejected:
 
->
-> >
-> > > max_ptes_none == 0 -> collapse mTHP only if all non-none/zero
-> > >
-> > > And for the intermediate values
-> > >
-> > > (1) pr_warn() when mTHPs are enabled, stating that mTHP collapse is not
-> > > supported yet with other values
-> >
-> > It feels a bit much to issue a kernel warning every time somebody twiddles that
-> > value, and it's kind of against user expectation a bit.
->
-> pr_warn_once() is what I meant.
+https://lore.kernel.org/all/20240620175703.605111-2-yury.norov@gmail.com/
 
-Right, but even then it feels a bit extreme, warnings are pretty serious
-things. Then again there's precedent for this, and it may be the least worse
-solution.
+You can check the above series for a number of examples.
 
-I just picture a cloud provider turning this on with mTHP then getting their
-monitoring team reporting some urgent communication about warnings in dmesg :)
+Bitmaps are widely used because they allow to implement lockless data
+access so cheap with just set_bit() and clear_bit(). There's nothing
+wrong to allocate a bit and release it shortly in case of some error
+just because it's really cheap.
 
->
-> >
-> > But maybe it's the least worst way of communicating things. It's still
-> > absolutely gross.
-> >
-> > > (2) treat it like max_ptes_none == 0 or (maybe better?) just disable mTHP
-> > > collapse
-> >
-> > Yeah disabling mTHP collapse for these values seems sane, but it also seems that
-> > we should be capping for this to work correctly no?
->
-> I didn't get the interaction with capping, can you elaborate?
+So, with all the above said, I've nothing against this UnusedId,
+but if you need it to only serialize the access to an underlying
+bitmap, can you explain in more details what's wrong with the existing
+pattern? If you have a performance impact in mind, can you show any
+numbers?
 
-I think that's addressed in the discussion above, once we clarify the creep
-thing then the rest should fall out.
+Thanks,
+Yury
 
->
-> >
-> > Also I think all this probably violates requirements of users who want to have
-> > different behaviour for mTHP and PMD THP.
-> >
-> > The default is 511 so we're in creep territory even with the damn default :)
->
-> I don't think so, but maybe I am wrong.
-
-Discussed above.
-
->
->
-> --
-> Cheers
->
-> David / dhildenb
->
-
-Thanks, Lorenzo
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/id_pool.rs | 67 ++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 51 insertions(+), 16 deletions(-)
+> 
+> diff --git a/rust/kernel/id_pool.rs b/rust/kernel/id_pool.rs
+> index d53628a357ed84a6e00ef9dfd03a75e85a87532c..e5651162db084f5dc7c16a493aa69ee253fe4885 100644
+> --- a/rust/kernel/id_pool.rs
+> +++ b/rust/kernel/id_pool.rs
+> @@ -25,24 +25,24 @@
+>  /// Basic usage
+>  ///
+>  /// ```
+> -/// use kernel::alloc::{AllocError, flags::GFP_KERNEL};
+> -/// use kernel::id_pool::IdPool;
+> +/// use kernel::alloc::AllocError;
+> +/// use kernel::id_pool::{IdPool, UnusedId};
+>  ///
+>  /// let mut pool = IdPool::new();
+>  /// let cap = pool.capacity();
+>  ///
+>  /// for i in 0..cap {
+> -///     assert_eq!(i, pool.acquire_next_id(i).ok_or(ENOSPC)?);
+> +///     assert_eq!(i, pool.find_unused_id(i).ok_or(ENOSPC)?.acquire());
+>  /// }
+>  ///
+>  /// pool.release_id(5);
+> -/// assert_eq!(5, pool.acquire_next_id(0).ok_or(ENOSPC)?);
+> +/// assert_eq!(5, pool.find_unused_id(0).ok_or(ENOSPC)?.acquire());
+>  ///
+> -/// assert_eq!(None, pool.acquire_next_id(0));  // time to realloc.
+> +/// assert!(pool.find_unused_id(0).is_none());  // time to realloc.
+>  /// let resizer = pool.grow_request().ok_or(ENOSPC)?.realloc(GFP_KERNEL)?;
+>  /// pool.grow(resizer);
+>  ///
+> -/// assert_eq!(pool.acquire_next_id(0), Some(cap));
+> +/// assert_eq!(pool.find_unused_id(0).ok_or(ENOSPC)?.acquire(), cap);
+>  /// # Ok::<(), Error>(())
+>  /// ```
+>  ///
+> @@ -56,8 +56,8 @@
+>  /// fn get_id_maybe_realloc(guarded_pool: &SpinLock<IdPool>) -> Result<usize, AllocError> {
+>  ///     let mut pool = guarded_pool.lock();
+>  ///     loop {
+> -///         match pool.acquire_next_id(0) {
+> -///             Some(index) => return Ok(index),
+> +///         match pool.find_unused_id(0) {
+> +///             Some(index) => return Ok(index.acquire()),
+>  ///             None => {
+>  ///                 let alloc_request = pool.grow_request();
+>  ///                 drop(pool);
+> @@ -187,18 +187,17 @@ pub fn grow(&mut self, mut resizer: PoolResizer) {
+>          self.map = resizer.new;
+>      }
+>  
+> -    /// Acquires a new ID by finding and setting the next zero bit in the
+> -    /// bitmap.
+> +    /// Finds an unused ID in the bitmap.
+>      ///
+>      /// Upon success, returns its index. Otherwise, returns [`None`]
+>      /// to indicate that a [`Self::grow_request`] is needed.
+>      #[inline]
+> -    pub fn acquire_next_id(&mut self, offset: usize) -> Option<usize> {
+> -        let next_zero_bit = self.map.next_zero_bit(offset);
+> -        if let Some(nr) = next_zero_bit {
+> -            self.map.set_bit(nr);
+> -        }
+> -        next_zero_bit
+> +    #[must_use]
+> +    pub fn find_unused_id(&mut self, offset: usize) -> Option<UnusedId<'_>> {
+> +        Some(UnusedId {
+> +            id: self.map.next_zero_bit(offset)?,
+> +            pool: self,
+> +        })
+>      }
+>  
+>      /// Releases an ID.
+> @@ -208,6 +207,42 @@ pub fn release_id(&mut self, id: usize) {
+>      }
+>  }
+>  
+> +/// Represents an unused id in an [`IdPool`].
+> +pub struct UnusedId<'pool> {
+> +    id: usize,
+> +    pool: &'pool mut IdPool,
+> +}
+> +
+> +impl<'pool> UnusedId<'pool> {
+> +    /// Get the unused id as an usize.
+> +    ///
+> +    /// Be aware that the id has not yet been acquired in the pool. The
+> +    /// [`acquire`] method must be called to prevent others from taking the id.
+> +    #[inline]
+> +    #[must_use]
+> +    pub fn as_usize(&self) -> usize {
+> +        self.id
+> +    }
+> +
+> +    /// Get the unused id as an u32.
+> +    ///
+> +    /// Be aware that the id has not yet been acquired in the pool. The
+> +    /// [`acquire`] method must be called to prevent others from taking the id.
+> +    #[inline]
+> +    #[must_use]
+> +    pub fn as_u32(&self) -> u32 {
+> +        // CAST: The maximum possible value in an IdPool is i32::MAX.
+> +        self.id as u32
+> +    }
+> +
+> +    /// Acquire the unused id.
+> +    #[inline]
+> +    pub fn acquire(self) -> usize {
+> +        self.pool.map.set_bit(self.id);
+> +        self.id
+> +    }
+> +}
+> +
+>  impl Default for IdPool {
+>      #[inline]
+>      fn default() -> Self {
+> 
+> -- 
+> 2.51.1.838.g19442a804e-goog
 
