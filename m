@@ -1,170 +1,140 @@
-Return-Path: <linux-kernel+bounces-873409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 622A1C13D85
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:35:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C04A0C13DDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:40:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66EE11A24FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:36:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 735C0562DEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D13054F0;
-	Tue, 28 Oct 2025 09:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC6E303C9B;
+	Tue, 28 Oct 2025 09:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw8nDcBv"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WgpzSpBj"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADCD303A38
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EA0302150
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644101; cv=none; b=mG+Bne21Okyquo47BM3rUiWkwqifSt4wF7fwugpxCf2ELVkuST2uj0eTguAICWdWYynn0XztWXzFDLkuK+UDi33TdnWIN9M2yNENdyf+5zvN0vFh4d6yXvxsXyiukfmKaR72IlTuspq8piMiI4rl+s83E5wp2+jQ0YDFbbfFg5U=
+	t=1761644085; cv=none; b=mw5Mchp2UQ8gaV5EZkeB3IDJZ5oElBn3ZKXdLmV9S0pnLX6BmoVQy9GByqjwBi0eOoEoAs+7vMt9fSCbNRIPQ/kPopoKLJtrP5+vu3BLQdpSVUuhiS0k7Os/qbbsH6CRAT/dJNtie7sY6VGYFi0XWCb6zuBBvQ0zUCGbNS8f4zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644101; c=relaxed/simple;
-	bh=Tgmsx1JScyxxj2M/daynBulpTMwkwcqhLj7ma+AO0SQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bc9AZyne8BNa2zKxQ/Pqj78++QpEPnjgy8nxDNLRvAV2kVdtkWDxtNyhNIvW8a3wZbfNjk+K22nedU6rhUleN2M+pws1BOe0J46urwbOBhhGS3gsFiYXlODNItE+zHYZqB4pwlynhKQsTWAgJi9t2/xiyMueOfXAT85qNrYikNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lw8nDcBv; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c0eb94ac3so10202348a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:34:58 -0700 (PDT)
+	s=arc-20240116; t=1761644085; c=relaxed/simple;
+	bh=ac2cQky0IwlGiqpgXPO1XMOU5eK87nY3Jt30oDW649I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uZG+6zeVviRd7sr4c005XOCDAQjIupJsoWJfmjdTxqs0agGaUN3SGgDU4UngN6bVE5U7EyXuRpj7bi46tGglgYuINgAl3qIL84vtDXLzQVcMsfG7mKjgmVOSj79vcfN4DdQJEAbTX4VDofnl0Wq9X0NV7Msm+Vf6tuNhpsZ9hCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WgpzSpBj; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4711b95226dso71246435e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:34:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761644097; x=1762248897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0KqhCSWD1Q42FEiIO/7VeHXIAsO8MdqNCvIdMk2S6qk=;
-        b=lw8nDcBv0WLF3jpxa78ZbGoYF4sYERwWQp8r5xvzCKv5sAwK1OtI92sb3HIrC7uVXo
-         AVaQzcfzGK+9e2kEHa/ml3Z1yPJMRtm0oAcTrLuLiF0MM/ItO2NmDcMEUdDvrvfZ3N6+
-         qxaHALr6XLInfagItRdv5p3XQ1X/8BQHQogMeM08iZSgIkH015olB8lTp5wf1PouXDVr
-         yCnKuZr05BJsz3Zbq91JzUFLLTp6R5wzhqZR7U7yE/ngJ3JL8K9nkRrFWFCdx/9Vv5yb
-         Hhj0XE3F/9NK1mupYIBpuVaaRIp/0vrgB5NMMG22NSXH90EDi9NExzkciHZRmhceAjRe
-         C+yw==
+        d=linaro.org; s=google; t=1761644082; x=1762248882; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9/LALU22bj87w78nI48Ei34YpYAmoKYu+jDE6VBCbPs=;
+        b=WgpzSpBj+JIL7I6HAeFZQbV2knyhoxIDxKIQXQlem26fBvtp5VZCsL+UdiQ3lRQJ5n
+         fBmdFDBVq0U4XKlPmxhnl+CjylN+Oum+WPBrQIF/AH1qFA3cPEZbFO9hptZ2j5G2OjDl
+         vY3QG/pwW3ZzqzZXpITH37aZIF+SB5y5anwQPUK70WQaz2vhTEO8OSYqV9Q45FLEq2fZ
+         Dwha8fMKi5/uAjbSvNJNvW+rdwVkdt8iBV9TAxVyzG4lee+AL5V98MU3juWJVGC4aYt+
+         H5YpOydx9D9f/0BJbNkB3H47HODBIjcll4M4CheeND0pEGm4TnZo5un15H9oP//tbFfV
+         rm0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761644097; x=1762248897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0KqhCSWD1Q42FEiIO/7VeHXIAsO8MdqNCvIdMk2S6qk=;
-        b=uovu8B+W7p8hWkZ2sYDdv7DhNUkuYhZLN1QgiT8AURjoSXsKk2+Ddw98VVG/BE6I2h
-         nnih0+7RYgBexEXt/ZLoHtHQ1z3lV04b8WoSo4gDVmN46WjZ/0nGZklSx9pl6Dx4ZN9F
-         XjUQyzi96zVnjsH+QJiTiOqGJ6AO6x3mRmfmHWW1OvrIQrxA8hEK86315hOgLsa1Toyc
-         uzs0YJwtIwENrtKT5SelAdLvW7rtT90NR4tnSv09HXGFsRbN/Sbjt+xDnz2LF42H2QFU
-         77KtMHUDwL1BegbhDUFFpRJJG8Yis7QO3evl/1N9i3lbogpEfZSd4qzgUsg/rcbNlesc
-         zcxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmrXn4yy+yNuCWBVApOl0uD4drC244AAZHqECAIitOzD7ayCl3Djh8mi5yZ00Uwf0RSHFQ9RPWfMUEkWo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5e++tTBeHOPk23z5DMrq+R1H7Oss+6lG1M3O0rXLF3YdzaKCV
-	FXHeGDQZSbv+OhdPYqs1em0FqzB0CYBZ8YNx8PbjJB+S6xP+sGRod39KokJKNTCDMt4X7HNPLSs
-	N92y74EoFsQAHdPigtFrrfXlXNwhzjXM=
-X-Gm-Gg: ASbGncso6fOGMmHM5ayvorkoA/MYcc1muC+UbCeXBi9z9mtcwxM1rHz7AjT+N7vUyB9
-	OMs7Rxn+8qwCnNeTm/RI4v8sL8Qpvq8gkmugP9aVpOm1BK6QdOD2v9r/vsyJIcRVbhboX+6yrKJ
-	XVK+gOxRhPiq+8Cgg8F9lg+eqBqlN8BC9UH3DmWtqZf4imZ1omB3Il6g6ptdXRAUCdLWjGv1NIi
-	ECKwEDBEwOzADkglO2Wt5eIE8qk2/pPVH5GzBsIkBX9TxsHLzjqYhitnTo=
-X-Google-Smtp-Source: AGHT+IFjt6ENLv3OgjeY1ld5nYFGuXlQevcjQGJSv4QAuB6EROb4RDtvfEjBykX6USiKiG6f7/s9p1mYGBj6/RmxU1k=
-X-Received: by 2002:a05:6402:1d53:b0:634:ab34:ed40 with SMTP id
- 4fb4d7f45d1cf-63ed76dda03mr2637221a12.0.1761644097392; Tue, 28 Oct 2025
- 02:34:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761644082; x=1762248882;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9/LALU22bj87w78nI48Ei34YpYAmoKYu+jDE6VBCbPs=;
+        b=iI8k4EgObqyGW9sca9te9OMeWh8jYqLp1BdedyjJZI+9Sdkl8QH/9mj//rJ5junCM7
+         diBMoVzxPhhJTcGBouTQVcvhVOsEBfahs5yfJPM7H9wTp+80l/LWAU7aGoM2AVWZxMG0
+         +0TdnziOScjwW+L/II2AztXGS285W+e5te39aDrKQ3BCTiPBMsPvYi6ni9c8W8KmAbQ6
+         6+cEgq2/aqfg4lSpen7Mixc7209JNNqt4UQdk3nuH8JDDIp7Ii/VgkGX6uxyVvoIw+7/
+         FcP6r1mCs7Eyehd7QUZG/XCtaxOgmrlHAbkMPbZ2yapBAA0ukl+y/TrpqZO+WTj+WOWp
+         DpFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVrRRfEqwd/TT9Xn2Br7h7REyAZicxUajfqUuFa3EFnVEuwB9Th+/dOXXWGWa3oIC5CjACHuxVveGl4xEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMeyKl9r5hiSFNgECXhjs2U6AkU0g7hvU+VMN7dHAhWb4UvE8G
+	2IvS7Egh+yaEUWW9Zj2ObTPSwKFGkjGBJ2D+tDvi+PcVX4YmS4Ybp84KMhm3n687Gpc=
+X-Gm-Gg: ASbGncv5Aye99rj+xJ8+QrK2ZP1bXlJDPWMsTTzbqcduEcIPY6his++RL3rjwWs0W8J
+	vMM+C2rWdCencI+ThbTPk4yMqyN3Ggc4/B66sN9AagYuVNIHA7O9VcFgfoTlqWosad20MiK5LAG
+	hd/0nfALFZGb12OXqh/tf2fiP/0iMUXfzA9JId1GetJS1qquxNHDCqHtHjGeos0BMmTNWIJFt9G
+	8MldYT0lPmadDSzS0Uax/Oi8H65gXdcGkprFW1nn1auo2W/w4GChbvbD7ARfLvckpUCqLCkwORb
+	G3PqPfYSqjgTQHWI6Z+Igf0/bYtFC2QAAGi2MckHLSiMqpzdqNMKr7GywaBl+9AehE8PzBufYQJ
+	PibeyRF/MVy3JZLgWSNhJc6h3nyg2UEL+Xj6Dqqi2JA5eJOTNetae9huUXEb7lK5AgPl1kRGWbN
+	k6MtUocvLtaEMPLTxIrB/FtLI6SrlfaajkJN43gX0RNz8=
+X-Google-Smtp-Source: AGHT+IEBsjbGhxSIADHKU/jkeoO1PtNiYWdQlg9Ym9NskralvCLvbd/sbcWeV6cauCEQmOzMHU/aag==
+X-Received: by 2002:a05:600c:4691:b0:471:9da:5248 with SMTP id 5b1f17b1804b1-47717e414a3mr19737305e9.26.1761644082274;
+        Tue, 28 Oct 2025 02:34:42 -0700 (PDT)
+Received: from [192.168.0.163] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952da12dsm19563607f8f.29.2025.10.28.02.34.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 02:34:41 -0700 (PDT)
+Message-ID: <22f63af8-281d-4783-b770-36cb1feb4732@linaro.org>
+Date: Tue, 28 Oct 2025 09:34:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-3-linux.amoon@gmail.com> <cfaa4824-a59a-4106-b2c1-befce2af0324@rock-chips.com>
-In-Reply-To: <cfaa4824-a59a-4106-b2c1-befce2af0324@rock-chips.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 28 Oct 2025 15:04:40 +0530
-X-Gm-Features: AWmQ_bmnYVQ5MIlrxdaMUdyWQ-V-ciIMUJiy8e-9y11-5OlEwSkXW-sMhSd3m04
-Message-ID: <CANAwSgRHhN5nZpKojKamTmZoY9qruwD0HJvEYFs_bqapoeRsoA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
- Rockchip PCIe driver
-To: Shawn Lin <shawn.lin@rock-chips.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>, 
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/6] media: qcom: camss: Add Kaanapali support
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@oss.qualcomm.com>, Robert Foss
+ <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+ tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+ yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shawn,
+On 23/10/2025 10:14, Hangxiang Ma wrote:
+> - 3 x VFE, 5 RDI per VFE
+> - 2 x VFE Lite, 4 RDI per VFE Lite
+> - 3 x CSID
+> - 2 x CSID Lite
+> - 6 x CSI PHY
+> 
+> This series has been tested using the following commands with a
+> downstream driver for S5KJN5 sensor.
 
-Thanks for your review comments.
+A few comments here:
 
-On Tue, 28 Oct 2025 at 06:14, Shawn Lin <shawn.lin@rock-chips.com> wrote:
->
-> =E5=9C=A8 2025/10/27 =E6=98=9F=E6=9C=9F=E4=B8=80 22:55, Anand Moon =E5=86=
-=99=E9=81=93:
-> > Add runtime power management support to the Rockchip DesignWare PCIe
-> > controller driver by enabling devm_pm_runtime() in the probe function.
-> > These changes allow the PCIe controller to suspend and resume dynamical=
-ly,
-> > improving power efficiency on supported platforms.
-> >
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 21 ++++++++++++++++++=
-+
-> >   1 file changed, 21 insertions(+)
-> >
-> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pc=
-i/controller/dwc/pcie-dw-rockchip.c
-> > index b878ae8e2b3e..5026598d09f8 100644
-> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> > @@ -20,6 +20,7 @@
-> >   #include <linux/of_irq.h>
-> >   #include <linux/phy/phy.h>
-> >   #include <linux/platform_device.h>
-> > +#include <linux/pm_runtime.h>
-> >   #include <linux/regmap.h>
-> >   #include <linux/reset.h>
-> >
-> > @@ -690,6 +691,20 @@ static int rockchip_pcie_probe(struct platform_dev=
-ice *pdev)
-> >       if (ret)
-> >               goto deinit_phy;
-> >
-> > +     ret =3D pm_runtime_set_suspended(dev);
-> > +     if (ret)
-> > +             goto disable_pm_runtime;
-> > +
-> > +     ret =3D devm_pm_runtime_enable(dev);
-> > +     if (ret) {
-> > +             ret =3D dev_err_probe(dev, ret, "Failed to enable runtime=
- PM\n");
-> > +             goto deinit_clk;
-> > +     }
-> > +
-> > +     ret =3D pm_runtime_resume_and_get(dev);
-> > +     if (ret)
-> > +             goto disable_pm_runtime;
-> > +
-> >       switch (data->mode) {
-> >       case DW_PCIE_RC_TYPE:
-> >               ret =3D rockchip_pcie_configure_rc(pdev, rockchip);
-> > @@ -709,7 +724,10 @@ static int rockchip_pcie_probe(struct platform_dev=
-ice *pdev)
-> >
-> >       return 0;
-> >
-> > +disable_pm_runtime:
->
-> We need to call reset_control_assert(rockchip->rst) before releasing the
-> the pm refcount. The problem we faced on vendor kernel is there might be
-> still on-going transaction from IP to the AXI which blocks genpd to be
-> powered down.
+Publish the code ! Its actually in your interests to do so.
 
-Thanks, I will try to fix this in the next version.
+> 
+> - media-ctl --reset
+> - media-ctl -V '"msm_csiphy2":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -V '"msm_csid0":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -V '"msm_vfe0_rdi0":0[fmt:SGBRG10/4096x3072]'
+> - media-ctl -l '"msm_csiphy2":1->"msm_csid0":0[1]'
+> - media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+> - yavta  --capture=20 -I -n 5 -f SGBRG10P -s 4096x3072 -F  /dev/video0
 
-Thanks
--Anand
+Good to see, it would be nice if you guys could also start running the 
+RDI path through libcamera - softisp soon gpuisp and start showing some 
+realworld results.
+
+Not a requirement to merge this series but, a strong suggestion for your 
+own verification purposes.
+
+---
+bod
+
+
 
