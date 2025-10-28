@@ -1,130 +1,81 @@
-Return-Path: <linux-kernel+bounces-873254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0442C13813
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:20:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CAD6C1380A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78E7D585523
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E31144634CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27312DECCB;
-	Tue, 28 Oct 2025 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45C882DE6F7;
+	Tue, 28 Oct 2025 08:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAPu/e7X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4r25Ajy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BC52DEA68;
-	Tue, 28 Oct 2025 08:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4D82DCF50;
+	Tue, 28 Oct 2025 08:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639445; cv=none; b=AbTYcjt+ISsXqs+10uRKOah5ple8IKxIvNVeXt8FOWNWwRvJJqggHOWJ/GpjetLL+8GRaJROyssjwJB4pLagBOpMWMaN4xoGzoPqDJ0cT7n0yASDeYB+0ZUYbOixlDwydw/vlbuRk91rNQxUQAyi4sTp1dkblxo2CzapxFKepyk=
+	t=1761639443; cv=none; b=LdWkOD7ZH00gTI4kiAcUHH+iJMnSnaDlp4jFP5LinMAmH/y0AcaAguRpkl6EdHSbSaLM6Wcp2YAVhMIbrXlW+Rrj2uaNwrqgNUMD266hWi0LNYVwdO9q0Z8RFRJHeZ9FeaGLkCChdVkg6ZbBr1PnsPpa/1vx0aixRkR+/nw668Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639445; c=relaxed/simple;
-	bh=yJ6OnFD0p0J2q2ViCKgWUNewRrcdoQHh3ztvy85qnmE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Ufe8qsRuDyKWspR5JGln+/yNCAXqfue1O6uaqJTv9T8zxSpnWIq9IhCC3hL+5H6j7yV9f7h3XPK8nfll7Cs4wdHgeYmIFVZlv9VXdZWrtFRZsMECBr4raS32k/zuM4WzDvAer09boCkXI7vvll9jooWB+hgaVYPgxVWtMyLIkMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAPu/e7X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60AE9C113D0;
+	s=arc-20240116; t=1761639443; c=relaxed/simple;
+	bh=qyT91W42PRR1k+MEQZv0hEXTAFbmtivniNwL/NC6hLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fcaTV4CIt86qj75ROWolIxGyfIJp9dBCQY6hvpO78Kj1dsvRCRMWPQa1y0at0uSD/cnE8kStCXnwia2iqNUJeMnteLPzdoFW5CTFAXrsxanBWZl0qQpy6nXdz+sWk/bJrucYzhazoB60/eeUT51gLU+c9r+gyRtS0EqJtrd75L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4r25Ajy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6B09C4CEFF;
 	Tue, 28 Oct 2025 08:17:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761639444;
-	bh=yJ6OnFD0p0J2q2ViCKgWUNewRrcdoQHh3ztvy85qnmE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=vAPu/e7XntGcsPEN/KZD9G1NbFP84vH19IgqZ27EjaQPKNcGe489i7ixPMBYO94Y2
-	 JjrE4g7bp42tur/bO+pdMMnAic0Vu/DEFsWXaaB7hpUr7woEqibb3TGpY27Q4E5q4A
-	 C4WdEzVKScmZqTmACTS51smBVajGsTlDa3QmtQxqID00GFt5oQTYcyTSIHiNOM9gJn
-	 aGv7xy9NdFjo1WYfzMuPGvH7K/48uauiVyhNbHFYh0T/sPm50bY4LhgTr/JISg/2KX
-	 4W3o8ZY8Vt09mTVnOGakxYrHdedxv9mW5B5PxIafk7pOM5Hzn0pGBpkcINF7clu/T7
-	 xQvvHVWOHdwWg==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 28 Oct 2025 09:16:55 +0100
-Subject: [PATCH net 4/4] mptcp: zero window probe mib
+	s=k20201202; t=1761639443;
+	bh=qyT91W42PRR1k+MEQZv0hEXTAFbmtivniNwL/NC6hLo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S4r25AjyOQUw9xJU5vPMMPqgp3oepywBN42/i4XeX7uXCxhSWZGYWZsglTKx+2WG8
+	 x3y8u+JKEbhZq+j+zqUSed+j4YFgl/eepOz9e1BA+gZk7+WrXdNE/YAAPTZmUC3sxQ
+	 LsX0fAct1KbOkSbhnw8Mu4hZR1JIJs8AUCGRoNWLGsIz7ttFsqe670dIGFlqLGdWbd
+	 5wxfIIfzpsWoTx670lxx0Z3gur8EDX5Bi0vYfSaFVNeXiTN3zte2PDOMD/dPlzfeiR
+	 yfoYmW9o/dKjQlSAvnCTt7nQtaQf+vVYgyeO+d6y61iuhOHvbT2eeWb0ZJ7CG1nkj7
+	 NzuWC9BdX9YIA==
+Date: Tue, 28 Oct 2025 09:17:21 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Aleksander Jan Bajkowski <olek2@wp.pl>
+Cc: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, hauke@hauke-m.de, 
+	linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: watchdog: lantiq,wdt: convert bindings
+ to dtschema
+Message-ID: <20251028-petite-demonic-spaniel-1cfed1@kuoka>
+References: <20251027210959.58297-1-olek2@wp.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-net-mptcp-send-timeout-v1-4-38ffff5a9ec8@kernel.org>
-References: <20251028-net-mptcp-send-timeout-v1-0-38ffff5a9ec8@kernel.org>
-In-Reply-To: <20251028-net-mptcp-send-timeout-v1-0-38ffff5a9ec8@kernel.org>
-To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
- Yonglong Li <liyonglong@chinatelecom.cn>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1908; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=L2OKjKKGhGjF8C+8RuWZFoc4maf4q5B5EWamzyvqW0M=;
- b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDIZathyAp/Ps5/rtmDn0qMNAfae9c+fcjSJfCpaPTmr6
- 9iD8DfCHaUsDGJcDLJiiizSbZH5M59X8ZZ4+VnAzGFlAhnCwMUpABPZt52RoedoSO4jCV6jWsep
- y8L//o2w3Xi/VzXgrcNH+7PrOgU+LmFkuCXK47n/yc65Bcf53q23Ky0N3S6toaN80MTsVb6V0TI
- XfgA=
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251027210959.58297-1-olek2@wp.pl>
 
-From: Paolo Abeni <pabeni@redhat.com>
+On Mon, Oct 27, 2025 at 10:06:57PM +0100, Aleksander Jan Bajkowski wrote:
+> Convert the Lantiq WDT Watchdog bindings to yaml format.
+> 
+> Signed-off-by: Aleksander Jan Bajkowski <olek2@wp.pl>
+> ---
+> v3:
+> - removed xrx300 from strait binding conversion
+> - moved falcon-wdt to previous enum
+> - added ref to watchdog
+> v2:
+> - requirement of lantiq,rcu is now expressed as a schema
+> ---
 
-Explicitly account for MPTCP-level zero windows probe, to catch
-hopefully earlier issues alike the one addressed by the previous
-patch.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Tested-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/mib.c      | 1 +
- net/mptcp/mib.h      | 1 +
- net/mptcp/protocol.c | 1 +
- 3 files changed, 3 insertions(+)
-
-diff --git a/net/mptcp/mib.c b/net/mptcp/mib.c
-index 6003e47c770a..171643815076 100644
---- a/net/mptcp/mib.c
-+++ b/net/mptcp/mib.c
-@@ -85,6 +85,7 @@ static const struct snmp_mib mptcp_snmp_list[] = {
- 	SNMP_MIB_ITEM("DssFallback", MPTCP_MIB_DSSFALLBACK),
- 	SNMP_MIB_ITEM("SimultConnectFallback", MPTCP_MIB_SIMULTCONNFALLBACK),
- 	SNMP_MIB_ITEM("FallbackFailed", MPTCP_MIB_FALLBACKFAILED),
-+	SNMP_MIB_ITEM("WinProbe", MPTCP_MIB_WINPROBE),
- };
- 
- /* mptcp_mib_alloc - allocate percpu mib counters
-diff --git a/net/mptcp/mib.h b/net/mptcp/mib.h
-index 309bac6fea32..a1d3e9369fbb 100644
---- a/net/mptcp/mib.h
-+++ b/net/mptcp/mib.h
-@@ -88,6 +88,7 @@ enum linux_mptcp_mib_field {
- 	MPTCP_MIB_DSSFALLBACK,		/* Bad or missing DSS */
- 	MPTCP_MIB_SIMULTCONNFALLBACK,	/* Simultaneous connect */
- 	MPTCP_MIB_FALLBACKFAILED,	/* Can't fallback due to msk status */
-+	MPTCP_MIB_WINPROBE,		/* MPTCP-level zero window probe */
- 	__MPTCP_MIB_MAX
- };
- 
-diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
-index 2feaf7afba49..49fed273f4dd 100644
---- a/net/mptcp/protocol.c
-+++ b/net/mptcp/protocol.c
-@@ -1346,6 +1346,7 @@ static int mptcp_sendmsg_frag(struct sock *sk, struct sock *ssk,
- 		 mpext->dsn64);
- 
- 	if (zero_window_probe) {
-+		MPTCP_INC_STATS(sock_net(ssk), MPTCP_MIB_WINPROBE);
- 		mptcp_subflow_ctx(ssk)->rel_write_seq += copy;
- 		mpext->frozen = 1;
- 		if (READ_ONCE(msk->csum_enabled))
-
--- 
-2.51.0
+Best regards,
+Krzysztof
 
 
