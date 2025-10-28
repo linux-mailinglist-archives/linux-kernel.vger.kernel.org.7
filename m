@@ -1,238 +1,139 @@
-Return-Path: <linux-kernel+bounces-873861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA4B1C14F57
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:47:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B42DC14F63
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4437426A13
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:43:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB75D464EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F0C13D51E;
-	Tue, 28 Oct 2025 13:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9F3328F8;
+	Tue, 28 Oct 2025 13:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qk4cmGF4"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HGrqsDy1"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC3F334C3A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D901D2AD32;
+	Tue, 28 Oct 2025 13:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761658982; cv=none; b=swtjGcJvMnzUzGukDB7JJh8sftlnHv+0Nipm6O84VSxGtQtwmI3+hSRkVYnRQg9QIZ5rvApWKsiGbJ7GDQPHk87juWwK2cJb/NsRkhKttaRJ7qjRNdRadgoBgfmJosXITagTsZEhmWcmxo/sRL3ZME/N2WqLuL/sFPnTmP3v5sA=
+	t=1761659043; cv=none; b=EE2481xmDFj6tQBRHLyLoyjqaqA3P5Di6rp+0faCuNZVOUA64m2ovELhsQpUO4lfvC5lgUtH20Vib0cabfZ6Ifsiolfx33MULJ7316XZX0575zA1kVY8Ai4KIi7J9cA/n3qqVRccv3fEZW9DJspRWOVSa9za3V2yIrzvDfxpq24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761658982; c=relaxed/simple;
-	bh=NkTLesmb1wL3baUpMFlHe2G3W0/q/YxF/pJo68s6F7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mQMJWRsSDH7eAKHvzEPiuQRVaUQBQiiWPYtGtvWs+reXevN6uklfVus0uKSVqds7HOM81E5M3VLCeCBKzlzpR9n4lZzIqdmi/0+abnQlmBNCkSrrudQC5oJAgu3cZYhlJhcm+nTsB51c7Cpekz+cfuugvveSL5z27p6PQWxqqPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Qk4cmGF4; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781997d195aso4298354b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:42:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761658978; x=1762263778; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i6IwLo36G1uBhKQ2BuhOcUno2dP4iNx04KNZvVlCM3I=;
-        b=Qk4cmGF4VH0Vm6vWMPQEgWfgoM4tTpVrVy1t43Ddr7MmXrawxUtgvfeEeh01Ew+SyZ
-         ce/z+UlZX5puViGXFJFCzx3vxFC0Qr0cqzvao6E0viw3eF+GiYYl3mTuDZNjfTf4PqKL
-         IqByUoLSTQ8cCTQYVLiheY8zSUH3PzFOklHAxLOVcCBso2IZAEmtegIRd0ltAb1aczrh
-         JbSZgoQPT4rgrUQScfBeOJnLvueuoE/mdAij2KVaAEH566075Rl6Cs2W11+V+NQNBNea
-         bdicdTCYHLSItlGpo2nLL288XJDVWnwol2JhIMj2kdm2nXhp+YvxMpRjuzUcli6DD4/g
-         FoUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761658978; x=1762263778;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i6IwLo36G1uBhKQ2BuhOcUno2dP4iNx04KNZvVlCM3I=;
-        b=p0xiPRvGqRLvW/LLOoPx259N56YYxQlEhpZn8QwJyFddjVqXhhdtvYFi4D5tnoeUDf
-         gYpD8kY0tLlcJSHQyJIsLFBhzJKAtDvIrk9fz1lfW/b8dHtPmrQxmlbvkHQnq1zAd+vD
-         ICZn4SagwBek6fdMjmmiZ6L79f3fxFLmIOXK0PhnZtcn/Wadn6FUVPgQKBacjDTrc5Qd
-         aWA0xVvXEakzRs2CMdm85Hl76zZN2bL8GoAiRPZfKJCI9gbHQoFML3xuKXT93lSH+UdB
-         3e8hcZ2iIqRxqUU7fcGPsqEGkRQNhspKjF7YRDn5/n6rJVrfktdJ6lU/5I8TlBVVjlMQ
-         kPAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWiZk1EVdzrmq8dAXJ2WsNc227YNJiIDdoTkMZOnr49shs7m4yuYntB/gOtIjcBxCm8ks48zyA5dNsqvYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAW7e81QlUidRUzUvQOcwAF5xaejuMtcjK2qvdm7CB+JYNw0Bt
-	zpF+n4xKyUdvx4Uq2JIpZg4p3I2rAj4Bm4icyT9DAnMzeAmge5LP5FqsbmKkOExyoJK5N444P0D
-	zPOMUzhvYI1vEUiObRLuNNnOg+fGGZlhOPjeWDvY2jA==
-X-Gm-Gg: ASbGncsOEugEefdGR3RtjbwJ33+98KyAJZozSDX47weqL06L1ur1JWEqV7y4j17T/Ek
-	IoX5SNiOxEAbPQeUxKPKRaWnUhfMDDAyeBFHDVMHZsNKUemHMXgcldXjfl2150mI+c4e3XOEHVL
-	PAoj5LSDmHKJtv3zQbWJeaQ/aBkruAjjWSjxbv6/tNmiru3YKxzl9tJeK8h0VSXIgpU9EybzFPF
-	3c/rTgHuRw6EhoYzHHpQ1e/sSnVll2C/Z1ml9kmxf4sI50rgW0Zfeg+KVXKLZ6wRSpRb1WpC4co
-	X4DFozDGZ0GfKC0umYLT7FNPz9kdiOXJU4NonWDCp3Hq5Z1QAA==
-X-Google-Smtp-Source: AGHT+IFOKqumylDC3091DymmwWVMempBrV41yNWr40LgMIQoxbB3YsiPNdrsfBOuzkn9llz2IOW5cx2sNZcESM4Ln90=
-X-Received: by 2002:a17:903:2446:b0:28e:681c:a7ed with SMTP id
- d9443c01a7336-294cb5231edmr48006645ad.36.1761658978283; Tue, 28 Oct 2025
- 06:42:58 -0700 (PDT)
+	s=arc-20240116; t=1761659043; c=relaxed/simple;
+	bh=0eCX2hzh9/rOQP2c5dwLPKKJYD0q5MTnLSDk5aNZX9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQOQmU58spKc+AtA23aun0dKZHQgVYV2WzPCmz9IKQx8KEwJwwGvumj0XLuuBD4fQUMqUxUWb63zirx863I1BtLhbG2unzC1IJTQ2R841Oin7SBilZ88/q8offsyrZBMuxZxSRHz/GrrSuT9+aeBBfALZJG8nbuzo3Md9KgbSTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HGrqsDy1; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5A36925E06;
+	Tue, 28 Oct 2025 14:43:52 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 9W7edxZGJM9z; Tue, 28 Oct 2025 14:43:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1761659031; bh=0eCX2hzh9/rOQP2c5dwLPKKJYD0q5MTnLSDk5aNZX9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=HGrqsDy1K11pC3XvY+UZFFi197y53VLfS+CJS6xLRum+crvECeY6OPwkQBtfYtcOh
+	 GcPYq9q3DZX6yTZZlQTTMfFQngnCXPBt3Gndm3D17Ns4SK64RSz5lQuv4KfcQ/cwAO
+	 ewuXsBpwxr603WwRlQQi6qNeB5mGGgbmOkCLu1RuoEIEmLx6d+Kxr2qfvGWc/cTtps
+	 ILwYJgqk1ezpSICZbqnfp8pXh6+sjSBiX/UL4eZb3fDxOKejmXkTKMEC2s9NISpLzw
+	 EcF1oXDYcUunXpNHckT5wCMczVYYVo5OU9viNmHQ/pZi2ZK7vpg1Mh/8RKClDwDUR9
+	 lJEs4Dq+2yUeQ==
+Date: Tue, 28 Oct 2025 13:42:44 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org,
+	Han Gao <gaohan@iscas.ac.cn>, Han Gao <rabenda.cn@gmail.com>,
+	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-riscv@lists.infradead.org, Fu Wei <wefu@redhat.com>
+Subject: Re: [PATCH v3 5/5] riscv: dts: thead: Add reset controllers of more
+ subsystems for TH1520
+Message-ID: <aQDIVJNX0fOTbp7p@pie>
+References: <20251014131032.49616-1-ziyao@disroot.org>
+ <20251014131032.49616-6-ziyao@disroot.org>
+ <aP9d3-deezGtCbHr@gen8>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027183438.817309828@linuxfoundation.org>
-In-Reply-To: <20251027183438.817309828@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Tue, 28 Oct 2025 19:12:44 +0530
-X-Gm-Features: AWmQ_bn_DPdFHC2JndhMvloWcakN9sV88rkaOQG3xnnYurPT_LYolUnNKN-lF8Q
-Message-ID: <CA+G9fYsQ_riqA+C74mpf6-_zoqyh66kozjFrQmAFBfxqvzoqpQ@mail.gmail.com>
-Subject: Re: [PATCH 6.6 00/84] 6.6.115-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP9d3-deezGtCbHr@gen8>
 
-On Tue, 28 Oct 2025 at 00:47, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.115 release.
-> There are 84 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.115-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Oct 27, 2025 at 11:56:15AM +0000, Drew Fustini wrote:
+> On Tue, Oct 14, 2025 at 01:10:32PM +0000, Yao Zi wrote:
+> > Describe reset controllers for VI, MISC, AP, DSP and AO subsystems. The
+> > one for AO subsystem is marked as reserved, since it may be used by AON
+> > firmware.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/riscv/boot/dts/thead/th1520.dtsi | 37 +++++++++++++++++++++++++++
+> >  1 file changed, 37 insertions(+)
+> > 
+> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
+> > index e680d1a7c821..15d64eaea89f 100644
+> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> > @@ -277,6 +277,12 @@ clint: timer@ffdc000000 {
+> >  					      <&cpu3_intc 3>, <&cpu3_intc 7>;
+> >  		};
+> >  
+> > +		rst_vi: reset-controller@ffe4040100 {
+> > +			compatible = "thead,th1520-reset-vi";
+> > +			reg = <0xff 0xe4040100 0x0 0x8>;
+> 
+> Is this intentional so that the first VI_SUBSYS register, VISYS_SW_RST
+> at offset 0x100, will have an offset of 0 from the thead,th1520-reset-vi
+> reg in the driver?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Yes, it's intentional for both VI and DSP subsystem. As you could see,
+excluding these TEE-only shadows, the first reset-related register in
+VI_SUBSYS is at offset 0x100. For DSP subsystem, it's at offset 0x28
+(and is the only reset-related register).
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+I want to keep the first 0x100 bytes in VI_SUBSYS, and first 0x24 bytes
+in DSP_SUBSYS free, because they're clock-related registers, and should
+be reserved for clock driver introduced in the future.
 
-## Build
-* kernel: 6.6.115-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 6de03dd48e80ed63781bdc986cd9895c1172a6b1
-* git describe: v6.6.113-190-g6de03dd48e80
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.1=
-13-190-g6de03dd48e80
+In TH1520 SoC, only AON and AP subsystems have strictly separated reset
+and clock register regions. For all other subsystems like VI, VO, VP,
+MISC and DSP, reset and clock registers tightly follow each other, but
+they don't interleave.
 
-## Test Regressions (compared to v6.6.113-106-g8ed83e981d68)
+This series follows the way in which VO clock/reset controllers are
+modeled in devicetree, where the subsystem region is split into two
+nodes, one for clock and one for reset. This will lead to less regular
+address/size values like what you noticed, as the registers do stay very
+close.
 
-## Metric Regressions (compared to v6.6.113-106-g8ed83e981d68)
+> [snip]
+> > +		rst_dsp: reset-controller@ffef040028 {
+> > +			compatible = "thead,th1520-reset-dsp";
+> > +			reg = <0xff 0xef040028 0x0 0x4>;
+> 
+> Similar to rst_vi, is this intentional so that the first register,
+> DSPSYS_SW_RST at offset 0x28, will have an offset of 0 in the driver?
+> 
+> Thanks,
+> Drew
 
-## Test Fixes (compared to v6.6.113-106-g8ed83e981d68)
-
-## Metric Fixes (compared to v6.6.113-106-g8ed83e981d68)
-
-## Test result summary
-total: 105308, pass: 89135, fail: 2925, skip: 13018, xfail: 230
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 129 total, 128 passed, 1 failed
-* arm64: 44 total, 40 passed, 4 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 31 passed, 1 failed
-* riscv: 15 total, 14 passed, 1 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 37 total, 34 passed, 3 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Yao Zi
 
