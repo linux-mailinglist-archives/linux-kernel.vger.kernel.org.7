@@ -1,250 +1,118 @@
-Return-Path: <linux-kernel+bounces-874217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E85CC15C8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:26:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 881B6C15BFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:20:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030AB18984E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:21:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 359013522CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6B73491E5;
-	Tue, 28 Oct 2025 16:16:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77E234888F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E93E34B434;
+	Tue, 28 Oct 2025 16:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e1BndjNt"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B23446C9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668201; cv=none; b=OBWoBB8+rYPnfCFjxqv3yLh9Wftp2oT/9ma1x1Z38JPc6mhKXClaYcBbz1yJv272J+eUqu7a5x2sDujOeUJ37STGLkJU/dIlnstq6Ar3nA/3g/cTojbh9hQ0WbvYfR0Z2GbuvdxY5xZjKTJ2BQ4flBjOczKYGb6p9JHI7z9FJ7U=
+	t=1761668214; cv=none; b=pEgz9/Cr1oIjkzROygPIuBAMZSwm5Py5Wj7ImPUtRTX+MJtHqyGNdQ7S1cyvMrfksRkGLEmFplxqwOC2+K3mPGTxxk1VqmHOc01CeS9tF3mrmfM3HsW5YnMJ/ptfaV7greZhgKSicZanOV3FY2USNJLmmH6TTQLK5QNqQQX4kpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668201; c=relaxed/simple;
-	bh=vvnZJk0kFGNJGHa0P24BYe6V1sQgrk9+DsQHuXQ2aiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRE5C4cULTXoSLySP5Din/EziG4rgGmqgw8T976cxXAw54frButinN+I84hpA1MBeqtE8kc62pJYFQk1womEgjhAUtCgLC5nkV76mufsawj148GwOB5NPRiPWMzA/aljF9kJvVyjWbmD6nRKYVo6Uyz9S1pVv598dps07uBG+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A088168F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:16:31 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 013703F63F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:16:38 -0700 (PDT)
-Date: Tue, 28 Oct 2025 16:16:27 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Karunika Choo <karunika.choo@arm.com>
-Cc: dri-devel@lists.freedesktop.org, nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/8] drm/panthor: Add arch-specific panthor_hw binding
-Message-ID: <aQDsW3xf2NNUvBN-@e110455-lin.cambridge.arm.com>
-References: <20251027161334.854650-1-karunika.choo@arm.com>
- <20251027161334.854650-2-karunika.choo@arm.com>
+	s=arc-20240116; t=1761668214; c=relaxed/simple;
+	bh=9fTJS/nnMDU6irI8BSHwrjtuXvQjuORoPzSm/7H21UQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kgXEG45s+GjTrxYsieWDrcTS/xQV4l66bvex4oL8GXcOA+0IrP8DzDDWjIZ0LPwygxzEDY6Yr5EV7e81ywfQnzdmB8aDOmzMHQny7VhPfRWh4PQzWgnfXY70VowAHr6ed+/FrehjaBaitBU6NXeyQuCa8lxNBZq+yqYylfjmB/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e1BndjNt; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--abarnas.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4770e0910e4so20887855e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:16:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761668210; x=1762273010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ho6JJQRwGiXKBOt/Alu7bdbMk7B3pL4UhaTJjWAG4eE=;
+        b=e1BndjNtsaFwY6XO0cuiTuLRaFXibglMnOuQTayqBdOXRWQwHKF7O/PcsQDIGwZKO+
+         lbf5TGt1SJ1TxKaYXhdhRgaqNE2/vlk2aV08YTDwB6hd1Lp+w2rC94C7Uy7keWs1gWwV
+         uN63dwaGPOs3od9LtTikWWKlkD86wweeMz6nAaYQphlTe7Xw9mQmV1IFZUlyH60beHEc
+         5pc0zueISZ2piShQqiyMF5je1rsKqVbtY82Yiwv4rs12RIg/MQ/xu0zMSoRin9naq/qC
+         WJnggF0oklnJzxm+GYIxlba5wHnF2/b48XOpNTALbjH5GDYlMSUffmFYjF2Ov4CyQvrs
+         RUPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761668210; x=1762273010;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ho6JJQRwGiXKBOt/Alu7bdbMk7B3pL4UhaTJjWAG4eE=;
+        b=Wr5kjBTmKnxmIL+lhtiKdN437gnAn4Jf0m56yDdZAgUItcjTvAgdYS35S6u3sOp27q
+         FCztNA92LR0xzfqgdHzXGg/0dLAc8s80sbzaF33Hp4vnJzqxcKaSTw2mk5/DlNPi9+ev
+         Dyw32NUCJa8zajELxkIt1orkS1DkcLeXFdUlX2luSYlS5VIpv9QCB5EfDKhFIWiOeP8p
+         RFJ6CpNfQLoG73DIy35ySK16yhvPDPMJqDyhuisxtUE6U3lBvy5Og2D7G5klSd8vGRjE
+         FoIRjENDzMqkjNipC/lEITp4bRJOfNHAKU7ZbPpAf3l5Llt1NoQz5ryfIfRsHgcrxo6i
+         irVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUi/crdeFJE8jGGwstsXNp7Jm1UuOU/OJBDXcGczy+cNisgywpn3vGG/nEUOG7R9v0kucLeQvEVfhNqufI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWbvd2QWsNCbizTDeIw9r4g0O1CmsCp28ywifySpaPNt63PDkp
+	BQba1ls1QErh53QwWYGlD0QU+qQEskMRqvjG2hIFDUbn34ZXvee8/Xt3twE3OgOF+Id4qItWlva
+	Qg6QDss6v2g==
+X-Google-Smtp-Source: AGHT+IHAhlk02BCJ5Vh9MNlszflfsqyTxmT8WTEnXpCaDZBseldqLR8dNqR6+bg3BKFy28J8Xt8y91Rz4bSz
+X-Received: from wmbdn1.prod.google.com ([2002:a05:600c:6541:b0:46e:1f26:9212])
+ (user=abarnas job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:64c5:b0:475:f16b:bcbf
+ with SMTP id 5b1f17b1804b1-4771e177ed5mr584995e9.14.1761668210378; Tue, 28
+ Oct 2025 09:16:50 -0700 (PDT)
+Date: Tue, 28 Oct 2025 16:16:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027161334.854650-2-karunika.choo@arm.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+Message-ID: <20251028161643.1727046-1-abarnas@google.com>
+Subject: [PATCH] clk: keystone: Fix discarded const qualifiers
+From: "=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Adrian=20Barna=C5=9B?=" <abarnas@google.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Add const qualifiers to the pointers returned from 'container_of' macro
+to prevent breaking the const promise on const struct pointers from
+parameters.
 
-On Mon, Oct 27, 2025 at 04:13:27PM +0000, Karunika Choo wrote:
-> This patch adds the framework for binding to a specific panthor_hw
-> structure based on the architecture major value parsed from the GPU_ID
-> register. This is in preparation of enabling architecture-specific
-> behaviours based on GPU_ID. As such, it also splits the GPU_ID register
-> read operation into its own helper function.
-> 
-> This framework allows a single panthor_hw structure to be shared across
-> multiple architectures should there be minimal changes between them via
-> the arch_min and arch_max field of the panthor_hw_entry structure,
-> instead of duplicating the structure across multiple architectures.
-> 
-> Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-> ---
-> v2:
->  * merged GPU_ID refactoring patch with the arch-specific panthor_hw
->    binding patch (PATCH 01/10 and PATCH 02/10 in v1).
-> ---
->  drivers/gpu/drm/panthor/panthor_device.h |  4 ++
->  drivers/gpu/drm/panthor/panthor_hw.c     | 65 +++++++++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_hw.h     |  6 +++
->  3 files changed, 74 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/panthor/panthor_device.h
-> index a764111359d2..1457c1255f1f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -26,6 +26,7 @@ struct panthor_device;
->  struct panthor_gpu;
->  struct panthor_group_pool;
->  struct panthor_heap_pool;
-> +struct panthor_hw;
->  struct panthor_job;
->  struct panthor_mmu;
->  struct panthor_fw;
-> @@ -122,6 +123,9 @@ struct panthor_device {
->  	/** @csif_info: Command stream interface information. */
->  	struct drm_panthor_csif_info csif_info;
-> 
-> +	/** @hw: GPU-specific data. */
-> +	struct panthor_hw *hw;
-> +
->  	/** @gpu: GPU management data. */
->  	struct panthor_gpu *gpu;
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.c b/drivers/gpu/drm/panthor/panthor_hw.c
-> index 4f2858114e5e..b6e7401327c3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.c
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.c
-> @@ -8,6 +8,28 @@
->  #define GPU_PROD_ID_MAKE(arch_major, prod_major) \
->  	(((arch_major) << 24) | (prod_major))
-> 
-> +/** struct panthor_hw_entry - HW arch major to panthor_hw binding entry */
-> +struct panthor_hw_entry {
-> +	/** @arch_min: Minimum supported architecture major value (inclusive) */
-> +	u8 arch_min;
-> +
-> +	/** @arch_max: Maximum supported architecture major value (inclusive) */
-> +	u8 arch_max;
+Once you have a mutable container structure pointer, you can change
+structure fields through it, which violates the const guarantee.
 
-I'm not a big fan of this [min, max] range definition. I would expect that,
-unless a new panthor_hw_entry is defined, the one covering arch X will also
-cover arch X+1 automatically. With the current implementation we will have
-to add a patch extending arch_max for an existing panthor_hw_entry when a new
-GPU architecture is released that is compatible with the previous one at the
-panthor_hw level *and backport the patch* for older kernels if they can
-support that hardware.
+Signed-off-by: Adrian Barna=C5=9B <abarnas@google.com>
+---
+ drivers/clk/keystone/sci-clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-My suggestion is to drop this structure entirely and change panthor_hw_bind_device()
-to a cascade of if()s starting with the latest arch to have a struct panthor_hw
-defined. For this patch the function will actually just set ptdev->hw to panthor_hw_arch_v10
-without any ifs.
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.=
+c
+index a4b42811de55..9d5071223f4c 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -496,8 +496,8 @@ static int ti_sci_scan_clocks_from_fw(struct sci_clk_pr=
+ovider *provider)
+ static int _cmp_sci_clk_list(void *priv, const struct list_head *a,
+ 			     const struct list_head *b)
+ {
+-	struct sci_clk *ca =3D container_of(a, struct sci_clk, node);
+-	struct sci_clk *cb =3D container_of(b, struct sci_clk, node);
++	const struct sci_clk *ca =3D container_of(a, struct sci_clk, node);
++	const struct sci_clk *cb =3D container_of(b, struct sci_clk, node);
+=20
+ 	return _cmp_sci_clk(ca, &cb);
+ }
+--=20
+2.51.1.851.g4ebd6896fd-goog
 
-Also (this is my personal preference) I would merge patch 1/8 and 2/8 so that we
-don't have just empty structures defined.
-
-Best regards,
-Liviu
-
-> +
-> +	/** @hwdev: Pointer to panthor_hw structure */
-> +	struct panthor_hw *hwdev;
-> +};
-> +
-> +static struct panthor_hw panthor_hw_arch_v10 = {};
-> +
-> +static struct panthor_hw_entry panthor_hw_match[] = {
-> +	{
-> +		.arch_min = 10,
-> +		.arch_max = 13,
-> +		.hwdev = &panthor_hw_arch_v10,
-> +	},
-> +};
-> +
->  static char *get_gpu_model_name(struct panthor_device *ptdev)
->  {
->  	const u32 gpu_id = ptdev->gpu_info.gpu_id;
-> @@ -62,7 +84,6 @@ static void panthor_gpu_info_init(struct panthor_device *ptdev)
->  {
->  	unsigned int i;
-> 
-> -	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
->  	ptdev->gpu_info.csf_id = gpu_read(ptdev, GPU_CSF_ID);
->  	ptdev->gpu_info.gpu_rev = gpu_read(ptdev, GPU_REVID);
->  	ptdev->gpu_info.core_features = gpu_read(ptdev, GPU_CORE_FEATURES);
-> @@ -117,8 +138,50 @@ static void panthor_hw_info_init(struct panthor_device *ptdev)
->  		 ptdev->gpu_info.tiler_present);
->  }
-> 
-> +static int panthor_hw_bind_device(struct panthor_device *ptdev)
-> +{
-> +	struct panthor_hw *hdev = NULL;
-> +	const u32 arch_major = GPU_ARCH_MAJOR(ptdev->gpu_info.gpu_id);
-> +	int i = 0;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(panthor_hw_match); i++) {
-> +		struct panthor_hw_entry *entry = &panthor_hw_match[i];
-> +
-> +		if (arch_major >= entry->arch_min && arch_major <= entry->arch_max) {
-> +			hdev = entry->hwdev;
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (!hdev)
-> +		return -EOPNOTSUPP;
-> +
-> +	ptdev->hw = hdev;
-> +
-> +	return 0;
-> +}
-> +
-> +static int panthor_hw_gpu_id_init(struct panthor_device *ptdev)
-> +{
-> +	ptdev->gpu_info.gpu_id = gpu_read(ptdev, GPU_ID);
-> +	if (!ptdev->gpu_info.gpu_id)
-> +		return -ENXIO;
-> +
-> +	return 0;
-> +}
-> +
->  int panthor_hw_init(struct panthor_device *ptdev)
->  {
-> +	int ret = 0;
-> +
-> +	ret = panthor_hw_gpu_id_init(ptdev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = panthor_hw_bind_device(ptdev);
-> +	if (ret)
-> +		return ret;
-> +
->  	panthor_hw_info_init(ptdev);
-> 
->  	return 0;
-> diff --git a/drivers/gpu/drm/panthor/panthor_hw.h b/drivers/gpu/drm/panthor/panthor_hw.h
-> index 0af6acc6aa6a..39752de3e7ad 100644
-> --- a/drivers/gpu/drm/panthor/panthor_hw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_hw.h
-> @@ -6,6 +6,12 @@
-> 
->  struct panthor_device;
-> 
-> +/**
-> + * struct panthor_hw - GPU specific register mapping and functions
-> + */
-> +struct panthor_hw {
-> +};
-> +
->  int panthor_hw_init(struct panthor_device *ptdev);
-> 
->  #endif /* __PANTHOR_HW_H__ */
-> --
-> 2.49.0
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
 
