@@ -1,166 +1,139 @@
-Return-Path: <linux-kernel+bounces-873723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA67C148A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:10:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FD5C148AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDD9C481BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:06:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B750048263A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912F6329C6A;
-	Tue, 28 Oct 2025 12:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F852D5957;
+	Tue, 28 Oct 2025 12:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hsf0ehmK"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qKQXrRO6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gocl/jMn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38BDB2EA473;
-	Tue, 28 Oct 2025 12:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164FA328616;
+	Tue, 28 Oct 2025 12:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761653161; cv=none; b=Y+RC5NEv3+8WPt62EsRqoMMWUSglE0TPoOA6X7wdpdF1xKyQV62ieIRTxWCdDX1f8ITjKx9odf6ZdnFKzCOOSwMbGVYA/MnkVwiDN2VzKrv+NjkAg3IaNki0Qb44P634c9gHeSbaAmkc25gdCB2RD7rlgjXwFJDzyoxpae+X3M4=
+	t=1761653217; cv=none; b=RgLhDfI7Q0s+65o5tNLi2hzOnN+xoIMVjnJolgXGqa2SnOaF7yNDAHKsRKBv0CwzyBJZTtxaXz6AUMRrDLDdLfP4iaKTc5mtx5/cqrzbSgqHSM4X4I+0LJt3I9p/Z8GyWoZNRKn6f0Z7qv3r64ldSydSWNHQ4fVoijv8cjPO670=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761653161; c=relaxed/simple;
-	bh=PhGGpEXqkmznOczFPyxAkSU3pBDrQtMgvujThrQe20M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ANB2G5G+OmIdrz1atOCsB5Cr2jmmAXiyIjISdPLe/fZJkbJXj+nPz+Z4935YA9VTANeWNLy/ovboE6n8MQJNQGYfe4t1gJMZbsLrZoCy92qdA8tIZAaQFA4uLThOhh2dVGm5g/WxVVcABKPPublVGGxgPyxz9IrhdqEZ+4Qhjvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hsf0ehmK; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SBctka1559797;
-	Tue, 28 Oct 2025 12:05:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=qcuPS2t5SiZmpSZCZCScmJtjO/b5vr5O70D
-	E5lU39lY=; b=hsf0ehmK6cnn6YrGwKSvPgO20LRFBunepCMLR/pXIbHARj3tVdr
-	DBmoHD4jSn8OW6BJo0bVMk3Cv0RHqKO7c7V6aepd3hI1MXYD/3bdipeJ7ahAMR+1
-	bCF0K3u6jB05V9rC8Nc7e6n9dhB4eO5XiSMJtv81ldB9J4Ox1zQAO7X9DJjex75j
-	DZyWbMwTUseAx4WGMl8MBlxIYZEtv57nuc8hBk3KHPcWJmt/GmEPMhSD4YCSdcLI
-	26k8SpqM213bz34CztbeS1Rix0W/KCMXCW8FyKUFzN4NpyyPUmG5jleEa0m0fFX7
-	rr4beCTigqAWaYr792CphzoosU1juapJLWQ==
-Received: from aptaippmta01.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2w51r27j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 12:05:55 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59SC5rvP001280;
-	Tue, 28 Oct 2025 12:05:53 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 4a0qmm0mah-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 12:05:53 +0000
-Received: from APTAIPPMTA01.qualcomm.com (APTAIPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59SC5rtt001261;
-	Tue, 28 Oct 2025 12:05:53 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA01.qualcomm.com (PPS) with ESMTPS id 59SC5q5m001251
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 12:05:53 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id E15F9231FF; Tue, 28 Oct 2025 20:05:51 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
-        luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v1] Bluetooth: btusb: add default nvm file
-Date: Tue, 28 Oct 2025 20:05:50 +0800
-Message-Id: <20251028120550.2225434-1-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761653217; c=relaxed/simple;
+	bh=ei+CA+ZBh3hHsRnekGA32bPDegEeVgJXMO6rrJReISs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pC95RjOqBd64nzlT5czh9AyjHwqEaAu2u6KXIC6dfgUyWihD5MvL9LZRTYMana08RentDQCVmx+uSBB0Va/xUQk6mV2QoEB2GrhlLY3sgln3fMyDevOHze33KVbGHqabcxTnO+eRmlFpzaxnbemdbkzSgboPf477JwIe3/yPBak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qKQXrRO6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gocl/jMn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 Oct 2025 13:06:52 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761653214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=crnGWfJ7+UbK0li8dGHZvc/h9PGKn2eAY0mmwg0N528=;
+	b=qKQXrRO6OVuHEcDSuInE5tNxabxKnup1VtOzPffIvExXjuF4xJEmj38AHd0xhxDPKZp7kE
+	MtM4/DZfqTPTSvLn6unZ520+2ok48bF8Ek0tfUKLejEKelVGlrIiXA3SMxx0AVIMpASl46
+	x4nffQQ8rOedTcEBYrHQ3OXaW6CewuEHIw41zuIVFVJ5Sm9YqVfWWjo0qenTh7JF4zTcex
+	NO+hEkwFLKbcVirJ/M/yvm0plZxdM3aTOSx5FcOh3nAeHQXpxuIqstMTSDl+zfKJN2szwv
+	LvMykX7eBEdO+HCKpeRp98X8YHANIxFgq51nxx7QrZPlRDSF+8BJP+g3lCa3Pw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761653214;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=crnGWfJ7+UbK0li8dGHZvc/h9PGKn2eAY0mmwg0N528=;
+	b=gocl/jMnijFGp8u7+eYJkexAu4wF08rf5SfQNrcx5prs3WeJ9NFbyzWKcoQZjQi1SFSen7
+	hpKTIBmKXAqe5MDw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Crystal Wood <crwood@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
+	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH v2] genirq/manage: Reduce priority of forced secondary
+ interrupt handler
+Message-ID: <20251028120652.AJUTgtwZ@linutronix.de>
+References: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: xMMIyjSgGHwEeAnFH3_ApRVoBl0VfIa3
-X-Authority-Analysis: v=2.4 cv=YMiSCBGx c=1 sm=1 tr=0 ts=6900b1a3 cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8
- a=icOeAstkKu_1uK2K-hUA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: xMMIyjSgGHwEeAnFH3_ApRVoBl0VfIa3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEwMiBTYWx0ZWRfX+utccSGBSB1u
- JGYE6liXje3zAsQ8egr7t5pgqLtXdF/ZZ+FcSso6HWxuX4t9i0DAbODVvR+bv4wfUYolEVL9Ee7
- JV6tSLhfQrCbOYhMqJ951As2t4MOnHKYR0eVY3WIDhrj5cZbBSnO0Rx9dIdk5dcEOPtkArOr74T
- m1/WXjpjWNwpUlu0JoTbPJNSk9r5oQpWQxljo567iWiI4AzSMK15Ex5UZlN1yP5OXZxwyrmqkln
- ji39zH4iHaPWsOfIJGZewhhrXyF+l1+q+Du0j7xGFdgChB2nuOBPviX/lcs4M0A8p8lTG4XfCmi
- 49XF8luMkL2nFDXy5IbfI3UHiyh8n0C1bQ78pw2RsWWsHB9IhiXIlrFCFFlcmRnUqLcaW4nqeF3
- 5y00b/3VrCaVJnLYiI4D7DjTOVPEyA==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 suspectscore=0 adultscore=0 clxscore=1011 priorityscore=1501
- lowpriorityscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280102
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
 
-If no NVM file matches the board_id, load the default NVM file.
+On 2025-10-27 13:59:31 [+0100], Lukas Wunner wrote:
+> Crystal reports that the PCIe Advanced Error Reporting driver gets stuck
+> in an infinite loop on PREEMPT_RT:
+> 
+> Both the primary interrupt handler aer_irq() as well as the secondary
+> handler aer_isr() are forced into threads with identical priority.
+> Crystal writes that on the ARM system in question, the primary handler
+> has to clear an error in the Root Error Status register...
+> 
+>    "before the next error happens, or else the hardware will set the
+>     Multiple ERR_COR Received bit.  If that bit is set, then aer_isr()
+>     can't rely on the Error Source Identification register, so it scans
+>     through all devices looking for errors -- and for some reason, on
+>     this system, accessing the AER registers (or any Config Space above
+>     0x400, even though there are capabilities located there) generates
+>     an Unsupported Request Error (but returns valid data).  Since this
+>     happens more than once, without aer_irq() preempting, it causes
+>     another multi error and we get stuck in a loop."
+> 
+> The issue does not show on non-PREEMPT_RT because the primary handler
+> runs in hardirq context and thus can preempt the threaded secondary
+> handler, clear the Root Error Status register and prevent the secondary
+> handler from getting stuck.
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
----
- drivers/bluetooth/btusb.c | 19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
+Not sure if I mentioned it before but this is due to forced threaded
+IRQs which can also be enabled on non-PREEMPT_RT systems via `threadirqs`.
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index dcbff7641..998dfd455 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
- }
- 
- static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
--					const struct qca_version *ver)
-+					const struct qca_version *ver,
-+					u16 board_id)
- {
- 	u32 rom_version = le32_to_cpu(ver->rom_version);
- 	const char *variant, *fw_subdir;
- 	int len;
--	u16 board_id;
- 
- 	fw_subdir = qca_get_fw_subdirectory(ver);
--	board_id = qca_extract_board_id(ver);
- 
- 	switch (le32_to_cpu(ver->ram_version)) {
- 	case WCN6855_2_0_RAM_VERSION_GF:
-@@ -3522,13 +3521,25 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
- 	const struct firmware *fw;
- 	char fwname[80];
- 	int err;
-+	u16 board_id = 0;
- 
--	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
-+	board_id = qca_extract_board_id(ver);
- 
-+retry:
-+	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
- 	err = request_firmware(&fw, fwname, &hdev->dev);
- 	if (err) {
-+		if (err == -EINVAL) {
-+			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
-+			return err;
-+		}
-+
- 		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
- 			   fwname, err);
-+		if (err == -ENOENT && board_id != 0) {
-+			board_id = 0;
-+			goto retry;
-+		}
- 		return err;
- 	}
- 
--- 
-2.34.1
+> Emulate the same behavior on PREEMPT_RT by assigning a lower default
+> priority to the secondary handler if the primary handler is forced into
+> a thread.
+> 
+> Reported-by: Crystal Wood <crwood@redhat.com>
+> Tested-by: Crystal Wood <crwood@redhat.com>
+> Closes: https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -856,6 +856,19 @@ void sched_set_fifo_low(struct task_struct *p)
+>  }
+>  EXPORT_SYMBOL_GPL(sched_set_fifo_low);
+>  
+> +/*
+> + * For when the primary interrupt handler is forced into a thread, in addition
+> + * to the (always threaded) secondary handler.  The secondary handler gets a
+> + * slightly lower priority so that the primary handler can preempt it, thereby
+> + * emulating the behavior of a non-PREEMPT_RT system where the primary handler
+> + * runs in hardirq context.
 
+s/non-PREEMPT_RT/non-forced threaded/ ?
+
+Other than that,
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Sebastian
 
