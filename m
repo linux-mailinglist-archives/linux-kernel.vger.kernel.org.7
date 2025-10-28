@@ -1,130 +1,156 @@
-Return-Path: <linux-kernel+bounces-873779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E4C14ACB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:43:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2A0C14BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DE48F346358
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:43:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 482D04FDF7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7B530B514;
-	Tue, 28 Oct 2025 12:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E36330D25;
+	Tue, 28 Oct 2025 13:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="StBeXySm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="0q6CIKqS"
+Received: from sinmsgout02.his.huawei.com (sinmsgout02.his.huawei.com [119.8.177.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D47C2DE1E2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3531DD525
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761655380; cv=none; b=oulmbvapMco+rhFjYdM0MCsn23mn7/iBeNR5+DL0GQMr4btSOMlDr69Vaqcn8ZrerRjT4mRK6hoevXDv+/+j3/Mow0hdBR+Fz27HrOqoSvTnCRVxOwHEJp/6CFHkpmaHmo2sjl3TJxEXKW8b1u6GD5+KPph4tKiQRrcMT7KcWFQ=
+	t=1761656511; cv=none; b=lznRxoFG35ZDPHSbCc6ow7FttDYIjHdLRFP7VsjklBITS1qIBQW0mcBuofy/bVDYg7tamFasN0A8EuLGTnW2ULiQOu8dcp8o67WXHo4Y3l9r7V845de4Ahx/Y5eJL2K2ZrPwopcxLXNMDnNyS8d3I/f2hKSom6i8Bs0HoFfvtTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761655380; c=relaxed/simple;
-	bh=u0Rc6uddmvyN6A9OgBxIwz2e4v43ymsLxM3TDcEIbKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WZ8tck6rjeKp5LyxvWWxYniZUevK3lKHNEzli3ZZBiBZJoLnNJE8ufoa6mvtmbfE4k4jHM/LgGnWC3kYzLTZ+cOYWaiTKkg3vR9v3B81fpW8AEy1prXnu0pmo6AkwqfiOGgAZs14rsfuuqSXjAjzZWkhhVvCh0652GObRPkIQTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=StBeXySm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761655370;
-	bh=u0Rc6uddmvyN6A9OgBxIwz2e4v43ymsLxM3TDcEIbKU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=StBeXySmJjGSd1xFRKwCwHY5JXlO8LMuQ6NNDIDliO3nbsaTrwe2GjQ4nC3M5HEi6
-	 jF2qtHilep9UT1TEXah25dWzbBVN4RNLz6baHmPXj/PulKUSmgZLkg7TL8d9UXo15P
-	 MEd9IThinC+GxvZR9t7QmQ4PrI47cVgmV/7GjQtR8tkgTWacQR3neGIxFzH5Vp6fEu
-	 92lf964rtDYc9RFWH+P2lzGUmMfdNUsB3ECMMwqlBe+s2lpG6mt1ikFkBSW7ifizAl
-	 bcJk8WFoCc34avz+tVuY9xhY0SsU0jGAftWx4JPZXGp0TP7CnrdutiZ2JCE3XLSdy8
-	 SDuHL1eaO3uvw==
-Received: from [192.168.1.90] (unknown [82.79.138.145])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C49D917E12BA;
-	Tue, 28 Oct 2025 13:42:49 +0100 (CET)
-Message-ID: <410fa913-e86b-4ffd-9d79-ce804f0271ff@collabora.com>
-Date: Tue, 28 Oct 2025 14:42:49 +0200
+	s=arc-20240116; t=1761656511; c=relaxed/simple;
+	bh=G+je3gq6SyPr4mpic59RxkXyND0BDnxnTAB1RME3Z7k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fh8GHhNImHGZaUcwBZTUffvB/TNAJx5NW9KQB9/YP+swS8U55+lILLTCbv6yd1z65eYJJmIK9EaiDmRsTM/G0Zd2F8pX6M0JbV15MarZxxVXItVYQChuwHnsWyDMiBhTqcs0Dg1uHLJYBz4Bd9jQwzkA8lhn5yC3s9gkcpVZ0UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=0q6CIKqS; arc=none smtp.client-ip=119.8.177.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=XlmmVyLrW9dxB5D/jeLU9wLivg2YAqzJk0hijCQf38Q=;
+	b=0q6CIKqS9pZHjGnA2xxGdlLBxvFNFIVWVvYNODcuuM/VMf5yr54r4KZon8S/johgIzA5tpn1o
+	l0wTWlUL5iHLwzGeLo+GE1WjLt9uN+SIMTXs2QV/zpBtyWHoKLIVn4ePf8mf3ZyQVqO1guwdc/l
+	cZ0iIUoPEvpZcqha7wC4dD8=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
+	by sinmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4cwqlx2wmcz1vnJV;
+	Tue, 28 Oct 2025 20:42:53 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cwqhk2vR4z6HJcZ;
+	Tue, 28 Oct 2025 20:40:06 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 35F071402F8;
+	Tue, 28 Oct 2025 20:43:36 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
+ 2025 12:43:35 +0000
+Date: Tue, 28 Oct 2025 12:43:34 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <ben.horgan@arm.com>, "Catalin
+ Marinas" <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, "Marc
+ Zyngier" <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	<linux-kernel@vger.kernel.org>, <kvmarm@lists.linux.dev>
+Subject: Re: [PATCH V2 2/2] arm64/mm: Add remaining TLBI_XXX_MASK macros
+Message-ID: <20251028124334.00001e77@huawei.com>
+In-Reply-To: <6e7d0bf3-ddf1-44a0-a0cb-7dc994101878@arm.com>
+References: <20251024040207.137480-1-anshuman.khandual@arm.com>
+	<20251024040207.137480-3-anshuman.khandual@arm.com>
+	<20251024120014.000020af@huawei.com>
+	<6e7d0bf3-ddf1-44a0-a0cb-7dc994101878@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-To: Mark Brown <broonie@kernel.org>
-Cc: Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Algea Cao <algea.cao@rock-chips.com>,
- Derek Foreman <derek.foreman@collabora.com>,
- Daniel Stone <daniels@collabora.com>, Aishwarya.TCV@arm.com
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
- <6f3f126d-72c1-48cb-a9c8-8d354af2a3d5@sirena.org.uk>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <6f3f126d-72c1-48cb-a9c8-8d354af2a3d5@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-Hi Mark,
+On Mon, 27 Oct 2025 07:06:45 +0530
+Anshuman Khandual <anshuman.khandual@arm.com> wrote:
 
-On 10/28/25 2:38 PM, Mark Brown wrote:
-> On Wed, Sep 03, 2025 at 09:50:58PM +0300, Cristian Ciocaltea wrote:
->> The first patch in the series implements the CEC capability of the
->> Synopsys DesignWare HDMI QP TX controller found in RK3588 & RK3576 Socs.
->> This is based on the downstream code, but rewritten on top of the CEC
->> helpers added recently to the DRM HDMI connector framework.
+> On 24/10/25 4:30 PM, Jonathan Cameron wrote:
+> > On Fri, 24 Oct 2025 05:02:07 +0100
+> > Anshuman Khandual <anshuman.khandual@arm.com> wrote:
+> >   
+> >> Add remaining TLBI_XXX_MASK macros and replace current open encoded fields.
+> >> While here replace hard coded page size based shifts but with derived ones
+> >> via ilog2() thus adding some required context.
+> >>
+> >> TLBI_TTL_MASK has been split into separate TLBI_TTL_MASK and TLBI_TG_MASK
+> >> as appropriate because currently it simultaneously contains both page size
+> >> and translation table level information. KVM on arm64 has been updated to
+> >> accommodate these changes to TLBI_TTL_MASK.
+> >>
+> >> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >> Cc: Will Deacon <will@kernel.org>
+> >> Cc: Marc Zyngier <maz@kernel.org>
+> >> Cc: Oliver Upton <oliver.upton@linux.dev>
+> >> Cc: linux-arm-kernel@lists.infradead.org
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: kvmarm@lists.linux.dev
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  arch/arm64/include/asm/tlbflush.h | 26 ++++++++++++++++++--------
+> >>  arch/arm64/kvm/nested.c           |  8 +++++---
+> >>  2 files changed, 23 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> >> index 131096094f5b..cf75fc2a06c3 100644
+> >> --- a/arch/arm64/include/asm/tlbflush.h
+> >> +++ b/arch/arm64/include/asm/tlbflush.h
+> >> @@ -57,9 +57,10 @@
+> >>  /* This macro creates a properly formatted VA operand for the TLBI */
+> >>  #define __TLBI_VADDR(addr, asid)				\
+> >>  	({							\
+> >> -		unsigned long __ta = (addr) >> 12;		\
+> >> -		__ta &= GENMASK_ULL(43, 0);			\
+> >> -		__ta |= (unsigned long)(asid) << 48;		\
+> >> +		unsigned long __ta = (addr) >> ilog2(SZ_4K);	\
+> >> +		__ta &= TLBI_BADDR_MASK;			\
+> >> +		__ta &= ~TLBI_ASID_MASK;			\
+> >> +		__ta |= FIELD_PREP(TLBI_ASID_MASK, asid);	\  
+> > I think you can replace the two lines above with
+> > 		FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);
+> > 
+> > It's a small reduction in code but I don't mind much either way.  
 > 
-> For the past couple of weeks we've been seeing various instability with
-> the graphics drivers on the Rock 5B in -next, the most common system is
-> that we get faults in code that looks suspiciously relevant to this
-> series:
+> Right. FIELD_MODIFY() might be appropriate in this scenario but
+> there will be some additional code churn needed. I don't have a
+> strong opinion either way.
 > 
-> <6>[   17.353368] rockchip-drm display-subsystem: bound fdd90000.vop (ops vop2_component_ops [rockchipdrm])
-> <6>[   17.355237] dwhdmiqp-rockchip fde80000.hdmi: registered DesignWare HDMI QP I2C bus driver
-> / # <1>[   17.357803] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000098
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -55,13 +55,12 @@
+>  } while (0)
 > 
-> ...
-> 
-> <4>[   17.372390] Hardware name: Radxa ROCK 5B (DT)
-> 
-> ...
-> 
-> <4>[   17.382082] Call trace:
-> <4>[   17.382317]  drm_bridge_connector_hdmi_cec_init+0x8/0x38 [drm_display_helper] (P)
-> <4>[   17.383003]  drm_bridge_connector_init+0x658/0x678 [drm_display_helper]
-> <4>[   17.383612]  dw_hdmi_qp_rockchip_bind+0x35c/0x4d8 [rockchipdrm]
-> <4>[   17.384159]  component_bind_all+0x118/0x248
-> <4>[   17.384550]  rockchip_drm_bind+0xb4/0x20c [rockchipdrm]
-> <4>[   17.385034]  try_to_bring_up_aggregate_device+0x164/0x1d0
-> <4>[   17.385528]  component_master_add_with_match+0xc4/0x104
-> <4>[   17.386008]  rockchip_drm_platform_probe+0x1f8/0x31c [rockchipdrm]
-> 
-> (from today's -next, 
-> 
-> Unfortunately we haven't managed to point at a specific commit, it looks
-> like this might be triggered by multiple serieses interacting with each
-> other.  I'm not sure what other information might be useful here?
+>  /* This macro creates a properly formatted VA operand for the TLBI */
+> -#define __TLBI_VADDR(addr, asid)                               \
+> -       ({                                                      \
+> -               unsigned long __ta = (addr) >> ilog2(SZ_4K);    \
+> -               __ta &= TLBI_BADDR_MASK;                        \
+> -               __ta &= ~TLBI_ASID_MASK;                        \
+> -               __ta |= FIELD_PREP(TLBI_ASID_MASK, asid);       \
+> -               __ta;                                           \
+> +#define __TLBI_VADDR(addr, asid)                                       \
+> +       ({                                                              \
+> +               unsigned long __ta = (addr) >> ilog2(SZ_4K);            \
+> +               __ta &= TLBI_BADDR_MASK;                                \
+> +               __ta |= FIELD_MODIFY(TLBI_ASID_MASK, &__ta, asid);      \
+		  FIELD_MODIFY(TLBI_ASID_MASK, &__tab, asid);
 
-Thanks for reporting, I will investigate.
+as it's done in place in the second parameter.
+ 
 
-Regards,
-Cristian
+
 
