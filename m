@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-874807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 051C3C17240
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:10:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B61C1725B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:14:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA841B24FB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:11:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 121294E283A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC41A355810;
-	Tue, 28 Oct 2025 22:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D799B35771F;
+	Tue, 28 Oct 2025 22:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="UWZFgGM0"
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="Jshba6H9"
 Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3A3002CE;
-	Tue, 28 Oct 2025 22:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23863557E9;
+	Tue, 28 Oct 2025 22:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761689427; cv=none; b=f74+U1x8UmpCn0gq7nOlU0MbK+dA0CwOgteJwdW648X1ww396XRw1rZQit6o+omC8mIVKSDLwP7lblK9AfZaMe1B5b47MpWWiKFR04z3tB8nykuIQNIC8tEEYHdQO17+CjfiOkBaSenhjbJLm4blES+NwhX7xrM57c21NFOc//k=
+	t=1761689432; cv=none; b=hENChI4GvuAHVBb3J+C9qtX4D1VwTDb3ai1/EN+opdFCJV3hS9Qc9drAIsmE+xRp5rU1Hu9LxcmS125hjMjsc4FRVllll+ta83xXKPtLHvPHIU+yEfOAQGPJoTBHfzvuQAUBhKtyeMqx8qVCgb93lafOMD5woCJs1PU5jgn7RwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761689427; c=relaxed/simple;
-	bh=kawGsCfUvXr+7vSeBdeE2yqE2s7nhjHnLojMxqecUbw=;
+	s=arc-20240116; t=1761689432; c=relaxed/simple;
+	bh=/14+de53sdHLFxJy3FlGFFHpx3a4rldgHBttfIj2tlc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JK4UzYIVJJSpjz6WplUX2qlxhm5shz7R3PQFIkFDnyuJUY/2gax2Y3sbNUF2GzPs0HTK1Xf8yiHb2xL5r58QVknzy1w6kuBC587vLYqth+my/rBusZmqCxWfMgjhnkJBVcMQX62XHVR1O5q6FX9+rCD/293Rlgkaz4UvmPI3t04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=UWZFgGM0; arc=none smtp.client-ip=45.79.88.28
+	 MIME-Version:Content-Type; b=EYLhXiO+oost/X/o0csao+naXyqbEbiI9fXedU2aTH3Rul9psprF9qcQ5oYyjdsb2IWl9dRbnpxV6k03SaYk104If1rL1E37MtV7XfHe+cjoPqSj3ub0cqFCWll8zbroTdmA80YcxCnFTrqy6zAXTdTDmj3ootnlV0pL+z4VD4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=Jshba6H9; arc=none smtp.client-ip=45.79.88.28
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A5D8440B38
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 5A8B240B3A
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761689425; bh=GgmtuNmfwXa+txVVMIvIpG2HLe8hEqtvp0iZpan2vnM=;
+	t=1761689426; bh=gKQ8fFVrdgwZdfTHmfmE67b43gu/oNObSB701iiqA04=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UWZFgGM034QfexiT++iLJIxr+7MviBGF/gbsaYmkm028d4FQquKA95U9lpVhBTDi9
-	 Ez8G4bljzSljjHc8glFF9HvmbWMcio6aM4IsGgskm9y4dYEPOGqsuetELf1lJ1KnzW
-	 65VJaUFl3oJkcuLL3QSyU2EnO82RXhUST8LX0Yj9BWCDP9+5rua70BC60edmQE0IwM
-	 +4NDpcuUpKLmoXCEm08zSces5/mxUVIT+8Wkeophb6CphET2IV4OY2bcxoiefPayZn
-	 muaqytZ6b91/I9A0mA24iJuY04VAojTbmcq83boDA0arGh83ylHnhdu1EVbbRhctHX
-	 p5nyQJ3/iMUNg==
+	b=Jshba6H9+IMkv9V/3NpVeEe1KvqIzqHW1l8sXECeN3KakFChXGnsBSFdvkwJBfMAO
+	 KbnXiR5Ul6/UCzOpcz/nKS+101EIXhep8oQkZzj9b8Q+9VB33K/eHZZmwGT8uSH/QF
+	 zuNcl1uoBIukraDaRLqTZ0QzMCdq+KJoCY+WNVfkMatRKusxwWXxYV8DkY1LGRhDOZ
+	 J2c77OZN2WqF2AkXgQB9ZPtox2Q4ksR3NXFg4B+ZGRpjVl+DUtbbe3gRm+OS9jOqyT
+	 7a6De039t/7V+JdMm+gXzHMJBQOECbOq8HPBJSW7l2I2xqBEw34bQ/qxbTZrcy7fTT
+	 HsVszhyYg7rcg==
 Received: from trenco.lwn.net (unknown [IPv6:2601:280:4600:2da9::1fe])
-	by ms.lwn.net (Postfix) with ESMTPA id A5D8440B38;
-	Tue, 28 Oct 2025 22:10:24 +0000 (UTC)
+	by ms.lwn.net (Postfix) with ESMTPA id 5A8B240B3A;
+	Tue, 28 Oct 2025 22:10:25 +0000 (UTC)
 From: Jonathan Corbet <corbet@lwn.net>
 To: linux-doc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -51,10 +51,13 @@ Cc: linux-kernel@vger.kernel.org,
 	Randy Dunlap <rdunlap@infradead.org>,
 	Jani Nikula <jani.nikula@linux.intel.com>,
 	Jonathan Corbet <corbet@lwn.net>,
+	Alex Shi <alexs@kernel.org>,
+	Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>,
 	Jani Nikula <jani.nikula@intel.com>
-Subject: [PATCH v4 1/7] docs: Move the "features" tools to tools/docs
-Date: Tue, 28 Oct 2025 16:10:09 -0600
-Message-ID: <20251028221017.5785-2-corbet@lwn.net>
+Subject: [PATCH v4 2/7] docs: move checktransupdate.py to tools/docs
+Date: Tue, 28 Oct 2025 16:10:10 -0600
+Message-ID: <20251028221017.5785-3-corbet@lwn.net>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251028221017.5785-1-corbet@lwn.net>
 References: <20251028221017.5785-1-corbet@lwn.net>
@@ -64,80 +67,135 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The scripts for managing the features docs are found in three different
-directories; unite them all under tools/docs and update references as
-needed.
+The checktranslate.py tool currently languishes in scripts/; move it to
+tools/docs and update references accordingly.
 
+Cc: Alex Shi <alexs@kernel.org>
+Cc: Yanteng Si <si.yanteng@linux.dev>
+Cc: Dongliang Mu <dzm91@hust.edu.cn>
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Acked-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 ---
- Documentation/sphinx/kernel_feat.py                           | 4 ++--
- .../features/scripts => tools/docs}/features-refresh.sh       | 0
- {scripts => tools/docs}/get_feat.pl                           | 2 +-
- {Documentation/features => tools/docs}/list-arch.sh           | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
- rename {Documentation/features/scripts => tools/docs}/features-refresh.sh (100%)
- rename {scripts => tools/docs}/get_feat.pl (99%)
- rename {Documentation/features => tools/docs}/list-arch.sh (83%)
+ Documentation/doc-guide/checktransupdate.rst              | 6 +++---
+ .../translations/zh_CN/doc-guide/checktransupdate.rst     | 6 +++---
+ Documentation/translations/zh_CN/how-to.rst               | 2 +-
+ MAINTAINERS                                               | 1 -
+ {scripts => tools/docs}/checktransupdate.py               | 8 ++++----
+ 5 files changed, 11 insertions(+), 12 deletions(-)
+ rename {scripts => tools/docs}/checktransupdate.py (97%)
 
-diff --git a/Documentation/sphinx/kernel_feat.py b/Documentation/sphinx/kernel_feat.py
-index aaac76892ceb..81c67ef23d8d 100644
---- a/Documentation/sphinx/kernel_feat.py
-+++ b/Documentation/sphinx/kernel_feat.py
-@@ -13,7 +13,7 @@
-     :license:    GPL Version 2, June 1991 see Linux/COPYING for details.
+diff --git a/Documentation/doc-guide/checktransupdate.rst b/Documentation/doc-guide/checktransupdate.rst
+index dfaf9d373747..7b25375cc6d9 100644
+--- a/Documentation/doc-guide/checktransupdate.rst
++++ b/Documentation/doc-guide/checktransupdate.rst
+@@ -27,15 +27,15 @@ Usage
  
-     The ``kernel-feat`` (:py:class:`KernelFeat`) directive calls the
--    scripts/get_feat.pl script to parse the Kernel ABI files.
-+    tools/docs/get_feat.pl script to parse the Kernel ABI files.
+ ::
  
-     Overview of directive's argument and options.
+-   ./scripts/checktransupdate.py --help
++   tools/docs/checktransupdate.py --help
  
-@@ -85,7 +85,7 @@ class KernelFeat(Directive):
-         srctree = os.path.abspath(os.environ["srctree"])
+ Please refer to the output of argument parser for usage details.
  
-         args = [
--            os.path.join(srctree, 'scripts/get_feat.pl'),
-+            os.path.join(srctree, 'tools/docs/get_feat.pl'),
-             'rest',
-             '--enable-fname',
-             '--dir',
-diff --git a/Documentation/features/scripts/features-refresh.sh b/tools/docs/features-refresh.sh
-similarity index 100%
-rename from Documentation/features/scripts/features-refresh.sh
-rename to tools/docs/features-refresh.sh
-diff --git a/scripts/get_feat.pl b/tools/docs/get_feat.pl
-similarity index 99%
-rename from scripts/get_feat.pl
-rename to tools/docs/get_feat.pl
-index 40fb28c8424e..d75e7c85dc85 100755
---- a/scripts/get_feat.pl
-+++ b/tools/docs/get_feat.pl
-@@ -18,7 +18,7 @@ my $enable_fname;
- my $basename = abs_path($0);
- $basename =~ s,/[^/]+$,/,;
+ Samples
  
--my $prefix=$basename . "../Documentation/features";
-+my $prefix=$basename . "../../Documentation/features";
+--  ``./scripts/checktransupdate.py -l zh_CN``
++-  ``tools/docs/checktransupdate.py -l zh_CN``
+    This will print all the files that need to be updated in the zh_CN locale.
+--  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
++-  ``tools/docs/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
+    This will only print the status of the specified file.
  
- # Used only at for full features output. The script will auto-adjust
- # such values for the minimal possible values
-diff --git a/Documentation/features/list-arch.sh b/tools/docs/list-arch.sh
-similarity index 83%
-rename from Documentation/features/list-arch.sh
-rename to tools/docs/list-arch.sh
-index ac8ff7f6f859..96fe83b7058b 100755
---- a/Documentation/features/list-arch.sh
-+++ b/tools/docs/list-arch.sh
-@@ -8,4 +8,4 @@
+ Then the output is something like:
+diff --git a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+index d20b4ce66b9f..dbfd65398077 100644
+--- a/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
++++ b/Documentation/translations/zh_CN/doc-guide/checktransupdate.rst
+@@ -28,15 +28,15 @@
  
- ARCH=${1:-$(uname -m | sed 's/x86_64/x86/' | sed 's/i386/x86/' | sed 's/s390x/s390/')}
+ ::
  
--$(dirname $0)/../../scripts/get_feat.pl list --arch $ARCH
-+$(dirname $0)/get_feat.pl list --arch $ARCH
+-    ./scripts/checktransupdate.py --help
++    tools/docs/checktransupdate.py --help
+ 
+ 具体用法请参考参数解析器的输出
+ 
+ 示例
+ 
+--  ``./scripts/checktransupdate.py -l zh_CN``
++-  ``tools/docs/checktransupdate.py -l zh_CN``
+    这将打印 zh_CN 语言中需要更新的所有文件。
+--  ``./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
++-  ``tools/docs/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst``
+    这将只打印指定文件的状态。
+ 
+ 然后输出类似如下的内容：
+diff --git a/Documentation/translations/zh_CN/how-to.rst b/Documentation/translations/zh_CN/how-to.rst
+index 714664fec308..7ae5d8765888 100644
+--- a/Documentation/translations/zh_CN/how-to.rst
++++ b/Documentation/translations/zh_CN/how-to.rst
+@@ -437,7 +437,7 @@ git email 默认会抄送给您一份，所以您可以切换为审阅者的角
+ 对于首次参与 Linux 内核中文文档翻译的新手，建议您在 linux 目录中运行以下命令：
+ ::
+ 
+-	./script/checktransupdate.py -l zh_CN``
++	tools/docs/checktransupdate.py -l zh_CN``
+ 
+ 该命令会列出需要翻译或更新的英文文档，结果同时保存在 checktransupdate.log 中。
+ 
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 5aa6d769b254..cd187b9f1dc2 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -7411,7 +7411,6 @@ S:	Maintained
+ P:	Documentation/doc-guide/maintainer-profile.rst
+ T:	git git://git.lwn.net/linux.git docs-next
+ F:	Documentation/
+-F:	scripts/checktransupdate.py
+ F:	scripts/documentation-file-ref-check
+ F:	scripts/get_abi.py
+ F:	scripts/kernel-doc*
+diff --git a/scripts/checktransupdate.py b/tools/docs/checktransupdate.py
+similarity index 97%
+rename from scripts/checktransupdate.py
+rename to tools/docs/checktransupdate.py
+index e39529e46c3d..e894652369a5 100755
+--- a/scripts/checktransupdate.py
++++ b/tools/docs/checktransupdate.py
+@@ -9,9 +9,9 @@ commit to find the latest english commit from the translation commit
+ differences occur, report the file and commits that need to be updated.
+ 
+ The usage is as follows:
+-- ./scripts/checktransupdate.py -l zh_CN
++- tools/docs/checktransupdate.py -l zh_CN
+ This will print all the files that need to be updated or translated in the zh_CN locale.
+-- ./scripts/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
++- tools/docs/checktransupdate.py Documentation/translations/zh_CN/dev-tools/testing-overview.rst
+ This will only print the status of the specified file.
+ 
+ The output is something like:
+@@ -168,7 +168,7 @@ def check_per_file(file_path):
+ def valid_locales(locale):
+     """Check if the locale is valid or not"""
+     script_path = os.path.dirname(os.path.abspath(__file__))
+-    linux_path = os.path.join(script_path, "..")
++    linux_path = os.path.join(script_path, "../..")
+     if not os.path.isdir(f"{linux_path}/Documentation/translations/{locale}"):
+         raise ArgumentTypeError("Invalid locale: {locale}")
+     return locale
+@@ -232,7 +232,7 @@ def config_logging(log_level, log_file="checktransupdate.log"):
+ def main():
+     """Main function of the script"""
+     script_path = os.path.dirname(os.path.abspath(__file__))
+-    linux_path = os.path.join(script_path, "..")
++    linux_path = os.path.join(script_path, "../..")
+ 
+     parser = ArgumentParser(description="Check the translation update")
+     parser.add_argument(
 -- 
 2.51.0
 
