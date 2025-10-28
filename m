@@ -1,279 +1,167 @@
-Return-Path: <linux-kernel+bounces-873425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D897C13E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:50:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CDFC13E99
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1592D582C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:46:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E0474F9380
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:47:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC812E7F2C;
-	Tue, 28 Oct 2025 09:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BD328467C;
+	Tue, 28 Oct 2025 09:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="phI66WdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gH++043s"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA852202F70;
-	Tue, 28 Oct 2025 09:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9AB202F70
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644774; cv=none; b=NiughJJSdY6sS9Eypw3E+08GDLwAG39O04MCRl9u+JP+1n5gKPDRpbVFkuWpWyqd+zXMgtapfFT8hg0qJ872dvpF4RkbL02Guxad0CUQikh/p6WCQ+XytMCFqI7MTyOXMHQ6hELjaSMCdK+VrPBNRnevgAcDtplM9nWvmZC32WY=
+	t=1761644828; cv=none; b=Yz80jUrKz5JwPvG4a1QCl5p0HFlFTs04pJ2BI0dz1SbKOjIr0xhTGo3MaEpxiLYsvC5wnOf/7oF0L1XniToKITJxJJ9J6Mgi13BIPQk1PbG0RK24D5snIXrpSpf6GRbG0fN7B+okALWZ94Hc8DLs+m1HaKbHx5VVu/lrPmulehM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644774; c=relaxed/simple;
-	bh=TPmM1Y4zQtbayFtP8s6u10qh5iWQIpuL6YvMmRFZZ7E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HrT8s/z0hDN01V+Vk2h2MXgW9RzSs/GYG5UdqKrnHcnVMiGRmScFl2mt8G8FnF6lADksYOUKvf6MfiESufcsf3E8FNh7p02gAj1quvyOiHLglXgSVMCcaYAFdJ+BgtsdaSV3CYc0MFinBxct5xX0R2OSFicaWx/iFQYBvn/2K7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=phI66WdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72389C4CEE7;
-	Tue, 28 Oct 2025 09:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761644774;
-	bh=TPmM1Y4zQtbayFtP8s6u10qh5iWQIpuL6YvMmRFZZ7E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=phI66WdZ4CPFa2yvxLXL9qBY+Lrqfcj5bjrEUrCMFJND1FCkaQGztz4DAcYhHLu1+
-	 Qfk5GZ+m9nZUdd16iCSyXynmTeVj9XKJlnfPAMzvMGM+mxcohT0wiGdHShw+1/ZIN1
-	 w2270guFY5mMtDD9vqOh5D94fMeHF7uUiKIDy5014wSr3DnS10GjRFMlf/je/SbkWG
-	 yhsA576cMFpajL4TSHTA/PDuhtiOxnRHECgS3u5iuUPtGx58VPeLfK4pNV4/VfEIAA
-	 bpk3dXs9iLUuUId9axY3fHhMn6KbaZWzwpPPKBPfstFlz2MDoAX2M2XjtMu+6y77KI
-	 m8+OyMfA1rk5w==
-Message-ID: <0bf4ab2e-9846-4f8b-ad72-e9db6fb7d08e@kernel.org>
-Date: Tue, 28 Oct 2025 10:46:08 +0100
+	s=arc-20240116; t=1761644828; c=relaxed/simple;
+	bh=hSWOe53S2QH3pVgKVB9TrVijS+TcXb/7kNtx/H2jVds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/lvZxNaPa/kB8A2x3+S0dq9pepdtHmr2Xn5nk1Ls1kaXURlQUyqeTzyPoWuiZc/W8PEDTyiFAXMk8IMYOk0OuGdzplrfnt8FdWbSyShEOLApVfZzLi3IsI+TgZJp9vc/wjc2OSc+yxE6fAAUOyz3Ott2AcvKZ+Wg5ijjyfehT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gH++043s; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-650409430f6so2781205eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:47:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761644826; x=1762249626; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nRcEviLpCpzNbLcGaqosnVGor2ewNPnssN8Q7KbkRtE=;
+        b=gH++043stkwOBSwbobKc79hFO2W3CPytqSSxp8/WBT/76s2CyWMiPq6n0LdlW54xQ7
+         P7pgXMCcbLNyPjFAy9Cxk5ozWkujCN/U/H8yiPFV1Q96UFpFky5Y5Xd6U9RJXMERTLau
+         NFSH1WHp6+wJ53hcqjsjci23GigykdSIwRqahcQkltJK+qoZEgH8WEOye/TIFZumDvei
+         Yfo/okhTq8koEQKNW+8/dfa2Yu3NhmpnECGKc0pLBjp3VMQIn9Hjzv0iTyt3sgXjW3VU
+         0P4NRq1Dk0PxDt7tZcurw5cURtJozQ6GUHMl2KkDkRxO6NGoqJPUMK2UA2DS5d1i7zG0
+         Cwuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761644826; x=1762249626;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nRcEviLpCpzNbLcGaqosnVGor2ewNPnssN8Q7KbkRtE=;
+        b=l8QC2kiSevfInslJA8O72p9T3aqZ/lDzLMHRY6cixW2yMhELAeH6y2ZeWVVQmhfvxy
+         ogtmm/13i5tBibw+rzNzwcX6/aJvEIVJYii5DZXE/v28YtTGdOJ3tgusEgMrPeFAVvGq
+         FCL0q5R22rWOl5mryTIIZv/oWPt+h8GNc2C2vZNSvSgfAIbL4lPQSNv4G4Gvsf2+vxlc
+         ovbfofWWQiBZU6zzBX1jFspHnyezT01yEY6lBmfSAsznu7Es1RcfjmmmSoWXzvVyRtSL
+         kAKtoSgeWCBUNws7lO2wE3uy82jT8daJf0ug/Lku3eQ21U2H2jVVOvLkU7M9JLz0BP0K
+         OMIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNd+PxLidfL+5z0+pvpERwX1rRUN26J3ona3JDgec0ptQlg0s6TFVObGr7LSs6gkY66pR2IvNsILEk0NQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdZBlmNyP/bjrVaO72jhBmsuUkb7RW0wKXYGWaIf/wB0G4N8Rv
+	W1CzOl08v7Y5u/q1BO97EyBkRIk2pITEUZ2Ski2SgoOypuE2BRJhcoevJ78MJwii51dUwg/vThB
+	qAIjoj3Kgr2p+j7e+zRE89apSiQ4JZDg=
+X-Gm-Gg: ASbGncukAkDuHwnbTwIVEEUlwHpWIjDWgVPwQTuUlZzXDObB1qZl/q3Cpy3mVXW9H1H
+	ciUqw/tFmJjXcEqrF0sHSsrMhrnICNFNV4EKiEu1rl4bFZnTFeTD5MtwDvJ7gdyPqbwKuaat+Q4
+	e5UylmXPKSL5fT+rYLtGz9Ao2J9yankll5WeacFSApJKly9UIg/DBAY45bC7EWEvGrCiso+weyf
+	iG5eiJE2qiiVBLkW324qMX1UkbQKxapJuX+91DULkllQUvrgsaoCGzpE1Aq
+X-Google-Smtp-Source: AGHT+IFw8a2DTtRPDokUw0E0HICi9syLpcF47ySoZkOb+tzllRPpMha+vYjNZRtSyWsUbq0R+JTaLVdCjMUDXP0/UC0=
+X-Received: by 2002:a05:6820:2188:b0:654:18f9:cfdc with SMTP id
+ 006d021491bc7-6566f2a0dc4mr1298750eaf.4.1761644825696; Tue, 28 Oct 2025
+ 02:47:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: media: camss: Add qcom,sm6350-camss
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bryan O'Donoghue <bod@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251024-sm6350-camss-v1-0-63d626638add@fairphone.com>
- <20251024-sm6350-camss-v1-1-63d626638add@fairphone.com>
- <20251028-defiant-visionary-rottweiler-f97cda@kuoka>
- <DDTUHFIN3IEK.3FY5IS9S73ASO@fairphone.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <DDTUHFIN3IEK.3FY5IS9S73ASO@fairphone.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251027150713.59067-1-linmq006@gmail.com> <aQB8PRlaBY_9-L8d@smile.fi.intel.com>
+ <aQB8j7Hc3b9vAT5_@smile.fi.intel.com> <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
+In-Reply-To: <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
+From: =?UTF-8?B?5p6X5aaZ5YCp?= <linmq006@gmail.com>
+Date: Tue, 28 Oct 2025 17:46:53 +0800
+X-Gm-Features: AWmQ_bkMzCWltp8_0lWU6LTq8diCXGtcBzjewll59CoFnsgQA3j4_8Ni5MdIpMM
+Message-ID: <CAH-r-ZEG5qN5QNCJTnX_oK2uyheNjvzoAEgzuyTYyUWF4kf+wQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in ad3552r_hs_write_data_source
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Markus Burri <markus.burri@mt.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Angelo Dureghello <adureghello@baylibre.com>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/10/2025 10:24, Luca Weiss wrote:
-> Hi Krzysztof,
-> 
-> On Tue Oct 28, 2025 at 9:54 AM CET, Krzysztof Kozlowski wrote:
->> On Fri, Oct 24, 2025 at 02:23:59PM +0200, Luca Weiss wrote:
->>  +
->>> +  clock-names:
->>> +    items:
->>> +      - const: cam_ahb_clk
->>> +      - const: cam_axi
->>> +      - const: soc_ahb
->>> +      - const: camnoc_axi
->>> +      - const: core_ahb
->>> +      - const: cpas_ahb
->>> +      - const: csiphy0
->>> +      - const: csiphy0_timer
->>> +      - const: csiphy1
->>> +      - const: csiphy1_timer
->>> +      - const: csiphy2
->>> +      - const: csiphy2_timer
->>> +      - const: csiphy3
->>> +      - const: csiphy3_timer
->>> +      - const: slow_ahb_src
->>> +      - const: vfe0_axi
->>> +      - const: vfe0
->>> +      - const: vfe0_cphy_rx
->>> +      - const: vfe0_csid
->>> +      - const: vfe1_axi
->>> +      - const: vfe1
->>> +      - const: vfe1_cphy_rx
->>> +      - const: vfe1_csid
->>> +      - const: vfe2_axi
->>> +      - const: vfe2
->>> +      - const: vfe2_cphy_rx
->>> +      - const: vfe2_csid
->>> +      - const: vfe_lite
->>> +      - const: vfe_lite_cphy_rx
->>> +      - const: vfe_lite_csid
->>> +
->>> +  interrupts:
->>> +    maxItems: 12
->>> +
->>> +  interrupt-names:
->>> +    items:
->>> +      - const: csid0
->>> +      - const: csid1
->>> +      - const: csid2
->>> +      - const: csid_lite
->>> +      - const: csiphy0
->>> +      - const: csiphy1
->>> +      - const: csiphy2
->>> +      - const: csiphy3
->>> +      - const: vfe0
->>> +      - const: vfe1
->>> +      - const: vfe2
->>> +      - const: vfe_lite
->>> +
->>> +  interconnects:
->>> +    maxItems: 4
->>> +
->>> +  interconnect-names:
->>> +    items:
->>> +      - const: cam_ahb
->>> +      - const: cam_hf_0_mnoc
->>> +      - const: cam_sf_0_mnoc
->>> +      - const: cam_sf_icp_mnoc
->>
->> Please share the list with the previous generation of this device. Which
->> one was used here as "previous"? For example x1e has quite different
->> names - nothing with "cam". No "cam" in qcs8300, either.
-> 
-> sm8250 is the big sibling for sm6350, so it's matching the names from
+Hi, Andy
 
-Ah, ok, good to know.
+Thanks for you review.
 
-> there upstream. These exact names are also used downstream for
-> "qcom,msm-bus,name".
-> 
-> I don't think there's anything preventing removing the cam_ prefix though.
+Andy Shevchenko <andriy.shevchenko@intel.com> =E4=BA=8E2025=E5=B9=B410=E6=
+=9C=8828=E6=97=A5=E5=91=A8=E4=BA=8C 17:07=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Tue, Oct 28, 2025 at 10:19:27AM +0200, Andy Shevchenko wrote:
+> > On Tue, Oct 28, 2025 at 10:18:05AM +0200, Andy Shevchenko wrote:
+> > > On Mon, Oct 27, 2025 at 11:07:13PM +0800, Miaoqian Lin wrote:
+>
+> +Cc: Markus Burri for the da9374819eb3
+>
+> ...
+>
+> > > > + if (count >=3D sizeof(buf))
+> > > > +         return -ENOSPC;
+> > >
+> > > But this makes the validation too strict now.
+> > >
+> > > >   ret =3D simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbu=
+f,
+> > > >                                count);
+> > >
+> > > You definitely failed to read the code that implements the above.
+> > >
 
-Let's use the X1E names here.
+I previously read the simple_write_to_buffer(), but add the check and
+think it can help to catch error eariler. My mistake.
 
-> 
->>
->>
->>> +
->>> +  iommus:
->>> +    maxItems: 4
->>
->> I was told iommus might differ. Are you sure all of them represent the
->> same (e.g. not specific iommus for specific purposes)?
-> 
-> I don't really know.
-> 
-> These 4 iommus are labelled 'msm_cam_smmu_ife' downstream. There's still
-> more iommus for more hardware blocks: jpeg, icp, cpas_cdm and lrme.
+> > > >   if (ret < 0)
+> > > >           return ret;
+> >
+> > > > - buf[count] =3D '\0';
+> > > > + buf[ret] =3D '\0';
+> >
+> > Maybe this line is what we might need, but I haven't checked deeper if =
+it's a
+> > problem.
+>
+> So, copy_to_user() and copy_from_user() are always inlined macros.
+> The simple_write_to_buffer() is not. The question here is how
+> the __builit_object_size() will behave on the address given as a paramete=
+r to
+> copy_from_user() in simple_write_to_buffer().
+>
+> If it may detect reliably that the buffer is the size it has. I believe i=
+t's
+> easy for the byte arrays on stack.
+>
+> That said, without proof that compiler is unable to determine the destina=
+tion
+> buffer size, this patch and the one by Markus are simple noise which actu=
+ally
+> changes an error code on the overflow condition.
+>
+> The only line that assigns NUL character might be useful in some cases
+> (definitely when buffer comes through indirect calls from a heap, etc).
+>
 
-OK, that's fine then.
+I believe it is still necessray to use buf[ret] =3D '\0'; intead of
+buf[count] =3D '\0';
+If you argee with this, I send a v2 with just this fix. Thanks.
 
-> 
-> Maybe someone from Qualcomm/Linaro can explain this further if
-> necessary?
-> 
->>
->>> +
->>> +  power-domains:
->>> +    items:
->>> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
->>> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
->>> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
->>> +      - description: Titan Top GDSC - Titan ISP Block, Global Distributed Switch Controller.
->>> +
->>> +  power-domain-names:
->>> +    items:
->>> +      - const: ife0
->>> +      - const: ife1
->>> +      - const: ife2
->>> +      - const: top
->>
->> Uh, not your fault, but who came with this list in previous generations?
->> Instead of simple and obvious "top+ifeX" which allows growing/shrinking,
->> someone put "top" at the end which means this cannot follow same order
->> as X1E for example... Heh, it follows at least sm8550.
-> 
-> Shall we put top as first power-domain? I don't think it's an issue to
-> change the order.
-
-Well, it matches sm8550, so I am just grumpy complaining. It's fine.
-
-> 
->>
->>
->>> +
->>> +  vdda-0.9-supply:
->>
->> There are no dots in property names. Are you sure these are called
->> VDDA_0.9 in the device datasheet (not schematics)? Please look at other
->> bindings how this is being named, depending whether this is PHY or PLL
->> supply (or only PHY).
-> 
-> The following power supplies are mentioned:
-> 
-> * VDD_CAMSS_PLL_0P9 - Camera SS PLL 0.9 V circuits
->     (not referenced in downstream kernel, connected to vreg_s5a in
->     schematics)
-
-So that's vdda-pll-supply
-
-> * VDD_A_CSI_x_0P9 - MIPI CSIx 0.9 V circuits
->     With pad names VDD_A_CSI_0_0P9 to VDD_A_CSI_3_0P9
-
-vdd-csiphy-0p9-supply
-
-> * VDD_A_CSI_x_1P25 - MIPI CSIx 1.25 V circuits
->     With pad names VDD_A_CSI_0_1P25 to VDD_A_CSI_3_1P25
-
-vdd-csiphy-1p25-supply
-
-
-Best regards,
-Krzysztof
+> > > NAK.
+> > >
+> > > This patch is an unneeded churn.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
