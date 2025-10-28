@@ -1,221 +1,209 @@
-Return-Path: <linux-kernel+bounces-873867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16614C14F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:46:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD23C14F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3977C189AF4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:45:51 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9662C354242
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4834F334C3A;
-	Tue, 28 Oct 2025 13:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31850335075;
+	Tue, 28 Oct 2025 13:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NpHopJG2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AM/pnHqp"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020091.outbound.protection.outlook.com [52.101.189.91])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44100335094;
-	Tue, 28 Oct 2025 13:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659114; cv=none; b=cQs5Brw5FAKcte8sP70cQ1jRHXNKJjMQ6W7NXAGRewAnT+d+hRFKchuwWUQ2vj78dAalEIwyisuQl0JM+PdK2skC3xGLMusWObCsjQVXfoZXXxvd62w+EpAQty0xQQ6q3j5wcrRd1tKiXicfNBcVF+ft8mL5bX6kqN1wHrsIrf0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659114; c=relaxed/simple;
-	bh=uQhSAlEHEPiPgASelFdHu++LY6iEZ6HEiRIEWHa7QT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gtZhek73NzZ9owcK7B1fsGzYSn/fqMxlCJAE89KpzHDPLbeTDPqnEFDEJwXmENTsC0LFn1A25CD4W3ullU8z0Twz5u8o8xljoAkIUx1O9rxLWZSxpoNoNAAkVEMGw6XyXyu7Lb1TNPid/iclPbkaGGzHPH0V8Oq6McKXNphcd7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NpHopJG2; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761659112; x=1793195112;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=uQhSAlEHEPiPgASelFdHu++LY6iEZ6HEiRIEWHa7QT4=;
-  b=NpHopJG2uoFtqnDJWvDcb5k2td/m5hlFv0VxPckdz/pVAEijsSwH17vD
-   HYq4eJ6JJnK4zDvqkj7Dl1aHOIkwTwYiH9OZCRBbiBBRbOawwQBTlb9qV
-   gr+d2aVL1MYYHflgdDxwnfaXYmIqPi5szQdCuqhBySnnm50rMp31pte1/
-   X75BoX+ydfYOYyq9viN/PKuvQe1exhgalhGnH8aorX7avm9CLcP1ZXbWr
-   ++0H6coUTqszSk4BuRKj//afrbVbDeCBrkyFUITOb70YFOdIoEfPgPiYQ
-   S4oSoG5tNR/N0/LnaOcgVBZrT7LndyXfuGo8G3RzOPsAC7Aq3IeHAEEjs
-   w==;
-X-CSE-ConnectionGUID: zZ8h3UEgRvmQBGZKvwO9Dg==
-X-CSE-MsgGUID: mzQXdYChTdi6WxhrzE7IZA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="51331899"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="51331899"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 06:45:12 -0700
-X-CSE-ConnectionGUID: 76nnSBjuSTWUBXSnc3REyA==
-X-CSE-MsgGUID: OYJqKwtZQ8CpB1luTm97tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="184977725"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mnyman-desk.intel.com) ([10.245.244.148])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 06:45:09 -0700
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-To: uttkarsh.aggarwal@oss.qualcomm.com
-Cc: mathias.nyman@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	mathias.nyman@intel.com,
-	wesley.cheng@oss.qualcomm.com
-Subject: [RFT PATCH] xhci: sideband: Fix race condition in sideband unregister
-Date: Tue, 28 Oct 2025 15:44:51 +0200
-Message-ID: <20251028134452.244096-1-mathias.nyman@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <51ca2248-5699-4c6d-b037-a57c90ed44ac@linux.intel.com>
-References: <51ca2248-5699-4c6d-b037-a57c90ed44ac@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE76830FC3C;
+	Tue, 28 Oct 2025 13:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.91
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761659104; cv=fail; b=fkAyg6WbPy3dvaUiURfzFpYTcT+URnCMPdyAzNkXkqeCfv/6byAYZc44FDvru991hEABuIXObvC5qTpv7hy9GdXQlC2Ni8Vy2Sg3WF3JCcWXCcIkT2ViYOVX5ROdoF7YQlURkwY9oZVsI8qLLY4S3iHJYrEuSAQEgDOTD86zSWQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761659104; c=relaxed/simple;
+	bh=uLSOCeikEQUaSujYiC2+2oR+8igbDdCQkN4JScG+avY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HC1QmoUtqrZS1Nbuluumqqc6NzCOjGGev3b8N73JUr4KHh+14DcTOGP8K/K6+2t48VV2JDan+zUkKx//yn2gPCApanfToOJfkzzXxDVeHtgfMYMlY6Y61cB3LOYXq+Kwi1l0X7KWoiuRUwiUQDeMaE7gSLSCKTHWqdqcR4yhjuI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=AM/pnHqp; arc=fail smtp.client-ip=52.101.189.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GTZsG7z1IilAXqe9f6QhzHg1Vs8L/PXZy9laaU4g4jA2qsXKnDuVAosHRc+BmoCLSqvHryXlHWi3BzuKzcOdJk6gscr+X6mfw+FfV1pYlE1SejaanZOaBa4STP+jDinnKCFWB+kdk14GzVoTZmFkpEWI/IX9DuKLy9hFslY+nkgzSqYmfiF7HzYvkqH914ffHC4tQ2tcSKjZv1mom82hUxb1p4Zz/NNVCu6SaV1AI4kJsq8YTiiWwRZf49SHTZyPSm/fVl9biZwXTfjEi0efusGC/2zh7C8pjoQhDYmUbv2LK+ue6jbDV2DoWlpfHjs7tE8MCIAuqgUePyJyTVkr6w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NUe2MhJ10+D12UJ287UAFiv43P6keFhcdqsbMqI/nWU=;
+ b=k+0PRpANl3M0mnJRduCfpOxtLFejnwOpcloXY49svbbbZIvO1QrflA+8hdvJseLMNj0FhimwvPlnXm4SzXW6kcx3nKJwDj8EharGNEZGQ6VXMSf4lr2/7PL2PAAvQZAJ8hmpeKCPRb5WWkg0FLFZ5dXPnF/rB5tWmpWm1KZTd+pW1VhN8HC6L0iBWtE7uga3fv4KfMeBhXsQ5yi/nUy8WB6JHthVoTfkYeJ2aPZF80GqKKmtSXpbs9nz23sEcGghDZotBC7mTT51uMBMNOuceLUb7oul0Sy52OeKinRkwB48BM5Tuxxjdp4vP+kkgD37bGdwWhl0+r56+lMUUv+H0A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NUe2MhJ10+D12UJ287UAFiv43P6keFhcdqsbMqI/nWU=;
+ b=AM/pnHqpdVGvg7bLruXrrvbF8TJ1XfO88uOuy+fRxsBu0q7ObS77fHvX/ohYIn2YV1zs/HLLyEgarmmYOuEkOQaApu7VUgOmizop5IMzQhcfH0HgFr1eBL/9/lWYAsDjGU+Q8BApCn0lOF06++VC9FxSNBe+/XIXUzmwJ8N0mMgA7CWEtie30FjPBBYncIbkxXxnh/u5IEpKLCHOK/XGd3vz7udnnkG2p6OzV9yAxINPxmZl0CzDvCCyNnp8gGrM+hWnKyy0ZTr8LrySDPd5LKz67ndtAXs1TYLcZEbwL8xSdwDfVcJb+TgeMeXVAbCg5HJ+Fgxvq1mDjf7CCCgAzQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT4PR01MB10358.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:e0::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 13:44:59 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 13:44:58 +0000
+Message-ID: <f5367784-d2fc-4c44-8757-722c4f87a690@efficios.com>
+Date: Tue, 28 Oct 2025 09:44:56 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V5 02/12] uaccess: Provide ASM GOTO safe wrappers for
+ unsafe_*_user()
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <20251027083700.573016505@linutronix.de>
+ <20251027083745.231716098@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251027083745.231716098@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0223.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:eb::15) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT4PR01MB10358:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f833765-939c-4500-ea6d-08de16282f3b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eDdQTkxUT2hxT2g3V05tbE9ZYWxsUXkrSVVteHQwdGhsZXE5NWg5UUY0T2Iv?=
+ =?utf-8?B?aFJPK01MRHhVSmdYOEZDbVJGQVdXQ0FadlBQbFg4NXovNlJ2WFVhaVg2aFlm?=
+ =?utf-8?B?VEdqWHFIeTVhVktVRTFQM1RhelRoeEkrRndJWmV3aFluMnRkNlpLMC9WV0RI?=
+ =?utf-8?B?TU5oK2VzM1d2N3pSNkoxWDVBUW9INEZNQS8rMWdPTGpHZmlseFJTWUp3ZGJI?=
+ =?utf-8?B?R0RKQUNrQlNSTlh3YnFrb1cwbmtYVXczMFMrOUh1TWtPQVV4Mi9YYUlucE9x?=
+ =?utf-8?B?Q09TeXZGVHk5UEh2MFRmK0NzUGVlQnROeE9lMG5Ia1hyMi9jS0RQcnEzR0hk?=
+ =?utf-8?B?VW9kS29ZWERFTHA5S2xrT0JuVlg2YTJvS2FvN1JVbHZKOExmenhRNHdUYW9j?=
+ =?utf-8?B?ZVhqWmNSNUpHWjNSTGdVQjlWMVRSdEU5MDdqVmlyMWo3MmNleTFVUTlUd09j?=
+ =?utf-8?B?UElnS1V0YUJkZU9ZS3VlQzJHNmh5WVdFY0dUTXlNN1dSUVd3RUNRRjNBQVNZ?=
+ =?utf-8?B?NlQxeDNCRi9jNWZaK1prZlVkTDM4V080S2NrMzdINGcyaGg4RlY4eWg4TVdu?=
+ =?utf-8?B?ZVB5bkpqMzgvWG1aa0tNRkthOXIvci9zZ0ZxVFJabGJhRWFkYWZ3OUl2Z1hC?=
+ =?utf-8?B?YTBDVEI3eTU0ZFNxN2xPeUNJUGxyTVMrWk5STUlkUm9pd0RHTlA5WkVLVDdW?=
+ =?utf-8?B?ZXF6VDdiMnd1T3FiTFJ4M1FUZ0pDYy9lZFNrMXRCVVBWMXUwaGV5UDNTazVM?=
+ =?utf-8?B?OERFeFZIdlZobkxhVDVOT3VaQnFIMHpia2w0NTFVa2xpWWw1OG16UU1qU2hX?=
+ =?utf-8?B?dmlCdlRTRkdjQ1R3RUtzb0lBbFc0U1pyODZuMlVxSnRhTGdLcjZZempCQVdC?=
+ =?utf-8?B?eWtpbitEcmNFaXVwQVpMV05GRWFQcUt4UkwvbHc3N1FlR05aK0luYU1WdGhU?=
+ =?utf-8?B?cFQyNzczeElJZW53NW9PWmNWZ3BWdmo0SDdiMWxxNDVOL2N4eFNRcDgvWTFG?=
+ =?utf-8?B?N29vcDJ4WmJDYTEwVU4zaW1pOTlTNTJLa2p4dUgvOGVRaU1LWkdBNjEyNmwx?=
+ =?utf-8?B?N3MzVld5bFk1ZmFPVUlDeUhDaW5rdGZ6dDR0WVduRlhaOVgrc3BpTFh3M3Rm?=
+ =?utf-8?B?ekh3UW0xNU0xekxScWVPcy9nT3MrdDlKM2Q4OXdBQ2VXM1RZRlhVaElvRWlq?=
+ =?utf-8?B?blpwYXp5bEJFSVFma3k0Z1g1N3hhNWN6dm91QTJXMEk4ZlhTZUVTakpWQm42?=
+ =?utf-8?B?YkVlQkdIdUlJTkIxY1dLNDgzaVVnd2NqWkFLelgvQUZQR0VUaHFPR2NIeEZx?=
+ =?utf-8?B?RlFTY1VKSlB6ekpyMXlMcGFVUjdQaTBTM3ljbHpvVUwxdTNaL2JUcGJpUXpJ?=
+ =?utf-8?B?bmx4RW56N1JlSmZPTWVMbGl3RDZoZGRaU2NvTkMvR3JRS05FM0dCQXVkZnBa?=
+ =?utf-8?B?M09yZlQzdGJ3ZUhoWVNpRDdDN20zL3dydkNRaXZCV3R2N2oxWURoUU5XMkJx?=
+ =?utf-8?B?ejFFeHdjNTdnbnZFSWQ0dTAzb2pheTFSdngvTVBVVXB1U3FHdURTZjVoSVdI?=
+ =?utf-8?B?L1ZCRUJFajg2Q1c4ZkhhR2VkNlM1dGtsQXNHRnF0Nlk3WU9CSjJ3aG9rNWlJ?=
+ =?utf-8?B?ckg2VEppL3JUTXExVkJTS2gvdklrM3ZrK2VUcW5zMTlmLzlVTHRqeUNSRTds?=
+ =?utf-8?B?Mit5Uy9xZ3I5WThsY1p3Ylh0SDV0UHI5RHdkVmZoNTdsMnRzQVppQUhoR1U0?=
+ =?utf-8?B?UzJTa203L012QWFXLzcrZWcrL3ZhV3ZhNXJpSEdLTzEzVjR5V08xeVlUTFVn?=
+ =?utf-8?B?OUw1VTNUYm9KV1Frc1hoYWhRNmE0UURIU0N2Qk1MK0tmckpGeEh5dmw0T2lz?=
+ =?utf-8?B?WGJsaDdtakV1ZHV6YmQvZmkvV2hBV24vUml0RGw0V3hKMEE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?R2dTY282Vk9ZK2tvdktzaHkxTzVBTWp1c3VJTmJtam5VUEcvMUs4bk5vcGdj?=
+ =?utf-8?B?dFVCMDRuZy81bzlZSlFlby9hckZ5RnpQb2g5SXV5TzVselUrbElZRU55ZTFv?=
+ =?utf-8?B?T2dISjZuSUcvc1RUaDlwUjdvQ1Z1ODJQa256cWhscGN1dXlwK21ZNUl1SDFR?=
+ =?utf-8?B?Tk9MU2d1MjZTYWJYVFJBWmtyS25uT2dIOW1Gczh3aVZ3c0d3R2syMm5GZ0pt?=
+ =?utf-8?B?ZTd3OUdsTDhyKzFsREQ2dzRFcG5BRUhWRkxZUmVORnF0VmlJbTA0d1FVYXVp?=
+ =?utf-8?B?cTR4dm5KUVBVTXdFVExmdVpzRGJvWVg3eWh6VVZlNUloTEZTaFRvcDFpRWQ5?=
+ =?utf-8?B?ZjZqSUlBUUljYmI2WFRsL0U0R1FnTWpnNGVsK2xBTTloTEYyN010STB6WVd6?=
+ =?utf-8?B?SlVWakR2MFQ1RE9UUEtzamZINlU5SEpLYklaZGtUSUI4WGw2RzN5bmZjU3BR?=
+ =?utf-8?B?d0hyQy95L2dMTXZUbzZVOXMybVAwY3hlQ21icEhobThXc3NraHNDUCtJc1FO?=
+ =?utf-8?B?R2RXOWtTaHFTNjJuVjB0UnVpZVhMN1UvSzhXeXBNalhMTTZBRFZLWnFFMlBY?=
+ =?utf-8?B?dFV4YlBVYmdxK21ha1VoRjBZYTRLNzVuaXhhbDNRWjhvZVQzeFVnTGZXN1NK?=
+ =?utf-8?B?RW5jQkJnQ2MyL0JIMnMwaHo5VlFxdkkvYXlaQVpPNGN4Z3M1WU1Xbmp4YjRU?=
+ =?utf-8?B?cmtUOEZjQUliOXNia25PaUVxWkRXTDBQdmRwM29uK09CazM0SFFzOFhoY2FX?=
+ =?utf-8?B?UWxCbzRBZ3JQS2QrSHJWTjd1UmlFRVRsNlJpQkM4QTRHNmNORGZnRldsVmp0?=
+ =?utf-8?B?bDRIb0RlUHJTWTg3bTVzSGRCWVJhbHh6TXk1SlU2VmN2UXM2S3hBYWNqMmtv?=
+ =?utf-8?B?V0xDejBqb0RaanM5ZExINDNJQklqYkJ1ZkNPSnZqK3ZTMDhZVWJmbTFRWGx6?=
+ =?utf-8?B?SEdUS1JUaVp3Q2djaS9FS3JLbVF3Rml6ZjBqcnhhQlNJZmFHdFhwR2ZwOUQz?=
+ =?utf-8?B?VEJQRWRldWJIS3R4ZCtVNFlDWDhvaWg2U0RxaWxWR2UzV01GL2ZqQndxS2RL?=
+ =?utf-8?B?ZGsrMmRkTEM4VEtyTzZONCtUdmJBK1ZyNmhWWkhWekFCcHdZRWN0bXpQSlRQ?=
+ =?utf-8?B?VmhGY3hyeUViOHNRV3FkMUcyamlwS1NiTXk5QUdKRHZENWhYNkZYT3NtQjds?=
+ =?utf-8?B?Mm1uRkc2dFRWR3IwRVZoUXpSOStRa2hCTG5sRDJnOE1XZDZta2hNaEJaczBn?=
+ =?utf-8?B?ZFpwRC8wMDViTlp1cFV5SzZ0azQvcXdIMkt6Z1RtMGovODJNam5ZMWNaSGVy?=
+ =?utf-8?B?WGRoQnh2bUZHMEU0cG4zUUc2Z2hWQy9PcktDTk5LTE5ZQ0F2YWZLRlFpMXJR?=
+ =?utf-8?B?QmhtM0NqQ3BIMWFKS1BtZS9udmNGcEYwanJVMDRaVk41Z3ZuZkM3S3Rxa004?=
+ =?utf-8?B?eDUySFVGOFVrU3U0NC9zQTRmUldjUE5icTNhOEQvRTZxTGxsVWFHNDJaVFZh?=
+ =?utf-8?B?dHRyMVJyM09RMzNITWtvbzFYUHpraU52ZFE5Uzd3UExITDZWNVZuZ05odTdL?=
+ =?utf-8?B?WXhUY3N5QTdsNlRvYUVjNlVXWmVJaWdYcnZpWUhxdkdDUmRzMkhzcFFZUHNP?=
+ =?utf-8?B?YUhmV3FnSGlaTjRwbVlHWnk5ZXV6c3FiYXVnUDVYOW9SaWJRbEt6VXNxOTRH?=
+ =?utf-8?B?T0syWm56T29CN1VBT3ZjZ1d6YmlYWjE1OVpxQ05sdDRYOWZoVE1jSGpTNWsw?=
+ =?utf-8?B?cy9tWW5MSzJ1dWNNdnlaNlFlVVc5QWd0b1VyenlMSEJ5aGh1YkExeVhSMlhC?=
+ =?utf-8?B?ZFFlRUVyTm03SkR5S1RXLzZZU1NJdDZYWFN3TWhNcXR4ajBBYUxZcHo0Mllo?=
+ =?utf-8?B?WGVZMWNUNW51cVRHY0R3ZmR4M2NZRGZTaFVMUUlFSHRlOHREVWdSY3llZFc1?=
+ =?utf-8?B?REZsb0pKSDR6dDR3SGVLNTg5enRUY1BJbHMvQmJhVEJzaE0rNVdwSS9wY1cz?=
+ =?utf-8?B?V3JVSDlFcTdib09qZFBmdGdsamRKZlJpMC9mbjRoalU3VFdlSUZVTXhVMHdY?=
+ =?utf-8?B?bk9EbFdvOWlobVVOY2dXNDdLWnBVKzMyMFk4L1JVS1pxdUFKWDltSUkyT212?=
+ =?utf-8?B?R2Y5MHprTTZJd0xub21JQXkwNGVneHV0NUx0d2dSSVc3RTlWTGsyNk5LdExB?=
+ =?utf-8?Q?7XN6t+OlcuKnzA1BELiRP1E=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f833765-939c-4500-ea6d-08de16282f3b
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 13:44:58.3273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hgm1zKowPNuHbMdJiKUjwvrt3PiLoLC+cuVd5/GlMvw3YnLOrkYke/MpFsX9M3C8HbQMwBzChjLCv3pVF2NbjxozWLyhMAdfw5mjtneMDfU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT4PR01MB10358
 
-Uttkarsh Aggarwal observed a kernel panic during sideband un-register
-and found it was caused by a race condition between sideband unregister,
-and creating sideband interrupters.
-The issue occurrs when thread T1 runs uaudio_disconnect() and released
-sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
-the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
-a crash.
+On 2025-10-27 04:43, Thomas Gleixner wrote:
+[...]
+> + * Some architectures use internal local labels already, but this extra
+> + * indirection here is harmless because the compiler optimizes it out
+> + * completely in any case. This construct just ensures that the ASM GOTO
+> + * target is always in the local scope. The C goto 'label' works correct
 
-Ensure new endpoints or interrupter can't be added to a sidenband after
-xhci_sideband_unregister() cleared the existing ones, and unlocked the
-sideband mutex.
-Reorganise code so that mutex is only taken and released once in
-xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+correct -> correctly
 
-Refuse to add endpoints or interrupter if sb->vdev is not set.
-sb->vdev is set when sideband is created and registered.
+Other than this nit:
 
-Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
-Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
-Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
----
- drivers/usb/host/xhci-sideband.c | 55 ++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 14 deletions(-)
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sideband.c
-index e771a476fef2..c308be9a8e9f 100644
---- a/drivers/usb/host/xhci-sideband.c
-+++ b/drivers/usb/host/xhci-sideband.c
-@@ -86,6 +86,22 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *e
- 	sb->eps[ep->ep_index] = NULL;
- }
- 
-+static void
-+__xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
-+{
-+	struct usb_device *udev;
-+
-+	if (!sb->ir)
-+		return;
-+
-+	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
-+	sb->ir = NULL;
-+	udev = sb->vdev->udev;
-+
-+	if (udev->state != USB_STATE_NOTATTACHED)
-+		usb_offload_put(udev);
-+}
-+
- /* sideband api functions */
- 
- /**
-@@ -132,6 +148,12 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
- 	unsigned int ep_index;
- 
- 	mutex_lock(&sb->mutex);
-+
-+	if (!sb->vdev) {
-+		mutex_unlock(&sb->mutex);
-+		return -ENODEV;
-+	}
-+
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 	ep = &sb->vdev->eps[ep_index];
- 
-@@ -317,6 +339,12 @@ xhci_sideband_create_interrupter(struct xhci_sideband *sb, int num_seg,
- 		return -ENODEV;
- 
- 	mutex_lock(&sb->mutex);
-+
-+	if (!sb->vdev) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
- 	if (sb->ir) {
- 		ret = -EBUSY;
- 		goto out;
-@@ -352,20 +380,11 @@ EXPORT_SYMBOL_GPL(xhci_sideband_create_interrupter);
- void
- xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
- {
--	struct usb_device *udev;
--
--	if (!sb || !sb->ir)
-+	if (!sb)
- 		return;
- 
- 	mutex_lock(&sb->mutex);
--	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
--
--	sb->ir = NULL;
--	udev = sb->vdev->udev;
--
--	if (udev->state != USB_STATE_NOTATTACHED)
--		usb_offload_put(udev);
--
-+	__xhci_sideband_remove_interrupter(sb);
- 	mutex_unlock(&sb->mutex);
- }
- EXPORT_SYMBOL_GPL(xhci_sideband_remove_interrupter);
-@@ -465,6 +484,7 @@ EXPORT_SYMBOL_GPL(xhci_sideband_register);
- void
- xhci_sideband_unregister(struct xhci_sideband *sb)
- {
-+	struct xhci_virt_device *vdev;
- 	struct xhci_hcd *xhci;
- 	int i;
- 
-@@ -474,16 +494,23 @@ xhci_sideband_unregister(struct xhci_sideband *sb)
- 	xhci = sb->xhci;
- 
- 	mutex_lock(&sb->mutex);
-+
-+	vdev = sb->vdev;
-+	if (!vdev)
-+		return;
-+
- 	for (i = 0; i < EP_CTX_PER_DEV; i++)
- 		if (sb->eps[i])
- 			__xhci_sideband_remove_endpoint(sb, sb->eps[i]);
--	mutex_unlock(&sb->mutex);
- 
--	xhci_sideband_remove_interrupter(sb);
-+	__xhci_sideband_remove_interrupter(sb);
-+
-+	sb->vdev = NULL;
-+	mutex_unlock(&sb->mutex);
- 
- 	spin_lock_irq(&xhci->lock);
- 	sb->xhci = NULL;
--	sb->vdev->sideband = NULL;
-+	vdev->sideband = NULL;
- 	spin_unlock_irq(&xhci->lock);
- 
- 	kfree(sb);
 -- 
-2.43.0
-
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
