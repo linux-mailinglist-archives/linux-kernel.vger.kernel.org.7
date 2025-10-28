@@ -1,161 +1,252 @@
-Return-Path: <linux-kernel+bounces-874203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C9F1C15C2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B6BC15C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410BC1AA4F6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:16:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2F5189A82A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD142348467;
-	Tue, 28 Oct 2025 16:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A000133EB07;
+	Tue, 28 Oct 2025 16:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="NeHsIFwW";
-	dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="2vHSlY3r"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Inie8l0R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E82A33A024;
-	Tue, 28 Oct 2025 16:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD4E331A4A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668062; cv=none; b=gPYWDXEzF1MjszI9ANPgBigmB1zeAkVRqg6VxTJ3ANENPvwBIzexHMgf42EeEAEazgyULicjvUyAmRQ/KYvGWwbeBro8viTu+tM9uG9Zcx+DL0qQU5sAu1SIJQsAbXFJHyph0iKFALJvGKipYzydw3dQYNY9fg7i/5IzKBAdl4c=
+	t=1761668036; cv=none; b=LIV6FQYj8tuzWBts9Oiv4Lg74H9suER8K0oldY4n6hYuCbs5UQywqrV9exxpT5VTx+NuzjhCnn/8rgHprP40uXO8JXeY1bCd1MZm/ItWSSjVVXJJPGs4eCuXRjhHZSIbfRTjF8g/5dwNvx302Cf+76WajD7jd0Ka+Cbnp5tk9AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668062; c=relaxed/simple;
-	bh=MUfAw+CEWCmi/k34obocl0dnwHMT1lqx/Pq21CoUC58=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=d59fS1lDWQg6AiDouJLQgnnWvq3KBet4/mmd7nqbk2PT3IbZ+/Zif0666sQ2V3emKwm9VoIHjuU8gw2ClXbU0iQNjgob+aO7qHOslV0In5JLDYrLLn/QvS7iffDo6F8i+5GL215fQWFQxHX046hI8TWyERIXyTIg5s4Z68U3iRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=NeHsIFwW; dkim=permerror (0-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=2vHSlY3r; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-DKIM-Signature: v=1; a=rsa-sha256; s=202507r; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1761668024; bh=UzHugUE4P/e8xKLy23qcD4u
-	xe9eMeMh43cCYTpyYyXk=; b=NeHsIFwW9HcKT0PR4KovvtWCrYAFj63P1CQq+KM0wBuwKHJ5YW
-	nWJktFL5JBL7S/76aXRnRV+3+KHAhknUa0QsFGp41XdcxXd+PlIi2JOKLcQvkLtNt4TDK2W+61X
-	xFL4gXZZesOUbuzj869KNplBcwIREFtXdtm2BLGIdxzn7F4u0GjzA1al33s8oAwleP/6yCRI0+Z
-	xkIVNNlnMgn2VBepKK1iS1Si1hg8OZJja2qJSjTLvTOZBv4ZVsv8Tdm/4qN3CZV306wvS0u7/YU
-	C6PTL18jNUjP7pe70oOtLDgrSsnACgfu7Bgy/liZQZ1b8zOXnWuD0L+Tx3JNRX4lSWw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202507e; d=mainlining.org; c=relaxed/relaxed;
-	h=Message-ID:Subject:To:From:Date; t=1761668024; bh=UzHugUE4P/e8xKLy23qcD4u
-	xe9eMeMh43cCYTpyYyXk=; b=2vHSlY3rAlhU8iqQUTFYwhYRHXGUycY6tXgFrOeMabXEq5stL0
-	eYM9qmvrDFltdpzU85Os568J2jbmN2K01QAA==;
-Date: Tue, 28 Oct 2025 21:43:43 +0530
-From: Piyush Raj Chouhan <pc1598@mainlining.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org
-CC: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_2/2=5D_arm64=3A_dts=3A_qcom=3A_sm815?=
- =?US-ASCII?Q?0=3A_Add_support_for_Xiaomi_Redmi_K20_Pro?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <ccdd5d44-2382-44e9-a56d-cbc5da23b13f@oss.qualcomm.com>
-References: <20251022054026.22816-1-pc1598@mainlining.org> <20251022054026.22816-2-pc1598@mainlining.org> <ccdd5d44-2382-44e9-a56d-cbc5da23b13f@oss.qualcomm.com>
-Message-ID: <5C7DC3D9-8DBB-409C-8672-6388EE01C320@mainlining.org>
+	s=arc-20240116; t=1761668036; c=relaxed/simple;
+	bh=BiRQH6wQneeuEFAtj7/AZRUajcc/8rS/qi1d4KyuDvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LCENGFwyLpuQlgM8WLBpHl6GnNkqUBD3c72fyK8k8XgG4juDY51sqc0+hlLpFyL4OAIfhMeuvD8BDUbW2bmWc3y97C49tiKaAayB9ce0HzUudP8TGxs9EL8t37Gt3+nHmJmJ/ioKhF4EQC2vt4kYFaX8WXB+ELC7RbrEqdFLcyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Inie8l0R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761668034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=KvvpFK250LHbofQ0y9+Mb287YMhgXcSSFNTTgJ2zzcM=;
+	b=Inie8l0R9zFnexBGtdO0fRU5uVH6xtlCepoU+rXCgLNJwDgYenPkZb1H0UGoWJa5D7156z
+	KvjZIHgPwyttfmXQa0556W3c/H6QQkyIDy7R3TIl4tUbXe/9OGdvTMkTqwW7Q7JC6LDOBn
+	HiW9vaBNY6Nsu3opgI5t5S4JrAL2lQc=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-315-GnufGNZFMf6WG1nkSPTLyQ-1; Tue, 28 Oct 2025 12:13:52 -0400
+X-MC-Unique: GnufGNZFMf6WG1nkSPTLyQ-1
+X-Mimecast-MFC-AGG-ID: GnufGNZFMf6WG1nkSPTLyQ_1761668031
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-471001b980eso39412125e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:13:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761668031; x=1762272831;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KvvpFK250LHbofQ0y9+Mb287YMhgXcSSFNTTgJ2zzcM=;
+        b=GA9Ou/FTfCYSKV1ESzrI9CI2K6mZtcRQZCKMDYzlBpzjUyHYs5l1bSbAQTfvVwgeq+
+         O/hGlnug5R88B1RMH+4OWwQ7A8ofInqP+fSF0rW0Nk2oANBuRO0+ry2jCJ+Bpo8Bnmqe
+         xpvzRQBWtGwoISE7vH9STKc8af5tLnCaI0hVdbjuOX6Uh+PtXTOV/+VG5DQmLHVt0MRp
+         2rPUEKfXdYpPO9AxPmO7Dyvkv1lK9wtCQoJ8PqpuskJH7E1FThbeQCE451Ap9YCwnxIT
+         +AqcsgTBpeoAFHTLWh7bV3z61APe9PTzQJYR+A31bxUJt8X2PFPNkZ+dMyB0m4nmYavs
+         4hKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+zQNe93n7Rl9oWMDM751NhnlCZZdjBvipyihLSlWtXADP0bCvybs3QKGESeQIwSdq0RZPdUy5oYMSHWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvOITHjEfSbtXDtuj+tXf++vlUiFSOmNKFb0GKnYI8Sv6Jnw6v
+	in4hoE0gzIUCv4mNWP1PcgXujMp3PyMy6zNjxd3Ws3FDavqiaaGzD7eGaWM9naYzPu5A/nOOLR9
+	yNz1Ol4AnIEsiNpVpx9/bH3j+Hy4UZuSZaogRRRm2aoPFGsMM7qo8u/JPFfCYLwjfLw==
+X-Gm-Gg: ASbGnctEO2MWOV9pPcj6/qiZXYMAgqwvLcetMB7Be8SAptoP5ZvH9VFZe3i5dqIVBcK
+	VNxphAgp8YHzRaOMuVT+DMbt2Ll+a+oIHG8h+R9907JJgrJAbxrWJ495LwZHYB/Cndx834ZD6ZD
+	QiQPUmXMd6nd74yAPOjjfG7ao+3lngBeWHxtT7Tfy56R6/QLN4cPZSVdlnhDcqDjASbm4XF3zOY
+	ZpDwSuaAq+2s81LBxvXdHkCsvmowe6JmME05ej/txqAK/9uGllm9D6RBItPzw0UEj0wgzvZgv2R
+	mejG7A8c+cm0ZvFFgHoOMAp60biGBbISyEuNiziCV6RGt2M8L7OlmavDIKSAe2BT7WOWx731Zrn
+	j83Z0SL+ol7f6qop/47luvJtFVLWW6Nzw
+X-Received: by 2002:a05:600c:3b27:b0:475:da13:2575 with SMTP id 5b1f17b1804b1-4771e1ab8a0mr264345e9.35.1761668031176;
+        Tue, 28 Oct 2025 09:13:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHYLMRn+FNd6v1pe6gevrEN6O2ueeH/AKghCdZ+vk7Py4/AlR9hq5U2B0FyPXLgVOsHfXK9hw==
+X-Received: by 2002:a05:600c:3b27:b0:475:da13:2575 with SMTP id 5b1f17b1804b1-4771e1ab8a0mr264115e9.35.1761668030728;
+        Tue, 28 Oct 2025 09:13:50 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db80fsm20703850f8f.31.2025.10.28.09.13.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 09:13:50 -0700 (PDT)
+Message-ID: <c1c9aedf-fb1b-47c8-8204-dbc28e9da4f3@redhat.com>
+Date: Tue, 28 Oct 2025 17:13:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: hugetlb: fix HVO crash on s390
+To: Joao Martins <joao.m.martins@oracle.com>,
+ Luiz Capitulino <luizcap@redhat.com>
+Cc: osalvador@suse.de, akpm@linux-foundation.org, aneesh.kumar@kernel.org,
+ hca@linux.ibm.com, borntraeger@linux.ibm.com, mike.kravetz@oracle.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org
+References: <20251028153930.37107-1-luizcap@redhat.com>
+ <50d815a1-8384-4eaa-8515-19d6c92425b3@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <50d815a1-8384-4eaa-8515-19d6c92425b3@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, konrad=20
-
-
+On 28.10.25 17:05, Joao Martins wrote:
+> On 28/10/2025 15:39, Luiz Capitulino wrote:
+>> A reproducible crash occurs when enabling HVO on s390. The crash and the
+>> proposed fix were worked on an s390 KVM guest running on an older
+>> hypervisor, as I don't have access to an LPAR. However, the same
+>> issue should occur on bare-metal.
+>>
+>> Reproducer (it may take a few runs to trigger):
+>>
+>>   # sysctl vm.hugetlb_optimize_vmemmap=1
+>>   # echo 1 > /proc/sys/vm/nr_hugepages
+>>   # echo 0 > /proc/sys/vm/nr_hugepages
+>>
+>> Crash log:
+>>
+>> [   52.340369] list_del corruption. prev->next should be 000000d382110008, but was 000000d7116d3880. (prev=000000d7116d3910)
+>> [   52.340420] ------------[ cut here ]------------
+>> [   52.340424] kernel BUG at lib/list_debug.c:62!
+>> [   52.340566] monitor event: 0040 ilc:2 [#1]SMP
+>> [   52.340573] Modules linked in: ctcm fsm qeth ccwgroup zfcp scsi_transport_fc qdio dasd_fba_mod dasd_eckd_mod dasd_mod xfs ghash_s390 prng des_s390 libdes sha3_512_s390 sha3_256_s390 virtio_net virtio_blk net_failover sha_common failover dm_mirror dm_region_hash dm_log dm_mod paes_s390 crypto_engine pkey_cca pkey_ep11 zcrypt pkey_pckmo pkey aes_s390
+>> [   52.340606] CPU: 1 UID: 0 PID: 1672 Comm: root-rep2 Kdump: loaded Not tainted 6.18.0-rc3 #1 NONE
+>> [   52.340610] Hardware name: IBM 3931 LA1 400 (KVM/Linux)
+>> [   52.340611] Krnl PSW : 0704c00180000000 0000015710cda7fe (__list_del_entry_valid_or_report+0xfe/0x128)
+>> [   52.340619]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+>> [   52.340622] Krnl GPRS: c0000000ffffefff 0000000100000027 000000000000006d 0000000000000000
+>> [   52.340623]            000000d7116d35d8 000000d7116d35d0 0000000000000002 000000d7116d39b0
+>> [   52.340625]            000000d7116d3880 000000d7116d3910 000000d7116d3910 000000d382110008
+>> [   52.340626]            000003ffac1ccd08 000000d7116d39b0 0000015710cda7fa 000000d7116d37d0
+>> [   52.340632] Krnl Code: 0000015710cda7ee: c020003e496f	larl	%r2,00000157114a3acc
+>>             0000015710cda7f4: c0e5ffd5280e	brasl	%r14,000001571077f810
+>>            #0000015710cda7fa: af000000		mc	0,0
+>>            >0000015710cda7fe: b9040029		lgr	%r2,%r9
+>>             0000015710cda802: c0e5ffe5e193	brasl	%r14,0000015710996b28
+>>             0000015710cda808: e34090080004	lg	%r4,8(%r9)
+>>             0000015710cda80e: b9040059		lgr	%r5,%r9
+>>             0000015710cda812: b9040038		lgr	%r3,%r8
+>> [   52.340643] Call Trace:
+>> [   52.340645]  [<0000015710cda7fe>] __list_del_entry_valid_or_report+0xfe/0x128
+>> [   52.340649] ([<0000015710cda7fa>] __list_del_entry_valid_or_report+0xfa/0x128)
+>> [   52.340652]  [<0000015710a30b2e>] hugetlb_vmemmap_restore_folios+0x96/0x138
+>> [   52.340655]  [<0000015710a268ac>] update_and_free_pages_bulk+0x64/0x150
+>> [   52.340659]  [<0000015710a26f8a>] set_max_huge_pages+0x4ca/0x6f0
+>> [   52.340662]  [<0000015710a273ba>] hugetlb_sysctl_handler_common+0xea/0x120
+>> [   52.340665]  [<0000015710a27484>] hugetlb_sysctl_handler+0x44/0x50
+>> [   52.340667]  [<0000015710b53ffa>] proc_sys_call_handler+0x17a/0x280
+>> [   52.340672]  [<0000015710a90968>] vfs_write+0x2c8/0x3a0
+>> [   52.340676]  [<0000015710a90bd2>] ksys_write+0x72/0x100
+>> [   52.340679]  [<00000157111483a8>] __do_syscall+0x150/0x318
+>> [   52.340682]  [<0000015711153a5e>] system_call+0x6e/0x90
+>> [   52.340684] Last Breaking-Event-Address:
+>> [   52.340684]  [<000001571077f85c>] _printk+0x4c/0x58
+>> [   52.340690] Kernel panic - not syncing: Fatal exception: panic_on_oops
+>>
+>> This issue was introduced by commit f13b83fdd996 ("hugetlb: batch TLB
+>> flushes when freeing vmemmap"). Before that change, the HVO
+>> implementation called flush_tlb_kernel_range() each time a vmemmap
+>> PMD split and remapping was performed. The mentioned commit changed this
+>> to issue a few flush_tlb_all() calls after performing all remappings.
+>>
+>> However, on s390, flush_tlb_kernel_range() expands to
+>> __tlb_flush_kernel() while flush_tlb_all() is not implemented. As a
+>> result, we went from flushing the TLB for every remapping to no flushing
+>> at all.
+>>
+>> This commit fixes this by introducing vmemmap_flush_tlb_all(), which
+>> expands to __tlb_flush_kernel() on s390 and to flush_tlb_all() on other
+>> archs.
+>>
+>> Fixes: f13b83fdd996 ("hugetlb: batch TLB flushes when freeing vmemmap")>
+> Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+>> ---
+>>   mm/hugetlb_vmemmap.c | 17 +++++++++++++----
+>>   1 file changed, 13 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/hugetlb_vmemmap.c b/mm/hugetlb_vmemmap.c
+>> index ba0fb1b6a5a8..5819a3088850 100644
+>> --- a/mm/hugetlb_vmemmap.c
+>> +++ b/mm/hugetlb_vmemmap.c
+>> @@ -48,6 +48,15 @@ struct vmemmap_remap_walk {
+>>   	unsigned long		flags;
+>>   };
+>>   
+>> +static inline void vmemmap_flush_tlb_all(void)
+>> +{
+>> +#ifdef CONFIG_S390
+>> +	__tlb_flush_kernel();
+>> +#else
+>> +	flush_tlb_all();
+>> +#endif
+>> +}
 >> +
->> +&i2c19 {
->> +	/* goodix,gt9886 @5d  */
->
->I see there's driver support for the GT98*97* - is there a chance you can
->reuse some of it?
->
+> 
+> Wouldn't a better fix be to implement flush_tlb_all() in
+> s390/include/asm/tlbflush.h since that aliases to __tlb_flush_kernel()?
 
-I am currently testing touch on gtx8 driver which currently is in lkml, on=
-ce its merged we could add support for it=2E
+Agreed, that feels cleaner and avoids this ifdef here.
 
-https://lore=2Ekernel=2Eorg/linux-input/20250918-gtx8-v1-0-cba879c84775@ma=
-inlining=2Eorg
+-- 
+Cheers
 
-[=2E=2E=2E]
->> +	connector {
->> +		compatible =3D "usb-c-connector";
->> +		power-role =3D "source";
->> +		data-role =3D "dual";
->> +		self-powered;
->> +
->> +		source-pdos =3D <PDO_FIXED(5000, 3000, PDO_FIXED_DUAL_ROLE |
->> +					 PDO_FIXED_USB_COMM | PDO_FIXED_DATA_SWAP)>;
->
->Have you verified this is in line with your specific device's
->downstream kernel?
+David / dhildenb
 
-Yes i have verified it=2E
-
-[=2E=2E=2E]
->> +&pm8150l_lpg {
->> +
->> +	status =3D "okay";
->
->ditto> +	led@1 {
->> +		reg =3D <1>;
->> +		color =3D <LED_COLOR_ID_WHITE>;
->> +		function =3D LED_FUNCTION_STATUS;
->> +
->> +		status =3D "disabled";
->
->?
-
-Raphael doesn=E2=80=99t have a white LED=2E I missed cleaning that=2E I=E2=
-=80=99ll remove it in the next revision=2E
-
->
->> +	};
->> +
->> +
->> +	led@2 {
->> +		reg =3D <2>;
->> +		color =3D <LED_COLOR_ID_RED>;
->> +		function =3D LED_FUNCTION_STATUS;
->> +		function-enumerator =3D <0>;
->> +	};
->> +
->> +	led@3 {
->> +		reg =3D <3>;
->> +		color =3D <LED_COLOR_ID_RED>;
->> +		function =3D LED_FUNCTION_STATUS;
->> +		function-enumerator =3D <1>;
->> +	};
->
->Are there really two separate red LEDs?
-
-Yes, it has popup camera with an LED on both side, i have verified functio=
-nality of both LEDs=2E=20
-
-
-[=2E=2E=2E]
->
->> +&usb_1_dwc3 {
->> +	dr_mode =3D "otg";
->> +	maximum-speed =3D "high-speed";
->> +
->> +	/* Remove USB3 phy */
->> +	phys =3D <&usb_1_hsphy>;
->> +	phy-names =3D "usb2-phy";
->
->Is this a physical limitation, i=2Ee=2E missing wires?
-
-Yes it is a physical limitation and downstream configured it similarly,
-
-[=2E=2E=2E]
-
-Thanks for all the rest of improvement suggestions=2E
-
-Best regards
-Piyush Raj Chouhan
 
