@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-874115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEB2C15907
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:45:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95293C1587D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:41:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EA9B4EAB60
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F821A2496D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C227345730;
-	Tue, 28 Oct 2025 15:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78538343D89;
+	Tue, 28 Oct 2025 15:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="HU+eZliQ"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBb9rYMJ"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1812345725;
-	Tue, 28 Oct 2025 15:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7E1225416
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665876; cv=none; b=R1XliWH4ivMC5TyEPimlZYNXOtq+B8YM3XYy0s+fIDUUljrOlzJaje+1GcjxRZEW2n+Gry/iXUcTyhkyBxS8i+zaJBP7cTR8+7dROsUzUEVaQdZPyIrHHMdrwFRv2JCtKSbm3/x4W2fw5+gi2p4LPGfZyQ45KpfxKGo574xhfYE=
+	t=1761665870; cv=none; b=KljB0oJNbJGZcms8Vn9Q5pm+9shz03F8rEg5DFtaIsO+hiZDPnAdg3RM4Ish5UY6LX+WdwDPG2x0gIfSRIWZPLgqaCdOZqWhzkKIgZP9YPe9DVxqSDnaDF4i6gEuui0rHl2l9rfwVHv5s+waj56dxAjlzv0pHsJCIuEDbKoqLYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665876; c=relaxed/simple;
-	bh=YiDL4UsJb50r2ifBXEf7YKxbCTXY2QcCUMFAbc1//UY=;
-	h=Date:From:To:Cc:Message-Id:In-Reply-To:References:Mime-Version:
-	 Content-Type:Subject; b=Sw0VEc1IptPW0jxf1Ib4d0PCcCj6SmUki/a6idGlrMWgnAewd7gx527mPsgrWXbf8pZNcwPGPDiqB8AghM5DLQKdV+G0irACN1kYUPUsR6wfY16nksdkaBEOFgPWXNURAMNUg0zZjsPcJJlUJtb3Pi5E6UzJ2y5CBuPWOtK4MyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=HU+eZliQ; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:Mime-Version:Message-Id:Cc:To:From
-	:Date:subject:date:message-id:reply-to;
-	bh=rQCkM+LhOLwLdgmWX34eWVh/KFSAjRx1HdzAE3MV9gU=; b=HU+eZliQ3xuK8KOK10CU7n8aZw
-	6yaRXhbdR7WAjzwEkEdjaxg87ha7cQPHyY1KDzXJXJVnwDSjjeQRCfwkFvXEAIFVw16Gbtr5+qHMM
-	xmBwCkPaJvQGikSZ2jY2SsnLVmS/d2MQo3xdCa6e0zxHGvQWxMBQ8un44D7d8XN0fC70=;
-Received: from modemcable168.174-80-70.mc.videotron.ca ([70.80.174.168]:39646 helo=pettiford)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1vDllW-0007rJ-Lh; Tue, 28 Oct 2025 11:37:43 -0400
-Date: Tue, 28 Oct 2025 11:37:42 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- wsa+renesas <wsa+renesas@sang-engineering.com>, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>, Nam Cao <namcao@linutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, biju.das.au
- <biju.das.au@gmail.com>, "linux-renesas-soc@vger.kernel.org"
- <linux-renesas-soc@vger.kernel.org>
-Message-Id: <20251028113742.7ad84146ecb9a2c7f2c6b4e9@hugovil.com>
-In-Reply-To: <TY3PR01MB113462A9E19F5AF62DB26CA5E86FDA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
-	<20251027154615.115759-13-biju.das.jz@bp.renesas.com>
-	<20251028105111.b0363ccd0eac7691191b6afe@hugovil.com>
-	<TY3PR01MB113462A9E19F5AF62DB26CA5E86FDA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761665870; c=relaxed/simple;
+	bh=hkxftgZogT+NrML8v/Ks/KEOR/YUZS/UiQYNzdbP+u0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8FkqiGgkJHDTLFXl9oEU26IhO0x3J/4JaYVH8QTK/i3dR444GAz5hO+yh8JNo11uU/bjxNnkZp9OHuse1g63oGZLsQ/Um9X5yVTioNdmmxiVygUrzexjf/004rCpIfFeikZpD8z6hktd2tlOUBEMkHbKtZwydAM+qqFgz4gldg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBb9rYMJ; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so61411845e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761665867; x=1762270667; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ary74Q16PuhBPSjsrWRBA9VPLl5HYwYWAzTzc3x3IqM=;
+        b=DBb9rYMJOXxlJyM+m6BXNSpELSoEt/nChqopUq4uC9Qadq1AyVYSyD4fQzarAxmENl
+         0BTDuCvadpxWY/wlwJswFHecSRbrAjnyy6b1WcxPi1QZxWNaTmfIOfc36mG3l/FvMIfC
+         aKcue7BmGO5Lhq/IBOeqU4miqQ7kQPUCYU63jMzH5wHYb9AGhSTIr+EPqwHLaWZQTz+D
+         9oqXgtmnbbI7OhS/TDebd4m5oExs+4i6ZLzxLEZOXy7b5LI396sx/XWOi55epWEL71ff
+         d7N0qzLayvzWatOPMQPfI0Sow4PN4aMRKZ3SJp9G732hpBb/PR1TsJE0+yAFu6JOUf9c
+         1BLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761665867; x=1762270667;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ary74Q16PuhBPSjsrWRBA9VPLl5HYwYWAzTzc3x3IqM=;
+        b=XXF7XWrckzcxnK7IAtY3pJOBPoqZACPrzNgNHgfR8jfzc+KkS0kLAG6k65vpy0Ni13
+         xO789hJVetGXGf5c0I6qrBJuK24lW70igVNqnToRRbiBpyXFX/McDM5mJqtzd4xEPUY0
+         /qW1pOyf4+WPEFhJ5T+dl7W+NLGEJlbC5+n7hmPBhbCUk+VSKcbafuK4OMojL9Ku/qZ+
+         HVLKE5iC9lrPAKt4hxQ9AonAhao4QGyip/NrpbfvS9HbB5qlOWsf+e3hfXakrVDzna8r
+         934Zj5r0iLL1tBgQjqatutKbejkDOkV4Tg/I9Nd0eCdqILLK0dCEqfwmMg7EUIyzHkHU
+         ScAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuQTAgEYeyGaZIJ/g8Y6648EjvCMgsfDrfTA0mj8n/NG1Up4YN9ft4vf7j/AgQynJXPxBYxWVJbmauo8s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCRDKsdNqVBr+igmbIefrdjzhffOQDQQzo/yAUG6Jud3Zv4rSz
+	X5T2cHRdwdFbHG0nWCAA0b+xJ5nhOKGtDmwFWt+wmv6AiEQFehytDzmwFuCaxygc7uY=
+X-Gm-Gg: ASbGncuLCg5GSYhEnq9lgRugIARZJhkKc1GYHbPU99cbFKnmbi0qDO6yZebi+4UWBj5
+	mmDqyGIovf62Q4wpPUDAzs8DgKrsz7MtsZy7dyrPQTuGS7ki26pZ9XEAZRZSJY/mGJbPLEpVlHO
+	BbhLLYzDp+3LGiP3sNrhPgpn2oaJC8xidu14/y+2VT2jGiNkh8BFmSR5waCH9kMep84AVYUxYnZ
+	Bs+jSdS6yYWWyq0j9REoGfoI+dHjDPq+NyxgOoR3Z35aE4aNwtH0DA9Q8u5B2F9wARIBO1f5dtb
+	lFHo67CSjCko20OGMGGnQ77OdntTksCMohs4YvAAOQLlFSAXrb/gJkH8T5aYlK3xkM/rn2no/YM
+	QgZpyfRm3wClK/tN+ZtSMmClUC5sGmMeEiH5HgV9KbMEcyWlUNgQIZX4keQf7RsIC3Qnx03Dbt1
+	3Lh+B60bI=
+X-Google-Smtp-Source: AGHT+IGa5T0vOPwrqxsDiAUoacPyZz4CzqIzpe6EkXzz80SQCdnOeksixDrdaFnDHHVah/KpxoMYOw==
+X-Received: by 2002:a05:600c:6304:b0:45b:7d77:b592 with SMTP id 5b1f17b1804b1-47717dff4cfmr30922465e9.12.1761665867365;
+        Tue, 28 Oct 2025 08:37:47 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df3c7sm20595813f8f.40.2025.10.28.08.37.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 08:37:46 -0700 (PDT)
+Date: Tue, 28 Oct 2025 17:37:45 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Skip setting orientation for UCSI
+ version 2.0 and above
+Message-ID: <jworx6dkoykwimfn7b3wlatgvk6engrbzyuhzsqbgjivlpicjw@xg2aenqcwkmz>
+References: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
+ <a4f3yhhz5sntno6gnfbjnjjsbtyo2e4y3da2aywsg36gvxkaxg@vw2vryukrepl>
+ <xboq73zw752odclybviqnl75pp2nl2eamdvcdv2idqljck7qvu@zdh6ny7nja3w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 70.80.174.168
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	* -3.2 NICE_REPLY_A Looks like a legit reply (A)
-Subject: Re: [PATCH 12/19] serial: sh-sci: Add support for RZ/G3E RSCI clks
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xboq73zw752odclybviqnl75pp2nl2eamdvcdv2idqljck7qvu@zdh6ny7nja3w>
 
-Hi Biju,
+On 25-10-28 17:30:37, Dmitry Baryshkov wrote:
+> On Tue, Oct 28, 2025 at 05:19:58PM +0200, Abel Vesa wrote:
+> > On 25-10-28 16:39:19, Abel Vesa wrote:
+> > > In case of UCSI version 2.0 and above, if the orientation is set from
+> > > glink as well, it will trigger the consumers along the graph (PHYs,
+> > > repeaters and so on) to reconfigure a second time. This might break
+> > > the consumer drivers which aren't currently implemented to drop the
+> > > second request of setting the same orientation.
+> > > 
+> > > So lets leave the orientation setting to the UCSI generic implementation
+> > > for all platform that implement UCSI spec 2.0 and above.
+> > > 
+> > > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > 
+> > Ignore this one please, as it is incomplete.
+> > 
+> > We need to also set the orientation_aware in pmic_glink_ucsi_update_connector()
+> > if the ucsi version is at least 2.0.
+> 
+> Note, I think it should be set in the core rather than setting it in the
+> driver.
 
-On Tue, 28 Oct 2025 15:08:50 +0000
-Biju Das <biju.das.jz@bp.renesas.com> wrote:
+Yep. I agree.
 
-> Hi Hugo,
-> 
-> Thanks for the feedback.
-> 
-> > -----Original Message-----
-> > From: Hugo Villeneuve <hugo@hugovil.com>
-> > Sent: 28 October 2025 14:51
-> > Subject: Re: [PATCH 12/19] serial: sh-sci: Add support for RZ/G3E RSCI clks
-> > 
-> > Hi Biju,
-> > 
-> > On Mon, 27 Oct 2025 15:45:59 +0000
-> > Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> > 
-> > > RZ/G3E RSCI has 5 module clocks. Add support for these clocks.
-> > 
-> > In "[PATCH 03/19] dt-bindings: serial: renesas,rsci: Document RZ/G3E support", you mention that
-> > "...RZ/G3E has 6 clocks...", and here 5?
-> 
-> 5 module clocks + 1 external clock = 6 clocks.
+That's what I'm doing next.
 
-Ok, maybe add this precision in your cover letter (and possibly
-other commits) to remove any ambiguity...
-
-> 
-> I just omitted external clock here as it is available on both G3E and T2H.
-> 
-> Cheers,
-> Biju
-> 
-> > 
-> > 
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > ---
-> > >  drivers/tty/serial/sh-sci-common.h |  3 +++
-> > >  drivers/tty/serial/sh-sci.c        | 14 ++++++++++++++
-> > >  2 files changed, 17 insertions(+)
-> > >
-> > > diff --git a/drivers/tty/serial/sh-sci-common.h
-> > > b/drivers/tty/serial/sh-sci-common.h
-> > > index ef1d94ae8b5c..f730ff9add60 100644
-> > > --- a/drivers/tty/serial/sh-sci-common.h
-> > > +++ b/drivers/tty/serial/sh-sci-common.h
-> > > @@ -17,6 +17,9 @@ enum SCI_CLKS {
-> > >  	SCI_SCK,		/* Optional External Clock */
-> > >  	SCI_BRG_INT,		/* Optional BRG Internal Clock Source */
-> > >  	SCI_SCIF_CLK,		/* Optional BRG External Clock Source */
-> > > +	SCI_FCK_DIV64,		/* Optional Functional Clock frequency-divided by 64 */
-> > > +	SCI_FCK_DIV16,		/* Optional Functional Clock frequency-divided by 16 */
-> > > +	SCI_FCK_DIV4,		/* Optional Functional Clock frequency-divided by 4 */
-> > 
-> > I see 6 clocks here?
-> > 
-> > >  	SCI_NUM_CLKS
-> > >  };
-> > >
-> > > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> > > index 5f5913410df9..d45bdda2b6c1 100644
-> > > --- a/drivers/tty/serial/sh-sci.c
-> > > +++ b/drivers/tty/serial/sh-sci.c
-> > > @@ -2994,6 +2994,9 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
-> > >  		[SCI_SCK] = "sck",
-> > >  		[SCI_BRG_INT] = "brg_int",
-> > >  		[SCI_SCIF_CLK] = "scif_clk",
-> > > +		[SCI_FCK_DIV64] = "tclk_div64",
-> > > +		[SCI_FCK_DIV16] = "tclk_div16",
-> > > +		[SCI_FCK_DIV4] = "tclk_div4",
-> > >  	};
-> > >  	struct clk *clk;
-> > >  	unsigned int i;
-> > > @@ -3003,6 +3006,9 @@ static int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
-> > >  	} else if (sci_port->type == SCI_PORT_RSCI) {
-> > >  		clk_names[SCI_FCK] = "operation";
-> > >  		clk_names[SCI_BRG_INT] = "bus";
-> > > +	} else if (sci_port->type == RSCI_PORT_SCI || sci_port->type == RSCI_PORT_SCIF) {
-> > > +		clk_names[SCI_FCK] = "tclk";
-> > > +		clk_names[SCI_BRG_INT] = "bus";
-> > >  	}
-> > >
-> > >  	for (i = 0; i < SCI_NUM_CLKS; i++) { @@ -3018,6 +3024,14 @@ static
-> > > int sci_init_clocks(struct sci_port *sci_port, struct device *dev)
-> > >  					     name);
-> > >  		}
-> > >
-> > > +		if (!clk && (sci_port->type == RSCI_PORT_SCI ||
-> > > +			     sci_port->type == RSCI_PORT_SCIF) &&
-> > > +		    (i == SCI_FCK || i == SCI_BRG_INT || i == SCI_FCK_DIV64 ||
-> > > +		     i == SCI_FCK_DIV16 || i == SCI_FCK_DIV4)) {
-> > > +			return dev_err_probe(dev, -ENODEV, "failed to get %s\n",
-> > > +					     name);
-> > > +		}
-> > > +
-> > >  		if (!clk && i == SCI_FCK) {
-> > >  			/*
-> > >  			 * Not all SH platforms declare a clock lookup entry
-> > > --
-> > > 2.43.0
-> > >
-> > >
-> > 
-> > --
-> > Hugo Villeneuve
-> 
-
-
--- 
-Hugo Villeneuve
+So ignore my earlier comment. :-)
 
