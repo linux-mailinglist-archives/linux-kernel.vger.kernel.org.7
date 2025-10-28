@@ -1,87 +1,83 @@
-Return-Path: <linux-kernel+bounces-874107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDB5FC15859
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:40:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFEBC15949
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD154214B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59C723B66D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FD43446A3;
-	Tue, 28 Oct 2025 15:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744DB345CA3;
+	Tue, 28 Oct 2025 15:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDwv4WN+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aTGEdT4I"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE1E3446BF;
-	Tue, 28 Oct 2025 15:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CE2340A47
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665634; cv=none; b=q//SR7HWjw0T9hA5RcC/o1a44UK/wHvudT1JUIhr3Uijvi3TDgs75AmavEKKxzIL6ThGIN/lY0eoyn6kwnVDeR4sad3ULjRJUUzLHJ9cakfAfpdp5EwHUOc/scX8WpVGMeTPBr4/I5UWZqDzLVnB4tjifXR8B0Q9YIZZgnGLvaE=
+	t=1761665641; cv=none; b=rXW4ubd1SWt8zXrRq20Wso1hUtwWYEips+yjSeve18ibN/L52l7ZPz+xN/nASTqKsxNgzXG4HpWweuWiIh97tknZvFLa4s7CfP74mtwpuqrmpyLS6vkQu6P0NGSNxT+Wgz4wmx/7Rl+J30ROx7PhkmtoHP80uFPROc94Bc4J+k4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665634; c=relaxed/simple;
-	bh=cX+C81nVx0Z3LScNIsS6bnmKVkssc/fKJSZrOOzm2EQ=;
+	s=arc-20240116; t=1761665641; c=relaxed/simple;
+	bh=5HUMdWdP7Gh+IDVSu3h6YOirnoHB3M6a1g128nvu7CQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H+D/0uj/OX/323RyMfpsuoq7e5c7PwEbDs+nOl3EgDQ0V7U8ExiD8BfN1hltgO1cAFbWwbiOCEciJ2FvGXiuwOku0I5x44yGDxN4m28X4hEbpFuj7NivVoZc+xm2bpYuflxxLRwPFW+KWWHNKKqpYjz5yAzutmemJRP+LRkMwBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDwv4WN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B635BC4CEE7;
-	Tue, 28 Oct 2025 15:33:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761665633;
-	bh=cX+C81nVx0Z3LScNIsS6bnmKVkssc/fKJSZrOOzm2EQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qDwv4WN+E/9jIS+YaRJNG7MSRe0rZK9JAVuKEi6DUk9I+yRfBiVXJb60EVy1JXq1b
-	 m+t0FnCOA9f9mWDDMLDExxqDecIdODKecq/8ma7/RRkplrRuPvdh1SAQEvmTlrIdQ+
-	 xS3kd9yPCP7BkDuxC5O8A1a2hFYKdmfM7hUYJj9V4ogUNZ5pt4NTy6nLIjZiSQZKqH
-	 bUUQHYvsCm+7qyfZPKZPDLtigwoBTP6+E+vT00ZAatYPsEqNvTX+SYi42L87zuDoO3
-	 g5uzpBvX0JK7w91ZoBEmkiRj9jY02yPDk2y8QOA0VguFrgHfkX1oRGCrGGTIritTJl
-	 AARFHGwCvrmxA==
-Date: Tue, 28 Oct 2025 16:33:46 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 11/70] ns: add active reference count
-Message-ID: <20251028-unvollendet-erzogen-a3ec83ca68bf@brauner>
-References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
- <20251024-work-namespace-nstree-listns-v3-11-b6241981b72b@kernel.org>
- <87a51cwbck.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvthKMRNbaOL9/+HciqIqZEFbV82X9czV4eV+JoO9rgA5LDbE/eDJIZ//KrhZuwLcsGQgb7+1Lqaw+bDX1BSHVRF40Bl2SuDrk8vitBRpoRHfblldu0RL2U9hDdH31d9gxzyDFeKdGWKHXsUxApvn+LW5r4rGLsv4fNZli2uRYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aTGEdT4I; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OHvaXLoEg+XCwHHw8NdpuxdvPKvxXIA9NAlup/Qhm+s=; b=aTGEdT4I2T4evtzUStevRmclaS
+	2u9Tq7Bg276IJ8f3a0GHwn4GNXIOTJ4O6sih69CtlNI4DZsACL8Pk4wcvxJIr9wqt8XmZlDpd9EMO
+	0+w74RTF9HHFqXQ6FO4diVoX2EcxKHer+gReAPGeQmiSObBg8XvPD/rqIGZcIE+RLK3vHov3FTrkT
+	QTsneCvMEu7c0iJN3UJdd0fR8VDnbRUgJmMgwOKHvvcHX92s8YcAt4A0MlvwMabvhyaLHuVR2g8la
+	Qyo7wFTeDLg/sj1oe9fIPXaldEFuEY4s28wpdsxMUKnPTdLPtPYaTlme/WsYHA1oehYmRFHVrq0r1
+	wehUxJ4A==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vDlhn-00000000jHK-2Xuo;
+	Tue, 28 Oct 2025 15:33:52 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 810E9300289; Tue, 28 Oct 2025 16:33:51 +0100 (CET)
+Date: Tue, 28 Oct 2025 16:33:51 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mel Gorman <mgorman@techsingularity.net>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Chris Mason <clm@meta.com>
+Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
+ EEVDF goals
+Message-ID: <20251028153351.GN3245006@noisy.programming.kicks-ass.net>
+References: <20251027133915.4103633-1-mgorman@techsingularity.net>
+ <20251027133915.4103633-3-mgorman@techsingularity.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a51cwbck.ffs@tglx>
+In-Reply-To: <20251027133915.4103633-3-mgorman@techsingularity.net>
 
-On Mon, Oct 27, 2025 at 05:36:27PM +0100, Thomas Gleixner wrote:
-> On Fri, Oct 24 2025 at 12:52, Christian Brauner wrote:
-> > diff --git a/kernel/time/namespace.c b/kernel/time/namespace.c
-> > index ee05cad288da..2e7c110bd13f 100644
-> > --- a/kernel/time/namespace.c
-> > +++ b/kernel/time/namespace.c
-> > @@ -106,6 +106,7 @@ static struct time_namespace *clone_time_ns(struct user_namespace *user_ns,
-> >  	ns->offsets = old_ns->offsets;
-> >  	ns->frozen_offsets = false;
-> >  	ns_tree_add(ns);
-> > +	ns_ref_active_get_owner(ns);
-> 
-> It seems all places where ns_ref_active_get_owner() is added it is
-> preceeded by a variant of ns_tree_add(). So why don't you stilck that
-> refcount thing into ns_tree_add()? I'm probably missing something here.
+On Mon, Oct 27, 2025 at 01:39:15PM +0000, Mel Gorman wrote:
+> @@ -8783,7 +8862,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>  		 * When non-idle entity preempt an idle entity,
+>  		 * don't give idle entity slice protection.
+>  		 */
+> -		do_preempt_short = true;
+> +		do_preempt_short = PREEMPT_WAKEUP_NEXT;
+>  		goto preempt;
+>  	}
 
-Yes, as usual a very astute observation. I've taken your advice and
-folded the parent count into __ns_tree_add_raw(). Thanks!
+I'm confused, should this not be WAKEUP_RESCHED?
 
