@@ -1,140 +1,118 @@
-Return-Path: <linux-kernel+bounces-873413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 214D9C13DFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:41:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 118CDC13E09
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45033586DB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026D33A6057
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 594723019DE;
-	Tue, 28 Oct 2025 09:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9CF819E82A;
+	Tue, 28 Oct 2025 09:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFWREluD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BndvowXS"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63CA27FD74;
-	Tue, 28 Oct 2025 09:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B36D2DA76C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644246; cv=none; b=CGjXKYxc4AuIEqtj3EEdWgHQaTr9/VRW6bxT+zDnKLNjbMzjf3DLCPu6VAomuVagz6LEEY7RJcxNgNikKQmdkJ0GJ86Qotd/QWLyxQ3mQIOKcCnYIR5rEYzoU6z7eN+NlkIFNRbdVloDKUIKK5l1N9RnGAvAQLm+IxpWNYrTKQE=
+	t=1761644337; cv=none; b=nydQapo0I/5Viat1nwQJsSes6zIARNFkOeH2XnVBVTkXS9bi+wfg+1d7l6/+cTkfl9ybdkwwYZvxhvcFOnJlfNKk5Zt1LsWQgmGbr/XwzKIDaEFk2aPM8YQPIt2D/MdgspMe46MJgfHjMuBW6Dlt+m4B4xaZifNjqJCHFaH+qCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644246; c=relaxed/simple;
-	bh=GDNRBS7USQzBWPlLsSGDE6NhCshXeRRSSiGMS+r9Hcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N7nk3NqHfH0rmGCE+iT4LIq8LsWRfDIRKbsKA9mGmhRje+pDJJdob8HvFBBNVimFDKVK7kelNnXr2DIeQoVtSnHJ9lEZ2CQu/F0Ksf3CyGOR9Pzb+haOpM94vBhVZePGFJeTaJp+zlhzsfbtiSqOg82Zreyl78lLhWZs2ie1UNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pFWREluD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC975C4CEE7;
-	Tue, 28 Oct 2025 09:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761644246;
-	bh=GDNRBS7USQzBWPlLsSGDE6NhCshXeRRSSiGMS+r9Hcw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pFWREluD3irQI3yfrft+mpT8TTkde5vCAYtNUAYmO/AdreMcAt2HsM0HjEVDZHA92
-	 wvtYslOv/atQqg+mK/KZB62rl0DZjPoF3vF1+Wu5Dqqz0cYQ/xYXohXdxZ/AYBRjFp
-	 zyJDKcXbXWOuSkxek+bixDVKnGhSKa5S3oKnOzsmiuV9GrdsZjNbJ5q9EhYyTydxpX
-	 svA+/WVKLQLL12/GLnEczdkorMVR+ssFTIs/GTYeq3GeWGMvJLkggAMcrICWZBbM/b
-	 nYpeP4sVgrygPWn27HiULWUX7GQAdkvV4TG23hBgWNgW906HJndSrsTg0205Si7MoD
-	 d/FLtFthUI36A==
-Message-ID: <2f4e7f94-2921-493c-94fa-45749a060bc0@kernel.org>
-Date: Tue, 28 Oct 2025 10:37:22 +0100
+	s=arc-20240116; t=1761644337; c=relaxed/simple;
+	bh=9XT29P5nG6ybcTWqNLWy6LyojXTlR4aBnuox8K8qQ7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M3QcGVvUFYsIWGcUtqU0+UnI4U5ggW8ZqKMw+EdXnzaqK93PFXUA1lwXQE+swkqzWFdAu4YSMwStxHSzCpCev5b7WpVdMJyG9U1yr91A8WMJcFjDWS66RTWQRPUxDxG6qK3jiXdFT2PIrquRnUjprtpWbVGLME4v5tyunHs4jIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BndvowXS; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-784966ad073so71555967b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761644334; x=1762249134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVeiwoRqAoE//vzYcx4vZTWn79lwOq5iCXrye7CBQN4=;
+        b=BndvowXSbu3KzjeuIB0MEYIVBvNE6b8Zj4Vh1fgkB02AOG8Ms/fWPrPpNqzIvouwH6
+         FESsvfOVT7mkSFypOjjIcs2Q/wI3feXYTBQxIz2hk97J5roJvMhtvnENUurBj1vp+jfJ
+         TVR6lBXKHS9EvxVoTXz3j+66fOVX5uSWjKNXidpJJzOFoWL14r6j14DgnaEJ/rc+Mh+5
+         wmyQHInB9nBy2QpRECGzHdOp8TXDMsCogCgowpLFmZuH6nQyk9PHSlcv5Kzn3mqsC+kJ
+         ZTLvs64pn5bTAFs5f6kLb0Ae6xTIkhb3ZSI/OWH9LOo2zal6d+srcL8iuHJ3J0Kgf3LG
+         NRqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761644334; x=1762249134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kVeiwoRqAoE//vzYcx4vZTWn79lwOq5iCXrye7CBQN4=;
+        b=TUE1Q6pfFiQZ04wpzmk7FWyWu1NVe7hk9DWyz/EOL9cxCjRmsib8YXi2VVzDSfEN3P
+         mV95CWzTuUzz2i2t0Avp4Z0shCDD3F2eud/UiFERa529KD5NTjZpz0Pppqb41E1iuVY5
+         iyJjDK4kt/NJOhFfvWu9pUjra3thfwRtfXegxiKTCP9JGVxNa2d9DDT2tlpyFA8c+G+Y
+         ls8NjsMsjhkR/2Uub2gMbwCBY2SYMSQMQCdx0orc7b2dazFoqN6rfTG+8AeyYOCVhrmU
+         f4KVcznhTcRq0IMIEBgtgHlS4YiY4V9wEZUxq27Q1CyDbWA9cB0EgipdgFZ5GFDIcg26
+         AJZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiN8/YvPTKprjG1RTtDeGlnZhKhoXi1newjMhGpFj+LPjVVu9cbu8OiW9MJrGz9C6VvfQgrjFEHxyMiL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG0v5QtuGPPj1NRkrlO3yw+6+h1pgJRLfGkmYMnahNFUGpeNvW
+	UAFeOs5JdJHkNVNed29XaRUmOFIlB6/KkLZgDOsWzvZ6CURHGgWMvcmBzRfZzoPg8zV6Wu83EpA
+	qfN9V8zXFV1Viop5rSP0BFEqVcLVvV4gEOtdVMR9YEIX2/NCx68b/
+X-Gm-Gg: ASbGnct4vD3i0vtW9EBoFGa89XQ6U/uCXCemHYID6MW9oKfZkq0lCghAE5jTEOw53dc
+	u2G2rwbpGF5oyOkngc+rBKwn4jlINHprgYtZYyURcmQHFMo+PGze4L/pMNsJhGLp0n9Kh9waBus
+	l7pUMjD93s9Pb/ZnOA433Bjnrz8rvFreYq8nU6P8SowcZqTED+p3Dyf82wlGQ7pYNINaezOPwYg
+	u2bFkOSLBPH+GHrXTxv5RBOYMXC+pgx/6y6DktKSgSdoGzI5/v5bQo6/mfK4DrmGlQIKj4=
+X-Google-Smtp-Source: AGHT+IFCKmnaPpXTAX3Mf+PwlXuMSXSX4zruOYSEiuVmo7Chb+u2cHajp0OhOA5+lkBXv4HGJcasVf0Bbiy3XKcmsAA=
+X-Received: by 2002:a05:690c:ecd:b0:784:8644:27cf with SMTP id
+ 00721157ae682-7861838ebfemr27771687b3.55.1761644334550; Tue, 28 Oct 2025
+ 02:38:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
-To: FUKAUMI Naoki <naoki@radxa.com>, Joseph Kogut <joseph.kogut@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Steve deRosier <derosier@cal-sierra.com>
-References: <174735136138.1544989.11909422896170025756.robh@kernel.org>
- <20250528221823.2974653-1-joseph.kogut@gmail.com>
- <20250528221823.2974653-2-joseph.kogut@gmail.com>
- <20250529-impressive-real-monkey-a7818b@kuoka>
- <6443BD03B4C4F1FE+d20c3903-e2dc-4c2b-8f6e-fac38f242898@radxa.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <6443BD03B4C4F1FE+d20c3903-e2dc-4c2b-8f6e-fac38f242898@radxa.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251028120224.1c7ff0eb@canb.auug.org.au>
+In-Reply-To: <20251028120224.1c7ff0eb@canb.auug.org.au>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 28 Oct 2025 10:38:42 +0100
+X-Gm-Features: AWmQ_bmF0Xk_seuQOVeZSwLTJtUIYb86ntNFB7ktW8B0ffUwuT0Of865jbW7_mw
+Message-ID: <CACRpkdbvU1LKdEqHQwZT5uk8yWz_F5mcn7CvnYBrb0c06PibRg@mail.gmail.com>
+Subject: Re: linux-next: duplicate patches in the pinctrl tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/10/2025 10:33, FUKAUMI Naoki wrote:
-> Hi Krzysztof,
-> 
-> https://patchwork.kernel.org/project/linux-rockchip/patch/20250528221823.2974653-2-joseph.kogut@gmail.com/
-> 
-> On 5/29/25 18:19, Krzysztof Kozlowski wrote:
->> On Wed, May 28, 2025 at 03:18:21PM GMT, Joseph Kogut wrote:
->>> Add device tree binding for the Radxa CM5 IO board.
->>>
->>> This board is based on the rk3588s.
->>
->> Do not attach (thread) your patchsets to some other threads (unrelated
->> or older versions). This buries them deep in the mailbox and might
->> interfere with applying entire sets.
->>
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Please explain the sorting rule used for this file. You must have known 
-> the sorting rule; otherwise, how can you be sure this patch is correct?
+On Tue, Oct 28, 2025 at 2:02=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
 
-Huh? I don't have a clue about sorting rule but if you mock my review
-let's make it different:
+> The following commits are also in the devicetree tree as different commit=
+s
+> (but the same patches):
+>
+>   9760089ca4b6 ("dt-bindings: arm: Convert Marvell AP80x System Controlle=
+r to DT schema")
+>   0385f89a0cbc ("dt-bindings: arm: Convert Marvell CP110 System Controlle=
+r to DT schema")
+>
+> These are commits
+>
+>   3fa6e2a0ce21 ("dt-bindings: arm: Convert Marvell AP80x System Controlle=
+r to DT schema")
+>   5024ac81c4cd ("dt-bindings: arm: Convert Marvell CP110 System Controlle=
+r to DT schema")
+>
+> in the devicetree tree.
 
-NAK
+Aha OK I didn't know they were already picked there, or I forgot it.
+(Rob may have told me in some messenger.)
+I will drop them from the pinctrl tree.
 
-Best regards,
-Krzysztof
+Yours,
+Linus Walleij
 
