@@ -1,376 +1,414 @@
-Return-Path: <linux-kernel+bounces-874887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2ADC1754E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:20:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F3DC1753C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1349188A539
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:17:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F8213A6D02
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6B3354AE1;
-	Tue, 28 Oct 2025 23:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8705B369998;
+	Tue, 28 Oct 2025 23:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9vdH4Eb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NjWsmEz8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31AE34EF15
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761693435; cv=fail; b=cRWnYc/cuiqaO5PS3egi1U0Mm7R3KS6bUpajAIdq2sAFNgtXGLj4WyHDwIKISEUMo9Cm0JQ45QJ4WMYXBETrMtSw7arQSi/HG9oQqru+XXvqoiGilA42qtTSr8+G5vsXFkKTxruX2/AK5hKabh8BjZiI9Kh6roUkKXBlThiF9ns=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761693435; c=relaxed/simple;
-	bh=5wgvnVzzS1+XxwUoJ5JWtC+pFWxOTRWJPJf2aOirWKw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lr0B72ZMAvbGmMIBjseuOCMx82MIw1C8ekEOl9kyOrGdx0rLh9z/5IBcxIwttag+FeCzIm9n8u938N9S3K7WZOpoPHbxNWkfk88RGhZu04X/eX9V2RYnrlKnJVEC3B9jdApSw+n3s+hcU4YazMAlbloeEZz8SarYVXum9Shl/h8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9vdH4Eb; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761693434; x=1793229434;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=5wgvnVzzS1+XxwUoJ5JWtC+pFWxOTRWJPJf2aOirWKw=;
-  b=M9vdH4EbzUEwV3ZY1bUr5pIY9Yl6Xt7BcnYmwyQgtPP+a5w4JRWQFWZE
-   X8xk6SSoluuBlc6ZgIk0FLaZf+Ksc5Opj/c1iFazuqG+Re13/DwmeROvn
-   eIp+djyM7B5/Fw4QAaYrCj4hmknosNiGvPXCt4fF4SUZuM4QYjf9WyRcq
-   OBlZLaUXDz4v5GRjVjB+GKA6tTSPVHaod6LHj1RGA3I/Edrt/kNOfaiLO
-   PWosetgGdyuxXrhFvsZDKHQW2oGFfdEwz5TroC9J2A5BF8vr52BXBT1Hf
-   nCLUKFTuHap87gWCkFjfY2b6EcP7+NzzaNRr+rVl9g6Jz4d3/v7XgiNj/
-   w==;
-X-CSE-ConnectionGUID: sQKAtUnmT2Gv19S8JWWJ2A==
-X-CSE-MsgGUID: br1JLFjcRaCh1HJpn+V97A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63955574"
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="63955574"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 16:17:12 -0700
-X-CSE-ConnectionGUID: nbUAH4NxT7KhW9EsQZVFyg==
-X-CSE-MsgGUID: 1xju/mujQWOWUQetL5Olag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="216360806"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 16:17:11 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 16:17:11 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 16:17:11 -0700
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.64)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 16:17:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lLw7Es67fHT72UEHJ3pyYFUdABHpJsLbxwr7L2i8rF5J6QeXQSY2O4hQzjvoUv5DyWHxg7Y+Uoqr13FIZcYc9dAVJuz/CFxm3V/rg2Ql/grorlOcf5ypxCwygfWsmu0FNsx52tbk2oQ46NDHeCUBGvOA9SxH5DM0ZAIyvthA5LXfUAwR2Tzq5xLpKaoQ7FtS9uSwuGh2C0OHJdl8POijeg+jlymUvgkvZqNB7bkVB+0aAqD5PZeeVMX6n/nE+NY+k0wsA1ipIF730AOuQFS0oq6Xo8AOylW784Lx+rcleHh/RU7aF/mbNDIPeQGr8P5fEvkCz+gZc0fVDseA8Hui7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nu7J/B1ixJl/LqgoCJiL2TyTS2ARV+ms7fS7FD0EuoA=;
- b=Dr9WTOWOPWxRcHFgCwdH7OdclVXggvBSxLIZ+tSNH3/YfuKoRP16vwfPekvTBwvjLzzfxRqA0J9VSuHSts3+r5/wtJT9waui5G2Yn1ftzJnu9l4z4LYfPWMA+VM2AovGuXWAVyAvfSJFw+yyhcOfuXsIIlmr6VpkjM05ESmPHBVZMVB4WjFcLQDg5rHyQR3kyF8BdRzHakAPh+fQIv/xD3pnSM3UVbw7IGjpnosxpdSekJ0++Xp9HDGZILWy3LZpNWAHbFU/cQTNACe7lwAP5gflkViUFhTivyXqWE0Bz8r7iIk+jyQkDPqeAVIB3AC11dfY4ne1cs3S5/3h17MMyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by PH7PR11MB8570.namprd11.prod.outlook.com (2603:10b6:510:2ff::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 23:17:07 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.9228.015; Tue, 28 Oct 2025
- 23:17:07 +0000
-Message-ID: <a9b49861-ff36-4550-ad29-a737eb5c1d63@intel.com>
-Date: Tue, 28 Oct 2025 16:17:05 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] fs/resctrl: Generic schema description
-To: Dave Martin <Dave.Martin@arm.com>, <linux-kernel@vger.kernel.org>
-CC: Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>, "Chen,
- Yu C" <yu.c.chen@intel.com>, Thomas Gleixner <tglx@linutronix.de>, "Ingo
- Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, "Jonathan
- Corbet" <corbet@lwn.net>, <x86@kernel.org>
-References: <aPtfMFfLV1l/RB0L@e133380.arm.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <aPtfMFfLV1l/RB0L@e133380.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR03CA0119.namprd03.prod.outlook.com
- (2603:10b6:303:b7::34) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01302AD32;
+	Tue, 28 Oct 2025 23:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761693535; cv=none; b=X0uN5pXDcN8CxO9SSzouk3NQhCo88YL+Rm5Pj7yMNdB/gE+mBVEbvgORCxUp+cjzPWNwtbx3/hD/GyJcWYh2MmGcJC8LG/W5Ya5EQVscsusDnJbajZ0UkO6vdLvGNgtq9YbEApV8yrAabZ1nMehM8nQURzccea3kFsAktQKsB0k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761693535; c=relaxed/simple;
+	bh=u/AsBCLPZSwSiuquTS8net/0yY0pN+chTJWc54dxxaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qo2CyU82K1LmcYU8vPXqCZoDKAUb8LL35rkpxT6MP72nJNnJjokSFdXHcDAfARtU+SVgazD3vDJQfS+sGSV09MK3TcLYgbo7Jfm0efHjAa/C6AVVzeNKcBpUx525qCv9aIGTQh0fYbjf/aONIIW+lTYjxEel+eZ9D1+nNeqF590=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NjWsmEz8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6EB3040E00DA;
+	Tue, 28 Oct 2025 23:18:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dQdH0zrd16_O; Tue, 28 Oct 2025 23:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761693523; bh=2BcdfkUUlXVS7d00O3QKzdkOKKZIPIfnCTA0Aa8j80E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NjWsmEz8PJ8Jr3rS8dxM8+NBjEvOF///Hh29my4FmIORCNS807zec8qW7tSC+BUpU
+	 otDkN69nqBrABlXCa3FZwaKG01afoeYXeOdUk5BsZJrM7C/jH5fglcgatBMEriD1t6
+	 t+jVvSU3uOx9laHNt6LySE7kd0GN5aMhTAIi2Rp55pwMVTYPdEz/j1lT/2kLxxtylQ
+	 3CGsywn+JQ3kf10Ua9y8Z8qYdvQIeF04yXdk5OyUUz5oYGcW7UZ4F5JcFtafw4dahZ
+	 K3Vx3TFy2KlYuhcKC6UDR6JFvvCFL7+DTAqKgK/7p9S7lHKpje6DOM66NEay/SiNfS
+	 qp8bs+r+DYi/gIyNJipJMuJfYsIFRrQG0I3mzgcMoaDEw0HZvcR7rmfMZ2lkUtmQs4
+	 E0P16xzNOGVzJD4+UuselFIxZFOGwQS4f2yRT5/ncjkHjb3PRBxNHQm0bxIQBSP+Jg
+	 SrV5lRWo9FAc+Ws8nOZJ4LIMNm/vgZumdFOHQaU9vpRGOO+BUnJhDqkScP2XA+YY6U
+	 FoPnie84SEAud0zLJCzLmUFgjs/+gvQFcmRlC/vIa70k8T/rm8JMzRB1e8Vjiu3ghu
+	 H2jIkmrvSGePt6GhM8z222oQ8+89FN3dBaOB/sP8V2u1Nn5exoePR8bPvH/bUOTV5X
+	 QchI6x43+CCfqojLjnxUmyPU=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4F13540E021A;
+	Tue, 28 Oct 2025 23:18:31 +0000 (UTC)
+Date: Wed, 29 Oct 2025 00:18:25 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
+Message-ID: <20251028231825.GDaQFPQflC7gyVOwMa@fat_crate.local>
+References: <20251024150333.GSaPuVRQYxH92zyrmO@fat_crate.local>
+ <20251024203012.GA251815@yaz-khff2.amd.com>
+ <20251024212723.GGaPvvO3l2OlUEG7Xn@fat_crate.local>
+ <20251025150304.GXaPzmqFawI0NrCC-0@fat_crate.local>
+ <20251027133542.GA8279@yaz-khff2.amd.com>
+ <20251027141139.GA51741@yaz-khff2.amd.com>
+ <20251028152231.GAaQDft32eXtTZBBzg@fat_crate.local>
+ <20251028154258.GA526743@yaz-khff2.amd.com>
+ <20251028174656.GBaQEBkOErfNAJbJsf@fat_crate.local>
+ <20251028203719.GA655216@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|PH7PR11MB8570:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5be458a3-30eb-4447-a043-08de16781d3b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NXNmVVEycjdLYkVwanhlU0VxUjhGRmMwU3VZdkxJWW9wbFMzQTlLWEQ3Z2J0?=
- =?utf-8?B?Z3FjRmk3QVpveHVtY1hVSEl3Z0tzb0V3K3RQa3YrT3NpcXpBbi9kODh1UnE3?=
- =?utf-8?B?VG4vbTJQNVRhcWtsTU0rdzFaak02SmFuV2x3N3pBUGpLNlhPVFgxUitnNnQx?=
- =?utf-8?B?OTNseW1qeTU5SmhnZ3pSdU1CVlVySWcwaW52UlNzcHEwZlNEOVFCS1d2d0k5?=
- =?utf-8?B?dEJodjA5cW50aFQyeXdEV0VrTHNPTFR6SjZZUUdyblcySm1KUmxNb3l1NS9j?=
- =?utf-8?B?N0grTklZZGVMb2VLOHJPL0ZlYUU5VkZLeE41OEg2UVlXWmJiZjlWQUUwYkdx?=
- =?utf-8?B?ekpFZWdZeXNXQ2l4eWtZK1BUNlRwVDYvNXMza2xOWHEycEhFa1hKOGVRZjhp?=
- =?utf-8?B?MDJvaXVhSGtxK1ZnRmlZVmNORGJkSENaL2ZDTWJjd3d3cXB1Nnk4aThoK3dG?=
- =?utf-8?B?UUxpZWM0bE9lUXBWUzd4YUpFOElCR2VoaGNvbm1YVGpFUm1GL2V2aXlmRGhS?=
- =?utf-8?B?UFhsN2FRc0ZhcHVUODBKSHUwSHhDRVFOMWppS2o1aGd5UGJMSGo1c0FueWx0?=
- =?utf-8?B?S01acW5RK0hDTlRJeVhXNndsb0tCL3hYTEFXaUJYSW1wckc2UG5wRkNWRHVF?=
- =?utf-8?B?K2U4RDl4ZUE1cElzNGIxR2FCWkJWVDF3REFCSDdBRDdpY041Tzc0aWdhMVFh?=
- =?utf-8?B?TnBuM0ZSbmcrdUdkdXhYSmFxYjhyOEd2MkNPUjJCajNieXdCWTE5RDJsbEVj?=
- =?utf-8?B?eXZPbmwzemQzT3RpWExTTlNXSE51YjErQVpvbXI5MjZKeE5rYjNYZ2RXRTYv?=
- =?utf-8?B?SEF5NzhucVdnM3ExNm9OSUlCNkNMa1FvWWFCd21xZlhOTkMxK2VGb0FrRDdJ?=
- =?utf-8?B?eHdwU0MvZXVPaEhWVEFnOEJEdlg0c2RGMWltRlVuYWNKbGVRdnU4QmRUNGlF?=
- =?utf-8?B?bWY3eEU2ZGJvU0VPczIyWEhFZ1AvMzFnRFRlSGZaZUlXUFRXNlpGZnFRU0NI?=
- =?utf-8?B?djE3aWllTUxoVjBxZy8ycWxMRUF5Q3VWc1BkZ1M2S09lOXIrdzIzSnV6V2p5?=
- =?utf-8?B?Y1JEOHNwNEQ0Y0E5QWIwaTdVMHVkV0craEY0b1ZIYjJvQkFGakVJVzl2YlIw?=
- =?utf-8?B?OS93QitwMjFMR3d3ZlFIL2ZxeEZTRlpVYUpXNjhIT0lTQzduOS8zaGltTmtz?=
- =?utf-8?B?UWczOW9vWCtLZ3U3M0FOVGZ6Mi9pZU1SRlBFOTl0SUdIL0o1NTRSR1FCYmFI?=
- =?utf-8?B?TW1kanhONGFMTm1CQ0xuV1IvdW96ckoxUHNKWVhDOTlUeHYyT3M4SUhuRDNk?=
- =?utf-8?B?Tm45L0FoMEZFNEE3WEQvMnJ6S210OWNMU0Yzdk9JbjRQZWZkVkpVMXZmVGtL?=
- =?utf-8?B?cDYya3czMDA3Y0Z2VEc3K3VPVk9EVGdyWFFZaVlNRGxSNXBKSE4xTGtJYkla?=
- =?utf-8?B?ZEpjV1NxRzdGeGlEejZPS3BOZU5CclU0akt5bFpOdXJqalpHeUxmamEwaEJQ?=
- =?utf-8?B?blVtMlFNMHd6QmJnMUZtN2FzZTJCdUdVUFI1cXppaGphTUNPNEtyb3dLdkMv?=
- =?utf-8?B?ak8xcnFabFg3dEw4UjVSUGtJbmF0VHg4N2JWMlZKbXZHQmJkLzdQVjlnT3lI?=
- =?utf-8?B?TWpmQWpXS2c1czdlNk95cjVpbE90YU9FVk9sV09rUi9WMjVUb2VEU292UWdz?=
- =?utf-8?B?ZUV2VGtxVmxsMHRGdGE3VE1HUEp2TU42T0ZFUWxySTVnOVh5ZUkwcnhGaXNz?=
- =?utf-8?B?REk5WXlMR1VuK1ZFUHhJb01UdnFSZm05RW12bFMzQ2V5eFB4Z1NiY1l4cXBU?=
- =?utf-8?B?NGVHeVVCUDJVajVUZ1JQQ0dCOWlyNmNhMVl5SkdaOWJaQ0hhYnh5aE9aUDk2?=
- =?utf-8?B?REZibDk5YWg1WWd3U01DdWhyVVhzKzZzb2JheGNlRis3K2ZVaVRId0x6cmRu?=
- =?utf-8?Q?HiODMb1W2hyF8s76WJRpFoVAVbYdXAtm?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SG83WnlTME9mNXJnM1VWZ0pYS2k5TjBoaURITGYxTy8rRU9uTnU2TDlWMmk1?=
- =?utf-8?B?d2NIWXJkQkxGeXFnRjlCaTR2SjlzZW1kSlc2S0Nmd2NUZHo3M2lMZENreWtZ?=
- =?utf-8?B?TGJjVWVHemtTS2plL2xOMnFXK1MzT242VTNBSG5IWlBpUktOUXpaYzd4M3dr?=
- =?utf-8?B?NktieVVnR0lsV2pvRGhIMHd6bHJrMFVlSWFDRnBsV3lpN2hOd2JYTURIYWI5?=
- =?utf-8?B?eVFIYVB1blMwTVloSGdjWW9uOEdtVjRhaldrNFN6S2REakQ3NExRVFR3SzBE?=
- =?utf-8?B?aU56WjlQWUtGajU0UlRaVjVnNHFYaTUybGM1dmZZU20velhVLzk3Q2RKcTdS?=
- =?utf-8?B?YWwvd2hNWjcwVEMzSFQ0Qm5WM2NuR2h6MytTaml3VDNJV0VKdGY1aEl1OVJM?=
- =?utf-8?B?M01lVGNKRk41elZDWjZUSHR6ejBGdzY4S0lrckp6VU9NRzdlUUowVkw5bDEr?=
- =?utf-8?B?K0RHUzZTRm81VkMvNjkwMkJTUGZPS3BVUmFqWXBwc3EwVGRCcmxjb284Y1Uv?=
- =?utf-8?B?MGpySjJwMzB3TzhFSHRMV2l6aWQ4eXYzNTJnNXdyVnhPYlJNRE4rVlh4ZXk5?=
- =?utf-8?B?a3paTDd3SGNyd2NZN3RIWjFkMlVJODJZTUZEV2VqbmprSTNoL1VrT1NFSzMv?=
- =?utf-8?B?Y2JPWUxnUTNrZXVPRnFCT21TdXNVZ1RWR2F3dmRtM0NIdEUyTEhkS1h1Rytk?=
- =?utf-8?B?K244WUtoTm5wazcwQzRtRlNEWDQ0Q3lQZ2hOOWZ5Tmlvc3dETWVPMnFOVzZ4?=
- =?utf-8?B?cE9IN0VhTHI5WFY2REF0Q1Ixdi9FUFNJdENoS29NbXhHaEhXdUhpNWo2Qy9w?=
- =?utf-8?B?SU1BcXlUMThzMTFJVUZmaEFveEZOdGpudTV1R2VxbHVtTE9tbkR6bDhZb24r?=
- =?utf-8?B?bVB3OG4vbXlnRjhBdDlTQjM3MWJIckQ0Z2RHL3dJSlpaWEYvdVgxWFFaUUdK?=
- =?utf-8?B?M1o1aFp5SzN4UURxMmNzNGRZSXRoUEJ0NXRSUDA3b2dhb0tHWjNJNjB2Y3ha?=
- =?utf-8?B?ZTIrUXplYkJtMktHdVRORWF2aGVEQngxVUxHaUgvSkV4SEJmbDBHTDVPeHc2?=
- =?utf-8?B?QndySDZqUC94MlI1RHZtRERKT2hROTJtVjFUVkQ4OXkvZDA5VDdEbVdYK28r?=
- =?utf-8?B?cFF3ZWUzRUJvVlhMZmpKcTdtalZTV3JOZ3pFRXhxYkZSYjFLNXpWNHJQRTRR?=
- =?utf-8?B?czJPbEVWajdFa205cC9ZaDJBaUdWSVhLSytFbENEQmwyQ2RhcG9yRFZjUi9z?=
- =?utf-8?B?L2xQRlJQUklveWR6SkQ1MHdXNHpHS0tpMzBBVFUreGJFNjNFK3lLeFIrbjk0?=
- =?utf-8?B?aXhkOWNYL0o1VXJ1YUY1bThNZVAraTBIaWYzTUJQSWwrNHloRzVBeEVnVmZO?=
- =?utf-8?B?blgrY1NWM2M4V1NhdXJHQVZrY3ZKTUFHS1hMWSt3MDVvcHJxai9jN0dvUjVm?=
- =?utf-8?B?bEJzK2M0WGRMc0ZhV2p2V0ZLZU0xbzVTNmtTam1NalY2NEhrSkNOeFIxbHZU?=
- =?utf-8?B?TVcvRlF0YVR1SXYxL0FjVHR6QXNxMkRkMnFpcldkVnd6QVdreXFPZ0pZcUV2?=
- =?utf-8?B?RVNYQXA0VHFjUVEyNWlPbHo1SUlDeXR6NkpuTy9hb0EzR2dWTDBtRDBsZUpW?=
- =?utf-8?B?RzQreHh6aG9VdmpWY0VoVWJPTHpFclVrNy9SeWZkWE52S3pEbTY1TFdCNWpv?=
- =?utf-8?B?YXVDSlJJYVpBUXovOVVycFNZamtXaVRMRG1CQmxRV0h3d3M5SlVVVlRIWUx3?=
- =?utf-8?B?ankrUUUyaDA2WnNHNm0vdnoyL1huek1GNWFYZGVhNk1kVWhUWlIyalk5VTJH?=
- =?utf-8?B?Y0NnU3dMaFlJQXhtOEd4eVJsK0NIak9ZV0ZvRUNIZjh6TUNpK0RYTnpORmtS?=
- =?utf-8?B?cWpPYkVwRzVDUk5xZ1BwcmU0ODAzcXEremtWS3NSU1NFMjErWnhlQzB4NlBX?=
- =?utf-8?B?cy9KUkxYaVNVV09mMHZDSmpEZC9HUEpySDJFK1U1YkhqSXNEU0RNVWN5aEJP?=
- =?utf-8?B?Z3VKajJWaVFOT29QaVc2bEZoenVJREhkWFN1QTkwZkpBcVhwb3RQeEM5ZVZl?=
- =?utf-8?B?RWpJenVXdjJCSVp5RTd5TUtIenZsMUE3UG8xL3g4SDdpK2thQzlubnRVYUs3?=
- =?utf-8?B?dkFmMm1Nei9VMTNtejQ2bFNtMzF2ZE54eCt4UHVnN2Z2dGdia0Z2ZnZvdFpX?=
- =?utf-8?B?OWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5be458a3-30eb-4447-a043-08de16781d3b
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 23:17:07.7046
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aNK5sBritcG0BgEAFcx56cODvakxzzrm+sz+7jQwZW/aAev9g+A4WNxMsq/TT5ijn/fN7fh1mNIFQvKdT6ceZ33qAxW4ohPpd0kX0Y4g05s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB8570
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251028203719.GA655216@yaz-khff2.amd.com>
 
-Hi Dave,
+On Tue, Oct 28, 2025 at 04:37:19PM -0400, Yazen Ghannam wrote:
+> Yep, that's it. Much cleaner. :)
 
-On 10/24/25 4:12 AM, Dave Martin wrote:
-> Hi all,
-> 
-> Going forward, a single resctrl resource (such as memory bandwidth) is
-> likely to require multiple schemata, either because we want to add new
-> schemata that provide finer control, or because the hardware has
-> multiple controls, covering different aspects of resource allocation.
-> 
-> The fit between MPAM's memory bandwidth controls and the resctrl MB
-> schema is already awkward, and later Intel RDT features such as Region
-> Aware Memory Bandwidth Allocation are already pushing past what the MB
-> schema can describe.  Both of these can involve multiple control
-> values and finer resolution than the 100 steps offered by the current
-> "MB" schema.
-> 
-> The previous discussion went off in a few different directions [1], so
-> I want to focus back onto defining an extended schema description that
-> aims to cover the use cases that we know about or anticipate today, and
-> allows for future extension as needed.
-> 
-> (A separate discussion is needed on how new schemata interact with
-> previously-defined schemata (such as the MB percentage schema). 
-> suggest we pause that discussion for now, in the interests of getting
-> the schema description nailed down.)
+:-)
 
-ok, but let's keep this as "open #1"
+Final version:
 
-> Following on from the previous mail thread, I've tried to refine and
-> flesh out the proposal for schema descriptions a bit, as follows.
-> 
-> Proposal:
-> 
->   * Split resource names and schema names in resctrlfs.
-> 
->     Resources will be named for the unique, existing schema for each
->     resource.
+From dd705221b2b3fb06fd2dc25dd51a8aaa1b1bd6d5 Mon Sep 17 00:00:00 2001
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+Date: Thu, 16 Oct 2025 16:37:48 +0000
+Subject: [PATCH] x86/mce/amd: Enable interrupt vectors once per-CPU on SMCA
+ systems
 
-Are you referring to the implementation or how things are exposed to user
-space? I am trying to understand how the existing L3CODE/L3DATA schemata
-fit in ... they are presented to user space as two separate resources since
-they each have their own directory in "info" while internally they are 
-schema of the L3 resource.
+Scalable MCA systems have a per-CPU register that gives the APIC LVT offset
+for the thresholding and deferred error interrupts.
 
-Just trying to understand if you are talking about reverting
-https://lore.kernel.org/all/20210728170637.25610-1-james.morse@arm.com/ ?
+Currently, this register is read once to set up the deferred error interrupt
+and then read again for each thresholding block. Furthermore, the APIC LVT
+registers are configured each time, but they only need to be configured once
+per-CPU.
 
-The current implementation appears to match this proposal so we may need to
-have special cases to keep CDP backwards compatible.
+Move the APIC LVT setup to the early part of CPU init, so that the registers
+are set up once. Also, this ensures that the kernel is ready to service the
+interrupts before the individual error sources (each MCA bank) are enabled.
 
-SMBA may also need some extra care ... especially if other architectures start
-to allocate memory bandwidth to CXL resource via their "MB" resource.
+Apply this change only to SMCA systems to avoid breaking any legacy behavior.
+The deferred error interrupt is technically advertised by the SUCCOR feature.
+However, this was first made available on SMCA systems.  Therefore, only set
+up the deferred error interrupt on SMCA systems and simplify the code.
+
+Guidance from hardware designers is that the LVT offsets provided from the
+platform should be used. The kernel should not try to enforce specific values.
+However, the kernel should check that an LVT offset is not reused for multiple
+sources.
+
+Therefore, remove the extra checking and value enforcement from the MCE code.
+The "reuse/conflict" case is already handled in setup_APIC_eilvt().
+
+  [ bp: Simplify and drop some comments. ]
+
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Tony Luck <tony.luck@intel.com>
+Tested-by: Tony Luck <tony.luck@intel.com>
+Link: https://lore.kernel.org/all/20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com
+---
+ arch/x86/kernel/cpu/mce/amd.c  | 121 +++++++++++++++------------------
+ arch/x86/kernel/cpu/mce/core.c |  19 +-----
+ 2 files changed, 56 insertions(+), 84 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index d9f9ee7db5c8..0f4a01056ad3 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -43,9 +43,6 @@
+ /* Deferred error settings */
+ #define MSR_CU_DEF_ERR		0xC0000410
+ #define MASK_DEF_LVTOFF		0x000000F0
+-#define MASK_DEF_INT_TYPE	0x00000006
+-#define DEF_LVT_OFF		0x2
+-#define DEF_INT_TYPE_APIC	0x2
  
->     The existing schema will keep its name (the same as the resource
->     name), and new schemata defined for a resource will include that
->     name as a prefix (at least, by default).
-> 
->     So, for example, we will have an MB resource with a schema called
->     MB (the schema that we have already).  But we may go on to define
->     additional schemata for the MB resource, with names such MB_MAX,
->     etc.
-> 
->   * Stop adding new schema description information in the top-level
->     info/<resource>/ directory in resctrlfs.
-> 
->     For backwards compatibilty, we can keep the existing property
->     files under the resource info directory to describe the previously
->     defined resource, but we seem to need something richer going
->     forward.
-> 
->   * Add a hierarchy to list all the schemata for each resource, along
->     with their properties.  So far, the proposal looks like this,
->     taking the MB resource as an example:
-> 
-> 	info/
-> 	 └─ MB/
-> 	     └─ resource_schemata/
-> 	         ├─ MB/
-> 	         ├─ MB_MIN/
-> 	         ├─ MB_MAX/
-> 	         ┆
-> 
->     Here, MB, MB_MIN and MB_MAX are all schemata for the "MB" resource.
->     In this proposal, what these just dummy schema names for
->     illustration purposes.  The important thing is that they all
->     control aspects of the "MB" resource, and that there can be more
->     than one of them.
-> 
->     It may be appropriate to have a nested hierarchy, where some
->     schemata are presented as children of other schemata if they
->     affect the same hardware controls.  For now, let's put this issue
->     on one side, and consider what properties should be advertsed for
->     each schema.
+ /* Scalable MCA: */
+ 
+@@ -57,6 +54,10 @@ static bool thresholding_irq_en;
+ struct mce_amd_cpu_data {
+ 	mce_banks_t     thr_intr_banks;
+ 	mce_banks_t     dfr_intr_banks;
++
++	u32		thr_intr_en: 1,
++			dfr_intr_en: 1,
++			__resv: 30;
+ };
+ 
+ static DEFINE_PER_CPU_READ_MOSTLY(struct mce_amd_cpu_data, mce_amd_data);
+@@ -271,6 +272,7 @@ void (*deferred_error_int_vector)(void) = default_deferred_error_interrupt;
+ 
+ static void smca_configure(unsigned int bank, unsigned int cpu)
+ {
++	struct mce_amd_cpu_data *data = this_cpu_ptr(&mce_amd_data);
+ 	u8 *bank_counts = this_cpu_ptr(smca_bank_counts);
+ 	const struct smca_hwid *s_hwid;
+ 	unsigned int i, hwid_mcatype;
+@@ -301,8 +303,8 @@ static void smca_configure(unsigned int bank, unsigned int cpu)
+ 		 * APIC based interrupt. First, check that no interrupt has been
+ 		 * set.
+ 		 */
+-		if ((low & BIT(5)) && !((high >> 5) & 0x3)) {
+-			__set_bit(bank, this_cpu_ptr(&mce_amd_data)->dfr_intr_banks);
++		if ((low & BIT(5)) && !((high >> 5) & 0x3) && data->dfr_intr_en) {
++			__set_bit(bank, data->dfr_intr_banks);
+ 			high |= BIT(5);
+ 		}
+ 
+@@ -377,6 +379,14 @@ static bool lvt_off_valid(struct threshold_block *b, int apic, u32 lo, u32 hi)
+ {
+ 	int msr = (hi & MASK_LVTOFF_HI) >> 20;
+ 
++	/*
++	 * On SMCA CPUs, LVT offset is programmed at a different MSR, and
++	 * the BIOS provides the value. The original field where LVT offset
++	 * was set is reserved. Return early here:
++	 */
++	if (mce_flags.smca)
++		return false;
++
+ 	if (apic < 0) {
+ 		pr_err(FW_BUG "cpu %d, failed to setup threshold interrupt "
+ 		       "for bank %d, block %d (MSR%08X=0x%x%08x)\n", b->cpu,
+@@ -385,14 +395,6 @@ static bool lvt_off_valid(struct threshold_block *b, int apic, u32 lo, u32 hi)
+ 	}
+ 
+ 	if (apic != msr) {
+-		/*
+-		 * On SMCA CPUs, LVT offset is programmed at a different MSR, and
+-		 * the BIOS provides the value. The original field where LVT offset
+-		 * was set is reserved. Return early here:
+-		 */
+-		if (mce_flags.smca)
+-			return false;
+-
+ 		pr_err(FW_BUG "cpu %d, invalid threshold interrupt offset %d "
+ 		       "for bank %d, block %d (MSR%08X=0x%x%08x)\n",
+ 		       b->cpu, apic, b->bank, b->block, b->address, hi, lo);
+@@ -473,41 +475,6 @@ static int setup_APIC_mce_threshold(int reserved, int new)
+ 	return reserved;
+ }
+ 
+-static int setup_APIC_deferred_error(int reserved, int new)
+-{
+-	if (reserved < 0 && !setup_APIC_eilvt(new, DEFERRED_ERROR_VECTOR,
+-					      APIC_EILVT_MSG_FIX, 0))
+-		return new;
+-
+-	return reserved;
+-}
+-
+-static void deferred_error_interrupt_enable(struct cpuinfo_x86 *c)
+-{
+-	u32 low = 0, high = 0;
+-	int def_offset = -1, def_new;
+-
+-	if (rdmsr_safe(MSR_CU_DEF_ERR, &low, &high))
+-		return;
+-
+-	def_new = (low & MASK_DEF_LVTOFF) >> 4;
+-	if (!(low & MASK_DEF_LVTOFF)) {
+-		pr_err(FW_BUG "Your BIOS is not setting up LVT offset 0x2 for deferred error IRQs correctly.\n");
+-		def_new = DEF_LVT_OFF;
+-		low = (low & ~MASK_DEF_LVTOFF) | (DEF_LVT_OFF << 4);
+-	}
+-
+-	def_offset = setup_APIC_deferred_error(def_offset, def_new);
+-	if ((def_offset == def_new) &&
+-	    (deferred_error_int_vector != amd_deferred_error_interrupt))
+-		deferred_error_int_vector = amd_deferred_error_interrupt;
+-
+-	if (!mce_flags.smca)
+-		low = (low & ~MASK_DEF_INT_TYPE) | DEF_INT_TYPE_APIC;
+-
+-	wrmsr(MSR_CU_DEF_ERR, low, high);
+-}
+-
+ static u32 get_block_address(u32 current_addr, u32 low, u32 high,
+ 			     unsigned int bank, unsigned int block,
+ 			     unsigned int cpu)
+@@ -543,12 +510,10 @@ static u32 get_block_address(u32 current_addr, u32 low, u32 high,
+ 	return addr;
+ }
+ 
+-static int
+-prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
+-			int offset, u32 misc_high)
++static int prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
++				   int offset, u32 misc_high)
+ {
+ 	unsigned int cpu = smp_processor_id();
+-	u32 smca_low, smca_high;
+ 	struct threshold_block b;
+ 	int new;
+ 
+@@ -568,18 +533,10 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
+ 	__set_bit(bank, this_cpu_ptr(&mce_amd_data)->thr_intr_banks);
+ 	b.interrupt_enable = 1;
+ 
+-	if (!mce_flags.smca) {
+-		new = (misc_high & MASK_LVTOFF_HI) >> 20;
+-		goto set_offset;
+-	}
+-
+-	/* Gather LVT offset for thresholding: */
+-	if (rdmsr_safe(MSR_CU_DEF_ERR, &smca_low, &smca_high))
+-		goto out;
+-
+-	new = (smca_low & SMCA_THR_LVT_OFF) >> 12;
++	if (mce_flags.smca)
++		goto done;
+ 
+-set_offset:
++	new = (misc_high & MASK_LVTOFF_HI) >> 20;
+ 	offset = setup_APIC_mce_threshold(offset, new);
+ 	if (offset == new)
+ 		thresholding_irq_en = true;
+@@ -587,7 +544,6 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
+ done:
+ 	mce_threshold_block_init(&b, offset);
+ 
+-out:
+ 	return offset;
+ }
+ 
+@@ -678,6 +634,32 @@ static void amd_apply_cpu_quirks(struct cpuinfo_x86 *c)
+ 		mce_banks[0].ctl = 0;
+ }
+ 
++/*
++ * Enable the APIC LVT interrupt vectors once per-CPU. This should be done
++ * before hardware is ready to send interrupts.
++ *
++ * Individual error sources are enabled later during per-bank init.
++ */
++static void smca_enable_interrupt_vectors(void)
++{
++	struct mce_amd_cpu_data *data = this_cpu_ptr(&mce_amd_data);
++	u64 mca_intr_cfg, offset;
++
++	if (!mce_flags.smca || !mce_flags.succor)
++		return;
++
++	if (rdmsrq_safe(MSR_CU_DEF_ERR, &mca_intr_cfg))
++		return;
++
++	offset = (mca_intr_cfg & SMCA_THR_LVT_OFF) >> 12;
++	if (!setup_APIC_eilvt(offset, THRESHOLD_APIC_VECTOR, APIC_EILVT_MSG_FIX, 0))
++		data->thr_intr_en = 1;
++
++	offset = (mca_intr_cfg & MASK_DEF_LVTOFF) >> 4;
++	if (!setup_APIC_eilvt(offset, DEFERRED_ERROR_VECTOR, APIC_EILVT_MSG_FIX, 0))
++		data->dfr_intr_en = 1;
++}
++
+ /* cpu init entry point, called from mce.c with preempt off */
+ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ {
+@@ -689,10 +671,16 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 
+ 	mce_flags.amd_threshold	 = 1;
+ 
++	smca_enable_interrupt_vectors();
++
+ 	for (bank = 0; bank < this_cpu_read(mce_num_banks); ++bank) {
+-		if (mce_flags.smca)
++		if (mce_flags.smca) {
+ 			smca_configure(bank, cpu);
+ 
++			if (!this_cpu_ptr(&mce_amd_data)->thr_intr_en)
++				continue;
++		}
++
+ 		disable_err_thresholding(c, bank);
+ 
+ 		for (block = 0; block < NR_BLOCKS; ++block) {
+@@ -713,9 +701,6 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
+ 			offset = prepare_threshold_block(bank, block, address, offset, high);
+ 		}
+ 	}
+-
+-	if (mce_flags.succor)
+-		deferred_error_interrupt_enable(c);
+ }
+ 
+ void smca_bsp_init(void)
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 7be062429ce3..4aff14e04287 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -726,24 +726,11 @@ DEFINE_PER_CPU(unsigned, mce_poll_count);
+  * 3) SMCA systems check MCA_DESTAT, if error was not found in MCA_STATUS, and
+  *    log it.
+  */
+-static bool smca_should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
++static bool smca_should_log_poll_error(struct mce *m)
+ {
+-	struct mce *m = &err->m;
+-
+-	/*
+-	 * If the MCA_STATUS register has a deferred error, then continue using it as
+-	 * the status register.
+-	 *
+-	 * MCA_DESTAT will be cleared at the end of the handler.
+-	 */
+-	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED))
++	if (m->status & MCI_STATUS_VAL)
+ 		return true;
+ 
+-	/*
+-	 * If the MCA_DESTAT register has a deferred error, then use it instead.
+-	 *
+-	 * MCA_STATUS will not be cleared at the end of the handler.
+-	 */
+ 	m->status = mce_rdmsrq(MSR_AMD64_SMCA_MCx_DESTAT(m->bank));
+ 	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED)) {
+ 		m->kflags |= MCE_CHECK_DFR_REGS;
+@@ -780,7 +767,7 @@ static bool should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
+ 	struct mce *m = &err->m;
+ 
+ 	if (mce_flags.smca)
+-		return smca_should_log_poll_error(flags, err);
++		return smca_should_log_poll_error(m);
+ 
+ 	/* If this entry is not valid, ignore it. */
+ 	if (!(m->status & MCI_STATUS_VAL))
+-- 
+2.51.0
 
-ok to put this aside but I think we should keep including it, "open #2" ?
+-- 
+Regards/Gruss,
+    Boris.
 
-> 
->   * Current properties that I think we might want are:
-> 
-> 	info/
-> 	 └─ SOME_RESOURCE/
-> 	     └─ resource_schemata/
-> 	         ├─ SOME_SCHEMA/
-> 	         ┆   ├─ type
-> 	             ├─ min
-> 	             ├─ max
-> 	             ├─ tolerance
-> 	             ├─ resolution
-> 	             ├─ scale
-> 	             └─ unit
-> 
->     (I've tweaked the properties a bit since previous postings.
->     "type" replaces "map"; "scale" is now the unit multiplier;
->     "resolution" is now a scaling divisor -- details below.)
-> 
->     I assume that we expose the properties in individual files, but we
->     could also combine them into a single description file per schema,
->     per resource or (possibly) a single global file.
->     (I don't have a strong view on the best option.)
-> 
-> 
->     Either way, the following set of properties may be a reasonable
->     place to start:
-> 
-> 
->     type: the schema type, followed by optional flag specifiers:
-> 
->       - "scalar": a single-valued numeric control
-> 
->         A mandatory flag indicates how the control value written to
->         the schemata file is converted to an amount of resource for
->         hardware regulation.
-> 
-> 	The flag "linear" indicates a linear mapping.
-> 
-> 	In this case, the amount of resource E that is actually
-> 	allocated is derived from the control value C written to the
-> 	schemata file as follows:
-> 
->     	E = C * scale * unit / resolution
-> 
-> 	Other flags values could be defined later, if we encounter
-> 	hardware with non-linear controls.
-> 
->       - "bitmap": a bitmap control
-> 
->         The optional flag "sparse" is present if the control accepts
->         sparse bitmaps.
-> 
-> 	In this case, E = bitmap_weight(C) * scale * unit / resolution.
-> 
-> 	As before, each bit controls access to a specific chunk of
-> 	resource in the hardware, such as a group of cache lines.  All
-> 	chunks are equally sized.
-> 
-> 	(Different CTRL_MON groups may still contend within the
-> 	allocation E, when they have bits in common between their
-> 	bitmaps.)
-
-Would it not be simpler to have the files/properties depend on the
-schema type? It almost seems as though some of the properties are forced
-to have some meaning for bitmap when they do not seem to be needed. Instead,
-for a bitmap type there can be bitmap specific properties like, for example,
-bit_usage. This may also create more flexibility when there is a future
-mapping function needed that depends on some new property?
-
-Reinette
+https://people.kernel.org/tglx/notes-about-netiquette
 
