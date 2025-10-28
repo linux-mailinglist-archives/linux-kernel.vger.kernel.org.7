@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-874308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CAEC15FC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:56:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B78C16057
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:02:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C18D4E1CFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6191A62791
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C3AE32E6B9;
-	Tue, 28 Oct 2025 16:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAAD346A00;
+	Tue, 28 Oct 2025 16:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j7AiJ2Vm"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfPj5uxZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD074307ADA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2956D2882B4;
+	Tue, 28 Oct 2025 16:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670599; cv=none; b=QBKQD6uQTWOqEWZ8DlZtTr5Nmm4NiEzCw8umPJY9gQBoPYwdBnXWBhlteuft+7ntSpSvqKELkDdpMoFLIc6sf5rxxosdD5xpI0tt8qaeYG9ILSMifL1p/k8zQU48RkmmWffKJVZ/QkEZAsQ2jLXvTkquzSkx37z2UPPT6sZo1lw=
+	t=1761670623; cv=none; b=Q1nnLWi7ukmD9X9po/Yn8OB8ImfYpyaSmCb8bpDalkdqG4nYz/oG+PTqSbB1QKTOZRJisZtZaBeysaVTO1+mTxTBbcPXduIAyKiLtkWq0SmQKWoGW3j5LPfziExIzeKqMdGTSf2MxpfPByVkm/2IRRQcHGeVYQlxI6eF6QAM8Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670599; c=relaxed/simple;
-	bh=p6RyFVKNQkIaQ4ZcnL2+jkSmewms8zqCNQv3TST4Jn8=;
+	s=arc-20240116; t=1761670623; c=relaxed/simple;
+	bh=jL+q+hX5pgclGqLhztaAcUV7Iu4y5c7/CXWShf0neD8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KU7STWXpvmUiopKNwmUX5MxCVLRwGwDI/96KT7G2JeoKqXqRfmjEtZwtMIi+PkJCWSLDrOQ19C9GDROClano5u5a9b9ggHdAHQ9CYQl3zgxN0LIhliSyc6v1Pn0JGsA5HTasP3hC4S8nsiYGgj5CptTSyO2PCd0WQ5KrNiA2/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j7AiJ2Vm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4770c34ca8eso25189795e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761670596; x=1762275396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RWB3SgEBP2sW+IMp9VjTcvHlAHIvY8hohrCBcP8MjQI=;
-        b=j7AiJ2VmQ5qcCj2/XwGuPPWrQWk8EeOVeRKM5Vpm1kcqj+fJ82nfhNPNCZvEb+gwW4
-         YDyrhbNUIySdvb1NnTsxn0v4BLGJ0ej2Vh26Y/HCz+qTno9HlAVquHD+kN+P+qV9dHRQ
-         4//C9L8JdnWS2yYN/oQgIXTR3MQUafRdwvk+Pi7NbZl12egs5OI4VAgOQEYmxBBtIWsn
-         ub01fHBF81cpM537/I8m1etOTD5tE6AuGi4fmBG+vuoMYjAWNijB7dWkQ/t6E1OHsw7h
-         lO7PErcsIPe+SckMfqpYpuzqlg1p2667beolctEXPJjqwfHHyHiEV8N29qaSZTi6KoJ6
-         B2LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761670596; x=1762275396;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RWB3SgEBP2sW+IMp9VjTcvHlAHIvY8hohrCBcP8MjQI=;
-        b=EwtBwTAhP8oevuOOkPnKGPokH6zEa3LfNj4KJMLJykc5xhEBxI923qFbvbo1jj6Ss3
-         ShXihp2NB31+VtRYuTz5N+S8Haw6L5Ii+3TVmTBssvsiTCbpR+IrOv4Rw9JyWBVPw2e6
-         Cy28dH4RfcvxOENotzZZGKU4k7Y/QJ4TWywllzIaNMGKOFmM92AjuLTxrmVHMDVpQSHW
-         /XfwPRY/A8JzLnEW76WDGPEq9bJ/mCGZ/ROcHj3KHUq8jqdhIFktVFhBQrl0fap9WyRP
-         qDQvBlDixKoES1Xrv10uXs2VZ4xxKRy/9IvzQfQUAMOE9FO0czznkN1WUG+xrZZuWZox
-         745g==
-X-Forwarded-Encrypted: i=1; AJvYcCWDYWCxByFrKKIweBXIheqTL/ymk54buQFIBzEoRkW3+M4Z+poUPiGkF0zZmbzhDNLqs47y4ZA76bwTvH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiKHNzX4VSTeEATNjk9OvQ/y8VM0C+KQZRaeYQZlGl4aXHWhgp
-	PH2VRn/QzMBeOf3phLy8fsYzM4DqdBxJcOJN/wbcm4rCpyf8FmaJg/z7
-X-Gm-Gg: ASbGncvAgiQgpMX/BqQlMAkIhxAkeWao5crJt52UhBVTJ2UvC6lSQKxukdQM1Wx2cLx
-	OnPHGSL1L0Gif+eODESk5KndtYMd5am51BPQwwsZySkW+BKVpqv9zevk9Ont66QjjgaRl8OXro9
-	ybFgYC6xHJhjnMGH9Nb6tAgIruiTpj7SOM2s+dF31z/TNmJiiGIF1qj+KycVJKJwUs7V7z40kdS
-	RaygM/aRs6is+72FQlvo576+amZmsZi8WSt7H9HHDt9GtMdO6i9cPbXwah8qqQ7PGUcxPlpG+YZ
-	xkLrYBgDGA3SRaA2+3rA1zh0BIBnKkS26WqK8y8cgVkCMo4McNszqT8v5HhQMrnBnQT0fU1S27k
-	zAUSrV/EI1cWsLIX7wvevgO9/Qvzvjn17nFchiFpMK80BXG8tBAwTvg5eDABkrdQ4mN4ePPJm3M
-	90ecyWmevJ/9SFhW6xhnx9TrNqLz4=
-X-Google-Smtp-Source: AGHT+IGzGR4B0wLNVXJkWpJi+gf0J9ZLmHxgn1i3xJss3GSWwRHMfKatObo/0+gt1zOBw+J/Okn6YQ==
-X-Received: by 2002:a05:600d:435c:b0:46f:b42e:e39e with SMTP id 5b1f17b1804b1-4771e3cb792mr378315e9.39.1761670595796;
-        Tue, 28 Oct 2025 09:56:35 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df473sm21333826f8f.42.2025.10.28.09.56.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 09:56:35 -0700 (PDT)
-Message-ID: <3c1dfe1c-a1bc-4873-9c5c-4f9904888194@gmail.com>
-Date: Tue, 28 Oct 2025 09:56:29 -0700
+	 In-Reply-To:Content-Type; b=IxPsOXZ+uAB9v7Y+gltNUfnbhqEsOBgjVVlTvxcVuUljl+Ql3noBwYtXC8CW7sztAsZbtuqihUrqxH4xt/m6Oa/vLrqRsXMoIVOwZyXDx93ydNf/6aJ23gOAqVVOv8Clp5lgoPS/fyHaSM/v9vZZTYKKoWnM1pLs2VnILBD/V4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfPj5uxZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCB3C4CEE7;
+	Tue, 28 Oct 2025 16:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761670622;
+	bh=jL+q+hX5pgclGqLhztaAcUV7Iu4y5c7/CXWShf0neD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SfPj5uxZTYeiNSCgD2N5QwJpnla587u0XK1spznO96mYoPO7vEMlH2urQbBREBVeJ
+	 M3Z9ub0LaIw3KyVGKmgT758C9UXOo1GfXSYKI7VYTUn2vJgQhOEGVUBGfK0vh7v2kv
+	 JxsmmGa4scR4Iprl0rTeEhKuf4/i/eovCZINXJvU4uAGqmq1gD0c93feU/TfA3sAsP
+	 iFMWQcdUgbMKc/DQjvdUI9GzTtMDY045kkHu1RUDTCnJTCT17ZYxZiOqvg9PV/l0ek
+	 KmT9XgwLfMOXYAgc1+jcsXzXhG3kmLwYlFuuDMDYAJgWrIXSOcDEyeIGfcoMwuw2Qv
+	 qdtiyFwX0jYdw==
+Message-ID: <7efc63ed-9c84-43c0-b524-f7e9e60b2846@kernel.org>
+Date: Tue, 28 Oct 2025 17:56:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,45 +49,130 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.15 000/117] 5.15.196-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com
-References: <20251028092823.507383588@linuxfoundation.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251028092823.507383588@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+ <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+ <20251028-wonderful-olive-muskox-77f98d@kuoka>
+ <ac126c63-f40c-4159-87c9-1b3d7a8dec63@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <ac126c63-f40c-4159-87c9-1b3d7a8dec63@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/28/25 02:29, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.196 release.
-> There are 117 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On 28/10/2025 16:22, Vijay Kumar Tumati wrote:
+>>> +  interconnects:
+>>> +    maxItems: 2
+>>> +
+>>> +  interconnect-names:
+>>> +    items:
+>>> +      - const: ahb
+>>> +      - const: hf_mnoc
+>> Why previously this was called hf_0 but now hf?
+> Hi Krzysztof, the interconnect driver exposes only one node 'camnoc_hf' 
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Drivers don't matter. Interconnect driver does not matter here. You
+describe this hardware, not interconnect driver.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+Keep it consistent with previous devices, whichever these are.
+
+> to the camera driver, with it internally managing the voting on hf_0 and 
+> hf_1 clients. The traffic from the Real Time blocks in camera go through 
+> both HF_0 and HF_1, with the former being the primary. This change 
+> correctly represents that the BW voting is for the whole of the HF 
+> client. Please let me know if you have any further questions and we 
+> would be happy to answer. Thank you.
+>>> +
+>>> +  iommus:
+>>> +    maxItems: 1
+>>> +
+>>> +  power-domains:
+>>> +    items:
+>>> +      - description:
+>>> +          TFE0 GDSC - Thin Front End, Global Distributed Switch Controller.
+>>> +      - description:
+>>> +          TFE1 GDSC - Thin Front End, Global Distributed Switch Controller.
+>>> +      - description:
+>>> +          TFE2 GDSC - Thin Front End, Global Distributed Switch Controller.
+>>> +      - description:
+>>> +          Titan GDSC - Titan ISP Block Global Distributed Switch Controller.
+>>> +
+>>> +  power-domain-names:
+>>> +    items:
+>>> +      - const: tfe0
+>>> +      - const: tfe1
+>>> +      - const: tfe2
+>> Why not using the same names as before? It really does not matter that
+>> it is thin or image, all of them are the same because only the
+>> difference against top matters.
+> Right, this is done to maintain the consistency with the clock driver on 
+
+Sorry, this makes no sense. This device has nothing to do with clock
+driver. Don't ever use clock drivers as arguments for doing something in
+completely different place.
+
+Not mentioning that drivers don't matter much for the bindings, so I
+really do not get what you try to explain here.
+
+Best regards,
+Krzysztof
 
