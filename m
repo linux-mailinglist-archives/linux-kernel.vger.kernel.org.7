@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-873245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F98CC1378B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:14:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A1BC137DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F0F4213DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:13:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D34BC4EE798
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76162D6401;
-	Tue, 28 Oct 2025 08:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4632D662F;
+	Tue, 28 Oct 2025 08:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="F53UDBxv"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="CNhQAqwA"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651D280A20
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3300F280A20;
+	Tue, 28 Oct 2025 08:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639204; cv=none; b=f3kTQz/koHKf+KbVQy77dPDH0tFxK1sC+cgCw2Iwh4dGgogT2Vxr6wMbhaOQU71pL2cT5DWzQjHEEYtxtwLoosNFPgMNDDJ+G0RnqqxXp46vythMovr8TH+dGHpgVHDXBtQ9sv8AE6lMyEeeYcu+0I358Sp1NU3SMcq/2B1Aqvk=
+	t=1761639295; cv=none; b=Le3+C8c/96QNAJC4JVVO1JU2e9bMn+fXe+3OIz3PatOGteqIY2/l8zajKZTw7LaaCDjcl1pNrWs5HW8jIClEHeacOz2IDHR5Y5/kVEN4I5NNh5TRKI7sUEqDajWk+0x9xb36GsLU/sRe1hN4Rkq7OYf/M1BqqPrz19N2+xS4k4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639204; c=relaxed/simple;
-	bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qomCLbUB1jHo8o/T3QWZ/J19HKtPr9FlY9m77RJjr0bcdglnmgKnDC6CAaIMmypKvwUPFKRV6VG9b+dBBcwljScQgmvbl6XQV9Zw0SA5Gk1zyBkDmw03mSSHWJBk62LvBp4SWeDHtkHpoKQdAS2tIEUgO5VUza4N5tWg/b/FY+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=F53UDBxv; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1761639199;
-	bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
-	h=From:Date:Subject:To:Cc:From;
-	b=F53UDBxvBeF7d84PJVk+CpKcJVzkfoJK1Ksf9Mo2pFwGcnOOEUKqRZj6i0IUvcYoO
-	 xj+OGQk10d73vCBfskU+u/wvN2x/uYmkFK8/WryZOzhpf+OP+2urqHX8ztBLmFBisT
-	 2GMsditRZDAi2vG1mnPH4nuCjv9wibFv/CkfbW+4=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 28 Oct 2025 09:13:18 +0100
-Subject: [PATCH] tools/nolibc: remove outdated comment about __sysret() in
- mmap()
+	s=arc-20240116; t=1761639295; c=relaxed/simple;
+	bh=7fmqbVVoMRKd5rRb/hEQUoiCjHPfJ5btS65o8VIO+qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cfcsbEUHKIzWyJXF/1ckNi7T5ptnIW0x3yAxh1eZnpmDY060z06S6Dr0G7ZW47UJ/2nGcd+7hwMVxXOyW2xAZt6Iut1RiP4Cj/117jZCaRg4nwfHrfc58gOdyfSWXZVHRrXlvprXRZFwGA4JMx8PssJBbbfrBCndxQVbi5hAof4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=CNhQAqwA; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6D7E1038C10B;
+	Tue, 28 Oct 2025 09:14:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1761639291; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=9J6GPm0KB+YmbPNCLYLirD9SAtVysCPH8yqWFXkk3qs=;
+	b=CNhQAqwADoG00qcUlWsKZqMPb4Z8b0UWqQsjp6ogHOWx4O8cUeGrzGQco+ITYPpZ/ArrBz
+	0h7caImJmOOFscLgpXTK9tctDRwmu6nyq0fDxj4wSYKFTItC0JRfk/j4UY7d4LYAmHbOoE
+	/G/tBERG/Ru9LfX+CH/ZtZoSEZzY0Cs50CnjnResMkDwQG7CSWd2/wvaa39+hzc6ycCPrU
+	RqcQUTzn1fnBz2RSMI8tplXFIRlwmIzHJjCSFAMiV7iGsrjbc6pfpoDMgrzABPP+iSKdvI
+	SxkOyM2iD42nWRaVVT1EzF+EnHVs8+RdsK5Ui2YtnY4SRWp8tK5nPxp2kbUXHA==
+Date: Tue, 28 Oct 2025 09:14:46 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	sr@sladewatkins.com
+Subject: Re: [PATCH 5.4 000/224] 5.4.301-rc1 review
+Message-ID: <aQB7dvaiRIMsqhWS@duo.ucw.cz>
+References: <20251027183508.963233542@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251028-nolibc-map-failed-comment-v1-1-75af291ce011@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAB17AGkC/x3MwQqEIBCA4VeJOTegssHWq0QHR6d2IDU0IpDef
- aXjd/j/CoWzcIGpq5D5kiIpNui+A/ezcWMU3wxGmUEr88WYdiGHwR64WtnZo0shcDzRa/sZiWh
- Q5KH1R+ZV7vc9L8/zB8baCrhrAAAA
-X-Change-ID: 20251028-nolibc-map-failed-comment-d1a49bbb50bd
-To: Willy Tarreau <w@1wt.eu>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761639198; l=1136;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
- b=D7ASp6uN7gVteodQn7MZ7VYMQ0W8l4SG2tLpX6x6kE0SKb4Sa6D3X2NX/m6HQS22ertL7pTFV
- YH/AZtpijOWBYdKp3tdgzq0+tAqt7wL9EVa9xMaE81Sxe1c/7e1RvQj
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="re0tYzvWO2vvUyBN"
+Content-Disposition: inline
+In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Since commit fb01ff635efd ("tools/nolibc: keep brk(), sbrk(), mmap()
-away from __sysret()") the implementation of mmap() does not use the
-__sysret() macro anymore.
 
-Remove the outdated comment.
+--re0tYzvWO2vvUyBN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/include/nolibc/sys/mman.h | 5 -----
- 1 file changed, 5 deletions(-)
+Hi!
 
-diff --git a/tools/include/nolibc/sys/mman.h b/tools/include/nolibc/sys/mman.h
-index 5228751b458c..77084ac3405a 100644
---- a/tools/include/nolibc/sys/mman.h
-+++ b/tools/include/nolibc/sys/mman.h
-@@ -31,11 +31,6 @@ void *sys_mmap(void *addr, size_t length, int prot, int flags, int fd,
- }
- #endif
- 
--/* Note that on Linux, MAP_FAILED is -1 so we can use the generic __sysret()
-- * which returns -1 upon error and still satisfy user land that checks for
-- * MAP_FAILED.
-- */
--
- static __attribute__((unused))
- void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
- {
 
----
-base-commit: 2602949b22330f1275138e2b5aea5d49126b9757
-change-id: 20251028-nolibc-map-failed-comment-d1a49bbb50bd
+> This is the start of the stable review cycle for the 5.4.301 release.
+> There are 224 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+6.6, 5.4 pass our testing, so risc-v compilation problem seems to be
+5.10 and 5.15 only.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+5.4.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
 Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
+                                                                Pavel
+--=20
+In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
+Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--re0tYzvWO2vvUyBN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaQB7dgAKCRAw5/Bqldv6
+8pPYAJ0W7deXs5Gc72m/qcEdKoVsIQx52QCfaQBbWNgq6cx+YukY19tPYyIko2Y=
+=q4FR
+-----END PGP SIGNATURE-----
+
+--re0tYzvWO2vvUyBN--
 
