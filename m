@@ -1,256 +1,128 @@
-Return-Path: <linux-kernel+bounces-873716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C143C1484C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:06:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C57D1C14846
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60CE156795D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D906A4025F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697BE32863F;
-	Tue, 28 Oct 2025 12:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B0B326D73;
+	Tue, 28 Oct 2025 12:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="D4RnKXG4"
-Received: from sg-1-11.ptr.blmpb.com (sg-1-11.ptr.blmpb.com [118.26.132.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wt7egkQV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U+U7dZCf"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98952328B64
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AD5302CC2;
+	Tue, 28 Oct 2025 12:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761652928; cv=none; b=lHj7mBS/V2Vw2FCAjjdtGEaaGrlCaxIrciqg9N1vF491wgpKm6AZS4uHIq0A1GxWvZvPMGkkfwA44BISBqsZASqF9E6Fd1D3Vd1H35Oe0+BHG0M77cu24NgmmcnIsHzhWoYg1ghpAsjtvCLsvO1k6QvcZFxD8Z2oNAijFg+0OLI=
+	t=1761652917; cv=none; b=hgsFtt/y5lKn9FHzLIVmtQ+gbZJoiya9hbT8L0W/y8Nf4Z12+CiyTnYJR6bI+T8B8QA0FmmJO9u8XgBx8DQkXkbgnExRqDn7zlViatG5VaXetTs6ASjyi+0zqu53Acb7/Z2ySMOZMzjv//KQLyBSK94dt9ZQ7VrCS2SGvSRs5Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761652928; c=relaxed/simple;
-	bh=FqVdAvB7cJ3bEnfcXXz4afwcjFpV9Hal5X7e453syz8=;
-	h=Cc:Subject:Mime-Version:References:From:Date:Content-Type:
-	 In-Reply-To:To:Message-Id; b=L0qX1qdh2cEGGD6epbfBno6o7r+Q2x6KJk81KpJmArCnxY6si77faAy9j0gYec0xpX12TmjEyhvBcHtG/4e5cbU7nj7QWmvQcQOqidSNVJYMfdUMrd3Tyy8iDwKcT/z2QqZBHB/3a4GUmKA2RXN4tYfGHNoNdR5+ZhBxK5w+lUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=fail smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=D4RnKXG4; arc=none smtp.client-ip=118.26.132.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fnnas.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
- s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761652911;
-  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
- reply-to:content-type:mime-version:in-reply-to:message-id;
- bh=qrdpkSUzpkeuew8x0js4jD14VDEyFeMHTwoUeSVoFuI=;
- b=D4RnKXG4hIwCAhpR+Qh2Amn/J02yZp2vFSaxJnouVbxeS6j1U3VVioKuGnHcPSokH6QgOF
- wwnDb9ddvWpHAS0u3Uxj9luPlKi/8Q/0v4ct52uMNsA7Bccu4/CpAonrVxTD6ZEOhTd8AV
- Er57n3y/xkmyiw/vpDzv/jc5rHkRu5q+Xmi9GKnA8fJSTHU7+az/Kvf38TKxMo0fAQIOM3
- SYOGs2aO6Gc0LDDCs2gAROYYcB3CzWcMOkeSZrCT/3+MeLDNszHS+PyLAO1Q0s0RNvTfF1
- am5vVukzNksWmysz2+07C60iqQ656BMoNiL3Jwxm0/kBQlEy2z8kIlq/KIkY6A==
-Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
-	<linux-raid@vger.kernel.org>, <linan666@huaweicloud.com>, 
-	<yangerkun@huawei.com>, <yi.zhang@huawei.com>
-Subject: Re: [PATCH v7 2/4] md: init bioset in mddev_init
-X-Original-From: Yu Kuai <yukuai@fnnas.com>
+	s=arc-20240116; t=1761652917; c=relaxed/simple;
+	bh=l7vOFpR42jbNSBtXSBdE8trxX9hJseDCpSFfGaihnz0=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=rHAQtlGm+kWMWidf71aMJ9pjtzXgsKETLEj0k0dJb2vw2UsPZuxYqeKczKJZiUIXYt4UObzgFpSZEbnsYKYyJs9LB6+nMXNH1PggZ5cnahqo7Q/URnmp7IeL/tKfiacEld8Xa6K4cbyN1Ge1heoI+LsgYpzTDaM1IadJgG1N80M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wt7egkQV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U+U7dZCf; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 Oct 2025 12:01:51 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761652913;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=YeVIUNu11cNST0eypHpOvCA3xSe//4ZGBiT4znegk7E=;
+	b=Wt7egkQVxYeOjVaaGNFQYYb4swa8JTcytEMFcYwiILRZqr3LspbEh7y7ir8dOEy+uYDh8l
+	2Nl/yU57JymRi1EPSu/Vh8elYzkX4pm0RU+MIE3CT0VHy44ExmjuTUgGMK2bWqOgunsyNN
+	hH3HUOQ44elZmhBD52bQF4Q8l9mJlYmfSyKsTGS7d5uB1gDkOeEqrKGdk5AJkxdPvT64ZK
+	HvP03ogl350MRZhxR3eXXCLzkQ40P6fQhSXYpoph5NBkACV5fFvuOIywztAf4wE3xsmoIy
+	aOB52y761yGgRQOl9ToFPnfTGYJywKjSAaKZXAt8Q9eDG40hKyurLrSyXprNrQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761652913;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=YeVIUNu11cNST0eypHpOvCA3xSe//4ZGBiT4znegk7E=;
+	b=U+U7dZCfJEte1jV/md8tZmW5RRpE2XO4lDYPpz2GyP8wwMfFo1qOYl/NEnTetaEz0AKYrK
+	FkFIZcBNSFG8gVDg==
+From: "tip-bot2 for Gregory Price" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/CPU/AMD: Add RDSEED fix for Zen5
+Cc: stable@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251027072915.3014463-1-linan122@huawei.com> <20251027072915.3014463-3-linan122@huawei.com>
-User-Agent: Mozilla Thunderbird
-Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Tue, 28 Oct 2025 20:01:48 +0800
+MIME-Version: 1.0
+Message-ID: <176165291198.2601451.3074910014537130674.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-From: "Yu Kuai" <yukuai@fnnas.com>
-Date: Tue, 28 Oct 2025 20:01:47 +0800
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20251027072915.3014463-3-linan122@huawei.com>
-X-Lms-Return-Path: <lba+26900b0ad+7d3938+vger.kernel.org+yukuai@fnnas.com>
-Reply-To: yukuai@fnnas.com
-To: <linan122@huawei.com>, <corbet@lwn.net>, <song@kernel.org>, 
-	<hare@suse.de>, <xni@redhat.com>
-Message-Id: <69829383-8212-473b-9346-d093d33f1d27@fnnas.com>
 
-Hi,
+The following commit has been merged into the x86/urgent branch of tip:
 
-=E5=9C=A8 2025/10/27 15:29, linan122@huawei.com =E5=86=99=E9=81=93:
-> From: Li Nan <linan122@huawei.com>
->
-> IO operations may be needed before md_run(), such as updating metadata
-> after writing sysfs. Without bioset, this triggers a NULL pointer
-> dereference as below:
->
->   BUG: kernel NULL pointer dereference, address: 0000000000000020
->   Call Trace:
->    md_update_sb+0x658/0xe00
->    new_level_store+0xc5/0x120
->    md_attr_store+0xc9/0x1e0
->    sysfs_kf_write+0x6f/0xa0
->    kernfs_fop_write_iter+0x141/0x2a0
->    vfs_write+0x1fc/0x5a0
->    ksys_write+0x79/0x180
->    __x64_sys_write+0x1d/0x30
->    x64_sys_call+0x2818/0x2880
->    do_syscall_64+0xa9/0x580
->    entry_SYSCALL_64_after_hwframe+0x4b/0x53
->
-> Reproducer
-> ```
->    mdadm -CR /dev/md0 -l1 -n2 /dev/sd[cd]
->    echo inactive > /sys/block/md0/md/array_state
->    echo 10 > /sys/block/md0/md/new_level
-> ```
->
-> Fixes: d981ed841930 ("md: Add new_level sysfs interface")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.c | 74 +++++++++++++++++++++++++------------------------
->   1 file changed, 38 insertions(+), 36 deletions(-)
->
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index f6fd55a1637b..51f0201e4906 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -730,6 +730,8 @@ static void mddev_clear_bitmap_ops(struct mddev *mdde=
-v)
->  =20
->   int mddev_init(struct mddev *mddev)
->   {
-> +	int err =3D 0;
-> +
->   	if (!IS_ENABLED(CONFIG_MD_BITMAP))
->   		mddev->bitmap_id =3D ID_BITMAP_NONE;
->   	else
-> @@ -741,8 +743,26 @@ int mddev_init(struct mddev *mddev)
->  =20
->   	if (percpu_ref_init(&mddev->writes_pending, no_op,
->   			    PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
-> -		percpu_ref_exit(&mddev->active_io);
-> -		return -ENOMEM;
-> +		err =3D -ENOMEM;
-> +		goto exit_acitve_io;
-> +	}
-> +
-> +	if (!bioset_initialized(&mddev->bio_set)) {
-> +		err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVE=
-CS);
+Commit-ID:     607b9fb2ce248cc5b633c5949e0153838992c152
+Gitweb:        https://git.kernel.org/tip/607b9fb2ce248cc5b633c5949e015383899=
+2c152
+Author:        Gregory Price <gourry@gourry.net>
+AuthorDate:    Mon, 20 Oct 2025 11:13:55 +02:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 28 Oct 2025 12:37:49 +01:00
 
-mddev_init() can only be called once for one mddev, no need to test if bios=
-et
-is initialized here.
+x86/CPU/AMD: Add RDSEED fix for Zen5
 
-> +		if (err)
-> +			goto exit_writes_pending;
-> +	}
-> +	if (!bioset_initialized(&mddev->sync_set)) {
+There's an issue with RDSEED's 16-bit and 32-bit register output
+variants on Zen5 which return a random value of 0 "at a rate inconsistent
+with randomness while incorrectly signaling success (CF=3D1)". Search the
+web for AMD-SB-7055 for more detail.
 
-same here.
+Add a fix glue which checks microcode revisions.
 
-> +		err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BV=
-ECS);
-> +		if (err)
-> +			goto exit_bio_set;
-> +	}
-> +
-> +	if (!bioset_initialized(&mddev->io_clone_set)) {
+  [ bp: Add microcode revisions checking, rewrite. ]
 
-And here.
+Cc: stable@vger.kernel.org
+Signed-off-by: Gregory Price <gourry@gourry.net>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20251018024010.4112396-1-gourry@gourry.net
+---
+ arch/x86/kernel/cpu/amd.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Thanks,
-Kuai
-
-> +		err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
-> +				  offsetof(struct md_io_clone, bio_clone), 0);
-> +		if (err)
-> +			goto exit_sync_set;
->   	}
->  =20
->   	/* We want to start with the refcount at zero */
-> @@ -773,11 +793,24 @@ int mddev_init(struct mddev *mddev)
->   	INIT_WORK(&mddev->del_work, mddev_delayed_delete);
->  =20
->   	return 0;
-> +
-> +exit_sync_set:
-> +	bioset_exit(&mddev->sync_set);
-> +exit_bio_set:
-> +	bioset_exit(&mddev->bio_set);
-> +exit_writes_pending:
-> +	percpu_ref_exit(&mddev->writes_pending);
-> +exit_acitve_io:
-> +	percpu_ref_exit(&mddev->active_io);
-> +	return err;
->   }
->   EXPORT_SYMBOL_GPL(mddev_init);
->  =20
->   void mddev_destroy(struct mddev *mddev)
->   {
-> +	bioset_exit(&mddev->bio_set);
-> +	bioset_exit(&mddev->sync_set);
-> +	bioset_exit(&mddev->io_clone_set);
->   	percpu_ref_exit(&mddev->active_io);
->   	percpu_ref_exit(&mddev->writes_pending);
->   }
-> @@ -6393,29 +6426,9 @@ int md_run(struct mddev *mddev)
->   		nowait =3D nowait && bdev_nowait(rdev->bdev);
->   	}
->  =20
-> -	if (!bioset_initialized(&mddev->bio_set)) {
-> -		err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVE=
-CS);
-> -		if (err)
-> -			return err;
-> -	}
-> -	if (!bioset_initialized(&mddev->sync_set)) {
-> -		err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BV=
-ECS);
-> -		if (err)
-> -			goto exit_bio_set;
-> -	}
-> -
-> -	if (!bioset_initialized(&mddev->io_clone_set)) {
-> -		err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
-> -				  offsetof(struct md_io_clone, bio_clone), 0);
-> -		if (err)
-> -			goto exit_sync_set;
-> -	}
-> -
->   	pers =3D get_pers(mddev->level, mddev->clevel);
-> -	if (!pers) {
-> -		err =3D -EINVAL;
-> -		goto abort;
-> -	}
-> +	if (!pers)
-> +		return -EINVAL;
->   	if (mddev->level !=3D pers->head.id) {
->   		mddev->level =3D pers->head.id;
->   		mddev->new_level =3D pers->head.id;
-> @@ -6426,8 +6439,7 @@ int md_run(struct mddev *mddev)
->   	    pers->start_reshape =3D=3D NULL) {
->   		/* This personality cannot handle reshaping... */
->   		put_pers(pers);
-> -		err =3D -EINVAL;
-> -		goto abort;
-> +		return -EINVAL;
->   	}
->  =20
->   	if (pers->sync_request) {
-> @@ -6554,12 +6566,6 @@ int md_run(struct mddev *mddev)
->   	mddev->private =3D NULL;
->   	put_pers(pers);
->   	md_bitmap_destroy(mddev);
-> -abort:
-> -	bioset_exit(&mddev->io_clone_set);
-> -exit_sync_set:
-> -	bioset_exit(&mddev->sync_set);
-> -exit_bio_set:
-> -	bioset_exit(&mddev->bio_set);
->   	return err;
->   }
->   EXPORT_SYMBOL_GPL(md_run);
-> @@ -6784,10 +6790,6 @@ static void __md_stop(struct mddev *mddev)
->   	mddev->private =3D NULL;
->   	put_pers(pers);
->   	clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
-> -
-> -	bioset_exit(&mddev->bio_set);
-> -	bioset_exit(&mddev->sync_set);
-> -	bioset_exit(&mddev->io_clone_set);
->   }
->  =20
->   void md_stop(struct mddev *mddev)
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index ccaa51c..bc29be6 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1035,8 +1035,18 @@ static void init_amd_zen4(struct cpuinfo_x86 *c)
+ 	}
+ }
+=20
++static const struct x86_cpu_id zen5_rdseed_microcode[] =3D {
++	ZEN_MODEL_STEP_UCODE(0x1a, 0x02, 0x1, 0x0b00215a),
++	ZEN_MODEL_STEP_UCODE(0x1a, 0x11, 0x0, 0x0b101054),
++};
++
+ static void init_amd_zen5(struct cpuinfo_x86 *c)
+ {
++	if (!x86_match_min_microcode_rev(zen5_rdseed_microcode)) {
++		clear_cpu_cap(c, X86_FEATURE_RDSEED);
++		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
++		pr_emerg_once("RDSEED32 is broken. Disabling the corresponding CPUID bit.\=
+n");
++	}
+ }
+=20
+ static void init_amd(struct cpuinfo_x86 *c)
 
