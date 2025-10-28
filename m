@@ -1,78 +1,110 @@
-Return-Path: <linux-kernel+bounces-873000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908F8C12CFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:52:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0390C12CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02D364EB821
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:52:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67B874EDE9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBA7273D81;
-	Tue, 28 Oct 2025 03:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E193E280325;
+	Tue, 28 Oct 2025 03:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VTv3uyI9"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r+LlHi1D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC85F27EFFA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2FD2571BD;
+	Tue, 28 Oct 2025 03:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623517; cv=none; b=CV+LcUWXW/BQyD4zySpQqM1Me6dZaFIXFmGUMvwRk4JfuueKudop1zeJFZKz/5dg3xjHzt6tuUdtLzDVNtyHV/CXWk93QZS5+MaW5nfsawEgLtzK1ZMOozbdlHayP3FbbPIo15dOZZWw31Mc8aJVm2lWzt7Ko6rAoCO/olmueZU=
+	t=1761623309; cv=none; b=iIli3y8WuVIihj2Q8yAJbFGniZ+/uTzGeRZCGUKX5Cv44NQsDJj5i1wvDVpUBcKlW5ics8gLs1iV3q8H3nyGogVsarIQMR9NMzYfsRS3yeM8aonRoAF2kskrf1I4+iM4ahOu5CNE83wjIKeDTdvat7I5y/QfONW9eV+29n8zThA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623517; c=relaxed/simple;
-	bh=5xMYtSEok4bYyLtlLowAuhEnBHAtxF/58LNkN8fxapg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W3wqjSntHPksWr/+j7nbZmhIKtE9BCjoCx1uqsXiAldkJSocRKJKaPqetfIyUvR8xe/34mPn0cn2UXZj/TX87xkRQYwIoaITXq3JVMCfn9fPRzyaaG/fbIGxOnq747+273OBlC2/FrM8i3M3/yvthO8bbWotAwDCW0/d1GI6NSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VTv3uyI9; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <ed7e7c83-6ff3-4a10-89ec-1b38610fabd2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761623503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CwVf5Z+boA1bEp6FLhaWmibblYnli4umc6NlcbXHDZc=;
-	b=VTv3uyI9pTP9vVQN+eL9q1tbWQIzsUZQBv0c47NoCWr3YGGDaqppbAe28rwLwvMlOQkmbz
-	lHZw/6NmG6bsDxLYjiytjC4IezQfaqZZBMrvUDYgNB8ophi5LzWC4I3e/pDscd2PX3/HH/
-	PIX26TmsTcqvLQnWFCPhvhmJlvKtE2M=
-Date: Tue, 28 Oct 2025 11:50:53 +0800
+	s=arc-20240116; t=1761623309; c=relaxed/simple;
+	bh=F9PEdAfzgWQQ2Eeck3XTAAh60sY+/GKtfF7NT+YXA9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PurDzIZ1LuzlPpRObRdLV7sYShFe1LAoGlRXJWSlKGXjOh7Ajic/dNR2V45iGZ5cw9ylrVxORkyBGe209XItKKV6VMwVEYIwn6w8YzBYv2K0JKgyVa7VVa/pK/oRwRTAti8AVZxQEs8u0LkNX+puOULQUUKwk7Ql+YAbGwm8Cxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r+LlHi1D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2741AC4CEE7;
+	Tue, 28 Oct 2025 03:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761623308;
+	bh=F9PEdAfzgWQQ2Eeck3XTAAh60sY+/GKtfF7NT+YXA9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r+LlHi1DRjrYdeHjbmQptIeHgcr+h+3w70uVuYEPJGPrY4kRuE4Afm1cwWeN17Ni6
+	 IABr8PF3+vkXuiicY7YlxBsudMRGr6JUVREv4e2Z+ouddyWJCC9UNFN5LtV9jm+QLU
+	 +CYLaW7XWhQKux0MzE9HXbpzqwFx70xulmvMKLOFD4sNLFNDUh9gYLTLpFmrbmX9AO
+	 h0LGzo7sj/QQz430yP8rbrguggjQBsur4KRWQqRPEnvgfDyQ0px7BbYYyhsIW//bVN
+	 G/JiIFDV+D0+dvFICRAVgdqEjRUhe5n77ARIKYdvU1u3IwTYdHw2wI7C9NvqCts/Xj
+	 YbEd4ytzBVAFg==
+Date: Mon, 27 Oct 2025 22:51:23 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, 
+	abhinav.kumar@linux.dev, sean@poorly.run, marijn.suijten@somainline.org, 
+	airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca, 
+	quic_khsieh@quicinc.com, neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com, aiqun.yu@oss.qualcomm.com, 
+	yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 08/12] arm64: defconfig: Enable NT37801 DSI panel driver
+Message-ID: <wuh7agcgg6spghilnx4amqukaaydj25u7kbdiod7fl6pu2ulvm@pmosyuo43cyw>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023080609.1212-3-yuanjie.yang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 06/24] smb: move file access permission bits
- definitions to common/smb1pdu.h
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
- christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
- linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251027071316.3468472-7-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd_LqhpKCJAPKm0yBC-G+tTJpVQJSoTCbEN7Gdz1kMnQDg@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <CAKYAXd_LqhpKCJAPKm0yBC-G+tTJpVQJSoTCbEN7Gdz1kMnQDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251023080609.1212-3-yuanjie.yang@oss.qualcomm.com>
 
-Yes, maybe I should move them to common/smbglob.h.
+On Thu, Oct 23, 2025 at 04:06:05PM +0800, yuanjie yang wrote:
+> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> 
+> Build the NT37801 DSI panel driver as module.
+> 
+> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
 
-On 10/28/25 11:36 AM, Namjae Jeon wrote:
-> Please don't move them to smb1pdu.h.
-> These are common definitions that are also defined in the smb2 specification.
+You (Yuanjie) authored the patch, but forgot to sign-off, then Yongxing
+provided certificate of origin, then you provide certificate of origin
+and send it to list?
 
--- 
+Please correct.
+
+Also, all other patches in this series are merged by DRM maintainers,
+while I'm supposed to merge this one. Please send it separately, once
+it's ready to be merged.
+
 Thanks,
-ChenXiaoSong.
+Bjorn
 
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 8cfb5000fa8e..537a065db11c 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -945,6 +945,7 @@ CONFIG_DRM_PANEL_SITRONIX_ST7703=m
+>  CONFIG_DRM_PANEL_STARTEK_KD070FHFID015=m
+>  CONFIG_DRM_PANEL_TRULY_NT35597_WQXGA=m
+>  CONFIG_DRM_PANEL_VISIONOX_VTDR6130=m
+> +CONFIG_DRM_PANEL_NOVATEK_NT37801=m
+>  CONFIG_DRM_DISPLAY_CONNECTOR=m
+>  CONFIG_DRM_FSL_LDB=m
+>  CONFIG_DRM_ITE_IT6263=m
+> -- 
+> 2.34.1
+> 
 
