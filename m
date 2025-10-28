@@ -1,176 +1,218 @@
-Return-Path: <linux-kernel+bounces-873902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF7DC150E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:07:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A21C1507D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D95D404056
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84B8B1AA21BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0659328B6B;
-	Tue, 28 Oct 2025 14:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ADE33509C;
+	Tue, 28 Oct 2025 14:02:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nZzFMTol"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Z9GFkG47"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A77624676A;
-	Tue, 28 Oct 2025 14:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F039A3346B9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660082; cv=none; b=JZUxbBwiSGuaZRkIVuYZ9nA87W8hO5tLhxbuWc0AG6Fbl2p7SGURIFRWXvE1r9JmumG/UfuoPGU7h3Jh6WTA8FuDiBoyMilqnePS3qdj9ryBBGHmR5+Cu3vhHoi4BRwPR45v5it9JdE9lZ14cNVigUQHMHTOVeGoAiaNO6pvxJY=
+	t=1761660136; cv=none; b=KLFrWoNcQxR7vwfIM/LS9W8GiGTQOIqkAweTOikgFEiw/e50QGWxFL7Bd5nLlBK6kPB+4LoTrplHZr7MBfevpc42eMy0CgkTEQH7ZT7ZojZp7Lyxu+t00u6sfc/J36bG8NeIROiqYbCRLqDuW+Ad6FgBLgafTkDf7V4R41Ur+7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660082; c=relaxed/simple;
-	bh=Q+JKkHpI7G2bnBrn++zkM52PKJ8LvFbwXnn+LgOzPvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1CT7cFxQ9+wN3OB80yh/FMZdhwjdzEW+yHAtX2xLdnn7K4cYsLJk5bG4I8KI2FIljJ5traeAe6Gj+KwW1QbkbJCklRDDI/+6eR80yUhXm5xJvNRIYYMtMi1CvrJfxqksQnYiDoM7cIk2+lcWqlWhvwhTeex914HSj0mma+UZ7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nZzFMTol; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761660079; x=1793196079;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q+JKkHpI7G2bnBrn++zkM52PKJ8LvFbwXnn+LgOzPvI=;
-  b=nZzFMTolApOFVvhgKjn/dOdxyXlANIJL+OILDq05KFMqxnZkzBw9Aojh
-   /Zo8JhtcOTxEd3YzgNH5D9eylUYvc2lggIuxTB7A+oFZyPE/C+hb/+yYW
-   zyRVSVv8HyLDkQ9zmLzf8Ed4yKfdJUBBNrsuZ5iKIuksMN1Pqky0S4roV
-   5LhvtEkMNsakaf6DcHOROjoQa1a+CYjK+JpVHfCxmNRwDaRloYtV5GyCc
-   T9KKEosGKkmzybltOvX/ss3NrO9YFSJIVFiRDMKNLss3hfQ3BeBeNvKLL
-   EZghlEh9IjNqrAYx/6Y5/MiawPitUoE4OUX7xGpusBHRc58Wx+seIvi1i
-   g==;
-X-CSE-ConnectionGUID: +SrZZ8YkQ769aVaX0VCyBA==
-X-CSE-MsgGUID: TjHfzLu4Tj+B3oRcQhVJ2g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63667220"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="63667220"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 07:01:19 -0700
-X-CSE-ConnectionGUID: u16gAOxzRcO5A15rT/ulKQ==
-X-CSE-MsgGUID: dCJ8mXX6S42gCVfap5q90Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="208948271"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 28 Oct 2025 07:01:12 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDkG6-000JBZ-0W;
-	Tue, 28 Oct 2025 14:01:10 +0000
-Date: Tue, 28 Oct 2025 22:00:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Miaoqian Lin <linmq006@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	"benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-	Philippe Cornu <philippe.cornu@st.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] drm/of: Fix device node reference leak in
- drm_of_panel_bridge_remove
-Message-ID: <202510282123.AjUbRs11-lkp@intel.com>
-References: <20251028060918.65688-1-linmq006@gmail.com>
+	s=arc-20240116; t=1761660136; c=relaxed/simple;
+	bh=KQJVW7hQFsOfYlMfXn7g2fhKNRdoKavynWn5pj97P2E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ELRnZyEujoI/F8INi0rlYfj+3iohwOErTZjqQYPhANcHADTGTtnVnKVxZ2umFIK+ofDcjDnY0fZu4YL76/7DHL1lKBFAPNjTI/Amm8QuXfhtUZFoUBTPYDneQQk2OzQRa5+r7h3LNxgOV3eVeO2g7szGlnyHCz8TOvHbkCVuBl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Z9GFkG47; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ed4e9b731744dd0f80f5f909649dc429cd38d662.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761660130;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HQTPBURjsOkZj3EiVY9z0u60SrFsL8Dztnnfp+pAlCA=;
+	b=Z9GFkG47Gtvs5GqThyqO3DTOhhShq//34KBy0fz3/b/XoJnmDxAH4ppQO+I+Hw7y78Ih4c
+	fU7a9lrwbxmOZoPVtfCo0Bh0hkpbeU/KBc72uATxrQrBglsA13UnJ5LFLlnmeOwe1G+JoY
+	rPlCR3T2rfOednltKD71yWyiqS4DSsE=
+Subject: Re: [PATCH bpf-next v2 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same register
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Eduard Zingerman <eddyz87@gmail.com>, ast@kernel.org,
+ daniel@iogearbox.net,  john.fastabend@gmail.com, andrii@kernel.org,
+ martin.lau@linux.dev, song@kernel.org,  yonghong.song@linux.dev,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,  jolsa@kernel.org,
+ shuah@kernel.org, paul.chaignon@gmail.com, m.shachnai@gmail.com, 
+ harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
+ luis.gerhorst@fau.de,  bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org
+Cc: Kaiyan Mei <M202472210@hust.edu.cn>, Yinhao Hu <dddddd@hust.edu.cn>
+Date: Tue, 28 Oct 2025 22:01:50 +0800
+In-Reply-To: <51769170ba3cf9eb4007fb0fc22f2434302d9aa5.camel@gmail.com>
+References: <20251025053017.2308823-1-kafai.wan@linux.dev>
+	 <20251025053017.2308823-2-kafai.wan@linux.dev>
+	 <51769170ba3cf9eb4007fb0fc22f2434302d9aa5.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028060918.65688-1-linmq006@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Miaoqian,
+On Mon, 2025-10-27 at 13:09 -0700, Eduard Zingerman wrote:
+> On Sat, 2025-10-25 at 13:30 +0800, KaFai Wan wrote:
+> > When conditional jumps are performed on the same register (e.g., r0 <=
+=3D r0,
+> > r0 > r0, r0 < r0) where the register holds a scalar with range, the ver=
+ifier
+> > incorrectly attempts to adjust the register's min/max bounds. This lead=
+s to
+> > invalid range bounds and triggers a BUG warning:
+> >=20
+> > verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds violat=
+ion u64=3D[0x1, 0x0]
+> > s64=3D[0x1, 0x0] u32=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_off=3D(0x0, 0x0)
+> > WARNING: CPU: 0 PID: 92 at kernel/bpf/verifier.c:2731 reg_bounds_sanity=
+_check+0x163/0x220
+> > Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-=
+debian-1.16.3-2
+> > 04/01/2014
+> > RIP: 0010:reg_bounds_sanity_check+0x163/0x220
+> > Call Trace:
+> > =C2=A0<TASK>
+> > =C2=A0reg_set_min_max+0xf7/0x1d0
+> > =C2=A0check_cond_jmp_op+0x57b/0x1730
+> > =C2=A0? print_bpf_insn+0x3d5/0xa50
+> > =C2=A0do_check_common+0x33ac/0x33c0
+> > =C2=A0...
+> >=20
+> > The root cause is in regs_refine_cond_op() where BPF_JLT/BPF_JSLT opera=
+tions
+> > adjust both min/max bounds on the same register, causing invalid bounds=
+.
+> >=20
+> > Since comparing a register with itself should not change its bounds (th=
+e
+> > comparison result is always known: r0 =3D=3D r0 is always true, r0 < r0=
+ is
+> > always false), the bounds adjustment is unnecessary.
+> >=20
+> > Fix this by:
+> > 1. Enhance is_branch_taken() and is_scalar_branch_taken() to properly
+> > =C2=A0=C2=A0 handle branch direction computation for same register comp=
+arisons
+> > =C2=A0=C2=A0 across all BPF jump operations
+> > 2. For unknown branch directions (e.g., BPF_JSET), add early return in
+> > =C2=A0=C2=A0 reg_set_min_max() to avoid bounds adjustment on the same r=
+egister
+> >=20
+> > The fix ensures that unnecessary bounds adjustments are skipped, preven=
+ting
+> > the verifier bug while maintaining correct branch direction analysis.
+> >=20
+> > Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> > Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> > Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail=
+.kaiyanm@hust.edu.cn/
+> > Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+> > Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> > ---
+> > =C2=A0kernel/bpf/verifier.c | 32 ++++++++++++++++++++++++++++++++
+> > =C2=A01 file changed, 32 insertions(+)
+> >=20
+> > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> > index 6d175849e57a..653fa96ed0df 100644
+> > --- a/kernel/bpf/verifier.c
+> > +++ b/kernel/bpf/verifier.c
+> > @@ -16037,6 +16037,12 @@ static int is_scalar_branch_taken(struct bpf_r=
+eg_state *reg1, struct
+> > bpf_reg_sta
+> > =C2=A0		}
+> > =C2=A0		break;
+> > =C2=A0	case BPF_JSET:
+> > +		if (reg1 =3D=3D reg2) {
+> > +			if (tnum_is_const(t1))
+> > +				return t1.value !=3D 0;
+> > +			else
+> > +				return (smin1 <=3D 0 && smax1 >=3D 0) ? -1 : 1;
+> > +		}
+>=20
+> I think this logic is fine, but it needs tests for multiple cases.
+>=20
+ok, I'll add tests for that.
 
-kernel test robot noticed the following build errors:
+> > =C2=A0		if (!is_reg_const(reg2, is_jmp32)) {
+> > =C2=A0			swap(reg1, reg2);
+> > =C2=A0			swap(t1, t2);
+> > @@ -16172,6 +16178,25 @@ static int is_pkt_ptr_branch_taken(struct bpf_=
+reg_state *dst_reg,
+> > =C2=A0static int is_branch_taken(struct bpf_reg_state *reg1, struct bpf=
+_reg_state *reg2,
+> > =C2=A0			=C2=A0=C2=A0 u8 opcode, bool is_jmp32)
+> > =C2=A0{
+> > +	if (reg1 =3D=3D reg2) {
+> > +		switch (opcode) {
+> > +		case BPF_JGE:
+> > +		case BPF_JLE:
+> > +		case BPF_JSGE:
+> > +		case BPF_JSLE:
+> > +		case BPF_JEQ:
+> > +			return 1;
+> > +		case BPF_JGT:
+> > +		case BPF_JLT:
+> > +		case BPF_JSGT:
+> > +		case BPF_JSLT:
+> > +		case BPF_JNE:
+> > +			return 0;
+> > +		default:
+> > +			break;
+> > +		}
+> > +	}
+> > +
+>=20
+> I think Alexei was against my suggestion to put it in
+> is_branch_taken() and preferred is_scalar_branch_taken() instead.
+>=20
+Hmm, I misunderstood that. If put in is_scalar_branch_taken() then just for=
+ scalar cases,
+just confirm that.
 
-[auto build test ERROR on drm-misc/drm-misc-next]
-[also build test ERROR on linus/master v6.18-rc3 next-20251028]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > =C2=A0	if (reg_is_pkt_pointer_any(reg1) && reg_is_pkt_pointer_any(reg2)=
+ && !is_jmp32)
+> > =C2=A0		return is_pkt_ptr_branch_taken(reg1, reg2, opcode);
+> > =C2=A0
+> > @@ -16429,6 +16454,13 @@ static int reg_set_min_max(struct bpf_verifier=
+_env *env,
+> > =C2=A0	if (false_reg1->type !=3D SCALAR_VALUE || false_reg2->type !=3D =
+SCALAR_VALUE)
+> > =C2=A0		return 0;
+> > =C2=A0
+> > +	/* We compute branch direction for same registers in is_branch_taken(=
+) and
+> > +	 * is_scalar_branch_taken(). For unknown branch directions (e.g., BPF=
+_JSET)
+> > +	 * on the same registers, we don't need to adjusts the min/max values=
+.
+> > +	 */
+> > +	if (false_reg1 =3D=3D false_reg2)
+> > +		return 0;
+> > +
+> > =C2=A0	/* fallthrough (FALSE) branch */
+> > =C2=A0	regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode), =
+is_jmp32);
+> > =C2=A0	reg_bounds_sync(false_reg1);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Miaoqian-Lin/drm-of-Fix-device-node-reference-leak-in-drm_of_panel_bridge_remove/20251028-141134
-base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
-patch link:    https://lore.kernel.org/r/20251028060918.65688-1-linmq006%40gmail.com
-patch subject: [PATCH] drm/of: Fix device node reference leak in drm_of_panel_bridge_remove
-config: mips-randconfig-r072-20251028 (https://download.01.org/0day-ci/archive/20251028/202510282123.AjUbRs11-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510282123.AjUbRs11-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510282123.AjUbRs11-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/drm_bridge.c:37:
->> include/drm/drm_of.h:174:2: error: call to undeclared function 'of_node_put'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     174 |         of_node_put(remote);
-         |         ^
-   1 error generated.
---
-   In file included from drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c:10:
->> include/drm/drm_of.h:174:2: error: call to undeclared function 'of_node_put'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     174 |         of_node_put(remote);
-         |         ^
-   In file included from drivers/gpu/drm/panel/panel-magnachip-d53e6ea8966.c:13:
-   In file included from include/linux/backlight.h:13:
-   In file included from include/linux/fb.h:5:
-   In file included from include/uapi/linux/fb.h:6:
-   In file included from include/linux/i2c.h:21:
-   In file included from include/linux/irqdomain.h:14:
->> include/linux/of.h:129:13: error: conflicting types for 'of_node_put'
-     129 | extern void of_node_put(struct device_node *node);
-         |             ^
-   include/drm/drm_of.h:174:2: note: previous implicit declaration is here
-     174 |         of_node_put(remote);
-         |         ^
-   2 errors generated.
-
-
-vim +/of_node_put +174 include/drm/drm_of.h
-
-   153	
-   154	/*
-   155	 * drm_of_panel_bridge_remove - remove panel bridge
-   156	 * @np: device tree node containing panel bridge output ports
-   157	 *
-   158	 * Remove the panel bridge of a given DT node's port and endpoint number
-   159	 *
-   160	 * Returns zero if successful, or one of the standard error codes if it fails.
-   161	 */
-   162	static inline int drm_of_panel_bridge_remove(const struct device_node *np,
-   163						     int port, int endpoint)
-   164	{
-   165	#if IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_DRM_PANEL_BRIDGE)
-   166		struct drm_bridge *bridge;
-   167		struct device_node *remote;
-   168	
-   169		remote = of_graph_get_remote_node(np, port, endpoint);
-   170		if (!remote)
-   171			return -ENODEV;
-   172	
-   173		bridge = of_drm_find_bridge(remote);
- > 174		of_node_put(remote);
-   175		drm_panel_bridge_remove(bridge);
-   176	
-   177		return 0;
-   178	#else
-   179		return -EINVAL;
-   180	#endif
-   181	}
-   182	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Thanks,
+KaFai
 
