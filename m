@@ -1,141 +1,150 @@
-Return-Path: <linux-kernel+bounces-872861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A20C123B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:45:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 980CAC127B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:05:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AF4F3A503A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489FB5E3B97
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648771F5435;
-	Tue, 28 Oct 2025 00:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E793C23AD;
+	Tue, 28 Oct 2025 01:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="FtGKA5E7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ijBE9gLX"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aKPeZjdr"
+Received: from mail-m3271.qiye.163.com (mail-m3271.qiye.163.com [220.197.32.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52871BBBE5;
-	Tue, 28 Oct 2025 00:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518B5221F17;
+	Tue, 28 Oct 2025 01:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612183; cv=none; b=JI47o/0NmLmNQOXJ4nurLCuK69TCdQVJTvOWUsqIDI1QojVInDrt9X0CzcVyX2GCmTCw619t+frYJ0jlgPKDf2B+o1dcs20XOTpXeltkiT+LhwDyJnz/p9NvOrvSk9DhMdZTsdAQDSij3RoQk3TkUcLN085xVRXd41k9gYJDqCU=
+	t=1761613211; cv=none; b=WaQSaLtSXVtFETJHxIsMlfuT866XBEieAsBjWlJXK1p50HvfOOE9etAuUstYTayjYTjNDwX0PNrLaBOv3/hKlUh6Uy0Sl79RgKfi/2553MpkyGlSM/vQkfe9KmGK0T1BTjznPaE6P0/o2i/Ylj8d1IgqylbC3L2LQxXtA9JLCX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612183; c=relaxed/simple;
-	bh=NpleAUsPv8tyterDaTQdtwZ7noPPJ/SFO2adnNZi/8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RP2LQg1SLNO5d2qdH3vHDFISJDOJ7KcbPilL4OV2S2av/De4vH//dCNM3Sg5aahEP0VH5kBH+30Wi7779UAiBuz+hv56Nt17RrJ75EbQnADh2zVebVYG2QWz0jlpWhBqjk667EmZnkN6/kU7EasXzSMF6QM3MBXEp7ZFY17XXOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=FtGKA5E7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ijBE9gLX; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DC02C140010B;
-	Mon, 27 Oct 2025 20:42:58 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 27 Oct 2025 20:42:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1761612178; x=
-	1761698578; bh=b66zlWBixK0izKr3d/veWV/xQufa7n1aK2ZSQQUrqfc=; b=F
-	tGKA5E7cuYj7NFqCYEJT2cRilNMEuVn92Z/Yq7Lj63XyVkj+NrBPF0hNqB/WLB6W
-	FKSIPBl/4MpBf7+FHgma4bfx/n7U6TGeZIT5cvRAJ5h21yI3d/FkorVpD/QA9BL1
-	7Yy+HmX3fhW8CIjrtq8yepZtZtViSwc3caEDaaSh7lf1mwxd4Mu52oQWJSX8WuWu
-	bcqmpKuGlAXP1iETZcaCgDPO5pKDvuRKebaNdqR3RL0qjARamtDB5gQghoPTqkN0
-	Cwk/9wOZY0JfGnXyAwslA7PL0HPlZhyHTgYuWpIbbOn3ERtXuj+wEx++ozYBIisu
-	EiypnGSQwBE4i37RzMgOA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761612178; x=1761698578; bh=b66zlWBixK0izKr3d/veWV/xQufa7n1aK2Z
-	SQQUrqfc=; b=ijBE9gLXSz6jJpJQ9mRY1d43+YZBneNYpupck+u4R2oAVK2FWu/
-	hh1xKO3PzyR9q0fFw4YafTDfybukutsJk3TGDVC5k+A85aZ3SGH65gn08LPYm9Fx
-	B5KaVkV7ssUdnugshbVB9ljuEAh3NgiqW/bl0FP2KRKxrtCu8+qj0U+MSUF0jtA/
-	rdLhsSJZyPzXsGGiM72J9lZCayJpd2t1/3eNAtM8bcBu4B/msP7fw1jhw9W1vTR/
-	9gnhciG2pCcQoqxql285qbkLCj/nMB36Fg/6MVi+9D9ymF7MOoxwgj6ToyezxI2n
-	MaHFFaQEM8WDbPHA5jMNBZJ6SgK8M0XgA2w==
-X-ME-Sender: <xms:kREAadnZXwOeLjNbXeNPPOsoWn9wVJPDu46l7lbGtwWm7k5-FSSthQ>
-    <xme:kREAaX6y_R1SyYGYtnXFNLDAw-UGRTfE8tdc6-0mCVj4kLxsCv8eSCP6y5p4ZgXmu
-    S9G18-bSPd4TB-JGFUSdy3bVvCNd7dZzjQbuCmD6fCwapKd-CGTFvg>
-X-ME-Received: <xmr:kREAaZ3xFhcpsQ1WzZNgGz0shWUs6aDLjjRV3w_ZwcLnXGr1HiH3GVBeapPuTlu36abp6Beyt_ShcTyFPx6XHhqkMqrvIDa5gz2S>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduheelgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepvfgrkhgrshhh
-    ihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjph
-    eqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeuffevveeufedtlefhjeeiieet
-    vdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghr
-    tghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhsthhrohiivg
-    hksehophgvnhhsohhurhgtvgdrtghirhhruhhsrdgtohhmpdhrtghpthhtohepthhifigr
-    ihesshhushgvrdguvgdprhgtphhtthhopehpvghrvgigsehpvghrvgigrdgtiidprhgtph
-    htthhopegrlhhsrgdquggvvhgvlhesrghlshgrqdhprhhojhgvtghtrdhorhhgpdhrtghp
-    thhtohepphgrthgthhgvshesohhpvghnshhouhhrtggvrdgtihhrrhhushdrtghomhdprh
-    gtphhtthhopehlihhnuhigqdhsohhunhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:kREAaaELfclbnZP2vhwTRYYq4JD70YUS6P3oxnyJkHEq-rcISSEqHw>
-    <xmx:kREAaQgoW6Eu3Rx5wgvjxiDhhU5UpCtPh6QbNyvk_55QxyJnq1n3OQ>
-    <xmx:kREAaVA531EsupR1fKS2GuuzwNWWQ6xnTL6yM8mfe7GdCKGTQ3oQcg>
-    <xmx:kREAaaSXDCK5GtaaFu-UUdN6XhnZb37MzeEVGnItOwNjHdf9WwiHkA>
-    <xmx:khEAaZ_DJlb-vWJWYikgArjlHmvu_9L8ntLeg3uat_c4nMGcDZ0rTsIK>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Oct 2025 20:42:55 -0400 (EDT)
-Date: Tue, 28 Oct 2025 09:42:52 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>
-Cc: Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
-	alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: sound: Increase max size of components field
-Message-ID: <20251028004252.GA553484@workstation.local>
-Mail-Followup-To: Maciej Strozek <mstrozek@opensource.cirrus.com>,
-	Takashi Iwai <tiwai@suse.de>, Jaroslav Kysela <perex@perex.cz>,
-	alsa-devel@alsa-project.org, patches@opensource.cirrus.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251023092754.84095-1-mstrozek@opensource.cirrus.com>
- <318f2ed3-57e6-495c-a773-4a094a3784cb@perex.cz>
- <87ikg03ecf.wl-tiwai@suse.de>
- <3cb73dae8e8ac1a29c856dc5c86064d568003316.camel@opensource.cirrus.com>
+	s=arc-20240116; t=1761613211; c=relaxed/simple;
+	bh=/MgNSB4BmLt0vPgHTRHS6LKWGzxG4RX8Wp1NJWxp58Q=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=HoU4wJm70B7XCn3JNUW++A4jp6i4nXz9f7X8Mazt9/XukyscqNgxgQ563uQp2GidcmjEtVKErauLmi0ZGC1iHhTrXSHslNrQTHFxPwsVYPVJy++O5awnZcpaPCuYXExu0r3c7uNgfsjP8RUolkEpfjkiwK+TpxsIm3lFSBO6c84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aKPeZjdr; arc=none smtp.client-ip=220.197.32.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.129] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2764cdbd9;
+	Tue, 28 Oct 2025 08:44:37 +0800 (GMT+08:00)
+Message-ID: <cfaa4824-a59a-4106-b2c1-befce2af0324@rock-chips.com>
+Date: Tue, 28 Oct 2025 08:44:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3cb73dae8e8ac1a29c856dc5c86064d568003316.camel@opensource.cirrus.com>
+User-Agent: Mozilla Thunderbird
+Cc: shawn.lin@rock-chips.com
+Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
+ Rockchip PCIe driver
+To: Anand Moon <linux.amoon@gmail.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
+ Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>,
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
+ <linux-pci@vger.kernel.org>,
+ "moderated list:ARM/Rockchip SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-3-linux.amoon@gmail.com>
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20251027145602.199154-3-linux.amoon@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a2846258d09cckunmfb2044f69bef6
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpJSVYfTE5DGRgZGk9MTEtWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=aKPeZjdrPMbSfHYI71aE7ibLXgYuDZdEaanjrVCXkI88WLjfdtNNEkHyLOVQX4iP4ccGH9O87aczzz9yJgpt0qIvPf9vUNeBnOk5yYERMivQXertqgmAhYLcerqfPVC3t9fVqBs/V6CtNquFh6vxTcC1yCd6Obb6gD2aRfvr3FA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=A+HDiRgC5t4Ys8kCexpdAvL//Urk5g0DuwaI2Z/zH6k=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi,
+在 2025/10/27 星期一 22:55, Anand Moon 写道:
+> Add runtime power management support to the Rockchip DesignWare PCIe
+> controller driver by enabling devm_pm_runtime() in the probe function.
+> These changes allow the PCIe controller to suspend and resume dynamically,
+> improving power efficiency on supported platforms.
+> 
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+>   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 21 +++++++++++++++++++
+>   1 file changed, 21 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> index b878ae8e2b3e..5026598d09f8 100644
+> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> @@ -20,6 +20,7 @@
+>   #include <linux/of_irq.h>
+>   #include <linux/phy/phy.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+>   #include <linux/regmap.h>
+>   #include <linux/reset.h>
+>   
+> @@ -690,6 +691,20 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>   	if (ret)
+>   		goto deinit_phy;
+>   
+> +	ret = pm_runtime_set_suspended(dev);
+> +	if (ret)
+> +		goto disable_pm_runtime;
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret) {
+> +		ret = dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+> +		goto deinit_clk;
+> +	}
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		goto disable_pm_runtime;
+> +
+>   	switch (data->mode) {
+>   	case DW_PCIE_RC_TYPE:
+>   		ret = rockchip_pcie_configure_rc(pdev, rockchip);
+> @@ -709,7 +724,10 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+>   
+>   	return 0;
+>   
+> +disable_pm_runtime:
 
-On Mon, Oct 27, 2025 at 11:50:32AM +0000, Maciej Strozek wrote:
-> diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-> index c302698fb685..7d53f6da59e2 100644
-> --- a/include/uapi/sound/asound.h
-> +++ b/include/uapi/sound/asound.h
-> @@ -1069,7 +1069,12 @@ struct snd_ctl_card_info {
->         unsigned char longname[80];
->         unsigned char reserved_[16];
->         unsigned char mixername[80];
-> -       unsigned char components[256];
-> +       unsigned char components[128];
-> +};
+We need to call reset_control_assert(rockchip->rst) before releasing the
+the pm refcount. The problem we faced on vendor kernel is there might be 
+still on-going transaction from IP to the AXI which blocks genpd to be
+powered down.
 
-Any approach to change the result of 'sizeof(struct snd_ctl_card_info)'
-breaks ABI to userspace application. This is the reason that Jaroslav
-addresses to the new PCM ioctl command. Unless, the userspace
-application build with the UAPI header provided by the existing version
-of Linux kernel does not work as expected in your version of Linux
-kernel, in respect to the sound subsystem.
+> +	pm_runtime_disable(dev);
+>   deinit_clk:
+> +	pm_runtime_no_callbacks(dev);
+>   	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>   deinit_phy:
+>   	rockchip_pcie_phy_deinit(rockchip);
+> @@ -725,6 +743,9 @@ static void rockchip_pcie_remove(struct platform_device *pdev)
+>   	/* Perform other cleanups as necessary */
+>   	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+>   	rockchip_pcie_phy_deinit(rockchip);
+> +	pm_runtime_put_sync(dev);
+> +	pm_runtime_disable(dev);
+> +	pm_runtime_no_callbacks(dev);
+>   }
+>   
+>   static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
 
-
-Regards
-
-Takashi Sakamoto
 
