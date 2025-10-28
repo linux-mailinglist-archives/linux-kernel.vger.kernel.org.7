@@ -1,156 +1,312 @@
-Return-Path: <linux-kernel+bounces-874634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAD5C16BE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:16:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE02C16BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83646403679
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:16:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CD544FCDB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDA5C8CE;
-	Tue, 28 Oct 2025 20:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8412BDC27;
+	Tue, 28 Oct 2025 20:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMguPJNc"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YUPlnrbE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 824041CAA85
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761682563; cv=none; b=ewZBA5+ieel5uL2LL3+PSEHp/xW7ZXOT+DUKcjQCQqEqv8O0+CkC57MerjBs8CBUpwCpvkI9OHxH06Nc416INLYnxbwp8wdvwXL+4T1H5EK3dQaR7SCfSuoKJrWLdcw3pxReq/lz/JyaaaeYyUHspC73ydPmzo/4L805/o9FKRA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761682563; c=relaxed/simple;
-	bh=BM/drt1Kw/lCtndnSgTN6wHlOq9MSst/ff0sEWt9SEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U4M7JvLXSapbWfnNxDTBSMLt+uvqFEyj2fbvdPTBrHx8cvYL+PWYXrPiMkmPIZTX0Ix8TkoXEKWxZeKINdU7xnbRBPrH+6ngZHyKPu6GQzhI/oLGDhFMsgt0+6gVi4tpidTpljYFmWp/FzQC0la0tqqsZcCvm28EQtgGoyvcAik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMguPJNc; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47114a40161so72246535e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:16:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761682560; x=1762287360; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C8sbXcQ5lD5cCxutqIUWwx12KWSx0PkZ6JH0o6eFGGg=;
-        b=BMguPJNco5Valnt36LdTyeUfquwtP/Ebh2myPcgUuWsZCb7t27ZDQNp8dF/PjOO7+2
-         wU+Yss9GRIauiOoMCCwEYkNICgxsWtGPI6GO1pGEx2ZrO7bN/G0RT4Xp5NsoCjrbDZk5
-         fbhfrBpAMrAlXj1lhrQfGJ0yfIyljon+uVK3zYfnyByc2S53Fihtt5eqqDAgMTy1SuOH
-         OQfBvtFLaEpGi5v4N49tiTyS0uijwVIPeOXcklK8sUEdiZIpk2yGaofgSpmKI1GrdqVd
-         4V7z9x1MRRoUBIv2FJAhlot+YX6bIEIUY+2AFInXuqDYD+C7GklnNwYC/RhXKpg8OsgS
-         mGYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761682560; x=1762287360;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C8sbXcQ5lD5cCxutqIUWwx12KWSx0PkZ6JH0o6eFGGg=;
-        b=I8VY4jQmNzpVyJlaQ/7MXxzL+TIJFBYwu3D6OYMyzbjKJP7jY7hF5z7lHJqCVIItCH
-         qPHkuHQmhlo+ird78pJP8YSVU6HKYF6JwGVR2PwntPtx2jdjFOfAPY6QWfKZmp+l1QjO
-         IufKjYvUe79Vy44d8INYtzxDVkGuT6OlFL2AxLqbsBKtODJRNu5gnG3AMjM1SOF63Ntx
-         kxWXdVsCSnZ+QwwF7Vy2gDk3XtJVTwfo1OkIr5tH/uBKlupGD7g9/o2v1lKw8VG6Xv9d
-         3xVJjqVxh4cOW1p0XU4q0FSPXOB2npocY+ZjlPrYuJimR6DRgg+hWmw+Fv55J4oLewbu
-         AWsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwqlfAx7lVjn8ylE5lWh1xlH+8hhd0S0gPNcd+nOa3+vfQcSiOgsiZ2QVKlFDzUorQ4NWOvCcTCjzAZD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdEOhjgi7lm633gM+QjRUZgJPbaFvqEUtFQaZrXtwtprYrwsIP
-	fRFM+TpSbIuFlCykGnQzWmHdobyYO3LXzHpfdFVGtvQ3DJq8vNaHPzV9/pYZUxOVchvsSWTviK6
-	jHZUV5O8+Pns1beWiso7+tviVACXhlqI=
-X-Gm-Gg: ASbGncuM5kJxgnu8HMxieQgUM1eASjyu0MN5IB3a2Te6XgHH1KxBf70dYdo9FfQg92w
-	L/e20F5bVyZ/vD0Qu7HVO7QoWzGHyR8okGjGLg9ekCF83wNmbjA3I/39t5bN9lymGyGGSHE7FHZ
-	1Y2uYzUUIMv+z3n9m/hjcVPRhUB9BdkSZqxEtiXP/DBeaaU7pBHp6l8YZrI9eu80HIxM0EcP18Q
-	3C9JTXnRT/+D3cASFq6f/KETF3fP/frgE6+i9A+J7WAe0FOJ4NkSBo7/yBz7aYWzx9nqdMsYssz
-	bDVauiiujEJ9k4eIBA==
-X-Google-Smtp-Source: AGHT+IH8GZm4jB2bptQiSIyNDsqdA47qbhPsbgo1JM5SGKK5xL+QrbeybCdL/wavQXil+cg+EkPuHY3/sqmCyLrg608=
-X-Received: by 2002:a05:600c:5489:b0:475:dbb5:239e with SMTP id
- 5b1f17b1804b1-4771e2248c2mr5265385e9.0.1761682559479; Tue, 28 Oct 2025
- 13:15:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8ED26FDBF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761682613; cv=fail; b=Oigp5jLKdXbuaDExt574rPe1VArY+05iut6ZYch10LXkVUp1PHYvsvX6wVgiPJglr3PGYFVcdMSDAYY9vv1YQLZjK7DhO4EpBkpAG3q1kGk9OtSgj37JHptfTi9J1elY6r3znu9ZfZBtSq5bYvFLwQIJ6Fa/dXTmfy1PNTr50pw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761682613; c=relaxed/simple;
+	bh=AXF0dZuWcTc3glJBbk49SJjk5tDjq16s0w85a2Ohzcs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=PgJjtpyb/hXiNGbc9finUXVqHyOT07nUhzXBvnwjvtUxpZ4h1j5y/x/+whniNHE7/Qzzxnc9GvNmbms+PpC86nxnxAj0xaKJ1z+pAEULr+3PcJOLWymT+hsp0jVMEmNL76qe0MobeeSvf/ep4aH3j0Ia5MvImmRW5EXG9tU40/U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YUPlnrbE; arc=fail smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761682611; x=1793218611;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=AXF0dZuWcTc3glJBbk49SJjk5tDjq16s0w85a2Ohzcs=;
+  b=YUPlnrbE2McKvypnjT/w2Px1+ru5IcYUfUgAx2b0xavhoeh6JExWAGba
+   yFIXdP/c7nhkVDXjltFzT6Ybuq17mFvQD0wSdbbelufMPODCHbBoWe/0A
+   MnyXXQdhqjJCpIdRyrZCaHlrGxt/78H87ozTPGEYSla2cyx9+E3ANCaCc
+   0EruzQE9TUqqcFv3Ejx8D6N2MHvmYZKfD/p6iZwqmcfDpfCOZrNiL/J7C
+   vkdrJCJkTqzlw8igqW7r6sM7xlmuxN189z5wIUHCzd76mbp96/SAwMiOh
+   5b+vieT7lcqjK6DoPzDSvr7PRE3QSXg9EnVgrby+5F+ZB+pYARU9xOgTe
+   g==;
+X-CSE-ConnectionGUID: urInFy9BStGx3k0qIhzxBQ==
+X-CSE-MsgGUID: 3GZo3UG+Rky/h3RH3yTM6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74914134"
+X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
+   d="scan'208";a="74914134"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 13:16:51 -0700
+X-CSE-ConnectionGUID: W8g1wTbEQt+J/3+gEKmEZg==
+X-CSE-MsgGUID: bpSX399UQTG7VY6HK5SRXQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
+   d="scan'208";a="222670246"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 13:16:51 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 13:16:50 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 13:16:50 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.60) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 13:16:47 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OHg6PBk6p6VG8xJDEHxx+557TJgsGDWRGI1ZZBSEwOnmNOLNorjACKxkM47f66ZWdUGsirXVrLQUbo4gpgRQe/zOTUkUeHFkRXSmlVsIBxI4JPhg1B4eXPR+7NEk0rNj2YtKcLAdtcCjsk+5m6xOQRKjktdzpiar8fMZoW0Sx7Oo03pLVFSkjAiwnnmpdnIrTrtGI7cjJ1XLnE0TG2hui6yzYPOFem1s3l1WyZ+4Zs4Ey3tWrzOFZojWk20gZV9SoaZMvk3EkiVNyKjFu/n/LbvJpK+NYycQu3WB0VRPk3LuOPWY6r1cT9bUxPbr8DHfINTRSe1NE0ZM8QbrzEaU9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DZA6+mZENvLD3p/tUjHbhNlxrPr+g4k27e7/+3BlXao=;
+ b=rnRgol8TRXPwK/pjG7/kCnnzS4adVoT8usERuic8QaMbF1ipQh3WcEYLZbCToMHiUXASjcVKYeDVdpoxUfPLjG901AwOY5xv5Ydt1hG/1AqsNpZjXf58xi6MKHdf8M+brmTBU5m+zKrw12z5Nl/asGekn4UpHVcL05krD2LWUKo/X+9cUhkKe4pU6rh+mwojhU3JaXciHM2aIVcneiG27XFgKEgMSwxDbc/OVA4JAEdHoUSP73UzXMB9SnLPIHQjzFttYFKsNRuP/320ABhr9KrLWpuo9OYOAS5znVfa/4aLAIlpr5vxuaknzFurCzODBQ2DBrX2GDm2sZ3syZOlCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SJ2PR11MB8421.namprd11.prod.outlook.com (2603:10b6:a03:549::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
+ 2025 20:16:45 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 20:16:45 +0000
+Date: Tue, 28 Oct 2025 13:16:43 -0700
+From: Matthew Brost <matthew.brost@intel.com>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <jiangshanlai@gmail.com>, <tj@kernel.org>,
+	<simona.vetter@ffwll.ch>, <pstanner@redhat.com>, <dakr@kernel.org>
+Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
+ lockdep with reclaim
+Message-ID: <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
+References: <20251021213952.746900-1-matthew.brost@intel.com>
+ <20251021213952.746900-2-matthew.brost@intel.com>
+ <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
+X-ClientProxiedBy: BY5PR03CA0010.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::20) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028165659.50962-1-krishnagopi487@gmail.com>
-In-Reply-To: <20251028165659.50962-1-krishnagopi487@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Tue, 28 Oct 2025 21:15:47 +0100
-X-Gm-Features: AWmQ_bm2C0BdXgXZU7UzFGNl63fc1nW7YzeP97hg5BdICc-hcGNcMMHXSO8p6_0
-Message-ID: <CA+fCnZeZ+c15X8BXg59ppbEmEUvp64aMaTPjXARyO_0x6KL+eQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: raw-gadget: cap raw_io transfer length to KMALLOC_MAX_SIZE
-To: Gopi Krishna Menon <krishnagopi487@gmail.com>
-Cc: gregkh@linuxfoundation.org, snovitoll@gmail.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	david.hunter.linux@gmail.com, khalid@kernel.org, 
-	linux-kernel-mentees@lists.linux.dev, 
-	syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ2PR11MB8421:EE_
+X-MS-Office365-Filtering-Correlation-Id: 730fecd4-6640-46f5-0b06-08de165eea8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WVg1MFBrZllKUXhscW5mZ0VzL3FNNkNVV28yQkpRd0VIaGVlMTNTQW4vQ0dN?=
+ =?utf-8?B?N2ZNTkVyM1lBTGNvWWRNRGU2bEJNekVPTkRXZ0ZBOFZoVDk3NmFDNFA1dkND?=
+ =?utf-8?B?cDZzbUhGSFR6MFNqMi9sUFRtTWdUczZOZjdTaXBPRWhpby9yNzN2eU0yYUJG?=
+ =?utf-8?B?aEcra2hvczlvZkhuQTRMc29SN1hmRUR4d1ZXeUhLS0lHdGV1UTMvQitYTVhB?=
+ =?utf-8?B?NDdsNGNsNU50V0FZOGpBejhMTkxZbWFHdExqbDVwTmt5eTlJQldqZk9acXlN?=
+ =?utf-8?B?emMvQUdGSDMxSjI1aXpoUFJiYVRuVmhCbytXTjVlVFZRcXJsYzdqTmR4K05D?=
+ =?utf-8?B?a1cvdHFqRWI3YStnRlh0VnJ6L2R2eE9EL0Y3V0Q5SnhIRi9FdHJxc21sVTZ2?=
+ =?utf-8?B?Vkdzd2ZYRDRqV2x2QWhxOGp5RU5uTUlxaXpWNUUrQjVEUDlJazZBbVlvek1Q?=
+ =?utf-8?B?Ujg4Z2Z3cTdkeWVRYi8ybk1oN2ZTNnliRFRPby84S2t6ZkFTV0dTZUhTVUdU?=
+ =?utf-8?B?Y0pTNmFBSzdDaXR4R0lOU0xUbHR1K0FLSDlYY2ovZkdidU14ZlRDNVNPUjdQ?=
+ =?utf-8?B?ZGN5RUxta0lick0zUFVHeDAvSjFzRy9GejllV3lqWFNVMFdhU1ZpZzVPb3c3?=
+ =?utf-8?B?NTdxVjlrSFh6VDR3R2pqQXExVk1XVXRncitxc09UZUpIbldZbnZXLzJ2UzB6?=
+ =?utf-8?B?V1g2YWsxWHlVUXJMbG9oaUdnZm9jQ1h3MGZ6NG92NzlkN3ZaNkpycVF6Zmty?=
+ =?utf-8?B?d1BQQmMyeWVXOFNsaGc1dnp1N1RzdnpEMWdhUzVPNWZ6RjJMNURBRUFCT0FE?=
+ =?utf-8?B?MFpVRjB5UTZVTDdxdkJVV3RsMk4wRDZzbi9GTHlqT1BEaEREOUdocmxZU3k3?=
+ =?utf-8?B?YWl6YmNWcGRBVG1IWGEzcmphMEN3R3ZaamMxdXZ2WlRuV205QVc0Z2twQ3NH?=
+ =?utf-8?B?Njg5bHc5RUd5T2FuVDRPM3g4VW9BSnpseHM3U2xQNE9MbnFKQWtGbWtUM1dI?=
+ =?utf-8?B?azNwSjVjd0Z3Nnp4OHNyS252Q2UzWVV4aDZiWWJ0eHVmWGZSZjA3QXhONy9w?=
+ =?utf-8?B?a3EvNml4eTBUbUwwK0pCUUFEWkFTMjZoWjZnUjIvQW9KZFNWcW1lWUJFenhG?=
+ =?utf-8?B?U2ZpcU96NllzdFV3b0VweGl5SXFCTHNCLzB5MGhYb1BWWlowSlZqN3ppaUxo?=
+ =?utf-8?B?TGorTnRMYUVyRi9sQUpXbVZUVk5POHpuTUFqckdIRXh5cE1PNk9STW1nK0pv?=
+ =?utf-8?B?dk9BUE9KSTI2UGxXQkNEblV3aUVmS0pUQzJmSGxLQWcxUXhuTWp3SURlNlJR?=
+ =?utf-8?B?ZHg1cTltM1h1OGNjd1YzVGZkdTFWcXN2enZHbG1lN0xRaTlnQ2p6cTdZZ1BU?=
+ =?utf-8?B?c3VYTUxMeTFpOGxuRS90YlBzZE5oUndNS0tMRzhScSt5SkFVcUhwcGUwMVli?=
+ =?utf-8?B?eENsVEwvMFlMdDB6eVUweGI1ZlJyTVB1bmsvMkZzNDBzYklXOGlKbGhNVkhY?=
+ =?utf-8?B?WW1BSEJxWk4rb1h5Y0JyTC81M1BwZUVrdkxIeSttbmdQaGN4eEhJUDFaTU9W?=
+ =?utf-8?B?bkxuN3lkenRjZHhlN3NzY1cvczY1UUdhRjRFcXRBVGZOUVZjMTdqWUZIcktz?=
+ =?utf-8?B?dWJCSHU5Z21oT0ozejhKTHBBemxqbHpwOE1CbnVCeHppZUp3b3U1QURQdkNJ?=
+ =?utf-8?B?dGo0RDZPbGJjWWRIYktJbGxGMEhZblNEWGxLazlQbC8vRnhISThpSStya0du?=
+ =?utf-8?B?azByYWN1eU5YMEN5enI3NC9pZHRUTXozei95bDBsRkdzQ3BTcHJOTlQ1aGFN?=
+ =?utf-8?B?d0pUb0xvZkUwOU5zQ2d2MzVaVUxRQmh3WjM0OS9sVWRqMHkvMW9CNmtNQk55?=
+ =?utf-8?B?SkdrRFAvellXK1U0OXo1UlVaeTNYZmVtNHFSaXVUaERaWkE9PQ==?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dXMvUlFUaGNZUXNoeTFhNUY1MWFFYk1aenVDd016dDlsK1JwckcvNWgxTVM4?=
+ =?utf-8?B?ek13R1JWRUFvV2QwbWY3UkJjYi92NXorN1ljaDdkQ1UwYitMVTBLaXh2YUdZ?=
+ =?utf-8?B?ZFU2M1YxZURKbXhYbDJiWi8vdGdJMTd3V0M1VjRvSTdhRmt3SS9vcE1rMW5i?=
+ =?utf-8?B?em5vR3AzTmNGNTN1dXdxcUxLeXk3Nlh1c1NXVzF4ZDd2c1E5TTZCOHd6dUpJ?=
+ =?utf-8?B?VjY5eEk4TERoYmw4UGtPQ2l3VTRGSHVFQ2ZJQzZMQjlPQlV1THdiVnVXTmlB?=
+ =?utf-8?B?c0hXUlR0aDljKzZqQmV1eXhIWitzd2UwSlJORnBxbEp3TUI1UWZlNkllK29p?=
+ =?utf-8?B?RTFuTzdSUWx1Mlh5WVhpTE5OVWdCSU10RVhoLzJLa0RaR25HWnQ0QzZBUTdj?=
+ =?utf-8?B?ME9xYWdLc2JrcWIzeTAwQmh3Z3QrMHBDWGQ4RTEwdWN5NjdQVUNqb3krc0pP?=
+ =?utf-8?B?aHhxOEpFb2dmS0NlUGUzalZtaVRRQ0UzTCt3a2EwR2xvQzJTV1k3VkJXcU9W?=
+ =?utf-8?B?VVJUS0lQUUpIdnk2SERDNXgzemVOMGNjRHJLK1pTUmwzM3hJOWk3dVpjK0xV?=
+ =?utf-8?B?SE1xU1hDbzdrVWpId2tRbWRER1VQV0FGSk1aaHR6RE92dDYzYW1yTW9zRnZI?=
+ =?utf-8?B?SXdqNmhVbWZzM1ZsWEhnZDUyUVBYV2NDK2MwSlhsNW05dkRhaFNVazRPOHRC?=
+ =?utf-8?B?RUhDZWZHRFpreUZHWDgyeUZXM2tocFZlcnJ1MTh4RUxRQ3FGaUxPenArNnFV?=
+ =?utf-8?B?SjIwQmVYRXBoZmJPanVJQ0kxRXJBZjAwTWQ5clBRUVI0MEJlNUcxRHBBRVox?=
+ =?utf-8?B?WVpOSFltaXhWOUFGODJBeitzRHA5QXcxbmhmYSszVk9NWUhjR0I1MUwwR2xW?=
+ =?utf-8?B?SFZTdCtZTVdFV3BSUmNPL256WDJGNldMMEJPR1plcXh5V3lJYkJ1Y3BXYVhN?=
+ =?utf-8?B?SU5QTXpCVzY3b29tNW8wbnBrcEJXYkN4M0dzTWhPeE9mSzdRSmUxTmhFQjJn?=
+ =?utf-8?B?eGUreEFiR0RaL1A0NXR1RTRXc0h6eXAvU0xjZ0RDZXZBdW9tTnJ3VVpCRzFl?=
+ =?utf-8?B?VEliVHJ2R3FyaFRxemUyR0lOMHZ2R25kMGhHWGh0WkdJQ2lsQXFBVFM3TFJp?=
+ =?utf-8?B?VERVU2dta2lTK2NKeldLS0VFT3I4d0ZiazM2OEZ6Q1FZaHVFS2xmekJ5SVpC?=
+ =?utf-8?B?azJ0N0lOVGFvZFE2ZHhOUllaRmtVZVExN2o4TlZVOGZwaCsrSzc5V3htM29G?=
+ =?utf-8?B?VjZvMWcyZ3p3V2JRNHVVY25YaVpMYm5pMGpxa0JQV3NCQUxyd3hpZkNCVFgv?=
+ =?utf-8?B?WFZrdVNqS1JTYUs2QUxNVVpqVFZ2dUUzNiszOWdKaUJocFhQZk42Nml5czJq?=
+ =?utf-8?B?bnBLdFBGdEp1MEVXSlA2TXZDdXV1cXFIWHdoUTFFR3R6d2hIYy96WHlCS3dN?=
+ =?utf-8?B?UGpJUEt1NGlYRjJqWU9IWEFnOHJkaG5xV0hZMHpkL2gyMGdPMnViaUxidnVO?=
+ =?utf-8?B?K1BzQm1mVGtKaENCelp4YTFNY1ZsTi8zZ2pEWkFlNkVBK1hLMFpvRFJUK01T?=
+ =?utf-8?B?WjNRZmdRTnF4aFk0Tk54dkZuNVNNNDVhTHVYZG5Jb1VHcUZyMVczNGZJdFdk?=
+ =?utf-8?B?dEZqY2RKdUNDRnZDcVNTUFgrcUtqMmwwTDhXdlR0emZtRTFmQ2R1QXR3MWZ3?=
+ =?utf-8?B?T2YrRm5wKy9GVVN0a2cvR1UwUnBlaEJhZmJmR25sMDVxZStsSW5pRkI3Z3BJ?=
+ =?utf-8?B?dGgvVVVmb0NTUzRpOVZMVzR4ampLeUpUY3E0MlF1eU56Q3JCcDE5WDJkUGVK?=
+ =?utf-8?B?c2JyUXhKT0lXa2VwU0tDVnR5U0s3Q0dxRjNtd1JtUWpjNXhudUU5dG1rRmw4?=
+ =?utf-8?B?L2NPblYvaFBuRzNrMjd3YllLQ0J0ZjFZMXdRNlFhSXVrWHd6ZGJnM0RsOEF1?=
+ =?utf-8?B?aWtyWUY5UjJ5UytTOFUyRXR4d1FJeFh0UThqSTVhY0RaL1BQb2l3dEJieWFs?=
+ =?utf-8?B?ZDVuQStobjZ0Z1o5b1Y1YXByNWdSLzBBd3BUTHZYZ1NXekJua0ZYWU9Dc0F2?=
+ =?utf-8?B?WVBOQWMrUXdCeWV0elVncERyTFl5Tm5CUlFWcjRVYUhTRVdWTjh2cW5aRUsr?=
+ =?utf-8?B?bWtzeExBT2hxbDR0bkUvWE5Zays2SkNMQ2N2Zm45OHh0VGppQm1GSitST0Rm?=
+ =?utf-8?B?OUE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 730fecd4-6640-46f5-0b06-08de165eea8a
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 20:16:45.2972
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kMk+rf/qznG+fGShuD1YTh4/cBKIt7t9JxUrPidjoQcPdDSXGyBervwkhrGKJ8vHHmErteNUEmRYNke3OP0mvg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8421
+X-OriginatorOrg: intel.com
 
-On Tue, Oct 28, 2025 at 5:57=E2=80=AFPM Gopi Krishna Menon
-<krishnagopi487@gmail.com> wrote:
->
-> The previous commit removed the PAGE_SIZE limit on transfer length of
-> raw_io buffer in order to avoid any problems with emulating USB devices
-> whose full configuration descriptor exceeds PAGE_SIZE in length. However
-> this also removes the upperbound on user supplied length, allowing very
-> large values to be passed to the allocator.
->
-> syzbot on fuzzing the transfer length with very large value (1.81GB)
-> results in kmalloc() to fall back to the page allocator, which triggers
-> a kernel warning as the page allocator cannot handle allocations more
-> than MAX_PAGE_ORDER/KMALLOC_MAX_SIZE.
+On Tue, Oct 28, 2025 at 10:32:54AM +0100, Christian König wrote:
+> On 10/21/25 23:39, Matthew Brost wrote:
+> > Drivers often use workqueues that are in the reclaim path (e.g., DRM
+> > scheduler workqueues). It is useful to teach lockdep that memory cannot
+> > be allocated on these workqueues. Add an interface to taint workqueue
+> > lockdep with reclaim.
+> 
+> Oh that is so wonderfully evil. I'm absolutely in favor of doing this.
+> 
+> But can't we check for the existing WQ_MEM_RECLAIM flag in the workqueue handling instead?
+> 
 
-Ah, right.
+Tejun suggested tying the lockdep annotation to WQ_MEM_RECLAIM, but the
+entire kernel explodes because many workqueues throughout Linux don’t
+adhere to this rule. Here's a link to my latest reply to Tejun [1].
 
->
-> Since there is no limit imposed on the size of buffer for both control
-> and non control transfers, cap the raw_io transfer length to
-> KMALLOC_MAX_SIZE and return -EINVAL for larger transfer length to
-> prevent any warnings from the page allocator.
->
-> Fixes: 37b9dd0d114a ("usb: raw-gadget: do not limit transfer length")
-> Tested-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-> Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68fc07a0.a70a0220.3bf6c6.01ab.GAE@goo=
-gle.com/
-> Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
-> ---
->  drivers/usb/gadget/legacy/raw_gadget.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/=
-legacy/raw_gadget.c
-> index b71680c58de6..46f343ba48b3 100644
-> --- a/drivers/usb/gadget/legacy/raw_gadget.c
-> +++ b/drivers/usb/gadget/legacy/raw_gadget.c
-> @@ -40,6 +40,7 @@ MODULE_LICENSE("GPL");
->
->  static DEFINE_IDA(driver_id_numbers);
->  #define DRIVER_DRIVER_NAME_LENGTH_MAX  32
-> +#define USB_RAW_IO_LENGTH_MAX KMALLOC_MAX_SIZE
->
->  #define RAW_EVENT_QUEUE_SIZE   16
->
-> @@ -667,6 +668,8 @@ static void *raw_alloc_io_data(struct usb_raw_ep_io *=
-io, void __user *ptr,
->                 return ERR_PTR(-EINVAL);
->         if (!usb_raw_io_flags_valid(io->flags))
->                 return ERR_PTR(-EINVAL);
-> +       if (io->length > USB_RAW_IO_LENGTH_MAX)
-> +               return ERR_PTR(-EINVAL);
->         if (get_from_user)
->                 data =3D memdup_user(ptr + sizeof(*io), io->length);
->         else {
-> --
-> 2.43.0
->
+[1] https://patchwork.freedesktop.org/patch/682494/?series=156284&rev=1#comment_1255380 
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+> Additional to that we should also make sure that the same wq is used for timeout and free and that this wq is single threaded *and* has the WQ_MEM_RECLAIM flag set.
+> 
 
-Thank you!
+Currently, free runs on the same work queue as run_job. We could look
+into moving it to a separate queue, but that’s a separate issue.
+
+IIRC the workqueue_struct is private and so we can't fish that out in
+the DRM scheduler without adding helpers to workqueue layer. Ofc we
+could do that too if you think this would be helpful.
+
+> Otherwise we run into the same lifetime issue with the job and memory reclaim during device reset as well.
+> 
+
+My patches in this series taint the submit_wq and timeout_wq in the DRM
+scheduler [2]. I have a solid understanding of reclaim rules, and this
+change helped uncover some convoluted cases in Xe—specifically in our
+device reset code involving power management and reclaim [3]. So I can
+confirm this has been quite helpful.
+
+Matt
+
+[2] https://patchwork.freedesktop.org/patch/682496/?series=156284&rev=1
+[3] https://patchwork.freedesktop.org/series/156292/
+
+> Regards,
+> Christian.
+> 
+> > 
+> > Cc: Tejun Heo <tj@kernel.org>
+> > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+> > ---
+> >  include/linux/workqueue.h | 19 +++++++++++++++++++
+> >  kernel/workqueue.c        |  9 +++++++++
+> >  2 files changed, 28 insertions(+)
+> > 
+> > diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> > index dabc351cc127..954c7eb7e225 100644
+> > --- a/include/linux/workqueue.h
+> > +++ b/include/linux/workqueue.h
+> > @@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+> >  						1, lockdep_map, ##args))
+> >  #endif
+> >  
+> > +
+> > +#ifdef CONFIG_LOCKDEP
+> > +/**
+> > + * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
+> > + * @wq: workqueue to taint with reclaim
+> > + * gfp: gfp taint
+> > + *
+> > + * Drivers often use workqueues that are in the reclaim path (e.g., DRM
+> > + * scheduler workqueues). It is useful to teach lockdep that memory cannot be
+> > + * allocated on these workqueues.
+> > + */
+> > +extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
+> > +#else
+> > +static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
+> > +					   gfp_t gfp)
+> > +{
+> > +}
+> > +#endif
+> > +
+> >  /**
+> >   * alloc_ordered_workqueue - allocate an ordered workqueue
+> >   * @fmt: printf format for the name of the workqueue
+> > diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> > index 45320e27a16c..fea410c20b71 100644
+> > --- a/kernel/workqueue.c
+> > +++ b/kernel/workqueue.c
+> > @@ -5846,6 +5846,15 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags,
+> >  	return wq;
+> >  }
+> >  EXPORT_SYMBOL_GPL(alloc_workqueue_lockdep_map);
+> > +
+> > +void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp)
+> > +{
+> > +	fs_reclaim_acquire(gfp);
+> > +	lock_map_acquire(wq->lockdep_map);
+> > +	lock_map_release(wq->lockdep_map);
+> > +	fs_reclaim_release(gfp);
+> > +}
+> > +EXPORT_SYMBOL_GPL(taint_reclaim_workqueue);
+> >  #endif
+> >  
+> >  static bool pwq_busy(struct pool_workqueue *pwq)
+> 
 
