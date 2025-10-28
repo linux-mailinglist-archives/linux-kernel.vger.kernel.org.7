@@ -1,331 +1,204 @@
-Return-Path: <linux-kernel+bounces-874065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C4CC1575F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:31:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8D0C1576B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C9E5F504098
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:26:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3726E5045F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:26:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BD7340A57;
-	Tue, 28 Oct 2025 15:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E75332EC6;
+	Tue, 28 Oct 2025 15:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="WxK09PmZ"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LWaKlekw"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020122.outbound.protection.outlook.com [52.101.189.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F11233FE2F;
-	Tue, 28 Oct 2025 15:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665156; cv=none; b=km+k5DKbAYHamcPg/x/h799LD2Ate07Hv71RYdIeOyiiqy9ZWa8zydFxupWixi4IQQi6DolS5gnFQN+HMxzYJLAhhiSLJxbZUwz8ZD40/Y6tfO03MtPrueaZW6vN0/BkCpTj2cO0ZKa8s2AZqQmgzqBKutMzVM7znljlI52Uz+k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665156; c=relaxed/simple;
-	bh=gg9i2hciml/HV7u/I8sN8l/x4tegWO7Evfv2kHCOLUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G1s6L2eYb4V2eDcN26JNalLSv31ev6KfZyiqwHHQWqRsvFjs6Wgk4TgR/qjQyjMSHlZextblxHnSP0tjRavxZ7KUIVx2zL2n70RwokI3JZ3tI+6Gi23gmbdpyWaQRcvL9biyxXqsV5KWFXKdwR0xgplfC0kF9/ZKAj2Iv0bS//w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=WxK09PmZ; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761665137; x=1762269937; i=w_armin@gmx.de;
-	bh=OpWD4msn0uB1TiOOKimqHcpG2iJycjatx4mjPpjDTMc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=WxK09PmZ1/rhO0kZXc8lC5KhnxYhd1Ylo563lA8TclZ+HshLrUrWzuVoyFZKvam6
-	 JQsWWKSqIcz7CrLBr8j38b4ICy4aRLNw7yHCO5/pIlJXsNoN3c+XkxQWeiKSPznIV
-	 CkcHMNXzE004273ci1tr+jWuqtiTShnaEHqz8FZFKSp4Ic9K038JbeuF+DxTZTcjs
-	 EQZK0jOZrqappPNAIknV1UWv9bZphE/hpU2Ho7Iu7jUY9tEbJi1+KudbEBIwz1Sx5
-	 lgviVfwR8OR0CDl6De+R8ipvto7Cy8fOjcNy8orYpOZCrW5KvfHde0y4j5TFAxQZo
-	 RjMrmwSLziB9EuiqUA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.127.102] ([141.76.8.166]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MgNct-1vvNvS1NgV-00gZrr; Tue, 28
- Oct 2025 16:25:37 +0100
-Message-ID: <b8f94bcd-fec3-4755-9179-044fd0aef36d@gmx.de>
-Date: Tue, 28 Oct 2025 16:25:35 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76EF257841
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761665179; cv=fail; b=pqb+S+tlTOqLucZgqlgYzNfFMs6JaEl9TLWfXDVAoeY2zcXCLlD0rxRssiG/ksSsSkSxXIQfNVJcQ4BVIoNlIxlvWcBtgIUA10U+KI9C/hJ4dO3+nrvcFZ/IuIGNrgLSM6fo7aBQGyh7nVA57RGzZOAhWCJ3cPspeChNfo1cbHM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761665179; c=relaxed/simple;
+	bh=l13S//0Z3E6UI2mEEq0779xQbQM5XiXNKll49X54n2U=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n1SZhFDO0L1k7qjyrVD576vT5ca0P6gXPKiszs8XVH2ntxnJtITpfTxIelc9Tz9wv5cZCHw3ZcdC9k6yEHyxqDQ2gGYOF3ijxkWw3Kugu/pDaPZuIVQUDdnm9uuij+M7bSEAJBewfYEXkPRkth6vltUTUpUGqJtc56xrnawWL6g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LWaKlekw; arc=fail smtp.client-ip=52.101.189.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B4fQ0mNrjsaJl3D2eB0jfKw8G+94JpCHR3ii35s3h/wfR4zSBp8F6Pw/UhNy7jCrfNJSKG8OxYW9qcWfPEfITpdN7zqiofkGXV1wW2gMagq3MWprpSaH86nRQ02hBhh+tfh+IIbAquek8+MCfvTZ4mgSid1mKf4yQkpdhTvmZaMEvnw3l0C4HJW18M1a7YK4cZlmL0AHWWoD2JwcDSbA4kcobxEPX44XBxxupM3hPDsGrXU3uq5VL3X53BhU3v1qNmbFIH5SaYAhQ+s+F9t1StgIPFwzgnAF9+MxoG83z+M1TfzZ6dY+Wy6AVQ4d9ODyHixXUQlk+dDr4U4cxuXmRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gOhlF4Y+LrJNnXGFNF1aoTV4/NIDwk8R73ilhvgLfmg=;
+ b=GidKSrQ6L15hiLPFBiJMAmvvAyJhylOeZGwZtqoCSdWPqGOFkXrWG6FXheBmwFECSOsMi4u+6nqAz2aCUe8PWcqI4kCL73fvfF2yd4DrF4toq5+ansYvQ5twj4zZc2giexYDXG8y5ABJUpCNVj4iX548GVzrK+Obn1TdEX6p4r2gEqmJyj2n58F4xcEcWSV6MqjXMxK552dao/qrf+5Y7zVlfP7fBfnIyNg8D/fnwMp2BiYATVKQoKjvscZkhQznZAYQ41kocG72brlGNMAVPiBEsPGrmk68PluVXkFHaX6FraIa7w4uaSGCzhtAuI8oiLSbM6s0YErl7NkxJDFScA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gOhlF4Y+LrJNnXGFNF1aoTV4/NIDwk8R73ilhvgLfmg=;
+ b=LWaKlekw2Q88+k1+fE5s8pY+3WEVhzcEcbPArIcewwmx95skL2F2JZtsrWDIUHSX138Li89gWaOE3yupnYoyu+A9uvP8GU48wx5xVpcRiJLu+1Fe47AFGD09CLkHMmRefDhgs+AYYZyCXdnG994h+58cqwkz83ovc4xG0RAK9u9gRbDqpJ91/FjalVviIMEFsda6YnzI83HHcrs44CbKr3hQveguEf17VSWI5Y192o+hQzQrvfm1zNlrCRKzydNHXh6vXsAsvGXOYfX9i7mnnO5c28Bm4G/2JIMHMJWM1adNaHlAMyA9h/WFMi5xMJEIy6nmfwWkc2GjoS/KORz4Hw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT1PPFE8D3DE690.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::59e) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 15:26:13 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 15:26:13 +0000
+Message-ID: <05d439ae-8f25-4b23-bb0c-3a3ce04eebbe@efficios.com>
+Date: Tue, 28 Oct 2025 11:26:11 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V6 15/31] rseq: Record interrupt from user space
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, x86@kernel.org, Sean Christopherson
+ <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
+References: <20251027084220.785525188@linutronix.de>
+ <20251027084306.905067101@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251027084306.905067101@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR01CA0127.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:1::27) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
-To: Antheas Kapenekakis <lkml@antheas.dev>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-References: <20251015084414.1391595-1-lkml@antheas.dev>
- <20251015084414.1391595-7-lkml@antheas.dev>
- <63f0221d-4436-4d1e-a933-8b12f392cac6@gmx.de>
- <CAGwozwHsFEU1nZNe-7HEv86Oi8VTX=qHO-Tz76uRJVeFTUDv5g@mail.gmail.com>
- <e41bb0b3-9c79-4d01-8510-4a60999e238b@gmx.de>
- <CAGwozwHACMJdbgcJgS-iOLpK_mQfcfHcF3Sci=XJJDiehbu7Bw@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAGwozwHACMJdbgcJgS-iOLpK_mQfcfHcF3Sci=XJJDiehbu7Bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:NKVYvuKZUtsblRzl+RYr6QRe/AlA3vutbpc3/lK+a5Zhx559+0F
- gvHU6+mgDdCZKcR8WtrwtJVCBkOpe8kzHBxI6iwxBHL6Cf/7vLD2kXjxYUfF+3VfDkKLhUI
- T4iyayFcnSurcKwcDb+fbgqr14IS/fW9Rl31ws/TSYq8TRkVT6RtAzFcIjh6zk7rBpIbQbD
- UYesW4p0vcfKo9wXAyl/Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4Ba7bRfF6fw=;o/tB4EXLiERfC8u0zW6fS5JNJYw
- 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
- mWW3g==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT1PPFE8D3DE690:EE_
+X-MS-Office365-Filtering-Correlation-Id: b80013f9-a182-404b-1491-08de16365407
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OFJsYWN0OU5HMGtVaUIzMGJrckZoSlpGVDhXRVdqOUtOcEkyc3dRZjk2VEhB?=
+ =?utf-8?B?ZDRlNlhoK0k1T1JhSnZzVXMzZWdGdWM3ODdiRGx2b2FJYk1FTWV0NWlDaTdw?=
+ =?utf-8?B?TCtFaDVPRllKdmtmSzRsNDRFTkFnak0zeFZEdG52SUJQc1dGM0N3aWJ4Sm00?=
+ =?utf-8?B?c284cS9tSkZtYXVsYmJkaUF1emoxaTdPWDVzdVYvMjYxa1lpc2k5bHQzK2lZ?=
+ =?utf-8?B?cWhEZVY2NFRNTVNwQ2hsSlVmLzdCMlZOMG4zSzFzNFd2RlhBSnNWdW95R01w?=
+ =?utf-8?B?bDRMdHlaQ3ZBdHZvL2dxQ3AvemdhT3RvczA0aDgxbGpsL3ptdmo2R2dINmdP?=
+ =?utf-8?B?RDNRazYycGpQc3J0RGFUMWNubVdaWWFNUG1xWWRTcS9mSy9yYkR6UjgzUWlm?=
+ =?utf-8?B?SG9QNEcwdFFCbUh4UndtaVVzb1dmWE14a1l3eVJ0Rnp3dDlFWkdxWElJV0lF?=
+ =?utf-8?B?SnErUzhWV0FNcGVabWJBN0luWXVhOStBUDN1MUlWWXFuKzZQMXIvOSt3RC9a?=
+ =?utf-8?B?Y0hSTEU0TlQzdEVEWTA1MkNpWUR6RHZpTXZxYWJ4bVdDM00zbUVTYUw2eFRB?=
+ =?utf-8?B?aFhYYno0TytybVVPZkFQK3Y2RTVyaDJSajJxV2lxZjA2eWl5QzcxK2Z4MjVr?=
+ =?utf-8?B?NjZ2UW1TaWZxdkM4SFdrTUNKcGJ6WVNMaVI5Tis4ZGduNFhoTHVoRmFQS0xU?=
+ =?utf-8?B?TVFaTTVQNnM1WHpiMVZ4Ty81N1RSbUc3UlF1RW9XbkpJMlljQ3dRVUpVUVI3?=
+ =?utf-8?B?dWVKNmdKNDJqUCtqZjZxditIL1UyL2RiQmZqODc1elp4RkZKaDdOSjN6R3Yv?=
+ =?utf-8?B?VGhCUENUNTlwWnpnb1dYMlgxWVd6SXd6aStWdmcyZk5JN25hQmphMytLbzFa?=
+ =?utf-8?B?N1RnWCtDV0FYdEdPOGRydXVCL3FTKytHUGZpcHgyRDB4R0ZFYjRzNU9SMHpC?=
+ =?utf-8?B?QVhuZ2Z0ekROcGtnSDJnbmhjSzgvQkR2dGpMUXM4RTJ2cGxTeWtCa2JLeXRh?=
+ =?utf-8?B?VXFRZGRyTnNMN0JsZjAvV3hTeWQrOXN2MVVFY2tBdUZzOUdDdVgyOTZMaU1y?=
+ =?utf-8?B?djVlOHNPbzRKM1Q5VCttOGR5emhUbG11UStsM0NMYWMrSXI5c1dMWlUwQWQ5?=
+ =?utf-8?B?Q0gvMFpVcHJQSXBrRUYrSFZSTGxMZHJzcU9BWXVDK1RqUEFKYXRMQXBpN3Ry?=
+ =?utf-8?B?SURwQXdqcTE4dUhCQzk5VHVKV0U5eUJ5eGx5aGI3andENDZmSlh5UFlwd2Q2?=
+ =?utf-8?B?RUR4bGtSZUJ0Q3poZFB3bkZkMEVPSEtjK3IzOUV2ZnZWUE5OUTkvWXlmWlZu?=
+ =?utf-8?B?UGhieUFSWmxYbDFxV0xWV0tEWHV2RHZHRWI4WjcrVnFzNHdnR3UxWVEyQVF0?=
+ =?utf-8?B?QTZhQ3NjMllKYlZrYUl6QWlYU2dia1RQUit1K3Evb1R0ZmY1NTBjejJORWF2?=
+ =?utf-8?B?eFBWWDRQU0NoZG5uejBvdUkxUFV1QUFtK3NhcHZrdmlyUmt3Unp1aVdCbGo0?=
+ =?utf-8?B?RXpWaFVhTjEzcTUzcncxaWkzMlNOa0Z1TDVES1NyZEkxUzNFSlZOSzNibHlQ?=
+ =?utf-8?B?b0tnckZ5TTc3a3FXVkd0Q2E5S29kV1JLNzgxeWhxazBMeWNBYi9uNFM3V3o1?=
+ =?utf-8?B?RHYwQ1FwdDJoN0JkRGRBNnJoUGRlbGkzYTlYaTVFOWR4UCtQVjE2b0JYZlFF?=
+ =?utf-8?B?L28vMGMwZmMvT1g1dWwxR1llYyt1R2xlb00rQ1VyQTZXWkdCcmgrMTRFM29k?=
+ =?utf-8?B?VTAyMDVUSldkdi9PU09zelhyV0YrRDl0RHRaLytEeFJDSWhFcmUzYXZtcGlP?=
+ =?utf-8?B?RDFkdGJ2aVNTeSt4cnN3NHlNYjZyZlZxVjV3QUYwUkNPaUZ6RHlrNVFWTHRR?=
+ =?utf-8?Q?Hn+vgqFel0J8j?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WHdhK3BobGVEaURaUWo2TmFFeFRrUkIwUUh5Rlp6ZGZrUzZJSE1IT3JKWEll?=
+ =?utf-8?B?WWpybEl0YitUVmZxSFJWK0lWRkhGTzlRTUtOYjhIQWZTclRVVndtMHNoNHph?=
+ =?utf-8?B?RXBRWnBKMTNwNzVyVEh1YzhDWWJZdXJXdzR0MVBzMEtGK3Vhd2NVd2F2WUda?=
+ =?utf-8?B?SXR1STArZXN2NHFzOXk3MFJtcnUwZGZtOVhEaFh3d0xqcXJYMFNieGhIUHR0?=
+ =?utf-8?B?TTUwY0dmdDNOd0xTTXQxSW9oS0N4YnpTd2FJV2JzcDFRL2FFUG1wZVZnZnZY?=
+ =?utf-8?B?VXUrdUJ0U1hRSEtZeEVzNXpHUXM1eHR3dWRFbEpXaEs5QWphTXFEeDdwaytt?=
+ =?utf-8?B?VDBUVXpHZ3VIOFFrNW1mMWdmQStRdTMrVlpTc2t5S2k1RUduQ3RzeUJvajAx?=
+ =?utf-8?B?QytrL2VsTnNjOGdoRk5zbEZvVHM4Q2V2M1BxLzZEQ2pHa3dVRG51Z21xOTlJ?=
+ =?utf-8?B?SlgvQUs3WlBERmJUZlArb25OWHBZcm5FNGZtcUpYeDlKYVorTE5XSTVrckhp?=
+ =?utf-8?B?ajFLOHh6UUJVQzRhYm1qQnMzTXlreXlxQkJkK1NDYkZzM0dlRThWRGpTMWRn?=
+ =?utf-8?B?aGJrVjBJb2Y4cStMUm5PNGZPY2RUSXJYOXkwMGFOYmZEbE1MWWtUN3NRd3hl?=
+ =?utf-8?B?TFRYUlJuTGM4djQyNm82cE5WY0I0U1RvalNOVU51Wi9UR1BLWndXZ1ZFS2cw?=
+ =?utf-8?B?eU9MZTk0TUN2T0dSWDNGM1NnaEw4emRYZ1BhSlZFZ0JTQ2xmWkU4NGJYaUxv?=
+ =?utf-8?B?MS9xVkZNaTB5cURZdXZuVGVzNFppOGhQZHZtbmcvNkFmR3ozdXNCNUxISUZZ?=
+ =?utf-8?B?RmVVa3NZVVRiV1hFZnppb2tHZ080aUxOb0VkSm9hdzFBY29zQ09ma1hMaWRQ?=
+ =?utf-8?B?dTk4TXA4Zm0zc2QvMzNwZ1ZWZzE2N2xnZ2RONkRJUytnNEFvak40NGZDM3JM?=
+ =?utf-8?B?K1p1dEJNeHIydEd3RHY5VFcrUXo3Qk5zdjZJVHVJNGl1empicXVpZEZzbmsv?=
+ =?utf-8?B?Yy9oaGxNQzZIMi9ZMVRseHNXdGYzWDU3cU5kYWVTaE9NVjBLM0lCU3c0WGxP?=
+ =?utf-8?B?emNHL3ZqengwUmNuTXNnTXMzQmlaTmJlUXE3WWxYTlpPTW5aOHY0MWh3UnQ1?=
+ =?utf-8?B?UlM1cEVHditzVFRSWTU5a0p5eUtROHlaZCtKRUNFaDhBbUpnNjR5VklyWERu?=
+ =?utf-8?B?NS9ESGpJTldYeHlZYU96MTdaSllTSDhveGtyK2c4ME9TWURUcm55NUVRdUww?=
+ =?utf-8?B?cVR4NDc3YjFCRlRPNFdMSWU2dU50cHJ5NXZVMUpqWjFvRU8zdWNGdEVXYlU1?=
+ =?utf-8?B?MS9JVmJ5bS9uVytJVW80NTRlTVBUdTQ1V1BSTzd2QzhNMDlZSzN2VzZVbjNK?=
+ =?utf-8?B?aWtXSXdYV2VEcTE5MGNJQjJqOTduMGRlUVRwOG9EK25PNjltM2JpS0tsSlR4?=
+ =?utf-8?B?VVNHOGhKTVR5QXNJTVR3WG5zQUNRdUQzYUVzWmRNYmlzQzEycFJOa3pWOVJW?=
+ =?utf-8?B?OXNTcDBod29pYWIyamgrbXlYMFhWaFMvM1hnWTdVaC9remloRHN4eDVJeGlE?=
+ =?utf-8?B?cVVqeC9JNk9PVG95bG1XUUNKdG5TV2FQT1FXNnI4U2xtT0F1K1p6eEp0azBu?=
+ =?utf-8?B?eUpCWEl3cG9PZ2VCcVZpNmkzai92VkpScWg1U3l5T01QWW9Id3Y4OFVoWUZV?=
+ =?utf-8?B?aXo4Uk5kMHVzUW5SK2l1NC81c3VDYmxUaUM2eTVWZ2FLMW5DcTlWclV5WHd0?=
+ =?utf-8?B?LzJ5ekZDTEpwU0xpVnMyYUZwRElmWmxZNmtmNkV3ZHVPcndxOWplRFB1dXht?=
+ =?utf-8?B?bGJOVXdPS0xMeXYxOVJhY0ZQRUU5VW5xb3ZjU2tiVnJBdk5zRHNUUmJJWU11?=
+ =?utf-8?B?KzRnNkJKSzFELzNUM1NGT0g3SCtOak1VelNZVE5xMEhPaGNLalJvbXVkNEhx?=
+ =?utf-8?B?UTU0RG9Bd211YnYrMm9QcmZCV20zZEtaN2FHN3ROeHJ2ODUrcFkrUW1VV2h4?=
+ =?utf-8?B?L08yaDc0WU1uaFBKcWVTdE5heDJCSS9YYitURlhhUnpXSEg1SFRtQWpkT0M1?=
+ =?utf-8?B?VU9TVHhrOE9TeUd5bjZWQ3FpVnJoVi9HZ3dHZklYdjNmMlFXNmxUN1Q1Uy95?=
+ =?utf-8?B?SVhxM0tJRWJpWGNUUHduNjhLbVFZTkpBYWVPNVVvdkhOZnZDeE10bVhmUWsx?=
+ =?utf-8?Q?qGPzskLW5Pwdcv/DiJGOnZE=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b80013f9-a182-404b-1491-08de16365407
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:26:12.9225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6xtW80qelA78nLjIGtmWlGJBeAn6rdAviGyDZV0rOdIsIT44ev8g+aG0ZwT7PktMuPIqzMeU3kzv4RtNpPsXM9u0agSw8uHiO/TxWc9dMUo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT1PPFE8D3DE690
 
-Am 28.10.25 um 16:20 schrieb Antheas Kapenekakis:
+On 2025-10-27 04:44, Thomas Gleixner wrote:
+[...]
+> @@ -281,6 +281,7 @@ static __always_inline void exit_to_user
+>   static __always_inline void irqentry_enter_from_user_mode(struct pt_regs *regs)
+>   {
+>   	enter_from_user_mode(regs);
+> +	rseq_note_user_irq_entry();
+>   }
+>   
+Looking at x86, both exc_debug_user() and exc_int3() invoke
+irqentry_enter_from_user_mode(), but there are various
+other traps that can come from userspace (e.g. math_error,
+exc_general_protection, ...). Some of those traps don't
+necessarily end with a signal delivery to the offending
+process. And some of those traps enable interrupts.
 
-> On Tue, 28 Oct 2025 at 14:50, Armin Wolf <W_Armin@gmx.de> wrote:
->> Am 27.10.25 um 00:17 schrieb Antheas Kapenekakis:
->>
->>> On Sun, 26 Oct 2025 at 23:50, Armin Wolf <W_Armin@gmx.de> wrote:
->>>> Am 15.10.25 um 10:44 schrieb Antheas Kapenekakis:
->>>>
->>>>> The Ayaneo EC resets after hibernation, losing the charge control state.
->>>>> Add a small PM hook to restore this state on hibernation resume.
->>>>>
->>>>> The fan speed is also lost during hibernation, but since hibernation
->>>>> failures are common with this class of devices, setting a low fan speed
->>>>> when the userspace program controlling the fan will potentially not
->>>>> take over could cause the device to overheat, so it is not restored.
->>>> I am still not happy with potentially breaking fancontrol on this device.
->>>> Most users expect fancontrol to continue working after hibernation, so not
->>>> restoring the fan speed configuration seems risky to me. Would it be enough
->>>> to warn users about his inside the documentation?
->>> This device features two modes of operation: a factory fan curve
->>> managed by the EC and a fixed speed set via override of the EC.
->>>
->>> The factory curve is tuned by the manufacturer to result in safe
->>> operation in all conditions by monitoring the CPU temperature and is
->>> not adjustable.
->>>
->>> The fixed speed, on its own when set manually, is not use-able,
->>> because this device has a fluctuating temperature based on workload.
->>> So to meet the varying conditions, its speed would either have to be
->>> set too high, leading to excess noise, or too low, potentially
->>> overheating. Therefore, users of this interface control it via a
->>> userspace program, e.g., hhd, coolercontrol, which allows creating a
->>> custom fan curve based on measurements of temperature sensors.
->>>
->>> When entering hibernation, the userspace program that controls the fan
->>> speed is frozen, so the fan remains at its previous speed regardless
->>> of temperature readings and there are no safety checks.
->>>
->>> When resuming from hibernation, the EC takes over and monitors the
->>> temperature, so it is safe until the userspace program is thawed. If
->>> we introduce a resume hook, we take over from the EC before the
->>> program is ready, introducing a gap where the device can potentially
->>> overheat. If anything, the freeze hook should remove the fan speed
->>> override instead, because suspend-then-hibernate is more of a
->>> liability for overheating if hibernation hangs.
->> Understandable, how about introducing a module_param_unsafe() for enabling
->> write access to the fan settings? The fan settings would be read-only by default,
->> so no suspend handling would be necessary. Said suspend handling would only be
->> necessary when the user _explicitly_ requests write access to the fan settings.
->>
->> What i am trying to say is that we should either expose a fully working feature
->> (fan control with suspend support) or none at all (fan speed monitoring only).
->>
->> What do you thing about that?
-> It is a safe parameter and it works during suspend. It has parity with
-> current hwmon drivers for other manufacturers.
->
-> Hibernation hooks for hwmon are unprecedented, in addition to
-> compromising the safety of the device. They _could_ be justified for
-> EC managed curves, since a minority of users might opt to set them via
-> systemd udev rules and the EC manages the temperature. But this is not
-> the case here.
->
-> Where does the need for these hooks stem from?
->
-> Antheas
-
-I agree that most hwmon drivers sadly do not restore the fan control settings during
-resume from hibernation. This however is an error inside the drivers themself, as device
-drivers are normally expected to restore such settings during resume. Without this the
-fancontrol software will suddenly stop working after hibernation, something users do no
-expect.
-
-Copying the faulty behavior of existing drivers is not a good idea here.
+So what happens if such a trap is triggered from userspace,
+and then scheduling happens on top of this trap ? Is this
+skipping rseq ip fixup and rseq fields updates ?
 
 Thanks,
-Armin Wolf
 
->> Thanks,
->> Armin Wolf
->>
->>> Other devices feature adjustable EC fan curves (e.g., Lenovo, Asus,
->>> AYN, MSI). Since the EC monitors the temperature there, it is fine to
->>> restore the fan curve. Speaking of, I am having quite a few issues
->>> with MSI Claws, so that series is a bit on the back burner, so I plan
->>> to push these series first.
->>>
->>> I will try to tend to this series in the next days. I wanted to push
->>> the Asus stuff first though.
->>>
->>>
->>> Antheas
->>>
->>>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
->>>>> ---
->>>>>     drivers/platform/x86/ayaneo-ec.c | 42 ++++++++++++++++++++++++++++++++
->>>>>     1 file changed, 42 insertions(+)
->>>>>
->>>>> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
->>>>> index 73e9dd39c703..8529f6f8dc69 100644
->>>>> --- a/drivers/platform/x86/ayaneo-ec.c
->>>>> +++ b/drivers/platform/x86/ayaneo-ec.c
->>>>> @@ -37,6 +37,8 @@
->>>>>     #define AYANEO_MODULE_LEFT  BIT(0)
->>>>>     #define AYANEO_MODULE_RIGHT BIT(1)
->>>>>
->>>>> +#define AYANEO_CACHE_LEN     1
->>>>> +
->>>>>     struct ayaneo_ec_quirk {
->>>>>         bool has_fan_control;
->>>>>         bool has_charge_control;
->>>>> @@ -47,6 +49,8 @@ struct ayaneo_ec_platform_data {
->>>>>         struct platform_device *pdev;
->>>>>         struct ayaneo_ec_quirk *quirks;
->>>>>         struct acpi_battery_hook battery_hook;
->>>>> +
->>>>> +     u8 cache[AYANEO_CACHE_LEN];
->>>>>     };
->>>>>
->>>>>     static const struct ayaneo_ec_quirk quirk_fan = {
->>>>> @@ -464,10 +468,48 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
->>>>>         return 0;
->>>>>     }
->>>>>
->>>>> +static int ayaneo_freeze(struct device *dev)
->>>>> +{
->>>>> +     struct platform_device *pdev = to_platform_device(dev);
->>>>> +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
->>>>> +     int ret, i = 0;
->>>>> +
->>>>> +     if (data->quirks->has_charge_control) {
->>>>> +             ret = ec_read(AYANEO_CHARGE_REG, &data->cache[i]);
->>>>> +             if (ret)
->>>>> +                     return ret;
->>>>> +             i++;
->>>>> +     }
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static int ayaneo_thaw(struct device *dev)
->>>>> +{
->>>>> +     struct platform_device *pdev = to_platform_device(dev);
->>>>> +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
->>>>> +     int ret, i = 0;
->>>>> +
->>>>> +     if (data->quirks->has_charge_control) {
->>>>> +             ret = ec_write(AYANEO_CHARGE_REG, data->cache[i]);
->>>>> +             if (ret)
->>>>> +                     return ret;
->>>>> +             i++;
->>>>> +     }
->>>>> +
->>>>> +     return 0;
->>>>> +}
->>>>> +
->>>>> +static const struct dev_pm_ops ayaneo_pm_ops = {
->>>>> +     .freeze = ayaneo_freeze,
->>>>> +     .thaw = ayaneo_thaw,
->>>>> +};
->>>>> +
->>>>>     static struct platform_driver ayaneo_platform_driver = {
->>>>>         .driver = {
->>>>>                 .name = "ayaneo-ec",
->>>>>                 .dev_groups = ayaneo_ec_groups,
->>>>> +             .pm = &ayaneo_pm_ops,
->>>> Please use pm_sleep_ptr() here.
->>>>
->>>> Thanks,
->>>> Armin Wolf
->>>>
->>>>>         },
->>>>>         .probe = ayaneo_ec_probe,
->>>>>     };
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
