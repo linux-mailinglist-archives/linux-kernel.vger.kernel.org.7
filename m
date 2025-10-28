@@ -1,131 +1,128 @@
-Return-Path: <linux-kernel+bounces-873799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296C5C14C28
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:06:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0B4C14C2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C6C423B29
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD1CD487F97
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE5B330B1F;
-	Tue, 28 Oct 2025 13:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3173E330D36;
+	Tue, 28 Oct 2025 13:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S0GM83XJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Eh7BMRuo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ee9PufgH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B411F4C8E;
-	Tue, 28 Oct 2025 13:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E413090E1;
+	Tue, 28 Oct 2025 13:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761656666; cv=none; b=L4l2j8Gad+J6RuR1ZmxlyZwRIXOXIn6zjibmSQXrb9AzqecUmMt02yXy/1R67m6IgZmg8Zhaj5C+BqRuNH/o9wsoWATxDritljvWlqfsQqSRhvE05/zTUM+EZKvXSIgUAnA8szEVYLvNMrrTW6T1l4F0mDWZLI6lhcZsnuUJSqY=
+	t=1761656693; cv=none; b=SRYVZz7WD1L51U6EiBwP20W7I5VxZJ9DVii6bjdlVjxelUNNs9OY20TbnozRBicHXayRXwggVioIAPRJ7j1XlAlhBjA9mdhcH4l08x0h37nC7MsgNlW7SYkg5spPwu6Px+p887wgSQ86UEVshOal61crvbd1RBsAxHzpNILlSk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761656666; c=relaxed/simple;
-	bh=0keN4uf+oCdEM7z/g5nLocViNiPVNqPlCkfcHTjbj6U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oSDPoSDv4KnMS7TJZjNt/9L5gWyqAzF90PYHA66rAAO8ny7LgvDfexdAmvE9OY+A3Z/9HTp2VhMnIGTO77ClOz0klbFXEpvDf0zp+4DGsC9BjQV6zKwv/8w2vvUlDGe/DGaGO3BsuQ2rJ41E4j4t/tQPpyAX7heRgc4gAkCmpDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S0GM83XJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Eh7BMRuo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761656663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rih7V8lhhV1Uz9qrmE1IenQly0r+yFC6m8HuQcXUPXU=;
-	b=S0GM83XJ3PoMyN971w8gTFPPU1e548Pej/XIJ+9//zCe7NwXSn3vIuPv+TGgD63SiXBkdc
-	NMn3VDb4no6mOqlI5Z88NkY44riYWGvupt5vgqyKtEktDF+ity2aV6gxeT6mRTrE4Ibutl
-	dpEHhIssyNiU0d8L4YXcC/BzCI2v7bEtTFRn6xPrS0nCaxgUOt0sG9Nev1aQChRVIzncc5
-	W+u7KjtFoM/c4oLsxZCtgLV+gPDaAK8swnwkG+L6lL5gRKgUpGjbLqKQ85/vsYwAOa7x6S
-	dszFB2IqC1R/+ECTyuFghjwkfIdCh2ij5dvPcbkeCZw0+f5TL+ucfwdRGyEsMw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761656663;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rih7V8lhhV1Uz9qrmE1IenQly0r+yFC6m8HuQcXUPXU=;
-	b=Eh7BMRuork9NPVe6xTsHHrohgpRZjJS9RuQeWGeQ1KN/O13+xvasfZ0sedC0ob993aB90Z
-	9nqu++w9eFQUbOCg==
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng
- <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
- <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Steven
- Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org
-Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
- enforcement timer
-In-Reply-To: <20251028083356.cDl403Q9@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.406689298@linutronix.de>
- <20251027113822.UfDZz0mf@linutronix.de> <87cy68wbt6.ffs@tglx>
- <20251028083356.cDl403Q9@linutronix.de>
-Date: Tue, 28 Oct 2025 14:04:22 +0100
-Message-ID: <87ms5buqi1.ffs@tglx>
+	s=arc-20240116; t=1761656693; c=relaxed/simple;
+	bh=COftkVcMXpznFAQ7q3UfcCCg9EaLM8GZnSyuX/Zh4HY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QZvt/u56bQp36Dl3niM/07BXMVXPhcJcKA6SzCt2Nc0OutTCZw8mYMPcA0znxMA6+fF1MRunIYxTp+U+l2v499qCEYT0hFIN+w32gKQmEI3EbKUWKXqo3uzwADEYIcGRgZ/Yg4fRuElQ1DGcwShp8lQIPMF4YxN2fVaJfGC2wu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ee9PufgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77EF5C4CEE7;
+	Tue, 28 Oct 2025 13:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761656693;
+	bh=COftkVcMXpznFAQ7q3UfcCCg9EaLM8GZnSyuX/Zh4HY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ee9PufgHnFaH9dUWt2PJQGi/UqE3D8SxTAHyyb/gOrltPPdfIohh3cPapLZkoTXSH
+	 MvOneX3JxY5fIm/nuYuaaRfEMIwD97CRgE0jEF1YakseaP68xv8bEuPYgfc++hWnhl
+	 RFGlAUsDweXzCfB8y51EkkRpBEgybD55P+HWBcChQQWyccsj6ViQkP4xEteuGYlpEy
+	 vdxV4jHBC/XANAcEoj4vm+mn+DcKyj+A1YXpe7/NmE8Zpi/5OrAisVW1L3AYBvtnuT
+	 3BXziNHHe+9XDXaof3FN9UNqWMv1q1rHXvd/M1Dy1B2AKhHcjs3hSWudfmJQAN4jsC
+	 zNQE4VvLEgY5g==
+Message-ID: <c77e229c-26c6-41b7-b807-04e54617ae77@kernel.org>
+Date: Tue, 28 Oct 2025 14:04:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: display: panel: samsung,atna33xc20: Document
+ ATNA60CL08
+To: Abel Vesa <abel.vesa@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <jesszhan0024@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251028-drm-panel-samsung-add-atna60cl08-v1-1-73123789fcdb@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251028-drm-panel-samsung-add-atna60cl08-v1-1-73123789fcdb@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 28 2025 at 09:33, Sebastian Andrzej Siewior wrote:
-> On 2025-10-27 17:26:29 [+0100], Thomas Gleixner wrote:
->> On Mon, Oct 27 2025 at 12:38, Sebastian Andrzej Siewior wrote:
->> > On 2025-10-22 14:57:38 [+0200], Thomas Gleixner wrote:
->> >> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
->> >> +{
->> >> +	struct slice_timer *st = container_of(tmr, struct slice_timer, timer);
->> >> +
->> >> +	if (st->cookie == current && current->rseq.slice.state.granted) {
->> >> +		rseq_stat_inc(rseq_stats.s_expired);
->> >> +		set_need_resched_current();
->> >> +	}
->> >
->> > You arm the timer while leaving to userland. Once in userland the task
->> > can be migrated to another CPU. Once migrated, this CPU can host another
->> > task while the timer fires and does nothing.
->> 
->> That's inevitable. If the scheduler decides to do that then there is
->> nothing which can be done about it and that's why the cookie pointer
->> exists.
->
-> Without an interrupt on the target CPU, there is nothing stopping the
-> task from overstepping its fair share.
+On 28/10/2025 13:22, Abel Vesa wrote:
+> The Samsung ATNA40CT06 panel is a 16" AMOLED eDP panel. It is similar to
+> the ATNA33XC20 except that it is larger and has a different resolution.
+> It is found on Qualcomm Glymur CRD platform.
+> 
+> Raw panel edid:
+> 
 
-If a task gets migrated then it can't overstep the share because the
-migration is bringing it back into the kernel, schedules it out and
-schedules it in on the new CPU. So the whole accounting start over
-freshly. That's the same as if the task gets the extension granted, goes
-to user space and gets interrupted again. If that interrupt sets
-NEED_RESCHED the grant is "revoked" and the timer fires for nothing.
 
-> Since it is a CPU local timer which is HRTIMER_MODE_HARD, from this CPUs
-> perspective it is either about to run or it did run. Therefore the
-> hrtimer_try_to_cancel() can't return -1 due to
-> hrtimer_callback_running() == true.
-> If you drop hrtimer_active() check and scoped_guard(irq),
-> hrtimer_try_to_cancel() will do the same hrtimer_active() check as you
-> have above followed by disable interrupts via lock_hrtimer_base() and
-> here hrtimer_callback_running() can't return true because interrupts are
-> disabled and the timer can't run on a remote CPU because it is a
-> CPU-local timer.
->
-> So you avoid a branch to hrtimer_try_to_cancel() if the timer already
-> fired.
 
-Yes you are right. Seems I've suffered from brain congestion. Let me
-remove it.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Thanks,
-
-        tglx
+Best regards,
+Krzysztof
 
