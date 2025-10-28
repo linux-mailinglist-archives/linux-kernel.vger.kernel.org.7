@@ -1,174 +1,92 @@
-Return-Path: <linux-kernel+bounces-873512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD9FC14192
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:27:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64505C14102
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D56B1983312
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:27:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 160D9564555
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA41301711;
-	Tue, 28 Oct 2025 10:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD8D3019C3;
+	Tue, 28 Oct 2025 10:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="QmTHE+1z"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IShrimE7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B0A3019DE;
-	Tue, 28 Oct 2025 10:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9841BC5C;
+	Tue, 28 Oct 2025 10:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761647218; cv=none; b=mbgOuTEaAeYWIOTlV/IBr6qUOcNOtS0Dj7Bprx3kChqXcvLAsZxAaFO/15vyWTGiZYnU641vKbQXGJe1GgYX1FdWqE4ktDWa9/bS5iXAuGvhcVRyMPJ8PS3qG+sSNSYe3Bmxg8UrcDf89ELQ5/I/Y3eQpeRDvmczu8ye6SVaTow=
+	t=1761646657; cv=none; b=QVvBCGBT7i3SZ/W0nDNcDs+sp/oCPzQG91hDO7anbm78NyVEiOJWca1m3HarbZqTnkrlAarxktGaLcVqQo5pub25849BZid6PK/f5J+iUI0JqCiRr4qTEV+uDl7RAbQnLeU7DDMFkHY9NFvFG1P+C4FKw/d64I3wxDB9TmfT+Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761647218; c=relaxed/simple;
-	bh=fGPfVLmHb+wl9h4eE562Vwd7sPPgvOxQ4yq0Gh3pNIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWj+iMmgxbPSVWOxlRCBeKw5D393To2+C2h7hFne559RFonIat/F+7dNJfHfr0xRN8A9f0xEXGL3i2T3jMnMmdebWlcqabhTebe7Kc1ul0bqolS7SQ140Dq7bgFHJb0HQbM2VFY8KO89qtlYCIfWNkrgQ9n6F1razh+dxEtsveg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=QmTHE+1z; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [10.10.11.27] (business-24-134-105-141.pool2.vodafone-ip.de [24.134.105.141])
-	(Authenticated sender: a.erhardt@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 16A932FC004D;
-	Tue, 28 Oct 2025 11:16:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1761646613;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AMx59YWeliqF/lFY/+ujXIhGSvd8cbjYB40wlB1RYFA=;
-	b=QmTHE+1zUU91L74zpwra1sUslqOLhjB8in8RHnroIZSWxQ6lBjrUjbIVH+zGHq++nET7u/
-	yusdq9wdM0bxM+vKOVtS6z6N71IW27l7SXCBsr4YeMBySbCjoAmDKI2WWgUKx8bZgmaGrn
-	YuJJXxhjlgqW5Vec8+nkonQBlBqJzLc=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=a.erhardt@tuxedocomputers.com smtp.mailfrom=aer@tuxedocomputers.com
-Message-ID: <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
-Date: Tue, 28 Oct 2025 11:16:51 +0100
+	s=arc-20240116; t=1761646657; c=relaxed/simple;
+	bh=VJm5ppskrkPPf3nRfEgvoMvvIklrrttFGp5m0NBmnyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XK4tUJo5ds0pw+8oIWJnIVBSc0p2Uq0tTYzOxBmDpH5mvjW9GSS5RNpGwm8V6ZBHcq98XsBK9C3SmFNoHKvmFRG+Y0Ock1ygOZCcUv1Rqx5djIYx+OHh09+VHoKpA3WUOifRbmsvKryi+JQkh0UVIamU+d8G9cNUIWo4mUjFsqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IShrimE7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4334C4CEE7;
+	Tue, 28 Oct 2025 10:17:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761646656;
+	bh=VJm5ppskrkPPf3nRfEgvoMvvIklrrttFGp5m0NBmnyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IShrimE7H1813z47FHt13K47u5BgdRj9iyDRKicWAJd0tX1h0kwskOGZA6tOHtZI6
+	 rQVhfGpamswikSuJ1o3da8aJfnTExSR4gMRm0CRruhqJT9w0VHzVCo7mwdhCVppv42
+	 mMWd7LH77DxttYQ+CMtoyJH9OknGxrFB929qZaRw0Rb//TdiZS5pN/u+Hq9CA2I227
+	 Mx1MdYIPgLin/4McNNL9OyCzdbLBlMhx+7KzfoKJlVlKGQu/ymL+YmtktkSlF29GyI
+	 Fe7QSRJO5XSLMp7yq+ME2Ztnu1wccztg+1DdQNUpelQ8TMsSnXqeeH7zu109hYytmX
+	 iBufrhfsU4lEw==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vDgln-000000001Hj-3XDT;
+	Tue, 28 Oct 2025 11:17:40 +0100
+Date: Tue, 28 Oct 2025 11:17:39 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Roger Quadros <rogerq@ti.com>, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] phy: ti: omap-usb2: Fix device node reference leak in
+ omap_usb2_probe
+Message-ID: <aQCYQ8NY3iaC4G_E@hovoldconsulting.com>
+References: <20251028062508.69382-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
-To: "Mario Limonciello (AMD)" <superm1@kernel.org>,
- David Airlie <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>
-References: <20250811162606.587759-1-superm1@kernel.org>
- <20250811162606.587759-4-superm1@kernel.org>
-Content-Language: en-US
-From: Aaron Erhardt <aer@tuxedocomputers.com>
-In-Reply-To: <20250811162606.587759-4-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028062508.69382-1-linmq006@gmail.com>
 
-
-On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
-> On systems with non VGA GPUs fbcon can't find the primary GPU because
-> video_is_primary_device() only checks the VGA arbiter.
+On Tue, Oct 28, 2025 at 02:25:06PM +0800, Miaoqian Lin wrote:
+> In omap_usb2_probe(), of_parse_phandle() returns a device node with its
+> reference count incremented. The caller is responsible for releasing this
+> reference when the node is no longer needed.
 > 
-> Add a screen info check to video_is_primary_device() so that callers
-> can get accurate data on such systems.
-
-I have a question regarding this change. To me, the function name 
-video_is_primary_device() implies that there is only one primary GPU.
-I would also expect that the 'boot_display' attribute added later in 
-the patch series based on this function is only set for one GPU, but 
-that is not necessarily the case. Since I'm working on a user-space
-program that reads the 'boot_display' attribute, I need to know what
-behavior is intended in order to do a correct implementation.
-
+> Add of_node_put(control_node) after usage to fix the
+> reference leak.
 > 
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
-> ---
-> v10:
->  * Rebase on 6.17-rc1
->  * Squash 'fbcon: Stop using screen_info_pci_dev()'
-> ---
->  arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
+> Found via static analysis.
 > 
-> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
-> index 81fc97a2a837a..e0aeee99bc99e 100644
-> --- a/arch/x86/video/video-common.c
-> +++ b/arch/x86/video/video-common.c
-> @@ -9,6 +9,7 @@
->  
->  #include <linux/module.h>
->  #include <linux/pci.h>
-> +#include <linux/screen_info.h>
->  #include <linux/vgaarb.h>
->  
->  #include <asm/video.h>
-> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
->  
->  bool video_is_primary_device(struct device *dev)
->  {
-> +#ifdef CONFIG_SCREEN_INFO
-> +	struct screen_info *si = &screen_info;
-> +	struct resource res[SCREEN_INFO_MAX_RESOURCES];
-> +	ssize_t i, numres;
-> +#endif
->  	struct pci_dev *pdev;
->  
->  	if (!dev_is_pci(dev))
-> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
->  
->  	pdev = to_pci_dev(dev);
->  
-> -	return (pdev == vga_default_device());
-> +	if (!pci_is_display(pdev))
-> +		return false;
-> +
-> +	if (pdev == vga_default_device())
-> +		return true;
+> Fixes: 478b6c7436c2 ("usb: phy: omap-usb2: Don't use omap_get_control_dev()")
+> Cc: stable@vger.kernel.org
 
-This can mark a VGA device as primary GPU.
+There should not be any need to backport this one.
 
-> +
-> +#ifdef CONFIG_SCREEN_INFO
-> +	numres = screen_info_resources(si, res, ARRAY_SIZE(res));
-> +	for (i = 0; i < numres; ++i) {
-> +		if (!(res[i].flags & IORESOURCE_MEM))
-> +			continue;
-> +
-> +		if (pci_find_resource(pdev, &res[i]))
-> +			return true;
-> +	}
-> +#endif
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 
-And then the new code can also choose a primary GPU.
+Other than that, looks good:
 
-> +
-> +	return false;
->  }
->  EXPORT_SYMBOL(video_is_primary_device);
->  
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-In particular, I have hardware that has this exact configuration where
-two GPUs are marked as primary and have a 'boot_display' attribute: the
-first one through vga_default_device(), the second one through the new
-detection method.
-
-Is this intended?
-
-Kind regards
-Aaron
-
+Johan
 
