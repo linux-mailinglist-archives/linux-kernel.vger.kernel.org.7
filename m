@@ -1,184 +1,171 @@
-Return-Path: <linux-kernel+bounces-873636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90015C14502
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:17:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43699C144D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CE34508B27
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:12:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8973940166F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDEC304BD6;
-	Tue, 28 Oct 2025 11:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 138222FFDD4;
+	Tue, 28 Oct 2025 11:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RYXB6v26"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="HO7joC8n"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B9302150
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDE3212575
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761649914; cv=none; b=UCNREFDyNqSpF3bLBTX1RxQDtcykJxLO4eI5JK5oYd912yriOv2WTVXy2hb1rOdlfnh9NQdbYqMamWnC7YJzxUexDwQQpAr7YdsBT49gkARMkcxtZhopjxHQ0jThm3EMWAziRpLEeiYR7uMWpHz7MGuwt3M+Q5o0CUipCQfSEvY=
+	t=1761650009; cv=none; b=g7VBv3U3xhE+cHEUe9pFqs2f7Za7O/cbwuB2zS4/U4h811hWZpNuB8XxaGAyt7JBrPv5SiQtzYwXLQdWq2AHJU22RDfyLTPimzSh0RnjD/Bp0PJh+eCqf4j381rTrnM9dnvI4+DPKHIBdgm91x73pGDm9MSX/DVzhiti9B7Nklc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761649914; c=relaxed/simple;
-	bh=tluPsZgS0AbUxys4VSNz7xRC3nOxi4aNyCC+IC+2QeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=reOzdN8ObGRm1G5yhgjoCKr0lU5KN2U/sVAACDTMjmPWnow5RaDyjbY9GgxSKTnfd/o5t/zYtMSIZU8SdD/O4aeuG5r7CAz+O+0VwrfnLVivuZewpOBB9FWKKW9V5czfMN6Q1zJXoWd86BCyLoyaQN1OPUs2ixalukISTNDNvoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RYXB6v26; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S8jeS52881678
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	opUtdQf4QfMq9eW5ijzGVRszcOjE71sRMPdyYjws57U=; b=RYXB6v26+vYPhlCW
-	KKF4VCCEITpKOLNrnI1gTw4AV5aIiQj+sirAXsZ6mD8RPXAPXPeQY4FOrCfaSD8h
-	ICKkft255d0UpDS7qABN2w8koXf3skvpcuw6repqcQwO3Flc+ueYVJIwhp6O4/o2
-	W2bdn2mWWlNQh/bQfAa6W3gj2NDNfLMN2jwYsJKwB+kVPXa7+HgMtjnUM/Cm3L3k
-	WjHzTscfOSpnQUy9NvZIQDIzCcx7wniuBZZ0psIt8SBdmYNSkWCAq/ekd1fmUouW
-	ucgzIp24JLig6RQeoy8gOK7zSChbzE9rHeIwxxOyL/ZY6PkqV1F+BlUM56/kdRUu
-	NaDdVw==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a29uhbjut-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7a28ccb4c8aso2683856b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:11:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761649911; x=1762254711;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=opUtdQf4QfMq9eW5ijzGVRszcOjE71sRMPdyYjws57U=;
-        b=DM60dHozlSbyG54LxYb00KPbk7+S4uUM98+T4Fd/rRygShQ5HA/p49tfcZGeZWSDvV
-         AqwNinMzDXmTvxXxXSHi/hmbcs0BolQSUQRnZw7GzlAoa+HtM7T553DUkxxjjrVmwx8T
-         5rE9r9H9ILPLmnXhB22t2fk01XkNp/vjojJ5OAiVh5PvERwfoTkmRzPCFxi2JjtJ0MU6
-         jw6Mz4P/cM6BY1H2jVMv2Cwro/7Pr9sWDoy0paIW3cV+xu7KFf3h/rDl+CIEtAYrMMJ5
-         nMoIFn5kPI1rNBN/nZU1Bjxh/y+YLIxYQwblu2E9Pg5n3Y6HjpUqnQPecctRbyR4kAQH
-         /RYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIAymG8Yp4WIHIG2LytQ0wJPbRtFDv7mm6PjbkQmhy2jgnXwPtSDqs4JpcdooKKUUJOh9bUBFfYSbTDws=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6zMmX/iu14xzP+JWZ3fIz5H74NZLP4oZpDbvtSKwtD9tQGU+R
-	Dy0E6lTpeu+bG5LbG/ANX43z7MJDd3OmZtCbVk/cY2DM0mqBfaXfsN/UNqooV6iLomkic7ioOmk
-	ORzt2cplHXNsVFL1stwwcMH1WkcNBVYNxVEpsEnb7tDrT3xxyYXxiiew7zisHzs5/qM/NuhVQ+W
-	Q=
-X-Gm-Gg: ASbGnct7buvHkFHsNkxpb9i20gH4UlSddYx3oKjuUD6DxE688S77ojF2gj3tFf/yLKx
-	mTLstNeQ7bIS+95+DFPKIDjhggbj3NHC4CB9GU/EkzfpkFsz0tyEh/eMIYupUfTeaD+FhRDNq52
-	HZiEmKwiEngCf6PCOFXkGtDY87uFf/cMzFEpJcgq+wM/g9iHrv9Tx81lM7QAiS5W/Dz+bVR/gEi
-	pZAmF34k0CHQFQEaFhmka9QSruGWEKRmEdslos10crN0vkCyFC1R9VU7l5I7g2BZIA8aa9ood2B
-	8OXWz3UdimjhqinkUfgCuoUCwM/zLdjrhkH/m2Q9ApoPmNCO/yKWig7+ZKbU4T8Ozd8DN0kwTqE
-	FeOY29VkC5XFGmFlBmwvtr5I9K0k=
-X-Received: by 2002:a05:6a20:9389:b0:334:a681:389c with SMTP id adf61e73a8af0-344d1e9d6f7mr4082416637.15.1761649911248;
-        Tue, 28 Oct 2025 04:11:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEir10gLmpuIQM7ApflZtUrLLZhaDCqOjyulYgaRdAjRBHf/P6MEgnu6ky/ldUcH5shRkkc9A==
-X-Received: by 2002:a05:6a20:9389:b0:334:a681:389c with SMTP id adf61e73a8af0-344d1e9d6f7mr4082378637.15.1761649910755;
-        Tue, 28 Oct 2025 04:11:50 -0700 (PDT)
-Received: from [10.218.10.142] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712791576dsm10053265a12.12.2025.10.28.04.11.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 04:11:49 -0700 (PDT)
-Message-ID: <17995927-b7fb-458a-a863-b03bd15e6073@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 16:41:45 +0530
+	s=arc-20240116; t=1761650009; c=relaxed/simple;
+	bh=uggkgi3Q7362PrEjJk1FfF452uwKbfjn5GiV7MqBnPc=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=I0ueoBT4X7Nr+DeY9QAZSorpjd5LSYPDkvr+KKBpSotH8vUvYJm1Vm4/IelOIfvPZC926GOKiF2oC9xn3AsvuwlQxv91l/HaUO2P60VrDpuXUr+byXK9y5lEudHJKM6NNwt8klLFoBcygyTm6TUbhmpHgKYMjzFSrYwAqe6qoqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=HO7joC8n; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=IruZ6tsBVucJWwjqgHjIbPoWLccutkeIxO4pOhVzLak=;
+	b=HO7joC8nay2zm7gfgvo3nT4alXc9FalA+xPchBjsCjATqUI2d12omH8t3KByJQDv29FvDJP5y
+	yZ5JyzoEkqFlkubOk8LCise9PxMgp5XjNoiXmtYnCE33B393RBvGAeZR0noGRtP7YRDl03NXlGz
+	YP0JqVX0+6NToW2WH1J8E1c=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cwnm01D7cz1prLt;
+	Tue, 28 Oct 2025 19:12:48 +0800 (CST)
+Received: from dggpemf200009.china.huawei.com (unknown [7.185.36.246])
+	by mail.maildlp.com (Postfix) with ESMTPS id DDD6A180237;
+	Tue, 28 Oct 2025 19:13:16 +0800 (CST)
+Received: from dggpemf500012.china.huawei.com (7.185.36.8) by
+ dggpemf200009.china.huawei.com (7.185.36.246) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 28 Oct 2025 19:13:16 +0800
+Received: from dggpemf500012.china.huawei.com ([7.185.36.8]) by
+ dggpemf500012.china.huawei.com ([7.185.36.8]) with mapi id 15.02.1544.011;
+ Tue, 28 Oct 2025 19:13:16 +0800
+From: zhangqilong <zhangqilong3@huawei.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"david@redhat.com" <david@redhat.com>, "Liam.Howlett@oracle.com"
+	<Liam.Howlett@oracle.com>, "vbabka@suse.cz" <vbabka@suse.cz>,
+	"rppt@kernel.org" <rppt@kernel.org>, "surenb@google.com" <surenb@google.com>,
+	"mhocko@suse.com" <mhocko@suse.com>, "jannh@google.com" <jannh@google.com>,
+	"pfalcato@suse.de" <pfalcato@suse.de>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Wangkefeng (OS Kernel Lab)"
+	<wangkefeng.wang@huawei.com>, Sunnanyong <sunnanyong@huawei.com>
+Subject: Re: [RFC PATCH 2/3] mm/mincore: Use can_pte_batch_count() in
+ mincore_pte_range() for pte batch mincore_pte_range()
+Thread-Topic: [RFC PATCH 2/3] mm/mincore: Use can_pte_batch_count() in
+ mincore_pte_range() for pte batch mincore_pte_range()
+Thread-Index: AdxH+5T+8zk9AGSdQ5COU3ncduDLzg==
+Date: Tue, 28 Oct 2025 11:13:16 +0000
+Message-ID: <29d2ad2f81b14c8384bd0a7d8d60ef62@huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] phy: qualcomm: m31-eusb2: Add runtime pm ops
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
- <daf0055b-7caf-4ace-8a06-071468273a37@oss.qualcomm.com>
- <1c52e759-15fd-462b-a9fd-ad620da099f5@oss.qualcomm.com>
- <e4f33bf0-05d9-4aad-b00e-fb7cc2c2633b@oss.qualcomm.com>
-Content-Language: en-US
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-In-Reply-To: <e4f33bf0-05d9-4aad-b00e-fb7cc2c2633b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: aQmT6uX0gJuHbMOEiwa6bJ7b2ECNwBDb
-X-Proofpoint-GUID: aQmT6uX0gJuHbMOEiwa6bJ7b2ECNwBDb
-X-Authority-Analysis: v=2.4 cv=QuFTHFyd c=1 sm=1 tr=0 ts=6900a4f8 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=_xMILRQ3MvDrwl_WGjgA:9 a=QEXdDO2ut3YA:10
- a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA5NSBTYWx0ZWRfX+yIi+eXdcKHL
- 1GtRhgkgBP5Y7Q7g4NF9+dZd4Nx+RuitUMW4vJs+SmsxDdeTRh8WU7SRFx0Mmwz9QA98eaMztj/
- 18KNwWbP4nhR5+XtqC5N/q7e01n5LxNsIsw+4D7360+D/JE71B723ZpdoH4vHuAsVcx4kyhTuBT
- P57Poud1A8rs+S5RbQiN3pvfqfvs10ApKTiG0tWCd7hcLqRHyJGRB3a2VKaU2hgv/m4uKkCC415
- 5/PJ1HHJKv2dsj0ULCoWP2qCvT1hAYjpbwig2zzMTngNP/PzsjYq8EF646Tl3uPH4xB0BcNKaJX
- ACRmvaWGRHlsCUbDXUaCGr0KgbsoqJbqIOWkgNGZ1erCpXhoFm71soAVM1Um9Mc2Y2yMLxpx0Kl
- k5wGQJdxSTcsfMGXWwBFWQ3Obct5Ew==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 adultscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280095
 
+ On Mon, Oct 27, 2025 at 10:03:14PM +0800, Zhang Qilong wrote:
+> > In current mincore_pte_range(), if pte_batch_hint() return one pte,
+> > it's not efficient, just call new added can_pte_batch_count().
+> >
+> > In ARM64 qemu, with 8 CPUs, 32G memory, a simple test demo like:
+> > 1. mmap 1G anon memory
+> > 2. write 1G data by 4k step
+> > 3. mincore the mmaped 1G memory
+> > 4. get the time consumed by mincore
+> >
+> > Tested the following cases:
+> >  - 4k, disabled all hugepage setting.
+> >  - 64k mTHP, only enable 64k hugepage setting.
+> >
+> > Before
+> >
+> > Case status | Consumed time (us)  |
+> > ----------------------------------|
+> > 4k          | 7356                |
+> > 64k mTHP    | 3670                |
+> >
+> > Pathed:
+> >
+> > Case status | Consumed time (us)  |
+> > ----------------------------------|
+> > 4k          | 4419                |
+> > 64k mTHP    | 3061                |
+> >
+> > The result is evident and demonstrate a significant improvement in the
+> > pte batch. While verification within a single environment may have
+> > inherent randomness. there is a high probability of achieving positive
+> > effects.
+>=20
+> Recent batch PTE series seriously regressed non-arm, so I'm afraid we can=
+'t
+> accept any series that doesn't show statistics for _other platforms_.
+>=20
+> Please make sure you at least test x86-64.
 
+OK, I will have  a  test on x86-64 as soon and it may yield unexpected resu=
+lts.
 
-On 10/27/2025 4:41 PM, Konrad Dybcio wrote:
-> On 10/27/25 12:09 PM, Prashanth K wrote:
->>
->>
->> On 10/27/2025 1:55 PM, Konrad Dybcio wrote:
->>> On 10/27/25 7:24 AM, Prashanth K wrote:
->>>> Add runtime power management operation callbacks for M31 EUSB2 PHY.
->>>> Enable/disable the clocks based on the runtime suspend/resume calls.
->>>>
->>>> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
->>>> ---
->>>
->>> [...]
->>>
->>>>  static int m31eusb2_phy_probe(struct platform_device *pdev)
->>>>  {
->>>>  	struct phy_provider *phy_provider;
->>>> @@ -270,6 +298,17 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
->>>>  		return dev_err_probe(dev, PTR_ERR(phy->clk),
->>>>  				     "failed to get clk\n");
->>>>  
->>>> +	dev_set_drvdata(dev, phy);
->>>> +	pm_runtime_set_active(dev);
->>>> +	pm_runtime_enable(dev);
->>>> +
->>>> +	/*
->>>> +	 * Prevent runtime pm from being ON by default. Users can enable
->>>> +	 * it using power/control in sysfs.
->>>> +	 */
->>>> +	pm_runtime_forbid(dev);
->>>
->>> This screams "this patch is broken" or "there are bad issues" which
->>> you did not describe at all.
->>>
->>> Konrad
->>
->> Hi Konrad, I was followed the same sequence from other phy drivers
->> containing pm_ops. I assume the runtime_forbid is added to control
->> runtime pm from userspace.
-> 
-> Other drivers call runtime_forbid() because the implementation doesn't
-> work.. Or at least historically the usb3 part hasn't been able to sus/
-> res properly
-> 
-> Konrad
+>=20
+> This code is very sensitive and we're not going to accept a patch like th=
+is without
+> _being sure_ it's ok.
 
-Sure, I'll remove the runtime_forbid call and send v2. Let me know if
-there's anything else.
+Year, it's a hot path, we should be extremely cautious.
 
-Thanks in advance,
-Prashanth K
+>=20
+> >
+> > Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+> > ---
+> >  mm/mincore.c | 10 +++-------
+> >  1 file changed, 3 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/mm/mincore.c b/mm/mincore.c index
+> > 8ec4719370e1..2cc5d276d1cd 100644
+> > --- a/mm/mincore.c
+> > +++ b/mm/mincore.c
+> > @@ -178,18 +178,14 @@ static int mincore_pte_range(pmd_t *pmd,
+> unsigned long addr, unsigned long end,
+> >  		/* We need to do cache lookup too for pte markers */
+> >  		if (pte_none_mostly(pte))
+> >  			__mincore_unmapped_range(addr, addr + PAGE_SIZE,
+> >  						 vma, vec);
+> >  		else if (pte_present(pte)) {
+> > -			unsigned int batch =3D pte_batch_hint(ptep, pte);
+> > -
+> > -			if (batch > 1) {
+> > -				unsigned int max_nr =3D (end - addr) >>
+> PAGE_SHIFT;
+> > -
+> > -				step =3D min_t(unsigned int, batch, max_nr);
+> > -			}
+> > +			unsigned int max_nr =3D (end - addr) >> PAGE_SHIFT;
+> >
+> > +			step =3D can_pte_batch_count(vma, ptep, &pte,
+> > +						   max_nr, 0);
+> >  			for (i =3D 0; i < step; i++)
+> >  				vec[i] =3D 1;
+> >  		} else { /* pte is a swap entry */
+> >  			*vec =3D mincore_swap(pte_to_swp_entry(pte), false);
+> >  		}
+> > --
+> > 2.43.0
+> >
+
 
