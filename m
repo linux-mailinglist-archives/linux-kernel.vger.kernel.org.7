@@ -1,303 +1,218 @@
-Return-Path: <linux-kernel+bounces-874754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A833DC17060
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:34:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE81EC16FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:28:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5E494507087
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:30:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A58C348D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCF5358D2D;
-	Tue, 28 Oct 2025 21:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C3A3563F9;
+	Tue, 28 Oct 2025 21:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oPGyrxHZ"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AC3/Jd0+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A709358D33
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C2F351FC1;
+	Tue, 28 Oct 2025 21:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761686789; cv=none; b=qRXX1DFNvzzhqdQJvhQRLmCkHFEJX4qjxrPqNzW0hFMr6NRm+higXqZg5Az4tHaFMhQifZH47C6ULr4o18N19MN8xvmOi+AavnYsjZ2o3l3w6DAy8Km5zu9w1VBHN/tOrUswbxesgO+yCN4L3c7mx6I9sE7ZqqG2IwXkf9KDKCE=
+	t=1761686717; cv=none; b=dKnWj8ZArIZw2xF5QQhnLxr7VA4x3+XCla4I46J/5ZLhPfe2KW4hb/x3WDB3fsVm9LgHoY1KAbW7djl5uF93CLxCbIWuIczmbmejx9T/rjE+Y4ny0IcJXYAx6NNYR7uf0RIVV4I+s3D9yrYGKo4FtE0i+ZoPVv0hGXJsZ0jGHc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761686789; c=relaxed/simple;
-	bh=BOs6JgCi8AjR74vw93U20UCPtCoQhB7p2LgmbsDFn9g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DRxJJ7S8rF9XWw1nJ8ZDIhEQTj0lKXbj63EqQvkByl4YBYNZxqlL2JVO74i8Vq4j9SOyHZsLk6TlZlzl6I5VxFfgNCbVHqd9yBPXofrUSUiTYwZEhmkvcv/8itXfwvXqHMlJkjXcgbihOpDZiQU1sf3QszXnh7Rbn1BuDe/k7rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oPGyrxHZ; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b62da7602a0so4574983a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:26:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761686786; x=1762291586; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rT6L9Wf8vYbbxkXQC/mV6lXNvx+aGP0etQXMbdvClGk=;
-        b=oPGyrxHZIlmgCkGqb6RH5S+ELHpT6wtPWeemkSmVjsaMP1fmSOmM/2q8mqM6H/M9dn
-         ABws1kjoP0pLOsW3kqVHD71PPK5/LZKmjF2WWOmAdn4IHSsbE4stm+Dc2YxKSiUh9kx5
-         hTtGT4znmlmT1s7wd1UKU/XQb7S0YrOX2xEer0hEJ4Pz4EpS3ttWMLoGFfTc0BLBO8M2
-         L6/M3tjd/kDOMk+Ehptume1SgEiQryY3NlM5c3kjh0x6ckeqYcEXrUKYbd90J03oBZHA
-         HjtPRt3lPSQSToMkabDE6t4fRPUKWXYAP+X8tSDGiiNWsbGrlOTODlU3/IMNARhyJO4p
-         F6uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761686786; x=1762291586;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rT6L9Wf8vYbbxkXQC/mV6lXNvx+aGP0etQXMbdvClGk=;
-        b=lk1GMSmezLOZZf2VT6YGe97V3a8uqVvImQ+hpzrYtLVPeZwViC1ccbO+wA6CD/RJQy
-         TOtHiSZ7G5vnG6jqLPZFZ+6v9vNRzpgewBzxN4CbTFS24QIjskAAQ8VxkguNy/hoaAZI
-         ff6nboVGW5Y/n9MddSA9RWhLL+DhqGBThwh69jYhJwfnjq0GZE3UaSofMVBr03XI5uko
-         /tLSW0PGZAgzL8N3/YC8AWOLFKuUsMnelh0/yY/R+gQ+Ll4Ny9o9ZWgit2oJSJgyYN50
-         2HKPTcgOYT6gxPHZV/rhvn2KEs2EE4HXz3r3Lg+i6CELF5i8sGyIjdBRJad4OqpBFSBq
-         Li+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVRn4VzYlnoWtOpLvuygwtNmsvd3h27j2kXUQNoh1glqZq/1HgELJWBwRbMDc/41CkuCzNbzh0wQxJpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoPc+uVzn7LdqIbIJy7RGHJYcZLVQuJk+rkirbCK/PrjxzkqXo
-	OSr92M+z3PSb7M/ZYVSVUJBhOcH65oST5XTYPLCJ/Hed11GC7EbhvY/m+PxilONs+IfcvcJ21za
-	/lPWs1RvJDi8fR+Z4PqmI+EsH+A==
-X-Google-Smtp-Source: AGHT+IFi6r0zdzbXdNzU52THvRuL2ZA/3vJbtaWuyVKp1vecZPNJs9dG6E1pIVYt/viPctamQhX27/sMjMfGtOyTrQ==
-X-Received: from pldv19.prod.google.com ([2002:a17:902:ca93:b0:290:28e2:ce4c])
- (user=kaleshsingh job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:c1c9:b0:249:3efa:3c99 with SMTP id d9443c01a7336-294def30f8cmr3834515ad.61.1761686786161;
- Tue, 28 Oct 2025 14:26:26 -0700 (PDT)
-Date: Tue, 28 Oct 2025 14:24:36 -0700
-In-Reply-To: <20251028212528.681081-1-kaleshsingh@google.com>
+	s=arc-20240116; t=1761686717; c=relaxed/simple;
+	bh=9OLtvkhVhxl64Y1HwNo56j9KBqYKKTYYqibe59BP9Dc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GI84ueiAlvXhtok+diWLxY+lcMW6tZLm/CKkmFlrr/Xh5YrIRTCB80lUCBjcc0yfQsm3jbdDfKKF0RZ9dvBfeLU3Xmw5tfi13o1f7dMp1u34mixFE7lz4CSmVcyR8JRkHu5qPEI9DQ+zm01sP1qoyh5C6ZaxlPssvP5yXZf+xKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AC3/Jd0+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C64ECC4CEE7;
+	Tue, 28 Oct 2025 21:25:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761686716;
+	bh=9OLtvkhVhxl64Y1HwNo56j9KBqYKKTYYqibe59BP9Dc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AC3/Jd0+OXWSXwtfCJ8CynnjqmBnN2iqmXByBjcsGTA0fIXgLvfQZg1CJgzpjW90k
+	 Zj4pt5SP5+STNSoyBQ8m7f35iKn6IfhFfl456lb+cGp7pXhbo2P3d7otBDrM7Eu3DN
+	 p7x9LEogrhEKcvGkuoFWcl/SywWtxfeUbd7/+KM4mBNyjzVVt0zh8Y3Wkii68BC736
+	 nFesdcTb7RxVIbgoZ2lGiSLvyZ0cJCL+l/J4fhBVniBpRJxewd8gLCis7i75EwY3O7
+	 sDUJxSeq0WuaCEMnLrp+GTT26ljlXemdvNrqCrLs0uoN9Ej99eMwl+Rcc0odqjNOEK
+	 2dRSCaSvqCwkg==
+Message-ID: <c7b86f6a-b691-41e3-955b-df40f4aca511@kernel.org>
+Date: Tue, 28 Oct 2025 16:25:15 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251028212528.681081-1-kaleshsingh@google.com>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251028212528.681081-6-kaleshsingh@google.com>
-Subject: [PATCH v4 5/5] mm/tracing: introduce trace_mm_insufficient_vma_slots event
-From: Kalesh Singh <kaleshsingh@google.com>
-To: akpm@linux-foundation.org, minchan@kernel.org, lorenzo.stoakes@oracle.com, 
-	david@redhat.com, Liam.Howlett@oracle.com, rppt@kernel.org, pfalcato@suse.de
-Cc: rostedt@goodmis.org, hughd@google.com, kernel-team@android.com, 
-	android-mm@google.com, Kalesh Singh <kaleshsingh@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Kees Cook <kees@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ Aaron Erhardt <aer@tuxedocomputers.com>, David Airlie <airlied@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>
+References: <20250811162606.587759-1-superm1@kernel.org>
+ <20250811162606.587759-4-superm1@kernel.org>
+ <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
+ <fb519d0e-9d7f-4835-964a-c21fd24b10e8@kernel.org>
+ <817215d6-0a37-41a3-89a0-b7d2f7c67f1f@suse.de>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <817215d6-0a37-41a3-89a0-b7d2f7c67f1f@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Introduce the trace_mm_insufficient_vma_slots tracepoint to improve
-observability of VMA allocation failures.
+On 10/28/25 11:50 AM, Thomas Zimmermann wrote:
+> Hi
+> 
+> Am 28.10.25 um 14:15 schrieb Mario Limonciello:
+>> On 10/28/25 5:16 AM, Aaron Erhardt wrote:
+>>>
+>>> On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
+>>>> On systems with non VGA GPUs fbcon can't find the primary GPU because
+>>>> video_is_primary_device() only checks the VGA arbiter.
+>>>>
+>>>> Add a screen info check to video_is_primary_device() so that callers
+>>>> can get accurate data on such systems.
+>>>
+>>> I have a question regarding this change. To me, the function name
+>>> video_is_primary_device() implies that there is only one primary GPU.
+>>> I would also expect that the 'boot_display' attribute added later in
+>>> the patch series based on this function is only set for one GPU, but
+>>> that is not necessarily the case. Since I'm working on a user-space
+>>> program that reads the 'boot_display' attribute, I need to know what
+>>> behavior is intended in order to do a correct implementation.
+>>>
+>>>>
+>>>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+>>>> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+>>>> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>>>> ---
+>>>> v10:
+>>>>   * Rebase on 6.17-rc1
+>>>>   * Squash 'fbcon: Stop using screen_info_pci_dev()'
+>>>> ---
+>>>>   arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
+>>>>   1 file changed, 24 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video- 
+>>>> common.c
+>>>> index 81fc97a2a837a..e0aeee99bc99e 100644
+>>>> --- a/arch/x86/video/video-common.c
+>>>> +++ b/arch/x86/video/video-common.c
+>>>> @@ -9,6 +9,7 @@
+>>>>     #include <linux/module.h>
+>>>>   #include <linux/pci.h>
+>>>> +#include <linux/screen_info.h>
+>>>>   #include <linux/vgaarb.h>
+>>>>     #include <asm/video.h>
+>>>> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
+>>>>     bool video_is_primary_device(struct device *dev)
+>>>>   {
+>>>> +#ifdef CONFIG_SCREEN_INFO
+>>>> +    struct screen_info *si = &screen_info;
+>>>> +    struct resource res[SCREEN_INFO_MAX_RESOURCES];
+>>>> +    ssize_t i, numres;
+>>>> +#endif
+>>>>       struct pci_dev *pdev;
+>>>>         if (!dev_is_pci(dev))
+>>>> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
+>>>>         pdev = to_pci_dev(dev);
+>>>>   -    return (pdev == vga_default_device());
+>>>> +    if (!pci_is_display(pdev))
+>>>> +        return false;
+>>>> +
+>>>> +    if (pdev == vga_default_device())
+>>>> +        return true;
+>>>
+>>> This can mark a VGA device as primary GPU.
+> 
+> Is the value returned from vga_default_device() eq to NULL?
+> 
+>>>
+>>>> +
+>>>> +#ifdef CONFIG_SCREEN_INFO
+>>>> +    numres = screen_info_resources(si, res, ARRAY_SIZE(res));
+>>>> +    for (i = 0; i < numres; ++i) {
+>>>> +        if (!(res[i].flags & IORESOURCE_MEM))
+>>>> +            continue;
+>>>> +
+>>>> +        if (pci_find_resource(pdev, &res[i]))
+>>>> +            return true;
+>>>> +    }
+>>>> +#endif
+>>>
+>>> And then the new code can also choose a primary GPU.
+> 
+> Maybe we should drop this block or move it to [1]? At [1] it would only 
+> run if the more sophisticated vgaarb has been disabled.
+> 
+> The vgaarb now selects CONFIG_SCREEN_INFO and already tests for 
+> overlapping resources. There's nothing here that vgaarb shouldn't 
+> already do. Yet, I don't understand how only one of the can be true at a 
+> time.
+> 
+> [1] https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/ 
+> vgaarb.h#L55
 
-This event fires when an operation is about to fail because it requires
-more VMA slots than are currently available, according to the
-sysctl_max_map_count limit. This is a preemptive check that occurs in
-call paths like mmap(), mremap(), and split_vma() before they attempt
-to create new VMAs.
+There is a hunk at the end of vga_is_boot_device() which I think is 
+causing this issue.  We have one VGA device which is NOT the boot 
+display but the code figures if it found nothing this must be right.
 
-This tracepoint can be used with event-driven telemetry, such as BPF
-programs, to collect data from devices in the field with minimal
-overhead.
+	/*
+	 * Vgadev has neither IO nor MEM enabled.  If we haven't found any
+	 * other VGA devices, it is the best candidate so far.
+	 */
+	if (!boot_vga)
+		return true;
 
-The tracepoint captures the mm_struct pointer and the current vma_count
-at the time of failure. This allows for observing the distribution of
-these events to determine if there are legitimate bugs or if an increase
-to the limit is warranted.
+I feel the right solution is to drop this now.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Pedro Falcato <pfalcato@suse.de>
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
----
-
-Changes in v4:
- - Update commit description to accurately reflect the trace event's
-   parameters.
-
-Changes in v3:
- - capture the mm pointer as the unique identifier and capture
-   the vma_count as well, instead of current task tgid, per Steve
- - Add include/trace/events/vma.h to MEMORY MAPPING section in
-   MAINTAINERS, per Lorenzo
- - rename trace_max_vma_count_exceeded() to
-   trace_mm_insufficient_vma_slots(), since this is a preemptive
-   check, per Lorenzo
- - Fix tools/testing/vma build errors, per Lorenzo
-
- MAINTAINERS                      |  1 +
- include/trace/events/vma.h       | 32 ++++++++++++++++++++++++++++++++
- mm/mmap.c                        |  5 ++++-
- mm/mremap.c                      | 10 ++++++++--
- mm/vma.c                         |  4 +++-
- mm/vma_internal.h                |  2 ++
- tools/testing/vma/vma_internal.h |  5 +++++
- 7 files changed, 55 insertions(+), 4 deletions(-)
- create mode 100644 include/trace/events/vma.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 66f7ca5b01ad..223124cb7d21 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16567,6 +16567,7 @@ S:	Maintained
- W:	http://www.linux-mm.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
- F:	include/trace/events/mmap.h
-+F:	include/trace/events/vma.h
- F:	mm/interval_tree.c
- F:	mm/mincore.c
- F:	mm/mlock.c
-diff --git a/include/trace/events/vma.h b/include/trace/events/vma.h
-new file mode 100644
-index 000000000000..4540fa607f66
---- /dev/null
-+++ b/include/trace/events/vma.h
-@@ -0,0 +1,32 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM vma
-+
-+#if !defined(_TRACE_VMA_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_VMA_H
-+
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(mm_insufficient_vma_slots,
-+
-+	TP_PROTO(struct mm_struct *mm),
-+
-+	TP_ARGS(mm),
-+
-+	TP_STRUCT__entry(
-+		__field(void *,	mm)
-+		__field(int,	vma_count)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->mm		= mm;
-+		__entry->vma_count	= mm->vma_count;
-+	),
-+
-+	TP_printk("mm=%p vma_count=%d", __entry->mm, __entry->vma_count)
-+);
-+
-+#endif /*  _TRACE_VMA_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 647a676c0ab4..3ebe9d5f7dfe 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -56,6 +56,7 @@
- 
- #define CREATE_TRACE_POINTS
- #include <trace/events/mmap.h>
-+#include <trace/events/vma.h>
- 
- #include "internal.h"
- 
-@@ -383,8 +384,10 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	 * sysctl_max_map_count limit by one. This behavior is preserved to
- 	 * avoid breaking existing applications.
- 	 */
--	if (max_vma_count() - mm->vma_count < 0)
-+	if (max_vma_count() - mm->vma_count < 0) {
-+		trace_mm_insufficient_vma_slots(mm);
- 		return -ENOMEM;
-+	}
- 
- 	/*
- 	 * addr is returned from get_unmapped_area,
-diff --git a/mm/mremap.c b/mm/mremap.c
-index 4874729cd65c..dfb481c5bfb1 100644
---- a/mm/mremap.c
-+++ b/mm/mremap.c
-@@ -30,6 +30,8 @@
- #include <asm/cacheflush.h>
- #include <asm/tlb.h>
- 
-+#include <trace/events/vma.h>
-+
- #include "internal.h"
- 
- /* Classify the kind of remap operation being performed. */
-@@ -1040,8 +1042,10 @@ static unsigned long prep_move_vma(struct vma_remap_struct *vrm)
- 	 * We'd prefer to avoid failure later on in do_munmap:
- 	 * which may split one vma into three before unmapping.
- 	 */
--	if (max_vma_count() - current->mm->vma_count < 4)
-+	if (max_vma_count() - current->mm->vma_count < 4) {
-+		trace_mm_insufficient_vma_slots(current->mm);
- 		return -ENOMEM;
-+	}
- 
- 	if (vma->vm_ops && vma->vm_ops->may_split) {
- 		if (vma->vm_start != old_addr)
-@@ -1814,8 +1818,10 @@ static unsigned long check_mremap_params(struct vma_remap_struct *vrm)
- 	 * the threshold. In other words, is the current map count + 6 at or
- 	 * below the threshold? Otherwise return -ENOMEM here to be more safe.
- 	 */
--	if (max_vma_count() - current->mm->vma_count < 6)
-+	if (max_vma_count() - current->mm->vma_count < 6) {
-+		trace_mm_insufficient_vma_slots(current->mm);
- 		return -ENOMEM;
-+	}
- 
- 	return 0;
- }
-diff --git a/mm/vma.c b/mm/vma.c
-index fbb8d1a0449d..2c35c3d008bc 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -594,8 +594,10 @@ __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- static int split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 		     unsigned long addr, int new_below)
- {
--	if (max_vma_count() - vma->vm_mm->vma_count < 1)
-+	if (max_vma_count() - vma->vm_mm->vma_count < 1) {
-+		trace_mm_insufficient_vma_slots(vma->vm_mm);
- 		return -ENOMEM;
-+	}
- 
- 	return __split_vma(vmi, vma, addr, new_below);
- }
-diff --git a/mm/vma_internal.h b/mm/vma_internal.h
-index 2f05735ff190..86823ca6857b 100644
---- a/mm/vma_internal.h
-+++ b/mm/vma_internal.h
-@@ -52,4 +52,6 @@
- 
- #include "internal.h"
- 
-+#include <trace/events/vma.h>
-+
- #endif	/* __MM_VMA_INTERNAL_H */
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index d89b26e81679..0fdde2eb5a57 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -1497,4 +1497,9 @@ static int max_vma_count(void)
- 	return sysctl_max_map_count;
- }
- 
-+/* Stub for trace_mm_insufficient_vma_slots */
-+static inline void trace_mm_insufficient_vma_slots(struct mm_struct *mm)
-+{
-+}
-+
- #endif	/* __MM_VMA_INTERNAL_H */
--- 
-2.51.1.851.g4ebd6896fd-goog
+> 
+>>>
+>>>> +
+>>>> +    return false;
+>>>>   }
+>>>>   EXPORT_SYMBOL(video_is_primary_device);
+>>>
+>>> In particular, I have hardware that has this exact configuration where
+>>> two GPUs are marked as primary and have a 'boot_display' attribute: the
+>>> first one through vga_default_device(), the second one through the new
+>>> detection method.
+>>>
+>>> Is this intended?
+>>>
+>>> Kind regards
+>>> Aaron
+>>>
+>>
+>> I wouldn't have expected a case like this and I think it means there 
+>> is a logic error.
+>>
+>> Can you please file a kernel bugzilla with details about your system 
+>> and CC me?
+>>
+>> dmesg and lspci -vvnn please
+>>
+>> Also; please clarify which GPU shows something when booting up.
+> 
+> Agreed.
+> 
+> Best regards
+> Thomas
+> 
+> 
 
 
