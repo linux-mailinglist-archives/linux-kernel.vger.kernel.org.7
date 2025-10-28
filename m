@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-874827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23646C172B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:18:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B2BC172BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718D11C2204E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71901C28124
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801B42D6E74;
-	Tue, 28 Oct 2025 22:18:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856ED2DFF04;
+	Tue, 28 Oct 2025 22:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="dpPJPkrN"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D06134F476
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796CE1B6CE9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761689886; cv=none; b=hf9koPbUWaEqf3g0eVM1s7tQ8hxe+J1MhxExjCY+EAaWb49tOESMtx9ie9L1LxW8Sa3uc8VTvnRRKxzhF5TlFFd1/UH6YRt098CdSDUchvkrXMRdOMjzpxyyXCY3497nxhDgZvaUahBzV/Ju6Ku5JYIgfFtOszhjMZCX2v280UE=
+	t=1761689956; cv=none; b=BKuxKGtFzrD7b6XCvbQXDYWchlP+6WOKIuJCb46BRcfdeS1NhkC+fq/wXzqgHE3pcQNfx3fTUZFyUMEXyo0UdeETbrhVKd8ssp9nOrUykYPTE/42QuNChwTYBcjhG4lydMEWfOaxpMi6blKCYHUYvMZB4imo3O+E1QCw+JE7ttA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761689886; c=relaxed/simple;
-	bh=5QqmVh6B/lxiHwgxtlHDgbI04/psocGPj8eHqNd2xzg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MeIcL5V1CAoQpWYg6K6+Ks/E2xT3AetXqTPreHUZF5LSZQfmY25OIqifZp9ZPmrixvbRYuiYAi8XQupNslbXcxZ2q2IWgsTOgjC/n48nmkdITy5iVV/uCWGvFOO433Tz0OAVOAG40YLqnigvQMBb4EUThigcjWbSsQa7x/ICbPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afceae09so75839945ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:18:05 -0700 (PDT)
+	s=arc-20240116; t=1761689956; c=relaxed/simple;
+	bh=mevXSP3pEnwviu7Dtj0yYMRGZGl7rzL2dcYI/FArHso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n5xINcRASzn3gBKerYCHjcI5ebEGxf4s+oqt19ey5RQLqRePMrgtTKUrVJWeqzQy1XrWqHNLtd1IRnZM0/DrDce+/7INNSvE0fJlkWq17CbbGQoLDTymj4Q54x+iK8CMDusns/hj6cg5w2EoygixsX3LRbpJc73/m1OKCX+qa7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=dpPJPkrN; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sladewatkins.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-88f2b29b651so662556085a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sladewatkins.com; s=google; t=1761689954; x=1762294754; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=56ATqaJhxY4mgO71KSReEDqtQk4ZYFmHYwLd5aGRlu0=;
+        b=dpPJPkrN+UfeeVZ09Dp7awi3OINHjrL/Vwt8g+FGDqPGDXJJdn4WOJsImyIYhXm1KA
+         ENt25tGaW6ecrnIz7JkYKPErRo6yGtGIRvh1C21vI59Hjvft3fonFGulvDNZNRqU3s90
+         j+N+Ayw2MnHDmUZCL+hztl1milsyDzCUGTOKp+38pKkU5J9LryQHd2qxhIcXClegt2w8
+         QMylaZKe+1emIncnacjCnpVEfEXKH8I3boyut1RWVlLktzqII7pQeDRoaNLd1ql79g7S
+         5eosyKrmuIC5vnQVsGLlI6ZnEyiPnkdQWNbGMSYJnnzSk9sy0DAK+MvtlEMs5SokrzZ3
+         6ERg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761689884; x=1762294684;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1761689954; x=1762294754;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qj6H6kMVL4WChUArWsziVzi2GVqgIPgNeekVhQMzx5M=;
-        b=O0lzTduEaPZrmzAPly7N97aoZTRc5ySXqRG+65e75I8ok/IxJiLs95CpeLszeA8zaM
-         jegD45bjs009yqhwMlPF9nmNT9HAnM3x+kpdQC5CaqUscx7dedAbORX7v8Es8MpnT708
-         Wu73I++zHBkyp7PbQl0D2AJmqXtYwEG9jjU3NqIRBsw4czxYHQZ6cNJFadtuVsg7rPmy
-         16+wPXCM3W+2GewyFzlaRXS4nqOmbmN6KJ4r8l+OzaCDMyUuH6xqdf79kqVF+zJBDuua
-         LktN/drkb+gu6s61flETUiGkgQhBhelY9GWQWoiHPtjfUvsdkfCfG3xgvLI8f75edfkZ
-         l3Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcgBlQIu4yUITZSffUhP5Zc4tRSHF/brKiVnnHkY3yIV32mpwM8JiPCmV9yt3bT5+Ng7INGvn1353M4iQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS0o1haKD3niRW3idxSyoU+4+xXZsMjDix7+ufE2xmaE3RVhSC
-	LxLktFFEajYTToX78g/t4orkhLkgYLakyVwwIwRauQK1VcR33DDtIPuOe3HPJcMrlyVZr+yyPWt
-	xQoaazFwm55Mq4uxG5WfwQVaWMZO59h868uVx8/Ku2/zBlrFcA1DnuM7rCSs=
-X-Google-Smtp-Source: AGHT+IECb9yClNausSKpf5YGhGEphpfa0DaL30psow3IushOaa5ZCPJIR1NxOt8+WH27ajqfVhAthiCN9NnIyQA+eINW7LJlNjVj
+        bh=56ATqaJhxY4mgO71KSReEDqtQk4ZYFmHYwLd5aGRlu0=;
+        b=PrvFcSNC2IjenNkkOkYaeN55To+2k6weAOCA15SwgroEVfAbJGoyHMga9EMYn9E0BL
+         OvNDPYV4O8zHZsPLOBMi1ZihjHGEJ8uq01pjAwggkRg4v4sDYqFpDZHoCbqHeYaZa25J
+         s5Ili6rSGoEi162elG4lAaijTg8bWSR9gLwxRWYLt1vaBsniEWqQTsDgzLkvi+nEAQdi
+         TjHhmJaov+SyMrSL8LRCLqgf4YnVXiFb1uqGGZ/iODlwuxZtRT35+r6c/xXRxCSr49Do
+         fuL9ILG03tzTJXP23KcB9iNAto6zdQayCOU8CDB0JcQw+jDUDvb2R7AnlQxxiZz56Wnm
+         GXoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUC7pkObxR9vppHsPoW9AwE12yj6lDYUcMROsNK4b6gtMVhA6s34w1gcUfkD3iDA1rd/z8FZwFy2fxnAQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXvXxHoyRVQhsCl2IFd+frJupB1WCMPHIQM9UTAUBR6T9qxulj
+	DTnCEbEyOCCGnHeyNASjRYz+1naqA03PYavTSnHOSmuhbWSngatrWx1CWyGajnD3YJI=
+X-Gm-Gg: ASbGncssbguPTrb1/zLMPYWrgnrQlLUjnoGTWcjPisQ+vBaTUQVQ3TmUa7EaX38bi71
+	/ccMWM3dKVHxD8U+S+LzHShtcQzhZPTbFSS+BFJSs/73HVsLUerZQNWbwEnGd4GCIoKndmxyaAV
+	JlBMPJSOLcFlWUGqjuRjXusW/5dDRuSn9JrQJjQRNHb7oDC5aORkMi/gXD3kEF3e2m6XUxeBLtg
+	y12fgOgqx9p0SS/uJBDby9sh49FIrxX7KdkhM41tj6ClAIvgvecKJ+tadff46cmzab3jyRaJew2
+	XRxwcv/ZVjmeMGMeJ6IhJ6QdpSSv/iYD21SOzwn3aXiVT+C65MEr/dPAwWQjmf1/K6UrbZ/nOzl
+	dELb9qGZEh7tKj9orECpYkeaL5qZ/6auVwFqWYk1Pzt7ZRxHmKmvWP28LwF49h0WxwkO/OcljOc
+	9uHsi+PM9VN4NCAA==
+X-Google-Smtp-Source: AGHT+IF8GRGi5y+TVmHqaFaB9DksAsq59HHx98BAT9jVFEgFA7NH9GIYqf3/VizIifdNtLOSDGMHdA==
+X-Received: by 2002:a05:620a:1a18:b0:8a5:331:b22c with SMTP id af79cd13be357-8a8e53d8000mr152397385a.43.1761689954189;
+        Tue, 28 Oct 2025 15:19:14 -0700 (PDT)
+Received: from [10.10.13.73] ([76.76.25.10])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3830f16sm80099491cf.22.2025.10.28.15.19.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 15:19:13 -0700 (PDT)
+Message-ID: <b6e926dd-810c-4123-bda4-5ccded5f8b6b@sladewatkins.com>
+Date: Tue, 28 Oct 2025 18:19:11 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa1:b0:42f:91aa:510b with SMTP id
- e9e14a558f8ab-432f8f9361bmr11469465ab.4.1761689884443; Tue, 28 Oct 2025
- 15:18:04 -0700 (PDT)
-Date: Tue, 28 Oct 2025 15:18:04 -0700
-In-Reply-To: <20251028182302.s5LSI%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901411c.050a0220.3344a1.03f4.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
-From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5.15 000/117] 5.15.196-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org
+References: <20251028092823.507383588@linuxfoundation.org>
+Content-Language: en-US
+From: Slade Watkins <sr@sladewatkins.com>
+In-Reply-To: <20251028092823.507383588@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/28/25 5:29 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.15.196 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
+> Anything received after that time might be too late.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Built the new rc today and have nothing new to report. Stable on -rc2 
+and my x86_64 (AMD) test system with no errors or regressions:
 
-Reported-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
-Tested-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
+Tested-by: Slade Watkins <sr@sladewatkins.com>
 
-Tested on:
-
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=10bf1932580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8c2405120cc7eb82
-dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10d84704580000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks,
+Slade
 
