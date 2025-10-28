@@ -1,193 +1,139 @@
-Return-Path: <linux-kernel+bounces-873108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B78C131F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:24:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A465C1320B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5F41A631B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:24:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E56B189E8BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB362BDC05;
-	Tue, 28 Oct 2025 06:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C20286D73;
+	Tue, 28 Oct 2025 06:24:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="Z0g6+QaN"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1n6JZwd"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7359286430;
-	Tue, 28 Oct 2025 06:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A050A28751F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761632652; cv=none; b=bf1FQUZBH8mGW4vsuux1eYBBQNvdc8A/VktRgW/g4Rd8xl4aQ7xSfCloxGJrAJo3KlPBGwzhQNLarEHQf9rNlS0d1DOEZMq1o3923mWZq4Hlvkd7dzwrNydFD+dpFVUbIKihVry4dCjNb373cbVawf6qThduIZQDRT27z5rptFM=
+	t=1761632671; cv=none; b=VcJf8aHOoiHh3lVIv4kq7wo2bUmg0p5WGZ6T3www8ZTGxV6IO9JR4f0ioLiGBDa75ILCMETIldtovftz1ettQRYG+0nK/YjzbceymHuAHz0bc0R5ReSfGMNhsewMvnP2SVd5Z36rRDoZ40K5mBil8TjzzPw3tcFgcWbIYJEh1TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761632652; c=relaxed/simple;
-	bh=RB/62kND96OGn8w2NViVi5fzTBHYYbkWkfWMVBqOwC8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aPqN3L5qziJFVw8JByM7VT3GMdO1QYrmiUMNwiNHRgLjjSV+fFj31sxM8qKcxv8PAG9+CJPQRwmLmHZOzcWpsUewFRlXjd3sCBq7BJYJm3ZB3SuL7HX03+8bPOx+fGqKYxt0n+MeYrxaOp5FXp4YQ1GCijSzmWVmCriIP7K9HIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=Z0g6+QaN; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 59S6NuBhA1978419, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1761632636; bh=Po8oHuwmQJTLFa57Ll66nhGvC8Z3t2WGmjA9WLSfruA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
-	 Content-Transfer-Encoding:Content-Type;
-	b=Z0g6+QaNu7dNjaAOpgfwB59+DGUY1zycxKjxtQmY7xFAO5JfJIMxTpHl6RodXgAS3
-	 XCegJXcuBfQTzanGI2Kq+iq2QmdA9Y9qOXWTX5Up34Iw/HUV+CRRYvOSxpGOzzm4z7
-	 UlgLBUfCYt7hfVdmvdaIS9oprrk5ufDhnmfhvLo8RaYs0NOfqCM5SMUonKuiGl2lIh
-	 C+ubTLac4d2ZRbCDlFd0fGxPpeb2aRiesiYj166Q1KmNkGgavT0vvg/zQdt31/P5zz
-	 +ttDNfxjhUoEDyon3+J9iE+xQ76dAqes4ONlNXtj2Fm9iFWLBv9S415cTs9UteHGLn
-	 oEmA9an233gYA==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 59S6NuBhA1978419
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 14:23:56 +0800
-Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 28 Oct 2025 14:23:56 +0800
-Received: from RTKEXHMBS03.realtek.com.tw (10.21.1.53) by
- RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Tue, 28 Oct 2025 14:23:55 +0800
-Received: from localhost.localhost (172.24.54.48) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server id
- 15.2.1544.27 via Frontend Transport; Tue, 28 Oct 2025 14:23:55 +0800
-From: Max Chou <max.chou@realtek.com>
-To: Marcel Holtmann <marcel@holtmann.org>,
-        Luiz Augusto von Dentz
-	<luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Hilda Wu <hildawu@realtek.com>, alex_lu <alex_lu@realsil.com.cn>,
-        <niall_ni@realsil.com.cn>, <zhu_qing@realsil.com.cn>,
-        Chih-Hsiang Wang
-	<wangchihhs@realtek.com>, <brenda.li@ublnx.com>,
-        Max Chou
-	<max.chou@realtek.com>
-Subject: [PATCH v2] Bluetooth: btrtl: Add the support for RTL8761CUV
-Date: Tue, 28 Oct 2025 14:24:13 +0800
-Message-ID: <20251028062413.252504-1-max.chou@realtek.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761632671; c=relaxed/simple;
+	bh=0uYy3VEBlwctl3AQekMYkBOmduDP+jjiBD7nvoV/WB8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S3mnko+JWKOaUD43sjLZnSKGNwBTsvgCwseG8JR3z+wsofgbsuHvd+k5IFb3+JlQkYZf3k1ZLWmb/qi+jzBsIDxMNB882drP45jMlL8bpHiiSucr2q8qD8+20pGx+WN36Mt5qgktPXPRgkjZqYBja4JQQH37HRQyqj8awayIuYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1n6JZwd; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781010ff051so3713241b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:24:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761632669; x=1762237469; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xdmp4Me7wQgWGSINcaaO6DB12X776uykd1AanqKsIrg=;
+        b=F1n6JZwd1+cViSIl79XOCKqLOcd8rGP5zauQ4l85cfRHEcFDVgxVKqA9ohaJ+K9gbJ
+         o9xgS3pJAltgd16KMYRFR+++9x/mEqcBSw7CeUA/LCN2JEh6tKRJjh+FxGnP6TY32stU
+         5c0zlftP87JKM/JWJtfXvu3StXBCxXbGxPw9jhUFPoNgKbjItp+Uh050hMecdjxrTqWm
+         d6m3oU40je3x5FBIEhsTucF76x3zeiJC6GUr/6WjSzydUx5yxx2n2RUhn7zo6YWqbmT0
+         g1BX5fByYgBZuVJQVDEUt96eMhSjxVCG75SRQYpAqGbyJgmDYpcKYNB15ly8/ne1JZDa
+         2E7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761632669; x=1762237469;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xdmp4Me7wQgWGSINcaaO6DB12X776uykd1AanqKsIrg=;
+        b=kuWDdofnpnGoEWL8wY7DF0JyTs+/sB8LBZ4aSvjP8TPmWkJM+PrcCHwEzBlKluRzsI
+         9C7N2J7yZjnWbRN3eyamqhy7a1QGLliapJ8uk4yxbJauU9XF0sx79Gal4CJkTyYXu+3e
+         Bv/gjpwYp6BNAj4sSBCC73N3qANsho+ZF4j4NipBSVoDlE2yc3XpGk6yn8UvQ1cvsN0N
+         +hY1AGHrDjAjoCvusrL8RVOqTjHMTFsL6wldLFTR62KPudS+UCsBNTqSgL/80wMHPkmd
+         4PtdD73BdOEviDCVQDi+Ai+UyJxRTs0UM9HowykPs4/8+0aZw+1ojxBdqm2+Pfq4TY6i
+         4pZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXoai51gTkdJzrxIZyzVJPNy6Giq8WGOjf5kw0Avbe7x/wCLCeb9T/e21BVGOcXg72+3kTP4J81GmlhO7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/posTqFgJWNEn1f9q7vglSsIvre33I2rR+uAnu7WSpUE5QxWT
+	v2BC4N9jafQbOZ4Mr5iP0jZ7TPHsdQCpEPdIdP7lNjEmuAisXJYPJ4GB
+X-Gm-Gg: ASbGnctwHv23l1vMU42d7XJVW9lK2Ka0y0SHQD7uMMVpFYE8DxH3g/5s42wPdbaUFhS
+	fFBKG6mUKSOaGtto2YUrnzjHe0CO6RItiCxXXJXeCmqVR+TqDHf30UE+CxdUKkUGvHvvaaNZDho
+	nO8LnPLKyK70rMkbt31M0aVUBJQZkdEoyq/Q9wxKfnh2yEq79oEzdMUY8c2FeSD/g8LzaGYxWo3
+	Ol0hcKImSS4wzaUb5zghpfLtrVm8xKHKfWZSHclM7tlAsZ1Sz92MngvLeVBTz9h3bPGh0zHcJHc
+	blxuvqUlNpsZcXyp4OCBK1B/lqTOiTJtgDDcY3vQqRS6Rp3JbfZSZj8l7XmWcQ+U+clTlrih47v
+	VGi0ZHQtfmwxx7Psgw0BlVyxDSrROYjqfKEG94iYE1EfYdV6dWQ0vsTikq75FJwKgZo0RBPGSye
+	8FQbETEEQaRGAZIYM2QejX8/eACbMvVdblrTOdTQ1nI10klku8Lkdm9Q==
+X-Google-Smtp-Source: AGHT+IGv+D4wp24FT68CnJLR5oLyMpLV/E78aYjMLl1V6sgXD7UwHIdmxv8JaQ7oQ0PzT0e74dyMKQ==
+X-Received: by 2002:a05:6a21:9989:b0:334:8239:56c9 with SMTP id adf61e73a8af0-344d3e45ee7mr3169929637.49.1761632668919;
+        Mon, 27 Oct 2025 23:24:28 -0700 (PDT)
+Received: from ?IPV6:2600:8802:702:7400:1c69:7897:d90:375b? ([2600:8802:702:7400:1c69:7897:d90:375b])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b7128e41a2esm9174084a12.22.2025.10.27.23.24.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 23:24:28 -0700 (PDT)
+Message-ID: <49308ca0-ebd1-4915-9ef4-0a5e31793da4@gmail.com>
+Date: Mon, 27 Oct 2025 23:24:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/dpu: drop dpu_hw_dsc_destroy() prototype
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251027-dpu-drop-dsc-destroy-v1-1-968128de4bf6@oss.qualcomm.com>
+Content-Language: en-US
+From: Jessica Zhang <jesszhan0024@gmail.com>
+In-Reply-To: <20251027-dpu-drop-dsc-destroy-v1-1-968128de4bf6@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add support for RTL8761CUV BT controller on the USB interface.
-Do not apply IC_MATCH_FL_HCIVER when hci_ver is 0 in the ic_id_table.
+On 10/27/2025 6:35 AM, Dmitry Baryshkov wrote:
+> The commit a106ed98af68 ("drm/msm/dpu: use devres-managed allocation for
+> HW blocks") dropped all dpu_hw_foo_destroy() functions, but the
+> prototype for dpu_hw_dsc_destroy() was omitted. Drop it now to clean up
+> the header.
+> 
+> Fixes: a106ed98af68 ("drm/msm/dpu: use devres-managed allocation for HW blocks")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-The device info from /sys/kernel/debug/usb/devices as below.
+Reviewed-by: Jessica Zhang <jesszhan0024@gmail.com>
 
-T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 13 Spd=12   MxCh= 0
-D:  Ver= 1.10 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=0bda ProdID=c761 Rev= 2.00
-S:  Manufacturer=Realtek
-S:  Product=Bluetooth Controller
-S:  SerialNumber=10000
-C:* #Ifs= 2 Cfg#= 1 Atr=a0 MxPwr=100mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-
-Signed-off-by: Max Chou <max.chou@realtek.com>
----
-Changes in V2:
-- Do not apply IC_MATCH_FL_HCIVER when hci_ver is 0 in the ic_id_table.
----
- drivers/bluetooth/btrtl.c | 16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 6abd962502e3..29bd3cd28e39 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -72,6 +72,7 @@ enum btrtl_chip_id {
- 	CHIP_ID_8851B = 36,
- 	CHIP_ID_8922A = 44,
- 	CHIP_ID_8852BT = 47,
-+	CHIP_ID_8761C = 51,
- };
- 
- struct id_table {
-@@ -230,6 +231,14 @@ static const struct id_table ic_id_table[] = {
- 	  .cfg_name = "rtl_bt/rtl8761bu_config",
- 	  .hw_info  = "rtl8761bu" },
- 
-+	/* 8761CU */
-+	{ IC_INFO(RTL_ROM_LMP_8761A, 0x0e, 0, HCI_USB),
-+	  .config_needed = false,
-+	  .has_rom_version = true,
-+	  .fw_name  = "rtl_bt/rtl8761cu_fw",
-+	  .cfg_name = "rtl_bt/rtl8761cu_config",
-+	  .hw_info  = "rtl8761cu" },
-+
- 	/* 8822C with UART interface */
- 	{ IC_INFO(RTL_ROM_LMP_8822B, 0xc, 0x8, HCI_UART),
- 	  .config_needed = true,
-@@ -344,7 +353,8 @@ static const struct id_table *btrtl_match_ic(u16 lmp_subver, u16 hci_rev,
- 		    (ic_id_table[i].hci_rev != hci_rev))
- 			continue;
- 		if ((ic_id_table[i].match_flags & IC_MATCH_FL_HCIVER) &&
--		    (ic_id_table[i].hci_ver != hci_ver))
-+		    (ic_id_table[i].hci_ver != hci_ver) &&
-+		    (ic_id_table[i].hci_ver != 0))
- 			continue;
- 		if ((ic_id_table[i].match_flags & IC_MATCH_FL_HCIBUS) &&
- 		    (ic_id_table[i].hci_bus != hci_bus))
-@@ -668,6 +678,7 @@ static int rtlbt_parse_firmware(struct hci_dev *hdev,
- 		{ RTL_ROM_LMP_8851B, 36 },	/* 8851B */
- 		{ RTL_ROM_LMP_8922A, 44 },	/* 8922A */
- 		{ RTL_ROM_LMP_8852A, 47 },	/* 8852BT */
-+		{ RTL_ROM_LMP_8761A, 51 },	/* 8761C */
- 	};
- 
- 	if (btrtl_dev->fw_len <= 8)
-@@ -1301,6 +1312,7 @@ void btrtl_set_quirks(struct hci_dev *hdev, struct btrtl_device_info *btrtl_dev)
- 	case CHIP_ID_8851B:
- 	case CHIP_ID_8922A:
- 	case CHIP_ID_8852BT:
-+	case CHIP_ID_8761C:
- 		hci_set_quirk(hdev, HCI_QUIRK_WIDEBAND_SPEECH_SUPPORTED);
- 
- 		/* RTL8852C needs to transmit mSBC data continuously without
-@@ -1520,6 +1532,8 @@ MODULE_FIRMWARE("rtl_bt/rtl8761b_fw.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8761b_config.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8761bu_fw.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8761bu_config.bin");
-+MODULE_FIRMWARE("rtl_bt/rtl8761cu_fw.bin");
-+MODULE_FIRMWARE("rtl_bt/rtl8761cu_config.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8821a_fw.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8821a_config.bin");
- MODULE_FIRMWARE("rtl_bt/rtl8821c_fw.bin");
--- 
-2.43.0
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h | 6 ------
+>   1 file changed, 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h
+> index b7013c9822d23238eb5411a5e284bb072ecc3395..cc7cc6f6f7cda639b30bad7632c6e73aacedfcb8 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_dsc.h
+> @@ -71,12 +71,6 @@ struct dpu_hw_dsc *dpu_hw_dsc_init_1_2(struct drm_device *dev,
+>   				       const struct dpu_dsc_cfg *cfg,
+>   				       void __iomem *addr);
+>   
+> -/**
+> - * dpu_hw_dsc_destroy - destroys dsc driver context
+> - * @dsc:   Pointer to dsc driver context returned by dpu_hw_dsc_init
+> - */
+> -void dpu_hw_dsc_destroy(struct dpu_hw_dsc *dsc);
+> -
+>   static inline struct dpu_hw_dsc *to_dpu_hw_dsc(struct dpu_hw_blk *hw)
+>   {
+>   	return container_of(hw, struct dpu_hw_dsc, base);
+> 
+> ---
+> base-commit: fe45352cd106ae41b5ad3f0066c2e54dbb2dfd70
+> change-id: 20251027-dpu-drop-dsc-destroy-a1265a9b8d99
+> 
+> Best regards,
 
 
