@@ -1,175 +1,106 @@
-Return-Path: <linux-kernel+bounces-873791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E014FC14BA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:58:10 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02563C14BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C1B50349291
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:58:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CBDD03487A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AEF63314C3;
-	Tue, 28 Oct 2025 12:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C063332863F;
+	Tue, 28 Oct 2025 13:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n3UVXJto"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="v1RUAwQj"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F0D330B3B;
-	Tue, 28 Oct 2025 12:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74463314AB;
+	Tue, 28 Oct 2025 13:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761656270; cv=none; b=LC3pW1/26pgdx9Dv+3rucFfJKfrN+cl4kTlVPIzpA/2d1e0eySSzR3cTFWrdMnLHS9SXp5FOv8SA1sYoVY8/gV+2duqJbbJYvWc1NkFSqcz11jOtxVumoYcoof97CDzV/m5kiCUpvyCjlRt9f5JBxW/pGCK7xSwhZyA6KXoAwx8=
+	t=1761656479; cv=none; b=OtGEfvefoaOfZTgPDF+uqEWMshrAB+WLgcBEiiQdfcyFHgihde3qO5Um0+qayoJGRJ96geSnRERqGYmea6m2nxeyNW4JvPu+4H6Rv8qQBjdyvBxUZeyFUIBagiGun7aT+7gEKWTrp3RsqoIKwiR1j1fiQT3wpDQPZjFuEM9LAck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761656270; c=relaxed/simple;
-	bh=c0lVYLey1J54j8+LzkyiF7aV7X/OiaCcAORzUDvclqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OC1IthX56FW2XKawmshsblc9oXpoyWNbvQagOIp31CqPHDuCWRYChXUQOga93cPD3asBuky92qJ0/l4bLF3fCsXDNeZDbhjbN3ST37tfN1RMZGTZBLS7moMpXGDMMXUoWBkjQeCiYoXl7y81Ior1fct3wLCB8HL5WOdsacHREvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=n3UVXJto; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SBDY6g015469;
-	Tue, 28 Oct 2025 12:57:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=corp-2025-04-25; bh=warw8
-	LcEpdVD1yZ6NqTjeOLsG3Gxja9LpBG0FJuLtoo=; b=n3UVXJtoKRP1tgQaroxsp
-	ZijJICAMc+P7SwJrE/bU8PTrqitCz2BWkGQS1ajOESlsN/1Bp75CDl4vva265YDm
-	qmkKfEsJht0txhlacPcnheOfrSr0nhMv+dfT3ZQYmo8gRTEuYaYRh8AcXi/JsVt+
-	JKfE9Kxn1Sx6Kf50NvDYlOfMdklRTLdmyYQ7zz2eG7tqigJhqXm3zuvCqTlDHxwi
-	z+Rjn0uZQaY5fZ8k0LZmS+O0MWzA9qPH3xxEk8xfWYavq0OGiYxISIpfjVrAJ6Eh
-	20hKPnTVyXXuZ66ekmn7udZdfClBbCqbudRKUIquQoSVu6mw7iKEbCeSK4+kBpLK
-	A==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a0n4yp5pm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 12:57:21 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SBslZc009120;
-	Tue, 28 Oct 2025 12:57:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n0fcxcu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 12:57:20 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59SCvCUw017359;
-	Tue, 28 Oct 2025 12:57:19 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 4a0n0fcx93-3;
-	Tue, 28 Oct 2025 12:57:19 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: bpf@vger.kernel.org
-Cc: alan.maguire@oracle.com,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        Quentin Monnet <qmo@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [RFC bpf-next 2/2] selftests/bpf: Add test for bpftool map ID printing
-Date: Tue, 28 Oct 2025 05:57:03 -0700
-Message-ID: <20251028125705.3586552-3-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251028125705.3586552-1-harshit.m.mogalapalli@oracle.com>
-References: <20251028125705.3586552-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1761656479; c=relaxed/simple;
+	bh=Ip0/Cn7Eq8CRmBNQPrUXFmsK1Z7fBv8Q9ArF72Fhztw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XlvqtiBuj5O3tz6GOL/YGC2GiTve6iBhfJCzeefwGoqYI7wvmQ4LqDriC2mPUS703V32wt0qIzz8/Osb3J7Z+/K4bRJSVSNJdnTPcNXZQRKMmCNWAfA6BHUIf5waRRnbi7X0028dupVDRB6MWGumH2/wiHaTo59eMW5bsyUSKTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=v1RUAwQj; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1761656477; x=1793192477;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ip0/Cn7Eq8CRmBNQPrUXFmsK1Z7fBv8Q9ArF72Fhztw=;
+  b=v1RUAwQjzS3HMSe4k2ir4jPY/RJhp7FMWsYjkOacyreF2Ln2FUd++lD3
+   HiNUdTS8AerG6GKL8R3ReV6MUCfxFYz5kGvdzp/PXwHHzFgcLRokUJThU
+   /VN5Jl/N4X5AZbrE6M9M2lQdfBQqm0qggKwtEJFpU9m6yToep6F4WjqiH
+   /cQ1vYVsvgPdFcPnxDMKf0KYkgSIrckTTZyG+QUHRqwKh3JFgTKQOWqqI
+   MFyBIQE5QFzWAvxhFpfyxIJrwyVPmJH3uAHe9/cWoPXAYvIx15+mv2dYb
+   wq8hD0lkUz42qoUSgqb3ekj7yFQSNarNxC0eRiDc14IcrwpYsdsoAoKs8
+   Q==;
+X-CSE-ConnectionGUID: Gg7jUh6qR9u+EJ1jhFrNyQ==
+X-CSE-MsgGUID: pDMRFxr/QW+1zSyrHNClDg==
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="48858559"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 06:01:13 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.87.152) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Tue, 28 Oct 2025 06:00:02 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Tue, 28 Oct 2025 06:00:01 -0700
+Date: Tue, 28 Oct 2025 13:58:47 +0100
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: <hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] net: phy:  micrel: lan8842 erratas
+Message-ID: <20251028125847.y2uracj2csvqhxy6@DEN-DL-M31836.microchip.com>
+References: <20251027124026.64232-1-horatiu.vultur@microchip.com>
+ <4eefecbe-fa8f-41de-aeae-4d261cce5c1f@lunn.ch>
+ <20251028073354.7r5pgrbrcqtqxcjt@DEN-DL-M31836.microchip.com>
+ <8b14b2b8-709e-4c83-8028-19ab2df1bac2@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510280108
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxMyBTYWx0ZWRfXx5KHZTgsI3sh
- Ysi24Y1RM6CA/KQ4aNIxmfZB5h99QvcO4kol0Owj8okFK1bWeqz1gWFc7M0CfsklqhzHRpmKtrp
- vxxJ7NEcwJCCAP3q94tPDNmcVD2CK2vEv2HD62Uunx/ASXxIB1WO7Pm6FJOgM3Ow0rwEOnv4cuW
- MSRYgt4Y+BFri5n460HxEK8sFT8jo+rZCWYdNv/GbnvhGIXCvSCUziM0UbSPzGSButvT85jZgPM
- +bM9Vkfcw3O64h01DAcU4mzTJwI+mKaA79pJ0FASWSSKuLcJKzbavIXiyUeYgkg4p+mPgcOIHFJ
- MpXZWvO30wV3Dwj488thFKewNMjoisos3rQi7chObqjOWf0Wh5tQzjvx3esPk3uogArC3vogikN
- S3kb4lqAN60rIbtvogXrx/mq8ey/dOMkF31dGOhOPblYlVhKDkQ=
-X-Authority-Analysis: v=2.4 cv=Z9vh3XRA c=1 sm=1 tr=0 ts=6900bdb1 b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=yPCof4ZbAAAA:8
- a=zZ8rhmji2bsAaRzR-ewA:9 cc=ntf awl=host:12123
-X-Proofpoint-ORIG-GUID: xCGF6xnaL5i6aiMdNhkkeDs-L6C7a6YQ
-X-Proofpoint-GUID: xCGF6xnaL5i6aiMdNhkkeDs-L6C7a6YQ
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <8b14b2b8-709e-4c83-8028-19ab2df1bac2@lunn.ch>
 
-Add selftest to check if Map ID is printed on successful creation in
-both plain text and json formats.
+The 10/28/2025 13:04, Andrew Lunn wrote:
+> 
+> > > I notice there is no Fixes: tag. So you don't think these are worth
+> > > back porting?
+> >
+> > Definetly I would like to be ported but the issue was there from
+> > beginning when the lan8842 was added, so I was not sure if it is OK to
+> > send it to net.
+> 
+> https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> 
+> says:
+> 
+> It must either fix a real bug that bothers people or just add a device ID.
+> 
+> Does this bother people?
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- .../testing/selftests/bpf/test_bpftool_map.sh | 36 +++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Yes, I would say so.
 
-diff --git a/tools/testing/selftests/bpf/test_bpftool_map.sh b/tools/testing/selftests/bpf/test_bpftool_map.sh
-index 515b1df0501e..013a64e96cbf 100755
---- a/tools/testing/selftests/bpf/test_bpftool_map.sh
-+++ b/tools/testing/selftests/bpf/test_bpftool_map.sh
-@@ -361,6 +361,40 @@ test_map_access_with_btf_list() {
- 	fi
- }
- 
-+# Function to test map ID printing
-+# Parameters:
-+#   $1: bpftool path
-+#   $2: BPF_DIR
-+test_map_id_printing() {
-+	local bpftool_path="$1"
-+	local bpf_dir="$2"
-+	local test_map_name="test_map_id"
-+	local test_map_path="$bpf_dir/$test_map_name"
-+
-+	local output
-+	output=$("$bpftool_path" map create "$test_map_path" type hash key 4 \
-+		value 8 entries 128 name "$test_map_name")
-+	if echo "$output" | grep -q "Map successfully created with ID:"; then
-+		echo "PASS: Map ID printed in plain text output."
-+	else
-+		echo "FAIL: Map ID not printed in plain text output."
-+		exit 1
-+	fi
-+
-+	rm -f "$test_map_path"
-+
-+	output=$("$bpftool_path" map create "$test_map_path" type hash key 4 \
-+		value 8 entries 128 name "$test_map_name" --json)
-+	if echo "$output" | jq -e 'has("id")' >/dev/null 2>&1; then
-+		echo "PASS: Map ID printed in JSON output."
-+	else
-+		echo "FAIL: Map ID not printed in JSON output."
-+		exit 1
-+	fi
-+
-+	rm -f "$test_map_path"
-+}
-+
- set -eu
- 
- trap cleanup_skip EXIT
-@@ -395,4 +429,6 @@ test_map_creation_and_map_of_maps "$BPFTOOL_PATH" "$BPF_DIR"
- 
- test_map_access_with_btf_list "$BPFTOOL_PATH"
- 
-+test_map_id_printing "$BPFTOOL_PATH" "$BPF_DIR"
-+
- exit 0
+> 
+>         Andrew
+
 -- 
-2.50.1
-
+/Horatiu
 
