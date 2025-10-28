@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-874187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38F9C15B71
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:15:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8E90C15B7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:15:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F40C3A5C31
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:10:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0E054008BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85D4344041;
-	Tue, 28 Oct 2025 16:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAA4345745;
+	Tue, 28 Oct 2025 16:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jbGSqMDl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tqg9kxBv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2639E342173;
-	Tue, 28 Oct 2025 16:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17823451D1;
+	Tue, 28 Oct 2025 16:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667792; cv=none; b=pZBt6JeuvMdC4h0nH88CJAqE3tl5NybPPq8r9V8s0dYRELoCJVKikb8uwLdX2Nt3vULFnhiLCL3w6NEN+CRJDDAgiek8+2NLIo+g2C2eyfIxQagDIA0ov0EVYkHL2Ed/5l9L/rjXFkiSeMDk/xA3giM3jiGE33L8ykeBARNB0mY=
+	t=1761667794; cv=none; b=ldJtfhpypuMeEcRQr8z+nlwKQSYtsMpnfQ3nzkTvEVdmY8xONWg7V/blPibY0TxyIuxB0YRPXPqp/Qx1gyB8NRkV9QloZfJ+mrS5YjiSBdtSszvygsMr5V/n4R9U+hSbGYaFeO28+Gzy6k7+4wAaqd1u28VxSb2sEBWdo3FtR3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667792; c=relaxed/simple;
-	bh=Ae8P5LuWUoMUbKBLMiZfN6RbP+pxgug2Q49TavZJAnc=;
+	s=arc-20240116; t=1761667794; c=relaxed/simple;
+	bh=NBCh9XbPVaZkWy/2QcQDmc6lAF4u8bfwRyApCiGC49A=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hYHkp37oGBdZX65wS/I1XuhVuQYxkuO1vocuo7hduVc5r9taQQhzTCpzqJA/KCy8HK/QDeYKKRIVXQT+uqPESwHrWiZVwo9Tae3HboeuwinhcKk01Mj01cOxigrjkWFjLdWe9K0Nd6CswAZ7a26JFIGR6Cn+PLkKG2EtNAm/OVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jbGSqMDl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0AA5C4CEE7;
-	Tue, 28 Oct 2025 16:09:48 +0000 (UTC)
+	 MIME-Version:Content-Type; b=cjabLecEibSmO53Ym9q3fmt/AQE33e5LuAyeSpCXCQZeHfLstN6G9sqmhQxzla3N7ynB7yjOjWKtoWa7q1UCdPHomNUtqQfCZ/WS8ubs9K7r9PPoqp2jYB5ddST075eqBrtarSkOaN2QKI7nmSTCxpcgzpeN/2uGWiLrIb6c+hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tqg9kxBv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21BA5C4CEFD;
+	Tue, 28 Oct 2025 16:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761667791;
-	bh=Ae8P5LuWUoMUbKBLMiZfN6RbP+pxgug2Q49TavZJAnc=;
+	s=k20201202; t=1761667794;
+	bh=NBCh9XbPVaZkWy/2QcQDmc6lAF4u8bfwRyApCiGC49A=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=jbGSqMDlHfKPAkVC8Ay7Vbav08zYNs8U48L4fPVJfkt6WYEbpliLUqwHtg+dwl8ky
-	 ODP5P1i6A1Dp4xRP7owrJtoMJjHs5mbo4KWbMKo4uDFg9PpQjgXPImSzVdFHUZutUu
-	 CC04BoOSW4St7+O7eujOJMIPtJzfZsrIa8pP6zLZ/UHuAoKGtcvak3PlTrKA7SlNTi
-	 TQAUqLBkbYe8wO5l9l38ASag0HAJTDStLNoF2D8aHx1FuK2c9yBDMbYGE18oUP2PkD
-	 ywllDgLk4qgW7tBp9BwwP9wUEHHIyZnJbxcYD5jn9nQcctDhvOqF+5kuVfU/lF7B2q
-	 BjvO8f3H/ar1A==
+	b=Tqg9kxBvRCaGxfSH2hzcbcuK5i7h89Hr0zI9rfNjYicd6UwYE8db08iFFXGCNxH2J
+	 1L58tQCHLQKw0ren3Wwm4Mg58qySPUaxxN4yWPbDUrMsBFciNzKkwhgeKM3okcYnNz
+	 gcyNG9apoBRJOl/Bf3hAWHUot3r7lygWpGZkjYBMR9krmjuJOc+LYMud3MPAk5kUCa
+	 VM5rh0dqXGcJJflGl4U0phuXSAzjmqTwIFGaiZWXd9XVETgYrMQqUs9dSvPc+fHcM4
+	 NfkdoxX10IcEGdEchnEjYr2JIl85g6/KG0ZeuEh4V2Tp9z6cXt6sjpJXdRiPSE/nR0
+	 L3LSwYahVdpPQ==
 From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srini@kernel.org>, 
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Vitaly Rodionov <vitalyr@opensource.cirrus.com>
+Cc: Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>, 
+ David Rhodes <david.rhodes@cirrus.com>, 
+ Richard Fitzgerald <rf@opensource.cirrus.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexey Klimov <alexey.klimov@linaro.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
-In-Reply-To: <20251022-qrb2210-qcm2290-sndcard-v2-0-32e9e269a825@linaro.org>
-References: <20251022-qrb2210-qcm2290-sndcard-v2-0-32e9e269a825@linaro.org>
-Subject: Re: [PATCH v2 0/2] Sndcard compatible for qrb2210/qcm2290
-Message-Id: <176166778871.143847.17063915806888837575.b4-ty@kernel.org>
-Date: Tue, 28 Oct 2025 16:09:48 +0000
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, patches@opensource.cirrus.com, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20251023090327.58275-1-vitalyr@opensource.cirrus.com>
+References: <20251023090327.58275-1-vitalyr@opensource.cirrus.com>
+Subject: Re: [PATCH v6 00/12] Add support for Cirrus Logic CS530x DAC and
+ CODEC variants.
+Message-Id: <176166779189.143847.17303624768770218391.b4-ty@kernel.org>
+Date: Tue, 28 Oct 2025 16:09:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,15 +66,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Wed, 22 Oct 2025 04:58:48 +0100, Alexey Klimov wrote:
-> This is a small patch series that serves as a preparation for
-> adding HDMI audio playback support on QRB2210 RB1 board.
-> The patches here are for sound subsystem. The other series
-> will focus on qcom DT files.
+On Thu, 23 Oct 2025 10:03:08 +0100, Vitaly Rodionov wrote:
+> This patch series introduces DAC, CODEC, and SPI control bus support
+> for Cirrus Logic CS530x variants, along with general code cleanup
+> and resolution of checkpatch.pl warnings.
 > 
-> The original series where one of the patches here were taken from is
-> https://lore.kernel.org/linux-sound/20250302-rb1_hdmi_sound_first-v1-0-81a87ae1503c@linaro.org/
-> and sndcard compable patch was added as new one.
+> Changes since v1,v2,v3:
+> 
+> - Signed off all patches
+> - Splitted "tidy up" pach in 3 separate simple patches
+> - Fixed commit subject to much preferred subject prefix for binding patches.
+> - Moved dt-bindings related patch down the chain
+> - Added all relevant maintainers to CC list
 > 
 > [...]
 
@@ -84,10 +87,30 @@ Applied to
 
 Thanks!
 
-[1/2] ASoC: dt-bindings: qcom,sm8250: add QRB2210 soundcard
-      commit: ee4407e1288ab85be16bacc45195b8bb23d44760
-[2/2] ASoC: qcom: sm8250: add qrb2210-sndcard compatible string
-      commit: e973dfe9259095fb509ab12658c68d46f0e439d7
+[01/12] ASoC: cs530x: Update the copyright headers
+        commit: ca4d49f8a21c37be7e5aed80100ca6b13ac3cf9d
+[02/12] ASoC: cs530x: Sort #include directives and tydy up whitespaces
+        commit: 1e0722a77b4e263854a812c9c106ddef8fd56720
+[03/12] ASoC: cs530x: Remove unused struct members and constants
+        commit: f97ebfda8da28a77a0218a448829451ba7e30d5d
+[04/12] ASoC: cs530x: Correct constant naming
+        commit: ddbcd2f396116581ad035fb76a99fc2ed865a85f
+[05/12] ASoC: dt-bindings: sound: cirrus: cs530x: Add cs530x
+        commit: 9957614d2b79578b6f9a2512bfbb2bc7bbdc43ce
+[06/12] ASoC: cs530x: Add CODEC and DAC support
+        commit: c63b2315b9cc6b705205c73dcf4591cfeb9a25ae
+[07/12] ASoC: cs530x: Rename bitfield to reflect common use for ADC and DAC
+        commit: 3941abb26ff327e53e1e8b873cab3ed3d5103eab
+[08/12] ASoC: cs530x: Check the DEVID matches the devtype
+        commit: c37c3e5e390dcd52cbe6178ac53f5a6131ef6f8c
+[09/12] ASoC: cs530x: Correct MCLK reference frequency values
+        commit: e7ab858390f24a23ba0827066382ba0e6a8e4379
+[10/12] ASoC: cs530x: Rename i2c related structures
+        commit: 38ff69586bbb3a823dd501972e17075374b685a1
+[11/12] ASoC: dt-bindings: sound: cirrus: cs530x: Add SPI bus support
+        commit: bb65cb96f64e9b4ea2bbd41e4591f3da91414fdb
+[12/12] ASoC: cs530x: Add SPI bus support for cs530x parts
+        commit: e7434adf0c53a84d548226304cdb41c8818da1cb
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
