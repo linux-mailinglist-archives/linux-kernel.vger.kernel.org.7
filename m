@@ -1,129 +1,158 @@
-Return-Path: <linux-kernel+bounces-873233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670B9C13720
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:08:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51069C136FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 579C2543BE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:04:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7AA1A23D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE3021D3F8;
-	Tue, 28 Oct 2025 08:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BE12D6E66;
+	Tue, 28 Oct 2025 08:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JqEu3dvf"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="GY/zisSt"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2733C38;
-	Tue, 28 Oct 2025 08:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141112AE8E;
+	Tue, 28 Oct 2025 08:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761638678; cv=none; b=JKTgMzlV0r8fL3RUm8KlZ1zErxD3OH8NgqylkFBf1iVAkM8oB+5b9EYjF+eWCpBxKADUAJTOZg86SBLJiiMpGy4geqT2uAnpPUZ34vrK8kKVS5LaRi206fZQjsHwqqu02l0Jv4bO9Ev2oaeCqvJ/zZjX0u4WOt9pMDUzK3kBAFs=
+	t=1761638762; cv=none; b=P/BX0wnasKtvi+MdpR1Q+PJBd93DgCLLXA8rAEGplQWDrhjhscEwwHV1QcDGVg0BJ3LKlRj66eh+vEt/TTx77mcKjqo9HxEHr/jY5L1sLqICMxQ+RLDpRKxqRKdB+5p8ifU9W12BSiuonVMYGoaONCtuz53ETnXpGsLzPp1PPUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761638678; c=relaxed/simple;
-	bh=1GBmAMPbA3Sf+YSCcerbg00fQYlt9Ato3JL5CPDHuds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SVEzQGNe8KMJsEGV/76l5efaT92e05oCNrpchsKcz4e0lDi/OTcRjeju4dWIXjSGhD5kcbWta8x2UyVuQAm6PlyAv3Mvr/i/PH6Caxj3Bvy+R8jOjccLqiE4381M96FUhgTJ2HOmTiqQmkK6CMdz2RAyQAnfmb0R9wDUZ/0WnSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JqEu3dvf; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761638677; x=1793174677;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1GBmAMPbA3Sf+YSCcerbg00fQYlt9Ato3JL5CPDHuds=;
-  b=JqEu3dvfTTZizqeoenHElrRJ2xUoArTf/HQTvVkZHR0SpB4ARq1qak7m
-   W1GzJgUZ2DxVCPKwN8dOnWV5fmECSM5RGSusR8v6SzpE6wsMpP9PkBt6e
-   WEZvlAX6qk366QULQzisyQyoVUkBFPcRbHV4z4uaOfwjxelAUskK74XF7
-   7QPBMfENHrYvidoeIHOPfG1+r72GwZcLpWYTaqWRFheLvYyduLJm2q6eL
-   4mm+cBqrbqS4D9xvJSc6BYDRAHw0ITILZ1jD155MBK1ipSB+py26sYHws
-   B+azFvPIrN2VpOie9LTnCdpJGuzMQBEGflJVhjRrCtrmlXIcqBwy5GOGn
-   A==;
-X-CSE-ConnectionGUID: BHblaZxGSjiJaQZ1kmgwTQ==
-X-CSE-MsgGUID: u7kfjwX3Ss2yKkA6geJ9vw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81153138"
-X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
-   d="scan'208";a="81153138"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:04:36 -0700
-X-CSE-ConnectionGUID: bTE9dfNqSCqPV4RY+ITyvw==
-X-CSE-MsgGUID: PXn/OT/IR+SgH4ewt7p+ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185609813"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:04:34 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vDegx-00000003FDa-2oym;
-	Tue, 28 Oct 2025 10:04:31 +0200
-Date: Tue, 28 Oct 2025 10:04:31 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: core: Use datasheet name as fallback for label
-Message-ID: <aQB5Dw2Eg0tVdNow@smile.fi.intel.com>
-References: <20251027124210.788962-1-wens@kernel.org>
- <20251027144327.09f59982@jic23-huawei>
+	s=arc-20240116; t=1761638762; c=relaxed/simple;
+	bh=wukHgSJEsIfLqQNCLz8DHKUrsiZCB9S/XmD1bR/72d0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=G9LjUrxQod6M00OJ5p+yB8tXqCm+DhTd+4WOVzD4dCEO4cVaD7GKZfaUqpWkyIzCB+mg1hJOtAFu3cGPZ/gnPGmmIOlv7scpbrjf9I9q4KtgKUCuIpX1YicNSJe03cQ6UAftj39qHTTOuszm+8ynVVsjsW6Daoa//rhUCylmSlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=GY/zisSt; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761638740; x=1762243540; i=markus.elfring@web.de;
+	bh=wukHgSJEsIfLqQNCLz8DHKUrsiZCB9S/XmD1bR/72d0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=GY/zisStLplILsP8TJSLH0qYdT1Qc1ztiyPADCv16nrr2dtGl0kEYuUWi66YS1fQ
+	 lFUp77dQDD6kQzjI1mUeaDe56dgDLGoOJW2FQYcJo8EdDeZsTuVWDDCmcwpaD0OmW
+	 POwSSD55GVqwi9KYoRJrF8O4leXfBbVSsdqXSc1wdCR+IorekLeRzEXFjNg8F5GSC
+	 7q+TsY14D66qq2eB+nWOZphpHjd7h3kJE7hhA4/2YoXwT8GA2FAFxiw+R63YTkmFJ
+	 cbT5HN100E0Bqc+Gp4wvJRXee1Tn4IgVLHQ37BHwue0oOb7tel895c5lfOmVHrTvR
+	 SMOCs9f3hlpoDyo0cg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.187]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MQ8ai-1vZZH20iVU-00SQtV; Tue, 28
+ Oct 2025 09:05:40 +0100
+Message-ID: <10746054-4f16-4e02-baf8-159b03926333@web.de>
+Date: Tue, 28 Oct 2025 09:05:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027144327.09f59982@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ kernel-janitors@vger.kernel.org, Joe Perches <joe@perches.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Akhilesh Patil <akhilesh@ee.iitb.ac.in>, Andy Whitcroft <apw@canonical.com>,
+ Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn <lukas.bulwahn@gmail.com>
+References: <20251027093818.1806010-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v3 1/1] checkpatch: Don't warn on "orhapned" DT schema
+ file
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251027093818.1806010-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JwQ/gMlUx551jwtC2xcmfcWhs887HAScw4lOZs1iiUFEGWdeJGE
+ FMpVnp7VZu4Qnx1UaTE5gJuGmPCdcQMvCk0KTtYUaS4Sri0v3mKG6mjYyGGgXFyOAeKABBv
+ 8VwdSElOHbW0HJFq3pt4fhv9QOxA6qc4QvEM+wnlfonX87/D0VC1eG8R7cq0h/kNqMagdBl
+ /c+dNNomFwnERoa/UUwBQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pr9pD8U074M=;bnm8C40kepONA+jVfPNMDejhl4z
+ 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
+ +y5nUb3KefMoCA==
 
-On Mon, Oct 27, 2025 at 02:43:27PM +0000, Jonathan Cameron wrote:
-> On Mon, 27 Oct 2025 20:42:09 +0800
-> Chen-Yu Tsai <wens@kernel.org> wrote:
-> 
-> > Some IIO drivers do not provide labels or extended names for their
-> > channels. However they may provide datasheet names. axp20x-adc is
-> > one such example.
-> > 
-> > Use the datasheet name as a fallback for the channel label. This mainly
-> > benefits iio-hwmon by letting the produced hwmon sensors have more
-> > meaningful names rather than in_voltageX.
-> 
-> I definitely don't want to have different behaviour for in kernel requests
-> and for people reading the _label attributes.  
-> https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/iio/industrialio-core.c#L1232
-> would need modifying to allow for the sysfs attributes to be created.
-> 
-> In general I'm not sure I want to do this.  Datasheet names can be exceptionally
-> obscure which is why we've kept them hidden from userspace.  At least dts writers
-> tend to have those names on their circuit diagrams and tend to have datasheet access.
-> 
-> Let's see if anyone else has feedback on this suggestion over next week or so.
+=E2=80=A6
+> Hence, avoid checkpatch warning about it.
 
-This is an ABI change without
-1) proper documentation;
-2) backward compatibility (i.e. there is no knob to opt-out the change, or make
-it opt-in).
+Do you try to influence software evolution any further for =E2=80=9Corphan=
+ed=E2=80=9D information?
 
-In this form is definitely NAK.
-
-If you wish something like this, better to have a separate attribute. But the
-problem maybe also that the same component (or 100% compatible one) made by
-different vendors and have different datasheet names. This means that the new
-attribute may still be ambiguous. Hence I see a little sense to have it, rather
-better to have these links / names to be put in DT schema. At least there we
-have different vendors and compatibility mappings.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Markus
 
