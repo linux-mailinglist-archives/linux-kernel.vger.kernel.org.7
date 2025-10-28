@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-874055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B0BC15663
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:21:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33E54C1563B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCF68355071
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:21:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D2F1B24D6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2042A33FE10;
-	Tue, 28 Oct 2025 15:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0F233F8AA;
+	Tue, 28 Oct 2025 15:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZVlRfk5d"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TF56fZeM"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB61333FE0A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C59DA3376B8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664832; cv=none; b=A79bVvWqfQV7UqCvZzdLvQdQ58rRw5ZSBarWks1hpJ6I3WSrC3/sjcbnEL4EXr9YfJalcQxGD8n+srZIX9yHOQG0T+6GobxSE0XaTGoe4u7GlSXXbPggd/c14n+FFwrlYBS8O3VNMOFcUhjmzEFv8Xun+gfP1+Xt0eupGBcDwfU=
+	t=1761664806; cv=none; b=lLIaddsXmdiIxoQoiygNT4ELaoYaveQL1lC+8iwNwF91DPpg9aV/Da0/vMlc3HA4B+5n4x21w4S95QaQ4WJy0s1Th4aXusPnnGzIxoG9ypwfmKKzfi+t+qEKg7DVF/mukmFCxir82x6vihMfMBfXz2iooOE3V8uhW1yZ5Tewtiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664832; c=relaxed/simple;
-	bh=HYd2qH7FWSYKEo+EVxagg1RUtl38TekujFQnRYEMBtY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jS6M6HfgWajnhYo9/6l7Scv9D2+TXciaUsw/0ok2o96XUEWY8jKv1m+9BpQag4gPElyrGeJ/BuNxrlG2fdg+766/MKy+LDuyKHXqYIsvQ5ZUd5pD2VMuLCFnJe8+22MRXkn13yuCMAVI5tZx24In61PbUwRRCIGRlK6U1NwnaLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZVlRfk5d; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761664829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FBxBqu3N+DlOX27bsFsVYIxqbBpbd6ybHXvJvZNNT5E=;
-	b=ZVlRfk5d74WPMBIH8ldQdIY8hxKmUlxbUA639saRb9HsLjkj5W/H2wzvsovLXZCn2jeoqc
-	2zFv0ACVKfYwSjpC2wv/xLwWOjqMhs9Yb+JaoKBuVsO9prkrAKL1KaUzgOeV04DmdE1z4t
-	ZXcDrxnAeNJOCUSTmGWi/q7BAZnlG8s=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	paul.chaignon@gmail.com,
-	m.shachnai@gmail.com,
-	kafai.wan@linux.dev,
-	harishankar.vishwanathan@gmail.com,
-	colin.i.king@gmail.com,
-	luis.gerhorst@fau.de,
-	shung-hsi.yu@suse.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v2 2/2] selftests/bpf: Range analysis test case for JEQ
-Date: Tue, 28 Oct 2025 23:19:38 +0800
-Message-ID: <20251028151938.3872003-3-kafai.wan@linux.dev>
-In-Reply-To: <20251028151938.3872003-1-kafai.wan@linux.dev>
-References: <20251028151938.3872003-1-kafai.wan@linux.dev>
+	s=arc-20240116; t=1761664806; c=relaxed/simple;
+	bh=s4Gx6QagiTUE1mIaeDbONB9+Ep16cr+q0GGk6X8s7jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JA4tLqL3d+nn3qS+meiYW8tqEXiGPQFI98nHY7kfmm5GxhNVkJ4uh09jtJL0W3SpBjQ+cj/jSD+h1HocUrgAEVVjtSCrSf6qPTP+Vc2heAUEsSE3mwRkxl90k96xfaSopvGO7aDfltjEDdLOH0LBabcruUbb13oBY1s5s1zNfeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TF56fZeM; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-475dd559a83so20327375e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:20:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761664801; x=1762269601; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g4xM4gK6/cv+oBkMKfsDBfGRWPzGwfaysxJmVNv0Gpw=;
+        b=TF56fZeMJfUYiZDzHgEXEBErcxhwGL2kWDZCu8XtcpruE1LQroQdNkUzsrZ7RskTLt
+         s7Le6jVDSg9s6r3sPmj9SZ9PGUk5bWnQObnBChD8dq8TDM8+ORj9Z59wWxSkMJ14Hbwp
+         SNnSzwAnIey0gfb3JeMuIHg+ImD3UcnnxMmUj2OD3OJ6NWM3TO1Pbdx5WESyEVM8OBPv
+         qDLWDw68wnNrkHFYqzUP1gw+uijuykVKFpxsRjU/j0rhCmCSIGh4RDmxRHwBAK8U33+o
+         nq7qL42W/0m3KN0exH1mYJ4E6dYYYFDXCbwKMFGRhYHEQveNPPpTJx5xS7W2OFWSDfyO
+         jYEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761664801; x=1762269601;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g4xM4gK6/cv+oBkMKfsDBfGRWPzGwfaysxJmVNv0Gpw=;
+        b=RUNxbjt6htsu1UEv8/N0YNoKDhxw5dWXpSVMTnesD98+Wsfhb4Sk+W3FvlVZtsORQy
+         gNEnCRLnPC324/T+mzCpwIpE+5BwDTrdbnQl+JY7wd9hd9QM7tv4gCmj0UKpWNTBHNMa
+         lw5HzuZ0RdX9Kf3Y40UPp5mbTmOBjAItI1NRO74OUI9IjyOZfTYkgoW6MmGkf7WNaCOT
+         zI3tz+zvt9D+O7Gk4NQz99BVhry5VuEr1eL+WPXNTvE+P+fyL2ty+KNe+P2wVrTmKSKL
+         5Uw5JaBSG/NPQuth35DDIABPMGAMYeXimfYgLk9+QVAb2/thjmN3NDPbH3wk/oNVMBug
+         12lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvQ7j6tWAjNku1P3UJ1K1pdDAF4GsvAlUTfP25ITNobGDFSRlhA3Ll4zbjOKoHW5rJtMAlO5TopZ8RQ3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVTY2ND0gOsQ/pD1oMhYblLXCXaQdeo8GtE/YVLiv9pWrFrhVF
+	6MM7k7ko5ivKXcDRezcu49MwXaREmA7O9lbBBftDv4qpAvyR3e2fp1rMAsIIJzpWodW2ZW83gxm
+	eaBse
+X-Gm-Gg: ASbGncsS6UYfteXavdwh479aV8aswh3QaDb8xnHaz9wpP/BLq97SaocyoEUZLKp5cyx
+	T5no3/mYgWymXPD+8arZWIcbqnQpoI+9zunZLo5A4zn1yy6JFTWwkqXCMEPm4Xmkq+uh5Tz4OZz
+	M7g9XDdtPPlXUiYdzIemCKeyr3S8ZE1bWQGz7IDaH3YdTzfYKov85rXONswRxJD3LS6fKIDcSHM
+	S49KST3tVjpX6WX5O2OMt9UwYXDTfkzDVhRL2Xv0CHBtwo+w0Dv2iApNQkdwB1BOD8+L9n0xSvh
+	rBEkAN2EM7axNzhNKZwASVTvjJp9F8L3pe5JG+HHO7VkdBD/Avs1dMcsm48ApLVsArAuV/Rudcz
+	1DjpxuW9svzAwWWrLZ5wrhuq60HrNM+TuFCKpzuU5FBc8mWG+a7TLqxjUFtyloU+ekhTKLSPO
+X-Google-Smtp-Source: AGHT+IGKCeR2r/LqTWZfnp4F6FPA5DKpq/WscvEqy8cVGEsQO6uQyLdM2X62ZFpf/CF88WVJpNKzJA==
+X-Received: by 2002:a05:600c:608e:b0:471:672:3486 with SMTP id 5b1f17b1804b1-47717dff927mr33130885e9.15.1761664801353;
+        Tue, 28 Oct 2025 08:20:01 -0700 (PDT)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47718ffa42bsm21650985e9.4.2025.10.28.08.19.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 08:19:59 -0700 (PDT)
+Date: Tue, 28 Oct 2025 17:19:58 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Skip setting orientation for UCSI
+ version 2.0 and above
+Message-ID: <a4f3yhhz5sntno6gnfbjnjjsbtyo2e4y3da2aywsg36gvxkaxg@vw2vryukrepl>
+References: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
 
-This patch adds coverage for the warning detected by syzkaller and fixed
-in the previous patch. Without the previous patch, this test fails with:
+On 25-10-28 16:39:19, Abel Vesa wrote:
+> In case of UCSI version 2.0 and above, if the orientation is set from
+> glink as well, it will trigger the consumers along the graph (PHYs,
+> repeaters and so on) to reconfigure a second time. This might break
+> the consumer drivers which aren't currently implemented to drop the
+> second request of setting the same orientation.
+> 
+> So lets leave the orientation setting to the UCSI generic implementation
+> for all platform that implement UCSI spec 2.0 and above.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-  verifier bug: REG INVARIANTS VIOLATION (true_reg1): range bounds
-  violation u64=[0xffffffffffffff01, 0xffffffffffffff00]
-  s64=[0xffffffffffffff01, 0xffffffffffffff00]
-  u32=[0xffffff01, 0xffffff00] s32=[0xffffff00, 0xffffff00]
-  var_off=(0xffffffffffffff00, 0x0)
-  verifier bug: REG INVARIANTS VIOLATION (true_reg2): range bounds
-  violation u64=[0xffffffffffffff01, 0xffffffffffffff00]
-  s64=[0xffffffffffffff01, 0xffffffffffffff00]
-  u32=[0xffffff01, 0xffffff00] s32=[0xffffff01, 0xffffff00]
-  var_off=(0xffffffffffffff00, 0x0)
+Ignore this one please, as it is incomplete.
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
----
- .../selftests/bpf/progs/verifier_bounds.c     | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
+We need to also set the orientation_aware in pmic_glink_ucsi_update_connector()
+if the ucsi version is at least 2.0.
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-index 0a72e0228ea9..304ab5a07a3b 100644
---- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-@@ -1550,6 +1550,29 @@ l0_%=:	r0 = 0;				\
- 	: __clobber_all);
- }
- 
-+SEC("socket")
-+__description("dead branch on jeq, does not result in invariants violation error")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jeq_range_analysis(void)
-+{
-+	asm volatile ("			\
-+	call %[bpf_get_prandom_u32];	\
-+	r6 = r0;			\
-+	r6 &= 0xFFFFFFFFFFFFFFF0;	\
-+	r7 = r0;			\
-+	r7 &= 0x07;			\
-+	r7 -= 0xFF;			\
-+	if r6 == r7 goto l1_%=;		\
-+l0_%=:  r0 = 0;				\
-+	exit;				\
-+l1_%=:  r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
- /* This test covers the bounds deduction on 64bits when the s64 and u64 ranges
-  * overlap on the negative side. At instruction 7, the ranges look as follows:
-  *
--- 
-2.43.0
-
+Will do and respin.
 
