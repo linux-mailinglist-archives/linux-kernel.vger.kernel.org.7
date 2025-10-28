@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-873153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A35C133EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:08:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0716CC1340D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1B424F9D4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:07:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D5F81A64F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08592BE652;
-	Tue, 28 Oct 2025 07:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6742C17A3;
+	Tue, 28 Oct 2025 07:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kzwFJfSV"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="P8xg+Xi0"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8592C08A8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ECE23506A
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761635220; cv=none; b=A2rEGNpYgWYQvpob6yrsHiQQJ1QoXinFpqdxjWn47JRBLRuuHjZU1EsX4aPu2mufH581X0A8mzBZnGqbIO8bYQgQc1pbJh498G3MmhcfFeIpaJZ8EKe/cKQaehEBkgfVdJ/ndUn6rjS32rZ9hcZTC7/jrWITlKX3kFXECjf0b7k=
+	t=1761635406; cv=none; b=DbNUk85szQvOdEBxgmM8kJhRiQOlIqfYg8be5U9VglJUPbWQ4J/6aGh+V52O8WnhHy6a2Az/Y2/X6aihSJums3XHoiQx59PjVxCY2dzF2gSLrp/vpVazGt5rHoiHQBqVnstvPv98u+vJZu6//Ine1Av6Bv/ICGosp8OFnvl7SRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761635220; c=relaxed/simple;
-	bh=R5PmlZtWzHHZKGgXjshm44Mpf/Tt3lSzAseSYL5jpRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YLFOIRWw4bPyEQbSZUE+wdzW/+BIOsY/4v4Oy+E8gcXW/q13C1roRHcc3YwvADUXRWhjczNnRWvMM1qhqRRlyrALwg13lZI/j7k2MFvSNwM/eo7h4h9HVXzmF1AeYs7MQOFOSEnlk05iufBdxeKGAZk5pVovkFEqaYrDDufNhrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kzwFJfSV; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso8561166a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:06:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761635217; x=1762240017; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=R5PmlZtWzHHZKGgXjshm44Mpf/Tt3lSzAseSYL5jpRs=;
-        b=kzwFJfSVlUIRSBkvPFV9cszKPEb5MmzumJf8w0+XB3pXNnxZv/a41B52lnt0FtfbyN
-         F0jiWYoilHFD+EALeQxuTk9V1f8EpBHo0zbFKa4wuhUJ7sBjffc5ifCcXzuAq7K+eBlL
-         CSjIQD+pKxpQimtjkX6h76APknIU7CohXlMemLCNc589+VSIAigrnVCtfRWopcSvSwBK
-         skiPnUu5I+OvjuRuc4jNBjIWraXPw6UNpSnAXjpH+ze4mWrGFMP1F2wAWpGonz31Xhv8
-         lGtwpyiBo63SfG5W2QAKj388T5jKkfbnqSXlIemloVX/us5My5X5u4+vFw7kwhYMNJMa
-         BzEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761635217; x=1762240017;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=R5PmlZtWzHHZKGgXjshm44Mpf/Tt3lSzAseSYL5jpRs=;
-        b=PRXs+s9rajo58Y0GbADpmRtKVp/GwAZko0HDsh/VXvNuKXJ6dK+kYFOxvwMgXexoOO
-         6OPgAggPjlgf4URSvdNS9UACyTlyGDLi23BidMBkjyGPoemaTAjoTMyVoQdPC9FL4zt6
-         NoQLjWkhel3X9oNi0ZGcpG+KTUo0J+IqyzfRadJa0fyI6+7UqKKIx2fvxQJ6WKG2DSO7
-         k2UkYOFCRt0JhmPLMbzW7xKywNv3HTJMG5xCpeSFMY6WZvSAA+ue/fCLCx7fu4WU/a3y
-         zHiNuJSLnCvCSH3sohhjWbRgO8qwWwk3a6BSTVF9uo2EwLcFb/qykrY0q3mS+hx9Lbra
-         NBaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVYP0nSY8Pq2jh1bfjTKVMyG9rdzOmrwRLdnq23LiBoDJlhNBC1WHOK1mXl5N4RYGpCDP5mN0R6Hi26Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUdpX1mUN+NBUq9KJ3Keul/AdRvck6MN6WR2Eo6hpc0KERZih8
-	bZAZbiQdkPBic4vougV9kGJpju8pgGYCSL0tlctT5PmTgqjdLIJngRhQ9o2RUvHcG557f9dhzUb
-	0s7VcSiqwT8Nn1/YFcCidPybiBOIHWQWWWF4r
-X-Gm-Gg: ASbGnctz/l+nZozR4yPT91jzM673YeMEiSayAEp4Q54fJ6IlIPe5AQK6b6eTUWNziIU
-	+cCJk+y67O9uZqtuJgP01FWl3LOEIoc5s9QyHkYc0J2lURy4uEQUbpkSisTZC3TPbtA//BIx34g
-	mm/Q8jb/IIR3XC84uxLl6g2xeC3xaucfkYyld85P7I77zZKSA96Er1NY45KPDdOTz3FOWBp4Jl0
-	nc70YnPGNOoVuh7Nm8mYdjAf99G0uHJE16FINz4naTmacf7HGGxzVRLFo8=
-X-Google-Smtp-Source: AGHT+IFqdZ7449/+gCSESKkn4OY2k6KiWRXks4E+V02E2uPaH6yPU4wF8iJFvFXAm8oiIsJdQKeuKoRJ7jR1cSg+eCI=
-X-Received: by 2002:a05:6402:5208:b0:63c:45da:2878 with SMTP id
- 4fb4d7f45d1cf-63ed8262ceemr2111325a12.25.1761635216475; Tue, 28 Oct 2025
- 00:06:56 -0700 (PDT)
+	s=arc-20240116; t=1761635406; c=relaxed/simple;
+	bh=pvVW4kKWOWWefij8Mw36nkpt3Eh7H4QBlpyCWLZrbZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=HfMLveJC46Ao2OJOU2vGCKjNLEFr5ktwjJJLjwm5lMKrUpI7VgZmq3FjJkO3ow0KQSssdqPpItxtf//sfEAhwjg9488vMZXybMb9A9ILMKnHTkuQ+CnjBTwzwG/+aBhSDJUKz9a3uKX8s86JIm0eTeMsgN8BEogPgtdczVUV7eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=P8xg+Xi0; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251028071002euoutp01403b776a269a2e1b29f6b7a0702f1fe1~ylhC0TzX03269932699euoutp01E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:10:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251028071002euoutp01403b776a269a2e1b29f6b7a0702f1fe1~ylhC0TzX03269932699euoutp01E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761635402;
+	bh=9azUV6qrislQ96/bD+k4ki00mSrQhWDXIEpbgtd0QTo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=P8xg+Xi0WutXVQGfmmHknFX2lnWgXE1RHdFp7+2bW9mvEiDbRQ6Hsz8vu8uyjXhbf
+	 KXoAd2Yy8dvBRrL8bHGpJ59Sv1uwZmmyxx3w/7wjcWqvuTIldGDtBSy/h+AHsTdk6h
+	 gnTXgeVBkB+UzkRPbnTdcXusMHinhkq41bQ2zESg=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251028071002eucas1p114afef26983bf8ca23374624a804dcbd~ylhCfczNU1129611296eucas1p1E;
+	Tue, 28 Oct 2025 07:10:02 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251028071001eusmtip1d3c9ba5b42870aa2c03d3176a0f93b2c~ylhCD6rRh1876418764eusmtip1B;
+	Tue, 28 Oct 2025 07:10:01 +0000 (GMT)
+Message-ID: <aaac0d2b-ec3f-4469-9334-a7216b85b33f@samsung.com>
+Date: Tue, 28 Oct 2025 08:10:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027090310.38999-1-linux.amoon@gmail.com> <20251027090310.38999-3-linux.amoon@gmail.com>
- <f36a77b1-79ce-4bd4-ba4a-b9260bae7f11@web.de>
-In-Reply-To: <f36a77b1-79ce-4bd4-ba4a-b9260bae7f11@web.de>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 28 Oct 2025 12:36:39 +0530
-X-Gm-Features: AWmQ_bnM6F6BzTGQqX_h0Uqm5Thyd0JbiSKKhO1nlm1lVvxcnt-IMVp2PL8CDLw
-Message-ID: <CANAwSgT43rsi+DxaMF3T-gsVoAAGSSDEL6s+TE2yZ+q+W3bRsQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] PCI: j721e: Use inline reset GPIO assignment and
- drop local variable
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Siddharth Vadapalli <s-vadapalli@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH] media: videobuf2: Fix device reference leak in
+ vb2_dc_alloc error path
+To: Haotian Zhang <vulab@iscas.ac.cn>, tfiga@chromium.org, Mauro Carvalho
+	Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20251028064443.655-1-vulab@iscas.ac.cn>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20251028071002eucas1p114afef26983bf8ca23374624a804dcbd
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251028064507eucas1p2895db44758261941ca898cb4edd2c7b3
+X-EPHeader: CA
+X-CMS-RootMailID: 20251028064507eucas1p2895db44758261941ca898cb4edd2c7b3
+References: <CGME20251028064507eucas1p2895db44758261941ca898cb4edd2c7b3@eucas1p2.samsung.com>
+	<20251028064443.655-1-vulab@iscas.ac.cn>
 
-Hi Markus,
-
-Thanks for your review comments.
-
-On Mon, 27 Oct 2025 at 19:13, Markus Elfring <Markus.Elfring@web.de> wrote:
+On 28.10.2025 07:44, Haotian Zhang wrote:
+> In vb2_dc_alloc(), get_device() is called to increment the device
+> reference count. However, if subsequent DMA allocation fails
+> (vb2_dc_alloc_coherent or vb2_dc_alloc_non_coherent returns error),
+> the function returns without calling put_device(), causing a device
+> reference leak.
 >
-> > The result of devm_gpiod_get_optional() is now assigned directly
-> > assigned to pcie->reset_gpio. This removes a superfluous local gpiod
-> > variable, improving code readability and compactness. The functionality
-> > remains unchanged, but the code is now more streamlined
+> Add put_device() call in the error path before kfree() to properly
+> release the device reference acquired earlier.
 >
-> Would a corresponding imperative wording become helpful for an improved change description?
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.18-rc3#n94
+> Fixes: de27891f675e ("media: videobuf2: handle non-contiguous DMA allocations")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+Reviewed-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>   drivers/media/common/videobuf2/videobuf2-dma-contig.c | 1 +
+>   1 file changed, 1 insertion(+)
 >
-Assign the result of devm_gpiod_get_optional() directly to pcie->reset_gpio.
-This removes a superfluous local variable, improving code clarity without
-altering the driver's behavior.
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> index a13ec569c82f..7123c5fae92c 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> @@ -258,6 +258,7 @@ static void *vb2_dc_alloc(struct vb2_buffer *vb,
+>   
+>   	if (ret) {
+>   		dev_err(dev, "dma alloc of size %lu failed\n", size);
+> +		put_device(buf->dev);
+>   		kfree(buf);
+>   		return ERR_PTR(-ENOMEM);
+>   	}
 
-Is this ok with you?
-> Regards,
-> Markus
-Thanks
--Anand
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
