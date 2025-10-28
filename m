@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-873934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6ABC151B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BA1C151C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B65E646DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D819644055
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC014337102;
-	Tue, 28 Oct 2025 14:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C5A0335BAA;
+	Tue, 28 Oct 2025 14:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N0dl+8q0"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b="Z8snaPvt"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49351337688;
-	Tue, 28 Oct 2025 14:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3B930FC10
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660498; cv=none; b=EQlryAI4MfjsmToR6ciJZ///SZXqOixT6wQfiH6WIHlT5PqjeAQuc5U6T9Y28WGasHkKxp9z6QSk+MkCwXM1oxS5YP6uwvcGCB4+1erI/Ep0tGzxPLdGC5eWagveDVDnkUxE/57XRa42gRj1jKGt00HHwYp6xfXaNF+a7g7lz5A=
+	t=1761660563; cv=none; b=G41MvlUry5DwDo6amRWg7dIXESH5bHHIMbeSh6jAAGjdOoSibLCoOFObX23EDLz7EH2jW76y9ajqYG3DB8v3FLjb3sRVcu8+PyhQKPMgeR/0HiMTn6SFNXjdGQS0EB4OpyQegdD9yvraky4/foc6jDdWqzImP6RSVsV8i8TQY6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660498; c=relaxed/simple;
-	bh=80GVU+KEcGEzhiawu3SE2Yj1JPq4yN4YExDM54LgnIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n2W04JA8l0fXBXD+1qlE8A3xOlAkKf4Fn6M4+BDSgF8zbiafaWzSzJ/uFgWcVgD2fUcIVShrMOx0mT/xTrFQJbBynanA5K3yOh8Hk3ws1E+UYLaHmbH3EoQOdma/8AxeihZoW/dqt53wD5t8yvevvYfi7AA+R0Uid/LN5SiYD/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N0dl+8q0; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=egKIBcM1r3rVKidn5mxv810VXintHraWDp0dW5Ht2GM=; b=N0dl+8q0JA4fa4L4Cx2BjjcqSZ
-	yQ8rMJW/u0dN3Wan0FmtwqEQWf9s5A0KbYjYcxwcEJSfOwBgqdwnL1PPmiysK3lbasy/if7n1jmx2
-	+DrQLkUbEp2h2e12xwxJOFBUT0Zeb1gbUKPIQFQSiWfXERYQZQSGWU6xTWzXhX0nda8+rDm1MpSzE
-	jy3LJQ7qFEStjHJJXvcWrdHc2a1v5wbbZVZPRYFdu7ZN/P3FoK1KRzZOfCkq2xA94B9VY08QWPUaB
-	lKB3yxXLFJf3uZpIBxZT4UrGdYn7XMQgq7085mhOd4G9Qj+EPP12k0s0MFU8Iz/HbKPZRDe+/QYH3
-	gKEhSxsA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDjV7-00000004W4V-0tv7;
-	Tue, 28 Oct 2025 13:12:37 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 99484300220; Tue, 28 Oct 2025 15:08:07 +0100 (CET)
-Date: Tue, 28 Oct 2025 15:08:07 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	"Emil Tsalapatis (Meta)" <emil@etsalapatis.com>,
-	Emil Tsalapatis <etsal@meta.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the tip tree with Linus' tree
-Message-ID: <20251028140807.GM3245006@noisy.programming.kicks-ass.net>
-References: <20251028112205.47129816@canb.auug.org.au>
- <aQAYE_X9XJ9RgJb3@slm.duckdns.org>
+	s=arc-20240116; t=1761660563; c=relaxed/simple;
+	bh=AdnRw7U11fEVAUyQ3c4ltusVoJvhyax3gV4Hxys3+Bs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NekHFp8CfusDNhUZ1IwXf1y/82EQqvexMI7nO500urly1lAVEWJM1+a8MNSd1odosppWYc4dRSVKmDkXbKKaNVOcsnsecJue+aGciYvLqcvsf6Y+rCnzCWDuMqKp/VYtNJ/9eV+qJDcmTzdDcSBtJuQQD+9KEmPUd6MGpCUdpp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com; spf=pass smtp.mailfrom=ciq.com; dkim=pass (2048-bit key) header.d=ciq.com header.i=@ciq.com header.b=Z8snaPvt; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ciq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ciq.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-8909f01bd00so645179985a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ciq.com; s=s1; t=1761660560; x=1762265360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/zcU8dbk3YPaQpFZh0LEGbD8GL5cYg7PwFTIPigTrJM=;
+        b=Z8snaPvtntUhFF81tpuJKrbRAija26SAyLnj8u9SKvi2gLZJIZKvbbcYtax9wCq8JT
+         mle5zzxEoqiwfoPYDqMrSVerTR7OrkR4L/1IMJdjHjQ2MMGusC0iHIX2IySM/c8fyucg
+         oCDYniXxQnUYt4uIaLsHnADB1OOKo9x6bGi/qXyOrF/83NCvmYVa0yvnad3vH8unsTby
+         y8gC3VxEOFAxKISHWt2XO8fm5vTBPqYbgmT9b8w/j/VjnPLqJkiXgQ6LHI3epttxwasX
+         xTCqE5vTXZ7HsuK27+4ojGmqIU/NFtupn3fbGvlltasgTeuGSvdo3CUyKej88psQI7nK
+         IUzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761660560; x=1762265360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/zcU8dbk3YPaQpFZh0LEGbD8GL5cYg7PwFTIPigTrJM=;
+        b=IGmTYtSb9BVurT8vHGk9RAeQeuMOiFuuuTXj//yUtu+2GrGrE4nLLWAoxV1dd/ksa1
+         eaSHFGZNMwvMhEexY4aANn9uPaflaWVJff7zR3l+f0lwDtbQlN1bRI9H7RnSsrWw6tFL
+         3VFq0cyIZnW2Aa4WmfFPuC3lJKKqLJ0iLFqtwEb17JPB/xs5wg82ciOSVKvri/hIiO/g
+         eabQmCxffQR0xjc8Peg5HngQwRYR/sy14IGfDh7emhjSJOvt0AR8Ri7AiQiksAXA4OuX
+         k5lh3e8fN/mHdMsX/W7q+PlSLKglA43kR3uwo8pjCUQyKEZlZHpEcDIkFkurqLpCkeq4
+         /WCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyN01+b2NRSttjKKDBPMB+jO8GOFaNg3gLrA0AK/vEFLOHa6E505Nuvy5FaO5eHwWUnVxVWeUAFrao5/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ0h3gLSyVx3NXKdYvGsxcrH1QLHk3p9oVL3mvIlBlUvf+NqrB
+	1n0hvN6lDv/t0u1sbGfDJbcxXXzAyRQ97CZe/m6jg/Whg/Argw03Ca9JHUa7cMdN/+LIdmd9CT2
+	HH9wOFa6GLRb3nDWgRqneaVgyEQYKGAR5pKNN8ru/8w==
+X-Gm-Gg: ASbGnctdAnOuLhejrNHI5sTklbV++35n3NY906KHBIXeDLgtekukESz4DV+hMB7YdzH
+	wHGOktJJe55lDN6jUC8hOeqv/eT2NT7aDu/6B4m2FARwdS7Iul+XlG7ZtgKTVNdo80ICu2qzGC4
+	eAfdzDshPCED7//8GQgCbK7JvqO+RS/0OfMGJfenrhg+aEAWLyloJczZNGYs7LX7OOGSxLM/VyO
+	MysHjPtWB4FYwsjzjeH1dXSnX79hjWqkWcNHgzYTmF/cAjZF0fBKXjYC/iGkg==
+X-Google-Smtp-Source: AGHT+IGeD0rlHtRDBvGxpdgqlidUafHqhsh8Ky9XoEDN3FLfwPUswXwdlMrdSNVbbnKnTlU7nlSS8qkTv9BYaTfYk5o=
+X-Received: by 2002:a05:620a:4711:b0:856:60d8:3688 with SMTP id
+ af79cd13be357-8a6f78fc5eemr447314685a.47.1761660560137; Tue, 28 Oct 2025
+ 07:09:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQAYE_X9XJ9RgJb3@slm.duckdns.org>
+References: <20251027183453.919157109@linuxfoundation.org>
+In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
+From: Brett Mastbergen <bmastbergen@ciq.com>
+Date: Tue, 28 Oct 2025 10:09:08 -0400
+X-Gm-Features: AWmQ_bmdkmfhBJpXFY9QIg-9Nu9KvuWXlnvP1dY6QfRsnqg3ap99m04OvaHDYGk
+Message-ID: <CAOBMUvjZR4OL0Ffq_yZq_-4nGNAQnicFP8mXqgc1tCtP0VvVsQ@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/117] 6.12.56-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org, sr@sladewatkins.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 03:10:43PM -1000, Tejun Heo wrote:
-> On Tue, Oct 28, 2025 at 11:22:05AM +1100, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the tip tree got a conflict in:
-> > 
-> >   kernel/sched/ext.c
-> > 
-> > between commit:
-> > 
-> >   a8ad873113d3 ("sched_ext: defer queue_balance_callback() until after ops.dispatch")
-> > 
-> > from Linus' tree and commit:
-> > 
-> >   4c95380701f5 ("sched/ext: Fold balance_scx() into pick_task_scx()")
-> > 
-> > from the tip tree.
-> > 
-> > I fixed it up (see below - but I was not sure if the
-> > "maybe_queue_balance_callback(rq);" is positioned correctly) and can
-> > carry the fix as necessary. This is now fixed as far as linux-next is
-> > concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts.
-> 
-> I resolved this in sched_ext/for-6.19 by pulling for-6.18-fixes but yeah the
-> conflict is through tip/sched/core. I think your resolution is correct and
-> matches sched_ext/for-6.19 (sans whitespaces).
-> 
-> I don't know how tip tree resolves these conflicts but either way - leaving
-> it as-is until the merge window, or pulling master and resolving in tip - is
-> fine from sched_ext POV. I can sync with tip/sched/core as necessary.
+On Mon, Oct 27, 2025 at 3:31=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.56 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.56-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-tip/sched/core should now have that merge resolved properly too.
+Builds successfully.  Boots and works on qemu and Dell XPS 15 9520 w/
+Intel Core i7-12600H
 
-Thanks!
+Tested-by: Brett Mastbergen <bmastbergen@ciq.com>
+
+Thanks,
+Brett
 
