@@ -1,485 +1,601 @@
-Return-Path: <linux-kernel+bounces-873151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0765C133C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:05:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1D3C133CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:06:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7164C5E06BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A867F3B538E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C016626F467;
-	Tue, 28 Oct 2025 07:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B7172C11F7;
+	Tue, 28 Oct 2025 07:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="oNAg1ASs"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moSgKFfy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF696286D5C;
-	Tue, 28 Oct 2025 07:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5833D1DDA24;
+	Tue, 28 Oct 2025 07:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761635090; cv=none; b=BMFYBj7Me5LJO50T0QDMuewucofetQp64VqHHXqNUZ4BQTpur0B7A3B02apHm0DBdZxVT4NjnshNoDsf8rG4vzM9KT2RGeyB6m6xwKJVEcbemdjl89j72LexkghMu+HJs5+zKpvHMblZsb4DrhtqXly2f+YJNb7l7zWVVGJtCBA=
+	t=1761635200; cv=none; b=Be6ftxH//BY7jIx9wJYprvvJ0Jg5pEtIGK7ayaNRnHzUz8b/zKrFu/oLTwsb08ABaGCat/rf5SXUud4eWy/r53wiFZEBBM33YSXSgrDkbVZw8uwrS1VDrA+0Hzi2o3InOEGz9ZRM5KTN4rphnYBJSMrwxJmL+sXVwtbGQXYWx4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761635090; c=relaxed/simple;
-	bh=nGkM12nvXNhOgvIKtqMH28gqlh04JWpLiGAj10BoOKQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=gF6lSvI8bNWtro4uDaq4bsKY5ELoVBCoSNCxquWKU3lf3kE2qohnZq7arM+XOXtr3Uk/y9Cec8FFEIkT/cd66tkPQWhLBETTq4L6QLMosJFWR91YMjYTSqrVx4mq+bd8VhNImu0xgYMoPc8S7GlGYtNToBVPg6tjJ5hCxFW6YNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=oNAg1ASs; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=EidUy3fn2h9Jd2vZFLEhj7aVLDGNg739ptn+7Sao1kI=;
-	b=oNAg1ASs4rWlVXEJ703vli3+hOV/p0YoA2Mv7WxDoL2hlkmATcgaeLPRESBOwoKej9/lLsYhx
-	RtuY84UKsSuOwGnjVyRk/sNapKlUTynxuCbwbjJmvGnuhWvg8NagC4CLJZavnO63tOqKJoat3Ed
-	bLu9zHq8E2ju132P/PzIth0=
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4cwhF639C5zRhRJ;
-	Tue, 28 Oct 2025 15:04:10 +0800 (CST)
-Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
-	by mail.maildlp.com (Postfix) with ESMTPS id DF52D18007F;
-	Tue, 28 Oct 2025 15:04:38 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 28 Oct 2025 15:04:38 +0800
-Subject: Re: [PATCH v10 2/2] hisi_acc_vfio_pci: adapt to new migration
- configuration
-To: Alex Williamson <alex@shazbot.org>
-CC: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<herbert@gondor.apana.org.au>, <shameerkolothum@gmail.com>,
-	<jonathan.cameron@huawei.com>, <linux-crypto@vger.kernel.org>,
-	<kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>
-References: <20251017091057.3770403-1-liulongfang@huawei.com>
- <20251017091057.3770403-3-liulongfang@huawei.com>
- <20251027222007.5e176e42@shazbot.org>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <734cd156-26c1-50f7-f0fa-db76beaab745@huawei.com>
-Date: Tue, 28 Oct 2025 15:04:37 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1761635200; c=relaxed/simple;
+	bh=p0uLGk4zsu4WQ2fu7lvJZDbp/ixU7AGem6xGsXLon70=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sg/LAZYX9RDT1zFnInxLT5IoKMgVJsQy/coIXvs1kOhzbPgYKy9Y8SqK0eLEnMaKQ6XJCsImCQzbmkA0+N989gbBZwgYNwx7iAMAtigLlmRPWn4qIiyoHZlvaRQEIncO2hbXBglVvmhzRG9op3IHheGdU/zqetWUuznTml78l6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moSgKFfy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B3A7C4CEE7;
+	Tue, 28 Oct 2025 07:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761635199;
+	bh=p0uLGk4zsu4WQ2fu7lvJZDbp/ixU7AGem6xGsXLon70=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=moSgKFfyvyvjW8XIEqX1wK1c9LHWkIybzY80/u2yj7pvGPEtn79JMC8UqENXsZ78E
+	 LLt1aMrhkBzOQ4AZFNU7McNtVlgpvpsCTOcBwg5c4Sqz6+TEwOrc6X9gJmGEwI9lSI
+	 orCqzDfEBzCw6aL8gbnMNFv7XIE/8M7W1XMSzDEEWVhkfN0NsfgLGgpv7lVPkrf/9p
+	 ge/lRRYYGFP/j7yh/bBmUPbK2KFtrlHbPSSB2GNCqe0inonZ89s4f8j9SJONwt+9sA
+	 vMXBh/AuHKTQMdDnUc2mYUf/TELdtWGUSy319dCX+EZIHobCY/uDJjtH5r17sKYnnU
+	 n0UJCgTws22XQ==
+Date: Tue, 28 Oct 2025 12:36:23 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, vkoul@kernel.org, 
+	kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org, 
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, 
+	christian.bruel@foss.st.com, shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com, 
+	qiang.yu@oss.qualcomm.com, namcao@linutronix.de, thippeswamy.havalige@amd.com, 
+	inochiama@gmail.com, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/7] PCI: spacemit: introduce SpacemiT PCIe host driver
+Message-ID: <paxtbwlvndtsmllhsdiovwqoes7aqwiltac6ah4ehrpkz554y6@uj5k3w5jxeln>
+References: <20251013153526.2276556-1-elder@riscstar.com>
+ <20251013153526.2276556-6-elder@riscstar.com>
+ <274772thveml3xq2yc7477b7lywzzwelbjtq3hiy4louc6cqom@o5zq66mqa27h>
+ <4027609d-6396-44c0-a514-11d7fe8a5b58@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251027222007.5e176e42@shazbot.org>
-Content-Type: text/plain; charset="gbk"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500015.china.huawei.com (7.185.36.143)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4027609d-6396-44c0-a514-11d7fe8a5b58@riscstar.com>
 
-On 2025/10/28 12:20, Alex Williamson wrote:
-> On Fri, 17 Oct 2025 17:10:57 +0800
-> Longfang Liu <liulongfang@huawei.com> wrote:
+On Mon, Oct 27, 2025 at 05:24:38PM -0500, Alex Elder wrote:
+> On 10/26/25 11:55 AM, Manivannan Sadhasivam wrote:
+> > On Mon, Oct 13, 2025 at 10:35:22AM -0500, Alex Elder wrote:
+> > > Introduce a driver for the PCIe host controller found in the SpacemiT
+> > > K1 SoC.  The hardware is derived from the Synopsys DesignWare PCIe IP.
+> > > The driver supports three PCIe ports that operate at PCIe gen2 transfer
+> > > rates (5 GT/sec).  The first port uses a combo PHY, which may be
+> > > configured for use for USB 3 instead.
+> > > 
+> > > Signed-off-by: Alex Elder <elder@riscstar.com>
+> > > ---
+> > > v2: - Renamed the PCIe driver source file "pcie-spacemit-k1.c"
+> > >      - Renamed the PCIe driver Kconfig option PCIE_SPACEMIT_K1; it
+> > >        is now tristate rather than Boolean
+> > >      - The PCIe host compatible string is now "spacemit,k1-pcie"
+> > >      - Renamed the PMU syscon property to be "spacemit,apmu"
+> > >      - Renamed the symbols representing the PCI vendor and device IDs
+> > >        to align with <linux/pci_ids.h>
+> > >      - Use PCIE_T_PVPERL_MS rather than 100 to represent a standard
+> > >        delay period.
+> > >      - Use platform (not dev) driver-data access functions; assignment
+> > >        is done only after the private structure is initialized
+> > >      - Deleted some unneeded includes in the PCIe driver.
+> > >      - Dropped error checking when operating on MMIO-backed regmaps
+> > >      - Added a regmap_read() call in two places, to ensure a specified
+> > >        delay occurs *after* the a MMIO write has reached its target.
+> > >      - Used ARRAY_SIZE() (not a local variable value) in a few spots
+> > >      - Now use readl_relaxed()/writel_relaxed() when operating on
+> > >        the "link" I/O memory space in the PCIe driver
+> > >      - Updated a few error messages for consistency
+> > >      - No longer specify suppress_bind_attrs in the PCIe driver
+> > >      - Now specify PCIe driver probe type as PROBE_PREFER_ASYNCHRONOUS
+> > >      - No longer use (void) cast to indicate ignored return values
+> > > 
+> > >   drivers/pci/controller/dwc/Kconfig            |  10 +
+> > >   drivers/pci/controller/dwc/Makefile           |   1 +
+> > >   drivers/pci/controller/dwc/pcie-spacemit-k1.c | 319 ++++++++++++++++++
+> > >   3 files changed, 330 insertions(+)
+> > >   create mode 100644 drivers/pci/controller/dwc/pcie-spacemit-k1.c
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
+> > > index 349d4657393c9..ede59b34c99ba 100644
+> > > --- a/drivers/pci/controller/dwc/Kconfig
+> > > +++ b/drivers/pci/controller/dwc/Kconfig
+> > > @@ -509,6 +509,16 @@ config PCI_KEYSTONE_EP
+> > >   	  on DesignWare hardware and therefore the driver re-uses the
+> > >   	  DesignWare core functions to implement the driver.
+> > > +config PCIE_SPACEMIT_K1
+> > > +	tristate "SpacemiT K1 PCIe controller (host mode)"
+> > > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> > > +	depends on PCI && OF && HAS_IOMEM
+> > > +	select PCIE_DW_HOST
+> > > +	default ARCH_SPACEMIT
+> > > +	help
+> > > +	  Enables support for the PCIe controller in the K1 SoC operating
+> > > +	  in host mode.
+> > > +
+> > >   config PCIE_VISCONTI_HOST
+> > >   	bool "Toshiba Visconti PCIe controller"
+> > >   	depends on ARCH_VISCONTI || COMPILE_TEST
+> > > diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> > > index 7ae28f3b0fb39..662b0a219ddc4 100644
+> > > --- a/drivers/pci/controller/dwc/Makefile
+> > > +++ b/drivers/pci/controller/dwc/Makefile
+> > > @@ -31,6 +31,7 @@ obj-$(CONFIG_PCIE_UNIPHIER) += pcie-uniphier.o
+> > >   obj-$(CONFIG_PCIE_UNIPHIER_EP) += pcie-uniphier-ep.o
+> > >   obj-$(CONFIG_PCIE_VISCONTI_HOST) += pcie-visconti.o
+> > >   obj-$(CONFIG_PCIE_RCAR_GEN4) += pcie-rcar-gen4.o
+> > > +obj-$(CONFIG_PCIE_SPACEMIT_K1) += pcie-spacemit-k1.o
+> > >   obj-$(CONFIG_PCIE_STM32_HOST) += pcie-stm32.o
+> > >   obj-$(CONFIG_PCIE_STM32_EP) += pcie-stm32-ep.o
+> > > diff --git a/drivers/pci/controller/dwc/pcie-spacemit-k1.c b/drivers/pci/controller/dwc/pcie-spacemit-k1.c
+> > > new file mode 100644
+> > > index 0000000000000..d58232cbb8a02
+> > > --- /dev/null
+> > > +++ b/drivers/pci/controller/dwc/pcie-spacemit-k1.c
+> > > @@ -0,0 +1,319 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * SpacemiT K1 PCIe host driver
+> > > + *
+> > > + * Copyright (C) 2025 by RISCstar Solutions Corporation.  All rights reserved.
+> > > + * Copyright (c) 2023, spacemit Corporation.
+> > > + */
+> > > +
+> > > +#include <linux/clk.h>
+> > > +#include <linux/delay.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/gfp.h>
+> > > +#include <linux/mfd/syscon.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/phy/phy.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/reset.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +#include "pcie-designware.h"
+> > > +
+> > > +#define PCI_VENDOR_ID_SPACEMIT		0x201f
+> > > +#define PCI_DEVICE_ID_SPACEMIT_K1	0x0001
+> > > +
+> > > +/* Offsets and field definitions for link management registers */
+> > > +
+> > 
+> > nit: drop the extra newline
 > 
->> On new platforms greater than QM_HW_V3, the migration region has been
->> relocated from the VF to the PF. The VF's own configuration space is
->> restored to the complete 64KB, and there is no need to divide the
->> size of the BAR configuration space equally. The driver should be
->> modified accordingly to adapt to the new hardware device.
->>
->> On the older hardware platform QM_HW_V3, the live migration configuration
->> region is placed in the latter 32K portion of the VF's BAR2 configuration
->> space. On the new hardware platform QM_HW_V4, the live migration
->> configuration region also exists in the same 32K area immediately following
->> the VF's BAR2, just like on QM_HW_V3.
->>
->> However, access to this region is now controlled by hardware. Additionally,
->> a copy of the live migration configuration region is present in the PF's
->> BAR2 configuration space. On the new hardware platform QM_HW_V4, when an
->> older version of the driver is loaded, it behaves like QM_HW_V3 and uses
->> the configuration region in the VF, ensuring that the live migration
->> function continues to work normally. When the new version of the driver is
->> loaded, it directly uses the configuration region in the PF. Meanwhile,
->> hardware configuration disables the live migration configuration region
->> in the VF's BAR2: reads return all 0xF values, and writes are silently
->> ignored.
->>
->> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
->> Reviewed-by: Shameer Kolothum <shameerkolothum@gmail.com>
->> ---
->>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 205 ++++++++++++------
->>  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |  21 ++
->>  2 files changed, 165 insertions(+), 61 deletions(-)
->>
->> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> index fde33f54e99e..55233e62cb1d 100644
->> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> @@ -125,6 +125,72 @@ static int qm_get_cqc(struct hisi_qm *qm, u64 *addr)
->>  	return 0;
->>  }
->>  
->> +static int qm_get_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->> +			   struct acc_vf_data *vf_data)
->> +{
->> +	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
->> +	struct device *dev = &qm->pdev->dev;
->> +	u32 eqc_addr, aeqc_addr;
->> +	int ret;
->> +
->> +	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL) {
->> +		eqc_addr = QM_EQC_DW0;
->> +		aeqc_addr = QM_AEQC_DW0;
->> +	} else {
->> +		eqc_addr = QM_EQC_PF_DW0;
->> +		aeqc_addr = QM_AEQC_PF_DW0;
->> +	}
->> +
->> +	/* QM_EQC_DW has 7 regs */
->> +	ret = qm_read_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
->> +	if (ret) {
->> +		dev_err(dev, "failed to read QM_EQC_DW\n");
->> +		return ret;
->> +	}
->> +
->> +	/* QM_AEQC_DW has 7 regs */
->> +	ret = qm_read_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
->> +	if (ret) {
->> +		dev_err(dev, "failed to read QM_AEQC_DW\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int qm_set_xqc_regs(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->> +			   struct acc_vf_data *vf_data)
->> +{
->> +	struct hisi_qm *qm = &hisi_acc_vdev->vf_qm;
->> +	struct device *dev = &qm->pdev->dev;
->> +	u32 eqc_addr, aeqc_addr;
->> +	int ret;
->> +
->> +	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL) {
->> +		eqc_addr = QM_EQC_DW0;
->> +		aeqc_addr = QM_AEQC_DW0;
->> +	} else {
->> +		eqc_addr = QM_EQC_PF_DW0;
->> +		aeqc_addr = QM_AEQC_PF_DW0;
->> +	}
->> +
->> +	/* QM_EQC_DW has 7 regs */
->> +	ret = qm_write_regs(qm, eqc_addr, vf_data->qm_eqc_dw, 7);
->> +	if (ret) {
->> +		dev_err(dev, "failed to write QM_EQC_DW\n");
->> +		return ret;
->> +	}
->> +
->> +	/* QM_AEQC_DW has 7 regs */
->> +	ret = qm_write_regs(qm, aeqc_addr, vf_data->qm_aeqc_dw, 7);
->> +	if (ret) {
->> +		dev_err(dev, "failed to write QM_AEQC_DW\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>  static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>  {
->>  	struct device *dev = &qm->pdev->dev;
->> @@ -167,20 +233,6 @@ static int qm_get_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>  		return ret;
->>  	}
->>  
->> -	/* QM_EQC_DW has 7 regs */
->> -	ret = qm_read_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
->> -	if (ret) {
->> -		dev_err(dev, "failed to read QM_EQC_DW\n");
->> -		return ret;
->> -	}
->> -
->> -	/* QM_AEQC_DW has 7 regs */
->> -	ret = qm_read_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
->> -	if (ret) {
->> -		dev_err(dev, "failed to read QM_AEQC_DW\n");
->> -		return ret;
->> -	}
->> -
->>  	return 0;
->>  }
->>  
->> @@ -239,20 +291,6 @@ static int qm_set_regs(struct hisi_qm *qm, struct acc_vf_data *vf_data)
->>  		return ret;
->>  	}
->>  
->> -	/* QM_EQC_DW has 7 regs */
->> -	ret = qm_write_regs(qm, QM_EQC_DW0, vf_data->qm_eqc_dw, 7);
->> -	if (ret) {
->> -		dev_err(dev, "failed to write QM_EQC_DW\n");
->> -		return ret;
->> -	}
->> -
->> -	/* QM_AEQC_DW has 7 regs */
->> -	ret = qm_write_regs(qm, QM_AEQC_DW0, vf_data->qm_aeqc_dw, 7);
->> -	if (ret) {
->> -		dev_err(dev, "failed to write QM_AEQC_DW\n");
->> -		return ret;
->> -	}
->> -
->>  	return 0;
->>  }
->>  
->> @@ -522,6 +560,10 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  		return ret;
->>  	}
->>  
->> +	ret = qm_set_xqc_regs(hisi_acc_vdev, vf_data);
->> +	if (ret)
->> +		return ret;
->> +
->>  	ret = hisi_qm_mb(qm, QM_MB_CMD_SQC_BT, qm->sqc_dma, 0, 0);
->>  	if (ret) {
->>  		dev_err(dev, "set sqc failed\n");
->> @@ -589,6 +631,10 @@ static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
->>  	vf_data->vf_qm_state = QM_READY;
->>  	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
->>  
->> +	ret = qm_get_xqc_regs(hisi_acc_vdev, vf_data);
->> +	if (ret)
->> +		return ret;
->> +
+> OK.
 > 
-> I'd have thought it'd still make sense that qm_{get,set}_regs() would
-> handle this subset of registers even though it's split out into helper
-> functions, now we have the dev_data debugfs failing to fill these
-> registers.  It's not clear it was worthwhile to split out the xqc
-> helpers at all here.
+> > > +#define K1_PHY_AHB_IRQ_EN			0x0000
+> > > +#define PCIE_INTERRUPT_EN		BIT(0)
+> > > +
+> > > +#define K1_PHY_AHB_LINK_STS			0x0004
+> > > +#define SMLH_LINK_UP			BIT(1)
+> > > +#define RDLH_LINK_UP			BIT(12)
+> > > +
+> > > +#define INTR_ENABLE				0x0014
+> > > +#define MSI_CTRL_INT			BIT(11)
+> > > +
+> > > +/* Some controls require APMU regmap access */
+> > > +#define SYSCON_APMU			"spacemit,apmu"
+> > > +
+> > > +/* Offsets and field definitions for APMU registers */
+> > > +
+> > 
+> > here also
+> 
+> OK.
+> 
+> > > +#define PCIE_CLK_RESET_CONTROL			0x0000
+> > > +#define LTSSM_EN			BIT(6)
+> > > +#define PCIE_AUX_PWR_DET		BIT(9)
+> > > +#define PCIE_RC_PERST			BIT(12)	/* 1: assert PERST# */
+> > > +#define APP_HOLD_PHY_RST		BIT(30)
+> > > +#define DEVICE_TYPE_RC			BIT(31)	/* 0: endpoint; 1: RC */
+> > > +
+> > > +#define PCIE_CONTROL_LOGIC			0x0004
+> > > +#define PCIE_SOFT_RESET			BIT(0)
+> > > +
+> > > +struct k1_pcie {
+> > > +	struct dw_pcie pci;
+> > > +	struct phy *phy;
+> > > +	void __iomem *link;
+> > > +	struct regmap *pmu;	/* Errors ignored; MMIO-backed regmap */
+> > > +	u32 pmu_off;
+> > > +};
+> > > +
+> > > +#define to_k1_pcie(dw_pcie) \
+> > > +		platform_get_drvdata(to_platform_device((dw_pcie)->dev))
+> > > +
+> > > +static void k1_pcie_toggle_soft_reset(struct k1_pcie *k1)
+> > > +{
+> > > +	u32 offset;
+> > > +	u32 val;
+> > > +
+> > > +	/*
+> > > +	 * Write, then read back to guarantee it has reached the device
+> > > +	 * before we start the delay.
+> > > +	 */
+> > > +	offset = k1->pmu_off + PCIE_CONTROL_LOGIC;
+> > > +	regmap_set_bits(k1->pmu, offset, PCIE_SOFT_RESET);
+> > > +	regmap_read(k1->pmu, offset, &val);
+> > > +
+> > > +	mdelay(2);
+> > > +
+> > > +	regmap_clear_bits(k1->pmu, offset, PCIE_SOFT_RESET);
+> > > +}
+> > > +
+> > > +/* Enable app clocks, deassert resets */
+> > > +static int k1_pcie_activate(struct k1_pcie *k1)
+> > 
+> > k1_pcie_enable_resources()?
+> 
+> OK, I'll use k1_pcie_{enable,disable}_resources().
+> 
+> > > +{
+> > > +	struct dw_pcie *pci = &k1->pci;
+> > > +	int ret;
+> > > +
+> > > +	ret = clk_bulk_prepare_enable(ARRAY_SIZE(pci->app_clks), pci->app_clks);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = reset_control_bulk_deassert(ARRAY_SIZE(pci->app_rsts),
+> > > +					  pci->app_rsts);
+> > > +	if (ret)
+> > > +		goto err_disable_clks;
+> > > +
+> > > +	ret = reset_control_bulk_deassert(ARRAY_SIZE(pci->core_rsts),
+> > > +					  pci->core_rsts);
+> > > +	if (ret)
+> > > +		goto err_assert_resets;
+> > > +
+> > > +	return 0;
+> > > +
+> > > +err_assert_resets:
+> > > +	reset_control_bulk_assert(ARRAY_SIZE(pci->app_rsts), pci->app_rsts);
+> > > +err_disable_clks:
+> > > +	clk_bulk_disable_unprepare(ARRAY_SIZE(pci->app_clks), pci->app_clks);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +/* Assert resets, disable app clocks */
+> > > +static void k1_pcie_deactivate(struct k1_pcie *k1)
+> > 
+> > k1_pcie_disable_resources()?
+> > 
+> > > +{
+> > > +	struct dw_pcie *pci = &k1->pci;
+> > > +
+> > > +	reset_control_bulk_assert(ARRAY_SIZE(pci->core_rsts), pci->core_rsts);
+> > > +	reset_control_bulk_assert(ARRAY_SIZE(pci->app_rsts), pci->app_rsts);
+> > > +	clk_bulk_disable_unprepare(ARRAY_SIZE(pci->app_clks), pci->app_clks);
+> > > +}
+> > > +
+> > > +static int k1_pcie_init(struct dw_pcie_rp *pp)
+> > > +{
+> > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > > +	struct k1_pcie *k1 = to_k1_pcie(pci);
+> > > +	u32 offset;
+> > > +	u32 mask;
+> > > +	u32 val;
+> > > +	int ret;
+> > > +
+> > > +	k1_pcie_toggle_soft_reset(k1);
+> > > +
+> > > +	ret = k1_pcie_activate(k1);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret = phy_init(k1->phy);
+> > > +	if (ret) {
+> > > +		k1_pcie_deactivate(k1);
+> > > +
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	/* Set the PCI vendor and device ID */
+> > > +	dw_pcie_dbi_ro_wr_en(pci);
+> > > +	dw_pcie_writew_dbi(pci, PCI_VENDOR_ID, PCI_VENDOR_ID_SPACEMIT);
+> > > +	dw_pcie_writew_dbi(pci, PCI_DEVICE_ID, PCI_DEVICE_ID_SPACEMIT_K1);
+> > > +	dw_pcie_dbi_ro_wr_dis(pci);
+> > > +
+> > > +	/*
+> > > +	 * Assert fundamental reset (drive PERST# low).  Put the port in
+> > 
+> > s/port/controller
+> 
+> OK.
+> 
+> > > +	 * root complex mode, and indicate that Vaux (3.3v) is present.
+> > > +	 */
+> > > +	mask = PCIE_RC_PERST;
+> > > +	mask |= DEVICE_TYPE_RC | PCIE_AUX_PWR_DET;
+> > > +
+> > > +	/*
+> > > +	 * Write, then read back to guarantee it has reached the device
+> > > +	 * before we start the delay.
+> > > +	 */
+> > > +	offset = k1->pmu_off + PCIE_CLK_RESET_CONTROL;
+> > > +	regmap_set_bits(k1->pmu, offset, mask);
+> > > +	regmap_read(k1->pmu, offset, &val);
+> > > +
+> > > +	mdelay(PCIE_T_PVPERL_MS);
+> > > +
+> > > +	/* Deassert fundamental reset (drive PERST# high) */
+> > > +	regmap_clear_bits(k1->pmu, offset, PCIE_RC_PERST);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void k1_pcie_deinit(struct dw_pcie_rp *pp)
+> > > +{
+> > > +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> > > +	struct k1_pcie *k1 = to_k1_pcie(pci);
+> > > +
+> > > +	/* Assert fundamental reset (drive PERST# low) */
+> > > +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
+> > > +			PCIE_RC_PERST);
+> > 
+> > You need assert PERST# here.
+> 
+> I don't understand this comment.
+> 
+> Setting PCIE_RC_PERST in this register drives PERST# low.
+> 
 
-Moving the differentiated handling of eqc and aeqc, which results from different drv_mode values,
-into the helper functions can keep the main business logic code for live migration
-clean and concise.
+Sorry, it was a brain fade from my side. Ignore my comment.
 
+> > > +	phy_exit(k1->phy);
+> > > +
+> > > +	k1_pcie_deactivate(k1);
+> > > +}
+> > > +
+> > > +static const struct dw_pcie_host_ops k1_pcie_host_ops = {
+> > > +	.init		= k1_pcie_init,
+> > > +	.deinit		= k1_pcie_deinit,
+> > > +};
+> > > +
+> > > +static bool k1_pcie_link_up(struct dw_pcie *pci)
+> > > +{
+> > > +	struct k1_pcie *k1 = to_k1_pcie(pci);
+> > > +	u32 val;
+> > > +
+> > > +	val = readl_relaxed(k1->link + K1_PHY_AHB_LINK_STS);
+> > > +
+> > > +	return (val & RDLH_LINK_UP) && (val & SMLH_LINK_UP);
+> > > +}
+> > > +
+> > > +static int k1_pcie_start_link(struct dw_pcie *pci)
+> > > +{
+> > > +	struct k1_pcie *k1 = to_k1_pcie(pci);
+> > > +	u32 val;
+> > > +
+> > > +	/* Stop holding the PHY in reset, and enable link training */
+> > > +	regmap_update_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
+> > > +			   APP_HOLD_PHY_RST | LTSSM_EN, LTSSM_EN);
+> > > +
+> > > +	/* Enable the MSI interrupt */
+> > > +	writel_relaxed(MSI_CTRL_INT, k1->link + INTR_ENABLE);
+> > > +
+> > > +	/* Top-level interrupt enable */
+> > > +	val = readl_relaxed(k1->link + K1_PHY_AHB_IRQ_EN);
+> > > +	val |= PCIE_INTERRUPT_EN;
+> > > +	writel_relaxed(val, k1->link + K1_PHY_AHB_IRQ_EN);
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static void k1_pcie_stop_link(struct dw_pcie *pci)
+> > > +{
+> > > +	struct k1_pcie *k1 = to_k1_pcie(pci);
+> > > +	u32 val;
+> > > +
+> > > +	/* Disable interrupts */
+> > > +	val = readl_relaxed(k1->link + K1_PHY_AHB_IRQ_EN);
+> > > +	val &= ~PCIE_INTERRUPT_EN;
+> > > +	writel_relaxed(val, k1->link + K1_PHY_AHB_IRQ_EN);
+> > > +
+> > > +	writel_relaxed(0, k1->link + INTR_ENABLE);
+> > > +
+> > > +	/* Disable the link and hold the PHY in reset */
+> > > +	regmap_update_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
+> > > +			   APP_HOLD_PHY_RST | LTSSM_EN, APP_HOLD_PHY_RST);
+> > > +}
+> > > +
+> > > +static const struct dw_pcie_ops k1_pcie_ops = {
+> > > +	.link_up	= k1_pcie_link_up,
+> > > +	.start_link	= k1_pcie_start_link,
+> > > +	.stop_link	= k1_pcie_stop_link,
+> > > +};
+> > > +
+> > > +static int k1_pcie_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct device *dev = &pdev->dev;
+> > > +	struct k1_pcie *k1;
+> > > +	int ret;
+> > > +
+> > > +	k1 = devm_kzalloc(dev, sizeof(*k1), GFP_KERNEL);
+> > > +	if (!k1)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	k1->pmu = syscon_regmap_lookup_by_phandle_args(dev_of_node(dev),
+> > > +						       SYSCON_APMU, 1,
+> > > +						       &k1->pmu_off);
+> > > +	if (IS_ERR(k1->pmu))
+> > > +		return dev_err_probe(dev, PTR_ERR(k1->pmu),
+> > > +				     "failed to lookup PMU registers\n");
+> > > +
+> > > +	k1->link = devm_platform_ioremap_resource_byname(pdev, "link");
+> > > +	if (!k1->link)
+> > > +		return dev_err_probe(dev, -ENOMEM,
+> > > +				     "failed to map \"link\" registers\n");
+> > > +
+> > > +	ret = devm_regulator_get_enable(dev, "vpcie3v3-supply");
+> > > +	if (ret)
+> > > +		return dev_err_probe(dev, ret,
+> > > +				     "failed to get \"vpcie3v3\" supply\n");
+> > 
+> > As mentioned in the bindings patch, you should rely on the PWRCTRL_SLOT driver
+> > to handle the power supplies. It is not yet handling the PERST#, but I have a
+> > series floating for that:
+> > https://lore.kernel.org/linux-pci/20250912-pci-pwrctrl-perst-v3-0-3c0ac62b032c@oss.qualcomm.com/
 > 
->>  	ret = vf_qm_read_data(vf_qm, vf_data);
->>  	if (ret)
->>  		return ret;
->> @@ -1186,34 +1232,52 @@ static int hisi_acc_vf_qm_init(struct hisi_acc_vf_core_device *hisi_acc_vdev)
->>  {
->>  	struct vfio_pci_core_device *vdev = &hisi_acc_vdev->core_device;
->>  	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
->> +	struct hisi_qm *pf_qm = hisi_acc_vdev->pf_qm;
->>  	struct pci_dev *vf_dev = vdev->pdev;
->> +	u32 val;
->>  
->> -	/*
->> -	 * ACC VF dev BAR2 region consists of both functional register space
->> -	 * and migration control register space. For migration to work, we
->> -	 * need access to both. Hence, we map the entire BAR2 region here.
->> -	 * But unnecessarily exposing the migration BAR region to the Guest
->> -	 * has the potential to prevent/corrupt the Guest migration. Hence,
->> -	 * we restrict access to the migration control space from
->> -	 * Guest(Please see mmap/ioctl/read/write override functions).
->> -	 *
->> -	 * Please note that it is OK to expose the entire VF BAR if migration
->> -	 * is not supported or required as this cannot affect the ACC PF
->> -	 * configurations.
->> -	 *
->> -	 * Also the HiSilicon ACC VF devices supported by this driver on
->> -	 * HiSilicon hardware platforms are integrated end point devices
->> -	 * and the platform lacks the capability to perform any PCIe P2P
->> -	 * between these devices.
->> -	 */
->> +	val = readl(pf_qm->io_base + QM_MIG_REGION_SEL);
->> +	if (pf_qm->ver > QM_HW_V3 && (val & QM_MIG_REGION_EN))
->> +		hisi_acc_vdev->drv_mode = HW_ACC_MIG_PF_CTRL;
->> +	else
->> +		hisi_acc_vdev->drv_mode = HW_ACC_MIG_VF_CTRL;
->>  
->> -	vf_qm->io_base =
->> -		ioremap(pci_resource_start(vf_dev, VFIO_PCI_BAR2_REGION_INDEX),
->> -			pci_resource_len(vf_dev, VFIO_PCI_BAR2_REGION_INDEX));
->> -	if (!vf_qm->io_base)
->> -		return -EIO;
->> +	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_PF_CTRL) {
->> +		/*
->> +		 * On hardware platforms greater than QM_HW_V3, the migration function
->> +		 * register is placed in the BAR2 configuration region of the PF,
->> +		 * and each VF device occupies 8KB of configuration space.
->> +		 */
->> +		vf_qm->io_base = pf_qm->io_base + QM_MIG_REGION_OFFSET +
->> +				 hisi_acc_vdev->vf_id * QM_MIG_REGION_SIZE;
->> +	} else {
->> +		/*
->> +		 * ACC VF dev BAR2 region consists of both functional register space
->> +		 * and migration control register space. For migration to work, we
->> +		 * need access to both. Hence, we map the entire BAR2 region here.
->> +		 * But unnecessarily exposing the migration BAR region to the Guest
->> +		 * has the potential to prevent/corrupt the Guest migration. Hence,
->> +		 * we restrict access to the migration control space from
->> +		 * Guest(Please see mmap/ioctl/read/write override functions).
->> +		 *
->> +		 * Please note that it is OK to expose the entire VF BAR if migration
->> +		 * is not supported or required as this cannot affect the ACC PF
->> +		 * configurations.
->> +		 *
->> +		 * Also the HiSilicon ACC VF devices supported by this driver on
->> +		 * HiSilicon hardware platforms are integrated end point devices
->> +		 * and the platform lacks the capability to perform any PCIe P2P
->> +		 * between these devices.
->> +		 */
->>  
->> +		vf_qm->io_base =
->> +			ioremap(pci_resource_start(vf_dev, VFIO_PCI_BAR2_REGION_INDEX),
->> +				pci_resource_len(vf_dev, VFIO_PCI_BAR2_REGION_INDEX));
->> +		if (!vf_qm->io_base)
->> +			return -EIO;
->> +	}
->>  	vf_qm->fun_type = QM_HW_VF;
->> +	vf_qm->ver = pf_qm->ver;
->>  	vf_qm->pdev = vf_dev;
->>  	mutex_init(&vf_qm->mailbox_lock);
->>  
->> @@ -1250,6 +1314,28 @@ static struct hisi_qm *hisi_acc_get_pf_qm(struct pci_dev *pdev)
->>  	return !IS_ERR(pf_qm) ? pf_qm : NULL;
->>  }
->>  
->> +static size_t hisi_acc_get_resource_len(struct vfio_pci_core_device *vdev,
->> +					unsigned int index)
->> +{
->> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =
->> +			hisi_acc_drvdata(vdev->pdev);
->> +
->> +	/*
->> +	 * On the old HW_ACC_MIG_VF_CTRL mode device, the ACC VF device
->> +	 * BAR2 region encompasses both functional register space
->> +	 * and migration control register space.
->> +	 * only the functional region should be report to Guest.
->> +	 */
->> +	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL)
->> +		return (pci_resource_len(vdev->pdev, index) >> 1);
->> +	/*
->> +	 * On the new HW device, the migration control register
->> +	 * has been moved to the PF device BAR2 region.
->> +	 * The VF device BAR2 is entirely functional register space.
->> +	 */
->> +	return pci_resource_len(vdev->pdev, index);
->> +}
->> +
->>  static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
->>  					size_t count, loff_t *ppos,
->>  					size_t *new_count)
->> @@ -1260,8 +1346,9 @@ static int hisi_acc_pci_rw_access_check(struct vfio_device *core_vdev,
->>  
->>  	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
->>  		loff_t pos = *ppos & VFIO_PCI_OFFSET_MASK;
->> -		resource_size_t end = pci_resource_len(vdev->pdev, index) / 2;
->> +		resource_size_t end;
->>  
->> +		end = hisi_acc_get_resource_len(vdev, index);
->>  		/* Check if access is for migration control region */
->>  		if (pos >= end)
->>  			return -EINVAL;
->> @@ -1282,8 +1369,9 @@ static int hisi_acc_vfio_pci_mmap(struct vfio_device *core_vdev,
->>  	index = vma->vm_pgoff >> (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT);
->>  	if (index == VFIO_PCI_BAR2_REGION_INDEX) {
->>  		u64 req_len, pgoff, req_start;
->> -		resource_size_t end = pci_resource_len(vdev->pdev, index) / 2;
->> +		resource_size_t end;
->>  
->> +		end = hisi_acc_get_resource_len(vdev, index);
->>  		req_len = vma->vm_end - vma->vm_start;
->>  		pgoff = vma->vm_pgoff &
->>  			((1U << (VFIO_PCI_OFFSET_SHIFT - PAGE_SHIFT)) - 1);
->> @@ -1330,7 +1418,6 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
->>  	if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
->>  		struct vfio_pci_core_device *vdev =
->>  			container_of(core_vdev, struct vfio_pci_core_device, vdev);
->> -		struct pci_dev *pdev = vdev->pdev;
->>  		struct vfio_region_info info;
->>  		unsigned long minsz;
->>  
->> @@ -1345,12 +1432,7 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
->>  		if (info.index == VFIO_PCI_BAR2_REGION_INDEX) {
->>  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
->>  
->> -			/*
->> -			 * ACC VF dev BAR2 region consists of both functional
->> -			 * register space and migration control register space.
->> -			 * Report only the functional region to Guest.
->> -			 */
->> -			info.size = pci_resource_len(pdev, info.index) / 2;
->> +			info.size = hisi_acc_get_resource_len(vdev, info.index);
->>  
->>  			info.flags = VFIO_REGION_INFO_FLAG_READ |
->>  					VFIO_REGION_INFO_FLAG_WRITE |
->> @@ -1521,7 +1603,8 @@ static void hisi_acc_vfio_pci_close_device(struct vfio_device *core_vdev)
->>  	hisi_acc_vf_disable_fds(hisi_acc_vdev);
->>  	mutex_lock(&hisi_acc_vdev->open_mutex);
->>  	hisi_acc_vdev->dev_opened = false;
->> -	iounmap(vf_qm->io_base);
->> +	if (hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL)
->> +		iounmap(vf_qm->io_base);
->>  	mutex_unlock(&hisi_acc_vdev->open_mutex);
->>  	vfio_pci_core_close_device(core_vdev);
->>  }
->> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
->> index 91002ceeebc1..d287abe3dd31 100644
->> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
->> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.h
->> @@ -59,6 +59,26 @@
->>  #define ACC_DEV_MAGIC_V1	0XCDCDCDCDFEEDAACC
->>  #define ACC_DEV_MAGIC_V2	0xAACCFEEDDECADEDE
->>  
->> +#define QM_MIG_REGION_OFFSET		0x180000
->> +#define QM_MIG_REGION_SIZE		0x2000
->> +
->> +#define QM_SUB_VERSION_ID		0x100210
+> I think that just means that I'll define a DT node compatible with
+> "pciclass,0604", and in that node I'll specify the vpcie3v3-supply
+> property.  That will cause that (pwrctrl) device to get and enable
+> the supply before the "real" PCIe device probes.
 > 
-> Above SUB_VERSION_ID isn't used.
 
-Yes, this macro variable needs to be removed.
+Right.
 
+> And once your PERST work gets merged into the PCI power control
+> framework, a callback will allow that to assert PERST# as needed
+> surrounding power transitions.  (But I won't worry about that
+> for now.)
 > 
->> +#define QM_EQC_PF_DW0			0x1c00
->> +#define QM_AEQC_PF_DW0			0x1c20
-> 
-> Seems like it'd make sense to define these next to the VF offsets and
-> perhaps even add "VF" to the existing macros for consistency.  Thanks,
->
 
-OK, it's better to distinguish between the old offset variable names with "VF"
-and the newly added PF offset addresses for clarity
+I'm still nervous to say that you should not worry about it (about not
+deasserting PERST# at the right time) as it goes against the PCIe spec.
+Current pwrctrl platforms supporting PERST# are working fine due to sheer luck.
 
-Thanks,
-Longfang.
+So it would be better to leave the pwrctrl driver out of the equation now and
+enable the supply in this driver itself. Later, once my pwrctrl rework gets
+merged, I will try to switch this driver to use it.
 
-> Alex
+> Is that right?
 > 
->> +
->> +/**
->> + * On HW_ACC_MIG_VF_CTRL mode, the configuration domain supporting live
->> + * migration functionality is located in the latter 32KB of the VF's BAR2.
->> + * The Guest is only provided with the first 32KB of the VF's BAR2.
->> + * On HW_ACC_MIG_PF_CTRL mode, the configuration domain supporting live
->> + * migration functionality is located in the PF's BAR2, and the entire 64KB
->> + * of the VF's BAR2 is allocated to the Guest.
->> + */
->> +enum hw_drv_mode {
->> +	HW_ACC_MIG_VF_CTRL = 0,
->> +	HW_ACC_MIG_PF_CTRL,
->> +};
->> +
->>  struct acc_vf_data {
->>  #define QM_MATCH_SIZE offsetofend(struct acc_vf_data, qm_rsv_state)
->>  	/* QM match information */
->> @@ -125,6 +145,7 @@ struct hisi_acc_vf_core_device {
->>  	struct pci_dev *vf_dev;
->>  	struct hisi_qm *pf_qm;
->>  	struct hisi_qm vf_qm;
->> +	int drv_mode;
->>  	/*
->>  	 * vf_qm_state represents the QM_VF_STATE register value.
->>  	 * It is set by Guest driver for the ACC VF dev indicating
+> > > +
+> > > +	/* Hold the PHY in reset until we start the link */
+> > > +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
+> > > +			APP_HOLD_PHY_RST);
+> > > +
+> > > +	k1->phy = devm_phy_get(dev, NULL);
+> > > +	if (IS_ERR(k1->phy))
+> > > +		return dev_err_probe(dev, PTR_ERR(k1->phy),
+> > > +				     "failed to get PHY\n");
+> > 
+> > Once you move these properties to Root Port binding, you need to have per-Root
+> > Port parser. Again, you can refer the STM32 driver.
 > 
-> .
+> I see getting the PHY in stm32_pcie_parse_port(), but nothing
+> about the supply (which you mentioned in the other message).
 > 
+
+To conclude, you should move forward with defining the PHY and supply properties
+in the Root Port node, but parse/handle them in this driver itself.
+
+> > > +
+> > > +	k1->pci.dev = dev;
+> > > +	k1->pci.ops = &k1_pcie_ops;
+> > > +	dw_pcie_cap_set(&k1->pci, REQ_RES);
+> > > +
+> > > +	k1->pci.pp.ops = &k1_pcie_host_ops;
+> > > +	k1->pci.pp.num_vectors = MAX_MSI_IRQS;
+> > 
+> > This driver is just using a single 'msi' vector, which can only support 32 MSIs.
+> > But MAX_MSI_IRQS is 256. So this looks wrong.
+> 
+> In dw_pcie_host_init(), if unspecified, MSI_DEF_NUM_VECTORS=32 is
+> used for num_vectors.  If it is specified, only if the value
+> exceeds MAX_MSI_IRQS=256 is an error returned.
+> 
+
+Yes, because the driver trusts the glue drivers to provide the num_vectors if
+they support more than 32.
+
+> In dw_handle_msi_irq(), "num_ctrls" is computed based on
+> num_vectors / MAX_MSI_IRQS_PER_CTRL=32.  A loop then
+> iterates over those "controllers"(?) to handle each bit
+> set in their corresponding register.
+> 
+> This seems OK.  Can you explain why you think it's wrong?
+> 
+
+So both 'ctrl' and 'msi' IRQs are interrelated. Each 'ctrl' can have upto 32 MSI
+vectors only. If your platform supports more than 32 MSI vectors, like 256, then
+the platform DT should provide 8 'msi' IRQs.
+
+Currently the driver is not strict about this requirement. I will send a patch
+to print an error message if this requirement is not satisfied.
+
+> > > +
+> > > +	platform_set_drvdata(pdev, k1);
+> > > +
+> > 
+> > For setting the correct runtime PM state of the controller, you should do:
+> > 
+> > pm_runtime_set_active()
+> > pm_runtime_no_callbacks()
+> > devm_pm_runtime_enable()
+> 
+> OK, that's easy enough.
+> 
+> > This will fix the runtime PM hierarchy of PCIe chain (from host controller to
+> > client drivers). Otherwise, it will be broken.
+> Is this documented somewhere?  (It wouldn't surprise me if it
+> is and I just missed it.)
+> 
+
+Sorry no. It is on my todo list. But I'm getting motivation now.
+
+> This driver has as its origins some vendor code, and I simply
+> removed the runtime PM calls.  I didn't realize something would
+> be broken without making pm_runtime*() calls.
+> 
+
+It is the PM framework requirement to mark the device as 'active' to allow it to
+participate in runtime PM. If you do not mark it as 'active' and 'enable' it,
+the framework will not allow propagating the runtime PM changes before *this*
+device. For instance, consider the generic PCI topology:
+
+PCI controller (platform device)
+	|
+PCI host bridge
+	|
+PCI Root Port
+	|
+PCI endpoint device
+
+If the runtime PM is not enabled for the PCI Root Port, then if the PCI endpoint
+device runtime suspends, it will not trigger runtime suspend for the Root Port
+and also for the PCI controller. Also, since the runtime PM framework doesn't
+have the visibility of the devices underneath the bus (like endpoint), it may
+assume that no devices (children) are currently active and may trigger runtime
+suspend of the Root Port (parent) even though the endpoint device could be
+'active'.
+
+For all these reasons, it is recommended to properly reflect the runtime PM
+status of the device even if the driver doesn't do anything special about it.
+This is also the reason why I asked you to set pm_runtime_no_callbacks() since
+this driver doesn't register any runtime PM ops.
+
+Since this controller driver is the top of the hierarchy, you may ask what could
+happen if this driver runtime PM status is not reflected correctly. Well, most
+controllers have some power domain associated with them controlled by the genpd
+framework. If the runtime PM framework thinks that there are no devices
+connected to the bus and the controller driver also doesn't have the state
+enabled, it may disable the power domain associated with it. If that happens,
+the PCI controller will not work and so the devices in the hierarchy.
+
+Hope this clarifies.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
