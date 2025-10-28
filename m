@@ -1,124 +1,251 @@
-Return-Path: <linux-kernel+bounces-873020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B2AC12D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:13:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7843C12D88
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:17:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC8594E1372
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:13:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3417A1A22C91
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9A0299957;
-	Tue, 28 Oct 2025 04:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A51298CCF;
+	Tue, 28 Oct 2025 04:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lbo5U6tc"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WlVuSCYz"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FB245021
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF0A1D7E41
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761624802; cv=none; b=qZoH18CKZdGJw5t83kvlsGP7YmwRg+5SCETqo7JvTVfqhe+RF13FI7lv6HOhjCMvuru+Cd4o8DvzeCc7ho/QVtrQGM4TMzG9VUEi/V19s20ryvNPRm9B49KCueWdrqx445Wswh/2w5BRHLpNBN2/RmD62gt9bRycOl09QRJOiww=
+	t=1761625061; cv=none; b=UICcA/wdFi1wzjefuUG9MbFjPUNtx2c4QjDzrKfUMikXLKM/anf6q5sTkrjOis5ZLRICBOIKQSJxGcns/9H5/WAlRKF6c3fe3GqpMWGbZUmv6AnRXTMGPZ1M3ffIZdtLt6djI9eLSWfOFA0EVBbqgw5DRKWN8NNPFJx61xcTGl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761624802; c=relaxed/simple;
-	bh=UyyiNhIYnsemwIB2QhJMUyT/KVr2/tew62qORZRK0Yg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gbatUXw80Qb7DVV8eMPYT2u8Q/8xIAG0L017qWgBrYnwXm/l5aCsLaJF0cjCRA54CcLHlLokZZzB9dmBZdHJMR4KdPzXOCwHi7/fQd0vjbbjqopzL66nm8kCx6yzsicqmLxso/C1mWRIRFBL619BKPDjf//yxAxRjUf3l/GIJR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lbo5U6tc; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so840938066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:13:20 -0700 (PDT)
+	s=arc-20240116; t=1761625061; c=relaxed/simple;
+	bh=1bEKqU8kV0ErBu1ALa2/+teuG5Dzt3u1bm7EjGr0028=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=f137n21Vc0DK4kHv+6cgulHbQwD2wR+4nlEEhY71u3AGpBCt5komISIf72BbZVHyqpwywPfnUa2w4TxeBUUrwq5bau9EE9K4UTDdSWKUxl2DTojjTM3DRN3SZ+UH3OeT4/aY39UamozL6/lbRz6Reh8w2S1EhtKw9X2HiMJ+mLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WlVuSCYz; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-470ff2f6e56so45345e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1761624799; x=1762229599; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wEgqINWjOapsM0h4fb7Lm6F0VAqSNd9RUscnZLgSB1U=;
-        b=lbo5U6tceNABkoI5dzvEAg5UbJWJEOEmk+5XBRW85Ot8eP+2lV2C2vRjXFgyAJjCT4
-         rLeDfVzjgCiGjlC730D8eHGsHBivSMPWdDf8RuT2a4BZdr7DQUfoYXRkr66eBiR2nujk
-         M2pOpi1By0M9HTVxSHMFamFThEvWPIjJ1TZe18A9QVqP0yPTv9c81FM8cLeK4pCpq9Rg
-         5Dts7qyNVXxXC0TsIaUSap+44VOds4bP57VQ228q86TboED+Os/I40IzIg96dq99ThnM
-         8pWgwouUJvS9Oi5rRG9dX8Sg8hwvjh3BAFWWTX5MY61xh4j8tP7Bl1pLlA+GGlHFeBlm
-         mCLw==
+        d=google.com; s=20230601; t=1761625058; x=1762229858; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2cAevRJm/yIdn/zFvFaKRkG15E90y6nwgwebq1Zvcoo=;
+        b=WlVuSCYziGB96dcM/scbdZjN139A6nf52m83sofbm3QT54a1ZID32/+1xLjMmjFE7y
+         kp0fJuyVJzcqOTghEOd3EYfHiIM8Xpe++6UsSULma1TW+UCWoU8lPS6+F/GQa4AW3SJy
+         e41atNT8nCT1BOi8SzL4u7NA2MqQmVBwzW+ICaVjQ3YSBF4zQVK/2/YadJmNdq3VLeeP
+         6AfQMZGfXBTEgRC6Z7fzae1Oggq2FLBBw3yVBLAc+W0HOdHsfhDHRnc+OZXJRgfTpOw9
+         LNPG1IccuoRVv9k5wDTlJUNosgTwpyeO3Ct9QchX7cIr59PmXFjEiYweoS/YfdARVqxN
+         Exxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761624799; x=1762229599;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEgqINWjOapsM0h4fb7Lm6F0VAqSNd9RUscnZLgSB1U=;
-        b=Nw1EfgfBr1RgpMuwjc+stTZun5PUnxNSAxvRxxces388nbbVWa0rYiWW1sEaBPdVqO
-         awMnq8ME5phFabhGXUuKAdoUAHPSAl+XcMO4jZTnwXVBrD/UOZvNStCRhinudHCT6Vog
-         rgHfIYxvXYx+U+dZhdaYUGgeKLLvSHHglV83zEVytvJE3nmcJw3+T9JC2aMa1lPKZuxa
-         B0/eCSkbPErzkbSmAoNcIok7bpis8A2+7oeAamPjkV/Wo1zqMwE2XIwLSDClAKp6QAfZ
-         430E1MAzzB/2gTw2qFLF3ySEDu+RP/pGzrPXwPk+gEFhxT8nwC1JxkbxLzac5BERlWA8
-         wLVw==
-X-Forwarded-Encrypted: i=1; AJvYcCU12bJ4Tg31+zNqOEjxzBrePbsJyYrh/0FWL1y4coQx0It0EhEGfsx8760hBv/1/cQq0XwQSlG+V5DIgPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY++xQajWp3xnPh9eVk5/1EOsTIuf2OyKCGoe/6FOiLTnQGoMc
-	QiH47R0Q2H2FzUFrb7jFmObeFOulL+woUUk/vVu3e9gdI6hffSq2K0w=
-X-Gm-Gg: ASbGncusUq1kuPPvs26uYIYv22FTvhRGdtvB15L9+g4hYJ6ufNf26IOHGXrXqsalhSD
-	VPf3arnDP037zOzb+aJb2gajQ9AXoYcvhHEtm6nVI/mLbA3kMGQjktOsyYSrW9bxjZhj0eQ68Ij
-	+AKyXPK93gxi8/SSMBIuVK9G6ycfym1vmPLBzmqgy6EYm0LtZbTKAgPhY9vRFjSfQYOmGA6OC8L
-	hUjWnpliteAadR6EoAR5hEkzvu3Yz/5tvN0Cuq8yGpx0w9NDcNaLSPCCpKFEH2zqgrLUfHSgDwI
-	4ZmCSdUm4TqDSrYDPt6KAWRvWiz6xo5uPEgkC3E47w6rDrzhJ1B9YrtWN1AuObv+udIehQYqHPK
-	FDt8qA8yrkmAGRtONKEqPiizxW4iDXiwoJpbqvbsn45fsIKRF5LEqye4YBU3wSMJn29ku5/RFfZ
-	31OLC5HGavsp4REgxwewB5hKIavUCatadtyYkdoN8KV+PMdNQYBD8=
-X-Google-Smtp-Source: AGHT+IEUPA4wpYmXK0HNWghv1sI6PC6wX8Ur9fjRdU/JKa9FwcicSW3bLBVlrN3ChpFgFmnLfEDCTg==
-X-Received: by 2002:a17:907:7e96:b0:b6d:6832:a9d3 with SMTP id a640c23a62f3a-b6dba584353mr220514066b.39.1761624798933;
-        Mon, 27 Oct 2025 21:13:18 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057a53.dip0.t-ipconnect.de. [91.5.122.83])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85445d48sm954769066b.65.2025.10.27.21.13.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 21:13:18 -0700 (PDT)
-Message-ID: <377623ca-864e-427d-b6d9-3ba0788d2261@googlemail.com>
-Date: Tue, 28 Oct 2025 05:13:17 +0100
+        d=1e100.net; s=20230601; t=1761625058; x=1762229858;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2cAevRJm/yIdn/zFvFaKRkG15E90y6nwgwebq1Zvcoo=;
+        b=egwPOwRsrgkQR1scccgUk643cjHy3U0Cfh3wIh+9mEhvF1ksHnD/i5/Cc8tTU6oXK1
+         kay6twC2odkrx/eNxIcTa9Sw01AklYbZy/a/vhck/CVlrYuOVPs3uWpDmxrIAU5wAgTw
+         1QLTSDSHG9P6QpYYOROvfjPNo2AYwGxnIL4Lr4Cz/qjExKMyGYpuB8neB/rj6awK+Sd1
+         hC4JgpWDgghb/UqBTfC24aYG5GPLsilEChrm8RixnWrMkm/RGQEVW1V7y1/bCrgQO4Px
+         X0h9pJIe8q5oj8rz8iZEchUUx4LvD7WOKbodR8gDBA/3VmgX6tZNVFa5lKgCsKHocpFB
+         YcmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzgCKoyHBVd0gZquXWPKsw/w+uzGJNufbLNFUbAgkUL9FIbHYR2mtqx+ufxwh6VXG7c4G0LU1UIeHBmVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJIrqr3ANAbwhOnTjFKf+mptkPM6ET0gB5gyQzw0JqtUSbhjPL
+	4KJmW4xOXv492W3Y24faNMFUHBYe5kcezOnEER4KqIS7NNsNuvIboW8JCSvPUMW0wu4MyWukB1b
+	MFOKiaCcpHAIo6H2T0dsWfW28txOL7vPlzryXIIve
+X-Gm-Gg: ASbGncv6v8XaE7vTfMgVSkrnPc74McaET7/ddjNwO7sObdIyeRUZuRMTRRFMOvoCHDf
+	0NtKgsUBnLcR4Pj0p7BHGQ/EK93IlCzgzS6t9jfXDjY8LDO0iLml6STSNzvWw8NFNOv30ZVxDHz
+	t1GIUO2Lz95fXx01woZvfckleQ4HPsbaufqWgkbA3a0IwayTVO4Xc9SJW8AD4t850uK9lapLcZl
+	quLH5bJIhXzb52UtU+qDRZJUGz3zxVHJ/lTCWcO4GzLj/dM5O1jdWpVCUHwGIDp4wyVpe4UAYWu
+	6kAsHctc8ByXAjegw156lTptlCXW
+X-Google-Smtp-Source: AGHT+IE+E4tY+etIsCFF2nPDoUHnyT22SnJy9UYp9PvQ/KhLgWN6YLuk42P54iQFHSSSkaspkz8UX/surNJ8nzJ1vaM=
+X-Received: by 2002:a05:600c:c0da:b0:475:da0c:38a8 with SMTP id
+ 5b1f17b1804b1-47718507566mr1227225e9.4.1761625057533; Mon, 27 Oct 2025
+ 21:17:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.12 000/117] 6.12.56-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- achill@achill.org, sr@sladewatkins.com
-References: <20251027183453.919157109@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250118231549.1652825-1-jiaqiyan@google.com> <20250919155832.1084091-1-william.roche@oracle.com>
+ <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com> <24367c05-ad1f-4546-b2ed-69e587113a54@oracle.com>
+In-Reply-To: <24367c05-ad1f-4546-b2ed-69e587113a54@oracle.com>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Mon, 27 Oct 2025 21:17:26 -0700
+X-Gm-Features: AWmQ_bmX6ASj90LVpGKygNwiwwkhojJGWTI7LXhkciYIpunIwL2ADJiOsQmDDCU
+Message-ID: <CACw3F53ycL5xDwHC2dYxi9RXBAF=nQjwT4HWnRWewQLaHFU_kw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
+To: William Roche <william.roche@oracle.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, jgg@nvidia.com, akpm@linux-foundation.org, 
+	ankita@nvidia.com, dave.hansen@linux.intel.com, david@redhat.com, 
+	duenwen@google.com, jane.chu@oracle.com, jthoughton@google.com, 
+	linmiaohe@huawei.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, muchun.song@linux.dev, 
+	nao.horiguchi@gmail.com, osalvador@suse.de, peterx@redhat.com, 
+	rientjes@google.com, sidhartha.kumar@oracle.com, tony.luck@intel.com, 
+	wangkefeng.wang@huawei.com, willy@infradead.org, harry.yoo@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 27.10.2025 um 19:35 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.12.56 release.
-> There are 117 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Tue, Oct 14, 2025 at 1:57=E2=80=AFPM William Roche <william.roche@oracle=
+.com> wrote:
+>
+> On 10/14/25 00:14, Jiaqi Yan wrote:
+>  > On Fri, Sep 19, 2025 at 8:58=E2=80=AFAM William Roche wrote:
+>  > [...]
+>  >>
+>  >> Using this framework, I realized that the code provided here has a
+>  >> problem:
+>  >> When the error impacts a large folio, the release of this folio
+>  >> doesn't isolate the sub-page(s) actually impacted by the poison.
+>  >> __rmqueue_pcplist() can return a known poisoned page to
+>  >> get_page_from_freelist().
+>  >
+>  > Just curious, how exactly you can repro this leaking of a known poison
+>  > page? It may help me debug my patch.
+>  >
+>
+> When the memfd segment impacted by a memory error is released, the
+> sub-page impacted by a memory error is not removed from the freelist and
+> an allocation of memory (large enough to increase the chance to get this
+> page) crashes the system with the following stack trace (for example):
+>
+> [  479.572513] RIP: 0010:clear_page_erms+0xb/0x20
+> [...]
+> [  479.587565]  post_alloc_hook+0xbd/0xd0
+> [  479.588371]  get_page_from_freelist+0x3a6/0x6d0
+> [  479.589221]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [  479.590122]  __alloc_frozen_pages_noprof+0x186/0x380
+> [  479.591012]  alloc_pages_mpol+0x7b/0x180
+> [  479.591787]  vma_alloc_folio_noprof+0x70/0xf0
+> [  479.592609]  alloc_anon_folio+0x1a0/0x3a0
+> [  479.593401]  do_anonymous_page+0x13f/0x4d0
+> [  479.594174]  ? pte_offset_map_rw_nolock+0x1f/0xa0
+> [  479.595035]  __handle_mm_fault+0x581/0x6c0
+> [  479.595799]  handle_mm_fault+0xcf/0x2a0
+> [  479.596539]  do_user_addr_fault+0x22b/0x6e0
+> [  479.597349]  exc_page_fault+0x67/0x170
+> [  479.598095]  asm_exc_page_fault+0x26/0x30
+>
+> The idea is to run the test program in the VM and instead of using
+> madvise to poison the location, I take the physical address of the
+> location, and use Qemu 'gpa2hpa' address of the location,
+> so that I can inject the error on the hypervisor with the
+> hwpoison-inject module (for example).
+> Let the test program finish and run a memory allocator (trying to take
+> as much memory as possible)
+> You should end up on a panic of the VM.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg oddities or regressions found.
+Thanks William, I can even repro with the hugetlb-mfr selftest withou a VM.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+>
+>  >>
+>  >> This revealed some mm limitations, as I would have expected that the
+>  >> check_new_pages() mechanism used by the __rmqueue functions would
+>  >> filter these pages out, but I noticed that this has been disabled by
+>  >> default in 2023 with:
+>  >> [PATCH] mm, page_alloc: reduce page alloc/free sanity checks
+>  >> https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
+>  >
+>  > Thanks for the reference. I did turned on CONFIG_DEBUG_VM=3Dy during d=
+ev
+>  > and testing but didn't notice any WARNING on "bad page"; It is very
+>  > likely I was just lucky.
+>  >
+>  >>
+>  >>
+>  >> This problem seems to be avoided if we call take_page_off_buddy(page)
+>  >> in the filemap_offline_hwpoison_folio_hugetlb() function without
+>  >> testing if PageBuddy(page) is true first.
+>  >
+>  > Oh, I think you are right, filemap_offline_hwpoison_folio_hugetlb
+>  > shouldn't call take_page_off_buddy(page) depend on PageBuddy(page) or
+>  > not. take_page_off_buddy will check PageBuddy or not, on the page_head
+>  > of different page orders. So maybe somehow a known poisoned page is
+>  > not taken off from buddy allocator due to this?
+>  >
+>  > Let me try to fix it in v2, by the end of the week. If you could test
+>  > with your way of repro as well, that will be very helpful!
+>
+>
+> Of course, I'll run the test on your v2 version and let you know how it
+> goes.
 
+Sorry it took more than I expect to prepare v2. I want to get rid of
+populate_memfd_hwp_folios and want to insert
+filemap_offline_hwpoison_folio into remove_inode_single_folio so that
+everything can be done on the fly in remove_inode_hugepages's while
+loop. This refactor isn't as trivial as I thought.
 
-Beste Grüße,
-Peter Schneider
+I was struggled with page refcount for some time, for a couple of reasons:
+1. filemap_offline_hwpoison_folio has to put 1 refcount on hwpoison-ed
+folio so it can be dissolved. But I immediately got a "BUG: Bad page
+state in process" due to "page: refcount:-1".
+2. It turns out to be that remove_inode_hugepages also puts folios'
+refcount via folio_batch_release. I avoided this for hwpoison-ed folio
+by removing it from the fbatch.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+I have just tested v2 with the hugetlb-mfr selftest and didn't see
+"BUG: Bad page" for either nonzero refcount or hwpoison after some
+hours of running/up time. Meanwhile, I will send v2 as a draft to you
+for more test coverage.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+>
+>
+>  >> But according to me it leaves a (small) race condition where a new
+>  >> page allocation could get a poisoned sub-page between the dissolve
+>  >> phase and the attempt to remove it from the buddy allocator.
+>
+> I still think that the way we recycle the impacted large page still has
+> a (much smaller) race condition where a memory allocation can get the
+> poisoned page, as we don't have the checks to filter the poisoned page
+> from the freelist.
+> I'm not sure we have a way to recycle the page without having a moment
+> when the poison page is in the freelist.
+> (I'd be happy to be proven wrong ;) )
+>
+>
+>  >> If performance requires using Hugetlb pages, than maybe we could
+>  >> accept to loose a huge page after a memory impacted
+>  >> MFD_MF_KEEP_UE_MAPPED memfd segment is released ? If it can easily
+>  >> avoid some other corruption.
+>
+> What I meant is: if we don't have a reliable way to recycle an impacted
+> large page, we could start with a version of the code where we don't
+> recycle it, just to avoid the risk...
+>
+>
+>  >
+>  > There is also another possible path if VMM can change to back VM
+>  > memory with *1G guest_memfd*, which wraps 1G hugetlbfs. In Ackerley's
+>  > work [1], guest_memfd can split the 1G page for conversions. If we
+>  > re-use the splitting for memory failure recovery, we can probably
+>  > achieve something generally similar to THP's memory failure recovery:
+>  > split 1G to 2M and 4k chunks, then unmap only 4k of poisoned page. We
+>  > still lose the 1G TLB size so VM may be subject to some performance
+>  > sacrifice.
+>  >
+>  > [1]
+> https://lore.kernel.org/linux-mm/2ae41e0d80339da2b57011622ac2288fed65cd01=
+.1747264138.git.ackerleytng@google.com
+>
+>
+> Thanks for the pointer.
+> I personally think that splitting the large page into base pages, is
+> just fine.
+> The main possibility I see in this project is to significantly increase
+> the probability to survive a memory error on large pages backed VMs.
+>
+> HTH.
+>
+> Thanks a lot,
+> William.
 
