@@ -1,175 +1,128 @@
-Return-Path: <linux-kernel+bounces-873266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A21C13870
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:25:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A723DC1382E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:22:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F523AD318
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D4251893D66
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54A92D839A;
-	Tue, 28 Oct 2025 08:22:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807982848AE;
+	Tue, 28 Oct 2025 08:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm3Ko8xU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522CE2D8395;
-	Tue, 28 Oct 2025 08:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D750035B13C;
+	Tue, 28 Oct 2025 08:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639748; cv=none; b=KUtyf48RPswEaDUoxBcUThQ3OiSAEImuBdguIOWTmUG7RXkKCQxICwLW6ElI/6M03CRNMlWJtiIhFxNJwJ+82nXoJzfLzjm4tsw0wy53rq4vHjpW/jOZizT3FYMa2G7H5P/88iY9QeIq3gRWWLFnXUBZkZg5h8dQ6b/o4XznzKA=
+	t=1761639681; cv=none; b=QvWM0ZhVvyojznYMB8CXsZY5ujYaRLbMDJ61JmrTSEBmnFafrJfmMAVZ/3V+R+v+PGBJSYhE2c9S4hArZaagHULT2qyEwAHxUYK7b4JBhEq3HKDq0M7QB+7wbduyEFeRZe/JxO+3QDRjgdLUeIXUy6H1pjU/b1fZFIzGAI9RtKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639748; c=relaxed/simple;
-	bh=JnHBpzt4+6XTNFKbiOj/fWeABjxut+4jKSAVSSepJ6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GIIDMg3oJW/A4id5IT2GinzDzFHDznWiBJqvzI3PljxvqmrAK/JUDMwf9r371a1MKq2OU8eko/4uc9xop9rqS/g10u0wuup8G2QNEJDK58YnhiXexTPoK/uxwViTkabiRwNUJ2GMXxybMli0jKt59qKazgGLOPn9hUM0l4FTmio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAA317k1fQBp7jw0BA--.4704S2;
-	Tue, 28 Oct 2025 16:22:15 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Lee Jones <lee@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] leds: netxbig: fix GPIO descriptor leak in error paths
-Date: Tue, 28 Oct 2025 16:21:17 +0800
-Message-ID: <20251028082117.276-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1761639681; c=relaxed/simple;
+	bh=xq6vPTE5D8vp9z0Ik6OcuXF3IvLLXrGywxNTTZownOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ox4GqjF4KFATAp040/IcnJcxB8zQ/pfSSSlcEf1D2IvALy0Z2gj3f6nbzhZEipXR0MHpPyJ4DclYztUDHqQYLpVI1dqgyQodAxlRWy3pCmLyszjZXsNDUMyPjVx3daJ/ICRHYolHmMsYjjGl/Dvlo3R1id9J4S4l+JVjny1QiFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zm3Ko8xU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53C53C4CEE7;
+	Tue, 28 Oct 2025 08:21:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761639681;
+	bh=xq6vPTE5D8vp9z0Ik6OcuXF3IvLLXrGywxNTTZownOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zm3Ko8xUw6mz5bmJKElBxZZnc515gBzgYlexGEXTV7+8ewILjEH/LGcGkouyx29SR
+	 wgIfheQtmzQZPBzeMQA2eWORMrkBs9m0HrYfCROHmTyILF1+bbZoHEIZXVoy5PXZX5
+	 ncD4rqLHmbW7bpY/lDmLZu5yXkcabWXCoUoxX8oGHzp3GxsJZfV6gj51xGK17R6186
+	 8gcSsdp1Nqf1mrclcD63+PtKgC0q19fR4qYh455JA+OkFPZBqkvBuyA59a6lS+gwlh
+	 hKsn1BnpMBoBUoQIGX/w9AduHALhdmjlzaQFG+GiazcDX90tjtSiPXq0arK56IDgg7
+	 v61HDSTvPTwCQ==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1vDexI-000000007wt-2LbI;
+	Tue, 28 Oct 2025 09:21:24 +0100
+Date: Tue, 28 Oct 2025 09:21:24 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Hans Verkuil <hans.verkuil@cisco.com>, linux-media@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] media: mediatek: fix VPU device leaks on probe
+Message-ID: <aQB9BIjXEOHpIy3_@hovoldconsulting.com>
+References: <20250924133552.28841-1-johan@kernel.org>
+ <aP91nfnpShIhXcVQ@hovoldconsulting.com>
+ <ac27d9b1da68746c62c03047fd7896e2303ef1fd.camel@ndufresne.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAA317k1fQBp7jw0BA--.4704S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxur13Cr13GrWxtw17uw15Jwb_yoW5CF17pr
-	W8AFnYkFy5GFyxJr4jqF4kAFy3uw4kta1xGa4Ik3ZY9F1Ivr1rXa45JF45Z3WDKryktryY
-	qF4fuay7uF4qk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjuHq7
-	UUUUU==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0JA2kAat5OzwAAsd
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ha2fucMgPiStiQXJ"
+Content-Disposition: inline
+In-Reply-To: <ac27d9b1da68746c62c03047fd7896e2303ef1fd.camel@ndufresne.ca>
 
-The function netxbig_gpio_ext_get() acquires GPIO descriptors but
-fails to release them when errors occur mid-way through initialization.
-The cleanup callback registered by devm_add_action_or_reset() only
-runs on success, leaving acquired GPIOs leaked on error paths.
 
-Add goto-based error handling to release all acquired GPIOs before
-returning errors.
+--Ha2fucMgPiStiQXJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 9af512e81964 ("leds: netxbig: Convert to use GPIO descriptors")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/leds/leds-netxbig.c | 43 ++++++++++++++++++++++++++-----------
- 1 file changed, 31 insertions(+), 12 deletions(-)
+On Mon, Oct 27, 2025 at 07:29:39PM +0000, Nicolas Dufresne wrote:
+> Le lundi 27 octobre 2025 =C3=A0 14:37 +0100, Johan Hovold a =C3=A9crit=C2=
+=A0:
+> > On Wed, Sep 24, 2025 at 03:35:49PM +0200, Johan Hovold wrote:
+> > > This series fixes VPU device leaks during probe of the mdp and two co=
+dec
+> > > drivers.
+> > >=20
+> > > Included is also a minor documentation update to make it clear that t=
+he
+> > > VPU lookup helper returns the device with an incremented refcount.
+> >=20
+> > Can these be picked up for 6.19?
+>=20
+> They are picked already, please check in the tree,
+>=20
+> https://gitlab.freedesktop.org/linux-media/media-committers/-/commits/next
 
-diff --git a/drivers/leds/leds-netxbig.c b/drivers/leds/leds-netxbig.c
-index e95287416ef8..cc8c1c5006bc 100644
---- a/drivers/leds/leds-netxbig.c
-+++ b/drivers/leds/leds-netxbig.c
-@@ -364,6 +364,9 @@ static int netxbig_gpio_ext_get(struct device *dev,
- 	if (!addr)
- 		return -ENOMEM;
- 
-+	gpio_ext->addr = addr;
-+	gpio_ext->num_addr = 0;
-+
- 	/*
- 	 * We cannot use devm_ managed resources with these GPIO descriptors
- 	 * since they are associated with the "GPIO extension device" which
-@@ -374,46 +377,62 @@ static int netxbig_gpio_ext_get(struct device *dev,
- 	for (i = 0; i < num_addr; i++) {
- 		gpiod = gpiod_get_index(gpio_ext_dev, "addr", i,
- 					GPIOD_OUT_LOW);
--		if (IS_ERR(gpiod))
--			return PTR_ERR(gpiod);
-+		if (IS_ERR(gpiod)) {
-+			ret = PTR_ERR(gpiod);
-+			goto err_free_addr;
-+		}
- 		gpiod_set_consumer_name(gpiod, "GPIO extension addr");
- 		addr[i] = gpiod;
-+		gpio_ext->num_addr++;
- 	}
--	gpio_ext->addr = addr;
--	gpio_ext->num_addr = num_addr;
- 
- 	ret = gpiod_count(gpio_ext_dev, "data");
- 	if (ret < 0) {
- 		dev_err(dev,
- 			"Failed to count GPIOs in DT property data-gpios\n");
--		return ret;
-+		goto err_free_addr;
- 	}
- 	num_data = ret;
- 	data = devm_kcalloc(dev, num_data, sizeof(*data), GFP_KERNEL);
--	if (!data)
--		return -ENOMEM;
-+	if (!data) {
-+		ret = -ENOMEM;
-+		goto err_free_addr;
-+	}
-+
-+	gpio_ext->data = data;
-+	gpio_ext->num_data = 0;
- 
- 	for (i = 0; i < num_data; i++) {
- 		gpiod = gpiod_get_index(gpio_ext_dev, "data", i,
- 					GPIOD_OUT_LOW);
--		if (IS_ERR(gpiod))
--			return PTR_ERR(gpiod);
-+		if (IS_ERR(gpiod)) {
-+			ret = PTR_ERR(gpiod);
-+			goto err_free_data;
-+		}
- 		gpiod_set_consumer_name(gpiod, "GPIO extension data");
- 		data[i] = gpiod;
-+		gpio_ext->num_data++;
- 	}
--	gpio_ext->data = data;
--	gpio_ext->num_data = num_data;
- 
- 	gpiod = gpiod_get(gpio_ext_dev, "enable", GPIOD_OUT_LOW);
- 	if (IS_ERR(gpiod)) {
- 		dev_err(dev,
- 			"Failed to get GPIO from DT property enable-gpio\n");
--		return PTR_ERR(gpiod);
-+		ret = PTR_ERR(gpiod);
-+		goto err_free_data;
- 	}
- 	gpiod_set_consumer_name(gpiod, "GPIO extension enable");
- 	gpio_ext->enable = gpiod;
- 
- 	return devm_add_action_or_reset(dev, netxbig_gpio_ext_remove, gpio_ext);
-+
-+err_free_data:
-+	for (i = 0; i < gpio_ext->num_data; i++)
-+		gpiod_put(gpio_ext->data[i]);
-+err_free_addr:
-+	for (i = 0; i < gpio_ext->num_addr; i++)
-+		gpiod_put(gpio_ext->addr[i]);
-+	return ret;
- }
- 
- static int netxbig_leds_get_of_pdata(struct device *dev,
--- 
-2.50.1.windows.1
+I can't seem to find them in that branch either, and they are not in
+linux-next.=20
 
+(I seem to have trimmed my original message too much so that the patch
+summaries were not included in my reminder. Perhaps you are thinking of
+the related mtk-mdp3 fix?)
+
+But I do see an incomplete attempt at a fix of the reference leak in
+that branch by someone else in commit cdd0f118ef87 ("media: mediatek:
+vcodec: Fix a reference leak in mtk_vcodec_fw_vpu_init()")
+
+Can that commit be dropped in favour of this series or shall I rebase on
+top of it?
+
+Johan
+
+--Ha2fucMgPiStiQXJ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQQHbPq+cpGvN/peuzMLxc3C7H1lCAUCaQB8/wAKCRALxc3C7H1l
+COHPAP4o5c3CdMjYcKPhRiv7y0Mt/SbQoTayD4O2ysNuNFLRCAEA3yz1kO0nlCQA
+6lld/IVLC+92XTeC/aq295ogntl20g8=
+=y1OE
+-----END PGP SIGNATURE-----
+
+--Ha2fucMgPiStiQXJ--
 
