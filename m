@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-873864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A9EC14F6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:48:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AABD2C14F3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:46:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772F36207F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:44:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2ABAE4FD091
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:44:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6E33328F8;
-	Tue, 28 Oct 2025 13:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRDzqMF0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CEF334389;
+	Tue, 28 Oct 2025 13:44:44 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9EB132E15F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1680F32E125;
+	Tue, 28 Oct 2025 13:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659051; cv=none; b=hbpFiqn3zt8nVSz4nOCLc7p84qnOYvuqW29x0yzmbF9NH/wDU1ypEigxkq/D8ba5qZN1kV0usTaW0tAQ17Z4TiZYYY6bnZ4MtD3lwJ2Aygf4BlXgKTEpyomuGjW6FUKZDsM1eFtpJNdt+p06sFrYJd1NN8ct7gJQU2sxSj0uuqo=
+	t=1761659083; cv=none; b=TsgRg0meSu7VYfiQJCSBII3CYB/jT4waKRLMSB8Y77YpaWUJmJcgiqYI/yKi5tqbJXNK3lVhj75Lp/dlWhTxAIND1//7EiwueuMixbV4sptbFi3gp46CvEfBs66hG5v1od01yApYqpwrycMRAJRw4UMxebijb6xQvIIiUvYL1eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659051; c=relaxed/simple;
-	bh=vq7T4W4n4gFEeGmD5D9ZAEQSp3CgtmtOG1ytOpkrNN8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CwJNMZBE677eCO3c34TLSmyZrzJc9qG6i4nvWlb/iJ83iqEpeKDy41mRtQEJrPGXkFSZaK1uQmIE8cAlboMxFa3n2FG6QtsGSl1h9VSdJWEUuAcZfxGNRkrK1foWEn9zhTDddCsvuPAULNh1XAEX49B3CgTpxB0TqiVMz0nleCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRDzqMF0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C03EC19422
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761659050;
-	bh=vq7T4W4n4gFEeGmD5D9ZAEQSp3CgtmtOG1ytOpkrNN8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=tRDzqMF04MfY2WABSfrSRLnse3Mgy6EyOrn+Pu/r2gl3ZU7GpIRzzFU0uoEfeR58y
-	 R6/haR5AacQd+5TK5tBYlytXZ5HqX3Q/9LdQ+u3w+WCTeKz1Ubv7+SnJBLqKMnLUs4
-	 S6aLZ88fNGvt9aPOgisbxVOzDxREYfpD/KYOVlyyncrHL0U7VKN1q1pnv1UKEQs4ro
-	 QmoAdD9kd6m3f0GQ3Oem6zlRiXXTMXK6HtDXRcLigd8bpltHGQku47sLa+00QfopHG
-	 4CgPWqWOrkwecvRvwyEAAILOUWjkSJJ1dWkG6AI0f75nWk7fFRW6NNdWRqEdfI1VLs
-	 taRZ5F67AA7Bw==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-378ddffb497so57852221fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:44:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV4vvBa2gitUY79hKoysDo3fbv/8jvyxQ8k7a5NV6CXa31WLEdi5N+eNDKo/Ai7ZijB0tdUKDImzZOhh04=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzifsj7Dj1KXwBquy+9ZZRV6L6aoqNpj6LLI39Khka9xPmK701X
-	6M+OSzwfVdp1lcjw3JihOhjER9y68KatDW2Lrjcy5neXoLT6SCCqTSr5nGi3Y+1gbiwq7IpJbax
-	349rLJ6xRzPCr5EyF9MGuIpnjCU55C7k=
-X-Google-Smtp-Source: AGHT+IGTtAcYuWKCVE8+/H7SGfbZK6Sf2oprOXFQDJmCdFXXr46QXur27Rti4tOTdg2Rzm12P4PmA+AtrxWWOPEyz6s=
-X-Received: by 2002:a05:651c:4409:10b0:378:d24d:c717 with SMTP id
- 38308e7fff4ca-379076be226mr9072081fa.7.1761659048628; Tue, 28 Oct 2025
- 06:44:08 -0700 (PDT)
+	s=arc-20240116; t=1761659083; c=relaxed/simple;
+	bh=IxwKCbUXHJTMHTBOxpn47Gc03a6SOp3BE8zoqd4FhvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMunvInp9+mbl4UopoQIsY9v5a7PiDgU/FAV/JvsIzWoH+JwZnozEtl5Eiy51mRlXRbXejFTY96N6Qs/PvIvE/wf+OXTtqX/8n+NEzD6/0s4WJ8gN8JbRJUF06cjlJrYMyvwKlLxLDejG61EdIEQLkJ7pSV9NAq+Q1A9Z8AeYK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id EF8402C0664E;
+	Tue, 28 Oct 2025 14:44:38 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id D868B587B; Tue, 28 Oct 2025 14:44:38 +0100 (CET)
+Date: Tue, 28 Oct 2025 14:44:38 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Crystal Wood <crwood@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
+	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH v2] genirq/manage: Reduce priority of forced secondary
+ interrupt handler
+Message-ID: <aQDIxvU18vzB-1G-@wunner.de>
+References: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
+ <20251028120652.AJUTgtwZ@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028105637.769470-1-usamaarif642@gmail.com>
-In-Reply-To: <20251028105637.769470-1-usamaarif642@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 28 Oct 2025 14:43:56 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXH8ogAzr-_yCWgqzj+NLVpvBGkm_XOJppSm2jcS4P8eUQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bnMdAxOYX25sIeGClZxQEY4KScBSwX7A3mccGkwB8TL2Tox5hNBUjWVOII
-Message-ID: <CAMj1kXH8ogAzr-_yCWgqzj+NLVpvBGkm_XOJppSm2jcS4P8eUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] x86: Fix kexec 5-level to 4-level paging transition
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, x86@kernel.org, 
-	apopple@nvidia.com, thuth@redhat.com, nik.borisov@suse.com, kas@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org, kernel-team@meta.com, 
-	Michael van der Westhuizen <rmikey@meta.com>, Tobias Fleig <tfleig@meta.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028120652.AJUTgtwZ@linutronix.de>
 
-On Tue, 28 Oct 2025 at 11:57, Usama Arif <usamaarif642@gmail.com> wrote:
->
-> This series addresses critical bugs in the kexec path when transitioning
-> from a kernel using 5-level page tables to one using 4-level page tables.
->
-> The root cause is improper handling of PGD entry value during the page level
-> transition. Specifically PGD entry value is masked with PAGE_MASK instead of
-> PTE_PFN_MASK, failing to account for high-order software bits like
-> _PAGE_BIT_NOPTISHADOW (bit 58).
->
-> When bit 58 (_PAGE_BIT_NOPTISHADOW) is set in the source kernel, the target
-> 4-level kernel doesn't recognize it and fails to mask it properly, leading
-> to kexec failure.
->
-> Patch 1: Fixes the x86 boot compressed code path by replacing direct CR3
-> dereferencing with read_cr3_pa() and using PTE_PFN_MASK instead
-> of PAGE_MASK.
->
-> Patch 2: Applies the same fix to the EFI stub code path. (Done in a
-> separate patch as Fixes tag is different).
->
->
-> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-> Reported-by: Tobias Fleig <tfleig@meta.com>
->
-> The patches are based on aaa9c3550b60d6259d6ea8b1175ade8d1242444e (next-20251022)
->
-> v1 -> v2:
-> - Remove patch 3 from v1 to fix kexec for source kernel in 5-level to 4-level
->   transition where the 4 level kernel doesnt have patch 1 and 2 (Dave Hansen)
-> - Add include for asm/pgtable.h to fix build for x86_64-allnoconfig (kernel test bot)
-> - Use native_read_cr3_pa and for both paths (Ard Biesheuvel)
->
-> Usama Arif (2):
->   x86/boot: Fix page table access in 5-level to 4-level paging
->     transition
->   efi/libstub: Fix page table access in 5-level to 4-level paging
->     transition
->
+On Tue, Oct 28, 2025 at 01:06:52PM +0100, Sebastian Andrzej Siewior wrote:
+> On 2025-10-27 13:59:31 [+0100], Lukas Wunner wrote:
+> > The issue does not show on non-PREEMPT_RT because the primary handler
+> > runs in hardirq context and thus can preempt the threaded secondary
+> > handler, clear the Root Error Status register and prevent the secondary
+> > handler from getting stuck.
+> 
+> Not sure if I mentioned it before but this is due to forced threaded
+> IRQs which can also be enabled on non-PREEMPT_RT systems via `threadirqs`.
 
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+According to the commit which introduced the "threadirqs" command line
+option, 8d32a307e4fa ("genirq: Provide forced interrupt threading"),
+it is "mostly a debug option".  I guess the option allows testing
+the waters on arches which do not yet "select ARCH_SUPPORTS_RT"
+to see if force-threaded interrupts break anything.  I recall the
+option being available in mainline for much longer than PREEMPT_RT
+and it was definitely useful as a justification to upstream changes
+which were otherwise only needed by the out-of-tree PREEMPT_RT patches.
+
+Intuitively I would assume that debug options are not worth calling out
+in commit messages or code comments as users and developers will
+primarily be interested in the real deal (i.e. PREEMPT_RT) and not
+an option which gets us only halfway there.  However if you
+(or anyone else) feels strongly about it, I'll be happy to respin.
+
+Thanks for taking a look!
+
+Lukas
 
