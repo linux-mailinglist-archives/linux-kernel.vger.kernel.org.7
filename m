@@ -1,212 +1,121 @@
-Return-Path: <linux-kernel+bounces-874338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB147C16174
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:16:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71537C1618A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D3F3BD6A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:09:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B65F3BCAFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7B7E34886B;
-	Tue, 28 Oct 2025 17:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3F1344047;
+	Tue, 28 Oct 2025 17:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFsEAYZR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeRHG5qE"
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3074132D0FA;
-	Tue, 28 Oct 2025 17:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0388534402F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671371; cv=none; b=HYKtOkTJzhrUqe3xWzada72hR8PoQi3OSOeVYBSeu3FStGu0qEANs8KfV3ZGQN9z6S6livj7VLzag2HksS+J15UoyiHhXg/3EDOWwsuMauUx31WGfE54YknOe9DHZb3C5b13+T06pizbhv7rOwrq3Evmv4ToAHv1fp9m7WNjUoU=
+	t=1761671428; cv=none; b=ePscbiSI+s3KazXSSyAXlE/McdQO4JYuG0Cl15AaxsLvWMpnWjYZrqfIprqac9UpT/D6/ADpcEGhqyI4+o/rCfYBC4aEsteREXYCsycsNWBXm17YtWhi7of7wWucQheQzbOucWKsDW/mfKtKVuZd9Pq8j5PSCZifzC5yLQNgGfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671371; c=relaxed/simple;
-	bh=Q/DvAf8uCkX2SPY6TkNj/fjy6KkdM9UtV7Vt2f04sMY=;
-	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
-	 Subject:From:To:Cc:Date; b=V+RUDQ0z8XYuDjlEjN0t9H3BknG1ad5S5DJCdVMbrhCirjVcmmms/hjtaTxJEbZ4X8iL31DjU7D0k5OqEydEVT+9z4Txvksb4zN3+pbC0bZFlTp7cYx49XBWGpdy+NfU3v0BY3wfaTeEIjCAHJz/42b3kg1a4dXORtf+N5yTx4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFsEAYZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 931ADC4CEE7;
-	Tue, 28 Oct 2025 17:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761671370;
-	bh=Q/DvAf8uCkX2SPY6TkNj/fjy6KkdM9UtV7Vt2f04sMY=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-	b=mFsEAYZRCq4UENune6IVXZdDlYzHgHBAwXb8WugQxY6+syeePOp+ipAyNcx50ahmG
-	 O5+SL4Hbaj/XZ4qDPrEdGABNuzalNBc2QKpKkNGsHFCvFS1dLjgAdXotJkPiqqH3kR
-	 SZx4o84mEt9zrh30Wd0vaMrfi5ogJIeMrxe8bPuB6a1x4r+M9QDArvkwry6q2qeP+O
-	 NOQy1j0c3bCQ8TANoCaWQtcSMWd7vNxUoG0PS0wN1Uerwxr6GNCD7ZjiANvRrRGKNV
-	 3l+d5AFNOJxNmu6XwqLoYp3Ne/L+qA1IS+bGbata46auw5Yv4s5/WvecO/6niXiOaj
-	 bXzALiH5vNOvg==
-Content-Type: multipart/mixed; boundary="===============9046533533940140989=="
+	s=arc-20240116; t=1761671428; c=relaxed/simple;
+	bh=m3I9dtve6TdfQpeD/5c1k/FwNdSdObvUw7hMoEvNVYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=In6y0fKyQV+k3dcQVPu8fd6fBMpBY3l26LRWndhcBjkyEM4vTYR4sCOafIcLjb0UDjyIFbHTsm0ekKo05Exq9UR3CrAztu5SOYwa5EJTeZeRBXvqRXmCs/ON0Lnyl4DDLo6XjczfEulQxzzO3VvkJMpgFyQDGiIBc6MKDOXsAZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeRHG5qE; arc=none smtp.client-ip=209.85.210.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-78af743c232so5786762b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:10:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761671426; x=1762276226; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NkkeBtodNmN2EMa9qJLybudRjmngQqkOpn4I47bN1Os=;
+        b=HeRHG5qEN5uTjjY3ibkWq33IiamipujAhi60b9r1rM5RRPJZix2+MocaWLMsgNdzzn
+         rCRaFyrKnHeUaypQDn1k3K/dqscVruRVqMTp+igbGbC+db5aiAfFYeE0f5PSLqzGly0B
+         Ovbu07ITP9IM/2fwN+YgCr6l72LfCsLXcf98t50rQ2aT51I9i9QHnWZBcPUJfgmI0dRC
+         hcDVe7L3na0X+uTihwIrNh/OF7NNAdsSDaUs/thpRtSEuaO3pAwmuCxPhAYF4SvzmzBq
+         +g5mLWYTq+KRd+hIVppWWv9JlGPQ/3UNy/vJ92ZwMl4d1BKAHGUXeTSQGuqNK8db6i73
+         GIMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761671426; x=1762276226;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NkkeBtodNmN2EMa9qJLybudRjmngQqkOpn4I47bN1Os=;
+        b=Dq3Y5OlBzfzsjfjVyBJjzZqABJdkF/KmuHnSJultFfipvJnqm+uGiIDaXHTLEGQ7r7
+         bXlxLWuxLcXPXwpuS1uLlEgQJI95XY5SlzM/zKtyGavj4wqC670Jqka9qMfnetZc5r8I
+         BOVOBHHf+FI5TLEAcik6sD35GqLkYTpAcZrzzsWfOH4RIg/ZdkkPFhTuuhPCev9gHaU5
+         Ac17cXGm3K5pL4XtjP8GjtLeVyflKFEwBZ96u9CygQ3H0hu4VQsIrVv7OQ/d8BdBMKnn
+         CgVmlGMU8kcTh9e24FbAT9Ya1lQN/fEpbJavkrEKwXKc5x6gmZS0VnX5K6Mo2Vic65ny
+         OLFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ0vYngkZWOhJo7s7KxUx7egatHojS4aa1NRxerHUiMqsMRcCYjV9XzAZfSso+WCEpuOdMmuHgGmTT4g4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzps4BLa8LsBx44Xw9finQHJdDAHX9KR1axquQwMinpkY0iGZNj
+	aLvqbHImVi1ONpuEmaDMwaSMORScB9+M7EeBKJVI2j6VqC29SSfAMJrT
+X-Gm-Gg: ASbGncvFxkmXL5+K4F4cTia2I8F8McvVpUTaY6bdaSwoO+HBPhOCM+OGoNFNT8jQyFZ
+	ZPJWhlvFtZWx/M/mwkXKZ6GHepSb/jBvIJWcpg5QeC23MlM52QaAC3qkNvnVE+0pjcGqbAPyB0W
+	cyWQJk1Voe0z2oD+XQ7tQM9sZI1MZm4RVzD1ma02j0EYcHaxX3/xn2s5Q9vmygQ553+KnlMOzMd
+	mNR+yJamIZKa8cas8XXTFVZUGP5KK4FSuN5bhrXAgN6XNyvHudSNnUNUuIIgqQAacZQcu13SUEq
+	dVkmXR2IEKjG4TEiutmFCo+9ODvg+ECPid6c3SLBa5eXaRfCEnIHRTB0Xq5+oMy2OSlS+4pDIw9
+	EtXlFpKMh2plfiMJIz47Xm2oWumGOnbvXHnLZgLcLydip9eGtC3ItTtKcCLOb6YHd1VqRdLri/1
+	VWw5TjtnxxdDdO5KdD5qk=
+X-Google-Smtp-Source: AGHT+IGQ8ffNexl4HmIkFUmg1fdyuZl4JbBMFVH6xuxPDuvHwL2uHadtShWy1RlMi1Xof4Eda3TnCw==
+X-Received: by 2002:a17:902:ec83:b0:27e:ec72:f67 with SMTP id d9443c01a7336-294cb391897mr51139475ad.6.1761671426009;
+        Tue, 28 Oct 2025 10:10:26 -0700 (PDT)
+Received: from fedora ([103.120.31.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3bbcsm121911965ad.15.2025.10.28.10.10.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 10:10:25 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:40:14 +0530
+From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftest: net: fix socklen_t type mismatch in
+ sctp_collision test
+Message-ID: <aQD49ukK0XMUHTUP@fedora>
+References: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
+ <aQDyGhMehBxVL1Sy@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <a48e281e6912037490270da40f79e45c1ad1e430c8c1cc84c48306106b06113a@mail.kernel.org>
-In-Reply-To: <20251028162502.3418817-2-chen.dylane@linux.dev>
-References: <20251028162502.3418817-2-chen.dylane@linux.dev>
-Subject: Re: [PATCH bpf-next v4 1/2] perf: Refactor get_perf_callchain
-From: bot+bpf-ci@kernel.org
-To: chen.dylane@linux.dev,peterz@infradead.org,mingo@redhat.com,acme@kernel.org,namhyung@kernel.org,mark.rutland@arm.com,alexander.shishkin@linux.intel.com,jolsa@kernel.org,irogers@google.com,adrian.hunter@intel.com,kan.liang@linux.intel.com,song@kernel.org,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,eddyz87@gmail.com,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com
-Cc: linux-perf-users@vger.kernel.org,linux-kernel@vger.kernel.org,bpf@vger.kernel.org,chen.dylane@linux.dev,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
-Date: Tue, 28 Oct 2025 17:09:28 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQDyGhMehBxVL1Sy@horms.kernel.org>
 
---===============9046533533940140989==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-
-
-```
-commit 59cfc61f83ad4ec998f4242ca000c554e3001b47
-Author: Tao Chen <chen.dylane@linux.dev>
-
-perf: Refactor get_perf_callchain
-
-This patch refactors get_perf_callchain() by extracting logic into new
-helper functions to provide more flexible stack-sampling APIs for BPF.
-
-> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> index fd1d91017..14a382cad 100644
-> --- a/include/linux/perf_event.h
-> +++ b/include/linux/perf_event.h
-> @@ -67,6 +67,7 @@ struct perf_callchain_entry_ctx {
->  	u32				nr;
->  	short				contexts;
->  	bool				contexts_maxed;
-> +	bool				add_mark;
->  };
-
-[ ... ]
-
-> @@ -1718,9 +1719,17 @@ DECLARE_PER_CPU(struct perf_callchain_entry, perf_callchain_entry);
+On Tue, Oct 28, 2025 at 04:40:58PM +0000, Simon Horman wrote:
+> Hi Ankit,
+> 
+> Please preserve reverse xmas tree order - longest line to shortest - for
+> local variable declarations in Networking code.
+> 
+> In this case, I think that would be as follows (completely untested).
+> 
+> 	struct sockaddr_in saddr = {}, daddr = {};
+> 	socklen_t len = sizeof(daddr);
+> 	struct timeval tv = {25, 0};
+> 	char buf[] = "hello";
+> 	int sd, ret;
 >
->  extern void perf_callchain_user(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
->  extern void perf_callchain_kernel(struct perf_callchain_entry_ctx *entry, struct pt_regs *regs);
-> +
-> +extern void __init_perf_callchain_ctx(struct perf_callchain_entry_ctx *ctx,
-> +				      struct perf_callchain_entry *entry,
-> +				      u32 max_stack, bool add_mark);
-> +
-> +extern void __get_perf_callchain_kernel(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
-> +extern void __get_perf_callchain_user(struct perf_callchain_entry_ctx *ctx, struct pt_regs *regs);
-> +
->  extern struct perf_callchain_entry *
->  get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-> -		   u32 max_stack, bool crosstask, bool add_mark);
-> +		   u32 max_stack, bool crosstask);
+Hi Simon,
+Thanks for your reply, i will send v2 patch with requested changes.
 
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 4d53cdd13..e28b35c7e 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -315,7 +315,7 @@ BPF_CALL_3(bpf_get_stackid, struct pt_regs *, regs, struct bpf_map *, map,
->  		max_depth = sysctl_perf_event_max_stack;
->
->  	trace = get_perf_callchain(regs, kernel, user, max_depth,
-> -				   false, false);
-> +				   false);
-                                       ^^^^^ removed last parameter
-
-Previously bpf_get_stackid() passed add_mark=false to get_perf_callchain().
-Now the parameter is gone, but get_perf_callchain() hardcodes add_mark=true
-when calling __init_perf_callchain_ctx(). This means BPF stack traces will
-now include PERF_CONTEXT_KERNEL/PERF_CONTEXT_USER marker values when they
-didn't before.
-
-The markers get added by __get_perf_callchain_kernel() and
-__get_perf_callchain_user() when ctx->add_mark is true. These markers are
-sentinel values (-128 for KERNEL, -512 for USER) that appear in the trace
-IP array alongside actual instruction pointers.
-
->
->  	if (unlikely(!trace))
->  		/* couldn't fetch the stack trace */
-> @@ -452,7 +452,7 @@ static long __bpf_get_stack(struct pt_regs *regs, struct task_struct *task,
->  		trace = get_callchain_entry_for_task(task, max_depth);
->  	else
->  		trace = get_perf_callchain(regs, kernel, user, max_depth,
-> -					   crosstask, false);
-> +					   crosstask);
-                                                   ^^^^^ same issue here
-
-Same problem in __bpf_get_stack() which was also passing add_mark=false.
-
-This changes BPF stack map behavior in user-visible ways:
-
-1) bpf_get_stackid() hashes the entire trace->ip[] array including any
-   markers, so identical stacks will now produce different stack IDs.
-
-2) bpf_get_stack() copies trace->ip[] directly to userspace buffers,
-   so BPF programs will see marker values mixed with instruction pointers.
-
-Can BPF tools handle these unexpected marker values? The commit message
-says "The next patch will modify the BPF part" but doesn't explain this
-intermediate behavior change.
-
-> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-> index 808c0d7a3..2c36e4906 100644
-> --- a/kernel/events/callchain.c
-> +++ b/kernel/events/callchain.c
-
-[ ... ]
-
->  struct perf_callchain_entry *
->  get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-> -		   u32 max_stack, bool crosstask, bool add_mark)
-> +		   u32 max_stack, bool crosstask)
->  {
->  	struct perf_callchain_entry *entry;
->  	struct perf_callchain_entry_ctx ctx;
-> -	int rctx, start_entry_idx;
-> +	int rctx;
->
->  	/* crosstask is not supported for user stacks */
->  	if (crosstask && user && !kernel)
-> @@ -232,34 +273,14 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
->  	if (!entry)
->  		return NULL;
->
-> -	ctx.entry		= entry;
-> -	ctx.max_stack		= max_stack;
-> -	ctx.nr			= entry->nr = 0;
-> -	ctx.contexts		= 0;
-> -	ctx.contexts_maxed	= false;
-> +	__init_perf_callchain_ctx(&ctx, entry, max_stack, true);
-                                                                ^^^^
-Here's where add_mark is hardcoded to true for all callers. The old code
-allowed callers to control this via parameter. BPF was passing false,
-perf_callchain() was passing true. Now both get true unconditionally.
-
-[ ... ]
-
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 7541f6f85..eb0f11059 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -8218,7 +8218,7 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
->  		return &__empty_callchain;
->
->  	callchain = get_perf_callchain(regs, kernel, user,
-> -				       max_stack, crosstask, true);
-> +				       max_stack, crosstask);
->  	return callchain ?: &__empty_callchain;
->  }
-
-
-```
-
----
-AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
-See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
-
-In-Reply-To-Subject: `perf: Refactor get_perf_callchain`
-CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18882141979
-
---===============9046533533940140989==--
+-- 
+Ankit
 
