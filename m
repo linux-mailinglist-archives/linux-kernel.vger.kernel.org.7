@@ -1,45 +1,87 @@
-Return-Path: <linux-kernel+bounces-873083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4007BC1307A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:54:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EB0C1308C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E2A33B1508
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:52:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758B11A27476
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4610629B216;
-	Tue, 28 Oct 2025 05:52:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6406529BD96;
+	Tue, 28 Oct 2025 05:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VdUJdoc9"
-Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Od5+Q6EN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D9320F08C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:52:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37439277819
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761630758; cv=none; b=o+MaRtQvpn1bqj79jHtTzpGHL/TenQSoGy4cTSjVAKwzmkuhZnGCCVugw6zZq75Po2UhqaXdSsRZ0ayu1gRVwlCfWcj5qCw2lX/psiGE42PdqDde8rXZGyTw+1g6WhjQkP1EgkeU41fkYBSewp3C44HH1KvaPd2cRvvY1ivDFsg=
+	t=1761630907; cv=none; b=PJmJDO6V3Q7HSvY1+nR6XnXZNIUpw5pUcb1DqJogqaOFsVC88Hs8lc7Gq6lt+Zos0N3dHa89FFeIodGuo1nODXW6JkVY8I++VvacjwTChdRKIb15LyHaPChPR9iDf3zgEBm6Nx3RCilyanc9799hXF18V2ePB3lRl4rztHiHxfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761630758; c=relaxed/simple;
-	bh=LNNeCIinekRrH+aWIJ9DLxfm7APfweEV36BaC2P3eO8=;
+	s=arc-20240116; t=1761630907; c=relaxed/simple;
+	bh=wbrzyQzJ/ISMxfjHCPJo4dCOxW5GR5mv8F3Pvly+tfo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7xHp0WTyCo7MSLYggaplZzIjrXaoIUJCY+amfUwdHtt7Oe5H7ERaDk8dab9IHvgyRoC2szR0Hoy27T5x+o2tom4NVcohV2XV0xbDEweDdX1W0/WYyTQcKxmYq0dKjqde1JKU+NwikJShL2Z23kV3EQmsbQJKVDR4OhmsWJ4M6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VdUJdoc9; arc=none smtp.client-ip=115.124.30.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1761630747; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qHx5mQQcIY5766D3icin+V2ywbEnQjZIxaVjW5p59p0=;
-	b=VdUJdoc9rWVjvo2EJs+JGv6e0t3fiLqxY8z/n08VIRC5+jViop+14UiK1s7W5CVR78kM1x58LU6I+yOYV2DfGXS79piXoieCISYK1fFd6n6KTgSMmLJlqQ8RIR9DE1g/vS6j/S2urNNTB3C22xk6wTOm8X81D4YV9hlfOnkPOUU=
-Received: from 30.221.128.145(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WrAkfBY_1761630746 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 28 Oct 2025 13:52:26 +0800
-Message-ID: <3080b006-a093-4aad-ae7b-de7d0ae9d6d9@linux.alibaba.com>
-Date: Tue, 28 Oct 2025 13:52:25 +0800
+	 In-Reply-To:Content-Type; b=HZ8J0/TrI2CGXD6G9frryicLkpIEoI4qGq+jXBSWXUd+tSWsrkyscCRUwERPwpYSeCpey2R6fO748cjFMCknV3x4SnQh/6LkbpqwyaVpF0HIOMyX4McFdDd+dixRPbbtIaiq7CzX0lh17eDdPZS87N5JD1O4kq9xHJPjqZjbvng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Od5+Q6EN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59RMDPFi2752101
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:55:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	hVbVyBqtSeMwHa5ZCMjstEwuUlHs1J5AbZsAqxmUJpM=; b=Od5+Q6EN/hVcROkv
+	68QhvL9ePE1pHjnXWh+zV9xtdoG9kqSXFOH2ATTmCVE2mHk5ToP/thq7TldSQHJZ
+	nx7RovXoZL7Qfmap5TTVF10lORG29RNRbed7jbaq0rS1RGQNNTVIBIJYHajuUB/m
+	EituOtTvHoaWS42QNop+O8QvhZJ/P4ndH4vH2J1Bb/sj6Az8YsgUYTVMy+bpTeSD
+	3OWQDjccQoBpbj9f6mWDLjk1Frh3ZBJ3LTpeavIplBzLLVXduP1GREB6lAtHfjL3
+	mxiJ6s3qPTeTZfZuVkiEZl79DNr3bvmpGMGa39W4Bp5OtG/lBJj2E/fd+At76jaV
+	bw7PcQ==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a28swjt7n-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:55:04 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-29085106b99so54007935ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:55:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761630904; x=1762235704;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hVbVyBqtSeMwHa5ZCMjstEwuUlHs1J5AbZsAqxmUJpM=;
+        b=QEyD6/aG9yo0P7DL+o22FQGU3ez3nGCpGt8ai32t90EYdNgNhTBOSLVucKjqfAjKlg
+         9p+2ED7NTEfbxJ6di4/cecv/BKYOFrC2n+Loc3mtGVRgjgo2j7tyk+9HZGW0VX4YwRRe
+         U1ACf7ozkDWZecpeUYSoiv3nfK09Wn7CU/gQbAN9B/qetKtxKge8pHSofyI/0fQb0wWE
+         yqEDl41bufGGGic8DGqXvC4yAhVfUHSvtzEvN/x7FL33xSAyVDJ34ZuZ5KdDEt/zN8C8
+         Pab826MWOHB82zPs6gT1Gr3lVCB6c471KT34Ct7XI9LlUN7nnbc9xMSXlu34Uwyz68ek
+         6VQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVFPf9qOJvi/56DlMrfS15RnaEAfgn1JTy/f1FKzhJGjsvOmPR4wJ9qPuMSdvM4UJx191qmcj1O5PL+4Tk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxRvsVMjF3Qc7FFGBdbs3UpYoROi8UkloxlTo7cv5S7M1kZ85L
+	FvBRW8f6RwfptQwPR35ZpCAIaK73wd/DDuDhDNceY1lTaa79j3IKMJNFkVCyRuIqMuYgbEmehy5
+	bkf6hgja2a0FcGWcqufPDETHDKfgVwr/cTORt54myC6aivSIrFFqs21vA/DK6wOYjdHE=
+X-Gm-Gg: ASbGncux5wvBHa8arzSQFu97mJYeQfW2sqZ+hHH3b/QI+Jp0RNm+Y0DtX9T6zi0a2V1
+	C0tjdEEFCQNMy3272Ntmt/Xl/COxkFnlO39guM3Alqi13s0VeR4DBybFJVONW/uvKaycmbLR0WW
+	XQPxiId7BhuuDRrmMzsyHKJdFjuAJapxK62Eogfe7bxQHwKNG8VgH6EEZvSUDgdgMrxcKljnx7O
+	ExDCJV/B4F4SEWapBzQbs+6Qv8Vff6vwGYkMBwCPGOsYxuHVsddRDnljJgX2K3GKseJ70UMHcib
+	a0RAWlauXFJqaD8vG5YqmEdVUAmGQLs1xnEvKfPT4PnqwGzmkkgiMVRja7EpAqWLBUIOTB2TDsA
+	9t7cWZ0akr+uNFniQfC/RnZJEtrX5d0uFzX7EcoalYTXdxiDZSyXipiERmFy4jolX+hw/e5M=
+X-Received: by 2002:a17:902:cec7:b0:290:9576:d6ef with SMTP id d9443c01a7336-294cb67481cmr35489585ad.54.1761630903950;
+        Mon, 27 Oct 2025 22:55:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlNN7tbxAtF8QwpzLzr8V1BNKo9CW6ELJvgyAYmlxy+kOCt0Ww5BoZG9W1Wv8WH/BdO4oLiA==
+X-Received: by 2002:a17:902:cec7:b0:290:9576:d6ef with SMTP id d9443c01a7336-294cb67481cmr35489155ad.54.1761630903456;
+        Mon, 27 Oct 2025 22:55:03 -0700 (PDT)
+Received: from [10.133.33.222] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3405sm104695945ad.2.2025.10.27.22.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 Oct 2025 22:55:03 -0700 (PDT)
+Message-ID: <89ae527a-c4b4-4294-93ae-e9afffb11f7a@oss.qualcomm.com>
+Date: Tue, 28 Oct 2025 13:54:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,106 +89,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ocfs2: validate cl_bpc in allocator inodes to prevent
- divide-by-zero
-To: Deepanshu Kartikey <kartikey406@gmail.com>, mark@fasheh.com,
- jlbec@evilplan.org, heming.zhao@suse.com, akpm <akpm@linux-foundation.org>
-Cc: ocfs2-devel@lists.linux.dev, linux-kernel@vger.kernel.org,
- syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-References: <20251028042919.18704-1-kartikey406@gmail.com>
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20251028042919.18704-1-kartikey406@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v12 3/5] dt-bindings: display/msm: Document MDSS on
+ QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar
+ <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250911-qcs8300_mdss-v12-0-5f7d076e2b81@oss.qualcomm.com>
+ <20250911-qcs8300_mdss-v12-3-5f7d076e2b81@oss.qualcomm.com>
+ <20250918-spectral-seahorse-of-witchcraft-69553c@kuoka>
+ <b745c515-2264-42aa-8d92-663efc7f6276@oss.qualcomm.com>
+ <6c195b42-d994-4d24-9c40-48d8069304e3@kernel.org>
+ <rkuihu3pmhexeahfch6j7bvwn5rn4ecccbhamluh7fas5qgaup@av2foeiwmcz3>
+ <8a6861a0-f546-475b-907c-65b691d1d340@kernel.org>
+ <cwuecyparlinhtdqckff7vdqpkio2kk7dwemzfao6qkhnuzhul@mfyqdphfvbdg>
+ <drmrkeukgua3w4p3jixdwq6dvj4xj36vvgk2kvwvhpqfk6le5g@tschh7rpsg4a>
+Content-Language: en-US
+From: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+In-Reply-To: <drmrkeukgua3w4p3jixdwq6dvj4xj36vvgk2kvwvhpqfk6le5g@tschh7rpsg4a>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: PRcRgujkE71cPu4U7tOIRM2VqkA2hDLV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA0OSBTYWx0ZWRfXzzT6JEpTCBxh
+ 0/9iq9TQJvy9ruFTQ0Mu1rD6r0i5oeWPYE1K4ql7aoQZy9yHnZZQocteEvdnOPIn99awNCZMaXT
+ yHAY5/M0d7z28estbOTfz2bChxSCNZgYNHC4lzzg3xGJuBUwBli/n6hZvr39UnIza5vennmeok9
+ UFZ1KCnIGF+ZzrIg/Tf0zHZ7qAS+dYkTvzlk86sqbSDxeCXGiidhmZB2DPLJlK2cUhGglY6hNEl
+ VBlQ5ln5GajIe2Gg+qnttvAerFIYgNbYclQhL9jYGgORln3o8rCWt+czG5GVS6SRoo1eOSub14F
+ 5ju/KQaIGYeMQNQ17gu0RJzQgiO6ha+JOzu2QnV2PrhmVCgYOectBtZOFXnYjjB70xUw9xA3Y4z
+ 3caGecadXVqIOebm2PcylZXPBP4C6g==
+X-Proofpoint-GUID: PRcRgujkE71cPu4U7tOIRM2VqkA2hDLV
+X-Authority-Analysis: v=2.4 cv=fL40HJae c=1 sm=1 tr=0 ts=69005ab8 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=rkEqYQ_PoaDmHDwLzVwA:9 a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 phishscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1015 adultscore=0 malwarescore=0 lowpriorityscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280049
 
 
 
-On 2025/10/28 12:29, Deepanshu Kartikey wrote:
-> The chain allocator field cl_bpc (blocks per cluster) is read from disk
-> and used in division operations without validation. A corrupted filesystem
-> image with cl_bpc=0 causes a divide-by-zero crash in the kernel:
+On 10/27/2025 7:52 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 08, 2025 at 10:40:39PM +0300, Dmitry Baryshkov wrote:
+>> On Tue, Oct 07, 2025 at 03:43:56PM +0900, Krzysztof Kozlowski wrote:
+>>> On 27/09/2025 08:26, Dmitry Baryshkov wrote:
+>>>> On Fri, Sep 19, 2025 at 01:34:39PM +0900, Krzysztof Kozlowski wrote:
+>>>>> On 18/09/2025 13:14, Yongxing Mou wrote:
+>>>>>>
+>>>> process in other patchsets and in my understanding on how to describe
+>>>> the particular hardware block. The changes were reflected in the
+>>>> changelog. If you plan to review this patchset once you get back from
+>>>> your vacation, that's fine. If you don't plan to, I can ask Yongxing to
+>>>> send v20 just for that number.
+>>>
+>>> Solution for me could be to ignore Qualcomm patches till they reach some
+>>> sort of maturity.
+>>>
+>>> I am not planning to review this patch, because:
+>>> 1. I already reviewed it, so not really necessary, but even if I wanted:
+>>> 2. It is gone from my inbox...
+>>
+>> So... Should it be resent to get it back to your inbox or should
+>> Yongxing just restore your tag on the grounds that the changes were not
+>> significant enough to drop it?
 > 
->   divide error: 0000 [#1] PREEMPT SMP KASAN
->   RIP: 0010:ocfs2_bg_discontig_add_extent fs/ocfs2/suballoc.c:335 [inline]
->   RIP: 0010:ocfs2_block_group_fill+0x5bd/0xa70 fs/ocfs2/suballoc.c:386
->   Call Trace:
->    ocfs2_block_group_alloc+0x7e9/0x1330 fs/ocfs2/suballoc.c:703
->    ocfs2_reserve_suballoc_bits+0x20a6/0x4640 fs/ocfs2/suballoc.c:834
->    ocfs2_reserve_new_inode+0x4f4/0xcc0 fs/ocfs2/suballoc.c:1074
->    ocfs2_mknod+0x83c/0x2050 fs/ocfs2/namei.c:306
+> Granted the lack of response, Yongxing, please send the new iteration of
+> the patchset.
 > 
-> This patch adds validation in ocfs2_validate_inode_block() to ensure cl_bpc
-> matches the expected value calculated from the superblock's cluster size
-> and block size for chain allocator inodes (identified by OCFS2_CHAIN_FL).
-> 
-> Moving the validation to inode validation time (rather than allocation time)
-> has several benefits:
-> - Validates once when the inode is read, rather than on every allocation
-> - Protects all code paths that use cl_bpc (allocation, resize, etc.)
-> - Follows the existing pattern of inode validation in OCFS2
-> - Centralizes validation logic
-> 
-> The validation catches both:
-> - Zero values that cause divide-by-zero crashes
-> - Non-zero but incorrect values indicating filesystem corruption or
->   mismatched filesystem geometry
-> 
-> With this fix, mounting a corrupted filesystem produces:
->   OCFS2: ERROR (device loop0): ocfs2_validate_inode_block: Inode 74
->          has corrupted cl_bpc: ondisk=0 expected=16
-> 
-> Instead of a kernel crash.
-> 
-> Link: https://lore.kernel.org/ocfs2-devel/20251026132625.12348-1-kartikey406@gmail.com/T/#u [v1]
-> Link: https://lore.kernel.org/all/20251027124131.10002-1-kartikey406@gmail.com/T/ [v2]
-> Reported-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fd8af97c7227fe605d95
-> Tested-by: syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com
-> Suggested-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
+Sure. Thanks for the reply. Should i add back the reviewed-by tag or 
+just resend the this series?
 
-Looks fine.
-Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-
-> ---
-> Changes in v3:
-> - Removed unnecessary local osb variable as suggested by Joseph Qi
-> - Added blank line before rc = 0 for better readability
-> 
-> Changes in v2:
-> - Moved validation from ocfs2_block_group_alloc() to ocfs2_validate_inode_block()
->   as suggested by Joseph Qi to benefit all code paths
-> - Added OCFS2_CHAIN_FL check to only validate chain allocator inodes
-> - Updated commit message to reflect the new location
-> ---
->  fs/ocfs2/inode.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-> index fcc89856ab95..dbbfe72b1dc7 100644
-> --- a/fs/ocfs2/inode.c
-> +++ b/fs/ocfs2/inode.c
-> @@ -1502,6 +1502,21 @@ int ocfs2_validate_inode_block(struct super_block *sb,
->  				 le16_to_cpu(di->i_suballoc_slot));
->  		goto bail;
->  	}
-> +	/* Validate cl_bpc for chain allocator inodes */
-> +	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
-> +		struct ocfs2_chain_list *cl = &di->id2.i_chain;
-> +		u16 cl_bpc = le16_to_cpu(cl->cl_bpc);
-> +		u16 expected_bpc = 1 << (OCFS2_SB(sb)->s_clustersize_bits -
-> +					 sb->s_blocksize_bits);
-> +
-> +		if (cl_bpc != expected_bpc) {
-> +			rc = ocfs2_error(sb,
-> +				"Inode %llu has corrupted cl_bpc: ondisk=%u expected=%u\n",
-> +				(unsigned long long)bh->b_blocknr,
-> +				cl_bpc, expected_bpc);
-> +			goto bail;
-> +		}
-> +	}
->  
->  	rc = 0;
->  
 
 
