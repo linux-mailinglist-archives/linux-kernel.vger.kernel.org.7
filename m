@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-873355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0168DC13C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:19:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC62DC13C35
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F333461804
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC95A1AA6849
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76DE6301006;
-	Tue, 28 Oct 2025 09:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76A3303A37;
+	Tue, 28 Oct 2025 09:17:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fOcEPXGU"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="g4iOmek2"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A88261B99
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F643016F7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761643042; cv=none; b=RSbpFSyyl3b5Yn9KLCQwWUGo0+W17lMF5B3qCxxMdHftyNCpP01X9Vd1wxo0yu+lLrL85U+KT6TgbJ+VjQFSMNmwaXnYxjPwDCN9mIfq9M2no5fFg+cQYtZpwpq5bweH6zVGVq+AkMLH/fXTbdCJCwOGxBfJKqdOObnqw76tGrY=
+	t=1761643045; cv=none; b=BOg75wU8GEGW4iNCfhdn6ErD/SKhdI8O78TohQR/vqKWGnMpRARA+1FEmiJm0kkkXwLosOjjVof/pNSjmx0zFldzMVZs9JVS6hXFFGx1nHTHKWrsbVJlm4sp/I7Mjnev26tb8qBdR3YH0JLl8KpGUduq2lHW+Kpb0Z8WhYzgZbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761643042; c=relaxed/simple;
-	bh=cyZyLundsyMK8gnrV8YrT8OZRfND/4ZKZAJIIljhbPk=;
+	s=arc-20240116; t=1761643045; c=relaxed/simple;
+	bh=vszDF/cx4qHYXXIt4CCpd4y86yZhshQ+o4PVe1g7Y50=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GDiTUexQIHvz8uhfN8dUaUw50+wdy5cyKxBjcjW/bLbixKINqAwGm1owX0j6E3XcrSfYYLyQKQs7WhWxWYL+8PksSk1IrBvtjTaaWtb3n2NXQP2mcfjipxKunORsR44BXrndF10Ndxj0t1TE0shYh7WnIORVoMGuFlYGknaMPvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fOcEPXGU; arc=none smtp.client-ip=159.69.126.157
+	 In-Reply-To:To:Cc; b=OEhZdBt5rjXE5nux+TYUAiIUlBNYtWAa25wdhQH/7L2ie5EodL2dVsTnyfI+h03rfkbqzpplwHHLx2zs7E51y6I8xvbaYiM7F4wka8taLfEcZXehcMDrjTNs7k8I6mvZdQjfMz/IZk8aP18UgKWbV/OmukFfS8DwM6ecNOf9Rpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=g4iOmek2; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1761643037;
-	bh=cyZyLundsyMK8gnrV8YrT8OZRfND/4ZKZAJIIljhbPk=;
+	s=mail; t=1761643038;
+	bh=vszDF/cx4qHYXXIt4CCpd4y86yZhshQ+o4PVe1g7Y50=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fOcEPXGUde//TsAO89amRNfwk5vWdNVZYP+aINNzg7rgHGEX2bDHMTBjLH3TtKGFK
-	 Kfxb8beObEbV9UDf8PxXAbWah1gfqirT5lfg8X8kpKypwItBTK7eXx8G2XZBHI+tAT
-	 RU+j41JM3dcNxrsnz7E9s/vpjuUXU3Mw3KPPRRFM=
+	b=g4iOmek2Pwb6uaHO9W+u8eso4VNQkDSU25wRqBElFVpQ8AW3A2IfvYY4xFaRdfeK6
+	 zEYDZMZis6+oV/rFJ2NiXsUZGNdNOvetfhbmxtX9XJLFGpk9Pzfe6Yir6auEGfA+Be
+	 3DzYkFALhdgDxn8UbMJq0+NthKJSN9gSw7gyLDRw=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Tue, 28 Oct 2025 10:15:39 +0100
-Subject: [PATCH 04/10] x86/um: Do not inherit vDSO from host
+Date: Tue, 28 Oct 2025 10:15:40 +0100
+Subject: [PATCH 05/10] x86/um: Drop gate area handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,7 +48,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251028-uml-remove-32bit-pseudo-vdso-v1-4-e930063eff5f@weissschuh.net>
+Message-Id: <20251028-uml-remove-32bit-pseudo-vdso-v1-5-e930063eff5f@weissschuh.net>
 References: <20251028-uml-remove-32bit-pseudo-vdso-v1-0-e930063eff5f@weissschuh.net>
 In-Reply-To: <20251028-uml-remove-32bit-pseudo-vdso-v1-0-e930063eff5f@weissschuh.net>
 To: Richard Weinberger <richard@nod.at>, 
@@ -62,252 +62,116 @@ Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761643036; l=7417;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761643036; l=2787;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=cyZyLundsyMK8gnrV8YrT8OZRfND/4ZKZAJIIljhbPk=;
- b=ErJu3hMj+Bqp4vF/M1+WxLQlIk5OXTslG7g273YGeACre+TpEugV839ttL9O5pU9rApJw0PoY
- XrePoO60HNiANfsfcDOlfyYLgfmuAiPahGEaDHecL2nvssfzBLDgjok
+ bh=vszDF/cx4qHYXXIt4CCpd4y86yZhshQ+o4PVe1g7Y50=;
+ b=o4JmUMvwtaLOa6D398C8FcQZo9AegfjrZ0mzUtV8o6ruPGtlXeeSvSB1/HNV+nBp+yjVHkJSq
+ 0+5+Nf0zAGFCVqYDRn7QlgelnwkKGaCgWpd/sXbvXYOnmwS3ORxXiCa
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Inheriting the vDSO from the host is problematic. The values read
-from the time functions will not be correct for the UML kernel.
-Furthermore the start and end of the vDSO are not stable or
-detectable by userspace. Specifically the vDSO datapages start
-before AT_SYSINFO_EHDR and the vDSO itself is larger than a single page.
+With the removal of the vDSO passthrough from the host,
+FIXADDR_USER_START is always 0 and the gate area setup code is dead.
 
-This codepath is only used on 32bit x86 UML. In my testing with both
-32bit and 64bit hosts the passthrough functionality has always been
-disabled anyways due to the checks against envp in scan_elf_aux().
+Remove it.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
- arch/um/os-Linux/elf_aux.c   | 27 ---------------
- arch/um/os-Linux/user_syms.c |  6 ----
- arch/x86/um/Kconfig          |  1 -
- arch/x86/um/Makefile         |  1 -
- arch/x86/um/asm/elf.h        | 29 ++--------------
- arch/x86/um/elfcore.c        | 78 --------------------------------------------
- 6 files changed, 3 insertions(+), 139 deletions(-)
+ arch/um/include/asm/page.h |  4 ----
+ arch/x86/um/Makefile       |  4 ++--
+ arch/x86/um/mem_32.c       | 50 ----------------------------------------------
+ 3 files changed, 2 insertions(+), 56 deletions(-)
 
-diff --git a/arch/um/os-Linux/elf_aux.c b/arch/um/os-Linux/elf_aux.c
-index 9ee0e3199790..f8927a5959d8 100644
---- a/arch/um/os-Linux/elf_aux.c
-+++ b/arch/um/os-Linux/elf_aux.c
-@@ -20,31 +20,15 @@ typedef Elf32_auxv_t elf_auxv_t;
- /* These are initialized very early in boot and never changed */
- char * elf_aux_platform;
- extern long elf_aux_hwcap;
--unsigned long vsyscall_ehdr;
--unsigned long vsyscall_end;
--unsigned long __kernel_vsyscall;
+diff --git a/arch/um/include/asm/page.h b/arch/um/include/asm/page.h
+index 6f54254aaf44..2d363460d896 100644
+--- a/arch/um/include/asm/page.h
++++ b/arch/um/include/asm/page.h
+@@ -96,8 +96,4 @@ extern unsigned long uml_physmem;
  
- __init void scan_elf_aux( char **envp)
- {
--	long page_size = 0;
- 	elf_auxv_t * auxv;
+ #endif	/* __ASSEMBLER__ */
  
- 	while ( *envp++ != NULL) ;
- 
- 	for ( auxv = (elf_auxv_t *)envp; auxv->a_type != AT_NULL; auxv++) {
- 		switch ( auxv->a_type ) {
--			case AT_SYSINFO:
--				__kernel_vsyscall = auxv->a_un.a_val;
--				/* See if the page is under TASK_SIZE */
--				if (__kernel_vsyscall < (unsigned long) envp)
--					__kernel_vsyscall = 0;
--				break;
--			case AT_SYSINFO_EHDR:
--				vsyscall_ehdr = auxv->a_un.a_val;
--				/* See if the page is under TASK_SIZE */
--				if (vsyscall_ehdr < (unsigned long) envp)
--					vsyscall_ehdr = 0;
--				break;
- 			case AT_HWCAP:
- 				elf_aux_hwcap = auxv->a_un.a_val;
- 				break;
-@@ -56,17 +40,6 @@ __init void scan_elf_aux( char **envp)
- 				elf_aux_platform =
- 					(char *) (long) auxv->a_un.a_val;
- 				break;
--			case AT_PAGESZ:
--				page_size = auxv->a_un.a_val;
--				break;
- 		}
- 	}
--	if ( ! __kernel_vsyscall || ! vsyscall_ehdr ||
--	     ! page_size || (vsyscall_ehdr % page_size) ) {
--		__kernel_vsyscall = 0;
--		vsyscall_ehdr = 0;
--	}
--	else {
--		vsyscall_end = vsyscall_ehdr + page_size;
--	}
- }
-diff --git a/arch/um/os-Linux/user_syms.c b/arch/um/os-Linux/user_syms.c
-index a310ae27b479..67f6112318b6 100644
---- a/arch/um/os-Linux/user_syms.c
-+++ b/arch/um/os-Linux/user_syms.c
-@@ -31,12 +31,6 @@ extern void *memset(void *, int, size_t);
- EXPORT_SYMBOL(memset);
- #endif
- 
--#ifdef CONFIG_ARCH_REUSE_HOST_VSYSCALL_AREA
--/* needed for __access_ok() */
--EXPORT_SYMBOL(vsyscall_ehdr);
--EXPORT_SYMBOL(vsyscall_end);
+-#ifdef CONFIG_X86_32
+-#define __HAVE_ARCH_GATE_AREA 1
 -#endif
 -
- #ifdef _FORTIFY_SOURCE
- extern int __sprintf_chk(char *str, int flag, size_t len, const char *format);
- EXPORT_SYMBOL(__sprintf_chk);
-diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
-index c52fb5cb8d21..798c6cc53e82 100644
---- a/arch/x86/um/Kconfig
-+++ b/arch/x86/um/Kconfig
-@@ -8,7 +8,6 @@ endmenu
- 
- config UML_X86
- 	def_bool y
--	select ARCH_BINFMT_ELF_EXTRA_PHDRS if X86_32
- 	select ARCH_USE_QUEUED_RWLOCKS
- 	select ARCH_USE_QUEUED_SPINLOCKS
- 	select DCACHE_WORD_ACCESS
+ #endif	/* __UM_PAGE_H */
 diff --git a/arch/x86/um/Makefile b/arch/x86/um/Makefile
-index b42c31cd2390..1767e6061b4d 100644
+index 1767e6061b4d..f9ea75bf43ac 100644
 --- a/arch/x86/um/Makefile
 +++ b/arch/x86/um/Makefile
-@@ -18,7 +18,6 @@ obj-y = bugs_$(BITS).o delay.o fault.o \
+@@ -13,7 +13,7 @@ obj-y = bugs_$(BITS).o delay.o fault.o \
+ 	ptrace.o ptrace_$(BITS).o ptrace_user.o setjmp_$(BITS).o signal.o \
+ 	stub_segv.o \
+ 	sys_call_table_$(BITS).o sysrq_$(BITS).o tls_$(BITS).o \
+-	mem_$(BITS).o subarch.o os-Linux/
++	subarch.o os-Linux/
+ 
  ifeq ($(CONFIG_X86_32),y)
  
- obj-y += syscalls_32.o
--obj-$(CONFIG_ELF_CORE) += elfcore.o
+@@ -26,7 +26,7 @@ subarch-y += ../kernel/sys_ia32.o
  
- subarch-y = ../lib/string_32.o ../lib/atomic64_32.o ../lib/atomic64_cx8_32.o
- subarch-y += ../lib/cmpxchg8b_emu.o ../lib/atomic64_386_32.o
-diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
-index e7a045e01471..8d7df4684c38 100644
---- a/arch/x86/um/asm/elf.h
-+++ b/arch/x86/um/asm/elf.h
-@@ -72,32 +72,9 @@ extern char * elf_aux_platform;
- #define ELF_PLATFORM_FALLBACK "i586"
- #define ELF_PLATFORM (elf_aux_platform ?: ELF_PLATFORM_FALLBACK)
+ else
  
--extern unsigned long vsyscall_ehdr;
--extern unsigned long vsyscall_end;
--extern unsigned long __kernel_vsyscall;
--
--/*
-- * This is the range that is readable by user mode, and things
-- * acting like user mode such as get_user_pages.
-- */
--#define FIXADDR_USER_START      vsyscall_ehdr
--#define FIXADDR_USER_END        vsyscall_end
--
--
--/*
-- * Architecture-neutral AT_ values in 0-17, leave some room
-- * for more of them, start the x86-specific ones at 32.
-- */
--#define AT_SYSINFO		32
--#define AT_SYSINFO_EHDR		33
--
--#define ARCH_DLINFO						\
--do {								\
--	if ( vsyscall_ehdr ) {					\
--		NEW_AUX_ENT(AT_SYSINFO,	__kernel_vsyscall);	\
--		NEW_AUX_ENT(AT_SYSINFO_EHDR, vsyscall_ehdr);	\
--	}							\
--} while (0)
-+/* No user-accessible fixmap addresses, i.e. vsyscall */
-+#define FIXADDR_USER_START      0
-+#define FIXADDR_USER_END        0
+-obj-y += syscalls_64.o vdso/
++obj-y += mem_64.o syscalls_64.o vdso/
  
- #else
- 
-diff --git a/arch/x86/um/elfcore.c b/arch/x86/um/elfcore.c
+ subarch-y = ../lib/csum-partial_64.o ../lib/memcpy_64.o \
+ 	../lib/memmove_64.o ../lib/memset_64.o
+diff --git a/arch/x86/um/mem_32.c b/arch/x86/um/mem_32.c
 deleted file mode 100644
-index ef50662fc40d..000000000000
---- a/arch/x86/um/elfcore.c
+index 29b2203bc82c..000000000000
+--- a/arch/x86/um/mem_32.c
 +++ /dev/null
-@@ -1,78 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <linux/elf.h>
--#include <linux/elfcore.h>
--#include <linux/coredump.h>
--#include <linux/fs.h>
--#include <linux/mm.h>
+@@ -1,50 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Copyright (C) 2011 Richard Weinberger <richrd@nod.at>
+- */
 -
+-#include <linux/mm.h>
 -#include <asm/elf.h>
 -
+-static struct vm_area_struct gate_vma;
 -
--Elf32_Half elf_core_extra_phdrs(struct coredump_params *cprm)
+-static int __init gate_vma_init(void)
 -{
--	return vsyscall_ehdr ? (((struct elfhdr *)vsyscall_ehdr)->e_phnum) : 0;
--}
+-	if (!FIXADDR_USER_START)
+-		return 0;
 -
--int elf_core_write_extra_phdrs(struct coredump_params *cprm, loff_t offset)
--{
--	if ( vsyscall_ehdr ) {
--		const struct elfhdr *const ehdrp =
--			(struct elfhdr *) vsyscall_ehdr;
--		const struct elf_phdr *const phdrp =
--			(const struct elf_phdr *) (vsyscall_ehdr + ehdrp->e_phoff);
--		int i;
--		Elf32_Off ofs = 0;
+-	vma_init(&gate_vma, NULL);
+-	gate_vma.vm_start = FIXADDR_USER_START;
+-	gate_vma.vm_end = FIXADDR_USER_END;
+-	vm_flags_init(&gate_vma, VM_READ | VM_MAYREAD | VM_EXEC | VM_MAYEXEC);
+-	gate_vma.vm_page_prot = PAGE_READONLY;
 -
--		for (i = 0; i < ehdrp->e_phnum; ++i) {
--			struct elf_phdr phdr = phdrp[i];
--
--			if (phdr.p_type == PT_LOAD) {
--				ofs = phdr.p_offset = offset;
--				offset += phdr.p_filesz;
--			} else {
--				phdr.p_offset += ofs;
--			}
--			phdr.p_paddr = 0; /* match other core phdrs */
--			if (!dump_emit(cprm, &phdr, sizeof(phdr)))
--				return 0;
--		}
--	}
--	return 1;
--}
--
--int elf_core_write_extra_data(struct coredump_params *cprm)
--{
--	if ( vsyscall_ehdr ) {
--		const struct elfhdr *const ehdrp =
--			(struct elfhdr *) vsyscall_ehdr;
--		const struct elf_phdr *const phdrp =
--			(const struct elf_phdr *) (vsyscall_ehdr + ehdrp->e_phoff);
--		int i;
--
--		for (i = 0; i < ehdrp->e_phnum; ++i) {
--			if (phdrp[i].p_type == PT_LOAD) {
--				void *addr = (void *) phdrp[i].p_vaddr;
--				size_t filesz = phdrp[i].p_filesz;
--				if (!dump_emit(cprm, addr, filesz))
--					return 0;
--			}
--		}
--	}
--	return 1;
--}
--
--size_t elf_core_extra_data_size(struct coredump_params *cprm)
--{
--	if ( vsyscall_ehdr ) {
--		const struct elfhdr *const ehdrp =
--			(struct elfhdr *)vsyscall_ehdr;
--		const struct elf_phdr *const phdrp =
--			(const struct elf_phdr *) (vsyscall_ehdr + ehdrp->e_phoff);
--		int i;
--
--		for (i = 0; i < ehdrp->e_phnum; ++i)
--			if (phdrp[i].p_type == PT_LOAD)
--				return (size_t) phdrp[i].p_filesz;
--	}
 -	return 0;
+-}
+-__initcall(gate_vma_init);
+-
+-struct vm_area_struct *get_gate_vma(struct mm_struct *mm)
+-{
+-	return FIXADDR_USER_START ? &gate_vma : NULL;
+-}
+-
+-int in_gate_area_no_mm(unsigned long addr)
+-{
+-	if (!FIXADDR_USER_START)
+-		return 0;
+-
+-	if ((addr >= FIXADDR_USER_START) && (addr < FIXADDR_USER_END))
+-		return 1;
+-
+-	return 0;
+-}
+-
+-int in_gate_area(struct mm_struct *mm, unsigned long addr)
+-{
+-	struct vm_area_struct *vma = get_gate_vma(mm);
+-
+-	if (!vma)
+-		return 0;
+-
+-	return (addr >= vma->vm_start) && (addr < vma->vm_end);
 -}
 
 -- 
