@@ -1,125 +1,202 @@
-Return-Path: <linux-kernel+bounces-874611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C34F1C16B03
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:55:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FD5C16B09
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C281403AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:55:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3B104F03F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4643502A2;
-	Tue, 28 Oct 2025 19:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD722BE650;
+	Tue, 28 Oct 2025 19:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En50DAfU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o9flvZw6"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BDF2D0625
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5561D2BE04B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681286; cv=none; b=CVxdSHpFIYg/Gzr/WPLCzaiClg/lfLAMtKGNGpBbZFrgrjFexx9k+AHpipgdXNUIgmDq9Lg3s1W6sm+Me5+b5EeEOj2jC6m6B6FGkGIE//2LIUWzB5UOiZzuCt2hXcnJM9JbpyxvRgglbBaxnUe3m1fOWIRXQQwVsjVZZWSWNAo=
+	t=1761681370; cv=none; b=VF3bjWAn6VNjoIFIf4Y9+6Yuxr85m6sSO6Pim8O3zl8m7aLBiCr4EqrU258n5ezWDURadwzzrxhCZA3x1w+dujGeh2W0N6EbUpBnTIijLEp6MKxvLQ7p4wKpgZNncVZlBK4OoRPaPiE2NdpofMdCEmMvLh7IfNv8cZDcCQIxTV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681286; c=relaxed/simple;
-	bh=sLuFwvAwHUNO/skdE7BzrktYPRAzXyoh3REUgst9oAM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LvTvnjWdxxLMfdXiA8oWpis+lU9aJrg8nx/cOgpgCdCCkwb39qkUuOob4CJRswLXgdzX8DJyO5U/fES3qjtvJJXFug5Dzfv+Irb9lS0+AQwm3xWFHAt5zgN5k90UUwlYHleZKNgtMTHnItaRHYr2Vp60RK6WgUbSQlEWb6gQnZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En50DAfU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8B7C4CEE7;
-	Tue, 28 Oct 2025 19:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761681286;
-	bh=sLuFwvAwHUNO/skdE7BzrktYPRAzXyoh3REUgst9oAM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=En50DAfURMwXsnoO7ty2KsDNFEjyMIKRKv83LzWhaGEwphyfErYT9jDhE8kZx78vh
-	 kvCCpMWW4uLtZN/bi9mSSJtQw7/wNqe6HrW53e40W6gEV8Y2tJ3fDMVHsa/zyQcWsL
-	 rW2NHErauKIyGnpIezZG0fLiURuQpLtXiwHKIE+MvpS8/qdP9pmI8Y0Hbmu06OFrmG
-	 j/wDKnOUVaM3PsQ8VwsK0m+w9wYdUdqLM18ioVCkjbz6+7cYI31ABz42zaOZSa++os
-	 1RmG0YjIihIRyTs9Fp+9/eWg7c+4eMJeb/fqS3FSMC7iy6B8KvzktN/rK4ZGeeQehb
-	 Fm0nChBPrKTsA==
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [PATCH] f2fs: add fadvise tracepoint
-Date: Tue, 28 Oct 2025 19:54:44 +0000
-Message-ID: <20251028195444.3181203-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
+	s=arc-20240116; t=1761681370; c=relaxed/simple;
+	bh=k1Nd2ZkHeTjO1+O9Y2qm5A3P/BikNVTJMUU/UEq3ZDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pkv15eVj0X2P5cVjfwoBVApRivCLnxUoxKusYRsYf6zGa+jMP/OtvVTSRq13jK6nlcdA9C8uN2/QwaRL0q7gKB97cjbK1wxjDfl+SyojGF54S6m2pLboXGW9fEQ0pcVWJUy3r+MCG1B61LPX4/eWUX4xnnTQg8tthI90oLdGcVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o9flvZw6; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-290da96b37fso10235ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761681369; x=1762286169; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qz7E3e014YVVbAntBggXwnVn/WihTsrRHoY0FNnCNtI=;
+        b=o9flvZw6lhtY3SvoXTUr4tvua6z5v1jv9c5w9SdD9mBP+gFTbNxGjq0N+cUvt8eia0
+         EhFqU0345Kes5GIeq56GqE9RPHWpfF1V5Lvu7UzUssuuXBzwYCQ1gjMftj8V6s9/WHK7
+         +6rxNBKo0ZXGuYQBGvaV+HRGp1Xw9McZFdANEJXrMaavzabIMdgHTtgKgpGE8Esa4amM
+         IUX2ZOe0Hu31ZXyZAqyssW7RQC958ROIZXete+PAS9nh17XFVSywlUx4wgsHDYe7k0k0
+         +uIPYV6Ejf5LFoX9w0qgBOnndWPVO54Ln2XUo1W1JFxO7FJremqZTf8PurT7+faV9+Jy
+         heYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761681369; x=1762286169;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qz7E3e014YVVbAntBggXwnVn/WihTsrRHoY0FNnCNtI=;
+        b=xS6iZuHejIcx5H8XwueXn969gtQuC4aNG7IdPuEljGadVhfTxUDXdOKTbx9nA/0h/i
+         AyWXfqij4nOu+Q79bU5+jJoWc6ZFtF0KwUl2nLH+FMDVmffyiS7bahNJsmlqRYOBqJxO
+         BD3lGo5Oj2R/qD8hpKS79nz7IQitBQUQ3biu80KR5tFGKWlezA2pxOCysYPTxc1a9b0N
+         37Xw5iFEGHLo9ns0OrAvcZxRsyNPsk64q093nMYlp7FfqmsJ8d9WPbdeuYvBHtCbScoT
+         GiYrGc2KN7OD21B4F6XW4UD1KMCCk3A8bLygApXFymzqBtypxTxH5MRvtUD/jKJFGvnO
+         n7gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWsPR69DBUXLuTNHwg/BS6f+gz/ax6eIAzzGN0r//R28tiqrqM16zhQxhxn+AiqdICbpA6khP2NZDqGPrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2bVxOtsUlHJRx/U4TWfG199/CH0qD7Wpjftbv1bQdjgjguniZ
+	m0vm1DHDVrI1DTSN5FtTk9JxDM2tldEMlEDxl+Hw1TxjLFneGv1T6OoD/dmyyZuXf23hyB2lgzq
+	EPYBywqkT3YN1UXH+3ZDJmC1JrxZP04Q2pnj4f54D
+X-Gm-Gg: ASbGncvjjF2KGUAauRtyRGniXtwJ4Uz/J0NUzi7mZ/oUL44D3G4nu8+B7vaOilyuU9w
+	ZKVh9GBx100IbQdhwJiZUVXeJobf0L3jUkRrN9+cMTManmTOoZDgTwi/zOTl8bnvg7cZEgUc6lk
+	yte7XDSbq7wCld5ATon+Y3LUzHDby2JF0ieUOtsnlDSvkzujzps7+y24dfLg0RmQ5pRz/O7S7H+
+	tcVqrJ0VUXQPyEZHC0Hx/oEyCvzsLQjx+ABlnOmGv5Pq2No+zA7DxWENgVQyOWaKfQGoXlXtq9k
+	Bp2jFHLPfcTOiG5OUJ83YnzM
+X-Google-Smtp-Source: AGHT+IH3TRhcVUxRwROAnGiMz0BCFIqdPZZG0MhujaC2lMpKBeZ22ZAZZERQaCQH0w/cSR6Snh/KcjDC/TdE6BhUx1o=
+X-Received: by 2002:a17:902:db05:b0:26e:ac44:3b44 with SMTP id
+ d9443c01a7336-294de569f58mr1209945ad.10.1761681368203; Tue, 28 Oct 2025
+ 12:56:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251028153821.4003666-1-irogers@google.com> <aQEV2ABm7JaGH3UO@x1>
+In-Reply-To: <aQEV2ABm7JaGH3UO@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 28 Oct 2025 12:55:56 -0700
+X-Gm-Features: AWmQ_bl0HnAjrQ_JMiG8nyJ6MWL_ZdLvpZp9FKGajQ3u8ZuiqIO16qXhOPI6o_4
+Message-ID: <CAP-5=fVuB02yxjQu2qvEVy9WHbSvVaAgPCpgSY8bXrSHGkr3rg@mail.gmail.com>
+Subject: Re: [PATCH v2] perf test workload: Add thread count argument to thloop
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds a tracepoint in the fadvise call path.
+On Tue, Oct 28, 2025 at 12:13=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Tue, Oct 28, 2025 at 08:38:20AM -0700, Ian Rogers wrote:
+> > Allow the number of threads for the thloop workload to be increased
+> > beyond the normal 2. Add error checking to the parsed time and thread
+> > count values.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> > v2: Perform the pthread_join unconditionally and ensure started
+> >     threads terminate.
+> > ---
+> >  tools/perf/tests/workloads/thloop.c | 45 ++++++++++++++++++++++++-----
+> >  1 file changed, 38 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/workloads/thloop.c b/tools/perf/tests/wor=
+kloads/thloop.c
+> > index 457b29f91c3e..bd8168f883fb 100644
+> > --- a/tools/perf/tests/workloads/thloop.c
+> > +++ b/tools/perf/tests/workloads/thloop.c
+> > @@ -31,21 +31,52 @@ static void *thfunc(void *arg)
+> >
+> >  static int thloop(int argc, const char **argv)
+> >  {
+> > -     int sec =3D 1;
+> > -     pthread_t th;
+> > +     int nt =3D 2, sec =3D 1, err =3D 1;
+> > +     pthread_t *thread_list =3D NULL;
+> >
+> >       if (argc > 0)
+> >               sec =3D atoi(argv[0]);
+> >
+> > +     if (sec <=3D 0) {
+> > +             fprintf(stderr, "Error: seconds (%d) must be >=3D 1\n", s=
+ec);
+> > +             return 1;
+> > +     }
+> > +
+> > +     if (argc > 1)
+> > +             nt =3D atoi(argv[1]);
+> > +
+> > +     if (nt <=3D 0) {
+> > +             fprintf(stderr, "Error: thread count (%d) must be >=3D 1\=
+n", nt);
+> > +             return 1;
+> > +     }
+> > +
+> >       signal(SIGINT, sighandler);
+> >       signal(SIGALRM, sighandler);
+> > -     alarm(sec);
+> >
+> > -     pthread_create(&th, NULL, thfunc, test_loop);
+> > -     test_loop();
+> > -     pthread_join(th, NULL);
+> > +     thread_list =3D calloc(nt, sizeof(pthread_t));
+> > +     if (thread_list =3D=3D NULL) {
+> > +             fprintf(stderr, "Error: malloc failed for %d threads\n", =
+nt);
+> > +             goto out;
+> > +     }
+> > +     for (int i =3D 1; i < nt; i++) {
+>
+> Why do you start at 1? What goes in thread[0]? calloc() leaves it at
+> NULL, then if you have two threads you'll allocate thread[1], i gets
+> incremented, 2 < 2 fails, you get just one thread created, when two were
+> asked?
+>
+> Oh, I see, you use the main thread to run, that test_loop() just before
+> the err =3D 0, its just that you allocate thread[0] for nothing, that
+> confused me.
 
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- fs/f2fs/file.c              |  2 ++
- include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+Agreed. It was so I could avoid doing "nt-1" as I mentioned before.
+Fwiw, pthread_self will sometimes return 0 for the main thread and so
+it isn't entirely inconsistent to do things this way. Not that the
+main thread should try to do a pthread_join with itself.
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 6d42e2d28861..4a81089c5df3 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5288,6 +5288,8 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
- 	struct inode *inode = file_inode(filp);
- 	int err;
- 
-+	trace_f2fs_fadvise(inode, offset, len, advice);
-+
- 	if (advice == POSIX_FADV_SEQUENTIAL) {
- 		if (S_ISFIFO(inode->i_mode))
- 			return -ESPIPE;
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index edbbd869078f..b7f5317b5980 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -586,6 +586,38 @@ TRACE_EVENT(f2fs_file_write_iter,
- 		__entry->ret)
- );
- 
-+TRACE_EVENT(f2fs_fadvise,
-+
-+	TP_PROTO(struct inode *inode, loff_t offset, loff_t len, int advice),
-+
-+	TP_ARGS(inode, offset, len, advice),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,	dev)
-+		__field(ino_t,	ino)
-+		__field(loff_t, size)
-+		__field(loff_t,	offset)
-+		__field(loff_t,	len)
-+		__field(int,	advice)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->dev	= inode->i_sb->s_dev;
-+		__entry->ino	= inode->i_ino;
-+		__entry->size	= inode->i_size;
-+		__entry->offset	= offset;
-+		__entry->len	= len;
-+		__entry->advice	= advice;
-+	),
-+
-+	TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld offset:%llu, len:%llu, advise:%d",
-+		show_dev_ino(__entry),
-+		(unsigned long long)__entry->size,
-+		__entry->offset,
-+		__entry->len,
-+		__entry->advice)
-+);
-+
- TRACE_EVENT(f2fs_map_blocks,
- 	TP_PROTO(struct inode *inode, struct f2fs_map_blocks *map, int flag,
- 		 int ret),
--- 
-2.51.1.851.g4ebd6896fd-goog
+Thanks,
+Ian
 
+> - Arnaldo
+>
+> > +             int ret =3D pthread_create(&thread_list[i], NULL, thfunc,=
+ test_loop);
+> >
+> > -     return 0;
+> > +             if (ret) {
+> > +                     fprintf(stderr, "Error: failed to create thread %=
+d\n", i);
+> > +                     done =3D 1; // Ensure started threads terminate.
+> > +                     goto out;
+> > +             }
+> > +     }
+> > +     alarm(sec);
+> > +     test_loop();
+> > +     err =3D 0;
+> > +out:
+> > +     for (int i =3D 1; i < nt; i++) {
+> > +             if (thread_list && thread_list[i])
+> > +                     pthread_join(thread_list[i], /*retval=3D*/NULL);
+> > +     }
+> > +     free(thread_list);
+> > +     return err;
+> >  }
+> >
+> >  DEFINE_WORKLOAD(thloop);
+> > --
+> > 2.51.1.851.g4ebd6896fd-goog
 
