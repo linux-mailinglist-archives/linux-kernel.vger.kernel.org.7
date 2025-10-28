@@ -1,172 +1,155 @@
-Return-Path: <linux-kernel+bounces-874533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E41C16873
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:43:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE96DC1687C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4E2401947
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:42:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139351C22017
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4C734F260;
-	Tue, 28 Oct 2025 18:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1620734FF4A;
+	Tue, 28 Oct 2025 18:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="IBcgLS0V"
-Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QEm//4JB"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655AB20013A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D9634E772
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676953; cv=none; b=IPZwegKrFIy7aMViuI5/f3hNe5ALb2L/bCCW9DA9BOYISkyuqSS3iXHnhg6n5lv5MnPvkd4mT//9JX6P9FWVcUIek9Dr7kXxwiNb8oNiHnPmrQdxoqN0tQU5btmuDyReedkBVGF4fMYkKQRu2nlYFNb+LhHA61CWOvSAbiqUTAY=
+	t=1761676958; cv=none; b=G3MVgD2XZEPN7ATlh7uaWw80g57urPeU8+W3XSn1Rp6b+HJ1VSppt1C4A/2odmWJ5m5PmiVijpFQ98GOBTxKPlxND2PP3UrlPkw+IWWCVS7xzf6ZemISIz3yj3kLkR6ODdPRyxiYrvrrHLcaKb3lZr3wXd5ip2Rt4JBS+Po/7Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676953; c=relaxed/simple;
-	bh=HL4Jsmiqq3qZinNDgEWhWXSE9m4WVT1UgDC8ewCAwvI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KYK25IWyauCL67D3R3m4Owm0nqkPbZovmjXMRKxAkQLuw0GWzqyB8kO2qDObLf1dBEtyxEdYq2Hkg+njqeiQEQvkw6bcgmx4kfQ49MTMHLMbQPK7uyAuE5cSkUc0jZCeO38olG7BrtjkFohVjYDr1WlPY6nauTiXcqSU8xMC9mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=IBcgLS0V; arc=none smtp.client-ip=67.231.145.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SILeXJ1469959
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:30 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=s2048-2025-q2; bh=O0D22jbflGl1QZqxbJJ1
-	lyaMPVaagUGQk+kZCnolltM=; b=IBcgLS0VKenZW7H8cSVqNHwonnmiclflTEMv
-	3jaM+H3bmXl1sO+txvPwPozjFnVhcUWTOYV0x1/5g+ACVy82IsFrqtvoFBthK3sg
-	ZnbU+oclh08BbfGRbnvIGKON3SfKUL7IdTiYKiuHN6AHF11KXe43zc3dFW0l4Zo6
-	8maptMbFtInJ1ODUHuk+mm9qfuPKf0tlPkPgczFWgXFzxxkfYb6r+KMCCjGPLP/s
-	yLuTkIvyhw/cvNI9yM2ERWT6r07OmHDBss+nkvdhzI+6B0zJdcNYwguEVg9yprkv
-	3GnAZgKYv3sHHMY/L/vrI4pL0yqTGDQY6ygmzdEBBpVITTaQeQ==
-Received: from mail.thefacebook.com ([163.114.134.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a2xt6b86t-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:42:30 -0700 (PDT)
-Received: from twshared82436.15.frc2.facebook.com (2620:10d:c085:108::150d) by
- mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.20; Tue, 28 Oct 2025 18:42:28 +0000
-Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
-	id 77C8E53948D; Tue, 28 Oct 2025 11:42:15 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:42:15 -0700
-From: Alex Mastro <amastro@fb.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Alex Williamson <alex.williamson@redhat.com>,
-        Alejandro Jimenez
-	<alejandro.j.jimenez@oracle.com>,
-        David Matlack <dmatlack@google.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
- limit
-Message-ID: <aQEOhyYQKW4unEfZ@devgpu012.nha5.facebook.com>
-References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
- <aP0S5ZF9l3sWkJ1G@devgpu012.nha5.facebook.com>
- <20251027133904.GE760669@ziepe.ca>
+	s=arc-20240116; t=1761676958; c=relaxed/simple;
+	bh=goTC3AtaAi01urtiUtv3DK9rgjalng0u2KmjYfb12ks=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=flR/FzIeE/jD3sbT6OSdV0nK58yAlpOB3vfZkao78bsa9/sVUlyNtJg9lao4qatT+CoLKTO02LaHtHfTiz+I9CxR0wVlJZDpHX8tpdbIYBMSvbof/yxdz8zJmtIz9STnrVoVNZv4itjp6Iek4D+jNkAJw2FFs5w/EuFlHBxcsPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QEm//4JB; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761676954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UViaiKs97AW130sd1Pv1jMx77Woc0mLfVhtIKZNEsXs=;
+	b=QEm//4JBVdHkp2n7eP7X+898pDWsbWkilRRDP2Ko/YBBo6UKw+UvVX3Asjh0e0UdJCN+6S
+	XOW0V2qu7Tgb+4tEk+vQISKdEdrf+L5RoaD4BtgsZDvTLR8ELwpryoEoajOe5DLGs14lF5
+	fTvPlRyjeTam2lyXWMYKq7qIpjO4VBY=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  LKML
+ <linux-kernel@vger.kernel.org>,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
+ <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
+ Kobryn <inwardvessel@gmail.com>,  linux-mm <linux-mm@kvack.org>,  "open
+ list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,  bpf
+ <bpf@vger.kernel.org>,  Martin KaFai Lau <martin.lau@kernel.org>,  Song
+ Liu <song@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun
+ Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+In-Reply-To: <CAADnVQKWskY1ijJtSX=N0QczW_-gtg-X_SpK_GuiYBYQodn5wQ@mail.gmail.com>
+	(Alexei Starovoitov's message of "Tue, 28 Oct 2025 10:45:47 -0700")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-7-roman.gushchin@linux.dev>
+	<CAADnVQKWskY1ijJtSX=N0QczW_-gtg-X_SpK_GuiYBYQodn5wQ@mail.gmail.com>
+Date: Tue, 28 Oct 2025 11:42:27 -0700
+Message-ID: <87qzumq358.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20251027133904.GE760669@ziepe.ca>
-X-FB-Internal: Safe
-X-Authority-Analysis: v=2.4 cv=VK3QXtPX c=1 sm=1 tr=0 ts=69010e96 cx=c_pps
- a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yJsSUgGDADgjvR2qnwgA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: BE_5KnfNYtMSidEXWmc1rk5MisDx5mlf
-X-Proofpoint-GUID: BE_5KnfNYtMSidEXWmc1rk5MisDx5mlf
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE1OCBTYWx0ZWRfX1NgMI9E6xnY6
- 2urGWvw3CA8jo/4gWb/6KoMW/BENDUer9UR7PBzotVS3qDt2NByg9AS0RS0whkmOVzRoeQ7l4Yl
- mHuWhliJpB4+b/VJcWQ8Zfux0pm2dSAMeK42p2nu1XySlx8Hf66u5hzRo3jjMjvh7N4gYD2VSl+
- /8NpepZIQPgc/KGPYnvSgTyhTUrqrlzXkH/Dwwi/fck90sZ1HR3yoy//eGVHl3lTzF2fB9bW0W5
- yrEROH7isQvcBPOgEFKl1FpTJpzjxPw0V1c58mLGSXC+x8KVqg5Ef4jI2fCNdmNeiMq+DLJkKX9
- K53lHLLS1YGcENQTDefhcst4PKOJCvOWS5rE8OSUYB9LyXaVJ7wpv07XG0MVsSDQu/1kOVjbzyQ
- xfCJu71yxuqG38ZC4mXLMfqAx87g+Q==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 27, 2025 at 10:39:04AM -0300, Jason Gunthorpe wrote:
-> On Sat, Oct 25, 2025 at 11:11:49AM -0700, Alex Mastro wrote:
-> > Alex and Jason, during my testing, I found that the behavior of range-based
-> > (!VFIO_DMA_UNMAP_FLAG_ALL) VFIO_IOMMU_UNMAP_DMA differs slightly when using
-> > /dev/iommu as the container.
-> > 
-> > iommufd treats range-based unmap where there are no hits in the range as an
-> > error, and the ioctl fails with ENOENT.
-> 
-> > vfio_iommu_type1.c treats this as a success and reports zero bytes unmapped in
-> > vfio_iommu_type1_dma_unmap.size.
-> 
-> Oh, weird...
-> 
-> What do you think about this:
-> 
-> diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
-> index c0360c450880b8..1124f68ec9020d 100644
-> --- a/drivers/iommu/iommufd/io_pagetable.c
-> +++ b/drivers/iommu/iommufd/io_pagetable.c
-> @@ -707,7 +707,8 @@ static int iopt_unmap_iova_range(struct io_pagetable *iopt, unsigned long start,
->  	struct iopt_area *area;
->  	unsigned long unmapped_bytes = 0;
->  	unsigned int tries = 0;
-> -	int rc = -ENOENT;
-> +	/* If there are no mapped entries then success */
-> +	int rc = 0;
->  
->  	/*
->  	 * The domains_rwsem must be held in read mode any time any area->pages
-> diff --git a/drivers/iommu/iommufd/ioas.c b/drivers/iommu/iommufd/ioas.c
-> index 1542c5fd10a85c..ef5e56672dea56 100644
-> --- a/drivers/iommu/iommufd/ioas.c
-> +++ b/drivers/iommu/iommufd/ioas.c
-> @@ -367,6 +367,8 @@ int iommufd_ioas_unmap(struct iommufd_ucmd *ucmd)
->  				     &unmapped);
->  		if (rc)
->  			goto out_put;
-> +		if (!unmapped)
-> +			rc = -ENOENT;
->  	}
->  
->  	cmd->length = unmapped;
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-Seems reasonable to me. The only affected callers are 
+> On Mon, Oct 27, 2025 at 4:18=E2=80=AFPM Roman Gushchin <roman.gushchin@li=
+nux.dev> wrote:
+>>
+>> +bool bpf_handle_oom(struct oom_control *oc)
+>> +{
+>> +       struct bpf_oom_ops *bpf_oom_ops =3D NULL;
+>> +       struct mem_cgroup __maybe_unused *memcg;
+>> +       int idx, ret =3D 0;
+>> +
+>> +       /* All bpf_oom_ops structures are protected using bpf_oom_srcu */
+>> +       idx =3D srcu_read_lock(&bpf_oom_srcu);
+>> +
+>> +#ifdef CONFIG_MEMCG
+>> +       /* Find the nearest bpf_oom_ops traversing the cgroup tree upwar=
+ds */
+>> +       for (memcg =3D oc->memcg; memcg; memcg =3D parent_mem_cgroup(mem=
+cg)) {
+>> +               bpf_oom_ops =3D READ_ONCE(memcg->bpf_oom);
+>> +               if (!bpf_oom_ops)
+>> +                       continue;
+>> +
+>> +               /* Call BPF OOM handler */
+>> +               ret =3D bpf_ops_handle_oom(bpf_oom_ops, memcg, oc);
+>> +               if (ret && oc->bpf_memory_freed)
+>> +                       goto exit;
+>> +       }
+>> +#endif /* CONFIG_MEMCG */
+>> +
+>> +       /*
+>> +        * System-wide OOM or per-memcg BPF OOM handler wasn't successfu=
+l?
+>> +        * Try system_bpf_oom.
+>> +        */
+>> +       bpf_oom_ops =3D READ_ONCE(system_bpf_oom);
+>> +       if (!bpf_oom_ops)
+>> +               goto exit;
+>> +
+>> +       /* Call BPF OOM handler */
+>> +       ret =3D bpf_ops_handle_oom(bpf_oom_ops, NULL, oc);
+>> +exit:
+>> +       srcu_read_unlock(&bpf_oom_srcu, idx);
+>> +       return ret && oc->bpf_memory_freed;
+>> +}
+>
+> ...
+>
+>> +static int bpf_oom_ops_reg(void *kdata, struct bpf_link *link)
+>> +{
+>> +       struct bpf_struct_ops_link *ops_link =3D container_of(link, stru=
+ct bpf_struct_ops_link, link);
+>> +       struct bpf_oom_ops **bpf_oom_ops_ptr =3D NULL;
+>> +       struct bpf_oom_ops *bpf_oom_ops =3D kdata;
+>> +       struct mem_cgroup *memcg =3D NULL;
+>> +       int err =3D 0;
+>> +
+>> +       if (IS_ENABLED(CONFIG_MEMCG) && ops_link->cgroup_id) {
+>> +               /* Attach to a memory cgroup? */
+>> +               memcg =3D mem_cgroup_get_from_ino(ops_link->cgroup_id);
+>> +               if (IS_ERR_OR_NULL(memcg))
+>> +                       return PTR_ERR(memcg);
+>> +               bpf_oom_ops_ptr =3D bpf_oom_memcg_ops_ptr(memcg);
+>> +       } else {
+>> +               /* System-wide OOM handler */
+>> +               bpf_oom_ops_ptr =3D &system_bpf_oom;
+>> +       }
+>
+> I don't like the fallback and special case of cgroup_id =3D=3D 0.
+> imo it would be cleaner to require CONFIG_MEMCG for this feature
+> and only allow attach to a cgroup.
+> There is always a root cgroup that can be attached to and that
+> handler will be acting as "system wide" oom handler.
 
-drivers/iommu/iommufd/ioas.c
-366:            rc = iopt_unmap_iova(&ioas->iopt, cmd->iova, cmd->length,
+I thought about it, but then it can't be used on !CONFIG_MEMCG
+configurations and also before cgroupfs is mounted, root cgroup
+is created etc. This is why system-wide things are often handled in a
+special way, e.g. in by PSI (grep system_group_pcpu).
 
-drivers/iommu/iommufd/vfio_compat.c
-244:            rc = iopt_unmap_iova(&ioas->iopt, unmap.iova, unmap.size,
-
-So your proposal should get vfio_compat.c into good shape.
-
-I think these locations need more scrutiny after your change
-
-diff --git a/drivers/iommu/iommufd/io_pagetable.c b/drivers/iommu/iommufd/io_pagetable.c
-index c0360c450880..e271696f726f 100644
---- a/drivers/iommu/iommufd/io_pagetable.c
-+++ b/drivers/iommu/iommufd/io_pagetable.c
-@@ -777,6 +777,7 @@ static int iopt_unmap_iova_range(struct io_pagetable *iopt, unsigned long start,
- 
- 		down_write(&iopt->iova_rwsem);
- 	}
-+	// redundant?
- 	if (unmapped_bytes)
- 		rc = 0;
- 
-@@ -818,6 +819,7 @@ int iopt_unmap_all(struct io_pagetable *iopt, unsigned long *unmapped)
- 	int rc;
- 
- 	rc = iopt_unmap_iova_range(iopt, 0, ULONG_MAX, unmapped);
-+	// intent still holds?
- 	/* If the IOVAs are empty then unmap all succeeds */
- 	if (rc == -ENOENT)
- 		return 0;
+I think supporting !CONFIG_MEMCG configurations might be useful for
+some very stripped down VM's, for example.
 
