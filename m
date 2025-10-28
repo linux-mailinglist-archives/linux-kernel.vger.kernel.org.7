@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-873969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC618C15387
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:45:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F31C15366
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C3C0660AAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:37:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3702F661B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB66338905;
-	Tue, 28 Oct 2025 14:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C2D339709;
+	Tue, 28 Oct 2025 14:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obShIerl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FpYSAbFL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ECE921770A;
-	Tue, 28 Oct 2025 14:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8645B30499B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761662221; cv=none; b=LYy7WsWV67uZIS67P1IVmYUBw9cfHrnMdnJjOolC0PYnHqHzvL1vQy7FMiv9iBANsbvccZZwesjjj4hfHB/wN225fkoNzQacAWuU3hXIzqHczXm0Yhk4LYYNwvEAfmcCDeoEKzYOnVnYuqb027s5C0KeAmKOLdhfUlhPH4CFeTo=
+	t=1761662275; cv=none; b=Dy90dMRmXLBWDo3d4hCxg4VrWNaCBO9z3N7tRMg6ZLAkKveZZ08O1tkGtJpkiXqukrOpK/fnimpx5LTqwmtUA4BRRr2CQIa5Ek3ylDEoqBZp5RpPhynz1ToIO+7lqAT4hymLL/lhaF5TwACT9O/eU1Ol+Tzyl48fZKTJyaFWkD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761662221; c=relaxed/simple;
-	bh=LaqoH0CNb4p9Z7UL/cJWJo9U5GQeFIJB8EnPWW9e8II=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gxj6nePRO680F6MukmWGaCGg8+gxiqFwEc3gzt3uVoTfmRLBWEkVlDHDa7vT2PbKlHBxs5jUfX1xFlTgivTnRmzAX9xKh7SfcQyltluH5muJCvcO9jLzR55/4C+ycO1o98ylUrXLkCqSR81I1X/rjBISx+932ERREA5fVJVyjVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obShIerl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DD70C4CEE7;
-	Tue, 28 Oct 2025 14:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761662220;
-	bh=LaqoH0CNb4p9Z7UL/cJWJo9U5GQeFIJB8EnPWW9e8II=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=obShIerlPdmCrA0t++n7V6yssrbVSSeZECUluphEjWqPS4QqlaMWNoN2DZuv0ddyr
-	 8xMfIDYGl5+2jmW5Z6e1LqqrrSVE8GmOE0o4kMoEwgAo8jWvBzpzUqA1DExTPlGUsG
-	 bovx80UwAMkdVfUkgGrUglK7Vl0hiKAFBlSx705x3CRtLKb2Tanvo4R31TtWOZdxt2
-	 IiGCqpSbODK2rY4b4n03eVwjUwqx4COqMbKC9kMqMEPDMVPpeCEF2Q6HbPOn+nqVTx
-	 qWHl5cOjk3m4X7wEbi5xvjDkm6raO1j77jhcBGuEulAxnd1LCa6UfyQyeZz0OHovnI
-	 qvPOs4La3ppug==
-Message-ID: <492c05bf-bf0f-4cca-af3b-121fdffd05e8@kernel.org>
-Date: Tue, 28 Oct 2025 15:36:56 +0100
+	s=arc-20240116; t=1761662275; c=relaxed/simple;
+	bh=09NZc1BAr3Ka76OtTpIJwkZSeHbrbtpTLxSEWNV/iwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pQPHMvN31e5uYij+1nenHHgu4cZusuk7qX//a9xeVEjGPUyMChwNRY6YQpUKBoHnUkxfDReabEcH4OQ78wVXumNcytYWhWbb/afubJoRw1ayzZZVJ2YQhXSlr45Ej2FZNFM5su311CWwWJKSWbhuyCLezi5aGR0hf8LeuhxLxpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FpYSAbFL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761662272;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=09NZc1BAr3Ka76OtTpIJwkZSeHbrbtpTLxSEWNV/iwI=;
+	b=FpYSAbFLjd24ib93Rnjhj+HVUCNFw5NHADKSgJIeaQqrK32lltTL3Zpx8szQRZKPVMFvwX
+	o5RKh+KgdSD0WGfHQzWT8sxw1Ao0PPZCmfxv9owsAMEHqo3nGVXV78yiJ3/1zh0Qnm/KuK
+	4zEgg4V+yVtsbEqH12Br1834gy8Eeo0=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-625-lbSM5KEVNIy6BO2n-B3pXA-1; Tue, 28 Oct 2025 10:37:49 -0400
+X-MC-Unique: lbSM5KEVNIy6BO2n-B3pXA-1
+X-Mimecast-MFC-AGG-ID: lbSM5KEVNIy6BO2n-B3pXA_1761662268
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-378e3e1c7c0so41232491fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:37:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761662268; x=1762267068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=09NZc1BAr3Ka76OtTpIJwkZSeHbrbtpTLxSEWNV/iwI=;
+        b=bcRCy9yl7z0YPrW4Yawi1zwlTn3q63WUpww+nxP43L36VRqkyEa/8MWUjkSaCT9Kn7
+         RjufnViTzToHIQvr7XaNCWRc5CPl4OzOh0i/YzsZdqc8g2fBcZ65uuDDZxbou133oRK7
+         6sc1q/wAPgzD5ygKWe+iqc0iirZcoD7cf2XfSbKaf8/ycai5Rmq1yMbZ1BI9VmWpyVEp
+         WClsHIof+P6Gx9ltN4FT5w6t1SVgNmdTS08Bgd+tiPrz0q2jAj1/BvCzC+06tBHv0H4k
+         MPZ6l5L/1DD3+XVfaa+MPdbqR1i3TXPwKbtohDxOYkqHZ80SYNIqnQVMx8e9Qa9UH4a7
+         84/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7igCR5U7L4+K9Zd/rGFJBKLxdJkkY4QehqSISyuQHzAgYcNiM381sTPEuFt4I4t7Xrhwl4yioXlLIa0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5Jhrx4i8OPUuGvgDU4DenfwbOnEwKoj34yX8h/ueIjh27g7yL
+	0ri/JUGW2/HmlVOhdXaaPVcP2cuABncGfhb4uGLaMqdNGgv1Y7nO4B5ZnCI0DlaIo/xmWF+/HSL
+	k0QALqyA+VqMebvgJqdJNrW8R2eoDQ/vkzVL6Qg3DgFqUf2wZDJ7AToWdOf8ajnDETD5Jao+Ccb
+	rEA7wL+MqB7EFuU76YBYq2ulfYYDFALudWzDRTQUzV
+X-Gm-Gg: ASbGnctHW4+8YjWsCbT3Kj20UeD658Yql1chastOEV1vMGqeU8CDUFDJnLFD1kWiV4X
+	ByTc35mhMUtU0QQnZpt5ggSCEOJYdKa4QMbRz05p8yjGN0ZkGTvDhltpeZdAkT23yebT1F9qNoM
+	0rMzHm3+dlKs6v26GFs8H8jRxNUrMe5Jzg6NkMAdzoA90bp/IoaGA1udWG9my/6FEIjXlAFgfUD
+	hpXW0FXsXvzpAsAAe0ZHrN7HTeHy4sL2sOUnRL0yCY=
+X-Received: by 2002:a2e:a917:0:b0:377:c556:68b7 with SMTP id 38308e7fff4ca-37907c99b06mr10803891fa.17.1761662267626;
+        Tue, 28 Oct 2025 07:37:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFH1qUNPl6ooa8Bsdv4mhpa8rES8RuOgArfXGQ7Zb+j6PUDeLzIiljeXqTefrnG6lrqdMn5JWzo4puaSyJ4lPM=
+X-Received: by 2002:a2e:a917:0:b0:377:c556:68b7 with SMTP id
+ 38308e7fff4ca-37907c99b06mr10803841fa.17.1761662267194; Tue, 28 Oct 2025
+ 07:37:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86: int3472: Fix double free of GPIO device
- during unregister
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
- Dan Scally <dan.scally@ideasonboard.com>
-Cc: Qiu Wenbo <qiuwenbo@gnome.org>, Daniel Scally <djrscally@gmail.com>,
- Qiu Wenbo <qiuwenbo@kylinsec.com.cn>, platform-driver-x86@vger.kernel.org,
- linux-kernel@vger.kernel.org, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Andy Shevchenko <andy@kernel.org>
-References: <20251024050537.92440-1-qiuwenbo@gnome.org>
- <5007d7f0-76ff-41fd-a371-05922c97f8ef@ideasonboard.com>
- <aQCUu5vCPlglC0Kd@smile.fi.intel.com>
- <7898408e-1b33-4f22-84d2-12bcd6254402@kernel.org>
- <aQCg-xZ_kAemfgZQ@smile.fi.intel.com>
- <d1cef8a6-1c67-4932-85e7-07c0e00477bb@ideasonboard.com>
- <aQCrLVBBOBVCnoJ8@smile.fi.intel.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <aQCrLVBBOBVCnoJ8@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CAJaqyWeiX1Tc77NcYoBbeVfKTeuKHK6hw=n_9Mk4y52k7Djr-g@mail.gmail.com>
+ <20251015030313-mutt-send-email-mst@kernel.org> <CAJaqyWfRmhXM8eV+=wMVKgrc8SJ98OTtBCtNDJj8ZRUM5Y9Nmg@mail.gmail.com>
+ <CAO55csx2rbjxEZk5K3aKcZ501KY3Zfs8ThEQHFqQ1ZB9RSXECA@mail.gmail.com>
+ <20251015040722-mutt-send-email-mst@kernel.org> <CAJaqyWcf3tz17q6G=123Xb+warf8Ckg=PLaPkzLU9hYHiUy9Zg@mail.gmail.com>
+ <20251022060748-mutt-send-email-mst@kernel.org> <CAJaqyWdRN3C1nOHQjWroBPWKjc5efNfVbecpruL=Cgsk6i1FXg@mail.gmail.com>
+ <20251022073231-mutt-send-email-mst@kernel.org> <CAJaqyWeDcyKKOvVdqUkpTuH3d-Tb9rBHG3ym+LC0fcmhrN_FJA@mail.gmail.com>
+ <20251028100923-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20251028100923-mutt-send-email-mst@kernel.org>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Tue, 28 Oct 2025 15:37:09 +0100
+X-Gm-Features: AWmQ_bm_ikxtcCHfifEP3X9--_zb9nwAd7fq5zkuRGqhN1hAtFMAFJR9kqLgpas
+Message-ID: <CAJaqyWePMtM8vtgm8UnGAv+_XNTnVNFSNuoqzt_Cn-CpZg46mA@mail.gmail.com>
+Subject: Re: [RFC 1/2] virtio_net: timeout control virtqueue commands
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Maxime Coquelin <mcoqueli@redhat.com>, Yongji Xie <xieyongji@bytedance.com>, 
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Dragos Tatulea DE <dtatulea@nvidia.com>, jasowang@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Oct 28, 2025 at 3:10=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Wed, Oct 22, 2025 at 02:55:18PM +0200, Eugenio Perez Martin wrote:
+> > On Wed, Oct 22, 2025 at 1:43=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
+com> wrote:
+> > >
+> > > On Wed, Oct 22, 2025 at 12:50:53PM +0200, Eugenio Perez Martin wrote:
+> > > > Let me switch to MQ as I think it illustrates the point better.
+> > > >
+> > > > IIUC the workflow:
+> > > > a) virtio-net sends MQ_VQ_PAIRS_SET 2 to the device
+> > > > b) VDUSE CVQ sends ok to the virtio-net driver
+> > > > c) VDUSE CVQ sends the command to the VDUSE device
+> > > > d) Now the virtio-net driver sends virtio-net sends MQ_VQ_PAIRS_SET=
+ 1
+> > > > e) VDUSE CVQ sends ok to the virtio-net driver
+> > > >
+> > > > The device didn't process the MQ_VQ_PAIRS_SET 1 command at this poi=
+nt,
+> > > > so it potentially uses the second rx queue. But, by the standard:
+> > > >
+> > > > The device MUST NOT queue packets on receive queues greater than
+> > > > virtqueue_pairs once it has placed the VIRTIO_NET_CTRL_MQ_VQ_PAIRS_=
+SET
+> > > > command in a used buffer.
+> > > >
+> > > > So the driver does not expect rx buffers on that queue at all. From
+> > > > the driver's POV, the device is invalid, and it could mark it as
+> > > > broken.
+> > >
+> > > ok intresting. Note that if userspace processes vqs it should process
+> > > cvq too. I don't know what to do in this case yet, I'm going on
+> > > vacation, let me ponder this a bit.
+> > >
+> >
+> > Sure.
+>
+> So let me ask you this, how are you going to handle device reset?
+> Same issue, it seems to me.
+>
 
-On 28-Oct-25 12:38 PM, Andy Shevchenko wrote:
-> On Tue, Oct 28, 2025 at 11:09:12AM +0000, Dan Scally wrote:
->> On 28/10/2025 10:54, Andy Shevchenko wrote:
->>> On Tue, Oct 28, 2025 at 11:38:00AM +0100, Hans de Goede wrote:
->>>> On 28-Oct-25 11:02 AM, Andy Shevchenko wrote:
->>>>> On Tue, Oct 28, 2025 at 08:55:07AM +0000, Dan Scally wrote:
->>>>>> On 24/10/2025 06:05, Qiu Wenbo wrote:
-> 
-> ...
-> 
->>>>>> However the Fixes tag I wonder about; devm_gpiod_get() will also result in a
->>>>>> call to gpiod_put() when the module is unloaded; doesn't that mean that the
->>>>>> same issue  will occur before that commit?
->>>>>
->>>>> Actually a good question! To me sounds like it's a bug(?) in regulator code.
->>>>> It must not release resources it didn't acquire. This sounds like a clear
->>>>> layering violation.
->>>>
->>>> I think the problem is that when it comes from devicetree it is acquired
->>>> by the regulator core.
->>>
->>> Hmm... I probably missed that, but I failed to see this. Any pointers?
->>
->> They can come through the struct regulator_desc.of_parse_cb(), which is called in
->> regulator_of_init_data(), from regulator_register(). For example: https://elixir.bootlin.com/linux/v6.17.5/source/drivers/power/supply/mt6370-charger.c#L234>
-> 
-> Ah, thank you, Dan, for the pointers. Indeed, that's how it's done. Hmm, still
-> why can't we let the regulator consumer to decide when to clean the resource?
-> I think this is an attempt to have a refcounting against shared GPIO resource
-> and it should be done in the GPIOLIB (if not yet). In regulator that put
-> call should probably be conditional (based on the source of GPIO request).
+Well my proposal is to mark it as broken so it needs to be reset
+manually. For example, unbinding and binding the driver in Linux. The
+point is that the driver cannot trust the device anymore as it is in
+an invalid state. Maybe suspend and reset all the vqs is also a valid
+solution to un-broke it if the device supports it but I think a race
+is unavoidable there, and I'm not sure how to communicate it to
+userspace for all kinds of devices. Incrementing rx errors could be a
+first proposal.
 
-Fixing this sounds like a somewhat big undertaking. In the mean time
-I think we should move forward with this patch to fix the immediate
-issue with the double free.
-
-Regards,
-
-Hans
-
+If we want to track it in VDUSE we should implement NEEDS_RESET and
+leave all the old drivers without solution. That's why I think it is
+better to solve all the problems at once in the driver.
 
 
