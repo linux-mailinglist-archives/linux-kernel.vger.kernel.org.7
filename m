@@ -1,61 +1,104 @@
-Return-Path: <linux-kernel+bounces-873345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38694C13BDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:13:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF0AC13B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2DD14F2C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:09:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF8003540D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467A42E888A;
-	Tue, 28 Oct 2025 09:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3897A2EB5D4;
+	Tue, 28 Oct 2025 09:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS8HsA3g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NgyY83Bn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FF823507B;
-	Tue, 28 Oct 2025 09:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152832DCF4E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642579; cv=none; b=oU/nqIfX/FeWW3u+vGgIMyzrqdG4HOM7Yjrsagcyp+uLdNnICF3U75TDJY8zOQkvw6ztkHCIwf6VsMhtozOgDegr7Wbe+K2ax/StHmPb51WNiFjOrC+GKDN8Ovxk1DPpovMyx4A19wy3+6cElRSUuFZJvBhfPOhv35asOWE6Dic=
+	t=1761642636; cv=none; b=a2X6NgjgE8Lv8/b7wqTEvJtqMapgB76OTaSvq+0NN+xRqcwzyQmYwnMwypXCwAX5xcSGW3Ij29OkZok861fEFWWPVQoCBX5FstKtbBNM+3fw6p1xoz7W4WjR/x2026TW/bmVdM+q3a03ygd5/5TyqSDGPT30iPZ3q7e4zgr0MIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642579; c=relaxed/simple;
-	bh=ZeszJ3G5pFbOJEm0PLsqfPwRQuGZps8vSqiFmYtwyKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EAIrBmo2N/rtSB6YqHBWUsfyr/JsvFXBVE7MQsIEC4TYmvGY/qIx4DEk2yGb53ZnVaJuu5JVpb8w38q482fJ0REqJ997VG7CpYF+C0IkNrZvQSU9hlTMivI1KrflIHk/+zUTCbnMJWvv7ubi5bOlaR2HjiqkCh1bgimHGGEJBtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS8HsA3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74176C4CEE7;
-	Tue, 28 Oct 2025 09:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761642579;
-	bh=ZeszJ3G5pFbOJEm0PLsqfPwRQuGZps8vSqiFmYtwyKY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MS8HsA3gHTzSFAkqVuH2/l8x1ouMjR1uDE4ZkKX7gH9k7EojJyCK4fKjjovw27RTp
-	 A1c4+6iqPHZjJW0zXOtiHS0TV+vlW37gAldPWA/ImTJljpZHvNLVI4Jpgs667xo6lH
-	 s6PVRRtHGv1l2bngpH5Qr3X8nQbgInqUMxD3jS+U9DMtXvfp9N5u06k0wpc4ZwpDqE
-	 BLC9iKNMcNuKGU5nfR/s2rAprUa7Wn4sKzQykkWjXuZcUwNPiZ4XW3I3VHby96bEtl
-	 whB5SVnoVtD8+xHnOA63yI7RY2LpBw23xPm2x+Ixy/LtxcDvzhi8dEG4SBVU7s7JcT
-	 EmlAuKIT3Mi6A==
-Date: Tue, 28 Oct 2025 10:09:36 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@oss.qualcomm.com, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 01/12] dt-bindings: arm: coresight: Add cpu cluster
- tmc/funnel/replicator support
-Message-ID: <20251028-enigmatic-astonishing-husky-f2c47a@kuoka>
-References: <20251027-cpu_cluster_component_pm-v1-0-31355ac588c2@oss.qualcomm.com>
- <20251027-cpu_cluster_component_pm-v1-1-31355ac588c2@oss.qualcomm.com>
+	s=arc-20240116; t=1761642636; c=relaxed/simple;
+	bh=gsaXk6rPSnT3/htmS1wC1UxgQ9W8HC0fe87DUuj7boA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iF4I6hD7TgUU63qJR4OeNrx5J0d5jyDRLMPUnfnsf951LnZjSRUHrgFsZkglZRPVnMWhNVc/l0Dow83Iohbdo2l26R+ITCtVurAAjnc1+d82mdEH835XzdrSKkq5L7XhNW9/XhVP9sqGvsUsqN+Y7eoE3s8Tru7ge3+zHyjfCQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NgyY83Bn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761642634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fC2VCoLVnfLvc+GVN6vMzms7DTor0VnmsdHYFXK6aw=;
+	b=NgyY83BnzL76LgaChcp1o+QsuFmE3Ic77LDPlD+p63psc8nzXp691CHTf33DWi01fPF+Tu
+	yHr2ClcT47FKRtTGZOE0pW/BPp/f1o4AXJfhCKaOiuWh9v6N6ci5xYbXb7E14Uvw/a9tls
+	P4+FefCuy0UpyFS+2rjjSyYKJfC6PCQ=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-170-EFbPRIPBOhG8PP8vqmInIg-1; Tue, 28 Oct 2025 05:10:32 -0400
+X-MC-Unique: EFbPRIPBOhG8PP8vqmInIg-1
+X-Mimecast-MFC-AGG-ID: EFbPRIPBOhG8PP8vqmInIg_1761642631
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b6d7ad47b58so336874966b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:10:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761642631; x=1762247431;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fC2VCoLVnfLvc+GVN6vMzms7DTor0VnmsdHYFXK6aw=;
+        b=fko/0P5mPhY7ohi3nlIOtCdYO6aFm05dYCynbC9jGZdJpCn+lchoj5CnTW5TY/E/tc
+         ccSX4Vv8KqdFDsQ2HCkdN4iuv6zxG9+lZYc1uY3EOWgUPu+GMAJW+Pqn37/d1ZaPTKQ4
+         LidNEh7dFHJeXvvstMnOqk/HAOPLpbHIsQPm9yp0XGeN+sSTctEFbgAazPmaUTWFsHsh
+         1G4zafhlhX+rtljSoCdI2NT7aGoEwcqwLMYiazldhCzsxA1+LvwD5WOI8SCFSKcUoy6Q
+         5iBP4srT1k1za1muZNflccH0wLksLmzXw/FJp+bGmSeK04K9LjXtzV9hjPesbMbJgA1A
+         Vadg==
+X-Forwarded-Encrypted: i=1; AJvYcCXMkc7ZcIn10FC/f29dF7Z9OyYbCZIZJs8lFSyp9E8C3YlzsKe4aiE/d562n2arBO8TzcAth2uO06PjNVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yygq/vCO1Ictz4dTZaS7hjkbvqOfmtGFhXVmYm1c1LbEq2YzMWc
+	3TgPz27S+TrYLaLgfC5YekY4xv5kipLxq4ScNS3Ue/P6bByhmk2/Jx5lleC7UDab7fjs41Td0YJ
+	EoYg8z/u9X20L0Vatg+vkCudPvrOFucra5rRf0Zh/yvxnF2OokuhX6py3E07aoUXJQwzWo05bOQ
+	==
+X-Gm-Gg: ASbGnctwxtwIqJPnvpvWTX4Jm7TXBpG3vE55lGFfbD+eu2nLfDip32aTr3UUADgjA2p
+	eECEebV7k8CgF5J7+E2r4VNwZSCp5ZzMaC0jOmiYmx9jzgk4dMcn0dC1hOvhZANr787wrdygCBj
+	8Hw55TrR/0XOZWXO773JRRwVgDmy9xYz/ZRYvg/PZbdIdXm7CXCrNBpm9mQocigkBvPb9mTauVH
+	fW3M6op3YbGpLbtNKjlfw5sYR7zMchjw7fiEuc38IUxLlMq50uIIQkEb3D8Y9/naYXiA5EnN4wZ
+	X4xFoWEXkRV6KWLWOgFer/66eB8W4AiK7bCT1Nz5fVZJ0CqsP67AKxZGYb4ZBAR7EsM603h6VNa
+	WaCIGORkNKmy07bBByVB5uM4=
+X-Received: by 2002:a17:906:7314:b0:b6d:5f02:51e1 with SMTP id a640c23a62f3a-b6dba48ed89mr308757866b.20.1761642630682;
+        Tue, 28 Oct 2025 02:10:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHp5fIM3h+FEyqEOS5MHMS5ieohkbVb2Z5rr/lbPP90LvTja8uJXC93IQE7iLbY3k1MDqtHAA==
+X-Received: by 2002:a17:906:7314:b0:b6d:5f02:51e1 with SMTP id a640c23a62f3a-b6dba48ed89mr308756366b.20.1761642630332;
+        Tue, 28 Oct 2025 02:10:30 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8548ed9asm1045251566b.74.2025.10.28.02.10.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 02:10:29 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id C0E5E2EAC74; Tue, 28 Oct 2025 10:10:28 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Jesper Dangaard Brouer <hawk@kernel.org>, netdev@vger.kernel.org
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, Eric Dumazet
+ <eric.dumazet@gmail.com>, "David S. Miller" <davem@davemloft.net>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ ihor.solodrai@linux.dev, "Michael S. Tsirkin" <mst@redhat.com>,
+ makita.toshiaki@lab.ntt.co.jp, toshiaki.makita1@gmail.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel-team@cloudflare.com
+Subject: Re: [PATCH net V2 1/2] veth: enable dev_watchdog for detecting
+ stalled TXQs
+In-Reply-To: <176159553266.5396.10834647359497221596.stgit@firesoul>
+References: <176159549627.5396.15971398227283515867.stgit@firesoul>
+ <176159553266.5396.10834647359497221596.stgit@firesoul>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Tue, 28 Oct 2025 10:10:28 +0100
+Message-ID: <87ecqne6ij.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,84 +106,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027-cpu_cluster_component_pm-v1-1-31355ac588c2@oss.qualcomm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 11:28:03PM -0700, Yuanfang Zhang wrote:
-> Add the following compatible strings to the bindings:
-> - arm,coresight-cpu-funnel
-> - arm,coresight-cpu-replicator
-> - arm,coresight-cpu-tmc
+Jesper Dangaard Brouer <hawk@kernel.org> writes:
 
-We see that from the diff. Explain here the hardware instead.
+> The changes introduced in commit dc82a33297fc ("veth: apply qdisc
+> backpressure on full ptr_ring to reduce TX drops") have been found to cau=
+se
+> a race condition in production environments.
+>
+> Under specific circumstances, observed exclusively on ARM64 (aarch64)
+> systems with Ampere Altra Max CPUs, a transmit queue (TXQ) can become
+> permanently stalled. This happens when the race condition leads to the TXQ
+> entering the QUEUE_STATE_DRV_XOFF state without a corresponding queue wak=
+e-up,
+> preventing the attached qdisc from dequeueing packets and causing the
+> network link to halt.
+>
+> As a first step towards resolving this issue, this patch introduces a
+> failsafe mechanism. It enables the net device watchdog by setting a timeo=
+ut
+> value and implements the .ndo_tx_timeout callback.
+>
+> If a TXQ stalls, the watchdog will trigger the veth_tx_timeout() function,
+> which logs a warning and calls netif_tx_wake_queue() to unstall the queue
+> and allow traffic to resume.
+>
+> The log message will look like this:
+>
+>  veth42: NETDEV WATCHDOG: CPU: 34: transmit queue 0 timed out 5393 ms
+>  veth42: veth backpressure stalled(n:1) TXQ(0) re-enable
+>
+> This provides a necessary recovery mechanism while the underlying race
+> condition is investigated further. Subsequent patches will address the ro=
+ot
+> cause and add more robust state handling.
+>
+> Fixes: dc82a33297fc ("veth: apply qdisc backpressure on full ptr_ring to =
+reduce TX drops")
+> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
 
-> 
-> Each requires 'power-domains' when used.
-> 
-> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
-> ---
->  .../bindings/arm/arm,coresight-dynamic-funnel.yaml | 23 +++++++++++++++++-----
->  .../arm/arm,coresight-dynamic-replicator.yaml      | 22 +++++++++++++++++----
->  .../devicetree/bindings/arm/arm,coresight-tmc.yaml | 22 +++++++++++++++++----
->  3 files changed, 54 insertions(+), 13 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
-> index b74db15e5f8af2226b817f6af5f533b1bfc74736..8f32d4e3bbb750f5a6262db0032318875739cf81 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
-> @@ -28,19 +28,32 @@ select:
->    properties:
->      compatible:
->        contains:
-> -        const: arm,coresight-dynamic-funnel
-> +        enum:
-> +          - arm,coresight-dynamic-funnel
-> +          - arm,coresight-cpu-funnel
-
-Keep alphabetical sorting. We asked this multiple times already.
-
->    required:
->      - compatible
->  
->  allOf:
->    - $ref: /schemas/arm/primecell.yaml#
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: arm,coresight-cpu-funnel
-> +    then:
-> +      required:
-> +        - power-domains
-
-Just move the allOf to the bottom like in example-schema.
-
-> +
->  properties:
->    compatible:
-> -    items:
-> -      - const: arm,coresight-dynamic-funnel
-> -      - const: arm,primecell
-> -
-
-Why do you remove this?
-
-> +    oneOf:
-> +      - items:
-> +          - const: arm,coresight-dynamic-funnel
-> +          - const: arm,primecell
-> +      - items:
-> +          - const: arm,coresight-cpu-funnel
-
-Hm? Why do you need custom select if this is not primecell? And nothing
-in commit msg explains why this is not primecell anymore.
-
-You have entire commit msg to say something useful, WHY you are doing
-this, WHY you are doing it DIFFERENTLY. Don't say what you did - that's
-obvious, we are capable of reading diffs.
-
-Best regards,
-Krzysztof
+Reviewed-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
 
