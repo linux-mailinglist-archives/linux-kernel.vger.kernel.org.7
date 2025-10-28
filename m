@@ -1,57 +1,56 @@
-Return-Path: <linux-kernel+bounces-873642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E847AC14533
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:20:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81CADC1450C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C18474F6823
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A034674CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95C430506C;
-	Tue, 28 Oct 2025 11:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C84304BA2;
+	Tue, 28 Oct 2025 11:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5H4tEaX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iO6CObc/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14371263889;
-	Tue, 28 Oct 2025 11:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9ED2E6127
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761650246; cv=none; b=mcSuPaHMEyv12Po6paXb6VvMuvX6RyoJRGyI5EF7Zv65rCt3tyk5DhpU6/aE6RYUfqyX2IlaSTGVvV6tKgtZw32Jbd65WymZWUlL3x7NqzUu2RIkx83MM1wgLZBIyG6VnLbgDNE/ZneKEnEIXM9NdyYnGaN81ec+wHJL/vjwpLg=
+	t=1761650257; cv=none; b=XTEy/OOjJLOOW+QzyDUunAJmfCgfcxdb0kzbgcs4ePJHgxId4fV8uEOVifrW9l4rGFLyn73EB7tBpFleMOZtUMG7Tg23BI6Lz0UbkrmIFPgZ5LMRU7Db42AT7ov2OmvKdo/8cLX50YyBbiuWKOl2EX/pM0n7aLgt5ILDwOs+fIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761650246; c=relaxed/simple;
-	bh=KFHmoskfEoZUtq2ZnSkL6BqQjR0sDUKkeQJSEpcbWG4=;
+	s=arc-20240116; t=1761650257; c=relaxed/simple;
+	bh=Iey8nZ7oDYf+JgIX8CvJENmVRD+Gv+5b229SQ6yon8k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jHBGouf382MWGWpyPkWeJn95OOceQQEdeWI1A4aIjRimE/w6BdKnzVHZdw5TB/ucnnh/VtSDDiYpeggh2txPqNOb4lSyMM+nACzuct0HG2SC4cSwLdzkOamU9ivbPTGc5HIBbPSV3xFjx5Zwd4jWJWg9dsdTSVL8TLUCtJsdJOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5H4tEaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0770CC4CEE7;
-	Tue, 28 Oct 2025 11:17:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aPZuji6rt/YP11NNO9OMNJ9TQYim/GE+P1V3offa6YWHhtWtS/YmE5JA0c5ZKbwneIfGtidpqtYWH/p98QVODvRsrPgwY4jEdldvgA6tbrIIrhsUAJUCHKJ3hGy4Ic4U+AdIe5V+NB/HNVQboht6nZHhKF7X5F/7Q+dB0H0RgII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iO6CObc/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A99BC4CEE7;
+	Tue, 28 Oct 2025 11:17:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761650245;
-	bh=KFHmoskfEoZUtq2ZnSkL6BqQjR0sDUKkeQJSEpcbWG4=;
+	s=k20201202; t=1761650257;
+	bh=Iey8nZ7oDYf+JgIX8CvJENmVRD+Gv+5b229SQ6yon8k=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=d5H4tEaXQrvd+/Y4j0wURACpp3nMe07KwZk54dIDeBcKWhE9HWhZmzNo0PnK1+EiS
-	 hJcoXhuEu82RkY/LBYlmU6CGVCqa0OjIfsBNFJSSSpj/Gonx9nez5zk4hXGjKbpC6L
-	 5Fm3tFWuQVn45OPd5/UMeMW4e9BaOWwxTz98sf3qSLwE7zhm+dYBlKRDR8iecHmVkl
-	 NR12rU7DJf1NtZH2nCXox5iYdaghUfvlIECuRZYtrZD/f+c72WoyEElvG+TRONEFNK
-	 tpFFjc+KLOgZqLUozAf6jAd+c96poOIZ1JGicC6va+F9bfDxq5F29h8gwjKs/RzEuk
-	 77OL8NEAvglfQ==
+	b=iO6CObc/RnhrhMSrg6AhcAJsYMaUVTsqFjIh1b9AZVwrGStg0tGd1xF23B2+0CiX6
+	 GTQeInoxwtkIHSo8TJGC8uIEjeGMzY0btQYbACaUTaq7oDwxRYdGx4jvTw5aiHThSw
+	 v9C/88GWi7/ektTs2leEO9jyq0tt0WIad4rCE0iHj3BkEebzHwWIMRW4U+/V0vxSfR
+	 PuSGbfYCfAtwd/C2HpGIDx9udIG1QNtt+us70nQRgm+zcph/c9LFo9CwAJQ8hCJMWp
+	 MZXpgcc199M126o52HIsoOhfx4z/gprBhAyPp8zO50MBlGj04Bmwz6vKk+EPgkIQ2P
+	 G9IqA0x0/bhOw==
 From: Mark Brown <broonie@kernel.org>
-To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-sound@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-In-Reply-To: <88ca34df9006b74a7596b91714e700bcff666c4b.1761507792.git.christophe.jaillet@wanadoo.fr>
-References: <88ca34df9006b74a7596b91714e700bcff666c4b.1761507792.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: renesas: fsi: Constify struct fsi_stream_handler
-Message-Id: <176165024378.34272.12649082972979023920.b4-ty@kernel.org>
-Date: Tue, 28 Oct 2025 11:17:23 +0000
+To: Marek Vasut <marex@denx.de>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Jean Delvare <jdelvare@suse.de>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <20251027132219.2f3274f0@endymion>
+References: <20251027132219.2f3274f0@endymion>
+Subject: Re: [PATCH] regulator: Let raspberrypi drivers depend on ARM
+Message-Id: <176165025579.34642.7378909528359924355.b4-ty@kernel.org>
+Date: Tue, 28 Oct 2025 11:17:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,29 +61,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-88d78
 
-On Sun, 26 Oct 2025 20:43:36 +0100, Christophe JAILLET wrote:
-> 'struct fsi_stream_handler' is not modified in this driver.
+On Mon, 27 Oct 2025 13:22:19 +0100, Jean Delvare wrote:
+> The Raspberry Pi drivers aren't useful on other architectures, so
+> only offer them on ARM and ARM64, except for build testing purposes.
 > 
-> Constifying this structure moves some data to a read-only section, so
-> increases overall security, especially when the structure holds some
-> function pointers.
 > 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   51837	  12312	     64	  64213	   fad5	sound/soc/renesas/fsi.o
-> 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/1] ASoC: renesas: fsi: Constify struct fsi_stream_handler
-      commit: d29479abaded34b2b1dab2e17efe96a65eba3d61
+[1/1] regulator: Let raspberrypi drivers depend on ARM
+      commit: 01313661b248c5ba586acae09bff57077dbec0a5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
