@@ -1,306 +1,216 @@
-Return-Path: <linux-kernel+bounces-874301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E39C8C15F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:54:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD51C1602C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EB454F7D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76D4B1B242FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C764834AB16;
-	Tue, 28 Oct 2025 16:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C196344047;
+	Tue, 28 Oct 2025 16:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SEFM0n+6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/OARpYo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B75833DEE8;
-	Tue, 28 Oct 2025 16:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732EC28642B;
+	Tue, 28 Oct 2025 16:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670335; cv=none; b=QemkphH/vP37SAo7gcZPG+Avi2Eqxc7kzQuD+mWZIWY3D5Zdp7mJcYA2qYaS/kT+qByUZXcXaJHFOmwfPUEKy6mLwgqvi4Nwv123NL4EZ2Stg9F1xiFBtuWHhQ2wznX/hKJJCwF3vx7gg1Ezb5pGCnle/ER+BsQ9fxTOGIK0vbw=
+	t=1761670409; cv=none; b=WTgmubAjb6QpwX8CRexyCQnfVP8rivGYulAt1Rk9HsG7BjPixITLEEhsjNqjpMW1wTS0n8nhBTrooZ7/Q4I45+6/OL71eC0KT9BVi3SvUar9lurL4wDlCQ3EXKN20jJLAom+caiAQuPdABf02lCjuLZOA2Escag1IT+ftRa6vUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670335; c=relaxed/simple;
-	bh=SsI3vE4lFVvttLwlWp30jk+SCL5jWqCV/MCGalhV7Ow=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MIQECnif1FMWUEfggf8nzCTY7y0UG4cxEiatfv0hUMlWNEukOjOK27SCmYAEcgDjQYel22vtFDbRx+Ohbrvbki+iuQxckQ/L1cdJwZomSjWQhYZQOV8VMitHVY9BlAbVPawd/0zMCDt4BFtWSW6OJgrf/MuvxKXXSSdAzshdQgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SEFM0n+6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761670333; x=1793206333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=SsI3vE4lFVvttLwlWp30jk+SCL5jWqCV/MCGalhV7Ow=;
-  b=SEFM0n+64Yu91SrzB0mG34z2b2N0GZQf52Q10DzfSw8W4DJehPzN0CPf
-   X/U5i/PHJsms2ikN+wmY17fOrRDCRG7e5DzBI0HiIz2vjHFkJUs8z411c
-   x2R/5B6/0jfe3bYJhjMcEu7bEb2ChasxImoU0f6ezExlmUST7rVLzh9Cd
-   FQbYEj6mOaXv7ehp9Metzb79IFUsZ0jzrcH7TYKqtcv6YSPaI4rESG6/p
-   myAeurA2LNVazo6MWmW9dwi0OkvoGXUAQJYq03Iq4V5pIvU8aNrAX1crv
-   6Z9+f5BEsB3xmSUPNrmoejfaVGCumkcon9MiKIvi8UM1DwBWNM+tEG5ke
-   A==;
-X-CSE-ConnectionGUID: hcMkMvdiQ8Cn2LDzh1/RZg==
-X-CSE-MsgGUID: csdDkFInQSCGUoX7Ih9Apg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63685309"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="63685309"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:52:12 -0700
-X-CSE-ConnectionGUID: m/ZpeFbbR0+rEI1wX/pvLw==
-X-CSE-MsgGUID: 2zeChfU2T7mKf8eWGNiqhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="189454888"
-Received: from pgcooper-mobl3.ger.corp.intel.com (HELO mnyman-desk.intel.com) ([10.245.244.148])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:52:10 -0700
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-To: uttkarsh.aggarwal@oss.qualcomm.com
-Cc: mathias.nyman@linux.intel.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	mathias.nyman@intel.com,
-	wesley.cheng@oss.qualcomm.com
-Subject: [RFT PATCH v2] xhci: sideband: Fix race condition in sideband unregister
-Date: Tue, 28 Oct 2025 18:51:53 +0200
-Message-ID: <20251028165153.283980-1-mathias.nyman@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <db07f48d-27cf-4681-b10e-38d252e24512@linux.intel.com>
-References: <db07f48d-27cf-4681-b10e-38d252e24512@linux.intel.com>
+	s=arc-20240116; t=1761670409; c=relaxed/simple;
+	bh=+PGWYJAw6ct9ucTSkBC0Dl851xqPWnKTOyQay0JBcgo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P537qsDlf8dTgzznCx7BN4KlvNx6rZO80Q4XKmyrbIpz8x85+09xRJvgTjhygbq5hXZiNiY/tGQ9KJ+yy7DVsNILQhkAVh7+nj1LbyYvjNADjddSvqSOOtRev0+Js1TGQoCoQKoHJOQj8ufZi1ThDzxHX0r/3MbHUEApiEy+yyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/OARpYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DA4FC4CEE7;
+	Tue, 28 Oct 2025 16:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761670408;
+	bh=+PGWYJAw6ct9ucTSkBC0Dl851xqPWnKTOyQay0JBcgo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a/OARpYocA7gyOwKzMi7EBVpdtzxeaW1CnRvFJFC5n7APvJX/mGBgz6FIONb6j7nV
+	 Oa4X1q4FPRdTD/NB0uYTxJViKnAb5LRDfED4FlGtIm2YTHx53Hwm5liTIEOJOuWN8x
+	 Xev3rdk9d74vTgjZvJJibnwoZOC4+KxlR2mhYfgXroXrQ836TtPeCAblOueOboBs8k
+	 z+19UkKQ1Nj/0hf7GohY+qqbba/jwp05xgNZineZdxP2qBJNDnoCOHWYsaBazoADdM
+	 lvCuOgmrCLOhjdws8JdNlXr1Rgzckq1as+EX4nkS1yOZpnADa5KjG1WspyDtMvMbQf
+	 6Sh8tSztra+gQ==
+Message-ID: <aba2bf95-836e-444d-961d-0b2ac1fb415a@kernel.org>
+Date: Tue, 28 Oct 2025 17:53:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+ Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <25f7ff09-08ea-4969-9184-9fd01b097558@kernel.org>
+ <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
+ <73955d58-544c-4299-a099-bfd9e5912a40@kernel.org>
+ <636a1f99-acd4-4904-8fae-f159646cc1a0@kernel.org>
+ <f4d80be9-986f-4d37-9c25-725eff7bb653@quicinc.com>
+ <e03373d9-e2dd-48b6-93a6-554fcd623718@kernel.org>
+ <59a00934-cb42-43de-ac5b-a9292b08301d@quicinc.com>
+ <aa4faa81-6e9d-41c2-85f0-32045a8f9f51@kernel.org>
+ <jaj5oxqcgckndtp7wwe6ukqbh4z5phe3pw3hnhp2hatgqffjzr@y7qevil4o3yr>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <jaj5oxqcgckndtp7wwe6ukqbh4z5phe3pw3hnhp2hatgqffjzr@y7qevil4o3yr>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Uttkarsh Aggarwal observed a kernel panic during sideband un-register
-and found it was caused by a race condition between sideband unregister,
-and creating sideband interrupters.
-The issue occurrs when thread T1 runs uaudio_disconnect() and released
-sb->xhci via sideband_unregister, while thread T2 simultaneously accessed
-the now-NULL sb->xhci in xhci_sideband_create_interrupter() resulting in
-a crash.
+On 28/10/2025 17:51, Dmitry Baryshkov wrote:
+> On Tue, Oct 28, 2025 at 05:40:33PM +0100, Krzysztof Kozlowski wrote:
+>> On 28/10/2025 17:33, Pavan Kondeti wrote:
+>>> On Tue, Oct 28, 2025 at 05:17:44PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 28/10/2025 13:27, Pavan Kondeti wrote:
+>>>>> On Tue, Oct 28, 2025 at 12:07:40PM +0100, Krzysztof Kozlowski wrote:
+>>>>>> On 28/10/2025 12:04, Krzysztof Kozlowski wrote:
+>>>>>>> On 28/10/2025 11:58, Hrishabh Rajput wrote:
+>>>>>>>>
+>>>>>>>> On 10/28/2025 3:10 PM, Krzysztof Kozlowski wrote:
+>>>>>>>>> On 28/10/2025 10:35, Hrishabh Rajput via B4 Relay wrote:
+>>>>>>>>>> +
+>>>>>>>>>> +static int __init gunyah_wdt_init(void)
+>>>>>>>>>> +{
+>>>>>>>>>> +	struct arm_smccc_res res;
+>>>>>>>>>> +	struct device_node *np;
+>>>>>>>>>> +	int ret;
+>>>>>>>>>> +
+>>>>>>>>>> +	/* Check if we're running on a Qualcomm device */
+>>>>>>>>>> +	np = of_find_compatible_node(NULL, NULL, "qcom,smem");
+>>>>>>>>> I don't think you implemented my feedback. This again is executed on
+>>>>>>>>> every platform, e.g. on Samsung, pointlessly.
+>>>>>>>>>
+>>>>>>>>> Implement previous feedback.
+>>>>>>>>
+>>>>>>>> Do you want us to add platform device from another driver which is 
+>>>>>>>> probed only on Qualcomm devices (like socinfo from previous discussion) 
+>>>>>>>> and get rid of the module init function entirely? As keeping anything in 
+>>>>>>>> the module init will get it executed on all platforms.
+>>>>>>>
+>>>>>>> Instead of asking the same can you read previous discussion? What is
+>>>>>>> unclear here:
+>>>>>>> https://lore.kernel.org/all/3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org/
+>>>>>>> ?
+>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> With this patch version, we have tried to reduce the code execution on 
+>>>>>>>> non-Qualcomm devices (also tried the alternative as mentioned in the 
+>>>>>>>> cover letter). Adding platform device from another driver as described 
+>>>>>>>> above would eliminate it entirely, please let us know if you want us to 
+>>>>>>>> do that.
+>>>>>>>
+>>>>>>> Why do I need to repeat the same as last time?
+>>>>>>
+>>>>>>
+>>>>>> Now I see that you completely ignored previous discussion and sent THE
+>>>>>> SAME approach.
+>>>>>
+>>>>> Our intention is not to waste reviewers time at all. It is just a
+>>>>> misunderstanding on what your comment is about. Let me elaborate further
+>>>>> not to defend our approach here but to get a clarity so that we don't
+>>>>> end up in the same situation when v4 is posted.
+>>>>>
+>>>>> https://lore.kernel.org/all/b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org/ 
+>>>>>
+>>>>> You mentioned here
+>>>>>
+>>>>> ```
+>>>>> To me socinfo feels even better. That way only, really only qcom devices
+>>>>> will execute this SMC.
+>>>>> ```
+>>>>>
+>>>>> We interpreted this comment as `avoid executing this SMC on non qcom
+>>>>> devices`. That is exactly what we have done in the current patch. since
+>>>>
+>>>>
+>>>> So where did you use socinfo? Point me to the code.
+>>>>
+>>>
+>>> Okay, lets go a bit deep into the socinfo part. we have used
+>>> `soc_device_match()` API to detect if the device is qcom (`family =
+>>> Snapdragon`). It works. However, when we built both `socinfo` and
+>>
+>> socinfo driver. Read my first feedback:
+>>
+>>
+>> "No, your hypervisor driver (which you have) should start the module via
+>> adding platform/aux/something devices."
+>>
+>> And then I agreed if you start it from the socinfo driver.
+> 
+> I'd rather not tie this to socinfo. The socinfo is an optional driver,
+> which is mainly used to provide debugfs entries. Watchdog is much more
+> important. It should not be tied to debugfs-only entry.
+> 
 
-Ensure new endpoints or interrupter can't be added to a sidenband after
-xhci_sideband_unregister() cleared the existing ones, and unlocked the
-sideband mutex.
-Reorganize code so that mutex is only taken and released once in
-xhci_sideband_unregister(), and clear sb->vdev while mutex is taken.
+No problem. Choose whatever driver it is. The problem is that they did
+not even implement that. They claimed they followed review but it is
+100% ignored. Nothing got implemented and they send the same.
 
-Use mutex guards to reduce human unlock errors in code
-
-Refuse to add endpoints or interrupter if sb->vdev is not set.
-sb->vdev is set when sideband is created and registered.
-
-Reported-by: Uttkarsh Aggarwal <uttkarsh.aggarwal@oss.qualcomm.com>
-Closes: https://lore.kernel.org/linux-usb/20251028080043.27760-1-uttkarsh.aggarwal@oss.qualcomm.com
-Fixes: de66754e9f80 ("xhci: sideband: add initial api to register a secondary interrupter entity")
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
----
-
-v2:
-  use guard() and fix missing mutex_unlock as recommended by greg k-h 
-
----
- drivers/usb/host/xhci-sideband.c | 97 +++++++++++++++++---------------
- 1 file changed, 53 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/usb/host/xhci-sideband.c b/drivers/usb/host/xhci-sideband.c
-index e771a476fef2..2daa0ba7ad9a 100644
---- a/drivers/usb/host/xhci-sideband.c
-+++ b/drivers/usb/host/xhci-sideband.c
-@@ -86,6 +86,22 @@ __xhci_sideband_remove_endpoint(struct xhci_sideband *sb, struct xhci_virt_ep *e
- 	sb->eps[ep->ep_index] = NULL;
- }
- 
-+static void
-+__xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
-+{
-+	struct usb_device *udev;
-+
-+	if (!sb->ir)
-+		return;
-+
-+	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
-+	sb->ir = NULL;
-+	udev = sb->vdev->udev;
-+
-+	if (udev->state != USB_STATE_NOTATTACHED)
-+		usb_offload_put(udev);
-+}
-+
- /* sideband api functions */
- 
- /**
-@@ -131,14 +147,17 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
- 	struct xhci_virt_ep *ep;
- 	unsigned int ep_index;
- 
--	mutex_lock(&sb->mutex);
-+	guard(mutex)(&sb->mutex);
-+
-+	if (!sb->vdev)
-+		return -ENODEV;
-+
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 	ep = &sb->vdev->eps[ep_index];
- 
--	if (ep->ep_state & EP_HAS_STREAMS) {
--		mutex_unlock(&sb->mutex);
-+	if (ep->ep_state & EP_HAS_STREAMS)
- 		return -EINVAL;
--	}
-+
- 
- 	/*
- 	 * Note, we don't know the DMA mask of the audio DSP device, if its
-@@ -148,14 +167,11 @@ xhci_sideband_add_endpoint(struct xhci_sideband *sb,
- 	 * and let this function add the endpoint and allocate the ring buffer
- 	 * with the smallest common DMA mask
- 	 */
--	if (sb->eps[ep_index] || ep->sideband) {
--		mutex_unlock(&sb->mutex);
-+	if (sb->eps[ep_index] || ep->sideband)
- 		return -EBUSY;
--	}
- 
- 	ep->sideband = sb;
- 	sb->eps[ep_index] = ep;
--	mutex_unlock(&sb->mutex);
- 
- 	return 0;
- }
-@@ -180,18 +196,16 @@ xhci_sideband_remove_endpoint(struct xhci_sideband *sb,
- 	struct xhci_virt_ep *ep;
- 	unsigned int ep_index;
- 
--	mutex_lock(&sb->mutex);
-+	guard(mutex)(&sb->mutex);
-+
- 	ep_index = xhci_get_endpoint_index(&host_ep->desc);
- 	ep = sb->eps[ep_index];
- 
--	if (!ep || !ep->sideband || ep->sideband != sb) {
--		mutex_unlock(&sb->mutex);
-+	if (!ep || !ep->sideband || ep->sideband != sb)
- 		return -ENODEV;
--	}
- 
- 	__xhci_sideband_remove_endpoint(sb, ep);
- 	xhci_initialize_ring_info(ep->ring);
--	mutex_unlock(&sb->mutex);
- 
- 	return 0;
- }
-@@ -316,28 +330,25 @@ xhci_sideband_create_interrupter(struct xhci_sideband *sb, int num_seg,
- 	if (!sb || !sb->xhci)
- 		return -ENODEV;
- 
--	mutex_lock(&sb->mutex);
--	if (sb->ir) {
--		ret = -EBUSY;
--		goto out;
--	}
-+	guard(mutex)(&sb->mutex);
-+
-+	if (!sb->vdev)
-+		return -ENODEV;
-+
-+	if (sb->ir)
-+		return -EBUSY;
- 
- 	sb->ir = xhci_create_secondary_interrupter(xhci_to_hcd(sb->xhci),
- 						   num_seg, imod_interval,
- 						   intr_num);
--	if (!sb->ir) {
--		ret = -ENOMEM;
--		goto out;
--	}
-+	if (!sb->ir)
-+		return -ENOMEM;
- 
- 	udev = sb->vdev->udev;
- 	ret = usb_offload_get(udev);
- 
- 	sb->ir->ip_autoclear = ip_autoclear;
- 
--out:
--	mutex_unlock(&sb->mutex);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(xhci_sideband_create_interrupter);
-@@ -352,21 +363,12 @@ EXPORT_SYMBOL_GPL(xhci_sideband_create_interrupter);
- void
- xhci_sideband_remove_interrupter(struct xhci_sideband *sb)
- {
--	struct usb_device *udev;
--
--	if (!sb || !sb->ir)
-+	if (!sb)
- 		return;
- 
--	mutex_lock(&sb->mutex);
--	xhci_remove_secondary_interrupter(xhci_to_hcd(sb->xhci), sb->ir);
--
--	sb->ir = NULL;
--	udev = sb->vdev->udev;
-+	guard(mutex)(&sb->mutex);
- 
--	if (udev->state != USB_STATE_NOTATTACHED)
--		usb_offload_put(udev);
--
--	mutex_unlock(&sb->mutex);
-+	__xhci_sideband_remove_interrupter(sb);
- }
- EXPORT_SYMBOL_GPL(xhci_sideband_remove_interrupter);
- 
-@@ -465,6 +467,7 @@ EXPORT_SYMBOL_GPL(xhci_sideband_register);
- void
- xhci_sideband_unregister(struct xhci_sideband *sb)
- {
-+	struct xhci_virt_device *vdev;
- 	struct xhci_hcd *xhci;
- 	int i;
- 
-@@ -473,17 +476,23 @@ xhci_sideband_unregister(struct xhci_sideband *sb)
- 
- 	xhci = sb->xhci;
- 
--	mutex_lock(&sb->mutex);
--	for (i = 0; i < EP_CTX_PER_DEV; i++)
--		if (sb->eps[i])
--			__xhci_sideband_remove_endpoint(sb, sb->eps[i]);
--	mutex_unlock(&sb->mutex);
-+	scoped_guard(mutex, &sb->mutex) {
-+		vdev = sb->vdev;
-+		if (!vdev)
-+			return;
-+
-+		for (i = 0; i < EP_CTX_PER_DEV; i++)
-+			if (sb->eps[i])
-+				__xhci_sideband_remove_endpoint(sb, sb->eps[i]);
- 
--	xhci_sideband_remove_interrupter(sb);
-+		__xhci_sideband_remove_interrupter(sb);
-+
-+		sb->vdev = NULL;
-+	}
- 
- 	spin_lock_irq(&xhci->lock);
- 	sb->xhci = NULL;
--	sb->vdev->sideband = NULL;
-+	vdev->sideband = NULL;
- 	spin_unlock_irq(&xhci->lock);
- 
- 	kfree(sb);
--- 
-2.43.0
-
+Best regards,
+Krzysztof
 
