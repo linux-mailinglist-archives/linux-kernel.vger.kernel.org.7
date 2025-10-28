@@ -1,107 +1,158 @@
-Return-Path: <linux-kernel+bounces-874263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E6EC15DA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:37:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FED9C15DBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8CC043555AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:37:41 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 75E1F354DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACE033CEA2;
-	Tue, 28 Oct 2025 16:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2902C33FE1E;
+	Tue, 28 Oct 2025 16:38:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Rnz4ibPE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZgTkqKY6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7503D336EDA;
-	Tue, 28 Oct 2025 16:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF20327F00A;
+	Tue, 28 Oct 2025 16:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669455; cv=none; b=MiWDBBeFpVSJztGSPz4515XuiA3Kx0fVtQmHvEm4fKAvhCNCXGo4rBmE3hVggBzKZA+ClxctZUnxxhtgT8FUse4MZ6FkIB7FkgjeOKjk6neAF5A0XWPIyBiNsXeFKVHNIMYz4JpDiNrCk6wqQ5fNeJDzEESFw3OqC24GSizgsTk=
+	t=1761669505; cv=none; b=szH6vLt4rBcLJyM9K/2U+BV/vTT1D4/4cMY5Tzsp08ipcPXdwXr/qrzbp5bBSlnR0tMjyp8tFl8kT7R1+1ujyPHH0XWYOwff/Q4Jysk1UjCVN3zPGjblcG/dc7UjEGv9bnKk66/v4JIxISPN5RqSsfnXMIwy0mvPa4ziRlLY680=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669455; c=relaxed/simple;
-	bh=W9mEmL7jIDLBMLBX7j3ZXla+oXrlDLCVbAxW1tbngG4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=NC0RWa/RuD7l4TXM1HSk44JvkwsgjnDgH4j+VNldAOfvW2cEVMsyaxNJ1GzwExgqHONafn8PHnCfqdoC1LQ2W51+ynCaWvVeSV9+RdhdOa3MPI3hnY1RG4bi5VmC0hZRvzU2ta2gXgknByVmRVsqmm6cWVis3u+KGHW11EoDfKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Rnz4ibPE; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1761669505; c=relaxed/simple;
+	bh=ZDoVW0phZTZ/KSYf4G3aRZC3br0hCZvkLMwglbY+L+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Perq9XxXD7YtlwgL7J4BHME2Vw5Sv+H6ltxRV6kwV1v0mslwJmiEx668hOrizgbvzm7KuE0vNcL/4JZ0/ogEnCfORGBok6Pk4aKhrrBc8Rzb+n2LkssvyMx8FoKOAw8u1ooLkdlxH4G3rdkvG9BM5Ll2D+HsEPCJ9kbxhqtiwus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZgTkqKY6; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761669454; x=1793205454;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=W9mEmL7jIDLBMLBX7j3ZXla+oXrlDLCVbAxW1tbngG4=;
-  b=Rnz4ibPEHBxHk5kp6gtuhbI00xrHoU4FTMpPqGrghuTgdhnq55b3ZVYl
-   bFsHKoKjIg3+q08SBI0zJtwsTeX/NPp/HRuKAeOAg3K1b+NqJ6/uzh9nw
-   X0H0bYZBndJ17DX58VMe613+QVuuXYMmTZtRglZl0rlVFDE5wPFQnTATB
-   1kMXkiCAdnfmJhkbMrlxA6MJg3H40UPwNelDqrKaV47ZnsleHnR2zyouI
-   C2frevHyeYxqZEgSrRigsVuXOtWY5UiR8PrJM8xmy+OoliIwVg9ropRRq
-   IYgvpd5QaxT7g7331XyFObLo+HY7zrRkUdk//ObKP/4CJ+0HMz2ZF6dod
-   w==;
-X-CSE-ConnectionGUID: Vz+9Ws9GQAuRSmyK1UXLMg==
-X-CSE-MsgGUID: B2LbszDLSuCwZPro06nHFA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63813471"
+  t=1761669504; x=1793205504;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=ZDoVW0phZTZ/KSYf4G3aRZC3br0hCZvkLMwglbY+L+I=;
+  b=ZgTkqKY6flUAV8m2t5xvZucfLD+p249A6IK3jjgggpHY61/rAjXDFIWs
+   3/O8oTxKfskpPyPim/NAXiZ8a3VD5a3ma82gQfPenTbl/Szeb1bCiWWxU
+   wgNGZkCY0uObFb0fwwPoFE2Cj1VzAtj4U+nwKJ/eHEC2bNmVWaI+NaBqW
+   EzG+WzaHZtY6dAKKe1c3dIPhlZhuKRaCISRL+QHn4tcGOSQIhcRiGnmAj
+   BFNntGXTxuK8d6mCj8BG7R2URnxuzgLHiQCbUs+2838MmLcC8cSBYAI08
+   td1yBYu9UFDxHHYNdSQeSFcF0Jtyo8fOSAlSkJ3I5ImLaP5qSQqIi3pFl
+   Q==;
+X-CSE-ConnectionGUID: WqOI9xSyRn+0/TRtaegpcA==
+X-CSE-MsgGUID: BbwoB0/MSJ6D0RkEuHjLBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81198497"
 X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="63813471"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:37:33 -0700
-X-CSE-ConnectionGUID: ERBcBXWcSganTId7wMNOqQ==
-X-CSE-MsgGUID: 2H5xkJCUSMynp9IjSUTaUA==
+   d="scan'208";a="81198497"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:38:24 -0700
+X-CSE-ConnectionGUID: QDQWITfDTcCcmdG7SlTaPg==
+X-CSE-MsgGUID: 5AsjzWDETaiOdcaAKoFztw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185095243"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.182])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:37:30 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Daniel Scally <djrscally@gmail.com>, Hans de Goede <hansg@kernel.org>, 
- Qiu Wenbo <qiuwenbo@gnome.org>
-Cc: Andy Shevchenko <andy@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251028063009.289414-1-qiuwenbo@gnome.org>
-References: <20251024050537.92440-1-qiuwenbo@gnome.org>
- <20251028063009.289414-1-qiuwenbo@gnome.org>
-Subject: Re: [PATCH v2] platform/x86: int3472: Fix double free of GPIO
- device during unregister
-Message-Id: <176166944603.2044.3460752500171416214.b4-ty@linux.intel.com>
-Date: Tue, 28 Oct 2025 18:37:26 +0200
+   d="scan'208";a="185484655"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.104])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:38:19 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 2647F121E5D;
+	Tue, 28 Oct 2025 18:38:17 +0200 (EET)
+Date: Tue, 28 Oct 2025 18:38:17 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] media: i2c: add Sony IMX111 CMOS camera sensor
+ driver
+Message-ID: <aQDxeXV37IHpKeKX@kekkonen.localdomain>
+References: <20250819120428.83437-1-clamor95@gmail.com>
+ <aLB_7YS9HsfzfadI@kekkonen.localdomain>
+ <CAPVz0n1mXvdyzshei8Mbw7KVYCkQjziBA95ton4MKXPnPd0kbQ@mail.gmail.com>
+ <aQDuOSUYbuoLoFbf@kekkonen.localdomain>
+ <aQDvzKMXhVlR2G3J@kekkonen.localdomain>
+ <CAPVz0n3E08Ft1q5QS-aT8WUQNmTe5uOs=d2VHovNH1BbdQWVRQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n3E08Ft1q5QS-aT8WUQNmTe5uOs=d2VHovNH1BbdQWVRQ@mail.gmail.com>
 
-On Tue, 28 Oct 2025 14:30:09 +0800, Qiu Wenbo wrote:
-
-> regulator_unregister() already frees the associated GPIO device. On
-> ThinkPad X9 (Lunar Lake), this causes a double free issue that leads to
-> random failures when other drivers (typically Intel THC) attempt to
-> allocate interrupts. The root cause is that the reference count of the
-> pinctrl_intel_platform module unexpectedly drops to zero when this
-> driver defers its probe.
+On Tue, Oct 28, 2025 at 06:34:15PM +0200, Svyatoslav Ryhel wrote:
+> вт, 28 жовт. 2025 р. о 18:31 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
+> >
+> > On Tue, Oct 28, 2025 at 06:24:25PM +0200, Sakari Ailus wrote:
+> > > Hi Svyatoslav,
+> > >
+> > > On Fri, Aug 29, 2025 at 09:20:10PM +0300, Svyatoslav Ryhel wrote:
+> > > > чт, 28 серп. 2025 р. о 19:12 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
+> > > > >
+> > > > > Hi Svyatoslaw,
+> > > > >
+> > > > > On Tue, Aug 19, 2025 at 03:04:25PM +0300, Svyatoslav Ryhel wrote:
+> > > > > > Add driver for Sony IMX111 CMOS sensor found in LG Optimus 4X and Vu
+> > > > > > smartphones.
+> > > > >
+> > > > > Thanks for the set.
+> > > > >
+> > > > > I wonder how would the sensor work with the CCS driver. The register layout
+> > > > > appears to be very much aligned with that (I haven't checked whether there
+> > > > > are MSRs that depend on the mode).
+> > > > >
+> > > >
+> > > > After deeper testing I have found that imx111 may be nokia,smia
+> > > > compatible, at least most of general registers and CCS logic is
+> > > > applicable. Some of registers may cause issues, for example,
+> > > > "phy_ctrl_capability" = 0, 0x0 and some insane pll ranges. Maybe that
+> > > > can be addressed with a firmware patch idk. The trickiest part is that
+> > > > each mode requires non-standard and non-common manufacturer code
+> > > > (0x3xxx ranges). If you can explain how to address these issues, I
+> > > > would love to add imx111 and a few other modules into list of CCS
+> > > > supported devices.
+> > >
+> > > On a closer look, only the image size related configuration and a little
+> > > more appears to be CCS-like. That's not enough to configure the sensor;
+> > > this is conveyed in the MSR space which indeed makes the sensor difficult
+> > > to control using the CCS driver, unfortunately.
+> >
+> > Ok, the driver appears to be doing quite a bit of register writes outside
+> > the register lists, which is good, and what's there appears indeed largely
+> > CCS compliant. The MSRs remain an issue; it'd take quite a bit of reverse
+> > engineering to figure out what the registers are and how to configure them
+> > in a generic way. I think that's doable but I'm not sure it is justifiable
+> > considering the expected effort.
+> >
 > 
-> [...]
+> I have deciphered a lot already since downstream provides only
+> register writing sequences. Everything that left is 0x3xxx which seems
+> to refer a vendor region and it is not documented anywhere.
 
+That's what I'd expect, too, with the possible exception of the datasheet,
+but even sensor datasheets often omit a lot of information.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo-fixes branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
-local branch there, which might take a while.
+I believe you're already aware of
+<URL:https://www.mipi.org/specifications/camera-command-set>?
 
-The list of commits applied:
-[1/1] platform/x86: int3472: Fix double free of GPIO device during unregister
-      commit: f0f7a3f542c1698edb69075f25a3f846207facba
-
---
- i.
-
+-- 
+Sakari Ailus
 
