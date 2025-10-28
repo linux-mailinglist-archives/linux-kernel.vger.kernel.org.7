@@ -1,143 +1,104 @@
-Return-Path: <linux-kernel+bounces-873244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A927FC13779
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:10:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F98CC1378B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD211A243FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4F0F4213DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7452D7DD8;
-	Tue, 28 Oct 2025 08:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76162D6401;
+	Tue, 28 Oct 2025 08:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsPj+uH2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="F53UDBxv"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946352D5950;
-	Tue, 28 Oct 2025 08:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E651D280A20
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639046; cv=none; b=Ms92MUU1n0Rf9dANMZRdkSSIfkAZzxfUvkDi512Tiuxd6M1phLk5fG/JALG641ent5W6mjiMVqLM/FGXLztXGsZRvHWj/RA4mdpiLuXC9MPQZ9E2HqoGznaFsqtn6U+Rb0bIg7OzCEzny1P562ZlXdAX4KmZifhQUUTNDy7nZmw=
+	t=1761639204; cv=none; b=f3kTQz/koHKf+KbVQy77dPDH0tFxK1sC+cgCw2Iwh4dGgogT2Vxr6wMbhaOQU71pL2cT5DWzQjHEEYtxtwLoosNFPgMNDDJ+G0RnqqxXp46vythMovr8TH+dGHpgVHDXBtQ9sv8AE6lMyEeeYcu+0I358Sp1NU3SMcq/2B1Aqvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639046; c=relaxed/simple;
-	bh=zBgb5f1WtkDg56Ox0V9GSaoKy0zGZLbaoISlecrexow=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LiY7oyqBJv8ZcthuQKzrTf7KhXtGx0VrVonYByEl8u4ugQEO4qkxwe/nnmd8EG5y6OidGWiphOzgie6DCCupKVYtRdLVry2nXZZHLSC4Jyv8iyXHO56DneqpBOOg1hnparY8sqdJzYeyjiOie7EaZdZxFiYc+KYt3Q7g/kUVQLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsPj+uH2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5D4C4CEE7;
-	Tue, 28 Oct 2025 08:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761639046;
-	bh=zBgb5f1WtkDg56Ox0V9GSaoKy0zGZLbaoISlecrexow=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=TsPj+uH26dczDXE7oXv27W0SY9W+B5oYJv1PGJDZbhbBjeoRxAiQqLRgi+lnAQrp7
-	 3gDI1b3QrcTr0Znv6ufEaEJJ4dbxyFSOM0msgbwv6JHHioWZl10DBI+SuY2vD4mioT
-	 IDr7N3iVU85sEgWV+hutydtmcSuT2lzc+zxWq60g4ZHmqKGKKONz7uranjY0DqOOrW
-	 R4JdJQxxrVp13hr6a4JCnR5kh+qlZjqk9qlDXuJ1o7XZcjvrXUGZ8jRTAijjLwnRNN
-	 KSC3k07DPR0iPm8NdyB/91/U1ncZ8JQoPg1bkiqr4z/9thLmKWjvS9s3XN1lgliyty
-	 hDT3XqNEuhXxg==
-Message-ID: <84ae4280-d0f0-42a2-acfd-e85e0263be1d@kernel.org>
-Date: Tue, 28 Oct 2025 09:10:39 +0100
+	s=arc-20240116; t=1761639204; c=relaxed/simple;
+	bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qomCLbUB1jHo8o/T3QWZ/J19HKtPr9FlY9m77RJjr0bcdglnmgKnDC6CAaIMmypKvwUPFKRV6VG9b+dBBcwljScQgmvbl6XQV9Zw0SA5Gk1zyBkDmw03mSSHWJBk62LvBp4SWeDHtkHpoKQdAS2tIEUgO5VUza4N5tWg/b/FY+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=F53UDBxv; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1761639199;
+	bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=F53UDBxvBeF7d84PJVk+CpKcJVzkfoJK1Ksf9Mo2pFwGcnOOEUKqRZj6i0IUvcYoO
+	 xj+OGQk10d73vCBfskU+u/wvN2x/uYmkFK8/WryZOzhpf+OP+2urqHX8ztBLmFBisT
+	 2GMsditRZDAi2vG1mnPH4nuCjv9wibFv/CkfbW+4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Tue, 28 Oct 2025 09:13:18 +0100
+Subject: [PATCH] tools/nolibc: remove outdated comment about __sysret() in
+ mmap()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
- qcom,kaanapali-camss binding
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
- <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
- <20251028-wonderful-olive-muskox-77f98d@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251028-wonderful-olive-muskox-77f98d@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251028-nolibc-map-failed-comment-v1-1-75af291ce011@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAB17AGkC/x3MwQqEIBCA4VeJOTegssHWq0QHR6d2IDU0IpDef
+ aXjd/j/CoWzcIGpq5D5kiIpNui+A/ezcWMU3wxGmUEr88WYdiGHwR64WtnZo0shcDzRa/sZiWh
+ Q5KH1R+ZV7vc9L8/zB8baCrhrAAAA
+X-Change-ID: 20251028-nolibc-map-failed-comment-d1a49bbb50bd
+To: Willy Tarreau <w@1wt.eu>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761639198; l=1136;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=2Qhzd2oGV2/6F82WeamAOfteFOsJBQS3O9GOKbu3nbc=;
+ b=D7ASp6uN7gVteodQn7MZ7VYMQ0W8l4SG2tLpX6x6kE0SKb4Sa6D3X2NX/m6HQS22ertL7pTFV
+ YH/AZtpijOWBYdKp3tdgzq0+tAqt7wL9EVa9xMaE81Sxe1c/7e1RvQj
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On 28/10/2025 09:09, Krzysztof Kozlowski wrote:
-> On Thu, Oct 23, 2025 at 02:14:34AM -0700, Hangxiang Ma wrote:
->> Add bindings for qcom,kaanapali-camss in order to support the camera
-> 
-> What is qcom,kaanapali-camss? Sounds like a compatible and you cannot
-> add bindings for a compatible. Instead add bindings for hardware, so
-> explain here hardware.
-> 
-> You could easily use `git log` to see how such commits are written
-> instead of pasting here your downstream practice.
-> 
+Since commit fb01ff635efd ("tools/nolibc: keep brk(), sbrk(), mmap()
+away from __sysret()") the implementation of mmap() does not use the
+__sysret() macro anymore.
 
+Remove the outdated comment.
 
-And of course standard comment:
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ tools/include/nolibc/sys/mman.h | 5 -----
+ 1 file changed, 5 deletions(-)
 
-A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
-prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+diff --git a/tools/include/nolibc/sys/mman.h b/tools/include/nolibc/sys/mman.h
+index 5228751b458c..77084ac3405a 100644
+--- a/tools/include/nolibc/sys/mman.h
++++ b/tools/include/nolibc/sys/mman.h
+@@ -31,11 +31,6 @@ void *sys_mmap(void *addr, size_t length, int prot, int flags, int fd,
+ }
+ #endif
+ 
+-/* Note that on Linux, MAP_FAILED is -1 so we can use the generic __sysret()
+- * which returns -1 upon error and still satisfy user land that checks for
+- * MAP_FAILED.
+- */
+-
+ static __attribute__((unused))
+ void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset)
+ {
 
+---
+base-commit: 2602949b22330f1275138e2b5aea5d49126b9757
+change-id: 20251028-nolibc-map-failed-comment-d1a49bbb50bd
 
 Best regards,
-Krzysztof
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
