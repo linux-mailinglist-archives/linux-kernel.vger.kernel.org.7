@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-874328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8A8C160D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:08:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7B2C16141
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14731A66243
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E7F420483
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A88422A1D5;
-	Tue, 28 Oct 2025 17:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15179346E69;
+	Tue, 28 Oct 2025 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="c4GnotxL"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GAc4R7Rr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117C428D8F4
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660F87081E;
+	Tue, 28 Oct 2025 17:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671121; cv=none; b=BJ6+1ZC2sydeNTtZWaYy/cFmyOZE6Bim3uw81q/F/FzGFu4zyZo/dwlkDWoneXuZHip8ziGXVjO5S13L0g+AKbCNxTieQ+kTvtFY6K0S3SbmKNWx30/5UeZNrzFZKNwG0U9Zx59jnnyGNlZOKA3yzDojRGHjKsI+5gOWac++M30=
+	t=1761671135; cv=none; b=G5/ZJ4Q6XrPwn4RquQ0EjeCX+Zx2Vxef47ExoCSV+qDdV4YKPtpamkiMYS6viTp4devQAso6MZB/PeCFC4OVA6bmLHy3imxeRAdij94/Z3Q5jX0GP/3nKdgrC9zBSNC7V+b/IXCevIKCN2bSE82S86wOvHRch795cvKJCTMbfJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671121; c=relaxed/simple;
-	bh=N0/zVLICnxNKLek4t08+XI7tTQ7F4VIB4xy8YpVu/X0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oR4hYUXHRToMZDsrsEdLeKfkpfyJiTiFozeKsUckLUtjpy2Xv/mPX9MUpg9wqye2QkOjI6uYhnuBK1uylaKylu67H1Bn+CFlEKFa1yd1FybXQaZ5LeiDfoGC9UvmTs1PKZTYTe0WDjzxUFei/sEq87tBrX1zpVE/39NKPEYarR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=c4GnotxL; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-780fc3b181aso3957530b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1761671117; x=1762275917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iBmB4qbptLfyTLiupE29rEaJ57aI2ZRJhbVvsp8ICt4=;
-        b=c4GnotxLcEERpWB3rJJziQb67+ooOwT+vJQuzsz1SOuEEGUpXpRKHh8kTpuid2pDYy
-         OL3qe4qNpzOX06It+jQomvRqgIXkHTgwpBDwvzVzoE351MyvvQujr0ng/BbxWmlJk542
-         Bxl8J8jgULU9ykuI9LfGKLyEfvStXDfqJwGs4T+eq8hD1H80HTvmZbKB5DX+XNXgxChs
-         +lG2vnE8bwQP5PZi09wi8chmv0sTCmpyuVy/4yTDZY+uD5WD/My8Do/rosOzIb2Q/iJ5
-         hDUhuzuOm6n/48NnzQX6tIP/AhAB4dZugVNYBpaZ4eRHQfKPSXO+vDsYQJuBRyNMsqlI
-         JayQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761671117; x=1762275917;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iBmB4qbptLfyTLiupE29rEaJ57aI2ZRJhbVvsp8ICt4=;
-        b=h+s3K0Dlib68k07w4FpdIEd8j+23xBpTZyi99KHCsPJEuFNYJDRmH30UCUH+pIMjlr
-         3/90rI2ov2foDA+Wv3NOdfmu4O01CPTGKviKuPldbtyQP9q1wmX3MNAT+gbRA2s6vwrz
-         lshAvxUGnitU6lvIZ4VdeUVsqPxXJbtL7Mnl9iAzuccRaKWUf01nHDZ7riJ9/oeqm+E0
-         30VQ9311NbNT42350Nk0PFmlbl84CiBlyJG/NRr+JyMOjmab69bFul9dPQNJPByikadU
-         imRvp9W0x9NTDNG98QEE+cVpSdw3DxyOrS+Vmiymx8WRrRbT4q57KExxnhg9QEhDQvxo
-         U1zA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZhwx/u4N3hMMnhyVgajl/h7vbd1YxV9b7/8JbUVSjPvGvBQ+XmdQ3cn0CMCPEDZlKT2fl0rZtd4cL1cU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfmcpN1bxCLBXyqoVVnuWkbfB9vZx0dxsxt+vg1xW4rMFJ4Ic3
-	D1EtEorOgFOly80DXMEpJrH0UEcKCkswYcWjDGtKNFexGmRdFFYC8SoP08KBYLMy+LQ=
-X-Gm-Gg: ASbGncsF4TVh0kCB0vqDFhxqXQQyPAOQTpb8T3ddhfkJyJ91xzIYDpiI99tFBbkpyc5
-	z5UkwSEMCY1S4ZjZAunh5G14CC41KTC6+9zqpxneRd1HvbbFIY1lkkUeyiuu9EcYnNIBE4jhimQ
-	S7h8MIY4xeAmL3ONG3TsNnH30U47VvFpaEzEpJUkAxYqgLoWo9z80NrWajQ91TQrZsvu9iGaNc4
-	ExiIhxXjoonxGp6VjJS4sqaxlOwcF+gmo6vHCIESuH/cIW7bpWqrhhSc+fVBoUaZdvZPh0E8R3w
-	cA0FZGA6MDPjfsFiC0N4dLM6VbS9fM+2MCTnQh2QZmHQTLcZ3KjA3DoQPJO12LcApWYsnhUFTuU
-	v1uFF7ulvVxTNCa67mO+jBXlOveLslF5thBs1dNV+ivJRFlvTYjf+wgXMg1u1iabVmmZMkic91n
-	OCry6il5O/V4lR
-X-Google-Smtp-Source: AGHT+IHjvH8tEuZg+gXvi6IM/+7or2ktCuzjFSHVpKfrsaF2EYXSWsRTQJnVaoBW4TL1kdx24muqFQ==
-X-Received: by 2002:a05:6a20:258f:b0:334:89c6:cdeb with SMTP id adf61e73a8af0-344d441fa42mr5353099637.56.1761671117283;
-        Tue, 28 Oct 2025 10:05:17 -0700 (PDT)
-Received: from localhost.localdomain ([49.37.217.46])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a414068addsm12508862b3a.44.2025.10.28.10.05.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:05:16 -0700 (PDT)
-From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-To: jjohnson@kernel.org
-Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org,
+	s=arc-20240116; t=1761671135; c=relaxed/simple;
+	bh=oL0rXXmMHbcR3EvMkdJ0IKxdFjgk39YWymPhTwNMDgw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GUYuObwHAo7hCum6Xh+dZkNXf8yCmJn/pHDjfco3GuViCmvnFL9riRNAWsXcdcMtN0a8qWKraNqxJBlWuHJ+ARD058M3OKYjQmjunm1ROT5OXb5YX5wSJqpSJQZEaZP65aLyWz3YmU6MOawZNGi4CIz66+p8TPpBdDt2aSG0SOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GAc4R7Rr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0592C4CEE7;
+	Tue, 28 Oct 2025 17:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761671134;
+	bh=oL0rXXmMHbcR3EvMkdJ0IKxdFjgk39YWymPhTwNMDgw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GAc4R7RrcicVl5PeahubF+TfLli3xATxMXRSgNiesCP4FlAu9VGhv4daehI46gO3t
+	 YdHl4NcawireCvk/sBo4Azw3sJfkZADoxK7hWgThsdwGxQv0LWx37SyEnoFJXQnFkc
+	 fg+aaheIUkRocD6+64eu7paqvkKQ/DSpVWcEiTuJElMCyfGc2LiclFQDx+zdVYqojG
+	 anSZI/vwWlsw3nc1UUGe3i9AKZ5Ft4y514OUiwYDcbSXE2I9ALHWxC1Q4sd7rB8FvQ
+	 jv7/p0goh4MSQI0HzGXw0pyIkbio0QbHKE8itMZ7ybLs90DcIHeYH/iNvG5rpkGqxU
+	 DHXj6ifX+xy5A==
+Received: by wens.tw (Postfix, from userid 1000)
+	id D9CDC5FCB3; Wed, 29 Oct 2025 01:05:31 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Richard Genoud <richard.genoud@bootlin.com>
+Cc: Chen-Yu Tsai <wens@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Wentao Liang <vulab@iscas.ac.cn>,
+	Johan Hovold <johan@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] wifi: ath12k: fix potential memory leak in ath12k_wow_arp_ns_offload()
-Date: Tue, 28 Oct 2025 22:34:55 +0530
-Message-ID: <20251028170457.134608-1-nihaal@cse.iitm.ac.in>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: (subset) [PATCH v4 00/16] Introduce Allwinner H6/H616 NAND controller support
+Date: Wed, 29 Oct 2025 01:05:29 +0800
+Message-ID: <176167109288.1159653.8613197052957076565.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251028073534.526992-1-richard.genoud@bootlin.com>
+References: <20251028073534.526992-1-richard.genoud@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-When the call to ath12k_wmi_arp_ns_offload() fails, the temporary memory
-allocation for offload is not freed before returning. Fix that by
-freeing offload in the error path.
+On Tue, 28 Oct 2025 08:34:53 +0100, Richard Genoud wrote:
+> This patch series introduce H6/H616 NAND controller support (but not yet
+> the DMA/MDMA part).
+> 
+> All the work was done on a H616 board with a Kioxia TC58NVG1S3HTA00 NAND
+> chip.
+> ECC is supported, as well as scrambling.
+> 
+> [...]
 
-Fixes: 1666108c74c4 ("wifi: ath12k: support ARP and NS offload")
-Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
----
-Compile tested only. Issue found using static analysis.
+Applied to sunxi/dt-for-6.19 in local tree, thanks!
 
- drivers/net/wireless/ath/ath12k/wow.c | 1 +
- 1 file changed, 1 insertion(+)
+[16/16] arm64: dts: allwinner: h616: add NAND controller
+        commit: f55a2526317aca8ecc1b21b346dbdebbc6aad97d
 
-diff --git a/drivers/net/wireless/ath/ath12k/wow.c b/drivers/net/wireless/ath/ath12k/wow.c
-index dce9bd0bcaef..e8481626f194 100644
---- a/drivers/net/wireless/ath/ath12k/wow.c
-+++ b/drivers/net/wireless/ath/ath12k/wow.c
-@@ -758,6 +758,7 @@ static int ath12k_wow_arp_ns_offload(struct ath12k *ar, bool enable)
- 		if (ret) {
- 			ath12k_warn(ar->ab, "failed to set arp ns offload vdev %i: enable %d, ret %d\n",
- 				    arvif->vdev_id, enable, ret);
-+			kfree(offload);
- 			return ret;
- 		}
- 	}
+I also fixed up alignment of the clocks property in the nand-controller
+node.
+
+Best regards,
 -- 
-2.43.0
-
+Chen-Yu Tsai <wens@kernel.org>
 
