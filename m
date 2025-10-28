@@ -1,125 +1,76 @@
-Return-Path: <linux-kernel+bounces-873127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FE4C132E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:33:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4548DC131C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A44094FF49C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:31:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EA85B4EA169
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB72226ED29;
-	Tue, 28 Oct 2025 06:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575BF286D73;
+	Tue, 28 Oct 2025 06:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="aErX//JP"
-Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmHiXQ/l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E97029B8E5;
-	Tue, 28 Oct 2025 06:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3F81E9915;
+	Tue, 28 Oct 2025 06:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761633110; cv=none; b=oPYvfiVUbe81PIEmBxHQ4CU8pIA92Rrtmr9p/jjX3AVoqyB9xR8ZImkZ9o1KwV/I4i8n00yAjpX0ZVhZHoBA5MDDK/jCWEXGEVA+bfEpvJLaSLnIHOHWHTnSxi3j91oQQcwX0wybkgN/A+0ror0+q+8kIyJ8aQFCr3hbHG+vO/c=
+	t=1761632499; cv=none; b=dNBwtAlgdXeZ0ceFcKg+rwZLp1P4M4n7avUsjNb6aH0pQSzO9D5dTB7ccCWHkXpMgw+F7pMlGRJvJRWAp06NXuAnwcqR8E5ZN7LMuhbVY+GhIMVC5jOCvNelodW8OBbqlyyDRMuWamJI1UKnmDqCn5ZLyUFOEGlzwlYMnIiMYik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761633110; c=relaxed/simple;
-	bh=kRRUofgeos3ZtqWPJdn9BGVMz9ruxa9wz+KdE97I8AM=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=K4HmTkiThScLvdBAQO/RGOmcYzg7aYtIg/PRKHLKtxh1D8hWXjY3KA7gp2um6MpJh39BxVkHqgjtBQDPDec2r0FvtUluv4uOU0hJQ/Wy+G24U44AZpVuwleW8MxOHJdMMWzLDAZBKQvy/5n4q7WZLferdZ/JAyhJvR5Z/SITA30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=aErX//JP; arc=none smtp.client-ip=162.62.57.252
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-	s=s201512; t=1761632799;
-	bh=pi1zXcr5RpNJ+LWrYVRPR8sqQuBNG7+Xw9qcszIoFM4=;
-	h=From:To:Cc:Subject:Date;
-	b=aErX//JPDEPZGG8rmiRIdO0sFYckDF+Oa7ZRtO0278rzCOlG7Is+ZLDcynWPlSYLQ
-	 cIyb8hjh/A+DhlG3aGjCZA+JxHgEpMxvD0m/xgPWS3fGayffKxh2q48XfmFuZfJ3EZ
-	 B+LQug4IUVs7Zb2jr7DpV1Jzd117xs4LH3iYsKTw=
-Received: from dcitdc.dci.com ([61.220.30.51])
-	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
-	id 5189CEA7; Tue, 28 Oct 2025 14:20:24 +0800
-X-QQ-mid: xmsmtpt1761632424ti6wb9lir
-Message-ID: <tencent_EA7267F6C936BBDE7977C3076819C9BA8D08@qq.com>
-X-QQ-XMAILINFO: NAuAIaytDrXp1QDAZDTmKMpfa75ZonkIdJUkMhBt1OUgMrQzXFl9JXtmDRFzvX
-	 aDLhNZEqZ2jrlJ20GkyBgreWHhn/pSI9rQ3/ZWKWvxX6MmLIFAAU8lBNsrIxytAdkkgC3e2QksDl
-	 fDMgIofmu7Yho3eE0WVMxO/sdLeTAfjnkyf49hC8tSr/wBhdIhDHRKDvvMqfBiYG7A3vIWl0eieH
-	 f0Rpwvsq1y7H0iChqsjXKtXP1ZpeANgw7H2dHIL3VNs2pUPdomXWP5IZDVWYyFoqmsHm+Qh/POU/
-	 4UQvtpCq4jAp1zIw1yZFSkO1hg6K3QGRaR3G+0gfv+bowztobV9Ak2fzZ9UdG93WA8UVZQj7gjq6
-	 rzrRHJuicr4Bsg3NlN9ofuAf9Bxagcui9ksX1z31bhAQucyNZd/nYCkk8uO5wZfLFEMvvjeYR+f8
-	 P/0jZhs8y3J7WTev4HwpEfRNIcnN5obxcPnm/UfxO5AkDO77bvCCFo/Djwt0o2fc0tqN5ail53vY
-	 z7/tg16OR1Hr/Ml/WX/XZBPZr3LkJqew9ZS+rYFje4HLpyt/l0RQuylaJdj/u6QUKkdt8eyBNVJo
-	 uYEe8IN95QwdYhpSg4F21XhooSzCr4ecN5QH/ONL0opMR21OWwzsv1G68CRxGBxJUfBxz3LNRb6H
-	 Mwv1RNLQrQ8TrWbcWcMGhTMcyHs9pRfOe+xT66al7C2hYUmii0C5ino8OXOOGgit6GD6S66dsjtm
-	 Epi7dps797rlkpLddkhJACRZuw3la3hdiHP7AUTn7VoGTQrXhtqEb8B+rPe20C0Br9Zbs3kTVMQd
-	 CejNihFBw2MTGW39fstBXe6RwQ//LNdkpuRnsDCdl3yk55KjByKHIRds7KPJCg9oaramsLM+937T
-	 bl11CutpI+D3ZCWtQ9ajA70gmTJ3pTLlEFlE+CZ7LHD387r9FAZWz7mpDQf1JgcJEyPL33X9VrtD
-	 pxlaE10+iv8n26g2uPyRxL3XPNwJkTKUpuwVhQPhDzMrviR0ucSjcZxKJUzEWT
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: "Shang song (Lenovo)" <shangsong2@foxmail.com>
-To: "Rafael J . Wysocki" <rafael@kernel.org>
-Cc: Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shangsong2@lenovo.com,
-	"Shang song (Lenovo)" <shangsong2@foxmail.com>
-Subject: [PATCH v2 1/1] ACPI: PRM: Skip the initialization when boot from legacy BIOS
-Date: Tue, 28 Oct 2025 02:20:13 -0400
-X-OQ-MSGID: <20251028062014.3090136-1-shangsong2@foxmail.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761632499; c=relaxed/simple;
+	bh=cBb99/Rk/YrwDvp4oXeogz9Ml7yvcmAlg5Zf25ML1MM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ByB8QUcTmyaL7gh7oO83QoSNLUeEcUxas+SQ5eqKxbHNV/vVUtKOaOf8RwfYlByCru0QLEs8JVTW9s7lG1RjjwsE3Nm7GPTlM7+g3jTYoKSsdJyIqfF6e7dutjafhkiKYGDNqtC6vfzdvG3bVzxJ0rySGXLUljZwLRZmw8hqL/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmHiXQ/l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22400C4CEE7;
+	Tue, 28 Oct 2025 06:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761632499;
+	bh=cBb99/Rk/YrwDvp4oXeogz9Ml7yvcmAlg5Zf25ML1MM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=JmHiXQ/ljBFCx9GEA9sDwjA4WxE8Hb8Ui9zHWjkhnkj6SSgP8J6xqAV6u7RTeLIDQ
+	 PHAA45UCwq0lF4pzca245V8nfnXtQex3kwJTU/HhrGHeNBabj6Sl2A5NaMdQDtHnxo
+	 D0Vt5Ty20SVdQB1iFONXfPKUOd8VF/7R89peWeR47ZQ0GXyI1P8zOwC8RNefjraooC
+	 WlapMYEUHZ63G3CRwzF5+r2VBhyQtbhhM8DKxtStPLZdXkiaFJRFn5PaN4Kfy7MfRX
+	 phQIqfk61NQkjlS9SFaTQEG3sJ+PEssNGeNtbqxfy/0oFOWa3HkbQCeFm7ok1wdyKQ
+	 ndSOG9eQsW8ZA==
+Date: Tue, 28 Oct 2025 00:21:34 -0600 (MDT)
+From: Paul Walmsley <pjw@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+cc: Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, 
+    Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+    WangYuli <wangyuli@uniontech.com>, Huacai Chen <chenhuacai@kernel.org>, 
+    linux-hardening@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, 
+    linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: KGDB: Replace deprecated strcpy in
+ kgdb_arch_handle_qxfer_pkt
+In-Reply-To: <20251011004750.461954-1-thorsten.blum@linux.dev>
+Message-ID: <e5c98ef4-40a0-433f-b4e5-3f1bc62a0c21@kernel.org>
+References: <20251011004750.461954-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-To address the confusion caused by the misleading "Failed to find VA for GUID..."
-message during legacy BIOS boot, making 'EFI_RUNTIME_SERVICES's earlier judgment
-can prevent this false alert.
+On Sat, 11 Oct 2025, Thorsten Blum wrote:
 
-Signed-off-by: Shang song (Lenovo) <shangsong2@foxmail.com>
----
+> strcpy() is deprecated because it can cause a buffer overflow when the
+> sizes of the source and the destination are not known at compile time.
+> Use strscpy() instead.
+> 
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-Changes in v2:
-  - Add comment for the code update.
+Thanks, queued for v6.18-rc fixes.
 
- drivers/acpi/prmt.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index 6792d4385eee..4457ff17f878 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -392,6 +392,14 @@ void __init init_prmt(void)
- 	if (ACPI_FAILURE(status))
- 		return;
- 
-+	/*
-+	 * Return immediately if EFI_RUNTIME_SERVICES is not enabled.
-+	 */
-+	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
-+		pr_err("PRM: EFI runtime services unavailable\n");
-+		return;
-+	}
-+
- 	mc = acpi_table_parse_entries(ACPI_SIG_PRMT, sizeof(struct acpi_table_prmt) +
- 					  sizeof (struct acpi_table_prmt_header),
- 					  0, acpi_parse_prmt, 0);
-@@ -404,11 +412,6 @@ void __init init_prmt(void)
- 
- 	pr_info("PRM: found %u modules\n", mc);
- 
--	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
--		pr_err("PRM: EFI runtime services unavailable\n");
--		return;
--	}
--
- 	status = acpi_install_address_space_handler(ACPI_ROOT_OBJECT,
- 						    ACPI_ADR_SPACE_PLATFORM_RT,
- 						    &acpi_platformrt_space_handler,
--- 
-2.43.7
-
+- Paul
 
