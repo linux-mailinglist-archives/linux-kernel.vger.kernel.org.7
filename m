@@ -1,888 +1,455 @@
-Return-Path: <linux-kernel+bounces-873756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73972C14A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:29:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45ECDC14A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61537465D53
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:29:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 318024F3CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E24832E6A7;
-	Tue, 28 Oct 2025 12:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE322303C8B;
+	Tue, 28 Oct 2025 12:29:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="HhTdPZ6k"
-Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9dCcoQL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802B832D7D8;
-	Tue, 28 Oct 2025 12:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74D132E6B9;
+	Tue, 28 Oct 2025 12:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654550; cv=none; b=kF6Se84noEVyRPTwZNE/9waWDdFKohGQTGg/rua1gLyhGqonC3lF6Zp5c/0nHjU2rk4FNDjGQs7UXuGXZIJTdLn4cpRlS82m1isaAXirXhvnjUfricgF0q04qrNgn0u6TudbchnB2qh9JBI7aAw+60etHtzIywYJycavVLedSXg=
+	t=1761654556; cv=none; b=nQ6Av0ltngZ89/ZiHmTrbKqiqCxGL5Jc4Z7304KwEifXCly1lIteIAnvSsVbItb/9E1hc6vAS+UUxWp001NiAKPpNs+INSsrumIa/2yVn4OMgCmIlwLtvittb+bW9HEfwVwaJE3ZHdF7Uh8qqZV08Hu4FBhfgwedNLFeS8NAzIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761654550; c=relaxed/simple;
-	bh=X2PcndL3We/ZUv58nLYjyLUtmdgWBZvyYxK1u/UV+5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uTbFosLQaXTBIrL296s3E4wY8h3uTcxtBXAbjxxvdzW/TMx8sKKm9F/j1xv/ijWItCsKsJDLwseIZFtiX4FLAj2flRIvDL7Di0xSmGvuAJelspCs0EkL7T3CD2MXohauiG7s3mTc8MnuV5d8T179EWuOAhwdwj4uRwx+S6Myoko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=HhTdPZ6k; arc=none smtp.client-ip=134.0.28.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbulk.masterlogin.de (unknown [192.168.10.85])
-	by mxout2.routing.net (Postfix) with ESMTP id 4354D5FD70;
-	Tue, 28 Oct 2025 12:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=routing; t=1761654544;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uIDQiFNbfRO8K6+0OUU5qkSCkOGmK/G0ptz9lI6GuYE=;
-	b=HhTdPZ6kYhlFhHBsHexWTicQNFU5DO5MeoeJ91pwSWk0txicCe7jEXe1EPdN0erCjHHD51
-	USOHXil3HP52hCz14jtn+j9G4O3TrdsEOGrlPh5r5LbwYi3+NIotzImtmO4YLYVDp3NKRi
-	QNNtd+Gnc6a2gaqn/wzONItyfZpipH8=
-Received: from frank-u24.. (fttx-pool-217.61.144.172.bambit.de [217.61.144.172])
-	by mxbulk.masterlogin.de (Postfix) with ESMTPSA id EF43B1226C0;
-	Tue, 28 Oct 2025 12:29:03 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Ryder Lee <ryder.lee@mediatek.com>,
-	Jianjun Wang <jianjun.wang@mediatek.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-pci@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1761654556; c=relaxed/simple;
+	bh=M0gT9Ho8hRq1U8nIIK24mbn8lo7wtYWBXsxfZh4dd9M=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HNYWiy6mb17xVuboQvp5FWhYNZ3754qkiigy9Sm9nl0KVpUMpe2mink0Bl3DHcQ+y2M3O1uqYzQcZUY33cgjNZrC7AvZDpJTbYQHZdM0o0ltcAnXTHGlOvIjOTHU7PmCs5re+i26I9DeM0odZZsUVZf2PJ9r5NrOTMzzBChF8pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9dCcoQL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C691BC4CEFD;
+	Tue, 28 Oct 2025 12:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761654556;
+	bh=M0gT9Ho8hRq1U8nIIK24mbn8lo7wtYWBXsxfZh4dd9M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=l9dCcoQLnZApXVoP15S/r745QnMwDQqHKkSFhCa4/3LJ83ad4LUnQJJtTP8U2DRrW
+	 tQl1kws46mlsJzZ4oazDyhKR/F2g3ue0GBdnrdTSXRicetX0BmmP6yljSX+F0WdIuo
+	 WROxlW/140jgmyDfNrk/qdrfhTKDf5TAq7F4TfH5Fo0ykc7NAzLxyRkp1+RLerA05x
+	 tUzV+sGVF4rjbkltLT0a6Gods+jdcCq2hSpAlqJlLqRTFvwr7dRulglhv6C634Zmrk
+	 o5q4GbTa7TDMp/73NflEKyY+ThB/SflXkNL3CENMOw94BQv6H5PX9eK0bHVVeHS38w
+	 cEypoQZlmojEg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vDip7-00000000Fpa-1Gaa;
+	Tue, 28 Oct 2025 12:29:13 +0000
+Date: Tue, 28 Oct 2025 12:29:12 +0000
+Message-ID: <86wm4fus4n.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [RFC v1] dt-bindings: PCI: convert mediatek-pcie binding to yaml
-Date: Tue, 28 Oct 2025 13:28:55 +0100
-Message-ID: <20251028122856.121595-1-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
+	oliver.upton@linux.dev,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	suzuki.poulose@arm.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	darren@os.amperecomputing.com,
+	cl@gentwo.org,
+	scott@os.amperecomputing.com,
+	gklkml16@gmail.com
+Subject: Re: [PATCH v2] KVM: arm64: nv: Optimize unmapping of shadow S2-MMU tables
+In-Reply-To: <060fe820-85b8-4476-be95-a0d37e53fa12@os.amperecomputing.com>
+References: <20251013065125.767779-1-gankulkarni@os.amperecomputing.com>
+	<0345c510-5db4-462f-95fb-591e71468aca@os.amperecomputing.com>
+	<87v7k53cud.wl-maz@kernel.org>
+	<060fe820-85b8-4476-be95-a0d37e53fa12@os.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, will@kernel.org, catalin.marinas@arm.com, suzuki.poulose@arm.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, cl@gentwo.org, scott@os.amperecomputing.com, gklkml16@gmail.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Frank Wunderlich <frank-w@public-files.de>
+On Tue, 28 Oct 2025 06:02:03 +0000,
+Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+>=20
+> On 10/23/2025 8:05 PM, Marc Zyngier wrote:
+> > On Thu, 23 Oct 2025 12:11:42 +0100,
+> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+> >>=20
+> >>=20
+> >> Hi Marc, Oliver,
+> >>=20
+> >> On 10/13/2025 12:21 PM, Ganapatrao Kulkarni wrote:
+> >>> As of commit ec14c272408a ("KVM: arm64: nv: Unmap/flush shadow
+> >>> stage 2 page tables"), an unmap of a canonical IPA range mapped at L1
+> >>> triggers invalidation in L1 S2-MMU and in all active shadow (L2) S2-M=
+MU
+> >>> tables. Because there is no direct mapping to locate the corresponding
+> >>> shadow IPAs, the code falls back to a full S2-MMU page-table walk and
+> >>> invalidation across the entire L1 address space.
+> >>>=20
+> >>> For 4K pages this causes roughly 256K loop iterations (about 8M for
+> >>> 64K pages) per unmap, which can severely impact performance on large
+> >>> systems and even cause soft lockups during NV (L1/L2) boots with many
+> >>> CPUs and large memory. It also causes long delays during L1 reboot.
+> >>>=20
+> >>> This patch adds a maple-tree-based lookup that records canonical-IPA =
+to
+> >>> shadow-IPA mappings whenever a page is mapped into any shadow (L2)
+> >>> table. On unmap, the lookup is used to target only those shadow IPAs
+> >>> which are fully or partially mapped in shadow S2-MMU tables, avoiding
+> >>> a full-address-space walk and unnecessary unmap/flush operations.
+> >>>=20
+> >>> The lookup is updated on map/unmap operations so entries remain
+> >>> consistent with shadow table state. Use it during unmap to invalidate
+> >>> only affected shadow IPAs, avoiding unnecessary CPU work and reducing
+> >>> latency when shadow mappings are sparse.
+> >>>=20
+> >>> Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+> >>> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.co=
+m>
+> >>> ---
+> >>>=20
+> >>> Changes since v1:
+> >>> 		Rebased to 6.18-rc1.
+> >>> 		Fixed alignment issue while adding the shadow ipa range
+> >>> 		to lookup.=09
+> >>>=20
+> >>> Changes since RFC v1:
+> >>> 		Added maple tree based lookup and updated with review
+> >>> 		comments from [1].
+> >>>=20
+> >>> [1] https://lkml.indiana.edu/2403.0/03801.html
+> >>>=20
+> >>>    arch/arm64/include/asm/kvm_host.h   |   3 +
+> >>>    arch/arm64/include/asm/kvm_nested.h |   9 +++
+> >>>    arch/arm64/kvm/mmu.c                |  17 ++--
+> >>>    arch/arm64/kvm/nested.c             | 120 ++++++++++++++++++++++++=
+++--
+> >>>    4 files changed, 138 insertions(+), 11 deletions(-)
+> >>>=20
+> >>> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/a=
+sm/kvm_host.h
+> >>> index b763293281c8..e774681c6ba4 100644
+> >>> --- a/arch/arm64/include/asm/kvm_host.h
+> >>> +++ b/arch/arm64/include/asm/kvm_host.h
+> >>> @@ -227,6 +227,9 @@ struct kvm_s2_mmu {
+> >>>    	 * >0: Somebody is actively using this.
+> >>>    	 */
+> >>>    	atomic_t refcnt;
+> >>> +
+> >>> +	/* For IPA to shadow IPA lookup */
+> >>> +	struct maple_tree nested_mmu_mt;
+> >>>    };
+> >>>      struct kvm_arch_memory_slot {
+> >>> diff --git a/arch/arm64/include/asm/kvm_nested.h b/arch/arm64/include=
+/asm/kvm_nested.h
+> >>> index f7c06a840963..5b7c4e7ed18f 100644
+> >>> --- a/arch/arm64/include/asm/kvm_nested.h
+> >>> +++ b/arch/arm64/include/asm/kvm_nested.h
+> >>> @@ -69,6 +69,8 @@ extern void kvm_init_nested(struct kvm *kvm);
+> >>>    extern int kvm_vcpu_init_nested(struct kvm_vcpu *vcpu);
+> >>>    extern void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mmu);
+> >>>    extern struct kvm_s2_mmu *lookup_s2_mmu(struct kvm_vcpu *vcpu);
+> >>> +extern int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 sha=
+dow_ipa, u64 ipa,
+> >>> +		u64 size);
+> >>>      union tlbi_info;
+> >>>    @@ -95,6 +97,12 @@ struct kvm_s2_trans {
+> >>>    	u64 desc;
+> >>>    };
+> >>>    +struct shadow_ipa_map {
+> >>> +	u64 shadow_ipa;
+> >>> +	u64 ipa;
+> >>> +	u64 size;
+> >>> +};
+> >>> +
+> >>>    static inline phys_addr_t kvm_s2_trans_output(struct kvm_s2_trans =
+*trans)
+> >>>    {
+> >>>    	return trans->output;
+> >>> @@ -132,6 +140,7 @@ extern int kvm_s2_handle_perm_fault(struct kvm_vc=
+pu *vcpu,
+> >>>    extern int kvm_inject_s2_fault(struct kvm_vcpu *vcpu, u64 esr_el2);
+> >>>    extern void kvm_nested_s2_wp(struct kvm *kvm);
+> >>>    extern void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block);
+> >>> +extern void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 =
+size, bool may_block);
+> >>>    extern void kvm_nested_s2_flush(struct kvm *kvm);
+> >>>      unsigned long compute_tlb_inval_range(struct kvm_s2_mmu *mmu,
+> >>> u64 val);
+> >>> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> >>> index 7cc964af8d30..27c120556e1b 100644
+> >>> --- a/arch/arm64/kvm/mmu.c
+> >>> +++ b/arch/arm64/kvm/mmu.c
+> >>> @@ -1872,6 +1872,10 @@ static int user_mem_abort(struct kvm_vcpu *vcp=
+u, phys_addr_t fault_ipa,
+> >>>    		ret =3D KVM_PGT_FN(kvm_pgtable_stage2_map)(pgt, fault_ipa, vma_p=
+agesize,
+> >>>    					     __pfn_to_phys(pfn), prot,
+> >>>    					     memcache, flags);
+> >>> +
+> >>> +		/* Add to lookup, if canonical IPA range mapped to shadow mmu */
+> >>> +		if (nested)
+> >>> +			add_to_shadow_ipa_lookup(pgt, fault_ipa, ipa, vma_pagesize);
+> >>>    	}
+> >>>      out_unlock:
+> >>> @@ -2094,14 +2098,15 @@ int kvm_handle_guest_abort(struct kvm_vcpu *v=
+cpu)
+> >>>      bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range
+> >>> *range)
+> >>>    {
+> >>> +	gpa_t start =3D range->start << PAGE_SHIFT;
+> >>> +	gpa_t end =3D (range->end - range->start) << PAGE_SHIFT;
+> >>> +	bool may_block =3D range->may_block;
+> >>> +
+> >>>    	if (!kvm->arch.mmu.pgt)
+> >>>    		return false;
+> >>>    -	__unmap_stage2_range(&kvm->arch.mmu, range->start <<
+> >>> PAGE_SHIFT,
+> >>> -			     (range->end - range->start) << PAGE_SHIFT,
+> >>> -			     range->may_block);
+> >>> -
+> >>> -	kvm_nested_s2_unmap(kvm, range->may_block);
+> >>> +	__unmap_stage2_range(&kvm->arch.mmu, start, end, may_block);
+> >>> +	kvm_nested_s2_unmap_range(kvm, start, end, may_block);
+> >>>    	return false;
+> >>>    }
+> >>>    @@ -2386,7 +2391,7 @@ void kvm_arch_flush_shadow_memslot(struct
+> >>> kvm *kvm,
+> >>>      	write_lock(&kvm->mmu_lock);
+> >>>    	kvm_stage2_unmap_range(&kvm->arch.mmu, gpa, size, true);
+> >>> -	kvm_nested_s2_unmap(kvm, true);
+> >>> +	kvm_nested_s2_unmap_range(kvm, gpa, size, true);
+> >>>    	write_unlock(&kvm->mmu_lock);
+> >>>    }
+> >>>    diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+> >>> index 7a045cad6bdf..3a7035e7526a 100644
+> >>> --- a/arch/arm64/kvm/nested.c
+> >>> +++ b/arch/arm64/kvm/nested.c
+> >>> @@ -7,6 +7,7 @@
+> >>>    #include <linux/bitfield.h>
+> >>>    #include <linux/kvm.h>
+> >>>    #include <linux/kvm_host.h>
+> >>> +#include <linux/maple_tree.h>
+> >>>      #include <asm/fixmap.h>
+> >>>    #include <asm/kvm_arm.h>
+> >>> @@ -725,6 +726,7 @@ void kvm_init_nested_s2_mmu(struct kvm_s2_mmu *mm=
+u)
+> >>>    	mmu->tlb_vttbr =3D VTTBR_CNP_BIT;
+> >>>    	mmu->nested_stage2_enabled =3D false;
+> >>>    	atomic_set(&mmu->refcnt, 0);
+> >>> +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
+> >>>    }
+> >>>      void kvm_vcpu_load_hw_mmu(struct kvm_vcpu *vcpu)
+> >>> @@ -1067,6 +1069,99 @@ void kvm_nested_s2_wp(struct kvm *kvm)
+> >>>    	kvm_invalidate_vncr_ipa(kvm, 0, BIT(kvm->arch.mmu.pgt->ia_bits));
+> >>>    }
+> >>>    +/*
+> >>> + * Store range of canonical IPA mapped to a nested stage 2 mmu table.
+> >>> + * Canonical IPA used as pivot in maple tree for the lookup later
+> >>> + * while IPA unmap/flush.
+> >>> + */
+> >>> +int add_to_shadow_ipa_lookup(struct kvm_pgtable *pgt, u64 shadow_ipa,
+> >>> +		u64 ipa, u64 size)
+> >>> +{
+> >>> +	struct kvm_s2_mmu *mmu;
+> >>> +	struct shadow_ipa_map *entry;
+> >>> +	unsigned long start, end;
+> >>> +	int ret;
+> >>> +
+> >>> +	start =3D ALIGN_DOWN(ipa, size);
+> >>> +	end =3D start + size;
+> >>> +	mmu =3D pgt->mmu;
+> >>> +
+> >>> +	entry =3D kzalloc(sizeof(struct shadow_ipa_map), GFP_KERNEL_ACCOUNT=
+);
+> >>> +
+> >>> +	if (!entry)
+> >>> +		return -ENOMEM;
+> >>> +
+> >>> +	entry->ipa =3D start;
+> >>> +	entry->shadow_ipa =3D ALIGN_DOWN(shadow_ipa, size);
+> >>> +	entry->size =3D size;
+> >>> +	ret =3D mtree_store_range(&mmu->nested_mmu_mt, start, end - 1, entr=
+y,
+> >>> +			  GFP_KERNEL_ACCOUNT);
+> >>> +	if (ret) {
+> >>> +		kfree(entry);
+> >>> +		WARN_ON(ret);
+> >>> +	}
+> >>> +
+> >>> +	return ret;
+> >>> +}
+> >>> +
+> >>> +static void nested_mtree_erase(struct maple_tree *mt, unsigned long =
+start,
+> >>> +		unsigned long size)
+> >>> +{
+> >>> +	void *entry =3D NULL;
+> >>> +
+> >>> +	MA_STATE(mas, mt, start, start + size - 1);
+> >>> +
+> >>> +	mtree_lock(mt);
+> >>> +	entry =3D mas_erase(&mas);
+> >>> +	mtree_unlock(mt);
+> >>> +	kfree(entry);
+> >>> +}
+> >>> +
+> >>> +static void nested_mtree_erase_and_unmap_all(struct kvm_s2_mmu *mmu,
+> >>> +		unsigned long start, unsigned long end, bool may_block)
+> >>> +{
+> >>> +	struct shadow_ipa_map *entry;
+> >>> +
+> >>> +	mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu)) {
+> >>> +		kvm_stage2_unmap_range(mmu, entry->shadow_ipa, entry->size,
+> >>> +				may_block);
+> >>> +		kfree(entry);
+> >>> +	}
+> >>> +
+> >>> +	mtree_destroy(&mmu->nested_mmu_mt);
+> >>> +	mt_init_flags(&mmu->nested_mmu_mt, MM_MT_FLAGS);
+> >>> +}
+> >>> +
+> >>> +void kvm_nested_s2_unmap_range(struct kvm *kvm, u64 ipa, u64 size,
+> >>> +		bool may_block)
+> >>> +{
+> >>> +	int i;
+> >>> +	struct shadow_ipa_map *entry;
+> >>> +
+> >>> +	lockdep_assert_held_write(&kvm->mmu_lock);
+> >>> +
+> >>> +	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
+> >>> +		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
+> >>> +		unsigned long start =3D ipa;
+> >>> +		unsigned long end =3D ipa + size;
+> >>> +
+> >>> +		if (!kvm_s2_mmu_valid(mmu))
+> >>> +			continue;
+> >>> +
+> >>> +		do {
+> >>> +			entry =3D mt_find(&mmu->nested_mmu_mt, &start, end - 1);
+> >>> +			if (!entry)
+> >>> +				break;
+> >>> +
+> >>> +			kvm_stage2_unmap_range(mmu, entry->shadow_ipa,
+> >>> +							entry->size, may_block);
+> >>> +			start =3D entry->ipa + entry->size;
+> >>> +			nested_mtree_erase(&mmu->nested_mmu_mt, entry->ipa,
+> >>> +							entry->size);
+> >>> +		} while (start < end);
+> >>> +	}
+> >>> +}
+> >>> +
+> >>>    void kvm_nested_s2_unmap(struct kvm *kvm, bool may_block)
+> >>>    {
+> >>>    	int i;
+> >>> @@ -1076,8 +1171,10 @@ void kvm_nested_s2_unmap(struct kvm *kvm, bool=
+ may_block)
+> >>>    	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
+> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
+> >>>    -		if (kvm_s2_mmu_valid(mmu))
+> >>> -			kvm_stage2_unmap_range(mmu, 0, kvm_phys_size(mmu), may_block);
+> >>> +		if (!kvm_s2_mmu_valid(mmu))
+> >>> +			continue;
+> >>> +
+> >>> +		nested_mtree_erase_and_unmap_all(mmu, 0, kvm_phys_size(mmu), may_b=
+lock);
+> >>>    	}
+> >>>      	kvm_invalidate_vncr_ipa(kvm, 0,
+> >>> BIT(kvm->arch.mmu.pgt->ia_bits));
+> >>> @@ -1091,9 +1188,14 @@ void kvm_nested_s2_flush(struct kvm *kvm)
+> >>>      	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
+> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
+> >>> +		struct shadow_ipa_map *entry;
+> >>> +		unsigned long start =3D 0;
+> >>>    -		if (kvm_s2_mmu_valid(mmu))
+> >>> -			kvm_stage2_flush_range(mmu, 0, kvm_phys_size(mmu));
+> >>> +		if (!kvm_s2_mmu_valid(mmu))
+> >>> +			continue;
+> >>> +
+> >>> +		mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
+> >>> +			kvm_stage2_flush_range(mmu, entry->shadow_ipa, entry->size);
+> >>>    	}
+> >>>    }
+> >>>    @@ -1104,8 +1206,16 @@ void kvm_arch_flush_shadow_all(struct kvm
+> >>> *kvm)
+> >>>    	for (i =3D 0; i < kvm->arch.nested_mmus_size; i++) {
+> >>>    		struct kvm_s2_mmu *mmu =3D &kvm->arch.nested_mmus[i];
+> >>>    -		if (!WARN_ON(atomic_read(&mmu->refcnt)))
+> >>> +		if (!WARN_ON(atomic_read(&mmu->refcnt))) {
+> >>> +			struct shadow_ipa_map *entry;
+> >>> +			unsigned long start =3D 0;
+> >>> +
+> >>>    			kvm_free_stage2_pgd(mmu);
+> >>> +
+> >>> +			mt_for_each(&mmu->nested_mmu_mt, entry, start, kvm_phys_size(mmu))
+> >>> +				kfree(entry);
+> >>> +			mtree_destroy(&mmu->nested_mmu_mt);
+> >>> +		}
+> >>>    	}
+> >>>    	kvfree(kvm->arch.nested_mmus);
+> >>>    	kvm->arch.nested_mmus =3D NULL;
+> >>=20
+> >> Any review comments or suggestions for this patch?
+> >=20
+> > None. This patch is obviously lacking the basic requirements that such
+> > an "optimisation" should handle, such as dealing with multiple
+> > mappings to the same IPA in the shadow S2, hence will happily fail to
+> > correctly unmap stuff. There is no documentation, and no test.
+> >=20
+> Thanks for the comment.
+> How about adding list of multiple mappings ranges to the maple tree
+> entry/node while adding to the lookup and later unmapping every
+> range present in that list?
 
-Try to convert the text-binding into a yaml based one to fix some binding
-errors for mediatek.
+How will that work when the various mappings don't have the same size?
 
-The SoCs handled are very different (clock-count,-names,phys,resets,...)
-but handled in one driver.
+> I tested this patch on an AmpereOne system (2 NUMA nodes, 96 CPUs
+> per node, numa balance enabled) with large vCPU counts and large
+> memory to L1 and L2.  The current full-address-space walk caused
+> very large unmap/flush work and significant delays (exacerbated by
+> NUMA balancing / page migration activity).  The targeted unmap using
+> the list per node removes only the affected mappings and reduces the
+> unmap latency substantially in our workloads.
 
-I'm not sure i did it right, so this is only an RFC :)
+I really don't care how badly things perform. The important thing is
+that this is architecturally correct, while your approach isn't.
 
-only 1 exapmple possible because all are put in one dts-file and includes
-affecting each other
+> I booted multiple L1s, each hosting several L2s, and observed no
+> panics or failures related to missing support for multiple=E2=80=91IPA
+> mappings.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- .../devicetree/bindings/pci/mediatek-pcie.txt | 289 -----------
- .../bindings/pci/mediatek-pcie.yaml           | 486 ++++++++++++++++++
- 2 files changed, 486 insertions(+), 289 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
+I'm sorry, but Linux isn't a validation tool for the architecture. You
+have clearly designed something around Linux's own behaviour, not the
+architectural requirements.
 
-diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt b/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
-deleted file mode 100644
-index 684227522267..000000000000
---- a/Documentation/devicetree/bindings/pci/mediatek-pcie.txt
-+++ /dev/null
-@@ -1,289 +0,0 @@
--MediaTek Gen2 PCIe controller
--
--Required properties:
--- compatible: Should contain one of the following strings:
--	"mediatek,mt2701-pcie"
--	"mediatek,mt2712-pcie"
--	"mediatek,mt7622-pcie"
--	"mediatek,mt7623-pcie"
--	"mediatek,mt7629-pcie"
--	"airoha,en7523-pcie"
--- device_type: Must be "pci"
--- reg: Base addresses and lengths of the root ports.
--- reg-names: Names of the above areas to use during resource lookup.
--- #address-cells: Address representation for root ports (must be 3)
--- #size-cells: Size representation for root ports (must be 2)
--- clocks: Must contain an entry for each entry in clock-names.
--  See ../clocks/clock-bindings.txt for details.
--- clock-names:
--  Mandatory entries:
--   - sys_ckN :transaction layer and data link layer clock
--  Required entries for MT2701/MT7623:
--   - free_ck :for reference clock of PCIe subsys
--  Required entries for MT2712/MT7622:
--   - ahb_ckN :AHB slave interface operating clock for CSR access and RC
--	      initiated MMIO access
--  Required entries for MT7622:
--   - axi_ckN :application layer MMIO channel operating clock
--   - aux_ckN :pe2_mac_bridge and pe2_mac_core operating clock when
--	      pcie_mac_ck/pcie_pipe_ck is turned off
--   - obff_ckN :OBFF functional block operating clock
--   - pipe_ckN :LTSSM and PHY/MAC layer operating clock
--  where N starting from 0 to one less than the number of root ports.
--- phys: List of PHY specifiers (used by generic PHY framework).
--- phy-names : Must be "pcie-phy0", "pcie-phy1", "pcie-phyN".. based on the
--  number of PHYs as specified in *phys* property.
--- power-domains: A phandle and power domain specifier pair to the power domain
--  which is responsible for collapsing and restoring power to the peripheral.
--- bus-range: Range of bus numbers associated with this controller.
--- ranges: Ranges for the PCI memory and I/O regions.
--
--Required properties for MT7623/MT2701:
--- #interrupt-cells: Size representation for interrupts (must be 1)
--- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
--  Please refer to the standard PCI bus binding document for a more detailed
--  explanation.
--- resets: Must contain an entry for each entry in reset-names.
--  See ../reset/reset.txt for details.
--- reset-names: Must be "pcie-rst0", "pcie-rst1", "pcie-rstN".. based on the
--  number of root ports.
--
--Required properties for MT2712/MT7622/MT7629:
---interrupts: A list of interrupt outputs of the controller, must have one
--	     entry for each PCIe port
--- interrupt-names: Must include the following entries:
--	- "pcie_irq": The interrupt that is asserted when an MSI/INTX is received
--- linux,pci-domain: PCI domain ID. Should be unique for each host controller
--
--In addition, the device tree node must have sub-nodes describing each
--PCIe port interface, having the following mandatory properties:
--
--Required properties:
--- device_type: Must be "pci"
--- reg: Only the first four bytes are used to refer to the correct bus number
--  and device number.
--- #address-cells: Must be 3
--- #size-cells: Must be 2
--- #interrupt-cells: Must be 1
--- interrupt-map-mask and interrupt-map: Standard PCI IRQ mapping properties
--  Please refer to the standard PCI bus binding document for a more detailed
--  explanation.
--- ranges: Sub-ranges distributed from the PCIe controller node. An empty
--  property is sufficient.
--
--Examples for MT7623:
--
--	hifsys: syscon@1a000000 {
--		compatible = "mediatek,mt7623-hifsys",
--			     "mediatek,mt2701-hifsys",
--			     "syscon";
--		reg = <0 0x1a000000 0 0x1000>;
--		#clock-cells = <1>;
--		#reset-cells = <1>;
--	};
--
--	pcie: pcie@1a140000 {
--		compatible = "mediatek,mt7623-pcie";
--		device_type = "pci";
--		reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
--		      <0 0x1a142000 0 0x1000>, /* Port0 registers */
--		      <0 0x1a143000 0 0x1000>, /* Port1 registers */
--		      <0 0x1a144000 0 0x1000>; /* Port2 registers */
--		reg-names = "subsys", "port0", "port1", "port2";
--		#address-cells = <3>;
--		#size-cells = <2>;
--		#interrupt-cells = <1>;
--		interrupt-map-mask = <0xf800 0 0 0>;
--		interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
--				<0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
--				<0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
--		clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
--			 <&hifsys CLK_HIFSYS_PCIE0>,
--			 <&hifsys CLK_HIFSYS_PCIE1>,
--			 <&hifsys CLK_HIFSYS_PCIE2>;
--		clock-names = "free_ck", "sys_ck0", "sys_ck1", "sys_ck2";
--		resets = <&hifsys MT2701_HIFSYS_PCIE0_RST>,
--			 <&hifsys MT2701_HIFSYS_PCIE1_RST>,
--			 <&hifsys MT2701_HIFSYS_PCIE2_RST>;
--		reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
--		phys = <&pcie0_phy PHY_TYPE_PCIE>, <&pcie1_phy PHY_TYPE_PCIE>,
--		       <&pcie2_phy PHY_TYPE_PCIE>;
--		phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
--		power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
--		bus-range = <0x00 0xff>;
--		ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000	/* I/O space */
--			  0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;	/* memory space */
--
--		pcie@0,0 {
--			reg = <0x0000 0 0 0 0>;
--			#address-cells = <3>;
--			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
--			ranges;
--		};
--
--		pcie@1,0 {
--			reg = <0x0800 0 0 0 0>;
--			#address-cells = <3>;
--			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
--			ranges;
--		};
--
--		pcie@2,0 {
--			reg = <0x1000 0 0 0 0>;
--			#address-cells = <3>;
--			#size-cells = <2>;
--			#interrupt-cells = <1>;
--			interrupt-map-mask = <0 0 0 0>;
--			interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
--			ranges;
--		};
--	};
--
--Examples for MT2712:
--
--	pcie1: pcie@112ff000 {
--		compatible = "mediatek,mt2712-pcie";
--		device_type = "pci";
--		reg = <0 0x112ff000 0 0x1000>;
--		reg-names = "port1";
--		linux,pci-domain = <1>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--		interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "pcie_irq";
--		clocks = <&topckgen CLK_TOP_PE2_MAC_P1_SEL>,
--			 <&pericfg CLK_PERI_PCIE1>;
--		clock-names = "sys_ck1", "ahb_ck1";
--		phys = <&u3port1 PHY_TYPE_PCIE>;
--		phy-names = "pcie-phy1";
--		bus-range = <0x00 0xff>;
--		ranges = <0x82000000 0 0x11400000  0x0 0x11400000  0 0x300000>;
--		status = "disabled";
--
--		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 7>;
--		interrupt-map = <0 0 0 1 &pcie_intc1 0>,
--				<0 0 0 2 &pcie_intc1 1>,
--				<0 0 0 3 &pcie_intc1 2>,
--				<0 0 0 4 &pcie_intc1 3>;
--		pcie_intc1: interrupt-controller {
--			interrupt-controller;
--			#address-cells = <0>;
--			#interrupt-cells = <1>;
--		};
--	};
--
--	pcie0: pcie@11700000 {
--		compatible = "mediatek,mt2712-pcie";
--		device_type = "pci";
--		reg = <0 0x11700000 0 0x1000>;
--		reg-names = "port0";
--		linux,pci-domain = <0>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
--		interrupt-names = "pcie_irq";
--		clocks = <&topckgen CLK_TOP_PE2_MAC_P0_SEL>,
--			 <&pericfg CLK_PERI_PCIE0>;
--		clock-names = "sys_ck0", "ahb_ck0";
--		phys = <&u3port0 PHY_TYPE_PCIE>;
--		phy-names = "pcie-phy0";
--		bus-range = <0x00 0xff>;
--		ranges = <0x82000000 0 0x20000000 0x0 0x20000000 0 0x10000000>;
--		status = "disabled";
--
--		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 7>;
--		interrupt-map = <0 0 0 1 &pcie_intc0 0>,
--				<0 0 0 2 &pcie_intc0 1>,
--				<0 0 0 3 &pcie_intc0 2>,
--				<0 0 0 4 &pcie_intc0 3>;
--		pcie_intc0: interrupt-controller {
--			interrupt-controller;
--			#address-cells = <0>;
--			#interrupt-cells = <1>;
--		};
--	};
--
--Examples for MT7622:
--
--	pcie0: pcie@1a143000 {
--		compatible = "mediatek,mt7622-pcie";
--		device_type = "pci";
--		reg = <0 0x1a143000 0 0x1000>;
--		reg-names = "port0";
--		linux,pci-domain = <0>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--		interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>;
--		interrupt-names = "pcie_irq";
--		clocks = <&pciesys CLK_PCIE_P0_MAC_EN>,
--			 <&pciesys CLK_PCIE_P0_AHB_EN>,
--			 <&pciesys CLK_PCIE_P0_AUX_EN>,
--			 <&pciesys CLK_PCIE_P0_AXI_EN>,
--			 <&pciesys CLK_PCIE_P0_OBFF_EN>,
--			 <&pciesys CLK_PCIE_P0_PIPE_EN>;
--		clock-names = "sys_ck0", "ahb_ck0", "aux_ck0",
--			      "axi_ck0", "obff_ck0", "pipe_ck0";
--
--		power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
--		bus-range = <0x00 0xff>;
--		ranges = <0x82000000 0 0x20000000  0x0 0x20000000  0 0x8000000>;
--		status = "disabled";
--
--		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 7>;
--		interrupt-map = <0 0 0 1 &pcie_intc0 0>,
--				<0 0 0 2 &pcie_intc0 1>,
--				<0 0 0 3 &pcie_intc0 2>,
--				<0 0 0 4 &pcie_intc0 3>;
--		pcie_intc0: interrupt-controller {
--			interrupt-controller;
--			#address-cells = <0>;
--			#interrupt-cells = <1>;
--		};
--	};
--
--	pcie1: pcie@1a145000 {
--		compatible = "mediatek,mt7622-pcie";
--		device_type = "pci";
--		reg = <0 0x1a145000 0 0x1000>;
--		reg-names = "port1";
--		linux,pci-domain = <1>;
--		#address-cells = <3>;
--		#size-cells = <2>;
--		interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
--		interrupt-names = "pcie_irq";
--		clocks = <&pciesys CLK_PCIE_P1_MAC_EN>,
--			 /* designer has connect RC1 with p0_ahb clock */
--			 <&pciesys CLK_PCIE_P0_AHB_EN>,
--			 <&pciesys CLK_PCIE_P1_AUX_EN>,
--			 <&pciesys CLK_PCIE_P1_AXI_EN>,
--			 <&pciesys CLK_PCIE_P1_OBFF_EN>,
--			 <&pciesys CLK_PCIE_P1_PIPE_EN>;
--		clock-names = "sys_ck1", "ahb_ck1", "aux_ck1",
--			      "axi_ck1", "obff_ck1", "pipe_ck1";
--
--		power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
--		bus-range = <0x00 0xff>;
--		ranges = <0x82000000 0 0x28000000  0x0 0x28000000  0 0x8000000>;
--		status = "disabled";
--
--		#interrupt-cells = <1>;
--		interrupt-map-mask = <0 0 0 7>;
--		interrupt-map = <0 0 0 1 &pcie_intc1 0>,
--				<0 0 0 2 &pcie_intc1 1>,
--				<0 0 0 3 &pcie_intc1 2>,
--				<0 0 0 4 &pcie_intc1 3>;
--		pcie_intc1: interrupt-controller {
--			interrupt-controller;
--			#address-cells = <0>;
--			#interrupt-cells = <1>;
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-new file mode 100644
-index 000000000000..6d464b96b13d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/mediatek-pcie.yaml
-@@ -0,0 +1,486 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/mediatek-pcie.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MediaTek Gen2 PCIe controller
-+
-+maintainers:
-+  - Jianjun Wang <jianjun.wang@mediatek.com>
-+
-+description: |+
-+  PCIe Gen2 MAC controller for MediaTek SoCs.
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - mediatek,mt2701-pcie
-+              - mediatek,mt2712-pcie
-+              - mediatek,mt7622-pcie
-+              - mediatek,mt7623-pcie
-+              - mediatek,mt7629-pcie
-+      - items:
-+          - enum:
-+              - airoha,en7523-pcie
-+          - const: mediatek,mt7622-pcie
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 4
-+
-+  reg-names:
-+    minItems: 1
-+    maxItems: 4
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  ranges:
-+    minItems: 1
-+    maxItems: 8
-+
-+  iommu-map:
-+    maxItems: 1
-+
-+  iommu-map-mask:
-+    const: 0
-+
-+  resets:
-+    minItems: 1
-+    maxItems: 3
-+
-+  reset-names:
-+    minItems: 1
-+    maxItems: 3
-+    items:
-+      enum: [ pcie-rst0, pcie-rst1, pcie-rst2 ]
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 6
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 6
-+
-+  device_type:
-+    const: pci
-+
-+  '#address-cells':
-+    const: 3
-+
-+  '#size-cells':
-+    const: 2
-+
-+  assigned-clocks:
-+    maxItems: 3
-+
-+  assigned-clock-parents:
-+    maxItems: 3
-+
-+  phys:
-+    minItems: 1
-+    maxItems: 3
-+
-+  phy-names:
-+    minItems: 1
-+    maxItems: 3
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  '#interrupt-cells':
-+    const: 1
-+
-+  interrupt-controller:
-+    description: Interrupt controller node for handling legacy PCI interrupts.
-+    type: object
-+    properties:
-+      '#address-cells':
-+        const: 0
-+      '#interrupt-cells':
-+        const: 1
-+      interrupt-controller: true
-+
-+    required:
-+      - '#address-cells'
-+      - '#interrupt-cells'
-+      - interrupt-controller
-+
-+    additionalProperties: false
-+
-+  interrupt-names:
-+    minItems: 1
-+    maxItems: 1
-+
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - ranges
-+  - clocks
-+  - clock-names
-+  - '#interrupt-cells'
-+
-+allOf:
-+  - $ref: /schemas/pci/pci-host-bridge.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mediatek,mt2701-pcie
-+              - mediatek,mt7623-pcie
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 4
-+
-+        clock-names:
-+          items:
-+            - const: free_ck
-+            - const: sys_ck0
-+            - const: sys_ck1
-+            - const: sys_ck2
-+
-+        phy-names:
-+          items:
-+            - const: pcie-phy0
-+            - const: pcie-phy1
-+            - const: pcie-phy2
-+
-+        reg-names:
-+          items:
-+            - const: subsys
-+            - const: port0
-+            - const: port1
-+            - const: port2
-+
-+        resets:
-+          minItems: 3
-+          maxItems: 3
-+
-+        reset-names:
-+          items:
-+            - const: pcie-rst0
-+            - const: pcie-rst1
-+            - const: pcie-rst2
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mediatek,mt2712-pcie
-+
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 2
-+
-+        clock-names:
-+          items:
-+            - enum: [sys_ck0, sys_ck1]
-+            - enum: [ahb_ck0, ahb_ck1]
-+
-+        phy-names:
-+          items:
-+            - enum: [pcie-phy0, pcie-phy1, pcie-phy2]
-+
-+        reg-names:
-+          items:
-+            enum: [port0, port1]
-+
-+        resets:
-+          minItems: 1
-+          maxItems: 2
-+
-+        reset-names:
-+          minItems: 1
-+          maxItems: 2
-+
-+      required:
-+        - interrupts
-+        - interrupt-names
-+        - linux,pci-domain
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mediatek,mt7622-pcie
-+
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 1
-+
-+        reg-names:
-+          items:
-+            - enum: [port0, port1]
-+
-+        clock-names:
-+          minItems: 1
-+          items:
-+            - enum: [sys_ck0, sys_ck1]
-+            - enum: [ahb_ck0, ahb_ck1]
-+            - enum: [aux_ck0, aux_ck1]
-+            - enum: [axi_ck0, axi_ck1]
-+            - enum: [obff_ck0, obff_ck1]
-+            - enum: [pipe_ck0, pipe_ck1]
-+
-+      required:
-+        - interrupts
-+        - interrupt-names
-+        - linux,pci-domain
-+
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - mediatek,mt7629-pcie
-+
-+    then:
-+      required:
-+        - interrupts
-+        - interrupt-names
-+        - linux,pci-domain
-+
-+unevaluatedProperties: false
-+
-+examples:
-+#  - |
-+#    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#    #include <dt-bindings/interrupt-controller/irq.h>
-+#    #include <dt-bindings/clock/mt2701-clk.h>
-+#    #include <dt-bindings/reset/mt2701-resets.h>
-+#    #include <dt-bindings/phy/phy.h>
-+#    #include <dt-bindings/power/mt2701-power.h>
-+
-+#    soc {
-+#    #address-cells = <2>;
-+#    #size-cells = <2>;
-+#    hifsys: syscon@1a000000 {
-+#        compatible = "mediatek,mt7623-hifsys",
-+#                 "mediatek,mt2701-hifsys",
-+#                 "syscon";
-+#        reg = <0 0x1a000000 0 0x1000>;
-+#        #clock-cells = <1>;
-+#        #reset-cells = <1>;
-+#    };
-+#    pcie: pcie@1a140000 {
-+#        compatible = "mediatek,mt7623-pcie";
-+#        device_type = "pci";
-+#        reg = <0 0x1a140000 0 0x1000>, /* PCIe shared registers */
-+#              <0 0x1a142000 0 0x1000>, /* Port0 registers */
-+#              <0 0x1a143000 0 0x1000>, /* Port1 registers */
-+#              <0 0x1a144000 0 0x1000>; /* Port2 registers */
-+#        reg-names = "subsys", "port0", "port1", "port2";
-+#        #address-cells = <3>;
-+#        #size-cells = <2>;
-+#        #interrupt-cells = <1>;
-+#        interrupt-map-mask = <0xf800 0 0 0>;
-+#        interrupt-map = <0x0000 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>,
-+#                <0x0800 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>,
-+#                <0x1000 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
-+#        clocks = <&topckgen CLK_TOP_ETHIF_SEL>,
-+#             <&hifsys CLK_HIFSYS_PCIE0>,
-+#             <&hifsys CLK_HIFSYS_PCIE1>,
-+#             <&hifsys CLK_HIFSYS_PCIE2>;
-+#        clock-names = "free_ck", "sys_ck0", "sys_ck1", "sys_ck2";
-+#        resets = <&hifsys MT2701_HIFSYS_PCIE0_RST>,
-+#             <&hifsys MT2701_HIFSYS_PCIE1_RST>,
-+#             <&hifsys MT2701_HIFSYS_PCIE2_RST>;
-+#        reset-names = "pcie-rst0", "pcie-rst1", "pcie-rst2";
-+#        phys = <&pcie0_phy PHY_TYPE_PCIE>, <&pcie1_phy PHY_TYPE_PCIE>,
-+#               <&pcie2_phy PHY_TYPE_PCIE>;
-+#        phy-names = "pcie-phy0", "pcie-phy1", "pcie-phy2";
-+#        power-domains = <&scpsys MT2701_POWER_DOMAIN_HIF>;
-+#        bus-range = <0x00 0xff>;
-+#        ranges = <0x81000000 0 0x1a160000 0 0x1a160000 0 0x00010000    /* I/O space */
-+#              0x83000000 0 0x60000000 0 0x60000000 0 0x10000000>;    /* memory space */
-+#        pcie@0,0 {
-+#            reg = <0x0000 0 0 0 0>;
-+#            #address-cells = <3>;
-+#            #size-cells = <2>;
-+#            #interrupt-cells = <1>;
-+#            interrupt-map-mask = <0 0 0 0>;
-+#            interrupt-map = <0 0 0 0 &sysirq GIC_SPI 193 IRQ_TYPE_LEVEL_LOW>;
-+#            ranges;
-+#        };
-+#        pcie@1,0 {
-+#            reg = <0x0800 0 0 0 0>;
-+#            #address-cells = <3>;
-+#            #size-cells = <2>;
-+#            #interrupt-cells = <1>;
-+#            interrupt-map-mask = <0 0 0 0>;
-+#            interrupt-map = <0 0 0 0 &sysirq GIC_SPI 194 IRQ_TYPE_LEVEL_LOW>;
-+#            ranges;
-+#        };
-+#        pcie@2,0 {
-+#            reg = <0x1000 0 0 0 0>;
-+#            #address-cells = <3>;
-+#            #size-cells = <2>;
-+#            #interrupt-cells = <1>;
-+#            interrupt-map-mask = <0 0 0 0>;
-+#            interrupt-map = <0 0 0 0 &sysirq GIC_SPI 195 IRQ_TYPE_LEVEL_LOW>;
-+#            ranges;
-+#        };
-+#    };
-+#    };
-+#  - |
-+#    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#    #include <dt-bindings/interrupt-controller/irq.h>
-+#    #include <dt-bindings/clock/mt2712-clk.h>
-+#    #include <dt-bindings/phy/phy.h>
-+#    soc {
-+#    #address-cells = <2>;
-+#    #size-cells = <2>;
-+#    pcie1: pcie@112ff000 {
-+#        compatible = "mediatek,mt2712-pcie";
-+#        device_type = "pci";
-+#        reg = <0 0x112ff000 0 0x1000>;
-+#        reg-names = "port1";
-+#        linux,pci-domain = <1>;
-+#        #address-cells = <3>;
-+#        #size-cells = <2>;
-+#        interrupts = <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>;
-+#        interrupt-names = "pcie_irq";
-+#        clocks = <&topckgen CLK_TOP_PE2_MAC_P1_SEL>,
-+#             <&pericfg CLK_PERI_PCIE1>;
-+#        clock-names = "sys_ck1", "ahb_ck1";
-+#        phys = <&u3port1 PHY_TYPE_PCIE>;
-+#        phy-names = "pcie-phy1";
-+#        bus-range = <0x00 0xff>;
-+#        ranges = <0x82000000 0 0x11400000  0x0 0x11400000  0 0x300000>;
-+#        status = "disabled";
-+#        #interrupt-cells = <1>;
-+#        interrupt-map-mask = <0 0 0 7>;
-+#        interrupt-map = <0 0 0 1 &pcie_intc1 0>,
-+#                <0 0 0 2 &pcie_intc1 1>,
-+#                <0 0 0 3 &pcie_intc1 2>,
-+#                <0 0 0 4 &pcie_intc1 3>;
-+#        pcie_intc1: interrupt-controller {
-+#            interrupt-controller;
-+#            #address-cells = <0>;
-+#            #interrupt-cells = <1>;
-+#        };
-+#     };
-+#     pcie0: pcie@11700000 {
-+#        compatible = "mediatek,mt2712-pcie";
-+#        device_type = "pci";
-+#        reg = <0 0x11700000 0 0x1000>;
-+#        reg-names = "port0";
-+#        linux,pci-domain = <0>;
-+#        #address-cells = <3>;
-+#        #size-cells = <2>;
-+#        interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
-+#        interrupt-names = "pcie_irq";
-+#        clocks = <&topckgen CLK_TOP_PE2_MAC_P0_SEL>,
-+#             <&pericfg CLK_PERI_PCIE0>;
-+#        clock-names = "sys_ck0", "ahb_ck0";
-+#        phys = <&u3port0 PHY_TYPE_PCIE>;
-+#        phy-names = "pcie-phy0";
-+#        bus-range = <0x00 0xff>;
-+#        ranges = <0x82000000 0 0x20000000 0x0 0x20000000 0 0x10000000>;
-+#        status = "disabled";
-+#        #interrupt-cells = <1>;
-+#        interrupt-map-mask = <0 0 0 7>;
-+#        interrupt-map = <0 0 0 1 &pcie_intc0 0>,
-+#                <0 0 0 2 &pcie_intc0 1>,
-+#                <0 0 0 3 &pcie_intc0 2>,
-+#                <0 0 0 4 &pcie_intc0 3>;
-+#        pcie_intc0: interrupt-controller {
-+#            interrupt-controller;
-+#            #address-cells = <0>;
-+#            #interrupt-cells = <1>;
-+#        };
-+#    };
-+#    };
-+#
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/mt7622-clk.h>
-+    #include <dt-bindings/phy/phy.h>
-+    #include <dt-bindings/power/mt7622-power.h>
-+    #include <dt-bindings/reset/mt7622-reset.h>
-+    soc {
-+    #address-cells = <2>;
-+    #size-cells = <2>;
-+    pcie0: pcie@1a143000 {
-+        compatible = "mediatek,mt7622-pcie";
-+        device_type = "pci";
-+        reg = <0 0x1a143000 0 0x1000>;
-+        reg-names = "port0";
-+        linux,pci-domain = <0>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+        interrupts = <GIC_SPI 228 IRQ_TYPE_LEVEL_LOW>;
-+        interrupt-names = "pcie_irq";
-+        clocks = <&pciesys CLK_PCIE_P0_MAC_EN>,
-+             <&pciesys CLK_PCIE_P0_AHB_EN>,
-+             <&pciesys CLK_PCIE_P0_AUX_EN>,
-+             <&pciesys CLK_PCIE_P0_AXI_EN>,
-+             <&pciesys CLK_PCIE_P0_OBFF_EN>,
-+             <&pciesys CLK_PCIE_P0_PIPE_EN>;
-+        clock-names = "sys_ck0", "ahb_ck0", "aux_ck0",
-+                  "axi_ck0", "obff_ck0", "pipe_ck0";
-+        power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
-+        bus-range = <0x00 0xff>;
-+        ranges = <0x82000000 0 0x20000000  0x0 0x20000000  0 0x8000000>;
-+        status = "disabled";
-+        #interrupt-cells = <1>;
-+        interrupt-map-mask = <0 0 0 7>;
-+        interrupt-map = <0 0 0 1 &pcie_intc0 0>,
-+                <0 0 0 2 &pcie_intc0 1>,
-+                <0 0 0 3 &pcie_intc0 2>,
-+                <0 0 0 4 &pcie_intc0 3>;
-+        pcie_intc0: interrupt-controller {
-+            interrupt-controller;
-+            #address-cells = <0>;
-+            #interrupt-cells = <1>;
-+        };
-+    };
-+    pcie1: pcie@1a145000 {
-+        compatible = "mediatek,mt7622-pcie";
-+        device_type = "pci";
-+        reg = <0 0x1a145000 0 0x1000>;
-+        reg-names = "port1";
-+        linux,pci-domain = <1>;
-+        #address-cells = <3>;
-+        #size-cells = <2>;
-+        interrupts = <GIC_SPI 229 IRQ_TYPE_LEVEL_LOW>;
-+        interrupt-names = "pcie_irq";
-+        clocks = <&pciesys CLK_PCIE_P1_MAC_EN>,
-+             /* designer has connect RC1 with p0_ahb clock */
-+             <&pciesys CLK_PCIE_P0_AHB_EN>,
-+             <&pciesys CLK_PCIE_P1_AUX_EN>,
-+             <&pciesys CLK_PCIE_P1_AXI_EN>,
-+             <&pciesys CLK_PCIE_P1_OBFF_EN>,
-+             <&pciesys CLK_PCIE_P1_PIPE_EN>;
-+        clock-names = "sys_ck1", "ahb_ck1", "aux_ck1",
-+                  "axi_ck1", "obff_ck1", "pipe_ck1";
-+        power-domains = <&scpsys MT7622_POWER_DOMAIN_HIF0>;
-+        bus-range = <0x00 0xff>;
-+        ranges = <0x82000000 0 0x28000000  0x0 0x28000000  0 0x8000000>;
-+        status = "disabled";
-+        #interrupt-cells = <1>;
-+        interrupt-map-mask = <0 0 0 7>;
-+        interrupt-map = <0 0 0 1 &pcie_intc1 0>,
-+                <0 0 0 2 &pcie_intc1 1>,
-+                <0 0 0 3 &pcie_intc1 2>,
-+                <0 0 0 4 &pcie_intc1 3>;
-+        pcie_intc1: interrupt-controller {
-+            interrupt-controller;
-+            #address-cells = <0>;
-+            #interrupt-cells = <1>;
-+        };
-+    };
-+    };
--- 
-2.43.0
+> If you have any test cases or scenarios that would validate support
+> for multiple IPA mappings, could you please share them?
 
+The onus is on *you* to provide them, not me.
+
+I've repeatedly said that I didn't care about performance when we have
+so little to validate the existing code. This still stands.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
