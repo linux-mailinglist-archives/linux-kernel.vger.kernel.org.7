@@ -1,77 +1,118 @@
-Return-Path: <linux-kernel+bounces-872867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D4CC1275C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:01:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D25C12719
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4199C5E342C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:55:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82971A281B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D500521CC79;
-	Tue, 28 Oct 2025 00:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525C9217723;
+	Tue, 28 Oct 2025 00:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSY1oKSP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UvubIpz/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CF540855;
-	Tue, 28 Oct 2025 00:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEA31F130A;
+	Tue, 28 Oct 2025 00:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612894; cv=none; b=fP7Cdl91fFmkDHKF3qRRWzSHfZyYsiuxLowSC2gyl/GY+dzPw53iRaD4YZ2nsWmn8oBCmfJjh7KtGh7xeax71MvcIYFxeeBotUg1o84PZ1jEAyCFCNcW3ql8ugQjXi1ee4tluF8sgaPqQTpOU0OqpEK25LrIvbtBmkMKlufcFVw=
+	t=1761613132; cv=none; b=XTA7maGnFX0mTFQgqtNXy3Wwj2QNCsbTEXubA7iuPLLyDAyl/SI2nwqPFJYbQ6kjAiVi5+J3HcxPKPpXsGmTZaOzduNXKu5Y3cWAfBFi54+rfYFq/Fa3GuvL4V89KUNC342AzscbQgD1ULXEwh+wOCmZey04SaIc0BWlLXnxQs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612894; c=relaxed/simple;
-	bh=Nd0pxAqWQXz/a5u/pQujHHDbZKq+u6+RfQU31uBaXWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S0QIo6pFJkrBiCJ5vBQxX2CG2oeWhYIaPs0kcPlVHLkoT0r9EAj+4sjKicvgnveW7BovTMmQE5OJvGHVXoZmHSGXhONez7HTCBqDu4Dj/nHdFf/KjG6dTfWQuMXUslmYne8Z8zlrpbl/67f38HEgrzYz2lRoDajSR/y1q0T1HvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSY1oKSP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08A40C4CEF1;
-	Tue, 28 Oct 2025 00:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761612893;
-	bh=Nd0pxAqWQXz/a5u/pQujHHDbZKq+u6+RfQU31uBaXWM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MSY1oKSPBgT+9kDn3D92h1zmAwFYZKJTB7GxHxRy3/8ucc+FSrEDx6EchgHjMuXCs
-	 rM4Tt6UiBpUAngGmQUwsdC+fKG+Z5c5kSyuUbJ5yoVNk3MO/Xaf5ySJLr+iFOzWWR8
-	 SwIXOUpzlS5VmPwyvf01Ee4DwcDknyIHD75K6sDqMFHW1ZjFJgs2kEyIzfqPjuvYMi
-	 3N3/sZ4z9iPWLm8Hv0r0aTM4aqzdzqQT2WNoFs2rb/1EC9H2DAXEDV58moUvmBFtyb
-	 VgOY/SxveJZUsgTaYKqD9p4hT13bcfC5iWhie5I8shqUL6lk7PhaUWKMnYdrfGPLm1
-	 QppjKEWbsCFtA==
-Date: Mon, 27 Oct 2025 17:54:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
- <liuyonglong@huawei.com>, <chenhao418@huawei.com>, <lantao5@huawei.com>,
- <huangdonghua3@h-partners.com>, <yangshuaisong@h-partners.com>,
- <jonathan.cameron@huawei.com>, <salil.mehta@huawei.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net 2/2] net: hns3: fix null pointer in debugfs issue
-Message-ID: <20251027175451.21b7bfe4@kernel.org>
-In-Reply-To: <20251023131338.2642520-3-shaojijie@huawei.com>
-References: <20251023131338.2642520-1-shaojijie@huawei.com>
-	<20251023131338.2642520-3-shaojijie@huawei.com>
+	s=arc-20240116; t=1761613132; c=relaxed/simple;
+	bh=k3xs2hQENkeUPUHmfLA8pQKs0WNCSZ7v6eCS5ExV3ek=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XLW9xBYVVuRNy91RjULdaSIQ/LuFj4dMfo2GRxrTc2DCKUVeiOySB6YbhYXsW0MrnFrJNcV+5WBQbxg4wQLhZRP7jfI8jDehAKK8DtEADZv+UMaeYMxkua3kz0XrUqO+FMOp9Vn3cyjkKW8anc9FoW0uyluLp06lxRpGdI4aQO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UvubIpz/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761613125;
+	bh=L81+zrGApxJjfnXFKaL02XYZg6KXaoAU8rolq380OBY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=UvubIpz/JzthQ01TIJfqwQ+ALE76sOokeNXPxh2mCPJqh3k6JEcH/Na3IoYLvHmnZ
+	 XmCNxwLKMrflzuq5iqV9WkZNLuBr3MYRSPO20mfsMzWfUoN9M/ip8voYGw82IELeHr
+	 DY3N96pek1bjTmX1Nz9mBdhVhByoUgtpIsb2IDX89WOlCATWSz4Y9mbNbjiPHIbOJb
+	 QbWYgp2/KYuTbK7p3GAqIGB7iWDwtF8GgiRJtRTuCz5eKyex6QLmNIoq6qRovDtTvc
+	 1iGDtfIeqUzcmmpUIiaB7WsFSPHXETtP1B6iEKTKbKVBdKpuHV2lD/47TWS5FAuzA8
+	 wtfYJrEHYxjUw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwX7S64fzz4w9V;
+	Tue, 28 Oct 2025 11:58:44 +1100 (AEDT)
+Date: Tue, 28 Oct 2025 11:58:44 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the sched-ext tree with the tip tree
+ merge
+Message-ID: <20251028115844.37775f1b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/1R=hNyqy_e1BzlCkY37ZmK.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/1R=hNyqy_e1BzlCkY37ZmK.
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 23 Oct 2025 21:13:38 +0800 Jijie Shao wrote:
-> Currently, when debugfs and reset are executed concurrently,
-> some resources are released during the reset process,
-> which may cause debugfs to read null pointers or other anomalies.
-> 
-> Therefore, in this patch, interception protection has been added
-> to debugfs operations that are sensitive to reset.
+Hi all,
 
-You need to explain what prevents the state from changing immediately
-after you did the bit check. With no obvious locking in place I don't
-see how this reliably fixes the issue.
+Today's linux-next merge of the sched-ext tree got a conflict in:
+
+  kernel/sched/ext.c
+
+between commit:
+
+  a98ec5cb7e15 ("Merge branch 'master' of https://git.kernel.org/pub/scm/li=
+nux/kernel/git/tip/tip.git")
+
+from the tip tree and commit:
+
+  70d837c3e017 ("sched_ext: Merge branch 'sched/core' of git://git.kernel.o=
+rg/pub/scm/linux/kernel/git/tip/tip into for-6.19")
+
+from the sched-ext tree.
+
+I fixed it up (this was just white space differences between the
+2 merges followed by another change in the shced-ext tree, so I just
+used the latter) and can carry the fix as necessary. This is now fixed
+as far as linux-next is concerned, but any non trivial conflicts should
+be mentioned to your upstream maintainer when your tree is submitted for
+merging.  You may also want to consider cooperating with the maintainer
+of the conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/1R=hNyqy_e1BzlCkY37ZmK.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkAFUQACgkQAVBC80lX
+0GyFMwf+JJDUAby9vZvGbFEwGQUk1Xe3zm9qpdw/LjDrc8lObAJegAx11fH+TLfb
+RJoHrbCkWEHAEKhLRmqa6GCEV+MG5fVgHuxkt3AGgbiPZRuCGAj72s4sTgzAvQC+
+4Tp9+uh/17rhojCM8nIQ2PDMBVC0G2NGi4JWzIM5yfR2AIg/6k7I2tzp4Kd1gEXR
+wzM1F2ioEy8IhJPi7AIpBIXpSL1OoeVS7dS6eNLihlIDAfV4jxwiN3JNughNv0tB
+yptnACL+Qrh6Q+WwI1dtim0PaxlrF/oNdUfDXp+D8UxPfj/G+t8+E3xv0nEVdRgA
+PwvRocrnMGEyAYO0cp9fMUMTFPcJPQ==
+=/9Ki
+-----END PGP SIGNATURE-----
+
+--Sig_/1R=hNyqy_e1BzlCkY37ZmK.--
 
