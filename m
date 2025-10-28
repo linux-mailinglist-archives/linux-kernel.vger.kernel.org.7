@@ -1,138 +1,198 @@
-Return-Path: <linux-kernel+bounces-874200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BE2C15C17
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:21:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57BAAC15B99
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:17:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0401C26C6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED21A4EAEE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C26346A13;
-	Tue, 28 Oct 2025 16:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E3E34574A;
+	Tue, 28 Oct 2025 16:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZbzKfvjz"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HtMDbF8r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytJTULRp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HtMDbF8r";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ytJTULRp"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C79F33033A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2D43451C1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:13:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668038; cv=none; b=eu9T6EPc0xMlRdKSNCnJVxVM+ivAFmgG7WpQy2+tXadY8jWc9ULhGGpJVwFjO+B+8pys6sWKZUk8rfAVxCduBY90yrk3OcwqNVHmoT89rhrxAx3Fyf0lq9nehxiib3JyIfjZcbZy3Id8KcUU8eHSWhcqi2QDf+/LAXXkP6WzFlw=
+	t=1761668026; cv=none; b=LbX0oRoQ45Cp+1X2LdPPbrkr8eWFk5BJxi/F+VcfqOeOfl3xLVAMHhaCNcLOQAsFwunqm2/gB+BCn0xvC5cjrnkOyxXzWTks/l19kGMU3wioovNwtoYFvaz6H0djkwtku5Ge7Pgh8VUQ7tL24JKiZn4QDs8J4IOQ2KB6s4HpqHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668038; c=relaxed/simple;
-	bh=OTM6b8wUF9rw6fOXlIOEcqaTwYbvDfucC0gkj/2fKZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eUQ2SasYWcu7cY+zw71iYVFnWE6KEjJj4oIQ+FyrnppJlbolcndEgZrPyq6SY1yOcZWSU6Sc3KRkBvX/0XdXqgy0prwZ0WcI/+YjFZtQALOF/Lg/raWevJboxXUHjPTTiAge+3I+Xg+S7JuOV5fZ8MQgM7sAufoCkXzrTSlrqds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZbzKfvjz; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b64cdbb949cso1407463366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761668034; x=1762272834; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/7vxW2qYHkfek8BcuNGNfNSQ19bugBoHjwa49fBWcYE=;
-        b=ZbzKfvjz90RJUVxDMbX0M1ivVwUqHfO2r3iweE3qUZ+CXb54Rja3n2cbcdsm3ueqq9
-         vNC4G70+iG6yaSWu8BvUQ+XOZCGr/Vxdrx9n33JT5TUS6e3gG3j+/nC1QwmvJ9+gvNeo
-         M6iIIsHF1yDqD1GmfyMAiyOmi8zd5zMQS986Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761668034; x=1762272834;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/7vxW2qYHkfek8BcuNGNfNSQ19bugBoHjwa49fBWcYE=;
-        b=Vx69itBqYrWbsJm66tXTz3VvWCZ0Zs4/RudRBgR6Dtw0/LEbxL097ywZruGeWNNZU+
-         CzeEL1BWCbkaqYO5nprDu5ouorVj9jWNXMbowuZiDt+aQdKCoDeoqw4g/ikt9SfaemZe
-         FxcFB9scRT4X3rmyCH/dwD4DroEkQs5Ua7HUoBCHheH5MVOVobN44vtAg7KnI/421g8s
-         cp0RD617PHPncPYntXcB5Rn75/jwgwpVEK2XWjDFegjTbweNVYqN0MZlr4UBRqQXExYF
-         oW9vuGFoNjB+t9LRjBv5h6MY6hJ6hbtbaDoZfhUlP7czyN8MhfUrlhOIXx8549y7mnoL
-         +9Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWncFtbCieIvRc34DlguFISTeX+AjTX1OJY6qxKJIvxAmp9oULyxxqim4MpdYdelfDz5sZlURnVh2JkLuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL+DR++r8p91sZ2IfkK+dkc44WF/+N67FOu8ebuPaZV2bScHBZ
-	M47WWOV8wzphmhZahtNzYHog1M9DjG+BPZgeKYXpLgicVeoAHVRMlOGJEmM0EPJacc1PnLPVsFV
-	EUy+v60s=
-X-Gm-Gg: ASbGncsxnyXqsksM1cBOhKWyInRrfK/PQLidjaoFJuXVP8vUEwft8vONyLwTS7PuRLX
-	Ge0jkljvRekWBAGQSgox4RNynW5HgmBaiSqd4Nl51DcC1r1YbS9exipeRsZ4MVlhXJ/zueQvGJO
-	GFh11D+n8iiq0Jz6nJQNAW37vgoaF2VF38SlLL1DoUwQ2CuU0paVxXt68RPgofFdzErIwdWQMD1
-	xtrOwUYk8ZQtxBu7HX6gEu6KP39P4dFzbcbKHodgh9Hl+3e0AI7+Im+WPjkFZ3j+LNRl6SESHrY
-	lhM2whIaAOCSoj7On2XcnfSvWzp0J0Vlt0/wcjV5dbzcp7HTV0FlUIWuRZSXTJE59D7KyPOP1dk
-	f84JZKfMZ4aDjTINR23attzKsadQwFfprS3GBd6nl2J4nXzl+yJTiTZtw33N9mP6S6AatAYznql
-	s7XQDY461SzbM3KTBdvsDpodKZRAC7lUC0wFcVD9cOhci0jFjt0VOCUmahtzMm
-X-Google-Smtp-Source: AGHT+IHZriKDiWnYQtAM1fk4XT2z8vHtKidtVPy8KOXP0PMIs9JopQ9cfiWHZc3duzjWT+Zb2S41Qw==
-X-Received: by 2002:a17:907:940d:b0:b47:de64:df26 with SMTP id a640c23a62f3a-b6dba586eb6mr412912066b.35.1761668034247;
-        Tue, 28 Oct 2025 09:13:54 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f98adsm1113587166b.49.2025.10.28.09.13.53
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 09:13:53 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c1413dbeeso9912688a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:13:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXhogQAmRuDJQvz+boczwhn2Y90olJ7ZyVfP9GEnqscNijs07bgash5rW7Wn8fEUgyBJn32CY/FoZSXzEw=@vger.kernel.org
-X-Received: by 2002:a05:6402:358a:b0:63c:4d42:993f with SMTP id
- 4fb4d7f45d1cf-63ed826ace7mr3748960a12.3.1761668033009; Tue, 28 Oct 2025
- 09:13:53 -0700 (PDT)
+	s=arc-20240116; t=1761668026; c=relaxed/simple;
+	bh=t3buJ2ysQkdol3q5rs3qBMfbIGRLgldMKJXCive1rt8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j1LxP8srjP+LcpjSec6j3iC5RZwyxeDVsop/nfPwgFndRvsrybV6KDERTOwDMXa8NpY4QsiW3+z/ltZXZIH+nVwrEr1Nepc0AaOgVej2Tbf2CbsK2LHdhEIjApURT9ikZjJ+TUKAkKiLIx717IxfwjzaCvUeE92PyDqVZfVwRds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HtMDbF8r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytJTULRp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HtMDbF8r; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ytJTULRp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 71D431F46E;
+	Tue, 28 Oct 2025 16:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761668022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIkfaA109e058juxrbARLnbhnw+30Zzst1672lVORwA=;
+	b=HtMDbF8r2wRWDGifnv9gYxSNAhmS0ojzB1YP8QtBcy8ubsAT3ZsONof3Bhi32jnCH/lw5z
+	Hq6v+a16uHNBw7YVLG0EXbD607lh+hXWEV2szjXMyw6CmEW2DhnqmsfmuG+WL6eiBIJi6S
+	EIT708Ji0KWfCPRQ6wSJTudLeMIbq9Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761668022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIkfaA109e058juxrbARLnbhnw+30Zzst1672lVORwA=;
+	b=ytJTULRp9UW/jr9bzPTDO3cAAmBQor2fn8ie0J+jiQytAqY1LFwxRRsg/XxfPqgAg/w4Xj
+	zB2K4ve4Da2VOpCw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761668022; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIkfaA109e058juxrbARLnbhnw+30Zzst1672lVORwA=;
+	b=HtMDbF8r2wRWDGifnv9gYxSNAhmS0ojzB1YP8QtBcy8ubsAT3ZsONof3Bhi32jnCH/lw5z
+	Hq6v+a16uHNBw7YVLG0EXbD607lh+hXWEV2szjXMyw6CmEW2DhnqmsfmuG+WL6eiBIJi6S
+	EIT708Ji0KWfCPRQ6wSJTudLeMIbq9Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761668022;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIkfaA109e058juxrbARLnbhnw+30Zzst1672lVORwA=;
+	b=ytJTULRp9UW/jr9bzPTDO3cAAmBQor2fn8ie0J+jiQytAqY1LFwxRRsg/XxfPqgAg/w4Xj
+	zB2K4ve4Da2VOpCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22B2113A7D;
+	Tue, 28 Oct 2025 16:13:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id h0gZB7XrAGm0CAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 28 Oct 2025 16:13:41 +0000
+Date: Tue, 28 Oct 2025 17:13:40 +0100
+Message-ID: <87ms5bf1hn.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,	Stephen Boyd
+ <sboyd@kernel.org>,	Nicolas Ferre <nicolas.ferre@microchip.com>,	Alexandre
+ Belloni <alexandre.belloni@bootlin.com>,	Claudiu Beznea
+ <claudiu.beznea@tuxon.dev>,	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,	David Miller
+ <davem@davemloft.net>,	Linus Walleij <linus.walleij@linaro.org>,	Bartosz
+ Golaszewski <brgl@bgdev.pl>,	Joel Stanley <joel@jms.id.au>,	Andrew Jeffery
+ <andrew@codeconstruct.com.au>,	Crt Mori <cmo@melexis.com>,	Jonathan Cameron
+ <jic23@kernel.org>,	Lars-Peter Clausen <lars@metafoo.de>,	Jacky Huang
+ <ychuang3@nuvoton.com>,	Shan-Chun Hung <schung@nuvoton.com>,	Yury Norov
+ <yury.norov@gmail.com>,	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jaroslav Kysela <perex@perex.cz>,	Takashi Iwai <tiwai@suse.com>,	Johannes
+ Berg <johannes@sipsolutions.net>,	Jakub Kicinski <kuba@kernel.org>,	Alex
+ Elder <elder@ieee.org>,	David Laight <david.laight.linux@gmail.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,	Jason Baron
+ <jbaron@akamai.com>,	Borislav Petkov <bp@alien8.de>,	Tony Luck
+ <tony.luck@intel.com>,	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Kim Seer Paller <kimseer.paller@analog.com>,	David Lechner
+ <dlechner@baylibre.com>,	Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,	Richard Genoud
+ <richard.genoud@bootlin.com>,	Cosmin Tanislav <demonsingur@gmail.com>,	Biju
+ Das <biju.das.jz@bp.renesas.com>,	Jianping Shen
+ <Jianping.Shen@de.bosch.com>,	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-renesas-soc@vger.kernel.org,
+	linux-crypto@vger.kernel.org,	linux-edac@vger.kernel.org,
+	qat-linux@intel.com,	linux-gpio@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org,	linux-iio@vger.kernel.org,
+	linux-sound@vger.kernel.org,	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 20/23] ALSA: usb-audio: Convert to common field_{get,prep}() helpers
+In-Reply-To: <91f957d8857d64df9eae33824203cc770b0182b3.1761588465.git.geert+renesas@glider.be>
+References: <cover.1761588465.git.geert+renesas@glider.be>
+	<91f957d8857d64df9eae33824203cc770b0182b3.1761588465.git.geert+renesas@glider.be>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251027083700.573016505@linutronix.de> <20251027083745.736737934@linutronix.de>
- <0c979fe0-ee55-48be-bd0f-9bff71b88a1d@efficios.com> <87frb3uijw.ffs@tglx>
-In-Reply-To: <87frb3uijw.ffs@tglx>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 Oct 2025 09:13:36 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjZ39CSZwN3W6n5kSAqL-OhJghygh3-dRsrJKpOa9nTwg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkZ4DVtg-fqS9oPLAcmx2bmXbpg5s6Qki9Q4422mgDG3jAT_1tXHLLXals
-Message-ID: <CAHk-=wjZ39CSZwN3W6n5kSAqL-OhJghygh3-dRsrJKpOa9nTwg@mail.gmail.com>
-Subject: Re: [patch V5 10/12] futex: Convert to get/put_user_inline()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org, 
-	Heiko Carstens <hca@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, David Laight <david.laight.linux@gmail.com>, 
-	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[renesas];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,wanadoo.fr];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[baylibre.com,kernel.org,microchip.com,bootlin.com,tuxon.dev,intel.com,gondor.apana.org.au,davemloft.net,linaro.org,bgdev.pl,jms.id.au,codeconstruct.com.au,melexis.com,metafoo.de,nuvoton.com,gmail.com,rasmusvillemoes.dk,perex.cz,suse.com,sipsolutions.net,ieee.org,wanadoo.fr,akamai.com,alien8.de,analog.com,bp.renesas.com,de.bosch.com,vger.kernel.org,lists.infradead.org,lists.ozlabs.org];
+	R_RATELIMIT(0.00)[to_ip_from(RLr5uiezb5xkkwytzfr8x566qh)];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_GT_50(0.00)[50];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -1.80
+X-Spam-Level: 
 
-On Tue, 28 Oct 2025 at 08:56, Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> There was not justification for the open coded inline either and
-> converting it to get/put must be a completely seperate change.
+On Mon, 27 Oct 2025 19:41:54 +0100,
+Geert Uytterhoeven wrote:
+> 
+> Drop the driver-specific field_get() and field_prep() macros, in favor
+> of the globally available variants from <linux/bitfield.h>.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v5:
+>   - Extracted from "bitfield: Add non-constant field_{prep,get}()
+>     helpers".
+> ---
+>  sound/usb/mixer_quirks.c | 6 ------
+>  1 file changed, 6 deletions(-)
+> 
+> diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+> index 713a8498b975e1ac..6eee89cbc0867f2b 100644
+> --- a/sound/usb/mixer_quirks.c
+> +++ b/sound/usb/mixer_quirks.c
+> @@ -3311,12 +3311,6 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
+>  #define RME_DIGIFACE_REGISTER(reg, mask) (((reg) << 16) | (mask))
+>  #define RME_DIGIFACE_INVERT BIT(31)
+>  
+> -/* Nonconst helpers */
+> -#undef field_get
+> -#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
+> -#undef field_prep
+> -#define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
+> -
+>  static int snd_rme_digiface_write_reg(struct snd_kcontrol *kcontrol, int item, u16 mask, u16 val)
+>  {
+>  	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
 
-Actually, there's some justification in the original: see commit
-43a43faf5376 ("futex: improve user space accesses") which talks about
-the original impetus for it all: avoiding the very expensive barrier
-in __get_user(), and how __get_user() itself couldn't be fixed.
+Acked-by: Takashi Iwai <tiwai@suse.de>
 
-So then it was converted to the modern user access helpers - including
-address masking - and the inlining was mostly incidental to that, but
-the commit message does point out that it actually makes the address
-generation a bit cleaner in addition to avoiding the function call.
 
-But I doubt that the extra instructions are all that noticeable.
+thanks,
 
-That said - this code *is* in a very hot path on some loads, so it is
-entirely possible that the inlining here is noticeable. I$ patterns in
-particular can be a real thing.
+Takashi
 
-(There was an additional issue of just making those user accesses -
-get, put and cmpxchg - look a bit more similar)
-
-           Linus
 
