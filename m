@@ -1,306 +1,321 @@
-Return-Path: <linux-kernel+bounces-873231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F26C136C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:04:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C7DC136E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:04:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739931A23BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3635E1A23B79
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C08024E4A8;
-	Tue, 28 Oct 2025 08:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6650D298CA6;
+	Tue, 28 Oct 2025 08:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VB4WQQY/"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="v+XRmDh9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="OZijjk78"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.0])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7536824BD
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761638638; cv=none; b=dChTJJg/jkSM8IeKq1AwsH7OumaWdfZt/kAm4aEiR+FeSb4Qye5n49G1ha01ODokkP5Sr9gEDb3+9q6FprZS4nAwxMMznqIWuAZNgHTVMNtspsNlNELDqmeLNqd8fbyJ3OOaNnbX7Mj6CPq+7R9AHxwl9vrJ3HPvEMFM/LtlelU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761638638; c=relaxed/simple;
-	bh=+pX8rASt9pu6JhC5u/90R9e610aJgZg7VLu+RbB54Mc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oWXusGPU9CRsqK1ck+VfIx+96xYTAia0lntMYkXNWdXOoZgTsFq2ZteHCiUHu5G1eVIt5B2M9ShmrMQ/zM06Y9cBXS1wn5DgKCuLvZH201huJGWJAcrsuXutGnJK0WzMoZiGZ4B6SKVYyrgwlKJed4vj4gcTv6rhD4afOA+Kfnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VB4WQQY/; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-78120957aceso68594187b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 01:03:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761638635; x=1762243435; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eC15ccR5nnApCoxc4+0YQMDmLIbyIc6gV9Rhgyphesg=;
-        b=VB4WQQY/oVme6LoLCTOFM2Vfg2nzbq+itq5ZZVrFuP7RXeWcu9DCdi6B+KVABEc+bv
-         9SH2sGTSjTOXbcVbBpOt36ocstR8ajaXwvkUhKAR1L0+eqvzEFmRsQ2XHU/JsmKSyRQw
-         7xUltgs/9nGYkHOPddzrrfUhiAlhZBZSADbcu0INhiIA5RIJ5GfN2YcSydSrvllGysiH
-         5xdDwo6PkADJHyEMjei1tNffwCCV7rb791gea3vvG7EiADsVeRm7LuNSNDAjz+6t6BES
-         bQsIQbCplnHuaLhDdfDCPoSVI9eh5tN6R+3C2iYmzq4XzUfvqmZV5qW/tz7T1c+cHOlD
-         yrDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761638635; x=1762243435;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eC15ccR5nnApCoxc4+0YQMDmLIbyIc6gV9Rhgyphesg=;
-        b=Vr8x8VgKhOaE499YCKBF/Nr76Vy6NeLXN95uV4hS67QyfpzNQUEyJc/apxdC3GAFyP
-         jsKb4wLggi/mLb6wHkOTq4CxRmFcA1Bsit7DCm3Dve1gbwsr5KogBjK7vJdtA74Po6Ws
-         1fOAisK/q9odM7lgUPObg6LvKWYngfJUfJMrBsTttDCdhBxfjcHZD/gG1b8s+DZz4EsE
-         ddq5HUI1XT+2UhXg4TuTjAfBuXMTiAsXG+SHxth4YV4cX1oBi2ACCNlF2wxe+Hseatg0
-         yiZcTjVYsMvHCtvm9J/l5gBG3o5G8NfCX3+VdZJd4PW4QtrjgSqSBN8vwwWtVO/AVo43
-         GAiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI7bl2WPb/F7X/hcGX9/WE9Nk6Qhg/DKFew3/QCiTHWDiEpIvc5lVasIW4vC/MDiy1j1u6IAQ8MO49OlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Id4v5+G7zMS/hHAt1co+SUNwYOhIp2pmcX17yDj1fGyev8Zo
-	q6aCXDoX3N8rl00RbsCywM+jrS3DLai0/VvKBmEzVR5FT2haGXF8RkXtHkXrx1ynp9o2Rmknbfd
-	gikmcZpnu3jF63Ile8ubYbw==
-X-Google-Smtp-Source: AGHT+IGLKjEl/9ST0CGYnitMac3UU3Sdz9/Bg/QrsrKLkVopg0A+q5RSf5QTaGj+4l1tguygWYQeVjMsLej9jyg1
-X-Received: from ybiv100.prod.google.com ([2002:a25:abed:0:b0:eb8:9eeb:f99e])
- (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:690c:62ca:b0:76e:415:1b1 with SMTP id 00721157ae682-78617fe29f7mr28687637b3.49.1761638635659;
- Tue, 28 Oct 2025 01:03:55 -0700 (PDT)
-Date: Tue, 28 Oct 2025 01:03:48 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E9A18C031;
+	Tue, 28 Oct 2025 08:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761638670; cv=pass; b=CTBxYq+anOa1HpbYNoin2bjY0xkhNhMQ6rG34MuGYf4rwUzjynEXqagfvwJcWCY4V2qsOC8evHYoBkL0/I31oc3V3okTfmA7OToebvL1sC6I5upxIUAp0AUMx8/2ma2ey6DtqVr5gXo0MdDRoaEhaWK3SP41wbWAeISc5/1poto=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761638670; c=relaxed/simple;
+	bh=s6a57ztWgKqzZop2eXVnrLGAARifLGZdVEuuyt6o4uw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UgTK3Yuk/vDREfSQ+Ek2wVfEwGe6HP6OCdnjkGl5F0YCE2TK1a27tUHQMT7hJqpb+RjVRZoiLpH5xZOCGoJ0njbE6HAHNvnDrrg2PyveUdktCHQIJ4nvvZ/maev2+SNWpNT6FpggazkVjxwovCLzzREVbgfWTiL8TkvmJSkdm+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=v+XRmDh9; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=OZijjk78; arc=pass smtp.client-ip=185.56.87.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-zd5h.prod.antispam.mailspamprotection.com; s=arckey; t=1761638668;
+	 b=DYmK8D8fCSvsIDFzEj1OIWynwBzz0cUvAAe0/WpYFviDLEER+EBGejIYllC58fP3oHjI7GY/xp
+	  VvPSwZqNSF5jrl927d8aO2vMegGQFJ730VXILcKepLkH7h9uJ0IeAlysdDH05qFSW7MbTXP8Qr
+	  Zd55TeERz7rwK1BQdwGFBw5uSmkfOAjdxYFKaYRW1V2rYyJgCo4pOwOxbcj8t8JWM2Sf7+mUBx
+	  QuuW7Apeoj2wTlxRtP5ekdHy+avDG4dsVtS3AM3rOZpo6ixoIkKA/xmVs461fLLBm0E2ODWy7/
+	  zNapQz6dVbPfXwSwiLUZAkUpM4sHNOzBBtmR+edWyir0CA==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-zd5h.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-zd5h.prod.antispam.mailspamprotection.com; s=arckey; t=1761638668;
+	bh=s6a57ztWgKqzZop2eXVnrLGAARifLGZdVEuuyt6o4uw=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
+	  To:From:DKIM-Signature:DKIM-Signature;
+	b=km0lZcWvK/UlWCWRMN3KP0ohUIgo/XL+gSj4Lv7L87YWe51MaevqH99PI8ll14QnbivVD2bsH1
+	  2+rZj5n8uLN6ovHYxGB0Z/5rnynxGMgpdFRMnWU7As7alr8GrLzcSAMMP+cSagAel+96E9oa9M
+	  nkB4EAYW98PdkjnzLtMMOIOdSFzUAT9nFspdX7hZoabtzn35N/48g0ipjxMV+uwisNYgsEEGoC
+	  BGUv24y7SNSPT8GtBFUPJ3pz/l1z44jsf7TjuxqVLnXFR0WE02p2gAQmuHFJ6wSPMdjmEzhgrD
+	  7eP5XO4gtEWItfy+w2YMOIAowWP1oKiDEKJIiTn5vDz7lw==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=tv0PkcWT+R6COZq+/bFx5P+D3RWcMKpvqpZ6j2a+CzU=; b=v+XRmDh9AdgS8LEFJZFq2yeBKt
+	4a5Mmj980ZRHqPvi/g+btq2iQo6NFT5sVv5sh1aNbwblPPjyj4t7JVuOMYeNgpKFjG73Mr2vhGmU6
+	0ng7YuL6pknZ04cNchwWsI0qy0rQAHG6QksYU+QJ1PDTH58UfnqkNQNrOZolR+Ea5k8Q=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-zd5h.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vDegj-00000000zwy-1f2q;
+	Tue, 28 Oct 2025 08:04:19 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=tv0PkcWT+R6COZq+/bFx5P+D3RWcMKpvqpZ6j2a+CzU=; b=OZijjk78i+B95GvMw1d1NggCNV
+	gS6m2njSh3c14y+eNYU715tLWZwRBp9g+3B6fbflCkwKy0OL0r3wiHrXShrdC8Lp2yi3rndZqqoeZ
+	oAYUvakhfEITOdyEyqBxG8zOrOaWYuqP1MvxL6fFbYUF1jOM7JjMO+V/hG3IfexkFZhc=;
+Received: from [87.17.42.198] (port=62990 helo=fedora.fritz.box)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vDegM-00000000NKV-2TYu;
+	Tue, 28 Oct 2025 08:03:54 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Jonathan Corbet <corbet@lwn.net>, Jocelyn Falempe <jfalempe@redhat.com>,
+ Javier Martinez Canillas <javierm@redhat.com>,
+ Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-embedded@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+Date: Tue, 28 Oct 2025 09:03:53 +0100
+Message-ID: <7194118.9J7NaK4W3v@fedora.fritz.box>
+In-Reply-To: <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
+References:
+ <20251027-drm_client_splash-v1-0-00698933b34a@valla.it>
+ <yq4btdc5qqukuqps7y53dratmu64ghyifgprlndnk5rbgml4of@rvca75sncvsm>
+ <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.1.838.g19442a804e-goog
-Message-ID: <20251028080348.2177469-1-blakejones@google.com>
-Subject: [PATCH v3] sched: reorder some fields in struct rq
-From: Blake Jones <blakejones@google.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Josh Don <joshdon@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
-	Blake Jones <blakejones@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="nextPart9956517.eNJFYEL58v";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: de4ab1ac8654d35d866963dfba46f082
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vDegj-00000000zwy-1f2q-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-zd5h.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-This colocates some hot fields in "struct rq" to be on the same cache line
-as others that are often accessed at the same time or in similar ways.
+--nextPart9956517.eNJFYEL58v
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Francesco Valla <francesco@valla.it>
+Subject: Re: [PATCH RFC 0/3] Add splash DRM client
+Date: Tue, 28 Oct 2025 09:03:53 +0100
+Message-ID: <7194118.9J7NaK4W3v@fedora.fritz.box>
+In-Reply-To: <3edea192-6a3f-44f5-b570-7033776e2ce4@suse.de>
+MIME-Version: 1.0
 
-Using data from a Google-internal fleet-scale profiler, I found three
-distinct groups of hot fields in struct rq:
+Hi Thomas,
 
-- (1) The runqueue lock: __lock.
+On Monday, 27 October 2025 at 13:35:31 Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> Hi Francenso, Maxime,
+> 
+> Am 27.10.25 um 11:09 schrieb Maxime Ripard:
+> > Hi,
+> >
+> > On Mon, Oct 27, 2025 at 12:03:00AM +0100, Francesco Valla wrote:
+> >> this patchset adds a new DRM client offering splash functionalities,
+> >> able to draw to screen:
+> >>
+> >>    - a colored background;
+> > So, I like that part, and we were recently discussing about this.
+> 
+> The panic screen has configurable foreground/background colors. Maybe we 
+> can harmonize these settings.
+> 
 
-- (2) Those accessed from hot code in pick_next_task_fair():
-      nr_running, nr_numa_running, nr_preferred_running,
-      ttwu_pending, cpu_capacity, curr, idle.
+Maybe, but probably the panic colors would typically be much more vibrant
+than splash ones. 
 
-- (3) Those accessed from some other hot codepaths, e.g.
-      update_curr(), update_rq_clock(), and scheduler_tick():
-      clock_task, clock_pelt, clock, lost_idle_time,
-      clock_update_flags, clock_pelt_idle, clock_idle.
+> >
+> >>    - a single-line text message, which can be set through sysfs or
+> >>      directly from the kernel command line;
+> 
+> Put it into the kernel config.
+> 
+> >>    - a very simple progress bar, which can be driven through sysfs;
+> 
+> Once you have options to control these settings from user space, you 
+> should do it in user space entirely. As Maxime suggested, please improve 
+> plymouth for anything with animation.
+> 
 
-The cycles spent on accessing these different groups of fields broke down
-roughly as follows:
+On this I can agree, see my reply to Maxime.
 
-- 50% on group (1) (the runqueue lock, always read-write)
-- 39% on group (2) (load:store ratio around 38:1)
--  8% on group (3) (load:store ratio around 5:1)
--  3% on all the other fields
+> >>    - a static image (optional).
+> 
+> Board vendors often provide an image, see /sys/firmware/acpi/bgrt/. This 
+> is a candidate for display, or the penguin or a custom image. Please 
+> make it configurable by Kconfig. Again, if you need policy and 
+> heuristics for deciding what to display, you better do this in user space.
+>
 
-Most of the fields in group (3) are already in a cache line grouping; this
-patch just adds "clock" and "clock_update_flags" to that group. The fields
-in group (2) are scattered across several cache lines; the main effect of
-this patch is to group them together, on a single line at the beginning of
-the structure. A few other less performance-critical fields (nr_switches,
-numa_migrate_on, has_blocked_load, nohz_csd, last_blocked_load_update_tick)
-were also reordered to reduce holes in the data structure.
+I'm not under ACPI/UEFI typically, and the concept for this patch was not
+developed on such system. But I'll take a look!
 
-Since the runqueue lock is acquired from so many different contexts, and is
-basically always accessed using an atomic operation, putting it on either
-of the cache lines for groups (2) or (3) would slow down accesses to those
-fields dramatically, since those groups are read-mostly accesses.
+> > But there's no reason to have all that in the kernel, and we already
+> > have userspace components to do so (plymouth being the main "mainstream"
+> > one).
+> >
+> >> Once compiled inside the kernel, the client can be enabled through the
+> >> command line specifying the drm_client_lib.active=splash parameter.
+> >>
+> >> == Motivation ==
+> >>
+> >> The motivation behind this work is to offer to embedded system
+> >> developers a new path for a simple activation of the display(s)
+> >> connected to their system, with the following usecases:
+> >>
+> >>    - bootsplash - possibly displaying even before init;
+> >>    - early activation of the display pipeline, in particular whenever one
+> >>      component of the pipeline (e.g.: a panel) takes a non-negligible
+> >>      time to initialize;
+> >>    - recovery systems, where the splash client can offer a simple feedback
+> >>      for unattended recovery tasks;
+> >>    - update systems, where the splash client can offer a simple feedback
+> >>      for unattended update tasks.
+> > If plymouth cannot be used by embedded systems for some reason, then you
+> > should work on a plymouth alternative.
+> 
+> Agreed. With an updater running in user space, that process should also 
+> manage the display update. No need for this in the kernel.
+> 
+> >
+> >> While the first seems the most obvious one, it was the second that acted
+> >> as the driver, as in the past I had to implement a ugly workaround using
+> >> a systemd generator to kickstart the initialization of a display and
+> >> shave ~400ms of boot time.
+> >>
+> >> The last 2 usecase, instead, are the reason I dropped the "boot" part
+> >> from bootsplash.
+> >>
+> >> == Implementation details ==
+> >>
+> >> The design is quite simple, with a kernel thread doing the heavylifting
+> >> for the rendering part and some locking to protect interactions with it.
+> >>
+> >> The splash image is loaded using the firmware framework, with the client
+> >> expecting to find a binary dump having the right dimensions (width and
+> >> height) and FOURCC format for each modeset. Given a 1920x1080 RGB888
+> >> modeset, the client will for example search for a firmware named:
+> >>
+> >>     drm_splash_1920x1080_RG24.raw
+> >>
+> >> If the firmware cannot be loaded directly, the NOUEVENT sysfs fallback
+> >> mechanism is used to let userspace load the appropriate image.
+> >>
+> >> == Testing ==
+> >>
+> >> Testing was done on qemu (both with vkms and bochs drivers), on a HDMI
+> >> display connected to a Beagleplay and on a ILI9341 SPI display connected
+> >> to a i.MX93 FRDM board. All these platforms revealed different
+> >> weaknesses that were hopefully removed.
+> >>
+> >> == Open points / issues ==
+> >>
+> >> The reason for this being an RFC is that there are several open points:
+> >>
+> >>    - Support for tiled connectors should be there, but has not been
+> >>      tested. Any idea on how to test it?
+> > Did you mean tiled formats?
+> >
+> >>    - I'm not entirely convinced that using the firmware framework to load
+> >>      the images is the right path. The idea behind it was to re-use the
+> >>      compressed firmware support, but then I discovered it is not there
+> >>      for built-in firmware.
+> > Yeah, firmware loading for this has a few issues (being tedious to setup
+> > for when built-in being one). I think just going the fbdev penguin road
+> > is a better choice: you provide the path, and it's embedded in the
+> > kernel directly.
+> >
+> >>    - Again on the firmware loading: CONFIG_LOADPIN would interfere with
+> >>      sysfs loading.
+> >>    - And again: FW_ACTION_NOUEVENT only has one user inside the kernel,
+> >>      leading me to think it is de-facto deprecated. And still, uevents
+> >>      for firmware loading seem frowned upon these days...
+> >>    - Generating binary dumps for... basically any format is not so
+> >>      straightforward. I crafted a Python tool with AI help which seems
+> >>      to work quite well, but I honestly did not yet understood which is
+> >>      the policy for AI-generated code inside the kernel, so it is not
+> >>      included in this patch set. All client code is genuine, though.
+> > BMP is simple enough to support so we should probably use that instead
+> > of a custom format.
+> 
+> file /sys/firmware/acpi/bgrt/image
+> /sys/firmware/acpi/bgrt/image: PC bitmap, Windows 3.x format, 768 x 256 
+> x 24, image size 589824, cbSize 589878, bits offset 54
+> 
+> That should probably be the format for now unless your firmware uses 
+> something else natively. Code for reading a BMP file can be found in the 
+> efifb driver. [1]
+> 
+> [1] 
+> https://elixir.bootlin.com/linux/v6.17.5/source/drivers/video/fbdev/efifb.c#L24
+> 
 
-This patch does not change the size of "struct rq" on machines with 64-byte
-cache lines. The additional "____cacheline_aligned" to put the runqueue
-lock on the next cache line will add an additional 64 bytes of padding on
-machines with 128-byte cache lines; although this is unfortunate, it seemed
-more likely to lead to stably good performance than e.g. by just putting
-the runqueue lock somewhere in the middle of the structure and hoping it
-wasn't on an otherwise busy cache line.
+When I started working on the patch I was not able to find this BMP decoder,
+I only found the PPM one from the bootup logo. I'll take a look here too.  
 
-Signed-off-by: Blake Jones <blakejones@google.com>
-Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
----
- kernel/sched/sched.h | 75 +++++++++++++++++++++++++++-----------------
- 1 file changed, 46 insertions(+), 29 deletions(-)
 
-v2 -> v3 changes:
-- Resynced and retested. Results are consistent with v2.
-  Link to v2: https://lore.kernel.org/lkml/CAP_z_Cg1Yvyq1qEkYXcyL-=zqTxqMxpV3Ap7ggzd4Q8f+=Zd9A@mail.gmail.com/T/
-  v2 received a Reviewed-By and Tested-By two months ago, but didn't get
-  any response to multiple followup pings.
+> Apart from the criticism for complexity, I do like the idea of having a 
+> splash screen.
+> 
+> Best regards
+> Thomas
+> 
+> >
+> > Maxime
+> 
+> 
 
-v1 -> v2 changes:
-- Resynced to tip/sched/core tree, which has removed CONFIG_SMP.
-  Link to v1: https://lore.kernel.org/lkml/20250722201339.1198239-1-blakejones@google.com/T/#u
+Thank you!
 
-I ran "hackbench" to test this change, but it didn't show very conclusive
-results.  Looking at a profile of the hackbench run, it was spending 95% of
-its cycles inside __alloc_skb(), __kfree_skb(), or kmem_cache_free() -
-almost all of which was spent updating memcg counters or contending on the
-list_lock in kmem_cache_node. In contrast, it spent less than 0.5% of its
-cycles inside either schedule() or try_to_wake_up(). So it's not surprising
-that it didn't show useful results here.
+Best regards,
+Francesco
 
-Instead, to test this, I wrote a focused load test that would put load on
-the pick_next_task_fair() path. A parent process would fork many child
-processes, and each child would nanosleep() for 1 msec many times in a
-loop. The load test was monitored with "perf", and I looked at the amount
-of cycles that were spent with sched_balance_rq() on the stack. The test
-reliably showed ~5% of all cycles were spent there. I ran it 100 times on
-a pair of 2-socket Intel Haswell machines (72 vCPUs per machine) - one
-running the tip of sched/core, the other running this change - using 360
-child processes and 8192 1-msec sleeps per child.  The mean cycle count
-dropped from 5.14B to 4.91B, or a 4.6% decrease.
+--nextPart9956517.eNJFYEL58v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
-More importantly, given that this change reduces cache misses in a very hot
-kernel codepath, there's likely to be additional application performance
-improvement due to reduced cache conflicts from kernel data structures.
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index e7718f12bc55..e9f71a09a5d8 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1114,28 +1114,47 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
-  * acquire operations must be ordered by ascending &runqueue.
-  */
- struct rq {
--	/* runqueue lock: */
--	raw_spinlock_t		__lock;
--
--	/* Per class runqueue modification mask; bits in class order. */
--	unsigned int		queue_mask;
-+	/*
-+	 * The following members are loaded together from pick_next_task(),
-+	 * and should be on an isolated cache line to avoid cache pollution.
-+	 * They are loaded much more often than they are stored.
-+	 */
- 	unsigned int		nr_running;
- #ifdef CONFIG_NUMA_BALANCING
- 	unsigned int		nr_numa_running;
- 	unsigned int		nr_preferred_running;
--	unsigned int		numa_migrate_on;
- #endif
-+	unsigned int		ttwu_pending;
-+	unsigned long		cpu_capacity;
-+#ifdef CONFIG_SCHED_PROXY_EXEC
-+	struct task_struct __rcu	*donor;  /* Scheduling context */
-+	struct task_struct __rcu	*curr;   /* Execution context */
-+#else
-+	union {
-+		struct task_struct __rcu *donor; /* Scheduler context */
-+		struct task_struct __rcu *curr;  /* Execution context */
-+	};
-+#endif
-+	struct task_struct	*idle;
-+	/* padding left here deliberately */
-+
-+	/*
-+	 * The next cacheline holds the (hot) runqueue lock, as well as
-+	 * some other less performance-critical fields.
-+	 */
-+	u64			nr_switches	____cacheline_aligned;
-+
-+	/* runqueue lock: */
-+	raw_spinlock_t		__lock;
-+
- #ifdef CONFIG_NO_HZ_COMMON
--	unsigned long		last_blocked_load_update_tick;
--	unsigned int		has_blocked_load;
--	call_single_data_t	nohz_csd;
- 	unsigned int		nohz_tick_stopped;
- 	atomic_t		nohz_flags;
-+	unsigned int		has_blocked_load;
-+	unsigned long		last_blocked_load_update_tick;
-+	call_single_data_t	nohz_csd;
- #endif /* CONFIG_NO_HZ_COMMON */
- 
--	unsigned int		ttwu_pending;
--	u64			nr_switches;
--
- #ifdef CONFIG_UCLAMP_TASK
- 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
- 	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
-@@ -1158,6 +1177,9 @@ struct rq {
- 	struct list_head	*tmp_alone_branch;
- #endif /* CONFIG_FAIR_GROUP_SCHED */
- 
-+#ifdef CONFIG_NUMA_BALANCING
-+	unsigned int		numa_migrate_on;
-+#endif
- 	/*
- 	 * This is part of a global counter where only the total sum
- 	 * over all CPUs matters. A task can increase this counter on
-@@ -1166,36 +1188,33 @@ struct rq {
- 	 */
- 	unsigned long 		nr_uninterruptible;
- 
--#ifdef CONFIG_SCHED_PROXY_EXEC
--	struct task_struct __rcu	*donor;  /* Scheduling context */
--	struct task_struct __rcu	*curr;   /* Execution context */
--#else
--	union {
--		struct task_struct __rcu *donor; /* Scheduler context */
--		struct task_struct __rcu *curr;  /* Execution context */
--	};
--#endif
- 	struct sched_dl_entity	*dl_server;
--	struct task_struct	*idle;
- 	struct task_struct	*stop;
- 	unsigned long		next_balance;
- 	struct mm_struct	*prev_mm;
- 
--	unsigned int		clock_update_flags;
--	u64			clock;
--	/* Ensure that all clocks are in the same cache line */
-+	/* Per class runqueue modification mask; bits in class order. */
-+	unsigned int		queue_mask;
-+
-+	atomic_t		nr_iowait;
-+
-+	/*
-+	 * The following fields of clock data are frequently referenced
-+	 * and updated together, and should go on their own cache line.
-+	 */
- 	u64			clock_task ____cacheline_aligned;
- 	u64			clock_pelt;
-+	u64			clock;
- 	unsigned long		lost_idle_time;
-+	unsigned int		clock_update_flags;
- 	u64			clock_pelt_idle;
- 	u64			clock_idle;
-+
- #ifndef CONFIG_64BIT
- 	u64			clock_pelt_idle_copy;
- 	u64			clock_idle_copy;
- #endif
- 
--	atomic_t		nr_iowait;
--
- 	u64 last_seen_need_resched_ns;
- 	int ticks_without_resched;
- 
-@@ -1206,8 +1225,6 @@ struct rq {
- 	struct root_domain		*rd;
- 	struct sched_domain __rcu	*sd;
- 
--	unsigned long		cpu_capacity;
--
- 	struct balance_callback *balance_callback;
- 
- 	unsigned char		nohz_idle_balance;
--- 
-2.51.1.838.g19442a804e-goog
+iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQB46QAKCRDir2xSXEi5
+AGFFAP44WmJhkVq8Dd3yPrN4/6UbZ2jWawAOmn01DC155zZoIgEAhZhC84pdRLkN
+8fFc7/Acio+KH0UOmzebgGlT202k6g0=
+=JHNe
+-----END PGP SIGNATURE-----
+
+--nextPart9956517.eNJFYEL58v--
+
+
 
 
