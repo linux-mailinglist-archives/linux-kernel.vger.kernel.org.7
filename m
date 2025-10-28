@@ -1,85 +1,136 @@
-Return-Path: <linux-kernel+bounces-873605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C639AC143DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9E1C143F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:03:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9B61AA50CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:56:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F284C1AA5E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53A3074AB;
-	Tue, 28 Oct 2025 10:54:05 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397ED307AC6;
+	Tue, 28 Oct 2025 10:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f4G9Xy7Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EF92E7F2C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE7D26C3A7;
+	Tue, 28 Oct 2025 10:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648844; cv=none; b=qZWGdPmyRbiDfQPhUf+oCgMAJIWpevT4lYtUj/z3Vkdd/ahYSO53QuxbdFp1qF49KJ5l1uA+vxCXbD+Gf60a+XCBEXMmQ/FAxG+3m3yiRTdu0QH+yEWU1xoco4DkKi8CyxZQL/0dUjZTVzSCEYv32k+OPSLApQps2A6YCk2VIe4=
+	t=1761648899; cv=none; b=IonzDtvRdrx+fW+I5vpW2iExr7tEUtJlVKNxTVZS1R7ZTPJNup5p8Ha0D44EZhQZrOOMdMCrwngLhQvN8HZ5IJj5Uvodm74dCvN1WDewgFmcfMxwmJCFbXBwamLbUmWCbl8Dz9c5q9ywp03U8vuGJ7wJc+8Cblm+alDTBXrcUXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648844; c=relaxed/simple;
-	bh=UnGQQKWUa5DQxkJWecCfEOgqTPm+utcqV7NCyPct1tI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gQxSc/aG11Zdm/EgS7Oc+O3Ogx2LPu6y0Nt4N2qy/gf7/sZrUsJ+BMANKmAZf5ZpIt4zUXYJyzUK5mrb5Inz2JP0Eo4FgHED6Um0+AJGPckUDIKhZFHXgzXZhjM5kU09xDNf4orHG/M9dGQrKj8Md6jg7fbEvqeXNDOQBQT6guE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945a4849260so862828939f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761648842; x=1762253642;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R0oI3dPUWnKo/UyVq88qVBTtjLzBjxNn+/ah1XRYiMc=;
-        b=WBsZ9SrroUu1vTra7OcU0rk6MbGXHhS4ys0i/+RAms7NdI5fF91oo5fltrvUK6wVhh
-         59iNVrp660bgJnkRvpGfNXnhfJ92yB6iCT0rgLIODMO6zG5m4aPJRMKQil6nkgaCtHgw
-         vvDTXs1cZCcyY+wnMc4ZQIILvZO5Q5YCw4/pOh6ha4q0yHCw8pJLwVrAk2e37Y2QfHT+
-         +iACA7ofYkT930nA8ZRQHnQRARbRQvXm8l8CY/UmJdlO7R7/BvZ4bZaGsmG4vmR5HoSW
-         74aMerYUd3Y+d749CRHlvWi63WDa7EzoAReCFHIXjpD11FK08dk03muwB/H6Lbqa20T4
-         PtpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzuaVmU9wr7MKJxaBzFfV9VDX/RoDAhDz69xP+CVMfoP1A0J3r1q+bM0AuhBspKroZuK8kExnqHGbDXtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRoHEgeNVYGbGyzKCJYhkUlAJcvjhbCE8Bosh4Fmsj1mGLXpul
-	WHXOg4Q2iqLRFHFJbvkJLyPE+KxM4gMN63beUfYLiJibbMwazNOlzxRhByAt3WsAt7H/7OTgXSG
-	oHIECo7PHqf5gwwKvGBYltC1/E6gCHMSU8OnzVymaTzewmuNztc2gOoGI0GU=
-X-Google-Smtp-Source: AGHT+IGsVSpAXI+5fc/D39yttmMsI+U/M2UCKcUdwRSPi2yNTcfxjUnC8SYicEUniUzGx0h7MVOQgtcv6/ODo4FFDywrALGHWezP
+	s=arc-20240116; t=1761648899; c=relaxed/simple;
+	bh=tNF3NVjCKUJmaGz92k5s0fNZFi9duePZm2Fk14uSDrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mYiZzFEVL4BHVstVUOY9bStBCyn9GhWtRNh3dixxO+ZEYD3TSnagvM8ESrUa/IbX0Mp+7Nf2RiARrmNkA5w7KM3O+0+bPQYMBy8gBG4ZBUmuJfnfZ3KszJQ2SFqbfc/s49klv6Um0IxgmzYRAaISwahIpX//YYMPMnBJnRdvyaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f4G9Xy7Q; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761648898; x=1793184898;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tNF3NVjCKUJmaGz92k5s0fNZFi9duePZm2Fk14uSDrw=;
+  b=f4G9Xy7QCNKAdxnSWGbsAyRioNrQLU1CnXtA8M/tQEZ7qeJaeoP+67f0
+   BKqXKrduHmMntwkSeg30yBp6hhLy6Rpw6q5k+NF44bbO5AqnVJm+YuKSr
+   /Iveal+C9y6KG1HHmguXzBSxgHlONYrsuHbv2DMV7d+HZ1pIbOHZDV6aT
+   RnXliq06nK+UO5WruK1FjTw3s/L1Ki9nYS1FTw1nWqC23Mq/+NrDMwx99
+   5Ciw2tN02EcYsDb6RTVdDIuLl3aPycj1yXNwApgJ1PET/trrubN44UBg2
+   yNSPuZlts9XLLQ2uiViKjJeIfCB2KQI3llJ8eofGXmPYrRpVvs2kOUjsi
+   g==;
+X-CSE-ConnectionGUID: 1ivGBndWQBuDD3bj+x2ByQ==
+X-CSE-MsgGUID: ePiJdklrSLyDIAQKGm4EFA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="89215408"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="89215408"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:54:57 -0700
+X-CSE-ConnectionGUID: io9eWLyCTN667L12GYdkYw==
+X-CSE-MsgGUID: 7yVL/8YESPSWsfQr6K7FDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="184491741"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:54:55 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDhLo-00000003Htz-0HA8;
+	Tue, 28 Oct 2025 12:54:52 +0200
+Date: Tue, 28 Oct 2025 12:54:51 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Hans de Goede <hansg@kernel.org>
+Cc: Dan Scally <dan.scally@ideasonboard.com>,
+	Qiu Wenbo <qiuwenbo@gnome.org>, Daniel Scally <djrscally@gmail.com>,
+	Qiu Wenbo <qiuwenbo@kylinsec.com.cn>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH] platform/x86: int3472: Fix double free of GPIO device
+ during unregister
+Message-ID: <aQCg-xZ_kAemfgZQ@smile.fi.intel.com>
+References: <20251024050537.92440-1-qiuwenbo@gnome.org>
+ <5007d7f0-76ff-41fd-a371-05922c97f8ef@ideasonboard.com>
+ <aQCUu5vCPlglC0Kd@smile.fi.intel.com>
+ <7898408e-1b33-4f22-84d2-12bcd6254402@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3e06:b0:430:bcef:e0a8 with SMTP id
- e9e14a558f8ab-4320f86661fmr41585635ab.28.1761648842738; Tue, 28 Oct 2025
- 03:54:02 -0700 (PDT)
-Date: Tue, 28 Oct 2025 03:54:02 -0700
-In-Reply-To: <20251028104005.R1CUs%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6900a0ca.050a0220.17b81f.0019.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
-From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7898408e-1b33-4f22-84d2-12bcd6254402@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hello,
+On Tue, Oct 28, 2025 at 11:38:00AM +0100, Hans de Goede wrote:
+> On 28-Oct-25 11:02 AM, Andy Shevchenko wrote:
+> > On Tue, Oct 28, 2025 at 08:55:07AM +0000, Dan Scally wrote:
+> >> On 24/10/2025 06:05, Qiu Wenbo wrote:
+> >>>
+> >>> regulator_unregister() already frees the associated GPIO device. On
+> >>> ThinkPad X9 (Lunar Lake), this causes a double free issue that leads to
+> >>> random failures when other drivers (typically Intel THC) attempt to
+> >>> allocate interrupts. The root cause is that the reference count of the
+> >>> pinctrl_intel_platform module unexpectedly drops to zero when this
+> >>> driver defers its probe.
+> >>>
+> >>> This behavior can also be reproduced by unloading the module directly.
+> >>>
+> >>> Fix the issue by removing the redundant release of the GPIO device
+> >>> during regulator unregistration.
+> >>>
+> >>> Fixes: 1e5d088a52c2 ("platform/x86: int3472: Stop using devm_gpiod_get()")
+> > 
+> >> However the Fixes tag I wonder about; devm_gpiod_get() will also result in a
+> >> call to gpiod_put() when the module is unloaded; doesn't that mean that the
+> >> same issue  will occur before that commit?
+> > 
+> > Actually a good question! To me sounds like it's a bug(?) in regulator code.
+> > It must not release resources it didn't acquire. This sounds like a clear
+> > layering violation.
+> 
+> I think the problem is that when it comes from devicetree it is acquired
+> by the regulator core.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Hmm... I probably missed that, but I failed to see this. Any pointers?
 
-failed to checkout kernel repo https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/linux-5.10.y: failed to run ["git" "fetch" "--force" "4d52a57a3858a6eee0d0b25cc3a0c9533f747d8f" "linux-5.10.y"]: exit status 128
+> Only when passed as platform-data as we do here does
+> this layering violation occur.
+> 
+> I do believe that a transfer of ownership ad done here is ok for
+> the platform-data special case.
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Tested on:
-
-commit:         [unknown 
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git linux-5.10.y
-kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
-dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16fa77e2580000
 
 
