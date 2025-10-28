@@ -1,142 +1,195 @@
-Return-Path: <linux-kernel+bounces-874082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BDDC15793
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:33:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F62C157E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6590423892
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFEB93ABA69
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659F633F8B1;
-	Tue, 28 Oct 2025 15:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EEF340A79;
+	Tue, 28 Oct 2025 15:30:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ai73c205"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="EJYW7osJ"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4985218991E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEC533EB16
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665369; cv=none; b=FgE4MbHZYOYJeSC+D/yHNWoX1Ssu2AV0CXF38ANo9nu53ma2GR4L7CK/PANQnVYfm9HJ2bGClISU5xNfKK2CVcyNE1I1KoeHKedWXMA0iqtNpoc3jW10VCwM9qTmETdAB4I2yd92P2y00HE2LwiszYNWDDhSAtx6V//a+JaIPNs=
+	t=1761665404; cv=none; b=o2cu4eCcKXJ84r9ECP81D1D/sOMsqN7JTy2Qs6/NxXlFDplQbwdoFv6uxYAyhE3KJP7cXpboRknM4MCC8dTTw9QTsGbokq/pQIbfMAPkU2dkTF1bg7XcrJkS7mmqfgK3pp7xeHs9dutCs8ceuUOBj46hG+45XcQ4tE2yss/AZA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665369; c=relaxed/simple;
-	bh=nNT2aPH4pU1awg69EcKL59cHGn20iFQORIESFfdyeo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=meyOt43SyCAWd1WnE5GPiCHI5jaosEGw5nKbmQeqJcQAezx2Wq3uuZ9XZT/fJ9Pc2nPKo/KXCA5tJu0Wr/txM3qPpDE0VqxzLy/grjpuZYlOc3R/RY5lM9L2Ce/sEm3/qLEuW2prkAUP7k4oxVXg225VfYRO8BcBjszviUXJQZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ai73c205; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b62e55af64aso244318a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:29:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761665367; x=1762270167; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HRzWyIqQEcf/ZJBQA3s+G3tjXpp8X6ENyc3hg9mUVd0=;
-        b=Ai73c205dNJNvfCmoKJqpIEhIgP0KQgAhaKmSQ6DmldTtgg1iz6KUKiK/k02rCiPoN
-         UcjYBoxpADg+WeXYqQ1kMCkHdIbpJrfUqRYOt/dTyJCImxHjuedcV9y3ois3ZIMmItaI
-         a9eApK1aF9mHdPnuM/Ana97W5+619GdCLyO4gq5noClE5VrOGq5+z3BocZFdN/wxm2a/
-         k9jUUoLI4ZhqoQ+g0RCVFhYIOK8goCyOCKjWd8btDpwzlayfciLa6/+iiWMBk1vnJj+t
-         pyGTVi57sMz+dTISFjg3jw+X/Xt1gH1QgWFMOiEauwzSr5uCxY+yrFbxtyg0NWYxX2Ri
-         ZHvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761665367; x=1762270167;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HRzWyIqQEcf/ZJBQA3s+G3tjXpp8X6ENyc3hg9mUVd0=;
-        b=rjekPS21cg35eBkXVfaUS6C14mnTLCVGvECze3Jf+z+lK7FiJBtq59UGW43utnBL4a
-         vqBagd1zU4g+BUbCMzTj2nbDYQIbh3wZ3oQDRf4rdCHdrF9/hRL/AT5lU6dJkk2p1p3t
-         S5bHCUih/6KK2aJFsrXy5rPevfTLJ52iRbS2jJZFdWyis6OiL5YuYsZfilyBV7qAo/tY
-         1Z7XpjY5FyZmJ/pG/hniWvNViL1ZhPLOAu4JkZLzb5yKnuy37DJk/fKc7GX+oXGZ5HUc
-         zt8JOHl47u7iy2KEeE4pzQ1NfVtB/3XBV6vPCwykwVMz7hqpv+MrDRmBMk2Xerw2B4Tu
-         L5Mg==
-X-Gm-Message-State: AOJu0YwrlWF6vy6cz8bYBhlDfSH2T9FHsTZ4q9EAiWJJhMaR/Q8pGG/2
-	SumK1Au91W8aRll0/zkdtmwCCiDVYSe68umz/HlGHZv8CZb2K/v7VAP1Nq4cNKW/hmftpmeTRUJ
-	6MezIm+GtKrc7ppcNE58XjoxttUMf7xGNkZ+j
-X-Gm-Gg: ASbGncs28ledkxCMGKpi2Dq7eauI0W53nvRP5rKD5OeqAjH815HiHMOnmESWKahG+/L
-	q/UdyB5YFucj70sZjcH6MzP7xZOl+RHN5U2KwaeLkSKAnoxYdbZfkFD2evZ5W8IEVq4B9HVZTaB
-	GTcaTqz8RokRlnfLrBWJJ1OP0aWnoBTcll0PqvSVnZmNIDmTBTYL695QptBIp2v1/kxG0kxaZbh
-	ksvaT86pm8OMS5jCd23m9K+zZOCY1lUbM+ElDunUYJ+ZuzeTRHip2RmWUOuvxVhaR8ND2O735Pt
-	D3K+CPd9hBkfzNKsRqGu6L9GG8Oq4lUNEVhimhTmDi9YTgBVm/KqVtzXPxnDm+a+NVRBX2wwm7m
-	Nfx4gRMluxHz9TA==
-X-Google-Smtp-Source: AGHT+IEt2QWSiwc1fzvapL/YFipPkowqSgA91n8w6WIGAEj0+tbOdL4w857IZTcBs08XlqChrmu6plQ01ps3q8KEsqY=
-X-Received: by 2002:a17:903:37c5:b0:25c:9c28:b425 with SMTP id
- d9443c01a7336-294cb523db2mr25447145ad.11.1761665367378; Tue, 28 Oct 2025
- 08:29:27 -0700 (PDT)
+	s=arc-20240116; t=1761665404; c=relaxed/simple;
+	bh=0+JcJSZRv+5cEPbScn4cJij1GB/yKUcRRKLWCDt4cKc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lNo2CaoGFtyYZSdfbk+YpxYuette0SsqosYUCN+27m+7zHVMBgEl/70Sa72W4VZfXxQPybaueHXgHQykT1GUswgxfL+wFEtT1HM3P6sBfJVI0ZibJtNh4NzSg7ViWBTo81mEPKmCkP517FOpOmdaabQF+jO6x+/bEEwtiMQ6jj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=EJYW7osJ; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SFT7253246334
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=J6s9huE7CzeVZWd+xdRL
+	81JG8jOCmMWfuJ8kW6UvvEU=; b=EJYW7osJHOsP1saNlEkBmCXNvinNXDBkHMur
+	7bqEvs/wb3YPYTIbb2hMO6DuO+vs4s88k2eHmo5A0TwYr3w+4AiX8u23cH8aigs7
+	uByPbVTnXrLeuV5hSFuRzUYAicWPDUgucrRH1hcOWgMXmpBjlwrRQOqCHkFv6G6g
+	MQf9jETx7RoV3H9716BZowd3ZwdMAetQM1eUPsz0s2wsyrc+IXSI2U2KIeRRrmHm
+	9bwGAvkcNQAmUscdaWUJgBdgIsE4vbYQiD0Dr9sYR86P+doHjAf/okO33Xseso1q
+	PUgLavOObg3yGaydoQ7JRso6xdXthKFWjiDk+s4rbV/IWmF8FA==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a30gxg08x-4
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:00 -0700 (PDT)
+Received: from twshared31684.07.ash9.facebook.com (2620:10d:c085:208::f) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Tue, 28 Oct 2025 15:29:58 +0000
+Received: by devgpu012.nha5.facebook.com (Postfix, from userid 28580)
+	id 0511B503217; Tue, 28 Oct 2025 08:29:51 -0700 (PDT)
+Date: Tue, 28 Oct 2025 08:29:51 -0700
+From: Alex Mastro <amastro@fb.com>
+To: Alex Williamson <alex@shazbot.org>
+CC: Alejandro Jimenez <alejandro.j.jimenez@oracle.com>,
+        Jason Gunthorpe
+	<jgg@ziepe.ca>, <kvm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, David
+ Matlack <dmatlack@google.com>
+Subject: Re: [PATCH v4 0/3] vfio: handle DMA map/unmap up to the addressable
+ limit
+Message-ID: <aQDhb7HahKWLuUG4@devgpu012.nha5.facebook.com>
+References: <20251012-fix-unmap-v4-0-9eefc90ed14c@fb.com>
+ <20251015132452.321477fa@shazbot.org>
+ <3308406e-2e64-4d53-8bcc-bac84575c1d9@oracle.com>
+ <aPFheZru+U+C4jT7@devgpu015.cco6.facebook.com>
+ <20251016160138.374c8cfb@shazbot.org>
+ <aPJu5sXw6v3DI8w8@devgpu012.nha5.facebook.com>
+ <20251020153633.33bf6de4@shazbot.org>
+ <aPe0E6Jj9BJA2Bd5@devgpu012.nha5.facebook.com>
+ <aP+Xr1DrNM7gYD8v@devgpu012.nha5.facebook.com>
+ <20251027195732.2b7d1d3f@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027201204.352890-1-dave.hansen@linux.intel.com>
-In-Reply-To: <20251027201204.352890-1-dave.hansen@linux.intel.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 28 Oct 2025 16:29:14 +0100
-X-Gm-Features: AWmQ_bnSh5NBAupbDNmWUWjhYUw4CT3QMwRqBP2qFMQPrSjrN72Y8_1eqwDUTw0
-Message-ID: <CANiq72k7LQwXFnZgh8fCLNnx=v17Yb7yVcPQT_cdPi5k=17jbA@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: Provide guidelines for kernel development tools
-To: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
-	Dan Williams <dan.j.williams@intel.com>, "Theodore Ts'o" <tytso@mit.edu>, 
-	Sasha Levin <sashal@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Shuah Khan <shuah@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251027195732.2b7d1d3f@shazbot.org>
+X-FB-Internal: Safe
+X-Authority-Analysis: v=2.4 cv=Dp1bOW/+ c=1 sm=1 tr=0 ts=6900e178 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=ufEAdIiS26JpeJN-8DcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: Uo7AlnxrE7_Cd_yLWtW7Lw1i5wBfXQOs
+X-Proofpoint-GUID: Uo7AlnxrE7_Cd_yLWtW7Lw1i5wBfXQOs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEzMCBTYWx0ZWRfXwWA+/Cb9XTQe
+ NYZfxC+t/IKymySJINCBV+bBT/Dk9JkaOWfQtmyYlGYsYFMJ/TBbYHDCJUmHnz2gNj1o/k9gtok
+ w+lKOmlWcZZtb1j7h/IS7qhcYGy3uRS74k4aismjUiitxk8eAmCWUrbLS9KHz4G1uqi9ekE4KJ8
+ HIwXD+RtWHC8XnioNp3bOrsgqzXXd7DtRSQK9MQGjlX8JP52kpg2YtekICv3Z3uMhpIZBtGnbgK
+ tx+1eYbDv0qGeYvuAB5qRyNtRL9jINgwYQ2wLibPtmptVQzXHGAPINzDEZmcsOhS6gu5Vxv2jaM
+ mIViWS99C+TfhMNtXICZij/SrcUpWHO6jQdCJAgjxHyo6xlgxrjma2B3hQPp0Nu69Lia0i5CUQR
+ CnwpMwM0WkSZ+O/uqQ9bMobYgypsAQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_05,2025-10-22_01,2025-03-28_01
 
-Hi Dave,
+On Mon, Oct 27, 2025 at 07:57:32PM -0600, Alex Williamson wrote:
+> On Mon, 27 Oct 2025 09:02:55 -0700
+> Alex Mastro <amastro@fb.com> wrote:
+> 
+> > On Tue, Oct 21, 2025 at 09:25:55AM -0700, Alex Mastro wrote:
+> > > On Mon, Oct 20, 2025 at 03:36:33PM -0600, Alex Williamson wrote:     
+> > > > Along with the tag, it would probably be useful in that same commit to
+> > > > expand on the scope of the issue in the commit log.  I believe we allow
+> > > > mappings to be created at the top of the address space that cannot be
+> > > > removed via ioctl, but such inconsistency should result in an
+> > > > application error due to the failed ioctl and does not affect cleanup
+> > > > on release.  
+> > 
+> > I want to make sure I understand the cleanup on release path. Is my supposition
+> > below correct?
+> > 
+> > diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+> > index 916cad80941c..7f8d23b06680 100644
+> > --- a/drivers/vfio/vfio_iommu_type1.c
+> > +++ b/drivers/vfio/vfio_iommu_type1.c
+> > @@ -1127,6 +1127,7 @@ static size_t unmap_unpin_slow(struct vfio_domain *domain,
+> >  static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> >  			     bool do_accounting)
+> >  {
+> > +	// end == 0 due to overflow
+> >  	dma_addr_t iova = dma->iova, end = dma->iova + dma->size;
+> >  	struct vfio_domain *domain, *d;
+> >  	LIST_HEAD(unmapped_region_list);
+> > @@ -1156,6 +1157,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> >  	}
+> >  
+> >  	iommu_iotlb_gather_init(&iotlb_gather);
+> > +	// doesn't enter the loop, never calls iommu_unmap
+> 
+> If it were only that, I think the iommu_domain_free() would be
+> sufficient, but it looks like we're also missing the unpin.  Freeing
 
-Some more nits and suggestions below...
+Oh, right.
 
-On Mon, Oct 27, 2025 at 9:13=E2=80=AFPM Dave Hansen <dave.hansen@linux.inte=
-l.com> wrote:
->
-> Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> the IOMMU domain isn't going to resolve that.  So it actually appears
+> we're leaking those pinned pages and this isn't as self-resolving as I
+> had thought.  I imagine if you ran your new unit test to the point where
+> we'd pinned and failed to unpin the majority of memory you'd start to
+> see system-wide problems.  Thanks,
 
-No big deal either way, but for the commit you could use ojeda@kernel.org
+Makes sense.
 
-> + - Spelling and grammar fix ups, like rephrasing to imperative voice
-
-Some bullet points have periods at the end, others don't.
-
-> + - Reformatting, like running scripts/Lindent.
-
-You could perhaps add
-
-    Lindent, ``clang-format`` or ``rustfmt``
-
-or similar (the Rust one is particularly relevant because we enforce
-that one treewide unlike the C one).
-
-> + - =E2=80=9Ccheckpatch.pl --fix=E2=80=9D output, or any tool suggested f=
-ix.
-
-We should use a code span for this one.
-
-Also, should it be "tool-suggested", i.e. with a hyphen? (not a native spea=
-ker)
-
-> + - coccinelle scripts
-
-Coccinelle
-
-> + - ChatGPT generated a new function in your patch to sort list entries.
-> + - A .c file in the patch was originally generated by Gemini but cleaned
-> +   up by hand.
-
-Like Jon, it also crossed my mind using just LLM here or perhaps
-mentioning "open" models. On the other hand, it is clear commercial
-models are getting used already, e.g. Gemini is in the commit log
-already and Claude is in the mailing list.
-
-I hope that helps -- thanks for sending this!
-
-Cheers,
-Miguel
+> Alex
+> 
+> >  	while (iova < end) {
+> >  		size_t unmapped, len;
+> >  		phys_addr_t phys, next;
+> > @@ -1210,6 +1212,7 @@ static long vfio_unmap_unpin(struct vfio_iommu *iommu, struct vfio_dma *dma,
+> >  static void vfio_remove_dma(struct vfio_iommu *iommu, struct vfio_dma *dma)
+> >  {
+> >  	WARN_ON(!RB_EMPTY_ROOT(&dma->pfn_list));
+> > +	// go here
+> >  	vfio_unmap_unpin(iommu, dma, true);
+> >  	vfio_unlink_dma(iommu, dma);
+> >  	put_task_struct(dma->task);
+> > @@ -2394,6 +2397,8 @@ static void vfio_iommu_unmap_unpin_all(struct vfio_iommu *iommu)
+> >  	struct rb_node *node;
+> >  
+> >  	while ((node = rb_first(&iommu->dma_list)))
+> > +		// eventually, we attempt to remove the end of address space
+> > +		// mapping
+> >  		vfio_remove_dma(iommu, rb_entry(node, struct vfio_dma, node));
+> >  }
+> >  
+> > @@ -2628,6 +2633,8 @@ static void vfio_release_domain(struct vfio_domain *domain)
+> >  		kfree(group);
+> >  	}
+> >  
+> > +	// Is this backstop what saves us? Even though we didn't do individual
+> > +	// unmaps, the "leaked" end of address space mappings get freed here?
+> >  	iommu_domain_free(domain->domain);
+> >  }
+> >  
+> > @@ -2643,10 +2650,12 @@ static void vfio_iommu_type1_release(void *iommu_data)
+> >  		kfree(group);
+> >  	}
+> >  
+> > +	// start here
+> >  	vfio_iommu_unmap_unpin_all(iommu);
+> >  
+> >  	list_for_each_entry_safe(domain, domain_tmp,
+> >  				 &iommu->domain_list, next) {
+> > +		// eventually...
+> >  		vfio_release_domain(domain);
+> >  		list_del(&domain->next);
+> >  		kfree(domain);
+> 
 
