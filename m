@@ -1,124 +1,177 @@
-Return-Path: <linux-kernel+bounces-874315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F34C16081
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:03:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3021C16084
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF8C73A925F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A013A5602
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF46299927;
-	Tue, 28 Oct 2025 16:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7623469F4;
+	Tue, 28 Oct 2025 16:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PM6sdOJ7"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mkxaOCfB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D052367B0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4502882B4;
+	Tue, 28 Oct 2025 16:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670763; cv=none; b=mkjGUQjvJi3BeZUB9VUF237mIwtrHXJP0b73Dv3MDIPcLIsJIyRIhhbukrdoU+Oir1rE4fdcH+uRxd4jw7hqWzCcjvNh94RroEgPA8ZhYEOE2Rct3Gq7Li3AaIvSZjWFJBIUjhZc0huN8T6tfYeJ6b8FFY/F9kRM7p04zyRv/VI=
+	t=1761670785; cv=none; b=TBJNRodVBCMv9O266sADIe0dpUeiTObZe/Vvs/jwPjQZ3pKx0hcb6tkZ/+Bh/HTtyoy/UbZcU3qvK1932dTSj0WbHysK1esUJYxq73svAslIjZp786GUR2+/S0ZF8WVlZlkLwTRdJpKTL7PhLC/jg8JSWBth8nUo/sNol040Zus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670763; c=relaxed/simple;
-	bh=xUoo3v5ZJQw29XXrDvIiWl2fdN4FMA7KctAmF276cZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OKxPk+7Egqvjy2ny6UrLi5kXdvevzacRuYVx1QfSbSGz5s3pameJqtrDLxfkAihbexcP3QiwxfdfAfr4FNngLaT2EJ96ZPWfR+cp+ajJrMV/hkmcOb0KOiWM2CcwB2uAUW6UnYErMoKs4BUIMg1Aqff5xqN+QG+Kzvri0r3Jono=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PM6sdOJ7; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so3853316a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761670756; x=1762275556; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2dc0g/PPsN9pIaKjPWHbYZ5oM9jT1rQwz1YwGMpT7w=;
-        b=PM6sdOJ7+9YL1aKaXE5ZqDPY12eBSoaJyVAWvBbyRg6rH95qBYW1i85CUn5prnqwQw
-         JuAJkRNwLK9wIOMAzq8fOAMy7RnTDmgiVNEn8qF+Tqq9vjC3UNjsksIXnAgXG5Rgzqle
-         8deDirW/ps1vl4TASaSn1YErj7acU0J80pf4Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761670756; x=1762275556;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K2dc0g/PPsN9pIaKjPWHbYZ5oM9jT1rQwz1YwGMpT7w=;
-        b=kxKMMS1Kdv1FaA+4+wC5FaU5h7IH08/dLNDI68zzWW6j5tbsG1YwsQ5dzWykitR5Hn
-         +i6R6RQ5WN5ITGWclXnPBRsZ8C5fXF3ZuI+QmgergCnShMvfXJ7JfNMk/YWmYqkDoxiw
-         7YCR+7EfTi9EJT4JUyilH2Ijb+2QpqtTwEtZSWkaF2glck/Rx9gaCtMtAtgkPABTcFzS
-         Ma6BXsprYURqDJv2dOl4sYrJoxyRdlwlZ1aywgMOfHCSBLpdgzS2nvgtTYs6Az4uFEPp
-         qMYWr+EDcIC92xp8Y/8ui6i5mbGTDqnaY85DGrpvESlm1TD1ht8DrFXy/C7hQXTQtHZ7
-         n2mA==
-X-Forwarded-Encrypted: i=1; AJvYcCWS0yHJ5xX4KiX+sj5CD2bSH7Cvyz+/B4YY6CpxpkysSpskrzwRjRxHrxwQkfw2CexqzG3EjAnX+npl9mw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPItEMknFfXI1foWqP7MZMO8zkdplg8THPE2zoTpW/nYSCxcP2
-	rPfKR6J4LrPpSYEavqceEXJfYMTh+fof1e9CfMcQxBsOhKnWZ12+wE6CMSU0+w8AW75Zcs/MOuR
-	RIFJ08/gmRg==
-X-Gm-Gg: ASbGncvCP+oaIfwlxpY27Ut3MstJUy4QWMftdQePECwwbGVbXnv5Oxn5fUpj1Rf0Fr8
-	YE5GNrVG6M/De6e0D4FcWrY3omN6UalMnYwA9AEPynwWlsAnZn6NFC5pMKwtcQVLgCOPTgqMY9x
-	lWn2ttDwVuRtYQLhzaO2fwWZa3ZoFWRVDyYwU+CvD7CL8eXbg7fkOFvvOh3pvEDkUk+JnI+Pa5O
-	nYRO2yBeRoK3MLMI7hE0eD/C3gKLwsEr6eA+HG6BwdgOzxRjXE+gJZ4ET8oUUcF0FBdQ4QG41x2
-	H/Vp9AJ6MVtmRT/zyl4YiKqJPic1UqBqhVK39KgJceMg9tnjD+KgOm3E37bGLbms4aejFM9SaE2
-	R2xGoXLlXe8XB+VzqXu1rNT/EdLPrEZjfpp1c63zV/qmCGYqQpKrl9ShMfKGa+YZKJ+qSxJg+hS
-	+0vzYNvXLivT2BJGuZ3p6bZ77eKlOjo82QMWrrNeYFK8xrKnaXAA==
-X-Google-Smtp-Source: AGHT+IEU8ucSRGCQ8yeUqxnefauviz30XW/vEeL1QR+arXa90yShFB11CkPH88aAq7dWyp5UdmSeSA==
-X-Received: by 2002:a17:907:9723:b0:b3d:395:3234 with SMTP id a640c23a62f3a-b6dba597c68mr519478066b.48.1761670756116;
-        Tue, 28 Oct 2025 09:59:16 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853c549fsm1159835666b.37.2025.10.28.09.59.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 09:59:15 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso3693578a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:59:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXW2jgW5nlIoNXXF72lm/74ieyAaFos6Dxb/5m2t/V8pK6r7EoceejYoPmcNiRQc4bR1DsfuCMnfFDjxQQ=@vger.kernel.org
-X-Received: by 2002:a05:6402:5244:b0:637:8faa:9df7 with SMTP id
- 4fb4d7f45d1cf-63ed8cc16aamr3779861a12.29.1761670755473; Tue, 28 Oct 2025
- 09:59:15 -0700 (PDT)
+	s=arc-20240116; t=1761670785; c=relaxed/simple;
+	bh=WlmcaPZh3FAEdN/6qXw/fqbntM6C+LPAQ9fLf0k7lnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+4TZowpWAejTKewZ65CuS0oarMRu1rufqWhNiShwM+sRiunrcCf/T8pMb62hdi4Bvg5FlbIJIMBWjk0etZzgI22oqoUbEyt8u6QG1yulX6ROJcKZoVN81xDPTfktzmmcWmdE5G5CEGWne36ffYU3JStpJXLdP1vFQTXpxb03i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mkxaOCfB; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761670783; x=1793206783;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=WlmcaPZh3FAEdN/6qXw/fqbntM6C+LPAQ9fLf0k7lnc=;
+  b=mkxaOCfBy1sXqCMgpU1+yKEUU/blA35PNZc+eJPevseUxfVe+LklzYG1
+   3Gk5HLmDC1FsR7BFe554nnFPt0z1BrEHgk/o85978WLkW5XCl2EYWZKwC
+   l9DPWINqYjpaIi5LtqXbNIRPSYcVRFzXtV5AhhobF1Q9ASHybHC5u7Xux
+   zRp7K9srSmCRNZ0uiyFgCU6NmkrQOimm2UVD64tP1tj6EF1vIVBTGLTEG
+   JdHLBm1+XbZqATIIwCTeVvZ+gi5y3Er3L2oXstfOmcmPIbqWbIJHPZwqX
+   bWHFQOcXckt7r1SiK1wfl8UM1nN3IvH+7DEYQp0/uffhflHaDs1Dm6o3B
+   w==;
+X-CSE-ConnectionGUID: GHsuNVLQQOi/StkT87cfyA==
+X-CSE-MsgGUID: JhCazu2RSYipJVCe6veLpw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86406395"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="86406395"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:59:32 -0700
+X-CSE-ConnectionGUID: 2PbBhK9LRGWi0Y4KcExGmw==
+X-CSE-MsgGUID: JQxp2GmST+qcjw//EZHrqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="186159231"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.104])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:59:28 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 46B66121E5D;
+	Tue, 28 Oct 2025 18:59:25 +0200 (EET)
+Date: Tue, 28 Oct 2025 18:59:25 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] media: i2c: add Sony IMX111 CMOS camera sensor
+ driver
+Message-ID: <aQD2baCkvRCbZG51@kekkonen.localdomain>
+References: <20250819120428.83437-1-clamor95@gmail.com>
+ <aLB_7YS9HsfzfadI@kekkonen.localdomain>
+ <CAPVz0n1mXvdyzshei8Mbw7KVYCkQjziBA95ton4MKXPnPd0kbQ@mail.gmail.com>
+ <aQDuOSUYbuoLoFbf@kekkonen.localdomain>
+ <aQDvzKMXhVlR2G3J@kekkonen.localdomain>
+ <CAPVz0n3E08Ft1q5QS-aT8WUQNmTe5uOs=d2VHovNH1BbdQWVRQ@mail.gmail.com>
+ <aQDxeXV37IHpKeKX@kekkonen.localdomain>
+ <CAPVz0n2UzvivdUdX5QapduYZ=+LbZp+LPJnSKJmd3WRe35BwaQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ea7552f1-842c-4bb8-b19e-0410bf18c305@intel.com>
- <20251028053330.2391078-1-kuniyu@google.com> <20251028095407.2bb53f85@pumpkin>
- <CAAVpQUARk-XeMdTeGy_s65sdwuLY2RzocGyJ=2_WkhsrFN-bUw@mail.gmail.com>
-In-Reply-To: <CAAVpQUARk-XeMdTeGy_s65sdwuLY2RzocGyJ=2_WkhsrFN-bUw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 Oct 2025 09:58:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiTN=1Sm5DVnXDtQ-tSiPuz-7QVpgP2vt6LgaEnhbubfw@mail.gmail.com>
-X-Gm-Features: AWmQ_blBlp8rG7EHRLe1uP1FYCp4LO5ZZWflvlu1_iOk9v8s-pHpb1shOoMSUXA
-Message-ID: <CAHk-=wiTN=1Sm5DVnXDtQ-tSiPuz-7QVpgP2vt6LgaEnhbubfw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
- unsafe_put_user() in epoll_put_uevent().
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: David Laight <david.laight.linux@gmail.com>, dave.hansen@intel.com, alex@ghiti.fr, 
-	aou@eecs.berkeley.edu, axboe@kernel.dk, bp@alien8.de, brauner@kernel.org, 
-	catalin.marinas@arm.com, christophe.leroy@csgroup.eu, 
-	dave.hansen@linux.intel.com, edumazet@google.com, hpa@zytor.com, 
-	kuni1840@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mingo@redhat.com, 
-	mpe@ellerman.id.au, npiggin@gmail.com, palmer@dabbelt.com, pjw@kernel.org, 
-	tglx@linutronix.de, will@kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n2UzvivdUdX5QapduYZ=+LbZp+LPJnSKJmd3WRe35BwaQ@mail.gmail.com>
 
-On Tue, 28 Oct 2025 at 09:42, Kuniyuki Iwashima <kuniyu@google.com> wrote:
->
-> This is the Zen 2 platform, so probably the stac/clac cost will be
-> more expensive than you expect on Zen 5.
+On Tue, Oct 28, 2025 at 06:55:11PM +0200, Svyatoslav Ryhel wrote:
+> вт, 28 жовт. 2025 р. о 18:38 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
+> >
+> > On Tue, Oct 28, 2025 at 06:34:15PM +0200, Svyatoslav Ryhel wrote:
+> > > вт, 28 жовт. 2025 р. о 18:31 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
+> > > >
+> > > > On Tue, Oct 28, 2025 at 06:24:25PM +0200, Sakari Ailus wrote:
+> > > > > Hi Svyatoslav,
+> > > > >
+> > > > > On Fri, Aug 29, 2025 at 09:20:10PM +0300, Svyatoslav Ryhel wrote:
+> > > > > > чт, 28 серп. 2025 р. о 19:12 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
+> > > > > > >
+> > > > > > > Hi Svyatoslaw,
+> > > > > > >
+> > > > > > > On Tue, Aug 19, 2025 at 03:04:25PM +0300, Svyatoslav Ryhel wrote:
+> > > > > > > > Add driver for Sony IMX111 CMOS sensor found in LG Optimus 4X and Vu
+> > > > > > > > smartphones.
+> > > > > > >
+> > > > > > > Thanks for the set.
+> > > > > > >
+> > > > > > > I wonder how would the sensor work with the CCS driver. The register layout
+> > > > > > > appears to be very much aligned with that (I haven't checked whether there
+> > > > > > > are MSRs that depend on the mode).
+> > > > > > >
+> > > > > >
+> > > > > > After deeper testing I have found that imx111 may be nokia,smia
+> > > > > > compatible, at least most of general registers and CCS logic is
+> > > > > > applicable. Some of registers may cause issues, for example,
+> > > > > > "phy_ctrl_capability" = 0, 0x0 and some insane pll ranges. Maybe that
+> > > > > > can be addressed with a firmware patch idk. The trickiest part is that
+> > > > > > each mode requires non-standard and non-common manufacturer code
+> > > > > > (0x3xxx ranges). If you can explain how to address these issues, I
+> > > > > > would love to add imx111 and a few other modules into list of CCS
+> > > > > > supported devices.
+> > > > >
+> > > > > On a closer look, only the image size related configuration and a little
+> > > > > more appears to be CCS-like. That's not enough to configure the sensor;
+> > > > > this is conveyed in the MSR space which indeed makes the sensor difficult
+> > > > > to control using the CCS driver, unfortunately.
+> > > >
+> > > > Ok, the driver appears to be doing quite a bit of register writes outside
+> > > > the register lists, which is good, and what's there appears indeed largely
+> > > > CCS compliant. The MSRs remain an issue; it'd take quite a bit of reverse
+> > > > engineering to figure out what the registers are and how to configure them
+> > > > in a generic way. I think that's doable but I'm not sure it is justifiable
+> > > > considering the expected effort.
+> > > >
+> > >
+> > > I have deciphered a lot already since downstream provides only
+> > > register writing sequences. Everything that left is 0x3xxx which seems
+> > > to refer a vendor region and it is not documented anywhere.
+> >
+> > That's what I'd expect, too, with the possible exception of the datasheet,
+> > but even sensor datasheets often omit a lot of information.
+> >
+> 
+> There is no commonly available datasheet for this model. From what I
+> have seen from similar models, 0x3xxx is vendor region and as you said
+> "datasheets often omit a lot of information" which is the case.
+> 
+> > I believe you're already aware of
+> > <URL:https://www.mipi.org/specifications/camera-command-set>?
+> >
+> 
+> Yes, but since this module is from pre-CCS era or was created right
+> before this standard was introduced, the module lacks a quite a bit of
+> registers and configurations required by CCS. Keep in mind that sensor
+> is used in the phone from 2012.
 
-Yeah, clac/stac are horrenously expensive on Zen 2. I think they are
-microcoded - and not the fast kind - so effectively serializing.
+Ah, I wasn't aware it was that old. ;) Well, there was another driver
+merged recently which was for a sensor from 2014.
 
-They got enormously faster and pipelined in later Zen microarchitectures.
-
-Sadly, Agner Fog doesn't do timings on those instructions, and I
-haven't found any other place that has some overview of the
-performance on different microarchitectures.
-
-                Linus
+-- 
+Sakari Ailus
 
