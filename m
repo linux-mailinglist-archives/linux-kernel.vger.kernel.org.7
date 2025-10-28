@@ -1,211 +1,122 @@
-Return-Path: <linux-kernel+bounces-872966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE214C12B88
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:06:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6884CC12B8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8882F5E087A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0968E1894F86
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3AD27E7F0;
-	Tue, 28 Oct 2025 03:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B244277009;
+	Tue, 28 Oct 2025 03:06:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="GnW4Aw/d"
-Received: from mail-m49239.qiye.163.com (mail-m49239.qiye.163.com [45.254.49.239])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M48f4vwO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125735464F;
-	Tue, 28 Oct 2025 03:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A1521CA03;
+	Tue, 28 Oct 2025 03:06:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761620792; cv=none; b=EZq6L6kv9pV7OmJXc8mjID36n8YshF/J+saZwCCfXwO8zh37/PQn5YWqsKspMfN+2VLPe6FmCXajpwophxCziUvMc0gbcz4mBUapcO7PAjNrJmoo6AJKHoipCPXYTfbcer+8Y9eHQHLUOHSp++ErxAhLCaB/zZP1VsYfC70RO6Y=
+	t=1761620816; cv=none; b=TRzuGL7voBxD54rANWCeIAI2rVeb13Xokhx1q9We4PN5Yabj/e5kucNtB/VFLkJiDRYn9eUIUMy1nwLUUthiNkFNkwiJzzoQCYYAAppvJeZi4DeGoKONxBuqX0GzRtnMbFgnOEQPy4GoPJBD2Bt9R7QCZb6y9rYHScBQsV752Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761620792; c=relaxed/simple;
-	bh=xIMIjcLOtWWmvdtaALoAJEa4lY8Y+eycyiB5RfEQU5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XPPzf+bFGLx9XAgXgrBx/32ZmGWlkzWzlZked1XyMgpOf/hVW4WtmshQf7AQgEjko4WS/cYtXCZtTyEyoBwq1B4tz0xQA3QlGBvw9k9e9rYoWAHNBzKldQ+Jdd8mTynMWKVFIotwaccPF9r5v9mWiyypsr2bLaS0m2Ob9NH/Wqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=GnW4Aw/d; arc=none smtp.client-ip=45.254.49.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 276a7504d;
-	Tue, 28 Oct 2025 11:06:16 +0800 (GMT+08:00)
-Message-ID: <ff9631f5-8fff-4be8-8b6f-807c29943ef6@rock-chips.com>
-Date: Tue, 28 Oct 2025 11:06:15 +0800
+	s=arc-20240116; t=1761620816; c=relaxed/simple;
+	bh=xf1gp9ZwAj290BdaHTZHHGg0zAqBchLXVLReMOjpbR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqNUv3hCRiWG7luRMaB8P6bFH7Vx+qeTqDpAuc08WrqWkLMt2mujXiLCIj0FVMiVmZ8I2M/AX9kgGkxAQ68miQC2bBlO0bPcCW7mJePBwBycrceSje5w6rO/wQI0PZYEtwBhUlrHBjCjKoAYJrBQBHZQ8ZDcGkqXG/PiJtOER9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M48f4vwO; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761620815; x=1793156815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xf1gp9ZwAj290BdaHTZHHGg0zAqBchLXVLReMOjpbR8=;
+  b=M48f4vwOMlf3k+yP9FEKBZeQ4oiBimc020DPIVHiY1iYvR5pNc//uHaL
+   qJnB1+bcubx/fw1DN/pBYtQH1pFHpOVTm/FMFym75Z76F9vw2blRy1pO4
+   K0aDfDPJ1ZXUTCob+Bb+/d2Q9Nnq0j1ecFEEVkBL7OCLYCI/24ZwZt6sd
+   yvDDaOFSABt6l9o909tajo/noBCPcaJrFGTo9RRD9O4sRxqj6Fnv7GoOn
+   498dgsBnGhkKPNgJzR0ZA09ZBAnyDuOP2ausbGCrsnuh/JgIiA1wF3OPK
+   Rq4ClUUYHIrEDP2JJZUDwmOsoLgDdL9IicT4wwo6UTq5Eau5vG3dL8tnI
+   A==;
+X-CSE-ConnectionGUID: zs5i/O4GTi6CRJ9XIfRkFA==
+X-CSE-MsgGUID: myVq44JkQrupqtm8j8/4RA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63749264"
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="63749264"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 20:06:54 -0700
+X-CSE-ConnectionGUID: BFsbtOy6TMuyeIeXkN5SNw==
+X-CSE-MsgGUID: 2W/BbVdhSP2jj11I25GD8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="184851330"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 27 Oct 2025 20:06:49 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDa2o-000IgT-1C;
+	Tue, 28 Oct 2025 03:06:46 +0000
+Date: Tue, 28 Oct 2025 11:06:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com, quic_wenbyao@quicinc.com,
+	inochiama@gmail.com, mayank.rana@oss.qualcomm.com,
+	thippeswamy.havalige@amd.com, shradha.t@samsung.com,
+	cassel@kernel.org, kishon@kernel.org, sergio.paracuellos@gmail.com,
+	18255117159@163.com, rongqianfeng@vivo.com, jirislaby@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	srk@ti.com, s-vadapalli@ti.com
+Subject: Re: [PATCH v4 4/4] PCI: keystone: Add support to build as a loadable
+ module
+Message-ID: <202510281008.jw19XuyP-lkp@intel.com>
+References: <20251022095724.997218-5-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dt-bindings: pwm: Add a new binding for
- rockchip,rk3576-pwm
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Lee Jones <lee@kernel.org>, William Breathitt Gray <wbg@kernel.org>
-Cc: kernel@collabora.com, Jonas Karlman <jonas@kwiboo.se>,
- Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
- linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-References: <20251027-rk3576-pwm-v3-0-654a5cb1e3f8@collabora.com>
- <20251027-rk3576-pwm-v3-1-654a5cb1e3f8@collabora.com>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <20251027-rk3576-pwm-v3-1-654a5cb1e3f8@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9a28c7d7a403a3kunm3d7a8e9cae638
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR1NH1ZPQh5OGEpITh1MTR9WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=GnW4Aw/dYogb45ppMn1qSoJSL2pNnFjBY0b/PtiQx/TSoajxTtANAPZYI2US7qTJxIytb8x03LMsWpn+ewbLYxi7VKk8//rVLAHcgXAfWEQR2cipDN5G90peVYads7hG4fsu94iGsxFccwarJeK+jGAhcKRDXCFx5toNeGHGRYQ=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=nNMTKt7YjJq48T2Pcq2cArq/vrX7B1+Cr2MDe+JTEgw=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022095724.997218-5-s-vadapalli@ti.com>
 
-Hi Nicolas,
+Hi Siddharth,
 
-On 10/28/2025 1:11 AM, Nicolas Frattaroli wrote:
-> The Rockchip RK3576 SoC has a newer PWM controller IP revision than
-> previous Rockchip SoCs. This IP, called "PWMv4" by Rockchip, introduces
-> several new features, and consequently differs in its bindings.
-> 
-> Instead of expanding the ever-growing rockchip-pwm binding that already
-> has an if-condition, add an entirely new binding to handle this.
-> 
-> There are two additional clocks, "osc" and "rc". These are available for
-> every PWM instance, and the PWM hardware can switch between the "pwm",
-> "osc" and "rc" clock at runtime.
-> 
-> The PWM controller also comes with an interrupt now. This interrupt is
-> used to signal various conditions.
-> 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->   .../bindings/pwm/rockchip,rk3576-pwm.yaml          | 77 ++++++++++++++++++++++
->   MAINTAINERS                                        |  7 ++
->   2 files changed, 84 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml b/Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
-> new file mode 100644
-> index 000000000000..48d5055c8b06
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
-> @@ -0,0 +1,77 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/rockchip,rk3576-pwm.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Rockchip PWMv4 controller
-> +
-> +maintainers:
-> +  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> +
-> +description: |
-> +  The Rockchip PWMv4 controller is a PWM controller found on several Rockchip
-> +  SoCs, such as the RK3576.
-> +
-> +  It supports both generating and capturing PWM signals.
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: rockchip,rk3576-pwm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: Used to derive the PWM signal.
-> +      - description: Used as the APB bus clock.
-> +      - description: Used as an alternative to derive the PWM signal.
-> +      - description: Used as another alternative to derive the PWM signal.
-> +
-> +  clock-names:
-> +    items:
-> +      - const: pwm
-> +      - const: pclk
-> +      - const: osc
-> +      - const: rc
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#pwm-cells":
-> +    const: 3
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/rockchip,rk3576-cru.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        pwm@2add0000 {
-> +            compatible = "rockchip,rk3576-pwm";
-> +            reg = <0x0 0x2add0000 0x0 0x1000>;
-> +            clocks = <&cru CLK_PWM1>, <&cru PCLK_PWM1>, <&cru CLK_OSC_PWM1>,
-> +                     <&cru CLK_RC_PWM1>;
-> +            clock-names = "pwm", "pclk", "osc", "rc";
-> +            interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-> +            #pwm-cells = <3>;
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 252b06d4240c..baecabab35a2 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22366,6 +22366,13 @@ F:	Documentation/userspace-api/media/v4l/metafmt-rkisp1.rst
->   F:	drivers/media/platform/rockchip/rkisp1
->   F:	include/uapi/linux/rkisp1-config.h
->   
-> +ROCKCHIP MFPWM
-> +M:	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> +L:	linux-rockchip@lists.infradead.org
-> +L:	linux-pwm@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
-> +
->   ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
->   M:	Daniel Golle <daniel@makrotopia.org>
->   M:	Aurelien Jarno <aurelien@aurel32.net>
-> 
+kernel test robot noticed the following build errors:
 
-The RK3506 and RV1126B platforms that are about to be upstream also use 
-this PWM IP. Would it be better to name the yaml file 
-"pwm-rockchip-v4.yaml"? Then subsequent platforms only need to expand 
-the compatible property.
+[auto build test ERROR on pci/next]
+[also build test ERROR on pci/for-linus linus/master v6.18-rc3 next-20251027]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Best regards,
-Damon
+url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Vadapalli/PCI-Export-pci_get_host_bridge_device-for-use-by-pci-keystone/20251022-180213
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20251022095724.997218-5-s-vadapalli%40ti.com
+patch subject: [PATCH v4 4/4] PCI: keystone: Add support to build as a loadable module
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20251028/202510281008.jw19XuyP-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510281008.jw19XuyP-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510281008.jw19XuyP-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes/test-kprobes.o
+>> ERROR: modpost: "hook_fault_code" [drivers/pci/controller/dwc/pci-keystone.ko] undefined!
+ERROR: modpost: "__ffsdi2" [drivers/spi/spi-amlogic-spifc-a4.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
