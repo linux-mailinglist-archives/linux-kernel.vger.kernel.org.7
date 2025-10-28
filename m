@@ -1,530 +1,92 @@
-Return-Path: <linux-kernel+bounces-874527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A16C16834
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:38:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A830C16837
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:39:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAA64009BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:38:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B341B28C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51AE34EEF4;
-	Tue, 28 Oct 2025 18:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KYPgC/Xx"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFF234E75A;
+	Tue, 28 Oct 2025 18:39:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143C818C31
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F391418C31
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676727; cv=none; b=rs+7ITq3waGMbkFm8ckFFrGIIbmwN5UWlTaMz4HIMWEqJK3pu41C85Y58+S4DnzyOmNp5RFTNsQH9AwwF55AQvlToxUWdWYCyZFbaEubH0Zs0HhXc0YhQuFKbGmVCd8h3SMgfvdwRcN8qM0xgmlsThtLLtJvAnS03uB1Qw9bVtI=
+	t=1761676746; cv=none; b=r6+/bjBZOH/xzA44zqQn0itFXFkur9wlAcQrNVFjjqtqS3dw1uNpp5ehvtfeds+xcsRDdYGeNp1Tezf2e7TFgYNSGRAyQA48n5t+L2BatlpPsr+3VQtResmSd2VLv+RxjYMzUDVhPbfkV5epif17/vO6/kqFZXY7nh+TSc2r5OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676727; c=relaxed/simple;
-	bh=eNKjMn3Uh/O76S50ypsMx4OuX1jX5jY7WEUfndGcZXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PNu9dr5YWz073v3LSmTaU0rvHUFNi3IFZuQkCC0C7X9qDRNgkyqVhJbd0lwo+6+FTuOnCVbLlHS+9pdxGBEn6U+qVZNY22lbbAxD2B9UCAudznClL6bGaia0YCREcmKhFcM7v7oov/ZlQtVyBL9qrNquuV2g9yfitJnCjFNDl3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KYPgC/Xx; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33d896debe5so7048899a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761676725; x=1762281525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/vN5CxRP8GOmUG8hJRpo4ShOfQ1YfKflpC8dma/Sbkg=;
-        b=KYPgC/XxCKwsSHrtOaheU3dzYB8L7FzIwws/+96Uy4KvigHswr9sZGAQkxk+QMn9cF
-         pppP1+DHt/v4RlUQUp5geNNmFSWjEAz2Q41mDpYFk/jIdnJBfN5NXqCBkPtSm98uf1/6
-         2PMoIGEJaNlEf21x+z4ph5OC6QYTYjk7C46Wi9ZJ2NHkroCUF6Kgy7v73ORDZ4/+dzgt
-         QkOU07QUVnpOJYKV+f9I65jev7huc6hQinOFV97QEKnGx2MbUs4ySGGFWHDMo/GTWGe2
-         goJAFhRWGqE5hMnM+KBCCrWgsVhb7WiRxlDn2mPPce/pjb8ZBjLmGQAYaR+Iovj/Avc1
-         k6dA==
+	s=arc-20240116; t=1761676746; c=relaxed/simple;
+	bh=eQTpfE+bt8iV5LlxSAileX7P/aLJWE6CI1VkBfgCpaQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=L333To1PAdgx9cEb2iXcVQw5SIRlImaPwvBYq7lFhORo3khP9WD7ItemNKex9dfpERmaWhRBI6nt/xeREeOo2bH32Qc6H9whZAZ6pC4jK8SBtZ4H0HWclZsK90BPN7ImzJa96lHM0jspwyNRj3NmAE2bdU4n4KnJCpe1x/if6c8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430ce62d138so79010845ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:39:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761676725; x=1762281525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/vN5CxRP8GOmUG8hJRpo4ShOfQ1YfKflpC8dma/Sbkg=;
-        b=IBj0AUyqDcicYyq5OH9OmvwYdrDLfO4Sir0YCOjeVjfaLjwijt2jcnJN417YmqOECO
-         7CPT6/Uh/PY419eg4p/LE9SEtTObQ4G3xRuOvPXlG4S09ax+ALTatkMa21gYtWQF9FD5
-         FdKfgdgV5wJ1aV9kKLkRE60Dn1Yiq+t28Dcn3wfgH1oD3SrIA7IZ85mX9pjSEIupmvkG
-         HErFvc5ZGDFCteSdVBgkgvQIUH6PHkONeLztQ8ffp5RjqmLYc6hyGLM39uavH393og36
-         0+//WeujFYNgohmHWD4ugRmAmu+vuu9ZwGKGAEwTn6/1JijmEjLnHEqIkZaplGLNwTLL
-         fPdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCxBbGnoUOGbX0zPXnJR4eIiwtX/f8szt8SPfydAvJ0PDjTc9suAsQbSXuG7yOPbVVyE6AEacJ6bgB2mY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrKCYzEjiEo2EoIhaFq2NfhUB6Xuit6BPZNQbN1kXDP/pwd1IM
-	slmFEpjYPTifoY8Zi77+hQCBpqZ4pQmB0kyPcw8vcl+Thkak4A9EilMqqHDTW2QOO3g6XxuH6xZ
-	c90wljBQSA0NgMykq0j1Ezs7Mq4zXlPUgloF+
-X-Gm-Gg: ASbGncu2KeT+D7j+npOL2p5c02QUQk+qi8Fn53NYYPzu8F86SrT6NZ91oKMc2buvvxI
-	7drOy83zHdKKOc4QKv2cHk8AW7qobG/wHuVMK/OLgAzLQIeiH152c0b6quV4EeXap4xL2Rs8Z8h
-	mdsHPE75PJpWoEDgxrwNXZ37KWOcrXPnoAqBIxoaNTj1BQBKrxQAlBc3UioCEyBeCESve1kgf2f
-	btwANOn1DIZ/kGxmI34Hdv1Z1txlewgtWBYzdrhM+HLKUoecn8l1H7Pez67rO7lRI6q1UXP3ZoB
-X-Google-Smtp-Source: AGHT+IG37qcOl9Tm/ysEqT6t58AjmfmG/OvfmrATTAyPMjqvl/m7d2lDQ4WVkwj9dCy3LYIymWXQdZkAcAOFevGO5N0=
-X-Received: by 2002:a17:90b:52ce:b0:33b:ae39:c297 with SMTP id
- 98e67ed59e1d1-3403a1581a2mr48103a91.16.1761676725235; Tue, 28 Oct 2025
- 11:38:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761676744; x=1762281544;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6AjENQ9WSBFUQetSq5NxMlv9nLRMzU0A4v7pFRwVXCA=;
+        b=W4Z2kxJtQUjFaR+V3JoriRLm+UORIGPhtGp4CZwxD0fCE8HpVrq55uqtvrfAPjMnAh
+         ZpNv3Oks6Zmq2JlseNngVvK/cjNcOtJsuIgaJC+8HZZyV1yAQC8b/F5qBYa8t7WdbYhg
+         SfpoK7+pBNmn5w118NFCyatg3KQMgDcWVc9JtNMwgdNTzt9CgcclgN+/DN2tziKOKWNd
+         Fzq2fdrrunv6Vh2B7WG6PlQbmm/50HBgdLXUSuPGhduffw3mwBsQ13deWk6L7jMMFNUb
+         gylndx+b0vonFJU3kWQ1y1DPgboD8mvWBG/+G2p1RK0dp7z8Xp/TgsYSTers6SRN7ldt
+         2w4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsm9RVKQBUc3MVMHpbXIhjSV8jORn9L8B7PUsLUr31qfRcnmZdmiYVIbxQAKpyKh1NkqIDEAGP33xK1wc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN54QRQqsHC10UKb0/85zzFlZQRgMPvuhsJ48QxMXuvLCB4s1k
+	jqut/BC3KUJO/w6Ygurjuzpt6mYzAEDnjj9FvQm0TjSeaTvq05Tf3j4BAh761RP4FKWmKS7w/Mq
+	H5H4EegRKFV8v7U8EPtApTb61+DikIMmoeh29S0obIFYb00zVB1bUqOBekHY=
+X-Google-Smtp-Source: AGHT+IH0EC4VfYmgggYkbbrjRfbmPiz3HRB4eoXg+8dvf+L20seeMlzLVSNdlK1cWJGVIDe4qTXE3YOmpQl5Qh0H+X5mlDUXze8F
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com> <20251027135423.3098490-2-dolinux.peng@gmail.com>
-In-Reply-To: <20251027135423.3098490-2-dolinux.peng@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 28 Oct 2025 11:38:31 -0700
-X-Gm-Features: AWmQ_blvKSfsqWLJYTuWoZdbctYC-scPNN1eQwmdgjM3tiPwN8yKV1CUd23hRzQ
-Message-ID: <CAEf4BzZXVARn5_-3eMmPupU-gun7p3VX-VuCVOuHBC0o0L-Pjg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 1/3] btf: implement BTF type sorting for
- accelerated lookups
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
+X-Received: by 2002:a05:6e02:3181:b0:42f:9353:c7bc with SMTP id
+ e9e14a558f8ab-432f8f81ba3mr3462185ab.6.1761676744122; Tue, 28 Oct 2025
+ 11:39:04 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:39:04 -0700
+In-Reply-To: <20251028181939.4hTbT%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69010dc8.050a0220.3344a1.03d8.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
+From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> This patch introduces a new libbpf interface btf__permute() to reorganize
-> BTF types according to a provided mapping. The BTF lookup mechanism is
-> enhanced with binary search capability, significantly improving lookup
-> performance for large type sets.
->
-> The pahole tool can invoke this interface with a sorted type ID array,
-> enabling binary search in both user space and kernel. To share core logic
-> between kernel and libbpf, common sorting functionality is implemented
-> in a new btf_sort.c source file.
->
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Cc: Song Liu <song@kernel.org>
-> Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
-> v2->v3:
-> - Remove sorting logic from libbpf and provide a generic btf__permute() i=
-nterface
-> - Remove the search direction patch since sorted lookup provides sufficie=
-nt performance
->   and changing search order could cause conflicts between BTF and base BT=
-F
-> - Include btf_sort.c directly in btf.c to reduce function call overhead
-> ---
->  tools/lib/bpf/btf.c            | 262 ++++++++++++++++++++++++++++++---
->  tools/lib/bpf/btf.h            |  17 +++
->  tools/lib/bpf/btf_sort.c       | 174 ++++++++++++++++++++++
->  tools/lib/bpf/btf_sort.h       |  11 ++
->  tools/lib/bpf/libbpf.map       |   6 +
->  tools/lib/bpf/libbpf_version.h |   2 +-
->  6 files changed, 447 insertions(+), 25 deletions(-)
->  create mode 100644 tools/lib/bpf/btf_sort.c
->  create mode 100644 tools/lib/bpf/btf_sort.h
->
+Hello,
 
-This looks a bit over-engineered, let's try to simplify and have more
-succinct implementation
+syzbot tried to test the proposed patch but the build/boot failed:
 
-pw-bot: cr
+fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
 
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 18907f0fcf9f..d20bf81a21ce 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -23,6 +23,7 @@
->  #include "libbpf_internal.h"
->  #include "hashmap.h"
->  #include "strset.h"
-> +#include "btf_sort.h"
->
->  #define BTF_MAX_NR_TYPES 0x7fffffffU
->  #define BTF_MAX_STR_OFFSET 0x7fffffffU
-> @@ -92,6 +93,12 @@ struct btf {
->          *   - for split BTF counts number of types added on top of base =
-BTF.
->          */
->         __u32 nr_types;
-> +       /* number of sorted and named types in this BTF instance:
-> +        *   - doesn't include special [0] void type;
-> +        *   - for split BTF counts number of sorted and named types adde=
-d on
-> +        *     top of base BTF.
-> +        */
-> +       __u32 nr_sorted_types;
->         /* if not NULL, points to the base BTF on top of which the curren=
-t
->          * split BTF is based
->          */
-> @@ -624,6 +631,11 @@ const struct btf *btf__base_btf(const struct btf *bt=
-f)
->         return btf->base_btf;
->  }
->
-> +__u32 btf__start_id(const struct btf *btf)
-> +{
-> +       return btf->start_id;
-> +}
 
-this can already be determined using btf__base_btf() (and then getting
-its btf__type_cnt()), but I guess I don't mind having a small
-dedicated API for this. But please add it as a separate patch
+Tested on:
 
-> +
->  /* internal helper returning non-const pointer to a type */
->  struct btf_type *btf_type_by_id(const struct btf *btf, __u32 type_id)
->  {
-> @@ -915,38 +927,16 @@ __s32 btf__find_by_name(const struct btf *btf, cons=
-t char *type_name)
->         return libbpf_err(-ENOENT);
->  }
->
-> -static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id,
-> -                                  const char *type_name, __u32 kind)
-> -{
-> -       __u32 i, nr_types =3D btf__type_cnt(btf);
-> -
-> -       if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
-> -               return 0;
-> -
-> -       for (i =3D start_id; i < nr_types; i++) {
-> -               const struct btf_type *t =3D btf__type_by_id(btf, i);
-> -               const char *name;
-> -
-> -               if (btf_kind(t) !=3D kind)
-> -                       continue;
-> -               name =3D btf__name_by_offset(btf, t->name_off);
-> -               if (name && !strcmp(type_name, name))
-> -                       return i;
-> -       }
-> -
-> -       return libbpf_err(-ENOENT);
-> -}
-> -
->  __s32 btf__find_by_name_kind_own(const struct btf *btf, const char *type=
-_name,
->                                  __u32 kind)
->  {
-> -       return btf_find_by_name_kind(btf, btf->start_id, type_name, kind)=
-;
-> +       return _btf_find_by_name_kind(btf, btf->start_id, type_name, kind=
-);
->  }
->
->  __s32 btf__find_by_name_kind(const struct btf *btf, const char *type_nam=
-e,
->                              __u32 kind)
->  {
-> -       return btf_find_by_name_kind(btf, 1, type_name, kind);
-> +       return _btf_find_by_name_kind(btf, 1, type_name, kind);
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
+dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1289dd42580000
 
-nit: please avoid using underscore-prefixed names
-
->  }
->
->  static bool btf_is_modifiable(const struct btf *btf)
-> @@ -1091,6 +1081,7 @@ static struct btf *btf_new(const void *data, __u32 =
-size, struct btf *base_btf, b
->         err =3D err ?: btf_sanity_check(btf);
->         if (err)
->                 goto done;
-> +       btf_check_sorted(btf, btf->start_id);
-
-let's do this lazily when we actually need to search by name, that
-will also work better with invalidation (currently you don't recheck
-sortedness after invalidation)
-
-[...]
-
-> +/*
-> + * Permute BTF types in-place using the ID mapping from btf_permute_opts=
-->ids.
-> + * After permutation, all type ID references are updated to reflect the =
-new
-> + * ordering. If a struct btf_ext (representing '.BTF.ext' section) is pr=
-ovided,
-> + * type ID references within the BTF extension data are also updated.
-> + */
-
-See how we provide doc comment for public APIs and do the same with btf__pe=
-rmute
-
-> +int btf__permute(struct btf *btf, const struct btf_permute_opts *opts)
-
-id map array is mandatory parameter which will always be specified,
-make it a fixed argument. We use opts for something that's optional
-and/or infrequently used. btf_ext being part of opts makes total
-sense, though.
-
-> +{
-> +       struct btf_permute *p;
-> +       int err =3D 0;
-> +
-> +       if (!OPTS_VALID(opts, btf_permute_opts))
-> +               return libbpf_err(-EINVAL);
-> +
-> +       p =3D btf_permute_new(btf, opts);
-> +       if (!p) {
-> +               pr_debug("btf_permute_new failed: %ld\n", PTR_ERR(p));
-> +               return libbpf_err(-EINVAL);
-> +       }
-> +
-> +       if (btf_ensure_modifiable(btf)) {
-> +               err =3D -ENOMEM;
-> +               goto done;
-> +       }
-> +
-> +       err =3D btf_permute_shuffle_types(p);
-> +       if (err < 0) {
-> +               pr_debug("btf_permute_shuffle_types failed: %s\n", errstr=
-(err));
-> +               goto done;
-> +       }
-> +       err =3D btf_permute_remap_types(p);
-
-can't we remap IDs as we shuffle and move types around? I'm not sure
-we need entire struct btf_permute to keep track of all of this, this
-can be a local state in a single function
-
-> +       if (err) {
-> +               pr_debug("btf_permute_remap_types failed: %s\n", errstr(e=
-rr));
-> +               goto done;
-> +       }
-> +
-> +done:
-> +       btf_permute_free(p);
-> +       return libbpf_err(err);
-> +}
-> +
-
-[...]
-
-> +/*
-> + * Shuffle BTF types.
-> + *
-> + * Rearranges types according to the permutation map in p->ids. The p->m=
-ap
-> + * array stores the mapping from original type IDs to new shuffled IDs,
-> + * which is used in the next phase to update type references.
-> + */
-> +static int btf_permute_shuffle_types(struct btf_permute *p)
-> +{
-> +       struct btf *btf =3D p->btf;
-> +       const struct btf_type *t;
-> +       __u32 *new_offs =3D NULL;
-> +       void *l, *new_types =3D NULL;
-> +       int i, id, len, err;
-> +
-> +       new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
-> +       new_types =3D calloc(btf->hdr->type_len, 1);
-> +       if (!new_types || !new_offs) {
-> +               err =3D -ENOMEM;
-> +               goto out_err;
-> +       }
-> +
-> +       l =3D new_types;
-
-What does "l" refer to in this name? It rings no bells for me...
-
-> +       for (i =3D 0; i < btf->nr_types; i++) {
-
-this won't work with split BTF, no?
-
-> +               id =3D p->ids[i];
-> +               t =3D btf__type_by_id(btf, id);
-> +               len =3D btf_type_size(t);
-> +               memcpy(l, t, len);
-> +               new_offs[i] =3D l - new_types;
-> +               p->map[id - btf->start_id] =3D btf->start_id + i;
-> +               l +=3D len;
-> +       }
-> +
-> +       free(btf->types_data);
-> +       free(btf->type_offs);
-> +       btf->types_data =3D new_types;
-> +       btf->type_offs =3D new_offs;
-> +       return 0;
-> +
-
-[...]
-
-> diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
-> new file mode 100644
-> index 000000000000..553c5f5e61bd
-> --- /dev/null
-> +++ b/tools/lib/bpf/btf_sort.c
-
-why does this have to be a separate file? can't it be part of btf.c?
-
-> @@ -0,0 +1,174 @@
-> +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
-> +/* Copyright (c) 2025 Xiaomi */
-> +
-> +#ifndef _GNU_SOURCE
-> +#define _GNU_SOURCE
-> +#endif
-> +
-> +#ifdef __KERNEL__
-> +
-> +#define btf_type_by_id                         (struct btf_type *)btf_ty=
-pe_by_id
-> +#define btf__str_by_offset                     btf_str_by_offset
-> +#define btf__type_cnt                          btf_nr_types
-> +#define btf__start_id                          btf_start_id
-> +#define libbpf_err(x)                          x
-> +
-> +#else
-> +
-> +#define notrace
-> +
-> +#endif /* __KERNEL__ */
-> +
-> +/*
-> + * Skip the sorted check if the number of BTF types is below this thresh=
-old.
-> + * The value 4 is chosen based on the theoretical break-even point where
-> + * linear search (N/2) and binary search (LOG2(N)) require approximately
-> + * the same number of comparisons.
-> + */
-> +#define BTF_CHECK_SORT_THRESHOLD  4
-
-I agree with Eduard, it seems like an overkill. For small BTFs this
-all doesn't matter anyways.
-
-> +
-> +struct btf;
-> +
-> +static int cmp_btf_kind_name(int ka, const char *na, int kb, const char =
-*nb)
-> +{
-> +       return (ka - kb) ?: strcmp(na, nb);
-> +}
-> +
-> +/*
-> + * Sort BTF types by kind and name in ascending order, placing named typ=
-es
-> + * before anonymous ones.
-> + */
-> +static int btf_compare_type_kinds_names(const void *a, const void *b, vo=
-id *priv)
-> +{
-> +       struct btf *btf =3D (struct btf *)priv;
-> +       struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
-> +       struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
-> +       const char *na, *nb;
-> +       bool anon_a, anon_b;
-> +       int ka, kb;
-> +
-> +       na =3D btf__str_by_offset(btf, ta->name_off);
-> +       nb =3D btf__str_by_offset(btf, tb->name_off);
-> +       anon_a =3D str_is_empty(na);
-> +       anon_b =3D str_is_empty(nb);
-> +
-> +       /* ta w/o name is greater than tb */
-> +       if (anon_a && !anon_b)
-> +               return 1;
-> +       /* tb w/o name is smaller than ta */
-> +       if (!anon_a && anon_b)
-> +               return -1;
-> +
-> +       ka =3D btf_kind(ta);
-> +       kb =3D btf_kind(tb);
-> +
-> +       if (anon_a && anon_b)
-> +               return ka - kb;
-> +
-> +       return cmp_btf_kind_name(ka, na, kb, nb);
-> +}
-
-I think we should keep it simple and only use sorted-by-name property.
-Within the same name, we can just search linearly for necessary kind.
-
-> +
-> +static __s32 notrace __btf_find_by_name_kind(const struct btf *btf, int =
-start_id,
-> +                                  const char *type_name, __u32 kind)
-> +{
-> +       const struct btf_type *t;
-> +       const char *tname;
-> +       int err =3D -ENOENT;
-> +
-> +       if (!btf)
-> +               goto out;
-> +
-> +       if (start_id < btf__start_id(btf)) {
-> +               err =3D __btf_find_by_name_kind(btf->base_btf, start_id, =
-type_name, kind);
-> +               if (err =3D=3D -ENOENT)
-> +                       start_id =3D btf__start_id(btf);
-> +       }
-> +
-> +       if (err =3D=3D -ENOENT) {
-> +               if (btf->nr_sorted_types) {
-> +                       /* binary search */
-> +                       __s32 start, end, mid, found =3D -1;
-> +                       int ret;
-> +
-> +                       start =3D start_id;
-> +                       end =3D start + btf->nr_sorted_types - 1;
-> +                       /* found the leftmost btf_type that matches */
-> +                       while(start <=3D end) {
-> +                               mid =3D start + (end - start) / 2;
-
-nit: binary search is, IMO, where succinct names like "l", "r", "m"
-are good and actually help keeping algorithm code more succinct
-without making it more obscure
-
-> +                               t =3D btf_type_by_id(btf, mid);
-> +                               tname =3D btf__str_by_offset(btf, t->name=
-_off);
-> +                               ret =3D cmp_btf_kind_name(BTF_INFO_KIND(t=
-->info), tname,
-> +                                                       kind, type_name);
-> +                               if (ret < 0)
-> +                                       start =3D mid + 1;
-> +                               else {
-> +                                       if (ret =3D=3D 0)
-> +                                               found =3D mid;
-> +                                       end =3D mid - 1;
-> +                               }
-> +                       }
-> +
-> +                       if (found !=3D -1)
-> +                               return found;
-
-please check find_linfo() in kernel/bpf/log.c for a very succinct
-implementation of binary search where we look not for exact match, but
-rather leftmost or rightmost element satisfying some condition.
-find_linfo() is actually looking for leftmost element (despite what
-comment says :) ), so I think can be followed very closely.
-
-> +               } else {
-> +                       /* linear search */
-> +                       __u32 i, total;
-> +
-> +                       total =3D btf__type_cnt(btf);
-> +                       for (i =3D start_id; i < total; i++) {
-> +                               t =3D btf_type_by_id(btf, i);
-> +                               if (btf_kind(t) !=3D kind)
-> +                                       continue;
-> +
-> +                               tname =3D btf__str_by_offset(btf, t->name=
-_off);
-> +                               if (tname && !strcmp(tname, type_name))
-> +                                       return i;
-> +                       }
-> +               }
-> +       }
-> +
-
-[...]
 
