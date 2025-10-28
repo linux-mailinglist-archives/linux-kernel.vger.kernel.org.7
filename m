@@ -1,76 +1,79 @@
-Return-Path: <linux-kernel+bounces-874412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 268CDC1645D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:46:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1309CC1640C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA51E406D16
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:43:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7921C34BC28
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B6034CFB9;
-	Tue, 28 Oct 2025 17:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C6534DCFD;
+	Tue, 28 Oct 2025 17:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l64mDNkp"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eddZkTuW"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C3E34B1B7
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF7034C99D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673364; cv=none; b=fEozsXNh2c7p7fZb5XdC3+Kb6j7NyMB6/+T04HZp+6aeeLuhppddKM+cVEGHJ4BZNzbJxWV7U8ptnpKJHMN3H/5sDOR5jo4I2JJmA9cS435eH4F5aKuvcgctnIqlgXuLVoHzhfOONzckW0y6SR8MMdx871p9WUg38iMpQwIjzXI=
+	t=1761673373; cv=none; b=gFIFldvgR5jsbEtDy3O67vI6oau3CnCFN0xfxFfo/H076acSvtuvluNdnHpqPihuJOrqFp0fGF0DzM0t1ISAug+gQhA/icwnRA/UGZDXB14XQH8fFKWd1D/D6AGynxk5qLaSCJrHE+5pViSV6/MV1isvfxMVXDOfFTaDikoUdQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673364; c=relaxed/simple;
-	bh=NB4/159VAJ/LOLYrEdLoYDe6gQW8IwjruqaLuSzroRI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DCtMOPtlYT2w2veXcN4TmTqkjF3IQAfcuK+EqD91xpSwii2Mlk0Tha5GiwaO48r/h1u94Wi6MoegMG4ubavHfkDabVkY4WTSDc3OrOq44NRW5tc5NZJW0FPzZcCP4Ah3nd9FXPfptVUhp/P5vmgvudlUL13mBr0QZY5OVgk43PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l64mDNkp; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1761673373; c=relaxed/simple;
+	bh=6v4wjgebPozLKUgfPJH5/qazZjK7CJHOf35355Wnrh8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZiqhAe81Pv27Y6ZBSgr1Zgyx13r3VL7K773P5FvpirBz5HNYXipwQz9P/ImBMD6bKTWBeyRiDcEs5CoaOB/8orGbOsAdXqyLdHx8o6jNnPtC/k4/bC6gD4OMl5MIAM/17wBJaFiGaaZe6n6GQybMhnbpn56MJXKyNWdvNQJ3OMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eddZkTuW; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so4884036b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:42:43 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-76e2ea933b7so124576b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:42:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761673363; x=1762278163; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pUzQKBks4b6XgtXD3YeHoVuqCQLUAhrUCly5cGOnfSg=;
-        b=l64mDNkpwyGxcOssSDTg7IatUFkEZGofVjCs2qt1FewOF6/6Mpobaw9ECAmBH+SC3U
-         tOTITFF/N3wjho6Ta984rJdEWi01dosMFY7ZlShOvoXkMxPmTOU3nItgCzDZc9rzM8en
-         NQTddCEyArdIevNn/fpsO+6pUkTMnQuirbEBxYJisTf5ezg/GGy1zTp7f9NmDq4T0mVO
-         q9WIuyi01+8S8yufqgtTRSAi0XWqMXuhuoo8H246EkE/K3sjmlPOUGMACkD8nSIK58Uy
-         MNTPc/n2iJVlYSCsrjQAX2pLig36SlK5wPb+abvVHmSOkn1csneA1Ulnm51gGjNPv7xb
-         o71w==
+        d=gmail.com; s=20230601; t=1761673371; x=1762278171; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3CmgKRjxqZ78TC/moM+aLGRRq1ZpH43SB88rhbo0/Vo=;
+        b=eddZkTuWFeKasSR8uxsAbOvFKMc6xw0XfVaLl1yMyYW4rqkjJQB0H6Nw2NU5VSa83/
+         qxlu+6sQ3ohVdkVH9AwI9y54F6orD10wlFyS5qcURMfZlmVuloJ6B0Jf9SI+Gb5uRv7A
+         B8O+ywkfeNMWPw3QTWROX8SmGjkZ+jBqcmW5Sf054AlWKXHxYYv4bLQrSfEvWV9dY4uJ
+         pAF2iPppu275yzGg7R/8lAfExfKm77HxYykEcyngvwiyO4BJp53Mz+VKD+oUU5ZjISWr
+         CniwzGhbQDwOegWM3ido0wmhpt69Rzx7dGyoxKoKNVRsD+gfsYMGnT1lLPiWeuCWuOlE
+         40Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761673363; x=1762278163;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pUzQKBks4b6XgtXD3YeHoVuqCQLUAhrUCly5cGOnfSg=;
-        b=fhDXWTJ8Rk1IztQVVR7JFsZUam13twlYBZukLOxTJL3hhHLXdFJbJqnItyB7z6fy8R
-         3C9Fkcv2Ws0FpD9pLAslHpLURtqjxw25cmYgTTFzR4yYofce/IVni/Lm4KeMDRG6LNOV
-         8f5OChhjYAyhoKuRu2OSLGgwX1DwsT1yYD3cnkxZxH5aA5Jd3N90zWsQClDzWAlnkFSL
-         xt2zumkIyIal4HRYBo6AUWth2EBwMVbzG2pI3AroYSOF8z89gcoEGcWd6F8vK5y/mqnE
-         2+ksiIwYIFDNdGoBOdf6ZJMiWdGlGrFMCTA7dLn//JuJgWnoL7FWwiTw6Wv+a1g/6BCS
-         I/WA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4d9I8wACbw86wRnQfj/qpdPGS4KxHoyoDnn8uhWkctk0T0OlMqJWgOwMnLv7hNPOxtS4XvmCPNAG8oR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCgtWfmVY5i7aJuXGvAhhbB5tku+gElqFgI7yR75IPjZfa4m3v
-	L1/+T7GPxNWpDfvDPRGBvDJRRoquJsAZ+LlK4xQY+evWmw8nvaR2/1Hs
-X-Gm-Gg: ASbGnctJVpVQT71RqT7pCbID3B6x8zYrQNM697OAQ9uxFoTp3ydw5zY+G4y478l/Brx
-	a1lLtxHTO36xv1GvLUtP2Xacad9WXgspNW4LDCIU9DPcQ02Lw77D+o3NjTlvHdOJwrmwzPibZHi
-	w4juq2ixyCLy1DYK7JP/QbT8P054z5ce4KK/7of6wn9NWs+CDIeKE6lu+wmLXBA4k8yHHBUV9TI
-	DXUbSl4KodTyCfkoM9GvSBo7gdFKisvBS97VwnzCijSAKJJLO/XUSb0JmOknhui9Gwpv3NT1Efp
-	1Xk9fhCqGkuBuXciDyV/36DRMwuUCT0mZ8OIhLP4yOcLZi5ujf2KMHFvXNE0xYQaSgNhtzFOeg7
-	uZ0zn8CKc3JV5W/qwm8sdCnw6NFeZsXVEbAN64y6XLoYEE+bFczupAPh9P67Tvhoc/pW33H/A+P
-	GCKM+fysrS7HNfKaigqhey12ecUhmEQq1m5iz9d/q2IR3KAJmOhBCKC8ooWRMZETJXlUc=
-X-Google-Smtp-Source: AGHT+IFkagOU2linMs2kD3kWq1TGqg7rAVt5JSOnY9BDlaUoP7+rT5UX8pceuf3wIHeJnBVA96Qorg==
-X-Received: by 2002:a05:6a21:3289:b0:266:1f27:a01e with SMTP id adf61e73a8af0-344d3e45d1amr5219012637.39.1761673362484;
-        Tue, 28 Oct 2025 10:42:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761673371; x=1762278171;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3CmgKRjxqZ78TC/moM+aLGRRq1ZpH43SB88rhbo0/Vo=;
+        b=cnESLGP55PbAzLPoiAdzEsEZIa44fly17i1fqGdIokS79B7TrouIxuoFifIxOPyqDW
+         zRR8wEu0Xw0npolqif6XNsRZe5pQ02axPS4RGgoCf+HFBf5derA+q6HKmLidt6+1B/k6
+         kwTtDCNOcegdrIAgAo0mhxfC9Z7Peed6xVdYQgpXGlntXRvMBMUaMhGOE+OrNv6sHwzG
+         +MD7pxZZUzADwnBI45LE0SHUJgcui0/qT09nQQHqGobBqtP1pVD4Qrtz4zrGgI9D/gtX
+         orzeNcKSykLi3aOypR1NdXhoW0wQK1ARLdaGX9wSBJkL35e3yESwS3K/W/yKPgIAqRPT
+         YbMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSO2kmP5jlPw7uHrRY6zT33hCsauy/oG/aOWkhm0xtxUcAJx2QTbfx7Krq6rKqB204QqoSJLfYfDnxAV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIRxgq9L1FlKMEXYU/SbpiG9oRThyrZzWQMFNNat7vlP8UmAR/
+	cIT6AZBqpIGQEVUUkIlZ9HXcgUeIfaqbebqIUDmzUPmqGgZNCh30ryMi
+X-Gm-Gg: ASbGncuTYTA5kAPUtJIFzSdVIsmy01tsoajiA+j1DPMP/VT8dwDBTAo8K/yiySQCzFD
+	zB+rQOfOYe5U7xQvh6divj4+6aaq9keQqcsA9Kde94zdvtvfruBnQ1Z3+q2Tw23N/aQDD9u8NVJ
+	MkV7iEqfHeP12peV5fVjH+y7MTG/eOwoOVN7RfB2tp1HAAm64428CfyZkxLdFZJIJPkVBtlCM8n
+	fXhYKpupXk/bJPgvGYAeXm87Ebe4d4Dv+V9wXqQm/RhWbpsZXFo/Iwr2d6LRifDmX2BFuXxmbHd
+	SRXfJwHvbvqh8uqxr6nr+jkwRomBxR8mwR1aikzkh+tWi+TMz2ZN+3VXebqzmumceHOLRyrQ6lm
+	r8cB0kjVkNMld+GWjPx5pTcC8QLCUINEDPD+2TnPs28Vn71NvvaguT8r/LPw/0ZOYx+hOb5NroT
+	LDb+lDJWPpQnryciH9TZES+IdhCWvQHJULajDMm9sBZKDYrJdQ0j1SRS+XPzSWzHsPqViwLjjZi
+	DU5OQ==
+X-Google-Smtp-Source: AGHT+IF7n2P9v4I116Y5WIJSgeGFxuUTJM6UJ4Tic/BqkwkkiA9qVF8XSZ650kwCzK0xRThK/PyTsQ==
+X-Received: by 2002:a05:6a21:ad16:b0:345:483a:48ae with SMTP id adf61e73a8af0-345483a4a8amr3360888637.12.1761673370932;
+        Tue, 28 Oct 2025 10:42:50 -0700 (PDT)
 Received: from debian.domain.name ([223.181.113.110])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bde68sm11086746a12.1.2025.10.28.10.42.34
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bde68sm11086746a12.1.2025.10.28.10.42.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:42:41 -0700 (PDT)
+        Tue, 28 Oct 2025 10:42:50 -0700 (PDT)
 From: I Viswanath <viswanathiyyappan@gmail.com>
 To: davem@davemloft.net,
 	edumazet@google.com,
@@ -89,10 +92,12 @@ Cc: netdev@vger.kernel.org,
 	david.hunter.linux@gmail.com,
 	khalid@kernel.org,
 	I Viswanath <viswanathiyyappan@gmail.com>
-Subject: [RFC/RFT PATCH net-next v3 0/2] net: Split ndo_set_rx_mode into snapshot and deferred write
-Date: Tue, 28 Oct 2025 23:12:20 +0530
-Message-ID: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
+Subject: [RFC/RFT PATCH net-next v3 1/2] net: Add ndo_write_rx_config and helper structs and functions:
+Date: Tue, 28 Oct 2025 23:12:21 +0530
+Message-ID: <20251028174222.1739954-2-viswanathiyyappan@gmail.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
+References: <20251028174222.1739954-1-viswanathiyyappan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,76 +106,210 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is an implementation of the idea provided by Jakub here
+Add ndo_write_rx_config callback and helper structs/functions:
 
-https://lore.kernel.org/netdev/20250923163727.5e97abdb@kernel.org/
+	rx_config_work - To schedule the callback and handle synchronization
 
-ndo_set_rx_mode is problematic because it cannot sleep.
+	read_snapshot/update_snapshot - Helper functions to read/update the
+		 rx_config snapshot
 
-To address this, this series proposes dividing existing set_rx_mode
-implementations into set_rx_mode and write_rx_config
+	set_and_schedule_rx_config - Helper function to call ndo_set_rx_mode
+		 and schedule ndo_write_rx_config
 
-The new set_rx_mode will be responsible for updating the rx_config
-snapshot which will be used by ndo_write_rx_config to update the hardware
+	execute_write_rx_config - Helper function that will be scheduled
+		 by rx_work->config_write
 
-In brief, The callback implementations should look something like:
-
-set_rx_mode():
-    prepare_rx_config();
-    update_snapshot();
-
-write_rx_config():
-    read_snapshot();
-    do_io();
-
-write_rx_config() is called from a work item making it sleepable
-during the do_io() section.
-
-This model should work correctly if the following conditions hold:
-
-1. write_rx_config should use the rx_config set by the most recent
-    call to set_rx_mode before its execution.
-
-2. If a set_rx_mode call happens during execution of write_rx_config,
-    write_rx_config should be rescheduled.
-
-3. All calls to modify rx_mode should pass through the set_rx_mode +
-    schedule write_rx_config execution flow.
-
-1 and 2 are guaranteed because of the properties of work queues
-
-Drivers need to ensure 3
-
-ndo_write_rx_config has been implemented for 8139cp driver as proof of
-concept
-
-To use this model, a driver needs to implement the
-ndo_write_rx_config callback, have a member rx_config in
-the priv struct and replace all calls to set rx mode with
-schedule_and_set_rx_mode();
+Signed-off-by: I Viswanath <viswanathiyyappan@gmail.com>
 ---
-v1:
-Link: https://lore.kernel.org/netdev/20251020134857.5820-1-viswanathiyyappan@gmail.com/
+ include/linux/netdevice.h | 38 +++++++++++++++++++++++++++-
+ net/core/dev.c            | 53 +++++++++++++++++++++++++++++++++++----
+ 2 files changed, 85 insertions(+), 6 deletions(-)
 
-v2:
-- Exported set_and_schedule_rx_config as a symbol for use in modules
-- Fixed incorrect cleanup for the case of rx_work alloc failing in alloc_netdev_mqs
-- Removed the locked version (cp_set_rx_mode) and renamed __cp_set_rx_mode to cp_set_rx_mode
-Link: https://lore.kernel.org/netdev/20251026175445.1519537-1-viswanathiyyappan@gmail.com/
-
-v3:
-- Added RFT tag
-- Corrected mangled patch
-
-I Viswanath (2):
-  net: Add ndo_write_rx_config and helper structs and functions:
-  net: ethernet: Implement ndo_write_rx_config callback for the 8139cp
-    driver
-
- drivers/net/ethernet/realtek/8139cp.c | 78 ++++++++++++++++-----------
- include/linux/netdevice.h             | 38 ++++++++++++-
- net/core/dev.c                        | 53 ++++++++++++++++--
- 3 files changed, 131 insertions(+), 38 deletions(-)
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index 7f5aad5cc9a1..9f188229443c 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -1100,7 +1100,12 @@ struct netdev_net_notifier {
+  * void (*ndo_set_rx_mode)(struct net_device *dev);
+  *	This function is called device changes address list filtering.
+  *	If driver handles unicast address filtering, it should set
+- *	IFF_UNICAST_FLT in its priv_flags.
++ *	IFF_UNICAST_FLT in its priv_flags. This sets up the snapshot of
++ *	rx_config that will be written to the device.
++ *
++ * void (*ndo_write_rx_config)(struct net_device *dev);
++ *	This function is scheduled immediately after ndo_set_rx_mode to
++ *	write rx_config to the device.
+  *
+  * int (*ndo_set_mac_address)(struct net_device *dev, void *addr);
+  *	This function  is called when the Media Access Control address
+@@ -1421,6 +1426,7 @@ struct net_device_ops {
+ 	void			(*ndo_change_rx_flags)(struct net_device *dev,
+ 						       int flags);
+ 	void			(*ndo_set_rx_mode)(struct net_device *dev);
++	void			(*ndo_write_rx_config)(struct net_device *dev);
+ 	int			(*ndo_set_mac_address)(struct net_device *dev,
+ 						       void *addr);
+ 	int			(*ndo_validate_addr)(struct net_device *dev);
+@@ -1767,6 +1773,12 @@ enum netdev_reg_state {
+ 	NETREG_DUMMY,		/* dummy device for NAPI poll */
+ };
+ 
++struct rx_config_work {
++	struct work_struct config_write;
++	struct net_device *dev;
++	spinlock_t config_lock;
++};
++
+ /**
+  *	struct net_device - The DEVICE structure.
+  *
+@@ -2082,6 +2094,8 @@ enum netdev_reg_state {
+  *			dev_list, one per address-family.
+  *	@hwprov: Tracks which PTP performs hardware packet time stamping.
+  *
++ *	@rx_work: helper struct to schedule rx config write to the hardware.
++ *
+  *	FIXME: cleanup struct net_device such that network protocol info
+  *	moves out.
+  */
+@@ -2559,6 +2573,8 @@ struct net_device {
+ 
+ 	struct hwtstamp_provider __rcu	*hwprov;
+ 
++	struct rx_config_work *rx_work;
++
+ 	u8			priv[] ____cacheline_aligned
+ 				       __counted_by(priv_len);
+ } ____cacheline_aligned;
+@@ -2734,6 +2750,26 @@ void dev_net_set(struct net_device *dev, struct net *net)
+ 	write_pnet(&dev->nd_net, net);
+ }
+ 
++#define update_snapshot(config_ptr, type)						\
++	do {										\
++		typeof((config_ptr)) rx_config = ((type *)(dev->priv))->rx_config;	\
++		unsigned long flags;							\
++		spin_lock_irqsave(&((dev)->rx_work->config_lock), flags);		\
++		*rx_config = *(config_ptr);						\
++		spin_unlock_irqrestore(&((dev)->rx_work->config_lock), flags);		\
++	} while (0)
++
++#define read_snapshot(config_ptr, type)						\
++	do {										\
++		typeof((config_ptr)) rx_config = ((type *)(dev->priv))->rx_config;	\
++		unsigned long flags;							\
++		spin_lock_irqsave(&((dev)->rx_work->config_lock), flags);		\
++		*(config_ptr) = *rx_config;						\
++		spin_unlock_irqrestore(&((dev)->rx_work->config_lock), flags);		\
++	} while (0)
++
++void set_and_schedule_rx_config(struct net_device *dev, bool flush);
++
+ /**
+  *	netdev_priv - access network device private data
+  *	@dev: network device
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 378c2d010faf..69b8bfc0edeb 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -9571,6 +9571,37 @@ int netif_set_allmulti(struct net_device *dev, int inc, bool notify)
+ 	return 0;
+ }
+ 
++static void execute_write_rx_config(struct work_struct *param)
++{
++	struct rx_config_work *rx_work = container_of(param,
++					 struct rx_config_work,
++					 config_write);
++	struct net_device *dev = rx_work->dev;
++
++	// This path should not be hit outside the work item
++	WARN_ON(!dev->netdev_ops->ndo_write_rx_config);
++	dev->netdev_ops->ndo_write_rx_config(dev);
++}
++
++/*	Sets up the rx_config snapshot and schedules write_rx_config. If
++ *	it's necessary to wait for completion of write_rx_config, set
++ *	flush to true.
++ */
++void set_and_schedule_rx_config(struct net_device *dev, bool flush)
++{
++	const struct net_device_ops *ops = dev->netdev_ops;
++
++	if (ops->ndo_set_rx_mode)
++		ops->ndo_set_rx_mode(dev);
++
++	if (ops->ndo_write_rx_config) {
++		schedule_work(&dev->rx_work->config_write);
++		if (flush)
++			flush_work(&dev->rx_work->config_write);
++	}
++}
++EXPORT_SYMBOL(set_and_schedule_rx_config);
++
+ /*
+  *	Upload unicast and multicast address lists to device and
+  *	configure RX filtering. When the device doesn't support unicast
+@@ -9579,8 +9610,6 @@ int netif_set_allmulti(struct net_device *dev, int inc, bool notify)
+  */
+ void __dev_set_rx_mode(struct net_device *dev)
+ {
+-	const struct net_device_ops *ops = dev->netdev_ops;
+-
+ 	/* dev_open will call this function so the list will stay sane. */
+ 	if (!(dev->flags&IFF_UP))
+ 		return;
+@@ -9601,8 +9630,7 @@ void __dev_set_rx_mode(struct net_device *dev)
+ 		}
+ 	}
+ 
+-	if (ops->ndo_set_rx_mode)
+-		ops->ndo_set_rx_mode(dev);
++	set_and_schedule_rx_config(dev, false);
+ }
+ 
+ void dev_set_rx_mode(struct net_device *dev)
+@@ -11961,9 +11989,17 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 	refcount_set(&dev->dev_refcnt, 1);
+ #endif
+ 
+-	if (dev_addr_init(dev))
++	dev->rx_work = kmalloc(sizeof(*dev->rx_work), GFP_KERNEL);
++	if (!dev->rx_work)
+ 		goto free_pcpu;
+ 
++	dev->rx_work->dev = dev;
++	spin_lock_init(&dev->rx_work->config_lock);
++	INIT_WORK(&dev->rx_work->config_write, execute_write_rx_config);
++
++	if (dev_addr_init(dev))
++		goto free_rx_work;
++
+ 	dev_mc_init(dev);
+ 	dev_uc_init(dev);
+ 
+@@ -12045,6 +12081,10 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
+ 	free_netdev(dev);
+ 	return NULL;
+ 
++free_rx_work:
++	cancel_work_sync(&dev->rx_work->config_write);
++	kfree(dev->rx_work);
++
+ free_pcpu:
+ #ifdef CONFIG_PCPU_DEV_REFCNT
+ 	free_percpu(dev->pcpu_refcnt);
+@@ -12130,6 +12170,9 @@ void free_netdev(struct net_device *dev)
+ 		return;
+ 	}
+ 
++	cancel_work_sync(&dev->rx_work->config_write);
++	kfree(dev->rx_work);
++
+ 	BUG_ON(dev->reg_state != NETREG_UNREGISTERED);
+ 	WRITE_ONCE(dev->reg_state, NETREG_RELEASED);
+ 
 -- 
 2.34.1
 
