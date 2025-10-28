@@ -1,149 +1,143 @@
-Return-Path: <linux-kernel+bounces-873411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6FA3C13D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:36:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23F4CC13DF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0681A2599A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:36:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 328F85862F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFCD3019DE;
-	Tue, 28 Oct 2025 09:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056E82DEA68;
+	Tue, 28 Oct 2025 09:37:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jb6M25ei"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SL6qyV9f"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E55B2153EA;
-	Tue, 28 Oct 2025 09:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202342C029F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644182; cv=none; b=CFYJ4K+w/W2voov0FvEiIaUo71kURpyaGuGsGDNGa1OY1WPHCm+hqfgaUDMYfnjXFS1MoxzfhFHuu5GjNNmG+tNwRWi9QYqUAXtwEu4TmTd+9EMVzkFAZ/TfXM3bPVg7ycnLOZwS5AdwrpAuYBu1BPwt9wI1ebweREuYyGBnFiM=
+	t=1761644219; cv=none; b=GExn1vK2LLkvgGlNQT7svqoBa3r00fQ0kBEMNJTr+sGQVR6tqIeL9UPNJ6iUkKFPMtTKEaQGQlpTpzqH19Siljrw+TDsBdkRT0/e8iLZ0RbWEPjiTtn/fhsQGxOhliEMSiTd6ZDr9iYj4jrbXNXO1aZn791EbiRyw9MBlUX2Quk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644182; c=relaxed/simple;
-	bh=/CnM+BwB4HWoGtBtLjRmY8adwf7rdmUhLpSovcchX3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ghi7isvwRFHYhmivXUVMFWW+fckIkjKBN392LGneDHuRcGNSvnotAFFAofjgxBMcYu1NbwbyBhw+EEm8PrX6JEgHwShMHK790P1yurSglXDs5X7ipI0GODGy7cgau/Pq//A7zFu1zjZdzgbqf837OZxKhIMB1hnaggrX3R7o7Y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jb6M25ei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7D50C4CEE7;
-	Tue, 28 Oct 2025 09:36:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761644181;
-	bh=/CnM+BwB4HWoGtBtLjRmY8adwf7rdmUhLpSovcchX3c=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=jb6M25eiwvmfBqF1TxlJXLovlSNw7g78WBNmlA6vokpLm2haJrAUMMZ3J8B+K6I5u
-	 xGe4S0Okzi18az/OAP825tHMtU8I+9Rqr8UIjuJIhtBMYUqbJ5TDkK9zvINmt0iisl
-	 B2QAV7mGZ70Bt1YjYyrQgGm+z3nBz3oQKPx9di2dchkbnXnxW+q7ei3/IibyZ+lhD0
-	 c/ZVakc+oL0URqSVM5dTtsFwahdGyC8nwuwL0mj4OQ7zOyprlo1TgO1Z20bIxTFAiP
-	 7NOywBIEETZN5QF27h6vNq0E2vylRbap3IdZ6XqKv9eyVidVuQtC1S32OG/4kUKrWn
-	 esMpwzp+dPSAA==
-Message-ID: <0d9895d1-9c4a-406f-858f-fcb318b9f04b@kernel.org>
-Date: Tue, 28 Oct 2025 10:36:17 +0100
+	s=arc-20240116; t=1761644219; c=relaxed/simple;
+	bh=/5SjHDf+g60VeDF7tKkxP5WygZLqUjkEHTHrJsfqiiM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jRegmFk7ylptR3pj7/x6PqwOAznVzN37aNYYKyRGJ8SuW3UuONjDnEyekGjnyoO3V1Ty8z3vldI1yh5HId7Ejpxj1EJwugz7yMfENOpMzuXD/YqSx8AdtGaRy1S7vxFasPvtN/H9mPUCOv5MVjKnsFjfSABYhq/Ykm227+16tBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SL6qyV9f; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-290c2b6a6c2so59974615ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761644217; x=1762249017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6jG9v3PVJPIbaBd5kVxUl8s2RTs4/RBdrWqQvfRNMgQ=;
+        b=SL6qyV9fyuwT/n4rxBfYCX5zs8fHpPP90jK3U4Vt5CsoZ2bMrJY8HphPYd8HSPWIew
+         CqHK4aSg2tUYWrn7nhYIaF06oT4oA6UpQobpAstzci02/884Gvfsv6EHTI68pBk/r8kf
+         ylvcC8re7p1gkVn5NEX6uFqLU4NH64TxfMzyVQNDSwM0897cLqlbrqeVIClVWWvkz6rc
+         9zkuW2VEmqNPwvKUnEJ+RcmYBvzw6JJg17rectYf4+CCbZZvc0ZLSQTfQ1+32n3nSzly
+         zKPFnkZ7JTzgvjK40fTAFsiXAavgAbEeIQ6Y8VqqnH2to5Y1Jua5yHEeRq94W80dOFzQ
+         7PNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761644217; x=1762249017;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6jG9v3PVJPIbaBd5kVxUl8s2RTs4/RBdrWqQvfRNMgQ=;
+        b=FkprTT78ZbbjowZ7NFMzjFU/w2LoRwJTD3iudCWsgS70reO1BtqCPWTCOpwn5M8uSU
+         AVAnau0HyyVLvquClG2TG0kb9lO0r+72tGBhwkC6vj6HrtphQenFxVXXl5h9f0Avxi5G
+         I8k1gLrQCDSXbuXAa44JBjyHm/6r2ONbDJwOMjYQWZ5VR6/HAmxeo7PBacP63uURnuJA
+         0fN8tAV09cyd4GFmPatbm9OvNB/WJ7JkPQjqpiLA/yK+vkSANUspKRV9H1/DOjfEsebw
+         5szAtFaSDaFHMTGo+lLghUqETE9OxTiQlidXFU/w/ksRUYrZ3U8gZ+4uNhPjRmWYqspN
+         9UaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMPoRR7fWL2+5OAhQ6FKg1nioFOxFzmD9M/NNvrTGTF7gddIiDuUvGwxUg01JNd3+2DADvGqALOe/PPVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC26DeYYSlNPRQd3LYkGROj6xUavsiaHrQBPnV01aHTxXe7sBz
+	0m49mro1d5Bds19/kv7id1o6lWWVLGxsuTCS8/cdzjSqSN5BYHLqrV9EtIa6P9SaHu23kKFAV8l
+	t1j0/iwCNvt3PHR16m7umkoqHySqNMxQ=
+X-Gm-Gg: ASbGnctxpv1cUSVmj15Cyddmf80sTvCcqSXYaSSWAuXnUfr+cwBSAY2R0XP5rmW976o
+	Du7jjjIUOYkXNDfAPJDX95z2aUilc1pcjAfjF6c/6ETnhET/IAg544Dow4PTpt81Fv/cgHNJJcZ
+	pwK5cydmz9BVeZOoCWrMP7pzGYJT24ltn5gVjv7SMT8+uiNj6rTy2zGgVQGNByuIDNRqJtRGLpp
+	lA5yXdpI5eUUMkx62FAjNzgqoTe1fdsQ1/eOOjyfx6BbUSaLItX9qWiwnF9qq1jSYCu518=
+X-Google-Smtp-Source: AGHT+IE2gOBCubvPoKT3rGM6v15n2dbkd2eHauDGUIwO5XTEfAeytVe1qP5Mq5hcSyYkW09TvDxnGMeavjeB3G54Bl4=
+X-Received: by 2002:a17:902:ea0a:b0:269:8d85:2249 with SMTP id
+ d9443c01a7336-294cb3821afmr36873395ad.22.1761644215891; Tue, 28 Oct 2025
+ 02:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: intel: Add Agilex5 SVC node with memory
- region
-To: Khairul Anuar Romli <khairul.anuar.romli@altera.com>,
- Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mahesh Rao <mahesh.rao@altera.com>,
- devicetree@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-References: <cover.1761643239.git.khairul.anuar.romli@altera.com>
- <a3182556c07839dcd9227fa6a4a9d295507f3e8e.1761643239.git.khairul.anuar.romli@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <a3182556c07839dcd9227fa6a4a9d295507f3e8e.1761643239.git.khairul.anuar.romli@altera.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251027092159.918445-1-kriish.sharma2006@gmail.com>
+ <23069e05-82d3-422f-9af7-fc100d4d1466@baylibre.com> <aQCITnF4kft6g64z@smile.fi.intel.com>
+In-Reply-To: <aQCITnF4kft6g64z@smile.fi.intel.com>
+From: Kriish Sharma <kriish.sharma2006@gmail.com>
+Date: Tue, 28 Oct 2025 15:06:44 +0530
+X-Gm-Features: AWmQ_bk4u-dbbnMYGRNeHJ1bkT0p71uvtHg2Ff8MalXPQTncpZhceKlNJkV7h70
+Message-ID: <CAL4kbROq0ko9RT0VENAUsk5j621U8LNkQKz7CxQNk7=C23p7aQ@mail.gmail.com>
+Subject: Re: [PATCH v2] iio: fix kernel-doc warnings in industrialio-backend.c
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: David Lechner <dlechner@baylibre.com>, nuno.sa@analog.com, olivier.moysan@foss.st.com, 
+	jic23@kernel.org, andy@kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/10/2025 10:29, Khairul Anuar Romli wrote:
-> Introduce the Stratix10 SoC service layer (SVC) node for Agilex5 SoCs.
-> The node includes the compatible string "intel,agilex5-svc" and references
-> a reserved memory region required for communication with the Secure Device
-> Manager (SDM).
-> 
-> Agilex5 introduces a dependency on IOMMU-based translation for reserved
-> memory, unlike prior Agilex platforms. This commit introduces the
-> structural changes needed to support this feature once the IOMMU driver
-> is upstreamed.
-> 
-> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-> ---
->  arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> index a13ccee3c4c3..15284092897e 100644
-> --- a/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex5.dtsi
-> @@ -841,5 +841,14 @@ queue7 {
->  				};
->  			};
->  		};
-> +
-> +		firmware {
-> +			svc {
-> +				compatible = "intel,agilex5-svc";
-> +				method = "smc";
-> +				memory-region = <&service_reserved>;
-> +				iommus = <&smmu 10>;
+Hi Andy, David,
 
+Thank you both for the reviews and helpful suggestions!
+I've sent v3 now, which includes the consistency fixes (changing
+Return: to RETURNS: across the file) and the other points you
+mentioned.
 
-You did not test your code.
+https://lore.kernel.org/all/20251028093326.1087660-1-kriish.sharma2006@gmai=
+l.com/
 
-Plus, where is the driver? Please read submitting patches in DT directory.
+Appreciate your time and feedback.
 
 Best regards,
-Krzysztof
+Kriish
+
+
+On Tue, Oct 28, 2025 at 2:39=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Oct 27, 2025 at 10:35:02AM -0500, David Lechner wrote:
+> > On 10/27/25 4:21 AM, KRIISHSHARMA wrote:
+>
+> ...
+>
+> > >   * iio_backend_oversampling_ratio_set - set the oversampling ratio
+> > >   * @back: Backend device
+> > > + * @chan: Channel number
+> > >   * @ratio: The oversampling ratio - value 1 corresponds to no oversa=
+mpling.
+> > >   *
+> > >   * Return:
+> >
+> > I guess it would not hurt to change this to RETURNS: to match the
+> > rest of the file either.
+>
+> Good catch! KRIISHSHARMA, please check the whole file for this as it's no=
+t a
+> direct mistake from kernel-doc perspective, there is a mistake from consi=
+stency
+> point of view and hence needs to be addressed.
+>
+> ...
+>
+> > > + * RETURNS:
+> > > + * Pointer to the driver private data associated with the backend.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
