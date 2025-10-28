@@ -1,174 +1,250 @@
-Return-Path: <linux-kernel+bounces-873220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1170C136A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:00:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFDEC13699
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BD2354ED5B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40EE440194F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530022D595B;
-	Tue, 28 Oct 2025 07:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B352D6E4A;
+	Tue, 28 Oct 2025 07:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="wW8s3UMt";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="hD1NkpdS"
-Received: from mta-01.yadro.com (mta-01.yadro.com [195.3.219.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JtvVYmhE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE1A271454;
-	Tue, 28 Oct 2025 07:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.3.219.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC8E2D46CE;
+	Tue, 28 Oct 2025 07:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761638384; cv=none; b=OnK7VtrRJyMX/1eGnn9nkTJmVd0XUpuBV5o4vF76FU8/6RR2X1qyhfIbp7+lqrZ3/AjYnKokbyyqj13WxE14qjDP9NzNpMOm5TMNWLrUHcjQGpACs+E7R6OpatNJ1BAb3gH7BzdsR91qD08vVk1n2M21ywHmJn2POOf7bBHbcWU=
+	t=1761638385; cv=none; b=FNoNHzsTRHcNkBZChBuzRKABQ4KbSPQA1YP4YhfQwU/Y5Z2wzNJQRuD0TH/Yh3kmwva30QaJ8UJDN+fks+AyTYhzke+L92VDL2AIgpciEo4Y1n/C27tb7deHgRGR8Nv7ulN5ljnORHGgzF91QZQruLJqvYqTTA4swJG+VOaAygA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761638384; c=relaxed/simple;
-	bh=/1RIS9IGTY5mmE8VkBgLL8dKwXagjr/uRKUBq08Tsx0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VgB3Pn+TTQcEeFagHHxA8UUHTlNVXEMdwVrkKo124T3OjnaBU3bi/Lrxcwe9bUykznbspoCB2TWEUeGyhy3fpWJx7Zn4UBj6xXKiyD2VrxrwUuoKh4ipX3h8eU7qBPYbSpwOWK8C25TD7i9hWQdnQ5Fo+9iugwWx5IEDFrhCfjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=wW8s3UMt; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=hD1NkpdS; arc=none smtp.client-ip=195.3.219.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-01.yadro.com (localhost [127.0.0.1])
-	by mta-01.yadro.com (Postfix) with ESMTP id 2320520006;
-	Tue, 28 Oct 2025 10:59:31 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-01.yadro.com 2320520006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-02;
-	t=1761638371; bh=C6DWKCrqeMd8yEie8ux+bImvLbKULsBRhRlilfIMAOc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=wW8s3UMt9YkpLDmA8dnGrRYvWBq5XJoXtVqgbcr78PCCKGClf8vzNvk23W0cROX4R
-	 MQCm7zjT00VdWQKK9dOv2DxBUNyZBG4dYomaUaKR+xj3NrCQO9vhLQUoUCIKJX7d0O
-	 Gv9MndjlkW1xD3m6+WFL34hXK0Uq9SMGyaTTTUXoOfwdngLdW+b4Kx5Kzjue2CUS6Q
-	 L7PfOgij7DyZ+VRE/RHk7lGKU2R+TZNzWjfWFAwd6l9GOpDzlQw8LecRrZKOJTXdsL
-	 NxfEVf8p55W6GSOlCysymTFrX2OXyV4nimwKjiJTinjoRXPWQt+TXXc4IjJ78CtlHs
-	 v9Wi4ezxLMCcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1761638371; bh=C6DWKCrqeMd8yEie8ux+bImvLbKULsBRhRlilfIMAOc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=hD1NkpdScXWFkWQbIKfU5Zi9iCBTPjUAMf06Pel1c+5+V4pBQYfUrGy51sHYUKdBE
-	 zd517/sZswtybZvck+paZu4gsnAu5KQymBaZ8kee/jZXn+2NOKDlUo3XkW/81ePeri
-	 aPiWOefE6rKEeWG4mXAqZBQm7y9TbIjq0yMIz2rAV6vYNP+D09BoKB6yJXRivoHzrM
-	 lEhZe7GBrN+SglVNV048riNNlm0cEl9ivZh6vW/i34Nubzg+lAZeORo9MIUXAHF3aB
-	 H0oXkdN79sSwOSnBeWkYL75kcSjFdHIqDU7hbwj0ljB+uenHQWvCxn7kB9D03x+C6/
-	 Vj0yEqg8uAQ9A==
-Received: from RTM-EXCH-01.corp.yadro.com (unknown [10.34.9.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-01.yadro.com (Postfix) with ESMTPS;
-	Tue, 28 Oct 2025 10:59:28 +0300 (MSK)
-Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
- RTM-EXCH-01.corp.yadro.com (10.34.9.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.20; Tue, 28 Oct 2025 10:59:26 +0300
-Received: from yadro.com (172.17.34.55) by T-EXCH-12.corp.yadro.com
- (10.34.9.214) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Tue, 28 Oct
- 2025 10:59:25 +0300
-Date: Tue, 28 Oct 2025 10:59:18 +0300
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Keith Busch <kbusch@kernel.org>
-CC: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, "Sagi
- Grimberg" <sagi@grimberg.me>, Stuart Hayes <stuart.w.hayes@gmail.com>,
-	<linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux@yadro.com>, <stable@vger.kernel.org>
-Subject: Re: [RESEND] [PATCH] nvme-tcp: fix usage of page_frag_cache
-Message-ID: <20251028075918.GA14902@yadro.com>
-References: <20251027163627.12289-1-d.bogdanov@yadro.com>
- <aP-m9btCap_dt32Y@kbusch-mbp>
+	s=arc-20240116; t=1761638385; c=relaxed/simple;
+	bh=HfhMDobu1SUJQyYm0YX92oqWhBmLIXxHwW9QTp0RVDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKGphsjSFYFn8NIWTJIx9NpBBjrUK6dDiCuIw2aG+iWuy2PARAgeCO19TphhBPL5I8Oja+2T4pKn99aypP4eJDM8hSGEh/IqJeLaYluTq1AuzsGy+OXUIVBwCOLI1UH4KE7+YnZThEp1Gck+SwsZkEta0aGTaghVj12vFaAlecU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JtvVYmhE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF859C113D0;
+	Tue, 28 Oct 2025 07:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761638385;
+	bh=HfhMDobu1SUJQyYm0YX92oqWhBmLIXxHwW9QTp0RVDI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JtvVYmhEA4zlBpixwOQbzKeOOcqy/fJn6a/Bz4ie9T8WY7sF/wFRGACulRgv+IdpU
+	 Oz3v0SSL1haWVDAXEZ/jaxgoc86TaMjmMRCk7H0Y/rr/BB4qnt/9I6i0KYIpsyr0xx
+	 yaaOxA14HikP4WQr9MB2N99NzfZrXs1D1Nk7w/TxKXSIOmpB53dQV/obmN9QO2pakQ
+	 MuqdjU2lBHhM0cRTE52LdeQhUqtTV6PzbOmmkk1yTVhwNnXUOLVL2cSNF3HGmGMEkE
+	 OZJvQII9P/pVEPYHcoyBK+inEdFLs0raFw5xIWuNc5vxmx7xkggmbLskDcM9XRgKER
+	 9Fx6yOYSTnifA==
+Date: Tue, 28 Oct 2025 08:59:42 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sudarshan Shetty <tessolveupstream@gmail.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: talos-evk: Add support for
+ QCS615 talos evk board
+Message-ID: <20251028-proud-bullfrog-of-aurora-e2cdba@kuoka>
+References: <20251028053248.723560-1-tessolveupstream@gmail.com>
+ <20251028053248.723560-3-tessolveupstream@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aP-m9btCap_dt32Y@kbusch-mbp>
-X-ClientProxiedBy: RTM-EXCH-01.corp.yadro.com (10.34.9.201) To
- T-EXCH-12.corp.yadro.com (10.34.9.214)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/10/28 03:53:00 #27799916
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+In-Reply-To: <20251028053248.723560-3-tessolveupstream@gmail.com>
 
-On Mon, Oct 27, 2025 at 11:08:05AM -0600, Keith Busch wrote:
-> On Mon, Oct 27, 2025 at 07:36:27PM +0300, Dmitry Bogdanov wrote:
-> > nvme uses page_frag_cache to preallocate PDU for each preallocated request
-> > of block device. Block devices are created in parallel threads,
-> > consequently page_frag_cache is used in not thread-safe manner.
-> > That leads to incorrect refcounting of backstore pages and premature free.
-> >
-> > That can be catched by !sendpage_ok inside network stack:
-> >
-> > WARNING: CPU: 7 PID: 467 at ../net/core/skbuff.c:6931 skb_splice_from_iter+0xfa/0x310.
-> >       tcp_sendmsg_locked+0x782/0xce0
-> >       tcp_sendmsg+0x27/0x40
-> >       sock_sendmsg+0x8b/0xa0
-> >       nvme_tcp_try_send_cmd_pdu+0x149/0x2a0
-> > Then random panic may occur.
-> >
-> > Fix that by serializing the usage of page_frag_cache.
-> >
-> > Cc: stable@vger.kernel.org # 6.12
-> > Fixes: 4e893ca81170 ("nvme_core: scan namespaces asynchronously")
-> > Signed-off-by: Dmitry Bogdanov <d.bogdanov@yadro.com>
-> > ---
-> >  drivers/nvme/host/tcp.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
-> > index 1413788ca7d52..823e07759e0d3 100644
-> > --- a/drivers/nvme/host/tcp.c
-> > +++ b/drivers/nvme/host/tcp.c
-> > @@ -145,6 +145,7 @@ struct nvme_tcp_queue {
-> >
-> >       struct mutex            queue_lock;
-> >       struct mutex            send_mutex;
-> > +     struct mutex            pf_cache_lock;
-> >       struct llist_head       req_list;
-> >       struct list_head        send_list;
-> >
-> > @@ -556,9 +557,11 @@ static int nvme_tcp_init_request(struct blk_mq_tag_set *set,
-> >       struct nvme_tcp_queue *queue = &ctrl->queues[queue_idx];
-> >       u8 hdgst = nvme_tcp_hdgst_len(queue);
-> >
-> > +     mutex_lock(&queue->pf_cache_lock);
-> >       req->pdu = page_frag_alloc(&queue->pf_cache,
-> >               sizeof(struct nvme_tcp_cmd_pdu) + hdgst,
-> >               GFP_KERNEL | __GFP_ZERO);
-> > +     mutex_unlock(&queue->pf_cache_lock);
-> >       if (!req->pdu)
-> >               return -ENOMEM;
+On Tue, Oct 28, 2025 at 11:02:48AM +0530, Sudarshan Shetty wrote:
+> Introduce the device tree support for the QCS615-based talos-evk
+> platform, which follows the SMARC (Smart Mobility ARChitecture)
+> standard. The platform is composed of two main hardware
+> components: the talos-evk-som and the talos-evk carrier board.
 > 
-> Just a bit confused by this. Everything related to a specific TCP queue
-> should still be single threaded on the initialization of its tagset, so
-> there shouldn't be any block devices accessing the queue's driver
-> specific data before the tagset is initialized.
+> The talos-evk-som is a compact System on Module that integrates the
+> QCS615 SoC, PMIC, and essential GPIO connectivity. It follows the
+> SMARC standard, which defines a modular form factor allowing the SoM
+> to be paired with different carrier boards for varied applications.
 
-Hmm, we are both right. You are right that the preallocated requests that
-are part of hw queue's tagset are preallocated at hw queue creation.
-But there is one(per hw queueue actually) more request objects that
-are preallocated for each block device - it's hctx->fq->flush_rq. I am
-talking about that one.
+Drop paragraph, completely redundant. Please write concise, informative
+messages, not something redundant and obvious. Or worse - marketing
+junk.
 
-The call stack is the following:
-nvme_scan_ns_list =parallel on all CPUs=>
- nvme_scan_ns_async->nvme_scan_ns -> nvme_alloc_ns -> nvme_alloc_ns ->
- __blk_mq_alloc_disk -> blk_mq_alloc_queue -> blk_mq_init_allocated_queue ->
- blk_mq_realloc_hw_ctxs for each hw(TCP) queue do ->
-  blk_mq_alloc_and_init_hctx(queue) -> blk_mq_init_hctx ->
-  blk_mq_init_request(flush_rq) -> nvme_tcp_init_request ->
-  page_frag_alloc(tcp_queue)
+> 
+> The talos-evk is one such carrier board, designed for evaluation
+> and development purposes. It provides additional peripherals
+> such as UART, USB, and other interfaces to enable rapid
+> prototyping and hardware bring-up.
+> 
+> This initial device tree provides the basic configuration needed
+> to boot the platform to a UART shell. Further patches will extend
+> support for additional peripherals and subsystems.
+
+Drop paragraph, it is contradictory to the next one.
+
+> 
+> The initial device tree includes basic support for:
+> 
+> - CPU and memory
+> 
+
+Drop blank lines
+
+between
+
+each
+
+of
+
+points. No need to inflate already huge commit msg.
 
 
+> - UART
+> 
+> - GPIOs
+> 
+> - Regulators
+> 
+> - PMIC
+> 
+> - Early console
+> 
+> - AT24MAC602 EEPROM
+> 
+> - MCP2515 SPI to CAN
+> 
+> - Hook up the ADV7535 DSI-to-HDMI bridge
+> 
+> - Add DP connector node and MDSS DisplayPort controller.
+> 
+> QCS615 talos-evk uses a Quectel AF68E WiFi/BT module (PCIe for
+> WiFi and UART for Bluetooth), which is different from the RIDE
+> platform. Plan to enable these in a follow-up patch series.
 
-BR,
- Dmitry
+Drop plans, not related. I also do not understand why you mention here
+RIDE. Does it mean you are duplicating the board?
+
+> 
+
+..
+
+
+> +&sdhc_1 {
+> +	pinctrl-0 = <&sdc1_state_on>;
+> +	pinctrl-1 = <&sdc1_state_off>;
+> +	pinctrl-names = "default", "sleep";
+> +
+> +	bus-width = <8>;
+> +	mmc-ddr-1_8v;
+> +	mmc-hs200-1_8v;
+> +	mmc-hs400-1_8v;
+> +	mmc-hs400-enhanced-strobe;
+> +	vmmc-supply = <&vreg_l17a>;
+> +	vqmmc-supply = <&vreg_s4a>;
+> +
+> +	non-removable;
+> +	no-sd;
+> +	no-sdio;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&spi6 {
+> +	status = "okay";
+> +
+> +	mcp2515@0 {
+
+Still no improvements.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+> +		compatible = "microchip,mcp2515";
+> +		reg = <0>;
+> +		clock-frequency = <20000000>;
+> +		interrupts-extended = <&tlmm 87 IRQ_TYPE_LEVEL_LOW>;
+> +		spi-max-frequency = <10000000>;
+> +		vdd-supply = <&vreg_v3p3_can>;
+> +		xceiver-supply = <&vreg_v5p0_can>;
+> +	};
+> +};
+
+..
+
+> diff --git a/arch/arm64/boot/dts/qcom/talos-evk.dts b/arch/arm64/boot/dts/qcom/talos-evk.dts
+> new file mode 100644
+> index 000000000000..5c2ac67383e7
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/talos-evk.dts
+> @@ -0,0 +1,133 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +/dts-v1/;
+> +
+> +#include "talos-evk-som.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm QCS615 IQ 615 EVK";
+> +	compatible = "qcom,talos-evk", "qcom,qcs615", "qcom,sm6150";
+> +	chassis-type = "embedded";
+> +
+> +	aliases {
+> +		mmc1 = &sdhc_2;
+> +	};
+> +
+> +	dp0-connector {
+
+dp-connector, unless there is here dp1. But then follow standard
+practice of adding suffixes, so connector-0, connector-1, etc. I could
+understand dp-connector-1 if you find dp-connector here:
+
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+> +		compatible = "dp-connector";
+> +		label = "DP0";
+> +		type = "full-size";
+> +
+> +		hpd-gpios = <&tlmm 104 GPIO_ACTIVE_HIGH>;
+> +
+> +		port {
+> +			dp0_connector_in: endpoint {
+> +				remote-endpoint = <&mdss_dp0_out>;
+> +			};
+> +		};
+> +	};
+
+...
+
+> +
+> +&i2c1 {
+> +	clock-frequency = <400000>;
+> +
+> +	status = "okay";
+> +
+> +	adv7535: adv7535@3d {
+
+Still no improvements.
+
+Node names should be generic. See also an explanation and list of
+examples (not exhaustive) in DT specification:
+https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+If you cannot find a name matching your device, please check in kernel
+sources for similar cases or you can grow the spec (via pull request to
+DT spec repo).
+
+Best regards,
+Krzysztof
+
 
