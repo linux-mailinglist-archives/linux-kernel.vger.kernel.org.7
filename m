@@ -1,100 +1,61 @@
-Return-Path: <linux-kernel+bounces-874790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68948C1717B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:49:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 478F0C17175
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8E6C75021CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:46:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39FC14F0751
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EC72EC096;
-	Tue, 28 Oct 2025 21:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA602E9EC7;
+	Tue, 28 Oct 2025 21:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVtfuX2m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rugj0stH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FEB2EB5CE;
-	Tue, 28 Oct 2025 21:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9812D8DC8;
+	Tue, 28 Oct 2025 21:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761688001; cv=none; b=V75Wq9nP95HrXzjT2wpe4ilU0fXzKzdW/hnhrYgHG9DOOjPp9ryw9aOdsX3bKxd4KnEHIGUMo9YS90o6Qcb2eirtpG7egGEqdVcxUvcRbBltfERMjzAP82ALrNRf0uOaEHfEqbjzop24CX2nBop6/4mts6pvNOeHE7KOCOiiSdk=
+	t=1761687999; cv=none; b=TUyn4w/9wXmDj9fPOl730ebhIrhpJiu50SIss+BOwpXoPfb2RsHijUGZz23zKaEbSzt0He2ii5kSS9jkmEn/NtnsRsljZj1a3YDc9Ue9n5mPbwDjbQc49l5VDc+qKrPICYGu7zXR5Ad5ww4vLROB1tRF1R7StLiuRXlJ372F8mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761688001; c=relaxed/simple;
-	bh=98qCRZHWGnqg7xDIKMCuNXdBxkmWnC/wKM3LJ+sRPFg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=HKgKSUDWATb4RW9wIydMBvDz9PgMhqjet9sDYlQK8TXz6k6ojKBFIxU4CkEf/VhXlYqX4vp1Lek7M5kWUnElrvfG3b/lyor918pG/8a5QUOduCWP0vdi3gPZqojqRmS3EnCfpEnkVSM6dgSLelm390TNdRtMZuqeCUH5yVTE048=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVtfuX2m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64041C4CEE7;
-	Tue, 28 Oct 2025 21:46:37 +0000 (UTC)
+	s=arc-20240116; t=1761687999; c=relaxed/simple;
+	bh=KlxQwxQiOyaOmfqlFrMqSOenDkOWYeInFu7SxGIC7qI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References; b=gPjB4jG8jubiA6hLAN1iRlS6rR/c8N3we/LZjK4J9aUAejALbY774Q8faX/5GO9KAkAX5EiWdm7ys5aGtaCcfF5jMY6+PFrbe6xVr8aI/6Bm1Ak+KVEDPtEeGRTXw0avDA2+Q0f7rC6JCJBZ11cRaSpG/Mg/u9iBIomqxFbgAp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rugj0stH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319B9C4CEFF;
+	Tue, 28 Oct 2025 21:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761688000;
-	bh=98qCRZHWGnqg7xDIKMCuNXdBxkmWnC/wKM3LJ+sRPFg=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=sVtfuX2mfhe82Bqy0W5riLNw1p7s7ncgziLHl3CfjgIBjfGYXCbdX5nBw9KftTIOr
-	 WwR4CE6Yf9D3erkZwldSmaF045xibBCcag/QJxUm1betWBzX26jCe571MV+KkQgPSQ
-	 dzzFx9h2I3bqy18Fl5eKKvXmQJaUmVpXQ9Cs+81GlyMyX88srQ+sO0sdEi4D9hiFzg
-	 DeaPlqBklU1zibVdTw+n6E6ySliU8+hOEoh3zCRDSGo+dVVtCfcEgLizGZ3TUKCf7Q
-	 ddMYgw0jhXtrygJK3X/POWEKM3crI1411K/IIfDEwMZNjRRmK94Q4G7H6bEU9viO6H
-	 MdTP4OtWIR6kg==
+	s=k20201202; t=1761687999;
+	bh=KlxQwxQiOyaOmfqlFrMqSOenDkOWYeInFu7SxGIC7qI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Rugj0stHDGAZfFTgDOzPqjRVS0o19zSVqH7cWV5rUxT6I1PsOha+C+8ZjT8mHcYt9
+	 MfozYdvFdBYRSoQv6Nw9OnyBI2iE42ESBoEby6dsrzFdyt0kvrPcZaEtRuE9GYa2As
+	 vy22Be7tyfQTmgA2/CRj3x32zdLke+LddFO6lhRaY0b4p5iloxanIKeas+QkSR/MXL
+	 bPmyY+Wyyt7VxjJVgUOKbJRpb37MyMBig3fZIyV0Pg+awFUpX9xC30FpwMNb23+VPw
+	 f1aFPfFOrj5WbtJQKIzQNuR0zbR4eoJ6ssApdyHeCCtB5+n/mMNpwXPH+EOGVNLn2U
+	 kZMyKG0X2VlvA==
+Date: Tue, 28 Oct 2025 11:46:38 -1000
+Message-ID: <5b07f2651dfe61d89f199055356562d3@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev
+Subject: Re: [PATCH] sched_ext: Use SCX_TASK_READY test instead of tryget_task_struct() during class switch
+In-Reply-To: <31c2ba69c73dc25b022533ca00300256@kernel.org>
+References: <31c2ba69c73dc25b022533ca00300256@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 28 Oct 2025 22:46:35 +0100
-Message-Id: <DDUA9WI1KASO.ECSJNA3RRQEI@kernel.org>
-Cc: <dri-devel@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Abdiel Janulgue"
- <abdiel.janulgue@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Robin Murphy" <robin.murphy@arm.com>,
- "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross"
- <tmgross@umich.edu>
-To: "Lyude Paul" <lyude@redhat.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] rust/dma: Take &mut self in
- CoherentAllocation::field_write()
-References: <20251028211801.85215-1-lyude@redhat.com>
-In-Reply-To: <20251028211801.85215-1-lyude@redhat.com>
 
-On Tue Oct 28, 2025 at 10:18 PM CET, Lyude Paul wrote:
-> At the moment - CoherentAllocation::field_write() only takes an immutable
-> reference to self. This means it's possible for a user to mistakenly call
-> field_write() while Rust still has a slice taken out for the coherent
-> allocation:
->
->   let alloc: CoherentAllocation<CoolStruct> =3D /* =E2=80=A6 */;
->
->   let evil_slice =3D unsafe { alloc.as_slice(/* =E2=80=A6 */)? };
->   dma_write!(alloc[1].cool_field =3D 42); /* UB! */
->
-> Keep in mind: the above example is technically a violation of the safety
-> contract of as_slice(), so luckily this detail shouldn't currently be
-> causing any UB in the kernel. But, there's no reason we should be solely
-> relying on the safety contract for enforcing this when we can just use a
-> mutable reference and already do so in other parts of the API.
+Applied to sched_ext/for-6.19.
 
-While I generally agree with this, the catch is that it would also enforce =
-that
-you would need a lock for calling dma_write!() in a concurrent context.
-
-I.e. if your CoherentAllocation is shared between tasks we can currently ha=
-ve
-the tasks calling dma_write!() and dma_read!() concurrently without requiri=
-ng a
-lock for the CoherentAllocation.
-
-Requiring a spinlock for such a case wouldn't be the end of the world of co=
-urse,
-but it would still be unnecessary.
+Thanks.
+--
+tejun
 
