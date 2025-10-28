@@ -1,88 +1,87 @@
-Return-Path: <linux-kernel+bounces-874796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C063C17198
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D815CC1719F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64143B417E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 242933B9196
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2971A2FE065;
-	Tue, 28 Oct 2025 21:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jUDfUc7m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B462B2FE065;
+	Tue, 28 Oct 2025 21:54:04 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FAA27EFFA;
-	Tue, 28 Oct 2025 21:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF942E040E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761688416; cv=none; b=D4RFoLPqPPd2cpwR2iWd+p87dB0IIwIxIxBELpqcxsAz+OhDR83OIbHxM49jU3iFOu45v6AH7O483I/9ZZUKXVofK2hUGFPEynMsd22lAumLBfq/G6udHDR1lvzUKGmxPS/k+nln/961XzBH0dZEtVWmjRhuCmK+38rAXLFTGqk=
+	t=1761688444; cv=none; b=kdNsMTyd0PNM/bfOIa+3xB03levWFWiy6A8Fx/f2VubssgDo/xnEnzDm7bi8XQV5qd7M1uavaLnTC+vu7p16eqsq3Foh0/OBzGEOvdqrbTsADZzkweXIwFvr06we4XGC8W609TXP0AfLEe9BFPd9bW4Zwj8FWNBu3eim20OiFc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761688416; c=relaxed/simple;
-	bh=JPCaK8/B5tsYDz94pQe8nGhHm3auqtQ3gChlHg2P/bM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cUyCYSeKqRE+sg8mjvnsRHeCwD7ke+n1d3pmZLFKAdBucggnZfEalxdhOTk628bqCMg3uhMb+YkFRNJx0+8WmQ2NVOvWhlI+XbWjhomAct9vy+C8b2KF8ZjpOUlJR53/niihRnM3nFOKOGHdLNkJqubo3gOyXVjDGUPixH4TV04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jUDfUc7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EE0C4CEE7;
-	Tue, 28 Oct 2025 21:53:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761688416;
-	bh=JPCaK8/B5tsYDz94pQe8nGhHm3auqtQ3gChlHg2P/bM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jUDfUc7mEFZUX45qomM6RsYqoM/5CDi75b7/yyE4Z73kJovnvDmd/C8y4u1uj24dF
-	 ipBJjGLGPtR53JWmGj6U0tOIvgXHUDnwdse8EQsjVQofHFVhizI4f1CQnepNrgthao
-	 2O7U1frt90PzjaFvpfA68R420ut+CTY5fKNVrsy8=
-Date: Tue, 28 Oct 2025 14:53:34 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Luiz Capitulino <luizcap@redhat.com>
-Cc: hca@linux.ibm.com, borntraeger@linux.ibm.com, joao.m.martins@oracle.com,
- mike.kravetz@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, gor@linux.ibm.com,
- gerald.schaefer@linux.ibm.com, agordeev@linux.ibm.com, osalvador@suse.de,
- david@redhat.com, aneesh.kumar@kernel.org
-Subject: Re: [PATCH v2] s390: fix HugeTLB vmemmap optimization crash
-Message-Id: <20251028145334.5a97211e0e46ca42fe2fa0d0@linux-foundation.org>
-In-Reply-To: <20251028211533.47694-1-luizcap@redhat.com>
-References: <20251028211533.47694-1-luizcap@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761688444; c=relaxed/simple;
+	bh=gGhoVfCYwcVX9tRrOf36XZTy4yNTN9aphoA3oBrXF/U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fHH9IvkMh6VyZ8Bg8M1JTG+fO/ZfPmOVIGpMa4LQdUFDQT2LL+yWdy+59Tl261L1g2/GUNrAZDyDsONZZL/GtRBrAO4ktC0q3pHXAc5/1LzIK6IeRIFnK/Yq7xCn6Fv8UlMDpUGUws8/IFXfn2Q7rjR2ZPpXDoE5SsvmZapiN5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d003e87eso235077315ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:54:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761688442; x=1762293242;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVbDYTj5bn4r7uEKFqf8fOZItmTjTtHMQUdwwWuSKhs=;
+        b=TRiY+uRcWB+7nWufd8hR2NGbAufmruQ5m45PL+AW1rpVHWhy1mNPABDXUeGMZN3xON
+         Z7V9K0DEKvMh8ZFJROo+7gDKm/fHaUUfV9RHq0YRO048Gk+4CmhyhnPWcJhAmecV0uSz
+         ACxqqBqyk86IY69p2xdOTTuhEGl5MNPnA5x3rRjTGOynd7L3/+RWr62M7Vjfs9Q3eTID
+         4vLZ/7f9ufZZwE8Et9uHAdpQU3v8tIH5lD2lGs+Br8ZijPP2wN90wzqknfEIwXWMeCrt
+         U/2/lArTf7n1Bu8jVReA/B+7I8XlOjGWZEH++OmlR1uaGKpVPX21BQOm7gvB89DPqLno
+         7MHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuWmzEVuWXYhDv0hFmZC+HE7DMg039AyerZi9qZJL1xOG3JhGzvB7+58w6poycPBPpJtTsW2tDXBX5em8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXm4PAIbx+Ut4cO3mFf8nHJ6wpZDZfd9oTTY6965WGQXWZFAZR
+	RX6MhswWSRSHxhOIG7f+FMiSJ2c8lXa181CNf0Vj819eE11MTAiNsmGk6/xHLVkBPERRblKb3I4
+	6JjEBW/812TklmXj9ODBL/sY3TI9zPHTWDWRr0WrVJPx4Ru75f6WOA6zljdk=
+X-Google-Smtp-Source: AGHT+IHlhqXe2V62plON/Bgr3GUXzg/BhgEvZ/ikZ4snA1mQVP50j/3Y733EN19S4YPowCn2Qa5pWoCZtm+Fvie4xNWs5e/QGBwR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2183:b0:431:d721:266d with SMTP id
+ e9e14a558f8ab-432f9090ee3mr10199355ab.31.1761688442206; Tue, 28 Oct 2025
+ 14:54:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 14:54:02 -0700
+In-Reply-To: <20251028182255.i5pLj%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69013b7a.050a0220.32483.01dd.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate (2)
+From: syzbot <syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 28 Oct 2025 17:15:33 -0400 Luiz Capitulino <luizcap@redhat.com> wrote:
+Hello,
 
-> A reproducible crash occurs when enabling HugeTLB vmemmap optimization (HVO)
-> on s390. The crash and the proposed fix were worked on an s390 KVM guest
-> running on an older hypervisor, as I don't have access to an LPAR. However,
-> the same issue should occur on bare-metal.
-> 
-> Reproducer (it may take a few runs to trigger):
-> 
->  # sysctl vm.hugetlb_optimize_vmemmap=1
->  # echo 1 > /proc/sys/vm/nr_hugepages
->  # echo 0 > /proc/sys/vm/nr_hugepages
-> 
-> ...
-> 
-> This commit fixes this by implementing flush_tlb_all() on s390 as an
-> alias to __tlb_flush_global(). This should cause a flush on all TLB
-> entries on all CPUs as expected by the flush_tlb_all() semantics.
-> 
-> ...
->
->  arch/s390/include/asm/tlbflush.h | 6 +++++-
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Thanks, I'll add this to mm.git.  If s390 people prefer to merge it
-(or nack it!) then please do so and I'll drop the mm.git copy.
+Reported-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
+Tested-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         4fc43deb Linux 6.12.55
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=177e6fe2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=7aef76bdb53b83d62a9e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ac432f980000
+
+Note: testing is done by a robot and is best-effort only.
 
