@@ -1,192 +1,203 @@
-Return-Path: <linux-kernel+bounces-874247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5289BC15CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:30:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBDEC15D62
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 553A3354B6B
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2042D188738C
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661B333CEA2;
-	Tue, 28 Oct 2025 16:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339DB28DB76;
+	Tue, 28 Oct 2025 16:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="2aHdX4Jr"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLmpobQi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BC01A9F9F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0EE285CA2;
+	Tue, 28 Oct 2025 16:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668987; cv=none; b=Oe1pCjv5llwRTFTyKpi2ulmYqPriuPLymg/hkx48WafQnTXzvLrBhMq7yrJukxeVk3qAKi08JaD7Z1lq7k1ijKjDQl0v24TNWWxhzYDKMOpzGrQM9BZ8FIq1/PnR2n67dnwTCv3JldxIigv5fpBL2p6a+G6n9Ltb44VCCcSwOq0=
+	t=1761668982; cv=none; b=Rf4948a9ucEBtg/tlTGl4jIwUB1u166Fm2DBbcxO3y2n+URZfBtM5WlrKBbw7FcW2wi025deEBDTWw/ePC5yd7+v8YHBjEYZAQNQbdUP4gq23BdAnx2jBDf/+ivrv9I1/orsRpcmc8G3IGauvALPwcd9d/1jXhEm8RLyUBvJmE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668987; c=relaxed/simple;
-	bh=xQ0DSL8vGlaPGQU9Hp7y9CcwdlTXKyRGe5V82OocB5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qhrnvOEdkTTVimWozKgBPIcIxhcmqzyVfi753FEtLT7XNLVQ3pfF0X4XbFcYWH8o8SbLCpWkpsUnc202PbaGJyTKq1rZWiIqA9iIvaOMFxesvfoiC/BiJP6dY9C1K8VS1rqfgs2AP9TIWYiaNDf6/U4qtge3XsHBQwxlpEgk09k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=2aHdX4Jr; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-430da09aa87so29220145ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:29:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761668985; x=1762273785; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vU+TdivIUQqN8kZ5z+UlMDP2EK04JqI3D0gfCEED62A=;
-        b=2aHdX4JrMmiQeCqQefDdTvXXrjSCVX/dfkXE/gznbAtx5/jO01zA+l/CJNEQuvLnWX
-         o6v0/DoyzWNPt3oSO++UjGjCslc+BXZ4FJRnCzp5YOexCvA8Asa+ArKqnVhScY+mdZ3J
-         b+TaWGvrrE4HNPF0lpgE6FLcnHdu4KGY3RCYkbyKDT6aMEMPpfTyhFU6nar7FOh+DC2e
-         CWAEehGAl5V6gCaence0ZgaXdHvFofgWbmqiEP/QK9zD9iUosgZbKlSmfIK7Z5Gf9Zf+
-         KsXV64UgSzgZr/yAvzoe2fLOfJ2xEwnlH2cRsuRzhqeIuQfwLDSd6Qv1Fz7KGXJaJJzY
-         nGdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761668985; x=1762273785;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vU+TdivIUQqN8kZ5z+UlMDP2EK04JqI3D0gfCEED62A=;
-        b=a0NgbQ9Fb7uWj/GKW7sPqERtTv4deTlYbQ5rbUSeFzKqp0EfbWNVFAEaBaMCMg7myV
-         y7KgrZl9X5yoqAO/d5h+nsz+PwWPk1DgmxlE6YPB4V7VFFiph1Sw68jWC8LFhCSRCSOA
-         UE8yk0eELiTGZVFtyP7/WPUGzZYUkcK0Tpgkk46mJisSl7k1b6J5m+8N/VJGvLykXvux
-         Mpho5DGRJKfnPF9Gv/n994Qvcpx5r/6EhOAmbq8GQbl1Fblux2NqDNfEHqEGV2qlWsoP
-         5YcC8J/IojawRhM5ll6GN1Afq9RyhCYH+dTtfnDHuLTU/+kXBoxXavssDcXho6ryQGux
-         UReg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOenAlQh5o//sw3qL+KwemFsGkaziR/xhmzkG5TKWJdv8SAWyxCvw+XPeci1g6ySs5E0QK1RvYRNaJ/q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxgh1r2VzbysoPOMu16RxBDkmLMMTVySbgy+KFw8nnkYp9jcpBU
-	lPgOSYpGTMe0zGX4IZoh3qDYVfvAfuXQrWdiwpE7loB19ZZDMYGAK4QdZF/Ax5ENkxGubHrfCRz
-	O3sb399kDGUifsOTQm2a4BVw5XP4aUgV0a4qriNMvog==
-X-Gm-Gg: ASbGncvM92OcIjv4ycDqurk8Ohzt4U2tFlIX35s15u05P6aE6TP2NFkyYuvRAfO5Hme
-	hvnDgp8ZU5KmJ0bEyhP1/AL1Z0qqQUyG93JH4fpDV9GINv8RKv90re0oDFp7WYdM027x8IV6p9E
-	sQiqtK96YpulRUG5S9cj1qld3AnB2eIMB7GGNO25rPjtETZK7uO0L9q4UN5VnirP0g9jl6bTuCj
-	91rj/SrrwdPSyOmX4tRt4LknKyOeR3niwLyzr3JGeJgw8fmlzNMJeZF+rMbDcd9e3aC0ruFsLjW
-	K/eOxrTiv92kwggsZg==
-X-Google-Smtp-Source: AGHT+IErAS74fWZIiI+tq2UyEDPXnXxNVCopnwSSqDNelEK9r7LFhgamKfvM6HVy6byU9ivOLNYx10ZFvWOtH8QctNI=
-X-Received: by 2002:a05:6e02:97:b0:3f3:4562:ca92 with SMTP id
- e9e14a558f8ab-432f82bbd0dmr6242035ab.10.1761668984856; Tue, 28 Oct 2025
- 09:29:44 -0700 (PDT)
+	s=arc-20240116; t=1761668982; c=relaxed/simple;
+	bh=U/1tZgh4GgLt+Eg5UD+RF0IXw1jsdcl5mI9mP5+MA+c=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=TJd7u7tK8AOweJ4agg/L39W8lLMl4nt+LLB4ArwEZUf0upf1JmrkLMdehi61stJCck+2iidt7arXrTmFoSM4+PZ3TKqkzpMqLOAqcpDRJGcc1RlGChG4BIG8Unk8vAMtg3WXxgu1XYVNzmiX6IViCtCrWZv5Sr3WccjkYfVqT+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kLmpobQi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2875C4CEE7;
+	Tue, 28 Oct 2025 16:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761668981;
+	bh=U/1tZgh4GgLt+Eg5UD+RF0IXw1jsdcl5mI9mP5+MA+c=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=kLmpobQikDxWT7WUdhZnPPHgea1mKVAOrBKSRVvtZX69Uy8vu6zY7cZDT0q7rpCmh
+	 YRl0wLJa5t6nmpSOW+0zUrCwHR8LZXuG8ANGGOfqpIynlTOCZJAYmXEr+/GWKSm/Ul
+	 YRanH8hzVhK6TDWi82HmhL/CRvw20Jc54n1I6NYDO++3sSJcn848NGsH+EX0Vz5M+p
+	 3bB0ptknTwcE3LaPXGXfoO18aW+BsDNJsRPy4nPmWEUVMDZCj7tEr1LuF5j6sDNDM6
+	 icwM7tPD+rqkUsY7itnr66Xs8RmtHF+RPaV/UsCYcm1cN2pT8FIpRQx6ut1KuQGaus
+	 bi6wHFVnZCiCQ==
+Message-ID: <7f49e7cb-c102-4e89-9aaa-73ba2998f4fd@kernel.org>
+Date: Tue, 28 Oct 2025 17:29:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023032517.2527193-1-minachou@andestech.com>
-In-Reply-To: <20251023032517.2527193-1-minachou@andestech.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 28 Oct 2025 21:59:34 +0530
-X-Gm-Features: AWmQ_blNGqcbnB8O5PtfaRq8QkAGM6_aeGo0IUFrD9sil21TuzEIfSgTnICVsec
-Message-ID: <CAAhSdy285QMVghHZv0He8-YOdBdK71_UXtQcy7_nf=3jaPxWsg@mail.gmail.com>
-Subject: Re: [PATCH v3] RISC-V: KVM: flush VS-stage TLB after VCPU migration
- to prevent stale entries
-To: Hui Min Mina Chou <minachou@andestech.com>
-Cc: atish.patra@linux.dev, pjw@kernel.org, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, tim609@andestech.com, ben717@andestech.com, 
-	az70021@gmail.com, =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+Cc: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <25f7ff09-08ea-4969-9184-9fd01b097558@kernel.org>
+ <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
+ <73955d58-544c-4299-a099-bfd9e5912a40@kernel.org>
+ <636a1f99-acd4-4904-8fae-f159646cc1a0@kernel.org>
+ <f4d80be9-986f-4d37-9c25-725eff7bb653@quicinc.com>
+ <e03373d9-e2dd-48b6-93a6-554fcd623718@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <e03373d9-e2dd-48b6-93a6-554fcd623718@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 23, 2025 at 8:59=E2=80=AFAM Hui Min Mina Chou
-<minachou@andestech.com> wrote:
->
-> From: Hui Min Mina Chou <minachou@andestech.com>
->
-> If multiple VCPUs of the same Guest/VM run on the same Host CPU,
-> hfence.vvma only flushes that Host CPU=E2=80=99s VS-stage TLB. Other Host=
- CPUs
-> may retain stale VS-stage entries. When a VCPU later migrates to a
-> different Host CPU, it can hit these stale GVA to GPA mappings, causing
-> unexpected faults in the Guest.
->
-> To fix this, kvm_riscv_gstage_vmid_sanitize() is extended to flush both
-> G-stage and VS-stage TLBs whenever a VCPU migrates to a different Host CP=
-U.
-> This ensures that no stale VS-stage mappings remain after VCPU migration.
->
-> Fixes: 92e450507d56 ("RISC-V: KVM: Cleanup stale TLB entries when host CP=
-U changes")
-> Signed-off-by: Hui Min Mina Chou <minachou@andestech.com>
-> Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-> Reviewed-by: Radim Kr=C4=8Dm=C3=A1=C5=99 <rkrcmar@ventanamicro.com>
+On 28/10/2025 17:17, Krzysztof Kozlowski wrote:
+> On 28/10/2025 13:27, Pavan Kondeti wrote:
+>> On Tue, Oct 28, 2025 at 12:07:40PM +0100, Krzysztof Kozlowski wrote:
+>>> On 28/10/2025 12:04, Krzysztof Kozlowski wrote:
+>>>> On 28/10/2025 11:58, Hrishabh Rajput wrote:
+>>>>>
+>>>>> On 10/28/2025 3:10 PM, Krzysztof Kozlowski wrote:
+>>>>>> On 28/10/2025 10:35, Hrishabh Rajput via B4 Relay wrote:
+>>>>>>> +
+>>>>>>> +static int __init gunyah_wdt_init(void)
+>>>>>>> +{
+>>>>>>> +	struct arm_smccc_res res;
+>>>>>>> +	struct device_node *np;
+>>>>>>> +	int ret;
+>>>>>>> +
+>>>>>>> +	/* Check if we're running on a Qualcomm device */
+>>>>>>> +	np = of_find_compatible_node(NULL, NULL, "qcom,smem");
+>>>>>> I don't think you implemented my feedback. This again is executed on
+>>>>>> every platform, e.g. on Samsung, pointlessly.
+>>>>>>
+>>>>>> Implement previous feedback.
+>>>>>
+>>>>> Do you want us to add platform device from another driver which is 
+>>>>> probed only on Qualcomm devices (like socinfo from previous discussion) 
+>>>>> and get rid of the module init function entirely? As keeping anything in 
+>>>>> the module init will get it executed on all platforms.
+>>>>
+>>>> Instead of asking the same can you read previous discussion? What is
+>>>> unclear here:
+>>>> https://lore.kernel.org/all/3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org/
+>>>> ?
+>>>>
+>>>>>
+>>>>>
+>>>>> With this patch version, we have tried to reduce the code execution on 
+>>>>> non-Qualcomm devices (also tried the alternative as mentioned in the 
+>>>>> cover letter). Adding platform device from another driver as described 
+>>>>> above would eliminate it entirely, please let us know if you want us to 
+>>>>> do that.
+>>>>
+>>>> Why do I need to repeat the same as last time?
+>>>
+>>>
+>>> Now I see that you completely ignored previous discussion and sent THE
+>>> SAME approach.
+>>
+>> Our intention is not to waste reviewers time at all. It is just a
+>> misunderstanding on what your comment is about. Let me elaborate further
+>> not to defend our approach here but to get a clarity so that we don't
+>> end up in the same situation when v4 is posted.
+>>
+>> https://lore.kernel.org/all/b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org/ 
+>>
+>> You mentioned here
+>>
+>> ```
+>> To me socinfo feels even better. That way only, really only qcom devices
+>> will execute this SMC.
+>> ```
+>>
+>> We interpreted this comment as `avoid executing this SMC on non qcom
+>> devices`. That is exactly what we have done in the current patch. since
+> 
+> 
+> So where did you use socinfo? Point me to the code.
 
-My comments on v2 are not addressed.
 
-Regards,
-Anup
+To recall my previous feedback:
 
-> ---
-> v3:
-> - Resolved build warning; updated header declaration and call side to
->   kvm_riscv_local_tlb_sanitize
->
-> v2:
-> - Updated Fixes commit to 92e450507d56
-> - Renamed function to kvm_riscv_local_tlb_sanitize
->
->  arch/riscv/include/asm/kvm_vmid.h | 2 +-
->  arch/riscv/kvm/vcpu.c             | 2 +-
->  arch/riscv/kvm/vmid.c             | 8 +++++++-
->  3 files changed, 9 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/riscv/include/asm/kvm_vmid.h b/arch/riscv/include/asm/k=
-vm_vmid.h
-> index ab98e1434fb7..75fb6e872ccd 100644
-> --- a/arch/riscv/include/asm/kvm_vmid.h
-> +++ b/arch/riscv/include/asm/kvm_vmid.h
-> @@ -22,6 +22,6 @@ unsigned long kvm_riscv_gstage_vmid_bits(void);
->  int kvm_riscv_gstage_vmid_init(struct kvm *kvm);
->  bool kvm_riscv_gstage_vmid_ver_changed(struct kvm_vmid *vmid);
->  void kvm_riscv_gstage_vmid_update(struct kvm_vcpu *vcpu);
-> -void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu);
-> +void kvm_riscv_local_tlb_sanitize(struct kvm_vcpu *vcpu);
->
->  #endif
-> diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
-> index 3ebcfffaa978..796218e4a462 100644
-> --- a/arch/riscv/kvm/vcpu.c
-> +++ b/arch/riscv/kvm/vcpu.c
-> @@ -968,7 +968,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
->                  * Note: This should be done after G-stage VMID has been
->                  * updated using kvm_riscv_gstage_vmid_ver_changed()
->                  */
-> -               kvm_riscv_gstage_vmid_sanitize(vcpu);
-> +               kvm_riscv_local_tlb_sanitize(vcpu);
->
->                 trace_kvm_entry(vcpu);
->
-> diff --git a/arch/riscv/kvm/vmid.c b/arch/riscv/kvm/vmid.c
-> index 3b426c800480..6323f5383d36 100644
-> --- a/arch/riscv/kvm/vmid.c
-> +++ b/arch/riscv/kvm/vmid.c
-> @@ -125,7 +125,7 @@ void kvm_riscv_gstage_vmid_update(struct kvm_vcpu *vc=
-pu)
->                 kvm_make_request(KVM_REQ_UPDATE_HGATP, v);
->  }
->
-> -void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu *vcpu)
-> +void kvm_riscv_local_tlb_sanitize(struct kvm_vcpu *vcpu)
->  {
->         unsigned long vmid;
->
-> @@ -146,4 +146,10 @@ void kvm_riscv_gstage_vmid_sanitize(struct kvm_vcpu =
-*vcpu)
->
->         vmid =3D READ_ONCE(vcpu->kvm->arch.vmid.vmid);
->         kvm_riscv_local_hfence_gvma_vmid_all(vmid);
-> +
-> +       /*
-> +        * Flush VS-stage TLBs entry after VCPU migration to avoid using
-> +        * stale entries.
-> +        */
-> +       kvm_riscv_local_hfence_vvma_all(vmid);
->  }
-> --
-> 2.34.1
->
+"No, your hypervisor driver (which you have) should start the module via
+adding platform/aux/something devices."
+
+"To me socinfo feels even better."
+
+And you ignored both and took some further part claiming that
+invalidates previous feedback. I don't know how to stress it more. You
+really do not read what was given to you.
+
+If you call any module_init other than module_foo_driver I will keep
+NAKing your patch because it is wrong. I explained why wrong already
+multiple times in previous threads and other discussions.
+
+Best regards,
+Krzysztof
 
