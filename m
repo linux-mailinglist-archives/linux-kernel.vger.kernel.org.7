@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-874461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758CCC16634
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:07:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C34C1664F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3C661B22ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:06:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7C3D54FE8A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1596834C9A3;
-	Tue, 28 Oct 2025 18:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21A934C820;
+	Tue, 28 Oct 2025 18:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hs3woLT9"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rxhjmmrw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243B8217F31
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA8623D2A3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761674731; cv=none; b=joGTVxabonhpBsu9MKmU+xiPvIU5l1QfEdLvbNVLJHXjzBQ7XsSD1sKOATLU5EvtBe7KoY+BCt9TYpE96lwxFhgJ4kecqaweT6qvnAe/bRAkpHfqKWlSrCy1lnhKBcufFgnjEo36OMzPcZAHGYlaUmHR4OxzSjslIZwEN7Y1kYg=
+	t=1761674776; cv=none; b=X5gahGY8zcbD04nYDwjy0f5dr5Iv20dAioINn1Fv06eFzieSDpoch/R5l0HEoV456iI4kLJHw7VtRqcN1wCnnzABFDigeqp5iDXlCOWblI0GF1KlH8/+7hw5oayG+O2ZRdLzGBkKhpPRBuFdM8eDNruucpRuv8I1b1EDZ67DxX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761674731; c=relaxed/simple;
-	bh=cn/C25Rbz1g7ApkaIAu6c0yNtzInMistPhKCeEWzQMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NsrUKPl68qNjOdQGv80KPRrBejRo3acKVUAq1tmpO5VYvAyWqjCJ4AshE00kZMKNNe2f0xZ2Yc/Dusofsrbgn6kVHBQcRyIGSmfhSN+pMoG/I2AHkH0gcRJAuG1aLO+UhZ+5VRN3zhHFHzkjMeI9FYcpHv/ARL7jxkgjMwdWQo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hs3woLT9; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so6181442a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:05:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761674729; x=1762279529; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yk6w8rVYaZcWTSTnE7iPwtQqPowVrL1jgYD+HQnj6UI=;
-        b=Hs3woLT9P6CfNwm6zmoW+BWsTMRdxwHNk7VjdvMXUUiCmeQXpYIvJaMWXvFTOce+zk
-         0bfeZVdepvmZ7wv+7fNtNDG7qCtWrqtlN+cITVFnlgUZfUa4Jo4ulrv9yWXbNUVlabls
-         gwwGrEvQC7ZYHuQXfHV6Vm064uKRQH9gFU2eHAb5CuIfy/m1y6m2Nq1K17nbKHZeleXE
-         06mr2thlk6C7dKfAY4LYZhg1NpB7SoPC1eS2MinA+jFTlk4siQAt+CxhewBdIQJRpDTU
-         iupTW7KDxwKfna+LK2sHSYs6SEGmitc53H7cBwtuh2QhFatxVreUCODKHT0ZxIb1OW5z
-         VLJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761674729; x=1762279529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yk6w8rVYaZcWTSTnE7iPwtQqPowVrL1jgYD+HQnj6UI=;
-        b=fLzIoRt1/SjDNhmHTq/A36HfaIwZ3lM+v6sxTqFELtXRevBNAy41s1uFZzR7GoXIp+
-         3l17clH6NZ4T5/lqygqoPXR6ARN8qwmjy01XJuIO4rAqTGb3ZaNz97+zVvJbFOlSg3R2
-         ozxW7g643nNVsyX3pJjgDo4YpPx1Xcn8hJURl0Qa7b2OVJUIFpUzrFe2awp/asyMKtVN
-         OqN/pEEKEBUPFIrPIrvoVBPNuUO+7odEyEgN8E9n+sBA8d1TMy3iq7/gd3LgqhipUHjP
-         CGDzLF/39kWRHXLxNo1nhD72hO0ey319FTgq3nNtIOt8TLYOtEJ0Jmh0rYYMQghlt0mH
-         gFVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwJO8PjsKyxKqnlaipXgOgll6fqFGFgu6iExLhQQMnsae4wbxljmCQp2pKJnVr2X8WOk41jabA5Z3O5bQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPlkE1J8aBb3VuGB8ErK3AzruXG5QFasxLEWSTK8VBUmBvEHVD
-	y67sotDAIVDU+1L4MehAADRcb8mV2QghWn/QIAv2wjkBMm//FPFYH+SS1DhrUp7bMMmw8rJJSXp
-	rodmTaOX8srTcRPg3li1Ric38y442gew=
-X-Gm-Gg: ASbGncunVte87C6Lw09C4psTY8IM86eW51y3KEWRIgoQSTRKHBUc/s2fvvrkgEFxM7O
-	gAdC6uclJ3f1DEAIJS5M3Mj/t//aco0V78pO86o/rwBHT+W/bU8ONJUgq1Vv4Hznjk9ZJamstXO
-	wLIWTdUe+ncrec1fkVF2owMvLJmJbQ84HCRKE2alxVbSQAVW3oIzkysn8+rolkrA80SKZ1A4OXP
-	+P5BSAH1/XoYIrgcb0+5lvI4vCtnQVg32e8n751NhKiLTs81s/R/gnvavcRVUZWEqiikl2gqpBl
-X-Google-Smtp-Source: AGHT+IGDWFPgY7P0J0rgoNRTpXkV9IpxvVzPeFO9NpOmpx7n8IIeQPH2id5pD0zxVQQqtPdTX8VbDivieGgcF2cpwKU=
-X-Received: by 2002:a17:90b:58ef:b0:33b:c5f6:40ef with SMTP id
- 98e67ed59e1d1-34027bda889mr5099562a91.24.1761674729195; Tue, 28 Oct 2025
- 11:05:29 -0700 (PDT)
+	s=arc-20240116; t=1761674776; c=relaxed/simple;
+	bh=gqjXzQwjIIkD9IpQ+kDj6XXKiUnNxxmvMSC7CWvzBxc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3fEMKfm+DDmAG6KFf4hRJrtaeYWYSx1SAqx3OHW5O5EhKxuQHi7DumNvK9DCa0yvzYF+VynSCPr3UggkRmEhG0CygrkEWNU0SVFkkOD7fs9JxGQSIdFkniDEA5AR2GKKsrZLYXRUQRv4VPbUPeKo9jUIhq8YL10H+mD5wJJzHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rxhjmmrw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E352C4CEE7;
+	Tue, 28 Oct 2025 18:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761674775;
+	bh=gqjXzQwjIIkD9IpQ+kDj6XXKiUnNxxmvMSC7CWvzBxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rxhjmmrw912PiJlxFLwH5DJOyDz3ys0GYWZNsprPyAAGeB6C0A92jzRmRn3O+pIbn
+	 lfyfD4q36CIfQmPEIcaGV/WfIy/5krYJlPQixHK3vKPJ59GF0JkeUWCS7RkLzTO2/O
+	 87BKSS6mdwGAJztEBwwqHfdddOmbRI2uTpupc70+7ykqadWARbBFJObIBvF3Pp7h8/
+	 /xBP8MDm21BzmsAqWwlJcAAnbFqKpcWSjugm0cADiu0WSJRfOCjtlcrdbJsSlVTLlf
+	 H5Vlk63FBktZPKW4yEPgjtfBeXOzi0JtMYnLc7DYHRgxIbZOjEcZ/qUdzUHUAiKL/2
+	 N/WBTxsg6WTJQ==
+Date: Tue, 28 Oct 2025 18:06:13 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Jan Prusakowski <jprusakowski@google.com>, linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH] f2fs: ensure node page reads complete before
+ f2fs_put_super() finishes
+Message-ID: <aQEGFWy7AmP2RcVM@google.com>
+References: <20251006084615.2585252-1-jprusakowski@google.com>
+ <c4643bb6-882a-4229-b938-e94398294905@kernel.org>
+ <aOkuA_Ffq2klE5g6@google.com>
+ <ac1bcf67-cc5f-4288-a2f3-c4fb6013c38a@kernel.org>
+ <aPEvpeM_cXWcxcZe@google.com>
+ <b4a0af34-bd8b-4130-a96f-6aacbe0fb576@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028135732.6489-1-cuibixuan@vivo.com>
-In-Reply-To: <20251028135732.6489-1-cuibixuan@vivo.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 28 Oct 2025 11:05:14 -0700
-X-Gm-Features: AWmQ_bkJMeV6sNPrCRGI7CcuEc5yewkxYrithOiGgXmBNzkm4G-mk86H_tT3dWE
-Message-ID: <CAEf4Bzbp2FYvTVz6SStj_p_ok+LLeXEAxcUiCkyWRf3wyjwi_Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next] libbpf: Ignore the modules that failed to load
- BTF object
-To: Bixuan Cui <cuibixuan@vivo.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@linux.dev, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4a0af34-bd8b-4130-a96f-6aacbe0fb576@kernel.org>
 
-On Tue, Oct 28, 2025 at 6:57=E2=80=AFAM Bixuan Cui <cuibixuan@vivo.com> wro=
-te:
->
-> Register kfunc in self-developed module but run error in other modules:
->     libbpf: btf: type [164451]: referenced type [164446] is not FUNC_PROT=
-O
->     libbpf: failed to load module [syscon_reboot_mode]'s BTF object #2: -=
-22
->
-> It is usually skipping the error does not affect the search for the next =
-module.
->
-> Then ignoring the failed modules, load the bpf process:
->     libbpf: btf: type [164451]: referenced type [164446] is not FUNC_PROT=
-O
->     libbpf: failed to load module [syscon_reboot_mode]'s BTF object #3: -=
-22
->     libbpf: extern (func ksym) 'bpf_kfunc': resolved to bpf_module [16444=
-2]
->     ...
->
-> Signed-off-by: Bixuan Cui <cuibixuan@vivo.com>
-> ---
->  tools/lib/bpf/libbpf.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 711173acbcef..0fa0d89da068 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -5702,7 +5702,8 @@ static int load_module_btfs(struct bpf_object *obj)
->                 if (err) {
->                         pr_warn("failed to load module [%s]'s BTF object =
-#%d: %d\n",
->                                 name, id, err);
-> -                       goto err_out;
-> +                       close(fd);
-> +                       continue;
->                 }
+Testing this patch:
 
-It's not an expected condition to have kernel module with corrupted
-BTF, so I don't think we should be doing this.
+Xfstests generic/335, generic/336 sometimes crash with the following message:
 
-pw-bot: cr
+F2FS-fs (dm-0): detect filesystem reference count leak during umount, type: 9, count: 1
+------------[ cut here ]------------
+kernel BUG at fs/f2fs/super.c:1939!
+Oops: invalid opcode: 0000 [#1] SMP NOPTI
+CPU: 1 UID: 0 PID: 609351 Comm: umount Tainted: G        W           6.17.0-rc5-xfstests-g9dd1835ecda5 #1 PREEMPT(none)
+Tainted: [W]=WARN
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+RIP: 0010:f2fs_put_super+0x3b3/0x3c0
+Call Trace:
+ <TASK>
+ generic_shutdown_super+0x7e/0x190
+ kill_block_super+0x1a/0x40
+ kill_f2fs_super+0x9d/0x190
+ deactivate_locked_super+0x30/0xb0
+ cleanup_mnt+0xba/0x150
+ task_work_run+0x5c/0xa0
+ exit_to_user_mode_loop+0xb7/0xc0
+ do_syscall_64+0x1ae/0x1c0
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
+ </TASK>
+---[ end trace 0000000000000000 ]---
 
+It appears that sometimes it is possible that f2fs_put_super() is called before
+all node page reads are completed.
+Adding a call to f2fs_wait_on_all_pages() for F2FS_RD_NODE fixes the problem.
 
->
->                 err =3D libbpf_ensure_mem((void **)&obj->btf_modules, &ob=
-j->btf_module_cap,
-> --
-> 2.39.0
->
+Fixes: 20872584b8c0b ("f2fs: fix to drop all dirty meta/node pages during umount()")
+Signed-off-by: Jan Prusakowski <jprusakowski@google.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+---
+ fs/f2fs/super.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bdb5ddb4f966..0b0ef8ba243b 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1989,14 +1989,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 		truncate_inode_pages_final(META_MAPPING(sbi));
+ 	}
+ 
+-	for (i = 0; i < NR_COUNT_TYPE; i++) {
+-		if (!get_pages(sbi, i))
+-			continue;
+-		f2fs_err(sbi, "detect filesystem reference count leak during "
+-			"umount, type: %d, count: %lld", i, get_pages(sbi, i));
+-		f2fs_bug_on(sbi, 1);
+-	}
+-
+ 	f2fs_bug_on(sbi, sbi->fsync_node_num);
+ 
+ 	f2fs_destroy_compress_inode(sbi);
+@@ -2007,6 +1999,15 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->meta_inode);
+ 	sbi->meta_inode = NULL;
+ 
++	/* Should check the page counts after dropping all node/meta pages */
++	for (i = 0; i < NR_COUNT_TYPE; i++) {
++		if (!get_pages(sbi, i))
++			continue;
++		f2fs_err(sbi, "detect filesystem reference count leak during "
++			"umount, type: %d, count: %lld", i, get_pages(sbi, i));
++		f2fs_bug_on(sbi, 1);
++	}
++
+ 	/*
+ 	 * iput() can update stat information, if f2fs_write_checkpoint()
+ 	 * above failed with error.
+-- 
+2.51.1.851.g4ebd6896fd-goog
+
 
