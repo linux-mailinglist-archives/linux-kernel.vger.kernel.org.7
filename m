@@ -1,368 +1,593 @@
-Return-Path: <linux-kernel+bounces-873390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1744C13D46
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:33:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D1FC13D6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 983A042107A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:29:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CB2C566552
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:30:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7292FFDC2;
-	Tue, 28 Oct 2025 09:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119F0303A03;
+	Tue, 28 Oct 2025 09:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ekoy10I9"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010060.outbound.protection.outlook.com [52.101.84.60])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Rvg5zJLE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB70145B16;
-	Tue, 28 Oct 2025 09:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761643749; cv=fail; b=mS+eSddYiPqYknsaGivW/Apvbr5sk4GCFrkJdIrbbhQABrdILPg2ZGfWF7AX0zfVfBxl3giRor0qMvu/Ik72OBAExBiPlNPPr6BhXrH0kOwZEhU+9xVxfu58aBEO5GvPD6W5+THhYZwEV30Iu1Pe3pHpfMShcW29h1TmwXCsTXs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761643749; c=relaxed/simple;
-	bh=3lYHu/uM+kXO5nKTnqfz88M//dmEeYpbMSPvN2TwTdM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YahQikSEuHaknKn0rTmdmOIblDImqbNX/hPh7HJocHjD7zHzoi3elfXKCxJ4csUesUO6hE5EMaI3xT5gnmxhmJGggU09L65NP7DWkdmiCf598+a9RZx6yM+lM9/3bH/dFM6oKEhGR2olCg+L26wpMv77GVeb8MZF2IJZhm/Fzvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Ekoy10I9; arc=fail smtp.client-ip=52.101.84.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jRXMVWGZTUHSGYdBUBEIKCv7hxoeGjkZKNO1arw3L/TiNVtRevnhOl2MOaesU9ziQXIk2WonO6/X67Ywlfo9Ypt2VjEZO80pv7gELUySbj8EPd5730nC5lh7fsEfHS8eGk5wcORkJXAi05mob5NdngaKLOZGlXnXq0mh8zWqOeXy0uNWE4gNak8lk0qCqhZuUyc/r9UE2Vg0OatKA4LF68gQAEAzkgKjAft9ffGLlp32S1ujQTv2Itd+TxOPKWZEApF7esHg7PgleytSJj7UgGUCGUqslk30g+B9lDtZaAzZ08jFKEl6b955JPhLRKSTBSndvYMxL/eYu8N5avBiJA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zFW3cUgafNEFvdYzmDiDIjXyhlp1ejlEMqSb1hEr/yw=;
- b=o5qXHR9ZTDnOCUhgNO270MlrlhwXjWpALRYdSBsM17Dfv3Rcpd9+SZGm2RJll9U0cY3kggUxu2tn3dea7fS/AcDC5sbU1U6UsVFT/i8YP0/GHQsX3f27Q1jbHvBDu1ClaEeRmWtm3Gwl81xdmXaVttogBvk/QxvvQKqIe1aPN4xtFnzmnaEoUuveSmIaoyEo9IWJRnkYcRL0Mtj0aMJdA/ZeH4m+X6B6Iwc+3vwsAQaqUAIcos/uUXk70H5y0qSekcCIo3VkH78SY64gGscE+MTfZgvv6nfQqsAMN5jFOaKytCHEF+luLOWujKuysAfA/4D3PzRfzGjCGBNdQBw9Sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zFW3cUgafNEFvdYzmDiDIjXyhlp1ejlEMqSb1hEr/yw=;
- b=Ekoy10I9XLDue3CAyLeQ7kjPd0UrUqsps0bp9wTtPiDtvbBUYVP/2X1C1N9pC9eSNIBJsmpiOvEXDSf1R4aI/tG9zG37eYqdRtLJ6DG/mfdoFal146ZnoRJJvNwvWvUEth7So9zZ+hlAMtKSYBFdFY6qJCwx6Dx9gxQQcWxvAVbiyFexPN6sb8XQtafHb2n3LJBR/vM+4VgkO8SP5/tjA2dGjpJa+e7l5QEktUx5t/anxPODOhaz96vWqSKC3+wpZrsPhf4TFP86zvjCDfDs7L+85vhQ1n72Ym1o9JW2jKmSt8JYZCq0dJporETftyYrRdAL4gbcuAMfcfdhR7wKeg==
-Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
- (2603:10a6:800:293::14) by PA1PR04MB10603.eurprd04.prod.outlook.com
- (2603:10a6:102:484::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 09:29:02 +0000
-Received: from VI2PR04MB11147.eurprd04.prod.outlook.com
- ([fe80::75ad:fac7:cfe7:b687]) by VI2PR04MB11147.eurprd04.prod.outlook.com
- ([fe80::75ad:fac7:cfe7:b687%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
- 09:29:02 +0000
-From: Carlos Song <carlos.song@nxp.com>
-To: Frank Li <frank.li@nxp.com>
-CC: "mkl@pengutronix.de" <mkl@pengutronix.de>, "broonie@kernel.org"
-	<broonie@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>,
-	"linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PACTH v2] spi: imx: add 16/32 bits per word support for target
- mode
-Thread-Topic: [PACTH v2] spi: imx: add 16/32 bits per word support for target
- mode
-Thread-Index: AQHcRNm/zRpEV+zYiU25ok3CqsF1ObTRSXUAgAP4xlCAARklAIAAxsaw
-Date: Tue, 28 Oct 2025 09:29:02 +0000
-Message-ID:
- <VI2PR04MB1114746F42268876E27C1B93FE8FDA@VI2PR04MB11147.eurprd04.prod.outlook.com>
-References: <20251024113107.513604-1-carlos.song@nxp.com>
- <aPt+JJhaB9dUOwL8@lizhi-Precision-Tower-5810>
- <VI2PR04MB11147AB20690F99BB6CEE2300E8FCA@VI2PR04MB11147.eurprd04.prod.outlook.com>
- <aP++6ghId1LvQ1NF@lizhi-Precision-Tower-5810>
-In-Reply-To: <aP++6ghId1LvQ1NF@lizhi-Precision-Tower-5810>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: VI2PR04MB11147:EE_|PA1PR04MB10603:EE_
-x-ms-office365-filtering-correlation-id: ec1bbcd2-d939-4e32-1c5d-08de16046e88
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|19092799006|7053199007|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WD6pVaHl8/xpx9Bq//QO46GIIszTssfRByV1v30wAyTTCDW8E5s+Lp8bjuYM?=
- =?us-ascii?Q?DPY+tqDzx9bzFWZUVfRUWFXXNiGXaLCa5qqN+NiOshPITTPZwnDL0WStuStS?=
- =?us-ascii?Q?XftaqQzYAO4xVAiBg1HO8aAZqXZhs/MIWLshDAbpjZZnEUAguQfxB/aJKoz+?=
- =?us-ascii?Q?Qzg4TMlqkfRc2UQC3DAC5v2CiCdSBXfsm5MhtKbVXxXPFP2Chwhi8+BQgBxT?=
- =?us-ascii?Q?avXGBCIgqNkxWtysxSLk1bl5m/Ua5v6VVIYQkk//FQ7I+6NOmt5/mo0ARh4Y?=
- =?us-ascii?Q?8kpwj9bCsoaaX1km48pQ2ZKN1uakwVQWsvCHzg+qTJufP8vntFcDBbn3aYRA?=
- =?us-ascii?Q?3GNbwY6PvVfZUqP69nx097ZXhrdRpLd7iV4UlWUWOmRV9kYe8zpefyVMno0b?=
- =?us-ascii?Q?OfERx8E6992sPiNUoKSpd2CdILQqTMWDSFVaFOO6r2jKUfDciJdgZC0Wf38O?=
- =?us-ascii?Q?ED29u9dKFNXYUEywRZCdoHkwNhdoWlAMrFs4nSicI2Q2rbYEAFjPVgMRdsOL?=
- =?us-ascii?Q?NeJRgLo7MaAVCek0N42NkbfioZVcmtEQsp1HOxzCPnWoEA+NISqoCL0Z8GKa?=
- =?us-ascii?Q?yjM9ebMXMuNd9p3jQMof9bEfglJS4DwDS7ti5bAODaCsX0+rQ+QmA2TolGHi?=
- =?us-ascii?Q?3+aD0aRorQcakLiNaiRNVNPrUKrHHoXquKgb5+r+8EprrSf/pja5b2yle1jR?=
- =?us-ascii?Q?B9co1S/r2PmSoAZ2mF63mK4xYgSQahdTf2v0GvoqJ00V0dtDx2K8VejkJppp?=
- =?us-ascii?Q?PcpDOkPvruTnMYImLjcF1mgtcQyeiEu2CevZaozcXgAd1d3VmHibIbJCfM8D?=
- =?us-ascii?Q?L1gsAu1bLOa+daI+I9aQ229AifTJRDJv43wf7Vc8c3R0Q32Kdj0nRnxsP6rZ?=
- =?us-ascii?Q?d50gQ0VUwUJjf/+Yi8qOpoGv1ATi6BGeKDykRP7qzC1yU4fhkTkfVGIRQ9ni?=
- =?us-ascii?Q?maDS4aXHq7oFCkN1iR171udYc9SZ6rJ2ROzmxQzFeHjSjjMVjcxkPxp96Sqv?=
- =?us-ascii?Q?Qfa8Lztlj6Gu/HyCKdVhIstXeP2B6QWXSYw8JI1qLbRVfubxLSCt4QKXWKxi?=
- =?us-ascii?Q?mo+6w47GWR0cZ8qP2UBbPaZ7e60SXOxNFfCfYJw9+6dTnr+A/w1OVWMH+MlE?=
- =?us-ascii?Q?/HVF4p/S4RXmXICl7gvoiOucpQTJBdxHQL+ZVgoCc+PMOMkQMub2BtFEVRKF?=
- =?us-ascii?Q?EwrX0/qFp1OTf7Lmyro+fPOCpb6cDiHvy74q+aUhfI433DCNH62iPh9Z2gsm?=
- =?us-ascii?Q?CAfgzxoQ+aueHkkCdlMb8yxvDrBM4jeMVBut+mJKGUG6saGLZj1zXvBnmP9i?=
- =?us-ascii?Q?h/O64T+UJfpKefLHWJPBZWLJ0ZaFQv1FxOsnIlHQ4gUp9b9pANXCDvABNiXd?=
- =?us-ascii?Q?Pl9spyJNppHel5s3zVnVYnxAmGzqig7vlADXlPE812XanWlkle+0hLaouqiJ?=
- =?us-ascii?Q?W2cDvULQrhX3jrwKbaV01hJvvdzZGWnSf0coQaIyGDB4OPrzyqgIqLjRhekj?=
- =?us-ascii?Q?lAsWDiwM66mhtLXdQqkYBPMQE73xbWxAxksi?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI2PR04MB11147.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(19092799006)(7053199007)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?7OjTTyQnFWp2uEHy/c+U4bWCkfsjl0gGTlW+jSRQhgJcgEt3SuRLyljugzcF?=
- =?us-ascii?Q?FLSI+9cFIqw50bT50g+e32VkmwZ37V3JdQx+A2dDd8wUAk/kLdblbIZUwc+8?=
- =?us-ascii?Q?bgLqYF57+RHw7KODLwoYqFYZ7BP0iybeGMJAbqGMZve7bBHOcuxt4eBhnif3?=
- =?us-ascii?Q?KZoCRrvcNGscYyFkjacmwBPXjklNoNaNPvFzgH5ouQuTcWF5ryDmvDKLl0Ai?=
- =?us-ascii?Q?pO0LJ7/+sMNTUNklhKQwBnhxc9A2U7GKeFIzuanxjQzcxEgG5A+7w8U02+Xw?=
- =?us-ascii?Q?c9yKoPNE0jv1EyxXXFfNuE5nRG6XajVStgTOiVAdtGbIgaBriDxyXJ961NE6?=
- =?us-ascii?Q?5iKsV6UKlhi/LlkwZhNM7u5ctXQOKNjM38dhdkdmnMY15Sa9iGG+O8j+qquN?=
- =?us-ascii?Q?4xZmKfC3/e7Y575TKXmmX6wkHN6t/qVBU0bdMk4DmqecHG3XKEIfBLulfNlJ?=
- =?us-ascii?Q?s0wfzeOASDWgfQaZJtT6K6MPF85wClgo1IPZN91QqN54X0rzYYrrDOr2vOQ/?=
- =?us-ascii?Q?2Hv8hUAshtm0wqkfq/bnFSzcm5tODV0fR1ePFlTdmqa9DL6EQMHRBOxoYWV+?=
- =?us-ascii?Q?bcDVClqoXH6qUWer1dMK3TqnekNT7RBZReatDiRJ9Q+kjq7r2dssdAeu1uXF?=
- =?us-ascii?Q?i0EyKRl5AOMI8kUmN3fV9zyxNtiI+qwy1QaFABoojvkdC0hLfDMjPqgB7mZn?=
- =?us-ascii?Q?QeIELhAlyIIkdDn6NPWn19BlJpHbJH4RPR1MOMgeSCHop54HPzxka0ZfRzl+?=
- =?us-ascii?Q?C3AO6pNUwDxTmDbTaTClsUQUXMN5WtDyDguyycC7v8pe0eIAg9FitY3Uojeg?=
- =?us-ascii?Q?5+dIVkJ6zkrzJAiKx8PYCXHmAdIvkPDkg/JCyctdzqKhXOb041U6hCGJ3aQ8?=
- =?us-ascii?Q?1Brei0D597Dw9oSab3ceYwqqLXYDEqrFokuN+Bc65X9iM7a+ytUPkDnqUzl6?=
- =?us-ascii?Q?Q7Dy13LhbmcsRwzp4nB2qJjTl/NLe49fwPJcRA2GSC8eOAoJKXn33PEVRj+u?=
- =?us-ascii?Q?cnzfsvx84Y63FC+RtYa/TnnBeaQA+cqZbM7aGEhcG9hGc3pKQVbuSGp0cAdt?=
- =?us-ascii?Q?k6xJ76UoOixE+ICP09mCRsuKzXWAPV9drYmr8IxQVSgf0rfvCoUH66HlMIDF?=
- =?us-ascii?Q?b4YmUKHzbRfUue48yehPflHpFw/557mBAyD97KphG4UGfBra5FxJUOUomUC9?=
- =?us-ascii?Q?hhx+bDp4w9+MpBbGin3bX3yWXgOdU6DYqJP8yQ4BHe6CJmUGAPQOuOCCiet8?=
- =?us-ascii?Q?a4M31DQWSlgjG2GDG3JJBxvfGlUd3e1E2tj+32p/K0US1IFvnUBXba+btwli?=
- =?us-ascii?Q?x8fUFur6AccrGHW03XE4dB5k5qwm97VgOs3uV8eGFrWyyLRxJkV23+k3/zMI?=
- =?us-ascii?Q?Q98JV7CAiYTlfQ1z7Vhk2kSoqvbpjHa0/3eAP5vHUzagu7U+ECPbqFPfMDPz?=
- =?us-ascii?Q?jeWpguPNiN8cyfKrgfLwmOOSa4891dABETStqaPZ1U6mmkHvD1tdV8zzZA0O?=
- =?us-ascii?Q?vx6tM0wx0nY2Tz4dGd6G3N8LhCLvX1uJQn1FD4DecanbJrMri0lCdNcyctsE?=
- =?us-ascii?Q?20rtmbrCJ3PzMnQk/mCVC3cVmf2BvhH2XhC+Mt1Z?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA2B303C85;
+	Tue, 28 Oct 2025 09:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761643759; cv=none; b=myI/V0+U1ey3ySoFOQD3SQjztg35zDeLYwrTyInHvD68XZSduX3ytJZfK5Vl9xvnDZyn7dGkz/vdhZzevwcoyXhAMRhIXkacPv7W1VfwjiF0LjoQ9iLnZ+PPUpMDssw4fnqRQ3A13J2xGTvva8RNULTqX2iHUcdYfuHBZIZunK8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761643759; c=relaxed/simple;
+	bh=445heezdjBWJpefRw4RQtDYbWl5z2fdWhXq66ZfLFTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Epdxh4TNub1t4aHLMRz27OUGDfEoW6dAKQUqTIv/oe2lyuetZg0Qs4VWvxFpX6p/WVRBvnK8XKPrfkfCKr27RvOzxA9xeJvHnXyz+f5rG9q/e5oGUHE6wQdsu/9NahoIycHyb1wevHi+bX0SXZIlv2zll+hFySs7ytQ9UkaJO88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Rvg5zJLE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE004C113D0;
+	Tue, 28 Oct 2025 09:29:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761643758;
+	bh=445heezdjBWJpefRw4RQtDYbWl5z2fdWhXq66ZfLFTg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Rvg5zJLEWf+ZEtA5Ss3yATYP0fhhx2VDUdQM2TNxFHMcTAr9AtfDNnvU557jzb0Dz
+	 bdlQr9wkEUrEtlqFKHXvxoiF34mYdhCcYDPHjgbMGjbYXtDtAr4RqJmv7ub7Nap2PB
+	 tkX1wfjQwuPasHfAbJGPqn5rKURvKSngfNQhjwO0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	achill@achill.org,
+	sr@sladewatkins.com
+Subject: [PATCH 5.15 000/117] 5.15.196-rc2 review
+Date: Tue, 28 Oct 2025 10:29:12 +0100
+Message-ID: <20251028092823.507383588@linuxfoundation.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: VI2PR04MB11147.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec1bbcd2-d939-4e32-1c5d-08de16046e88
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2025 09:29:02.3179
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FUgc2gSetQUuvDkGXRCCuIwc4EEhNQag4gAnkZx6t6nIG6x5Dvb1HKPnTCMGOFVwxcnQfMdCiYl5e4kEj7MWCA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10603
+User-Agent: quilt/0.69
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc2.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.15.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.15.196-rc2
+X-KernelTest-Deadline: 2025-10-30T09:28+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This is the start of the stable review cycle for the 5.15.196 release.
+There are 117 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc2.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 5.15.196-rc2
+
+Marek Vasut <marek.vasut+renesas@mailbox.org>
+    PCI: rcar: Demote WARN() to dev_warn_ratelimited() in rcar_pcie_wakeup()
+
+Zhengchao Shao <shaozhengchao@huawei.com>
+    net: rtnetlink: fix module reference count leak issue in rtnetlink_rcv_msg
+
+Kuen-Han Tsai <khtsai@google.com>
+    usb: gadget: f_acm: Refactor bind path to use __free()
+
+Kuen-Han Tsai <khtsai@google.com>
+    usb: gadget: f_ncm: Refactor bind path to use __free()
+
+Kuen-Han Tsai <khtsai@google.com>
+    usb: gadget: Introduce free_usb_request helper
+
+Kuen-Han Tsai <khtsai@google.com>
+    usb: gadget: Store endpoint pointer in usb_request
+
+Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+    arch_topology: Fix incorrect error check in topology_parse_cpu_capacity()
+
+Darrick J. Wong <djwong@kernel.org>
+    xfs: always warn about deprecated mount options
+
+Maarten Lankhorst <dev@lankhorst.se>
+    devcoredump: Fix circular locking dependency with devcd->mutex.
+
+Niklas Cassel <cassel@kernel.org>
+    PCI: tegra194: Reset BARs when running in PCIe endpoint mode
+
+Marek Vasut <marek.vasut+renesas@mailbox.org>
+    PCI: rcar-host: Drop PMSR spinlock
+
+Marek Vasut <marek.vasut+renesas@gmail.com>
+    PCI: rcar: Finish transition to L1 state in rcar_pcie_config_access()
+
+Vidya Sagar <vidyas@nvidia.com>
+    PCI: tegra194: Handle errors in BPMP response
+
+Jaegeuk Kim <jaegeuk@kernel.org>
+    f2fs: fix wrong block mapping for multi-devices
+
+Chuck Lever <chuck.lever@oracle.com>
+    NFSD: Define a proc_layoutcommit for the FlexFiles layout type
+
+Jan Kara <jack@suse.cz>
+    vfs: Don't leak disconnected dentries on umount
+
+Gui-Dong Han <hanguidong02@gmail.com>
+    drm/amdgpu: use atomic functions with memory barriers for vm fault info
+
+Marek Vasut <marek.vasut+renesas@mailbox.org>
+    PCI: rcar-host: Convert struct rcar_msi mask_lock into raw spinlock
+
+Muhammad Usama Anjum <usama.anjum@collabora.com>
+    wifi: ath11k: HAL SRNG: don't deinitialize and re-initialize again
+
+Siddharth Vadapalli <s-vadapalli@ti.com>
+    PCI: j721e: Fix programming sequence of "strap" settings
+
+Siddharth Vadapalli <s-vadapalli@ti.com>
+    PCI: j721e: Enable ACSPCIE Refclk if "ti,syscon-acspcie-proxy-ctrl" exists
+
+Darrick J. Wong <djwong@kernel.org>
+    fuse: fix livelock in synchronous file put from fuseblk workers
+
+Amir Goldstein <amir73il@gmail.com>
+    fuse: allocate ff->release_args only if release is needed
+
+Xiao Liang <shaw.leon@gmail.com>
+    padata: Reset next CPU when reorder sequence wraps around
+
+Sean Nyekjaer <sean@geanix.com>
+    iio: imu: inv_icm42600: Simplify pm_runtime setup
+
+Bence Csókás <csokas.bence@prolan.hu>
+    PM: runtime: Add new devm functions
+
+Sean Nyekjaer <sean@geanix.com>
+    iio: imu: inv_icm42600: Avoid configuring if already pm_runtime suspended
+
+David Lechner <dlechner@baylibre.com>
+    iio: imu: inv_icm42600: use = { } instead of memset()
+
+Sergey Bashirov <sergeybashirov@gmail.com>
+    NFSD: Fix last write offset handling in layoutcommit
+
+Sergey Bashirov <sergeybashirov@gmail.com>
+    NFSD: Minor cleanup in layoutcommit processing
+
+Sergey Bashirov <sergeybashirov@gmail.com>
+    NFSD: Rework encoding and decoding of nfsd4_deviceid
+
+Christoph Hellwig <hch@lst.de>
+    xfs: fix log CRC mismatches between i386 and other architectures
+
+Christoph Hellwig <hch@lst.de>
+    xfs: rename the old_crc variable in xlog_recover_process
+
+Vineeth Vijayan <vneethv@linux.ibm.com>
+    s390/cio: Update purge function to unregister the unused subchannels
+
+Mark Rutland <mark.rutland@arm.com>
+    arm64: errata: Apply workarounds for Neoverse-V3AE
+
+Mark Rutland <mark.rutland@arm.com>
+    arm64: cputype: Add Neoverse-V3AE definitions
+
+Florian Eckert <fe@dev.tdt.de>
+    serial: 8250_exar: add support for Advantech 2 port card with Device ID 0x0018
+
+Victoria Votokina <Victoria.Votokina@kaspersky.com>
+    most: usb: hdm_probe: Fix calling put_device() before device initialization
+
+Victoria Votokina <Victoria.Votokina@kaspersky.com>
+    most: usb: Fix use-after-free in hdm_disconnect
+
+Alexander Usyskin <alexander.usyskin@intel.com>
+    mei: me: add wildcat lake P DID
+
+Deepanshu Kartikey <kartikey406@gmail.com>
+    comedi: fix divide-by-zero in comedi_buf_munge()
+
+Alice Ryhl <aliceryhl@google.com>
+    binder: remove "invalid inc weak" check
+
+Mathias Nyman <mathias.nyman@linux.intel.com>
+    xhci: dbc: enable back DbC in resume if it was enabled before suspend
+
+Andrey Konovalov <andreyknvl@gmail.com>
+    usb: raw-gadget: do not limit transfer length
+
+Tim Guttzeit <t.guttzeit@tuxedocomputers.com>
+    usb/core/quirks: Add Huawei ME906S to wakeup quirk
+
+LI Qingwu <Qing-wu.Li@leica-geosystems.com.cn>
+    USB: serial: option: add Telit FN920C04 ECM compositions
+
+Reinhard Speyerer <rspmn@arcor.de>
+    USB: serial: option: add Quectel RG255C
+
+Renjun Wang <renjunw0@foxmail.com>
+    USB: serial: option: add UNISOC UIS7720
+
+Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+    net: ravb: Ensure memory write completes before ringing TX doorbell
+
+Michal Pecio <michal.pecio@gmail.com>
+    net: usb: rtl8150: Fix frame padding
+
+Stefano Garzarella <sgarzare@redhat.com>
+    vsock: fix lock inversion in vsock_assign_transport()
+
+Deepanshu Kartikey <kartikey406@gmail.com>
+    ocfs2: clear extent cache after moving/defragmenting extents
+
+Maciej W. Rozycki <macro@orcam.me.uk>
+    MIPS: Malta: Fix keyboard resource preventing i8042 driver from registering
+
+Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    Revert "cpuidle: menu: Avoid discarding useful information"
+
+Tonghao Zhang <tonghao@bamaicloud.com>
+    net: bonding: fix possible peer notify event loss or dup issue
+
+Alexey Simakov <bigalex934@gmail.com>
+    sctp: avoid NULL dereference when chunk data buffer is missing
+
+Huang Ying <ying.huang@linux.alibaba.com>
+    arm64, mm: avoid always making PTE dirty in pte_mkwrite()
+
+Ioana Ciornei <ioana.ciornei@nxp.com>
+    dpaa2-eth: fix the pointer passed to PTR_ALIGN on Tx path
+
+Wei Fang <wei.fang@nxp.com>
+    net: enetc: correct the value of ENETC_RXB_TRUESIZE
+
+Johannes Wiesböck <johannes.wiesboeck@aisec.fraunhofer.de>
+    rtnetlink: Allow deleting FDB entries in user namespace
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: rtnetlink: add NLM_F_BULK support to rtnl_fdb_del
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: add ndo_fdb_del_bulk
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: rtnetlink: add bulk delete support flag
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: netlink: add NLM_F_BULK delete request modifier
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: rtnetlink: use BIT for flag values
+
+Nikolay Aleksandrov <razor@blackwall.org>
+    net: rtnetlink: add helper to extract msg type's kind
+
+Geert Uytterhoeven <geert@linux-m68k.org>
+    m68k: bitops: Fix find_*_bit() signatures
+
+Yangtao Li <frank.li@vivo.com>
+    hfsplus: return EIO when type of hidden directory mismatch in hfsplus_fill_super()
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfs: fix KMSAN uninit-value issue in hfs_find_set_zero_bits()
+
+Alexander Aring <aahringo@redhat.com>
+    dlm: check for defined force value in dlm_lockspace_release
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfsplus: fix KMSAN uninit-value issue in hfsplus_delete_cat()
+
+Yang Chenzhi <yang.chenzhi@vivo.com>
+    hfs: validate record offset in hfsplus_bmap_alloc
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfsplus: fix KMSAN uninit-value issue in __hfsplus_ext_cache_extent()
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfs: make proper initalization of struct hfs_find_data
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfs: clear offset and space out of valid records in b-tree node
+
+Simon Schuster <schuster.simon@siemens-energy.com>
+    nios2: ensure that memblock.current_limit is set when setting pfn limits
+
+Xichao Zhao <zhao.xichao@vivo.com>
+    exec: Fix incorrect type for ret
+
+Niko Mauno <niko.mauno@vaisala.com>
+    Revert "perf test: Don't leak workload gopipe in PERF_RECORD_*"
+
+Brian Norris <briannorris@google.com>
+    PCI/sysfs: Ensure devices are powered for config reads (part 2)
+
+Viacheslav Dubeyko <slava@dubeyko.com>
+    hfsplus: fix slab-out-of-bounds read in hfsplus_strcasecmp()
+
+Jiaming Zhang <r772577952@gmail.com>
+    ALSA: usb-audio: Fix NULL pointer deference in try_to_register_card
+
+Randy Dunlap <rdunlap@infradead.org>
+    ALSA: firewire: amdtp-stream: fix enum kernel-doc warnings
+
+Vincent Guittot <vincent.guittot@linaro.org>
+    sched/fair: Fix pelt lost idle time detection
+
+Ingo Molnar <mingo@kernel.org>
+    sched/balancing: Rename newidle_balance() => sched_balance_newidle()
+
+Timur Kristóf <timur.kristof@gmail.com>
+    drm/amd/powerplay: Fix CIK shutdown temperature
+
+Fabian Vogt <fvogt@suse.de>
+    riscv: kprobes: Fix probe address validation
+
+I Viswanath <viswanathiyyappan@gmail.com>
+    net: usb: lan78xx: fix use of improperly initialized dev->chipid in lan78xx_reset
+
+Oleksij Rempel <linux@rempel-privat.de>
+    net: usb: lan78xx: Add error handling to lan78xx_init_mac_address
+
+Jakub Kicinski <kuba@kernel.org>
+    net: usb: use eth_hw_addr_set() instead of ether_addr_copy()
+
+Sabrina Dubroca <sd@queasysnail.net>
+    tls: don't rely on tx_work during send()
+
+Sabrina Dubroca <sd@queasysnail.net>
+    tls: always set record_type in tls_process_cmsg
+
+Sabrina Dubroca <sd@queasysnail.net>
+    tls: wait for async encrypt in case of error during latter iterations of sendmsg
+
+Sascha Hauer <s.hauer@pengutronix.de>
+    net: tls: wait for async completion on last message
+
+David Howells <dhowells@redhat.com>
+    splice, net: Add a splice_eof op to file-ops and socket-ops
+
+Alexey Simakov <bigalex934@gmail.com>
+    tg3: prevent use of uninitialized remote_adv and local_adv variables
+
+Eric Dumazet <edumazet@google.com>
+    tcp: fix tcp_tso_should_defer() vs large RTT
+
+Raju Rangoju <Raju.Rangoju@amd.com>
+    amd-xgbe: Avoid spurious link down messages during interface toggle
+
+Dmitry Safonov <0x7f454c46@gmail.com>
+    net/ip6_tunnel: Prevent perpetual tunnel growth
+
+Linmao Li <lilinmao@kylinos.cn>
+    r8169: fix packet truncation after S4 resume on RTL8168H/RTL8111H
+
+Nicolas Dichtel <nicolas.dichtel@6wind.com>
+    doc: fix seg6_flowlabel path
+
+Yeounsu Moon <yyyynoom@gmail.com>
+    net: dlink: handle dma_map_single() failure properly
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: m_can: m_can_plat_remove(): add missing pm_runtime_disable()
+
+Yuezhang Mo <Yuezhang.Mo@sony.com>
+    dax: skip read lock assertion for read-only filesystems
+
+Benjamin Tissoires <bentiss@kernel.org>
+    HID: multitouch: fix sticky fingers
+
+Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    cpufreq: CPPC: Avoid using CPUFREQ_ETERNAL as transition delay
+
+Thomas Fourier <fourier.thomas@gmail.com>
+    crypto: rockchip - Fix dma_unmap_sg() nents value
+
+Kaustabh Chakraborty <kauschluss@disroot.org>
+    drm/exynos: exynos7_drm_decon: remove ctx->suspended
+
+Kaustabh Chakraborty <kauschluss@disroot.org>
+    drm/exynos: exynos7_drm_decon: properly clear channels during bind
+
+Kaustabh Chakraborty <kauschluss@disroot.org>
+    drm/exynos: exynos7_drm_decon: fix uninitialized crtc reference in functions
+
+Yu Kuai <yukuai3@huawei.com>
+    blk-crypto: fix missing blktrace bio split events
+
+Ma Ke <make24@iscas.ac.cn>
+    media: lirc: Fix error handling in lirc_register()
+
+keliu <liuke94@huawei.com>
+    media: rc: Directly use ida_free()
+
+Arnd Bergmann <arnd@arndb.de>
+    media: s5p-mfc: remove an unused/uninitialized variable
+
+Filipe Manana <fdmanana@suse.com>
+    btrfs: fix clearing of BTRFS_FS_RELOC_RUNNING if relocation already running
+
+Deepanshu Kartikey <kartikey406@gmail.com>
+    ext4: detect invalid INLINE_DATA + EXTENTS flag combination
+
+Zhang Yi <yi.zhang@huawei.com>
+    jbd2: ensure that all ongoing I/O complete before freeing blocks
+
+Yi Cong <yicong@kylinos.cn>
+    r8152: add error handling in rtl8152_driver_init
 
 
+-------------
 
-> -----Original Message-----
-> From: Frank Li <frank.li@nxp.com>
-> Sent: Tuesday, October 28, 2025 2:50 AM
-> To: Carlos Song <carlos.song@nxp.com>
-> Cc: mkl@pengutronix.de; broonie@kernel.org; shawnguo@kernel.org;
-> s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
-> linux-spi@vger.kernel.org; imx@lists.linux.dev;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PACTH v2] spi: imx: add 16/32 bits per word support for tar=
-get
-> mode
->=20
-> On Mon, Oct 27, 2025 at 03:39:36AM +0000, Carlos Song wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Frank Li <frank.li@nxp.com>
-> > > Sent: Friday, October 24, 2025 9:25 PM
-> > > To: Carlos Song <carlos.song@nxp.com>
-> > > Cc: mkl@pengutronix.de; broonie@kernel.org; shawnguo@kernel.org;
-> > > s.hauer@pengutronix.de; kernel@pengutronix.de; festevam@gmail.com;
-> > > linux-spi@vger.kernel.org; imx@lists.linux.dev;
-> > > linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> > > Subject: Re: [PACTH v2] spi: imx: add 16/32 bits per word support
-> > > for target mode
-> > >
-> > > On Fri, Oct 24, 2025 at 07:31:07PM +0800, carlos.song@nxp.com wrote:
-> > > > From: Carlos Song <carlos.song@nxp.com>
-> > > >
-> > > > Now for ECSPI only support 8 bits per word in target mode.
-> > > > Enable 16/32 bits per word support for spi-imx target mode.
-> > > >
-> > > > Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> > > > Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
-> > > > ---
-> > > >  drivers/spi/spi-imx.c | 12 ++++++++++--
-> > > >  1 file changed, 10 insertions(+), 2 deletions(-)
-> > > >
-> > > > diff --git a/drivers/spi/spi-imx.c b/drivers/spi/spi-imx.c index
-> > > > 155ddeb8fcd4..017f83f5dfdf 100644
-> > > > --- a/drivers/spi/spi-imx.c
-> > > > +++ b/drivers/spi/spi-imx.c
-> > > > @@ -424,8 +424,12 @@ static void spi_imx_buf_tx_swap(struct
-> > > > spi_imx_data *spi_imx)
-> > > >
-> > > >  static void mx53_ecspi_rx_target(struct spi_imx_data *spi_imx)  {
-> > > > -	u32 val =3D ioread32be(spi_imx->base + MXC_CSPIRXDATA);
-> > > > +	u32 val =3D readl(spi_imx->base + MXC_CSPIRXDATA);
-> > > >
-> > > > +	if (spi_imx->bits_per_word <=3D 8)
-> > > > +		swab32s(&val);
-> > > > +	else if (spi_imx->bits_per_word <=3D 16)
-> > > > +		swahw32s(&val);
-> > >
-> > > Needn't swap when bits_per_word > 24, like 32? or our hardware max
-> > > support to 16?
-> > >
-> > > Frank
-> >
-> > I think we don't need. We are reading/writing FIFO by 32-bits word. In
-> > this case, we just need keep the default byte order.
-> >
-> > Is it more reasonable only support bits per word=3D8/16/32 for target m=
-ode?
-> > -b 8/16/32 can cover most use case.
->=20
-> yes, I only can't understand why needn't swap at 32bits workds, but other
-> needs.
->=20
-> FIFO 31..24  23..16  15..8  7..0
->       B0      B1     B2      B3
->=20
-> next you
->=20
-> in memory val is
->=20
-> 0x0: B3
-> 0x1: B2
-> 0x2: B1
-> 0x3: B0
->=20
-> swab32s() to  bits_per_work 8
->=20
-> 0x0: B0
-> 0x1: B1
-> 0x2: B2
-> 0x3: B3
->=20
-> if bits per_word 16
->=20
-> val
->=20
-> 0x0: X
-> 0x1: X
-> 0x2: B1
-> 0x3: B0
->=20
-> after swahw32s change to
->=20
-> 0x0: B1
-> 0x1: B0
-> 0x2: x
-> 0x3: x
->=20
-> B0 and B1 still be swapped.
->=20
-> Does SPI defined term word fixed big-endian?
->=20
-> Frank
->=20
+Diffstat:
 
-No, SPI doesn't define this. This swap is caused by the SPI-IMX FIFO design=
-.
-SPI-IMX FIFO is fixed little-endian.
+ Documentation/arm64/silicon-errata.rst             |   2 +
+ Documentation/networking/seg6-sysctl.rst           |   3 +
+ Makefile                                           |   4 +-
+ arch/arm64/Kconfig                                 |   1 +
+ arch/arm64/include/asm/cputype.h                   |   2 +
+ arch/arm64/include/asm/pgtable.h                   |   3 +-
+ arch/arm64/kernel/cpu_errata.c                     |   1 +
+ arch/m68k/include/asm/bitops.h                     |  25 ++--
+ arch/mips/mti-malta/malta-setup.c                  |   2 +-
+ arch/nios2/kernel/setup.c                          |  15 +++
+ arch/riscv/kernel/probes/kprobes.c                 |  13 +-
+ block/blk-crypto-fallback.c                        |   3 +
+ drivers/android/binder.c                           |  11 +-
+ drivers/base/arch_topology.c                       |   2 +-
+ drivers/base/devcoredump.c                         | 138 +++++++++++++--------
+ drivers/base/power/runtime.c                       |  44 +++++++
+ drivers/comedi/comedi_buf.c                        |   2 +-
+ drivers/cpufreq/cppc_cpufreq.c                     |  14 ++-
+ drivers/cpuidle/governors/menu.c                   |  21 ++--
+ drivers/crypto/rockchip/rk3288_crypto_ahash.c      |   3 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c   |   5 +-
+ drivers/gpu/drm/amd/amdgpu/gmc_v7_0.c              |   7 +-
+ drivers/gpu/drm/amd/amdgpu/gmc_v8_0.c              |   7 +-
+ .../gpu/drm/amd/pm/powerplay/hwmgr/smu7_hwmgr.c    |   3 +-
+ drivers/gpu/drm/exynos/exynos7_drm_decon.c         |  98 +++++----------
+ drivers/hid/hid-multitouch.c                       |  27 ++--
+ drivers/iio/imu/inv_icm42600/inv_icm42600_accel.c  |   5 +-
+ drivers/iio/imu/inv_icm42600/inv_icm42600_core.c   |  35 ++----
+ drivers/iio/imu/inv_icm42600/inv_icm42600_gyro.c   |   5 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_cmd_v6.c    |  35 ++----
+ drivers/media/rc/lirc_dev.c                        |  15 +--
+ drivers/media/rc/rc-main.c                         |   6 +-
+ drivers/misc/mei/hw-me-regs.h                      |   2 +
+ drivers/misc/mei/pci-me.c                          |   2 +
+ drivers/most/most_usb.c                            |  13 +-
+ drivers/net/bonding/bond_main.c                    |  40 +++---
+ drivers/net/can/m_can/m_can_platform.c             |   2 +-
+ drivers/net/ethernet/amd/xgbe/xgbe-drv.c           |   1 -
+ drivers/net/ethernet/amd/xgbe/xgbe-mdio.c          |   1 +
+ drivers/net/ethernet/broadcom/tg3.c                |   5 +-
+ drivers/net/ethernet/dlink/dl2k.c                  |  23 ++--
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |   3 +-
+ drivers/net/ethernet/freescale/enetc/enetc.h       |   2 +-
+ drivers/net/ethernet/realtek/r8169_main.c          |   5 +-
+ drivers/net/ethernet/renesas/ravb_main.c           |   8 ++
+ drivers/net/usb/aqc111.c                           |   2 +-
+ drivers/net/usb/lan78xx.c                          |  42 +++++--
+ drivers/net/usb/r8152.c                            |   9 +-
+ drivers/net/usb/rndis_host.c                       |   2 +-
+ drivers/net/usb/rtl8150.c                          |  13 +-
+ drivers/net/wireless/ath/ath11k/core.c             |   6 +-
+ drivers/net/wireless/ath/ath11k/hal.c              |  16 +++
+ drivers/net/wireless/ath/ath11k/hal.h              |   1 +
+ drivers/pci/controller/cadence/pci-j721e.c         |  64 +++++++++-
+ drivers/pci/controller/dwc/pcie-designware-ep.c    |   1 +
+ drivers/pci/controller/dwc/pcie-tegra194.c         |  28 ++++-
+ drivers/pci/controller/pcie-rcar-host.c            |  83 +++++++------
+ drivers/pci/pci-sysfs.c                            |  10 +-
+ drivers/s390/cio/device.c                          |  37 ++++--
+ drivers/tty/serial/8250/8250_exar.c                |  11 ++
+ drivers/usb/core/quirks.c                          |   2 +
+ drivers/usb/gadget/function/f_acm.c                |  42 +++----
+ drivers/usb/gadget/function/f_ncm.c                |  78 +++++-------
+ drivers/usb/gadget/legacy/raw_gadget.c             |   2 -
+ drivers/usb/gadget/udc/core.c                      |   3 +
+ drivers/usb/host/xhci-dbgcap.c                     |   9 +-
+ drivers/usb/serial/option.c                        |  10 ++
+ fs/btrfs/relocation.c                              |  13 +-
+ fs/dax.c                                           |   2 +-
+ fs/dcache.c                                        |   2 +
+ fs/dlm/lockspace.c                                 |   2 +-
+ fs/exec.c                                          |   2 +-
+ fs/ext4/inode.c                                    |   8 ++
+ fs/f2fs/data.c                                     |   2 +-
+ fs/fuse/dir.c                                      |   2 +-
+ fs/fuse/file.c                                     |  75 ++++++-----
+ fs/fuse/fuse_i.h                                   |   2 +-
+ fs/hfs/bfind.c                                     |   8 +-
+ fs/hfs/brec.c                                      |  27 +++-
+ fs/hfs/mdb.c                                       |   2 +-
+ fs/hfsplus/bfind.c                                 |   8 +-
+ fs/hfsplus/bnode.c                                 |  41 ------
+ fs/hfsplus/btree.c                                 |   6 +
+ fs/hfsplus/hfsplus_fs.h                            |  42 +++++++
+ fs/hfsplus/super.c                                 |  25 +++-
+ fs/hfsplus/unicode.c                               |  24 ++++
+ fs/jbd2/transaction.c                              |  13 +-
+ fs/nfsd/blocklayout.c                              |   5 +-
+ fs/nfsd/blocklayoutxdr.c                           |   7 +-
+ fs/nfsd/flexfilelayout.c                           |   8 ++
+ fs/nfsd/flexfilelayoutxdr.c                        |   3 +-
+ fs/nfsd/nfs4layouts.c                              |   1 -
+ fs/nfsd/nfs4proc.c                                 |  34 +++--
+ fs/nfsd/nfs4xdr.c                                  |  14 +--
+ fs/nfsd/xdr4.h                                     |  36 +++++-
+ fs/ocfs2/move_extents.c                            |   5 +
+ fs/splice.c                                        |  31 ++++-
+ fs/xfs/libxfs/xfs_log_format.h                     |  30 ++++-
+ fs/xfs/xfs_log.c                                   |   8 +-
+ fs/xfs/xfs_log_priv.h                              |   4 +-
+ fs/xfs/xfs_log_recover.c                           |  34 +++--
+ fs/xfs/xfs_ondisk.h                                |   2 +
+ fs/xfs/xfs_super.c                                 |  33 +++--
+ include/linux/cpufreq.h                            |   3 +
+ include/linux/fs.h                                 |   1 +
+ include/linux/net.h                                |   1 +
+ include/linux/netdevice.h                          |   9 ++
+ include/linux/pm_runtime.h                         |   4 +
+ include/linux/splice.h                             |   1 +
+ include/linux/usb/gadget.h                         |  25 ++++
+ include/net/ip_tunnels.h                           |  15 +++
+ include/net/rtnetlink.h                            |   9 +-
+ include/net/sock.h                                 |   1 +
+ include/uapi/linux/netlink.h                       |   1 +
+ kernel/padata.c                                    |   6 +-
+ kernel/sched/fair.c                                |  38 +++---
+ net/core/rtnetlink.c                               |  81 ++++++++----
+ net/ipv4/ip_tunnel.c                               |  14 ---
+ net/ipv4/tcp_output.c                              |  19 ++-
+ net/ipv6/ip6_tunnel.c                              |   3 +-
+ net/sctp/inqueue.c                                 |  13 +-
+ net/socket.c                                       |  10 ++
+ net/tls/tls_main.c                                 |   7 +-
+ net/tls/tls_sw.c                                   |  22 +++-
+ net/vmw_vsock/af_vsock.c                           |  38 +++---
+ sound/firewire/amdtp-stream.h                      |   2 +-
+ sound/usb/card.c                                   |  10 +-
+ tools/perf/tests/perf-record.c                     |   4 -
+ 128 files changed, 1305 insertions(+), 728 deletions(-)
 
-One example to easy understand:
 
-If buf is:
-
-0XB0B1B2B3
-
-So data in TXFIFO is:
-FIFO 31..24  23..16  15..8  7..0
-  B0        B1		B2   B3
-
-So we can always see data on SPI bus:
-0xB3B2B1B0
-
-For this patch:
-bits per word=3D 8: it means one byte is one word, so it should not effect =
-by big endian or little endian, so every bytes should keep the same order b=
-etween memory and SPI bus.
-We write FIFO by 32 bits word, So we should swap every bytes in this word f=
-rom 0XB0B1B2B3 to 0XB3B2B1B0
-
-Data in TXFIFO is
-FIFO 31..24  23..16  15..8  7..0
-  B3        B2		B1  B0
-Then we can see data on SPI bus is
-0XB0B1B2B3
-
-For bits per word =3D 16, it means two bytes in one word, so every 2 bytes =
-is one word, the word should be a little endian word,
-
-so we should swap half word from
-0XB0B1B2B3 to 0XB2B3B0B1
-
-Then data in TXFIFO is:
-FIFO 31..24  23..16  15..8  7..0
-  B2        B3		B0  B1
-Then we can see data on SPI bus is
-0XB1B0B3B2
-
-For bis per word =3D32, it means for bytes in one word, so every 4 bytes is=
- one word. The whole word is a little endian.
-So we keep the default order.
-0XB0B1B2B3
-
-FIFO 31..24  23..16  15..8  7..0
-  B0        B1		B2  B3
-
-So we can see the data on bus is:
-0xB3B2B1B0
-
-The RX handle is the same with TX. From bus to FIFO is a little word, so sw=
-ap in memory.
-
-Carlos
-
-> > Carlos
-> > > >  	if (spi_imx->rx_buf) {
-> > > >  		int n_bytes =3D spi_imx->target_burst % sizeof(val);
-> > > >
-> > > > @@ -453,12 +457,16 @@ static void mx53_ecspi_tx_target(struct
-> > > spi_imx_data *spi_imx)
-> > > >  	if (spi_imx->tx_buf) {
-> > > >  		memcpy(((u8 *)&val) + sizeof(val) - n_bytes,
-> > > >  		       spi_imx->tx_buf, n_bytes);
-> > > > +		if (spi_imx->bits_per_word <=3D 8)
-> > > > +			swab32s(&val);
-> > > > +		else if (spi_imx->bits_per_word <=3D 16)
-> > > > +			swahw32s(&val);
-> > > >  		spi_imx->tx_buf +=3D n_bytes;
-> > > >  	}
-> > > >
-> > > >  	spi_imx->count -=3D n_bytes;
-> > > >
-> > > > -	iowrite32be(val, spi_imx->base + MXC_CSPITXDATA);
-> > > > +	writel(val, spi_imx->base + MXC_CSPITXDATA);
-> > > >  }
-> > > >
-> > > >  /* MX51 eCSPI */
-> > > > --
-> > > > 2.34.1
-> > > >
 
