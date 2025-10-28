@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-873919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAAD1C150FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:08:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7176C1515B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE43E1C2401E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7E5622733
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F80233CEA8;
-	Tue, 28 Oct 2025 14:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC4433DEED;
+	Tue, 28 Oct 2025 14:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Mcp43v4U"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Qdyjhz16"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0805E33B973
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C438033CEB1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660237; cv=none; b=eJfKVQYkYUiom/OD+30tS/AGj4M4oQyTJdHGU7LJ8mKa8tQ8zmqB0jIjk+lthAWblC4tn9o3RMWE9vQ7Urg89/SvuCk4ZgU9hw2YFquMoyPcTtLKxrsFhLv1ZOvpedX6HRXNLBjhCKTPFW/Oz1UWzj0xlOVwlCqBGjHz82l4SOs=
+	t=1761660243; cv=none; b=m2ap1FeImhx1EvjPi8cuJaL6+g1tuL6wospWkEZ9NcADvQe0QK+tz2pgNNlleDslU7hqXb2MiroLPPnE1AAVBD8c0Xsl9QgSklGOvU/a0e4bLRKdx2eYuF7573TC0a0OjetH/ev1cQ+7ww2tpofiv4CxFD7ea0fzp+cLEGZe0Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660237; c=relaxed/simple;
-	bh=B99n2BJg7ZZJCSR2ssO24WoXB6kUezL1KP4/WR6sRm0=;
+	s=arc-20240116; t=1761660243; c=relaxed/simple;
+	bh=vKMiI/fCaDbQtvED7yaLQh4IT6nXVGp8S4zEKJEZe+c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k8FBo/X0T6WoXxcGU+jsXS+VnEk3J8sIopw+udL/y5ZaGLN1bpPinlnHTj7H4g/2/EBjKETP305VaLSswNsxqbBwgW6pacfwIvNgojMrfuRgRq7JNnBatE3EjaMBz9BKqdiCx7/gIO+v2myE/rGigCQkopPQ2cPKlAP63UV5fpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Mcp43v4U; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=RkygsFy79Ea4qtGlwT7GupxbfQzYPiYRrIselrYFQ6Wpi4O7nUsH96ZyB6WzbvUpBDT5j2cOvRAOC7WuePFHZT3les2QHHecie3+no8kaWpvop7M3KZNJjJiMPnJ3eLt09EJ+cmGtNT0y3W2fLrn7+o+8l5jZwqJRinAF2y6NLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Qdyjhz16; arc=none smtp.client-ip=91.218.175.186
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761660232;
+	t=1761660238;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=N6cy0qJU4vZTky6WsO6fPgmyrH0v2+1c03Oi7wqa5+0=;
-	b=Mcp43v4Uw1DN1te6MLoGfIu4JBZPPNa/YdsIikEd59YRXiDP67BQ+YkTF+91+BLyLuIPFr
-	EZQ+DNJ0Tz9/WrVUMTS7op86uCagBE5emzwbk0TROnKZweY3Opo2prHAUcrb+eDsox0mLI
-	BN26/J6xOdjx6l2HOhJ2q5avXrQhhH8=
+	bh=H+7NrfaZDIPUuVApNFCo2ZEP+9yr6hXQlGbR4tT0+ik=;
+	b=Qdyjhz16yrrQUs+gx1nzi89faKxHADcP4j9vTU0L4BargQ0ss1oUx66KBzo6X3MeKKARg+
+	i7TdrDOyRKnHNz6X7Ryn/w5Lf8VqKa61i19yefLGT69//fwtHrH24n4kSvJiW1mDdOEeSP
+	2QfnOZ1TikLPFn1LqXa/r/dZnOq6tdw=
 From: Qi Zheng <qi.zheng@linux.dev>
 To: hannes@cmpxchg.org,
 	hughd@google.com,
@@ -61,11 +61,10 @@ To: hannes@cmpxchg.org,
 Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	cgroups@vger.kernel.org,
-	Muchun Song <songmuchun@bytedance.com>,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v1 15/26] mm: workingset: prevent memory cgroup release in lru_gen_eviction()
-Date: Tue, 28 Oct 2025 21:58:28 +0800
-Message-ID: <847c35eb649fde525eecde97fcee3d01708b7b3a.1761658310.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 16/26] mm: thp: prevent memory cgroup release in folio_split_queue_lock{_irqsave}()
+Date: Tue, 28 Oct 2025 21:58:29 +0800
+Message-ID: <ae89721afa0a21376eeb3386fa60f7426c746cd7.1761658310.git.zhengqi.arch@bytedance.com>
 In-Reply-To: <cover.1761658310.git.zhengqi.arch@bytedance.com>
 References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
@@ -77,57 +76,53 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-From: Muchun Song <songmuchun@bytedance.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
 
-In the near future, a folio will no longer pin its corresponding
-memory cgroup. To ensure safety, it will only be appropriate to
-hold the rcu read lock or acquire a reference to the memory cgroup
-returned by folio_memcg(), thereby preventing it from being released.
+In the near future, a folio will no longer pin its corresponding memory
+cgroup. To ensure safety, it will only be appropriate to hold the rcu read
+lock or acquire a reference to the memory cgroup returned by
+folio_memcg(), thereby preventing it from being released.
 
-In the current patch, the rcu read lock is employed to safeguard
-against the release of the memory cgroup in lru_gen_eviction().
+In the current patch, the rcu read lock is employed to safeguard against
+the release of the memory cgroup in folio_split_queue_lock{_irqsave}().
 
-This serves as a preparatory measure for the reparenting of the
-LRU pages.
-
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- mm/workingset.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ mm/huge_memory.c | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 8cad8ee6dec6a..c4d21c15bad51 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -241,11 +241,14 @@ static void *lru_gen_eviction(struct folio *folio)
- 	int refs = folio_lru_refs(folio);
- 	bool workingset = folio_test_workingset(folio);
- 	int tier = lru_tier_from_refs(refs, workingset);
--	struct mem_cgroup *memcg = folio_memcg(folio);
-+	struct mem_cgroup *memcg;
- 	struct pglist_data *pgdat = folio_pgdat(folio);
-+	unsigned short memcg_id;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 9d3594df6eedf..067259a9e0809 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1153,13 +1153,25 @@ split_queue_lock_irqsave(int nid, struct mem_cgroup *memcg, unsigned long *flags
  
- 	BUILD_BUG_ON(LRU_GEN_WIDTH + LRU_REFS_WIDTH > BITS_PER_LONG - EVICTION_SHIFT);
- 
+ static struct deferred_split *folio_split_queue_lock(struct folio *folio)
+ {
+-	return split_queue_lock(folio_nid(folio), folio_memcg(folio));
++	struct deferred_split *queue;
++
 +	rcu_read_lock();
-+	memcg = folio_memcg(folio);
- 	lruvec = mem_cgroup_lruvec(memcg, pgdat);
- 	lrugen = &lruvec->lrugen;
- 	min_seq = READ_ONCE(lrugen->min_seq[type]);
-@@ -253,8 +256,10 @@ static void *lru_gen_eviction(struct folio *folio)
- 
- 	hist = lru_hist_from_seq(min_seq);
- 	atomic_long_add(delta, &lrugen->evicted[hist][type][tier]);
-+	memcg_id = mem_cgroup_id(memcg);
++	queue = split_queue_lock(folio_nid(folio), folio_memcg(folio));
 +	rcu_read_unlock();
- 
--	return pack_shadow(mem_cgroup_id(memcg), pgdat, token, workingset);
-+	return pack_shadow(memcg_id, pgdat, token, workingset);
++
++	return queue;
  }
  
- /*
+ static struct deferred_split *
+ folio_split_queue_lock_irqsave(struct folio *folio, unsigned long *flags)
+ {
+-	return split_queue_lock_irqsave(folio_nid(folio), folio_memcg(folio), flags);
++	struct deferred_split *queue;
++
++	rcu_read_lock();
++	queue = split_queue_lock_irqsave(folio_nid(folio), folio_memcg(folio), flags);
++	rcu_read_unlock();
++
++	return queue;
+ }
+ 
+ static inline void split_queue_unlock(struct deferred_split *queue)
 -- 
 2.20.1
 
