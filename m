@@ -1,206 +1,162 @@
-Return-Path: <linux-kernel+bounces-872963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16B9C12B6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:04:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 875A9C12B70
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27F5D1AA26FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536325878B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3959D23DEB6;
-	Tue, 28 Oct 2025 03:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE3121CA03;
+	Tue, 28 Oct 2025 03:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dSDy0/f9"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010051.outbound.protection.outlook.com [52.101.46.51])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BSp2w5cP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4D11F583D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761620615; cv=fail; b=Mj24u88VGOdKP12trW8HL4rXdDVnT0PK0/XsUIQDKllL8c+/0pjBHYvrqfjwQVagqwUuhZwa+xpKyrC1qrBbLBkXxr7ros7TBgBCBe1wmkGZsf91ufqNEnFO45e5VGJNLquaxxtNkPOyj/kWqEGFIkY5hdE1tHljN2RpieXkBfw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761620615; c=relaxed/simple;
-	bh=o1Q5asRH8eI4Z14VDLro0wrCenGLWjh1cCtCemSi3UA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PmWzRJOqcd3wUVLdWnmUDyI479+CUny0ih08t7tqHdi+qS0TuSOzS/vm8LyOSTiDWLMRGedekVfLsMgmUs+AYnWAZ+t2G/kCffn9nTbHJWwK+RSjsSm4/mFOYD/qDm72wgayh+FeiLdp5ZEJyUHEx+iisViyVDnRX53zhYfLq0g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dSDy0/f9; arc=fail smtp.client-ip=52.101.46.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iCWcM431gO8WYANaK9IDkVHhQ82lWONPG6MPvFjvZ2+ieFUoO9cTnudJWzD/9WYh3lVPUo/s7VDvpooZoSrW0DJqM9TcVLBtr6gL65kkbfn35rorobVfsjHCP1E2wLQgVO03OLLoY/aXeEO62TTLGlGgsWtUNlL15aXtHwWMxAT4+IcL3Nt2suuvAbiAps0zih3kbiry6XteynfhcwsuqoZk5a1WRsU4YeopxlvwBZIkfURUCkHiBwun65CX0T6k8VsEguz9MaMZwANVCbd616Z/0fc270B41BKMjkTfLekkpWWI3wjm+tXtmsi43YVDu1Lz9BLvhAYxJfZeicO4EA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PZ7VjY+/G/86Gcy1TWuESR71QsB3wtMmKiQR5D+4OFU=;
- b=XLEFmOEGeJI3OWbanWLitA9OXZx653DdFGVzpF5qC0mJZBge6xd99o5CDEZgSEcphSSFSX8nuDokcuxjUoIRJtqPE300LdbCKj0zomkIsF3Hlrnkx29kKbxeQgyJ3wxDSZvzRggTNWn1dj3JgCS+xDmXfnjacQdfnL1U3xBQhqrDtVCOKJ4k6AdJn7rjDOMjztHmKuvo+2VZcp8e/tg1lphyD120RNSjswyrk9+7sxkIjaWeFZwDG3jUcgZ2/6B/omXshCTi9ATHamKxvFPXvtzBH21qW8azYLQy0qnSCPUSlrGERlYO+tpoeVC0oO68qCuaZ8SbscBnQlrfEsUNUw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bytedance.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PZ7VjY+/G/86Gcy1TWuESR71QsB3wtMmKiQR5D+4OFU=;
- b=dSDy0/f9zdFEm8vMrLrSXe24i0rpr9Tw3HEYSroQf392vzeO+W5Hbyz7oYF+T+sB+xR0ik+kMEq+lRxrkrLxyWHMERdWzJmnsdVK4XrJaAXQ2BPyB9h/un0gd61SR5ubW9k6S2U/eQw/ofXHlYVQKFg3X6BLr+KbE3yAwEbRo/U=
-Received: from BN9PR03CA0532.namprd03.prod.outlook.com (2603:10b6:408:131::27)
- by DS0PR12MB8217.namprd12.prod.outlook.com (2603:10b6:8:f1::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 03:03:26 +0000
-Received: from BN1PEPF00004681.namprd03.prod.outlook.com
- (2603:10b6:408:131:cafe::30) by BN9PR03CA0532.outlook.office365.com
- (2603:10b6:408:131::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.17 via Frontend Transport; Tue,
- 28 Oct 2025 03:03:25 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BN1PEPF00004681.mail.protection.outlook.com (10.167.243.87) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 03:03:25 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Mon, 27 Oct
- 2025 20:03:24 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 27 Oct
- 2025 22:03:24 -0500
-Received: from [10.136.37.11] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Mon, 27 Oct 2025 20:03:21 -0700
-Message-ID: <b2adb9ec-b4e3-4744-afee-8b93f2185837@amd.com>
-Date: Tue, 28 Oct 2025 08:33:15 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2269242D84
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761620641; cv=none; b=MehUB+Xog4RJonbmk/my/ZFXmCDiNIj661Qoaifm6pjEJGiI/ExWFlnebnhH/LDfIJqY0Mkr6pHqiD4IxHlxp9zFOUtY9POhDohCSLVk/P8OSCYhESnVt5TjTlatY0e4H3KWz1t/PNzbulXjYwWCBGm3aF06KdWTPph7o0YhZfc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761620641; c=relaxed/simple;
+	bh=MAMBTDB5J81podhs/Vxvh8Om3RfCRucDoiCNDGV+6Gc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pe0YU2EU9zjcXQjLWzOHLejpvgN/4Y1zm6J4Fw7iVghwkv9CazBaqdrFxGPh+A8CeglbDyXmaelQ+SiwN8or45girdd6YVGAaikDoblzzTAmA8wxPM9/0IzRcZ4Yltd3nIuI4ovTOC1NxrzR4lReATsZXUjFrBO2xemcVdUh/BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BSp2w5cP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761620638;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vfNTkoX5o8M7lD+gAK07FYlqQWjsG6C+tpRjNjLD85s=;
+	b=BSp2w5cPG1EdyFxoMlxx1K25J0KLTphWGYcKP44ElDZ9O3GLs728pJ7E6Z+8KEt6HILjmo
+	H7knc4oTuCw9t8O3pXc0VxvRLwy8brgn9TdR4j912LHpTuodTeQKe9f37u+MEApw2PvZiu
+	DF4CtUaLJy2wGec/E8gDYcfoz6fSDx0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-MOErp7MUNkyaHL7YM-fbQQ-1; Mon,
+ 27 Oct 2025 23:03:54 -0400
+X-MC-Unique: MOErp7MUNkyaHL7YM-fbQQ-1
+X-Mimecast-MFC-AGG-ID: MOErp7MUNkyaHL7YM-fbQQ_1761620632
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FF84180A220;
+	Tue, 28 Oct 2025 03:03:52 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.238])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 129E219560AD;
+	Tue, 28 Oct 2025 03:03:44 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net] virtio-net: calculate header alignment mask based on features
+Date: Tue, 28 Oct 2025 11:03:41 +0800
+Message-ID: <20251028030341.46023-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Fix non-empty throttled_limbo_list warning
- in tg_throttle_down()
-To: Aaron Lu <ziqianlu@bytedance.com>, Hao Jia <jiahao.kernel@gmail.com>
-CC: <mingo@redhat.com>, <peterz@infradead.org>, <mingo@kernel.org>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
-	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
-	<mgorman@suse.de>, <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	"Hao Jia" <jiahao1@lixiang.com>
-References: <20251027090534.94429-1-jiahao.kernel@gmail.com>
- <20251027120211.GB33@bytedance>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20251027120211.GB33@bytedance>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004681:EE_|DS0PR12MB8217:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8b739a8-aab9-44ac-aa4f-08de15ce8fac
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|36860700013|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dFpJZVNHMlRGMEZPV0htemlzYXRDbTU2L2FnZFVOc204dm0yUGF1bGt5TEln?=
- =?utf-8?B?Q05MTVg4dzBWdVhoWTFxa2tvMDFjbktYeTJSKzF2M0trbEhzYWdmckMrZERF?=
- =?utf-8?B?ZkQ0TDdTdFlxZFhjdkFsSTBTcHgwaTZNWUlqejJ3QUFaYWJIc1YxUlV4N3pT?=
- =?utf-8?B?czBWc0ZtRDJIWURsZnJUb2IxWHl1ZjVWaWx3M0ZERkxBS3Q1cHlVbzl0ODN6?=
- =?utf-8?B?bWZMYmJHTTVhaEhET0RTSzE1NXplV0tuTkw3UHVOR1JvZG9MdTd1WHhMWG85?=
- =?utf-8?B?bDB6djgwQitUUVdXRTdYdDFkQTJ2OU01RjRSSzlTY0xJaGFkMlZZV0lLanRv?=
- =?utf-8?B?a0xLRmJET0tLZlZiUk92OHA5SzkyTUNya215SXhlYnlmOEhPaEpCR2tJdHNG?=
- =?utf-8?B?RGY1ZVNSZGVPTGMzZ0ZsaEtCczdvbUtKcjBJd3dYNWFUd04xOWJ6c3YxNFRO?=
- =?utf-8?B?d3U0YlpXdlRmZG9rOW9xQklXeUUwemlQQnhsRlljM3hOVDZrUVA4bGo0ZHpr?=
- =?utf-8?B?QXVGVWpBMUZmZThiVkRlMS8yS1A3K09WMW83QzV6bnJUSWJWMEV5SXFKam5P?=
- =?utf-8?B?b0FNdDlkWnptSUVrV1N1anI5aHN6MTRoeUV6T1R5ZW1kL2xCRWdOZjh3OXlp?=
- =?utf-8?B?L0xpeVl3NCtmdnkxd0VEb3diSzVGTkNBVE9PYkZxVzRBVjliSzQrcUJ1aURr?=
- =?utf-8?B?NTVOMUJqeHplYXorazdtSmZ5dDk3RkIxajNPMFA4akNENmJWdmNxZk12d0R5?=
- =?utf-8?B?RHJoOWxXK1d1ZDM4Zng1Y2gxM2QzR2VISWpPaXRJSmpiL0g4VFlQT2lIQTBS?=
- =?utf-8?B?S2NnYjhPVDM5REFVTnY5VkRHd1B4eVU4RmtUUENxVDZtajF5QkMzanNYUVEy?=
- =?utf-8?B?Zlc3QXdobFBJV05lSkhVR3lqQjZIb2gwR0JmZHYweW5IZEc0UUVJTER0b2s0?=
- =?utf-8?B?djZBalNpd2xLeGJXWVNXVW5ZN25uaS8rdmJ1ME9DRms5OXRlU1RZaWtPRkRY?=
- =?utf-8?B?NVJxam5mWlUxYy9OVGhGYnRXUU9aSTFmYTEwdUNRVStBRkQ3UUQxTlhUb1ox?=
- =?utf-8?B?YVBDcmZYdXVXWmtUQVhGVnhoWlF3V2pMMzl1VCt1UkRBVm5SV2pCQ2t2QXJP?=
- =?utf-8?B?R1lxNzFTek9DVlpxbUNpOUFueWxZb0pQOWRpWVBqU25tdU43WGlHek5VTTRX?=
- =?utf-8?B?aXZsU05FMmdFaklYNGpQcmFyVTVZblJFQkpLRjVkd3JhV2dLWnVMa3NqQXdF?=
- =?utf-8?B?RFlPZDdJdG9nYmdsL2ZOTTdINTVNdkp0QjFaNGZ6eVlIOTZnMU1jcVRzb3Iw?=
- =?utf-8?B?SUx3by9pOFJETjBIMTYrZkVRWlhtaVY4dXhMSTBNSnRNdU9qczlaQmxxa1NB?=
- =?utf-8?B?elFFMWc4cVRlRm8rTkNjZG5yU01rLytnbGVnRWwyZ2NGbXB0cWEwcjdIR3NU?=
- =?utf-8?B?T0M4MWNQSFEwbVlmL3RiUTZoT1F3NTJEblI3NUhDWUEyVEk4dnRzZWFRSTZk?=
- =?utf-8?B?dEZIL2RWYU5QWWtSWVFLVHA5SXhMc1JLMlpJYWxNMjZ3czdkVGNURm5WaDF0?=
- =?utf-8?B?RndSOUcwc1licGY1SmZHd1NScHZkOCtxNVJvQjBVeTk3bGoxY2ZPL1NHRVF0?=
- =?utf-8?B?U2ZtanNrR25XOFgzRzF5Z3I0ZVNKUGMrazBYUkxwcTVPVm5CWVFPUlVXdDAv?=
- =?utf-8?B?aEdPdTh5c0xCRHVBckRRT2w0NmlNRHl2TkZFYTdJckU3U3Fra0RzcmFKTXJP?=
- =?utf-8?B?QkpValNmZE1oLyt3ZWs5L1hQeVo2THVCK0M4TTQ1UWxTd1htb1kxSGF5Q3Av?=
- =?utf-8?B?UDI2N2p0NTZRaG5ralJwUjFUVHZDSTVyaUR6eloyekR0c05pOGFWSG5NZUZU?=
- =?utf-8?B?UVB4RnUzOTdWdGU3MVN0WUtUNzZtcGY2WGduVzFhNmZqUDhDM3BIaXNmQ1FO?=
- =?utf-8?B?ckUza2tyNU1lWVlsUER6cFhHUWtoMjB3RW9GVWt2c0NrdGI0TGFCaWdWVXlT?=
- =?utf-8?B?U1dKZjJtQm5FMU00eGVNc0dLNmlQSzFOa0Z2R2htZUUvTER6Z3J2RXd3akc2?=
- =?utf-8?B?UVdyVmh3S09xQk5iMU8zaldYV1VLR0NGNlhJc0FWRndsVUJ6c2QzeVdQbmFa?=
- =?utf-8?Q?B6qA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 03:03:25.0667
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8b739a8-aab9-44ac-aa4f-08de15ce8fac
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00004681.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8217
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hello Aaron,
+Commit 56a06bd40fab ("virtio_net: enable gso over UDP tunnel support.")
+switches to check the alignment of the virtio_net_hdr_v1_hash_tunnel
+even when doing the transmission even if the feature is not
+negotiated. This will cause a series performance degradation of pktgen
+as the skb->data can't satisfy the alignment requirement due to the
+increase of the header size then virtio-net must prepare at least 2
+sgs with indirect descriptors which will introduce overheads in the
+device.
 
-On 10/27/2025 5:32 PM, Aaron Lu wrote:
-> On Mon, Oct 27, 2025 at 05:05:34PM +0800, Hao Jia wrote:
->> @@ -6403,7 +6407,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
->>   * expired/exceeded, otherwise it may be allowed to steal additional ticks of
->>   * runtime as update_curr() throttling can not trigger until it's on-rq.
->>   */
->> -static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
->> +static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags)
->>  {
->>  	if (!cfs_bandwidth_used())
->>  		return;
->> @@ -6418,6 +6422,13 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
->>  
->>  	/* update runtime allocation */
->>  	account_cfs_rq_runtime(cfs_rq, 0);
->> +	/*
->> +	 * Do not attempt to throttle on the cfs_rq unthrottle path.
->> +	 * and it must be placed after account_cfs_rq_runtime() to
->> +	 * prevent a possible missed start of the bandwidth timer.
-> 
-> Hi Prateek and Hao,
-> 
-> Does it matter to start the bw timer? If no cfs_rq gets throttled, the
-> timer doesn't look that useful.
+Fixing this by calculate the header alignment during probe so when
+tunnel gso is not negotiated, we can less strict.
 
-Ack! But if we've reached here with ENQUEUE_THROTTLE set, we are in fact
-trying to enqueue a task during unthrottling and we only start the timer
-if we don't have any bandwidth since __account_cfs_rq_runtime() would bail
-out if "cfs_rq->runtime_remaining > 0"
-> Also, account_cfs_rq_runtime() calls
-> assign_cfs_rq_runtime() and if assign failed, it will do resched_curr()
-> but since we do not throttle cfs_rq here, that resched would be useless.
+Pktgen in guest + XDP_DROP on TAP + vhost_net shows the TX PPS is
+recovered from 2.4Mpps to 4.45Mpps.
 
-resched only happens if "cfs_rq->curr" is set andcheck_enqueue_throttle() already bails out if "cfs_rq->curr" is set so
-the resched is avoided.
+Note that we still need a way to recover the performance when tunnel
+gso is enabled, probably a new vnet header format.
 
+Fixes: 56a06bd40fab ("virtio_net: enable gso over UDP tunnel support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/virtio_net.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 31bd32bdecaf..5b851df749c0 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -441,6 +441,9 @@ struct virtnet_info {
+ 	/* Packet virtio header size */
+ 	u8 hdr_len;
+ 
++	/* header alignment */
++	size_t hdr_align;
++
+ 	/* Work struct for delayed refilling if we run low on memory. */
+ 	struct delayed_work refill;
+ 
+@@ -3308,8 +3311,9 @@ static int xmit_skb(struct send_queue *sq, struct sk_buff *skb, bool orphan)
+ 	pr_debug("%s: xmit %p %pM\n", vi->dev->name, skb, dest);
+ 
+ 	can_push = vi->any_header_sg &&
+-		!((unsigned long)skb->data & (__alignof__(*hdr) - 1)) &&
++		!((unsigned long)skb->data & (vi->hdr_align - 1)) &&
+ 		!skb_header_cloned(skb) && skb_headroom(skb) >= hdr_len;
++
+ 	/* Even if we can, don't push here yet as this would skew
+ 	 * csum_start offset below. */
+ 	if (can_push)
+@@ -6926,15 +6930,20 @@ static int virtnet_probe(struct virtio_device *vdev)
+ 	}
+ 
+ 	if (virtio_has_feature(vdev, VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO) ||
+-	    virtio_has_feature(vdev, VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO))
++	    virtio_has_feature(vdev, VIRTIO_NET_F_HOST_UDP_TUNNEL_GSO)) {
+ 		vi->hdr_len = sizeof(struct virtio_net_hdr_v1_hash_tunnel);
+-	else if (vi->has_rss_hash_report)
++		vi->hdr_align = __alignof__(struct virtio_net_hdr_v1_hash_tunnel);
++	} else if (vi->has_rss_hash_report) {
+ 		vi->hdr_len = sizeof(struct virtio_net_hdr_v1_hash);
+-	else if (virtio_has_feature(vdev, VIRTIO_NET_F_MRG_RXBUF) ||
+-		 virtio_has_feature(vdev, VIRTIO_F_VERSION_1))
++		vi->hdr_align = __alignof__(struct virtio_net_hdr_v1_hash);
++	} else if (virtio_has_feature(vdev, VIRTIO_NET_F_MRG_RXBUF) ||
++		virtio_has_feature(vdev, VIRTIO_F_VERSION_1)) {
+ 		vi->hdr_len = sizeof(struct virtio_net_hdr_mrg_rxbuf);
+-	else
++		vi->hdr_align = __alignof__(struct virtio_net_hdr_mrg_rxbuf);
++	} else {
+ 		vi->hdr_len = sizeof(struct virtio_net_hdr);
++		vi->hdr_align = __alignof__(struct virtio_net_hdr);
++	}
+ 
+ 	if (virtio_has_feature(vdev, VIRTIO_NET_F_GUEST_UDP_TUNNEL_GSO_CSUM))
+ 		vi->rx_tnl_csum = true;
 -- 
-Thanks and Regards,
-Prateek
+2.31.1
 
 
