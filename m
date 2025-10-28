@@ -1,213 +1,479 @@
-Return-Path: <linux-kernel+bounces-874436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E986AC16572
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:58:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD242C165A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95F205048E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:55:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 519585420CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2457034DB4F;
-	Tue, 28 Oct 2025 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406E134DCF5;
+	Tue, 28 Oct 2025 17:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ks/uO4jD"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t5pqJX0Q"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A7934D93B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254F334C9B5
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761674116; cv=none; b=AR26qh2xCctWICuDlK7SJMW7E+r6k0NkSPoYYMAKTz658L+UdhiT+jhLrv7dbB+D4vwxex43e4KDcOI+BvF+aqCGyfv+pRS/ZSL2DnIZ4hXjVjQCFCqVkMaBXdim7x7GzlHRQIjRkVNfpVeykc6YmwkdopZNGhBTGA77+hdxN1w=
+	t=1761674154; cv=none; b=ascMJC6UtlQZ0nI2zbwYQUbb71byok3cDrGS1fMUA3Tu5dNsIRgPdsJj8GZbD1mKpYlpF/Q92A5q++V/kUfrqxvSjvW5DKV7BroQftqHCfMkkSYCLOPylLDTPrxQ7jxC53OUPQGZkJgZGAluo113tqnz3QM2wdz1RR8DqpSVCNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761674116; c=relaxed/simple;
-	bh=iStP52tSTRqDHZ2s/0JKhVbhHFkl0Dz3qnu03/driQ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rzDQ3QEQ15mWNibz5gG9ZD6XOsQGqiAa3vcycO4XpCj0nAjpunKaClxIKIjFSBywPpw/49KlHZMucsWYNRmcIUc9woypC7XMSnv7S+7gesS8YP+0NcLPM9UWPOR2OydSpevf4kVX6f58zj2kCN5/V3U8OzC3lRBEZnjtgVwv9HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ks/uO4jD; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-592f5736693so6618644e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:55:13 -0700 (PDT)
+	s=arc-20240116; t=1761674154; c=relaxed/simple;
+	bh=vq5e8fIjrWj9RhPW/Zc8fFi8d2F6f4O2//w8hDNaqoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NgWsGmUnkoKLLTpgG+ivFghaicK9/YTXeH0uyY/JS/kn/8UN+kbVIKd/WWx7F0wxsZ42kkX7HokCJqKoCwaNZQXuftTFKtzodEw/4OF9iVWsT1WAw0bjPI+rguFSUgUtYtib2MqmlHIHuY8LUloojK1y7f/zbtp0NJpINMlo7HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t5pqJX0Q; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4eccff716f4so36651cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761674111; x=1762278911; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hrs+/SZt/Dp84KkQFuAowfk7ciIjCYoKYgFhbI0eCxo=;
-        b=Ks/uO4jDUE+R5flB+IeJSU1S2jahqmB7+vQGIFTMq/ZBTqJBFbINUBFWt+xFamwVsg
-         +j00QQ/pF+/U5hbHEhk4Cie1KiAsNRv5c8s1V0Gdwms2cx1bE7+IPCwZEZwOw34I8KA8
-         NNl7gosuHl/m1nQNkY8ddo3QjrPUJ92iavcRc=
+        d=google.com; s=20230601; t=1761674151; x=1762278951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SEQPDQeMOb+zP03ZLfbq8HiFiymDeHxHs9qyniKVrJQ=;
+        b=t5pqJX0Qe/lJO3GH9UFPOx8JGGJ3/tfzn3uwkBN+XWOSEBM7v8NeYfcKW7gyHhXUCU
+         n1MZkefLR7XnnftwyhV9z1NFT1umn3swzZyoTuMQBW+u7/y6EQaMGnrph0RW+o8+E2bU
+         sQZXyrPCmdnpqAjX77VohrJrgpGU2OFHJ7EGrU7GVUnz+wEEVZZzD/ZUDGMJE4FrvXct
+         WOnBzwRlmbB/O3lcJv5F6foEbQgsJu1wXY+T862/APLg5RQELQ9Jcndl96YBl8qQcOp0
+         yuGxy3n8KtWtFMlX31Vc4kqGXWt1HeJgj9zhTXKPY8DIPqeaE4ODZZpX8oaT1yIHRqYw
+         mkLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761674111; x=1762278911;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hrs+/SZt/Dp84KkQFuAowfk7ciIjCYoKYgFhbI0eCxo=;
-        b=Z/iAUqO2eNFiiuL5OVtFW50eUUuozHaFUmpN5MKr9u8J29p1t5xDco7ab9BE+Eqsed
-         D9Evb0ek6XSyUWNL9K9Uo45Ly6nfaUI+2y0gUi5/pHXc6x5izH3HfRQfwSDzNyGusHNu
-         Mh4fI6fXFaDAmtg5QFmDVF9cvZlFX5VC3t9BHG0dbWFh0M9/5GMKsmGNuGFDeZYZ02E+
-         2swcGDBRHUKvvfAWNp2eSvXM/SK7nTEioRrumWHHfNE0BBfzDmVK4edz2mnGhCwzylqD
-         NkIj6cYHb9omso3Mxf0rK8BYyboUTjkkM3iNM/y39haM/ZSjeV/J56dcxS/ZyKicAg+/
-         ztfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGhaPNF3haS/ZpNDkJ1DETuzgTBChuU2SqnoMIC++sx9/FAI2wA0aOts2JpXyAt8wsHgow8cHcQaTBWbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZqA7OSzrJG1ukf+GBizq84N/abTUMme04MA5vk/5cCcoYXvIP
-	bZpM5RFIk7eLmGzHvV7rb220cdu34+rQ87QtrDgIiA+OOhpweaBomFKOp6plnIH6Vg==
-X-Gm-Gg: ASbGnctuXAwByuzp6qZAzkkQ8MCK1/Vyq+P7ISdPkjjrMHgeQYCEjA8LSC8W0+eDF6X
-	8SM2MuG+PbZNPsg+0BXuNWcS+jv26sHBCh/LX5IcbMoFUwGzcVh2jKlCFeu6a7PSpEuf6R7KI4F
-	/tBvzUiBmZOc1vl16uI4bjUaJoqvaw1DF1OXhq/38jIHMwWywp66RrLq62jufCViesfKxIS4hEz
-	L8VCNpgR+reMXwmEKC9/PNrJbCww0mBEEI478Hq3/x1PpewyjDt8Rj/ZS5Nz8uPhDxnRNVCRZkM
-	Kcj047PcpnUJdN8frFMc5x7XT1RcUhA7IVP6ix/bBtoDxWD0AYKPIX5taSg3Qo5qNTn4LZJ1nIS
-	HLyOSJjXPjTg3JawiH2HHZt1TOwJn2AFRwPHcjT+H82Nzch2GG1D628Bi/GbqTEMqdRqH2Pr5vD
-	MS+Z4raJIlihrsblJb0Vz5TgTd7WXBqVPGY4VydEoVaHwIOcp0YfHM31Ol3vSKbpCzIw==
-X-Google-Smtp-Source: AGHT+IFqGiYrkyFkibQDWmSYZpAF6eBWO6jYvlesQVDAePpNLhM3UWiTVV5GZ9/v+cj6r6VcAsgK+w==
-X-Received: by 2002:a05:6512:4012:b0:592:f935:cd8d with SMTP id 2adb3069b0e04-59412868c4bmr83783e87.15.1761674111422;
-        Tue, 28 Oct 2025 10:55:11 -0700 (PDT)
-Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f7444bsm3239773e87.85.2025.10.28.10.55.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:55:11 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 28 Oct 2025 17:55:10 +0000
-Subject: [PATCH] media: uvcvideo: Fix support for
- V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX
+        d=1e100.net; s=20230601; t=1761674151; x=1762278951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SEQPDQeMOb+zP03ZLfbq8HiFiymDeHxHs9qyniKVrJQ=;
+        b=FX2FsfRCp0F+5qIypsvRpmw8c+gNp/ZH7K/rqFb2froGwj1nRKwqxb7CLlB2JdvFPw
+         9AAE5SOfh5ecoJVVW33Oj8LjT4khYngjsJpiuVh65Ya+sZVUd1EUGCfMfAzEehh7vxWJ
+         s9LSMW2Je/7BLYu7MFdesDWpAHFUDfiM6qTt+bCBMnshFmLc6oJ6IqaGmqt8MbMOPmzl
+         LQMmsA2JMH7aoKMbP6xQqaxULnKp2U1rVttozHv2bDhOPMIZHy5Q1IInc/b8Gv5eS+hH
+         tu5+rx7kQxkTtOjsekW4E90oH4LD8Su3mXNfUmnO3KTLF61rrYdNQAHQ9jTuce2OdxEC
+         natQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Kqa5/ZDktVhxPiOQGhwpY/flh45+otQpdJs3mHXYJPToe0iKsmZoYvm1L85tnykdgBg8wL4awowdb/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJNji45IReU25l3H+s5ZkR+nsRcJkxeJo/fWVVH19j1SR2eaOZ
+	M6PY0O7VgX/8EJW7YEhECWzqmRl0yPGJiWRXbbk1WHmY8zkva3etzmJ0bpy+cY9Zt8EIGPvP/kb
+	uXM7c0/ihjFtNUAE1JG/sMAgc5B6fBovbJjUiuIqs
+X-Gm-Gg: ASbGncvkXmV9d/WYqnqd4ss/PljT98tJDVR0p3ifVYCppcvz8pUxudN3bHN1ou3KTnB
+	FjGQk32iYOmY8/MWqzANMyMzxYmLCrL/hrRia0JJ5lyruz6LAe1LERHRhkn9hiKMRBsQpJNN0+y
+	9Hcn0uXy4+WngHrDKiynx5gsAgC4XOsrvs/ktBoPvJUy9mFKxKM/Dg0GNgWLznnK5uVqD+afKNo
+	hjysLsx/HGk5RG6tSBujQX2CQ8jcT5Tf1D4PMeFKH4/OqBK5DHvLtSvLawhE/r089yGh7CtPlhf
+	nLOoUForNXGJ7Aai1rFaUJvYLw==
+X-Google-Smtp-Source: AGHT+IE4E344p3HvFpIsLYI5M9X4WV2Y7oB0kX580su6zBAwlKd1hdG3cfoOpCRO56waorA3KTYtH/DLpgCm8hLFEkg=
+X-Received: by 2002:a05:622a:1307:b0:4e8:b04a:82e3 with SMTP id
+ d75a77b69052e-4ed1588e627mr400851cf.10.1761674150355; Tue, 28 Oct 2025
+ 10:55:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-uvc-fix-which-v1-1-a7e6b82672a3@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAH0DAWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDAyML3dKyZN20zArd8ozM5AzdZOOkRMO0JDOL1BRTJaCegqJUoCTYvOj
- Y2loAMUR4ul8AAAA=
-X-Change-ID: 20251028-uvc-fix-which-c3ba1fb68ed5
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hansg@kernel.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@kernel.org>, Yunke Cao <yunkec@google.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+References: <20251027122847.320924-1-harry.yoo@oracle.com> <20251027122847.320924-4-harry.yoo@oracle.com>
+In-Reply-To: <20251027122847.320924-4-harry.yoo@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 28 Oct 2025 10:55:39 -0700
+X-Gm-Features: AWmQ_bndOQ1c1b7afJ0YZYVN9VO4Il9GK8ViNlP50-zWVw6oU176SbWk_uCfUOQ
+Message-ID: <CAJuCfpE9PRvd1Tsm6gAvxKvPFgVt640q3vSbt0wAWOa3G4tnfA@mail.gmail.com>
+Subject: Re: [RFC PATCH V3 3/7] mm/slab: abstract slabobj_ext access via new
+ slab_obj_ext() helper
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: akpm@linux-foundation.org, vbabka@suse.cz, andreyknvl@gmail.com, 
+	cl@linux.com, dvyukov@google.com, glider@google.com, hannes@cmpxchg.org, 
+	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
+	rientjes@google.com, roman.gushchin@linux.dev, ryabinin.a.a@gmail.com, 
+	shakeel.butt@linux.dev, vincenzo.frascino@arm.com, yeoreum.yun@arm.com, 
+	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The VIDIOC_G_EXT_CTRLS with which V4L2_CTRL_WHICH_(MIN|MAX)_VAL can only
-work for controls that have previously announced support for it.
+On Mon, Oct 27, 2025 at 5:29=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
+ote:
+>
+> Currently, the slab allocator assumes that slab->obj_exts is a pointer
+> to an array of struct slabobj_ext objects. However, to support storage
+> methods where struct slabobj_ext is embedded within objects, the slab
+> allocator should not make this assumption. Instead of directly
+> dereferencing the slabobj_exts array, abstract access to
+> struct slabobj_ext via helper functions.
+>
+> Introduce a new API slabobj_ext metadata access:
+>
+>   slab_obj_ext(slab, obj_exts, index) - returns the pointer to
+>   struct slabobj_ext element at the given index.
+>
+> Directly dereferencing the return value of slab_obj_exts() is no longer
+> allowed. Instead, slab_obj_ext() must always be used to access
+> individual struct slabobj_ext objects.
 
-This patch fixes the following v4l2-compliance error:
+If direct access to the vector is not allowed, it would be better to
+eliminate slab_obj_exts() function completely and use the new
+slab_obj_ext() instead. I think that's possible. We might need an
+additional `bool is_slab_obj_exts()` helper for an early check before
+we calculate the object index but that's quite easy.
 
-  info: checking extended control 'User Controls' (0x00980001)
-  fail: v4l2-test-controls.cpp(980): ret != EINVAL (got 13)
-        test VIDIOC_G/S/TRY_EXT_CTRLS: FAIL
-
-Fixes: 39d2c891c96e ("media: uvcvideo: support V4L2_CTRL_WHICH_MIN/MAX_VAL")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/usb/uvc/uvc_ctrl.c | 11 +++++++++--
- drivers/media/usb/uvc/uvc_v4l2.c |  9 ++++++---
- drivers/media/usb/uvc/uvcvideo.h |  2 +-
- 3 files changed, 16 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 2905505c240c060e5034ea12d33b59d5702f2e1f..2f7d5cdd18e072a47fb5906da0f847dd449911b4 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -1432,7 +1432,7 @@ static bool uvc_ctrl_is_readable(u32 which, struct uvc_control *ctrl,
-  * auto_exposure=1, exposure_time_absolute=251.
-  */
- int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
--			   const struct v4l2_ext_controls *ctrls,
-+			   const struct v4l2_ext_controls *ctrls, u32 which,
- 			   unsigned long ioctl)
- {
- 	struct uvc_control_mapping *master_map = NULL;
-@@ -1442,14 +1442,21 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
- 	s32 val;
- 	int ret;
- 	int i;
-+	bool is_which_min_max = (ioctl == VIDIOC_G_EXT_CTRLS &&
-+				 (which == V4L2_CTRL_WHICH_MIN_VAL ||
-+				  which == V4L2_CTRL_WHICH_MAX_VAL));
- 
- 	if (__uvc_query_v4l2_class(chain, v4l2_id, 0) >= 0)
--		return -EACCES;
-+		return is_which_min_max ? -EINVAL : -EACCES;
- 
- 	ctrl = uvc_find_control(chain, v4l2_id, &mapping);
- 	if (!ctrl)
- 		return -EINVAL;
- 
-+	if ((!(ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX) ||
-+	     !(ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)) && is_which_min_max)
-+		return -EINVAL;
-+
- 	if (ioctl == VIDIOC_G_EXT_CTRLS)
- 		return uvc_ctrl_is_readable(ctrls->which, ctrl, mapping);
- 
-diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-index 9e4a251eca88085a1b4e0e854370015855be92ee..d5274dc94da3c60f1f4566b307dd445f30c4f45f 100644
---- a/drivers/media/usb/uvc/uvc_v4l2.c
-+++ b/drivers/media/usb/uvc/uvc_v4l2.c
-@@ -765,6 +765,7 @@ static int uvc_ioctl_query_ext_ctrl(struct file *file, void *priv,
- 
- static int uvc_ctrl_check_access(struct uvc_video_chain *chain,
- 				 struct v4l2_ext_controls *ctrls,
-+				 u32 which,
- 				 unsigned long ioctl)
- {
- 	struct v4l2_ext_control *ctrl = ctrls->controls;
-@@ -772,7 +773,8 @@ static int uvc_ctrl_check_access(struct uvc_video_chain *chain,
- 	int ret = 0;
- 
- 	for (i = 0; i < ctrls->count; ++ctrl, ++i) {
--		ret = uvc_ctrl_is_accessible(chain, ctrl->id, ctrls, ioctl);
-+		ret = uvc_ctrl_is_accessible(chain, ctrl->id, ctrls, which,
-+					     ioctl);
- 		if (ret)
- 			break;
- 	}
-@@ -806,7 +808,7 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *priv,
- 		which = V4L2_CTRL_WHICH_CUR_VAL;
- 	}
- 
--	ret = uvc_ctrl_check_access(chain, ctrls, VIDIOC_G_EXT_CTRLS);
-+	ret = uvc_ctrl_check_access(chain, ctrls, which, VIDIOC_G_EXT_CTRLS);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -840,7 +842,8 @@ static int uvc_ioctl_s_try_ext_ctrls(struct uvc_fh *handle,
- 	if (!ctrls->count)
- 		return 0;
- 
--	ret = uvc_ctrl_check_access(chain, ctrls, ioctl);
-+	ret = uvc_ctrl_check_access(chain, ctrls, V4L2_CTRL_WHICH_CUR_VAL,
-+				    ioctl);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-index ed7bad31f75ca474c1037d666d5310c78dd764df..d583425893a5f716185153a07aae9bfe20182964 100644
---- a/drivers/media/usb/uvc/uvcvideo.h
-+++ b/drivers/media/usb/uvc/uvcvideo.h
-@@ -786,7 +786,7 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
- 		 struct v4l2_ext_control *xctrl);
- int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl);
- int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
--			   const struct v4l2_ext_controls *ctrls,
-+			   const struct v4l2_ext_controls *ctrls, u32 which,
- 			   unsigned long ioctl);
- 
- int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
-
----
-base-commit: c218ce4f98eccf5a40de64c559c52d61e9cc78ee
-change-id: 20251028-uvc-fix-which-c3ba1fb68ed5
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+>
+> Convert all users to use these APIs.
+> No functional changes intended.
+>
+> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
+> ---
+>  mm/memcontrol.c | 23 ++++++++++++++++-------
+>  mm/slab.h       | 43 ++++++++++++++++++++++++++++++++++++------
+>  mm/slub.c       | 50 ++++++++++++++++++++++++++++---------------------
+>  3 files changed, 82 insertions(+), 34 deletions(-)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 8dd7fbed5a94..2a9dc246e802 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2566,7 +2566,8 @@ struct mem_cgroup *mem_cgroup_from_obj_folio(struct=
+ folio *folio, void *p)
+>          * slab->obj_exts.
+>          */
+>         if (folio_test_slab(folio)) {
+> -               struct slabobj_ext *obj_exts;
+> +               unsigned long obj_exts;
+> +               struct slabobj_ext *obj_ext;
+>                 struct slab *slab;
+>                 unsigned int off;
+>
+> @@ -2576,8 +2577,9 @@ struct mem_cgroup *mem_cgroup_from_obj_folio(struct=
+ folio *folio, void *p)
+>                         return NULL;
+>
+>                 off =3D obj_to_index(slab->slab_cache, slab, p);
+> -               if (obj_exts[off].objcg)
+> -                       return obj_cgroup_memcg(obj_exts[off].objcg);
+> +               obj_ext =3D slab_obj_ext(slab, obj_exts, off);
+> +               if (obj_ext->objcg)
+> +                       return obj_cgroup_memcg(obj_ext->objcg);
+>
+>                 return NULL;
+>         }
+> @@ -3168,6 +3170,9 @@ bool __memcg_slab_post_alloc_hook(struct kmem_cache=
+ *s, struct list_lru *lru,
+>         }
+>
+>         for (i =3D 0; i < size; i++) {
+> +               unsigned long obj_exts;
+> +               struct slabobj_ext *obj_ext;
+> +
+>                 slab =3D virt_to_slab(p[i]);
+>
+>                 if (!slab_obj_exts(slab) &&
+> @@ -3190,29 +3195,33 @@ bool __memcg_slab_post_alloc_hook(struct kmem_cac=
+he *s, struct list_lru *lru,
+>                                         slab_pgdat(slab), cache_vmstat_id=
+x(s)))
+>                         return false;
+>
+> +               obj_exts =3D slab_obj_exts(slab);
+>                 off =3D obj_to_index(s, slab, p[i]);
+> +               obj_ext =3D slab_obj_ext(slab, obj_exts, off);
+>                 obj_cgroup_get(objcg);
+> -               slab_obj_exts(slab)[off].objcg =3D objcg;
+> +               obj_ext->objcg =3D objcg;
+>         }
+>
+>         return true;
+>  }
+>
+>  void __memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+> -                           void **p, int objects, struct slabobj_ext *ob=
+j_exts)
+> +                           void **p, int objects, unsigned long obj_exts=
+)
+>  {
+>         size_t obj_size =3D obj_full_size(s);
+>
+>         for (int i =3D 0; i < objects; i++) {
+>                 struct obj_cgroup *objcg;
+> +               struct slabobj_ext *obj_ext;
+>                 unsigned int off;
+>
+>                 off =3D obj_to_index(s, slab, p[i]);
+> -               objcg =3D obj_exts[off].objcg;
+> +               obj_ext =3D slab_obj_ext(slab, obj_exts, off);
+> +               objcg =3D obj_ext->objcg;
+>                 if (!objcg)
+>                         continue;
+>
+> -               obj_exts[off].objcg =3D NULL;
+> +               obj_ext->objcg =3D NULL;
+>                 refill_obj_stock(objcg, obj_size, true, -obj_size,
+>                                  slab_pgdat(slab), cache_vmstat_idx(s));
+>                 obj_cgroup_put(objcg);
+> diff --git a/mm/slab.h b/mm/slab.h
+> index d63cc9b5e313..df2c987d950d 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -528,10 +528,12 @@ static inline bool slab_in_kunit_test(void) { retur=
+n false; }
+>   * associated with a slab.
+>   * @slab: a pointer to the slab struct
+>   *
+> - * Returns a pointer to the object extension vector associated with the =
+slab,
+> - * or NULL if no such vector has been associated yet.
+> + * Returns the address of the object extension vector associated with th=
+e slab,
+> + * or zero if no such vector has been associated yet.
+> + * Do not dereference the return value directly; use slab_obj_ext() to a=
+ccess
+> + * its elements.
+>   */
+> -static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+> +static inline unsigned long slab_obj_exts(struct slab *slab)
+>  {
+>         unsigned long obj_exts =3D READ_ONCE(slab->obj_exts);
+>
+> @@ -544,7 +546,30 @@ static inline struct slabobj_ext *slab_obj_exts(stru=
+ct slab *slab)
+>                        obj_exts !=3D OBJEXTS_ALLOC_FAIL, slab_page(slab))=
+;
+>         VM_BUG_ON_PAGE(obj_exts & MEMCG_DATA_KMEM, slab_page(slab));
+>  #endif
+> -       return (struct slabobj_ext *)(obj_exts & ~OBJEXTS_FLAGS_MASK);
+> +
+> +       return obj_exts & ~OBJEXTS_FLAGS_MASK;
+> +}
+> +
+> +/*
+> + * slab_obj_ext - get the pointer to the slab object extension metadata
+> + * associated with an object in a slab.
+> + * @slab: a pointer to the slab struct
+> + * @obj_exts: a pointer to the object extension vector
+> + * @index: an index of the object
+> + *
+> + * Returns a pointer to the object extension associated with the object.
+> + */
+> +static inline struct slabobj_ext *slab_obj_ext(struct slab *slab,
+> +                                              unsigned long obj_exts,
+> +                                              unsigned int index)
+> +{
+> +       struct slabobj_ext *obj_ext;
+> +
+> +       VM_WARN_ON_ONCE(!slab_obj_exts(slab));
+> +       VM_WARN_ON_ONCE(obj_exts !=3D slab_obj_exts(slab));
+> +
+> +       obj_ext =3D (struct slabobj_ext *)obj_exts;
+> +       return &obj_ext[index];
+>  }
+>
+>  int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+> @@ -552,7 +577,13 @@ int alloc_slab_obj_exts(struct slab *slab, struct km=
+em_cache *s,
+>
+>  #else /* CONFIG_SLAB_OBJ_EXT */
+>
+> -static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+> +static inline unsigned long slab_obj_exts(struct slab *slab)
+> +{
+> +       return false;
+> +}
+> +
+> +static inline struct slabobj_ext *slab_obj_ext(struct slab *slab,
+> +                                              unsigned int index)
+>  {
+>         return NULL;
+>  }
+> @@ -569,7 +600,7 @@ static inline enum node_stat_item cache_vmstat_idx(st=
+ruct kmem_cache *s)
+>  bool __memcg_slab_post_alloc_hook(struct kmem_cache *s, struct list_lru =
+*lru,
+>                                   gfp_t flags, size_t size, void **p);
+>  void __memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab,
+> -                           void **p, int objects, struct slabobj_ext *ob=
+j_exts);
+> +                           void **p, int objects, unsigned long obj_exts=
+);
+>  #endif
+>
+>  void kvfree_rcu_cb(struct rcu_head *head);
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 64705cb3734f..ae73403f8c29 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2031,7 +2031,7 @@ static bool freelist_corrupted(struct kmem_cache *s=
+, struct slab *slab,
+>
+>  static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
+>  {
+> -       struct slabobj_ext *slab_exts;
+> +       unsigned long slab_exts;
+>         struct slab *obj_exts_slab;
+>
+>         obj_exts_slab =3D virt_to_slab(obj_exts);
+> @@ -2039,9 +2039,12 @@ static inline void mark_objexts_empty(struct slabo=
+bj_ext *obj_exts)
+>         if (slab_exts) {
+>                 unsigned int offs =3D obj_to_index(obj_exts_slab->slab_ca=
+che,
+>                                                  obj_exts_slab, obj_exts)=
+;
+> +               struct slabobj_ext *ext =3D slab_obj_ext(obj_exts_slab,
+> +                                                      slab_exts, offs);
+> +
+>                 /* codetag should be NULL */
+> -               WARN_ON(slab_exts[offs].ref.ct);
+> -               set_codetag_empty(&slab_exts[offs].ref);
+> +               WARN_ON(ext->ref.ct);
+> +               set_codetag_empty(&ext->ref);
+>         }
+>  }
+>
+> @@ -2159,7 +2162,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
+mem_cache *s,
+>
+>  static inline void free_slab_obj_exts(struct slab *slab)
+>  {
+> -       struct slabobj_ext *obj_exts;
+> +       unsigned long obj_exts;
+>
+>         obj_exts =3D slab_obj_exts(slab);
+>         if (!obj_exts)
+> @@ -2172,11 +2175,11 @@ static inline void free_slab_obj_exts(struct slab=
+ *slab)
+>          * NULL, therefore replace NULL with CODETAG_EMPTY to indicate th=
+at
+>          * the extension for obj_exts is expected to be NULL.
+>          */
+> -       mark_objexts_empty(obj_exts);
+> +       mark_objexts_empty((struct slabobj_ext *)obj_exts);
+>         if (unlikely(READ_ONCE(slab->obj_exts) & OBJEXTS_NOSPIN_ALLOC))
+> -               kfree_nolock(obj_exts);
+> +               kfree_nolock((void *)obj_exts);
+>         else
+> -               kfree(obj_exts);
+> +               kfree((void *)obj_exts);
+>         slab->obj_exts =3D 0;
+>  }
+>
+> @@ -2201,9 +2204,10 @@ static inline void free_slab_obj_exts(struct slab =
+*slab)
+>  #ifdef CONFIG_MEM_ALLOC_PROFILING
+>
+>  static inline struct slabobj_ext *
+> -prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+> +prepare_slab_obj_ext_hook(struct kmem_cache *s, gfp_t flags, void *p)
+>  {
+>         struct slab *slab;
+> +       unsigned long obj_exts;
+>
+>         if (!p)
+>                 return NULL;
+> @@ -2215,30 +2219,32 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, =
+gfp_t flags, void *p)
+>                 return NULL;
+>
+>         slab =3D virt_to_slab(p);
+> -       if (!slab_obj_exts(slab) &&
+> +       obj_exts =3D slab_obj_exts(slab);
+> +       if (!obj_exts &&
+>             alloc_slab_obj_exts(slab, s, flags, false)) {
+>                 pr_warn_once("%s, %s: Failed to create slab extension vec=
+tor!\n",
+>                              __func__, s->name);
+>                 return NULL;
+>         }
+>
+> -       return slab_obj_exts(slab) + obj_to_index(s, slab, p);
+> +       obj_exts =3D slab_obj_exts(slab);
+> +       return slab_obj_ext(slab, obj_exts, obj_to_index(s, slab, p));
+>  }
+>
+>  /* Should be called only if mem_alloc_profiling_enabled() */
+>  static noinline void
+>  __alloc_tagging_slab_alloc_hook(struct kmem_cache *s, void *object, gfp_=
+t flags)
+>  {
+> -       struct slabobj_ext *obj_exts;
+> +       struct slabobj_ext *obj_ext;
+>
+> -       obj_exts =3D prepare_slab_obj_exts_hook(s, flags, object);
+> +       obj_ext =3D prepare_slab_obj_ext_hook(s, flags, object);
+>         /*
+>          * Currently obj_exts is used only for allocation profiling.
+>          * If other users appear then mem_alloc_profiling_enabled()
+>          * check should be added before alloc_tag_add().
+>          */
+> -       if (likely(obj_exts))
+> -               alloc_tag_add(&obj_exts->ref, current->alloc_tag, s->size=
+);
+> +       if (likely(obj_ext))
+> +               alloc_tag_add(&obj_ext->ref, current->alloc_tag, s->size)=
+;
+>  }
+>
+>  static inline void
+> @@ -2253,8 +2259,8 @@ static noinline void
+>  __alloc_tagging_slab_free_hook(struct kmem_cache *s, struct slab *slab, =
+void **p,
+>                                int objects)
+>  {
+> -       struct slabobj_ext *obj_exts;
+>         int i;
+> +       unsigned long obj_exts;
+>
+>         /* slab->obj_exts might not be NULL if it was created for MEMCG a=
+ccounting. */
+>         if (s->flags & (SLAB_NO_OBJ_EXT | SLAB_NOLEAKTRACE))
+> @@ -2267,7 +2273,7 @@ __alloc_tagging_slab_free_hook(struct kmem_cache *s=
+, struct slab *slab, void **p
+>         for (i =3D 0; i < objects; i++) {
+>                 unsigned int off =3D obj_to_index(s, slab, p[i]);
+>
+> -               alloc_tag_sub(&obj_exts[off].ref, s->size);
+> +               alloc_tag_sub(&slab_obj_ext(slab, obj_exts, off)->ref, s-=
+>size);
+>         }
+>  }
+>
+> @@ -2326,7 +2332,7 @@ static __fastpath_inline
+>  void memcg_slab_free_hook(struct kmem_cache *s, struct slab *slab, void =
+**p,
+>                           int objects)
+>  {
+> -       struct slabobj_ext *obj_exts;
+> +       unsigned long obj_exts;
+>
+>         if (!memcg_kmem_online())
+>                 return;
+> @@ -2341,7 +2347,8 @@ void memcg_slab_free_hook(struct kmem_cache *s, str=
+uct slab *slab, void **p,
+>  static __fastpath_inline
+>  bool memcg_slab_post_charge(void *p, gfp_t flags)
+>  {
+> -       struct slabobj_ext *slab_exts;
+> +       unsigned long obj_exts;
+> +       struct slabobj_ext *obj_ext;
+>         struct kmem_cache *s;
+>         struct folio *folio;
+>         struct slab *slab;
+> @@ -2381,10 +2388,11 @@ bool memcg_slab_post_charge(void *p, gfp_t flags)
+>                 return true;
+>
+>         /* Ignore already charged objects. */
+> -       slab_exts =3D slab_obj_exts(slab);
+> -       if (slab_exts) {
+> +       obj_exts =3D slab_obj_exts(slab);
+> +       if (obj_exts) {
+>                 off =3D obj_to_index(s, slab, p);
+> -               if (unlikely(slab_exts[off].objcg))
+> +               obj_ext =3D slab_obj_ext(slab, obj_exts, off);
+> +               if (unlikely(obj_ext->objcg))
+>                         return true;
+>         }
+>
+> --
+> 2.43.0
+>
 
