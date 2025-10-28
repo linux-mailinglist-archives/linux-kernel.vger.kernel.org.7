@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-873703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601E0C147B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:58:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 211C7C147DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00C84284B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:57:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED2704F11B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3769314D3B;
-	Tue, 28 Oct 2025 11:57:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E78730F92B;
-	Tue, 28 Oct 2025 11:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ECF31814A;
+	Tue, 28 Oct 2025 11:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b="pfWTrq2I"
+Received: from sg-1-17.ptr.blmpb.com (sg-1-17.ptr.blmpb.com [118.26.132.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0843164DB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.26.132.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761652627; cv=none; b=F0BX2M7bU4mbGInP7Zh4vdd/mLqAuHGoVYHmJ/1EaAmv5Xn0hxKZuQUWkNdfaYzVDGdnP21zo5OrZnoQqhrMP3mHvQwQRyYHBcgr5nf9bGqFYrBIHtuBP+EiPdV0LjDOZFYpuNUcZ/Swsnclhxd9B5wsNFEKGnWbhnHrffS/Nl8=
+	t=1761652763; cv=none; b=ZaCPXl5EKYxSlKOkUtuMM0yqPJu6InYtcoHxizm8I4jmCaLd5zWmPHdl8whg5IjJqNAg0alrSRh3Y2zcXNczKvKhlOMwlepBVx4aDP69aU6+XKehO1ULU+j/T+spoXuJejvmAyqpsGpfS7Qtw4OvublwetkUmHAihBNrjnSzt7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761652627; c=relaxed/simple;
-	bh=z5CXhGy/LBc2zpdHHMxomM5MbPIp7P2Uxn6ZD1HAR94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLCA8tZm5B3OzNigbGa+y24d+cNUT5IihJLAN9oQRnJlef5jd6ti6uEop35qFTPpblA4LkIeHNmF0jf0BmX7goUMj7n/JcpTqwHD7+C1gMls1VD65cktClcr6LQ7MSWGHsd4EH7s7+aZd7P6+vJBe1mXoXEk2j/Pf2fq1Rum3M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7486F168F;
-	Tue, 28 Oct 2025 04:56:56 -0700 (PDT)
-Received: from [10.57.39.79] (unknown [10.57.39.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BC743F63F;
-	Tue, 28 Oct 2025 04:57:02 -0700 (PDT)
-Message-ID: <6c35e1e4-8267-4eba-a53e-04ff74e224a2@arm.com>
-Date: Tue, 28 Oct 2025 11:57:00 +0000
+	s=arc-20240116; t=1761652763; c=relaxed/simple;
+	bh=8kAxUUpvPH+tLSUkOL+TdaqlC7BCFNAQ+DNQrsXJdlg=;
+	h=References:Mime-Version:Subject:In-Reply-To:To:Content-Type:From:
+	 Cc:Date:Message-Id; b=Kolr7hUlWwFIRgIinoFIiTe/fV/wMooID4WRsi8Kj0mMTplc9CC8ApK13KaCsz0QFR4FjeLxj+VdndCbpo8083u0bsprQAo+oOWpcR1OvepQJiPNzuISAsYTf96/62mfG7WYwFRmZxDvh/0bOwJPEHH490mLAmhH1yODoCWgyUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com; spf=none smtp.mailfrom=fnnas.com; dkim=pass (2048-bit key) header.d=fnnas-com.20200927.dkim.feishu.cn header.i=@fnnas-com.20200927.dkim.feishu.cn header.b=pfWTrq2I; arc=none smtp.client-ip=118.26.132.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fnnas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fnnas.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+ s=s1; d=fnnas-com.20200927.dkim.feishu.cn; t=1761652630;
+  h=from:subject:mime-version:from:date:message-id:subject:to:cc:
+ reply-to:content-type:mime-version:in-reply-to:message-id;
+ bh=Gh0h+kP+TFCFkPq7jxPJn9esXy4V4wufNyCV3J/qzQE=;
+ b=pfWTrq2Idjdu3tkVgwYopTANtJ0yssIsk6qd5vHF/lFNi51T0r/Lut84cEOq9ntsNiTIRp
+ j+e0bd3p69nlCE+n4RVaH8L8U746xhcgI4OpJJqVyt/GIB4hx+sIPmGLX2cLXQKtEObTI3
+ P8kDUtp5B2b6pQe99mmoHIrWNfk6coyVkn4IoOTtozqmDgBTKFRwB49EGQUYQs5L1AUVd9
+ 3CV1VoYdU63Pfkah9jLPO4osNbNgb3XLOa2FIGc6jnmyXLM6XdC6Mkjwwyd3ps9M4JpwCM
+ 2hS57v6Cft/i6+ppBB0CnsROgZXrOzDK6Z3coSW5G/hZ+vqPRMQd2Bcw/joB2A==
+References: <20251027072915.3014463-1-linan122@huawei.com> <20251027072915.3014463-2-linan122@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Subject: Re: [PATCH v7 1/4] md: delete md_redundancy_group when array is becoming inactive
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251027072915.3014463-2-linan122@huawei.com>
+To: <linan122@huawei.com>, <corbet@lwn.net>, <song@kernel.org>, 
+	<hare@suse.de>, <xni@redhat.com>
+X-Lms-Return-Path: <lba+26900af94+a0a778+vger.kernel.org+yukuai@fnnas.com>
+X-Original-From: Yu Kuai <yukuai@fnnas.com>
+Content-Type: text/plain; charset=UTF-8
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/of: Fix device node reference leak in
- of_iommu_get_resv_regions
-To: Miaoqian Lin <linmq006@gmail.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Rob Herring <robh@kernel.org>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20251028063601.71934-1-linmq006@gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20251028063601.71934-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Yu Kuai" <yukuai@fnnas.com>
+Cc: <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, 
+	<linux-raid@vger.kernel.org>, <linan666@huaweicloud.com>, 
+	<yangerkun@huawei.com>, <yi.zhang@huawei.com>
+Date: Tue, 28 Oct 2025 19:57:05 +0800
+Message-Id: <0ef2d9c7-62c7-4e3e-9eab-48cbb2d7e6fd@fnnas.com>
+Received: from [192.168.1.104] ([39.182.0.168]) by smtp.feishu.cn with ESMTPS; Tue, 28 Oct 2025 19:57:07 +0800
+Reply-To: yukuai@fnnas.com
 
-On 2025-10-28 6:36 am, Miaoqian Lin wrote:
-> In of_iommu_get_resv_regions(), of_find_node_by_phandle() returns a device
-> node with its reference count incremented. The caller is responsible for
-> releasing this reference when the node is no longer needed.
-> 
-> Add a call to of_node_put() to release the reference after the usage.
+=E5=9C=A8 2025/10/27 15:29, linan122@huawei.com =E5=86=99=E9=81=93:
 
-Just put the reference immediately after getting it - this inner usage 
-only happens if it's the same dev->of_node we're already using for the 
-outer iteration, so we don't need to bother holding an extra reference 
-as it can't suddenly disappear anyway (or even if it could, that's still 
-not *this* code's problem...)
-
-Thanks,
-Robin.
-
-> Found via static analysis.
-> 
-> Fixes: a5bf3cfce8cb ("iommu: Implement of_iommu_get_resv_regions()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+> From: Li Nan <linan122@huawei.com>
+>
+> 'md_redundancy_group' are created in md_run() and deleted in del_gendisk(=
+),
+> but these are not paired. Writing inactive/active to sysfs array_state ca=
+n
+> trigger md_run() multiple times without del_gendisk(), leading to
+> duplicate creation as below:
+>
+>   sysfs: cannot create duplicate filename '/devices/virtual/block/md0/md/=
+sync_action'
+>   Call Trace:
+>    dump_stack_lvl+0x9f/0x120
+>    dump_stack+0x14/0x20
+>    sysfs_warn_dup+0x96/0xc0
+>    sysfs_add_file_mode_ns+0x19c/0x1b0
+>    internal_create_group+0x213/0x830
+>    sysfs_create_group+0x17/0x20
+>    md_run+0x856/0xe60
+>    ? __x64_sys_openat+0x23/0x30
+>    do_md_run+0x26/0x1d0
+>    array_state_store+0x559/0x760
+>    md_attr_store+0xc9/0x1e0
+>    sysfs_kf_write+0x6f/0xa0
+>    kernfs_fop_write_iter+0x141/0x2a0
+>    vfs_write+0x1fc/0x5a0
+>    ksys_write+0x79/0x180
+>    __x64_sys_write+0x1d/0x30
+>    x64_sys_call+0x2818/0x2880
+>    do_syscall_64+0xa9/0x580
+>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>   md: cannot register extra attributes for md0
+>
+> Creation of it depends on 'pers', its lifecycle cannot be aligned with
+> gendisk. So fix this issue by triggering 'md_redundancy_group' deletion
+> when the array is becoming inactive.
+>
+> Fixes: 790abe4d77af ("md: remove/add redundancy group only in level chang=
+e")
+> Signed-off-by: Li Nan <linan122@huawei.com>
 > ---
->   drivers/iommu/of_iommu.c | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
-> index 6b989a62def2..02448da8ff90 100644
-> --- a/drivers/iommu/of_iommu.c
-> +++ b/drivers/iommu/of_iommu.c
-> @@ -256,6 +256,7 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
->   				maps = of_translate_dma_region(np, maps, &iova, &length);
->   				if (length == 0) {
->   					dev_warn(dev, "Cannot reserve IOVA region of 0 size\n");
-> +					of_node_put(np);
->   					continue;
->   				}
->   				type = iommu_resv_region_get_type(dev, &phys, iova, length);
-> @@ -265,6 +266,7 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
->   				if (region)
->   					list_add_tail(&region->list, list);
->   			}
-> +			of_node_put(np);
->   		}
->   	}
->   #endif
+>   drivers/md/md.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index fa13eb02874e..f6fd55a1637b 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -6878,6 +6878,10 @@ static int do_md_stop(struct mddev *mddev, int mod=
+e)
+>   		if (!md_is_rdwr(mddev))
+>   			set_disk_ro(disk, 0);
+>  =20
+> +		if (mode =3D=3D 2 && mddev->pers->sync_request &&
+> +		    mddev->to_remove =3D=3D NULL)
+> +			mddev->to_remove =3D &md_redundancy_group;
+> +
+>   		__md_stop_writes(mddev);
+>   		__md_stop(mddev);
+>  =20
 
+Reviewed-by: Yu Kuai <yukuai@fnnas.com>
 
