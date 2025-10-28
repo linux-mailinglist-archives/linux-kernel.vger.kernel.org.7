@@ -1,644 +1,130 @@
-Return-Path: <linux-kernel+bounces-873095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A57EC13137
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:08:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EBC13146
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AF973351A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD943AB19C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A7CD29E10B;
-	Tue, 28 Oct 2025 06:08:28 +0000 (UTC)
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11023087.outbound.protection.outlook.com [40.107.44.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E129C33F;
+	Tue, 28 Oct 2025 06:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwVffNQz"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664B9296BB6;
-	Tue, 28 Oct 2025 06:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761631706; cv=fail; b=PrLQ8jV9ms3UyH51R6EHXgJtSfYvRM8NPMuf9Tq2GDyjL1I8Fpra5aoQaKdkYQZ4KhoZ50CPuTXurygvR3cToEV1Xx4d2aKNQpDQwCtt3eaphA8NsR3QAhL9ny0GvRyihDn49gFv80FiABFFJO4zzRGgqWcv5wDwwcbWpI8xpYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761631706; c=relaxed/simple;
-	bh=pzTBJCj7NI+iIXDf0FwKO8nXA48OdLithm0+ATowkkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HAUnPxkMQO+hBbL+LTh1SnOuyOt/PK+Hl4jH+xZ14CGpLcKPgx/USDdIBo5YXpESqOlAEXkUansosQm3bN3pWEFu6xdKBdfQ8mU4K0H4NVTc6DNfAObuE+5lUWJU5R/qWGGYZD8pU3//TH3haUYgt9W/1DzYJrxdaVp3zG5+OiQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.44.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Co6k7yUcY6oD5UV2kzTvIshMvPSQApVLcQwTF9CuTFMgwszJpNEnVOTrEGkmtqg24NsL6UABWNFFj53qgt3+V6RDJcEBWXVw3eGjsQp1p7v9WF11xUvPb63npVjOqbip3iEYpApJqBy080VQhG2fxP0pRXO7xk9OCclbx8rq2fhxTZ5HWk+oK/+WTXTmJ7yeA72i/csHFa7kn5CJVazFggR4wbLYaG5tV6BDALGxDbsnwt2l7jiQDW0lUQ4KbCe+MIDk76LvU4kiQMLDm1uC4gQTsoFVD2jq9dk7+efa2hygwBpElFY8WObI39uXO68nAtFP3VDPGWW6VCS6OsY+dw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ObzEsPq61FRSniDfj3DytDNv1iDibJTYW/ngEac+GvI=;
- b=HMulzYSSPDulqjhn/Nr9kKoHSIVWgI2tbww+G0OKU9mMmRmlnhqUMyca+99FqraAwmyvWWWt8qsuwekl92Kt0Hw/sNsTeSiruRNw5QDusrqEPPlIr/NfZNBi7eDJ6vlcEd3ejJJAfvEs1j6hGg85r9lNz7JJ/gOoD7a/o8RJl97qGiNUSxcqUcqSUyDmOFzekmtABOAuLoXPpQWrOq/cMDyfUukPfEtOOVF0Ur3mbzc7xBiMMA6wLwv0Jis2RX98BcxEq8L0et3JrqaZviGpfQNroDEfffWlmn5ZtnWn4HqQjG2B8MMGGIRhQPjgd4k/s0UWftnR3g9o6/kSYttmYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-Received: from SEWP216CA0093.KORP216.PROD.OUTLOOK.COM (2603:1096:101:2bf::8)
- by SI6PR06MB7217.apcprd06.prod.outlook.com (2603:1096:4:24f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Tue, 28 Oct
- 2025 06:08:18 +0000
-Received: from TY2PEPF0000AB85.apcprd03.prod.outlook.com
- (2603:1096:101:2bf:cafe::db) by SEWP216CA0093.outlook.office365.com
- (2603:1096:101:2bf::8) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.20 via Frontend Transport; Tue,
- 28 Oct 2025 06:08:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- TY2PEPF0000AB85.mail.protection.outlook.com (10.167.253.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 06:08:16 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 90B1B41604E0;
-	Tue, 28 Oct 2025 14:08:15 +0800 (CST)
-Date: Tue, 28 Oct 2025 14:08:11 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Gary Yang <gary.yang@cixtech.com>
-Cc: <linus.walleij@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<cix-kernel-upstream@cixtech.com>
-Subject: Re: [PATCH v5 3/3] arm64: dts: cix: Add pinctrl nodes for sky1
-Message-ID: <aQBdy0ZSwq4V_sIs@nchen-desktop>
-References: <20251021070410.3585997-1-gary.yang@cixtech.com>
- <20251021070410.3585997-4-gary.yang@cixtech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F2329AAE3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761631728; cv=none; b=mKwa9u2TA88siGn05h6dYtwxzPp+0I2o0Yv4j8WDGzU74PH37dM867bmXeuKPuRmmS1jETP1wXthxqNxZjJH+H6aY5hZIWBcdU9k+hbNaFNR+jr3DS/Duz0FPv5U9F2f3M8pgbZ/1Lw1jX9FNe4NRzAdp4Y90G92y6oDOs4ds5o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761631728; c=relaxed/simple;
+	bh=q7Tc2QsMBaN+HdSGE3XhX0GNjhdhA21Ns2bjotQEtBA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a0ah4iahGrdsq68Ig313Ff8b5EAxEsMRFilaZLi8uiVn6XeNqYB4trgxzlSyES/pq8/dxMX+e8emhHVgeT6yY2ia0wYONLUUmkOb/yCLvZIBd97d3uOOMNQ71L0QErpQYk/xAR6OHqCfBMIoxcdEhL8Mr6P3GQ4qetgKsC491X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwVffNQz; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso4991411a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761631727; x=1762236527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EtQOQB0/xeiaea1mof+0CkoSu6y09kgD2fJAIO20kBU=;
+        b=BwVffNQzNrjA44edQduAm31/Ty1+eD1ko+O4xUYxdOqVIm1Mcbq5LNZ51gZFDMx6oz
+         yctWAtLsp8LlKZAQUrtgGHv/Y8h6qntuXD/bqkBiJTQCMoZYk805s1rJwaM+9VPs26mu
+         EElDlKL01yxVt0sem3jv4wlmkEvUZKk6sm9HZDEuYja18cKdmkQavc9w5/nR4zlc8o9X
+         bddjEKSReP54w+lofIR/6jTmQtVWEhrpWsPDlNaLlkhmpNG6oZe5UKEG3a6xojMM3NS6
+         m8xP8Iud3W/RU/JGX2luB62fvOYulnRbS7bX5QnMHtjbnQAeFDcpTIL4wF527QkBG6Ev
+         DjWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761631727; x=1762236527;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EtQOQB0/xeiaea1mof+0CkoSu6y09kgD2fJAIO20kBU=;
+        b=pgLiNPRhzab0BFoubuxya+mjHgRdaQpPBxewnbV5nuDuIEpOBvJg73XESuP7mPM9lN
+         xSZIQgcuiqf3bLnZ3wPDgKPjSYkNFfmuMEYmlrLErbH9sDFz953pPWDWVL5jSMaAIFiK
+         k8lcqKnEVHZlpfP4oI3Yr4LKGB9IFgyP78xsBmaWltZm8qaQrLThzlvZfTdWxs02519K
+         w6xAAUI0i/Lx2+m7qloQJBrqj7qyZVZ4GgCwT8xMY7gpQUOCEfMf2/6Krir3JucqREIk
+         QZM0SISQBdCYcbWoUR7sZIM34QsAi9UGPlrrjLKPVSCFPCK0Vx8yQOX9yCc2l6IKuxD6
+         HpKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW46+EOVOjVwS1icVXEohPWVjT+nOl+aVIdX883wvf7ZDu+6a+QfXutU5AF8MspwMpflKmCDYKW12cxBE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK0VZlKQv1IZqkD08/Sh/s9ItQAtuiNZfCHJOPkc/3/QxXqgtl
+	LPMYchH5RqqPadI74vMvT1ejhceYBMxRGz36bUX79NURO3893O6g5cEfYDxCOXYyiFUaXQ==
+X-Gm-Gg: ASbGnctdlAH+wPfdR/DHgymqS4HUKJDlApMcFm6IZVueMwqLlBK8mrrzP2vefz9w/YV
+	xK+MBdWs9g16qUU2SnUD/nsbVwwrkWTckhp8hWPp3NZiM8ATLDs7LEglNyygdUvGbJACmI6qvSV
+	LtYOLaXaWhrLZIhdR130ZigTHpNS74H+fGBMF+1ynrpumEaLEBkNd6cjN7vmOTjiXoK8h880KsC
+	tkP3hasgg5j2LVPSmOhQM0e/qX2siQF9zeUdu5wWu5FSQoIwBeUP2Ur+vOZW/Jp5OJC7xiAA7ss
+	hAWJ2HKc1l47TAVRs5ZZx1x/lBTr6WPtOuNxvG6MxGIep2MtNWfeNo4ie4SY5KPijO3PeSS2v6o
+	vJFhNvhep2+6OwA1jivu4Mw/BF0WPmHvOASUcOe6ixugxNWDQNne6vnsycntn+g63gplp6EZ51C
+	yvOiRInOLl1+6mCjOR9OomUQ==
+X-Google-Smtp-Source: AGHT+IGM18PVXmk/Ly4QV9wJ4WdGZzC+O29UfRf1c8szMur4qUVhZWR85AkuIgff1YJgN9jGYRTafQ==
+X-Received: by 2002:a17:90b:58f0:b0:32e:2059:ee83 with SMTP id 98e67ed59e1d1-340279e5f8bmr3103225a91.7.1761631726760;
+        Mon, 27 Oct 2025 23:08:46 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm9533462a12.5.2025.10.27.23.08.43
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 23:08:46 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] thermal: thermal_of: Fix device node reference leak in thermal_of_cm_lookup
+Date: Tue, 28 Oct 2025 14:08:29 +0800
+Message-Id: <20251028060829.65434-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021070410.3585997-4-gary.yang@cixtech.com>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY2PEPF0000AB85:EE_|SI6PR06MB7217:EE_
-X-MS-Office365-Filtering-Correlation-Id: e78bfaf2-d063-4f7e-52ae-08de15e862cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?kxOtKb4BqPVo51rpL6MFiPm2cjHZ7lQR2ntkoU+g1kRu2LgSnJHee25Lbyxw?=
- =?us-ascii?Q?rbIyeP7pd6GcCdRRAswEK+61lVOFMF3XW7duv9R3LNH+xniJdLNX2rsO5kuu?=
- =?us-ascii?Q?7sr6+DVBOg5BNq1Ot58epJJE0DkrD1IvustfjD8HlJKZydyB+WGQgwbAg6r1?=
- =?us-ascii?Q?HVY3dvLsMuALgy7Pia1yZu1TUHWQ9t4PxbCuurUTXI4dQ0rTaR5fR+MAryJ3?=
- =?us-ascii?Q?RYNo+jGEESAsBWfiQ++bLxQY8PzJzJdQTtnW3fz32je+/eukHA2aElOVFlFW?=
- =?us-ascii?Q?FH03oZwOIqtqfbwhgOPlflW+4b03J2GL2nQjnCBw8j/5MjqVNT2OYsUQrXp8?=
- =?us-ascii?Q?IyQwUAwyFLfuQWY3esUIBqMrR/lgv2Y2HAMQUkAxAaMITyHR/GXUVcGvJ3UG?=
- =?us-ascii?Q?tAyzx5FcjmqvA+4SPBACGD0N6dz83MBfRSSOC92KmVSKWTyyC6n7hBy+vgH+?=
- =?us-ascii?Q?jHlat7PqrjdXfVlb+bwBzHvS7d7r/GqR1OuEqsRDjFppqOAAJI4J2gMk029h?=
- =?us-ascii?Q?KHlhUHP0rbuitBFBu8mJGLIOIACtha5X+gdHpeCjiX2HUIsr/nlyw9geAtH9?=
- =?us-ascii?Q?YHjzEu/9ItBYA/xJUF79LS24et+oohjHkAa1KGzC/3MtQCc6QivPAyPeTZH9?=
- =?us-ascii?Q?kG+D1GYWBAQa73ZBY0kqIhqbRrzyrk7LEXr/6tHYen+fZif2k59GMjvPdPLB?=
- =?us-ascii?Q?Dm9Reo8wHlRWKCjoq69ra00PhdQkK4xqMm/UbOusDPm6BnGcmYReHVwlZc1j?=
- =?us-ascii?Q?1A3I+Z9eI/z41dhwPlGhp9Y+g8SfKtrMnMT8g+t6nv40j9UFBH6BtXFpJ4zd?=
- =?us-ascii?Q?AjGHqNN71mdmMf4zO4b0aaPrO9xCkVBUe9tnjXN2J3zRTH+8J5UmBlOsDK5r?=
- =?us-ascii?Q?0RI5KUBSJOaTHlet1aKOnL8dL6NoUg4x87S8gEoYSIDyb55rlOXoB50P63OH?=
- =?us-ascii?Q?Nuev0o8gv9XTRd4FTy37VbdOuwvDZrjGC1wOe6sl6l0bb8im6HB4Wde5T6op?=
- =?us-ascii?Q?1UinD3a5H2k6mEYlF1Tidp1jOnzgg4n/TRtM4hLTg4/wr/wWEN3w6h5O7nCr?=
- =?us-ascii?Q?KiWuUbyctBKz/3lBvf115M3cYsJlx3nFSZ78SJP7xa1MxBUF0idm/8K22/T5?=
- =?us-ascii?Q?W20dzbbqMaf7mvgzF7OsNqqN1U3uPrmJHdio0Im3zslV2skhKwfPHKn+/K7l?=
- =?us-ascii?Q?Ug3e5PAD6N3JVi/rpQHYCPgfk98xzdr9icQn4P04+W9Dv3vBnXFe//VWcVA3?=
- =?us-ascii?Q?f06gEwXObrHcera4X60ugpjlLay+fNCGxfINWonAN+jjyTYBgCc7GW8M7jZq?=
- =?us-ascii?Q?5BlqjtLW3AzNLJ+cYUL6I/R2QTiGEH80dSYf9Shf2IWgZYK+M87ebamPvteu?=
- =?us-ascii?Q?XrRTgWN5jFGGYWSgSsTZi1hQVq3TNHgCb8vTms9qsqxzyg4CQu7aN9y1WMfH?=
- =?us-ascii?Q?wqO4U5twa6bVhv8wMaRMxt6horQMkFq0QekSCMcRWUsSZNnabRjNysnwP/Y/?=
- =?us-ascii?Q?1jUuBTkugbV7/rnCVt4aPg8Tylkhdt3wvUdAFkutLcMFoHuXVAml5HQzZBZl?=
- =?us-ascii?Q?HSgk+IULghEG0EQlApc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 06:08:16.5065
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e78bfaf2-d063-4f7e-52ae-08de15e862cf
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	TY2PEPF0000AB85.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI6PR06MB7217
+Content-Transfer-Encoding: 8bit
 
-On 25-10-21 15:04:10, Gary Yang wrote:
-> Add the pin-controller nodes for Sky1 platform.
-> 
-> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+In thermal_of_cm_lookup(), of_parse_phandle() returns a device node with
+its reference count incremented. The caller is responsible for releasing
+this reference when the node is no longer needed.
 
-Applied, thanks.
+Add of_node_put(tr_np) to fix the reference leaks.
 
-Peter
-> ---
->  arch/arm64/boot/dts/cix/sky1-orion-o6.dts |  32 ++
->  arch/arm64/boot/dts/cix/sky1-pinfunc.h    | 401 ++++++++++++++++++++++
->  arch/arm64/boot/dts/cix/sky1.dtsi         |  10 +
->  3 files changed, 443 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/cix/sky1-pinfunc.h
-> 
-> diff --git a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-> index d74964d53c3b..cdaca197edda 100644
-> --- a/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-> +++ b/arch/arm64/boot/dts/cix/sky1-orion-o6.dts
-> @@ -7,6 +7,8 @@
->  /dts-v1/;
->  
->  #include "sky1.dtsi"
-> +#include "sky1-pinfunc.h"
-> +
->  / {
->  	model = "Radxa Orion O6";
->  	compatible = "radxa,orion-o6", "cix,sky1";
-> @@ -34,6 +36,36 @@ linux,cma {
->  
->  };
->  
-> +&iomuxc {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hog>;
-> +
-> +	pinctrl_hog: hog-cfg {
-> +		pins {
-> +			pinmux = <CIX_PAD_GPIO144_FUNC_GPIO144>,
-> +				<CIX_PAD_GPIO145_FUNC_GPIO145>,
-> +				<CIX_PAD_GPIO146_FUNC_GPIO146>,
-> +				<CIX_PAD_GPIO147_FUNC_GPIO147>;
-> +			bias-pull-down;
-> +			drive-strength = <8>;
-> +		};
-> +	};
-> +};
-> +
-> +&iomuxc_s5 {
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_hog_s5>;
-> +
-> +	pinctrl_hog_s5: hog-s5-cfg {
-> +		pins {
-> +			pinmux = <CIX_PAD_GPIO014_FUNC_GPIO014>;
-> +			bias-pull-up;
-> +			drive-strength = <8>;
-> +
-> +		};
-> +	};
-> +};
-> +
->  &uart2 {
->  	status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/cix/sky1-pinfunc.h b/arch/arm64/boot/dts/cix/sky1-pinfunc.h
-> new file mode 100644
-> index 000000000000..ebe9f6fef403
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/cix/sky1-pinfunc.h
-> @@ -0,0 +1,401 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Copyright 2024-2025 Cix Technology Group Co., Ltd.
-> + */
-> +
-> +#ifndef __CIX_SKY1_H
-> +#define __CIX_SKY1_H
-> +
-> +/* s5 pads */
-> +#define CIX_PAD_GPIO001_FUNC_GPIO001				   (0 << 8 | 0x0)
-> +#define CIX_PAD_GPIO002_FUNC_GPIO002				   (1 << 8 | 0x0)
-> +#define CIX_PAD_GPIO003_FUNC_GPIO003				   (2 << 8 | 0x0)
-> +#define CIX_PAD_GPIO004_FUNC_GPIO004				   (3 << 8 | 0x0)
-> +#define CIX_PAD_GPIO005_FUNC_GPIO005				   (4 << 8 | 0x0)
-> +#define CIX_PAD_GPIO006_FUNC_GPIO006				   (5 << 8 | 0x0)
-> +#define CIX_PAD_GPIO007_FUNC_GPIO007				   (6 << 8 | 0x0)
-> +#define CIX_PAD_GPIO008_FUNC_GPIO008				   (7 << 8 | 0x0)
-> +#define CIX_PAD_GPIO009_FUNC_GPIO009				   (8 << 8 | 0x0)
-> +#define CIX_PAD_GPIO010_FUNC_GPIO010				   (9 << 8 | 0x0)
-> +#define CIX_PAD_GPIO011_FUNC_GPIO011				   (10 << 8 | 0x0)
-> +#define CIX_PAD_GPIO012_FUNC_GPIO012				   (11 << 8 | 0x0)
-> +#define CIX_PAD_GPIO013_FUNC_GPIO013				   (12 << 8 | 0x0)
-> +#define CIX_PAD_GPIO014_FUNC_GPIO014				   (13 << 8 | 0x0)
-> +#define CIX_PAD_SFI_I2C0_SCL_FUNC_SFI_I2C0_SCL			   (28 << 8 | 0x0)
-> +#define CIX_PAD_SFI_I2C0_SCL_FUNC_SFI_I3C0_SCL			   (28 << 8 | 0x1)
-> +#define CIX_PAD_SFI_I2C0_SDA_FUNC_SFI_I2C0_SDA			   (29 << 8 | 0x0)
-> +#define CIX_PAD_SFI_I2C0_SDA_FUNC_SFI_I3C0_SDA			   (29 << 8 | 0x1)
-> +#define CIX_PAD_SFI_I2C1_SCL_FUNC_SFI_I2C1_SCL			   (30 << 8 | 0x0)
-> +#define CIX_PAD_SFI_I2C1_SCL_FUNC_SFI_I3C1_SCL			   (30 << 8 | 0x1)
-> +#define CIX_PAD_SFI_I2C1_SCL_FUNC_SFI_SPI_CS0			   (30 << 8 | 0x2)
-> +#define CIX_PAD_SFI_I2C1_SDA_FUNC_SFI_I2C1_SDA			   (31 << 8 | 0x0)
-> +#define CIX_PAD_SFI_I2C1_SDA_FUNC_SFI_I3C1_SDA			   (31 << 8 | 0x1)
-> +#define CIX_PAD_SFI_I2C1_SDA_FUNC_SFI_SPI_CS1			   (31 << 8 | 0x2)
-> +#define CIX_PAD_SFI_GPIO0_FUNC_GPIO015				   (32 << 8 | 0x0)
-> +#define CIX_PAD_SFI_GPIO0_FUNC_SFI_SPI_SCK			   (32 << 8 | 0x1)
-> +#define CIX_PAD_SFI_GPIO0_FUNC_SFI_GPIO0			   (32 << 8 | 0x2)
-> +#define CIX_PAD_SFI_GPIO1_FUNC_GPIO016				   (33 << 8 | 0x0)
-> +#define CIX_PAD_SFI_GPIO1_FUNC_SFI_SPI_MOSI			   (33 << 8 | 0x1)
-> +#define CIX_PAD_SFI_GPIO1_FUNC_SFI_GPIO1			   (33 << 8 | 0x2)
-> +#define CIX_PAD_SFI_GPIO2_FUNC_GPIO017				   (34 << 8 | 0x0)
-> +#define CIX_PAD_SFI_GPIO2_FUNC_SFI_SPI_MISO			   (34 << 8 | 0x1)
-> +#define CIX_PAD_SFI_GPIO2_FUNC_SFI_GPIO2			   (34 << 8 | 0x2)
-> +#define CIX_PAD_GPIO018_FUNC_SFI_GPIO3				   (35 << 8 | 0x0)
-> +#define CIX_PAD_GPIO018_FUNC_GPIO018				   (35 << 8 | 0x1)
-> +#define CIX_PAD_GPIO019_FUNC_SFI_GPIO4				   (36 << 8 | 0x0)
-> +#define CIX_PAD_GPIO019_FUNC_GPIO019				   (36 << 8 | 0x1)
-> +#define CIX_PAD_GPIO020_FUNC_SFI_GPIO5				   (37 << 8 | 0x0)
-> +#define CIX_PAD_GPIO020_FUNC_GPIO020				   (37 << 8 | 0x1)
-> +#define CIX_PAD_GPIO021_FUNC_SFI_GPIO6				   (38 << 8 | 0x0)
-> +#define CIX_PAD_GPIO021_FUNC_GPIO021				   (38 << 8 | 0x1)
-> +#define CIX_PAD_GPIO022_FUNC_SFI_GPIO7				   (39 << 8 | 0x0)
-> +#define CIX_PAD_GPIO022_FUNC_GPIO022				   (39 << 8 | 0x1)
-> +#define CIX_PAD_GPIO023_FUNC_SFI_GPIO8				   (40 << 8 | 0x0)
-> +#define CIX_PAD_GPIO023_FUNC_GPIO023				   (40 << 8 | 0x1)
-> +#define CIX_PAD_GPIO023_FUNC_SFI_I3C0_PUR_EN_L			   (40 << 8 | 0x2)
-> +#define CIX_PAD_GPIO024_FUNC_SFI_GPIO9				   (41 << 8 | 0x0)
-> +#define CIX_PAD_GPIO024_FUNC_GPIO024				   (41 << 8 | 0x1)
-> +#define CIX_PAD_GPIO024_FUNC_SFI_I3C1_PUR_EN_L			   (41 << 8 | 0x2)
-> +#define CIX_PAD_SPI1_MISO_FUNC_SPI1_MISO			   (42 << 8 | 0x0)
-> +#define CIX_PAD_SPI1_MISO_FUNC_GPIO025				   (42 << 8 | 0x1)
-> +#define CIX_PAD_SPI1_CS0_FUNC_SPI1_CS0				   (43 << 8 | 0x0)
-> +#define CIX_PAD_SPI1_CS0_FUNC_GPIO026				   (43 << 8 | 0x1)
-> +#define CIX_PAD_SPI1_CS1_FUNC_SPI1_CS1				   (44 << 8 | 0x0)
-> +#define CIX_PAD_SPI1_CS1_FUNC_GPIO027				   (44 << 8 | 0x1)
-> +#define CIX_PAD_SPI1_MOSI_FUNC_SPI1_MOSI			   (45 << 8 | 0x0)
-> +#define CIX_PAD_SPI1_MOSI_FUNC_GPIO028				   (45 << 8 | 0x1)
-> +#define CIX_PAD_SPI1_CLK_FUNC_SPI1_CLK				   (46 << 8 | 0x0)
-> +#define CIX_PAD_SPI1_CLK_FUNC_GPIO029				   (46 << 8 | 0x1)
-> +#define CIX_PAD_GPIO030_FUNC_GPIO030				   (47 << 8 | 0x0)
-> +#define CIX_PAD_GPIO030_FUNC_USB_OC0_L				   (47 << 8 | 0x1)
-> +#define CIX_PAD_GPIO031_FUNC_GPIO031				   (48 << 8 | 0x0)
-> +#define CIX_PAD_GPIO031_FUNC_USB_OC1_L				   (48 << 8 | 0x1)
-> +#define CIX_PAD_GPIO032_FUNC_GPIO032				   (49 << 8 | 0x0)
-> +#define CIX_PAD_GPIO032_FUNC_USB_OC2_L				   (49 << 8 | 0x1)
-> +#define CIX_PAD_GPIO033_FUNC_GPIO033				   (50 << 8 | 0x0)
-> +#define CIX_PAD_GPIO033_FUNC_USB_OC3_L				   (50 << 8 | 0x1)
-> +#define CIX_PAD_GPIO034_FUNC_GPIO034				   (51 << 8 | 0x0)
-> +#define CIX_PAD_GPIO034_FUNC_USB_OC4_L				   (51 << 8 | 0x1)
-> +#define CIX_PAD_GPIO035_FUNC_GPIO035				   (52 << 8 | 0x0)
-> +#define CIX_PAD_GPIO035_FUNC_USB_OC5_L				   (52 << 8 | 0x1)
-> +#define CIX_PAD_GPIO036_FUNC_GPIO036				   (53 << 8 | 0x0)
-> +#define CIX_PAD_GPIO036_FUNC_USB_OC6_L				   (53 << 8 | 0x1)
-> +#define CIX_PAD_GPIO037_FUNC_GPIO037				   (54 << 8 | 0x0)
-> +#define CIX_PAD_GPIO037_FUNC_USB_OC7_L				   (54 << 8 | 0x1)
-> +#define CIX_PAD_GPIO038_FUNC_GPIO038				   (55 << 8 | 0x0)
-> +#define CIX_PAD_GPIO038_FUNC_USB_OC8_L				   (55 << 8 | 0x1)
-> +#define CIX_PAD_GPIO039_FUNC_GPIO039				   (56 << 8 | 0x0)
-> +#define CIX_PAD_GPIO039_FUNC_USB_OC9_L				   (56 << 8 | 0x1)
-> +#define CIX_PAD_GPIO040_FUNC_GPIO040				   (57 << 8 | 0x0)
-> +#define CIX_PAD_GPIO040_FUNC_USB_DRIVE_VBUS0			   (57 << 8 | 0x1)
-> +#define CIX_PAD_GPIO041_FUNC_GPIO041				   (58 << 8 | 0x0)
-> +#define CIX_PAD_GPIO041_FUNC_USB_DRIVE_VBUS4			   (58 << 8 | 0x1)
-> +#define CIX_PAD_GPIO042_FUNC_GPIO042				   (59 << 8 | 0x0)
-> +#define CIX_PAD_GPIO042_FUNC_USB_DRIVE_VBUS5			   (59 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_CLK_FUNC_SE_QSPI_CLK			   (60 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_CLK_FUNC_QSPI_CLK			   (60 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_CS_L_FUNC_SE_QSPI_CS_L			   (61 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_CS_L_FUNC_QSPI_CS_L			   (61 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_DATA0_FUNC_SE_QSPI_DATA0		   (62 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_DATA0_FUNC_QSPI_DATA0			   (62 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_DATA1_FUNC_SE_QSPI_DATA1		   (63 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_DATA1_FUNC_QSPI_DATA1			   (63 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_DATA2_FUNC_SE_QSPI_DATA2		   (64 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_DATA2_FUNC_QSPI_DATA2			   (64 << 8 | 0x1)
-> +#define CIX_PAD_SE_QSPI_DATA3_FUNC_SE_QSPI_DATA3		   (65 << 8 | 0x0)
-> +#define CIX_PAD_SE_QSPI_DATA3_FUNC_QSPI_DATA3			   (65 << 8 | 0x1)
-> +/* s0 pads */
-> +#define CIX_PAD_GPIO043_FUNC_GPIO043				   (0 << 8 | 0x0)
-> +#define CIX_PAD_GPIO044_FUNC_GPIO044				   (1 << 8 | 0x0)
-> +#define CIX_PAD_GPIO045_FUNC_GPIO045				   (2 << 8 | 0x0)
-> +#define CIX_PAD_GPIO046_FUNC_GPIO046				   (3 << 8 | 0x0)
-> +#define CIX_PAD_DP2_DIGON_FUNC_DP2_DIGON			   (18 << 8 | 0x0)
-> +#define CIX_PAD_DP2_BLON_FUNC_DP2_BLON				   (19 << 8 | 0x0)
-> +#define CIX_PAD_DP2_VARY_BL_FUNC_DP2_VARY_BL			   (20 << 8 | 0x0)
-> +#define CIX_PAD_I2C7_SCL_FUNC_I2C7_SCL				   (21 << 8 | 0x0)
-> +#define CIX_PAD_I2C7_SDA_FUNC_I2C7_SDA				   (22 << 8 | 0x0)
-> +#define CIX_PAD_I2C5_SCL_FUNC_I2C5_SCL				   (26 << 8 | 0x0)
-> +#define CIX_PAD_I2C5_SCL_FUNC_GPIO047				   (26 << 8 | 0x1)
-> +#define CIX_PAD_I2C5_SDA_FUNC_I2C5_SDA				   (27 << 8 | 0x0)
-> +#define CIX_PAD_I2C5_SDA_FUNC_GPIO048				   (27 << 8 | 0x1)
-> +#define CIX_PAD_I2C6_SCL_FUNC_I2C6_SCL				   (28 << 8 | 0x0)
-> +#define CIX_PAD_I2C6_SCL_FUNC_GPIO049				   (28 << 8 | 0x1)
-> +#define CIX_PAD_I2C6_SDA_FUNC_I2C6_SDA				   (29 << 8 | 0x0)
-> +#define CIX_PAD_I2C6_SDA_FUNC_GPIO050				   (29 << 8 | 0x1)
-> +#define CIX_PAD_I2C0_CLK_FUNC_I2C0_CLK				   (30 << 8 | 0x0)
-> +#define CIX_PAD_I2C0_CLK_FUNC_GPIO051				   (30 << 8 | 0x1)
-> +#define CIX_PAD_I2C0_SDA_FUNC_I2C0_SDA				   (31 << 8 | 0x0)
-> +#define CIX_PAD_I2C0_SDA_FUNC_GPIO052				   (31 << 8 | 0x1)
-> +#define CIX_PAD_I2C1_CLK_FUNC_I2C1_CLK				   (32 << 8 | 0x0)
-> +#define CIX_PAD_I2C1_CLK_FUNC_GPIO053				   (32 << 8 | 0x1)
-> +#define CIX_PAD_I2C1_SDA_FUNC_I2C1_SDA				   (33 << 8 | 0x0)
-> +#define CIX_PAD_I2C1_SDA_FUNC_GPIO054				   (33 << 8 | 0x1)
-> +#define CIX_PAD_I2C2_SCL_FUNC_I2C2_SCL				   (34 << 8 | 0x0)
-> +#define CIX_PAD_I2C2_SCL_FUNC_I3C0_SCL				   (34 << 8 | 0x1)
-> +#define CIX_PAD_I2C2_SCL_FUNC_GPIO055				   (34 << 8 | 0x2)
-> +#define CIX_PAD_I2C2_SDA_FUNC_I2C2_SDA				   (35 << 8 | 0x0)
-> +#define CIX_PAD_I2C2_SDA_FUNC_I3C0_SDA				   (35 << 8 | 0x1)
-> +#define CIX_PAD_I2C2_SDA_FUNC_GPIO056				   (35 << 8 | 0x2)
-> +#define CIX_PAD_GPIO057_FUNC_GPIO057				   (36 << 8 | 0x0)
-> +#define CIX_PAD_GPIO057_FUNC_I3C0_PUR_EN_L			   (36 << 8 | 0x1)
-> +#define CIX_PAD_I2C3_CLK_FUNC_I2C3_CLK				   (37 << 8 | 0x0)
-> +#define CIX_PAD_I2C3_CLK_FUNC_I3C1_CLK				   (37 << 8 | 0x1)
-> +#define CIX_PAD_I2C3_CLK_FUNC_GPIO058				   (37 << 8 | 0x2)
-> +#define CIX_PAD_I2C3_SDA_FUNC_I2C3_SDA				   (38 << 8 | 0x0)
-> +#define CIX_PAD_I2C3_SDA_FUNC_I3C1_SDA				   (38 << 8 | 0x1)
-> +#define CIX_PAD_I2C3_SDA_FUNC_GPIO059				   (38 << 8 | 0x2)
-> +#define CIX_PAD_GPIO060_FUNC_GPIO060				   (39 << 8 | 0x0)
-> +#define CIX_PAD_GPIO060_FUNC_I3C1_PUR_EN_L			   (39 << 8 | 0x1)
-> +#define CIX_PAD_I2C4_CLK_FUNC_I2C4_CLK				   (40 << 8 | 0x0)
-> +#define CIX_PAD_I2C4_CLK_FUNC_GPIO061				   (40 << 8 | 0x1)
-> +#define CIX_PAD_I2C4_SDA_FUNC_I2C4_SDA				   (41 << 8 | 0x0)
-> +#define CIX_PAD_I2C4_SDA_FUNC_GPIO062				   (41 << 8 | 0x1)
-> +#define CIX_PAD_HDA_BITCLK_FUNC_HDA_BITCLK			   (42 << 8 | 0x0)
-> +#define CIX_PAD_HDA_BITCLK_FUNC_I2S0_SCK			   (42 << 8 | 0x1)
-> +#define CIX_PAD_HDA_BITCLK_FUNC_I2S9_RSCK_DBG			   (42 << 8 | 0x2)
-> +#define CIX_PAD_HDA_RST_L_FUNC_HDA_RST_L			   (43 << 8 | 0x0)
-> +#define CIX_PAD_HDA_RST_L_FUNC_I2S0_DATA_IN			   (43 << 8 | 0x1)
-> +#define CIX_PAD_HDA_RST_L_FUNC_I2S9_DATA_IN0_DBG		   (43 << 8 | 0x2)
-> +#define CIX_PAD_HDA_SDIN0_FUNC_HDA_SDIN0			   (44 << 8 | 0x0)
-> +#define CIX_PAD_HDA_SDIN0_FUNC_I2S0_MCLK			   (44 << 8 | 0x1)
-> +#define CIX_PAD_HDA_SDIN0_FUNC_I2S9_TSCK_DBG			   (44 << 8 | 0x2)
-> +#define CIX_PAD_HDA_SDOUT0_FUNC_HDA_SDOUT0			   (45 << 8 | 0x0)
-> +#define CIX_PAD_HDA_SDOUT0_FUNC_I2S0_DATA_OUT			   (45 << 8 | 0x1)
-> +#define CIX_PAD_HDA_SDOUT0_FUNC_I2S9_TWS_DBG		           (45 << 8 | 0x2)
-> +#define CIX_PAD_HDA_SYNC_FUNC_HDA_SYNC				   (46 << 8 | 0x0)
-> +#define CIX_PAD_HDA_SYNC_FUNC_I2S0_WS				   (46 << 8 | 0x1)
-> +#define CIX_PAD_HDA_SYNC_FUNC_I2S9_RWS_DBG			   (46 << 8 | 0x2)
-> +#define CIX_PAD_HDA_SDIN1_FUNC_HDA_SDIN1			   (47 << 8 | 0x0)
-> +#define CIX_PAD_HDA_SDIN1_FUNC_GPIO063				   (47 << 8 | 0x1)
-> +#define CIX_PAD_HDA_SDIN1_FUNC_I2S9_DATA_IN1_DBG		   (47 << 8 | 0x2)
-> +#define CIX_PAD_HDA_SDOUT1_FUNC_HDA_SDOUT1			   (48 << 8 | 0x0)
-> +#define CIX_PAD_HDA_SDOUT1_FUNC_GPIO064				   (48 << 8 | 0x1)
-> +#define CIX_PAD_HDA_SDOUT1_FUNC_I2S9_DATA_OUT0_DBG		   (48 << 8 | 0x2)
-> +#define CIX_PAD_I2S1_MCLK_FUNC_I2S1_MCLK			   (49 << 8 | 0x0)
-> +#define CIX_PAD_I2S1_MCLK_FUNC_GPIO065				   (49 << 8 | 0x1)
-> +#define CIX_PAD_I2S1_SCK_FUNC_I2S1_SCK				   (50 << 8 | 0x0)
-> +#define CIX_PAD_I2S1_SCK_FUNC_GPIO066				   (50 << 8 | 0x1)
-> +#define CIX_PAD_I2S1_WS_FUNC_I2S1_WS				   (51 << 8 | 0x0)
-> +#define CIX_PAD_I2S1_WS_FUNC_GPIO067				   (51 << 8 | 0x1)
-> +#define CIX_PAD_I2S1_DATA_IN_FUNC_I2S1_DATA_IN			   (52 << 8 | 0x0)
-> +#define CIX_PAD_I2S1_DATA_IN_FUNC_GPIO068			   (52 << 8 | 0x1)
-> +#define CIX_PAD_I2S1_DATA_OUT_FUNC_I2S1_DATA_OUT		   (53 << 8 | 0x0)
-> +#define CIX_PAD_I2S1_DATA_OUT_FUNC_GPIO069			   (53 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_MCLK_FUNC_I2S2_MCLK			   (54 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_MCLK_FUNC_GPIO070				   (54 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_RSCK_FUNC_I2S2_RSCK			   (55 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_RSCK_FUNC_GPIO071				   (55 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_RSCK_FUNC_I2S5_RSCK_DBG			   (55 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_RSCK_FUNC_I2S6_RSCK_DBG			   (55 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_RWS_FUNC_I2S2_RWS				   (56 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_RWS_FUNC_GPIO072				   (56 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_RWS_FUNC_I2S5_RWS_DBG			   (56 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_RWS_FUNC_I2S6_RWS_DBG			   (56 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_TSCK_FUNC_I2S2_TSCK			   (57 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_TSCK_FUNC_GPIO073				   (57 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_TSCK_FUNC_I2S5_TSCK_DBG			   (57 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_TSCK_FUNC_I2S6_TSCK_DBG			   (57 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_TWS_FUNC_I2S2_TWS				   (58 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_TWS_FUNC_GPIO074				   (58 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_TWS_FUNC_I2S5_TWS_DBG			   (58 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_TWS_FUNC_I2S6_TWS_DBG			   (58 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_DATA_IN0_FUNC_I2S2_DATA_IN0		   (59 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_IN0_FUNC_GPIO075			   (59 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_IN0_FUNC_I2S5_DATA_IN0_DBG		   (59 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_DATA_IN0_FUNC_I2S6_DATA_IN0_DBG		   (59 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_DATA_IN1_FUNC_I2S2_DATA_IN1		   (60 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_IN1_FUNC_GPIO076			   (60 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_IN1_FUNC_I2S5_DATA_IN1_DBG		   (60 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_DATA_IN1_FUNC_I2S6_DATA_IN1_DBG		   (60 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_DATA_OUT0_FUNC_I2S2_DATA_OUT0		   (61 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_OUT0_FUNC_GPIO077			   (61 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_OUT0_FUNC_I2S5_DATA_OUT0_DBG		   (61 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_DATA_OUT0_FUNC_I2S6_DATA_OUT0_DBG		   (61 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_DATA_OUT1_FUNC_I2S2_DATA_OUT1		   (62 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_OUT1_FUNC_GPIO078			   (62 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_OUT1_FUNC_I2S5_DATA_OUT1_DBG		   (62 << 8 | 0x2)
-> +#define CIX_PAD_I2S2_DATA_OUT1_FUNC_I2S6_DATA_OUT1_DBG		   (62 << 8 | 0x3)
-> +#define CIX_PAD_I2S2_DATA_OUT2_FUNC_I2S2_DATA_OUT2		   (63 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_OUT2_FUNC_GPIO079			   (63 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_OUT3_FUNC_I2S2_DATA_OUT3		   (64 << 8 | 0x0)
-> +#define CIX_PAD_I2S2_DATA_OUT3_FUNC_GPIO080			   (64 << 8 | 0x1)
-> +#define CIX_PAD_I2S2_DATA_OUT3_FUNC_I2S9_DATA_OUT1_DBG		   (64 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_MCLK_FUNC_I2S3_MCLK			   (65 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_MCLK_FUNC_GPIO081				   (65 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_RSCK_FUNC_I2S3_RSCK			   (66 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_RSCK_FUNC_GPIO082				   (66 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_RSCK_FUNC_I2S7_RSCK_DBG			   (66 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_RSCK_FUNC_I2S8_RSCK_DBG			   (66 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_RWS_FUNC_I2S3_RWS				   (67 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_RWS_FUNC_GPIO083				   (67 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_RWS_FUNC_I2S7_RWS_DBG			   (67 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_RWS_FUNC_I2S8_RWS_DBG			   (67 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_TSCK_FUNC_I2S3_TSCK			   (68 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_TSCK_FUNC_GPIO084				   (68 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_TSCK_FUNC_I2S7_TSCK_DBG			   (68 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_TSCK_FUNC_I2S8_TSCK_DBG			   (68 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_TWS_FUNC_I2S3_TWS				   (69 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_TWS_FUNC_GPIO085				   (69 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_TWS_FUNC_I2S7_TWS_DBG			   (69 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_TWS_FUNC_I2S8_TWS_DBG			   (69 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_DATA_IN0_FUNC_I2S3_DATA_IN0		   (70 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_DATA_IN0_FUNC_GPIO086			   (70 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_DATA_IN0_FUNC_I2S7_DATA_IN0_DBG		   (70 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_DATA_IN0_FUNC_I2S8_DATA_IN0_DBG		   (70 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_DATA_IN1_FUNC_I2S3_DATA_IN1		   (71 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_DATA_IN1_FUNC_GPIO087			   (71 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_DATA_IN1_FUNC_I2S7_DATA_IN1_DBG		   (71 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_DATA_IN1_FUNC_I2S8_DATA_IN1_DBG		   (71 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_DATA_OUT0_FUNC_I2S3_DATA_OUT0		   (72 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_DATA_OUT0_FUNC_GPIO088			   (72 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_DATA_OUT0_FUNC_I2S7_DATA_OUT0_DBG		   (72 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_DATA_OUT0_FUNC_I2S8_DATA_OUT0_DBG		   (72 << 8 | 0x3)
-> +#define CIX_PAD_I2S3_DATA_OUT1_FUNC_I2S3_DATA_OUT1		   (73 << 8 | 0x0)
-> +#define CIX_PAD_I2S3_DATA_OUT1_FUNC_GPIO089			   (73 << 8 | 0x1)
-> +#define CIX_PAD_I2S3_DATA_OUT1_FUNC_I2S7_DATA_OUT1_DBG		   (73 << 8 | 0x2)
-> +#define CIX_PAD_I2S3_DATA_OUT1_FUNC_I2S8_DATA_OUT1_DBG		   (73 << 8 | 0x3)
-> +#define CIX_PAD_GPIO090_FUNC_GPIO090				   (74 << 8 | 0x0)
-> +#define CIX_PAD_GPIO090_FUNC_I2S4_MCLK_LB			   (74 << 8 | 0x1)
-> +#define CIX_PAD_GPIO091_FUNC_GPIO091				   (75 << 8 | 0x0)
-> +#define CIX_PAD_GPIO091_FUNC_I2S4_SCK_LB			   (75 << 8 | 0x1)
-> +#define CIX_PAD_GPIO092_FUNC_GPIO092				   (76 << 8 | 0x0)
-> +#define CIX_PAD_GPIO092_FUNC_I2S4_WS_LB				   (76 << 8 | 0x1)
-> +#define CIX_PAD_GPIO093_FUNC_GPIO093				   (77 << 8 | 0x0)
-> +#define CIX_PAD_GPIO093_FUNC_I2S4_DATA_IN_LB			   (77 << 8 | 0x1)
-> +#define CIX_PAD_GPIO094_FUNC_GPIO094				   (78 << 8 | 0x0)
-> +#define CIX_PAD_GPIO094_FUNC_I2S4_DATA_OUT_LB			   (78 << 8 | 0x1)
-> +#define CIX_PAD_UART0_TXD_FUNC_UART0_TXD			   (79 << 8 | 0x0)
-> +#define CIX_PAD_UART0_TXD_FUNC_PWM0				   (79 << 8 | 0x1)
-> +#define CIX_PAD_UART0_TXD_FUNC_GPIO095				   (79 << 8 | 0x2)
-> +#define CIX_PAD_UART0_RXD_FUNC_UART0_RXD			   (80 << 8 | 0x0)
-> +#define CIX_PAD_UART0_RXD_FUNC_PWM1				   (80 << 8 | 0x1)
-> +#define CIX_PAD_UART0_RXD_FUNC_GPIO096				   (80 << 8 | 0x2)
-> +#define CIX_PAD_UART0_CTS_FUNC_UART0_CTS			   (81 << 8 | 0x0)
-> +#define CIX_PAD_UART0_CTS_FUNC_FAN_OUT2				   (81 << 8 | 0x1)
-> +#define CIX_PAD_UART0_CTS_FUNC_GPIO097				   (81 << 8 | 0x2)
-> +#define CIX_PAD_UART0_RTS_FUNC_UART0_RTS			   (82 << 8 | 0x0)
-> +#define CIX_PAD_UART0_RTS_FUNC_FAN_TACH2			   (82 << 8 | 0x1)
-> +#define CIX_PAD_UART0_RTS_FUNC_GPIO098				   (82 << 8 | 0x2)
-> +#define CIX_PAD_UART1_TXD_FUNC_UART1_TXD			   (83 << 8 | 0x0)
-> +#define CIX_PAD_UART1_TXD_FUNC_FAN_OUT0				   (83 << 8 | 0x1)
-> +#define CIX_PAD_UART1_TXD_FUNC_GPIO099				   (83 << 8 | 0x2)
-> +#define CIX_PAD_UART1_RXD_FUNC_UART1_RXD			   (84 << 8 | 0x0)
-> +#define CIX_PAD_UART1_RXD_FUNC_FAN_TACH0			   (84 << 8 | 0x1)
-> +#define CIX_PAD_UART1_RXD_FUNC_GPIO100				   (84 << 8 | 0x2)
-> +#define CIX_PAD_UART1_CTS_FUNC_UART1_CTS			   (85 << 8 | 0x0)
-> +#define CIX_PAD_UART1_CTS_FUNC_FAN_OUT1				   (85 << 8 | 0x1)
-> +#define CIX_PAD_UART1_CTS_FUNC_GPIO101				   (85 << 8 | 0x2)
-> +#define CIX_PAD_UART1_RTS_FUNC_UART1_RTS			   (86 << 8 | 0x0)
-> +#define CIX_PAD_UART1_RTS_FUNC_FAN_TACH1			   (86 << 8 | 0x1)
-> +#define CIX_PAD_UART1_RTS_FUNC_GPIO102				   (86 << 8 | 0x2)
-> +#define CIX_PAD_UART2_TXD_FUNC_UART2_TXD			   (87 << 8 | 0x0)
-> +#define CIX_PAD_UART2_TXD_FUNC_GPIO103				   (87 << 8 | 0x1)
-> +#define CIX_PAD_UART2_RXD_FUNC_UART2_RXD			   (88 << 8 | 0x0)
-> +#define CIX_PAD_UART2_RXD_FUNC_GPIO104				   (88 << 8 | 0x1)
-> +#define CIX_PAD_UART3_TXD_FUNC_UART3_TXD			   (89 << 8 | 0x0)
-> +#define CIX_PAD_UART3_TXD_FUNC_GPIO105				   (89 << 8 | 0x1)
-> +#define CIX_PAD_UART3_RXD_FUNC_UART3_RXD			   (90 << 8 | 0x0)
-> +#define CIX_PAD_UART3_RXD_FUNC_GPIO106				   (90 << 8 | 0x1)
-> +#define CIX_PAD_UART3_CTS_FUNC_UART3_CTS			   (91 << 8 | 0x0)
-> +#define CIX_PAD_UART3_CTS_FUNC_GPIO107				   (91 << 8 | 0x1)
-> +#define CIX_PAD_UART3_CTS_FUNC_TRIGIN0				   (91 << 8 | 0x2)
-> +#define CIX_PAD_UART3_RTS_FUNC_UART3_RTS			   (92 << 8 | 0x0)
-> +#define CIX_PAD_UART3_RTS_FUNC_GPIO108				   (92 << 8 | 0x1)
-> +#define CIX_PAD_UART3_RTS_FUNC_TRIGIN1				   (92 << 8 | 0x2)
-> +#define CIX_PAD_UART4_CSU_PM_TXD_FUNC_UART4_CSU_PM_TXD		   (93 << 8 | 0x0)
-> +#define CIX_PAD_UART4_CSU_PM_TXD_FUNC_GPIO109			   (93 << 8 | 0x1)
-> +#define CIX_PAD_UART4_CSU_PM_RXD_FUNC_UART4_CSU_PM_RXD		   (94 << 8 | 0x0)
-> +#define CIX_PAD_UART4_CSU_PM_RXD_FUNC_GPIO110			   (94 << 8 | 0x1)
-> +#define CIX_PAD_UART5_CSU_SE_TXD_FUNC_UART5_CSU_SE_TXD		   (95 << 8 | 0x0)
-> +#define CIX_PAD_UART5_CSU_SE_TXD_FUNC_GPIO111			   (95 << 8 | 0x1)
-> +#define CIX_PAD_UART5_CSU_SE_RXD_FUNC_UART5_CSU_SE_RXD		   (96 << 8 | 0x0)
-> +#define CIX_PAD_UART5_CSU_SE_RXD_FUNC_GPIO112			   (96 << 8 | 0x1)
-> +#define CIX_PAD_UART6_CSU_SE_RXD_FUNC_UART6_CSU_SE_RXD		   (97 << 8 | 0x0)
-> +#define CIX_PAD_UART6_CSU_SE_RXD_FUNC_GPIO113			   (97 << 8 | 0x1)
-> +#define CIX_PAD_CLK_REQ0_L_FUNC_CLK_REQ0_L			   (98 << 8 | 0x0)
-> +#define CIX_PAD_CLK_REQ0_L_FUNC_GPIO114				   (98 << 8 | 0x1)
-> +#define CIX_PAD_CLK_REQ2_L_FUNC_CLK_REQ2_L			   (99 << 8 | 0x0)
-> +#define CIX_PAD_CLK_REQ2_L_FUNC_GPIO115				   (99 << 8 | 0x1)
-> +#define CIX_PAD_CLK_REQ4_L_FUNC_CLK_REQ4_L			   (100 << 8 | 0x0)
-> +#define CIX_PAD_CLK_REQ4_L_FUNC_GPIO116				   (100 << 8 | 0x1)
-> +#define CIX_PAD_CSI0_MCLK0_FUNC_CSI0_MCLK0			   (101 << 8 | 0x0)
-> +#define CIX_PAD_CSI0_MCLK0_FUNC_GPIO117				   (101 << 8 | 0x1)
-> +#define CIX_PAD_CSI0_MCLK1_FUNC_CSI0_MCLK1			   (102 << 8 | 0x0)
-> +#define CIX_PAD_CSI0_MCLK1_FUNC_GPIO118				   (102 << 8 | 0x1)
-> +#define CIX_PAD_CSI1_MCLK0_FUNC_CSI1_MCLK0			   (103 << 8 | 0x0)
-> +#define CIX_PAD_CSI1_MCLK0_FUNC_GPIO119				   (103 << 8 | 0x1)
-> +#define CIX_PAD_CSI1_MCLK1_FUNC_CSI1_MCLK1			   (104 << 8 | 0x0)
-> +#define CIX_PAD_CSI1_MCLK1_FUNC_GPIO120				   (104 << 8 | 0x1)
-> +#define CIX_PAD_GPIO121_FUNC_GPIO121				   (105 << 8 | 0x0)
-> +#define CIX_PAD_GPIO121_FUNC_GMAC0_REFCLK_25M			   (105 << 8 | 0x1)
-> +#define CIX_PAD_GPIO122_FUNC_GPIO122				   (106 << 8 | 0x0)
-> +#define CIX_PAD_GPIO122_FUNC_GMAC0_TX_CTL			   (106 << 8 | 0x1)
-> +#define CIX_PAD_GPIO123_FUNC_GPIO123				   (107 << 8 | 0x0)
-> +#define CIX_PAD_GPIO123_FUNC_GMAC0_TXD0				   (107 << 8 | 0x1)
-> +#define CIX_PAD_GPIO124_FUNC_GPIO124				   (108 << 8 | 0x0)
-> +#define CIX_PAD_GPIO124_FUNC_GMAC0_TXD1				   (108 << 8 | 0x1)
-> +#define CIX_PAD_GPIO125_FUNC_GPIO125				   (109 << 8 | 0x0)
-> +#define CIX_PAD_GPIO125_FUNC_GMAC0_TXD2				   (109 << 8 | 0x1)
-> +#define CIX_PAD_GPIO126_FUNC_GPIO126				   (110 << 8 | 0x0)
-> +#define CIX_PAD_GPIO126_FUNC_GMAC0_TXD3				   (110 << 8 | 0x1)
-> +#define CIX_PAD_GPIO127_FUNC_GPIO127				   (111 << 8 | 0x0)
-> +#define CIX_PAD_GPIO127_FUNC_GMAC0_TX_CLK			   (111 << 8 | 0x1)
-> +#define CIX_PAD_GPIO128_FUNC_GPIO128				   (112 << 8 | 0x0)
-> +#define CIX_PAD_GPIO128_FUNC_GMAC0_RX_CTL			   (112 << 8 | 0x1)
-> +#define CIX_PAD_GPIO129_FUNC_GPIO129				   (113 << 8 | 0x0)
-> +#define CIX_PAD_GPIO129_FUNC_GMAC0_RXD0				   (113 << 8 | 0x1)
-> +#define CIX_PAD_GPIO130_FUNC_GPIO130				   (114 << 8 | 0x0)
-> +#define CIX_PAD_GPIO130_FUNC_GMAC0_RXD1				   (114 << 8 | 0x1)
-> +#define CIX_PAD_GPIO131_FUNC_GPIO131				   (115 << 8 | 0x0)
-> +#define CIX_PAD_GPIO131_FUNC_GMAC0_RXD2				   (115 << 8 | 0x1)
-> +#define CIX_PAD_GPIO132_FUNC_GPIO132				   (116 << 8 | 0x0)
-> +#define CIX_PAD_GPIO132_FUNC_GMAC0_RXD3				   (116 << 8 | 0x1)
-> +#define CIX_PAD_GPIO133_FUNC_GPIO133				   (117 << 8 | 0x0)
-> +#define CIX_PAD_GPIO133_FUNC_GMAC0_RX_CLK			   (117 << 8 | 0x1)
-> +#define CIX_PAD_GPIO134_FUNC_GPIO134				   (118 << 8 | 0x0)
-> +#define CIX_PAD_GPIO134_FUNC_GMAC0_MDC				   (118 << 8 | 0x1)
-> +#define CIX_PAD_GPIO135_FUNC_GPIO135				   (119 << 8 | 0x0)
-> +#define CIX_PAD_GPIO135_FUNC_GMAC0_MDIO				   (119 << 8 | 0x1)
-> +#define CIX_PAD_GPIO136_FUNC_GPIO136				   (120 << 8 | 0x0)
-> +#define CIX_PAD_GPIO136_FUNC_GMAC1_REFCLK_25M			   (120 << 8 | 0x1)
-> +#define CIX_PAD_GPIO137_FUNC_GPIO137				   (121 << 8 | 0x0)
-> +#define CIX_PAD_GPIO137_FUNC_GMAC1_TX_CTL			   (121 << 8 | 0x1)
-> +#define CIX_PAD_GPIO138_FUNC_GPIO138				   (122 << 8 | 0x0)
-> +#define CIX_PAD_GPIO138_FUNC_GMAC1_TXD0				   (122 << 8 | 0x1)
-> +#define CIX_PAD_GPIO138_FUNC_SPI2_MISO				   (122 << 8 | 0x2)
-> +#define CIX_PAD_GPIO139_FUNC_GPIO139				   (123 << 8 | 0x0)
-> +#define CIX_PAD_GPIO139_FUNC_GMAC1_TXD1				   (123 << 8 | 0x1)
-> +#define CIX_PAD_GPIO139_FUNC_SPI2_CS0				   (123 << 8 | 0x2)
-> +#define CIX_PAD_GPIO140_FUNC_GPIO140				   (124 << 8 | 0x0)
-> +#define CIX_PAD_GPIO140_FUNC_GMAC1_TXD2				   (124 << 8 | 0x1)
-> +#define CIX_PAD_GPIO140_FUNC_SPI2_CS1				   (124 << 8 | 0x2)
-> +#define CIX_PAD_GPIO141_FUNC_GPIO141				   (125 << 8 | 0x0)
-> +#define CIX_PAD_GPIO141_FUNC_GMAC1_TXD3				   (125 << 8 | 0x1)
-> +#define CIX_PAD_GPIO141_FUNC_SPI2_MOSI				   (125 << 8 | 0x2)
-> +#define CIX_PAD_GPIO142_FUNC_GPIO142				   (126 << 8 | 0x0)
-> +#define CIX_PAD_GPIO142_FUNC_GMAC1_TX_CLK			   (126 << 8 | 0x1)
-> +#define CIX_PAD_GPIO142_FUNC_SPI2_CLK				   (126 << 8 | 0x2)
-> +#define CIX_PAD_GPIO143_FUNC_GPIO143				   (127 << 8 | 0x0)
-> +#define CIX_PAD_GPIO143_FUNC_GMAC1_RX_CTL			   (127 << 8 | 0x1)
-> +#define CIX_PAD_GPIO144_FUNC_GPIO144				   (128 << 8 | 0x0)
-> +#define CIX_PAD_GPIO144_FUNC_GMAC1_RXD0				   (128 << 8 | 0x1)
-> +#define CIX_PAD_GPIO145_FUNC_GPIO145				   (129 << 8 | 0x0)
-> +#define CIX_PAD_GPIO145_FUNC_GMAC1_RXD1				   (129 << 8 | 0x1)
-> +#define CIX_PAD_GPIO146_FUNC_GPIO146				   (130 << 8 | 0x0)
-> +#define CIX_PAD_GPIO146_FUNC_GMAC1_RXD2				   (130 << 8 | 0x1)
-> +#define CIX_PAD_GPIO147_FUNC_GPIO147				   (131 << 8 | 0x0)
-> +#define CIX_PAD_GPIO147_FUNC_GMAC1_RXD3				   (131 << 8 | 0x1)
-> +#define CIX_PAD_GPIO148_FUNC_GPIO148				   (132 << 8 | 0x0)
-> +#define CIX_PAD_GPIO148_FUNC_GMAC1_RX_CLK			   (132 << 8 | 0x1)
-> +#define CIX_PAD_GPIO149_FUNC_GPIO149				   (133 << 8 | 0x0)
-> +#define CIX_PAD_GPIO149_FUNC_GMAC1_MDC				   (133 << 8 | 0x1)
-> +#define CIX_PAD_GPIO150_FUNC_GPIO150				   (134 << 8 | 0x0)
-> +#define CIX_PAD_GPIO150_FUNC_GMAC1_MDIO				   (134 << 8 | 0x1)
-> +#define CIX_PAD_GPIO151_FUNC_GPIO151				   (135 << 8 | 0x0)
-> +#define CIX_PAD_GPIO151_FUNC_PM_GPIO0				   (135 << 8 | 0x1)
-> +#define CIX_PAD_GPIO152_FUNC_GPIO152				   (136 << 8 | 0x0)
-> +#define CIX_PAD_GPIO152_FUNC_PM_GPIO1				   (136 << 8 | 0x1)
-> +#define CIX_PAD_GPIO153_FUNC_GPIO153				   (137 << 8 | 0x0)
-> +#define CIX_PAD_GPIO153_FUNC_PM_GPIO2				   (137 << 8 | 0x1)
-> +
-> +#endif
-> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-> index 2fb2c99c0796..bc28e5b0f065 100644
-> --- a/arch/arm64/boot/dts/cix/sky1.dtsi
-> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-> @@ -328,6 +328,11 @@ i3c1: i3c@4100000 {
->  			status = "disabled";
->  		};
->  
-> +		iomuxc: pinctrl@4170000 {
-> +			compatible = "cix,sky1-pinctrl";
-> +			reg = <0x0 0x04170000 0x0 0x1000>;
-> +		};
-> +
->  		mbox_ap2se: mailbox@5060000 {
->  			compatible = "cix,sky1-mbox";
->  			reg = <0x0 0x05060000 0x0 0x10000>;
-> @@ -416,6 +421,11 @@ ppi_partition1: interrupt-partition-1 {
->  				};
->  			};
->  		};
-> +
-> +		iomuxc_s5: pinctrl@16007000 {
-> +			compatible = "cix,sky1-pinctrl-s5";
-> +			reg = <0x0 0x16007000 0x0 0x1000>;
-> +		};
->  	};
->  
->  	timer {
-> -- 
-> 2.49.0
-> 
+Found via static analysis.
 
+Fixes: 3fd6d6e2b4e8 ("thermal/of: Rework the thermal device tree initialization")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/thermal/thermal_of.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
+index 1a51a4d240ff..2bb1b8e471cf 100644
+--- a/drivers/thermal/thermal_of.c
++++ b/drivers/thermal/thermal_of.c
+@@ -284,8 +284,11 @@ static bool thermal_of_cm_lookup(struct device_node *cm_np,
+ 		int count, i;
+ 
+ 		tr_np = of_parse_phandle(child, "trip", 0);
+-		if (tr_np != trip->priv)
++		if (tr_np != trip->priv) {
++			of_node_put(tr_np);
+ 			continue;
++		}
++		of_node_put(tr_np);
+ 
+ 		/* The trip has been found, look up the cdev. */
+ 		count = of_count_phandle_with_args(child, "cooling-device",
 -- 
+2.39.5 (Apple Git-154)
 
-Best regards,
-Peter
 
