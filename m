@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-872912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D658DC12976
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:52:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFBAC1297F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE27B1A20BDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:52:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AE0D4E7550
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C88625D208;
-	Tue, 28 Oct 2025 01:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBEF12620D2;
+	Tue, 28 Oct 2025 01:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="We9MTdBx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Tw4NOIvc"
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D9316F288;
-	Tue, 28 Oct 2025 01:51:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6FB1662E7;
+	Tue, 28 Oct 2025 01:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761616310; cv=none; b=RIpKbLLyA3bgJkT0lGOqkOKR+YN0PiyOkpAjeCUKYJVdiJ/+LhAiXVllSVPpCjUps2yYG8h4oZU2Bk8fdvUm5ZYs+Nzz2TSTjSpNArJ6Hc/0bu6NiobO5qqW+u2JrBvj5QDxOy4X3OK5UtoV7V0glsJJ4E7CiagA4jj5Wy6OgDU=
+	t=1761616541; cv=none; b=NfMJ8RFWmeyevN98j3hz4hC34BMqVytP++BOMLKZHfbqw7oRmwwpm04bddwh8Dz/9eruXaRpT7yLNMVcCjMfqbEZFNgjRxULasBCc2f+sYL5CM893/Pfj2jgDdwdoHathT2P1dAKWnx1fgefMZWwMogCVbKTDi/woyUPjIrDObY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761616310; c=relaxed/simple;
-	bh=Hdcmonauq1UQrJeJkRK9OcxLmaBkB1a8SCYWp4aotd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bCFaFr91ojN4eBoFPCSocl6VINskunQKjoMOwnv9MTsMTEkN5fCt+XSIjrYXMicvwhx7CcyhTR4J9Y6+gzf4U0fRUIT9DyDYDKx/+jfvEDNfFIfIYINaJudFHa7MO09kkNUO1JtZ5D1khvaan/46NVN8RZhmJXXJ9ARfDHVIaJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=We9MTdBx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761616304;
-	bh=EXGkxCzISUK4Z047COz0deGKs8c/Xj/XbyOZARODuKw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=We9MTdBxZdvuRdZ6awYl7BCBwKPIhyBYOzNfhMVrKh/3vesmzUl1KRoNJMcP79iOC
-	 DctAtL/BTGOpOhzYczqtdpZJzmzaQ20wR91y7YJ3V5hu5bFr3Vtx7lQFPeUFvvKgQv
-	 o0oxgh8QZymNac93raMxeXVFUYy3JEFJ7ICEA942ktdu8KV3vZtMxAfM8GpHd8oLGH
-	 VRGDTnGDe6K+ereaG8nn8/8IP5b9L+WfjFZrplsM/LvKhQFhkmk+Y18jc7Exmdo1R/
-	 tiQqyYhlbLdZ1C49k47N/GXLhPNcStSgEnjvoelhLEilatlQr/GuplCdQZpCseht1U
-	 h3xohRq9gKXUw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwYJb2FBfz4w9w;
-	Tue, 28 Oct 2025 12:51:43 +1100 (AEDT)
-Date: Tue, 28 Oct 2025 12:51:42 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, "Michal Wilczynski"
- <m.wilczynski@samsung.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Daniel
- Almeida" <daniel.almeida@collabora.com>, "Peter Colberg"
- <pcolberg@redhat.com>, "Lyude Paul" <lyude@redhat.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>, "Linux Next Mailing List"
- <linux-next@vger.kernel.org>, "Alice Ryhl" <aliceryhl@google.com>, "Viresh
- Kumar" <viresh.kumar@linaro.org>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: build failure after merge of the pwm tree
-Message-ID: <20251028125142.01a32039@canb.auug.org.au>
-In-Reply-To: <DDT05KLECH04.37PKIHQQ4K3MX@kernel.org>
-References: <20251027125148.7f7d8ed6@canb.auug.org.au>
-	<22fl35khmbf6ufyjzbfvxor7b6nohqakqovjoya3v4mmlenz5c@6wbdednrd2pb>
-	<DDT05KLECH04.37PKIHQQ4K3MX@kernel.org>
+	s=arc-20240116; t=1761616541; c=relaxed/simple;
+	bh=uns5HrGmuITUIqjhk0AYfVm1iY5hzrj4fRpnfjYl+mA=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=jq6fxAhztcED9a50vIN8YvKo5pfianR0xLb0aT66KvKdNZVq3TTdaN3RsObl0g7DYNIkh+08pKHpk0/P7YVUprzj1x1sDi3EP0xgMmd9JjRXFGJ8woaMW9JIs+hGhEAuJu0uD3KOUHbn2fkWZv+PdR24qxXXWi/zKDtjcFfFn+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Tw4NOIvc; arc=none smtp.client-ip=113.46.200.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=it2CGwrr8XPuER+Fzwz3Cppb788D/OOVWmIQqhmKuOk=;
+	b=Tw4NOIvcrG2onfPI4rJ5m3fGpfEYdbNiM2l79HoeyadfiaSXDXWUWCN185iTdcXRd8RYzoCll
+	ftO77acbkCIHDk51zSapOxp3u8B/0rkv6CIDNHvLfHL7vDPlmfbXtZuDipuO0+tKJY0N5or7I7N
+	qxYWmPoow/rR1R4BuJrvypo=
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cwYMs2Ky1z1T4Fg;
+	Tue, 28 Oct 2025 09:54:33 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C4F1140155;
+	Tue, 28 Oct 2025 09:55:35 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 28 Oct 2025 09:55:34 +0800
+Message-ID: <a0853cd9-cab5-441d-b181-8ba97f2f58b0@huawei.com>
+Date: Tue, 28 Oct 2025 09:55:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+pX0/Gm5.DwGVWB9ZmDNeDR";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<lantao5@huawei.com>, <huangdonghua3@h-partners.com>,
+	<yangshuaisong@h-partners.com>, <jonathan.cameron@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 2/2] net: hns3: fix null pointer in debugfs issue
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20251023131338.2642520-1-shaojijie@huawei.com>
+ <20251023131338.2642520-3-shaojijie@huawei.com>
+ <20251027175451.21b7bfe4@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20251027175451.21b7bfe4@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
---Sig_/+pX0/Gm5.DwGVWB9ZmDNeDR
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+on 2025/10/28 8:54, Jakub Kicinski wrote:
+> On Thu, 23 Oct 2025 21:13:38 +0800 Jijie Shao wrote:
+>> Currently, when debugfs and reset are executed concurrently,
+>> some resources are released during the reset process,
+>> which may cause debugfs to read null pointers or other anomalies.
+>>
+>> Therefore, in this patch, interception protection has been added
+>> to debugfs operations that are sensitive to reset.
+> You need to explain what prevents the state from changing immediately
+> after you did the bit check. With no obvious locking in place I don't
+> see how this reliably fixes the issue.
 
-On Mon, 27 Oct 2025 10:38:05 +0100 "Danilo Krummrich" <dakr@kernel.org> wro=
-te:
->
-> On Mon Oct 27, 2025 at 9:11 AM CET, Uwe Kleine-K=C3=B6nig wrote:
-> > Translating the changes that commit does to
-> > drivers/gpu/drm/nova/driver.rs for drivers/pwm/pwm_th1520.rs results in:
-> >
-> > diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-> > index 0ad38b78be85..dd554574adc8 100644
-> > --- a/drivers/pwm/pwm_th1520.rs
-> > +++ b/drivers/pwm/pwm_th1520.rs
-> > @@ -328,7 +328,7 @@ impl platform::Driver for Th1520PwmPlatformDriver {
-> >      fn probe(
-> >          pdev: &platform::Device<Core>,
-> >          _id_info: Option<&Self::IdInfo>,
-> > -    ) -> Result<Pin<KBox<Self>>> {
-> > +    ) -> impl PinInit<Self, Error> {
-> >          let dev =3D pdev.as_ref();
-> >          let request =3D pdev.io_request_by_index(0).ok_or(ENODEV)?;
-> > =20
-> > @@ -365,7 +365,7 @@ fn probe(
-> > =20
-> >          pwm::Registration::register(dev, chip)?;
-> > =20
-> > -        Ok(KBox::new(Th1520PwmPlatformDriver, GFP_KERNEL)?.into())
-> > +        Ok(Th1520PwmPlatformDriver)
-> >      }
-> >  } =20
->=20
-> Yes, this looks good.
+In July, we used seqfile to refactor debugfs.
 
-OK, I have applied that to linux-next from today.
+Before the refactoring, all debugfs operations would check the reset status
+(HNS3_NIC_STATE_INITED and HNS3_NIC_STATE_RESETTING) in the entry function.
+After the refactoring, the entry function was removed, which led to the loss of protection.
 
---=20
-Cheers,
-Stephen Rothwell
+This patch restores the protection behavior that existed before the refactoring.
+Now our tests have already detected the null pointer issue.
 
---Sig_/+pX0/Gm5.DwGVWB9ZmDNeDR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+As for the problem you mentioned, we have been discussing it recently.
+There is a small time gap, checking the status before reading from debugfs is fine,
+but there could still be issues if the device enters the reset state during the read process:
 
------BEGIN PGP SIGNATURE-----
+check state pass
+	debugfs read start...
+		do reset
+			debugfs read end
+			
+Currently, we are still assessing the risk and discussing solutions for this issue.
+After adding the entry protection, executing debugfs and reset concurrently has not
+resulted in null pointers or other exceptions.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkAIa4ACgkQAVBC80lX
-0GxCMQf+IA4Zj3fPiMiNAgnJm37uJDx86hP1sd4KBBGjStgXzYVi3pPg5NtME88D
-o/nAfgLWxMccgt21iw33eZontRCj5VJVx8v72PLG3vWtVairSRPX8yOrwGXZtLVV
-sGs1ZRP5CFFBOfdZOCh3PoA8p3OGV67FiLJlgN/G5t+ephZHDnyC7aqmA2lNTKKU
-WmUnmBVk5YJsukFzVrPGVbKzBSLYjFbO/CE/DAdR8ct6ixjdN2jAjahcNrcd8phv
-ku+k4awhkzHPp8S8spMGqzZ5WqQbfimtqzcKVeTFWIlfXGqBDxpMe4/Ckr8H1eOm
-JjwtsCkvOfMsB73fnEXxgLy3Kt+6Yg==
-=Lm9L
------END PGP SIGNATURE-----
+Thanks,
+Jijie Shao
 
---Sig_/+pX0/Gm5.DwGVWB9ZmDNeDR--
 
