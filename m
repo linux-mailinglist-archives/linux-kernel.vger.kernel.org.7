@@ -1,140 +1,265 @@
-Return-Path: <linux-kernel+bounces-872858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C724C1235B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:42:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CBBC1228B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBCE4189A053
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:42:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 212ED352498
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11F121F4CB3;
-	Tue, 28 Oct 2025 00:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8531E0DD9;
+	Tue, 28 Oct 2025 00:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MVjyAjJL"
-Received: from mail-m15579.qiye.163.com (mail-m15579.qiye.163.com [101.71.155.79])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HVHUBUje"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617557405A;
-	Tue, 28 Oct 2025 00:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF63149C41;
+	Tue, 28 Oct 2025 00:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612094; cv=none; b=gqr3AfOUpJ6gpet3uZwYZtOPxSpheJo11243pKHcbVf5Mveb8mKe72qTaJbNhl6uHU478xxhfOdlrmu12DOsPxejU2N/BnxUNn8pF5Ngy0Xuezfn6kY8vi4H+VKuMcJUGz9FmluxsZg5H01wzIq6lsk3+p1QePXSW+xH5GTvOQA=
+	t=1761611183; cv=none; b=egiuZ88ca1rUQNUhrKzHo8P+IZMGneM8QNe1WnuYQyfNVf7tDOndJnl88EmW+/fnU8WyAgDigHOb6+PBpL+HIjzt1IFfDOaUYj/V9l+/O1VuEKowb3ngAUW6B8RwKfb+JVvcBEbEqvU6sL8oO8x30AbLL57oFkzhZjUFq0lYZzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612094; c=relaxed/simple;
-	bh=TJ1Up/1bYs8liQ5I6qAwrj0HRSLMn+C0XKElX/dALfk=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=i/ov5qrdEFDs9uPGkOr+DCNYwnKTYCPREBkjEmxDWWcomaEoPH5hEkh8aOjKEdQAspjIW9ksgJwn/P63WYB25PlpLPXaWPKmewdeZDlaPo1I8+VCnhYI/hfeAN9IjsWIJrsZ80Epk4gElEWROBCiBJesDyMYOVyXnv+sRYEV1FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MVjyAjJL; arc=none smtp.client-ip=101.71.155.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 27641a992;
-	Tue, 28 Oct 2025 08:26:08 +0800 (GMT+08:00)
-Message-ID: <4fe0ccf9-8866-443a-8083-4a2af7035ee6@rock-chips.com>
-Date: Tue, 28 Oct 2025 08:26:05 +0800
+	s=arc-20240116; t=1761611183; c=relaxed/simple;
+	bh=03OjAGrl9Ce/K7jq0kNHfmZRLQY0iB8bbCx2CK6fD4s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=EHFN9J3PaL1Lu2vavaYrpYH2z+v6W3FXkG2RyRkwH80/TwZ5uNtVjvHTAixp55IfIoE9ULgzvRxl6ZiMWiYBeD0upTlNSi3liBgeGY/CciWjoOvlmHfdvHF1yY2zKHRRwGYUEFfB9a2WBLFSomEpocXKyMlCcQT6e6mPME6ZW6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=HVHUBUje; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE4EC4CEF1;
+	Tue, 28 Oct 2025 00:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761611182;
+	bh=03OjAGrl9Ce/K7jq0kNHfmZRLQY0iB8bbCx2CK6fD4s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HVHUBUjezRvJcZmKT1mk7OhneauH29p/qrVO4e2mCpCeGowlb7n+7PIoWHCmgPwVp
+	 cGWdtpvpmgPv8LCLCDA+/sQBYoVF8rwrHZBJUczjUqqrFJ3YEU94X0MniJ2Zuwlaod
+	 uf2xiA/fC7qtULW2v3xM5g7PPCDVdKpuqd4Xx2qE=
+Date: Mon, 27 Oct 2025 17:26:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: <ankita@nvidia.com>
+Cc: <aniketa@nvidia.com>, <vsethi@nvidia.com>, <jgg@nvidia.com>,
+ <mochs@nvidia.com>, <skolothumtho@nvidia.com>, <linmiaohe@huawei.com>,
+ <nao.horiguchi@gmail.com>, <david@redhat.com>,
+ <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+ <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
+ <tony.luck@intel.com>, <bp@alien8.de>, <rafael@kernel.org>,
+ <guohanjun@huawei.com>, <mchehab@kernel.org>, <lenb@kernel.org>,
+ <kevin.tian@intel.com>, <alex@shazbot.org>, <cjia@nvidia.com>,
+ <kwankhede@nvidia.com>, <targupta@nvidia.com>, <zhiw@nvidia.com>,
+ <dnigam@nvidia.com>, <kjaju@nvidia.com>, <linux-kernel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-edac@vger.kernel.org>,
+ <Jonathan.Cameron@huawei.com>, <ira.weiny@intel.com>,
+ <Smita.KoralahalliChannabasappa@amd.com>, <u.kleine-koenig@baylibre.com>,
+ <peterz@infradead.org>, <linux-acpi@vger.kernel.org>, <kvm@vger.kernel.org>
+Subject: Re: [PATCH v4 2/3] mm: handle poisoning of pfn without struct pages
+Message-Id: <20251027172620.d764b8e0eab34abd427d7945@linux-foundation.org>
+In-Reply-To: <20251026141919.2261-3-ankita@nvidia.com>
+References: <20251026141919.2261-1-ankita@nvidia.com>
+	<20251026141919.2261-3-ankita@nvidia.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com
-Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource
- cleanup
-To: Anand Moon <linux.amoon@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
- Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>,
- "moderated list:ARM/Rockchip SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-2-linux.amoon@gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20251027145602.199154-2-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a28353b1709cckunm5714e79495b73
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtDHlZMT0tJSU9CSEsfGhhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=MVjyAjJLoKqFruf/2T8UTkdFxaaY1HLRIzik5UoO+bPgLPabD6cwVDYphWLLcTcg1zKklhAqtFdqx48TtcbK1a9MXPQuuoR0mM0N1HHZSJmd+0x7IsDhaokWGwjR3VlWLoquao1g1pe6uM8UlxJDqOxLD2g9W84vG9UdDLDdHic=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=/01EZ5lMl59YI++li6XSVu0o5BZOK5sa3DWde3cS9iY=;
-	h=date:mime-version:subject:message-id:from;
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-在 2025/10/27 星期一 22:55, Anand Moon 写道:
-> Introduce a .remove() callback to the Rockchip DesignWare PCIe
-> controller driver to ensure proper resource deinitialization during
-> device removal. This includes disabling clocks and deinitializing the
-> PCIe PHY.
+On Sun, 26 Oct 2025 14:19:18 +0000 <ankita@nvidia.com> wrote:
+
+> From: Ankit Agrawal <ankita@nvidia.com>
 > 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+> Poison (or ECC) errors can be very common on a large size cluster.
+> The kernel MM currently does not handle ECC errors / poison on a memory
+> region that is not backed by struct pages. If a memory region mapped
+> using remap_pfn_range() for example, but not added to the kernel, MM
+> will not have associated struct pages. Add a new mechanism to handle
+> memory failure on such memory.
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index 87dd2dd188b4..b878ae8e2b3e 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
->   	return ret;
->   }
->   
-> +static void rockchip_pcie_remove(struct platform_device *pdev)
+> Make kernel MM expose a function to allow modules managing the device
+> memory to register the device memory SPA and the address space associated
+> it. MM maintains this information as an interval tree. On poison, MM can
+> search for the range that the poisoned PFN belong and use the address_space
+> to determine the mapping VMA.
+> 
+> In this implementation, kernel MM follows the following sequence that is
+> largely similar to the memory_failure() handler for struct page backed
+> memory:
+> 1. memory_failure() is triggered on reception of a poison error. An
+> absence of struct page is detected and consequently memory_failure_pfn()
+> is executed.
+> 2. memory_failure_pfn() collects the processes mapped to the PFN.
+> 3. memory_failure_pfn() sends SIGBUS to all the processes mapping the
+> faulty PFN using kill_procs().
+> 
+> Note that there is one primary difference versus the handling of the
+> poison on struct pages, which is to skip unmapping to the faulty PFN.
+> This is done to handle the huge PFNMAP support added recently [1] that
+> enables VM_PFNMAP vmas to map at PMD or PUD level. A poison to a PFN
+> mapped in such as way would need breaking the PMD/PUD mapping into PTEs
+> that will get mirrored into the S2. This can greatly increase the cost
+> of table walks and have a major performance impact.
+> 
+> ...
+>
+> @@ -2216,6 +2222,136 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
+>  	kill_procs(&tokill, true, pfn, flags);
+>  }
+>  
+> +int register_pfn_address_space(struct pfn_address_space *pfn_space)
 > +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
+> +	if (!pfn_space)
+> +		return -EINVAL;
+
+I suggest this be removed - make register_pfn_address_space(NULL)
+illegal and let the punishment be an oops.
+
+> +	scoped_guard(mutex, &pfn_space_lock) {
+> +		if (interval_tree_iter_first(&pfn_space_itree,
+> +					     pfn_space->node.start,
+> +					     pfn_space->node.last))
+> +			return -EBUSY;
 > +
-> +	/* Perform other cleanups as necessary */
-> +	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
-> +	rockchip_pcie_phy_deinit(rockchip);
+> +		interval_tree_insert(&pfn_space->node, &pfn_space_itree);
+> +	}
+> +
+> +	return 0;
 > +}
-
-Thanks for the patch.
-
-Dou you need to call dw_pcie_host_deinit()?
-And I think you should also try to mask PCIE_CLIENT_INTR_MASK_MISC and
-remove the irq domain as well.
-
-if (rockchip->irq_domain) {
-	int virq, j;
-	for (j = 0; j < PCI_NUM_INTX; j++) {
-		virq = irq_find_mapping(rockchip->irq_domain, j);
-		if (virq > 0)
-			irq_dispose_mapping(virq);
-         }
-	irq_set_chained_handler_and_data(rockchip->irq, NULL, NULL);
-	irq_domain_remove(rockchip->irq_domain);
-}
-
-Another thin I noticed is should we call pm_runtime_* here for hope that
-genpd could be powered donw once removed?
-
-
+> +EXPORT_SYMBOL_GPL(register_pfn_address_space);
 > +
->   static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
->   	.mode = DW_PCIE_RC_TYPE,
->   };
-> @@ -754,5 +764,6 @@ static struct platform_driver rockchip_pcie_driver = {
->   		.suppress_bind_attrs = true,
->   	},
->   	.probe = rockchip_pcie_probe,
-> +	.remove = rockchip_pcie_remove,
->   };
->   builtin_platform_driver(rockchip_pcie_driver);
+> +void unregister_pfn_address_space(struct pfn_address_space *pfn_space)
+> +{
+> +	guard(mutex)(&pfn_space_lock);
+> +
+> +	if (pfn_space &&
+> +	    interval_tree_iter_first(&pfn_space_itree,
+> +				     pfn_space->node.start,
+> +				     pfn_space->node.last))
+> +		interval_tree_remove(&pfn_space->node, &pfn_space_itree);
+> +}
+> +EXPORT_SYMBOL_GPL(unregister_pfn_address_space);
+> +
+> +static void add_to_kill_pfn(struct task_struct *tsk,
+> +			    struct vm_area_struct *vma,
+> +			    struct list_head *to_kill,
+> +			    unsigned long pfn)
+> +{
+> +	struct to_kill *tk;
+> +
+> +	tk = kmalloc(sizeof(*tk), GFP_ATOMIC);
+> +	if (!tk)
+> +		return;
+
+This is unfortunate.  GFP_ATOMIC is unreliable and we silently behave
+as if it worked OK.
+
+> +	/* Check for pgoff not backed by struct page */
+> +	tk->addr = vma_address(vma, pfn, 1);
+> +	tk->size_shift = PAGE_SHIFT;
+> +
+> +	if (tk->addr == -EFAULT)
+> +		pr_info("Unable to find address %lx in %s\n",
+> +			pfn, tsk->comm);
+> +
+> +	get_task_struct(tsk);
+> +	tk->tsk = tsk;
+> +	list_add_tail(&tk->nd, to_kill);
+> +}
+> +
+> +/*
+> + * Collect processes when the error hit a PFN not backed by struct page.
+> + */
+> +static void collect_procs_pfn(struct address_space *mapping,
+> +			      unsigned long pfn, struct list_head *to_kill)
+> +{
+> +	struct vm_area_struct *vma;
+> +	struct task_struct *tsk;
+> +
+> +	i_mmap_lock_read(mapping);
+> +	rcu_read_lock();
+> +	for_each_process(tsk) {
+> +		struct task_struct *t = tsk;
+> +
+> +		t = task_early_kill(tsk, true);
+> +		if (!t)
+> +			continue;
+> +		vma_interval_tree_foreach(vma, &mapping->i_mmap, pfn, pfn) {
+> +			if (vma->vm_mm == t->mm)
+> +				add_to_kill_pfn(t, vma, to_kill, pfn);
+> +		}
+> +	}
+> +	rcu_read_unlock();
+
+We could play games here to make the GFP_ATOMIC allocation unnecessary,
+but nasty.  Allocate the to_kill* outside the rcu_read_lock, pass that
+pointer into add_to_kill_pfn().  If add_to_kill_pfn()'s
+kmalloc(GFP_ATOMIC) failed, add_to_kill_pfn() can then consume the
+caller's to_kill*.  Then the caller can drop the lock, allocate a new
+to_kill* then restart the scan.  And teach add_to_kill_pfn() to not
+re-add tasks which are already on the list.  Ugh.
+
+At the very very least we should tell the user that the kernel goofed
+and that one of their processes won't be getting killed.
+
+> +	i_mmap_unlock_read(mapping);
+> +}
+> +
+> +/**
+> + * memory_failure_pfn - Handle memory failure on a page not backed by
+> + *                      struct page.
+> + * @pfn: Page Number of the corrupted page
+> + * @flags: fine tune action taken
+> + *
+> + * Return:
+> + *   0             - success,
+> + *   -EBUSY        - Page PFN does not belong to any address space mapping.
+> + */
+> +static int memory_failure_pfn(unsigned long pfn, int flags)
+> +{
+> +	struct interval_tree_node *node;
+> +	LIST_HEAD(tokill);
+> +
+> +	scoped_guard(mutex, &pfn_space_lock) {
+> +		bool mf_handled = false;
+> +
+> +		/*
+> +		 * Modules registers with MM the address space mapping to the device memory they
+> +		 * manage. Iterate to identify exactly which address space has mapped to this
+> +		 * failing PFN.
+
+We're quite lenient about >80 columns nowadays, but overflowing 80 for
+a block comment is rather needless.
+
+> +		for (node = interval_tree_iter_first(&pfn_space_itree, pfn, pfn); node;
+> +		     node = interval_tree_iter_next(node, pfn, pfn)) {
+> +			struct pfn_address_space *pfn_space =
+> +				container_of(node, struct pfn_address_space, node);
+>
+> +			collect_procs_pfn(pfn_space->mapping, pfn, &tokill);
+> +
+> +			mf_handled = true;
+> +		}
+> +
+> +		if (!mf_handled)
+> +			return action_result(pfn, MF_MSG_PFN_MAP, MF_IGNORED);
+> +	}
+> +
+> +	/*
+> +	 * Unlike System-RAM there is no possibility to swap in a different
+> +	 * physical page at a given virtual address, so all userspace
+> +	 * consumption of direct PFN memory necessitates SIGBUS (i.e.
+> +	 * MF_MUST_KILL)
+> +	 */
+> +	flags |= MF_ACTION_REQUIRED | MF_MUST_KILL;
+> +
+> +	kill_procs(&tokill, true, pfn, flags);
+> +
+> +	return action_result(pfn, MF_MSG_PFN_MAP, MF_RECOVERED);
+> +}
+> +
 
 
