@@ -1,107 +1,87 @@
-Return-Path: <linux-kernel+bounces-873208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961C6C135D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:48:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED548C135E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192264064E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:48:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F37564072
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B095248881;
-	Tue, 28 Oct 2025 07:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSp4dhCX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A623823EAB8;
+	Tue, 28 Oct 2025 07:49:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDE717BB21;
-	Tue, 28 Oct 2025 07:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FDE1E2614
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761637682; cv=none; b=n/1t1UM4MINO/w5Mde2ke5C+Lrch3xsxAZmzncn8KpPozuBgcZYO6Lm/B77A0H8g3pNbkUBlAXnWrtW2bj4RT7uTrpcZ9K4yG5n0tY+xyjEogbzUzf91XIqmTfsz5uueyCtmksR9lyN65+mnq02UTXuvkmjTI8rlz36+2tAH8Fo=
+	t=1761637746; cv=none; b=lX63clUWDmGV4+iQKk4iKrNvSuEXYhGFCWr4j0n4pdn1y0jbV6kWZxV8SIaI0r18HFY8X3QdsA35t7XTkalnmmI1Z1MH0vXYVyoAsUF/N0nkaQL+tMdlPluVPkvbEyef0Y9GPD6Ku6ZG0q/ZDHMi3WNSEdSos6OZBmT48mJoqN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761637682; c=relaxed/simple;
-	bh=KClJh703ruviggVORWywOzunQO6HBuBT/e1jnVpnPXc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TmzzxqOI5cxj72CBrtxto15bB5Stm/UkM5h7wokmcJidc+zJRoPMYOy7mWuRxMmF4RkAwUvcJyrxoFAQEBoYH8NNVDggJ0J7C8jnp9bjOaR5heMz6NDnw6zZgTb4iTPpYRFhAPaihFCdCmNxttYO6FeAnKpUBOLWV6QL4IcFDJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSp4dhCX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD480C113D0;
-	Tue, 28 Oct 2025 07:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761637681;
-	bh=KClJh703ruviggVORWywOzunQO6HBuBT/e1jnVpnPXc=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=JSp4dhCXz/ltiFCTPO0JZcMRQ0fsKve6CAnHmMlvgGjKIsE9cs2S5JvV5W2MW7nAn
-	 82HXAZqM6GUp1+SVIebgExEctwbw5eR8rdTw73RBFVFYfA+vDmsp+U4HqdAgSoU5F/
-	 /TKhjJf/vrUuHq96xsIZAhivbBsQ/tgYZuM83LA1aYES/wvftOKN+q0du0hlugp8Sz
-	 fa01y6qXoBel8u57qib+5TEcobWqo/i4L+Cz73uiN0CdPftCQZDwWT1lXiIESFogAy
-	 6OQvGLFdXKq9D1mZ7L2/12L7C9M+hmgdIEAFAJ83G+sJ30s0jnr9tUhLF61qe4Wa7r
-	 a9BW8d4ARqz2g==
-Date: Tue, 28 Oct 2025 08:47:58 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, bmc-sw@aspeedtech.com, 
-	benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org, jk@codeconstruct.com.au, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	andrew@codeconstruct.com.au, p.zabel@pengutronix.de, andriy.shevchenko@linux.intel.com, 
-	naresh.solanki@9elements.com, linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v21 2/4] dt-bindings: i2c: ast2600-i2c.yaml: Add
- global-regs and transfer-mode properties
-Message-ID: <20251028-ingenious-dazzling-jackdaw-af487d@kuoka>
-References: <20251027061240.3427875-1-ryan_chen@aspeedtech.com>
- <20251027061240.3427875-3-ryan_chen@aspeedtech.com>
- <93a2ff5f-2f8e-494b-9652-b93bc243c229@kernel.org>
+	s=arc-20240116; t=1761637746; c=relaxed/simple;
+	bh=WOku76Ozy4VOy+vEQGLHt6QbINTquMKuLzAIb5AnGGU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZVetvLKWCJ1ZjI9Cc3+d8n5WbON7bWnbaOukn2gmRYk0r5T4BwfllRHYgpyVyxxoaiG7k/odSxeLz5CSBB34RwWf9I0R6+Bz579JK+BakdafLhWkhMM9fyfRn1MQ7gj1HBWFSVzb9R/AQ4j3xwp3bqSY5hLCVt+eXgQkS5bqS7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431db4650b7so78095015ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:49:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761637744; x=1762242544;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D+2sV0+PakweGHJ8cHVLpT6AoKkt4teywwfFIuJ1p9k=;
+        b=LA6DSsiTGcWzsJ6j8gsUWeFyyl9sDHcnlnF/IqLM7OX8K8bpr9y3tw6c9VRxn31mYj
+         AA+0KH2GH2jbcYHY8RyMeBzlzFzBIRqRYqFGUIuwWPXzKiHr/apzmS/Aaa+n6YctV9kS
+         6gZSAyLjrBRjm25ppFXSSEEpJ+kOaKX5xtZB/Z4JPF4VvZKyeMyIN1GiBG+1GxSbGSyC
+         I7HVev7ACKVILU0DTeB89DIgsO0n20i+vQj3l6MDm4fUU5yZ396Q7vAC6KLkvHbu7iMN
+         HB7erV+/SbHd8sAv/YWGfYhO0DOu8dWlXuNIg33m5vGKuu66qYraWPs/KsCw5D6rc13L
+         XVQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpfBw+TPIPmh4Fo0MrRW6mo2y6rHzHf7CvWtA4Xdcn99efou+Ro02ta+YxhoXz7byFVjdwpfRY0HdHtQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhcIKjCMAsuKpBWDgPb0CfnvMBBd8l7xsRMlRKaWo6Qi/z87Km
+	1YGCfFKtosHrAZXJDaX4z3z1GGrYE22o7/6BFgdDW4AOe2JBTwd+WomPRBRqGkUS1IFm36tYbT7
+	GDvjGIpBtoqvB3sZjHGB62Ejrfuz/sWqjtUSnSZdeWbwtg9ru1XNJkFLqjLs=
+X-Google-Smtp-Source: AGHT+IFcAKKVz9X7gQf8MJaUU1GB9CPQgRphyvpM//HV0VGepFSUuIXYoAlVxva53REWTTmnXl8Nxz/cyD7UGQzLw8BKahfyqZVw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <93a2ff5f-2f8e-494b-9652-b93bc243c229@kernel.org>
+X-Received: by 2002:a05:6e02:2608:b0:42d:7dea:1e04 with SMTP id
+ e9e14a558f8ab-4320f842fe7mr37060215ab.25.1761637744001; Tue, 28 Oct 2025
+ 00:49:04 -0700 (PDT)
+Date: Tue, 28 Oct 2025 00:49:03 -0700
+In-Reply-To: <20251028070157.yQX9a%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6900756f.050a0220.32483.0138.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 08:14:45PM +0100, Krzysztof Kozlowski wrote:
-> On 27/10/2025 07:12, Ryan Chen wrote:
-> > The AST2600 I2C controller supports three transfer modes: byte,
-> > buffer, and DMA. To allow board designers and firmware to
-> > explicitly select the preferred transfer mode for each controller
-> > instance. "aspeed,transfer-mode" to allow device tree to specify
-> > the desired transfer method used by each I2C controller instance.
-> > 
-> > And AST2600 i2c controller have two register mode, one is legacy
-> > register layout which is mix controller/target register control
-> > together, another is new mode which is separate controller/target
-> > register control.
-> > 
-> 
-> This implies your "reg" properties have now completely different meaning
-> and this would be quite an ABI break. We discussed this probably 15
-> revisions ago. Where did you document the resolution of that discussion?
-> 
-> >  
-> >  unevaluatedProperties: false
-> >  
-> > @@ -57,10 +85,12 @@ examples:
-> >        #address-cells = <1>;
-> >        #size-cells = <0>;
-> >        compatible = "aspeed,ast2600-i2c-bus";
-> > -      reg = <0x40 0x40>;
-> > +      reg = <0x80 0x80>, <0xc00 0x20>;
-> 
-> Not relevant to this patch. You just added this line in patch #1, so did
-> you add incorrect code just to fix it right away?
-> 
-> No, fix your example when creating it.
+Hello,
 
-Heh, and this was not even tested... you have warnings here (see
-maintainer soc profiles).
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Best regards,
-Krzysztof
+Reported-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
+Tested-by: syzbot+77026564530dbc29b854@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         fd575722 Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=164d832f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2cdd0ccb22d6e441
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=152d6258580000
+
+Note: testing is done by a robot and is best-effort only.
 
