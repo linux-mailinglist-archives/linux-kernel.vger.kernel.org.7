@@ -1,146 +1,322 @@
-Return-Path: <linux-kernel+bounces-874193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94752C15B6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:15:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C4B4C15BAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:17:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C6844E1A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:11:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 463691C23CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B113451CB;
-	Tue, 28 Oct 2025 16:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800E43446C9;
+	Tue, 28 Oct 2025 16:12:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SyxgsjzA"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kTFwPIyW"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A381F4C8E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CA3342CA7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667862; cv=none; b=dxPUjq1T2SXWcMnAcjPtY4Ll/pLH27zuyUGwhM42Ien31Rrcfjf5DdNrmjuF9HP0VFR6dhTAKY9JCKWeNmKOjZgGWLL3hoAuuc8Q8B4Ke4a6e6MUHL81tRwMtk6SJOs2Bih9u9ew/nP9WA9b9a6+PbG9VMZfFFy2caiujh08Z/E=
+	t=1761667938; cv=none; b=vAzEg27XE3utKPYWpgakOash3QZgv2np+9VycryeNXVeEZ7rNU+cnpvzlqQJSLOEinpdOtH3WJpyDm1ExIUMsa9bwfCqAA1Um9QfmJHsB/GS8DYKlD4o2lxqdoA/nfYYp6TZvmdbdE/AezovUQdVJZk42eYKhrl+i6z5/Z5NHF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667862; c=relaxed/simple;
-	bh=dJBi1SI6KRLdskO7pfO8PR4VwDReQHqZlMyEW6CEiGU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aoe6rBwMO8zfHCKQ2qU/Wtfeyb0HPGrMEp7XAvzJkftY/VXBHlU/j9BSDCZV0COxaNaOiIYXPXhuVAiHAp3sEYxC0K7PK1DX779quosCi5hOORq+qR+JHC7LFT+4UvqF2yB4W31hwnxSRbNltTxlftP24FGf1HBmhvUtTrKvxGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SyxgsjzA; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761667858;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D4PZj+Z/AUd5TD2H5mliXY1n/lg/WeR66f3O6rTVgL0=;
-	b=SyxgsjzAaP3eQ9upztzSYWfJ4WsFRqyGC+WNAlDIHsVjNFkuLy+80+fxZhJbxoF71KM/Sb
-	2dXtGFR0Z9YliT37NCbk2o9jgMkSzntlWrQPUd9ujQ4NC2Ewk5O6GCMZUgB8sGf6/K33Ov
-	Tv8wxDHZwyaHL5z9MiCmBhWGX4QJh9c=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: bot+bpf-ci@kernel.org
-Cc: akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
- ast@kernel.org, surenb@google.com, mhocko@kernel.org,
- shakeel.butt@linux.dev, hannes@cmpxchg.org, andrii@kernel.org,
- inwardvessel@gmail.com, linux-mm@kvack.org, cgroups@vger.kernel.org,
- bpf@vger.kernel.org, martin.lau@kernel.org, song@kernel.org,
- memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
- yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
-Subject: Re: [PATCH v2 08/23] mm: introduce BPF kfuncs to deal with memcg
- pointers
-In-Reply-To: <2c91977fcab04be6305bf4be57e825f7e84005d16667adcdfad0585be506537c@mail.kernel.org>
-	(bot's message of "Mon, 27 Oct 2025 23:48:21 +0000 (UTC)")
-References: <20251027231727.472628-9-roman.gushchin@linux.dev>
-	<2c91977fcab04be6305bf4be57e825f7e84005d16667adcdfad0585be506537c@mail.kernel.org>
-Date: Tue, 28 Oct 2025 09:10:47 -0700
-Message-ID: <87ldkv57nc.fsf@linux.dev>
+	s=arc-20240116; t=1761667938; c=relaxed/simple;
+	bh=YmU+S2dpj2lpvbkcXW1CLOnuN+/RJrukgDz9Fq/nJcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPKvWf+NSR7xsC63VJ0DxYuSDjaEO77Hj0j7JXua6s6n40CDHurThsXkCIEhuNzRg8gG9fdRUXeiQHRSq0oRTPZ38EIGkkuVo7qTTVCtVewMd2ZcnKJUFA85U4lr+Rx5qvynzPVHwa1+07ygP3iOvrObdBgFICywURlpV9JKv+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kTFwPIyW; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-58b027beea6so9380e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761667935; x=1762272735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qxRI++0kUA4C88E54g3jys1xp+GEI9qFS2ZGVb0fFIA=;
+        b=kTFwPIyW2dqp1qBON3q/aXQV5MLtLqLwIwvT8Pdqff9vx1eZEwHjNAZlcA0PgpDmJ2
+         glAR3Wzmw91lfDywd77xM/fDySLBzYiGwZc8nQOsrH8GkOXPyfDbSeeQ/ClWeqe9rR8A
+         4djVL1fkGJGx9aTTDyx0PdjpkDFCmNlCAAqh28LyBfBw5tmjxqMoIBAWrqAQGCOP92M6
+         YJTW5Jclzi5nmQhqNNsG6dXfGcBXEXCMj5U9KZ6tz7lrUVg5kSZ4/U52vHtbUzIZ8XtI
+         awBqQoOcC6cYOz96B/dYfXAUAnxDrsEjGhZjVHERUUONPO1uC3k7OAa5cS8/C1+beTCA
+         HGLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761667935; x=1762272735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qxRI++0kUA4C88E54g3jys1xp+GEI9qFS2ZGVb0fFIA=;
+        b=b5s18JkyBSeIH+RD2A6kuCLFSfQ2cIV1sbRnW13EdicMo1zKGKQIBSx9d2/pruGczT
+         69ftqu2Y+ak9fvCg6IrkCd62ajAzXvVX/0A4i6j+Rvvf6Br5TcbrLXG1WwmTsEjH11MM
+         oj0tzsH1At+mY4qSnpWEBWZgRI8WYbyR8fViL+XICwr/8V8p9TZTsHEVtlg+Ce56FB/z
+         Lm3XETuIvxX0s/jbKp/hKXqqM7yUFIiiJw/UsUdFP4BHUsowsOWIXfzjUzfvo23X9TKF
+         d8GINo8JqynylMeQ+8GaN7QVzU6WtAqN22ux39QFkNspAxhdU7nH6b9fosDeBnBmKthj
+         1v9w==
+X-Forwarded-Encrypted: i=1; AJvYcCW97ipkPdSFp3YfJqIvktktze9dyHmE5lYe3kH1BxC6b/vZW2bq/qQVogQASoJbPJO/55kXt8wP+0qPI1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF4G+PEn4yFGbotVocZalwe2d0TXe2aDseASIFZq0XfaWwRaDE
+	cEqUAqK6colN82MvynlzVFV5lH0oq3DY1JyQs6nfON9orWOW1F1y45WQHiR/3f5gWdhtbGZjsQ3
+	Bxc/bN1pRuHxy5cvgUtOilWzBZgF6xlUxyE1JLpTT
+X-Gm-Gg: ASbGncv1Lrxz9DlsvslaVjovXrJsyGoZvzozkWED6/atazxlsJQG15Nxldaep7KRU2I
+	xZKgaFMx91av9A+iiDpqkQD4JCVLw5Mx3+0VS5H+J13RSlmxxkDjxw272Ku2cCL9vyLAD48idce
+	L0akzwfRYQeBfbYGUQMnUOnRxYoMLXvuIVEXmJdTv5Hm6SeoR9smvX2Z7LzeTl7aSOBQwo8CbBo
+	h25FsuCw0YFKScdNtQ9kfKiZ/J5uT7OnzN0gRbE8zGFjDHIyovJzrlZRwijY1zR5ETfEzaI1pwn
+	MKgKx1PABmKV95vlNWNkB9udJQ==
+X-Google-Smtp-Source: AGHT+IGHjnuV06Q110K/XiF/19HksKvviTMay1daMlenEI88sIR67s4zP4V81F71auWP2H80fovhcnl0+5UV0L8pGUg=
+X-Received: by 2002:a05:6512:b84:b0:586:8e3c:9456 with SMTP id
+ 2adb3069b0e04-5930eed566dmr430517e87.0.1761667934253; Tue, 28 Oct 2025
+ 09:12:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+References: <20251023074410.78650-1-byungchul@sk.com> <20251023074410.78650-3-byungchul@sk.com>
+ <CAHS8izME4W3ENXNXf4Cxegmk9xnRmKajpRMQ18L0=FGTFebeaw@mail.gmail.com> <64E18E02-727B-47C4-8849-486AB98CACD8@nvidia.com>
+In-Reply-To: <64E18E02-727B-47C4-8849-486AB98CACD8@nvidia.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 28 Oct 2025 09:12:00 -0700
+X-Gm-Features: AWmQ_bmxv3BL-tBNLLwsdAEGZyVMyLK1NK7F8-nJ_Ys_3boWKRkq5vfhkylVKmE
+Message-ID: <CAHS8izNuSkxn1HZJ-1W_wa7QsQFE5yKUjbfSgKEzv9tLLOYveQ@mail.gmail.com>
+Subject: Re: [RFC mm v4 2/2] mm: introduce a new page type for page pool in
+ page type
+To: Zi Yan <ziy@nvidia.com>
+Cc: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com, harry.yoo@oracle.com, 
+	ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, 
+	hawk@kernel.org, john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com, 
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch, 
+	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org, 
+	david@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org, 
+	ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org, 
+	kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com, 
+	baolin.wang@linux.alibaba.com, toke@redhat.com, asml.silence@gmail.com, 
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org, sfr@canb.auug.org.au, 
+	dw@davidwei.uk, ap420073@gmail.com, dtatulea@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-bot+bpf-ci@kernel.org writes:
+On Mon, Oct 27, 2025 at 6:45=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 27 Oct 2025, at 21:28, Mina Almasry wrote:
+>
+> > On Thu, Oct 23, 2025 at 12:45=E2=80=AFAM Byungchul Park <byungchul@sk.c=
+om> wrote:
+> >>
+> >> ->pp_magic field in struct page is current used to identify if a page
+> >> belongs to a page pool.  However, ->pp_magic will be removed and page
+> >> type bit in struct page e.i. PGTY_netpp can be used for that purpose.
+> >>
+> >> Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(=
+),
+> >> and __ClearPageNetpp() instead, and remove the existing APIs accessing
+> >> ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+> >> netmem_clear_pp_magic().
+> >>
+> >> This work was inspired by the following link:
+> >>
+> >> [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@g=
+mail.com/
+> >>
+> >> While at it, move the sanity check for page pool to on free.
+> >>
+> >> Suggested-by: David Hildenbrand <david@redhat.com>
+> >> Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
+> >> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> >> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> >> Acked-by: David Hildenbrand <david@redhat.com>
+> >> Acked-by: Zi Yan <ziy@nvidia.com>
+> >> ---
+> >> Hi Mina,
+> >>
+> >> I dropped your Reviewed-by tag since there are updates on some comment=
+s
+> >> in network part.  Can I still keep your Reviewed-by?
+> >>
+> >>         Byungchul
+> >> ---
+> >>  .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
+> >>  include/linux/mm.h                            | 27 +++---------------=
+-
+> >>  include/linux/page-flags.h                    |  6 +++++
+> >>  include/net/netmem.h                          |  2 +-
+> >>  mm/page_alloc.c                               |  8 +++---
+> >>  net/core/netmem_priv.h                        | 17 +++---------
+> >>  net/core/page_pool.c                          | 14 +++++-----
+> >>  7 files changed, 25 insertions(+), 51 deletions(-)
+> >>
+> >> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/driver=
+s/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> >> index 5d51600935a6..def274f5c1ca 100644
+> >> --- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> >> +++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
+> >> @@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdp=
+sq *sq,
+> >>                                 xdpi =3D mlx5e_xdpi_fifo_pop(xdpi_fifo=
+);
+> >>                                 page =3D xdpi.page.page;
+> >>
+> >> -                               /* No need to check page_pool_page_is_=
+pp() as we
+> >> +                               /* No need to check PageNetpp() as we
+> >>                                  * know this is a page_pool page.
+> >>                                  */
+> >>                                 page_pool_recycle_direct(pp_page_to_nm=
+desc(page)->pp,
+> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >> index b6fdf3557807..f5155f1c75f5 100644
+> >> --- a/include/linux/mm.h
+> >> +++ b/include/linux/mm.h
+> >> @@ -4361,10 +4361,9 @@ int arch_lock_shadow_stack_status(struct task_s=
+truct *t, unsigned long status);
+> >>   * DMA mapping IDs for page_pool
+> >>   *
+> >>   * When DMA-mapping a page, page_pool allocates an ID (from an xarray=
+) and
+> >> - * stashes it in the upper bits of page->pp_magic. We always want to =
+be able to
+> >> - * unambiguously identify page pool pages (using page_pool_page_is_pp=
+()). Non-PP
+> >> - * pages can have arbitrary kernel pointers stored in the same field =
+as pp_magic
+> >> - * (since it overlaps with page->lru.next), so we must ensure that we=
+ cannot
+> >> + * stashes it in the upper bits of page->pp_magic. Non-PP pages can h=
+ave
+> >> + * arbitrary kernel pointers stored in the same field as pp_magic (si=
+nce
+> >> + * it overlaps with page->lru.next), so we must ensure that we cannot
+> >>   * mistake a valid kernel pointer with any of the values we write int=
+o this
+> >>   * field.
+> >>   *
+> >> @@ -4399,26 +4398,6 @@ int arch_lock_shadow_stack_status(struct task_s=
+truct *t, unsigned long status);
+> >>  #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SH=
+IFT - 1, \
+> >>                                   PP_DMA_INDEX_SHIFT)
+> >>
+> >> -/* Mask used for checking in page_pool_page_is_pp() below. page->pp_m=
+agic is
+> >> - * OR'ed with PP_SIGNATURE after the allocation in order to preserve =
+bit 0 for
+> >> - * the head page of compound page and bit 1 for pfmemalloc page, as w=
+ell as the
+> >> - * bits used for the DMA index. page_is_pfmemalloc() is checked in
+> >> - * __page_pool_put_page() to avoid recycling the pfmemalloc page.
+> >> - */
+> >> -#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
+> >> -
+> >> -#ifdef CONFIG_PAGE_POOL
+> >> -static inline bool page_pool_page_is_pp(const struct page *page)
+> >> -{
+> >> -       return (page->pp_magic & PP_MAGIC_MASK) =3D=3D PP_SIGNATURE;
+> >> -}
+> >> -#else
+> >> -static inline bool page_pool_page_is_pp(const struct page *page)
+> >> -{
+> >> -       return false;
+> >> -}
+> >> -#endif
+> >> -
+> >>  #define PAGE_SNAPSHOT_FAITHFUL (1 << 0)
+> >>  #define PAGE_SNAPSHOT_PG_BUDDY (1 << 1)
+> >>  #define PAGE_SNAPSHOT_PG_IDLE  (1 << 2)
+> >> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> >> index 0091ad1986bf..edf5418c91dd 100644
+> >> --- a/include/linux/page-flags.h
+> >> +++ b/include/linux/page-flags.h
+> >> @@ -934,6 +934,7 @@ enum pagetype {
+> >>         PGTY_zsmalloc           =3D 0xf6,
+> >>         PGTY_unaccepted         =3D 0xf7,
+> >>         PGTY_large_kmalloc      =3D 0xf8,
+> >> +       PGTY_netpp              =3D 0xf9,
+> >>
+> >>         PGTY_mapcount_underflow =3D 0xff
+> >>  };
+> >> @@ -1078,6 +1079,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
+> >>  PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
+> >>  FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
+> >>
+> >> +/*
+> >> + * Marks page_pool allocated pages.
+> >> + */
+> >> +PAGE_TYPE_OPS(Netpp, netpp, netpp)
+> >> +
+> >>  /**
+> >>   * PageHuge - Determine if the page belongs to hugetlbfs
+> >>   * @page: The page to test.
+> >> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> >> index 651e2c62d1dd..0ec4c7561081 100644
+> >> --- a/include/net/netmem.h
+> >> +++ b/include/net/netmem.h
+> >> @@ -260,7 +260,7 @@ static inline unsigned long netmem_pfn_trace(netme=
+m_ref netmem)
+> >>   */
+> >>  #define pp_page_to_nmdesc(p)                                         =
+  \
+> >>  ({                                                                   =
+  \
+> >> -       DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));             =
+  \
+> >> +       DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));                        =
+  \
+> >>         __pp_page_to_nmdesc(p);                                       =
+  \
+> >>  })
+> >>
+> >> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >> index fb91c566327c..c69ed3741bbc 100644
+> >> --- a/mm/page_alloc.c
+> >> +++ b/mm/page_alloc.c
+> >> @@ -1042,7 +1042,6 @@ static inline bool page_expected_state(struct pa=
+ge *page,
+> >>  #ifdef CONFIG_MEMCG
+> >>                         page->memcg_data |
+> >>  #endif
+> >> -                       page_pool_page_is_pp(page) |
+> >
+> > Shouldn't you replace the page_pool_page_is_pp check with a PageNetpp
+> > check in this call site and below? Or is that no longer necessary for
+> > some reason?
+>
+> It is done in the hunk below this one:
+>
+> @@ -1379,9 +1376,12 @@ __always_inline bool free_pages_prepare(struct pag=
+e *page,
+>                 mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+>                 folio->mapping =3D NULL;
+>         }
+> -       if (unlikely(page_has_type(page)))
+> +       if (unlikely(page_has_type(page))) {
+> +               /* networking expects to clear its page type before relea=
+sing */
+> +               WARN_ON_ONCE(PageNetpp(page));
+>                 /* Reset the page_type (which overlays _mapcount) */
+>                 page->page_type =3D UINT_MAX;
+> +       }
+>
+>         if (is_check_pages_enabled()) {
+>                 if (free_page_is_bad(page))
+>
+> where
+> free_pages_prepare()
+>   -> free_page_is_bad()
+>     -> page_expected_state()
+>
 
-> ```
-> commit ec8e2e1769704b4f69261f36e6aaf035d47c5f0f
-> Author: Roman Gushchin <roman.gushchin@linux.dev>
->
-> mm: introduce BPF kfuncs to deal with memcg pointers
->
-> This commit introduces two new BPF kfuncs for converting css pointers
-> to memcg pointers with proper reference counting: bpf_get_mem_cgroup()
-> and bpf_put_mem_cgroup().
->
->> diff --git a/mm/Makefile b/mm/Makefile
->> index 051e88c69..2d8f9beb3 100644
->> --- a/mm/Makefile
->> +++ b/mm/Makefile
->> @@ -107,6 +107,7 @@ obj-$(CONFIG_MEMCG) += swap_cgroup.o
->>  endif
->>  ifdef CONFIG_BPF_SYSCALL
->>  obj-y += bpf_oom.o
->> +obj-$(CONFIG_MEMCG) += bpf_memcontrol.o
->>  endif
->>  obj-$(CONFIG_CGROUP_HUGETLB) += hugetlb_cgroup.o
->>  obj-$(CONFIG_GUP_TEST) += gup_test.o
->> diff --git a/mm/bpf_memcontrol.c b/mm/bpf_memcontrol.c
->> new file mode 100644
->> index 000000000..1e4609774
->> --- /dev/null
->> +++ b/mm/bpf_memcontrol.c
->> @@ -0,0 +1,88 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +/*
->> + * Memory Controller-related BPF kfuncs and auxiliary code
->> + *
->> + * Author: Roman Gushchin <roman.gushchin@linux.dev>
->> + */
->> +
->> +#include <linux/memcontrol.h>
->> +#include <linux/bpf.h>
->> +
->> +__bpf_kfunc_start_defs();
->> +
->> +/**
->> + * bpf_get_mem_cgroup - Get a reference to a memory cgroup
->> + * @css: pointer to the css structure
->> + *
->> + * Returns a pointer to a mem_cgroup structure after bumping
->> + * the corresponding css's reference counter.
->> + *
->> + * It's fine to pass a css which belongs to any cgroup controller,
->> + * e.g. unified hierarchy's main css.
->> + *
->> + * Implements KF_ACQUIRE semantics.
->> + */
->> +__bpf_kfunc struct mem_cgroup *
->> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
->> +{
->> +	struct mem_cgroup *memcg = NULL;
->> +	bool rcu_unlock = false;
->> +
->> +	if (!root_mem_cgroup)
->> +		return NULL;
->> +
->> +	if (root_mem_cgroup->css.ss != css->ss) {
->                                             ^^^^^^^
->
-> Can this dereference a NULL css pointer?  The function checks css for
-> NULL at line 42 with "if (css && css_tryget(css))", which suggests css
-> can be NULL.  If a BPF program calls this function with a NULL css,
-> wouldn't it crash here before reaching that check?
+Thanks, looks fine to me then. I'm not extremely familiar with this
+code so I won't give a Reviewed-by, but here is an ack, FWIW:
 
-Here css passed as an argument to bpf_get_mem_cgroup() can't be NULL,
-because the BPF verifier guarantees that it's a valid css pointer.
+Acked-by: Mina Almasry <almasrymina@google.com>
 
-However the result of rcu_dereference_raw(cgroup->subsys[ssid]) can be
-NULL, this is why the "if (css && css_tryget(css))" check is required
-down below.
+--=20
+Thanks,
+Mina
 
