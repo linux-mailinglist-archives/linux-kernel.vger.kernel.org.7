@@ -1,86 +1,148 @@
-Return-Path: <linux-kernel+bounces-874172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6922C15AD2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:06:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FEFC15AD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD3E3B75D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57D11A63480
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E803451D1;
-	Tue, 28 Oct 2025 15:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B6F342C9D;
+	Tue, 28 Oct 2025 15:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TY8rRApu"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h0Rjdky4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1F234402B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667165; cv=none; b=IQMj6C6ultstt71hMVxPmda6TutfF8e6DwKwU2rh1LkCB8i6QazFPRtttpozoeZmg0c4sZaqymwpwtHtjMDxg9pTaV7q6HHCxu1U0S83YQg+L93HRW8nGcA72OQ3UT5LQ3+rLhCpuUho3vkgr8FZ6aAdSmuUkkHwT5nP3WKGAng=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667165; c=relaxed/simple;
-	bh=RTLGSpjrQ1ImABJfi/VAQfh3gN0Itfqt2aNCceR5h8k=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kuxEmmNfjOnI5rSAEgGcHxXuMtWixnRS4+1yRTRkPYajuchoCNAyYhOAe0yDkkcmiymvi7mVFPl+LzeIHdY/RLUbr25PUek1CqFl9/aJ+4CCruSZoKU1aA3tyyFSDe1tqmxhYobbTguIAK2cxkhG9nSR1gmpqAUSFFao7xkC+eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TY8rRApu; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id E98E41A170C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:59:19 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BF148606AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADC02D5924;
 	Tue, 28 Oct 2025 15:59:19 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8BFF6117A99F8;
-	Tue, 28 Oct 2025 16:59:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761667159; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=hAFtFEMN41KVDleG5UTxtREAtjcFkU9gQ7IFFJPq7GY=;
-	b=TY8rRApu9XyAlv1PMITVi0UFV6D74qU7dbiVcL5W82XtKibRtJ9Xijy2h6JcekgfZ6c/Qi
-	rBCk45x9CtUheThYRc4WT3Gwodu2Z0dyvmaM0zPY5q2kW8KnAQuk8KcgyQ89aFFxeyMJkF
-	3fVDlq4d9s6izO+HRJOql6wXeS+yBBspzLAcA8lSvFDMxU0Ks345UxPKETiMDYgf5zF4N9
-	9+E6boojg2sRQo6cxDxEEEz2vCH37b6R/Jsi7F92Zvov4TEkHUSS0ilF8b82DmM1+WwQ3h
-	UhocztOewUVZ1ZrtDWThAT22bP1xixJL0abOeOKeudEqjWZrmZWg/SItBSgFDg==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: richard@nod.at, vigneshr@ti.com, niravkumarlaxmidas.rabara@altera.com
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251027102304.658490-1-niravkumarlaxmidas.rabara@altera.com>
-References: <20251027102304.658490-1-niravkumarlaxmidas.rabara@altera.com>
-Subject: Re: [PATCH v3] mtd: rawnand: cadence: Add support for NV-DDR
- interface mode
-Message-Id: <176166715382.365556.10326674698031952686.b4-ty@bootlin.com>
-Date: Tue, 28 Oct 2025 16:59:13 +0100
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761667159; cv=none; b=A3hkZvIaIE5rDyaXGLk1XsOvICspbnGFOv2ohQWfB8ezwe3LgD9Xds/NtG9o7f3aajZ1F+CxiI9+pA9xhKgX1kthGeIvK3hEup1A/xCsFzAAovbdAEtFrxiLMSgjbAETW5Omg58t+2tLY2XlAtFz/F3J1/83KNjX7MN2F6Zbyjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761667159; c=relaxed/simple;
+	bh=SDRIuqWM2TI7GYT8HdCkn7TBcJvTMa+nGGBd4kxLWaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LM8wB4FvWv6t0ONt4DiNcJ2pxHO15xcGD581IJGcMHq89GYl0GK7ejvzemNscQurTzSjWd7LzOfNCyaXcSZOhPdOEvnxKSZyXspQN2VifDUZ9tbLFmsjZqPVgqhUr+JH/AP0tBnRtELAfyhDeP3uGFG+6YU2+hbdT0mXz6LT/dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h0Rjdky4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C55CEC4CEE7;
+	Tue, 28 Oct 2025 15:59:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761667159;
+	bh=SDRIuqWM2TI7GYT8HdCkn7TBcJvTMa+nGGBd4kxLWaU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h0Rjdky40XtCVRjoUUWv5rLiJ9ZMpCagJKFXeyfzHOGEHTGw9bKgoBDki9igeNVWF
+	 hxxzLvARw99/t5f4Lqs+Dj5fZyVuN3fZZCRfCFM55ZeACJS/rijOr6rAqCQE7Hwid1
+	 QyXcKn0xMZDkHD1ajCbuYBSCn+ENYdvO5PJWUuqfmfteG28nQwGE4UO2KHjBeLwl2c
+	 hE32PRBdNnuYpqH0YyIEEpoBXAGIkGRuRSDfPq/9QdewsKj3LtsQ6g4eJFxD5TaKJO
+	 HpEpDWwMqwcXSfnux9kuKahgFba9EgaGpASx7PAIM38ag+Pw/+fgAan6RlnvKpPKM4
+	 jLUxM6PBiYL0w==
+Date: Tue, 28 Oct 2025 16:59:16 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
+	Jann Horn <jannh@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v6 27/29] x86/mm/pti: Implement a TLB flush
+ immediately after a switch to kernel CR3
+Message-ID: <aQDoVAs5UZwQo-ds@localhost.localdomain>
+References: <20251010153839.151763-1-vschneid@redhat.com>
+ <20251010153839.151763-28-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20251010153839.151763-28-vschneid@redhat.com>
 
-On Mon, 27 Oct 2025 18:23:04 +0800, niravkumarlaxmidas.rabara@altera.com wrote:
-> Add support for NV-DDR mode in the Cadence NAND controller driver.
+Le Fri, Oct 10, 2025 at 05:38:37PM +0200, Valentin Schneider a Ècrit :
+> Deferring kernel range TLB flushes requires the guarantee that upon
+> entering the kernel, no stale entry may be accessed. The simplest way to
+> provide such a guarantee is to issue an unconditional flush upon switching
+> to the kernel CR3, as this is the pivoting point where such stale entries
+> may be accessed.
 > 
+> As this is only relevant to NOHZ_FULL, restrict the mechanism to NOHZ_FULL
+> CPUs.
 > 
+> Note that the COALESCE_TLBI config option is introduced in a later commit,
+> when the whole feature is implemented.
+> 
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> ---
+>  arch/x86/entry/calling.h      | 26 +++++++++++++++++++++++---
+>  arch/x86/kernel/asm-offsets.c |  1 +
+>  2 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/entry/calling.h b/arch/x86/entry/calling.h
+> index 813451b1ddecc..19fb6de276eac 100644
+> --- a/arch/x86/entry/calling.h
+> +++ b/arch/x86/entry/calling.h
+> @@ -9,6 +9,7 @@
+>  #include <asm/ptrace-abi.h>
+>  #include <asm/msr.h>
+>  #include <asm/nospec-branch.h>
+> +#include <asm/invpcid.h>
+> 
+>  /*
+> 
+> @@ -171,8 +172,27 @@ For 32-bit we have the following conventions - kernel is built with
+> 	andq    $(~PTI_USER_PGTABLE_AND_PCID_MASK), \reg
+>  .endm
+> 
+> -.macro COALESCE_TLBI
+> +.macro COALESCE_TLBI scratch_reg:req
+>  #ifdef CONFIG_COALESCE_TLBI
+> +	/* No point in doing this for housekeeping CPUs */
+> +	movslq  PER_CPU_VAR(cpu_number), \scratch_reg
+> +	bt	\scratch_reg, tick_nohz_full_mask(%rip)
+> +	jnc	.Lend_tlbi_\@
 
-Applied to nand/next, thanks!
+I assume it's not possible to have a static call/branch to
+take care of all this ?
 
-[1/1] mtd: rawnand: cadence: Add support for NV-DDR interface mode
-      commit: 573df859aa087cfa38b1a085e4d486de8fbce989
+Thanks.
 
-Patche(s) should be available on mtd/linux.git and will be
-part of the next PR (provided that no robot complains by then).
-
-Kind regards,
-Miqu√®l
-
+-- 
+Frederic Weisbecker
+SUSE Labs
 
