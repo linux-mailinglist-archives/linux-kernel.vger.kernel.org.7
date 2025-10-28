@@ -1,90 +1,146 @@
-Return-Path: <linux-kernel+bounces-872840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1770EC12272
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:17:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 612B9C12275
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:20:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE1CC3B3A53
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:17:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F22834E6BC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75261A9B46;
-	Tue, 28 Oct 2025 00:17:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECE1C84A1;
+	Tue, 28 Oct 2025 00:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKlfDzGy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8F41A5B84
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997BAA92E;
+	Tue, 28 Oct 2025 00:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761610624; cv=none; b=AXK2YpKZAYrZf54zumLlN17+ndescJ8OdBIEG6hAUGwNK/e7Pxc5nNu1gaZZYv6roMxy0UlNkOiAASQU6VSJBkmh74OcRwwWKsuSe+CP9sUrozzHhL8iX+kWP94IW5CTqt/VoNqmu9kXSEQN5IwhPXzNk4P6RWom4GCwedEvI6U=
+	t=1761610800; cv=none; b=eXVB/JcrfK+ibVaxoesV2ZM2L6FIhOTM5uCY2dA3tHH2SsgwbQb2zErbjQkBDa0q29yqX6vay1mDx2VhXnYTvlH/uV1ztYk/KaawD/JnYqO9yDJo7cKnW7RX9H0Y1AT+xJVxtw4iAEBeUO5srk5oyT64HtKaEHx5YGD3HbMHEwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761610624; c=relaxed/simple;
-	bh=w8vq3OdCE3yx3J6crNdLW2+Hbc2+4qtG5alt131P2fg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=u7MCDTwPuJ9k8pr/Gat9jJwSGefRM9OvFTfgFcMKLNAcl/vEmdzkscROoAY99knX82mrL6fQZnWzeEbdvgXmWQDzhXOqRS2kyjv7Lxr3ahUWxq0/pz8E+OHemfQ0OXN3nCu5gVOH+Rb0Xx2jZyoTceXRG6whXKF3tPFRzT6ATrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431f20be851so37425245ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:17:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761610622; x=1762215422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q+BxjPTeay4IQJxgholECUU0/b+Vf640R7FfR9OqLCc=;
-        b=n9dgGZ9GSaZ8jACZbUnk7m6i4fNMcTCde1n+0KsSevqv39jYrs2+mXoX3hhMHLKMz2
-         rN6uIkfl85xVyodlyDsW8a/2Y0M/oWrMPVyDlJ5mAt6ELnYX5EKKtxjKh7+AvSq4e15K
-         Vgsbjy5w/k7Jer9ywBjDsjCMtEmj7JVtqQZAe1VpVBc1QAsctiMsKgTXIR9PoVSSyfwe
-         XPWDtZ+YPDUCsl3vOsLIeA6ELR0K1SzOlqWjcS4lDhY7MvoB14zo35WnzYRxqFH28YGe
-         8VP90hMpio9nzhuJQxaGiBEnfODWzotOfUKQmSWI91X9Zl2KCz7B+VmTaSGqmoD5U034
-         AMUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKmVNQHzbCcyZrzcSKYsxzYmIH/442zpOesb1sExp3NXCSPepvlbxemjuSRz/F8WZEqhnyC+Ro71RvF7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAgmF/IMr+8iG9m7a5n+dXAem4bK+fN/rFBrWDnSL/0Vbi88/K
-	Wz7q/S2akMr8qZ+anjbrkPiCmF7n5tEazwEHd50+91GUI5plQ+ZSVbv3xziPM8H1wuE6bROc/dR
-	9eAGYxDX33uDCrPTHbYDQuJTmerNLOkKHkkN7oluY0OMEZfyrYEZGUqZ7Z/M=
-X-Google-Smtp-Source: AGHT+IHdV4hJ9MsxTO9lThudEXMeDmJmS7gRscZENNGnQ8fX706qkGKCmrQ9S9unumIWqysBZZuolAbCiElvh75tp3uFtbmW5NhR
+	s=arc-20240116; t=1761610800; c=relaxed/simple;
+	bh=fMKpEKZyTG/cWFXRARo36nj6DVugavMF7X3PEBILtt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TbyQ5kNHaMlm92vpFLHJLHgk5W3omWEyoXiv8P3oMUgrSToXo4JtVPSiGn4ZLY+7SPGM8uEcWfHwrU8+2hOj3JE6o15tX9XKr867LI8vnYEvWjr5Jelsq+kZR/DXNu6rcLjRS9jbqq3ne+kmD4UlP/h79dXfDqmm2b8GTUCJUsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKlfDzGy; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761610799; x=1793146799;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=fMKpEKZyTG/cWFXRARo36nj6DVugavMF7X3PEBILtt4=;
+  b=LKlfDzGyP06558Wv/2HnhOwiBLHPsqdm5si/WW1sICh9qQY2W+vyJmwU
+   S5Fm2trL2pC9/mrkQbLE2NPnsCgJn8FweAjhp89sB+HhYwE+7+r6DwEzq
+   0oEPPVWbz/fddmM1Y6byW36PDxPPvYSaBviQ5AB2vVqqw5xtIjh5xumPO
+   3qOD1s604TdJ+RtcIHD5Fj5ScgzWBXP5SgXs7i+de+x/5LklEc5jQupxW
+   rivehj66+ofq25KgqwvkjJoerbGm0mroUYsaaFGBfiJ2O90SCjtV6+Bu7
+   AQ1P3OaXWoaLDPGBDjHcm1dMB6xiFm8eVNBEO2PYr0EOneXThUVEBFMnG
+   w==;
+X-CSE-ConnectionGUID: bQxU9gWtRWu617Y3P+qbwg==
+X-CSE-MsgGUID: r1u//98KQeiypLwYihcJIw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63601305"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63601305"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 17:19:58 -0700
+X-CSE-ConnectionGUID: gc5Eqv+kRBGHIR+oxhNF5A==
+X-CSE-MsgGUID: DQOmNcgvRtGtbsliWTTx5w==
+X-ExtLoop1: 1
+Received: from jjgreens-desk15.amr.corp.intel.com (HELO desk) ([10.124.222.186])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 17:19:57 -0700
+Date: Mon, 27 Oct 2025 17:19:50 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Jim Mattson <jmattson@google.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Brendan Jackman <jackmanb@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D
+ cache flush is skipped
+Message-ID: <20251028001950.feubf7qfq5irasjz@desk>
+References: <20251016200417.97003-1-seanjc@google.com>
+ <20251016200417.97003-2-seanjc@google.com>
+ <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
+ <aPe5XpjqItip9KbP@google.com>
+ <20251021233012.2k5scwldd3jzt2vb@desk>
+ <20251022012021.sbymuvzzvx4qeztf@desk>
+ <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com>
+ <20251027231721.irprdsyqd2klt4bf@desk>
+ <CALMp9eSVt22PW+WyfNvnGcOciDQ8MkX9vDmDZ+-Q2QJUH_EvHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cd8d:0:b0:430:cfe4:6e61 with SMTP id
- e9e14a558f8ab-4320f7dcd73mr30898485ab.14.1761610622187; Mon, 27 Oct 2025
- 17:17:02 -0700 (PDT)
-Date: Mon, 27 Oct 2025 17:17:02 -0700
-In-Reply-To: <z742ziobbolobstu2ljazsv3hkp27pdpfghrtzj3vfr46w2v2s@jqdpqtdgy5qn>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69000b7e.050a0220.17b81f.0004.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in raw_alloc_io_data
-From: syzbot <syzbot+a894fe5447d0543e89c9@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
-	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
-	krishnagopi487@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	matthew.brost@intel.com, rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
-	ying.huang@linux.alibaba.com, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALMp9eSVt22PW+WyfNvnGcOciDQ8MkX9vDmDZ+-Q2QJUH_EvHw@mail.gmail.com>
 
-Hello,
+On Mon, Oct 27, 2025 at 04:58:10PM -0700, Jim Mattson wrote:
+> On Mon, Oct 27, 2025 at 4:17 PM Pawan Gupta
+> <pawan.kumar.gupta@linux.intel.com> wrote:
+> >
+> > On Mon, Oct 27, 2025 at 03:03:23PM -0700, Jim Mattson wrote:
+> > > On Tue, Oct 21, 2025 at 6:20 PM Pawan Gupta
+> > > <pawan.kumar.gupta@linux.intel.com> wrote:
+> > > >
+> > > > ...
+> > > > Thinking more on this, the software sequence is only invoked when the
+> > > > system doesn't have the L1D flushing feature added by a microcode update.
+> > > > In such a case system is not expected to have a flushing VERW either, which
+> > > > was introduced after L1TF. Also, the admin needs to have a very good reason
+> > > > for not updating the microcode for 5+ years :-)
+> > >
+> > > KVM started reporting MD_CLEAR to userspace in Linux v5.2, but it
+> > > didn't report L1D_FLUSH to userspace until Linux v6.4, so there are
+> > > plenty of virtual CPUs with a flushing VERW that don't have the L1D
+> > > flushing feature.
+> >
+> > Shouldn't only the L0 hypervisor be doing the L1D_FLUSH?
+> >
+> > kvm_get_arch_capabilities()
+> > {
+> > ...
+> >         /*
+> >          * If we're doing cache flushes (either "always" or "cond")
+> >          * we will do one whenever the guest does a vmlaunch/vmresume.
+> >          * If an outer hypervisor is doing the cache flush for us
+> >          * (ARCH_CAP_SKIP_VMENTRY_L1DFLUSH), we can safely pass that
+> >          * capability to the guest too, and if EPT is disabled we're not
+> >          * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
+> >          * require a nested hypervisor to do a flush of its own.
+> >          */
+> >         if (l1tf_vmx_mitigation != VMENTER_L1D_FLUSH_NEVER)
+> >                 data |= ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
+> >
+> 
+> Unless L0 has chosen L1D_FLUSH_NEVER. :)
+> 
+> On GCE's L1TF-vulnerable hosts, we actually do an L1D flush at ASI
+> entry rather than VM-entry. ASI entries are two orders of magnitude
+> less frequent than VM-entries, so we get comparable protection to
+> L1D_FLUSH_ALWAYS at a fraction of the cost.
+> 
+> At the moment, we still do an L1D flush on emulated VM-entry, but
+> that's just because we have historically advertised
+> IA32_ARCH_CAPABILITIES.SKIP_L1DFL_VMENTRY to L1.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thanks for the background.
 
-Reported-by: syzbot+a894fe5447d0543e89c9@syzkaller.appspotmail.com
-Tested-by: syzbot+a894fe5447d0543e89c9@syzkaller.appspotmail.com
+I still don't see the problem, CPUs that are vulnerable to L1TF are also
+vulnerable to MDS. So, they don't set mmio_stale_data_clear, instead they
+set X86_FEATURE_CLEAR_CPU_BUF and execute VERW in __vmx_vcpu_run()
+regardless of whether L1D_FLUSH was done.
 
-Tested on:
-
-commit:         fd575722 Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1077d614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=609c87dcb0628493
-dashboard link: https://syzkaller.appspot.com/bug?extid=a894fe5447d0543e89c9
-compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=127b9e7c580000
-
-Note: testing is done by a robot and is best-effort only.
+But, I agree it is best to decouple L1D flush and MMIO Stale Data to be
+avoid any confusion.
 
