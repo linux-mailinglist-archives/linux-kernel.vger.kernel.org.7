@@ -1,178 +1,147 @@
-Return-Path: <linux-kernel+bounces-874309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B78C16057
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:02:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC19DC16063
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6191A62791
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:57:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8351AA5410
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAAD346A00;
-	Tue, 28 Oct 2025 16:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88CE346E61;
+	Tue, 28 Oct 2025 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfPj5uxZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxtoXs2t"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2956D2882B4;
-	Tue, 28 Oct 2025 16:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F1346E59
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670623; cv=none; b=Q1nnLWi7ukmD9X9po/Yn8OB8ImfYpyaSmCb8bpDalkdqG4nYz/oG+PTqSbB1QKTOZRJisZtZaBeysaVTO1+mTxTBbcPXduIAyKiLtkWq0SmQKWoGW3j5LPfziExIzeKqMdGTSf2MxpfPByVkm/2IRRQcHGeVYQlxI6eF6QAM8Gc=
+	t=1761670632; cv=none; b=VPpyXmyYyAM470rxxF3v3eiW3p/yw0zbpw6wAzQgpLinWIbmeQEwOb+uLrNMxzmoNeUeff5sYF8bLAeiQe6ic3VcUrVeHEV6etudzD/aG1Pn5xlrlZqn56B75ctP5QzESCIYVH/rv9/yjD0noG6kBaLFOsW4zi5YRngNNQR343I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670623; c=relaxed/simple;
-	bh=jL+q+hX5pgclGqLhztaAcUV7Iu4y5c7/CXWShf0neD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IxPsOXZ+uAB9v7Y+gltNUfnbhqEsOBgjVVlTvxcVuUljl+Ql3noBwYtXC8CW7sztAsZbtuqihUrqxH4xt/m6Oa/vLrqRsXMoIVOwZyXDx93ydNf/6aJ23gOAqVVOv8Clp5lgoPS/fyHaSM/v9vZZTYKKoWnM1pLs2VnILBD/V4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfPj5uxZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCB3C4CEE7;
-	Tue, 28 Oct 2025 16:56:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761670622;
-	bh=jL+q+hX5pgclGqLhztaAcUV7Iu4y5c7/CXWShf0neD8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SfPj5uxZTYeiNSCgD2N5QwJpnla587u0XK1spznO96mYoPO7vEMlH2urQbBREBVeJ
-	 M3Z9ub0LaIw3KyVGKmgT758C9UXOo1GfXSYKI7VYTUn2vJgQhOEGVUBGfK0vh7v2kv
-	 JxsmmGa4scR4Iprl0rTeEhKuf4/i/eovCZINXJvU4uAGqmq1gD0c93feU/TfA3sAsP
-	 iFMWQcdUgbMKc/DQjvdUI9GzTtMDY045kkHu1RUDTCnJTCT17ZYxZiOqvg9PV/l0ek
-	 KmT9XgwLfMOXYAgc1+jcsXzXhG3kmLwYlFuuDMDYAJgWrIXSOcDEyeIGfcoMwuw2Qv
-	 qdtiyFwX0jYdw==
-Message-ID: <7efc63ed-9c84-43c0-b524-f7e9e60b2846@kernel.org>
-Date: Tue, 28 Oct 2025 17:56:55 +0100
+	s=arc-20240116; t=1761670632; c=relaxed/simple;
+	bh=VWbzR5JJcNh9vxeY+++ECnRky78xd0PGd5/1QQmh4bE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VOIsb/8oygvrH++2oegX2QWEHcxV3MAhrVe94SpNx2rp0zHFtSp0oIPEzohJKCOOFZeH0g4juUON7xnarF0lBFQtm4tXfJIgERS+RC24Y2e/JWCxUIk2/C6SeIiKsfbLYCakSXnkISQnqe6jOJHIASbEjlSQm0emaRM/tKBKc7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxtoXs2t; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7833765433cso7843287b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:57:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761670630; x=1762275430; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FZSNxR68yHjL7zAo+Mv3sJfsksYIyvHAgD0mbxvBcYw=;
+        b=kxtoXs2tyYUa/OnUAm9YuC+KkVYe+0j6de840pULz+2oZhsfrvYD8yiM79I0JDuy/c
+         8SgBz4l9M8qRgo4zykYrvK/GqiYdgeGkG5uzx1RoT2fyd5RTgyqnb2oBXpSAlQqEQcc0
+         2xPaFreEStUSZ7ErmrHNFaDrsG4iSNKnkva6FZjCxzqFeMqGc874KUoqTyIPy0cmyMzV
+         oKvou+7Ha5Irg2H/6Dy68piW6Db0r7OzcIPu1+jo6ktS3sJlCTtFT30wLuRROpqHFY2L
+         H4Zl2Lr7mbsTm5d5xENsjsKyJ1q++5akki3pESzFpx7LQjkAT36kz4J4NcIyeVDWxKjq
+         nJ2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761670630; x=1762275430;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FZSNxR68yHjL7zAo+Mv3sJfsksYIyvHAgD0mbxvBcYw=;
+        b=wF5kTu1ww6T9kxRoYsb5is52I+YxUuVxQCdkQByBwtkJ+QbLA95BYpihyl6yCioRkm
+         FrOjjm8eZwoNO4jVA2gNdJVorX1n1YjAmjFZOCLWCWCdwfeou6zEGmlJYs9DECV9eTdT
+         rCy5dOrzM0fRbgpzM3pu20s5MDFHNc/AaXTbUoBhgdXoz6hbF5v7YbuQidyxDh80NX7n
+         Io9qm6ORlXW8xHNsXGKiVSVlXgMgpGyM/+Gn/q2ZVSjHBc1BbtM4vv+IBCn5ThUhyG1e
+         KIyFSHuQkoH1Ei5TyGq5u2E3FUYIhHeWl1YoVjo773lPhleAPh4IscDgEZBiIxs8hYVM
+         0CJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq20n2aodz5B0z5J099WmxrD3NYWC69+jQXsy9FyGouybKTBAjUJ98EkpgrsmFO6TA9medb2ZPDmvpbK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGCl3zRB+qRZkkYVkYSfcinBaTZVJ4qVLFEEsxWKGlWQankPwz
+	B42aXOdsJ97df7077wQcBnHiUmnbwTOM3r3TcbsenwAUauhrAVlpyYOcsIAKNAgk
+X-Gm-Gg: ASbGncsjm1J8l8WTaIErl6rYHJiJsbfHuxX3mSDp0MCyrA0uBfpSWWyv34jUjr+h/bf
+	66x1iq7dHxfoAwM/G6Pkap/R8vnb3LOf+YM8SYjhXFjsesCYp1+B6ng9h+OdHyTHMHeoqCPw9au
+	A051TRaIRHUbaZP+cm/+vfxbqpLqGHVfkJXQBAIhvq9xTbWN1x1Th1cjJK01ueMgo+0ufa26XhT
+	HaK4gLxBlPajrv7Uhq108yRJmILCGd3B9o1jGfUR6zXbsR9Feka16YYRQEkCk+BIAAlA/l6/fMp
+	w6JscIDqF+wzjCrfYAaeRR+zRCzYOZ7ngVm+9YGocXfsS+JzcERwy37i/JwGCHxeAmG28XtPF25
+	EoKVQ083bo5zMtAqrwr7pr2a0TwVxe/waw3WhakMFaTq3ahDr5fXfQ/31AUtcZiyspj1QiUzh6s
+	T2Xaa9Fz9Eg3ynaHUZUpg=
+X-Google-Smtp-Source: AGHT+IHYzX3zBX9m/HOdpIkdCjhBMv9C2sbByBuod4kCB2jxgbvqLV3QWhnzZ0epjRo8NPkrViDs8g==
+X-Received: by 2002:a05:6a00:3d4f:b0:780:7eaa:938 with SMTP id d2e1a72fcca58-7a441bde268mr6351210b3a.12.1761670629662;
+        Tue, 28 Oct 2025 09:57:09 -0700 (PDT)
+Received: from kforge.gk.pfsense.com ([103.70.166.143])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a4140699basm12133857b3a.50.2025.10.28.09.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 09:57:09 -0700 (PDT)
+From: Gopi Krishna Menon <krishnagopi487@gmail.com>
+To: andreyknvl@gmail.com,
+	gregkh@linuxfoundation.org
+Cc: Gopi Krishna Menon <krishnagopi487@gmail.com>,
+	snovitoll@gmail.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	khalid@kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+Subject: [PATCH] usb: raw-gadget: cap raw_io transfer length to KMALLOC_MAX_SIZE
+Date: Tue, 28 Oct 2025 22:26:57 +0530
+Message-ID: <20251028165659.50962-1-krishnagopi487@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
- qcom,kaanapali-camss binding
-To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
- Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
- Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
- trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
- Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
- Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
- <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
- <20251028-wonderful-olive-muskox-77f98d@kuoka>
- <ac126c63-f40c-4159-87c9-1b3d7a8dec63@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ac126c63-f40c-4159-87c9-1b3d7a8dec63@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/10/2025 16:22, Vijay Kumar Tumati wrote:
->>> +  interconnects:
->>> +    maxItems: 2
->>> +
->>> +  interconnect-names:
->>> +    items:
->>> +      - const: ahb
->>> +      - const: hf_mnoc
->> Why previously this was called hf_0 but now hf?
-> Hi Krzysztof, the interconnect driver exposes only one node 'camnoc_hf' 
+The previous commit removed the PAGE_SIZE limit on transfer length of
+raw_io buffer in order to avoid any problems with emulating USB devices
+whose full configuration descriptor exceeds PAGE_SIZE in length. However
+this also removes the upperbound on user supplied length, allowing very
+large values to be passed to the allocator.
 
-Drivers don't matter. Interconnect driver does not matter here. You
-describe this hardware, not interconnect driver.
+syzbot on fuzzing the transfer length with very large value (1.81GB)
+results in kmalloc() to fall back to the page allocator, which triggers
+a kernel warning as the page allocator cannot handle allocations more
+than MAX_PAGE_ORDER/KMALLOC_MAX_SIZE.
 
-Keep it consistent with previous devices, whichever these are.
+Since there is no limit imposed on the size of buffer for both control
+and non control transfers, cap the raw_io transfer length to
+KMALLOC_MAX_SIZE and return -EINVAL for larger transfer length to
+prevent any warnings from the page allocator.
 
-> to the camera driver, with it internally managing the voting on hf_0 and 
-> hf_1 clients. The traffic from the Real Time blocks in camera go through 
-> both HF_0 and HF_1, with the former being the primary. This change 
-> correctly represents that the BW voting is for the whole of the HF 
-> client. Please let me know if you have any further questions and we 
-> would be happy to answer. Thank you.
->>> +
->>> +  iommus:
->>> +    maxItems: 1
->>> +
->>> +  power-domains:
->>> +    items:
->>> +      - description:
->>> +          TFE0 GDSC - Thin Front End, Global Distributed Switch Controller.
->>> +      - description:
->>> +          TFE1 GDSC - Thin Front End, Global Distributed Switch Controller.
->>> +      - description:
->>> +          TFE2 GDSC - Thin Front End, Global Distributed Switch Controller.
->>> +      - description:
->>> +          Titan GDSC - Titan ISP Block Global Distributed Switch Controller.
->>> +
->>> +  power-domain-names:
->>> +    items:
->>> +      - const: tfe0
->>> +      - const: tfe1
->>> +      - const: tfe2
->> Why not using the same names as before? It really does not matter that
->> it is thin or image, all of them are the same because only the
->> difference against top matters.
-> Right, this is done to maintain the consistency with the clock driver on 
+Fixes: 37b9dd0d114a ("usb: raw-gadget: do not limit transfer length")
+Tested-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68fc07a0.a70a0220.3bf6c6.01ab.GAE@google.com/
+Signed-off-by: Gopi Krishna Menon <krishnagopi487@gmail.com>
+---
+ drivers/usb/gadget/legacy/raw_gadget.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Sorry, this makes no sense. This device has nothing to do with clock
-driver. Don't ever use clock drivers as arguments for doing something in
-completely different place.
+diff --git a/drivers/usb/gadget/legacy/raw_gadget.c b/drivers/usb/gadget/legacy/raw_gadget.c
+index b71680c58de6..46f343ba48b3 100644
+--- a/drivers/usb/gadget/legacy/raw_gadget.c
++++ b/drivers/usb/gadget/legacy/raw_gadget.c
+@@ -40,6 +40,7 @@ MODULE_LICENSE("GPL");
+ 
+ static DEFINE_IDA(driver_id_numbers);
+ #define DRIVER_DRIVER_NAME_LENGTH_MAX	32
++#define USB_RAW_IO_LENGTH_MAX KMALLOC_MAX_SIZE
+ 
+ #define RAW_EVENT_QUEUE_SIZE	16
+ 
+@@ -667,6 +668,8 @@ static void *raw_alloc_io_data(struct usb_raw_ep_io *io, void __user *ptr,
+ 		return ERR_PTR(-EINVAL);
+ 	if (!usb_raw_io_flags_valid(io->flags))
+ 		return ERR_PTR(-EINVAL);
++	if (io->length > USB_RAW_IO_LENGTH_MAX)
++		return ERR_PTR(-EINVAL);
+ 	if (get_from_user)
+ 		data = memdup_user(ptr + sizeof(*io), io->length);
+ 	else {
+-- 
+2.43.0
 
-Not mentioning that drivers don't matter much for the bindings, so I
-really do not get what you try to explain here.
-
-Best regards,
-Krzysztof
 
