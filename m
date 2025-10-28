@@ -1,159 +1,254 @@
-Return-Path: <linux-kernel+bounces-874350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A628C16180
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:16:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D83FC161AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F08834ED1FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 024ED1B27288
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:19:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1761E346E54;
-	Tue, 28 Oct 2025 17:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0AE32E6A7;
+	Tue, 28 Oct 2025 17:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UvxoeYlq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q/wr1ea3"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011066.outbound.protection.outlook.com [40.107.208.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48EE32E125
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671775; cv=none; b=m7q4GcXyUgk/8e4MQ0zNcLyBgX34d4IOfX2Neqdfge7uGYOsYLJ9zY4+McILR0BeimYzy0UobniwDJAkpYuslUmubGbTpsdn/m8HOB9riKSG6r7fwmLKlpkq2RjoRIQFC4sPTua7RnlLCy6fg3PMce1pPj1Whk6+Spjpm6QfDbQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671775; c=relaxed/simple;
-	bh=nS8+htJjqSEedj7KXDtv5XvZ98pBWn2X5YD5S56Ge9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhu7Tv4mOBU9jV1z4ZcpYDdOBpF51vFMK/G4D0Fbwhu970/4hDJ4Qu3XdNfySjbWgnhzkJ13q8T7YPA0V1DM3rPzhZw9qVWNwK/pKRIivYzwVBF6P9/ERsesMfGjWUWgkaUZxu/YWFunrETeQwY+V7JfW1u5htiPT6o5/KDfCeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UvxoeYlq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761671771;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OZZJmYzbni2EVKfNXfjvDYvkFMG8WiEx1VqOApMIszw=;
-	b=UvxoeYlqvP17HjxyG9qcd9VcG1r/VWvaTvVJK50f/TPBiYM5k9IJyT/a0y4PZ/qwAF8ORk
-	ze2psaMtUf91bc7GU8K2ZoD725X0dYoPdHBNLuOEJn4uQ+7Og4dRSw+0NmWziioxdCPW89
-	6NXVR+e7xkRgfg4sOy7l+njm9N5Ackc=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-9-QQeEszMTeIsE2Thu0zLg-1; Tue, 28 Oct 2025 13:16:09 -0400
-X-MC-Unique: 9-QQeEszMTeIsE2Thu0zLg-1
-X-Mimecast-MFC-AGG-ID: 9-QQeEszMTeIsE2Thu0zLg_1761671769
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-78e5b6f1296so135197686d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:16:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761671769; x=1762276569;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OZZJmYzbni2EVKfNXfjvDYvkFMG8WiEx1VqOApMIszw=;
-        b=YqHUaNyqUrSDnSiej4T1lesVkkHiw/4mfH0++PTL1+Hp3m2H1+2ctV0MGJneaOnm9R
-         dOqcdfWTko30mlaRkZ+17wveb2Q7tliQGNKyo4nc/k8d+QNh0F7EliqXkirwNOKpmZpJ
-         yykHHloZbXn1vSLthhUhYoJPto7Dey2e2xDjREehDmQi/W42dNXnZzfXAdAZgpgk3tsM
-         Ffxr0/y2bPjquyRJt+PZABo/xvGHmU9lWYJtiH9vejp/yrWFVstBOVni82bO+7wfBK09
-         GBoKYVKBkd3YcKBC2/PGfU9ay0/YHZ2Hq/gPs+FsNwAtPsrEpNjfQce3NIeAvRgRuD5T
-         /uWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3Zuj+6sVO6YMadSAWGzn/bdRi9gk/s0IMCSIk51cV8f0PwiFVE2kaPVA94PvXj+yJVfLl870y8lKovY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywb8+5A36p4lyqUi8g/aUU3Yd6iUi3rZQ8zjDQdQQFk6vBkRXfA
-	GjdLYWH7rJqZnAh7vFJjTwFmDDyWXkInyXLF8UrpE5a6c5dBKDMidilnwBXCcCU6S7bFgVlYm9S
-	TKosXdJk/6cyqZI2z59z8XS3PavQNuwdcZrfs+y0NCkWd1DCB6tO2rxTtbOo3iWOivQ==
-X-Gm-Gg: ASbGnctw6k6//B9JwlrMIMUvAXH/f6QgRyaHXTtroAFjNaAPJ+uiOWXwxNkMC6emd3z
-	DIXLRayd5qUSN5HyJaDrfZL4i3zcL6C7jPc/CcwxK6RTRJru5PlIB80mYA0da+rJvhLFYTBkZB6
-	y5/ML5sPiDf8wuKC/Vw0k6Mk4gQZIy5Tu52cVTCKy8BAy3uUcHeQIuy17QEjUzylRz5E3T6wXA4
-	/xA9VUAAuYpLjgvvRIjsBWTr54gXAI8YMbY3OfrbLg2/E99SQC8+Hi6nmGe1LmD0JezyDt+9Q/e
-	hYVuiPgG5ZDXI5zyCdLmEyC0F26RFCGKXWwgz9+iPS8CDUTEOzQAVx3sfKSEHmm7N80bGaRZXH6
-	b/Q==
-X-Received: by 2002:a05:6214:20c4:b0:87c:20f1:359c with SMTP id 6a1803df08f44-88008764b84mr5742786d6.11.1761671769236;
-        Tue, 28 Oct 2025 10:16:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJPAT5x1RqJKPB3Gg2m0808ux1QN3Uf5oB2BMADrFvGcoIldW5zFHxqfitjG7zUSDb9gzyhQ==
-X-Received: by 2002:a05:6214:20c4:b0:87c:20f1:359c with SMTP id 6a1803df08f44-88008764b84mr5742396d6.11.1761671768836;
-        Tue, 28 Oct 2025 10:16:08 -0700 (PDT)
-Received: from [192.168.2.110] ([70.49.125.126])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48d91a2sm81157926d6.17.2025.10.28.10.16.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 10:16:08 -0700 (PDT)
-Message-ID: <4f522b65-1ab8-4725-8da7-3f071e7919c1@redhat.com>
-Date: Tue, 28 Oct 2025 13:15:57 -0400
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7E520010C;
+	Tue, 28 Oct 2025 17:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761671912; cv=fail; b=jEbQDJ2WMOnVn0ANSgLUKW/QdF3GO5zdVcZbL5F6YfQEf9l2iaKApzMxuVmWlzp3mqgWbtdCmdu5+YAl2fV8oR9u1fPiLB48f05jAWT5sJ5lUuljE7buoBvZMXS/UNkLgb3dwoYNwSDa2DdjriXX0TE8q5WVoZGdtTI2WeUfAmw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761671912; c=relaxed/simple;
+	bh=7IgEg9FWuOn8ogY/EPWTDxp/J/69SSPkeVFpkoy/Sig=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uGZAFvLbU9OPL1V6ESKSto87M6DFniWtlkQBDwh0jqKvLzzeOeiUnnzopGa8+JxcrDRuhkYJ1htyxTgAQWJ3Plahi8YKBq3NIpON4U5HKPNt4DY1E5srS1HuZToZpsVfa4PmyH5meiw3+GlT4YhuEymRYbZJPH9s7CK410mptpI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q/wr1ea3; arc=fail smtp.client-ip=40.107.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tyHiGfjBttrm5yhann4icLZmW441BYhNwQTPiG0ZVk7CfBH2zMVBekNv8lhZD6gQjpv7q0fJMPnHKVWXS2v1b1SMSm00/DoQ08OZI735V90cVXuDAli7cQ3uxYySgnL1aQHQpVeUjDG++tkYalpmJY9Bc0q8EgJR0sR9jY/RCTclNQIw6Q0JnSmOGZe5rabKEIpEsV7OddgcqR77sS+/L6LdzvzJEJR9Gj1X2cawXZ7s/i61SqJ9ND+xOUGIOanu02uDOKeHZmrakWUH9KvajVIzRFcHcxgY5daDH5zCCfBx7/TO6VnyWOKCZIG4oRGMnqNmNbjM9cVmSnDEnKr3Bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JbADUguVEkxMs56yQ0Q4oqrvnkVneBYSs0vUGVMgezE=;
+ b=FvrPLKAxBvTewxmqmapgj4gq1r3CCpDc01vHi0ITr/FTtX17LYIzx8hox6mMKbQustvKvTGD7KYlQAXoCIn+1HFJ//P60Kbvv4qeUcGA793fb5H6TPN+Oy/LNNqwm1rSHoIa1xo5FxiFGHpgEEXKQgv1lsOKkrs2iCYZ9qV36OthETW2tEq1PouGe4zZGYWghYk/lKeHTACOkaV/qU5n0+8qCAHOrx+6MtQadbX+wUyKCWF5Jo9B2uwTczHLCTDwV9xW8pWn3obFSrlbP8BtFZRdNjOECp444tDrN7mgKv2d86kXr/yq9WeVSJr78g04ltinu/8nTUkLCWUSUsU4Cw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JbADUguVEkxMs56yQ0Q4oqrvnkVneBYSs0vUGVMgezE=;
+ b=q/wr1ea3pxpJP6by+KyWYuNtID5kvwi17dZzIgj5AUcsRs6r8vz8o+Z1/iFe4XIPTWfx9n7fcJEupHTFbA2I+0+tsSPspSYeHs/iyzQFTX9WEYk6D0x/eCfaHg/9Jmy4TE+YLIiKUwuWkLnENUmwbBAo9lEPUam5nIjAE9bYgmhO+3ux18TLeBpfFFcn6ma3Mf4EpYDZB/c5hqzcz2SyzvcDACggx1VyzhYFQET7Yz1X/JHWiQ3FRuFdMgij2Sd3j2tp04KW7jaEdLjjjDO5gezRj3tQeINvlJu/X91ccN9gwkedandx377JxgCstbyKh3x/p84Nk0Z+pBT3PUqaPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by DM4PR12MB6039.namprd12.prod.outlook.com (2603:10b6:8:aa::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 17:18:27 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 17:18:27 +0000
+Message-ID: <1772ce29-c84c-42b3-8c77-e92355fbee53@nvidia.com>
+Date: Tue, 28 Oct 2025 10:18:21 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/7] gpu: nova-core: add extra conversion functions and
+ traits
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ Alistair Popple <apopple@nvidia.com>, Joel Fernandes
+ <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
+ <20251026-nova-as-v1-5-60c78726462d@nvidia.com>
+ <CANiq72mgoW_TyWf9Nv=5t3Qij_dsDjicNpGsa=F1t+sg23vxSA@mail.gmail.com>
+ <de796658-ed1d-41f1-b153-f3d1089656ba@nvidia.com>
+ <DDU1AQDW78QI.1CBHEW03926H0@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DDU1AQDW78QI.1CBHEW03926H0@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PH7PR17CA0070.namprd17.prod.outlook.com
+ (2603:10b6:510:325::10) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: hugetlb: fix HVO crash on s390
-To: Heiko Carstens <hca@linux.ibm.com>,
- Joao Martins <joao.m.martins@oracle.com>
-Cc: osalvador@suse.de, akpm@linux-foundation.org, david@redhat.com,
- aneesh.kumar@kernel.org, borntraeger@linux.ibm.com, mike.kravetz@oracle.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-s390@vger.kernel.org
-References: <20251028153930.37107-1-luizcap@redhat.com>
- <50d815a1-8384-4eaa-8515-19d6c92425b3@oracle.com>
- <20251028161426.35377Af6-hca@linux.ibm.com>
- <5c72e064-9298-490e-b05a-16be6b5590b7@oracle.com>
- <20251028170251.11688Aa3-hca@linux.ibm.com>
-Content-Language: en-US, en-CA
-From: Luiz Capitulino <luizcap@redhat.com>
-In-Reply-To: <20251028170251.11688Aa3-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|DM4PR12MB6039:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a23d741-5a7e-40de-1041-08de1646021d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZC9oZWZXN3ZUSHA3c2cva1dmempvbEhaRzRhZGVtdnYraEYzMnZpYklSOHo1?=
+ =?utf-8?B?TGxXdEVIZkZmNmxhNW8wNnhkVlUzcGhYek4zWXl5eEZTcDVLbHg2NjBvc3Z1?=
+ =?utf-8?B?M2hxZnVvOGhIU2pyRTh2RitiVVMvQXJpZXBBajkwYlR3UEd0Qmd6c2VMdnJQ?=
+ =?utf-8?B?VVJYZ3ArbldrU2NCdkVnOVpPMS9KdDdqM3FNRTMxY3pTdUtObng0ZS9FQnVX?=
+ =?utf-8?B?Nksyb0l6MmNrNUZydTczbkRNNGExTmF3VFdIczZIQUJuNlora0V4N1pFUFBC?=
+ =?utf-8?B?TDZ5MkVsQldkcFFCcVZSTUlIUHJ1dzhhUGgxZkQvbzVITXowaUVJRVZSaGg4?=
+ =?utf-8?B?MWUxZ0FaMjNnb2c4VTByb21XNnNPWUdMc0tTVWZyR0E2aW5ZTkh6RnNVbXJ5?=
+ =?utf-8?B?Y2NKVXRLSnMxc3NqenhEeVlWRzI2VjB3TTE1TnppMTBNYisxK0VTbzFnbGdI?=
+ =?utf-8?B?T3pFZ3pXa1NlakJIeDNMT2QyeGZLdHRIUExhZ0FPWUw2SmdFR05NdlBBN255?=
+ =?utf-8?B?TUhRUHI4RkR1YkROVjcybW1JcGtSdjZCMVJHZnNRaFBwZzNuK2tWZ2M1OU1o?=
+ =?utf-8?B?bk5wNkdPMFplS3U2cHZFNVFqV1ZScTM3Vk5RK1lMNXBtaXpHQVZKY2FkVmZL?=
+ =?utf-8?B?SXlxTUdBVjVNckFzWTB1T2dFTVg0eDVHeGlZeXczWDUyVzZzMld0aHgybnRU?=
+ =?utf-8?B?M1luY0ZFZmtqTmpzdlNUNTJGcldrKzBmU0lRRFBMM3MrTytrNFhoY2JObjhJ?=
+ =?utf-8?B?aWZQUDR6OERTdHN0WmdFdkJqb3ZqSEc5Vmt6aVBJODAvOUJnWnNsNGtvZkRi?=
+ =?utf-8?B?YzFlbnlSYk9HQTB4Q2xEUWtxVU9MOUVaSm9MUXhMZjFNRVdmUm14cUlBOVQ1?=
+ =?utf-8?B?U3NLcmpBd3kvVEplN0dxOWpSeEZPQW9GR0lDY3pGaUNBSWsxYk5DS3dDa2hi?=
+ =?utf-8?B?bk5BV2NheU9VZ0FLVWhmS25SREdjSVJiOVh5bkt3SWZEVUNSekI4L1pWcmNa?=
+ =?utf-8?B?N0ZJMGNIMU1ocUxEVWNGdDl3ODVXaFlMTWpKT1VXSlY5OWwrNDFmbVRmMjZz?=
+ =?utf-8?B?VjdZZFRpZ1dEL3paU21KMkZJbFI2RzFLWXZ5eTQwaFJPeXBuTjllTXhFc2d5?=
+ =?utf-8?B?dHVRNUU3MFFyRkVVVUlUL2VaSGZadVBEd2ZZcGM5WTlYSFBNZkJKMHlhWEpz?=
+ =?utf-8?B?RzlnK3RBay91dnArZVd3aVlvVmpReURLNXdHQTlMbW5DWCtnUWg0bC91VjF4?=
+ =?utf-8?B?YmtaK1ZsY3pNVU4xMUh0SUdZcGhJaWovU0hGQ0NBcDhpczVIK1c4WXkrZ1M4?=
+ =?utf-8?B?OVdaVHhVZ3JwK2V6Z3h3TWZzQlhuSWJTNDZleHF4MHJUZXFzUUVTUi9XeVpU?=
+ =?utf-8?B?STFqSXNORHNXZVUrdjNnZFBGTXhlUWVrVVBvdEpoSWZZdVIyV1Z0alIxc0ha?=
+ =?utf-8?B?cDhrdWdmUEZlQmRWdVoyYWZMd2UzOWgrWCtodGs5NlBuOTdSQ005NFNTOEZH?=
+ =?utf-8?B?SW1mMFNJMi81K1JzZDVNaW9IQ0ZLdk85RXFVanUvQThHMVBwTnNFcmtIamRZ?=
+ =?utf-8?B?cXBzbjhIRUVqNVlDVnpuUUJsSzA1S2xVeE5DekxtNEdLazd6TmdIUjRsMnVI?=
+ =?utf-8?B?YjJOY09qNDNTMVpIdk04Vk9tMzR6MDIrbEw1UGFIQkFtMGwxdTg3K3dPWmNl?=
+ =?utf-8?B?RDJqR2NpMlpDUUw1NlEzMHllTkJUUlc4LzJTeFVwTk1lUTE3U05OZUNhdDUy?=
+ =?utf-8?B?SmwrL0VEU0Nta0lNNEpQR3plc1FKd0xhY3JSTGRCTjdxMk50dnRIQnJ1V2Fh?=
+ =?utf-8?B?UEZqV3A4b0xTUGtjUFo1UEFLaVU0NklhY0xaK1hrZGtSNzhvTVpnTzlXZGVZ?=
+ =?utf-8?B?M3Z6YzNpUmtZZ3loSzBSb0JLV2JlY2J0WGVMc25ibXkwRGdJOUNhRWUyWDgr?=
+ =?utf-8?Q?DCZ0XyD/CHv3WaLDSDJ9eKZDXskxljuQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bE44ZU9QM0dkZitaWWlacFk5Y1hWNTUybVA5Q1pvcDJaTnU0UnY4M080ajNT?=
+ =?utf-8?B?UjNmYzVCZk5ydzIxZGVLWm9jbDh2Ukl3TmY0K2FYY0dsT01TbTBjcEJBWHNv?=
+ =?utf-8?B?d0pIOERWTDc3c0VtOXRGQTkvSkxQcjZQKzBnWUszTHNVQklwKzRzK3NYWE90?=
+ =?utf-8?B?aGNBUGNoQXpOZ0duQWU0S2NneW9qRkUxbElWb1dmSVhnZ2NwdVpITXF6RGRh?=
+ =?utf-8?B?SjdIVkF4bzJGTG5SeWxJeThhcFZjSGU2WWtSNW9ETE82dmYrbnQwMEhwOVNR?=
+ =?utf-8?B?WG9IbncrZ1BPMXhQaWJHelJYaTJjVVJmUWk1TzB2U1BHR2JEYnNFSzBaa056?=
+ =?utf-8?B?dTRWMlFoQmF4dElCOXZveWRkSWlKejBvUkx3L3laUnJLMXp2T3pmbnQ3dVB1?=
+ =?utf-8?B?TlpGUjVrSkozSlJGTTlGclQ3blk5M2grU3I1UEJnbkx5RHFCRXQzbjRZMWlv?=
+ =?utf-8?B?VmpzTEY3T3RDNGgxbjBMUzNKZnFwN3Nuc2pRUzNPVVAwV0RvWGtDWldoVEhk?=
+ =?utf-8?B?N2toODlzWnMrMWRFTXcrd3JFbzZNc2dualdoblNpVzNJVFpuenpXMnhqVUNi?=
+ =?utf-8?B?RGU1a2Q0eWtZL2tXY0pUR1N1dUE2bGllV1g5ZEpIM0dDQkR2SUF6QkJIcmto?=
+ =?utf-8?B?K0gwT3N3NFdaaW12YkxaZmFQSGdESHlZWnBhRnVHK0xJUjcxOGVabVlDck81?=
+ =?utf-8?B?UTZvTjY4VndVNFdVTXRaTmpoY1RWaDltSFhzWkNrR0kvcEFUb01GbjFnREdo?=
+ =?utf-8?B?dVNRNnRzZU5LSlk1SEVyYnhIK0dCVFJRNEw5SE0rSXpuUUR1dkh1YmJjcUxu?=
+ =?utf-8?B?M2dQNUdmWHJFZ1ZDdmJ5SG9aekJNMEFtZkM1WVNHVFBMcTVvTGplbVNGU0Jo?=
+ =?utf-8?B?VnVvQWg0YU96NEd3WVBlNlo1RXQyNVNQeThVSzZKamF1WVR1UDAzTTF6OERB?=
+ =?utf-8?B?NWRySFIyQ1VaTGhJYWxRSHhLUHRUb3ZLbUQ2R0MweUVzLzJvd0dZZWNtT2xW?=
+ =?utf-8?B?eHBrSjRieDZXVDREZ1E0L1k0MFRHUG96VTBPUHFuS00rUThPS2taS0Irdkg4?=
+ =?utf-8?B?aU9pSjZxYm1WdGNLMktzMkJYenlMbkQ4T0ZoditSd3dWRnFtSlhCTHVLYXho?=
+ =?utf-8?B?enZSanN5UkQzZWRwSWdQOHN3MnZYWTBDVThQTHZrcnBGQUhQSWdOZzkyRzZ0?=
+ =?utf-8?B?VXFIbFk2cWdzTWhLd052VFpvQ0U2N1RJTTN4WWpZdm5PZHQ5S0srSCtDMTY1?=
+ =?utf-8?B?eU00bVNmQWozcWg2WEJ5MEJKbFUwbmY0SEdFSkdCdjdBSzlYMkppc2NWZ2ky?=
+ =?utf-8?B?czlqbFF5dW01QmRLZ3JZbFVFdlJ1cTlTdWVwTXZiWUUrcDZXR3c3SWdTanNI?=
+ =?utf-8?B?UFB0WGRsa1J2WUk1VFRLODNnRlRRMnFOSGdmalVSSnBjdnZkbWR1azkxSHpM?=
+ =?utf-8?B?K2R5eWNzNVllYU9yeEJ2TFpqbnp2R0U3VDcvQ052eXdUQlltR2E3YWxuc1dj?=
+ =?utf-8?B?WWdZVGJaVVRsZnc3N0U4RkU5Q3EvZVNzTjJ6UUo5b010NWJlV1ZyRSt0ZzJ4?=
+ =?utf-8?B?MU1vaFN3Q2U1NjhVYXhkZ0RjUUgzV3ZwTXlFbFRTeFlVOUhNRjFrZlV6SGRr?=
+ =?utf-8?B?M2ltUlNYWVdTdmI5VzF3aGExRmhlaksxMWhUZnFjN3pqeFRHZEhwM1RkQ09F?=
+ =?utf-8?B?b2dIUXh6S3plMCtveGpKWVdXK2VadFY0SUtlTG5aTDBEY2pCNXFJUkE1aXRI?=
+ =?utf-8?B?OVpHbE9LUE82dXhJRGI4eTVnV3Z3MVM5Rk5jZno5K0pDd3BUMVYrSlI5OG5N?=
+ =?utf-8?B?SUZXZzhjdVR5V0diNE5wd1NMVExwTC9OQkFkdVFGUUpwSkJGM2pmTmwxS0NR?=
+ =?utf-8?B?Z0RIbnp5VDdYV0RPVXpaNlMyQVJmUkYzSjNsdXRzWkpieHphK3htc3JzbXEx?=
+ =?utf-8?B?Y1UyKytEUEQrV0tvUlJ0bVRSRFNiMS91Ykx2OUZSVEJqdm5aNUNuLzZPTExD?=
+ =?utf-8?B?cEgwVFZvd1J2R2RKQVV0TWZLa09tZUMrVmxHelJBbUQ1cGlnZFlzQXJqdDZM?=
+ =?utf-8?B?aFVLeDhvb2hqYU1SK010MnRVNi9hUEk5d2hwYW41UEpNU29VdkFMWkxTemh4?=
+ =?utf-8?Q?l78xjEl2NwvM+lXERwttzY7VU?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a23d741-5a7e-40de-1041-08de1646021d
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 17:18:27.4447
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jLMzNGf8KkJNcWjkveesDhMiYoRcWvRoSJD+t0C4EXPWdd5LcW/az4OZlh2NpgLbYBIkTDMZGb8Ohx97EUvXkA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6039
 
-On 2025-10-28 13:02, Heiko Carstens wrote:
-> On Tue, Oct 28, 2025 at 04:48:57PM +0000, Joao Martins wrote:
->> On 28/10/2025 16:14, Heiko Carstens wrote:
->>> On Tue, Oct 28, 2025 at 04:05:45PM +0000, Joao Martins wrote:
->>>>> +static inline void vmemmap_flush_tlb_all(void)
->>>>> +{
->>>>> +#ifdef CONFIG_S390
->>>>> +	__tlb_flush_kernel();
->>>>> +#else
->>>>> +	flush_tlb_all();
->>>>> +#endif
->>>>> +}
->>>>> +
->>>>
->>>> Wouldn't a better fix be to implement flush_tlb_all() in
->>>> s390/include/asm/tlbflush.h since that aliases to __tlb_flush_kernel()?
+On 10/28/25 7:44 AM, Alexandre Courbot wrote:
+> On Tue Oct 28, 2025 at 3:46 AM JST, John Hubbard wrote:
+>> On 10/26/25 9:44 AM, Miguel Ojeda wrote:
+>>> On Sun, Oct 26, 2025 at 3:40 PM Alexandre Courbot <acourbot@nvidia.com> wrote:
+>> ...
+>>
+>>> Regarding the `.into_as()` name, it makes sense, but it can be a bit
+>>> surprising when reading out of context... The standalone functions are
+>>> super clear, in comparison. But I am not sure what could be better.
+>>> `into_in_this_arch()` or similar could emphasize that this will only
+>>> work in certain architectures, i.e. it is "an `into()` for this arch"
+>>> rather than the general one.
+>>> That would go well with the idea that you didn't implement it for
+>>> other obvious types, which I guess was to avoid developers using this
+>>> instead of `into()` by mistake, right?
 >>>
->>> The question is rather what is flush_tlb_all() supposed to flush? Is
->>> it supposed to flush only tlb entries corresponding to the kernel
->>> address space, or should it flush just everything?
->>>
->> The latter i.e. everything
 >>
->> At least as far as I understand
+>> Exactly: the into-as, from-as naming suffers from *appearing* to be
+>> familiar and readable, but actually, the naming gives no hint as to
+>> what it is really doing--nor how it is subtly different from the
+>> basic from/as/into standard conversions.
 >>
->>> Within this context it looks like only tlb flushing for the kernel
->>> address space is required(?)
+>> Instead, we need to add something (almost anything) to the name, to
+>> make it clearly different from the from/as/into.
 >>
->> That's correct. We are changing the vmemmap which is in the kernel address
->> space, so that's the intent.
->>
->> flush_tlb_all() however is the *closest* equivalent to this that's behind an
->> arch generic API i.e. flushing kernel address space on all CPUs TLBs. IIUC, x86
->> when doing flush_tlb_kernel_range with enough pages it switches to flush_tlb_all
->> (these days on modern AMDs it's even one instruction solely in the calling CPU).
+>> into_for_arch() goes in that direction, for example.
 > 
-> Considering that flush_tlb_all() should be mapped to __tlb_flush_global()
-> and not __tlb_flush_kernel() on s390.
+> I'd like to get more input on that, for I am not sure how we can stay
+> succint in the naming, while carrying the relevant information.
 
-You're right.
+That's too many constraints: if you want an extremely short name
+that carries information, *and* avoids (as requested here) confusion
+with existing "as" methods, then...you can't.
 
-> However if there is only a need to flush tlb entries for the complete(?)
-> kernel address space, then I'd rather propose a new tlb_flush_kernel()
-> instead of a big hammer. If I'm not mistaken flush_tlb_kernel_range()
-> exists for just avoiding that. And if architectures can avoid a global
-> flush of _all_ tlb entries then that should be made possible.
+But you are allowed to be less succinct here, because the more
+specialized and rare a case is, the longer you can make the name.
+And here, you are definitely allowed a few more characters.
 
-Should we take a v2 doing your suggestion above for now and work on
-the tlb_flush_kernel() idea as a follow up improvement? At least we
-go from crashing to flushing more than we should...
+
+> `into_arch` does not sound much more explanatory than `into_as` - the
+> intent with the latter was to say "I would normally have done an `as`,
+> but instead here is a method that attests that this operations is indeed
+> lossless and safe".
+> 
+> The best naming scheme I could think of is to have the methods carry the
+> source or destination types: e.g. `from_usize` or `into_usize` (like the
+> standalone functions), but that would require defining as many traits,
+> and increase the number of imports - if we go that way, we might just as
+> well drop the traits completely and use the standalone functions.
+
+Accurate names are really desirable; maybe we shouldn't completely
+close the door to the above approach.
+
+thanks,
+John Hubbard
+
+> 
+> `into_native` also comes to mind, but like `arch`, it can mean many
+> things depending on the context.
+> 
+> ... I think I still believe that `into_as` is the clearest name, once
+> one has read the documentation for the trait - which one should be
+> expected to do anyway. :)
 
 
