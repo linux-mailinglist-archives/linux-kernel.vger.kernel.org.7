@@ -1,60 +1,72 @@
-Return-Path: <linux-kernel+bounces-873103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E52C131AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:18:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67FE4C132E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:33:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D38854EDCA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:18:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A44094FF49C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CFA27F736;
-	Tue, 28 Oct 2025 06:18:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB72226ED29;
+	Tue, 28 Oct 2025 06:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Q0zkTcDR"
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com [113.46.200.226])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="aErX//JP"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B8D78F29
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E97029B8E5;
+	Tue, 28 Oct 2025 06:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761632333; cv=none; b=kZ83UFBYkP+SIcGHaDTfuBWffLeBDdxb9oCvxyw1qLgoJBW+LV+OrXpPcJ1b47rsLiHRO6GcpLxV2SjR1LaxOjouuXrYFUXR8ORpLcPBH4XtWtRZZCGHrNxdXBeSxj0ueaSQC/xlHYEQiUPTbtExBgS7Sa83xTaHJGRCwk9MkuM=
+	t=1761633110; cv=none; b=oPYvfiVUbe81PIEmBxHQ4CU8pIA92Rrtmr9p/jjX3AVoqyB9xR8ZImkZ9o1KwV/I4i8n00yAjpX0ZVhZHoBA5MDDK/jCWEXGEVA+bfEpvJLaSLnIHOHWHTnSxi3j91oQQcwX0wybkgN/A+0ror0+q+8kIyJ8aQFCr3hbHG+vO/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761632333; c=relaxed/simple;
-	bh=4nEEcZQrJS15+2zFMypct11dj67w7o5mAkbMFUFV+rY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V67ykEZ2P042W0Fl5K319S1nVFCncojqQ0M2XU0L9daWLWCqn6yRuH3PskApQerzS5byHYBP+UpBANj7bStOr5OyOfmqSb4wemzoaLYfMoCVy6v7cOTOSMswM0vpufSsfjhDYKxhQ4pWDcCMTZqrfsJ+H9HJo7X53DR38GnG2l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Q0zkTcDR; arc=none smtp.client-ip=113.46.200.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=Xq9ZpBKijRP4yN0dW1eTvhFf2QVdu1P/bLYVpE2xac4=;
-	b=Q0zkTcDRWzoy2qrLKW917T7U0pYBoZvoP+MlBy/OSKPYNdKxaJLI58w5moDfgBIUk9jUqXyF2
-	u9/Cuuw3E29oFpSTKnQNPBWxdV9+opsJQreD3AtklCeJT7zqWgXUP6IHN1cGUbHVY3L1h+Kv5yb
-	QHr/QpepM3Q34x9FoTwZLLc=
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cwgDC3bNxzKm6s;
-	Tue, 28 Oct 2025 14:18:19 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9087F14027A;
-	Tue, 28 Oct 2025 14:18:47 +0800 (CST)
-Received: from huawei.com (10.50.85.135) by dggpemf200018.china.huawei.com
- (7.185.36.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
- 2025 14:18:46 +0800
-From: Quanmin Yan <yanquanmin1@huawei.com>
-To: <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<yanquanmin1@huawei.com>, <wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-Subject: [PATCH] mm/damon/stat: set last_refresh_jiffies to jiffies at startup
-Date: Tue, 28 Oct 2025 14:19:27 +0800
-Message-ID: <20251028061927.1378746-1-yanquanmin1@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761633110; c=relaxed/simple;
+	bh=kRRUofgeos3ZtqWPJdn9BGVMz9ruxa9wz+KdE97I8AM=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=K4HmTkiThScLvdBAQO/RGOmcYzg7aYtIg/PRKHLKtxh1D8hWXjY3KA7gp2um6MpJh39BxVkHqgjtBQDPDec2r0FvtUluv4uOU0hJQ/Wy+G24U44AZpVuwleW8MxOHJdMMWzLDAZBKQvy/5n4q7WZLferdZ/JAyhJvR5Z/SITA30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=aErX//JP; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1761632799;
+	bh=pi1zXcr5RpNJ+LWrYVRPR8sqQuBNG7+Xw9qcszIoFM4=;
+	h=From:To:Cc:Subject:Date;
+	b=aErX//JPDEPZGG8rmiRIdO0sFYckDF+Oa7ZRtO0278rzCOlG7Is+ZLDcynWPlSYLQ
+	 cIyb8hjh/A+DhlG3aGjCZA+JxHgEpMxvD0m/xgPWS3fGayffKxh2q48XfmFuZfJ3EZ
+	 B+LQug4IUVs7Zb2jr7DpV1Jzd117xs4LH3iYsKTw=
+Received: from dcitdc.dci.com ([61.220.30.51])
+	by newxmesmtplogicsvrszc43-0.qq.com (NewEsmtp) with SMTP
+	id 5189CEA7; Tue, 28 Oct 2025 14:20:24 +0800
+X-QQ-mid: xmsmtpt1761632424ti6wb9lir
+Message-ID: <tencent_EA7267F6C936BBDE7977C3076819C9BA8D08@qq.com>
+X-QQ-XMAILINFO: NAuAIaytDrXp1QDAZDTmKMpfa75ZonkIdJUkMhBt1OUgMrQzXFl9JXtmDRFzvX
+	 aDLhNZEqZ2jrlJ20GkyBgreWHhn/pSI9rQ3/ZWKWvxX6MmLIFAAU8lBNsrIxytAdkkgC3e2QksDl
+	 fDMgIofmu7Yho3eE0WVMxO/sdLeTAfjnkyf49hC8tSr/wBhdIhDHRKDvvMqfBiYG7A3vIWl0eieH
+	 f0Rpwvsq1y7H0iChqsjXKtXP1ZpeANgw7H2dHIL3VNs2pUPdomXWP5IZDVWYyFoqmsHm+Qh/POU/
+	 4UQvtpCq4jAp1zIw1yZFSkO1hg6K3QGRaR3G+0gfv+bowztobV9Ak2fzZ9UdG93WA8UVZQj7gjq6
+	 rzrRHJuicr4Bsg3NlN9ofuAf9Bxagcui9ksX1z31bhAQucyNZd/nYCkk8uO5wZfLFEMvvjeYR+f8
+	 P/0jZhs8y3J7WTev4HwpEfRNIcnN5obxcPnm/UfxO5AkDO77bvCCFo/Djwt0o2fc0tqN5ail53vY
+	 z7/tg16OR1Hr/Ml/WX/XZBPZr3LkJqew9ZS+rYFje4HLpyt/l0RQuylaJdj/u6QUKkdt8eyBNVJo
+	 uYEe8IN95QwdYhpSg4F21XhooSzCr4ecN5QH/ONL0opMR21OWwzsv1G68CRxGBxJUfBxz3LNRb6H
+	 Mwv1RNLQrQ8TrWbcWcMGhTMcyHs9pRfOe+xT66al7C2hYUmii0C5ino8OXOOGgit6GD6S66dsjtm
+	 Epi7dps797rlkpLddkhJACRZuw3la3hdiHP7AUTn7VoGTQrXhtqEb8B+rPe20C0Br9Zbs3kTVMQd
+	 CejNihFBw2MTGW39fstBXe6RwQ//LNdkpuRnsDCdl3yk55KjByKHIRds7KPJCg9oaramsLM+937T
+	 bl11CutpI+D3ZCWtQ9ajA70gmTJ3pTLlEFlE+CZ7LHD387r9FAZWz7mpDQf1JgcJEyPL33X9VrtD
+	 pxlaE10+iv8n26g2uPyRxL3XPNwJkTKUpuwVhQPhDzMrviR0ucSjcZxKJUzEWT
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: "Shang song (Lenovo)" <shangsong2@foxmail.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	shangsong2@lenovo.com,
+	"Shang song (Lenovo)" <shangsong2@foxmail.com>
+Subject: [PATCH v2 1/1] ACPI: PRM: Skip the initialization when boot from legacy BIOS
+Date: Tue, 28 Oct 2025 02:20:13 -0400
+X-OQ-MSGID: <20251028062014.3090136-1-shangsong2@foxmail.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,46 +74,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf200018.china.huawei.com (7.185.36.31)
 
-In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
-avoid unnecessarily frequent stat update.
+To address the confusion caused by the misleading "Failed to find VA for GUID..."
+message during legacy BIOS boot, making 'EFI_RUNTIME_SERVICES's earlier judgment
+can prevent this false alert.
 
-On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
-jiffies wrap bugs appear earlier. However, this causes time_before_eq()
-in DAMON_STAT to unexpectedly return true during the first 5 minutes
-after boot on 32-bit systems (see [1] for more explanation, which fixes
-another jiffies-related issue in DAMON). As a result, DAMON_STAT does not
-update any monitoring results during that period, which can be more
-confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
-
-Fix it by setting last_refresh_jiffies to jiffies at startup.
-
-[1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
-
-Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
-Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
+Signed-off-by: Shang song (Lenovo) <shangsong2@foxmail.com>
 ---
- mm/damon/stat.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/mm/damon/stat.c b/mm/damon/stat.c
-index 6c4503d2aee3..6dc3e18de910 100644
---- a/mm/damon/stat.c
-+++ b/mm/damon/stat.c
-@@ -132,6 +132,9 @@ static int damon_stat_damon_call_fn(void *data)
- 	struct damon_ctx *c = data;
- 	static unsigned long last_refresh_jiffies;
+Changes in v2:
+  - Add comment for the code update.
+
+ drivers/acpi/prmt.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
+index 6792d4385eee..4457ff17f878 100644
+--- a/drivers/acpi/prmt.c
++++ b/drivers/acpi/prmt.c
+@@ -392,6 +392,14 @@ void __init init_prmt(void)
+ 	if (ACPI_FAILURE(status))
+ 		return;
  
-+	if (unlikely(!last_refresh_jiffies))
-+		last_refresh_jiffies = jiffies;
++	/*
++	 * Return immediately if EFI_RUNTIME_SERVICES is not enabled.
++	 */
++	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
++		pr_err("PRM: EFI runtime services unavailable\n");
++		return;
++	}
 +
- 	/* avoid unnecessarily frequent stat update */
- 	if (time_before_eq(jiffies, last_refresh_jiffies +
- 				msecs_to_jiffies(5 * MSEC_PER_SEC)))
+ 	mc = acpi_table_parse_entries(ACPI_SIG_PRMT, sizeof(struct acpi_table_prmt) +
+ 					  sizeof (struct acpi_table_prmt_header),
+ 					  0, acpi_parse_prmt, 0);
+@@ -404,11 +412,6 @@ void __init init_prmt(void)
+ 
+ 	pr_info("PRM: found %u modules\n", mc);
+ 
+-	if (!efi_enabled(EFI_RUNTIME_SERVICES)) {
+-		pr_err("PRM: EFI runtime services unavailable\n");
+-		return;
+-	}
+-
+ 	status = acpi_install_address_space_handler(ACPI_ROOT_OBJECT,
+ 						    ACPI_ADR_SPACE_PLATFORM_RT,
+ 						    &acpi_platformrt_space_handler,
 -- 
-2.43.0
+2.43.7
 
 
