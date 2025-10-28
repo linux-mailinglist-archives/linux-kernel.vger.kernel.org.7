@@ -1,127 +1,134 @@
-Return-Path: <linux-kernel+bounces-873665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC1CC1461D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:32:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C061DC14626
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 29A5B4EC797
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:31:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C9525006BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534A730C609;
-	Tue, 28 Oct 2025 11:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DC630C373;
+	Tue, 28 Oct 2025 11:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ui5STRnS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A5gZQ4j0"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221FB304982;
-	Tue, 28 Oct 2025 11:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2393090E8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761651013; cv=none; b=W11T2oX7pBT+js47/UkNbxusczW5f4wNkQrMKYIlruwBiCM/5X9xxAswibUGDmQDdJpD4nu9bZm2VMZtLA72MsCrlP3ZGTgNNjDFckWDqQQZ5ZqeiKwWdpo/ehsA6lZpoyM3WGWIjTmdABFiz83jvd2EqoSuUtDYiXBZ1QFfL/0=
+	t=1761651037; cv=none; b=o1aNoQ6xB2OANHK5K0B9PkbxDYWscS5yT7T/ktvp7U6ynwndPun5oiHZerOxaa8f0a/Q9cNfQgJSWzDFrUUGpQEqNKGr5QKng6mvE0LwCqhwJ2DHaYNdVYvCESx4tT7U6jyJiQmiPfqQKTzo6VTH3XXD5UqxTKkyAF6V2C/fZmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761651013; c=relaxed/simple;
-	bh=RYyZ8LxwRvrHfyL3AnEZcTl4DBVEIygndMncgI0gpA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S0Je8XsKR7jhsilWDqDqEjqQpKma5vJFOr4bFl31GKAaMATXUQpvx41N8ny4Erw6WwS86Euiw4HXjpRwh7S0ougSLAMhcRkyrkPhYaoKLkyVAhzS791hrsmsJyFwY0JBf2d6j87mJNE0TqFhDr4SXyqeIrk/WakolXm3lbJNZmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ui5STRnS; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S41A9X019381;
-	Tue, 28 Oct 2025 11:29:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=RYyZ8L
-	xwRvrHfyL3AnEZcTl4DBVEIygndMncgI0gpA0=; b=Ui5STRnSff13qOdsAiUUqR
-	HKT8I0s7Ks1Elb9hEMOGYisfKhF6qjoi5lvAJrSJhtsbtW/SX+KaMDvV+NteHFpv
-	ftfiOL8zscCuaI7e3fPTvMv8Fs7MSTFIvjpu18RFMk7W4VUhHbkRujFnFC24EBnw
-	RKSnd7x1r3DXUYtcLbUqvNQSUZKGgHJdP01blDigGed+Tga8oKagWaORjE9n9iaH
-	57p/OabpebbUqPvl9vyrh4cCAai2wsShOuO8a4Zniik6+Y+FIh/tW7cfZaM6vg1i
-	A3rTUjM0EI5Sk96Vxh/83UutATbSFcM2aVYt4y/xwXhkkSOGLm49aICbr2TlQ8TQ
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0mys3egy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 11:29:54 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59S9uOqR006796;
-	Tue, 28 Oct 2025 11:29:54 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a1bk124ku-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 11:29:53 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59SBTqWm39977448
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 11:29:52 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EF922004B;
-	Tue, 28 Oct 2025 11:29:52 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 200B520040;
-	Tue, 28 Oct 2025 11:29:52 +0000 (GMT)
-Received: from li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com (unknown [9.155.201.149])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 28 Oct 2025 11:29:52 +0000 (GMT)
-Date: Tue, 28 Oct 2025 12:29:50 +0100
-From: Jan Polensky <japo@linux.ibm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-        Tejun Heo <tj@kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>, cgroups@vger.kernel.org,
-        aubrey.li@linux.intel.com, yu.c.chen@intel.com
-Subject: Re: [tip:sched/core] [sched]  b079d93796:
- WARNING:possible_recursive_locking_detected_migration_is_trying_to_acquire_lock:at:set_cpus_allowed_force_but_task_is_already_holding_lock:at:cpu_stopper_thread
-Message-ID: <aQCpLifOIy1Ct4tL@li-276bd24c-2dcc-11b2-a85c-945b6f05615c.ibm.com>
-References: <202510271206.24495a68-lkp@intel.com>
- <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
- <20251028090324.GQ4068168@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761651037; c=relaxed/simple;
+	bh=uLz1nCOc13P72Z9cLqgJATuBA1im88R9TxqI9YQCXBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tH80ljcZKVaLyvk5nyajbYdC0tuf8FIK13VHPTuvyv6A5AjBNXfzhrFvi4Daxta4D7TJEkzjZyACcvGVmNbkyeRoieMxubICBkuNEJFUT0kZgqZJEvLgXol8MLCz44H4LOCiO2bZgoHbw3bUlePvV6tidMz0fr3BKvKSPJ58WYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A5gZQ4j0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761651034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6wj7YAztZrM6wj1+S+3q5JHWOPj4KIXwKeK9N2bqLfU=;
+	b=A5gZQ4j0xLIsGcgO2HUNkY0U3Ui72riAn6/pLfsfJd7vhw4IgnyBoh2JVae9HT6iOgOwoJ
+	uVgnFuqWFL97Ame9GmTrOYjQ87bSePLcY3PN9MgPT014WDkm7JiVKr7Uh4Lx3s00auQPUV
+	rOJPnxtTyj+5Q5dRTbHvP5VcPmJ8v5M=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-108-JJSED9FCOHmaY4sL7LLmzQ-1; Tue, 28 Oct 2025 07:30:32 -0400
+X-MC-Unique: JJSED9FCOHmaY4sL7LLmzQ-1
+X-Mimecast-MFC-AGG-ID: JJSED9FCOHmaY4sL7LLmzQ_1761651032
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-475db4369b1so25258445e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:30:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761651031; x=1762255831;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6wj7YAztZrM6wj1+S+3q5JHWOPj4KIXwKeK9N2bqLfU=;
+        b=l7bL+pbuJAakLSlWkhVD9T2xGN0GU5YGGnshxPVMuVWN+G4bHSgVSznNRAEKHE1hOP
+         bPfNN9pc7iG1F9Db/h2h7R2NuKVCQzlukaVpVwhu1xwk7iRffrzWa69XS7/o5K1fqXeg
+         dAFMZcUdvOXejYZ8UN71/SCwwVXthEMA06MQEtVIO/GoYeGMu2xGdv3e7nGe2LNxbP4S
+         3vH58Bok13OXVG4XDI4fPlP+Yf3YstpbFxHAGPWzpsJPx7al77OyjGfzAOj/yLwY2rps
+         AE1dV/0oPOgpefjRc8P+tBd3O8MVr6iE+k+eOONKpgw+F1RAV67caB+1L5zOpwR6D1EF
+         tOKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqJF7VRQYVu8UvFPXPzzVOx9fd+k9W3P9NtiWk+yHL173mXuYxhoSg/TZyDqsezU7nXnZFTDkS+q0vVdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPKHARIQl9p6PuDJaIWc0eTwXgjb99ACuBnlq09YWH7ZqmDlZi
+	avWEhg5eGMPC9u5PkNS0JrTxNInB7x+w0jo6Xzt168z4dyQ4qhK5QqW++uhAQVRniAY5ACXFOud
+	NrFmcw3A3uODdKE9Q3S07TY//yqSVPQd2D7N8KzpnP13FCq6992KCvMafJQp5WI4kfg==
+X-Gm-Gg: ASbGncvF5u9CVuWo+StlWcquTw7aDjO0ApmT0M/+LWaos6Jr40aX/VSbM0eTiruVT9N
+	4oXrgLoPnY9YWdI9L3+djkYSO38P7OLbYYJYIGgylOwwL9O2M/kXaZMU8TZL97jhOlZim4aRrVo
+	Tu9wqm79uSeEDt7/9R/sp4xjvm4G1Jy2lXxR1ECdSEMAS2TI8nWbo0Dj4qN9hOtY7M7vEl8tQJI
+	PcKDFhxenSAHbcmSoli0m2QWSFXJFxO0luTE2PNI+haKYBd9HMEhNoMQ05C/sRK181+2g3wPa5f
+	ExzPKk1mWSPP8bWaHp72HKHAsjJmFXn8EJiX+BYJCeF9+byJ693WsBkEXCov1S5c4kMUdzbqrh5
+	evn+Uk7JUN7ydrK7k0V5mBs1mxdEDvLqImDxwZgykVnVzEpA=
+X-Received: by 2002:a05:600c:4446:b0:475:da13:2566 with SMTP id 5b1f17b1804b1-47717e6095fmr25034685e9.35.1761651031639;
+        Tue, 28 Oct 2025 04:30:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG1UoWkDkAxEnPYbIqlYF36LNiS1od7f4r/oylsQ8lGjLYMkIaaEI5SdiPojR2VWZlNQPGbIA==
+X-Received: by 2002:a05:600c:4446:b0:475:da13:2566 with SMTP id 5b1f17b1804b1-47717e6095fmr25034235e9.35.1761651031148;
+        Tue, 28 Oct 2025 04:30:31 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd489fa4sm187152685e9.16.2025.10.28.04.30.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 04:30:30 -0700 (PDT)
+Message-ID: <c10939d2-437e-47fb-81e9-05723442c935@redhat.com>
+Date: Tue, 28 Oct 2025 12:30:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028090324.GQ4068168@noisy.programming.kicks-ass.net>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BnQHA89s6j3pnB4fu31QcCgwqTPIlcYA
-X-Authority-Analysis: v=2.4 cv=ct2WUl4i c=1 sm=1 tr=0 ts=6900a932 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=-MEPCI2RMl-VrW-zF0sA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zZCYzV9kfG8A:10 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxMCBTYWx0ZWRfXyjhRkgSjL5cA
- VNzoMBa6acvDZ3/4iat8ipQUSmf2Vsq99hX6wOUF5cZaWAHV1VNGJksdkd2VE2f0gXgO0N2JeVk
- LZfhKmIGxWYap1gYZwstoFRA4YOk9M8LSdAvHv18PeC31PDDQpWq00ot1qxs/LecXmlfF9ZnyfQ
- ileNQEKWx4Ig2cpZFAJyPKQOH9H11quQK2QFfnQ7tx/mAUVWmoGaxGpp66oZBRHDpUgEBAfyetQ
- O6YvCOU5fYE/e4676+HFdHK4J8HGFc3Y+MqWkg7PD6eT9slFcq80U/qOyNJ7IT3l7K4cUmNKAK2
- 63uR4SvgYRoClsb1AF3LjTJAvrPixM5mxIifHDmp13D555wQkTvDWgHmqLe97MW+WjaJS4nbOgj
- fVd6N6iCcKrbOWrBuxoLXmnXjqzgFg==
-X-Proofpoint-GUID: BnQHA89s6j3pnB4fu31QcCgwqTPIlcYA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 phishscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- spamscore=0 adultscore=0 priorityscore=1501 clxscore=1011 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250010
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v3 1/3] net,mptcp: fix proto fallback detection with
+ BPF sockmap
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
+Cc: stable@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
+ John Fastabend <john.fastabend@gmail.com>, Eric Dumazet
+ <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Willem de Bruijn <willemb@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Simon Horman <horms@kernel.org>, Matthieu Baerts <matttbe@kernel.org>,
+ Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
+ Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20251023125450.105859-1-jiayuan.chen@linux.dev>
+ <20251023125450.105859-2-jiayuan.chen@linux.dev>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20251023125450.105859-2-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 28, 2025 at 10:03:24AM +0100, Peter Zijlstra wrote:
-> On Mon, Oct 27, 2025 at 12:01:33PM +0100, Peter Zijlstra wrote:
->
-> Could someone confirm this fixes the problem?
->
-Tested-by: Jan Polensky <japo@linux.ibm.com>
+On 10/23/25 2:54 PM, Jiayuan Chen wrote:
+> When the server has MPTCP enabled but receives a non-MP-capable request
+> from a client, it calls mptcp_fallback_tcp_ops().
+> 
+> Since non-MPTCP connections are allowed to use sockmap, which replaces
+> sk->sk_prot, using sk->sk_prot to determine the IP version in
+> mptcp_fallback_tcp_ops() becomes unreliable. This can lead to assigning
+> incorrect ops to sk->sk_socket->ops.
 
-Thank you for the quick fix. I’ve verified the patch on s390x and can confirm that it resolves the
-spin lock issue.
+I don't see how sockmap could modify the to-be-accepted socket sk_prot
+before mptcp_fallback_tcp_ops(), as such call happens before the fd is
+installed, and AFAICS sockmap can only fetch sockets via fds.
+
+Is this patch needed?
+
+/P
+
 
