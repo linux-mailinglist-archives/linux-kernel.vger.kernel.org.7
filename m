@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-874835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21DDC17322
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:31:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BB2C1732B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E021B26095
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:31:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F2C3A415A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F573570A3;
-	Tue, 28 Oct 2025 22:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FAEB217F53;
+	Tue, 28 Oct 2025 22:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L8oXu/T6"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="huJOEh5w"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C38F3563CE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326AF301716
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761690657; cv=none; b=ozVHhxJ0F3BwdGGogkPojwF/yNNjT7BK7xYEfZ1kZ3MXXqFRrrDwYucc3KQTqRIBKcWPGKS3U4pUCslu6LP8bkvoBhM5rW7MZyXT+xJvlv057mkbdWPO4V36XwSK73OnRQvUEQ3KxwyB1+Mn0UNcnmxzHsAjaUPFGxms5kEqnMc=
+	t=1761690677; cv=none; b=gnGZCO11HpVJxU+pimyKHix1kT9N8XSdVzcDKEmOVSPZqRBjC/BbwLZkYoLeClVocAMk2hAq7IyJrbK8VV4taUpBgfqpTvRFzrN+WFpGbcHyql/vneYDDn5CfRbv5g0O3BkzpPlwMAzx9e2iySpdYdESr88VqskRwyg/1Bcj2i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761690657; c=relaxed/simple;
-	bh=sx9Mpldj6UmZjYtPI1GsMsto99Ag0oVxN4vN/BoY9V0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gOc6M3W+XZiMCKYL5AEoibMVIrudt9W3Tbi+l93McQMcBHMO/Wmh4ZYDq4776xyFfJOmfrLsmTqiZZxybYCMBl8g/25dZ8pkoQ2BbE/bx5JOKBucKc/EtdmYgPfC+XlOej76swi+A4bQ7fzJGgqeGIIXJLpNjUQIFl9UCmBiGWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L8oXu/T6; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-475dd559b0bso51755355e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:54 -0700 (PDT)
+	s=arc-20240116; t=1761690677; c=relaxed/simple;
+	bh=4f/E8wYsA6IVOnqk1n/iSdAEWxxL1oai9Ck3rOXgjDE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=BUo1cY5AMkwxj2fKY+EBZdn6dHL18nzbrTqhb6XDQPSfb8TYzkWnQdvnEjDEtAbYHuKOUAFUuOYFA0vX3PbJjjolSYn7hQz2TDb/SltnbIgWmWnArhAx7I8hMIA6VPnX9KNDA01YQi8+qiAevL/GMOghxIEEpdn9NyI962PEmys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=huJOEh5w; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so6601653f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:31:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761690653; x=1762295453; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w7MYXT8RdCoSxz7Hgl9+a32CaifYT+zfGLvjG0fFD9Q=;
-        b=L8oXu/T6u7zqeivM9gSd3PzbKHH9yassNHcZjNQXt0iPKbqcWlX2cKkBCxf2X+lmTc
-         H8pkfao+lXt7DfZ26OryPI/aJHcV2/lGSNBKI/r/iN93D/u0IZmqZrvNz3GFEeaLXXVn
-         W8bZhE8nMdOlgtddvk/1rYo74vM1mOxicJ2mHYH4tpUdyYgdVlxNb8rRk5u35BEF75ju
-         5nSlwBlTje+nXw8et4e3YpO0FuLFkxvCb7/lc5ezVVVmif9RbtsSg0enjqyrsqmE+4aU
-         JUDQeY8Qj25gyHNZiMdKbDkUsI7naoNx+7OFTtS6Br4MOm0yd/O8rSnsFKtpntTwQrTx
-         3i6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761690653; x=1762295453;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=googlemail.com; s=20230601; t=1761690673; x=1762295473; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=w7MYXT8RdCoSxz7Hgl9+a32CaifYT+zfGLvjG0fFD9Q=;
-        b=KAPXPR+0iTeLG6vfLpk46u4XkQ8pl7WGQszkHRebZ8HftHOQ/kDk/OF0sTYdmmhQzb
-         ZZUsgcOp4hZFNeCcZ6XFgvZ6tNs7/Aubg8mXh5GTncjqF7wHCoR2i0mJsDspb+KQit9U
-         62nrhIuaaQzWVGcXq+ZQciGgYBnWnZTsDCRw4myaqOgoiKnWXixtq41nReQ6qDpCKsjt
-         esXSpT+7lkvQnS9s+iKNNj0t0lVqU3w/esT76ejq76dbNs9EEu8vBbcIOjlQUOwBm+8m
-         3WPdB+zhgmD39wYUb+J6xDyM4zo/knasq9QzsJq6DNSVt5LJ7ekDKc0qLS3sa7JB2JmZ
-         H6SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUoXqFlWvoqU5g+oDGQxVLtRmfRhM/W9IsX0KtTr09mui9iWaT0Lc/U79S2UJhhDSaq7h7QSPTY9XW19Zk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKIu9AocncFf1I5D+AK+LkA8cFUi3XzcUQbQP97ZgDGpeALySG
-	smoOy6bPEAj8JW0QbIu3gW4GIvHz9vhGsY8aWAB8JiEeDP5HeBL0+1/8
-X-Gm-Gg: ASbGncsqxKfdfLilzJZ/8iMC5gJTMA80+67tkoOJ7dUaZlL4s9/F9mhclZG9kakof60
-	ySTc9mAqCfiAhOyQieibJGo5gA9dFNAvcbrOlJN/bjqLpxJsaRXq/zMM1lOfinlND/7pnmr1IY2
-	AeyySvVC9swDveXtuwfPPWHm+k0vy3gKEapILJ8Y/0OJ4TUSKoBdKG4qfYG4FOV2MIdC3wAIC88
-	oeT7L1pzM+l6I4KUAoVa3AEM9DUKvei4HYMut85iRhdGacuT1015kLXeSiHVr1F15JYAOYbQCpV
-	VR/dtBSYkeGIgShezKCf7X5WHRShqcF74wXD3e2R5geRL4fE63jFjUsrIIqnkKa4qFXihURIXAM
-	IAOndZZCjqAagbbFXae3wkG7SnqrgBvJYlNdT3JJC1nVo+UJAB9Poxym+NQf1MKMya5l1igzp02
-	Sm8y8AVxNJSDZywOgJ3natHPwimn8vB2KLeWTgRWxcYNH6mMWswhVg
-X-Google-Smtp-Source: AGHT+IGr3MaQmjLDcnechwHoyti0ltwYCF5fdXDSzbiJBdxMc2AUsas+y5bOu1/39BNyQHtZcenqXg==
-X-Received: by 2002:a05:600c:474f:b0:477:df3:1453 with SMTP id 5b1f17b1804b1-4771e1ed170mr10187095e9.28.1761690652951;
-        Tue, 28 Oct 2025 15:30:52 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3b7cb9sm16032815e9.15.2025.10.28.15.30.51
+        bh=ITM43CPLBwOuYd6o70DQuUBrw0NjrXbprfM503VifJI=;
+        b=huJOEh5wbAJC2aZyA7eU0vlLrZgWZ5ysVoxyRjXINj565ENnMZPuzHG2yq1wcVtGwX
+         mfYTId4nr2Y53k1sfdlxVlr+hmFzLdtnE8dS41MfwtNA+mszZv47iKnqUMQA1JGIkTj6
+         rviSj59H6daCpxEjZmWy32mgKAwR8YbsL+JFUSIDWaZ4e72W0G/h4fbbTjo98xBSpAEU
+         pTGffhXVf77j+MDHvu7tlHFRnPjFaPEkK28UaaIwzQwdnhpKC0rb2LyfFtUCTn814hZ+
+         qRbxyYpWBx1FuUCNozEn0W0BWfYwGY+Itp58/bNUg7imwl37AHZqQlrBRns9RFq+fweT
+         APNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761690673; x=1762295473;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:reply-to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ITM43CPLBwOuYd6o70DQuUBrw0NjrXbprfM503VifJI=;
+        b=NAU8VWPb5IoaQBH5Gownc3rCGvTGxtedLVXT16g7dZZV1pZrObvJdUXsDn/JK1QZzo
+         19dcvvS7amw1s9YNVX4kxgXqLALqg+0LFY2nb1lunB92xZEYzOae0OciZFh4Yicm8ilT
+         1nMjSnbDJ6aIu1y6k4N3/S2ZiaOkkrztmsTxTDGSHet2CGNUUGs8OZorDOXEvJMxmHkP
+         SfsUU1QATbaQWC5vjvLJymdTi3PbbvB/9HjnVUOHBbmBi1PQK/2Sp4QTcqScKOZ31tfF
+         e/nMdCH9UNVrZVu+tsS+iZtNC4kxfBcX9MSAVDpg1EGgHMl1ceXBoxs7U7Zt4AnrDMej
+         YYXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWU/pb4MsIUVsiftsC0ggZnCQbN+mGQWfg5FSOicMQ2CK9fKWSPfZM0paY5eMbefyq+vrTtXfascZSPdvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNOlPvvnzyi5H2Y/cJb6KdRSJ0gGDU9MMv0sbFGJqSIVuCPQ7u
+	NDqPwWusiZOzXzoXOG4PWpkPjP0jr732oueWGErhBh00oo6+Mt9SPgW1j/EEyC7GQPY=
+X-Gm-Gg: ASbGncuB76RWtgLjiSSaxh52I85yRLUjicu/1dPTQPRuR7Xi5ch0cS7IFutTsfSdqIk
+	LPq3GfML7LCLWW8JxNJS3nYAWTryR/XXdyab4qSdmtiGLI+jxU5WFMYasBNBy0BdkZL/YLRFrKC
+	M13VM4FCO19s7gkjRafqcXRWfCDV91CgJpJJikASyqFjTVvc9JE4vJOLiyrbWVhUOgK6jOq2b+x
+	+B1uNSteYZgYZwegSqw0R+NYFBZnvxKaMwiFAQW++Td80fCqBPVc8yfLMWQRvOPxkOtfmMesIra
+	6wqu3JUmb83E0/LVBcD5vMUPxvt7RiDEqO4iBEVhXm/Z9q0mErzumwm9ls0IKX4V5fbwvsuWlzJ
+	oOtvn6rEBD4lU434R1lLaHpzZdqm+8BbKJ4UikuDsldvaLqOyocRZjwY3/JthktSnQfmdR243mu
+	GaVTwvwp0idQaWq4KSM/oH6+dXXDw5Z0plRkRwkkp/4VhiI4LdKavZnk5M
+X-Google-Smtp-Source: AGHT+IF39JXaNKoZtJy/RnakC95kMOdpqIZDZsaP2nRMKdtss4WP+ExeeGb//XMDyt0ZBLq/3VZ/Jg==
+X-Received: by 2002:a5d:5f48:0:b0:425:86ca:98c with SMTP id ffacd0b85a97d-429aef86b59mr393337f8f.28.1761690673262;
+        Tue, 28 Oct 2025 15:31:13 -0700 (PDT)
+Received: from ?IPv6:2a02:8071:7130:82c0:da34:bd1d:ae27:5be6? ([2a02:8071:7130:82c0:da34:bd1d:ae27:5be6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm22707923f8f.38.2025.10.28.15.31.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 15:30:52 -0700 (PDT)
-Date: Tue, 28 Oct 2025 22:30:50 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: dave.hansen@intel.com, alex@ghiti.fr, aou@eecs.berkeley.edu,
- axboe@kernel.dk, bp@alien8.de, brauner@kernel.org, catalin.marinas@arm.com,
- christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
- edumazet@google.com, hpa@zytor.com, kuni1840@gmail.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- maddy@linux.ibm.com, mingo@redhat.com, mpe@ellerman.id.au,
- npiggin@gmail.com, palmer@dabbelt.com, pjw@kernel.org, tglx@linutronix.de,
- torvalds@linux-foundation.org, will@kernel.org, x86@kernel.org
-Subject: Re: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
- unsafe_put_user() in epoll_put_uevent().
-Message-ID: <20251028223050.3e3ce110@pumpkin>
-In-Reply-To: <CAAVpQUARk-XeMdTeGy_s65sdwuLY2RzocGyJ=2_WkhsrFN-bUw@mail.gmail.com>
-References: <ea7552f1-842c-4bb8-b19e-0410bf18c305@intel.com>
-	<20251028053330.2391078-1-kuniyu@google.com>
-	<20251028095407.2bb53f85@pumpkin>
-	<CAAVpQUARk-XeMdTeGy_s65sdwuLY2RzocGyJ=2_WkhsrFN-bUw@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Tue, 28 Oct 2025 15:31:12 -0700 (PDT)
+Message-ID: <aeee5f47ef2842fde66bc66fc598ee4f007fc1c2.camel@googlemail.com>
+Subject: Re: [PATCH] drm/panel: kingdisplay-kd097d04: Disable EoTp
+From: Christoph Fritz <chf.fritz@googlemail.com>
+Reply-To: chf.fritz@googlemail.com
+To: Sebastian Fleer <dev@dwurp.de>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang
+ <jesszhan0024@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>,  Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 28 Oct 2025 23:31:11 +0100
+In-Reply-To: <20251028214045.1944956-1-dev@dwurp.de>
+References: <20251028214045.1944956-1-dev@dwurp.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 Oct 2025 09:42:25 -0700
-Kuniyuki Iwashima <kuniyu@google.com> wrote:
+Hi Sebastian
 
-> On Tue, Oct 28, 2025 at 2:54=E2=80=AFAM David Laight
-> <david.laight.linux@gmail.com> wrote:
-> >
-> > On Tue, 28 Oct 2025 05:32:13 +0000
-> > Kuniyuki Iwashima <kuniyu@google.com> wrote:
-> >
-> > .... =20
-> > > I rebased on 19ab0a22efbd and tested 4 versions on
-> > > AMD EPYC 7B12 machine: =20
-> >
-> > That is zen5 which I believe has much faster clac/stac than anything el=
-se.
-> > (It might also have a faster lfence - not sure.) =20
+On Tue, 2025-10-28 at 22:38 +0100, Sebastian Fleer wrote:
+> Since commit d97e71e44937 ("drm/bridge: synopsys: dw-mipi-dsi: enable EoT=
+p by
+> default") panel output on an Acer Chromebook Tab 10 (google-dru) is corru=
+pted.
+> The tablet I use is equipped with a kingdisplay-kd097d04 panel, disabling=
+ EoTp
+> restores the correct functionality.
 >=20
-> This is the Zen 2 platform, so probably the stac/clac cost will be
-> more expensive than you expect on Zen 5.
+> Fixes: d97e71e44937 ("drm/bridge: synopsys: dw-mipi-dsi: enable EoTp by d=
+efault")
 
-I must has looked the cpu type incorrectly.
-AMD haven't made it easy working out the cpu architecture.
-I need to get an older zen cpu for my set of test systems
-(and some newer Intel ones).
+Just to clarify: This is not a fix for that commit, it is a fix for the
+panel driver itself.
 
-> > Getting a 3% change for that diff also seems unlikely.
-> > Even if you halved the execution time of that code the system would have
-> > to be spending 6% of the time in that loop.
-> > Even your original post only shows 1% in ep_try_send_events().
+EoTp is the default in Linux, a panel driver cannot enable it, only
+disable it.
 
-I realised after that you might be showing a 3% change in that 1%.
+Commit d97e71e44937 ("drm/bridge: synopsys: dw-mipi-dsi: enable EoTp by
+default") fixed a bug in the synopsys dw-mipi-dsi because EoTp was not
+enabled there by default.
+
+Enabling EoTp in dw-mipi-dsi revealed an underlying issue in panel-
+kingdisplay-kd097d04.
+
+That same issue appears if one would connect this panel to a different
+mipi-dsi core (because there EoTp is also enabled by default).
+
+> Signed-off-by: Sebastian Fleer <dev@dwurp.de>
+> ---
+>  drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> We saw a similar improvement on the same platform by
-> 1fb0e471611d ("net: remove one stac/clac pair from
-> move_addr_to_user()").
-
-Certainly removing one could easily be measurable.
-
-	David
-
-
+> diff --git a/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c b/drivers=
+/gpu/drm/panel/panel-kingdisplay-kd097d04.c
+> index 2fc7b0779b37..893af9b16756 100644
+> --- a/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
+> +++ b/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
+> @@ -359,7 +359,7 @@ static int kingdisplay_panel_probe(struct mipi_dsi_de=
+vice *dsi)
+>  	dsi->lanes =3D 4;
+>  	dsi->format =3D MIPI_DSI_FMT_RGB888;
+>  	dsi->mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_LPM;
+> +			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
+> =20
+>  	kingdisplay =3D devm_drm_panel_alloc(&dsi->dev, __typeof(*kingdisplay),=
+ base,
+>  					   &kingdisplay_panel_funcs,
 
