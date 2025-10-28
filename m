@@ -1,174 +1,167 @@
-Return-Path: <linux-kernel+bounces-873275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FE0C138EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:34:45 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58221C138F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 898CA4E3438
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:34:15 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 04715351BA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903082C17A8;
-	Tue, 28 Oct 2025 08:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA14248881;
+	Tue, 28 Oct 2025 08:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N3JSUMKv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OOzR5ynh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FZmVYX4R"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4372021576E;
-	Tue, 28 Oct 2025 08:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB9DD271
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761640448; cv=none; b=Ru+mJfsExbzTETmLtUnjlse4Rvd/kjokXmaKh52LYrzim4pkCgq5PK/nUS/H5jqNIyEUAozhR1L6na+iID46yeFDcvj6/kQ+5Cba4UUajrb31CYCuZ4f17wlQ+1vsMpQhWWN1yHmSxhxVuRlq/4E73ZcASs7bZUPtcTVZC8967w=
+	t=1761640565; cv=none; b=PoNoO2youe6E2s2Y3Zh//ihxdYjqhwNvRKGGCRi5lVz4i5IaoaD5ia2ehIY7bmeHLlPUmdOhNmWFq51Z28gVcWDstLouUL1YkQ0R7JAX1t0kbhT54mabfaVH7mnfPX8LSj0bk5JQFxhg1BbU+fj9DaNNra7hIbBiZ47MTAn7mPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761640448; c=relaxed/simple;
-	bh=CYLmaOBgHYt3LSzhmMb2Wlpalqn3kMa60TBG7D9z+UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVz3j8HZVoi7rjNvBqxJ0VtLKle5rb5NWggH9dwz9FQwSnvvyU+lHQ8Qfsaf0//xx7BX6TKavvIJlXF168tYf0skIdAVvFI5C2rcEp4P55z/21srOkEuJejMvXkZeWAtqKH+zJ9+Y1KL0zmMpkUlEGCvUKMng+dCle4ji3Y0AEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N3JSUMKv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OOzR5ynh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 09:33:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761640437;
+	s=arc-20240116; t=1761640565; c=relaxed/simple;
+	bh=ZAbHR1u6U8cM7E+FyRH7H3DlNgciPAN7euk8FnaU3lY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RDzBIj99Y5DmXcz4am0frKH5FTctaMHpSvqDXPjPg72JmcOceOZOMTYFRxTMgFEWjthrKx6NzzCkgFxEjGvKLQAkVyEezXtj6W8AZivr6mqES81msIQQUDEDmYB+nbY8hwJz1qanZcIvWvE8kOa1XTVw4WjFbHay/cLw4YEwl/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FZmVYX4R; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <0f7e6be5-f9ac-4019-93c6-295a068046a8@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761640558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=v8bo8tT6fUf4Z0oRK29BRJ8yd34/WHo4boCnEa8kDIY=;
-	b=N3JSUMKvMR4/nK4bPpfSSsRRu7u5CzJvaYbZ3VQndBFt9eNFXNXNOf/nivfdwEsY61Dwyx
-	bzl9I4o49guELHZVTUhqopidgnngWdWYGgn4i4zDFaiztVATxia5LvyXfbikjtQUwC81Lu
-	kPxKRYtQwjsSjugjFVi9S3ORBsoWfgGyWxfkgubSCXaFq3DB9gYFH8aWYn3qtyAgd4bf3I
-	4A82bm9YgIgP5r7dRSj3NE71xIjrK4WyueIW+SOimY27Ji/CMZkLjxbYgXkLJtm38uqVjW
-	C6CFtijmnLs5Zr5dA7G8rA9NtgdCe4HcNXoZToWOqjJoq/Uu/b2nsafEq/prTg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761640437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v8bo8tT6fUf4Z0oRK29BRJ8yd34/WHo4boCnEa8kDIY=;
-	b=OOzR5ynhJ5kHWV2nAudvooXqPaF166obYxwIeuAX9mjXK8Pg/Xjv7WjPSseHYaS5s8mg+o
-	anM+JRb4QxgL0FDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
- enforcement timer
-Message-ID: <20251028083356.cDl403Q9@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.406689298@linutronix.de>
- <20251027113822.UfDZz0mf@linutronix.de>
- <87cy68wbt6.ffs@tglx>
+	bh=jQQzhmZR1maF++whUcF7mYPtgUN1DSb8cYmCvPeH5rw=;
+	b=FZmVYX4RsSHDCCkZVM0T5gMdsRunXkOs9KLexay+RnS0snHdHDyH+MKyeEDH8nJNnPOhli
+	lzX74B3An2s845eQwln8PiJJJEqe5D2VwMkUZioaTUKaUs2C1cT80dQ6HZM+sZiijk7vdf
+	87QoWcEXxPqlmr1qSyr1okLsGjLWCNo=
+Date: Tue, 28 Oct 2025 01:35:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <87cy68wbt6.ffs@tglx>
+Subject: Re: [PATCH] RISC-V: Enable HOTPLUG_PARALLEL for secondary CPUs
+To: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Sunil V L <sunilvl@ventanamicro.com>,
+ Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250905122512.71684-1-apatel@ventanamicro.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Atish Patra <atish.patra@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20250905122512.71684-1-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-10-27 17:26:29 [+0100], Thomas Gleixner wrote:
-> On Mon, Oct 27 2025 at 12:38, Sebastian Andrzej Siewior wrote:
-> > On 2025-10-22 14:57:38 [+0200], Thomas Gleixner wrote:
-> >> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
-> >> +{
-> >> +	struct slice_timer *st =3D container_of(tmr, struct slice_timer, tim=
-er);
-> >> +
-> >> +	if (st->cookie =3D=3D current && current->rseq.slice.state.granted) {
-> >> +		rseq_stat_inc(rseq_stats.s_expired);
-> >> +		set_need_resched_current();
-> >> +	}
-> >
-> > You arm the timer while leaving to userland. Once in userland the task
-> > can be migrated to another CPU. Once migrated, this CPU can host another
-> > task while the timer fires and does nothing.
->=20
-> That's inevitable. If the scheduler decides to do that then there is
-> nothing which can be done about it and that's why the cookie pointer
-> exists.
 
-Without an interrupt on the target CPU, there is nothing stopping the
-task from overstepping its fair share.
+On 9/5/25 5:25 AM, Anup Patel wrote:
+> The core kernel already supports parallel bringup of secondary
+> CPUs (aka HOTPLUG_PARALLEL). The x86 and MIPS architectures
+> already use HOTPLUG_PARALLEL and ARM is also moving toward it.
+>
+> On RISC-V, there is no arch specific global data accessed in the
+> RISC-V secondary CPU bringup path so enabling HOTPLUG_PARALLEL for
+> RISC-V would only requires:
+> 1) Providing RISC-V specific arch_cpuhp_kick_ap_alive()
+> 2) Calling cpuhp_ap_sync_alive() from smp_callin()
+>
+> This patch is tested natively with OpenSBI on QEMU RV64 virt machine
+> with 64 cores and also tested with KVM RISC-V guest with 32 VCPUs.
+>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> ---
+>   arch/riscv/Kconfig          |  2 +-
+>   arch/riscv/kernel/smpboot.c | 15 +++++++++++++++
+>   2 files changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index a4b233a0659e..d5800d6f9a15 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -196,7 +196,7 @@ config RISCV
+>   	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+>   	select HAVE_STACKPROTECTOR
+>   	select HAVE_SYSCALL_TRACEPOINTS
+> -	select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
+> +	select HOTPLUG_PARALLEL if HOTPLUG_CPU
+>   	select IRQ_DOMAIN
+>   	select IRQ_FORCED_THREADING
+>   	select KASAN_VMALLOC if KASAN
+> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> index 601a321e0f17..d85916a3660c 100644
+> --- a/arch/riscv/kernel/smpboot.c
+> +++ b/arch/riscv/kernel/smpboot.c
+> @@ -39,7 +39,9 @@
+>   
+>   #include "head.h"
+>   
+> +#ifndef CONFIG_HOTPLUG_PARALLEL
+>   static DECLARE_COMPLETION(cpu_running);
+> +#endif
+>   
+>   void __init smp_prepare_cpus(unsigned int max_cpus)
+>   {
+> @@ -179,6 +181,12 @@ static int start_secondary_cpu(int cpu, struct task_struct *tidle)
+>   	return -EOPNOTSUPP;
+>   }
+>   
+> +#ifdef CONFIG_HOTPLUG_PARALLEL
+> +int arch_cpuhp_kick_ap_alive(unsigned int cpu, struct task_struct *tidle)
+> +{
+> +	return start_secondary_cpu(cpu, tidle);
+> +}
+> +#else
+>   int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>   {
+>   	int ret = 0;
+> @@ -199,6 +207,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+>   
+>   	return ret;
+>   }
+> +#endif
+>   
+>   void __init smp_cpus_done(unsigned int max_cpus)
+>   {
+> @@ -225,6 +234,10 @@ asmlinkage __visible void smp_callin(void)
+>   	mmgrab(mm);
+>   	current->active_mm = mm;
+>   
+> +#ifdef CONFIG_HOTPLUG_PARALLEL
+> +	cpuhp_ap_sync_alive();
+> +#endif
+> +
+>   	store_cpu_topology(curr_cpuid);
+>   	notify_cpu_starting(curr_cpuid);
+>   
+> @@ -243,7 +256,9 @@ asmlinkage __visible void smp_callin(void)
+>   	 */
+>   	local_flush_icache_all();
+>   	local_flush_tlb_all();
+> +#ifndef CONFIG_HOTPLUG_PARALLEL
+>   	complete(&cpu_running);
+> +#endif
 
-> >> +	return HRTIMER_NORESTART;
-> >> +}
-> >> +
-> > =E2=80=A6
-> >> +static void rseq_cancel_slice_extension_timer(void)
-> >> +{
-> >> +	struct slice_timer *st =3D this_cpu_ptr(&slice_timer);
-> >> +
-> >> +	/*
-> >> +	 * st->cookie can be safely read as preemption is disabled and the
-> >> +	 * timer is CPU local. The active check can obviously race with the
-> >> +	 * hrtimer interrupt, but that's better than disabling interrupts
-> >> +	 * unconditionally right away.
-> >> +	 *
-> >> +	 * As this is most probably the first expiring timer, the cancel is
-> >> +	 * expensive as it has to reprogram the hardware, but that's less
-> >> +	 * expensive than going through a full hrtimer_interrupt() cycle
-> >> +	 * for nothing.
-> >> +	 *
-> >> +	 * hrtimer_try_to_cancel() is sufficient here as with interrupts
-> >> +	 * disabled the timer callback cannot be running and the timer base
-> >> +	 * is well determined as the timer is pinned on the local CPU.
-> >> +	 */
-> >> +	if (st->cookie =3D=3D current && hrtimer_active(&st->timer)) {
-> >> +		scoped_guard(irq)
-> >> +			hrtimer_try_to_cancel(&st->timer);
-> >
-> > I don't see why hrtimer_active() and IRQ-disable is a benefit here.
-> > Unless you want to avoid a branch to hrtimer_try_to_cancel().
-> >
-> > The function has its own hrtimer_active() check and disables interrupts
-> > while accessing the hrtimer_base lock. Since preemption is disabled,
-> > st->cookie remains stable.
-> > It can fire right after the hrtimer_active() here. You could just
-> >
-> > 	if (st->cookie =3D=3D current)
-> > 		hrtimer_try_to_cancel(&st->timer);
-> >
-> > at the expense of a branch to hrtimer_try_to_cancel() if the timer
-> > already expired (no interrupts off/on).
->=20
-> That's not equivalent. As this is CPU local the interrupt disable
-> ensures that the timer is not running on this CPU. Otherwise you need
-> hrtimer_cancel(). Read the comment. :)
+LGTM.
 
-Since it is a CPU local timer which is HRTIMER_MODE_HARD, from this CPUs
-perspective it is either about to run or it did run. Therefore the
-hrtimer_try_to_cancel() can't return -1 due to
-hrtimer_callback_running() =3D=3D true.
-If you drop hrtimer_active() check and scoped_guard(irq),
-hrtimer_try_to_cancel() will do the same hrtimer_active() check as you
-have above followed by disable interrupts via lock_hrtimer_base() and
-here hrtimer_callback_running() can't return true because interrupts are
-disabled and the timer can't run on a remote CPU because it is a
-CPU-local timer.
+Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-So you avoid a branch to hrtimer_try_to_cancel() if the timer already
-fired.
+Have you tried with 128 harts ? I was not able to boot 128 harts in Qemu 
+with NR_CPUS=256.
+This is unrelated to this patch though. I can reproduce the issue on 
+upstream with 6.18-rc3.
 
-> Thanks,
->=20
->         tglx
 
-Sebastian
+>   	/*
+>   	 * Disable preemption before enabling interrupts, so we don't try to
+>   	 * schedule a CPU that hasn't actually started yet.
 
