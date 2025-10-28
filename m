@@ -1,255 +1,247 @@
-Return-Path: <linux-kernel+bounces-874170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 666B7C15AD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:06:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C63DC15AE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:07:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33E294EF642
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:59:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82B6D1889353
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DD6346E48;
-	Tue, 28 Oct 2025 15:58:25 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B64C3469F6;
+	Tue, 28 Oct 2025 15:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="obzFxSnr"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11258344025;
-	Tue, 28 Oct 2025 15:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667105; cv=none; b=orF9jeZnNGJFOrYM0FMM0a3vgF1kn6iHRbx3p9w6o1xM3Q0MGXdbQ4wNjYBplFmyoHMp4GX0r0z8FrJFte22y489Pf5HMVPQjX67oku0pp27iIgYlmDoayzGPfWJm3jtbqznCBPMxbp0QdtIE5vaLXFC6uCDU+Pus1L3sAEwRvs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667105; c=relaxed/simple;
-	bh=lyCYgFwWPJURKsOfRYtiF8tVB5dNes6lcF/XpjiZIcc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QJGs/xEE94S6Cms1/pmQBf/i/ZNxRquyY8TGylq6m/hKUhNrbE+BUjWsT7YlMAvfZl9jbqgp8rKIX+53fo7cORY9hUvdzS5Sl8Q9zVJWE939OfptakmKKIFtuhqSDatlwEIKm1bUHYuDgNaNMiLepbTUG7Y2zcEEU3lmsCYi5nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cww4S0MQSzHnH4s;
-	Tue, 28 Oct 2025 15:57:28 +0000 (UTC)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id DCB4F140157;
-	Tue, 28 Oct 2025 23:58:18 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
- 2025 15:58:17 +0000
-Date: Tue, 28 Oct 2025 15:58:16 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: <linux-cxl@vger.kernel.org>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
- Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>, "Ira Weiny" <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>, Jonathan Corbet <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Robert Richter" <rrichter@amd.com>, Cheatham Benjamin
-	<benjamin.cheatham@amd.com>
-Subject: Re: [PATCH 2/4 v5] cxl/core: Add helpers to detect Low Memory Holes
- on x86
-Message-ID: <20251028155816.00003161@huawei.com>
-In-Reply-To: <20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
-References: <20251006155836.791418-1-fabio.m.de.francesco@linux.intel.com>
-	<20251006155836.791418-3-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D8D346774;
+	Tue, 28 Oct 2025 15:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.145.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761667171; cv=fail; b=qH0JlD22TndHDc/aWvVHS4N/G5E+N24JdMq12dfXA3SH2tlLsrEI44IJRli7sJeymBjOchV3KyUFneigKRaq5an3BbL7mgSsTTKFIGqqer9ETBP7SHRlbwEPox37hYGvdnGEXMrVbT19kJztdNvSslIaBFAgspcQ5lGHrORQBkQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761667171; c=relaxed/simple;
+	bh=ALu/2CTSnTwfQbqVI20muKp36joCtOtV5z+7UFGbZdY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DtRBc59leK3folfjHzeWPiOhyzZ96v+ab3ygf7PiQMAHPl82bLy4tXgwuI5Bk5VBZ9/whfGHT/qtfMdPSmGVL/O6FF1T9Tb/Jq89o5zl7S7XSIPiCECDM7IW+ylz2qOoR1SG+1e6ok14oibQG2zAjUP3knxumTZF22/zLrxndnw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=obzFxSnr; arc=fail smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SFT37U3245792;
+	Tue, 28 Oct 2025 08:59:05 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=s2048-2025-q2;
+	 bh=WantUP6tHPomrrgfGpfQry8HxHWAoDwAelBa0MU+fH8=; b=obzFxSnrh9ac
+	Rh/o80Yghy/Ss2H16zjz+484s/QXzBSAh3grJWOaUgu+zYXP9Tmlj9D9p0nTgfNl
+	fAPnBh1l9KVBpkaPPtLj/DAc7YWbRb3tYXfip+JqxUQYyFYBr9TKZX8P3YGpwL5I
+	JDHm4a62joUi1RYOl6YAJuMYrtN3mfLZmGGQ0g98MgZIJAb0jxM+Z3Esi+SngfoQ
+	iV3fniozyzDu5V8CcrLjJSNTnSkZ3uqh7SOTJKgY9KKCVqRYXe+3ERpTqfeGERtq
+	1i3eJ4ggr4VWXMaEutvTqB5J0FT+IaGQ9szxIUfK3WZoj1aIgKUBppqtAmK8H99e
+	hONkGqEfwA==
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011002.outbound.protection.outlook.com [40.107.208.2])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a30gxg8rb-1
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 08:59:05 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=No8pzz6clRCra57eN9gzfm/GnhKv6Xk+mRrg978OaLX1FIED1aJ3HYczjtIGtaWP5qQ8BebQPkBpWTuXtQb9VYZftuZaTinXrugTk44J2mGQeJZjS3CCqCKPNxKfBEjiiqBeEaxdLvcmiuvX0/MrYlhYz6ZcByKkbj93pT/95XCpDJELyf6LhBrapfEr5MdbfvpZ16kIIEjx+LhGl/27SxOtH5xXEDUxxmfqFXLyExHaUVSRxCUJLpdXx2uzr4zG63h9rOx/muHej4UuYZk0ZgfKGIVChuZXwfW3gBOg5hQ9gHSe2v2ltD4a2ifcZcxy6yP9vke0r6TU3cboJoFAIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WantUP6tHPomrrgfGpfQry8HxHWAoDwAelBa0MU+fH8=;
+ b=uWJDglYJZH6L7Kkp7xEGxd9g7c4QILdtC0wbY4IpFQv/N9k2UUC114Ra24jCe8bsMcxaqnwlMevVKlXfjgtT0VPrBwkfV04RBsH3S5D/RCSTuhKGwEOuAc1TfQprLRl3/Gd0P2zbME+BrCXLDowVjDLMQRrfqy+oJGOaZN3/qXnLccLH3DXUpuDOF6l7TKyUyXW3zuV+hQXHmvwEukSuvbRn/cUxamD+a5glKpOiwvlD7eI3cmRighmVG4aL+gv5iAhxbhyXvKjoqAIz/qaeo4XK83Vt+9j2eeCcKfyWMSArQO5M5fcpGD/Uolz0QwzlQkdkk1bk+v74bWnyXLLl8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com (2603:10b6:408:1ad::10)
+ by BLAPR15MB4049.namprd15.prod.outlook.com (2603:10b6:208:271::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
+ 2025 15:59:03 +0000
+Received: from LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e]) by LV3PR15MB6455.namprd15.prod.outlook.com
+ ([fe80::8102:bfca:2805:316e%5]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 15:59:03 +0000
+Message-ID: <a1d4d200-5a35-4990-8499-6dc7ea6d65ac@meta.com>
+Date: Tue, 28 Oct 2025 11:58:50 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/23] mm: allow specifying custom oom constraint for
+ BPF triggers
+To: bot+bpf-ci@kernel.org, roman.gushchin@linux.dev, akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, ast@kernel.org, surenb@google.com,
+        mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org,
+        andrii@kernel.org, inwardvessel@gmail.com, linux-mm@kvack.org,
+        cgroups@vger.kernel.org, bpf@vger.kernel.org, martin.lau@kernel.org,
+        song@kernel.org, memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net,
+        eddyz87@gmail.com, yonghong.song@linux.dev, ihor.solodrai@linux.dev
+References: <20251027232206.473085-4-roman.gushchin@linux.dev>
+ <634e7371353c8466b3d0fa0dd7ceeaf17c8c4d7b274f4f7369d3094d22872cd6@mail.kernel.org>
+Content-Language: en-US
+From: Chris Mason <clm@meta.com>
+In-Reply-To: <634e7371353c8466b3d0fa0dd7ceeaf17c8c4d7b274f4f7369d3094d22872cd6@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MN0PR05CA0012.namprd05.prod.outlook.com
+ (2603:10b6:208:52c::35) To LV3PR15MB6455.namprd15.prod.outlook.com
+ (2603:10b6:408:1ad::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR15MB6455:EE_|BLAPR15MB4049:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b0f9a5f-bb01-4961-5cce-08de163aea75
+X-FB-Source: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WlNrcUp6UHNYb3JyT0V1NjlwaWN3R2I0RXVyUkdmQVk2MkM2blY1bS9tNWZU?=
+ =?utf-8?B?UlNLYUdueW1kQXM5cDF3RUFKd2JDTDZ6bFE0L2owb1lZRklTT3BGeUtITXA2?=
+ =?utf-8?B?K1ZzN2N1OE5CVXVMR1l0bzUva0hOeDJ3Zko0WFkyY0RyY05WdjcweEZBSWtZ?=
+ =?utf-8?B?MFdDd243bWdhUlpKMkpzNG0yYk05ZGtXSWpGVHp6SW9CVWk2UGxWS2kwWmla?=
+ =?utf-8?B?L2JZck9YYlVtKzJPK3JhaUZHa3h1NEdadHIxS2IzYk9LbUQxYlVNZW1qQkh3?=
+ =?utf-8?B?alVCT21idzVpNWJEaTV5dG5xTC9pTDY3enlCeWU2LytYYkFRMlgyS2wxckVY?=
+ =?utf-8?B?bXBjU0xIQWRiNTlsU0toQXVnSkZOSVVVbHpZWGQ3UXpVYk50amsxak5tWkda?=
+ =?utf-8?B?bzF6MStkN2liclJBd2ZDV1pLUDJiWE9Db014dWFja0RvVkZncmN5d2k4aXFt?=
+ =?utf-8?B?cWxld3dxRXc2SWpkejNJN1hKSDc5TG1sYXY2VHRYdE56YVVqZ3FpY21wMUd1?=
+ =?utf-8?B?cElTOWVOenFKelV5Q1BIcnRkZVREZy9zdTRZQ25BaDJkYUd1SVBhMis4ZUJ3?=
+ =?utf-8?B?T2dsUCswbTFlVUx5bFZlUXpxUG1HWmdDeVBsMnExNWw0MEgrNnBwbGZRejJ0?=
+ =?utf-8?B?ZFZuY0htS21vZGxnSURTTW5ZY1FUZjltRTVqZndUMFhiZlBkcjhCM09JcHRQ?=
+ =?utf-8?B?cmgxN3RQUXNsNWRsazNPeEZwVmFIL2E3VmxKTHQ5WmovVEtZd2wxdC9rOU1E?=
+ =?utf-8?B?dkdjWTlzRXdCYkRDcWdtcklENVhDSS83YnJRamZ2am5aZ2puS0wxSjV3UDBR?=
+ =?utf-8?B?NHgzS0t0ajVHVC9DYzRVN2FueVgxdVQzdUpHOW5IME1NZVg3TVRUYmw0V2RU?=
+ =?utf-8?B?cUJyTVJQRE0ra1BpNlhxNmZOR0RDbmd1NXRocm10REJKb0VRcStveGluK0N4?=
+ =?utf-8?B?bUFWMDgvaFdCU2JwL3RjaW1EeEtUZmdKT0Q3TzNLK2p4Mmh2TGJNa0tOSjcz?=
+ =?utf-8?B?ZEcvb2o5VGg1ajY0Z2J3SWMwR0tZa1FHS0ZnUjloVGlsZ0pZL2o3Lyt5U0ZQ?=
+ =?utf-8?B?ZHFTekFtRllQa0U3cnJPY00xMldEY3ZNdktYTngyQ0pMbzJ1UzVrZTFIUzIx?=
+ =?utf-8?B?THJMdk1VZ0cvNzFkUmxBWnFjT29KWE1vZCsvc1FtejNrMytBTHphQVE3Tzky?=
+ =?utf-8?B?KzRGY29kOVB0K1gwcWMzTmg4YWwrcnY2bTVFc2V2M2hxdDJWY0hMeVdkUWtY?=
+ =?utf-8?B?TDRnR0VEcHE1RVZtRHEzQThqMmE4Q1Y5N2J1NEZJV2FwL0EvS3hkYnBaS2Y3?=
+ =?utf-8?B?VHl4Sk9wTTBDZUtmZ1d5aVlpVU82ZXdFSTF4aXJXQmFPc0h0U0NPRTZkREUr?=
+ =?utf-8?B?WjJZajFNYnVwcUpLVnBzUTlhQnZ5UnpRUS9PUFNVeG9LV0VmM2Q0eVh5ZXBv?=
+ =?utf-8?B?N2VwMmV1cVphR3c3R3BHQWcxVDN2SmhxdUVRVkwxWGpxclp0UzRta0liVjNw?=
+ =?utf-8?B?OE4wM2p5amgvN1B6bldzQXUySlN6Qm5VWm85UEdMWXBRejJYamdYTTdQNVdn?=
+ =?utf-8?B?b09SYWpmNXk0TURoUkZTUkVta24yQ1hKYlZuT0RwUUsyQXZXOUh2bHFoRnlk?=
+ =?utf-8?B?cGF5cGpuUUh4MUVkcmdFdHAwKzRrQ0k5c2QrelhJQkgycFB5d2krSGo5N3Y2?=
+ =?utf-8?B?YmtJb2ErZHVXckxTanRJVlpEM2FhOWJtZUo4d3lSdzN0M3ZmNisremhoOVlB?=
+ =?utf-8?B?OGYrbiszMFdqN2FlRGNNbm55YWpvUlEwQWdZbXBkeHdSa1IvcktIOGRzYytQ?=
+ =?utf-8?B?a0xSY3owa3h0YlgybEtDVCtqbTRuUmtPYU1XZng3UzA0NlJGRGRUaTJtVUdt?=
+ =?utf-8?B?VjZDd21JdFNVWHhlQVpDejB0Mm5tekJ4U1FTRWh2Qm1jZFNOZ01Pbm1CeTNt?=
+ =?utf-8?Q?n32QwdGzpeAIcrtQjjzWdHZPI8sZjdQr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR15MB6455.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cWI4ZDNQVmFQVzRobVRkNXFXKy81YjdhdzZBY01ac0VKTkFQTDlNWHNMTFFw?=
+ =?utf-8?B?WThhODVKSmRENlkzdG1rVlY5cE1oS3NPd2I5bFlEQVJQM0lHQWxRSnVYTENa?=
+ =?utf-8?B?ZWxPeGFVRVZ0aU56ZWZXaUkvTkRpSmV1WEhvakJ4ZHh5MFYySmRBckl0Yzkw?=
+ =?utf-8?B?K1dDaDhEaUFaQ2xNSGljZGJXRjFydW03ZkowYWExV3VKbTU1VytyUDBaSzhN?=
+ =?utf-8?B?Q2F4OWpkQ01XUmw2YlBlYkR2bzh6aFRWdzJsY1NlTjR3R1ROMmxHc2pEK0VI?=
+ =?utf-8?B?V0k4RlZlWm0zcTh6bkJmWWlTMENRejB4eDJJbWkyMkE2MFEzTFpINDJPcmR6?=
+ =?utf-8?B?OHFWWnQrUDJKR2grTm1jSFZqYkRWQkhObVJRY1FVcWd3VTJzZ1RNRzQrcTUr?=
+ =?utf-8?B?eldRcXFYV2tsMGRqV1QvNjM0N2FRZHhZbmlLYzRaQnBFVUY0VWFPb2ZRdmtW?=
+ =?utf-8?B?K3duTWNmcG5wWHVkZU16NWU3NW5JYTJicERJSlB1d2tKbTFsV0t2dFZ5a2xQ?=
+ =?utf-8?B?UEl1VFQ1SWdhTFh5dDZvYXNUNVZPOUFwUHB5YnFYai93cWNtUFBLdUlnYWo3?=
+ =?utf-8?B?TktGU1k4V1hiVWQrVHFTancvUS8vUExPeXQwL0Qvb2dOYnlGeWpCbUtzWkJH?=
+ =?utf-8?B?cXg5eElSYS81RXljYXAyaHJ5M0htMzM0OTVxRWcrQkhtR0tGMVhYM0trVWVB?=
+ =?utf-8?B?dDMzOUdYcW00SVoxRms1YzdLdFlObUM4WEMyUnFsRWtTb1E3eGhqS0F4SDR0?=
+ =?utf-8?B?dVpZK0JIb1ZiL2N2ZUhiYm5GN1Myc1UyVStqMDdQcHZMWVhBRk9KZ1hQNDYv?=
+ =?utf-8?B?UGE5RlhoaGxYYkpFT3Z5TG4wSzRCK2ZLU0c1Z2t0aG53UkNXS0dGREs0WnE2?=
+ =?utf-8?B?VWxLNWhnQkpaME5JSFhla21nT2RjRWp5YVhhTCtXdDZJeGFZQVUxUEpBTXpq?=
+ =?utf-8?B?QVhyUTlBcXJ5bWVzbHpSOGdKcElJNjRpSk4zN0RHOEZVQ1p2bTBIbW5qSUo5?=
+ =?utf-8?B?Rk51alkvcVBuRmQ4U1ZwSW9mQUZUR0ljVjVyVU82cEFCKzVkNjFycFIzZjFU?=
+ =?utf-8?B?WWRYVjhGLzRab1BtdHN6QmVOb21pNWpJWUZkVm44ZWhWdld5c3M4OEt5OTF4?=
+ =?utf-8?B?VjZ5N3V4TzhiUmtrWVJKMmthemNLeHdRa0tTRlNRN1ZPVGdySFZuZFJQdWhx?=
+ =?utf-8?B?eXUwaWljcXB1UjI0b052bXI1VS9QRmxrUG9CZHF6SjZxK1lWaGU4ek9TYXRl?=
+ =?utf-8?B?UWs4K1Y3MmgwZ3J0N2tDaVRYMjhZNWxwMEduaGQ2U2RRM1A3M0kwTU1rNFRx?=
+ =?utf-8?B?ZnZIQm94cHUyWlVWeVlTOXZ6WkVqT2tGRnRORGZ0UUJyTnlqaW1LczZPQnBO?=
+ =?utf-8?B?MjZTbW9wMjg0c2tLY0E5RVh0UDlZTTRnNHo1cjUvZ01reDJvOXExb3B6VEtO?=
+ =?utf-8?B?M2tZRFAwMC9zVERkbm9HNFNhYThUUERtSzJ6TVlUZWc1enNpVmJ4Y1J6UWUv?=
+ =?utf-8?B?YUFTdzkxckF1OE9OejVSNW5FUVdLWENjVXI1OVlvbC9JQ20vdnBIT1lTQUlH?=
+ =?utf-8?B?WXFFRDFqY2RDaXIvT1NKcU9aSnVCQklUZm1GU21McFNqdE45SVJmNTlNc3FH?=
+ =?utf-8?B?SElzQzlvaWVhNXpKK0xhVHZ1OU1kUTVQcGl0NENkYkczVzBhYzNZdXJMdDBE?=
+ =?utf-8?B?OVNGRTBqTnJCUklhallVVzdPQ2svdjRQeHRRWHA2TStnRnFmejN0MlZvRFEz?=
+ =?utf-8?B?Zmp2dUpDbzF6cGNuYmdCbHlNSEtQcEpGcHNoR0FvazdXQ2FHbXJHSWRvSkFn?=
+ =?utf-8?B?MHFKekdQbmYxb3FqTXlUR3lORWxWS1k5YmRFYVZIZmRMT2RkNWRTUUZxamx0?=
+ =?utf-8?B?NEpreHlVcFZDdXU5T3BqNUhhUGZEeFIwVHpRYWtDMkhqY2FnRk85UEhaVnBz?=
+ =?utf-8?B?NzRyaHdGVXJsVDB1K0xHczFzVVJDeHIyL09YMVN4dkFrZXJ6TFhieS8ySDdv?=
+ =?utf-8?B?am9uaytyT1RTMUlYUXk0RnN4VUJPNENJY0ltUVl3cUFyZ2NaUkpCSlFIRHh4?=
+ =?utf-8?B?UnZWQjJ1WWkzY1FNWjBrNXNoWHh0enM2UFplTm1Pakk4bGlhZyszN0RoQmtT?=
+ =?utf-8?Q?u0Xg=3D?=
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b0f9a5f-bb01-4961-5cce-08de163aea75
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR15MB6455.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:59:03.2441
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LnikrYGFGU4q+26fMHVT0c3aw7TdHqGmGKB5e7c4uDrKQ6IlgVxPQIpC7cO1jrWv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB4049
+X-Authority-Analysis: v=2.4 cv=Dp1bOW/+ c=1 sm=1 tr=0 ts=6900e849 cx=c_pps
+ a=hjCSP9ZXGz/ZSNNiZYHiPg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=zVkyJDCJO4fTJCsB6y8A:9
+ a=QEXdDO2ut3YA:10 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: GKX8zOHdSV00Bm5wqSi5ksfFbtnrgzqd
+X-Proofpoint-GUID: GKX8zOHdSV00Bm5wqSi5ksfFbtnrgzqd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEzNSBTYWx0ZWRfX7U85ahkf8VYB
+ NfBwDK6cambTyYjUDBcU+M9WNKaUtA2LYYDKIkWibTGtBxGT9u9U0jpRRQrgpABGDWQhvJVyMF/
+ JChetuXo23h3nHHYw4pcZbeNJetslxE/UIrRFHG2FWBkXVi5c2eRZAiUvanhgghmU0Ted1/Elbz
+ ArtN6myRuvtFAATXKtQluZiPMBpa9lxnuSAWPLGiSR3QY55HDn6isdSQTR+Qt8ZthAWMXW1xxnU
+ XYtGoLIsSo7AJTn2OpUQnEZ+kq8lr4LFyP/3rXP1yellNEvXCgwhdiICdkD92x+BOvdQBl4Hza0
+ 18OH1xqlxC5heom8Ku7WVIHx6hmUTgy6Bu3VPIP36n8o3ItQuj2xpDqPoQlqA0MM3zXu+5AFXmS
+ DkEwjqNbvZdkgE0isLN6jJM1Xk8U6w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
 
-On Mon,  6 Oct 2025 17:58:05 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
-
-> On a x86 platform with a low memory hole (LHM), the BIOS may publish
-> CFMWS that describes a system physical address (SPA) range that
-> typically is only a subset of the corresponding CXL intermediate switch
-> and endpoint decoder's host physical address (HPA) ranges. The CFMWS
-> range never intersects the LHM and so the driver instantiates a root
-> decoder whose HPA range size doesn't fully contain the matching switch
-> and endpoint decoders' HPA ranges.[1]
+On 10/27/25 7:48 PM, bot+bpf-ci@kernel.org wrote:
+>> @@ -1350,11 +1367,14 @@ __bpf_kfunc int bpf_oom_kill_process(struct oom_control *oc,
+>>   * Returns a negative value if an error occurred.
+>>   */
+>>  __bpf_kfunc int bpf_out_of_memory(struct mem_cgroup *memcg__nullable,
+>> -				  int order, u64 flags)
+>> +				  int order, u64 flags,
+>> +				  const char *constraint_text__nullable)
+>>  {
+>>  	struct oom_control oc = {
+>>  		.memcg = memcg__nullable,
+>>  		.order = order,
+>> +		.constraint = CONSTRAINT_BPF,
+>> +		.bpf_constraint = constraint_text__nullable,
+>>  	};
+>>  	int ret;
 > 
-> To construct regions and attach decoders, the driver needs to match root
-> decoders and regions with endpoint decoders. The process fails and
-> returns errors because the driver is not designed to deal with SPA
-> ranges which are smaller than the corresponding hardware decoders HPA
-> ranges.
+> When CONSTRAINT_BPF is set in bpf_out_of_memory(), the early return in
+> constrained_alloc() prevents oc->totalpages from being initialized.  This
+> leaves totalpages at zero (from the designated initializer).
 > 
-> Introduce two functions that indirectly detect the presence of x86 LMH
-> and allow the matching between a root decoder or an already constructed
-> region with a corresponding intermediate switch or endpoint decoder to
-> enable the construction of a region and the subsequent attachment of the
-> same decoders to that region.
+> Later in the call chain out_of_memory()->select_bad_process()->
+> oom_evaluate_task()->oom_badness(), the code performs division by
+> totalpages at line 237:
 > 
-> These functions return true when SPA/HPA misalignments due to LMH's are
-> detected under specific conditions:
+>     adj *= totalpages / 1000;
 > 
-> - Both the SPA and HPA ranges must start at LMH_CFMWS_RANGE_START (i.e.,
->   0x0 on x86 with LMH's).
-> - The SPA range's size is less than HPA's.
-> - The SPA range's size is less than 4G.
-> - The HPA range's size is aligned to the NIW * 256M rule.
-> 
-> Also introduce a function that adjusts the range end of a region to be
-> constructed and the DPA range's end of the endpoint decoders that will
-> be later attached to that region.
-> 
-> [1] commit 7a81173f3 ("cxl: Documentation/driver-api/cxl: Describe the x86 Low Memory Hole solution")
-> 
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-A few minor comments from me.
+> Can this cause a division by zero?  The path is reachable when a BPF
+> program calls bpf_out_of_memory() and either no BPF OOM handler is
+> registered or the handler fails to free memory, causing execution to fall
+> through to select_bad_process().
 
-> diff --git a/drivers/cxl/core/platform_quirks.c b/drivers/cxl/core/platform_quirks.c
-> new file mode 100644
-> index 000000000000..7e76e392b1ae
-> --- /dev/null
-> +++ b/drivers/cxl/core/platform_quirks.c
-> @@ -0,0 +1,99 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +
-> +#include <linux/range.h>
-> +#include "platform_quirks.h"
-> +#include "cxlmem.h"
-> +#include "core.h"
-> +
-> +/* Start of CFMWS range that end before x86 Low Memory Holes */
-> +#define LMH_CFMWS_RANGE_START 0x0ULL
-> +
-> +/**
-> + * platform_cxlrd_matches_cxled() - Platform quirk to match CXL Root and
-> + * Endpoint Decoders. It allows matching on platforms with LMH's.
-> + * @cxlrd: The Root Decoder against which @cxled is tested for matching.
-> + * @cxled: The Endpoint Decoder to be tested for matching @cxlrd.
-> + *
-> + * platform_cxlrd_matches_cxled() is typically called from the
-> + * match_*_by_range() functions in region.c. It checks if an endpoint decoder
-> + * matches a given root decoder and returns true to allow the driver to succeed
-> + * in the construction of regions where it would otherwise fail for the presence
-> + * of a Low Memory Hole (see Documentation/driver-api/cxl/conventions.rst).
-> + *
-> + * In x86 platforms with LMH's, the CFMWS ranges never intersect the LMH, the
-> + * endpoint decoder's HPA range size is always guaranteed aligned to NIW*256MB
-> + * and also typically larger than the matching root decoder's, and the root
-> + * decoder's range end is at an address that is necessarily less than SZ_4G
-> + * (i.e., the Hole is in Low Memory - this function doesn't deal with other
-> + * kinds of holes).
-> + *
-> + * Return: true if an endpoint matches a root decoder, else false.
-> + */
-> +bool platform_cxlrd_matches_cxled(const struct cxl_root_decoder *cxlrd,
-> +				  const struct cxl_endpoint_decoder *cxled)
-> +{
-> +	const struct range *rd_r, *sd_r;
-> +	int align;
-> +
-> +	rd_r = &cxlrd->cxlsd.cxld.hpa_range;
-> +	sd_r = &cxled->cxld.hpa_range;
-> +	align = cxled->cxld.interleave_ways * SZ_256M;
-> +
-> +	if (rd_r->start == LMH_CFMWS_RANGE_START &&
-> +	    rd_r->start == sd_r->start && rd_r->end < sd_r->end &&
-> +	    rd_r->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-> +	    IS_ALIGNED(range_len(sd_r), align))
-> +		return true;
-> +
-> +	return false;
-Similar to below.  Simply returning the boolean statement can be simpler
+Looks like the AI got a little excited about finding the uninit variable
+chain and forgot what dividing by zero really means.  I'll add a false
+positive check for this.
 
-	return rd_r->start == LMH_CFMWS_RANGE_START &&
-	       rd_r->start == sd_r->start &&
-	       rd_r->end < sd_r->end &&
-	       rd_r->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-	       IS_ALIGNED(range_len(sd_r), align);
-
-
-> +}
-> +
-> +/**
-> + * platform_region_matches_cxld() - Platform quirk to match a CXL Region and a
-> + * Switch or Endpoint Decoder. It allows matching on platforms with LMH's.
-> + * @p: Region Params against which @cxled is matched.
-> + * @cxld: Switch or Endpoint Decoder to be tested for matching @p.
-> + *
-> + * Similar to platform_cxlrd_matches_cxled(), it matches regions and
-> + * decoders on platforms with LMH's.
-> + *
-> + * Return: true if a Decoder matches a Region, else false.
-> + */
-> +bool platform_region_matches_cxld(const struct cxl_region_params *p,
-> +				  const struct cxl_decoder *cxld)
-> +{
-> +	const struct range *r = &cxld->hpa_range;
-> +	const struct resource *res = p->res;
-> +	int align = cxld->interleave_ways * SZ_256M;
-> +
-> +	if (res->start == LMH_CFMWS_RANGE_START && res->start == r->start &&
-> +	    res->end < r->end && res->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-> +	    IS_ALIGNED(range_len(r), align))
-> +		return true;
-
-Dave commented on line break up here, but I'd go further.
-
-	return res->start == LMH_CFMWS_RANGE_START &&
-	       res->start == r->start &&
-	       res->end < r->end &&
-	       res->end < (LMH_CFMWS_RANGE_START + SZ_4G) &&
-	       IS_ALIGNED(range_len(r), align);
-
-> +
-> +	return false;
-> +}
-
-> diff --git a/drivers/cxl/core/platform_quirks.h b/drivers/cxl/core/platform_quirks.h
-> new file mode 100644
-> index 000000000000..a15592b4e90e
-> --- /dev/null
-> +++ b/drivers/cxl/core/platform_quirks.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +
-> +#include "cxl.h"
-> +
-> +#ifdef CONFIG_CXL_PLATFORM_QUIRKS
-> +bool platform_cxlrd_matches_cxled(const struct cxl_root_decoder *cxlrd,
-> +				  const struct cxl_endpoint_decoder *cxled);
-> +bool platform_region_matches_cxld(const struct cxl_region_params *p,
-> +				  const struct cxl_decoder *cxld);
-> +void platform_res_adjust(struct resource *res,
-> +			 struct cxl_endpoint_decoder *cxled,
-> +			 const struct cxl_root_decoder *cxlrd);
-> +#else
-> +static inline bool
-> +platform_root_decoder_contains(const struct cxl_root_decoder *cxlrd,
-> +			       const struct cxl_endpoint_decoder *cxled)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline bool
-> +platform_region_matches_cxld(const struct cxl_region_params *p,
-> +			     const struct cxl_decoder *cxld)
-> +{
-> +	return false;
-> +}
-> +
-> +inline void platform_res_adjust(struct resource *res,
-static 
-> +				struct cxl_endpoint_decoder *cxled,
-> +				const struct cxl_root_decoder *cxlrd)
-> +{
-> +}
-> +#endif /* CONFIG_CXL_PLATFORM_QUIRKS */
-
+-chris
 
