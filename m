@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-873921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251ACC15114
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:10:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D27C15131
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:10:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26F231894240
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7B331A21C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E0F33EAED;
-	Tue, 28 Oct 2025 14:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C301433FE08;
+	Tue, 28 Oct 2025 14:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pWzdGFK9"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mQRNNpfr"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47863335BAF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5705433DEE8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660249; cv=none; b=E3MpCP8Fl2+ETB+s4Dcf2UsOg6abt92bgAPB6Pc7CEgguhgCvtyeuRpbfGmgzygxfXeGTz/C/wi+ci024w6q9wTJiuU2WaEfTClubaTGWMv5Ovbq+gPysqBgH6zUjnbThS1UJ0wf1kIEWPzk6vJv2KWYkmf3J7xTd0BDNh31YBo=
+	t=1761660258; cv=none; b=MedBnGf/8FFKxhiEMKMUCVFrEqfqXTCQG86uKuUiQqRPbHB8PzBcukZV9gdaTm4SMnKwuXCqZhnpQV/MbeVrCrIna02q/ikLyzEmg04OJDeINM/O3WlyzfL26iK6fMVj4Y/N7RPAgSVO1bOqahf604YMygw3x/jUqkjoKOCxcE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660249; c=relaxed/simple;
-	bh=OSy/9GGCdN7m8F02iyVvXHlEK7sNx7mHMO14zaERKGQ=;
+	s=arc-20240116; t=1761660258; c=relaxed/simple;
+	bh=P0q6MjSkVjsNV2grrn3T44FIUMkX9PSRxmfEJUTIUEA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j+zWjkzxsoNL+gWGYsRTul9ZRZqgfQOTgns7FT7XHL5fR/dClUPL49YgeXwb+ob8dBGIi+DrjA8o8U50qYVhYogTKU3n16Tan88NemQAY2RWOLKe1utjv/kQnzc6/cK9xFX+7fpbHXBq/Vjy1SDSRuyk33zI9fTbea7jtfBvWrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pWzdGFK9; arc=none smtp.client-ip=91.218.175.179
+	 MIME-Version; b=hfPTUgEmtEh/BiiRQyTZGHW9uMdqvZKhuNEHalVJYNZv+Hou2o+DxQjsS3XwF07sPt8fTgoVb4UfIhFW48IfXpznHPWLmZ9bKBBFhNsx+HQqWBcvMpv+JR8RuVQiEgPkqzbdXoZjspIcrX+aYrmvgjyW0e4un6VXTmBww7NVA2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mQRNNpfr; arc=none smtp.client-ip=91.218.175.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761660244;
+	t=1761660252;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=d2EOOSlZh8oRwtRfQtnzgpJLzbPe1acyr5pcLzwWU68=;
-	b=pWzdGFK9jp5/gKWOoMPYfN/1zgwDvyk5R6UyUH2ocXAJcYLiJkqMhI+d2hIraioYk881Hw
-	7rzlQkLG3uO06lrW3XshXYI5VB2JcP+sh5murHeNw1f62HR7cktjcNoiJHB7FiwL0hTSM1
-	7bK+5TfatVR2jrRm9JSuNcGrGdlqOCQ=
+	bh=awA3itBKj19H7/d+bEsq6yy17boeItLnhliB54mswXw=;
+	b=mQRNNpfrKBpzz1ab1nTDgyCoguSHCTkk95shXK3iNipGI04oEMEXi5IIHEPqlqy+SEmRpM
+	qyRZZQYqvRsB5YE+THqhsZdE833GfIrCf6qfwNtQCy481oRQtt+89LTqZmnI4GWpd8q08w
+	S9hcQ/U+3SEnqwhb2eichfz//vZJxFk=
 From: Qi Zheng <qi.zheng@linux.dev>
 To: hannes@cmpxchg.org,
 	hughd@google.com,
@@ -62,10 +62,12 @@ Cc: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	cgroups@vger.kernel.org,
 	Muchun Song <songmuchun@bytedance.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
 	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v1 17/26] mm: workingset: prevent lruvec release in workingset_refault()
-Date: Tue, 28 Oct 2025 21:58:30 +0800
-Message-ID: <7d58f7f924961bc9ce386b3101448a49d7aa1daa.1761658310.git.zhengqi.arch@bytedance.com>
+Subject: [PATCH v1 18/26] mm: zswap: prevent lruvec release in zswap_folio_swapin()
+Date: Tue, 28 Oct 2025 21:58:31 +0800
+Message-ID: <c85c86746a3103bac3657934a2655c1eb81ff290.1761658311.git.zhengqi.arch@bytedance.com>
 In-Reply-To: <cover.1761658310.git.zhengqi.arch@bytedance.com>
 References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
 Precedence: bulk
@@ -85,44 +87,34 @@ released without the rcu read lock or a reference to its memory
 cgroup.
 
 In the current patch, the rcu read lock is employed to safeguard
-against the release of the lruvec in workingset_refault().
+against the release of the lruvec in zswap_folio_swapin().
 
 This serves as a preparatory measure for the reparenting of the
 LRU pages.
 
 Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Acked-by: Nhat Pham <nphamcs@gmail.com>
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
 ---
- mm/workingset.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ mm/zswap.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/mm/workingset.c b/mm/workingset.c
-index c4d21c15bad51..a69cc7bf9246d 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -560,11 +560,12 @@ void workingset_refault(struct folio *folio, void *shadow)
- 	 * locked to guarantee folio_memcg() stability throughout.
- 	 */
- 	nr = folio_nr_pages(folio);
-+	rcu_read_lock();
- 	lruvec = folio_lruvec(folio);
- 	mod_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + file, nr);
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 5d0f8b13a958d..a341814468b95 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -664,8 +664,10 @@ void zswap_folio_swapin(struct folio *folio)
+ 	struct lruvec *lruvec;
  
- 	if (!workingset_test_recent(shadow, file, &workingset, true))
--		return;
-+		goto out;
- 
- 	folio_set_active(folio);
- 	workingset_age_nonresident(lruvec, nr);
-@@ -580,6 +581,8 @@ void workingset_refault(struct folio *folio, void *shadow)
- 		lru_note_cost_refault(folio);
- 		mod_lruvec_state(lruvec, WORKINGSET_RESTORE_BASE + file, nr);
+ 	if (folio) {
++		rcu_read_lock();
+ 		lruvec = folio_lruvec(folio);
+ 		atomic_long_inc(&lruvec->zswap_lruvec_state.nr_disk_swapins);
++		rcu_read_unlock();
  	}
-+out:
-+	rcu_read_unlock();
  }
  
- /**
 -- 
 2.20.1
 
