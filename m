@@ -1,246 +1,308 @@
-Return-Path: <linux-kernel+bounces-873093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F01C1C13128
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:07:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89054C13134
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7796463B8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:07:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07EFE351982
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7015629E10C;
-	Tue, 28 Oct 2025 06:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C778277819;
+	Tue, 28 Oct 2025 06:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3T2D1ia"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AHGNaB9p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2464129E101
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B80B284693
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761631645; cv=none; b=aDH0RIrqK88ADxFcRiSuAvVe2dqfGz3NDvoH7sSuWAvmfCOtTsISiC2kCLxY68U0MVeuSetH4z2RUzT720EITEAhRkgr55RlyhsmVt+Pq42Fcj9BoIHn8vQ84iEHLC0+nX1ar0eZ9YDTKPfLpv/4zS18dImhAb3cx2Uq27gftJo=
+	t=1761631696; cv=none; b=ViopwVqLTUhMJm2gLMhsAmJEvTvus3+qUUDdZNs3gK9JWx9Nm0PvGTflAo509JJSzMneLbgHgZQ6ZxaL2S81RXLFPQtEvRtaT2QWl4MMn4mg+09hKiekJ/p0cPU/+I/s3XG9sljrZgYv3UGEfSNEmGfGKIzXg6aUlg9PMuhi+q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761631645; c=relaxed/simple;
-	bh=BQpmR2GlXVb/KvYNeHtrpNy6RpVE5xqbmGQxNYoGk/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=My4C3gaCt96DagJ+XLDQuAPY4OPMTxY/ZSjwUeHch9YlVR1tTXrhMjDtkNhrFI48NUpjY9hS0oXPoRWKhKrtWLgCT48WVWN0Z4b+bDgPtViNjyWqmRJfGzwiexupXuiwspLU60r6BGF2VRGye8QQAIsFVMlkxTFI3Pn+53U9rjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3T2D1ia; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-26e68904f0eso59910245ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:07:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761631643; x=1762236443; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X3Mi6dBwQl7K+tk271ylyIVMo6R3DpX7lq7cC7Ipe/g=;
-        b=R3T2D1iamXenRPMJ1Xspb1MTBf8Ml6Nv14oRolAxDFic2XD0bGy7yW8KVJTbUuXfHf
-         IOSbYhQaXUnDV4fEbmzNxRRxncEI1AlITPYn+nVRLNnjIFgo68/LENCdzyyJG6X2tNDb
-         eNQ9iRkkrqrE+HS11i9F1V2CJxz90Sm0a2mCb0yPzIbASLZA7kVG/8ePVBJ5fpf/hlIP
-         NJbs9cuXDqqMN6sBjrrzU+RcKKyKVkQtPxUqX8//q+etYwmgwhasazXDRrJbX3MdeJPF
-         qtOPsT1L8ZtNXbGM3/sRXRsF3OcDO8fUk09p93iRdI+gq0pFwF4bYNoUY9qXArjzrAUl
-         TPkA==
+	s=arc-20240116; t=1761631696; c=relaxed/simple;
+	bh=W0c8R10SoHWGGlerj/TVivFgOQeuC3ZQvjeAXshqRTM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=krKR7lDVxNaaujALmmfkR3o2qZds3ZP5NsRJ0+amR+tFgweqbst8rvsM4C9qs5BItJxngr0DV/I9UXH+7r180XAVvqshvhDzEM3M5PDBT/7ZJ1yNWzixh8fEtsxH73oWU8GWx/gbz5/HqRrRQcZxM74eeSXShBGqvodShfQEC+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AHGNaB9p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S4p7f3591592
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:08:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=YFQernyphzUokXIV/+I70uHICPm/RP+xKMy
+	m6taPSU8=; b=AHGNaB9pEUoM29BMQpWF6/trsZW1rS5KDocyjzV8W/vz2j4q31H
+	ESPuVsfd68gX/V4mkTkOL9wgY4lCXzbJ0aV4Ub810hB/4P7nsPLk+KjdVdgQFkE8
+	0KTFCwyUCwd6ZwLWs14EZTyorviFMDvmzOMFjz7lfpwqJ82AxbC54C9mW2wl9Zxp
+	o99XC+/nZ1KwF6BKoFFEvRwx++MypnucKh/XX9q/eikQwcFuSQn0J93lkXsWD6zB
+	S8lTfhGAGLW73wU91vZ94ai/Ol8RCs21NeMA4+umq7WTZLv60aALwT374kLQqAyj
+	BcZNbgVasZGCp886nqiBa2Xtc//dyLT+Zyg==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2q5u85nb-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:08:13 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-78117b8e49fso11918085b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:08:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761631643; x=1762236443;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X3Mi6dBwQl7K+tk271ylyIVMo6R3DpX7lq7cC7Ipe/g=;
-        b=DNUYRKWHv95zIF6ut5PmhHEXcRkwLzbpudHasXP1h/9RPaA25Ga4uicKItVF+myB58
-         LCz0eHdw1gCUHSp8yO8ywCTTPJUrvBemHRCE4BfgZ5/PZfdjVm4cqe3YAa8DzmLld6Pa
-         UuxRcDsDYdDQRRXWwXrv6GtDU0c1mBokAxECh/WloLGE6nxwIGZHKPxcOoxLe5pmSPER
-         pL3Vf4tEzC08WVGVVWMUL6ccjF+JP5NZ49HFGplXWAgm7/ICVlRWmGlIGA1dN74WWCxI
-         L8F9KQOkHKSAZPyGt9Zqn2ds8d0tHEnV8B/N/e4GB9uT2SWa4XCErxae6PPhp/F/Pf3q
-         mZ7g==
-X-Forwarded-Encrypted: i=1; AJvYcCU33jDz5U/BYXKn9cY9eZtmmxwfQhhD/JyH7b63M9EIoHfRuEhawIg3LZaaNdKSSCvo8wYgzoQ4PoCWzSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN+wltBZ+E3e8uUu/DsCa2QTc07CHR2z1xfRMRaGJApNBDXm8h
-	KVysFR3RwMmhMs7lKS72mTXFjX4YSzyBwJ8jVl9Kw21umT3kEHlFWSoW
-X-Gm-Gg: ASbGncsIWzg7xS9CwqBo4mnXeAZAd7oy8M6fedMmrVIObY1zcHGzq7BwcNn+3ttGAaW
-	6b1oD1wLzFrkchYkylCt+LkZRbb5qk0UvQX59l5uy79+FHnwXi0gNbizQDRE4u2Pu0BW53nBvV1
-	JMUkQTZdOIjt32wSbEfavEmUE7dPDOqd3Pf6NVO4oxuj7mGqPZZx0TeOzNE9m/2oG1UxOyQiA/z
-	DhfP1dedRIpkFYI1a7JjEWQJrIKG9w3qlEoTMWJD5pBGa4tvh2eE2TnmTsZwAUf9jQGUBX32p8a
-	Ls1CE8qiKc49SjziYwurK6bZY+4+teEQuG1x7pbgbI1oQ2xu1rUqzx3QQDqs82v9t++Dc3CE1qr
-	bLHd05EIxGQ1jzW1GjUdHE5aa4oZbpt/tuykDy+Z5q57lynADAuWOs6eNd/KJ0krs8F//XKbeHO
-	evp9N76Rw1szQVh5rQzUYaHBTwQPBdOdlaGfxIqriMpHtuCdks75Yc2w==
-X-Google-Smtp-Source: AGHT+IEqDKe28CM1wcw1T5jIas5LPW4A4iQTrqZvLc/K2EgN8TV441SShFqZjxfapz7ZcPNUWZg1Vg==
-X-Received: by 2002:a17:902:c945:b0:265:47:a7b0 with SMTP id d9443c01a7336-294cb37b969mr24029555ad.10.1761631643254;
-        Mon, 27 Oct 2025 23:07:23 -0700 (PDT)
-Received: from ?IPV6:2600:8802:702:7400:1c69:7897:d90:375b? ([2600:8802:702:7400:1c69:7897:d90:375b])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bfaa1sm9237607a12.7.2025.10.27.23.07.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 Oct 2025 23:07:22 -0700 (PDT)
-Message-ID: <a4a7f1c9-1817-4092-9ab1-07209bb44125@gmail.com>
-Date: Mon, 27 Oct 2025 23:07:20 -0700
+        d=1e100.net; s=20230601; t=1761631693; x=1762236493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YFQernyphzUokXIV/+I70uHICPm/RP+xKMym6taPSU8=;
+        b=iemUeo7TP4T0RwWfPYWjAy3nsJryESXVzpu9tolzkkn22mKHC6f2UXftCh3IvQpGoQ
+         G7RWDE9rT9hK9Cq/nMEoGyDdZnR1n4w5chMV47jiJnJjMP3cT1IHAnDtcbsdMetGkJEJ
+         gGg5MwzyGk2XYSYHvwj9bFDyv7tCbcUgzSYvq10WThlJxz+7+GuMCZj7zL0eOZ7fuZwZ
+         XWG/sX893SZNmGBdbDe25f+HhqJUfQZg5KJfG1MyncxpIikLvK5K8efpjgE0Pbg7b1EG
+         rU7TBhY7LXWS/NyKL18WEjAcM8rTzSPuDixnLniMYNODxP243tyuD+7BXLYSHvfflpjI
+         6l+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXXzLYPTE7DfgSCdp6rJPHLinl8cGXsAdu6An2k8CDk1mw8HWIAgm/9TN3poLMQzm8gUbbXZp7PeVJF+Uw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywv2UU7ahAC5XT5K4FZ8KwaH9cxjaCdIpDZFkJDsRWF87TGoU7
+	XbR7AyxiX+nmb88fUu8ZRQIjcng+Z+CYK6ZDObJTMBeyNGDaeStK1KMViM6kgsd1W4OYc28/Udj
+	OD4h6I/9QdIjLBylviOEkpAWKnDp6MqgR6QkaM/fLzPCfJcBUYkQDYpTrK47Rza7z6xU=
+X-Gm-Gg: ASbGncs2wUEnFjmthPO0r9bbYTZ1tV/tCrXfKUiLwm/XTO6Iyd6Q7jAAR1F2qG41+tv
+	gvX118FKBzOdq03RAAfFslOPR6FL6/6j/rZBykW44pbD9sVe1dEm44FP88M2ASHKa/Dwxc+rav0
+	itYhIkeULrvuYBk1IFasA92hswUxGCYQU3suz7JjOUOE/rxYGZNM49remf7t5F7rV0jOjDmBKet
+	7DJLu/8wU6kqRIW3MSor8F0Vj8/sCMEH81K7t3jtCzFcsWE6uIOAGCEynbNKXeEgRKrLGsQ6G4P
+	BPih4pu6RqfkQKI8uJGLLUNXKE/WbHH7ZiMnT/f1PJLY6zntb7ixJ0q7kznHw+icMySzNqpvro6
+	jszfSDG/uxKUt02A0JpQMBKGw4xqlT62IoDfMw+FWrfP8U+ZQ+QPvKfZTYA==
+X-Received: by 2002:a05:6a00:9281:b0:7a2:721b:adb6 with SMTP id d2e1a72fcca58-7a441c47627mr3120284b3a.28.1761631692846;
+        Mon, 27 Oct 2025 23:08:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF5IdZmG+yfCiDsulIMrTHpgRc/xNK0DVqnVio5NHUD8R1SXXmWIe+eXbbrig1qqDs8Z+/EJA==
+X-Received: by 2002:a05:6a00:9281:b0:7a2:721b:adb6 with SMTP id d2e1a72fcca58-7a441c47627mr3120253b3a.28.1761631692335;
+        Mon, 27 Oct 2025 23:08:12 -0700 (PDT)
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (i-global052.qualcomm.com. [199.106.103.52])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414011acdsm10204566b3a.13.2025.10.27.23.08.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Oct 2025 23:08:11 -0700 (PDT)
+From: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+To: jjohnson@kernel.org
+Cc: ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>,
+        Ross Brown <true.robot.ross@gmail.com>
+Subject: [PATCH ath-current] Revert "wifi: ath12k: Fix missing station power save configuration"
+Date: Tue, 28 Oct 2025 14:07:44 +0800
+Message-Id: <20251028060744.897198-1-miaoqing.pan@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/12] drm/msm/dpu: Compatible with Kaanapali interrupt
- register
-To: yuanjie yang <yuanjie.yang@oss.qualcomm.com>,
- robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
- sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
- simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
- quic_khsieh@quicinc.com, neil.armstrong@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
- aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
-References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
- <20251023075401.1148-4-yuanjie.yang@oss.qualcomm.com>
-Content-Language: en-US
-From: Jessica Zhang <jesszhan0024@gmail.com>
-In-Reply-To: <20251023075401.1148-4-yuanjie.yang@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA1MSBTYWx0ZWRfX9/V/9IQUCYhZ
+ 66euY7pXTYxAVL7pjiK2C1oPq3EJSd6XQn9z/m85Gd0usTKsLtaQRQbqbIc7v8Jnmcuown4jMUN
+ HXQwRM+V4wo6JseaClaifnOhs/n1/nEruiPMM9B9TT/x9jcmGB13f5BFrW5C7pG6GlR9BJVZ5lT
+ FIwYh/skcX8WD8Ea8diIM9GdZmW5O4QU5xR3HtQyMBLmLeiyuojt9oqWBjY5SU7aOT6mA/7AqJw
+ 7zsSDXuXlDGRQS7oexKscRReYoNqp2YbRUzVnp5MMRw5Or2V7pITMn9q64FKzRhPL8NW92DjDEf
+ FXbOXN0moXWQ5lcTh/mNi5tsUDXRu9PzqzKPsGkZM5mcRC+NQiRof36aFvqFhCVPQ7RbCudKwWm
+ HMqZnGKRgW84zWaaIo1Yy1Gk4TerrQ==
+X-Proofpoint-ORIG-GUID: -X_Hv6U7x7JvoGhtMXp-Q36bwJvKUnBp
+X-Proofpoint-GUID: -X_Hv6U7x7JvoGhtMXp-Q36bwJvKUnBp
+X-Authority-Analysis: v=2.4 cv=c9CmgB9l c=1 sm=1 tr=0 ts=69005dcd cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=b9+bayejhc3NMeqCNyeLQQ==:17
+ a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8
+ a=EUspDBNiAAAA:8 a=rFrEXt6fRIhDJ_V8PpwA:9 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
+ clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280051
 
-On 10/23/2025 12:53 AM, yuanjie yang wrote:
-> From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+This reverts commit 4b66d18918f8e4d85e51974a9e3ce9abad5c7c3d.
 
-Hi Yuanjie,
+In [1], Ross Brown reports poor performance of WCN7850 after enabling
+power save. Temporarily revert the fix; it will be re-enabled once
+the issue is resolved.
 
-Can you reword the commit message title to be more clear on what this 
-patch *does*? "Compatible with Kaanapali interrupt register" is vague.
+Tested-on: WCN7850 hw2.0 PCI WLAN.IOE_HMT.1.1-00011-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
 
-Something like "Add interrupt registers for DPU 13.x" is a complete 
-sentence and makes it clear that you're adding interrupt registers.
+Fixes: 4b66d18918f8 ("wifi: ath12k: Fix missing station power save configuration")
+Reported-by: Ross Brown <true.robot.ross@gmail.com>
+Closes: https://lore.kernel.org/all/CAMn66qZENLhDOcVJuwUZ3ir89PVtVnQRq9DkV5xjJn1p6BKB9w@mail.gmail.com/ # [1]
+Signed-off-by: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+---
+ drivers/net/wireless/ath/ath12k/mac.c | 122 ++++++++++++--------------
+ 1 file changed, 55 insertions(+), 67 deletions(-)
 
-Thanks,
+diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+index eacab798630a..db351c922018 100644
+--- a/drivers/net/wireless/ath/ath12k/mac.c
++++ b/drivers/net/wireless/ath/ath12k/mac.c
+@@ -4064,68 +4064,12 @@ static int ath12k_mac_fils_discovery(struct ath12k_link_vif *arvif,
+ 	return ret;
+ }
+ 
+-static void ath12k_mac_vif_setup_ps(struct ath12k_link_vif *arvif)
+-{
+-	struct ath12k *ar = arvif->ar;
+-	struct ieee80211_vif *vif = arvif->ahvif->vif;
+-	struct ieee80211_conf *conf = &ath12k_ar_to_hw(ar)->conf;
+-	enum wmi_sta_powersave_param param;
+-	struct ieee80211_bss_conf *info;
+-	enum wmi_sta_ps_mode psmode;
+-	int ret;
+-	int timeout;
+-	bool enable_ps;
+-
+-	lockdep_assert_wiphy(ath12k_ar_to_hw(ar)->wiphy);
+-
+-	if (vif->type != NL80211_IFTYPE_STATION)
+-		return;
+-
+-	enable_ps = arvif->ahvif->ps;
+-	if (enable_ps) {
+-		psmode = WMI_STA_PS_MODE_ENABLED;
+-		param = WMI_STA_PS_PARAM_INACTIVITY_TIME;
+-
+-		timeout = conf->dynamic_ps_timeout;
+-		if (timeout == 0) {
+-			info = ath12k_mac_get_link_bss_conf(arvif);
+-			if (!info) {
+-				ath12k_warn(ar->ab, "unable to access bss link conf in setup ps for vif %pM link %u\n",
+-					    vif->addr, arvif->link_id);
+-				return;
+-			}
+-
+-			/* firmware doesn't like 0 */
+-			timeout = ieee80211_tu_to_usec(info->beacon_int) / 1000;
+-		}
+-
+-		ret = ath12k_wmi_set_sta_ps_param(ar, arvif->vdev_id, param,
+-						  timeout);
+-		if (ret) {
+-			ath12k_warn(ar->ab, "failed to set inactivity time for vdev %d: %i\n",
+-				    arvif->vdev_id, ret);
+-			return;
+-		}
+-	} else {
+-		psmode = WMI_STA_PS_MODE_DISABLED;
+-	}
+-
+-	ath12k_dbg(ar->ab, ATH12K_DBG_MAC, "mac vdev %d psmode %s\n",
+-		   arvif->vdev_id, psmode ? "enable" : "disable");
+-
+-	ret = ath12k_wmi_pdev_set_ps_mode(ar, arvif->vdev_id, psmode);
+-	if (ret)
+-		ath12k_warn(ar->ab, "failed to set sta power save mode %d for vdev %d: %d\n",
+-			    psmode, arvif->vdev_id, ret);
+-}
+-
+ static void ath12k_mac_op_vif_cfg_changed(struct ieee80211_hw *hw,
+ 					  struct ieee80211_vif *vif,
+ 					  u64 changed)
+ {
+ 	struct ath12k_vif *ahvif = ath12k_vif_to_ahvif(vif);
+ 	unsigned long links = ahvif->links_map;
+-	struct ieee80211_vif_cfg *vif_cfg;
+ 	struct ieee80211_bss_conf *info;
+ 	struct ath12k_link_vif *arvif;
+ 	struct ieee80211_sta *sta;
+@@ -4189,24 +4133,61 @@ static void ath12k_mac_op_vif_cfg_changed(struct ieee80211_hw *hw,
+ 			}
+ 		}
+ 	}
++}
+ 
+-	if (changed & BSS_CHANGED_PS) {
+-		links = ahvif->links_map;
+-		vif_cfg = &vif->cfg;
++static void ath12k_mac_vif_setup_ps(struct ath12k_link_vif *arvif)
++{
++	struct ath12k *ar = arvif->ar;
++	struct ieee80211_vif *vif = arvif->ahvif->vif;
++	struct ieee80211_conf *conf = &ath12k_ar_to_hw(ar)->conf;
++	enum wmi_sta_powersave_param param;
++	struct ieee80211_bss_conf *info;
++	enum wmi_sta_ps_mode psmode;
++	int ret;
++	int timeout;
++	bool enable_ps;
+ 
+-		for_each_set_bit(link_id, &links, IEEE80211_MLD_MAX_NUM_LINKS) {
+-			arvif = wiphy_dereference(hw->wiphy, ahvif->link[link_id]);
+-			if (!arvif || !arvif->ar)
+-				continue;
++	lockdep_assert_wiphy(ath12k_ar_to_hw(ar)->wiphy);
+ 
+-			ar = arvif->ar;
++	if (vif->type != NL80211_IFTYPE_STATION)
++		return;
++
++	enable_ps = arvif->ahvif->ps;
++	if (enable_ps) {
++		psmode = WMI_STA_PS_MODE_ENABLED;
++		param = WMI_STA_PS_PARAM_INACTIVITY_TIME;
+ 
+-			if (ar->ab->hw_params->supports_sta_ps) {
+-				ahvif->ps = vif_cfg->ps;
+-				ath12k_mac_vif_setup_ps(arvif);
++		timeout = conf->dynamic_ps_timeout;
++		if (timeout == 0) {
++			info = ath12k_mac_get_link_bss_conf(arvif);
++			if (!info) {
++				ath12k_warn(ar->ab, "unable to access bss link conf in setup ps for vif %pM link %u\n",
++					    vif->addr, arvif->link_id);
++				return;
+ 			}
++
++			/* firmware doesn't like 0 */
++			timeout = ieee80211_tu_to_usec(info->beacon_int) / 1000;
+ 		}
++
++		ret = ath12k_wmi_set_sta_ps_param(ar, arvif->vdev_id, param,
++						  timeout);
++		if (ret) {
++			ath12k_warn(ar->ab, "failed to set inactivity time for vdev %d: %i\n",
++				    arvif->vdev_id, ret);
++			return;
++		}
++	} else {
++		psmode = WMI_STA_PS_MODE_DISABLED;
+ 	}
++
++	ath12k_dbg(ar->ab, ATH12K_DBG_MAC, "mac vdev %d psmode %s\n",
++		   arvif->vdev_id, psmode ? "enable" : "disable");
++
++	ret = ath12k_wmi_pdev_set_ps_mode(ar, arvif->vdev_id, psmode);
++	if (ret)
++		ath12k_warn(ar->ab, "failed to set sta power save mode %d for vdev %d: %d\n",
++			    psmode, arvif->vdev_id, ret);
+ }
+ 
+ static bool ath12k_mac_supports_tpc(struct ath12k *ar, struct ath12k_vif *ahvif,
+@@ -4228,6 +4209,7 @@ static void ath12k_mac_bss_info_changed(struct ath12k *ar,
+ {
+ 	struct ath12k_vif *ahvif = arvif->ahvif;
+ 	struct ieee80211_vif *vif = ath12k_ahvif_to_vif(ahvif);
++	struct ieee80211_vif_cfg *vif_cfg = &vif->cfg;
+ 	struct cfg80211_chan_def def;
+ 	u32 param_id, param_value;
+ 	enum nl80211_band band;
+@@ -4514,6 +4496,12 @@ static void ath12k_mac_bss_info_changed(struct ath12k *ar,
+ 	}
+ 
+ 	ath12k_mac_fils_discovery(arvif, info);
++
++	if (changed & BSS_CHANGED_PS &&
++	    ar->ab->hw_params->supports_sta_ps) {
++		ahvif->ps = vif_cfg->ps;
++		ath12k_mac_vif_setup_ps(arvif);
++	}
+ }
+ 
+ static struct ath12k_vif_cache *ath12k_ahvif_get_link_cache(struct ath12k_vif *ahvif,
 
-Jessica Zhang
+base-commit: 2469bb6a6af944755a7d7daf66be90f3b8decbf9
+-- 
+2.34.1
 
-> 
-> DPU version 13 introduces changes to the interrupt register
-> layout. Update the driver to support these modifications for
-> proper interrupt handling.
-> 
-> Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
-> Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
-> ---
->   .../gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 89 ++++++++++++++++++-
->   1 file changed, 88 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-> index 49bd77a755aa..8d265581f6ec 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
-> @@ -40,6 +40,15 @@
->   #define MDP_INTF_REV_7xxx_INTR_TEAR_STATUS(intf)	(MDP_INTF_REV_7xxx_TEAR_OFF(intf) + 0x004)
->   #define MDP_INTF_REV_7xxx_INTR_TEAR_CLEAR(intf)		(MDP_INTF_REV_7xxx_TEAR_OFF(intf) + 0x008)
->   
-> +#define MDP_INTF_REV_13xx_OFF(intf)			(0x18D000 + 0x1000 * (intf))
-> +#define MDP_INTF_REV_13xx_INTR_EN(intf)			(MDP_INTF_REV_13xx_OFF(intf) + 0x1c0)
-> +#define MDP_INTF_REV_13xx_INTR_STATUS(intf)		(MDP_INTF_REV_13xx_OFF(intf) + 0x1c4)
-> +#define MDP_INTF_REV_13xx_INTR_CLEAR(intf)		(MDP_INTF_REV_13xx_OFF(intf) + 0x1c8)
-> +#define MDP_INTF_REV_13xx_TEAR_OFF(intf)		(0x18D800 + 0x1000 * (intf))
-> +#define MDP_INTF_REV_13xx_INTR_TEAR_EN(intf)		(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x000)
-> +#define MDP_INTF_REV_13xx_INTR_TEAR_STATUS(intf)	(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x004)
-> +#define MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(intf)		(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x008)
-> +
->   /**
->    * struct dpu_intr_reg - array of DPU register sets
->    * @clr_off:	offset to CLEAR reg
-> @@ -199,6 +208,82 @@ static const struct dpu_intr_reg dpu_intr_set_7xxx[] = {
->   	},
->   };
->   
-> +/*
-> + * dpu_intr_set_13xx -  List of DPU interrupt registers for DPU >= 13.0
-> + */
-> +static const struct dpu_intr_reg dpu_intr_set_13xx[] = {
-> +	[MDP_SSPP_TOP0_INTR] = {
-> +		INTR_CLEAR,
-> +		INTR_EN,
-> +		INTR_STATUS
-> +	},
-> +	[MDP_SSPP_TOP0_INTR2] = {
-> +		INTR2_CLEAR,
-> +		INTR2_EN,
-> +		INTR2_STATUS
-> +	},
-> +	[MDP_SSPP_TOP0_HIST_INTR] = {
-> +		HIST_INTR_CLEAR,
-> +		HIST_INTR_EN,
-> +		HIST_INTR_STATUS
-> +	},
-> +	[MDP_INTF0_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(0),
-> +		MDP_INTF_REV_13xx_INTR_EN(0),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(0)
-> +	},
-> +	[MDP_INTF1_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(1),
-> +		MDP_INTF_REV_13xx_INTR_EN(1),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(1)
-> +	},
-> +	[MDP_INTF1_TEAR_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(1),
-> +		MDP_INTF_REV_13xx_INTR_TEAR_EN(1),
-> +		MDP_INTF_REV_13xx_INTR_TEAR_STATUS(1)
-> +	},
-> +	[MDP_INTF2_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(2),
-> +		MDP_INTF_REV_13xx_INTR_EN(2),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(2)
-> +	},
-> +	[MDP_INTF2_TEAR_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(2),
-> +		MDP_INTF_REV_13xx_INTR_TEAR_EN(2),
-> +		MDP_INTF_REV_13xx_INTR_TEAR_STATUS(2)
-> +	},
-> +	[MDP_INTF3_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(3),
-> +		MDP_INTF_REV_13xx_INTR_EN(3),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(3)
-> +	},
-> +	[MDP_INTF4_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(4),
-> +		MDP_INTF_REV_13xx_INTR_EN(4),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(4)
-> +	},
-> +	[MDP_INTF5_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(5),
-> +		MDP_INTF_REV_13xx_INTR_EN(5),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(5)
-> +	},
-> +	[MDP_INTF6_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(6),
-> +		MDP_INTF_REV_13xx_INTR_EN(6),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(6)
-> +	},
-> +	[MDP_INTF7_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(7),
-> +		MDP_INTF_REV_13xx_INTR_EN(7),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(7)
-> +	},
-> +	[MDP_INTF8_INTR] = {
-> +		MDP_INTF_REV_13xx_INTR_CLEAR(8),
-> +		MDP_INTF_REV_13xx_INTR_EN(8),
-> +		MDP_INTF_REV_13xx_INTR_STATUS(8)
-> +	},
-> +};
-> +
->   #define DPU_IRQ_MASK(irq_idx)	(BIT(DPU_IRQ_BIT(irq_idx)))
->   
->   static inline bool dpu_core_irq_is_valid(unsigned int irq_idx)
-> @@ -507,7 +592,9 @@ struct dpu_hw_intr *dpu_hw_intr_init(struct drm_device *dev,
->   	if (!intr)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	if (m->mdss_ver->core_major_ver >= 7)
-> +	if (m->mdss_ver->core_major_ver >= 13)
-> +		intr->intr_set = dpu_intr_set_13xx;
-> +	else if (m->mdss_ver->core_major_ver >= 7)
->   		intr->intr_set = dpu_intr_set_7xxx;
->   	else
->   		intr->intr_set = dpu_intr_set_legacy;
 
