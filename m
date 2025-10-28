@@ -1,130 +1,123 @@
-Return-Path: <linux-kernel+bounces-873327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C184C13ACE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:03:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A04C13B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:08:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC24F347422
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:03:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 400355080B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8737E2DE6F8;
-	Tue, 28 Oct 2025 09:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5CA82E8B80;
+	Tue, 28 Oct 2025 09:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CGNB3GBc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yMyvYEnz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0906C2D978C;
-	Tue, 28 Oct 2025 09:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235A12E7BB4;
+	Tue, 28 Oct 2025 09:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642221; cv=none; b=DdTff1ov4PgJEQpNYJu2G4H5+S+58XwEz9q4t6kQkyPxSeom/fQK5qLYZpzy7/HWEI41TLJ/4BfN4qfovRwzmoWaNwxDwYt0K/Rgq63HLNnYXqD8DPRCrukEqycY7UtnjxBs44znW8HxR8yhpHpln+odHI9V9qGgt8tuGv0f2cI=
+	t=1761642315; cv=none; b=o7LEZWyF5U654uzMqGqCqLkaRVRBysfoqbC3IUthQ+bqf074zZJ7KRHVvpDcIFHT+q0NTg+x2XN7+Qm1J/Sbt7GGSrEGn/AEToeIdy/1DKQ92Xggs/t2zQtihGe3bFXHFh2eWX9KCr4wQUchrHL/x3BGycHxJfwUvmDCjU//+AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642221; c=relaxed/simple;
-	bh=FYchjVqAMBQv9LBq46poc1KVyQCj9SBIi0pkPIA8Og4=;
+	s=arc-20240116; t=1761642315; c=relaxed/simple;
+	bh=V0eGMEDYNjmZcItSuYC29g2UnX0Z2vl5cwdDrIsClsE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFX4Hrkoe8o4vkMLJOUqWL6Sii49fGjeDAS9dUGY4kQ6FZMj0+AIEJT5W211pL5HbPdkA7xhWq6EwyJLTo1yAQkb0y8mWA2pkDKD1m7a2CKcBiz8FmAtI3yeWYp2/UodXT6CCnrpmXue2C4mqs/gU9K8NfHmuihPY7Kn3+yqVNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CGNB3GBc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=+9Ze56vyjrFGBBLikcAq8sc6beALo9Z6C9Ec7GUdfW4=; b=CGNB3GBcvuX2cPKZk+73pjOZX+
-	QJKofhcWvyXNpepFZwC9YNGrYs+AzjkJX2Avt31iCqWoGx+ffgp43DbWt5D0zUKp+0mlknxdwlh6p
-	F2+X/4gILWHSJL7jg5yYffwUl0BpaBJXkr7Hd9DzKOWlv5sSuXs5MiQQ64AKYrDPHwvU5aUqhB5Ob
-	A5957Y+8KSfhPv0zh1Xh1gPqD6A60ZncX4t5rcoVD6YSrFnf+nzGusyCOtYW/A8e1F5v5GyjWO/Ft
-	Xq6jR3jlZ7MjOE3yH0GqKv1TqDn1ux8ATJm0Y9MhRRCculYdQZsggQsvwHM7yg/eEJvtx+FsmL3rI
-	ODQPG1KQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDfbw-00000009xri-12M5;
-	Tue, 28 Oct 2025 09:03:25 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 47151300289; Tue, 28 Oct 2025 10:03:24 +0100 (CET)
-Date: Tue, 28 Oct 2025 10:03:24 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: kernel test robot <oliver.sang@intel.com>, japo@linux.ibm.com
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Juri Lelli <juri.lelli@redhat.com>,
-	Tejun Heo <tj@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	cgroups@vger.kernel.org, aubrey.li@linux.intel.com,
-	yu.c.chen@intel.com
-Subject: Re: [tip:sched/core] [sched]  b079d93796:
- WARNING:possible_recursive_locking_detected_migration_is_trying_to_acquire_lock:at:set_cpus_allowed_force_but_task_is_already_holding_lock:at:cpu_stopper_thread
-Message-ID: <20251028090324.GQ4068168@noisy.programming.kicks-ass.net>
-References: <202510271206.24495a68-lkp@intel.com>
- <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VSMTefbTJ8shqGhQQ/pl0WqKppMcqht7oaws/Mdo8yUKYvIEFVHfm0Ui1qOMlay9h2dk+Z9aupzKNBNeXlSFY4H7rwkvN0ZCrvUNalnAvvmwa2j5qtdLcE4maOfM97noAaX4ZZm7qWv8wrDOt836n1oY/m28KjoUFqjV1VrCwU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yMyvYEnz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C599AC4CEE7;
+	Tue, 28 Oct 2025 09:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761642314;
+	bh=V0eGMEDYNjmZcItSuYC29g2UnX0Z2vl5cwdDrIsClsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=yMyvYEnzpTp2MOjVQmTfUVy9NkK+HpZw70+IgxZWHgaUIJ/ZPNs23ySvUKz8Vw0ds
+	 McHxCRsFiSGzvztrmF88bKzDtyqYM1kU5NfT9Lu9kAaRLo1g6xbwOJ+6nxOfEycS3u
+	 17bq2xXT2unZREUCwBJASVyJnSeR3vE4vC1iQnMI=
+Date: Tue, 28 Oct 2025 09:33:17 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Ron Economos <re@w6rz.net>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+	sr@sladewatkins.com
+Subject: Re: [PATCH 5.15 000/123] 5.15.196-rc1 review
+Message-ID: <2025102850-obedience-filter-efca@gregkh>
+References: <20251027183446.381986645@linuxfoundation.org>
+ <d61b75c9-a6a1-452c-a2be-34959d354739@w6rz.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d61b75c9-a6a1-452c-a2be-34959d354739@w6rz.net>
 
-On Mon, Oct 27, 2025 at 12:01:33PM +0100, Peter Zijlstra wrote:
+On Mon, Oct 27, 2025 at 09:49:59PM -0700, Ron Economos wrote:
+> On 10/27/25 11:34, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.15.196 release.
+> > There are 123 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.196-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> The RISC-V build fails with:
+> 
+> arch/riscv/kernel/cpu.c: In function 'riscv_of_processor_hartid':
+> arch/riscv/kernel/cpu.c:24:33: error: implicit declaration of function
+> 'of_get_cpu_hwid'; did you mean 'of_get_cpu_node'?
+> [-Werror=implicit-function-declaration]
+>    24 |         *hart = (unsigned long) of_get_cpu_hwid(node, 0);
+>       |                                 ^~~~~~~~~~~~~~~
+>       |                                 of_get_cpu_node
+> cc1: some warnings being treated as errors
+> 
+> The function of_get_cpu_hwid() doesn't exist in Linux 5.15.x. It was
+> introduced in 5.16-rc1. The following patches should be reverted:
+> 
+> 87b94f8227b3b654ea6e7670cefb32dab0e570ed RISC-V: Don't fail in
+> riscv_of_parent_hartid() for disabled HARTs
+> 
+> 568d34c6aafa066bbdb5e7b6aed9c492d81964e8 RISC-V: Don't print details of CPUs
+> disabled in DT
+> 
+> And the stable-dep-of patches for the above should also be reverted since
+> they cause warnings:
+> 
+> 989694ece94da2bbae6c6f3f044994302f923cc8 riscv: cpu: Add 64bit hartid
+> support on RV64
+> 
+> 8c2544fd913bb7b29ee3af79e0b302036689fe7a RISC-V: Minimal parser for "riscv,
+> isa" strings
+> 
+> e0cc917db8fb7b4881ad3e8feb76cefa06f04fe6 RISC-V: Correctly print supported
+> extensions
+> 
+> c616540d6b67830bb4345130e8fa3d8e217249a0 iscv: Use of_get_cpu_hwid()
 
-Could someone confirm this fixes the problem?
+Thanks, I'll go drop all of these and push out a -rc2
 
-> ---
-> Subject: sched: Fix the do_set_cpus_allowed() locking fix
-> 
-> Commit abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-> overlooked that __balance_push_cpu_stop() calls select_fallback_rq()
-> with rq->lock held. This makes that set_cpus_allowed_force() will
-> recursively take rq->lock and the machine locks up.
-> 
-> Run select_fallback_rq() earlier, without holding rq->lock. This opens
-> up a race window where a task could get migrated out from under us, but
-> that is harmless, we want the task migrated.
-> 
-> select_fallback_rq() itself will not be subject to concurrency as it
-> will be fully serialized by p->pi_lock, so there is no chance of
-> set_cpus_allowed_force() getting called with different arguments and
-> selecting different fallback CPUs for one task.
-> 
-> Fixes: abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-> Reported-by: Jan Polensky <japo@linux.ibm.com>
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Closes: https://lore.kernel.org/oe-lkp/202510271206.24495a68-lkp@intel.com
-> ---
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 1842285eac1e..67b5f2faab36 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -8044,18 +8044,15 @@ static int __balance_push_cpu_stop(void *arg)
->  	struct rq_flags rf;
->  	int cpu;
->  
-> -	raw_spin_lock_irq(&p->pi_lock);
-> -	rq_lock(rq, &rf);
-> -
-> -	update_rq_clock(rq);
-> -
-> -	if (task_rq(p) == rq && task_on_rq_queued(p)) {
-> +	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
->  		cpu = select_fallback_rq(rq->cpu, p);
-> -		rq = __migrate_task(rq, &rf, p, cpu);
-> -	}
->  
-> -	rq_unlock(rq, &rf);
-> -	raw_spin_unlock_irq(&p->pi_lock);
-> +		rq_lock(rq, &rf);
-> +		update_rq_clock(rq);
-> +		if (task_rq(p) == rq && task_on_rq_queued(p))
-> +			rq = __migrate_task(rq, &rf, p, cpu);
-> +		rq_unlock(rq, &rf);
-> +	}
->  
->  	put_task_struct(p);
->  
+greg k-h
 
