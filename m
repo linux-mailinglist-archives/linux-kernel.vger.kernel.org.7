@@ -1,239 +1,139 @@
-Return-Path: <linux-kernel+bounces-873087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2A3C130B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:59:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A5DC130BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60EA61A27738
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:59:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 407CE4E1AFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:01:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28DA29C328;
-	Tue, 28 Oct 2025 05:58:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DA0286D6D;
+	Tue, 28 Oct 2025 06:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVK08nZs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MH9QRqll"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC162EB10;
-	Tue, 28 Oct 2025 05:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B1222339;
+	Tue, 28 Oct 2025 06:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761631136; cv=none; b=Mqkd279Xb56I4k5DHyNDLMIxBsp7NBeOgpM6+cHMKhHcG1TswgYz+T2Nsrgkna4xtlkc7X5nPqBjtngB+J0ROtC3eeRzOygoYI/b021hPFkqWvyw8aZJlIkC3XlDkPpgtClyyTfe9IMjqghaDgsbzI+9JLrJCxJXhSo6/ayofuo=
+	t=1761631306; cv=none; b=oCzm/jv3tQW4wcA2PXfy57qKb9rScMIFGNkIsTejcV+tBHfuAF3SF9+Y0ZoiFFQOCgxTkPFZidl5YSEkYtT4chWhdn0wCmwpqzjTuTbindJy9iqf4Qg1n81Hd8hCwZlPgdglYH0cVNvDjtAIc9iZwI/S08/DRoO4llDE1E3aD9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761631136; c=relaxed/simple;
-	bh=5nvub1nz/PwFG6vmA7igkyADbQjAVdws9iOKjuyisY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=go93TFOUPHpN7AjfQXNJ+gd27CeTUIjf1m30hXMZ++JYVLC7ytxrZql0iaN+sainqNTTZvbiIF1J0gsVAiQHL2BiLG2UxMCg4RcIaGwh+tw9k0+4qIHj9tk0EF88O4nwfWSCLFB8RodgJZtIpDTs3gpdAG184t/ESfeQEMcWezY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVK08nZs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E4F8C4CEFF;
-	Tue, 28 Oct 2025 05:58:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761631136;
-	bh=5nvub1nz/PwFG6vmA7igkyADbQjAVdws9iOKjuyisY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DVK08nZssDlFzyc6htZVrgoiLclrduYy+8lpJK6jo55ArO+yABat8i+O7E0WGvFCV
-	 DnF/OIZ93EJcX7RwRbSTs3ws/2GmdkuR9cBb00snEKh17EJEhRVWuG+8TFLAIZ3WcL
-	 7aa+xbNPMohnqVVj2Q39vSaOeaMiQ13kgoKW7zxooIpSrLEKEh3NR8epqosAgojbli
-	 uGP8gfOGNWgWFRSNu/7IdcMQCiAyKCdfxJjX+LNFMMEsiomtWjq8pXgHtIlz6V2mIC
-	 Jw62VWaID6H4AUCsyMuP7tpMkHRXd3PAKUK/WZFZgzvFq12juFdKgc1cEjJ7ZGEB9o
-	 mGGyRjLbozQ5Q==
-Date: Tue, 28 Oct 2025 11:28:40 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, vkoul@kernel.org, 
-	kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, 
-	christian.bruel@foss.st.com, shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com, 
-	qiang.yu@oss.qualcomm.com, namcao@linutronix.de, thippeswamy.havalige@amd.com, 
-	inochiama@gmail.com, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	s=arc-20240116; t=1761631306; c=relaxed/simple;
+	bh=o/MtvnoZFtcEhS+9uTxnucBzOOd7NnBtyKSzDQPcmCY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k4tN0pl6sbpgxphJ4OW43uVa2uN74XN17JUZabLuqV9wVGwTzqIzIg+jdaua9PINLFWSyjZw12ZdpEBM1oy/J31/OTFWsnJ+AVXcubz6X06DGEZMXXkpXD82mkHHPcamltUvd16gNgmQeMXFKYHZHGTmTac4vBSBmW5NXSyXEjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MH9QRqll; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761631305; x=1793167305;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=o/MtvnoZFtcEhS+9uTxnucBzOOd7NnBtyKSzDQPcmCY=;
+  b=MH9QRqllmmh/TmusTd2RAHtHxIuCvyS7Pl13z0hBki2Hh1Fjm5lxT/yU
+   dyNiGGaB3VgdmoJX3KVPzRvwtOrCrcG3ObwQ09HS/6SC3sIY10PZEmIne
+   KpH8KeYwEMZK+f45b1p5EbKFqypfdu3cBFGbYALV4n4Thvksx3OtOk/s0
+   aGvPo+46zoFntUjttYt0gqOuFlArTu71qVamMHBujSeT10BNo7OUqROgb
+   efe9WOjtE1Sz0TLxVzYo8QoXSW8jrn7H/OrSXk1v3Z1PfkCBVPYzqjDMQ
+   /XnjInp0Q7PhqPVcux92rUKNe67g1XHqEKq20kHI1fPljboUpgu2sYXIM
+   w==;
+X-CSE-ConnectionGUID: Pt3gaPIsR0yvEtxUayYwtg==
+X-CSE-MsgGUID: j64LI0z5RnecR5sKx4euaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74397445"
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="74397445"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 23:01:44 -0700
+X-CSE-ConnectionGUID: vsoPQOoFRw+VMm9FRVsW4A==
+X-CSE-MsgGUID: A2QLi0tkT9ijc6FbIDtLEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="185146997"
+Received: from 984fee019967.jf.intel.com ([10.165.54.94])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 23:01:44 -0700
+From: Chao Gao <chao.gao@intel.com>
+To: kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/7] dt-bindings: pci: spacemit: introduce PCIe host
- controller
-Message-ID: <tjnc4wwpdwlziboonlmki6nm7t523k5atemygwyg7ck5knsde4@anjrtcf5gcq7>
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <20251013153526.2276556-4-elder@riscstar.com>
- <u53qfrubgrcamiz35ox6lcdpp5bbzfwcsic466z5r6yyx6xz3n@c64nw2pegtfe>
- <ae92d3f4-5131-46be-b9b1-e8ec437c9ae9@riscstar.com>
+Cc: Chao Gao <chao.gao@intel.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Binbin Wu <binbin.wu@linux.intel.com>,
+	Xiaoyao Li <xiaoyao.li@intel.com>
+Subject: [PATCH] KVM: x86: Call out MSR_IA32_S_CET is not handled by XSAVES
+Date: Mon, 27 Oct 2025 23:01:41 -0700
+Message-ID: <20251028060142.29830-1-chao.gao@intel.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae92d3f4-5131-46be-b9b1-e8ec437c9ae9@riscstar.com>
 
-On Mon, Oct 27, 2025 at 05:24:33PM -0500, Alex Elder wrote:
-> On 10/26/25 11:38 AM, Manivannan Sadhasivam wrote:
-> > On Mon, Oct 13, 2025 at 10:35:20AM -0500, Alex Elder wrote:
-> > > Add the Device Tree binding for the PCIe root complex found on the
-> > > SpacemiT K1 SoC.  This device is derived from the Synopsys Designware
-> > > PCIe IP.  It supports up to three PCIe ports operating at PCIe gen 2
-> > > link speeds (5 GT/sec).  One of the ports uses a combo PHY, which is
-> > > typically used to support a USB 3 port.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > ---
-> > > v2: - Renamed the binding, using "host controller"
-> > >      - Added '>' to the description, and reworded it a bit
-> > >      - Added reference to /schemas/pci/snps,dw-pcie.yaml
-> > >      - Fixed and renamed the compatible string
-> > >      - Renamed the PMU property, and fixed its description
-> > >      - Consistently omit the period at the end of descriptions
-> > >      - Renamed the "global" clock to be "phy"
-> > >      - Use interrupts rather than interrupts-extended, and name the
-> > >        one interrupt "msi" to make clear its purpose
-> > >      - Added a vpcie3v3-supply property
-> > >      - Dropped the max-link-speed property
-> > >      - Changed additionalProperties to unevaluatedProperties
-> > >      - Dropped the label and status property from the example
-> > > 
-> > >   .../bindings/pci/spacemit,k1-pcie-host.yaml   | 156 ++++++++++++++++++
-> > >   1 file changed, 156 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> > > new file mode 100644
-> > > index 0000000000000..87745d49c53a1
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
-> > > @@ -0,0 +1,156 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/pci/spacemit,k1-pcie-host.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: SpacemiT K1 PCI Express Host Controller
-> > > +
-> > > +maintainers:
-> > > +  - Alex Elder <elder@riscstar.com>
-> > > +
-> > > +description: >
-> > > +  The SpacemiT K1 SoC PCIe host controller is based on the Synopsys
-> > > +  DesignWare PCIe IP.  The controller uses the DesignWare built-in
-> > > +  MSI interrupt controller, and supports 256 MSIs.
-> > > +
-> > > +allOf:
-> > > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: spacemit,k1-pcie
-> > > +
-> > > +  reg:
-> > > +    items:
-> > > +      - description: DesignWare PCIe registers
-> > > +      - description: ATU address space
-> > > +      - description: PCIe configuration space
-> > > +      - description: Link control registers
-> > > +
-> > > +  reg-names:
-> > > +    items:
-> > > +      - const: dbi
-> > > +      - const: atu
-> > > +      - const: config
-> > > +      - const: link
-> > > +
-> > > +  spacemit,apmu:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> > > +    description:
-> > > +      A phandle that refers to the APMU system controller, whose
-> > > +      regmap is used in managing resets and link state, along with
-> > > +      and offset of its reset control register.
-> > > +    items:
-> > > +      - items:
-> > > +          - description: phandle to APMU system controller
-> > > +          - description: register offset
-> > > +
-> > > +  clocks:
-> > > +    items:
-> > > +      - description: DWC PCIe Data Bus Interface (DBI) clock
-> > > +      - description: DWC PCIe application AXI-bus master interface clock
-> > > +      - description: DWC PCIe application AXI-bus slave interface clock
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: dbi
-> > > +      - const: mstr
-> > > +      - const: slv
-> > > +
-> > > +  resets:
-> > > +    items:
-> > > +      - description: DWC PCIe Data Bus Interface (DBI) reset
-> > > +      - description: DWC PCIe application AXI-bus master interface reset
-> > > +      - description: DWC PCIe application AXI-bus slave interface reset
-> > > +      - description: Global reset; must be deasserted for PHY to function
-> > > +
-> > > +  reset-names:
-> > > +    items:
-> > > +      - const: dbi
-> > > +      - const: mstr
-> > > +      - const: slv
-> > > +      - const: phy
-> > > +
-> > > +  interrupts:
-> > > +    items:
-> > > +      - description: Interrupt used for MSIs
-> > > +
-> > > +  interrupt-names:
-> > > +    const: msi
-> > > +
-> > > +  phys:
-> > > +    maxItems: 1
-> > > +
-> > > +  vpcie3v3-supply:
-> > > +    description:
-> > > +      A phandle for 3.3v regulator to use for PCIe
-> > 
-> > Could you please move these Root Port specific properties (phy, vpcie3v3-supply)
-> > to the Root Port node?
-> > 
-> > Reference: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/pci/st,stm32-pcie-host.yaml
-> 
-> OK, I'll try to follow what that ST binding does (and the
-> matching driver).
-> 
-> > For handling the 'vpcie3v3-supply', you can rely on PCI_PWRCTRL_SLOT driver.
-> I looked at the code under pci/pwrctrl.  But is there some other
-> documentation I should be looking at for this?
-> 
+Update the comment above is_xstate_managed_msr() to note that
+MSR_IA32_S_CET isn't saved/restored by XSAVES/XRSTORS.
 
-Sorry, nothing available atm. But I will create one, once we fix some core
-issues with pwrctrl so that it becomes useable for all (more in the driver
-patch).
+MSR_IA32_S_CET isn't part of CET_U/S state as the SDM states:
+  The register state used by Control-Flow Enforcement Technology (CET)
+  comprises the two 64-bit MSRs (IA32_U_CET and IA32_PL3_SSP) that manage
+  CET when CPL = 3 (CET_U state); and the three 64-bit MSRs
+  (IA32_PL0_SSP–IA32_PL2_SSP) that manage CET when CPL < 3 (CET_S state).
 
-> It looks like it involves creating a new node compatible with
-> "pciclass,0604".  And that the purpose of that driver was to
-> ensure certain resources are enabled before the "real" PCI
-> device gets probed.
-> 
-> I see two arm64 DTS files using it:  x1e80100.dtsi and r8a779g0.dtsi.
-> Both define this node inside the main PCIe controller node.
-> 
-> Will this model (with the parent pwrctrl node and child PCI
-> controller node) be used for all PCI controllers from here on?
-> 
+Fixes: e44eb58334bb ("KVM: x86: Load guest FPU state when access XSAVE-managed MSRs")
+Signed-off-by: Chao Gao <chao.gao@intel.com>
+---
+I didn't check the SDM when Xin asked [1] why MSR_IA32_S_CET isn't
+xstate-managed. It looks like my reply (and my sample code) misled
+everyone into thinking MSR_IA32_S_CET was part of the CET_S state.
+I realized this issue when reviewing the QEMU patch [2].
 
-The PCI controller (host bridge) node is the parent and the Root Port node
-(which gets bind to pwrctrl slot driver) will be the child.
+[1]: https://lore.kernel.org/kvm/aKvP2AHKYeQCPm0x@intel.com/
+[2]: https://lore.kernel.org/kvm/20251024065632.1448606-12-zhao1.liu@intel.com/
+---
+ arch/x86/kvm/x86.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
-> Or are you saying this properly represents the relationship of
-> the supply with the PCIe port in this SpacemiT case?
-> 
-
-We want to use this for all the new platforms and also try to convert the old
-ones too gradually.
-
-- Mani
-
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 9cfed304035f..c7592ac8f443 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3877,15 +3877,13 @@ static void record_steal_time(struct kvm_vcpu *vcpu)
+ 
+ /*
+  * Returns true if the MSR in question is managed via XSTATE, i.e. is context
+- * switched with the rest of guest FPU state.  Note!  S_CET is _not_ context
+- * switched via XSTATE even though it _is_ saved/restored via XSAVES/XRSTORS.
+- * Because S_CET is loaded on VM-Enter and VM-Exit via dedicated VMCS fields,
+- * the value saved/restored via XSTATE is always the host's value.  That detail
+- * is _extremely_ important, as the guest's S_CET must _never_ be resident in
+- * hardware while executing in the host.  Loading guest values for U_CET and
+- * PL[0-3]_SSP while executing in the kernel is safe, as U_CET is specific to
+- * userspace, and PL[0-3]_SSP are only consumed when transitioning to lower
+- * privilege levels, i.e. are effectively only consumed by userspace as well.
++ * switched with the rest of guest FPU state.
++ *
++ * Note, S_CET is _not_ saved/restored via XSAVES/XRSTORS. Also note, loading
++ * guest values for U_CET and PL[0-3]_SSP while executing in the kernel is
++ * safe, as U_CET is specific to userspace, and PL[0-3]_SSP are only consumed
++ * when transitioning to lower privilege levels, i.e. are effectively only
++ * consumed by userspace as well.
+  */
+ static bool is_xstate_managed_msr(struct kvm_vcpu *vcpu, u32 msr)
+ {
 -- 
-மணிவண்ணன் சதாசிவம்
+2.47.3
+
 
