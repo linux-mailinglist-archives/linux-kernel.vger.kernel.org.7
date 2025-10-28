@@ -1,438 +1,146 @@
-Return-Path: <linux-kernel+bounces-874317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C87C16042
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:00:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB9EC1600E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:58:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B3ABD3557C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:00:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 858024E2E5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199B1346E41;
-	Tue, 28 Oct 2025 17:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454DC346A00;
+	Tue, 28 Oct 2025 16:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V55C0LDo";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rHtfIkAS"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KP+v+6HS"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE243213E6A;
-	Tue, 28 Oct 2025 17:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670840; cv=fail; b=BEFAsfDpGxjd0HQfIdJ+Uuj+ach7oDWr9uZ6m59AKePhXpfv4EuxTdb+ttH5CjK6NivpyW5FleMLGs/AZv3HZlDbwSOprcI0sfzdKUHCcN1Z1klBoS+wELRPH1eQIiHqvx8PW/u4XtCV3HASvEFho2f3jGVTAmoZtUNbITWOO9E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670840; c=relaxed/simple;
-	bh=Si/8Hvh2LQOS5V9B4AJcVLnp+uueLnXdP4zrDabQPGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=I/N+7cQ4ddDOnDQh0RjhtvGEfbTpmiQH/ow+Cu2/KlQi5COyrj7F2uBDrAF5E7Be4ofqW329bU7cgiuVDXOBaFggV6sgpBY1SSt3bnk9kkeHFjzwDPFjmBPCIVU3CmdE+igsw1Pbjqu3fAyo2HiTJRHVTysuiJ2BtMildMf9LAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=V55C0LDo; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rHtfIkAS; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SBEUiZ021132;
-	Tue, 28 Oct 2025 16:57:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=ikwK8bOzxTD1PndpRZyD3513qxHT9lZxwoJX+tPoylc=; b=
-	V55C0LDoYLVp8Cn256yY1XQ4J5wyzixMqzgN4XScmBYy2rnl4Hxbgha2CUGAOWEM
-	ZgBgkjVxtDtwXDezydFg6mT6f0olVXySBLkNYfd3Metuwab2VKhnHJ3E8em453T4
-	qj0e4m/lMBFjOOfXb7VpJ7GlzBKZGlKMojJuxRZa0gVu4RDjHiP52ybiMbt6CSVh
-	ent6PnXPfhjFM1L6y5u2z9tyE6+iU6dIGiayhllMalgBdPxbCCvLdayCxi8Zc28c
-	CXu35HuTHVtbsBPgxv2hI6RIbeZdXHsW3idJ0kgJvZpntbj9URaSOlMD93m8Qq0Z
-	oN/FujBBql/CozhTNETmdw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a22uwm28p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 16:57:49 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SFejCR016405;
-	Tue, 28 Oct 2025 16:57:47 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011043.outbound.protection.outlook.com [40.107.208.43])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n08g3r8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 16:57:47 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hniVh95/8a9ZP2tQCalgheZrGOqBP0FtQdr2ug1d07IsNsF11bM3kTz4pla8XM8mqlmi/SAILknvnuKgcxklyhZqyes5AbOJZ3PoGPmTJtMPJvXCIQHpv8mjH1eKbUuBs9qmJXInt/9W8Nb1JNH2bW/NWLXA6PN89uwzDnW2serQ6EyLhJsACwim05CgouQw1mVjuGl98QfwhED4vubKhDg9IXzQATu5ThtsdJZWaDf9a0z/KjjizatxzEwRGk2jBRVhmi6vlANOqk3X+9RYgLM9802tbc2ccD/HXyAyeCMORt0cmi4XiGZZypQneTsle5t49y/DoC5uw2foRFZoxw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ikwK8bOzxTD1PndpRZyD3513qxHT9lZxwoJX+tPoylc=;
- b=XOTDU1EbJdPNezyAi9zBk5MYGamdM2epeL+GCGyclvqx8EnQksJu18IMLlK4cgcZ24ndeqMubzN7n/7ne1GxYSb6Y0ZHPjoDrcnz16Yg+kHvgMO4xB1yX0ueJrTqMm6t+Foc9NvABPeUWra1y5Z8y3pJueeKhJILOSg1hRORBJdfTWG8klV3n5qUZ/MRg9dxAtg789lvVUQbfklSeU+Jx4yqFNtzBoeFQrZVZR2tpBAvBdQgc1G9pRO2mVZkGmBwa9UIHi7ClzDhMzfhx2ErBMRiWTa/BhK/DYChGL4c2+O8kj9s9mg589RL3S+R2fMW+7RUTgzADaFhzltGSLvG8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD3633F8B3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761670702; cv=none; b=YBVLp2fdq7ctUBGrQ2v4lhDlDnMld4EE3GAEcchHM7stDxIjlB1/n0liXnJT/dhcYBd/wcEqaN4hgK6lN4Mi3r6yuEYXJIg202RSmz5jJS/Xq63zWLLmrUyPIDGHSZo4uxh0x5yaEk52tgqhBFZmB85U3PQZDAoXteXAih9dGuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761670702; c=relaxed/simple;
+	bh=S2YK88oreoElX7onfuW9IzclvPMp4++2KYT8+xCMHWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMDA12jFkLiN7KSyGLB/5xbhmwDiKxtm7ESnMtoRsL9kH2HWX3bRQgju1HwNkMYCc/KKdTJ5q32z6/e4Pf10cRMCghWCAbkbBycD2dp0mka7zy3je7i1IR8heyKYK4Mq9JYHk7MUYzrMUWUclValRc7gZrIuucD56xauC6WCpH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KP+v+6HS; arc=none smtp.client-ip=209.85.215.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so4215613a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:58:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ikwK8bOzxTD1PndpRZyD3513qxHT9lZxwoJX+tPoylc=;
- b=rHtfIkASCtQaNCyc4V18VAXp4+exr91A98n2GNWuP0sGfjRYV2zSnXHmvWThp8IzpjjfIgHQph+NHT2oAtDTIY24Fiw7kkjXmnBvg9x92DoSAywJOG+YICOHRsjbUhr0xQmKYA4eWHJde5NImFFsyPk+7/ZrtvcOlFa4KtwIy/0=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH8PR10MB6480.namprd10.prod.outlook.com (2603:10b6:510:22c::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Tue, 28 Oct
- 2025 16:57:43 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
- 16:57:42 +0000
-Date: Tue, 28 Oct 2025 16:57:40 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Nico Pache <npache@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org, david@redhat.com,
-        ziy@nvidia.com, baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-        ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
-        rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
-        will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
-        cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
-        richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
-        rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-Message-ID: <2983c165-8c13-4bb9-b2f8-bfe8508cce43@lucifer.local>
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
- <CAA1CXcA4AcHrw18JfAoVygRgUZW3EzsN6RPZVrC=OJwSNu_9HA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA1CXcA4AcHrw18JfAoVygRgUZW3EzsN6RPZVrC=OJwSNu_9HA@mail.gmail.com>
-X-ClientProxiedBy: LO4P265CA0216.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:33a::8) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=gmail.com; s=20230601; t=1761670700; x=1762275500; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DKAJWIVdXY6w33OMTqrvcoCl8DNQe+wsI3uiwsncnTY=;
+        b=KP+v+6HSTLrwT2OpXu/6ZePmQxEAkhPAipGgDURxgT9q7sDRgYqNlMbr+L35kyIJb/
+         9uLXAacqZyxOU8K2o9ccVVnMTUeIFrw0tynFlLkdfJtqWj6hQmeqoje7AwTuNlBztK6L
+         1X1mnzj5jo6AODvZUuQ4cyYbUa9VEYnE7KFDUezu0J0E+wwDkuo+ocIToDenWvldHC6N
+         bWVVfHwF2ZrHsgjLUte2EQQXuewkUo/4TkV+wFl8Tlc27GmOPfDv35HxSBPfE7JS2Wpx
+         GDEy5gNkgwSzZ8i974XhnKrz3weO2/NCv4ouzVmKBU1SeO2cBLSYSZXusU+4GR4PpZkw
+         AWVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761670700; x=1762275500;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DKAJWIVdXY6w33OMTqrvcoCl8DNQe+wsI3uiwsncnTY=;
+        b=FF727rnJIIUw6U8tjzo7zbOPmBYFR+drr/vRLiVB59F6xnJRSj4bBgbkvSd49M7rJ4
+         KWqk0/bPX89vsO3uTs6NbugLWkN6v1Lp6mY6CxYPhVaJtKLD+z/nYHVcn2PTfulRGthR
+         br6tCYHMutENCxiUw2JGhZv+9j9QQcw7hi4dpyb3x2TpbKtQigaQzmoEbFiNYGbfXepq
+         N89TgTbrKzP4ueR069+CwoMxN+ARpWjHemjn1Y9FC9ewu1MgziRr2SzLP+JhBTiIW3s6
+         Ok5hc8xU4hEKlTpj2CZ0C9rOQsHTzf4tE3pYR/H7G6fTCAFipO3acJxjnQJzpWgstV1p
+         qekA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt0WPFaWVIFRaCpj7k+vK2PuU4zHRpi0ZacK1wFyi4DSAjaVJlF+z1lUeJWu8bhiToHDuH2il/iHLiif8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4pfbX5S3avvTV8Faxb+poOSRiZMaX5gO5rrrRptWTAPqc+sy1
+	zPN3BJv6qigZTiuwwhatFstqUG1e/xH00KIp9NQwdnlkeXp43ia03vr0
+X-Gm-Gg: ASbGnctggFQ7ZIAGi9zhyuyFYogPaLPSKPZjJuULVEHR7bG3SOxJJYikJue2cVZFhLG
+	w9mnfqweqvw45mLHuEDdEq987etFl2uYNWf7dsx5seiVh77f4oGA9e3tCBq81fw8Y8KeefcR/aX
+	osusUw5s/fLlZ7Ty3QkV7uJeG7Y9wlMZU68i+k6XE2PTFZlqYv+VoAZ4swo8ho3/L6yokn+cmB8
+	aJSTGkOIvX1C3KtsDYxyfRWsHcZC1ttQysvpHqiWig14G+HPlDamZCCYPCvqmNp9waPclbF0yWg
+	hzWvhxIo71wmG0mt7EzEoIWVZueVk+7Vr6oNo45G8hZospCJTi0BAr13SM5w9hTqqhrcJLyy9Q1
+	w+5/M79u1sKjXJkA4I/K1hcVyQAv3cRdl45FO+cpLe9Z3hS+lp11sCiL+BZ5DXCXevlStQ96UIA
+	MxHUoC3GsNy/HHuhufTB0=
+X-Google-Smtp-Source: AGHT+IGoWRXRZauvUG5j1zo0Qxhl0gwoNettufvBODgutBswNwVQoMUoNOz0OY25v/QcS1yZJBzGlA==
+X-Received: by 2002:a17:903:2f0e:b0:290:c0d7:237d with SMTP id d9443c01a7336-294cb50e4bbmr54429445ad.36.1761670700123;
+        Tue, 28 Oct 2025 09:58:20 -0700 (PDT)
+Received: from fedora ([103.120.31.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf4b0csm121255865ad.10.2025.10.28.09.58.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 09:58:19 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:28:10 +0530
+From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] selftests/user_events: Avoid taking address of packed
+ member in perf_test
+Message-ID: <aQD2Igc3svAF3klc@fedora>
+References: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
+ <20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH8PR10MB6480:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8fa8c013-1070-4049-96ea-08de16431c67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L0tmeUhITWM3WlJKblFQNVB1N0FRbW1UMVlma2NFZnZZbDVwTkVtUlB3Nmh4?=
- =?utf-8?B?UlNrMy8xUXJjWkFpOU52eWYraVZyNzdPQWJBcWxKV1VyR1hRdXR3Y1JrdXR5?=
- =?utf-8?B?dVhPc1czWjR1YzFidVBZTjBHelAzUkZ6VzJPOUJuM25kN3FwT0RlcTdhbUdB?=
- =?utf-8?B?bUtlb2haMDlSMDl1elRYUXBvdUE4Yk54OVVadVhGcU52UURZRHZpOGJCVXJY?=
- =?utf-8?B?aDNtc3JVN1gwRER4NmgxaWFwckVXYng5YXdVZEF1SUxvV0wzRkpSUkc4ZC9m?=
- =?utf-8?B?YlpBbFI1K0dZRWVBU01SRVZPME5NUUJIL3VXZlk2T0krbTdQSC9nRmJvZkVE?=
- =?utf-8?B?bGl5R1drL2pGR1RJY0ZQN2ttQWxpaGtueTJUckQ3QWdZZk1KbWtzcngyZGZ1?=
- =?utf-8?B?cGxDVjJtUUNOQ2cxY3hyV0xicUYrbktlWUR4QThQZUJFSE02YUp2bzhCSWtm?=
- =?utf-8?B?cE03ZXNFaE5EdGxrbEQvNmVuS0xOdkRYVEZON0c3aDZ1cjdhVGJTZ2tVK0s1?=
- =?utf-8?B?MUhRU2JpWms3S3V1Qnp3L1dMVWtXRWV4WmZEMXk0WEpNYTMrSmUrVVJkNFVr?=
- =?utf-8?B?TkI2WldDeEdRVTVsWjlFNi9Id1kzZ1dJM3ZpS1ZtTGlDc29NOEtBajh6dnVB?=
- =?utf-8?B?U3U4ZTBjOTZVb0xsUXphWUFnTndPK3JRUHArRDVQUXVVczlWd0xxbnFGbzdq?=
- =?utf-8?B?Y3JDVUQ1dnExdkMxd01SeFZsQzUvd1VLVExndXNWWlNiWXlxMTFIVjhkTEN6?=
- =?utf-8?B?TDNrZGdNd1V0bnBldHpSNkY1N0x5WTF6LzNia3hrZTR5WHdYYlEzNGZUL3Vt?=
- =?utf-8?B?M1llRUVEc0IzeFgrZlpHbnE4SENOVVVLRUI5U0EvZ1lBTktOOWFJWkVwZS8x?=
- =?utf-8?B?cFYyL1lGcmttR2xnQ09kREtybGEzcVdIUmc4dmk2Vzh0eVREdWdWZEpVUXht?=
- =?utf-8?B?MUZ1bHNIS0l6RmQrYXg4b09SY3NCN3UwSXpON0R0cmZ2cnFjU0VQNHp2QjNz?=
- =?utf-8?B?d2xhcityMWlxaDRkaHhTVzZJNk42TzQyTFhuSXkxaGZ0SEN0Y0JDWS9tR1g5?=
- =?utf-8?B?SWlCMmNBcTBqT2J4OXpwcUlRS2VxbWxSS0JmcWxrMnlGZVZjWWVRL3IvNlhv?=
- =?utf-8?B?M1FEbHkvK2I0aEloSE1ENW5pL24vdHZBYUJ0UW5MNFVlbUwyWklRdnBqVGFa?=
- =?utf-8?B?WVpOKy9WamthZ2REeVRjNDVTRk42b2ttaWJrUm5oNWhTejgxZ1NBdmFLcGp6?=
- =?utf-8?B?UWRoNVJoSld3TzNNYTRTUmpOeThJcWRweEp5QXlBeFphclExTi9ZQzFBR2Jn?=
- =?utf-8?B?UlVrNHViSmdRM2hJL3laVHp3eitDYlg1RDNFVTNRdjhVK2RkM3hzdDdyS3l0?=
- =?utf-8?B?SHBucVc4M0pCd05WM1FiRWJ6TGo0VzBUT2gyMFJyQmxHczR4MCt6Vkkvbysr?=
- =?utf-8?B?N1lJWXZiVHZiU2p2NnJZZXUvdm9mY0F2dDE4OWdEMnBMVHFxTTE5TlFjTGM0?=
- =?utf-8?B?NExLYU0zaHJEUHpFMERJK1h1SXFGSmtvTklIVTN5NTM0V05pK0pJVTZHMFhq?=
- =?utf-8?B?TWNtbUFjU295NWhkVHdyWHpNeXUwc0V5dG9SeE9sZTYxWno5K0RUbTVlNWNF?=
- =?utf-8?B?M0s5MnJlT1NoRUxmMmNhZEVXdzNNSVY3eTdTNGE5dGxmdjIxTU9OaVZwa2J1?=
- =?utf-8?B?dWVzeVZnRHhHK21ZT2cvUHRvUlZCYW41SHFrSVlKNjJBMFdZd1lFSnhSZ2lq?=
- =?utf-8?B?SXUxaHZURngyemJxTG5mNDJZMm91TUxEcXhnOWR0ckJwM2JZY3ora0g5bFhV?=
- =?utf-8?B?RC9wbnpCT2EzZW5nWU5vczFMS2p0dUo3d1JrbFgvL0Q1emdBaWx0THoyaCtu?=
- =?utf-8?B?S0pza2pjKy9lTFpkQnFjdng3cUVzQkdqK2lwWThVSDNMZ1A1WkJQdmtWUzdP?=
- =?utf-8?Q?/zXNQHdTZiZkeMw4jjoQL9gWi1aSRGh3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b3pGcmREeXhZQklLbzdKZkp1eUk0a24zNno2RVQ0L2hDVkd2bDJWYmdHcnZ1?=
- =?utf-8?B?QnYyT0srMHAxOXhrMjgvQjJIcnhpcW92SHZtN01RWFhEci85YXcyZVp0QnlU?=
- =?utf-8?B?VnVWbkdkeUJPS2d4ejRKWFBUMDZkMGN2VDA5SlozZDVjaDJ3RjRhZmIrZ0Z0?=
- =?utf-8?B?ZG9RNTZmVGdsK0tETmR5SnVCNFIyKzAyWHl6dDQwN0s1TGRGR1MveHFYREUy?=
- =?utf-8?B?dXFEU0dCa0l0RTFDclhrZVU1eG9RS0NDQTdjSmU3ZDVrT3NBeXd5cndKNVJX?=
- =?utf-8?B?cHZTckpYcTZNV1lYWDk5dmY1K3AzU2lONTRsbHdpMXJ0dlM0NXE3OEt3TW01?=
- =?utf-8?B?RnB3U3hZc3E2WEtyNUgzWlZ5cmdJUk9xTnhQTE5BYkVoRjltWkNCek5PVEV2?=
- =?utf-8?B?eGxvUytxUm5va0Z4dUdlNkowS1I3SVBpRTh4eWJLTUhSY1NQblo3RG1oNFZB?=
- =?utf-8?B?a1l6SzU0cmxULzhMZkNPMWpXMmd1Y3ExRlJNVCtSd1g4dVZxVE80T0NUT1Q0?=
- =?utf-8?B?dGlwTjNQa3p5alpUZzA1ajJrSUJCaG5ITVZpdDlyMk45MTltNXNtUENRcTAr?=
- =?utf-8?B?NFVvUDJjV2s0c3FPZHNWV1pxS0tEZ1ZyYjh3dzl5b25RRzRycWZhOTUwcmhE?=
- =?utf-8?B?NW04eUZaVXp0R25TNGIxbGdSMDBxWEpqSDFWMWxpMHpVNGhYL3djN25iUzRY?=
- =?utf-8?B?Um00R1VaS1V0dnFFWHd4OE5yM0ltTnlmNEQ0Ui9aa2tjM3QwakV4dWY1a1J0?=
- =?utf-8?B?Q2xYNlE5TE5jbHV5N2R2ZmpuT2VrZ3RaVFcxVW42ZVJQZWxlWkk1VzQ3V3Av?=
- =?utf-8?B?K1hVeHg4NGI4SDhDWStZSUdONjJYMEVKTVYzTCtGMzNKZUxsaElZU3Z3SjZS?=
- =?utf-8?B?VnZWNFdTL1N2QXJ6QmlCSjV0UGdFRFllTGdCZ1VuQ0MyUEJQcWQvU0RQKzVm?=
- =?utf-8?B?UzFqVlljQmhXVnpaaXREcTZYNy9FVHdTdGc4UldTbCt3RWRmMVM0SjMxSU41?=
- =?utf-8?B?WjN5dmtremVFdE5TKzVZdVRUbDVwZmRMUDRpT2J2S0dnZVhyVkhjdTk3Mk1n?=
- =?utf-8?B?Z1B1Mk9maitFemx6bW5zT1g0RHVtOWN6Kzl5SFhvZkJ2QW9DZTVwbmZ1L2pr?=
- =?utf-8?B?T0pXWUt2MVFocTBiOEc5OWdoWUJMclU5ODhML1FFWjNXRHhnZTdmSFBZSldD?=
- =?utf-8?B?L1dLUXc4YWdtUndmRzAwaDZGb0pSS0l0QWJmdHFMYjVXTDFad3MzWmtiSGsz?=
- =?utf-8?B?NnNkZ2RHVml5dkcrTmFvYXQwK0xybEVxemVTQjNhekNaYkVlRitIcXdJVGhZ?=
- =?utf-8?B?T3BuUVNjQmsvZGdick92VHI3ZHpjelhzVkNMcHdYZzVMMGtCeDAvVUxwbzhG?=
- =?utf-8?B?enNZRHhkd0NDOVFLWjRxUjlQYjJ5Q0xUZTBNYWh4YkplQXhqOGo4RGU5UHpu?=
- =?utf-8?B?dWpFUGIybUxucmRjWVFMZVdkYk9GQXg3dTJ6cUxzYnpMdzlBUjFDZ0E3QVJB?=
- =?utf-8?B?ZndDQkRJdndzRnhzL0FyZklWM0RWQlZqSWZFd0dCU3BUU2MvYjUyQ1B1K1g0?=
- =?utf-8?B?RS82STdrYThRazByYzE1ZHRsWVdlZnVwbXN1RWNUMlh3RGczZU1hb3NGQkRK?=
- =?utf-8?B?OWtDRmdBZyt3NTVIZDNrR0RnSWRLdkttb0xGV1hIak1KNmtNamhyY0k3Tmts?=
- =?utf-8?B?V2cvVitEOEpYQUxCMGdHVytNelZSOTkvMWErcTZXYVQxdldORXNURVBoSE43?=
- =?utf-8?B?NUtveDZKclJOckxxb3N5UDNGajdVV295ai9KNVBTeVdyYkdaUUY3UWZNMWtt?=
- =?utf-8?B?cDJ4MTJxN1MwbDBqekNaakdscm1ZcitmWmNYRkZodWFycjh0Rk1BUG5wVWZq?=
- =?utf-8?B?UnZFWktqaWdmWXl3QzNUSUtwdmRmN2lJOEtHN05JT0NkZ1JwaDJsWVZWdmdO?=
- =?utf-8?B?K3c5YjBRQ1g1WmZKT3h1WURiRHBiaXhSWkNCc003Y1FIUTVQTURJVnlOYkRI?=
- =?utf-8?B?R052a2NVazFZYmlxc2Z4WDBMVjlUQ1QyNDZEbzRHNWdibWhaQ1VSUnJMSjhl?=
- =?utf-8?B?U2tNWXpFUi83dGhsbUVBRXdKcHMrT3ZydWhOOHVRVjg5Nk9MWjZkVmIvYStV?=
- =?utf-8?B?amx3YVRaVDZ2L2k1bFhVRE5BRGJybksvaTgwSFllSmV4ckF0clNUOXV6eWtr?=
- =?utf-8?B?Wnc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	DC+ctjWZ6DsHxhEvKYnBKpTMdpOQl7NPwWKwe/JV/mdNZBxqL/ZPkZQMbKgcqKrGQti0sW4BInv8dep2w9sGvDt5OWMqAuzt0g7rxijDXJLQsX4SkArVvC0+ICgyrc0FsrJKS+8uBuKbzDSQj/wz9GN3+3N8RxnfZ25gcblx1mbk1Sws3whDsl0JFRpfiyW+L3FPgfElar/QW7Vy+P/QeMiV2zrSWhICx3Faw4TRG4lkZhOIeLZU2eRWJ5vO+ZPuU+YSN/minKE9ZQdqJZek6QtSyq/4AYCX3z3yAbj5XHkQgirMvxJy7RFKQHagccMSOUEbdkm/hkpP539DALAKPF4nWpqg3CDdhAHgb9cle3ikSsB2jHTpWy9jR6jOsImjZm4HgPtpAEumfaN703zlqkO21vI2cc0+uyaaNKvyC86MI84URu44mfMXkn1lyJdE98ppYk9ROHSoHiqL5pF83YP4acW3gmQl2zX3UYL60BSXYx/WvAyB25q05PCMKjNiSaOKtBpzJ4swkB9EPMeR+MNXBrLe4mSOigbDBD4WNxsOzOX2mUpxN1VFpXw0kmJGj0HR1a+/BItOPWd+xkz3tufQMFzkxW7IWsFCnxvwtd0=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fa8c013-1070-4049-96ea-08de16431c67
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 16:57:42.9177
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SyMOvQRnQDOlHi1acqFc2OtgrAZaIdOrvukk0dYKp618LyWmBWzwpZDMvBEWNhh82jOU+AJTbRa7/0VnJy1/lSRF38AvKBjkntox39hSYQU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6480
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 spamscore=0 adultscore=0
- phishscore=0 bulkscore=0 mlxscore=0 mlxlogscore=999 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510280143
-X-Proofpoint-GUID: YSCFe4l8vocYqrAmacb5IaL_9hlmlPKR
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MSBTYWx0ZWRfX43FkoMLwfIV+
- Phyhw3lAntozjd2sOYwsJFE1hoUZj89xfUFba6o2g5D0D37/UycyqGtVTJGpKBBRkiVxDIh2+Sm
- 76pOBh80jVsZfg5ni6Rr7rYmyG5ZCNpzkkO4oAKWFupjMXZnqaOtJG1zv2xz2YAiKZ2zqMRe+b0
- cXqcdH6SyopjwK4ErCWq7JPsKI2N5pclvlrwUc53E8sbclgvIzRYxOIqu66LomwePtuKARnbb8O
- B+GY/weGzt/HqwGrgB9djG7gzjRvukbnzrdmSxejK8xs0+d4aOxND72m2VmOmcCb+4Tp5KS13+w
- 5Eslevb+gTbAaSbiR2/rkDzwsqgu8eALGfS/IWU/XprT3oLk+uupiQ/HlA6wMOB2+xkFd2D9EoX
- i/JT9nHoage68ZO/3Ur2IqFwLEWRrefJrjZloNcKS8qHStMd7y4=
-X-Proofpoint-ORIG-GUID: YSCFe4l8vocYqrAmacb5IaL_9hlmlPKR
-X-Authority-Analysis: v=2.4 cv=Ae683nXG c=1 sm=1 tr=0 ts=6900f60d b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=u7GQ2BnP5N2ghcVvD8QA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:13657
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
 
-On Tue, Oct 28, 2025 at 07:36:55AM -0600, Nico Pache wrote:
-> On Mon, Oct 27, 2025 at 11:54 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
+On Mon, Oct 27, 2025 at 04:25:21PM -0700, Andrew Morton wrote:
+> On Mon, 27 Oct 2025 17:04:39 +0530 Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
+> 
+> > Accessing 'reg.write_index' directly triggers a -Waddress-of-packed-member
+> > warning due to potential unaligned pointer access:
+> > 
+> > perf_test.c:239:38: warning: taking address of packed member 'write_index'
+> > of class or structure 'user_reg' may result in an unaligned pointer value 
+> > [-Waddress-of-packed-member]
+> >   239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+> >       |                                             ^~~~~~~~~~~~~~~ 
+> > 
+> > Use memcpy() instead to safely copy the value and avoid unaligned pointer
+> > access across architectures.
+> > 
+> > ...
 > >
-> > On Wed, Oct 22, 2025 at 12:37:08PM -0600, Nico Pache wrote:
-> > > The current mechanism for determining mTHP collapse scales the
-> > > khugepaged_max_ptes_none value based on the target order. This
-> > > introduces an undesirable feedback loop, or "creep", when max_ptes_none
-> > > is set to a value greater than HPAGE_PMD_NR / 2.
-> > >
-> > > With this configuration, a successful collapse to order N will populate
-> > > enough pages to satisfy the collapse condition on order N+1 on the next
-> > > scan. This leads to unnecessary work and memory churn.
-> > >
-> > > To fix this issue introduce a helper function that caps the max_ptes_none
-> > > to HPAGE_PMD_NR / 2 - 1 (255 on 4k page size). The function also scales
-> > > the max_ptes_none number by the (PMD_ORDER - target collapse order).
-> > >
-> > > The limits can be ignored by passing full_scan=true, this is useful for
-> > > madvise_collapse (which ignores limits), or in the case of
-> > > collapse_scan_pmd(), allows the full PMD to be scanned when mTHP
-> > > collapse is available.
-> > >
-> > > Signed-off-by: Nico Pache <npache@redhat.com>
-> > > ---
-> > >  mm/khugepaged.c | 35 ++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 34 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > > index 4ccebf5dda97..286c3a7afdee 100644
-> > > --- a/mm/khugepaged.c
-> > > +++ b/mm/khugepaged.c
-> > > @@ -459,6 +459,39 @@ void __khugepaged_enter(struct mm_struct *mm)
-> > >               wake_up_interruptible(&khugepaged_wait);
-> > >  }
-> > >
-> > > +/**
-> > > + * collapse_max_ptes_none - Calculate maximum allowed empty PTEs for collapse
-> > > + * @order: The folio order being collapsed to
-> > > + * @full_scan: Whether this is a full scan (ignore limits)
-> > > + *
-> > > + * For madvise-triggered collapses (full_scan=true), all limits are bypassed
-> > > + * and allow up to HPAGE_PMD_NR - 1 empty PTEs.
-> > > + *
-> > > + * For PMD-sized collapses (order == HPAGE_PMD_ORDER), use the configured
-> > > + * khugepaged_max_ptes_none value.
-> > > + *
-> > > + * For mTHP collapses, scale down the max_ptes_none proportionally to the folio
-> > > + * order, but caps it at HPAGE_PMD_NR/2-1 to prevent a collapse feedback loop.
-> > > + *
-> > > + * Return: Maximum number of empty PTEs allowed for the collapse operation
-> > > + */
-> > > +static unsigned int collapse_max_ptes_none(unsigned int order, bool full_scan)
-> > > +{
-> > > +     unsigned int max_ptes_none;
-> > > +
-> > > +     /* ignore max_ptes_none limits */
-> > > +     if (full_scan)
-> > > +             return HPAGE_PMD_NR - 1;
-> > > +
-> > > +     if (order == HPAGE_PMD_ORDER)
-> > > +             return khugepaged_max_ptes_none;
-> > > +
-> > > +     max_ptes_none = min(khugepaged_max_ptes_none, HPAGE_PMD_NR/2 - 1);
-> >
->
-> Hey Lorenzo,
->
-> > I mean not to beat a dead horse re: v11 commentary, but I thought we were going
-> > to implement David's idea re: the new 'eagerness' tunable, and again we're now just
-> > implementing the capping at HPAGE_PMD_NR/2 - 1 thing again?
->
-> I spoke to David and he said to continue forward with this series; the
-> "eagerness" tunable will take some time, and may require further
-> considerations/discussion.
+> > --- a/tools/testing/selftests/user_events/perf_test.c
+> > +++ b/tools/testing/selftests/user_events/perf_test.c
+> > @@ -201,6 +201,7 @@ TEST_F(user, perf_empty_events) {
+> >  	struct perf_event_mmap_page *perf_page;
+> >  	int page_size = sysconf(_SC_PAGESIZE);
+> >  	int id, fd;
+> > +	__u32 write_index;
+> >  	__u32 *val;
+> >  
+> >  	reg.size = sizeof(reg);
+> > @@ -236,7 +237,8 @@ TEST_F(user, perf_empty_events) {
+> >  	ASSERT_EQ(1 << reg.enable_bit, self->check);
+> >  
+> >  	/* Ensure write shows up at correct offset */
+> > -	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+> > +	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
+> > +	ASSERT_NE(-1, write(self->data_fd, &write_index,
+> >  	                    sizeof(reg.write_index)));
+> 
+> Simply casting &write_index to void* would fix this?
 
-It would be good to communicate this in the patch, I wasn't aware he had said go
-ahead with it. Maybe I missed the mail.
+yes, this hides the type mismatch from the compiler. But i think
+casting to void * will not fix the alignment mismatch for packed struct.
+It works on x86, but might break on other platform.
 
-Also others might not be aware. When you're explicitly ignoring prior
-review from 2 version ago you really do need to spell out why, at least for
-civility's sake.
+> 
+> >  	val = (void *)(((char *)perf_page) + perf_page->data_offset);
+> >  	ASSERT_EQ(PERF_RECORD_SAMPLE, *val);
 
-Apologies if there was communication I've forgotten about/missed. But
-either way please can we very explicitly communicate these things.
-
->
-> >
-> > I'm still really quite uncomfortable with us silently capping this value.
-> >
-> > If we're putting forward theoretical ideas that are to be later built upon, this
-> > series should be an RFC.
-> >
-> > But if we really intend to silently ignore user input the problem is that then
-> > becomes established uAPI.
-> >
-> > I think it's _sensible_ to avoid this mTHP escalation problem, but the issue is
-> > visibility I think.
-> >
-> > I think people are going to find it odd that you set it to something, but then
-> > get something else.
->
-> The alternative solution is to not support max_ptes_none for mTHP
-> collapse and not allow none/zero pages. This is essentially "capping"
-> the value too.
-
-No that alternative equally _silently_ ignores the user-specified tunable,
-which is my objection.
-
-The problem you have here is max_ptes_none _defaults_ to a value that
-violates the cap for mTHP (511).
-
-So neither solution is workable.
-
->
-> >
-> > As an alternative we could have a new sysfs field:
-> >
-> > /sys/kernel/mm/transparent_hugepage/khugepaged/max_mthp_ptes_none
-> >
-> > That shows the cap clearly.
-> >
-> > In fact, it could be read-only... and just expose it to the user. That reduces
-> > complexity.
->
-> I agree with Baolin here; adding another tunable will only increase
-> the complexity for our future goals, and also provides needless
-> insight into the internals when they can not be customized.
-
-We already have needless insight into internals with max_pte_none which we can
-never, ever remove due to uAPI so that ship has sailed I'm afraid.
-
-I don't personally think adding a read-only view of this data really makes
-that much worse.
-
-Also if we do go ahead with eagerness, I expect we are going to want to
-have different max_pte_none values for mTHP/non-mTHP.
-
-We _will_ need to convert between max_pte_none and eagerness in some way
-(though when eagerness comes along, we can start having 'detent' values,
-that is if a use specifies max_ptes_none of 237 we could change it to 128
-for instance) and as a result show eagerness _in terms of_ max_pte_none.
-
-Since we _have_ to do this for uAPI reasons, it doesn't seem really that
-harmful or adding to complexity to do the equivalent for a _read-only_
-field for mTHP.
-
-AFAIC this patch right now is not upstreamable for the simple reason of
-violating user expectation (even if that expectation might be silly) and
-_silently_ updating max_ptes_none for mTHP.
-
-So this suggestion was designed to try to get us towards something
-upstreamable.
-
-So it's not a case of 'sorry I don't like that we can't do it' + we go
-ahead with things as they are, it's a case of - we really need to find a
-way to do this not-silently or AFAICT, the series is blocked on this until
-this is resolved.
-
-Perhaps we should have discussed 'what to do for v12' more on-list and
-could have avoided this ahead of time...
-
-Thanks, Lorenzo
-
->
-> Cheers,
-> -- Nico
->
-> >
-> > We can then bring in eagerness later and have the same situation of
-> > max_ptes_none being a parameter that exists (plus this additional read-only
-> > parameter).
-> >
-> > > +
-> > > +     return max_ptes_none >> (HPAGE_PMD_ORDER - order);
-> > > +
-> > > +}
-> > > +
-> > >  void khugepaged_enter_vma(struct vm_area_struct *vma,
-> > >                         vm_flags_t vm_flags)
-> > >  {
-> > > @@ -546,7 +579,7 @@ static int __collapse_huge_page_isolate(struct vm_area_struct *vma,
-> > >       pte_t *_pte;
-> > >       int none_or_zero = 0, shared = 0, result = SCAN_FAIL, referenced = 0;
-> > >       const unsigned long nr_pages = 1UL << order;
-> > > -     int max_ptes_none = khugepaged_max_ptes_none >> (HPAGE_PMD_ORDER - order);
-> > > +     int max_ptes_none = collapse_max_ptes_none(order, !cc->is_khugepaged);
-> > >
-> > >       for (_pte = pte; _pte < pte + nr_pages;
-> > >            _pte++, addr += PAGE_SIZE) {
-> > > --
-> > > 2.51.0
-> > >
-> >
->
+Thanks
+Ankit
 
