@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-874599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931D5C16A8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:46:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 920A0C16A97
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06B364F05DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:46:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 822964E8DE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF5C213E9F;
-	Tue, 28 Oct 2025 19:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029E427CCEE;
+	Tue, 28 Oct 2025 19:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHQwPYXm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ph8sVaf5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFC411713;
-	Tue, 28 Oct 2025 19:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FDA711713;
+	Tue, 28 Oct 2025 19:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761680769; cv=none; b=CUDBc4LSvR4mMSnH8E//xcvPP9AmDcQuONICmdyVLAergFXnY7Rx0cDVvAuW7MqHJ7+oQ9ge0MllJTIG3Juw2mvcCLuj5YjaCW4NJvjwN8XgkgHtFclxp2puEK28BHEgOIIVN2SksohkbzU5kVATnKGKiRTJoGg+1KifIGcfJSE=
+	t=1761680952; cv=none; b=kXsJec9tRtbt3ADRlInr4hYtujlp6O1SJMf4cOsD7/98TxXifBjEL5tm04iDy+myUSjPZioLDvRAKEL0MJ13jFXycDO/aTqSw2xunW4tSM5y/piFdS9er/2UVVVqvEb7Ggw53fGGbXgMga0rWqweQmj8KkcWn9qQscCigGmP0VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761680769; c=relaxed/simple;
-	bh=w3VcIMFNncYev6xyyHdkUM5LCBO6snPWm/1dFj2oeDk=;
+	s=arc-20240116; t=1761680952; c=relaxed/simple;
+	bh=CKEsyC7pw4d0z7ZyuFMSd7YgtnsZCVl+k1LMpg2/quw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etJV4jLmt4TNzjoQIumskQSM+MU5DS4iRH59rmpQUfGXmdzryQtpGQiEn4pmQrLr5bCDiy15w0+ft4ePcS7tslFkzh/zH0RlVeCoGKFkQorfBMEC0Bd/815+Yo5uITWBefu4pV2EC39L35s0E7N+fohZEmQQ3YOoE3wtuSj/lSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHQwPYXm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77482C4CEE7;
-	Tue, 28 Oct 2025 19:46:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HnO7FDqb8J4lBlG7XkX9CeFDYb3wO6LsBIYTZ3FJ2le0rZbDILEj8c8dGfZrkg4PeBwdY96yX8glqbkiAPIB6uDWcj719gEM3ZP+B3zdpHsBQ+LsYjN/Td7JSSbTxbctKhNDBQ34G/gRKGXMUSXkIR5y1wgWmwKF+Eyqqd4EyPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ph8sVaf5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56113C4CEE7;
+	Tue, 28 Oct 2025 19:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761680768;
-	bh=w3VcIMFNncYev6xyyHdkUM5LCBO6snPWm/1dFj2oeDk=;
+	s=k20201202; t=1761680951;
+	bh=CKEsyC7pw4d0z7ZyuFMSd7YgtnsZCVl+k1LMpg2/quw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GHQwPYXmFh/OqSYeZ9teA5Cb8sxABO+O8gpxByZTt2tr8hEVS7m4Kx7nRp3O0dpR2
-	 Wf5h41rCJpWbeni650Xz72zX0gfMhAFipd/8DlXFwhk1L+HWu1+15i+rLieZkj8cqp
-	 f1zkHB3tL8lZ25qC7Tew3nGK0HceXRQJpmo47FWO3p40DBi3i8tPcQfMezW7rNyg2N
-	 qnaHWVldSVRtOON2ncmO1upjl5nq+PagisYIQ7Lf1Ui7impHNFgqCSsj40HrCjkh0/
-	 M8zZSgcF6fSHyvnCfyRYeIbTN3Hq4dBzATbHMd1Cd5J5Fxr/3bc9SMmPHMFIu6xDRm
-	 6nGik2Ue5rHjQ==
-Date: Tue, 28 Oct 2025 19:46:04 +0000
+	b=ph8sVaf5Rtft1OeMIpzBp8XXE9J6AI73lJKLRRaYivAP68Bpc2gF40KapFg2+cIyT
+	 ppgm6rBqaFhCfpCjKvQ3gBfLwDFtOgjzTjmqnyOMomU8gs8dzoxVhxJHIBMuV5fP0H
+	 u1MQYtat+9F2bJHeS8NUskDn/cF8b5n9WHbvGKQXhfIgMesZXpkBLw8K+m4JCA+mha
+	 A/W8wzotRgYGNsaP6/gnaQUw6dMVU1/l+7AVW/9o31oX06sWDte6d7NWzpR/xWjYCv
+	 2c/Mhfw2KFu1hpm+kwVs7iW9Qi5wrmH+0DQOb3v95RBUyExK40+IOp4BXbRDUEzgk9
+	 vKiRzDgx7q7PQ==
+Date: Tue, 28 Oct 2025 19:49:07 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Coia Prant <coiaprant@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add NineTripod
-Message-ID: <20251028-semicolon-audacity-dd5bdd418207@spud>
-References: <20251028-haste-amusing-78c28e834b5b@spud>
- <CALj3r0jQ-Y3wt=iyykrFVWDXyA+2feCtYy+budYzqOaVY6WqnQ@mail.gmail.com>
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Tony Lindgren <tony@atomide.com>, hns@goldelico.com,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH RFC 1/3] dt-bindings: input: elan: Introduce Elan
+ eKTP1059 Touchpad
+Message-ID: <20251028-unlocking-designing-efbdc8ca49df@spud>
+References: <20250825-ektp-submit-v1-0-1dd476c1277b@kemnade.info>
+ <20250825-ektp-submit-v1-1-1dd476c1277b@kemnade.info>
+ <20250825-decal-purchase-8cfe0003a3f2@spud>
+ <20251028204149.325506f6@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,72 +65,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="niplE5DXJ5xnJ+ih"
+	protocol="application/pgp-signature"; boundary="Jvj0xhg5VQhOffjA"
 Content-Disposition: inline
-In-Reply-To: <CALj3r0jQ-Y3wt=iyykrFVWDXyA+2feCtYy+budYzqOaVY6WqnQ@mail.gmail.com>
+In-Reply-To: <20251028204149.325506f6@kemnade.info>
 
 
---niplE5DXJ5xnJ+ih
+--Jvj0xhg5VQhOffjA
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 12:38:10PM -0700, Coia Prant wrote:
-> At first, it was to avoid problems with the beginning of numbers.
-
-What problems does starting with a number produce?
-
-> Given that it is already used by downstream projects, we have retained
-> this to ensure that users can seamlessly migrate to the mainline
-> version.
-
-What's the actual impact of changing it from "nine" to "9" for
-downstream users? This is a board vendor, probably nothing is even
-interacting with the board-level compatible at all programmatically?
-
-Please don't top post.
-
-> Thanks.
+On Tue, Oct 28, 2025 at 08:41:49PM +0100, Andreas Kemnade wrote:
+> On Mon, 25 Aug 2025 17:40:56 +0100
+> Conor Dooley <conor@kernel.org> wrote:
 >=20
-> 2025-10-28 19:35 (GMT+00:00), Conor Dooley <conor@kernel.org> said:
-> > On Sun, Oct 26, 2025 at 10:36:44PM +0800, Coia Prant wrote:
-> > Add NineTripod to the vendor prefixes.
-> >
-> > Signed-off-by: Coia Prant
-> > ---
-> > Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
-> > 1 file changed, 2 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > index f1d188200..37687737e 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -1124,6 +1124,8 @@ patternProperties:
-> > description: National Instruments
-> > "^nicera,.*":
-> > description: Nippon Ceramic Co., Ltd.
-> > +  "^ninetripod,.*":
-> > Why ninetripod instead of 9tripod? That's what the company uses and in
-> > the marketing fluff for the boards.
-> > +    description: Shenzhen 9Tripod Innovation and Development CO., LTD.
-> > "^nintendo,.*":
-> > description: Nintendo
-> > "^nlt,.*":
-> > --
-> > 2.47.3
-> >
+> > On Mon, Aug 25, 2025 at 12:07:28AM +0200, Andreas Kemnade wrote:
+> > > The Elan eKTP1059 Touchpad is seen in the Epson Moverio BT-200
+> > > attached via SPI. Add a binding for this chip. Little is known.
+> > >=20
+> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > > ---
+> > >  .../devicetree/bindings/input/elan,ektp1059.yaml   | 45 ++++++++++++=
+++++++++++
+> > >  1 file changed, 45 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/input/elan,ektp1059.ya=
+ml b/Documentation/devicetree/bindings/input/elan,ektp1059.yaml
+> > > new file mode 100644
+> > > index 000000000000..a10256a271e0
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/input/elan,ektp1059.yaml
+> > > @@ -0,0 +1,45 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/input/elan,ektp1059.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Elantech SPI Touchpad
+> > > +
+> > > +maintainers:
+> > > +  - Andreas Kemnade <andreas@kemnade.info>
+> > > +
+> > > +allOf:
+> > > +  - $ref: touchscreen/touchscreen.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: elan,ektp1059
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +
+> > > +additionalProperties: false =20
 
---niplE5DXJ5xnJ+ih
+btw, there's two spaces at EOL here. Is that in the patch itself, or
+just a mail artefact?
+
+> >=20
+> > Shouldn't this be unevalutedProperties: false, since you want to make
+> > use of what's in touchscreen.yaml?
+> >
+> did not do too much thought about this yet. But am I allowed to use this
+> in a touchpad? BTW: who defines whether the chip is a touchpad? T*P* in
+> its part number might be a hint, the device where I am using it, uses it
+> as a touchpad. But who says it cannot be glued onto some screen?
+
+I've got no idea what you're talking about here, I don't know anything
+about the mechanics of touchpad chips. All I am commenting on is that
+you're including touchscreen.yaml but do not permit any properties
+defined in that binding to be used for this device.
+
+--Jvj0xhg5VQhOffjA
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEdfAAKCRB4tDGHoIJi
-0t0JAPwMQxn3n3NWEpsiImdiPhus3HKlzVvj5qA2XdW1fRX9ZAEAv2NYiwS8iLK3
-cRoKFl4agYz9hNMDop3M98ItwQtM7wE=
-=VZvn
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEeMwAKCRB4tDGHoIJi
+0l5+AP4m7nww0iHVAtMhmQQmWIi5aQT1bVrqcjpi0pSyREAxmQD+Olwl99HkT547
++YKrVSEzoLpdnnCeg8IDDotNDmhOmwc=
+=mLkH
 -----END PGP SIGNATURE-----
 
---niplE5DXJ5xnJ+ih--
+--Jvj0xhg5VQhOffjA--
 
