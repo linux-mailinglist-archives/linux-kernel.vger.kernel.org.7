@@ -1,185 +1,223 @@
-Return-Path: <linux-kernel+bounces-874155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7ADC15A2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:59:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F354C15A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:01:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02FE6403CAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:53:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8363F5673DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785E34321D;
-	Tue, 28 Oct 2025 15:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A03634575E;
+	Tue, 28 Oct 2025 15:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="BiXrT6nQ"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020134.outbound.protection.outlook.com [52.101.191.134])
+	dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b="sU3vrLm8"
+Received: from mail.hostpark.net (mail.hostpark.net [212.243.197.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB442367B0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666706; cv=fail; b=fobw4vUpMhcm0NJwr10vKu8d8U64kFO/GdRXcKf0FHO7vxP5vhfGXl/YpWIxP8WnI4XQbBfGt4PBSy0yfE3vINYDaIoSlFORyCxrweu5iANCJjbw/2HmUjFb5lqPG9n+nmPwawRh8jgX4snXa+my0p1kSY6TTLGl9Yua+pIVK38=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666706; c=relaxed/simple;
-	bh=O18qkEdPolBnDRfzC42EO9L9cXZtLA+is63N1Mv1PEo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u2L+TgS5SUNCkGZadkpsnKDRBSmX2bgobPiqNNO48W7xoUsYEJHHC5sERiHIAIpVQ9vt9P8Kn8uTabn1WVRs5RYh2KHgHQC6pxzJ3goMTfVMgPDP+PmAMnFh8DFRkVHgfGssZPaGJVbkT4sPQpdkH4QMo9+b3QFiJLfY3Pp0vrA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=BiXrT6nQ; arc=fail smtp.client-ip=52.101.191.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R/harn8afu0fEeYavIBTemEt+hBSmceC5lXYZYJ/4JGw25qjbgmeWgkvapBfoqZ2BH2+avpRPACifGB44l/b3+xF4AmCvpobSYpMfk7y1hjRjiuxKWi7jE1RUh9P4u1S46Pfde4+omf1dxavccNYmxgyT1NVGVhweENSsTz5C/tnsn1+eWjz7qfcC9JmRvt7GOwmJ5ORjaUyjllcohros1K8NTu5FwtCqWpOzpEMzsvb/U5RlU9VZTtXdrXMeo7bi9JHsPQDMzx9USiOEXkh6hqTx209tLpJft6XPcS9igpvRWICyT7upUWAN97k9mPwLBzYi2vSWTfz6DN5Hei1kQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/dGKfUmylyX8pucpn1d1t8bMvv8mDeRwLvywxLla3/o=;
- b=eM/l9DtrcIw/3Yt/v1kkJal91kK3o1bvg/CjkyiwzJeu23k1oYEWXmEwG+37ei8VMzHnm8shg7iG5WbxQO7d+U8PJokoSNrfot8OdWq7QOdteRO98WkeKhcGOImaRaLWD61qPLKhdW/fZjhVeeSkCXHF1mS7n/Dxa6Ar9YZW41BNl2pVcXaeLhOJTXd1Ec2Ezf7xT8OAeLERP32EdFoG50eyW/1G6R4RZWqxk1CEhaEjfIB/RKiOyPRmdeaW4eWJjTOtDPO3ZDpHnCnpSwVm6t1wRmP4H3dqioBiSJXhFzqNVOimZY6o/FVCwuPOLOeuTImjCIpRKy2cNC9xM6vBFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/dGKfUmylyX8pucpn1d1t8bMvv8mDeRwLvywxLla3/o=;
- b=BiXrT6nQTFOtjJVQ2sjTnNT1mFREjt8ZBjMi7cCPGD+1avo3IoKolgKOtMXPcXOA6OtLK5I4+EE8Cfno8URiCOqbsBOAFVPqxUU4DvOCdJFcbcHniC4E7t1eU/oNj7/R+uXODR0Vbu4Dpeho0hrKCsZsLiKUaGzMKqnZkEIoaP8YDE7Pq74PJiOoiI6VHwgwKCCpAPIctl2owts4Rl9VjyLSiuS05ra0IIUBkqyfoIVfB/DXrBxLuOGZZzwZpZc89k3/ivN03Mqi2x7OVIR+swCxaK207IthnyxgFuQEygMr9NdcwbyieBi1RyuKwT/qeealnhrUo14x/zpduIEcVQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQBPR01MB10568.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:70::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Tue, 28 Oct
- 2025 15:51:39 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
- 15:51:39 +0000
-Message-ID: <626e9ac4-e59d-4d88-8428-e215b9c34e51@efficios.com>
-Date: Tue, 28 Oct 2025 11:51:38 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V6 24/31] rseq: Separate the signal delivery path
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, x86@kernel.org, Sean Christopherson
- <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
-References: <20251027084220.785525188@linutronix.de>
- <20251027084307.455429038@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251027084307.455429038@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT2PR01CA0015.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:38::20) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95480343D8E;
+	Tue, 28 Oct 2025 15:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.243.197.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761666721; cv=none; b=AyeZRTZa6JzQREsSnlo2RVd8Nf8NL9nLAmWAUPX9PT4g2meArdiQylUPsH/smDXwL5DttgBM9yX0VAvi5AYSKIBacoSxkQva/e734+kGJFNW7zBV0HMjbRLo+FOFYKflxmRbdq+DjQVQjeQR3uYJAOEkQuwLu/RvOHykQprkqcE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761666721; c=relaxed/simple;
+	bh=UF7eSuEBBdlXuSqT26s0+lsJpdaez8Svv47ZTzarpIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LMDnC24/VQSzhLsgMfgs2X4dBkLPyZTC8K5rON2FdT1KL9nrKaGdrb9UARHMoBrHsgaTs+WpH4aA+RuoLC9dhCUwOXUwlNOWqz0ruqz47gbhQ3fVpXq+7yptxEZT1H+Kigv6v50cj/akFEVDaewzv4/+qC+QOB47dUT+WRcMiV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li; spf=pass smtp.mailfrom=klarinett.li; dkim=pass (1024-bit key) header.d=klarinett.li header.i=@klarinett.li header.b=sU3vrLm8; arc=none smtp.client-ip=212.243.197.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=klarinett.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=klarinett.li
+Received: from localhost (localhost [127.0.0.1])
+	by mail.hostpark.net (Postfix) with ESMTP id C604216671;
+	Tue, 28 Oct 2025 16:51:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=klarinett.li; h=
+	content-transfer-encoding:content-type:content-type:mime-version
+	:x-mailer:message-id:date:date:subject:subject:from:from; s=
+	sel2011a; t=1761666710; bh=UF7eSuEBBdlXuSqT26s0+lsJpdaez8Svv47ZT
+	zarpIs=; b=sU3vrLm8D70pJncbAaulxbwjFz7FSfJo+BF/6B9QHXWUoFcuKc/KA
+	L23GlfowfHJKrE58uW7CVirHmDp32MC9mBu5b556XLy00wbq0YRXzjjSNhqdeNFt
+	aNKlS1cLIQ5LGeyiiXXumhltjppkXASLisc/swV+KNemMhqjf2VaaM=
+X-Virus-Scanned: by Hostpark/NetZone Mailprotection at hostpark.net
+Received: from mail.hostpark.net ([127.0.0.1])
+ by localhost (mail1.hostpark.net [127.0.0.1]) (amavis, port 10224) with ESMTP
+ id KygcuKzd1zPM; Tue, 28 Oct 2025 16:51:50 +0100 (CET)
+Received: from customer (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.hostpark.net (Postfix) with ESMTPSA id 5F3AF16148;
+	Tue, 28 Oct 2025 16:51:48 +0100 (CET)
+From: Christian Hitz <christian@klarinett.li>
+To: Lee Jones <lee@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Dan Murphy <dmurphy@ti.com>
+Cc: Christian Hitz <christian.hitz@bbv.ch>,
+	stable@vger.kernel.org,
+	Pavel Machek <pavel@ucw.cz>,
+	linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] leds: leds-lp50xx: enable chip before any communication
+Date: Tue, 28 Oct 2025 16:51:40 +0100
+Message-ID: <20251028155141.1603193-1-christian@klarinett.li>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR01MB10568:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c4a3fda-8787-4a82-aeb8-08de1639e1a3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MG12c1dNZlVhYjkyQWRLeURlU2xlL0dvYm9NTk9HU21ONU4vMkxqaUdRQVBX?=
- =?utf-8?B?UFFHSjhoS04rQkFmZzJScWlQTWU4SWhtcDdHOThUcldaeEZIQ0NkOXRPN2Q5?=
- =?utf-8?B?ZDFwbnFkQnpCaGJ5cy9PcGxTdkRYU1hPYnQyVFFRZ3hlT3NHUVR4ZmhCaFZz?=
- =?utf-8?B?WlVKcTZmT0tCTnd4VnZyZitYYlFJTzBBUlArSVFETm80aFpadjk0ZkkvTFV3?=
- =?utf-8?B?SUJRaXIyK1c2V3IwZWd3WktiNWRRQW1WQ3F2RzhtV0dCVzJwN1hqZUczTW1u?=
- =?utf-8?B?V3JQL01SV2RyWXFSTTczR2ttWkw0VGFNVXFYQmg5bWpyUVJMUU9RcXZSTkMv?=
- =?utf-8?B?Uk9RZkh0VjJwaVgxSmZ6YW1TME42NDBWV0IzdUM1NUxWRXk2LzVTN2dROXNr?=
- =?utf-8?B?RHdvc0RJQjc4VDU3QTBtMDZ2MW93bXN3a2ZLcjA2NC9sRVBNa1FDdVVzS0dU?=
- =?utf-8?B?SEVyc1Z4TGc4SFhpKzZqSmhkYXFaYU9GdHRCQ3FRUk9xSG9oTmJKNGY2ZGFn?=
- =?utf-8?B?WmZ2UVQrY1pYVzJkREJ4S0l3ZGVlKzlzcU5Za2VBbGpaT3VLT1pGcEQ1REQ2?=
- =?utf-8?B?TmxsS0ZvZC9KMmM4TGZQSU9pSWdTYnEvOEtyT0pZS2RkUnlQUEZsUEpJbEwr?=
- =?utf-8?B?RjA4NFhUekJiRCtQYjFpUmZCK2hvbkEyTnA0MWprUlp5QVVUaHVFWGxFdFZ0?=
- =?utf-8?B?bG4zNFE2UHorbytYTkhkelJ0cjI2RDY1MGJJRWZ1RXBzWkxkaTFtWGZ1YXVa?=
- =?utf-8?B?QWVlZDlZaFVmK1htR0c4UUsxZ3lCNjZlbjF4cnRlVllCdTYvZGt5S2IwSEkx?=
- =?utf-8?B?M3BibGVYdWJUZUh5WGh1NVozaTNTZGEvbVpVN3BOa1VKM25yVDdUbGZpZ0F4?=
- =?utf-8?B?Q21wTmhPN1RwVmQ5Z3g3aVZFeVgvbXExWnJFWW1ENExZSDhvdTNOSkp2d01w?=
- =?utf-8?B?MlFYaDBNMHRjQlhLTGtBY3RPWFlwWGxqQjlCT0xhNWJRU2NpdDV6em1STUNK?=
- =?utf-8?B?ZHNUYVdBeVhCeUkwU3dYRGhTeUJzZUxyNkt4c3p0NEE2cG5CS2Y1enZVb1ZR?=
- =?utf-8?B?QjdGby9qMy9ZWHFTOGhOK3k1RHJmV2h1NmdaM1p4SzRSVGl2SEkyWkorazNM?=
- =?utf-8?B?TUtVMVE3SG5ET2Z5RW1mTmFMRERyRjc0V3RLSW9JeXpBSUtuaXA1M1JLdDky?=
- =?utf-8?B?UkJrL2M1RzNEbE9GeWdtN1duRTdwZzBRdXB5b0pDZGh5aGpWc0xkdTZzS3kz?=
- =?utf-8?B?ZXJ6c2tqWEplT1JxS2dFZlZoQmRaSUNWZ1ZxTG93bzV6QXE4cTN1dVlJcFBn?=
- =?utf-8?B?RGZMenhwUUpZa0lWZjRoMjZUYjB1dEd5eG9rKzd5dTEvdkd4T2M1R0dBdmZq?=
- =?utf-8?B?c3YzRVVwVTdwSlEyaDZyMUNnM0c4UXAya015MmlMVUZaaHZteHc0Zk81SW1p?=
- =?utf-8?B?VFY1MjUxTDdvREcvNEFhT0t3eG1xT0lYanU4eFAxYWdCQTRadHdrTGg4RThx?=
- =?utf-8?B?cGI5V0tVaTZGVkppb2k2bW55dkVOeU1GWU91a3FlQUJjL3VzQ0VpdWV1WlB3?=
- =?utf-8?B?dHFMUTN2dy80d2tlcDA5Qk0yVGNsY0NHeStEc0pZNUlWTlBLeEFZd1BjbVZn?=
- =?utf-8?B?c0pFRXZTK2xjTmFxSC9GczVoc3llZjhnVzd2TG1FOFJFYnFuci94LzhUVU0y?=
- =?utf-8?B?YW9LeCt2VEJwcGM1azFGT3ZxdUVDQlBnRW5VWUliSm90UGsxaXZvVnNubG4y?=
- =?utf-8?B?RTdoWUFnWWlJNzdENGM1UkdydXZScnNTM2FQTEV3Y25YcGVEbXBCalhadWNN?=
- =?utf-8?B?d1J0UkJiVzVHeHY3d1VKYmNPMzVxdGc1TkppNEYvWmFrN1ZHbnRrajZhcG5x?=
- =?utf-8?B?ZHFYSExFRVdXbjdzZEkxZEJpOEVHV0RWenlqbHV2aHlvcGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWx2cEVyYnlpNkt4QmJxZ2piWHBHUmJRTENjTU16c1lMczlmVFJpVUVrclFW?=
- =?utf-8?B?cnZBWldHMGhoY3pubFdZZkRzYUJOTzBaeWx5UUdZY0lSbWx2SDl5TkFrSVRo?=
- =?utf-8?B?T1RjMThxMDhza1FZYStQK0d1dGVoVytiend1WXM3NFl0VU8vL3NROUpoc2Zi?=
- =?utf-8?B?YWpQWWhBcEtVTUphWDFJVkJqT2k2dS8wS3MyekVrSUNLNUtzTzYvaWxNYW9J?=
- =?utf-8?B?VnUra21KQjU4TUZjSk9IdmNoMWNOU1dBZ0pIVFBKajRIdmhIL0lJMWExTjFr?=
- =?utf-8?B?MUhuRG5uN3RFeFFqMHZ4S0lZUXRsS0xHempIRXdOanVlbTZxcUp6UUxpcDll?=
- =?utf-8?B?QUtYQUdLeVk5RWdURGhkK1E4Kzg5KzNMcWtQdjJjeUkycEFIVWppTTJIVGQ2?=
- =?utf-8?B?cUg1V3pzZkcwNDlLWlcrUmtpTDRVRGxNTUFndGFiNGVQdFlCT0pTb2VRRzdH?=
- =?utf-8?B?dENEOE1uYTNyRDE4a0Z1T215L0FkK2pSNjd1RzNYR3l6Sm1EdzBBSjRhWFhy?=
- =?utf-8?B?UkdaSjhraEFMKzdnb2lJNFN4dnhpM2NIanRvQU81RWxtbTBNUDVvVGlaZGRZ?=
- =?utf-8?B?TmlGL09rUm4xWnFlRjk4V09Xc0Rmc1JzcndrSllhdWdvZGNHdUUyL0NWNjRV?=
- =?utf-8?B?a1luZTI3SFVIb3Q2ekQreGVXN2hEVGk3cW9rMDAwNzlBRlpDa2NSRUpjUllu?=
- =?utf-8?B?YmFpOGdsQWt2aytUU09ycDU0cXJZd0Z3QVR0UUdCeS9mTGlLOXVQays1c1p4?=
- =?utf-8?B?OXJlRTluUmM1S3l0TURxcjJ3SGd0b3FiZ1Q3c0Z6MFBjMTlVZ3RVWjIrbE94?=
- =?utf-8?B?ZXc4YTdkSC82Z1hnMlYxTEJUc0R3OHFvWEJadWl1a3dXK2NFeFlKZ21pTGN1?=
- =?utf-8?B?RkZDMS94b3Axc2NpYXZzbEZqTnZ5bXM3YjBvd2JwcTdhYmlkeEFkWlFWLys1?=
- =?utf-8?B?dDRkTS9CY0lSMXJFZWltM2NESThnS0sxODJMMFEzVkRqUzV2SDNwTXBGWGJB?=
- =?utf-8?B?OHJnbGovWDdReHNkUGlMRUMvMlU5azFkS0RyVjVUdlRnWmdKeXppakJpYnVY?=
- =?utf-8?B?K0l6Q05yVmI4alB5WjV3NUxKbS85WkxTc0MyeUphOEc1VXM4MnNTRGVRYjRz?=
- =?utf-8?B?SDFIYzBISUdqWG9aQVZnbGxTZDRQb1dYME9TajZOZmhwTEU0S0tTeGZXT3BO?=
- =?utf-8?B?K09qWUo2Y291eVpDQ0dDUmF5TXFWN3hwamt1YS9xREhHdkxOcStISC9zMTRC?=
- =?utf-8?B?bG1Ha3BxUUVCYXVEcWVzQkgrQnd1NFlFYndOWEV0VUhiS29ZTXliaDVnbVJn?=
- =?utf-8?B?MU5jditWRnBRNXg2dFYyd3JRK2c0eHpWWnNSNFRvM0VHRnd1eXQ5RFQ1M29M?=
- =?utf-8?B?T3NPdGFLQUhZM2lpY0xGMmtUQStwS0xNRnhCNjNZSHR1Tk5JSlpYRzkxbW1m?=
- =?utf-8?B?bnhXcm1kRnpZQkhKQ2E2dmY4bTBZYjFwbWh3S2RiSnJHVVFGdFZ1cTJmbGdL?=
- =?utf-8?B?QUZ1eSt1aTkxWU9oZWlkcWROdlo3WFNsRTYxRFJBSlJkeGI0WStLTTFhMDlJ?=
- =?utf-8?B?TTZqSG9PZEN1YnlmcWlBQ2hqbFVlZDJVY1dmbDFxOStCdWNYR3JCQ3d1U2FK?=
- =?utf-8?B?dEU0dUhTM2NTVTBwTW4ycXBwbFRueTN4UFNUZjNBVGs0dm9PWVdlU0JFN0Mz?=
- =?utf-8?B?M2o3ajQ1MmZNckRPVDhnWW0reFh6OWxWOWhuajg4ZW94bmxEOC9jVDZvaWVR?=
- =?utf-8?B?bENGdkE5MEkzNWJ5NUZNSC8xRndtWmV3S0lZQVphWktremQyQ2N6bEEvWHdQ?=
- =?utf-8?B?ZXo1SGZ3LzhaR3VHTXNCQUZDU1Bsd0l6TFIwazBCcE0vdGpZMy9nWkkrMkYz?=
- =?utf-8?B?TkhvMldTbzlvbE9lQjc5V1JFRm9GUkU1QW1rRlYwdE0yQVBGblM0Y1MyUjFX?=
- =?utf-8?B?TDh0aVNkK09LZm9yMTJLR3JITXpsT21HN3MyNWtKSHVleGZMakVXZmpKWDI2?=
- =?utf-8?B?RTdVdHJZWXlCaWc3dkpGOVZNWGc4eTZQWmlGTzNXaUVJdEFwN2Z6N0F6empK?=
- =?utf-8?B?NndWQThWUDVtdFdsWTR5YkQrTzBCWi9FYktiOWxHWFBkeTcxb3ZaUnA5bjRD?=
- =?utf-8?B?a3k0RFZlemJtcWw4MUtHaTRCUVZkTnowekNnd1hzMmhBZ2JYMlpockRJT2pO?=
- =?utf-8?Q?s3I9wtla0Y6gLHWRTgkDgyM=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c4a3fda-8787-4a82-aeb8-08de1639e1a3
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:51:38.9390
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3T0FKXyqHZeD1E80jVT0mlEfhqzXHCU5NdSHCecKS/u9sNFftxZ8oZuv7ZnceNKIPc8CywmHNGalAEbnLG3E2CwEzMnkylET9twf2JmP0uQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR01MB10568
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2025-10-27 04:45, Thomas Gleixner wrote:
-> Completely separate the signal delivery path from the notify handler as
-> they have different semantics versus the event handling.
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+From: Christian Hitz <christian.hitz@bbv.ch>
 
+If a GPIO is used to control the chip's enable pin, it needs to be pulled
+high before any i2c communication is attempted.
+
+Currently, the enable GPIO handling is not correct.
+
+Assume the enable GPIO is low when the probe function is entered. In this
+case the device is in SHUTDOWN mode and does not react to i2c commands.
+
+During probe the following sequence happens:
+ 1. The call to lp50xx_reset() on line 548 has no effect as i2c is not
+    possible yet.
+ 2. Then - on line 552 - lp50xx_enable_disable() is called. As
+    "priv->enable_gpio“ has not yet been initialized, setting the GPIO has
+    no effect. Also the i2c enable command is not executed as the device
+    is still in SHUTDOWN.
+ 3. On line 556 the call to lp50xx_probe_dt() finally parses the rest of
+    the DT and the configured priv->enable_gpio is set up.
+
+As a result the device is still in SHUTDOWN mode and not ready for
+operation.
+
+Split lp50xx_enable_disable() into distinct enable and disable functions
+to enforce correct ordering between enable_gpio manipulations and i2c
+commands.
+Read enable_gpio configuration from DT before attempting to manipulate
+enable_gpio.
+Add delays to observe correct wait timing after manipulating enable_gpio
+and before any i2c communication.
+
+Fixes: 242b81170fb8 ("leds: lp50xx: Add the LP50XX family of the RGB LED driver")
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Christian Hitz <christian.hitz@bbv.ch>
+---
+Changes in v2:
+ - Unconditionally reset in lp50xx_enable
+ - Define magic numbers
+ - Improve log message
+---
+ drivers/leds/leds-lp50xx.c | 55 +++++++++++++++++++++++++++-----------
+ 1 file changed, 40 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/leds/leds-lp50xx.c b/drivers/leds/leds-lp50xx.c
+index 94f8ef6b482c..d3485d814cf4 100644
+--- a/drivers/leds/leds-lp50xx.c
++++ b/drivers/leds/leds-lp50xx.c
+@@ -50,6 +50,12 @@
+ 
+ #define LP50XX_SW_RESET		0xff
+ #define LP50XX_CHIP_EN		BIT(6)
++#define LP50XX_CHIP_DISABLE	0x00
++#define LP50XX_START_TIME_US	500
++#define LP50XX_RESET_TIME_US	3
++
++#define LP50XX_EN_GPIO_LOW	0
++#define LP50XX_EN_GPIO_HIGH	1
+ 
+ /* There are 3 LED outputs per bank */
+ #define LP50XX_LEDS_PER_MODULE	3
+@@ -371,19 +377,42 @@ static int lp50xx_reset(struct lp50xx *priv)
+ 	return regmap_write(priv->regmap, priv->chip_info->reset_reg, LP50XX_SW_RESET);
+ }
+ 
+-static int lp50xx_enable_disable(struct lp50xx *priv, int enable_disable)
++static int lp50xx_enable(struct lp50xx *priv)
+ {
+ 	int ret;
+ 
+-	ret = gpiod_direction_output(priv->enable_gpio, enable_disable);
++	if (priv->enable_gpio) {
++		ret = gpiod_direction_output(priv->enable_gpio, LP50XX_EN_GPIO_HIGH);
++		if (ret)
++			return ret;
++
++		udelay(LP50XX_START_TIME_US);
++	}
++
++	ret = lp50xx_reset(priv);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (enable_disable)
+-		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
+-	else
+-		return regmap_write(priv->regmap, LP50XX_DEV_CFG0, 0);
++	return regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_EN);
++}
+ 
++static int lp50xx_disable(struct lp50xx *priv)
++{
++	int ret;
++
++	ret = regmap_write(priv->regmap, LP50XX_DEV_CFG0, LP50XX_CHIP_DISABLE);
++	if (ret)
++		return ret;
++
++	if (priv->enable_gpio) {
++		ret = gpiod_direction_output(priv->enable_gpio, LP50XX_EN_GPIO_LOW);
++		if (ret)
++			return ret;
++
++		udelay(LP50XX_RESET_TIME_US);
++	}
++
++	return 0;
+ }
+ 
+ static int lp50xx_probe_leds(struct fwnode_handle *child, struct lp50xx *priv,
+@@ -447,6 +476,10 @@ static int lp50xx_probe_dt(struct lp50xx *priv)
+ 		return dev_err_probe(priv->dev, PTR_ERR(priv->enable_gpio),
+ 				     "Failed to get enable GPIO\n");
+ 
++	ret = lp50xx_enable(priv);
++	if (ret)
++		return ret;
++
+ 	priv->regulator = devm_regulator_get(priv->dev, "vled");
+ 	if (IS_ERR(priv->regulator))
+ 		priv->regulator = NULL;
+@@ -547,14 +580,6 @@ static int lp50xx_probe(struct i2c_client *client)
+ 		return ret;
+ 	}
+ 
+-	ret = lp50xx_reset(led);
+-	if (ret)
+-		return ret;
+-
+-	ret = lp50xx_enable_disable(led, 1);
+-	if (ret)
+-		return ret;
+-
+ 	return lp50xx_probe_dt(led);
+ }
+ 
+@@ -563,7 +588,7 @@ static void lp50xx_remove(struct i2c_client *client)
+ 	struct lp50xx *led = i2c_get_clientdata(client);
+ 	int ret;
+ 
+-	ret = lp50xx_enable_disable(led, 0);
++	ret = lp50xx_disable(led);
+ 	if (ret)
+ 		dev_err(led->dev, "Failed to disable chip\n");
+ 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.51.1
+
 
