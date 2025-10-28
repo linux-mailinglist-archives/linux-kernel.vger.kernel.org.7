@@ -1,159 +1,129 @@
-Return-Path: <linux-kernel+bounces-873449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0CFC13F44
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:57:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961E2C13F8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:59:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2D24C50035C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF973BC4FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C9A3016F8;
-	Tue, 28 Oct 2025 09:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE36A302160;
+	Tue, 28 Oct 2025 09:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jkGqoYfT"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhE5EfWm"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DC2302CC2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8747730274F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645233; cv=none; b=Zm5fr9TbtKKjqsxHbdXtX+hmY3nu66UOs5cwWQDXHaG8ZIX+9t2uWx1cUsrb6VwAGg93JJMIb8LOvkAEDhVbvorEuOK30kXXYmHkwB4/ckTPia6V4XBtgvAfZSbXHAVOdbs+Pj20ZVdJGexHpmLxang+wQ6BBbwkReYQOq6LPLc=
+	t=1761645253; cv=none; b=JwbcxV5UMMTj9h3Xl0Y/5gb4n6z5bFnI7tk3jJDeCGjsm14707r3YJ6wZ0rMW3yFGfO0AvH4JRrzr7GDT7H1UobC7BWkY9gVO6tvW5FFxa/pa0JjzBD9sspBaFq/cAMlCMzK5X5hgacLaFNZ78RBmHZlK4weRAeDhlomttYZyP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645233; c=relaxed/simple;
-	bh=L40eWwxPkCYUpMmLkv9h8QruB34rpCY3EV+gN9QOtWk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UMuv4xV5kO2CVEOEgIgVC2T2JlqMI7QdqrpfECVxVujxST1HBPRlXp6isa3nSIt8XogIGrW1oLEYTLA5dnF+n9jnP5DFjnNaXgpcoy0pxlITdzFSeUkCYn6TpKxTg17xUL6Y+52YFpQgbQW7psP34CHbbMMkHu2YVKPxG/H/T38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jkGqoYfT; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4711b95226dso71553175e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:53:51 -0700 (PDT)
+	s=arc-20240116; t=1761645253; c=relaxed/simple;
+	bh=o4CatTXk3C1VwFfoRAdNv+qAYE3ujOUobvckbuzv3dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JTU5BzplkXTzwq/EOiHwKr7Jt7Bi75A7UE07du8iqCO4E5DdXVouZwXZVqMWFwQaRcUleGT/T24GlKprOYbVPsoBzyGK5Q7dlq9734MhcgnqxS+hBex5fug2/vzxdkp+aInC1qB/yYXBHwEXipzELW9S5LWvxg5moUS8f7fjY34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DhE5EfWm; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-475dbc3c9efso23108135e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:54:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761645230; x=1762250030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8I8yp/MiZ7ri17yJV9kzL93n+BFpQFCc+/QSsi4tVMs=;
-        b=jkGqoYfTyqWGuiiBYryZXuCtMwXHvUUAGdIk1RJkXECQfS6RyTr1kjVZBCHQ+QB7Id
-         E8BGN8h9mJfr5k4y1ew8ibQQ5nDF7AMTBHnnOGdNZho3gMi/jSMT0JButOeevwpgo1N5
-         DZxSqFPMGbcVN4EV4MMoM8LQQSre4UG3rDJD05cLl/vKoVAnuUNweTal0RPo3berC/w+
-         FOvfsP17st3eE6Rm19bCxoLliTFh3LdY49w1DuT/aVnRN4mTh/Ayq7b+PY/vUb/VAiZK
-         MvGeHniD0uIZ61edWc8uFWQgN85X97v2pkdwyCKUoTm8D2Z+GKH+U4GAp6VzLJpJdsc8
-         Afcg==
+        d=gmail.com; s=20230601; t=1761645250; x=1762250050; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Eov/MPh/YX8dO6loIW1fKNx4DJr3A70PfDx1JeMPyWU=;
+        b=DhE5EfWm+ATSe30OyLNn7OE1r1WkaVmIjp5JuGbRvtZKJs1SKlbDlTwbDs2UlApB8X
+         wrYSdE21jTY6miJ5SjUimeoqLCyMMgbX6GGjtf/jWIb7bHFAAEHKxbYaup0pSfrbSicv
+         AdMHaklaVqA12UbHVHy6vaW3kIQgvo8K7vfJJrco1IYjw3/2V/AafhUvUPlmbyVe4yka
+         zjPx2rfZWLRbMBF0u8eXebtLi1zay1iHEK1ek80orDWjXXm++y0GbXjTObd4qvvwTD/k
+         0uHhGq2kOwsl/n1V2UWsAIX9iBUIpANeZq0rkfACv1wzZcoTZwio42AJSvXxgvUd6sSg
+         WQlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761645230; x=1762250030;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8I8yp/MiZ7ri17yJV9kzL93n+BFpQFCc+/QSsi4tVMs=;
-        b=Tzk54k8q/2AxDLDXYVBUt9ozUQrzEUlLwO76FPf/GxgeA19wR97VnDrPfpT0qh33Ae
-         Th1PDKq8ci8eVEQKVY1H7XUrZmHh/CWikXfxB7eCBurJztguCfIsID9X70/3TNI3D0++
-         Zlir5kxYNHP4RPfv3BWMZFGDmYYKsUdagzFuskDJOqZl5lqdPXuIov9/vCUMcrocQQAq
-         YeZjFwvAjYi8DC5TUB3c4HP+m1c05KvoTXpPisT5/VCaH+lCBrYaPjOFuGYJqjmoY4P9
-         s+zObY4xsyWDy/smEZX4v2v1IHQKxi0ltNd0GeAEn9Rzj+pWw6DUG1PjqJECDA59hU4K
-         IDyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYeX1PhTgzUJ1BdnlxfOpMAipftSmLCeuhT7DRRxpqFuBCGySW+uBsM7UetoyS5vbaEH/C1ynckPkYluM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVpfjbUwE99UGlQVFxHIb6X4mIWRPqWfNDa9q6ccjse9Pr1uIm
-	/36RlNkGtSZZdsVjeIP+wqRlvaahGCSXWPNk39aSWhrFQD3vMZyNyiWDH+6CE7/yr+0=
-X-Gm-Gg: ASbGncuYzVQNucsVT9knmoti3Mr9TfeNEj3+4dc6/fOHxY3ZUh1Zl09zFnfTlRbYW7E
-	vPnfqOc/ityVuC9Uuom6Kgp6jzP3jUCBHQPKwVqNfWHnrbe4m1rG32OKyZyKavsFgUOqrzr+Quc
-	LX+HLVuV+xNZCVN+wbBrHdxZOxql/oY3AmPr2dIwK8pW0+4p2l5hahbA0gmLiv8UDupl3b8PMVr
-	rgyoSn5myfn6jVRKQkp0Qe8E2D5qd2o/WaVmurHOW4OlQFN8syU5WQprpti+WbOysSovyk1IjTn
-	J2tt2yvLvbT8wnPS0v5dHbPcWkRGELmeHEkNcGhBiYjROb68EKNPu/bs4DHgFRJKq1f4+gxu7r0
-	f9lm2b95+ImXKMNP5V/tLBP7mclvZ5lKthKewYHopgSWhmnty9Uqt9IxnhxRebO77rD5qiPbw5s
-	7NqMHcw4qEWvvYkz+SVaVW5uCdKcSw+wd16RCyywSH7D6fwQsBVA==
-X-Google-Smtp-Source: AGHT+IEqG+78yGFGY+SL/zvW3Zf5gXKbhNU8p6clS9qReHpKKpmAUUwL60SMqhqOg8eCmjLjilEooQ==
-X-Received: by 2002:a05:600c:4f0b:b0:476:4efc:8edc with SMTP id 5b1f17b1804b1-47717dfe1fdmr20085705e9.15.1761645230249;
-        Tue, 28 Oct 2025 02:53:50 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:cad:2140:ebe6:df10:d28d:aa5? ([2a01:e0a:cad:2140:ebe6:df10:d28d:aa5])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd48942dsm189090425e9.4.2025.10.28.02.53.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 02:53:49 -0700 (PDT)
-Message-ID: <fbc3237e-0185-4c06-a6ea-f061a2afbd64@linaro.org>
-Date: Tue, 28 Oct 2025 10:53:48 +0100
+        d=1e100.net; s=20230601; t=1761645250; x=1762250050;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Eov/MPh/YX8dO6loIW1fKNx4DJr3A70PfDx1JeMPyWU=;
+        b=iG+HCuGmt90b7rJRa/Zuj818g9iyNzaAOkeJIC3oZqOfjeniXkzrRUUmHXyCk8ys7f
+         iS/DOD55Gm25Jy3QRiOBCI/2rRg7A6/cwZ6TBZaKyWgk8oEbFTk7xp+RuZaJS+nvRuju
+         ganDc2VfZ8NXTtf+lmqb1o3au2J8DFyN2fv33OZfAxaCCqIlkRZ/3dezGn/eRhFKSRAm
+         MwcwyzFS2/k88bFQQoiAD8KIQWmI+G0FCnMX4DU2EVLSZSs8foHX4xNg1ZMh+IklnoBu
+         Z7fF8Vh13GKvIcU4vxeUVVLy/pSHuNwhrvo9551X6aEpPICf2pxZQaXddH8ZxhmMN9qm
+         bzzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5v1S1wQKhAqyJv1wImmOEKbwfozZRr6t5tWqJaZM5UWJk3u20d2LHdKWWCKLHZxNJr2Va0op1/rkajv4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIrCHE6J/AlL0y5eGUspmLimOjQGmGkj4CoVCENUdhSNE9SirN
+	sOukVZH8DmY8ohxDH2Rtn88vNcGNriId06KEI4oohIbLFgpbcBXg5IO3
+X-Gm-Gg: ASbGnctmYwa1J+xBTI1/9hPdK9Jy5RgYNzccxdBjTqmuYTo/wlE8gISUgFsEastEadM
+	HB9SqyazceJP3ZzD3iXdGQilToA6ipgpY1WrwNKyFwwn42nzn7nLhecSBFgzh3stsSMoGUokpsz
+	sIypRNIF9iv5bWTvGqm28cwH4KAhFdXD5hSANN5eD1R6bSago+yNE+9EYA3U/rugLOLxZ6QbAQ7
+	aZP0R2xX6MuhB3SDaj7g/xW8sHGZF3CaJ4g8rixzuAOzMDn28bdII4K4+aX63FUUr0y+lz/VPE9
+	MdEN8NxXtl6xGnDPaYR7irDW8moCAXtdvI0kq8xO5T8zbM+o7j8VxEKVT5NJ6QvEjI1EypPO0yN
+	uwodE7jy44VbhkFRGs7e8Qoeg4/2W11SsFeaJZBDXvE8vrBw3EAioNb204M9akvalpdE9l3NB2j
+	dEXzt21qPPp1o8F7ZOgJeOf+LYfSXDPWKAafnQGgoDdA==
+X-Google-Smtp-Source: AGHT+IHTsad+5R9VyJ1jsBgS805AF7/gtOcePpU3LeuhaXctgbpE0MIvJRpdSfBK4sVPhc9XIgYUZg==
+X-Received: by 2002:a05:600c:1e0f:b0:475:dbb5:2397 with SMTP id 5b1f17b1804b1-47717d488f1mr20861355e9.0.1761645249706;
+        Tue, 28 Oct 2025 02:54:09 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd4783b8sm187327045e9.15.2025.10.28.02.54.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 02:54:09 -0700 (PDT)
+Date: Tue, 28 Oct 2025 09:54:07 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: dave.hansen@intel.com, alex@ghiti.fr, aou@eecs.berkeley.edu,
+ axboe@kernel.dk, bp@alien8.de, brauner@kernel.org, catalin.marinas@arm.com,
+ christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com,
+ edumazet@google.com, hpa@zytor.com, kuni1840@gmail.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ maddy@linux.ibm.com, mingo@redhat.com, mpe@ellerman.id.au,
+ npiggin@gmail.com, palmer@dabbelt.com, pjw@kernel.org, tglx@linutronix.de,
+ torvalds@linux-foundation.org, will@kernel.org, x86@kernel.org
+Subject: Re: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
+ unsafe_put_user() in epoll_put_uevent().
+Message-ID: <20251028095407.2bb53f85@pumpkin>
+In-Reply-To: <20251028053330.2391078-1-kuniyu@google.com>
+References: <ea7552f1-842c-4bb8-b19e-0410bf18c305@intel.com>
+	<20251028053330.2391078-1-kuniyu@google.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm/meson: Fix reference count leak in
- meson_encoder_dsi_probe
-To: Miaoqian Lin <linmq006@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nicolas Belin <nbelin@baylibre.com>, Jagan Teki
- <jagan@amarulasolutions.com>, dri-devel@lists.freedesktop.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20251027084258.79180-1-linmq006@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20251027084258.79180-1-linmq006@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 10/27/25 09:42, Miaoqian Lin wrote:
-> The of_graph_get_remote_node() function returns a device node with its
-> reference count incremented. The caller is responsible for calling
-> of_node_put() to release this reference when done.
-> 
-> Fixes: 42dcf15f901c ("drm/meson: add DSI encoder")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
-> ---
->   drivers/gpu/drm/meson/meson_encoder_dsi.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_encoder_dsi.c b/drivers/gpu/drm/meson/meson_encoder_dsi.c
-> index 6c6624f9ba24..01edf46e30d0 100644
-> --- a/drivers/gpu/drm/meson/meson_encoder_dsi.c
-> +++ b/drivers/gpu/drm/meson/meson_encoder_dsi.c
-> @@ -121,6 +121,7 @@ int meson_encoder_dsi_probe(struct meson_drm *priv)
->   	}
->   
->   	meson_encoder_dsi->next_bridge = of_drm_find_bridge(remote);
-> +	of_node_put(remote);
->   	if (!meson_encoder_dsi->next_bridge)
->   		return dev_err_probe(priv->dev, -EPROBE_DEFER,
->   				     "Failed to find DSI transceiver bridge\n");
+On Tue, 28 Oct 2025 05:32:13 +0000
+Kuniyuki Iwashima <kuniyu@google.com> wrote:
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+....
+> I rebased on 19ab0a22efbd and tested 4 versions on
+> AMD EPYC 7B12 machine:
+
+That is zen5 which I believe has much faster clac/stac than anything else.
+(It might also have a faster lfence - not sure.)
+
+Getting a 3% change for that diff also seems unlikely.
+Even if you halved the execution time of that code the system would have
+to be spending 6% of the time in that loop.
+Even your original post only shows 1% in ep_try_send_events().
+
+An 'interesting' test is to replicate the code you are optimising
+to see how much slower it goes - you can't gain more than the slowdown.
+
+What is more likely is that breathing on the code changes the cache
+line layout and that causes a larger performance change.
+
+A better test for epoll_put_event would be to create 1000 fd (pipes or events).
+Then time calls epoll_wait() that return lots of events.
+
+	David
 
