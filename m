@@ -1,121 +1,133 @@
-Return-Path: <linux-kernel+bounces-874429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384ECC1655C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:56:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77F8C1656B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73CE03A9F25
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:51:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2B7D4FF640
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E439E34B1A1;
-	Tue, 28 Oct 2025 17:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8868834B415;
+	Tue, 28 Oct 2025 17:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BbDk9LW2"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SsuG6orE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCD017A2E0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212C233CEA7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673864; cv=none; b=e8oXyVrsl5Rg/xZsD8iZWKazzgKdOtoQK/0xCS63UTU6vCiMVx2rVvVLyRo39SOp7ZWUw8jyEzTk4qYXOGgKp3p8S4Egdh/RE162jhWCr6OOGOWd40iTGvdVnM0iR2Fzo5hlc+je0+z4WDBkJ6bnqJ5qk2BiCoaNzot46+M1OrI=
+	t=1761674078; cv=none; b=PELdH8m+QK8wog03cSPPk4ywuN78Z6Z6EF0Or6Rj5TYR1zArWOVEnSzdC13jtbPgXZnCKX7xIS45dS0et/3Kc0YQZJiEqjtB0BX4K5u5spAvYs9BzfjSWkq8eFxcoeA2+T7QOVnZpgl5mKvrDkH/WEDHy1Dckj4WowMUHS3bNNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673864; c=relaxed/simple;
-	bh=OR5hyWguXhFi+vK9n485+xoRTtPsJ9pKkAHM4sjOqUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WwHCHP2NP0wT7E1e9j4DuQluPInEzPrp1kZ9tStLA6Kif8UQDidKpsB1tDbSnJanmb8tnsQCQ9LhNGkiuhtwRYLFhB1qQhpsRp38o5yUtuoN/fWcl603NGa/UTst+XdCtHY7XgkLv/oGNHVtNogG/S8EZK+XSA4uIsHCJ9g1tuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BbDk9LW2; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 494D640E0200;
-	Tue, 28 Oct 2025 17:51:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 526wgh75SGto; Tue, 28 Oct 2025 17:50:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761673855; bh=oz3I0r0/Uv0Hig7MsmFlrgD+dOXSKw2vNqensbSzaSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BbDk9LW2AfJgFUUhU7QSNGi8GLRhgkSyLMyse1gy/TH6xPMwcQKKPKwwtj/OvQpBL
-	 OwdS1SJ+RIlEW8tQjDmDgK5OVhWkpIGC34c0y5tELF0vIgA0FrsgLQWT/v6NorYEeN
-	 IrsYB4H747CjBWuQP53cOzRWsZ+soz28YnFjRjnXGHpFCU56nof+mPLA10JRRQGCZ4
-	 sADYdukju4igDy9zy19c7JsTQCQ4Tbpj+IDe5E0Ai8DKKEtjqJbMZci+SCyhVI3SzG
-	 qXTAO8r2pwKTyFTZENLd4+GbjUGnC6uqAonWNdF63GNCWwYkGwFuUWabP/LGpyOwMq
-	 7wKKlXu7Qbl3I0fZLzhXkyclU4dv4hE0F39h0uRiiXUKD+1gyE8RfwlCROo6B3dx3E
-	 6rJ+vFf37DhYaD04hFhKN0Z93hoNxkd7XiSmmjWaRa65GRjnCeIg6qVgyCjmMdRc6T
-	 oZw82kWTzXGN1zrPbyBPyc7hdk0zvTn459GBi8m2Zd+dkbChEn5SQE6k+5aUgq9yoY
-	 znxVCeXuvbz/dw0MzXZ+aoI+bTNLK6QoJY8CSz3j+Z0UHLdpr7uMWV+GqBvHFdfwWU
-	 5myGbbW8kOG34l5X0ZpyRUSEsdPsw7gOMM70QpQRlIc7lioLIqCUkf3vuhBEyvYzRK
-	 LSPu4AoztyF1CTQQoVsbYsFc=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id B67F440E00DA;
-	Tue, 28 Oct 2025 17:50:40 +0000 (UTC)
-Date: Tue, 28 Oct 2025 18:50:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Ahmed S. Darwish" <darwi@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Sean Christopherson <seanjc@google.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	John Ogness <john.ogness@linutronix.de>, x86@kernel.org,
-	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 04/35] x86/cpuid: Rename cpuid_leaf()/cpuid_subleaf()
- APIs
-Message-ID: <20251028175039.GCaQECb5EqT1_pwqX3@fat_crate.local>
-References: <20250905121515.192792-1-darwi@linutronix.de>
- <20250905121515.192792-5-darwi@linutronix.de>
+	s=arc-20240116; t=1761674078; c=relaxed/simple;
+	bh=+XfPjxAiyUR+g9YPk2mdpcDipEBOHQEvOAQhXqwQBec=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AOj1qPJ6j8OTDoBzQHGwtJP3+u5azLzSeUaD4ExfcdUvOx0jFWboW3aPDwziC+P6rDFb/H4T0qvPD3xLOl+fSU4EiW2h8OOAJPGr02GhjlhHwJG1zVTTbgkEEv6qRevslmVD4v7S57wg4n3NS+BePhq0oTN47IsO6pD55snXYZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SsuG6orE; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761674077; x=1793210077;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=+XfPjxAiyUR+g9YPk2mdpcDipEBOHQEvOAQhXqwQBec=;
+  b=SsuG6orEl53gsuJu/yFWXECwuLwvThHJTgCvO3bPDPInUs9dAU6y3gNh
+   Jeh8sMEPCDH8igh9QrIrkW5i42QbWZaGdAoAu8QZ7QDycDzUYF+focAPK
+   qj9Pv5DVxeVl+31OAeylMK2j/ccuYDrSXr/DpUty5VF0LhApLWYOy+ls0
+   blaZvuFeGOxuyJjiD4jvvFeIOqzTZs3qBK+tDb/EIuTDtkmB2fxYLd4SZ
+   mGcF8MtjHdVbEvLn01Nk9XH4lftLC+G9g5NZdthx2L8/tc8C/PAsfUMAX
+   VNDOYR/VcJ5iz7foLCI8z8rBOOQm+Zj0LQfXG37eOAAEFg4jXQtVppAGw
+   g==;
+X-CSE-ConnectionGUID: AhMAaa21RrmXilR5mwSwcw==
+X-CSE-MsgGUID: qPZ4LnwHRSOcc5VCMIAuUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74384365"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="74384365"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 10:54:36 -0700
+X-CSE-ConnectionGUID: b0TTWRHeRs6Vk+zd+lxYXQ==
+X-CSE-MsgGUID: K4bh8J2QSc6W+KtoK4vhgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="216296424"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 28 Oct 2025 10:54:35 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDntE-000JYd-34;
+	Tue, 28 Oct 2025 17:54:00 +0000
+Date: Wed, 29 Oct 2025 01:51:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Balasubramani Vivekanandan <balasubramani.vivekanandan@intel.com>
+Subject: arch/xtensa/boot/boot-elf/bootstrap.S:58: Error: invalid register
+ 'atomctl' for 'wsr' instruction
+Message-ID: <202510290153.vj0S6aHa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250905121515.192792-5-darwi@linutronix.de>
 
-On Fri, Sep 05, 2025 at 02:14:44PM +0200, Ahmed S. Darwish wrote:
-> diff --git a/arch/x86/include/asm/cpuid/api.h b/arch/x86/include/asm/cpuid/api.h
-> index 44fa82e1267c..2b9750cc8a75 100644
-> --- a/arch/x86/include/asm/cpuid/api.h
-> +++ b/arch/x86/include/asm/cpuid/api.h
-> @@ -131,12 +131,12 @@ static inline void __cpuid_read(u32 leaf, u32 subleaf, u32 *regs)
->  	__cpuid(regs + CPUID_EAX, regs + CPUID_EBX, regs + CPUID_ECX, regs + CPUID_EDX);
->  }
->  
-> -#define cpuid_subleaf(leaf, subleaf, regs) {		\
-> +#define cpuid_read_subleaf(leaf, subleaf, regs) {	\
->  	static_assert(sizeof(*(regs)) == 16);		\
->  	__cpuid_read(leaf, subleaf, (u32 *)(regs));	\
->  }
->  
-> -#define cpuid_leaf(leaf, regs) {			\
-> +#define cpuid_read(leaf, regs) {			\
+Hi Lucas,
 
-Are we getting rid of that "cpuid_read" thing eventually?
+First bad commit (maybe != root cause):
 
-Because with CPUID the only thing you can do is read - no write.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   fd57572253bc356330dbe5b233c2e1d8426c66fd
+commit: b67e7422d229dead0dddaad7e7c05558f24d552f drm/xe: Fix build with CONFIG_MODULES=n
+date:   5 weeks ago
+config: xtensa-randconfig-r054-20251028 (https://download.01.org/0day-ci/archive/20251029/202510290153.vj0S6aHa-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510290153.vj0S6aHa-lkp@intel.com/reproduce)
 
-That can be sorted out when the dust settles...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510290153.vj0S6aHa-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   arch/xtensa/boot/boot-elf/bootstrap.S: Assembler messages:
+>> arch/xtensa/boot/boot-elf/bootstrap.S:58: Error: invalid register 'atomctl' for 'wsr' instruction
+
+
+vim +58 arch/xtensa/boot/boot-elf/bootstrap.S
+
+e85e335f8ff615 Max Filippov 2012-12-03  42  
+e85e335f8ff615 Max Filippov 2012-12-03  43  	.align  4
+e85e335f8ff615 Max Filippov 2012-12-03  44  _SetupMMU:
+09af39f649dac6 Max Filippov 2021-07-26  45  #if XCHAL_HAVE_WINDOWED
+e85e335f8ff615 Max Filippov 2012-12-03  46  	movi	a0, 0
+e85e335f8ff615 Max Filippov 2012-12-03  47  	wsr	a0, windowbase
+e85e335f8ff615 Max Filippov 2012-12-03  48  	rsync
+e85e335f8ff615 Max Filippov 2012-12-03  49  	movi	a0, 1
+e85e335f8ff615 Max Filippov 2012-12-03  50  	wsr	a0, windowstart
+e85e335f8ff615 Max Filippov 2012-12-03  51  	rsync
+09af39f649dac6 Max Filippov 2021-07-26  52  #endif
+e85e335f8ff615 Max Filippov 2012-12-03  53  	movi	a0, 0x1F
+e85e335f8ff615 Max Filippov 2012-12-03  54  	wsr	a0, ps
+e85e335f8ff615 Max Filippov 2012-12-03  55  	rsync
+e85e335f8ff615 Max Filippov 2012-12-03  56  
+e85e335f8ff615 Max Filippov 2012-12-03  57  #ifndef CONFIG_INITIALIZE_XTENSA_MMU_INSIDE_VMLINUX
+e85e335f8ff615 Max Filippov 2012-12-03 @58  	initialize_mmu
+
+:::::: The code at line 58 was first introduced by commit
+:::::: e85e335f8ff615f74e29e09cc2599f095600114b xtensa: add MMU v3 support
+
+:::::: TO: Max Filippov <jcmvbkbc@gmail.com>
+:::::: CC: Chris Zankel <chris@zankel.net>
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
