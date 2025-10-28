@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-874763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C9CC170B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:36:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CABA3C1705A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85FD750517A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 650743B294C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4028B2DA77F;
-	Tue, 28 Oct 2025 21:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784092DECB2;
+	Tue, 28 Oct 2025 21:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3ZXKk6G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1bvISX9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9997B2D877D;
-	Tue, 28 Oct 2025 21:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3CD2DE6E3;
+	Tue, 28 Oct 2025 21:30:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761687030; cv=none; b=JN9EEnTNTZgeM3Ran8jDENXXJf0U0jnFdefNe3QS/rxMfOyBy2mQ30VP4B6NwL6DTK3J81fw5UZwBKTLGGXtVQEYyzxHp4Dx6+VkbI9llzIkowmoZcwOOckhgKanZPiDHQYE2QyO09V41GKjtILdlIxLUrjdELD9iklfxv1J5iM=
+	t=1761687031; cv=none; b=ggdQxJDsE/wCbUCRz9Une06obRxSzak9HiArhecw3WKZPmrmeW4j5c1yKm3Ks0OQOsDzO3TtvZ8OReRFc0GmW/BC8h9/Vrzrw703JAEQv2Kqottj/H/U3WXkG9cOpJeayfNizWhS5bgNDQ0ZBEsqNrUX6axe1N31DF6uWEldSVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761687030; c=relaxed/simple;
-	bh=PBfFa50thmRpidq6BOC5K0JDhrtSoy0t8qgytuJUK1g=;
+	s=arc-20240116; t=1761687031; c=relaxed/simple;
+	bh=eFtJ15StyaaHQlL+PLTy1jwHuJuBtYiw2acnSMmyTOs=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ntvykKe1xW8BIghMDsI9lcq0wONvgJM9L4qHNbFXI1eRzbadJGe3hBhvIKUs8pouvFHWsebVJ0NwqsKLrHjnM2Q9hZklDXHfl37pvCw/6/jkSHnDXBt6/p2R3HQigLG0xVmVH4KfYvOxSsazLX8/c6wGnchlXDxBREhWqJ7efDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C3ZXKk6G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16BC6C4CEE7;
-	Tue, 28 Oct 2025 21:30:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rKgmyzjd4WLb14U2CPX7sn1Cm3d4XkTeC7nytnTLBOWfxnSE2iYAm+rokFQi1z1FyCN7iYFy4ZsKXK5gst8iLGm8/qo5qY9jdbFZvC3zANREGezwdvIRvzzAy2hHo3GxMwXXhcD8lFXkCuVFZb7hgnuV1Ht85uctePBLrnA7mck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1bvISX9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D177C4CEE7;
+	Tue, 28 Oct 2025 21:30:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761687030;
-	bh=PBfFa50thmRpidq6BOC5K0JDhrtSoy0t8qgytuJUK1g=;
+	s=k20201202; t=1761687031;
+	bh=eFtJ15StyaaHQlL+PLTy1jwHuJuBtYiw2acnSMmyTOs=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=C3ZXKk6GVpXS9q544hhnMwd8d+5SWi0MGFG7FHgsNjjoB72H1adLghT7RRoK9zAsk
-	 EKm2yFyplU3iMePMvdJedIAkCYCv+h0Hr5oqJBeiz4xF1Tj3VKK1z3RbNT3EFE6QQ1
-	 3o5TRgMLIufUQZPWHqwxL/Rn2wEWp4rvtt1anEi29+VMa6nB8LzBz+BnlD4rtSIH4M
-	 qGPFRQJms32QOqt8V2vRgC7kIJOcdQv3Emxyixp+R6WZ2NNuO0hnAM7wRaxcX8fFmU
-	 /Jb5RR7iiuF8O0guP5ajb84V32KSSul+scc0bn54BS0/UlFiOFs0WIJU2GAX/ePzHs
-	 QgVU4C4nIbl+g==
+	b=C1bvISX9212KUFDtka3yYt4PXfw1h9EX0UzIcaRtbB8X59yIo1XHcBaidXOQHVCNj
+	 yvlao8C1h9i8eXbm5d85mR7oKgWMro7FmfG1eOmdJOIfE7ZLEpjGoYud7Kw+LQcFkZ
+	 fsXyLAICA29cPBJ3kog63mVFNfjeFSFYLzkA6YkFMUMPZVtwQ3It3vhSoSk5C/naVX
+	 zijUws5wxYfSQA7CA9gtpjcOWE+nQBm/wFi2Cp+RFEoDAHVizP/CaWypHXIuUHSxoz
+	 hTRF71P/8Kn7wk9kbLV8iYSVcEfOQpURteAxWzh4o8P9KIw7iIW9FWNK8uhoRBSNxB
+	 YMzUaBMpb1nHA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id DF56D39EFBBB;
-	Tue, 28 Oct 2025 21:30:08 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33EE739EFBBB;
+	Tue, 28 Oct 2025 21:30:10 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] Bluetooth: btrtl: Fix memory leak in
- rtlbt_parse_firmware_v2()
+Subject: Re: [PATCH v2] Bluetooth: MAINTAINERS: Add Bartosz Golaszewski as
+ Qualcomm hci_qca maintainer
 From: patchwork-bot+bluetooth@kernel.org
 Message-Id: 
- <176168700749.2391991.7235212202926157732.git-patchwork-notify@kernel.org>
-Date: Tue, 28 Oct 2025 21:30:07 +0000
-References: <20251028175632.146460-1-nihaal@cse.iitm.ac.in>
-In-Reply-To: <20251028175632.146460-1-nihaal@cse.iitm.ac.in>
-To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+ <176168700894.2391991.2092450571253780212.git-patchwork-notify@kernel.org>
+Date: Tue, 28 Oct 2025 21:30:08 +0000
+References: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: brgl@bgdev.pl, marcel@holtmann.org, luiz.dentz@gmail.com,
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to bluetooth/bluetooth-next.git (master)
 by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
 
-On Tue, 28 Oct 2025 23:26:30 +0530 you wrote:
-> The memory allocated for ptr using kvmalloc() is not freed on the last
-> error path. Fix that by freeing it on that error path.
+On Tue, 28 Oct 2025 16:53:21 +0100 you wrote:
+> There are no dedicated maintainers of Qualcomm hci_qca Bluetooth
+> drivers, but there should be, because these are actively used on many
+> old and new platforms.  Bartosz Golaszewski agreed to take care of this
+> code.
 > 
-> Fixes: 9a24ce5e29b1 ("Bluetooth: btrtl: Firmware format v2 support")
-> Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-> ---
-> Compile tested only. Issue found using static analysis.
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+> Link: https://lore.kernel.org/r/CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - Bluetooth: btrtl: Fix memory leak in rtlbt_parse_firmware_v2()
-    https://git.kernel.org/bluetooth/bluetooth-next/c/4a3855790fba
+  - [v2] Bluetooth: MAINTAINERS: Add Bartosz Golaszewski as Qualcomm hci_qca maintainer
+    https://git.kernel.org/bluetooth/bluetooth-next/c/91a22e93e960
 
 You are awesome, thank you!
 -- 
