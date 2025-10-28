@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-874053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03790C1565A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:21:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFC8C1568A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:23:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB541B256EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864A43B98BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410EC341AC8;
-	Tue, 28 Oct 2025 15:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0791342CB0;
+	Tue, 28 Oct 2025 15:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NjJ8ru2j"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jLzo1Wps"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B998433F8DC
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F8F342C80
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664819; cv=none; b=S1HsrnY1e7uo4UubBD3Y+67+eBo0HjJx7YlbPZ2FUiyWY0Hi8DdsrP0vQKm5KLECWnbO+T4JWSMD9cC8Gn6Wu61pU2vjSvfWwtTkEPOcTuBqNiis6TJbmHnvJGn3p2qu1GmWbMs5fem4TXoQ6sK8b6mwa4aqZBXl6NSbbARR2BE=
+	t=1761664824; cv=none; b=G8xQDvpXvCdFgDYYqfZFbPQ0cLeTon0Hnh6xA/OYbHOmAc8xA8oAM2cttM3YCGr31c+OZYw9Txblt1jhkv2X1L0brbcCdGIV+3QtAMeuySeDS0xOqvu8qN6jKWRbYTIKMQqiV66ECgyVzgDRm/wJyqv4gtvJDnH0AFlwi9h8lW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664819; c=relaxed/simple;
-	bh=KiMvJaTew1YHNiKfgdPOfLoDPJZ+GN7jRXSQJ5trAzw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qatvehqhY9BaSQ+clO38kXvyPOU7vW4HQ56LpbeWF41+PbX2ACtJOEbuNAeVROUqdLWqUNbcA1Ia2ZqJ8Hy1pYhuX0XNzXUDPzk8erw8lNT8HJDU9d3/hMKMhBQpAAK26QbSy3DquXt9Wto9ZOf1Dfex1yFvVTGI7Y3hvsL9EgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NjJ8ru2j; arc=none smtp.client-ip=95.215.58.183
+	s=arc-20240116; t=1761664824; c=relaxed/simple;
+	bh=e6HN/dKZ+u/7a8MHlTVFNNkvjRiIo/c13bcuG1xwNJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DWYhsGU/0ixWp9AEK8gk/fQhfZjlemclgUncmulhRIkt9LZmJHjEeijYXNG3r3l9fKNfM3cCx08hyu9njZKDw9vEozpHHZv8HC+j9wO6FwzDsEf8ygu39MyVKAihPcPr+Yv9jd9tTX/pEuL3xv2aRA1t4kI295MvN5/tUAPODrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jLzo1Wps; arc=none smtp.client-ip=95.215.58.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761664814;
+	t=1761664820;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YyYvf+fvSrlf/zx6Wpz6IBTQDiN9neqrcFDocO0D1sU=;
-	b=NjJ8ru2j+6b8cBmW16gfEcMGb2HbcgvPS8khZJaxO/7eesTFgZ3CkJMGiqCPhjUyV09UF4
-	imbIaaSn2ELHHqkTVu2upRIM333J+x6xFLaJyhnFcDVKTgZi62tW23mNj02YrYC64qJTkk
-	zwDI/61ZxmSwr7BOPoys9FSco2fy9Ow=
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iwl7rDXJIzJ2WczqQvEPGztzATA3rpnK5twYsIF3gag=;
+	b=jLzo1Wpsk75CWojoi00GapRaZEz7bp8J9YWi4T7MOrR7LTBGbBtktHriZwi+oHKCTGimjY
+	MwpeeETfswZHR2WSyUN2Rsmlvp83ggfpvfcpDe9ZV9Ic4D/wMtUdT9H/FKWEV7lavfrFnq
+	K456k+rBInD3/3X/98cRS/Ch5s4Opgc=
 From: KaFai Wan <kafai.wan@linux.dev>
 To: ast@kernel.org,
 	daniel@iogearbox.net,
@@ -63,9 +65,12 @@ To: ast@kernel.org,
 	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v2 0/2] bpf: Fix tnum_overlap to check for zero mask intersection
-Date: Tue, 28 Oct 2025 23:19:36 +0800
-Message-ID: <20251028151938.3872003-1-kafai.wan@linux.dev>
+Cc: syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com
+Subject: [PATCH bpf-next v2 1/2] bpf: Fix tnum_overlap to check for zero mask intersection
+Date: Tue, 28 Oct 2025 23:19:37 +0800
+Message-ID: <20251028151938.3872003-2-kafai.wan@linux.dev>
+In-Reply-To: <20251028151938.3872003-1-kafai.wan@linux.dev>
+References: <20251028151938.3872003-1-kafai.wan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,23 +80,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This small patchset is about avoid verifier bug warning when tnum_overlap()
-is called with zero mask intersection.
+Syzbot reported a kernel warning due to a range invariant violation in
+the BPF verifier. The issue occurs when tnum_overlap() fails to detect
+that two tnums don't have any overlapping bits.
 
-v2:
- - fix runtime error
+The problematic BPF program:
+   0: call bpf_get_prandom_u32
+   1: r6 = r0
+   2: r6 &= 0xFFFFFFFFFFFFFFF0
+   3: r7 = r0
+   4: r7 &= 0x07
+   5: r7 -= 0xFF
+   6: if r6 == r7 goto <exit>
 
-v1:
- https://lore.kernel.org/all/20251026163806.3300636-1-kafai.wan@linux.dev/
+After instruction 5, R7 has the range:
+   R7: u64=[0xffffffffffffff01, 0xffffffffffffff08] var_off=(0xffffffffffffff00; 0xf)
+
+R6 and R7 don't overlap since they have no agreeing bits. However,
+is_branch_taken() fails to recognize this, causing the verifier to
+refine register bounds and trigger range bounds violation:
+
+   6: if r6 == r7 goto <exit>
+   true_reg1: u64=[0xffffffffffffff01, 0xffffffffffffff00] var_off=(0xffffffffffffff00, 0x0)
+   true_reg2: u64=[0xffffffffffffff01, 0xffffffffffffff00] var_off=(0xffffffffffffff00, 0x0)
+
+The root cause is that tnum_overlap() doesn't properly handle the case
+where the masks have no overlapping bits.
+
+Fix this by adding an early check for zero mask intersection in tnum_overlap().
+
+Reported-by: syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com
+Fixes: f41345f47fb2 ("bpf: Use tnums for JEQ/JNE is_branch_taken logic")
+Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 ---
-KaFai Wan (2):
-  bpf: Fix tnum_overlap to check for zero mask intersection
-  selftests/bpf: Range analysis test case for JEQ
+ kernel/bpf/tnum.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- kernel/bpf/tnum.c                             |  2 ++
- .../selftests/bpf/progs/verifier_bounds.c     | 23 +++++++++++++++++++
- 2 files changed, 25 insertions(+)
-
+diff --git a/kernel/bpf/tnum.c b/kernel/bpf/tnum.c
+index f8e70e9c3998..1a75b7c9a73a 100644
+--- a/kernel/bpf/tnum.c
++++ b/kernel/bpf/tnum.c
+@@ -163,6 +163,8 @@ bool tnum_overlap(struct tnum a, struct tnum b)
+ {
+ 	u64 mu;
+ 
++	if (a.mask && b.mask && !(a.mask & b.mask))
++		return false;
+ 	mu = ~a.mask & ~b.mask;
+ 	return (a.value & mu) == (b.value & mu);
+ }
 -- 
 2.43.0
 
