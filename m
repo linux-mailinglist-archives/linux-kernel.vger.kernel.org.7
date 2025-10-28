@@ -1,141 +1,166 @@
-Return-Path: <linux-kernel+bounces-873460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4297C13FD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:03:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A85EC13FCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:03:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946603B4BCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:59:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96233AED28
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606AA2D877E;
-	Tue, 28 Oct 2025 09:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6683C2FFDC4;
+	Tue, 28 Oct 2025 09:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="J3k8HRJC"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEMyhoiH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4504D302779
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0C12264D3;
+	Tue, 28 Oct 2025 09:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645535; cv=none; b=r4PbaGjg54mez5+HRUtQLrU9xunkijZMbSDwVIHQcaW85P7UYm57xI9mrBt+7LI8COcg7llsS7qnVoy/V7oKOtQ67OIhF/O3iMEDwKd5uMC8JvTt1P6hoCSxLMciIuSCz2A/SRdO2Y9avXg+UXX/LdAYnc7+peR2q5yu0aMaCOc=
+	t=1761645531; cv=none; b=B+K8wQqzvErgT5RlZcDPGwXLpn7B8UcWu6YCxcBrFz3mBreNhWNKzrW5LGIDGT3pU7qbw25CKJQqUYlxIzIll82vkJEvVVCfeq0UVZ/fTslq8Iqaq4wSwRyXwNTMTbvthBFiVloM8RAfJ3FFWtQ4OxKX770RHDVVpc3SBpHPkFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645535; c=relaxed/simple;
-	bh=Udw4Kac4IPS7oanBQ6UJdyxqv8+zAPZHZclswaCqs0E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gxl3lLeM974XQb8huOIDCy0ZKtFaU95VdgOdNpE6To0ZWRtOTT5t0WlUGTbMu5wf3e7Q09ef2WSQqKUZT7kYNgGErtQnurATGBec/zFVVCuYRGXAEA8w7bmwab9g2U6YsL1xCNOjPdpXqc2IcL+YdH/+wueyKaalt6JGaLET8Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=J3k8HRJC; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-430ab5ee3e7so25733835ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:58:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761645533; x=1762250333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1PY8mCSuKOhJf2Q+W5FTads5NFbSblIDSqg2ZyPdi2M=;
-        b=J3k8HRJClO8sGnJrBPVRqmAHzuXoyZ6O9JTTC2GCDLv6qcXuPnG/EGHkXxgTzPYrGc
-         qi7ZOqLlExHdvLpw6d3ka/tZ/ExTCFt6AASgtoVEdogoK1BWKQKqvRqJldMsxkUVzEuB
-         yTrJM7VAzgrPRKgiPzWKjPxZGpVQOVLXUDkHYZMmNNWkLOLfB+/KHJe+3U8EkE8jC4Qu
-         GCujq28zK1Ria5s/hj2xEijJ+NJfDs9GeJrvETHt5vqTZicirOT8FIY25SgMqekfMlq1
-         gP0ARg7SHv5MCMg6nhmVseYR1dmTF+DdYM6nzfbmfc6HpRBHKX5LkUXUzNSqjxCQca2r
-         WKAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761645533; x=1762250333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1PY8mCSuKOhJf2Q+W5FTads5NFbSblIDSqg2ZyPdi2M=;
-        b=mPOkCaWdG5BXM3KB0hxNdRNWnkjIeBInooQFEdfEVV2pS2USnUWGKYomeZPsqJ1Ccw
-         xieTMA6pzIBI3XBSWZlrga221y/RiOiNsH7/V4s7sn1wBRD46DXqRXo36KMegbw2eRCx
-         sFFV1SiKefqgd75AEr/4xVnk99oSRe/gUmxyj4yo+/kjuZ3CcESvC4ntAXgPB5AM9qGG
-         GA/BER+NiGLcEXALp0VZjShgJs32vegXwLqm71mqPSVXwp6OcbQOia1TyL3I4O4y6K+O
-         R6V5jU7v/ajP2SQP6ITI/mIY5etesdDBi1CZsdGPuJ+OKLlitTIKaaWBMd9WVxJryTHi
-         M/2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUNKcVUrPx3ZN/HhlC349yIDd93MR3dHtqsUtRpWObDx68TG8B6srCDdONLRPCbGiebDifja8w4XDCmGJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yynjf5AORyt+7Hdw72l7mMZGomUb3JZhmqlaJE+uDfrWO4k1jRk
-	DqCuqMwKokbnByLZC77QInk/2RNaZG6w0VrprA8EOS7Ac1kIQFP27RNb/vBZzR7V8/dOojIDN0f
-	1Zry8/nbtAPRFRF/Fostmdc4+716KwxmFXlnH1pA0rw==
-X-Gm-Gg: ASbGnctqvXn5rvxRrI55ZlYcNAE19hFbmagL7ozXikuLyiqpPiYApzVWg6lsb1iwl6z
-	rVg4JMkDB9/1A9ojWYpLTQh9zE8oIC+pvXquy/d3raTmvwmkGHhAmtOHzv5UF0gU1scFR9ls5Kh
-	VYZveKb4gUKX1jPw/oCldHHpzQq1K7MDC8Tqm2zpjTe/Dm1gx3+hxSxGW2NxFLn7qFDzDhQ96b3
-	ncezVbP6pzVY3N6WG4fGpH9dMS7uXsrOMs8MJ/K0h4benisIyswLxHAopK+G01uo8YvCtDoA5Y7
-	jEGfdGXK1/BT4ymaVg==
-X-Google-Smtp-Source: AGHT+IEg0a1CT3cJ1oaHQ17yWX2472MdL2RHimICjHVP34ZQDjWMsWJJoe7Ni16kwKdyIqohFYWx2NwOzODq5cmzegw=
-X-Received: by 2002:a05:6e02:d:b0:431:d73b:ea9c with SMTP id
- e9e14a558f8ab-4320f6b1237mr44673025ab.6.1761645533137; Tue, 28 Oct 2025
- 02:58:53 -0700 (PDT)
+	s=arc-20240116; t=1761645531; c=relaxed/simple;
+	bh=j1Wuuai0DHLOISftaFJXhAj539lvrP+aY1BqLm3W/y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zik2HceWzchBLnq3PgxpOLZuLyOTd35MNmUo0S2eCsAahFrgTTtysYutzQxdJ+Fg8nnBq314O88+4704LfFAcPVheW705ssKQ3F/c6Sd7IpT88DEgswkX3upwZ1zeyoNpDobJaipvDj4je0xRvyJe96dm6vdtj5lpkryqi5O/QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEMyhoiH; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761645530; x=1793181530;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=j1Wuuai0DHLOISftaFJXhAj539lvrP+aY1BqLm3W/y0=;
+  b=TEMyhoiH20VPij3C++/Zqoqod+bzbjyI+UjRpTT2AwD1FZTFXQpcDOk5
+   plRKuVktGRx/QXA26UdEQIq2gCXOpuWLgQPkJKaN4eWdEuGN42TGHlCf/
+   a/l106OgcePKDPCKVya/uj+sXoXVCK49AjszF8IAHHXkcD5Fbshld/1Zm
+   24XM3pDel4C/AhETzia1euEaWa/L3oOwStmGrxzJLq8KMfGEmys5YVCec
+   gNB/vZ+YSNTHjFHUW0Q9akzJCmrMbdmkHeVEtCHPdA2mEuwuFvjmjbw5W
+   049T675lIdawW5oC0fv556IYbnfEcf3SEOu1Hm0EQloLB6H80E4nY7svd
+   A==;
+X-CSE-ConnectionGUID: PGuJD9ytTmS+qPyCi9lo+Q==
+X-CSE-MsgGUID: A7L9dBxDQui3hlZViChdBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="86367803"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="86367803"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:58:49 -0700
+X-CSE-ConnectionGUID: 3638tNjiTaamivKL0wNKgw==
+X-CSE-MsgGUID: Hui5lH8yTue+8ZrcL5g7dw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="189617977"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:58:46 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDgTS-00000003H7H-3TYM;
+	Tue, 28 Oct 2025 11:58:42 +0200
+Date: Tue, 28 Oct 2025 11:58:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: =?utf-8?B?5p6X5aaZ5YCp?= <linmq006@gmail.com>
+Cc: Markus Burri <markus.burri@mt.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in
+ ad3552r_hs_write_data_source
+Message-ID: <aQCT0q4hKtlVbJDU@smile.fi.intel.com>
+References: <20251027150713.59067-1-linmq006@gmail.com>
+ <aQB8PRlaBY_9-L8d@smile.fi.intel.com>
+ <aQB8j7Hc3b9vAT5_@smile.fi.intel.com>
+ <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
+ <CAH-r-ZEG5qN5QNCJTnX_oK2uyheNjvzoAEgzuyTYyUWF4kf+wQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021135155.1409-1-thorsten.blum@linux.dev> <20251021135155.1409-2-thorsten.blum@linux.dev>
-In-Reply-To: <20251021135155.1409-2-thorsten.blum@linux.dev>
-From: Anup Patel <anup@brainfault.org>
-Date: Tue, 28 Oct 2025 15:28:41 +0530
-X-Gm-Features: AWmQ_bmouff25xtnvPr1URYNqHRT10uCqQrPn__6ZXy4Z26vl234qADpGcUh16E
-Message-ID: <CAAhSdy2Y25TXjZNmaMMKhwZBi-T-UzXjQGuVfqy-ThTuJ4rmNA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cpuidle: riscv-sbi: Replace deprecated strcpy in sbi_cpuidle_init_cpu
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH-r-ZEG5qN5QNCJTnX_oK2uyheNjvzoAEgzuyTYyUWF4kf+wQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 21, 2025 at 7:22=E2=80=AFPM Thorsten Blum <thorsten.blum@linux.=
-dev> wrote:
->
-> strcpy() is deprecated; use strscpy() instead.
->
-> Link: https://github.com/KSPP/linux/issues/88
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+On Tue, Oct 28, 2025 at 05:46:53PM +0800, 林妙倩 wrote:
+> Andy Shevchenko <andriy.shevchenko@intel.com> 于2025年10月28日周二 17:07写道：
+> > On Tue, Oct 28, 2025 at 10:19:27AM +0200, Andy Shevchenko wrote:
+> > > On Tue, Oct 28, 2025 at 10:18:05AM +0200, Andy Shevchenko wrote:
+> > > > On Mon, Oct 27, 2025 at 11:07:13PM +0800, Miaoqian Lin wrote:
 
-LGTM.
+...
 
-Reviewed-by: Anup Patel <anup@brainfault.org>
+> > > > > + if (count >= sizeof(buf))
+> > > > > +         return -ENOSPC;
+> > > >
+> > > > But this makes the validation too strict now.
+> > > >
+> > > > >   ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
+> > > > >                                count);
+> > > >
+> > > > You definitely failed to read the code that implements the above.
+> > > >
+> 
+> I previously read the simple_write_to_buffer(), but add the check and
+> think it can help to catch error eariler. My mistake.
+> 
+> > > > >   if (ret < 0)
+> > > > >           return ret;
+> > >
+> > > > > - buf[count] = '\0';
+> > > > > + buf[ret] = '\0';
+> > >
+> > > Maybe this line is what we might need, but I haven't checked deeper if it's a
+> > > problem.
+> >
+> > So, copy_to_user() and copy_from_user() are always inlined macros.
+> > The simple_write_to_buffer() is not. The question here is how
+> > the __builit_object_size() will behave on the address given as a parameter to
+> > copy_from_user() in simple_write_to_buffer().
+> >
+> > If it may detect reliably that the buffer is the size it has. I believe it's
+> > easy for the byte arrays on stack.
+> >
+> > That said, without proof that compiler is unable to determine the destination
+> > buffer size, this patch and the one by Markus are simple noise which actually
+> > changes an error code on the overflow condition.
+> >
+> > The only line that assigns NUL character might be useful in some cases
+> > (definitely when buffer comes through indirect calls from a heap, etc).
+> >
+> 
+> I believe it is still necessray to use buf[ret] = '\0'; intead of
+> buf[count] = '\0';
+> If you argee with this, I send a v2 with just this fix. Thanks.
 
-Regards,
-Anup
+As explained above, please try to model the situation and see if current code
+is buggy, i.e. provide a step-by-step test case and show a traceback that
+points to a out-of-boundary access in this function. (Note, you don't need to
+have a HW for that, you might need to create a dummy IIO or other module with
+the similar interface and run it, in such a case, share also link to the source
+code of that module.) When you prove the problem exists, I will happily ACK
+all similar patches, including yours.
 
-> ---
->  drivers/cpuidle/cpuidle-riscv-sbi.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidl=
-e-riscv-sbi.c
-> index a360bc4d20b7..19be6475d356 100644
-> --- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-> +++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-> @@ -18,6 +18,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/slab.h>
-> +#include <linux/string.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
-> @@ -303,8 +304,8 @@ static int sbi_cpuidle_init_cpu(struct device *dev, i=
-nt cpu)
->         drv->states[0].exit_latency =3D 1;
->         drv->states[0].target_residency =3D 1;
->         drv->states[0].power_usage =3D UINT_MAX;
-> -       strcpy(drv->states[0].name, "WFI");
-> -       strcpy(drv->states[0].desc, "RISC-V WFI");
-> +       strscpy(drv->states[0].name, "WFI");
-> +       strscpy(drv->states[0].desc, "RISC-V WFI");
->
->         /*
->          * If no DT idle states are detected (ret =3D=3D 0) let the drive=
-r
-> --
-> 2.51.0
->
+> > > > NAK.
+> > > >
+> > > > This patch is an unneeded churn.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
