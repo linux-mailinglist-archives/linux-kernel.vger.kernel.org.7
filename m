@@ -1,88 +1,91 @@
-Return-Path: <linux-kernel+bounces-873096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EBC13146
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:08:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28E1C1314F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:09:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD943AB19C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:08:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6CD84E4F7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E129C33F;
-	Tue, 28 Oct 2025 06:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF17229D29C;
+	Tue, 28 Oct 2025 06:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwVffNQz"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AkbX2dtG"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F2329AAE3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25D71C5D46
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:09:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761631728; cv=none; b=mKwa9u2TA88siGn05h6dYtwxzPp+0I2o0Yv4j8WDGzU74PH37dM867bmXeuKPuRmmS1jETP1wXthxqNxZjJH+H6aY5hZIWBcdU9k+hbNaFNR+jr3DS/Duz0FPv5U9F2f3M8pgbZ/1Lw1jX9FNe4NRzAdp4Y90G92y6oDOs4ds5o=
+	t=1761631775; cv=none; b=l+LQkgllx0YZO0UQxO5bda77TVxaW93NnYuECMxS2sSEBs+tIbzSzYo8NKDQRN6E7TqyJ+soERQLuIlfZdaui1KSP26bLquDzeW/YbWvvv86cyhvUGqSjfeXJp2SeNAXrSax4e1CAIyuW7XQmEeNTinaD4peAWetsxsWzeGWr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761631728; c=relaxed/simple;
-	bh=q7Tc2QsMBaN+HdSGE3XhX0GNjhdhA21Ns2bjotQEtBA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a0ah4iahGrdsq68Ig313Ff8b5EAxEsMRFilaZLi8uiVn6XeNqYB4trgxzlSyES/pq8/dxMX+e8emhHVgeT6yY2ia0wYONLUUmkOb/yCLvZIBd97d3uOOMNQ71L0QErpQYk/xAR6OHqCfBMIoxcdEhL8Mr6P3GQ4qetgKsC491X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwVffNQz; arc=none smtp.client-ip=209.85.216.44
+	s=arc-20240116; t=1761631775; c=relaxed/simple;
+	bh=7tSMPskPiKe/boXjgCXM8U4kjX9Rmu5BHSaKJRhAyrg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A0hVhG/Oqd85he4wGcei09NTyBXlEDu/1pa1IfSIDW+XPA5PBtVU/OuBVKMQEHO1Jj8qVmXS/y+8wwqTY6ZCJ6sczgxh1ynNPFV+BD+Op09K9jF80UHHY3Lc3jattkkG1+XIHZ1SsRlwuBr+4H7bYxQ9Q6Ja8t0+DH6AThntz0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AkbX2dtG; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso4991411a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:08:47 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so4213159b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:09:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761631727; x=1762236527; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761631773; x=1762236573; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtQOQB0/xeiaea1mof+0CkoSu6y09kgD2fJAIO20kBU=;
-        b=BwVffNQzNrjA44edQduAm31/Ty1+eD1ko+O4xUYxdOqVIm1Mcbq5LNZ51gZFDMx6oz
-         yctWAtLsp8LlKZAQUrtgGHv/Y8h6qntuXD/bqkBiJTQCMoZYk805s1rJwaM+9VPs26mu
-         EElDlKL01yxVt0sem3jv4wlmkEvUZKk6sm9HZDEuYja18cKdmkQavc9w5/nR4zlc8o9X
-         bddjEKSReP54w+lofIR/6jTmQtVWEhrpWsPDlNaLlkhmpNG6oZe5UKEG3a6xojMM3NS6
-         m8xP8Iud3W/RU/JGX2luB62fvOYulnRbS7bX5QnMHtjbnQAeFDcpTIL4wF527QkBG6Ev
-         DjWQ==
+        bh=ZxCaZgetgi7vR+cOn85gSzckFRkwOHE6DdvavzMKaQo=;
+        b=AkbX2dtGxl2sf8gLRLDSn9oK2vmeAPa5gOcC9fkdtCnAc9M6SbNxG6Ge+owznUttaO
+         UIYwqFtYzC5KfR6G0Sd586Onq42NCaQ8snrmhAYM71/VIvQevgZWHXOXkDzjZtiaBJSx
+         JosbzoBwpm5wNeoeAnCNbWm1EE9m/tNnQTyx5vGphjoXKVKIL473QGayIGrjWMYJoqaR
+         2K5sKMWHA3l7SrBD9sISKAB38fVPgXVU0DIKS7uVLSUSO7thDbqQpHRMSvE/x7zYH446
+         BturuGNxStPJczjlQDpotYbWjZpP4RcurcNux864a9gFR0OH/CoF2Lruk/KSACi54QAn
+         BqWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761631727; x=1762236527;
+        d=1e100.net; s=20230601; t=1761631773; x=1762236573;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EtQOQB0/xeiaea1mof+0CkoSu6y09kgD2fJAIO20kBU=;
-        b=pgLiNPRhzab0BFoubuxya+mjHgRdaQpPBxewnbV5nuDuIEpOBvJg73XESuP7mPM9lN
-         xSZIQgcuiqf3bLnZ3wPDgKPjSYkNFfmuMEYmlrLErbH9sDFz953pPWDWVL5jSMaAIFiK
-         k8lcqKnEVHZlpfP4oI3Yr4LKGB9IFgyP78xsBmaWltZm8qaQrLThzlvZfTdWxs02519K
-         w6xAAUI0i/Lx2+m7qloQJBrqj7qyZVZ4GgCwT8xMY7gpQUOCEfMf2/6Krir3JucqREIk
-         QZM0SISQBdCYcbWoUR7sZIM34QsAi9UGPlrrjLKPVSCFPCK0Vx8yQOX9yCc2l6IKuxD6
-         HpKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW46+EOVOjVwS1icVXEohPWVjT+nOl+aVIdX883wvf7ZDu+6a+QfXutU5AF8MspwMpflKmCDYKW12cxBE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK0VZlKQv1IZqkD08/Sh/s9ItQAtuiNZfCHJOPkc/3/QxXqgtl
-	LPMYchH5RqqPadI74vMvT1ejhceYBMxRGz36bUX79NURO3893O6g5cEfYDxCOXYyiFUaXQ==
-X-Gm-Gg: ASbGnctdlAH+wPfdR/DHgymqS4HUKJDlApMcFm6IZVueMwqLlBK8mrrzP2vefz9w/YV
-	xK+MBdWs9g16qUU2SnUD/nsbVwwrkWTckhp8hWPp3NZiM8ATLDs7LEglNyygdUvGbJACmI6qvSV
-	LtYOLaXaWhrLZIhdR130ZigTHpNS74H+fGBMF+1ynrpumEaLEBkNd6cjN7vmOTjiXoK8h880KsC
-	tkP3hasgg5j2LVPSmOhQM0e/qX2siQF9zeUdu5wWu5FSQoIwBeUP2Ur+vOZW/Jp5OJC7xiAA7ss
-	hAWJ2HKc1l47TAVRs5ZZx1x/lBTr6WPtOuNxvG6MxGIep2MtNWfeNo4ie4SY5KPijO3PeSS2v6o
-	vJFhNvhep2+6OwA1jivu4Mw/BF0WPmHvOASUcOe6ixugxNWDQNne6vnsycntn+g63gplp6EZ51C
-	yvOiRInOLl1+6mCjOR9OomUQ==
-X-Google-Smtp-Source: AGHT+IGM18PVXmk/Ly4QV9wJ4WdGZzC+O29UfRf1c8szMur4qUVhZWR85AkuIgff1YJgN9jGYRTafQ==
-X-Received: by 2002:a17:90b:58f0:b0:32e:2059:ee83 with SMTP id 98e67ed59e1d1-340279e5f8bmr3103225a91.7.1761631726760;
-        Mon, 27 Oct 2025 23:08:46 -0700 (PDT)
+        bh=ZxCaZgetgi7vR+cOn85gSzckFRkwOHE6DdvavzMKaQo=;
+        b=NGWsDeQql+ru2qKMheog5VGKnRUP8pHfkibV9lz5KHrgAzeqSQXFvug9pJEvCFGRol
+         0uk7eEm7FU2UUqCld72DvHPck1bf1zbMmOyq5zYhm5Fge/oagzqV+tWehEaIvuhZqEX4
+         zpiawzoZ71WTydO54R9PslpBrNXW3OiV2r+bMzLwGmcLVLUkkd6kddk5bURevQ35Id7M
+         JuS86A+2wqUhnc0k6PQPX4mzX3u94Roxt4wJLHUSa6meozrqWFQbbM4kvte4x/Y9IZzh
+         RM2yGFJanWMZePke2xPlAcDCVlCIKYIoCPDKdI7xEQkVb6FGRZVnOs8dbE9ZPcidbTf8
+         ghBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcTfp8f6KidaIEGUP5lOzwOL6yFEaP/sKjRPFUkhAvUZ65z2U51FglgnVF/oB7bshFGKPW4hzweAx66m8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVDWkr+I98RZRFT+t7E01CKoqAaI7GwXArBIrQsk0uLrt3biDE
+	w7UGeSjVtwPxuTn8PyJEBA6vFnGmf5WbmQZLq4cWFrum/oTFq6oZ58zn
+X-Gm-Gg: ASbGncv+MQkPavoKjwOyDOQ5sDOjx9+EmHsCKiDOtC83WjOJCLpiPpInFBYrfMSqylJ
+	E8iOjyHWQj024IZ7vDLL/NVSTIor17FGG7VCFtoQ7X42qNyEGi7tbQ/bLj4QmNRQmZW1q3bi4Yz
+	JIwuBsePp7lMMIKWCS1i0WtPe0cn1ZtXOCcUSRkY4vt+PSxdxJjPEClFtUXSlqsLUthaW5WchLA
+	I5jb+bHQYrU9iH7hgN0R05nKhgstQWcgYgItzrcyP3KANzzxfqbMn1OKKC0Y8Z+UrY5ETR7KpNu
+	P1MT3fke7qje0Yi52YLYXV0ZmSIKo5I08+Zz04nXNgAoKy8Zi7KGw4vwonA8mY+IJSZmMve+9qS
+	dQ8q7M01ZrT6MIEp9yCwrREJFFZ4cjjXKntczIiCxsN8i17zYrzpeRmVdCZYLSNgNRpeVOeAmUu
+	w6vgPOVGymHu5I8fjsyIbRvQ==
+X-Google-Smtp-Source: AGHT+IH1+F3wRNfLwu/JVjiQE8TzFdjDfCqQgZpgSMYvuq3FzyuWy/Ro1wdBKzwG6QcCND8qtflldg==
+X-Received: by 2002:a05:6a20:158a:b0:341:c255:7148 with SMTP id adf61e73a8af0-344d345618bmr3246377637.28.1761631773211;
+        Mon, 27 Oct 2025 23:09:33 -0700 (PDT)
 Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b71268bdb2dsm9533462a12.5.2025.10.27.23.08.43
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-b71268bd810sm9382533a12.6.2025.10.27.23.09.30
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 23:08:46 -0700 (PDT)
+        Mon, 27 Oct 2025 23:09:32 -0700 (PDT)
 From: Miaoqian Lin <linmq006@gmail.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	"benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+	Philippe Cornu <philippe.cornu@st.com>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
 Cc: linmq006@gmail.com,
 	stable@vger.kernel.org
-Subject: [PATCH] thermal: thermal_of: Fix device node reference leak in thermal_of_cm_lookup
-Date: Tue, 28 Oct 2025 14:08:29 +0800
-Message-Id: <20251028060829.65434-1-linmq006@gmail.com>
+Subject: [PATCH] drm/of: Fix device node reference leak in drm_of_panel_bridge_remove
+Date: Tue, 28 Oct 2025 14:09:18 +0800
+Message-Id: <20251028060918.65688-1-linmq006@gmail.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,38 +95,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In thermal_of_cm_lookup(), of_parse_phandle() returns a device node with
-its reference count incremented. The caller is responsible for releasing
-this reference when the node is no longer needed.
+of_graph_get_remote_node() returns a device node
+with its reference count incremented. The caller is responsible for
+releasing this reference when the node is no longer needed.
 
-Add of_node_put(tr_np) to fix the reference leaks.
+Add of_node_put(remote) to fix the reference leak.
 
 Found via static analysis.
 
-Fixes: 3fd6d6e2b4e8 ("thermal/of: Rework the thermal device tree initialization")
+Fixes: c70087e8f16f ("drm/drm_of: add drm_of_panel_bridge_remove function")
 Cc: stable@vger.kernel.org
 Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- drivers/thermal/thermal_of.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ include/drm/drm_of.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/thermal/thermal_of.c b/drivers/thermal/thermal_of.c
-index 1a51a4d240ff..2bb1b8e471cf 100644
---- a/drivers/thermal/thermal_of.c
-+++ b/drivers/thermal/thermal_of.c
-@@ -284,8 +284,11 @@ static bool thermal_of_cm_lookup(struct device_node *cm_np,
- 		int count, i;
+diff --git a/include/drm/drm_of.h b/include/drm/drm_of.h
+index 7f0256dae3f1..5940b1cd542b 100644
+--- a/include/drm/drm_of.h
++++ b/include/drm/drm_of.h
+@@ -171,6 +171,7 @@ static inline int drm_of_panel_bridge_remove(const struct device_node *np,
+ 		return -ENODEV;
  
- 		tr_np = of_parse_phandle(child, "trip", 0);
--		if (tr_np != trip->priv)
-+		if (tr_np != trip->priv) {
-+			of_node_put(tr_np);
- 			continue;
-+		}
-+		of_node_put(tr_np);
+ 	bridge = of_drm_find_bridge(remote);
++	of_node_put(remote);
+ 	drm_panel_bridge_remove(bridge);
  
- 		/* The trip has been found, look up the cdev. */
- 		count = of_count_phandle_with_args(child, "cooling-device",
+ 	return 0;
 -- 
 2.39.5 (Apple Git-154)
 
