@@ -1,130 +1,155 @@
-Return-Path: <linux-kernel+bounces-873962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AA6C152E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:33:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6022C152F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEB11B23887
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:33:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557E91B24567
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D062246BD8;
-	Tue, 28 Oct 2025 14:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDD03376A3;
+	Tue, 28 Oct 2025 14:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LbMXCvkX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mf+lajln"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747DF1B4F2C;
-	Tue, 28 Oct 2025 14:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB4C2C0F96;
+	Tue, 28 Oct 2025 14:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761661980; cv=none; b=i9I7QP9inbc1SrZbXrGMs8jme5zQ5IBQ/lwOni6+8XIMrf8veqZV7opTk1AnuOhRRhsrS0ilpgjzd9+N/+SqLqTSekS3RfvELnhV3hZv5ZKExSCOyBjeN6utisTSsF5s1N0pYDfK4q/o+Hr1c1u6gI786vGIEaqs30SKiRB3pAE=
+	t=1761662003; cv=none; b=OaMDUte8A+GcS0K+w5VMXkhRF+mghdqaNGFo0ImdndqquHMfRRIbq04FE9dkvRHPcGBn9/wvnpX38Jca2CqI2AjESCBEE48tkgX1c12gmJ6C+lnV9edVc3Bv93WCGqwioNHxfxaUL4Wy3Uh0aEZpsukdj6utrPnrTXg9eCtV6fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761661980; c=relaxed/simple;
-	bh=m8qK9GrgBHEtoVg+nw/e+zKxXz+F9N3oAZJPB+bVAzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NJwQnUWPD9FYFz5S0Pz7Y35g3e2AYEN6Vha9CbPDMmi6Nvt3L6t2tN3rl9W91vsKRzouaqYq2W/BC3/P1ReZ8HcAfl080NZC8LXm4VAYBEA9C/tz4zuioJbdsEH7wzjumNTTwjZmaK1SOityTWN1NEVtVTNPMoei0y9PNKekG0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LbMXCvkX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9596C4CEE7;
-	Tue, 28 Oct 2025 14:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761661977;
-	bh=m8qK9GrgBHEtoVg+nw/e+zKxXz+F9N3oAZJPB+bVAzg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LbMXCvkXhDDPeEkYXnOKpdGA1nfQvLIw5sSl/MYVTkKI7aknfwsfQ24ERHdu4BHIA
-	 rselvPLqKbpZ6dnfgJs+13sTqw6xgfGG+gnR89HTweuQYCFj7JI6TtLtrzt2ZyJW4U
-	 qTkf3OacDQT0S1135AhcMB+vsUd1HnsvMJSSzqQWIYXfLbuVuoGv8sU5zMU2qqhpCC
-	 KDdMK2a4TscA23GUnkYxzY4P/BFPjCkKs30kmDkUR6LZXymGnR2PJn5P91vmV/euD8
-	 y4lP/GbEtC4hrmA7Iw7R4S7gi0w9BkFZ2fey1WjDd4vNOLxY7wv2fe8hcgI0FiNUsw
-	 Z2cExOhSi1oew==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Quanmin Yan <yanquanmin1@huawei.com>,
-	akpm@linux-foundation.org,
-	damon@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wangkefeng.wang@huawei.com,
-	zuoze1@huawei.com
-Subject: Re: [PATCH] mm/damon/stat: set last_refresh_jiffies to jiffies at startup
-Date: Tue, 28 Oct 2025 07:32:49 -0700
-Message-ID: <20251028143250.50144-1-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251028141915.49989-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1761662003; c=relaxed/simple;
+	bh=cvbBAFvEUYF4/uygFqDXN5huAqBRxJ5CYiUtMJr8o68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sV/VLiqwiXW3UixMkw5ccx2wh+cOg18Nbq0hFkZvhqvNLgwWCUtIsX5nBDf7j0vVgKUpvZZCSN62tMX8xctfwA0N/fcQ2gvkjiF///eAINN6tFnuA6Q/B9wzdjmVfVT9dgJ/RRefpvHn6ksVWP+hlpMplt62It0tr8hLpl6P8eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mf+lajln; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761662001; x=1793198001;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cvbBAFvEUYF4/uygFqDXN5huAqBRxJ5CYiUtMJr8o68=;
+  b=Mf+lajlnZCGhT0F7e0w1KWrm/EIiBkQwtBgCt5FYtco9nr2jeiLn+7B4
+   tFm+zuMoXhZDJUP4wbmhd5bbWw7jwAW6trIMRxmQS8vfKC261UWmOxWLU
+   HCbIMJFVQRgHVsst6qJdBcBJo34jHisubX0ZTrhttfWz49qVk1wwh64nV
+   d6xKyl2vI0akEemweam1FUU9bb+QfEP47Si7pG40/TMphMtHuxvqohc70
+   2w66O3iNJJ7AGBUULAzYpF+HwOKyYCqLxBgbDisYoFfqkXRkJuNVcv+uL
+   xGBeW0Y98DTET1jR6S8pWWoOjx2xV6RPIe1zQJzWmO2XuML3gqPaofM7r
+   g==;
+X-CSE-ConnectionGUID: QI0FUlclRT2jHrtwJaBDqA==
+X-CSE-MsgGUID: TyeVzs2TR1eVOZvgVYuLMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63857745"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63857745"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 07:33:20 -0700
+X-CSE-ConnectionGUID: 0YNrc5QzTg2W8j79oeRWRg==
+X-CSE-MsgGUID: 8KNuQCivSDS0+oH1G/N0xQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="185447887"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 28 Oct 2025 07:33:17 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDkl9-000JEb-0S;
+	Tue, 28 Oct 2025 14:33:15 +0000
+Date: Tue, 28 Oct 2025 22:32:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Miaoqian Lin <linmq006@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+	Philippe Cornu <philippe.cornu@st.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] drm/of: Fix device node reference leak in
+ drm_of_panel_bridge_remove
+Message-ID: <202510282250.QkCSotB2-lkp@intel.com>
+References: <20251028060918.65688-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028060918.65688-1-linmq006@gmail.com>
 
-On Tue, 28 Oct 2025 07:19:14 -0700 SeongJae Park <sj@kernel.org> wrote:
+Hi Miaoqian,
 
-> On Tue, 28 Oct 2025 14:19:27 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
-> 
-> > In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
-> > avoid unnecessarily frequent stat update.
-> > 
-> > On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
-> > jiffies wrap bugs appear earlier. However, this causes time_before_eq()
-> > in DAMON_STAT to unexpectedly return true during the first 5 minutes
-> > after boot on 32-bit systems (see [1] for more explanation, which fixes
-> > another jiffies-related issue in DAMON). As a result, DAMON_STAT does not
-> > update any monitoring results during that period, which can be more
-> > confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
-> > 
-> > Fix it by setting last_refresh_jiffies to jiffies at startup.
-> 
-> Nice catch, thank you for this patch!
-> 
-> > 
-> > [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
-> > 
-> > Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
-> > Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
-> > ---
-> >  mm/damon/stat.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/mm/damon/stat.c b/mm/damon/stat.c
-> > index 6c4503d2aee3..6dc3e18de910 100644
-> > --- a/mm/damon/stat.c
-> > +++ b/mm/damon/stat.c
-> > @@ -132,6 +132,9 @@ static int damon_stat_damon_call_fn(void *data)
-> >  	struct damon_ctx *c = data;
-> >  	static unsigned long last_refresh_jiffies;
-> >  
-> > +	if (unlikely(!last_refresh_jiffies))
-> > +		last_refresh_jiffies = jiffies;
-> > +
-> 
-> How about doing the initialization together with the declaration?  E.g.,
-> 
->  static int damon_stat_damon_call_fn(void *data)
->  {
->         struct damon_ctx *c = data;
-> -       static unsigned long last_refresh_jiffies;
-> +       static unsigned long last_refresh_jiffies = jiffies;
+kernel test robot noticed the following build warnings:
 
-Actually, a similar issue can happen again if DAMON_STAT is stopped and
-restarted by user.  That is, if user stops DAMON_STAT just after
-last_refresh_jiffies is updated, and restart it after 5 seconds or more, the
-time_before_eq() on damon_call_fn() will return true, so stat updates will
-happen earlier than expected.  Shouldn't be a real problem, but better to avoid
-if possible.
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on linus/master v6.18-rc3 next-20251028]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-How about making last_refresh_jiffies a global variable and initialize it on
-damon_stat_start()?  To avoid unnecessary name conflicts, the variable name
-would also better to be changed, e.g., damon_stat_last_refresh_jiffies.
+url:    https://github.com/intel-lab-lkp/linux/commits/Miaoqian-Lin/drm-of-Fix-device-node-reference-leak-in-drm_of_panel_bridge_remove/20251028-141134
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20251028060918.65688-1-linmq006%40gmail.com
+patch subject: [PATCH] drm/of: Fix device node reference leak in drm_of_panel_bridge_remove
+config: parisc-randconfig-002-20251028 (https://download.01.org/0day-ci/archive/20251028/202510282250.QkCSotB2-lkp@intel.com/config)
+compiler: hppa-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510282250.QkCSotB2-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510282250.QkCSotB2-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/bridge/ti-dlpc3433.c:12:
+   include/drm/drm_of.h: In function 'drm_of_panel_bridge_remove':
+   include/drm/drm_of.h:174:2: error: implicit declaration of function 'of_node_put'; did you mean 'fwnode_init'? [-Werror=implicit-function-declaration]
+     of_node_put(remote);
+     ^~~~~~~~~~~
+     fwnode_init
+   In file included from include/linux/irqdomain.h:14,
+                    from include/linux/i2c.h:21,
+                    from drivers/gpu/drm/bridge/ti-dlpc3433.c:18:
+   include/linux/of.h: At top level:
+>> include/linux/of.h:129:13: warning: conflicting types for 'of_node_put'
+    extern void of_node_put(struct device_node *node);
+                ^~~~~~~~~~~
+   In file included from drivers/gpu/drm/bridge/ti-dlpc3433.c:12:
+   include/drm/drm_of.h:174:2: note: previous implicit declaration of 'of_node_put' was here
+     of_node_put(remote);
+     ^~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
 
-Thanks,
-SJ
+vim +/of_node_put +129 include/linux/of.h
 
-[...]
+0829f6d1f69e4f Pantelis Antoniou 2013-12-13  126  
+0f22dd395fc473 Grant Likely      2012-02-15  127  #ifdef CONFIG_OF_DYNAMIC
+0f22dd395fc473 Grant Likely      2012-02-15  128  extern struct device_node *of_node_get(struct device_node *node);
+0f22dd395fc473 Grant Likely      2012-02-15 @129  extern void of_node_put(struct device_node *node);
+0f22dd395fc473 Grant Likely      2012-02-15  130  #else /* CONFIG_OF_DYNAMIC */
+3ecdd0515287af Rob Herring       2011-12-13  131  /* Dummy ref counting routines - to be implemented later */
+3ecdd0515287af Rob Herring       2011-12-13  132  static inline struct device_node *of_node_get(struct device_node *node)
+3ecdd0515287af Rob Herring       2011-12-13  133  {
+3ecdd0515287af Rob Herring       2011-12-13  134  	return node;
+3ecdd0515287af Rob Herring       2011-12-13  135  }
+0f22dd395fc473 Grant Likely      2012-02-15  136  static inline void of_node_put(struct device_node *node) { }
+0f22dd395fc473 Grant Likely      2012-02-15  137  #endif /* !CONFIG_OF_DYNAMIC */
+9448e55d032d99 Jonathan Cameron  2024-02-25  138  DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+3ecdd0515287af Rob Herring       2011-12-13  139  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
