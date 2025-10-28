@@ -1,151 +1,210 @@
-Return-Path: <linux-kernel+bounces-873938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AE4C151E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:19:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 428E0C151F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:20:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6129D1887026
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80D4188D35D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7AE318131;
-	Tue, 28 Oct 2025 14:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E011230D0F;
+	Tue, 28 Oct 2025 14:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jm73QtCD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nm85i7fR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6dnwsvU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B922616DC28;
-	Tue, 28 Oct 2025 14:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89F11FF7D7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660636; cv=none; b=nzIn/XUWmkJqIqDG7syCzUmZB7HdL7M+VAFGlXX3KXemuyjD8feOGawOEz7/G2PRojmNpSr1IvQDK/FcsP+KYbCeoswxCc1Oa2NTGR+IgaUvShomv0942Sxt9Dghe9yBlMiJTDoZinJSxYjYXNRmNeGeLB542nd1nofrIlu+GQs=
+	t=1761660652; cv=none; b=QrXISVtC+LKAgr1brgXlqygSjb1dhiTb4i5Jla5ZzNgK02ZKGkbLZZ76YdKoph77vqbepaXN+GnAU9GeoFAoLm4onO42BjrQZg0TtKzUfxXAaxAmuhL+nycUtWMyvTo0BGwh7N/X7p9RKjCHePgyh/jLyuUULwPU1pFt02RhqPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660636; c=relaxed/simple;
-	bh=djyze9ldgzI4ZKoBLm8S71QabwqL4pNZjmOMYfiZCVE=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ScNqwRgD9GVnr1vpuPiWZ2yufJWv6z03Xjo871+mf/61TIsV51BF0p7k4WRbsf8Uyg5UT8z5urckx9hBwUTIeYdOmU9z1HeljQbc+kWdXPBcKw4q+Z3gMbHndUFKHUkx0WlDKcIOOlkCnFa9Nn4sErfKwoBVnrC/5pfqGjNHKMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jm73QtCD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nm85i7fR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 14:10:30 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761660631;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oH0POa2oO+05kPQ+RLcpZTyKg4u+UzeQxFqhSWQnI5E=;
-	b=jm73QtCDeDikysVMu7QPoEKVGPayQKTlW7+WnlWanCamJpYkSPqiSp5jT9Y/lJyN0jjOyA
-	N32+sf7ainTneYHIVeRTEXo4VkdLHLCgAi1WZKeac45PacUrNW4NEc4ITVBCKJUklfeECH
-	jtL9JkaEy8pCGM6abMq6lEDbt/g2kjbXJHQN+5hVWIMTNlQurBH08vRqpldPZHRaDFnmZ3
-	GyAbBNz/3u8QSA/CVqJ/Dk8jJivDfqAQWpnZADrLHPnKod1GaO+2Ekrc+YTETUKpwvAkut
-	XvNCGUFB8CevhyNJt1bN/Chdt5C29kSD8jPyvfOhQr4oKY/twu3cAUJlQTf8nQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761660631;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oH0POa2oO+05kPQ+RLcpZTyKg4u+UzeQxFqhSWQnI5E=;
-	b=nm85i7fR6ioKv53530a727BHgRI53Mr9vg5ikdTOK6RQQkPCRwZ/xvfEfykG/11Xgq5CCN
-	11GLgz/QDhlIfkBQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched: Fix the do_set_cpus_allowed() locking fix
-Cc: Jan Polensky <japo@linux.ibm.com>,
- kernel test robot <oliver.sang@intel.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
-References: <20251027110133.GI3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761660652; c=relaxed/simple;
+	bh=9MQdQxj70yjmNeGCIc6Di+FRAIbRgsLKF+QiN38fNXY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ThzDZ7a2vBW90wZuVpWa15V7MYgDo2SabY8TOJNq2ML/5Q3ORRRqwXnW80VRNT37jnjUd3bwlmz0OXGswvkZC6AnJrPyFlNrl4Nk/Wc5Q5nawXUWO+fy5pZ5nwiAzs7o4K6ZUceYgw879kzhYC3dpuaGc9XTOc+fZkp2EAiHyOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6dnwsvU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C08EC4CEFD
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:10:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761660652;
+	bh=9MQdQxj70yjmNeGCIc6Di+FRAIbRgsLKF+QiN38fNXY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G6dnwsvUgrYl1OrqkZ9wOHYFRXBUnREZvE3I4Q8DK7cBq1Rg4GC1O7T6hLgDpw0uB
+	 LOeIcsJWCYs0+Ds6rJt+IA/ZYvko7PDG4uz6+BNtvuScjGYNU2WOvlu0dYpaPb1Z9E
+	 jyNTQnXLrBqMWo/Pr6Q+ynv2d4OyfGAu08zuKhFTmvkmk4JoLjqnvLFKHqVeYlHWGT
+	 B403m1RShc+XaN/zUuWTQFaZD4vHt8Y1H907S1PEHjuifUbVXTq+YNy2b3lD2UpCuh
+	 kdYycVw0GLNngjDcjVuqHjAAqX6aE1wbx/9K43ceEhm6UDjebJHz49FdMuy7BzX5ci
+	 hB27FC679dGAg==
+Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-44f6d7b586cso528703b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:10:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnvbsaTvs7e1XIaYhoFpwcUFKBlLGwLqlHarSvZvDSAPrO2TKZ8k6cKBRqOuHyOxOXFYnH6NDp0Y7liqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv7jJjX883ThD5I4TlAIYaQAy4SvD0d60eI7ANKfqzxz7DqAi5
+	DPjl1Ujh97X3FW2FUVwWMC2KvhdV+R57ryTeRa7XXK9CpK72Qs9WZuPJHFIrWt2dzVNURYUlmJ/
+	Lk6C0+xACBnDrzSvXV5P8e0bJxCZiOrU=
+X-Google-Smtp-Source: AGHT+IE0knAQw6FfaushnbySWImrTzxFtRDabqyVZ1OX3SSkfmRS+Rz3Ee2OaBsxYv6Q+KSNzkK0/9j1cQNQK9cPfvg=
+X-Received: by 2002:a05:6808:15a7:b0:441:8f74:f1f with SMTP id
+ 5614622812f47-44f6bb1e9c6mr1559391b6e.57.1761660651602; Tue, 28 Oct 2025
+ 07:10:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176166063011.2601451.2694990479291864074.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <20250929093754.3998136-1-lihuisong@huawei.com>
+ <20250929093754.3998136-6-lihuisong@huawei.com> <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
+ <92b1b431-9855-43fb-8bb3-801649064438@huawei.com> <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
+ <ab814879-37d6-49dc-8a38-6b94cabf9327@huawei.com> <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
+ <37fb4e84-d404-449e-986a-e5ccb327bd78@huawei.com> <CAJZ5v0j9i1W3JmDQP+-tTqu1dnE1i1XeZUk5=JMKRN_e++iJ7w@mail.gmail.com>
+ <8b1dc682-928a-4898-876c-ae6ccf59d328@huawei.com>
+In-Reply-To: <8b1dc682-928a-4898-876c-ae6ccf59d328@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 28 Oct 2025 15:10:39 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hTkVzuKQu4WFOxtdfC-uXTBYkBr77UurXj_zfDbgV0vg@mail.gmail.com>
+X-Gm-Features: AWmQ_blMwiClUZfXYAWhC0RqhmMfjUZfV9B0g6Ofzj4BSy4UXTWbOnLbxq5ntE4
+Message-ID: <CAJZ5v0hTkVzuKQu4WFOxtdfC-uXTBYkBr77UurXj_zfDbgV0vg@mail.gmail.com>
+Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
+ processor FFH LPI state
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the sched/core branch of tip:
+On Tue, Oct 28, 2025 at 1:45=E2=80=AFPM lihuisong (C) <lihuisong@huawei.com=
+> wrote:
+>
+>
+> =E5=9C=A8 2025/10/27 20:28, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> > On Mon, Oct 27, 2025 at 2:43=E2=80=AFAM lihuisong (C) <lihuisong@huawei=
+.com> wrote:
+> >>
+> >> =E5=9C=A8 2025/10/26 20:40, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> >>> On Fri, Oct 24, 2025 at 11:40=E2=80=AFAM lihuisong (C) <lihuisong@hua=
+wei.com> wrote:
+> >>>> =E5=9C=A8 2025/10/23 18:35, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> >>>>> On Thu, Oct 23, 2025 at 12:17=E2=80=AFPM lihuisong (C) <lihuisong@h=
+uawei.com> wrote:
+> >>>>>> =E5=9C=A8 2025/10/22 3:42, Rafael J. Wysocki =E5=86=99=E9=81=93:
+> >>>>>>> On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@hu=
+awei.com> wrote:
+> >>>>>>>> Both ARM64 and RISCV architecture would validate Entry Method of=
+ LPI
+> >>>>>>>> state and SBI HSM or PSCI cpu suspend. Driver should return fail=
+ure
+> >>>>>>>> if FFH of LPI state are not ok.
+> >>>>>>> First of all, I cannot parse this changelog, so I don't know the
+> >>>>>>> motivation for the change.
+> >>>>>> Sorry for your confusion.
+> >>>>>>> Second, if _LPI is ever used on x86, the
+> >>>>>>> acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info()=
+ will
+> >>>>>>> get in the way.
+> >>>>>> AFAICS, it's also ok if X86 platform use LPI.
+> >>>>> No, because it returns an error by default as it stands today.
+> >>>>>
+> >>>>>>> Why does the evaluation in acpi_processor_setup_cpuidle_dev() not=
+ work?
+> >>>>>> The acpi_processor_ffh_lpi_probe does verify the validity of LPI f=
+or ARM
+> >>>>>> and RISCV.
+> >>>>>> But the caller of the acpi_processor_setup_cpuidle_dev()don't veri=
+fy the
+> >>>>>> return value.
+> >>>>>> In addition, from the name of acpi_processor_setup_cpuidle_dev(), =
+its
+> >>>>>> main purpose is to setup cpudile device rather than to verify LPI.
+> >>>>> That's fair enough.
+> >>>>>
+> >>>>> Also, the list of idle states belongs to the cpuidle driver, not to=
+ a
+> >>>>> cpuidle device.
+> >>>>>
+> >>>>>> So I move it to a more prominent position and redefine the
+> >>>>>> acpi_processor_setup_cpuidle_dev to void in patch 9/9.
+> >>>>>>>> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low=
+ Power Idle(LPI) states")
+> >>>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> >>>>>>>> ---
+> >>>>>>>>      drivers/acpi/processor_idle.c | 10 ++++++++--
+> >>>>>>>>      1 file changed, 8 insertions(+), 2 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/proces=
+sor_idle.c
+> >>>>>>>> index 5684925338b3..b0d6b51ee363 100644
+> >>>>>>>> --- a/drivers/acpi/processor_idle.c
+> >>>>>>>> +++ b/drivers/acpi/processor_idle.c
+> >>>>>>>> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_de=
+v(struct acpi_processor *pr,
+> >>>>>>>>
+> >>>>>>>>             dev->cpu =3D pr->id;
+> >>>>>>>>             if (pr->flags.has_lpi)
+> >>>>>>>> -               return acpi_processor_ffh_lpi_probe(pr->id);
+> >>>>>>>> +               return 0;
+> >>>>>>>>
+> >>>>>>>>             return acpi_processor_setup_cpuidle_cx(pr, dev);
+> >>>>>>>>      }
+> >>>>>>>> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(=
+struct acpi_processor *pr)
+> >>>>>>>>
+> >>>>>>>>             ret =3D acpi_processor_get_lpi_info(pr);
+> >>>>>>>>             if (ret)
+> >>>>> So I think it would be better to check it here, that is
+> >>>>>
+> >>>>> if (!ret) {
+> >>>>>           ret =3D acpi_processor_ffh_lpi_probe(pr->id));
+> >>>>>           if (!ret)
+> >>>>>                   return 0;
+> >>>>>
+> >>>>>           pr_info("CPU%d: FFH LPI state is invalid\n", pr->id);
+> >>>>>           pr->flags.has_lpi =3D 0;
+> >>>>> }
+> >>>>>
+> >>>>> return acpi_processor_get_cstate_info(pr);
+> >>>>>
+> >>>>> And the default acpi_processor_ffh_lpi_probe() needs to be changed =
+to return 0.
+> >>>> Sorry, I don't understand why pr->flags.has_lpi is true if
+> >>>> acpi_processor_ffh_lpi_probe() return failure.
+> >>> It is set by acpi_processor_get_lpi_info() on success and
+> >>> acpi_processor_ffh_lpi_probe() does not update it.
+> >> The acpi_processor_get_lpi_info() will return failure on X86 platform
+> >> because this function first call acpi_processor_ffh_lpi_probe().
+> >> And acpi_processor_ffh_lpi_probe return EOPNOTSUPP because X86 platfor=
+m
+> >> doesn't implement it.
+> >> So I think pr->flags.has_lpi is false on X86 plaform.
+> > On x86 it is 0, but what if acpi_processor_ffh_lpi_probe() fails on arm=
+64, say?
+> Arm64 supports the acpi_processor_ffh_lpi_probe().
+> So pr->flags.has_lpi is 1 on success.
+> >>>> In addition, X86 platform doesn't define acpi_processor_ffh_lpi_prob=
+e().
+> >>>> this function will return EOPNOTSUPP.
+> >>> Which is exactly why it is a problem.  x86 has no reason to implement
+> >>> it because FFH always works there.
+> >> Sorry, I still don't understand why X86 has no reason to implement it.
+> >> I simply think that X86 doesn't need it.
+> >> AFAICS, the platform doesn't need to get LPI info if this platform
+> >> doesn't implement acpi_processor_ffh_lpi_probe().
+>
+> > Well, that's what is implemented in the current code, but it will need
+> > to be changed if x86 is ever added and I'd rather avoid cleanups
+> > making it harder to change.
+>
+> What you mean is that X86 use LPI?
 
-Commit-ID:     af13e5e437dc2eb8a3291aad70fc80d9cc78bc73
-Gitweb:        https://git.kernel.org/tip/af13e5e437dc2eb8a3291aad70fc80d9cc7=
-8bc73
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Mon, 27 Oct 2025 12:01:33 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Tue, 28 Oct 2025 15:00:48 +01:00
+In the future, x86 may want to use _LPI, that's all.
 
-sched: Fix the do_set_cpus_allowed() locking fix
+> If X86 also define acpi_processor_ffh_lpi_probe and use LPI, this patch
+> is also good to it.
 
-Commit abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-overlooked that __balance_push_cpu_stop() calls select_fallback_rq()
-with rq->lock held. This makes that set_cpus_allowed_force() will
-recursively take rq->lock and the machine locks up.
-
-Run select_fallback_rq() earlier, without holding rq->lock. This opens
-up a race window where a task could get migrated out from under us, but
-that is harmless, we want the task migrated.
-
-select_fallback_rq() itself will not be subject to concurrency as it
-will be fully serialized by p->pi_lock, so there is no chance of
-set_cpus_allowed_force() getting called with different arguments and
-selecting different fallback CPUs for one task.
-
-Fixes: abfc01077df6 ("sched: Fix do_set_cpus_allowed() locking")
-Reported-by: Jan Polensky <japo@linux.ibm.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Jan Polensky <japo@linux.ibm.com>
-Closes: https://lore.kernel.org/oe-lkp/202510271206.24495a68-lkp@intel.com
-Link: https://patch.msgid.link/20251027110133.GI3245006@noisy.programming.kic=
-ks-ass.net
----
- kernel/sched/core.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 096e8d0..fd9ff69 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -8044,18 +8044,15 @@ static int __balance_push_cpu_stop(void *arg)
- 	struct rq_flags rf;
- 	int cpu;
-=20
--	raw_spin_lock_irq(&p->pi_lock);
--	rq_lock(rq, &rf);
--
--	update_rq_clock(rq);
--
--	if (task_rq(p) =3D=3D rq && task_on_rq_queued(p)) {
-+	scoped_guard (raw_spinlock_irq, &p->pi_lock) {
- 		cpu =3D select_fallback_rq(rq->cpu, p);
--		rq =3D __migrate_task(rq, &rf, p, cpu);
--	}
-=20
--	rq_unlock(rq, &rf);
--	raw_spin_unlock_irq(&p->pi_lock);
-+		rq_lock(rq, &rf);
-+		update_rq_clock(rq);
-+		if (task_rq(p) =3D=3D rq && task_on_rq_queued(p))
-+			rq =3D __migrate_task(rq, &rf, p, cpu);
-+		rq_unlock(rq, &rf);
-+	}
-=20
- 	put_task_struct(p);
-=20
+Well, fair enough.
 
