@@ -1,312 +1,185 @@
-Return-Path: <linux-kernel+bounces-874636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE02C16BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:18:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509D9C16C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6CD544FCDB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:17:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01F7E406A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8412BDC27;
-	Tue, 28 Oct 2025 20:16:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8998F2BDC27;
+	Tue, 28 Oct 2025 20:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YUPlnrbE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YJ9coa7+"
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com [74.125.224.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8ED26FDBF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761682613; cv=fail; b=Oigp5jLKdXbuaDExt574rPe1VArY+05iut6ZYch10LXkVUp1PHYvsvX6wVgiPJglr3PGYFVcdMSDAYY9vv1YQLZjK7DhO4EpBkpAG3q1kGk9OtSgj37JHptfTi9J1elY6r3znu9ZfZBtSq5bYvFLwQIJ6Fa/dXTmfy1PNTr50pw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761682613; c=relaxed/simple;
-	bh=AXF0dZuWcTc3glJBbk49SJjk5tDjq16s0w85a2Ohzcs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PgJjtpyb/hXiNGbc9finUXVqHyOT07nUhzXBvnwjvtUxpZ4h1j5y/x/+whniNHE7/Qzzxnc9GvNmbms+PpC86nxnxAj0xaKJ1z+pAEULr+3PcJOLWymT+hsp0jVMEmNL76qe0MobeeSvf/ep4aH3j0Ia5MvImmRW5EXG9tU40/U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YUPlnrbE; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761682611; x=1793218611;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=AXF0dZuWcTc3glJBbk49SJjk5tDjq16s0w85a2Ohzcs=;
-  b=YUPlnrbE2McKvypnjT/w2Px1+ru5IcYUfUgAx2b0xavhoeh6JExWAGba
-   yFIXdP/c7nhkVDXjltFzT6Ybuq17mFvQD0wSdbbelufMPODCHbBoWe/0A
-   MnyXXQdhqjJCpIdRyrZCaHlrGxt/78H87ozTPGEYSla2cyx9+E3ANCaCc
-   0EruzQE9TUqqcFv3Ejx8D6N2MHvmYZKfD/p6iZwqmcfDpfCOZrNiL/J7C
-   vkdrJCJkTqzlw8igqW7r6sM7xlmuxN189z5wIUHCzd76mbp96/SAwMiOh
-   5b+vieT7lcqjK6DoPzDSvr7PRE3QSXg9EnVgrby+5F+ZB+pYARU9xOgTe
-   g==;
-X-CSE-ConnectionGUID: urInFy9BStGx3k0qIhzxBQ==
-X-CSE-MsgGUID: 3GZo3UG+Rky/h3RH3yTM6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74914134"
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="74914134"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 13:16:51 -0700
-X-CSE-ConnectionGUID: W8g1wTbEQt+J/3+gEKmEZg==
-X-CSE-MsgGUID: bpSX399UQTG7VY6HK5SRXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="222670246"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 13:16:51 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 13:16:50 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 13:16:50 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.60) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 13:16:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OHg6PBk6p6VG8xJDEHxx+557TJgsGDWRGI1ZZBSEwOnmNOLNorjACKxkM47f66ZWdUGsirXVrLQUbo4gpgRQe/zOTUkUeHFkRXSmlVsIBxI4JPhg1B4eXPR+7NEk0rNj2YtKcLAdtcCjsk+5m6xOQRKjktdzpiar8fMZoW0Sx7Oo03pLVFSkjAiwnnmpdnIrTrtGI7cjJ1XLnE0TG2hui6yzYPOFem1s3l1WyZ+4Zs4Ey3tWrzOFZojWk20gZV9SoaZMvk3EkiVNyKjFu/n/LbvJpK+NYycQu3WB0VRPk3LuOPWY6r1cT9bUxPbr8DHfINTRSe1NE0ZM8QbrzEaU9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DZA6+mZENvLD3p/tUjHbhNlxrPr+g4k27e7/+3BlXao=;
- b=rnRgol8TRXPwK/pjG7/kCnnzS4adVoT8usERuic8QaMbF1ipQh3WcEYLZbCToMHiUXASjcVKYeDVdpoxUfPLjG901AwOY5xv5Ydt1hG/1AqsNpZjXf58xi6MKHdf8M+brmTBU5m+zKrw12z5Nl/asGekn4UpHVcL05krD2LWUKo/X+9cUhkKe4pU6rh+mwojhU3JaXciHM2aIVcneiG27XFgKEgMSwxDbc/OVA4JAEdHoUSP73UzXMB9SnLPIHQjzFttYFKsNRuP/320ABhr9KrLWpuo9OYOAS5znVfa/4aLAIlpr5vxuaknzFurCzODBQ2DBrX2GDm2sZ3syZOlCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SJ2PR11MB8421.namprd11.prod.outlook.com (2603:10b6:a03:549::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 20:16:45 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
- 20:16:45 +0000
-Date: Tue, 28 Oct 2025 13:16:43 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-CC: <intel-xe@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <jiangshanlai@gmail.com>, <tj@kernel.org>,
-	<simona.vetter@ffwll.ch>, <pstanner@redhat.com>, <dakr@kernel.org>
-Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
- lockdep with reclaim
-Message-ID: <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
-References: <20251021213952.746900-1-matthew.brost@intel.com>
- <20251021213952.746900-2-matthew.brost@intel.com>
- <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
-X-ClientProxiedBy: BY5PR03CA0010.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::20) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B996298991
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761682806; cv=none; b=NWXxnmNWjCghBHjqp4XE0PWb13zl4YufhJPFf9myaX6g+3CJi3Gx0NhU8GIeKU/9QfaZT/N7/lbDf+ylJAj+TDOhe0OK5jIMFua8kzJvXpnZS8fbd5EqDpS1YkKBSxI78l/ygAFSmgtaAXCQF72NOinAdwTL7QJno/kTnG2Owck=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761682806; c=relaxed/simple;
+	bh=1DL7qm57wub/f9vhoCnXsfxm9twR8KCYygrnXx0fhOc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZZPH+WX3/nQ1WmXwxpF/W3ol9svBWHwk9W5rdxE1NNcLVHekSeHA26HMvxyoJPAUp1kROUjgeR21MvvRajT2gPfLsG5nRmyKi/Z5UeBoxAFJvdSroepptL2hfHzq1FiwvdzkYOlfMA70kODZCuTIEoDPw0E5FN3zz/4F1ly6uuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YJ9coa7+; arc=none smtp.client-ip=74.125.224.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f53.google.com with SMTP id 956f58d0204a3-63e17c0fefbso6955604d50.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761682804; x=1762287604; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3lEnOrPU7t9BTi0lIm6AXk0/RgDoLHUnhIVJitTcT88=;
+        b=YJ9coa7+agFZT+GjtubljnQLVrI3/nFNlARYWqx2XKiwMAFEuH5pOWdpcm0wj7ppSv
+         lskvQG7wh+uQNWEWm5MSp5eqnD0G2vUa/tiWKtmRVah5ij+nVEj6LhiEaCzyXiik/nlG
+         +DB6lEWD/LIUi82yBVknCkJizSyRB0llrWFyll7oa7ucuVPBeNNyK0e3S0T2jUtCg3BD
+         NEXEACJ0XNPFh+0qX+0R2ILuRCJmwyeJlD/0ym6ZZR+Mlu7wFPk9xtV8XcNLG8rFPVod
+         V24yOR3+dxGsQRk5zqvEtsWpBW8NAmHoh4Qe92xI23/1RSXyQF10TtVFKs07kK/83aHy
+         j5Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761682804; x=1762287604;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3lEnOrPU7t9BTi0lIm6AXk0/RgDoLHUnhIVJitTcT88=;
+        b=Z1Kt6Yk3ZfwyReo+ilbdbreOvqNnUpDt4mfSwUljlzTh5Ethx29iwwL9N/o2sf0ER8
+         iseQcbFmIACbKhgHDUMOwwP+lamwYuSpW+70tb0BLEsLSBiHZdsBr7QdwFnFC3N/Bk2+
+         RmzKK0SmwuwM48hd8rn5e1rGtSOd/z39JTRxX+Az9ySANSgBVjwkzp+9BhZWFdme3Zz8
+         VcNNh1smae2NKxq5eRUwbp9SDrgz8A+q9N4EZwCIrmJmbjk4lZklXuperaYqnG/BH8gq
+         KELArF9wHlVGQF5A+SvLWMXdJkajxXgsEoH95FLhAdEqgSS2kqHgfoQGCfxIi0uT5nC7
+         Sg4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWl1LEJ/0QZvWHEDutSug7R5peGAtJ1/OVpcy0yBWHIDZxTClhbx0UxZ3RSQaoLjujM8VSPEZYCEgq3flw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVh/fPiyg6KVN52b3g2nalikMvOIZOHc+DzHisIbi1sdPlW69W
+	/Jgx8mjzcWsex+e9D6xKQWvP9Fs1V4/l+LAkUFuEfFZKp0Wwvl1bH0t5UIubYWxgoMVqZ9u7LGA
+	06gACLRogF0hySai7pk6gfQyUQyo1N2ZoxQ==
+X-Gm-Gg: ASbGncvOuq1xgG2rFcHfdyox27DIR0LDqLYIs4oiR8uLKGg/toHz9KM5Wh7V2PCtEQm
+	CqrUqzGWkvMxKNrNuHY56H0+3qA/sE81Y1AKR1wWPqhNEMh2crQ8z4yeHiHKnM3UyJrEjif22S8
+	DGMLVUmVTyk4fzfS0jyEVbPZ5yCmkaoklNwWdD5an5iOm0lhaafg2HxwzWh1S5dmbFOgbMr2TJM
+	FEHhkhwR53q+Zh1OJl6vO7/C8jcE/WQltjb6fnrmFrYjmLo4VLA7uzZIZU=
+X-Google-Smtp-Source: AGHT+IHgKGGElaUgkNdyxfVG3niQuHRbpKqrhRCCJLjNWkcWpoez/iaqA+lCNPGD4ysIgKN9cdylbUkkCIi+yZAgSns=
+X-Received: by 2002:a05:690e:42d1:b0:635:4ecf:bdc6 with SMTP id
+ 956f58d0204a3-63f76dcb9eamr529307d50.40.1761682804232; Tue, 28 Oct 2025
+ 13:20:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SJ2PR11MB8421:EE_
-X-MS-Office365-Filtering-Correlation-Id: 730fecd4-6640-46f5-0b06-08de165eea8a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WVg1MFBrZllKUXhscW5mZ0VzL3FNNkNVV28yQkpRd0VIaGVlMTNTQW4vQ0dN?=
- =?utf-8?B?N2ZNTkVyM1lBTGNvWWRNRGU2bEJNekVPTkRXZ0ZBOFZoVDk3NmFDNFA1dkND?=
- =?utf-8?B?cDZzbUhGSFR6MFNqMi9sUFRtTWdUczZOZjdTaXBPRWhpby9yNzN2eU0yYUJG?=
- =?utf-8?B?aEcra2hvczlvZkhuQTRMc29SN1hmRUR4d1ZXeUhLS0lHdGV1UTMvQitYTVhB?=
- =?utf-8?B?NDdsNGNsNU50V0FZOGpBejhMTkxZbWFHdExqbDVwTmt5eTlJQldqZk9acXlN?=
- =?utf-8?B?emMvQUdGSDMxSjI1aXpoUFJiYVRuVmhCbytXTjVlVFZRcXJsYzdqTmR4K05D?=
- =?utf-8?B?a1cvdHFqRWI3YStnRlh0VnJ6L2R2eE9EL0Y3V0Q5SnhIRi9FdHJxc21sVTZ2?=
- =?utf-8?B?Vkdzd2ZYRDRqV2x2QWhxOGp5RU5uTUlxaXpWNUUrQjVEUDlJazZBbVlvek1Q?=
- =?utf-8?B?Ujg4Z2Z3cTdkeWVRYi8ybk1oN2ZTNnliRFRPby84S2t6ZkFTV0dTZUhTVUdU?=
- =?utf-8?B?Y0pTNmFBSzdDaXR4R0lOU0xUbHR1K0FLSDlYY2ovZkdidU14ZlRDNVNPUjdQ?=
- =?utf-8?B?ZGN5RUxta0lick0zUFVHeDAvSjFzRy9GejllV3lqWFNVMFdhU1ZpZzVPb3c3?=
- =?utf-8?B?NTdxVjlrSFh6VDR3R2pqQXExVk1XVXRncitxc09UZUpIbldZbnZXLzJ2UzB6?=
- =?utf-8?B?V1g2YWsxWHlVUXJMbG9oaUdnZm9jQ1h3MGZ6NG92NzlkN3ZaNkpycVF6Zmty?=
- =?utf-8?B?d1BQQmMyeWVXOFNsaGc1dnp1N1RzdnpEMWdhUzVPNWZ6RjJMNURBRUFCT0FE?=
- =?utf-8?B?MFpVRjB5UTZVTDdxdkJVV3RsMk4wRDZzbi9GTHlqT1BEaEREOUdocmxZU3k3?=
- =?utf-8?B?YWl6YmNWcGRBVG1IWGEzcmphMEN3R3ZaamMxdXZ2WlRuV205QVc0Z2twQ3NH?=
- =?utf-8?B?Njg5bHc5RUd5T2FuVDRPM3g4VW9BSnpseHM3U2xQNE9MbnFKQWtGbWtUM1dI?=
- =?utf-8?B?azNwSjVjd0Z3Nnp4OHNyS252Q2UzWVV4aDZiWWJ0eHVmWGZSZjA3QXhONy9w?=
- =?utf-8?B?a3EvNml4eTBUbUwwK0pCUUFEWkFTMjZoWjZnUjIvQW9KZFNWcW1lWUJFenhG?=
- =?utf-8?B?U2ZpcU96NllzdFV3b0VweGl5SXFCTHNCLzB5MGhYb1BWWlowSlZqN3ppaUxo?=
- =?utf-8?B?TGorTnRMYUVyRi9sQUpXbVZUVk5POHpuTUFqckdIRXh5cE1PNk9STW1nK0pv?=
- =?utf-8?B?dk9BUE9KSTI2UGxXQkNEblV3aUVmS0pUQzJmSGxLQWcxUXhuTWp3SURlNlJR?=
- =?utf-8?B?ZHg1cTltM1h1OGNjd1YzVGZkdTFWcXN2enZHbG1lN0xRaTlnQ2p6cTdZZ1BU?=
- =?utf-8?B?c3VYTUxMeTFpOGxuRS90YlBzZE5oUndNS0tMRzhScSt5SkFVcUhwcGUwMVli?=
- =?utf-8?B?eENsVEwvMFlMdDB6eVUweGI1ZlJyTVB1bmsvMkZzNDBzYklXOGlKbGhNVkhY?=
- =?utf-8?B?WW1BSEJxWk4rb1h5Y0JyTC81M1BwZUVrdkxIeSttbmdQaGN4eEhJUDFaTU9W?=
- =?utf-8?B?bkxuN3lkenRjZHhlN3NzY1cvczY1UUdhRjRFcXRBVGZOUVZjMTdqWUZIcktz?=
- =?utf-8?B?dWJCSHU5Z21oT0ozejhKTHBBemxqbHpwOE1CbnVCeHppZUp3b3U1QURQdkNJ?=
- =?utf-8?B?dGo0RDZPbGJjWWRIYktJbGxGMEhZblNEWGxLazlQbC8vRnhISThpSStya0du?=
- =?utf-8?B?azByYWN1eU5YMEN5enI3NC9pZHRUTXozei95bDBsRkdzQ3BTcHJOTlQ1aGFN?=
- =?utf-8?B?d0pUb0xvZkUwOU5zQ2d2MzVaVUxRQmh3WjM0OS9sVWRqMHkvMW9CNmtNQk55?=
- =?utf-8?B?SkdrRFAvellXK1U0OXo1UlVaeTNYZmVtNHFSaXVUaERaWkE9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dXMvUlFUaGNZUXNoeTFhNUY1MWFFYk1aenVDd016dDlsK1JwckcvNWgxTVM4?=
- =?utf-8?B?ek13R1JWRUFvV2QwbWY3UkJjYi92NXorN1ljaDdkQ1UwYitMVTBLaXh2YUdZ?=
- =?utf-8?B?ZFU2M1YxZURKbXhYbDJiWi8vdGdJMTd3V0M1VjRvSTdhRmt3SS9vcE1rMW5i?=
- =?utf-8?B?em5vR3AzTmNGNTN1dXdxcUxLeXk3Nlh1c1NXVzF4ZDd2c1E5TTZCOHd6dUpJ?=
- =?utf-8?B?VjY5eEk4TERoYmw4UGtPQ2l3VTRGSHVFQ2ZJQzZMQjlPQlV1THdiVnVXTmlB?=
- =?utf-8?B?c0hXUlR0aDljKzZqQmV1eXhIWitzd2UwSlJORnBxbEp3TUI1UWZlNkllK29p?=
- =?utf-8?B?RTFuTzdSUWx1Mlh5WVhpTE5OVWdCSU10RVhoLzJLa0RaR25HWnQ0QzZBUTdj?=
- =?utf-8?B?ME9xYWdLc2JrcWIzeTAwQmh3Z3QrMHBDWGQ4RTEwdWN5NjdQVUNqb3krc0pP?=
- =?utf-8?B?aHhxOEpFb2dmS0NlUGUzalZtaVRRQ0UzTCt3a2EwR2xvQzJTV1k3VkJXcU9W?=
- =?utf-8?B?VVJUS0lQUUpIdnk2SERDNXgzemVOMGNjRHJLK1pTUmwzM3hJOWk3dVpjK0xV?=
- =?utf-8?B?SE1xU1hDbzdrVWpId2tRbWRER1VQV0FGSk1aaHR6RE92dDYzYW1yTW9zRnZI?=
- =?utf-8?B?SXdqNmhVbWZzM1ZsWEhnZDUyUVBYV2NDK2MwSlhsNW05dkRhaFNVazRPOHRC?=
- =?utf-8?B?RUhDZWZHRFpreUZHWDgyeUZXM2tocFZlcnJ1MTh4RUxRQ3FGaUxPenArNnFV?=
- =?utf-8?B?SjIwQmVYRXBoZmJPanVJQ0kxRXJBZjAwTWQ5clBRUVI0MEJlNUcxRHBBRVox?=
- =?utf-8?B?WVpOSFltaXhWOUFGODJBeitzRHA5QXcxbmhmYSszVk9NWUhjR0I1MUwwR2xW?=
- =?utf-8?B?SFZTdCtZTVdFV3BSUmNPL256WDJGNldMMEJPR1plcXh5V3lJYkJ1Y3BXYVhN?=
- =?utf-8?B?SU5QTXpCVzY3b29tNW8wbnBrcEJXYkN4M0dzTWhPeE9mSzdRSmUxTmhFQjJn?=
- =?utf-8?B?eGUreEFiR0RaL1A0NXR1RTRXc0h6eXAvU0xjZ0RDZXZBdW9tTnJ3VVpCRzFl?=
- =?utf-8?B?VEliVHJ2R3FyaFRxemUyR0lOMHZ2R25kMGhHWGh0WkdJQ2lsQXFBVFM3TFJp?=
- =?utf-8?B?VERVU2dta2lTK2NKeldLS0VFT3I4d0ZiazM2OEZ6Q1FZaHVFS2xmekJ5SVpC?=
- =?utf-8?B?azJ0N0lOVGFvZFE2ZHhOUllaRmtVZVExN2o4TlZVOGZwaCsrSzc5V3htM29G?=
- =?utf-8?B?VjZvMWcyZ3p3V2JRNHVVY25YaVpMYm5pMGpxa0JQV3NCQUxyd3hpZkNCVFgv?=
- =?utf-8?B?WFZrdVNqS1JTYUs2QUxNVVpqVFZ2dUUzNiszOWdKaUJocFhQZk42Nml5czJq?=
- =?utf-8?B?bnBLdFBGdEp1MEVXSlA2TXZDdXV1cXFIWHdoUTFFR3R6d2hIYy96WHlCS3dN?=
- =?utf-8?B?UGpJUEt1NGlYRjJqWU9IWEFnOHJkaG5xV0hZMHpkL2gyMGdPMnViaUxidnVO?=
- =?utf-8?B?K1BzQm1mVGtKaENCelp4YTFNY1ZsTi8zZ2pEWkFlNkVBK1hLMFpvRFJUK01T?=
- =?utf-8?B?WjNRZmdRTnF4aFk0Tk54dkZuNVNNNDVhTHVYZG5Jb1VHcUZyMVczNGZJdFdk?=
- =?utf-8?B?dEZqY2RKdUNDRnZDcVNTUFgrcUtqMmwwTDhXdlR0emZtRTFmQ2R1QXR3MWZ3?=
- =?utf-8?B?T2YrRm5wKy9GVVN0a2cvR1UwUnBlaEJhZmJmR25sMDVxZStsSW5pRkI3Z3BJ?=
- =?utf-8?B?dGgvVVVmb0NTUzRpOVZMVzR4ampLeUpUY3E0MlF1eU56Q3JCcDE5WDJkUGVK?=
- =?utf-8?B?c2JyUXhKT0lXa2VwU0tDVnR5U0s3Q0dxRjNtd1JtUWpjNXhudUU5dG1rRmw4?=
- =?utf-8?B?L2NPblYvaFBuRzNrMjd3YllLQ0J0ZjFZMXdRNlFhSXVrWHd6ZGJnM0RsOEF1?=
- =?utf-8?B?aWtyWUY5UjJ5UytTOFUyRXR4d1FJeFh0UThqSTVhY0RaL1BQb2l3dEJieWFs?=
- =?utf-8?B?ZDVuQStobjZ0Z1o5b1Y1YXByNWdSLzBBd3BUTHZYZ1NXekJua0ZYWU9Dc0F2?=
- =?utf-8?B?WVBOQWMrUXdCeWV0elVncERyTFl5Tm5CUlFWcjRVYUhTRVdWTjh2cW5aRUsr?=
- =?utf-8?B?bWtzeExBT2hxbDR0bkUvWE5Zays2SkNMQ2N2Zm45OHh0VGppQm1GSitST0Rm?=
- =?utf-8?B?OUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 730fecd4-6640-46f5-0b06-08de165eea8a
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 20:16:45.2972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kMk+rf/qznG+fGShuD1YTh4/cBKIt7t9JxUrPidjoQcPdDSXGyBervwkhrGKJ8vHHmErteNUEmRYNke3OP0mvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8421
-X-OriginatorOrg: intel.com
+References: <20251027171759.1484844-1-cjd@cjdns.fr>
+In-Reply-To: <20251027171759.1484844-1-cjd@cjdns.fr>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Tue, 28 Oct 2025 21:19:53 +0100
+X-Gm-Features: AWmQ_bnFo7mm_j1RGqm_idjiztE8WhG05zba6SQTIj4ViGB8NtmMx-tKQzB1yd8
+Message-ID: <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com, 
+	shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 10:32:54AM +0100, Christian König wrote:
-> On 10/21/25 23:39, Matthew Brost wrote:
-> > Drivers often use workqueues that are in the reclaim path (e.g., DRM
-> > scheduler workqueues). It is useful to teach lockdep that memory cannot
-> > be allocated on these workqueues. Add an interface to taint workqueue
-> > lockdep with reclaim.
-> 
-> Oh that is so wonderfully evil. I'm absolutely in favor of doing this.
-> 
-> But can't we check for the existing WQ_MEM_RECLAIM flag in the workqueue handling instead?
-> 
+Hi,
 
-Tejun suggested tying the lockdep annotation to WQ_MEM_RECLAIM, but the
-entire kernel explodes because many workqueues throughout Linux don’t
-adhere to this rule. Here's a link to my latest reply to Tejun [1].
+On Mon, Oct 27, 2025 at 6:19=E2=80=AFPM Caleb James DeLisle <cjd@cjdns.fr> =
+wrote:
+>
+> When on a Big Endian machine, PCI swaps words to/from LE when
+> reading/writing them. This presents a problem when we're trying
+> to copy an opaque byte array such as firmware or encryption key.
+>
+> Byte-swapping during copy results in two swaps, but solves the
+> problem.
+>
+> Fixes:
+> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+> mt76x2e 0000:02:00.0: Build: 1
+> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+> mt76x2e 0000:02:00.0: Firmware failed to start
+> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -145
+>
+> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> ---
+>  drivers/net/wireless/mediatek/mt76/mmio.c | 34 +++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>
+> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net/wire=
+less/mediatek/mt76/mmio.c
+> index cd2e9737c3bf..776dbaacc8a3 100644
+> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u32 of=
+fset, u32 mask, u32 val)
+>         return val;
+>  }
+>
+> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+> +                                         const u8 *src, int len)
+> +{
+> +       __le32 val;
+> +       int i =3D 0;
+> +
+> +       for (i =3D 0; i < ALIGN(len, 4); i +=3D 4) {
+> +               memcpy(&val, src + i, sizeof(val));
+> +               writel(cpu_to_le32(val), dst + i);
+> +       }
+> +}
+> +
+>  static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+>                                  const void *data, int len)
+>  {
+> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offset, da=
+ta,
+> +                                             len);
+> +               return;
+> +       }
+>         __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len,=
+ 4));
 
-[1] https://patchwork.freedesktop.org/patch/682494/?series=156284&rev=1#comment_1255380 
+Maybe just replace this with memcpy_toio() which does no swapping at
+all instead of double swapping on BE?
 
-> Additional to that we should also make sure that the same wq is used for timeout and free and that this wq is single threaded *and* has the WQ_MEM_RECLAIM flag set.
-> 
+>  }
+>
+> +static void mt76_mmio_read_copy_portable(u8 *dst,
+> +                                        const void __iomem *src, int len=
+)
+> +{
+> +       u32 val;
+> +       int i;
+> +
+> +       for (i =3D 0; i < ALIGN(len, 4); i +=3D 4) {
+> +               val =3D le32_to_cpu(readl(src + i));
+> +               memcpy(dst + i, &val, sizeof(val));
+> +       }
+> +}
+> +
+>  static void mt76_mmio_read_copy(struct mt76_dev *dev, u32 offset,
+>                                 void *data, int len)
+>  {
+> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+> +               mt76_mmio_read_copy_portable(data, dev->mmio.regs + offse=
+t,
+> +                                            len);
+> +               return;
+> +       }
+>         __ioread32_copy(data, dev->mmio.regs + offset, DIV_ROUND_UP(len, =
+4));
 
-Currently, free runs on the same work queue as run_job. We could look
-into moving it to a separate queue, but that’s a separate issue.
+And memcpy_fromio() here.
 
-IIRC the workqueue_struct is private and so we can't fish that out in
-the DRM scheduler without adding helpers to workqueue layer. Ofc we
-could do that too if you think this would be helpful.
-
-> Otherwise we run into the same lifetime issue with the job and memory reclaim during device reset as well.
-> 
-
-My patches in this series taint the submit_wq and timeout_wq in the DRM
-scheduler [2]. I have a solid understanding of reclaim rules, and this
-change helped uncover some convoluted cases in Xe—specifically in our
-device reset code involving power management and reclaim [3]. So I can
-confirm this has been quite helpful.
-
-Matt
-
-[2] https://patchwork.freedesktop.org/patch/682496/?series=156284&rev=1
-[3] https://patchwork.freedesktop.org/series/156292/
-
-> Regards,
-> Christian.
-> 
-> > 
-> > Cc: Tejun Heo <tj@kernel.org>
-> > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-> > Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> > ---
-> >  include/linux/workqueue.h | 19 +++++++++++++++++++
-> >  kernel/workqueue.c        |  9 +++++++++
-> >  2 files changed, 28 insertions(+)
-> > 
-> > diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-> > index dabc351cc127..954c7eb7e225 100644
-> > --- a/include/linux/workqueue.h
-> > +++ b/include/linux/workqueue.h
-> > @@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
-> >  						1, lockdep_map, ##args))
-> >  #endif
-> >  
-> > +
-> > +#ifdef CONFIG_LOCKDEP
-> > +/**
-> > + * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
-> > + * @wq: workqueue to taint with reclaim
-> > + * gfp: gfp taint
-> > + *
-> > + * Drivers often use workqueues that are in the reclaim path (e.g., DRM
-> > + * scheduler workqueues). It is useful to teach lockdep that memory cannot be
-> > + * allocated on these workqueues.
-> > + */
-> > +extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
-> > +#else
-> > +static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
-> > +					   gfp_t gfp)
-> > +{
-> > +}
-> > +#endif
-> > +
-> >  /**
-> >   * alloc_ordered_workqueue - allocate an ordered workqueue
-> >   * @fmt: printf format for the name of the workqueue
-> > diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> > index 45320e27a16c..fea410c20b71 100644
-> > --- a/kernel/workqueue.c
-> > +++ b/kernel/workqueue.c
-> > @@ -5846,6 +5846,15 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags,
-> >  	return wq;
-> >  }
-> >  EXPORT_SYMBOL_GPL(alloc_workqueue_lockdep_map);
-> > +
-> > +void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp)
-> > +{
-> > +	fs_reclaim_acquire(gfp);
-> > +	lock_map_acquire(wq->lockdep_map);
-> > +	lock_map_release(wq->lockdep_map);
-> > +	fs_reclaim_release(gfp);
-> > +}
-> > +EXPORT_SYMBOL_GPL(taint_reclaim_workqueue);
-> >  #endif
-> >  
-> >  static bool pwq_busy(struct pool_workqueue *pwq)
-> 
+Best regards,
+Jonas
 
