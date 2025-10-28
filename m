@@ -1,135 +1,87 @@
-Return-Path: <linux-kernel+bounces-874602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D54C16AA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:50:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64865C16AAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:51:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A7D40323A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:50:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDBB74F139F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28752BEFE5;
-	Tue, 28 Oct 2025 19:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lQENu0VY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2C12BE020;
+	Tue, 28 Oct 2025 19:51:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0BE2264CC;
-	Tue, 28 Oct 2025 19:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37872264CC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681047; cv=none; b=ReJ4oZN8jCQANQgNtpP8zqOQQ8hTFTgay9BIIVzt8wqvI24o4NJt+r2yhWYLjBz/uhGczvMaZv4XLekArxJnIT3GrabOXAM+KPTB6IsetpB1IwObR8LmudQ3a7gZelgeVY1ns8DW/SNMWD4Dv0wiHeYp40hvI02eqr1MWOAXo2I=
+	t=1761681068; cv=none; b=iN/nNTxhYKSqnlnz/vLuDndnzDvVvD1Baej7lrp0I2cX8GWWgV2QUk18uXIsanFS8DCIAyr3tAX4QGACZb+tqCTI2VhahAVoJLjUL5XgcQtY24YppoxUJ7woyHh/vsRr+pkybLsWAONu8HW6duxFiXODYCNb0v4mBuqo/SqRyi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681047; c=relaxed/simple;
-	bh=urY0TsI3YpOvkzhC5Aaj7bm6xndrDnvaVbi//LpjLyk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IPKsql/ifEF4MU8tncSOm0zCn/Rwofje2qIDEVLVpgFiegq5Lt4XTZnl9mf2WLiWNQx1syBDg6f4x+Edbl/Ow2T/Jrx2ieLoB2mddki/KY8gFTzqHrb7emkH+Kre6/zk89lNGLWY+onYgR1eluD/VXF7qsbiaKPcSdPjTkS+hw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lQENu0VY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 220DBC4CEE7;
-	Tue, 28 Oct 2025 19:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761681046;
-	bh=urY0TsI3YpOvkzhC5Aaj7bm6xndrDnvaVbi//LpjLyk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lQENu0VYfgQnZZA5Br4Ng5xQ+VspOzihA9JzG60ugUFZ+jycvOkgfLV4JvyKymelk
-	 vI4n9Im3YnTVF2qulK3NATuo3OntkWDbc58CQ5HnMyLNO6P/d6+3svew42OWgTsYsy
-	 oXDfHLUjHhM+IwuYS0DNRop6OqbogCTYK3Z+YytBHc7CT271JyFsWwIucFqoxOeI1p
-	 M929jQwCxGFU+TMgcv8OxpS9ESL8Tn/djL7olUT3dqxFD+LsRZ/V/5ZQ2C7nye+nr9
-	 ArMpNa5CezshShvaZfZjtVahpydr3OZM1qeLWQ+vyEzvmPaSapQyioLb6SRRTXPXY+
-	 UHwGMHTcvBgEQ==
-Date: Tue, 28 Oct 2025 19:50:42 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	"magnus.damm" <magnus.damm@gmail.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"biju.das.au" <biju.das.au@gmail.com>
-Subject: Re: [PATCH 02/19] dt-bindings: serial: rsci: Drop "uart-has-rtscts:
- false"
-Message-ID: <20251028-desolate-roulette-e678476fb039@spud>
-References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
- <20251027154615.115759-3-biju.das.jz@bp.renesas.com>
- <20251028-griminess-undocked-b6918de546fc@spud>
- <TY3PR01MB113460F737A66E71E86482C5286FDA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1761681068; c=relaxed/simple;
+	bh=zlOxXjStvazw+HIDVIJrsZrO4IZd+5XWEhYR2TuzQoA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=JwPrB49iB09MuLVTNwQ6hImx9SptaZXp0LTrm2XbozWoWmj8OPfKt6QU4ZE0pZ4TbRHaPuR0/QAZGZ9RRWq9oYaKaQ8nMsfVG7kbAxOQ61JJCDkWr4slWzpN1dK0axj80N3viUfR0Fv+tyqxRarKjECIzWki+XWScDgc53Tq+iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430da49fb0aso178097555ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:51:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761681066; x=1762285866;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ktg8b7RrjRxT9a8pGC1gLDdE60z5t3F9fC1pPJ2FifU=;
+        b=hBoPXldrFPhxnixKHuuozLIGVj2gNKoG4xDY5ZMCPKlkAEDA5zG9f6JRt+lPIKS43U
+         jajkcRmmcvhAzsbmWB0f3rUmNILPgSG4UP5eMLmX1pRyEDfdV13jnOi6LFXYCGn5Xab/
+         ze+NTgGw1LY5hcDt0E8CpfL2sgtM4+I8Jgg5Oj8wj9GhsBlmoKuehCceopbhN3cS0qIM
+         scRNk9InKblDo31CBfjiCSQyfXaMQfQAXyhzfj8k+kqsHB44A8qBAY02XSXCtl+mpI00
+         IRyEwmZR/SUrcEzqHUdirBL5V8zWC0SJdQAVXD0Rxch9GyzpPp6ud5ampVeL0TscX6LF
+         +ybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/4tfBMHKpZtLOQYLZ5tCdl+WrJthSRpwTcIzTKIvpGXpn+swwj0MOcqi+HvEhz65KC121CC/IHx5/nT0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxopM4du7DEFYlhG9q5+7Z5gEtnUn28aNz8YipsXr24o510dV0o
+	iCTBpN89sZQnXDKP0FoOKCSm+qr3Tno9VXchRoINwUQ41Aq1n1YC1fOKU5oHXcUIMlGamvNaLkF
+	8pFZXDdJJ9XnC9jpE2OSO4H2W0c+rLCD8Dr4BlALQbj24DZnE8PcA3wLEz+U=
+X-Google-Smtp-Source: AGHT+IEMnOgitIyFG5E0bVNeEpG9bJdb5nuAXAjTHBvbPGrkh/1+5x4F3T0zdqBJJdtFyHvBEL9M1B1QYKRuG6ksGCFaXYqQU0M8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p4+0ILj/kKp+n3xh"
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB113460F737A66E71E86482C5286FDA@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+X-Received: by 2002:a05:6e02:221d:b0:430:e5a4:6f33 with SMTP id
+ e9e14a558f8ab-432f902b57fmr5640195ab.15.1761681065943; Tue, 28 Oct 2025
+ 12:51:05 -0700 (PDT)
+Date: Tue, 28 Oct 2025 12:51:05 -0700
+In-Reply-To: <20251028182251.0GoZ4%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69011ea9.050a0220.3344a1.03e1.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---p4+0ILj/kKp+n3xh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Tue, Oct 28, 2025 at 07:39:41PM +0000, Biju Das wrote:
-> Hi Conor Dooley,
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: 28 October 2025 19:28
-> > Subject: Re: [PATCH 02/19] dt-bindings: serial: rsci: Drop "uart-has-rt=
-scts: false"
-> >=20
-> > On Mon, Oct 27, 2025 at 03:45:49PM +0000, Biju Das wrote:
-> > > Drop "uart-has-rtscts: false" from binding as the IP support hardware
-> > > flow control.
-> >=20
-> > Why is it being removed, rather than only being required for the existi=
-ng devices? It's not clear to
-> > me that the comment about the IP supporting flow control excludes the i=
-ntegration on these particular
-> > devices from somehow having flow control disabled.
->=20
-> It was a mistake previously as the driver does not implement hardware flo=
-w control and
-> is excluded in device tree.
->=20
-> Actually, the RSCI IP on all SoCs supports hardware flow control.
-> If a channel need flow control it can make use of the property uart-has-r=
-tscts;
-> That is the reason for removing hardware flow control disabled property("=
-uart-has-rtscts: false")
+Reported-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
+Tested-by: syzbot+727d161855d11d81e411@syzkaller.appspotmail.com
 
-Could you update the commit message to be clear that that's the case?
-Just something like "as the IP supports hardware flow control on all
-SoCs".
+Tested on:
 
-With that,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+commit:         4fc43deb Linux 6.12.55
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=1192432f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fe7b438dcda9b036
+dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=149d3614580000
 
-Cheers,
-Conor.
-
-pw-bot: changes-requested
-
---p4+0ILj/kKp+n3xh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEekQAKCRB4tDGHoIJi
-0lbqAQDrbvjZGyqEa4vMZ9yAGpwQWkCZPHRSDevgaBUe8ItJyQD+I/ga4At6wgCj
-t8bAQYNoMxGxgMXnkFB1xec89NgWzg0=
-=pS4z
------END PGP SIGNATURE-----
-
---p4+0ILj/kKp+n3xh--
+Note: testing is done by a robot and is best-effort only.
 
