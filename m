@@ -1,474 +1,359 @@
-Return-Path: <linux-kernel+bounces-874500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236F6C16750
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:25:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DDEC1671D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6CE64FFD20
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:25:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E27E0356642
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A3B350D6A;
-	Tue, 28 Oct 2025 18:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NLKVUuq+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FE+2lsII"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F0334F495;
+	Tue, 28 Oct 2025 18:21:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49134DB4F;
-	Tue, 28 Oct 2025 18:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761675728; cv=fail; b=Qf6oGovy5yt1BC4V46zTNpmUP29U44qE5cWtewGLKIAOfl7hCbaV/QYfVAH+bvEUEQxlmnDjDPCjwzJ/aFG3PDiAYlCC0h8+damqKINS1Cc3j27hqSbdAM36wnRNz6nkBZ+A4Tde6oQTYLmEseAPxtrn30UzzPLfYeGFulzvMNA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761675728; c=relaxed/simple;
-	bh=Fy7SdeXvLH/JXRvh1QnZtTi27cOjETMnLu5jKkabm7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GwgSrrAkZo5GsIluBrnwhuIi2FU7vDytI6y/JVqKH6sFyGTjaUIuDg3OIxvrPA9+2TESEWXh0o9nxOSm3310d17sMSRgBPIi1igj8pmx74XB12AO8/R6Bm/8ztUcs3dj671qhoM3cbSXCMPjUyK3KJRMwWhqORaCgdZ7cRfWLnY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NLKVUuq+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FE+2lsII; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SHSF4t019338;
-	Tue, 28 Oct 2025 18:21:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=1tWYaTYXbt5qhrhUVj
-	LjsTq0wyYSA3bBuPCkr/IgVlQ=; b=NLKVUuq+5k7HJxJ+NRRB8ao4lypBqlJZwi
-	VxwVbVElwf+Rug2Te9XJpTmSR+A8DRq3hhWWZ0WgSm0u1rdzz3DDQtm4wL7qKjU9
-	iJiqOqtijS0im6QfAZsMNk6AOzkcOgOU+ZS1q5ie74PFYj1IiVWUYFXL7cPl37fW
-	JTXEDLVbaw8kI4VTZOR9tlcxFGsZLb9AfE8qbM+iYSX6N6NId8Er+fTXYh2J6Uut
-	zjA8vgO7rBaofkHAOJMJRsUT9zotveafNwG1EgXpw+MLLVOWpcVi5cYKiALeLxhB
-	rhE+oV4QwlztuWnNsEL1M3pz/w0/eb1cX3/Mfb55f1MOJ6xQ6+Tw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a22uwm8xb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:21:01 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SHYeQm009058;
-	Tue, 28 Oct 2025 18:21:00 GMT
-Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazon11010006.outbound.protection.outlook.com [52.101.61.6])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n0ftx42-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:21:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lk1qBK47wNBFEUx5djBLc19MzVaLGoyj4j8dJYI49UvW7zuCRAj0i09qFwt3mJUd5ecn6sBLnCkfwkpP6zXBIAoxdaQ1r5MHtbG1HoE8tfBFfaiy3AmCzQdIGRtK9kOcRcPgBaN0g29k4dXGX4BMrFEfm24YNd1HZn6/U/UK3Ss9l+asw6NS+8o9WV9E/GWbrMOdShNi+R0X8JVgS67Qy++EuaEIEA1A+THpEVeHcvByZZwbCsGn9UcvkHV0A8Un4QRqxNkgsvTUVFUgRnLkvJvU9+BYaCkbWlrfsgLjH6eFAtel8mMqRO+NhJIEZUZ1FiSFGIy1sLt5LsU3+yGV1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1tWYaTYXbt5qhrhUVjLjsTq0wyYSA3bBuPCkr/IgVlQ=;
- b=Jzcp0zHDqij1TxzChW9ON0V4r4D4Xcef5Brb2EBG+wtWSqHtBk2Vz8iWDKga6SEAu33s6jiD+qNKjolfGGBlFWvYWQiQhOLD04VV09RaDKiLHysEE9hzMyOrg71S8XWaed4yeBIV/mxbuI+3g8WwtChXMLBzMdc82KhaOjup6W+iR2gmHYN7Qd98sxu39fECkn/x5nubeP4HclIZwlOVEcAls/9mRS256WUPWdL0wF3pPCJKqq7KijDzcgxOqziOHerpEya+MI2kV2AJxaUfjmD10iBk3TmJeGP6sERf+bQKJwrfKRPYt6xdxZg1fMN3hu47Du9GZhRPNUzvIw8mxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1tWYaTYXbt5qhrhUVjLjsTq0wyYSA3bBuPCkr/IgVlQ=;
- b=FE+2lsIIQm7nbmxxn0fUFlDp6+Dx16mmE0IgeYrejxS4HeTLVRZ9NIxIxd990ukLCnZi6xU/h1VWdvAxSWqnylvhxWkxmSXj/5daIG/+ij+147oIoOvok6AfW8ATFhYBfvvJmLAstQmXr9YP1WHhqn8KGf2cGb9ul3YncdYSnh4=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB4687.namprd10.prod.outlook.com (2603:10b6:a03:2d8::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 18:20:56 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
- 18:20:56 +0000
-Date: Tue, 28 Oct 2025 18:20:54 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
-        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
-        Lance Yang <lance.yang@linux.dev>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
-        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
-        Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
-        Leon Romanovsky <leon@kernel.org>, Muchun Song <muchun.song@linux.dev>,
-        Oscar Salvador <osalvador@suse.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
-        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
-        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
-        Pasha Tatashin <pasha.tatashin@soleen.com>,
-        Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
-        kvm@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
- confusion
-Message-ID: <ce71f42f-e80d-4bae-9b8d-d09fe8bd1527@lucifer.local>
-References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
- <20251027160923.GF760669@ziepe.ca>
- <8d4da271-472b-4a32-9e51-3ff4d8c2e232@lucifer.local>
- <20251028124817.GH760669@ziepe.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028124817.GH760669@ziepe.ca>
-X-ClientProxiedBy: LO2P123CA0004.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:a6::16) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF93345CD6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761675664; cv=none; b=LNUKofQOe5j8CNba4xqv+RIQGdur7JnASPuYCoryYaROAayP4nyuCHFpgG8bl4Ct0XQC1s8Z7shtrgicc0W9s7nDajrr2vQPhHL6yOKwRm/hpDlpa1lcltcd0oJTAEStNo6ojiwNOxb5exSvyxT9Lflpf1RxW/vGFY0RK/16inI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761675664; c=relaxed/simple;
+	bh=8qNldGNzWL1WtJvjnyg+s05Oc2KiVwd9hVAvpZN7oos=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Vl0Is0IlaJaccKmbeqg5Jc2SzxvVP6B7AgC1OHQtAgsEutMPkryA+9hY4pk/mbODdKqMmptRn0XI5UiRr6RtBJyoOP/bkuf26KVekrboM9qS6U6ebRfL+yZemw7Mq6JX9z0c/27+L5l1EJyy6uCWNWqCMSg1pR1ONsI6pO/Wr80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431f20be851so46851305ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:21:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761675662; x=1762280462;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmTmeUgS9qACl94yTOySxNgklAagaDvCrK3aaZPOHc4=;
+        b=sFqLnEUhOylkzgjDJv53QAZjn6T9s4X0saq0UYu9LZ50hX3ZeAyB0LvY611UYIyH/E
+         lO7s0lb1dQS358eD5P67Ji9hYt1/ODWLfakn7/oz3yLgnYyL3mwELPLJc+w/05goH9K8
+         MdWFBx70DcaPnto668WA1gLm/xr4dyyPsMLw3jRyFZqO7PClfATJJs5DzN2h370sUUDm
+         +y5SVWpcwQ0HgwPhesWrLMIcryEF4PEPsabKkUnLzBcUL6f+uFEh3COntcoZfrpPi9xw
+         Ftiwd5iceou7+7QPglTg6U6yxXZjlQ3s3m5hUsz7OcB4DVjsL8skHksrQM0rkwFaoi0C
+         6X0Q==
+X-Gm-Message-State: AOJu0Yzxe4dN7hpk5mf8Ar167phuP98ZnD9QpwpmoswxwVtlryCiU/kv
+	/vWAYA++hXO9gPiVRfersCZA5wtW5s4z/LnRLgVYaHEqOs7Tz69g/Yl9XeISAIelOhvpckrsfjX
+	lOngVSUrBcckGcGVuOoJ9CT4g9MqCUdyB9jHX7G7EgPmDiciWXZ8BPIkoxRQ=
+X-Google-Smtp-Source: AGHT+IH2QF+UM1GJ4ExDFctost3LBde0J+X1QwIzu0A6odJ7zUgusKWNbUIC3AxwILyd2gXkyypNwxA5gcjglEQZWSezJKEa7cCu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4687:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2210f53-7a60-48ee-e87d-08de164ebca7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?maDAk3NVzIhDneWIJKbE0PeNcT8zJnjQe4uoTiATCdnBbvkqDHMIa+blx/jy?=
- =?us-ascii?Q?4tZY07C6OU2z9G/880ZGOJ46KkTmBI+NQQFKI/8dSN7+lIPKELzkeheOAU/W?=
- =?us-ascii?Q?+iCcGcUIRN3IW0mJflHr+MY41YDAqawXg8EU8CpgLmEDULJywyT9r1cEUWy0?=
- =?us-ascii?Q?XnmkdESCsgf6RZTOFBNZAC6RML7yu7dApdL3aUI9HWdF4rWFnpOZ3EJkDblP?=
- =?us-ascii?Q?ll7BJBiNMlL9AX084G4pEXkCqkGnpTriJES6w0mLfMiqRdSKeGcoxfYErRnx?=
- =?us-ascii?Q?+uRHFgdQ9Tvdy0L1J8TRQ8KZkVox3GrBefyUoohNtu/kbRFBUpCEtdPhSk7Z?=
- =?us-ascii?Q?z9MOutDwz0yjcbBMpXzEt3qHQosBoqoqoy5JUVustlRva/ckDo8StPV3vO3d?=
- =?us-ascii?Q?qoJWZNHBqT9Vbp0Cw+TNe6YIWXhDuoZUKdgM8SPTl64T2SL6ekDcsXe2P+XO?=
- =?us-ascii?Q?Xm3/HyWjFXgbyPxfPqW5h2sTw0hOIxYh2NFyLzEtMeAyEfczl7/41AxW6thb?=
- =?us-ascii?Q?NehHpe4Hb+YMXzdi4op7HqqlMr1bC5z330kvGyqaYuEonVCjfgbYGuopRV9J?=
- =?us-ascii?Q?JsiLzRYk+iIyF/tXzwopx7gi34WN44cgjOZ9qEH3pnMONkX3vKGLkaLf6G7w?=
- =?us-ascii?Q?bSL2/E5efzTNWk7IycVjocemzM3T8vwmWlxRzM47ojh4MRPRdkL+lFU5NC5I?=
- =?us-ascii?Q?nxZLD0G2scEMuFNaUUVbdmpO0VN35mTr6ZMx62frU/3pYSZ9wt1OakbxdfDo?=
- =?us-ascii?Q?XIldYK/VBUUZZxMf4Dox37mfwjF94ZLNjc2RzZwYhOYQ5GLfGYX1zoct588E?=
- =?us-ascii?Q?k5MjpbuwLBcMCXK54Q48x+RtC8Fqzv/LsuzyakvxusxfYJtzS6SPcigqwGlu?=
- =?us-ascii?Q?DzbmuLsPuNPUHCYncZFbQS0ZrPIlcpVgDkLv522D3Wc/BADE/Bs1fz/iG0E9?=
- =?us-ascii?Q?umRAJhpCodysHDJ3EJZsTtvLwJWEDa8/OKkq1CPIwG6ZQZmfKWCsi7PjCvT/?=
- =?us-ascii?Q?FnZ4BGdkGppOApriSFKns29X+F5hYJ1qAxxxLgmh3anmGxPpbQZBZ82LjKcs?=
- =?us-ascii?Q?eJHkkHaOs8bLu8VmDzfUcEJ2WxT2XS91aqre+q2hv3Lbp1HCuDei/OWk4Sxj?=
- =?us-ascii?Q?x1kRSH5N5h6BpCcVnao44znTFG1p4SVQRCdjIUzokYoxQZMQrkmClMbtOrZy?=
- =?us-ascii?Q?cwZtz29NWESJM+Hkm8OdbohwZLryA/gzOPL37oP/R67Jv7/Unn448Ub7ii4b?=
- =?us-ascii?Q?sIIqyhN7MgsJ8yHl9Ek11DrU04yRdETMzUgvKEXvWhYbhdD3+0qq3FTbu55W?=
- =?us-ascii?Q?apC4UT68B/jYu0cd56fBVf0AZTZlu6xHFhDu/YNGae56HQ8MGe4kfhbwv0Dl?=
- =?us-ascii?Q?rn1F+8MB6NFMlKETNYPJyLAg7n33JPc82C8G9o0OVQVFkr4M8bDrtdsi1enG?=
- =?us-ascii?Q?sxBYKiIzTql8BVN319lT61RkHd2ySWx0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Ce+UmMoBsU3KMqFWyU+GnzrOon8D0oXa2yvUbr/djCLZApdrq3eTJy9RaTnT?=
- =?us-ascii?Q?wgQXEzs//4wyJw3dXYUhoeXpYUgqTTp4xMfJX0Tiv+5nRFxKjRVcLgTjY+W0?=
- =?us-ascii?Q?FDk6tDCitGfA2nAGOGA9e3POO4qMjoeg0zcmlQLh/mzQg1qytFgZ4hxoGmS+?=
- =?us-ascii?Q?bADTr9Rb0w8QUOYjkhhVCRiwQN0tVU3wdzVza2S/x0ycwub9tXh8ietsxe6O?=
- =?us-ascii?Q?DSkwD37/X/9b/jewFRk94kT3IzqLobW+KsbU3fh+iazENEe6WaL0Rh/lgGQr?=
- =?us-ascii?Q?HTMB4kx3xwBswuakLimRQ50CHEnl+GiMYqsWW0hAkKH8u3PHrBBrhfObiQIU?=
- =?us-ascii?Q?vi0upizaMwK5qR8+KPHBRFOJIcHLBs+0MstL2UZ631hQSGJEZw43sKTjyUkC?=
- =?us-ascii?Q?O0K6uF8cplt+ctLbGu6sIBywLnlrlCAKntsLCfR1YhwWphNeaTxcexAl7BTV?=
- =?us-ascii?Q?t0gBgy4qXDbCvcWCxLLNG+trCzY3L50bw3X7muIEpq4n1FXy93CiR8CXciOy?=
- =?us-ascii?Q?lLFZ9XETnJ1QWNPeab8UntECLQCiqHJWd8fHsNI/gfNw2yjK84VHdYVoehva?=
- =?us-ascii?Q?NZ9f3vGc1ZSDuuvV4EaQeQ4b55iWoKf7bz7LmPiU2faYbBTEMVhIaVaqfBpX?=
- =?us-ascii?Q?ZJZUiOimHdhGmn82X3a4N94tcQFNAUPT8SRqFcIFpqRzEAaKs1PbdGzz0Lv4?=
- =?us-ascii?Q?0o/Dr8eds0lBUUMDwK/X5veS4BmrJJj8xlPZMC0bFxqBBrCRZZOyZN2BD7hT?=
- =?us-ascii?Q?WH1Ro1xM0sDXxQ2EbA9EfsCln3aMYkL17Va5DFoz3e6WQxOla2KUXCyHG3JV?=
- =?us-ascii?Q?NH49zTjxZUB/0g6EFGkCUaynqbP0UaGNcGw6WP/fnS0BQ3J2sR8YCCiR078+?=
- =?us-ascii?Q?pePnNAZX9NEqU3CvxbpCV0xbfofylPMYbj197GMXNMAd1cdA7RLVBWBn2Y0c?=
- =?us-ascii?Q?FYrWsxnU4AncXwdsJ7FnS77o65xXMQL4hDaOnr5C7rcLzSrQviZyZUQqSgOp?=
- =?us-ascii?Q?GTidmfrmdEL7oSq0mweIBMN/zeT8q7X///X3y/knxPP5ll1DzAjJsE35+b5g?=
- =?us-ascii?Q?aM+WGgS81SMwepbSaqBu08XI36auSwX15AsubK3R3F/yQtdZlNXZB2+KvpuL?=
- =?us-ascii?Q?d4tiLU2uzd9tx/JecEorufu3FwAME/VdgFbYSW09unNQPKcnkeAR1d168KJF?=
- =?us-ascii?Q?hG649x/TEU7BaUOrXC0DJUNLGO3oKA5kqywEdyhGU3CKS6+OguupH32hDPTT?=
- =?us-ascii?Q?sODQCRRqgGgdrfg0smBIZkfkYQln/YiTMPLXxIOZBic1X6v8ziytmlZPToxG?=
- =?us-ascii?Q?RiiVctoy1JOFzYozaSVoboJt8y3IumOS/GeVytT1ntzMZxsQCPBaPsNZ+Roj?=
- =?us-ascii?Q?n4VC38GG7ivkBo2MXV3lMOyCrBiNe4BdauauWLPQ/epkCabUgKN8fsENl77c?=
- =?us-ascii?Q?o0Ty0w1g4cdllE3UnTKHLXxVSIAPyk1X3plL6ySyl+wTA1wHEYKfn1pRvn48?=
- =?us-ascii?Q?ckfUAlwTC8G3E6qhZ0VkzrdBN4kMhDol/Xy46w0qN8Y6u12STRD2TDrs2O46?=
- =?us-ascii?Q?Qkb/sLS26Vuceua09Wa2aVMvZJxn6NNRHfabFa5BtSa0WxHZx1+m9NZNOqZY?=
- =?us-ascii?Q?bg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	/5jNL58ESbd0+cKYwsUCnUqbKAOCiIQKbgyyqiDqt6xhaJFTxWX6l5dAwJrJOHCya5gxSS+JN4asoipPEsnRKZp52GJXnJiqVULoc8qJ8ZQoXmWYKFf+Z3MM4r7GuBUdtGC4I1p8vb4pmGN2tEWflRs1LSU96eZI/Zy5CugJENuci1IQCCG0OGBdGdcJcSubFQubIvmGvrGQqVsWLbspDXc2/ht8IXPC4CmRAh1HBvA1X9/7J+GazOYFbQtOj+oX775NFJO4ePn+ldE9TSnoSOC1K9+AAaS2dy17oO01GcpbZUtEzIshEP7Y/6vMKl9sT1PIc41TfoPgny77e8DTiBx0NDIgtX/mnsSVzxJ6RdVvpAZRZIm+buAkjgNPSUMuhKz86JsGy/+zzoRlVvyfo7+ocDIO6uQceYCY2zdpQTbgLpx4ScKcCk5KXG2p4kPkEItjaPo0Q66f0IPXx73plJ9ykOXTmAymner8XTczU47WUdyFvX9yBQOpKgz8NW77LOL2Q0n/MRiX8vJelc6ViV6kKqSMIGKENl+uog9h7MT5VN/JoIi1bBrRmmaeh9oofXupMGnj4N1OFjuUCLlWLsVY/7xkfJGihe1uBLKsRDo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2210f53-7a60-48ee-e87d-08de164ebca7
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 18:20:56.3301
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DObTnVJ7Gl3ORWzsRZAL7zFk3y0s7AYjGRKLZOJKzOALywDH6spw0JI0yfPah4eKN5pZbmozb/cu3/HdfGwD97AU0SF20vVH5i1+2gFKsjI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4687
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999
- adultscore=0 phishscore=0 suspectscore=0 bulkscore=0 malwarescore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2510020000 definitions=main-2510280155
-X-Proofpoint-GUID: IYcLt0RXGypCiRvXN2UGTyzeNw8PGFRp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1MSBTYWx0ZWRfX/szzCbqok8l+
- a8EhtelLwZei7jL7DCYC5RpCn96YHoTcgprNDgeD1chuIWYV/lI/7bz8AaOMpMjgeO8xTCXIbyF
- BHLrWNGCT3l238CPx7lWQVHXsItYkhi4gXsrmNh0X0giA+67pHvKx3Q38KGDp906QoqdoF5Uaow
- OmdKniEr80OonNeQ3jBVfdXhFMorZ0FTMLK0mapyZG416gOObUgyFE3CnvkaWk/FVxXW3so0xOj
- LACvI0kIIrPga5stXs9jk4n0V9Y7KM4BZpHw9qSgPxQX0B0tBWfEN7FxQXnFHMegbS0SRPW0cBN
- Lvuax13ulFbvihYDvJZNUeccM2lB33Qy8pAILiiheAZX9a+AXyKoFBG47WzCGG2K/ivrHUYlNoS
- iAuCYavbFaMDAnoAmfN74Fx8szkVd6R3VU+G/w/byLEicuQYQvM=
-X-Proofpoint-ORIG-GUID: IYcLt0RXGypCiRvXN2UGTyzeNw8PGFRp
-X-Authority-Analysis: v=2.4 cv=Ae683nXG c=1 sm=1 tr=0 ts=6901098d b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=4_-8tt-Ts-JjSCUy2Q8A:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12123
+X-Received: by 2002:a05:6e02:3181:b0:42f:9353:c7bc with SMTP id
+ e9e14a558f8ab-432f8f81ba3mr2498695ab.6.1761675661972; Tue, 28 Oct 2025
+ 11:21:01 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:21:01 -0700
+In-Reply-To: <68e48f33.a00a0220.298cc0.046e.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6901098d.050a0220.32483.01cd.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+ linux-6.1.y
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 28, 2025 at 09:48:17AM -0300, Jason Gunthorpe wrote:
-> On Mon, Oct 27, 2025 at 05:33:57PM +0000, Lorenzo Stoakes wrote:
-> > (Note I never intended this to be an RFC, it was only because of
-> > series-likely-to-be-dropped causing nasty conflicts this isn't an 'out
-> > there' series rather a practical submission).
-> >
-> > To preface, as I said elsewhere, I intend to do more on this, renaming
-> > swp_entry_t to probably leaf_entry_t (thanks Gregory!)
-> >
-> > The issue is no matter how I do this people will theorise different
-> > approaches, I'm trying to practically find a way forward that works
-> > iteratively.
->
-> It is why I suggested that swp_entry_t is the name we have (for this
-> series at least) and lean into it as the proper name for the abstract
-> idea of a multi-type'd value. Having a following series to rename
-> "swp_entry_t" to some "leaf entry" will resolve the poor naming.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-This is addressed below.
+***
 
-> But for now, "swp_entry_t" does not mean *swap* entry, it means "leaf
-> entry with a really bad type name".
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+Author: dmantipov@yandex.ru
 
-Yes.
-
->
-> And swpent_* is the namespace prefix for things dealing with
-> swp_entry_t.
->
-> If done consistently then the switch to leaf entry naming is just a
-> simple mass rename of swpent/leafent.
->
-> > > That suggests functions like this:
-> > >
-> > > swpent_is_swap()
-> > > swpent_is_migration()
-> > > ..
-> >
-> > The _whole point_ of this series is to separate out the idea that you're
-> > dealing with swap entries so I don't like swpent as a name obviously.
->
-> As you say we can't fix everything at once, but if you do the above
-> and then rename the end state would be
->
-> leafent_is_swap()
-> leafent_is_migration()
->  ..
->
-> And that seems like a good end state.
-
-This is a two wrongs don't make a right situation.
-
-I don't want to belabour this because we ultimately agree using
-leafent_xxx() now is fine.
-
->
-> So pick the small steps, either lean into swpent in this series as the
-> place holder for leafent in the next..
->
-> Or this seems like a good idea too:
->
-> > We could also just pre-empt and prefix functions with leafent_is_swap() if
-> > you prefer.
-
-Good. I may even go so far as to say 'thank science we agree on that' ;)
-
-Yes I'll do this.
-
-> >
-> > We could even do:
-> >
-> > /* TODO: Rename swap_entry_t to leaf_entry_t */
-> > typedef swap_entry_t leaf_entry_t;
-
-BTW typo, obv. meant swp_entry_t here...
-
-> >
-> > And use the new type right away.
->
-> Then the followup series is cleaning away swap_entry_t as a name.
-
-OK so you're good with the typedef? This would be quite nice actually as we
-could then use leaf_entry_t in all the core leafent_xxx() logic ahead of
-time and reduce confusion _there_ and effectively document that swp_entry_t
-is just badly named.
-
-This follow up series is one I very much intend to do, it's just going to
-be a big churny one (hey my speciality anyway) but one which is best done
-entirely mechanically I think.
-
->
-> > > /* True if the pte is a swpent_is_swap() */
-> > > static inline bool swpent_get_swap_pte(pte_t pte, swp_entry_t *entryp)
-> > > {
-> > >    if (pte_present(pte))
-> > >         return false;
-> > >    *swpent = pte_to_swp_entry(pte);
-> > >    return swpent_is_swap(*swpent);
-> > > }
-> >
-> > I already implement in the series a pte_to_swp_entry_or_zero() function
->
-> I saw, but I don't think it is a great name.. It doesn't really give
-> "zero" it gives a swp_entry_t that doesn't pass any of the
-> swpent_is_XX() functions. ie a none type.
-
-Naming is hard...
-
-I mean really it wouldn't be all too awful to have pte_to_leafent() do this
-now...
-
->
-> > that goes one further - checks pte_present() for you, if pte_none() you
-> > just get an empty swap entry, so this can be:
->
-> And I was hoping to see a path to get rid of the pte_none() stuff, or
-> at least on most arches. It is pretty pointless to check for pte_none
-> if the arch has a none-pte that already is 0..
->
-> So pte_none can be more like:
->    swpent_is_none(pte_to_swp_entry(pte))
->
-> Where pte_to_swp_entry is just some bit maths with no conditionals.
-
-*leafent
-
-I mean I'm not so sure that's all that useful, you often want to skip over
-things that are 'none' entries without doing this conversion.
-
-We could use the concept of 'none is an empty leaf_entry_t' more thoroughly
-internally in functions though.
-
-I will see what I can do.
-
->
-> > > I also think it will be more readable to keep all these things under a
-> > > swpent namespace instead of using unstructured english names.
-> >
-> > Nope. Again, the whole point of the series is to avoid referencing
-> > swap. swpent_xxx() is just eliminating the purpose of the series right?
-> >
-> > Yes it sucks that the type name is what it is, but this is an iterative
-> > process.
->
-> Sure, but don't add a bunch of new names with *no namespace*. As above
-> either accept swpent is a placeholder for leafent in the next series,
-> or do this:
->
-> > But as above, we could pre-empt future changes and prefix with a
-> > leafent_*() prefix if that works for you?
->
-> Which seems like a good idea to me.
-
-Yup. We agree on this.
-
->
-> > > I'd expect a safe function should be more like
-> > >
-> > >    *swpent = pte_to_swp_entry_safe(pte);
-> > >    return swpent_is_swap(*swpent);
-> > >
-> > > Where "safe" means that if the PTE is None or Present then
-> > > swpent_is_XX() == false. Ie it returns a 0 swpent and 0 swpent is
-> > > always nothing.
-> >
-> > Not sure it's really 'safe', the name is unfortunate, but you could read
-> > this as 'always get a valid swap entry to operate on'...
->
-> My suggestion was the leaf entry has a type {none, swap, migration, etc}
->
-> And this _safe version returns the none type'd leaf entry for a
-> present pte.
-
-I mean that's already what's happening more or less with the ..._is_zero()
-function (albeit needing a rename).
-
->
-> We move toward eliminating the idea of pte_none by saying a
-> non-present pte is always a leaf_entry and what we call a "none pte"
-> is a "none leaf entry"
-
-Well as discussed above.
-
->
-> > leaf_entry_t leafent_from_pte()...?
->
-> Probably this one?
-> > > static inline bool get_pte_swap_entry(pte_t pte, swp_entry_t *entryp)
-> > > {
-> > >    return swpent_is_swap(*swpent = pte_to_swp_entry_safe(pte));
-> > > }
-> >
-> > I absolutely hate that embedded assignment, but this is equivalent to what
-> > I suggested above, so agreed this is a good suggestion broadly.
-> >
-> > >
-> > > Maybe it doesn't even need an inline at that point?
-> >
-> > Don't understand what you mean by that. It's in a header file?
->
-> I mean just write it like this in the callers:
->
->   swp_entry_t leafent = pte_to_swp_entry_safe(pte);
->
->   if (swpent_is_swap(leafent)) {
->   }
->
-> It is basically the same # lines as the helper version.
-
-Right, good point!
-
->
-> > > > * is_huge_pmd() - Determines if a PMD contains either a present transparent
-> > > >   huge page entry or a huge non-present entry. This again simplifies a lot
-> > > >   of logic that simply open-coded this.
-> > >
-> > > is_huge_or_swpent_pmd() would be nicer, IMHO. I think it is surprising
-> > > when any of these APIs accept swap entries without being explicit
-> >
-> > Again, I'm not going to reference swap in a series intended to eliminate
-> > this, it defeats the purpose.
-> >
-> > And the non-present (or whatever you want to call it) entry _is_ huge. So
-> > it's just adding more confusion that way IMO.
->
-> Then this:
->
->   pmd_is_present_or_leafent(pmd)
-
-A PMD can be present and contain an entry pointing at a PTE table so I'm
-not sure that helps... naming is hard :)
-
-Will think of alternatives on respin.
-
->
-> Jason
-
-Thanks, Lorenzo
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 7f11ffacc915..e606826045b5 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	int status;
+ 	struct inode *inode = NULL;
+ 	struct buffer_head *bh = NULL;
++	struct ocfs2_dinode *di;
++	struct ocfs2_truncate_log *tl;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 		goto bail;
+ 	}
+ 
++	di = (struct ocfs2_dinode *)bh->b_data;
++	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
++	tl_count = le16_to_cpu(tl->tl_count);
++	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
++		     tl_count == 0 || tl_used > tl_count)) {
++		status = -EFSCORRUPTED;
++		iput(inode);
++		brelse(bh);
++		mlog_errno(status);
++		goto bail;
++	}
++
+ 	*tl_inode = inode;
+ 	*tl_bh    = bh;
+ bail:
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index de6fd4a09ffd..82da2f518697 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3416,6 +3437,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4107,10 +4136,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index a1f3b25ce612..d8b2c19609e2 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1419,6 +1419,31 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		goto bail;
+ 	}
+ 
++	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
++		struct ocfs2_chain_list *cl = &di->id2.i_chain;
++
++		if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list count %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_count));
++			goto bail;
++		}
++		if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list index %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_next_free_rec));
++			goto bail;
++		}
++	}
++
++	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
++	    le32_to_cpu(di->i_clusters)) {
++		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
++				 (unsigned long long)bh->b_blocknr,
++				 le32_to_cpu(di->i_clusters));
++		goto bail;
++	}
++
+ 	rc = 0;
+ 
+ bail:
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index c4426d12a2ad..a041f2626c54 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -910,13 +910,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index b1e32ec4a9d4..6acf13adfb55 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1032,6 +1038,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index 7aebdbf5cc0a..0670829d9818 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -468,7 +468,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -482,7 +483,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -494,7 +496,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -638,7 +641,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -651,7 +654,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -796,9 +799,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -933,7 +937,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1019,7 +1024,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
 
