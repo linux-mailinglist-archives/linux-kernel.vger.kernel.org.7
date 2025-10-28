@@ -1,1054 +1,328 @@
-Return-Path: <linux-kernel+bounces-873056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C196FC12EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:29:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D3CC12F94
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5E0A4E45C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A29C40904C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7AE261573;
-	Tue, 28 Oct 2025 05:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155742C21F2;
+	Tue, 28 Oct 2025 05:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="AsuMjahR"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qpl5tzAR";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hUtPs4Qv"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE95274670
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761629359; cv=none; b=KjpJz6ibnehMd1hvxgZp8x2oOBHk8szQF47BjYE1z1OCvFvFLGkLsksEQjxu6dTkP53lCUeb+sAVrP47j2fA4WC865GD6f26/RaJnAewlwSiZxMLN4g7S9wrd4vrRh7UFg4U7eU1czPGS5T8AmU3Qk+8Qce68oSEykT9+PcgmFQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761629359; c=relaxed/simple;
-	bh=TB5EqGugva/QkkTT8ER9ojhZTvohjy+949Tavv74/X8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5VPKcU6fBjkghJhnc9olfdsZC/CU7RghH+xm8+k81pMa4FWot5S5xyojoJEB8mZo0gRKYfQk7QHNmNXVyVtBbS9rg2KIk2SbIpa+T5yA/lu7vmM2ob+Gz1EC8lY5PWr1xPHIR/fKYlJ01R0uU6bCdsGQUhb/KA6Jb/e+CN855w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=AsuMjahR; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4eb9fa69fb8so41529611cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 22:29:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B2F29D268;
+	Tue, 28 Oct 2025 05:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761629544; cv=fail; b=qIy1sKz8E3Vq7Z8ORjxbeUN/JMWPcjK392Y2LaXKDtF1P3nUQIefMuL2g58hY7AIunRzr+Dwhpd229wG/Vc/GVN1XyWCMAkEZQPJsHuJBpTgoBxyQ4xPfESoORaYViNNEKJE+tXbfUxFDra5nMM0RoNbknQI8ocQHTwctrDFQpM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761629544; c=relaxed/simple;
+	bh=cJ7UMYqgoOJ6NkQ+fy4obUyhJgGQ6nC1WqLO7TA2M9M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lrjBSblUZ1PHAS+Q3efU2QMg27izHLnMwbo0gfwQFe7jcbpg/3p08bVKB04ed8QWsOymOQk+X0T1piyEhGdDFTKFHf0hSWVFV6U8nI2u/j9skWJ7d0WFvc00P9F5F6S4M71O7BkJCZKsfK2RYg20ernjN9awBH1X9tYQ38frwJc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=qpl5tzAR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hUtPs4Qv; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S5Nhxn028399;
+	Tue, 28 Oct 2025 05:31:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=YYMZGIgVqGM3Ia7k
+	DrKLFPbsPVGWf5wrKmd77I1h8hg=; b=qpl5tzARuXAlLAGnLU4JMZANP11OkeXV
+	j0wqw67Mpi5zOIt1p8GM4BZhr0HH790L3JNfk0vQxgWyrBI69R5XlmCebeZF0Wrm
+	5MimQTkPkB6xaU2AMT5WJdjgFX6gvoAxSQ2pV1+A8FDCJz7I6ZrkFrwpBRs5kaKI
+	KZTeuf+CUdDVfEjXmvOT3AA8PcbtPL69fUG/F3n6wjG+gq/jI2ghnVt43M4OqoJ5
+	NYTEtmq5zSdWF2vRap5UyRBsjnKdat3mjYurMhcB3L9WlFUQZ7WtQPl6RPXrMxFa
+	Dwbhv4X5JWFSh2q/JxgRR7Ad5KYl4sapKGbHwN0gYFBcCf1W6dCuNw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a23gvjj9n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 05:31:45 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59S2iEDm034916;
+	Tue, 28 Oct 2025 05:31:44 GMT
+Received: from sj2pr03cu001.outbound.protection.outlook.com (mail-westusazon11012003.outbound.protection.outlook.com [52.101.43.3])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a19pf3qn1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 28 Oct 2025 05:31:44 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jGIq1ggkZjFfv2cSRDQCEzhDUZD+lHFvwDGot6w+sU2QeqbxT/iDpZ9ddROYuDXU7kIUVe7Q+KAngOxW1jqDV3Htla/DonESIKahiLfxQFqT0L1Ay5qOze+cBi50EekFFY3QT9wTcqaTbbY3JDmLj1HORHOsKtDrFaezs2cbbImKhkz/wgMUwR+8GUVURuBYqkUBbqLTJZ5hViq7Q38w197gCWTyqNv69X1q/WaMWJIja6jUHhE2NSSoFjktXnggIE6xFZAhLqR6W+ol1gLqlM04JLyCjmwBZN4vUcE7CaoL1kun/C2IGCPvS9u+23D5b6JUH6sxkd/AHds4w3MukA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YYMZGIgVqGM3Ia7kDrKLFPbsPVGWf5wrKmd77I1h8hg=;
+ b=mNt3QwSgjWQWQkXId6IWPvsldRAzBZ6jt6MOdMooXjVwahhIZpL9kUpRZ6xx+b3kBvDiAm0hGD5glFzH1C4xp0/tBifVRfCZE8l5XCdQ0CsbEGdl85vX5SIgia8y6j3166S1xVuNJAWZbt2Es8siLoaU+mQ7hnUrNkNgs9JMLysgG8ljrFiccAWcL54+AK3ZSKNGCOec+YGbcuDfRuJ/8rnJJgQxYe6snqwD4Rbp621GiFoBrrvFiFfSwJ6NxBfxhv7TPKQyJ5hLquRNOFa+lWVqLlTkBEckduoKnu14HxoyyhJyr/CAd+GA9SzxW1jaoCPcopgD90kaJPSoy2Le1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1761629355; x=1762234155; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6v1EwC2f5SAtl7VWKNTmOSRMgFAVxUY563gkr3Argho=;
-        b=AsuMjahRnQT8K3N6hVxSO3ZpGCjZL/cw2qzuQcFuZKYBSZYOCJnoIK/Ug+AMG30QkH
-         0lfPN8OxfzJOfmQJzKVVhqWMRhKJqVPOD9/UVXCFNax41DVDjisnUqZvnB70crNIEUa6
-         3j/WlhSTQ/JYrNjnvvozNaga3GqjbrKr5k3q7d8XpGmmn2MnsIJSCTncwUeXxgoNJpFE
-         cj48wNlekW9HlWzS/rQn/oENIMFfB8x1QAt5bbG5v1kea4RoNAsw4uTOSSnleAY4u9AT
-         c0zNLy8PKGU4csKIjPOwCs9AuUCPwI4M86TgpY7QndDpf7Hju3doCM508t02FV8Q97sL
-         BOtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761629355; x=1762234155;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6v1EwC2f5SAtl7VWKNTmOSRMgFAVxUY563gkr3Argho=;
-        b=QLv/NMWwV0TPzkao89VEyH5si03mNHLKeh5PTpIfRISdV/7CU3NbPzW17IiTQsirip
-         SYCVqPYbtoPrhNBjsuDumuUy7frDc14UfDRyvBNi48wAe1eY1DUAuL7C4wlBKNjIs5em
-         ayJYoC06HOp2QJ4VZqqEdQeK00UwLP5gG2oDMs+i/NOWUDQyulYMcDC8+26tDlpHrhy8
-         RoCEVXeI8VH7i1ig7L1Q97jE6i7cpYn/SCuo0DC7Pu5IScsutny8dMT+k1XYIMGNEOY1
-         j2AqHthkpLJTCZTMSbjuCxD7IFFWFUCa4hvK51uwCD1MWthj46b9TR5OPhBE5/Nrn68D
-         KjYA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4xuDY0Uv1qadTeZ1eX6JVnTOkl9NF+X59XPewpchYRLnil9WWQSNOMZponCaep6By1h/tM+a6whYhodw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR0aJznDVcsGtw0SMiaDvRXrWWxijt1wuXisH97E8oFuSYFtAa
-	Mq6zbLyU4XiaPFmyn3pTUaaignIPIuwSTCfOGSYFuO/ltJUwkxQt7IaGd/f5KVzAl6FDqYXzIll
-	yER+ufUy6xbthm8BQN3DVDBjCD/DwbKzfIckDS/7TAw==
-X-Gm-Gg: ASbGncsSKDW44KkK38OeHgFmP2yOc9WXQycivyZJ2/QYSJlVp9WUCawHcraA0+mJWwL
-	mM+CLGKfp0q3Xe0p5EqXbx2rSa/eqq/VuctdBMSBjSjSCBoRdz79aiOhpu80K/UvRB72a9uGg2/
-	BLPCvHYLZOOgx0Lays6qOuMuuIH5QKmTPDwxvkL+3H9p3AizVhhM5OZSrU4qktqoBcE6lqtJx/2
-	uTwgCKgIT1ez8iPbXtdW1yK8MdmXvcXm9iSPnWy5sGvMb/pKIMhvqXWVqLvmX+TdswIMkxvh3Ct
-	R4S0ir1Cr+h/kLqpBg==
-X-Google-Smtp-Source: AGHT+IHSkU+uSMK7sRV4CMBfjbQyPQOOM4iP4PX3QsnunXo2B12rsWejk+DZQr/ieoIhjJfyMRkKM2UZu4joOnl1lG0=
-X-Received: by 2002:ac8:5987:0:b0:4e8:a941:4b81 with SMTP id
- d75a77b69052e-4ed074fc7bfmr33187241cf.32.1761629355345; Mon, 27 Oct 2025
- 22:29:15 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YYMZGIgVqGM3Ia7kDrKLFPbsPVGWf5wrKmd77I1h8hg=;
+ b=hUtPs4Qv5OYko9YTe9GeRSgLKNUmJ5Bnj/Jpn2o7T09Wp6TrTr6uB0PK1LcAl0j8JgN927uY9fz+shGMRmXNW1SZb6eVDJyudqMwE+xRbsSy0rK/sLryfgL0mpIKqWpn/uUjaVL4t4JgOgF1IHbSS1rwXnNK3WFy7GI2C7cxku8=
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com (2603:10b6:5:357::14)
+ by DS0PR10MB7152.namprd10.prod.outlook.com (2603:10b6:8:f1::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.18; Tue, 28 Oct 2025 05:31:39 +0000
+Received: from CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574]) by CO6PR10MB5409.namprd10.prod.outlook.com
+ ([fe80::3c92:21f3:96a:b574%4]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 05:31:38 +0000
+From: Ankur Arora <ankur.a.arora@oracle.com>
+To: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc: arnd@arndb.de, catalin.marinas@arm.com, will@kernel.org,
+        peterz@infradead.org, akpm@linux-foundation.org, mark.rutland@arm.com,
+        harisokn@amazon.com, cl@gentwo.org, ast@kernel.org, rafael@kernel.org,
+        daniel.lezcano@linaro.org, memxor@gmail.com, zhenglifeng1@huawei.com,
+        xueshuai@linux.alibaba.com, joao.m.martins@oracle.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: [RESEND PATCH v7 0/7] barrier: Add smp_cond_load_*_timeout()
+Date: Mon, 27 Oct 2025 22:31:29 -0700
+Message-Id: <20251028053136.692462-1-ankur.a.arora@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MW4PR03CA0355.namprd03.prod.outlook.com
+ (2603:10b6:303:dc::30) To CO6PR10MB5409.namprd10.prod.outlook.com
+ (2603:10b6:5:357::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908181717.1997461-1-cleger@rivosinc.com> <20250908181717.1997461-4-cleger@rivosinc.com>
- <CAPd4WezJSEGzO7hgo6T+5Np0vnJRGh76ANxQOSeJdXy5cnQnSQ@mail.gmail.com>
-In-Reply-To: <CAPd4WezJSEGzO7hgo6T+5Np0vnJRGh76ANxQOSeJdXy5cnQnSQ@mail.gmail.com>
-From: Himanshu Chauhan <hchauhan@ventanamicro.com>
-Date: Tue, 28 Oct 2025 10:59:04 +0530
-X-Gm-Features: AWmQ_bm67vClC-6gzX3pHUnUg5yVuu1SSvFgEUx30SlrC2ltixuuVe4qZykBCL8
-Message-ID: <CAPd4Wez1eMgehVBr22WSTf_7b67kLYVXr7gziFXCKzhhBaf-og@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] drivers: firmware: add riscv SSE support
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, Anup Patel <apatel@ventanamicro.com>, 
-	Xu Lu <luxu.kernel@bytedance.com>, Atish Patra <atishp@atishpatra.org>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Yunhui Cui <cuiyunhui@bytedance.com>, Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR10MB5409:EE_|DS0PR10MB7152:EE_
+X-MS-Office365-Filtering-Correlation-Id: 451a2172-364a-48bc-992b-08de15e3445e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?84s+6qQpvAYZ4uVjw4K/tSIIrAfOh3BopiJ8v0BqcBEqGW+BaeTa+9Vi1DBe?=
+ =?us-ascii?Q?xzb4J3UmeQS5l3/AfcVaRffuSRkMdP5CJ9e/A2DiJ/WyLL1qXJjw9re/oahs?=
+ =?us-ascii?Q?kpUFDZL95h/SfrWNxDOueKOMSvesILwJtQh8rH2u2quv6TBlK0zYcZkoqO1i?=
+ =?us-ascii?Q?lj0K8OXPD2NjhWCLxn0bgUxrIvpZ1SNYLd2zuRhnaaGxkR3tWDcdf3ZDvpqR?=
+ =?us-ascii?Q?HYpyOxEDqdspmLk1kwi/wRs3dLSO/BbtHgETk4NqTXZd8s8TbRlL44eOXFDb?=
+ =?us-ascii?Q?QaTi14HZTNm2c+7QYhkhpqDSK3yoVDKPkpzrhXNEMKdJtyBLEQYhyQE29jTe?=
+ =?us-ascii?Q?1RF3o/m2c2u/OsmVN/NC08JcUCLlJvsQrXRORa3dswcWGU02PSRwQv2FOtrr?=
+ =?us-ascii?Q?WCHlrWQRWcAkgKY9aJa0v03OcGmUy4c/tHrunOWJnnM42U9tOZ9t7mhcq0L/?=
+ =?us-ascii?Q?r6VwCRAt7UtRTqZ7n52C7sV8gtC8OSbSWyQ9hpX+asov9rr1Vody04GhI8In?=
+ =?us-ascii?Q?U7A/l3Fp1n2NAXT342bBBhdaM+AJTNL2qQsix/y4a5z8L8ShACU+r38esncK?=
+ =?us-ascii?Q?bcRWKuUCkJ5fQ6Ugqvs3r7pQvCwDonkR8OSU2Dk/phAEqPWcRwssji/4Gfka?=
+ =?us-ascii?Q?vjE+x9mHd7FVPcRvz/dNFg7WOf6FF5fKAvQN7t46FY1oZ7UJvma/JM38Txct?=
+ =?us-ascii?Q?ohTVLzluD7vXZzOXDBSOtyImLJi1EzJX7tvW8CXCW+TkYNz0j5jHOh6bZ+Ev?=
+ =?us-ascii?Q?Z9zTVwcx1WmT1wce8539qgRbbCTO1iqTGZfg7EMQM0LQLNAsFjMCSgNWbcLr?=
+ =?us-ascii?Q?Z7uHAs+VHpxl80qCh3uwBy7s7SMwgy7blf6qTm17iO+nDhE+lNg2SAJs1iZi?=
+ =?us-ascii?Q?Z9MPi/jn6p4Npk5eBdbOIf9GSSO7OE2MQS+l1MwkIwVSoqwa96xPO5vlpnZj?=
+ =?us-ascii?Q?zl5vVK+ziYcrpaZ4Jy2U7WBKKX4gz5sRXZ5Y6xFtx++SRubfl100oFzuAQ/e?=
+ =?us-ascii?Q?kyI6aWTOpvAfIqt5Xplh37nnsOf0WVfvhRiAd8u+2QpIYeIea/tVq10PuO5C?=
+ =?us-ascii?Q?CRJXkzZVtzyK4pgSiVSgvYHTM+Lngkj5VMutWfnwtCgtsDqBJzbhPcx01l9b?=
+ =?us-ascii?Q?ByeSc3FB6uFfZfg96pYGGxV2rna3toNegQM1mKjGzP19lyrNEtE4oLd/5/cM?=
+ =?us-ascii?Q?7XcN7c8gD2E7XXfVGTo7VpWgBxR0h++knIMzBz8s9ZJp4vflH9iO/w+KCTXD?=
+ =?us-ascii?Q?W8BLJ36IsjYLgXexA+mVlSJ9sLj6HMRO1aZ1RtFgLG1EiSEtTRz9VFbaW+z/?=
+ =?us-ascii?Q?OP6nPNnacCf2htvNIsj5tBPsXqZiqtx6ouutbycbMfbY76jg9yx7blSRixkj?=
+ =?us-ascii?Q?dwpcQfWOKKRpe5atATOZLRzvSlwmGbJ9GsbWLiyD99DZHvmwQ9RUHfqM3HFv?=
+ =?us-ascii?Q?1cAbnbr3/EU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR10MB5409.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?MRC0+nhd89/xP8fX5a/7K/V80g1wB6G8M71AgKHEiI/ti+Pn4ikgtrQ+pt4l?=
+ =?us-ascii?Q?0pr/0Ed5NTqxw4s0qJ1VFCzZITuilE/ng3pzGeUYBYKDHcVeKLata2fVIcGr?=
+ =?us-ascii?Q?bqG3yT9rlnw2s8bp2K7stmllFuykvdb0WvciJUUuKUff+p5HLyR0B07OWOUR?=
+ =?us-ascii?Q?4uYI7GWTyVCSF9Lh2avaqGLuNs5xmhcMykHs9J84f7Z2WPUZIVvOctxEWFFP?=
+ =?us-ascii?Q?v5kT3LXSXfz4bZIa4f+JYQXMDUeZk/l6NfFp+5MEPwzvwoFpAK2poLYDXS6t?=
+ =?us-ascii?Q?6eLsxeR7Hv1gwzVGxl9szhOBELh5kODKo7+lRbRmBG1AGVYSqK8eSShV9tY/?=
+ =?us-ascii?Q?sszVHhBVKJIgYsaOapHmPeZUMsTaTEFKrhkL16knlWB6WLhGBJAP4Fj8XgEa?=
+ =?us-ascii?Q?Mxxy/Kj/94+F96HsgsYTdlzdZPreM3ns7btKNWBCJy5WWPCdPaKOvhYASc4H?=
+ =?us-ascii?Q?18mriaF1jXphOhkkgYcwQXFC4gz4lUxPsURT5piXrPM/lxteivRw1JAzFKVK?=
+ =?us-ascii?Q?kR7JohYcGBgdqVrQvowYPLUHelzUaebiMk29b7ZZ/Kf5LfgU7+m/Nv4JNc/9?=
+ =?us-ascii?Q?lW9H7SkFnumNB2khiazYNr22O9i+JcBkldyw91fUxf6IA47Y8eKKfGM0n/JZ?=
+ =?us-ascii?Q?2COWk80e0PAMRtE2oIWoXhTnRvi0WIxksLrXvwLK44aHTSkZuegPzKFCxNK+?=
+ =?us-ascii?Q?409urk+HNchaZ2v/L78bDUXMlg2FYR3eL4FkoAtxGP28lRqGoUCWfLzA+Hrm?=
+ =?us-ascii?Q?uCZ5A3W8PQgGa1SECKpI7wOBd9Sey8fkn+VGRwyrFOB1GuIl+DcubDCnscXf?=
+ =?us-ascii?Q?Z1N3WARRcESsvvLJVE9tbt++CbTYgfZ7ne6Z/bjru5PDKYQEk1dm9+D6CgZg?=
+ =?us-ascii?Q?9l+CweL1QxMq9of+8U9eONfLAewb/jtd/86yI5kGsxAX8f2nVawUwT/5+13R?=
+ =?us-ascii?Q?Xu3NufMyKx9hs3uhHfuRonC7f3h7U+jyLHAgVPfSZEo4CnX28sjFg11OPsnq?=
+ =?us-ascii?Q?A8XWmPpdJjgVKzMI0PlLD9jsQpRe+PfrUddyPaQlEs4bsszbyhFv7mtoqGQi?=
+ =?us-ascii?Q?GjRyyYuPvFarqFYR8pwsPwF4/4fhXn2ExYzzHsqgh40XO1jcJhfOJSSEV08i?=
+ =?us-ascii?Q?EcNNYQjKk0uHu04VGuMxyLwFth88fjTTXkCpS8+SP59jAEqk67ESz/ShFkK2?=
+ =?us-ascii?Q?vyZSpEu0aeauRaPl7+tm2g60UDgGyfLf3ztmpclwGU1dahvN4/3/GqLa1vxE?=
+ =?us-ascii?Q?WXssc3xeDUi1LyYhSKnftHaNPqdPKAN9fXQ+nLOWLiKyPGpIfRTUNDoIZI9K?=
+ =?us-ascii?Q?i0usctnEEHf5+gA0C6LUs1Bhcba3+FfdLC6pW3h86oOc88W4qdmbLtl/hR13?=
+ =?us-ascii?Q?ZL5jRbdV7Yqc3yHu/tz7xV03elzYXuB0mH/OSFHf+0lYpknBrZe5WpDa0vT1?=
+ =?us-ascii?Q?dw2foZMiVnDMbLLgc/AroO1ipuCFlQxIk2s5UD/305fxH9m7vVwSlO5d76u5?=
+ =?us-ascii?Q?7IElO0ISnVAbad5aZDBXTjq5c/RjxrYPFc9/uTeOzFj/u/omLrvgt6PbtjQF?=
+ =?us-ascii?Q?Ke7/2274G0/golSvG23aftdQHWCXTw/PjQosQVi/WENLGcxJJJSCRRAL76TN?=
+ =?us-ascii?Q?yw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	VddxOQlZcLmeD+dCyZsimdAxoB1iu2Jt+OXSuNU4lvuXIeAQYb1OeNxjI91jIR0qe5iM/9YMosVin7cnVB5jqrzOs4eLd+By9r6ZTgSlfYEGcKF9bfFyLTNk31e7s/zzdlfPL3zeTTt7Z5r7Al2b4rR84XI8aKTN/jicjdvjEpkd2tUUsP8x7N+66baTmdeonF1UcO6D9HOMVHlz4utdzJPGTKHo5FZeZTVMEBlAEQqVssu9KUJCtgNcr1StX8V52xxaS343cYv2lFqwtTAPBulhbpjBdpiyaC6Dk7ZvYHlUWpwvIYHWIY12hl14+rcvdEZo4NzEarLI7as/YH769ohV4XAt3qEfdcmhp5wGVVUWeTON3Owkxoc0EaxHpcz5zuB5XRUukD7+rpf/QFAe6MhlC49BWpIMGVKkPs3K7dajGVoor/lm6QEgtrFd0NsKcekz4NKRoFxqk1+/xmz4ZzwAfOZqEJReBaHNKe/EAe3JhZj+7uEYZNwCmyWVf1fMRvAD0FmeJrHJ6KDi2gJdZmtXpgFexRKrN/W0fIBKBrIL/zkrBTiOXhfc+XzUxQAigWHb3lgPrdtqOy7ZgPyrtyoxhvDHDY67smIBTIRJkhM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 451a2172-364a-48bc-992b-08de15e3445e
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR10MB5409.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 05:31:38.8482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: j4QeKFXSMgVDQjmQ4lavNk77w4j93DQW925QRttBAmL5QMJNGDW+Q8emLA7Ql5hoximc4POqET9C4FucFXdgXXmLT/DJmqMEid9fUiT7vPY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7152
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
+ malwarescore=0 mlxlogscore=999 suspectscore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
+ definitions=main-2510280046
+X-Proofpoint-GUID: FE8uflbVgA3S6UhbOqfx5s217Cp4fDZf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI3MDA1OCBTYWx0ZWRfXwxeSKSyE7lWm
+ juFYGhgP36CxWUm3l+WsBFxmhkK7le0nWn0F2v1D+TiolNCDEuuFam9H2Xmg/1c6lUjF0ERLY8e
+ r6hfHMqLXiWumqb6TJRh7SbZbIFJbeOFmErNoqNYK82EEH1IgcK0RiwbBRZSO6U/lb/dP3Uckia
+ 6s7jGvLqO2PN+l1wWFtPhT5X3M1llDW9tCuQzz0XbD7bmdC/I1u4X2y/br85Yzc6PfRimN5cc84
+ hruXLMNTQQ/E9xRgDuHr/YtFmTRSMDwHVNYte6NgkMww7kYnfLNph59Or4whsen8K3Ia05py+Xb
+ I4nntamJqqu8t8jBu/jde0/dV8IjhvwiiZdS3ACxvyxtrrV6ucSgcZXc2wT8XrcNoJq4Dzvo09j
+ pEDHJu5p2hjeuxAmd0L6klPNr0YwHt4D6pwaa//9aHlmnz7DZoE=
+X-Authority-Analysis: v=2.4 cv=HsN72kTS c=1 sm=1 tr=0 ts=69005541 b=1 cx=c_pps
+ a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=vggBfdFIAAAA:8 a=7CQSdrXTAAAA:8 a=JfrnYn6hAAAA:8 a=KKAkSRfTAAAA:8
+ a=pGLkceISAAAA:8 a=QXDmnoQuuVSgSO7tUmQA:9 a=a-qgeE7W1pNrGK8U0ZQC:22
+ a=1CNFftbPRP8L7MoqJWF3:22 a=cvBusfyB2V15izCimMoJ:22 cc=ntf awl=host:12124
+X-Proofpoint-ORIG-GUID: FE8uflbVgA3S6UhbOqfx5s217Cp4fDZf
 
-Hi Clement,
+[ Added linux-pm to Cc for the poll_idle() changes. ]
 
-On Tue, Oct 28, 2025 at 10:21=E2=80=AFAM Himanshu Chauhan
-<hchauhan@ventanamicro.com> wrote:
->
-> On Mon, Sep 8, 2025 at 11:49=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@r=
-ivosinc.com> wrote:
-> >
-> > Add driver level interface to use RISC-V SSE arch support. This interfa=
-ce
-> > allows registering SSE handlers, and receive them. This will be used by
-> > PMU and GHES driver.
-> >
-> > Co-developed-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
-> > Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
-> > Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > ---
-> >  MAINTAINERS                            |  15 +
-> >  drivers/firmware/Kconfig               |   1 +
-> >  drivers/firmware/Makefile              |   1 +
-> >  drivers/firmware/riscv/Kconfig         |  15 +
-> >  drivers/firmware/riscv/Makefile        |   3 +
-> >  drivers/firmware/riscv/riscv_sbi_sse.c | 701 +++++++++++++++++++++++++
-> >  include/linux/riscv_sbi_sse.h          |  57 ++
-> >  7 files changed, 793 insertions(+)
-> >  create mode 100644 drivers/firmware/riscv/Kconfig
-> >  create mode 100644 drivers/firmware/riscv/Makefile
-> >  create mode 100644 drivers/firmware/riscv/riscv_sbi_sse.c
-> >  create mode 100644 include/linux/riscv_sbi_sse.h
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index fe168477caa4..684d23f852c3 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -21648,6 +21648,13 @@ T:     git git://git.kernel.org/pub/scm/linux/=
-kernel/git/iommu/linux.git
-> >  F:     Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
-> >  F:     drivers/iommu/riscv/
-> >
-> > +RISC-V FIRMWARE DRIVERS
-> > +M:     Conor Dooley <conor@kernel.org>
-> > +L:     linux-riscv@lists.infradead.org
-> > +S:     Maintained
-> > +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/conor/linux.g=
-it
-> > +F:     drivers/firmware/riscv/*
-> > +
-> >  RISC-V MICROCHIP FPGA SUPPORT
-> >  M:     Conor Dooley <conor.dooley@microchip.com>
-> >  M:     Daire McNamara <daire.mcnamara@microchip.com>
-> > @@ -21712,6 +21719,14 @@ F:     arch/riscv/boot/dts/spacemit/
-> >  N:     spacemit
-> >  K:     spacemit
-> >
-> > +RISC-V SSE DRIVER
-> > +M:     Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
-> > +R:     Himanshu Chauhan <himanshu@thechauhan.dev>
-> > +L:     linux-riscv@lists.infradead.org
-> > +S:     Maintained
-> > +F:     drivers/firmware/riscv/riscv_sse.c
-> > +F:     include/linux/riscv_sse.h
-> > +
-> >  RISC-V THEAD SoC SUPPORT
-> >  M:     Drew Fustini <fustini@kernel.org>
-> >  M:     Guo Ren <guoren@kernel.org>
-> > diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-> > index bbd2155d8483..1894df87b08e 100644
-> > --- a/drivers/firmware/Kconfig
-> > +++ b/drivers/firmware/Kconfig
-> > @@ -294,6 +294,7 @@ source "drivers/firmware/meson/Kconfig"
-> >  source "drivers/firmware/microchip/Kconfig"
-> >  source "drivers/firmware/psci/Kconfig"
-> >  source "drivers/firmware/qcom/Kconfig"
-> > +source "drivers/firmware/riscv/Kconfig"
-> >  source "drivers/firmware/samsung/Kconfig"
-> >  source "drivers/firmware/smccc/Kconfig"
-> >  source "drivers/firmware/tegra/Kconfig"
-> > diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
-> > index 4ddec2820c96..6cdd84570ea7 100644
-> > --- a/drivers/firmware/Makefile
-> > +++ b/drivers/firmware/Makefile
-> > @@ -34,6 +34,7 @@ obj-y                         +=3D efi/
-> >  obj-y                          +=3D imx/
-> >  obj-y                          +=3D psci/
-> >  obj-y                          +=3D qcom/
-> > +obj-y                          +=3D riscv/
-> >  obj-y                          +=3D samsung/
-> >  obj-y                          +=3D smccc/
-> >  obj-y                          +=3D tegra/
-> > diff --git a/drivers/firmware/riscv/Kconfig b/drivers/firmware/riscv/Kc=
-onfig
-> > new file mode 100644
-> > index 000000000000..ed5b663ac5f9
-> > --- /dev/null
-> > +++ b/drivers/firmware/riscv/Kconfig
-> > @@ -0,0 +1,15 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +menu "Risc-V Specific firmware drivers"
-> > +depends on RISCV
-> > +
-> > +config RISCV_SBI_SSE
-> > +       bool "Enable SBI Supervisor Software Events support"
-> > +       depends on RISCV_SBI
-> > +       default y
-> > +       help
-> > +         The Supervisor Software Events support allows the SBI to deli=
-ver
-> > +         NMI-like notifications to the supervisor mode software. When =
-enabled,
-> > +         this option provides support to register callbacks on specifi=
-c SSE
-> > +         events.
-> > +
-> > +endmenu
-> > diff --git a/drivers/firmware/riscv/Makefile b/drivers/firmware/riscv/M=
-akefile
-> > new file mode 100644
-> > index 000000000000..c8795d4bbb2e
-> > --- /dev/null
-> > +++ b/drivers/firmware/riscv/Makefile
-> > @@ -0,0 +1,3 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +
-> > +obj-$(CONFIG_RISCV_SBI_SSE)            +=3D riscv_sbi_sse.o
-> > diff --git a/drivers/firmware/riscv/riscv_sbi_sse.c b/drivers/firmware/=
-riscv/riscv_sbi_sse.c
-> > new file mode 100644
-> > index 000000000000..57b6dad92482
-> > --- /dev/null
-> > +++ b/drivers/firmware/riscv/riscv_sbi_sse.c
-> > @@ -0,0 +1,701 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Copyright (C) 2024 Rivos Inc.
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "sse: " fmt
-> > +
-> > +#include <linux/cpu.h>
-> > +#include <linux/cpuhotplug.h>
-> > +#include <linux/cpu_pm.h>
-> > +#include <linux/hardirq.h>
-> > +#include <linux/list.h>
-> > +#include <linux/percpu-defs.h>
-> > +#include <linux/reboot.h>
-> > +#include <linux/riscv_sbi_sse.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#include <asm/sbi.h>
-> > +#include <asm/sse.h>
-> > +
-> > +struct sse_event {
-> > +       struct list_head list;
-> > +       u32 evt_id;
-> > +       u32 priority;
-> > +       sse_event_handler_fn *handler;
-> > +       void *handler_arg;
-> > +       /* Only valid for global events */
-> > +       unsigned int cpu;
-> > +
-> > +       union {
-> > +               struct sse_registered_event *global;
-> > +               struct sse_registered_event __percpu *local;
-> > +       };
-> > +};
-> > +
-> > +static int sse_hp_state;
-> > +static bool sse_available __ro_after_init;
-> > +static DEFINE_SPINLOCK(events_list_lock);
-> > +static LIST_HEAD(events);
-> > +static DEFINE_MUTEX(sse_mutex);
-> > +
-> > +struct sse_registered_event {
-> > +       struct sse_event_arch_data arch;
-> > +       struct sse_event *event;
-> > +       unsigned long attr;
-> > +       bool is_enabled;
-> > +};
-> > +
-> > +void sse_handle_event(struct sse_event_arch_data *arch_event,
-> > +                     struct pt_regs *regs)
-> > +{
-> > +       int ret;
-> > +       struct sse_registered_event *reg_evt =3D
-> > +               container_of(arch_event, struct sse_registered_event, a=
-rch);
-> > +       struct sse_event *evt =3D reg_evt->event;
-> > +
-> > +       ret =3D evt->handler(evt->evt_id, evt->handler_arg, regs);
-> > +       if (ret)
-> > +               pr_warn("event %x handler failed with error %d\n", evt-=
->evt_id, ret);
-> > +}
-> > +
-> > +static struct sse_event *sse_event_get(u32 evt)
-> > +{
-> > +       struct sse_event *event =3D NULL;
-> > +
-> > +       scoped_guard(spinlock, &events_list_lock) {
-> > +               list_for_each_entry(event, &events, list) {
-> > +                       if (event->evt_id =3D=3D evt)
-> > +                               return event;
-> > +               }
-> > +       }
-> > +
-> > +       return NULL;
-> > +}
-> > +
-> > +static phys_addr_t sse_event_get_attr_phys(struct sse_registered_event=
- *reg_evt)
-> > +{
-> > +       phys_addr_t phys;
-> > +       void *addr =3D &reg_evt->attr;
-> > +
-> > +       if (sse_event_is_global(reg_evt->event->evt_id))
-> > +               phys =3D virt_to_phys(addr);
-> > +       else
-> > +               phys =3D per_cpu_ptr_to_phys(addr);
-> > +
-> > +       return phys;
-> > +}
-> > +
-> > +static struct sse_registered_event *sse_get_reg_evt(struct sse_event *=
-event)
-> > +{
-> > +       if (sse_event_is_global(event->evt_id))
-> > +               return event->global;
-> > +       else
-> > +               return per_cpu_ptr(event->local, smp_processor_id());
-> > +}
-> > +
-> > +static int sse_sbi_event_func(struct sse_event *event, unsigned long f=
-unc)
-> > +{
-> > +       struct sbiret ret;
-> > +       u32 evt =3D event->evt_id;
-> > +       struct sse_registered_event *reg_evt =3D sse_get_reg_evt(event)=
-;
-> > +
-> > +       ret =3D sbi_ecall(SBI_EXT_SSE, func, evt, 0, 0, 0, 0, 0);
-> > +       if (ret.error) {
-> > +               pr_warn("Failed to execute func %lx, event %x, error %l=
-d\n",
-> > +                       func, evt, ret.error);
-> > +               return sbi_err_map_linux_errno(ret.error);
-> > +       }
-> > +
-> > +       if (func =3D=3D SBI_SSE_EVENT_DISABLE)
-> > +               reg_evt->is_enabled =3D false;
-> > +       else if (func =3D=3D SBI_SSE_EVENT_ENABLE)
-> > +               reg_evt->is_enabled =3D true;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +int sse_event_disable_local(struct sse_event *event)
-> > +{
-> > +       return sse_sbi_event_func(event, SBI_SSE_EVENT_DISABLE);
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_disable_local);
-> > +
-> > +int sse_event_enable_local(struct sse_event *event)
-> > +{
-> > +       return sse_sbi_event_func(event, SBI_SSE_EVENT_ENABLE);
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_enable_local);
-> > +
-> > +static int sse_event_attr_get_no_lock(struct sse_registered_event *reg=
-_evt,
-> > +                                     unsigned long attr_id, unsigned l=
-ong *val)
-> > +{
-> > +       struct sbiret sret;
-> > +       u32 evt =3D reg_evt->event->evt_id;
-> > +       unsigned long phys;
-> > +
-> > +       phys =3D sse_event_get_attr_phys(reg_evt);
-> > +
-> > +       sret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_READ, evt, a=
-ttr_id, 1,
-> > +                        phys, 0, 0);
-> > +       if (sret.error) {
-> > +               pr_debug("Failed to get event %x attr %lx, error %ld\n"=
-, evt,
-> > +                        attr_id, sret.error);
-> > +               return sbi_err_map_linux_errno(sret.error);
-> > +       }
-> > +
-> > +       *val =3D reg_evt->attr;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int sse_event_attr_set_nolock(struct sse_registered_event *reg_=
-evt,
-> > +                                    unsigned long attr_id, unsigned lo=
-ng val)
-> > +{
-> > +       struct sbiret sret;
-> > +       u32 evt =3D reg_evt->event->evt_id;
-> > +       unsigned long phys;
-> > +
-> > +       reg_evt->attr =3D val;
-> > +       phys =3D sse_event_get_attr_phys(reg_evt);
-> > +
-> > +       sret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_EVENT_ATTR_WRITE, evt, =
-attr_id, 1,
-> > +                        phys, 0, 0);
-> > +       if (sret.error)
-> > +               pr_debug("Failed to set event %x attr %lx, error %ld\n"=
-, evt,
-> > +                        attr_id, sret.error);
-> > +
-> > +       return sbi_err_map_linux_errno(sret.error);
-> > +}
-> > +
-> > +static void sse_global_event_update_cpu(struct sse_event *event,
-> > +                                       unsigned int cpu)
-> > +{
-> > +       struct sse_registered_event *reg_evt =3D event->global;
-> > +
-> > +       event->cpu =3D cpu;
-> > +       arch_sse_event_update_cpu(&reg_evt->arch, cpu);
-> > +}
-> > +
-> > +static int sse_event_set_target_cpu_nolock(struct sse_event *event,
-> > +                                          unsigned int cpu)
-> > +{
-> > +       unsigned long hart_id =3D cpuid_to_hartid_map(cpu);
-> > +       struct sse_registered_event *reg_evt =3D event->global;
-> > +       u32 evt =3D event->evt_id;
-> > +       bool was_enabled;
-> > +       int ret;
-> > +
-> > +       if (!sse_event_is_global(evt))
-> > +               return -EINVAL;
-> > +
-> > +       was_enabled =3D reg_evt->is_enabled;
-> > +       if (was_enabled)
-> > +               sse_event_disable_local(event);
-> > +
-> > +       ret =3D sse_event_attr_set_nolock(reg_evt, SBI_SSE_ATTR_PREFERR=
-ED_HART,
-> > +                                       hart_id);
-> > +       if (ret =3D=3D 0)
-> > +               sse_global_event_update_cpu(event, cpu);
-> > +
-> > +       if (was_enabled)
-> > +               sse_event_enable_local(event);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +int sse_event_set_target_cpu(struct sse_event *event, unsigned int cpu=
-)
-> > +{
-> > +       int ret;
-> > +
-> > +       scoped_guard(mutex, &sse_mutex) {
-> > +               scoped_guard(cpus_read_lock) {
-> > +                       if (!cpu_online(cpu))
-> > +                               return -EINVAL;
-> > +
-> > +                       ret =3D sse_event_set_target_cpu_nolock(event, =
-cpu);
-> > +               }
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_set_target_cpu);
-> > +
-> > +static int sse_event_init_registered(unsigned int cpu,
-> > +                                    struct sse_registered_event *reg_e=
-vt,
-> > +                                    struct sse_event *event)
-> > +{
-> > +       reg_evt->event =3D event;
-> > +
-> > +       return arch_sse_init_event(&reg_evt->arch, event->evt_id, cpu);
-> > +}
-> > +
-> > +static void sse_event_free_registered(struct sse_registered_event *reg=
-_evt)
-> > +{
-> > +       arch_sse_free_event(&reg_evt->arch);
-> > +}
-> > +
-> > +static int sse_event_alloc_global(struct sse_event *event)
-> > +{
-> > +       int err;
-> > +       struct sse_registered_event *reg_evt;
-> > +
-> > +       reg_evt =3D kzalloc(sizeof(*reg_evt), GFP_KERNEL);
-> > +       if (!reg_evt)
-> > +               return -ENOMEM;
-> > +
-> > +       event->global =3D reg_evt;
-> > +       err =3D sse_event_init_registered(smp_processor_id(), reg_evt, =
-event);
-> > +       if (err)
-> > +               kfree(reg_evt);
-> > +
-> > +       return err;
-> > +}
-> > +
-> > +static int sse_event_alloc_local(struct sse_event *event)
-> > +{
-> > +       int err;
-> > +       unsigned int cpu, err_cpu;
-> > +       struct sse_registered_event *reg_evt;
-> > +       struct sse_registered_event __percpu *reg_evts;
-> > +
-> > +       reg_evts =3D alloc_percpu(struct sse_registered_event);
-> > +       if (!reg_evts)
-> > +               return -ENOMEM;
-> > +
-> > +       event->local =3D reg_evts;
-> > +
-> > +       for_each_possible_cpu(cpu) {
-> > +               reg_evt =3D per_cpu_ptr(reg_evts, cpu);
-> > +               err =3D sse_event_init_registered(cpu, reg_evt, event);
-> > +               if (err) {
-> > +                       err_cpu =3D cpu;
-> > +                       goto err_free_per_cpu;
-> > +               }
-> > +       }
-> > +
-> > +       return 0;
-> > +
-> > +err_free_per_cpu:
-> > +       for_each_possible_cpu(cpu) {
-> > +               if (cpu =3D=3D err_cpu)
-> > +                       break;
-> > +               reg_evt =3D per_cpu_ptr(reg_evts, cpu);
-> > +               sse_event_free_registered(reg_evt);
-> > +       }
-> > +
-> > +       free_percpu(reg_evts);
-> > +
-> > +       return err;
-> > +}
-> > +
-> > +static struct sse_event *sse_event_alloc(u32 evt, u32 priority,
-> > +                                        sse_event_handler_fn *handler,=
- void *arg)
-> > +{
-> > +       int err;
-> > +       struct sse_event *event;
-> > +
-> > +       event =3D kzalloc(sizeof(*event), GFP_KERNEL);
-> > +       if (!event)
-> > +               return ERR_PTR(-ENOMEM);
-> > +
-> > +       event->evt_id =3D evt;
-> > +       event->priority =3D priority;
-> > +       event->handler_arg =3D arg;
-> > +       event->handler =3D handler;
-> > +
-> > +       if (sse_event_is_global(evt))
-> > +               err =3D sse_event_alloc_global(event);
-> > +       else
-> > +               err =3D sse_event_alloc_local(event);
-> > +
-> > +       if (err) {
-> > +               kfree(event);
-> > +               return ERR_PTR(err);
-> > +       }
-> > +
-> > +       return event;
-> > +}
-> > +
-> > +static int sse_sbi_register_event(struct sse_event *event,
-> > +                                 struct sse_registered_event *reg_evt)
-> > +{
-> > +       int ret;
-> > +
-> > +       ret =3D sse_event_attr_set_nolock(reg_evt, SBI_SSE_ATTR_PRIO,
-> > +                                       event->priority);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       return arch_sse_register_event(&reg_evt->arch);
-> > +}
-> > +
-> > +static int sse_event_register_local(struct sse_event *event)
-> > +{
-> > +       int ret;
-> > +       struct sse_registered_event *reg_evt;
-> > +
-> > +       reg_evt =3D per_cpu_ptr(event->local, smp_processor_id());
-> > +       ret =3D sse_sbi_register_event(event, reg_evt);
-> > +       if (ret)
-> > +               pr_debug("Failed to register event %x: err %d\n", event=
-->evt_id,
-> > +                        ret);
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static int sse_sbi_unregister_event(struct sse_event *event)
-> > +{
-> > +       return sse_sbi_event_func(event, SBI_SSE_EVENT_UNREGISTER);
-> > +}
-> > +
-> > +struct sse_per_cpu_evt {
-> > +       struct sse_event *event;
-> > +       unsigned long func;
-> > +       cpumask_t error;
-> > +};
-> > +
-> > +static void sse_event_per_cpu_func(void *info)
-> > +{
-> > +       int ret;
-> > +       struct sse_per_cpu_evt *cpu_evt =3D info;
-> > +
-> > +       if (cpu_evt->func =3D=3D SBI_SSE_EVENT_REGISTER)
-> > +               ret =3D sse_event_register_local(cpu_evt->event);
-> > +       else
-> > +               ret =3D sse_sbi_event_func(cpu_evt->event, cpu_evt->fun=
-c);
-> > +
-> > +       if (ret)
-> > +               cpumask_set_cpu(smp_processor_id(), &cpu_evt->error);
-> > +}
-> > +
-> > +static void sse_event_free(struct sse_event *event)
-> > +{
-> > +       unsigned int cpu;
-> > +       struct sse_registered_event *reg_evt;
-> > +
-> > +       if (sse_event_is_global(event->evt_id)) {
-> > +               sse_event_free_registered(event->global);
-> > +               kfree(event->global);
-> > +       } else {
-> > +               for_each_possible_cpu(cpu) {
-> > +                       reg_evt =3D per_cpu_ptr(event->local, cpu);
-> > +                       sse_event_free_registered(reg_evt);
-> > +               }
-> > +               free_percpu(event->local);
-> > +       }
-> > +
-> > +       kfree(event);
-> > +}
-> > +
-> > +static int sse_on_each_cpu(struct sse_event *event, unsigned long func=
-,
-> > +                          unsigned long revert_func)
-> > +{
-> > +       struct sse_per_cpu_evt cpu_evt;
-> > +
-> > +       cpu_evt.event =3D event;
-> > +       cpumask_clear(&cpu_evt.error);
-> > +       cpu_evt.func =3D func;
-> > +       on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
-> > +       /*
-> > +        * If there are some error reported by CPUs, revert event state=
- on the
-> > +        * other ones
-> > +        */
-> > +       if (!cpumask_empty(&cpu_evt.error)) {
-> > +               cpumask_t revert;
-> > +
-> > +               cpumask_andnot(&revert, cpu_online_mask, &cpu_evt.error=
-);
-> > +               cpu_evt.func =3D revert_func;
-> > +               on_each_cpu_mask(&revert, sse_event_per_cpu_func, &cpu_=
-evt, 1);
-> > +
-> > +               return -EIO;
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +int sse_event_enable(struct sse_event *event)
-> > +{
-> > +       int ret =3D 0;
-> > +
-> > +       scoped_guard(mutex, &sse_mutex) {
-> > +               scoped_guard(cpus_read_lock) {
-> > +                       if (sse_event_is_global(event->evt_id)) {
-> > +                               ret =3D sse_event_enable_local(event);
-> > +                       } else {
-> > +                               ret =3D sse_on_each_cpu(event,
-> > +                                                     SBI_SSE_EVENT_ENA=
-BLE,
-> > +                                                     SBI_SSE_EVENT_DIS=
-ABLE);
-> > +                       }
-> > +               }
-> > +       }
-> > +       return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_enable);
-> > +
-> > +static int sse_events_mask(void)
-> > +{
-> > +       struct sbiret ret;
-> > +
-> > +       ret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_HART_MASK, 0, 0, 0, 0, 0=
-, 0);
-> > +
-> > +       return sbi_err_map_linux_errno(ret.error);
-> > +}
-> > +
-> > +static int sse_events_unmask(void)
-> > +{
-> > +       struct sbiret ret;
-> > +
-> > +       ret =3D sbi_ecall(SBI_EXT_SSE, SBI_SSE_HART_UNMASK, 0, 0, 0, 0,=
- 0, 0);
-> > +
-> > +       return sbi_err_map_linux_errno(ret.error);
-> > +}
-> > +
-> > +static void sse_event_disable_nolock(struct sse_event *event)
-> > +{
-> > +       struct sse_per_cpu_evt cpu_evt;
-> > +
-> > +       if (sse_event_is_global(event->evt_id)) {
-> > +               sse_event_disable_local(event);
-> > +       } else {
-> > +               cpu_evt.event =3D event;
-> > +               cpu_evt.func =3D SBI_SSE_EVENT_DISABLE;
-> > +               on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
-> > +       }
-> > +}
-> > +
-> > +void sse_event_disable(struct sse_event *event)
-> > +{
-> > +       scoped_guard(mutex, &sse_mutex) {
-> > +               scoped_guard(cpus_read_lock) {
-> > +                       sse_event_disable_nolock(event);
-> > +               }
-> > +       }
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_disable);
-> > +
-> > +struct sse_event *sse_event_register(u32 evt, u32 priority,
-> > +                                    sse_event_handler_fn *handler, voi=
-d *arg)
-> > +{
-> > +       struct sse_event *event;
-> > +       int cpu;
-> > +       int ret =3D 0;
-> > +
-> > +       if (!sse_available)
-> > +               return ERR_PTR(-EOPNOTSUPP);
-> > +
-> > +       guard(mutex)(&sse_mutex);
-> > +       if (sse_event_get(evt))
-> > +               return ERR_PTR(-EEXIST);
-> > +
-> > +       event =3D sse_event_alloc(evt, priority, handler, arg);
-> > +       if (IS_ERR(event))
-> > +               return event;
-> > +
-> > +       scoped_guard(cpus_read_lock) {
-> > +               if (sse_event_is_global(evt)) {
-> > +                       unsigned long preferred_hart;
-> > +
-> > +                       ret =3D sse_event_attr_get_no_lock(event->globa=
-l,
-> > +                                                       SBI_SSE_ATTR_PR=
-EFERRED_HART,
-> > +                                                       &preferred_hart=
-);
-> > +                       if (ret)
-> > +                               goto err_event_free;
-> > +
-> > +                       cpu =3D riscv_hartid_to_cpuid(preferred_hart);
-> > +                       sse_global_event_update_cpu(event, cpu);
-> > +
-> > +                       ret =3D sse_sbi_register_event(event, event->gl=
-obal);
-> > +                       if (ret)
-> > +                               goto err_event_free;
-> > +
-> > +               } else {
-> > +                       ret =3D sse_on_each_cpu(event, SBI_SSE_EVENT_RE=
-GISTER,
-> > +                                             SBI_SSE_EVENT_DISABLE);
-> > +                       if (ret)
-> > +                               goto err_event_free;
-> > +               }
-> > +       }
-> > +
-> > +       scoped_guard(spinlock, &events_list_lock)
-> > +               list_add(&event->list, &events);
-> > +
-> > +       return event;
-> > +
-> > +err_event_free:
-> > +       sse_event_free(event);
-> > +
-> > +       return ERR_PTR(ret);
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_register);
-> > +
-> > +static void sse_event_unregister_nolock(struct sse_event *event)
-> > +{
-> > +       struct sse_per_cpu_evt cpu_evt;
-> > +
-> > +       if (sse_event_is_global(event->evt_id)) {
-> > +               sse_sbi_unregister_event(event);
-> > +       } else {
-> > +               cpu_evt.event =3D event;
-> > +               cpu_evt.func =3D SBI_SSE_EVENT_UNREGISTER;
-> > +               on_each_cpu(sse_event_per_cpu_func, &cpu_evt, 1);
-> > +       }
-> > +}
-> > +
-> > +void sse_event_unregister(struct sse_event *event)
-> > +{
-> > +       scoped_guard(mutex, &sse_mutex) {
-> > +               scoped_guard(cpus_read_lock)
-> > +                       sse_event_unregister_nolock(event);
-> > +
-> > +               scoped_guard(spinlock, &events_list_lock)
-> > +                       list_del(&event->list);
-> > +
-> > +               sse_event_free(event);
-> > +       }
-> > +}
-> > +EXPORT_SYMBOL_GPL(sse_event_unregister);
-> > +
-> > +static int sse_cpu_online(unsigned int cpu)
-> > +{
-> > +       struct sse_event *event;
-> > +
-> > +       scoped_guard(spinlock, &events_list_lock) {
-> > +               list_for_each_entry(event, &events, list) {
-> > +                       if (sse_event_is_global(event->evt_id))
-> > +                               continue;
-> > +
-> > +                       sse_event_register_local(event);
-> > +                       if (sse_get_reg_evt(event))
-> > +                               sse_event_enable_local(event);
-> > +               }
-> > +       }
-> > +
-> > +       /* Ready to handle events. Unmask SSE. */
-> > +       return sse_events_unmask();
-> > +}
-> > +
-> > +static int sse_cpu_teardown(unsigned int cpu)
-> > +{
-> > +       int ret =3D 0;
-> > +       unsigned int next_cpu;
-> > +       struct sse_event *event;
-> > +
-> > +       /* Mask the sse events */
-> > +       ret =3D sse_events_mask();
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       scoped_guard(spinlock, &events_list_lock) {
-> > +               list_for_each_entry(event, &events, list) {
-> > +                       if (!sse_event_is_global(event->evt_id)) {
-> > +                               if (event->global->is_enabled)
->
-> For consistency, it would be better to get the registered event for
-> the event using the API sse_get_reg_evt(event).
+This series adds waited variants of the smp_cond_load() primitives:
+smp_cond_load_relaxed_timeout(), and smp_cond_load_acquire_timeout().
 
-Actually, it needed not just for consistency. The check above is
-!sse_event_is_global() and then event->global is accessed. This causes
-additional errors. Using sse_get_reg_evt() fixes these errors.
-Please make this change.
+As the name suggests, the new interfaces are meant for contexts where
+you want to wait on a condition variable for a finite duration.  This is
+easy enough to do with a loop around cpu_relax(). However, some
+architectures (ex. arm64) also allow waiting on a cacheline. So, these
+interfaces handle a mixture of spin/wait with a smp_cond_load() thrown
+in.
 
-Thank you.
->
-> > +                                       sse_event_disable_local(event);
-> > +
-> > +                               sse_sbi_unregister_event(event);
-> > +                               continue;
-> > +                       }
-> > +
-> > +                       if (event->cpu !=3D smp_processor_id())
-> > +                               continue;
-> > +
-> > +                       /* Update destination hart for global event */
-> > +                       next_cpu =3D cpumask_any_but(cpu_online_mask, c=
-pu);
-> > +                       ret =3D sse_event_set_target_cpu_nolock(event, =
-next_cpu);
-> > +               }
-> > +       }
-> > +
-> > +       return ret;
-> > +}
-> > +
-> > +static void sse_reset(void)
-> > +{
-> > +       struct sse_event *event;
-> > +
-> > +       list_for_each_entry(event, &events, list) {
-> > +               sse_event_disable_nolock(event);
-> > +               sse_event_unregister_nolock(event);
-> > +       }
-> > +}
-> > +
-> > +static int sse_pm_notifier(struct notifier_block *nb, unsigned long ac=
-tion,
-> > +                          void *data)
-> > +{
-> > +       WARN_ON_ONCE(preemptible());
-> > +
-> > +       switch (action) {
-> > +       case CPU_PM_ENTER:
-> > +               sse_events_mask();
-> > +               break;
-> > +       case CPU_PM_EXIT:
-> > +       case CPU_PM_ENTER_FAILED:
-> > +               sse_events_unmask();
-> > +               break;
-> > +       default:
-> > +               return NOTIFY_DONE;
-> > +       }
-> > +
-> > +       return NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block sse_pm_nb =3D {
-> > +       .notifier_call =3D sse_pm_notifier,
-> > +};
-> > +
-> > +/*
-> > + * Mask all CPUs and unregister all events on panic, reboot or kexec.
-> > + */
-> > +static int sse_reboot_notifier(struct notifier_block *nb, unsigned lon=
-g action,
-> > +                              void *data)
-> > +{
-> > +       cpuhp_remove_state(sse_hp_state);
-> > +       sse_reset();
-> > +
-> > +       return NOTIFY_OK;
-> > +}
-> > +
-> > +static struct notifier_block sse_reboot_nb =3D {
-> > +       .notifier_call =3D sse_reboot_notifier,
-> > +};
-> > +
-> > +static int __init sse_init(void)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (sbi_probe_extension(SBI_EXT_SSE) <=3D 0) {
-> > +               pr_err("Missing SBI SSE extension\n");
-> > +               return -EOPNOTSUPP;
-> > +       }
-> > +       pr_info("SBI SSE extension detected\n");
-> > +
-> > +       ret =3D cpu_pm_register_notifier(&sse_pm_nb);
-> > +       if (ret) {
-> > +               pr_warn("Failed to register CPU PM notifier...\n");
-> > +               return ret;
-> > +       }
-> > +
-> > +       ret =3D register_reboot_notifier(&sse_reboot_nb);
-> > +       if (ret) {
-> > +               pr_warn("Failed to register reboot notifier...\n");
-> > +               goto remove_cpupm;
-> > +       }
-> > +
-> > +       ret =3D cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "riscv/sse:onlin=
-e",
-> > +                               sse_cpu_online, sse_cpu_teardown);
-> > +       if (ret < 0)
-> > +               goto remove_reboot;
-> > +
-> > +       sse_hp_state =3D ret;
-> > +       sse_available =3D true;
-> > +
-> > +       return 0;
-> > +
-> > +remove_reboot:
-> > +       unregister_reboot_notifier(&sse_reboot_nb);
-> > +
-> > +remove_cpupm:
-> > +       cpu_pm_unregister_notifier(&sse_pm_nb);
-> > +
-> > +       return ret;
-> > +}
-> > +arch_initcall(sse_init);
-> > diff --git a/include/linux/riscv_sbi_sse.h b/include/linux/riscv_sbi_ss=
-e.h
-> > new file mode 100644
-> > index 000000000000..a1b58e89dd19
-> > --- /dev/null
-> > +++ b/include/linux/riscv_sbi_sse.h
-> > @@ -0,0 +1,57 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +/*
-> > + * Copyright (C) 2024 Rivos Inc.
-> > + */
-> > +
-> > +#ifndef __LINUX_RISCV_SBI_SSE_H
-> > +#define __LINUX_RISCV_SBI_SSE_H
-> > +
-> > +#include <linux/types.h>
-> > +#include <linux/linkage.h>
-> > +
-> > +struct sse_event;
-> > +struct pt_regs;
-> > +
-> > +typedef int (sse_event_handler_fn)(u32 event_num, void *arg,
-> > +                                  struct pt_regs *regs);
-> > +
-> > +#ifdef CONFIG_RISCV_SBI_SSE
-> > +
-> > +struct sse_event *sse_event_register(u32 event_num, u32 priority,
-> > +                                    sse_event_handler_fn *handler, voi=
-d *arg);
-> > +
-> > +void sse_event_unregister(struct sse_event *evt);
-> > +
-> > +int sse_event_set_target_cpu(struct sse_event *sse_evt, unsigned int c=
-pu);
-> > +
-> > +int sse_event_enable(struct sse_event *sse_evt);
-> > +
-> > +void sse_event_disable(struct sse_event *sse_evt);
-> > +
-> > +int sse_event_enable_local(struct sse_event *sse_evt);
-> > +int sse_event_disable_local(struct sse_event *sse_evt);
-> > +
-> > +#else
-> > +static inline struct sse_event *sse_event_register(u32 event_num, u32 =
-priority,
-> > +                                                  sse_event_handler_fn=
- *handler,
-> > +                                                  void *arg)
-> > +{
-> > +       return ERR_PTR(-EOPNOTSUPP);
-> > +}
-> > +
-> > +static inline void sse_event_unregister(struct sse_event *evt) {}
-> > +
-> > +static inline int sse_event_set_target_cpu(struct sse_event *sse_evt,
-> > +                                          unsigned int cpu)
-> > +{
-> > +       return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static inline int sse_event_enable(struct sse_event *sse_evt)
-> > +{
-> > +       return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static inline void sse_event_disable(struct sse_event *sse_evt) {}
-> > +#endif
-> > +#endif /* __LINUX_RISCV_SBI_SSE_H */
-> > --
-> > 2.43.0
-> >
+The interfaces are:
+   smp_cond_load_relaxed_timeout(ptr, cond_expr, time_check_expr)
+   smp_cond_load_acquire_timeout(ptr, cond_expr, time_check_expr)
+
+The added parameter, time_check_expr, determines the bail out condition.
+
+Also add the ancillary interfaces atomic_cond_read_*_timeout(), and
+atomic64_cond_read_*_timeout(), both of which are wrappers around
+smp_cond_load_*_timeout().
+
+Update poll_idle() and resilient queued spinlocks to use these
+interfaces.
+
+Changelog:
+
+  v6 [1]:
+   - fixup missing timeout parameters in atomic64_cond_read_*_timeout()
+   - remove a race between setting of TIF_NEED_RESCHED and the call to
+     smp_cond_load_relaxed_timeout(). This would mean that dev->poll_time_limit
+     would be set even if we hadn't spent any time waiting.
+     (The original check compared against local_clock(), which would have been
+     fine, but I was instead using a cheaper check against _TIF_NEED_RESCHED.)
+   (Both from meta-CI bot)
+
+  v5 [2]:
+   - use cpu_poll_relax() instead of cpu_relax().
+   - instead of defining an arm64 specific
+     smp_cond_load_relaxed_timeout(), just define the appropriate
+     cpu_poll_relax().
+   - re-read the target pointer when we exit due to the time-check.
+   - s/SMP_TIMEOUT_SPIN_COUNT/SMP_TIMEOUT_POLL_COUNT/
+   (Suggested by Will Deacon)
+
+   - add atomic_cond_read_*_timeout() and atomic64_cond_read_*_timeout()
+     interfaces.
+   - rqspinlock: use atomic_cond_read_acquire_timeout().
+   - cpuidle: use smp_cond_load_relaxed_tiemout() for polling.
+   (Suggested by Catalin Marinas)
+
+   - rqspinlock: define SMP_TIMEOUT_POLL_COUNT to be 16k for non arm64
+
+  v4 [3]:
+    - naming change 's/timewait/timeout/'
+    - resilient spinlocks: get rid of res_smp_cond_load_acquire_waiting()
+      and fixup use of RES_CHECK_TIMEOUT().
+    (Both suggested by Catalin Marinas)
+
+  v3 [4]:
+    - further interface simplifications (suggested by Catalin Marinas)
+
+  v2 [5]:
+    - simplified the interface (suggested by Catalin Marinas)
+       - get rid of wait_policy, and a multitude of constants
+       - adds a slack parameter
+      This helped remove a fair amount of duplicated code duplication and in hindsight
+      unnecessary constants.
+
+  v1 [6]:
+     - add wait_policy (coarse and fine)
+     - derive spin-count etc at runtime instead of using arbitrary
+       constants.
+
+Haris Okanovic tested v4 of this series with poll_idle()/haltpoll patches. [7]
+
+Any comments appreciated!
+
+Thanks!
+Ankur
+
+ [1] https://lore.kernel.org/lkml/20250911034655.3916002-1-ankur.a.arora@oracle.com/
+ [2] https://lore.kernel.org/lkml/20250911034655.3916002-1-ankur.a.arora@oracle.com/
+ [3] https://lore.kernel.org/lkml/20250829080735.3598416-1-ankur.a.arora@oracle.com/
+ [4] https://lore.kernel.org/lkml/20250627044805.945491-1-ankur.a.arora@oracle.com/
+ [5] https://lore.kernel.org/lkml/20250502085223.1316925-1-ankur.a.arora@oracle.com/
+ [6] https://lore.kernel.org/lkml/20250203214911.898276-1-ankur.a.arora@oracle.com/
+ [7] https://lore.kernel.org/lkml/2cecbf7fb23ee83a4ce027e1be3f46f97efd585c.camel@amazon.com/
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: linux-arch@vger.kernel.org
+
+Ankur Arora (7):
+  asm-generic: barrier: Add smp_cond_load_relaxed_timeout()
+  arm64: barrier: Support smp_cond_load_relaxed_timeout()
+  arm64: rqspinlock: Remove private copy of
+    smp_cond_load_acquire_timewait()
+  asm-generic: barrier: Add smp_cond_load_acquire_timeout()
+  atomic: Add atomic_cond_read_*_timeout()
+  rqspinlock: Use smp_cond_load_acquire_timeout()
+  cpuidle/poll_state: Poll via smp_cond_load_relaxed_timeout()
+
+ arch/arm64/include/asm/barrier.h    | 13 +++++
+ arch/arm64/include/asm/rqspinlock.h | 85 -----------------------------
+ drivers/cpuidle/poll_state.c        | 29 +++-------
+ include/asm-generic/barrier.h       | 63 +++++++++++++++++++++
+ include/linux/atomic.h              | 10 ++++
+ kernel/bpf/rqspinlock.c             | 31 +++++------
+ 6 files changed, 108 insertions(+), 123 deletions(-)
+
+-- 
+2.43.5
+
 
