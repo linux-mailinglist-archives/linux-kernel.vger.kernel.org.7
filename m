@@ -1,150 +1,123 @@
-Return-Path: <linux-kernel+bounces-873876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E59C14FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:51:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4E35C14FC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:53:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A0C245087F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FC8A42614B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806A822A4DA;
-	Tue, 28 Oct 2025 13:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BCBzeOpV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D283224B1E;
+	Tue, 28 Oct 2025 13:48:14 +0000 (UTC)
+Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CA7227E82
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D296C17B506
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659252; cv=none; b=qoLMlox1FvO29gcf09Q2rKr6RAohxkUSVjLIXRh8qvkvPzwccoJefL7fBIk74FCT5nR3dF5RDqY4Lq2li6bsXPkkEMfpEG57LgPzinKWLE2KD7K3XezE1rxc0tIjsg3f041291gjSyJy9eB9upuJtdeH88SanlcIyqHev9bqJBw=
+	t=1761659293; cv=none; b=nRAHVTR0zobPc/5kZNNG+oDEEHB2k1UpG0oV8AFw6oQ9RDzv4NyS+g3I/1nng1knmy59fEkBUCfoZr7ItX8UxlKClu++WuHyXathmcnV/Z5pquiW+EbupX9CYte+RvzMJCPi+5Ypq3E51oJ98BQsOLfTTNfvyQn2gTRz3UjS25Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659252; c=relaxed/simple;
-	bh=GVjUEKZRgeMgDKNXAgezVSn0xrs6j1yMXphGPwksYBw=;
+	s=arc-20240116; t=1761659293; c=relaxed/simple;
+	bh=mo9APOFetC+o4+E2vl8lwuxRbZ/PNfLE6Ac+ecHV1dU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rOartTf4ki8rw3RhA8ex0RTM1F+kso3HdLPw9WaVnWLQHt4zG1QLzqP+mTohUzXzlNry0ldXfRyhoP+uFHd8VjXRIveWxpQ4FgUKE0zM4mP4e8TZFor8wy/ulM1Lll0TlFNFV0S34bYbMFKUBP89cADV9tvomkm/rKlTcEMWIrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BCBzeOpV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD5BC16AAE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:47:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761659252;
-	bh=GVjUEKZRgeMgDKNXAgezVSn0xrs6j1yMXphGPwksYBw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BCBzeOpVuTtpNnsK/HEK0mvaOH767BgRFEyc3cHrIO1uiPno7n9YbPE0RrBArxZJU
-	 W1oBY0fw/FAwbktfbNtUAgrshGxHddq0rN8tOoA4XbxSqmUtrpxUBsI12txQ7WoGpW
-	 ZRQoArmgPB6yUM7WhWutdmuL7EdEOUXbQDGy+kXexwRk0gFMBYoD6FrGcjfft1EaO7
-	 Yw35Jaet/uAic4eP1VgrZelWiQyauRn+hnaML2Agzj5bHh9X3g7vAs6DrnQSflHlrP
-	 1j+pIlVoCla2DQOukwOJTvguGHl/86+1BWvl85Hjah+3g35Bo82ImtyFxIG1M8I0Bp
-	 T0vmV1b6La1Zw==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3761e5287c9so70418631fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:47:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWcmHnPZ6N/6K6OaRS2FDMuAvr22QWUw5/pqlIbWv/FTk5rpFkl2GWt3OOGbSo9J2O0AeWKyWM5gwvVBXI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIXb19HEIoNaXbd+Ssdnvnr/P9CobeC9FbwW/5tPGgIwcvuC55
-	BxuKZbzHp5LyJwMpAB4Bjw4X/vPtM8qY4WMOJnciyU8qA+Rn3Y+bgs7gdzh6u0+WfJssITL351e
-	ohoD18TIbko7LBPJIdnSpDezJlrcsqh8=
-X-Google-Smtp-Source: AGHT+IGMDRiylwmZD0SBl5ugRhR6rIlFVm0u852ZP1jG9URNwU34wlwBhJJFjd3gP3FgNoxZynY+eRUKXAVIwfZ/a6U=
-X-Received: by 2002:a2e:9a13:0:b0:36f:284:56db with SMTP id
- 38308e7fff4ca-379077114c5mr10647291fa.23.1761659250814; Tue, 28 Oct 2025
- 06:47:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=cVwvbMZKUkvWwmQLer0zk3ax0vcW5QeAbDlUDlWPbnGSYnKGcDrF7SciQ85lR7diIqVFA4xCTBLDGkuyX2b5NwU1vVZ0IbFp2Jt4Lpih9Mvq7v5xqPbI6MRkBD4n9lvBJYCgUJM7Oe0NRSIskKPysqT1U0+t8zlFQByAEoV36hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=74.125.224.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-63d8788b18dso6481954d50.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:48:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761659289; x=1762264089;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oPMFTXsnoNZjm5dyqceKxk4gXVUdwjZcnDXHEFYHIA0=;
+        b=sf0h+spCesqMCguNs4zXa59aX69WJAf029me9ZJRna/f3dC772IgGgd2xRAFTw/E6h
+         CX6+VBRDZFYm9Xf2o+KIBHOQixcxumD9VAf/htbs9s+P7HgUxw2cJs+WwgUxdQB0DIQp
+         J5dyw5eCCJ2dgoaHRf+p6XNJvnTttMHrgFAiX+FTTbO4FWeJVdjxnMed1IhHFA5BrXjn
+         KoAb7rW2hc2RdW9UL+HzAjmrQS/xc8K9KQFXLZz58hp42B5XgR+wT7FIVCD1qbN2PbPd
+         Kxg82+Up/rYytkJBUFV5Kv6Ygv3XKMkHXdPMwXF3zF2EYuGRLNu+0Sa0q6g3fdmyEP3j
+         oElw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPOy4ZOqPcBJ0Tfd0ydfqpcWpvRAR4p8RXGD8+TkUDxU6i4v4Nn17ZjIFSHy9w9eICNUJnRnYfXak6pls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqSJZEwFYe3zyPmpk/0hrI/qb+ebXBOLKpNKOfEF635nGkhARf
+	J7bJ1V6aIEE7N5JGIt56+p27WSZyY3+N/ZSzz+q0qkfBnVghe3nokVjVeGokXEIB1cIHGMaUyJY
+	3gAY6vRKXImhS4gwamC0kXKsQnROAWKc=
+X-Gm-Gg: ASbGnct8Fr6YC8i4mtHBs05rn3BxFD8+LBs+sInXgKr3CrDUHYHDwEYM07wnCSl3u/G
+	48cUyf74lQzvujRsEJoXHGkTApOsZhbZhlrwrHD7KJCiq1FzeSdsZZvTMKHiWdgVEucpWLoHstD
+	cBGE2tb8vSj1K5tSzxWIHCIz/HBaD0T+HQbnmIeUCtFkqjRQySv2yGfHEVmCoipsygau1PdkAIA
+	uiH446ugQAHar4K9KWHdrjrJumJzsCtnjg6NmWIGOOmt6hA7wl3evhJ3wlp6FjydHRFVZzhaw==
+X-Google-Smtp-Source: AGHT+IEpad4qjzXZnnPUSnxLHEvfwEEW/p4NMzrGRe+eVIllVRD+MMw8/uUDVMbqy8K2DcaFli6aaeVoXMtxDLr8VQw=
+X-Received: by 2002:a05:690e:42cd:b0:63e:e9b:6220 with SMTP id
+ 956f58d0204a3-63f6ba95f0cmr2455437d50.47.1761659288840; Tue, 28 Oct 2025
+ 06:48:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAAhV-H7HN128du-b1Rk_9qbYBq7gMSwo0s31909N4pTou6wzew@mail.gmail.com>
- <CAMj1kXGvSnCMRVCW7eAxgLRWMEV3QRj3Dqg3PmZchZJNpnLK9w@mail.gmail.com>
- <CAAhV-H4UKdso0BokAqvjYeBLr-jbjFAaQX4z=1ztpBamqrOEEg@mail.gmail.com>
- <CAMj1kXEXDC_oq4aWbkR5dqYBix2d1xJEdaj-v747e1nOA0Q_Yg@mail.gmail.com>
- <rhnei6wovxmoqs36wdysomfsul3faxtmgde73wrrqdt3qo3b2j@akd7vzne76rq>
- <CAMj1kXF+hDJy0vRWNgwoijHxvA-scvhGODMj9A3dv19v3jf2yw@mail.gmail.com>
- <lgyzruqczm7uti2lfbhfhr5hyzpnm7wtvgffa2o7nigx76g6i3@wlffltvmhhez>
- <CAMj1kXFDquPxCYSBWgjikS=209pSJ_kth67M0RDeuetV9CPYAw@mail.gmail.com>
- <wlx6pt5crtfdwtop4w5vjznjfarrwitq44wdbufncjdvtsx647@tgobruak66yb>
- <CAMj1kXFfEBkcc-aiwGrRR-pKg4LBbS7weK0pEpZJsKOk5pbkuA@mail.gmail.com>
- <jxfb5a2c2qber623l2gwewirwod54bbgfnvt7t7f3jah2ea33g@2uyhy3auzmpx>
- <d9f3352a-1c1f-464a-a8fd-741cd96b5f8e@loongson.cn> <CAAhV-H6m5vszCyiF3qi94cpHBPVuqM2xH93D=gfsQqOSYvC-sA@mail.gmail.com>
- <33612d85-e70b-26da-8460-ea6b9064ce08@loongson.cn> <CAAhV-H5ZSTFDxvm-W1CrgEoQ5d_jw5yVsfetQ_J_qL5pqLtzgg@mail.gmail.com>
- <CAMj1kXGk0udgM67wrWqahqK8H0uE8emQj51SmJey+7fE-FTjdA@mail.gmail.com> <CAAhV-H4c=vdNWO0v_mYL2xZ9FYjDyRDvt6f_kV4d8Bh=CRJniQ@mail.gmail.com>
-In-Reply-To: <CAAhV-H4c=vdNWO0v_mYL2xZ9FYjDyRDvt6f_kV4d8Bh=CRJniQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 28 Oct 2025 14:47:18 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEaxxcWTTANWeEMNjYDymdL5Fxy2B=XBF4RGtteEkfinw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkAt2Vtj9hvye18BBbdzR0dpGQ4Zhb1DJGs0utdf4kJbulyIP6uV_Jkez8
-Message-ID: <CAMj1kXEaxxcWTTANWeEMNjYDymdL5Fxy2B=XBF4RGtteEkfinw@mail.gmail.com>
-Subject: Re: [PATCH v2] efistub: Only link libstub to final vmlinux
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	loongarch@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-efi@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250915062135.748653-1-zhangpengjie2@huawei.com> <651ffa3f-9098-4d00-877b-d22e3e8cd64a@huawei.com>
+In-Reply-To: <651ffa3f-9098-4d00-877b-d22e3e8cd64a@huawei.com>
+Reply-To: myungjoo.ham@gmail.com
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Date: Tue, 28 Oct 2025 22:47:30 +0900
+X-Gm-Features: AWmQ_bk23k_KI096SoA9euoBCAKpEylPGoxdr43SmVwRmbr5t2KsgoFftr8vmtY
+Message-ID: <CAJ0PZbRsH6DcDKHhYGDktg-zejfWafnRR-DHrp8Zw89ervh2HQ@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: hisi: Fix potential UAF in OPP handling
+To: "zhangpengjie (A)" <zhangpengjie2@huawei.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Linux PM list <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, lihuisong@huawei.com, 
+	yubowen8@huawei.com, linhongye@h-partners.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, 26 Oct 2025 at 12:20, Huacai Chen <chenhuacai@kernel.org> wrote:
+2025=EB=85=84 10=EC=9B=94 27=EC=9D=BC (=EC=9B=94) 11:28, zhangpengjie (A) <=
+zhangpengjie2@huawei.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
 >
-> On Thu, Oct 23, 2025 at 4:07=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> =
-wrote:
+> On 9/15/2025 2:21 PM, Pengjie Zhang wrote:
+> > Ensure all required data is acquired before calling dev_pm_opp_put(opp)
+> > to maintain correct resource acquisition and release order.
 > >
-> > On Thu, 23 Oct 2025 at 10:01, Huacai Chen <chenhuacai@kernel.org> wrote=
-:
-> > >
-> > > On Thu, Oct 23, 2025 at 2:55=E2=80=AFPM Tiezhu Yang <yangtiezhu@loong=
-son.cn> wrote:
-> > > >
-> > > > Hi Josh and Ard,
-> > > >
-> > > > On 2025/10/20 =E4=B8=8B=E5=8D=882:55, Huacai Chen wrote:
-> > > > > On Mon, Oct 20, 2025 at 9:24=E2=80=AFAM Tiezhu Yang <yangtiezhu@l=
-oongson.cn> wrote:
-> > > > >>
-> > > > >> Hi Josh, Ard and Huacai,
-> > > > >>
-> > > > >> On 2025/10/18 =E4=B8=8A=E5=8D=881:05, Josh Poimboeuf wrote:
-> > > > >>
-> > > > >> ...
-> > > > >>
-> > > > >>> But IIUC, the libstub code runs *very* early, and wouldn't show=
- up in a
-> > > > >>> stack trace anyway, because there are no traces of it on the st=
-ack once
-> > > > >>> it branches to head.S code (which doesn't save the link registe=
-r).
-> > > > >>
-> > > > >> Thanks for your discussions.
-> > > > >>
-> > > > >> Are you OK with this current patch?
-> > > > > For me the current patch is just OK.
-> > > >
-> > > > We have discussed this a few times but there is almost no consensus
-> > > > of what should happen next and nothing changes.
-> > > >
-> > > > Could you please give me a clear reply? Then I can make progress fo=
-r
-> > > > the following series:
-> > > >
-> > > > https://lore.kernel.org/loongarch/20250917112716.24415-1-yangtiezhu=
-@loongson.cn/
-> > > For me, this patch is OK, ignore __efistub_ prefix in objtool is also
-> > > OK [1]. But I cannot accept the way that modifying the efistub part
-> > > only for LoongArch.
-> > >
-> > > Clear enough?
-> > >
+> > Fixes: 7da2fdaaa1e6 ("PM / devfreq: Add HiSilicon uncore frequency scal=
+ing driver")
+> > Signed-off-by: Pengjie Zhang <zhangpengjie2@huawei.com>
+> > ---
+> >   drivers/devfreq/hisi_uncore_freq.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
 > >
-> > LoongArch is the only architecture which has the problem, so I don't
-> > see a reason to modify other architectures.
-> From your reply I think the efistub code is completely right, but
-> objtool cannot handle the "noreturn" function pointer. And this patch
-> is a workaround rather than a proper fix (so you don't want to touch
-> other architectures), right?
+> > diff --git a/drivers/devfreq/hisi_uncore_freq.c b/drivers/devfreq/hisi_=
+uncore_freq.c
+> > index 96d1815059e3..c1ed70fa0a40 100644
+> > --- a/drivers/devfreq/hisi_uncore_freq.c
+> > +++ b/drivers/devfreq/hisi_uncore_freq.c
+> > @@ -265,10 +265,11 @@ static int hisi_uncore_target(struct device *dev,=
+ unsigned long *freq,
+> >               dev_err(dev, "Failed to get opp for freq %lu hz\n", *freq=
+);
+> >               return PTR_ERR(opp);
+> >       }
+> > -     dev_pm_opp_put(opp);
+> >
+> >       data =3D (u32)(dev_pm_opp_get_freq(opp) / HZ_PER_MHZ);
+> >
+> > +     dev_pm_opp_put(opp);
+> > +
+> >       return hisi_uncore_cmd_send(uncore, HUCF_PCC_CMD_SET_FREQ, &data)=
+;
+> >   }
+>
+> Gentle ping on this reviewed patch. =F0=9F=99=82
+>
+> Thanks!
 >
 
-That is my reasoning, yes. But Josh is right that it shouldn't make a
-difference in practice, I am just reluctant to make changes to the
-code running on the target to accommodate a flawed build time tool.
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+
+PTAL, Chanwoo.
 
