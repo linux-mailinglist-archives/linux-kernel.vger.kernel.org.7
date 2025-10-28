@@ -1,47 +1,40 @@
-Return-Path: <linux-kernel+bounces-873565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B725AC142DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:48:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B56C143D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B011894314
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95688625235
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12990309EF8;
-	Tue, 28 Oct 2025 10:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5391930C348;
+	Tue, 28 Oct 2025 10:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCfHSVbn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="S1mtYRFF"
+Received: from mail-m32116.qiye.163.com (mail-m32116.qiye.163.com [220.197.32.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3323081C2;
-	Tue, 28 Oct 2025 10:42:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05A82306B0D;
+	Tue, 28 Oct 2025 10:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648146; cv=none; b=Lg/FLOOlLgPyqVbg4ehNTcERU0hVfdw1768SY5CUvxvYuUvLO5MBmSX7uTYwQ/b7yADy/t5SUfzPoHw97/emre/03ZkzUUC7p/cNkt4gNl0mIxZT6SWq4Gm+hFl4QtRh4BlsiG16n2aBfKqBfubCsfvOTCd4m9XSWSsSASllhFQ=
+	t=1761649098; cv=none; b=dJmHvP82T1qWLD7uGomCTz4Z/iSPGAKuBoPVysx5nPYHvQ+SADiGajzU5PFIx/9IcQKorGZW5Uy1NTKIHupmRPIulRC0b3zlfbG12I8CpMZkaKlm6n6MDR7p4JStadOy5wiJ0rROnP7Dp6HxvklxC9KTihDg92JPb1+MEIVrrbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648146; c=relaxed/simple;
-	bh=38wxE3g3XRLJs8huMWHMGaxxdwbTkUF7vehtIb5e760=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TNw6QUouUw0/GaK/ntfGvgSuBNluUV5X+VncHN+5VudmjPNRsZNUwk8KR2Z2Quo7ENdbnyzJiTLP6o5iUr064GLVx5lc05jF9v+iSkELkIyRxuLt71O+NWe5EJWn+Xq1tbqQCCT4Aj//Gquhk2bvM8YZI+qonqTideb/0vLoawY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCfHSVbn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFDFC4CEE7;
-	Tue, 28 Oct 2025 10:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761648145;
-	bh=38wxE3g3XRLJs8huMWHMGaxxdwbTkUF7vehtIb5e760=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=KCfHSVbnJHFUbKQ0dOh5bZo18QqtuQ11GmlCaUuORBW169eHEB8OXwvD917+cXf09
-	 BByH+nVdCZU7vqt7QxsXPAsxZOcCNMyqT79v917FfDD3eS5J8NgqPwurwZFqcv/HZA
-	 XzTEkhp76Z0gJ8ZAxpsVtdOk5Fsx1EpkIb8WRr8VJ7t03FNG21U4vVsSIhLlYjHSFx
-	 vH1t3pyImTGRnf2wuwOgbsjgQEqkopVLDSNG12SltITeqerxfPFx34mIwc9G/cGrz+
-	 O/ObIwHOu2wm8cU8UPHCmHG07EhMGZy5nYuDYDcpTO7ETsq554iQ7XbTXvb4lc9mB7
-	 5Zo0/+87cVCgw==
-Message-ID: <400d08a1-c373-4efa-8ec4-f535e74acd98@kernel.org>
-Date: Tue, 28 Oct 2025 11:42:21 +0100
+	s=arc-20240116; t=1761649098; c=relaxed/simple;
+	bh=26olVJnTBzVdqfMxmqduKc3AaTMDecoatS6OLyYX9xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ksDa6jrnXQK+v9WO1vHApBtOm219qH90kzlP2MTNnzFPyvTfITmewprwfGQCrGoP1jxhvTMtkWXOMrPWT0FnUQW5XXpXewd0GLiGI79iFZ6pBJ9PP3Wfh/UlsY+LceLar3I7fJZvTowcLsQ+2iSKCf42/tZrqfb1Zm9gxJ2pIQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=S1mtYRFF; arc=none smtp.client-ip=220.197.32.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 277b7c941;
+	Tue, 28 Oct 2025 18:42:52 +0800 (GMT+08:00)
+Message-ID: <dbb5f7b4-7dac-413e-8c0a-4f962b79eae0@rock-chips.com>
+Date: Tue, 28 Oct 2025 18:42:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,97 +42,57 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: FUKAUMI Naoki <naoki@radxa.com>, Joseph Kogut <joseph.kogut@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Steve deRosier <derosier@cal-sierra.com>
-References: <174735136138.1544989.11909422896170025756.robh@kernel.org>
- <20250528221823.2974653-1-joseph.kogut@gmail.com>
- <20250528221823.2974653-2-joseph.kogut@gmail.com>
- <20250529-impressive-real-monkey-a7818b@kuoka>
- <6443BD03B4C4F1FE+d20c3903-e2dc-4c2b-8f6e-fac38f242898@radxa.com>
- <2f4e7f94-2921-493c-94fa-45749a060bc0@kernel.org>
+Subject: Re: [PATCH v3 1/5] dt-bindings: pwm: Add a new binding for
+ rockchip,rk3576-pwm
+To: Conor Dooley <conor@kernel.org>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Lee Jones <lee@kernel.org>, William Breathitt Gray <wbg@kernel.org>,
+ kernel@collabora.com, Jonas Karlman <jonas@kwiboo.se>,
+ Alexey Charkov <alchark@gmail.com>, linux-rockchip@lists.infradead.org,
+ linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20251027-rk3576-pwm-v3-0-654a5cb1e3f8@collabora.com>
+ <20251027-rk3576-pwm-v3-1-654a5cb1e3f8@collabora.com>
+ <ff9631f5-8fff-4be8-8b6f-807c29943ef6@rock-chips.com>
+ <20251028-favored-dynamite-fa626b96ecba@spud>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <2f4e7f94-2921-493c-94fa-45749a060bc0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <20251028-favored-dynamite-fa626b96ecba@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a9a2a69de4503a3kunm3a0251b715b88b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxlMHVZKGkkeHR5DSUMZH0NWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=S1mtYRFF6hi+IK7RpvYsFRyQjzX9G+C1YGR+qZrW7CHGySfkhkjEJ6cltXdZZ5ZnbzFXXAyotA4NNbci43z7eiXayHbWdngregdEBj7/lEfAf2r4yQn0YVx5aR/TJErMMP3zqlDTE2SMXXNZJ7JDijcgo9+npF4OSioc323AKx4=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=gWFZ7wFU0oJn0xlF0a8hdwI8bFTvAeFwgQl1T8susj4=;
+	h=date:mime-version:subject:message-id:from;
 
-On 28/10/2025 10:37, Krzysztof Kozlowski wrote:
-> On 28/10/2025 10:33, FUKAUMI Naoki wrote:
->> Hi Krzysztof,
->>
->> https://patchwork.kernel.org/project/linux-rockchip/patch/20250528221823.2974653-2-joseph.kogut@gmail.com/
->>
->> On 5/29/25 18:19, Krzysztof Kozlowski wrote:
->>> On Wed, May 28, 2025 at 03:18:21PM GMT, Joseph Kogut wrote:
->>>> Add device tree binding for the Radxa CM5 IO board.
->>>>
->>>> This board is based on the rk3588s.
->>>
->>> Do not attach (thread) your patchsets to some other threads (unrelated
->>> or older versions). This buries them deep in the mailbox and might
->>> interfere with applying entire sets.
->>>
->>>
->>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Please explain the sorting rule used for this file. You must have known 
->> the sorting rule; otherwise, how can you be sure this patch is correct?
-> 
-> Huh? I don't have a clue about sorting rule but if you mock my review
-> let's make it different:
-> 
-> NAK
+Hi Conor,
 
-Please ignore, I thought that's patch from FUKAUMI Naoki which code and
-then pokes about that.
+On 10/28/2025 4:50 PM, Conor Dooley wrote:
+> On Tue, Oct 28, 2025 at 11:06:15AM +0800, Damon Ding wrote:
+>> On 10/28/2025 1:11 AM, Nicolas Frattaroli wrote:
+>   
+>> The RK3506 and RV1126B platforms that are about to be upstream also use this
+>> PWM IP. Would it be better to name the yaml file "pwm-rockchip-v4.yaml"?
+> 
+> No. Files should be named to match a compatibles.
+> 
+>> Then subsequent platforms only need to expand the compatible property.
+> 
+> That's all subsequent platforms need to do anyway!
+
+Got it.
 
 Best regards,
-Krzysztof
+Damon
+
 
