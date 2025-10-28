@@ -1,128 +1,312 @@
-Return-Path: <linux-kernel+bounces-874530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EAAC16858
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:41:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9E6C1684C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D3284EB41B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89F901B28EA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223EB34F465;
-	Tue, 28 Oct 2025 18:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD13034EEEA;
+	Tue, 28 Oct 2025 18:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPCuih3M"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jwa/H/nq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2518D34EEF2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676819; cv=none; b=Gm4MgeVw2Ff1qZb6mex1+Z68drF7fqdKKGknvA7TAb4cFJvM98yE46JkNUzBSh7/cVZ3XmmfCiEl47AnIPChWPnT0iQJdq8kmFGJzpL66vH9y7QefziExTnpDJOkwstlNB9jI+IkJx8ujef59xjO7rWLD5RCXxDNRYmOtV+6Vzg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676819; c=relaxed/simple;
-	bh=YHUyqG9og7JRiLqH4LyIAka56ptv6pdodMSXVssNBPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VIhoGRbsRXGdplMNyn5Unw5eD1HBS1GTu6rKICL/zG1eaeRUoMqLX02HxC3GDFrOOPmRA74+1HUtMs2ijqW+DdQQEFpT5HVfOiOimB4u9kAAA1x2GT3DLmTuKxL/IMgrmZP3gqC8ah0w1iovi99eu62ZHsMwwCTHwBroQ2oYvrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPCuih3M; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33e0008d3b3so6438750a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:40:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761676817; x=1762281617; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ReHRtTE3vpAbKBdAM1gtLmprCAAoAlRTRkSZ/pbLtpY=;
-        b=aPCuih3M3sTZfq26ff42uHYNlimbbmyUp3u23K6QobQWTGpkbinrzLU4m/AktGHdyK
-         VL9WaD9M6O+cDDHkWqvVKOzV8MMmjAwMI72Apv9VkMuv4qnN9V/0Ozp3YCh/dCgGqlPV
-         NHUBxLWwEefvlwe7woasAGFljrukNZ/1LfIoEkJScYLLknghxntRn+mpMLAT37ZSQ7fy
-         ug1kXzeKtFr3yy9N5xnRNbv440mEv6OCKvxrXWneMwyqK0kYoQqEOVf5JeNCiBQggm11
-         LFfLFAGZ6ad6BRVu97IqlO3Dk5OHhu7VPdMVXPPlilVhOuXZDXw9Hq9xUflJBEmaA8tb
-         JbHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761676817; x=1762281617;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ReHRtTE3vpAbKBdAM1gtLmprCAAoAlRTRkSZ/pbLtpY=;
-        b=qWgnUxHTzGZIQuMNUoKDVT1hzk5VwhSgYbv1PJU0zoriKAdSkNJPEXHL00RwGBfUyD
-         sXBkk2SnF7tipe5m+hilsGWh/rosGssu4hW8cNMmjGHyTj4RK++7/0wzUwUbBSwUer4j
-         HAv2+huNeI0aeLXdPjtuiXqemdTI07SCC+8Q3i9fKOkulZmy5o95VZCcqbEaeQAoLHbW
-         XMQ+21QyR7OkUBgBVDRuCOBUbqB654wfkZzrpTYRDKGeSwX7p3ZNoWLZ7WBMP9BMCmiS
-         bWKfvRr5SAC9hVENJZf54T5Cc42Nd1+Vv4CJ1HMfCer9ZycrSfJXctqf/5yJOvRytgi3
-         pr1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWXuBfyiLdpECGwgneEgfqmqSomY7NHxbPWykwJUqcLilZYA9eNIZxW+nkOWeOKG8v+PbzEo1Swuv+c8CU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLw9Ctym6T64hHSXkLJmOIklFgJeJHs8aPZnGeCp3TzEPKHdTx
-	aYfOM2Dg0VjnGS0nRfJsY1dSzQsmBbHGiAQs76HU1hDDwn3fWFYd4M/EboNZNFrgxyRnPfMQMg2
-	NFQBQbDEUt9Fx8SpoBXs8quOiPTifOn0q1A==
-X-Gm-Gg: ASbGncuzK6IkxL9dp89awXHOoGEKppTlzUugV5mKgcnmWCiQNC6q/HF8PZi+F/EIIyM
-	m5dtNUE0l/HyCK4cz8Or2DyLPMZ09YematBGcdD8YFxoTYiQeCjDt1y0VR61Mb92lCPrEAbJXdy
-	L/K8b+uNN+qyArQYi+S1yp5/NTKWMpxyuUa3t6/Mgs3fhGmJPkjW1djmnoaz/m/IYEeBHovxeCE
-	j2qimb5zQRPVVls8kHs7fFA9Wd/QuoqRLsTtqcWR8pioul0u7nwDLz4R7+L3ok8N1qOc++cm6MX
-X-Google-Smtp-Source: AGHT+IFpi9zDAw8H+uPYXYR7N1r5jRqU5Ai68jkqn3uM+9psX8uQczEPz/AgjranWwgbURI8mlaG82WgPadfnvyMFso=
-X-Received: by 2002:a17:90b:4c4d:b0:31e:d4e3:4002 with SMTP id
- 98e67ed59e1d1-3403a14377emr52330a91.2.1761676817234; Tue, 28 Oct 2025
- 11:40:17 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2911D32ABC3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761676846; cv=fail; b=PWebfl57AoXUigSRGg7E9pBpabrPSGkDY9a66hQaELou1WWQdoz6zi+ayayZzXBTFSYiptTPXnCvrR0eq4UmohsHnZnZtJFuEsgoGvQhA3t5n3vkfbAr522WeUcc5hyk3toS55gA20Neod07+3gcxIGNUVFRCgiY/zeZmrAVC38=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761676846; c=relaxed/simple;
+	bh=qaCCQwmpCZjmHyOq5LDm2dj2NpCa9IgqjAPJ8OnB+mQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=itYlZCMpwAjybPFQb73W1Z7juynLd+/IDTF9Ar78QX2A0jnpCtqZB3SppYhd7HHf5RF7AA0OSrXq+GBSy2e3gRrH1r5+H5NFIfYzLbw1PGNzuat+EtKcmcUjDDLoXG+w4P1KcStzG5wumogTwVF/ePyhgIrxRRsBHuP0KgvKz1Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jwa/H/nq; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761676845; x=1793212845;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=qaCCQwmpCZjmHyOq5LDm2dj2NpCa9IgqjAPJ8OnB+mQ=;
+  b=jwa/H/nqIhAN6ycaUb5gpaSjitkgf1ktvjKCR5wCpCQLVg/PDAUpGdTp
+   J1EZmjVeU+yBrb12kzlUOGLGuM7fY/fvQvYsW+zu5IiRAe4GRuhT2XKM8
+   iwsexqIQe7+JcffgVP0xxP7/r6oWkiqPOky5pPPZeoV6YuB5vxarzGkSF
+   SS24qDEcMPw+xhxRLDMrGWzv7D7YW4R7u+idhO82OZuMqOpCVd15bj31g
+   sdhXpMPEAcHBvkqqErtSnBbVErvvpeH4dM9DYNwLc+mFNVKgM7JvErIXA
+   NGsNGuI1I9YrWZAQiswysTyNVfblzCzLNJNHHTr37+JhdN6+JySVu9Qby
+   Q==;
+X-CSE-ConnectionGUID: PoaAZ1eVTXivdEvkdjEmNQ==
+X-CSE-MsgGUID: HCOWlsKVR86kKoBRXjFl4w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66403466"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="66403466"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 11:40:44 -0700
+X-CSE-ConnectionGUID: mFv0inWKSeaGLifk68vNxg==
+X-CSE-MsgGUID: CSP4takMQ/uBani47WVZ8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="189744815"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 11:40:45 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 11:40:44 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 11:40:44 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.12)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 11:40:43 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ckhGYUePXuDtjO97O5stuF2t4/kBNuDZNB0pF+mDnNdE2A/MFuADN4hEtiq0CUJE5RCbnsKbTJ9i9rCDVwHGYiWMU9PN/fBKTZZeN4Vx73Iu3Mgt16D+3yn0l8O1NEYZS7RdK83Tijg5M1kPNRHxw5j2cYRSLUq/iwot/iwEMRKOHqs4kKuqNOVFTbhTwYFAfZ00a9+bzO67qHItE6SemL1ooYae0aXfvJYbGhPjVzdlMPJtWaEyKmu4RtEujxF1jEngOC66tTcFvjYQsApZcF5sjX9zcOtaxwpWHZGrtbi7Tzn67UO3UyFXA0P36DadnJPauMJF9TAFvQy/OPbpZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UxOGa1naTFBzgpFlqZFNezPimY6ysSnlSFJMGc1F2MQ=;
+ b=L7g1D48OchfXb5K2mXWDWgji/yicRPnLYAOQgNqfs01jkjCc2BPLyBcj90lUd2Lu296+6p98S+qb5C3NnzfjHn9zIEMa3MTC/cfURu7h34OCPBFY3WERH5FfMhvUcbh/xiw3k07elsTxBem9KAodNvG5kcVhoDYIU0NKqPtW822Ygw64YwnJBlnYAHoupG5VLkezaqEl1UXSrGcghE0Tw4sJ9+kIXwjk47GvGWzY2e41KGDlCLvKHtAASfoxEYblsOeDq+iZF6HcPStZw/HZZ3Ygxm/Kc72R4FjjF5OWkvWKdFu267FtOfltylT7U/ppVNQXBDAE6s8fU5iS/EwMJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by CH0PR11MB8165.namprd11.prod.outlook.com (2603:10b6:610:18e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 18:40:41 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 18:40:38 +0000
+Date: Tue, 28 Oct 2025 11:40:33 -0700
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+CC: Fenghua Yu <fenghuay@nvidia.com>, Maciej Wieczor-Retman
+	<maciej.wieczor-retman@intel.com>, Peter Newman <peternewman@google.com>,
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, "Drew
+ Fustini" <dfustini@baylibre.com>, Dave Martin <Dave.Martin@arm.com>, Chen Yu
+	<yu.c.chen@intel.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v12 20/31] fs/resctrl: Refactor mkdir_mondata_subdir()
+Message-ID: <aQEOIfMFo1Dqv-sP@agluck-desk3>
+References: <20251013223348.103390-1-tony.luck@intel.com>
+ <20251013223348.103390-21-tony.luck@intel.com>
+ <4bcb8320-687f-4c43-b4b7-150d503b9890@intel.com>
+ <aP_5eW_GHwXebeyq@agluck-desk3>
+ <b4921b96-3f86-45d8-a353-471c8f20e2b1@intel.com>
+ <aQD560ppyTDob_Wd@agluck-desk3>
+ <820cd2b6-b71b-435b-bc67-c35318f869e2@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <820cd2b6-b71b-435b-bc67-c35318f869e2@intel.com>
+X-ClientProxiedBy: BY3PR04CA0004.namprd04.prod.outlook.com
+ (2603:10b6:a03:217::9) To SJ1PR11MB6083.namprd11.prod.outlook.com
+ (2603:10b6:a03:48a::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com> <20251027135423.3098490-4-dolinux.peng@gmail.com>
-In-Reply-To: <20251027135423.3098490-4-dolinux.peng@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 28 Oct 2025 11:40:03 -0700
-X-Gm-Features: AWmQ_bkfehzA6_mDWthS_m9oyAgVFVGQGAttnEawAXl4ZiOgz-ClG0bQjogRbQ0
-Message-ID: <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
- verification and binary search
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PR11MB6083:EE_|CH0PR11MB8165:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6bf86c7c-f330-4ae3-b302-08de16517c36
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?k8lW0W7U2QzeudO8Wc6Wi//pAGbOY49r0RIqSdWUatGwfvTExhRpm5n+BEoQ?=
+ =?us-ascii?Q?8JpaUg16+MD1QSPKYxEgmjLeXxt5WvBqVVZXYnhEcz7g3rWu+Gf7LmeYbOxI?=
+ =?us-ascii?Q?2l48ST97BdRFNci8VndavLdweZnDbH9hwI/ZyTQvmmBfBGtEYuVGxxfYwG3X?=
+ =?us-ascii?Q?I3632l4IRh+w3SKrD/NelcrBwLXRA/TdWtlulY7gEt/cMQRHfdAejzb87Uys?=
+ =?us-ascii?Q?lRQaTMssiTKCNQBoRhqC9oX8q70KthfVNKRmYDrRUYUzeCo+x1C3gzXZhZSj?=
+ =?us-ascii?Q?ad6YCEPxtqYxMeCXwjYrW0FYpQPZJQtKDDGgei+DKK9T7cAOmDX7ez0rdidn?=
+ =?us-ascii?Q?aceU9mzcnMSC+SnlWfu/CaFK3qJ1GmetDsYkKrAA0l+fqgiEtWMpHVVoHz2C?=
+ =?us-ascii?Q?VHVYiV5lSZP0dHCV+hKM1uPhpPMPO/4gIg4u2M0LClyFkroitnVQxP3/mRSS?=
+ =?us-ascii?Q?NC9BmnTdlVhCqSCMa5VkFBILCDbCHu4N1cSCG80Gn8mATO9c3HfgmLdVY5H3?=
+ =?us-ascii?Q?hDdDYqgumbxp7obj9VCt/VTghn3Kqg44xDpM/nEbSUFN0RP1OBIwJJLNDpUu?=
+ =?us-ascii?Q?1q2ky0LX87Tbt8SZVRwUbeT8CUfYxC051vAGRm/OaOtHWK1QnIGUFQi+7Z6L?=
+ =?us-ascii?Q?LMDpMfuZ+pJ4KZg3CvH8i7Kc5PizJpE75acsHniJVEsTpOoWO9nOmfjQITGb?=
+ =?us-ascii?Q?TSfhCfBBSBjQ4O7ktQE4qj0UMs/9uyjncV4hoz9Know9byIKAoRdm2fEjlbv?=
+ =?us-ascii?Q?ScBfmTJyDj+fYMPvJ15w2O9GWcSamdfp/5JDXDjVwOtsJa1GDQewQRD99d1y?=
+ =?us-ascii?Q?k5/ABg0trXmUT05vlSU9kesC1jz4z5viesYF+S8rlIJDuordQ/iCRPwjUGVx?=
+ =?us-ascii?Q?x18kMRKZV0pRkg0nkrrzgtsP4rPhhgpyE/mOfqgOQTT3qmpbXLi8hyP7rwEZ?=
+ =?us-ascii?Q?KtMQSkOWVE+K18qkffPLq/nu7DOY3JrO0fS11Z/KBjnYUgRB1pL2GgGShpr/?=
+ =?us-ascii?Q?rUaDOooNb3BMeCO7remFwfAhuzKGdJJ5XdFsToZvo07BCmoX0C7YTAD834cU?=
+ =?us-ascii?Q?QtJqDmjuB1vVIHgI0zoxoOAPx/tugtyS7pz3QLb61vsxpy2SLdAAzJ/STTIQ?=
+ =?us-ascii?Q?tNlf/5KmBjK2VlGbkp/wkT5tW7fvM15FJzDjJTCq9dkBErkqoYLxFQNudF8T?=
+ =?us-ascii?Q?vkraNPaeb/6yy1p5bSfe7/p3K2PEEILe2nTEGQxUQsPYufPFAmzm2E+rKWpn?=
+ =?us-ascii?Q?xIRJTg45wU9U5cmLkEA79TC16gV43PBY87tj91te0p7/XVPM3Ae7eMdOgEZ8?=
+ =?us-ascii?Q?RnChGMwcS0/W5MOmKQruGNV3fWYWjtHUOpNQFl+1Nwbod65+zMFcdcDPq0gD?=
+ =?us-ascii?Q?9mMMWVBXcYYoYOEkYJHHlP0I/YvFx0aOe7pMZSAocC5lA/4hgTaOl4zN1hDI?=
+ =?us-ascii?Q?xyMCM8beRmZfQ9NHQgpmn2Lw5DQPYz/w?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?k9IZecp/3+Qu5XVGX7M7ua9F6TsG3XMLWGRe9pFcG7Mm/2EcmekQq7tkpQuo?=
+ =?us-ascii?Q?Luv7KaO0iAyU4SxoKvcJMci1xFrCb9YxUAr29tuKXDPV+o1NWHdtkdocoeGK?=
+ =?us-ascii?Q?AYZZxcOb5luctDbYtQXJGS0HKd8DCvDxciNqXcew4ebha6o4VpzphcEhB/Qh?=
+ =?us-ascii?Q?zDYQ33GsZ58dOBGsdhbLJXrp7RAfTmPBC3RoXUIPy4n9HqiAiihFp7XO+fFJ?=
+ =?us-ascii?Q?tvPPjIOw4PSt9t2sjvjkW0X/aL8tQPnFoE5BihKkiVkUXm5ASoyF9339+X0G?=
+ =?us-ascii?Q?BH07V5tlEc2Xl6H74vKF5lSJIEZQhxtmCGy1IyVudAcTV5JyBIDM9rS7vO0s?=
+ =?us-ascii?Q?s/gXtHuBP6LUkIItuXP4T77xKZwSuK2eXl2h64ewTFqOLbcOK3inWyCTUw7a?=
+ =?us-ascii?Q?OChNDI7tgsVkkrcmWe/tO/Uu44ZqkCulu9LGPtMnB/Uv2Bn6gKyeBY/BnvYU?=
+ =?us-ascii?Q?CpxjSL2g/TNPD9ysc5cJs5f8hpHebi+bgDX91CUKy3DXT0okofF5d9QJ1vOV?=
+ =?us-ascii?Q?XSIHVAVr1jmpXBLAWXuaW+bVbenc4h3VVnxS1of/0Uv2xDJ+J461gxkG/aRD?=
+ =?us-ascii?Q?/GTpjonCGMOGGV8K6gnGDvsb6NEZ0YqVxbfqKAcPZcCZ+Qg4F7fj5NTTr5Gh?=
+ =?us-ascii?Q?8AWcsZC42sifM+8V2Ig+U7jYPO+K5pOu4BYcBTJjwuGyFsXWVuqtlYizHvnQ?=
+ =?us-ascii?Q?3stBTAGFUJAPHRJmUfEFRApytAewkjT2GZMnPZoamUHoFN0XMVN0Gf68ndzi?=
+ =?us-ascii?Q?/42CZNNFC1WCvzB+Kx+rDxkkhohrI8YqCNH+GkqSni66t2zwRL2dpAkzF8VG?=
+ =?us-ascii?Q?9DaeC80SRkZuhPIW4veHb/a0dCHETKedKAuyZEtriYULuKHvXY67t5ltdkmB?=
+ =?us-ascii?Q?sdbDUxbsv5q4UDwJs6K8pPL4aYVBEbNzn/dbCw1EORB3gpo7dgzQlVSG/RRv?=
+ =?us-ascii?Q?n0e4UU0/qQqvOhVBSfq6u1Zo8rpdPQvlZwrSfG9c1kyyNo/1eQfTPgcF9JjT?=
+ =?us-ascii?Q?LYUl3NdB1I0rVszbYAOMcnTz3zxWDc0RdUGxD5dQwVK6FMSWgtmcL9jBZdeN?=
+ =?us-ascii?Q?HLkXK7fqiAtYnTDPQL/g9c9obCDbNoYu8xqsLGBHxiAxeL9Y0ypBwxWh/5Bj?=
+ =?us-ascii?Q?7IASW2P1s9/42uT+3li0cQNhyLPI+QgRg+0SKcjSlgDJKJqQqBljtEqIPZpP?=
+ =?us-ascii?Q?sc8Z5Vfa8+SRtcBsQSfd33vqPlGwJxW1wsgjmsn8D7WJ5sY5Ozwnq9obWrKW?=
+ =?us-ascii?Q?OPBK4XvQ/4VLfaSZArHan3xT4XrqdZN/sezfIdAHWsYJTc+lsTysbWmT009G?=
+ =?us-ascii?Q?Lp7gW/IJ2T8UbcTwMJReSlzE/TShHDp36s2h5akIac8jZs7Yud/17+R9MHhL?=
+ =?us-ascii?Q?RcVwFc50fkfBEGu5p+8sK1xZEoKq7qcxmGovFyt/OdraaslgKIjVqTwnV6HH?=
+ =?us-ascii?Q?7UwO9qiksu1j79NXAwpdFv2BnmuSrEIY1mnKmXJWqyJHYC5mTS1ze2RPshMo?=
+ =?us-ascii?Q?+p+SX/9Z1gjwp+R4LN0Z6lWxbFseFLhxKnKaNYf9K7NuMBAEI2QGKe6gpSE4?=
+ =?us-ascii?Q?hoFVaf9A4E2SsLuavUVMSSTG7MrXmVaML2UD+Hu0?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bf86c7c-f330-4ae3-b302-08de16517c36
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 18:40:37.9524
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +m3ozWXJ4JYj+2C2XZFRyp1pvLGWlHFTb/TsfzDbfvUrl1lhr/vpBuQN3IKYLEI+ASzNX608W0JTtgUgWWlotw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8165
+X-OriginatorOrg: intel.com
 
-On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> The previous commit implemented BTF sorting verification and binary
-> search algorithm in libbpf. This patch enables this functionality in
-> the kernel.
->
-> Cc: Eduard Zingerman <eddyz87@gmail.com>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: Alan Maguire <alan.maguire@oracle.com>
-> Cc: Song Liu <song@kernel.org>
-> Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
-> v2->v3:
-> - Include btf_sort.c directly in btf.c to reduce function call overhead
-> ---
->  kernel/bpf/btf.c | 34 ++++++++++++++++++----------------
->  1 file changed, 18 insertions(+), 16 deletions(-)
->
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 0de8fc8a0e0b..df258815a6ca 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -33,6 +33,7 @@
->  #include <net/sock.h>
->  #include <net/xdp.h>
->  #include "../tools/lib/bpf/relo_core.h"
-> +#include "../tools/lib/bpf/btf_sort.h"
+On Tue, Oct 28, 2025 at 10:40:44AM -0700, Reinette Chatre wrote:
+> Modifying mon_add_all_files() sounds good. I assume the node activation (kernfs_active())
+> will still be done by the caller which would have this new function return a struct kernfs_node *?
+> If so, I think it will make code easier to read if name implies that a new kn is created.
+> Since the caller is already mkdir_mondata_subdir(), what do you think of _mkdir_mondata_subdir()?
 
-I don't believe in code reuse for the sake of code reuse. This code
-sharing just makes everything more entangled and complicated.
-Reimplementing binary search is totally fine, IMO.
+Reinette,
 
-[...]
+This section of fs/resctrl/rdtgroup.c now looks like this. Call sites
+are now free of duplicated code. Thanks for the nudge to do this.
+
+-Tony
+
+---
+
+/*
+ * Create a directory for a domain and populate it with monitor files.
+ */
+static struct kernfs_node *_mkdir_mondata_subdir(struct kernfs_node *parent_kn, char *name,
+						 struct rdt_domain_hdr *hdr,
+						 struct rdt_resource *r,
+						 struct rdtgroup *prgrp, int domid)
+{
+	struct rmid_read rr = {0};
+	struct kernfs_node *kn;
+	struct mon_data *priv;
+	struct mon_evt *mevt;
+	int ret;
+
+	kn = kernfs_create_dir(parent_kn, name, parent_kn->mode, prgrp);
+	if (IS_ERR(kn))
+		return kn;
+
+	ret = rdtgroup_kn_set_ugid(kn);
+	if (ret)
+		goto out_destroy;
+
+	for_each_mon_event(mevt) {
+		if (mevt->rid != r->rid || !mevt->enabled)
+			continue;
+		priv = mon_get_kn_priv(r->rid, domid, mevt, !hdr);
+		if (WARN_ON_ONCE(!priv)) {
+			ret = -EINVAL;
+			goto out_destroy;
+		}
+
+		ret = mon_addfile(kn, mevt->name, priv);
+		if (ret)
+			goto out_destroy;
+
+		if (hdr && resctrl_is_mbm_event(mevt->evtid))
+			mon_event_read(&rr, r, hdr, prgrp, &hdr->cpu_mask, mevt, true);
+	}
+
+	return kn;
+out_destroy:
+	kernfs_remove(kn);
+	return ERR_PTR(ret);
+}
+
+static int mkdir_mondata_subdir_snc(struct kernfs_node *parent_kn,
+				    struct rdt_domain_hdr *hdr,
+				    struct rdt_resource *r, struct rdtgroup *prgrp)
+{
+	struct kernfs_node *ckn, *kn;
+	struct rdt_l3_mon_domain *d;
+	char name[32];
+
+	if (!domain_header_is_valid(hdr, RESCTRL_MON_DOMAIN, RDT_RESOURCE_L3))
+		return -EINVAL;
+
+	d = container_of(hdr, struct rdt_l3_mon_domain, hdr);
+	sprintf(name, "mon_%s_%02d", r->name, d->ci_id);
+	kn = kernfs_find_and_get(parent_kn, name);
+	if (kn) {
+		/*
+		 * rdtgroup_mutex will prevent this directory from being
+		 * removed. No need to keep this hold.
+		 */
+		kernfs_put(kn);
+	} else {
+		kn = _mkdir_mondata_subdir(parent_kn, name, NULL, r, prgrp, d->ci_id);
+		if (IS_ERR(kn))
+			return PTR_ERR(kn);
+	}
+
+	sprintf(name, "mon_sub_%s_%02d", r->name, hdr->id);
+	ckn = _mkdir_mondata_subdir(kn, name, hdr, r, prgrp, hdr->id);
+	if (IS_ERR(ckn)) {
+		kernfs_remove(kn);
+		return PTR_ERR(ckn);
+	}
+
+	kernfs_activate(kn);
+	return 0;
+}
+
+static int mkdir_mondata_subdir(struct kernfs_node *parent_kn,
+				struct rdt_domain_hdr *hdr,
+				struct rdt_resource *r, struct rdtgroup *prgrp)
+{
+	struct kernfs_node *kn;
+	char name[32];
+
+	lockdep_assert_held(&rdtgroup_mutex);
+
+	if (r->rid == RDT_RESOURCE_L3 && r->mon_scope == RESCTRL_L3_NODE)
+		return mkdir_mondata_subdir_snc(parent_kn, hdr, r, prgrp);
+
+	sprintf(name, "mon_%s_%02d", r->name, hdr->id);
+	kn = _mkdir_mondata_subdir(parent_kn, name, hdr, r, prgrp, hdr->id);
+	if (IS_ERR(kn))
+		return PTR_ERR(kn);
+
+	kernfs_activate(kn);
+	return 0;
+}
 
