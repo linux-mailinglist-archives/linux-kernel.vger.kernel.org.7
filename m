@@ -1,218 +1,120 @@
-Return-Path: <linux-kernel+bounces-873733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE47C148F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:13:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60140C148F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B3D34F6BC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:13:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 155F74EF340
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:13:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ACA32B991;
-	Tue, 28 Oct 2025 12:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13F032B982;
+	Tue, 28 Oct 2025 12:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="wvljycMA";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="OUONIk+t"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.0])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="teS58CmQ"
+Received: from mail-il1-f193.google.com (mail-il1-f193.google.com [209.85.166.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E398B2E543B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.0
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761653591; cv=pass; b=fH+owccnwBIxPBURd0nb12DB7Th54qrejtXf3Kxr5A2d1Do40uVuXeYFOb0CalMqRTK3C6vZZNnqAqYUhaMGpf9Tis63XiPcFJHBD8DQLPQLSZb2QK0h7exMy6Fl+fvwEhxunAhq5n66cKoOqN86irvjUTXrsM8+iJjdScTp5P0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761653591; c=relaxed/simple;
-	bh=LPNuOvV5GIfBMgx0l/rLWwK1QWOgIasJTyq4uGGl3as=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=YMuOHQKRoN4h9TLs/5oYRdMN2ghUAdFmRkjbU8RUE9eWtBEFEy9zEYDha0P4M3yZml/NOJPi4xZ33gpoO18QJxWvaF3YTYkSN0fAs0proAhzOAaP3NUMDdf9efdQAh7ChH3J33TAHxxa6/3UMh3D+YlEFGzmrI3ORTYF0BSMQoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=wvljycMA; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=OUONIk+t; arc=pass smtp.client-ip=185.56.87.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-dkmb.prod.antispam.mailspamprotection.com; s=arckey; t=1761653589;
-	 b=Ke8F6MCN6+sC8f5fsRpDEj3sM/pnb1N3O6vrzxqZVPJhzE1hkP9D8dm4FgEZIh3SrIoW2Z6dlI
-	  sD0VrvBOzoEJ6ZCQAPSEb554eedw7X/+W7uIcNQR3wNbh1QrrUE2EGs0reGu8acLhi3qNNvd0T
-	  uAKZUov/5qrHazxhNKuh6+s3V5LCsKkd16vYQGHV7Ja09fUBPBRv5lOTmaI7wXgBi8iB9pJzv5
-	  t1oYvu//bddCatPsb1HxjrLqDrZbrRbh94mfeXE3hdyhBye57jPw32MD4PoqPRCeMF3FsD2blS
-	  uOwYs0xi/LqlTIFvuGQO5vQ+wOkfu0alg0Kk8R6uqrWGZQ==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-dkmb.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-dkmb.prod.antispam.mailspamprotection.com; s=arckey; t=1761653589;
-	bh=LPNuOvV5GIfBMgx0l/rLWwK1QWOgIasJTyq4uGGl3as=;
-	h=Cc:To:Message-ID:Content-Transfer-Encoding:Content-Type:MIME-Version:
-	  Subject:Date:From:DKIM-Signature:DKIM-Signature;
-	b=fyLY8SkGYl+fCpPmkpHNAZ3Zl4IBHV5NlDwEWOVePV1o97dUbFbaaP5nNv40er7/btstgHVRC5
-	  Q9IXshEENSNH5VYBpSDPul3bO7TfPlYDfn+IILBUwUJelFCcD82W/fmIpz99pfTMvI1PiejRns
-	  Eg/nYlumpWj9HqhsyMXXPPZF+tJSfIHSMLCiSIaFjSGMu/MyjmPonRjyJ6cwW1jNZCPHjkU2VF
-	  dbop+gMjGbbD3vUo2VmTUGV0FWtKc2V4Ufz5ox15O7AY/GdOHX2elu9F5AqnEiBL/wAg9hDbaC
-	  MFR1VjPPJXC1XFX/Rkxj8mfzJO2HSM0i2a6elREqb47vEw==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:MIME-Version:Subject
-	:Date:From:Reply-To:List-Unsubscribe;
-	bh=VG6cm4G4x6Z3D7MXtTK+Y6amsUkDuaGsyQbRz1bw3mQ=; b=wvljycMA8ylYY0aXO9Ot1KQHpd
-	1NEYegTHelwH29q6pe4B1nJX1hDqed4+UEtEDnvZHPh5CC1nT1ppW8c3CRNbJpMc50qDFg1MB8O9e
-	tFBcJkGo41JJn3buO3icDLmKtWIqOXuvERAlO4DTly/74DJKXtCgQS0BTQstwVCs2kMw=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-dkmb.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vDiZU-00000005h3Z-2wAS
-	for linux-kernel@vger.kernel.org;
-	Tue, 28 Oct 2025 12:13:06 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Cc:To:Subject:Date:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=VG6cm4G4x6Z3D7MXtTK+Y6amsUkDuaGsyQbRz1bw3mQ=; b=OUONIk+tp/9U4/2UzIK2MKESkb
-	EWYaSFEzux4RHxkDR5NqeTnb2PUvtqkXXnElXdiwxfxkU65Mzn8v9RHKWYb6kfEbx/SJSe337hH89
-	q/0OjaQ4w05M1W2IB+57kDrym8FZhZpH1g8+hWcOk2swPsJpWtGhUB8+C0nfow8piJ1I=;
-Received: from [87.17.42.198] (port=61382 helo=[192.168.178.74])
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vDiZ5-000000004BL-1CX4;
-	Tue, 28 Oct 2025 12:12:39 +0000
-From: Francesco Valla <francesco@valla.it>
-Date: Tue, 28 Oct 2025 13:12:29 +0100
-Subject: [PATCH] drm/bridge: ldb: add support for an external bridge
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768AA32B992
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761653628; cv=none; b=SRcSyHi0wtOjGUKNfLrAUylGdLczLPwCzNCGPXMx+oKJVwalbF223byNXOduWg+GHMRsDFGFBUkqBVY8CW8P3cj8VW+MNfzPkoCIP+9gsGw60iOcfzA4Pq/7FYwDmiE+oPALzl8M/ANx4xPbOJd/NLpuxujwiHdrPwU9Qv+SKK8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761653628; c=relaxed/simple;
+	bh=kbcPGBau+vooz71sYCj+fU43PtJotVJhPet/tmcL4PI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LeLLet9OjMChH0ScAJ8pwb0C48ve+Y7OlsAS0gq9hxExoz2K2iYwoAo8QgZ+GNKxwiHO8mCvgDh854ZM4yBASCh9YgPobfDNxiAOSNHTX/rvou/qVRfpC3C6E9gRt0m/K/7o3+RVvbBEYZSz7LkBb1NQUezZUtDeVumuJVKM4ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=teS58CmQ; arc=none smtp.client-ip=209.85.166.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-il1-f193.google.com with SMTP id e9e14a558f8ab-430da09aa87so27701985ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 05:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761653625; x=1762258425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=khwU93CFPe3QSgLFIeava2HVYo78KABRwFXaYkzJCAk=;
+        b=teS58CmQVvvUym+YrlFp3zwOrka5vN1kZIajXuH85CQnYmCNGv2Q9K0qZQ7M0MORjh
+         soe1psPExXKvvkIL9/MCOOcwa+l+1vMEh3KtgX7x9gPT605pXQ3zN2eVN/ZoDub21/Md
+         hoIjdBIbAQydBkQsmDk7ZpOg8uuaQmcZgPPjuyX3q2n8kaN8lelDme1CoxSq9IhvphF2
+         cPlvw9U0fMorQCc5ryrqLqAEUup9RRaTnuNzM/rlzExze4LIgOOkXpeAu6bRzemwP/or
+         RH/4l9Obzg/SrVLbciVj8Owh0ytu6pq3QiGZ6WVWUk2kMVSEPrHqyoQtvNdwvSBy3Xl2
+         9bQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761653625; x=1762258425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=khwU93CFPe3QSgLFIeava2HVYo78KABRwFXaYkzJCAk=;
+        b=uFWHEFqbl6nkbDbISQlzDZ1o1CxJRneQgx68o9KySItfs9v29b2ATxAH+TAqUjymXY
+         05GNc55CEeTlJdBeoT9oIADksgEurOMRJ1vvEVWL2V1JD3Mn1Cq4TDblB00DwRFLX7Rd
+         5u0rYMUSZyWcFzXt/7mdZqr1uBdm5JXy6/a9FP4waDP5FNo518JDPDsU+u+2bdHARknr
+         E1gYMFDpmdWuBofFKXvM04w5i/iyfhLIynotc2kbs+ZI2giwRmdh79xuo70dojgaD1+I
+         BCoKz+kQjWF0o0QUZmHzCUpG+/HMMfSz+IMaEch8xYGfCgocMsS2RAONhSjOHYQaEHZt
+         78cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXA4CaclV7hr1nv8Os7DfBQPn0GFH+wQhaNbnQFT3W3VsKuFcjchWsgze4fGyyUQ5t1ow7dl3FIFSJ1yPU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRM9e+2kDhRlJCA3Zv1NMUBqtlcQkYkGeweNhLGIqtCqWEhCVG
+	mb42mlTHAssYqm6DB2nQYATQDgEFJ1r70kVHPr1twX7PTRXracUDNm7I7wmPDJE4Yg3YVi9ggiA
+	9MD9AGt6YlA==
+X-Gm-Gg: ASbGncvoj48tOnWQq20ec444fFEAqSS0wUrw+dVv0mI/2S3s80qPaH4kmm5yW5m2pua
+	c1lOOe8anGFso7eSF6NwS7l48zjH9COYsB9W92h1a3utCWEFUXXOBbMsonsZSb1YHpdz8kONuQm
+	fqEp4BIoVp83T1L3VGDHcf9gkfl53zXzpMtGj6mn712/8HMQQ+RiUTZsmVHMBK8YuKE5oQfDB99
+	XOUTZ4+ExBSbBqQq9l/P2NUP3Fj3Ny5iCkDBl6gmkRPRv5dVtK3ofU5Q0k5wWngfGGE9xBMLkkQ
+	OTodOTGk2Ecu6ToI/t1dgQDkJEVSue06CFclDwVOjXD/bahqZQQlBxFW8IVX34q3oNEOe+z45m0
+	WAp9+0MP1jT1BtpfX5M740MRzRXaX38Dzc53sCfgA6hzxsHlfQ7avEbGWxDtDVgze4i3fW8j1VY
+	gG0MCYzLJp/FIePCo4A8tnSTpoJ/aCWjsKtI3cAJTh
+X-Google-Smtp-Source: AGHT+IFFKmfRm7wHQRo/Azl9/WRSsx5DMAL5YyC5rW7dp5KofBMFZhyFfl0BPEsUUmZluzy0ORJ7BQ==
+X-Received: by 2002:a05:6e02:18c5:b0:42f:9eb7:759b with SMTP id e9e14a558f8ab-4320f7a8a05mr41476835ab.28.1761653625563;
+        Tue, 28 Oct 2025 05:13:45 -0700 (PDT)
+Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f6898adfsm42280895ab.31.2025.10.28.05.13.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 05:13:45 -0700 (PDT)
+Message-ID: <71ee4a10-70a7-49e1-919a-0b47af4780fa@riscstar.com>
+Date: Tue, 28 Oct 2025 07:13:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/3] spi: support the SpacemiT K1 SPI controller
+To: Mark Brown <broonie@kernel.org>
+Cc: dlan@gentoo.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, pjw@kernel.org, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+ spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20251027125504.297033-1-elder@riscstar.com>
+ <e4dd3db6-d554-4fd3-a674-60f2ff6e5475@sirena.org.uk>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <e4dd3db6-d554-4fd3-a674-60f2ff6e5475@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
-X-B4-Tracking: v=1; b=H4sIACyzAGkC/x2MWQqAIBQAryLvO8EF264SIaWvetCGQgjS3ZM+h
- 2EmQ8RAGKFnGQI+FOk6C8iKgdumc0VOvjAooYwUquV0pE7b3c92DuSL105IiU1rau+gZHfAhdK
- /HMb3/QC6aGlvYgAAAA==
-X-Change-ID: 20251028-imx93_ldb_bridge-3c011e7856dc
-To: Liu Ying <victor.liu@nxp.com>, Marek Vasut <marex@denx.de>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
- Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org, 
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3272; i=francesco@valla.it;
- h=from:subject:message-id; bh=LPNuOvV5GIfBMgx0l/rLWwK1QWOgIasJTyq4uGGl3as=;
- b=owGbwMvMwCX2aH1OUIzHTgbG02pJDJkMm82SNsa8OHinb6/mTb83ZcsTq5/uXrUuf2vNSo8Wh
- Ql/lJ9ndJSyMIhxMciKKbKErLtxb89c829pGxgfwcxhZQIZwsDFKQATEbzJ8E+JpSBxrptKlEhZ
- 9bEZ3lf+316Tq/m1pfuevUraQ7np2wwZGW7z35vssMSS6+rqi4wra9MCO1oeCR5daDn5yP/8tLO
- qN3gB
-X-Developer-Key: i=francesco@valla.it; a=openpgp;
- fpr=CC70CBC9AA13257C6CCED8669601767CA07CA0EA
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 1cbf96610381131d1470fb74c67659b1
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vDiZU-00000005h3Z-2wAS-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-dkmb.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
 
-One option for the LVDS port of the LDB is to be connected to an
-additional bridge, such as a LVDS to HDMI converter. Add support for
-such case, along with the direct connection to a panel.
+On 10/27/25 9:40 AM, Mark Brown wrote:
+> On Mon, Oct 27, 2025 at 07:55:00AM -0500, Alex Elder wrote:
+> 
+>> Between version 5 and version 6:
+>>    - Rebase only
+>>
+>> Here is version 5 of this series:
+>>    https://lore.kernel.org/lkml/20251013123309.2252042-1-elder@riscstar.com/
+>>
+>> Between version 4 and version 5:
+>>    - Added Yixun's Reviewed-by tag on patch 3
+>>
+> 
+> Please stop doing all these resends, this is just making things noisy
+> and pushing you further down the review queue.  You should not resend to
+> collect tags, and you should leave a reasonable time for review.
 
-Signed-off-by: Francesco Valla <francesco@valla.it>
----
-I was trying to add display support for the i.MX93 FRDM on top of the
-patch sent some time ago by Fabian Pflug [1], using some of the work
-already done by Alexander Stein but not yet merged [2], but then I
-noticed that the support for LVDS-HDMI converter bridges was missing
-from the LDB driver already present for the i.MX93.
-
-Not a fail of the driver itself, obviously, but I wonder if/how the
-existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
-correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
-
-Anyhow, a patch for such setup is attached; it was tested on the i.MX93
-FRDM using [1] and [2] plus some more devicetree modifications.
-
-[1] https://lore.kernel.org/all/20251022-fpg-nxp-imx93-frdm-v3-1-03ec40a1ccc0@pengutronix.de
-[2] https://lore.kernel.org/all/20250304154929.1785200-1-alexander.stein@ew.tq-group.com
-[3] https://elixir.bootlin.com/linux/v6.17.5/source/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-
-Regards,
-Francesco
----
- drivers/gpu/drm/bridge/fsl-ldb.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-index 5c3cf37200bcee1db285c97e2b463c9355ee6acb..fad436f2e0bfac8b42096a6fcd0022da0f35284e 100644
---- a/drivers/gpu/drm/bridge/fsl-ldb.c
-+++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-@@ -294,7 +294,6 @@ static int fsl_ldb_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *panel_node;
- 	struct device_node *remote1, *remote2;
--	struct drm_panel *panel;
- 	struct fsl_ldb *fsl_ldb;
- 	int dual_link;
- 
-@@ -335,15 +334,24 @@ static int fsl_ldb_probe(struct platform_device *pdev)
- 		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
- 		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
- 
--	panel = of_drm_find_panel(panel_node);
--	of_node_put(panel_node);
--	if (IS_ERR(panel))
--		return PTR_ERR(panel);
--
--	fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
--	if (IS_ERR(fsl_ldb->panel_bridge))
--		return PTR_ERR(fsl_ldb->panel_bridge);
-+	/* First try to get an additional bridge, if not found go for a panel */
-+	fsl_ldb->panel_bridge = of_drm_find_bridge(panel_node);
-+	if (fsl_ldb->panel_bridge) {
-+		of_node_put(panel_node);
-+	} else {
-+		struct drm_panel *panel;
- 
-+		panel = of_drm_find_panel(panel_node);
-+		of_node_put(panel_node);
-+		if (IS_ERR(panel))
-+			return dev_err_probe(dev, PTR_ERR(panel),
-+					     "Failed to find panel");
-+
-+		fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-+		if (IS_ERR(fsl_ldb->panel_bridge))
-+			return dev_err_probe(dev, PTR_ERR(fsl_ldb->panel_bridge),
-+					     "Failed to add panel bridge");
-+	}
- 
- 	if (fsl_ldb_is_dual(fsl_ldb)) {
- 		struct device_node *port1, *port2;
-
----
-base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
-change-id: 20251028-imx93_ldb_bridge-3c011e7856dc
-
-Best regards,
--- 
-Francesco Valla <francesco@valla.it>
-
+OK, no more.	-Alex
 
