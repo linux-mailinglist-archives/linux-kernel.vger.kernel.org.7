@@ -1,153 +1,134 @@
-Return-Path: <linux-kernel+bounces-874403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 956F8C1642D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:44:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E467C163B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E398A56311C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:40:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF84C355DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9215434B1B7;
-	Tue, 28 Oct 2025 17:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F50934C142;
+	Tue, 28 Oct 2025 17:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Iu8/a+C4"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8244A2727E2;
-	Tue, 28 Oct 2025 17:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Jb7YK/tX"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA92345CB1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673197; cv=none; b=OMPkcQC0Nx2GCZ/FR6rQEvZ+eEtv6XdC17n3+oj34XUTFUMpG45aN95LCsQ3wexhEwUHiJmsszgohTW+sXrNUa7c7NqbhPcRsmH/Y0TloM4HZmYCOUWhTjL252gsQQBrm/92+iJj+sPs7kpYo4o2yowc3dqCyZ4QeRPu6uG58no=
+	t=1761673222; cv=none; b=WZsZYkzdoWQAi87ULIWfJ0qeeDb4MRW0QeAY+cHelGjDPcJO0UXzImmJpuo3GFCS6HXzkWstCfp5qlOO82JWhUhxgKvHw1lLZtCtHZxvG83mPuG7pQ0S0kYkqSFb0HjAJY46EhJvOzPvZx+lxuj/Ths2vBLcdY59+6X0hvsZkTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673197; c=relaxed/simple;
-	bh=3L4sQ+n0iCERodipuq4cDSnVAbS79qllvuLvEuRLRoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RBJf0jm3vf5QEIeGXLuyaVWpLmmMM4wzpMhOFaMFQeyn0uYNZkbyYcg1mK7NCLShHpQCTNLSMa9BEOWdBWzNsY7kz8C9mp61tWpyKUvlD5Kpdy3UdMFBCwiPDWgSGouJ4wDDzrBQTqEFzjYOIgMLIJblIKWGhZsN4L/ZP2Kftu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Iu8/a+C4; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [40.65.108.177])
-	by linux.microsoft.com (Postfix) with ESMTPSA id CDC4E200FE6A;
-	Tue, 28 Oct 2025 10:39:47 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CDC4E200FE6A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761673188;
-	bh=lGRetVmr1LlkyFgDzb6rTopLa8zqATdxCQN9LlITDAU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Iu8/a+C4j2dICZulfzHvt3zxTWTziHiZrzuxnC+WjIDUGjrZ8EyfGhTla40Vw82la
-	 IDKDiwejtx4XNgvpqS1CxyGUcocDFcFEvi20fQGmIddCRqpM+KpD1IqkOuolbgyPw5
-	 IMxsmpfF/a8hg4f+HF7LBh4buH0iRoCPitECm5xI=
-Date: Tue, 28 Oct 2025 10:39:45 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Vipin Sharma <vipinsh@google.com>, bhelgaas@google.com,
- alex.williamson@redhat.com, pasha.tatashin@soleen.com, dmatlack@google.com,
- graf@amazon.com, pratyush@kernel.org, gregkh@linuxfoundation.org,
- chrisl@kernel.org, rppt@kernel.org, skhawaja@google.com, parav@nvidia.com,
- saeedm@nvidia.com, kevin.tian@intel.com, jrhilke@google.com,
- david@redhat.com, jgowans@amazon.com, dwmw2@infradead.org,
- epetron@amazon.de, junaids@google.com, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [RFC PATCH 06/21] vfio/pci: Accept live update preservation
- request for VFIO cdev
-Message-ID: <20251028103945.0000716e@linux.microsoft.com>
-In-Reply-To: <20251028132855.GJ760669@ziepe.ca>
-References: <20251018000713.677779-1-vipinsh@google.com>
-	<20251018000713.677779-7-vipinsh@google.com>
-	<20251027134430.00007e46@linux.microsoft.com>
-	<20251028132855.GJ760669@ziepe.ca>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761673222; c=relaxed/simple;
+	bh=aXUMeXzMr7+pu8Yf59D4UfcQD82Ccm+D67e+43HI4bE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QuxfRFfby5N6pOHdReH1yJYEvXGx3blQM++VxRTJCWF+jLzxhWh5RhPo3ODV6AsBTMDqhU0ZKH5oW4wUcUTiMfcO0mPAA3RGCHJawz3BAzFFsDahcSM3HahI5/Xm+DsavcKQCrGjI8GrFj0TnR7o1zdJyZj7OoOO+JJybl0D0t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Jb7YK/tX; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-3737d09d123so87178541fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:40:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761673218; x=1762278018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I1dDT+Kuo18gW/vAs5pcbkOprB45nObDwGH/xrxPOiA=;
+        b=Jb7YK/tX/NExrWrnnfEsvBKPDaXpc/KVGXJh1wkHCo4Zfs/c/o0rSwNvp11ctUHn0m
+         Y2c/NFQCsQQpy7HyA24SMs5VAkyjRHaVj6cx52it3B5UwRa5FwpvqMmGjS+BCtlukMfG
+         Um6dQl8jszRUVksnp6ZuaksjsS0ApRauEtN2aUIeeXDFbsCz16g/8ARsSTZyfFQvQm0k
+         rkNZxp7xYTscP6u9+d9+7qs1ITpxYc1tf60x/tHJHk6omM8I9vkni4qVhyOx/zWpj4cR
+         w7GLMo1m8WVXIC720BeQ9aH/dSvIrJ7qvIjqHLbQPOL4qD4/C65l5N1hFAF8ScwUn8O2
+         ApfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761673218; x=1762278018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I1dDT+Kuo18gW/vAs5pcbkOprB45nObDwGH/xrxPOiA=;
+        b=oPonnF6qC8WROQ2bb8T7NAUZUAxt+A819JdQLoVdMvHXKN2O7otATQ9e4R41J/cn1K
+         jQ55T9QBonVTcTy2cxzSB6EGgEMOh6mIYBtOF3ar83FCbbLQQw5h4HEC/Zr/cBFcpBpn
+         VlJLutuHlf1DP9aKW7KE+11bPkWQHqNmK3dh93i0tTqMdPPtLL2pO9etM6FGYTrBvZDt
+         TuNXzF96fpmbreEXYeaXm4sSk1jL72WaINFzXv3ykUBsrC0Xyx45dIPjMz/d2oG+F6RL
+         bjJYAeia0gvokwVOwA3T0WzKJ+Mm+vM9kj9W41ybqskxHtvlLjLiIhrnY1pLMmjecwp7
+         IveA==
+X-Forwarded-Encrypted: i=1; AJvYcCWMeOno2SD4iSFEMubSDV++J6jtp7F3SUI8gSpfzPmcb9Wn0ETA8Dsxp3+AW4EXPKtbbZK+ag3ck0FnEfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuLyO+hZW+DK384DIojpaTX8dDoYVTxqOZ1Hpfn9BEHwQ8W012
+	p6Sn8iTngytmJAgunSdKHyxH9KyrS6BOkT7ASt/JLLv6t6apTsY01H57r8bMYQpnFlUVWArQgw7
+	/pHvUgWuYocLbqg+nivzYUZWFtp8ouNYizrALUP0h3A==
+X-Gm-Gg: ASbGncuPobtYF9AOnzqWQ88uGgfBBddeNk0OF4lMsldlkOVKCSS0YbHdHgcmI95RQwG
+	J117V/DOo062DskPBl6nGe2HYpn9N/dVymdiVhh3Hrbq+yZreDPnENpu3hepI5rjrv4VPAjDGUq
+	tzp5OU4A16DyOuMM11WgYVVwlJAqwsc5dxpvxvhzwnKB0zEb9DrvSIhIqu/n6VohwMTlbhKah9u
+	KIPLn/Lut1YDYZB5hvBjz3fmWKECdaOf+wCWEgEOTiEWCi9a+T73ivd4yjcA2z2NCWCmFI4Pffw
+	DapAG14+rjM+2GVggshxuS1fQfQ=
+X-Google-Smtp-Source: AGHT+IFNOY7fS5NXoOFhyNJtmea1wSytgnH4oBkJVvZ9r27nhCdq6OSaGfOh73lSEWuOWGB7Asbt73QW9CvKZgTz/nE=
+X-Received: by 2002:a05:651c:4347:10b0:338:10c9:5871 with SMTP id
+ 38308e7fff4ca-37a052c83admr689201fa.34.1761673218316; Tue, 28 Oct 2025
+ 10:40:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 28 Oct 2025 18:40:06 +0100
+X-Gm-Features: AWmQ_bkhwYP_3u9-JoVziAs2Bk2afMmvyoh0mwlsnq_68htCAVlTBlNvVkP6s1g
+Message-ID: <CAMRc=MewE_wRrKsbo94GuwrO2D=1L==3ceJBKXQXvLgiqhd7Dw@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: MAINTAINERS: Add Bartosz Golaszewski as
+ Qualcomm hci_qca maintainer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 Oct 2025 10:28:55 -0300
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
+On Tue, Oct 28, 2025 at 4:53=E2=80=AFPM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> There are no dedicated maintainers of Qualcomm hci_qca Bluetooth
+> drivers, but there should be, because these are actively used on many
+> old and new platforms.  Bartosz Golaszewski agreed to take care of this
+> code.
+>
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+> Link: https://lore.kernel.org/r/CAMRc=3DMdqAATOcDPhd=3Du0vOb8nLxSRd7N8rLG=
+LO8F5Ywq3+=3DJCw@mail.gmail.com/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>
+> ---
+>
+> Changes in v2:
+> Don't orphan, add Bartosz.
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8abdc0e50699..8a2c5fb0ba55 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21145,6 +21145,7 @@ F:      Documentation/devicetree/bindings/net/qco=
+m,bam-dmux.yaml
+>  F:     drivers/net/wwan/qcom_bam_dmux.c
+>
+>  QUALCOMM BLUETOOTH DRIVER
+> +M:     Bartosz Golaszewski <brgl@bgdev.pl>
+>  L:     linux-arm-msm@vger.kernel.org
+>  S:     Maintained
+>  F:     drivers/bluetooth/btqca.[ch]
+> --
+> 2.48.1
+>
 
-> On Mon, Oct 27, 2025 at 01:44:30PM -0700, Jacob Pan wrote:
-> > I have a separate question regarding noiommu devices. I=E2=80=99m curre=
-ntly
-> > working on adding noiommu mode support for VFIO cdev under iommufd.
-> > =20
->=20
-> Oh how is that going? I was just thinking about that again..
->=20
-I initially tried to create a special VFIO no-iommu iommu_domain
-without an iommu driver, but I found it difficult without iommu_group
-and other machinery. I also had a special vfio_device_ops
-vfio_pci_noiommu_ops with special vfio_iommufd_noiommu_bind to create
-iommufd_acess object as in Yi's original patch.
-
-My current approach is that I have a special noiommu driver that handles
-the special iommu_domain. It seems much cleaner though some extra code
-overhead. I have a working prototype that has:
-# tree /dev/vfio/   =20
-/dev/vfio/          =20
-|-- 7               =20
-|-- devices         =20
-|   `-- noiommu-vfio0
-`-- vfio            =20
-
-And the typical:
-/sys/class/iommu/noiommu/
-|-- devices
-|   |-- 0000:00:00.0 -> ../../../../pci0000:00/0000:00:00.0
-|   |-- 0000:00:01.0 -> ../../../../pci0000:00/0000:00:01.0
-|   |-- 0000:00:02.0 -> ../../../../pci0000:00/0000:00:02.0
-|   |-- 0000:00:03.0 -> ../../../../pci0000:00/0000:00:03.0
-|   |-- 0000:00:04.0 -> ../../../../pci0000:00/0000:00:04.0
-|   |-- 0000:00:05.0 -> ../../../../pci0000:00/0000:00:05.0
-|   |-- 0000:01:00.0 -> ../../../../pci0000:00/0000:00:04.0/0000:0
-
-The following user test can pass:
-1. __iommufd =3D open("/dev/iommu", O_RDWR);
-2. devfd =3D open a noiommu cdev
-3. ioas_id =3D ioas_alloc(__iommufd)
-4. iommufd_bind(__iommufd, devfd)
-5. successfully do an ioas map, e.g.
-ioctl(iommufd, IOMMU_IOAS_MAP, &map)=20
-This will call pfn_reader_user_pin() but the noiommu driver does
-nothing for mapping.
-
-I am still debugging some cases, would like to have a direction check
-before going too far.
-
-> After writing the generic pt self test it occured to me we now have
-> enough infrastructure for iommufd to internally create its own
-> iommu_domain with a AMDv1 page table for the noiommu devices. It would
-> then be so easy to feed that through the existing machinery and have
-> all the pinning/etc work.
->=20
-Could you elaborate a little more? noiommu devices don't have page
-tables. Are you saying iommufd can create its own iommu_domain w/o a
-vendor iommu driver? Let me catch up with your v7 :)
-
-> Then only an ioctl to read back the physical addresses from this
-> special domain would be needed
->=20
-Yes, that was part of your original suggestion to avoid /proc pagemap.
-I have not added that yet. Do you think this warrant a new ioctl or
-just return it in
-	struct iommu_ioas_map map =3D {
-		.size =3D sizeof(map),
-		.flags =3D IOMMU_IOAS_MAP_READABLE,
-		.ioas_id =3D ioas_id,
-		.iova =3D iova,
-		.user_va =3D uvaddr,
-		.length =3D size,
-	};
-
-> It actually sort of feels pretty easy..
->=20
-> Jason
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
