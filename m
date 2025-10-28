@@ -1,244 +1,359 @@
-Return-Path: <linux-kernel+bounces-874475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55802C166CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:17:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F93C166E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AD0163561D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:17:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C37154E6A0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD75339B4F;
-	Tue, 28 Oct 2025 18:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KWfuMIBw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692B34889E;
+	Tue, 28 Oct 2025 18:19:35 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3406A1E766E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41715339B4F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761675446; cv=none; b=YMsxyoiVcuk2eUMadNW+6wsLVJaeRjBOgdrGABr5flWSIAb96Dj/MpoWoBJul/BQE98Ssa+GaoMFSHiVCjDgW9qPafpNzePCPJ9fGAXSkc/8frCxnFD+s5KXNfnni4H07l+I471xgjzUb9CWf5RtKr5LhyvZR9CMjuJfAP6aWXU=
+	t=1761675575; cv=none; b=hBjs4Akmgf3F81wm42fmc89/PkC7ZMMIE1ANdqNiY3ogLwSGMqMCqhhP92Q2i6DUJoL21fFLa+pV+krUOC72yvF6PRam9hearvDBez1g6wydnoMvk839YAZSu2Q1MB/OuCyzGAZUqSNAMDzFX7zuf2knxUfoxucpkw3In7WMwb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761675446; c=relaxed/simple;
-	bh=i3SzW3VPWqdsqxV/FDxjAOEQpxm7li/WGvnttm4POTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hvhY9x1Udc/4g48XiMgA12x6N819PGUBNw8hurZKPmx4fSXBPuLagDaP9Zin7E7x+cjLI58WjS36b+v9+jV5J/QOuBlM7yeMOi728OUWrBSa6tD8va2MhEWjrbpsOpAesWSiROXa+FbfhwIiWR0/s0ADJquN6EnM/PU4U3tv6EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KWfuMIBw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761675444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ySxbOqqI4HJUHGwdFmdvZDlaPAKPqm3FO8qJrHqBgvw=;
-	b=KWfuMIBwYVfGUNFqoZgv1a1MJ/l9+1IUNK7lTjklKiWSaEkGBI4ssdOCO+B2ZzpjUrZl9L
-	/i2lSUeOs/hhJW/MKSAALFt4DJ+ztJZO3jyaRVG4r7RJU1Q6K0T5tWJAclGigRuEMFZtDt
-	oGeCggGJMahIQeoTiZ0Wf9kepLGHXAw=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-199-9jn1Zu-fNkaRxoypk37-nA-1; Tue, 28 Oct 2025 14:17:20 -0400
-X-MC-Unique: 9jn1Zu-fNkaRxoypk37-nA-1
-X-Mimecast-MFC-AGG-ID: 9jn1Zu-fNkaRxoypk37-nA_1761675439
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-475de1afec6so474345e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:17:20 -0700 (PDT)
+	s=arc-20240116; t=1761675575; c=relaxed/simple;
+	bh=g0HTuNgWUHj6cam7BZORXKIhUY3deC5vioyYljXWgqg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gEdU2z2m8ZZKQxLSNiaqSDZINGyTN/ktf+cU4K/YJG+zdW4mAf5LnTEylWBUVFn2CvfBkaQPDgz9m4KlQqr0xZLb+rb16UEzyxp/63w66V5aN6AC502fFShHEdQ9cLvvJiT+gXTZOy9FyKfUst/ELhVJIjzwLn7eYtVRP5365y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d789ee5aso81872615ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:19:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761675439; x=1762280239;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ySxbOqqI4HJUHGwdFmdvZDlaPAKPqm3FO8qJrHqBgvw=;
-        b=dQC3TGuWs7tc5+Ce2k+waUhODzMV4KGkGjT6DxyxMp6eDnZcEIbrV6bQXybK6ZgzMI
-         bHruvWnyJukn+DnvwW2WqanjHrloOExTu19tC3F02yVo8VCgUwRXepwlp7LDLacs3lSb
-         3ogfLpX9aRCgPbj2DpafldoCI1soO3i0DCKjak/ROyElMcZ09Bh7qARbunvAThjzGX1f
-         cbbX+8OGiBMtAz5juiB5K4ije6s8eb2rP6pVauqmoEVUHdD3PAXZiOcIa2/9I0JngMTb
-         l1YnxkXU2Qlu0tv9GRvHQAOJ9HamoZzU51A5ZIyEaCqkbTHLLRDQx2FnEGNMHnzqxC+O
-         UB9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUM/OYs2DozxIBHtzAIPEFR2xBqzQdmskxhiFDBzBNy/l0Nmh2UBNJx5XCJFmHQc/su1kNHxVfwSG2gQRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbvZJvVlqiC7POZowCPz9H+4Kl8AFjdfUX9l+kX0Dwy8flspSD
-	c46g7F+41EcVFVJTpsfLeNXSaKwseK3JdKSW2tN3xaik+/blz63Uk18ji6gW2rNrrixqOQI8gJ/
-	ezVKdVYhzLPFY4m3Nij/vRq9kTshAUsqig2cx5X1CiM5wSMTpIrVi3Sy0CfLLwFNEgQ==
-X-Gm-Gg: ASbGncvxILE7wX6ebrEBbNlOBeMcu5seLEO0R6svEsye6pSS6+T3qPQRulMc6NOrXLN
-	55wQcqOpUJZ4S0svIYlDWpbKaa470CV7KCXidC1y4hVBVKc1X7tL3epUx2hyWFs2ieHUd5l1NhA
-	dM2Er1dMpWrCx9TdELlsp/FtlKPR7BFn0JJ4A6PQrUndf6YUnfV5YXNbdDHMlZe5RVEFMBgCevH
-	zaR2aCj2YNkOxZMcTTNMlx/Kmfl62msWk4Wl38krRpapyOdLnDfrQWjEY95Re4/ILz7bgpCGMRV
-	Xbhr4DYuk1mKhTGbez1mmgjl55C8a6NtqQuL9ovhZZuYGiHt1nlCGSyCLHFCG4nK0v9Qa0XIgrZ
-	wWS98ihNCu9vEOXjc/4l3oWC0oyfPY19wPHCG114=
-X-Received: by 2002:a05:600c:8418:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-4771e68adc4mr1427655e9.16.1761675439244;
-        Tue, 28 Oct 2025 11:17:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEh9w3CR7oqv8SD+DpRc304K1YwGmWnUOlNNN0GFBUn5BuV/oHlq0iG3kt+3RHe9DOoKNgvDg==
-X-Received: by 2002:a05:600c:8418:b0:46f:a2ba:581f with SMTP id 5b1f17b1804b1-4771e68adc4mr1427045e9.16.1761675438722;
-        Tue, 28 Oct 2025 11:17:18 -0700 (PDT)
-Received: from [192.168.200.155] (host-80-81-2-50.customer.m-online.net. [80.81.2.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e18bd92sm5763515e9.2.2025.10.28.11.17.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 11:17:18 -0700 (PDT)
-Message-ID: <dc002ef9-53ee-4466-b963-baadfd5162b7@redhat.com>
-Date: Tue, 28 Oct 2025 19:17:16 +0100
+        d=1e100.net; s=20230601; t=1761675572; x=1762280372;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfXTmmK3puFuK381TWyTUm9O8YcJG4OMvs9xdi/t8Zs=;
+        b=MHhPmvrxrLXMp5KRlI5Zj2YrxD+bXe0wqlg3ijxfb62yVJv3mU85znRriAgSkpCKW3
+         hSTZ1fyewy/G+80AoNV9BIcimi6BmOzDHr7RomB6M4cr9YHXVpj9qfFKR0x+Bu+lZl7W
+         FcEZJrOopBk6TCkdM7Ssft0U9QQwr8619s8VHP5PIlUzYYUX1IKw4BV7BogYxODkU151
+         YwPCZV6C4vk04u/VX32m0XwLT3BIfqtjsuSKmOzG7OhxBdwHl3ig7zGBBqap+izbh+Bm
+         k9nDVfl1+yDQqIm47Xi8rryxv7NdNKHXwwwRMDv474EaAuT/vbCFhbDQBUWfPjSnHXlw
+         nvVw==
+X-Gm-Message-State: AOJu0YzO6Q+wlMEfGHe+UOxn5f3mfkBSdc/3Tw4ko4w1tLBh4XnebZZS
+	RxJCF/54GwR3zYu1O/wU4+VlzDtzF5llkV7pYsIdS3jySmo0UC3EuH/Vm3FiMMfES0I0I3BPj8r
+	VCafz/h+01yjfSUYZO8LE95q5/ST9JT6tjx6q2sWOziiD9/wOgvAIfRoSAAg=
+X-Google-Smtp-Source: AGHT+IHGuAZ1tfSkYnEKoUZB3LpFRf8vpzfHTGMaPI8ocatXsjGMENEwDPGXRf277lQWWLXxbHA6nLGYXPlr8t6yLhs9Y5BXOK0a
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
- Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- pfalcato@suse.de
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
- <063f8369-96c7-4345-ab28-7265ed7214cb@linux.alibaba.com>
- <9a3f2d8d-abd1-488c-8550-21cd12efff3e@lucifer.local>
- <e2a89e74-1533-4a83-8d0f-3f4821750e25@redhat.com>
- <64b9a6cd-d2e4-4142-bf41-abe80bf1f61a@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <64b9a6cd-d2e4-4142-bf41-abe80bf1f61a@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:144a:b0:430:ae26:7c19 with SMTP id
+ e9e14a558f8ab-432f8e6de6fmr2816975ab.0.1761675572386; Tue, 28 Oct 2025
+ 11:19:32 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:19:32 -0700
+In-Reply-To: <68d913e1.050a0220.1696c6.0003.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69010934.050a0220.3344a1.03bf.GAE@google.com>
+Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+ linux-5.10.y
+From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 28.10.25 19:09, Lorenzo Stoakes wrote:
-> (It'd be good if we could keep all the 'solutions' in one thread as I made a
-> detailed reply there and now all that will get lost across two threads but
-> *sigh* never mind. Insert rant about email development here.)
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Yeah, I focused in my other mails on things to avoid creep while 
-allowing for mTHP collapse.
+***
 
-> 
-> On Tue, Oct 28, 2025 at 06:56:10PM +0100, David Hildenbrand wrote:
->> [...]
->>
->>>
->>>> towards David's earlier simplified approach:
->>>> 	max_ptes_none == 511 -> collapse mTHP always
->>>> 	max_ptes_none != 511 -> collapse mTHP only if all PTEs are non-none/zero
->>>
->>> Pretty sure David's suggestion was that max_ptes_none would literally get set to
->>> 511 if you specified 511, or 0 if you specified anything else.
->>
->> We had multiple incarnations of this approach, but the first one really was:
->>
->> max_ptes_none == 511 -> collapse mTHP always
-> 
-> But won't 511 mean we just 'creep' to maximum collapse again? Does that solve
-> anything?
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+Author: dmantipov@yandex.ru
 
-No creep, because you'll always collapse.
-
-Creep only happens if you wouldn't collapse a PMD without prior mTHP 
-collapse, but suddenly would in the same scenario simply because you had 
-prior mTHP collapse.
-
-At least that's my understanding.
-
-> 
->> max_ptes_none == 0 -> collapse mTHP only if all non-none/zero
->>
->> And for the intermediate values
->>
->> (1) pr_warn() when mTHPs are enabled, stating that mTHP collapse is not
->> supported yet with other values
-> 
-> It feels a bit much to issue a kernel warning every time somebody twiddles that
-> value, and it's kind of against user expectation a bit.
-
-pr_warn_once() is what I meant.
-
-> 
-> But maybe it's the least worst way of communicating things. It's still
-> absolutely gross.
-> 
->> (2) treat it like max_ptes_none == 0 or (maybe better?) just disable mTHP
->> collapse
-> 
-> Yeah disabling mTHP collapse for these values seems sane, but it also seems that
-> we should be capping for this to work correctly no?
-
-I didn't get the interaction with capping, can you elaborate?
-
-> 
-> Also I think all this probably violates requirements of users who want to have
-> different behaviour for mTHP and PMD THP.
-> 
-> The default is 511 so we're in creep territory even with the damn default :)
-
-I don't think so, but maybe I am wrong.
-
-
--- 
-Cheers
-
-David / dhildenb
-
+diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
+index 94c7acfebe18..0e0a4742b8a6 100644
+--- a/fs/ocfs2/alloc.c
++++ b/fs/ocfs2/alloc.c
+@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 	int status;
+ 	struct inode *inode = NULL;
+ 	struct buffer_head *bh = NULL;
++	struct ocfs2_dinode *di;
++	struct ocfs2_truncate_log *tl;
++	unsigned int tl_count, tl_used;
+ 
+ 	inode = ocfs2_get_system_file_inode(osb,
+ 					   TRUNCATE_LOG_SYSTEM_INODE,
+@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+ 		goto bail;
+ 	}
+ 
++	di = (struct ocfs2_dinode *)bh->b_data;
++	tl = &di->id2.i_dealloc;
++	tl_used = le16_to_cpu(tl->tl_used);
++	tl_count = le16_to_cpu(tl->tl_count);
++	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
++		     tl_count == 0 || tl_used > tl_count)) {
++		status = -EFSCORRUPTED;
++		iput(inode);
++		brelse(bh);
++		mlog_errno(status);
++		goto bail;
++	}
++
+ 	*tl_inode = inode;
+ 	*tl_bh    = bh;
+ bail:
+diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
+index 195515eefd33..869cc09e86a8 100644
+--- a/fs/ocfs2/dir.c
++++ b/fs/ocfs2/dir.c
+@@ -304,8 +304,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
+ 				 unsigned long offset)
+ {
+ 	const char *error_msg = NULL;
+-	const int rlen = le16_to_cpu(de->rec_len);
+-	const unsigned long next_offset = ((char *) de - buf) + rlen;
++	unsigned long next_offset;
++	int rlen;
++
++	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
++		/* Dirent is (maybe partially) beyond the buffer
++		 * boundaries so touching 'de' members is unsafe.
++		 */
++		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
++		     "too close to end or out-of-bounds",
++		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
++		return 0;
++	}
++
++	rlen = le16_to_cpu(de->rec_len);
++	next_offset = ((char *) de - buf) + rlen;
+ 
+ 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
+ 		error_msg = "rec_len is smaller than minimal";
+@@ -780,6 +793,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
+ 	struct ocfs2_extent_block *eb;
+ 	struct ocfs2_extent_rec *rec = NULL;
+ 
++	if (le16_to_cpu(el->l_count) !=
++	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %lu has invalid extent list length %u\n",
++				  inode->i_ino, le16_to_cpu(el->l_count));
++		goto out;
++	}
++
+ 	if (el->l_tree_depth) {
+ 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
+ 				      &eb_bh);
+@@ -3418,6 +3439,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+ 		offset += le16_to_cpu(de->rec_len);
+ 	}
+ 
++	if (!last_de) {
++		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
++				  "is unexpectedly short",
++				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
++				  i_size_read(dir));
++		goto out;
++	}
++
+ 	/*
+ 	 * We're going to require expansion of the directory - figure
+ 	 * out how many blocks we'll need so that a place for the
+@@ -4109,10 +4138,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+ 	}
+ 
+ 	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
+-	memset(&dx_root->dr_list, 0, osb->sb->s_blocksize -
+-	       offsetof(struct ocfs2_dx_root_block, dr_list));
++
++	dx_root->dr_list.l_tree_depth = 0;
+ 	dx_root->dr_list.l_count =
+ 		cpu_to_le16(ocfs2_extent_recs_per_dx_root(osb->sb));
++	dx_root->dr_list.l_next_free_rec = 0;
++	memset(&dx_root->dr_list.l_recs, 0,
++	       osb->sb->s_blocksize -
++	       (offsetof(struct ocfs2_dx_root_block, dr_list) +
++		offsetof(struct ocfs2_extent_list, l_recs)));
+ 
+ 	/* This should never fail considering we start with an empty
+ 	 * dx_root. */
+diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
+index 7c9dfd50c1c1..17f4106a15df 100644
+--- a/fs/ocfs2/inode.c
++++ b/fs/ocfs2/inode.c
+@@ -1418,6 +1418,31 @@ int ocfs2_validate_inode_block(struct super_block *sb,
+ 		goto bail;
+ 	}
+ 
++	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
++		struct ocfs2_chain_list *cl = &di->id2.i_chain;
++
++		if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list count %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_count));
++			goto bail;
++		}
++		if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count)) {
++			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list index %u\n",
++					 (unsigned long long)bh->b_blocknr,
++					 le16_to_cpu(cl->cl_next_free_rec));
++			goto bail;
++		}
++	}
++
++	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
++	    le32_to_cpu(di->i_clusters)) {
++		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
++				 (unsigned long long)bh->b_blocknr,
++				 le32_to_cpu(di->i_clusters));
++		goto bail;
++	}
++
+ 	rc = 0;
+ 
+ bail:
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index fc8252a28cb1..f60a2f286392 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -912,13 +912,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+ static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
+ {
+ 	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
+-	int i;
+ 
+ 	alloc->id1.bitmap1.i_total = 0;
+ 	alloc->id1.bitmap1.i_used = 0;
+ 	la->la_bm_off = 0;
+-	for(i = 0; i < le16_to_cpu(la->la_size); i++)
+-		la->la_bitmap[i] = 0;
++	memset(la->la_bitmap, 0, le16_to_cpu(la->la_size));
+ }
+ 
+ #if 0
+diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
+index 98e77ea957ff..8732965760d2 100644
+--- a/fs/ocfs2/move_extents.c
++++ b/fs/ocfs2/move_extents.c
+@@ -100,7 +100,13 @@ static int __ocfs2_move_extent(handle_t *handle,
+ 
+ 	rec = &el->l_recs[index];
+ 
+-	BUG_ON(ext_flags != rec->e_flags);
++	if (ext_flags != rec->e_flags) {
++		ret = ocfs2_error(inode->i_sb,
++				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
++				  (unsigned long long)ino, index, rec->e_flags, cpos);
++		goto out;
++	}
++
+ 	/*
+ 	 * after moving/defraging to new location, the extent is not going
+ 	 * to be refcounted anymore.
+@@ -1034,6 +1040,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
+ 	if (range.me_threshold > i_size_read(inode))
+ 		range.me_threshold = i_size_read(inode);
+ 
++	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
++			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
++		status = -EINVAL;
++		goto out_free;
++	}
++
+ 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
+ 		context->auto_defrag = 1;
+ 
+diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
+index 19137c6d087b..91f660ce3098 100644
+--- a/fs/ocfs2/ocfs2_fs.h
++++ b/fs/ocfs2/ocfs2_fs.h
+@@ -470,7 +470,8 @@ struct ocfs2_extent_list {
+ 	__le16 l_reserved1;
+ 	__le64 l_reserved2;		/* Pad to
+ 					   sizeof(ocfs2_extent_rec) */
+-/*10*/	struct ocfs2_extent_rec l_recs[];	/* Extent records */
++					/* Extent records */
++/*10*/	struct ocfs2_extent_rec l_recs[] __counted_by_le(l_count);
+ };
+ 
+ /*
+@@ -484,7 +485,8 @@ struct ocfs2_chain_list {
+ 	__le16 cl_count;		/* Total chains in this list */
+ 	__le16 cl_next_free_rec;	/* Next unused chain slot */
+ 	__le64 cl_reserved1;
+-/*10*/	struct ocfs2_chain_rec cl_recs[];	/* Chain records */
++					/* Chain records */
++/*10*/	struct ocfs2_chain_rec cl_recs[] __counted_by_le(cl_count);
+ };
+ 
+ /*
+@@ -496,7 +498,8 @@ struct ocfs2_truncate_log {
+ /*00*/	__le16 tl_count;		/* Total records in this log */
+ 	__le16 tl_used;			/* Number of records in use */
+ 	__le32 tl_reserved1;
+-/*08*/	struct ocfs2_truncate_rec tl_recs[];	/* Truncate records */
++					/* Truncate records */
++/*08*/	struct ocfs2_truncate_rec tl_recs[] __counted_by_le(tl_count);
+ };
+ 
+ /*
+@@ -640,7 +643,7 @@ struct ocfs2_local_alloc
+ 	__le16 la_size;		/* Size of included bitmap, in bytes */
+ 	__le16 la_reserved1;
+ 	__le64 la_reserved2;
+-/*10*/	__u8   la_bitmap[];
++/*10*/	__u8   la_bitmap[] __counted_by_le(la_size);
+ };
+ 
+ /*
+@@ -653,7 +656,7 @@ struct ocfs2_inline_data
+ 				 * for data, starting at id_data */
+ 	__le16	id_reserved0;
+ 	__le32	id_reserved1;
+-	__u8	id_data[];	/* Start of user data */
++	__u8	id_data[] __counted_by_le(id_count);	/* Start of user data */
+ };
+ 
+ /*
+@@ -798,9 +801,10 @@ struct ocfs2_dx_entry_list {
+ 					 * possible in de_entries */
+ 	__le16		de_num_used;	/* Current number of
+ 					 * de_entries entries */
+-	struct	ocfs2_dx_entry		de_entries[];	/* Indexed dir entries
+-							 * in a packed array of
+-							 * length de_num_used */
++					/* Indexed dir entries in a packed
++					 * array of length de_num_used.
++					 */
++	struct	ocfs2_dx_entry		de_entries[] __counted_by_le(de_count);
+ };
+ 
+ #define OCFS2_DX_FLAG_INLINE	0x01
+@@ -935,7 +939,8 @@ struct ocfs2_refcount_list {
+ 	__le16 rl_used;		/* Current number of used records */
+ 	__le32 rl_reserved2;
+ 	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
+-/*10*/	struct ocfs2_refcount_rec rl_recs[];	/* Refcount records */
++				/* Refcount records */
++/*10*/	struct ocfs2_refcount_rec rl_recs[] __counted_by_le(rl_count);
+ };
+ 
+ 
+@@ -1021,7 +1026,8 @@ struct ocfs2_xattr_header {
+ 						    buckets.  A block uses
+ 						    xb_check and sets
+ 						    this field to zero.) */
+-	struct ocfs2_xattr_entry xh_entries[]; /* xattr entry list. */
++						/* xattr entry list. */
++	struct ocfs2_xattr_entry xh_entries[] __counted_by_le(xh_count);
+ };
+ 
+ /*
 
