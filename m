@@ -1,152 +1,143 @@
-Return-Path: <linux-kernel+bounces-873243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100F8C1376A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A927FC13779
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E152D1A2419D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FD211A243FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6CF2C15AE;
-	Tue, 28 Oct 2025 08:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7452D7DD8;
+	Tue, 28 Oct 2025 08:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZyC2WDhE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsPj+uH2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EAC29E11E;
-	Tue, 28 Oct 2025 08:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946352D5950;
+	Tue, 28 Oct 2025 08:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639032; cv=none; b=KVP4+VKrXkqSgLLvnyazUHcFoAk7xO03kQNA0E2WFt/EI4k7K6ke5dOE/3srn8jBN6F8YsJuVTel6Z9wC69srCKwITbnHB7/qBxCagQa17oUAYEOEvv34rn0XaabMOFM9FnUPwWtgUXrAlpGItErnbJgpKXlzQgdbFVZpK4mNe8=
+	t=1761639046; cv=none; b=Ms92MUU1n0Rf9dANMZRdkSSIfkAZzxfUvkDi512Tiuxd6M1phLk5fG/JALG641ent5W6mjiMVqLM/FGXLztXGsZRvHWj/RA4mdpiLuXC9MPQZ9E2HqoGznaFsqtn6U+Rb0bIg7OzCEzny1P562ZlXdAX4KmZifhQUUTNDy7nZmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639032; c=relaxed/simple;
-	bh=CCWns77OmOt4vjojJJ4+7pxoDkV1iHGduGsfXfkZa1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxEBHQV8RvYg6gD8hdCamD1JX+ys+VlkbD8RkkIHdghUc5sIYl4f5/eMyW2v2686BMMnX6hw7pQmJ/rsx2Mml8Vu9ZdSji9r70QXQQoP/279to+qWoNXt0EGcKpX9tSwKoG8Mi67Cxe7k+j3OLMYQVUYi5OC6eLaYRFeV5AgMEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZyC2WDhE; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761639030; x=1793175030;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CCWns77OmOt4vjojJJ4+7pxoDkV1iHGduGsfXfkZa1g=;
-  b=ZyC2WDhEtTf3dy11f6dOSj/lRbLgLmdUmn0enlouZiUZlsZQ5EvxEIHz
-   LzSbIR+QFBHCr340drKs3Fse6UL/vsYxioGce9Wb2OUb7apzYrKj+o9H0
-   9bpt07w9KpiRC5sNy4qZtMybW4ZBxxEK/yUWk2wTQH5HjgvxW/xdlbBu7
-   YU3a5Fl/IX+hB+7B5YwVnJ/IngFIGDpIkRgz76D60NANhCMq3s1qKAhmb
-   i8GQ4yI1F0kWZUEOJPxkC9fElrKoPxZUwA4TN6zbwk4QyXEr7tdmctTkL
-   FhCf5R0KzGErsv42C5Hw9N9x8qp8Ulyfdu6DuD0koXtij/AnBfvfpx0X+
-   g==;
-X-CSE-ConnectionGUID: NvEL/5+8TjKCiNSECvdTPA==
-X-CSE-MsgGUID: 1vrPLTUnRKGgD3tdixyGyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63769181"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="63769181"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:10:30 -0700
-X-CSE-ConnectionGUID: /VdNS5MmR4eLlYiGyoT2Ew==
-X-CSE-MsgGUID: lWLXbDHWSW+9gYBHKRgDSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185366413"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:10:28 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vDeme-00000003FJ4-1WAR;
-	Tue, 28 Oct 2025 10:10:24 +0200
-Date: Tue, 28 Oct 2025 10:10:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Gary =?utf-8?B?Q2h1KOalmuWFieW6hik=?= <chuguangqing@inspur.com>,
-	lars <lars@metafoo.de>,
-	"Michael.Hennerich" <Michael.Hennerich@analog.com>,
-	dlechner <dlechner@baylibre.com>, "nuno.sa" <nuno.sa@analog.com>,
-	andy <andy@kernel.org>,
-	"subhajit.ghosh" <subhajit.ghosh@tweaklogic.com>,
-	"javier.carrasco.cruz" <javier.carrasco.cruz@gmail.com>,
-	linux-iio <linux-iio@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] iio: light: apds9960: convert to use maple tree
- register cache
-Message-ID: <aQB6cFpTsBssGej3@smile.fi.intel.com>
-References: <abf45488369cbcce6298cc0ea19c0b3a24-10-25intel.com@sslemail.net>
- <aPs9HdeTZKoqFqdk@smile.fi.intel.com>
- <68fc4591.1.gk94qBPVZajhk94q@inspur.com>
- <aP8tvj_IPbv65m0T@smile.fi.intel.com>
- <20251027133806.5e4368bc@jic23-huawei>
+	s=arc-20240116; t=1761639046; c=relaxed/simple;
+	bh=zBgb5f1WtkDg56Ox0V9GSaoKy0zGZLbaoISlecrexow=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=LiY7oyqBJv8ZcthuQKzrTf7KhXtGx0VrVonYByEl8u4ugQEO4qkxwe/nnmd8EG5y6OidGWiphOzgie6DCCupKVYtRdLVry2nXZZHLSC4Jyv8iyXHO56DneqpBOOg1hnparY8sqdJzYeyjiOie7EaZdZxFiYc+KYt3Q7g/kUVQLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsPj+uH2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5D4C4CEE7;
+	Tue, 28 Oct 2025 08:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761639046;
+	bh=zBgb5f1WtkDg56Ox0V9GSaoKy0zGZLbaoISlecrexow=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=TsPj+uH26dczDXE7oXv27W0SY9W+B5oYJv1PGJDZbhbBjeoRxAiQqLRgi+lnAQrp7
+	 3gDI1b3QrcTr0Znv6ufEaEJJ4dbxyFSOM0msgbwv6JHHioWZl10DBI+SuY2vD4mioT
+	 IDr7N3iVU85sEgWV+hutydtmcSuT2lzc+zxWq60g4ZHmqKGKKONz7uranjY0DqOOrW
+	 R4JdJQxxrVp13hr6a4JCnR5kh+qlZjqk9qlDXuJ1o7XZcjvrXUGZ8jRTAijjLwnRNN
+	 KSC3k07DPR0iPm8NdyB/91/U1ncZ8JQoPg1bkiqr4z/9thLmKWjvS9s3XN1lgliyty
+	 hDT3XqNEuhXxg==
+Message-ID: <84ae4280-d0f0-42a2-acfd-e85e0263be1d@kernel.org>
+Date: Tue, 28 Oct 2025 09:10:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027133806.5e4368bc@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+ <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+ <20251028-wonderful-olive-muskox-77f98d@kuoka>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251028-wonderful-olive-muskox-77f98d@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 01:38:06PM +0000, Jonathan Cameron wrote:
-> On Mon, 27 Oct 2025 10:30:54 +0200
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> > On Sat, Oct 25, 2025 at 11:36:45AM +0800, Gary Chu(楚光庆) wrote:
-> > > >On Fri, Oct 24, 2025 at 03:38:23PM +0800, Chu Guangqing wrote:  
-> > > >> The maple tree register cache is based on a much more modern data structure
-> > > >> than the rbtree cache and makes optimisation choices which are probably
-> > > >> more appropriate for modern systems than those made by the rbtree cache.  
-
-...
-
-> > > >>   .reg_defaults = apds9960_reg_defaults,
-> > > >>   .num_reg_defaults = ARRAY_SIZE(apds9960_reg_defaults),  
-> > > >
-> > > >^^^^ Be careful with such cases, the cache implementations may behave
-> > > >differently. Have you tested this on the actual HW?
-> > > >  
-> > > We have conducted tests on some hardware, and performance improvements were observed,
-> > >  though tests have not been carried out on all hardware models.
-> > > Neither rbtree nor maple tree directly depends on hardware types (such as CPU or peripheral
-> > >  models). Instead, they rely on the address distribution characteristics (discrete/continuous)
-> > >  of hardware registers. The optimal cache type is determined by the hardware layout.
-> > > Red-black trees excel at individual operations on discrete addresses, while Maple Trees are
-> > >  proficient in range operations on contiguous addresses.  
-> > 
-> > It's not about the low-level cache implementation, it's about regmap
-> > abstraction implementation that might differ from cache to cache
-> > implementations. This all in regard how the cold cache is getting filled up.
-> > There is a separate discussion (unrelated to the topic of your series) where
-> > this was brought up.
+On 28/10/2025 09:09, Krzysztof Kozlowski wrote:
+> On Thu, Oct 23, 2025 at 02:14:34AM -0700, Hangxiang Ma wrote:
+>> Add bindings for qcom,kaanapali-camss in order to support the camera
 > 
-> I appreciate these things can be hard to track down with lots of threads in flight
-> but any chance of a reference for that? I'd be a little surprised if these uses
-> are complicated enough to hit corner cases but would like to know more.
-> I've taken a few similar changes in the past thinking there would be no
-> practical difference.
-
-Sure, it appeared in the discussion of v2 of the following patch:
-https://lore.kernel.org/linux-gpio/20251009132651.649099-2-bigunclemax@gmail.com/
-
-> > That's why I asked how this was tested.
-> > 
-> > In any case, up to Jonathan, but I had to rise a potential misbehave, so in my
-> > opinion this kind of corner cases needs to be tested on real HW.
-> > 
-> > > >>   .max_register = APDS9960_REG_GFIFO_DIR(RIGHT),
-> > > >> - .cache_type = REGCACHE_RBTREE,
-> > > >> + .cache_type = REGCACHE_MAPLE,
-> > > >>  };  
-
--- 
-With Best Regards,
-Andy Shevchenko
+> What is qcom,kaanapali-camss? Sounds like a compatible and you cannot
+> add bindings for a compatible. Instead add bindings for hardware, so
+> explain here hardware.
+> 
+> You could easily use `git log` to see how such commits are written
+> instead of pasting here your downstream practice.
+> 
 
 
+And of course standard comment:
+
+A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+
+Best regards,
+Krzysztof
 
