@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-873012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1804CC12D54
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:04:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C751C12D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:04:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340321AA57C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BACE467525
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF55D29AAFA;
-	Tue, 28 Oct 2025 04:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FC52853EE;
+	Tue, 28 Oct 2025 04:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQZcFttU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="gxPWMQuc"
+Received: from outbound.ms.icloud.com (p-west3-cluster3-host1-snip4-10.eps.apple.com [57.103.72.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48319298CCF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AD2A92E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.72.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761624179; cv=none; b=ee4ZlvR2xNq6vvvb/gl6ZvQVhsCrq/74dFarSm+StRuAHfAziHl3HyIZCa90mVcLZbIX+lSCT/ERvxoGoaVo4ZgUJI4mzLEYUW4mlEm357MaxM1dFfZb022aRhDrcdJnZSj37QJAVDUmB215uyrOgc0xf9Q9A3zT86kPuadgags=
+	t=1761624177; cv=none; b=TdzqbdKZ2UIXGorz7AaIzcpNED7S0OR5B/QAWtWv36Af3kvzDwvxr60LWI9kFzqQWFgjG634JcMRpmA/k9YoLlzzxpGKWpQ8aUU0Kisr1ipY+u3VrCUHofJ4fDMGz0FONfKaCytwIVso7qnVYi1Cd4QXKh1KgLnUvw0x0N7DbRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761624179; c=relaxed/simple;
-	bh=tQ76DelEERQRex/jtJZfPH2Uwy7MZJd5BE1h4O3y61o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YyEzW3E15Jlap8xNLNPDX0oGedsfJ+eVsVtHL2owAExqJLEPzTmluxcEpvRUeFAk9SHO3qoaSg0oCIBzCNlNOGuu94H7aSs35e0Ir1pl3Mr38d1a5rVp+XOauakZGCkRqdug0gO2pgdBHchEgyUg8HEtH8RdmXh+z1Si1fWuO2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQZcFttU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8BF4C116C6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761624178;
-	bh=tQ76DelEERQRex/jtJZfPH2Uwy7MZJd5BE1h4O3y61o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AQZcFttUAejCsBupzSJxXGQwIiKwwVZiJy7/3JYhRuyc6iJnRbNUt4Cr1G3n3FkQt
-	 U+dSY6I00YwT1wjJA4LjPvKSO5H10uN5kAIBvMu6vNcdZaRGiUrWOXLvd3UwBTWcU9
-	 zqI34c+Yfkp1/7w8GEIOHG4DKi8v0amTuXLqYMHt2ztYvtNL2yzyrTj7gEHZzntN48
-	 Wiv2h2MiIysSCYtEbNVmIYKH1XVec67pnLk6NC5yr0vGtnHJ6xM/VftmcMMGn6AubP
-	 rsNt9UHwtd2RfMXjY25Lz/UyE57019QBtqU/CA0Sbcpa5MxTYO9cBQ2AKsZON9D+da
-	 prSGmeG+d1I8A==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-63c2d72582cso8824209a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 21:02:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUPbRD2BbXG8lECPKTmYy9vU2vWyvdJ4fZTuhgMBy1rzYnk5jGTKZL/iLZjd16BMWHOjcLE7PY4s1HQRRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/5s6zKo+SJjWzgOzgxMfIXpK3OsWoVJT5HF+HflrTXW1Iqg+2
-	AOh0Gb4xR6pZUIYerapEWNJ5r7AilzxfxPFP7jiy6h2eTnaLkPsUV72QRck+M/S+twht8Zv0Z68
-	G67C97Aa8/WSGGdc+LQwqj1JJT5FOA/s=
-X-Google-Smtp-Source: AGHT+IHXAMLyGd3ViihkM7YWAwqC60GP3yExiGkJKKlISyVAqClcK8DRhTQvl1yvQUUGcMgAouco7qij1IZFRq6GO4Q=
-X-Received: by 2002:a05:6402:280a:b0:634:c377:e188 with SMTP id
- 4fb4d7f45d1cf-63ed7f0f51cmr2040695a12.6.1761624177528; Mon, 27 Oct 2025
- 21:02:57 -0700 (PDT)
+	s=arc-20240116; t=1761624177; c=relaxed/simple;
+	bh=bFZCFcf06h8T66gLu6gVsCMqBeqg079i1sIMTeDCecs=;
+	h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version; b=RqDhd9y5w15JCdySaQxx1mVghFG4FdpusyhcOY78siMlZgHY3J1/W90DMOaCVsf0S35mfqzhYpbjMoCpycTM/XJ+9KUVqw8GMpWj92dWqzSbr3p71j2NbiUxxc2jn+jUEbQfI+niHKukMa+hPMVZECiP/4XU5YHakrHGGAkXZSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=gxPWMQuc; arc=none smtp.client-ip=57.103.72.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+Received: from outbound.ms.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-3a-60-percent-8 (Postfix) with ESMTPS id 4337918000AC;
+	Tue, 28 Oct 2025 04:02:53 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com; s=1a1hai; bh=YdJUwIqmtQxYRwFx4n9+CvoBPFB6u8eKUtmPnn5+SZA=; h=Message-ID:Subject:From:To:Date:Content-Type:MIME-Version:x-icloud-hme; b=gxPWMQuc9uKqSKNdF/ZeVRY+uJtojIMt2h83ylvSygL/K0HmkajamTVy3xWhJFxmFld9NvFaLyck97u8lv2hTI0Qwh7A0mto8C40kXV5DJ65N+H17Gbx0vqaTlodbiioNxNRS6hgtlPwkk1/XN4j/jQLULFpWkzVXOypVWh5c6ncIuyiLXzK6H2rue7Bpz9xyLaKmfZc2PIv0RHu6xXRzwLx8Av2G3uLmAvglMZIbJSkULZTLC0/cqwB+8RKFzeXkGco1IeLeJFYTRgfm28AQm56BIv6I//uCz05Mye8fi+ITCw2N6ViXUn0k2CAeKPeoLGcXJIcsffT6nSvkFak4A==
+Received: from [192.168.4.116] (unknown [17.57.154.37])
+	by p00-icloudmta-asmtp-us-west-3a-60-percent-8 (Postfix) with ESMTPSA id 8CEA318000B2;
+	Tue, 28 Oct 2025 04:02:52 +0000 (UTC)
+Message-ID: <8603b67049805f8b2d187a2d4e4a82a18c656470.camel@icloud.com>
+Subject: [PATCH 3/3] drm/plane: Correct typo in update_plane docs
+From: Zoe Gates <zoe.blair.gates@icloud.com>
+To: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, 	airlied@gmail.com, simona@ffwll.ch,
+ dri-devel@lists.freedesktop.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 27 Oct 2025 23:02:50 -0500
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
- <20251027071316.3468472-6-chenxiaosong.chenxiaosong@linux.dev>
- <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com> <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
-In-Reply-To: <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 28 Oct 2025 13:02:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8zuJsy5FZxsEQtPCm1OqJ6Usr-6CPkVgoRPYnX3NiQ9g@mail.gmail.com>
-X-Gm-Features: AWmQ_bkIhrtor2FjpadxESdE_tFAx0KuAPo1GLwDErGKEJHKMeO6tthrhAVNJOk
-Message-ID: <CAKYAXd8zuJsy5FZxsEQtPCm1OqJ6Usr-6CPkVgoRPYnX3NiQ9g@mail.gmail.com>
-Subject: Re: [PATCH v4 05/24] smb: move some duplicate definitions to common/smb1pdu.h
-To: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org, 
-	christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: EAE4rW_LQrmipeqfdkPBKuC0jX3ShehK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDAzMyBTYWx0ZWRfX9+ZXVC9qP9Gj
+ emEJZDkJ8WHkMfRhT7Vv3tosWui7qwRAjq0pwwIBst2DP8OM9D/H+h8ntbtShLXI7rc3oTn3Btl
+ uLGKQvKhavSFBuBFg2eGbRwxI2O5ZvYCS6pLTknDdzVM7EYR5oTw+DkjnOprEPY3sfjywfiK7v3
+ 5J3lN8BNPCf6gVxH6kcR8dPh2IEzQDNTwkWiu6p5q9kSjztIyEg85j7afpNhHxA+eJZ5pfcVnhh
+ PI4yojUdAeV7KcQkkxMAOjAarjMTMOKG35A7K1wERN1+1wankwyDmlNuUapZpNXN6hXgXTcjI=
+X-Proofpoint-ORIG-GUID: EAE4rW_LQrmipeqfdkPBKuC0jX3ShehK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 adultscore=0 malwarescore=0
+ suspectscore=0 phishscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2510280033
+X-JNJ: AAAAAAAB7VEUwYnqwEWr147H2Rp8xJEKDD5nYq5NnjQSoDdce2oYYIc/Zl4X5TNER8dcVYpY7OHcLt2aFTWpcJ/cDNuGPBoOnt50xcCecixql51U4l48QUeEiSyH53X3elFfWyqiTN2xm0YPN6p8CAqnKUWXuugxsbcN+vroHIVAMH7G1Po9qxq9lEv8yIhpvwl+3eA9+7FwtYuRp87hPEdOUuFNkw13w6bHZoqDTWh+eRZYzhtXofr+2vbIkh9C94ueIdmGEGmlSEUHVktEIuFRYGxznfyNC05Hj80Ra6mIMV1gTERdaf2cp4xFBJB6oOKT2eCWMHSw1m4uiwlI+5+51Z3mreyOizSxGtk18DFnQdRfENX1c3Sb06b2ivdubvRDWKeGNVX5M7tmKrIWRttwGPg7Fd/6yePVPjH5Iu0DpJUzICvUYzc044edGfW6YaVVjSZxixXT8f+3cGAsmDl7D+6+3IPL9iSCgFfWSJI5YQD2JJP/lxuk5nHFSG0v+aH32/3EvHpAr1LDqFHyXQEzPB8FYXUwrF3oM6LYUA2PI8IY9qVxsC6GZ+vUlJX8sim+TRO1GMICaBuX05P9I4s6zMHOfLi6gICSs5GRGTQDRoAgUqX+LyorgcOxRIHIA51561B8LDd+HZ3tmRcdiSYrBzSUcM/AdRMkpIc2v0QtPa73vmSKr5JB609/9LcFup/tzbiym1R4/ZLpOjkTZjfQPFAmGOyblekIGNrMvYuHsLQM2FxvdPWB/t/yXSrGQf9CaJ2t7z7Hdqa/TEis+3hWPsWSdgvv
 
-On Tue, Oct 28, 2025 at 12:58=E2=80=AFPM ChenXiaoSong
-<chenxiaosong.chenxiaosong@linux.dev> wrote:
->
-> Would it be harder to maintain if only part of the definitions are moved?
->
-> Moving the related definitions together would make maintenance easier,
-> that's just my personal opinion.
-Please check Steve's reply on another mail thread.
-If you think it looks weird, don't move them.
+From 931f0f259c881c892e78df75a7bcd1263a838d5b Mon Sep 17 00:00:00 2001
+From: Zoe Gates <zoe@zeocities.dev>
+Date: Mon, 27 Oct 2025 22:15:11 -0500
+Subject: [PATCH 3/3] drm/plane: Correct typo in update_plane docs
 
->
-> On 10/28/25 11:42 AM, Namjae Jeon wrote:
-> > On Mon, Oct 27, 2025 at 4:15=E2=80=AFPM <chenxiaosong.chenxiaosong@linu=
-x.dev> wrote:
-> >>
-> >> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >>
-> >> In order to maintain the code more easily, move duplicate definitions =
-to
-> >> new common header file.
-> >>
-> >> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> >> Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
-> > ksmbd does not use all smb1 pdus. Instead of moving all smb1 definition=
-s,
-> > move the ones ksmbd uses to smb1pdu.h.
-> > Thanks.
->
-> --
-> Thanks,
-> ChenXiaoSong.
->
+Fix the kernel-doc spelling so the update_plane parameter description
+uses the proper wording.
+
+Signed-off-by: Zoe Gates <zoe@zeocities.dev>
+---
+ include/drm/drm_plane.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/drm/drm_plane.h b/include/drm/drm_plane.h
+index 01479dd94e76..90006a811d57 100644
+--- a/include/drm/drm_plane.h
++++ b/include/drm/drm_plane.h
+@@ -295,7 +295,7 @@ struct drm_plane_funcs {
+ 	 *
+ 	 * This is the legacy entry point to enable and configure the
+plane for
+ 	 * the given CRTC and framebuffer. It is never called to
+disable the
+-	 * plane, i.e. the passed-in crtc and fb paramters are never
+NULL.
++	 * plane, i.e. the passed-in crtc and fb parameters are never
+NULL.
+ 	 *
+ 	 * The source rectangle in frame buffer memory coordinates is
+given by
+ 	 * the src_x, src_y, src_w and src_h parameters (as 16.16
+fixed point
+--=20
+2.51.1
+
 
