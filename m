@@ -1,198 +1,129 @@
-Return-Path: <linux-kernel+bounces-873897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87AAEC15092
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:04:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 317C8C150A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:05:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EC16443C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DA3622D96
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBDC72376FD;
-	Tue, 28 Oct 2025 13:57:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621423314DD;
+	Tue, 28 Oct 2025 13:58:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="QmMIlMNQ"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013051.outbound.protection.outlook.com [40.107.44.51])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uOeqyrTx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZyyuACtX"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED934233704;
-	Tue, 28 Oct 2025 13:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659875; cv=fail; b=OoVyLbAc9OzGSzRkqRp0PniOI/HCdD03oB3bW4dR9iE8WjP4qFe4aMgey4PgG7ChKTSSlstG6AnMb4ktdldF5bFNRqf+4RH4TpSUylY78ThgtlCDGsv2tUBFYlYJ44TnAXiktSXZxncl2lhp7i7ikG6hT7YzJgrkdt9+axHBAAQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659875; c=relaxed/simple;
-	bh=SMOnU3TWg0kweuQGnHIie6DL4u3nahJKs2uLIWV9KtA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uHMR+7tW0TzD00PBXOr8lmQvAV3NP+3OVQDf2Q2my50x8aSyztUcwCTlIXRd0lsZUyFoEYwcAXpddS2p64LdalX31Yv09KnjHF6XifC6Fs5FD4LUysiqJThtYxpxl+2rS76VqviVM12rjmR0YoIG+VHSdbw/UDQIy3mStM9sCzw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=QmMIlMNQ; arc=fail smtp.client-ip=40.107.44.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OfWZbw5r+h6rEeneU+0cT112H6eOmNdKe5xQEqQxh8RAU+wMCb/A8muFfd2VyofcCTxwDTrEYCt0Cmb/sqid35wzfFHoRqv0aFvEhV8S82KesK9eB0VoFtIisXr/aMP/0Usw0+0Hw4xCzOlhwm2NJjz6ImZbpxY8Qn/+VmkgNQz3QW42KJvKRfdgvTDd3IMWOF2Z/+M5+1gDBbcmESHIyk+qeYNqFRxS6mLJkmtD6mT/Ch1MlNXJ/erf3dcV+/sESA8M+F59y82S/Xi1wCthAbEKA9PJvJ93CPEHnBeWd8vStW75+haxjdutqqKD6VwdWTbA5bXHifQmeRzMUIYw9w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s9MZmGsI/uDBwsu/AAeTfs4AxE7RbFMkuxtotOEfP8o=;
- b=MTmazUspVM+xHdhjBRz2fnlNaTFOFP1tP/s9Ih4+AJ+QbnOAahqzoGYn92artTvyD28Z7AHyIVyE2MobYtiIiZXEakOa6EdsLGcvM2ZddciH71BPdp9Z37Ovk3es+vOCuJ75EBAch7Ju5K0OgLaoMbrQP45plSmasT7uU7gGyCbp8Hu77aPpAIzgh4DKDaAXhSVVZFaS7osokwmEVWBsqkolKHx1PwKzDTElOtFJ2xFcsMGS7rPThAL/A9Yyf7pttkD2egx8z1qFuRo0o8LoCin6tLrK+O4WWPT+RvpKGo4ZQxV3egTliX4A1XWlid/Ww11fBynu2jPFyoSn9rO0CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s9MZmGsI/uDBwsu/AAeTfs4AxE7RbFMkuxtotOEfP8o=;
- b=QmMIlMNQ3diX7gzT90VP2+u1gkk0Y+WcFzr3WqqBEMBoH1j8EcFHnI5+SxlPhQkKbDsJml2UMQ+NDrz/mb1j4W6qAUai/+fFU73Ojyhd0YSpEpaHYli3vkFBJ4t9yOugWnlH8ue/5ph0TrcPe94FFSKZwZtmqw837mBB9ZiZ9Lip9dkxS4PnjatUW2jS9zz/syLJYiIHhtUJrLv3schp8JKgut/qwKo8eEUKginGJBXO+UmFyaYycQIeKjUVzt8YgNWjOjnxSd7qYXgHLAdJ3Yu8hqNQ7yzKMIe6VJq38imHUyhzvpvw9RpzrQorx8yzqsNyrGvflffjuq34PuoO8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from JH0PR06MB7055.apcprd06.prod.outlook.com (2603:1096:990:6e::14)
- by SEZPR06MB6668.apcprd06.prod.outlook.com (2603:1096:101:181::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 13:57:47 +0000
-Received: from JH0PR06MB7055.apcprd06.prod.outlook.com
- ([fe80::df0:e58f:7ef8:5a8d]) by JH0PR06MB7055.apcprd06.prod.outlook.com
- ([fe80::df0:e58f:7ef8:5a8d%7]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
- 13:57:47 +0000
-From: Bixuan Cui <cuibixuan@vivo.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	cuibixuan@vivo.com
-Subject: [PATCH bpf-next] libbpf: Ignore the modules that failed to load BTF object
-Date: Tue, 28 Oct 2025 06:57:32 -0700
-Message-Id: <20251028135732.6489-1-cuibixuan@vivo.com>
-X-Mailer: git-send-email 2.17.1
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0032.apcprd02.prod.outlook.com
- (2603:1096:4:195::12) To JH0PR06MB7055.apcprd06.prod.outlook.com
- (2603:1096:990:6e::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15646233704;
+	Tue, 28 Oct 2025 13:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761659882; cv=none; b=NUwchYoQyseurlASFc/WA5/htFB9tegTIIudTBC6v5rbTVxIxv8vK+fdM8hoHTzhgYAg0eaNfTgdmjvFdW9aKK8W7QO0+DyTwETt+/cuwwvXhAs80aARB6x75bflgdZkz8VoIxjlnVBownAa2a0efGj7xKHV2bkmfqNVdExy3lI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761659882; c=relaxed/simple;
+	bh=jwhkSKyIAKFcKFKcHbcE5yLIWsbhuzQegvHxTtFBzts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lsNevQpHhVkWayBsMytRCOv3xoSij57c2PxqQ4EBFwkjXywl7mEGafOquHSSE17U2VuVfp2WmFDVwo5YDRLFYl/M9iXSsRbagXFAD2LfO4yDBQ5prFHBi4Igx7INtBCPVrYvG5xVIdiGpmm+3BBpHDzc2NlxrxGnOxuQ86rDWek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uOeqyrTx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZyyuACtX; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 Oct 2025 14:57:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761659878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q4sSQfkLnUOR6EYFSrWyzoEwtf3zqvnnuhYr4uBXt5w=;
+	b=uOeqyrTxLDYiEMrmWVSQnhrBNLXvhfmhLJnXro8s8e/5+TaBX3e5hHYQ6wrfnnpA/D+2Br
+	VepBCLLZ3mf2vpT0Gz3Vb2syn2mtMHOQBa2es2M8TlOQbwY7PIJcir1YnIN+/U8BCAMrWA
+	edD/Gv6/wrcYXy5koz4y8dRqXZtGvoc0VWUDzWnBYMQEBG2nmOYC5G6McQ9BmDx4OF87w1
+	vnxRNlqLwuHgl9jkDfCCuwOe99j4HoazKUy46yw4w5zbHDiLrTiRWzlxqmDAKBPNpBC3WT
+	XLBBTN4PVOzTnm4pvMmbTyTZOa3kY6kt5hU+6zicfLmRuiMJrLthYfYgMrumAg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761659878;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=q4sSQfkLnUOR6EYFSrWyzoEwtf3zqvnnuhYr4uBXt5w=;
+	b=ZyyuACtX6WpVEwXwNANDHp34V24b0xcRAwXy5gpP9ecmQBqdeOCJKHHu1j6YtOcJWLigfB
+	Jd3qSDCN9nglHQAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Crystal Wood <crwood@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, Attila Fazekas <afazekas@redhat.com>,
+	linux-pci@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+	Oliver OHalloran <oohall@gmail.com>
+Subject: Re: [PATCH v2] genirq/manage: Reduce priority of forced secondary
+ interrupt handler
+Message-ID: <20251028135756.31PG0uHY@linutronix.de>
+References: <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
+ <20251028120652.AJUTgtwZ@linutronix.de>
+ <aQDIxvU18vzB-1G-@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR06MB7055:EE_|SEZPR06MB6668:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9081c0fd-9714-4d61-ded5-08de1629f9a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fQh+aEoBkhHwwQ22PUzHzA51Ho6+S/5D7x9+24UzOrobQORgVoPmTcDj1FRG?=
- =?us-ascii?Q?/O++TotR8YCqGPOd3QXol1TaAMZZjfKlEx4YzMIQwUFUUeHDA1pEA4CZE/s7?=
- =?us-ascii?Q?DYuWQTu48olh3TSebRzliZBhXtw5zuVvNZitAFwJQZaAmv3Y1smU8D7ONVmL?=
- =?us-ascii?Q?n2nuxiTmXP7o+/6QqvWlP6/keuGo1iCdAVCECagG0nifZw/NpZBgkTehkNgx?=
- =?us-ascii?Q?rEqPA9ZLKbuTt63FiXrV46SaAgwjbRvqWb6FrgRAVYumyrZLmVtpi/DqGAN3?=
- =?us-ascii?Q?3Z9bf8Dri1qEraul24qKKrRveCW27wvu9LNCutVRsJZr3XN60PGcGJnvNAtz?=
- =?us-ascii?Q?iBPMkbCNAPtCwwqyEvZE8lvjgXYaz/H1WIhANpY2VNCE99YTpb8So1MbnnF2?=
- =?us-ascii?Q?SsWBQNSt1f6IcG2211e1s/3tqFVWYCQYK141n2XH7WxMzctGkUlC/rjJwd7b?=
- =?us-ascii?Q?3tGwO5LSc0IDS9gDxNRi6w5S38S8SZ2IIF7rnjlxZQSEY1UZqUQ/BO7bGXca?=
- =?us-ascii?Q?L+5QXxpVrKQmUBRnQo8+xlg0I5AiRKsbriTkzi6u/NYYYSP3sIV/4TMKbnO/?=
- =?us-ascii?Q?XbHUfE/B4RzSpAxdWv2qk0i7fcred3OqYge/xuckXqQWElQhJGGa1VPdsMWJ?=
- =?us-ascii?Q?oFzpFPUwdDf7JK114LryZO4/LTCK80k9oRcYhZ9Toi4D9KNPdFJ13aT21VqW?=
- =?us-ascii?Q?kaVYJSeK88cBirsrqjJlMymRTq/zOwn4JshYEq2GMIZstZXGYAbjcTstjhZd?=
- =?us-ascii?Q?3qoVUqA/xQbncl1kQZR9VI/olCDd/IHCir1e7VBXbru29OgR928x25Nya8Hg?=
- =?us-ascii?Q?a8NNgwXWH1k4CwQjyKE3Dxhf/4iWUp/GXbWTwqjuPlUoBhR/diJfxUDKkBnz?=
- =?us-ascii?Q?ZXr/B6bqD5arKsbGYcJh4N2itewt+2Pxdto2hwFH6g3iBeObCXrSgviaaKDh?=
- =?us-ascii?Q?hR5j5qe0y9NaHOtjLf2xdjg7CdnaG7tPb62Wkku1OhtcYZ1jbKeB95CzlAZK?=
- =?us-ascii?Q?IwW9NV8J9mXKfszaNfe9kbZM2Uu9EUmFWKEUk8pa91wuoL51V4xOMQZ2Bwkv?=
- =?us-ascii?Q?qyGmIJqqdJV7bAWQeAQcd6ff7Okc5N+tqgznYb2ndDQmKDQFrN4lFheNJGzH?=
- =?us-ascii?Q?Y0pNe2QnTwCi7LcnL/2mOry9QGiSGGCBsNjlk9Ukvgc/6ueoKMKVsQXKhdvO?=
- =?us-ascii?Q?Zv+23QQ4fE9QE5ll44R7niz12PdO+s3bDknZSangSig41UHMgpIsW4cpsNtf?=
- =?us-ascii?Q?4PK4Gv5k0y10lr8laUIaAuUr51pf3h6jLQB2uTpcdhRZxVXBtNMF32CR0iVk?=
- =?us-ascii?Q?HWL87zofMolcM2UusHyyFA9YONokHSrZsjSIkKz8z01Vr2+sGl3cEYxQZzwO?=
- =?us-ascii?Q?MscPNtRwcyvOo61SYg+JJSdWUryA3COJFBWNin5xNkin7gXrrssZ0uPgkjAY?=
- =?us-ascii?Q?3tqX4nyoDdzk+UKmXIitFFZEd2COBe/NyUslm+pAbs7wnmJnnehbd7jT0Gr0?=
- =?us-ascii?Q?EWBf71eAWJjalW+4wEmUmogjgrmiOs7lhpQ2?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB7055.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yK4SzwgrKlsJi9W5An5vaYrmZ/e+aZ8s+jzkAm0e3eAaGlKi0J7OBnsh3CzV?=
- =?us-ascii?Q?hgjWf2/IDv3YWSpwIC0pKeW3TZd0+es2x/lkNu6Qop/IwMJ+K4bgPZoozJTz?=
- =?us-ascii?Q?izkKYqGcGr5/CPOIk3IipR0PcVzmahyCTC1KCL2OIJxMWIxNQjuNW4LYVHmq?=
- =?us-ascii?Q?kUVa0cPOV+CMsWbiU+6oIUFHMFPVb/PHtj7DJvk/1FSnaM8xjV9TZ5cDSESJ?=
- =?us-ascii?Q?AKOa8DHxQCoscSUBKH3Hv2KVmn4P+9zIbvUNnweBgRg4oOURmhFU3lBEC38m?=
- =?us-ascii?Q?vNrEph/mBI+2DIFsMLTFTgyBmcQ1vCSvHM9u+SasQXMinGcQ2o35hzfRKA2j?=
- =?us-ascii?Q?RNTNi41pcFld+sfZhm+Ms9yFznpdeaNwfUOpbVh55rAfICW0gHrUmHzyTevN?=
- =?us-ascii?Q?+5ZjaPW9yEdhbSCCwuBkoHXFFjrtf0pM4eI7MMJg3UokAU9VRsSMIVLtms/n?=
- =?us-ascii?Q?eBf15MuwILXBhYUfS2R8reudMaMZp7/PAHDzNCH9C1W9gPZ3AzrrF3MJxHga?=
- =?us-ascii?Q?ihJJEhItwTKCekuzlFiYYCHarEiUXg3B1CdPAMZvMOiRrGV10aGW2X1oy5Z7?=
- =?us-ascii?Q?Tvn5MGK4IOZ4GtOuJjoI+xyUlZkHLAcUr+W5XO49uiigoXs/zqhwf7jrDuri?=
- =?us-ascii?Q?0HAxsRRv480g4gGZUmSI59gq7sWgryk8ehoDZj12Kby2y5wLscyOLjO1Zpho?=
- =?us-ascii?Q?hKwQUyKS4dzlv/pRga4neya6c+gm0IB5RIoRo8Cvfp4RNudr3+ubOkE14hXy?=
- =?us-ascii?Q?fM2YiRxfK6tLcwIs8uKCjPktOxpLpk2gcHFdLhLYEGPPr07fmq1jllsSOiur?=
- =?us-ascii?Q?bQwuF7QSMU7n8IXDlINzdBGFqz9xODZ7wzMQ1flLuHwheIJfiAkNj6rsELuX?=
- =?us-ascii?Q?FvBKoH40K+ToVPojUYSVKd9tE3Eb3sApYyOZvB8bLXMMHPi3dDQvv3nUkXGb?=
- =?us-ascii?Q?Z7d+Sc8kaE6Oyi9eUwhrPOlDgXuvYeNeuSqa2MsTRTl7alVOH3IM/cu+eJtj?=
- =?us-ascii?Q?zREYHKTcXE6OsTlULT9zgAr+znZ+NF5Ka8XCclyuqoiROlhiHVhl0ksY1oVv?=
- =?us-ascii?Q?jUUuBUmRycFsBWEcH2k2Irzqttp4O4fYgP9l0SyRXiRO0hu5hxinlS7tE19c?=
- =?us-ascii?Q?1zae6LT6Z3Tjb6KahaGERUSNfyYO3Ub7TdE//QuBOgG7FABpC9ZwhMcEqPs7?=
- =?us-ascii?Q?bkp1uTeCQkwozWcLZnDAHha28JFsk7yHk8rGAKsh5a9UTJ3SK6no2RL2FRNh?=
- =?us-ascii?Q?H3MfVzj5aGcBSRvZRwmcgt8ckgUmEU9+qb1r9UebZmJTdgSJ4JALngU4JLxq?=
- =?us-ascii?Q?9RNCoXOD72GWULMDShG3/CJrdfkizAJwlAE+mX09RDXvgJij8/f+hDnErkgu?=
- =?us-ascii?Q?uOoErwuQZ9QxCIAsnWleTYrIWJ8lGpaPImx5ILpUG/tJ1r29DxTI3BmGykWk?=
- =?us-ascii?Q?N73dHunTGoFM3jAYO1jjMqT++GftTXEzCbwr5n0I6XuqVWm1agrHAMwnaJaU?=
- =?us-ascii?Q?FbPJ+9ykOG8dg4JUV9sckUkSiBoJIS/3b9Pom2FLWr9SHmWn1nFiFViv5KDv?=
- =?us-ascii?Q?lC7lbFq1Bb+Cl4lbCmLX3kbPeoQKW/dy3wuN5dNK?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9081c0fd-9714-4d61-ded5-08de1629f9a0
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB7055.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 13:57:47.2395
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2pSs0Plu4UrlNOuTzsIGVkwgUMx0pHNUzVbs28WIviNsCS9T3S1Lv8YLXoPpPPMW7RXPloi0nex41OAhwbIjxw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6668
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aQDIxvU18vzB-1G-@wunner.de>
 
-Register kfunc in self-developed module but run error in other modules:
-    libbpf: btf: type [164451]: referenced type [164446] is not FUNC_PROTO
-    libbpf: failed to load module [syscon_reboot_mode]'s BTF object #2: -22
+On 2025-10-28 14:44:38 [+0100], Lukas Wunner wrote:
+> On Tue, Oct 28, 2025 at 01:06:52PM +0100, Sebastian Andrzej Siewior wrote:
+> > On 2025-10-27 13:59:31 [+0100], Lukas Wunner wrote:
+> > > The issue does not show on non-PREEMPT_RT because the primary handler
+> > > runs in hardirq context and thus can preempt the threaded secondary
+> > > handler, clear the Root Error Status register and prevent the secondary
+> > > handler from getting stuck.
+> > 
+> > Not sure if I mentioned it before but this is due to forced threaded
+> > IRQs which can also be enabled on non-PREEMPT_RT systems via `threadirqs`.
+> 
+> According to the commit which introduced the "threadirqs" command line
+> option, 8d32a307e4fa ("genirq: Provide forced interrupt threading"),
+> it is "mostly a debug option".  I guess the option allows testing
+> the waters on arches which do not yet "select ARCH_SUPPORTS_RT"
+> to see if force-threaded interrupts break anything.  I recall the
+> option being available in mainline for much longer than PREEMPT_RT
+> and it was definitely useful as a justification to upstream changes
+> which were otherwise only needed by the out-of-tree PREEMPT_RT patches.
 
-It is usually skipping the error does not affect the search for the next module.
+There are people using it without PREEMPT_RT due to $reasons. It is not
+documented in Documentation/admin-guide/kernel-parameters.txt as an
+option meant only for debugging.
 
-Then ignoring the failed modules, load the bpf process:
-    libbpf: btf: type [164451]: referenced type [164446] is not FUNC_PROTO
-    libbpf: failed to load module [syscon_reboot_mode]'s BTF object #3: -22
-    libbpf: extern (func ksym) 'bpf_kfunc': resolved to bpf_module [164442]
-    ...
+> Intuitively I would assume that debug options are not worth calling out
+> in commit messages or code comments as users and developers will
+> primarily be interested in the real deal (i.e. PREEMPT_RT) and not
+> an option which gets us only halfway there.  However if you
+> (or anyone else) feels strongly about it, I'll be happy to respin.
 
-Signed-off-by: Bixuan Cui <cuibixuan@vivo.com>
----
- tools/lib/bpf/libbpf.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I argued and sent patches to fix code which was wrong on PREEMPT_RT due
+to threadirqs and was also wrong without PREEMPT_RT enabled but solely
+with forced-threaded irqs.
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 711173acbcef..0fa0d89da068 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -5702,7 +5702,8 @@ static int load_module_btfs(struct bpf_object *obj)
- 		if (err) {
- 			pr_warn("failed to load module [%s]'s BTF object #%d: %d\n",
- 				name, id, err);
--			goto err_out;
-+			close(fd);
-+			continue;
- 		}
+But please wait once tglx/irq or peterz/sched says something here before
+repining.
 
- 		err = libbpf_ensure_mem((void **)&obj->btf_modules, &obj->btf_module_cap,
---
-2.39.0
+> Thanks for taking a look!
+> 
+> Lukas
 
+Sebastian
 
