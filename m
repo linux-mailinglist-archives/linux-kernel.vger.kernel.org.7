@@ -1,102 +1,90 @@
-Return-Path: <linux-kernel+bounces-874305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8DEC15FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:55:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7F1C15FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:56:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B91C9355EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:55:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 273804E5435
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A4432AAB2;
-	Tue, 28 Oct 2025 16:55:47 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC73346A0B;
+	Tue, 28 Oct 2025 16:56:09 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F15220F49
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EA33451C1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670546; cv=none; b=XNNqQesb6wH4xpXEa06yisZ6pVCyFr/JEzSxxPbLXh+TAhqn6baSa/64+D53MOtPsx4U1qHrcCOpyne+symTWnUkJjS9rGgSEkcK9c7vrdIujooQ+rGjmmQwbm39VpOw2p4VUfaUxGBEALF0XMXkW1/dDgsjmGRBblmTJC+FjgQ=
+	t=1761670569; cv=none; b=Io8u6jcDkEbJYCNwDkgz77PojqNhAS4Cfe5eykN+dcPt8xoMNPTvOH9pUHzDrgDoMosWVBhX6Yn9v8R24ihoVbyUob2oPpYdvZNgGMdPJChFsxwcUpbTAg+ZHjEwT5qNISBtz3upnj1cfw9ciaaBAg2MdII5ywaNOBLcSQWyM3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670546; c=relaxed/simple;
-	bh=wLepN27H/rXjaFTfzdsDWDFJJCwoZQxsK2vgjctlbcg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E41GMR0g6wHGh1vnWKizVbk33av88c006lGTM8mU/1tfEneJ3qBcMZI1CB9stZvoze4gGa6OH5B5+PP+Z5UGI6zYgbnMWFFDtaP94b0Jo0WKgyPpb3p3iadHFm8nGO6b2dPfNKF9fwp5TcOXbXD4OxDu7NseFrCZfwLgrvoF0NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
-	by APP-01 (Coremail) with SMTP id qwCowACHZrmK9QBpBvyUBA--.8952S2;
-	Wed, 29 Oct 2025 00:55:39 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: srini@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] nvmem: core: fix GPIO descriptor resource leak
-Date: Wed, 29 Oct 2025 00:55:26 +0800
-Message-ID: <20251028165526.534-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1761670569; c=relaxed/simple;
+	bh=WOQ1xmNxtYoTqX/5bEfTYtjhoumCJgYdg98MSSTwkXs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IdVvrYUoDHY/kGZgXIcszJHTSFbqSqa/ooQzbaDf/YWxTeefMJK/RmKtK/1UKl9Z/WGraws5RJXTf1+U35+ZJ9Mqg036xs5DlKfnma2LX9UWMBPvu8i/itX9Htnm4zpd5vvxu6I2ryA0aoEnskuT9mP1LgyIfFCTm7Q70Dqvadk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430d4a4dea3so1342265ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:56:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761670565; x=1762275365;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozi99NcD6xWnvKgmrhFFCgg+4Pg8D/jR1dayURp6JBo=;
+        b=EsgvDF07OlS5ziDjDIBVSWig/ZyeUpLE84jJHdvKpp1Ii53l0Z/FS8Xt4ucU25msS+
+         DenMXdsgC+xDL7o11D4TWXw4YDdNiYtH0NuchvNP2S5eRVO+25yy6v6u8PkiLw6nMP4L
+         rNq/eB7s7mW7PKRBOJF/9bm1UxtJTxiMSZ6/ShHN1KrdQ4Ra5DX0IQEy51pWpKLgZwY6
+         RmblbGBisMjMQdoZhgKf3rZhdaFLncP44MeCpgT/Fk/i6+McsL88Eaw4qMNr8Ja6hty3
+         JLvQg3j67w4fWfLzUNfQySZ5a5pm1wNKcYmKz2msya/+tJXqhmzKnfnBE4H5+GzdOmZU
+         s7Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCU885CqsCFNNSVcD36LU06Gt3PA1iR6QxJ/uzPoanzlyqRZSuSbAh0y7jn/Zve4Ffm0gzIn/rPhPvgyA8g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3sV7qDcWX0ChJbUYb1mC9iuMPHBfAQbgPhsW6JFyKYumA4VW3
+	JN/9PCaeF3bbv+npeEMQRS77IkPTSGDT9MARFk9bb9P9hnu0UfKn7bcnq3mi5lpd9Xi71lKFDEv
+	/YA5N962bwDj3iQWZB6LKjF7GqQl/VRddgG+p3Iv+2xwZyqwxWjf94UPUPTc=
+X-Google-Smtp-Source: AGHT+IFiQGALKQurVTu5wG2hAEJP6OUmrWfCn08tcDbl9qt42SjOPgZEk4NpsRvpGGqPip1lUjaE8YBq03SuXQx+t8SYee3wGWIm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowACHZrmK9QBpBvyUBA--.8952S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jr13XF1UuFWUKF4fZr1rtFb_yoWktrc_Cw
-	1jgr97XF4fAr1DKF1Y9r43Zw4Syan8trWYyF4IqF93J34jvrsrZ34qv3sIg342gr4xur9r
-	JFyUArWIk347ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxAIw28IcxkI7VAKI48J
-	MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwV
-	AFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv2
-	0xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4
-	v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AK
-	xVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfU5WlkUUUUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0JA2kArMPDGgAAse
+X-Received: by 2002:a05:6e02:9:b0:430:cafc:df6a with SMTP id
+ e9e14a558f8ab-43210445659mr47064715ab.15.1761670564976; Tue, 28 Oct 2025
+ 09:56:04 -0700 (PDT)
+Date: Tue, 28 Oct 2025 09:56:04 -0700
+In-Reply-To: <njddimio6m6pi3bcfyixizrfzjfflqvqe32xlfwn24vtzk67j4@3cijvucydtb5>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6900f5a4.050a0220.32483.01c7.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in raw_ioctl
+From: syzbot <syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, apopple@nvidia.com, byungchul@sk.com, 
+	david@redhat.com, gourry@gourry.net, joshua.hahnjy@gmail.com, 
+	krishnagopi487@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	matthew.brost@intel.com, rakie.kim@sk.com, syzkaller-bugs@googlegroups.com, 
+	ying.huang@linux.alibaba.com, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-The driver calls gpiod_get_optional() in nvmem_register() but never
-calls gpiod_put() in nvmem_device_release() or in the register error
-path. This leads to a GPIO descriptor resource leak.
+Hello,
 
-Add gpiod_put() in nvmem_device_release() and in the register error
-path to fix the resource leak.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Fixes: 2a127da461a9 ("nvmem: add support for the write-protect pin")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/nvmem/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+Reported-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
+Tested-by: syzbot+d8fd35fa6177afa8c92b@syzkaller.appspotmail.com
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 387c88c55259..597598db88f4 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -1043,6 +1043,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 	if (config->compat)
- 		nvmem_sysfs_remove_compat(nvmem, config);
- err_put_device:
-+	gpiod_put(nvmem->wp_gpio);
- 	put_device(&nvmem->dev);
- 
- 	return ERR_PTR(rval);
-@@ -1062,6 +1063,7 @@ static void nvmem_device_release(struct kref *kref)
- 
- 	nvmem_device_remove_all_cells(nvmem);
- 	nvmem_destroy_layout(nvmem);
-+	gpiod_put(nvmem->wp_gpio);
- 	device_unregister(&nvmem->dev);
- }
- 
--- 
-2.50.1.windows.1
+Tested on:
 
+commit:         f7d2388e Add linux-next specific files for 20251028
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1244432f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d0af39d067deaba8
+dashboard link: https://syzkaller.appspot.com/bug?extid=d8fd35fa6177afa8c92b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14461f34580000
+
+Note: testing is done by a robot and is best-effort only.
 
