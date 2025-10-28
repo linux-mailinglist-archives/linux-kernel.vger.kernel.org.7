@@ -1,170 +1,238 @@
-Return-Path: <linux-kernel+bounces-874625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EBFC16B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:04:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE462C16B43
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C6F3BC6FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:04:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C44744E7711
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C95B35029D;
-	Tue, 28 Oct 2025 20:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99404350291;
+	Tue, 28 Oct 2025 20:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="jXNDQ/aH"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FzycHZfy";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ms+iaDc/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD218626;
-	Tue, 28 Oct 2025 20:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CC5D27F736
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681857; cv=none; b=Q7+o/VHJlidqHQMQU9LQGnJybdc5tnGYxVqeynCNZXkwKmdNSfbRasjyS3cDDZoxYaXuvIdr6inzhdpF4JeymIxuJ3PagJVCHuTp/ZOep9qBuQz398zo8D6arvMpfH1na/tZ1jgA8sWcKmNmIBbtrYZtXTf5UKtdT3RspC+L7YU=
+	t=1761681610; cv=none; b=cSU/q+xxgdxbOKhaGU34bd83pCac5R0mFiS5BQvzezPqdEfKvoawS7uG3gDHvmxdHmTJ/gjGP0t/MX2N0xLTCfpl+QMtL0TP9Mt9gdkdPWS2EuFVVwIED42JGp3AgMQ77GCfuDgW7wUZaotTq7sdoVG62YI1hdIhVp/Y4sAIF9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681857; c=relaxed/simple;
-	bh=FTDvTxIZzeDNpOgOOnihA/zW/npIPvoaXcvipQNNMt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KCgREGW+/cILFoV6pl0UGZQR9vP5O2d31/X887TWRdRvmX8eJn79N+WYtA/eygbwc6dNBnERKT1q2Jy9clhM/JunBaxDWNp0IGCPMgRkn5KEm13/XUMn991QXy2icqPEQhkEo7Un7JqlkGV4tg9albLWnETmWZh0lhb8SLypoRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=jXNDQ/aH; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761681852; x=1762286652; i=markus.elfring@web.de;
-	bh=vdIRR0gXLsfY+ml4e6FTsMbQ2ZMNFqfdd/SP4uiFbHQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=jXNDQ/aHWRdrCdHWlLRaawHCue7UtHYkdAXIeqCgcXe61xxicMBXMIRAx456phxb
-	 FQqj4lPIDYHgJVHC4ljBLldXuwg0x1NxEOoj5x/+QjfrTva04D+ERPp6/Pxzf/m+3
-	 PzK3zxltC3pjNhel6e8PUxTbuO3nbI8aTifMknsGLxvZWoE1mrR8CnWrV+0bBR0q4
-	 cBE8GtLA7LHJ70E5K6BAqBZiRljGHVbRgFjOSs6NupYskAr0epjr5xcvS/e4frFG8
-	 hR+GdglbNwFYbK8jllTETw/Ga0sghuJuqmATwJ/4vm4yz77gqX8z/mUt8vVjltBYQ
-	 zKWfTEqlDVEGCHzTmQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.187]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5CQT-1wEQwR18aL-00vyJ0; Tue, 28
- Oct 2025 20:58:50 +0100
-Message-ID: <e6c75370-b127-4b41-8aef-e5012150ec94@web.de>
-Date: Tue, 28 Oct 2025 20:58:48 +0100
+	s=arc-20240116; t=1761681610; c=relaxed/simple;
+	bh=3PXbwVmfbb8UXIQGow79HZxdvB9q0pyISYMOz45a6Dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKrFR8SowUx8LTML4q0t95NrNYXUKVsUe2SZmUzaJhItzjoO7KKVNlaRzjOvzTxbBVaLsjnbyLLV7H2VOPHgC08k6NulOt1PFFw0X5mr7AgUGSvNJSRkdn4tv9sa6Dbp7Xx4npCt5e0txpDX9twzdTbt+emUUuY8+iSiKRBH2Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FzycHZfy; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ms+iaDc/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlxjx2623272
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:00:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=V4roZFbJyz4h3LTg3OYpA/rr
+	jgxznf7XEnG0CMcM7Z4=; b=FzycHZfynrd35FGtx+2WJpQ3s9APtJZESicJKxHF
+	2uKj3LpBadHCj8Yvf9aQjS39nZKVKdXwyFCYOhs1dlp/99lSNRgO5ymcNCFDTmT5
+	hBy/FGHn0j/kppmpceiujkfCXT0cOCqh27p6jwpgl1IUzh+U7KjHBix7w/oRd6c+
+	N/60sgCzSylbB2wtGCtuXzEQ0JmS0b8dC5/Hweg2UGZOZIfBG5JlE5wr9GNapDPw
+	x4BkBC98mmhMpUIOEn9VUt6h2jFDD9WVMSt4F9hp4gn2IkE6jrVGA+sdg+o3AV4i
+	zLj+yifHnwmsVJGB3QNsZvf/tK5vEADGvYEwj+yszjyFkg==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a100wc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:00:08 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eceefa36d0so104687201cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761681607; x=1762286407; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4roZFbJyz4h3LTg3OYpA/rrjgxznf7XEnG0CMcM7Z4=;
+        b=Ms+iaDc/99lgJ7L4PzEBi1l9E7s3Ba6R0h8YgYxUIYpdGaEPi78bV7TwtFFjqMeDYU
+         9Lri2x40CWsonmTEJ2ee4Wu88r99x7I05nxLtVlxmva6V/XerRx7qpkkMGlBj0fY4x7D
+         UbpkXr8O6RtwTwfdPs8bXfFtBoKPTHFjXloxabJNDppvDPiuKDDv7Xngc4CBvfwsXY3X
+         TUZo1DZU8ikzvyl3vyazdGkWMDK6XBUP+wmWwjX19uJHhZTjsk+S1H9hTcFe8yzTpgGi
+         ASpc1dWx8Rr7sWaQEnXBPoO1ni5mEyCN81g4BkYn3aTvTx42im8GpyirEAKZyweDIue8
+         wT5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761681607; x=1762286407;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V4roZFbJyz4h3LTg3OYpA/rrjgxznf7XEnG0CMcM7Z4=;
+        b=WbDmiNS1qXLVqO7VAWFlTpVn2L823WgT5aX/bK24zE3exsH3J5M6k2MeDbvNJfMik0
+         TOJhb6P3Z9xYVEL6LNfv+nKne5qnT3fmvEi8JdxeBYFlP43mLratOZs0/OhCA9viv33j
+         KXgXVoXaJMq8SsH6kvKy8tUWfCeM6AvQ2Tz2OncJq99t9Z4SUiffi+AlitQbrjWPm/Iy
+         6TbzI/Crsmbj78LvvKn5VxZJ45ypmLJ4CQLeINTVfohGPAo9rjXU2rFEYttVnrnMzeCn
+         xlv+PKJIhVNQIWXz882be/rLANal8/dfJTWC3lowlpBJkJP1gFI6KdH+BGf2cPkC5GsH
+         g2cg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNwUABBQY6SMUTySZ8ocjZi6QxYd8tNA0tJNSpRDHEYS+RvLV6wu5F+AFtagpa0f8lM8nytgPtv2TAcbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqIwn+A8CvzxOqdt16ZrIPsTOyuNzoEv6KnLzjo/MG1DPpSMJC
+	xyFxBe4gOCwoUUEVovHpRk309f1ZptPJvbhX1o5o6+j8F3grlNsY7laSAJ46Zf7U33qCzuifKa3
+	rEHECWSu07ulAZl7g1B3Yuah/EsfoytJSxgv9PH57sPGFq1LG8OP4FAY6siUB8D6crwc=
+X-Gm-Gg: ASbGncsJzVQJS/WhqPTrtjiW9x/Z34VxUKtVp4xIQbrbRo1tWT0pDVp3VvWXKXbgLIy
+	TMP0QPcprJkdvul/5emwTsdAqhArfodhk5kfDIZZOnSCKNEWdS+ooa95o4usjAqQlBFtgyMyCAQ
+	K/5IpwOg+wSzxAduZ4KTMTHdF30Q8gAGEKnMuGAHS/5zoQ7x002+DAgF6vh5Ci8TBYF81AZOTzN
+	OdpJ9YUrKKYqWXdZ5oe8STjr/WEczczf4gdVdavGf8nCyrI7Cqq0zj1wufgpgpHCbnnSW3u6rns
+	4OJAAYQc3tFz8I4tDkzq3fv5i9BEF6G1jsbEGLP5YXg5sXQgThXVFWvrZAA6u6Ws4Htd30q1VX5
+	mA86V82Bn4dNzeLBlENVOVMeRrQxh1qE+bXu773QrPKbR2Ue/x282ioz8cYSuNptU+Esm76to+h
+	YotlhyzAmRHLpC
+X-Received: by 2002:ac8:58c8:0:b0:4ed:68a:abba with SMTP id d75a77b69052e-4ed15b7dad0mr5278141cf.37.1761681607317;
+        Tue, 28 Oct 2025 13:00:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFW5aQI+Mi4P7TXLTknhsG3o08YzSTL6vg6PtZtW0JsBzmgyHQTV0m7A4A017Zn2nx/4LIdQA==
+X-Received: by 2002:ac8:58c8:0:b0:4ed:68a:abba with SMTP id d75a77b69052e-4ed15b7dad0mr5277611cf.37.1761681606708;
+        Tue, 28 Oct 2025 13:00:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f5c33dsm3249487e87.53.2025.10.28.13.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 13:00:06 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:00:04 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: xiangxu.yin@oss.qualcomm.com
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com
+Subject: Re: [PATCH v6 2/4] dt-bindings: display: msm: sm6150-mdss: Fix
+ example indentation and OPP values
+Message-ID: <ggrtehmzg5bajbglcjhlf5jynhwqq6vztc2fqwxxgip2q3vmip@t72qcggza2or>
+References: <20251024-add-displayport-support-to-qcs615-devicetree-v6-0-c4316975dd0e@oss.qualcomm.com>
+ <20251024-add-displayport-support-to-qcs615-devicetree-v6-2-c4316975dd0e@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v? 2/2] PCI: j721e: Use inline reset GPIO assignment and
- drop local variable
-To: Anand Moon <linux.amoon@gmail.com>, linux-omap@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Siddharth Vadapalli <s-vadapalli@ti.com>,
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20251028154229.6774-1-linux.amoon@gmail.com>
- <20251028154229.6774-3-linux.amoon@gmail.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251028154229.6774-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:flSGfgFEBOxbSY1So0TI+gtIAxqlRfdGBuByOYvGGECjWy8/VDB
- zo3R/pCdXPN1mIzcxFZQA819z1SjecdZcI8drNpMT39Z1SunQGD5jWDrdY8kTi3T4pS9Pgr
- p6I7aQr1a2N1n6KyqhiL5UCNWV7Wwp6YbS/Ccn9FfwtbM/+i6GzCJy1L+Uk3PEDmUDNr66u
- MHA6r5AwylJdMs3juvp1w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:65CO7IhhkF4=;xn6ZrW0UxtovFCrD+lI2zagO2xK
- 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
- 6VuIQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-add-displayport-support-to-qcs615-devicetree-v6-2-c4316975dd0e@oss.qualcomm.com>
+X-Proofpoint-GUID: L7VH6dQ5O0EOcqCpZUIQ6xR6wnyhgMfh
+X-Proofpoint-ORIG-GUID: L7VH6dQ5O0EOcqCpZUIQ6xR6wnyhgMfh
+X-Authority-Analysis: v=2.4 cv=A5dh/qWG c=1 sm=1 tr=0 ts=690120c8 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=oTxB0LKMmMN85w47ZbAA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2OCBTYWx0ZWRfX2R//KeClQWSC
+ BGmUY8kbSnVDD7NpcLEWbeBb0hVliX85yXDz38QLgENd/9VcGARl4z+8j/RMYt5I8JZeJSrbi1e
+ XDrdKwShRco7EXz+5/rC6ptcmabImUpBSX4UD36yCLC7x6ydlUPDVg6D1xsT7fPuDXeth+t3fa/
+ spuTXKav0s6dcRJARmvgdtIAld4jch0EYJm28ATvK1OghfSKDaJ6P3oJ8Jcy0VVTeUiPpjObzxD
+ iLvhft9PjTYQt142EVhNpheMZ0BAiwJRWnbLqAvWXI/3NkaQFKrsFV6nZ/SgRPqoMgIYQHBX0wn
+ xTIeQB/EbfTCV0NOoFcOGPfIYF3BzQICZ3XIsiLZ9CZS7nAmOl1k54migSdLunz9+idiPAFrGdk
+ DOHGvzbiRXNmqGxO7RK0gS3jF1Ebaw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 spamscore=0 bulkscore=0 impostorscore=0
+ clxscore=1015 malwarescore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510280168
 
-=E2=80=A6> Thus removes a superfluous local variable, which simplifies con=
-trol flow
+On Fri, Oct 24, 2025 at 01:21:02PM +0800, Xiangxu Yin via B4 Relay wrote:
+> From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> 
+> - Adjusted indentation and added missing blank lines in the example.
+> - Corrected OPP clock values to match actual DTS configuration.
 
-       remove?                               Simplify?
+See Documentation/process/submitting-patches.rst to check how to write
+proper commit messages.
 
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  .../bindings/display/msm/qcom,sm6150-mdss.yaml     | 32 ++++++++++++----------
+>  1 file changed, 17 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+> index ba0dea2edea98cee0826cf38b3f33361666e004a..80183df71cd9288f652dc42afeae101e8edcbe65 100644
+> --- a/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sm6150-mdss.yaml
+> @@ -140,35 +140,37 @@ examples:
+>                  #size-cells = <0>;
+>  
+>                  port@0 {
+> -                  reg = <0>;
+> -                  dpu_intf0_out: endpoint {
+> -                  };
+> +                    reg = <0>;
+> +
+> +                    dpu_intf0_out: endpoint {
+> +                    };
+>                  };
+>  
+>                  port@1 {
+> -                  reg = <1>;
+> -                  dpu_intf1_out: endpoint {
+> -                      remote-endpoint = <&mdss_dsi0_in>;
+> -                  };
+> +                    reg = <1>;
+> +
+> +                    dpu_intf1_out: endpoint {
+> +                        remote-endpoint = <&mdss_dsi0_in>;
+> +                    };
+>                  };
+>              };
+>  
+>              mdp_opp_table: opp-table {
+>                  compatible = "operating-points-v2";
+>  
+> -                opp-19200000 {
+> -                  opp-hz = /bits/ 64 <19200000>;
+> -                  required-opps = <&rpmhpd_opp_low_svs>;
+> +                opp-192000000 {
 
-> and improves code clarity without affecting functional behavior.
+This is not necessary. This is just an example, so it doesn't matter,
+which values are actually written here.
 
-      improve?
+> +                    opp-hz = /bits/ 64 <192000000>;
+> +                    required-opps = <&rpmhpd_opp_low_svs>;
+>                  };
+>  
+> -                opp-25600000 {
+> -                  opp-hz = /bits/ 64 <25600000>;
+> -                  required-opps = <&rpmhpd_opp_svs>;
+> +                opp-256000000 {
+> +                    opp-hz = /bits/ 64 <256000000>;
+> +                    required-opps = <&rpmhpd_opp_svs>;
+>                  };
+>  
+>                  opp-307200000 {
+> -                  opp-hz = /bits/ 64 <307200000>;
+> -                  required-opps = <&rpmhpd_opp_nom>;
+> +                    opp-hz = /bits/ 64 <307200000>;
+> +                    required-opps = <&rpmhpd_opp_nom>;
+>                  };
+>              };
+>          };
+> 
+> -- 
+> 2.34.1
+> 
+> 
 
-
-Regards,
-Markus
+-- 
+With best wishes
+Dmitry
 
