@@ -1,87 +1,109 @@
-Return-Path: <linux-kernel+bounces-874034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF7A5C155CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A72C155EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA87403323
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:11:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412D6502594
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3B6330336;
-	Tue, 28 Oct 2025 15:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF8E33DEDB;
+	Tue, 28 Oct 2025 15:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JcFuDfUm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwa51bTi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48142253A0
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD8916DC28;
+	Tue, 28 Oct 2025 15:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664200; cv=none; b=pM397+S3z7+Nwz4CgcOmfVRGdIPW1iCoSGitmu6A9daRXFfJ1LvUbFH0+0SaDl4Et8VFUGbNnYCdZR/II3JgKq2q1eO/NrBPz+Zkd02shh5d2v89qmaFzSUeltvMbmQkCrKFY12tegm3h3HrslNwe3o85a6D+gPkaWvHP0ubuRk=
+	t=1761664230; cv=none; b=QrHjR7omd09b14jZ6AwBdK1axx5k3j5b817RBvXAw07M/U/z4Wxrf5zQxF/xpY03Vk0L3ZisyU6rQuU4g4ShbWe3DtOpKmG0jRWafkAk8m8RMWPPY43dXFkx69nX9sAzD9BcHg0gvT/p5Y4xAmOQfhrI/B1yzLww8NDGJirezzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664200; c=relaxed/simple;
-	bh=hLhp57BJ4FJe7BaRm6JxmUcgxCIhvxSY8tIzFRrsP2g=;
+	s=arc-20240116; t=1761664230; c=relaxed/simple;
+	bh=8YthI3p1g8E4fGp4lN5pfwCWiXSbbb5wGc582EqpCjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AC6gyTgfyiPh//wGobyZ7JZtzIAT6cgukIFY2g/TSdy0BjVI2tCP9dcbkou79gcp4xFFs/mqJjjIjPb/gBNV09JGFZI0qM3lxiN0SsaSCeaptsqAnCacj/uh8IwA4uWijff5hq2QM0upkti8SPhECZ5SZL50hbdTtzfvtX5MZ8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JcFuDfUm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=AWmIlBHFMo0aYymV49lblPXlL74wuGvYjsKJAEK6+dE=; b=JcFuDfUm+Nm0DQPsF0l7qLJ7Kr
-	JPr85A9OrZqTmNIJr0ib4oC3qr/cw/mHC3L/rgP/teTq6SWQTP7Kw1qeuOf6oINMWi5hwvav8Aug1
-	U7mzjZVgnjmCC36Wf89OL3ubqed1ELfOCqrbSG55W0JUmFXTKDT33iNiP0tHPlA6X9RGQ7yrtjzfk
-	eua2hEDi2OLC1bah6DXDFKZhkyp8un3N7mURBEG+00yNczHAUsA8tgQSpOzoBJxAj+AIIuvKy/Uao
-	xEizy/FBSlIGQg6tNUAyFkfFfqhvxpZmnsy1YLVPnqKXsuhKjbAeL5YGZtongWZXTX5wzNOpNvWNd
-	WNjyXt7Q==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDkSq-00000004chr-36mj;
-	Tue, 28 Oct 2025 14:14:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA7E4300289; Tue, 28 Oct 2025 16:09:51 +0100 (CET)
-Date: Tue, 28 Oct 2025 16:09:51 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chris Mason <clm@meta.com>
-Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
- EEVDF goals
-Message-ID: <20251028150951.GD4067720@noisy.programming.kicks-ass.net>
-References: <20251027133915.4103633-1-mgorman@techsingularity.net>
- <20251027133915.4103633-3-mgorman@techsingularity.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGLCo9QRVzxX50duvnKhSdzCrRv2n6TbrR+aN9H6GYyjeFE6xV+hOH4SToY3WFCoXuWdg5f0UQ/Cn6nXmo6zzQ6A1gwngzu7UeCs2E716nHoRzPBAKIhC0FdmNH4qR9sfhV+RtQSb6QC4MgOxSYJcxDi47/MqkxtsUL9vpTHlbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwa51bTi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95680C4CEF7;
+	Tue, 28 Oct 2025 15:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761664229;
+	bh=8YthI3p1g8E4fGp4lN5pfwCWiXSbbb5wGc582EqpCjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hwa51bTiOrIpGOHkNIBEiX7kP/09KzLNe5W5S31eEiwfmD2aXj75b3LAjIsTM0km0
+	 DcNx0qiQjL/f+WQKgxpCe7o7vUEwhfFzm/VmSL9vHOduWKVbbKx196ZU4usyr4qWXe
+	 xRdTnTG3OgrQvQ/gHi3TYi3dR6SHMMkcYnsfmD7X0RH2+9pPwJi9mLJqMAf0Hy/chI
+	 5tAvjKN0PWaI2XbqcCCu81H4SEO1H4kLVbciU2uzCDOlKsiwwGzbGDCaOb5t7PXhHK
+	 AlCLB6etAT13QKtzysET120YKJ03bOuDWj+rYOSi/GO5FzHWwfpxB0zCDtn3hN63tc
+	 lRi485x8qeYRQ==
+Date: Tue, 28 Oct 2025 15:10:22 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Guenter Roeck <linux@roeck-us.net>,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-i3c@lists.infradead.org
+Subject: Re: [PATCH 3/4] regmap: i3c: switch to use i3c_xfer from
+ i3c_priv_xfer
+Message-ID: <718f4e83-48e9-408b-9569-42769f76d302@sirena.org.uk>
+References: <20251028-lm75-v1-0-9bf88989c49c@nxp.com>
+ <20251028-lm75-v1-3-9bf88989c49c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="dGU0FRXfnJSl6dVk"
+Content-Disposition: inline
+In-Reply-To: <20251028-lm75-v1-3-9bf88989c49c@nxp.com>
+X-Cookie: Your canceled check is your receipt.
+
+
+--dGU0FRXfnJSl6dVk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027133915.4103633-3-mgorman@techsingularity.net>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 01:39:15PM +0000, Mel Gorman wrote:
-> +enum preempt_wakeup_action {
-> +	PREEMPT_WAKEUP_NONE,		/* No action on the buddy */
-> +	PREEMPT_WAKEUP_NEXT,		/* Check next is most eligible
-> +					 * before rescheduling.
-> +					 */
-> +	PREEMPT_WAKEUP_RESCHED,		/* Plain reschedule */
-> +};
+On Tue, Oct 28, 2025 at 10:57:54AM -0400, Frank Li wrote:
+> Switch to use i3c_xfer instead of i3c_priv_xfer because framework will
+> update to support HDR mode. i3c_priv_xfer is now an alias of i3c_xfer.
+>=20
+> Replace i3c_device_do_priv_xfers() with i3c_device_do_xfers(..., I3C_SDR)
+> to align with the new API.
+>=20
+> Prepare for removal of i3c_priv_xfer and i3c_device_do_priv_xfers().
 
-In pre-existing code that isn't modified by this patch, we have:
+Acked-by: Mark Brown <broonie@kernel.org>
 
-  if (do_preempt_short)
+--dGU0FRXfnJSl6dVk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Which seems to hard rely on PREEMPT_WAKEUP_NONE being 0, please make
-that explicit in the enum above.
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkA3N4ACgkQJNaLcl1U
+h9Axzwf+Nts9b0hUZDWoyFrOrpdSY1gklGWScN2Fks55EWfvF3VaTQcAxgCJVAAg
+9r7n+t6WaZ8GP3AoLKQiVkfWG7sIidWAblqi3STK4L/hIGB5mHHm6Ifo9lva0fWW
+tbVehX6/hVX1GgVpKXkMnAKAv3blhYSr8hck7snQRQhpMPLlZRWZAg0uThD/8dNv
++54oSPGCVLLFsu4XM9QKpMJdE/wrEW62iycsbBNcf4zFnHJM8AkYm9uGxi057nas
+hOTiEK0i+MRUNGtow58ju9OxAuWwbwi6DPmc+5aCA9zLFStjufAPf16hx47db44F
+yYvT882Zu53UH2SRvFrgCpHfojWzvA==
+=3M3t
+-----END PGP SIGNATURE-----
+
+--dGU0FRXfnJSl6dVk--
 
