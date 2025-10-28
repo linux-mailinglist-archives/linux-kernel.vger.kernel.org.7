@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-873321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5431CC13ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E474C13AE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:05:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D9D65507ECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:00:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20A305623C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119452DE718;
-	Tue, 28 Oct 2025 09:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06C1A2DE6E3;
+	Tue, 28 Oct 2025 09:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mrOoXqfR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZYLzoWQH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWKmH91f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF412DC787;
-	Tue, 28 Oct 2025 09:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C66262FC7;
+	Tue, 28 Oct 2025 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642019; cv=none; b=ohgG5GW8r/XqTyqEcWH2EJUbacEvxa4gZSEUfIMy1QGoIKhmFLfFs9z48o6VWZzr+0aVBTcdNGL83MCNgkT6/W2jF9b6Ib3DWOxBN4THOmibtzCc7bz5mH3gqFeZsY6r3aeqc+naQEjf3RIHv5d1mxdG+p6jWEL9wuuePG3ETgc=
+	t=1761642034; cv=none; b=hiCa0qbGADMgYPHT9aON5yidjGDxkheoAutKjVOL10uum0w9xM79Af97lTrQ3N2bmGmr2MaOw8oBgjQBsfOiGA9wRGoSgOVKVpYsGQGcASVJzaHyfdlx06c9sKfeFev92QdX3F65x+VUT2zFVqFD5GCak52xuy+PcseatA57lPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642019; c=relaxed/simple;
-	bh=CFA1rn2tpJ4+HDZVFQmiB9SKB7uTemgwFuaLHwqwRuI=;
+	s=arc-20240116; t=1761642034; c=relaxed/simple;
+	bh=rZ4NQKQCLrbiX4zUi8bRocWHIWn3QwuUM+myMdN/DI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hDO7djj3KiAfx2HxZ39pmtlByd7F2BIdFP5rjQqxoELjNKT3gyL08WrYeByr9LBbKkYF1m3h4e/Aonpo8mTMASczTcHvPmTCg9STh9eP0XkmuldknFW6tV9hj+y6KBFiCXrxO0su+6/zrza6FQcRAJ8dt6QnB9ZUNpKJvVL/0eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mrOoXqfR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZYLzoWQH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 28 Oct 2025 10:00:15 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761642016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KqZKQaJV3pb2fnig7xHxtQURPVvUylxqU+UUNMCHFLM=;
-	b=mrOoXqfRPQzGnPkqLRXINyKflU5w1zDHX4XlfFz2jDj9YbqLrmXBQ0HDgN38Hy5F2IdPpm
-	nZRNINLNrn36a5/oAeVVJMfVQ93bPJjJw1HshIADuHdhCM0HbF5HOyNf3Xe1GA2Gx5o0Or
-	qmdTS9w/s7QAPgjCuFMfagUlSw5L2/wXUuMDDo0wjmXfdh01ffhg6N1hJ+/OFhDi9UaMnV
-	8AehjP8c3Z6m6Z7rtiRhjrLzDtYx81bIl2oH/IzDUkwmkopmbcHftt1lFyq8E1sC3KznVl
-	FvJryry7JUyBsiw89OyCaqhGEErc6ZJfEEYE9ktZFwOFskLR73deZjDoQeaC2Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761642016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KqZKQaJV3pb2fnig7xHxtQURPVvUylxqU+UUNMCHFLM=;
-	b=ZYLzoWQHFI4LYKoVgPnN0fjSlPJmBs0/woCr1LJPGPodDmDaXBsvs1/LfhyJpeatKOj0aA
-	lPwjoOxlNBE6woBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Prakash Sangappa <prakash.sangappa@oracle.com>,
-	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org
-Subject: Re: [patch V2 08/12] rseq: Implement time slice extension
- enforcement timer
-Message-ID: <20251028090015.hcvhq9YP@linutronix.de>
-References: <20251022110646.839870156@linutronix.de>
- <20251022121427.406689298@linutronix.de>
- <20251027113822.UfDZz0mf@linutronix.de>
- <87cy68wbt6.ffs@tglx>
- <20251028083356.cDl403Q9@linutronix.de>
- <db7f7264-6ccf-4f55-929a-4c2e813dd8f5@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnOKtWpWytyAd0HDEuAEEZgkDGKqJVogbbZzz3+fmvNup8CPAYLF0MGftIdFCllAPdLd9mKWAFuk2C9C7Uv9uy6Uptq3yqFAQXrYJgujyw1evl0e2I8j1xO0RliZpJMD97UZg3Ero+uczQPNnYP/qnMXMTKYJpKc5kvEmfmv5VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWKmH91f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49AD3C4CEE7;
+	Tue, 28 Oct 2025 09:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761642033;
+	bh=rZ4NQKQCLrbiX4zUi8bRocWHIWn3QwuUM+myMdN/DI4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWKmH91fKqGtdl9lsayw35svBXtixc0YgYQVpuIVL9pV3DyVI4ORJsSFIQJ6+TAjL
+	 mwtHeqgdSesSUYZPa8eQPhQ+WLFLpDNuRwGR8zjohAwM4FDUvR4zwfjjk5WqMkrMfP
+	 /0ie3QweE1xAT7iov3Jl8fEMazj1vSI85Km1nxoi18ebyoueCbsmN+3FFRYPiDwguS
+	 Es/Vka2CmLvy5ZsCb90LXqp7lTuXfy5lscQa8tnB5hkoRnt3II2VVOouuHkmVfzB0e
+	 wU4QETD4dROrAf25zaUsYknU6tnD4fPGfXr03WMdBuJJlyVF4HPXCnfGPcVxDl5BX5
+	 vSHxEvZG/OzvQ==
+Date: Tue, 28 Oct 2025 10:00:31 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Josua Mayer <josua@solid-run.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 01/10] dt-bindings: arm: fsl: Add binding for various
+ solidrun imx8 boards
+Message-ID: <20251028-truthful-dexterous-hyena-d3d4c5@kuoka>
+References: <20251027-imx8mp-hb-iiot-v1-0-683f86357818@solid-run.com>
+ <20251027-imx8mp-hb-iiot-v1-1-683f86357818@solid-run.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,61 +68,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <db7f7264-6ccf-4f55-929a-4c2e813dd8f5@amd.com>
+In-Reply-To: <20251027-imx8mp-hb-iiot-v1-1-683f86357818@solid-run.com>
 
-On 2025-10-28 14:21:24 [+0530], K Prateek Nayak wrote:
-> Hello Sebastian,
->=20
-> On 10/28/2025 2:03 PM, Sebastian Andrzej Siewior wrote:
-> > On 2025-10-27 17:26:29 [+0100], Thomas Gleixner wrote:
-> >> On Mon, Oct 27 2025 at 12:38, Sebastian Andrzej Siewior wrote:
-> >>> On 2025-10-22 14:57:38 [+0200], Thomas Gleixner wrote:
-> >>>> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
-> >>>> +{
-> >>>> +	struct slice_timer *st =3D container_of(tmr, struct slice_timer, t=
-imer);
-> >>>> +
-> >>>> +	if (st->cookie =3D=3D current && current->rseq.slice.state.granted=
-) {
-> >>>> +		rseq_stat_inc(rseq_stats.s_expired);
-> >>>> +		set_need_resched_current();
-> >>>> +	}
-> >>>
-> >>> You arm the timer while leaving to userland. Once in userland the task
-> >>> can be migrated to another CPU. Once migrated, this CPU can host anot=
-her
-> >>> task while the timer fires and does nothing.
-> >>
-> >> That's inevitable. If the scheduler decides to do that then there is
-> >> nothing which can be done about it and that's why the cookie pointer
-> >> exists.
-> >=20
-> > Without an interrupt on the target CPU, there is nothing stopping the
-> > task from overstepping its fair share.
->=20
-> When the task moves CPU, the rseq_exit_user_update() would clear all
-> of the slice extension state before running the task again. The task
-> will start off again with "rseq->slice_ctrl.request" and
-> "rseq->slice_ctrl.granted" both at 0 signifying the task was
-> rescheduled.
+On Mon, Oct 27, 2025 at 06:48:10PM +0100, Josua Mayer wrote:
+> Add bindings for various SolidRun boards:
+> 
 
-I wasn't aware this is done once the task is in userland and then
-relocated to another CPU.
+A nit, subject: drop second/last, redundant "binding for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-> As for overstepping the limits on the previous CPU, the EEVDF
-> algorithm (using the task's "vlag" - the vruntime deviation from the
-> "avg_vruntime") would penalize it accordingly when enqueued.
+> - i.MX8MP HummingBoard IIoT - based on the SolidRun i.MX8M Plus SoM
+> - SolidSense N8 - single-board design with i.MX8M Nano
+> - i.MX8M Mini System on Module
+> - i.MX8M Mini HummingBoard Ripple
+> 
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> ---
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-So it wouldn't be the initial delay which is enforced by the timer, but
-the regular scheduler that would put an end to it. Somehow forgot that
-we still have a scheduler=E2=80=A6
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> The previous CPU would just get a spurious interrupt and since the
-> timer cookie doesn't match with "current", the handler does
-> nothing and goes away.
+Best regards,
+Krzysztof
 
-Yeah, that is fine.
-
-Sebastian
 
