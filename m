@@ -1,167 +1,202 @@
-Return-Path: <linux-kernel+bounces-873404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B89AC13DBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:38:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5451C13D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC22580780
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:34:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED021A24DC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E56E2BD5A8;
-	Tue, 28 Oct 2025 09:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4972DEA68;
+	Tue, 28 Oct 2025 09:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZVGuTDlw"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKOC9qVI"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA4320010A;
-	Tue, 28 Oct 2025 09:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE0D29CB3C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644061; cv=none; b=A5wY1ZBPo6hXzM3tw9JisaYFlvV7R4VCrSDaEWKtLP1j7Y0rBcrbntgHlXFRaAsuscd+NEmxaqws42hvKk0T7uw1xBPHsv9tIJKoYKQ4JW6ISskakPBxb+UsgcRA+aq2OGnbJCJ3tm6wX7dvxMkeYV/RutzUMimHc2hAq5p9MQI=
+	t=1761644083; cv=none; b=ON8fVRw971j+Bvlz6tSmN0/hCQV8gZiRh7PdqkXsVVZVQ/T9hFAPWj3hFZLkT6fq94XY2Bdi41/4yRRbi/5zGOcvCzIgO92o+NKwZxN4xjw4bVlbb+gZN/iBvIoFnvRVWutYDLYkCYbqKoPsV/cEugsR/8hrpgR8wj3dwGtK7LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644061; c=relaxed/simple;
-	bh=jVLfI4yVKGdiFnT6DQInbzcdjszHzIy4uSzgNXUJDdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MtnvsuFaNp02rdWsprUlFLuOhygbZ8OF5J2n42Urhcc/HFVRrZTh/Wlr9t22O7T+rgbvjK+V7DkMBvz0x9hkzz60NpPiS3nu4MYowE0nWs4ODW/LNfUBlzlBPqf1IPx62hnxFXDFdb6GTT2nsmffx2gnZ9kPVyk++n4x83pjGqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZVGuTDlw; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S5Cec7011667;
-	Tue, 28 Oct 2025 09:34:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=j8GQXZ
-	d2Emr7kAZPCq4OFeSfQwI7uxfH7Sh/8Zh9x5Q=; b=ZVGuTDlwVacT49TuiLa26M
-	fyiSMeRqOmpxWDXLG25FK9d9WHSPFtf5rq+XPPw/FY+sqWIyCi3mZpH53ErsMfpZ
-	j0SOAKa9089K489BkOq7Co+xElvDLZYslzI9zztydtJcoIvFELRb4Sjn34rMHXut
-	AnYLEagaMof+fH+WZwQyLXkPcDDZjqYZ4nQzg374DmpqziGHhiMbOEVm0P2h9xjg
-	wYMyMBEibR5Z5UVcA5VjXEazY2ILR7uf19UNROMCktcLbU3F9SAZCO6z9UgPiQay
-	FmE3xhyN6hi+ieJiTomdEwA9LdpZCxJXvZzSyHBF2NC2ARR7RvE7AhOwMz9iwAHA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p993273-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:34:15 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59S9UUpt029051;
-	Tue, 28 Oct 2025 09:34:14 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p993271-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:34:14 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59S8qHjO009424;
-	Tue, 28 Oct 2025 09:34:13 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a1b3j1st7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:34:13 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59S9YB0b8323716
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 09:34:12 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8FBEA58059;
-	Tue, 28 Oct 2025 09:34:11 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C204E58057;
-	Tue, 28 Oct 2025 09:34:05 +0000 (GMT)
-Received: from [9.109.248.153] (unknown [9.109.248.153])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 Oct 2025 09:34:05 +0000 (GMT)
-Message-ID: <c1c8f18f-a74e-40c1-8090-985d31cabd1b@linux.ibm.com>
-Date: Tue, 28 Oct 2025 15:04:04 +0530
+	s=arc-20240116; t=1761644083; c=relaxed/simple;
+	bh=UjusioGH/ELF8ZfnUIo9L+3qtvOzRcEwTb00EPFoV+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QmFLaCdhxihh7/EKZKQZ9oSvsbBsZLPmD8VDCQKjlGGZThAplozKsIqW9yDIh1Ef3Ui2oP+7q6YUo6oPxIhHUBNHp6RjCIqgmufvkVbcdUygHEBpH3lTyxdshSdy6wErZ3pkWqb1N7sjQB94j18yacBDkNZ4N/X4colQaQk12nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LKOC9qVI; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61feb87fe26so9795072a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761644080; x=1762248880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=odW3qtXEWjV0YpOhuEaOM6Q/wDrQniW9fcSMR6G8lw0=;
+        b=LKOC9qVIT3jDDcDXP86tfte8XYCjNp0UOtvVQNvOEk4E3eSSPuHrcztNIhpNYvcYHa
+         H4BK6XroyjyzY9jUxrq5DVtiUQbILkcSOYI0gIySksqN9NuXvYdNoe///h6ppVusngS0
+         y5CADfkTKca8QDuPh98KWKEYI/3WpsFc+baNt1WfqZbX7itG0qfZb8LpgPYOMssn8r0/
+         Kqf0U9MP7T3hAasQG377qTdnSHSmS2p9dgupgQMHtmeO3bxiE23VszfHawzfv2L4o7D/
+         eLGCylwmcEozvX43SJU34CKh7c5e8LsVjzXt3ApZIzNHqWtm8blMtZ/scQpqApLoLGio
+         0rww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761644080; x=1762248880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=odW3qtXEWjV0YpOhuEaOM6Q/wDrQniW9fcSMR6G8lw0=;
+        b=R1TFzYcqVa57YEVEKS4jQTduH8XTCTOyJII0zagzZsjKyNB2KzXDRtE0ibEkqx5+jE
+         26j03mfOD/GOrlrORlpEtTUhfJZ/8orS2Z9p1syUNlaMLR4JM7BeJxZLvlxhZ88zKFxI
+         CY0+jBoDUE0lt/Yo4nnSuGzz/+pBuXETQT5mnmKumUaflqNGNh8v1tMbeVJmxRf1w5I9
+         LSa6ogi7W4J/rhSwyrnfU7koRAH8C/lIGMyR6c17kpRzDzWGL+XwBsVRB6F8Rs7dtOh4
+         F2xG3tG+Yn76Rfn3fN9cZPwR1JcrKs4GIfHMLJORxF3lpguZOigbcwh9qPQ2fARVjFuX
+         jrlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSO37sLMG2XDZ4D6OtB8RkkEw+Y4PBiHSGTkN8yR3vd2rert0d2IGSXMPCtYruIDET0KqNGCAz3PSWTIc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxiyCtueGTR1K+l5qnksHoCo1GgUiBapRKRJdrP6Ov0dGM8Ffn
+	3fvUebh0XWad18LESz8gVOcy4kHv7FjhAuYqWInFt8YExVhIcIbrIVHVufvGkqLumDzJ8xvhSOo
+	UqiJW3qmgzP0vVQlH2XD2nCTuXsf+Pn8=
+X-Gm-Gg: ASbGncsYt9UdEfvq7euR2OUIRDSpCtW8CTelWOMlUGjLbVn8fFYWwmp02MPaS54OiUO
+	lWA9+6XZWQNC5OqUv7YT5gJEzBvZ13bCNiL6wr6xh/eny/OiyepYyO5/XJKp464qZ3q1CyC89EP
+	9JLF0ohvV87r8AaoYGQM9FfL4viyJ+fS2a4PeNtuUqKzQbDURFqIb4jMCHaClT3XOonYqIokTAh
+	qutCWo0nC1ZjnlsUe9UQA+3VU/ZdUeRHSWrzYj2otc5Mke3XmfWwDTR33c=
+X-Google-Smtp-Source: AGHT+IGsPCbe8r5dH8aant/YcEWw31jcAKY6dud6j8gJef9y0b9mBgF4kNxJ/GBJ3EJ/6/I5pBM64WHstQkAUKfPv+w=
+X-Received: by 2002:a05:6402:84a:b0:63c:533f:4b18 with SMTP id
+ 4fb4d7f45d1cf-63ed8279e25mr2443085a12.36.1761644079781; Tue, 28 Oct 2025
+ 02:34:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 2/2] net/smc: handle -ENOMEM from
- smc_wr_alloc_link_mem gracefully
-To: Halil Pasic <pasic@linux.ibm.com>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang
- <wenjia@linux.ibm.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Wen Gu <guwen@linux.alibaba.com>,
-        Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20251027224856.2970019-1-pasic@linux.ibm.com>
- <20251027224856.2970019-3-pasic@linux.ibm.com>
-Content-Language: en-US
-From: Mahanta Jambigi <mjambigi@linux.ibm.com>
-In-Reply-To: <20251027224856.2970019-3-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=JqL8bc4C c=1 sm=1 tr=0 ts=69008e17 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=SRrdq9N9AAAA:8 a=bkXrHAGJtgqs1KMYcx4A:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-GUID: M5ZXeYPseEWtehOxGfpeErU-77_Rhbrz
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxOSBTYWx0ZWRfX0INeQH/V75fH
- pCYD1kmjafZMlBioN/n20HvwWn4Dbn/q8pjziaQaRUnKtjctwGjEuDmM1jmNhHE+//ZaLzhwgXR
- fqTKOyq10D3O8tCgb5RREfMhSdRzBMLv9gPTTmh9FUe46i9KleyRYJEedw3ozHzxJS0wFqlbuLL
- E/l2VfsXPJ4Q8NB4HX1samRdRqj+fn1gH6Klp+JADEE86gclw7gMWCeOYyDfod1z/EWL+m/emTc
- /RGCLd+kiU5aFYNu8au5KV7oqt77IMa7TiX8/vZCcwjpH/bxkNvmlZJOKMGgcujdKb8YhyKopr9
- WZENWLCFyu7t8vrYWriUbJyUGczBAWFuadHTQlRPGwWdkQcHqdCOeTiZCLTNFHXnjmmEFgc0Z/k
- vPii1dvUSaVh2Lxq7Fkm20A1n6nuYw==
-X-Proofpoint-ORIG-GUID: nbQ9WZ-8fnSKwd6ZppZDASRvcf9mvVl5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 bulkscore=0
- priorityscore=1501 spamscore=0 adultscore=0 phishscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250019
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-2-linux.amoon@gmail.com> <4fe0ccf9-8866-443a-8083-4a2af7035ee6@rock-chips.com>
+In-Reply-To: <4fe0ccf9-8866-443a-8083-4a2af7035ee6@rock-chips.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Tue, 28 Oct 2025 15:04:22 +0530
+X-Gm-Features: AWmQ_bmPsHqocSX1aRGHrBmzWUPGfL89N89yzNkDBUrKAG5QnhtWURPNx9mXmf8
+Message-ID: <CANAwSgRXcg4tO00SNu77EKdp6Ay6X7+_f-ZoHxgkv1himxdi0Q@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Shawn,
 
+Thanks for your review comments.
 
-On 28/10/25 4:18 am, Halil Pasic wrote:
-> Currently if a -ENOMEM from smc_wr_alloc_link_mem() is handled by
-> giving up and going the way of a TCP fallback. This was reasonable
-> before the sizes of the allocations there were compile time constants
-> and reasonably small. But now those are actually configurable.
-> 
-> So instead of giving up, keep retrying with half of the requested size
-> unless we dip below the old static sizes -- then give up! In terms of
-> numbers that means we give up when it is certain that we at best would
-> end up allocating less than 16 send WR buffers or less than 48 recv WR
-> buffers. This is to avoid regressions due to having fewer buffers
-> compared the static values of the past.
-> 
-> Please note that SMC-R is supposed to be an optimisation over TCP, and
-> falling back to TCP is superior to establishing an SMC connection that
-> is going to perform worse. If the memory allocation fails (and we
-> propagate -ENOMEM), we fall back to TCP.
-> 
-> Preserve (modulo truncation) the ratio of send/recv WR buffer counts.
-> 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-> Reviewed-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
-> Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
-> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+On Tue, 28 Oct 2025 at 05:56, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+> =E5=9C=A8 2025/10/27 =E6=98=9F=E6=9C=9F=E4=B8=80 22:55, Anand Moon =E5=86=
+=99=E9=81=93:
+> > Introduce a .remove() callback to the Rockchip DesignWare PCIe
+> > controller driver to ensure proper resource deinitialization during
+> > device removal. This includes disabling clocks and deinitializing the
+> > PCIe PHY.
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > ---
+> >   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+> >   1 file changed, 11 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pc=
+i/controller/dwc/pcie-dw-rockchip.c
+> > index 87dd2dd188b4..b878ae8e2b3e 100644
+> > --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> > @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_dev=
+ice *pdev)
+> >       return ret;
+> >   }
+> >
+> > +static void rockchip_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +     struct device *dev =3D &pdev->dev;
+> > +     struct rockchip_pcie *rockchip =3D dev_get_drvdata(dev);
+> > +
+> > +     /* Perform other cleanups as necessary */
+> > +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> > +     rockchip_pcie_phy_deinit(rockchip);
+> > +}
+>
+> Thanks for the patch.
+>
+> Dou you need to call dw_pcie_host_deinit()?
+I feel the rockchip_pcie_phy_deinit will power off the phy
+> And I think you should also try to mask PCIE_CLIENT_INTR_MASK_MISC and
+> remove the irq domain as well.
+>
+> if (rockchip->irq_domain) {
+>         int virq, j;
+>         for (j =3D 0; j < PCI_NUM_INTX; j++) {
+>                 virq =3D irq_find_mapping(rockchip->irq_domain, j);
+>                 if (virq > 0)
+>                         irq_dispose_mapping(virq);
+>          }
+>         irq_set_chained_handler_and_data(rockchip->irq, NULL, NULL);
+>         irq_domain_remove(rockchip->irq_domain);
+> }
+>
+I have implemented resource cleanup in rockchip_pcie_remove,
+which is invoked when the system is shutting down.
+Your feedback on the updated code is welcome.
 
+static void rockchip_pcie_remove(struct platform_device *pdev)
+{
+        struct device *dev =3D &pdev->dev;
+        struct rockchip_pcie *rockchip =3D dev_get_drvdata(dev);
+        int irq;
 
-Tested-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
+        irq =3D of_irq_get_byname(dev->of_node, "legacy");
+        if (irq < 0)
+                return;
 
+        /* Perform other cleanups as necessary */
+        /* clear up INTR staatus register */
+        rockchip_pcie_writel_apb(rockchip, 0xffffffff,
+                                 PCIE_CLIENT_INTR_STATUS_MISC);
+        if (rockchip->irq_domain) {
+                int virq, j;
+                for (j =3D 0; j < PCI_NUM_INTX; j++) {
+                        virq =3D irq_find_mapping(rockchip->irq_domain, j);
+                        if (virq > 0)
+                                irq_dispose_mapping(virq);
+                }
+                irq_set_chained_handler_and_data(irq, NULL, NULL);
+                irq_domain_remove(rockchip->irq_domain);
+        }
+
+        clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+        /* poweroff the phy */
+        rockchip_pcie_phy_deinit(rockchip);
+        /* release the reset */
+        reset_control_assert(rockchip->rst);
+        pm_runtime_put_sync(dev);
+        pm_runtime_disable(dev);
+        pm_runtime_no_callbacks(dev);
+}
+
+> Another thin I noticed is should we call pm_runtime_* here for hope that
+> genpd could be powered donw once removed?
+>
+I could not find 'genpd' (power domain) used in the PCIe driver
+If we have an example to use genpd I will update this.
+
+I am also looking into adding NOIRQ_SYSTEM_SLEEP_PM_OPS
+
+Thanks
+-Anand
 
