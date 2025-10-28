@@ -1,123 +1,88 @@
-Return-Path: <linux-kernel+bounces-874577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C91CFC169D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:29:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43E8DC169D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:29:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C75C188CFFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:29:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E138A4EE5B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE09285C9D;
-	Tue, 28 Oct 2025 19:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07B534F491;
+	Tue, 28 Oct 2025 19:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sfF4SApS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a0E2SCtl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446DD261581;
-	Tue, 28 Oct 2025 19:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357EC34DB4C;
+	Tue, 28 Oct 2025 19:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761679708; cv=none; b=V/rzbUoOH47ytPukOIobQtzoY1Zi0hoWl2XOW0/ak1A8cxEuJsonQXHRaaYc+YMGOhL4bI1AIBWzeSlgyt1QliyWRK1WzUDYUKMT/JKa2hevn7tfAy4MUbYhNXqS4TzV4Pqp8n2BO0F7x0czHgFg9mjWmzD9ecn0gZ71pzPeL/A=
+	t=1761679756; cv=none; b=Z4BHG+3JV8BOhtwHoZThA0Cm5Rimg4ROWNV/Y6VkSbrR9H7hNWxv0Z1a94x4vQ8li/hnx7t+7XfNXdeK8JJ8Rqey4mel89CY+hoLH4/R+EZBwb+AacWsnNkCBbThlBHCucWRewsFYQL9ukNv0Xj+K0BmFp+O4o6Af8EwtslSM/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761679708; c=relaxed/simple;
-	bh=TsJiVu7tfPU5QNygJ6AqlG+Y4qq+GJW0tdIrv8h5l9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlEF2jCb/R0BXl3IauzuGdo48+v/7F1hRfsGgAsmlXH83qzobhQihWSL7HzUcG1EVuBNOt6NxvbDA+YHCJtsUHndsrcu6tQdyu3pNyPIRZg6kJza0nxWfWxvP63te7yuRkcy6G9Z5/154nzvxGZjzFr9WMXKAs0in/xKX/gH4BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sfF4SApS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 246A1C4CEE7;
-	Tue, 28 Oct 2025 19:28:24 +0000 (UTC)
+	s=arc-20240116; t=1761679756; c=relaxed/simple;
+	bh=yhpHcLEqc9zsTaS9679BExSMSqz7AtnOHsWWNaL0cyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S01Pb/U2fLxKduMl7N+mMv4nD6cTJ5q8axGvboPTY4AAkcK4qj/zKxHB56XFgjVJbgFA8idthojRagejaeunV7cmpcRwkM/yt7heVkstDHjJfDh4w+Kua2/0GdjYKoMicbRj0ajooIy+bQBUuGkfcAhgWTJlKYKXj74hxb9tWxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a0E2SCtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 087CCC4CEE7;
+	Tue, 28 Oct 2025 19:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761679707;
-	bh=TsJiVu7tfPU5QNygJ6AqlG+Y4qq+GJW0tdIrv8h5l9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sfF4SApSUDaWgAqHux/sZKL8rGKvF5aC9xIr0LZdA/DWukqRfpRXhZ5NpdGiQM/NZ
-	 hYxLcFVBbFn7lEZ34F/OFimfnnk7OG03JURHlQcVg9wmdt+ghiQaY1opjrx8RXv0V9
-	 Wws5J7hXfop8wNR3dw3ct57yR07K//BCoKuoqSeXhO7GAmnAaArYxpOneooV8JxGAD
-	 j6qTxVNgoY0SDjuQf/Eb/9mPVHw/W15LXv1uUr4RdjHIPVLzacl35NEHonun3jD/y+
-	 YVOGUk+ilcCcWEO10OjPOnuFaUa+Iv0c2ZdRw/7uKYMMVHMEek/gb/h+3R96awhXXS
-	 3QfGuik4m2Q3w==
-Date: Tue, 28 Oct 2025 19:28:22 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: Re: [PATCH 02/19] dt-bindings: serial: rsci: Drop "uart-has-rtscts:
- false"
-Message-ID: <20251028-griminess-undocked-b6918de546fc@spud>
-References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
- <20251027154615.115759-3-biju.das.jz@bp.renesas.com>
+	s=k20201202; t=1761679755;
+	bh=yhpHcLEqc9zsTaS9679BExSMSqz7AtnOHsWWNaL0cyE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a0E2SCtlyBuSS9EJ4MEBr2iRKaZt6OMMa5w4xaTBKA9GFts2L6xjxYXAN8bTYKXOd
+	 7S5NhCso5esNzcqEEMPuaTqZJE1QdG5SUWtTWXGQkFdLRSD+URiPvHueL+dzUvsi55
+	 A5ZyX5z87zaXjITntGrggXU7p8y3eSge3SU4vvB4vPJJeM4eRkmUT0yeiy5XxWB2fF
+	 VClV57v87mJZoo/A5wOdjDektqFdiQML3upLIvDSLe7LzDRGAV3dCdggf+Tl5B7lIV
+	 H+TC0IfoBzYIOWwgk3ffzsRNyz/IMICkrohO5hqyC+dt7YgbI2jkGKFO0nFlI4L/KQ
+	 NaKR5qD2QLCTA==
+Message-ID: <7f9073f8-c7c6-4a9f-96b1-beb5974078af@kernel.org>
+Date: Tue, 28 Oct 2025 20:29:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="D1Iw+TUx8nS+nqMu"
-Content-Disposition: inline
-In-Reply-To: <20251027154615.115759-3-biju.das.jz@bp.renesas.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] rust: id_pool: do not supply starting capacity
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yury Norov <yury.norov@gmail.com>, =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
+ <arve@android.com>, Todd Kjos <tkjos@android.com>,
+ Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>,
+ Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
+ Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
+ <20251028-binder-bitmap-v3-3-32822d4b3207@google.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251028-binder-bitmap-v3-3-32822d4b3207@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/28/25 11:55 AM, Alice Ryhl wrote:
+> Rust Binder wants to use inline bitmaps whenever possible to avoid
+> allocations, so introduce a constructor for an IdPool with arbitrary
+> capacity that stores the bitmap inline.
+> 
+> The existing constructor could be renamed to with_capacity() to match
+> constructors for other similar types, but it is removed as there is
+> currently no user for it.
+> 
+> Acked-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> Reviewed-by: Burak Emir <bqe@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
---D1Iw+TUx8nS+nqMu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
-On Mon, Oct 27, 2025 at 03:45:49PM +0000, Biju Das wrote:
-> Drop "uart-has-rtscts: false" from binding as the IP support hardware
-> flow control.
-
-Why is it being removed, rather than only being required for the
-existing devices? It's not clear to me that the comment about the IP
-supporting flow control excludes the integration on these particular
-devices from somehow having flow control disabled.
-
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/serial/renesas,rsci.yaml | 2 --
->  1 file changed, 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b=
-/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> index f50d8e02f476..6b1f827a335b 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> @@ -54,8 +54,6 @@ properties:
->    power-domains:
->      maxItems: 1
-> =20
-> -  uart-has-rtscts: false
-> -
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.43.0
->=20
-
---D1Iw+TUx8nS+nqMu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEZVgAKCRB4tDGHoIJi
-0g1VAQDAsorsBQUBiytjGezt5B9ODmmBWiLhV7Aikg2Eb1NlcAEAr/RZE2msMsdZ
-1ge0LJZ0bqws73j19QI4et4h4LCbpQc=
-=3GfB
------END PGP SIGNATURE-----
-
---D1Iw+TUx8nS+nqMu--
 
