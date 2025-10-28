@@ -1,131 +1,147 @@
-Return-Path: <linux-kernel+bounces-874129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332D0C15964
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6A5C15958
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5DE1C20736
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:45:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 801631B23B51
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B50345CB3;
-	Tue, 28 Oct 2025 15:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F05433290A;
+	Tue, 28 Oct 2025 15:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F+asoayS"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oEiQB725"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12501342C88
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D8A345738
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666198; cv=none; b=SVXXfnp3paPyiaRkaHRI9KupZ2FhsZ6zNQyHb6z6meZV24vycUXpNYyjgtPtBaVkOwNcVnn/AL83VJKq8JfGEadiRh3HZ/hWWhRzm2aXH+vhZs2TFUi8Tucpe1v56ndAvSqvvns96TQYdxMavFNspcX2unr+97/JTKHJ2BwJeC0=
+	t=1761666191; cv=none; b=l4Q8yxDzC8jvdg4TCPw8yEu6HthNvYaDqZToWzKUQK9teTjF3Ct/26jkDBTFt22t/H2mi2Ly4esAfZQNJspmE8jmkuyRgUR8QICPAGu90rpZKlCb4sEi4LcauUiM+o+/x8WYhTGtgFv+/qFJLqxnjDz+uEsrbt0XK/MRZMS6bT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666198; c=relaxed/simple;
-	bh=p8N0VHY2XpMh/L81W8FzKQHWHJk+NmZNjv7GuBCqyQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h0XF5o7vH/PW6SdVdwfHDFE3iVQ4DLTEGWZEzUhohmkrW8KS+jkQsOMreBpPpSISRJlrdVCaHshrLiOF1OGWhvZwuQ71y0edBwTkomhHIGsQY8jI6HKdD3iX1a90X+lr7zKTAMSRR356keU/JiIXbdVDF74Y1uqmuA8QgvCWjKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F+asoayS; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-591ec7af7a1so6310376e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:43:16 -0700 (PDT)
+	s=arc-20240116; t=1761666191; c=relaxed/simple;
+	bh=yZAouXEgeBn+HPlnEp+e1nrDFlGoOkzrrAmmBWF3gDI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JQFQ5atZGI3Kv9Iuqt73ObNTKec9xCVxQIX13CDz3KBY9B2KlhgaojtebkdQu2LkxLtpyJOcsFa2LYPm717mPp6nOFQYebKW4tbNZPTUfbn1IdSSeYABt/4ZSfqiME7AvcqzAK2VcdvC5sLCArh9VxvuyQT62RKo/XeZ8PewPck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oEiQB725; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-4270491e9easo5075480f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761666194; x=1762270994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=do7MuCP88nOM3eMBQKiSZ63kBzTalMH1rd1ZJUZo3vk=;
-        b=F+asoayS366GanZ5Gwtp4/aKW1G2d3JPcsnw2FFWfWbb4AWL5KcNSPx1XZ/4pah/WQ
-         KimGGQzgEriuGk9jfql0Ae7FH3H8UTDm57K5EotoyyHCE3D+PIqlk8PPwuhDwVi0jl6S
-         cu8oKVb3aXHkarELOAeTMXfCpwYs5tpurLC+i5aN6/zkJG5AZlDATun47wHkGYEmuFdY
-         XDo0gpi/DQRKjMaPD0g7Er2IJc4CYzKStv+05B5DUlPD6X+zIo2gu+F4uNXS8Zy27WJI
-         V2FdMrMR/fJQleq5P9AsmDRrd9soqpH2u0BbStY65TKNQHgXPWkMeSX7MP878chlsHOw
-         3RCQ==
+        d=linaro.org; s=google; t=1761666187; x=1762270987; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nLENo1D2vGjvqUj48+wQ7IiD227BanSgpj1tG6vbGqw=;
+        b=oEiQB725Q/YI/2eKESf+SnBcegRIFqIzfBAmR/Bml3D/5WgSE0SYJENp69JCHpUjGz
+         gXQg9JTJqqhG3XUyn7iULHDAFJXhnmg3B9uOg3zC3CNvEbPOuptidFwXqFl8DIa3zhDh
+         6PJhV0LxHXU/o3i3EZuxI0Kq/7E3Z4jSxERNeFHn0H69U4GHiAsn5plD8ZZH8uM2CNOA
+         qszpv8KO8wKj4sdDd/I950LSl9JtKhCXRZm2K3ZGQY9kkEK/4RrMYH5xIJq28N7i2PW9
+         /SkFVIZSh5PnLiC16wHkmWGZmcK3tdGTw/O/xO7kLwOVnVKB6uJKoQcTE00X7d+10KAO
+         IvtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761666194; x=1762270994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=do7MuCP88nOM3eMBQKiSZ63kBzTalMH1rd1ZJUZo3vk=;
-        b=n1XI8i+Qrc9kWahaMSVQGpkzJ3PVYiTpEbKo05BEulVBnsyyc3RoI7seYCZdTZupgc
-         X6l7nPwgs4palohF1tfe/M1UBwlmWoISlc0wF0AuoUdPlkF9Z6lJqGmQ3fTLWQns6cw4
-         Ea+lhs8qE6zq1URXcKCil8OniTKydIFIbe37mI8b6+5YANzz2r/XieHs87N0t9TINpTE
-         UIOF4vdmz88SYkzMNyfhvRlIYEbzgrRCJJAMa9Y4Rcaag3XWHi5x+Wnq5t/OyjFN1N7U
-         IJu1vslLlGRKT4g5a++Cja0mRyzwVQI1+Xml+1sVns3Umuss08QoiuHvEi19ZfZi4yBB
-         V9UA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeZ5JrtjOv2E1rBBIi07OOCBgyUZTZ03EavFKr6rIlZugfuMuyG3j4bcNfsyfMK3sOjH4lP3Ttyjf1THc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzulzqh5B/dYytNM3z2fjaOTagvZzwW4HYfwv0dFM9j/5Y89Zak
-	aiI1oxB3mlecX98q1Wg8sp8/7vpFwyDLvEyiQFmvqKdHPZZXWmyDDe4ZG+Se9U4dxGfZosPjvJ3
-	RaZSnDq3uywz0pxoAbqqi/pwDNqvgcbxkNH6SHvztNw==
-X-Gm-Gg: ASbGnctrlQeVElp7fKygCLFhOs2rc5lxshgHib2a1jgqeztUoyfxtQNnFv4ODQTElNV
-	CotFfO/NiEyJ2eUEDb08o/hUw5/PTX1MQw8Zz2hctbRerQ5yENwUss9dUxHflTY59AxMdGoum/B
-	UdERtAvudAP+ktUwFq6feSj172vAKrQNRVLM8HC5mhtl4nG1ypSTIfvSkZyUSqHNUcTHkVVJXGk
-	gVWvD35wTvHkL7Q/nlksvvUbzXW3m0U4KcZmbXxwTLHCuVwORmNQ4x+EwVlOPzEPoYLRfAi8y1S
-	eSkzn0nh9KKIYhO0
-X-Google-Smtp-Source: AGHT+IFTRBGcYDkiyCueyH65DwGrBfpjtYBktHnpsdJL9xh5HvsW1ijkB+8miiiXsCQ87IK4j3035BwnwPw7l+jO6Uc=
-X-Received: by 2002:a05:6512:4027:b0:592:f766:a49c with SMTP id
- 2adb3069b0e04-5930e997932mr1316517e87.15.1761666194042; Tue, 28 Oct 2025
- 08:43:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761666187; x=1762270987;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nLENo1D2vGjvqUj48+wQ7IiD227BanSgpj1tG6vbGqw=;
+        b=dEhMtQ9R9elAqdTAUXw1PLXXZsjV405qPllSH70q8e4P7Qik2Y+aiGV12fRNYfbIJZ
+         in3B4McYY3W7P6jfB7QYCzRaY0TQ8LKUuK5yFiUCdXEnQpS0+zHycnlmij+Bs+6q1DYy
+         XmKMQY8ksA9l1qmjcyY/c0iM2blaCHho4r6t+fVMadxX8iStloUIkPhyMgZtkqGZCy77
+         IfryTcrHX4nrxvQZ6nM4gNnmSmdZwjmfTs6/UoeL7MDI0eW/on901F/Ob52kI/8+NwB0
+         PbeVOyFcQ9owhXDHjDP2VsYLo/97lHskb8WSpQ7Sc2YhbU/WYW7Iv4qbou5K1M+Zr3xe
+         +uKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtJl7ZI+pW6fH2ssFS7/lFe6DMotWRbLRYbkITYaflWLn4w0jFpJWgPknlVh5MupZzE3GKAO7aY/6XENA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMLn4moS/FC1Mrja+RKVIPd5Eh/+2ZFWTO8j7pHfMI8cjgqDbV
+	ub3Ik2oClV1R4+V3SlYzrFXSttopW0QbdlX4lMmHIWy+SDiIGcdz7t9C9/rz4ZTs2GI=
+X-Gm-Gg: ASbGncu4agvLHoMQnc3N3QB0lRqAc23Z4lBN0vs1djia1JflvIBiNBbB98ZU86S5Cj0
+	oj6OR+h5MDWCtru99PePDueuyBowu7KuI5ShMIJKpOHdTY+ahUGfiOPW3nj0v+2HjnmAkGnePUy
+	KVxdm82lhOJ+Rma7ODgo6ujK2XYU80xeN1l8VM0z1sI1GFSI2Qmjv02pHaiZzFpDrCFMkqyVO+u
+	qqqY8NCLU81f89Hx3w7i2/9i8XgsYOsYRFYTWX0mab8aUsI69yzWts19PT0AmoiNNAzEi87c4Mj
+	w0HjfoPk+fokqfYMWNBXErBiIEks3oXYjijGwG0F0M/IXk/yr0TNwgoDonTUWGi/MgUyXbPuYy+
+	DZHYcs9TIV8TFEMMzU8elUjiqIYdmbT6g0oE8HGBKpokp7iGhweqE62sR6k9+k56T5/kM7gtTQ2
+	8e83OVWHAp
+X-Google-Smtp-Source: AGHT+IHFZzNqXo4DPDPEq2vl9ZtR/eDDPJqyNRiKM4rOaHvpEudFLMaZUvOTcQDmn3/DYHAyk2W3vQ==
+X-Received: by 2002:a05:6000:288b:b0:428:55d3:ece1 with SMTP id ffacd0b85a97d-429a7e96c28mr3561680f8f.58.1761666186630;
+        Tue, 28 Oct 2025 08:43:06 -0700 (PDT)
+Received: from hackbox.lan ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb55asm21009631f8f.17.2025.10.28.08.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 08:43:05 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Tue, 28 Oct 2025 17:43:03 +0200
+Subject: [PATCH] usb: typec: ucsi: Set orientation_aware if UCSI version is
+ 2.x and above
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org> <20251028-dt-bindings-qcom-bluetooth-v1-1-524a978e3cda@linaro.org>
-In-Reply-To: <20251028-dt-bindings-qcom-bluetooth-v1-1-524a978e3cda@linaro.org>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 28 Oct 2025 16:43:01 +0100
-X-Gm-Features: AWmQ_bmGdgwF3B9dB_VDDUnDofSCXpuNVCFm0vFH9VJDj6OZrO0qPdBbjuGlM8k
-Message-ID: <CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com>
-Subject: Re: [PATCH 01/12] Bluetooth: MAINTAINERS: Orphan Qualcomm hci_qca
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251028-b4-ucsi-set-orientation-aware-on-version-2-and-above-v1-1-d3425f5679af@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAIbkAGkC/x2NSw7CMAwFr1J5jaXUSsvnKoiF0xjwJkFJGpCq3
+ h3D7s1i5m1QpahUuAwbFOlaNSeD8TDA8uT0ENRoDORoGh2dMHhcl6pYpWE2NTVu5iC/uQja6FJ
+ +ESTkFJFD7oLheCY/RR/cPIOlX0Xu+vnfXm/7/gVvXEEXhgAAAA==
+X-Change-ID: 20251028-b4-ucsi-set-orientation-aware-on-version-2-and-above-b79245d4b066
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1094; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=yZAouXEgeBn+HPlnEp+e1nrDFlGoOkzrrAmmBWF3gDI=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBpAOSIxZC3gYnsoFZxhyJEbOup3CTDele0k3jhC
+ X4EHxOLIlyJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaQDkiAAKCRAbX0TJAJUV
+ Vp6SEACScWZvd9xNNj0DobSCH2XhHad7U8MbsIxxXTboQRIufEiDY0fh88RJxtG++zUv+5XzOo2
+ an2yRlcXKEbTSci4Us4rFMt443QqEbBt5wlTWxO2DCJP/3NSEFGDEmckYM/aIT4V8L8lV3hXIVm
+ KGLKyJJE2WEtYuXfEFdOLL8BK/KawlifdXPZFaxk0lOALxHbRsjzpnQd5XG4XljX+L2Kl3CvOSV
+ e5Cmx9YJ6vFVOaK0K2hmN43IQT2YCm5bkFECgh+FFxs3dXwsSnAB2ezTIq8vhRufdeARkJsSzFw
+ nLsi59i2aLoeLCf1R6U0AcMOipZndxZtTUhFUBB3FRx03eWiET9uwAHIAQms88HH3St1pmfWgxw
+ t9rrX4eDdWGTc1lvPKhrUTvzVM3beskuN2502V6Q8ErpO1d2VOpogUpQnqzhZdheb2qiQ5jlT6D
+ Ztvxbjo3vlt+iUOuT7HDNWs9yr3lup31IRGVf6VLK7OHuOT/ueD6IPYGzIeyDQhYXVvBsyzk+Rt
+ vz8jQamX6hmKyJI6fFybeWNh701FatrssSUxObD6FDYQHb+YKqqic/WS/xGuOmP/HOE0rUT9jEk
+ sdvBu1+UUyz5+8iSJl+itwXVgfc9gLfmvw5QoK0m1Oc8vZnxZe17QvFeJkkoVTKR1pSMAVIEJqf
+ PJnx04m2CMheNmQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Tue, Oct 28, 2025 at 4:33=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> There are no maintainers of Qualcomm hci_qca Bluetooth driver, so make
-> it explicit that driver was orphaned and no one cares to keep it
-> maintained.  That's also indication for future removal from the Linux
-> kernel.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8abdc0e50699..be637b9dc7c0 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -21146,7 +21146,7 @@ F:      drivers/net/wwan/qcom_bam_dmux.c
->
->  QUALCOMM BLUETOOTH DRIVER
->  L:     linux-arm-msm@vger.kernel.org
-> -S:     Maintained
-> +S:     Orphan
->  F:     drivers/bluetooth/btqca.[ch]
->  F:     drivers/bluetooth/btqcomsmd.c
->  F:     drivers/bluetooth/hci_qca.c
->
-> --
-> 2.48.1
->
->
+For UCSI 2.0 and above, since the orientation is part of the paylad,
+set the orientation_aware by default and let the implementation specific
+update_connector op override if necessary.
 
-Actually, I added that entry so that the arm-msm list can get Cc'ed on
-patches. The fact it didn't use to, caused some regressions. I have
-done some work on it, so I can take it over as maintainer.
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/usb/typec/ucsi/ucsi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Bart
+diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+index ed23edab776354f08452c539d75d27132b8c44dd..84afa9bfc65b6e6ad0a8c1856252299c16562baf 100644
+--- a/drivers/usb/typec/ucsi/ucsi.c
++++ b/drivers/usb/typec/ucsi/ucsi.c
+@@ -1637,6 +1637,9 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
+ 	cap->driver_data = con;
+ 	cap->ops = &ucsi_ops;
+ 
++	if (ucsi->version >= UCSI_VERSION_2_0)
++		con->typec_cap.orientation_aware = true;
++
+ 	if (ucsi->ops->update_connector)
+ 		ucsi->ops->update_connector(con);
+ 
+
+---
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
+change-id: 20251028-b4-ucsi-set-orientation-aware-on-version-2-and-above-b79245d4b066
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
 
