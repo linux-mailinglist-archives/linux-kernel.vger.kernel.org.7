@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-874103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276C3C157C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:35:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DC1C15877
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:40:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A0F623553E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2595817C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD72348468;
-	Tue, 28 Oct 2025 15:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE952BE059;
+	Tue, 28 Oct 2025 15:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cykoaXZf"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nAOQ6GX0"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1257346A01
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC281347FEA
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665553; cv=none; b=gEh1Jt/l5TSy1Kr6K4ifTjRqXxTZvNQVUiMkdob/IQqmVeePAk4naOKEW1gVUtahrKISKVbjtSDL/GmF8AhLSXEKVGvko9/0os1Tal6CKKSHPmU8Uu0OJ50UZTB97szt9l5DrkjHOL1Nn4xRWAP12OlxuHYZMWtQ0w5OESHuKmA=
+	t=1761665555; cv=none; b=DB9Nl4q7k/9ZKPYwWRYA+sKOV3E2nnWXHhECZnadXgO59WYh+8D2aM/+HCgHulYjuJUqcQBzkkGSvtg4nj9sgz96qhTWWq5JRmNqVqCUlG5rs1lzPux0v2TsPIlLSV5yoNuooa7WDIzW8rMCxIdZRBOQf4ZJ0N5owEmRbAkB3sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665553; c=relaxed/simple;
-	bh=jPSqbAaZWf+nXy437xdl9lFbSrwJt4G29g2uShMe+G0=;
+	s=arc-20240116; t=1761665555; c=relaxed/simple;
+	bh=zSukNZlJ7MIqdyaMWhjsK/r7+F8I2VhKVYJCKLETVDw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QeNgSrppNcBlttj7IwAClFF0To1hP6LpDZ8pBkNMfgKjRviY8akahE/k9rEXrCTqvNIPCFOvMdwy+ZI1g41DSuVr6AXsBcbR1Yn0ROtT30ce4jREDXqED7qMttPBqlBl0cLiIzxs7XK27FG72zkR6huuG4OfpI7BBr8S9Q+q4n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cykoaXZf; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:To:Cc; b=XA8dZ64Dx+Lp83xHLkd/wj8lsyqm5HFL2LxXtClKDQxoTm8o/x8hC3xJYtm4lZ5fgcY8MZ0pobQJWu8amHGd/paMAICT5340/PexPMTtSq+8w09u65i+j7/MAfUB/cQQsGaH9i9MptaA4iA7mCSY577qCejNWh031sJD3EGI9d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nAOQ6GX0; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-42702037a01so1105055f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:32:31 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-471810a77c1so6030215e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:32:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761665550; x=1762270350; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761665551; x=1762270351; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AWIluFh7l+SbDGc0Ojge6hgzh47Q/bkdeBXpFh6Hrrk=;
-        b=cykoaXZfh2azxdx+Lp8wP1ww5XgwGXkmqHDDQUCGhLXwyIXN0o0TrM7Jr383RALNQe
-         F8SO3glow2ZPkS5NAmXebFhdKvjhmoBiauhKVX4+RjzIfTeTa4KJfmgHPO5V+uOlRCzG
-         ZOZ97CcEauZd5n4PaW4gvdItD0WkUXWFMr0v4RwCdSw75ycYmhmQOEssRWcDVFT/SJ/V
-         /xgApyK7MXklXb1ooTADHFHlLN6rsPaaH3rj6aix5ah9nk6lVR329p8fLLvF/uh4C+JH
-         U4SWfY12Fj+EkuIO0yfIIRidlpDXNau6o773jcevFykW8oub8hToulW9W9/IjTLhylo2
-         w1Ng==
+        bh=2LZwNoJWwYkaKmAAehgehdzMFy99KMCq/sPgFndgvoQ=;
+        b=nAOQ6GX0sobwU81e4+wMBIccAfq9QxROtuHTTa/40R3kqljfXzowxKHZ5y56O3oBU5
+         6CP/PnQl3fbeEBaF7YL1f2O87EJWDfYIcCmqNiCrnIsb60jYiqZjhyRCYuYBNqHs5vpH
+         9RvZBk7HZOxxRD+x0m0e8Qv8UZpJ4JM72lVkbnErQ2uFRbSMLaUwcXTxJI6ODmuhQNoO
+         XoVfSkgiAj8iu42pmP1Ub4ydVfAUZKkr8QIksfP9u18ZzOqNuglJoAMavmGKU20XRx5N
+         gg+pdT/M0BfRNM514+2zmoMuR5o62S/6CgTjXR//EunljM8NACZeop0KWJQgxlySXZJH
+         1sXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761665550; x=1762270350;
+        d=1e100.net; s=20230601; t=1761665551; x=1762270351;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AWIluFh7l+SbDGc0Ojge6hgzh47Q/bkdeBXpFh6Hrrk=;
-        b=Hw5TM43CdjxWbgbdEgyj5iLH7HvbQP6qZ0KTdpSFwSzhCpmCajcYf3f0CxVGUx2Ori
-         IRZLLWelMgnM/LSCK3RGmCJl7q59V5sLyO209U2ir5wXfeS7UPGlBEYI+pNB4NCiZdX/
-         PQgS50BiOP05+/HDaMLXsqSL3UFxr8cgGPTJz/Px69NBuUTq3wpDrQOdpOWCDQAeiFSV
-         DuPQJNLjUAByHpfB7vGuVUOFHduUBz0OgfvQrPLnWVkAz3z6/r26rOgtDYGnoGHNAmtk
-         0Hj4IfckGC+fVOjnpq3fHTOrZGw/Iv9GjcHWFdnHRTmWKuQwSjhJNwOmD2edx4Z8WtVl
-         gvmw==
-X-Gm-Message-State: AOJu0YwqbKNgH2a+ByB4MoFf0SarwHelv60U7gB80IIRAX2zVfy+dfAq
-	eddzpqD5XA4msodMG6/fX/fSw83PrwjDfFlRlPJb3L96lUGF3fxVmvI+FuUQO1CxA5o=
-X-Gm-Gg: ASbGncsFkusM5bhyum2kW/4JjJhE7bDOhZ1fwfpYv6eY2cbQNStN3nJ9TTi+pJTqSOl
-	ecGPDZ6srRddMo0VBj2bQgdqsiA/jP2tNDUTldM8Q5BO50MWhxY4nLZ80occPfLORyr0PctPz77
-	0TQ+fBpkaqeId807KGnVyyj5pg8wjhwtsAic8Xym3VK/xESbSIurOi4PEKDbpjlGSddKWSPyuLa
-	pxdTGylHkyrtxBNpo3fgZbx7uoA9afx96pN29n8etkESWFCo74hWr9yp3g1RqZcvxw3OL9l+9kf
-	YFgE0E9Pg1RJrmge5uCimCp1/IiWMo/70jlu6xB5z9vgkkXLfLg8KDqdDi+g5d9/Vu1CA5fSQzO
-	aF0eYUarCEVoATUK1NhHthcK/u3x7uD9hWB1ctrT1thudNRG1VQsJF+2BHWUGhuA4SZwZ670DJE
-	P5L61i+zp+M56/OxEE
-X-Google-Smtp-Source: AGHT+IE6N+cXVDuP6XtDqTarJlsYeaHJcR5I/2UdB3NeXMfaaZg/5I0GyxX2YsoCgI2IvD5zZGUXZg==
-X-Received: by 2002:a05:6000:1447:b0:426:c349:eb1d with SMTP id ffacd0b85a97d-429a7df68eemr1890960f8f.0.1761665549729;
-        Tue, 28 Oct 2025 08:32:29 -0700 (PDT)
+        bh=2LZwNoJWwYkaKmAAehgehdzMFy99KMCq/sPgFndgvoQ=;
+        b=fm5ui7T+WlajS4DZZeF5OpLErtQv2YB5VIIsW4rq8So7cFsQk7qjOxkBIkGvF3iOO1
+         +Fjen0olHsxC1hiQWvk++ScaEj6kOtqZGDpznzMoC2y7bqM3nzIp/3PkkO518Sr4O735
+         3OabpoqVFpiQicwTR/ljdqap0xRioOElTQhjgx3LbFiZ29HDPjdF+y2/Aj8Vf+y84Afx
+         w9cEpCnVtmEwVZ44d2IWa7ePHecpCHLkAhSX0DwQhvpNJMtsfUZVPSx/ORKKzqY1U+du
+         wAfynqO7K8u9+rHPsX7WHMl7HPMCuB3zRZtMSGs9cmY6Oc3UEgtBQ4921+6Nwrx8WjrE
+         IIEg==
+X-Gm-Message-State: AOJu0YwYEcfMoU7aQWUxZfd24qohdVRKM9EhWLto/udRv/X4w5Y6Lujh
+	K3+llndKhroMgWHoVLvGXOtYMIXvCK9YsFHp+4Xp54ex+Yrjef/Mxx5YkBZQgjft/Ow=
+X-Gm-Gg: ASbGnctIMNLsQ0ZxupWPN2IAw4Y6YqyfCJvk9/89VhDHlXRJoJCEVIrEVtxov8MXlHI
+	k8Wd1rpDG8faUymvWkl6kagM4vT0MBhDvtsO2X08d3P+UNyj4rPbO00zxtZhiUolQlKubfCiY3X
+	Xrgl0dqDDv5c58XLqXjMRcV5cMWzhx0lv3xXWQz3JZJJaI8Y7swpm1c0Cn50K1oMv1hBuHl2xNF
+	0RNq4mbrpx2HSA+4YXOlw/dPD6nyCKuMrjTnjg4x3XQgH+WT+yGWEOLCYFtqKQ41/cTRD0B3t77
+	0mHhvMVhgrLf3fMwQrDlxKvSQ0acod9OtqBjFBvphJjt7Ya+CsfkC7sZ0fqvUvrGl9r+TZ5QWDz
+	w5FIZeWaUdUKvSUAgHrOuCW9dOPm4Butttf7QpgnYEXzjpAm8JvxRYoaLuT/4lkeRb6DB/JDaab
+	YnS+jgV1GDB5zH0rnUKm9kbSxQNLA=
+X-Google-Smtp-Source: AGHT+IGVE3B2QRjpTEh5wr1vPtOo1EljFcIgnH5xAZBrUlCMOJ0sPgHl+FMB8DiEmz2qJn5TRoBcsg==
+X-Received: by 2002:a05:600c:314c:b0:476:84e9:b552 with SMTP id 5b1f17b1804b1-47717e42d94mr18438835e9.4.1761665551119;
+        Tue, 28 Oct 2025 08:32:31 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d9e80sm20844417f8f.28.2025.10.28.08.32.28
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d9e80sm20844417f8f.28.2025.10.28.08.32.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 08:32:29 -0700 (PDT)
+        Tue, 28 Oct 2025 08:32:30 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 28 Oct 2025 16:32:00 +0100
-Subject: [PATCH 11/12] dt-bindings: bluetooth: qcom,wcn7850-bt: Split to
- separate schema
+Date: Tue, 28 Oct 2025 16:32:01 +0100
+Subject: [PATCH 12/12] dt-bindings: bluetooth: qcom,wcn7850-bt: Deprecate
+ old supplies
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-dt-bindings-qcom-bluetooth-v1-11-524a978e3cda@linaro.org>
+Message-Id: <20251028-dt-bindings-qcom-bluetooth-v1-12-524a978e3cda@linaro.org>
 References: <20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org>
 In-Reply-To: <20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org>
 To: Marcel Holtmann <marcel@holtmann.org>, 
@@ -97,189 +97,74 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
  linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4902;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1727;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=jPSqbAaZWf+nXy437xdl9lFbSrwJt4G29g2uShMe+G0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpAOH6s501lki5GujocJptq6e0rFCleiIHXvbes
- /IoU8c3AvWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQDh+gAKCRDBN2bmhouD
- 121rD/4q3+YhA6M0jllBek0EMuUHDfTzGQn2viOlcyrywoe21I9XTV0ld28bcOYDsnO2uwMNy1Q
- VyvisMhPDb/hZ0tDDHTDq55ec7U1fRd6JzZAln43eIG2UCY1/Lx2kBawaulytyENxPRTqkTNhiG
- R1MDlUuTuRU/yflziFejQ8eNkSYfc6z90Cp70kvGTgXtsvhF+Z+x6YX8e0C31UUqXRAvqV98m5a
- y4yEGPW88ls79v9Tpw+PpMmjbX0pN7iG3KhefQQLfQPS/BQUoGTFhbKTc1mcG0kwYmTg1Oz5d30
- pgIn1BjudyKT/DQm0Az75nkmtq7igoYau/7yi/uQIZ05EhW7chOKcRg0I1Tp3Zz/W7Rwm3bEtUe
- IS7EYt7e9gxMLLED0WkNQPLJ2ROjuQfiXgGnAY2E+dXocN8nar6dBQYbPvneLPEwh65uw1wA1BB
- VpP6eQ3cWkosy2yiOkQUczhW95Bs1Aao1/hBTeXkZL5ZR8iwnTxUlGIpVNxkI58MQjlMtfoTmTJ
- 3gLbeJOiAoyLkvArSGjF788+WncT7Fdl5AC/ksK/zZZZaO9wX9occAgHEMFo66jUzFyZI+H+GzU
- Isl1NucyhH6Fkvj75TIybwyJpC2ogDLsA2sghOCUxX57hfaAgPVIAmH/+qGn3KsliHIKHK3Lwwa
- Uf6vZJ2lRCl7VYg==
+ bh=zSukNZlJ7MIqdyaMWhjsK/r7+F8I2VhKVYJCKLETVDw=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpAOH7qJ7gAnazlmEVmSQT2tl9Ov0fW8LBbuH92
+ j+nTnI5/1yJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQDh+wAKCRDBN2bmhouD
+ 1+RrD/4lCI9nI3gLTpbmLlCCHv8SmzZIwl9uEqBvUPhzDRA8WaZJh/ZEp2TgoALquJUW/C5CS0G
+ SaKnKiFSqrO3SCWCiLEus1feRx/7VQdes6ITSWyfgbkZassgogbBFzLCUAlhaFKvrw9FytIgx+P
+ Lc9xiiVK8wKORsFckj99TmPGm2M6GWhVMChKwkJ4EkNFBEZIm/g5fxsppVngkr9tDvut1uRezt+
+ 7DKogdmfYCNSnSnbovMt09FsU2VyxOoAQxFAEt7btdo1L2srZA1aI5XxLKdvTH84j8Yh3L10Gxu
+ F1Aj/dKG82PBM1uhew9QrBwjf0zhPZhsuVk4eis/WqRb75e9qa1z4VSWgYmGd2Gt/Ep09aOWDaJ
+ 3a06SoGgrxePjYcwyvon09LIZv+2Oj42QQiZN5Ub0C74TFp62062edF2GgxpEJbxTPDuRQXleYW
+ W9zFdPR6HfBzgC6hriu2hKUS9An1JBNnUS0BWxp+6UNoyc64ko6i9wfos5qqFa/p4XEyuofNGNX
+ aVMzg+iFOWgaf6dCnetMW1S2+agDvSSyaMalD0GVuX9Sf0SNgD2iV1/BIPVW75dskYIrVhtV4bU
+ w7gg0tg/b/wXTFp4IEXXJH452bxAbovmd5OsZ7WZC4HAGjLRxsxr+vY24j+WsTJ4AlbFlaYpvu4
+ hFA+1fgm6I8+uaQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-One big Qualcomm Bluetooth schema is hardly manageable: it lists all
-possible properties (19 supplies).  Split qcom,wcn7850-bt to separate
-bindings, so device schema will be easier to read/maintain and list only
-relevant properties.
+Commit bd3f305886ad ("dt-bindings: bluetooth: qualcomm: describe the
+inputs from PMU for wcn7850") changed the binding to new description
+with a Power Management Unit (PMU), thus certain power-controller
+properties are considered deprecated and are part of that PMUs binding.
+
+Deprecate them to mark clearly that new PMU-based approach is preferred.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- ...ualcomm-bluetooth.yaml => qcom,wcn7850-bt.yaml} | 97 ++++++++--------------
- 1 file changed, 36 insertions(+), 61 deletions(-)
+ .../devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml         | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-similarity index 50%
-rename from Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-rename to Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-index ff301798b50c..d2a1477380eb 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+diff --git a/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
+index d2a1477380eb..418a06ff0353 100644
+--- a/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
 +++ b/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-@@ -1,18 +1,15 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/net/bluetooth/qualcomm-bluetooth.yaml#
-+$id: http://devicetree.org/schemas/net/bluetooth/qcom,wcn7850-bt.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
- 
--title: Qualcomm Bluetooth Chips
-+title: Qualcomm WCN7850 Bluetooth
- 
- maintainers:
-   - Balakrishna Godavarthi <quic_bgodavar@quicinc.com>
-   - Rocky Liao <quic_rjliao@quicinc.com>
- 
--description:
--  This binding describes Qualcomm UART-attached bluetooth chips.
--
- properties:
-   compatible:
-     enum:
-@@ -20,92 +17,70 @@ properties:
+@@ -17,19 +17,25 @@ properties:
  
    enable-gpios:
      maxItems: 1
--    description: gpio specifier used to enable chip
++    deprecated: true
  
    swctrl-gpios:
      maxItems: 1
      description: gpio specifier is used to find status
                   of clock supply to SoC
--
--  clocks:
--    maxItems: 1
--    description: clock provided to the controller (SUSCLK_32KHZ)
-+  vddaon-supply:
-+    description: VDD_AON supply regulator handle
++    deprecated: true
++
+   vddaon-supply:
+     description: VDD_AON supply regulator handle
  
    vddio-supply:
      description: VDD_IO supply regulator handle
++    deprecated: true
  
--  vddxo-supply:
--    description: VDD_XO supply regulator handle
--
--  vddaon-supply:
--    description: VDD_AON supply regulator handle
--
    vdddig-supply:
      description: VDD_DIG supply regulator handle
--
--  vddbtcmx-supply:
--    description: VDD_BT_CMX supply regulator handle
--
--  vddrfacmn-supply:
--    description: VDD_RFA_CMN supply regulator handle
--
++    deprecated: true
++
    vddrfa0p8-supply:
      description: VDD_RFA_0P8 supply regulator handle
  
--  vddrfa1p7-supply:
--    description: VDD_RFA_1P7 supply regulator handle
--
--  vddrfa1p8-supply:
--    description: VDD_RFA_1P8 supply regulator handle
--
-   vddrfa1p2-supply:
-     description: VDD_RFA_1P2 supply regulator handle
+@@ -41,6 +47,7 @@ properties:
  
-+  vddrfa1p8-supply:
-+    description: VDD_RFA_1P8 supply regulator handle
-+
    vddrfa1p9-supply:
      description: VDD_RFA_1P9 supply regulator handle
++    deprecated: true
  
-+  vddrfacmn-supply:
-+    description: VDD_RFA_CMN supply regulator handle
-+
-   vddwlcx-supply:
-     description: VDD_WLCX supply regulator handle
- 
-   vddwlmx-supply:
-     description: VDD_WLMX supply regulator handle
- 
--  max-speed: true
--
--  firmware-name:
--    minItems: 1
--    items:
--      - description: specify the name of nvm firmware to load
--      - description: specify the name of rampatch firmware to load
--
--  local-bd-address: true
--
--  qcom,local-bd-address-broken:
--    type: boolean
--    description:
--      boot firmware is incorrectly passing the address in big-endian order
--
- required:
-   - compatible
--
--additionalProperties: false
-+  - vddrfacmn-supply
-+  - vddaon-supply
-+  - vddwlcx-supply
-+  - vddwlmx-supply
-+  - vddrfa0p8-supply
-+  - vddrfa1p2-supply
-+  - vddrfa1p8-supply
- 
- allOf:
-   - $ref: bluetooth-controller.yaml#
-+  - $ref: qcom,bluetooth-common.yaml
-   - $ref: /schemas/serial/serial-peripheral-props.yaml#
- 
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,wcn7850-bt
--    then:
--      required:
--        - vddrfacmn-supply
--        - vddaon-supply
--        - vddwlcx-supply
--        - vddwlmx-supply
--        - vddrfa0p8-supply
--        - vddrfa1p2-supply
--        - vddrfa1p8-supply
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    serial {
-+        bluetooth {
-+            compatible = "qcom,wcn7850-bt";
-+
-+            max-speed = <3200000>;
-+            vddaon-supply = <&vreg_pmu_aon_0p59>;
-+            vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+            vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+            vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
-+            vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+            vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+            vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+        };
-+    };
+   vddrfacmn-supply:
+     description: VDD_RFA_CMN supply regulator handle
 
 -- 
 2.48.1
