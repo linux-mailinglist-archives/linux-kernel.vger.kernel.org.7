@@ -1,210 +1,217 @@
-Return-Path: <linux-kernel+bounces-873939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428E0C151F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:20:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8540AC151EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80D4188D35D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90DBA6453E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E011230D0F;
-	Tue, 28 Oct 2025 14:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656DA3346B5;
+	Tue, 28 Oct 2025 14:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6dnwsvU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="eMHtqJAy"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020135.outbound.protection.outlook.com [52.101.189.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89F11FF7D7
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761660652; cv=none; b=QrXISVtC+LKAgr1brgXlqygSjb1dhiTb4i5Jla5ZzNgK02ZKGkbLZZ76YdKoph77vqbepaXN+GnAU9GeoFAoLm4onO42BjrQZg0TtKzUfxXAaxAmuhL+nycUtWMyvTo0BGwh7N/X7p9RKjCHePgyh/jLyuUULwPU1pFt02RhqPU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761660652; c=relaxed/simple;
-	bh=9MQdQxj70yjmNeGCIc6Di+FRAIbRgsLKF+QiN38fNXY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ThzDZ7a2vBW90wZuVpWa15V7MYgDo2SabY8TOJNq2ML/5Q3ORRRqwXnW80VRNT37jnjUd3bwlmz0OXGswvkZC6AnJrPyFlNrl4Nk/Wc5Q5nawXUWO+fy5pZ5nwiAzs7o4K6ZUceYgw879kzhYC3dpuaGc9XTOc+fZkp2EAiHyOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6dnwsvU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C08EC4CEFD
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:10:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761660652;
-	bh=9MQdQxj70yjmNeGCIc6Di+FRAIbRgsLKF+QiN38fNXY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G6dnwsvUgrYl1OrqkZ9wOHYFRXBUnREZvE3I4Q8DK7cBq1Rg4GC1O7T6hLgDpw0uB
-	 LOeIcsJWCYs0+Ds6rJt+IA/ZYvko7PDG4uz6+BNtvuScjGYNU2WOvlu0dYpaPb1Z9E
-	 jyNTQnXLrBqMWo/Pr6Q+ynv2d4OyfGAu08zuKhFTmvkmk4JoLjqnvLFKHqVeYlHWGT
-	 B403m1RShc+XaN/zUuWTQFaZD4vHt8Y1H907S1PEHjuifUbVXTq+YNy2b3lD2UpCuh
-	 kdYycVw0GLNngjDcjVuqHjAAqX6aE1wbx/9K43ceEhm6UDjebJHz49FdMuy7BzX5ci
-	 hB27FC679dGAg==
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-44f6d7b586cso528703b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:10:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVnvbsaTvs7e1XIaYhoFpwcUFKBlLGwLqlHarSvZvDSAPrO2TKZ8k6cKBRqOuHyOxOXFYnH6NDp0Y7liqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv7jJjX883ThD5I4TlAIYaQAy4SvD0d60eI7ANKfqzxz7DqAi5
-	DPjl1Ujh97X3FW2FUVwWMC2KvhdV+R57ryTeRa7XXK9CpK72Qs9WZuPJHFIrWt2dzVNURYUlmJ/
-	Lk6C0+xACBnDrzSvXV5P8e0bJxCZiOrU=
-X-Google-Smtp-Source: AGHT+IE0knAQw6FfaushnbySWImrTzxFtRDabqyVZ1OX3SSkfmRS+Rz3Ee2OaBsxYv6Q+KSNzkK0/9j1cQNQK9cPfvg=
-X-Received: by 2002:a05:6808:15a7:b0:441:8f74:f1f with SMTP id
- 5614622812f47-44f6bb1e9c6mr1559391b6e.57.1761660651602; Tue, 28 Oct 2025
- 07:10:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBBC318131;
+	Tue, 28 Oct 2025 14:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.135
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761660715; cv=fail; b=LwhRw6fEWo24nB1l/xuRVGyofl6tTzmVMNUbhlKSaJIFTRZBvxPKd6OYzhlEzFkcthtz029BEH4WytNuA/K3GEROBoDOjNp+eWtQQotvUMImiYsz3s+Vw1+rJwFjW/ooDrgHaXbE4l5+T/zeTZQ+w5qNdEUmsuBiqK/cHQc1RCY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761660715; c=relaxed/simple;
+	bh=1Ey6YxesSAFmMscugou4FRVnncgY6X2RtT7EogNnLFA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=D7SPUo/rnfKtqz82P9qiF9vQBZm9a8O+5fH1zCTNfUgUEewY3ShRFi7TAlr1xVoAcRFBZ2qmOFrxxBdJAmdc7eh4erh8V1pgxTH79dF17bVeD22MmSZi6O8CwJV0jgpXtL5FGzioMC6ohlh+jQxE4UIEzpWQuudnk1FaYoe9De0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=eMHtqJAy; arc=fail smtp.client-ip=52.101.189.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=scqSkGXA3DO4DmZ0XJ5EanOWAyYU9py0/YAN79eoDQgQI8Ym4elsfX1ssUgiTSUnW/t5PicYHb1i2XLeysqNgaj90eQICE3ppRmsVJLth388CgaA/ZN1bpVtYdZw+K4hQ6W5vrCmWKHc06r6Y07QHILpHqNoB4DikJMmCwAVnV9BJqKGNNfDqW+h3rSySexOtp2AMKOxKCnZD/zPeuaurwIZuwvbUOLq8Q0W+K+VI9JUjlBy4EQjGYfpW5N/vPdUGW28F/L09F7ZPZaUf7NakZgKj4RhE0W1clx017bb6JvVlmP5QAOlb0leX4V8/do8PAHk9VO60zJYry+WNvOd5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=B3PhbknjB4rowKoIAFN9ZBuKLVF6qLMdZ+tMOcznx0k=;
+ b=Zw3FS61neI/SRlqkr97XZlfJVtdN5mGsORE0YwhDJQbWCw5topTaxDBwN5wnu8Ab9KpyQqeu8bs/N8CtM3pOLnUsGoJYXinW7QUpPle4I3WsZYanu/btz5TEgB35FFVhBHAFT9iXpQm6QiKsODix7uUtrwBtmBIvT369IfaboZxiyT/EWtkQS3WX/xUPXtzlDhlOq3B4HNxjyQtypROzPPeUrJXmr5MHbQP4ij+GGF2oL5PxwMEk94nyVakCI8Mru9UNjU+T6wbaCreLYztPQOf2+1UqjEc6+ADFzdMCzef47aYBW2gY/mqlmGmwQWE2UCpKoIBHg2DiTFIYWWBjvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=B3PhbknjB4rowKoIAFN9ZBuKLVF6qLMdZ+tMOcznx0k=;
+ b=eMHtqJAyBUs6oL9fNdY74EjUPzL3lMKEhDTC4ULoplnccEPTJ6ODwrml4yLyYb5C4qwiLCoqUzM/VKNwNNm4mKwoZdGU0ZDu+kQBx61SHvcEN4NU/mC2PiAhrgRqTJ3zHId2Y6p7RErjRLZSP2ApltvJ4NIzkRXBdN/hnH0XzU1m1dlYELv2kB4tES9YfNjiH0JEOWRVAsqdjvtqvyv91HWH85en1bW3m5pHy6WZU/yD5BCC9TU+DjhZcpeuso/U+e1twZknZGecoylarSbpMLeor4iP9XKBwrf+A5Huo3NIq0L0QEt+Fm/iy8OQjFyigWUDoIH2wEkIPmlOC36Otw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB8789.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:b8::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 14:11:47 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
+ 14:11:47 +0000
+Message-ID: <561981b8-4d30-43fd-9deb-47b776f1b032@efficios.com>
+Date: Tue, 28 Oct 2025 10:11:45 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V5 07/12] uaccess: Provide scoped user access regions
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ David Laight <david.laight.linux@gmail.com>,
+ kernel test robot <lkp@intel.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ linuxppc-dev@lists.ozlabs.org, Paul Walmsley <pjw@kernel.org>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Peter Zijlstra <peterz@infradead.org>, Darren Hart <dvhart@infradead.org>,
+ Davidlohr Bueso <dave@stgolabs.net>, =?UTF-8?Q?Andr=C3=A9_Almeida?=
+ <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org
+References: <20251027083700.573016505@linutronix.de>
+ <20251027083745.546420421@linutronix.de>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20251027083745.546420421@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YT4PR01CA0384.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fd::13) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929093754.3998136-1-lihuisong@huawei.com>
- <20250929093754.3998136-6-lihuisong@huawei.com> <CAJZ5v0iLt7rnXBaTBv=-ztKro39h1hECQS_Ov9Cn1eBcfhXDaQ@mail.gmail.com>
- <92b1b431-9855-43fb-8bb3-801649064438@huawei.com> <CAJZ5v0g0PgicTEAb3gAeF2D3ZqONNt+6odt2SfGE7XtY3zoPyg@mail.gmail.com>
- <ab814879-37d6-49dc-8a38-6b94cabf9327@huawei.com> <CAJZ5v0hHO_vuQ71sQ2=vmjEMNr3jYh6Wx_nk55gQVdGgWFDHKQ@mail.gmail.com>
- <37fb4e84-d404-449e-986a-e5ccb327bd78@huawei.com> <CAJZ5v0j9i1W3JmDQP+-tTqu1dnE1i1XeZUk5=JMKRN_e++iJ7w@mail.gmail.com>
- <8b1dc682-928a-4898-876c-ae6ccf59d328@huawei.com>
-In-Reply-To: <8b1dc682-928a-4898-876c-ae6ccf59d328@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 28 Oct 2025 15:10:39 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hTkVzuKQu4WFOxtdfC-uXTBYkBr77UurXj_zfDbgV0vg@mail.gmail.com>
-X-Gm-Features: AWmQ_blMwiClUZfXYAWhC0RqhmMfjUZfV9B0g6Ofzj4BSy4UXTWbOnLbxq5ntE4
-Message-ID: <CAJZ5v0hTkVzuKQu4WFOxtdfC-uXTBYkBr77UurXj_zfDbgV0vg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/9] ACPI: processor: idle: Add the verification of
- processor FFH LPI state
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB8789:EE_
+X-MS-Office365-Filtering-Correlation-Id: ed607d9d-b573-4aa1-6d66-08de162bee19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b1pmbjBXUUhHQXVJY255ZVZrRysySHg3NHY5U2NjcVNwZkhjaE1rQ3pnQ0Jz?=
+ =?utf-8?B?Qm1CNVB1K2V0SFRwT1pBc0IrY0p5ME5nd2d6SjNiTHZSaGs3WThwK0ZNN1M3?=
+ =?utf-8?B?NDkyTWU1WHlkMjVCUnRLcTFHUWMwTnRTVnpmT1N5dm5DMEJkVG51Mkloejlh?=
+ =?utf-8?B?aFBsRlNtRktTRkZHT2NzVS90aTdzbDlZaktIaGlZNzRKaFBtNzVod0dmNmdF?=
+ =?utf-8?B?RDBYVjMyQ3NZWGYyQWZFdDUvSWhZd0xuclNGYXMxQ1hmMmRnWFlKWGErOHdP?=
+ =?utf-8?B?VHBLUGxDc0g1dWRtZzh4TkhNMndUQy9mMVJDU1kxUkVaSzVmRU0wRmRmdEtx?=
+ =?utf-8?B?SEcrK0ZUZ1ptRWVhc001SlJocXJYNTNDYUQ3R1NSK0JDejQyRC9TcWF0cU4v?=
+ =?utf-8?B?USt4clpITWZlZTRyd1J2Qm5oaTBQdExSZkd1VXE3N1ozdFRONWNQbWxTZVFH?=
+ =?utf-8?B?TmtpNkNLNUlaaDVBKzhGdGxlRGo5SXZWNlR5S2llRFA4WXNQRzhybjBsWUNL?=
+ =?utf-8?B?SlpGKzRvdHdtTHhxMXR2ZzRiS3RVakxDc2dOTzFlTitiQnlPMGx4ZXUxMmhK?=
+ =?utf-8?B?STNIUDkwUU94N1EwZVpwbTJ5STlYcnovOExxTWxHc3grK1Q5aGpCaVRkOGRH?=
+ =?utf-8?B?bnc1RVRpWkxyd0hiaHRYQjRHZTZQdENhUGJPUG5jeDFPaGZySEdUUnJCUzlP?=
+ =?utf-8?B?Qy9tckRXc2t1Mkd1L3k3ZGpIU1Y4N2gyS0gwNjZKMDNGT3JLUnZYR1lHYUNq?=
+ =?utf-8?B?bUlwTkgzS1VEMDgvUDJhV1cveGp2WlI5TUVpSVRPWHJmVWRmeFhSVVRNczVl?=
+ =?utf-8?B?S3pQY3NzbmZjZ0dHMmpvNUpsVUtHb0RFUk12djR5YzJFQlpQTXdIem1WcEh5?=
+ =?utf-8?B?aDNkcHBTbjNZQ1Zld1RJOHRNTmMvWmV4VjBObjdEQmJ6THlqRnUzYXgyVUox?=
+ =?utf-8?B?ZHQ2SDErTktQTGliOStGMUdkdURScFR6YjNsbFI0OWZ1YW5uVnNwK3BSWEow?=
+ =?utf-8?B?VXVlQ0RNUEkzZ09WVmp1Y3FLcmdYcndEN3kySDVKQXhHU1hKci9rZnRmOGZO?=
+ =?utf-8?B?Q1RuUVAzdkQyYUlnakdFQ1l5M1ZXMkJTMWJyZUx1MUEzRERiVG9kNmpFS042?=
+ =?utf-8?B?SGpHdWh6Q21VY2RYSXJLTlJtSVA3ekVma3pSQ1ZIS0JsdWVLQkJmRGt0cDE3?=
+ =?utf-8?B?MU1SR3NPNy9aaGJBaVIxNm1WQUwvS2M5N1JJK1hNYytiRk1nQXdDeUI3ZjBx?=
+ =?utf-8?B?UFlXRnRiZHNCWmVseTJ1TW1VbXdURkowZ0RtV3o4em0vckJFaXFzQlNlMEhu?=
+ =?utf-8?B?WmtIZEJxMVFiZzhvdy9KckFXUE83TE02aDAwd1JzL3dRdkhBWDhseU1TYnRQ?=
+ =?utf-8?B?aDF3OVNPWWJqNlBNWTIrZ1U5TUdXdURWRW9qZ1RKVGZrRkJVdk1zSlNrWWtr?=
+ =?utf-8?B?Zkt0T3JBZm5FUWhsM09za29rby9FeTdkU3JibUxuVFYxVWhQNS9Hd1QyQTZJ?=
+ =?utf-8?B?SGxIalZFVFpsZHRGaWIxNzBhN1F3NkpRak9YakFjU2hvb0cvWjhwSDVXeWNS?=
+ =?utf-8?B?TkRNK3Z6bEtjdVNxY0hmZHFUR2pnRC9iazkrUG41clpQYU1nRTkxQjRvQVVk?=
+ =?utf-8?B?NWhVL0w1RG16N2VXWFg4Y1RxdmpLTkJodFdCTWlNTjZLbzRHUVBsMy9Sc1hu?=
+ =?utf-8?B?c0dqSUpITmNXclcwTnh1R1VQOE9hRHUwMk9oelVvaVFnN0VibG1yeURmci9X?=
+ =?utf-8?B?Q1JuVG1ibVhvM1hNWXR1Y0VxV1FCSk9iejRDNlF0UXJETHA0cHh6NWtIZmRB?=
+ =?utf-8?B?Lyt1WVE1NnNzVHRKb2s3WFBqaHpyMWIwdWxmaXVNVEVoRXhpdFR4cXlEYXpX?=
+ =?utf-8?B?V2RxMXFkbHlNMExrNWdHM1dBOXprejJtK3A0YnFoMUF6NHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Vll5OHFDSGtyNEs2VWc5UkE5dFFYUmxrWkF6bDRpbzB1eU9ySXdsdFFNOVNa?=
+ =?utf-8?B?MGhUQm9DOEZ4VktOc2wwTUM5eDc3NzNPL1dmTG9nWko0RGN1Y2ZxQlUrVmFN?=
+ =?utf-8?B?VjR1MTRHNE9zZldWaHpWa3Nhdm4vcEk0OEZrTUNhejhXMmZIV2xEdzJQSWc0?=
+ =?utf-8?B?emJpOGVpdUMrYlI2OWRoQ2NCSFNkUzd0UFZ5cDREUElaS1ZrRVdVVVFiMEZP?=
+ =?utf-8?B?amZrZWpCSzV0a1lCN1BpNnNNcFR1Y0FGK1Y4MUVEU29URzF0TFpwRS92aE0z?=
+ =?utf-8?B?TUtGSnVXczhxMk44Ymdib3JvWFJiV3Y5cXovQ3pHQW43MXRVNC95K09GMndV?=
+ =?utf-8?B?dmlPVjMzNWdjWXJXZkJyc2RhT3hGbExiNXRVUmJtaytqcnJVbG5DS2duMm04?=
+ =?utf-8?B?TFprVGhPazdwRHBWdUhWMXk5WXFHSnlUQUpxcGFvWEFuL1JzWi9sYzJnaWZH?=
+ =?utf-8?B?eDUvdkNnZ0FCR1hTbm5jemE0d0Y0RG81ZEl4cUgvSGpqTkNqWlVUZ2NBVktt?=
+ =?utf-8?B?UXdaNkVqMjUwVFFONGJTZVhCak0rTFZtaVltdDZWbDI2KzlCWUhUQXl5MGdQ?=
+ =?utf-8?B?c3lRam9WczdIZ2JqeUhKclVUYmNyUWM3NFdBZE9ISTNxeVhDU2h0UGpnRjEy?=
+ =?utf-8?B?MmppUVo4M05xdkF4U3hBbzRKYkxMNmpLS0tlM29KRHRTMlYvQndNeXFDdHlL?=
+ =?utf-8?B?NFF6K0ZUVUkyMHhESCs3aGduWk4waFlIdllFb2FSTEZicWtJNnhncjVwaEZ3?=
+ =?utf-8?B?akdNTEoySUM0dFBjdWxsUHI5MENSWDVXUGlVbjFlQ1NXVExqTzcyc0lacWNB?=
+ =?utf-8?B?bjFmRktrOVY2ZVgweGlyTmFYcnBmUXM3OFlvblBIamRCZVJhWXk4VHY3MnRR?=
+ =?utf-8?B?VWkzajBrMmpwTmtmYXVkT1RSQzV3bS9JSDlLOVdQN1FMSWNNZnR0b3M2UGR2?=
+ =?utf-8?B?YkFNUm5JYitRNVFlWjBJSG9MY0hHK0VEdzgwMzdzaGdSdEMvQVFveS9Veldk?=
+ =?utf-8?B?Tkg0b3VFcThqMFpzaUdsZlNXRGVaVVBCWW1ocDRxSEtVbXR6SklNMlgzenNu?=
+ =?utf-8?B?VVJkSjB1S0tmS2Q3SW9Tbm1zamo0THFldk5WVVdyZ3FETHNHV09nTHN1UTJm?=
+ =?utf-8?B?anhCcHp2UGErYVBPSWlkaUJ3N1dRVHBYSkxHcytKR1BVeURoTnYwMGRFaHRV?=
+ =?utf-8?B?RWJtM1d0SHMzTVZ3UUtKbVpiVGg1NVdNWFZHU3MwQ0t1ZDlPUXFraHFTbXhv?=
+ =?utf-8?B?Yk50NmJrL1lXUzlSVGcrMG5WdksxMmtDaG95N2x0M0N2cUxORlNwdFdGenhB?=
+ =?utf-8?B?V1ArSnB2YmNINHJIc0Vvc2Y4cGRXMHpwSzg1U2RJbHM4eDJseGpCSTRpbmsr?=
+ =?utf-8?B?YkZ2UkVucVhGdVB3Q1V0TUlMbWlWM3JGQ3FzQlpxMFBvTnEzb1N2SXZ5bE1l?=
+ =?utf-8?B?Q1hqc0NEcDZNek1lbzFaM2h0Vk5hMFF4eVJ6K3RsRW93MnBZbmVCSkxBNTZL?=
+ =?utf-8?B?TVJqTUFIVmpyQmxCcVFFWFYwMC9HZmIvNUJYUmd1Q3paTGN2L3RRcjk4MGVr?=
+ =?utf-8?B?YmVKcmlaRXVHaVE0cDJ3VjkxQTdiUmRzVnRyblBhWnFPWDhPUE9DOSsxTlBL?=
+ =?utf-8?B?K0NOSUt3MkVGMDlhQ0FQaGpmYVp2Qk5peTgxbkt0NnFjTVo3S0NPeXVVRGMz?=
+ =?utf-8?B?TTJ5eDZNQ2JFa1VVZjRjT1NhWnJUTFd3M2tpWEhZbnFRaWxRdHpZN3JCVi9M?=
+ =?utf-8?B?Y0FzZGtDNU5ZempPNHBDaGVJTHFNMDVTQzEvQzNFQ1Z3Ky9MMTFjdlhFaEFB?=
+ =?utf-8?B?MXFSZ1VrcWE2d0NoUDNleUtqNkZyU1RHcGhKKzFzYWVMb2c0SGtlVUpoZ0h4?=
+ =?utf-8?B?azZPY3dEL0NGQkQzVHFxZGxHcW5wU092VHlzd29SQ3I0bVEyYWN0bkpBeE45?=
+ =?utf-8?B?dE91TkR6a25ZZEdrM0FlZkZGQ2w5NUxNZnpEQUlORENpRVE3Q2JVUkJjYXFY?=
+ =?utf-8?B?OEI0bDR3S05iRURyYTBwWjd6bjJNc3FPK21vdGlsbFB5UG8yNG1DMkN4UUEx?=
+ =?utf-8?B?Vmg1RXJvVnN1V1VnaU9jeWdIcmJ3SzIxVVRIQVpnSDdRcjlCSTdFbkMxa0x3?=
+ =?utf-8?B?SHA3cG5RVTNZMWJTR2JHTUtNQjNjbTJJRWRpM2sxd2RFSGl6Sjdtd2tCS09H?=
+ =?utf-8?Q?l00KehbBiwEdiI+YOtDxL/Y=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed607d9d-b573-4aa1-6d66-08de162bee19
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 14:11:46.9619
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rv1hT0w/RvoPm9oZmw0lS9vOIR2JaOk2dmRUyj8KbD2OqJiBAtgDQ0K6+IKTjX/fhDGpgZ3xs4EEUsngy2Z3ieSEgsIzKs+MwgeLFFu9DCE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB8789
 
-On Tue, Oct 28, 2025 at 1:45=E2=80=AFPM lihuisong (C) <lihuisong@huawei.com=
-> wrote:
->
->
-> =E5=9C=A8 2025/10/27 20:28, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> > On Mon, Oct 27, 2025 at 2:43=E2=80=AFAM lihuisong (C) <lihuisong@huawei=
-.com> wrote:
-> >>
-> >> =E5=9C=A8 2025/10/26 20:40, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>> On Fri, Oct 24, 2025 at 11:40=E2=80=AFAM lihuisong (C) <lihuisong@hua=
-wei.com> wrote:
-> >>>> =E5=9C=A8 2025/10/23 18:35, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>>>> On Thu, Oct 23, 2025 at 12:17=E2=80=AFPM lihuisong (C) <lihuisong@h=
-uawei.com> wrote:
-> >>>>>> =E5=9C=A8 2025/10/22 3:42, Rafael J. Wysocki =E5=86=99=E9=81=93:
-> >>>>>>> On Mon, Sep 29, 2025 at 11:38=E2=80=AFAM Huisong Li <lihuisong@hu=
-awei.com> wrote:
-> >>>>>>>> Both ARM64 and RISCV architecture would validate Entry Method of=
- LPI
-> >>>>>>>> state and SBI HSM or PSCI cpu suspend. Driver should return fail=
-ure
-> >>>>>>>> if FFH of LPI state are not ok.
-> >>>>>>> First of all, I cannot parse this changelog, so I don't know the
-> >>>>>>> motivation for the change.
-> >>>>>> Sorry for your confusion.
-> >>>>>>> Second, if _LPI is ever used on x86, the
-> >>>>>>> acpi_processor_ffh_lpi_probe() in acpi_processor_get_power_info()=
- will
-> >>>>>>> get in the way.
-> >>>>>> AFAICS, it's also ok if X86 platform use LPI.
-> >>>>> No, because it returns an error by default as it stands today.
-> >>>>>
-> >>>>>>> Why does the evaluation in acpi_processor_setup_cpuidle_dev() not=
- work?
-> >>>>>> The acpi_processor_ffh_lpi_probe does verify the validity of LPI f=
-or ARM
-> >>>>>> and RISCV.
-> >>>>>> But the caller of the acpi_processor_setup_cpuidle_dev()don't veri=
-fy the
-> >>>>>> return value.
-> >>>>>> In addition, from the name of acpi_processor_setup_cpuidle_dev(), =
-its
-> >>>>>> main purpose is to setup cpudile device rather than to verify LPI.
-> >>>>> That's fair enough.
-> >>>>>
-> >>>>> Also, the list of idle states belongs to the cpuidle driver, not to=
- a
-> >>>>> cpuidle device.
-> >>>>>
-> >>>>>> So I move it to a more prominent position and redefine the
-> >>>>>> acpi_processor_setup_cpuidle_dev to void in patch 9/9.
-> >>>>>>>> Fixes: a36a7fecfe60 ("ACPI / processor_idle: Add support for Low=
- Power Idle(LPI) states")
-> >>>>>>>> Signed-off-by: Huisong Li <lihuisong@huawei.com>
-> >>>>>>>> ---
-> >>>>>>>>      drivers/acpi/processor_idle.c | 10 ++++++++--
-> >>>>>>>>      1 file changed, 8 insertions(+), 2 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/proces=
-sor_idle.c
-> >>>>>>>> index 5684925338b3..b0d6b51ee363 100644
-> >>>>>>>> --- a/drivers/acpi/processor_idle.c
-> >>>>>>>> +++ b/drivers/acpi/processor_idle.c
-> >>>>>>>> @@ -1264,7 +1264,7 @@ static int acpi_processor_setup_cpuidle_de=
-v(struct acpi_processor *pr,
-> >>>>>>>>
-> >>>>>>>>             dev->cpu =3D pr->id;
-> >>>>>>>>             if (pr->flags.has_lpi)
-> >>>>>>>> -               return acpi_processor_ffh_lpi_probe(pr->id);
-> >>>>>>>> +               return 0;
-> >>>>>>>>
-> >>>>>>>>             return acpi_processor_setup_cpuidle_cx(pr, dev);
-> >>>>>>>>      }
-> >>>>>>>> @@ -1275,7 +1275,13 @@ static int acpi_processor_get_power_info(=
-struct acpi_processor *pr)
-> >>>>>>>>
-> >>>>>>>>             ret =3D acpi_processor_get_lpi_info(pr);
-> >>>>>>>>             if (ret)
-> >>>>> So I think it would be better to check it here, that is
-> >>>>>
-> >>>>> if (!ret) {
-> >>>>>           ret =3D acpi_processor_ffh_lpi_probe(pr->id));
-> >>>>>           if (!ret)
-> >>>>>                   return 0;
-> >>>>>
-> >>>>>           pr_info("CPU%d: FFH LPI state is invalid\n", pr->id);
-> >>>>>           pr->flags.has_lpi =3D 0;
-> >>>>> }
-> >>>>>
-> >>>>> return acpi_processor_get_cstate_info(pr);
-> >>>>>
-> >>>>> And the default acpi_processor_ffh_lpi_probe() needs to be changed =
-to return 0.
-> >>>> Sorry, I don't understand why pr->flags.has_lpi is true if
-> >>>> acpi_processor_ffh_lpi_probe() return failure.
-> >>> It is set by acpi_processor_get_lpi_info() on success and
-> >>> acpi_processor_ffh_lpi_probe() does not update it.
-> >> The acpi_processor_get_lpi_info() will return failure on X86 platform
-> >> because this function first call acpi_processor_ffh_lpi_probe().
-> >> And acpi_processor_ffh_lpi_probe return EOPNOTSUPP because X86 platfor=
-m
-> >> doesn't implement it.
-> >> So I think pr->flags.has_lpi is false on X86 plaform.
-> > On x86 it is 0, but what if acpi_processor_ffh_lpi_probe() fails on arm=
-64, say?
-> Arm64 supports the acpi_processor_ffh_lpi_probe().
-> So pr->flags.has_lpi is 1 on success.
-> >>>> In addition, X86 platform doesn't define acpi_processor_ffh_lpi_prob=
-e().
-> >>>> this function will return EOPNOTSUPP.
-> >>> Which is exactly why it is a problem.  x86 has no reason to implement
-> >>> it because FFH always works there.
-> >> Sorry, I still don't understand why X86 has no reason to implement it.
-> >> I simply think that X86 doesn't need it.
-> >> AFAICS, the platform doesn't need to get LPI info if this platform
-> >> doesn't implement acpi_processor_ffh_lpi_probe().
->
-> > Well, that's what is implemented in the current code, but it will need
-> > to be changed if x86 is ever added and I'd rather avoid cleanups
-> > making it harder to change.
->
-> What you mean is that X86 use LPI?
+On 2025-10-27 04:43, Thomas Gleixner wrote:
+[...]
+> + * __scoped_user_access_begin - Start a scoped user access
+[...]
+> + * Internal helper for __scoped_user_access(). Don't use directly
 
-In the future, x86 may want to use _LPI, that's all.
+"directly" -> "directly."
 
-> If X86 also define acpi_processor_ffh_lpi_probe and use LPI, this patch
-> is also good to it.
+> +
+> +/**
+> + * __scoped_user_access - Open a scope for user access
 
-Well, fair enough.
+[...]
+
+> + * can use @elvl or a different label outside the scope, which requires
+
+elvl -> elbl
+
+Other than those nits:
+
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
