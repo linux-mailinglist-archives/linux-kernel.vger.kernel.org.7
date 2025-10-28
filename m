@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-872895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2474BC128D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:30:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F623C128D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:31:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61DCC1A65972
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:31:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BE8F435490F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5043E23BD1A;
-	Tue, 28 Oct 2025 01:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27090246782;
+	Tue, 28 Oct 2025 01:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hnr26WG3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXdJxKfr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1D3185E4A;
-	Tue, 28 Oct 2025 01:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629D624291E;
+	Tue, 28 Oct 2025 01:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761615030; cv=none; b=kWDQMLNjfhZ6TDDrC2RjhupI/H/kXW6O6lV+D1jTSbYG0ZsBhKA++vJ0hY7/hoTo/43l9LD9WK9vCsPvri6C/oA2UEezjLkg7aXOHzgaiQ7gKR4D45hcs8syt+NGrvt//4xDaJwKVLukGbU1OPypi23Zm/wrxqAq/QvALbU/t6I=
+	t=1761615033; cv=none; b=qu/blZ2CaaBc5QhEN+/W5qkapR/UmfzaL38LtfamGJX2ZVaA7BUaa8Q9uTwRwDNDa8TzAKkhjfNMb23zVO4QguD8getAQ2btIPKwUwS7z1XDf4+6PHHpMbMRsncFgcn18rt41Q/73pzwgAw+wu2SqctaUDNfToWGft589C8Un/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761615030; c=relaxed/simple;
-	bh=Bm2irc7gXUY0CPdzzsQ3acckBICJU4QlM8eFUNd3X5Y=;
+	s=arc-20240116; t=1761615033; c=relaxed/simple;
+	bh=o3kCu3EuhOIPjiF/VpH1qDgmw5lE/WjtvwGR/PMy/yc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZrTL/VyvKz2/EEuKu91U5oGeS7uQnzmvop4SKJrhqYspIwqoDVYKTJ6QRINgunOZCrfcHb11jdmPEU75EovBhwV4e2wCmasjZpGMrg/TgfFGtdsqIZFIVgwYz4xkzoZ0Eq/mgE1kzfmdjn4+oRciWISO2YTu1GfBdfWB310rqvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hnr26WG3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E557C4CEF1;
-	Tue, 28 Oct 2025 01:30:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JLZcIBg4JJPjFzC7GXYOOweGY2RAdoWJhw9xqDV8Wn+MV3cC8tYGsm0LO0UmxQQWC9CdrIynxXXt8sZY6rWllXmTT07cOzsrujG9+GdGAcZUksVTmMV9YSGCBEwPFuQkDpQPE95JPg8tovOxoHp6vnum/Urr37DX4tVu+/bfrgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXdJxKfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0771C116B1;
+	Tue, 28 Oct 2025 01:30:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761615030;
-	bh=Bm2irc7gXUY0CPdzzsQ3acckBICJU4QlM8eFUNd3X5Y=;
+	s=k20201202; t=1761615032;
+	bh=o3kCu3EuhOIPjiF/VpH1qDgmw5lE/WjtvwGR/PMy/yc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Hnr26WG3OLnFInlblb0f266rA6wtxVdNFWKC/epftIgZJ7fXAroehIm+TrueFE5IM
-	 daxlCSD8Z8HuN9z/PFR9JGDRwnPt5CAZmGEKyfMIdPXmGMt8V3DoME7GnOOUYzPAhE
-	 bfYXIsykI1KMN5VSL8qjV5FcTRyOZ/FUMV28JQFiiNdj+at8YB5aaOAyf7RIRLm4AX
-	 iobP3RB9fzN/ZZKifiiU6T5DhB31l+EMAF26B0mrakbs57ZUl2dvvGQdPBRkP2X+xW
-	 qZahuqyLgeiKIbbcwLiqTMynhl0my8EBErqLg3hicCuhDjgZBcndqydxadn853f1vi
-	 FF7/G9uD2b5Vg==
+	b=WXdJxKfrjpY1Q579EbyfGRsyA+UO7lrxqVGN2JZ/iHfG/P8i04RQoOWu7+dWZ49vM
+	 RQ1pan8usfQY/ppspEmHk2KgoE08ebWB88tKqiH4BnNMKJisWNxU8x2ZebLJhBp5li
+	 ywHvFg71rWm3ggMApoGzf3/FLkRiv4dACTv/3vzUewFePb3ol3qYE5sqVgqqWCWNFo
+	 /UmFmoGwWxK+1qrrIkc4C1xyKC9hlnUF7jswkNjn1S6ymRltdoBau8KFF8qtDbvo+q
+	 5Mor7easUFxkucLz/IDRpvftwjnOJmawuZFIv62FT7WG3VjHE/ExBHZS6NPZ+jmUQ7
+	 bTpIL4IUh1PBg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7131E39D60B9;
-	Tue, 28 Oct 2025 01:30:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E8E39D60B9;
+	Tue, 28 Oct 2025 01:30:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,43 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] dt-bindings: net: sparx5: Narrow properly LAN969x
- register space windows
+Subject: Re: [PATCH net] dpll: spec: add missing module-name and clock-id to
+ pin-get reply
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176161500826.1653952.7154756553118848296.git-patchwork-notify@kernel.org>
-Date: Tue, 28 Oct 2025 01:30:08 +0000
-References: <20251026101741.20507-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20251026101741.20507-2-krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Steen.Hegelund@microchip.com,
- daniel.machon@microchip.com, UNGLinuxDriver@microchip.com,
- lars.povlsen@microchip.com, robert.marko@sartura.hr, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
+ <176161501100.1653952.3250284969978682466.git-patchwork-notify@kernel.org>
+Date: Tue, 28 Oct 2025 01:30:11 +0000
+References: <20251024185512.363376-1-poros@redhat.com>
+In-Reply-To: <20251024185512.363376-1-poros@redhat.com>
+To: Petr Oros <poros@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, donald.hunter@gmail.com,
+ jiri@resnulli.us, vadim.fedorenko@linux.dev, milena.olech@intel.com,
+ arkadiusz.kubalewski@intel.com, ivecera@redhat.com,
+ michal.michalik@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mschmidt@redhat.com
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Sun, 26 Oct 2025 11:17:42 +0100 you wrote:
-> Commit 267bca002c50 ("dt-bindings: net: sparx5: correct LAN969x register
-> space windows") said that LAN969x has exactly two address spaces ("reg"
-> property) but implemented it as 2 or more.  Narrow the constraint to
-> properly express that only two items are allowed, which also matches
-> Linux driver.
+On Fri, 24 Oct 2025 20:55:12 +0200 you wrote:
+> The dpll.yaml spec incorrectly omitted module-name and clock-id from the
+> pin-get operation reply specification, even though the kernel DPLL
+> implementation has always included these attributes in pin-get responses
+> since the initial implementation.
 > 
-> Fixes: 267bca002c50 ("dt-bindings: net: sparx5: correct LAN969x register space windows")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> This spec inconsistency caused issues with the C YNL code generator.
+> The generated dpll_pin_get_rsp structure was missing these fields.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] dt-bindings: net: sparx5: Narrow properly LAN969x register space windows
-    https://git.kernel.org/netdev/net/c/210b35d6a7ea
+  - [net] dpll: spec: add missing module-name and clock-id to pin-get reply
+    https://git.kernel.org/netdev/net/c/520ad9e96937
 
 You are awesome, thank you!
 -- 
