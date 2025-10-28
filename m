@@ -1,104 +1,149 @@
-Return-Path: <linux-kernel+bounces-873951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71B4C15294
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:27:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A54C15282
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 365F0464EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044B3460D9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45453376BA;
-	Tue, 28 Oct 2025 14:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F7C3370FF;
+	Tue, 28 Oct 2025 14:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjKECZ2+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uIBa1ecY"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383902877FE;
-	Tue, 28 Oct 2025 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BA9335BA6
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761661236; cv=none; b=oBdlPfugFhcoro09Dx4GCXKX2tpYmxQIbA2sWDbB3emzdyCVBD9luDy6neLI6Dm53H+sXNsI4v/usKYYt72jaBTiHUkXf1weeczCMleQuNF2tSHIOrNFuC4SBfCS08uhHyxG5285GQpwtsn70wV7YiEAhdNzHVUaicrpiW5RXhw=
+	t=1761661230; cv=none; b=L+IuLbqmUvFxHq1tPzuh2+OsfAxsdfFvU30TJDEVcYq3WmhnPINBIck6mVt8K17rzZ7kPCVIHpGsgmj7+cDg/Qk7Wd+Ua/mKZMYQZjVTxGYVh5KRZYXeVrfds5/3D9FghydsfeSAuPg/q/8l3sGaP4neui/tbIlL3iSUl+YY4ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761661236; c=relaxed/simple;
-	bh=QwRLL5j9thMLgs8+QAEz/w2vJUj8mHUdca6Hu3kM2Uk=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=mnmZUZz7OP10bSXu04ZuXaZmeM9cc81i1/sxvSVBIgne0eBFG9N4NpqgdFbhC4vOpeVkR4V/Ctiex/Z5o6+fsvYqK1dwEHzL3hCM1JGf87F/LeoyQSWK2rNUMMtT4Man7dxUtDhFiYbTeLci8ddMfzsM8r2zE6M26x/whw45FJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjKECZ2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC445C4CEE7;
-	Tue, 28 Oct 2025 14:20:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761661235;
-	bh=QwRLL5j9thMLgs8+QAEz/w2vJUj8mHUdca6Hu3kM2Uk=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=RjKECZ2+Ujtg9uz6vMIFpfGU1yq701BpLgwVitjDZToVOw+z4uWhQvZlZ3isW9KiG
-	 9uaGfZ4QajI5E7jj94vjw+pkPvF3Ddt6F0qDJJLIt8vaOA9vxmnrlGZvwhcCN4Y5U3
-	 cuwuYMyVdHRd77q+GUV/fBuWkBtT6T9KyMt8MxiN/w0XM06ljlWnYxyDbNGC0CQ1aq
-	 15dktkxmNG5AuaehrbJjp1Jp5z2yXO7r8z4YjSfe+2trXM5Pt4flThmd+Ze33nr46Z
-	 ipuEbMtO7uCmEo2OC3N4Xs7aNcy4DciqLbMx4uly8+EaKkrH9kDJuVTztM+JDChAOL
-	 Ek/d0eQOSgb8w==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCBB39EFA55;
-	Tue, 28 Oct 2025 14:20:14 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1761661230; c=relaxed/simple;
+	bh=pP8FTV47DQsaScTl4AKuec/C6HsHLvvn5JrdlNFvXF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rok61aCXaTHwrXqFgUUh54SFSYLVVehKQpK2kZY+Sk1/kyt2McVHvjVwoWnb/wXvNKXAGZ8pr63fKEv9tWUWtTJfYUuMyTJtWO1QODjvlfchnNK3cr8v9oCLtmNrSl+6LQ/DWpJr8G1bCCBv6TOfQz9tcJgUrTJ3+0Dyk9UL3k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uIBa1ecY; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-376466f1280so90823211fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:20:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761661227; x=1762266027; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sOmSiTMyA8cqAorOzkSzQ5xujNoDEMVqXsbHnkkNM1c=;
+        b=uIBa1ecYcS0SjQasgAEKQr/pVNdcH2s+vv+Ivq8X+TvJlZm3PK4XkoOKj+ySjsss6V
+         0g8VjUJ/7QVvEAWpyHMqMetwZu3/zoN1N9yyXtB0KFxrE/rVPaA1Wla9t4UuOGIAw/wn
+         tLvnxdxSdn4y9ZLZkoqvs3/uknC8cTF+ohyHp0eXubW+fJwQrXlNVOsgxyt8mMbBy66D
+         1uC4SKbYh7kSu4m2DIPdoiKVO+xnGkWcrG1i+y3Uwm1SYSS1wzr0PjgOSFofFE0v8Jnx
+         uh6w6swnMKwZGoMtYXUS13Dhkpdcfv4aAkZJJYWpnhecHmYQWvg4zllIFHM+xQPboquJ
+         uIow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761661227; x=1762266027;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sOmSiTMyA8cqAorOzkSzQ5xujNoDEMVqXsbHnkkNM1c=;
+        b=aBrcWG41+KAoCY7irB/ov7k8ZtRqXGwaYcSia+Am+fOcK92TnuI6RO9TVUaM9Z1sEl
+         uiNtWbqlqi5dceG/mxK/4eyR4frFI48qtfqecvn7EO2DqsHoVhvBaa0cg0sWR7cn7GOm
+         1o+5dJZJ+XvNtG7sovfcqlRdptDDVonplQ3Z791ifaX27A8GKuL+3JeAulRvXb7tNbz4
+         ivn4tkzBuKJuh3J56HdAvZZ+E+GlWXwNmftjKlEdUTBUDd+jJ7qGjobeo4CkWkEoKca/
+         FwCyeRI8oXfegofs2wzKOkP84fpBvrCbHSMbhs673iTCgTgGP4YoLzdyys1xbQsIQ1Fm
+         mrdg==
+X-Forwarded-Encrypted: i=1; AJvYcCXo9M7ukzGvhc1H1d5Ya1pTT5Y/IeAvXSisL3voAU5XYVkBGIwKppjwNHysMRkuZTJVU1SWEXrIh+D9XQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/9Byd3pV0IDl3hiV+giWGlFPpD+F7mStqFdAP3A9RdOevSWWp
+	+sDAJlkttuvm7Cz/DMYoHxXYYorcDUM3CxZfTKvzDT4q0a3qHGGWPs22DvlkAgJ5+NguO3v8xXn
+	WRvBk6b0iy1EhOMqADDG2u8X2nFdUjo4KLUt3KFyqTA==
+X-Gm-Gg: ASbGncsPMVOIIWlzaWzTYpy/mte5LuKBf75xpC3cCwmEqxLdoEY5e0EM6yZYLGymZVh
+	7EKFujsjS1BVgwUr0f3Gwpaclnf/U6oXSIpf2hnZnITqVyfLwRGzw40G/oPuJdwHdL9IWukIUGj
+	X5+i1C3r61W755cIcVgk8OFB9uyG1LcvaYsDaqTa43MdAhgtbyFRLpZRUNvDqvWD9bfMIgcFS9c
+	BQOdhBy7G2G+U/PVPkGU0XBIigitKNxUjoW4a6bRHLG29TiCkupiOxJ/+IlW0zND71JEAR7PwRc
+	Tef3HWbUZMUlLFZSAq0S3bJwtd0=
+X-Google-Smtp-Source: AGHT+IEa9/49xzFtkrl2WuFSbF2nGR0Ee3sa2JYGGK47IcVnnhS7gaKd3pqPtDHg3v3/2iaUnvbb9dKc2W6cTL8KA/s=
+X-Received: by 2002:a05:651c:2354:10b0:351:62e3:95d6 with SMTP id
+ 38308e7fff4ca-3790773c607mr10303011fa.28.1761661226962; Tue, 28 Oct 2025
+ 07:20:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3 0/5] net: macb: EyeQ5 support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176166121351.2249512.7238254409117352079.git-patchwork-notify@kernel.org>
-Date: Tue, 28 Oct 2025 14:20:13 +0000
-References: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
-In-Reply-To: <20251023-macb-eyeq5-v3-0-af509422c204@bootlin.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun_=3Ctheo=2Elebrun=40bootlin=2Ecom=3E?=@codeaurora.org
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev,
- linux@armlinux.org.uk, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, benoit.monin@bootlin.com,
- gregory.clement@bootlin.com, maxime.chevallier@bootlin.com,
- tawfik.bayouk@mobileye.com, thomas.petazzoni@bootlin.com,
- vladimir.kondratiev@mobileye.com, andrew@lunn.ch, conor.dooley@microchip.com
+References: <cover.1761588465.git.geert+renesas@glider.be> <76ac5587c5ff3aae3c23f7b41e2f3eacb32ebd21.1761588465.git.geert+renesas@glider.be>
+In-Reply-To: <76ac5587c5ff3aae3c23f7b41e2f3eacb32ebd21.1761588465.git.geert+renesas@glider.be>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 28 Oct 2025 15:20:13 +0100
+X-Gm-Features: AWmQ_bkGEmC8OCwW4QksGegCfgNPPWl_EjVB0knvBjv-hfBoqYq6hENcwtWJ0QE
+Message-ID: <CAMRc=MdcH-56_cJ7oDUhHRsJRnDqbss5ET-3yGrBffGmEK_ieQ@mail.gmail.com>
+Subject: Re: [PATCH v5 04/23] gpio: aspeed: #undef field_{get,prep}() before
+ local definition
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Mon, Oct 27, 2025 at 7:42=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Prepare for the advent of globally available common field_get() and
+> field_prep() macros by undefining the symbols before defining local
+> variants.  This prevents redefinition warnings from the C preprocessor
+> when introducing the common macros later.
+>
+> Suggested-by: Yury Norov <yury.norov@gmail.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> --
+> v5:
+>   - New.
+> ---
+>  drivers/gpio/gpio-aspeed.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+> index 7953a9c4e36d7550..ef4ccaf74a5b379e 100644
+> --- a/drivers/gpio/gpio-aspeed.c
+> +++ b/drivers/gpio/gpio-aspeed.c
+> @@ -32,7 +32,9 @@
+>  #include "gpiolib.h"
+>
+>  /* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
+> +#undef field_get
+>  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
+> +#undef field_prep
+>  #define field_prep(_mask, _val)        (((_val) << (ffs(_mask) - 1)) & (=
+_mask))
+>
+>  #define GPIO_G7_IRQ_STS_BASE 0x100
+> --
+> 2.43.0
+>
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
-
-On Thu, 23 Oct 2025 18:22:50 +0200 you wrote:
-> This series' goal is adding support to the MACB driver for EyeQ5 GEM.
-> The specifics for this compatible are:
-> 
->  - HW cannot add dummy bytes at the start of IP packets for alignment
->    purposes. The behavior can be detected using DCFG6 so it isn't
->    attached to compatible data.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,v3,1/5] dt-bindings: net: cdns,macb: add Mobileye EyeQ5 ethernet interface
-    https://git.kernel.org/netdev/net-next/c/c51aa14be9c4
-  - [net-next,v3,2/5] net: macb: match skb_reserve(skb, NET_IP_ALIGN) with HW alignment
-    https://git.kernel.org/netdev/net-next/c/ae7a9585ea69
-  - [net-next,v3,3/5] net: macb: add no LSO capability (MACB_CAPS_NO_LSO)
-    https://git.kernel.org/netdev/net-next/c/7a3d209145d1
-  - [net-next,v3,4/5] net: macb: rename bp->sgmii_phy field to bp->phy
-    https://git.kernel.org/netdev/net-next/c/3f7e51cd5fbf
-  - [net-next,v3,5/5] net: macb: Add "mobileye,eyeq5-gem" compatible
-    https://git.kernel.org/netdev/net-next/c/48cf0be9b9a6
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
