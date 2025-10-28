@@ -1,86 +1,167 @@
-Return-Path: <linux-kernel+bounces-874421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D05C164A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:50:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046D7C16466
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:46:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD3AE503A18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:46:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 737FD3565E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D4C34DB4C;
-	Tue, 28 Oct 2025 17:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF11A34D4CD;
+	Tue, 28 Oct 2025 17:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ou17VRgY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdEK6NOy"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E1934D4EE;
-	Tue, 28 Oct 2025 17:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640DB34D4D8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673545; cv=none; b=FWlP+x6BeOVNZHy3NXsClD8QRDPkYyG3CZK1/XmH2FYn24E2YLSP7A/SWxMqTOpsBOjBbzPBHDgraSs36jxpVT6p9ZLZNdh4KjTA1VLLjSmrn2Tag3Aql09Bwq6AsNq0I0nutAVviDbLDKHwOy0VRDAidxYVrZgbISU531JZmRo=
+	t=1761673565; cv=none; b=QwZpAKUEPjnzn3Ey1oU6cxATa08ksagFg4JCdWcQcCh7+Urfk3XWQawIqCAAfVJlKrcmUxMaSQd6YTjESWJeh2rhC26lUd7nBztgqTeV2rtOTf2+h9qOpimsgFB4/bHUhCiXerMQA3yxUfUcjmC4MAerxHQM1MhY5b4DeYlfBVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673545; c=relaxed/simple;
-	bh=+dLtF98APFzqQMWkNMDsXupA4N5Dose6NnX1dZolbVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dh7luU1xdIEjJ4aF5IByorb9ujvga1CZdt9GO+afPkZK6rdsd34tHEYtdKdpkJuFhyX4bT2du/J8mv0F7bm9MpqtabwXFlv37ll/3JToOYiz83wt7u7Ia4XtPMV9Bt0QSqetc+55bAiCQPpeek2rGbbp4sx+pcKyYLLEo5PpXyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ou17VRgY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38512C4CEFF;
-	Tue, 28 Oct 2025 17:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761673545;
-	bh=+dLtF98APFzqQMWkNMDsXupA4N5Dose6NnX1dZolbVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ou17VRgYRWyf7GYttLPtnHUL+7krmFU9uA8ITFxYKSyNOUC8xGU6Qe6bONJCeuhDe
-	 vm/wRRRo6LRCDrzCocybRsHQdrkYl4DuGUq+AwjWdVdURI1dbPJt2sdALRKazMZiTj
-	 K3Lr4veYfZPEaGPEMYwFNXlOLTxo1T/CHWaPqBnVHmF62FcjVO9TFpjhtPmh1a5XR5
-	 UZQg0nofH38apj895X+qVyxyXVzo3QomLqIW5aBbVaDbfFP8c4M2xgEilECICxAsb/
-	 fxUMJ0rz2DDGwOuxk2jagSLl63Xki/UxNTaJ235oASLPSmvvBw/Q86TchAfwV1LmsS
-	 0aHfqsAIUyMrg==
-Date: Tue, 28 Oct 2025 10:45:41 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Eugene Shalygin <eugene.shalygin@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kbuild@vger.kernel.org
-Subject: Re: Can't boot kernel 6.17.4+ via rEFInd
-Message-ID: <20251028174541.GA1548965@ax162>
-References: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
- <20251026211334.GA1659905@ax162>
- <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
- <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
+	s=arc-20240116; t=1761673565; c=relaxed/simple;
+	bh=gB7hEkZPdK08HudRz2YuF8fv82Vq7UsDwA/HC8IHSaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=btBuDkq+tp3G4Sl1ViMnm6vOSxc3NF0rlKhHjiA7GVJj9g2k8b43dsEhb4NE5SDokzvhEHt5cM5dNnxnZU2tydBTnvrEnpEa8t3Gflk2pwXfLBo/Ts8VFaEl55qFg2nvDgm6QtJOvW36wwT8RW8wlhEdmrVVrGkOJJ1VpPHbf7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdEK6NOy; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-427084a641aso4633108f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761673561; x=1762278361; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z8o8F76IUU0UbQ0/2SRvS77TkF8M8+mUDrHHUTizJsU=;
+        b=EdEK6NOyQhyKdAf7e6PzuB+lCbL2yoTMei36RwI6UkbbU9Bn14Wn2giQDD4Qkv70CJ
+         lnoKa4+nqmt9+U1xSlDWwfHOJpC2utZQ5jR0iWnWv1cZtbjeDGBiELXB5s59ZTGfpUXC
+         3fuureugnjV3ePzbWnHc+lRs/msS0W6pIDDPsJ7DHuVwb/wywYVV+bLtPbi26mx2gept
+         xx3yJXC8ls1Egw5KEF0uDUatfRepLzuKGMZUmHmQ5QYrhckIN0PDxgdVnTM/vzo5yXFQ
+         u26Oj/YT/gtuTTUMJNsClH7XtQdenszfsOrOqFpYgz6PXe3LnZqCXEYzjdmSxqlWmH9+
+         gnXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761673561; x=1762278361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z8o8F76IUU0UbQ0/2SRvS77TkF8M8+mUDrHHUTizJsU=;
+        b=DoTLRwa1YQYlWPwXJh+wEf3NjResFu/Sf869KUFxkcR8fnLAxwh3aEQX/luulzJsMO
+         7ZLW6aOmZveS6XKD+wTQCNYS2CIPJ6FvhQGUEUDglU4syImr1m+SWGcPuMwwzDjLv4Il
+         xBNnx30ZKlNqC59aRROPdAK0HqYD8USK1zzxQi/Aj4Y5uF8WzU9jV/MwMAVVx+q3trBO
+         KEu2UUrm8Uaxf9wjUNRhKKtgIUkRJ88BMD2oXMqzth0EUK0wh8xfB65v1+xRr70IzvHw
+         ugY5XAxrDwlc6i1W+4LxR0+ANFXa1rLkhLGPnfnZsMl1OUWmCuWdX7jT1yXNG45GLLdy
+         9+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWO3B48ANJdL5XafSvdIA/v8M7yJ4LqNKThFot0tBHI4dGvLdt4bpZTRARwx+Gqq66ONGTUEh+/f498in0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfXXEF537IBvn7ffoIEUzq1r8LeRHK/6OIISnj1j8RzXhRsalj
+	G0hjqJIWRQ2q/dYw5LFv/jovOMjD6qijqWwde1be2hBQ4eGVlP+TJZ5mHbMsKxXa+5/fWcuYmGn
+	1R7T6IB8SiRZSE4YTGSMGnmFWaDUht3o=
+X-Gm-Gg: ASbGncufq3m7FjlVLKsx3MLAKHegbRcIIW2WefuS5JQaZkIist7H6AtF/uB5R72kzTV
+	SWBo/o/sW2I3lvk37oSAlegvX028bVkOKl74NTof8ESQZ3E3+TMWJ9e6StKipJkl3RzsTjGeVDV
+	DMTKGeS9PvkaJzqTecq5coRunqrOjWAIcpBQDLrr3coejkzQ8kbVybISWkGWo4c2+rmZpswRWkj
+	jgd3ND6ng7YVid/54QlS79A9u4qDjao77Euk362fs2h5fLvAy7rbmNAGvP2WXiZUJPosq/yaXaM
+X-Google-Smtp-Source: AGHT+IHdC935jXGEIZNQ8BYD/ANRC6JF/uyaxHO8iGt25M0BknomRTBrWpakBaxhp4hLDP8/bFuayzs/ibY+/MUNENI=
+X-Received: by 2002:a05:6000:3108:b0:427:6cb:74a4 with SMTP id
+ ffacd0b85a97d-429a7e7a1b0mr3757740f8f.39.1761673560565; Tue, 28 Oct 2025
+ 10:46:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-7-roman.gushchin@linux.dev>
+In-Reply-To: <20251027231727.472628-7-roman.gushchin@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 28 Oct 2025 10:45:47 -0700
+X-Gm-Features: AWmQ_bncnJypaBtdt8pXLZmr8dzBy7-unV831zo2gE3qs0GF1C9pXA_M9bOiMqw
+Message-ID: <CAADnVQKWskY1ijJtSX=N0QczW_-gtg-X_SpK_GuiYBYQodn5wQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 09:41:25PM +0100, Eugene Shalygin wrote:
-> Hi Nathan,
-> 
-> On Mon, 27 Oct 2025 at 20:35, Eugene Shalygin <eugene.shalygin@gmail.com> wrote:
-> > Neither the patch nor 6.18-rc3 work. I'm going to try to revert
-> > 5b5cdb1fe434e8adc97d5037e6d05dd386c4c4c6 together with anything that
-> > is needed to apply the reversing patch.
-> 
-> Replacing CONFIG_KERNEL_ZSTD with  CONFIG_KERNEL_GZIP made the kernel
-> bootable. What does that mean?
+On Mon, Oct 27, 2025 at 4:18=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+>
+> +bool bpf_handle_oom(struct oom_control *oc)
+> +{
+> +       struct bpf_oom_ops *bpf_oom_ops =3D NULL;
+> +       struct mem_cgroup __maybe_unused *memcg;
+> +       int idx, ret =3D 0;
+> +
+> +       /* All bpf_oom_ops structures are protected using bpf_oom_srcu */
+> +       idx =3D srcu_read_lock(&bpf_oom_srcu);
+> +
+> +#ifdef CONFIG_MEMCG
+> +       /* Find the nearest bpf_oom_ops traversing the cgroup tree upward=
+s */
+> +       for (memcg =3D oc->memcg; memcg; memcg =3D parent_mem_cgroup(memc=
+g)) {
+> +               bpf_oom_ops =3D READ_ONCE(memcg->bpf_oom);
+> +               if (!bpf_oom_ops)
+> +                       continue;
+> +
+> +               /* Call BPF OOM handler */
+> +               ret =3D bpf_ops_handle_oom(bpf_oom_ops, memcg, oc);
+> +               if (ret && oc->bpf_memory_freed)
+> +                       goto exit;
+> +       }
+> +#endif /* CONFIG_MEMCG */
+> +
+> +       /*
+> +        * System-wide OOM or per-memcg BPF OOM handler wasn't successful=
+?
+> +        * Try system_bpf_oom.
+> +        */
+> +       bpf_oom_ops =3D READ_ONCE(system_bpf_oom);
+> +       if (!bpf_oom_ops)
+> +               goto exit;
+> +
+> +       /* Call BPF OOM handler */
+> +       ret =3D bpf_ops_handle_oom(bpf_oom_ops, NULL, oc);
+> +exit:
+> +       srcu_read_unlock(&bpf_oom_srcu, idx);
+> +       return ret && oc->bpf_memory_freed;
+> +}
 
-Hmmmm, I am not sure... That seems rather odd within the context of the
-flagged change.
+...
 
-Could you post the output of 'readelf -S vmlinux vmlinux.unstripped'
-from the broken and good builds? Does rEFInd have any sort of additional
-debugging to see why/what it is complaining about not being able to
-find?
+> +static int bpf_oom_ops_reg(void *kdata, struct bpf_link *link)
+> +{
+> +       struct bpf_struct_ops_link *ops_link =3D container_of(link, struc=
+t bpf_struct_ops_link, link);
+> +       struct bpf_oom_ops **bpf_oom_ops_ptr =3D NULL;
+> +       struct bpf_oom_ops *bpf_oom_ops =3D kdata;
+> +       struct mem_cgroup *memcg =3D NULL;
+> +       int err =3D 0;
+> +
+> +       if (IS_ENABLED(CONFIG_MEMCG) && ops_link->cgroup_id) {
+> +               /* Attach to a memory cgroup? */
+> +               memcg =3D mem_cgroup_get_from_ino(ops_link->cgroup_id);
+> +               if (IS_ERR_OR_NULL(memcg))
+> +                       return PTR_ERR(memcg);
+> +               bpf_oom_ops_ptr =3D bpf_oom_memcg_ops_ptr(memcg);
+> +       } else {
+> +               /* System-wide OOM handler */
+> +               bpf_oom_ops_ptr =3D &system_bpf_oom;
+> +       }
 
-Cheers,
-Nathan
+I don't like the fallback and special case of cgroup_id =3D=3D 0.
+imo it would be cleaner to require CONFIG_MEMCG for this feature
+and only allow attach to a cgroup.
+There is always a root cgroup that can be attached to and that
+handler will be acting as "system wide" oom handler.
 
