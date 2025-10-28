@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-874501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B2FC16753
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:25:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3239AC16759
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:25:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA3104FCE22
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:25:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A01D2356DF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2680350D75;
-	Tue, 28 Oct 2025 18:22:13 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587B83469F5;
+	Tue, 28 Oct 2025 18:22:51 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D811345722
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEAAA2E543B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761675733; cv=none; b=jf/Sb5T+81e6A7+zfNf6KcgV1V9CBKL1dyF1a3A0t0pMaX4wdp+VTX7aWz9fqzolnUkNqUQEubBOWk9+hawC+rdJkbGckyRFWyN6YfNjSla0ftgHlzbeCKOibnHzHQYsxZ8Vn7+DkaWBt6HLAoW43GG42GiEfipl6mcmP5nEFqY=
+	t=1761675770; cv=none; b=OaRKq559mIrvSgijyNuLofzozNplkjfxC5seIJgN3AjlszFOcW2PKj+HXNh5kFOIZ3AwvcxadGyny9fKajIUUEHLKn0Ur+DIPF8ATKinwozAoClzdkHyVMwyi/2bNGdlEF8rkAcIKQQNg6Ci5xy+ShtN75ZadFwK0nEth0qqyj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761675733; c=relaxed/simple;
-	bh=8qNldGNzWL1WtJvjnyg+s05Oc2KiVwd9hVAvpZN7oos=;
+	s=arc-20240116; t=1761675770; c=relaxed/simple;
+	bh=9+Rs16G9a4KRaN5OlDyXbWWvaUi6IdlxqzGSH8W+wbo=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WGa9mK9J1jibDT2wjzpY7vEzyGEsFIMTHpO5NrYWTYH5rGQgat9jmI5O3I77ajDKESz0m812hq+9rBIqS68c4OjgKbWlQePWstE3AJNrwPqhrCZXsJWR0jbtHDhuVhcSPT+mVzdQYV/dVMv7O5mc5o+NBy1wObWXLI7ScEJCDjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+	 Content-Type; b=b5j83dxHMylId1klZQE1AHd77kAntKMLHorRcu8WLVjNioP3keupYp3j6Pp77XYxbyq9nho9vHXu2kQ4SUMhnY6/Y5WKqiiOWLtilJ15kMGrx1OM+RYSXWLM8yyo1sfJQSOGPAClkwaXq7KHwP87VJkC4VB4x3luzONOl1WCssU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430ced58cd2so226147495ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:22:11 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430d789ee5aso81926705ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:22:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761675730; x=1762280530;
+        d=1e100.net; s=20230601; t=1761675768; x=1762280568;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmTmeUgS9qACl94yTOySxNgklAagaDvCrK3aaZPOHc4=;
-        b=ZI4jfUtRgU4ioQhW42o6VZ5sdVueJD/I9SwDyCoqZvSSognqEAOywHojHksjGrZoQk
-         DDMV07lsfNOd008OiwlBeW/DyYrgh6yzZ/BoJUrFBvjB8WYHwsQsFM0kKjoBzIm0ZX7f
-         xeKkBTLpDDaO18RpiF76sz1rjp2rGe0bucMuqfOKJLUrGLolync7wputfSuBJ3DesA71
-         sQdb2aDaPhEMhHqHlUTtwC5J72A0r2kVB1h7f0NPyvHl2XoQJqzT8JWEaEnUN22W/5eD
-         El3IIEtzBt9nuYxwfgiTOYRiky+MTkrSL57sYOjjE4eDH8CgLrxIE/hE7ml+p3l7yQue
-         5VQg==
-X-Gm-Message-State: AOJu0YwRTUUTCtZ1FCTUkc+qXZRF+ZuQXqDXJsprpYfiIOkOyVv40M70
-	IgNR/bBxq58ouCBjn7LaAFdWWfMyv+vHEG9ElQ3a93ydC9cjtxGBZPhzBlYZTb+lnCa7/ce+ruR
-	n4g51t4/DAkETd/qFqQqiV5/zE36hvguNH9/adJlNPhFZGNWMlIM+mii2Qsw=
-X-Google-Smtp-Source: AGHT+IE91h5FXagHaOMJuUKogEsq+DZKAuddyhYBrGOKxROqFAfljnu+K5B+nRRvRsMXv3Lg1qN14DoEgmY9oXvA7U++8Exu/lQp
+        bh=KMt4K1hSuVsXX4R2lD7sh5NJ9h7Ip5nva1Ktu9PBth4=;
+        b=iE1oDhBdplI8D/qDri4Um41FSD18tVYBbGIHxqru86F+ME0qW5aaRFzOez/SJ3BzSf
+         x/Itz0X35F8OCKjuX73itLVsVOnrvCIQsPKubG7utxmah6M/Mnr0ltKfYSchJ29UOn94
+         /IGz+1P4vsRv2dUE1VcPWl6K/adKdBZD4f4cfqw5CusfBID4Pd16tqjI8a7qAzyC9Vve
+         4Tid53iYySQEp+5EnayNBDYBpm7cjQOOz/ZfeVMTyYtHnoGhxC5vXolU13AIgX2u4w9F
+         E7i+TkvkFEbT7nStALWWvsxrppQZOzaL/SlJIdQjxbu7Hh7faShNKBCBTVUtXPgSNzJd
+         wBqQ==
+X-Gm-Message-State: AOJu0YzXM4Bt8wLh6DAKTyldHZncl7TmX4y6R+tMTmGbIlB66QWt6cvh
+	WOp5iTT81+cHC/bngXvAB5ldy4en3sZMhV40tbl7NS/QPNWXfopizUXQ9Zct2m/ZWYv1P53p8ZH
+	IFKWG/vCPix//BuhCy+L6eOW0MI8Q9Ew60khZM6THIlieNryvaDgYUpiYcV4=
+X-Google-Smtp-Source: AGHT+IFBRIjP0L1rc6QBSO415FdqG/0JOiexyUtVXMYzp7/YG/WULc8PQ+as+r2/DQsTSbRG+eQc7nWNrKo96MwnNEupF6XIIbHT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:5e84:b0:430:ab80:66f9 with SMTP id
- e9e14a558f8ab-432f8f87012mr2610035ab.1.1761675730651; Tue, 28 Oct 2025
- 11:22:10 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:22:10 -0700
-In-Reply-To: <00000000000052138306204134f2@google.com>
+X-Received: by 2002:a05:6e02:16c6:b0:432:f818:4334 with SMTP id
+ e9e14a558f8ab-432f903c899mr1619085ab.21.1761675767951; Tue, 28 Oct 2025
+ 11:22:47 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:22:47 -0700
+In-Reply-To: <68d913e1.050a0220.1696c6.0003.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690109d2.050a0220.3344a1.03cc.GAE@google.com>
+Message-ID: <690109f7.050a0220.3344a1.03cd.GAE@google.com>
 Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
- linux-6.1.y
-From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
+ linux-6.12.y
+From: syzbot <syzbot+30b53487d00b4f7f0922@syzkaller.appspotmail.com>
 To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -70,14 +70,14 @@ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
 ***
 
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
 Author: dmantipov@yandex.ru
 
 diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 7f11ffacc915..e606826045b5 100644
+index 5d9388b44e5b..b84e164c6314 100644
 --- a/fs/ocfs2/alloc.c
 +++ b/fs/ocfs2/alloc.c
-@@ -6155,6 +6155,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+@@ -6162,6 +6162,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
  	int status;
  	struct inode *inode = NULL;
  	struct buffer_head *bh = NULL;
@@ -87,7 +87,7 @@ index 7f11ffacc915..e606826045b5 100644
  
  	inode = ocfs2_get_system_file_inode(osb,
  					   TRUNCATE_LOG_SYSTEM_INODE,
-@@ -6172,6 +6175,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
+@@ -6179,6 +6182,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
  		goto bail;
  	}
  
@@ -108,7 +108,7 @@ index 7f11ffacc915..e606826045b5 100644
  	*tl_bh    = bh;
  bail:
 diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index de6fd4a09ffd..82da2f518697 100644
+index 7799f4d16ce9..51e09c0c77f7 100644
 --- a/fs/ocfs2/dir.c
 +++ b/fs/ocfs2/dir.c
 @@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
@@ -150,7 +150,7 @@ index de6fd4a09ffd..82da2f518697 100644
  	if (el->l_tree_depth) {
  		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
  				      &eb_bh);
-@@ -3416,6 +3437,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
+@@ -3415,6 +3436,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
  		offset += le16_to_cpu(de->rec_len);
  	}
  
@@ -165,7 +165,7 @@ index de6fd4a09ffd..82da2f518697 100644
  	/*
  	 * We're going to require expansion of the directory - figure
  	 * out how many blocks we'll need so that a place for the
-@@ -4107,10 +4136,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
+@@ -4096,10 +4125,15 @@ static int ocfs2_expand_inline_dx_root(struct inode *dir,
  	}
  
  	dx_root->dr_flags &= ~OCFS2_DX_FLAG_INLINE;
@@ -184,7 +184,7 @@ index de6fd4a09ffd..82da2f518697 100644
  	/* This should never fail considering we start with an empty
  	 * dx_root. */
 diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index a1f3b25ce612..d8b2c19609e2 100644
+index 4a7509389cf3..9f6daa4b256c 100644
 --- a/fs/ocfs2/inode.c
 +++ b/fs/ocfs2/inode.c
 @@ -1419,6 +1419,31 @@ int ocfs2_validate_inode_block(struct super_block *sb,
@@ -220,10 +220,10 @@ index a1f3b25ce612..d8b2c19609e2 100644
  
  bail:
 diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index c4426d12a2ad..a041f2626c54 100644
+index d1aa04a5af1b..56be21c695d6 100644
 --- a/fs/ocfs2/localalloc.c
 +++ b/fs/ocfs2/localalloc.c
-@@ -910,13 +910,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
+@@ -905,13 +905,11 @@ static int ocfs2_local_alloc_find_clear_bits(struct ocfs2_super *osb,
  static void ocfs2_clear_local_alloc(struct ocfs2_dinode *alloc)
  {
  	struct ocfs2_local_alloc *la = OCFS2_LOCAL_ALLOC(alloc);
@@ -239,7 +239,7 @@ index c4426d12a2ad..a041f2626c54 100644
  
  #if 0
 diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index b1e32ec4a9d4..6acf13adfb55 100644
+index f9d6a4f9ca92..b10c8acd469b 100644
 --- a/fs/ocfs2/move_extents.c
 +++ b/fs/ocfs2/move_extents.c
 @@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
@@ -271,7 +271,7 @@ index b1e32ec4a9d4..6acf13adfb55 100644
  		context->auto_defrag = 1;
  
 diff --git a/fs/ocfs2/ocfs2_fs.h b/fs/ocfs2/ocfs2_fs.h
-index 7aebdbf5cc0a..0670829d9818 100644
+index c93689b568fe..2421ad603d24 100644
 --- a/fs/ocfs2/ocfs2_fs.h
 +++ b/fs/ocfs2/ocfs2_fs.h
 @@ -468,7 +468,8 @@ struct ocfs2_extent_list {
@@ -336,7 +336,7 @@ index 7aebdbf5cc0a..0670829d9818 100644
  };
  
  #define OCFS2_DX_FLAG_INLINE	0x01
-@@ -933,7 +937,8 @@ struct ocfs2_refcount_list {
+@@ -934,7 +938,8 @@ struct ocfs2_refcount_list {
  	__le16 rl_used;		/* Current number of used records */
  	__le32 rl_reserved2;
  	__le64 rl_reserved1;	/* Pad to sizeof(ocfs2_refcount_record) */
@@ -346,7 +346,7 @@ index 7aebdbf5cc0a..0670829d9818 100644
  };
  
  
-@@ -1019,7 +1024,8 @@ struct ocfs2_xattr_header {
+@@ -1020,7 +1025,8 @@ struct ocfs2_xattr_header {
  						    buckets.  A block uses
  						    xb_check and sets
  						    this field to zero.) */
