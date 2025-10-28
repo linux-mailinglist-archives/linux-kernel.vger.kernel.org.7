@@ -1,180 +1,170 @@
-Return-Path: <linux-kernel+bounces-873812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA688C14CB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:15:59 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D638C14CB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016CF1B25B18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:16:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DC844E809F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79F518BC3D;
-	Tue, 28 Oct 2025 13:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618D61E3DF2;
+	Tue, 28 Oct 2025 13:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhdlgvXs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMObxLmu"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B07379EA;
-	Tue, 28 Oct 2025 13:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96C51534EC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761657352; cv=none; b=mHMI38LNTXjMcyNnGgDkr/USomb5Zs2oZDGaUVIkSjEWPdPdDYUb2n8EbAuaJoa7SJaCnxkLW8xm95JJQOUSfegt++3gziF72ZZaCStoFMYA7o1TECY7oylpWcHr2hMm+XdwCMc8yVWR8M+GwV54lRb4s5gxVNe6peJmtY/gGSo=
+	t=1761657502; cv=none; b=ZouKWd/I8pXyaRamRBSsXptMS713ofnRb0epZwE0EsyaWu3sS5ALuW+VGAqBhkf6YVYu2JXivCtzEl0Jvwocb68ccZc29le0gCX02DF47HRzs5UmVg/gH04TjIJ7pTszkzQmOuiUkCfqbsuHDl+zGbWeHXgmS+DMKZHESHEl8PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761657352; c=relaxed/simple;
-	bh=jgk53h7OSDfuZZih1qwRmh/i7Jrm083kbSCmk6tyGss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mw/Ofe7oyI6L8cA7tAF2seWGG1n6fxbbHp9EsOMbXocaDT3vOQeq5cI/RGdFiWh88pNCfK3oCN6FqLDjgDXug576gkxQCAxG558qE5aikAFF8q66txH4dgY4J8hxbxUDSx0hw60OTMk0RGXXQeEcmx6jQ0/V5iCXzZcUgsT32NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhdlgvXs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23DDC4CEF7;
-	Tue, 28 Oct 2025 13:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761657350;
-	bh=jgk53h7OSDfuZZih1qwRmh/i7Jrm083kbSCmk6tyGss=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WhdlgvXsdkUyMpn15dEY5mILwDw6umVD2N2R1lqoyLTBvGQUt1LS+lCFW4ugucwXR
-	 QVUQEyu7cC58JQQi9af+CFHr54y66WWUkLSq5oCg5AHReytX/pnlllglklzBPSqYzl
-	 TOf7+OoU2UrlNBHMnmsCQAhuVK0AXD1Siqj/aOerhAf1frPGCxJW0Go4vnBwt6Ej1L
-	 vNNtYUkGTiVixV4KWW+fEilkg+5dyL/EYi6PyiRnBry1s08tepgdQyyRXou53TU1Kj
-	 4Pyy8gRFRJuI+y3V4UtSDVCHybzDGsXPBBjAIU22c7rJENtKWcpFE6MoflnWxTOfU6
-	 fP4BkjZEj+XTg==
-Message-ID: <fb519d0e-9d7f-4835-964a-c21fd24b10e8@kernel.org>
-Date: Tue, 28 Oct 2025 08:15:48 -0500
+	s=arc-20240116; t=1761657502; c=relaxed/simple;
+	bh=fiLWZK6ImQVCW9629k9PoFbTy4/Jk9SIirXQPkk2UZQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=thI9ih10Q7rgIuoaAy7pkCfvii5WZ3QSnnciqouFewTiwWYVQ8bDj9Syme599HMvzNWWUmv5Ob3ztyGzsg+ek/fBETteGs7+Df+UKmKw8Dwc8jwT7AueYe3boM14GAIawEPWE8Y9JJ1WRbDa99VkG4IlVCxeiJat8rO2M/Rl2NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMObxLmu; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-592fdbeb7b2so5995743e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761657499; x=1762262299; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TqhalhS8wH7ktHtboyTNLZoKooOIXtABZeKACOZEvrg=;
+        b=KMObxLmuHCAoskojdE3pq0YS5LVn7dOFJxPVuVKQKX9HnmaN5wVrU0Icb+EDa/wvPB
+         blypoeYlGTEuXMdrCAFDko+yje12V3IC+CAKpJ3xXCN2jh/PntaBA7bwJps3rGBYhpg6
+         6aZAsZrnPvRCfNWNszPAq4ry+CznuH/waQNeAhMjvJPNJOvijsxH06NwFDMqy+PN1oM8
+         8f2UnbE1SOtOIy3oKQ/Sin8uLDKfQiLC1O6g1oKDEmU7RNTwD7t7APG20TuPScj5Lr24
+         glTwRDlTbcUZ0FX24Tg1CFtWN0q93jj1mXeaE641XjJPrIYVLf3II3PMqPndRkiu8ovt
+         iuHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761657499; x=1762262299;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TqhalhS8wH7ktHtboyTNLZoKooOIXtABZeKACOZEvrg=;
+        b=rP14/OMQv5t1jgqTv770H0pnKIKiNSECFyr2jf9tn+HCimdG0fnvhwMH3mHKNdig9x
+         GXGUazHUKVqErPQDISqhBQMM9w80Iw5T6D9l0haXjizblSM3UBi83etUzHY0+6HqeGNS
+         W8x8Hp17dPbHGFWBd901kbf0KGkZ8fqdXUsrRwc/MRNdTJA88DVXFGaEHAHpFwDQXTqr
+         dBhOXqG3n2y+/YSBmMORtVsNBI4p230yPKp4LYGBdxepdJV7jykA7SgLgyHIA8UNapYf
+         O5wT4MTSQZK+nMzOn1MqP3ZFfnbi/D1FdSmnGAg0A2YuDsoVr+7pVIOUlhi0ilpZPZws
+         vezw==
+X-Forwarded-Encrypted: i=1; AJvYcCWU1cOlYOIrm1E+Al4YcFcQcHFUA/KlcwW9spqdrtTJNUdZWPuFywTvo204qcie5/2MduH+RdS0LhHno/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOErkYR0cvjL3+FkzlcinjwZblWKbQIvhKqtC6CbKNtKf7gp3S
+	yLpQM5cLLfhOpEtE4fYchvOKK5OaSi0xg5zWsiU9Wrq5gOQAc0gmLHKnyNISMqjnkrs=
+X-Gm-Gg: ASbGncvff/QKdqrSMRfMklHvZbU1qMUXxsPiDLyv5eMkraL6zZvuB6QXM7WIvdoDAhE
+	9CpEILYii6jdvcAK/cxEUZ5s/gO0kLkFe6trQlI3dwPX7a7Vs39GZJLckQM6A3tEo/bC1Y55U7k
+	vzCCDh13wnkXRBOL9vT6soivnFEVvRdl15JTc0Qb9FHqEtAqRfgbxXzUVnfAiO6T3kVgahvtNY5
+	A1LZ1RyK1fDeuvRUb0rIo/6OGUWyNjVVRpR42NshzeZFM2wojIZSXrOcLngYb/uW1zEL+XJZc6v
+	c7UXpVZ3YMQlbhm/OciEkyoF5Zybycl+G7faCfyYUi4Ry7qYYNproFRaenaIopnPa2IUDHVdeJo
+	C+e3qWX0P+LDlSRLkpqGriERVaevnUJLGQpXrE+cZgSo=
+X-Google-Smtp-Source: AGHT+IFH42jTuKwp0a5o9y/IlF7jThN+9qfutPbd8sJT3wsJFSPYJU9S3gA+Z0OKXiwtbIQO2EAhtw==
+X-Received: by 2002:a05:6512:31d0:b0:592:fc21:bbfc with SMTP id 2adb3069b0e04-5930e9dd0a7mr1227732e87.44.1761657498708;
+        Tue, 28 Oct 2025 06:18:18 -0700 (PDT)
+Received: from milan ([2001:9b1:d5a0:a500::24b])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f55739sm3048909e87.49.2025.10.28.06.18.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 06:18:18 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@milan>
+Date: Tue, 28 Oct 2025 14:18:16 +0100
+To: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Mikulas Patocka <mpatocka@redhat.com>, Alasdair Kergon <agk@redhat.com>,
+	DMML <dm-devel@lists.linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dm-bufio: align write boundary on bdev_logical_block_size
+Message-ID: <aQDCmAPfpIGZiceo@milan>
+References: <20251020123350.2671495-1-urezki@gmail.com>
+ <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com>
+ <aQCDLBie3fGwMDW2@milan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
-To: Aaron Erhardt <aer@tuxedocomputers.com>, David Airlie
- <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- Daniel Dadap <ddadap@nvidia.com>
-References: <20250811162606.587759-1-superm1@kernel.org>
- <20250811162606.587759-4-superm1@kernel.org>
- <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQCDLBie3fGwMDW2@milan>
 
-On 10/28/25 5:16 AM, Aaron Erhardt wrote:
+On Tue, Oct 28, 2025 at 09:47:40AM +0100, Uladzislau Rezki wrote:
+> Hello!
 > 
-> On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
->> On systems with non VGA GPUs fbcon can't find the primary GPU because
->> video_is_primary_device() only checks the VGA arbiter.
->>
->> Add a screen info check to video_is_primary_device() so that callers
->> can get accurate data on such systems.
+> Sorry i have missed you email for unknown reason to me. It is
+> probably because you answered to email with different subject
+> i sent initially.
 > 
-> I have a question regarding this change. To me, the function name
-> video_is_primary_device() implies that there is only one primary GPU.
-> I would also expect that the 'boot_display' attribute added later in
-> the patch series based on this function is only set for one GPU, but
-> that is not necessarily the case. Since I'm working on a user-space
-> program that reads the 'boot_display' attribute, I need to know what
-> behavior is intended in order to do a correct implementation.
+> > 
+> > On Mon, 20 Oct 2025, Uladzislau Rezki (Sony) wrote:
+> > 
+> > > When performing a read-modify-write(RMW) operation, any modification
+> > > to a buffered block must cause the entire buffer to be marked dirty.
+> > > 
+> > > Marking only a subrange as dirty is incorrect because the underlying
+> > > device block size(ubs) defines the minimum read/write granularity. A
+> > > lower device can perform I/O only on regions which are fully aligned
+> > > and sized to ubs.
+> > 
+> > Hi
+> > 
+> > I think it would be better to fix this in dm-bufio, so that other dm-bufio 
+> > users would also benefit from the fix. Please try this patch - does it fix 
+> > it?
+> > 
+> If it solves what i describe i do not mind :)
 > 
->>
->> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
->> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
->> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
->> ---
->> v10:
->>   * Rebase on 6.17-rc1
->>   * Squash 'fbcon: Stop using screen_info_pci_dev()'
->> ---
->>   arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
->>   1 file changed, 24 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
->> index 81fc97a2a837a..e0aeee99bc99e 100644
->> --- a/arch/x86/video/video-common.c
->> +++ b/arch/x86/video/video-common.c
->> @@ -9,6 +9,7 @@
->>   
->>   #include <linux/module.h>
->>   #include <linux/pci.h>
->> +#include <linux/screen_info.h>
->>   #include <linux/vgaarb.h>
->>   
->>   #include <asm/video.h>
->> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
->>   
->>   bool video_is_primary_device(struct device *dev)
->>   {
->> +#ifdef CONFIG_SCREEN_INFO
->> +	struct screen_info *si = &screen_info;
->> +	struct resource res[SCREEN_INFO_MAX_RESOURCES];
->> +	ssize_t i, numres;
->> +#endif
->>   	struct pci_dev *pdev;
->>   
->>   	if (!dev_is_pci(dev))
->> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
->>   
->>   	pdev = to_pci_dev(dev);
->>   
->> -	return (pdev == vga_default_device());
->> +	if (!pci_is_display(pdev))
->> +		return false;
->> +
->> +	if (pdev == vga_default_device())
->> +		return true;
-> 
-> This can mark a VGA device as primary GPU.
-> 
->> +
->> +#ifdef CONFIG_SCREEN_INFO
->> +	numres = screen_info_resources(si, res, ARRAY_SIZE(res));
->> +	for (i = 0; i < numres; ++i) {
->> +		if (!(res[i].flags & IORESOURCE_MEM))
->> +			continue;
->> +
->> +		if (pci_find_resource(pdev, &res[i]))
->> +			return true;
->> +	}
->> +#endif
-> 
-> And then the new code can also choose a primary GPU.
-> 
->> +
->> +	return false;
->>   }
->>   EXPORT_SYMBOL(video_is_primary_device);
->>   
-> 
-> In particular, I have hardware that has this exact configuration where
-> two GPUs are marked as primary and have a 'boot_display' attribute: the
-> first one through vga_default_device(), the second one through the new
-> detection method.
-> 
-> Is this intended?
-> 
-> Kind regards
-> Aaron
-> 
+> > 
+> > 
+> > From: Mikulas Patocka <mpatocka@redhat.com>
+> > 
+> > There may be devices with logical block size larger than 4k. Fix
+> > dm-bufio, so that it will align I/O on logical block size. This commit
+> > fixes I/O errors on the dm-ebs target on the top of emulated nvme device
+> > with 8k logical block size created with qemu parameters:
+> > 
+> > -device nvme,drive=drv0,serial=foo,logical_block_size=8192,physical_block_size=8192
+> > 
+> > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+> > Cc: stable@vger.kernel.org
+> > 
+> > ---
+> >  drivers/md/dm-bufio.c |    9 +++++----
+> >  1 file changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > Index: linux-2.6/drivers/md/dm-bufio.c
+> > ===================================================================
+> > --- linux-2.6.orig/drivers/md/dm-bufio.c	2025-10-13 21:42:47.000000000 +0200
+> > +++ linux-2.6/drivers/md/dm-bufio.c	2025-10-20 14:40:32.000000000 +0200
+> > @@ -1374,7 +1374,7 @@ static void submit_io(struct dm_buffer *
+> >  {
+> >  	unsigned int n_sectors;
+> >  	sector_t sector;
+> > -	unsigned int offset, end;
+> > +	unsigned int offset, end, align;
+> >  
+> >  	b->end_io = end_io;
+> >  
+> > @@ -1388,9 +1388,10 @@ static void submit_io(struct dm_buffer *
+> >  			b->c->write_callback(b);
+> >  		offset = b->write_start;
+> >  		end = b->write_end;
+> > -		offset &= -DM_BUFIO_WRITE_ALIGN;
+> > -		end += DM_BUFIO_WRITE_ALIGN - 1;
+> > -		end &= -DM_BUFIO_WRITE_ALIGN;
+> > +		align = max(DM_BUFIO_WRITE_ALIGN, bdev_logical_block_size(b->c->bdev));
+>
+Should it be physical_block_size of device? It is a min_io the device
+can perform. The point is, a user sets "ubs" size which should correspond
+to the smallest I/O the device can write, i.e. physically.
 
-I wouldn't have expected a case like this and I think it means there is 
-a logic error.
-
-Can you please file a kernel bugzilla with details about your system and 
-CC me?
-
-dmesg and lspci -vvnn please
-
-Also; please clarify which GPU shows something when booting up.
+--
+Uladzislau Rezki
 
