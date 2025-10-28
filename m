@@ -1,106 +1,114 @@
-Return-Path: <linux-kernel+bounces-874584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B898BC169F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:33:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835B7C16A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 714493568F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:33:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C74F1A25DD7
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848BF34F481;
-	Tue, 28 Oct 2025 19:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAF834F494;
+	Tue, 28 Oct 2025 19:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/AJOvJy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DVCLQu91"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD37525784E;
-	Tue, 28 Oct 2025 19:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6AB2342C80;
+	Tue, 28 Oct 2025 19:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761680014; cv=none; b=bwhMLbSVPJot7qwi/C/6667fMdzavYt/HksKTALT6PH0CGi1RmGRi54y7A1Myyu7HZCPL3aFmsH2hSsURNmNxoA3XTyeXI9GJ6Qbv8/XK5BJEVT8JHLIT/JPQDvqnTZovysGwAWH5KyA7xzL6vojRvVoSodrEqFQNQtIrhRCVi0=
+	t=1761680107; cv=none; b=BCsP90rjM4L/pJ7irG46GDx8FGlZK1I8syBgxowoiXdUBAVjSZz3cXOnwrdXyYGC5DlIVCPUJv6fRRDYnRK0MhHv2aKdUUbJEiJV7WKN9Ud7aGdqhzzhWbYQsTgD/0m0R+deqY+7RPgUnGAjgOxvTxzmqndQglCoOjeMgSkVsgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761680014; c=relaxed/simple;
-	bh=/aaILh4Sb4dqcUqp6HGcNIrngphl1Uu0/ZivAdehfH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LiuG8rMOS+11PK+GsOKKOsTP5Rb9uoCdk0yLMubj3hqk+vqiwbjq+f3BocKuJPcvRAC8TI2KzI9EufhjMeY91Oz7i3uHETQghCWXT5deqTMVrs5Mpa9evF9woE+aFoyR2TJ/w3ziIshe0e6naMev4tD6zX1PVHTqbAiTnEJgi+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/AJOvJy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2C4C4CEE7;
-	Tue, 28 Oct 2025 19:33:29 +0000 (UTC)
+	s=arc-20240116; t=1761680107; c=relaxed/simple;
+	bh=TduQ/dgw+UuyE9mcK4GdQk5Yb3BIZ3ZWL8E2yD0tmpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dL/E+eqW8n6CMFId++OdK5swGHJRiiOD2dNF1fzQFrQV3yuaxBUquHTSsQLBWXpxkmJltmfDLQwDSXsqvt7+XVfbt66hV5Lkx8j5PItp+jCaZLRg1Jk/xYxEiYT0v+AMIlO5XySaTHO+LYLWdHM6oQOsidaTSCiK89bZPLjcojI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DVCLQu91; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FDEC4CEE7;
+	Tue, 28 Oct 2025 19:35:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761680013;
-	bh=/aaILh4Sb4dqcUqp6HGcNIrngphl1Uu0/ZivAdehfH0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f/AJOvJyoe4eD9ZjS71zbvG32E4Nnwbvgbpd3LwmI0SZ7fJ/Ot5VbfI33Co5NJmUO
-	 43PbDLJQjAKJcaeTD2/I8YtP8I+qa4LM3bEYQJrKy5rhnblF3tTrVsnZfcfUd7bfdk
-	 eaaROZrXu1g1ZtiSTgU7d2bgUu/F7Opbw2SB4Rtm52vUayN7VEssFwvZAkGtTDt/8i
-	 Nrl2EpRYR1nOCLvYCKvNPi54/A5J0QGSWmGvQQmPk1R21HpGK856JYVorXsJvRWIfR
-	 1vtCoZarVhrbX7d/38U/dAPPBbHVGViEK9Fs65StZUG1VHlSQVYNuUikuIXRDkrxN4
-	 FiQ1SISXaPhCQ==
-Message-ID: <e0a78e58-1b83-47f2-b030-52539cf63ff8@kernel.org>
-Date: Tue, 28 Oct 2025 20:33:27 +0100
+	s=k20201202; t=1761680105;
+	bh=TduQ/dgw+UuyE9mcK4GdQk5Yb3BIZ3ZWL8E2yD0tmpc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DVCLQu91cK4OpYffGRZamj+PPqPn5Gscu6EfUvTLNA37ubHqnxoEvi7lkRhEUGzDU
+	 xL7ajaFSUyzXsA42/xVNQ4czWtB1MBMqhIvkJRa5prxJSIfw7Kp3H0aY6iGWN7cvqL
+	 DU+ZyTgdHiNVEh+Qk5neaRJecK1qppidmbUgTxG/SAgKOouzYEupm1cElGJlXC0/wj
+	 2E6l3/tTjg+U6Fn3iJozbSxLR97mwx/psasiVkUP0OIuaP5z2jOnFeBvBW90b/IXrU
+	 qZAspKr2+91BJwhGzKLTFSBj6DP9hVzPDA6reyF6X5dxROzHoXO68NWvz2H5XBajRg
+	 213VaXtJCbnKw==
+Date: Tue, 28 Oct 2025 19:35:01 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Coia Prant <coiaprant@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Dragan Simic <dsimic@manjaro.org>,
+	Jonas Karlman <jonas@kwiboo.se>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: vendor-prefixes: Add NineTripod
+Message-ID: <20251028-haste-amusing-78c28e834b5b@spud>
+References: <20251026143645.917588-2-coiaprant@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] rust: id_pool: do not immediately acquire new ids
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Yury Norov <yury.norov@gmail.com>, =?UTF-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?=
- <arve@android.com>, Todd Kjos <tkjos@android.com>,
- Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>,
- Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>,
- Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>,
- Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
- <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251028-binder-bitmap-v3-4-32822d4b3207@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Gl+av2e7HRT0n/2a"
+Content-Disposition: inline
+In-Reply-To: <20251026143645.917588-2-coiaprant@gmail.com>
 
-On 10/28/25 11:55 AM, Alice Ryhl wrote:
-> +/// Represents an unused id in an [`IdPool`].
-> +pub struct UnusedId<'pool> {
-> +    id: usize,
-> +    pool: &'pool mut IdPool,
-> +}
-> +
-> +impl<'pool> UnusedId<'pool> {
-> +    /// Get the unused id as an usize.
-> +    ///
-> +    /// Be aware that the id has not yet been acquired in the pool. The
-> +    /// [`acquire`] method must be called to prevent others from taking the id.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn as_usize(&self) -> usize {
-> +        self.id
-> +    }
-> +
-> +    /// Get the unused id as an u32.
-> +    ///
-> +    /// Be aware that the id has not yet been acquired in the pool. The
-> +    /// [`acquire`] method must be called to prevent others from taking the id.
-> +    #[inline]
-> +    #[must_use]
-> +    pub fn as_u32(&self) -> u32 {
-> +        // CAST: The maximum possible value in an IdPool is i32::MAX.
 
-I think this should rather be an invariant of `UnusedId`.
+--Gl+av2e7HRT0n/2a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+On Sun, Oct 26, 2025 at 10:36:44PM +0800, Coia Prant wrote:
+> Add NineTripod to the vendor prefixes.
+>=20
+> Signed-off-by: Coia Prant <coiaprant@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Doc=
+umentation/devicetree/bindings/vendor-prefixes.yaml
+> index f1d188200..37687737e 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -1124,6 +1124,8 @@ patternProperties:
+>      description: National Instruments
+>    "^nicera,.*":
+>      description: Nippon Ceramic Co., Ltd.
+> +  "^ninetripod,.*":
 
-> +        self.id as u32
-> +    }
+Why ninetripod instead of 9tripod? That's what the company uses and in
+the marketing fluff for the boards.
+
+> +    description: Shenzhen 9Tripod Innovation and Development CO., LTD.
+>    "^nintendo,.*":
+>      description: Nintendo
+>    "^nlt,.*":
+> --=20
+> 2.47.3
+>=20
+
+--Gl+av2e7HRT0n/2a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEa5QAKCRB4tDGHoIJi
+0lLpAQCEq5o2AIeBeKU/HTLGiRDFRwZsauzXLY1N19v7WOrccAEAk2K6wBMBRl7P
+WXToJKSFpArrZz2WIkOYuL/UaqrZ8w4=
+=1enS
+-----END PGP SIGNATURE-----
+
+--Gl+av2e7HRT0n/2a--
 
