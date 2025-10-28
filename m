@@ -1,119 +1,119 @@
-Return-Path: <linux-kernel+bounces-873463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21B0BC13FDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:03:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8890C13FDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:04:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D97719C156A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:02:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BB7F19C4313
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828693043D4;
-	Tue, 28 Oct 2025 10:02:12 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3548A21CC44;
-	Tue, 28 Oct 2025 10:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248BE2EA151;
+	Tue, 28 Oct 2025 10:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SWsGL09Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7A721CC44;
+	Tue, 28 Oct 2025 10:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761645732; cv=none; b=YtjJd8ljIkgiMqHRjsAiCLNxoyPO9VNfzJwXplIWP4yAc6oH3tf7vrLPFbIev8DLVKWWMJ6C02uoQh1W8osOEtk8yMtHZuDlLaGFvM/i8c87GgcvxEbCTiXrANZzC+moULb6LuOs6f737WRAvao2vVBggVEJZanH34mSXcyZKP4=
+	t=1761645762; cv=none; b=jScy5IVq0AqAa2G7Gyh0iA4Tvx6IRf8/POASkdU0dGC3MMQNj4AMgeiXpHAAVT3l9Ze3cCwYFKRS3Z6dFTAuy6nNv/hF4hkY7Uaaa6ISqYzMEHyMeTRyC1qwBrkTUFQ4UQge+m4WmC55SkZjPUG6xeMO1cWuRMhdzA2LP5j+hk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761645732; c=relaxed/simple;
-	bh=LsYTuV7LLN5FAg+rUEomU5ZVfWHzIhuwGB/sNrd2ySE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fLy+mMmo0WxuAUEFj2gmx33lQJ7kAHTSt4mdijzMdQoWPSWNGB9xYsKSpaYXV5xFmNFsQpDAk0Cq6Dj07J23cBLYxJMNROgf+pXVwdEp7rVCZyTQ2Xg6YtPmieVqpCFa4/+eHJwrZzJRvi01yu/Zz3e6nBIS//mLvLKnYo0etBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=4.193.249.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
-Received: from zju.edu.cn (unknown [218.12.19.0])
-	by mtasvr (Coremail) with SMTP id _____wDnk2mTlABpgDcnAw--.432S3;
-	Tue, 28 Oct 2025 18:01:56 +0800 (CST)
-Received: from ubuntu.localdomain (unknown [218.12.19.0])
-	by mail-app2 (Coremail) with SMTP id zC_KCgB3RDaOlABpdXFUAw--.49170S2;
-	Tue, 28 Oct 2025 18:01:54 +0800 (CST)
-From: Duoming Zhou <duoming@zju.edu.cn>
-To: linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	martin.petersen@oracle.com,
-	James.Bottomley@HansenPartnership.com,
-	Duoming Zhou <duoming@zju.edu.cn>
-Subject: [PATCH] scsi: imm: fix use-after-free bugs caused by unfinished delayed work
-Date: Tue, 28 Oct 2025 18:01:49 +0800
-Message-Id: <20251028100149.40721-1-duoming@zju.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1761645762; c=relaxed/simple;
+	bh=lQWfisAJs4RJ3y8d55ySLjGc636npxz1pe40KBUeamQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtErVE/n9gepOjgz2VoiDl/+OB1rd7jOrvG99X4Vz6tsMA0MXbrO7FaNFapirRYhWRz021Gf8SmEY8wFtkZEnaJ2jdUYh/Pz3ITLH9LATbBNaK3t6bT5YmLVm33vrVf5fHP5x1szWgq8r+0YvUnj58NV3UAj9oq1bhDMnLpRHV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SWsGL09Y; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761645761; x=1793181761;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lQWfisAJs4RJ3y8d55ySLjGc636npxz1pe40KBUeamQ=;
+  b=SWsGL09Y1pg3o/5V9C32jp1RvMwA/fKbj7JvNOrJ6epgRx2TCj/t6Hop
+   46uHA4YGeDnRR9OL6wK01Q3hIxJOA/ToxdwpnerSiQx2mvxVzraxTF2NT
+   Rqb1BYV8+g/Ym4+dPGBLX1Mel52YcEzaXk6pFN8H6A3NOtPa6IqQ3vCHT
+   IxU1G83lAjYK2JrLhRvhy23+ELoAHqZv+LEt45Bu2FP2A4qo7i/35NyjO
+   LZr1sHHDgxuC4V1g7XZDBZ9idJGuEjhsCMTLYFn3TqhtkVXsBCuBrzp0k
+   u+Y8M7n53GuxxLxDoEqrcAGiLpDgRgNWtowXw+zxnaPyJCQLMGzcWMXjS
+   Q==;
+X-CSE-ConnectionGUID: vOJU/I9eSJ+giZMHXofiKQ==
+X-CSE-MsgGUID: hvxb4DCcQ4eZ2xTfJPE9gQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74416082"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="74416082"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:02:40 -0700
+X-CSE-ConnectionGUID: 9HQMeyTZRlmPNrPh0jzpQw==
+X-CSE-MsgGUID: ggLPNZggTwy4b66UXSalDg==
+X-ExtLoop1: 1
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:02:38 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDgXD-00000003HD7-2l9O;
+	Tue, 28 Oct 2025 12:02:35 +0200
+Date: Tue, 28 Oct 2025 12:02:35 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Dan Scally <dan.scally@ideasonboard.com>
+Cc: Qiu Wenbo <qiuwenbo@gnome.org>, Daniel Scally <djrscally@gmail.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Qiu Wenbo <qiuwenbo@kylinsec.com.cn>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>
+Subject: Re: [PATCH] platform/x86: int3472: Fix double free of GPIO device
+ during unregister
+Message-ID: <aQCUu5vCPlglC0Kd@smile.fi.intel.com>
+References: <20251024050537.92440-1-qiuwenbo@gnome.org>
+ <5007d7f0-76ff-41fd-a371-05922c97f8ef@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zC_KCgB3RDaOlABpdXFUAw--.49170S2
-X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwUNAWj-yv4F7QA+s-
-X-CM-DELIVERINFO: =?B?aaysbgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
-	CR1yNwzV7anoiB6+B/SY26SzCtXLsURgkJIJQorRbNy8C5r+8AVgZrgI/5IUEDxN9XmH+v
-	Ws5s1vt5/vKW3V7J0whNC/8f+UfxYoAS7oQgkoOLlUUxR07JOb8BTt7NEwh8aQ==
-X-Coremail-Antispam: 1Uk129KBj93XoW7WF4kCFW3KFy8AFy8Cr4ftFc_yoW8XFyUpr
-	Z3Ga45t3y7uay8uw47Xr48WFySgrs8Gry7K3yxW3yfCr98JF1jqF13ta15Wa4rCrW8A39x
-	ZF4jqwn5ZayqyrcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
-	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
-	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
-	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
-	WUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
-	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
-	vjxU26pBDUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5007d7f0-76ff-41fd-a371-05922c97f8ef@ideasonboard.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-The delayed work item imm_tq is initialized in imm_attach() and
-scheduled via imm_queuecommand() for processing SCSI commands.
-When the IMM parallel port SCSI host adapter is detached through
-imm_detach(), the imm_struct device instance is deallocated.
+On Tue, Oct 28, 2025 at 08:55:07AM +0000, Dan Scally wrote:
+> On 24/10/2025 06:05, Qiu Wenbo wrote:
+> > 
+> > regulator_unregister() already frees the associated GPIO device. On
+> > ThinkPad X9 (Lunar Lake), this causes a double free issue that leads to
+> > random failures when other drivers (typically Intel THC) attempt to
+> > allocate interrupts. The root cause is that the reference count of the
+> > pinctrl_intel_platform module unexpectedly drops to zero when this
+> > driver defers its probe.
+> > 
+> > This behavior can also be reproduced by unloading the module directly.
+> > 
+> > Fix the issue by removing the redundant release of the GPIO device
+> > during regulator unregistration.
+> > 
+> > Fixes: 1e5d088a52c2 ("platform/x86: int3472: Stop using devm_gpiod_get()")
 
-However, the delayed work might still be pending or executing
-when imm_detach() is called, leading to use-after-free bugs
-when the work function imm_interrupt() accesses the already
-freed imm_struct memory.
+> However the Fixes tag I wonder about; devm_gpiod_get() will also result in a
+> call to gpiod_put() when the module is unloaded; doesn't that mean that the
+> same issue  will occur before that commit?
 
-The race condition can occur as follows:
+Actually a good question! To me sounds like it's a bug(?) in regulator code.
+It must not release resources it didn't acquire. This sounds like a clear
+layering violation.
 
-CPU 0(detach thread)   | CPU 1
-                       | imm_queuecommand()
-                       |   imm_queuecommand_lck()
-imm_detach()           |     schedule_delayed_work()
-  kfree(dev) //FREE    | imm_interrupt()
-                       |   dev = container_of(...) //USE
-                           dev-> //USE
-
-Add disable_delayed_work_sync() in imm_detach() to guarantee
-proper cancellation of the delayed work item before imm_struct
-is deallocated.
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
----
- drivers/scsi/imm.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/scsi/imm.c b/drivers/scsi/imm.c
-index 5c602c057798..45b0e33293a5 100644
---- a/drivers/scsi/imm.c
-+++ b/drivers/scsi/imm.c
-@@ -1260,6 +1260,7 @@ static void imm_detach(struct parport *pb)
- 	imm_struct *dev;
- 	list_for_each_entry(dev, &imm_hosts, list) {
- 		if (dev->dev->port == pb) {
-+			disable_delayed_work_sync(&dev->imm_tq);
- 			list_del_init(&dev->list);
- 			scsi_remove_host(dev->host);
- 			scsi_host_put(dev->host);
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
