@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-874609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8ABBC16AF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:54:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A247C16AFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 118074E9FD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18DA1C22B78
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C1B336EDC;
-	Tue, 28 Oct 2025 19:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798802C15A5;
+	Tue, 28 Oct 2025 19:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GokpmF4j"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HS45+suS"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBA92BE04B;
-	Tue, 28 Oct 2025 19:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122052D0625
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761681270; cv=none; b=Dv9DIwiU7AlO5oFABsrOZo4zXtZl9JmZcF5VHgp5+L47wsUrQQ8Z4Lrr8vfaBOaSiuqqR1veHJOgF5fwmHeNg/jOmSidALesZeuHgjfLapDlCIrbWIQLggyVFeVw1VHFkrwM04yjh+WmMum2wk/C+DMV/tiux5bRES3YeWhhPRw=
+	t=1761681282; cv=none; b=N9/stI99sd8MG35Mssos21LRrxgiyEvPcA5a97glVHA2rIQGHcn+10hOHuoc0RFaTUsvd0YUDa8qMmVsQ5gFA+geU2i4vltnzPx1UsJLpzeEfnrgBahAAPw/acUCmRMrWvYgykeOLEQQU8KBn7TMmh4p/2IjugXOzvnnsTaK7wQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761681270; c=relaxed/simple;
-	bh=PjuO3FlWFh2/k0xrW5JQXDEz6+CkeOl/301PZpppegE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OSuZRP3hsdtgwAuJhRjbD6fiFjCn66XykAjRsv3nwpBAfoo9AF2FdzeQg0PcuR24dzieR4BobtzU2rknVjL09kUQeyAj/E8k/gzbwzQd93T8m1ofs5jfe2sss2ABVDJBxjUucI3y+E1jlAAIgRvWrzgEq2szPr6NHRz2BEsNVJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GokpmF4j; arc=none smtp.client-ip=91.218.175.180
+	s=arc-20240116; t=1761681282; c=relaxed/simple;
+	bh=GhznppW5jwYDRcAihiwYTPNGnL0pOvsU68n6vWbNcPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QADzsR+EwdityBYWWvPSU+HIvMI38oiWjgPiapETUk97z7DeIyfARG8RZ/k46Ryts+aq2s1QvBfqU5kjKhNqNwwvdRN7cku048mIiK0yKLiEN9++J3t/G9f0eMqdUoi0r1+SeyC3LlFd2/xHpJZMTHbUkegzB+xEPDQASfdKiS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HS45+suS; arc=none smtp.client-ip=95.215.58.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+Date: Tue, 28 Oct 2025 12:54:29 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761681264;
+	t=1761681277;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=W1vfNH1OtxcVF1Jg9QAf61yzDR/63k5WefYxmSxcqt4=;
-	b=GokpmF4jfTl+pwsmQbtDT5ic/PNmqZi3UwNtLBQo6WzF05jogM1a4ra3TXZ0+gSmuQhSt9
-	0tM68yBrWrIn74Ess33qfXZCGPme1h6MljFE/w427Ce82/ru+IdWwypGezWDhGWJSCFv/D
-	y+QdscXaBfltrFgGplzm1qPNl8ODy0M=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>
-Subject: Re: [PATCH v2 20/23] sched: psi: implement bpf_psi struct ops
-In-Reply-To: <aQEM7LXpZdOpsgvU@slm.duckdns.org> (Tejun Heo's message of "Tue,
-	28 Oct 2025 08:35:24 -1000")
-References: <20251027232206.473085-1-roman.gushchin@linux.dev>
-	<20251027232206.473085-10-roman.gushchin@linux.dev>
-	<aQD_-a8oWHfRKcrX@slm.duckdns.org> <877bweswvo.fsf@linux.dev>
-	<aQEM7LXpZdOpsgvU@slm.duckdns.org>
-Date: Tue, 28 Oct 2025 12:54:16 -0700
-Message-ID: <87cy66pztj.fsf@linux.dev>
+	bh=Bb0C3VyuAmSiKsi2qlBRx/pFXIP36IO29vP/bFyjw0g=;
+	b=HS45+suSm2rzrJQMMkE+ycYcgEd0ql+2mj/3Lex3TN7T7ZQvpXI25hP3pXR3WsB0zcaUNK
+	uiEipqPSyA+Q2udnhlpK792HxTJ2Mp/Q/kHXIOwPZubUX60qkv7f5jqoZbW18g6cQajOUP
+	D0wHWOIWHS9q0agqXQNk/58Ej7bERuk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Akinobu Mita <akinobu.mita@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: oom-killer not invoked on systems with multiple memory-tiers
+Message-ID: <o3gxx5uipm53gccoccjjdvtvv6gkyx4r7qexzdkg3uqtqc7wsv@yd3rqfsy2bpz>
+References: <20251022135735.246203-1-akinobu.mita@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251022135735.246203-1-akinobu.mita@gmail.com>
 X-Migadu-Flow: FLOW_OUT
 
-Tejun Heo <tj@kernel.org> writes:
+Hi Akinobu,
 
-> Hello,
->
-> On Tue, Oct 28, 2025 at 11:29:31AM -0700, Roman Gushchin wrote:
->> > Here, too, I wonder whether it's necessary to build a hard-coded
->> > infrastructure to hook into PSI's triggers. psi_avgs_work() is what triggers
->> > these events and it's not that hot. Wouldn't a fexit attachment to that
->> > function that reads the updated values be enough? We can also easily add a
->> > TP there if a more structured access is desirable.
->> 
->> Idk, it would require re-implementing parts of the kernel PSI trigger code
->> in BPF, without clear benefits.
->> 
->> Handling PSI in BPF might be quite useful outside of the OOM handling,
->> e.g. it can be used for scheduling decisions, networking throttling,
->> memory tiering, etc. So maybe I'm biased (and I'm obviously am here), but
->> I'm not too concerned about adding infrastructure which won't be used.
->> 
->> But I understand your point. I personally feel that the added complexity of
->> the infrastructure makes writing and maintaining BPF PSI programs
->> simpler, but I'm open to other opinions here.
->
-> Yeah, I mean, I'm not necessarily against adding infrastructure if the need
-> is justified - ie. it enables new things which isn't reasonably feasible
-> otherwise. However, it's also a good idea to start small, iterate and build
-> up. It's always easier to add new things than to remove stuff which is
-> already out there. Wouldn't it make more sense to add the minimum mechanism,
-> see how things develop and add what's identified as missing in the
-> process?
+On Wed, Oct 22, 2025 at 10:57:35PM +0900, Akinobu Mita wrote:
+> On systems with multiple memory-tiers consisting of DRAM and CXL memory,
+> the OOM killer is not invoked properly.
+> 
+> Here's the command to reproduce:
+> 
+> $ stress-ng --oomable -v --memrate 20 --memrate-bytes 10G \
+>     --memrate-rd-mbs 1 --memrate-wr-mbs 1
+> 
+> The memory usage is the number of workers specified with the --memrate
+> option multiplied by the buffer size specified with the --memrate-bytes
+> option, so please adjust it so that it exceeds the total size of the
+> installed DRAM and CXL memory.
+> 
+> If swap is disabled, you can usually expect the OOM killer to terminate
+> the stress-ng process when memory usage approaches the installed memory size.
+> 
+> However, if multiple memory-tiers exist (multiple
+> /sys/devices/virtual/memory_tiering/memory_tier<N> directories exist),
+> and /sys/kernel/mm/numa/demotion_enabled is true and
+> /sys/kernel/mm/lru_gen/min_ttl_ms is 0, the OOM killer will not be invoked
+> and the system will become inoperable.
+> 
+> If /sys/kernel/mm/numa/demotion_enabled is false, or if demotion_enabled
+> is true but /sys/kernel/mm/lru_gen/min_ttl_ms is set to a non-zero value
+> such as 1000, the OOM killer will be invoked properly.
+> 
+> This issue can be reproduced using NUMA emulation even on systems with
+> only DRAM. However, to configure multiple memory-tiers using fake nodes,
+> you must apply the attached patch.
+> 
+> You can create two-fake memory-tiers by booting a single-node system with
+> the following boot options:
+> 
+> numa=fake=2
+> numa_emulation.default_dram=1,0
+> numa_emulation.read_latency=100,1000
+> numa_emulation.write_latency=100,1000
+> numa_emulation.read_bandwidth=100000,10000
+> numa_emulation.write_bandwidth=100000,10000
+> 
 
-Ok, let me try the TP approach and see how it will look like.
-If there won't see any significant downsides, I'll drop the BPF PSI triggers
-infrastructure.
-
-Thanks!
+Thanks for the report. Can you try to repro this with traditional LRU
+i.e. not MGLRU? I just want to see if this is MGLRU only issue or more
+general.
 
