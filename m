@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-874470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43445C1669B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:14:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09489C166A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01BCA4E250A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:14:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D4758355F91
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBD134FF60;
-	Tue, 28 Oct 2025 18:12:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9763F34D4CE;
+	Tue, 28 Oct 2025 18:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lQS9HNn2"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zp5tubok"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0033B32D0C9;
-	Tue, 28 Oct 2025 18:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F0629B78D;
+	Tue, 28 Oct 2025 18:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761675169; cv=none; b=Yuacg4UF8o7mN09tcXTsjA02ywbF2l55PETBOCWxc8W0ZvVtf2PuSY5LF4Kij+jgLbeT5l9JlscuFKlI5SUrYKfWrwRtQsLjToqdlLiso7Wo4UNK73nixHHgUfYDb1wfOYLz9B3hSbXFuG1O7ucjdCrSzAhlOiZSK2OK4GBlt00=
+	t=1761675234; cv=none; b=BetsTZk+/cQkPWuInf9dO9n3arRhdr1I2tWqrlGdO4QivEaXcekWimjYpsWYOwdtQsxsa+8XtUl8wI7aPnkbdjKs/LjT0t5VRajozR8ESZJLFJfWHf7gbFGfiHbM9zISMKeOy7wlm9C4gp8vPSWyfGpHHiYl4cLbeIIFnvruuPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761675169; c=relaxed/simple;
-	bh=pZiVIVBdUQJ8VQZlZ/1Fn3ZM0wQ+JL3yG6Un4Uz/z0w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QaKK1BUKTThPMnpw7G2lvxNrwk1Na5L5ZZEd7lkY1w5IsfqxgcJQ46hvQ1Xx9MUzmmGOJvgUIpZKjBnr+z56f7hBesR/f38oQDKmnNKi3m/HsIxH4x4q336EZLnasFrnuQzKJdZE5EiLGVdUpeEJk12qj7/KKXRUFRB6pp+qbtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lQS9HNn2; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761675164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/mIcK7vCMiNf076l+LaWZKI497HGob3OxvsLoIs/FEg=;
-	b=lQS9HNn2xXA7sE3Ntv4jDLBzYAliouwdGZ+N3LRU21VyhFQwa6LZ/qS98WN3YIK0dl7m/U
-	IPp6lysrkH4QjjvO5HK/WAeejgtUQvlJMHCCSokVJGYZHi6pBnr5uI9D9SY/4jb4sywY3j
-	/EM9m2P5QogpPrIXFP7YPVLZbXSyLmo=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Tejun Heo <tj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,  Kumar Kartikeya
- Dwivedi <memxor@gmail.com>
-Subject: Re: [PATCH v2 08/23] mm: introduce BPF kfuncs to deal with memcg
- pointers
-In-Reply-To: <aQEAnB7Gjs4vew8x@slm.duckdns.org> (Tejun Heo's message of "Tue,
-	28 Oct 2025 07:42:52 -1000")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-9-roman.gushchin@linux.dev>
-	<aQEAnB7Gjs4vew8x@slm.duckdns.org>
-Date: Tue, 28 Oct 2025 11:12:35 -0700
-Message-ID: <87y0ouuc8c.fsf@linux.dev>
+	s=arc-20240116; t=1761675234; c=relaxed/simple;
+	bh=ydcqvtv6pl9AvbRH/zswn14QewZaklN115dIzczXlLw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=aYgVK3evowt6HPQuuh3lzc2EtNoiz6/NmykIHM82yzwD+k8qbu/HZ8x77OdMK86a9zzBym5rHaNugmj3SUO4S6wHS+PezO/8NKIsnGJ+Zl37DzeIqVe+44dqlZDMBGvPIAMUdfVvz4vWgaqzo8mycEwu+KMtSY+u+ClnQQU6RJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zp5tubok; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761675233; x=1793211233;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=ydcqvtv6pl9AvbRH/zswn14QewZaklN115dIzczXlLw=;
+  b=Zp5tubokexIjYQ/2lQO7wtpAtFEzHHeZikZ6L+LK0FQgvC0AVPUcayBN
+   jDWpRXg48q0wAmWeP8uU7lsod4ca+nCPBnJeXggMHjMSymUaW/6YLp2Lp
+   CmehQtk/Fw/S4Zv4RgpA+qE0idgJRpWJUGtBWCSbOdt7KW7CPcXXtI/Uv
+   P5MdVCIj44F0UGRpl+g52iwEpC0oySw/oSsVXvxziXQ0D1tIKFtuw8CuX
+   2DQXlgZAvgN7mD1viJolSDCM6N2ODGrxo4w0s9KEJ2oZ2a4GGSehK2sED
+   nVvjvjtHgJICP0JqevT6L9Kr0KKhzCo+qk8qT89b/5WgMTDjKH43VSOCL
+   Q==;
+X-CSE-ConnectionGUID: rb3N6JotS/mws3cG9CryTA==
+X-CSE-MsgGUID: gjifVBv0S6S/d6OCCa7+Kw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81416677"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="81416677"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 11:13:52 -0700
+X-CSE-ConnectionGUID: pauuhUuRT3CzfJ3Juy9zaQ==
+X-CSE-MsgGUID: DL+N6KbURzukO/CD/RhFbA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="184602165"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.182])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 11:13:49 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Lazar Aleksic <kripticni.dev@gmail.com>
+Cc: hansg@kernel.org, linux-kernel@vger.kernel.org, 
+ platform-driver-x86@vger.kernel.org
+In-Reply-To: <20251028180956.10753-1-kripticni.dev@gmail.com>
+References: <20251028180956.10753-1-kripticni.dev@gmail.com>
+Subject: Re: [PATCH v2] platform: x86: Kconfig: fix minor typo in help for
+ WIRELESS_HOTKEY
+Message-Id: <176167522483.2247.179631177596031371.b4-ty@linux.intel.com>
+Date: Tue, 28 Oct 2025 20:13:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Tejun Heo <tj@kernel.org> writes:
+On Tue, 28 Oct 2025 19:09:05 +0100, Lazar Aleksic wrote:
 
-> On Mon, Oct 27, 2025 at 04:17:11PM -0700, Roman Gushchin wrote:
->> +__bpf_kfunc struct mem_cgroup *
->> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
->> +{
->> +	struct mem_cgroup *memcg = NULL;
->> +	bool rcu_unlock = false;
->> +
->> +	if (!root_mem_cgroup)
->> +		return NULL;
->> +
->> +	if (root_mem_cgroup->css.ss != css->ss) {
->> +		struct cgroup *cgroup = css->cgroup;
->> +		int ssid = root_mem_cgroup->css.ss->id;
->> +
->> +		rcu_read_lock();
->> +		rcu_unlock = true;
->> +		css = rcu_dereference_raw(cgroup->subsys[ssid]);
->
-> Would it make more sense to use cgroup_e_css()?
+> Fixed a misspelling of Xiaomi
+> 
+> 
 
-Good call, will update in the next version.
 
-Thank you!
+Thank you for your contribution, it has been applied to my local
+review-ilpo-fixes branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-fixes branch only once I've pushed my
+local branch there, which might take a while.
+
+The list of commits applied:
+[1/1] platform: x86: Kconfig: fix minor typo in help for WIRELESS_HOTKEY
+      commit: bd34bf518a5ffeb8eb7c8b9907ba97b606166f7b
+
+--
+ i.
+
 
