@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-874872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2242C174BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:15:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEFFC174B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE6411C805E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22C73B8D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C531374AB3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BE1374AB1;
 	Tue, 28 Oct 2025 23:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CmgQ55i3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i8krNUSc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A69D36B997;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A2B36B99A;
 	Tue, 28 Oct 2025 23:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761693069; cv=none; b=o88b3TDL6XPF/wfbrUG1wb9Agc5hFSCQpWIyQSY5fsLGVYtFcnTUDC6K2e1qR2YFu5PX34pIe5QZYTeBLTh/i37UzY2E2wa88qMk13GECFBrqYC3dLG6a1WEBWFPY/rGiY+7vQtesg65w/FzCCmCfY9VOehPiwSZO9Ip9Jtf5hY=
+	t=1761693069; cv=none; b=CpUkzS5msRB2bYunYlOUFLC8YvT95jab8rnp5f9GLM2WtapqL0wp/9GN2j0zEu9qSDVLkkJbafp72E90fJAJkJ2MrtJ2rfj/6Pt5xXPPBnqmrFnzszbSisq8f9pQCP+IqIRZkb9ksR8nYcoJkq7emJQKshyjKYsT0l0AQRxVctk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761693069; c=relaxed/simple;
-	bh=wSwArNUKZ0GhTI12DbyC0pJqy9+aiJFgUD1QWSxVO2g=;
+	bh=Lp/sEkMZsE67tXH+Ndy0qtN++BL6+DdO3Q5iet8yKzg=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=EJBTeHYJmaqLdJwz3q4qA4drBQjYmsvzflJFgANDdpmHMZpMlWLGZGbhBzPt0wccYych/gqN5w1vLv7C7DyVuwHRRuFcc23lPM98+r1fpUL8lmbOMxSG2qeckxQxYsTlIM4WnVj5uB1W7wsY3RFUKTFGFOYyrEFB2SKXVRJAbAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CmgQ55i3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E9D8C113D0;
+	 Content-Type; b=Y9UrdlOArzUH9BymnOl5r73T1JWf/yPkci67mBw3LybgCmaHRrRV1/4D6t7aqHOuEUQsmnu9CA3EymWyTwwVUL9vVpOnUs50xM3SIhAFmFgHSIbICwD11IaXqzTsEVy3hcpGvzXLG17Xw6N312SLjbpMj7PDGIYGXrtWAgFA/H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i8krNUSc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67EDFC19422;
 	Tue, 28 Oct 2025 23:11:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761693069;
-	bh=wSwArNUKZ0GhTI12DbyC0pJqy9+aiJFgUD1QWSxVO2g=;
+	bh=Lp/sEkMZsE67tXH+Ndy0qtN++BL6+DdO3Q5iet8yKzg=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=CmgQ55i3mcLx4EAODWd0NO0bUXKKg9HDiZlS4ocGVeH2XL33jalnC61Noqs9vSkMt
-	 ltIpe7oG163nFtRox8YJmyABDRB3hRAdnU48QJwCSE6+2KlHLmwGhW5BCywXkD+IDb
-	 tXCw/j87qQZo5L6xmOdF/+s0x/kj/tMEW/EksiT1/9u1ZfTtacp8Gt4qxGPOIC5jlK
-	 /73CvPRNmVJRbeAUrA2WHRYsjcV2hQiy5Iya8MkVX3kTiME2gAIwNXD3aR/HAZWH6y
-	 FOIIYRztuYkRlTadcqFXo1nbKUDyEd7HMsUAFU08xugBKXmE2DJtQ11AbRhHTqNSPM
-	 lUnXHIn9KxVmg==
+	b=i8krNUScaLziVHZs+ozI3RPNMAAeZZPq0nbXGTrj59pCCA7n3/6dyGnkkR7waj8h9
+	 F+mIs/z8eOpUyuZrnLJAvYsiv62C+Q59l9z+mumDDI/ImZuPXj2H5aMjRlLRQptkek
+	 v/hHurLMtHK3WiEFVdb5BUCRHnXoD4mCOUhN42Qij4ZeXz461m1RKA8FKa5Mt2VBYN
+	 GVa+noXqKr96KLAjhIPnsGkYkd9sZ9ZTfPRHdGQH2T895jhWT5pHCuUyEXY0xP8Or0
+	 oeOqHVgyTzMv6bngFbamDy4+vQYys9fStI1oeuCl57kL6QkZY424Uttc3HFbI1xA2j
+	 oCpXc0KcwHjhQ==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vDsqy-00000004qt8-2Phy;
+	id 1vDsqy-00000004qtf-37bz;
 	Tue, 28 Oct 2025 19:11:48 -0400
-Message-ID: <20251028231148.429422865@kernel.org>
+Message-ID: <20251028231148.594898736@kernel.org>
 User-Agent: quilt/0.68
-Date: Tue, 28 Oct 2025 19:11:23 -0400
+Date: Tue, 28 Oct 2025 19:11:24 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -66,7 +66,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>,
  Adrian Hunter <adrian.hunter@intel.com>,
  Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v5 09/13] tracing: Show printable characters in syscall arrays
+Subject: [PATCH v5 10/13] tracing: Add trace_seq_pop() and seq_buf_pop()
 References: <20251028231114.820213884@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,76 +78,68 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-When displaying the contents of the user space data passed to the kernel,
-instead of just showing the array values, also print any printable
-content.
-
-Instead of just:
-
-  bash-1113    [003] .....  3433.290654: sys_write(fd: 2, buf: 0x555a8deeddb0 (72:6f:6f:74:40:64:65:62:69:61:6e:2d:78:38:36:2d:36:34:3a:7e:23:20), count: 0x16)
-
-Display:
-
-  bash-1113    [003] .....  3433.290654: sys_write(fd: 2, buf: 0x555a8deeddb0 (72:6f:6f:74:40:64:65:62:69:61:6e:2d:78:38:36:2d:36:34:3a:7e:23:20) "root@debian-x86-64:~# ", count: 0x16)
-
-This only affects tracing and does not affect perf, as this only updates
-the output from the kernel. The output from perf is via user space. This
-may change by an update to libtraceevent that will then update perf to
-have this as well.
+In order to allow an interface to remove an added character from the
+trace_seq and seq_buf descriptors, add helper functions trace_seq_pop()
+and seq_buf_pop().
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_syscalls.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ include/linux/seq_buf.h   | 17 +++++++++++++++++
+ include/linux/trace_seq.h | 13 +++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index a2de6364777a..2d1307f13e13 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -155,6 +155,8 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 	trace_seq_printf(s, "%s(", entry->name);
- 
- 	for (i = 0; i < entry->nb_args; i++) {
-+		bool printable = false;
-+		char *str;
- 
- 		if (trace_seq_has_overflowed(s))
- 			goto end;
-@@ -193,8 +195,11 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 
- 		val = trace->args[entry->user_arg_size];
- 
-+		str = ptr;
- 		trace_seq_puts(s, " (");
- 		for (int x = 0; x < len; x++, ptr++) {
-+			if (isascii(*ptr) && isprint(*ptr))
-+				printable = true;
- 			if (x)
- 				trace_seq_putc(s, ':');
- 			trace_seq_printf(s, "%02x", *ptr);
-@@ -203,6 +208,22 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 			trace_seq_printf(s, ", %s", EXTRA);
- 
- 		trace_seq_putc(s, ')');
-+
-+		/* If nothing is printable, don't bother printing anything */
-+		if (!printable)
-+			continue;
-+
-+		trace_seq_puts(s, " \"");
-+		for (int x = 0; x < len; x++) {
-+			if (isascii(str[x]) && isprint(str[x]))
-+				trace_seq_putc(s, str[x]);
-+			else
-+				trace_seq_putc(s, '.');
-+		}
-+		if (len < val)
-+			trace_seq_printf(s, "\"%s", EXTRA);
-+		else
-+			trace_seq_putc(s, '"');
+diff --git a/include/linux/seq_buf.h b/include/linux/seq_buf.h
+index 52791e070506..9f2839e73f8a 100644
+--- a/include/linux/seq_buf.h
++++ b/include/linux/seq_buf.h
+@@ -149,6 +149,23 @@ static inline void seq_buf_commit(struct seq_buf *s, int num)
  	}
+ }
  
- 	trace_seq_putc(s, ')');
++/**
++ * seq_buf_pop - pop off the last written character
++ * @s: the seq_buf handle
++ *
++ * Removes the last written character to the seq_buf @s.
++ *
++ * Returns the last character or -1 if it is empty.
++ */
++static inline int seq_buf_pop(struct seq_buf *s)
++{
++	if (!s->len)
++		return -1;
++
++	s->len--;
++	return (unsigned int)s->buffer[s->len];
++}
++
+ extern __printf(2, 3)
+ int seq_buf_printf(struct seq_buf *s, const char *fmt, ...);
+ extern __printf(2, 0)
+diff --git a/include/linux/trace_seq.h b/include/linux/trace_seq.h
+index 557780fe1c77..4a0b8c172d27 100644
+--- a/include/linux/trace_seq.h
++++ b/include/linux/trace_seq.h
+@@ -80,6 +80,19 @@ static inline bool trace_seq_has_overflowed(struct trace_seq *s)
+ 	return s->full || seq_buf_has_overflowed(&s->seq);
+ }
+ 
++/**
++ * trace_seq_pop - pop off the last written character
++ * @s: trace sequence descriptor
++ *
++ * Removes the last written character to the trace_seq @s.
++ *
++ * Returns the last character or -1 if it is empty.
++ */
++static inline int trace_seq_pop(struct trace_seq *s)
++{
++	return seq_buf_pop(&s->seq);
++}
++
+ /*
+  * Currently only defined when tracing is enabled.
+  */
 -- 
 2.51.0
 
