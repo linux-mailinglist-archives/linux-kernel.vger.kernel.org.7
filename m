@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-874291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6D3C15F99
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:55:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CDCBC15F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAF4F189E0BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:52:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9DE34E0F45
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03365337B84;
-	Tue, 28 Oct 2025 16:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95693469FD;
+	Tue, 28 Oct 2025 16:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="AqFBcPg7"
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="LinaYz7K"
 Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7632B20C001
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42802346A07
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670285; cv=none; b=Q+fkRmhsVstUvb5FSrQczsEOw3XHYb6Q3L0xeEZW3Pyc8fv9NU+k/ttC8a68brRtWbevrDxME8KGER+e2Gkw1AQd0/1z8hUtEdnpb1cynIxkL+DGLQ+g3/ubCApxjU4aZqmSXCW5LN7w56zbD9Tc6+zuKXmhjCYEAqKDRbtvJmA=
+	t=1761670293; cv=none; b=JjImUj6tOgp1eBf8CWXdN4gHcaoAasGC5U28v4jfGIqne0FrW5VR/DTMMi5dYA3Mtg/8xoiN8qCVtISvC55NUhKxboZNrAps4JGDKkcVfa0uhmT31WQre8K6HEI4h5MRqxDq055daV4IsImwjzkPPwSMTmPbjLDOVUZ6Ja9668U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670285; c=relaxed/simple;
-	bh=/PWhpD2oDOmv2dH7kGMkevMbA2WSTllCDJVYL2Aw2cE=;
+	s=arc-20240116; t=1761670293; c=relaxed/simple;
+	bh=OE90M9SHvSvA5l+RUGUmFGhl1wN6mpUlGaLpcv1TQ34=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WHQUF50zTQvfiW+ybIb08oOv9er6PXVpuUWZFed3xtwkWUd2+UREpIXS8htrAzFxrWNpzPlJoFeTkrNBwm4jooAGgb88gn3hft2wAPWY6ohmI60XCHztz1xjaGRtc3jRGqu1I3M929m1uoCiJzYe/C23UeiQLnTV/Hd7+sj7vRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=AqFBcPg7; arc=none smtp.client-ip=199.89.3.6
+	 MIME-Version; b=Th6vdE7SjEz0HDy22jfuc4Gr/0yrOOCRaCKasBHDr1qiR7/kF8O2Xgf1eVTzX3C0nsBR5nzn9e0wf6DshTQXsS0vDyPwvEM4OlWXNJTiOsRxbw2TwJ95TPSDYhw3AYJx/0BLkAmx+U44xe34clCz1O8QJKVRmO1AEnLHzVzpsV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=LinaYz7K; arc=none smtp.client-ip=199.89.3.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
 Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cwxGf34YZzlvt1w;
-	Tue, 28 Oct 2025 16:51:22 +0000 (UTC)
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cwxGn4znYzlw64j;
+	Tue, 28 Oct 2025 16:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
 	content-transfer-encoding:mime-version:references:in-reply-to
 	:x-mailer:message-id:date:date:subject:subject:from:from
-	:received:received; s=mr01; t=1761670280; x=1764262281; bh=pGnOs
-	hIpkcHkEviwvGBbCl+/CVagdS68MMfYziuJIRg=; b=AqFBcPg7q+LLNFY+4UKXg
-	YjB4kDSHsHwOJeKjSwpZSgtJlUGINkFt1UQUIa+T4cP+h2XJZ4MI4q021B9eTj/I
-	zQ7I0M5/5v4E9A47c+E/lsI5SL1k7tPbM5CAFMNdhVKo/clUeAO+KzO1MvkzJ8G0
-	vBWUwbLDIAacrl5NibET/Qe/NRM2qrYCVOMriiHabvjVm/kuJWX1xej031ogGPnY
-	AVmbn54EJsoEQ/E1g23v5WeYfvDZ1ZmYosBzxUv4lTkrs/nG1XrCETbL98r26uHy
-	IqoCz3iVyZDkssia1OFeIhqwRZPY+fEanS0VVnsLMRiQxB5PJFvWlzdOTMqu2jVH
-	g==
+	:received:received; s=mr01; t=1761670288; x=1764262289; bh=LRIWt
+	bqd2ihm9tZ3zwb7WJ9jCre/CeGZGkQVe3N0vl8=; b=LinaYz7KOQaC0R/idTQjt
+	YVU+VZRCk9PwvStRq1cadB+p651+1VJmelqxmEd9V88r2xaBC0RKv1weVHA/xQ1V
+	DUtJ1r9tmM3MURwgqlLbJ00sSs3xqzkjGDoCvNaEYVen9g4SMreFTd1h3I43ieLX
+	aOJPuKOpkxUOf8e32wO6JKVTR7JtFxwL3bpT80z5Jwe6cWlaKtMq9eJfY1uoyR6w
+	g6Rkp5U7PqrkPpYpgAw1pQN4pybjxOfkB/Wt0zX0EIOFxP4+nYSVpLh1Jv9OD53g
+	2vPkjr5NGVLpinXIJvGHFSBAaguIY5cvl83ICBDu9+RDpLfb4Lf7zJol9G3vnE8a
+	A==
 X-Virus-Scanned: by MailRoute
 Received: from 003.mia.mailroute.net ([127.0.0.1])
  by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id 2IzIDGhvgVuY; Tue, 28 Oct 2025 16:51:20 +0000 (UTC)
+ id tWl5qD0_qmiF; Tue, 28 Oct 2025 16:51:28 +0000 (UTC)
 Received: from bvanassche.mtv.corp.google.com (unknown [104.135.180.219])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cwxGX6DJtzlw64n;
-	Tue, 28 Oct 2025 16:51:15 +0000 (UTC)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cwxGf0dPczlvm7H;
+	Tue, 28 Oct 2025 16:51:21 +0000 (UTC)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Ingo Molnar <mingo@redhat.com>
 Cc: linux-kernel@vger.kernel.org,
@@ -62,9 +62,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
 	Juri Lelli <juri.lelli@redhat.com>,
 	Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH 1/2] Revert "sched/debug: Change SCHED_WARN_ON() to WARN_ON_ONCE()"
-Date: Tue, 28 Oct 2025 09:50:57 -0700
-Message-ID: <20251028165059.682306-2-bvanassche@acm.org>
+Subject: [PATCH 2/2] Fix SCHED_WARN_ON()
+Date: Tue, 28 Oct 2025 09:50:58 -0700
+Message-ID: <20251028165059.682306-3-bvanassche@acm.org>
 X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
 In-Reply-To: <20251028165059.682306-1-bvanassche@acm.org>
 References: <20251028165059.682306-1-bvanassche@acm.org>
@@ -76,555 +76,234 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Prepare for modifying the SCHED_WARN_ON() implementation.
+SCHED_WARN_ON() uses WARN_ONCE() and WARN_ONCE() uses printk(). Using
+printk() from certain code paths in the process scheduler is not allowed
+because printk() acquires the console_lock and this may cause printk()
+to sleep. Sleeping is not allowed from many paths in the process
+scheduler. Hence make sure that SCHED_WARN_ON() uses printk_deferred()
+instead of printk().
 
-This reverts commit f7d2728cc032a23fccb5ecde69793a38eb30ba5c.
+Here is an example of a lockdep complaint fixed by this patch:
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+WARNING: possible circular locking dependency detected
+------------------------------------------------------
+swapper/4/0 is trying to acquire lock:
+ffffffc082179768 (console_owner){-...}-{0:0}, at: console_lock_spinning_e=
+nable+0x44/0x80
+
+but task is already holding lock:
+ffffff8b33d30a18 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x188/0x116c
+
+which lock already depends on the new lock.
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (&rq->__lock){-.-.}-{2:2}:
+       _raw_spin_lock_nested+0x50/0x70
+       __task_rq_lock+0x74/0x154
+       wake_up_new_task+0x110/0x40c
+       kernel_clone+0x28c/0x508
+       user_mode_thread+0x60/0x8c
+       rest_init+0x28/0x1b8
+       start_kernel+0x390/0x4b0
+
+-> #4 (&p->pi_lock){-.-.}-{2:2}:
+       _raw_spin_lock_irqsave+0x64/0xac
+       try_to_wake_up+0x6c/0xa18
+       default_wake_function+0x20/0x38
+       autoremove_wake_function+0x1c/0x64
+       __wake_up+0xac/0xfc
+       rpm_suspend+0x484/0x668
+       pm_runtime_work+0x8c/0xa8
+       process_one_work+0x26c/0x65c
+       worker_thread+0x33c/0x498
+       kthread+0x110/0x134
+       ret_from_fork+0x10/0x20
+
+-> #3 (&dev->power.wait_queue){....}-{2:2}:
+       _raw_spin_lock_irqsave+0x64/0xac
+       __wake_up+0x34/0xfc
+       rpm_resume+0x4e8/0x5c8
+       __pm_runtime_resume+0x6c/0xb0
+       dt_idle_attach_cpu+0x70/0x9c
+       psci_cpuidle_probe+0x270/0x494
+       platform_probe+0xa0/0xe0
+       really_probe+0x114/0x454
+       __driver_probe_device+0xa4/0x160
+       driver_probe_device+0x44/0x23c
+       __device_attach_driver+0x15c/0x1f4
+       bus_for_each_drv+0x10c/0x168
+       __device_attach+0xc0/0x1a0
+       device_initial_probe+0x14/0x24
+       bus_probe_device+0x94/0x120
+       device_add+0x298/0x498
+       platform_device_add+0x80/0x24c
+       platform_device_register_full+0x144/0x154
+       psci_idle_init+0x74/0xc4
+       do_one_initcall+0x124/0x464
+       do_initcall_level+0xa8/0xd4
+       do_initcalls+0x74/0xf0
+       do_basic_setup+0x1c/0x28
+       kernel_init_freeable+0x154/0x204
+       kernel_init+0x20/0x1ac
+
+-> #2 (&dev->power.lock){-.-.}-{2:2}:
+       _raw_spin_lock_irqsave+0x64/0xac
+       __pm_runtime_resume+0x5c/0xb0
+       __uart_start+0x4c/0x120
+       uart_write+0xe8/0x304
+       n_tty_write+0x310/0x4c8
+       file_tty_write+0x154/0x32c
+       redirected_tty_write+0x94/0xe0
+       vfs_write+0x2e8/0x3ac
+       ksys_write+0x78/0xe8
+       __arm64_sys_write+0x1c/0x2c
+       invoke_syscall+0x58/0x10c
+       el0_svc_common+0xa8/0xdc
+       do_el0_svc+0x1c/0x28
+       el0_svc+0x50/0xd4
+
+-> #1 (&port_lock_key){-...}-{2:2}:
+       _raw_spin_lock_irqsave+0x64/0xac
+       google_serial8250_console_write+0xe0/0x8f0 [google_8250_base]
+       univ8250_console_write+0x2c/0x40 [google_8250]
+       console_flush_all+0x210/0x420
+       console_unlock+0x84/0x12c
+       vprintk_emit+0x12c/0x1b8
+       vprintk_default+0x44/0x70
+       vprintk+0xe4/0x164
+       _printk+0x54/0x80
+       register_console+0x428/0x524
+       serial_core_register_port+0x664/0x8b8
+       serial_ctrl_register_port+0x10/0x20
+       uart_add_one_port+0x10/0x20
+       google_serial8250_register_8250_port+0x834/0xa1c [google_8250]
+       dw8250_probe+0x550/0x5f0 [google_8250_dw]
+       platform_probe+0xa0/0xe0
+       really_probe+0x114/0x454
+       __driver_probe_device+0xa4/0x160
+       driver_probe_device+0x44/0x23c
+       __driver_attach+0x124/0x278
+       bus_for_each_dev+0x104/0x160
+       driver_attach+0x24/0x34
+       bus_add_driver+0x144/0x2d4
+       driver_register+0x68/0x104
+       __platform_driver_register+0x20/0x30
+       do_one_initcall+0x124/0x464
+       do_init_module+0x58/0x2f4
+       load_module+0x12c8/0x14b0
+       __arm64_sys_finit_module+0x238/0x33c
+       invoke_syscall+0x58/0x10c
+       el0_svc_common+0xa8/0xdc
+       do_el0_svc+0x1c/0x28
+       el0_svc+0x50/0xd4
+
+-> #0 (console_owner){-...}-{0:0}:
+       __lock_acquire+0x150c/0x2e24
+       lock_acquire+0x13c/0x2f0
+       console_lock_spinning_enable+0x6c/0x80
+       console_flush_all+0x1dc/0x420
+       console_unlock+0x84/0x12c
+       vprintk_emit+0x12c/0x1b8
+       vprintk_default+0x44/0x70
+       vprintk+0xe4/0x164
+       _printk+0x54/0x80
+       __warn_printk+0x10c/0x1d4
+       sub_running_bw+0x164/0x1a8
+       task_non_contending+0x29c/0x4b0
+       dequeue_dl_entity+0x1f0/0x260
+       pick_task_dl+0x7c/0x1c4
+       __schedule+0x554/0x116c
+       schedule_idle+0x24/0x48
+       do_idle+0x2f0/0x338
+       cpu_startup_entry+0x34/0x3c
+
+other info that might help us debug this:
+
+Chain exists of:
+  console_owner --> &p->pi_lock --> &rq->__lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rq->__lock);
+                               lock(&p->pi_lock);
+                               lock(&rq->__lock);
+  lock(console_owner);
+
+ *** DEADLOCK ***
+
+3 locks held by swapper/4/0:
+ #0: ffffff8b33d30a18 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x188/0x1=
+16c
+ #1: ffffffc082179790 (console_lock){+.+.}-{0:0}, at: vprintk_emit+0x124/=
+0x1b8
+ #2: ffffffc082109238 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquir=
+e+0x0/0x40
+
+stack backtrace:
+Call trace:
+ dump_backtrace+0xfc/0x17c
+ show_stack+0x18/0x28
+ dump_stack_lvl+0x40/0x104
+ dump_stack+0x18/0x3c
+ print_circular_bug+0x32c/0x334
+ check_noncircular+0x158/0x178
+ __lock_acquire+0x150c/0x2e24
+ lock_acquire+0x13c/0x2f0
+ console_lock_spinning_enable+0x6c/0x80
+ console_flush_all+0x1dc/0x420
+ console_unlock+0x84/0x12c
+ vprintk_emit+0x12c/0x1b8
+ vprintk_default+0x44/0x70
+ vprintk+0xe4/0x164
+ _printk+0x54/0x80
+ __warn_printk+0x10c/0x1d4
+ sub_running_bw+0x164/0x1a8
+ task_non_contending+0x29c/0x4b0
+ dequeue_dl_entity+0x1f0/0x260
+ pick_task_dl+0x7c/0x1c4
+ __schedule+0x554/0x116c
+ schedule_idle+0x24/0x48
+ do_idle+0x2f0/0x338
+ cpu_startup_entry+0x34/0x3c
+ secondary_start_kernel+0x138/0x1a8
+ __secondary_switched+0xc0/0xc4
 
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/sched/core.c       | 22 ++++++++--------
- kernel/sched/core_sched.c |  2 +-
- kernel/sched/deadline.c   | 12 ++++-----
- kernel/sched/ext.c        |  2 +-
- kernel/sched/fair.c       | 54 +++++++++++++++++++--------------------
- kernel/sched/rt.c         |  2 +-
- kernel/sched/sched.h      | 12 +++++----
- kernel/sched/stats.h      |  2 +-
- 8 files changed, 55 insertions(+), 53 deletions(-)
+ kernel/sched/sched.h | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 67b5f2faab36..90da6857a252 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -839,7 +839,7 @@ void update_rq_clock(struct rq *rq)
- 		return;
-=20
- 	if (sched_feat(WARN_DOUBLE_CLOCK))
--		WARN_ON_ONCE(rq->clock_update_flags & RQCF_UPDATED);
-+		SCHED_WARN_ON(rq->clock_update_flags & RQCF_UPDATED);
- 	rq->clock_update_flags |=3D RQCF_UPDATED;
-=20
- 	clock =3D sched_clock_cpu(cpu_of(rq));
-@@ -1734,7 +1734,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq, =
-struct task_struct *p,
-=20
- 	bucket =3D &uc_rq->bucket[uc_se->bucket_id];
-=20
--	WARN_ON_ONCE(!bucket->tasks);
-+	SCHED_WARN_ON(!bucket->tasks);
- 	if (likely(bucket->tasks))
- 		bucket->tasks--;
-=20
-@@ -1754,7 +1754,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq, =
-struct task_struct *p,
- 	 * Defensive programming: this should never happen. If it happens,
- 	 * e.g. due to future modification, warn and fix up the expected value.
- 	 */
--	WARN_ON_ONCE(bucket->value > rq_clamp);
-+	SCHED_WARN_ON(bucket->value > rq_clamp);
- 	if (bucket->value >=3D rq_clamp) {
- 		bkt_clamp =3D uclamp_rq_max_value(rq, clamp_id, uc_se->value);
- 		uclamp_rq_set(rq, clamp_id, bkt_clamp);
-@@ -2141,7 +2141,7 @@ void activate_task(struct rq *rq, struct task_struc=
-t *p, int flags)
-=20
- void deactivate_task(struct rq *rq, struct task_struct *p, int flags)
- {
--	WARN_ON_ONCE(flags & DEQUEUE_SLEEP);
-+	SCHED_WARN_ON(flags & DEQUEUE_SLEEP);
-=20
- 	WRITE_ONCE(p->on_rq, TASK_ON_RQ_MIGRATING);
- 	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-@@ -4092,7 +4092,7 @@ int try_to_wake_up(struct task_struct *p, unsigned =
-int state, int wake_flags)
- 		 *  - we're serialized against set_special_state() by virtue of
- 		 *    it disabling IRQs (this allows not taking ->pi_lock).
- 		 */
--		WARN_ON_ONCE(p->se.sched_delayed);
-+		SCHED_WARN_ON(p->se.sched_delayed);
- 		if (!ttwu_state_match(p, state, &success))
- 			goto out;
-=20
-@@ -4380,7 +4380,7 @@ static void __sched_fork(u64 clone_flags, struct ta=
-sk_struct *p)
- 	INIT_LIST_HEAD(&p->se.group_node);
-=20
- 	/* A delayed task cannot be in clone(). */
--	WARN_ON_ONCE(p->se.sched_delayed);
-+	SCHED_WARN_ON(p->se.sched_delayed);
-=20
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	p->se.cfs_rq			=3D NULL;
-@@ -5612,7 +5612,7 @@ static void sched_tick_remote(struct work_struct *w=
-ork)
- 			 * we are always sure that there is no proxy (only a
- 			 * single task is running).
- 			 */
--			WARN_ON_ONCE(rq->curr !=3D rq->donor);
-+			SCHED_WARN_ON(rq->curr !=3D rq->donor);
- 			update_rq_clock(rq);
-=20
- 			if (!is_idle_task(curr)) {
-@@ -5832,7 +5832,7 @@ static inline void schedule_debug(struct task_struc=
-t *prev, bool preempt)
- 		preempt_count_set(PREEMPT_DISABLED);
- 	}
- 	rcu_sleep_check();
--	WARN_ON_ONCE(ct_state() =3D=3D CT_STATE_USER);
-+	SCHED_WARN_ON(ct_state() =3D=3D CT_STATE_USER);
-=20
- 	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
-=20
-@@ -6914,7 +6914,7 @@ static inline void sched_submit_work(struct task_st=
-ruct *tsk)
- 	 * deadlock if the callback attempts to acquire a lock which is
- 	 * already acquired.
- 	 */
--	WARN_ON_ONCE(current->__state & TASK_RTLOCK_WAIT);
-+	SCHED_WARN_ON(current->__state & TASK_RTLOCK_WAIT);
-=20
- 	/*
- 	 * If we are going to sleep and we have plugged IO queued,
-@@ -9235,7 +9235,7 @@ static void cpu_util_update_eff(struct cgroup_subsy=
-s_state *css)
- 	unsigned int clamps;
-=20
- 	lockdep_assert_held(&uclamp_mutex);
--	WARN_ON_ONCE(!rcu_read_lock_held());
-+	SCHED_WARN_ON(!rcu_read_lock_held());
-=20
- 	css_for_each_descendant_pre(css, top_css) {
- 		uc_parent =3D css_tg(css)->parent
-@@ -10641,7 +10641,7 @@ static void task_mm_cid_work(struct callback_head=
- *work)
- 	struct mm_struct *mm;
- 	int weight, cpu;
-=20
--	WARN_ON_ONCE(t !=3D container_of(work, struct task_struct, cid_work));
-+	SCHED_WARN_ON(t !=3D container_of(work, struct task_struct, cid_work));
-=20
- 	work->next =3D work;	/* Prevent double-add */
- 	if (t->flags & PF_EXITING)
-diff --git a/kernel/sched/core_sched.c b/kernel/sched/core_sched.c
-index 9ede71ecba7f..2e9037774d97 100644
---- a/kernel/sched/core_sched.c
-+++ b/kernel/sched/core_sched.c
-@@ -67,7 +67,7 @@ static unsigned long sched_core_update_cookie(struct ta=
-sk_struct *p,
- 	 * a cookie until after we've removed it, we must have core scheduling
- 	 * enabled here.
- 	 */
--	WARN_ON_ONCE((p->core_cookie || cookie) && !sched_core_enabled(rq));
-+	SCHED_WARN_ON((p->core_cookie || cookie) && !sched_core_enabled(rq));
-=20
- 	if (sched_core_enqueued(p))
- 		sched_core_dequeue(rq, p, DEQUEUE_SAVE);
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 6b8a9286e2fc..05c1c2d16329 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -223,8 +223,8 @@ void __add_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
-=20
- 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
- 	dl_rq->running_bw +=3D dl_bw;
--	WARN_ON_ONCE(dl_rq->running_bw < old); /* overflow */
--	WARN_ON_ONCE(dl_rq->running_bw > dl_rq->this_bw);
-+	SCHED_WARN_ON(dl_rq->running_bw < old); /* overflow */
-+	SCHED_WARN_ON(dl_rq->running_bw > dl_rq->this_bw);
- 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
- 	cpufreq_update_util(rq_of_dl_rq(dl_rq), 0);
- }
-@@ -236,7 +236,7 @@ void __sub_running_bw(u64 dl_bw, struct dl_rq *dl_rq)
-=20
- 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
- 	dl_rq->running_bw -=3D dl_bw;
--	WARN_ON_ONCE(dl_rq->running_bw > old); /* underflow */
-+	SCHED_WARN_ON(dl_rq->running_bw > old); /* underflow */
- 	if (dl_rq->running_bw > old)
- 		dl_rq->running_bw =3D 0;
- 	/* kick cpufreq (see the comment in kernel/sched/sched.h). */
-@@ -250,7 +250,7 @@ void __add_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
-=20
- 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
- 	dl_rq->this_bw +=3D dl_bw;
--	WARN_ON_ONCE(dl_rq->this_bw < old); /* overflow */
-+	SCHED_WARN_ON(dl_rq->this_bw < old); /* overflow */
- }
-=20
- static inline
-@@ -260,10 +260,10 @@ void __sub_rq_bw(u64 dl_bw, struct dl_rq *dl_rq)
-=20
- 	lockdep_assert_rq_held(rq_of_dl_rq(dl_rq));
- 	dl_rq->this_bw -=3D dl_bw;
--	WARN_ON_ONCE(dl_rq->this_bw > old); /* underflow */
-+	SCHED_WARN_ON(dl_rq->this_bw > old); /* underflow */
- 	if (dl_rq->this_bw > old)
- 		dl_rq->this_bw =3D 0;
--	WARN_ON_ONCE(dl_rq->running_bw > dl_rq->this_bw);
-+	SCHED_WARN_ON(dl_rq->running_bw > dl_rq->this_bw);
- }
-=20
- static inline
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index b063444dc003..4c1fba4dcd61 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1574,7 +1574,7 @@ static bool task_can_run_on_remote_rq(struct scx_sc=
-hed *sch,
- {
- 	int cpu =3D cpu_of(rq);
-=20
--	WARN_ON_ONCE(task_cpu(p) =3D=3D cpu);
-+	SCHED_WARN_ON(task_cpu(p) =3D=3D cpu);
-=20
- 	/*
- 	 * If @p has migration disabled, @p->cpus_ptr is updated to contain onl=
-y
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 273e2871b59e..ce89554fc3c1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -397,7 +397,7 @@ static inline void list_del_leaf_cfs_rq(struct cfs_rq=
- *cfs_rq)
-=20
- static inline void assert_list_leaf_cfs_rq(struct rq *rq)
- {
--	WARN_ON_ONCE(rq->tmp_alone_branch !=3D &rq->leaf_cfs_rq_list);
-+	SCHED_WARN_ON(rq->tmp_alone_branch !=3D &rq->leaf_cfs_rq_list);
- }
-=20
- /* Iterate through all leaf cfs_rq's on a runqueue */
-@@ -694,7 +694,7 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, =
-struct sched_entity *se)
- {
- 	s64 vlag, limit;
-=20
--	WARN_ON_ONCE(!se->on_rq);
-+	SCHED_WARN_ON(!se->on_rq);
-=20
- 	vlag =3D avg_vruntime(cfs_rq) - se->vruntime;
- 	limit =3D calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
-@@ -3299,7 +3299,7 @@ static void task_numa_work(struct callback_head *wo=
-rk)
- 	bool vma_pids_skipped;
- 	bool vma_pids_forced =3D false;
-=20
--	WARN_ON_ONCE(p !=3D container_of(work, struct task_struct, numa_work));
-+	SCHED_WARN_ON(p !=3D container_of(work, struct task_struct, numa_work))=
-;
-=20
- 	work->next =3D work;
- 	/*
-@@ -4007,7 +4007,7 @@ static inline bool load_avg_is_decayed(struct sched=
-_avg *sa)
- 	 * Make sure that rounding and/or propagation of PELT values never
- 	 * break this.
- 	 */
--	WARN_ON_ONCE(sa->load_avg ||
-+	SCHED_WARN_ON(sa->load_avg ||
- 		      sa->util_avg ||
- 		      sa->runnable_avg);
-=20
-@@ -5376,7 +5376,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_=
-entity *se, int flags)
- 	clear_buddies(cfs_rq, se);
-=20
- 	if (flags & DEQUEUE_DELAYED) {
--		WARN_ON_ONCE(!se->sched_delayed);
-+		SCHED_WARN_ON(!se->sched_delayed);
- 	} else {
- 		bool delay =3D sleep;
- 		/*
-@@ -5386,7 +5386,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_=
-entity *se, int flags)
- 		if (flags & (DEQUEUE_SPECIAL | DEQUEUE_THROTTLE))
- 			delay =3D false;
-=20
--		WARN_ON_ONCE(delay && se->sched_delayed);
-+		SCHED_WARN_ON(delay && se->sched_delayed);
-=20
- 		if (sched_feat(DELAY_DEQUEUE) && delay &&
- 		    !entity_eligible(cfs_rq, se)) {
-@@ -5477,7 +5477,7 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched=
-_entity *se)
- 	}
-=20
- 	update_stats_curr_start(cfs_rq, se);
--	WARN_ON_ONCE(cfs_rq->curr);
-+	SCHED_WARN_ON(cfs_rq->curr);
- 	cfs_rq->curr =3D se;
-=20
- 	/*
-@@ -5518,7 +5518,7 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_=
-rq)
- 	if (sched_feat(PICK_BUDDY) &&
- 	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
- 		/* ->next will never be delayed */
--		WARN_ON_ONCE(cfs_rq->next->sched_delayed);
-+		SCHED_WARN_ON(cfs_rq->next->sched_delayed);
- 		return cfs_rq->next;
- 	}
-=20
-@@ -5554,7 +5554,7 @@ static void put_prev_entity(struct cfs_rq *cfs_rq, =
-struct sched_entity *prev)
- 		/* in !on_rq case, update occurred at dequeue */
- 		update_load_avg(cfs_rq, prev, 0);
- 	}
--	WARN_ON_ONCE(cfs_rq->curr !=3D prev);
-+	SCHED_WARN_ON(cfs_rq->curr !=3D prev);
- 	cfs_rq->curr =3D NULL;
- }
-=20
-@@ -6013,7 +6013,7 @@ static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
- 	 * throttled-list.  rq->lock protects completion.
- 	 */
- 	cfs_rq->throttled =3D 1;
--	WARN_ON_ONCE(cfs_rq->throttled_clock);
-+	SCHED_WARN_ON(cfs_rq->throttled_clock);
- 	return true;
- }
-=20
-@@ -6123,7 +6123,7 @@ static inline void __unthrottle_cfs_rq_async(struct=
- cfs_rq *cfs_rq)
- 	}
-=20
- 	/* Already enqueued */
--	if (WARN_ON_ONCE(!list_empty(&cfs_rq->throttled_csd_list)))
-+	if (SCHED_WARN_ON(!list_empty(&cfs_rq->throttled_csd_list)))
- 		return;
-=20
- 	first =3D list_empty(&rq->cfsb_csd_list);
-@@ -6136,7 +6136,7 @@ static void unthrottle_cfs_rq_async(struct cfs_rq *=
-cfs_rq)
- {
- 	lockdep_assert_rq_held(rq_of(cfs_rq));
-=20
--	if (WARN_ON_ONCE(!cfs_rq_throttled(cfs_rq) ||
-+	if (SCHED_WARN_ON(!cfs_rq_throttled(cfs_rq) ||
- 	    cfs_rq->runtime_remaining <=3D 0))
- 		return;
-=20
-@@ -6172,7 +6172,7 @@ static bool distribute_cfs_runtime(struct cfs_bandw=
-idth *cfs_b)
- 			goto next;
-=20
- 		/* By the above checks, this should never be true */
--		WARN_ON_ONCE(cfs_rq->runtime_remaining > 0);
-+		SCHED_WARN_ON(cfs_rq->runtime_remaining > 0);
-=20
- 		raw_spin_lock(&cfs_b->lock);
- 		runtime =3D -cfs_rq->runtime_remaining + 1;
-@@ -6193,7 +6193,7 @@ static bool distribute_cfs_runtime(struct cfs_bandw=
-idth *cfs_b)
- 				 * We currently only expect to be unthrottling
- 				 * a single cfs_rq locally.
- 				 */
--				WARN_ON_ONCE(!list_empty(&local_unthrottle));
-+				SCHED_WARN_ON(!list_empty(&local_unthrottle));
- 				list_add_tail(&cfs_rq->throttled_csd_list,
- 					      &local_unthrottle);
- 			}
-@@ -6218,7 +6218,7 @@ static bool distribute_cfs_runtime(struct cfs_bandw=
-idth *cfs_b)
-=20
- 		rq_unlock_irqrestore(rq, &rf);
- 	}
--	WARN_ON_ONCE(!list_empty(&local_unthrottle));
-+	SCHED_WARN_ON(!list_empty(&local_unthrottle));
-=20
- 	rcu_read_unlock();
-=20
-@@ -6786,7 +6786,7 @@ static void hrtick_start_fair(struct rq *rq, struct=
- task_struct *p)
- {
- 	struct sched_entity *se =3D &p->se;
-=20
--	WARN_ON_ONCE(task_rq(p) !=3D rq);
-+	SCHED_WARN_ON(task_rq(p) !=3D rq);
-=20
- 	if (rq->cfs.h_nr_queued > 1) {
- 		u64 ran =3D se->sum_exec_runtime - se->prev_sum_exec_runtime;
-@@ -6891,8 +6891,8 @@ requeue_delayed_entity(struct sched_entity *se)
- 	 * Because a delayed entity is one that is still on
- 	 * the runqueue competing until elegibility.
- 	 */
--	WARN_ON_ONCE(!se->sched_delayed);
--	WARN_ON_ONCE(!se->on_rq);
-+	SCHED_WARN_ON(!se->sched_delayed);
-+	SCHED_WARN_ON(!se->on_rq);
-=20
- 	if (sched_feat(DELAY_ZERO)) {
- 		update_entity_lag(cfs_rq, se);
-@@ -7139,8 +7139,8 @@ static int dequeue_entities(struct rq *rq, struct s=
-ched_entity *se, int flags)
- 		rq->next_balance =3D jiffies;
-=20
- 	if (p && task_delayed) {
--		WARN_ON_ONCE(!task_sleep);
--		WARN_ON_ONCE(p->on_rq !=3D 1);
-+		SCHED_WARN_ON(!task_sleep);
-+		SCHED_WARN_ON(p->on_rq !=3D 1);
-=20
- 		/* Fix-up what dequeue_task_fair() skipped */
- 		hrtick_update(rq);
-@@ -8718,7 +8718,7 @@ static void set_cpus_allowed_fair(struct task_struc=
-t *p, struct affinity_context
- static void set_next_buddy(struct sched_entity *se)
- {
- 	for_each_sched_entity(se) {
--		if (WARN_ON_ONCE(!se->on_rq))
-+		if (SCHED_WARN_ON(!se->on_rq))
- 			return;
- 		if (se_is_idle(se))
- 			return;
-@@ -12488,7 +12488,7 @@ static void set_cpu_sd_state_busy(int cpu)
-=20
- void nohz_balance_exit_idle(struct rq *rq)
- {
--	WARN_ON_ONCE(rq !=3D this_rq());
-+	SCHED_WARN_ON(rq !=3D this_rq());
-=20
- 	if (likely(!rq->nohz_tick_stopped))
- 		return;
-@@ -12524,7 +12524,7 @@ void nohz_balance_enter_idle(int cpu)
- {
- 	struct rq *rq =3D cpu_rq(cpu);
-=20
--	WARN_ON_ONCE(cpu !=3D smp_processor_id());
-+	SCHED_WARN_ON(cpu !=3D smp_processor_id());
-=20
- 	/* If this CPU is going down, then nothing needs to be done: */
- 	if (!cpu_active(cpu))
-@@ -12607,7 +12607,7 @@ static void _nohz_idle_balance(struct rq *this_rq=
-, unsigned int flags)
- 	int balance_cpu;
- 	struct rq *rq;
-=20
--	WARN_ON_ONCE((flags & NOHZ_KICK_MASK) =3D=3D NOHZ_BALANCE_KICK);
-+	SCHED_WARN_ON((flags & NOHZ_KICK_MASK) =3D=3D NOHZ_BALANCE_KICK);
-=20
- 	/*
- 	 * We assume there will be no idle load after this update and clear
-@@ -13053,7 +13053,7 @@ bool cfs_prio_less(const struct task_struct *a, c=
-onst struct task_struct *b,
- 	struct cfs_rq *cfs_rqb;
- 	s64 delta;
-=20
--	WARN_ON_ONCE(task_rq(b)->core !=3D rq->core);
-+	SCHED_WARN_ON(task_rq(b)->core !=3D rq->core);
-=20
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 	/*
-@@ -13266,7 +13266,7 @@ static void switched_from_fair(struct rq *rq, str=
-uct task_struct *p)
-=20
- static void switched_to_fair(struct rq *rq, struct task_struct *p)
- {
--	WARN_ON_ONCE(p->se.sched_delayed);
-+	SCHED_WARN_ON(p->se.sched_delayed);
-=20
- 	attach_task_cfs_rq(p);
-=20
-@@ -13299,7 +13299,7 @@ static void __set_next_task_fair(struct rq *rq, s=
-truct task_struct *p, bool firs
- 	if (!first)
- 		return;
-=20
--	WARN_ON_ONCE(se->sched_delayed);
-+	SCHED_WARN_ON(se->sched_delayed);
-=20
- 	if (hrtick_enabled_fair(rq))
- 		hrtick_start_fair(rq, p);
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 1fd97f2d7ec6..61c364219735 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1673,7 +1673,7 @@ static struct sched_rt_entity *pick_next_rt_entity(=
-struct rt_rq *rt_rq)
- 	BUG_ON(idx >=3D MAX_RT_PRIO);
-=20
- 	queue =3D array->queue + idx;
--	if (WARN_ON_ONCE(list_empty(queue)))
-+	if (SCHED_WARN_ON(list_empty(queue)))
- 		return NULL;
- 	next =3D list_entry(queue->next, struct sched_rt_entity, run_list);
-=20
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d04e007608a3..e289d364459e 100644
+index e289d364459e..34a9c473104a 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -91,6 +91,8 @@ struct cpuidle_state;
+@@ -91,7 +91,21 @@ struct cpuidle_state;
  #include "cpupri.h"
  #include "cpudeadline.h"
 =20
-+#define SCHED_WARN_ON(x) WARN_ONCE(x, #x)
-+
+-#define SCHED_WARN_ON(x) WARN_ONCE(x, #x)
++#define SCHED_WARN_ON(x)				\
++	({						\
++		bool __ret =3D (x);			\
++							\
++		if (unlikely(__ret)) {			\
++			unsigned long __flags;		\
++							\
++			local_irq_save(__flags);	\
++			printk_deferred_enter();	\
++			WARN_ONCE(__ret, #x);		\
++			printk_deferred_exit();		\
++			local_irq_restore(__flags);	\
++		}					\
++		unlikely(__ret);			\
++	})
+=20
  /* task_struct::on_rq states: */
  #define TASK_ON_RQ_QUEUED	1
- #define TASK_ON_RQ_MIGRATING	2
-@@ -1597,7 +1599,7 @@ static inline void update_idle_core(struct rq *rq) =
-{ }
-=20
- static inline struct task_struct *task_of(struct sched_entity *se)
- {
--	WARN_ON_ONCE(!entity_is_task(se));
-+	SCHED_WARN_ON(!entity_is_task(se));
- 	return container_of(se, struct task_struct, se);
- }
-=20
-@@ -1678,7 +1680,7 @@ static inline void assert_clock_updated(struct rq *=
-rq)
- 	 * The only reason for not seeing a clock update since the
- 	 * last rq_pin_lock() is if we're currently skipping updates.
- 	 */
--	WARN_ON_ONCE(rq->clock_update_flags < RQCF_ACT_SKIP);
-+	SCHED_WARN_ON(rq->clock_update_flags < RQCF_ACT_SKIP);
- }
-=20
- static inline u64 rq_clock(struct rq *rq)
-@@ -1725,7 +1727,7 @@ static inline void rq_clock_cancel_skipupdate(struc=
-t rq *rq)
- static inline void rq_clock_start_loop_update(struct rq *rq)
- {
- 	lockdep_assert_rq_held(rq);
--	WARN_ON_ONCE(rq->clock_update_flags & RQCF_ACT_SKIP);
-+	SCHED_WARN_ON(rq->clock_update_flags & RQCF_ACT_SKIP);
- 	rq->clock_update_flags |=3D RQCF_ACT_SKIP;
- }
-=20
-@@ -1796,7 +1798,7 @@ static inline void rq_pin_lock(struct rq *rq, struc=
-t rq_flags *rf)
-=20
- 	rq->clock_update_flags &=3D (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
- 	rf->clock_update_flags =3D 0;
--	WARN_ON_ONCE(rq->balance_callback && rq->balance_callback !=3D &balance=
-_push_callback);
-+	SCHED_WARN_ON(rq->balance_callback && rq->balance_callback !=3D &balanc=
-e_push_callback);
- }
-=20
- static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
-@@ -2778,7 +2780,7 @@ static inline void idle_set_state(struct rq *rq,
-=20
- static inline struct cpuidle_state *idle_get_state(struct rq *rq)
- {
--	WARN_ON_ONCE(!rcu_read_lock_held());
-+	SCHED_WARN_ON(!rcu_read_lock_held());
-=20
- 	return rq->idle_state;
- }
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index cbf7206b3f9d..0e015cc4f68c 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -144,7 +144,7 @@ static inline void psi_enqueue(struct task_struct *p,=
- int flags)
-=20
- 	if (p->se.sched_delayed) {
- 		/* CPU migration of "sleeping" task */
--		WARN_ON_ONCE(!(flags & ENQUEUE_MIGRATED));
-+		SCHED_WARN_ON(!(flags & ENQUEUE_MIGRATED));
- 		if (p->in_memstall)
- 			set |=3D TSK_MEMSTALL;
- 		if (p->in_iowait)
 
