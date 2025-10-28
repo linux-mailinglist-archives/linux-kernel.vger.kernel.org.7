@@ -1,150 +1,98 @@
-Return-Path: <linux-kernel+bounces-873985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580BFC153D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:49:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45C54C1548C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC8964ED88C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B1B660356
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC2C2512C8;
-	Tue, 28 Oct 2025 14:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34683258ECF;
+	Tue, 28 Oct 2025 14:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="huHQXCvp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eM3+yCt1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BBD224AF1;
-	Tue, 28 Oct 2025 14:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D712512C8;
+	Tue, 28 Oct 2025 14:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761662958; cv=none; b=tVceoydioJrBqYZPc/PiSrRKs/t2jPxKfONK8p+T9+O5o6dY3eFb/gfi58dWHR4mUUz/Hn4Xb8lxKf7yi6nBxpW8dDbLqMnKBCxTjUR6l2NthEa1r4iRC4VNQVWJOPyt7MeWQshdKHBjzeaX1yZWf9m43xcQZu3XtnDj8jeAlQA=
+	t=1761663033; cv=none; b=C7EjEApMwZn910Mj35+l1l6Gz2b09SWgADosXHm24IFUQeaJxKnplZjw2rCeKlxqBgMnkKGCAubmHg4exfOLaUJbYjXY/9snq1VDT3bx2rLHFzeYls82ZbxNYSYEPQ7qDpzNb71gj4uDMektkWFg6kV3MBrtt3zTYj6Bx+ke5Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761662958; c=relaxed/simple;
-	bh=/YcbY6Xd39AsABVLZZYIvhdW8ivhFU4lURFGb2RCZr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hxc8N413euu4Eh80TwLyO/1T/SyxEX37D6EuDw7H/WXKCuJ0RWQPLtjMpONpGAq6h1Lg2hfBGMxBvAJly95g4G5auA8ggM0/4CDQo8Lb8+7UZBhCa56LYelsPcARoSY9vUDYsgxD2BArkTv4SJcB3T5pKmdkNjoBPxZpIOrV1GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=huHQXCvp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64951C4CEE7;
-	Tue, 28 Oct 2025 14:49:16 +0000 (UTC)
+	s=arc-20240116; t=1761663033; c=relaxed/simple;
+	bh=6K/S8d0IVvVTkkQFbLMvHUlIli4SloaGEMV2HIrhuwM=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tywDSaCk9eAQC8SjEnAwdNwotcCtehyIlZir3gSpF7Byk0jHcPFXau4rC1/F+ReUiK59lE3R+/ONKWCgAvs3YTD1l8e/Ybh3LUwyFFz9fz86+DwFFtumoRKkkmrFvlg6W6s52nxIRy+1xOcj4oZwPtvt11ECtNhFowJyO5p6NR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eM3+yCt1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2944C4CEE7;
+	Tue, 28 Oct 2025 14:50:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761662956;
-	bh=/YcbY6Xd39AsABVLZZYIvhdW8ivhFU4lURFGb2RCZr8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=huHQXCvp0W/S5F1ENdurMkw2WwJZbMBNDXAh91iSKf/vrNDl1NLBkoXJdUx/C19Qv
-	 Z4qNcGgTCDjqG04Q8z3Gw4n7Ol2Hs4TiC0IGtfV35bwyLcbAG4VH3lZOOkEdiJR4uv
-	 98GKb95kopcHzMuvU3H2025SulpKC226+6+rZMUmhwVvLSkelVU5+Fv/hfF6vOYswZ
-	 XcZScHHzyBVq+mz32oPgQ0NUDZQKpY6cLjssBtvUS7RZby1k7TivV6VhaUkRZyqa69
-	 4+Ez+WRvhuVyLYG73RXpS/ughenkh3oUdmNmmth4K/glGp+Eu28p8jOe+6mgl5gPer
-	 pCdjOFhzrTR8g==
-Date: Tue, 28 Oct 2025 15:49:14 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Nicolas Saenz Julienne <nsaenzju@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
-	Jann Horn <jannh@google.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [PATCH v6 24/29] context_tracking,x86: Defer kernel text
- patching IPIs
-Message-ID: <aQDX6hHV3b1-_wuF@localhost.localdomain>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-25-vschneid@redhat.com>
+	s=k20201202; t=1761663033;
+	bh=6K/S8d0IVvVTkkQFbLMvHUlIli4SloaGEMV2HIrhuwM=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=eM3+yCt18RfkfiycnlMD+IvDLDucmNxUByaJkwdlM7uZYjsJ8fBZwFjTAzV0RB5lL
+	 sFPDBmjn86sWiCRf+aR1aShxtEs70ohGhHYM0uMFfNlX2oR8FE/OwHVPS3YBnJiuUa
+	 UJuD2VaKLrJjcttYbLX9gAqgYAx9KvOAsHAeZmxGY9PXzYGrrFQJf6kZMLF03R764c
+	 xPthxPygltd4liezV6i2XVnOkOwImZNv7ws4EOyWJnJbOpUFe7/RmHElLefFyY4a5e
+	 evRh8bFWhCOLbQFsclRhijStG53G74u9aTqhOgA4dpVlbd4a3ehw7FztfGk/TrwtAW
+	 YnZmkl9H7GdRQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB21C39EFA55;
+	Tue, 28 Oct 2025 14:50:11 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251010153839.151763-25-vschneid@redhat.com>
+Subject: Re: [PATCH net-next v2 0/2] net: stmmac: Add support for coarse
+ timestamping
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176166301074.2258992.15898542633680780702.git-patchwork-notify@kernel.org>
+Date: Tue, 28 Oct 2025 14:50:10 +0000
+References: <20251024070720.71174-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20251024070720.71174-1-maxime.chevallier@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, richardcochran@gmail.com, linux@armlinux.org.uk,
+ kory.maincent@bootlin.com, vadim.fedorenko@linux.dev,
+ alexis.lothore@bootlin.com, thomas.petazzoni@bootlin.com,
+ netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Le Fri, Oct 10, 2025 at 05:38:34PM +0200, Valentin Schneider a écrit :
-> text_poke_bp_batch() sends IPIs to all online CPUs to synchronize
-> them vs the newly patched instruction. CPUs that are executing in userspace
-> do not need this synchronization to happen immediately, and this is
-> actually harmful interference for NOHZ_FULL CPUs.
-> 
-> As the synchronization IPIs are sent using a blocking call, returning from
-> text_poke_bp_batch() implies all CPUs will observe the patched
-> instruction(s), and this should be preserved even if the IPI is deferred.
-> In other words, to safely defer this synchronization, any kernel
-> instruction leading to the execution of the deferred instruction
-> sync (ct_work_flush()) must *not* be mutable (patchable) at runtime.
-> 
-> This means we must pay attention to mutable instructions in the early entry
-> code:
-> - alternatives
-> - static keys
-> - static calls
-> - all sorts of probes (kprobes/ftrace/bpf/???)
-> 
-> The early entry code leading to ct_work_flush() is noinstr, which gets rid
-> of the probes.
-> 
-> Alternatives are safe, because it's boot-time patching (before SMP is
-> even brought up) which is before any IPI deferral can happen.
-> 
-> This leaves us with static keys and static calls.
-> 
-> Any static key used in early entry code should be only forever-enabled at
-> boot time, IOW __ro_after_init (pretty much like alternatives). Exceptions
-> are explicitly marked as allowed in .noinstr and will always generate an
-> IPI when flipped.
-> 
-> The same applies to static calls - they should be only updated at boot
-> time, or manually marked as an exception.
-> 
-> Objtool is now able to point at static keys/calls that don't respect this,
-> and all static keys/calls used in early entry code have now been verified
-> as behaving appropriately.
-> 
-> Leverage the new context_tracking infrastructure to defer sync_core() IPIs
-> to a target CPU's next kernel entry.
-> 
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzju@redhat.com>
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+Hello:
 
-Acked-by: Frederic Weisbecker <frederic@kernel.org>
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
+On Fri, 24 Oct 2025 09:07:16 +0200 you wrote:
+> Hello everyone,
+> 
+> This is V2 for coarse timetamping support in stmmac. This version uses a
+> dedicated devlink param "ts_coarse" to control this mode.
+> 
+> This doesn't conflict with Russell's cleanup of hwif.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v2,1/2] net: stmmac: Move subsecond increment configuration in dedicated helper
+    https://git.kernel.org/netdev/net-next/c/792000fbcd0c
+  - [net-next,v2,2/2] net: stmmac: Add a devlink attribute to control timestamping mode
+    https://git.kernel.org/netdev/net-next/c/6920fa0c764d
+
+You are awesome, thank you!
 -- 
-Frederic Weisbecker
-SUSE Labs
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
