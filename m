@@ -1,124 +1,153 @@
-Return-Path: <linux-kernel+bounces-872910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285FCC12961
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:48:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4110C12970
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BBA1A6634F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:48:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35E3A500DC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C94255F28;
-	Tue, 28 Oct 2025 01:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="fRrVoPIs"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6520425D1F7;
+	Tue, 28 Oct 2025 01:51:35 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD44215F6B;
-	Tue, 28 Oct 2025 01:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8964816F288;
+	Tue, 28 Oct 2025 01:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761616087; cv=none; b=qpo5csDgZfe6fTnyTGag0QrF6tCPk/fnIWggfmdAPLlM10kRb0LH8W+Au9+l3JtMaxUev0ygvjxTI+Vq+Qqm/Fzf6BLLrBVkFILTua5rm5/d+56GsXxeeU2KUzW7SEn3VLJQl0A+l6AA7whJpu+i0BNUg+x0C2W+vSfCKvAjYUI=
+	t=1761616295; cv=none; b=l7SpeG5g816wrBE4yCi+aFvlN/dChDfq7bJd+OX1SP7j6mm3w7DPIz6SsndzTmjlFJZ/AxLQyzHn3rkkzt4YvKHPZx3bs5dGxNtBZQOX6L9Kqi8hsGyxxB+BsARpYTOUFZpS8bqbjmZPQ66cxqvwG5m9ezKbq+RbPe7Yn9caBiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761616087; c=relaxed/simple;
-	bh=Iv5rRjYY8JSRUIKds9sbbJvzC+aTVnp8pVpbAJNDqS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iwbQtWmC9pNr50wjKDtf84gLgb7dbt+lsqCc18zoZkAGQj2CO7OmcK28/8nFW8Yt63K4ju/tQ2vkSSwKupQGVB7VcDWhbWPcEBmgISXogWavwQEI6WpHKndpNo2iNYKWkPggLpi4W5FqJC4a2m8d7cazqgTfs1yyXwMcDHgBZvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=fRrVoPIs; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
-	s=mxsw2412; t=1761616004;
-	bh=ZZGiSuhveC35IDEiLoprkDlOVwgiu6jWGoH+rPsLx3c=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version;
-	b=fRrVoPIs29UqTD0m3W7X56lgTJVygEyMciveva6ZK7qLlDlv+u9LNMQhkpu8IYult
-	 cCBRkTBMQAaZxPko4cRncE/y3sPftOlL8w+tJXZnaYxlKG5jDzU3/HIrqS1gltW94g
-	 xVsDdlE/6UQ8uZ+CCA9plMbuiVYnGNvhJKpJLrAI=
-X-QQ-mid: esmtpgz16t1761615995t756b5b9f
-X-QQ-Originating-IP: 7q80XCy0jGgLRN/KX1RproqfInXomRBfooCh3iM0zPE=
-Received: from = ( [61.145.255.150])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 28 Oct 2025 09:46:33 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3934101092882309250
-EX-QQ-RecipientCnt: 9
-Date: Tue, 28 Oct 2025 09:46:33 +0800
-From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-To: Alex Elder <elder@riscstar.com>, broonie@kernel.org, dlan@gentoo.org
-Cc: p.zabel@pengutronix.de, linux-spi@vger.kernel.org,
-	spacemit@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>
-Subject: Re: [PATCH v6 2/3] spi: spacemit: introduce SpacemiT K1 SPI
- controller driver
-Message-ID: <FFC4D2691116C9D4+aQAgeeG28SpSI7YR@kernel.org>
-References: <20251027125504.297033-1-elder@riscstar.com>
- <20251027125504.297033-3-elder@riscstar.com>
+	s=arc-20240116; t=1761616295; c=relaxed/simple;
+	bh=fz4zgvfX8X+qirqfDKVSY1/HPFrH0WizlqSF0w34Si8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kk88La+gd/mvEgPb90gclhbaR4AWLPFWZsiB2SUyB2x/4lX+M6adJzgPTLg/VbkgjmMU1Qs80JZ+VsFLwH3mC5FGEu3JokEKJdTv6pFJ7KRLxm26lNmcs/AtycYeOPrYBaxe5c/bZgtjYk6FMQav3ZSGihRijfH0lAuhGfw6JwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 971a9f5eb3a011f0a38c85956e01ac42-20251028
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:5d91b49d-5a66-40cf-9c7b-28aa208aa133,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:a9d874c,CLOUDID:3839235e197e2efe96210ae0c772be0a,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|817|850,TC:nil,Content:-
+	10|-8|-5|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,CO
+	L:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 971a9f5eb3a011f0a38c85956e01ac42-20251028
+X-User: xiaopei01@kylinos.cn
+Received: from localhost.localdomain [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 135765811; Tue, 28 Oct 2025 09:51:15 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: jic23@kernel.org
+Cc: alexandre.belloni@bootlin.com,
+	eugen.hristev@linaro.org,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: at91-sama5d2_adc: Fix potential use-after-free in sama5d2_adc driver
+Date: Tue, 28 Oct 2025 09:51:13 +0800
+Message-Id: <20251028015113.34609-1-xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251027134908.36d63b9f@jic23-huawei>
+References: <20251027134908.36d63b9f@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027125504.297033-3-elder@riscstar.com>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: NvGGTAUhB2iW18mMlxXY2mDBeJh78WNKTROkTk6L8LQ3hqB4wCe7vAlx
-	Iov5PVGTOE8ckjEVZgx023uvmPdFZP8CzSX6DQnnZoUD42iCzQvoJNWebc2kdoWK3uuVXNG
-	VukIcw4F3JB4WdP4lGomOfsWjUMLP7aN2mgX/BhnPHY3J38vLk2ddoh8ZI2hkqJSA4fodsi
-	SGCCAPxMldj7BKBMBIHHXVrfuaktnMJf7B78VlqXId/1YwyMYJWIV0v21U8LTtqjQLl7szk
-	MQrokQ5eSnLNLCamqlaLXhxziB6SYZRqmKcwmaZxoBf8YKc0mzi3bc0Fi+/9rj9fG3JtkxU
-	AA2fIXD/yN0gg5qd9SKPkBbpHHrluJMoLMOdcYUVKLsCBcTIBNYTAb4C+fu7HHggvBR7FY7
-	0HogkCpIzuT1OpQLjj4IKqMcGlp+pFw+sbHhrlKIXiQ5UjUDwyV6NlypS+tlbbuxHWfmoO4
-	FSBXHvIM7E3gw+D5lGCb3YSien6Yf+r8OpUiLgU6LEl53mVDwXj0AblXzcTz28cytCrHA2h
-	Y1VvFzjkjpd6VOxYnC1IOW8zadT6JarzrCSjhzFH4ektZOO1S0IWQFJGim1Tg7E4oBw1G8f
-	SKWGrggWBNNs9cBvF7Be+rzSiEWPSBkvKU82cG1/PCxOqTWqskQFollBzb3eZsXqS3+Wdqd
-	GymwecOeRIzsLELni2fAHUyqPOAzNfADcCsqw4BO8u6/B74eFVS7h3xTlBh7xpFKDwktqHY
-	cdvKHHxZ3nP6r6l/phPt6DTBtrYfUvH60ZlnPDNQttpD3wgCfR9W4jStZMQgyq9iH/sKz15
-	+51juOmf3YHu6eHEKI5DtvIl0bFOEqa4OebUWYfbfJja8rmlHGsjFnW1XcA8ZecCDQXwrGq
-	IioKv/xV1PY0gJHEF5OZnjjxwT0y5X/yDUC/EtaKHqGTZMXeyGw+a6Z7GNPACdenrwyi4pz
-	X8UrXdiBhBTAYeBymXTe8X21F0wA61qOVOHCN77XKUuDB4ae4QTFXWzCpc8lsvYKgLTMRJ0
-	7of+kZMM7h7HYdNvfk3Z5KF8qHhRJ8rTX6WNs4EZO7FaKUkNRHfVXHgG1FFZc=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 07:55:02AM -0500, Alex Elder wrote:
-> This patch introduces the driver for the SPI controller found in the
-> SpacemiT K1 SoC.  Currently the driver supports master mode only.
-> The SPI hardware implements RX and TX FIFOs, 32 entries each, and
-> supports both PIO and DMA mode transfers.
-> 
-> Signed-off-by: Alex Elder <elder@riscstar.com>
-> ---
->  drivers/spi/Kconfig           |   9 +
->  drivers/spi/Makefile          |   1 +
->  drivers/spi/spi-spacemit-k1.c | 965 ++++++++++++++++++++++++++++++++++
->  3 files changed, 975 insertions(+)
->  create mode 100644 drivers/spi/spi-spacemit-k1.c
-> 
-> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-> index 4d8f00c850c14..2e933edab1718 100644
-> --- a/drivers/spi/Kconfig
-> +++ b/drivers/spi/Kconfig
-> @@ -1071,6 +1071,15 @@ config SPI_SG2044_NOR
->  	  also supporting 3Byte address devices and 4Byte address
->  	  devices.
->  
-> +config SPI_SPACEMIT_K1
-> +	tristate "K1 SPI Controller"
-> +	depends on ARCH_SPACEMIT || COMPILE_TEST
-> +	depends on OF
-> +	imply MMP_PDMA if ARCH_SPACEMIT
-> +	default ARCH_SPACEMIT
-SPI needs to be a built-in feature?
-if not, how about:
-default m if ARCH_SPACEMIT
+> On Mon, 20 Oct 2025 15:49:25 +0800
+> Pei Xiao <xiaopei01@kylinos.cn> wrote:
+>
+> > at91_adc_interrupt can call at91_adc_touch_data_handler function
+> > to start the work by schedule_work(&st->touch_st.workq).
+> > 
+> > If we remove the module which will call at91_adc_remove to
+> > make cleanup, it will free indio_dev through iio_device_unregister
+> > while the work mentioned above will be used. The sequence of operations
+> > that may lead to a UAF bug is as follows:
+> > 
+> > CPU0                                      CPU1
+> > 
+> >                                      | at91_adc_workq_handler
+> > at91_adc_remove                      |
+> > iio_device_unregister(indio_dev)     |
+> > //free indio_dev                     |
+> >                                      | iio_push_to_buffers(indio_dev)
+> >                                      | //use indio_dev
+>
+> Hi,
+>
+> I'm not completely following your description here.
+> The free doesn't happen in iio_device_unregister() but quite a bit later.
+> So either the problem you are seeing is actually devm_ tear down that
+> will do the free, or it's a more specific action in iio_device_unregister()
+> though I'm not sure what it might be. Possibly a specific buffer mask
+> getting torn down?  I haven't analysed it closely enough to figure out if
+> there is a race there but it's the only thing I can immediately spot that
+> would even be of interest to a work item in a driver via some core interfaces.
+>
+> Other than working out exact cause for anyone looking at this later, I'm
+> also not sure you don't leave a potential race where a fresh request comes in
+> between that cancel_work_sync() and the iio_device_unregister() call as it
+> is only when iio_device_unregister() is complete that all interfaces are torn
+> down that could start a fresh capture.
+>
+> So were the cancel_work_sync() one line later I would have been happy but
+> from your description I'm not sure that fixes the bug you are seeing!
+>
+> Jonathan
 
-                  - Troy
+Hi,
+
+  Thank you for your reply email. 
+
+  I haven't tested this bug, but I noticed this potential issue while
+
+reading the code. So, can I send the v3 patch and move the 
+
+cancel_work_sync to the next line of code?
+
+Thanks!
+
+Pei.
+>
+>
+>
+> > 
+> > Fix it by ensuring that the work is canceled before proceeding with
+> > the cleanup in at91_adc_remove.
+> > 
+> > Fixes: 3ec2774f1cc ("iio: adc: at91-sama5d2_adc: add support for position and pressure channels")
+> > Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> > ---
+> >  drivers/iio/adc/at91-sama5d2_adc.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/iio/adc/at91-sama5d2_adc.c b/drivers/iio/adc/at91-sama5d2_adc.c
+> > index b4c36e6a7490..1cd6ce61cf17 100644
+> > --- a/drivers/iio/adc/at91-sama5d2_adc.c
+> > +++ b/drivers/iio/adc/at91-sama5d2_adc.c
+> > @@ -2480,6 +2480,7 @@ static void at91_adc_remove(struct platform_device *pdev)
+> >  	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+> >  	struct at91_adc_state *st = iio_priv(indio_dev);
+> >  
+> > +	cancel_work_sync(&st->touch_st.workq);
+> >  	iio_device_unregister(indio_dev);
+> >  
+> >  	at91_adc_dma_disable(st);
+>
+
+
 
