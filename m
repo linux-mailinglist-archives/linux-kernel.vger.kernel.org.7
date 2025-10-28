@@ -1,457 +1,98 @@
-Return-Path: <linux-kernel+bounces-874549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D03C168DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:00:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A31C168E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CBDA14E8886
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E471A1C243BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A32F21FF23;
-	Tue, 28 Oct 2025 19:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51EE834E77A;
+	Tue, 28 Oct 2025 19:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dXlmrmbT";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ASh+90rK"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cj++AlAn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FC017C9E;
-	Tue, 28 Oct 2025 19:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761678029; cv=fail; b=VkYa66MRBqaf9R4I8Iy9DUrA25Ozt+oosW//rU2TZaBVXj+xKQd+rNUODtdrKIdCKLrpJCWHfjA/8spbEoAz6VzLBVkyAeh+SXxd4LAUP9C7A/9OWyZjrEixk7eV2j3M3csTLOFJiqDg4YUVTSiTWbcNDxPHDUx9YDOhrCTJiR8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761678029; c=relaxed/simple;
-	bh=NLWOEaiUplS1HDo9vxzd1HioXYOMYOfL90BR4x5MpgU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Hd8DCKscaOq/vPBf/hEIofRcwBtjjP9NpgjScO9P+NpjpkAI4eXIfQ9U96fRT71jdLtJ0Tu1M0XFeE0mc60ORK3tps5xgoQ23PFiiROPCKHzzqSAkbD7sQ6DiDCGjiU3xsdRYq7jT/n64v+C+uQK+acuwaJL56lbVmpek+EuXus=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dXlmrmbT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ASh+90rK; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SHecWq015518;
-	Tue, 28 Oct 2025 18:59:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=/27a6cDSIq89UiNiQ2
-	7Lo7Pv2RvZE+2pIXst16y0d6Q=; b=dXlmrmbTFqwxEDuMETgPco+s0MVGgQZZWw
-	YX0XPqAx0dQPojy8rwCDnwIuOUrJ9yRH5b1FUC/mwyg+HF/XI0Bsu8qni2upeYo0
-	5z3CI7gY8T0dfQQyg1ykpSjNnZUZcL6b44AChMr1i1nn+4LJQeBWQ7zTbZTMUlkI
-	bZSMLGusDwt/1A3Al4mOXUX+6Fi4NbpMg92CYAp3y6fJrDNSzRoDxdSXPiXdIfri
-	7+1XgeLqf9c2PpwQYh+b9YQGMwPo0Psi5So1itYH2YQPQQ9ynjXhxBWBRNNK2YZD
-	ZHs/bwvdAWXIouGmPZUZWW1pB4YWt50xhp89WFYTf47PZVsiZMQw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a0n4yq2jt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:59:40 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59SHqtPr037435;
-	Tue, 28 Oct 2025 18:59:40 GMT
-Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012049.outbound.protection.outlook.com [40.107.209.49])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a0n08mm04-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 18:59:40 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iGb4tO3kGAVB87RQlwgeg8LkiGWHUIjv9iUZacKHYRzIa1/5VLUpq1Wbjnb+xu1HQP4SH5q0/eNOWq0F5YLRt1EvmmtBu8ZqjLYqM1Ju91I+QizUK24rjV11AmvcMvIBhodV6smZoeFMyfb2c5leG9IfwwvDQAKNzmbHJ0DJhHoNZvrou+9kwMq7k6Atd8/mh1Aud6ZQNjdnDjvh9F/U/1Nh29Mcuh0LXPiKCVJdSYHnxl+z/A3SP944JcMwOoRBL1eprfx4t+nDJNrkPgJkPbOTd9miFDj18JigIqU1RHsokpMZL7pzzI1EkkAiMQOoUWY9lkychcp5N6P/icijRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/27a6cDSIq89UiNiQ27Lo7Pv2RvZE+2pIXst16y0d6Q=;
- b=BLk/UELahnTE4k8MwQdpWWMSSNkf6kz+G9fUa2/5lrBJukFUOitNXlSrKvgxis6a4kNw8USflmsj8FU1YgJrCO0iXQcVLqZJJfpx4mIX2rzAcxCIap4bU5qYOEjJZpukB9l1vBtX/tvsSNmQEOrWMlpcNo5HDlstFtO1v3Zti0CwcjI3f0TSDUTefiPROaJbeIYxI6+tnU25nSwvVcwAN1Z1/C8tV4otCFK3TEkkKgNfMl0SdkQid6suAuGaoDiei5gI402yBfyDNwENL6PIwY2OlRqcMiQBRl+3xcVzt65N8zWV1r77jb9fMlgZjV9nw2SNYdJ3JpjEsn8huY5XHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/27a6cDSIq89UiNiQ27Lo7Pv2RvZE+2pIXst16y0d6Q=;
- b=ASh+90rKfqwgR7h4dDm+jjuhTjASCIYnWPZoDnwLgmvHdmaj7tVHxGXH+vlUhECeUECKwjye93g0dOJ8gOoDpjBgTW9+BNxSRGgsDp65dgX319VQytRXBHJPpwiqExwqUCl/75i1cBpiC5FuJILj22zM7rLXVfO5F0kq6KeJ1Eo=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA0PR10MB6889.namprd10.prod.outlook.com (2603:10b6:208:433::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
- 2025 18:59:34 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Tue, 28 Oct 2025
- 18:59:34 +0000
-Date: Tue, 28 Oct 2025 18:59:31 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org, ziy@nvidia.com,
-        baolin.wang@linux.alibaba.com, Liam.Howlett@oracle.com,
-        ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
-        rostedt@goodmis.org, mhiramat@kernel.org,
-        mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
-        baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
-        wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
-        sunnanyong@huawei.com, vishal.moola@gmail.com,
-        thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
-        kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
-        anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
-        will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
-        cl@gentwo.org, jglisse@google.com, surenb@google.com,
-        zokeefe@google.com, hannes@cmpxchg.org, rientjes@google.com,
-        mhocko@suse.com, rdunlap@infradead.org, hughd@google.com,
-        richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz,
-        rppt@kernel.org, jannh@google.com, pfalcato@suse.de
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-Message-ID: <3dc6b17f-a3e0-4b2c-9348-c75257b0e7f6@lucifer.local>
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
- <CAA1CXcA4AcHrw18JfAoVygRgUZW3EzsN6RPZVrC=OJwSNu_9HA@mail.gmail.com>
- <e69acbc5-0824-4b07-8744-8d5145e2580b@redhat.com>
- <e66b671f-c6df-48c1-8045-903631a8eb85@lucifer.local>
- <74583699-bd9e-496c-904c-ce6a8e1b42d9@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74583699-bd9e-496c-904c-ce6a8e1b42d9@redhat.com>
-X-ClientProxiedBy: LO2P265CA0311.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::35) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1BF33375A;
+	Tue, 28 Oct 2025 19:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761678048; cv=none; b=E+CiiRDs1YNtoHyUCPRu+KRk5ADwBDd1J53r0PDuwSPGGWavv7IxcNgIpL1atrY14TG+m7UUrPNNRr+TIsqLjH1nuZQ1wEUTXcDOmyDJDUtzN9Hq8nDACCjtyYrSmXz2x3BvRQddUgzA3unBaSYXTLGKLWPsLtOk9Or4qAq16GQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761678048; c=relaxed/simple;
+	bh=6TmXIE1ErW1nB1KXGkfIGafW/uBduxIYiTR3bdatlVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D9Aoq4NK5MA5xvFZ5Bx6W255qJLsAWUwzR54mwifjGaeWa+z43E8Uo49RBJtd581YZMcdo7Pzqv3G2c+CHuUqPn9RPuFj84kqdCkLYowuviTW9emHquqYUSezG0ipf1ONiFojVuNb62bEE+8xFHP5xxnjlfnaXMPFszkZ+P6GcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cj++AlAn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0436C4CEE7;
+	Tue, 28 Oct 2025 19:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761678048;
+	bh=6TmXIE1ErW1nB1KXGkfIGafW/uBduxIYiTR3bdatlVU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cj++AlAnGZflpB4f4hkVJGUc6pd7F4IGudK+niagBTeAK6Ew+wzIma5f9lxESKhPY
+	 BT59wnXnCRj7qZzc0N02GWXkhuXBNT7oAlXBPbsUK8xCV+2UKKXv4ACW/EN3TO06HS
+	 Z85UzrFf7SDYnCwJen5uNbybajZFtI5+3a6BM7StycwWLjIMi6y6F2/cx8Pek5V+t1
+	 DGr7SYhcUthikLpqsZxXgL8lHW/T98JQXOrLcPnKQhVIkORP6ccZ9ANXm1q3/Ui+PV
+	 mdKidhK3KL43QkPnUQkViElQAsy9kmIqqpm4Tw6wNhkyowc453A2gWIO0oUpv5qkU2
+	 iOj0tqjk77ItQ==
+From: Chuck Lever <cel@kernel.org>
+To: Khushal Chitturi <kc9282016@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	jlayton@kernel.org,
+	neil@brown.name,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xdrgen: handle _XdrString in union encoder/decoder
+Date: Tue, 28 Oct 2025 15:00:43 -0400
+Message-ID: <176167803663.42531.4479861144864515683.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251028145317.15021-1-kc9282016@gmail.com>
+References: <20251026180018.9248-1-kc9282016@gmail.com> <20251028145317.15021-1-kc9282016@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA0PR10MB6889:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10f06630-bf36-4483-93a6-08de1654220f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?815DI1ItGHAhmH+4cjkw/8okrtnan7qJbanDYIzg0y80SREr6+CxapwxfH+m?=
- =?us-ascii?Q?Z1zXFs3XpmhHb9+hrXhGzCYLaqAHYgXuWP8FWKWoRBMdNo6APgP9Hzw9XMWd?=
- =?us-ascii?Q?6GQBTtwhjCcfFbDQOjeyRnQmktX1AFjwIWxacSs/CaERgDngOoyVFzWMiF9y?=
- =?us-ascii?Q?IgCZhK3TgkZP5iknzjcNoSCwdpzwvKUXO97SsDoi3FH2NuKBmWNQgFrUM4tg?=
- =?us-ascii?Q?LnfX+BofC5Ap4XMVZ9iBFh7j0QFb4AZrYaNw6iB1BYI7yaS1B2rFLj6AHDwZ?=
- =?us-ascii?Q?CZi81NEYs4S3XPTzIgkHbotd4AN17LrCi0G+XTPhXe+Oz2sq6MXNLoccMoAl?=
- =?us-ascii?Q?lgcCohf005E5N7kMlWUoFt5+jyC8wyeaaZkULpkkUpHhJc+mmRArjX3U+/mm?=
- =?us-ascii?Q?ecSpVrbzp6tf1gBd67kyvBWJfIuMMzIqqSSFSU0z7kN5KiHddX2a1/teHeRf?=
- =?us-ascii?Q?we+IbIBquPI0Ag4tn4/AeA6Vfd6MF0avbXJVGsiHod5oqfhhZ+2S4sHoOuqc?=
- =?us-ascii?Q?J5Wmd6N875fCKAt55RaZ7ELDKpKDKRlC7vzHEbBqqkKp5WFjvEeygbzhjpON?=
- =?us-ascii?Q?3KGamn9L7XdiiTACdsiHjbgm3RmLe5phxalSI5OLItGTUp3cKLxb78GQdCTm?=
- =?us-ascii?Q?EUQ6iorn3euZi8xA1RcVVpJpLKBl5Rpx13DjNnk8yrjRc7zi62aY50qRkEOT?=
- =?us-ascii?Q?nUAXERas7vB5JTfiXIgd3Knx//OpL7Ko28aJl9JMCp74lXPRuceSSzv3/8x1?=
- =?us-ascii?Q?g/X9x6R3Y6JeQ4BWggKXsq6GY5yr1ZnyGj+L5oJoWsQ0+6/FvnfjD2LGzmkI?=
- =?us-ascii?Q?GADVPjHCZMVqQmPXtctHJ/hURTqoLkzf7W9JXyiNqKPYuJDvqPerKBSnn5V/?=
- =?us-ascii?Q?x4mXKEpx3Qo0RlQxUpGvXN+VnJbPPitQugL7GG1KrFUgGOsSo4VV5N2P+Baa?=
- =?us-ascii?Q?xXV+Rzkhqra7QppscSmfDeEvOKHUnp9CoB7Lb+A+kFfVwNY2Ko1ujXoXL1eI?=
- =?us-ascii?Q?aBXkPdDF23bCY/WMxDB/7BBZnuoPI91BsyYrGKCz6SXwIA5jYlyqnAmE8oNO?=
- =?us-ascii?Q?FL0Y0+Vtfryzak54oODPhtZ05TvQlrEV8/TfbqniPEI/syxkh5xWb2ECh1iA?=
- =?us-ascii?Q?SiXBV3Ct/FK1d2eqNGspzkDxcwKnQXvsVeLG478HV4sguMq3VrEyg5+qs4N4?=
- =?us-ascii?Q?9mLhpHGzms1gHSi9Wp85VCQcv1xXvTOhnrL7N3bCKvJWS4o0sBm6Wo6W7agF?=
- =?us-ascii?Q?Jw3pu2SfYyCG0dY8oqvQ8ewlwgxBFZppGVjTA/9Jqs1ZWS/Gbq7zJeo35R4I?=
- =?us-ascii?Q?jJODrV0XTJo+lzKddY0jcRdDgHuMSv3gv33C4hDa1ma3WPbCij/paUNm5kQS?=
- =?us-ascii?Q?v5cr+BM/t+RSmfFGkwZTmoItNjXLl5yXYPkc+EqULcFwAAb2pmBobpXOEwz7?=
- =?us-ascii?Q?V9ml79JwX11lE3yEQ1bNHqvnwK7Ivytb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dR3jelqkENANnK7G0SZSr0HKRwEnrxXImsjGc80OXmfdEEKZs7lMjMoJxTxN?=
- =?us-ascii?Q?ltho1P9eLAIwEBPEBhMuekHK0u5qjFr3xgCaUorJ2QPx5kVMwvtgIHOibvdy?=
- =?us-ascii?Q?bI1jI+QIO2+faN+Jm//2hYGUChbk+jOjJT/xYB3om/Zyz1Ex+ra8627fKtsw?=
- =?us-ascii?Q?fp1V991lWrWepqgF+VOhg/M0dtjI8qMDIQFeucdRG3Ia8IVgEBe4qRLZyELW?=
- =?us-ascii?Q?8fGFFJvaGsiTJDg9mjTF7EWvIVvR16tZUrjwTDKOej0Wkth6h6dxKD6jMQYx?=
- =?us-ascii?Q?T1+ZJnZ3KAfhM9cYxyzEn2dlcZw1xiQXTlGh54jFPy2fB4r9QHNsvUe9BBnW?=
- =?us-ascii?Q?Ba5/cU0jIwM3AmJNX4imS20TE4oCexC/lqKelbD3Y9EdX0T2wWu9umy1FelJ?=
- =?us-ascii?Q?aLzkWKoavOak9+wSxmzVrJTCXCfD30xZ5LJV7/mYNtBN5gD8NOeTKNM5BVBk?=
- =?us-ascii?Q?AxnflB4sxUiELIxBuArjxu4w97kg5hIy1gHJxda6vX3X1mDJAISSqDbbx6R6?=
- =?us-ascii?Q?r2d6ZNE7bFDBUjDXDeZplMH/T5Rl1F4WV5Vvwt126cTz8Yra313WCuDCzaiN?=
- =?us-ascii?Q?HjJku1ekERtqPIswNO6OZuSu6IZSgqEVb9hoeK927VZWcnsza2KfUIbtxJEx?=
- =?us-ascii?Q?nBuqLghy9k39BOI+wd8LF7XSg2A22DtqkTpbtBYHScUDDbJM7nyAuSA8Iw44?=
- =?us-ascii?Q?Knab1rndunm8tBTb/uvPmLTQnzqoRrXcA6NKiXXkdSNEWFCn64ds3negAMUd?=
- =?us-ascii?Q?2mVLLN0kfoyiIjJnRxUFC+VEVHUlMM5UTUOsyw8Put8JTYuxXQs3jHBBOsp+?=
- =?us-ascii?Q?7fPlsY6ECzwQE6bDenPnJ/gIUp/NDfCk6DAxXCB2+8KNDx7umln4qQhZhx+y?=
- =?us-ascii?Q?DrpoqeLrMKOAybNeiTh7Ni2taVDuH5AN59+zMQN2pGm15RcA9iBcR+KdNkCt?=
- =?us-ascii?Q?kOSJuOGr1PNviDHBVwE8ZyMeng2itmYTiAl84xJYqiZOZ6N5UNNLXvvApCIj?=
- =?us-ascii?Q?Mc9tdXjPXQMLB2vHmZuBtIEMxkazfhuxmskosxmAwnNEoY9ovUS1hK0X24zK?=
- =?us-ascii?Q?K6zSd9OpWyQtV8LU9NK/W43NTHRWgkXMRtTH4JOVQYTlcAs0SJdbmGFJomVV?=
- =?us-ascii?Q?iFjcdrUbVoTttfH3kfMAmikiKAwqkMqASyKvYStiNMYnYgzjvSi4Fu8rB3y/?=
- =?us-ascii?Q?aQ5JIyq4dHo4KgTPiOAf5jfnm8k0G77EbgnhWZkcZop+WyNHs5ZLqzHRHaIF?=
- =?us-ascii?Q?G/khPYGo2wdhlMxIeif7uY8cM4WxfPfQsjypCtWdI7GddQASzxW21j/0HHf0?=
- =?us-ascii?Q?LvrRpmO0dpSeiQNffKBS2jYNq/ecdQbPDutnrO7MQdnoRnHks//CMgeElvxL?=
- =?us-ascii?Q?XhpJp89pAYppK7/P28WnR2MBQPLeuVkHZuxoDr+9uAxZfKqDk5qryqPFtm3K?=
- =?us-ascii?Q?AhvfWH87JHuDwh+985A+Pb5ng1kQ4LEBjqtpjliern1LyehxuFGvHyu6swH/?=
- =?us-ascii?Q?wCfGNNiNFC1aPVXRf1g4x5SCTvUHyyHfUWjfKZQsJhkHZDVi+lH4586uCowT?=
- =?us-ascii?Q?cyBUeY5IJ6ETB+B7XqHgZuMVQiJCN/eXRZ7/zLcojmM1a7Z/nu5mH07415gr?=
- =?us-ascii?Q?VA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Ph/p25nL1klXqLHyQJcfD+deNqb5Ce2G0nhg/mXIQDZr1E+8upzCT9EBABY5EdIWEhKeiyTAgQXnGzPQYUFAUpVZsC77RvLlmIp+/Jff0ZivIJ+AjvjROlsobOSTCIYrM/I42+4o1XsdjauQidweeR9v4K2tzbsWyLUHtUv5FQtBmhit9M0hCi0Bdt//wlp2VGVCvfOOzgKKaYScyePUvT9gJjUo3HQZYhQZlFpEqfpdmTYLdsoqQBypNG6guzemQPxPPcOUGsNZ5QtS2ZPZJA4SsHYeHPsUsQbGMZ1Zxovj+wl9kKneetiTE1TW9sH+ZvkImd764eucL57dcRuglWBsqwWVtC4tMSbnVGJcWKL3Zi3J/Ks9flaCAwvIHDE8NnAWR+KCdGhsn8mlUlQPc3ZoPDWRaMONNb33naXe5NweDs8Y5y6POezIjYwfaQuoW+OZkrGmFTTveHOzHBQm26elldd25fuYXXpMe2/LfYf+QIrVLYO70KSJj+ITXS2wIP5JJnYkF9gHA5f6w20KxtL4ff2MurphNolSJDhbWqDsfoF1pQ41ryTUBUGxbr0VMnMUB9nCwTjcY3Rk2KMHPHtMazUHmmAxF1iGG9u4HSE=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10f06630-bf36-4483-93a6-08de1654220f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 18:59:33.9320
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 694rZ74ynLjiqXCAYYawCdE8fVqYd8xvxrPVHU/899WPZt/O9yu0+Xa2Gcni/EfoHUC//XpgKye7MBsYN0Jjh3YNscpGh9ZkVoVLszpjzjQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6889
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0 suspectscore=0
- malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510020000
- definitions=main-2510280161
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAxMyBTYWx0ZWRfX/0//m80uwbup
- Pi/+sWgRRbX/Rm0r0yV4D4mWTAKQszdLo3BUWrgP0VnNQNHw+lIICdJq+u1cDIbjawD1MJ4xPWG
- UZMrGPWDTvyBl1Vh5d3rtUDMkl8JTwgBO0h4BzwCKK0fTIGudvnI4qnf5bJBsBN89R3f2FNe7mc
- d4vaHs8nUXA1brydH85w3mtOtNyp6Io/ZV/owZljHFXzInnzTlqvBsF+Myo9zC/zaxlVjpV3UYc
- 35L3vKVSao8cGwLb1id9jHTq7uOtDCAavzAgyf0ul84UeJjkpYT39B7BnycA6bHyJXqrR0BCiX0
- NFW5FyKetbyYM40X/0+7RYlUHCxk3pTfFuTrad1tXTID2JD73/jVS0M8mmBBzojcZpMoMD9v1uj
- 8UTUCw4J6UVjmNwE7CTdD2vBNiIm0g==
-X-Authority-Analysis: v=2.4 cv=Z9vh3XRA c=1 sm=1 tr=0 ts=6901129d cx=c_pps
- a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=lm_c3_3Ww6B06y51cfgA:9 a=CjuIK1q_8ugA:10 a=UhEZJTgQB8St2RibIkdl:22
- a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
-X-Proofpoint-ORIG-GUID: ScB-zABZ6c2PmpD_fO9reB0nWc9wU9Ow
-X-Proofpoint-GUID: ScB-zABZ6c2PmpD_fO9reB0nWc9wU9Ow
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 07:08:38PM +0100, David Hildenbrand wrote:
->
-> > > > Hey Lorenzo,
-> > > >
-> > > > > I mean not to beat a dead horse re: v11 commentary, but I thought we were going
-> > > > > to implement David's idea re: the new 'eagerness' tunable, and again we're now just
-> > > > > implementing the capping at HPAGE_PMD_NR/2 - 1 thing again?
-> > > >
-> > > > I spoke to David and he said to continue forward with this series; the
-> > > > "eagerness" tunable will take some time, and may require further
-> > > > considerations/discussion.
-> > >
-> > > Right, after talking to Johannes it got clearer that what we envisioned with
-> >
-> > I'm not sure that you meant to say go ahead with the series as-is with this
-> > silent capping?
->
-> No, "go ahead" as in "let's find some way forward that works for all and is
-> not too crazy".
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Right we clearly needed to discuss that further at the time but that's moot now,
-we're figuring it out now :)
-
->
+On Tue, 28 Oct 2025 20:23:17 +0530, Khushal Chitturi wrote:
+> Running xdrgen on xdrgen/tests/test.x fails when
+> generating encoder or decoder functions for union
+> members of type _XdrString. It was because _XdrString
+> does not have a spec attribute like _XdrBasic,
+> leading to AttributeError.
+> 
+> This patch updates emit_union_case_spec_definition
+> and emit_union_case_spec_decoder/encoder to handle
+> _XdrString by assigning type_name = "char *" and
+> avoiding referencing to spec.
+> 
 > [...]
->
-> > > "eagerness" would not be like swappiness, and we will really have to be
-> > > careful here. I don't know yet when I will have time to look into that.
-> >
-> > I guess I missed this part of the converastion, what do you mean?
->
-> Johannes raised issues with that on the list and afterwards we had an
-> offline discussion about some of the details and why something unpredictable
-> is not good.
 
-Could we get these details on-list so we can discuss them? This doesn't have to
-be urgent, but I would like to have a say in this or at least be part of the
-converastion please.
+Applied to nfsd-testing, thanks!
 
->
-> >
-> > The whole concept is that we have a paramaeter whose value is _abstracted_ and
-> > which we control what it means.
-> >
-> > I'm not sure exactly why that would now be problematic? The fundamental concept
-> > seems sound no? Last I remember of the conversation this was the case.
->
-> The basic idea was to do something abstracted as swappiness. Turns out
-> "swappiness" is really something predictable, not something we can randomly
-> change how it behaves under the hood.
->
-> So we'd have to find something similar for "eagerness", and that's where it
-> stops being easy.
+[1/1] xdrgen: handle _XdrString in union encoder/decoder
+      commit: 33489817c0df12155eb3bfc86edca8fc64d204f6
 
-I think we shouldn't be too stuck on
+--
+Chuck Lever
 
->
-> >
-> > >
-> > > If we want to avoid the implicit capping, I think there are the following
-> > > possible approaches
-> > >
-> > > (1) Tolerate creep for now, maybe warning if the user configures it.
-> >
-> > I mean this seems a viable option if there is pressure to land this series
-> > before we have a viable uAPI for configuring this.
-> >
-> > A part of me thinks we shouldn't rush series in for that reason though and
-> > should require that we have a proper control here.
-> >
-> > But I guess this approach is the least-worst as it leaves us with the most
-> > options moving forwards.
->
-> Yes. There is also the alternative of respecting only 0 / 511 for mTHP
-> collapse for now as discussed in the other thread.
-
-Yes I guess let's carry that on over there.
-
-I mean this is why I said it's better to try to keep things in one thread :) but
-anyway, we've forked and can't be helped now.
-
-To be clear that was a criticism of - email development - not you.
-
-It's _extremely easy_ to have this happen because one thread naturally leads to
-a broader discussion of a given topic, whereas another has questions from
-somebody else about the same topic, to which people reply and then... you have a
-fork and it can't be helped.
-
-I guess I'm saying it'd be good if we could say 'ok let's move this to X'.
-
-But that's also broken in its own way, you can't stop people from replying in
-the other thread still and yeah. It's a limitation of this model :)
-
->
-> >
-> > > (2) Avoid creep by counting zero-filled pages towards none_or_zero.
-> >
-> > Would this really make all that much difference?
->
-> It solves the creep problem I think, but it's a bit nasty IMHO.
-
-Ah because you'd end up wtih a bunch of zeroed pages from the prior mTHP
-collapses, interesting...
-
-Scanning for that does seem a bit nasty though yes...
-
->
-> >
-> > > (3) Have separate toggles for each THP size. Doesn't quite solve the
-> > >      problem, only shifts it.
-> >
-> > Yeah I did wonder about this as an alternative solution. But of course it then
-> > makes it vague what the parent values means in respect of the individual levels,
-> > unless we have an 'inherit' mode there too (possible).
-> >
-> > It's going to be confusing though as max_ptes_none sits at the root khugepaged/
-> > level and I don't think any other parameter from khugepaged/ is exposed at
-> > individual page size levels.
-> >
-> > And of course doing this means we
-> >
-> > >
-> > > Anything else?
-> >
-> > Err... I mean I'm not sure if you missed it but I suggested an approach in the
-> > sub-thread - exposing mthp_max_ptes_none as a _READ-ONLY_ field at:
-> >
-> > /sys/kernel/mm/transparent_hugepage/khugepaged/max_mthp_ptes_none
-> >
-> > Then we allow the capping, but simply document that we specify what the capped
-> > value will be here for mTHP.
->
-> I did not have time to read the details on that so far.
-
-OK. It is a bit nasty, yes. The idea is to find something that allows the
-capping to work.
-
->
-> It would be one solution forward. I dislike it because I think the whole
-> capping is an intermediate thing that can be (and likely must be, when
-> considering mTHP underused shrinking I think) solved in the future
-> differently. That's why I would prefer adding this only if there is no
-> other, simpler, way forward.
-
-Yes I agree that if we could avoid it it'd be great.
-
-Really I proposed this solution on the basis that we were somehow ok with the
-capping.
-
-If we can avoid that'd be ideal as it reduces complexity and 'unexpected'
-behaviour.
-
-We'll clarify on the other thread, but the 511/0 was compelling to me before as
-a simplification, and if we can have a straightforward model of how mTHP
-collapse across none/zero page PTEs behaves this is ideal.
-
-The only question is w.r.t. warnings etc. but we can handle details there.
-
->
-> >
-> > That struck me as the simplest way of getting this series landed without
-> > necessarily violating any future eagerness which:
-> >
-> > a. Must still support khugepaged/max_ptes_none - we aren't getting away from
-> >     this, it's uAPI.
-> >
-> > b. Surely must want to do different things for mTHP in eagerness, so if we're
-> >     exposing some PTE value in max_ptes_none doing so in
-> >     khugepaged/mthp_max_ptes_none wouldn't be problematic (note again - it's
-> >     readonly so unlike max_ptes_none we don't have to worry about the other
-> >     direction).
-> >
-> > HOWEVER, eagerness might want want to change this behaviour per-mTHP size, in
-> > which case perhaps mthp_max_ptes_none would be problematic in that it is some
-> > kind of average.
-> >
-> > Then again we could always revert to putting this parameter as in (3) in that
-> > case, ugly but kinda viable.
-> >
-> > >
-> > > IIUC, creep is less of a problem when we have the underused shrinker
-> > > enabled: whatever we over-allocated can (unless longterm-pinned etc) get
-> > > reclaimed again.
-> > >
-> > > So maybe having underused-shrinker support for mTHP as well would be a
-> > > solution to tackle (1) later?
-> >
-> > How viable is this in the short term?
->
-> I once started looking into it, but it will require quite some work, because
-> the lists will essentially include each and every (m)THP in the system ...
-> so i think we will need some redesign.
-
-Ack.
-
-This aligns with non-0/511 settings being non-functional for mTHP atm anyway.
-
->
-> >
-> > Another possible solution:
-> >
-> > If mthp_max_ptes_none is not workable, we could have a toggle at, e.g.:
-> >
-> > /sys/kernel/mm/transparent_hugepage/khugepaged/mthp_cap_collapse_none
-> >
-> > As a simple boolean. If switched on then we document that it caps mTHP as
-> > per Nico's suggestion.
-> >
-> > That way we avoid the 'silent' issue I have with all this and it's an
-> > explicit setting.
->
-> Right, but it's another toggle I wish we wouldn't need. We could of course
-> also make it some compile-time option, but not sure if that's really any
-> better.
->
-> I'd hope we find an easy way forward that doesn't require new toggles, at
-> least for now ...
-
-Right, well I agree if we can make this 0/511 thing work, let's do that.
-
-Toggle are just 'least worst' workarounds on assumption of the need for capping.
-
->
-> --
-> Cheers
->
-> David / dhildenb
->
-
-Thanks, Lorenzo
 
