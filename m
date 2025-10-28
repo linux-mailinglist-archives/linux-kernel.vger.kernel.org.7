@@ -1,168 +1,171 @@
-Return-Path: <linux-kernel+bounces-872865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280BDC1271F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 878EEC12728
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:59:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12600561AA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:55:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D389D5073C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43DC1A9FBD;
-	Tue, 28 Oct 2025 00:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA73B284890;
+	Tue, 28 Oct 2025 00:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbfWnq0Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y721SBMr"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4593F1F4CB3;
-	Tue, 28 Oct 2025 00:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA16E213E89
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761612747; cv=none; b=Ph9+yfXhVvsOxuhYCKvlv2gadKnhcyLP5LzknM6qJK7ixUwpzIaOSgiVfRcC//uV4MMTdnv+44J4DwpFrCDbPFq6YZTrWntZHlPAAjf/FudsU9qQ09fZSMZKk+QzKuWSV1RNpjydUXehX75VNmaj8JZNcSmDLcmpvGlFKtdGWGw=
+	t=1761612805; cv=none; b=k+rcnU7ALgB7w8vtUXouOBz3YrmWssWxyc4fWeOdz7R5fTngFRJffKMHEjBPLsmU3UTdUM4Zu5oA/sskwTZ3CHjn47PW4eIUpJtbsK6XqWKHfjT7tqJT0fL3UBHGoPRmN3pC1zETVcAL/JUfnoJpi3fnlv17iTs7rLL4dAGgL5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761612747; c=relaxed/simple;
-	bh=w7zS/Rxbd2Ot04z+qhtf2Kt5+S/gx85Bie+qXzvTKLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WzpW0dzRc2MrgnzFMw75qYKdx/MOxzJDeFA9n1Mwey49UneSo/U/hV0reE+wULFrbtush/hipQunJTQi5dfVQO2EgTBdy6tb7OL5pRiRG068MYEc31vF7RDfRWVCJx/iNzR9Trb85F6E3h6spmnbibWtg81cQnIA9ZgO9sBR89w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbfWnq0Q; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761612746; x=1793148746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w7zS/Rxbd2Ot04z+qhtf2Kt5+S/gx85Bie+qXzvTKLc=;
-  b=hbfWnq0QKwFfshK115fYOwiH3llsu7zrHc7YoFZL7PXIBWeR7jkEPl+/
-   OmOR46hFap+MWXE3WpfPo/MSiRSbSZ6JVwkLEKokjFnqRkvqo6IUHsAaq
-   HDMMFatUTbkNJh+1qcT3Z09mIgt4GhyAi2F9cwKApXanijG4VdSasBRud
-   M/IoZT+ilTlOeCmhXoq1hgNriAT6vMusgNt3fdCriekHVZDO2u6RRvKf9
-   RCSDhDJILUg340LHe/T/M/DrTUeDwMCsmH0F05vfjOWDrF6DGJ9mdCkZF
-   VItg4S6zMKgTYGRt9GU6zHXUk8tWgg72cHiQNmvKyIzc86WNqV7gm4XRV
-   g==;
-X-CSE-ConnectionGUID: UOQhubnpTrOl2axRxhDG0w==
-X-CSE-MsgGUID: AWqbq4lyS2G4Ib08HB2ZvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75049315"
-X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
-   d="scan'208";a="75049315"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 17:52:25 -0700
-X-CSE-ConnectionGUID: iliyoV3HSiWz4WHQBxJ1yQ==
-X-CSE-MsgGUID: hTZAPswWTDKoA9uQQVALaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
-   d="scan'208";a="185103061"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 27 Oct 2025 17:52:20 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDXwb-000Ibx-1L;
-	Tue, 28 Oct 2025 00:52:16 +0000
-Date: Tue, 28 Oct 2025 08:51:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Nysal Jan K.A." <nysal@linux.ibm.com>,
-	Sourabh Jain <sourabhjain@linux.ibm.com>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Nysal Jan K.A." <nysal@linux.ibm.com>,
-	Sachin P Bappalige <sachinpb@linux.ibm.com>, stable@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Laurent Dufour <ldufour@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/kexec: Enable SMT before waking offline CPUs
-Message-ID: <202510280824.Fe2D1Sbw-lkp@intel.com>
-References: <20251025080512.85690-1-nysal@linux.ibm.com>
+	s=arc-20240116; t=1761612805; c=relaxed/simple;
+	bh=4cNoaCHzEIXXX6xk48r/fdOgWstgghbGcJ+Uh2Rack8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eOxSrTg9PvwNuKqKMiyi21TF5cKymf69luyPPWSaOmD804F25OaHV8ERmJrDkOUpYOB2JJdsr2h/U8T05LGklP9dHiWXOf5MYIrhT2KivsjV3iKspIPYpTOn2k+diqPe9dYlRkh2La3I2ebhkPNB70O/8MnnOhSIx3FsKc8/WlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y721SBMr; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4eccff716f4so151991cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:53:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761612801; x=1762217601; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mJCzECofJKvnJPuZipIbzwFt9dZuYtL7L7v6udTFcYQ=;
+        b=y721SBMrGPeRfrBtY6u+SOmiX8J/bxDYOc2vN4POw591ibNSAstKdBLU7K9v/oBRa5
+         +cDGwJSsd7SXAaNv+3OSvJnWiuiwAnCd0QvYOV0YlEPTYc8u9TOlviM2zppVFXM3azzS
+         b0zZpA+hvCC4617HHd0k1QuDMBBxP+FYZfVrUPn7C97RXuamDSxS3gLrzTnDBcttJmBt
+         RfSox0mtwiysW9q1Tdx0VyjnSbZniUtCV5qiw7IS+xg1+8gSSnR7H824QXRRbPk5RC0P
+         OCjmCwaRPkUzYTiNn/9a/jPj2uIx8E5EhtXIEQcBAckCPbmjyHhxKuGu8jf56VmOm3jF
+         MaHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761612801; x=1762217601;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mJCzECofJKvnJPuZipIbzwFt9dZuYtL7L7v6udTFcYQ=;
+        b=lRB/kxyVikXuNTLcGHwqbqMykKo1jaqPARnGu8cNg/rT9ji1dUp6nobvWkQGQxVX0s
+         zAZ+8AUOc6qWvhXnY+B1MInP9FUuYBNY5uPBZWERfgANPyBXDm9ZLsqkLjU9efuhMScP
+         GaLvV8IMIXBYG9QjH1v6D3JLD296tVKhnWMXkm+bjqwY1UUAtE9KNlQBCbHvAKVSkD+Z
+         dxotqeQnX0uNUp6M0HHjmDDEjsbqzzieRjj07pqAut2YjmHzEbtgC+o9yvJgU1Qhp5WV
+         QhxJXKUc0gguWk90dpG4zjShO/cKGM/TZkPZkRZwC629uRqneLelaNpqZxrMAjDSrkw/
+         33ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWm3d0sUvP0qa5D0Lf10EvqMngkrvFqwJiE0U/1gcjUX5QOiS3Q9ANwk3+dDkjRQxoWbu7MBCPkexJCrvQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGZbUD5CR+U/8zqeP79mM/DoanmMrR9dr1uHdaeiHTzfXdbZp1
+	EBOkMrhxGvm1MM8NosljtAYyyerXd73TKuIVuWTAqIa0fE+cG8vGu0Uk9deq/iz2yswseFVXyAk
+	QwJJu54v5I5FzdDQstOVcMiGRSNk+wCZ/RA+LU0WE
+X-Gm-Gg: ASbGncuPkDScAMqKct2n08/mC4xAq9FlIFPadt+Yvb/VuqcxqgFoMc2aAng9RECw1iy
+	DpukCMOyHfoyMxOasFFqe91ZMRJlk7lOTfmyeXuU0w5GbRlHkSZZbXyk6T8qWCnP8k2zl19MlgZ
+	LydZ8Erzc0GyBP/8BSbcAjx5kp0Mk86EYzE1P/tpBfMfXK3dpkZGiK9xV4+rfAhnR3dxlc1ZPdo
+	b7UkRCHjqcr+dHzioIvUfgw0sCBGiOE++A6gFCOQUx05Qo19EA03C/SfSkr86z1zije6ki5+kpl
+	BFdr/u8cD5wmSipqftXAFQU1hT0A
+X-Google-Smtp-Source: AGHT+IFUa6cbmVeGtvDptFMbgioO6afUPchhlusFkMBjA1ySA48BX0gjJrkRqKv7ZzUc5bXX4Ce1xRj5gu1FMlPg1oI=
+X-Received: by 2002:a05:622a:54d:b0:4b7:9617:4b51 with SMTP id
+ d75a77b69052e-4ed09f6d3bdmr1722601cf.15.1761612801462; Mon, 27 Oct 2025
+ 17:53:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025080512.85690-1-nysal@linux.ibm.com>
+References: <20250925172851.606193-1-sagis@google.com> <20250925172851.606193-22-sagis@google.com>
+ <aPum5qJjFH49YVyy@google.com> <68fff9328b74_1ffdeb100d8@iweiny-mobl.notmuch> <aQADUmrDSRAydBhI@google.com>
+In-Reply-To: <aQADUmrDSRAydBhI@google.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Mon, 27 Oct 2025 19:53:09 -0500
+X-Gm-Features: AWmQ_blpq8uWAYgHCheNYVNyGFnS8Ty-_u58qPRtAcnmw4uJ0sM5wXqbEirKh4w
+Message-ID: <CAAhR5DGAOsv-SiLkCziazy4Q9qG_iNqn5Zb9ik+KQ63KDzJsAA@mail.gmail.com>
+Subject: Re: [PATCH v11 21/21] KVM: selftests: Add TDX lifecycle test
+To: Sean Christopherson <seanjc@google.com>
+Cc: Ira Weiny <ira.weiny@intel.com>, linux-kselftest@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Roger Wang <runanwang@google.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nysal,
+On Mon, Oct 27, 2025 at 6:42=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Mon, Oct 27, 2025, Ira Weiny wrote:
+> > Sean Christopherson wrote:
+> > > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/t=
+esting/selftests/kvm/include/kvm_util.h
+> > > index af52cd938b50..af0b53987c06 100644
+> > > --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> > > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> > > @@ -210,6 +210,20 @@ kvm_static_assert(sizeof(struct vm_shape) =3D=3D=
+ sizeof(uint64_t));
+> > >     shape;                                  \
+> > >  })
+> > >
+> > > +#define __VM_TYPE(__mode, __type)          \
+> > > +({                                         \
+> > > +   struct vm_shape shape =3D {               \
+> > > +           .mode =3D (__mode),               \
+> > > +           .type =3D (__type)                \
+> > > +   };                                      \
+> > > +                                           \
+> > > +   shape;                                  \
+> > > +})
+> > > +
+> > > +#define VM_TYPE(__type)                            \
+> > > +   __VM_TYPE(VM_MODE_DEFAULT, __type)
+> >
+> > We already have VM_SHAPE()?  Why do we need this as well?
+>
+> VM_SHAPE() takes the "mode", and assumes a default type.  The alternative=
+ would
+> be something like __VM_SHAPE(__type, __mode), but that's annoying, especi=
+ally on
+> x86 which only has one mode.
+>
+> And __VM_SHAPE(__type) + ____VM_SHAPE(__type, __mode) feels even more wei=
+rd.
+>
+> I'm definitely open to more ideas, VM_TYPE() isn't great either, just the=
+ least
+> awful option I came up with.
+>
+> > >  #if defined(__aarch64__)
+> > >
+> > >  extern enum vm_guest_mode vm_mode_default;
+> > > diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/to=
+ols/testing/selftests/kvm/include/x86/processor.h
+> > > index 51cd84b9ca66..dd21e11e1908 100644
+> > > --- a/tools/testing/selftests/kvm/include/x86/processor.h
+> > > +++ b/tools/testing/selftests/kvm/include/x86/processor.h
+> > > @@ -362,6 +362,10 @@ static inline unsigned int x86_model(unsigned in=
+t eax)
+> > >     return ((eax >> 12) & 0xf0) | ((eax >> 4) & 0x0f);
+> > >  }
+> > >
+> > > +#define VM_SHAPE_SEV               VM_TYPE(KVM_X86_SEV_VM)
+> > > +#define VM_SHAPE_SEV_ES            VM_TYPE(KVM_X86_SEV_ES_VM)
+> > > +#define VM_SHAPE_SNP               VM_TYPE(KVM_X86_SNP_VM)
+> >
+> > FWIW I think the SEV bits should be pulled apart from the TDX bits and =
+the
+> > TDX bits squashed back into this series with the SEV as a per-cursor pa=
+tch.
+>
+> Ya, that's my intent, "officially" post and land this SEV+ change, then h=
+ave the
+> TDX series build on top.  Or did you mean something else?
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on powerpc/next]
-[also build test ERROR on powerpc/fixes linus/master v6.18-rc3 next-20251027]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Nysal-Jan-K-A/powerpc-kexec-Enable-SMT-before-waking-offline-CPUs/20251025-160821
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-patch link:    https://lore.kernel.org/r/20251025080512.85690-1-nysal%40linux.ibm.com
-patch subject: [PATCH] powerpc/kexec: Enable SMT before waking offline CPUs
-config: powerpc64-randconfig-001-20251028 (https://download.01.org/0day-ci/archive/20251028/202510280824.Fe2D1Sbw-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project e1ae12640102fd2b05bc567243580f90acb1135f)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510280824.Fe2D1Sbw-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510280824.Fe2D1Sbw-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from <built-in>:3:
-   In file included from include/linux/compiler_types.h:171:
-   include/linux/compiler-clang.h:37:9: warning: '__SANITIZE_THREAD__' macro redefined [-Wmacro-redefined]
-      37 | #define __SANITIZE_THREAD__
-         |         ^
-   <built-in>:353:9: note: previous definition is here
-     353 | #define __SANITIZE_THREAD__ 1
-         |         ^
->> arch/powerpc/kexec/core_64.c:220:22: error: expression is not assignable
-     220 |         cpu_smt_num_threads = threads_per_core;
-         |         ~~~~~~~~~~~~~~~~~~~ ^
-   arch/powerpc/kexec/core_64.c:221:18: error: expression is not assignable
-     221 |         cpu_smt_control = CPU_SMT_ENABLED;
-         |         ~~~~~~~~~~~~~~~ ^
-   1 warning and 2 errors generated.
-
-
-vim +220 arch/powerpc/kexec/core_64.c
-
-   204	
-   205	/*
-   206	 * We need to make sure each present CPU is online.  The next kernel will scan
-   207	 * the device tree and assume primary threads are online and query secondary
-   208	 * threads via RTAS to online them if required.  If we don't online primary
-   209	 * threads, they will be stuck.  However, we also online secondary threads as we
-   210	 * may be using 'cede offline'.  In this case RTAS doesn't see the secondary
-   211	 * threads as offline -- and again, these CPUs will be stuck.
-   212	 *
-   213	 * So, we online all CPUs that should be running, including secondary threads.
-   214	 */
-   215	static void wake_offline_cpus(void)
-   216	{
-   217		int cpu = 0;
-   218	
-   219		lock_device_hotplug();
- > 220		cpu_smt_num_threads = threads_per_core;
-   221		cpu_smt_control = CPU_SMT_ENABLED;
-   222		unlock_device_hotplug();
-   223	
-   224		for_each_present_cpu(cpu) {
-   225			if (!cpu_online(cpu)) {
-   226				printk(KERN_INFO "kexec: Waking offline cpu %d.\n",
-   227				       cpu);
-   228				WARN_ON(add_cpu(cpu));
-   229			}
-   230		}
-   231	}
-   232	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I've got v12 mostly ready to be sent for review. I was thinking of
+incorporating this change as part of that series. Do you prefer that I
+wait until this patch lands before I post v12?
 
