@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-874831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC46C172EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:23:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BAD0C172F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:25:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BA81AA1DE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:23:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0E5094EC752
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4217C2E11A6;
-	Tue, 28 Oct 2025 22:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DE5355802;
+	Tue, 28 Oct 2025 22:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HrlHnl8w"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b="KMMyYntm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LHzpYPwR"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1F12DE6E3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801502C3244;
+	Tue, 28 Oct 2025 22:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761690193; cv=none; b=Atq2EFTDlBHVOyEO33dQqlTNAeAhC1TEMnc+qRjDKzoYJfW2HZ+LUlSnmcQvCLu69RKFn9YtR31RTfRYbQ1xi2Mv3DLmnaXVc2Fud3k89178rGb4y7vYE3L46p+lnfaTt7/n1ThKiLdO9xx87ib2wdRPM2DFEHLEWPjrHygz5vc=
+	t=1761690293; cv=none; b=JfZ6b1JbsvcB1hMhCA1pg5FvpP8SbjaDvBAtOw/W02W+NCEuUjC+7Sz/0V2dgmP3Ls+begvzEcwK6IZJxVMRB+/D4prnNYThsZsVc1YHu6K5l7QKxY/FbL8bN9AHlLMVcR4MLu0yRZDfIx6khj5ukp+lxFZ1USqSXdnDCOXMcP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761690193; c=relaxed/simple;
-	bh=L7K9HnqH2KFb1xTVC1XCnk3NZKxonWlqyMM1iA1YmCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BANlDZBd8pQ6FBw9FVk0YCa5wNf1LnBsN2Cu1l+GLxbjfkxTKCEAhV2ryQ7vnou7WvtF8S0UPkADtk4h8h22Z3bwSTpasbpUfY8WKWNk8ahmIbPJvkibSoXTlQcTPQ2PG3VvErZT0wKtUH7vy4vqYCSHWieTR68Gy3F0PIz3v/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HrlHnl8w; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 28 Oct 2025 22:23:02 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761690189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W8qPfg69aH85hJK/2NIrynP1wda3Qv85XlTue8Hsfnw=;
-	b=HrlHnl8wcOt30G4U6CIKp2eObmki4ed/Ly9TLL1vLd0cXjurfQy0W/nPlEekzldFR8nCSh
-	t3Yxc8JeYfc4T2cmVOjZSAY4WoyZcCmFkGzCNhXh3UmYeDWhzAEYG1aWeRg8Tv0y8lCjCm
-	Q5kL2bUAuLWPOKbkmyehr6PVf17K8Kg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
-	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
-	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
-Subject: Re: [PATCH v16 36/51] KVM: nSVM: Save/load CET Shadow Stack state
- to/from vmcb12/vmcb02
-Message-ID: <ngbxelfw4lvipsvnoykqo4sonuyjqhuyoh5yogvc6btqj4w6cr@y2jpmnyjphmc>
-References: <20250919223258.1604852-1-seanjc@google.com>
- <20250919223258.1604852-37-seanjc@google.com>
+	s=arc-20240116; t=1761690293; c=relaxed/simple;
+	bh=Oam2va7MmmZ3mEnhKA7wghpNktb70BDdloGLJ4rCws4=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=TVhCfN2FBUkZJuPOnYORioM27XBu2nTlMav4FGdaZKBBtFeWcSZHBZe+IcDXNsulKjIu6gQnTCTJu9JUdw9ZORT18vvXBstE9iS+lpUeMowrKrwsJSG7rsGIHYHCpsGF4af/pucXFVgHMpsJ4vQJe6Uz4DDDTvg+2hWpAISh2mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net; spf=pass smtp.mailfrom=ownmail.net; dkim=pass (2048-bit key) header.d=ownmail.net header.i=@ownmail.net header.b=KMMyYntm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LHzpYPwR; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ownmail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ownmail.net
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 438227A00F8;
+	Tue, 28 Oct 2025 18:24:50 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 28 Oct 2025 18:24:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ownmail.net; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to; s=fm3; t=
+	1761690290; x=1761776690; bh=m9c4KXkrm3n9FA2Zuexcj0LYa3ZWj9eTbWo
+	tzWEvdlw=; b=KMMyYntmrBHPe+vtVwaAnTJ4NluGfjYCfv1fRd4n/EnbulTpXez
+	xqDf1SLDeHIQpUCv1nJNU3By2wkPC8F8j0hjXp/QzRfIHJyYgn47XD6zI5I6MUj1
+	6LraBsJTPCaJjgZPdEWo3hZvA0yJq4PXNXWAJmfgfUZzdS/OQ82rFXmFm0qUK5Lw
+	zAlKupFWvl8Y1T5CpHXl2aEd2OzvJGPj+g0+9jxNzi+zvLY+SwY+pPv4ESwFqtJp
+	3yZzDaQF6jDVIvY1fPx21TrTx8iwLab++uoJNnMvXNf4PLJgHmQ4eZUkX8nUDMzy
+	OYHZQ3v8Kvlft9XXGMCikMdgxxdKQ10qZVw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761690290; x=
+	1761776690; bh=m9c4KXkrm3n9FA2Zuexcj0LYa3ZWj9eTbWotzWEvdlw=; b=L
+	HzpYPwRKo4XzbBVLtjmBtUPWqdlEM4MJBWsiWoOP+O1xj+JaXgEJI9f0J5I/z280
+	y2wiGvRBD4/4vh8swGy5aZg4tov0dzo1tX7hDLLR1FGhaGGFnfwCCsIWYucJAiNR
+	G7EEXMf6+4lRDFiD3boQ5uaPKyZHhp3K20+Er9Ist/gRXDfKOpHojekTP2F5ZiEq
+	I1n8XnUWDrdxNWLQFrzE+Pi1KA8FlwZdbUvM2MAJ1rCYMVA8n+UtbS+0RmG7ZJRc
+	eUQHaPNouqTPRF7H82KCauPYEFl7zQH19pCX1xpl11y9mKVbHkgZC7zo/FghWU5r
+	i3uwFmXHtC4ZxBr6BxUXA==
+X-ME-Sender: <xms:sUIBad6vGR35bfGSRldPHLL-vu4u4FJ5ADyItESTGqr8yp93nonkrA>
+    <xme:sUIBaaeUt7rWfTynbbW7dqD-LZMfJTF-XyBz8pIWkYZJw5uCjM2XiL1oiqQaF3KXt
+    vFct8-rOMIkJrSloNEeC2atafEivaUAsYb9tULopiFgoFudBg>
+X-ME-Received: <xmr:sUIBaYzoJy4iz-NE8xrMY-hNC53CffPjVsgGDYhs8sLL1J6kjRx9Iz-MUzNRNulvOO7XItERb-TWYiFaijalh1mULthFMHFT0IJIlxOI0yaH>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduiedvtdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurheptgfgggfhvfevufgjfhffkfhrsehtjeertddttdejnecuhfhrohhmpefpvghilheu
+    rhhofihnuceonhgvihhlsgesohifnhhmrghilhdrnhgvtheqnecuggftrfgrthhtvghrnh
+    epudetfefhudevhedvfeeufedvffekveekgfdtfefggfekheejgefhteeihffggfelnecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhgvihhlsg
+    esohifnhhmrghilhdrnhgvthdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhp
+    ohhuthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprh
+    gtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepthhomhesthgrlhhpvgihrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopehokhhorhhnihgvvhesrhgvughhrghtrdgtoh
+    hmpdhrtghpthhtoheptghhuhgtkhdrlhgvvhgvrhesohhrrggtlhgvrdgtohhmpdhrtghp
+    thhtohepuggrihdrnhhgohesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepkhhusggrse
+    hkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:sUIBaYpL3IvEz7XOjkokXwTsbC2toh7224_pOCPwR7Fug6WHnryVCg>
+    <xmx:sUIBaey2nQrd8cpMCQ9yZWsZgbSDR_ZA0kNjxwXr-8oaevm4_4htPQ>
+    <xmx:sUIBaUr_QwhT9_naQvp1537SWeI_reGzRgncpDj4_g8A0GvQHhgS3Q>
+    <xmx:sUIBaWfOTs2zaHBUyF7B9Li9FT8k7nPWCN6sQENQccZq8kLoQxFecA>
+    <xmx:skIBaWBI-rLTUCiwGhRFG1TFHB2KFpydGICze5A9z1LBRCuqnIU0AYxe>
+Feedback-ID: iab3e480c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 28 Oct 2025 18:24:45 -0400 (EDT)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250919223258.1604852-37-seanjc@google.com>
-X-Migadu-Flow: FLOW_OUT
+From: NeilBrown <neilb@ownmail.net>
+To: "Khushal Chitturi" <kc9282016@gmail.com>
+Cc: chuck.lever@oracle.com, linux-nfs@vger.kernel.org, jlayton@kernel.org,
+ okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Khushal Chitturi" <kc9282016@gmail.com>
+Subject: Re: [PATCH v2] xdrgen: handle _XdrString in union encoder/decoder
+In-reply-to: <20251028145317.15021-1-kc9282016@gmail.com>
+References: <20251026180018.9248-1-kc9282016@gmail.com>,
+ <20251028145317.15021-1-kc9282016@gmail.com>
+Date: Wed, 29 Oct 2025 09:24:43 +1100
+Message-id: <176169028361.1793333.2540728361412926877@noble.neil.brown.name>
+Reply-To: NeilBrown <neil@brown.name>
 
-On Fri, Sep 19, 2025 at 03:32:43PM -0700, Sean Christopherson wrote:
-> Transfer the three CET Shadow Stack VMCB fields (S_CET, ISST_ADDR, and
-> SSP) on VMRUN, #VMEXIT, and loading nested state (saving nested state
-> simply copies the entire save area).  SVM doesn't provide a way to
-> disallow L1 from enabling Shadow Stacks for L2, i.e. KVM *must* provide
-> nested support before advertising SHSTK to userspace.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/kvm/svm/nested.c | 20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> index 826473f2d7c7..a6443feab252 100644
-> --- a/arch/x86/kvm/svm/nested.c
-> +++ b/arch/x86/kvm/svm/nested.c
-> @@ -636,6 +636,14 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
->  		vmcb_mark_dirty(vmcb02, VMCB_DT);
->  	}
->  
-> +	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
-> +	    (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_CET)))) {
-> +		vmcb02->save.s_cet  = vmcb12->save.s_cet;
-> +		vmcb02->save.isst_addr = vmcb12->save.isst_addr;
-> +		vmcb02->save.ssp = vmcb12->save.ssp;
-> +		vmcb_mark_dirty(vmcb02, VMCB_CET);
-> +	}
-> +
+On Wed, 29 Oct 2025, Khushal Chitturi wrote:
+> --- a/tools/net/sunrpc/xdrgen/generators/union.py
+> +++ b/tools/net/sunrpc/xdrgen/generators/union.py
+> @@ -1,3 +1,4 @@
+> +# SPDX-License-Identifier: GPL-2.0
+>  #!/usr/bin/env python3
 
-According to the APM, there are some consistency checks that should be
-done on CET related fields in the VMCB12. Specifically from
-"Canonicalization and Consistency Checks. " in 15.5.1 in the APM Volume
-2 (24593—Rev. 3.42—March 2024):
+#! must be the first line to be effective.
+Other .py files in the kernel have '# SPDX' on the second or third line.
 
-• Any reserved bit is set in S_CET
-• CR4.CET=1 when CR0.WP=0
-• CR4.CET=1 and U_CET.SS=1 when EFLAGS.VM=1
-• Any reserved bit set in U_CET (SEV-ES only):
-  - VMRUN results in VMEXIT(INVALID)
-  - VMEXIT forces reserved bits to 0
-
-Most consistency checks are done in __nested_vmcb_check_save(), but it
-only operates on the cached save area, which does not have everything
-you need. You'll probably need to add the needed fields to the cached
-save area, or move the consistency checks elsewhere.
-
-Related to this, I am working on patches to copy everything we use from
-vmcb12->save to the cache area to minimize directly accessing vmcb12
-from the guest memory as much as possible. So I already intend to add
-other fields to the cached save area.
-
-There's also a couple of other missing consistency checks that I will
-send patches for, which also need fields currently not in the cached
-save area.
-
->  	kvm_set_rflags(vcpu, vmcb12->save.rflags | X86_EFLAGS_FIXED);
->  
->  	svm_set_efer(vcpu, svm->nested.save.efer);
-> @@ -1044,6 +1052,12 @@ void svm_copy_vmrun_state(struct vmcb_save_area *to_save,
->  	to_save->rsp = from_save->rsp;
->  	to_save->rip = from_save->rip;
->  	to_save->cpl = 0;
-> +
-> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
-> +		to_save->s_cet  = from_save->s_cet;
-> +		to_save->isst_addr = from_save->isst_addr;
-> +		to_save->ssp = from_save->ssp;
-> +	}
->  }
->  
->  void svm_copy_vmloadsave_state(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
-> @@ -1111,6 +1125,12 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
->  	vmcb12->save.dr6    = svm->vcpu.arch.dr6;
->  	vmcb12->save.cpl    = vmcb02->save.cpl;
->  
-> +	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK)) {
-> +		vmcb12->save.s_cet	= vmcb02->save.s_cet;
-> +		vmcb12->save.isst_addr	= vmcb02->save.isst_addr;
-> +		vmcb12->save.ssp	= vmcb02->save.ssp;
-> +	}
-> +
->  	vmcb12->control.int_state         = vmcb02->control.int_state;
->  	vmcb12->control.exit_code         = vmcb02->control.exit_code;
->  	vmcb12->control.exit_code_hi      = vmcb02->control.exit_code_hi;
-> -- 
-> 2.51.0.470.ga7dc726c21-goog
-> 
+NeilBrown
 
