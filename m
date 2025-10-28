@@ -1,122 +1,250 @@
-Return-Path: <linux-kernel+bounces-873003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDF3C12D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:55:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35374C12D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE9804F1A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9938F1AA4918
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A442877DA;
-	Tue, 28 Oct 2025 03:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0883128850E;
+	Tue, 28 Oct 2025 03:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbRLEqh3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LPdbP3rx"
+Received: from mail-oo1-f100.google.com (mail-oo1-f100.google.com [209.85.161.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8200D286426;
-	Tue, 28 Oct 2025 03:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1F41FF1C7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623724; cv=none; b=gvzHx/SAX+hmpzY8cRrDV+dC/ABTokyUYkwutLcHoG5uK2tGm56UOWz7794lMQ+YuobTlKnA5hliDkcpj+rNcDwk/lLMMl7ekAa2QU/GAFxjd5z+KgP5JIJq3aP0SF2x0d0HcbXO4zKynYYHSag1tb6eYns/LPgN02m8dJ3lrQU=
+	t=1761623940; cv=none; b=VaQtV+JpAM7GFZ9QV0d4H8CJA6XAr/Dlc+DtibDMR+n1T7A4zxiJmFgxf9wEzTPuAwNFQXxymmpIbGPWEvSKtRQapyTl4Rry37imfd36OXrE/wLH/u7MUOF3WOPZNp34bCaH3ydndQFJ7XCBVjOSd9+yisOVLJ6IFyIxOR/drV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623724; c=relaxed/simple;
-	bh=dDXQDxxY8lRWIpUbLl6a0HHlcgShkDugrbP6Xi3mWSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8RFc+rw91GwSB9wcfvWV7TaIz2iV9FCDA/9DdueFVpOdlgTq7YXPsSJAJgtFFAPRhi4WkrbCmNs6hXoGY63euYDPEyJwCrGKtzize675hUXEgtjFeKkP4fvxSiJauJJR2dxqJVtU5mNsnjmWhkxvnxSw6HZUoeXVOGfB0cegSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbRLEqh3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FC02C4CEE7;
-	Tue, 28 Oct 2025 03:55:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761623723;
-	bh=dDXQDxxY8lRWIpUbLl6a0HHlcgShkDugrbP6Xi3mWSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tbRLEqh3OKPeAdCoe3L8lyhKJXQDmJVCxY/hwVkRr9/1QUDbSShRX9qAMpEcqc1R5
-	 Mjtb0kNXQpAW3r8gNgTR+6SS8rjbZhlXHDfs3crbTDBSnJk+WDDBA+SitPFtNO6Ahb
-	 dcyU55bkAAe5TjNPCY5MfkCWXJvxgKQfXZ7t8jIZWOAsA+NJoDbVc23V2PB7RQh4pw
-	 wjodNbr7hBnP6RKWsENhZ480CQeMeOhZctB0MvfyzwpvpIj06mCijHkl9XYcO2k8J2
-	 sHNMiZ+kAV3Ucg+VnGETZcum9mO7l+I9dYnJ/rwKvcE18zfOJcMQIznwOHI6UbD3zH
-	 wjh+2IUeDRsIQ==
-Date: Mon, 27 Oct 2025 22:58:19 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add
- Kaanapali and Glymur compatibles
-Message-ID: <xlf7ubya3qq4nehugwbdjkx755m5zhmkbezs2w4hzlanooeomo@3wgf37cypvie>
-References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
- <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
+	s=arc-20240116; t=1761623940; c=relaxed/simple;
+	bh=Lhaufn8/5o0aFak1T1X8LWiQ9Vp9jYWpmccDP5IPlM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rg1sG2dBBtvVc3+IE+X9WmkWZF0b1yi3rTwzNEKpRZFqSwcQ/E7uvyHgjbHCuxZBJMAy22FcZz/a9BpjeVvSl1jj8CaeuEbzgKagJFG/1Jy+8D3yqEh1XpOCffQnSkwj88KxM7+HrNUYnTDU+3u+2+FEUF0IEU2Qs/GsuvF0WWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LPdbP3rx; arc=none smtp.client-ip=209.85.161.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f100.google.com with SMTP id 006d021491bc7-6542eb6dae0so2768561eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:58:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761623937; x=1762228737;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:dkim-signature:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k7l+lxETnezKFB/SUkJFcal9s1qCzY49GMPjNr4fWBA=;
+        b=cgKkXJcfcF5qd8yU+Z41RF9iEl3aByQq3xBm2IqWEUxiMxy11G/fTFlERLZ0Zhyzaj
+         lu0U7zLuRZOYDVi1oDNc1HLuCrqwkyBO8q1/roR14d/Ky9wL0zPQIxsYRg/SszZUNO6a
+         paohMzWfE1VupJ+AbiQo8V6sMuJfy1WpUBapYa2Fz4eSR+8gbmpL9/I2iWU2mmx6p6hl
+         9LpyatsnzqAIMb+Yo29llPwoBkj8koqQANTK4ndFXUKpu/KKXczQCx0nDR/ktAkOwD4h
+         UklWeisj5NgZXBI0c0YJ1IgTvSqvOOnbY2FWrrzHp1au5EWaBztKBasezB03Xr3jH7Mj
+         tZwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/KoSphbXLOjIv/DkgG40r8mFF/4P6ayhIDFoHNEyAYWl5yLmKKSEVmBb1FaCbrbAt3Afpgu2WhgAXDys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPws/zLMnlMGXswmoWOBdaqzVmL2C0Zv1hH3GG8XSq4MK3Padf
+	qi14sWlbKom6FLZ/YUbo4VoY7XMsjrlw1gZHanYGgX1TwiXe0liu9bCDtFy0uw7KOSwx+LjZYDK
+	2e71A11nsZxR4IkwxAp98X598yXzXOeHl1WaG509E9rW2gSiVr6fMCyc/ByMvtQwjIoyYJCBErw
+	wPX9mBFFRJW8AJQNdreFRXm28tus1WaH8Qc/64qk7flNCM5g5W8f9MjuXyShjtSrI4t8X+NAytI
+	ofnCD2GkwG677wAq10=
+X-Gm-Gg: ASbGnctwmRvMU0gZaTnD9/4IayaRfCV3gbY/W59KrmkCUXAj/djf2DPnXx45t1lKa1f
+	3djtBLGv0gjEiYyhVyvIJxQppzbDxo/G7lT09OAmNrCnDYZMxh4VyMSycl3ILwsgHK8lP/X9Shp
+	gNP15cWtGdR6I5HJEwwNBsEahKhRYcmNWffOtbFDIDohC1QC78DvYWTxMoAcJ8tWB+tEZfmMw15
+	aV5hY9jYHZ1YAtVCPXxbmReKTAAmvR5ehIR1ltpmTokKYm/zwFM9UGM78jvTXW3vtREWWJOF0Rk
+	mXMK2Z9/i71rGDHd6RTtVtSzqD9ZOybA4tWMEmv3Pt3nOCkQ1zMtg0ASZN+LebO8T6or0gP7YcM
+	06Bf9mg/nSoHrLh+W3GfmQGQ1zXIREudsCxAvUb5QupP+6BCu5nqcFazmkA==
+X-Google-Smtp-Source: AGHT+IHb5+D9KF6P5g4P/dJwjAf44VwmXe7sQI/Q+uvWU7YBzYE0Zr+8s41zw+wGZdG07lF347euuLgXq7d7
+X-Received: by 2002:a05:6870:a109:b0:36e:8381:db00 with SMTP id 586e51a60fabf-3d5d6bb99d7mr771359fac.9.1761623937477;
+        Mon, 27 Oct 2025 20:58:57 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com ([144.49.247.127])
+        by smtp-relay.gmail.com with ESMTPS id 586e51a60fabf-3d1e3d5edf4sm864074fac.19.2025.10.27.20.58.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 27 Oct 2025 20:58:57 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-286a252bfbfso127958125ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:58:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1761623936; x=1762228736; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7l+lxETnezKFB/SUkJFcal9s1qCzY49GMPjNr4fWBA=;
+        b=LPdbP3rxh8UHwzN8suO7mU2VGBu3fAFyIMpt5JenW/HBHP+FC/3dQUxCbW8d4bOaPV
+         y+2JYpWopBpMUKsHqOUEsJ7nOBwp3udIHqFfYh4M5FZWppusg9mBsNr0OB7vbvjHh/Xt
+         H/jIY/S/DKjwTwPCQMIxmL3RexzUamFsP7GM4=
+X-Forwarded-Encrypted: i=1; AJvYcCVH17dn4ZvdYUgfVPt9p88y/bHkHXoRe1oXWmmntp3pm50q5OOsuYcM1MGgaLPQ38ASxZtB7KtkfqtDDkg=@vger.kernel.org
+X-Received: by 2002:a17:903:2a8c:b0:24c:cb60:f6f0 with SMTP id d9443c01a7336-294cb65b9bemr24860925ad.58.1761623935696;
+        Mon, 27 Oct 2025 20:58:55 -0700 (PDT)
+X-Received: by 2002:a17:903:2a8c:b0:24c:cb60:f6f0 with SMTP id
+ d9443c01a7336-294cb65b9bemr24860555ad.58.1761623935350; Mon, 27 Oct 2025
+ 20:58:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
+References: <20251027201351.GA8995@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+In-Reply-To: <20251027201351.GA8995@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Tue, 28 Oct 2025 09:28:43 +0530
+X-Gm-Features: AWmQ_bl75f7dqjFbUVPcV9v4im1W7jAziU_Y-4tInbqHdouUMsSEqWvfCXgRlgk
+Message-ID: <CALs4sv2_rXfTonX2E6Ny_SWb6p-R4_WkDpr+gaFK4yWOVO4s_A@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] net: mana: Implement ndo_tx_timeout and
+ serialize queue resets per port.
+To: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com, 
+	kotaranov@microsoft.com, horms@kernel.org, shradhagupta@linux.microsoft.com, 
+	ssengar@linux.microsoft.com, ernis@linux.microsoft.com, 
+	shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, dipayanroy@microsoft.com
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000effa65064230084c"
 
-On Mon, Oct 27, 2025 at 02:22:49PM -0700, Anjelique Melendez wrote:
-> Document the Kaanapali and Glymur compatibles used to describe the PMIC
-> glink on each platform.
-> Kaanapali will have the same battery supply properties as sm8550 platforms
-> so define qcom,sm8550-pmic-glink as fallback for Kaanapali.
-> Glymur will have the same battery supply properties as x1e80100 platforms
-> so define qcom,x1e80100-pmic-glink as fallback for Glymur.
-> 
-> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+--000000000000effa65064230084c
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 28, 2025 at 1:45=E2=80=AFAM Dipayaan Roy
+<dipayanroy@linux.microsoft.com> wrote:
+>
+> Implement .ndo_tx_timeout for MANA so any stalled TX queue can be detecte=
+d
+> and a device-controlled port reset for all queues can be scheduled to a
+> ordered workqueue. The reset for all queues on stall detection is
+> recomended by hardware team.
+>
+> The change introduces a single ordered workqueue
+> ("mana_per_port_queue_reset_wq") with WQ_UNBOUND | WQ_MEM_RECLAIM and
+> queues exactly one work_struct per port onto it. This achieves:
+>
+>   * Global FIFO across all port reset requests (alloc_ordered_workqueue).
+>   * Natural per-port de-duplication: the same work_struct cannot be
+>     queued twice while pending/running.
+>   * Avoids hogging a per-CPU kworker for long, may-sleep reset paths
+>     (WQ_UNBOUND).
+>   * Guarantees forward progress during memory pressure
+>     (WQ_MEM_RECLAIM rescuer).
+>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
 > ---
->  .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml      | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
-> index 7085bf88afab..c57022109419 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
-> @@ -37,12 +37,19 @@ properties:
->            - const: qcom,pmic-glink
->        - items:
->            - enum:
-> +              - qcom,kaanapali-pmic-glink
+> Changes in v2:
+>   - Fixed cosmetic changes.
+> ---
 
-This seems pretty reasonable, kaanapali-pmic-glink being "the same" as
-sm8550-pmic-glink, just moved to a different core - with the changes
-that implies.
+You must wait at least 24 hours before posting a new revision.
+Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
->                - qcom,milos-pmic-glink
->                - qcom,sm8650-pmic-glink
->                - qcom,sm8750-pmic-glink
->                - qcom,x1e80100-pmic-glink
+--000000000000effa65064230084c
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Why did we say x1e80100-pmic-glink is "the same" as sm8550-pmic-glink?
-
->            - const: qcom,sm8550-pmic-glink
->            - const: qcom,pmic-glink
-> +      - items:
-> +          - enum:
-> +              - qcom,glymur-pmic-glink
-> +          - const: qcom,x1e80100-pmic-glink
-
-glymur-pmic-glink indeed has parts in common with x1e80100-pmic-glink,
-so I guess that makes sense.
-
-> +          - const: qcom,sm8550-pmic-glink
-
-I don't think this should be here.
-
-Regards,
-Bjorn
-
-> +          - const: qcom,pmic-glink
->  
->    '#address-cells':
->      const: 1
-> -- 
-> 2.34.1
-> 
+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
+/HTPxpDrr4vzZL0yoc9XefyCbdiwfyFl99oBekp+1ZxXc5bZsVhRPVyEWFtCys66nqu5cU2GPT3a
+ySQEHOtIKyGGgzMVvitOzO2suQkoMvu/swsftfgCY/PObdlBZhv0BD97+WwR6CQJh/YEuDDEHYCy
+NDeiVtF3/jwT04bHB7lR9n+AiCSLr9wlgBHGdBFIOmT/XMX3K8fuMMGLq9PpGQEMvYa9QTkE9+zc
+MddiNNh1xtCTG0+kC7KIttdXTnffisXKsX44B8ECAwEAAaOCAd0wggHZMA4GA1UdDwEB/wQEAwIF
+oDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3Nl
+Y3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEF
+BQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1Ud
+IAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIB
+FiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzBBBgNVHR8EOjA4MDagNKAy
+hjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWltZWNhMjAyMy5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNVHQ4EFgQUxJ6fps/yOGneJRYDWUKPuLPk
+miYwDQYJKoZIhvcNAQELBQADggIBAI2j2qBMKYV8SLK1ysjOOS54Lpm3geezjBYrWor/BAKGP7kT
+QN61VWg3QlZqiX21KLNeBWzJH7r+zWiS8ykHApTnBlTjfNGF8ihZz7GkpBTa3xDW5rT/oLfyVQ5k
+Wr2OZ268FfZPyAgHYnrfhmojupPS4c7bT9fQyep3P0sAm6TQxmhLDh/HcsloIn7w1QywGRyesbRw
+CFkRbTnhhTS9Tz3pYs5kHbphHY5oF3HNdKgFPrfpF9ei6dL4LlwvQgNlRB6PhdUBL80CJ0UlY2Oz
+jIAKPusiSluFH+NvwqsI8VuId34ug+B5VOM2dWXR/jY0as0Va5Fpjpn1G+jG2pzr1FQu2OHR5GAh
+6Uw50Yh3H77mYK67fCzQVcHrl0qdOLSZVsz/T3qjRGjAZlIDyFRjewxLNunJl/TGtu1jk1ij7Uzh
+PtF4nfZaVnWJowp/gE+Hr21BXA1nj+wBINHA0eufDHd/Y0/MLK+++i3gPTermGBIfadXUj8NGCGe
+eIj4fd2b29HwMCvfX78QR4JQM9dkDoD1ZFClV17bxRPtxhwEU8DzzcGlLfKJhj8IxkLoww9hqNul
+Md+LwA5kUTLPBBl9irP7Rn3jfftdK1MgrNyomyZUZSI1pisbv0Zn/ru3KD3QZLE17esvHAqCfXAZ
+a2vE+o+ZbomB5XkihtQpb/DYrfjAMYICVzCCAlMCAQEwYjBSMQswCQYDVQQGEwJCRTEZMBcGA1UE
+ChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xvYmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0Eg
+MjAyMwIMClwVCDIzIfrgd31IMA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCCH3NRa
+DhmYA6nz0B6GgDpg+RwxgnkGYwYslnA434tOaTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwG
+CSqGSIb3DQEJBTEPFw0yNTEwMjgwMzU4NTZaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEq
+MAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCG
+SAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCrxaE0+7Uh3Aht0IMqpCfQp7/IT1APCC76QOwQwLq2
+ENzlAEK47KkDD2H6YqHiUOnEF6jUlpRv+aGhf7dh+koRTCH5p4BYDSCXL60I3R0bdKEabjo0wAth
+lSmG0/YcfY/YVj4AKGY+91kXMUZlaRCljO6Hk87MP/lQlpytaby9Zb40M7taNHXe/E96jr3L5FU/
+93NAzTcfyrY4jjebmSpUM8c37io70U/rH3MiIxwgv0VFADFYfyaYkArjw7wKw+rtB4P2tR1rRgUF
+5hAR3uQ5AG/fShpAo6puHVPmOp+1QvKiJvxYJtFTBXcXb3LZ9t81AZEPv3vhnHzH4ixlv/1C
+--000000000000effa65064230084c--
 
