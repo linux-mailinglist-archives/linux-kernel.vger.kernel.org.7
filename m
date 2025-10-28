@@ -1,155 +1,237 @@
-Return-Path: <linux-kernel+bounces-873978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8E4C15363
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:44:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50038C15378
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 40B214E97D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:44:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F22034E9D9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CCB133971E;
-	Tue, 28 Oct 2025 14:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7406339713;
+	Tue, 28 Oct 2025 14:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+r4yTM4"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ko5lX9ig"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010058.outbound.protection.outlook.com [52.101.85.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E023220010C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761662647; cv=none; b=HAn1xVj2W1szGzfLftAhrL1WrYUcMShcolrUMVkNWyAtbgnLYDFozbdAXV857rw+6tyEg87rWHtSPDb9XkKjwiuXOxP1nd+3e4R4h42HMb4S+j6tnnfhUfCSojIRt73GBYY8RY5dtZj+Eq8zd7PsYmqmUvvWtDx/5L6XltrQI6Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761662647; c=relaxed/simple;
-	bh=uHlWjfN/mb18cUtiJHWf+tS/jejD/ik7CmtMoAVGbyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VH5SRxda5viWmmLmlwl8bl2/MM0g0GtRErVDwAdNxRA0Ir+n3UAX5Y0YoSyOKmCSPiiDTyPptfL2kEi3wfLcTEAZL9w+C7qS9weSmX2eMWrS9YCkmykHw18BIwj0muBiZepoZXd/iLq+brs7dvkoJeAa/q/10M095EYM92FDsRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+r4yTM4; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761662646; x=1793198646;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=uHlWjfN/mb18cUtiJHWf+tS/jejD/ik7CmtMoAVGbyE=;
-  b=m+r4yTM4eI0qNjG4WuP0S0r7lX7M4SzMpdpb0/l9TiZh0Md1K2Kk4bP4
-   AFAKY5XJ4wiPjCswxbIge7qIJ8gpsvsqWaRoMmDwupmJgHveNiTQCdxtH
-   ED+1SfdhqKa4wNXE6IkIIZY5c1Wv5krKOhAXKTroUbdad8pmEfRn4yxh7
-   bb9hjVDZ1BL1K3/V2Zxx+grE6OImz8gdoWrfOB+AHWXNF6ZP4Vz+2muVW
-   rchuHMo7yqbqGScYxq8zh28kwPRVf49deS3BWuZkVzsRI0T1HGAHVzsJ1
-   5/zWyBh4h7Q0jr/FyWwkpNfBWBT0mFt6ys3KtqPwGwYtPEKth2tVq33Hb
-   A==;
-X-CSE-ConnectionGUID: 247L85qdQ52411GQyhuEvw==
-X-CSE-MsgGUID: R0bITbkNQPeae5Nv+w6Dhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66380330"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="66380330"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 07:44:05 -0700
-X-CSE-ConnectionGUID: 55qJYwYyQL6oByaQat3B4w==
-X-CSE-MsgGUID: 8fTEXKITSDekeW24gvCZqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185822693"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 28 Oct 2025 07:44:04 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vDkvZ-000JG0-2B;
-	Tue, 28 Oct 2025 14:44:01 +0000
-Date: Tue, 28 Oct 2025 22:43:31 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Vineet Gupta <vgupta@kernel.org>
-Subject: include/linux/atomic/atomic-arch-fallback.h:4152:16: sparse: sparse:
- cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-Message-ID: <202510282219.yD4DaWrP-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D93B19ADBA;
+	Tue, 28 Oct 2025 14:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761662679; cv=fail; b=mPiM1uTXx/LdlPjSCqOcGD8JegfMjn2IuKJ2Tr/FJ7kYzcSYh55elDRELk3pmSRSHzc9LlS8W/utOBHLNt0WKmxApXLckDQ/L4DgipUNMIntvxwMPzcz5QbF9hpT/ruZpA7TFKtjF5BYJOxIX7+jZK6/hhKfJZrjOIIAuzFkogM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761662679; c=relaxed/simple;
+	bh=M6Vo3DYYQ9ZtX7b4cE4LqATmKBc/Wv+rR4TSSRCTpKk=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=oR4IK6k6mmOWz11fgxHE5iAHCNv1CR4eMRmF419jNmbxmg4rijD1+ON8ZHRdvFvpd8BCN5AzGUmVhkhesMxs2MNuCNpuwgYQ9zH1sHhpUFHsfwOjquDQhUHVsM8XSCrRzf2cVpJ/xtjeyy2wlvQ0A5bq1eAYMipN0Sky85oVXSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ko5lX9ig; arc=fail smtp.client-ip=52.101.85.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fzg+gGw5qqYoGTZWdTNbvAQ3+x6zwHZRfg/0PnOHsno30PxtVqsvIKsV5KpWXeJMcxYWeg/rtjgrmkyWTFAsxMOLZgHXltZO2HwfsqXgMw53PwHfpJ7oRdhIvVPirNLzMvbLGo/ktKWVP+/s5xcnEs3D/0Wp4VxtRt840haxyTKtMMQKDJaTZJ0iME6I6Wlz52dFB/6panSyqMfjt3c2WMfHf6LnnzIb0a53RqwPK1BvrPhMuLGjWTU+xPMjyvqHJdaJmTyKzOszB96cvxQ4jUTJXKMLMiaQxBLrz149P9lAl+7X34yIoQ2bN+FcqpJ+dpNGhp/0rDZ3IFuj9taVPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=M6Vo3DYYQ9ZtX7b4cE4LqATmKBc/Wv+rR4TSSRCTpKk=;
+ b=PIIWiIWvH3ylJ6uig5gtK2a0uJMdp37vDWR31NoodpNQo0AL3lgk+dFbISbBD3kWn9c2sBLkkkS7YhHIdgbIUSNspWRtcRcoVEiGidYx3ll+L9PYsq6H1SHZVIM072f3Y40n3ITI5nNPZ41YfoURQqDUOOZriOKNEboLRJV3OMajOZ+rdtW/BytdglzlKYgJ69IYhtanBqh0ORsm6NevpuD0rCKYL9hwWlPqeFbk+LDZ1Auup3xbeVqWq1s/R5IUmwcUfYbZMcjYb+0r3VT9BqMFyYRBgisBHtDVB/3iY4dgg7RH/srYyLqdCo/eapJ1Br58SmMCG2nmxOY6i9hiCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M6Vo3DYYQ9ZtX7b4cE4LqATmKBc/Wv+rR4TSSRCTpKk=;
+ b=Ko5lX9iglZCzyaIuPZQa4qHHjY+GF/8iUjS/Mi2vEr45Vq3zqNpO23vkZC5CIkOH0X4imcDzdnsEKGJS532hwGbZ7itHZ5VodwB2jAwGsCO0xqHdm+R8Q1+b8RnRzF2VTgH+yPJyh+J3bTZ4APYbrEwfteX3NhxDDPTYodrImSNDVwFi9+LVWN0FaclH47ueGZDJkz5OA+Hkxx7RqAzlWMKhT56+Za+xPlbIYiEK5aHs1R12Iv9B3TqTd0JnUQ0/WP7tTKRAgQHE3O9mNquIFFdkzHp9ur9mZ0GJ8waUe9R95b5ZbMugH2eoGBbC3sYzPgwpX8cbk48VSzkuQt1ZyQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH8PR12MB7280.namprd12.prod.outlook.com (2603:10b6:510:220::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 14:44:34 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 14:44:34 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Oct 2025 23:44:30 +0900
+Message-Id: <DDU1AQDW78QI.1CBHEW03926H0@nvidia.com>
+Cc: "Alice Ryhl" <aliceryhl@google.com>, "David Airlie" <airlied@gmail.com>,
+ "Simona Vetter" <simona@ffwll.ch>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex
+ Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
+ "Alistair Popple" <apopple@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Edwin Peer"
+ <epeer@nvidia.com>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Matthew Wilcox" <willy@infradead.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 5/7] gpu: nova-core: add extra conversion functions and
+ traits
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Miguel Ojeda"
+ <miguel.ojeda.sandonis@gmail.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251026-nova-as-v1-0-60c78726462d@nvidia.com>
+ <20251026-nova-as-v1-5-60c78726462d@nvidia.com>
+ <CANiq72mgoW_TyWf9Nv=5t3Qij_dsDjicNpGsa=F1t+sg23vxSA@mail.gmail.com>
+ <de796658-ed1d-41f1-b153-f3d1089656ba@nvidia.com>
+In-Reply-To: <de796658-ed1d-41f1-b153-f3d1089656ba@nvidia.com>
+X-ClientProxiedBy: TY4P301CA0007.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:26f::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB7280:EE_
+X-MS-Office365-Filtering-Correlation-Id: 719b0d8a-dffa-4e2f-2e61-08de1630827d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R21VTE10emk0NmlrcTgzVWxjZXc0UXhFcHNYSDZZb3dZclo2dFI3VmV3RDgv?=
+ =?utf-8?B?a1cxKzZhY3hmekwzSytWT2xMSWwwRHBtZGNCeUZ4NW1pSGFuc2M2VStFQyt5?=
+ =?utf-8?B?K3RFQjE1Ui9kUEtvZmN1YWppUjVSY3gzYXZmSmR4U2ljRHNvd2YzeGovTDZx?=
+ =?utf-8?B?TW43UXhsYzJETDY1blJDcytVSGpDeWJnZ3RtbWdZMnovRXlMZC96L1l6UHVH?=
+ =?utf-8?B?Z0h1UkYwRldQYTEwUzEwaUlLalZTSlhJalhhbFUyT2lXcUR5VkwrSW8xU2JC?=
+ =?utf-8?B?OGNFeHdYZDUrZE9JNWYwMEZXZnpucjlUaXZ4UERXTE8yVnB4RUMzZXdNVFF6?=
+ =?utf-8?B?czBkVGR6eVV4ZG1uUDIrdENRT0lRZFczc1J5K29VRmt6OVNoaEdUZUYvd0ZM?=
+ =?utf-8?B?Ly9YaGRha21kTUF6cUlHZFd5TlpJSGNDTnAxRW4wR0FIZ05QUndFVVh2ZnRl?=
+ =?utf-8?B?QkxGUmtuZjZxUVFiZFZsNm0ySk1saVNxN083YzFBNmdkQlBySWI4bVVucVNo?=
+ =?utf-8?B?SXVkT2lxTDNUb1R6c0Z5WkJiSWVTTlhiWmJNVjZzbHY4RGNoelFGKzkybGY2?=
+ =?utf-8?B?Q3dBMmxUMXlIY3dlaUk3Tis5bURZQ2JZd05KQjBURDNqTDhoV0IvcEV0bElO?=
+ =?utf-8?B?cmVNcFJ0Z3kvc1VxTEE1amhrbm9kdjBJTW94dW95S3R4eS9HZ3FkNS9FMGZY?=
+ =?utf-8?B?bGRtZkVGQXRFNnRZbngwM3AxbjhBMDQ3N0hPMWswbVVVTlRKU1g2NjZ0SFBh?=
+ =?utf-8?B?OHlXOWhLWFFLN1pMbFBOV3gvalQ0SE90S05OeGdMKzgrU28yUEx5RGdIMk5s?=
+ =?utf-8?B?V1hQcEpzZ3I2aWJtK3FDVXpHMWtDOXdnV08wREFqaWxNNW82UTRxUGU3RmFG?=
+ =?utf-8?B?L2MwSEkxUFBNeEpvN0x4amtoVjhMOU9CdzE1cFdYNEUvUW9RWmpYOHFTRVJr?=
+ =?utf-8?B?ZkgwdkdlZjhRYjR2bDJoSEQ0bkZSUlBVTEZNZ2QrWTNqYk94UFV2VkRTeXVw?=
+ =?utf-8?B?RDZlRGFSNjUzZ0RURG00MnBKYXo2SFErWWdsWi81eU5MekpiRndUd09XSGxQ?=
+ =?utf-8?B?U1lHb1ZWZDk4QnhCRWc3OHRxNXpZRm13MHVzWUs5QmVyaDh4Y3IycGd4K1Ny?=
+ =?utf-8?B?aEpLZXhHK2xxN2p3eXk3M2IvNnpFN2FPTlUrcjNySGhFR2RrV1VWR0VKaVdv?=
+ =?utf-8?B?QW1aVFg5cGkvSFMyTTJ0anZsQW1LU2hxSzJFdnRNTDdRLzI3Q2tCd2JSam9i?=
+ =?utf-8?B?TzcyWTRuYmd3YW5qVVBoNng1Qkhkc0RtcnBnQ1BwR09EMEZPT3ZDWlJ0SFY5?=
+ =?utf-8?B?VVlJYXpQaFNjVGt6L3dFbUdEdU5uR2kwbVhma25lVE0vbTR5a3lxdWNCd01O?=
+ =?utf-8?B?MEpKOURRWjRiOVE1UnNvZms1ZmVoU080a3BIcFNLS3VoM3MyMG9YMnRkbVNy?=
+ =?utf-8?B?ckYwUXFzaTJFWVk0RkdSdjFtMDE3SXd6ZkMzTERSMjdTM1QrVE1tVURCQU1p?=
+ =?utf-8?B?dnVzUDdQRmNiQ3VQSkpMWXU2ejNNSkdpREl6WWpCaHJzYjFFMExiWDgvTkR0?=
+ =?utf-8?B?WUhqWnZJMDZmUEx3RHRKclVuT3lobE1reUVXajB2OG9RcXpBbno4ZjFTM1Vh?=
+ =?utf-8?B?ZGp6UFNmRlZwQTZCbU9ZRExRVUlmNml0S0ExUEhJVktvakd3eWc4c0FodCtr?=
+ =?utf-8?B?QytPWXI4cm40YWhwS0UwaVVJOXUyYjdYQTg0a3lLc0RaZ3lrR1BzeDVuS1F1?=
+ =?utf-8?B?dzBuU2Z2NnQ0T3NMZklpbmtxRU9rWGZaVXJ5VnUyRUR1bjBhN1NQQnZQQUU3?=
+ =?utf-8?B?c3FoVzZOS25pZFRoTjFYckpXR3kyMUNDN3JwTnh2MXZVdlBOZ2ltaUgzYkE0?=
+ =?utf-8?B?KzlvTDhiQzFQSmFMSUxFc2ppU3U2UE5PcjJKcGdXWlVhT1NPbHJrMTZHSkM0?=
+ =?utf-8?Q?eDeWFpA9lTbb0CKEJv6qvYnHGpxTkFvS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VllscGM1QTkrdDdSRXd6NlY2TkttekI0MlJtNlplTTQ3TXB0cUVlSHFOTTdE?=
+ =?utf-8?B?S3dYVlkycGJlZjRNY0JsYTE5NXpWMWhGQUNzVHhDbGE1di9vbERJdC9PSkNq?=
+ =?utf-8?B?SlhxK3hyU1h6dGtTMkVwRGFGZEFlQzJURCt4SDNESUxwbi96bE9BNERRWW5V?=
+ =?utf-8?B?U2IwMnV5YnBMK1gzNUwyVDlpcHZDYXp3UEJYMDhXY2Y3QjdxRHhMU0x0VWNj?=
+ =?utf-8?B?NDBrUHhRd0dyazdZZkpWa2dMV0ZiMmFFbEZoS3hteXlhS2xHRldsTzRGRlFC?=
+ =?utf-8?B?WnRKNTlJSm1TNXVKZVZnOUQ2L3h0S1c0S3I0Y2pZanZXNjdEZjhiYkVWZG5X?=
+ =?utf-8?B?SlpxMTRIa1lDWm1OK0x1RHpVTHFSTzJzVE5NcW12aGo1bXUybmhhOGJnYmRU?=
+ =?utf-8?B?MVRacEpDbUJkWUZPOXUyOWlZaXlhcG9xeHlidDFtUnNzN0d0N2xmUG1vVTli?=
+ =?utf-8?B?YnB3clh3S1N5RkYxcVV2UTFib0pTUHFseXQzNU9FZGZjZTJXUVNXVVRpZDk1?=
+ =?utf-8?B?Z2F1TkVNa29xVDlTQ3BKREdFeGVFL1hBWTQzcUF4aGhwcjBHS3VrUXNDVC9u?=
+ =?utf-8?B?MlZNMDhabWNOaDRSdS91YTg5TDZVeXJncnBGUUlTdzhVRWdRTGxRbnV1eUEv?=
+ =?utf-8?B?M3pTQzZtWlJSSTI5cFlwR0NmV1M3d2xjbmVtbjAwRTVOYk5CSlRqQnl5STlD?=
+ =?utf-8?B?VmpxNGtLT054NDRyVllyTG0wN0FleFRsdS9aVnNIcWZOOUI0S0ZacHY2Mnp6?=
+ =?utf-8?B?bmFpWjNFbGt2ZmRjd2NjREdzYk13TGNiZkNtQWxJNlRqZnlOdlRqVnBIZTJt?=
+ =?utf-8?B?UG8reDdkUU9iSzhTZkFvR3F2UlFxYnNzQWpvNGRXQVBKaHBrM1E1b0kzMDVj?=
+ =?utf-8?B?cDRHcEFzSlJWd2psM2Jlak9HbE1UYmdVN3FheDl3aGRRYWxaaTNVcEdsUVhi?=
+ =?utf-8?B?YWRrMC9uT3paamd2OHNjakxIeTBjRUQzRXlIUWI2Q1BRSkUvOWEzNXlNUko4?=
+ =?utf-8?B?KytDcHByTEw3STlTdWdUTG53eC9DVHhZT0NEUkVYdE1NWkhjbEx1UkxYU2dX?=
+ =?utf-8?B?S1diLytvT29ZV0ZSMFptZjZrSkorZmtLa0FIcE16bndHL2hxM1cxai90NVBt?=
+ =?utf-8?B?VnpwcnFWakhXZUVJU2E5OTZ3a0FBMTRvZHVkZG1Kdk5DaFdEMERCWWxaWDk3?=
+ =?utf-8?B?ZjJDVWRPN2ZUWEd4cmNTcVVYenBVdEFaVEZBZlE2RFFDcG5SOWdpWHgyYnJG?=
+ =?utf-8?B?eFppVVZiSVgyM2xidkZnaG5EajdJTC9TbDNyc2tkSUFBdmlLempHN3lOSWZO?=
+ =?utf-8?B?UHAvNXhKTFZFTEZKMlNQaHJ5bE9Xb3hMK0JNUmROY1NhVFc1OVhYSWRxWEpq?=
+ =?utf-8?B?NTZSSFd1ZzVKbTRWNE1IUWlkMlg2ZmVvQlRLRXc2ZUorR1FTbEtVSnAxQ2VD?=
+ =?utf-8?B?T2hGQ2IyY2E3S09RWDFTTWlKempHbkFKMU94YnFyYm03alJPc2M0ZnJJZERp?=
+ =?utf-8?B?SmtScWM2STJBNThKb05xOWV2ajR4RnMrSWsvU1JDaE95Q1JVYzMvdk9XWkRp?=
+ =?utf-8?B?VlNJWGtRbTZMMjU3NVROdWVJeVN1WVRDUERGa2FXNTgxZjhQUEVWNm85M3ZG?=
+ =?utf-8?B?QUd1b01UN3lXS0VmTHRzU2pyYStnRlZoMXpBUHIwemdmVk5DdU52Z2RJMjZH?=
+ =?utf-8?B?ZlFtTzJyQlc1R1RtczJ4M1czTnRyL1lYUmszSjNUZ2dRYUh5SmxaeEY0d000?=
+ =?utf-8?B?L21CNFF4WFZBVCtZNFFoeExiTlNoVG4zN1gxRndJdE1MQ0RGMnp5Vk13MWNX?=
+ =?utf-8?B?TG1KdlN6dDFrSjdmKzdTQXdabE1jbk9RYldoNWhJWjJJbW41bW5hU2NmaVRr?=
+ =?utf-8?B?QU9aUmh3dTBQcTZ3aEp3YzNSTmplRXZ4azE3SnVqelFYL1I5Z1V3TXl3RVJY?=
+ =?utf-8?B?dm1ob21IZTdBWFRPc0hIc0hKaHoxUG1iODkxcTZsUUJkUGh2Wm9FSmxXVjBv?=
+ =?utf-8?B?NW9CN28yUGhIUGtjYWVTa1pPWVV1SU5BK1JFdlhzbjFTaWRSOFcrcElNNVYw?=
+ =?utf-8?B?WmovSTYrbFVYOWFoSndMMVg5V0VpZ3ZZejB6S283bnVSNjNESzBDdzNkWjNv?=
+ =?utf-8?B?WTZQSEQxZ1NKMUtUYXFIQnIxdDBCTW50Ky93TVU1aXR1bGZiTkhZbmpjallW?=
+ =?utf-8?Q?4Sw252ppUMKxdyOegruq3wczKhVFVCS9CT+Gt0AIn5Tp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 719b0d8a-dffa-4e2f-2e61-08de1630827d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 14:44:34.1070
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zvrHLnThs49VRYmLb1JD0u4DpdanymfugBG2hrXDy9cNwyibrxbvSKH5x9m7jDB22b5uVHflz28vAtmTExg84w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7280
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   fd57572253bc356330dbe5b233c2e1d8426c66fd
-commit: ea7caffedd011f7d40abe93a884ffbe46f122535 ARC: atomics: Implement arch_atomic64_cmpxchg using _relaxed
-date:   5 months ago
-config: arc-randconfig-r121-20251028 (https://download.01.org/0day-ci/archive/20251028/202510282219.yD4DaWrP-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510282219.yD4DaWrP-lkp@intel.com/reproduce)
+On Tue Oct 28, 2025 at 3:46 AM JST, John Hubbard wrote:
+> On 10/26/25 9:44 AM, Miguel Ojeda wrote:
+>> On Sun, Oct 26, 2025 at 3:40=E2=80=AFPM Alexandre Courbot <acourbot@nvid=
+ia.com> wrote:
+> ...
+>
+>> Regarding the `.into_as()` name, it makes sense, but it can be a bit
+>> surprising when reading out of context... The standalone functions are
+>> super clear, in comparison. But I am not sure what could be better.
+>> `into_in_this_arch()` or similar could emphasize that this will only
+>> work in certain architectures, i.e. it is "an `into()` for this arch"
+>> rather than the general one.
+>> That would go well with the idea that you didn't implement it for
+>> other obvious types, which I guess was to avoid developers using this
+>> instead of `into()` by mistake, right?
+>>=20
+>
+> Exactly: the into-as, from-as naming suffers from *appearing* to be
+> familiar and readable, but actually, the naming gives no hint as to=20
+> what it is really doing--nor how it is subtly different from the
+> basic from/as/into standard conversions.
+>
+> Instead, we need to add something (almost anything) to the name, to
+> make it clearly different from the from/as/into.
+>
+> into_for_arch() goes in that direction, for example.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510282219.yD4DaWrP-lkp@intel.com/
+I'd like to get more input on that, for I am not sure how we can stay
+succint in the naming, while carrying the relevant information.
+`into_arch` does not sound much more explanatory than `into_as` - the
+intent with the latter was to say "I would normally have done an `as`,
+but instead here is a method that attests that this operations is indeed
+lossless and safe".
 
-sparse warnings: (new ones prefixed by >>)
-   lib/atomic64_test.c: note: in included file (through include/linux/atomic.h, include/asm-generic/bitops/lock.h, arch/arc/include/asm/bitops.h, ...):
-   include/linux/atomic/atomic-arch-fallback.h:4152:16: sparse: sparse: cast truncates bits from constant value (aaa31337c001d00d becomes c001d00d)
->> include/linux/atomic/atomic-arch-fallback.h:4152:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4181:16: sparse: sparse: cast truncates bits from constant value (aaa31337c001d00d becomes c001d00d)
-   include/linux/atomic/atomic-arch-fallback.h:4181:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4209:16: sparse: sparse: cast truncates bits from constant value (aaa31337c001d00d becomes c001d00d)
-   include/linux/atomic/atomic-arch-fallback.h:4209:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4234:16: sparse: sparse: cast truncates bits from constant value (aaa31337c001d00d becomes c001d00d)
-   include/linux/atomic/atomic-arch-fallback.h:4234:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4152:16: sparse: sparse: cast truncates bits from constant value (faceabadf00df001 becomes f00df001)
->> include/linux/atomic/atomic-arch-fallback.h:4152:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4181:16: sparse: sparse: cast truncates bits from constant value (faceabadf00df001 becomes f00df001)
-   include/linux/atomic/atomic-arch-fallback.h:4181:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4209:16: sparse: sparse: cast truncates bits from constant value (faceabadf00df001 becomes f00df001)
-   include/linux/atomic/atomic-arch-fallback.h:4209:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
-   include/linux/atomic/atomic-arch-fallback.h:4234:16: sparse: sparse: cast truncates bits from constant value (faceabadf00df001 becomes f00df001)
-   include/linux/atomic/atomic-arch-fallback.h:4234:16: sparse: sparse: cast truncates bits from constant value (deadbeefdeafcafe becomes deafcafe)
+The best naming scheme I could think of is to have the methods carry the
+source or destination types: e.g. `from_usize` or `into_usize` (like the
+standalone functions), but that would require defining as many traits,
+and increase the number of imports - if we go that way, we might just as
+well drop the traits completely and use the standalone functions.
 
-vim +4152 include/linux/atomic/atomic-arch-fallback.h
+`into_native` also comes to mind, but like `arch`, it can mean many
+things depending on the context.
 
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4126  
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4127  /**
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4128   * raw_atomic64_cmpxchg() - atomic compare and exchange with full ordering
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4129   * @v: pointer to atomic64_t
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4130   * @old: s64 value to compare with
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4131   * @new: s64 value to assign
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4132   *
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4133   * If (@v == @old), atomically updates @v to @new with full ordering.
-6dfee110c6cc7a include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2024-02-09  4134   * Otherwise, @v is not modified and relaxed ordering is provided.
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4135   *
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4136   * Safe to use in noinstr code; prefer atomic64_cmpxchg() elsewhere.
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4137   *
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4138   * Return: The original value of @v.
-ad8110706f3811 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4139   */
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4140  static __always_inline s64
-9257959a6e5b4f include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4141  raw_atomic64_cmpxchg(atomic64_t *v, s64 old, s64 new)
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4142  {
-1d78814d41701c include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4143  #if defined(arch_atomic64_cmpxchg)
-1d78814d41701c include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4144  	return arch_atomic64_cmpxchg(v, old, new);
-1d78814d41701c include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4145  #elif defined(arch_atomic64_cmpxchg_relaxed)
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4146  	s64 ret;
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4147  	__atomic_pre_full_fence();
-9257959a6e5b4f include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4148  	ret = arch_atomic64_cmpxchg_relaxed(v, old, new);
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4149  	__atomic_post_full_fence();
-37f8173dd84936 include/linux/atomic-arch-fallback.h        Peter Zijlstra 2020-01-24  4150  	return ret;
-9257959a6e5b4f include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4151  #else
-9257959a6e5b4f include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05 @4152  	return raw_cmpxchg(&v->counter, old, new);
-d12157efc8e083 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4153  #endif
-1d78814d41701c include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4154  }
-d12157efc8e083 include/linux/atomic/atomic-arch-fallback.h Mark Rutland   2023-06-05  4155  
-
-:::::: The code at line 4152 was first introduced by commit
-:::::: 9257959a6e5b4fca6fc8e985790bff62c2046f20 locking/atomic: scripts: restructure fallback ifdeffery
-
-:::::: TO: Mark Rutland <mark.rutland@arm.com>
-:::::: CC: Peter Zijlstra <peterz@infradead.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+... I think I still believe that `into_as` is the clearest name, once
+one has read the documentation for the trait - which one should be
+expected to do anyway. :)
 
