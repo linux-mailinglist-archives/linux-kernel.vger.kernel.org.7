@@ -1,261 +1,145 @@
-Return-Path: <linux-kernel+bounces-874596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7C7C16A6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:44:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7904C16A7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:44:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D1174E65F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:43:47 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07350356934
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D68350285;
-	Tue, 28 Oct 2025 19:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86613350291;
+	Tue, 28 Oct 2025 19:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SgpzUPIm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="r9JM/5LT";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="umfdoBtP"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F625F96B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761680622; cv=fail; b=K8yvu3ZBeCCrqiAgR+lNftiVA1Q5J7VlBauAcMlFwPpT/knDGy26iKS6UXmdG8lh+oTWDxkqr43xQbt8ni3FVKRbiLsBzLAlAhMT+IzGOkebVl6C0HHnzDN8m0zpOULT3aDc1vx734aW0uEnNhZ/GObymXXj4tmTA7FGY6HKDRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761680622; c=relaxed/simple;
-	bh=LMcFwSst3fZtQqGThFaGvaKG8wlz4J+OgkxXg9oH6V0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=p3VYCEaVP0zGmFaowmQBwJ9rtAnL8kBvJP6WeHLNmt95C7Yryot6kaeyva2eASXBPHtS4mAafa9B2M2llYVTvKUt+sahwnaNdWGJfC0qCYopHutE6rxc2abtI8GOSfnd0gdNn0SCf1/8xBTCj7zyNUwNuMjLi54Zzn9wWMQ/oMQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SgpzUPIm; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761680620; x=1793216620;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=LMcFwSst3fZtQqGThFaGvaKG8wlz4J+OgkxXg9oH6V0=;
-  b=SgpzUPImAWewqcTOgfK5n2+9nk6GyhNAGJ62iMqxkq1uaNTWWf+7LwQd
-   QqeSS5ePffOJyeuVMAlrC/BtjicPPIwJX5eaXiIrzWSWq3V4iSxnubX4P
-   25KganrlZ6dWS/XeW4cvR7Vt70yqEQI1q4MtN7EUFK3Zh3PZQTNNte9Se
-   VDH+cvmayPBC/EL6qFj+sSQAjYbsbshEjhnAW8T/yETSW94d3bI7lLqoq
-   TdmxkYVcrGUB7zT2qa/AknwYTtcydw3+yzV82uknOFD9iOazeuRVBwTKa
-   iK6B/CrJGEPUpucxo5Wmsx80HXOqG0l43QyZ3/Cebvlei/ERHnmuPMVlB
-   w==;
-X-CSE-ConnectionGUID: DAMGAfmhTBy8S8XIvEQQrw==
-X-CSE-MsgGUID: 2fHP/cU9Tkmpk7Y/7kiX+Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74082845"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="74082845"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 12:43:40 -0700
-X-CSE-ConnectionGUID: PrDFFY/sTtGtzECx02x5rQ==
-X-CSE-MsgGUID: NGRPAk4OR9q7MBsuLlMC+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="189758473"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 12:43:40 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 12:43:38 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 12:43:38 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.22) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Tue, 28 Oct 2025 12:43:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H04Lax03VhbLdS6kQu3aAjyxELVGoEALFc/5ZaHalnodcCcq/Ip8ivJePlCTgQ6bnOrb+g9LiZY9bG5uu87ueE+wSRL5WJGrO7zF0CxPC4ipeRCNhaL8lvzD4m9A7eMUNaniTTO/PmwEM6a9d48v+V1gnrg+pWE9SojZ3h/h3T4meTWMoSxwHwLp5i7k8B8XGQEiMt5T8UfegFveo3tq+gRzi+GROYeBi1d5tQmwOMytcLTbf/E1q8LFED5Qy14GNvz3FjuUic998hg39UDPVJeIi7e6jFtEjcIXLn0fY5TKwnVdgJiKRXUxowmso1l0yEoS5LhzlQsVPIKVvgHp3Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RpU++PPdInXcVRSrHYj3TWdfKZcIBVP5rXCuxS7z6Fo=;
- b=KJLa/EtVSDjJp3/PpKl/p8PlwH3iITru+/PqenRKKMAugK+Q/k+QLhjJbORCsSTCZ6WZ+oVaXG0QWXCeCsRYW0CgOT3QhjAMq8/QSh2Xj0rCaNvB+utua2iJrqNCEsKzoHc9QYdwDqgAz79QkidX1P622qvknj93b9K25GaEUCJEuvEiq83LbZb4p6HEJYXVmhfIYogw6u1ZSMn4DClN4icdlKwdcuwamf8RnODBYDskPKSmv82Mt2K977FJKZjnLTl82yS+zem0Jv0GvSnBRghPmSxNryvngCAoe4ipcM8XaEma3dHJUQ0ty2TPtRTYWcUaXbNRUhWZzZ3IsYW+gQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
- by SA1PR11MB7110.namprd11.prod.outlook.com (2603:10b6:806:2b3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.17; Tue, 28 Oct
- 2025 19:43:35 +0000
-Received: from PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
- ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
- 19:43:35 +0000
-Date: Tue, 28 Oct 2025 12:43:33 -0700
-From: Matthew Brost <matthew.brost@intel.com>
-To: Philipp Stanner <phasta@kernel.org>
-CC: Danilo Krummrich <dakr@kernel.org>, Christian =?iso-8859-1?Q?K=F6nig?=
-	<ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, <tursulin@ursulin.net>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm/sched: Add FIXME detailing potential hang
-Message-ID: <aQEc5eUR8bq+XNG1@lstrano-desk.jf.intel.com>
-References: <20251028134602.94125-2-phasta@kernel.org>
- <20251028134602.94125-4-phasta@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028134602.94125-4-phasta@kernel.org>
-X-ClientProxiedBy: BY5PR17CA0022.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::35) To PH7PR11MB6522.namprd11.prod.outlook.com
- (2603:10b6:510:212::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5571F5827;
+	Tue, 28 Oct 2025 19:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761680679; cv=none; b=nYO3e56E9eLhsgmPBOxXjV8IqO/Jz1rwRBrZHCW3rKri8ggaNNMNrbjn2nx8I36nHg5F8zbSRgeW5pTxCHJtADS4Hi+kh+ETJkNeO2Oy5/MaAKjk2UGMNQbJa5zGYybBMgf+SOLXccwX/F3qbvFoAxlAN3XBDjg1MhbnSIWcaoQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761680679; c=relaxed/simple;
+	bh=Msq9T36ZFxgTo2O/BlSoUqcqG4aEYoQ5fAFhnErLZog=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=n92lltiUoWiYlS4Lfm65AyM6OFeM7hFf/6y/ZF9kFYUwt2HkhBrUXkh3ROEhMF6ti49psGb/H7UaI3x4OYoVOkjqwgprrz2oQRYpCky7CAc786VnrR+c+dpAALB85WHY219d0L9th8nQtOC7/mOPSVpIJCSRpy17luEmO4FXuJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=r9JM/5LT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=umfdoBtP; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 Oct 2025 19:44:33 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761680675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=p4QVTyWunBvfONVP0Mj//QUzxTGF7UBFnbv9Id8gW9c=;
+	b=r9JM/5LTM4P+ZZhyQmXHArJaIndBwGmVCKFOaqitXu07N3zA+EHBCY6kmZnjtFjt4qcebr
+	3UWzFyQ6wA+YdQNKT14Y6zRmMZFzqystqUMNSB7J0gOJTPybTbu0mOCJuaL7Gb2wqUTUaW
+	C5istUm9vDc0qlgPMDTuRptxDMBRBF6Gx1VJnsxtQ4/6ql2sf1yjMej5vxTWUTqumceuHD
+	bta+C6NxWqeHoRVAODy2p6LGF0J4VhJDTqlahuKWCfxO8HRJx9hwUeCstTKIZJWVDyQkqy
+	ysnmfbkF2C0fDeOHWGkb4W7CrjD10Gf+2UiZ8cH09D07mojaS+UbIXrQy+VJOw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761680675;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=p4QVTyWunBvfONVP0Mj//QUzxTGF7UBFnbv9Id8gW9c=;
+	b=umfdoBtP4M7kpHwgs/K21Xy2kcgGKP6qjJsAoCfQTXU2ObiEbdJi9CgQyJ6dR/lO5pHExc
+	+ngg/TF0a8eoKdBw==
+From: "tip-bot2 for Chang S. Bae" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/fpu: Ensure XFD state on signal delivery
+Cc: Sean Christopherson <seanjc@google.com>,
+ "Chang S. Bae" <chang.seok.bae@intel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Chao Gao <chao.gao@intel.com>,
+ stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA1PR11MB7110:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80863221-3fbe-4aaf-b3d8-08de165a48ba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QS9pdktsaTBNVDduUk5BV2s0S3NBZ3ErNHFwR2JvS0tmUCtXT1h4V0tSZUk4?=
- =?utf-8?B?Q1llOG9hdkRPT1JLTDFZMDRpYWErdHFGRzh4ZEhPR05WSGlpY0NRR1ZoYk1x?=
- =?utf-8?B?T1NzZWlKTlVZNGNLZTRTdGhPMmV3VC9VeUovY3Q2VXJUcDFPQkZ5Vzh3N3Fy?=
- =?utf-8?B?VzdWUUJGSWh0VWlnN3ZNTnk4QTlhMTJzWHdhYUNzWkV5RjFJYkswWWVoL0to?=
- =?utf-8?B?YnkrN3UxWDAvb21PTjFlOHhIWWM4WTNHZHEycFJVSitPRC8xWVVOQWtyMjda?=
- =?utf-8?B?eG1LK1hreE8yejJPZFNPVDZOUVU5QTJtbDVwdGVjRXlNSkQzZFdJQlhBNVdO?=
- =?utf-8?B?a3ZzN2JOK25rUDhIQTBQMmhzU1g0RGY2OSt1OXYyUkwrQVdRVTdia0Y3VkFi?=
- =?utf-8?B?c3FzRWQ1TFZSM3FiWUJBQWNwenJLb3oyK1NRVWJ5SVNGdllvM2RLYk5ZaElu?=
- =?utf-8?B?NUQ3NUxUejFGZmt4cjlhZFAvTnlyUGJNbWJOOTB4V2tRMTlrMGtyV21iSTJj?=
- =?utf-8?B?UG55T0liU3YrYzZLQUZUOU1WUzZPMXpvT0xuNU1uTHlSd0NaSEhuVWgrUy9a?=
- =?utf-8?B?OXBYVklEeHZ6aWhyWWJvUlcwLzdQa0lpdVljWWY5Y3AyOUkxWWRoSGN2d1Z4?=
- =?utf-8?B?SEY5aFRJcDBMWGM4aUk4QThtYmJKb2xlYithTGZPanJSOEFiR0dyenAvTmRG?=
- =?utf-8?B?Y1BrUUhuN3VRdUNtRHgwZUpTUnFkNUNMQmFlYkFOdHBMWTBTVmZkQno5RDdr?=
- =?utf-8?B?eXVyc2xSdk00ei9oSHVYWms5YzdvV2V2QWtWV2o3RDQrRGV2czZOUW9HbndP?=
- =?utf-8?B?aFIzeWVjKzNJM2lDSTlHcCsyR3VzVU04L29NVXJZZHJwWlV3MGtzaXNObmE5?=
- =?utf-8?B?MG5JWUR3cEZacHA3dWQzb1Zqdlk2TTBKWSsxTDZHbXR1VlQyanA4NkR1SGhD?=
- =?utf-8?B?R0REMFdNb0FUcFMvUFNlamNXcjRydHlZbTA4enRJWGVzWVEzZ2RpRERSc2dP?=
- =?utf-8?B?Z3JBcndjc3FEQkJBVTNrbWJrYS9nQnhxRGc1ZTZlTFJTUGJ6VTh2MnZiRlJW?=
- =?utf-8?B?UTZWNk9TQjlaUjdzRHJrVVVLbjJjcVdsdzRjZFRKd2pJOEpXcjNHRWlUMzJO?=
- =?utf-8?B?VW5aT1cwTktWWFFNM2xLNFp6bUJjTTF0M3RzTmhXZjN2NGJmWG9ZZk9iT2tP?=
- =?utf-8?B?VENVLzFWU05SOU5hZGxXWnFYME5oWGY1OGFJSEJqUnlEZlJiNXpMam5teWRF?=
- =?utf-8?B?SVAxdXpwZjRNeWJ5dzR1ZWl5dE9MRk00WnZDbVZ2WUJBV05YZ2ZINHY3c05T?=
- =?utf-8?B?aXdTTDNsbi9xZFJTSXpGMXJOaldVeHA0SDRkRVoyWXJqckRhalBFZ0wwa3g4?=
- =?utf-8?B?aWFQZEwyS083eUN5Tm1jUVFHa0tEbndiM1AzdlJKdks5T0JTZ1dNWHVHVkZM?=
- =?utf-8?B?UnMzV3pyZVNKeERnQ3h3Zy9CcmVWTVZsc3ZCUnVMMUJyQWEyQWJpQ3pDRE9N?=
- =?utf-8?B?eFZ6UkhCZW5TcURzb2ZWSEVaWW04d2dsQWpPRlZ2OTJmOVVwTEU2d3lJSG9Z?=
- =?utf-8?B?dEtuU04rNjEzQW5xNy9hV0w4NmxjNjJ0dm5tVFFlU3IxNUJRc3VubVBQdDVk?=
- =?utf-8?B?bnNYUXJMYWRVaFJnQ1NMd29RcE9XOEw2QUZ1eGFGQ3lnMnpQaU1XUHA4VlpZ?=
- =?utf-8?B?WEJ4Z2M2SVBrVzJUM3RYd281MFdvNEMveDBuNW52Zkd2ZTNsakxVRFVia0Fs?=
- =?utf-8?B?MFYwWmZUdnA1NHhKcjhpWDFOM2lKSGVyM016Z3ZwQVlsQkNZSC95WHQzRFhS?=
- =?utf-8?B?RXBqWlU1Rk9Ha3crRGtJQ1QwZWxNc2ttZVVDMzlMaTBPQ2NwT2RFRHZBY2xR?=
- =?utf-8?B?Q0RyTUlqb0ZUNm5EcVVjNnQwNUV4SGcvZWdONUhldEFKTjdsWWZYTkMwMDR4?=
- =?utf-8?Q?fTww67DlKxiD51wxfnyWq87b1K+xRiNZ?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N3JNWVNUeWI5dDhzYy9ydjJ6dU1Tb1Q3b1I4TDVick5rYUYyT3FLaHJhUldY?=
- =?utf-8?B?YlUxZ1g4QzQrSk1CSEdPM2tRUkkvQmVvRjRKOFhBT1czZnZMZG55emVqNDNq?=
- =?utf-8?B?YVRnTkRkWmNRdVdQMHF5ZHdHUFUreGV1WjEvcms5WlRiN2d0d0dVVUVjalhI?=
- =?utf-8?B?QUtlQVFucjRncVNCN0gyQ1dQSldnOENhWHBoWjVVQlpWY25qK1Evd0hvUWd2?=
- =?utf-8?B?TXBqbmduUytNaEpVNi94czY3TW5NaTNOcUV4WEdlVjQwZmRaWjFBcGM4aVEr?=
- =?utf-8?B?QytsUkd0T3EyQnhDd3BLOU1Ba2szajhHN3lYUXVkSlhOL2R1WXFuZ1VNcXo5?=
- =?utf-8?B?dWwwa3hSbHJrY0QvbHorSDdIekNBWWs5aTdXUmpuSENiZmx6SEMvZW95MVVl?=
- =?utf-8?B?bjNYb3ZWMVZEVVNTSVVqbTVyVmkvc24wUFlYVkl3c05xblZkTmtLT1F4R2Fv?=
- =?utf-8?B?bC9ZZGZtTmp4SSt4RlFlUmlOamlyRW4xTlBkdXRaNlIvZkRxdzRxdzMxZU13?=
- =?utf-8?B?TUwyUXhndmVZWGRIRW1iV0JZSktQQlhPNmJKME13UzNIRjhEb21nVi8xZmZJ?=
- =?utf-8?B?R1BQOCt0TksxbXhXOXM4YlVxQm9XTjBaSkUxMGRvR2tuVGFIRnN1UmYwWGNm?=
- =?utf-8?B?QS9ld0lWeUE1cm45SnFDVm0xRHBqbXNyQzhGUlBkOFJmcDdkTjBwT3NWRUQ4?=
- =?utf-8?B?Z01MeXRvdy8rSlNqUEM3d1Q2QUtibkNzTk0raHVtSHZhN05Na3NXVFFzUkhQ?=
- =?utf-8?B?V0MxdVFCTndmVDdOSlV3dTdVUmt6bFNJcUVSYjFqQmlkVjQ2RGlJTUcyR2hQ?=
- =?utf-8?B?SmVKY1h4QzIvZnJiQ0MyUVp6U2N1dnJRWUtoanF3d0k5NHVURGZxczl2YXVH?=
- =?utf-8?B?VDF5djhvN0k1SzZKam15elV5RllyeFA5TVJJdmpZV3hQdHdkdGpybXkxRjdP?=
- =?utf-8?B?aHhxenNBUFEwM0YvcytscFowRm5nL2dtV1ZpTnN0WU1MSnJkMjUrUmtaclBa?=
- =?utf-8?B?MS85R2xGVHovTFRqeXJnbVZXWlZSMVRIWXNnR1BqaG9EbEFXSlFEZXFPd1Fw?=
- =?utf-8?B?ZDh2ZnpFUWF1TDRtTEh0VFdWU2J1cGlSMUVtNTdvMHFvQjUwNkRacmN2bmN3?=
- =?utf-8?B?cXpFT3NTazkvb3FwTWNDRVY5SVZGVnpwQm5GeFNrMnNuNkVFU29ZcW1hWFhB?=
- =?utf-8?B?VE56MkxtZVNlSFJtejFSb1dJL0FYMjhuRDVwaGtacU1ieEdaekkxempnRkhI?=
- =?utf-8?B?Qnpsd3QxMEkzWEhhbUc1SDV6TW55RGNVbExQNUMyMDc5cGR1NngvMlp2QzN5?=
- =?utf-8?B?dUVIVnNKZTFwbTBUOUxHdDRoS054dnpyd2UvNE1aSFpHNUM3MW84U25KMEsy?=
- =?utf-8?B?b2htbUxzNmt3ZUZ4dktnTWtRT3NsVm1oTVdmSEJKZGVURmZxeXY2MWFhR0RG?=
- =?utf-8?B?U2JwSHZiV3hVR1hSMzJ2WmNEclpBS2pBdWNIQjk5YWdLRHZVbGFwRUZhcnhF?=
- =?utf-8?B?d3JwYzhvMEpGd2JtT2Z2N05ZWmdtVjNoN1h5OHBzRHJtZXFXRCtHTWVKNXQw?=
- =?utf-8?B?Nzd0MlFXT3YwanpiMWRJcFhKL0VBZ3VUMWFlMG4zVWVkcGlrYTJZdWJwOHVw?=
- =?utf-8?B?bVQycjg4QkgycWlMNVZwcEl5Q0ZDd3JnQzg4VDd4U3llMDZONndnYlg5QTRt?=
- =?utf-8?B?bWgwTTZ6OUs2cDEwcVd4TzhrWS9pSzNleHowdDlyTmUwK3FUQWF3REdqYWRr?=
- =?utf-8?B?akdxQnRmdEFVZVk2S0JUeFRldWsrdEhpclRpblVsekRQbUpnL1doY2lqYVcw?=
- =?utf-8?B?N2xMZk5PRHVQbDZRVEZBRkE5SlQwSExSZUo4QUpUbktmK29TaGpEbmQrVno4?=
- =?utf-8?B?anpGMjNtUTBzUmVOeWVBeWdOcG5yWW54SjBoZjRWM0RUd3VYQ1ZvU0JJQWpE?=
- =?utf-8?B?MXQ1bW4wSzFtc1ZSTXFiNVZtZ0h4SFV6MkE0YTVPV0JHL3hoSlJKWkRIK2tX?=
- =?utf-8?B?NXZDcjN4NHhma01vUWsvT2JkY3VNUnk5UVM1ODFiQmtOYzlzMGU4K2F2bXJp?=
- =?utf-8?B?N2djS3ZlV0RYMU1Xc0s1UU1rZFEwMXFrWG03cEh6K2xpRk5qQzdPTXNRNFhh?=
- =?utf-8?B?bXhCaytoTFVZdkdYZVRkR2FmWm9ud3pxamRtaGJKMWU4MkgzK2FveHRJb2Mr?=
- =?utf-8?B?dkE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80863221-3fbe-4aaf-b3d8-08de165a48ba
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 19:43:35.8030
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +BqO54Cx6NcD5iHNziDJcM7fJ7dAbsV2vi6PmupTq2UfOuxcbfs2pnClOWOSB8dMGYlfdp9UEQ3+y7D2dvxJ8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB7110
-X-OriginatorOrg: intel.com
+Message-ID: <176168067359.2601451.3900540994771276596.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 02:46:02PM +0100, Philipp Stanner wrote:
-> If a job from a ready entity needs more credits than are currently
-> available, drm_sched_run_job_work() (a work item) simply returns and
-> doesn't reschedule itself. The scheduler is only woken up again when the
-> next job gets pushed with drm_sched_entity_push_job().
-> 
-> If someone submits a job that needs too many credits and doesn't submit
-> more jobs afterwards, this would lead to the scheduler never pulling the
-> too-expensive job, effectively hanging forever.
-> 
-> Document this problem as a FIXME.
-> 
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 492e8af639db..eaf8d17b2a66 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1237,6 +1237,16 @@ static void drm_sched_run_job_work(struct work_struct *w)
->  
->  	/* Find entity with a ready job */
->  	entity = drm_sched_select_entity(sched);
-> +	/*
-> +	 * FIXME:
-> +	 * The entity can be NULL when the scheduler currently has no capacity
-> +	 * (credits) for more jobs. If that happens, the work item terminates
-> +	 * itself here, without rescheduling itself.
-> +	 *
-> +	 * It only gets started again in drm_sched_entity_push_job(). IOW, the
-> +	 * scheduler might hang forever if a job that needs too many credits
-> +	 * gets submitted to an entity and no other, subsequent jobs are.
-> +	 */
+The following commit has been merged into the x86/urgent branch of tip:
 
-drm_sched_job_done frees the credits, which triggers
-drm_sched_free_job_work, and that in turn triggers
-drm_sched_run_job_work.
+Commit-ID:     388eff894d6bc5f921e9bfff0e4b0ab2684a96e9
+Gitweb:        https://git.kernel.org/tip/388eff894d6bc5f921e9bfff0e4b0ab2684=
+a96e9
+Author:        Chang S. Bae <chang.seok.bae@intel.com>
+AuthorDate:    Mon, 09 Jun 2025 17:16:59 -07:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Tue, 28 Oct 2025 12:10:59 -07:00
 
-This flow could be refined a bit, but I do believe it works—unless I'm
-missing something. I'm pretty sure we have tests in Xe that exhaust the
-credits, though it might be continuous submissions; I'd have to check.
+x86/fpu: Ensure XFD state on signal delivery
 
-Matt 
+Sean reported [1] the following splat when running KVM tests:
 
->  	if (!entity) {
->  		/*
->  		 * Either no more work to do, or the next ready job needs more
-> -- 
-> 2.49.0
-> 
+   WARNING: CPU: 232 PID: 15391 at xfd_validate_state+0x65/0x70
+   Call Trace:
+    <TASK>
+    fpu__clear_user_states+0x9c/0x100
+    arch_do_signal_or_restart+0x142/0x210
+    exit_to_user_mode_loop+0x55/0x100
+    do_syscall_64+0x205/0x2c0
+    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+
+Chao further identified [2] a reproducible scenario involving signal
+delivery: a non-AMX task is preempted by an AMX-enabled task which
+modifies the XFD MSR.
+
+When the non-AMX task resumes and reloads XSTATE with init values,
+a warning is triggered due to a mismatch between fpstate::xfd and the
+CPU's current XFD state. fpu__clear_user_states() does not currently
+re-synchronize the XFD state after such preemption.
+
+Invoke xfd_update_state() which detects and corrects the mismatch if
+there is a dynamic feature.
+
+This also benefits the sigreturn path, as fpu__restore_sig() may call
+fpu__clear_user_states() when the sigframe is inaccessible.
+
+[ dhansen: minor changelog munging ]
+
+Closes: https://lore.kernel.org/lkml/aDCo_SczQOUaB2rS@google.com [1]
+Fixes: 672365477ae8a ("x86/fpu: Update XFD state where required")
+Reported-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Chao Gao <chao.gao@intel.com>
+Tested-by: Chao Gao <chao.gao@intel.com>
+Link: https://lore.kernel.org/all/aDWbctO%2FRfTGiCg3@intel.com [2]
+Cc:stable@vger.kernel.org
+Link: https://patch.msgid.link/20250610001700.4097-1-chang.seok.bae%40intel.c=
+om
+---
+ arch/x86/kernel/fpu/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 1f71cc1..e88eacb 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -825,6 +825,9 @@ void fpu__clear_user_states(struct fpu *fpu)
+ 	    !fpregs_state_valid(fpu, smp_processor_id()))
+ 		os_xrstor_supervisor(fpu->fpstate);
+=20
++	/* Ensure XFD state is in sync before reloading XSTATE */
++	xfd_update_state(fpu->fpstate);
++
+ 	/* Reset user states in registers. */
+ 	restore_fpregs_from_init_fpstate(XFEATURE_MASK_USER_RESTORE);
+=20
 
