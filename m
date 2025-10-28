@@ -1,99 +1,125 @@
-Return-Path: <linux-kernel+bounces-873325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491B4C13B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:07:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC18AC13B10
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABE6E561B7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 991934065DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE97B257842;
-	Tue, 28 Oct 2025 09:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9759A2E613B;
+	Tue, 28 Oct 2025 09:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/qUlU0Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ja3p/cwu"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3124F2DD5F6;
-	Tue, 28 Oct 2025 09:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9112E6CDE
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642185; cv=none; b=GGm9FkLkcUzntrJ49zcDN+vgtR58gaTPCPR8FVf9iPpTgRmXpjr7J4TbXw/ruMPcRMCkcgUiE5vyApy0Jepm+xhz7T4Paeticb79pCcOYg0ma31DdLuRHapiO5dzZkn4mDlfBSeHGCDu4j4+1kqmqzeVNDPBXB+VKWKZvlAFIUA=
+	t=1761642268; cv=none; b=vD3D9dknxwpHN6BpxVOA7iybP1FunFemZrZOP6v2DgIR+EuVK9bYkRrqVSnghWf0spZ5fh0OMWzQjhY8grGcjd9Iw84STHVLhTFG/zr6ZbDgD2QvTqaF+2iF0k1APZLrCvNbN44ieLt7MKOOPume5iqXLi1XzllFaZ5GzQFfEVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642185; c=relaxed/simple;
-	bh=WPuS1p03nJA56MEoRrTM+Ywn8nh+8dI3UapF3Ehxvpo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RgfKW7rdHTSYK+41kNw7L5yeHw6MiR03LjURCb4kRKWLr6Iu8jcEz+3c4uQdB6iOTPy7LLSSO6Cmz2eABXKM2JaXTzsshjDBxFs4sqhntJB/ca+Xn5EfT9AgDx70hZb+LpMn0mE2jO1VBknw5rntdzWpK5S1TiLm3MmQpxpEePM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/qUlU0Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6594EC4CEE7;
-	Tue, 28 Oct 2025 09:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761642185;
-	bh=WPuS1p03nJA56MEoRrTM+Ywn8nh+8dI3UapF3Ehxvpo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q/qUlU0ZPopjFTMLx4zYjlF2i9nz19usJHFqW8oZoBpQsXaVLIIUPFiJtVNUGvcem
-	 I6BMGesn8kLn2u8QrlcyfeImFZsBa0ksoziH8pqUYlvqfaOzbgk/ciUEd5x5ScVIiT
-	 6w1qAqNZVYtyb3R0ugjvBwgciveN84SPJuqnFi034iKCf1LEBRHgfZF8W76nAMcjhp
-	 Ol9yO16MLt0ZNc+N76hYogP/ewRNr1sCWlzoddDUoUOqow/VezgwJi/hkJ68iD6dHW
-	 UUL3zgb6LlJjtJi6p7arEfOAdzC4OgV3L9FMXSc3xw3DRMkpmNA7iV0Lde+fivLLdF
-	 hA2OqtsnlbRuA==
-Date: Tue, 28 Oct 2025 10:03:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Josua Mayer <josua@solid-run.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Jon Nettleton <jon@solid-run.com>, Mikhail Anikin <mikhail.anikin@solid-run.com>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/10] dt-bindings: display: panel: ronbo,rb070d30: add
- port property
-Message-ID: <20251028-premium-sunfish-of-feminism-2bc6ab@kuoka>
-References: <20251027-imx8mp-hb-iiot-v1-0-683f86357818@solid-run.com>
- <20251027-imx8mp-hb-iiot-v1-2-683f86357818@solid-run.com>
+	s=arc-20240116; t=1761642268; c=relaxed/simple;
+	bh=ArfTrKrv8Ysh1doytRjr7MtYumzy/kUaptVBDhO+T9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C8dfcySzSp7/8/ayFnojOTzXFDbolSSFe1mrqvnq4YGtIlvd9TiWtsT+JJqkYu22LqImU/CDRJihxvAutAnXdIFhUtu9S/4NyiIU6Y7qwwVu5UW9d4+skhJ8XX6cpZXHfQxJJxnqbSHKazaTgH3cDxZcs1u01hwG9A+v8MORzN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ja3p/cwu; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so5445189a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:04:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761642264; x=1762247064; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCk37IL9TNEuJu99+/BU8pgLYMu1/hhqDZOHWWgs03Y=;
+        b=ja3p/cwuqGQABscdEWeHDvrV5cx2tZRMe4p5giaOwzDdOc9yIIcgCSnX/EGhZMupeL
+         JC8IA1DKmPf8B2ewe1QUMP3kN78bwd+LxILMfh008aFDb804xK/N0T5YtsTVfvbYks7W
+         jPg0WgSDKuyaGUJdNT5/os+0yPvhbWYkACPu05RLnSvidYIqINOjpTdrx//rpX9xnpqQ
+         iHez+/8zOMygjkp4vt0PuDaJ3d03RHK7X/tMM+q50F6MujJB/dobbl6ICiL3BQRO+p/6
+         9a78rJ50jANObpfdLApBtiepVx65VyK7SRaLUvHGUTiZ/7iRNm7ytqWkF4Bosv5RqU0p
+         ESNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761642264; x=1762247064;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vCk37IL9TNEuJu99+/BU8pgLYMu1/hhqDZOHWWgs03Y=;
+        b=M90Gwedl8X4Te6cL49BoRs+qfiArW1dWMviJEcfhviiIu+Ly2zBZhlvMKnBX13RgSu
+         49CwTcI7Peh1iD79eNhgeRtRywK4TeB+CWCMUALkr+I0Rk0SfKzHfSOPri4ec+90Lk/R
+         JAWr19JJjVWau5PvKQyC92Q2iyIRPTTxZ/YXpMnt/HpDrna2Npz0ChqeKH2BJtJX7WDv
+         zyYVbQ4mixHnbgZUmiz/VLPl0yAUrBHJbbnfUnPawhJk8inOTghy7RciLHf6UaZIMSsf
+         /zp0w1cMvaVazHIqn96T5QXQNYch8ifCPFbfePTjh13dATXYFR3NF/+ZjOLR9SGfMgTE
+         4qgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1nBd7GkhBA9w1c03UKTJtST+NxdNr6iAPmqwp47pJBMKw1NukVHZSs2ayzeU+4O/HCHltGmt2c3iK914=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVGHoDj0EiXtyk/yWcD8/AJ7wjNnQjS0qKZrivhfJJJnuCP1BQ
+	jRG8z+fwqebCH4ecERLIRiEItPJJmbS9IKl2qstKZB/ae/2UL8tGZ78AK758P5BQBKs=
+X-Gm-Gg: ASbGncuQVvCC15MKRZULVh1n+3b2b3+I/IGvDovtCBqZ8E8VoFTujOdUXVi6cdl7zeX
+	GTpfLn8EABhbZSHd/B9vfVMdVxXA62Fh8KMfzy19vDbS9r38LOjJWYLDuGat9UQT4qqEV/J7FnD
+	0/HeQrKpzIaeZ79dNMUaYgrQ/SK/odyjs0EG4PayPk0MVJZ45D8/xWRkrJiXVkEbi/3LtknVQYa
+	nI//H+XsOuHD8uJwfqi9n16jb1qfvVpLvAmvSHzZmSrZYKBoLGPnJsJ3yXxC1Y0LfjdXfR0/7dH
+	j5N3dUCLs+yxTUzGFaXWj0IReyMCxH2BKOzCsO9+qZU4CNk18bpRkiiyyXNPCieomN3pgbZO89S
+	xh6CBUDAvuGNNNd+JaZU+9edDkryWaRs4b2DWf/ueHQFBhrnzzePpyyRYdtzNW03FUvF1JDZ845
+	CGdmuuHXHrptvQ+VStNN+9BerThXPc9ZVNTdSUXzoo
+X-Google-Smtp-Source: AGHT+IE0x8+gQC0CyX0cFdRTYzDWc7QN1yKT32zNylaVLGljr2NqwohXZstVtLf5ZgNGVymFFXxzGg==
+X-Received: by 2002:a17:90b:3b41:b0:338:3cea:6089 with SMTP id 98e67ed59e1d1-34027a09d5emr3049018a91.14.1761642264277;
+        Tue, 28 Oct 2025 02:04:24 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([139.177.225.230])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34028fe80c5sm914996a91.0.2025.10.28.02.04.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 28 Oct 2025 02:04:23 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Cc: muchun.song@linux.dev,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH] genirq/proc: fix race in show_irq_affinity()
+Date: Tue, 28 Oct 2025 17:04:08 +0800
+Message-ID: <20251028090408.76331-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027-imx8mp-hb-iiot-v1-2-683f86357818@solid-run.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 06:48:11PM +0100, Josua Mayer wrote:
-> port property is used for linking dsi ports with dsi panels.
-> Add port property to ronbo dsi panel binding.
-> 
-> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> ---
->  Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-> index 04f86e0cbac91..a2dc67a87fa3b 100644
-> --- a/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-> +++ b/Documentation/devicetree/bindings/display/panel/ronbo,rb070d30.yaml
-> @@ -13,6 +13,7 @@ properties:
->    compatible:
->      const: ronbo,rb070d30
->  
-> +  port: true
+Reading /proc/irq/N/smp_affinity* races with irq_set_affinity() and
+irq_move_masked_irq(), leading to old or torn output for users.
 
-Port is never the second property. Please look at other bindings.
+We hit a real-world issue: after a user writes a new CPU mask to
+/proc/irq/N/affinity*, the syscall returns success, yet a subsequent
+read of the same file immediately returns a value different from
+what was just written—much to the user’s surprise. Root-causing
+showed that a race between show_irq_affinity() and
+irq_move_masked_irq() lets the read observe a transient, inconsistent
+affinity mask. struct irq_desc is supposed to be accessed under the
+desc->lock, it seems that show_irq_affinity() forgets that, so fix it.
 
-Also, missing blank line and missing top-level ref for panel-common.
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+---
+ kernel/irq/proc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/kernel/irq/proc.c b/kernel/irq/proc.c
+index 8e29809de38d..d8979d46abbd 100644
+--- a/kernel/irq/proc.c
++++ b/kernel/irq/proc.c
+@@ -48,6 +48,8 @@ static int show_irq_affinity(int type, struct seq_file *m)
+ 	struct irq_desc *desc = irq_to_desc((long)m->private);
+ 	const struct cpumask *mask;
+ 
++	guard(raw_spinlock_irq)(&desc->lock);
++
+ 	switch (type) {
+ 	case AFFINITY:
+ 	case AFFINITY_LIST:
+-- 
+2.20.1
 
 
