@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-874393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5AE3C16385
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:39:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE37C163D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6AD54022DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:37:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7A13AE6FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D56D34C99D;
-	Tue, 28 Oct 2025 17:37:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB5E3314B8;
-	Tue, 28 Oct 2025 17:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4722C259CA9;
+	Tue, 28 Oct 2025 17:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tRf0bAvU"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE6034A771
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673032; cv=none; b=tDx3NEZYB92yUVlip78wZutb3cjEq0cdmOnKoV6xs9wlsRIoIYCD3fdoMNGkd5ARIaT74cW7VCSYGFrypc96/Th+bJxuiJzsbD54QC/j4AAqsGeumez2DJprDxFbPB9bF341EgfL7b6Sbzj4D5qIKSNAInP8Wv/3GoyUJEVb+rQ=
+	t=1761673076; cv=none; b=Ol+hRwBkIK/uJ6Lo1Ol16sklv0w/sEHUHgtMhJD6qUsUidwu6BtSx9/8OnXE6q5yUYmxyJCgcLe4fphH2mWiVfPzqh5WRR3s0Z1L4Us7uYSbjnj/g9ZzJ+q/gPSCjAxvHGJrcijb6egxS3/M5oN35uvHrXsZ9NX5j+439Fr2NY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673032; c=relaxed/simple;
-	bh=G3TLd8Hl1Ec17sjc6IMx64ueGdYu5PtD8M1IERWgHdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQx0PeRosK6QBZUT1G2kWIsT4cFzNX8is1ZKpuu2HvP4TFT11KYmYnv9bF/z8M/Sj71JKGZRVYozwLUa/b7AyWpezzLMOFHOulDL5V4SOuTFntjEzYnSS99711sOTT0i4B7nLn2yIg8BYu8Nbhhdp5gyUtOl/uIDoQ9inivcs2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA05C168F;
-	Tue, 28 Oct 2025 10:37:01 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D3223F673;
-	Tue, 28 Oct 2025 10:37:03 -0700 (PDT)
-Message-ID: <d91f65fb-900f-4d21-ad5e-0cbe146bbb65@arm.com>
-Date: Tue, 28 Oct 2025 17:37:02 +0000
+	s=arc-20240116; t=1761673076; c=relaxed/simple;
+	bh=WCMg7UUnl6IMP5RsK5bXZua1oQz6K1bVCjhQkkqx5ms=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C2Jh6e7KdOrqJToRJMk1U8owUXMjRu1eoWzxUwjMLg0YDTztI9yj4QLYV2F8q106+6aGGft6jUHlvn7aD0xjKWZmcIgTj2uZkYH33s//3uIAjlTupFd+zm03L0TaaXotW8GyPHK4IbZYzHMZvM93EgyvzPgWVwaZwvI7tn2cky0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tRf0bAvU; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-290b13c5877so127258785ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761673074; x=1762277874; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8T4o8duS8kLdi84UueGHzy38mnS8VEpOnZiB5sHhaeI=;
+        b=tRf0bAvUAUTSp33Yt3tFnqg5tTnMoOcrM+iA1gfhIIAUknLfs/3w/AEMKzaqifFkRy
+         GxzIM8x7gBENFZliOQvIBf5epa5qQ5xxJ2x8qYVxWux4P9aSKxHSWUdOUaMlvGhpmfeu
+         gPZe5US1VyE7AQZiWrgaNiyYAw7FsbfuqmZK7I13+uL0HXpJrOUcoPP0MpFuFu+HPR4P
+         Iy3Mgv60UelSQhZzE+z/HKCzEIN5L0keOAXpB+zxUgQB5A3v5+7wHY2hGwaDqGLoUA5A
+         PyviehO+MT6kslaopuRZPENzj1E16IgkPQPjw3bVtfISjJ7sEMgQNudwnVpIAteQcl3S
+         gGsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761673074; x=1762277874;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8T4o8duS8kLdi84UueGHzy38mnS8VEpOnZiB5sHhaeI=;
+        b=fv2Ihge7KLhM9YUJOMabScSueyO6cncAUy6AKgUiLRx4XKCuFoug5DOL84zRdx2mUD
+         khhvZc2grZuOzQuGGYcOBGfXql0DaMpgG7K4JN5bWykUan3sNkpbo9ytV8zu2Ax0AigW
+         z6XAigjffCVwR/Zyn7upO1OzSe64y2B4i7yFRotVJSb/Svh7qBb8bNbb9P7Jy15g13qk
+         C0fsjdq5sPLNqQSYLm4LnS/OyqjWUMtWsGCoMvLQDU5+rYfmN0Qd7KccatypKScB19sZ
+         g/kopJ7tom/A6w4cbRGb1BVrkSeaRvby1+SKsE0UGhkNgimRAMDPpWT1Dz9HAbZOe46w
+         /NNg==
+X-Forwarded-Encrypted: i=1; AJvYcCXDe9BxQUbynvCdSGr+pRjDA8NUljLZQP3+PzaWWdeY4FdPXe/P0J8cZ4En2yIdOJNBzw/M1LFLcu66zbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6GZFsYOLe4/hY+fndBl9xhZc6jorF9wRswEBPW4p/4IBlspUC
+	FdPAGWt9cVFnqlrjxFPVCdQlO8lgUkCvUb1YYJ+lfjlWWBK2aE7SmBIn1iGU+ltYeKvhIZDzzin
+	EJq6PVQ==
+X-Google-Smtp-Source: AGHT+IFos7dmlHc5zgyuKwSvkzMGrICMFJHNR7QI6Hf+TJ3vKWf9u68Fb2sJjv7IaagPEHKeX48Q/hD6mEQ=
+X-Received: from plpp9.prod.google.com ([2002:a17:902:c709:b0:292:4a9c:44cf])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:246:b0:27e:e1f3:f853
+ with SMTP id d9443c01a7336-294dedd4181mr189615ad.8.1761673074418; Tue, 28 Oct
+ 2025 10:37:54 -0700 (PDT)
+Date: Tue, 28 Oct 2025 10:37:53 -0700
+In-Reply-To: <aEeAl9Hp7sSizrl8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mpam: Clean MBWU monitor overflow bit
-To: Zeng Heng <zengheng4@huawei.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, carl@os.amperecomputing.com,
- catalin.marinas@arm.com, dakr@kernel.org, dave.martin@arm.com,
- david@redhat.com, dfustini@baylibre.com, fenghuay@nvidia.com,
- gregkh@linuxfoundation.org, gshan@redhat.com, guohanjun@huawei.com,
- jeremy.linton@arm.com, jonathan.cameron@huawei.com, kobak@nvidia.com,
- lcherian@marvell.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- lpieralisi@kernel.org, peternewman@google.com, quic_jiles@quicinc.com,
- rafael@kernel.org, robh@kernel.org, rohit.mathew@arm.com,
- scott@os.amperecomputing.com, sdonthineni@nvidia.com, sudeep.holla@arm.com,
- sunnanyong@huawei.com, tan.shaopeng@fujitsu.com, wangkefeng.wang@huawei.com,
- will@kernel.org, xhao@linux.alibaba.com
-References: <a3e95937-b0c7-020e-d52d-7189d2540f8f@huawei.com>
- <20251025093428.1379218-1-zengheng4@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20251025093428.1379218-1-zengheng4@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250610001700.4097-1-chang.seok.bae@intel.com> <aEeAl9Hp7sSizrl8@intel.com>
+Message-ID: <aQD_cZzqml1vindY@google.com>
+Subject: Re: [PATCH] x86/fpu: Ensure XFD state on signal delivery
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: "Chang S. Bae" <chang.seok.bae@intel.com>, mingo@redhat.com, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de, 
+	bp@alien8.de, dave.hansen@linux.intel.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Zeng,
-
-On 10/25/25 10:34, Zeng Heng wrote:
-> The MSMON_MBWU register accumulates counts monotonically forward and
-> would not automatically cleared to zero on overflow. The overflow portion
-> is exactly what mpam_msmon_overflow_val() computes, there is no need to
-> additionally subtract mbwu_state->prev_val.
+On Tue, Jun 10, 2025, Chao Gao wrote:
+> On Mon, Jun 09, 2025 at 05:16:59PM -0700, Chang S. Bae wrote:
+> >Sean reported [1] the following splat when running KVM tests:
+> >
+> >   WARNING: CPU: 232 PID: 15391 at xfd_validate_state+0x65/0x70
+> >   Call Trace:
+> >    <TASK>
+> >    fpu__clear_user_states+0x9c/0x100
+> >    arch_do_signal_or_restart+0x142/0x210
+> >    exit_to_user_mode_loop+0x55/0x100
+> >    do_syscall_64+0x205/0x2c0
+> >    entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> >
+> >Chao further identified [2] a reproducible scenarios involving signal
+> >delivery: a non-AMX task is preempted by an AMX-enabled task which
+> >modifies the XFD MSR.
+> >
+> >When the non-AMX task resumes and reloads XSTATE with init values,
+> >a warning is triggered due to a mismatch between fpstate::xfd and the
+> >CPU's current XFD state. fpu__clear_user_states() does not currently
+> >re-synchronize the XFD state after such preemption.
+> >
+> >Invoke xfd_update_state() which detects and corrects the mismatch if the
+> >dynamic feature is enabled.
+> >
+> >This also benefits the sigreturn path, as fpu__restore_sig() may call
+> >fpu__clear_user_states() when the sigframe is inaccessible.
+> >
+> >Fixes: 672365477ae8a ("x86/fpu: Update XFD state where required")
+> >Reported-by: Sean Christopherson <seanjc@google.com>
+> >Closes: https://lore.kernel.org/lkml/aDCo_SczQOUaB2rS@google.com [1]
+> >Tested-by: Chao Gao <chao.gao@intel.com>
+> >Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+> >Cc: stable@vger.kernel.org
+> >Link: https://lore.kernel.org/all/aDWbctO%2FRfTGiCg3@intel.com [2]
 > 
-> Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
-> MSMON_MBWU register must first be read to prevent it from being
-> inadvertently cleared by the write operation. Then, before updating the
-> monitor configuration, the overflow bit should be cleared to zero.
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
 > 
-> Finally, use the overflow bit instead of relying on counter wrap-around
-> to determine whether an overflow has occurred, that avoids the case where
-> a wrap-around (now > prev_val) is overlooked.
-> 
-> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
-> ---
->  drivers/resctrl/mpam_devices.c | 21 +++++++++++++++++++--
->  1 file changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 0dd048279e02..575980e3a366 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -1062,6 +1062,21 @@ static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
->  	}
->  }
->  
-> +static bool read_msmon_mbwu_is_overflow(struct mpam_msc *msc)
-> +{
-> +	u32 ctl;
-> +	bool overflow;
-> +
-> +	ctl = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
-> +	overflow = ctl & MSMON_CFG_x_CTL_OFLOW_STATUS ? true : false;
-> +
-> +	if (overflow)
-> +		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl &
-> +				     ~MSMON_CFG_x_CTL_OFLOW_STATUS);
+> Thanks for looking into this issue.
 
-
-Seems sensible. It's best to consider the overflow status bit for long
-counters as well. Although, that's introduced later in the series so
-depends on patch ordering. (Sorry, was considering patches on top of the
-full series when I commented on counter length before.)
-
-> +
-> +	return overflow;
-> +}
-> +
->  /* Call with MSC lock held */
->  static void __ris_msmon_read(void *arg)
->  {
-> @@ -1069,6 +1084,7 @@ static void __ris_msmon_read(void *arg)
->  	bool config_mismatch;
->  	struct mon_read *m = arg;
->  	u64 now, overflow_val = 0;
-> +	bool mbwu_overflow = false;
->  	struct mon_cfg *ctx = m->ctx;
->  	bool reset_on_next_read = false;
->  	struct mpam_msc_ris *ris = m->ris;
-> @@ -1091,6 +1107,7 @@ static void __ris_msmon_read(void *arg)
->  			reset_on_next_read = mbwu_state->reset_on_next_read;
->  			mbwu_state->reset_on_next_read = false;
->  		}
-> +		mbwu_overflow = read_msmon_mbwu_is_overflow(msc);
-
-If the config is then found to mismatch, then mbwu_overflow can be
-subsequently set to false.
-
->  	}
->  
->  	/*
-> @@ -1138,8 +1155,8 @@ static void __ris_msmon_read(void *arg)
->  		mbwu_state = &ris->mbwu_state[ctx->mon];
->  
->  		/* Add any pre-overflow value to the mbwu_state->val */
-> -		if (mbwu_state->prev_val > now)
-> -			overflow_val = mpam_msmon_overflow_val(m->type) - mbwu_state->prev_val;
-> +		if (mbwu_overflow)
-> +			overflow_val = mpam_msmon_overflow_val(m->type);
-
-Yep, makes sense.
-
->  
->  		mbwu_state->prev_val = now;
-
-With this prev_val no longer has any use.
-
->  		mbwu_state->correction += overflow_val;
-Thanks,
-
-Ben
-
+Ping.  I _think_ this is still needed?  AFAICT, it just fell through the cracks.
 
