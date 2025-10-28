@@ -1,401 +1,245 @@
-Return-Path: <linux-kernel+bounces-874367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46F3C1627D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:30:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5EACC16247
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FC8B5019BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8991C24562
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0833D34B41E;
-	Tue, 28 Oct 2025 17:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A455227FD44;
+	Tue, 28 Oct 2025 17:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxDFJcpx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="D5TOPSKf"
+Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB48A346A19;
-	Tue, 28 Oct 2025 17:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253BA339B5E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761672377; cv=none; b=tsckdXQDvfot5Arq/xOtbi7eObAi7j/CDeQbywvrXMYT3App7ctQwgxr5/8cm9ycJkGuXTD9tf1h0JRvwUlxzgBszYAdJCcgeVp0v3yKA2HUQefySFXoSVzfeiVuJYT9XvbnP+KS7zb6OCGWeNhA/bedpXmbjkAi2yW9sYCOVL8=
+	t=1761672488; cv=none; b=ZgfW7Pj4J1w7nv0ICutOS+5COwbLDFiXxsek1bkkYR2nGKwJZ93SFr8Cg/4nH/78A2SDVXN9m38UyvrbEQrEpamfrv8rS8FsEvcGKa3IJjn5wpcau/uBauPZrsmffUDgFBQgObbI/FmevBRypDVOWcmpDtn3xq52CHm4gq1Q9ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761672377; c=relaxed/simple;
-	bh=TPax0slGP7PiPUxCVpNjABnEC3k7GlA/DHa3fwFl7gU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EXYhR+uGeQ9eMqg1XkzT71MGzZP8MP+S4EdkI1cvZjXFWN1yyJOBeedjthThCvsa6r5qtjuDzUEGz+QrjV2WmfFQj8VgBBrgDYvITk/e+9T/JUuGgB6VPglB+66LjPMyOtGdGKrHYmesOdpuiZnCqvYkj69v5WiQsgWbbAMo7TY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxDFJcpx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC551C4CEE7;
-	Tue, 28 Oct 2025 17:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761672376;
-	bh=TPax0slGP7PiPUxCVpNjABnEC3k7GlA/DHa3fwFl7gU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KxDFJcpx/HWC2pENdRtR/MkUxhf0BIKD6ANVc3e/buzQecZkDC22XPHSOcgkdwkSP
-	 QUrJu/X+hO7IhpkwIlxDAWzLMUjcnf2l0wT16ZWxxFt0pckVpn/ekYH71HQHE+nvsd
-	 S9BA1WiQzIMRT7bH8WXJ2YACgI+bf1gUVMG1lPVXzHlC+6EwW9raDc4OzQ0Jq27A4t
-	 sRWZ4OJm3AfJZ1yIarHC3M35dZR3w7B8NcNYnNwpqYcTKxk+Wzwl3JgZ4Vygwn1UwY
-	 AsF9w/bXgyPAkS0d93u477ovQdNMyfzA9AK0I7Co82YitMpMVBzSUjVbk7nAt+FGs+
-	 NxjIyoCa/ZXBA==
-Message-ID: <bc5831bb-cfa3-4327-b129-30ca5d17b45e@kernel.org>
-Date: Tue, 28 Oct 2025 18:26:05 +0100
+	s=arc-20240116; t=1761672488; c=relaxed/simple;
+	bh=8wquMDkIHq4Im1b0jco8M/fwii9bGnFoFZqwSeh30y0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h5xoF1RorkKNJk/MhHg3FxSX+FsJ7ozn6bvN95IcbUqvxY3intxhixzJ+lwHW5KltY6dyX3LK8Ix+Y4j6J/hKM6qmo2r0597kBX2nOhAOrj2AU6O1cK3uqGH+HUgD6Mu9qbBFEcEaMTppCiy9MIUR9FnXbu7amyKfx4SyZbIyvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=D5TOPSKf; arc=none smtp.client-ip=88.99.38.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay12 (localhost [127.0.0.1])
+	by relay12.grserver.gr (Proxmox) with ESMTP id B54ABBDBB3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:27:56 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay12.grserver.gr (Proxmox) with ESMTPS id CD11DBDBB8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:27:55 +0200 (EET)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 4BD9A201B8E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:27:55 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761672475;
+	bh=HU9UoBsZbHguHWD5/Van7BmfUQKq6GqEPH0N/82zYvQ=;
+	h=Received:From:Subject:To;
+	b=D5TOPSKfmNlIp2ZSGaslt4VYAJEvAdrikcVQ8e7jmI+8T42h0V7SEPhX5r9c9rKgv
+	 RfeSfRRQYrcze8X/I+8B6DRXPIqd4p3nNsLLYOmT3NuOxRMCV95lZ+0QJRo5xKdlAU
+	 gqLt1fMqJxd44WbjoZQV2RbkksA0Obl5i6hHDZJopXuW0zklNtGl9YC5NHeLMR0p6Y
+	 rWePLYvpH+KMthuarVjslTkzNrgDfQ4KVHwMQzG7m32GTZyBZlqQBn45z8ZPepF9Ws
+	 huFHWE7EPwqaQVMCGbOaEcGWTCPaEHktSOjctQOgAw7+ZzrExB46OLGHBKza1WShxu
+	 w0Vwi9Gd4NIcw==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.177) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f177.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f177.google.com with SMTP id
+ 38308e7fff4ca-378d54f657fso8781591fa.2
+        for <linux-kernel@vger.kernel.org>;
+ Tue, 28 Oct 2025 10:27:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU4+qed2/CuUtP0GylYIXOnE8NkAX/y421cvmJwqPX4PmoDLQvcImOFLFP2ZdGHcoqwGbfKrnvgh2nKnAs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEPgV21WqD5rj2ied1pU+vqSGajoJ6DkbY9WcUsIYtrf9zWOGt
+	mr23+kWV/8LSSG//BnYQMCuXvYj9Ju+kdmVNacs+JG3hFXMvJjIc6LRAfLni3YUfICMeyuj0PZE
+	a64wZBRCPj2zjwSkgL6NiBuNLBpKiD6A=
+X-Google-Smtp-Source: 
+ AGHT+IHy0bQSvjL9vt4t1fRebvpa51jhls+H0tpgM+NyIsSmCqYDEqgqrovCxhPw24e+mMwJk/l4HHRkUnBcqxQWKzA=
+X-Received: by 2002:a2e:a805:0:b0:376:2802:84ce with SMTP id
+ 38308e7fff4ca-37a052f8c58mr653481fa.47.1761672474783; Tue, 28 Oct 2025
+ 10:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 0/3] mptcp: Fix conflicts between MPTCP and sockmap
-Content-Language: en-GB, fr-BE
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, mptcp@lists.linux.dev
-Cc: John Fastabend <john.fastabend@gmail.com>,
- Jakub Sitnicki <jakub@cloudflare.com>, Eric Dumazet <edumazet@google.com>,
- Kuniyuki Iwashima <kuniyu@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemb@google.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Florian Westphal <fw@strlen.de>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20251023125450.105859-1-jiayuan.chen@linux.dev>
- <14b565a1-0c2a-420d-ab2a-dc8a46dbf33c@kernel.org>
- <319c419455b73deb312b53d99c30217f6b606208@linux.dev>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <319c419455b73deb312b53d99c30217f6b606208@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251026191635.2447593-1-lkml@antheas.dev>
+ <20251026191635.2447593-2-lkml@antheas.dev>
+ <CAGwozwEwPj9VRRo2U50ccg=_qSM7p-1c_hw2y=OYA-pFc=p13w@mail.gmail.com>
+ <35A5783A-CA60-4B10-8C7B-5820B65307FE@linux.dev>
+ <CAGwozwFtah66p=5oy9rf5phVGdDTiWg0WuJBT3qGpWdP3A62Pg@mail.gmail.com>
+ <eb749233-0342-49a9-a41b-6d18239eb1d9@linux.dev>
+In-Reply-To: <eb749233-0342-49a9-a41b-6d18239eb1d9@linux.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Tue, 28 Oct 2025 18:27:42 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwEKzurj7qeAnzvWjJbf03da70ij5DtOJ7svZaoJ7vK=aA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkSaMOjigM12P8qgnp_UJNXlYwcZ6Aw14wC6rOeZBYojHWBPQG5b2veNn0
+Message-ID: 
+ <CAGwozwEKzurj7qeAnzvWjJbf03da70ij5DtOJ7svZaoJ7vK=aA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] ALSA: hda/realtek: Add match for ASUS Xbox Ally
+ projects
+To: Matthew Schwartz <matthew.schwartz@linux.dev>
+Cc: Shenghao Ding <shenghao-ding@ti.com>, Baojun Xu <baojun.xu@ti.com>,
+	Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176167247554.3088170.14983304816635917851@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Hi Jiayuan,
+On Mon, 27 Oct 2025 at 20:58, Matthew Schwartz
+<matthew.schwartz@linux.dev> wrote:
+>
+> On 10/27/25 1:23 AM, Antheas Kapenekakis wrote:
+> > On Mon, 27 Oct 2025 at 07:02, Matthew Schwartz
+> > <matthew.schwartz@linux.dev> wrote:
+> >>
+> >>
+> >>
+> >>> On Oct 26, 2025, at 12:19=E2=80=AFPM, Antheas Kapenekakis <lkml@anthe=
+as.dev> wrote:
+> >>>
+> >>> On Sun, 26 Oct 2025 at 20:16, Antheas Kapenekakis <lkml@antheas.dev> =
+wrote:
+> >>>>
+> >>>> Bind the realtek codec to TAS2781 I2C audio amps on ASUS Xbox Ally
+> >>>> projects. While these projects work without a quirk, adding it incre=
+ases
+> >>>> the output volume significantly.
+> >>>
+> >>> Also, if you can upstream the firmware files:
+> >>> TAS2XXX13840.bin
+> >>> TAS2XXX13841.bin
+> >>> TAS2XXX13940.bin
+> >>> TAS2XXX13941.bin
+> >>
+> >> This is the firmware at [1], correct? I=E2=80=99m testing the series w=
+ith that firmware on my ROG Xbox Ally X, and I found something interesting.
+> >>
+> >> By default, with just your kernel patches and the firmware files hoste=
+d at [1], my unit is loading:
+> >>
+> >> tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin=
+, sha256: 58cffa36ae23a2d9b2349ecb6c1d4e89627934cd79218f6ada06eaffe6688246
+> >>
+> >> However, with this firmware file,  TAS2XXX13840.bin, there is signific=
+ant audio clipping above 75% speaker level on my individual unit.
+> >>
+> >> Then, I tried renaming the other firmware file, TAS2XXX13841.bin, into=
+ TAS2XXX13840.bin. Now my unit is loading:
+> >>
+> >> tas2781-hda i2c-TXNW2781:00-tas2781-hda.0: Loaded FW: TAS2XXX13840.bin=
+, sha256: 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
+> >>
+> >> With this firmware file, audio is perfect all the way to 100% speaker =
+level.
+> >>
+> >> If I recall, there have been other ASUS products that required matchin=
+g amplifier hardware with firmware correctly, right? It looks like this mig=
+ht be another case of since it seems my unit is loading the wrong firmware =
+for its amplifiers.
+> >
+> > The original Ally X had a similar setup, yes.
+> >
+> > First patch might not be perfect and your speaker pin might be 1. My
+> > Xbox Ally's pin is 1. It loads:
+> > Loaded FW: TAS2XXX13941.bin, sha256:
+> > 0fda76e7142cb455df1860cfdb19bb3cb6871128b385595fe06b296a070f4b8c
+> >
+> > And it sounds loud and crisp. So the pin is read.
+> >
+> > I had multiple users verify the X works, but perhaps it is not perfect
+> > yet. Make sure you are not using a dsp that might be interfering
+>
+> Seems like there have been other reports similar to mine on Xbox Ally X, =
+where flipping the firmware files by renaming them fixes sound issues for t=
+hem.
+>
+> @TI, Maybe something is different with the conditional logic for the ROG =
+Xbox Ally X? The current GPIO-detected speaker_id doesn't always correspond=
+ to the correct firmware choice on this model it seems.
 
-Thank you for your reply!
+Yeah, it seems that specifically on the Xbox Ally X, the firmwares are
+swapped around? What could be the case for that?
 
-On 24/10/2025 06:13, Jiayuan Chen wrote:
-> 2025/10/23 22:10, "Matthieu Baerts" <matttbe@kernel.org mailto:matttbe@kernel.org?to=%22Matthieu%20Baerts%22%20%3Cmatttbe%40kernel.org%3E > 写到:
-> 
-> 
->>>  MPTCP creates subflows for data transmission between two endpoints.
->>>  However, BPF can use sockops to perform additional operations when TCP
->>>  completes the three-way handshake. The issue arose because we used sockmap
->>>  in sockops, which replaces sk->sk_prot and some handlers.
->>>
->> Do you know at what stage the sk->sk_prot is modified with sockmap? When
->> switching to TCP_ESTABLISHED?
->> Is it before or after having set "tcp_sk(sk)->is_mptcp = 0" (in
->> subflow_ulp_fallback(), coming from subflow_syn_recv_sock() I suppose)?
-> 
-> 
-> Yes, there are two call points. One is after executing subflow_syn_recv_sock():
-> tcp_init_transfer(sk, BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB, skb);
-> 
-> So at this point, is_mptcp = 0. The other call point is when userspace calls
-> the BPF interface, passing in an fd while it's not a subflow but a parent sk
-> with its own mptcp_prot we will also reject it.
+I had three users with popping and dropped audio swap the firmware on
+their X and they said the other one fixed it. And another two without
+issues swapping the firmware and saying it does not make a
+quantifiable change.
 
-OK, thank you for the explanations! I think your commit message in patch
-1/3 should then explain the conditions to have mptcp_fallback_tcp_ops()
-being called with a different sk_prot. In short: MPTCP listening socket,
-TCP request without MPTCP, sk_prot reset to TCP (subflow_syn_recv_sock)
-when SYN RECV, then reset by sockmap when ESTABLISHED, then accept part
-and sk_prot is not the expected one.
+Antheas
 
-> You can refer to my provided selftest, which covers these scenarios.
-> 
->> If MPTCP is still being used (sk_is_tcp(sk) && sk_is_mptcp(sk)), I guess
->> sockmap should never touch the in-kernel TCP subflows: they will likely
->> only carry a part of the data. Instead, sockmap should act on the MPTCP
->> sockets, not the in-kernel TCP subflows.
-> 
-> Yes, I agree.
-> 
-> For full functionality, we need to retrieve the parent socket from MPTCP
-> and integrate it with sockmap, rather than simply rejecting.
 
-We should be careful when adding such exceptions. I will add more
-details below.
+Antheas
 
-> The current implementation rejects MPTCP because I previously attempted to
-> add sockmap support for MPTCP, but it required implementing many interfaces
-> and would take considerable time.
-> 
-> So for now, I'm proposing this as a fix to resolve the immediate issue.
-> Subsequently, we can continue working on fully integrating MPTCP with sockmap.
-
-It makes sense to start with the fix for stable, then the implementation
-later. I think the implementation should not be that complex: it is just
-that it has to be done at MPTCP level, not TCP. sockmap supports
-different protocol, and it doesn't seem to be TCP specific, so that
-should be feasible.
-
->> There is one particular case to take into consideration: an MPTCP
->> connection can fallback to "plain" TCP before being used by the
->> userspace. Typically, that's when an MPTCP listening socket receives a
->> "plain" TCP request (without MPTCP): a "plain" TCP socket will then be
->> created, and exposed to the userspace. In this case, sk_is_mptcp(sk)
->> will return false. I guess that's the case you are trying to handle,
->> right? (It might help BPF reviewers to mention that in the commit
->> message(s).)
-> 
-> Yes, this is primarily the case we're addressing. I will add this description
-> to the commit message.
-
-Thanks!
-
->> I would then say that sk->sk_prot->psock_update_sk_prot should not point
->> to tcp_bpf_update_proto() when MPTCP is being used (or this callback
->> should take the MPTCP case into account, but I guess no). In case of
->> fallback before the accept() stage, the socket can then be used as a
->> "plain" TCP one. I guess when tcp_bpf_update_proto() will be called,
->> sk_prot is pointing to tcp(v6)_prot, not the MPTCP subflow override one,
->> right?
-> 
-> Yes, when tcp_bpf_update_proto is called the sk_prot is pointing to tcp(v6)_prot.
-> subflow_syn_recv_sock
->  mptcp_subflow_drop_ctx
->   subflow_ulp_fallback
->    mptcp_subflow_ops_undo_override -> reset sk_prot to original one
-
-I see, it would be good to add that in the commit message as well.
-
-> So [patch 2/3] aims to prevent psock_update_sk_prot from being executed on subflows.
-> 
-> Actually, replacing the subflow's callbacks is also incorrect, as you mentioned earlier,
-> because subflows only carry part of the data. By checking for subflows early and skipping
-> subsequent steps, we avoid incorrect logic.
-> 
-> Furthermore, there's another risk: if an IPv6 request comes in and we perform the replacement,
-> MPTCP will roll it back to inet_stream_ops. I haven't delved too deeply into the potential
-> impact, but I noticed that inet6_release has many V6-specific cleanup procedures not present
-> in inet_release.
-
-That's why we have the WARN_ON_ONCE(): this sk_prot was not expected, a
-fix in the code is required if another value is accepted.
-
->>> Since subflows
->>>  also have their own specialized handlers, this creates a conflict and leads
->>>  to traffic failure. Therefore, we need to reject operations targeting
->>>  subflows.
->>>
->> Would it not work to set sk_prot->psock_update_sk_prot to NULL for the
->> v4 and v6 subflows (in mptcp_subflow_init()) for the moment while
->> sockmap is not supported with MPTCP? This might save you some checks in
->> sock_map.c, no?
-> 
-> This seems like a reliable alternative I hadn't considered initially.
-> 
-> However, adding the check on the BPF side serves another purpose: to explicitly
-> warn users that sockmap and MPTCP are incompatible.
-> 
-> Since the latest Golang version enables MPTCP server by default, and if the client
-> doesn't support MPTCP, it falls back to TCP logic. We want to print a clear message
-> informing users who have upgraded to the latest Golang and are using sockmap.
-> 
-> Perhaps we could add a function like sk_is_mptcp_subflow() in the MPTCP side?
-> The implementation would simply be sk_is_tcp(sk) && sk_is_mptcp(sk).
-> 
-> Implementing this check logic on the BPF side might become invalid if MPTCP internals
-> change later; placing it in the MPTCP side might be a better choice.
-
-I can understand that adding an error message can be helpful, but I
-don't think we should add MPTCP specific checks in sockmap for the moment.
-
->>> This patchset simply prevents the combination of subflows and sockmap
->>>  without changing any functionality.
->>>
->> In your case, you have an MPTCP listening socket, but you receive a TCP
->> request, right? The "sockmap update" is done when switching to
->> TCP_ESTABLISHED, when !sk_is_mptcp(sk), but that's before
->> mptcp_stream_accept(). That's why sk->sk_prot has been modified, but it
->> is fine to look at sk_family, and return inet(6)_stream_ops, right?
-> 
-> I believe so. Since MPTCP is fundamentally based on TCP, using sk_family to
-> determine which ops to fall back to should be sufficient.
-> 
-> However, strictly speaking, this [patch 1/3] might not even be necessary if we
-> prevent the sk_prot replacement for subflows at the sockmap layer.
-> 
->> A more important question: what will typically happen in your case if
->> you receive an MPTCP request and sockmap is then not supported? Will the
->> connection be rejected or stay in a strange state because the userspace
->> will not expect that? In these cases, would it not be better to disallow
->> sockmap usage while the MPTCP support is not available? The userspace
->> would then get an error from the beginning that the protocol is not
->> supported, and should then not create an MPTCP socket in this case for
->> the moment, no?
->>
->> I can understand that the switch from TCP to MPTCP was probably done
->> globally, and this transition should be as seamless as possible, but it
->> should not cause a regression with MPTCP requests. An alternative could
->> be to force a fallback to TCP when sockmap is used, even when an MPTCP
->> request is received, but not sure if it is practical to do, and might be
->> strange from the user point of view.
-> 
-> Actually, I understand this not as an MPTCP regression, but as a sockmap
-> regression.
-> 
-> Let me explain how users typically use sockmap:
-> 
-> Users typically create multiple sockets on a host and program using BPF+sockmap
-> to enable fast data redirection. This involves intercepting data sent or received
-> by one socket and redirecting it to the send or receive queue of another socket.
-> 
-> This requires explicit user programming. The goal is that when multiple microservices
-> on one host need to communicate, they can bypass most of the network stack and avoid
-> data copies between user and kernel space.
-> 
-> However, when an MPTCP request occurs, this redirection flow fails.
-
-This part bothers me a bit. Does it mean that when the userspace creates
-a TCP listening socket (IPPROTO_TCP), MPTCP requests will be accepted,
-but MPTCP will not be used ; but when an MPTCP socket is used instead,
-MPTCP requests will be rejected?
-
-If yes, it might be clearer not to allow sockmap on connections created
-from MPTCP sockets. But when looking at sockmap and what's happening
-when a TCP socket is created following a "plain TCP" request, we would
-need specific MPTCP code to catch that in sockmap...
-
-> Since the sockmap workflow typically occurs after the three-way handshake, rolling
-> back at that point might be too late, and undoing the logic for MPTCP would be very
-> complex.
-> 
-> Regardless, the reality is that MPTCP and sockmap are already conflicting, and this
-> has been the case for some time. So I think our first step is to catch specific
-> behavior on the BPF side and print a message
-> "sockmap/sockhash: MPTCP sockets are not supported\n", informing users to either
-> stop using sockmap or not use MPTCP.
-> 
-> As for the logic to check for subflows, I think implementing it in subflow.c would be
-> beneficial, as this logic would likely be useful later if we want to
-> support MPTCP + sockmap.
-
-Probably yes.
-
-> Furthermore, this commit also addresses the issue of incorrectly selecting
-> inet_stream_ops due to the subflow prot replacement, as mentioned above.
-
-(indeed, but this seems to happen only when sk_prot has been replaced by
-sockmap :) )
-
->>> A complete integration of MPTCP and sockmap would require more effort, for
->>>  example, we would need to retrieve the parent socket from subflows in
->>>  sockmap and implement handlers like read_skb.
->>>  
->>>  If maintainers don't object, we can further improve this in subsequent
->>>  work.
->>>
->> That would be great to add MPTCP support in sockmap! As mentioned above,
->> this should be done on the MPTCP socket. I guess the TCP "in-kernel"
->> subflows should not be modified.
-> 
-> 
-> I think we should first fix the issue by having sockmap reject operations on subflows.
-> Subsequently, we can work on fully integrating sockmap with MPTCP as a feature
-> (which would require implementing some handlers).
-
-OK for me!
-
->>> [1] truncated warning:
->>>  [ 18.234652] ------------[ cut here ]------------
->>>  [ 18.234664] WARNING: CPU: 1 PID: 388 at net/mptcp/protocol.c:68 mptcp_stream_accept+0x34c/0x380
->>>  [ 18.234726] Modules linked in:
->>>  [ 18.234755] RIP: 0010:mptcp_stream_accept+0x34c/0x380
->>>  [ 18.234762] RSP: 0018:ffffc90000cf3cf8 EFLAGS: 00010202
-> [...]
->>>
->> Please next time use the ./scripts/decode_stacktrace.sh if possible.
->> (and strip the timestamps if it is not giving useful info)
->> Just to be sure: is it the warning you get on top of net or net-next? Or
->> an older version? (Always useful to mention the base)
-> 
-> Thank you, Matthieu. I will pay attention to this.
-> 
-> 
->>>
->>> ---
->>>  v2: https://lore.kernel.org/bpf/20251020060503.325369-1-jiayuan.chen@linux.dev/T/#t
->>>  Some advice suggested by Jakub Sitnicki
->>>  
->>>  v1: https://lore.kernel.org/mptcp/a0a2b87119a06c5ffaa51427a0964a05534fe6f1@linux.dev/T/#t
->>>  Some advice from Matthieu Baerts.
->>>
->> (It usually helps reviewers to add more details in the notes/changelog
->> for the individual patch)
-> 
-> Thank you, Matthieu. I will provide more detailed descriptions in the future.
-
-Thanks!
-
-So for the v4, patch 2/3 would be replaced by one setting ...
-
-  tcp_prot_override.psock_update_sk_prot = NULL;
-  (...)
-  tcpv6_prot_override.psock_update_sk_prot = NULL;
-
-... in mptcp_subflow_init(). (+ more details for patch 1/3).
-
-From there, we can discuss with other maintainers what to do with the
-MPTCP listening socket + sockmap case. And in parallel, we can also
-discuss MPTCP support with sockmap. WDYT?
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
-pw-bot: cr
+> >
+> > Antheas
+> >
+> >> Matt
+> >>
+> >> [1]: https://github.com/hhd-dev/hwfirm
+> >>
+> >>>
+> >>> That would be great :)
+> >>>
+> >>> Antheas
+> >>>
+> >>>> Cc: stable@vger.kernel.org # 6.17
+> >>>> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> >>>> ---
+> >>>> sound/hda/codecs/realtek/alc269.c | 2 ++
+> >>>> 1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/re=
+altek/alc269.c
+> >>>> index 8ad5febd822a..d1ad84eee6d1 100644
+> >>>> --- a/sound/hda/codecs/realtek/alc269.c
+> >>>> +++ b/sound/hda/codecs/realtek/alc269.c
+> >>>> @@ -6713,6 +6713,8 @@ static const struct hda_quirk alc269_fixup_tbl=
+[] =3D {
+> >>>>        SND_PCI_QUIRK(0x1043, 0x12f0, "ASUS X541UV", ALC256_FIXUP_ASU=
+S_MIC_NO_PRESENCE),
+> >>>>        SND_PCI_QUIRK(0x1043, 0x1313, "Asus K42JZ", ALC269VB_FIXUP_AS=
+US_MIC_NO_PRESENCE),
+> >>>>        SND_PCI_QUIRK(0x1043, 0x1314, "ASUS GA605K", ALC285_FIXUP_ASU=
+S_GA605K_HEADSET_MIC),
+> >>>> +       SND_PCI_QUIRK(0x1043, 0x1384, "ASUS RC73XA", ALC287_FIXUP_TX=
+NW2781_I2C),
+> >>>> +       SND_PCI_QUIRK(0x1043, 0x1394, "ASUS RC73YA", ALC287_FIXUP_TX=
+NW2781_I2C),
+> >>>>        SND_PCI_QUIRK(0x1043, 0x13b0, "ASUS Z550SA", ALC256_FIXUP_ASU=
+S_MIC_NO_PRESENCE),
+> >>>>        SND_PCI_QUIRK(0x1043, 0x1427, "Asus Zenbook UX31E", ALC269VB_=
+FIXUP_ASUS_ZENBOOK),
+> >>>>        SND_PCI_QUIRK(0x1043, 0x1433, "ASUS GX650PY/PZ/PV/PU/PYV/PZV/=
+PIV/PVV", ALC285_FIXUP_ASUS_I2C_HEADSET_MIC),
+> >>>> --
+> >>>> 2.51.1
+> >>>>
+> >>>>
+> >>>
+> >>>
+> >>
+> >>
+> >
+>
+>
 
 
