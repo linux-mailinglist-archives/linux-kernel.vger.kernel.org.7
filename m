@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-873959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE4DC15297
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:27:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EABFC152D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 90D7C4EB538
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:27:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31C658528E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E588C3376B9;
-	Tue, 28 Oct 2025 14:27:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CD73385A1;
+	Tue, 28 Oct 2025 14:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="ldy13xPC"
+Received: from forwardcorp1b.mail.yandex.net (forwardcorp1b.mail.yandex.net [178.154.239.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3CF32ABC3;
-	Tue, 28 Oct 2025 14:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D79A3081AC;
+	Tue, 28 Oct 2025 14:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761661659; cv=none; b=iWkxdMissn8bzyN8X0JropzlBIyY2DLG9n0ZZ4k3mr6Salozbq37Y7MPDgw8BBLSJ1yzHhlivjM/tgPzwOXe4oMDz7DP1RI453c7zcOwgedn8xY8jQkkORJLFkov2iK/qKggQopG5FHfwtaT9MGU5w6nT/T034z7B9qvJtqO9/0=
+	t=1761661691; cv=none; b=Dt5AzyEYJ3nlXcHcBWiC23KkFR5Zua386W1p99DnzYlzLIQgoS6j/PcwvOb7kBSgnrblW+PL9PTYwM5v5GrFDg58RFxWY/ze5OMJwz/phqmxZLi8dSdNpR4DPrEXz2rusIfzHytVdEchjgDeHvwP9jJVKwQctzT8/x12V7u3tcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761661659; c=relaxed/simple;
-	bh=HN5gCjWcl53Q/ofqMQ8gWafIhNFC/61P7jhn3tzFMt8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=phqGRFwXyLdmOHSBg7hkSQo/9HqN4esOykGlN6QNHHviYEfNgnwRxZ8fQYma1C+hTFQsGwFSwIGTaJ5NLPtYsAarHPgwd6MSwuhBc57wK7b0oVteUbc0gUHA3qqB00oLYGOulVuBby498wJb5c9/ol7RLFYGpj4UeL2vaTOuv8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cwt3g3RTzzHnGf5;
-	Tue, 28 Oct 2025 14:26:39 +0000 (UTC)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 354B81400D3;
-	Tue, 28 Oct 2025 22:27:30 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
- 2025 14:27:29 +0000
-Date: Tue, 28 Oct 2025 14:27:27 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Robert Richter <rrichter@amd.com>
-CC: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Davidlohr
- Bueso" <dave@stgolabs.net>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Gregory Price <gourry@gourry.net>, "Terry
- Bowman" <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-Subject: Re: [PATCH] cxl/region: Support multi-level interleaving with
- smaller granularities for lower levels
-Message-ID: <20251028142727.00003f91@huawei.com>
-In-Reply-To: <20251028094754.72816-1-rrichter@amd.com>
-References: <20251028094754.72816-1-rrichter@amd.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761661691; c=relaxed/simple;
+	bh=RPppPMVEQPsh2y1GjpYuNxHxtRlMaDPmxSkKWCrYkjA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cw4akZgQhnmaFRR27kqS4BLRKKhMzn+0EbQmnTBXlL6lBtdmiz38sb2dzcCE7EQe+NyymR4wOyu2L4GHoB/G7GOCKSNGlxcrwKTJtzEA4em2c/fTkfGele9nRcwZyuNFAY51gxFCTMlOFPd/C9sBMtXxSP7MeN6dDutXTZRbYPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=ldy13xPC; arc=none smtp.client-ip=178.154.239.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:49f:0:640:b99a:0])
+	by forwardcorp1b.mail.yandex.net (Yandex) with ESMTPS id 808E180A9D;
+	Tue, 28 Oct 2025 17:27:57 +0300 (MSK)
+Received: from i111667286.ld.yandex.ru (unknown [2a02:6bf:8080:2::1:3d])
+	by mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id qReQdZ2b5W20-gMxKwSGD;
+	Tue, 28 Oct 2025 17:27:56 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1761661676;
+	bh=sk8MoiTs5k5APW6gtqgCF2xdeZ/K2hxjvJJvk7+8Gco=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=ldy13xPCco84f30jCUKGJK2uye3U0A4XDxBVSzjuUzDP/hE3rCRahp0ngOdPLzjuO
+	 9bx/+jxFXKx1KQjjHiyT+URHWikCkLFn6JkRaG4GjuFJeQ3NwkPQ5R+417i7hiMKYU
+	 auX0v2/if7KFGUbpkkOUMj63prQGubGFDCe+R4BI=
+Authentication-Results: mail-nwsmtp-smtp-corp-canary-81.sas.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+From: Andrey Troshin <drtrosh@yandex-team.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Andrey Troshin <drtrosh@yandex-team.ru>,
+	"David S . Miller" <davem@davemloft.net>,
+	Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+	Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 5.10] ipv6: sr: Fix MAC comparison to be constant-time
+Date: Tue, 28 Oct 2025 17:27:55 +0300
+Message-ID: <20251028142755.2059-1-drtrosh@yandex-team.ru>
+X-Mailer: git-send-email 2.51.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 10:47:53 +0100
-Robert Richter <rrichter@amd.com> wrote:
+From: Eric Biggers <ebiggers@kernel.org>
 
-> The CXL specification supports multi-level interleaving "as long as
-> all the levels use different, but consecutive, HPA bits to select the
-> target and no Interleave Set has more than 8 devices" (from 3.2).
-> 
-> Currently the kernel expects that a decoder's "interleave granularity
-> is a multiple of @parent_port granularity". That is, the granularity
-> of a lower level is bigger than those of the parent and uses the outer
-> HPA bits as selector. It works e.g. for the following 8-way config:
-> 
->  * cross-link (cross-hostbridge config in CFMWS):
->    * 4-way
->    * 256 granularity
->    * Selector: HPA[8:9]
->  * sub-link (CXL Host bridge config of the HDM):
->    * 2-way
->    * 1024 granularity
->    * Selector: HPA[10]
-> 
-> Now, if the outer HPA bits are used for the cross-hostbridge, an 8-way
-> config could look like this:
-> 
->  * cross-link (cross-hostbridge config in CFMWS):
->    * 4-way
->    * 512 granularity
->    * Selector: HPA[9:10]
->  * sub-link (CXL Host bridge config of the HDM):
->    * 2-way
->    * 256 granularity
->    * Selector: HPA[8]
-> 
-> The enumeration of decoders for this configuration fails then with
-> following error:
-> 
->  cxl region0: pci0000:00:port1 cxl_port_setup_targets expected iw: 2 ig: 1024 [mem 0x10000000000-0x1ffffffffff flags 0x200]
->  cxl region0: pci0000:00:port1 cxl_port_setup_targets got iw: 2 ig: 256 state: enabled 0x10000000000:0x1ffffffffff
->  cxl_port endpoint12: failed to attach decoder12.0 to region0: -6
-> 
-> Note that this happens only if firmware is setting up the decoders
-> (CXL_REGION_F_AUTO). For userspace region assembly the granularities
-> are chosen to increase from root down to the lower levels. That is,
-> outer HPA bits are always used for lower interleaving levels.
-> 
-> Rework the implementation to also support multi-level interleaving
-> with smaller granularities for lower levels. Determine the interleave
-> set of autodetected decoders. Check that it is a subset of the root
-> interleave.
-> 
-> The HPA selector bits are extracted for all decoders of the set and
-> checked that there is no overlap and bits are consecutive. All
-> decoders can be programmed now to use any bit range within the
-> region's target selector.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+commit a458b2902115b26a25d67393b12ddd57d1216aaa upstream.
 
-We debated this back when the original support was added. At the time the
-discussion pretty much concluded there was no reason anyone would ever actually
-do this because it mostly doesn't provide much/any performance benefit and
-might result in significantly worse performance by not spreading out accesses as
-early as possible.
+To prevent timing attacks, MACs need to be compared in constant time.
+Use the appropriate helper function for this.
 
-So do we have any idea why a bios is doing this? Something about the
-host interconnect?
+Fixes: bf355b8d2c30 ("ipv6: sr: add core files for SR HMAC support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+Reviewed-by: Andrea Mayer <andrea.mayer@uniroma2.it>
+Link: https://patch.msgid.link/20250818202724.15713-1-ebiggers@kernel.org
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[Andrey Troshin: backport fix for 5.10]
+Signed-off-by: Andrey Troshin <drtrosh@yandex-team.ru>
+---
+Backport fix for CVE-2025-39702
+Link: https://nvd.nist.gov/vuln/detail/CVE-2025-39702
+---
+ net/ipv6/seg6_hmac.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-
-Jonathan
+diff --git a/net/ipv6/seg6_hmac.c b/net/ipv6/seg6_hmac.c
+index 4a3f7bb027ed..8bb7f94cba1e 100644
+--- a/net/ipv6/seg6_hmac.c
++++ b/net/ipv6/seg6_hmac.c
+@@ -35,6 +35,7 @@
+ #include <net/xfrm.h>
+ 
+ #include <crypto/hash.h>
++#include <crypto/algapi.h>
+ #include <crypto/sha.h>
+ #include <net/seg6.h>
+ #include <net/genetlink.h>
+@@ -270,7 +271,7 @@ bool seg6_hmac_validate_skb(struct sk_buff *skb)
+ 	if (seg6_hmac_compute(hinfo, srh, &ipv6_hdr(skb)->saddr, hmac_output))
+ 		return false;
+ 
+-	if (memcmp(hmac_output, tlv->hmac, SEG6_HMAC_FIELD_LEN) != 0)
++	if (crypto_memneq(hmac_output, tlv->hmac, SEG6_HMAC_FIELD_LEN))
+ 		return false;
+ 
+ 	return true;
+-- 
+2.34.1
 
 
