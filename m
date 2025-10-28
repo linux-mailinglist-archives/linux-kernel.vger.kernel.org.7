@@ -1,218 +1,320 @@
-Return-Path: <linux-kernel+bounces-874072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13656C15726
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:28:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3715CC1572C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9682C4067FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:27:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 021433B72B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1454733F8BE;
-	Tue, 28 Oct 2025 15:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDB534027C;
+	Tue, 28 Oct 2025 15:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMe6PPFD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgzzf499"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3984C30BF75
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA97340A67
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665203; cv=none; b=KNHUzMTLIrTYyJVOeoeGCtW1H1MJNUaE7zDZZTW9kUnusKG9ZfCnqTWoC/vL1TIsWQU6knDQyzoBGyRuX/YFJPk7ZlFuV+EBzE096sL+XQcgXsOIOItqUXyMy/dQ6K16hJlUhapE9fffB7BGwMzq4T/QTlRAA65Gl97G8ZObd7k=
+	t=1761665211; cv=none; b=c37L4NSKAw3MoKAeAFrMiBrYIAN3pgJsVBNewnCWGDThMNFbixNFzzEGzbiRSYLajkwVjCdzx/uwUG73p2hU/5+kOgEiJl2YZFTWf9XVvq2QUIraoe0i3NCArwR6O85SJwCOVFt5GgJHWoxzwaeV2gWrno/GgM/urR6/heRx60s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665203; c=relaxed/simple;
-	bh=og4RpLkQbHwN8FOYj4/Ae2jn1OJFGZDc8igUI8xWOMY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=eLlz3rU03yAVRtw72CKkUr5ZAEUYZQ0JvUHrUx0UiVGTzaFb+EHX1lZO2f+Az5ALhqfAzv04KQbjjny+oI19DRvzMTRtL6WF1scqUuBb3iaKadQuBlkOvYy9wrZntzG75DUue0otD5XBEqBuCYUygJDCd6TJ6vAJHkbhRZQadUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMe6PPFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77991C4CEF7;
-	Tue, 28 Oct 2025 15:26:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761665202;
-	bh=og4RpLkQbHwN8FOYj4/Ae2jn1OJFGZDc8igUI8xWOMY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=VMe6PPFDylySqOED17+YvMfnapMzSDc1WEfDcbD/ml3q+KmNrwBDXmvCq7BatsDXy
-	 okJyPIfexJrWSbCBiu4AN0dZ4RGPKPwBcerg91Dbns7qi6cC/0YEWAzWo9q8Eq9krZ
-	 /65wbFPshhoFg0r4/HcdHbrG5Nl0VHxFp47alG2fKpmtGVcLButFfi+Qd1K3PL6RIo
-	 mjbGE+RoiqkLniwCPUqy7Fw7SGijxVFo2wH7n6KUq9TqSysVukOTh/aUwXwEQ6ErvN
-	 TeOGgkjxmwRwDBOP2t5UDuTVVVfiNwy4SRlAcY3asqh4veB/u8QHZvDFaKzjYOS128
-	 Xweo7JtwJbXBQ==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 28 Oct 2025 16:26:24 +0100
-Subject: [PATCH 5/5] nvmet-fc: use pr_* print macros instead of dev_*
+	s=arc-20240116; t=1761665211; c=relaxed/simple;
+	bh=J8gWe5S/wU/Aw3JtTddPawUYb2A11E91lY5KPNIjULE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+at9ILo7jebWrxMlteV3xpT5CS5ILBi/cHDIl6IFavr5u+L8JY0dNgBcu6F+CLDx/6CqQ4YZCSJ6kpPbfTuLGi7OHxnpYhWteivaJPsB1alPosgbvFuIAq09TrFLoWx2W7eogo1fjuM9ZSeCbZ44wTpAmGEb/EzIHmu/gGEfOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgzzf499; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-421851bca51so5680130f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761665207; x=1762270007; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L5NN874Vbf6j1t9kDklEAtFLWXAQFaa3F0AHLiRU/ns=;
+        b=wgzzf49981lb2sPpB7bztN7xkYR0c2cKBvb6NlHuj+c+PijJ4xHS9UUsU12icVC50w
+         aUX5calUvKp0gBYfuCM7ODVFWNNIeiisBEsFlrFuIi61yfcYlvBPXFllF+km7rdXcS24
+         AGukgPQ8u6ywykFPtGEsbdtmeHM0J71yvUh1O8CWoaYmCIkkhp1PQ7K/0RCjmU7UQYUC
+         P2GYbUkguTzUsBuaRgNmMr98R3byzXlOIH0poao7me3I/W+ME28f3iV7vbpztzGPV4Gm
+         MVcTJ9n8+B1t3nAVpSfCsTzRL2e2ZFU6QB2UenZ4HD6VzdG/QIR+y+70/wt1KbMufi6d
+         TG/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761665207; x=1762270007;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L5NN874Vbf6j1t9kDklEAtFLWXAQFaa3F0AHLiRU/ns=;
+        b=CFuhy+RbnR/foQgyZWL3AQcw8qDEwHdBy+s4qvHg7cBq/PHnxkHivazvmOil1tSXuh
+         81tVmNkNv/N2tpRL/3ubps8dPaVCn/qv8caiP4I1szy3C3nVM3t/WFEyB+vbQ02mWig4
+         6vJngCIyFv5aX+ukcTf/7SfspT4nCRREBZzbEb8jyixSfvRkHoNDPrRCjUoS2VhSoGEa
+         LjUr4GQHKAIxFN70PcKEkn0w8TRXn29/TNuQAnBX1CBl7IZdn88d9Zys87978gjOibCs
+         lP3nRRWkhV+6tIvxWQnyEnbKN24V0wzd+UI+EM86JT6KDCb2RJGijAR8TYq0EEQyJ6TB
+         A59A==
+X-Forwarded-Encrypted: i=1; AJvYcCVc8dDPP+22CuoqWkg65FIksxiDExTR1Jb83JXAl7mCyQVvMT9l4H8GpV+BTSIophswk0NOXmt4vVsLwpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUkb8QxPosDMW49ssb7GtXic1fdeB0J2jDylgWbgpAQ3ls2q+5
+	TGKYLt6EW9tWPW/vh0zYaimbJLm4nltCyJg2HoXbF2ZVPt0Batm9hkxMbOs3ohAE0EU=
+X-Gm-Gg: ASbGncvdxyC0IBQEZItZeU7cF7MjjjFCXMZ0rpW6us0hVr9j/IewLxPxMTfNyoOcjM5
+	5M05zhNmnzK3xJGQv3KnFcQZ6rbiUfpNshviM7aRZ0xgnNGd2Zk9EsWUa3AGnYxxb34SLwERDhj
+	6waSWPodJz4iRRMxnkPJ5ZGX3q2IxwZK8yerXClKjwihVUoJKslDcE+mRu06mNYOa1347ahYsEQ
+	mLdBCMnZsKqcDeMGx3aBCWXy7C5175kki5L6K/GmcI0Ihs81jmecvycdb/mrZ9wiw44c32+zhoW
+	Gl/sbp9pZ6lamMM1JmDb6/u6kepIakcBMw2hZdWzgb0eRuavJX58HWyAQKXyds/nU7trhPZOTwP
+	cjWsawIwEyfUSN76R5wC9E2DbjTfQw+ZjLvxGhJYX8o3P+MJB8bW9Z3BUdEA4RK0TUJAgcfOPm9
+	mJ07owHQ==
+X-Google-Smtp-Source: AGHT+IFht8W8LlHf+fVb5sQbyInnI36G4HSXQo3iShQ7ls0EqY4pU5HsL5gFy2X7AKE+Q9Dl1X05Xg==
+X-Received: by 2002:a05:6000:61e:b0:427:546:4378 with SMTP id ffacd0b85a97d-429a7e4eeeamr4138749f8f.20.1761665207072;
+        Tue, 28 Oct 2025 08:26:47 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.77.170])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b2dsm20547898f8f.2.2025.10.28.08.26.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 08:26:46 -0700 (PDT)
+Message-ID: <643e2956-2ddb-45a8-9c8f-c77a73bac4d2@linaro.org>
+Date: Tue, 28 Oct 2025 15:26:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-nvmet-fcloop-fixes-v1-5-765427148613@kernel.org>
-References: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org>
-In-Reply-To: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org>
-To: Justin Tee <justin.tee@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
- Keith Busch <kbusch@kernel.org>
-Cc: James Smart <james.smart@broadcom.com>, Jens Axboe <axboe@kernel.dk>, 
- linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Daniel Wagner <wagi@kernel.org>
-X-Mailer: b4 0.14.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf dsos: Don't block when reading build IDs
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022-james-perf-fix-dso-block-v1-1-c4faab150546@linaro.org>
+ <CAP-5=fUF8C=yFkPb_ohJVzX01PvS5n++yZZifWSV-4sMNKZAZA@mail.gmail.com>
+ <aP1kSdZJKYIpnRia@google.com>
+ <CAP-5=fUiO1uypnsw=G-FFj0xE=uCowG5FetaC9JGygOxybuGGA@mail.gmail.com>
+ <17f00d4d-5cbf-4c9c-a51a-f0ae34f181cf@linaro.org>
+ <CAP-5=fV-g1CeJCoEnNnz_eFsks01JyUR3Fxz_H0X_rdTzOGuAw@mail.gmail.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <CAP-5=fV-g1CeJCoEnNnz_eFsks01JyUR3Fxz_H0X_rdTzOGuAw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Many of the nvmet-fc log messages cannot print the device used, because
-it's not there yet:
 
-  (NULL device *): {0:0} Association deleted
 
-Use the pr_* macros consistently throughout the module and match the
-output of the nvme-fc module.
+On 28/10/2025 3:07 pm, Ian Rogers wrote:
+> On Tue, Oct 28, 2025 at 3:33 AM James Clark <james.clark@linaro.org> wrote:
+>>
+>> On 26/10/2025 4:52 am, Ian Rogers wrote:
+>>> On Sat, Oct 25, 2025 at 4:59 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> On Fri, Oct 24, 2025 at 11:26:18AM -0700, Ian Rogers wrote:
+>>>>> On Wed, Oct 22, 2025 at 8:46 AM James Clark <james.clark@linaro.org> wrote:
+>>>>>>
+>>>>>> The following command will hang consistently when the GPU is being used
+>>>>>> due to non regular files (e.g. /dev/dri/renderD129, /dev/dri/card2)
+>>>>>> being opened to read build IDs:
+>>>>>>
+>>>>>>    $ perf record -asdg -e cpu-clock -- true
+>>>>>>
+>>>>>> Change to non blocking reads to avoid the hang here:
+>>>>>>
+>>>>>>     #0  __libc_pread64 (offset=<optimised out>, count=0, buf=0x7fffffffa4a0, fd=237) at ../sysdeps/unix/sysv/linux/pread64.c:25
+>>>>>>     #1  __libc_pread64 (fd=237, buf=0x7fffffffa4a0, count=0, offset=0) at ../sysdeps/unix/sysv/linux/pread64.c:23
+>>>>>>     #2  ?? () from /lib/x86_64-linux-gnu/libelf.so.1
+>>>>>>     #3  read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:880
+>>>>>>     #4  filename__read_build_id (filename=0x5555562df333 "/dev/dri/card2", bid=0x7fffffffb680, block=true) at util/symbol-elf.c:924
+>>>>>>     #5  dsos__read_build_ids_cb (dso=0x5555562df1d0, data=0x7fffffffb750) at util/dsos.c:84
+>>>>>>     #6  __dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:59
+>>>>>>     #7  dsos__for_each_dso (dsos=0x55555623de68, cb=0x5555557e7030 <dsos__read_build_ids_cb>, data=0x7fffffffb750) at util/dsos.c:503
+>>>>>>     #8  dsos__read_build_ids (dsos=0x55555623de68, with_hits=true) at util/dsos.c:107
+>>>>>>     #9  machine__read_build_ids (machine=0x55555623da58, with_hits=true) at util/build-id.c:950
+>>>>>>     #10 perf_session__read_build_ids (session=0x55555623d840, with_hits=true) at util/build-id.c:956
+>>>>>>     #11 write_build_id (ff=0x7fffffffb958, evlist=0x5555562323d0) at util/header.c:327
+>>>>>>     #12 do_write_feat (ff=0x7fffffffb958, type=2, p=0x7fffffffb950, evlist=0x5555562323d0, fc=0x0) at util/header.c:3588
+>>>>>>     #13 perf_header__adds_write (header=0x55555623d840, evlist=0x5555562323d0, fd=3, fc=0x0) at util/header.c:3632
+>>>>>>     #14 perf_session__do_write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true, fc=0x0, write_attrs_after_data=false) at util/header.c:3756
+>>>>>>     #15 perf_session__write_header (session=0x55555623d840, evlist=0x5555562323d0, fd=3, at_exit=true) at util/header.c:3796
+>>>>>>     #16 record__finish_output (rec=0x5555561838d8 <record>) at builtin-record.c:1899
+>>>>>>     #17 __cmd_record (rec=0x5555561838d8 <record>, argc=2, argv=0x7fffffffe320) at builtin-record.c:2967
+>>>>>>     #18 cmd_record (argc=2, argv=0x7fffffffe320) at builtin-record.c:4453
+>>>>>>     #19 run_builtin (p=0x55555618cbb0 <commands+288>, argc=9, argv=0x7fffffffe320) at perf.c:349
+>>>>>>     #20 handle_internal_command (argc=9, argv=0x7fffffffe320) at perf.c:401
+>>>>>>     #21 run_argv (argcp=0x7fffffffe16c, argv=0x7fffffffe160) at perf.c:445
+>>>>>>     #22 main (argc=9, argv=0x7fffffffe320) at perf.c:553
+>>>>>>
+>>>>>> Fixes: 53b00ff358dc ("perf record: Make --buildid-mmap the default")
+>>>>>> Signed-off-by: James Clark <james.clark@linaro.org>
+>>>>>> ---
+>>>>>> I'm not actually sure if this is the right fix for this. Commit
+>>>>>> 2c369d91d093 ("perf symbol: Add blocking argument to
+>>>>>> filename__read_build_id") which added the blocking argument says that it
+>>>>>> should be non-blocking reads for event synthesis, but the callstack here
+>>>>>> is when writing the header out.
+>>>>>>
+>>>>>> There was also an is_regular_file() check added in commit c21986d33d6b
+>>>>>> ("perf unwind-libdw: skip non-regular files"), which presumably falls
+>>>>>> afoul of the "which unfortunately fails for symlinks" part of the other
+>>>>>> linked commit message?
+>>>>>>
+>>>>>> So I can't tell if we should add the is_regular_file() check here too,
+>>>>>> or just set it to non-blocking, or it needs some extra state to be
+>>>>>> passed all the way down to dsos__read_build_ids_cb() to do different
+>>>>>> things.
+>>>>>
+>>>>> The fix lgtm but I worry about making all the build ID reading
+>>>>> non-blocking meaning build IDs getting lost.
+>>>>
+>>>> I'm not sure what non-blocking means for regular file system operations
+>>>> on a block device.  But it may have some impact on regular files on a
+>>>> network filesystem.
+>>
+>> It depends on the filesystem, but I think the assurances given by
+>> O_NONBLOCK are very weak anyway. It can be practically ignored or do
+>> different things in different situations. Especially as we don't handle
+>> EAGAIN or do anything fancy we shouldn't use it.
+>>
+>> For our case it looks like we should always do blocking reads but make
+>> sure to not open a non-regular file.
+>>
+>>>
+>>> Agreed. Prior to using blocking we tried to imply from the file type
+>>> from stat, but that skipped things like symlinks :-/
+>>>
+>>
+>> Am I missing something here? is_regular_file() uses stat() which returns
+>> info about the target file, rather than the symlink, so they wouldn't be
+>> skipped. lstat() is the one that returns info about the link file.
+>>
+>> I tested is_regular_file() with links, links to links, pipes, files and
+>> devices and it works as expected and would avoid the need to use O_NONBLOCK.
+> 
+> I don't mind we back out the use of the is_block parameter and use
+> is_regular_file. In the code before the change to use is_block the
+> callers would call is_regular_file and then call
+> filename__read_build_id. This seemed error prone as some callers were
+> doing the is_regular_file check and others not. I think I favor just
+> getting rid of the argument but putting the is_regular_file check in
+> filename__read_build_id. I'd switched to using O_NONBLOCK rather than
 
-Using port:association ids are more useful when debugging what's going
-on, because these match now with the log entries from nvme-fc.
----
- drivers/nvme/target/fc.c | 48 +++++++++++++++++++++---------------------------
- 1 file changed, 21 insertions(+), 27 deletions(-)
+That makes sense to me. Should I make that change in addition to 
+Namhyung's patch?
 
-diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
-index 7d84527d5a43..0d9784004c9b 100644
---- a/drivers/nvme/target/fc.c
-+++ b/drivers/nvme/target/fc.c
-@@ -490,8 +490,7 @@ nvmet_fc_xmt_disconnect_assoc(struct nvmet_fc_tgt_assoc *assoc)
- 			sizeof(*discon_rqst) + sizeof(*discon_acc) +
- 			tgtport->ops->lsrqst_priv_sz), GFP_KERNEL);
- 	if (!lsop) {
--		dev_info(tgtport->dev,
--			"{%d:%d} send Disconnect Association failed: ENOMEM\n",
-+		pr_info("{%d:%d}: send Disconnect Association failed: ENOMEM\n",
- 			tgtport->fc_target_port.port_num, assoc->a_id);
- 		return;
- 	}
-@@ -513,8 +512,7 @@ nvmet_fc_xmt_disconnect_assoc(struct nvmet_fc_tgt_assoc *assoc)
- 	ret = nvmet_fc_send_ls_req_async(tgtport, lsop,
- 				nvmet_fc_disconnect_assoc_done);
- 	if (ret) {
--		dev_info(tgtport->dev,
--			"{%d:%d} XMT Disconnect Association failed: %d\n",
-+		pr_info("{%d:%d}: XMT Disconnect Association failed: %d\n",
- 			tgtport->fc_target_port.port_num, assoc->a_id, ret);
- 		kfree(lsop);
- 	}
-@@ -1187,8 +1185,7 @@ nvmet_fc_target_assoc_free(struct kref *ref)
- 	if (oldls)
- 		nvmet_fc_xmt_ls_rsp(tgtport, oldls);
- 	ida_free(&tgtport->assoc_cnt, assoc->a_id);
--	dev_info(tgtport->dev,
--		"{%d:%d} Association freed\n",
-+	pr_info("{%d:%d}: Association freed\n",
- 		tgtport->fc_target_port.port_num, assoc->a_id);
- 	kfree(assoc);
- }
-@@ -1224,8 +1221,7 @@ nvmet_fc_delete_target_assoc(struct nvmet_fc_tgt_assoc *assoc)
- 			flush_workqueue(assoc->queues[i]->work_q);
- 	}
- 
--	dev_info(tgtport->dev,
--		"{%d:%d} Association deleted\n",
-+	pr_info("{%d:%d}: Association deleted\n",
- 		tgtport->fc_target_port.port_num, assoc->a_id);
- 
- 	nvmet_fc_tgtport_put(tgtport);
-@@ -1716,9 +1712,9 @@ nvmet_fc_ls_create_association(struct nvmet_fc_tgtport *tgtport,
- 	}
- 
- 	if (ret) {
--		dev_err(tgtport->dev,
--			"Create Association LS failed: %s\n",
--			validation_errors[ret]);
-+		pr_err("{%d}: Create Association LS failed: %s\n",
-+		       tgtport->fc_target_port.port_num,
-+		       validation_errors[ret]);
- 		iod->lsrsp->rsplen = nvme_fc_format_rjt(acc,
- 				sizeof(*acc), rqst->w0.ls_cmd,
- 				FCNVME_RJT_RC_LOGIC,
-@@ -1730,8 +1726,7 @@ nvmet_fc_ls_create_association(struct nvmet_fc_tgtport *tgtport,
- 	atomic_set(&queue->connected, 1);
- 	queue->sqhd = 0;	/* best place to init value */
- 
--	dev_info(tgtport->dev,
--		"{%d:%d} Association created\n",
-+	pr_info("{%d:%d}: Association created\n",
- 		tgtport->fc_target_port.port_num, iod->assoc->a_id);
- 
- 	/* format a response */
-@@ -1809,9 +1804,9 @@ nvmet_fc_ls_create_connection(struct nvmet_fc_tgtport *tgtport,
- 	}
- 
- 	if (ret) {
--		dev_err(tgtport->dev,
--			"Create Connection LS failed: %s\n",
--			validation_errors[ret]);
-+		pr_err("{%d}: Create Connection LS failed: %s\n",
-+		       tgtport->fc_target_port.port_num,
-+		       validation_errors[ret]);
- 		iod->lsrsp->rsplen = nvme_fc_format_rjt(acc,
- 				sizeof(*acc), rqst->w0.ls_cmd,
- 				(ret == VERR_NO_ASSOC) ?
-@@ -1871,9 +1866,9 @@ nvmet_fc_ls_disconnect(struct nvmet_fc_tgtport *tgtport,
- 	}
- 
- 	if (ret || !assoc) {
--		dev_err(tgtport->dev,
--			"Disconnect LS failed: %s\n",
--			validation_errors[ret]);
-+		pr_err("{%d}: Disconnect LS failed: %s\n",
-+		       tgtport->fc_target_port.port_num,
-+		       validation_errors[ret]);
- 		iod->lsrsp->rsplen = nvme_fc_format_rjt(acc,
- 				sizeof(*acc), rqst->w0.ls_cmd,
- 				(ret == VERR_NO_ASSOC) ?
-@@ -1907,8 +1902,7 @@ nvmet_fc_ls_disconnect(struct nvmet_fc_tgtport *tgtport,
- 	spin_unlock_irqrestore(&tgtport->lock, flags);
- 
- 	if (oldls) {
--		dev_info(tgtport->dev,
--			"{%d:%d} Multiple Disconnect Association LS's "
-+		pr_info("{%d:%d}: Multiple Disconnect Association LS's "
- 			"received\n",
- 			tgtport->fc_target_port.port_num, assoc->a_id);
- 		/* overwrite good response with bogus failure */
-@@ -2051,8 +2045,8 @@ nvmet_fc_rcv_ls_req(struct nvmet_fc_target_port *target_port,
- 	struct fcnvme_ls_rqst_w0 *w0 = (struct fcnvme_ls_rqst_w0 *)lsreqbuf;
- 
- 	if (lsreqbuf_len > sizeof(union nvmefc_ls_requests)) {
--		dev_info(tgtport->dev,
--			"RCV %s LS failed: payload too large (%d)\n",
-+		pr_info("{%d}: RCV %s LS failed: payload too large (%d)\n",
-+			tgtport->fc_target_port.port_num,
- 			(w0->ls_cmd <= NVME_FC_LAST_LS_CMD_VALUE) ?
- 				nvmefc_ls_names[w0->ls_cmd] : "",
- 			lsreqbuf_len);
-@@ -2060,8 +2054,8 @@ nvmet_fc_rcv_ls_req(struct nvmet_fc_target_port *target_port,
- 	}
- 
- 	if (!nvmet_fc_tgtport_get(tgtport)) {
--		dev_info(tgtport->dev,
--			"RCV %s LS failed: target deleting\n",
-+		pr_info("{%d}: RCV %s LS failed: target deleting\n",
-+			tgtport->fc_target_port.port_num,
- 			(w0->ls_cmd <= NVME_FC_LAST_LS_CMD_VALUE) ?
- 				nvmefc_ls_names[w0->ls_cmd] : "");
- 		return -ESHUTDOWN;
-@@ -2069,8 +2063,8 @@ nvmet_fc_rcv_ls_req(struct nvmet_fc_target_port *target_port,
- 
- 	iod = nvmet_fc_alloc_ls_iod(tgtport);
- 	if (!iod) {
--		dev_info(tgtport->dev,
--			"RCV %s LS failed: context allocation failed\n",
-+		pr_info("{%d}: RCV %s LS failed: context allocation failed\n",
-+			tgtport->fc_target_port.port_num,
- 			(w0->ls_cmd <= NVME_FC_LAST_LS_CMD_VALUE) ?
- 				nvmefc_ls_names[w0->ls_cmd] : "");
- 		nvmet_fc_tgtport_put(tgtport);
+> is_regular_file not just because of symlinks but just because it
+> wasn't clear that anything non-regular may still have a build id.
 
--- 
-2.51.0
+That I'm not sure about either. Can we assume that no non-regular files 
+have build IDs as we're not handling EAGAIN anyway? Or at least if they 
+do it's not currently supported.
+
+> 
+> There's the separate issue of why are we writing out buildids in the
+> features when the buildid-mmaps contain the same data. It seems
+> Namhyung has a patch just about optimizing that case :-)
+> 
+> Thanks,
+> Ian
+> 
+>> James
+>>
+>>>>> It seems that generating
+>>>>> the build ID feature table is unnecessary if we have build ID mmap
+>>>>> events, including synthesized ones that will have read the build IDs.
+>>>>> I wonder if a better "fix" is:
+>>>>> ```
+>>>>> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+>>>>> index cb52aea9607d..15f75c70eb76 100644
+>>>>> --- a/tools/perf/builtin-record.c
+>>>>> +++ b/tools/perf/builtin-record.c
+>>>>> @@ -1842,7 +1842,7 @@ static void record__init_features(struct record *rec)
+>>>>>          for (feat = HEADER_FIRST_FEATURE; feat < HEADER_LAST_FEATURE; feat++)
+>>>>>                  perf_header__set_feat(&session->header, feat);
+>>>>>
+>>>>> -       if (rec->no_buildid)
+>>>>> +       if (rec->no_buildid || rec->buildid_mmap)
+>>>>>                  perf_header__clear_feat(&session->header, HEADER_BUILD_ID);
+>>>>>
+>>>>>          if (!have_tracepoints(&rec->evlist->core.entries))
+>>>>> ```
+>>>>> that should disable the build ID feature table generation when build
+>>>>> ID mmaps are in use (the default). Having the build IDs twice in the
+>>>>> data file feels redundant. Or we could do your fix or both, wdyt?
+>>>>
+>>>> I'm ok to remove the header feature but I think it should update
+>>>> build-ID cache even with this change.
+>>>
+>>> Yeah, dropping the feature writing also impacts updating the build ID
+>>> cache because:
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/header.c?h=perf-tools-next#n338
+>>> It is kind of strange that writing a header feature does this. What if
+>>> I want to write a header with build IDs but not update the cache? It'd
+>>> make more sense, I think, for perf_session__cache_build_ids to be
+>>> called explicitly. There is also the global no_buildid_cache
+>>> controlling behavior:
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/build-id.c?h=perf-tools-next#n43
+>>> But that's kind of a hack as we may have >1 session such as with TPEBS.
+>>>
+>>>> I'm also curious if the device has samples actually.  It should be
+>>>> checked by dso->hit.
+>>>
+>>> In this case the header writing is happening after the samples have
+>>> been processed, but it looks like marking of samples doesn't consider
+>>> data addresses:
+>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/build-id.c?h=perf-tools-next#n55
+>>> just sample->ip and the callchain. If the marking was updated for data
+>>> pages then just writing build IDs for marked dsos would make sense.
+>>> There could be callers not marking dsos so they'd need altering, or
+>>> two versions of the code.
+>>>
+>>> Thanks,
+>>> Ian
+>>>
+>>>> Thanks,
+>>>> Namhyung
+>>>>
+>>>>>
+>>>>> Thanks,
+>>>>> Ian
+>>>>>
+>>>>>> ---
+>>>>>>    tools/perf/util/dsos.c | 5 +++--
+>>>>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+>>>>>> index 64c1d65b0149..5e1c815d7cb0 100644
+>>>>>> --- a/tools/perf/util/dsos.c
+>>>>>> +++ b/tools/perf/util/dsos.c
+>>>>>> @@ -81,13 +81,14 @@ static int dsos__read_build_ids_cb(struct dso *dso, void *data)
+>>>>>>                   return 0;
+>>>>>>           }
+>>>>>>           nsinfo__mountns_enter(dso__nsinfo(dso), &nsc);
+>>>>>> -       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/true) > 0) {
+>>>>>> +       /* Don't block in case path isn't for a regular file. */
+>>>>>> +       if (filename__read_build_id(dso__long_name(dso), &bid, /*block=*/false) > 0) {
+>>>>>>                   dso__set_build_id(dso, &bid);
+>>>>>>                   args->have_build_id = true;
+>>>>>>           } else if (errno == ENOENT && dso__nsinfo(dso)) {
+>>>>>>                   char *new_name = dso__filename_with_chroot(dso, dso__long_name(dso));
+>>>>>>
+>>>>>> -               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/true) > 0) {
+>>>>>> +               if (new_name && filename__read_build_id(new_name, &bid, /*block=*/false) > 0) {
+>>>>>>                           dso__set_build_id(dso, &bid);
+>>>>>>                           args->have_build_id = true;
+>>>>>>                   }
+>>>>>>
+>>>>>> ---
+>>>>>> base-commit: a1d8548c23076c66d96647f5f6f25aa43567f247
+>>>>>> change-id: 20251022-james-perf-fix-dso-block-ca1d8437bbc0
+>>>>>>
+>>>>>> Best regards,
+>>>>>> --
+>>>>>> James Clark <james.clark@linaro.org>
+>>>>>>
+>>
 
 
