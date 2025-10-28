@@ -1,175 +1,214 @@
-Return-Path: <linux-kernel+bounces-873833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BAFC14D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:30:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9419C14D90
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EEF5420F5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:27:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A5C3A44DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CCA33507A;
-	Tue, 28 Oct 2025 13:26:57 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B00331A50;
-	Tue, 28 Oct 2025 13:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761658016; cv=none; b=OrLWsDF0ERkscPl2fS/4ywZJzSLvLeF64SkN44pmci6jgm5eA9pAjHjTduqvGyBRkw80iziKgwltEwUBDsvdDcTw5iGcrpqHLl8XGSPRcDp3Syn4JScW7bzcrNXYjygKYBbDRKngGqV0eZJvPxw/+sr34o29eqrZvHLD6cR9cEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761658016; c=relaxed/simple;
-	bh=V4L/H30OuBlemwDlVM8ADYwYLpVGXZKR1xdAcxgluVg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PRZa9LgDKG+AuRbJGgX8ESaTZg31o5iZM34SwFmLqWzPziCaZs2CK4WreGeyBp9pdhsWEdqnrwLJhn9vs1jq3i7jYpR9944P3drMF+GP4gGjITlUAPRaeL9hFFKvhT/kMWd9PMjdtZWOuJJwbWgRGNjl6np7F+1DJDJratjsdPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: I4wMIvZwTSGVxiOVXjc90Q==
-X-CSE-MsgGUID: BYQX+M04TrKSPZh6O30p3Q==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Oct 2025 22:26:53 +0900
-Received: from demon-pc.localdomain (unknown [10.226.92.5])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id A3F2C40078A8;
-	Tue, 28 Oct 2025 22:26:48 +0900 (JST)
-From: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-To: 
-Cc: John Madieu <john.madieu.xa@bp.renesas.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
-Subject: [PATCH v2 9/9] arm64: dts: renesas: r9a09g087: add TSU and thermal zones support
-Date: Tue, 28 Oct 2025 15:25:17 +0200
-Message-ID: <20251028132519.1472676-10-cosmin-gabriel.tanislav.xa@renesas.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251028132519.1472676-1-cosmin-gabriel.tanislav.xa@renesas.com>
-References: <20251028132519.1472676-1-cosmin-gabriel.tanislav.xa@renesas.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4550F33438C;
+	Tue, 28 Oct 2025 13:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gN/LyQvr"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11010054.outbound.protection.outlook.com [40.93.198.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D053314D2
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.198.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761657996; cv=fail; b=oeXCATu4t0k6tSjKEfgNa3S61+Nm8r8nB5AOcaC7AoiB1nbT6dm6ZvVjR44r9BlYtiNTNer4uis0CPRVW9rJ6cgiX12gXK/OCWYY2tP62yYN8tpmOpbl3ZoC9vIDP3fXIDM6nIKqIfRP4uGNfgeJQ/oKXE3Ak5A7+pmYU0vxMA0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761657996; c=relaxed/simple;
+	bh=0VDCxKKMcSHqMFqNlrvdNiwHlZt5sEQM+lLmqaEmigs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LIri9z5QgsPsP9NQ1lmmk3DN9v1qwWUZiM/lyDTGMUjX2hgiuYTUfKEbF+eTe4k5dmjWlByTFf11z6/p3MNQkYZWkuqHAsMsMcNPryk8JAdxuot9qRJ2sUIB+Jsgl0cORpssdMq8jVi18P+tveQFVN/XsZp+Aqt2yCFVOHnfaF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gN/LyQvr; arc=fail smtp.client-ip=40.93.198.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tH/otfuz1DjRLZ3p75QXTA1+voxOWhBq5GuInX/WQdJ5wIvp+6gKUhgbiwNGPoNNQ1m80V3xhzcuffcyJz17ooaGQs+17LV5+ve5tE18HEDi+u6bw7JwB5CDkcjlHE+AM/S//FLPsjsIAfynrLPJrFWNIvV32ALaG3Qdzp4iXyhCli2CmW6t/tesMILiMaFaR0FHXaUlUHw8/HF/DCxHvcKMu4aKkSU7ADPiXkuZfWFbo7+5mT772UgPz48j318S2R7PRv9TtQFxl0925JUPWCg4OLpyHJyyiAsP1itFMQRpwO+Z4+TB1UfL66QUXuELA7TlrbuCcefa66FE5KlIqg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Jn9O5hbEwUxIEuqEaXP+G8MeLRXUCadplNgGVSlV8U=;
+ b=lnPsN+L91ydbzkialq7k6n0p+lQiyf3pOmNyxwRqRoaeF/ZBKk7wwhIZOmffIhzQ6Hapv8nhQRDI8y81rJ5kM/3pjPl3u9cWu2FWe6/sH7iEXbxZfPXaJSHMgfAtUtNLPevJMawNbCfctZ0f9IlTFH9xCEC7YGeUWwqZZle0z+Wc9r04NWdxYBihS5AGn5/LZXnM4pDW+gd/8ErtqE+SttXy3E9f6vyc/60L/xhKmTE41zDk0by0IApqzyHwMHQMhzx7mmajAj4Gjcs+Z2Ozi+Pt39Q813OkOaZgO2PsZerdH4LBCwMRj+szQxn7kyET9jP94bzkO/LPCeISEHYt8w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Jn9O5hbEwUxIEuqEaXP+G8MeLRXUCadplNgGVSlV8U=;
+ b=gN/LyQvr+od/qE3q4WALs3Sb/mIvrCfFopgoUERpGzjZ2zkxYMAEiqI3XN7TUanZPVECih+qaNBGfb+jf5spxuuB1XkvG2Y/KPF8t9TG4mSEmX/Buh0EtZ6c/sfUDKMti6KhIVTC5+R14ZJp3OlXAlmDLEsOjlFMGZGpLDQi4cs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by MW4PR12MB6756.namprd12.prod.outlook.com (2603:10b6:303:1e9::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Tue, 28 Oct
+ 2025 13:26:32 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 13:26:32 +0000
+Message-ID: <6c619ad7-5502-42bc-8de8-8bf2af2e9566@amd.com>
+Date: Tue, 28 Oct 2025 14:26:26 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/amdgpu: lock bo before calling
+ amdgpu_vm_bo_update_shared
+To: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20251028130906.6029-1-pierre-eric.pelloux-prayer@amd.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20251028130906.6029-1-pierre-eric.pelloux-prayer@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BN9PR03CA0958.namprd03.prod.outlook.com
+ (2603:10b6:408:108::33) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW4PR12MB6756:EE_
+X-MS-Office365-Filtering-Correlation-Id: d309a8ac-67f8-4eb1-4ded-08de16259bf4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0lIUnBZNkZyT2QrMlNSMitYdWxQME5wOUxTYTVCNzJzUDdmMityTldJSzNq?=
+ =?utf-8?B?UzFlMmpIZDNPVGhHbUJpc25TNzJRRUVNMGZlSkFBeVVMN0hENThCc3IyMSt3?=
+ =?utf-8?B?YVYrVjFENThEVDdUM1YwdkEvVDNiRC9lUXVGRWxZK0dUQnhKR0ZoSmFpcGUy?=
+ =?utf-8?B?blgwclJCVEJOUHdQcFlJb3ZsMS9XOXB4MzRCR09VaFMrRUNZYXlGOGV3eWlv?=
+ =?utf-8?B?OXhVZUx1d0owcFR6WjZCMXBDU3lKd2N0Mm5EcFRwZnZWMFdGb25hTkc0NFdU?=
+ =?utf-8?B?ak04ai9zSU10VDNBcmcxYTdLV0RYSDkxNlYrMDlTUzd0QncyeWJnUmp4SVNk?=
+ =?utf-8?B?TVJwdVEyd1JZVUNYZldCekI3elNNcUs3QVByZHAxUkRyL1VHU2NnZHdpSVpP?=
+ =?utf-8?B?QjdpWnpDbFZxTGlPcE1ITDJicjNud0pHbUIvZy9uK01FdnlySU9vak9ML3c0?=
+ =?utf-8?B?SmtKSENnUEJrSzY1UzhyaEFQWUZSNDNsN0xzYUJJN1lGWmZmOUlIeXhNb3Ro?=
+ =?utf-8?B?ZERKVzRIY3EzdDVQM3BZRlB5MTU3RUdXUzdoeWJpSTNmNWltTUxobnZpa1Zj?=
+ =?utf-8?B?V2I3S3gxSWtMTklvK0pHSkNFc0x1NXNWRkdRUGlZSFVybmFScElMdXpMTitr?=
+ =?utf-8?B?eTIzUFR1OFlPMHZDTXBQQVlzQ213cDhkaTkwMzdpcWlLbEhXY0ZTSHdUczhI?=
+ =?utf-8?B?Vzk1M0ZWTmdvOXZNS05pdWNodFpQQjhFeVRxcmtNRmFXSk5uUkVUZWRZT3M3?=
+ =?utf-8?B?dEp5ZTU1Vjluc2N3ZjVwUjdlWjROVzlmVHZ3alVqU0xVSk9sbDMxc0ZMeTda?=
+ =?utf-8?B?VXQyQWM5R1FDalkzNzRXM2MxaVBpUThFa09HSzVDcC8rRGNKb0IxLzlaSUpx?=
+ =?utf-8?B?OWxlbEZLSzBPcFBYNS82MW12RnpSOGtOQW00aC9hUlNua3k5UDAyYXhka3Qy?=
+ =?utf-8?B?MHNqR2wwbmt6V3phcEt5MVJJaVVMM2pneGo3eUVUWXY2Z3NEaHVEQ1kyN2Zz?=
+ =?utf-8?B?T1FTb1ZVQ1hCVkVzUGFpN0pjQ01xZk9pQ21uSkd5azJjMHI4ZTNTWW5nSTFw?=
+ =?utf-8?B?MzJEQUtQdHFOdFlxVWY2M1JXdlBlaWUwV1lMQ0NpMkJLVEZkaGx1eUQzSGdK?=
+ =?utf-8?B?RStTSlJ0a2FueHgzVzZINUZMME51RlQ3VWEvYVRNbEFreEJtYjdraGl5dlVz?=
+ =?utf-8?B?WEVKS3NYZFQ5ZExnVDRGS3ViRjRIZC84ZXhkWkdhUDZtaElwNThVOWVZSkpE?=
+ =?utf-8?B?NGViOTF6MEI3RWVjOVpFM0FQSnNxVHF2akUwcjZrN2hIZ1dUYnM1T0Vzb3RM?=
+ =?utf-8?B?QkI5WHY5QVMydFVtMjd5L250VGxtN0VmVWFiQ0MwTCtZOHhlWUYveElCT0Vm?=
+ =?utf-8?B?KzNvbFM2K2VFSVl5RUZreTVFSk9scDQ0bzhCcXRyc2crWWJSWldMSHN4Ly8r?=
+ =?utf-8?B?UTliS090dzJvQjB0TjlnMEIzTklzdG1jcVdWdjBLSnhJVnh5dzhSOFRxc2I1?=
+ =?utf-8?B?TUJsczI5NUlGVjk3YnIxZ2k0MHdML0VSY0RqaTNsbXJ6ZTJLQ291L0FwanZU?=
+ =?utf-8?B?MGRUcmJvd29KUlRXaElTVjJjQXVHSmFuTXk5Rkg1M1lVZEVVRURjWklBY01S?=
+ =?utf-8?B?N2FLcjd0eTJIbGlwNU5iWmVNOUkrVC94dDlMV2hBZUxnQUZrZkZzeGNHSFdw?=
+ =?utf-8?B?eTZmbXBrWHBEaXl3bjJOUW5qdmZiRDBYL0RVSENHYlBDS1ZoVGxkM1FBOHU5?=
+ =?utf-8?B?eXB0eEg2dTAvZ2twU1N0cm1qRnBxbEFjMUxZZWhGRmxFNHJXMWIzbDNwbnZn?=
+ =?utf-8?B?Zzhad2V2MHV5VUt4NCtsc2hoQ3dZZ1dYS0NkMGVJZ1NNWncrOTJvNGM5U2Zy?=
+ =?utf-8?B?QWdrVVdNUExpQWxMZ29rcjd2SVJLMDR5aWh1L3Z2T3lITjcweDNzSHZ4U2M1?=
+ =?utf-8?Q?2ey/5HFcazVSoVor04rUYoStWQnnPgvG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y3E4YVpGZHByM3ZpZndpcFJsajVnNmhiNW1zS0tyWnIzRmlPVDBOd0t0d1BJ?=
+ =?utf-8?B?V0hPNVdTelRJUlYvbE9xUEZnYnQwTXQrUWQ1WGxsS0hrNTN6OC9kZStzMEZu?=
+ =?utf-8?B?elFXbEtjVlpjcjFVSnd4a2txaTB0elpmeFVsS3VGTVlUWTNkSGJzN2dBRFVz?=
+ =?utf-8?B?cGpFem9OTjRXYzQzTDM2L3dmRnlUd2t0emxzSHNNdy9UU0F0RUlkWWs3V0VU?=
+ =?utf-8?B?NHFMV2hpK1RkbURJVDdmUVlnTHRHT2k4YTRnK0pwelFGVU8rNWhjOHRNK2JS?=
+ =?utf-8?B?M1RZcm1zV1YzaHN4Yit6bE9vQnRxRzhJajZWa2hjL0MxaktOelgzWHZWNXhS?=
+ =?utf-8?B?aWVQMWF1VnZtNVZxOGtJKzF5cXBrcUhaWExUSHVqQUt6b0VlZGdMTis2ZEZD?=
+ =?utf-8?B?S1RUSXBhN0l1K0hDb21SbzZONDBSYk5ZN2MyYVhMUUxKRkphdVM1VDFDSEN5?=
+ =?utf-8?B?T3VmNnQybGN6MWF2NXRCWk5Zc0xyYldEWTJ1dWxuT0o4R1A1RTJudFRWYi9X?=
+ =?utf-8?B?NHRCeWVmWlY3S214K29wci96MnlpK1NZYmZQY3gyT21lWWk5TDF3Q2pnVSt3?=
+ =?utf-8?B?UWpWWUsySE5JQ1NOb3JrUDBpM0o1bkpVTmtxUmNTOExiR0h5dzkyTE1xSVhG?=
+ =?utf-8?B?N2FHdjIvNHJ3OGpFL2NHa3U2WmprVXZyeTkzRWgrcWc3UmplVVIxeHVNa2py?=
+ =?utf-8?B?TXVMeXoxNGlLUG5QczRXelNXUzhBSEFOb3BIL0VMOVR0V0ttMWV4cml2dGk3?=
+ =?utf-8?B?eXMyUXJzVkZlclM1a3ZmbkZuWVhVQkY5eGp3SWhveWZtNmR1NXlmSEtjbFlP?=
+ =?utf-8?B?dlByalp4dVhkQ1F1TXlkRVVPYm9lLzdTTng2VklTTFkwNXFiK21nUm5KODFo?=
+ =?utf-8?B?R2habFJvRE5oQlBZN0hxWWV6NWtsY3BhTmtWVnVOTU9LMEwwOWdmU1E3Qi9S?=
+ =?utf-8?B?T3duRmlFUmxvV1FPWTBYdjk3SWVyS1NCSitEdjRuNVQ2SWszR0ZrZi94QnR3?=
+ =?utf-8?B?dkJMbElNajEvUXhucGFCcGpCWXI0ODRxS2l1eFVkTWIzVGxmand3b0ViRFRm?=
+ =?utf-8?B?aERPbkpva09xZi9VQkwveE96b2tYeCtLa0NuVVN3QlBvMEZPUFBNNWpoaWNB?=
+ =?utf-8?B?dlY1SzIrRXVYN0szMHRhbk9oaFNSeFhwMlVhVDhNSVFvYmxadndvV1lGUWVG?=
+ =?utf-8?B?aUNSNzhwKzY4Ynk0K2pBb0haVTdhdk1wbW5UR2IrSjkrTDA4cjNCMWo2WDh5?=
+ =?utf-8?B?WERiNVdrSXlmcDVPL3o1cXBLY29UMnpNTGlsY1lEbURUZ3Y4dHVDWk1OTWtx?=
+ =?utf-8?B?NzBxYlRmVzZIaUNoWnE5cVlEaERKaWlvMjN1azZwNGYwRHRPOEhhK1Q4Z2Zk?=
+ =?utf-8?B?cjFjSm9JQ3BBRG1Ta0lMOWU3am5lVjVuQkZneWU4ODczcWsyL2laT1dCVk1F?=
+ =?utf-8?B?clZJQzFtUEhIblBVb2poNEdTMEdSUzErYnNMSnVlcndvN1VVeHBWcmQxc1B2?=
+ =?utf-8?B?OFlTaUNEOXVkcGlWWWxQckovOWVKZEY3V1JYemV6ODZsbHZLUVRBSFMwL0ZI?=
+ =?utf-8?B?ME5yWjVFWnJ0bE14eDNUbEoxUG5JSEY2ZUFNSGFFQzFlbjlsM05UcDZidHNF?=
+ =?utf-8?B?aTl2NVRSeVhrZkFzRjFsZzI2cFBCRWJzbXR2NXVCamF2Ynp4MXZ6ZWZKK05w?=
+ =?utf-8?B?ZER4Q3BKalQxbnhncFdPQWRveDV2L01PanJoNG1FaEdTeDljMzVXcW9xTUM3?=
+ =?utf-8?B?a3IwYld0Q2RONy9pY2dpMk1lNlBZd2VvR1lRNlBIQXVqUDF0S0RJMHdKVExF?=
+ =?utf-8?B?SmFIYTRsK2hRNjEraW5DNFN5R0lYbXZETERmLzhjWlEyUUFXS3hUOFdzWFpa?=
+ =?utf-8?B?YVdLdHhsK2VXZHhWS3JOcTRCZUxNdnhGSzFLVXp2V3prWEJ0RFVQbkh6cUZ5?=
+ =?utf-8?B?d2tpTmJ1V1FLWitwYzJqWWZnb21HbER5Ty9jRTV2KzlnR3JiM3Ryb0JlTWRm?=
+ =?utf-8?B?TElCQ3NrUFNnODNKQjA5NU5ONzJoNzdHUEhxbFFxVSswZE0zaitsYXkzcHEz?=
+ =?utf-8?B?VGVEZ0NuUE1DQ1ZlL01XZmJJZmd2Zmk2blYrWVEzOUh0NjFiU1EyQXNOZnBn?=
+ =?utf-8?Q?GhGXNY1jxQraYrRn8p9vlqPiQ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d309a8ac-67f8-4eb1-4ded-08de16259bf4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 13:26:32.1265
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 89sdb2f2Fv2urq1vGDEDGQyK7IvKa8V6ROCtZzkLMxlL130gcISrrC84u91ujrHE
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6756
 
-The Renesas RZ/N2H (R9A09G087) SoC includes a Temperature Sensor Unit
-(TSU). The device provides real-time temperature measurements for
-thermal management, utilizing a single dedicated channel for temperature
-sensing.
+On 10/28/25 14:09, Pierre-Eric Pelloux-Prayer wrote:
+> BO's reservation object must be locked before using
+> amdgpu_vm_bo_update_shared otherwise dma_resv_assert_held will
+> complain in amdgpu_vm_update_shared.
+> 
+> Signed-off-by: Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
 
-The TSU loads calibration data via SMC SIP.
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a09g087.dtsi | 46 ++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-index 5eef8c18037e..db117b6f75a1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087.dtsi
-@@ -36,6 +36,7 @@ cpu0: cpu@0 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C0>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -46,6 +47,7 @@ cpu1: cpu@100 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C1>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -56,6 +58,7 @@ cpu2: cpu@200 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C2>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -66,6 +69,7 @@ cpu3: cpu@300 {
- 			next-level-cache = <&L3_CA55>;
- 			enable-method = "psci";
- 			clocks = <&cpg CPG_CORE R9A09G087_CLK_CA55C3>;
-+			#cooling-cells = <2>;
- 			operating-points-v2 = <&cluster0_opp>;
- 		};
- 
-@@ -244,6 +248,17 @@ wdt5: watchdog@80083400 {
- 			status = "disabled";
- 		};
- 
-+		tsu: thermal@80086000 {
-+			compatible = "renesas,r9a09g087-tsu", "renesas,r9a09g077-tsu";
-+			reg = <0 0x80086000 0 0x1000>;
-+			interrupts = <GIC_SPI 713 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 714 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "adi", "adcmpi";
-+			clocks = <&cpg CPG_MOD 307>;
-+			power-domains = <&cpg>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		i2c0: i2c@80088000 {
- 			compatible = "renesas,riic-r9a09g087", "renesas,riic-r9a09g077";
- 			reg = <0 0x80088000 0 0x400>;
-@@ -844,6 +859,37 @@ sdhi1_vqmmc: vqmmc-regulator {
- 		};
- 	};
- 
-+	thermal-zones {
-+		cpu-thermal {
-+			polling-delay = <1000>;
-+			polling-delay-passive = <250>;
-+			thermal-sensors = <&tsu>;
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&cpu0 0 1>, <&cpu1 0 1>,
-+							 <&cpu2 0 1>, <&cpu3 0 1>;
-+					contribution = <1024>;
-+				};
-+			};
-+
-+			trips {
-+				target: trip-point {
-+					temperature = <95000>;
-+					hysteresis = <1000>;
-+					type = "passive";
-+				};
-+
-+				sensor_crit: sensor-crit {
-+					temperature = <120000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+
- 	stmmac_axi_setup: stmmac-axi-config {
- 		snps,lpi_en;
- 		snps,wr_osr_lmt = <0xf>;
--- 
-2.51.1
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> index ff98c87b2e0b..830412f04b6c 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c
+> @@ -81,13 +81,20 @@ static int amdgpu_dma_buf_attach(struct dma_buf *dmabuf,
+>  	struct drm_gem_object *obj = dmabuf->priv;
+>  	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+>  	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
+> +	int r;
+>  
+>  	if (!amdgpu_dmabuf_is_xgmi_accessible(attach_adev, bo) &&
+>  	    pci_p2pdma_distance(adev->pdev, attach->dev, false) < 0)
+>  		attach->peer2peer = false;
+>  
+> +	r = dma_resv_lock(bo->tbo.base.resv, NULL);
+> +	if (r)
+> +		return r;
+> +
+>  	amdgpu_vm_bo_update_shared(bo);
+>  
+> +	dma_resv_unlock(bo->tbo.base.resv);
+> +
+>  	return 0;
+>  }
+>  
 
 
