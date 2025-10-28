@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-873745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4757C149D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:25:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB7AC149CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:25:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8CA219C10AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84CBE4813A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D3532F744;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE6E32F77F;
 	Tue, 28 Oct 2025 12:23:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LkN5orKn"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BnIeIH5j"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7232D0EC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C53632E135
 	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654203; cv=none; b=t6fVY5K9cz/edB3no7iCHJkQMXEe/sffCkcDyffm+RFSRSrbKzGFdzc02Y52o5qL319gJDs59Sx7vlGg7WBwHSobU0tZ4suUXFVYNhkU1TvA4qaCxtPzL50OJmYaw3EaZo6XAaDhvx3bptT5RFyLjp6Nyj4i4gBYkiG2U2DAuyA=
+	t=1761654203; cv=none; b=ofA0Tice/AKtBApwACtjUG4Kp3JBVpVT/1IpjpHhMlkGsB/OxtN4ejDmoSeauhIGqUPRPxhc+Ew/ybF5rLuv9AUaemyVDl3tF8pxe1aSQJ0jAucFkR+e1fIqMGVGXLRyaEKXuIUAV+FZm1HtXfFcofgXwYHHrRLwnIYnvfYwSPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761654203; c=relaxed/simple;
-	bh=CcfjXkudmcRMkM5k4FnFQVn2Pj1DpNZz1VwIHs0i84c=;
+	bh=yhgJHAx9fPc8H/lCyHycOlGU2mO1WZaQYsqIZeybbiw=;
 	h=From:Date:Subject:MIME-Version:Message-Id:In-Reply-To:To:Cc:
-	 Content-Type:References; b=KA8I3ivb7Yv+eDixYl6RxoXebbT+qOP9jFpTYFaXFqBixe6xsbAbkox92vocojZYnKlFxCvnej/NTqcnD5v77b/7FOgFr1F4bx36BG7GMDL+uZmkqaSfsn3ulRD0WHD9CBvuMJBQjU3IV0G2G306gNucevUKygIY9C5Uic17DlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LkN5orKn; arc=none smtp.client-ip=210.118.77.12
+	 Content-Type:References; b=U8wIajh41LuQ1eU3q5ngH9dTD5VX7DyRTESLAqbKIJe5ZQvMVMra2mcXvmbinqcmMnf83RiHAdm3O3JGbBHrK4bdsdiMcSwPt63bqNZzh8Wyg8Z8hIfYdN7GLSIoUiBTTnrkml9e9yjxHzAd7h6Gp6BHQx5FnbL0XSetUyjgL+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=BnIeIH5j; arc=none smtp.client-ip=210.118.77.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251028122318euoutp0242cb6fb8f07ad3db4e735a6c61ace25c~ypyj0t17s0282502825euoutp02V
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:23:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251028122318euoutp0242cb6fb8f07ad3db4e735a6c61ace25c~ypyj0t17s0282502825euoutp02V
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251028122319euoutp0185a46675e5efe0ce14b393b2d292c4f1~ypyk7ZWq00496004960euoutp01k
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:23:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251028122319euoutp0185a46675e5efe0ce14b393b2d292c4f1~ypyk7ZWq00496004960euoutp01k
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761654198;
-	bh=uWMsqhhcsDbSWAzMcyI6QgsDz6D9C7w2POWICu7CupQ=;
+	s=mail20170921; t=1761654199;
+	bh=Lm82DRGUZZTV1/beTKsFXySMTVqtnJxLBKgmXs1gVko=;
 	h=From:Date:Subject:In-Reply-To:To:Cc:References:From;
-	b=LkN5orKn9XHXubVcNTl/1nuQvVq/uHBE3gmWBWr+njVfDGe1qwKGccWy7Qxfxhm73
-	 49AfQbivz9L/BefYPWUM7iENdKJsXJn+iYMhWgpqv5OdVk9PjyvmIJ89YOoRJsA+UY
-	 s/oYE8G8ywiXZMSqRTFvuNEigb0hGQsnDHVhhI6c=
+	b=BnIeIH5jEm0VOKgBrzpMbb1uakOkoeayhb74hp0j9RjEqIYQ9EVWNhalDlmIwitFP
+	 jS/H83dsM39aXBHimHfxdD23J7JTzy4buroRirlXUeUAUlf6q/vqiqP1EPc/KOWpaR
+	 NpGDcXgj3sSnsomxoIMhIeOy5C8FJPrNfZFHVpd0=
 Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68~ypyjVyJo80564105641eucas1p1P;
+	20251028122318eucas1p1863a8b44efe27c28a1bcf427d2855c00~ypykGd4I41056510565eucas1p1H;
 	Tue, 28 Oct 2025 12:23:18 +0000 (GMT)
 Received: from AMDC4942.eu.corp.samsungelectronics.net (unknown
 	[106.210.136.40]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251028122317eusmtip2563abe71fe7499c4e71a7162653a7e76~ypyih3a7n2998829988eusmtip2H;
-	Tue, 28 Oct 2025 12:23:17 +0000 (GMT)
+	20251028122318eusmtip2cb42586905d3b5fd524bea75b0831884~ypyjWQEit0671406714eusmtip20;
+	Tue, 28 Oct 2025 12:23:18 +0000 (GMT)
 From: Michal Wilczynski <m.wilczynski@samsung.com>
-Date: Tue, 28 Oct 2025 13:22:34 +0100
-Subject: [PATCH 3/4] pwm: th1520: Use module_pwm_platform_driver! macro
+Date: Tue, 28 Oct 2025 13:22:35 +0100
+Subject: [PATCH 4/4] pwm: th1520: Fix clippy warning for redundant struct
+ field init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +60,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-pwm_fixes-v1-3-25a532d31998@samsung.com>
+Message-Id: <20251028-pwm_fixes-v1-4-25a532d31998@samsung.com>
 In-Reply-To: <20251028-pwm_fixes-v1-0-25a532d31998@samsung.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -73,24 +74,19 @@ Cc: Stephen Rothwell <sfr@canb.auug.org.au>, rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
 	linux-riscv@lists.infradead.org
 X-Mailer: b4 0.15-dev
-X-CMS-MailID: 20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68
+X-CMS-MailID: 20251028122318eucas1p1863a8b44efe27c28a1bcf427d2855c00
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68
+X-RootMTR: 20251028122318eucas1p1863a8b44efe27c28a1bcf427d2855c00
 X-EPHeader: CA
-X-CMS-RootMailID: 20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68
+X-CMS-RootMailID: 20251028122318eucas1p1863a8b44efe27c28a1bcf427d2855c00
 References: <20251028-pwm_fixes-v1-0-25a532d31998@samsung.com>
-	<CGME20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68@eucas1p1.samsung.com>
+	<CGME20251028122318eucas1p1863a8b44efe27c28a1bcf427d2855c00@eucas1p1.samsung.com>
 
-The `pwm_th1520` Rust driver calls C functions from the `PWM` namespace,
-triggering `modpost` warnings due to missing namespace import
-declarations in its `.modinfo` section.
+Clippy warns about redundant struct field initialization when the field
+name and the variable name are the same (e.g., `status: status`).
 
-Fix these warnings and simplify the module declaration by switching from
-the generic `kernel::module_platform_driver!` macro to the newly
-introduced PWM-specific `kernel::module_pwm_platform_driver!` macro.
-The new macro automatically handles the required `imports_ns: ["PWM"]`
-declaration.
+No functional change.
 
 Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 ---
@@ -98,18 +94,18 @@ Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pwm/pwm_th1520.rs b/drivers/pwm/pwm_th1520.rs
-index 0ad38b78be854ab3c10268fb20763d9962f59c0f..5fb123f5e9c6dc3a8ee9a7a47fa778c23213e957 100644
+index 5fb123f5e9c6dc3a8ee9a7a47fa778c23213e957..95a809af48eb16fe13125d4d9f4ee5de20555e77 100644
 --- a/drivers/pwm/pwm_th1520.rs
 +++ b/drivers/pwm/pwm_th1520.rs
-@@ -369,7 +369,7 @@ fn probe(
-     }
- }
+@@ -185,7 +185,7 @@ fn round_waveform_tohw(
+         );
  
--kernel::module_platform_driver! {
-+kernel::module_pwm_platform_driver! {
-     type: Th1520PwmPlatformDriver,
-     name: "pwm-th1520",
-     authors: ["Michal Wilczynski <m.wilczynski@samsung.com>"],
+         Ok(pwm::RoundedWaveform {
+-            status: status,
++            status,
+             hardware_waveform: wfhw,
+         })
+     }
 
 -- 
 2.34.1
