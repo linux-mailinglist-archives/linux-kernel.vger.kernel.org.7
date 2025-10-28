@@ -1,110 +1,238 @@
-Return-Path: <linux-kernel+bounces-873246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A1BC137DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:18:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41FDC137B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D34BC4EE798
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5433D3BF7A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4632D662F;
-	Tue, 28 Oct 2025 08:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D022D7DF9;
+	Tue, 28 Oct 2025 08:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="CNhQAqwA"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWoiZ3Qn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3300F280A20;
-	Tue, 28 Oct 2025 08:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C177E1BC4E;
+	Tue, 28 Oct 2025 08:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639295; cv=none; b=Le3+C8c/96QNAJC4JVVO1JU2e9bMn+fXe+3OIz3PatOGteqIY2/l8zajKZTw7LaaCDjcl1pNrWs5HW8jIClEHeacOz2IDHR5Y5/kVEN4I5NNh5TRKI7sUEqDajWk+0x9xb36GsLU/sRe1hN4Rkq7OYf/M1BqqPrz19N2+xS4k4g=
+	t=1761639369; cv=none; b=t7HQoP0c1JcxwyAsfqdPFEA1Pu0g6L8atNyHHNd8e2msQz+kcw2TSz2728eptaQS13QYq3ZJvbEVJPDu51kSKKTjboK6FCgY8gzJonej8EYajfuYefyXu4ymhcSYzAg0rMF7L0LqpQp/k01Bv28wAJEDT9R5NLnIQ09s/E/Q7XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639295; c=relaxed/simple;
-	bh=7fmqbVVoMRKd5rRb/hEQUoiCjHPfJ5btS65o8VIO+qs=;
+	s=arc-20240116; t=1761639369; c=relaxed/simple;
+	bh=ZAfmU0FpKyd3OOPLc6LD6luNCN153GGX0iR9vaXLeYE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cfcsbEUHKIzWyJXF/1ckNi7T5ptnIW0x3yAxh1eZnpmDY060z06S6Dr0G7ZW47UJ/2nGcd+7hwMVxXOyW2xAZt6Iut1RiP4Cj/117jZCaRg4nwfHrfc58gOdyfSWXZVHRrXlvprXRZFwGA4JMx8PssJBbbfrBCndxQVbi5hAof4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=CNhQAqwA; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B6D7E1038C10B;
-	Tue, 28 Oct 2025 09:14:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1761639291; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=9J6GPm0KB+YmbPNCLYLirD9SAtVysCPH8yqWFXkk3qs=;
-	b=CNhQAqwADoG00qcUlWsKZqMPb4Z8b0UWqQsjp6ogHOWx4O8cUeGrzGQco+ITYPpZ/ArrBz
-	0h7caImJmOOFscLgpXTK9tctDRwmu6nyq0fDxj4wSYKFTItC0JRfk/j4UY7d4LYAmHbOoE
-	/G/tBERG/Ru9LfX+CH/ZtZoSEZzY0Cs50CnjnResMkDwQG7CSWd2/wvaa39+hzc6ycCPrU
-	RqcQUTzn1fnBz2RSMI8tplXFIRlwmIzHJjCSFAMiV7iGsrjbc6pfpoDMgrzABPP+iSKdvI
-	SxkOyM2iD42nWRaVVT1EzF+EnHVs8+RdsK5Ui2YtnY4SRWp8tK5nPxp2kbUXHA==
-Date: Tue, 28 Oct 2025 09:14:46 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
-	sr@sladewatkins.com
-Subject: Re: [PATCH 5.4 000/224] 5.4.301-rc1 review
-Message-ID: <aQB7dvaiRIMsqhWS@duo.ucw.cz>
-References: <20251027183508.963233542@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=otmV0zyntr+wL+fRG12nXohnP6RA0GgUe3CiE8X4nEEGyNVEYcNId5/X72nNpTrKFHB3Qw6BjX1HeuUY3/tuwNAQRjIs0s72KWLcBXR8qFOoORgHQUBGRZ0OXnEUDcHuS1zoIdg/buBB0W5OqVM/ainVgXQN6pGk5zYRqhjX++g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWoiZ3Qn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F795C4CEE7;
+	Tue, 28 Oct 2025 08:16:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761639369;
+	bh=ZAfmU0FpKyd3OOPLc6LD6luNCN153GGX0iR9vaXLeYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HWoiZ3Qn5h7Wj7+GlNEaku5DiODphQqYkXj3x7kSib8C3OczC4kdBt20OExXPaCGy
+	 nEvr1LCh5A99hln7xzGEDbRznpr7JjpBJDfxauEN0o7/VU5yHbdMxneK7MUUc/kZdy
+	 ovkt0Gm220ye/xikz0kX2Mg8XZn5JGKQo+GsifRdzJl4UZIic/+z8W+w5aZ3A5plKU
+	 +2YsiRlkl5AHZ1M3IwtsDMARTNoo+oInELCcgFUiaSyN6zNB6PFSzq72oxgCaVBT86
+	 40QJbPnkpz5kLUT9Jr2KVjIDamUPnSvxnOo1v81BDGoLSp3+qOam7sLtD/yMzPS9XN
+	 Vcm++bCNu8P7Q==
+Date: Tue, 28 Oct 2025 09:16:06 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Vinod Koul <vkoul@kernel.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 1/8] dt-bindings: net: qcom: document the ethqos
+ device for SCMI-based systems
+Message-ID: <20251028-wonderful-orchid-emu-25cd02@kuoka>
+References: <20251027-qcom-sa8255p-emac-v3-0-75767b9230ab@linaro.org>
+ <20251027-qcom-sa8255p-emac-v3-1-75767b9230ab@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="re0tYzvWO2vvUyBN"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <20251027-qcom-sa8255p-emac-v3-1-75767b9230ab@linaro.org>
+
+On Mon, Oct 27, 2025 at 04:44:49PM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Describe the firmware-managed variant of the QCom DesignWare MAC. As the
+> properties here differ a lot from the HLOS-managed variant, lets put it
+> in a separate file.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  .../devicetree/bindings/net/qcom,ethqos-scmi.yaml  | 101 +++++++++++++++++++++
+>  .../devicetree/bindings/net/snps,dwmac.yaml        |   5 +-
+>  MAINTAINERS                                        |   1 +
+>  3 files changed, 106 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos-scmi.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos-scmi.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b821299d7b30cdb802d9ee5d9fa17542b8334bd2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos-scmi.yaml
+> @@ -0,0 +1,101 @@
+> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/qcom,ethqos-scmi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Ethernet ETHQOS device (firmware managed)
+> +
+> +maintainers:
+> +  - Bjorn Andersson <andersson@kernel.org>
+> +  - Konrad Dybcio <konradybcio@kernel.org>
+> +  - Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> +
+> +description:
+> +  dwmmac based Qualcomm ethernet devices which support Gigabit
+> +  ethernet (version v2.3.0 and onwards) with clocks, interconnects, etc.
+> +  managed by firmware
+> +
+> +allOf:
+> +  - $ref: snps,dwmac.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sa8255p-ethqos
+> +
+> +  reg:
+> +    maxItems: 2
+> +
+> +  reg-names:
+> +    items:
+> +      - const: stmmaceth
+> +      - const: rgmii
+> +
+> +  interrupts:
+> +    items:
+> +      - description: Combined signal for various interrupt events
+> +      - description: The interrupt that occurs when HW safety error triggered
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: macirq
+> +      - const: sfty
+> +
+> +  power-domains:
+> +    minItems: 3
+
+maxItems instead
+
+But the other problem is that it is conflicting with snps,dwmac.yaml
+which says max 1 is allowed. You need to fix that, along with
+restricting other users of that shared schema to maxItems: 1.
+
+> +
+> +  power-domain-names:
+> +    items:
+> +      - const: core
+> +      - const: mdio
+> +      - const: serdes
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  dma-coherent: true
+> +
+> +  phys: true
+
+Missing maxItems.
+
+> +
+> +  phy-names:
+> +    const: serdes
+> +
+> +required:
+> +  - compatible
+> +  - reg-names
+> +  - power-domains
+
+power-domain-names
+
+Shouldn't phys be required? How device can work sometimes without its
+phy?
 
 
---re0tYzvWO2vvUyBN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    ethernet: ethernet@7a80000 {
+> +        compatible = "qcom,sa8255p-ethqos";
+> +        reg = <0x23040000 0x10000>,
+> +              <0x23056000 0x100>;
+> +        reg-names = "stmmaceth", "rgmii";
+> +
+> +        iommus = <&apps_smmu 0x120 0x7>;
+> +
+> +        interrupts = <GIC_SPI 946 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 782 IRQ_TYPE_LEVEL_HIGH>;
+> +        interrupt-names = "macirq", "sfty";
+> +
+> +        dma-coherent;
+> +
+> +        snps,tso;
+> +        snps,pbl = <32>;
+> +        rx-fifo-depth = <16384>;
+> +        tx-fifo-depth = <16384>;
+> +
+> +        phy-handle = <&ethernet_phy>;
+> +        phy-mode = "2500base-x";
 
-Hi!
+Incomplete example - missing phys.
 
+> +
+> +        snps,mtl-rx-config = <&mtl_rx_setup1>;
+> +        snps,mtl-tx-config = <&mtl_tx_setup1>;
+> +
+> +        power-domains = <&scmi8_pd 0>, <&scmi8_pd 1>, <&scmi8_dvfs 0>;
+> +        power-domain-names = "core", "mdio","serdes";
+> +    };
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index dd3c72e8363e70d101ed2702e2ea3235ee38e2a0..312d1bbc2ad1051520355039f5587381cbd1e01c 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -71,6 +71,7 @@ properties:
+>          - loongson,ls7a-dwmac
+>          - nxp,s32g2-dwmac
+>          - qcom,qcs404-ethqos
+> +        - qcom,sa8255p-ethqos
+>          - qcom,sa8775p-ethqos
+>          - qcom,sc8280xp-ethqos
+>          - qcom,sm8150-ethqos
+> @@ -180,7 +181,8 @@ properties:
+>            - const: ahb
+>  
+>    power-domains:
+> -    maxItems: 1
+> +    minItems: 1
+> +    maxItems: 3
 
-> This is the start of the stable review cycle for the 5.4.301 release.
-> There are 224 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-6.6, 5.4 pass our testing, so risc-v compilation problem seems to be
-5.10 and 5.15 only.
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.4.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+Ah, you did it. But you need to update all other bindings as well.
 
 Best regards,
-                                                                Pavel
---=20
-In cooperation with DENX Software Engineering GmbH, HRB 165235 Munich,
-Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Krzysztof
 
---re0tYzvWO2vvUyBN
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaQB7dgAKCRAw5/Bqldv6
-8pPYAJ0W7deXs5Gc72m/qcEdKoVsIQx52QCfaQBbWNgq6cx+YukY19tPYyIko2Y=
-=q4FR
------END PGP SIGNATURE-----
-
---re0tYzvWO2vvUyBN--
 
