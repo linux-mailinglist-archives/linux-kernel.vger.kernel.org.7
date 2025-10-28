@@ -1,139 +1,127 @@
-Return-Path: <linux-kernel+bounces-873863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B42DC14F63
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:48:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CEEC14EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB75D464EBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:44:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D734C307
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFC9F3328F8;
-	Tue, 28 Oct 2025 13:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144EA334C2E;
+	Tue, 28 Oct 2025 13:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="HGrqsDy1"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XW1JDYO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D901D2AD32;
-	Tue, 28 Oct 2025 13:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B5D33343B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659043; cv=none; b=EE2481xmDFj6tQBRHLyLoyjqaqA3P5Di6rp+0faCuNZVOUA64m2ovELhsQpUO4lfvC5lgUtH20Vib0cabfZ6Ifsiolfx33MULJ7316XZX0575zA1kVY8Ai4KIi7J9cA/n3qqVRccv3fEZW9DJspRWOVSa9za3V2yIrzvDfxpq24=
+	t=1761658991; cv=none; b=MZUQf++y0jo+Hh63saY32O+KxGjc6sAmF+bIl8/Ct0fTyb9jEJn01qRz91jON7AoG81UwF/DU+UzS4A/mRbeeO4EAI4ZkZKDrLhJta88m1UNx7kGUGQyrQ7oabA8leYZl9wFa7w91W106X41vxZg1iUbNm/gCcj4gbqRA7BPXmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659043; c=relaxed/simple;
-	bh=0eCX2hzh9/rOQP2c5dwLPKKJYD0q5MTnLSDk5aNZX9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQOQmU58spKc+AtA23aun0dKZHQgVYV2WzPCmz9IKQx8KEwJwwGvumj0XLuuBD4fQUMqUxUWb63zirx863I1BtLhbG2unzC1IJTQ2R841Oin7SBilZ88/q8offsyrZBMuxZxSRHz/GrrSuT9+aeBBfALZJG8nbuzo3Md9KgbSTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=HGrqsDy1; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5A36925E06;
-	Tue, 28 Oct 2025 14:43:52 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 9W7edxZGJM9z; Tue, 28 Oct 2025 14:43:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1761659031; bh=0eCX2hzh9/rOQP2c5dwLPKKJYD0q5MTnLSDk5aNZX9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=HGrqsDy1K11pC3XvY+UZFFi197y53VLfS+CJS6xLRum+crvECeY6OPwkQBtfYtcOh
-	 GcPYq9q3DZX6yTZZlQTTMfFQngnCXPBt3Gndm3D17Ns4SK64RSz5lQuv4KfcQ/cwAO
-	 ewuXsBpwxr603WwRlQQi6qNeB5mGGgbmOkCLu1RuoEIEmLx6d+Kxr2qfvGWc/cTtps
-	 ILwYJgqk1ezpSICZbqnfp8pXh6+sjSBiX/UL4eZb3fDxOKejmXkTKMEC2s9NISpLzw
-	 EcF1oXDYcUunXpNHckT5wCMczVYYVo5OU9viNmHQ/pZi2ZK7vpg1Mh/8RKClDwDUR9
-	 lJEs4Dq+2yUeQ==
-Date: Tue, 28 Oct 2025 13:42:44 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org,
-	Han Gao <gaohan@iscas.ac.cn>, Han Gao <rabenda.cn@gmail.com>,
-	linux-kernel@vger.kernel.org, Guo Ren <guoren@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-riscv@lists.infradead.org, Fu Wei <wefu@redhat.com>
-Subject: Re: [PATCH v3 5/5] riscv: dts: thead: Add reset controllers of more
- subsystems for TH1520
-Message-ID: <aQDIVJNX0fOTbp7p@pie>
-References: <20251014131032.49616-1-ziyao@disroot.org>
- <20251014131032.49616-6-ziyao@disroot.org>
- <aP9d3-deezGtCbHr@gen8>
+	s=arc-20240116; t=1761658991; c=relaxed/simple;
+	bh=RqU8ooxGP3d5BGDqht1wRrVV5zKW2fpWna7YCD6BgNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uAOHVEGg/TLP5ZS1rbNGnHkcwesGA45an/ncxH5F9R9NiHPHYKmW0Nj5io863RjGegvm33622GaKXmUj7S1S7uwa6CBOEgqdxQlMP5xlANLz8KswNG6ST25zAwqzeku8T/YF0Hazvqi2Rg87FHM3FqDjEeUgPi1RQfb1lkfBu0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XW1JDYO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D161FC4CEFD
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761658990;
+	bh=RqU8ooxGP3d5BGDqht1wRrVV5zKW2fpWna7YCD6BgNw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XW1JDYO5bhGuvRO+8LaNPWDiMiEqn46XlG5pAHuTYPkkUwBfTHWIAo+yXKtoSVHIS
+	 QwxYFYx5WIJJEeB4g3QNRzjXzTfPYrjPG+ZwdI3xBC0Daac07Z4zohSUGonNyodnii
+	 /AyQ1SnXero0WO6CulXzUwyYA6ovHLfupI2mwbWbcFKefRYy0zFCHA4sRvLQPw7W6q
+	 WovyFEWAD0BLQZ02LNlTlNLYo5R2bsLc+sM8KPQ820jhB/fbIyk8YKnqZ8TMcjebhG
+	 sYIERJasZzoYs1nUXRkmota1/ZmbGbMYSx9f4n/KW8tTjClw7rDR5fKA7XKgJd/aC1
+	 vfHC9vKfIAtaA==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-36527ac0750so52942581fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:43:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVrMLm2Do3peNH+Pa2FBW0/AKBNbFumE0jhUGCzl2xr1Mpn57Yke0SjRfeToyV0Xlr6K2mp5IShQiRifqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhYoXKJzd1WLjAMguGYWX7nOz5DIwABuVZbllZR3rj1sL+BlPt
+	ZR8z4aVF3FrSOt8WM+dcNiVDot5K/64WBqkNBQ2cikVoeyLWRzbXRpeSdO4vspabDJbuILYmuyE
+	NETUblICxcYH6TnQ8QlMiSZqYBy8X798=
+X-Google-Smtp-Source: AGHT+IHkIw26u7F419Pj1lh4qhYibZamlABQDX5PY5n3HBNOILBNvfOulAOIRz2raMKa11mn/73gf+9CSS24BrZo03Y=
+X-Received: by 2002:a05:651c:2352:20b0:36e:ca93:62df with SMTP id
+ 38308e7fff4ca-3790768fa7fmr9485091fa.3.1761658989237; Tue, 28 Oct 2025
+ 06:43:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP9d3-deezGtCbHr@gen8>
+References: <20251023082129.75612-1-maqianga@uniontech.com>
+ <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com> <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
+In-Reply-To: <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Tue, 28 Oct 2025 14:42:57 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
+X-Gm-Features: AWmQ_bkQl15BrZRzZGKbVV0HuIh0-gITf1_INVKqu5_rHF8PwaNBiut4Akzbt3c
+Message-ID: <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 11:56:15AM +0000, Drew Fustini wrote:
-> On Tue, Oct 14, 2025 at 01:10:32PM +0000, Yao Zi wrote:
-> > Describe reset controllers for VI, MISC, AP, DSP and AO subsystems. The
-> > one for AO subsystem is marked as reserved, since it may be used by AON
-> > firmware.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/riscv/boot/dts/thead/th1520.dtsi | 37 +++++++++++++++++++++++++++
-> >  1 file changed, 37 insertions(+)
-> > 
-> > diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > index e680d1a7c821..15d64eaea89f 100644
-> > --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> > +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> > @@ -277,6 +277,12 @@ clint: timer@ffdc000000 {
-> >  					      <&cpu3_intc 3>, <&cpu3_intc 7>;
-> >  		};
-> >  
-> > +		rst_vi: reset-controller@ffe4040100 {
-> > +			compatible = "thead,th1520-reset-vi";
-> > +			reg = <0xff 0xe4040100 0x0 0x8>;
-> 
-> Is this intentional so that the first VI_SUBSYS register, VISYS_SW_RST
-> at offset 0x100, will have an offset of 0 from the thead,th1520-reset-vi
-> reg in the driver?
+On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wrote:
+>
+>
+> =E5=9C=A8 2025/10/23 16:30, Ard Biesheuvel =E5=86=99=E9=81=93:
+> > On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> wrote:
+> >> In the efi_virtmap_init(), permission settings have been applied:
+> >>
+> >> static bool __init efi_virtmap_init(void)
+> >> {
+> >>          ...
+> >>          for_each_efi_memory_desc(md)
+> >>                  ...
+> >>                  efi_create_mapping(&efi_mm, md);
+> >>          ...
+> >>          efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_permis=
+sions);
+> >>          ...
+> >> }
+> >>
+> >> Therefore, there is no need to apply it again in the efi_create_mappin=
+g().
+> >>
+> >> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI Runti=
+me Services regions")
+> >>
+> >> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> > No, efi_memattr_apply_permissions() uses the /optional/ memory
+> > attributes table, whereas efi_create_mapping() uses the permission
+> > attributes in the EFI memory map. The memory attributes table is
+> > optional, in which case any RO/XP attributes from the memory map
+> > should be used.
+> >
+> I see.
+>
+> Then, can it be modified like this?
 
-Yes, it's intentional for both VI and DSP subsystem. As you could see,
-excluding these TEE-only shadows, the first reset-related register in
-VI_SUBSYS is at offset 0x100. For DSP subsystem, it's at offset 0x28
-(and is the only reset-related register).
+No
 
-I want to keep the first 0x100 bytes in VI_SUBSYS, and first 0x24 bytes
-in DSP_SUBSYS free, because they're clock-related registers, and should
-be reserved for clock driver introduced in the future.
+> --- a/arch/arm/kernel/efi.c
+> +++ b/arch/arm/kernel/efi.c
+> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct *mm,
+> efi_memory_desc_t *md)
+>                  desc.type =3D MT_MEMORY_RWX_NONCACHED;
+>          else if (md->attribute & EFI_MEMORY_WC)
+>                  desc.type =3D MT_DEVICE_WC;
+> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
 
-In TH1520 SoC, only AON and AP subsystems have strictly separated reset
-and clock register regions. For all other subsystems like VI, VO, VP,
-MISC and DSP, reset and clock registers tightly follow each other, but
-they don't interleave.
+This will be true for RO, XP or RO+XP.
 
-This series follows the way in which VO clock/reset controllers are
-modeled in devicetree, where the subsystem region is split into two
-nodes, one for clock and one for reset. This will lead to less regular
-address/size values like what you noticed, as the registers do stay very
-close.
+> +               desc.type =3D MT_MEMORY_RO;
 
-> [snip]
-> > +		rst_dsp: reset-controller@ffef040028 {
-> > +			compatible = "thead,th1520-reset-dsp";
-> > +			reg = <0xff 0xef040028 0x0 0x4>;
-> 
-> Similar to rst_vi, is this intentional so that the first register,
-> DSPSYS_SW_RST at offset 0x28, will have an offset of 0 in the driver?
-> 
-> Thanks,
-> Drew
-
-Best regards,
-Yao Zi
+This will apply RO permissions even to XP regions, which need to be writabl=
+e.
 
