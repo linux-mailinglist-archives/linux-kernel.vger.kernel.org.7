@@ -1,226 +1,140 @@
-Return-Path: <linux-kernel+bounces-873625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5965C1443A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:07:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 650CFC14452
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:08:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC1318871AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:02:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A651884EBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8A246327;
-	Tue, 28 Oct 2025 11:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BDD25487C;
+	Tue, 28 Oct 2025 11:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nauEeugs"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kg1KvEIr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7F220687;
-	Tue, 28 Oct 2025 11:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC7B29CB3C;
+	Tue, 28 Oct 2025 11:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761649324; cv=none; b=VWB90+Y+MtBaDTWSKf670KOpAtrOlMVgSmGouq0DP6AxZv3M3sOUNPS+0k+mcZcu0IukIEoks0meKwjxCH9DyUqpfoy+km+czuTprZP+1puZWwCOxv6Dy4ExJFC3OoZoHf2f0tnjSun56/8bsWnF0nKGOuB94Ud+DBHgjYw5TxM=
+	t=1761649418; cv=none; b=MmpEgyUqjAy9U4XHpeEyYWrp9CAHrBjs8VhnzSB1/1R+fS7tcs4jtUZL8MRkH8rGc/nrz9IkoTu+cNsjYQKmCIBJUsQ7a4Ng1rJTRLTM/c3e7Gt2aubtackafViu2SGBbuZEDQ6ObvkMzavV2DB5OXQJ/SXx4DinvfXdGt/KFzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761649324; c=relaxed/simple;
-	bh=cCy7XfJQQ6tmEWKrz8y/ZGaRRcmwc7CUhVpp/ftQ01E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZAxr9Ymu1dJDJM+svSkfddd/bHBaYcQOhIq5T1dNbX1hpWhP1cB28BvbIWXrsysgw9Pu7SGxCWnb98HQFVuNUt4C+ZcZEHB7aU3DYi5QPoxBkjPqip1v8C11SoMsHaQVJCIHwg8b7lktBSS9KsYQXfhfrNZ3EcNp4qkgcldFJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nauEeugs; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=BKyHZS2EZCHEG5HvTJgD6zBUF5GxKhRVP4H8eLNSKjM=; b=nauEeugsTVqeocAIeaAK6vw9wp
-	S+kz22OoJMAA6gEOdXCP9JHtlp3/tWukoqjiDmBy/qRWHhy7639BM3PkMWVlC1SXoIxwOlk5monSk
-	5CkbNM/tNw+Q8nTgJAuV1e96GKBV7X5AjR2TmP/wxLjuuAMzI4HMocDvvJ11P5mwansMLPFiZGjbk
-	GuWrnpHczU+VGAtykBhFNKcv9WLFADBrzQr8mJ0iElQyb340D4ijFwmsB4A1INOjSs5tgNJueMY0c
-	SvZ/SxcZhb5YhgUvRwWXYzy+Aj48EiEBiT4MpBbjMzTnA2Uv634b0PKiqiWE6H0vjvq/DjBLQLB+L
-	dZXrqAHA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDgat-00000004ChB-42b7;
-	Tue, 28 Oct 2025 10:06:24 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CE07D300323; Tue, 28 Oct 2025 12:01:53 +0100 (CET)
-Date: Tue, 28 Oct 2025 12:01:53 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
-Subject: Re: [PATCH 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
- called from anywhere
-Message-ID: <20251028110153.GZ4067720@noisy.programming.kicks-ass.net>
-References: <20251025001849.1915635-1-tj@kernel.org>
- <20251025001849.1915635-4-tj@kernel.org>
- <20251027091822.GH3245006@noisy.programming.kicks-ass.net>
- <aP-XAGrWQY1d6Bq9@slm.duckdns.org>
- <20251027181028.GB988547@noisy.programming.kicks-ass.net>
- <aP-3QsygWJRn6Z2u@slm.duckdns.org>
+	s=arc-20240116; t=1761649418; c=relaxed/simple;
+	bh=nkkLrAlevRXkLcLG9RiZU4O8iz5dJyIEy8uwyVIezRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qJbcwKtk7xY6sRGHeallqIxT0qV3h42qWdgzNwg14BYT1pNWJ4qmGnp5e3xeRQc/D3kmXF9C4tCA39W1iCgYiTAzgMmb8evdIypKdVugrygxPqa0cL4JL7Y8ik+3yd/vhw+NA0X4NOrP358QTDCh5WOpmkXdzJrVR/xYCag0oAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kg1KvEIr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE229C4CEE7;
+	Tue, 28 Oct 2025 11:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761649417;
+	bh=nkkLrAlevRXkLcLG9RiZU4O8iz5dJyIEy8uwyVIezRY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=kg1KvEIrI0fCuYpSzXcLta67NTsMjXgSPiH+0NMTI2dqW285AvjYIcuNr7SgfYHNq
+	 64S0SrcpXZKkMBN0EkfSmOZcf0mHQiO83+QWQ6Y0R2m+FGUX9L7en/RiNzTynil1Tm
+	 Bl+EM8B9c7NFAye5YZZmlifI0hR1PssB4PPjt1K/jq2NKkzGL9IDX0ohSUm0FgBJk6
+	 z5CEP7tZVAFsOf4+ykDAocmQ7BWvMt3/kg9IjOt36vedEHBfOMQ6jG1GBLvrMsuzkT
+	 IeiC24nmxQyxANbnHM7fpROaUid7BchpMExPsy5IP44a5wx0h95W19fa7IHGNTqYyw
+	 BjPkPdnlDSrRQ==
+Message-ID: <58f812f6-426c-4164-bedd-5744f02d194c@kernel.org>
+Date: Tue, 28 Oct 2025 12:03:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aP-3QsygWJRn6Z2u@slm.duckdns.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: firmware: Add Agilex5 SVC compatible
+ string
+To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>,
+ Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <cover.1761643239.git.khairul.anuar.romli@altera.com>
+ <728e10b5100e3a41d2d4595f227d26df6bdbe205.1761643239.git.khairul.anuar.romli@altera.com>
+ <ec66c0b0-33c0-4036-ad33-c1faf9633e02@kernel.org>
+ <c99c4b5e-a8f9-4de4-8997-6e7aa7e47386@altera.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c99c4b5e-a8f9-4de4-8997-6e7aa7e47386@altera.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 27, 2025 at 08:17:38AM -1000, Tejun Heo wrote:
-> Hello,
+On 28/10/2025 11:59, Romli, Khairul Anuar wrote:
+> On 28/10/2025 5:35 pm, Krzysztof Kozlowski wrote:
+>> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>>
+>> On 28/10/2025 10:28, Khairul Anuar Romli wrote:
+>>> Enable support for the Agilex5 in Stratix10 SoC service layer (SVC) by
+>>> adding the new compatible string "intel,agilex5-svc" in the device tree
+>>> bindings.
+>>>
+>>> This is needed to differentiate Agilex5 from previous SoC generations, as
+>>> Agilex5 uses a different mechanism for mapping reserved memory regions,
+>>> which rely on IOMMU support.
+>>
+>> There are no iommus here, so this feels inaccurate.
+>>
+>> Best regards,
+>> Krzysztof
 > 
-> On Mon, Oct 27, 2025 at 07:10:28PM +0100, Peter Zijlstra wrote:
-> ...
-> > Just for my elucidation and such.. This is when ttwu() happens and the
-> > CPU is idle and you dispatch directly to it, expecting it to then go run
-> > that task. After which another wakeup/balance movement happens which
-> > places/moves a task from a higher priority class to that CPU, such that
-> > your initial (ext) task doesn't get to run after all. Right?
-> 
-> Yes, that's the scenario that I was thinking.
+> I will remove this on the v2 revision as the iommu is part on future 
+> patch series.
+>
 
-So I've been pondering this a bit, and came up with the below. I'm not
-quite happy with it, I meant to share that new queue_mask variable, but
-this came out.
+No, instead please post complete bindings for this device. So all of the
+hardware properties. See writing bindings doc.
 
-
----
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2175,10 +2175,14 @@ void wakeup_preempt(struct rq *rq, struc
- {
- 	struct task_struct *donor = rq->donor;
- 
--	if (p->sched_class == donor->sched_class)
--		donor->sched_class->wakeup_preempt(rq, p, flags);
--	else if (sched_class_above(p->sched_class, donor->sched_class))
-+	if (p->sched_class == rq->next_class) {
-+		rq->next_class->wakeup_preempt(rq, p, flags);
-+
-+	} else if (sched_class_above(p->sched_class, rq->next_class)) {
-+		rq->next_class->wakeup_preempt(rq, p, flags);
- 		resched_curr(rq);
-+		rq->next_class = p->sched_class;
-+	}
- 
- 	/*
- 	 * A queue event has occurred, and we're going to schedule.  In
-@@ -6814,6 +6818,7 @@ static void __sched notrace __schedule(i
- 	clear_tsk_need_resched(prev);
- 	clear_preempt_need_resched();
- keep_resched:
-+	rq->next_class = next->sched_class;
- 	rq->last_seen_need_resched_ns = 0;
- 
- 	is_switch = prev != next;
-@@ -8653,6 +8658,8 @@ void __init sched_init(void)
- 		rq->rt.rt_runtime = global_rt_runtime();
- 		init_tg_rt_entry(&root_task_group, &rq->rt, NULL, i, NULL);
- #endif
-+		rq->next_class = &idle_sched_class;
-+
- 		rq->sd = NULL;
- 		rq->rd = NULL;
- 		rq->cpu_capacity = SCHED_CAPACITY_SCALE;
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2289,9 +2289,16 @@ static int balance_dl(struct rq *rq, str
-  * Only called when both the current and waking task are -deadline
-  * tasks.
-  */
--static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p,
--				  int flags)
-+static void wakeup_preempt_dl(struct rq *rq, struct task_struct *p, int flags)
- {
-+	/*
-+	 * Can only get preempted by stop-class, and those should be
-+	 * few and short lived, doesn't really make sense to push
-+	 * anything away for that.
-+	 */
-+	if (p->sched_class != &dl_sched_class)
-+		return;
-+
- 	if (dl_entity_preempt(&p->dl, &rq->donor->dl)) {
- 		resched_curr(rq);
- 		return;
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2966,7 +2966,12 @@ static void switched_from_scx(struct rq
- 	scx_disable_task(p);
- }
- 
--static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p,int wake_flags) {}
-+static void wakeup_preempt_scx(struct rq *rq, struct task_struct *p, int wake_flags)
-+{
-+	if (p->sched_class != &ext_sched_class)
-+		switch_class(rq, p);
-+}
-+
- static void switched_to_scx(struct rq *rq, struct task_struct *p) {}
- 
- int scx_check_setscheduler(struct task_struct *p, int policy)
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8729,7 +8729,7 @@ static void set_next_buddy(struct sched_
- /*
-  * Preempt the current task with a newly woken task if needed:
-  */
--static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int wake_flags)
-+static void wakeup_preempt_fair(struct rq *rq, struct task_struct *p, int wake_flags)
- {
- 	struct task_struct *donor = rq->donor;
- 	struct sched_entity *se = &donor->se, *pse = &p->se;
-@@ -8737,6 +8737,12 @@ static void check_preempt_wakeup_fair(st
- 	int cse_is_idle, pse_is_idle;
- 	bool do_preempt_short = false;
- 
-+	/*
-+	 * XXX Getting preempted by higher class, try and find idle CPU?
-+	 */
-+	if (p->sched_class != &fair_sched_class)
-+		return;
-+
- 	if (unlikely(se == pse))
- 		return;
- 
-@@ -13640,7 +13646,7 @@ DEFINE_SCHED_CLASS(fair) = {
- 	.yield_task		= yield_task_fair,
- 	.yield_to_task		= yield_to_task_fair,
- 
--	.wakeup_preempt		= check_preempt_wakeup_fair,
-+	.wakeup_preempt		= wakeup_preempt_fair,
- 
- 	.pick_task		= pick_task_fair,
- 	.pick_next_task		= pick_next_task_fair,
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1615,6 +1615,12 @@ static void wakeup_preempt_rt(struct rq
- {
- 	struct task_struct *donor = rq->donor;
- 
-+	/*
-+	 * XXX If we're preempted by DL, queue a push?
-+	 */
-+	if (p->sched_class != &rt_sched_class)
-+		return;
-+
- 	if (p->prio < donor->prio) {
- 		resched_curr(rq);
- 		return;
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1179,6 +1179,7 @@ struct rq {
- 	struct sched_dl_entity	*dl_server;
- 	struct task_struct	*idle;
- 	struct task_struct	*stop;
-+	const struct sched_class *next_class;
- 	unsigned long		next_balance;
- 	struct mm_struct	*prev_mm;
- 
+Best regards,
+Krzysztof
 
