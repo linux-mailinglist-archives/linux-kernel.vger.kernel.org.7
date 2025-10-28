@@ -1,170 +1,116 @@
-Return-Path: <linux-kernel+bounces-874418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD89C1649C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:49:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64236C1649F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:49:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C43623BCD67
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:44:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311993BBB82
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE87326B2D5;
-	Tue, 28 Oct 2025 17:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED8834D4CD;
+	Tue, 28 Oct 2025 17:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0hGLHRNV"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b="VF6Ns1kW"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A99234BA5B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18DF34C9AB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673411; cv=none; b=cP8KGa7/AFYr47tIplSmgz5tToH8BZUJXqLKf5JsEMrPj9EGWLNPbOhG+h6N9m+ME7QhcFKcpMhkUqVMiiA1FHKc92CbYykxgDKxRIG6mhvIV9dTCG5Qp+UrZ4ym0f6FpOl1LxZFhe3T3EEX/WOxUL+2wTRruOqd2kHz7G5iTus=
+	t=1761673437; cv=none; b=bf1F94RN6ZqdUGYLU7mNSq5kWgsppsGefvYib3gHIu2LxChULx7itrfmgylWGemvIHnLywrugHn7iX55HfrioGqZftEoS2d2u+5PLwXojxPvBeCkemCW+klIfCbpZSisUszCuNfEILzGjm6E7uj6owy8YAyEcE9dNYOubsKEK5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761673411; c=relaxed/simple;
-	bh=OJsTYMzbe/UDLrK6Bw+bsAXFWG7YtvhKytf26d44Q68=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LtDHFHd+cnmtmqNuGZk/WBVD2Mo+EmDcfSJDCWwRvhu51C9vq72QGVIpuM8Os2l/X415IXc2HCYhZLrxLlAVyztLwU2C8cgBXtmb1d6wn9ltPmM/WbCV9Sh4vlPli9rHDXCCC6OHBNj5UI/gXWaV5UfR8tFTooYP+K6Ly50mVB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0hGLHRNV; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4eccff716f4so31471cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:43:29 -0700 (PDT)
+	s=arc-20240116; t=1761673437; c=relaxed/simple;
+	bh=0bwjpb3oxZU8XGM4NxNdpBSzF6jrx93O+BlgTEXd45E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WJSXtRW0opBSTvnAe1/1DhDFwj50uBeS3I6YHp58TjvzkV6ea51fKDscj1wjaaThJ9+Z+CR/WPwFj14MKAZ1ZsFoKsw55G4VzuVnOaafMV9XYMXP7ZPhuvyw0YaIOALVUJ1SOBPEDPfBRQSMOwVNxJX1nqbIkPSeQPWKMkBqtRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in; spf=pass smtp.mailfrom=cse.iitm.ac.in; dkim=pass (2048-bit key) header.d=cse-iitm-ac-in.20230601.gappssmtp.com header.i=@cse-iitm-ac-in.20230601.gappssmtp.com header.b=VF6Ns1kW; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cse.iitm.ac.in
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cse.iitm.ac.in
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-33226dc4fc9so6012654a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:43:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761673408; x=1762278208; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tm84HDvajvdUeYx0RetHD/996j4kdkLd2nXgDOVyMuw=;
-        b=0hGLHRNV7cCeSwAeH+GuHFgtA8k5j+LWuR2nhN0elJcozyqqKbfxnwsAeZ/SVMwyxO
-         ElWekUQEzyrULtBVoQJvDMDFGFpF9fTlitKzfzVz/jj8hTGjpId2P0UZDWWcZZJlR6OI
-         gCiB2/TS9wOIUN+Rf3JUH4zdk7l7H1xAN2nLbukIHwQYkpmylq104gUamdkON6s/vs+F
-         kF0pPtvk3H/NclTvnd705OgakJYf63UyiH7as2vOzQX12vUztOKk5O1GwRouxUPtl9NU
-         Ge1i8wEN4/XmevbzxUQLu1u/fSOir0KpJzUQgDbhTK22fWJ5wqHKxHtad0YVsle2YHda
-         HVag==
+        d=cse-iitm-ac-in.20230601.gappssmtp.com; s=20230601; t=1761673434; x=1762278234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u0qpkbmtmAPne10NIF9Jum+PYmUB8FRAdbJ18tTQPmQ=;
+        b=VF6Ns1kWQErCawMzWz79FnujoEvchjAM/2WH60PcreDrAAC+NRmzRi380byQH5k0k2
+         MRd3CLgdFURgLCdYQ20k9VsoqSFwUtrPonO847ArxgP95y61qhl62OHHAmwU/DFUnued
+         P4J3T9cDFprxpS2OsGzPNw6sWz8KUAMfPIc1Z3krQkPjqZ74+p0CWYzo02E79ld0aFAl
+         LAw48WyDLrKHYgAeHAfiaVYqVJvaw7IhoShEKBbTvVfup4TIFBgjQleqVOcU57nRfhnz
+         /eThJnsKIq08feVDza98zsKw3UizxcV7p9VILEoCNKCkCzJ+LA2HFwX2GSxVlASuv/Ip
+         cYLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761673408; x=1762278208;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tm84HDvajvdUeYx0RetHD/996j4kdkLd2nXgDOVyMuw=;
-        b=qvFwqSj/U6DqsbTex+JUUiejG3KTKUWz48unei1xjY95l1kq2uk4zU6dL1gN4Brs3k
-         /h95gcs9huDvykK1T9P22BwkQvdAAI1fIWWChjkl5sKy7BJjRP9yV/nW0q437/9I5PjL
-         0S8I5u3et1xKgdOhofYSjAmvlzzoZGvd9wAYLw+IkySTWhJTwqIfajCefRwMexP6fH24
-         oN/WyeFNiyw5yJk8qSwObM+ZiKRYhSVr7mEFRx8rC7FeJThWzTQgSOqpSVDCYsk5023u
-         GePCvp1C/gGVK6jw9vTHDuvs/SQeAHxZeeUJDCb3NC94yI6u9W1Oi5FwoTvPWEquBjY2
-         twrw==
-X-Forwarded-Encrypted: i=1; AJvYcCWN9kSI96xChzK6sgOlCIER3TytkrgkrdPvyu+ssVLSW6PYAcqJuW4DJ+tgpRBPuH+xncRlZmwCB19NwIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI/K0ckHMCdM1hrGIM1BM6BrBp4+oH2rxeL+yJLswLBGG/4jaZ
-	Hz/wl7LU4LFiF3JVEzjMkilfzvpOCx8pqLW8az1i877Wiuhf/llFDhIkTNXkVnuBWv7MoUcNXh9
-	EGTqO0HBt+FkMiII4u5Ypbzbotp1aI2aIW9mvjC2s
-X-Gm-Gg: ASbGnctVQx2BCxVETJ9dT5j8GX5ysTdKs1JYZd818LRpfyYdBkLVq3pZ/52pHjbcAxp
-	g8AD9qYkcFm9BGO6BtR+Otaos30WkXMAJY8cvnSzFB3fpS9pSSljsmFjdcmooGQtx+pUsYKmoaz
-	oQKvTd7AoUKB5q3qsCsoq46LD33XpKMGaxoMa+lTUHjaRPKB7Gp3hbAo+v7nkhbU0hSSDvvgoqu
-	AB/hbAU6InzkA3A21OvmY4PPgAhXchanukf375lb5+N8zwee4kHz+KcKINqI+/niMAT9k9K9sgG
-	Skeaoia7YajAkH6mzR0WKlc5hg==
-X-Google-Smtp-Source: AGHT+IHqOw0wVAMZdI9HPTfn0JRAVi2UYS5cUsNnlCDAZHhG876N53Uqz0wugy8aVXJs9k9838Yo4Ajkv/Cn41vL3UM=
-X-Received: by 2002:ac8:57c4:0:b0:4b7:a72f:55d9 with SMTP id
- d75a77b69052e-4ed1593d02dmr323231cf.13.1761673407812; Tue, 28 Oct 2025
- 10:43:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761673434; x=1762278234;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u0qpkbmtmAPne10NIF9Jum+PYmUB8FRAdbJ18tTQPmQ=;
+        b=O2SyPAFitoYs597bc5KIirzyhlrrD2pmYoAaAq8OBk0o5SxSPU52VrfJ38hbb2tsTQ
+         ahbtFEkjyEdG9lZxan/AbxA+FTyLM7HMbr1divczJaHtfakfsYyePevEsId/iuUECEIN
+         H6eKgyiYn63Qv6NGyitn8W4gOMDblsoCwx8tnkiQT9xoF2V0zEXxkW7J1G1N4kKaHnjN
+         Ok7BUJrvYCNAcsw55aUhQEcCf+Rthf5hHAMGvBx9MOSnRUkQr+9ljKhZANHg7G64SskR
+         9o+CuGfQDxkmE5bnSu/bhwnSNpO7ydApT48NbsX4fyUQ4+hJWRlLVylf32IGTsrxDRYs
+         XUww==
+X-Forwarded-Encrypted: i=1; AJvYcCVjFWiNYCdyJFc0Ap4/A9ejiipiO8c/Q+IoPg+eEzpqhgc6QY29laFJfZTh3hsEON1yHvjSzYTFHRQjjpE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR72SrehEbQms5wh3qwZRRHnrRygr5Wyb2SRoKdQDVXPvSx5Dj
+	DaQmXslcVRzOPd7krWG7//cHHQxP5XXA7LhSwJKzZ+qgqBulPwf5IK9kytUSNwSuRwQ=
+X-Gm-Gg: ASbGncso1Oc+uydA/hroQaIk3bl+EhQNDhiRFP1pMi+hFZUPFH2W0KBH8s3icRhM2qj
+	OMsY7I1b4ItWPt5CHA49TBgfvn7tmxb9Li0i537ZBSAbYV533KMX23KdSoFN3aPudgWJu7AUEOQ
+	dzxlfUDsNm9A6wYlqH4oNuh7JWh0F8yh1uLR7czlXvV/yvr7b0q1nOrRnGfdHqv8AwtgdQN2RtS
+	3m0GHD/FUOxiDPkNGl2tceT0ISDbB8WY4HzSZjiCljnMxAr3WQd7Qf2keRCPXL9J0eCcE2iHZSn
+	UMAubC6LR66JhESsqlBMhNMXf/y5V3qQxU2U4oaVMXMZP5BLfjkTua4aqqpGe2i+57Zrhs2a1XT
+	S8cbZlawWRMSgl2h4Gej6ScBIArqjwO1CASH+vkIXee0TcXAHnc/akCBBG4zLYFN7Na39Id73jY
+	PNhU2RuFibnmdLusPTXAS1X8c=
+X-Google-Smtp-Source: AGHT+IHjSGUgQEqomu07pS1jduR1pgMItt8Lc6mHKJe9u9dK5Ny/DjdsS7jZxwcxklB8xXuRkgkFpQ==
+X-Received: by 2002:a17:90b:58f0:b0:32e:2059:ee83 with SMTP id 98e67ed59e1d1-340279e5f8bmr5853372a91.7.1761673433797;
+        Tue, 28 Oct 2025 10:43:53 -0700 (PDT)
+Received: from localhost.localdomain ([49.37.217.46])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-340292c0d81sm1560989a91.3.2025.10.28.10.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 10:43:53 -0700 (PDT)
+From: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+To: linux-wireless@vger.kernel.org
+Cc: Abdun Nihaal <nihaal@cse.iitm.ac.in>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: zd1211rw: fix potential memory leak in __zd_usb_enable_rx()
+Date: Tue, 28 Oct 2025 23:13:39 +0530
+Message-ID: <20251028174341.139134-1-nihaal@cse.iitm.ac.in>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027122847.320924-1-harry.yoo@oracle.com> <20251027122847.320924-2-harry.yoo@oracle.com>
-In-Reply-To: <20251027122847.320924-2-harry.yoo@oracle.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 28 Oct 2025 10:43:16 -0700
-X-Gm-Features: AWmQ_bkEq6fU-X83NBs-FScowfdztSWFRPMtVvCpjCocisVvI5BwLCPHsCScVHY
-Message-ID: <CAJuCfpF5gG63njY436vctG-Tzbco8X9a1w3YA=u1AGrRqxVshg@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 1/7] mm/slab: allow specifying freepointer offset
- when using constructor
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, andreyknvl@gmail.com, 
-	cl@linux.com, dvyukov@google.com, glider@google.com, hannes@cmpxchg.org, 
-	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
-	rientjes@google.com, roman.gushchin@linux.dev, ryabinin.a.a@gmail.com, 
-	shakeel.butt@linux.dev, vincenzo.frascino@arm.com, yeoreum.yun@arm.com, 
-	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 5:29=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
->
-> When a slab cache has a constructor, the free pointer is placed after the
-> object because certain fields must not be overwritten even after the
-> object is freed.
->
-> However, some fields that the constructor does not care can safely be
-> overwritten. Allow specifying the free pointer offset within the object,
-> reducing the overall object size when some fields can be reused for the
-> free pointer.
+The memory allocated for urbs with kcalloc() is not freed on any error
+path. Fix that by freeing it in the error path.
 
-Documentation explicitly says that ctor currently isn't supported with
-custom free pointers:
-https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/slab.h#L318
-It obviously needs to be updated but I suspect there was a reason for
-this limitation. Have you investigated why it's not supported? I
-remember looking into it when I was converting vm_area_struct cache to
-use SLAB_TYPESAFE_BY_RCU but I can't recall the details now...
+Fixes: e85d0918b54f ("[PATCH] ZyDAS ZD1211 USB-WLAN driver")
+Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+---
+Compile tested only. Issue found using static analysis.
 
->
-> Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
-> ---
->  mm/slab_common.c | 2 +-
->  mm/slub.c        | 6 ++++--
->  2 files changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 932d13ada36c..2c2ed2452271 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -231,7 +231,7 @@ static struct kmem_cache *create_cache(const char *na=
-me,
->         err =3D -EINVAL;
->         if (args->use_freeptr_offset &&
->             (args->freeptr_offset >=3D object_size ||
-> -            !(flags & SLAB_TYPESAFE_BY_RCU) ||
-> +            (!(flags & SLAB_TYPESAFE_BY_RCU) && !args->ctor) ||
->              !IS_ALIGNED(args->freeptr_offset, __alignof__(freeptr_t))))
->                 goto out;
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 462a39d57b3a..64705cb3734f 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -7781,7 +7781,8 @@ static int calculate_sizes(struct kmem_cache_args *=
-args, struct kmem_cache *s)
->         s->inuse =3D size;
->
->         if (((flags & SLAB_TYPESAFE_BY_RCU) && !args->use_freeptr_offset)=
- ||
-> -           (flags & SLAB_POISON) || s->ctor ||
-> +           (flags & SLAB_POISON) ||
-> +           (s->ctor && !args->use_freeptr_offset) ||
->             ((flags & SLAB_RED_ZONE) &&
->              (s->object_size < sizeof(void *) || slub_debug_orig_size(s))=
-)) {
->                 /*
-> @@ -7802,7 +7803,8 @@ static int calculate_sizes(struct kmem_cache_args *=
-args, struct kmem_cache *s)
->                  */
->                 s->offset =3D size;
->                 size +=3D sizeof(void *);
-> -       } else if ((flags & SLAB_TYPESAFE_BY_RCU) && args->use_freeptr_of=
-fset) {
-> +       } else if (((flags & SLAB_TYPESAFE_BY_RCU) || s->ctor) &&
-> +                       args->use_freeptr_offset) {
->                 s->offset =3D args->freeptr_offset;
->         } else {
->                 /*
-> --
-> 2.43.0
->
+ drivers/net/wireless/zydas/zd1211rw/zd_usb.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
+index 2faa0de2a36e..8ee15a15f4ca 100644
+--- a/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
++++ b/drivers/net/wireless/zydas/zd1211rw/zd_usb.c
+@@ -791,6 +791,7 @@ static int __zd_usb_enable_rx(struct zd_usb *usb)
+ 	if (urbs) {
+ 		for (i = 0; i < RX_URBS_COUNT; i++)
+ 			free_rx_urb(urbs[i]);
++		kfree(urbs);
+ 	}
+ 	return r;
+ }
+-- 
+2.43.0
+
 
