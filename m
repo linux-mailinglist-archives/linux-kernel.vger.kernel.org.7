@@ -1,136 +1,157 @@
-Return-Path: <linux-kernel+bounces-874560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3503C16937
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:13:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 113FAC1693D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:13:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D31431AA29F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:13:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17636402BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC3934E772;
-	Tue, 28 Oct 2025 19:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A1A2BCF6C;
+	Tue, 28 Oct 2025 19:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="A5pvgHYc"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SMknY+ux"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DFD25784E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:12:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237AF244691;
+	Tue, 28 Oct 2025 19:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761678780; cv=none; b=so/ssPbYDI5TRZnUzq/dx+UTl+/mirIbfUO1pK9SYRKGTkLVPTOWQR7fCPPg6qNZ7Jtv3EhFS5+xErTuLSHa2/pivjtWez3LnlcpUJj9uOl7G3aF9VCauQ5dqSraiG1V4dRmyp91MkN2fBMPm6bTe3EEK4RqdI/rim+TvZNHMlY=
+	t=1761678813; cv=none; b=gYBfHa6NQZtktQxdUhNU2k8jT4PHMpw0Nx7/NRd8JH05IU0LZx+Jc628ZgYsNsJo/Vxf8+DekdAUgoqEKUNuubQtmSB4YM/MCHfuMxpsMliAK7N8jyB0DLVUvsI+XkKxEX0EBHCL94JCkvNtEl7RL2/GZw/vS1QedTeMgb//m+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761678780; c=relaxed/simple;
-	bh=7pmpFBPAooA7uZTEq5xcWaQNGdi3bnLGsp3ozlowH2A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YdAByl/CuJmezNHE2OaNPBG5jxMXUUCmLnycOAsEDLsGwDP4B2JD3fNVDJsEPz08eEgosVVihzebgrqlb+nsDdacVA8Uu4QwbusTrxba7KJ9V5y+mYmmr1vpyGKrdLnORLNEepBwr5IFrGpuQAmg1bZMouuG/+vmzkmTqAEuJPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=A5pvgHYc; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-63c0c9a408aso10343693a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:12:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1761678776; x=1762283576; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oL3CIqlSnEUIPnF8RN18LXFTdGCghKUIKc2P/11P0YA=;
-        b=A5pvgHYcJfha4zDZIWnmkYQfwj3RI1tNaemR+ASLzd/QxCJtHF9K+XJ7sDGApCxzhZ
-         diyahb+FOttWKq2HiiwxO4GtTC0zlpe6VTeY1fR8HfbNKIimmGvW7nRwP+Zh9WFxwfAK
-         OTAUO5adRNN9D1gRrhqtqB5+1KLxXRGYIhyU0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761678776; x=1762283576;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oL3CIqlSnEUIPnF8RN18LXFTdGCghKUIKc2P/11P0YA=;
-        b=Y/5oaYlBau06XYgtms9YLrbUuxR3rrmhrizBV3FYdZeyaeSwhW0JIH21KGuD2KqTU+
-         bHOhdQdIp56LFjSAsJ90Nibud6mAUkTn9sF6z4kGZV2wHeScBQguzqQrb/CWTr69fUPX
-         pF7qMNfm7CE/OmBcKcV8p3SqH6hEtXf7pNjbTmxNzX37aVXBS38PaGgnbMeU1XG2h1K1
-         dk3S73ZDGbqagzmYJ6GQcD8umyBwNtBFLSUIWEGrhP8/LwWnJQbLIo68+SwgSfExML5C
-         S45QYfe4FtCKihkEg7iS0EScvAe7OgH8xcBDG2hSQ+nFbUA+7mUVH1kKLKRKpbojx3tS
-         CpdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQuhH5Z1pP6cMAQYz/RomRmH9S7ArsvVJuy3zWn6ohdhsamWOGqcwfhROq0Jb8ajHiqvrala1CiKhx2WE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAq9gKolZjjfwoQpDz25t6N9jX3u/lco3OZLmF3G1ot/Zb/2F9
-	9JmWEOdz6+K6aa0SkUid59v/U1m3STmPJL8NMPBaRDi9tc/NrSSYbRHxttw9JEVhTmiTsztcyMX
-	N1V7OsQceyQ==
-X-Gm-Gg: ASbGncucHYnYqKO2cetwILe45Mm3mWy3UzY0bxr5w4MBsCZrLIJK0woBkUtCcjlktZC
-	eSHFlND+2l6hB5JGnniPoEaQiNdGoRAOUDxjUAPomAqHzP3BkCqlUnCo/Yy13rqsKcD+foq1Btb
-	AIIwJXdVdDE7LZxA16ysKGInX+7nhD2kR4QZj7IRVmUkZ0wGIDJXeG92H1IdjrObJNWb48s1Ohg
-	LdsuP6I3AyxfahaG7+NJPHPCGjI30lc3y888l0Wl9kbBaoYWBXBbWTpoLHoH8O8WZa+maSt/Lbz
-	GfiHQA51ZVOzRjGMwI/jgt/ZCfc72bPQJuZN51XZrsEqw3FpfqGqyz4+3wrFEFuMnALCfDmCFum
-	xJBXcZIFsU4drspubwVQoUbigLEua+vnszMHjT20otQSgJFYaACkahPC47eM3WEhsvXP5/5jZC/
-	qSbPLw2mtVLKNXGiFq4NLmUKyZX4J3S5g4Es0U/FjWIyDfIW4KQA==
-X-Google-Smtp-Source: AGHT+IFB2lIxRhRDiaCCUq/cjbUlGJ5D+CGJRz4kd9kBGzr54qxLHEXs9hsyQ5HdJIK+01wB5LGfzA==
-X-Received: by 2002:a05:6402:1941:b0:63c:4f1e:6d82 with SMTP id 4fb4d7f45d1cf-64044252dadmr133340a12.24.1761678776286;
-        Tue, 28 Oct 2025 12:12:56 -0700 (PDT)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63ecf3686c5sm3946264a12.36.2025.10.28.12.12.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 12:12:55 -0700 (PDT)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c2d72581fso9291652a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:12:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWKir0ys4aAatmhwN5igUGcd1bluI3uiGsGfyOQ9WeDMjlOFTiuHmRKEoJKt517JT5lopBO1zn8nQ4u9kk=@vger.kernel.org
-X-Received: by 2002:a05:6402:26d5:b0:63b:f909:df50 with SMTP id
- 4fb4d7f45d1cf-640441bc6d3mr138626a12.14.1761678774925; Tue, 28 Oct 2025
- 12:12:54 -0700 (PDT)
+	s=arc-20240116; t=1761678813; c=relaxed/simple;
+	bh=sZIrF5BC7ksSsWzA+ZVd/ZRBeM5EUfucbSmCQoGjJpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p/OvFuggHrWl2dGVrz+lDr6enR96g39K+Gx0q513fgZUKd3/suGPYUKd15v/ppiEWCjphy9bC8woKMqJ6cX0WktI3uIpQFsBAPAkctaKLV85+alBuBGhgiHtrU2NLTUK3/8svwgHwKw6A7+i+wA0zYkmiIa+iQZ7YszXRIro1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SMknY+ux; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CAF7C4CEE7;
+	Tue, 28 Oct 2025 19:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761678812;
+	bh=sZIrF5BC7ksSsWzA+ZVd/ZRBeM5EUfucbSmCQoGjJpU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SMknY+uxdXCS6M7DgL/O8lllk3C/4IEmUM8+wtrkh8yDZRnvBgA5+lEPjJoa+desw
+	 wrFvea+RngTjoT6geDFzTy0NU4pY+71t8BbdVJtYhSxobiRrvOq3hkLl05w6Otv0sc
+	 BrsnPlnPl2EleChu+WQgWMsxdUMtQtApCnS57Om0n63jE9/3CBeVku37dZTpN4+HO1
+	 LVco4JKMqGTqI40P8ADCW9Be3jHI62aD8nU6mgLmw8XHB7Cu90HtA6Y7ndt4FkapK8
+	 V6ek33aUqOrAeYqSMXkkJ7FYUq+4hWc/NXEATIFBq9eI5ZyN8J8GAR5UVrVQqfqPZ3
+	 N/JOk4DgiESZQ==
+Date: Tue, 28 Oct 2025 16:13:28 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf test workload: Add thread count argument to
+ thloop
+Message-ID: <aQEV2ABm7JaGH3UO@x1>
+References: <20251028153821.4003666-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028175639.2567832-1-kuniyu@google.com> <CAHk-=wj7s3VKFP2vLmEHhHZ=VBkr5v8J-Y47uzidnt=Kt+dzng@mail.gmail.com>
-In-Reply-To: <CAHk-=wj7s3VKFP2vLmEHhHZ=VBkr5v8J-Y47uzidnt=Kt+dzng@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 28 Oct 2025 12:12:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiYvRqYYCi3Wcq==Y7Zg_i9u-04sk4BtXrP03txZ0yzww@mail.gmail.com>
-X-Gm-Features: AWmQ_bnlLqcYXf_eOcV10dIkw4sE4pAJUua6DYvNIrtovqBlD8HS0-THJ6CDcXI
-Message-ID: <CAHk-=wiYvRqYYCi3Wcq==Y7Zg_i9u-04sk4BtXrP03txZ0yzww@mail.gmail.com>
-Subject: Re: [PATCH v2] epoll: Use user_write_access_begin() and
- unsafe_put_user() in epoll_put_uevent().
-To: Kuniyuki Iwashima <kuniyu@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Laight <david.laight.linux@gmail.com>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuni1840@gmail.com>, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028153821.4003666-1-irogers@google.com>
 
- On Tue, 28 Oct 2025 at 12:02, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Because I think the proper patch should look something like the
-> attached.. For me, that generates
->
->         movabs $0x123456789abcdef,%rcx
->         cmp    %rcx,%r15
->         cmova  %rcx,%r15
->         stac
->         mov    %r12d,(%r15)
->         mov    %rax,0x4(%r15)
->         clac
->
-> which honestly should be pretty much optimal.
+On Tue, Oct 28, 2025 at 08:38:20AM -0700, Ian Rogers wrote:
+> Allow the number of threads for the thloop workload to be increased
+> beyond the normal 2. Add error checking to the parsed time and thread
+> count values.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> v2: Perform the pthread_join unconditionally and ensure started
+>     threads terminate.
+> ---
+>  tools/perf/tests/workloads/thloop.c | 45 ++++++++++++++++++++++++-----
+>  1 file changed, 38 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/tests/workloads/thloop.c b/tools/perf/tests/workloads/thloop.c
+> index 457b29f91c3e..bd8168f883fb 100644
+> --- a/tools/perf/tests/workloads/thloop.c
+> +++ b/tools/perf/tests/workloads/thloop.c
+> @@ -31,21 +31,52 @@ static void *thfunc(void *arg)
+>  
+>  static int thloop(int argc, const char **argv)
+>  {
+> -	int sec = 1;
+> -	pthread_t th;
+> +	int nt = 2, sec = 1, err = 1;
+> +	pthread_t *thread_list = NULL;
+>  
+>  	if (argc > 0)
+>  		sec = atoi(argv[0]);
+>  
+> +	if (sec <= 0) {
+> +		fprintf(stderr, "Error: seconds (%d) must be >= 1\n", sec);
+> +		return 1;
+> +	}
+> +
+> +	if (argc > 1)
+> +		nt = atoi(argv[1]);
+> +
+> +	if (nt <= 0) {
+> +		fprintf(stderr, "Error: thread count (%d) must be >= 1\n", nt);
+> +		return 1;
+> +	}
+> +
+>  	signal(SIGINT, sighandler);
+>  	signal(SIGALRM, sighandler);
+> -	alarm(sec);
+>  
+> -	pthread_create(&th, NULL, thfunc, test_loop);
+> -	test_loop();
+> -	pthread_join(th, NULL);
+> +	thread_list = calloc(nt, sizeof(pthread_t));
+> +	if (thread_list == NULL) {
+> +		fprintf(stderr, "Error: malloc failed for %d threads\n", nt);
+> +		goto out;
+> +	}
+> +	for (int i = 1; i < nt; i++) {
 
-Side note: when I say "pretty much optimal", the truly optimal
-situation would be to do the address masking entirely outside the loop
-in ep_send_events(), but we don't expose that interface, and we have
-absolutely horrible experiences with doing user address checking
-separately from the actual code that does the access, so I'm really
-loathe to add that kind of logic.
+Why do you start at 1? What goes in thread[0]? calloc() leaves it at
+NULL, then if you have two threads you'll allocate thread[1], i gets
+incremented, 2 < 2 fails, you get just one thread created, when two were
+asked?
 
-So the above is *not* optimal in the sense that the
+Oh, I see, you use the main thread to run, that test_loop() just before
+the err = 0, its just that you allocate thread[0] for nothing, that
+confused me.
 
-        movabs $0x123456789abcdef,%rcx
-        cmp    %rcx,%r15
-        cmova  %rcx,%r15
+- Arnaldo
 
-part certainly *could* be done outside the list_for_each_entry_safe()
-loop in ep_send_events(), but I do not think that three simple
-ALU-only instructions should make a difference here.
-
-              Linus
+> +		int ret = pthread_create(&thread_list[i], NULL, thfunc, test_loop);
+>  
+> -	return 0;
+> +		if (ret) {
+> +			fprintf(stderr, "Error: failed to create thread %d\n", i);
+> +			done = 1; // Ensure started threads terminate.
+> +			goto out;
+> +		}
+> +	}
+> +	alarm(sec);
+> +	test_loop();
+> +	err = 0;
+> +out:
+> +	for (int i = 1; i < nt; i++) {
+> +		if (thread_list && thread_list[i])
+> +			pthread_join(thread_list[i], /*retval=*/NULL);
+> +	}
+> +	free(thread_list);
+> +	return err;
+>  }
+>  
+>  DEFINE_WORKLOAD(thloop);
+> -- 
+> 2.51.1.851.g4ebd6896fd-goog
 
