@@ -1,255 +1,209 @@
-Return-Path: <linux-kernel+bounces-874313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA54DC16017
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:58:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDE9DC16068
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B0B6234D5B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:58:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE2C1AA5E9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B608133DEE8;
-	Tue, 28 Oct 2025 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961851E32CF;
+	Tue, 28 Oct 2025 16:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZE3ezo2a"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SAqpgwYU";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZnuR0Ek5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA53C16DC28
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C5E33DEE8
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761670700; cv=none; b=M2nzN3/M9cGcV6eH3oBED+rdccjcjIWbbfTIn3r05FzDSPntJQ8XoLzy4efRAnfrItDrEUkx1fVcx9Q6MKP3XEq/e8fzRjXXEY7+T6Vy+fmUJWakFeHyaF9p66mJ6RD3b3lDAHOl/bqDtITJrUxPAYSjoL2osbnFMBE7Ol+0014=
+	t=1761670656; cv=none; b=X/l6mB7+37YpGlY4oAIPCc1hQwXGVLv5S6d3ST76rwnxe+88jyToTiWFbnu37cHPjoYlv1b1F5Ot2k0B5M7EkfK3iJEtZ/ONo8yHMkaGOBbeXZ//RN1bXNCeui69guOiwiNSPJq7fbb0sfwCNatvP8R3dHu3Sz+lmKiMETpRSZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761670700; c=relaxed/simple;
-	bh=aoFLmVyoMCMr76vl3NiHOrxx9PXBKoqcT8Cci/Dm5qs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDJZcE2Btl86bNrLmIn6KE5HevxybmioCScG2DOWxOfQnQdXf3o5Hb2mYgxo7GbSVvrk6l9VQOij21tSVhRl21DaRVibexBt5SgZ+wCdmTc5UH8pQPRJ8Sm0srT8FxMVv4cP5/eHr2oUyQ+bgCi3MKix6PgDtRLVIt9qS6dPxks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZE3ezo2a; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <058529d6-01f7-48f8-8030-e62b95b9a45e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761670695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KhhuV960WKiGx2T1AygxtReZoOMMVm0CZ8E13jhoQyU=;
-	b=ZE3ezo2aXcfAMQ7h44hBctUxmd++Y82Yr9YZ5/g2DtnYyzSJf4aKQGD8JCoB7jNVN4H34v
-	z+P0NP/vUfSWOBsiNk6Ol/8GqSVBn9zuwCRyrGNi18GVCv1cYhRoddb6rncMDwfce1SdSF
-	oqvB0GPi6b/axRTMkDPEhOZWp1UYH4c=
-Date: Wed, 29 Oct 2025 00:57:25 +0800
+	s=arc-20240116; t=1761670656; c=relaxed/simple;
+	bh=sQcuamK2+awSRDESFFKbrhanPd1dWv8v0lyezG99h1E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKAi2SnxMFQcXTFNbpeVa5wobedoLeBDNkSx4AixEXZ8s1ArGEPed5lyTiz+ZL124wbA013tx/cK48egV15H5osKAmLP3+G8DMg7MAWZcLQOUQtFG3p4WLH6okWWV8Koy9xUKngee+GwEjVaZl7X7fqP32HNfgHmt9llNW1jnek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SAqpgwYU; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZnuR0Ek5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SFcwkB2027345
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:57:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=YYkj+iJzcJ7SpBqMq32UWLhN
+	k8gutYq0DL5v9oW2oqQ=; b=SAqpgwYUc3zjk6u1uEABqy520OWkq1amsKuYoNmI
+	XVSyCNxdU1M8GtOVGQTRxNEZwUxOE6vZujneS9LxSILX0hota84oGtqJ/nION0y7
+	sEw5mgdh+N4Z0N20kBDmltrlhZhNBI+lTiOZTTmiuBOvfB8ZkPDkw8UA/Y5c6OZb
+	V9eNhJ6FsI3dU7yVZ6bdFwKstDFYbKE6/0N0q315ycOHhE6RXMbiwyLrkH7VfHDS
+	s4k905+HQnUAqNz9BQYdcw7qTrQ+3hdgKZ87tMujOQml3COJi+yg0CbQpj+GGBoc
+	HRu3MqIIP/ZplpWT559hdN5E88ugOlx1Y2wF5L4jk7ffew==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2yxtrewj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:57:33 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e89f4a502cso188845771cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761670653; x=1762275453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YYkj+iJzcJ7SpBqMq32UWLhNk8gutYq0DL5v9oW2oqQ=;
+        b=ZnuR0Ek5KWeOfPibw0tbaLpfFkTS/j0YbaIdwd0Qt2no4z+osXxkDL1sm2QGGE7z1W
+         nS+blK2VzzAey3viBPS4xjByikLiPdQll9KsDx/SPYBZj2BRdw5gnEFeFnGnvu6eGq+O
+         PT+wtlR/pN0JKhBRJe1FivUy+O69fD2zFGLb1fo2NB6UFbmqhr/LesYez0gbc/flI0RT
+         mCdNdjjgOwaDRzG9cpevu16GljBWyLGzAm541NeHqxKy8gG5GE/eToiOkUV2XvRGCr/T
+         j6d5zWzR9f9Kw1wTj4enemEI1dUMkZc24Io0eaZQQdKBgvNMa1VDbca9pKGpBP5P5gXP
+         NtRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761670653; x=1762275453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YYkj+iJzcJ7SpBqMq32UWLhNk8gutYq0DL5v9oW2oqQ=;
+        b=Ljdx5y5AUQ5Q8wEMz6ZzxfoSHcvZDe/eqYfjPkBXBPO2POh5JjDe8XIvtfUNN+ozGP
+         W3hJ6w3df5N3OXnVsRQy/kT4trq2UrozCmCvBXPvxSNk8rjJLLwsGuVmLSl7rsIcZQpV
+         HhPVizjcGJXXSeBsRwRcWK9Jsyf8E+m2d0lYx/FlvPiumYDbpRy7toPiRxtTfuDEdALo
+         oKE9iccBNl/OpB/H2w6rj91VAnPx9iyr1ygm2pZJ3DXTgc2Z8Y92xX0xPH9p1sycqNui
+         X7omWcu20cMhJio9U1o2Nh8Ntw4bF82d+XcR80+DK5CeJ/OktZ0iWtz1Gtcli/1V/b/e
+         pUaw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+UWOJ9t5lFTHR8Vk3dYOjA27g6IPtzqrPTADEAHB7yeUbIrpqpoV+IGovrEtG/44NnA14w9EAOJEXNbk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywv+OVtNBKEn1V7D80hVGgfL+SMLc4dSRkHucZFp+ituPwG8zl3
+	/X039Hl5UTL32Fx0TT/45gjktsUk9+F795+NFz3GeGoupc1iknuqjdbbbqtS9Ovy5fYdCRAEeC+
+	lataRwcIh8yTsXACHOXo9LVoasJsZCi4/St0nWiuVV9K7F6fIOuseTE1YSA2Ys8NPjPU=
+X-Gm-Gg: ASbGncuPAi/uqq2XK/nCEpaS0aehPrgjANzx0g9bys3L2IV5ePMe3HODCCtjXc7nSmG
+	5o3tMcUSn6cOHvwfW1vzmrHhtg4sElF7YgmA43Fh+LMOAh50eE3TAwyoV8Nt6TTtUQJj6UIVnah
+	6kkv9vx7zGMcg1Z6g9ag0PrXtwxJZM+Q/Ln+KjaFwUsUn60YCOcE0eR95GSgjSohDdec3WO5tX5
+	CW8Mh2L5et0NN2C2wpanu0Xpi5p0BJ+unBjo2L9em5bkoR8q1NyFBgS/MrLB2cMyiZGOzPCEj+c
+	XugDhqZiwhDXgRkf7Lhdk9rZavrsYjyZy2of+4iKMBVjJZGSncgCt0U3XgvFbDuDnfljA0qCtEE
+	XmzBLB7dEOXbif6+laAl1G81ETG2ftsAJGN3Aay5HsQbb605/GhTR5WZYHLvgjBwCKd2M3V8c2l
+	gQbqXMtqOmsFHa
+X-Received: by 2002:a05:622a:5c9b:b0:4e8:afdb:6f56 with SMTP id d75a77b69052e-4ed1509426emr4337581cf.74.1761670653080;
+        Tue, 28 Oct 2025 09:57:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFjwC9xxcgo4Q0PgTNGfYV9nhPktWWK4tZNjpIa3klhG4u7NhRCwCj9sGWBrtzYDgjAEemnQ==
+X-Received: by 2002:a05:622a:5c9b:b0:4e8:afdb:6f56 with SMTP id d75a77b69052e-4ed1509426emr4337191cf.74.1761670652636;
+        Tue, 28 Oct 2025 09:57:32 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f482fdsm3125844e87.31.2025.10.28.09.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 09:57:31 -0700 (PDT)
+Date: Tue, 28 Oct 2025 18:57:30 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Shuai Zhang <quic_shuaz@quicinc.com>
+Cc: marcel@holtmann.org, luiz.dentz@gmail.com, linux-bluetooth@vger.kernel.org,
+        stable@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_chejiang@quicinc.com
+Subject: Re: [PATCH v1] Bluetooth: btusb: add default nvm file
+Message-ID: <3fluuwp2gxkc7ev5ddd2y5niga3tn77bxb6ojbpaoblbufepek@owcrah4exoky>
+References: <20251028120550.2225434-1-quic_shuaz@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] codetag: debug: Handle existing CODETAG_EMPTY in
- mark_objexts_empty for slabobj_ext
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter
- <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-References: <20251027085214.184672-1-hao.ge@linux.dev>
- <CAJuCfpF+0ok85A1ZhbptSzrB-X6CUj=TMj9ZvwzjV1tO5PqFbA@mail.gmail.com>
- <d1456749-46c3-463f-bc28-f465b8ce6ff9@linux.dev>
- <CAJuCfpFJHE-VAOgKfoXJA+V-okvgQt_iEEUdvd4ZCaARFiWExA@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <CAJuCfpFJHE-VAOgKfoXJA+V-okvgQt_iEEUdvd4ZCaARFiWExA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028120550.2225434-1-quic_shuaz@quicinc.com>
+X-Authority-Analysis: v=2.4 cv=ZN7aWH7b c=1 sm=1 tr=0 ts=6900f5fd cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=COk6AnOGAAAA:8 a=_esQDi1y6y9LiqYhBzgA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 5PvqMdydj6zwmoy6ygUzUhRWDnPPA0-K
+X-Proofpoint-GUID: 5PvqMdydj6zwmoy6ygUzUhRWDnPPA0-K
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE0MyBTYWx0ZWRfX6NSnX2J+s3PR
+ uMqa9sPCz7E1C9xO/DJKyMBAswumiYVAg9l/x3AKb+TuTNwuyhJyY1lSNryhymbMdSK3pk8gL9b
+ 2f02+fNxfl3Ixl1z0TI8bU0F9nON1SHsyr3XW3IggF6jWRKT5ka51eenPWrfp7egBaAzgXT+nyp
+ hneif59fAnla3MvMZ6WVtcaz+fAjCjCrzTqENoobzycsj3isIoOhRvpEnNA/fHA7xV1AdG46eeX
+ zZHvnr9IXatnaypxYCaNe0SVNapJjpz0ZUonGIa6tw67v5hsoSYUg+vqoX+BSeU2Og4aF+XuyU4
+ aFolmK33kd4gTq6Q2/Nll0RIlA/V4m94EOvzLI2ZqjUN8aWSUSoHaneX/UhlLBE5pni8z+lOMCp
+ DmHFimeMP68paxU8zNqnZFVXl8yPLw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 suspectscore=0 impostorscore=0 lowpriorityscore=0
+ malwarescore=0 adultscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510020000
+ definitions=main-2510280143
 
-HI Suren
+On Tue, Oct 28, 2025 at 08:05:50PM +0800, Shuai Zhang wrote:
+> If no NVM file matches the board_id, load the default NVM file.
+> 
+> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+> ---
+>  drivers/bluetooth/btusb.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index dcbff7641..998dfd455 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
+>  }
+>  
+>  static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+> -					const struct qca_version *ver)
+> +					const struct qca_version *ver,
+> +					u16 board_id)
+>  {
+>  	u32 rom_version = le32_to_cpu(ver->rom_version);
+>  	const char *variant, *fw_subdir;
+>  	int len;
+> -	u16 board_id;
+>  
+>  	fw_subdir = qca_get_fw_subdirectory(ver);
+> -	board_id = qca_extract_board_id(ver);
+>  
+>  	switch (le32_to_cpu(ver->ram_version)) {
+>  	case WCN6855_2_0_RAM_VERSION_GF:
+> @@ -3522,13 +3521,25 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+>  	const struct firmware *fw;
+>  	char fwname[80];
+>  	int err;
+> +	u16 board_id = 0;
+>  
+> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
+> +	board_id = qca_extract_board_id(ver);
+>  
+> +retry:
+> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
+>  	err = request_firmware(&fw, fwname, &hdev->dev);
+>  	if (err) {
+> +		if (err == -EINVAL) {
+> +			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
+> +			return err;
+> +		}
+> +
+>  		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+>  			   fwname, err);
+> +		if (err == -ENOENT && board_id != 0) {
+> +			board_id = 0;
+> +			goto retry;
+> +		}
 
+I'd rather see here:
 
-On 2025/10/29 00:19, Suren Baghdasaryan wrote:
-> On Mon, Oct 27, 2025 at 6:31 PM Hao Ge <hao.ge@linux.dev> wrote:
->> Hi Suren
->>
->>
->> On 2025/10/28 03:44, Suren Baghdasaryan wrote:
->>> On Mon, Oct 27, 2025 at 1:53 AM Hao Ge <hao.ge@linux.dev> wrote:
->>>> From: Hao Ge <gehao@kylinos.cn>
->>>>
->>>> Even though obj_exts was created with the __GFP_NO_OBJ_EXT flag,
->>>> objects in the same slab may have their extensions allocated via
->>>> alloc_slab_obj_exts, and handle_failed_objexts_alloc may be called
->>>> within alloc_slab_obj_exts to set their codetag to CODETAG_EMPTY.
->>>>
->>>> Therefore, both NULL and CODETAG_EMPTY are valid for the codetag of
->>>> slabobj_ext, as we do not need to re-set it to CODETAG_EMPTY if it
->>>> is already CODETAG_EMPTY. It also resolves the warning triggered when
->>>> the codetag is CODETAG_EMPTY during slab freeing.
->>> I'm not sure what scenario leads to handle_failed_objexts_alloc() and
->>> mark_objexts_empty() being used against the same codetag reference.
->>> Could you please explain the exact scenario you hit?
->>>
->>> handle_failed_objexts_alloc() assigns CODETAG_EMPTY to the elements of
->>> the obj_exts vector while mark_objexts_empty() assigns CODETAG_EMPTY
->>> to the obj_ext of the obj_exts vector itself. In what case do these
->>> two calls operate on the same reference?
->> This issue also occurred during our memory stress testing.
->>
->> I apologize for the incorrect description in my commit message:
->>
->> The possibility of its occurrence should be as follows:
->>
->> When a slab allocates a slabobj_ext, the slab to which this slabobj_ext
->> belongs may have already allocated its own slabobj_ext
->>
->> and called handle_failed_objexts_alloc. That is to say, the codetag of
->> this slabobj_ext has been set to CODETAG_EMPTY.
-> Ah, ok. Let's see if I understood this correctly. The slab from which
-> slabobj_ext objects are allocated (let's call it slabA) tries to
-> allocate its own slabobj_ext, fails, then succeeds and calls
-> handle_failed_objexts_alloc() which sets all elements of its
-> slabA->obj_exts[] to CODETAG_EMPTY. Then slabobj_ext object is
-> allocated from slabA with __GFP_NO_OBJ_EXT, therefore it leaves
-> slabA->obj_exts[obj_idx] intact and equal to CODETAG_EMPTY instead of
-> NULL. At this point, slabB->obj_exts points to an object in slabA.
-> When slabB is freed and free_slab_obj_exts() gets called to free
-> slabB->obj_exts, it detects that slabA->obj_exts[obj_idx] is not NULL
-> and generates this warning. In your callstack stack the freeing seems
-> to happen inside kmem_cache_alloc_noprof() and I think that's because
-> we lost the race and freeing the vector we allocated here:
-> https://elixir.bootlin.com/linux/v6.18-rc3/source/mm/slub.c#L2165 but
-> the scenario is pretty much the same as if we didn't lose the race.
-> The warning would happen later on I think, when we would be freeing
-> slabB->obj_exts. The key for reproducing this is to fail allocation
-> for a slab that is used to allocate slabobj_ext objects. Is my
-> understanding correct?
+  } else {
+	bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
+	return err;
+  }
 
+>  		return err;
+>  	}
+>  
+> -- 
+> 2.34.1
+> 
 
-Yes, your explanation is extremely detailed and thorough.
-
-
-> BTW, your fix seems fine to me, I just want to understand the scenario
-> so that we can explain it correctly.
->
->> To quickly detect this WARN, I modified the code
->> from:WARN_ON(slab_exts[offs].ref.ct) to WARN_ON(slab_exts[offs].ref.ct
->> == 1);
->>
->> We then obtained this message:
->>
->> [21630.898561] ------------[ cut here ]------------
->> [21630.898596] kernel BUG at mm/slub.c:2050!
->> [21630.898611] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
->> [21630.900372] Modules linked in: squashfs isofs vfio_iommu_type1
->> vhost_vsock vfio vhost_net vmw_vsock_virtio_transport_common vhost tap
->> vhost_iotlb iommufd vsock binfmt_misc nfsv3 nfs_acl nfs lockd grace
->> netfs tls rds dns_resolver tun brd overlay ntfs3 exfat btrfs
->> blake2b_generic xor xor_neon raid6_pq loop sctp ip6_udp_tunnel
->> udp_tunnel nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib
->> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct
->> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4
->> nf_tables rfkill ip_set sunrpc vfat fat joydev sg sch_fq_codel nfnetlink
->> virtio_gpu sr_mod cdrom drm_client_lib virtio_dma_buf drm_shmem_helper
->> drm_kms_helper drm ghash_ce backlight virtio_net virtio_blk virtio_scsi
->> net_failover virtio_console failover virtio_mmio dm_mirror
->> dm_region_hash dm_log dm_multipath dm_mod fuse i2c_dev virtio_pci
->> virtio_pci_legacy_dev virtio_pci_modern_dev virtio virtio_ring autofs4
->> aes_neon_bs aes_ce_blk [last unloaded: hwpoison_inject]
->> [21630.909177] CPU: 3 UID: 0 PID: 3787 Comm: kylin-process-m Kdump:
->> loaded Tainted: G        W           6.18.0-rc1+ #74 PREEMPT(voluntary)
->> [21630.910495] Tainted: [W]=WARN
->> [21630.910867] Hardware name: QEMU KVM Virtual Machine, BIOS unknown
->> 2/2/2022
->> [21630.911625] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS
->> BTYPE=--)
->> [21630.912392] pc : __free_slab+0x228/0x250
->> [21630.912868] lr : __free_slab+0x18c/0x250[21630.913334] sp :
->> ffff8000a02f73e0
->> [21630.913830] x29: ffff8000a02f73e0 x28: fffffdffc43fc800 x27:
->> ffff0000c0011c40
->> [21630.914677] x26: ffff0000c000cac0 x25: ffff00010fe5e5f0 x24:
->> ffff000102199b40
->> [21630.915469] x23: 0000000000000003 x22: 0000000000000003 x21:
->> ffff0000c0011c40
->> [21630.916259] x20: fffffdffc4086600 x19: fffffdffc43fc800 x18:
->> 0000000000000000
->> [21630.917048] x17: 0000000000000000 x16: 0000000000000000 x15:
->> 0000000000000000
->> [21630.917837] x14: 0000000000000000 x13: 0000000000000000 x12:
->> ffff70001405ee66
->> [21630.918640] x11: 1ffff0001405ee65 x10: ffff70001405ee65 x9 :
->> ffff800080a295dc
->> [21630.919442] x8 : ffff8000a02f7330 x7 : 0000000000000000 x6 :
->> 0000000000003000
->> [21630.920232] x5 : 0000000024924925 x4 : 0000000000000001 x3 :
->> 0000000000000007
->> [21630.921021] x2 : 0000000000001b40 x1 : 000000000000001f x0 :
->> 0000000000000001
->> [21630.921810] Call trace:
->> [21630.922130]  __free_slab+0x228/0x250 (P)
->> [21630.922669]  free_slab+0x38/0x118
->> [21630.923079]  free_to_partial_list+0x1d4/0x340
->> [21630.923591]  __slab_free+0x24c/0x348
->> [21630.924024]  ___cache_free+0xf0/0x110
->> [21630.924468]  qlist_free_all+0x78/0x130
->> [21630.924922]  kasan_quarantine_reduce+0x114/0x148
->> [21630.925525]  __kasan_slab_alloc+0x7c/0xb0
->> [21630.926006]  kmem_cache_alloc_noprof+0x164/0x5c8
->> [21630.926699]  __alloc_object+0x44/0x1f8
->> [21630.927153]  __create_object+0x34/0xc8
->> [21630.927604]  kmemleak_alloc+0xb8/0xd8
->> [21630.928052]  kmem_cache_alloc_noprof+0x368/0x5c8
->> [21630.928606]  getname_flags.part.0+0xa4/0x610
->> [21630.929112]  getname_flags+0x80/0xd8
->> [21630.929557]  vfs_fstatat+0xc8/0xe0
->> [21630.929975]  __do_sys_newfstatat+0xa0/0x100
->> [21630.930469]  __arm64_sys_newfstatat+0x90/0xd8
->> [21630.931046]  invoke_syscall+0xd4/0x258
->> [21630.931685]  el0_svc_common.constprop.0+0xb4/0x240
->> [21630.932467]  do_el0_svc+0x48/0x68
->> [21630.932972]  el0_svc+0x40/0xe0
->> [21630.933472]  el0t_64_sync_handler+0xa0/0xe8
->> [21630.934151]  el0t_64_sync+0x1ac/0x1b0
->> [21630.934923] Code: aa1803e0 97ffef2b a9446bf9 17ffff9c (d4210000)
->> [21630.936461] SMP: stopping secondary CPUs
->> [21630.939550] Starting crashdump kernel...
->> [21630.940108] Bye!
->>
->>>> Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mark failed slab_ext allocations")
->>>> Signed-off-by: Hao Ge <gehao@kylinos.cn>
->>>> ---
->>>>    mm/slub.c | 12 +++++++++++-
->>>>    1 file changed, 11 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/slub.c b/mm/slub.c
->>>> index d4367f25b20d..cda8f75b72e7 100644
->>>> --- a/mm/slub.c
->>>> +++ b/mm/slub.c
->>>> @@ -2046,7 +2046,17 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
->>>>           if (slab_exts) {
->>>>                   unsigned int offs = obj_to_index(obj_exts_slab->slab_cache,
->>>>                                                    obj_exts_slab, obj_exts);
->>>> -               /* codetag should be NULL */
->>>> +
->>>> +               /*
->>>> +                * codetag should be either NULL or CODETAG_EMPTY.
->>>> +                * When the same slab calls handle_failed_objexts_alloc,
->>>> +                * it will set us to CODETAG_EMPTY.
->>>> +                *
->>>> +                * If codetag is already CODETAG_EMPTY, no action is needed here.
->>>> +                */
->>>> +               if (unlikely(is_codetag_empty(&slab_exts[offs].ref)))
->>>> +                       return;
->>>> +
->>>>                   WARN_ON(slab_exts[offs].ref.ct);
->>>>                   set_codetag_empty(&slab_exts[offs].ref);
->>>>           }
->>>> --
->>>> 2.25.1
->>>>
+-- 
+With best wishes
+Dmitry
 
