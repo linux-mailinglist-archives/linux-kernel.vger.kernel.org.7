@@ -1,177 +1,223 @@
-Return-Path: <linux-kernel+bounces-873204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F911C1359B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D465C135A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:44:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D4445E2130
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:39:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12E915E27E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86EF17A300;
-	Tue, 28 Oct 2025 07:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA14822D795;
+	Tue, 28 Oct 2025 07:39:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzEqqrCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hpw7dwnB"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2244E86337;
-	Tue, 28 Oct 2025 07:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8D3221F20
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761637131; cv=none; b=EM0RdkG6GcDUqg22Q9IgjBA+laBJ/HDqwi/3f306YWYjkIBI7eG05lQA+Dh2mil7oNSRPLA6mmiZ/URjJcFCVdancPEGpCWxKz0y1/qbhO8NU+B9a0U/7BQsBEcRQ3nJen+7CvDAWuvngZveG81EKDsNVbe/EOjFCe7cc+e0OFY=
+	t=1761637148; cv=none; b=ZckEjU3ADpul10mOpIuvDickXmbksUff3i7JiX44qSoznt6A2c98AknTVlNMEUzsfOMSq7wnqJfkKvnISylDt/TvtTIPZtRjMIrXPih/nae0c20bxdE+3TfuFOwJNiTXYD7ivLKT//JCadgShDKx5dAcL4tlSHq3GqIlb2d6hdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761637131; c=relaxed/simple;
-	bh=9mGaj0sbbdNrxuAO9crC1CuxjMpvcFqHIz84NURNSS4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WW7ZUF09zkHHsNjLfMA9qlCm1KDbgwZQN/KJy4XS6jUUrRhrnMmr45euw+8gej6i2vKnYSVuCxM35V1FCv3U+DcslF06x9OB3TPWeyf3GIObghhXngtkxGPRs7rGIq7NBOjLc/IZSt5NP/PTKM2bqfA3cFsVhuY5sCCjCYyc/EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzEqqrCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CF70C4CEE7;
-	Tue, 28 Oct 2025 07:38:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761637130;
-	bh=9mGaj0sbbdNrxuAO9crC1CuxjMpvcFqHIz84NURNSS4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OzEqqrCEYkYDhMPTFAIOuO2h/oq+tBfbJENgxk/s1/SY0jgJdhP56yb42Qsqz1o3A
-	 ZBQ/AKLWy11BdWyZnpv0HNWb9cQr6IWl7inWbLxwwGE2OR7uqRzYNNhcs6O8pPCbE9
-	 WwmbcFq1L6WoDFvnRl/PVgKyM4iSUSljgd9b8s0BYTd8FIFyWT3+2BDk4kPj3IiW5/
-	 slWPRs+O1XszHouwLVgZsFJIrJnj9RPonYNqCaUtE7NmYcrsmyE6P6s1Kq/zOWVDo3
-	 llEDlXmlWk8Gynftch+k3ImSRcvDJVL6ZLBeCzbAkfTfNdA/exKD6SxdfS5axmojdl
-	 b0RlHdP2pGHSg==
-Date: Tue, 28 Oct 2025 08:38:48 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hendrik Noack <hendrik-noack@gmx.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Input: Add Wacom W9000-series penabled
- touchscreens
-Message-ID: <20251028-hairy-caped-pronghorn-88d9b8@kuoka>
-References: <20251027164050.113623-1-hendrik-noack@gmx.de>
- <20251027212535.4078-1-hendrik-noack@gmx.de>
+	s=arc-20240116; t=1761637148; c=relaxed/simple;
+	bh=sH3e7s8xPB6+HNIGAMv6PrTNEE0dGDJnlF85p02RvL0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=c2rdlxFR9glff1J455SDfGn4iWHXNcbBx2EQIdcYLE/6EEvPAI33WCABPx/MuFDM7zWUtVPsHHM8j9E6J05srvqXDC5rgOJLtIvRCjOSSCMJCOlkQFRnR/2sgnoc3Svni9gTQoGHKaXGtVnKz2hCKwpiSgoNe+WzvDJeDnoseQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hpw7dwnB; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b55517e74e3so5159962a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:39:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761637145; x=1762241945; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fZQcAE3NiFPEWRiaaSdgMTBw653ZGnPFrSKRDHStXzg=;
+        b=hpw7dwnB55uSuP5Je5uhHmIz73ieUoyx1pj2j8piFq/CcOuCuFHBFwt1BWnBmMZ18U
+         +UWiVOifZT+SJpKooYd9Hke/7rGEwoY4pFfuig7NGasUIKr9qrdigb1J1S3jE9BCbDaB
+         ZCINEKQbm2bSQqPelFfid1Slt4Z5pOMth3iDHgcTIzrUwdrsvJxVKCCJbWfC2cHhVj9x
+         5f9LWv5X6KRX34X4hi7gm4aBLwKBDzKvmTEg/msC2mdOyu/PmJUaRcQdsvhA57EpyKse
+         uhRRtO0dHS04omzW3F2FH03qFJTtubHC4fyo/ESS6VUIMO26E5cCb7Y3TOFW6RQ8ECQl
+         nr8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761637145; x=1762241945;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fZQcAE3NiFPEWRiaaSdgMTBw653ZGnPFrSKRDHStXzg=;
+        b=T/XzdPNpYb9GxUk2bR4S1TxLATevEdcnFU+5yr+VBPMWi1wnfEj4UKCeFnPNLHNs3u
+         aWzZN+j9y6FXY8PetSucW4CaaJyV5lp7kL+Mpdmjx7lVHygFUjrihJsjt2speHZc+keX
+         HT/aNGCWU4TWEpIbt7KO34W/qNEQdQQGYONMsKhvYCBesS66nv7iQtDPrs5qy6uugk81
+         tN4maJ5GmLZdZ/WNVPXpayYg1d5HRYnQ+NuVEwChMZNsFPr9tIwNsJLQLNlw5xNYxcum
+         pqp/7SJeha6rmWfF1G2kAQrpyHpyQOPBCZBBA9ywFDj2dZs+ZHn41rinImmcRXWlGSXi
+         nutg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxBNIzbawGezgtxY8c9EjUDOcVn3Mki5+JQGC+8upm6ol98KAYZkRr1XDi9FT8cYH/0aXPyNu1H2jyohc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/L+S9NJ6XdRrBN0KN92u1pbEinp0hPb8UlwJDalzjd9W9Q+wS
+	OPOLHssPtZRLpxLb4LadWp9xQuWMVjX2q7JE96HKJFybj/PErOHLL+NG/0CY9JQH2mm/hemSiQ5
+	brtBSvxjnr2AS7g3ChsKKpIYwYYHCPU0=
+X-Gm-Gg: ASbGncvLfI8w/gXl/LQkYu7UCacunbZIbLSXu6xDYGzx6681KtAXeqTmJFfb8/DBSMc
+	CFjInXiGmbTUmb/BWZ1xQPyAwp/aMFuEj0dvZ9vYx+9UywqihQryw+1spozR192C3BnGyZWIXCM
+	uZ2R9WEQF9BtmCHHQHYHAswXOxueZOwuqkir3XweiminskQhR8r6HQtQZkVexolLzKiRFTiC6D8
+	Y/J59hvCXQ9ZCe6sXJwnI07sR79RXddzfsvDxMY2uSED8cW5tAfyqPI1yO3ziBCgSKxWox/w/DB
+	8x47AsPjr5N9hQ==
+X-Google-Smtp-Source: AGHT+IGFh2TYLasVGXUF21rpEaEF/tSw6kHufc0/I2DgN9Fg5FFpCLuzmunsuUK3bHPgMcURl/Aj5TjMj7GW+UrQwnM=
+X-Received: by 2002:a17:902:ce91:b0:27e:e1f3:f853 with SMTP id
+ d9443c01a7336-294cb35ec0emr25822415ad.8.1761637145420; Tue, 28 Oct 2025
+ 00:39:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251027212535.4078-1-hendrik-noack@gmx.de>
+From: Christopher Harris <chris.harris79@gmail.com>
+Date: Tue, 28 Oct 2025 00:38:54 -0700
+X-Gm-Features: AWmQ_bnrt0pbyscnBc_FU7k8Dqzb61ZnfyKrV__muDPkT_bA0X_pvnkmcGfo5-g
+Message-ID: <CAM+eXpdDT7KjLV0AxEwOLkSJ2QtrsvGvjA2cCHvt1d0k2_C4Cw@mail.gmail.com>
+Subject: [REGRESSION] AMD P-State fails with "_CPC object is not present" on
+ AMD Zen 4 (EPYC 4484PX) between 6.10 and 6.11
+To: linux-pm@vger.kernel.org
+Cc: regressions@lists.linux.dev, mario.limonciello@amd.com, perry.yuan@amd.com, 
+	rafael@kernel.org, viresh.kumar@linaro.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 27, 2025 at 10:25:34PM +0100, Hendrik Noack wrote:
-> Add bindings for two Wacom W9007 variants which can be found in tablets.
-> 
-> Signed-off-by: Hendrik Noack <hendrik-noack@gmx.de>
-> ---
->  .../input/touchscreen/wacom,w9000-series.yaml | 79 +++++++++++++++++++
->  1 file changed, 79 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.yaml
+#regzbot introduced: v6.10..v6.11
 
-Filename matching compatible,
+[Regression precisely identified: Last working 6.10.0, first broken 6.11.0]
 
-> 
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.yaml b/Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.yaml
-> new file mode 100644
-> index 000000000000..93579ae0297e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/wacom,w9000-series.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/wacom,w9000-series.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Wacom W9000-series penabled I2C touchscreen driver
+## Summary
 
-Driver as Linux driver? if so, then drop.
+The AMD P-State driver fails to initialize on AMD EPYC 4484PX
+processors starting
+with kernel 6.11.0, returning "_CPC object is not present in SBIOS or
+ACPI disabled"
+error. The same hardware works correctly with kernel 6.10.0 and earlier.
 
-> +
-> +description:
-> +  The W9000-series are penabled touchscreen controllers by Wacom.
-> +
-> +maintainers:
-> +  - Hendrik Noack <hendrik-noack@gmx.de>
-> +
-> +allOf:
-> +  - $ref: touchscreen.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - wacom,w9007a_lt03
-> +      - wacom,w9007a_v1
+The regression was introduced between 6.10.0 and 6.11.0.
 
-None of the compatibles use underscores. Please do not come up with
-entirely different coding style than existing kernel.
+## Hardware
 
-Also, nothing explain here differences - not commit msg, not
-description.
+- CPU: AMD EPYC 4484PX 12-Core Processor (Zen 4 architecture)
+- Motherboard: SuperMicro (confirmed CPPC enabled in BIOS by vendor)
+- Tested on multiple identical systems
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description:
-> +      Optional regulator for the VDD digital voltage.
-> +
-> +  pdct-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Optional GPIO specifier for the touchscreen's pdct pin.
-> +
-> +  flash-mode-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Optional GPIO specifier for the touchscreen's flash-mode pin.
-> +
-> +  pen-inserted-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Optional GPIO specifier for the touchscreen's pen-insert pin.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - vdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      digitizer@56 {
-> +        compatible = "wacom,wacom,w9007a_v1";
-> +        reg = <0x56>;
-> +        interrupt-parent = <&gpx3>;
-> +        interrupts = <5 IRQ_TYPE_EDGE_RISING>;
-> +
-> +        vdd-supply = <&stylus_reg>;
-> +
-> +        pdct-gpios = <&gpd1 2 GPIO_ACTIVE_HIGH>;
-> +        flash-mode-gpios = <&gpd1 3 GPIO_ACTIVE_HIGH>;
-> +        pen-inserted-gpios = <&gpx0 0 GPIO_ACTIVE_LOW>;
-> +
-> +        touchscreen-x-mm = <262>;
-> +        touchscreen-y-mm = <164>;
+Note: This issue likely affects other AMD Zen 4 processors and
+possibly other AMD
+generations, though testing has been performed specifically on EPYC
+4484PX systems.
 
-Never tested, after fixing compatible you will see errors. You need
-unevaluatedProperties.
+## Regression Test Results
+
+**Working** (amd-pstate loads successfully):
+- 6.8.0-84-generic (Ubuntu 24.04)
+- 6.8.0-86-generic (Ubuntu 24.04)
+- 6.9.0-060900-generic (Ubuntu mainline)
+- 6.10.0-061000-generic (Ubuntu mainline)
+- 6.10.14-061014-generic (Ubuntu mainline) **<-- LAST WORKING (latest 6.10.x)**
+
+**Broken** (falls back to acpi-cpufreq with _CPC error):
+- 6.11.0-061100-generic (Ubuntu mainline) **<-- FIRST BROKEN**
+- 6.12.0-061200-generic (Ubuntu mainline)
+- 6.13.0-061300-generic (Ubuntu mainline)
+- 6.14.0-061400-generic (Ubuntu mainline)
+- 6.16.7-061607-generic (Ubuntu mainline)
+- 6.17.1-061701-generic (Ubuntu mainline)
+- 6.17.5-061705-generic (Ubuntu mainline)
+- 6.18.0-061800rc3-generic (Ubuntu mainline RC)
+- 6.17.1-1-cachyos-server-lto (Arch Linux)
+
+## Error Message
+
+```
+[    4.508125] amd_pstate: the _CPC object is not present in SBIOS or
+ACPI disabled
+```
+
+## Steps to Reproduce
+
+1. Boot with kernel parameter: amd_pstate=passive
+2. Check driver: cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver
+   Expected: amd-pstate
+   Actual: acpi-cpufreq
+3. Check dmesg: dmesg | grep "_CPC"
+   Shows: "the _CPC object is not present in SBIOS or ACPI disabled"
+
+## Kernel Configuration (identical in working and broken kernels)
+
+```
+CONFIG_ACPI_CPPC_LIB=y
+CONFIG_X86_AMD_PSTATE=y
+CONFIG_X86_AMD_PSTATE_DEFAULT_MODE=3
+CONFIG_X86_AMD_PSTATE_UT=m
+```
+
+## Testing Environment
+
+- Tested with vanilla kernels from Ubuntu mainline PPA
+- No additional modules or patches
+- Kernel not tainted
+- Reproduced on both Ubuntu 24.04 and Arch Linux distributions
+
+## Impact
+
+This regression prevents affected AMD systems from using the optimized
+AMD P-State
+driver, forcing fallback to generic acpi-cpufreq with approximately 5-10%
+performance loss. While confirmed on AMD EPYC 4484PX (Zen 4), this
+likely affects
+a broader range of AMD processors that support CPPC/ACPI P-States.
+
+## Next Steps
+
+I'm prepared to:
+1. Run amd-debug-tools to capture detailed reports if needed
+2. Test any proposed patches
+3. Perform git bisect between 6.10 and 6.11 if required
+4. Provide any additional debugging information
+
+## Bisection Results
+
+Through systematic testing of Ubuntu mainline kernels, I've identified the exact
+regression window:
+
+- **Last working version**: 6.10.14-061014-generic (latest 6.10.x series)
+- **First broken version**: 6.11.0-061100-generic
+
+The regression was introduced during the 6.11 merge window. All 6.10.x versions
+work correctly (tested through 6.10.14), while all 6.11+ versions
+fail. The issue
+persists through all subsequent versions tested up to 6.18.0-rc3.
+
+The regression appears to be in ACPI _CPC object detection/parsing, as the same
+BIOS/hardware combination works with the entire 6.10.x series but
+fails with 6.11+.
+
+## Additional Information
+
+The same ACPI tables and BIOS work correctly with 6.8 kernels, confirming
+this is not a firmware issue but a kernel regression in CPPC/ACPI handling.
+
+ACPI/CPPC related messages from working system (6.8.0):
+- No error messages, driver loads successfully
+
+ACPI/CPPC messages from broken system (6.17.5):
+```
+$ zgrep "ACPI.*CPPC" /proc/config.gz
+CONFIG_ACPI_CPPC_LIB=y
+$ dmesg | grep amd_pstate
+[    0.714133] amd_pstate: the _CPC object is not present in SBIOS or
+ACPI disabled
+```
+
+I've tested on multiple identical systems with the same results. I'm available
+for testing patches or providing additional debugging information as needed.
+
+Thank you for your attention to this regression.
 
 Best regards,
-Krzysztof
 
+Chris Harris
+chris.harris79@gmail.com
 
