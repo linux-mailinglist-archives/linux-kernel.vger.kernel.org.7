@@ -1,117 +1,143 @@
-Return-Path: <linux-kernel+bounces-874031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5524C155A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:13:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C3FC155D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1DAA1B2128C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:10:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 443114F15B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C164341AC8;
-	Tue, 28 Oct 2025 15:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D88A341645;
+	Tue, 28 Oct 2025 15:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbKhzdPg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XqLWwI2/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE33340DA1
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD6D33769A;
+	Tue, 28 Oct 2025 15:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664096; cv=none; b=MT6RHKlyuUkhaewTFiRyt3WXLkTfxxQ0QqWNzfHnrULh/fIc38BkioVW/PSaBKAYR/3tfuxeTjUjrvXHAwRQqXDW2xcqonQX4auUGf4Du2zNWTLAtzy5xj+HRKCDoA2ryyoPaJ2CG5SQGD5Qjp59JaqRZ+BI9eItuIB91ij5ssM=
+	t=1761664094; cv=none; b=PfRzhfbmw0bUhX7Y3gg8nKfF7ebweEYMBKUtz2y2j6cCvLhgIDM/y+sSJqa+WKaB51iFOlhuc074vIur0IJDLJFnNLrL52V2+rB0NKA6xsH0t6JmWHrZSp38EbdzzpedInsoSF2RPj/2nr+E+IoCry/jXR3UAO5VGwpiaEq+sv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664096; c=relaxed/simple;
-	bh=nC5h8Ln9RiB4A32t/cW1wNQwvbwaWDrUshVJEGXjFc8=;
+	s=arc-20240116; t=1761664094; c=relaxed/simple;
+	bh=KSeLWfOIJIJ6rjAdH73CFG870S9I/ysFcDzt7Qd2DxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNXGwlYeryFWICsbEq2dki+YawWjOg/jgYdqmmPaxPqgkqkDEsnz2pX+qaM+zyZrGkq4RbCMkaDwXAwsWEjA+M6NA3yTo4QdPIQES8VgRo4PMBDjZtxDPbVLhZS2AJeks2nO1snKDxtXxIlScabG9Uxt6ks7I87t0fCalzuExCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbKhzdPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FD92C4CEE7;
-	Tue, 28 Oct 2025 15:08:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3uf+kdTB7jYLfGqYtto/vXS0pFLSDUW62W2SN1s6U1C8NPsFSgtX/N8t90RfZWaxq6HND+zELCfCr6sRGZyCGIDi2KyvSDpi4S6FxwolYKhABC01izc5/cuR+H7d6R5jOmq3vQaKPOkH7cF0KpM0QD4skXILjpAs5eT2wbBUog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XqLWwI2/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61581C4CEF7;
+	Tue, 28 Oct 2025 15:08:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761664096;
-	bh=nC5h8Ln9RiB4A32t/cW1wNQwvbwaWDrUshVJEGXjFc8=;
+	s=k20201202; t=1761664094;
+	bh=KSeLWfOIJIJ6rjAdH73CFG870S9I/ysFcDzt7Qd2DxU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fbKhzdPgXB6ebEOtYoiN0anfPBW7d1hKD0//YiiPI3FuBSIyfyD9VBl77gtua8cu8
-	 4RwdhGEvDTAaZY7L/D+CCB6bRrc951CgS4CC9y/yCrA119TKIAnFWCAyyKa+9nbsYt
-	 v8rzUMm76rCFx3tTG/fndXoJh9ZtnTiDirpoj+GLgGU/rySShcDsHGryvdZBMWH/xO
-	 A9ji6Y6VaBlnxY14gXdiBqRaOIn7+otKFBPj45AapTN2uMOG3uLJKQyMHQl+pDfCKB
-	 YU9uZftiy3bTTLXxX1hQJzLT077SVX7AKputTk8wfh1XIADHdDmTS9uX7yIPLkzLvb
-	 LztIRjbGUtr8A==
-Date: Tue, 28 Oct 2025 15:08:06 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Derek Foreman <derek.foreman@collabora.com>,
-	Daniel Stone <daniels@collabora.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-Message-ID: <5678895e-2647-42db-b3f0-86a21b9bc225@sirena.org.uk>
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
- <6f3f126d-72c1-48cb-a9c8-8d354af2a3d5@sirena.org.uk>
- <410fa913-e86b-4ffd-9d79-ce804f0271ff@collabora.com>
- <63003a7e-8d3d-433a-8a44-54fe8740bc3a@collabora.com>
+	b=XqLWwI2/h+Ljug5dZGeHNoWKdWTbeNHzWL5YYQ7LzO0HXm4R+UouDP/fUtz4o2RA2
+	 oUaKkkvDNCEwNU3AIqPW8m3j/viG73HaLCMytWKUvvimwT5JGT3EPXulHkYKB01G8Y
+	 T1Jqmm1XDqTTjkWssVHU7RiWyqJ8qSHI5tlyZEQJ9Qz+GicrbTYV0zb4DoV4dlJj0E
+	 w0B7QFNGGxjUgDXF8907s8bqpxXk7SCt6tjRqvTgExCRESzZ7hU2IrND2S7UNkTXsL
+	 dN6Vcq8pW2rBw4Jf83VxyIgm7n6zETA/G+xhHA7FfQJkP+DLP2oWs9nCuisT8vM+HI
+	 aXaIWlp7GvO0g==
+Date: Tue, 28 Oct 2025 12:08:10 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf test workload: Add thread count argument to
+ thloop
+Message-ID: <aQDcWtHI9LSBAWw9@x1>
+References: <20251027201405.3715599-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hHHi8VVPfq5V2b8D"
-Content-Disposition: inline
-In-Reply-To: <63003a7e-8d3d-433a-8a44-54fe8740bc3a@collabora.com>
-X-Cookie: Your canceled check is your receipt.
-
-
---hHHi8VVPfq5V2b8D
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20251027201405.3715599-1-irogers@google.com>
 
-On Tue, Oct 28, 2025 at 04:57:03PM +0200, Cristian Ciocaltea wrote:
+On Mon, Oct 27, 2025 at 01:14:05PM -0700, Ian Rogers wrote:
+> Allow the number of threads for the thloop workload to be increased
+> beyond the normal 2. Add error checking to the parsed time and thread
+> count values.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/workloads/thloop.c | 41 ++++++++++++++++++++++++-----
+>  1 file changed, 35 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/perf/tests/workloads/thloop.c b/tools/perf/tests/workloads/thloop.c
+> index 457b29f91c3e..dbb88bcf49e0 100644
+> --- a/tools/perf/tests/workloads/thloop.c
+> +++ b/tools/perf/tests/workloads/thloop.c
+> @@ -31,21 +31,50 @@ static void *thfunc(void *arg)
+>  
+>  static int thloop(int argc, const char **argv)
+>  {
+> -	int sec = 1;
+> -	pthread_t th;
+> +	int nt = 2, sec = 1, err = 1;
+> +	pthread_t *thread_list = NULL;
+>  
+>  	if (argc > 0)
+>  		sec = atoi(argv[0]);
+>  
+> +	if (sec <= 0) {
+> +		fprintf(stderr, "Error: seconds (%d) must be >= 1\n", sec);
+> +		return 1;
+> +	}
+> +
+> +	if (argc > 1)
+> +		nt = atoi(argv[1]);
+> +
+> +	if (nt <= 0) {
+> +		fprintf(stderr, "Error: thread count (%d) must be >= 1\n", nt);
+> +		return 1;
+> +	}
+> +
+>  	signal(SIGINT, sighandler);
+>  	signal(SIGALRM, sighandler);
+> -	alarm(sec);
+>  
+> -	pthread_create(&th, NULL, thfunc, test_loop);
+> +	thread_list = calloc(nt, sizeof(pthread_t));
+> +	if (thread_list == NULL) {
+> +		fprintf(stderr, "Error: malloc failed for %d threads\n", nt);
+> +		goto out;
+> +	}
+> +	for (int i = 1; i < nt; i++) {
+> +		int ret = pthread_create(&thread_list[i], NULL, thfunc, test_loop);
+> +
+> +		if (ret) {
+> +			fprintf(stderr, "Error: failed to create thread %d\n", i);
 
-> This seems to have been already addressed:
+With nt=2 what happens if you manage to create the first thread but not
+the second? The first would not have its pthread_join()?
 
-> https://lore.kernel.org/all/20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com/
-
-Ah, good.  Hopefully that lands soon, do you have any idea what's
-holding it up?
-
---hHHi8VVPfq5V2b8D
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkA3FYACgkQJNaLcl1U
-h9AVOQf/TT3cHQKKcbpTXY1jqeGzTtOf4Q+lasiQNfgPQnTeq/V2uYagmZRlgVFc
-9SDXeRkcFN/u7GiPt9+nQ4tWJaWkAV3BOnqPndzPF4mCtBqDuI68jq1wdjnY2ILB
-ptsrNz1xkUu+oJlsPWALqlSsQHWGNsYENLDExWjs4/MkM45mOHEH2b/jPAoD4GTT
-lmp2TmEYZ03SR8wl362H8XVg8GAHFZLVVdetTwdB3TknjZf5aJD8L3cf0uSqkufw
-3lk0lx+xFMh6hk3IBLAiuqdhVMDEkUaSEpgy5lHGhpSraZYjJ6cvcyV/s8m7lGl4
-s9ZOEfXvUgqO8XcY36AaBaNolFqsSw==
-=AwHR
------END PGP SIGNATURE-----
-
---hHHi8VVPfq5V2b8D--
+> +			goto out;
+> +		}
+> +	}
+> +	alarm(sec);
+>  	test_loop();
+> -	pthread_join(th, NULL);
+> +	for (int i = 1; i < nt; i++)
+> +		pthread_join(thread_list[i], /*retval=*/NULL);
+>  
+> -	return 0;
+> +	err = 0;
+> +out:
+> +	free(thread_list);
+> +	return err;
+>  }
+>  
+>  DEFINE_WORKLOAD(thloop);
+> -- 
+> 2.51.1.851.g4ebd6896fd-goog
 
