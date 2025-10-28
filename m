@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-874631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BC9C16BD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:12:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BCE6C16BE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:14:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 25C644F7C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:11:08 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 88936350330
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E1734FF50;
-	Tue, 28 Oct 2025 20:11:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B50935029D;
+	Tue, 28 Oct 2025 20:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dy60kxZh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4RqJzLaD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24C234EEF5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A7B23EA96
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761682266; cv=none; b=A5WxNZfcL3Ng466rlEhs+jnRQZGv4dQ6dmvaCxm6Gq1//FhV1QSaVICJgwJ6lDkaqluYtTvBEBGChOte26cS8R5Apb+oX74IkrO6TY8V853OWrf0Y8RrymCtRvGvGzDef+ZIUpSxyatSbOmQvTLgC9WO3AXzNaQVp/s70l8L0kI=
+	t=1761682439; cv=none; b=OPzP/LyctLBdcAb1GCzAwyJ2APQdhctyMXfDZ02ZV1mwnSiO4N5CqRp2MbhTEQadoJgI1I1Hn3Ul/mUnmb/TEopyyKNa2q3CImasbwS22L1SpRSnKokNjUyxV5P0h6qqskWQuo4Q68bkci9rJWL+BWKqbmn9o12Bun0q6WDj0og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761682266; c=relaxed/simple;
-	bh=76t7X4NtlKBoa3bhC4F39PmxIQyVWCPFEMu71njF7JQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jJxtH2JAzmdbu5WHf5AkGta0TV0LTABEe4PYBTO/qd8Z7W9UNrZ5T8TFGLzDsvgbw/1hmJA8A4lvFcEdzPf9rYtlpgiI96TvLY94dyDHSBBNxZq/M+GzbvW+flVVtaBbOnzL4lbswCxsfB+fpESyI+yeWIFXlnNcg7D//RUZdZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430afaea1beso85295095ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:11:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761682264; x=1762287064;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=snDiMXoIBqHxqZ1Z3cTd54OwNy2Ll8Rqdyd951bEoNk=;
-        b=bgA2M8LBujtwHXTdrP/bZ4ZN9RswzOHDtLz+ehVDbeuKaiWAtJSMg09UBJuzjrMT49
-         ZYS9O3QxyVve+Ex5CklFinzJCYEUNcPkqn/5nLL11iXXUucGNuL8sRbWWhWDwFeZ+bdj
-         AbUtOCqDQkrv92hByuxUapZGXQozfLAyKSTo3eg4OhVq487VFGZNF/dp5ZpXdmoNCGsg
-         33vHQIjrAI87MJGFHlfZdLrDSYn6MakVWMX+S8zOAdYKyiEL0pWcNYemiegtk/K2Ty/g
-         yr9P69PM1vznktt+jLqkJ7LPLyRXKEaYPHYbguUs7mX4RUEEFDEXo1KyirXKJWxRhIj4
-         x8/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUUQtTw5VvUN+B7NFHPCxPWi13zzEEsrkf1RYVFCynod7dDo4yR8gpCyKrm62zdFhM4Pgwef+5CAFC0UwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6Owtl7SDhuN0rTIcmML+2XSoIsO3VEqcVxXmlWzKAH+UqFWAi
-	AuLRUdxA4BxA/MQUs/4DcqaIfPHOa+WVTVi/Hqj+wckn8VBBMnMoraHBPhOiwfe2mqbCbAoe5+t
-	xYJe/WmExCfvUsvqAWCYks6GWwWEpcBdkHCHHGub5bycc/Kn5bYSnag1DXx4=
-X-Google-Smtp-Source: AGHT+IGG/0dINSPTmUOb73GUaltDBc92SKzWgv/1NnnA1VxhhscrmAXZZCLOxXm+45k7OR9exyK9900T3I1Jxidj7gqgxfieM+wH
+	s=arc-20240116; t=1761682439; c=relaxed/simple;
+	bh=Oixx8EWSWQTq06cavMws4Pvsp62qi2MmNzuildh4xzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSZn64QjyMzrSXVrL9gRNYvxUEJX4v24bMVmEzjxdHXzeD79RtixDOa7yPNs9zl8wJNtvjMjB+UtC8mVxapUHuhkMAikEzJ2llXpmj2oEL58czPd7GRGb0fSCt/vYA9eZyE1R1MX367PpBJRTHs4O7qhTU4sUKDnMJ4RFKad8uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dy60kxZh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4RqJzLaD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 28 Oct 2025 21:13:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761682436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oixx8EWSWQTq06cavMws4Pvsp62qi2MmNzuildh4xzo=;
+	b=dy60kxZhniGssSMo2E2uj67BKgl1P10QrChr46SvnZvO7RjiX/OyJXNkBARcVwwCyJJvez
+	WnybMELM8aRxwPK1qZjHeYJCDMdj1ljjgW369J6B4LC7xtgqQfLf5AUv22QvZiX3Wocdip
+	kY1rJn+Vjc3plBFx6hWNMnyBdqBbFfyPTBDb8Owiv+wH/9EBCeftm5ec8T8JE+HcN14XR0
+	Dz8bCZH7nWbtTG8FUL0DugY7fNBFr5M5/SA/ulec2n4oJOf9btvE6+jKDi5wpVtXWylhy8
+	PcDSfDXlyFk2G7j4CdwcyNMeziYUOpPl3YvPBy/JWUSR3Flh8q+73MU6WbcJCA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761682436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Oixx8EWSWQTq06cavMws4Pvsp62qi2MmNzuildh4xzo=;
+	b=4RqJzLaD/HZzL9Oi9q4JouyvUZTJV3HW7yOG6YDRuZwyp1O4ioFRoix5mV5N3Inr7qgtwF
+	uCd0LdQROxT0vLCg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] perf/x86: Add cond_resched() when allocate/release DS
+ buffers
+Message-ID: <20251028201354.d25lZRRa@linutronix.de>
+References: <20251027212724.1759322-1-namhyung@kernel.org>
+ <20251028141518.GA4067720@noisy.programming.kicks-ass.net>
+ <20251028152747.GR4068168@noisy.programming.kicks-ass.net>
+ <aQETYiqpEo5IcTXN@google.com>
+ <20251028190422.GE3419281@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d99:b0:42f:9b0c:cd84 with SMTP id
- e9e14a558f8ab-432f8f81c02mr8604245ab.3.1761682263781; Tue, 28 Oct 2025
- 13:11:03 -0700 (PDT)
-Date: Tue, 28 Oct 2025 13:11:03 -0700
-In-Reply-To: <20251028182257.xZmGA%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69012357.050a0220.32483.01d8.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
-From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251028190422.GE3419281@noisy.programming.kicks-ass.net>
 
-Hello,
+On 2025-10-28 20:04:22 [+0100], Peter Zijlstra wrote:
+> Well, we've been trying to get people to test things... But
+> realistically people will only test once you force them. So we'll see.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+| grep CONFIG_PREEMPT_LAZY /boot/config-6.16.12+deb14+1-amd64
+| CONFIG_PREEMPT_LAZY=y
 
-Reported-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
-Tested-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
+Debian has it enabled by default in current testing/ unstable distro.
+\o/
 
-Tested on:
+Sebastian
 
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b2dfe2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=45603f6730eb4fd7
-dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11db57e2580000
-
-Note: testing is done by a robot and is best-effort only.
 
