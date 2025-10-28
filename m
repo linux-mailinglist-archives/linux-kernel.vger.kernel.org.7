@@ -1,170 +1,126 @@
-Return-Path: <linux-kernel+bounces-872914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30B7FC12985
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:56:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA04AC129A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282AE1AA307F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD08B5684A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829C82641E3;
-	Tue, 28 Oct 2025 01:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979FF2620D2;
+	Tue, 28 Oct 2025 01:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdza6PTp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTaDNk+a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36211662E7;
-	Tue, 28 Oct 2025 01:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F140B1D61A3;
+	Tue, 28 Oct 2025 01:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761616556; cv=none; b=YFa57RKFoTdmsyeBaMFZOqqRsULOrFrESuPDVb32seFtv6X3Bl1aFIohRelljloBpNW/zRZD62+NB9CPHuARB7v1x3QYJuU29iXEt/6hihZs8+EVIAGfm73sQA1C5mCYkublunJf9/U0eEZtapp65lsEclqSwThhBVwYFTKjNoY=
+	t=1761616603; cv=none; b=UyKP2BfGh36KsYSNT8goWB/GO5GRSj7EJ7i7uy9eBVytDiLCeY1rfSymeyTbrddJugl91yJJyveDT+o+Tude5igFQRlkKwR6FKpSWbuFaIvRqZJgOUhsTkGvGmDPD3DZAYmyiX4czUMZ5jqL3sY5rvyNKkFqTYdnjbwq8i6pQkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761616556; c=relaxed/simple;
-	bh=6IlL0RD/b1cmQ2o28E1LFzW/+KMUWhpSmqh1P0RR74k=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=sHEf8SKDY4L/8SrYQ164Ic25dapc1c0U/+29Xc+fM0EP7bt5L1QLlUzVNPRX35hZrU6dr7+0fd5jtTGPTNbfFFwWDaLkfrRFvb4l/gNvvYnT4urhSZnhK/yj384cZEMCrvLRncPW78gyZ5qFITbdf2UBZeWX3CuRmPiNX23Z+Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdza6PTp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B62A1C4CEF1;
-	Tue, 28 Oct 2025 01:55:51 +0000 (UTC)
+	s=arc-20240116; t=1761616603; c=relaxed/simple;
+	bh=g2yyvoN+1HNOmdyvaXIarerpwTT69j+s8Bc+DILxvjI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YGmJZI+qKuKg71YkiK9iCyfIoikBDonrbj6T5fF/LDins71sQpUqkLpVScpLyMEUS0wK7sUyuE6Byi5eVqyD5e2R0VwRzX1OKiRRSpIq0T9+tWePbBhvHDDkillEBWKCaQ0Z0IQjf8Q1JLz/13QWlDbPE3OTvKFqeVoS87Kn/sI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTaDNk+a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56839C4CEF1;
+	Tue, 28 Oct 2025 01:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761616556;
-	bh=6IlL0RD/b1cmQ2o28E1LFzW/+KMUWhpSmqh1P0RR74k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jdza6PTpVIv54MadO3APb4bau5qFddYhcpvXjSTnjv2TfyE08Z4O4glutGY6oaVhu
-	 nYR75QQXC3SO8VyxMdcwoAVaMYw8Xy0BUdy3xJCg64/2eBMukdCrYKZS6TtEKR2ChL
-	 vK6A0SuB/mo+5xJJ3XLIYsS+pZRZJ0Abcr6Ni1a6iO1CXyo7+YarkUnsfxILXhESBQ
-	 qxbWXagybJU32oddPCU3AnViWYCTgv6gDWtsfwN0AqpXQwRHEO+9YyEUqA2nDm/xxy
-	 Vfju0PPjbRwyhvg21/4c5JIrFUZoBKyycNEa44C5NEQq7MuSbeO1+/2kWuELXZDfVL
-	 TJcr1Hh5zEHlA==
-Date: Tue, 28 Oct 2025 10:55:49 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, Jinchao Wang <wangjinchao600@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H . Peter Anvin" <hpa@zytor.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-perf-users@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v5 6/8] selftests: tracing: Add a basic testcase for
- wprobe
-Message-Id: <20251028105549.ae94e8eeb42f4efc183d2807@kernel.org>
-In-Reply-To: <20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
-References: <175859019940.374439.7398451124225791618.stgit@devnote2>
-	<175859026716.374439.14852239332989324292.stgit@devnote2>
-	<aPvwGhMBJqMKcC9D@finisterre.sirena.org.uk>
-	<20251027224347.4c887cc956df63602f377550@kernel.org>
-	<20251028084222.a3c1ae97d125d9bd88fc565b@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1761616602;
+	bh=g2yyvoN+1HNOmdyvaXIarerpwTT69j+s8Bc+DILxvjI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=iTaDNk+aZqktgIHMAvwTEZ+sCp+1KPnLqdtWZnXIf//ShAfEgm8my91TerFAY4ROi
+	 3lpeXg3a/tvo+Z11E8FZBYb+dyIKUVcPXHJmw2gHQIoxj6dxJGQQ9bWmeLDedQcHbd
+	 0eysn84yPKkKTIH03mr99MHmCZwd/dqM74Y6v19UF7g4zOpA8oVSNqhtKwDd+vaqpu
+	 iAJ3LNAA6CKcfo60D0TKEmc2ffhoaVduudmS5bzJUTGd6A9rh9Myy2w+ZtTWe2qHt9
+	 HNwlsKC31qImNA+2+KpT+XPZF2xA2r7nso/VJ9HT/IRfe0NHHScelDgw78T9so6Aur
+	 ggqYEVV8xDt/g==
+Message-ID: <8ad9e792-7b0a-4c93-8ad9-3f13e6f8614f@kernel.org>
+Date: Tue, 28 Oct 2025 09:56:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org,
+ syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: invalidate dentry cache on failed whiteout
+ creation
+To: Deepanshu Kartikey <kartikey406@gmail.com>, jaegeuk@kernel.org
+References: <20251027130635.13739-1-kartikey406@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20251027130635.13739-1-kartikey406@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 28 Oct 2025 08:42:22 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-
-> ~ # cd /sys/kernel/tracing/
-> /sys/kernel/tracing # echo 'w:my_wprobe w@jiffies' >> dynamic_events 
-> /sys/kernel/tracing # echo 1 > events/wprobes/my_wprobe/enable 
-> [   54.942288] trace_wprobe: enable_trace_wprobe called
-> [   54.945306] trace_wprobe: trying to register wprobes
-> [   54.947367] trace_wprobe: __register_trace_wprobe called
-> [   54.949586] trace_wprobe: registering wprobe at addr: 0xffffb6ce429fb200, len: 4, type: 2
-> [   54.951639] Creating wide hw breakpoint on CPU 0
-> [   54.966390] Creating kernel counter on CPU 0 for event type 5
-> [   54.967758] perf_install_in_context: event 00000000736da1d9 ctx 000000005d4db900 cpu 0
-> [   54.972015] perf_install_in_context2: event 00000000736da1d9 ctx set to 000000005d4db900
-> [   54.976697] cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2c8
+On 10/27/25 21:06, Deepanshu Kartikey wrote:
+> F2FS can mount filesystems with corrupted directory depth values that
+> get runtime-clamped to MAX_DIR_HASH_DEPTH. When RENAME_WHITEOUT
+> operations are performed on such directories, f2fs_rename performs
+> directory modifications (updating target entry and deleting source
+> entry) before attempting to add the whiteout entry via f2fs_add_link.
 > 
-> What happen if the cpu calls function on itself by
-> smp_call_function_single() on arm64?
+> If f2fs_add_link fails due to the corrupted directory structure, the
+> function returns an error to VFS, but the partial directory
+> modifications have already been committed to disk. VFS assumes the
+> entire rename operation failed and does not update the dentry cache,
+> leaving stale mappings.
 > 
->   smp_call_function_single(this_cpu, remote_function, &data, 1);
+> In the error path, VFS does not call d_move() to update the dentry
+> cache. This results in new_dentry still pointing to the old inode
+> (new_inode) which has already had its i_nlink decremented to zero.
+> The stale cache causes subsequent operations to incorrectly reference
+> the freed inode.
+> 
+> This causes subsequent operations to use cached dentry information that
+> no longer matches the on-disk state. When a second rename targets the
+> same entry, VFS attempts to decrement i_nlink on the stale inode, which
+> may already have i_nlink=0, triggering a WARNING in drop_nlink().
+> 
+> Example sequence:
+> 1. First rename (RENAME_WHITEOUT): file2 → file1
+>    - f2fs updates file1 entry on disk (points to inode 8)
+>    - f2fs deletes file2 entry on disk
+>    - f2fs_add_link(whiteout) fails (corrupted directory)
+>    - Returns error to VFS
+>    - VFS does not call d_move() due to error
+>    - VFS cache still has: file1 → inode 7 (stale!)
+>    - inode 7 has i_nlink=0 (already decremented)
+> 
+> 2. Second rename: file3 → file1
+>    - VFS uses stale cache: file1 → inode 7
+>    - Tries to drop_nlink on inode 7 (i_nlink already 0)
+>    - WARNING in drop_nlink()
+> 
+> Fix this by explicitly invalidating old_dentry and new_dentry when
+> f2fs_add_link fails during whiteout creation. This forces VFS to
+> refresh from disk on subsequent operations, ensuring cache consistency
+> even when the rename partially succeeds.
+> 
+> Reproducer:
+> 1. Mount F2FS image with corrupted i_current_depth
+> 2. renameat2(file2, file1, RENAME_WHITEOUT)
+> 3. renameat2(file3, file1, 0)
+> 4. System triggers WARNING in drop_nlink()
+> 
+> Fixes: 7e01e7ad746b ("f2fs: support RENAME_WHITEOUT")
+> Reported-by: syzbot+632cf32276a9a564188d@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=632cf32276a9a564188d
+> Suggested-by: Chao Yu <chao@kernel.org>
+> Link: https://lore.kernel.org/all/20251022233349.102728-1-kartikey406@gmail.com/ [v1]
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Deepanshu Kartikey <kartikey406@gmail.com>
 
-Sorry, that was printk buffering issue. I used trace_printk() instead
-and persistent ring buffer[1] to trace it.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-[1] https://docs.kernel.org/trace/debugging.html#persistent-buffers-across-boots
-
-~ # echo 1 > /sys/kernel/tracing/instances/boot_map/options/trace_printk_dest
-~ # echo 'w:my_wprobe w@jiffies' >> /sys/kernel/tracing/dynamic_events 
-~ # echo 1 > /sys/kernel/tracing/events/wprobes/my_wprobe/enable 
-QEMU 8.2.2 monitor - type 'help' for more information
-(qemu) system_reset
-...
-
-~ # cat /sys/kernel/tracing/instances/boot_map/trace 
-# tracer: nop
-#
-# entries-in-buffer/entries-written: 16/16   #P:1
-#
-#                                _-----=> irqs-off/BH-disabled
-#                               / _----=> need-resched
-#                              | / _---=> hardirq/softirq
-#                              || / _--=> preempt-depth
-#                              ||| / _-=> migrate-disable
-#                              |||| /     delay
-#           TASK-PID     CPU#  |||||  TIMESTAMP  FUNCTION
-#              | |         |   |||||     |         |
-           <...>-63      [000] .....    21.065038: register_wide_hw_breakpoint: Creating wide hw breakpoint on CPU 0
-           <...>-63      [000] .....    21.079678: perf_event_create_kernel_counter: Creating kernel counter on CPU 0 for event type 5
-           <...>-63      [000] .....    21.080051: perf_install_in_context: perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337 cpu 0
-           <...>-63      [000] .....    21.080140: perf_install_in_context: perf_install_in_context2: event 000000000b3ac4d3 ctx set to 00000000097d6337
-           <...>-63      [000] .....    21.080939: cpu_function_call: cpu_function_call: calling function on CPU 0, func: __perf_install_in_context+0x0/0x2f0
-           <...>-63      [000] .....    21.080966: smp_call_function_single: smp_call_function_single: calling function on CPU 0, func: remote_function+0x0/0x78, wait=1
-           <...>-63      [000] ...1.    21.080973: smp_call_function_single: smp_call_function_single: running on CPU 0, call CPU 0
-           <...>-63      [000] ...1.    21.081099: smp_call_function_single: smp_call_function_single: checking for potential deadlock conditions
-           <...>-63      [000] ...1.    21.081259: generic_exec_single: generic_exec_single: preparing to call function on CPU 0, func: remote_function+0x0/0x78
-           <...>-63      [000] ...1.    21.081269: generic_exec_single: Executing smp_call_function_single on self CPU 0, func: remote_function+0x0/0x78
-           <...>-63      [000] d..1.    21.081289: csd_do_func: csd_do_func: CPU 0 executing func remote_function+0x0/0x78
-           <...>-63      [000] d..1.    21.081429: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 ctx 00000000097d6337
-           <...>-63      [000] d..2.    21.083211: hw_breakpoint_control: hw_breakpoint_control: ops=0
-           <...>-63      [000] d..1.    21.084191: __perf_install_in_context: __perf_install_in_context: event 000000000b3ac4d3 done, ret=0
-           <...>-63      [000] d..1.    21.084237: csd_do_func: csd_do_func: CPU 0 finished func remote_function+0x0/0x78
-           <...>-63      [000] d..1.    21.084243: generic_exec_single: Finished csd_lock_record(NULL)
-~ # 
-
-
-So the last message is right before the local_irq_restore() in
-generic_exec_single().
-
-static int generic_exec_single(int cpu, call_single_data_t *csd)
-{
-	...
-		csd_lock_record(csd);
-		csd_unlock(csd);
-		local_irq_save(flags);
-		csd_do_func(func, info, NULL);
-		csd_lock_record(NULL);
-		trace_printk("Finished csd_lock_record(NULL)\n"); <- 
-		local_irq_restore(flags);
-		return 0;
-
-Actually, I added another trace_printk() right after generic_exec_single().
-
-	err = generic_exec_single(cpu, csd);
-	trace_printk("generic_exec_single returned %d for CPU %d, func: %pS\n",
-		err, cpu, func);
-
-This means after setting the hw_breakpoint, when enabing the IRQ,
-the machine is frozen - but qemu is running busy.
-
-Can we specify the kernel memory address to HW breakpoint on arm64?
-
-Thank you,
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
 
