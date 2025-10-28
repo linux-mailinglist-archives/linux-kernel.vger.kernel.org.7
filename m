@@ -1,142 +1,127 @@
-Return-Path: <linux-kernel+bounces-874252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538B1C15DEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:40:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 512C6C15D7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:35:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0519463671
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:31:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2F62504105
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F476340DAC;
-	Tue, 28 Oct 2025 16:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14AB303A2D;
+	Tue, 28 Oct 2025 16:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="na3Dwu2K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UsFMAVyw"
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68973370E2;
-	Tue, 28 Oct 2025 16:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F27B28689B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669076; cv=none; b=UG8+3AaozledH121imWKJXc4csXd+JK+a9j8gIMNIorSvWo0tt00o0XITC6INa17ihPDgitdeeV4WYxgZEYUDZMpd8zNXkQ7B+Z4aCYHqN9nnmtLUZdaWwaeDcGZsoLBU6op5C5BhzYlrezm2BRW7ak10XZhXLIGxnqi5TVRARY=
+	t=1761669111; cv=none; b=BRLQv7tzdmmjKtnVltEYuawaGFkh6kvwLdjYAH5QZYrhylZm5cAsTOIzz6ajh0hVMLvDCabs8RTxxYxf+URhTXoHSOTpQ3ypaVn6TmKtIDwYNZWHV3ziaKSU5jGBlpFibzkAeikkOkeVu6N50yWILZ4cX97Bu2HK2AjknY2xP+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669076; c=relaxed/simple;
-	bh=LEa/LtulEX7iu5siVVB8zT5KqHE8MDqhFS/uQJ5ajdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B44dd3hwIRET/M/i6KcS6FAuMKy02yZv5pRLaFKeNp9P6xaUH3kmHSKT2DW/5ssWQAqUTolGzFF3g+3syan0aq4PWYMUldW4R4GBTndoQap5bgAQkPPTB4wuy1x5dxSqUAzFtutqzy+/cvUeTm8wpyhP5n8HvB1A9dSxO645TLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=na3Dwu2K; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761669075; x=1793205075;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=LEa/LtulEX7iu5siVVB8zT5KqHE8MDqhFS/uQJ5ajdk=;
-  b=na3Dwu2KRFS2OloJQCzHm1LJ43CkR+XSnE58b74aK5PMHLQthWDwxsGH
-   1Bmwv3UhBVwgUZ/wkHpSy9jZboDJtjHPvV5wgnBt1GIUJBYhhyu6tCnnM
-   7kXDvm3SOiGUFF2hacJO98FvjvUgAGIOunwLEzA3BsA0JlV8LWiQCp4GQ
-   v6Hj5SDzgS8a7pdqi92NNnRBjQORu0XH+7LyRGuFZAka7BymtUS3qvPyb
-   pY8lSXhJfcnZ5naH3x1rUMP6C0jC3ovZjtViVh6PPFU/Hk9UKfQmj2+ak
-   eFGjEy8zKBE0BL52iNLMstA/8/QQ52C3bZ6t8PovOCGTgJ/O3QbQP1ls0
-   w==;
-X-CSE-ConnectionGUID: h5kTLgnySz+P3K5i6yy3JQ==
-X-CSE-MsgGUID: vqmv4SARTJq5IEqYJUzsTw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81406252"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="81406252"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:31:14 -0700
-X-CSE-ConnectionGUID: 02lDYFW7SiepysPC7ybIxg==
-X-CSE-MsgGUID: CX23qSOKSdWUWvR1519K+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="185287673"
-Received: from egrumbac-mobl6.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.104])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 09:31:10 -0700
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 06FA0121E88;
-	Tue, 28 Oct 2025 18:31:08 +0200 (EET)
-Date: Tue, 28 Oct 2025 18:31:08 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] media: i2c: add Sony IMX111 CMOS camera sensor
- driver
-Message-ID: <aQDvzKMXhVlR2G3J@kekkonen.localdomain>
-References: <20250819120428.83437-1-clamor95@gmail.com>
- <aLB_7YS9HsfzfadI@kekkonen.localdomain>
- <CAPVz0n1mXvdyzshei8Mbw7KVYCkQjziBA95ton4MKXPnPd0kbQ@mail.gmail.com>
- <aQDuOSUYbuoLoFbf@kekkonen.localdomain>
+	s=arc-20240116; t=1761669111; c=relaxed/simple;
+	bh=0PucAMAox93xgjGrD5pR5CZazcj6sVnwd0fqWCdhArI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pw1safeRG4JcaQEvYmYbGM6uXdUn+Oz83mB5WUCmykHgZIeoxpzrX2h9yXeSo9a8YoirN7ZrAcIUnkGhA2yo7EyEnglGWaza3d2fx9n2clwsSBEv6J8W4Mz2Tb1bH4Of47FrrgNqlmbOY+Xq+B/e9/Sgp3kjDc6nlYmZDPXt0dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UsFMAVyw; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761669105;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HWSSRHmArf/3utDL/ehBcqRMhr+v6BRpRpOeVW9o8r8=;
+	b=UsFMAVywaT8IpkoioAmt6vXomW1hLiGke5lnfdOFm6CT75B6FrTgPwndxR0Ld4UWB+GB6Z
+	kNutJOjE/CXohXqu1fHCO5Wo3THXTOtts+MdPLoZN5i9dq8L67okdhsPKyc4EOyrIZ69wY
+	ts6Gbva7I2Aaj5nD5s2hWpcBahe3SXQ=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: bot+bpf-ci@kernel.org
+Cc: akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
+ ast@kernel.org, surenb@google.com, mhocko@kernel.org,
+ shakeel.butt@linux.dev, hannes@cmpxchg.org, andrii@kernel.org,
+ inwardvessel@gmail.com, linux-mm@kvack.org, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, martin.lau@kernel.org, song@kernel.org,
+ memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
+ yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
+Subject: Re: [PATCH v2 17/23] bpf: selftests: introduce read_cgroup_file()
+ helper
+In-Reply-To: <58dd6b759499f212f626e6d7658dd558b3e6a334e0780898002cb2cb84dbcb85@mail.kernel.org>
+	(bot's message of "Mon, 27 Oct 2025 23:48:24 +0000 (UTC)")
+References: <20251027232206.473085-7-roman.gushchin@linux.dev>
+	<58dd6b759499f212f626e6d7658dd558b3e6a334e0780898002cb2cb84dbcb85@mail.kernel.org>
+Date: Tue, 28 Oct 2025 09:31:38 -0700
+Message-ID: <87ms5b3s45.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQDuOSUYbuoLoFbf@kekkonen.localdomain>
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 28, 2025 at 06:24:25PM +0200, Sakari Ailus wrote:
-> Hi Svyatoslav,
-> 
-> On Fri, Aug 29, 2025 at 09:20:10PM +0300, Svyatoslav Ryhel wrote:
-> > чт, 28 серп. 2025 р. о 19:12 Sakari Ailus <sakari.ailus@linux.intel.com> пише:
-> > >
-> > > Hi Svyatoslaw,
-> > >
-> > > On Tue, Aug 19, 2025 at 03:04:25PM +0300, Svyatoslav Ryhel wrote:
-> > > > Add driver for Sony IMX111 CMOS sensor found in LG Optimus 4X and Vu
-> > > > smartphones.
-> > >
-> > > Thanks for the set.
-> > >
-> > > I wonder how would the sensor work with the CCS driver. The register layout
-> > > appears to be very much aligned with that (I haven't checked whether there
-> > > are MSRs that depend on the mode).
-> > >
-> > 
-> > After deeper testing I have found that imx111 may be nokia,smia
-> > compatible, at least most of general registers and CCS logic is
-> > applicable. Some of registers may cause issues, for example,
-> > "phy_ctrl_capability" = 0, 0x0 and some insane pll ranges. Maybe that
-> > can be addressed with a firmware patch idk. The trickiest part is that
-> > each mode requires non-standard and non-common manufacturer code
-> > (0x3xxx ranges). If you can explain how to address these issues, I
-> > would love to add imx111 and a few other modules into list of CCS
-> > supported devices.
-> 
-> On a closer look, only the image size related configuration and a little
-> more appears to be CCS-like. That's not enough to configure the sensor;
-> this is conveyed in the MSR space which indeed makes the sensor difficult
-> to control using the CCS driver, unfortunately.
+bot+bpf-ci@kernel.org writes:
 
-Ok, the driver appears to be doing quite a bit of register writes outside
-the register lists, which is good, and what's there appears indeed largely
-CCS compliant. The MSRs remain an issue; it'd take quite a bit of reverse
-engineering to figure out what the registers are and how to configure them
-in a generic way. I think that's doable but I'm not sure it is justifiable
-considering the expected effort.
+> ```
+> commit 712137918bba1b0a9c7c670bab9200b0f0d6a7e8
+> Author: Roman Gushchin <roman.gushchin@linux.dev>
+>
+> bpf: selftests: introduce read_cgroup_file() helper
+>
+> This patch adds a new helper function read_cgroup_file() to read from
+> cgroup control files in BPF selftests. The function opens a file,
+> reads into a buffer, and returns the result.
+>
+>> diff --git a/tools/testing/selftests/bpf/cgroup_helpers.c b/tools/testing/selftests/bpf/cgroup_helpers.c
+>> index 20cede4db..8fb02fe4c 100644
+>> --- a/tools/testing/selftests/bpf/cgroup_helpers.c
+>> +++ b/tools/testing/selftests/bpf/cgroup_helpers.c
+>> @@ -126,6 +126,45 @@ int enable_controllers(const char *relative_path, const char *controllers)
+>>  	return __enable_controllers(cgroup_path, controllers);
+>>  }
+>>
+>> +static size_t __read_cgroup_file(const char *cgroup_path, const char *file,
+>> +				 char *buf, size_t size)
+>> +{
+>> +	char file_path[PATH_MAX + 1];
+>> +	size_t ret;
+>> +	int fd;
+>> +
+>> +	snprintf(file_path, sizeof(file_path), "%s/%s", cgroup_path, file);
+>> +	fd = open(file_path, O_RDONLY);
+>> +	if (fd < 0) {
+>> +		log_err("Opening %s", file_path);
+>> +		return -1;
+>
+> Can __read_cgroup_file() return -1 when its return type is size_t?
+>
+> The function signature declares size_t (unsigned), but returns -1 here.
+> When -1 is implicitly converted to size_t, it becomes SIZE_MAX
+> (18446744073709551615 on 64-bit systems). Callers checking for errors
+> with "if (ret < 0)" will fail because size_t is unsigned, and callers
+> checking "if (ret == -1)" will also fail after the cast.
+>
+>> +	}
+>> +
+>> +	ret = read(fd, buf, size);
+>> +	close(fd);
+>> +	return ret;
+>
+> Does this handle read() errors correctly?
+>
+> The read() syscall returns ssize_t which can be negative on error.
+> Assigning this to size_t (line 143) converts negative error codes into
+> large positive numbers. For example, read() returning -1 becomes SIZE_MAX
+> when stored in ret.
+>
+> Should the return type be ssize_t instead of size_t to properly propagate
+> both success (byte count) and error (negative values) to callers?
 
--- 
-Sakari Ailus
+Correct, fixed to ssize_t. Thanks!
 
