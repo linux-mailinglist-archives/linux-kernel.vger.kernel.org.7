@@ -1,109 +1,124 @@
-Return-Path: <linux-kernel+bounces-874049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41265C15684
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C226C156A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 106C3502A80
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:18:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60E2B507C78
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C18733FE1E;
-	Tue, 28 Oct 2025 15:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A4233DEDB;
+	Tue, 28 Oct 2025 15:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b="YCSOK9tt"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UuEpn00l"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0B633F8DA
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123A02E7BAA;
+	Tue, 28 Oct 2025 15:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664673; cv=none; b=vF3jW79BC8lk4GFtoemY6xG6zR5+xhlLs7csZsybaBVB4Gi745gaal4kSsv64Y9G4bfPJtjvDa/ZzGe+/d/rQPSCK9oo+UGwRv3QI7R1xzruPYYxK2nVCV1K1J+uk7a495dkFRGcvP0KdPa6BYM+epJoyYBybO8DbVRcgegUDJY=
+	t=1761664760; cv=none; b=fIEZp/DnEVp5uVSg+ZOYiaMg3+m19M1j2WH3gPI48aYD29xnFiLwVhRBRp0TzyyFPicEnxPouNW+BAPGnJVTTZYYWgx3Be3XKmadUKfJbrfkkitfHLEUWd6l4k96n42JtacnisWDzr9TiQbUf1QdyiVg/PSPgr0VDZUO1NHsdvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664673; c=relaxed/simple;
-	bh=MMaMHTb4Ah2CCrUzmnNSZ0wgi0JyjgLlM6vbEvp2sbk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KUilgGnKYmCr6O9qZOkjZftJDJ+Y5Fgms9+38RWjZxotMfgd295lhfktitTwHcRpR67bbYrgfkp1xAXWs4YSewi3Lhg/uZqAc98x/7l3ttJ5lqHSj9RPAH6Yn2ZatUby42bxz8N+HPM2IUQL0/6WAgXAngbYq1XdA5AJIZo5HhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net; spf=none smtp.mailfrom=dpplabs.com; dkim=pass (2048-bit key) header.d=reznichenko.net header.i=@reznichenko.net header.b=YCSOK9tt; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=reznichenko.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=dpplabs.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b62e7221351so5378097a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:17:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=reznichenko.net; s=google; t=1761664671; x=1762269471; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MMaMHTb4Ah2CCrUzmnNSZ0wgi0JyjgLlM6vbEvp2sbk=;
-        b=YCSOK9ttSSGanTt51EsKsqwqq8wteU+FncXeGl3p7zWom7oOtmLbMB4jwLwccPuYHU
-         luuCrzTrwXIyaa+yC/oPFsoebtAWun3X9LuEWw1AXx5aBWH3sF6Xr8UDCYzK/r7T8HsC
-         HyC2cCrsbGkvSeuekO6ztDd5klOuk/KQ8cwWR0rJlqEqBENaMguPCYqwRbPGtEnPP6lE
-         FtqeFBvD4lBseIn7LhpOYgnO6H8zKgsn31u4QpgjoAqr7QgQr5SpfcUjo5/rhc01mdp6
-         Xj1CIuTtWajxV1h8C0IXLdBicXs5jsEC6cVLhaMDrtoEnow9+ziEW8QFQxRYptx9gXTc
-         mCQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761664671; x=1762269471;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MMaMHTb4Ah2CCrUzmnNSZ0wgi0JyjgLlM6vbEvp2sbk=;
-        b=Xfx2jldYmPExeDyBHEmIbzzWYOqlfGrBt9kj+F5GiDPMuMaFcBirPTGxci+dv8mPhT
-         JkU6kEIShKzUhG6XRYaYrAALfpf8Gy/SFMQ5NmAFdE8f1wbskaoJ/KiK1B2DnrZ3NiZB
-         xP9itZNVYhe41NCvx39vsqioVuF5qGKKhQGW//Gu8flScE2cIutz2+Tve99u5XNu3hSw
-         ZbPz7psUgHHfRxmlp8I31eiUT/akN4Q80vXywzfameuduN4duah+ByMe6x8uQAoCd7mD
-         HIVZgn+jFZHLw78licGwGDeyf0zYmVX7Q4MK0DPfzjVIwLLjAD6A7b0U/Y0zGp4Twq5t
-         A0gg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBBf/Z5qB5O1da0hZqReg68HstE9UN7ifMDOLIjDDMj0CV+CDCE2QGjBMwCU0sbWYAs96uWoZSLDzndFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAAbt7QXhXUpdPxp3LZJaGRFuHe2GmRbijHZI+rICtQFe6zSH3
-	fahJs39SVI9JpEYy7NLMyKcEM561IUTSJJB1V5UIPrryw7jj6SuQOVatbG2NQW1NpzI=
-X-Gm-Gg: ASbGncsXXUEjN27KwUFezi9nGVDZg94Hm8r8ceejtoYZUlU5mZvfaGKJ40ahTO22YQ+
-	EAzsjjrFOvZssf44VVG1653hKSG/UDKzhxoy8EO1cHMuEmLxFA3irQdTZ/Fi2NC+AeM6GW0AVCk
-	Sn8Tmf1YTYWRPtSMO9/bIf4Z5I1zKvxHFXHoCosaIfqDYVERzt8EyEJb8YwpaYlGE7iI64pYEPF
-	Ts+58/1ztbjbuc6R0qC+u4Fvuw3sphBSNh0JQZSyRkDTSzewRFRpHtrmHGHdki5xOiRUqQw1UW3
-	2DKHnKYZascdHtlV1Wt5E3Cnd5RzKImnO2GgWD2tMWKx9CLQOEjxEib4EVQtoKZBKxegwPdrtCz
-	jTXEij3cNMc4k8A6b4HIJEZbNDzSr5beKUU5/oPrm+Z3NKaG5T3coBEw6aO+l7kAXjEjItPG7Az
-	+C5Shp1mGG1fdHG+M01A==
-X-Google-Smtp-Source: AGHT+IH2TaPyS4w0bOjLoYbINLXI1oqC6DBGXJhehW0z/yn2CnV6ID73kQc6DVG+AgvO4fXzT9O+Eg==
-X-Received: by 2002:a17:902:db11:b0:272:dee1:c133 with SMTP id d9443c01a7336-294cb39de3bmr44858755ad.22.1761664671204;
-        Tue, 28 Oct 2025 08:17:51 -0700 (PDT)
-Received: from z440.. ([2601:1c0:4502:2d00:647b:c9a6:1750:9275])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e42afdsm118620375ad.99.2025.10.28.08.17.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 08:17:50 -0700 (PDT)
-From: Igor Reznichenko <igor@reznichenko.net>
-To: robh@kernel.org
-Cc: conor+dt@kernel.org,
-	corbet@lwn.net,
-	david.hunter.linux@gmail.com,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	krzk@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	skhan@linuxfoundation.org
-Subject: [PATCH v2 1/2] dt-bindings: hwmon: Add support for ST TSC1641 power monitor
-Date: Tue, 28 Oct 2025 08:17:47 -0700
-Message-ID: <20251028151747.663000-1-igor@reznichenko.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251027191425.GA1403533-robh@kernel.org>
-References: <20251027191425.GA1403533-robh@kernel.org>
+	s=arc-20240116; t=1761664760; c=relaxed/simple;
+	bh=YfeA9WDImd+OY7C5WhOa1hQ4s8wAxkujvBRU2K6EBg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bcKz/wHAEZ9VbTWKe6ofvRH0hfBuvm0dTyFFxANes7D3TnY+rzxk2zXSM+pjQUtfKs2DOi7vawvyG4tjOp9WmyghfyM5cp+jO67UiDmn0DY3wNpHMmavbjRR54OahH+0BfOyJcSCwUSx9TDfr9y/svSqDBB8ZECbMnxnycjpuq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UuEpn00l; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761664759; x=1793200759;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=YfeA9WDImd+OY7C5WhOa1hQ4s8wAxkujvBRU2K6EBg0=;
+  b=UuEpn00lwbrtw+EG4/wCEowCowkcStLEOySLOcVszOScbWtaqhgKBvUr
+   /7yZXE8eoVFB1hlc/3ScR1N9Nu33LPj3XmBrBc3MqHryyjSo0IHhy5QHi
+   YYZMByXRc3DTwGYp6zZUW7EswrS8pu7uRCxgjNgKVDbGICv07wR50FIa6
+   np1SLNNnTsScsslX9BMyhU3yDTFR9Fz0kaVjVueAPNRA8oEBYU2DPrw+G
+   Y8eIGMQ59cmT6sOBGvIzLcTbWe6gwRF5kusVEoo13tUqihWJfGZ9Sc/eu
+   7eu81xDhbujZdEGtLq95zhQBdQJiJkvQ54gVY8CW3trkSi0mMZWvAULrC
+   g==;
+X-CSE-ConnectionGUID: 6TkJkKBkT9WOHcVhpDeJPw==
+X-CSE-MsgGUID: CIuUfOADQTiiFpyHzFVpXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67632035"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="67632035"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:19:18 -0700
+X-CSE-ConnectionGUID: 23FxZjE0RhSi50fQRTKghQ==
+X-CSE-MsgGUID: zAQ6VqKPSP+GPyCHdgQyRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="186122207"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:19:15 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDlTc-00000003LlR-0BQf;
+	Tue, 28 Oct 2025 17:19:12 +0200
+Date: Tue, 28 Oct 2025 17:19:11 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: Miaoqian Lin <linmq006@gmail.com>, Markus Burri <markus.burri@mt.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in
+ ad3552r_hs_write_data_source
+Message-ID: <aQDe7-ienRpcfNV_@smile.fi.intel.com>
+References: <20251027150713.59067-1-linmq006@gmail.com>
+ <aQB8PRlaBY_9-L8d@smile.fi.intel.com>
+ <aQB8j7Hc3b9vAT5_@smile.fi.intel.com>
+ <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
+ <071e3da4d69e10d64c54a18b7dd34ae11ab68f58.camel@gmail.com>
+ <aQDXF-AIF6wNIo76@smile.fi.intel.com>
+ <aecd2e25900f2ef38f937a295e995269c433453b.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aecd2e25900f2ef38f937a295e995269c433453b.camel@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Understood. The bit in question controls the alert pin polarity on the device side,
-independent of whether the pin is used as interrupt or not. I'll drop the property
-for now and revisit if there's a board that actually uses an inverter or needs to
-program the bit explicitly.
+On Tue, Oct 28, 2025 at 03:12:29PM +0000, Nuno Sá wrote:
+> On Tue, 2025-10-28 at 16:45 +0200, Andy Shevchenko wrote:
+> > On Tue, Oct 28, 2025 at 12:31:04PM +0000, Nuno Sá wrote:
 
-Thanks, Igor
+...
+
+> > For the latter I want to see the real traceback and a reproducer. I also
+> > wonder why
+> > we never had reports from syzkaller on this. It has non-zero chance to stumble
+> > over
+> > the issue here (if there is an issue to begin with).
+> 
+> If I have the time, I might do it. If my suspicious are correct, it should be
+> fairly easy to reproduce.
+
+My suspicious is also like this, if you have a working setup for one of such
+a user (like this chip) already, it's ~15 minutes to get it done without
+writing an additional code.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
