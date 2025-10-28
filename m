@@ -1,149 +1,151 @@
-Return-Path: <linux-kernel+bounces-873950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92A54C15282
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:26:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91465C15261
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044B3460D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:20:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7054C4E5EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F7C3370FF;
-	Tue, 28 Oct 2025 14:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80217335BA6;
+	Tue, 28 Oct 2025 14:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uIBa1ecY"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GUe9Exyq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BA9335BA6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558E62EB10;
+	Tue, 28 Oct 2025 14:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761661230; cv=none; b=L+IuLbqmUvFxHq1tPzuh2+OsfAxsdfFvU30TJDEVcYq3WmhnPINBIck6mVt8K17rzZ7kPCVIHpGsgmj7+cDg/Qk7Wd+Ua/mKZMYQZjVTxGYVh5KRZYXeVrfds5/3D9FghydsfeSAuPg/q/8l3sGaP4neui/tbIlL3iSUl+YY4ak=
+	t=1761661340; cv=none; b=fkhykfVcbMYz3qJna2R1LBp6Ci1e243RGCXG1dAC/yIrjD7jgUGcOYLYk0u7sk3IWwWvIb6TPxN1u/52xxUjkhBgS9UlJ7f1yusFViVZccTGoDRsQmOSrgcH5SFUs87lRiRAUFSCSatX6pyUSg/+dJ1RiODxxBBeEsB8Vz4LZD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761661230; c=relaxed/simple;
-	bh=pP8FTV47DQsaScTl4AKuec/C6HsHLvvn5JrdlNFvXF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rok61aCXaTHwrXqFgUUh54SFSYLVVehKQpK2kZY+Sk1/kyt2McVHvjVwoWnb/wXvNKXAGZ8pr63fKEv9tWUWtTJfYUuMyTJtWO1QODjvlfchnNK3cr8v9oCLtmNrSl+6LQ/DWpJr8G1bCCBv6TOfQz9tcJgUrTJ3+0Dyk9UL3k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uIBa1ecY; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-376466f1280so90823211fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:20:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761661227; x=1762266027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sOmSiTMyA8cqAorOzkSzQ5xujNoDEMVqXsbHnkkNM1c=;
-        b=uIBa1ecYcS0SjQasgAEKQr/pVNdcH2s+vv+Ivq8X+TvJlZm3PK4XkoOKj+ySjsss6V
-         0g8VjUJ/7QVvEAWpyHMqMetwZu3/zoN1N9yyXtB0KFxrE/rVPaA1Wla9t4UuOGIAw/wn
-         tLvnxdxSdn4y9ZLZkoqvs3/uknC8cTF+ohyHp0eXubW+fJwQrXlNVOsgxyt8mMbBy66D
-         1uC4SKbYh7kSu4m2DIPdoiKVO+xnGkWcrG1i+y3Uwm1SYSS1wzr0PjgOSFofFE0v8Jnx
-         uh6w6swnMKwZGoMtYXUS13Dhkpdcfv4aAkZJJYWpnhecHmYQWvg4zllIFHM+xQPboquJ
-         uIow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761661227; x=1762266027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sOmSiTMyA8cqAorOzkSzQ5xujNoDEMVqXsbHnkkNM1c=;
-        b=aBrcWG41+KAoCY7irB/ov7k8ZtRqXGwaYcSia+Am+fOcK92TnuI6RO9TVUaM9Z1sEl
-         uiNtWbqlqi5dceG/mxK/4eyR4frFI48qtfqecvn7EO2DqsHoVhvBaa0cg0sWR7cn7GOm
-         1o+5dJZJ+XvNtG7sovfcqlRdptDDVonplQ3Z791ifaX27A8GKuL+3JeAulRvXb7tNbz4
-         ivn4tkzBuKJuh3J56HdAvZZ+E+GlWXwNmftjKlEdUTBUDd+jJ7qGjobeo4CkWkEoKca/
-         FwCyeRI8oXfegofs2wzKOkP84fpBvrCbHSMbhs673iTCgTgGP4YoLzdyys1xbQsIQ1Fm
-         mrdg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo9M7ukzGvhc1H1d5Ya1pTT5Y/IeAvXSisL3voAU5XYVkBGIwKppjwNHysMRkuZTJVU1SWEXrIh+D9XQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/9Byd3pV0IDl3hiV+giWGlFPpD+F7mStqFdAP3A9RdOevSWWp
-	+sDAJlkttuvm7Cz/DMYoHxXYYorcDUM3CxZfTKvzDT4q0a3qHGGWPs22DvlkAgJ5+NguO3v8xXn
-	WRvBk6b0iy1EhOMqADDG2u8X2nFdUjo4KLUt3KFyqTA==
-X-Gm-Gg: ASbGncsPMVOIIWlzaWzTYpy/mte5LuKBf75xpC3cCwmEqxLdoEY5e0EM6yZYLGymZVh
-	7EKFujsjS1BVgwUr0f3Gwpaclnf/U6oXSIpf2hnZnITqVyfLwRGzw40G/oPuJdwHdL9IWukIUGj
-	X5+i1C3r61W755cIcVgk8OFB9uyG1LcvaYsDaqTa43MdAhgtbyFRLpZRUNvDqvWD9bfMIgcFS9c
-	BQOdhBy7G2G+U/PVPkGU0XBIigitKNxUjoW4a6bRHLG29TiCkupiOxJ/+IlW0zND71JEAR7PwRc
-	Tef3HWbUZMUlLFZSAq0S3bJwtd0=
-X-Google-Smtp-Source: AGHT+IEa9/49xzFtkrl2WuFSbF2nGR0Ee3sa2JYGGK47IcVnnhS7gaKd3pqPtDHg3v3/2iaUnvbb9dKc2W6cTL8KA/s=
-X-Received: by 2002:a05:651c:2354:10b0:351:62e3:95d6 with SMTP id
- 38308e7fff4ca-3790773c607mr10303011fa.28.1761661226962; Tue, 28 Oct 2025
- 07:20:26 -0700 (PDT)
+	s=arc-20240116; t=1761661340; c=relaxed/simple;
+	bh=px0MgSDxvp/2jAYLc+fSsb66AHIsm1T+dXEXQF/9FzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lx7dAc/OFiOVlcvleE+3xZdGFXGEtJxyAG2nKcQK60nhx9D2p4fI5Rgp33OoHxmUIw+n+isVoGEtwIVRUgMZcIH/UnuK2z9o351fQphJqH1EPu/uKvJP+lVJBjdsLY4IUTQ//vJdthO/dIQr6ZhQnarxb0CZwyjDGWKQ+kYs9hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GUe9Exyq; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761661340; x=1793197340;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=px0MgSDxvp/2jAYLc+fSsb66AHIsm1T+dXEXQF/9FzY=;
+  b=GUe9ExyqbjD8lONrWgHPWSCsN4ZQlvBLs8GhursUzftl6on65VTc4YkQ
+   wou4kWx9mzUMpewve/vxhDCKFQ7VhKnQLxohJezW6BtIUIW8HU4oeK2ab
+   ZXOqXwKVeYcMJ8s+o0cdcm+qULSLwIrCbQxP7e/7qOSyfnkrvXmKDfUiV
+   iHvBp6Y+i2fBzlqdbrwJVtG5s4cfC+EVTUXD8HcCbM6WvH+wF3Nmaf6Hl
+   VmobcS2iJXGOI+6xCr7vrkJlmFiFyBJA+OxJbXaNYbHBJwLnNm5MrdPIV
+   vzvjFjHLEBNouzMCupyNhNMU7gdr0QH8urmE6en30M6znknIdhgV1Urn/
+   g==;
+X-CSE-ConnectionGUID: a2whkGThR6alFawzbvFnyA==
+X-CSE-MsgGUID: 7yo4SEZ8RAegow3H07XLTg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63669582"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63669582"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 07:22:19 -0700
+X-CSE-ConnectionGUID: cTls5HCJRuGpZlmY+dGByg==
+X-CSE-MsgGUID: ug5gR5tiSbiJl0V4QntL/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="185055954"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 28 Oct 2025 07:22:16 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDkaR-000JDt-0Q;
+	Tue, 28 Oct 2025 14:22:13 +0000
+Date: Tue, 28 Oct 2025 22:22:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Miaoqian Lin <linmq006@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+	Philippe Cornu <philippe.cornu@st.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] drm/of: Fix device node reference leak in
+ drm_of_panel_bridge_remove
+Message-ID: <202510282155.MdnvC7YI-lkp@intel.com>
+References: <20251028060918.65688-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761588465.git.geert+renesas@glider.be> <76ac5587c5ff3aae3c23f7b41e2f3eacb32ebd21.1761588465.git.geert+renesas@glider.be>
-In-Reply-To: <76ac5587c5ff3aae3c23f7b41e2f3eacb32ebd21.1761588465.git.geert+renesas@glider.be>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 28 Oct 2025 15:20:13 +0100
-X-Gm-Features: AWmQ_bkGEmC8OCwW4QksGegCfgNPPWl_EjVB0knvBjv-hfBoqYq6hENcwtWJ0QE
-Message-ID: <CAMRc=MdcH-56_cJ7oDUhHRsJRnDqbss5ET-3yGrBffGmEK_ieQ@mail.gmail.com>
-Subject: Re: [PATCH v5 04/23] gpio: aspeed: #undef field_{get,prep}() before
- local definition
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028060918.65688-1-linmq006@gmail.com>
 
-On Mon, Oct 27, 2025 at 7:42=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
->
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> --
-> v5:
->   - New.
-> ---
->  drivers/gpio/gpio-aspeed.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
-> index 7953a9c4e36d7550..ef4ccaf74a5b379e 100644
-> --- a/drivers/gpio/gpio-aspeed.c
-> +++ b/drivers/gpio/gpio-aspeed.c
-> @@ -32,7 +32,9 @@
->  #include "gpiolib.h"
->
->  /* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
-> +#undef field_get
->  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#undef field_prep
->  #define field_prep(_mask, _val)        (((_val) << (ffs(_mask) - 1)) & (=
-_mask))
->
->  #define GPIO_G7_IRQ_STS_BASE 0x100
-> --
-> 2.43.0
->
+Hi Miaoqian,
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on drm-misc/drm-misc-next]
+[also build test WARNING on linus/master v6.18-rc3 next-20251028]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Miaoqian-Lin/drm-of-Fix-device-node-reference-leak-in-drm_of_panel_bridge_remove/20251028-141134
+base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+patch link:    https://lore.kernel.org/r/20251028060918.65688-1-linmq006%40gmail.com
+patch subject: [PATCH] drm/of: Fix device node reference leak in drm_of_panel_bridge_remove
+config: x86_64-randconfig-161-20251028 (https://download.01.org/0day-ci/archive/20251028/202510282155.MdnvC7YI-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510282155.MdnvC7YI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510282155.MdnvC7YI-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/tiny/arcpgu.c:23:
+   include/drm/drm_of.h: In function 'drm_of_panel_bridge_remove':
+   include/drm/drm_of.h:174:9: error: implicit declaration of function 'of_node_put' [-Wimplicit-function-declaration]
+     174 |         of_node_put(remote);
+         |         ^~~~~~~~~~~
+   In file included from include/linux/of_reserved_mem.h:6,
+                    from drivers/gpu/drm/tiny/arcpgu.c:28:
+   include/linux/of.h: At top level:
+>> include/linux/of.h:129:13: warning: conflicting types for 'of_node_put'; have 'void(struct device_node *)'
+     129 | extern void of_node_put(struct device_node *node);
+         |             ^~~~~~~~~~~
+   include/drm/drm_of.h:174:9: note: previous implicit declaration of 'of_node_put' with type 'void(struct device_node *)'
+     174 |         of_node_put(remote);
+         |         ^~~~~~~~~~~
+
+
+vim +129 include/linux/of.h
+
+0829f6d1f69e4f Pantelis Antoniou 2013-12-13  126  
+0f22dd395fc473 Grant Likely      2012-02-15  127  #ifdef CONFIG_OF_DYNAMIC
+0f22dd395fc473 Grant Likely      2012-02-15  128  extern struct device_node *of_node_get(struct device_node *node);
+0f22dd395fc473 Grant Likely      2012-02-15 @129  extern void of_node_put(struct device_node *node);
+0f22dd395fc473 Grant Likely      2012-02-15  130  #else /* CONFIG_OF_DYNAMIC */
+3ecdd0515287af Rob Herring       2011-12-13  131  /* Dummy ref counting routines - to be implemented later */
+3ecdd0515287af Rob Herring       2011-12-13  132  static inline struct device_node *of_node_get(struct device_node *node)
+3ecdd0515287af Rob Herring       2011-12-13  133  {
+3ecdd0515287af Rob Herring       2011-12-13  134  	return node;
+3ecdd0515287af Rob Herring       2011-12-13  135  }
+0f22dd395fc473 Grant Likely      2012-02-15  136  static inline void of_node_put(struct device_node *node) { }
+0f22dd395fc473 Grant Likely      2012-02-15  137  #endif /* !CONFIG_OF_DYNAMIC */
+9448e55d032d99 Jonathan Cameron  2024-02-25  138  DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+3ecdd0515287af Rob Herring       2011-12-13  139  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
