@@ -1,113 +1,91 @@
-Return-Path: <linux-kernel+bounces-873005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73FE8C12D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:57:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4219C12D2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 786AD4F948D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:57:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E3C460792
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4006288C3D;
-	Tue, 28 Oct 2025 03:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B087227A461;
+	Tue, 28 Oct 2025 03:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oif/PkD3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="U3b+S8O6"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062AB2882B7;
-	Tue, 28 Oct 2025 03:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A631328726D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623840; cv=none; b=BsJ50gjoxMtgLGl2lLTInG1EK6+Aa547KZkNpvj242sDs7hVskh8FiD2RYjp4hHeVNf8Zxh9Nsk8WWlx3F3KSV684Df0fOEkXa6+pUyjF5sqhL9U2o6sL7W9xL6bPXYz0Eubx9gA/lKR6sLmActJWWbOT+dK0tsVBeXT2CGYiPo=
+	t=1761623893; cv=none; b=hpXCmoly02dv95VekISABqmECFjmbpU2F4LVripQeeHe1UOt07GuptB2lQl9fw22YAJ2rLIdYUuKVCKa1G+HeWaMv7LLhvBEO7X2qj9uE93TzxiWk574KmiFf6Q8lBTW0qzMqoj0Zl4bB9NpBpc7p9P1XTyCI+X8beTdhV5C8Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623840; c=relaxed/simple;
-	bh=E/V2G9/zyjIrU1Yw2R5c9sWezrJUVjL8R1ze99nRLz0=;
+	s=arc-20240116; t=1761623893; c=relaxed/simple;
+	bh=VP4T6rUdU/ddECsl/aZycZiR5lezQ2/cHMQj9C56QzY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+f0MRIEhIz+8cQ6LVgiSf5zldEbJEJJxukbYsldjP8N+NIgFhEcm+BAkzc9JWyV6ah/qnvIfRsOgPTTMA8sXADRSbWu5+IcjZBWOGLGA34tcXVgzfzqqtvF3TdAISXrC8NZ9wJ7/f5nP46UTtTx6LlOPej6BtMSt6cljzK9PFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oif/PkD3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98800C116B1;
-	Tue, 28 Oct 2025 03:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761623839;
-	bh=E/V2G9/zyjIrU1Yw2R5c9sWezrJUVjL8R1ze99nRLz0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oif/PkD35wqGCyy0HXx9X0nYNWJqGyuHD9l6H1swXx4xMexQLrfEWzYI3uRA5X8XO
-	 zdG+P5FvOGe0/dilKGs9Fzv7pMiv5E8ogmzuq46/n7AbnH45W3Ur4pnRGxs8/F/rUi
-	 KCN/Z1O63FNrovo05jH3zqo2rgDmTel0ZpVO3qD80lcbA3ofrFNHZSktNLezPPPDfU
-	 JAgoCwHwrN+4DCu6CuTxiq8P8VKij5Zkl7+/CsZPawh/yWXsE/9cu9MoLE+7fQoSMU
-	 eo1g8aDRG4iKKDXU2spIoV74D2z4OiThtrXKYvkKlbEgyfWa4q+FeeXnVZGfHdFuzF
-	 9US3IL3NY+s1A==
-Message-ID: <9f63d117-2bb2-453f-8c93-0cc3ea5c90ca@kernel.org>
-Date: Tue, 28 Oct 2025 12:53:34 +0900
+	 In-Reply-To:Content-Type; b=CLpUbLerLDJ38TgAFLogL7m/i/FrqLbZyeND8wXYArVCpNhSfC5jpQS6qp5/9VZJwKbIji4qYmSyPHMrVx3DBlRMySHzaG6kyyEvTtEY6ob1rOGHCWpu6BWQ/V4cAcG/MQKdREhiCild/w7EIQ/H4t2FeuiG7pvdLUJSu5DY7QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=U3b+S8O6; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <75086bc6-9747-4a10-b4ee-ebf9ffdf25ec@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761623889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IZL1/VUO7eAG2V742XYwsgahCIY/duuttonLMJA+0L8=;
+	b=U3b+S8O6KyRSZCsC9CN8qtEDQE5VagMVloKv9HsoIwk1rLt1+o3rdywLZ/eQnga+u3yGov
+	uX/h3+YwSnx9RKdDpnymXZLp9kXxixifYR5F1MxgdxRiKEptSXUjQdCPyOJVtxmC3v6cne
+	+j1vMNP+a1M7oBWayBqq/aSmiGSISgo=
+Date: Tue, 28 Oct 2025 11:57:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] scsi: sd: Add manage_restart device attribute to
- scsi_disk
-To: Markus Probst <markus.probst@posteo.de>, Niklas Cassel
- <cassel@kernel.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251027202339.1043723-1-markus.probst@posteo.de>
- <20251027202339.1043723-2-markus.probst@posteo.de>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH v4 05/24] smb: move some duplicate definitions to
+ common/smb1pdu.h
+To: Namjae Jeon <linkinjeon@kernel.org>
+Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org,
+ christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
+References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev>
+ <20251027071316.3468472-6-chenxiaosong.chenxiaosong@linux.dev>
+ <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20251027202339.1043723-2-markus.probst@posteo.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: ChenXiaoSong <chenxiaosong.chenxiaosong@linux.dev>
+In-Reply-To: <CAKYAXd_u5+p5hjvQey+TM8w4+P7aN7zSfwDbrUKRtbwx4vtyDw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/28/25 5:23 AM, Markus Probst wrote:
-> In addition to the already existing manage_shutdown,
-> manage_system_start_stop and manage_runtime_start_stop device
-> scsi_disk attributes, add manage_restart, which allows the high-level
-> device driver (sd) to manage the device power state for SYSTEM_RESTART if
-> set to 1.
-> 
-> This attribute is necessary for the following commit "ata: stop disk on
-> restart if ACPI power resources are found" to avoid a potential disk power
-> failure in the case the SATA power connector does not retain the power
-> state after a restart.
-> 
-> Signed-off-by: Markus Probst <markus.probst@posteo.de>
+Would it be harder to maintain if only part of the definitions are moved?
 
-One nit below.
+Moving the related definitions together would make maintenance easier, 
+that's just my personal opinion.
 
-With that fixed, looks OK to me.
-
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
-> +static ssize_t manage_restart_show(struct device *dev,
-> +				   struct device_attribute *attr, char *buf)
-> +{
-> +	struct scsi_disk *sdkp = to_scsi_disk(dev);
-> +	struct scsi_device *sdp = sdkp->device;
-> +
-> +	return sysfs_emit(buf, "%u\n", sdp->manage_restart);
-> +}
-> +
-> +
-
-One extra blank line not needed here.
-
-> +static ssize_t manage_restart_store(struct device *dev,
-> +				    struct device_attribute *attr,
-> +				    const char *buf, size_t count)
-> +{
-> +	struct scsi_disk *sdkp = to_scsi_disk(dev);
-> +	struct scsi_device *sdp = sdkp->device;
-> +	bool v;
+On 10/28/25 11:42 AM, Namjae Jeon wrote:
+> On Mon, Oct 27, 2025 at 4:15 PM <chenxiaosong.chenxiaosong@linux.dev> wrote:
+>>
+>> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>>
+>> In order to maintain the code more easily, move duplicate definitions to
+>> new common header file.
+>>
+>> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
+>> Suggested-by: Namjae Jeon <linkinjeon@kernel.org>
+> ksmbd does not use all smb1 pdus. Instead of moving all smb1 definitions,
+> move the ones ksmbd uses to smb1pdu.h.
+> Thanks.
 
 -- 
-Damien Le Moal
-Western Digital Research
+Thanks,
+ChenXiaoSong.
+
 
