@@ -1,209 +1,138 @@
-Return-Path: <linux-kernel+bounces-874710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D471C16E8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:17:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AE9C16E9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 553F21AA7009
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:17:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A533AF079
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9B834F24D;
-	Tue, 28 Oct 2025 21:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="comSEmJB"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FB3350A27;
+	Tue, 28 Oct 2025 21:17:35 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF082DF149;
-	Tue, 28 Oct 2025 21:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2421D1F4188;
+	Tue, 28 Oct 2025 21:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761686224; cv=none; b=PwQzo4Zp3aYwHMPrfkTFRmp5koyrOT/z6jOU7uzKwcoVTQkKFgZrLu6Fqeint078O20mjIAXwn9OsrsA8d7JXVzuw3wRLOyXA0SAVhcMzHiQvJYvWHu5BB0ingqh/VQk/TSdiSUgoxAxEv1F4L7XKs58rBLCvViM0wyA03HKCQ0=
+	t=1761686255; cv=none; b=Q5mJZTeRa8CK2XzmlhwKXjOSlQL10JWDTh3d/GoEIcZ4VFYrjQ1noAEmrzC+2Wx1E/Uum4ZqG/1XV4io3oVq3pXaHFKoAitMAirpfw2+KwQEp0dX6ivge5JD6YxrfQbxlumL5Pl10aRusebFNvtN1ZZgFFGBUJhbp/7Ol+GONwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761686224; c=relaxed/simple;
-	bh=5GhD8nOxOMMbxz7FpBxfrkh9eIh09AUdGNH1xh+tUDs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GfR9GKJhgzOBjiugdgaa+2W7xCo9Q+HvEl4XXf1TrJA3cFVij6n+5eH5zLBqh5SuQK/qVG8EST+PRSU6AObASxITisOrz/wYP0g4GoRx7oXm+fkjUPVXyCzKzovhbRxFS1JHUdVWRMrdTC+998zEaNA6r8xx7ALcZWf8hXtDn6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=comSEmJB; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1761686217; x=1762291017; i=deller@gmx.de;
-	bh=agjwSDItBCjjVU39n6Gh/m5gcfolEP3e/OyEBDQSo24=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=comSEmJBwP3P1te7cHpEXEA/OE67HYn8HWfVCEWgrZgI+bIEurXRs8E9dj/0OI2w
-	 kvJfaeYI2p5+b441kb0AXen1HMBSVPy3a0s6X6Oey5ccsB74cNwVYx+mg2xnkkR/p
-	 up+ass2Wyq8bRb6NDUCSJ9+9V2BdThjnHuZveFYwJ5miCRgCSMecusoaBhCGlvhjC
-	 Cx5C2hnNS4Lh7HMGTT5OBWPcsXt1ZJRwvlZfho3rPsWVH7bYsg5lUEaO2IMIOcmkF
-	 JSepS9Y0w+zZ3YA7Kvi1E8RaOJd5aIedknalpcFT5C3DP1VJzvhg3iJwJ4tfGNZ/k
-	 QHRm0kDEE7+ey+2YAA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.50.74]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MStCY-1vi9EF2mVy-00TSbv; Tue, 28
- Oct 2025 22:16:57 +0100
-Message-ID: <62d108bd-21db-48d3-9ceb-79e533d94306@gmx.de>
-Date: Tue, 28 Oct 2025 22:16:56 +0100
+	s=arc-20240116; t=1761686255; c=relaxed/simple;
+	bh=em98p2AJC4tx6/0tI7pM4H80h48CM34VXM6lkBhTBOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKCRffkha2gSAxEcstcqJf+BRJRUSoiw4oCvjyVGlqbfC7zQses6wxiSEhagSSENJSbPgVnzKFMpbRMSuBKMv8Yjz4otHClLQ84uZu7Ac6YlJg7/u7c5EHJ++IW5OH9Y6mY82xg7BJWhOaMAAyMgnDaOhcPClrCuxu6vw4hxFiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E193C4CEE7;
+	Tue, 28 Oct 2025 21:17:30 +0000 (UTC)
+Date: Tue, 28 Oct 2025 21:17:28 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+	bpf@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Haris Okanovic <harisokn@amazon.com>,
+	"Christoph Lameter (Ampere)" <cl@gentwo.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, zhenglifeng1@huawei.com,
+	xueshuai@linux.alibaba.com,
+	Joao Martins <joao.m.martins@oracle.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Subject: Re: [RESEND PATCH v7 2/7] arm64: barrier: Support
+ smp_cond_load_relaxed_timeout()
+Message-ID: <aQEy6ObvE0s2Gfbg@arm.com>
+References: <20251028053136.692462-1-ankur.a.arora@oracle.com>
+ <20251028053136.692462-3-ankur.a.arora@oracle.com>
+ <3642cfd1-7da6-4a75-80b7-00c21ab6955f@app.fastmail.com>
+ <87qzumq51p.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fbdev/pvr2fb: Fix leftover reference to
- ONCHIP_NR_DMA_CHANNELS
-To: Florian Fuchs <fuchsfl@gmail.com>, linux-fbdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-sh@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20251025223850.1056175-1-fuchsfl@gmail.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20251025223850.1056175-1-fuchsfl@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UdZlOokfHKGDpX8dXOUirwmPPyISseLEpiyhqQjxg9vXPdZ7Y7b
- AepB7Rf/UEeLr8l2q3nIdhd797LrIggBcLeIrv8qrP/H/FvIQ0vq7X7s6NDBH2n8ZwtsYFb
- Bm3+1AoRaB/59Lns80wNMZDVOb7186uVV8LCvuO+LAeaE0rJXZiz3CINgRREs/AiSXHx2Mw
- TdgWtWCzl5pFuafYEADfQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:T4RVxgMdMzE=;DlCtkFcG3X6C0CNhu1X/FvARNvS
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87qzumq51p.fsf@oracle.com>
 
-On 10/26/25 00:38, Florian Fuchs wrote:
-> Commit e24cca19babe ("sh: Kill off MAX_DMA_ADDRESS leftovers.") removed
-> the define ONCHIP_NR_DMA_CHANNELS. So that the leftover reference needs
-> to be replaced by CONFIG_NR_ONCHIP_DMA_CHANNELS to compile successfully
-> with CONFIG_PVR2_DMA enabled.
->=20
-> Signed-off-by: Florian Fuchs <fuchsfl@gmail.com>
-> ---
-> Note: The fix has been compiled, and tested on real Dreamcast hardware,
-> with CONFIG_PVR2_DMA=3Dy.
->=20
->   drivers/video/fbdev/pvr2fb.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Oct 28, 2025 at 11:01:22AM -0700, Ankur Arora wrote:
+> Arnd Bergmann <arnd@arndb.de> writes:
+> > On Tue, Oct 28, 2025, at 06:31, Ankur Arora wrote:
+> >> Support waiting in smp_cond_load_relaxed_timeout() via
+> >> __cmpwait_relaxed(). Limit this to when the event-stream is enabled,
+> >> to ensure that we wake from WFE periodically and don't block forever
+> >> if there are no stores to the cacheline.
+> >>
+> >> In the unlikely event that the event-stream is unavailable, fallback
+> >> to spin-waiting.
+> >>
+> >> Also set SMP_TIMEOUT_POLL_COUNT to 1 so we do the time-check for each
+> >> iteration in smp_cond_load_relaxed_timeout().
+> >
+> > After I looked at the entire series again, this one feels like
+> > a missed opportunity. Especially on low-power systems but possibly
+> > on any ARMv9.2+ implementation including Cortex-A320, it would
+> > be nice to be able to both turn off the event stream and also
+> > make this function take fewer wakeups:
+> >
+> >> +/* Re-declared here to avoid include dependency. */
+> >> +extern bool arch_timer_evtstrm_available(void);
+> >> +
+> >> +#define cpu_poll_relax(ptr, val)					\
+> >> +do {									\
+> >> +	if (arch_timer_evtstrm_available())				\
+> >> +		__cmpwait_relaxed(ptr, val);				\
+> >> +	else								\
+> >> +		cpu_relax();						\
+> >> +} while (0)
+> >> +
+> >
+> > Since the caller knows exactly how long it wants to wait for,
+> > we should be able to fit a 'wfet' based primitive in here and
+> > pass the timeout as another argument.
+> 
+> Per se, I don't disagree with this when it comes to WFET.
+> 
+> Handling a timeout, however, is messier when we use other mechanisms.
+> 
+> Some problems that came up in my earlier discussions with Catalin:
+> 
+>   - when using WFE, we also need some notion of slack
+>     - and if a caller specifies only a small or no slack, then we need
+>       to combine WFE+cpu_relax()
+> 
+>   - for platforms that only use a polling primitive, we want to check
+>     the clock only intermittently for power reasons.
+>     Now, this could be done with an architecture specific spin-count.
+>     However, if the caller specifies a small slack, then we might need
+>     to we check the clock more often as we get closer to the deadline etc.
+> 
+> A smaller problem was that different users want different clocks and so
+> folding the timeout in a 'timeout_cond_expr' lets us do away with the
+> interface having to handle any of that.
+> 
+> I had earlier versions [v2] [v3] which had rather elaborate policies for
+> handling timeout, slack etc. But, given that the current users of the
+> interface don't actually care about precision, all of that seemed
+> a little overengineered.
 
-applied.
+Indeed, we've been through all these options and without a concrete user
+that needs a more precise timeout, we decided it's not worth it. It can,
+however, be improved later if such users appear.
 
-Thanks!
-Helge
+> [v2] https://lore.kernel.org/lkml/20250502085223.1316925-1-ankur.a.arora@oracle.com/#r
+> [v3] https://lore.kernel.org/lkml/20250627044805.945491-1-ankur.a.arora@oracle.com/
+
+-- 
+Catalin
 
