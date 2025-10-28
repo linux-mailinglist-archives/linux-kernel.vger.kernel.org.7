@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-873751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9251C149DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:26:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ABD3C149D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B6B884FA763
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:25:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD6914F7C53
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D723F32D45C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5593F32D421;
 	Tue, 28 Oct 2025 12:25:37 +0000 (UTC)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nkCkaKgU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C24A16DC28
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE572D7D47;
+	Tue, 28 Oct 2025 12:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761654337; cv=none; b=h8ovaKC+19hO796kzipH/cU49xsgJUipV+fSdMtRvtnomhWfwo4/1fx1CChQwNoe+EvzjfZuoFbB8gNcaVKE98IpCdi4dC7H/dB/XF73/apv76Oy2jDO6vsAgWSFBWze1smAiimgcyu44LvLIQfcRv+XCf8LM9jGaG7VAS+BeqY=
+	t=1761654336; cv=none; b=Ysga3/FQNaSteOXsxz5pQ++yGR3u4VbsqgUUxFw1sfLIEGWEka/JGR5Wsr+5vQHxrINfruaiNXerM9Pxl3o7aEWMieVkqBkMLGtlbbBMlpvMoEnvgHIWh2I7TYLYgdhBcMeBSowA3lkug5vNpn9BuzEgdi0SdjWcRnnvws2Pii0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761654337; c=relaxed/simple;
-	bh=N68wcf/V7B8aRXpClNfxorIGvhWOHLmzjflJ6wry/SI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=AAeUWWa4eBDguGpYEH3Hr/fAN5KcIV3V2LUa9IZcHi5S6T58YxQPg9pSUaqv+enLzzbzhf9njnoZuViqkAE23K5sXSSys1xsV3vZ7HOn5bw0tvZF7pqMCSsWjdczUz5BYH5mXOlKMKRPraz/g0v7Oa3MphRpb8JP96hse7fgagE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: zesmtpip2t1761654318t7f936c1d
-X-QQ-Originating-IP: yvfBL7O8gh818stg7fqBr3pW5/SJD7nE4jj2O24rJtk=
-Received: from [IPV6:240f:10b:7440:1:27fe:5767 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 28 Oct 2025 20:25:05 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9726398132461173433
-Message-ID: <2677EA3D584229BA+9a4c2359-c8ef-48f9-ab9f-ce197dbcc203@radxa.com>
-Date: Tue, 28 Oct 2025 21:25:02 +0900
+	s=arc-20240116; t=1761654336; c=relaxed/simple;
+	bh=O3rrBgUppSWO5V6RBh3WFUXiqJ2WOAiNVe9eUEytpLs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=jiXkhfK3EK0JOxUCiQu4uOyAjahGXYcjrrDFCW6+je/KpPpR6sSqik/zZZIY3xgtyQQIYRBp47xd4XdBR+BilGkbxbQa4Wc+X6VbpCQhOmd0Yj5+QhtsCRKKlUB5M9Dg7CQKjndj6iVvEn3QzVFL7EtOpgKeNcVnXFfqE7YttvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nkCkaKgU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D242C4CEE7;
+	Tue, 28 Oct 2025 12:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761654336;
+	bh=O3rrBgUppSWO5V6RBh3WFUXiqJ2WOAiNVe9eUEytpLs=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=nkCkaKgUtJmi0jENBGtAEa7GZdUeq8CF1abVMc663PiYN+cAyRA/JvQKcIlZ5F+wb
+	 E6FfvhpsuHBryNfWCH1P0bMxVDRYeX+BFhH4fGTD56fJTplRK61O3Mf9gkUjqaKKsd
+	 0qXX8YDk/R28atBJEPF3I887qTNTqvLDugOkbCDSX/Xc+mOLeal8dx3nGg46FXQc/T
+	 lY0LxHgRHO0usuNdOOi21sZaBILsS49bNEhOOYvaeE2r7JftuSV4aC5w9Wklcn8LCJ
+	 SnjXF8AoetwDCUGiWaOYmHH4OJ8/p4HyygyUoQ3PfkqA4T/qvmC6I/NTcuLkdBTIqf
+	 1rVnVf9aVXnnA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/3] Add Radxa CM5 module and IO board dts
-From: FUKAUMI Naoki <naoki@radxa.com>
-To: Joseph Kogut <joseph.kogut@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Jimmy Hon <honyuenkwun@gmail.com>, Steve deRosier <derosier@cal-sierra.com>,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250617-rk3588s-cm5-io-dts-upstream-v5-0-8d96854a5bbd@gmail.com>
- <57969F385B5AF318+653dac83-8227-4987-84c6-f3e08b10085c@radxa.com>
- <CAMWSM7iHtAxewW4JkRqRsifVnccqeFviaCgeOyprKDr92FOurg@mail.gmail.com>
- <AE0735A6C797CCFF+10496d73-7c0a-4884-9561-24721305a24f@radxa.com>
-Content-Language: en-US
-In-Reply-To: <AE0735A6C797CCFF+10496d73-7c0a-4884-9561-24721305a24f@radxa.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
-X-QQ-XMAILINFO: NVi1BXwuV7vtBTLC6JjhUrd+eBPb23TLEewdafAcvu7t1ax9nmnC1Fpf
-	Urjc2W9KYjdA9SzLMu/YX8w0J8f3su40sjlHQdLdE0VBG3Otr9B33GChkfsGQOOOZ9S+d94
-	qKOkca3nKbCr+w49n3EwMvYMZoXVVFohTR+bXpaKitSIkEzJ06YBQDWd06P+aYO5JYjJWTs
-	yI6ep4YaywVeO0uCSQTCkMm2P9GA/zYcRXEOYU6O5JBzWxvPcjQZ9VrszOjNIvbukQUDWII
-	XmdCWX9iNjyJqi5Uqu7dpoD8gFuNYaUbEvfQRxdInDZBFJPUFTle5tkempnEUC6xnIjH+OU
-	slKB0AfqUz0yGFQOHWljbURIdQsi2TFef25w9eg+IbXVJqkI2fouiaVW6y0+RyelesrL2tG
-	II841o8w8UkMBXwXzqxTbwM+XqrwwMhYWPHtjy5M2+gVbe4SRYRZLdnIimatCzskEofmY9e
-	f9kI49rwQVQtphBzXKMGQ/MDlu7lx8SDnx1XjgWTK17zfg/lhtdLOdS6zzxjKsxURZmNn/R
-	GHLEFRyB6krkY4JKEEEO/5B3/sKv1tGcceZxBuAKLUBlKtDEiqk83zLcUXjcegI4BBlK0Ph
-	+ra5OQVkl4DUErhOgOh95Cz0Ok2FkbJbsv26f1qneVQBcZSZvuuW9ZFiLh7HqLyyMxNW8dd
-	G/ud8n9osRD5gPiDMAf1+8daJz+oLRm5sz9KKPrQZm9Q+Cx45ahi6IBghs7SpOBsGHJnsKn
-	8Tem4Fqq2R8qqKnBBBN0P4+7m8RH7hjag0Vjbr2e148ZJvjRd6JulgIkmfNQW/gZFyTyUpd
-	L6CWXybSpLaxPCelXDQ+8NRcsLQ5DThY2bP8wF4vyrE6eE99qhIOzaw6UmWxuWJ/w5x0EPt
-	fgUY+OfmnWUFampEa/uZ06AZfoKgHzr+EKx8LfmV/suRr+SVXeAediafeSYpybquU2dw6zP
-	M2OGtxtlhlW0XwsragiQvmtl92uXN3tJ0+6LH+EVnD0xdgqToViWFUg3BBpkpDctlQ/yxy/
-	OZrsz5Gg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Oct 2025 13:25:30 +0100
+Message-Id: <DDTYCAZWUZL5.36Y1LKLB8EUD6@kernel.org>
+Subject: Re: [PATCH v2 1/2] gpu: nova-core: merge the Revision type into the
+ Spec type
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>, "Zhi Wang"
+ <zhiw@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>
+To: "John Hubbard" <jhubbard@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251028023937.1313108-1-jhubbard@nvidia.com>
+ <20251028023937.1313108-2-jhubbard@nvidia.com>
+In-Reply-To: <20251028023937.1313108-2-jhubbard@nvidia.com>
 
-Hi Joseph,
+On Tue Oct 28, 2025 at 3:39 AM CET, John Hubbard wrote:
+> -pub(crate) struct Revision {
+> -    major: u8,
+> -    minor: u8,
+> -}
+> -
+> -impl Revision {
+> -    fn from_boot0(boot0: regs::NV_PMC_BOOT_0) -> Self {
+> -        Self {
+> -            major: boot0.major_revision(),
+> -            minor: boot0.minor_revision(),
+> -        }
+> -    }
+> -}
+> -
+> -impl fmt::Display for Revision {
+> -    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+> -        write!(f, "{:x}.{:x}", self.major, self.minor)
+> -    }
+> -}
+> -
+> -/// Structure holding the metadata of the GPU.
+> +/// Structure holding a basic description of the GPU: Architecture, Chip=
+set and Revision.
+>  pub(crate) struct Spec {
+>      chipset: Chipset,
+> -    /// The revision of the chipset.
+> -    revision: Revision,
+> +    major_revision: u8,
+> +    minor_revision: u8,
+>  }
 
-I apologize for the delay in my work. My part is almost complete (see 
-below), but would you like to take over the rest?
+Why not keep the Revision type and its Display impl as well?
 
-  https://github.com/RadxaNaoki/linux/commits/radxa-cm5-io/
+> =20
+>  impl Spec {
+> @@ -162,11 +142,25 @@ fn new(bar: &Bar0) -> Result<Spec> {
+> =20
+>          Ok(Self {
+>              chipset: boot0.chipset()?,
+> -            revision: Revision::from_boot0(boot0),
+> +            major_revision: boot0.major_revision(),
+> +            minor_revision: boot0.minor_revision(),
+>          })
+>      }
+>  }
+> =20
+> +impl fmt::Display for Spec {
+> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+> +        write!(
+> +            f,
+> +            "Chipset: {}, Architecture: {:?}, Revision: {:x}.{:x}",
+> +            self.chipset,
+> +            self.chipset.arch(),
+> +            self.major_revision,
+> +            self.minor_revision
+> +        )
 
-Best regards,
+This could just be:
 
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
+	write!(
+	    f,
+	    "Chipset: {}, Architecture: {:?}, Revision: {}",
+	    self.chipset,
+	    self.chipset.arch(),
+	    self.revision,
+	)
 
-On 10/16/25 10:49, FUKAUMI Naoki wrote:
-> Hi Joseph,
-> 
-> On 10/16/25 08:39, Joseph Kogut wrote:
->> Hello Naoki,
->>
->>
->> On Wed, Sep 3, 2025 at 1:28 AM FUKAUMI Naoki <naoki@radxa.com> wrote:
->>>
->>> Hi Joseph,
->>>
->>> I'm thinking of continuing your work, so if you've already done
->>> something, please let me know.
->>>
->>
->> I've not followed up on this series yet, but I'm planning on picking
->> it back up this week. I'm happy to collaborate with you, do let me
->> know if you've made any progress or improvements, and thank you for
->> your review earlier.
-> 
-> I've already almost finished the work. Unfortunately, a problem(*1) 
-> caused the work to stop for a few weeks, but the problem has been 
-> resolved(*2), so I can continue working. I'll post a patch soon once 
-> some minor tweaking and testing is complete.
-> 
-> By the way, at some point I switched from "continuing your work" to 
-> "recreating a new one based on my current work." The results of my 
-> current work(*3) have changed significantly.
-> 
-> *1 https://patchwork.kernel.org/project/linux-pci/patch/20250922-pci-dt- 
-> aspm-v2-1-2a65cf84e326@oss.qualcomm.com/#26603499
-> *2 https://patchwork.kernel.org/project/linux-rockchip/ 
-> patch/20251015123142.392274-2-cassel@kernel.org/
-> *3 https://github.com/RadxaNaoki/u-boot/commits/radxa-cm5-io/
-> 
-> Best regards,
-> 
-> -- 
-> FUKAUMI Naoki
-> Radxa Computer (Shenzhen) Co., Ltd.
-> 
->> Best,
->> Joseph
->>
->>> Best regards,
->>>
->>> -- 
->>> FUKAUMI Naoki
->>> Radxa Computer (Shenzhen) Co., Ltd.
->>>
->>> On 6/18/25 07:11, Joseph Kogut wrote:
->>>> This patch series adds initial device tree support for the Radxa CM5 
->>>> SoM
->>>> and accompanying IO board.
->>>>
->>>> V4 -> V5:
->>>>     Patch (2/3), per Jimmy:
->>>>     - Alias eMMC to mmc0
->>>>     - Remove unused sdio alias
->>>>     - Move gmac, hdmi0 nodes to carrier board dts
->>>>
->>>>     Patch (3/3), per Jimmy:
->>>>     - Enable hdmi0_sound and i2s5_8ch
->>>>     - Remove redundant enablement of sdhci
->>>>     - Enable usb_host2_xhci
->>>>
->>>>     - Tested HDMI audio
->>>>
->>>> V3 -> V4:
->>>>     - Fixed XHCI initialization bug by changing try-power-role from 
->>>> source
->>>>       to sink
->>>>
->>>> V2 -> V3:
->>>>     - Addressed YAML syntax error in dt binding (per Rob)
->>>>     - Fixed whitespace issue in dts reported by checkpatch.pl
->>>>     - Split base SoM and carrier board into separate patches
->>>>     - Added further details about the SoM and carrier to the commit
->>>>       messages
->>>>
->>>> V1 -> V2:
->>>>     - Added copyright header and data sheet links
->>>>     - Removed non-existent property
->>>>     - Sorted alphabetically
->>>>     - Removed errant whitespace
->>>>     - Moved status to the end of each node
->>>>     - Removed pinctrl-names property from leds (indicated by 
->>>> CHECK_DTBS)
->>>>     - Removed delays from gmac with internal delay
->>>>
->>>> - Link to v4: https://lore.kernel.org/r/20250605-rk3588s-cm5-io-dts- 
->>>> upstream-v4-0-8445db5ca6b0@gmail.com
->>>>
->>>> Signed-off-by: Joseph Kogut <joseph.kogut@gmail.com>
->>>> ---
->>>> Joseph Kogut (3):
->>>>         dt-bindings: arm: rockchip: Add Radxa CM5 IO board
->>>>         arm64: dts: rockchip: Add rk3588 based Radxa CM5
->>>>         arm64: dts: rockchip: Add support for CM5 IO carrier
->>>>
->>>>    .../devicetree/bindings/arm/rockchip.yaml          |   7 +
->>>>    arch/arm64/boot/dts/rockchip/Makefile              |   1 +
->>>>    .../boot/dts/rockchip/rk3588s-radxa-cm5-io.dts     | 486 ++++++++ 
->>>> +++++++++++++
->>>>    .../arm64/boot/dts/rockchip/rk3588s-radxa-cm5.dtsi | 135 ++++++
->>>>    4 files changed, 629 insertions(+)
->>>> ---
->>>> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
->>>> change-id: 20250605-rk3588s-cm5-io-dts-upstream-f4d1e853977e
->>>>
->>>> Best regards,
->>>
->>
-> 
-> 
+> +    }
+> +}
+> +
+>  /// Structure holding the resources required to operate the GPU.
+>  #[pin_data]
+>  pub(crate) struct Gpu {
+> @@ -193,13 +187,7 @@ pub(crate) fn new<'a>(
+>      ) -> impl PinInit<Self, Error> + 'a {
+>          try_pin_init!(Self {
+>              spec: Spec::new(bar).inspect(|spec| {
+> -                dev_info!(
+> -                    pdev.as_ref(),
+> -                    "NVIDIA (Chipset: {}, Architecture: {:?}, Revision: =
+{})\n",
+> -                    spec.chipset,
+> -                    spec.chipset.arch(),
+> -                    spec.revision
+> -                );
+> +                dev_info!(pdev.as_ref(),"NVIDIA ({})\n", spec);
+>              })?,
+> =20
+>              // We must wait for GFW_BOOT completion before doing any sig=
+nificant setup on the GPU.
+> --=20
+> 2.51.1
 
 
