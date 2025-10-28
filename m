@@ -1,92 +1,154 @@
-Return-Path: <linux-kernel+bounces-874528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A830C16837
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:39:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17205C16852
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:41:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45B341B28C45
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:39:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDCF24F8858
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFF234E75A;
-	Tue, 28 Oct 2025 18:39:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D4634F256;
+	Tue, 28 Oct 2025 18:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAAdeZK3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F391418C31
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FB919F115;
+	Tue, 28 Oct 2025 18:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676746; cv=none; b=r6+/bjBZOH/xzA44zqQn0itFXFkur9wlAcQrNVFjjqtqS3dw1uNpp5ehvtfeds+xcsRDdYGeNp1Tezf2e7TFgYNSGRAyQA48n5t+L2BatlpPsr+3VQtResmSd2VLv+RxjYMzUDVhPbfkV5epif17/vO6/kqFZXY7nh+TSc2r5OI=
+	t=1761676767; cv=none; b=cU/rWeg+TnIN7eKOi7wJnuDGop/urWraKTFv6J/j5191TnD/YOBjV+/9i3SD/A72gFwCBbmuLol2W6scEocM8ekm4H0Uu6E6TwKwjNMs4o6mr4l2ncy6NTKR+XXgsSDVUSjPNN1rj9doPIxs1DwZfMhRakWYadx7wT7zA+v4ABI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676746; c=relaxed/simple;
-	bh=eQTpfE+bt8iV5LlxSAileX7P/aLJWE6CI1VkBfgCpaQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=L333To1PAdgx9cEb2iXcVQw5SIRlImaPwvBYq7lFhORo3khP9WD7ItemNKex9dfpERmaWhRBI6nt/xeREeOo2bH32Qc6H9whZAZ6pC4jK8SBtZ4H0HWclZsK90BPN7ImzJa96lHM0jspwyNRj3NmAE2bdU4n4KnJCpe1x/if6c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430ce62d138so79010845ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:39:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761676744; x=1762281544;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AjENQ9WSBFUQetSq5NxMlv9nLRMzU0A4v7pFRwVXCA=;
-        b=W4Z2kxJtQUjFaR+V3JoriRLm+UORIGPhtGp4CZwxD0fCE8HpVrq55uqtvrfAPjMnAh
-         ZpNv3Oks6Zmq2JlseNngVvK/cjNcOtJsuIgaJC+8HZZyV1yAQC8b/F5qBYa8t7WdbYhg
-         SfpoK7+pBNmn5w118NFCyatg3KQMgDcWVc9JtNMwgdNTzt9CgcclgN+/DN2tziKOKWNd
-         Fzq2fdrrunv6Vh2B7WG6PlQbmm/50HBgdLXUSuPGhduffw3mwBsQ13deWk6L7jMMFNUb
-         gylndx+b0vonFJU3kWQ1y1DPgboD8mvWBG/+G2p1RK0dp7z8Xp/TgsYSTers6SRN7ldt
-         2w4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsm9RVKQBUc3MVMHpbXIhjSV8jORn9L8B7PUsLUr31qfRcnmZdmiYVIbxQAKpyKh1NkqIDEAGP33xK1wc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN54QRQqsHC10UKb0/85zzFlZQRgMPvuhsJ48QxMXuvLCB4s1k
-	jqut/BC3KUJO/w6Ygurjuzpt6mYzAEDnjj9FvQm0TjSeaTvq05Tf3j4BAh761RP4FKWmKS7w/Mq
-	H5H4EegRKFV8v7U8EPtApTb61+DikIMmoeh29S0obIFYb00zVB1bUqOBekHY=
-X-Google-Smtp-Source: AGHT+IH0EC4VfYmgggYkbbrjRfbmPiz3HRB4eoXg+8dvf+L20seeMlzLVSNdlK1cWJGVIDe4qTXE3YOmpQl5Qh0H+X5mlDUXze8F
+	s=arc-20240116; t=1761676767; c=relaxed/simple;
+	bh=vAbZ834u8r2BTOo+5gC4v15rLlnSd6ggC4qhlRuryd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oz0HPxwP2Cy5KcLjS1/Jx30knumDmeHT0YxMILPwRKS8LKPcYxo84Ml8n7lqqgVeYe2YrTjU5erz9JTkDHnrH7T5uSw2xwXE5c9VMNQUVH/jm+9jC5z1YCQsNyzSHd+azXtmFLjxW5mhRMBXCxXUkSUdj56PhMGRYqsKsE4Wrm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAAdeZK3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2147EC4CEE7;
+	Tue, 28 Oct 2025 18:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761676767;
+	bh=vAbZ834u8r2BTOo+5gC4v15rLlnSd6ggC4qhlRuryd0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RAAdeZK3ICynb3uBtUdD3qSGSLNHvVsW5d+TmKLmS0cwy6PmPQk0xhjxhkIK3W4u+
+	 rmWlDHdGpEmKMHrlkXhTfRMudnPt3UFtPFKxbKR7MJkS3q6LrGPL1tGxKcho58nmAd
+	 ic02jG/o3z+q7M8SKYgZ1HhN3KSPvEgQcYen0Lt4UOzSQcubUc5ioXUNkukygRy5iC
+	 EIlVdR07mUiu3L5HkSmRWdXsPwPKrly650HTerHADD4M9+nqnSgw8XJYGZ3LKqtTd1
+	 KVTRZtWLrNbnGqlYfgHvivEdDsc7yR/T/QAllPDbZUjhYyTfCc/zPc6oW8V0ONIwN3
+	 8v7ZvvkQrzhBA==
+Message-ID: <0ddf3634-d9eb-425a-b35b-c0b4ee995a4b@kernel.org>
+Date: Tue, 28 Oct 2025 19:39:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3181:b0:42f:9353:c7bc with SMTP id
- e9e14a558f8ab-432f8f81ba3mr3462185ab.6.1761676744122; Tue, 28 Oct 2025
- 11:39:04 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:39:04 -0700
-In-Reply-To: <20251028181939.4hTbT%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69010dc8.050a0220.3344a1.03d8.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
-From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+To: Vijay Kumar Tumati <vijay.tumati@oss.qualcomm.com>,
+ Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+ Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+ trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+ Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+ Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+ <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+ <20251028-wonderful-olive-muskox-77f98d@kuoka>
+ <ac126c63-f40c-4159-87c9-1b3d7a8dec63@oss.qualcomm.com>
+ <7efc63ed-9c84-43c0-b524-f7e9e60b2846@kernel.org>
+ <f0c05321-776c-40af-b379-b9336b618340@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <f0c05321-776c-40af-b379-b9336b618340@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 28/10/2025 18:45, Vijay Kumar Tumati wrote:
+>>>>> +      - const: tfe1
+>>>>> +      - const: tfe2
+>>>> Why not using the same names as before? It really does not matter that
+>>>> it is thin or image, all of them are the same because only the
+>>>> difference against top matters.
+>>> Right, this is done to maintain the consistency with the clock driver on
+>> Sorry, this makes no sense. This device has nothing to do with clock
+>> driver. Don't ever use clock drivers as arguments for doing something in
+>> completely different place.
+>>
+>> Not mentioning that drivers don't matter much for the bindings, so I
+>> really do not get what you try to explain here.
+> 
+> Understood. I meant to say that it is consistent with the naming for the 
+> TFE device that is available on Kaanapali. If our intention is to keep 
+> the names in the bindings same as previous generations despite the 
+> changing HW architectures, we could change these to IFEs, to be 
+> consistent with previous  generations. Please advise. Appreciate your 
+> inputs here.
 
-syzbot tried to test the proposed patch but the build/boot failed:
 
-fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
-fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
+You name these based on the provider, the clock controller or whatever
+controller, and that's the mistake. Names are coming from this device
+point of view, from the consumer. This device does not care whether this
+is Thin or Image or Whatever GDSC.
 
 
-Tested on:
-
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b309c907eaab29da
-dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1289dd42580000
-
+Best regards,
+Krzysztof
 
