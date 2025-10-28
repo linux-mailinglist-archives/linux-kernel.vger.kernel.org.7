@@ -1,109 +1,188 @@
-Return-Path: <linux-kernel+bounces-874035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A72C155EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:16:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C741DC155C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:14:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 412D6502594
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABD21890F96
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF8E33DEDB;
-	Tue, 28 Oct 2025 15:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954ED33FE29;
+	Tue, 28 Oct 2025 15:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwa51bTi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Co0CYXMw"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD8916DC28;
-	Tue, 28 Oct 2025 15:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6850A33F8A7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664230; cv=none; b=QrHjR7omd09b14jZ6AwBdK1axx5k3j5b817RBvXAw07M/U/z4Wxrf5zQxF/xpY03Vk0L3ZisyU6rQuU4g4ShbWe3DtOpKmG0jRWafkAk8m8RMWPPY43dXFkx69nX9sAzD9BcHg0gvT/p5Y4xAmOQfhrI/B1yzLww8NDGJirezzw=
+	t=1761664236; cv=none; b=p/Jq7PC702kvhHbjJD/+hVBPuQObwKktCvMRd/SpEH2/T/hDn44Ys/V6gEXY5KgYsnZH1VLgY9dD3gAXrAOY6xqiS2b1FA8HnTl/dVvcTCBqjgcSaiF7e2bgDgd8V51MAx0TMXEL3o2wxBPTKUUPg20L+7uV79YRVAueXZEBHMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664230; c=relaxed/simple;
-	bh=8YthI3p1g8E4fGp4lN5pfwCWiXSbbb5wGc582EqpCjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGLCo9QRVzxX50duvnKhSdzCrRv2n6TbrR+aN9H6GYyjeFE6xV+hOH4SToY3WFCoXuWdg5f0UQ/Cn6nXmo6zzQ6A1gwngzu7UeCs2E716nHoRzPBAKIhC0FdmNH4qR9sfhV+RtQSb6QC4MgOxSYJcxDi47/MqkxtsUL9vpTHlbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwa51bTi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95680C4CEF7;
-	Tue, 28 Oct 2025 15:10:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761664229;
-	bh=8YthI3p1g8E4fGp4lN5pfwCWiXSbbb5wGc582EqpCjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hwa51bTiOrIpGOHkNIBEiX7kP/09KzLNe5W5S31eEiwfmD2aXj75b3LAjIsTM0km0
-	 DcNx0qiQjL/f+WQKgxpCe7o7vUEwhfFzm/VmSL9vHOduWKVbbKx196ZU4usyr4qWXe
-	 xRdTnTG3OgrQvQ/gHi3TYi3dR6SHMMkcYnsfmD7X0RH2+9pPwJi9mLJqMAf0Hy/chI
-	 5tAvjKN0PWaI2XbqcCCu81H4SEO1H4kLVbciU2uzCDOlKsiwwGzbGDCaOb5t7PXhHK
-	 AlCLB6etAT13QKtzysET120YKJ03bOuDWj+rYOSi/GO5FzHWwfpxB0zCDtn3hN63tc
-	 lRi485x8qeYRQ==
-Date: Tue, 28 Oct 2025 15:10:22 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-i3c@lists.infradead.org
-Subject: Re: [PATCH 3/4] regmap: i3c: switch to use i3c_xfer from
- i3c_priv_xfer
-Message-ID: <718f4e83-48e9-408b-9569-42769f76d302@sirena.org.uk>
-References: <20251028-lm75-v1-0-9bf88989c49c@nxp.com>
- <20251028-lm75-v1-3-9bf88989c49c@nxp.com>
+	s=arc-20240116; t=1761664236; c=relaxed/simple;
+	bh=5eURALmjEXpcAT+tMtvn9nNrKnMmPzsrKL2QAv6/xDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WwijJLx9g1cvEcrKyI/qJZ3RcAfyCtaE6/ulpDCFbtZas6ChmQW2YBP68SdJO3TV8qBxV2FguSEEvlFLUCRDTxUvtOXzhf8ArLGDzDnOVaI9dpn9rShJbUuvNixA8IsHBnwEVuiIEothKxDQhbPyT+x+7wdVj8CMd2YofCajCIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Co0CYXMw; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-290da96b37fso202915ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:10:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761664235; x=1762269035; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zmwGfBA71gaKywqy7NioTKwzmenUnKIz3SBwxgyrT6A=;
+        b=Co0CYXMwYdtQtcyZqfB5pR7IAbFU6k8rV3/hr/nwndkzCEdyaxEjWDU2v1TC+FPsss
+         iXqYLQ5uWNIfqXHExs7O0xgmvTPU67AvDdQb0Jf8lbQzGClJnyjoui+yRdUfg59RU5rU
+         UrRJQNld+UgQzu9IpVG1uIgZgag02/MI92KhXUjE12edZhZltd5gkgSsYKxAqN/AckFZ
+         uaCqPspnEZoobI4xsctoExgItn2+2ZTmXNEYUFq+iWSCEJ0mMKNRRNrkYAunMhEb4Ju1
+         s8EtJWeuRtN9waABmoUXxj/Ith1cLjvf8APGNKJPwq3lqp2Q/wnoKsL8dq2R/0LLkHL3
+         BWyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761664235; x=1762269035;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zmwGfBA71gaKywqy7NioTKwzmenUnKIz3SBwxgyrT6A=;
+        b=uwsEdDlnEdqncUwHbgHUJIa++lNmS9rt1+/fbh0p1pV2jInoQ5r6g4irBpZ+psEgzl
+         mf4JeQ55t0lA5IvNBtbUvYjmDSTzmMZAx3pceISsgpnbpPMGDfS+aS8SAL/qHmLP4MEV
+         oaAzzITfY4NeA8NPX+DXxP1SIDGz3nXeUdHsOHiSZU7d8uv4W+oS1Bx8ARvt8+rwfItL
+         V7Gsh17ZZU+zpOA7Fwc7gMv0Smdl1rpcTw+O7rOOS2alXIROxVKrZ3BFxqZIhkNEvKEh
+         4STYCkvA2UlzE3rQWBxnCGBNeDJRuTFEZoLQg6KRgdIfcVmH8uNNVKITZOlTCQHuYzUg
+         1brw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxm+JrDoYEBUJ2jYW+W24m4diZTQaME7+P7HlH7/qy+7Dq5ArHRcJnOWKiE4EyaVkohsz/lRRMNYoHXVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3keudKaQyVq6SReJYHi67KHW1Dk6oXpbD51EJ2zjBmH5d3BAY
+	WH61za/XAVefgmUHl4n+UoY7Cw4ktL46zq2d6I6GSKhPkWCw32n4D5T7HD3+/L/kaCvDAd4YmbN
+	2U6ZA7wEeeAjlVBQStqP5KYvA2ztcDRDzsh6TmggO
+X-Gm-Gg: ASbGncu1GIOukNFuGw9DTMaCNZjLVOetc/Ngz2qttHSrH1lCyGgYSPfMvRwzs2602Pz
+	hQWNB5/75D4DelK/k1vi4CQIdSJO+3EvdZdimqNXqV4Bj4+N/OSlZAyzPfPTA7lVw15bg47B2DO
+	jzpzhhWSwJudwWMLHDqIdXWTdGN1+vjLZdANX++uT0vunZjR9ReMlieBzc4245ea7IDUnpqr4Bd
+	Iq24R1qEXeXq+81/Ks1M9TNkcdprfPRJHcZbyfG5yeLAE0G3r8YUwFxkvPZFOPX7DbEd94OmMrt
+	bSPdPjIbzF7vQXVao+7aCJYjAA==
+X-Google-Smtp-Source: AGHT+IE3DMWW3zVk/a+sqA74LhwuSAxFitEwU8gUISEAsBDvLi/0+/aSCNWdCr0CI+9ikc+Vc3l//6wwZLtU99l+TEQ=
+X-Received: by 2002:a17:902:f551:b0:25b:ce96:7109 with SMTP id
+ d9443c01a7336-294cf219784mr4352065ad.3.1761664234147; Tue, 28 Oct 2025
+ 08:10:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dGU0FRXfnJSl6dVk"
-Content-Disposition: inline
-In-Reply-To: <20251028-lm75-v1-3-9bf88989c49c@nxp.com>
-X-Cookie: Your canceled check is your receipt.
-
-
---dGU0FRXfnJSl6dVk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251027201405.3715599-1-irogers@google.com> <aQDcWtHI9LSBAWw9@x1>
+In-Reply-To: <aQDcWtHI9LSBAWw9@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 28 Oct 2025 08:10:22 -0700
+X-Gm-Features: AWmQ_blmLG8elvtK72Nq1qoZ_Qwt-KFZ9zTBzwwTPbDxl7b8KIejhv02kmuJaH8
+Message-ID: <CAP-5=fXph-sL5cjdSXmeD-V3ydZ1YSTfS+4o5nM5KDE_aw8a0w@mail.gmail.com>
+Subject: Re: [PATCH v1] perf test workload: Add thread count argument to thloop
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 10:57:54AM -0400, Frank Li wrote:
-> Switch to use i3c_xfer instead of i3c_priv_xfer because framework will
-> update to support HDR mode. i3c_priv_xfer is now an alias of i3c_xfer.
->=20
-> Replace i3c_device_do_priv_xfers() with i3c_device_do_xfers(..., I3C_SDR)
-> to align with the new API.
->=20
-> Prepare for removal of i3c_priv_xfer and i3c_device_do_priv_xfers().
+On Tue, Oct 28, 2025 at 8:08=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Oct 27, 2025 at 01:14:05PM -0700, Ian Rogers wrote:
+> > Allow the number of threads for the thloop workload to be increased
+> > beyond the normal 2. Add error checking to the parsed time and thread
+> > count values.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/tests/workloads/thloop.c | 41 ++++++++++++++++++++++++-----
+> >  1 file changed, 35 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/workloads/thloop.c b/tools/perf/tests/wor=
+kloads/thloop.c
+> > index 457b29f91c3e..dbb88bcf49e0 100644
+> > --- a/tools/perf/tests/workloads/thloop.c
+> > +++ b/tools/perf/tests/workloads/thloop.c
+> > @@ -31,21 +31,50 @@ static void *thfunc(void *arg)
+> >
+> >  static int thloop(int argc, const char **argv)
+> >  {
+> > -     int sec =3D 1;
+> > -     pthread_t th;
+> > +     int nt =3D 2, sec =3D 1, err =3D 1;
+> > +     pthread_t *thread_list =3D NULL;
+> >
+> >       if (argc > 0)
+> >               sec =3D atoi(argv[0]);
+> >
+> > +     if (sec <=3D 0) {
+> > +             fprintf(stderr, "Error: seconds (%d) must be >=3D 1\n", s=
+ec);
+> > +             return 1;
+> > +     }
+> > +
+> > +     if (argc > 1)
+> > +             nt =3D atoi(argv[1]);
+> > +
+> > +     if (nt <=3D 0) {
+> > +             fprintf(stderr, "Error: thread count (%d) must be >=3D 1\=
+n", nt);
+> > +             return 1;
+> > +     }
+> > +
+> >       signal(SIGINT, sighandler);
+> >       signal(SIGALRM, sighandler);
+> > -     alarm(sec);
+> >
+> > -     pthread_create(&th, NULL, thfunc, test_loop);
+> > +     thread_list =3D calloc(nt, sizeof(pthread_t));
+> > +     if (thread_list =3D=3D NULL) {
+> > +             fprintf(stderr, "Error: malloc failed for %d threads\n", =
+nt);
+> > +             goto out;
+> > +     }
+> > +     for (int i =3D 1; i < nt; i++) {
+> > +             int ret =3D pthread_create(&thread_list[i], NULL, thfunc,=
+ test_loop);
+> > +
+> > +             if (ret) {
+> > +                     fprintf(stderr, "Error: failed to create thread %=
+d\n", i);
+>
+> With nt=3D2 what happens if you manage to create the first thread but not
+> the second? The first would not have its pthread_join()?
 
-Acked-by: Mark Brown <broonie@kernel.org>
+Yeah. Let's join them. I was trying to be clean and not just call
+exit. Fwiw, the 1st thread is the main thread and I was trying to
+avoid "nt - 1" appearing everything, or nt being 1 in the case of 2
+threads. Anyway...
 
---dGU0FRXfnJSl6dVk
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Ian
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkA3N4ACgkQJNaLcl1U
-h9Axzwf+Nts9b0hUZDWoyFrOrpdSY1gklGWScN2Fks55EWfvF3VaTQcAxgCJVAAg
-9r7n+t6WaZ8GP3AoLKQiVkfWG7sIidWAblqi3STK4L/hIGB5mHHm6Ifo9lva0fWW
-tbVehX6/hVX1GgVpKXkMnAKAv3blhYSr8hck7snQRQhpMPLlZRWZAg0uThD/8dNv
-+54oSPGCVLLFsu4XM9QKpMJdE/wrEW62iycsbBNcf4zFnHJM8AkYm9uGxi057nas
-hOTiEK0i+MRUNGtow58ju9OxAuWwbwi6DPmc+5aCA9zLFStjufAPf16hx47db44F
-yYvT882Zu53UH2SRvFrgCpHfojWzvA==
-=3M3t
------END PGP SIGNATURE-----
-
---dGU0FRXfnJSl6dVk--
+> > +                     goto out;
+> > +             }
+> > +     }
+> > +     alarm(sec);
+> >       test_loop();
+> > -     pthread_join(th, NULL);
+> > +     for (int i =3D 1; i < nt; i++)
+> > +             pthread_join(thread_list[i], /*retval=3D*/NULL);
+> >
+> > -     return 0;
+> > +     err =3D 0;
+> > +out:
+> > +     free(thread_list);
+> > +     return err;
+> >  }
+> >
+> >  DEFINE_WORKLOAD(thloop);
+> > --
+> > 2.51.1.851.g4ebd6896fd-goog
 
