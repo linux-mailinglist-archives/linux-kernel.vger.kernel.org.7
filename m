@@ -1,228 +1,335 @@
-Return-Path: <linux-kernel+bounces-873210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FAF8C135F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3387AC13643
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DBC15029CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:49:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6BC294F9B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4973B248898;
-	Tue, 28 Oct 2025 07:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2DB23D7DC;
+	Tue, 28 Oct 2025 07:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Df16USv6"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9HtBwp4"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8599D86337
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:49:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073D87494
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761637788; cv=none; b=dHkWc9FeFr+Wrz3vb9DNNxTOWmf1FALhNRmY0+H9DfdVxjh+6cxDL+3A+mOagZ1UsHy72amQmdZ9XBqkwAvuPCcGb7yoZSYQbr3pEcYmTerUzZrqV6x9NAAn75EoK7dqYhl+Qa90gJIeZw+OvARmsaVWRzPK/UNwnlrJTL2owt0=
+	t=1761637937; cv=none; b=R7ZMMjg1tj5uUS0q+N1Ml1TWZbn1cgW6u+byR0CIr7i+wJI5IdWPEKA+8ggbgqWmX4WIt5pnQN8nE+OLC37WVDyPfGZOpD+OiaBHHIepkUZi/kfWrhq5L3Q7G9DhB4lsiBCvFZTHAM7P3gAIDuCpvv76V9I/D9ISRTzBh+ujKoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761637788; c=relaxed/simple;
-	bh=xde4VpDak39g0S4VLqYId+aibXlv3b+Nn4ZFo8SnVCE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=cht+7CiBXRjLOzLfYOZVIZtOk77++xAfjICzHhVpNKKhHg3NVet+5D93WZ70YpatVq1f9AVARIyGn38g/XI/Tkyt5zQyv9/AS5/AgnkYTmAsrDx7dBnx71/LDphQ5qe41HmJFcqtSgIQPGkHS+LdjcjnQDSwqzXwoeOAMSj0CJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Df16USv6; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1761637937; c=relaxed/simple;
+	bh=2TLsqKUAJSlIDwzNt67dPER1waoF14AO7+SemfjmG+Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N+U05Etik+UMFYcdtYLc7DgNvHmcdfcl7d18DWzXK3BV0FT9mjTjah273m71fHDYMrm5IhSaZUASu0rHVGxlGJKTn4lfIU96Z87MbCrLVsOCG0H1d8V3d+7YBFFJu9X07Z1ElP8qf+50ei22g7kLpM0iDWhqkPtSUdZ7H+z6d6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9HtBwp4; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-37902f130e1so16614861fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:49:46 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-78118e163e5so5530588b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:52:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761637784; x=1762242584; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=599KCBsf74z9253rS1v8/WJK6GniRppSrGmNjd3JNU4=;
-        b=Df16USv6fXkTMozzM7zpTOsApyC+k72BrCdObrzEYOA+5fq2+bk88fViCe2gF41+JV
-         mQ7mr7NMFvhz2+qLDl3iHSsTJ4eoEinSdOO97cFqivFDtckC72oNxI59dUS/RpOBkSu1
-         1cPJhGEmLAYtShSDFYidGsCExIBc/v7Inh93K0tKJdFom5gvmnKeu0rr2ftnaeM6sWxp
-         FE/9Ozi9mB1zKZh6njEkLeN9etbetDaU9H8vMomEeiMtGpSHXZyzGU9zIdNB97UGi6we
-         LId8RYSJZgXw75tx6+YQH5w4NmzNDfo7zTR9waDjPbk3YjdSqxfBwNSpRBX/RL5a43hc
-         KQfA==
+        d=gmail.com; s=20230601; t=1761637935; x=1762242735; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSrokT66Tzvef7LKxyB0Zo+SNa0Wi31xGiDyrSyf8zc=;
+        b=h9HtBwp4GABUAHdQCi6bEw+ILCGxhOf8wEn7KCNjyoCGg3ON7q+QzdBf9nnvRHO2A5
+         XdNv6O1KKyJEgFp7a33rebYHersgoQ6iEjZiSiyjjbgSZQ/avmDO0BxCzvAzB+PKLzdp
+         zvPYTrglU9+fYtg/mdzmHGiqmye5RzW+rjKMkd3i7dNHwwG9dzyx1UWHYZL2pbUTysrZ
+         K3H3XBaAzmBuPQt1ERSlXZa1N7TRmEqk3PQFnk8F2FkNIzhuQK5wp2Y52I6zrsBjSShV
+         0BkfJQ7WnOx/oBxIbUdjlE4w4tgQIP1JKG1AeD1B9YnknZuFeUxdjJ2JfVPEZingWcNQ
+         x2Zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761637784; x=1762242584;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=599KCBsf74z9253rS1v8/WJK6GniRppSrGmNjd3JNU4=;
-        b=Eag70cXA1Q13MzCFOkijTYJ0b6/WTu57gdMm6d0Ak0CsT4GpAvPGAJc3lL/Q1jsZUc
-         1+h2mqE5haaV00eunK/DO5YGpK1Gpd1cr/BTcJIwYXRfNLTnxN5gsL00jBM1Hup8Ilr4
-         Rw2CBgAHP5NYqQQHAB4Y3HAXPZKTvJqj9fAwIdlj3VzXpE+uTTQlTwMJfzFHUHmaZrq/
-         7ReQw1V4lQZicaI2TuxTMvHSwnmzaU3y3Kc+G1sVr0ft3q22uxvRSf74XB+CWVHWfYUq
-         o3m6CAXs51Cx94F7rlEXaE3vGD2i6umgDYwFDi7qwaxMIj1crDB43WO1EKwYWYGNlXFf
-         FCew==
-X-Forwarded-Encrypted: i=1; AJvYcCWTJmKuzN3pSp05rsIhLMKSHhLd7nRNHw6WIfrHU1jn4gy+zugeWuBOVuD3NN02G+uN44YYhvpOcxlfwHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTJj1m2I62AlAmawAtdhbS9Oui8bRK2vv/A785d8d4/ykVIHxY
-	7Zgw6gKK+1BFvTLcrfQLhgnKBBhc5iWPsjdRFbPBVh2Xy3ne+4bvDGSPYAjWB+3NbF/ozRHbbmH
-	/wKtEQVWXf0GTh+2UdXrmPnQHrGcmEak=
-X-Gm-Gg: ASbGncuhgkE+KSWh96fbglsUUvVFdlcyBVUwTU5satGa6wuYlROJ22FnaySd7nh7mBb
-	V3UuG0x2M2wIViBXksmE9ZSpbbvwmfJHZ8EPFe3MGXpRxTWo9By5KwSuwHpNTIPJtdk7/zt9+za
-	cespZtRgy/yyAfrHPeYOLQ1wuXNrusnPGbCdR43mfeJoHdiQzeLhQhylSfSgkOD9xA8XeVJhw2P
-	80707anmH5TT3OuVLgD4cEawWO/+hj4Zkhh2uh6pkDVC+AURfAZougXb1jpCc4=
-X-Google-Smtp-Source: AGHT+IH2BejTHHAppc5i+MLtbQ9Ba/am1ffHoIuDO9J1uNsvZpU1FSZDgA92e1yRaikWm0/RlVJ5cDZmXhv2BHqDSEw=
-X-Received: by 2002:a2e:9a0e:0:b0:378:ee95:cb10 with SMTP id
- 38308e7fff4ca-3790779e5c3mr7549691fa.44.1761637784189; Tue, 28 Oct 2025
- 00:49:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761637935; x=1762242735;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hSrokT66Tzvef7LKxyB0Zo+SNa0Wi31xGiDyrSyf8zc=;
+        b=Yz25bta624Y6kT7vd43M8ETLu12keXfGt/shZjLm8WCNgw10D2c7AgFW2IY1uctbDf
+         TCsRuGumrsJVyaAwEu2I66Og2UB1YPH800c8S6xfNwLfs0CtTrBwtsJj8ghGv0Sv9cEu
+         bE0m6B0p7CgRjYCnzLJviIX1TbmdKa4YaCq0zkrvi9EWDKYZYgzms7OeiGm9GvpxCCER
+         7VUPMMNpJ2iBiiF+JMbs5o2US6CUpxyip5qi2PhwDd2DC2iWnApfUqzm/GnkgKCEAQKl
+         spy6gHfzbK0bopR1CgZet9O9QmaHNRRVVvW7xrru7hjHD/JKiwF/o9UjwG/08MT0uEfY
+         21og==
+X-Gm-Message-State: AOJu0Yxo/w5oo9vVv7G3rBAevLjDHHc7WaZoh+XW6DsjUKFRtRK1y8qJ
+	tZvkim/I3itLnLpRP5kfvbWoy3BNi1LEu5wjSvamvXmAJrRj+8iB5oXJ
+X-Gm-Gg: ASbGncsdNKvdqRACGqNQ4OHX4fYk7efCWBLEFbhx1BMhokC1Vgo1DSEQTgTc0PVw4Qr
+	DpDRKsvLWR1bVc2zMKCKJ0fv30NVcBk4aYkUXK7Au7DOTgLNSfkMS3bADAZPBGKxEIZX1yBP+9S
+	sUgPsae4lcNfNPc6M+buPHYp4vBTFQ3KsLJORnhYTglsP9V8yqKmsWrsv+u25+FdQjGM+Q7AWIU
+	yYbU9s4Fnwi5HMggEkNGHo4Suw6CvhqRjX7rz1Sg8dNybHmU1VwNHVsYicdk3ygz30kLwUqFQLD
+	3AMc/v7Nf5XKxdtfHZ1z9ozXM0RFwvHgXnhH7VZouASsVntaURQwGvszqE8FCWd5cs7fruBZmQy
+	sDl1ZvkUeEuWevfBLlSJAC1ObTEK/PsnSHF+dfn/PlofJKI7wWs+HnI+CNOq2w8XS3QuQTFGpgU
+	WFrznU3JE5MGmKe5+gWRP23jnqKCYp
+X-Google-Smtp-Source: AGHT+IFYNjjjoGOGtE6HON2xoA0mB3Wb8oXEz+UAnqVBQTxvDo3pjaBpZ4cZenwodZn/LEf1PcxJcA==
+X-Received: by 2002:a05:6300:6c04:b0:334:91ab:f189 with SMTP id adf61e73a8af0-344deddd4eamr1872441637.22.1761637935171;
+        Tue, 28 Oct 2025 00:52:15 -0700 (PDT)
+Received: from localhost.localdomain ([210.184.73.204])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414049290sm10525549b3a.34.2025.10.28.00.52.08
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 28 Oct 2025 00:52:14 -0700 (PDT)
+From: Hao Jia <jiahao.kernel@gmail.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	kprateek.nayak@amd.com
+Cc: linux-kernel@vger.kernel.org,
+	Hao Jia <jiahao1@lixiang.com>,
+	Aaron Lu <ziqianlu@bytedance.com>
+Subject: [PATCH v3] sched/fair: Fix non-empty throttled_limbo_list warning in tg_throttle_down()
+Date: Tue, 28 Oct 2025 15:52:01 +0800
+Message-Id: <20251028075201.71422-1-jiahao.kernel@gmail.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Tingjia Cao <tjcao980311@gmail.com>
-Date: Tue, 28 Oct 2025 03:49:32 -0400
-X-Gm-Features: AWmQ_bmD3TUW_gld4khNnCFdO-2m1sCL8Yu7g_nOQ7cXlwxVXPN9Bh2LtIRNXgk
-Message-ID: <CABcWv98gu6HqbOEoOPBL4tJrcGmU=1x3=fN3Fpho8wiY+D22CQ@mail.gmail.com>
-Subject: [BUG] select_idle_sibling() doesn't consider sync wakeup logic
-To: mingo@redhat.com, peterz@infradead.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, dietmar.eggemann@arm.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="000000000000599b650642334290"
+Content-Transfer-Encoding: 8bit
 
---000000000000599b650642334290
-Content-Type: multipart/alternative; boundary="000000000000599b64064233428e"
+From: Hao Jia <jiahao1@lixiang.com>
 
---000000000000599b64064233428e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Aaron Lu and I hit a non-empty throttled_limbo_list warning in
+tg_throttle_down() during testing.
 
-Hello,
+WARNING: kernel/sched/fair.c:5975 at tg_throttle_down+0x2bd/0x2f0, CPU#20: swapper/20/0
+Call Trace:
+ ? __pfx_tg_nop+0x10/0x10
+ walk_tg_tree_from+0x39/0xd0
+ ? __pfx_tg_throttle_down+0x10/0x10
+ throttle_cfs_rq+0x176/0x1f0
+ enqueue_task_fair+0x4f5/0xd30
+ ? unthrottle_cfs_rq+0x2f7/0x3a0
+ tg_unthrottle_up+0x10c/0x2f0
+ ? __pfx_tg_unthrottle_up+0x10/0x10
+ walk_tg_tree_from+0x66/0xd0
+ ? __pfx_tg_nop+0x10/0x10
+ unthrottle_cfs_rq+0x16b/0x3a0
+ __cfsb_csd_unthrottle+0x1f0/0x250
+ ? __pfx___cfsb_csd_unthrottle+0x10/0x10
+ __flush_smp_call_function_queue+0x104/0x440
+ ? tick_nohz_account_idle_time+0x4c/0x80
+ flush_smp_call_function_queue+0x3b/0x80
+ do_idle+0x14f/0x240
+ cpu_startup_entry+0x30/0x40
+ start_secondary+0x128/0x160
+ common_startup_64+0x13e/0x141
 
-We have observed an issue in the CFS scheduler's task placement logic
-present in kernel versions v6.14 and latest v6.18-rc3.
+cgroup hierarchy:
 
-The function select_idle_sibling() in *fair.c* does not correctly handle
-the WF_SYNC wakeup flag, leading to suboptimal placement of newly awakened
-child tasks.
+          root
+        /      \
+        A*     ...
+     /  |  \   ...
+        B* ...
 
-The core issue lies in a logical contradiction between wake_affine_idle()
-and select_idle_sibling() when sync is true.
+Debugging shows the following:
+A and B are configured with relatively small quota and large period.
 
-1. Intended Behavior (wake_affine_idle): During a sync wakeup (WF_SYNC is
-true), the scheduler's intent is to place the child task on this_cpu (the
-parent's current CPU) if there is only 1 runnable task. The rationale is
-that the parent is expected to go to sleep almost immediately, making its
-CPU available. It keeps the child task on a CPU with a hot cache.
-static int wake_affine_idle(int this_cpu, int prev_cpu, int sync) {
-    ...
-    if ((rq->nr_running - cfs_h_nr_delayed(rq)) =3D=3D 1)
-        return this_cpu;
-    ...
-}
+At some point, cfs_rq_A is throttled. Due to the throttling of cfs_rq_A,
+the tasks on cfs_rq_B are added to cfs_rq_B's throttled_limbo_list.
 
-2. Flawed Behavior (select_idle_sibling): When select_task_rq_fair() later
-calls select_idle_sibling() with "this_cpu" as the "target", it rejects the
-"target" because it is not currently idle (the parent is still running).
-Instead, it searches for an actually idle sibling CPU within the same LLC
-domain. During a sync wakeup, however, the scheduler assumes the parent
-will sleep immediately and should treat the parent=E2=80=99s CPU as effecti=
-vely
-available if it's the only runnable task.
+Resetting task_group B quota will set cfs_rq_B runtime_remaining to 0 in
+tg_set_cfs_bandwidth().
+Since task_group A is throttled, Therefore, task on cfs_rq_B cannot run,
+and runtime_remaining stays 0. With task_group B has a small quota,
+tasks on other CPUs in task_group B quickly consume all of
+cfs_b_B->runtime, causing cfs_b_B->runtime to be 0.
 
-3. The Consequence: The wakee is placed on a remote idle sibling rather
-than on the idle parent=E2=80=99s CPU, losing cache locality. The remote CP=
-U may
-also have been idle in a deeper C-state and/or at a lower frequency,
-further hurting the child=E2=80=99s performance.
+When cfs_rq_A is unthrottled later, tg_unthrottle_up(cfs_rq_B) will
+re-queues task. However, because cfs_rq_B->runtime_remaining still 0,
+and it cannot obtain runtime from cfs_b_B->runtime either. Therefore,
+the task will be throttled in
+enqueue_task_fair()->enqueue_entity()->check_enqueue_throttle(),
+triggering a non-empty throttled_limbo_list warning in tg_throttle_down().
 
-Kernel Info
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Host OS: on ubuntu24.04, running qemu with "-smp cpus=3D3,cores=3D3"
-Processor: Two Intel Xeon Silver 4114 10-core CPUs at 2.20 GHz
-Kernel Version: v6.14 and latest v6.18-rc3
+Root Cause:
+In unthrottle_cfs_rq(), we only checked cfs_rq_A->runtime_remaining, but
+enqueue_task_fair() requires that the runtime_remaining of each cfs_rq
+level be greater than 0.
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-We attached a patch to fix this issue. Thank you for the effort!
+Solution:
+One way to fix this warning is to add a runtime_remaining check for
+each cfs_rq level of the task in unthrottle_cfs_rq(), but this makes code
+strange and complicated.
+Another straightforward and simple solution is to add a new enqueue flag
+to ensure that enqueue in tg_unthrottle_up() will not immediately trigger
+throttling. This may enqueue sched_entity with no remaining runtime, which
+is not a big deal because the current kernel also has such situations [1].
 
-Best,
-Tingjia
+We still retain the runtime_remaining check in unthrottle_cfs_rq() for
+higher-level cfs_rq to avoid enqueuing many entities with
+runtime_remaining < 0.
 
---000000000000599b64064233428e
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Also remove the redundant assignment to se in tg_throttle_down().
 
-<div dir=3D"ltr">Hello,<br><br>We have observed an issue in the CFS schedul=
-er&#39;s task placement logic present in kernel versions v6.14 and latest v=
-6.18-rc3.<br><br>The function select_idle_sibling() in <b>fair.c</b> does n=
-ot correctly handle the WF_SYNC wakeup flag, leading to suboptimal placemen=
-t of newly awakened child tasks.<br><br>The core issue lies in a logical co=
-ntradiction between wake_affine_idle() and select_idle_sibling() when sync =
-is true.<br><br>1. Intended Behavior (wake_affine_idle): During a sync wake=
-up (WF_SYNC is true), the scheduler&#39;s intent is to place the child task=
- on this_cpu (the parent&#39;s current CPU) if there is only 1 runnable tas=
-k. The rationale is that the parent is expected to go to sleep almost immed=
-iately, making its CPU available. It keeps the child task on a CPU with a h=
-ot cache.<br>static int wake_affine_idle(int this_cpu, int prev_cpu, int sy=
-nc) {<div>=C2=A0 =C2=A0 ...<br>=C2=A0 =C2=A0 if ((rq-&gt;nr_running - cfs_h=
-_nr_delayed(rq)) =3D=3D 1)<br>=C2=A0 =C2=A0 =C2=A0 =C2=A0 return this_cpu;<=
-/div><div>=C2=A0 =C2=A0 ...</div><div>}<br><br>2. Flawed Behavior (select_i=
-dle_sibling): When select_task_rq_fair() later calls select_idle_sibling() =
-with &quot;this_cpu&quot; as the &quot;target&quot;, it rejects the &quot;t=
-arget&quot; because it is not currently idle (the parent is still running).=
- Instead, it searches for an actually idle sibling CPU within the same LLC =
-domain. During a sync wakeup, however, the scheduler assumes the parent wil=
-l sleep immediately and should treat the parent=E2=80=99s CPU as effectivel=
-y available if it&#39;s the only runnable task.<br><br>3. The Consequence: =
-The wakee is placed on a remote idle sibling rather than on the idle parent=
-=E2=80=99s CPU, losing cache locality. The remote CPU may also have been id=
-le in a deeper C-state and/or at a lower frequency, further hurting the chi=
-ld=E2=80=99s performance.</div><div><br>Kernel Info<br>=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D<br>Host OS: on ubuntu24.04, running qemu with &=
-quot;-smp cpus=3D3,cores=3D3&quot;<br>Processor: Two Intel Xeon Silver 4114=
- 10-core CPUs at 2.20 GHz<br>Kernel Version: v6.14 and latest v6.18-rc3</di=
-v><div><br></div><div>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D</div><d=
-iv>We attached a patch to fix this issue. Thank=C2=A0you for the effort!<br=
-></div><div><br></div><div>Best,</div><div>Tingjia</div></div>
+[1]: https://lore.kernel.org/all/20251015084045.GB35@bytedance
 
---000000000000599b64064233428e--
---000000000000599b650642334290
-Content-Type: application/octet-stream; 
-	name="0001-consider-sync-wakeup-when-selecting-idle-sibling.patch"
-Content-Disposition: attachment; 
-	filename="0001-consider-sync-wakeup-when-selecting-idle-sibling.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mha8zwvw0>
-X-Attachment-Id: f_mha8zwvw0
+Fixes: e1fad12dcb66 ("sched/fair: Switch to task based throttle model")
+Suggested-by: Aaron Lu <ziqianlu@bytedance.com>
+Suggested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Reported-by: Aaron Lu <ziqianlu@bytedance.com>
+Closes: https://lore.kernel.org/all/20251016065438.GA32@bytedance
+Signed-off-by: Hao Jia <jiahao1@lixiang.com>
+---
+v3:
+  Make the dequeue_throttle flag comment more accurate, as suggested by Aaron Lu.
 
-RnJvbSA4YTJjODU1NzY4YWRkMmViNTNjMjQ5NmE1MjMwYThjMWQ3YzY3N2JmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBUaW5namlhLTB2MCA8dGpjYW85ODAzMTFAZ21haWwuY29tPgpE
-YXRlOiBUdWUsIDI4IE9jdCAyMDI1IDAyOjMwOjU3IC0wNTAwClN1YmplY3Q6IFtQQVRDSF0gY29u
-c2lkZXIgc3luYyB3YWtldXAgd2hlbiBzZWxlY3RpbmcgaWRsZSBzaWJsaW5nCgotLS0KIGtlcm5l
-bC9zY2hlZC9mYWlyLmMgfCAxMCArKysrKysrLS0tCiAxIGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRp
-b25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2tlcm5lbC9zY2hlZC9mYWlyLmMg
-Yi9rZXJuZWwvc2NoZWQvZmFpci5jCmluZGV4IGNlZTE3OTNlODI3Ny4uMDE0MjBhNDgxYzM4IDEw
-MDY0NAotLS0gYS9rZXJuZWwvc2NoZWQvZmFpci5jCisrKyBiL2tlcm5lbC9zY2hlZC9mYWlyLmMK
-QEAgLTEwNjQsNyArMTA2NCw3IEBAIHN0YXRpYyBib29sIHVwZGF0ZV9kZWFkbGluZShzdHJ1Y3Qg
-Y2ZzX3JxICpjZnNfcnEsIHN0cnVjdCBzY2hlZF9lbnRpdHkgKnNlKQogCiAjaW5jbHVkZSAicGVs
-dC5oIgogCi1zdGF0aWMgaW50IHNlbGVjdF9pZGxlX3NpYmxpbmcoc3RydWN0IHRhc2tfc3RydWN0
-ICpwLCBpbnQgcHJldl9jcHUsIGludCBjcHUpOworc3RhdGljIGludCBzZWxlY3RfaWRsZV9zaWJs
-aW5nKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCwgaW50IHByZXZfY3B1LCBpbnQgY3B1LCBpbnQgc3lu
-Yyk7CiBzdGF0aWMgdW5zaWduZWQgbG9uZyB0YXNrX2hfbG9hZChzdHJ1Y3QgdGFza19zdHJ1Y3Qg
-KnApOwogc3RhdGljIHVuc2lnbmVkIGxvbmcgY2FwYWNpdHlfb2YoaW50IGNwdSk7CiAKQEAgLTc4
-MTAsMTIgKzc4MTAsMTMgQEAgc3RhdGljIGlubGluZSBib29sIGFzeW1fZml0c19jcHUodW5zaWdu
-ZWQgbG9uZyB1dGlsLAogLyoKICAqIFRyeSBhbmQgbG9jYXRlIGFuIGlkbGUgY29yZS90aHJlYWQg
-aW4gdGhlIExMQyBjYWNoZSBkb21haW4uCiAgKi8KLXN0YXRpYyBpbnQgc2VsZWN0X2lkbGVfc2li
-bGluZyhzdHJ1Y3QgdGFza19zdHJ1Y3QgKnAsIGludCBwcmV2LCBpbnQgdGFyZ2V0KQorc3RhdGlj
-IGludCBzZWxlY3RfaWRsZV9zaWJsaW5nKHN0cnVjdCB0YXNrX3N0cnVjdCAqcCwgaW50IHByZXYs
-IGludCB0YXJnZXQsIGludCBzeW5jKQogewogCWJvb2wgaGFzX2lkbGVfY29yZSA9IGZhbHNlOwog
-CXN0cnVjdCBzY2hlZF9kb21haW4gKnNkOwogCXVuc2lnbmVkIGxvbmcgdGFza191dGlsLCB1dGls
-X21pbiwgdXRpbF9tYXg7CiAJaW50IGksIHJlY2VudF91c2VkX2NwdSwgcHJldl9hZmYgPSAtMTsK
-KwlzdHJ1Y3QgcnEgKnJxID0gY3B1X3JxKHRhcmdldCk7CiAKIAkvKgogCSAqIE9uIGFzeW1tZXRy
-aWMgc3lzdGVtLCB1cGRhdGUgdGFzayB1dGlsaXphdGlvbiBiZWNhdXNlIHdlIHdpbGwgY2hlY2sK
-QEAgLTc4MzcsNiArNzgzOCw5IEBAIHN0YXRpYyBpbnQgc2VsZWN0X2lkbGVfc2libGluZyhzdHJ1
-Y3QgdGFza19zdHJ1Y3QgKnAsIGludCBwcmV2LCBpbnQgdGFyZ2V0KQogCSAgICBhc3ltX2ZpdHNf
-Y3B1KHRhc2tfdXRpbCwgdXRpbF9taW4sIHV0aWxfbWF4LCB0YXJnZXQpKQogCQlyZXR1cm4gdGFy
-Z2V0OwogCisJaWYgKHN5bmMgJiYgKHJxLT5ucl9ydW5uaW5nIC0gY2ZzX2hfbnJfZGVsYXllZChy
-cSkpID09IDEpCisJCXJldHVybiB0YXJnZXQ7CisKIAkvKgogCSAqIElmIHRoZSBwcmV2aW91cyBD
-UFUgaXMgY2FjaGUgYWZmaW5lIGFuZCBpZGxlLCBkb24ndCBiZSBzdHVwaWQ6CiAJICovCkBAIC04
-NjE4LDcgKzg2MjIsNyBAQCBzZWxlY3RfdGFza19ycV9mYWlyKHN0cnVjdCB0YXNrX3N0cnVjdCAq
-cCwgaW50IHByZXZfY3B1LCBpbnQgd2FrZV9mbGFncykKIAkJbmV3X2NwdSA9IHNjaGVkX2JhbGFu
-Y2VfZmluZF9kc3RfY3B1KHNkLCBwLCBjcHUsIHByZXZfY3B1LCBzZF9mbGFnKTsKIAl9IGVsc2Ug
-aWYgKHdha2VfZmxhZ3MgJiBXRl9UVFdVKSB7IC8qIFhYWCBhbHdheXMgPyAqLwogCQkvKiBGYXN0
-IHBhdGggKi8KLQkJbmV3X2NwdSA9IHNlbGVjdF9pZGxlX3NpYmxpbmcocCwgcHJldl9jcHUsIG5l
-d19jcHUpOworCQluZXdfY3B1ID0gc2VsZWN0X2lkbGVfc2libGluZyhwLCBwcmV2X2NwdSwgbmV3
-X2NwdSwgc3luYyk7CiAJfQogCXJjdV9yZWFkX3VubG9jaygpOwogCi0tIAoyLjQzLjAKCg==
---000000000000599b650642334290--
+v2 Link: https://lore.kernel.org/all/20251027090534.94429-1-jiahao.kernel@gmail.com
+
+ kernel/sched/fair.c  | 31 ++++++++++++++++++++++---------
+ kernel/sched/sched.h |  7 ++++++-
+ 2 files changed, 28 insertions(+), 10 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 273e2871b59e..67ce46c532e2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5229,7 +5229,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	se->deadline = se->vruntime + vslice;
+ }
+ 
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags);
+ static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
+ 
+ static void
+@@ -5287,7 +5287,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	se->on_rq = 1;
+ 
+ 	if (cfs_rq->nr_queued == 1) {
+-		check_enqueue_throttle(cfs_rq);
++		check_enqueue_throttle(cfs_rq, flags);
++
+ 		list_add_leaf_cfs_rq(cfs_rq);
+ #ifdef CONFIG_CFS_BANDWIDTH
+ 		if (cfs_rq->pelt_clock_throttled) {
+@@ -5912,7 +5913,7 @@ static int tg_unthrottle_up(struct task_group *tg, void *data)
+ 	list_for_each_entry_safe(p, tmp, &cfs_rq->throttled_limbo_list, throttle_node) {
+ 		list_del_init(&p->throttle_node);
+ 		p->throttled = false;
+-		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP);
++		enqueue_task_fair(rq_of(cfs_rq), p, ENQUEUE_WAKEUP | ENQUEUE_THROTTLE);
+ 	}
+ 
+ 	/* Add cfs_rq with load or one or more already running entities to the list */
+@@ -6029,15 +6030,18 @@ void unthrottle_cfs_rq(struct cfs_rq *cfs_rq)
+ 	 * unthrottled us with a positive runtime_remaining but other still
+ 	 * running entities consumed those runtime before we reached here.
+ 	 *
+-	 * Anyway, we can't unthrottle this cfs_rq without any runtime remaining
++	 * We can't unthrottle this cfs_rq without any runtime remaining
+ 	 * because any enqueue in tg_unthrottle_up() will immediately trigger a
+ 	 * throttle, which is not supposed to happen on unthrottle path.
++	 *
++	 * Although the ENQUEUE_THROTTLE flag ensures that enqueues in
++	 * tg_unthrottle_up() do not trigger a throttle, we still retain the check
++	 * for cfs_rq->runtime_remaining. This prevents the enqueueing of many
++	 * entities whose runtime_remaining is less than 0.
+ 	 */
+ 	if (cfs_rq->runtime_enabled && cfs_rq->runtime_remaining <= 0)
+ 		return;
+ 
+-	se = cfs_rq->tg->se[cpu_of(rq)];
+-
+ 	cfs_rq->throttled = 0;
+ 
+ 	update_rq_clock(rq);
+@@ -6403,7 +6407,7 @@ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+  * expired/exceeded, otherwise it may be allowed to steal additional ticks of
+  * runtime as update_curr() throttling can not trigger until it's on-rq.
+  */
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags)
+ {
+ 	if (!cfs_bandwidth_used())
+ 		return;
+@@ -6418,6 +6422,13 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq)
+ 
+ 	/* update runtime allocation */
+ 	account_cfs_rq_runtime(cfs_rq, 0);
++	/*
++	 * Do not attempt to throttle on the cfs_rq unthrottle path.
++	 * and it must be placed after account_cfs_rq_runtime() to
++	 * prevent a possible missed start of the bandwidth timer.
++	 */
++	if (flags & ENQUEUE_THROTTLE)
++		return;
+ 	if (cfs_rq->runtime_remaining <= 0)
+ 		throttle_cfs_rq(cfs_rq);
+ }
+@@ -6724,7 +6735,7 @@ static void sched_fair_update_stop_tick(struct rq *rq, struct task_struct *p)
+ 
+ static void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec) {}
+ static bool check_cfs_rq_runtime(struct cfs_rq *cfs_rq) { return false; }
+-static void check_enqueue_throttle(struct cfs_rq *cfs_rq) {}
++static void check_enqueue_throttle(struct cfs_rq *cfs_rq, int flags) {}
+ static inline void sync_throttle(struct task_group *tg, int cpu) {}
+ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
+ static void task_throttle_setup_work(struct task_struct *p) {}
+@@ -6926,6 +6937,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	int h_nr_runnable = 1;
+ 	int task_new = !(flags & ENQUEUE_WAKEUP);
+ 	int rq_h_nr_queued = rq->cfs.h_nr_queued;
++	int throttle_flag = flags & ENQUEUE_THROTTLE;
+ 	u64 slice = 0;
+ 
+ 	if (task_is_throttled(p) && enqueue_throttled_task(p))
+@@ -6983,7 +6995,8 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 		if (cfs_rq_is_idle(cfs_rq))
+ 			h_nr_idle = 1;
+ 
+-		flags = ENQUEUE_WAKEUP;
++		/* Ensure ENQUEUE_THROTTLE flag can be propagated through the hierarchy */
++		flags = ENQUEUE_WAKEUP | throttle_flag;
+ 	}
+ 
+ 	for_each_sched_entity(se) {
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e7718f12bc55..ce838cb00990 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2364,6 +2364,10 @@ extern const u32		sched_prio_to_wmult[40];
+  * CLASS - going to update p->sched_class; makes sched_change call the
+  *         various switch methods.
+  *
++ * THROTTLE - invoked in throttle_cfs_rq_work() during throttle for
++ *            accounting purpose, and in tg_unthrottle_up() to avoid
++ *            throttling when enqueuing tasks.
++ *
+  * ENQUEUE_HEAD      - place at front of runqueue (tail if not specified)
+  * ENQUEUE_REPLENISH - CBS (replenish runtime and postpone deadline)
+  * ENQUEUE_MIGRATED  - the task was migrated during wakeup
+@@ -2381,9 +2385,9 @@ extern const u32		sched_prio_to_wmult[40];
+ #define DEQUEUE_MIGRATING	0x0010 /* Matches ENQUEUE_MIGRATING */
+ #define DEQUEUE_DELAYED		0x0020 /* Matches ENQUEUE_DELAYED */
+ #define DEQUEUE_CLASS		0x0040 /* Matches ENQUEUE_CLASS */
++#define DEQUEUE_THROTTLE	0x0080 /* Matches ENQUEUE_THROTTLE */
+ 
+ #define DEQUEUE_SPECIAL		0x00010000
+-#define DEQUEUE_THROTTLE	0x00020000
+ 
+ #define ENQUEUE_WAKEUP		0x0001
+ #define ENQUEUE_RESTORE		0x0002
+@@ -2393,6 +2397,7 @@ extern const u32		sched_prio_to_wmult[40];
+ #define ENQUEUE_MIGRATING	0x0010
+ #define ENQUEUE_DELAYED		0x0020
+ #define ENQUEUE_CLASS		0x0040
++#define ENQUEUE_THROTTLE	0x0080
+ 
+ #define ENQUEUE_HEAD		0x00010000
+ #define ENQUEUE_REPLENISH	0x00020000
+-- 
+2.34.1
+
 
