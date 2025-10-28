@@ -1,122 +1,92 @@
-Return-Path: <linux-kernel+bounces-874522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2182BC167F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:33:00 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F6FC167F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DF61B2757E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:33:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 89CFD346C9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A3E34E75A;
-	Tue, 28 Oct 2025 18:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hssVsn3Q"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4263B34AB1C;
+	Tue, 28 Oct 2025 18:33:08 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51CC345727
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759ED199FAC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761676364; cv=none; b=jq7PjEMFB4ygvmzjIyHsGTtEI6oy72T/j5H+YXQ2kJ/bo+4ysOL36aehqEC0Xnb597kTiqxf+r7CijLAqwJ5S7WDirg/+8A2Je+xKBooy4XVmSF0DO+937cMwEB9cAae5lTEaTnF1rEm8G9V66d+DXtlSJ8WhcTOO3Tle4mL+BY=
+	t=1761676387; cv=none; b=MqhsNUZvmvzzxC3zzyzLRlS4QevVbzCQNXoVs39tOACH3B3hTPoa2XV6969pqHYjLm3mMB0COxnf/3QtDzXSv+yLvIkIy/d42wzQC202EVFJDSjwlNukJfrdiexlmBaeF1Cm0x6lgp2JDNbfRfWfc3yCgTqAwrSlpsa/Ilzqoz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761676364; c=relaxed/simple;
-	bh=rwcnxNG6I32u+/Nrolp8o34FZIHcZuGuCps+y7MpA84=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oTQG/ZYcu+sL7mJrEqZwSxpoe6sfupOycw5n7BJQpzXa4YNOmTrcoQQ9puNTKLRTDsydhoIYusDdlQtZQV1Ir43uZ1LjZbFdRQ0thv5eqxpIOEF+wWRk+TbSXIK/zYdvYcDvprfIRTQFyU210gZrLysHGNklVmS8JbF0CRQ67FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hssVsn3Q; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761676360;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nf6l5EBnraIwk2fFm2crn/UFRlvBCZhPypt0K7UxZjY=;
-	b=hssVsn3Q/lG0Ha8WD0NuxkPn5nIfYTE9daX6kZTPWtQkfcc3c5liTlrsaeobIK+I5u/Qsi
-	5u5PKy2Fn5+Y3sy756yujLmcWPZCVTncPzc64DvnC8OzMF/k3zCALlzXU5oKmoAsWHtJ7d
-	ssChMGvkIZRChpOs5U70e0V6baHPiU0=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Chris Mason <clm@meta.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-  bot+bpf-ci@kernel.org,  Andrew Morton <akpm@linux-foundation.org>,  LKML
- <linux-kernel@vger.kernel.org>,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,
-  inwardvessel <inwardvessel@gmail.com>,  linux-mm <linux-mm@kvack.org>,
-  "open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,  bpf
- <bpf@vger.kernel.org>,  Martin KaFai Lau <martin.lau@kernel.org>,  Song
- Liu <song@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun
- Heo <tj@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,  Eduard
- <eddyz87@gmail.com>,  Yonghong Song <yonghong.song@linux.dev>,  Ihor
- Solodrai <ihor.solodrai@linux.dev>
-Subject: Re: [PATCH v2 08/23] mm: introduce BPF kfuncs to deal with memcg
- pointers
-In-Reply-To: <f5d71202-188d-45ff-a5e8-387d060fca47@meta.com> (Chris Mason's
-	message of "Tue, 28 Oct 2025 14:03:18 -0400")
-References: <20251027231727.472628-9-roman.gushchin@linux.dev>
-	<2c91977fcab04be6305bf4be57e825f7e84005d16667adcdfad0585be506537c@mail.kernel.org>
-	<87ldkv57nc.fsf@linux.dev>
-	<CAADnVQLkza5_95qc0vGYBLUu-4FN_cZEcVywTs5XemTE9O-ZtQ@mail.gmail.com>
-	<f5d71202-188d-45ff-a5e8-387d060fca47@meta.com>
-Date: Tue, 28 Oct 2025 11:32:31 -0700
-Message-ID: <87y0ouri68.fsf@linux.dev>
+	s=arc-20240116; t=1761676387; c=relaxed/simple;
+	bh=ipwDZ9annplH38RhTUgq12LhogPLz69R4pZNtMH83xM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=E+2cuv7nsiFHHJbwUlntW1WP643VH07Pe8xkyOrBRcYD4PpzGSiv7/AGTNmLGulL+hLyqLpB93TYLwiVtGBuIpLPpXgy8oJ0wahE6PMUdWVzK7QKwjGh3lI7HQBxjsjR8Am5QxydVMRVP1qY2tp3e1n4h9vJ9Vjn+Jz7qpWE/0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430d7ace0ddso82855115ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761676382; x=1762281182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqOwXWyQ5cg+z83zXoyA0D5QJ4Vp8EoxqU6T3H+FwkI=;
+        b=EkBsVzeIVYoxgI79dASq4nqwY/Pk6rXZmgBN5xRRB+RVrwQdW2u8G2EaXeUI2oi786
+         6jH9KsTOzLwSc5qwOqbziXLJdIgq/6OC3g9ZjvN7SRwYn3G+7HvXacREczIPDR3SENB5
+         Cyd5hy5viceHngqtaIdr2umXY/GhDVDMqvUe5E70C4I90iQSBZdyxPlsjonhJHjolvHk
+         RX1bOBi+N4K11cN9ik5XVo1azCsz2loHCTuJtBYS+gLJlTGUPdJgmKzs082xyabWC01R
+         4JeKiIeU4dkgQYRm8tWWWGQTpDqxxf6BZQGj7GnGkw6sNsZ4yKXxtSOcBD+GaSlKyFhO
+         DEiw==
+X-Forwarded-Encrypted: i=1; AJvYcCURlzKIhoiroy8DB8cJhPElD/XNIwIB7MZHhISmEbdpBvfrIYz0mPzA0ntII6xIDZ/pM+wy7A4ccnNio1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNtqEnyLP1kIXRs6TsPdyeP+vRWotgotIoyUX1C2ha1Kxit2VE
+	VlCmTUO218PJoC6ZTWR6PyHqk2u/UwzdS3fVZTKlH+42W7Y74QsXwHRP3V0Kc5mCd/yITgrLyVL
+	qLNbpoQQqI+aif0gg7cPyGIP+JL4FmogE6wte8wQrJSr+fXA2pgEjKw/yxV0=
+X-Google-Smtp-Source: AGHT+IGHqynQK0OYs0J9pN+0SjyXHE16vZmwAyz1MnJ0u91K0LDZ886s4yPNF402KwYG+kjSKGl8vB0ojHQloVph0vz6Y+zFEsZS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:318e:b0:430:aca2:53d5 with SMTP id
+ e9e14a558f8ab-432f8f93765mr2914495ab.1.1761676382584; Tue, 28 Oct 2025
+ 11:33:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 11:33:02 -0700
+In-Reply-To: <20251028181934.eY2E6%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69010c5e.050a0220.3344a1.03d7.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in __ocfs2_move_extent
+From: syzbot <syzbot+727d161855d11d81e411@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Chris Mason <clm@meta.com> writes:
+Hello,
 
-> On 10/28/25 1:12 PM, Alexei Starovoitov wrote:
->> On Tue, Oct 28, 2025 at 9:11=E2=80=AFAM Roman Gushchin <roman.gushchin@l=
-inux.dev> wrote:
->>>
->>> bot+bpf-ci@kernel.org writes:
->>>
->>>> ```
->>>> commit ec8e2e1769704b4f69261f36e6aaf035d47c5f0f
->>>> Author: Roman Gushchin <roman.gushchin@linux.dev>
->>>> Can this dereference a NULL css pointer?  The function checks css for
->>>> NULL at line 42 with "if (css && css_tryget(css))", which suggests css
->>>> can be NULL.  If a BPF program calls this function with a NULL css,
->>>> wouldn't it crash here before reaching that check?
->>>
->>> Here css passed as an argument to bpf_get_mem_cgroup() can't be NULL,
->>> because the BPF verifier guarantees that it's a valid css pointer.
->>>
->>> However the result of rcu_dereference_raw(cgroup->subsys[ssid]) can be
->>> NULL, this is why the "if (css && css_tryget(css))" check is required
->>> down below.
->>=20
->> Yeah. Not sure how feasible it is to teach AI about KF_RCU semantics.
->
-> I pulled it down locally to try and w/semcode it is properly catching thi=
-s:
->
-> False Positives Eliminated
->
-> 1. EH-001 NULL dereference - css parameter dereferenced without check
->
-> - Why false positive: BPF verifier ensures pointer parameters are
-> non-NULL. All kernel kfuncs follow the same pattern of not checking
-> parameters for NULL (css_rstat_updated, css_rstat_flush,
-> bpf_put_mem_cgroup, etc.). The KF_RET_NULL flag controls return value,
-> not parameter nullability.
->
-> My plan is to just have the prompt read Documentation/bpf/kfuncs.rst,
-> which Eduard suggested.  I'll make a bpf kfuncs pattern and do that.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Awesome, thank you!
+fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
+
+
+Tested on:
+
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=84e81c4d0c0e900a
+dashboard link: https://syzkaller.appspot.com/bug?extid=727d161855d11d81e411
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=156d6c92580000
+
 
