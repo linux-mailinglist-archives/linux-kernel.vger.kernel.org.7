@@ -1,169 +1,235 @@
-Return-Path: <linux-kernel+bounces-874792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 263A5C1716C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:48:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3DFC17184
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F360F1C23823
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444931887B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD392F6198;
-	Tue, 28 Oct 2025 21:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5E82F6912;
+	Tue, 28 Oct 2025 21:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NblzW3VI"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GLnxrmaU"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012041.outbound.protection.outlook.com [52.101.53.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B92692F12C8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761688088; cv=none; b=HySNp7mxGnAsxl86FHZZ+JBOtfZA6apUm4mpaIvBMPczWwsO9u74kgL17v97cYk10KPxBOziSFjF7hUCffORtbjgcWb259R9R/U0HT046WWZUrvlOcwVrooSVIdXbLvvyQVG+rlYvbAgXoKPmL5smD8+05FRpln++CFSVo/oKLc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761688088; c=relaxed/simple;
-	bh=xnWAo3zUl6Gff87g0btQedPx1DAW9IRA0yDqbJp/pPI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Dq+vL/NjqMbDNgUAigNQQUhy6L3H7KGyyaKhkCilK8KULuH56Y+TeNfc63vAjv+EJ6wYo2Y45hayt3QpqqsTIeAKOZOgxeav7qQkt6Ayqzihv8nzmO9MX4nHTaPxMJOIiGltIpAf/zg06A4nnMI5IcErpYoLTMyfvFe181NyzE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NblzW3VI; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-63c4999fa3dso3732943a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:48:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761688085; x=1762292885; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a1rwNT7AoFhufoGiv/tnU9FtjWDK0AyzLDsdNZZgJak=;
-        b=NblzW3VICih2GMr31DW3LWLKiKM2HAvSEzgep48yShOQUnwIkhVNZ89fs7QGXJL5Ch
-         iQlz/C0z0XZOMvSRCi/dRYEkKj2BNsZ9U4OqCzkI52d+c8L4FpXRcmLrz5cOeQsAt63n
-         q1A1Gl+R/Q4SC3RRczwePClycIpO2e+VojYguiRDAjFWvnjUdnLeJQzOoGPx2YXtlFo1
-         cpfCL8ceJEsQlAVGdTs250UkD7vApSQsPFp5XVbhNwk16uDnHzTH/NDmuxHPhNGxaXJu
-         pQOJww0yUOuD/V8Ak09p5ftsB1zi1yWQjngGR+n2XULNt8UkiNTIn0BtuQdR8OYBZSt2
-         i/2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761688085; x=1762292885;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a1rwNT7AoFhufoGiv/tnU9FtjWDK0AyzLDsdNZZgJak=;
-        b=lciBzZ/l6/HEt/MGrDeKCz9ZDw7qtHzpfslgZEBy+D40vTrTKTKGw1+iOS18kJ0Pku
-         47kc8lOfyEW54uXb2C3d5QUrlWOaqKf8kPl7x5iFX6qVO4HoKe2vBgq8ikEpoFvIkbM7
-         VWQxtQ4M787Z2JPtrldP2jqDqDCGcmJLDBNWaW/G1Mnx8GRW3J6h8P5Sqk8SSP7jEcTK
-         OZwBAsoLJMoUguvgQoP2gTGBMaAGPY+7+lgfK/sg5WD36M/YIAAdloDhCBN3bogu/rHT
-         2ZdXoXTBwW3zwVYGwG3sla3/sYjcJ5CN+/fhjjT4rtFENYmVIy5QRyYGp4z82FjMzhFX
-         X/Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYQK7URvBGim20iWStVwMhVEsr0Q2s0OtocjP36/cZPfYJ3NOpCNpzblf/azbZUtdJEGUo5Zg3qwlFWkw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmZ3MN7nU/UnF5kUMJNcn59Zuyr7qWJ1BzLdXW/g8BHW0y/+t3
-	qGtMDLMTbOZ9QULo+IyE+PSchygHQJL5gm3mke6109D3CggcvBRVvsjMQbQYFbjnU5gxv6vgtiL
-	bhe70LjaVLtGW+wStyg==
-X-Google-Smtp-Source: AGHT+IFq7poWf2sgLrm3BVNZylI1NJluksrbA9l1DBnB4++RIDBy8ODLNpGUK+5h9JR8qw+jZ9tjisMbHT4ls6A=
-X-Received: from edi25.prod.google.com ([2002:a05:6402:3059:b0:639:e051:c411])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:2686:b0:639:7c6b:9745 with SMTP id 4fb4d7f45d1cf-640441c1efemr482701a12.13.1761688085213;
- Tue, 28 Oct 2025 14:48:05 -0700 (PDT)
-Date: Tue, 28 Oct 2025 21:48:04 +0000
-In-Reply-To: <aQEOhS8VVrAgae3C@yury>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E322343C0;
+	Tue, 28 Oct 2025 21:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761688172; cv=fail; b=k2ZKtikblhnAME3VAF9kB8cujwHdRF0/eJtxWLllqEhZyZ1F3KFK406brZbSVJPR2DkM7PylajyTFej/k6S7FpFHcf2cZNTtzX4PHInSiOZ+J48qVS4ZQc9zkmpAYjV0jPjvPX5ifwnof4XzPbKb5e6OVNvyk+194YudpKRCFvM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761688172; c=relaxed/simple;
+	bh=XmAE2cs+J6bou+zWCK7qfUsJwaGzJN2fLAlguMyFkRM=;
+	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
+	 In-Reply-To:MIME-Version; b=LVNAMcyB2tBqg9VN4kZFX19JJT927/JJOCVxBh8dwIdLRAoWDBTSki8+SZ1KkdIc3W5Gccu/MMzaSvKuwvMK84oKva7wOMl5ypGXw+xWZG0wAsCDuQQequ7avKYHLYYM3w00yne0IR3NzgoVXRBxVQs5lgeCaS4PF0KGCeUGf4k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GLnxrmaU; arc=fail smtp.client-ip=52.101.53.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZjeJS2FARCu8YHlnlwueSAaSTfCLUY/O7AGkNgDRDUen7AGsbXKTAOAmnWE/4w6+N50FrWvvFM0833CJQkMT9APUflhpx89EqON4gBN09aTSdEG8Rtl8fXWZxLChxc7ZbUG8YY1ND/C1dCYsVYxmBbI5E9psahvG0sq8JOvAQ38ToFjVymgHtV0ecyEOqfpt4P8b+mWqkmNVt8TK1qdDgN3LPsTfqbdnOVaPYwCY1ZAV49ApD1MO+NDeUTlwWqcMhJN26OC2RdujbM+8T5RW7kmOoDb9w0FJtm1jyO95j5L2OwZm9CHkzHRD2u39HPm0fplPYYEFBrLLv9+jmvuyIw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HsjlGenmor9tk1BUnjw6asIS4Q78e5cWresoo64xzE8=;
+ b=jAoQnWJjKUxHgPsv7hirUWT8d9bymjOhv3YMIISTNRjiJgFHOLQeSBxNHgq4zdg3neTJKZ9nl9JZv6LBzDWJwLW6hAV4F53Ev6BNCRMCMxSqFD4Jw8zbtLFz6Hp8meXlhrVPt6De53kmN1Fk9ucd4JRtlxj7ZKq1klsjsoCGHgOV8GqorE+zDNm1NAXaBcy+iCjuGieegjl2X23whDDdTZZwMbRfl14+3nJ9DBoR3Q8gOgy69+N66sSd21orxiMJ7xmuryF/AHmNka64Zdh7FwZDpmG0lbNjjZNOPAm5yeo3q9A24f+/WFpvOVUyNM8CtTlSrMUEV+R+QBpavt0JHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HsjlGenmor9tk1BUnjw6asIS4Q78e5cWresoo64xzE8=;
+ b=GLnxrmaUAU6X16wkVGU68HYrME1SaON6V7cqBU2BZtItk3sv0kM9qx52CRevIPNDOyZb0GY5zrVAFw16n6ogXX8ZshSP8I3GRsZCPy4+C8tsHSf8fAavMPtlANDA7X8w2ORQK1qDsi0LTmsSOUYsTprTcb1WjeM0FBtpU3lMa4yFJlgqxuCF0RzuclQujmkeUXNBk3psljMSDWfsvCuN9fA+4bKRvLm/F5jcc8Bq5JlndT7KByTRkHAovwoDXY9Ca9ZVG2eGXwYY8XKD2bPd4s5qoF9vZhFtTorXKlAwSQqZc5Yyw84zu0P+Mzj/IM6hPmca2TPJ5EKvt3sVtmUuQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by BL1PR12MB5923.namprd12.prod.outlook.com (2603:10b6:208:39a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
+ 2025 21:49:23 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 21:49:23 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 06:49:20 +0900
+Message-Id: <DDUAC0IWH700.27TKNFBEOQ7KT@nvidia.com>
+To: "John Hubbard" <jhubbard@nvidia.com>, "Miguel Ojeda" <ojeda@kernel.org>,
+ "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>
+Cc: "Alistair Popple" <apopple@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Edwin Peer"
+ <epeer@nvidia.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH 0/5] gpu: nova-core: leverage FromBytes for VBIOS
+ structures
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+ <b1657e5c-5679-4e5a-a1b4-c8559bc7d891@nvidia.com>
+In-Reply-To: <b1657e5c-5679-4e5a-a1b4-c8559bc7d891@nvidia.com>
+X-ClientProxiedBy: SG2PR03CA0087.apcprd03.prod.outlook.com
+ (2603:1096:4:7c::15) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
- <20251028-binder-bitmap-v3-4-32822d4b3207@google.com> <aQEOhS8VVrAgae3C@yury>
-Message-ID: <aQE6FOn_9Z84NMnG@google.com>
-Subject: Re: [PATCH v3 4/5] rust: id_pool: do not immediately acquire new ids
-From: Alice Ryhl <aliceryhl@google.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Arve =?utf-8?B?SGrDuG5uZXbDpWc=?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Christian Brauner <brauner@kernel.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|BL1PR12MB5923:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6f6d26bc-6e91-4366-5f99-08de166bdb6d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S0NoNGVyR1FFZkdPbVlUTWhrWHJhTEdhQ2MzVUZJdGt6TmtyWnRPZ01oS1Mx?=
+ =?utf-8?B?ZnhWOXFOdERZWVQ5cTZUTFNSR0orSE1kTUkzbEpyclorK1RzaXpUdmdjaGZp?=
+ =?utf-8?B?cWE1MUQvaUJjZDR2VzloNEpzQWNnK0NjUmNldUtBM3REMHJ3TmpWT2tGM1I2?=
+ =?utf-8?B?ZWVXYktiLzZXYzJqSW82SXBBNzA4N0ZBUnA5ZTA3amNlRzNtSUFuKzF5Und3?=
+ =?utf-8?B?VGFDSkpIb3NycW1mWXJZNzkzaUk2aWRzZkYwQjFqMDZ4bzJob0J3SUlUWXVp?=
+ =?utf-8?B?Z2Z4Zm8yMmdPZEJUR2ZPYXMweVU0TTNZRWovREprR3huK2QrMFB6TFpJdUVX?=
+ =?utf-8?B?VDBqZjVrbGNQWUt3VDIxSlZ6ejJTcUZodHdpY0ZTTkNKSEpzZEdLK3d0UEVw?=
+ =?utf-8?B?YmtWS3hFeUZwc0F6a3hLaXdza0dzdTFDWUdtOEtpV3kxQWV5SW9lMlg2MkEv?=
+ =?utf-8?B?NS9ydWxvdkN2Zm56Ym9kN3RhUHJlcFZIYVBZb0VJWGZhRVhpOG1MTHQ0WDVl?=
+ =?utf-8?B?aXRHSUtKcmk5SVV5WlNBcFZnbkVWWS9rbDlwajZuR2EwcDlEdmhJNFpMNHZN?=
+ =?utf-8?B?Z29oYkdwMlpTQkIrQWxhRW1mOGdVdEpTZTFzYU9xY1J6amVLamtvSTdXSkxm?=
+ =?utf-8?B?ZzJuQUMyM2c4cDVGVythcU03QlNJUUM0cGE5d2d6RDMySFJSeUlkVnZmSi9Y?=
+ =?utf-8?B?K3hNdXFpUnhhNEhmQ2RZVC9TcGRseFhhNkNDT09TREFvM0FkZzVQa2RQVHUw?=
+ =?utf-8?B?WHNUYzMvRjk2eWlpMzJJa2R5OG5QR1hYekRFMklReFJxZjg1Wk1uSmRkd05G?=
+ =?utf-8?B?RmpUU1lJczJXd3k1MzE4MTkvb0kra0JLOUl2d3Q0aTF6N0xFY0dwT0JPUDJX?=
+ =?utf-8?B?TURnWFBWNEl3SDNkbnBxNVlEaHlVRXhuME9EZmtXSGh5aU1RUzFIV0lwTHJr?=
+ =?utf-8?B?NUVBS3l3Z3k1eEdHODBiOEQrZ0lnNUVIdjFrNVEzWW5FSVNjOHFBVTczcDI5?=
+ =?utf-8?B?b3dPRjZqMnh5OXJja3RJa3RhNjhYb05WTEdIZlMzRS85S0k3RTY2SWJjSU9B?=
+ =?utf-8?B?Q2JDV0RIUElFeWJrRktkV3pnSGJiTUovN3VBejFBU3c0eWNXZFB3OURRcDY2?=
+ =?utf-8?B?VUx3V04yN3owNE9LUlV2YTlpTVdvZGZ2dWUxVlhJME9YNTBvSnpCaFc5K0E5?=
+ =?utf-8?B?Y1BJVGE5b3Q3Qy8xVmJjeldJeEpEVk9HNmUvL25pNjdTRTZtVHp5TU16ck1N?=
+ =?utf-8?B?VjNGaERQdDB5dStmV2xKTXlCUTIzZTFDdG1CeG5RK2U0OVlUdk9oeDk5V2Q1?=
+ =?utf-8?B?TDB1a1dscGNUeHlGNHdQWEtmdytzNThQWTl4aVYxelJ6a3NBS2hucTd2RnI1?=
+ =?utf-8?B?WlIzS2d0MXpIMitoVE9Jd1BsL1NhbkFOc0pLWENhM3ZvVVRjc1E3dXBoNjFi?=
+ =?utf-8?B?WmhuUTBmcm9CUVB2OFRPdlh3VURJcEs3aHU5MHJIeThCUzlwOW9CZGtPYzA2?=
+ =?utf-8?B?SEhRdEVXNkNxdTFOV0VXM1pvUFYzVTlldklxem82QkhWb3BES3lSZEE3MXFV?=
+ =?utf-8?B?L3pqaHFlYUFBRGUwRmlQL1p0S3FmM3o4Q2ovU0N6dXAzL2c4N2dvNWhYMTVl?=
+ =?utf-8?B?UXZhMTlOVHhKc25uZk1EZldmZHF0ajZRSGpmQlQvd1c4ZWtHN0hSSVk4aWRO?=
+ =?utf-8?B?dE5MeC95cllOSVh0elAwV2drcVkxaDlzS2RuTisyb2RqeTRtc2NoR3lyVVIx?=
+ =?utf-8?B?cW1JY2NXMDNOSWNseTFqcjg5dGVFT3RVeFJNYW1BejlmcXdLUURBWDRMTEFE?=
+ =?utf-8?B?RHJQblRHemZLQWs4NUt3OW1KajBpaFRSdUhQc0ppSzJmb2g0VUd2ZWErMjc4?=
+ =?utf-8?B?S2VFMzhNTFFVemx5ZTBMK0JNTE1rRnF6VUFneC9EdDVnVkhETnRiVS9zZkN4?=
+ =?utf-8?B?aHFZV2VUMjlrcUlTRHU2ZkpWd2NMaEtBRVdNRllta2FoNm5rRVBaZUpQWHMw?=
+ =?utf-8?B?OUNzYVo0cklERXRPVDgwTjBPNG55SWxEYWt6S245SFJkV3B4YjJqdmVPUllv?=
+ =?utf-8?Q?XXI21Z?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UDBzTURaZUI5cTd1RlBKNlNUWlhSbW5TTFZNZElsSHhzUlFjbEk2Q0VFbHpQ?=
+ =?utf-8?B?ZTBNZmxma1EvcXlEeVc4UCtKWnpCbGM5U3U3TVBDbEM1KzBwbDVROGJZc0dX?=
+ =?utf-8?B?Vks5L2QyOUdtUjFGQ1ZnUXFMWldDa2NnYzVMcHNaQVluNzAvN1FvVWcvbXdP?=
+ =?utf-8?B?aGZ5dVp2M1luVVJhcExhSmxyaWppa0pzMXRXNnpMbVFRaXgvRTNDWjV6dmU2?=
+ =?utf-8?B?czlUQi9pZ09OS2QrelJPRi8xUkZiTiswTUMrTmVteGUvZmtDeHZTZXJZZG1C?=
+ =?utf-8?B?a1VvbUFUeElsWTI1MXpSQW1GQjNaRDV4MzUxK3NSOGdlamxMOHp3UlIxek1J?=
+ =?utf-8?B?blJnSGJiYTY3cmNTdTRLSUpDSmloZ1VtUUo2OTBwM3RDODFZZVBob3BpNUtZ?=
+ =?utf-8?B?djFLKzJWZWFJTHJwVXZreFltamo3b0xWQnAxYUUrZ25RYkV6Ukljc1JRMDZH?=
+ =?utf-8?B?WGtkODZ6SnZISkZDYm14aGJRbmZiRVNONE02c1pzM2ZEcHRmVmJDRUpHOHI2?=
+ =?utf-8?B?WlhmdUU0R3o3SlRVUWpaekwzMkRPcWJ6b1c2KzNaT0paQWovbUZ4MmtVcFlj?=
+ =?utf-8?B?NHR2eUdSay9NS0RqOWFnOTdsaXcrVEE0SHErYkVuQTUyZDlYaFkrMFhyNXpj?=
+ =?utf-8?B?aDV1VkJCWm1zeGMzVHRnU295NlVNTHcwYUJySHhkMnBNanAwaVY2L1N4N2NZ?=
+ =?utf-8?B?emU4UXJwNmhHUE1pbW5YdzcxaTdNaEw2RE1mRi9lTlFHS3JZSlRsNmhCcldL?=
+ =?utf-8?B?VDZqVnpoTXp5RWo3dzVIQU1TMVRpV2xqc0dYMkRUTWE1b0Q1SHR2S3JKbHp5?=
+ =?utf-8?B?MzBpeTNnSGRNYVNMcFhpTzNQbTNZcFRFNjlQWTNyTHFVZTdtMkZyTmFYV3V5?=
+ =?utf-8?B?Z042Z09FM3VFdEIzUzVURTM5cGxwT2VGcHVpVVFKbnBNNU5GRkJiMHlkSGR3?=
+ =?utf-8?B?Z0ZOa2lVNW9QRDhGWWFrVXpUcTFqS3M2YThoR21oeDNlT0dKcjVzTXFuN3Fo?=
+ =?utf-8?B?OGRDUXVGTjZwWG5saTNTeUlhQXJ3Vjdia200TjRNWEZ6RlJUT2lURGVOQy9G?=
+ =?utf-8?B?ZUhkbTN2NjNkVThBUWpHYUFzWlc5aktQaUdLVlk5V0pFZ3RDbVFSVndjeENs?=
+ =?utf-8?B?YU1STWhOai9pRk1ydExZdTZWaXoyd05XMitmdHFFSFplbTNVT3U2R2dPQUcv?=
+ =?utf-8?B?b0VlMnVURi9iT1RtaXl6TVg0UTUxQXR3KzhRQUNDUi8wWVNseEpLaHpReFBi?=
+ =?utf-8?B?YTZwck5DaFlESHgrR0J3U0ozaWpHUzRZVFZXZXRxeHQrY0Vwd0NzWkErNy9Y?=
+ =?utf-8?B?VHBmZU5kTUJpdEgveHFBczJBQ3dhUHhPRHRONjBkRGtkRldNZkJhMDlhV3JO?=
+ =?utf-8?B?MzNUWVdDNXF4blJIeTdhQUo1eEc2aUk0YVRncWpwcDh5L1VzOThOYnBENnp0?=
+ =?utf-8?B?UVdPYnArQ216eDY1K2lBck10TWVuTnFtL2FlRXEwUTFVODFyMUVNK0ZnTVFB?=
+ =?utf-8?B?MkFIYmZxbytFb1IvUXhMdjZyU2FvbDN2d05vL2ZMT0VpdUtPNE5QOGhma1BO?=
+ =?utf-8?B?aVhjekp1ZGVtczdxRXdCVGlTRG1DNEJqM28zQlF2V0VxMnpjaHo0UFdFeUh6?=
+ =?utf-8?B?blc3dXVSL1ZXVnpBSGtjc2pla0s1K1FadE1zZWpnek4wTjR2Q3VYeHVsbEpj?=
+ =?utf-8?B?WUJ2b1B3czVZNUR5RG92dWZ5M3F3U3VEdzYwTHBlRjJubHBiZkh0MWRabnlW?=
+ =?utf-8?B?K0wwaElMbmdRQTVmUzhlQlMwOC9aVGQyQXc3VjFPaFpRT0FrOFF4OThTVVNl?=
+ =?utf-8?B?c0Q0VEgyS2pCbGt0MHowaFpETkhWZmc1NUYvQkNSWnQvMVptNjk0L3dvRzJp?=
+ =?utf-8?B?OCtCYUFNTVAwc1BlR3NGS3JuZnp0K09ZTzlzK0FPSm8vWk1DNkU5WVpLaUxn?=
+ =?utf-8?B?dG8zYWVHcExpenFjbW9Yc3FxOFAyWS84Wjc2R25hSzd3WkRGOUR5N1pCUEtw?=
+ =?utf-8?B?S0diK1p2TFNtanV3OWtBMXpWSlkyNDBSaTdteFJ1dHp5QWRpUVZmaE9ZWEtk?=
+ =?utf-8?B?RWJRd3dPRVdGcmtXK2tTekxiQ2pRcjhEK2RxT1R6d01sV05zT09kWi9nSEJy?=
+ =?utf-8?Q?2Xcc7E4mgAfbx62NQornNqOz9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6f6d26bc-6e91-4366-5f99-08de166bdb6d
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 21:49:23.4638
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9O9gDwl1qFLtNlKLQPGLH75xV62HNQU4M0zfNDOAP0xZ48aLg5B4EDagkOqaKOmAmSCcwvbKFEs6OnEC0bxJzw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5923
 
-On Tue, Oct 28, 2025 at 02:42:13PM -0400, Yury Norov wrote:
-> On Tue, Oct 28, 2025 at 10:55:17AM +0000, Alice Ryhl wrote:
-> > When Rust Binder assigns a new ID, it performs various fallible
-> > operations before it "commits" to actually using the new ID. To support
-> > this pattern, change acquire_next_id() so that it does not immediately
-> > call set_bit(), but instead returns an object that may be used to call
-> > set_bit() later.
-> > 
-> > The UnusedId type holds a exclusive reference to the IdPool, so it's
-> > guaranteed that nobody else can call find_unused_id() while the UnusedId
-> > object is live.
-> 
-> Hi Alice,
-> 
-> I'm not sure about this change, but it looks like a lock wrapping
-> acquire_next_id().
-> 
-> If so, we don't protect functions with locks, we protect data
-> structures.
-> 
-> If the above is wrong, and this new UnusedId type serializes all
-> accesses to a bitmap (lock-like), or write-accesses (rw-lock like),
-> then this is still questionable.
-> 
-> Bitmaps are widely adopted as a lockless data structure among the
-> kernel. If you modify bitmaps with set_bit() and clear_bit() only,
-> with some precautions you are running race-proof. The kernel lacks
-> for atomic bit-aquire function, but you can implement it youself.
-> 
-> I actually proposed atomic acquire API, but it was rejected:
-> 
-> https://lore.kernel.org/all/20240620175703.605111-2-yury.norov@gmail.com/
-> 
-> You can check the above series for a number of examples.
-> 
-> Bitmaps are widely used because they allow to implement lockless data
-> access so cheap with just set_bit() and clear_bit(). There's nothing
-> wrong to allocate a bit and release it shortly in case of some error
-> just because it's really cheap.
-> 
-> So, with all the above said, I've nothing against this UnusedId,
-> but if you need it to only serialize the access to an underlying
-> bitmap, can you explain in more details what's wrong with the existing
-> pattern? If you have a performance impact in mind, can you show any
-> numbers?
-> 
-> Thanks,
-> Yury
+On Wed Oct 29, 2025 at 5:24 AM JST, John Hubbard wrote:
+> On 10/28/25 8:07 AM, Alexandre Courbot wrote:
+> ...=20
+>> The base for this work is `drm-rust-next`, with [2] applied.
+>
+> Taking a look now, but unable to apply, using those steps. Do you have
+> anything else perhaps in your tree?
 
-Hi Yury,
+I tried checking out `drm-rust-next`, applying [2] (single patch, not
+the whole series), then this series, and it applied for me - with the
+caveat that the posted version of said patch does not build. :/
 
-This does not change the locking requirements of IdPool at all. Both
-before and after this change, acquiring a bit from the pool uses the
-signature &mut self, which means that the caller of the method is
-required to enforce exclusive access to the entire IdPool (doesn't have
-to be a lock - the caller may use any exclusion mechanism of its
-choosing). In the case of Rust Binder, exclusive access is enforced
-using a spinlock. In the case of the examples in IdPool docs, exclusive
-access is enforced by having the IdPool be stored in a local variable
-that has not been shared with anyone.
+Yet more evidence that we should maintain the good habit of publishing
+trees for our patch series, which I unexcusably omitted here, so here it
+is:
 
-It's true that the underlying bitmap supports lockless/atomic operations
-by using the methods set_bit_atomic() and similar. Those methods are
-&self rather than &mut self because they do not require exclusive access
-to the entire Bitmap. But IdPool can't provide &self methods. The
-existing acquire_next_id() method has a race condition if you tried to
-perform two calls in parallel. But even if we changed it to perform a
-correct atomic bit-acquire, the fact that IdPool is resizable also
-incurs a locking requirement.
+https://github.com/Gnurou/linux/tree/nova-vbios-frombytes
 
-The only purpose of this UnusedId change is to make use of RAII to
-automatically clean up the acquired ID in error paths. I avoided
-setting the bit right away for simplicity, but setting the bit and
-unsetting it in error paths via RAII would also work. But there would
-still be a lock in Rust Binder that protects the bitmap without this
-change.
+>
+>
+> thanks,
+> John Hubbard
+>
+>>=20
+>> [1] https://lore.kernel.org/rust-for-linux/DDTRW1P2I4PB.10ZTZDY95JBC5@nv=
+idia.com/
+>> [2] https://lore.kernel.org/rust-for-linux/20251026-nova-as-v1-1-60c7872=
+6462d@nvidia.com/
+>>=20
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>> Alexandre Courbot (5):
+>>       rust: transmute: add `from_bytes_prefix` family of methods
+>>       gpu: nova-core: vbios: use FromBytes for PmuLookupTable header
+>>       gpu: nova-core: vbios: use FromBytes for PcirStruct
+>>       gpu: nova-core: vbios: use FromBytes for BitHeader
+>>       gpu: nova-core: vbios: use FromBytes for NpdeStruct
+>>=20
+>>  drivers/gpu/nova-core/vbios.rs | 137 ++++++++++++++++------------------=
+-------
+>>  rust/kernel/transmute.rs       |  60 ++++++++++++++++++
+>>  2 files changed, 113 insertions(+), 84 deletions(-)
+>> ---
+>> base-commit: 639291d7c30cec5cf0d9a79371021c2e4404cfc9
+>> change-id: 20251028-nova-vbios-frombytes-eb0cbb6a2f11
+>>=20
+>> Best regards,
 
-Alice
 
