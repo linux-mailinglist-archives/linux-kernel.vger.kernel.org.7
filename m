@@ -1,263 +1,201 @@
-Return-Path: <linux-kernel+bounces-874329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4BE2C160DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:08:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB9FC16102
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BABE51A66D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:06:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F129A405CF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B614933A01C;
-	Tue, 28 Oct 2025 17:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D8F348894;
+	Tue, 28 Oct 2025 17:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="XPUaSY9G";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="LAjIXLYA"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.1])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TTEhoMvl"
+Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010041.outbound.protection.outlook.com [52.101.193.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124EE28A3EF
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:05:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CF1345CAF;
+	Tue, 28 Oct 2025 17:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671129; cv=pass; b=m8dESfybeOHEmNH1IDtBErKGum19uBrG/H8uEtO1WuwX+5NKOxMI5VEeKJyOVWA1OVnAoINdAIHREPzgKw/bPtNPP+dCFE6VCsz2G9HyN/fqDt/p+Fb9YJRuEbI31w/vJaLxfK1LFx4FQe3BhqIweNjfZe1iMbGkUiA8ivcXtnU=
+	t=1761671051; cv=fail; b=CuBMYWxmYtNz6pbdHl2PP8Y3dv78b/y1Gs30P4Az5eXn9FbFekSQYPVTgWVCCm7rULUM23ekBfTazh4STGR6PDIkmjGPSf9szUSr4uON5uYwY6sXTsDnAofSHJN5lL1OF59dZuK4bbazPLghwpaPodZUSkIQyNW5cjqECO+w63s=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671129; c=relaxed/simple;
-	bh=OZ0ZtiH9Ffd/H3YhMXhZvm8XE+UAipi6AHVisU+hxWU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LdITW5I7BbBNrJFrd19JnNlNSijjnKentKrLsr9oUCCr35BBNj63wRAGAyKFc4wzpASQ2DcoMvhBhx1/Vv/Ps1Vjmfv01ChgKDaJsXZzbR3Ev69PboM94ax9XH7qGy7I912MzCc1d2ogqwT/yDeWXT+QLIqyUIVu3/Gk5c4zp9s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=XPUaSY9G; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=LAjIXLYA; arc=pass smtp.client-ip=185.56.87.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; s=arckey; t=1761671127;
-	 b=P2omGGEwROmecSyNaHG81rg8m7Ww3YS976nlfVkFceT+4ALMX0sf8LZ8vgKALnrKjG7Qtstevj
-	  HYKSvNuk0XCK4g2124E+aOUm8toZSEvQCxtEFCCe8wCGSzT5eRperSsEmPJna7QbfgHw0P0gQX
-	  IH38gfAUvQe8hrNLDz66qNBHgSy1cLLv2OsjmEhgk0kMLvOIAniNEJUPJzqDDjMjRjHKcWxJoE
-	  1WZKfcwSxm6/4HmpRnW90UUOXCiORXh7dr1qUUuJCKtgGeuii5m1w/IbCpcPps4cf7PZfM7Ysj
-	  PF1aPs9GPryMnxxEqoTXPQpwJ7gyV7gY1xHVBxoiAXM0hg==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; s=arckey; t=1761671127;
-	bh=OZ0ZtiH9Ffd/H3YhMXhZvm8XE+UAipi6AHVisU+hxWU=;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
-	  To:From:DKIM-Signature:DKIM-Signature;
-	b=GJDEfxoTS+OUxPbbTopq8KOjUx4TWJA1uhHz7PR22kskiMe11LRqPPpey1CR7xAd5fjM4ytAZI
-	  fn2B9uwHSOk9dSGWoe4FG5T/6UDbCaWAG0Ouy3xJB1pvc87HxrgikoYfj61C8LSNc1X77e1ytq
-	  dd5b2uC+1AgRGuoK3XES4anTe2toB6zWl7YqrK5EGlwkCNVViLlC4PxJ/F/qeowCie8418RUZ0
-	  YEm2Oow1Hxx508vx/Ce6jVVIxI/zJFs65fPZpWpGCrbKCj74tXgNAQ+HTfkJREz9ZXkxH8I0Ks
-	  MRuftlZ0NQlBHzmmpB70cieXXLYlZb1gsr3ODeVOlz7AFg==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=nFXGsd0wvJCB2aoq6ydUjxoEpP8AS5JY0g0UJ7Jo4rk=; b=XPUaSY9GM0qe4RKiJPoxKoWn4T
-	aICUJzD6pNO0bSg2sATeZMq/bF0b4nV3B6DVCwC0W9vr1uTIvpNS4ZIurrg5hVJCNRRxZprPFxIPD
-	MDG+t8/V0TApxpTP1cvl7hIPIJtyYp6o4UyspV3bQ1aJJbjPZlRvrHnBdoFl6nmDZPuA=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vDm9G-0000000F3xt-2gG4
-	for linux-kernel@vger.kernel.org;
-	Tue, 28 Oct 2025 16:02:16 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=nFXGsd0wvJCB2aoq6ydUjxoEpP8AS5JY0g0UJ7Jo4rk=; b=LAjIXLYAuKe+nn91fplPC8zwte
-	Ub+TSBb3J+TqyLvVF4RU3DTnoGllzWP9T+jeUeALMF3MBgHttDcK3t6DYSFJnb/+D3Bp41AiTeG1l
-	xWRwKT05PmIKAGN487/QO54yYlwiqTgVuLa29SgACOLG1ZQO7W3YCgvCS2xQGS4abhg0=;
-Received: from [87.17.42.198] (port=63724 helo=fedora.localnet)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vDm8f-000000009YH-2cLa;
-	Tue, 28 Oct 2025 16:01:37 +0000
-From: Francesco Valla <francesco@valla.it>
-To: Liu Ying <victor.liu@nxp.com>, Marek Vasut <marex@denx.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/bridge: ldb: add support for an external bridge
-Date: Tue, 28 Oct 2025 17:01:24 +0100
-Message-ID: <2860884.vuYhMxLoTh@fedora>
-In-Reply-To: <1944228.tdWV9SEqCh@steina-w>
-References:
- <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
- <1944228.tdWV9SEqCh@steina-w>
+	s=arc-20240116; t=1761671051; c=relaxed/simple;
+	bh=KbzOD0eChZQuxRYmECXVZfKwWRpKnUhYTPf0RuGdR5A=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=CWAiP1FAwNgwsxo7HxwDpk9OOEtUvQIv4Z9Sqtt06mmVgFX9xbduY4iEkb5PJ0QWPP1OpTwIoz5yZL90WBn8+yJNVS/yfXUIVxTLLP8VamiV8+I97natTvFurnKecq3fNuzqrDvz5jANk1HZOZfSuES9o/goXb9fbns523Gxpk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TTEhoMvl; arc=fail smtp.client-ip=52.101.193.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t+/W0UdbKJDhYtsZCbAklDQgVrOOjJMqwEnBbcgZ6SFX7nOi/ehaEsHwdoLuA7n1YgklZVeXFiuqBRuSR4Axjf1NBoskNKsmMcVYjENFam+OBvzitCnT5PL2QpDL1c+rbdSSYqKXAkTRclpxARFn8ABOC8qWtmTfN0tXtFIaGlW1gbq3xebqFgeruVTlWu0uX8EnomWLpl2oki9yc/SC0SFpP2nw2jqCZXVBBElRtisBiHlg03o4pG8cObUWy1dVAq+ylKMPyl14XRRKafqBdpQ6oY6VVceW1F6EUyBlE5ktZ68DtCCpCRj8ENC13RjfgfVwQdh3TloI7H4x3rzMBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BbUD/a7Kz4J74qTgOGRzdXRKWRfQR1m+PhWTudHQaLc=;
+ b=voqFqGnrj+COSyKk62nfzivM7NmVBLaxpY1wmOhS+9klqIYxtMfrWwBTFuNzt+LP8j0hkjce8+8P3kaCdITZzk9I8QSZ82GBD+h6jrVnFm9HTlh3wWyjjK9Y/nmjHuuH82a4gb8usrWtn82GfzyRYHDXANGPJ7xa3CaPs3qvzqzGYY41QIYAJPrUPkm6JJoN+L3EiMR3lzpauNcPk0fx8YmR2kE59pnwnhghWVu5QBmIEvNSXzDi+Uo8RPbWzyXrWrRbSAMjoIK2RBciIaA/PNa6iigR5rwet/c9YAvuyK+jLtKGDl487VRdpNpfSTz+y+9HRrJrdRKLebxCaCuAUQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BbUD/a7Kz4J74qTgOGRzdXRKWRfQR1m+PhWTudHQaLc=;
+ b=TTEhoMvlZfeRjHnBkJIgOJmMrRpKPFoy5TsHOIC1CvYLBDSK3mbdAiURJ7HmrIgT7d/h/Pqdz1TOZmi6pZFyfphF21FwPpCoZ3Y/IGqdB8pl1RHCjZkXLt4IGwrQQi3KjOnmbuOtkD4gFmo0uVqdWJ2mWawWwhc+2b6Q/8fDMhby5CLl0wgRMMySXn9fUCWVjniNXKYe486eWbZIwOOto/gBjUQ8RSkeerb2a4jtvsDp7bwPDiTw7EnorPIHHF9XA5bTs7lyDcIQuz4wbNejdUH+zPa/VcjGDeIkAKyXcGsrUbbMNcAK+MiHnCoykgz4v69jujGUFyzHPAZspq5Low==
+Received: from DM6PR06CA0101.namprd06.prod.outlook.com (2603:10b6:5:336::34)
+ by DM4PR12MB7574.namprd12.prod.outlook.com (2603:10b6:8:10e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Tue, 28 Oct
+ 2025 17:04:03 +0000
+Received: from CH3PEPF00000018.namprd21.prod.outlook.com
+ (2603:10b6:5:336:cafe::6) by DM6PR06CA0101.outlook.office365.com
+ (2603:10b6:5:336::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Tue,
+ 28 Oct 2025 17:04:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CH3PEPF00000018.mail.protection.outlook.com (10.167.244.123) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.0 via Frontend Transport; Tue, 28 Oct 2025 17:04:00 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.34; Tue, 28 Oct
+ 2025 10:03:38 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Oct
+ 2025 10:03:37 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Tue, 28 Oct 2025 10:03:36 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
+	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
+	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
+	<stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10 000/325] 5.10.246-rc2 review
+In-Reply-To: <20251028092846.265406861@linuxfoundation.org>
+References: <20251028092846.265406861@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5090209.OV4Wx5bFTl";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: 723bc1ca69d378485273679a25d3335b
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vDm9G-0000000F3xt-2gG4-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+Message-ID: <bd849f35-6d75-4a88-8dd7-206302736ae8@rnnvmail203.nvidia.com>
+Date: Tue, 28 Oct 2025 10:03:36 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000018:EE_|DM4PR12MB7574:EE_
+X-MS-Office365-Filtering-Correlation-Id: 56bbe961-5cf6-495a-8865-08de1643fdc7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|7416014|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RHNwRGl2ZnYvZHdRdkpxYU9LQngrYTlQUHV5THk1U2JKVDI1WCtsWExOSWMv?=
+ =?utf-8?B?RDNMZ2VvUmdiQ3V5RC9jdDRZM3RVelRUNGxlWFhNZ1pkVkFKL1lJY25BOFAx?=
+ =?utf-8?B?TkpmSlZaRE9XendlbXFaM1RyZEN4Vm9Xd0JObU5taHVCZ0JEeWxmRWhCL1pB?=
+ =?utf-8?B?WVo2RnhjaVpNZ1FaQnc4R1ZXYWp5K05BU2NlUUlQL1RGbm9lTjRrNTJJMTNK?=
+ =?utf-8?B?L00vZE1uSlNGRktheWpqNmI4MlFqUldkWDlMM0FKQW9yQjBJN0gwVG1maTRC?=
+ =?utf-8?B?dklhNGhYL3d1bll6VWJEL2tjamlva0F4OEtWVXlmSWNIZDIzaDVpMEJpYXNp?=
+ =?utf-8?B?ZStwWWxTbkZJbmxOb0tNRENKd2ZzR3p0OFdwWHdlME1Bc1BUSWFOZktPMzVX?=
+ =?utf-8?B?dyt2UGp4UzRpeUJIdjhTRVI0NWU1S2t2a2l4R0NuQ1RZWGp5dHpObkpDSVY5?=
+ =?utf-8?B?S21DMVpURzdoWVI3VGpHYXBLNDVvWXhTaXZFY0pMTExQb1RoRC9ITFB3Vm5t?=
+ =?utf-8?B?WlR1MGtHeXRlVUxqaGFxTmNPTTRsV05HVkJ6cjNrVElBR3FJaUhqaDRkdmlj?=
+ =?utf-8?B?SW5JTU1zRjZyRFdxbENsVUFPNE0zSXRpZjN3N0xieVlxNzRsZjd3bFR6anpp?=
+ =?utf-8?B?aWNiRFd6NWttNUtsNkFJZTcveE12bjJQd01YdTV6bHBGY1k5a2xKaWhsSCtX?=
+ =?utf-8?B?S0dHNW0wN2gvRWYwUllDbjJXY0gvNjlxR0w0VnRPZVdySEV1OHJYTllaTVp0?=
+ =?utf-8?B?NTFCbjB5ZUJVOUs2em8vTlVMV01BNlZWQUxuYXRJV2pzejhGZXNJeEN5Z0Rx?=
+ =?utf-8?B?U2lFVGpsVmFjaVA0Ym12Wm9ZNWlIaklOdUx5dHdWVWprL2hIV1BhR3k3dTZQ?=
+ =?utf-8?B?NkRhSEYxeW1Na2xQR3QyS0x2RGEzWWVVSFhzdW1ZUmNJMWx5cVVLN01JTi9r?=
+ =?utf-8?B?d2c4bUY2U3hhMkpDOVJjMGZIK1pXSEVHK3ZjZklUdUpSTDQveE4rKzdOYkZt?=
+ =?utf-8?B?VWNHc3Zja01COVRxWXo0V1NMZ2VHTFZOcERKNyt2czJqZmJJWW5memV1eFBp?=
+ =?utf-8?B?a3U2akRMUFljTkdEWXhOeGVvd0hxV1B3R3pnUlpiVldvUUZ2dWJRKy9GcldS?=
+ =?utf-8?B?RWR3Q3B0bzNUQlg3WitDS1ZzZ21nZEtpMU50Y3VSeHk4WGFmRXhTTFRUK1Iy?=
+ =?utf-8?B?bEJtS1ZpTTFYTURCMFVzbmRKbDFwQnBnUGhIUFkzNkI4SnNwR2xsSDhrdzNy?=
+ =?utf-8?B?bXVEYzVZdVM0NzduamdlU1c3OUtNMFlva2h3KzVLY0FCaWFSdnNIRFRiRG91?=
+ =?utf-8?B?eG5UclFIYTdVVkpvbjJmL0pBS1NuUU80blhOY1J6Y1MyZzRyZ2xwcEZyeWdB?=
+ =?utf-8?B?UDcybzNyZTQxWmEvYld0WTZYYkRHR1NvZ2F1M3BkN2l3allyR0Z5QXBMeFY0?=
+ =?utf-8?B?Y1BLVXI3cDBVMnMwTjFWamJiUFdlcXBwMnVTdUtkUGxlOHpnNmRFV2tEWG11?=
+ =?utf-8?B?c1VKeUlNVnZvZFYrOUVaZGlueFMrQy9YVWlscjBSNmdYZDZGOHRRMjdPK3ZG?=
+ =?utf-8?B?c2FCOVliRVoyNnVQS0FtNjBaWUY0UUYrOFRzOURzZlpXN2NybTVHRlFtdmhi?=
+ =?utf-8?B?NHdoVW1SWmwrUFR5bXNQOFJ3WXlWWHNZUyt2cHVCT3c4THhiWGxyQTdkVTdP?=
+ =?utf-8?B?enkzazJibHVBUlgyMUtmcVVwSi9LS0V2MENKSUNRcTh1TlcrOXRKM1hoV2NO?=
+ =?utf-8?B?N3NVRU5acTlETTdEbUhmcXVBNTdvMG41ZmNIbjNBdU4yZXJGRS9XQm9GYnAz?=
+ =?utf-8?B?NUJWeElGY1hZYStQYlNPUUkrSFl1ZnNIVHV5NVYwTlAwUnJwU3hqMkxhZ3Nn?=
+ =?utf-8?B?T0RVWFhFc2N3RUd6QWN3ejU0K1N1ejdtVWZjZlBsMWpkZ0VyVDJDNWZNOGd5?=
+ =?utf-8?B?UXhETXpGaWF3K2FzQndNRWlYTmd1S25SRzVab1Q0a0NTSjdqSndkTnhhaEp0?=
+ =?utf-8?B?VnRkaXN4elRXSVBvbGdpa1R0VEtBVUxxZHl2SDJsdkdqZUxlbXNWdUNzUUNa?=
+ =?utf-8?B?RjBzMjYzdk1xbGxwLzlnd3ZONElldXoyaTlnQlN4aW9QWnkwT3U5MEJWMHY1?=
+ =?utf-8?Q?XiDo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 17:04:00.7950
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 56bbe961-5cf6-495a-8865-08de1643fdc7
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000018.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7574
 
---nextPart5090209.OV4Wx5bFTl
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Francesco Valla <francesco@valla.it>
-Date: Tue, 28 Oct 2025 17:01:24 +0100
-Message-ID: <2860884.vuYhMxLoTh@fedora>
-In-Reply-To: <1944228.tdWV9SEqCh@steina-w>
-MIME-Version: 1.0
-
-Hi,
-
-On Tuesday, 28 October 2025 at 13:27:37 Alexander Stein <alexander.stein@ew.tq-group.com> wrote:
-> Hi Francesco,
+On Tue, 28 Oct 2025 10:29:21 +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.246 release.
+> There are 325 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Am Dienstag, 28. Oktober 2025, 13:12:29 CET schrieb Francesco Valla:
-> > One option for the LVDS port of the LDB is to be connected to an
-> > additional bridge, such as a LVDS to HDMI converter. Add support for
-> > such case, along with the direct connection to a panel.
-> > 
-> > Signed-off-by: Francesco Valla <francesco@valla.it>
-> > ---
-> > I was trying to add display support for the i.MX93 FRDM on top of the
-> > patch sent some time ago by Fabian Pflug [1], using some of the work
-> > already done by Alexander Stein but not yet merged [2], but then I
-> > noticed that the support for LVDS-HDMI converter bridges was missing
-> > from the LDB driver already present for the i.MX93.
-> > 
-> > Not a fail of the driver itself, obviously, but I wonder if/how the
-> > existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
-> > correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
-> > 
-> > Anyhow, a patch for such setup is attached; it was tested on the i.MX93
-> > FRDM using [1] and [2] plus some more devicetree modifications.
-> > 
-> > [1] https://lore.kernel.org/all/20251022-fpg-nxp-imx93-frdm-v3-1-03ec40a1ccc0@pengutronix.de
-> > [2] https://lore.kernel.org/all/20250304154929.1785200-1-alexander.stein@ew.tq-group.com
-> > [3] https://elixir.bootlin.com/linux/v6.17.5/source/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-> > 
-> > Regards,
-> > Francesco
-> > ---
-> >  drivers/gpu/drm/bridge/fsl-ldb.c | 26 +++++++++++++++++---------
-> >  1 file changed, 17 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > index 5c3cf37200bcee1db285c97e2b463c9355ee6acb..fad436f2e0bfac8b42096a6fcd0022da0f35284e 100644
-> > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> > @@ -294,7 +294,6 @@ static int fsl_ldb_probe(struct platform_device *pdev)
-> >  	struct device *dev = &pdev->dev;
-> >  	struct device_node *panel_node;
-> >  	struct device_node *remote1, *remote2;
-> > -	struct drm_panel *panel;
-> >  	struct fsl_ldb *fsl_ldb;
-> >  	int dual_link;
-> >  
-> > @@ -335,15 +334,24 @@ static int fsl_ldb_probe(struct platform_device *pdev)
-> >  		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
-> >  		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
-> >  
-> > -	panel = of_drm_find_panel(panel_node);
-> > -	of_node_put(panel_node);
-> > -	if (IS_ERR(panel))
-> > -		return PTR_ERR(panel);
-> > -
-> > -	fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> > -	if (IS_ERR(fsl_ldb->panel_bridge))
-> > -		return PTR_ERR(fsl_ldb->panel_bridge);
-> > +	/* First try to get an additional bridge, if not found go for a panel */
-> > +	fsl_ldb->panel_bridge = of_drm_find_bridge(panel_node);
-> > +	if (fsl_ldb->panel_bridge) {
-> > +		of_node_put(panel_node);
-> > +	} else {
-> > +		struct drm_panel *panel;
-> >  
-> > +		panel = of_drm_find_panel(panel_node);
-> > +		of_node_put(panel_node);
-> > +		if (IS_ERR(panel))
-> > +			return dev_err_probe(dev, PTR_ERR(panel),
-> > +					     "Failed to find panel");
-> > +
-> > +		fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> > +		if (IS_ERR(fsl_ldb->panel_bridge))
-> > +			return dev_err_probe(dev, PTR_ERR(fsl_ldb->panel_bridge),
-> > +					     "Failed to add panel bridge");
-> > +	}
+> Responses should be made by Thu, 30 Oct 2025 09:28:09 +0000.
+> Anything received after that time might be too late.
 > 
-> Without looking into the details this somehow looks similar to
-> drm_of_find_panel_or_bridge(), or drmm_of_get_bridge for the managed variant.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.246-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
 > 
-> Best regards,
-> Alexander
+> thanks,
 > 
-> >  
-> >  	if (fsl_ldb_is_dual(fsl_ldb)) {
-> >  		struct device_node *port1, *port2;
-> > 
-> > ---
-> > base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
-> > change-id: 20251028-imx93_ldb_bridge-3c011e7856dc
-> > 
-> > Best regards,
-> > 
-> 
-> 
-> 
+> greg k-h
 
-Well, I did not know of devm_drm_of_get_bridge(), and unfortunately the
-driver I checked (Samsung DSIM) has not yet been updated to use it.
-Sorry for the noise.
+All tests passing for Tegra ...
 
-I'll wait for more feedback (if any) and then send a v2 - which looks
-much cleaner now.
+Test results for stable-v5.10:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    67 tests:	67 pass, 0 fail
 
-Thank you!
+Linux version:	5.10.246-rc2-g98417fb6195f
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
-Regards,
-Francesco
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
---nextPart5090209.OV4Wx5bFTl
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQDo1AAKCRDir2xSXEi5
-AA83AP0VODlMOPiFo+Etj7oaFVsgFDTnwBhEX54ICokuPyWjewEA/RnsnW2CT6zy
-NlUewINvfCea60Pz3od7UPV/AbPhvgg=
-=eIuv
------END PGP SIGNATURE-----
-
---nextPart5090209.OV4Wx5bFTl--
-
-
-
+Jon
 
