@@ -1,171 +1,162 @@
-Return-Path: <linux-kernel+bounces-873519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4849DC141E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:34:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AA70C14207
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C754D4E66DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:34:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B999242442F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97472E8E1F;
-	Tue, 28 Oct 2025 10:34:49 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C382E6CD2;
-	Tue, 28 Oct 2025 10:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C682430506C;
+	Tue, 28 Oct 2025 10:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StPuP6aX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CEF2BE65E;
+	Tue, 28 Oct 2025 10:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761647689; cv=none; b=IMBjvdgKocS1VVhteIIv/Pny64GCtdfEFFrJwOJi6k43pRgLDVb6VaLBOQ9UK4BBw0ToZG7efRc5LnxDJ4k7Mwq0zpN5+CS1ZR+ZP8u1uNrWU7SCt6erWvR0FFJ4OjjLAM2mkm/NLPwQ0Z/dN7g1aohH5gGyhYTf1kY2Rlfc0G0=
+	t=1761647797; cv=none; b=HbiQc2wTBCml9duJZAn3WDMOi4gJZSmrfffDxYBzuCq1OvWC8R/Y1m77YksqS9oHKnXJ2/xHRqZWOgdhH8r3lGeLaot2eqvOuTGO58gaWimblkt67E6bNmXTZd9M9w4xMS/f+vy04ef1lWOTiBI4rrk6zUrG581iduxDwYWSMv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761647689; c=relaxed/simple;
-	bh=5HaFRhf1AjitWDNq9/FJXcfd6yha35h050b//Tq74Pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tRgLBDWRZjH9UW7/Jb+86rSuP06h7d/kmNnOVFCtlq+nXa2PaKlfCGoIDRwFFoZlyIYGnGP6WQkAeSain+9zdo6go8v05Nl8oZQgjMG+JSQPf0jyNvSwc/BBso4c36PYA/AxfrCW5S+iiu//efkRHjjzRb+ikajEVEtUWsOAyeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07A50106F;
-	Tue, 28 Oct 2025 03:34:39 -0700 (PDT)
-Received: from [10.44.160.74] (unknown [10.44.160.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3597D3F63F;
-	Tue, 28 Oct 2025 03:34:39 -0700 (PDT)
-Message-ID: <f3b8a71c-7698-4918-99d1-36e97bded97c@arm.com>
-Date: Tue, 28 Oct 2025 11:34:34 +0100
+	s=arc-20240116; t=1761647797; c=relaxed/simple;
+	bh=5XbkQBaVMcIBV6/nt9qmxsvLTVz+pIg1JTzr795jX4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJ2h+/aUAhwYvsy2W2S3lcTuZ5XnZlg2jxrFkh4F5IwNj1FFmu55y7yR+rJ2bkYCQBOUj+bwfopxDtYoMeuenSDcvD8OMYcJt+Joj7BTiQegpw+hO3v8BZkPueGqVM716pNMDI/stQVXcGK/K9aOzs87sDofnkLDNulCMy8YxHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StPuP6aX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75C1CC4CEE7;
+	Tue, 28 Oct 2025 10:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761647796;
+	bh=5XbkQBaVMcIBV6/nt9qmxsvLTVz+pIg1JTzr795jX4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=StPuP6aXMOhlEtXNVEXfjtdSvwQQMgKxOn5UPzz2/ZBPY5DCbjyVc88mLtzhTRmva
+	 DLCObG9SHb2CYVuvAQDeFcP5AAvWaOemRd0QfBA25BC66BfmMWPjPZ9Hnh5erJBSM9
+	 nPV6PV9LKK6e/g1fGhxdsP5hbIRL3gNRdt7Pg+hF8niCbLRPXvZQY9Q0jLMjoRoZo8
+	 p2C8jhLQzxYaxG0SEL3lSXEQrzqkfcxldejj88fwL9rXtHhrhroNCKHX8M3j8HfOJH
+	 iFaBduOdoPLHeJbC6w1E9UsdCjLZwba4jZrZ+znxQCrBOHll60j8DlbwkTvKulcNgD
+	 TAOqGoYBgXstA==
+Date: Tue, 28 Oct 2025 10:36:30 +0000
+From: Simon Horman <horms@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>,
+	Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	Lennart Poettering <mzxreary@0pointer.de>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 17/70] nstree: add listns()
+Message-ID: <aQCcrqp7qxY8ew8T@horms.kernel.org>
+References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
+ <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/13] mm: introduce generic lazy_mmu helpers
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251015082727.2395128-1-kevin.brodsky@arm.com>
- <20251015082727.2395128-7-kevin.brodsky@arm.com>
- <73b274b7-f419-4e2e-8620-d557bac30dc2@redhat.com>
- <390e41ae-4b66-40c1-935f-7a1794ba0b71@arm.com>
- <f8d22ae0-4e36-4537-903f-28164c850fdb@redhat.com>
- <28bf77c0-3aa9-4c41-aa2b-368321355dbb@arm.com>
- <14030818-52e7-41eb-8ad7-602f3476d448@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <14030818-52e7-41eb-8ad7-602f3476d448@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251024-work-namespace-nstree-listns-v3-17-b6241981b72b@kernel.org>
 
-On 27/10/2025 17:24, David Hildenbrand wrote:
-> On 24.10.25 16:32, Kevin Brodsky wrote:
->> On 24/10/2025 15:27, David Hildenbrand wrote:
->>> On 24.10.25 14:13, Kevin Brodsky wrote:
->>>> On 23/10/2025 21:52, David Hildenbrand wrote:
->>>>> On 15.10.25 10:27, Kevin Brodsky wrote:
->>>>>> [...]
->>>>>>
->>>>>> * madvise_*_pte_range() call arch_leave() in multiple paths, some
->>>>>>      followed by an immediate exit/rescheduling and some followed
->>>>>> by a
->>>>>>      conditional exit. These functions assume that they are called
->>>>>>      with lazy MMU disabled and we cannot simply use
->>>>>> pause()/resume()
->>>>>>      to address that. This patch leaves the situation unchanged by
->>>>>>      calling enable()/disable() in all cases.
->>>>>
->>>>> I'm confused, the function simply does
->>>>>
->>>>> (a) enables lazy mmu
->>>>> (b) does something on the page table
->>>>> (c) disables lazy mmu
->>>>> (d) does something expensive (split folio -> take sleepable locks,
->>>>>       flushes tlb)
->>>>> (e) go to (a)
->>>>
->>>> That step is conditional: we exit right away if pte_offset_map_lock()
->>>> fails. The fundamental issue is that pause() must always be matched
->>>> with
->>>> resume(), but as those functions look today there is no situation
->>>> where
->>>> a pause() would always be matched with a resume().
->>>
->>> We have matches enable/disable, so my question is rather "why" you are
->>> even thinking about using pause/resume?
->>>
->>> What would be the benefit of that? If there is no benefit then just
->>> drop this from the patch description as it's more confusing than just
->>> ... doing what the existing code does :)
->>
->> Ah sorry I misunderstood, I guess you originally meant: why would we use
->> pause()/resume()?
->>
->> The issue is the one I mentioned in the commit message: using
->> enable()/disable(), we assume that the functions are called with lazy
->> MMU mode is disabled. Consider:
->>
->>    lazy_mmu_mode_enable()
->>    madvise_cold_or_pageout_pte_range():
->>      lazy_mmu_mode_enable()
->>      ...
->>      if (need_resched()) {
->>        lazy_mmu_mode_disable()
->>        cond_resched() // lazy MMU still enabled
->>      }
->>
->> This will explode on architectures that do not allow sleeping while in
->> lazy MMU mode. I'm not saying this is an actual problem - I don't see
->> why those functions would be called with lazy MMU mode enabled. But it
->> does go against the notion that nesting works everywhere.
->
-> I would tackle it from a different direction: if code calls with lazy
-> MMU enabled into random other code that might sleep, that caller would
-> be wrong.
->
-> It's not about changing functions like this to use pause/resume.
->
-> Maybe the rule is simple: if you enable the lazy MMU, don't call any
-> functions that might sleep.
+On Fri, Oct 24, 2025 at 12:52:46PM +0200, Christian Brauner wrote:
 
-You're right, this is a requirement for lazy MMU. Calling enable() then
-disable() means returning to the original state, and if the function
-sleeps at that point then the caller must not itself enable lazy MMU.
+...
 
-I mixed up that case with the original motivation for pause()/resume(),
-which is to temporarily pause any batching. This is considered an
-implementation detail and the caller isn't expected to be aware of it,
-hence the need for that use-case to work regardless of nesting.
+> diff --git a/kernel/nstree.c b/kernel/nstree.c
 
-> Maybe we could support that later by handling it before/after
-> sleeping, if ever required?
+...
 
-Indeed, pause()/resume() could be used to allow functions that sleep to
-be called with lazy MMU enabled. But that's only a hypothetical use-case
-for now.
+> +static ssize_t do_listns(struct klistns *kls)
+> +{
+> +	u64 *ns_ids = kls->kns_ids;
+> +	size_t nr_ns_ids = kls->nr_ns_ids;
+> +	struct ns_common *ns, *first_ns = NULL;
+> +	struct ns_tree *ns_tree = NULL;
+> +	const struct list_head *head;
+> +	struct user_namespace *user_ns;
+> +	u32 ns_type;
+> +	ssize_t ret;
+> +
+> +	if (hweight32(kls->ns_type) == 1)
+> +		ns_type = kls->ns_type;
+> +	else
+> +		ns_type = 0;
+> +
+> +	if (ns_type) {
+> +		ns_tree = ns_tree_from_type(ns_type);
+> +		if (!ns_tree)
+> +			return -EINVAL;
+> +	}
+> +
+> +	if (kls->last_ns_id) {
+> +		kls->first_ns = lookup_ns_id_at(kls->last_ns_id + 1, ns_type);
+> +		if (!kls->first_ns)
+> +			return -ENOENT;
+> +		first_ns = kls->first_ns;
+> +	}
+> +
+> +	ret = 0;
+> +	if (ns_tree)
+> +		head = &ns_tree->ns_list;
+> +	else
+> +		head = &ns_unified_list;
+> +
+> +	guard(rcu)();
+> +	if (!first_ns)
+> +		first_ns = first_ns_common(head, ns_tree);
+> +
+> +	for (ns = first_ns; !ns_common_is_head(ns, head, ns_tree) && nr_ns_ids;
+> +	     ns = next_ns_common(ns, ns_tree)) {
+> +		if (kls->ns_type && !(kls->ns_type & ns->ns_type))
+> +			continue;
+> +		if (!ns_get_unless_inactive(ns))
+> +			continue;
+> +		/* Check permissions */
+> +		if (!ns->ops)
+> +			user_ns = NULL;
 
-> Or am I missing something regarding your point on pause()/resume()?
+Hi Christian,
 
-Doesn't sound like it :) I'll remove that paragraph from the (already
-long) commit message. Thanks!
+Here it is assumed that ns->ops may be NULL.
 
-- Kevin
+> +		else
+> +			user_ns = ns->ops->owner(ns);
+> +		if (!user_ns)
+> +			user_ns = &init_user_ns;
+> +		if (ns_capable_noaudit(user_ns, CAP_SYS_ADMIN) ||
+> +		    is_current_namespace(ns) ||
+> +		    ((ns->ns_type == CLONE_NEWUSER) && ns_capable_noaudit(to_user_ns(ns), CAP_SYS_ADMIN))) {
+> +			*ns_ids++ = ns->ns_id;
+> +			nr_ns_ids--;
+> +			ret++;
+> +		}
+> +		if (need_resched())
+> +			cond_resched_rcu();
+> +		/* doesn't sleep */
+> +		ns->ops->put(ns);
+
+And, if so, it isn't clear to me why that wouldn't also be the case here.
+
+Flagged by Smatch.
+
+> +	}
+> +
+> +	return ret;
+> +}
+
+...
 
