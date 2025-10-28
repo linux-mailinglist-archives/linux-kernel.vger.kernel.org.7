@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-874280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C25C15E76
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:44:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B998AC15EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:47:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37FFB3435AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:44:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0510D1A609D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D3734405F;
-	Tue, 28 Oct 2025 16:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F337345745;
+	Tue, 28 Oct 2025 16:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZZ5UCe1I"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KGz1sjsP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FC133F8A3;
-	Tue, 28 Oct 2025 16:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B36D33C528;
+	Tue, 28 Oct 2025 16:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669880; cv=none; b=qLbMsET11dUHvToc93xWpog+AtJ1rx1Q9F3H9BXAxe+J678Q+n9UnBzXmpU9m1n9KvoSzxgZABluf9YTQz97j9uFuN0xf2PHesYEnli54p9pq4mVk5uiH5N37+ZTq1ZLi24Q0gGZrmAudnzLCnuIWdGfyE4UYJcCorcFcvInges=
+	t=1761669760; cv=none; b=rc4bpDvLKMpjXS+qtd3sRzMjx/rd4LytqdP1JmxxyJnPbOHxQ4zF2DMR63k6K9ClmjMzDQQ0mrAcYbmHgwBIgbN/aAVzw0shHyTVYrmINgvwy4gTSkEW1OIGgTsEt9PscHLd1UmfjJn8yuGkaV+Ds7VyjAnyPKEMw6P9pZT6H5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669880; c=relaxed/simple;
-	bh=+zDR3syKjBS2kd+OGgcF0id7D9QlT0C1fTMMcdbDDkc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XsC/MrF2FMie1W5rtSrl+swNS8F4TwbrfBVTB0M5aigh4TDVqjMLy5vX4jzmtwdXDdBChXZlz3Pf+bCu+Di1+yEuAf5/8woR66HGxbv1LKOPpDYLx0jnNgWUSHnD2Sb2cCdmcUx/W96WFTYJw2qSljKrUsadl5O3zR1nZlGi8Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZZ5UCe1I; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761669876;
-	bh=+zDR3syKjBS2kd+OGgcF0id7D9QlT0C1fTMMcdbDDkc=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ZZ5UCe1I+VEvGaETBjkABXqceD+4vP3AKUIGnEYq4VzFXR51M623FLgS/kA8qv4O3
-	 d/8ZpREhi2GnKYvdHwIvsixY9jMgira2oG+o/a2FjYacLib+u/dkfexby2xqWbDV28
-	 5QzbOfb+qj7hZ4jKImLRWcwJM4GwOJGJR4gcDCFn0+EwG0DIR2/48vwePA1MocWXc/
-	 FFgKn53F+k0LZRhqNrCMsUaKTPQ5GMB95jXROOIIcUVh/ruC6B0V2GAxQzww6tzuY3
-	 2jAY642APV2A2elQEOe5AbBYneeBjNv43SuRuB7B6ThqM6Y600X57An+wVIy7hySst
-	 WXTLkhbCmPYdw==
-Received: from [192.168.11.9] (ip-217-65-134-16.ptr.icomera.net [217.65.134.16])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 985C317E1278;
-	Tue, 28 Oct 2025 17:44:32 +0100 (CET)
-Message-ID: <c5d17fc824ac7091e63f9d1d9ed7c0666994089e.camel@collabora.com>
-Subject: Re: [PATCH v2 2/2] media: chips-media: wave5: Process ready frames
- when CMD_STOP sent to Encoder
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Brandon Brnich <b-brnich@ti.com>, Nas Chung <nas.chung@chipsnmedia.com>,
-  Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, 	linux-media@vger.kernel.org,
+	s=arc-20240116; t=1761669760; c=relaxed/simple;
+	bh=hZ3gnF5i4eT8ptp4+qQqGEWxVx7X7XqSJUbf0+1+MjQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=S2KynwGbxgXDbukGgwaeJ1tciE7TUow8YDt+3lQrRtFo+1wQl7eb9OgPka8Qp4j6o81DqziLgEXQzLbumiAtEbE/b2baAru4+6KNF10uB7kQmnmBIaCVwbqInlDPv8HN2ZOlZcCNMs5JsFjOYanwtQhexvpQJiMLprFMiOGo/0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KGz1sjsP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E651AC4CEE7;
+	Tue, 28 Oct 2025 16:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761669760;
+	bh=hZ3gnF5i4eT8ptp4+qQqGEWxVx7X7XqSJUbf0+1+MjQ=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=KGz1sjsPJdGZeaXD2tDxhhqsJW194IcRDCErKAPdaYC2a+LgWeruZPsql3j/Qey/r
+	 GY71GEOdnxbWDZdKvMhlrvaVbfBAMObvtg+7bffBGLxfQ4cJOE4YP9Tg0SHRqUE/gB
+	 67FEP/nUSS7WAIHSTPSrj4Y4qLu6SPkcKV8JY2I+vWxfvoDdDxOM0X4MfKnhHJnLGe
+	 oY1FPp4J2ExmluTsIq/46gNwboL+JWt0SAtMmwpYk6SrGAxvbSOL40P8rAnjOAILWM
+	 xcGpRmcacGRls66gLE3tzIJtEijttMME/SL5Fo6ukxzuvxYEk0yJK2khM2IkTH32Am
+	 JEM7Vg9Biq6lQ==
+From: Mark Brown <broonie@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>, Xiubo Li <Xiubo.Lee@gmail.com>, 
+ Fabio Estevam <festevam@gmail.com>, Nicolin Chen <nicoleotsuka@gmail.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Zidan Wang <zidan.wang@freescale.com>, 
+ Maarten Zanders <maarten@zanders.be>
+Cc: linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
  linux-kernel@vger.kernel.org
-Cc: Darren Etheridge <detheridge@ti.com>
-Date: Tue, 28 Oct 2025 16:42:28 +0000
-In-Reply-To: <20251021204618.2441939-2-b-brnich@ti.com>
-References: <20251021204618.2441939-1-b-brnich@ti.com>
-	 <20251021204618.2441939-2-b-brnich@ti.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-fnIbwzv7kVFXSPSi8gAo"
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+In-Reply-To: <20251024135716.584265-1-maarten@zanders.be>
+References: <20251024135716.584265-1-maarten@zanders.be>
+Subject: Re: [PATCH] ASoC: fsl_sai: Fix sync error in consumer mode
+Message-Id: <176166975766.152863.14270477182475254035.b4-ty@kernel.org>
+Date: Tue, 28 Oct 2025 16:42:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-fnIbwzv7kVFXSPSi8gAo
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 21 octobre 2025 =C3=A0 15:46 -0500, Brandon Brnich a =C3=A9crit=C2=
-=A0:
-> CMD_STOP being sent to encoder before last job is executed by device_run
-> can lead to an occasional dropped frame. Ensure that remaining ready
-> buffers are drained by making a call to v4l2_m2m_try_schedule.
->=20
-> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
-
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
-> ---
-> =C2=A0drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 2 ++
-> =C2=A01 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> index 0a2eab372913..7ee77c9a30c0 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> @@ -649,6 +649,8 @@ static int wave5_vpu_enc_encoder_cmd(struct file *fil=
-e,
-> void *fh, struct v4l2_en
-> =C2=A0
-> =C2=A0		m2m_ctx->last_src_buf =3D v4l2_m2m_last_src_buf(m2m_ctx);
-> =C2=A0		m2m_ctx->is_draining =3D true;
-> +
-> +		v4l2_m2m_try_schedule(m2m_ctx);
-> =C2=A0		break;
-> =C2=A0	case V4L2_ENC_CMD_START:
-> =C2=A0		break;
-
---=-fnIbwzv7kVFXSPSi8gAo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-88d78
 
------BEGIN PGP SIGNATURE-----
+On Fri, 24 Oct 2025 15:57:15 +0200, Maarten Zanders wrote:
+> When configured for default synchronisation (Rx syncs to Tx) and the
+> SAI operates in consumer mode (clocks provided externally to Tx), a
+> synchronisation error occurs on Tx on the first attempt after device
+> initialisation when the playback stream is started while a capture
+> stream is already active. This results in channel shift/swap on the
+> playback stream.
+> Subsequent streams (ie after that first failing one) always work
+> correctly, no matter the order, with or without the other stream active.
+> 
+> [...]
 
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQDydAAKCRDZQZRRKWBy
-9H/SAPwI3yGHldwe6ZRqSHBVKktYayRKH5TXay0xDmFAHPHduQEApiUurKdcqoNF
-tgZCbD4Ej3iJr5/MKVWXBh9J3XOZ2wI=
-=IH2a
------END PGP SIGNATURE-----
+Applied to
 
---=-fnIbwzv7kVFXSPSi8gAo--
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoC: fsl_sai: Fix sync error in consumer mode
+      commit: b2dd1d0d322dce5f331961c927e775b84014d5ab
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
