@@ -1,193 +1,92 @@
-Return-Path: <linux-kernel+bounces-874738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D106C16F8E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:26:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1024FC16FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 83E75356CF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:26:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DBD5507281
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7CE935A94D;
-	Tue, 28 Oct 2025 21:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FEF351FCB;
+	Tue, 28 Oct 2025 21:21:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WjIt/cYh"
-Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ap6HA4Ne"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D35359706
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB13350A26;
+	Tue, 28 Oct 2025 21:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761686481; cv=none; b=eAD3uCOVzywMLFUw4Wy8A1hbysK1tOi4fFWBzW+05I91PIDcvFjN6s9LIq8ussex0ey0Pu07h1yss7eNCvvni6akrEBSeCrK0deHXI98qwHCtRsQXJMAq/kYC04ng9BJpW60GOsEzh/WQFozIpsYjQv917q0VA1NFs9gd9y6AWQ=
+	t=1761686504; cv=none; b=oqMXWs+l4Wyr065OFtc6T2FD7Ns2bCrygwEMu1TsFy/KTkvoVZrHntIL8T+jygVELGtFcN/iNJpV3sjMr3B8rZmOv3aJyF5PHnIIOKNRHjTBkTnKiZByoP28c0/juz9QUIGAwrTmBKbIKA6QvkPNQywGxaJRkzvzLZI9PvpKVUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761686481; c=relaxed/simple;
-	bh=qfaC2A7mPzRh1wHLGzIzthw0+fibjKOEou+mOk9ZG90=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KHB3rIIaLnAdD5kphXDTdlvFh7YCXhpqBg9EkpEhBm5o8m6IMkego7S7R5vwVNkCXce9UsBQ8uHLxWtIOjHf9ER9ZeywsF8PT/qdxKyGs/cvHdkDXQFSMiEYexEEut4N133DGFZyAbuYeUKk5n3UzRgLeZQ73BtMzbbybiKd4fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WjIt/cYh; arc=none smtp.client-ip=209.85.160.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sagis.bounces.google.com
-Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-3c96de7fdf3so9917928fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:21:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761686477; x=1762291277; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CS0IWmflrx758IAyyWQq7DhPqTRvRcCDsa+nQ4BIQi4=;
-        b=WjIt/cYhRMQxSZ5dj4nZMe59IdNEzIK3M2gwoVZnS9HaVvnNAUGW41Dmo9hvB18AWi
-         HojWpk0TsgiKE9Siofje5YOY9lCbKVmsoAfORCdmYWcolEV9wKIxKm1gJY1M1mjOwk6f
-         qTrECfQcbjFFWAADt08y1udDkHzuQMlVStg+W3wqGaRuGPrfF+Gd3DN5YwcUbHH1hD8s
-         oOiC2v6GK9p5yXyIxMUGsdBfZnZYEBoWvAzVCtRNNCFpF3LSQlvgAwQpZHzKY8/B/Vq5
-         TkBQTIgUmNXeAE15G5mIo2c4RWaklhfacDAlFNttebSREsUSU72ImvbyfFPcrPi2GkcA
-         a0Iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761686477; x=1762291277;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CS0IWmflrx758IAyyWQq7DhPqTRvRcCDsa+nQ4BIQi4=;
-        b=rATqs5XrWY9l55K8TLKdU2fqSoL+6NH2975MYrGXn4fCk+bOieVNFe3J11ZPP4/GNw
-         flScFQrCfyJRK5dYAFCm5e3Q3z+vRZfNmS4V84EIW+GKp4MfdHJl4W401TL2EjY+FHXB
-         skd161Rrs/oyXJw8jbV4bJXHpQ90tEwrr66DjYFcjGgKeu07K4DqVJ77xGsy2/Ka37oZ
-         ye/y3g+B5mtGcFFh80Z3VIUz2WdEI6L/yeMEB3+iJOnxtVpiRq03+jRMDNc2mnBoqGYJ
-         eKF7krcFwg5GhWt+DAAT1Ss3VjiLqsFl7eCo6ly8DOSxT7H+2ra1RzNKVxo2jzmfjc2h
-         NNEA==
-X-Gm-Message-State: AOJu0YyII1MRjc6YhKuJTA3HBIyFqZYDHG5J0N6xPajv2ddM/lMJY6H9
-	uUkIjcbxzVjwBfpHVvBcZ5E5lCqMECebXrrrYW5kv7ipUwyyo14XG7TXFJks4ReVYHwIxSPR5GD
-	UdA==
-X-Google-Smtp-Source: AGHT+IH9FCcaXI/EKUJmw3moCTxbFHd52ZJluIjy8ghlVGUWeAZZptsgmg2AF7Kqcixt3CD2LMrRRymXIA==
-X-Received: from oabcr6.prod.google.com ([2002:a05:6870:ebc6:b0:3c9:a56f:e0b7])
- (user=sagis job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6871:6081:b0:3d2:f13:698c
- with SMTP id 586e51a60fabf-3d74b26bce8mr402771fac.32.1761686476891; Tue, 28
- Oct 2025 14:21:16 -0700 (PDT)
-Date: Tue, 28 Oct 2025 21:20:49 +0000
-In-Reply-To: <20251028212052.200523-1-sagis@google.com>
+	s=arc-20240116; t=1761686504; c=relaxed/simple;
+	bh=DuSnrySqhofeDqnS4DKDx+YN2NNZl32lm0X0WzjcLCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qxMdzio+201oOIDfuhv7SvUCkVmDlshhh5O4WleKPoYBQ8PKmd2BgRiZx/sHxhw6s67WHqhs/RnchJi//dijfsOeyolPSh/1af6aZSFTmUJ6eIEj+dWHAlJ2+9USEUhfdxN3+L7GcE2QKiLgmxErLPNRj6PlfgwvL/cu69nXBQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ap6HA4Ne; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9ACC4CEE7;
+	Tue, 28 Oct 2025 21:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761686503;
+	bh=DuSnrySqhofeDqnS4DKDx+YN2NNZl32lm0X0WzjcLCw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ap6HA4NeTjzxTNaI8Je+9eZMy9Icq1rv4XN5dcZkcB6KM8wjzD3mUTdPbu6vIHs2C
+	 f5wcH4EqRxyYhOp2aUt2iAYSddJCnLSkXvHmoy/5XNVnf45HFxOz2fRzfKW0HZFCED
+	 l14CQb9w6rvGYavgn50RI2i70fPsvcGcIU4gSuwTOEotb9KzDBtVkcFahl5WhqsZQg
+	 dcOlSNPev+fjWUNW9RWSCOFf2+mvUuLsX1kJtpCMRRudPCF7sdyFMzbzYEVdB8IJwI
+	 bkJgygVnH2CJd4LXg5V74vIPVotNHoM3oi1HORihkL6lu9xeUOj3G/7joq76EWbJZ+
+	 wyMeB9iwk6U5w==
+Message-ID: <000cd38e-7052-4987-b5bc-b8de176363cf@kernel.org>
+Date: Tue, 28 Oct 2025 16:21:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251028212052.200523-1-sagis@google.com>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251028212052.200523-24-sagis@google.com>
-Subject: [PATCH v12 23/23] KVM: selftests: Add TDX lifecycle test
-From: Sagi Shahar <sagis@google.com>
-To: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>, 
-	Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Erdem Aktas <erdemaktas@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Sagi Shahar <sagis@google.com>, Roger Wang <runanwang@google.com>, 
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Chenyi Qiang <chenyi.qiang@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
+To: Antheas Kapenekakis <lkml@antheas.dev>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+ Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+References: <20251015084414.1391595-1-lkml@antheas.dev>
+ <20251015084414.1391595-7-lkml@antheas.dev>
+ <38a49942-58d3-49cf-90d7-1af570918ae5@kernel.org>
+ <CAGwozwEmjms0H=GPbevuOjJfed6x69wmg8E9begBhUKbF8B2AQ@mail.gmail.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <CAGwozwEmjms0H=GPbevuOjJfed6x69wmg8E9begBhUKbF8B2AQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Adding a test to verify TDX lifecycle by creating a simple TD.
+On 10/28/25 3:34 PM, Antheas Kapenekakis wrote:
+>>> The fan speed is also lost during hibernation, but since hibernation
+>>> failures are common with this class of devices
+Why are hibernation failures more common in this class of device than 
+anything else?  The hibernation flow is nearly all done in Linux driver 
+code (with the exception of ACPI calls that move devices into D3 and out 
+of D0).
 
-Signed-off-by: Sagi Shahar <sagis@google.com>
+Perhaps you're seeing a manifestation of a general issue that we're 
+working on a solution for here:
 
----------------------------------------------
+https://lore.kernel.org/linux-pm/20251025050812.421905-1-safinaskar@gmail.com/
 
-Changes from v11:
- * Removed vm_tdx_create_with_one_vcpu and replaced the call site with
-   vm_create_shape_with_one_vcpu
----
- tools/testing/selftests/kvm/Makefile.kvm      |  1 +
- .../selftests/kvm/include/x86/processor.h     |  1 +
- .../selftests/kvm/include/x86/tdx/tdx_util.h  |  8 +++++
- tools/testing/selftests/kvm/x86/tdx_vm_test.c | 33 +++++++++++++++++++
- 4 files changed, 43 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/x86/tdx_vm_test.c
+https://lore.kernel.org/linux-pm/20251026033115.436448-1-superm1@kernel.org/
 
-diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-index b7a518d62098..2f49c8965df9 100644
---- a/tools/testing/selftests/kvm/Makefile.kvm
-+++ b/tools/testing/selftests/kvm/Makefile.kvm
-@@ -156,6 +156,7 @@ TEST_GEN_PROGS_x86 += rseq_test
- TEST_GEN_PROGS_x86 += steal_time
- TEST_GEN_PROGS_x86 += system_counter_offset_test
- TEST_GEN_PROGS_x86 += pre_fault_memory_test
-+TEST_GEN_PROGS_x86 += x86/tdx_vm_test
- 
- # Compiled outputs used by test targets
- TEST_GEN_PROGS_EXTENDED_x86 += x86/nx_huge_pages_test
-diff --git a/tools/testing/selftests/kvm/include/x86/processor.h b/tools/testing/selftests/kvm/include/x86/processor.h
-index dba2b3d558d1..7cd70ff15412 100644
---- a/tools/testing/selftests/kvm/include/x86/processor.h
-+++ b/tools/testing/selftests/kvm/include/x86/processor.h
-@@ -369,6 +369,7 @@ static inline unsigned int x86_model(unsigned int eax)
- #define VM_SHAPE_SEV		VM_TYPE(KVM_X86_SEV_VM)
- #define VM_SHAPE_SEV_ES		VM_TYPE(KVM_X86_SEV_ES_VM)
- #define VM_SHAPE_SNP		VM_TYPE(KVM_X86_SNP_VM)
-+#define VM_SHAPE_TDX		VM_TYPE(KVM_X86_TDX_VM)
- 
- /* Page table bitfield declarations */
- #define PTE_PRESENT_MASK        BIT_ULL(0)
-diff --git a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-index 2467b6c35557..f8e1c4d92a7a 100644
---- a/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-+++ b/tools/testing/selftests/kvm/include/x86/tdx/tdx_util.h
-@@ -11,6 +11,14 @@ static inline bool is_tdx_vm(struct kvm_vm *vm)
- 	return vm->type == KVM_X86_TDX_VM;
- }
- 
-+/*
-+ * Verify that TDX is supported by KVM.
-+ */
-+static inline bool is_tdx_enabled(void)
-+{
-+	return !!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(KVM_X86_TDX_VM));
-+}
-+
- /*
-  * TDX ioctls
-  */
-diff --git a/tools/testing/selftests/kvm/x86/tdx_vm_test.c b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-new file mode 100644
-index 000000000000..a37ab0fb2a97
---- /dev/null
-+++ b/tools/testing/selftests/kvm/x86/tdx_vm_test.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "processor.h"
-+#include "kvm_util.h"
-+#include "tdx/tdx_util.h"
-+#include "ucall_common.h"
-+#include "kselftest_harness.h"
-+
-+static void guest_code_lifecycle(void)
-+{
-+	GUEST_DONE();
-+}
-+
-+TEST(verify_td_lifecycle)
-+{
-+	struct kvm_vcpu *vcpu;
-+	struct kvm_vm *vm;
-+	struct ucall uc;
-+
-+	vm = vm_create_shape_with_one_vcpu(VM_SHAPE_TDX, &vcpu,
-+					   guest_code_lifecycle);
-+
-+	vcpu_run(vcpu);
-+	TEST_ASSERT_EQ(get_ucall(vcpu, &uc), UCALL_DONE);
-+
-+	kvm_vm_free(vm);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	TEST_REQUIRE(is_tdx_enabled());
-+	return test_harness_run(argc, argv);
-+}
--- 
-2.51.1.851.g4ebd6896fd-goog
+https://lore.kernel.org/linux-pm/5935682.DvuYhMxLoT@rafael.j.wysocki/T/#u
 
+Or if you're on an older kernel and using hybrid sleep we had a generic 
+issue there as well which was fixed in 6.18-rc1.
+
+Nonetheless; don't make policy decisions based upon kernel bugs.  Fix 
+the kernel bugs.
 
