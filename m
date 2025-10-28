@@ -1,146 +1,178 @@
-Return-Path: <linux-kernel+bounces-872841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612B9C12275
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:20:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE780C1227E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:22:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F22834E6BC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:20:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED6144EE988
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29ECE1C84A1;
-	Tue, 28 Oct 2025 00:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B706E1C6FE8;
+	Tue, 28 Oct 2025 00:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKlfDzGy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sjZOFES9"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997BAA92E;
-	Tue, 28 Oct 2025 00:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CED28682;
+	Tue, 28 Oct 2025 00:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761610800; cv=none; b=eXVB/JcrfK+ibVaxoesV2ZM2L6FIhOTM5uCY2dA3tHH2SsgwbQb2zErbjQkBDa0q29yqX6vay1mDx2VhXnYTvlH/uV1ztYk/KaawD/JnYqO9yDJo7cKnW7RX9H0Y1AT+xJVxtw4iAEBeUO5srk5oyT64HtKaEHx5YGD3HbMHEwk=
+	t=1761610937; cv=none; b=ETqj+uKspHLIkrO3JmTyXjZcGUBVcifarM3p4mH0Gkyo7WSRyY6ROqxFeoCIuNAMncZ8cxGT2DGDKrRLJ4xsAqG+doAdHbxCahyOXeqY+FDd4hHoTbJZ/enfVcWZ67KvfcGkbXCXIzhmPJRIpmZ+dwM4C9z0ZVtXcZor/hqkHmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761610800; c=relaxed/simple;
-	bh=fMKpEKZyTG/cWFXRARo36nj6DVugavMF7X3PEBILtt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TbyQ5kNHaMlm92vpFLHJLHgk5W3omWEyoXiv8P3oMUgrSToXo4JtVPSiGn4ZLY+7SPGM8uEcWfHwrU8+2hOj3JE6o15tX9XKr867LI8vnYEvWjr5Jelsq+kZR/DXNu6rcLjRS9jbqq3ne+kmD4UlP/h79dXfDqmm2b8GTUCJUsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKlfDzGy; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761610799; x=1793146799;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=fMKpEKZyTG/cWFXRARo36nj6DVugavMF7X3PEBILtt4=;
-  b=LKlfDzGyP06558Wv/2HnhOwiBLHPsqdm5si/WW1sICh9qQY2W+vyJmwU
-   S5Fm2trL2pC9/mrkQbLE2NPnsCgJn8FweAjhp89sB+HhYwE+7+r6DwEzq
-   0oEPPVWbz/fddmM1Y6byW36PDxPPvYSaBviQ5AB2vVqqw5xtIjh5xumPO
-   3qOD1s604TdJ+RtcIHD5Fj5ScgzWBXP5SgXs7i+de+x/5LklEc5jQupxW
-   rivehj66+ofq25KgqwvkjJoerbGm0mroUYsaaFGBfiJ2O90SCjtV6+Bu7
-   AQ1P3OaXWoaLDPGBDjHcm1dMB6xiFm8eVNBEO2PYr0EOneXThUVEBFMnG
-   w==;
-X-CSE-ConnectionGUID: bQxU9gWtRWu617Y3P+qbwg==
-X-CSE-MsgGUID: r1u//98KQeiypLwYihcJIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63601305"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63601305"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 17:19:58 -0700
-X-CSE-ConnectionGUID: gc5Eqv+kRBGHIR+oxhNF5A==
-X-CSE-MsgGUID: DQOmNcgvRtGtbsliWTTx5w==
-X-ExtLoop1: 1
-Received: from jjgreens-desk15.amr.corp.intel.com (HELO desk) ([10.124.222.186])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 17:19:57 -0700
-Date: Mon, 27 Oct 2025 17:19:50 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Jim Mattson <jmattson@google.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Brendan Jackman <jackmanb@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] KVM: VMX: Flush CPU buffers as needed if L1D
- cache flush is skipped
-Message-ID: <20251028001950.feubf7qfq5irasjz@desk>
-References: <20251016200417.97003-1-seanjc@google.com>
- <20251016200417.97003-2-seanjc@google.com>
- <DDO1FFOJKSTK.3LSOUFU5RM6PD@google.com>
- <aPe5XpjqItip9KbP@google.com>
- <20251021233012.2k5scwldd3jzt2vb@desk>
- <20251022012021.sbymuvzzvx4qeztf@desk>
- <CALMp9eRpP0LvMJ=aYf45xxz1fRrx5Sf9ZrqRE8yKRcMX-+f4+A@mail.gmail.com>
- <20251027231721.irprdsyqd2klt4bf@desk>
- <CALMp9eSVt22PW+WyfNvnGcOciDQ8MkX9vDmDZ+-Q2QJUH_EvHw@mail.gmail.com>
+	s=arc-20240116; t=1761610937; c=relaxed/simple;
+	bh=/Nsy43OmyQgzmy4VsVKt9cic6upg9TxwfsjRAC6WvZ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oUZoRKMo71OZB7XZO9msnt+97xofwjc4a88OEHdLbDep/lae5vgh9RdBoTTE85X9ldq8/k1MxHtnC6jnVaysJaY1vMj4Ndrpe6MI0fivQBApaN4ssOsZbJ7xacuk3jw4k5XFvgmyBiwudB+FfVTNw7rUG9aa1ytUkS11TXKkjAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sjZOFES9; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761610928;
+	bh=46Sos33mfTH8OXy6O6FaIdv6yCA1kIk7+Ha9IqSpw70=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sjZOFES9l6uh3vcOTw3je1AKSJx71zcm/wAIT6MIMHEGmY7uIvsWOcndpH0DF/+F6
+	 cxrV7aeZVk/8Fw6ry/gBaPSpWseNBf1hapPp4mgQ3AUDu6vJKIxs/kgn4UfkqYWim8
+	 wPKgbMTyPojTXeQ7wDz8wGLWhIfYfraAdb8ph0BmpRDs/CQu42w/nbYn4QVqmuMHu5
+	 NneAJRHPPx/f+3vlhmDFZpGsmoPP0+HE9ONgNBcKzdT4RqDu+MMBeOyKZ6dSdSCjxJ
+	 IBcZmjNEhgcTynSfY+fE8H2KVYLrn38jstx7GLZ+NmA4G1KH97k4NtCMUdv9/IEDqh
+	 3fnJeT8dF/kqw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cwWKB5y23z4w2J;
+	Tue, 28 Oct 2025 11:22:06 +1100 (AEDT)
+Date: Tue, 28 Oct 2025 11:22:05 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: "Emil Tsalapatis (Meta)" <emil@etsalapatis.com>, Emil Tsalapatis
+ <etsal@meta.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>, Tejun Heo
+ <tj@kernel.org>
+Subject: linux-next: manual merge of the tip tree with Linus' tree
+Message-ID: <20251028112205.47129816@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALMp9eSVt22PW+WyfNvnGcOciDQ8MkX9vDmDZ+-Q2QJUH_EvHw@mail.gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/qkMsA=A20wnBfewgFzGasY1";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Mon, Oct 27, 2025 at 04:58:10PM -0700, Jim Mattson wrote:
-> On Mon, Oct 27, 2025 at 4:17 PM Pawan Gupta
-> <pawan.kumar.gupta@linux.intel.com> wrote:
-> >
-> > On Mon, Oct 27, 2025 at 03:03:23PM -0700, Jim Mattson wrote:
-> > > On Tue, Oct 21, 2025 at 6:20 PM Pawan Gupta
-> > > <pawan.kumar.gupta@linux.intel.com> wrote:
-> > > >
-> > > > ...
-> > > > Thinking more on this, the software sequence is only invoked when the
-> > > > system doesn't have the L1D flushing feature added by a microcode update.
-> > > > In such a case system is not expected to have a flushing VERW either, which
-> > > > was introduced after L1TF. Also, the admin needs to have a very good reason
-> > > > for not updating the microcode for 5+ years :-)
-> > >
-> > > KVM started reporting MD_CLEAR to userspace in Linux v5.2, but it
-> > > didn't report L1D_FLUSH to userspace until Linux v6.4, so there are
-> > > plenty of virtual CPUs with a flushing VERW that don't have the L1D
-> > > flushing feature.
-> >
-> > Shouldn't only the L0 hypervisor be doing the L1D_FLUSH?
-> >
-> > kvm_get_arch_capabilities()
-> > {
-> > ...
-> >         /*
-> >          * If we're doing cache flushes (either "always" or "cond")
-> >          * we will do one whenever the guest does a vmlaunch/vmresume.
-> >          * If an outer hypervisor is doing the cache flush for us
-> >          * (ARCH_CAP_SKIP_VMENTRY_L1DFLUSH), we can safely pass that
-> >          * capability to the guest too, and if EPT is disabled we're not
-> >          * vulnerable.  Overall, only VMENTER_L1D_FLUSH_NEVER will
-> >          * require a nested hypervisor to do a flush of its own.
-> >          */
-> >         if (l1tf_vmx_mitigation != VMENTER_L1D_FLUSH_NEVER)
-> >                 data |= ARCH_CAP_SKIP_VMENTRY_L1DFLUSH;
-> >
-> 
-> Unless L0 has chosen L1D_FLUSH_NEVER. :)
-> 
-> On GCE's L1TF-vulnerable hosts, we actually do an L1D flush at ASI
-> entry rather than VM-entry. ASI entries are two orders of magnitude
-> less frequent than VM-entries, so we get comparable protection to
-> L1D_FLUSH_ALWAYS at a fraction of the cost.
-> 
-> At the moment, we still do an L1D flush on emulated VM-entry, but
-> that's just because we have historically advertised
-> IA32_ARCH_CAPABILITIES.SKIP_L1DFL_VMENTRY to L1.
+--Sig_/qkMsA=A20wnBfewgFzGasY1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the background.
+Hi all,
 
-I still don't see the problem, CPUs that are vulnerable to L1TF are also
-vulnerable to MDS. So, they don't set mmio_stale_data_clear, instead they
-set X86_FEATURE_CLEAR_CPU_BUF and execute VERW in __vmx_vcpu_run()
-regardless of whether L1D_FLUSH was done.
+Today's linux-next merge of the tip tree got a conflict in:
 
-But, I agree it is best to decouple L1D flush and MMIO Stale Data to be
-avoid any confusion.
+  kernel/sched/ext.c
+
+between commit:
+
+  a8ad873113d3 ("sched_ext: defer queue_balance_callback() until after ops.=
+dispatch")
+
+from Linus' tree and commit:
+
+  4c95380701f5 ("sched/ext: Fold balance_scx() into pick_task_scx()")
+
+from the tip tree.
+
+I fixed it up (see below - but I was not sure if the
+"maybe_queue_balance_callback(rq);" is positioned correctly) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc kernel/sched/ext.c
+index ecb251e883ea,49f4a9e76348..000000000000
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@@ -2368,41 -2298,22 +2332,23 @@@ static struct task_struct *first_local_
+  					struct task_struct, scx.dsq_list.node);
+  }
+ =20
+- static struct task_struct *pick_task_scx(struct rq *rq)
++ static struct task_struct *pick_task_scx(struct rq *rq, struct rq_flags *=
+rf)
+  {
+  	struct task_struct *prev =3D rq->curr;
++ 	bool keep_prev, kick_idle =3D false;
+  	struct task_struct *p;
+- 	bool keep_prev =3D rq->scx.flags & SCX_RQ_BAL_KEEP;
+- 	bool kick_idle =3D false;
+ =20
+- 	/*
+- 	 * WORKAROUND:
+- 	 *
+- 	 * %SCX_RQ_BAL_KEEP should be set iff $prev is on SCX as it must just
+- 	 * have gone through balance_scx(). Unfortunately, there currently is a
+- 	 * bug where fair could say yes on balance() but no on pick_task(),
+- 	 * which then ends up calling pick_task_scx() without preceding
+- 	 * balance_scx().
+- 	 *
+- 	 * Keep running @prev if possible and avoid stalling from entering idle
+- 	 * without balancing.
+- 	 *
+- 	 * Once fair is fixed, remove the workaround and trigger WARN_ON_ONCE()
+- 	 * if pick_task_scx() is called without preceding balance_scx().
+- 	 */
+- 	if (unlikely(rq->scx.flags & SCX_RQ_BAL_PENDING)) {
+- 		if (prev->scx.flags & SCX_TASK_QUEUED) {
+- 			keep_prev =3D true;
+- 		} else {
+- 			keep_prev =3D false;
+- 			kick_idle =3D true;
+- 		}
+- 	} else if (unlikely(keep_prev &&
+- 			    prev->sched_class !=3D &ext_sched_class)) {
+- 		/*
+- 		 * Can happen while enabling as SCX_RQ_BAL_PENDING assertion is
+- 		 * conditional on scx_enabled() and may have been skipped.
+- 		 */
++ 	rq_modified_clear(rq);
++ 	rq_unpin_lock(rq, rf);
++ 	balance_one(rq, prev);
++ 	rq_repin_lock(rq, rf);
+++	maybe_queue_balance_callback(rq);
++ 	if (rq_modified_above(rq, &ext_sched_class))
++ 		return RETRY_TASK;
++=20
++ 	keep_prev =3D rq->scx.flags & SCX_RQ_BAL_KEEP;
++ 	if (unlikely(keep_prev &&
++ 		     prev->sched_class !=3D &ext_sched_class)) {
+  		WARN_ON_ONCE(scx_enable_state() =3D=3D SCX_ENABLED);
+  		keep_prev =3D false;
+  	}
+
+--Sig_/qkMsA=A20wnBfewgFzGasY1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkADK4ACgkQAVBC80lX
+0GyRoAf9F4u2QKohmfjTWxY0TZVzYWFf+5uFhKpLG662VjctOEN4FeK4qTk++kjl
+EMmbAYimzzhOHpiMrxVt3SwsXBnG4AArYdEG/hHPHg9EB4NlfFtl1u76W9Wbo5FR
+QsuejUy0fVHC/gh5nI0bgV5FX+PADawdbisBcUqZPyP409MlCMJmXVmQwLKH9tTy
+ZrdtpSBmSiG+fO9aczf3WfS6UUnZ8H0CN6xGHKX63z6LMmlYStsNI6GJexPI+1OV
+ygPRxOlRd2J0hO4cZ5kcDTVtHyxeoksR0pPXKfi/Js4Oc0RFN91YPUyPmIa9WT5+
+wR8yxN+2mnZ3NY34sppsMt3r2L8ZkA==
+=4nPX
+-----END PGP SIGNATURE-----
+
+--Sig_/qkMsA=A20wnBfewgFzGasY1--
 
