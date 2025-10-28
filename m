@@ -1,193 +1,386 @@
-Return-Path: <linux-kernel+bounces-874896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80ED2C1760E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:36:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E20C1761B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137E53A48B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:36:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DB63AC380
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:38:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1317306B00;
-	Tue, 28 Oct 2025 23:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2501B36B973;
+	Tue, 28 Oct 2025 23:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOQPpC/m"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hfGu2gaI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DEB2C15A8
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761694555; cv=none; b=XGnREEiN8y3Pphe2atKSlgd/9vesrvUXyLL1PVS7kcauM4O+KUB4wRSeM+UqRy5Gjh0nmDDiNMW1pcfeNtLXGYXYdVvpVplAiCkGZwLxuoo33gUOvTCq9ps8Rj0BrNnuGhLWZ0e3hg/Zu2E9wzgoNijihAN61EdQsMHWx6PPj5o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761694555; c=relaxed/simple;
-	bh=pO3ezBcQxEG3Pj7tMfcTswPOd999jDNlRZTd+tb/its=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D3ie3IVCzt+0/E2DyM1gqdi55mFjAUC/Y6dz+l36VXTjpjZKfO/CWs/B1/XpB+hNvlS6VzrgzlYvAJO/zY9tgdtElM9zev2OC5qfVECJ02vwbzxVKxuPYr5AFy7jRRqaK0JSL6mbfQacXZI3zoTphjLCOthf5BDtTSl2wPsb8x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOQPpC/m; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47117f92e32so59941515e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761694552; x=1762299352; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pO3ezBcQxEG3Pj7tMfcTswPOd999jDNlRZTd+tb/its=;
-        b=kOQPpC/mr/pSZI816b0Fn6HrfxFcQKig9QLpQq/T2i81OBCo/MpEQAmYLFXuicMtVW
-         89179mMigsvCEkIvqsiCgs9HLyfudd/Eao4peUhWhaUkCG+GEcbS3qOvaRK+6G4cEGpX
-         DovbewDH8zImjk6rpnaz+oA1WRu0TUq3otZlR6rw6rbLG1njtAJEcjWlHzFPblErCNkG
-         vQZ+wIZxY5MnLupPhSOBMfunuIccCHDuhD6QaPPyMfa7ykwnewec5Jw9gXPIBjp3piqR
-         6fgUgDgxqnuhFMnOtmcfRs8qVwkdEK16rW22EfU+fBRBbN5iQfgZF50LPPoLOx4X2h+M
-         QBig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761694552; x=1762299352;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pO3ezBcQxEG3Pj7tMfcTswPOd999jDNlRZTd+tb/its=;
-        b=YcdA2GDqLS+czD7RIGZkmXSJNskUboPvsA9fWztD0iQkXaMRhfpfPDCdHvak0mOugD
-         kvg82KzuK+fKqlytCJo7ge4oPDxsknefNOlK/IL4tPNAydvnKoZnyGUy2lk7i8bsnpyz
-         xyBSiDbmPLXDSvTxh15phaj5sJes00J/NfMdPw35tPnHTpxxOa0V5KGi/igX8Fxi2i8q
-         gEFHtO6gD+JuYxmvSPtApao0q9vuJaOa2aes10Vrd8NvFHl4mUUqov83CfgAu2JWtnt1
-         9LQp3vzLVM3NRJE8/yrsN4hww/Kxq0i8/CuMNFC7ZuRKWiazS0CJaxSHYyWpnWjrIvGo
-         hxxg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5vftqfOSrHlDCoCEfPsfDLWt0grh/91QzNsObU0YMKC2iUHwH1qIpc6tM+zjRXAPw0jAk1DNDPFZXtB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmcuINAaUKT5nw/DX0SdlMs9p85G9l2Ha0M/I9n3+de8v3QBaL
-	Xi/7IWERYNqhZDrNrRu4C/vxXrSD6zNNyH8jUhxUDdSiafqSbsi0QMcyV/9Kxg==
-X-Gm-Gg: ASbGncuomv2/yqcIFj8h5r3Lyqn4UHuzrBa9/dlb+iTLuP35g0rFWk6xKOUJzXedFET
-	fbPl8kXB9ln/mvls0xdEjFSwpaATZwx2HDv3SB/2I1Zp4G1dsU2QT92Wmva7tEWiILlLKV4XkOj
-	dkrP59L5LzK6H9PpPtGVbyqY9lTdUqhEWXAxzVTQ7fQF2VC96nx8C41FeLNB13gyQkmRoP42Zzc
-	8aMgvIVpTVbCUnrvxdodWxcMIj2hNhaoPPyePlvKgTzKKbSteg4qtg6xd2Fj4mhXnoJZA9g/n/H
-	fPll967pg93eWyYAzUcZGVauL04jFGCuAvJopqpINY0gr4oPV1Hzt1aE+jRMzmynicq4hQaqVPh
-	gw0hsfT4LBkyhAWtrcTRDbcBJ49ZAIRKdyHThqJxm6wpLOw27GdlD9JMgS+j1cR/abxmoc3HPbw
-	86pqexYbgrEnR9DBdomcSz7ic=
-X-Google-Smtp-Source: AGHT+IE+7lavUcbRiUEoBcPcWWhtl2Ye0Lqq0olW9TOJGPDFy5Ml5rtmUhOJt0ianoi/OzmsyK7njA==
-X-Received: by 2002:a05:600c:3b1d:b0:475:e007:baf1 with SMTP id 5b1f17b1804b1-4771e3b8626mr10555025e9.34.1761694551467;
-        Tue, 28 Oct 2025 16:35:51 -0700 (PDT)
-Received: from vitor-nb.Home (bl19-170-125.dsl.telepac.pt. [2.80.170.125])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e196a9asm17054265e9.7.2025.10.28.16.35.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 16:35:49 -0700 (PDT)
-Message-ID: <f99c528a19fa793035cece3f83b332d7ecafa7da.camel@gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: PCI: ti,j721e-pci-host: Add
- optional regulator supplies
-From: Vitor Soares <ivitro@gmail.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Bjorn Helgaas
- <bhelgaas@google.com>,  Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Vitor
- Soares <vitor.soares@toradex.com>, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 28 Oct 2025 23:35:48 +0000
-In-Reply-To: <wg2wpwex4vbwwxynk5salk6mbpneww76wfvznn442a2xyqrrck@a7qqqn3hjzcg>
-References: <20251014112553.398845-1-ivitro@gmail.com>
-	 <20251014112553.398845-2-ivitro@gmail.com>
-	 <20251020-kickass-fervent-capybara-9c48a0@kuoka>
-	 <2c3e4bdefb306dc89c15bebc549d854ea2b4cc32.camel@gmail.com>
-	 <wg2wpwex4vbwwxynk5salk6mbpneww76wfvznn442a2xyqrrck@a7qqqn3hjzcg>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4BF2C15A8;
+	Tue, 28 Oct 2025 23:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761694676; cv=fail; b=dVkG8G6lKaa/xzHomclV6BftfBdC0qmFh2ohpXAtV/ioEGDY5zrOIbqa7dGoA17l7xLje05MwnEZ14u8FsWqorfZXZjpRVSp9PfAdOgeCxascy4hf0TrpvdUnxrLWesSFdOllkhg2iLuNWCV+ILINWImuw8r9LMgx3ku832RIgg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761694676; c=relaxed/simple;
+	bh=PP+6Rm+YpdqU4zhjI2wcTBSd4FRSsyMf0rWnOBNKxVI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=b7gkwFEZPPPXPPSoicT1K0+CjrPtOmIzkn3tAqG4HqA4trao263CeDSKJp839TaBWIRJxvWROY4cxsofHkpSU2E2U494W/bCwqM/fdvczJblZN9tsTGkqDf+IUuz1xNg1V5Ye4MiCHGdcd41QyCc5L3cim4u+ZvBWyJmzlMFP1Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hfGu2gaI; arc=fail smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761694674; x=1793230674;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=PP+6Rm+YpdqU4zhjI2wcTBSd4FRSsyMf0rWnOBNKxVI=;
+  b=hfGu2gaI7Ulx8eMnYa//s70TamlODehMXzw9Cbtu+dq5DBhlrko5sUHe
+   CiZZWKcCEZ57O+eHbBUE2cPp0BjS6ZN18kRe5NxpleM7el3Vw02fURWjG
+   3ppPOMehdXLzzX28xUPIP3UsRuit6yxH9AXfPaIW3I3bmqRXZPHmqA0wm
+   GRDrG/EzyN9A2InoTwRUhTluXVD9wRuiNZ92hfLJg/2VM0X3PsyqBXAk6
+   +T//sISAzyW7rIg4nY8cfaeB6qn9+svLB8MqMDpl3rPRXR4P91MI1Ix6h
+   QLJt/lpiiKZBS++2PggTn8Z7kdsnEKECo/uI1FA11YNIj/WA5hwp5mzlz
+   w==;
+X-CSE-ConnectionGUID: 9+/USTciRBGuTFLivfxVwA==
+X-CSE-MsgGUID: LubAthzrTIaERJQZ/HlrdA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63735442"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63735442"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 16:37:53 -0700
+X-CSE-ConnectionGUID: GqvBb2zrSyCbFIGdE8rUdw==
+X-CSE-MsgGUID: OArcWxVYStKeq+Jh1Qad5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
+   d="scan'208";a="189844891"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 16:37:53 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 16:37:52 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Tue, 28 Oct 2025 16:37:52 -0700
+Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.4) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Tue, 28 Oct 2025 16:37:52 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LWR9kxQ3eejb2qhpO+pfqNuRqhiXs5uVI/0UJx6ByEX1c6uujV3SZ4ySDe8B70748DV+U8BbmHoY9jlwxi6g7j8z1sxFEghruxpDR/kYTAkVNENf/bXlnlmHphrdqNi/eg5qSjVw0Ld2jXt4ZXJzPw8RWcEyfgpFWI+TZE30cFILUjtwPIDZ8UzGfFb5A5WD2UUggUQ/evEjoosFnjRrtNPAwSgmpFzQB4yrgL5Z3VrOYb1XYncaykTycRf/4dD6ps24AYVoOyVHn/Xt5K6f0fLj/dmJnZWLunI8oZrcV/ziTblI6KDAIFhJd/BRfq0reVX6HHDCU2LnNYB4vUCbJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wUObr7BsXF9L81Sz8FqzVh4vV5b7hkrlk1QVwLFctuA=;
+ b=lUsB7aDOqXhAO/4bBhmTomJnHzJs0jxr+rX3YxvTxbJicab2aQNc5tAwmq5UlRZghFHC0WCDNlxiQFtllqG6U44mkRCrUI7NUM1K1cnoHzjYnJhjjSolbW4+Foc8FSe7BUynhuCWFwNhkat0lxSSLZ0QABVUwp162RfCmKDSIqg96cJnTAHwjcKZCxa7Gx8Gu8cM9ydXczQumtsFm9ew8bY2nkmyNzGwN92x2yRk7kcLXyqPQSDdieqhlw46RDYyMytOX6/osylEASy4/5a1RH243xtCgNBZuG8fpXPdu3tpyGyuLs1DvV89kOW6B8HwBamWTvubMabH/oUPt2tzIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com (2603:10b6:5:394::7) by
+ LV3PR11MB8726.namprd11.prod.outlook.com (2603:10b6:408:21a::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Tue, 28 Oct
+ 2025 23:37:44 +0000
+Received: from DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39]) by DM4PR11MB5373.namprd11.prod.outlook.com
+ ([fe80::927a:9c08:26f7:5b39%5]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 23:37:44 +0000
+Date: Wed, 29 Oct 2025 00:37:39 +0100
+From: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
+To: Michal Wajdeczko <michal.wajdeczko@intel.com>
+CC: Alex Williamson <alex.williamson@redhat.com>, Lucas De Marchi
+	<lucas.demarchi@intel.com>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
+	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
+	<kevin.tian@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
+	<matthew.brost@intel.com>, <dri-devel@lists.freedesktop.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
+ Laguna" <lukasz.laguna@intel.com>
+Subject: Re: [PATCH v2 18/26] drm/xe/pf: Add helpers for VF MMIO migration
+ data handling
+Message-ID: <zh4olea5hdmfrrj62jhcuff3fqqoimt7incrhylqusdvy6bkko@inf4ufj4qhei>
+References: <20251021224133.577765-1-michal.winiarski@intel.com>
+ <20251021224133.577765-19-michal.winiarski@intel.com>
+ <b523664f-50ce-4de6-8d02-90b6938089c1@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b523664f-50ce-4de6-8d02-90b6938089c1@intel.com>
+X-ClientProxiedBy: VI1PR0102CA0067.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803::44) To DM4PR11MB5373.namprd11.prod.outlook.com
+ (2603:10b6:5:394::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR11MB5373:EE_|LV3PR11MB8726:EE_
+X-MS-Office365-Filtering-Correlation-Id: 923ff029-5ab7-4b78-319f-08de167afd76
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Um9RVXg3TERFRmJKWHUvZDBxaVAzVGY1U1JweDZEdG9OSk1NLzFOMkhmSEFJ?=
+ =?utf-8?B?eFFVRVpQaU4zMDVJYU5qUmJFSDBtMUZVNi9RNDhpRVJjcFRydzRNVkk0Zmcx?=
+ =?utf-8?B?UUNQQVVIWkpteGMyT1VQQTl0WGJ4N0lGWGRoMWZXeFJZdWNMU3dLbzZRMnhh?=
+ =?utf-8?B?WFNCdGtOZ2tNRVpqK3NxRkhncmdyL0hFZHlnVi9UdDMrZmVraGVUN0tkWC9O?=
+ =?utf-8?B?bkFmMWNjL0ZnR2lwdHdSVDNKZkEyLzlIT3h3NVdKWWhsVlc0ck14UnVmbndW?=
+ =?utf-8?B?ZXlXb3FlZXJub21vTmc5aTYzN2NKZjM2NThGM2dsTURBeFVxWGgyS2Y1ZFNR?=
+ =?utf-8?B?V0lJV1VjVTBDZSsxbzJaVW5uVVQvTTRjS0xNWENYVGlIdXNCd2xhd3B4Nk1t?=
+ =?utf-8?B?MmsrbC8zZjZ0K1k4cFprVmlLNkpOUzNaaVljU1h0alRZczh5N2dFRkJDQll0?=
+ =?utf-8?B?a3ZxVWQrbVI4VWdTWGRhQlg3LzNWWHRlTUNnSTMwbmNvQ3pSM3FGUmVaeXdl?=
+ =?utf-8?B?dURXWmVjb1BKUGtFRVhpYThkSm8zajFqdm5wcHFNOUk1RHpoYmIyRjhNY0Nh?=
+ =?utf-8?B?Y1lRSC9NS1doWk9ITnU1dDJKS3plb0M2VGdqUno5ZHRQSmRBTFg5VTFtWWxz?=
+ =?utf-8?B?Zkhiakh6U1piNStYWlVzV29COUdLTDlVRWZ5cXJ0b3BSM1VnMkxzRUtubWN6?=
+ =?utf-8?B?ZEZBelJyTUl3YUZyMGJPeXRjYWxrNU9NTFc3Y2JyS0VZZGRYU1hVV0hxblVw?=
+ =?utf-8?B?ZDNiMVVCUTFJcFk5YTdtQmlYUWc5dXBCa1EyclM1Nk9VQ3VxaDVSQnI1aEVN?=
+ =?utf-8?B?ZU5Gd3d3K0hETnpMdVVobzNZaGY2d1czczJiSE1hRnVTT0pBQTg0Ryttc2dG?=
+ =?utf-8?B?dWx5UmI1dWx5U2xmb0tOZ1hDRThWaWlMWENYa0lPOFM3eFAxUkszckw0L2tU?=
+ =?utf-8?B?aW9KYmIzSkgydHlJcURacUc4bDZuSkR1aEZ6ejBPbjJzSkoyNW45UmNrajJu?=
+ =?utf-8?B?UkRXOVp0OCtFMFRrMWRSMjZIQlNkREREVTdYM3ArbmZwalpRVVpyVEVOb1Rs?=
+ =?utf-8?B?SjQrL0o1amUrV1I5aVc0TUtuVUtxejhGMnVlMUF6ZlBBVnZQbzhLMkVjMmlr?=
+ =?utf-8?B?b1NiM3A0RHM5d24razdoMVpveDN6UkpTWDlRLzhQcVF2NzVnTVNRejB4ZHpW?=
+ =?utf-8?B?QXpaSWdwMjJxMVNKemJwVDl3TG9zcUlwcU9lK2xueDM1cnRZUm9zMzd6ZktF?=
+ =?utf-8?B?QWVkcWZScDFGMG9mZ25rQk1BdFNWdDJleVVDS255QmJ1KzMwQ25ZTFZCWnJl?=
+ =?utf-8?B?eGZqMkU1N1ZONjNQODZuZUN2S3RZVVdRNkovUmUzb3lia0t6b09TWjB6b2J3?=
+ =?utf-8?B?d1N6MnZjOW5kS1JDNmFWQUI0dlpranRjSnJsYjNLS3FEanZyeTFMK25YcTlV?=
+ =?utf-8?B?d012aWF3dSt3M2VDUUJkaHl0WlA3VnVjeG4yMURJM3QrRnQzY1ArL1JTY01s?=
+ =?utf-8?B?SGdHOG0xSHhNVGFnaGIvNUtVY0c4d1gwcjl1ZDlUR1ZzWVB5Q0ZMQW56WDNH?=
+ =?utf-8?B?WlJDSnF1b1VlVWR5UlJkeGJzWVEyMmFIN3YwbjlUa0hZSjZxMEUwMEx3WFVr?=
+ =?utf-8?B?UFY1NGQyeFdTK0JRcFlOcHdPQm5ROGlTaTJEQ3JFVXFMVk5CVTVWQTRSOWUy?=
+ =?utf-8?B?Z3JwM09uYW9WSjdEVUZkQzhVRmtxcHY4WTVsaW1vczNZbDNwZEMrS1ZvOEhQ?=
+ =?utf-8?B?WG1nblEyVDFBK1hSNStlczVlcU5jcDFNRUFYR0NUQlEzU3FKUEpYcGZFRXBa?=
+ =?utf-8?B?UE5kRVdiYnExSnk4Y3AydDU4TG9EaWxLUkZRSmNSSHplaGFPUHRONFFsSFQz?=
+ =?utf-8?B?NExGNXZiRkNZSnZpNmZiZTFsR3Rldmk0elJ2UGgwTWUrOE9XNE9PZFlmWUl3?=
+ =?utf-8?Q?1GrZwFyBK8Q16aELIWTP5Z3BSLJ5lH7u?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB5373.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZldGQ3RFcWlHT1paTnJ2Q3l4alJkODJsQWdqbGlpV2d4bWZYS1lPUjhFR2VQ?=
+ =?utf-8?B?VVlNeTlSQXd2cUxLTmpCM1hxd0V1SVJ5ZkVZdHJRSDlWTElqdTg0RzlBYkhW?=
+ =?utf-8?B?YzZBNTFNZ3JHQlNLb2w5cTUxT1RQU3BhbkJIY3QxcVFkTnZkYVlZb1pnblFt?=
+ =?utf-8?B?U2hxT2k3Smx5RzBJV2svdExDTm9lUGsrTHJ6c2VBdWJpcXlwTWNBYStWVGZt?=
+ =?utf-8?B?c0VsTkR5N2JBaEIxVCtCV0RJQWdJb3JXeTNuZ3pwT1FpSjgrb29lK204bDN3?=
+ =?utf-8?B?SVR4UHE2VlZCQkoyZm10K3ZTUEVSUXdROEZabFRFMzh4b1hETUtORzBTamRs?=
+ =?utf-8?B?ZFhXbktDYnZ3dlNOVWFkemlqVnl2RHk0cU5sMnQ2TFQ5MHFkeFRWQkxtZXZB?=
+ =?utf-8?B?Q0Z5azh2Rlo4LzlzS01lTk9ycmFpdU9rbmZaVjVVUEhxZXpIMjVsK21CY1Aw?=
+ =?utf-8?B?bUN2N1R3MzRoSSt5dWExZWRVa1JYbHJYaEtTM1I0eEJXck1EdlAzMlduUXBy?=
+ =?utf-8?B?WlNYWHlPWVFsOFFmRFlDeVRMRTFJZ1Q4ZFBtL0xnb28xVm9oekEwOUhLcHUy?=
+ =?utf-8?B?b2Nqb0JGN3lCNWJIajBpUnErZHZSWlprOCtDWlNPNTVTSFJMM3RTUHdWNnQz?=
+ =?utf-8?B?cTc3azRYOVZ5OTBvSFhtcjJ6Y2NUSmgzRjVsZjY1TXBERndCOGZOZXgrRmw0?=
+ =?utf-8?B?d2h4eEFQQ2hKWkgrNXNnR2dxZFZJOGFLbVg1ZjBCNWN1RXJCTElVRktzTk9a?=
+ =?utf-8?B?T3JhUmRaV1ZMWE0vMk1KMVRMNFdleDFiMHFvQVRIa1d6Umd5bXdoRC9sSUJn?=
+ =?utf-8?B?MGhCWEJZdEtpRnlsdDVjOHluVisvK2lqNGxRS1pJU0Q5QUJRZ1VVaGNCZUpT?=
+ =?utf-8?B?WHo0RlRUWXRtTGJJRFJKaThvNzNMRTNRaGYwU0g1TzhMbTRXWUdWMVpyU1lF?=
+ =?utf-8?B?N25SUXFwYmp2ODdRZnMwVkRVVDFOTW1XYjVHUUNyd2xDWitOMmk2dmlaNWlT?=
+ =?utf-8?B?cVRuZURCa3hic01QWnN5VG13d1hjanpmU0VHck9WU1ExZFRTbHJGU1VuYjNk?=
+ =?utf-8?B?TVZVcTMyQjBreG52ZnNDNlNUY3RjbXp6MjVDdnhmc1dMVFhnc3l2aDVod2Ex?=
+ =?utf-8?B?eUVNTXBGcDZpcHFTLzYyWVYzbEVwcjNHdzExdEV6Z25xa3RyZ295OU1VQUVz?=
+ =?utf-8?B?NjVJcklWN3Z4RGptbEwzMDcwTkNRWXRKc3R2Uk1ITGZoWUZ5T0Vsa3c1QTFl?=
+ =?utf-8?B?VVc4Mk5keEh0cTFOUCtvdnh1VzBPNFp4VDB6cmJDb1VmcTA1SHFUTE5haS9K?=
+ =?utf-8?B?ZFc1R2lqV0NSK3dJVkZyQk8zWDFPVVlSNU1TbWFxR3A5eUxlRkJmOVIwN1RF?=
+ =?utf-8?B?bHFUcDBMNWVXZWI4ZHM5d3VGcU9lZTVFNTR2OFRlTFRDcGRFQVVmM3dVczVE?=
+ =?utf-8?B?S0RXMktSa0RFMy95NjZSVGd3elQzZUpnZkxFdGtSMVZHMUlEWWhBamU1eVYz?=
+ =?utf-8?B?VE05aFVUWHpwM0cyS0FpRjNKb0RIaStaMHdQSkpmZFUxSzFlOTJlMXZicGU3?=
+ =?utf-8?B?c0FVTXRTWU5SS3JjZHVlNURoTFhDTFFzdGVvdW5ENnpuQS94UXRDQmd1MGVs?=
+ =?utf-8?B?YkVwV1RsTEJ4ckhvM3pBVDd0a1dWMTZMaDcwM3k0eGJzTXkxK1ViSUZWRFYz?=
+ =?utf-8?B?QnREdnZ2Tko5U1puMzFXQWNrVHFZNnRTVWdzV052V2srVHhQK2RXWmJOUWI1?=
+ =?utf-8?B?M3YxQVQyb01Od1UzdDZUeldnRnZNd216dHNYdGFUL2QzN3Z4eTJPUnFzdThk?=
+ =?utf-8?B?Q00vdmUrVDI0K0NJTUlWRUFOM3QxR2s3cHdGVGNsVEJpQms1TFl6RnE4Q2I1?=
+ =?utf-8?B?S2tMZk5heDVoWmZUclFRK085Vk4ybzRBRFRKSDNIMk8vV3BuZ2RuR1RKWllZ?=
+ =?utf-8?B?MHhVdHllWWZxYVU3WE9xN2FvUk9BOS9mT1ptUElZMCtaZmkxWEJWT2FUd3NU?=
+ =?utf-8?B?ZytVUG5HamN4UzlTL0h2bWZia05RLzNkVWMrV3gxc1V1Nk4vTlNZazhMTTRo?=
+ =?utf-8?B?bmliVDBsNTRHRlhSNFE3SjVsK0NQQjVwU1VVVmdwQ0RxNlZRWHR0T1YyVWIw?=
+ =?utf-8?B?ZlVjNzArbmdmbERxN0FZOEpNK1k3N2JBR28vRlhzeVIwMDcvakI1dEV2NHE5?=
+ =?utf-8?B?K0E9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 923ff029-5ab7-4b78-319f-08de167afd76
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB5373.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 23:37:44.3850
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +A/EVCWqyhf5JLPmFKRk/dGpfLsl4ojBXcpvjT9LPnMn8n1Dr3tNl2yFumOBFgk7XiO4LSIV2yVnBdEmLA1QF5GEeNhr/5vjRc7MJfdhl1g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8726
+X-OriginatorOrg: intel.com
 
-On Tue, 2025-10-28 at 11:11 +0530, Manivannan Sadhasivam wrote:
-> On Mon, Oct 27, 2025 at 11:22:26PM +0000, Vitor Soares wrote:
-> > Hi Krzysztof,
-> >=20
-> > Thank you for the feedback.
-> >=20
-> > On Mon, 2025-10-20 at 13:14 +0200, Krzysztof Kozlowski wrote:
-> > > On Tue, Oct 14, 2025 at 12:25:48PM +0100, Vitor Soares wrote:
-> > > > From: Vitor Soares <vitor.soares@toradex.com>
-> > > >=20
-> > > > Add optional regulator supply properties for PCIe endpoints on TI S=
-oCs.
-> > > > Some boards provide dedicated regulators for PCIe devices, such as
-> > > > 1.5V (miniPCIe), 3.3V (common for M.2 or miniPCIe), or 12V
-> > > > (for high-power devices). These supplies are now described as optio=
-nal
-> > > > properties to allow the driver to control endpoint power where
-> > > > supported.
-> > >=20
-> > > Last sentence is completely redundant. Please do not describe DT, we
-> > > all can read the patch. Driver is irrelevant here.
-> > >=20
-> > >=20
-> > Ack, I will remove last sentence.
-> >=20
-> > >=20
-> > > How you described here and in descriptions, suggests these are rather
-> > > port properties, not the controller.
-> >=20
-> > You are right - these supplies power the PCIe slot/connector, not the
-> > controller
-> > itself. However, as per my understanding, the current kernel practice i=
-s to
-> > place slot supplies in the root complex node rather than the endpoint n=
-ode.
-> > as
-> > seen in e.g.:
-> > - imx6q-pcie.yaml
-> > - rockchip-dw-pcie.yaml
-> > - rcar-pci-host.yaml
-> >=20
-> > This seems consistent with those existing bindings, but please let me k=
-now
-> > if
-> > I=E2=80=99m overlooking something specific to this case.
-> >=20
->=20
-> We do not properly document it, but defining the slot supplies in host br=
-idge
-> (controller) node is deprecated. Some bindings still do it for legacy rea=
-sons,
-> but the new ones should define them in the Root Port nodes as they belong=
- to.
-> We
-> do not have a separate DT node for PCI slots, but rather reuse the Root P=
-ort
-> node.
->=20
-> There are also bindings that define supplies in the endpoint node. They d=
-o it
-> for devices directly connected to the PCI bus without a connector (like i=
-n
-> PCB).
->=20
-> - Mani
->=20
+On Fri, Oct 24, 2025 at 12:10:31AM +0200, Michal Wajdeczko wrote:
+> 
+> 
+> On 10/22/2025 12:41 AM, Michał Winiarski wrote:
+> > In an upcoming change, the VF MMIO migration data will be handled as
+> > part of VF control state machine. Add the necessary helpers to allow the
+> > migration data transfer to/from the VF MMIO registers.
+> > 
+> > Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> > ---
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf.c | 88 +++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/xe/xe_gt_sriov_pf.h |  6 ++
+> 
+> wrong place for those helpers
+> 
+> just promote xe_reg_vf_to_pf()
+> 
+> or maybe it can be done like this:
+> 
+> 	void xe_mmio_init_vf(struct xe_mmio *vf, const struct xe_mmio *pf, vfid);
+> 
+> then
+> 
+> 	struct xe_mmio mmio_vf;
+> 
+> 	xe_mmio_init_vf(&mmio_vf, &gt->mmio, vfid);
+> 	val = xe_mmio_read32(&mmio_vf, REG);
+> 	xe_mmio_write32(&mmio_vf, val, REG);
+> 
+> let me try check this out
 
-Thanks for the clarification and context. From what I understand, the
-recommendation is to define the supply regulators under the individual root=
- port
-node rather than in the host bridge (controller) node, as the supplies
-conceptually belong to each port rather than the controller itself.
+With:
+4504e78068924 ("drm/xe/pf: Access VF's register using dedicated MMIO view")
 
-On the j721e PCIe controller, the current driver implementation assumes a s=
-ingle
-root port and doesn=E2=80=99t parse child port nodes. To follow the new con=
-vention, I=E2=80=99d
-need to refactor the driver to support root port subnodes, and I wonder if =
-the
-PHY reference and reset should also be moved to the Root Port node in that =
-case.
+The helpers are somewhat no longer necessary.
+I'll move the logic to xe_gt_sriov_pf_migration.c and drop this patch
+completely, moving everything into:
+drm/xe/pf: Handle MMIO migration data as part of PF control
 
-Could you please point me to an example of a PCIe controller binding or dri=
-ver
-that already follows this approach?
+Thanks,
+-Michał
 
-Best regards,
-Vitor Soares
+> 
+> 
+> >  2 files changed, 94 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf.c b/drivers/gpu/drm/xe/xe_gt_sriov_pf.c
+> > index c4dda87b47cc8..31ee86166dfd0 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf.c
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf.c
+> > @@ -194,6 +194,94 @@ static void pf_clear_vf_scratch_regs(struct xe_gt *gt, unsigned int vfid)
+> >  	}
+> >  }
+> >  
+> > +/**
+> > + * xe_gt_sriov_pf_mmio_vf_size - Get the size of VF MMIO register data.
+> > + * @gt: the &xe_gt
+> > + * @vfid: VF identifier
+> > + *
+> > + * Return: size in bytes.
+> > + */
+> > +size_t xe_gt_sriov_pf_mmio_vf_size(struct xe_gt *gt, unsigned int vfid)
+> > +{
+> > +	if (xe_gt_is_media_type(gt))
+> > +		return MED_VF_SW_FLAG_COUNT * sizeof(u32);
+> > +	else
+> > +		return VF_SW_FLAG_COUNT * sizeof(u32);
+> > +}
+> > +
+> > +/**
+> > + * xe_gt_sriov_pf_mmio_vf_save - Save VF MMIO register values to a buffer.
+> > + * @gt: the &xe_gt
+> > + * @vfid: VF identifier
+> > + * @buf: destination buffer
+> > + * @size: destination buffer size in bytes
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_gt_sriov_pf_mmio_vf_save(struct xe_gt *gt, unsigned int vfid, void *buf, size_t size)
+> > +{
+> > +	u32 stride = pf_get_vf_regs_stride(gt_to_xe(gt));
+> > +	struct xe_reg scratch;
+> > +	u32 *regs = buf;
+> > +	int n, count;
+> > +
+> > +	if (size != xe_gt_sriov_pf_mmio_vf_size(gt, vfid))
+> > +		return -EINVAL;
+> > +
+> > +	if (xe_gt_is_media_type(gt)) {
+> > +		count = MED_VF_SW_FLAG_COUNT;
+> > +		for (n = 0; n < count; n++) {
+> > +			scratch = xe_reg_vf_to_pf(MED_VF_SW_FLAG(n), vfid, stride);
+> > +			regs[n] = xe_mmio_read32(&gt->mmio, scratch);
+> > +		}
+> > +	} else {
+> > +		count = VF_SW_FLAG_COUNT;
+> > +		for (n = 0; n < count; n++) {
+> > +			scratch = xe_reg_vf_to_pf(VF_SW_FLAG(n), vfid, stride);
+> > +			regs[n] = xe_mmio_read32(&gt->mmio, scratch);
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +/**
+> > + * xe_gt_sriov_pf_mmio_vf_restore - Restore VF MMIO register values from a buffer.
+> > + * @gt: the &xe_gt
+> > + * @vfid: VF identifier
+> > + * @buf: source buffer
+> > + * @size: source buffer size in bytes
+> > + *
+> > + * Return: 0 on success or a negative error code on failure.
+> > + */
+> > +int xe_gt_sriov_pf_mmio_vf_restore(struct xe_gt *gt, unsigned int vfid,
+> > +				   const void *buf, size_t size)
+> > +{
+> > +	u32 stride = pf_get_vf_regs_stride(gt_to_xe(gt));
+> > +	const u32 *regs = buf;
+> > +	struct xe_reg scratch;
+> > +	int n, count;
+> > +
+> > +	if (size != xe_gt_sriov_pf_mmio_vf_size(gt, vfid))
+> > +		return -EINVAL;
+> > +
+> > +	if (xe_gt_is_media_type(gt)) {
+> > +		count = MED_VF_SW_FLAG_COUNT;
+> > +		for (n = 0; n < count; n++) {
+> > +			scratch = xe_reg_vf_to_pf(MED_VF_SW_FLAG(n), vfid, stride);
+> > +			xe_mmio_write32(&gt->mmio, scratch, regs[n]);
+> > +		}
+> > +	} else {
+> > +		count = VF_SW_FLAG_COUNT;
+> > +		for (n = 0; n < count; n++) {
+> > +			scratch = xe_reg_vf_to_pf(VF_SW_FLAG(n), vfid, stride);
+> > +			xe_mmio_write32(&gt->mmio, scratch, regs[n]);
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /**
+> >   * xe_gt_sriov_pf_sanitize_hw() - Reset hardware state related to a VF.
+> >   * @gt: the &xe_gt
+> > diff --git a/drivers/gpu/drm/xe/xe_gt_sriov_pf.h b/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > index e7fde3f9937af..7f4f1fda5f77a 100644
+> > --- a/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > +++ b/drivers/gpu/drm/xe/xe_gt_sriov_pf.h
+> > @@ -6,6 +6,8 @@
+> >  #ifndef _XE_GT_SRIOV_PF_H_
+> >  #define _XE_GT_SRIOV_PF_H_
+> >  
+> > +#include <linux/types.h>
+> > +
+> >  struct xe_gt;
+> >  
+> >  #ifdef CONFIG_PCI_IOV
+> > @@ -16,6 +18,10 @@ void xe_gt_sriov_pf_init_hw(struct xe_gt *gt);
+> >  void xe_gt_sriov_pf_sanitize_hw(struct xe_gt *gt, unsigned int vfid);
+> >  void xe_gt_sriov_pf_stop_prepare(struct xe_gt *gt);
+> >  void xe_gt_sriov_pf_restart(struct xe_gt *gt);
+> > +size_t xe_gt_sriov_pf_mmio_vf_size(struct xe_gt *gt, unsigned int vfid);
+> > +int xe_gt_sriov_pf_mmio_vf_save(struct xe_gt *gt, unsigned int vfid, void *buf, size_t size);
+> > +int xe_gt_sriov_pf_mmio_vf_restore(struct xe_gt *gt, unsigned int vfid,
+> > +				   const void *buf, size_t size);
+> >  #else
+> >  static inline int xe_gt_sriov_pf_init_early(struct xe_gt *gt)
+> >  {
+> 
 
