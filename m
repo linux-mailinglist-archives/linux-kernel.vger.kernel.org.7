@@ -1,229 +1,240 @@
-Return-Path: <linux-kernel+bounces-873158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4712AC1344B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:18:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6CE5C13460
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:23:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38CD94EE5EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1601891273
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7772247A6B;
-	Tue, 28 Oct 2025 07:18:43 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36DD17B506
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 07:18:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761635923; cv=none; b=W395DiP/Mb7TuNJkyngKDfAQIPt7FXMwOqAejHHltexAjQdUBjunCCiOf2+CA9HeEXfv91jzqLOvGd59zVLlcYy1XwTEzYCAiK3v4u24NnCf3Uvdb+mNr7oncAtPiRutqcQ8ukZ8PL0UJVz6EQz2iTP9I9N88w35JKbibzg4av8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761635923; c=relaxed/simple;
-	bh=9wFMyl+wlVQmV9kjcbTomuLiPKrjV9h0+QJfzU8zhOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aUCL8ju2UHmTcEandhH2jiRhow0zLd/mJUE7R5M2W/80NYfQgWDoRdBULoRv73bYJJDYplPAGNn5Gr3RNWiDMhCJJgoD/Anrk/sGmB9B+5avdKSfZTTcQKSWtMSQKXVnEHntj2l5MsUJveNSuz5RxycxA9tu+uGMhvm2VRoH+sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [223.64.68.45])
-	by gateway (Coremail) with SMTP id _____8DxvdJNbgBpq3obAA--.58965S3;
-	Tue, 28 Oct 2025 15:18:37 +0800 (CST)
-Received: from localhost.localdomain (unknown [223.64.68.45])
-	by front1 (Coremail) with SMTP id qMiowJCxrsNJbgBpsa8UAQ--.1270S2;
-	Tue, 28 Oct 2025 15:18:36 +0800 (CST)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	Xuefeng Li <lixuefeng@loongson.cn>,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: Consolidate max_pfn & max_low_pfn calculation
-Date: Tue, 28 Oct 2025 15:18:25 +0800
-Message-ID: <20251028071825.1639678-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198161FECD4;
+	Tue, 28 Oct 2025 07:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="g4zfiZ5+"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazon11013034.outbound.protection.outlook.com [40.93.201.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC44885C4A;
+	Tue, 28 Oct 2025 07:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.201.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761636140; cv=fail; b=RzO5udwAOCJu4436jR5hzcv/bzMLyurUMwqFbJzIdoHa5ePbsTn+AJbmU/YVwPA3UH9DFzc0qGlTUuuCiKrOoJNp+AGuF/5Q9S6HnYnjE9aDf/AN+8LzeowoHY8IaUtecw6ONYPu5Sr45SsmC4iJ5865/c1yVcFXTn61v+x+hx0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761636140; c=relaxed/simple;
+	bh=b13d5voqQ/9QTzXKmiMz85YB9quEAg1EUTs7xejWhWY=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=FLYuO15h0xHsd1NkFqnniuq35y2ELPEkRh4NJzK0AjLBSWA1D/O2YVH1wwJWh5S6idL4ZTD43IMer299e1lzBb7cRB/hQ36KafmT6/yaSddQNskHmBRmPPbY2CkfQ/UHT8Wz/TOjo+sozU6SYFZh6YOaRQWLQJ4V1BTR/NfWFIQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=g4zfiZ5+; arc=fail smtp.client-ip=40.93.201.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JqXCbjxrv5GCIuM49d3R9JgNmTo69Q3t8efG7zXcIUFPypI62SSmlo8jrxfSQBcr50Q3N3DGjX5BE8ZMugpghZgNMZRYolLyWlXy1FNDRLYBi0pRSkr3BxbxFenidQW6mG9C6Y0QF2rLWnz+d7Ym7sAfMTnUXn7FkN6F/XUw002bcYKE3tFD5rTPFJ4LZGGsuLHIi6VrJ0dDJOHrYHG9I57WqQ6MA2H0Ku+ceRI3J/fCQtNnu6a91RUjZMStRXFvEiCj6CH6eegeTCa/IktcI9C4W86CVTD21fxJUl0+yyRPzZwN/KXF+EZNiU3cIOGjWtRa1HI6UZc5mv+41MiJuQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VHL2iyj/WJmf3f9RquAh9jSoPefeMfU36CiJTmK2ClU=;
+ b=r33qI6XCd2RqT+U/0lov0ewro0l/yJZHxtr/gR1GqjRU6QOdCGKmBD7nl2LWc1JAaSCUiVZlIXPpgOsvW6DssFcQVzNBNAiXfLYv9KiXJM8lBTPZayKiNwm0B0E8eFXcJILL0kJsFPnPl6AelL+9WY7uONKUd7EMba3WFZvujU5UWYPSs0giyx22XlYRI3c7GkEHl0tYflsp8HqFZK2tzojJii+rhvksW6QWDrUZnDDbd1lWrVNx3c2a74qmhZLD6bIwf4NnM3BNizswQTQI525cNeNnk1UrWR8WGQGZ63KtQZAhJMHRXzMsh/gYS4Vz2E4Kx1XTlTXK62fIrYHKrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VHL2iyj/WJmf3f9RquAh9jSoPefeMfU36CiJTmK2ClU=;
+ b=g4zfiZ5+SI+1Pgi0BVzC4Vdsa+to47FS58u0bnaQ3Oj0acy7aqBS4KO9DZS1qomnqQe561Y027b1aS9gmL7ySyxsF8iPWi2G0jUHaY4jUqNKTzE8mYkwq6vt/PYZu7LXijNFHJim+rFpOLnZGbU0dGhMDrw+iSKOl1vlXUvIFbuTV2LJPUb9u/haWiSHnVRgsfS3w1v1IMSH+acbSQCunLaXXvSZOI2MV+IG3uXeRxccCGlK28rlzvC+3SiDDKNLENorjWXjR0pDx60VB1E+T7lO57rNl4KYGQidtFRf9okO52bqDrJDWR6miSwAG+XArlg9FLzDuuguWVN+iULJoA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH3PR12MB9196.namprd12.prod.outlook.com (2603:10b6:610:197::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.15; Tue, 28 Oct
+ 2025 07:22:16 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 07:22:15 +0000
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 28 Oct 2025 16:22:09 +0900
+Message-Id: <DDTRW1P2I4PB.10ZTZDY95JBC5@nvidia.com>
+Cc: "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Edwin Peer"
+ <epeer@nvidia.com>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Nouveau" <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v2 2/7] gpu: nova-core: vbios: remove unneeded u8
+ conversions
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
+ <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com>
+ <20251027-nova-as-v2-2-a26bd1d067a4@nvidia.com>
+ <50f8b846-aead-43d3-b3f0-49e67b1952b5@nvidia.com>
+In-Reply-To: <50f8b846-aead-43d3-b3f0-49e67b1952b5@nvidia.com>
+X-ClientProxiedBy: SI2PR06CA0002.apcprd06.prod.outlook.com
+ (2603:1096:4:186::10) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJCxrsNJbgBpsa8UAQ--.1270S2
-X-CM-SenderInfo: hfkh0x5xdftxo6or00hjvr0hdfq/
-X-Coremail-Antispam: 1Uk129KBj93XoWxKr45Gry3CF1kuw4kKw1rGrX_yoW7XF15pr
-	yjyr95Jr48Wrn3Z3yIq3s8ury5J3Z2kw47Way2kF93uFnrZrnrXr1kXrnrZF90q3yxCFWS
-	vrnYyrySv3WUt3cCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8zwZ7UUUUU==
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH3PR12MB9196:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53e0c546-28a8-4959-ba0a-08de15f2b72f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bWhSWG1SMkN4TGFMeVRuV1RhQ1pBL0cxS1hEbS9RRDB5UjZGb0RaQ25HRE05?=
+ =?utf-8?B?emtkZFoxY1lBWG4wcWRld29nbmttbmVoRDZIU29FVkNzK1k1ems5OWl5bXlu?=
+ =?utf-8?B?SVpNT3NKSjF4ZmNVU3ljajdzbndwQUxlK2RCbkZmZXZ0eVNJRk5odWh2Zk16?=
+ =?utf-8?B?b3NYTDhjR3FoSGtBMzdEK05VWUM2bUNydEVkSVZRR3F0bU83YUtJS2xvaGdO?=
+ =?utf-8?B?Lyt4STB0bnNiY0xCMEZyamV1ZDNXc2tKZjVQQUJvZTlUcEplelBjVGdKZUdj?=
+ =?utf-8?B?UUxLWlR3TTg3TFI2SEtuaDI1LzVSWEI2ZXBFQ1M1YkFHeEc2UjRiczZtaU02?=
+ =?utf-8?B?ZEU3MnZCSUt3dGFEZmNZQS9qU1FtTVkraVZVMTUxM3JCQ3MxZ1JtRGNnVnBM?=
+ =?utf-8?B?SU4wa2xFa2xJWGppRndiNGdYR1VOUGJ1SmV2ZDBwOW0rZDFrZFBqRksrcnFU?=
+ =?utf-8?B?Qm1LcFdzbExFcnBCdHpSZWxiOHNRR05TUlFNZllvWmtKazhoNmR3bGFwTDRC?=
+ =?utf-8?B?YnhwVzVjOWlhS0pqbEVtQ1psOTZYWTR4R2ExN1RBNm1EUFBSQk15L2VkSC9P?=
+ =?utf-8?B?cmdQR3VocU1DQWZsSFhJbGhaSFNxcmVycEtvNkhoQTlDYVc3ZnlNUlNZd1NY?=
+ =?utf-8?B?dzFHWVBuc1ljVDVGSnRaMGpKSDFGSFFpZEZTdWkwL01SeVpDTCtIai96TXlT?=
+ =?utf-8?B?UDNydCtyMEV4TnZ2bjcyYWx5SE5FcWFGa3orQXA4WXZtcUd6R1JjbmpYdlhR?=
+ =?utf-8?B?WEhEa3FzZE5JY2dqeVRBSGJ0dVV3UDdJd2RnZEgzZ0tFOVVVVHRDYUkrT3Bp?=
+ =?utf-8?B?ZlMzN1BXaDdaekwrVUVuT3lVdDRoWW5IS1FvMm1aR2JtNFU1UW1POTJBU2FY?=
+ =?utf-8?B?bkNkYVErLzgxaHhRRkVMZlJWNFd1QlgxRURhZFhzN3ZjRUlrcWJXL004dTE4?=
+ =?utf-8?B?WElqaVhnUFpyb0pOY0NLUFFRdE0wUlJORk9BR3czaFdKcGk4NVp3SlNvVFRo?=
+ =?utf-8?B?RnNZd0J2eVNzR3NBQmQ2QXU1L3NheERUQU80TzVhZWt4THV2UjBpb25oR21U?=
+ =?utf-8?B?WVNzV2RoM281L1FEZk0vdWkycjB6ZXZKdDY0TUhBaThucm4zZnAxQzRMTFBw?=
+ =?utf-8?B?UjlGY0FNMklHOUhUSWZQb0NUNUoyZnl1ck96L3FYOWc3enhmL1ZjMDJGaUlK?=
+ =?utf-8?B?eFZKRENhNTlucmsrckRrdG5wTWMzWTBHK3ppc2ZYQk56cE1ONWRSSkk3UVZt?=
+ =?utf-8?B?TG16T1ZGZFgvZUJLVEIrWklSbnFGa0E2cktrUHFsT2xrZi9JZWtYc05zd3E4?=
+ =?utf-8?B?OEJVY01oQXNIUi8zczIvVnJyUkR6b0RwcTVsd09hSTl3NkZLZklmNk1YK2Rn?=
+ =?utf-8?B?QWZoQ1BkN0M4RXpjV2dTOCtCSW5SREF5a3lOdG0vLzk1N3RNTjNhV3IwTGRL?=
+ =?utf-8?B?d2RqRlVyVTd5eHdvRTl0ZE9LU3FHZGw2bkxRQVVzUFJNR21OcU1HcmVVV1E0?=
+ =?utf-8?B?cjhzOVRhUmI4ZEtKMThuVW5RU0d2MUxoVlZOUm1BUnNqeVBKWE1XZmduZTZm?=
+ =?utf-8?B?REZHTFl0TE9SbStVYm9iWWRGeTQ5SDE3UU9lOTBVWlkrbVRwRk42WDhYZlpx?=
+ =?utf-8?B?ejVUNlRjSEJOSGF3KzhyOUpMQXlCOVcvV0txc25FdW0zOFRUOXVCTWdOeERr?=
+ =?utf-8?B?ZXdibGR0YWRqRkt6cVZjeWRSaTlLTzFXNDFrLzFmL29BY005Ym0wY2haTEY0?=
+ =?utf-8?B?V2F4ZXdjVktuL0Fwc2FxQ1VkTy9Wbm4zTk82QkJZNDRoL0J4YkdKSHRhMDlk?=
+ =?utf-8?B?d3czc29QSjdjUnpzOWRuK3RZOUpyTXY2emdoc2RHZHFQdDhqanJSWmpaMTl3?=
+ =?utf-8?B?RE1EcXl3RHNoNWFDZEVjNzhROFZNZlY2ajYzcHlFWnZIdmZQUTgzUWJFU2Vj?=
+ =?utf-8?B?QVl2bHdVNnQ3UWtFSEhxSk1TVmhTdXdqRkRhUnFVSnlyTU9rSGFOQldGMFZS?=
+ =?utf-8?Q?buKaowuxenIMLoivpGOsbiiC7z7A+E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OTVHd2E1Y2pYU0JKT0JIcFJ2TTJ0RERDa1FTcDlkTXYrcloxNU5lNUpURlV2?=
+ =?utf-8?B?M1l0bXJPKzdtNWdwc21JWmxReW5OakZQdlN4Q1pFZVhFNGp4dkN2U1VLWUJ5?=
+ =?utf-8?B?aDhGVXVoVFF4TFlPeTFzWHRoVjJRT2kwSUVnQ0pRVExScHMwVjRsVEYwMWsv?=
+ =?utf-8?B?aGMrc0dtNi9pdWllMVN2dGtCUXhDaHhOTUJidFAvU2VHSDF0b3lXd2pKN2Rm?=
+ =?utf-8?B?UFNoeDNFZFdvWFhBTXhvKy9RbTFRY1F2am1DVU1Nb3ZPbEx4ZEI2R0Q3ZTRn?=
+ =?utf-8?B?a0ZtU3M0MnFxc3BLMDZPUS9ZNEJLK3ptRVN6cEwxbUNpbnNqVEtSTGpISlBw?=
+ =?utf-8?B?Skowb0c0cHdBR052djVBRmozbjlYSzYvaEg0dVpLSStrY2wzdzR5WU9QUnFi?=
+ =?utf-8?B?YkhvQjNiNzZHOXFGUUE5S21rR2MxSlpXYmlRSGRPOW90aVlhbHhpZDdsUHVy?=
+ =?utf-8?B?OEpiQ3FhbzJrTlVsNVlxOEN5ek5WUUlsSzE3cmkxeTZSazZrcjdCeUdjSEJV?=
+ =?utf-8?B?Wm9aZHlpQ0VsYTBuRnhvR1hQTWc5eGJrSUJ3VitDdHVyY096UjBMc1hiYWVh?=
+ =?utf-8?B?akJZbENLREdOckRDMGVoRlRKbXpmVzlPRGRYYjdVeFBJeUQwMnQxR003T2xv?=
+ =?utf-8?B?Z2Z1blZsc1RNUTNXZDRNbGcxbEFpZ3B3OFdsZmdpVTZoV2ZYSXNIbUhnQXR1?=
+ =?utf-8?B?QTc2ZG9jWVBiR2FXT05PSmdHMUVDSTUrL1RQdThETWg0UmJCMEt6aCt0dnQ5?=
+ =?utf-8?B?RldRVmx2Z3Q4clpnVVRaOHpXb21kMldCcy9Za2pYL0JRcUhUU2NCV05QZTd3?=
+ =?utf-8?B?WnovdnZPcnZGOTdmWWxTU05aRTJpa1BlU29LVGJaYVdHUDRQVUVkS1UvdXpm?=
+ =?utf-8?B?WmNlWCtlWk43ZWZHSlFPRmlBQkF2S09JM2tCNElRTWc5S3ZLY3lKejlISDRZ?=
+ =?utf-8?B?RkFZUTAwTlJNZzNjWXhtcHpKeDZRUngrM3VCNEgrOG41TlRzQWZSVWRWYS9v?=
+ =?utf-8?B?RGFOMUlRRjUxUTVnd1VBazBSaG0xZWtJTDdnQTdWbUczMnkxRlZ3bjZqcnpM?=
+ =?utf-8?B?STRlOTR6MWpxUVZOUDFwV3pmSlVOdjZlRVJTRG9jQm0yYVRUREhoYXk4Qk5K?=
+ =?utf-8?B?U2FnczArNFMrQUF6eW54R2N0K1VhYThtVVpVRUNNR0kyMHJXRFQ4TWpPYkZT?=
+ =?utf-8?B?MXVlZTcwaHhYSXU3TnJ4YlRNY1QyQTV2Z3cyU2xTWFlYeUlHQ3Q4dkZZSmxx?=
+ =?utf-8?B?RnYrYjFKYlFhY2tuVXNyK3FVWk1FQ2NnNjdocERYbzVab2E0THdFblRDUFll?=
+ =?utf-8?B?U2tqRitUOGtwcVBRM1VYTTVHU2FQYi9Wa2pXS2d5REczdktLWVc0cnBPOFVL?=
+ =?utf-8?B?cVY1VXY3aWFrWCsreGtOSnRzNGZHOWlvYjhSbG9rYnMvR2ptK3dHdzJsemU5?=
+ =?utf-8?B?U0VPT1RZekpJa0JNVElUajMvNE00MTBGUUlseENGTnpUaEpLRDhyZHdOZGtN?=
+ =?utf-8?B?TlhkSVdScFdqdTBZend6Uy9BWG9jWFFlY2R4T2FzWWZhOVhsS2E1dTI0WWRJ?=
+ =?utf-8?B?VHUraVJncE5HWnVWSk5PMUg4cTdUdXBJVTd1MHZDOW9rVDFKa1pQRWJXTCtK?=
+ =?utf-8?B?UHo5OGJEd2x3My9HS29IMTRyV3dLNXNuWENQWlQzYkRHaklqeEJ2Y2lsb25D?=
+ =?utf-8?B?VEdWZW05NUNhZjZuZjkyWjkwUkY1UERXeHl0dEEyd1ZJRTlHMUdDZkQxTW5K?=
+ =?utf-8?B?RDg1M3dDcVhRbFhOajNvUkxja3l5c1lpMGZxYUxsdVliOHhZOHZXcHVwTldv?=
+ =?utf-8?B?L0xubWtGV3hHZDVzVkFTZTVNa2FudUh3dFlYTXh6UmMwT3JYUHhlMHZPSWN4?=
+ =?utf-8?B?T2JwVHovUnpjYzR0ODhFZHdqU0Y4UlhoZHhBYmZJc2FlVERzcXZYYU43SkYz?=
+ =?utf-8?B?TGF0SGtSVEY0S1VSbHphZ2dSNi9YUm85U2tpVW1HaXg0L1ZKeGo1aDJZQVJk?=
+ =?utf-8?B?SzZ2QWYxdmx1T1FrWWR2bjJVVXhFeDdJWWc4SUdWL3Z0cmJTcFcyL0cwT0tO?=
+ =?utf-8?B?Ulc0aS9qTk5INXVVQWExUkF6L01zTGZRaVZSc3ZhQjNVVkJBejNJTXNxcmFo?=
+ =?utf-8?Q?qXm7cbvfm1+fUsVtLYQZ5nSVI?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53e0c546-28a8-4959-ba0a-08de15f2b72f
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 07:22:15.3565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bfu/kVdDotTVVqPwTVeVoxIT9zpHv2fI+xC+jRzc1qYvDEGKjnW+OcHYf99GvCVjSxtxg1fwq4h05PENfUF9CQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9196
 
-Now there 5 places which calculate max_pfn & max_low_pfn:
-1. in fdt_setup() for FDT systems;
-2. in memblock_init() for ACPI systems;
-3. in init_numa_memory() for NUMA systems;
-4. in arch_mem_init() to recalculate for "mem=" cmdline;
-5. in paging_init() to recalculate for NUMA systems.
+On Tue Oct 28, 2025 at 2:41 AM JST, Joel Fernandes wrote:
+> Hello Alex,
+>
+> On 10/27/2025 8:54 AM, Alexandre Courbot wrote:
+>> These variables were read from the u8 array `data` and converted to a
+>> `usize`, before being converted back to a `u8`. Just re-read them from
+>> the source to avoid using `as`.
+>>=20
+>> Acked-by: Danilo Krummrich <dakr@kernel.org>
+>> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+>> ---
+>>  drivers/gpu/nova-core/vbios.rs | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>=20
+>> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbio=
+s.rs
+>> index 943b0dac31df..dbe0d6e4a015 100644
+>> --- a/drivers/gpu/nova-core/vbios.rs
+>> +++ b/drivers/gpu/nova-core/vbios.rs
+>> @@ -911,9 +911,9 @@ fn new(dev: &device::Device, data: &[u8]) -> Result<=
+Self> {
+>> =20
+>>          Ok(PmuLookupTable {
+>>              version: data[0],
+>> -            header_len: header_len as u8,
+>> -            entry_len: entry_len as u8,
+>> -            entry_count: entry_count as u8,
+>> +            header_len: data[1],
+>> +            entry_len: data[2],
+>> +            entry_count: data[3],
+>>              table_data,
+>
+> Why not just change PmuLookupTable to:
+>
+> struct PmuLookupTable {
+>     version: u8,
+>     header_len: usize,
+>     entry_len: usize,
+>     entry_count: usize,
+>     table_data: KVec<u8>,
+> }
+>
+> That is cleaner and removes the issue while allowing to use the local var=
+iables
+> (and also makes sense to be usize as these 3 fields are size-like fields)=
+.
 
-Since memblock_init() is called both for ACPI and FDT systems, move the
-calculation out of the for_each_efi_memory_desc() loop can eliminate the
-first case. The last case is very questionable (may be derived from the
-MIPS/Loongson code) and breaks the "mem=" cmdline, so should be removed.
-And then the NUMA version of paging_init() can be also eliminated.
+That would work! But while trying I also figured we could just split the
+header into its own `repr(C)` struct and use `FromBytes` on it, which
+would achieve the same result with less array indexing.
 
-After consolidation there are 3 places of calculation:
-1. in memblock_init() for both ACPI and FDT systems;
-2. in init_numa_memory() to recalculate for NUMA systems;
-3. in arch_mem_init() to recalculate for the "mem=" cmdline.
-
-For all cases the calculation is:
-max_pfn = PFN_DOWN(memblock_end_of_DRAM());
-max_low_pfn = min(PFN_DOWN(HIGHMEM_START), max_pfn);
-
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kernel/mem.c   |  7 +++----
- arch/loongarch/kernel/numa.c  | 23 ++---------------------
- arch/loongarch/kernel/setup.c |  5 ++---
- arch/loongarch/mm/init.c      |  2 --
- 4 files changed, 7 insertions(+), 30 deletions(-)
-
-diff --git a/arch/loongarch/kernel/mem.c b/arch/loongarch/kernel/mem.c
-index aed901c57fb4..8ab1ffedc52c 100644
---- a/arch/loongarch/kernel/mem.c
-+++ b/arch/loongarch/kernel/mem.c
-@@ -13,7 +13,7 @@
- void __init memblock_init(void)
- {
- 	u32 mem_type;
--	u64 mem_start, mem_end, mem_size;
-+	u64 mem_start, mem_size;
- 	efi_memory_desc_t *md;
- 
- 	/* Parse memory information */
-@@ -21,7 +21,6 @@ void __init memblock_init(void)
- 		mem_type = md->type;
- 		mem_start = md->phys_addr;
- 		mem_size = md->num_pages << EFI_PAGE_SHIFT;
--		mem_end = mem_start + mem_size;
- 
- 		switch (mem_type) {
- 		case EFI_LOADER_CODE:
-@@ -31,8 +30,6 @@ void __init memblock_init(void)
- 		case EFI_PERSISTENT_MEMORY:
- 		case EFI_CONVENTIONAL_MEMORY:
- 			memblock_add(mem_start, mem_size);
--			if (max_low_pfn < (mem_end >> PAGE_SHIFT))
--				max_low_pfn = mem_end >> PAGE_SHIFT;
- 			break;
- 		case EFI_PAL_CODE:
- 		case EFI_UNUSABLE_MEMORY:
-@@ -49,6 +46,8 @@ void __init memblock_init(void)
- 		}
- 	}
- 
-+	max_pfn = PFN_DOWN(memblock_end_of_DRAM());
-+	max_low_pfn = min(PFN_DOWN(HIGHMEM_START), max_pfn);
- 	memblock_set_current_limit(PFN_PHYS(max_low_pfn));
- 
- 	/* Reserve the first 2MB */
-diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
-index d6e73e8f9c0b..ab9c660526a3 100644
---- a/arch/loongarch/kernel/numa.c
-+++ b/arch/loongarch/kernel/numa.c
-@@ -272,7 +272,8 @@ int __init init_numa_memory(void)
- 		node_mem_init(node);
- 		node_set_online(node);
- 	}
--	max_low_pfn = PHYS_PFN(memblock_end_of_DRAM());
-+	max_pfn = PFN_DOWN(memblock_end_of_DRAM());
-+	max_low_pfn = min(PFN_DOWN(HIGHMEM_START), max_pfn);
- 
- 	setup_nr_node_ids();
- 	loongson_sysconf.nr_nodes = nr_node_ids;
-@@ -283,26 +284,6 @@ int __init init_numa_memory(void)
- 
- #endif
- 
--void __init paging_init(void)
--{
--	unsigned int node;
--	unsigned long zones_size[MAX_NR_ZONES] = {0, };
--
--	for_each_online_node(node) {
--		unsigned long start_pfn, end_pfn;
--
--		get_pfn_range_for_nid(node, &start_pfn, &end_pfn);
--
--		if (end_pfn > max_low_pfn)
--			max_low_pfn = end_pfn;
--	}
--#ifdef CONFIG_ZONE_DMA32
--	zones_size[ZONE_DMA32] = MAX_DMA32_PFN;
--#endif
--	zones_size[ZONE_NORMAL] = max_low_pfn;
--	free_area_init(zones_size);
--}
--
- int pcibus_to_node(struct pci_bus *bus)
- {
- 	return dev_to_node(&bus->dev);
-diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
-index 69c17d162fff..25a87378e48e 100644
---- a/arch/loongarch/kernel/setup.c
-+++ b/arch/loongarch/kernel/setup.c
-@@ -294,8 +294,6 @@ static void __init fdt_setup(void)
- 
- 	early_init_dt_scan(fdt_pointer, __pa(fdt_pointer));
- 	early_init_fdt_reserve_self();
--
--	max_low_pfn = PFN_PHYS(memblock_end_of_DRAM());
- #endif
- }
- 
-@@ -390,7 +388,8 @@ static void __init check_kernel_sections_mem(void)
- static void __init arch_mem_init(char **cmdline_p)
- {
- 	/* Recalculate max_low_pfn for "mem=xxx" */
--	max_pfn = max_low_pfn = PHYS_PFN(memblock_end_of_DRAM());
-+	max_pfn = PFN_DOWN(memblock_end_of_DRAM());
-+	max_low_pfn = min(PFN_DOWN(HIGHMEM_START), max_pfn);
- 
- 	if (usermem)
- 		pr_info("User-defined physical RAM map overwrite\n");
-diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
-index c3e4586a7975..6bfd4b8dad1b 100644
---- a/arch/loongarch/mm/init.c
-+++ b/arch/loongarch/mm/init.c
-@@ -60,7 +60,6 @@ int __ref page_is_ram(unsigned long pfn)
- 	return memblock_is_memory(addr) && !memblock_is_reserved(addr);
- }
- 
--#ifndef CONFIG_NUMA
- void __init paging_init(void)
- {
- 	unsigned long max_zone_pfns[MAX_NR_ZONES];
-@@ -72,7 +71,6 @@ void __init paging_init(void)
- 
- 	free_area_init(max_zone_pfns);
- }
--#endif /* !CONFIG_NUMA */
- 
- void __ref free_initmem(void)
- {
--- 
-2.47.3
-
+Actually, we could do that for a bunch of structures in this file, so I
+think I'll just try and do it that way.
 
