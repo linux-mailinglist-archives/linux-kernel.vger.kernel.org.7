@@ -1,112 +1,166 @@
-Return-Path: <linux-kernel+bounces-873491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C618C140E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:19:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CCA2C140ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26EDA4FA943
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:17:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BCCC5563E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B593081B0;
-	Tue, 28 Oct 2025 10:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5B930595F;
+	Tue, 28 Oct 2025 10:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NJsb70WG"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eFvvXxu/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1BE307AF2
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B83E19E82A;
+	Tue, 28 Oct 2025 10:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761646615; cv=none; b=qysNyG11N6IIgd26Gq4aXM6bNWj/cA3rQ5DMhiE6BVxq+UiUxBglu4w6ww9KVMxPJtFEV2hJ6qq5U26mZIQIUA3y1CWA1ql8Xl1A4GkGQ9BVqWwaFkB8TBSqGSwB6ddtN9N6wWuk+3dgwiphuAQn7XqIfs5Ay5W5IO6Q8kngIug=
+	t=1761646627; cv=none; b=Ka7ye6X5zMXMumo2nBH84U5PlgRuTjVvmLfR03dt2FpEl6A0JqE1OisnwuRJHgF2wTRW/5awTBG12zSGCEcgGaGzo3DxGMIyOtCwtCpWA0VJdNlB6Cw4GxkrEY6+u75bn/Np4q9sLG6njdw8dvvGarprofwYQ6saOWXokPzkBWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761646615; c=relaxed/simple;
-	bh=azBQ3OWrgMDeqzBKXjWG/3P66Ru0UGjGqS7Tm81ePBI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YcoWReoHNKxzEXNdmMFd4fnM1b/0BQIpiAkMFB1lX8o2vfFuK5n4JpisQIQ5CjBioFG2HXmYeC6yfNSBqm2udhkfJmAHB0gIGyXkLKemmFAKuoucy0y2/DcawuVZWq+xV4XK/jGD6TcTuVDL9YaDh+nVdFWHx6WnSuMoWxvYr4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NJsb70WG; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 9453A4E41393;
-	Tue, 28 Oct 2025 10:16:50 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 61E8F606AB;
-	Tue, 28 Oct 2025 10:16:50 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2A1731179B1A0;
-	Tue, 28 Oct 2025 11:16:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761646609; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+OuXZMnaZ4fecFxPcq14M2NVMZIWpSpSGN4BrirylB4=;
-	b=NJsb70WGj3gzFkkHQ9peasIqc9ipmU2eFTBxN8RViZloU3PbUejLbAfegZxMQrRJ9pbQeA
-	jFEtjUGrbDob/mQD3Pc8W8/iktEPQ+7opkZCyPE6OrxgODiOudGzeZMFVZfWRj4nyDHyDq
-	v/FAH0o7JLITPliZLxdofG/N0asK7GVTO8pP+qxcama1CZNYkw9X7QTb2vAIp9ZLogx2hY
-	M8m9GdiXvnn9W+Fh2UxnDZ5E2x71+rkREBoFLqNJPnHhOxLGGlWNNYJtvAzqn+8iAKd7Xx
-	gqP2Aq49d4l5YmAFKBcsw377SOb1j6jfIuzhTTYy36W1As6negm8txob1Y3F2g==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 28 Oct 2025 11:15:47 +0100
-Subject: [PATCH v3 6/6] drm/bridge: synopsys: dw-dp: add bridge before
- attaching
+	s=arc-20240116; t=1761646627; c=relaxed/simple;
+	bh=dzDRgBfe41vPTtLFx1w/UKaZRygZUStxlPAkuWneFfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=k+y08QNdgN1MaoC72mNiyef4EpzTSkiynsw88ZlF0XtdTiYAhhk4nF6TcyI4aJtyk6JPAHDxExLUbHcRbPOvTjHl55gKWnXmQE4vQZMabfb0REZWH+Jg41z/jtC5800Nrns10Mk6wjdbuZS2Rh67vzQ3+bg4NirIaeXKopmkvTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eFvvXxu/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SA3MuU1238711;
+	Tue, 28 Oct 2025 10:16:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	AXZZaRV9/aKTDc5WPcsiEt+lwX/c/Kd/mZJvpJjiS3Y=; b=eFvvXxu/CskYXUwV
+	Z0TkpEG7R/i3JZm0ioIdRwo6AAtLhTTmBjPCdBDm4UIkuq1rhIe+mNSXKwSCQQtf
+	g7mVkKv1dlQmrBYkfwcVF/fBTxyTN/GUeRVIgfVTNZDS24gFT9brdCwvB4iHARB4
+	ubU1LHkW0KvlyZssuDUt5GrLk2VzK4Y/ePQr9w8tKSow7oHu5v/nuQe5JRVj8MR5
+	BTBlOOxOTqGxeEuXPketlPJmhO37BufCrTus4OuWZdLTG1jwtXXj75miH0BhIaiV
+	vQYVbe/M1pWHZGio+hPo/VHY+jb+d8qM80Z2AbiJbCpuzmXkKla2a8+PwVjXp6r/
+	ByIsFQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2ur3g121-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 10:16:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59SAGeru011629
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 Oct 2025 10:16:40 GMT
+Received: from [10.206.96.75] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 28 Oct
+ 2025 03:16:31 -0700
+Message-ID: <cfaf4ad9-53a9-4adf-adf3-36203403e908@quicinc.com>
+Date: Tue, 28 Oct 2025 15:46:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: qcom-edp: Add edp ref clk for
+ sa8775p
+Content-Language: en-US
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <robin.clark@oss.qualcomm.com>, <lumag@kernel.org>,
+        <abhinav.kumar@linux.dev>, <jessica.zhang@oss.qualcomm.com>,
+        <sean@poorly.run>, <marijn.suijten@somainline.org>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <quic_mahap@quicinc.com>, <konradybcio@kernel.org>, <mani@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <vkoul@kernel.org>, <kishon@kernel.org>,
+        <cros-qcom-dts-watchers@chromium.org>, <linux-phy@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <quic_vproddut@quicinc.com>
+References: <20251013104806.6599-1-quic_riteshk@quicinc.com>
+ <20251013104806.6599-2-quic_riteshk@quicinc.com>
+ <wai7uqe6bn6kcfp3gmgqvc7sfrs37vmpqh6cucc7mopwf5x76j@vkxbwvqiqlyz>
+From: Ritesh Kumar <quic_riteshk@quicinc.com>
+In-Reply-To: <wai7uqe6bn6kcfp3gmgqvc7sfrs37vmpqh6cucc7mopwf5x76j@vkxbwvqiqlyz>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-6-bb8611acbbfb@bootlin.com>
-References: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-0-bb8611acbbfb@bootlin.com>
-In-Reply-To: <20251028-b4-drm-bridge-alloc-add-before-attach-v3-0-bb8611acbbfb@bootlin.com>
-To: Alain Volmat <alain.volmat@foss.st.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Raphael Gallais-Pou <rgallaispou@gmail.com>, 
- Andy Yan <andy.yan@rock-chips.com>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA4NyBTYWx0ZWRfX2yGWf57XHnkc
+ aJ7yBDQfRpt1/dljtXSWtZxUVsAGsfY9LqgAu+q/7VCRqexGp2SlbUqYPoV98u1IB4bXo6pu8QU
+ CUU5zp2rA45PjdzyzBwkLxo+oBv+JCWv0Tzgd1GAsvbEH8XhZMvMjV4aY45ZCHL2q80gJSY/TXp
+ qHHYS3eBmHkBPEFt4kUDTyfPuRtynrInQtgb0SaXWpsn3ESMhv8NNQ/RdyZiSNaTdIawX0BxTSA
+ zIze2rJRT7wRq+Kf2NtvF3ElltzzUyfls2/9jzCWfnbJ+geUNExnsZBOwiMnOlxuJIBhSIGwHE2
+ YWSzWxiBzyv4IH4she4iS/06JVK7oO7ftXVWxcSqZpy1EUdISROtx2N0Hr5IIy20xHoRHIyzIWA
+ NTtwHM3cLXuvJc0nb9t6npyVxaMjHg==
+X-Authority-Analysis: v=2.4 cv=Jub8bc4C c=1 sm=1 tr=0 ts=69009809 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
+ a=UE7cb82etAGfsupJFAEA:9 a=QEXdDO2ut3YA:10 a=-_B0kFfA75AA:10
+ a=TjNXssC_j7lpFel5tvFf:22 a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22
+ a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-GUID: 6qcP2j5BWDkV_R2vhP4zlL5mv1mbfjFi
+X-Proofpoint-ORIG-GUID: 6qcP2j5BWDkV_R2vhP4zlL5mv1mbfjFi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 spamscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280087
 
-DRM bridges should be always added to the global bridge list before being
-attached.
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+On 10/27/2025 10:35 PM, Bjorn Andersson wrote:
+> On Mon, Oct 13, 2025 at 04:18:04PM +0530, Ritesh Kumar wrote:
+> > Add edp reference clock for sa8775p edp phy.
+>
+> Perhaps the eDP ref clock was missed in the initial contribution,
+> perhaps it wasn't supposed to be described at the time, perhaps the
+> hardware changed...we can only speculate on the purpose of this patch...
+>
+> You could change this however, by following
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> and start your commit message with an explanation of the problem you're
+> trying to solve...
 
----
+Sure, will update the commit message giving details of the problem.
 
-This patch was added in v3 after searching for any remaining bridges not
-using drm_bridge_add().
----
- drivers/gpu/drm/bridge/synopsys/dw-dp.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > 
+> > Signed-off-by: Ritesh Kumar <quic_riteshk@quicinc.com>
+>
+> Please start using your oss.qualcomm.com
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-dp.c b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-index 9bbfe8da3de0264acbf8725d54f2f9627662e595..82aaf74e1bc070603bdda0be3a1c6dc631ff00da 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-dp.c
-@@ -2049,6 +2049,8 @@ struct dw_dp *dw_dp_bind(struct device *dev, struct drm_encoder *encoder,
- 	bridge->type = DRM_MODE_CONNECTOR_DisplayPort;
- 	bridge->ycbcr_420_allowed = true;
- 
-+	devm_drm_bridge_add(dev, bridge);
-+
- 	dp->aux.dev = dev;
- 	dp->aux.drm_dev = encoder->dev;
- 	dp->aux.name = dev_name(dev);
+Took a note of it.
 
--- 
-2.51.0
-
+> Regards,
+> Bjorn
+>
+> > ---
+> >  Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> > index bfc4d75f50ff..b0e4015596de 100644
+> > --- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> > +++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+> > @@ -73,6 +73,7 @@ allOf:
+> >          compatible:
+> >            enum:
+> >              - qcom,x1e80100-dp-phy
+> > +            - qcom,sa8775p-edp-phy
+> >      then:
+> >        properties:
+> >          clocks:
+> > -- 
+> > 2.17.1
+> > 
 
