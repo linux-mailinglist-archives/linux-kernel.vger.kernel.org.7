@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-873627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650CFC14452
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:08:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46612C144BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A651884EBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:04:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3426544033
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4BDD25487C;
-	Tue, 28 Oct 2025 11:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED8E3019DA;
+	Tue, 28 Oct 2025 11:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kg1KvEIr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9zbWuG8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC7B29CB3C;
-	Tue, 28 Oct 2025 11:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F16A2C08C0;
+	Tue, 28 Oct 2025 11:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761649418; cv=none; b=MmpEgyUqjAy9U4XHpeEyYWrp9CAHrBjs8VhnzSB1/1R+fS7tcs4jtUZL8MRkH8rGc/nrz9IkoTu+cNsjYQKmCIBJUsQ7a4Ng1rJTRLTM/c3e7Gt2aubtackafViu2SGBbuZEDQ6ObvkMzavV2DB5OXQJ/SXx4DinvfXdGt/KFzs=
+	t=1761649494; cv=none; b=ZJBFlReZDt0ehkHGC4RVkepk0OI5QQYKNuhu57yQ2AOHX+t4ZJWPpcqG1VcZujFEIuY3SbcL9RB/U8mHER+do7MOLuRk9X9onhopeByGz8JcUXMcsStuUHp7QblKvP3DyBi4XDbuF8aOOmAMR5b71hPv6tjTCMe925QfuQ3vXso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761649418; c=relaxed/simple;
-	bh=nkkLrAlevRXkLcLG9RiZU4O8iz5dJyIEy8uwyVIezRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qJbcwKtk7xY6sRGHeallqIxT0qV3h42qWdgzNwg14BYT1pNWJ4qmGnp5e3xeRQc/D3kmXF9C4tCA39W1iCgYiTAzgMmb8evdIypKdVugrygxPqa0cL4JL7Y8ik+3yd/vhw+NA0X4NOrP358QTDCh5WOpmkXdzJrVR/xYCag0oAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kg1KvEIr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE229C4CEE7;
-	Tue, 28 Oct 2025 11:03:35 +0000 (UTC)
+	s=arc-20240116; t=1761649494; c=relaxed/simple;
+	bh=OBCXvKJjGdONFbMXWfGZ9ObyKFupdDq2VJVf7GEfLgU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kK5BN5QocLM0lLTm8/GwafiATVO0rSMs1pGCbPt8JL3FuWDGZ8L2LD3ECvtllW9nJvsIqcBhKa5z36xjYo51YRssdHVPt+k/qv1Po7X2kRBBu8lAW/5nTuO29PrdTQRQwOCAVtOioB1auHIslbT9+bGmNwV1o40l5d/JXA+nyl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9zbWuG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA94AC4CEE7;
+	Tue, 28 Oct 2025 11:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761649417;
-	bh=nkkLrAlevRXkLcLG9RiZU4O8iz5dJyIEy8uwyVIezRY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=kg1KvEIrI0fCuYpSzXcLta67NTsMjXgSPiH+0NMTI2dqW285AvjYIcuNr7SgfYHNq
-	 64S0SrcpXZKkMBN0EkfSmOZcf0mHQiO83+QWQ6Y0R2m+FGUX9L7en/RiNzTynil1Tm
-	 Bl+EM8B9c7NFAye5YZZmlifI0hR1PssB4PPjt1K/jq2NKkzGL9IDX0ohSUm0FgBJk6
-	 z5CEP7tZVAFsOf4+ykDAocmQ7BWvMt3/kg9IjOt36vedEHBfOMQ6jG1GBLvrMsuzkT
-	 IeiC24nmxQyxANbnHM7fpROaUid7BchpMExPsy5IP44a5wx0h95W19fa7IHGNTqYyw
-	 BjPkPdnlDSrRQ==
-Message-ID: <58f812f6-426c-4164-bedd-5744f02d194c@kernel.org>
-Date: Tue, 28 Oct 2025 12:03:33 +0100
+	s=k20201202; t=1761649493;
+	bh=OBCXvKJjGdONFbMXWfGZ9ObyKFupdDq2VJVf7GEfLgU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U9zbWuG8KfcIOhXoz2kCkYBTYFtIpBhypwWofwuVuGvRyhpkhaKSA3s1x1sWX1Yin
+	 RhN3YliNA0yS38qRRkhzS2xzrw9Ll7dUJU2HVWEPmP7U03foFueN9Q505fAV7LTqOV
+	 4vcGGjsrqQMwFWGF9XN3sGTSUFEvJB9d6RmCUxTZvvo/4OywsxranPm2hS4wS/np6O
+	 Z3zmhCPLai19R2G2quiwDIoL66nd8r6QU54z6v92Yu1nHE/6Myg7QWuM73pYPWV3w9
+	 1MYpqpfWXjtN8ewT+LhU0HQJssjABUcXlYiafczXV5OT0Unq8fqEeSrzIDXQmejDOb
+	 RV/cHU0MFpT/Q==
+Message-ID: <73955d58-544c-4299-a099-bfd9e5912a40@kernel.org>
+Date: Tue, 28 Oct 2025 12:04:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,18 +49,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: firmware: Add Agilex5 SVC compatible
- string
-To: "Romli, Khairul Anuar" <khairul.anuar.romli@altera.com>,
- Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "Rao, Mahesh" <mahesh.rao@altera.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <cover.1761643239.git.khairul.anuar.romli@altera.com>
- <728e10b5100e3a41d2d4595f227d26df6bdbe205.1761643239.git.khairul.anuar.romli@altera.com>
- <ec66c0b0-33c0-4036-ad33-c1faf9633e02@kernel.org>
- <c99c4b5e-a8f9-4de4-8997-6e7aa7e47386@altera.com>
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+To: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <25f7ff09-08ea-4969-9184-9fd01b097558@kernel.org>
+ <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,34 +108,47 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <c99c4b5e-a8f9-4de4-8997-6e7aa7e47386@altera.com>
+In-Reply-To: <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/10/2025 11:59, Romli, Khairul Anuar wrote:
-> On 28/10/2025 5:35 pm, Krzysztof Kozlowski wrote:
->> [You don't often get email from krzk@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->>
->> On 28/10/2025 10:28, Khairul Anuar Romli wrote:
->>> Enable support for the Agilex5 in Stratix10 SoC service layer (SVC) by
->>> adding the new compatible string "intel,agilex5-svc" in the device tree
->>> bindings.
->>>
->>> This is needed to differentiate Agilex5 from previous SoC generations, as
->>> Agilex5 uses a different mechanism for mapping reserved memory regions,
->>> which rely on IOMMU support.
->>
->> There are no iommus here, so this feels inaccurate.
->>
->> Best regards,
->> Krzysztof
+On 28/10/2025 11:58, Hrishabh Rajput wrote:
 > 
-> I will remove this on the v2 revision as the iommu is part on future 
-> patch series.
->
+> On 10/28/2025 3:10 PM, Krzysztof Kozlowski wrote:
+>> On 28/10/2025 10:35, Hrishabh Rajput via B4 Relay wrote:
+>>> +
+>>> +static int __init gunyah_wdt_init(void)
+>>> +{
+>>> +	struct arm_smccc_res res;
+>>> +	struct device_node *np;
+>>> +	int ret;
+>>> +
+>>> +	/* Check if we're running on a Qualcomm device */
+>>> +	np = of_find_compatible_node(NULL, NULL, "qcom,smem");
+>> I don't think you implemented my feedback. This again is executed on
+>> every platform, e.g. on Samsung, pointlessly.
+>>
+>> Implement previous feedback.
+> 
+> Do you want us to add platform device from another driver which is 
+> probed only on Qualcomm devices (like socinfo from previous discussion) 
+> and get rid of the module init function entirely? As keeping anything in 
+> the module init will get it executed on all platforms.
 
-No, instead please post complete bindings for this device. So all of the
-hardware properties. See writing bindings doc.
+Instead of asking the same can you read previous discussion? What is
+unclear here:
+https://lore.kernel.org/all/3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org/
+?
+
+> 
+> 
+> With this patch version, we have tried to reduce the code execution on 
+> non-Qualcomm devices (also tried the alternative as mentioned in the 
+> cover letter). Adding platform device from another driver as described 
+> above would eliminate it entirely, please let us know if you want us to 
+> do that.
+
+Why do I need to repeat the same as last time?
 
 Best regards,
 Krzysztof
