@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-872973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C86C12BB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:16:49 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1CAC12BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C89A588153
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:16:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1D0EE354AAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C28277C96;
-	Tue, 28 Oct 2025 03:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEA028002B;
+	Tue, 28 Oct 2025 03:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lv9fGlCp"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9oiRTdf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31B311713
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A116E19D065;
+	Tue, 28 Oct 2025 03:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761621401; cv=none; b=Oaq+fSe+U61EIbm4kln3EgggSsT+ALogVfjXMIoy/2wwNtSiW+HOxwyFm85A7g2fZKOntbD7OOYktQTPBCiwHlfR9SEnArVnh5g2dmkx/SDPd4ZfUv/bYskJ1B7cKco7tcmikxWqd4VXYDkth8rJPF5T/DDceDHowdXzGezg/28=
+	t=1761621546; cv=none; b=QpfhbDTSrdwp/xhr0B7UyFB7e3bgjcbiJfMqh4peIm1tFMG22Y5/HPxqw12fhRVpuBwn89BNFM6NYJhBRcb0Eq7mEoz9WNuAATVspYQ1lmgD4LfikG+dNJGzCWeAljxNH9Pyiszr+RaOfFHVRIu6kkl/N6WBK2OEzGpji0a7jRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761621401; c=relaxed/simple;
-	bh=cHHkD30AaxNGfUjFD9KtWlH0G5zDyjXDYQiWrVKJSIE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QPXLd+ntTmRvM4VDCK0QTS9dRqEFZA59yNWROTPkNsB+/iPoszz4dmSi5FNqLiOUimNGBCzJpTTB+txm0xO8mv5dCBFyZ3I6epy/aLWJYwMbwJpb4e4ikmW28Y+IOLEtZPeb3acq8QAnKVVxYccViOOZroXx/qb5foD+pJQg1NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lv9fGlCp; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7833765433cso6818618b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761621399; x=1762226199; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=q7Dr88n0rsMeY0SbLXIpFyJggBzx8goTlgYQ7zbZXXM=;
-        b=Lv9fGlCpfXzsi6PkQ0jGtnCEf6t0rev5XwPG5y0I4hHwY/Y4ImeoGsil/3jeKiJygC
-         ovZuqV4YvhZQrD3ILzoS/sMiLFwLBpjKd5Brcu6N9LJhbKXh9+O6bht+vOlRRIJ+znef
-         JUR7wPR8aSUT/bbevN9Qi1Gb5PjPx81Y0UHNzXpnfEOqa/ttjrxHbVDY5qFc7ZQ9QL+Y
-         zV1tWc410U4XxTdojpFIvWviPsiRIDuAC3qR+GSqOfMd23964ciyz41sI6upV07lTmDq
-         xXcgEhhNLsS+id6X7A9yqhsnsOQ5GdoiKZkorcpVeDxgQ2IWQKFCZ843FlL/HlxoDH17
-         AXfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761621399; x=1762226199;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=q7Dr88n0rsMeY0SbLXIpFyJggBzx8goTlgYQ7zbZXXM=;
-        b=CH2WagtiET6IgF/IbMqiJ55w677xP0SXtBlaG0b5ivgYABu+JYj3rfp9rhALxhgUQf
-         2NY2lz0PvTBcn+aQ7AVu+m54eFPiKZC344DVpdssC863v+NTgz/n97sSjh4gZFEqZrXe
-         4D5ahxnG8NNN9jtATB8DbxZT+kxoe+tUwso4GgSOp/y0bG1ZIRHXoJsvLK5Ovn9rVD1G
-         OUeOr6p90zs5501SxFzyoTpU3IcHEunRfUwpIbDXTp0VALEAP37D6P1n5J5qcGZDHgmZ
-         YzQ0W3YT7wEF5IpKBYP1/hb1InQOwmAkebjH7Tm0FbtcPcvljGTFoiDSe9b7KQB5+lBz
-         UvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ21urnxM1230Te87aqoypcI6CGYhCtTcKepGZXgPgMRz/sJDLvV/Cm915OcNkePD7/RKEZBYJuAWNKBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDY5+LsyR+L1SYhd1Kr3Dv9b4fyuB3DQiGdY5ZwBwrTFBKI/mb
-	VNsYyrainGFiuQahuYBu100+IGYm+yAbNnCHXN1NQQLKfGRzb8N01ivhk8GwWLIHK5Q2LA==
-X-Gm-Gg: ASbGncunfRlLgejiQAdfYXnAt4aUQjmWoRcqEzLES2S+lDm42qtHbPcgkoxLekrQbM5
-	Dx/U5F612Lljqn7sdUlFMf2txbgRd/5w13kIQEqkv0dqybr4JBcEvf1wt+S2fHM0HrSchc8BaNv
-	7iAs0TTFg34oEZF0KVZDonTNXXpcp4uDsNEu5IrJytXGWMfBYVA8DeNWLn9JthI5+1j8BAgabvh
-	NZQk7eRD/gPZCFQRq09yBEQGmmiu/YZNFWyfTWecFNDmuLifYuecQ4W+ayGfd/FzoRzByCsANe5
-	csYvgQuSs64+bDb+s7bO/gN+HrC2ZhZTjLzkGKrSR+4pYOWF2gF10Y4gSZnS5UBx1wlPZTXL3/D
-	uoBhhKa6UgNNTJzAfvirmYPbwP60cKGyFMbm0hdsWlHu3h0WizCUoFD8Ak8usRKrOntz5hsCr4M
-	DrUIuNwHJAHt3q9G50g8q8Sw==
-X-Google-Smtp-Source: AGHT+IGeeElAGdz52QvzDON6TZ6X2VN+9KdN3tRsb9MvpzKrX+azsLuImQoCuSHnyIB4CWg/XHY7mQ==
-X-Received: by 2002:a05:6a00:c8d:b0:7a2:6b48:5359 with SMTP id d2e1a72fcca58-7a441c46a7cmr2594121b3a.24.1761621399271;
-        Mon, 27 Oct 2025 20:16:39 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41408c4dfsm9818276b3a.65.2025.10.27.20.16.36
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 27 Oct 2025 20:16:38 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	linux-pm@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] soc: imx: gpc: fix reference count leak in imx_gpc_remove
-Date: Tue, 28 Oct 2025 11:16:20 +0800
-Message-Id: <20251028031623.43284-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1761621546; c=relaxed/simple;
+	bh=6Pkx7EpEceX8AGS9kNb6JSNTph9sXRbaGVrP8ohO+QE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=flBleFUC6Sxkgvnt5H8Yi1dJf47dH/HBV09xwAmHVLm24MW5AqQzehj2kmOSzGnMa/cuLaiRbGnNNqv9HGioQFVVILMNNlpgIQurue8Pt62eZQAg9PvgPAwUO50Zir7kWloDY1AXDrqdtk7OhExw1az/5Z+fZoLB6GTfHeOIA10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9oiRTdf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 26B09C4CEF1;
+	Tue, 28 Oct 2025 03:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761621546;
+	bh=6Pkx7EpEceX8AGS9kNb6JSNTph9sXRbaGVrP8ohO+QE=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=P9oiRTdfca6l0bHZNNRYh402zW5pfWNbzn40lSSEObiA3GpWhHu4R4yhqWlbuLjKl
+	 3q27l25EUOwe6cjIAEgKhEmlCa47ySahh3V7oCQIKsg3bae2b3aodk69V+8rJfEAFN
+	 tHmU8YQPSOUz6+nToM/ZBVL3Hw4bSJHJfoycgEhct8kFcDKv7HjmRAB/VMfzzgEjAO
+	 a9NL/959Yjdjxmw63iO+phnhJjfeHfcmAQAYY0o6QCbI3QOXLxxTCQYgjkB43ZM57K
+	 nkSNeqRLi7ddT9sDT04oMoZ13inM5zhdxJcBY1R1Lok4zxcKS1TkpKV6/leh9e1ujd
+	 l/gDQSbVXf8wA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145E1CCF9EA;
+	Tue, 28 Oct 2025 03:19:06 +0000 (UTC)
+From: Rohan G Thomas via B4 Relay <devnull+rohan.g.thomas.altera.com@kernel.org>
+Subject: [PATCH net v4 0/3] net: stmmac: Fixes for stmmac Tx VLAN insert
+ and EST
+Date: Tue, 28 Oct 2025 11:18:42 +0800
+Message-Id: <20251028-qbv-fixes-v4-0-26481c7634e3@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABI2AGkC/23MTQ7CIBAF4KuYWYvhr9C68h7GBYWpJdFWoSGap
+ ncXWZgaXb6Z970ZIgaPEfabGQImH/045CC3G7C9Gc5IvMsZOOUVbRgj9zaRzj8wEmlQSYe1QtS
+ Q+7eA5ZHrRxhwglM+9j5OY3iW/cTK689UYoQSrBk2VaNtx7qDuUwYzM6O1zKT+JpWa8rf1DZUa
+ dG22skfKj6UUabXVGTqhJEcBVdSmS+6LMsLHTpqzx4BAAA=
+X-Change-ID: 20250911-qbv-fixes-4ae64de86ee7
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Jose Abreu <Jose.Abreu@synopsys.com>, 
+ Rohan G Thomas <rohan.g.thomas@intel.com>, 
+ Boon Khai Ng <boon.khai.ng@altera.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rohan G Thomas <rohan.g.thomas@altera.com>, 
+ Matthew Gerlach <matthew.gerlach@altera.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761621544; l=2041;
+ i=rohan.g.thomas@altera.com; s=20250815; h=from:subject:message-id;
+ bh=6Pkx7EpEceX8AGS9kNb6JSNTph9sXRbaGVrP8ohO+QE=;
+ b=h888JNhaD6tt+8BW1WkjUzuWlKSKhGyEh25Z5t6P7ZlUiItvmkAuNr8VSOuHl3pvatHp3vM+L
+ MKOtmFc0ofsCBXhuo2MgAO8ib72NbeJxayKeRFNZILGUuxzj5YnXLA8
+X-Developer-Key: i=rohan.g.thomas@altera.com; a=ed25519;
+ pk=5yZXkXswhfUILKAQwoIn7m6uSblwgV5oppxqde4g4TY=
+X-Endpoint-Received: by B4 Relay for rohan.g.thomas@altera.com/20250815
+ with auth_id=494
+X-Original-From: Rohan G Thomas <rohan.g.thomas@altera.com>
+Reply-To: rohan.g.thomas@altera.com
 
-of_get_child_by_name() returns a node pointer with refcount
-incremented, we should use of_node_put() on it when not need anymore.
-Add missing of_node_put() to avoid refcount leak.
+This patchset includes following fixes for stmmac Tx VLAN insert and
+EST implementations:
+   1. Disable STAG insertion offloading, as DWMAC IPs doesn't support
+      offload of STAG for double VLAN packets and CTAG for single VLAN
+      packets when using the same register configuration. The current
+      configuration in the driver is undocumented and is adding an
+      additional 802.1Q tag with VLAN ID 0 for double VLAN packets.
+   2. Consider Tx VLAN offload tag length for maxSDU estimation.
+   3. Fix GCL bounds check
 
-Fixes: 721cabf6c660 ("soc: imx: move PGC handling to a new GPC driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+Signed-off-by: Rohan G Thomas <rohan.g.thomas@altera.com>
 ---
- drivers/pmdomain/imx/gpc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v4:
+- Reworked sdu_len check to be done before stmmac_vlan_insert
+- Corrected formatting of the if block in the maxSDU check
+- Updated variable declarations to follow reverse christmas tree order
+- Revised the commit message to clearly reflect the maxSDU requirement
+- Link to v3: https://lore.kernel.org/r/20251017-qbv-fixes-v3-0-d3a42e32646a@altera.com
 
-diff --git a/drivers/pmdomain/imx/gpc.c b/drivers/pmdomain/imx/gpc.c
-index 33991f3c6b55..a34b260274f7 100644
---- a/drivers/pmdomain/imx/gpc.c
-+++ b/drivers/pmdomain/imx/gpc.c
-@@ -536,6 +536,8 @@ static void imx_gpc_remove(struct platform_device *pdev)
- 			return;
- 		}
- 	}
-+
-+	of_node_put(pgc_node);
- }
- 
- static struct platform_driver imx_gpc_driver = {
+Changes in v3:
+- Commit for disabling 802.1AD tag insertion offload is introduced in
+  to this patchset
+- Add just VLAN_HLEN to sdu_len when 802.1Q tag offload is requested
+- Link to v2: https://lore.kernel.org/r/20250915-qbv-fixes-v2-0-ec90673bb7d4@altera.com
+
+Changes in v2:
+- Use GENMASK instead of BIT for clarity and consistency
+- Link to v1: https://lore.kernel.org/r/20250911-qbv-fixes-v1-0-e81e9597cf1f@altera.com
+
+---
+Rohan G Thomas (3):
+      net: stmmac: vlan: Disable 802.1AD tag insertion offload
+      net: stmmac: Consider Tx VLAN offload tag length for maxSDU
+      net: stmmac: est: Fix GCL bounds checks
+
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 32 ++++++++++-------------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c   |  4 +--
+ drivers/net/ethernet/stmicro/stmmac/stmmac_vlan.c |  2 +-
+ 3 files changed, 17 insertions(+), 21 deletions(-)
+---
+base-commit: bfe62db5422b1a5f25752bd0877a097d436d876d
+change-id: 20250911-qbv-fixes-4ae64de86ee7
+
+Best regards,
 -- 
-2.39.5 (Apple Git-154)
+Rohan G Thomas <rohan.g.thomas@altera.com>
+
 
 
