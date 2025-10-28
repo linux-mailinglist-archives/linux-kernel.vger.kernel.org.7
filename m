@@ -1,151 +1,278 @@
-Return-Path: <linux-kernel+bounces-874084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 104DFC15780
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:33:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CEDC1575C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0490D462697
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:30:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1381B25F4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9236C341AA0;
-	Tue, 28 Oct 2025 15:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92333F8BE;
+	Tue, 28 Oct 2025 15:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hhbZFqaO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dxPK0whb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C83834027C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4286F273D77
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665416; cv=none; b=fcOSYAJ9YQWVf3u9w+VoLAxFW6+/M0iIHBlkC4H4scDqsqNTgdrx8o+fgxNUy3cFeYoSuktyipZOR2xZeW+ikgQb02g5ENr3Cs+Th6sy2cuiqj1G5kIOAqiC+fRm8VcC5/1+NpUs42Ok8fNbHgpY8UOLS42H2sm7ZifoJWLAQFQ=
+	t=1761665431; cv=none; b=alO+nGtBJiGHcfyX8+ddyDUb1n2cXJQupvd85znwbiy5QdV3SDsf/ggnWET5j1RzhTUKaV0p6csiq03nIgMtPK8tb5K3TK5bKl6fusU/kEQ4zq+HK5j8CMDTM0UoPMxWZWyFqKBZQ8/qYWyBCAiLQZTg51tn2Lj6Mt5OktqoD8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665416; c=relaxed/simple;
-	bh=GYKf1Zkv3JxGImNaWPJcp2l4cntA4Qaaj3JKVyCraHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HgZSnioRppUdUxz7wH0V6kWuc3kmNodLafhxGaw427kwGxBj1sH0sL534ZT/vXfIfmLUkXJdP+NGSfBaJi5vzgOfWhCaR73NuOgX603m0IUvr/k3uV84uIq+WfxbN/ZSSrH3VSC5J9m2yw8tEeIZyaaEN2p3Jcf1QvQJV1UHSkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hhbZFqaO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SEndEZ1895659
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ziHqZ26Nre+FSZRTP4tBX/uS
-	+PYMS+5i5oLrGECrPLM=; b=hhbZFqaOmXteW2bd4JXD5RuBAzvCex85WcsoAscz
-	irviZx5zBy9QjeMtoSlW03/l8K+0Qj9oJee8Q1Q9CU2SzWZxCvHm+B469muBlRmP
-	dr9IFYh9E2hUuQGkiM/KdVHIwTNaTw2YTtYYJ0/42XtTHWTQRi3rUFvMoCUCP6fv
-	k9JqtjdtbAn/TU7INUaAR/PqVcx80TpJXPFigxWnUjmKAcUG4yAICytOdx88hqGz
-	Gq25BVPyrl5jDklVoVJXPWaVa+W5zwqssdr8risfXEnQW8nMROXhuvD15R45osMo
-	NES+EPHG5LWKjEcrx0UQFUkSXUCGrXjyrtRWdKT9W6ibUw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2q5u9vpt-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:30:13 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eba90c163cso79921881cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:30:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761665413; x=1762270213;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ziHqZ26Nre+FSZRTP4tBX/uS+PYMS+5i5oLrGECrPLM=;
-        b=XacHCN6FaYNOjimWB8IyNrZiryksMnTT78KJ4Op4oK54zQlLwqiYzK5GygNbws9PZ3
-         c9ET4eglBQMy/xXybK76FpMOcSrpQmM/hHlTXW2lZHaT+OlxGHf9tFHTR+IfcqCMO2kR
-         hts/BBr9NEPhaN3DfxHdZnUSPlJnngsbzDBVtkQbCsXFo2X/dOCml0Ru1ls4mx6oT1J5
-         y98OSC8QMa2q1E94MIyoWspgzNpjg33JW/gyPmKBX9zooGKvU4kqs17JEjhtFZ0In3wM
-         ioaF9JajG7KQ3EGjG+WD36b7U0lRIlDYrtX6gT7OuMm3OajA7aqSD+LSPORmuiv0wssx
-         XLOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeFlkw4Gnqq/zPz9VXynzKqKCiTkWGzU+z8uKBvtHnzyDEDX9Qg8SdxLAluvOvOvAElKyVB6mb4iblJBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySS7TBa6bQVWYA14cF9z/VDxSrdhY483IQ+8l0VrV4ltlSRpj6
-	3PJI7l6gFVHk56sjLxCJKU5jsfoEnk/rUeBwJJvQQIerLyVzAPRwRnD5GyOfKoQnZS1a+Al0fJ+
-	VcY2OYuaS9lHj/ryZLFwWIoBXnTrSqVc6EUERCAEFSRa5KhV9T/WEHgg8Q2QnRf8LFrvgES1hjB
-	c=
-X-Gm-Gg: ASbGncsxRHJj+n2N6MKnmpEaAxdJh0kVux+XWRqda1B0cvwYgUX5YTv1kDvMkgDJZQu
-	BWsl6vbOaoqi5t9M9lesMAIgIm2xEm6ziu9pALvyDyBppXHHTgHiW1T6OtdTX8/262UU8ITjyPl
-	UFrUcmVpCYsROm3q7F567jUwJUBPl0UTrpolgG73IvbKeTBH04mcosSepdXK07vfSoATEn1H3c5
-	7f3rZVkO2A3boHj601GLBpBdYEAFteN16nQErn4w7bGdk/5FmiwIZilVIQY48WUqS0Qm5dsatax
-	Flf19f5RvrgEn/VWoKcxlRv+uORq85RbjRojb0S/4IYWcDivQWLi7XIqQNdyHno6JGyanCb+mu6
-	PqS6EJpgQ33OI4em9boxv8tskIY7AdlfMpe6KprkxcnvnXzip4hsRWzD7YUnQQ8Xf0QqatnYDcY
-	Q7qBgBXq897sbt
-X-Received: by 2002:a05:622a:11c5:b0:4ec:fa87:4652 with SMTP id d75a77b69052e-4ed13170110mr13343311cf.60.1761665412712;
-        Tue, 28 Oct 2025 08:30:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGg7P7iCAoIlm72fWxC4E6hnb4vx9CUyOoG5mm3iPgoXzkpB/+xZKhybNgY3uywIyNmJeQepw==
-X-Received: by 2002:a05:622a:11c5:b0:4ec:fa87:4652 with SMTP id d75a77b69052e-4ed13170110mr13341941cf.60.1761665411805;
-        Tue, 28 Oct 2025 08:30:11 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f41cbbsm3174644e87.2.2025.10.28.08.30.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 08:30:11 -0700 (PDT)
-Date: Tue, 28 Oct 2025 17:30:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: Skip setting orientation for UCSI
- version 2.0 and above
-Message-ID: <mjgwv3soxgdcybkoo6xglxfpusswmjoyit4z3qpbnyhatj73od@ywmnx6vyupsi>
-References: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
+	s=arc-20240116; t=1761665431; c=relaxed/simple;
+	bh=Pnv5Dyx32aX0Ep4Qni6xAPeNlnBBV2vjXLAZHxKgH3g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rX383lLn3aluSMwX1+7oiU06XQxtJGqEmpTIR6s0fJU29YczPP8jQgA8CX1lEv22YchZOgwWxNDu0vhaBWdhOENBaSK7C6uDd5KMarHVcxbWkpMEW6ZlI4YL/C7usrq6wadMC7Am2ew88tokQq26X+S6XhUGRZ8cddEGXuNJ0yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dxPK0whb; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761665429; x=1793201429;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=Pnv5Dyx32aX0Ep4Qni6xAPeNlnBBV2vjXLAZHxKgH3g=;
+  b=dxPK0whbiVe9RS19VxLoA7q9eut1gUfSjwbHBFBQsB5iq7K5zxLRgoL4
+   w2NcaFYL+s0wwMDPOe4ddxOGnJPmCtxvxzZS21/52KwtMH7fA9rieGd3+
+   MKdayMfJ3gxndlsJF8beqEK0aLJWAaAKJCzZm8OO8uVuJq/JLjFVSVv/f
+   kb8Ve5n9nnDSOz/tm9ObfOIl95KEzxAJtzkyiIzDGtr0CdMA6CCGGMn6/
+   AsDs48yaswxa4pdUv5m3hrKb2kK33fkLo7JayTaDVo0jcvHUpj9LgwusN
+   1oyRMBYoyEbgyusPndRoVRqRn8AOJofca6v14A7TqBN/djNOJ5etLFQJ4
+   A==;
+X-CSE-ConnectionGUID: Kmg9H2qNR/Gh5JbBwKT1sQ==
+X-CSE-MsgGUID: Yu3Fa814Qk6wC3xRSxeuVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63471026"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63471026"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:30:29 -0700
+X-CSE-ConnectionGUID: yogDWpNsRwaxrvoaAYzcRw==
+X-CSE-MsgGUID: 4GOVHaMKRTWCemKR7GBMew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="185295604"
+Received: from schen9-mobl4.amr.corp.intel.com (HELO [10.125.109.151]) ([10.125.109.151])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:30:28 -0700
+Message-ID: <4560ffb7eab64f7b9c6f7eb2ad7430827e19f849.camel@linux.intel.com>
+Subject: Re: [PATCH 15/19] sched/fair: Respect LLC preference in task
+ migration and detach
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: "Chen, Yu C" <yu.c.chen@intel.com>, K Prateek Nayak
+ <kprateek.nayak@amd.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
+ <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
+ <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
+ <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
+ <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
+ <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Adam Li	
+ <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar
+ <mingo@redhat.com>
+Date: Tue, 28 Oct 2025 08:30:26 -0700
+In-Reply-To: <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+	 <d3afcff5622222523c843f5c1b023bfe43f9c67c.1760206683.git.tim.c.chen@linux.intel.com>
+	 <5cdf379c-b663-424d-8505-d91046e63c20@amd.com>
+	 <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028-ucsi-glink-skip-orientation-for-ucsi-v2-v1-1-93e936ac59b4@linaro.org>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDEzMCBTYWx0ZWRfX9GRvxtOEWvXz
- uHq4PvlZWnKFAsI3Ns9oD0pNQUCkSp6ttZm2TjEDWZgscD/Tusxv1F+Ccv/bMqU8apjrlF/Mu5Y
- gtVrC+HCfEJiKlmW71y5P0UrKgTDMga4lueb61FJK+KQvN6vj6WA3/3tknyQ1RTOZmKH+oRYMf0
- c0yFecgdCRwmTROQct2mWoneCtVCfKjU4Hzo6D+7oQG6dBKRJHl3vTxLIsFP+hIzEfnCw81Uy7p
- Im8gzDcfq+HJtsUfE9y2nm+ETW2tJM9kXLCwCVlSFZJrgP48z41AJ3Z8+4q+GFpUmU5yLn7Acp3
- MoGd57yuj89Y4qvpyFmdBJGiftZ2R3IQGt0Xd/W7kv29bRLYmgC54yAZD6Iclk35bhpuH2Ht5vy
- eJLeS/iiRVorRkY9GnzDzqnAMMIOGw==
-X-Proofpoint-ORIG-GUID: m0j5__7ZsI_PU-NxMgvgyYLUycL-iebW
-X-Proofpoint-GUID: m0j5__7ZsI_PU-NxMgvgyYLUycL-iebW
-X-Authority-Analysis: v=2.4 cv=c9CmgB9l c=1 sm=1 tr=0 ts=6900e185 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8
- a=KoMzjsMEiVGJI_OJEYAA:9 a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_05,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 adultscore=0
- clxscore=1015 lowpriorityscore=0 impostorscore=0 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280130
 
-On Tue, Oct 28, 2025 at 04:39:19PM +0200, Abel Vesa wrote:
-> In case of UCSI version 2.0 and above, if the orientation is set from
-> glink as well, it will trigger the consumers along the graph (PHYs,
-> repeaters and so on) to reconfigure a second time. This might break
-> the consumer drivers which aren't currently implemented to drop the
-> second request of setting the same orientation.
+On Tue, 2025-10-28 at 19:58 +0800, Chen, Yu C wrote:
+> Hi Prateek,
+>=20
+> On 10/28/2025 2:02 PM, K Prateek Nayak wrote:
+> > Hello Tim,
+> >=20
+> > On 10/11/2025 11:54 PM, Tim Chen wrote:
+> > > @@ -9969,6 +9969,12 @@ int can_migrate_task(struct task_struct *p, st=
+ruct lb_env *env)
+> > >   	if (env->flags & LBF_ACTIVE_LB)
+> > >   		return 1;
+> > >  =20
+> > > +#ifdef CONFIG_SCHED_CACHE
+> > > +	if (sched_cache_enabled() &&
+> > > +	    can_migrate_llc_task(env->src_cpu, env->dst_cpu, p) =3D=3D mig_=
+forbid)
+> > > +		return 0;
+> > > +#endif
+> > > +
+> > >   	degrades =3D migrate_degrades_locality(p, env);
+> > >   	if (!degrades)
+> > >   		hot =3D task_hot(p, env);
+> >=20
+> > Should we care for task_hot() w.r.t. migration cost if a task is being
+> > moved to a preferred LLC?
+> >=20
+>=20
+> This is a good question. The decision not to migrate a task when its
+> LLC preference is violated takes priority over the check in task_hot().
+>=20
+> The main reason is that we want cache aware aggregation to be more
+> aggressive than generic migration; otherwise, cache-aware migration
+>   might not take effect according to our previous test. This seems to
+> be a trade-off. Another consideration might be: should we consider
+> the occupancy of a single thread or that of the entire process?
+> For example, suppose t0, t1, and t2 belong to the same process. t0
+> and t1 are running on the process's preferred LLC0, while t2 is
+> running on the non-preferred LLC1. Even though t2 has high occupancy
+> on LLC1 (making it cache-hot on LLC1), we might still want to move t2
+> to LLC0 if t0, t1, and t2 read from and write to each other - since we=
+=20
+> don't want to generate cross-LLC access.
+>=20
+> > Also, should we leave out tasks under core scheduling from the llc
+> > aware lb? Even discount them when calculating "mm->nr_running_avg"?
+> >=20
+> Yes, it seems that the cookie match check case was missed, which is
+> embedded in task_hot(). I suppose you are referring to the p->core_cookie
+> check; I'll look into this direction.
+>=20
+> > > @@ -10227,6 +10233,20 @@ static int detach_tasks(struct lb_env *env)
+> > >   		if (env->imbalance <=3D 0)
+> > >   			break;
+> > >  =20
+> > > +#ifdef CONFIG_SCHED_CACHE
+> > > +		/*
+> > > +		 * Don't detach more tasks if the remaining tasks want
+> > > +		 * to stay. We know the remaining tasks all prefer the
+> > > +		 * current LLC, because after order_tasks_by_llc(), the
+> > > +		 * tasks that prefer the current LLC are at the tail of
+> > > +		 * the list. The inhibition of detachment is to avoid too
+> > > +		 * many tasks being migrated out of the preferred LLC.
+> > > +		 */
+> > > +		if (sched_cache_enabled() && detached && p->preferred_llc !=3D -1 =
+&&
+> > > +		    llc_id(env->src_cpu) =3D=3D p->preferred_llc)
+> > > +			break;
+> >=20
+> > In all cases? Should we check can_migrate_llc() wrt to util migrated an=
+d
+> > then make a call if we should move the preferred LLC tasks or not?
+> >=20
+>=20
+> Prior to this "stop of detaching tasks", we performed a can_migrate_task(=
+p)
+> to determine if the detached p is dequeued from its preferred LLC, and in
+> can_migrate_task(), we use can_migrate_llc_task() -> can_migrate_llc() to
+> carry out the check. That is to say, only when certain tasks have been
+> detached, will we stop further detaching.
+>=20
+> > Perhaps disallow it the first time if "nr_balance_failed" is 0 but
+> > subsequent failed attempts should perhaps explore breaking the preferre=
+d
+> > llc restriction if there is an imbalance and we are under
+> > "mig_unrestricted" conditions.
+> >=20
+>=20
 
-Might or breaks? What happens if the driver doesn't ignore the request?
+Pratek,
 
-> 
-> So lets leave the orientation setting to the UCSI generic implementation
-> for all platform that implement UCSI spec 2.0 and above.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/usb/typec/ucsi/ucsi_glink.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+We have to actually allow for imbalance between LLCs with task
+aggregation.
 
--- 
-With best wishes
-Dmitry
+Say we have 2 LLCs and only one process running. Suppose all tasks in the p=
+rocess
+can fit in one LLC and not overload it. Then we should not pull tasks from
+the preferred LLC, and allow the imbalance. If we balance the tasks the
+second time around, that will defeat the purpose.
+
+That's why we have the knob llc_overload_pct (50%), which will start spread=
+ing
+tasks to non-preferred LLC once load in preferred LLC excees 50%.
+And llc_imb_pct(20%), which allows for a 20% higher load between preferred =
+LLC
+and non-preferred LLC if the preferred LLC is operating above 50%.
+
+So if we ignore the LLC policy totally the second time around, we may be br=
+eaking
+LLC aggregation and have tasks be moved to their non-preferred LLC.
+
+Will take a closer look to see if nr_balance_failed > 0
+because we cannot move tasks to their preferred LLC repeatedly, and if
+we should do anything different to balance tasks better without violating
+LLC preference.
+
+Tim
+
+> I suppose you are suggesting that the threshold for stopping task=20
+> detachment
+> should be higher. With the above can_migrate_llc() check, I suppose we ha=
+ve
+> raised the threshold for stopping "task detachment"?
+>=20
+> thanks,
+> Chenyu
+>=20
+> > > +#endif
+> > > +
+> > >   		continue;
+> > >   next:
+> > >   		if (p->sched_task_hot)
+> >=20
 
