@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-872853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBF2C122ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:39:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E5EC12341
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD64F2899
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5445801CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01231F4606;
-	Tue, 28 Oct 2025 00:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B12D21772A;
+	Tue, 28 Oct 2025 00:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdphfSy2"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jd7Uys33"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F31741A704B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9493213E89
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611949; cv=none; b=VKrtRb2rSkmb5gbhUkl4Saiew9UGERE9Mv2Pbjx7Rv/soLUq8/f+cTZYHfcjz8d0wU3yxssLLJ8JHt0P9ZVnk/jmLkbE7RNV5O5Ao2yYVCgDIeD4US6Zkhh8rYXNQZCph18T850LRS0ZHS6e4IcWb8oPVs73IC6jUVggT11xmDs=
+	t=1761611954; cv=none; b=fCOSfr8StGPN8Mgj/s9TGSjeKtc6OTJYB757WtmQB4tW9MZIoO8Diafec0m2hKTl6KYDgf2GC7+zQKvs2YVa5M1cRsE8fpw9JkfjABCEkPI+FYc81YZLMOl6Z6sOIN0JntvaSuNurdHkziuVqvh0Nh0288pKCNhobEoRZFTyeYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611949; c=relaxed/simple;
-	bh=92L3b4Ntl7Ogh3uo+qzMPWm7sN+t4dOvnC1FUrJY5ZA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ipn8a9gfcALBGNI1+Rsqnqr/NWiTo06lv+6JFSHYka5GlXrbEk5IBhIxs20IOaBrzbhkoeUlzziF+aIGMGBhddH61+gkXFEaxc69hyS3iW5XJENfC9vg6OyxhHqMlP7JeO+umjdagTTepToE5L2s9alj/zOdKS72pkBMdRTctX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdphfSy2; arc=none smtp.client-ip=209.85.215.169
+	s=arc-20240116; t=1761611954; c=relaxed/simple;
+	bh=la5GWOA6va8nayPbgB6XzEsfdMULSOIbIX750WJpME8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r53GLqmEyCv0QKjrPmQv93SekuPHHlk0A9XDxgGUjzDNjAOPTDraYjwLJc4C70+na1dyShvb47F8kd8h88JIG8HWNkfPcYp/h33xUPkqQmIQJ94uqJj2HTBIwPYP9RUc4MLj8Ad6tzBRipDWgA0eswHO6JxqdGvl4WSKOPZIlhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jd7Uys33; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b6cfffbb1e3so3787177a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:39:07 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-27ee41e074dso55115265ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:39:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761611947; x=1762216747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8s7zFl+2eb3TMAz+jhCE+xRnt2/MEJ1FXnvoxEqZlz4=;
-        b=OdphfSy2Jgme1nDOPVPRgiDi/WcEMqgEj9oqJreVYWDXtWlj8j/No49Bnhk33+G/8z
-         SMv3rTF8uCbxR/87540IQ8FaSP4CtEEYboi7Pq5J0oysH++AaNmCXQOIgHXipKHZOvhH
-         xYZ6MUd+pRg9iOIVK2G/9zVOHwZS1G5FtOicFdL/AlvHMKl9Cs9wYf5aPdTgE2koAqBz
-         d53EP5jnFFhh2afZ7NlIQ50ncZ1Pl86O+luFde/Curv4XDrWC5foIHuOjPJoZbU6AO40
-         JoDk7LiffKoQNvTULTrmayaAG3dyggEgL3QslANCMQM+DDd7O+iJaq/XqhFVRaAsBkIN
-         Zm2Q==
+        d=gmail.com; s=20230601; t=1761611951; x=1762216751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DKnShh97FzAXK9uF4JYbivS+DlO0bX3Ab4FUiZA04Ec=;
+        b=Jd7Uys3332NzH3gW68MsGFZuLQdjCR7Xk2WC6g+D8VgFl/pwtT9aiPeVYGIGxFsG8m
+         L7KsTU3w7aqsK2C2ibQFzYpMaUZEJ2SEsqn1q4IEYG2WmgOEud1D6nhLMOtxpBz3P2nI
+         FfpxSrK7wcg8788QMivL2aQaBCxI/U50Ws9h4oPYu/PE7eocQxLiP4cDhSLcstq/qVCI
+         j4hiBRuuD4NhR/7xv7oMnbfiZNrr7xR3fCGXdIlztyY3PoKc2F2nmJFmB6+YCGHuu4dB
+         LJFCxq63GATxdpdyZyUmJIOYYtKStBeFd+upd1XVEFtSR8PndLkuWlyBmp5xB5qyIARk
+         2nSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761611947; x=1762216747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8s7zFl+2eb3TMAz+jhCE+xRnt2/MEJ1FXnvoxEqZlz4=;
-        b=Kcmdg/54JFxsIAIRWzzzxRrY0HhrSbiyAoXMa4RqXIAaWF2gMz1LhDhop6TL+l+dmR
-         88a+1IhzqJdpiouZ6pNfXggS06Y6viJEr0+RDdSAuUrnf7iugQQrGTAibaJv6XbGSK5d
-         PVnObHFjtBo6ooN4WI9vBA7iaraMh76YZbqaDx1zIJWCzrDbHwBJMAoLxuHeWJ0n6vbx
-         gy81zYLzC2HLIAZ3ShCxfH9gcTfm/3LjOnXnAh7Cdzsp07dFs9AHvBr/KeLE4xwk7efl
-         HjTFOBNrGPlyxbsKviv1nj5zZsOLlHQAxCVL1Y2Eizitf0k4NXs8F//LVIs+alreZh+i
-         FKuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYKFrhkFJdZ2wcKSnvJ1mfHkui57vKFzDCJN96s+c3K4ZJrCbOQQFoJqrvAUc1iQ+wrT4xY3XkEfhp5CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyABi5ncPNbLfcVzraEi0+YgNX20pooWz6u0RHDYlm2BZSkdBJu
-	Xjio7XfFwCAFr/bKlELE2pJsUUPKSA8X3v7WyaSXcs5bq8ngliP5Y5xR
-X-Gm-Gg: ASbGncvtP0h9bksGtd8o4mPKqXgg1D1wfsha5rhLZHhi3iU+GiF9VbX0g9MgID8IJgN
-	GtxQFqqe2HU9qVpwioji6dTugur6mHWcT61iAx399Ndcz+iuX+ZcqxIYF/lOvwAtdtie3r+7LZO
-	GYtPsy7h5b7vE+r28m/sgLmH8sY0jg5+GP5FjyQ6CVM/gG6cwUYCnK3nUho20tjNYIAxkYPlUQ2
-	GQLCe/82BmZVDvKSiT4GhixoM0V9yd598kq6b06i0oe/b+ph/d1Ia537MlzZM+Ra9k0wpmR3lCG
-	ajgIXhKQQ4TvO7XpGe+yvV9JdwvEbT4OhQJUnaEOM9Sz92+XZpE4EgkdNEggb9zmZpQOJNOZxft
-	timsO3lvt0Uk7RD8P4s9ReotMmvFU6RJPtsIULqsGyF88Zac2WfdDurwZp3QydVc61jjhMed31x
-	XaNh6MQr6U9rzBDXQRc6fv
-X-Google-Smtp-Source: AGHT+IF5ghXu9jBruY6ziKGQyMSMM4oq3ugUChPGlRqBf0309+0SovNGzWf+rJoqR49uQlRPUDRaYw==
-X-Received: by 2002:a17:902:c402:b0:290:b14c:4f36 with SMTP id d9443c01a7336-294cb52db11mr21604075ad.31.1761611947142;
-        Mon, 27 Oct 2025 17:39:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761611951; x=1762216751;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DKnShh97FzAXK9uF4JYbivS+DlO0bX3Ab4FUiZA04Ec=;
+        b=FuiNHDVa8Xjr/OPlicHr4e7CI5yVwvvbfxQOFb5umpI7sgLIRAI47r77epJmXuWJ+j
+         dbxoQDvJuxIMriI8DQ+6IX+x3wRSeibe4fi+gMhw0gV0xo2T5qSJOL7HaUbZRCK6nm4x
+         uW7JbevZa+JVf330n+xBlGgtaAo8kk1za+LtjN6EwoLKxMs8d3swVMMHJBHuwX281m4N
+         TcCD1P/nDxdYFRv64ScYFPIiMZdHdOVpQAVt8tNXU5nCTIksYTZgEt3Asg/H7poVupnx
+         uoQhU7Fs1gkuRSxe0isO2QCU1CqtlBGCu6Qo+mWAjXa+sJq95xeJpBzLZo3WMhjoaeGg
+         4fGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXW8QGXULJEddjmM8fHl9YmNNw2fLRbWA4iJ8/p0H4FL7RaXrZjofsrYfXMSuSxKO2oI/PJ8SI7nSuSMxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySbVi7Fgmz837c5LR61MD4udCQ+usvnEuZCOo9SBRZptfUVWuV
+	GXg0JEcWK1NVjzxizGj42/xoNX5xRbF1rXhZUt5hH/8m/lG4d9S4ZhvB
+X-Gm-Gg: ASbGncszMicHjD0kMhH7oYmwnHHgScd+IhbioRX5d9CDLYABlmmJtW8GRFqRGeMFT4h
+	1RdV2XkK1XK98EAjD5UfB4kdGbZ3jh4S6ASvlBqwCvxFSP7qk78Pu0ynDz6lzArJc9sqmOqFoYR
+	didjlwI7fh43todPEClmQZI/MfbHnt9yz3jkkUE6M/5JtpzuLWz5uWrXR0LwGMNDbJrhM5XmCRR
+	tOMxE37/UG6xdP7d6lntOEzhnIkC+SDO8jDrEXZ8VM59pxGXdPVRcVZQsKxp/XW1QouJGB0Narv
+	fEqVX/BN5tr02vh7FNf24ODHbDHjeE7Ph5Kn16XNjsKR88RF6SQuAhX2vr4pbV/6u6FI5DY+BDG
+	solkpxNklhTFHZPBW1PqthBb9eIn/UYhQ2ZaEbyLw9js+Nmln9LGwwzn844PL5TEBrKe3X8nFiF
+	I=
+X-Google-Smtp-Source: AGHT+IGDgRzXqJUJJkrtAaCEFJyXOr4mEl+07Z2j/3J+/i5aKBpQqqv/TIGwi4eyT7fk5HkXcUBq3g==
+X-Received: by 2002:a17:903:244d:b0:24c:b39f:baaa with SMTP id d9443c01a7336-294cb65f7f9mr16976795ad.49.1761611950502;
+        Mon, 27 Oct 2025 17:39:10 -0700 (PDT)
 Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf359asm94353925ad.12.2025.10.27.17.39.06
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e7039sm10005885a91.12.2025.10.27.17.39.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 17:39:06 -0700 (PDT)
+        Mon, 27 Oct 2025 17:39:10 -0700 (PDT)
 From: Inochi Amaoto <inochiama@gmail.com>
 To: Han Gao <rabenda.cn@gmail.com>,
 	Icenowy Zheng <uwu@icenowy.me>,
@@ -99,10 +101,12 @@ Cc: netdev@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	Yixun Lan <dlan@gentoo.org>,
 	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH v4 0/3] net: stmmac: dwmac-sophgo: Add phy interface filter
-Date: Tue, 28 Oct 2025 08:38:55 +0800
-Message-ID: <20251028003858.267040-1-inochiama@gmail.com>
+Subject: [PATCH v4 1/3] dt-bindings: net: sophgo,sg2044-dwmac: add phy mode restriction
+Date: Tue, 28 Oct 2025 08:38:56 +0800
+Message-ID: <20251028003858.267040-2-inochiama@gmail.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251028003858.267040-1-inochiama@gmail.com>
+References: <20251028003858.267040-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,40 +115,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As the SG2042 has an internal rx delay, the delay should be remove
-when init the mac, otherwise the phy will be misconfigurated.
+As the ethernet controller of SG2044 and SG2042 only supports
+RGMII phy. Add phy-mode property to restrict the value.
 
-Since this delay fix is common for other MACs, add a common helper
-for it. And use it to fix SG2042.
+Also, since SG2042 has internal rx delay in its mac, make
+only "rgmii-txid" and "rgmii-id" valid for phy-mode.
 
-Change from v3:
-- https://lore.kernel.org/all/20251024015524.291013-1-inochiama@gmail.com
-1. patch 1: fix binding check error
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+---
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Change from v2:
-- https://lore.kernel.org/all/20251020095500.1330057-1-inochiama@gmail.com
-1. patch 3: fix comment typo
-2. patch 3: add check for PHY_INTERFACE_MODE_NA.
-
-Change from v1:
-- https://lore.kernel.org/all/20251017011802.523140-1-inochiama@gmail.com
-1. Add phy-mode property to dt-bindings of sophgo,sg2044-dwmac
-2. Add common helper for fixing RGMII phy mode
-3. Use struct to hold the compatiable data.
-
-Inochi Amaoto (3):
-  dt-bindings: net: sophgo,sg2044-dwmac: add phy mode restriction
-  net: phy: Add helper for fixing RGMII PHY mode based on internal mac
-    delay
-  net: stmmac: dwmac-sophgo: Add phy interface filter
-
- .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++
- .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 20 ++++++++-
- drivers/net/phy/phy-core.c                    | 43 +++++++++++++++++++
- include/linux/phy.h                           |  3 ++
- 4 files changed, 85 insertions(+), 1 deletion(-)
-
---
+diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+index ce21979a2d9a..916ef8f4838a 100644
+--- a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
++++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+@@ -70,6 +70,26 @@ required:
+ 
+ allOf:
+   - $ref: snps,dwmac.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: sophgo,sg2042-dwmac
++    then:
++      properties:
++        phy-mode:
++          enum:
++            - rgmii-txid
++            - rgmii-id
++    else:
++      properties:
++        phy-mode:
++          enum:
++            - rgmii
++            - rgmii-rxid
++            - rgmii-txid
++            - rgmii-id
++
+ 
+ unevaluatedProperties: false
+ 
+-- 
 2.51.1
 
 
