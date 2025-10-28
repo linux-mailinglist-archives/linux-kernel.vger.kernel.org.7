@@ -1,63 +1,86 @@
-Return-Path: <linux-kernel+bounces-873242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575E4C137A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:16:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100F8C1376A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:10:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B70B541ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E152D1A2419D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF7B3C38;
-	Tue, 28 Oct 2025 08:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6CF2C15AE;
+	Tue, 28 Oct 2025 08:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdPk3YGs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZyC2WDhE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B222D595F;
-	Tue, 28 Oct 2025 08:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EAC29E11E;
+	Tue, 28 Oct 2025 08:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639002; cv=none; b=XFpVKy5Mv7X1t3mwVzwIIbzESGSjDDQ8W54EdIqWpJiXwa75KkxaVqFuFClfVSLpBGfG0t7Z9kVlILevgSwCUVgS7HccKX2BkwZ6EA7I/ZJwwKkeAK2BLTJkz10dxTi8I45KqM5eROEisMnYtk8kWQHbEFF6ZTdpWMLyaXvsmzU=
+	t=1761639032; cv=none; b=KVP4+VKrXkqSgLLvnyazUHcFoAk7xO03kQNA0E2WFt/EI4k7K6ke5dOE/3srn8jBN6F8YsJuVTel6Z9wC69srCKwITbnHB7/qBxCagQa17oUAYEOEvv34rn0XaabMOFM9FnUPwWtgUXrAlpGItErnbJgpKXlzQgdbFVZpK4mNe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639002; c=relaxed/simple;
-	bh=NGu5Zpot/BG4U7gSUgi6aoPy0LHfrm2D+G3A/4Yp3cI=;
+	s=arc-20240116; t=1761639032; c=relaxed/simple;
+	bh=CCWns77OmOt4vjojJJ4+7pxoDkV1iHGduGsfXfkZa1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQutGiXUQSJ568rxyxmPtrhOBovIASbu43942RujP1f1BnJfi9mFZbXwPom5MLbbey6zKR7ll8v/4cGuSFk3C+GEWa4VmVmHLnjHDhftFgn7wWVc32aY1J/OlJ6uBD8Q2LJq4/fiyJoxBZPnUOESTBt9Pf3H6MqeGshC6PWV9hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdPk3YGs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A911FC4CEE7;
-	Tue, 28 Oct 2025 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761639002;
-	bh=NGu5Zpot/BG4U7gSUgi6aoPy0LHfrm2D+G3A/4Yp3cI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TdPk3YGszQ3DVFbaQjgzT4DIcdcXClDuEL4vcFLMwyQtVwveAN6KXSaMthYrmqXlq
-	 UlFqBDCFqP9u6Scp/KzogioFz9TAvfYgJYltgF6Yb0UJ86k3MEQJLHp8H43forHxg/
-	 VN6wmCOrPKLhz0sgCp8+eWa5VcqkRdQE7qmHK4fOAnHb7ayBI8otnO6F2TycQ2zE4H
-	 /9HcyPBNDMoPbrDer+ZeaJ169LJo1yT1SbuWEKGi5xSa7Me2NhsT1rxt0tZ08heKrm
-	 0CBLPMq984o79wcuxspap23UUwpNcOBhqSUX5vnyYd//nlKRFMYgikNYc1cfYSQKDM
-	 kBje0ylONmXaA==
-Date: Tue, 28 Oct 2025 09:09:59 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>, 
-	Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>, linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, 
-	yijie.yang@oss.qualcomm.com, Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Atiya Kailany <atiya.kailany@oss.qualcomm.com>
-Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
- qcom,kaanapali-camss binding
-Message-ID: <20251028-wonderful-olive-muskox-77f98d@kuoka>
-References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
- <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxEBHQV8RvYg6gD8hdCamD1JX+ys+VlkbD8RkkIHdghUc5sIYl4f5/eMyW2v2686BMMnX6hw7pQmJ/rsx2Mml8Vu9ZdSji9r70QXQQoP/279to+qWoNXt0EGcKpX9tSwKoG8Mi67Cxe7k+j3OLMYQVUYi5OC6eLaYRFeV5AgMEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZyC2WDhE; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761639030; x=1793175030;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CCWns77OmOt4vjojJJ4+7pxoDkV1iHGduGsfXfkZa1g=;
+  b=ZyC2WDhEtTf3dy11f6dOSj/lRbLgLmdUmn0enlouZiUZlsZQ5EvxEIHz
+   LzSbIR+QFBHCr340drKs3Fse6UL/vsYxioGce9Wb2OUb7apzYrKj+o9H0
+   9bpt07w9KpiRC5sNy4qZtMybW4ZBxxEK/yUWk2wTQH5HjgvxW/xdlbBu7
+   YU3a5Fl/IX+hB+7B5YwVnJ/IngFIGDpIkRgz76D60NANhCMq3s1qKAhmb
+   i8GQ4yI1F0kWZUEOJPxkC9fElrKoPxZUwA4TN6zbwk4QyXEr7tdmctTkL
+   FhCf5R0KzGErsv42C5Hw9N9x8qp8Ulyfdu6DuD0koXtij/AnBfvfpx0X+
+   g==;
+X-CSE-ConnectionGUID: NvEL/5+8TjKCiNSECvdTPA==
+X-CSE-MsgGUID: 1vrPLTUnRKGgD3tdixyGyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63769181"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63769181"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:10:30 -0700
+X-CSE-ConnectionGUID: /VdNS5MmR4eLlYiGyoT2Ew==
+X-CSE-MsgGUID: lWLXbDHWSW+9gYBHKRgDSg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="185366413"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 01:10:28 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDeme-00000003FJ4-1WAR;
+	Tue, 28 Oct 2025 10:10:24 +0200
+Date: Tue, 28 Oct 2025 10:10:24 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Gary =?utf-8?B?Q2h1KOalmuWFieW6hik=?= <chuguangqing@inspur.com>,
+	lars <lars@metafoo.de>,
+	"Michael.Hennerich" <Michael.Hennerich@analog.com>,
+	dlechner <dlechner@baylibre.com>, "nuno.sa" <nuno.sa@analog.com>,
+	andy <andy@kernel.org>,
+	"subhajit.ghosh" <subhajit.ghosh@tweaklogic.com>,
+	"javier.carrasco.cruz" <javier.carrasco.cruz@gmail.com>,
+	linux-iio <linux-iio@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] iio: light: apds9960: convert to use maple tree
+ register cache
+Message-ID: <aQB6cFpTsBssGej3@smile.fi.intel.com>
+References: <abf45488369cbcce6298cc0ea19c0b3a24-10-25intel.com@sslemail.net>
+ <aPs9HdeTZKoqFqdk@smile.fi.intel.com>
+ <68fc4591.1.gk94qBPVZajhk94q@inspur.com>
+ <aP8tvj_IPbv65m0T@smile.fi.intel.com>
+ <20251027133806.5e4368bc@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,245 +89,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251027133806.5e4368bc@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Thu, Oct 23, 2025 at 02:14:34AM -0700, Hangxiang Ma wrote:
-> Add bindings for qcom,kaanapali-camss in order to support the camera
+On Mon, Oct 27, 2025 at 01:38:06PM +0000, Jonathan Cameron wrote:
+> On Mon, 27 Oct 2025 10:30:54 +0200
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > On Sat, Oct 25, 2025 at 11:36:45AM +0800, Gary Chu(楚光庆) wrote:
+> > > >On Fri, Oct 24, 2025 at 03:38:23PM +0800, Chu Guangqing wrote:  
+> > > >> The maple tree register cache is based on a much more modern data structure
+> > > >> than the rbtree cache and makes optimisation choices which are probably
+> > > >> more appropriate for modern systems than those made by the rbtree cache.  
 
-What is qcom,kaanapali-camss? Sounds like a compatible and you cannot
-add bindings for a compatible. Instead add bindings for hardware, so
-explain here hardware.
+...
 
-You could easily use `git log` to see how such commits are written
-instead of pasting here your downstream practice.
-
-> subsystem for Kaanapali.
+> > > >>   .reg_defaults = apds9960_reg_defaults,
+> > > >>   .num_reg_defaults = ARRAY_SIZE(apds9960_reg_defaults),  
+> > > >
+> > > >^^^^ Be careful with such cases, the cache implementations may behave
+> > > >differently. Have you tested this on the actual HW?
+> > > >  
+> > > We have conducted tests on some hardware, and performance improvements were observed,
+> > >  though tests have not been carried out on all hardware models.
+> > > Neither rbtree nor maple tree directly depends on hardware types (such as CPU or peripheral
+> > >  models). Instead, they rely on the address distribution characteristics (discrete/continuous)
+> > >  of hardware registers. The optimal cache type is determined by the hardware layout.
+> > > Red-black trees excel at individual operations on discrete addresses, while Maple Trees are
+> > >  proficient in range operations on contiguous addresses.  
+> > 
+> > It's not about the low-level cache implementation, it's about regmap
+> > abstraction implementation that might differ from cache to cache
+> > implementations. This all in regard how the cold cache is getting filled up.
+> > There is a separate discussion (unrelated to the topic of your series) where
+> > this was brought up.
 > 
-> Signed-off-by: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> ---
->  .../bindings/media/qcom,kaanapali-camss.yaml       | 369 +++++++++++++++++++++
->  1 file changed, 369 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> new file mode 100644
-> index 000000000000..82f427bd036b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/qcom,kaanapali-camss.yaml
-> @@ -0,0 +1,369 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/qcom,kaanapali-camss.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Kaanapali Camera Subsystem (CAMSS)
-> +
-> +maintainers:
-> +  - Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
-> +
-> +description:
-> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,kaanapali-camss
-> +
-> +  reg:
-> +    maxItems: 16
-> +
-> +  reg-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  clocks:
-> +    maxItems: 34
-> +
-> +  clock-names:
-> +    items:
-> +      - const: camnoc_nrt_axi
-> +      - const: camnoc_rt_axi
-> +      - const: camnoc_rt_vfe0
-> +      - const: camnoc_rt_vfe1
-> +      - const: camnoc_rt_vfe2
-> +      - const: camnoc_rt_vfe_lite
-> +      - const: cam_top_ahb
-> +      - const: cam_top_fast_ahb
-> +      - const: csid
-> +      - const: csid_csiphy_rx
-> +      - const: csiphy0
-> +      - const: csiphy0_timer
-> +      - const: csiphy1
-> +      - const: csiphy1_timer
-> +      - const: csiphy2
-> +      - const: csiphy2_timer
-> +      - const: csiphy3
-> +      - const: csiphy3_timer
-> +      - const: csiphy4
-> +      - const: csiphy4_timer
-> +      - const: csiphy5
-> +      - const: csiphy5_timer
-> +      - const: gcc_hf_axi
-> +      - const: qdss_debug_xo
+> I appreciate these things can be hard to track down with lots of threads in flight
+> but any chance of a reference for that? I'd be a little surprised if these uses
+> are complicated enough to hit corner cases but would like to know more.
+> I've taken a few similar changes in the past thinking there would be no
+> practical difference.
 
-No, I told many times you are supposed to use same order as last
-generation. Stop doing this alphabetical ordering or ordering by value.
-The previous generation has here vfe0.
+Sure, it appeared in the discussion of v2 of the following patch:
+https://lore.kernel.org/linux-gpio/20251009132651.649099-2-bigunclemax@gmail.com/
 
-> +      - const: vfe0
-> +      - const: vfe0_fast_ahb
-> +      - const: vfe1
-> +      - const: vfe1_fast_ahb
-> +      - const: vfe2
-> +      - const: vfe2_fast_ahb
-> +      - const: vfe_lite
-> +      - const: vfe_lite_ahb
-> +      - const: vfe_lite_cphy_rx
-> +      - const: vfe_lite_csid
-> +
-> +  interrupts:
-> +    maxItems: 16
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: csid0
-> +      - const: csid1
-> +      - const: csid2
-> +      - const: csid_lite0
-> +      - const: csid_lite1
-> +      - const: csiphy0
-> +      - const: csiphy1
-> +      - const: csiphy2
-> +      - const: csiphy3
-> +      - const: csiphy4
-> +      - const: csiphy5
-> +      - const: vfe0
-> +      - const: vfe1
-> +      - const: vfe2
-> +      - const: vfe_lite0
-> +      - const: vfe_lite1
-> +
-> +  interconnects:
-> +    maxItems: 2
-> +
-> +  interconnect-names:
-> +    items:
-> +      - const: ahb
-> +      - const: hf_mnoc
+> > That's why I asked how this was tested.
+> > 
+> > In any case, up to Jonathan, but I had to rise a potential misbehave, so in my
+> > opinion this kind of corner cases needs to be tested on real HW.
+> > 
+> > > >>   .max_register = APDS9960_REG_GFIFO_DIR(RIGHT),
+> > > >> - .cache_type = REGCACHE_RBTREE,
+> > > >> + .cache_type = REGCACHE_MAPLE,
+> > > >>  };  
 
-Why previously this was called hf_0 but now hf?
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> +
-> +  iommus:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    items:
-> +      - description:
-> +          TFE0 GDSC - Thin Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          TFE1 GDSC - Thin Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          TFE2 GDSC - Thin Front End, Global Distributed Switch Controller.
-> +      - description:
-> +          Titan GDSC - Titan ISP Block Global Distributed Switch Controller.
-> +
-> +  power-domain-names:
-> +    items:
-> +      - const: tfe0
-> +      - const: tfe1
-> +      - const: tfe2
-
-Why not using the same names as before? It really does not matter that
-it is thin or image, all of them are the same because only the
-difference against top matters.
-
-> +      - const: top
-> +
-> +  vdd-csiphy-0p8-supply:
-> +    description:
-> +      Phandle to a 0.8V regulator supply to CSI PHYs core block.
-> +
-> +  vdd-csiphy-1p2-supply:
-> +    description:
-> +      Phandle to 1.2V regulator supply to CSI PHYs pll block.
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    description:
-> +      CSI input ports.
-> +
-> +    patternProperties:
-> +      "^port@[0-3]$":
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          Input port for receiving CSI data on CSI0.
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: video-interfaces.yaml#
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              data-lanes:
-> +                minItems: 1
-> +                maxItems: 4
-> +
-> +            required:
-> +              - data-lanes
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - interrupt-names
-> +  - interconnects
-> +  - interconnect-names
-> +  - iommus
-> +  - power-domains
-> +  - power-domain-names
-> +  - vdd-csiphy-0p8-supply
-> +  - vdd-csiphy-1p2-supply
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interconnect/qcom,icc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/power/qcom,rpmhpd.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        camss: isp@9253000 {
-
-Drop unused label
-
-> +            compatible = "qcom,kaanapali-camss";
-
-Best regards,
-Krzysztof
 
 
