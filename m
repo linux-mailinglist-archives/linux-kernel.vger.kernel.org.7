@@ -1,99 +1,85 @@
-Return-Path: <linux-kernel+bounces-872924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00BBC12A1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:09:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF2EC12A2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:09:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 991F44E7E74
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:09:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7796E4E8BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328A11D5151;
-	Tue, 28 Oct 2025 02:09:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VYVdP2MK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4702DF68
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409961C861A;
+	Tue, 28 Oct 2025 02:09:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1352192B7D;
+	Tue, 28 Oct 2025 02:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761617344; cv=none; b=gSIEONDSUl3oLsGKfoj6Tqydgcc6MZpcUaLSD3zbAxBHawkXFDCld7dS78ouo429BSBEtGTWmwT7Dh05SPr0c6twI4wrX8WxrhDQK+YWxDfFgF3nZTfyJYkNxtEiosc+SRdeBdkSCq0PtTFoXR3nm6bwz1oQZeOrrFiwQ3dMKa8=
+	t=1761617378; cv=none; b=QGshW9vNiQJ1UnmuaH0PDjD5Ynj5HrLlvEXjEX9OSQ5RQ/dD4o0NllKQYZ+xsH3v+DHpWOXlRhhiONLztR6bH22N4D/XDTDnxtYzD4SRQoigDiMUuVd3mK6pq1Dz6FIH9OSa7YyRmFp7T6vquoOTNNTaVlnL9ZpSTI9sMPOVoV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761617344; c=relaxed/simple;
-	bh=Ci3wKX9+GbtJLgrVVLH6sgxI9J3LFEptlAiQzuBfGzY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eu4CfYWDqMIpDB4t4Rv/9rqczDXsfmY4zrC3SPx8HZ6BbyW0+PGnY2OsFBe64VAjHFrNGzb8oXo8tF+z3DMH9c/0p3EBcW8pL9JZ2DmNNBd04ugz0lR8gPXpDGxXCSHMD8VZliuS6y8q5PCwOJmRzfuqIUMDBJZfPAe9zvxCp1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VYVdP2MK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25996C4AF0B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 02:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761617344;
-	bh=Ci3wKX9+GbtJLgrVVLH6sgxI9J3LFEptlAiQzuBfGzY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VYVdP2MKrKlpuDWPX9DGGz7xq3AXkbRLU67SRkl4brImYlrRB9zbYA5XaD0RlhS5J
-	 yk7K77gKuO+/eOBre+kcLGqyoxQRozRCvghK7Y8mQdPSXQXR74LxXchze+rvlvAHsd
-	 fY3CwxeSIAGo6ueWTu3XPCtcDfb6CdkEzHIAPpiigfGlujOMuq3H14pjEYvoXbIFZZ
-	 mVd8688H7ZZ3w/nh+qZtk9HaBtXCVBz3Fpu3ucB0TRvE4J4mZ4C/eRpF666u2BCTQI
-	 eKjQnNzz5SZilRiXSM9XZtql4+0wLPzJ4rt3R5+TZKZY+tBY3cGKNX0IztHiFozPR0
-	 riLcvMBSTV5kQ==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so2218024a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 19:09:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVzmNcDMt314Lq/xeAGYt7EHTgzVz/0boF2t/In9SuG2RKpEAEw1pyxNAncQJOUFSdZ5pm+z3SN2OoW3hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztH2Ok0oDOlzpTTGJRmeCTqakamSPlawoPFVhbEWzZMp2i3G7+
-	+X1oT/BxF7psC+NNlOYx+wIFG3Xzm8eLZ85sY+ZBQeQmNQk3RvlQiA3creUfaivBsqxY3aMixrv
-	gfFTfPKcQBqBIOx/iyqTJMtRcKR8Z+f4=
-X-Google-Smtp-Source: AGHT+IHm6KkzkLs6ctwsQTN/W2y/IMPkRwoVU0DIJIHBOHSIX/K+TLihLpu1pfPvA1zOQz0aEA3/CX3FlCe7w/C7Ikk=
-X-Received: by 2002:a05:6402:2101:b0:63b:f4b4:a004 with SMTP id
- 4fb4d7f45d1cf-63ed848cae0mr1801058a12.2.1761617342785; Mon, 27 Oct 2025
- 19:09:02 -0700 (PDT)
+	s=arc-20240116; t=1761617378; c=relaxed/simple;
+	bh=ynaihyXFtzTuHdEqhczTTlhBJVZmuleW1RFH0U7dwQU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pjKEdVxEvClyEfHoEicMTArU7LDoseh5ZRWUa4cWim4zgBH8fJswnE0hNDDHz0RdVyFgq0BcekRWQgQ/GBMnUp0UHPH2MBdfSdplFRCRxxaVXG32HEJUh6LrUB4gLvBLJ/sIChup4GP731XKbcR1xF5IUQlMTwzR9tgXkVyHAjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9146B152B;
+	Mon, 27 Oct 2025 19:09:22 -0700 (PDT)
+Received: from beelzebub.ast.arm.com (unknown [10.118.29.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C3CA3F63F;
+	Mon, 27 Oct 2025 19:09:30 -0700 (PDT)
+From: Stuart Yoder <stuart.yoder@arm.com>
+To: linux-integrity@vger.kernel.org,
+	jarkko@kernel.org,
+	peterhuewe@gmx.de,
+	jgg@ziepe.ca,
+	sudeep.holla@arm.com
+Cc: Prachotan.Bathi@arm.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm_crb: add missing loc parameter to kerneldoc
+Date: Mon, 27 Oct 2025 21:09:21 -0500
+Message-Id: <20251028020921.214189-1-stuart.yoder@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <OcRf3_Q--F-9@tutamail.com>
-In-Reply-To: <OcRf3_Q--F-9@tutamail.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 28 Oct 2025 11:08:50 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
-X-Gm-Features: AWmQ_blA9zoKI2SVeeGsuWipkZxgiFCqrqDbuMR0eNhCmBzwYqh32VPQiN0OKAk
-Message-ID: <CAKYAXd8yo8HH2E0QWgLTBdnjVfpD_8LUPpOXbcKT4p91TLRh6A@mail.gmail.com>
-Subject: Re: [FS-DEV][NTFSPLUS][BUGREPORT]NtfsPlus extend mft data allocation error.
-To: craftfever@tutamail.com
-Cc: Linux Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Linux Kernel <linux-kernel@vger.kernel.org>, Iamjoonsoo Kim <iamjoonsoo.kim@lge.com>, 
-	Cheol Lee <cheol.lee@lge.com>, Jay Sim <jay.sim@lge.com>, Gunho Lee <gunho.lee@lge.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 26, 2025 at 3:40=E2=80=AFAM <craftfever@tutamail.com> wrote:
->
->
->
-> Hi, I' decided to test your new driver, as I found ntfs3 driver buggy and=
- causing system crush under huge amount of files writing ti disk ("I'm repo=
-rted this bug already on lore.kernel maillists). The thing is ntfsplus demo=
-nstrated buggy behavior in somewhat similar situation, but without system c=
-rushing or partition corruption. When I try, for example, download many sma=
-ll files through download manager, download can interrupt, and cosole versi=
-on writes about memory allocation error. Similar error was in ntfs3 driver,=
- but in this case with ntfsplus there is no program/system crash, just soft=
--erroring and interrupting, but files cannot be wrote in this case. In dmes=
-g this errors follow up with this messages:
->
-> [16952.870880] ntfsplus: (device sdc1): ntfs_mft_record_alloc(): Failed t=
-o extend mft data allocation.
-> [16954.299230] ntfsplus: (device sdc1): ntfs_mft_data_extend_allocation_n=
-olock(): Not enough space in this mft record to accommodate extended mft da=
-ta attribute extent.  Cannot handle this yet.
->
-> I know. that driver in development now, so I'm reporting this bug in time=
- when development is still in process. Thank you
-I will take a look and fix the next version.
-Thanks for your report!
+Update the kerneldoc parameter definitions for __crb_go_idle
+and __crb_cmd_ready to include the loc parameter.
+
+Signed-off-by: Stuart Yoder <stuart.yoder@arm.com>
+---
+ drivers/char/tpm/tpm_crb.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index c75a531cfb98..0eb48429f73d 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -179,6 +179,7 @@ static int crb_try_pluton_doorbell(struct crb_priv *priv, bool wait_for_complete
+  *
+  * @dev:  crb device
+  * @priv: crb private data
++ * @loc:  locality
+  *
+  * Write CRB_CTRL_REQ_GO_IDLE to TPM_CRB_CTRL_REQ
+  * The device should respond within TIMEOUT_C by clearing the bit.
+@@ -233,6 +234,7 @@ static int crb_go_idle(struct tpm_chip *chip)
+  *
+  * @dev:  crb device
+  * @priv: crb private data
++ * @loc:  locality
+  *
+  * Write CRB_CTRL_REQ_CMD_READY to TPM_CRB_CTRL_REQ
+  * and poll till the device acknowledge it by clearing the bit.
+-- 
+2.34.1
+
 
