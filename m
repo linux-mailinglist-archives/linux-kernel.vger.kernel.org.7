@@ -1,201 +1,121 @@
-Return-Path: <linux-kernel+bounces-873653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC47C145A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:29:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C614C14656
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98595E521D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA30B4265C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30E0307AF2;
-	Tue, 28 Oct 2025 11:28:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC36307AFB;
+	Tue, 28 Oct 2025 11:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QJNbxjjC"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010064.outbound.protection.outlook.com [52.101.85.64])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="n3eMlPvv"
+Received: from smtp70.iad3b.emailsrvr.com (smtp70.iad3b.emailsrvr.com [146.20.161.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5D01E49F;
-	Tue, 28 Oct 2025 11:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761650933; cv=fail; b=r0JusqSq0mivk92o0VbNwKS3y+gO31ntAfUJO42Q0YHZf8RqABBSRgHJsha4u4XWMZQEuVw4Hp16vPsr1rxU/i817aePcsU62uVShN3gAeWQANIRAbNSjVsdvDEkqcpgHYUTqwVH/jH8+CDDgeih7SJC1LEA6hmk/bhiZJD9d6I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761650933; c=relaxed/simple;
-	bh=zuM+XvbfNgBJKImzruVG0B1eUVKqWIb6B+HluC2R7uw=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=GLRHgn/A3/JxKNpFlhoS4xvlxfT9t01nuwWfuIbTB5JqJhhA3s7dqiafoy9mNV2lGkLQxVnaLNiIgQPy+wL/WwKh5TRlNDB9uI7lgvkgTAde+YTQLy3QT2anUqFh5hmQ8QmbqnO+Q9xj1g4b3OXr003kH+QqKOCJJ57xrwd1wG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QJNbxjjC; arc=fail smtp.client-ip=52.101.85.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ypfykaX4XsIR04AebE4RXXtyvFlkScCkJ5/YhcBVHxOm1HO9OW8/cc2yt5Z1Xjq22iBtYxNIEyi1zWt6eyi4yHr6VgwhBjvA9s1JYtqHa/mZVWkhEtcE8ueYo1cVdrTXRI1I7wTaMnJzXgFJVixj0fK+Mv3EWqy0kjwRaXHNQz5CDT9wh0A5RAh7Jcm7L+I3ee8Pv6eYdkJohVS5jrQFoMtRRiN6D+VvoAjsYK0d2uwa1OASbJ6Kj1KbES8Ss/IQQSCtJphc+KG2FdO5+jENloYgMwpvKfK3BqU8PKgdKOAmhfCZTBlVyL76oJ6f/yvDVothEfoMkCL7prNXnTzpaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zY5Z2NthXl3woqT6SJ6/sqsizO6EzucLjmfMde2bkVU=;
- b=tapl3uXTnxvjIUIuj0vixKyhdN4IUVBwXuYClp107yLg0heD3GHkW42dQHSjFlrpAiaqR+86C9wQ2AJ3sYAE7wgzd6y8rXOaKCQTxN2UCDt+Mq7tt4msxgKERSfFGRyK/p31Somn5S6TNIJ9OP+QGbyQb9SWXRsN64XAUI4zdPAQq9hFLifQjqDFtXTCfjPWY5f/uvzsCrIHzrd+RU89FoMQqG+34vZrisDekZb0CanRtJNk3h/faj9tjMo+wbBIwJSpWtGT3kWDDZ3x+PK6gX496R7mW4L9pD0aUcMLGyFi6SSdD0Oo7QteLe7BZMOC644OgMhJK08TLp0lSwGnOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zY5Z2NthXl3woqT6SJ6/sqsizO6EzucLjmfMde2bkVU=;
- b=QJNbxjjCM1KNKJDesSi1XvZp+X7KFQ9C/S9n++ZyJfjqovTtYH2b4oXYn99D+eW+JBTH82NapBP+cSIE1xRpm5GbnP6QHbV3CWzkKz/JTNZHetYFM4K3AHoiGgF0zhjlUqCH+46qzsoxkAU3l9XH6OkuZIX6f8eAJQ1YVcDsR0+sd94A0jXm9zGyf4OjQV/xPNEK0iYRkzKebfS2qVjDCG9ExOZjbS3zp7ybaa9VLFqVAMBHPnjLb+TKbR1FWPVKEU0/+mmdhFBhYIXva8IBuhmhDSA5z+5aWXmkSfmoOVqjxWfVFKV0gYggMiWaOX8GyrqMGa2pCDeSPy//5CQ6Rw==
-Received: from BYAPR07CA0067.namprd07.prod.outlook.com (2603:10b6:a03:60::44)
- by MN0PR12MB6004.namprd12.prod.outlook.com (2603:10b6:208:380::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.13; Tue, 28 Oct
- 2025 11:28:47 +0000
-Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
- (2603:10b6:a03:60:cafe::10) by BYAPR07CA0067.outlook.office365.com
- (2603:10b6:a03:60::44) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Tue,
- 28 Oct 2025 11:28:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Tue, 28 Oct 2025 11:28:45 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 28 Oct
- 2025 04:28:29 -0700
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 28 Oct
- 2025 04:28:29 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Tue, 28 Oct 2025 04:28:28 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <rwarsow@gmx.de>,
-	<conor@kernel.org>, <hargar@microsoft.com>, <broonie@kernel.org>,
-	<achill@achill.org>, <sr@sladewatkins.com>, <linux-tegra@vger.kernel.org>,
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 5.4 000/224] 5.4.301-rc1 review
-In-Reply-To: <20251027183508.963233542@linuxfoundation.org>
-References: <20251027183508.963233542@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1010E305948
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761651411; cv=none; b=hRYfo2EU8rh7mGaocX4N3swSywCj1Mp3Yq4VounpZZmlSgbYdA1s7HQFbpOXaoLAcG99x3Nvrgsx41/0vrMYj6OBtHAB0PCWgHvcxON0wh4hpe8aaCwsSa4uLRh7x5CYc2+sty6/UZ3umEANzmTo6zeZe5fJ4PFV6T1auG0dTM8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761651411; c=relaxed/simple;
+	bh=4awWjJKUoUU4MtANdtPYrUHLvN7n+6YrLHLVGj1qDLM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JfVYb6My3SBn2uokYAmJt2yVjPKqPXBUXgqvSv7RMcu0fjjr9+I91uAAjZMS6xYfQ5TcujHOEwVEFonimQi/0IYL98UqGfyLd6f/SyzRaTG/gNRNi7FB123KgFtwhwXT7k+ytzS0QCdkZivEoLWAja6vWOQUyzWPECkm+HB3l1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=n3eMlPvv; arc=none smtp.client-ip=146.20.161.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1761650926;
+	bh=4awWjJKUoUU4MtANdtPYrUHLvN7n+6YrLHLVGj1qDLM=;
+	h=From:To:Subject:Date:From;
+	b=n3eMlPvv7O3f/b2PSfSklyqelTchJPXyX6fyViSnB64UM9GLGZjIFnIv+Ntb2jW//
+	 wr+5KPWbFb7NYimaEyTNwMx7u4YC/GQ0sqjLJW5VfHab8hwH7GnW/A5/vW3cxDfmGg
+	 LIk/bEsiOI0QyCGXc/cTPpFQ11QvSwioDZHEyYFE=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp1.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 91FF96033E;
+	Tue, 28 Oct 2025 07:28:45 -0400 (EDT)
+From: Ian Abbott <abbotti@mev.co.uk>
+To: linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ian Abbott <abbotti@mev.co.uk>,
+	H Hartley Sweeten <hsweeten@visionengravers.com>
+Subject: [PATCH] comedi: 8255: Fail to attach if fail to request I/O port region
+Date: Tue, 28 Oct 2025 11:28:33 +0000
+Message-ID: <20251028112833.15033-1-abbotti@mev.co.uk>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <ec4ea3f4-b160-496b-8d43-10c4cdde133f@rnnvmail201.nvidia.com>
-Date: Tue, 28 Oct 2025 04:28:28 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|MN0PR12MB6004:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6a001f3d-cc86-4544-d2a9-08de16152815
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZkVNUE5XYytub2I0cjZua0J6YkNjMjNHRlhXcVhJTWFxUnV2LzNaTHRrdzBi?=
- =?utf-8?B?aG9PcFV0NXlHbU9nNXZKMkxoQWpsaGZMUHYvclNBVVE4NU5TSmJ4TG5HTEYx?=
- =?utf-8?B?L3ZYeTMrTEJuUHFnaU04ZGRKY0xtbEtIa3lhQ0ZGQ0JSSXBQbHhIMVJyTmdx?=
- =?utf-8?B?Njd5RGxhUjFQNStYQVErMThLMXdTaVd1Vi9xYnk0c2gwb2VCM3U1aXlibkEz?=
- =?utf-8?B?dmFUZFRkeUxOVzJpRUtJMDVLL0kzRHI0R1V0TG44NjExNTVieTVHWjA1dnIr?=
- =?utf-8?B?YlhyQysrb3dKT3REUXFjTmd2RFFBVXB6MFA1bC9FaDQxOHlOZVRYNXZ3Tm83?=
- =?utf-8?B?Y0orbW1ndERJT2lLM1FVNXBGcDBNTmZ6eDJhN2FvdlZidTNEWlBaeitwdnlG?=
- =?utf-8?B?bXUva2p0TUFKYW5HNWluUjhuUWJhdFRLQ1pnZmtNbmUwNytNS2UyS2p5amxM?=
- =?utf-8?B?YkVNSEtreG1oTE94S3ZRdnNiWEdhVlQ1NWZqckQ5MXhmQk95SW5DdkwxWTh0?=
- =?utf-8?B?a2VETi9RYVdEOHNnVk1mOWZyUk5QYjA1ckcwM1ZzS2NiYWhrYThtYzZySDJs?=
- =?utf-8?B?VktQT2YrWnkycVhLZkpyOWYxenpzTktIdDJ4cFNoQXFtL0ZBNlh4aUh2T05p?=
- =?utf-8?B?aVhzMTgvRE1VQUlXc0ZxNjlzeVFnRUVFRDlyMDJBV3hJcnlkMmM0SzY0VnRk?=
- =?utf-8?B?blJwbi9aN1Vsb1RDM3NUQk0rWmRTU0Z6MmVMMUVlOERHUVNNUFJoNURrTHBs?=
- =?utf-8?B?Ym1DS0E4bXQvd01VeDF0SE1VTk42V09nYkEyU2lVOGJ6ZGdzR05jenFTWFRC?=
- =?utf-8?B?eDU5YlovVHplSXFhSGIyWk1id0JOR0ZoTkw5aEM4NTNTck40OEc2NG9tUHFo?=
- =?utf-8?B?b2pkdjQrdUQzQlV4WDdCVWFaSHlaK0hoRmVyRDBNQ2NXZzh1NW5OdHJCai93?=
- =?utf-8?B?bkhNNzNpMjdjbFltTGRZY0c2QzRNVXlUVEZOakVQSHN0QVpPNzZUMTRob25a?=
- =?utf-8?B?bVFueTNBbVZTY2liTkg1eGN2VUhEcEd2a1kzazM3RGJhOGdVUFpHMjJpemNl?=
- =?utf-8?B?MEZuODFLajRYa2J3RGk2NVN6MDVJVk1NWWtoODlxNTcxWTB6WE9lTU5uS29N?=
- =?utf-8?B?dFhqeWQ1M3ZNaWx3QUFEVFlNWm0zZ013WjJac2VreE1lMGNReXNscjZNQW91?=
- =?utf-8?B?U1FwNjZaVythM3JSU1FQWld0K1ZXclFqSDRXQTBRRkVwc2tiWGxwcXVmV284?=
- =?utf-8?B?RE8vUm5paUVDOG1CSG1QVjBKQUN0ZWhiblZJYW91dU1nQktzbUYxdjFWMEZH?=
- =?utf-8?B?d2M4WWVvTTZEL1VPZnBKc2tObzJNV0hKWE45Z1hOSjNua2VyR0JKODhCaEJV?=
- =?utf-8?B?ZlZsOVZXOGtGMzJQNVkwRjIxdEY1TTNwNXBDV0ZCc2UzWDNzaERQOGJnbkZQ?=
- =?utf-8?B?YTN4dENVOXJBK1BUSmw2UjlmSVQwem53UmZVOHZ3M1BWczE2M0FpVmMyZ3dj?=
- =?utf-8?B?d1BBMVQxUCtlTjN6NGhyMW1lTXNRYVRMNUh1SGg5dm05MjVsN1FWNThrUlRr?=
- =?utf-8?B?QlRzdUFJSEo3Zkd4Ylh3ZkdHWXFCV28vV0FPbW1TbmNMekR3emFacGVBcVZv?=
- =?utf-8?B?cU5Qb1lLRXpyUURZZVM1MWpzcXczWS9oZFh4TTB4eFAzZjlBcllwcXMxaUZB?=
- =?utf-8?B?OGlGUDRYd2M3UHdsQUgzeHltczRrcWJ2V1hRNFJTbXJLZXVsVUN3MzJzSjZP?=
- =?utf-8?B?K1Q2RmNIdnhwVHFSaXNuWWt3VnBrL3FtZUl0UjIrdHdTejRJdWEwZGxuTHFq?=
- =?utf-8?B?MHZuVXNKcm5DZCtQSGJQZWVVcitiOU5XSXF0SzgrK3ZrMTgweU4waW0zTUUr?=
- =?utf-8?B?RFNodnI0Z0ZNbDN2aVRObStqTUJRWmNIaFVxeFlkK2VZck1jaG14MmE3RkJx?=
- =?utf-8?B?Ykx4TnRuZWdVekwwaTdOajUvTWdiZUErOWJTamJLdFdoTCtYZkloY0ZtRW1F?=
- =?utf-8?B?MmlLQ3BzZEo3bFY0dlppSW5keGJNSStVY1JZSHhCUzRQYisxYkhmWGU2YnEz?=
- =?utf-8?B?YTZHQWdQaWdPa3Iza2VvSkxRTGtXMTFRaHFmNkc3WHVTL1dsenhHcmtOWERu?=
- =?utf-8?Q?/Q3U=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 11:28:45.5474
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6a001f3d-cc86-4544-d2a9-08de16152815
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001C9.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6004
+Content-Transfer-Encoding: 8bit
+X-Classification-ID: 78266644-0099-4a55-b3bb-d8a12d3b36ef-1-1
 
-On Mon, 27 Oct 2025 19:32:26 +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.4.301 release.
-> There are 224 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.4.301-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.4.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+The COMEDI standalone 8255 driver can be used to configure a COMEDI
+device consisting of one of more subdevices, each using an 8255 digital
+I/O chip mapped to a range of port I/O addresses.  The base port I/O
+address of each chip is specified in an array of integer option values
+by the `COMEDI_DEVCONFIG` ioctl.
 
-All tests passing for Tegra ...
+When support for multiple 8255 subdevices per device was added in the
+out-of-tree comedi 0.7.27 back in 1999, if any port I/O region could not
+be requested, then the corresponding subdevice was set to be an "unused"
+subdevice, and the COMEDI device would still be set-up OK as long as
+those were the only types of errors.  That has persisted until the
+present day, but seems a bit odd in retrospect.  All the other COMEDI
+drivers that use port I/O or memory regions will fail to set up the
+device if any region cannot be requested.  It seems unlikely that the
+sys admin would deliberately choose a port that cannot be requested just
+to leave a gap in the device's usable subdevice numbers, and failing to
+set-up the device will provide a more noticeable indication that
+something hasn't been set-up correctly, so change the driver to fail to
+set up the device if any of the port I/O regions cannot be requested.
 
-Test results for stable-v5.4:
-    10 builds:	10 pass, 0 fail
-    24 boots:	24 pass, 0 fail
-    54 tests:	54 pass, 0 fail
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+---
+ drivers/comedi/drivers/8255.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-Linux version:	5.4.301-rc1-g4e89a6191515
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra20-ventana,
-                tegra210-p2371-2180, tegra210-p3450-0000,
-                tegra30-cardhu-a04
+diff --git a/drivers/comedi/drivers/8255.c b/drivers/comedi/drivers/8255.c
+index f45f7bd1c61a..5f70938b4477 100644
+--- a/drivers/comedi/drivers/8255.c
++++ b/drivers/comedi/drivers/8255.c
+@@ -77,19 +77,17 @@ static int dev_8255_attach(struct comedi_device *dev,
+ 		 * base address of the chip.
+ 		 */
+ 		ret = __comedi_request_region(dev, iobase, I8255_SIZE);
++		if (ret)
++			return ret;
++		ret = subdev_8255_io_init(dev, s, iobase);
+ 		if (ret) {
++			/*
++			 * Release the I/O port region here, as the
++			 * "detach" handler cannot find it.
++			 */
++			release_region(iobase, I8255_SIZE);
+ 			s->type = COMEDI_SUBD_UNUSED;
+-		} else {
+-			ret = subdev_8255_io_init(dev, s, iobase);
+-			if (ret) {
+-				/*
+-				 * Release the I/O port region here, as the
+-				 * "detach" handler cannot find it.
+-				 */
+-				release_region(iobase, I8255_SIZE);
+-				s->type = COMEDI_SUBD_UNUSED;
+-				return ret;
+-			}
++			return ret;
+ 		}
+ 	}
+ 
+-- 
+2.51.0
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
 
