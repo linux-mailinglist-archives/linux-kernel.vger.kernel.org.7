@@ -1,127 +1,224 @@
-Return-Path: <linux-kernel+bounces-874267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F137DC15DE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:40:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C158C15E49
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:43:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C32835564B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:40:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 778654E8DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A7A286887;
-	Tue, 28 Oct 2025 16:39:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F4B342CB4;
+	Tue, 28 Oct 2025 16:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GNvCqsB/"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2JdsJ8S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410517081E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF6A1E0DD9;
+	Tue, 28 Oct 2025 16:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669598; cv=none; b=XJ1akfVwh6M6qPyiEp4uljc8lCdVbTtmExY3xcxMgO8fRyf8S7df3tMyGkIehCR2hkAllQsT0oFvlphwyLo+BYZ+XVLwfptPuAku4T8LCYRIyWtevGDxTPqv/GgEMG8AQQFtZkccN4W2GQSRhPP7aS3sbbnrbq+HTZBVA5do4Ys=
+	t=1761669639; cv=none; b=TqTv5NX8JYQgK1VUF9BWYfIyBegOLYN+Xf+JvMKfUckCZo3xIsqJc7QS1aMyLkP4ymmPNn1hMSj9VjEPmiTqCxqX/a6yZs3/+IlhO299gI/uNP5gZxBvphMgKoEMmiezpdYykL100qEWBg4f5fpaobouYi2AqJnIe4c0uJyiy08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669598; c=relaxed/simple;
-	bh=KDVtgMrR4QbHV8q6n3burehK4NNi/MNvE4NZoYP4CRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1x6wdGkVepr83DyQz2n5iDtEOGJX1ZEBf/n/gDEJhv1Z/BCwez4NTTUMlrIQh0WAycsGJts3yZ06EPYWs5me4vh+w2Ar+M4Jf/Svrq9kAY1eNT0Wr71ZEbFMgRCx9iG/f21K3WAKTIVJZJMzzYo3vymf0I9mDJsUbA4Z2l+8n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GNvCqsB/; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3f0ae439bc3so3940593f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761669595; x=1762274395; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ayPvp3aUy7A0NXAfeV1Yvb5EM2oZXjw1a3kGQLQFivg=;
-        b=GNvCqsB/TDGm0z3wDS5rD8wiGQbtyEEW9t9nTb7x8uE2jWdiOdH93eBRjNWVy4jo01
-         nuNNCNVGdNbIbgPRI15G/nR03WMACUhc+g9jRP+Pv6Zrdnw28mLsTgqtS8OO0YlX7ogY
-         xiGHgDuuJkgrhEFrspssfixdM6qCyH98fx5QP3l9lMbpdNcDfPMAU0Fdj3F8rfnmFTV6
-         dTRNZ2S20Yd/W1laHQYJxaiTAwt8ssDZTMyLT7Zi1IsqyBqM1pUoUHvVN8ky3TPv5tQT
-         IxQzj1LfczkIX8Wapmws/jbN2NBokuFO5X33jNscDhveydU03bx0+Xp794jmJiVB3hzF
-         mkfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761669595; x=1762274395;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ayPvp3aUy7A0NXAfeV1Yvb5EM2oZXjw1a3kGQLQFivg=;
-        b=vss8gzuerDuW30/W6n5lLcXCtCjMAGyCXdlz/dSpeyQ4z6yZeOyfSGMKONs0Y3gjq/
-         aMTSPd5K70L+8r4yhKJci0lU0LfZsTjAFakiJbhqQVAQJ+lFobeGWrDr0m0cvm5h+2pW
-         KQpU7Mhi7LFMpvbSJIvRoIEGSW/oADDOS9R/l2Ss3xYiB6T614sXzV3iAFppFVCGumu7
-         QMGf5Im5U65kmlORpZUgxhpGW3Rs4j6gIuC1mi6ZLUxtz3capWmkq/gYFY3bHxWVOa1O
-         iQseFGnihbjzDVIbt89osZ8is+ZnwvQqnpa/fdHHTfrVPYfv2V7G5FMhbugQGRLHtPXs
-         Y8yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIkpAusjlrAU2SPQa2yjprfKZF/CTaJnBVhMS4jnaMwK2cTh+nEHOlw83XHknLwTDw7PgpLyvDTyuDJf8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIR6+b5NZgMFEoRoFRQxiZdrRKAi9dUsBReuDPErqTAd4VDoKj
-	T7GMH0MthqUtiQbrdoBI1k7avdv3g+Eo0oItepu2O69nLK/dGSF8Zw21xXllyc0uGvg=
-X-Gm-Gg: ASbGncuK2/0k/enVVUQooqxI71Ij8w4AXA3pNfiPQILUYp5hHkCL0OeJQtE94jxuOqo
-	wtdCIapEfNGRevGWjpMxUS1QgbnCKEcqGUsK32PR65jy20y2u+alrvielSx5vtb7Qo68wbdeD0+
-	3eb++VD0acdwYXuqbsA2ewU7jZS7981J5OgeoglHCw5KH6axXnYaQZSXWC46MBY8G6vZNglZhcB
-	7EZPd6Tn/FhZ/CMnShB8o5BKZJypku3pKoPzaQ3BEYHG9G9GDuJ8swwZMTRUTiNCsIHD2FY+iLa
-	tiAs3CuwFuTuXyBiKxGtmdrZxglLh7lKnwH4hWok40h6f6SWmRjA41v8l/KX3nbWW/avmfd9ZC4
-	GxxbZK7+Knro6FlEk09Rq2+9Hpf3CDeRnhbUr7rQ1BUiGCaZtnAe9bkSH4/EWx9rPdpGgmRuT
-X-Google-Smtp-Source: AGHT+IEZ87hHsKDJtSMUjmPMjPg22H5KbMPCymadPgJhxFMPAVNlY+zHp3R2l0vulAvPGoVtFB6kTQ==
-X-Received: by 2002:a05:6000:2383:b0:426:d5a0:bac8 with SMTP id ffacd0b85a97d-429a7e8a487mr3398217f8f.56.1761669595108;
-        Tue, 28 Oct 2025 09:39:55 -0700 (PDT)
-Received: from linaro.org ([86.121.7.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cbb2bsm21530050f8f.13.2025.10.28.09.39.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 09:39:54 -0700 (PDT)
-Date: Tue, 28 Oct 2025 18:39:53 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: typec: ucsi: Set orientation_aware if UCSI version
- is 2.x and above
-Message-ID: <7jpghdq6so4mxarb22r75gxwxxutcixzkxdshfeyvvfbsazn2l@4mpklf2xw3ww>
-References: <20251028-b4-ucsi-set-orientation-aware-on-version-2-and-above-v1-1-d3425f5679af@linaro.org>
- <23b6e21b-40e1-419f-9314-97eb685b9aef@oss.qualcomm.com>
+	s=arc-20240116; t=1761669639; c=relaxed/simple;
+	bh=/JfS7eiiSAq3FKBXLYqqDzVgEh7qbDZ2ncxN1xuql3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EhGVMu8ddmPB+bI8JG81JRNhdUI26RYWQlZpZ7JBHyi09ptWjRNCTLgY7hqz1B5piOwk41lZddJEkmkNPaZO45iNiTPZg0uNgRVMmTvofJErzTq5KDYicl5q+gIOCedmb/zYIlwuKba5e+X1W9SYnqPE9No4SOFud+XKrWkjgBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2JdsJ8S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE882C4CEE7;
+	Tue, 28 Oct 2025 16:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761669638;
+	bh=/JfS7eiiSAq3FKBXLYqqDzVgEh7qbDZ2ncxN1xuql3M=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a2JdsJ8SyutaDbKgxjbg3ZsYUjtFeDhtbN1TnUTIjFZqjNTatBwv5Y7AKc0HiKKoC
+	 7WO0Fpu+QNUf29xTVd+gkfH1IurBwfp36YYhqa++1euiGMmrlPsbbUNm53pQFK9i6K
+	 Z5xlku0+qj8PrMQiTvnwgbGYcWMEDW0QRJnPszzoIEE/NsciyMzdPn9jvVFYIR/33w
+	 JubTSYKzTaMoUvr0vnLVQljk0zNLazZ9rr0han0rBZ3Heu0guV92OlgiW5AXCb8+qC
+	 4D+wAEI04uD3YEKp6rm3UTeIbOT0ynFeb2xFyz7wZmp7SBGDT2KVc1gRcamqrRi8R4
+	 y8ftVK+8hmQYA==
+Message-ID: <aa4faa81-6e9d-41c2-85f0-32045a8f9f51@kernel.org>
+Date: Tue, 28 Oct 2025 17:40:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <23b6e21b-40e1-419f-9314-97eb685b9aef@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] watchdog: Add driver for Gunyah Watchdog
+To: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
+Cc: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251028-gunyah_watchdog-v3-1-e6d1ea438b1d@oss.qualcomm.com>
+ <25f7ff09-08ea-4969-9184-9fd01b097558@kernel.org>
+ <76479593-c47b-41a7-8349-5d7c1403f7c0@oss.qualcomm.com>
+ <73955d58-544c-4299-a099-bfd9e5912a40@kernel.org>
+ <636a1f99-acd4-4904-8fae-f159646cc1a0@kernel.org>
+ <f4d80be9-986f-4d37-9c25-725eff7bb653@quicinc.com>
+ <e03373d9-e2dd-48b6-93a6-554fcd623718@kernel.org>
+ <59a00934-cb42-43de-ac5b-a9292b08301d@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <59a00934-cb42-43de-ac5b-a9292b08301d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25-10-28 18:24:21, Dmitry Baryshkov wrote:
-> On 28/10/2025 17:43, Abel Vesa wrote:
-> > For UCSI 2.0 and above, since the orientation is part of the paylad,
-> > set the orientation_aware by default and let the implementation specific
-> > update_connector op override if necessary.
-> > 
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >   drivers/usb/typec/ucsi/ucsi.c | 3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> > index ed23edab776354f08452c539d75d27132b8c44dd..84afa9bfc65b6e6ad0a8c1856252299c16562baf 100644
-> > --- a/drivers/usb/typec/ucsi/ucsi.c
-> > +++ b/drivers/usb/typec/ucsi/ucsi.c
-> > @@ -1637,6 +1637,9 @@ static int ucsi_register_port(struct ucsi *ucsi, struct ucsi_connector *con)
-> >   	cap->driver_data = con;
-> >   	cap->ops = &ucsi_ops;
-> > +	if (ucsi->version >= UCSI_VERSION_2_0)
-> > +		con->typec_cap.orientation_aware = true;
+On 28/10/2025 17:33, Pavan Kondeti wrote:
+> On Tue, Oct 28, 2025 at 05:17:44PM +0100, Krzysztof Kozlowski wrote:
+>> On 28/10/2025 13:27, Pavan Kondeti wrote:
+>>> On Tue, Oct 28, 2025 at 12:07:40PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 28/10/2025 12:04, Krzysztof Kozlowski wrote:
+>>>>> On 28/10/2025 11:58, Hrishabh Rajput wrote:
+>>>>>>
+>>>>>> On 10/28/2025 3:10 PM, Krzysztof Kozlowski wrote:
+>>>>>>> On 28/10/2025 10:35, Hrishabh Rajput via B4 Relay wrote:
+>>>>>>>> +
+>>>>>>>> +static int __init gunyah_wdt_init(void)
+>>>>>>>> +{
+>>>>>>>> +	struct arm_smccc_res res;
+>>>>>>>> +	struct device_node *np;
+>>>>>>>> +	int ret;
+>>>>>>>> +
+>>>>>>>> +	/* Check if we're running on a Qualcomm device */
+>>>>>>>> +	np = of_find_compatible_node(NULL, NULL, "qcom,smem");
+>>>>>>> I don't think you implemented my feedback. This again is executed on
+>>>>>>> every platform, e.g. on Samsung, pointlessly.
+>>>>>>>
+>>>>>>> Implement previous feedback.
+>>>>>>
+>>>>>> Do you want us to add platform device from another driver which is 
+>>>>>> probed only on Qualcomm devices (like socinfo from previous discussion) 
+>>>>>> and get rid of the module init function entirely? As keeping anything in 
+>>>>>> the module init will get it executed on all platforms.
+>>>>>
+>>>>> Instead of asking the same can you read previous discussion? What is
+>>>>> unclear here:
+>>>>> https://lore.kernel.org/all/3b901f9d-dbfa-4f93-a8d2-3e89bd9783c9@kernel.org/
+>>>>> ?
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> With this patch version, we have tried to reduce the code execution on 
+>>>>>> non-Qualcomm devices (also tried the alternative as mentioned in the 
+>>>>>> cover letter). Adding platform device from another driver as described 
+>>>>>> above would eliminate it entirely, please let us know if you want us to 
+>>>>>> do that.
+>>>>>
+>>>>> Why do I need to repeat the same as last time?
+>>>>
+>>>>
+>>>> Now I see that you completely ignored previous discussion and sent THE
+>>>> SAME approach.
+>>>
+>>> Our intention is not to waste reviewers time at all. It is just a
+>>> misunderstanding on what your comment is about. Let me elaborate further
+>>> not to defend our approach here but to get a clarity so that we don't
+>>> end up in the same situation when v4 is posted.
+>>>
+>>> https://lore.kernel.org/all/b94d8ca3-af58-4a78-9a5a-12e3db0bf75f@kernel.org/ 
+>>>
+>>> You mentioned here
+>>>
+>>> ```
+>>> To me socinfo feels even better. That way only, really only qcom devices
+>>> will execute this SMC.
+>>> ```
+>>>
+>>> We interpreted this comment as `avoid executing this SMC on non qcom
+>>> devices`. That is exactly what we have done in the current patch. since
+>>
+>>
+>> So where did you use socinfo? Point me to the code.
+>>
 > 
-> This is not enough. You should also parse the data and call
-> typec_set_orientation().
+> Okay, lets go a bit deep into the socinfo part. we have used
+> `soc_device_match()` API to detect if the device is qcom (`family =
+> Snapdragon`). It works. However, when we built both `socinfo` and
 
-Actually no. That is done by the following patch:
+socinfo driver. Read my first feedback:
 
-https://lore.kernel.org/all/20251028-usb-typec-ucsi-orientation-v2-1-9330478bb6c1@linaro.org
 
-Which has been already applied.
+"No, your hypervisor driver (which you have) should start the module via
+adding platform/aux/something devices."
 
-And no, we don't need Fixes tag as this is an improvement.
+And then I agreed if you start it from the socinfo driver.
+
+
+> `gunyah-wdt` as modules, we do see that `gunyah-wdt` gets probed before
+> `socinfo` because the driver that registers socinfo as platform device
+> which is `smem` probe is getting delayed. As you may know `smem` device
+> gets registered by `OF` core directly before the whole platform devices
+> are populated. To make sure that any configuration works, we went with
+> `qcom,smem` based detection. This is mentioned in the cover letter, sure
+> it is a detail that can easily be lost. Now one might just say go and
+> fix probe deferral problems. The problem here is that `smem` platform
+> device creation happens differently to other devices which is leading to
+> probe deferral. I can enumerate the problem in much detail, if that
+> interests you.
+> 
+> Please help us understand what is the real concern here? we don't want
+> to call `of_find_compatible_node()` API on non qcom devices but it is
+
+It was told to you already multiple times and it is basic kernel
+knowledge - you do not execute your init code on other platforms. At
+all. You are developing like it was 2005. That was the style that time.
+
+Write concise replies, I really have not much time to read LLM output.
+
+Best regards,
+Krzysztof
 
