@@ -1,564 +1,250 @@
-Return-Path: <linux-kernel+bounces-874678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6270C16D62
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:00:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20D0C16D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C19224E2BDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9035E1A28810
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF2F350A17;
-	Tue, 28 Oct 2025 21:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF867350D6F;
+	Tue, 28 Oct 2025 21:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="cYM02BSe"
-Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.169])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q0UmJYI6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QA4WM7oI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5288E34F498
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1070350A26
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761685207; cv=none; b=Hj0xRjWxdXVX7LOuv0PJKmZjew/ie00FBwhru2eEJ0soY298bDJGqgFVd1eXRxVt90CSA41UvZYMB29U8zILk7UvuaQhhZsrVMBq1196LwfDUTh5gFPrtzOxITWDgS5wVshoYiJYMqdUccvJi+Q58i7SBO/50jYSDzsYkNLqc7Y=
+	t=1761685211; cv=none; b=Je8FGvH9MLKuJcFAUwpUQ4SzFdwHr8f++HmHWOQ3gQSenybZCUTpE9fhwsXHbhTN54XN4zRSVYIemsuGi8xgxONUqUDflL3ph4+y0aHeNkDQOvRbxrCHJJoDwW+YuXt6x0K/HPFzqy8XCIPobGfx8r8ZX9scqAxQ+QgXPlF7JZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761685207; c=relaxed/simple;
-	bh=haO62HY7g3Y3li2nzdiOAIA18zm4c9H4mVPNM46hp24=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qshNK0hiQ0RvjWiZ1Z0S/MD24Oy7umB7gDXCDtvT3I25i8/RuD8+cd/SItOHwW6a+ual7stlvLnNGo/fBwb3kAq/2Vqja4vTOgw4U0yy84VvcNsqoi1foj3TkpaEPsh6C0WkcAQkNDrHZIMeut1dkiu1dLxNNmfV+ZxEb45UTIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=cYM02BSe; arc=none smtp.client-ip=195.121.94.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xs4all.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
-X-KPN-MessageId: f5583d8b-b440-11f0-84a0-005056abad63
-Received: from smtp.kpnmail.nl (unknown [10.31.155.37])
-	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
-	id f5583d8b-b440-11f0-84a0-005056abad63;
-	Tue, 28 Oct 2025 21:59:13 +0100 (CET)
+	s=arc-20240116; t=1761685211; c=relaxed/simple;
+	bh=wRiosEmTpDAVLVLEoBEb3Ki+aT+vGc91sDzAON0Ob/8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t0+8jcd20TONBOOx1b4L15FJreZQ7vB0hfuA8R8xHCXzcKk8HqagpBxKRfSHv24lViHKb6qP+GPUvMjmKR59BdMVLWbqbdfTYiRB5CnWv2fFfIOQXLUm4L8tDt/svjaj5fgyqesBFwRyJr91pIcU5P8HnAIn5fWHcSLpoDKrAaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q0UmJYI6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QA4WM7oI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlA4w2616640
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:00:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fmeFRlppkrUjz7TJfHZBER
+	QR84XKctMO67PE77+lR+0=; b=Q0UmJYI6FHStmegzkAY164F9oqYVJQq3JOr3d3
+	ptU6NYifWymGbHLxN9h4GSGM6mM0vLbW6oBXYPkprTQXEUzMikLXxRFfpyRG9jel
+	/i0zwxFnQIjaSbvhpT88ryAZY5uPOa8Zv7Igf1eulFEWX4O3abZNN87dFaoIiDwK
+	1aH39ehzidzZck5+WyxtPeKvdDMw34g3Bx4/mPxZQ64Kolxl+fEW8RQPY79vlZNU
+	KZ53v8FTrgUNyRCCLogHEbWFjqksENMEwPexdhEzjsqFhdvEJjaCjk5234yfJKAq
+	6XOzY35Ucy2h3zgWnUQvIjYFzPcDUD2D8Uqjpk9Yiyi2qV0Q==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a349y05sa-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:00:08 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e88947a773so327644241cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:00:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=xs4all.nl; s=xs4all01;
-	h=mime-version:message-id:date:subject:to:from;
-	bh=pH2TFgTn6/J2bBxJjQCiygjfMnxONmo9yOZe4v2bZTI=;
-	b=cYM02BSe3x7fDcWB+u5Ps47O2+EArcPhvYaHIooCExAa3azIOxlb4InRJ8wYJQgmjTykqropfj8mG
-	 kO1+jn8FjW0cCpAtIg4SbLnIbAgTi+DVZ6QKqtmurBlGlum8p1Mw8TsgR8F1G6GNVCO0P+GGCJR0gF
-	 LJ+q0FuDdqd7fiaACaFuzKKiv/ZCwWwgm/ppph6iMD37fpY447YuU+7OLJS6YczivDSrmjgD46a4M3
-	 h6mXP4fiylTFeaLDakSHkHY2MkqN9SspWw/Y9lO5SlWJ+H+fHNjvSR3nzwVExgpT6BeawIGbF0ua8p
-	 7HPGCnk02rgjh1t88BBtD2IE2F7AviA==
-X-KPN-MID: 33|g+VRnRkT5wnLeWpMLtCCN5KxrYfbXPSQO3dMdqhHmWWbhxs2caM4m2Dc1mrYii+
- nFymvAUGRm092FiO4z6KGpoDAd78vmgQ4V/4KKAoruNQ=
-X-KPN-VerifiedSender: Yes
-X-CMASSUN: 33|rYq3TUzMnsEQA64Xe0oC7fQTW0ZGsvnD3rMts1qeuK82FT4VgOsq9hkXJTVi1g7
- v6gRgqdDM+sSzVFG28Rw1Cg==
-Received: from daedalus.home (unknown [178.231.9.54])
-	by smtp.xs4all.nl (Halon) with ESMTPSA
-	id e7f95c13-b440-11f0-bd9d-005056ab1411;
-	Tue, 28 Oct 2025 21:58:52 +0100 (CET)
-From: Jori Koolstra <jkoolstra@xs4all.nl>
-To: Christian Brauner <brauner@kernel.org>,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Taotao Chen <chentaotao@didiglobal.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	NeilBrown <neil@brown.name>
-Cc: jkoolstra@xs4all.nl,
-	linux-kernel@vger.kernel.org,
-	syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Subject: [PATCH] Add error handling to minix filesystem similar to ext4
-Date: Tue, 28 Oct 2025 21:58:57 +0100
-Message-ID: <20251028205857.386719-1-jkoolstra@xs4all.nl>
-X-Mailer: git-send-email 2.51.1.dirty
+        d=oss.qualcomm.com; s=google; t=1761685207; x=1762290007; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fmeFRlppkrUjz7TJfHZBERQR84XKctMO67PE77+lR+0=;
+        b=QA4WM7oIIkE501OyoQwSdDT8pQ3d72TGmJfs/fjKk+NjJY5tqxjp+pG43a4xtEawSN
+         4aOqXIax5MkazoGnyrRSuWLeOTlhgdDz4PoUGykm0KPo35Y3w5XgKA0dWYaUrBSIDjUR
+         P10kgbANMhSmuPsGwA2D2rTOIhblAVjvkJ5Gxs+9CkVBS3XfzQVAXAUK8Xce7eIH1Fnj
+         Gc/VjJA4QNYG4KKwlNWGA7YL0/qBG4k+lv3yEifCfKjegT70Yrb2HE9aAXGZDdqDRlla
+         cUEc9s8VWLJCqEgiswxsgOrE/x3VZEI9r52BXxEosTaMVYEkBSScSHQGVcyqlp0NsjSw
+         xbdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761685207; x=1762290007;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fmeFRlppkrUjz7TJfHZBERQR84XKctMO67PE77+lR+0=;
+        b=AwPSjTspW8gcVrs87yBnWtY+avRXdxGaU2Ak6LbNZoUMYjJu0PLhBJUOvMPrqt1bqj
+         ny79VJ/7sgbye3lcSdoAaKuHGL4vB6mlLVieyClLvtcs82iujC/oPGrmdHRbwA/kR/O8
+         0vu8aFYow3E9u7/D3bSdou30nUXX7rdnwqCYoIQ5xywAkymcPUszHo5ONngUu9CRRiNK
+         rzOBhn9G53egBGPH/sAsBwAf/NGKq31gMo8XLWekxZ1a9NoMf6MSC7ZzZGLjPPaBYH6Y
+         VsXrlvqelYUfj4MPrivkLOKGKhFvUEKu7gdfCAJRqcFFjShBgnMQNEPL9wUzOZTGM+1i
+         JuFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXy9r6S/4oaOwjUKh8BREg4VO42P/NLzvleZYN6ZCmf6z1q86H2A1KOCLgcBS9J0cwvij+U4L8p12O8OkQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxzges8mMYV1XioV4vdlnjjXyaZyorbmhtqAgL1ExIrB1eI2cEt
+	/qMkDQINBy1cDdm+67iYLP5A60mnlcqJWqcAf2zgWM/xLmgyw63Sui8mOmYRW7nz8g7sgYn/MLl
+	6PUwICWoiw8+NijGxLk0Xnn53uccnNXricSIt8+lA0LfrKlHxwanMPQiF5VFeGiWpMuw=
+X-Gm-Gg: ASbGncvTrACMocmESWBECeXsATrI1dQuvkIWDVxIYnSW4+sGZ8fX6JRc+144rIPP3qo
+	YzEp6V885no1iz8Pk6x9mBCG4ceh7m5cyudJgWbbXNSmv8YcOcz7enclEoM2m+6HKPNKCCl9YKm
+	l47SOVNAJfgfEdb4kli0ADrOwUPuGh3cmpwBaRP0u5hO4Li6LCE3t0/OSLQk6gtCM/Cy3lZouTV
+	nPHoDPc2vyCLFevqm9EUReDzjTDq9N4GhB8jLcEEKDIrX2dEOUtWBlaIM83rb8FAVYz0yVpJL7w
+	t+Qbw5nuqQ+QZ6tClUIi3re99bSdU42MKVhXhLxWupef5aszFQrYnTSYedfQQcrVIZNyDs/kk3q
+	3TeyDdZFnuPtGyiuqK89xAkmlM9N5BKmiJT3OXqHydMOr5kg+7ws1hSuOQe67kCLCv4WBt1FIJq
+	yUopKNA7xRSChH
+X-Received: by 2002:ac8:598c:0:b0:4ed:5ed:253a with SMTP id d75a77b69052e-4ed15b49b4dmr9408501cf.12.1761685206756;
+        Tue, 28 Oct 2025 14:00:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxMsT+5Y09mdzLd+06A3xqeybTxQvQeYJ/RcrwC4yFOFdtYuGuXeKL3kKc6qKOwVjqlnQG5g==
+X-Received: by 2002:ac8:598c:0:b0:4ed:5ed:253a with SMTP id d75a77b69052e-4ed15b49b4dmr9408111cf.12.1761685206154;
+        Tue, 28 Oct 2025 14:00:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f861f5sm3283594e87.107.2025.10.28.14.00.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 14:00:05 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: [PATCH 0/7] arm64: dts: qcom: cleanup GPU's zap-shader node
+Date: Tue, 28 Oct 2025 22:59:59 +0200
+Message-Id: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANAuAWkC/x3MQQqAIBBA0avErBswoZKuEi1EZ3I2JhoRSXdPW
+ r7F/xUKZaECS1ch0yVFjtgw9B24YONOKL4ZtNLjoLRBf+JjE5ZgPWX0PDs9Gp6YHbQmZWK5/9+
+ 6ve8HenJ6ZF8AAAA=
+X-Change-ID: 20251028-dt-zap-shader-df7c258f6ffc
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6130;
+ i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
+ bh=wRiosEmTpDAVLVLEoBEb3Ki+aT+vGc91sDzAON0Ob/8=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQyaj3iXT4M7rb9p7nFObf0s6XI5PPyB9fX1wRbqjl8R56
+ 7PtVcc6GY1ZGBi5GGTFFFl8ClqmxmxKDvuwY2o9zCBWJpApDFycAjARh/vs/4MYXPSttCOXLZ/h
+ yTZdQuHn7I+d+y+aOLyaIJL9+zzTxV7XiQYfdHgcdgdzyk42UcnxnTpfPTy9UOnWFZmzXKL+rSd
+ KJmwrXrJe94RcWbdoqJBG8r5ZT32y+nweCX5W0It8ase8hb/IYRvb31tf11R9a9zfHd2/U+mzTc
+ GuEyERt7+VBtV4L2Vh1NzlGvZz9vwWHeHdzsKmRe7cMQX2VtF8T2w0rqmfPWrHFMTk32gg+n23s
+ IjSNZn0y767kh/8e8QVbsHT6Xkg/8ktpwN5BuxLY7VTgraXJahZJZ4z/1fZob2BY+GEulnzNCV2
+ +obqG/jodHJI7Xe3C/ny5EJMNMcKDWNrrew7Wy1tlAE=
+X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-Authority-Analysis: v=2.4 cv=D8RK6/Rj c=1 sm=1 tr=0 ts=69012ed8 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=1pCyjgwHKzNf7cO5EhIA:9 a=QEXdDO2ut3YA:10
+ a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-GUID: zSP-64DucBI4zfY4Swmyl0U9irNvF8_r
+X-Proofpoint-ORIG-GUID: zSP-64DucBI4zfY4Swmyl0U9irNvF8_r
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE3NiBTYWx0ZWRfX3XKj568tS70I
+ o0TRnPHwAtgs9mfOGmIq2Q2cFxwLzMgCq9KQOYZI1JhP6UuN2cBvhmZsOWsCuQvNDgTVQUA44XI
+ BEcNjGkXZcJPgigMOpxNiRWcJ5S9Bv2OexSBxv8SIuKIfqNQsmebRcVnEsUVpdVlugsfMhOifBc
+ ZkDt0tmEGYLRe9gHIWSEp+LykNRZ2uJFn7Xkk88kq/Qzf5jclELxWnSxceo5cMLJBFURyJPVwT3
+ vhJvKnvZmQSKRGm0JBOVboj38eYvVIJeTFrt8qxnScUxWx51DE6z4b/nM58w2pCv70rvbpjz1ES
+ 2UCGg83Y/lUuJO9ysF7ba+xe5FSUyH3th5oUjaV7pPtMd3y7O7Zu5D8yNmb7INqOQbHgsSJv3Uf
+ 3UWGHNOwGLseTTpr+VRClwPWtUAidw==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_08,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 phishscore=0 adultscore=0 impostorscore=0 bulkscore=0
+ clxscore=1015 malwarescore=0 lowpriorityscore=0 suspectscore=0
+ priorityscore=1501 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510280176
 
-This patch sets up generic handling of errors such as filesystem
-corruption which are frequently raised by syzbot. Towards this aim it
-adds the following mount options to the minix filesystem: errors=
-continue/panic/remount-ro and (no)warn-on-error, with semantics
-similar to ext4fs. When a minix_error() or minix_error_inode() is
-raised, the error is reported and action is taken according to which of
-these mount options is set (errors=continue,nowarn-on-error are the
-default).
+Historically all devices manually defined GPU zap-shader node in their
+board DT files. This practice is frowned upon. Add the zap-shader node
+on all platforms, define a label for it and use the label in order to
+patch the node with the firmware name.
 
-As an examle, this patch fixes a drop_nlink warning in rmdir exposed by
-syzbot, originating from a corrupted nlink field of a directory.
-
-The changes were tested using the syzbot reproducer with the various new
-mount options. I also handcrafted a similar corrupted fs but with the
-minix v3 format (the reproducer uses v1).
-
-Signed-off-by: Jori Koolstra <jkoolstra@xs4all.nl>
-Reported-by: syzbot+4e49728ec1cbaf3b91d2@syzkaller.appspotmail.com
-Closes: https://syzbot.org/bug?extid=4e49728ec1cbaf3b91d2
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- fs/minix/inode.c        | 237 ++++++++++++++++++++++++++++++++++++----
- fs/minix/itree_common.c |   2 +-
- fs/minix/minix.h        |  43 ++++++++
- fs/minix/namei.c        |  25 +++--
- 4 files changed, 275 insertions(+), 32 deletions(-)
+Dmitry Baryshkov (7):
+      arm64: dts: qcom: sdm670: create common zap-shader node
+      arm64: dts: qcom: sdm845: create common zap-shader node
+      arm64: dts: qcom: sc8180x: create common zap-shader node
+      arm64: dts: qcom: sc8280xp: create common zap-shader node
+      arm64: dts: qcom: sm8250: drop duplicate memory-region defs
+      arm64: dts: qcom: sc7180: add gpu_zap_shader label
+      arm64: dts: qcom: add gpu_zap_shader label
 
-diff --git a/fs/minix/inode.c b/fs/minix/inode.c
-index 32db676127a9..62159b7526a2 100644
---- a/fs/minix/inode.c
-+++ b/fs/minix/inode.c
-@@ -21,10 +21,16 @@
- #include <linux/vfs.h>
- #include <linux/writeback.h>
- #include <linux/fs_context.h>
-+#include <linux/fs_parser.h>
-+#include <linux/fsnotify.h>
- 
- static int minix_write_inode(struct inode *inode,
--		struct writeback_control *wbc);
-+			     struct writeback_control *wbc);
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf);
-+static int minix_init_fs_context(struct fs_context *fc);
-+static void minix_handle_error(struct super_block *sb, int error,
-+			       const char *func, unsigned int line);
-+static bool system_going_down(void);
- 
- static void minix_evict_inode(struct inode *inode)
- {
-@@ -113,17 +119,121 @@ static const struct super_operations minix_sops = {
- 	.statfs		= minix_statfs,
- };
- 
-+void __minix_error(struct super_block *sb, const char *function,
-+		   unsigned int line, int error, const char *fmt, ...)
-+{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+	printk(KERN_CRIT "minix-fs error (device %s): %s:%d: comm %s: %pV\n",
-+	       sb->s_id, function, line, current->comm, &vaf);
-+	va_end(args);
-+
-+	fsnotify_sb_error(sb, NULL, error ? error : EFSCORRUPTED);
-+
-+	minix_handle_error(sb, error, function, line);
-+}
-+
-+void __minix_error_inode(struct inode *inode, const char *function,
-+			 unsigned int line, int error, u32 block,
-+			 const char *fmt, ...)
-+{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+	if (block)
-+		printk(KERN_CRIT "minix-fs error (device %s): %s:%d: "
-+		       "inode #%lu: block %du: comm %s: %pV\n",
-+		       inode->i_sb->s_id, function, line, inode->i_ino,
-+		       block, current->comm, &vaf);
-+	else
-+		printk(KERN_CRIT "minix-fs error (device %s): %s:%d: "
-+		       "inode #%lu: comm %s: %pV\n",
-+		       inode->i_sb->s_id, function, line, inode->i_ino,
-+		       current->comm, &vaf);
-+	va_end(args);
-+
-+	fsnotify_sb_error(inode->i_sb, NULL, error ? error : EFSCORRUPTED);
-+
-+	minix_handle_error(inode->i_sb, error, function, line);
-+}
-+
-+static void minix_handle_error(struct super_block *sb, int error,
-+			       const char *func, unsigned int line)
-+{
-+	struct minix_sb_info *sbi = minix_sb(sb);
-+
-+	if (sbi->s_version != MINIX_V3) {
-+		sbi->s_mount_state |= MINIX_ERROR_FS;
-+		mark_buffer_dirty(sbi->s_sbh);
-+	}
-+
-+	if (test_opt(sb, WARN_ON_ERROR))
-+		WARN_ON_ONCE(1);
-+
-+	/* Do not panic during 'reboot -f' */
-+	if (test_opt(sb, ERRORS_PANIC) && !system_going_down()) {
-+		panic("minix-fs (device %s): panic forced after error\n",
-+		      sb->s_id);
-+	}
-+
-+	if (test_opt(sb, ERRORS_CONT) || sb_rdonly(sb))
-+		return;
-+
-+	minix_msg(sb, KERN_CRIT, "Remounting filesystem read-only");
-+
-+	sb->s_flags |= SB_RDONLY;
-+}
-+
-+void __minix_msg(struct super_block *sb,
-+		 const char *prefix, const char *fmt, ...)
-+{
-+	struct va_format vaf;
-+	va_list args;
-+
-+	va_start(args, fmt);
-+	vaf.fmt = fmt;
-+	vaf.va = &args;
-+	if (sb)
-+		printk("%sminix-fs (%s): %pV\n", prefix, sb->s_id, &vaf);
-+	else
-+		printk("%sminix-fs: %pV\n", prefix, &vaf);
-+	va_end(args);
-+}
-+
-+static bool system_going_down(void)
-+{
-+	return system_state == SYSTEM_HALT || system_state == SYSTEM_POWER_OFF
-+		|| system_state == SYSTEM_RESTART;
-+}
-+
-+struct minix_fs_context {
-+	unsigned int s_mount_opt;
-+	unsigned int s_def_mount_opt;
-+};
-+
- static int minix_reconfigure(struct fs_context *fc)
- {
--	struct minix_super_block * ms;
-+	struct minix_fs_context *ctx = fc->fs_private;
- 	struct super_block *sb = fc->root->d_sb;
--	struct minix_sb_info * sbi = sb->s_fs_info;
-+	unsigned int flags = fc->sb_flags;
-+	struct minix_sb_info *sbi = minix_sb(sb);
-+	struct minix_super_block *ms;
-+
-+	sbi->s_mount_opt = ctx->s_mount_opt;
- 
- 	sync_filesystem(sb);
- 	ms = sbi->s_ms;
--	if ((bool)(fc->sb_flags & SB_RDONLY) == sb_rdonly(sb))
-+
-+	if ((bool)(flags & SB_RDONLY) == sb_rdonly(sb))
- 		return 0;
--	if (fc->sb_flags & SB_RDONLY) {
-+	if (flags & SB_RDONLY) {
- 		if (ms->s_state & MINIX_VALID_FS ||
- 		    !(sbi->s_mount_state & MINIX_VALID_FS))
- 			return 0;
-@@ -172,6 +282,7 @@ static bool minix_check_superblock(struct super_block *sb)
- 
- static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- {
-+	struct minix_fs_context *ctx = fc->fs_private;
- 	struct buffer_head *bh;
- 	struct buffer_head **map;
- 	struct minix_super_block *ms;
-@@ -198,6 +309,8 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- 
- 	ms = (struct minix_super_block *) bh->b_data;
- 	sbi->s_ms = ms;
-+	sbi->s_mount_opt = ctx->s_mount_opt;
-+	sbi->s_def_mount_opt = ctx->s_def_mount_opt;
- 	sbi->s_sbh = bh;
- 	sbi->s_mount_state = ms->s_state;
- 	sbi->s_ninodes = ms->s_ninodes;
-@@ -226,7 +339,7 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- 		s->s_max_links = MINIX2_LINK_MAX;
- 	} else if (s->s_magic == MINIX2_SUPER_MAGIC2) {
- 		sbi->s_version = MINIX_V2;
--		sbi->s_nzones = ms->s_zones;
-+	sbi->s_nzones = ms->s_zones;
- 		sbi->s_dirsize = 32;
- 		sbi->s_namelen = 30;
- 		s->s_max_links = MINIX2_LINK_MAX;
-@@ -367,8 +480,8 @@ static int minix_fill_super(struct super_block *s, struct fs_context *fc)
- out_bad_sb:
- 	printk("MINIX-fs: unable to read superblock\n");
- out:
--	s->s_fs_info = NULL;
- 	kfree(sbi);
-+	fc->s_fs_info = NULL;
- 	return ret;
- }
- 
-@@ -377,18 +490,6 @@ static int minix_get_tree(struct fs_context *fc)
- 	 return get_tree_bdev(fc, minix_fill_super);
- }
- 
--static const struct fs_context_operations minix_context_ops = {
--	.get_tree	= minix_get_tree,
--	.reconfigure	= minix_reconfigure,
--};
--
--static int minix_init_fs_context(struct fs_context *fc)
--{
--	fc->ops = &minix_context_ops;
--
--	return 0;
--}
--
- static int minix_statfs(struct dentry *dentry, struct kstatfs *buf)
- {
- 	struct super_block *sb = dentry->d_sb;
-@@ -518,11 +619,15 @@ static struct inode *V1_minix_iget(struct inode *inode)
- 		return ERR_PTR(-EIO);
- 	}
- 	if (raw_inode->i_nlinks == 0) {
--		printk("MINIX-fs: deleted inode referenced: %lu\n",
--		       inode->i_ino);
-+		minix_error_inode(inode, "deleted inode referenced");
- 		brelse(bh);
- 		iget_failed(inode);
- 		return ERR_PTR(-ESTALE);
-+	} else if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-+		minix_error_inode(inode, "directory inode has corrupted nlink");
-+		brelse(bh);
-+		iget_failed(inode);
-+		return ERR_PTR(-EFSCORRUPTED);
- 	}
- 	inode->i_mode = raw_inode->i_mode;
- 	i_uid_write(inode, raw_inode->i_uid);
-@@ -556,11 +661,15 @@ static struct inode *V2_minix_iget(struct inode *inode)
- 		return ERR_PTR(-EIO);
- 	}
- 	if (raw_inode->i_nlinks == 0) {
--		printk("MINIX-fs: deleted inode referenced: %lu\n",
--		       inode->i_ino);
-+		minix_error_inode(inode, "deleted inode referenced");
- 		brelse(bh);
- 		iget_failed(inode);
- 		return ERR_PTR(-ESTALE);
-+	} else if (S_ISDIR(raw_inode->i_mode) && raw_inode->i_nlinks == 1) {
-+		minix_error_inode(inode, "directory inode has corrupted nlink");
-+		brelse(bh);
-+		iget_failed(inode);
-+		return ERR_PTR(-EFSCORRUPTED);
- 	}
- 	inode->i_mode = raw_inode->i_mode;
- 	i_uid_write(inode, raw_inode->i_uid);
-@@ -705,13 +814,95 @@ void minix_truncate(struct inode * inode)
- 		V2_minix_truncate(inode);
- }
- 
-+enum {
-+	Opt_errors, Opt_warn_on_error, Opt_nowarn_on_error
-+};
-+
-+static const struct constant_table minix_param_errors[] = {
-+	{"continue",	MINIX_MOUNT_ERRORS_CONT},
-+	{"panic",	MINIX_MOUNT_ERRORS_PANIC},
-+	{"remount-ro",	MINIX_MOUNT_ERRORS_RO},
-+	{}
-+};
-+
-+/*
-+ * Mount option specification
-+ */
-+static const struct fs_parameter_spec minix_param_specs[] = {
-+	fsparam_enum	("errors",		Opt_errors, minix_param_errors),
-+	fsparam_flag	("warn-on-error",	Opt_warn_on_error),
-+	fsparam_flag	("nowarn-on-error",	Opt_nowarn_on_error),
-+	{}
-+};
-+
-+static int minix_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	struct minix_fs_context *ctx = fc->fs_private;
-+	struct fs_parse_result result;
-+
-+	int token;
-+
-+	token = fs_parse(fc, minix_param_specs, param, &result);
-+	if (token < 0)
-+		return token;
-+
-+	switch (token) {
-+	case Opt_errors:
-+		ctx->s_mount_opt &= ~MINIX_MOUNT_ERRORS_MASK;
-+		ctx->s_mount_opt |= result.uint_32;
-+		break;
-+	case Opt_warn_on_error:
-+		ctx->s_mount_opt |= MINIX_MOUNT_WARN_ON_ERROR;
-+		break;
-+	case Opt_nowarn_on_error:
-+		ctx->s_mount_opt &= ~MINIX_MOUNT_WARN_ON_ERROR;
-+		break;
-+	}
-+	return 0;
-+}
-+
-+static void minix_fc_free(struct fs_context *fc)
-+{
-+	struct minix_fs_context *ctx = fc->fs_private;
-+
-+	if (!ctx)
-+		return;
-+	kfree(ctx);
-+}
-+
-+static const struct fs_context_operations minix_context_ops = {
-+	.get_tree	= minix_get_tree,
-+	.reconfigure	= minix_reconfigure,
-+	.parse_param	= minix_parse_param,
-+	.free		= minix_fc_free,
-+};
-+
-+int minix_init_fs_context(struct fs_context *fc)
-+{
-+	struct minix_fs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct minix_fs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	fc->fs_private = ctx;
-+	fc->ops = &minix_context_ops;
-+
-+	ctx->s_def_mount_opt |= MINIX_MOUNT_ERRORS_DEF;
-+	ctx->s_mount_opt = ctx->s_def_mount_opt;
-+
-+	return 0;
-+}
-+
- static struct file_system_type minix_fs_type = {
- 	.owner			= THIS_MODULE,
- 	.name			= "minix",
- 	.kill_sb		= kill_block_super,
- 	.fs_flags		= FS_REQUIRES_DEV,
- 	.init_fs_context	= minix_init_fs_context,
-+	.parameters		= minix_param_specs,
- };
-+
- MODULE_ALIAS_FS("minix");
- 
- static int __init init_minix_fs(void)
-diff --git a/fs/minix/itree_common.c b/fs/minix/itree_common.c
-index dad131e30c05..6832c671125e 100644
---- a/fs/minix/itree_common.c
-+++ b/fs/minix/itree_common.c
-@@ -188,7 +188,7 @@ static int get_block(struct inode * inode, sector_t block,
- 	/*
- 	 * Indirect block might be removed by truncate while we were
- 	 * reading it. Handling of that case (forget what we've got and
--	 * reread) is taken out of the main path.
-+	 * reread) is taken out of the msb_breadain path.
- 	 */
- 	if (err == -EAGAIN)
- 		goto changed;
-diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-index d54273c3c9ff..254220ffbf39 100644
---- a/fs/minix/minix.h
-+++ b/fs/minix/minix.h
-@@ -11,6 +11,22 @@
- #define MINIX_V2		0x0002		/* minix V2 fs */
- #define MINIX_V3		0x0003		/* minix V3 fs */
- 
-+#define MINIX_MOUNT_ERRORS_CONT		0x00001	/* Continue on errors */
-+#define MINIX_MOUNT_ERRORS_RO		0x00002	/* Remount fs ro on errors */
-+#define MINIX_MOUNT_ERRORS_PANIC	0x00004	/* Panic on errors */
-+#define MINIX_MOUNT_WARN_ON_ERROR	0x00008 /* Trigger WARN_ON on error */
-+
-+#define MINIX_MOUNT_ERRORS_MASK		0x00007
-+
-+#define MINIX_MOUNT_ERRORS_DEF		MINIX_MOUNT_ERRORS_CONT
-+
-+#define clear_opt(sb, opt)		minix_sb(sb)->s_mount_opt &= \
-+						~MINIX_MOUNT_##opt
-+#define set_opt(sb, opt)		minix_sb(sb)->s_mount_opt |= \
-+						MINIX_MOUNT_##opt
-+#define test_opt(sb, opt)		(minix_sb(sb)->s_mount_opt & \
-+						MINIX_MOUNT_##opt)
-+
- /*
-  * minix fs inode data in memory
-  */
-@@ -39,6 +55,8 @@ struct minix_sb_info {
- 	struct buffer_head * s_sbh;
- 	struct minix_super_block * s_ms;
- 	unsigned short s_mount_state;
-+	unsigned short s_mount_opt;
-+	unsigned short s_def_mount_opt;
- 	unsigned short s_version;
- };
- 
-@@ -55,6 +73,13 @@ int minix_getattr(struct mnt_idmap *, const struct path *,
- 		struct kstat *, u32, unsigned int);
- int minix_prepare_chunk(struct folio *folio, loff_t pos, unsigned len);
- 
-+extern __printf(3, 4)
-+void __minix_msg(struct super_block *, const char *, const char *, ...);
-+void __minix_error(struct super_block *, const char *, unsigned int, int,
-+		   const char *, ...);
-+void __minix_error_inode(struct inode *, const char *, unsigned int, int, u32,
-+			 const char *, ...);
-+
- extern void V1_minix_truncate(struct inode *);
- extern void V2_minix_truncate(struct inode *);
- extern void minix_truncate(struct inode *);
-@@ -168,4 +193,22 @@ static inline int minix_test_bit(int nr, const void *vaddr)
- 
- #endif
- 
-+#define minix_error(sb, fmt, ...)						\
-+	__minix_error((sb), __func__, __LINE__, 0, (fmt), ##__VA_ARGS__)
-+#define minix_error_err(sb, err, fmt, ...)					\
-+	__minix_error((sb), __func__, __LINE__, (err), (fmt), ##__VA_ARGS__)
-+#define minix_error_inode(inode, fmt, ...)					\
-+	__minix_error_inode((inode), __func__, __LINE__, 0, 0,			\
-+			    (fmt), ##__VA_ARGS__)
-+#define minix_error_inode_err(inode, err, fmt, ...)				\
-+	__minix_error_inode((inode), __func__, __LINE__, (err), 0,		\
-+			    (fmt), ##__VA_ARGS__)
-+#define minix_error_inode_block(inode, block, err, fmt, ...)			\
-+	__minix_error_inode((inode), __func__, __LINE__, (err), (block),	\
-+			    (fmt), ##__VA_ARGS__)
-+#define minix_msg(sb, level, fmt, ...)				\
-+	__minix_msg(sb, level, fmt, ##__VA_ARGS__)
-+
-+#define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
-+
- #endif /* FS_MINIX_H */
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index 8938536d8d3c..23f98f44e262 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -161,15 +161,24 @@ static int minix_unlink(struct inode * dir, struct dentry *dentry)
- static int minix_rmdir(struct inode * dir, struct dentry *dentry)
- {
- 	struct inode * inode = d_inode(dentry);
--	int err = -ENOTEMPTY;
--
--	if (minix_empty_dir(inode)) {
--		err = minix_unlink(dir, dentry);
--		if (!err) {
--			inode_dec_link_count(dir);
--			inode_dec_link_count(inode);
--		}
-+	int err = -EFSCORRUPTED;
-+
-+	if (dir->i_nlink <= 2) {
-+		minix_error_inode(inode, "directory inode has corrupted nlink");
-+		goto out;
- 	}
-+
-+	err = -ENOTEMPTY;
-+	if (!minix_empty_dir(inode))
-+		goto out;
-+
-+	err = minix_unlink(dir, dentry);
-+	if (!err) {
-+		inode_dec_link_count(dir);
-+		inode_dec_link_count(inode);
-+ 	}
-+
-+out:
- 	return err;
- }
- 
+ arch/arm64/boot/dts/qcom/apq8096-db820c.dts                |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8996-oneplus3.dts              |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8996-oneplus3t.dts             |  6 +++---
+ arch/arm64/boot/dts/qcom/msm8996-xiaomi-gemini.dts         |  6 ++----
+ arch/arm64/boot/dts/qcom/msm8996.dtsi                      |  2 +-
+ arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-natrium.dts     |  6 ++----
+ arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-scorpio.dts     |  6 ++----
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi                      |  2 +-
+ arch/arm64/boot/dts/qcom/qrb2210-rb1.dts                   |  6 +++---
+ arch/arm64/boot/dts/qcom/qrb4210-rb2.dts                   |  6 +++---
+ arch/arm64/boot/dts/qcom/qrb5165-rb5.dts                   |  7 +++----
+ arch/arm64/boot/dts/qcom/sa8295p-adp.dts                   | 14 +++-----------
+ arch/arm64/boot/dts/qcom/sc7180-acer-aspire1.dts           |  9 ++++-----
+ arch/arm64/boot/dts/qcom/sc7180-el2.dtso                   |  6 ++----
+ arch/arm64/boot/dts/qcom/sc7180-idp.dts                    |  1 +
+ arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi               |  1 +
+ arch/arm64/boot/dts/qcom/sc7180.dtsi                       |  4 ++++
+ arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts        | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8180x-primus.dts                |  9 +++++----
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                      |  9 +++++++++
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts                  | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8280xp-el2.dtso                 |  6 ++----
+ arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts       | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts     | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts  | 12 +++---------
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi                     |  9 +++++++++
+ arch/arm64/boot/dts/qcom/sdm670-google-sargo.dts           |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm670.dtsi                       |  4 ++++
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts                 |  8 ++++----
+ arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi             |  4 ----
+ arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts              |  6 ++----
+ arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dts               |  6 ++----
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts                    |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi        |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts    |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts          |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi      |  7 +++----
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi      |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts         |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm845.dtsi                       |  4 ++++
+ arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts |  7 +++----
+ arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts       |  9 ++++-----
+ arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts            |  6 +++---
+ arch/arm64/boot/dts/qcom/sm6115.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dts          |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8150.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm8250-mtp.dts                    |  7 +++----
+ arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi   |  7 +++----
+ arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts            |  7 +++----
+ arch/arm64/boot/dts/qcom/sm8250.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm8350-hdk.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8350.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm8450-hdk.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8450.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm8550-hdk.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8550-mtp.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8550-qrd.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8550.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/sm8650-hdk.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8650-qrd.dts                    |  6 +++---
+ arch/arm64/boot/dts/qcom/sm8650.dtsi                       |  2 +-
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts               |  6 +++---
+ .../arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi |  6 +++---
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts    |  6 +++---
+ arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts      |  6 +++---
+ .../boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dts      |  6 ++----
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   |  6 +++---
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   |  8 ++++----
+ arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                  |  6 +++---
+ 70 files changed, 198 insertions(+), 244 deletions(-)
+---
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
+change-id: 20251028-dt-zap-shader-df7c258f6ffc
+
+Best regards,
 -- 
-2.51.1.dirty
+With best wishes
+Dmitry
 
 
