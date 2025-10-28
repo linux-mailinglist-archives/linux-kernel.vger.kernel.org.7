@@ -1,137 +1,85 @@
-Return-Path: <linux-kernel+bounces-873604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236B5C143DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C639AC143DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:02:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 991985426F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB9B61AA50CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DA02FD696;
-	Tue, 28 Oct 2025 10:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yy/3i9ZL"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D53A3074AB;
+	Tue, 28 Oct 2025 10:54:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA822E7F2C
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EF92E7F2C
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648833; cv=none; b=EGqQavFOBOJP/kWOd/NMFwJyoOPGBcLgn9OalEQieXvkLodAE8FO8mdzETbdTtDJND/CRKDYO/fV4NeCW5RPM3NqcLmxx5xXHpEoyPU0Hj3tXFE4xTEiVGh/ZmhSBr5syoi2i4bWnazEGTFOYMzbJJepjXIvyePQvnXk5b5982c=
+	t=1761648844; cv=none; b=qZWGdPmyRbiDfQPhUf+oCgMAJIWpevT4lYtUj/z3Vkdd/ahYSO53QuxbdFp1qF49KJ5l1uA+vxCXbD+Gf60a+XCBEXMmQ/FAxG+3m3yiRTdu0QH+yEWU1xoco4DkKi8CyxZQL/0dUjZTVzSCEYv32k+OPSLApQps2A6YCk2VIe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648833; c=relaxed/simple;
-	bh=KAAq3UD42W1vG9OmM9VYHYbQDySbjL7ySIBoXYb+P6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4BXkGiPFrXD6H2xXNUIR2ZAqxiXdM14m6uuamCj2Gz8lMqpJfmT++IGL8rLH6o7HMzo/Ry23BgYAQNfbAbkFIZdk0Cr5VO48FsJm6kwUB/3VoysH11OS+PgEgfYjRMV5M1NoYlx1e8d86j3TlXigLIVc2QXvcTXPkZ4nysvKcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yy/3i9ZL; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so2966433f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:53:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761648830; x=1762253630; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ciiMP+aVPTGP01jthAKSkaUntJMAjHCa/1wZcaGOww=;
-        b=Yy/3i9ZLnTph6l90l0/LWiSjVJjFFrdB7gzpReH19Aigawc8qKerqf2BoIb2Z3O/th
-         3CoMu0Ww8AmvCDWxQx3rmdXWiBLYQeN97T5iWohg9m+o7gKRNEHT4D4yZAhRiTKoJ3a7
-         jIoB9i8YPDV7ney8HRyUDM61CedfEH2wdqb7KGHcqgMq1sbTvhv1G2fmU5MIZnWDW9aA
-         mMKEapUS1wJDZ/bEVjtG6psYobGTa94j/fsLeL5WYgBMeYvgNQJ71Za8n8v7bJholgzX
-         VkDPrXGLD8xLPnMvalQbhA9YgyvHvt7U4++6gFiBcTxUDfr8K7o8apYWqPZeS238SLS2
-         ZWUw==
+	s=arc-20240116; t=1761648844; c=relaxed/simple;
+	bh=UnGQQKWUa5DQxkJWecCfEOgqTPm+utcqV7NCyPct1tI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gQxSc/aG11Zdm/EgS7Oc+O3Ogx2LPu6y0Nt4N2qy/gf7/sZrUsJ+BMANKmAZf5ZpIt4zUXYJyzUK5mrb5Inz2JP0Eo4FgHED6Um0+AJGPckUDIKhZFHXgzXZhjM5kU09xDNf4orHG/M9dGQrKj8Md6jg7fbEvqeXNDOQBQT6guE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945a4849260so862828939f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:54:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761648830; x=1762253630;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5ciiMP+aVPTGP01jthAKSkaUntJMAjHCa/1wZcaGOww=;
-        b=fzm5AhAmv9w9QLo+uQr1zyN6aafvRi33ISy7E3b23JLCFY1y9F/IRporBy62k26tL/
-         9v6mhTw+6Gq36d244YDXAzzDs2sKbStyyk5uvMa10hFEaiQle+A2mBVN2QK57+qe4Trv
-         UdraIB4MUzSpm9TGQAwedCr+pYYFvrgBjb+hBnSWuzhJfQ+HKmfCaPiI5Uus+gAC6y7g
-         bgxlsxFSCDilLzVNa18inNlgZ0OlVzrm1iPPJFk6EjDoLAS+dmIB3YPvairPgGayDuTq
-         FLZApBGSxcmQ8ePmWovw5qq1ZAiUonBXvzlRY6exyAH+zKczT8koTXVo2WL8IPOONxRD
-         +XIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXENT4OtNeM/ofVvXEgZajqLRDImF2KGYbsTGxGJTDT0aonR5axbPt2qyKJ5KR9lPrE1iIyecU5Ddu+TYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFR5fhz1OO8iEJmMqU22McT/8/Io4tJPHE/D7syluyNo41RXRn
-	Lgq8pR3ueVCZzYO+3aODhQ93kQ5uATGIxHcRj6ykA0HKJPM5LgHzCGZ+q/N5NOyZk8o=
-X-Gm-Gg: ASbGncsDYOp0Ew05FsLcSQ+OQ7DDTMwd7vGutD0+wJRO6wUmvw8OMHU2eGloN2rxKGj
-	+tER2L+zf0iI+cVy1jzzCNwe75s2rQOTFsuy519F0czTfwaTow4kiBqSlAreQb1sCdEXJmo9xAT
-	z81NGKExId9Lk9On7fqNwxxHoZ8TU6sAFye+ydHd2yCyqSklERkPLggtw1HsnyeOY2a2O+HD/JZ
-	ME6JPfeTV27c/GnUkXM2SQhfPlIfE3rzPZssQmiKvZg2q2+CHDzrQ0S+a1H/PpMSGpZ5lnVcVd2
-	/IFfFhHBefrKLWqIqY4oroFtNWg6gSUVA2jh+x57Vo+juXVOaFCNHwJW76tjPrOrCL3Ynfo3SOQ
-	w0saGWSBu2zys3JeFFLaifhZHbkP4WDsC7UXUJUS+NobnVzOpOe3tCdF2u1Z6ylNKsoFHWqY+eX
-	S4cS3casrHsj53W/2cPdFN
-X-Google-Smtp-Source: AGHT+IGNt3x1+qvnQdvPMrB8YbMOh25mEuFQD2Py5L6FbHFNPHpPfAZVVrBrzGdO5MKQniNEUyPgGA==
-X-Received: by 2002:a05:6000:26d1:b0:3eb:9447:b97a with SMTP id ffacd0b85a97d-429a7e8e222mr2559278f8f.54.1761648829920;
-        Tue, 28 Oct 2025 03:53:49 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:7f41:186a:1d61:ae59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475dd374e21sm191479545e9.9.2025.10.28.03.53.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 03:53:49 -0700 (PDT)
-Date: Tue, 28 Oct 2025 11:53:44 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	Rob Clark <robin.clark@oss.qualcomm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Johan Hovold <johan@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu/arm-smmu-qcom: Enable use of all SMR groups when
- running bare-metal
-Message-ID: <aQCguL11h6oa5Y4C@linaro.org>
-References: <20250821-arm-smmu-qcom-all-smr-v1-1-7f5cbbceac3e@linaro.org>
- <aMAkJ7CfPQuhvhfm@willie-the-truck>
- <aMBJNzXpQTMg4Ncs@linaro.org>
- <d73e5026-ccb0-4a19-9742-099a0443f878@arm.com>
- <aMsJHheI6Y1V5q74@linaro.org>
- <aM0LZVudBKjWuVrT@willie-the-truck>
+        d=1e100.net; s=20230601; t=1761648842; x=1762253642;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=R0oI3dPUWnKo/UyVq88qVBTtjLzBjxNn+/ah1XRYiMc=;
+        b=WBsZ9SrroUu1vTra7OcU0rk6MbGXHhS4ys0i/+RAms7NdI5fF91oo5fltrvUK6wVhh
+         59iNVrp660bgJnkRvpGfNXnhfJ92yB6iCT0rgLIODMO6zG5m4aPJRMKQil6nkgaCtHgw
+         vvDTXs1cZCcyY+wnMc4ZQIILvZO5Q5YCw4/pOh6ha4q0yHCw8pJLwVrAk2e37Y2QfHT+
+         +iACA7ofYkT930nA8ZRQHnQRARbRQvXm8l8CY/UmJdlO7R7/BvZ4bZaGsmG4vmR5HoSW
+         74aMerYUd3Y+d749CRHlvWi63WDa7EzoAReCFHIXjpD11FK08dk03muwB/H6Lbqa20T4
+         PtpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzuaVmU9wr7MKJxaBzFfV9VDX/RoDAhDz69xP+CVMfoP1A0J3r1q+bM0AuhBspKroZuK8kExnqHGbDXtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRoHEgeNVYGbGyzKCJYhkUlAJcvjhbCE8Bosh4Fmsj1mGLXpul
+	WHXOg4Q2iqLRFHFJbvkJLyPE+KxM4gMN63beUfYLiJibbMwazNOlzxRhByAt3WsAt7H/7OTgXSG
+	oHIECo7PHqf5gwwKvGBYltC1/E6gCHMSU8OnzVymaTzewmuNztc2gOoGI0GU=
+X-Google-Smtp-Source: AGHT+IGsVSpAXI+5fc/D39yttmMsI+U/M2UCKcUdwRSPi2yNTcfxjUnC8SYicEUniUzGx0h7MVOQgtcv6/ODo4FFDywrALGHWezP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aM0LZVudBKjWuVrT@willie-the-truck>
+X-Received: by 2002:a05:6e02:3e06:b0:430:bcef:e0a8 with SMTP id
+ e9e14a558f8ab-4320f86661fmr41585635ab.28.1761648842738; Tue, 28 Oct 2025
+ 03:54:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 03:54:02 -0700
+In-Reply-To: <20251028104005.R1CUs%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6900a0ca.050a0220.17b81f.0019.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] UBSAN: array-index-out-of-bounds in ocfs2_block_group_fill
+From: syzbot <syzbot+77026564530dbc29b854@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Robin,
+Hello,
 
-On Fri, Sep 19, 2025 at 08:51:01AM +0100, Will Deacon wrote:
-> On Wed, Sep 17, 2025 at 09:16:46PM +0200, Stephan Gerhold wrote:
-> > I realize it is weird to allow non-architectural features like this, but
-> > I haven't found any indication that the additional SMRs work any
-> > different from the standard ones. The SMMU spec seems to reserve space
-> > for up to 256 SMRs in the address space and the register bits, as if it
-> > was intended to be extended like this later. That's also why it works
-> > correctly without any changes in arm-smmu.c: the bit masks used there
-> > already allow up to 256 SMRs.
-> > 
-> > What do you think?
-> 
-> Although it's all pretty ugly, I think we really only have two choices:
-> 
->   - Teach the core driver code about all this and use an rmr-like scheme
->     to leave the upper SMRs in bypass
-> 
->   - Hack it in the impl code as per your patch
-> 
-> The latter option is probably the most pragmatic (especially considering
-> the need to handle the virtualised case differently) but I'd like to see
-> what Robin thinks.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Do you have any thoughts for this?
+failed to checkout kernel repo https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/linux-5.10.y: failed to run ["git" "fetch" "--force" "4d52a57a3858a6eee0d0b25cc3a0c9533f747d8f" "linux-5.10.y"]: exit status 128
 
-The stream match conflicts that happen without this patch still exist,
-I've been testing this patch for quite some time now and have never
-noticed any issues.
 
-Thanks,
-Stephan
+Tested on:
+
+commit:         [unknown 
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=99cb6b007a8889ef
+dashboard link: https://syzkaller.appspot.com/bug?extid=77026564530dbc29b854
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16fa77e2580000
+
 
