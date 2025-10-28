@@ -1,411 +1,213 @@
-Return-Path: <linux-kernel+bounces-874442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CD7AC1659B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E986AC16572
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:58:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F28055088F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:56:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 95F205048E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B2034FF46;
-	Tue, 28 Oct 2025 17:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2457034DB4F;
+	Tue, 28 Oct 2025 17:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgWVrzmy"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ks/uO4jD"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913A134C9B5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A7934D93B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761674136; cv=none; b=OUFMlrTuu7CSyA+0a0SlufRbDu2b8HYDhFMrOI7GoWFV4Al+t5H7GRJm8n2ogcCCVXaHH2mYq0dXQpcxSZVDXtNAPPxwNwLAHAr1/mJcSDI3KL1lYBs9JcK+HXIF19BwgHUqlXXOBPBuWPGYGiGGQv85iwrxgJ0kkqYBGBKxiVg=
+	t=1761674116; cv=none; b=AR26qh2xCctWICuDlK7SJMW7E+r6k0NkSPoYYMAKTz658L+UdhiT+jhLrv7dbB+D4vwxex43e4KDcOI+BvF+aqCGyfv+pRS/ZSL2DnIZ4hXjVjQCFCqVkMaBXdim7x7GzlHRQIjRkVNfpVeykc6YmwkdopZNGhBTGA77+hdxN1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761674136; c=relaxed/simple;
-	bh=I3dZ4r/IY7ujNUAxDMw7mlWcZIOVQIpADZ9QnnlsISI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GOlQXNvjTybAMQVidWCUWui5o4vjFEzf3bsm8OtoD5LuhJb68w6DJmSQVP12uwd3Iwv3mq3Q9uRSf05hWWfM92OJ+Cql4npgRIUlVReRCM/6w9gMpYg/seGpiU3QF6uaPnB80ZSQL5EMPsnx+i3hwrRlJazl5gNi5OnXXz3n7rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgWVrzmy; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b553412a19bso4105747a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:55:34 -0700 (PDT)
+	s=arc-20240116; t=1761674116; c=relaxed/simple;
+	bh=iStP52tSTRqDHZ2s/0JKhVbhHFkl0Dz3qnu03/driQ8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rzDQ3QEQ15mWNibz5gG9ZD6XOsQGqiAa3vcycO4XpCj0nAjpunKaClxIKIjFSBywPpw/49KlHZMucsWYNRmcIUc9woypC7XMSnv7S+7gesS8YP+0NcLPM9UWPOR2OydSpevf4kVX6f58zj2kCN5/V3U8OzC3lRBEZnjtgVwv9HE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ks/uO4jD; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-592f5736693so6618644e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:55:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761674134; x=1762278934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GcbFKXGjYARUNll6qoAP3bTKPOC/dQImP+gxnI1KcEM=;
-        b=MgWVrzmyDcspybW7xI0/OeKFUu8NJ4kTdCKXDqttisGOwaYUdGNAUq8Wkjb+b+nYJB
-         tSRGkWy4XGOMkDSsmr7g5708C1YVIc5tLb4B/q9m6h3ei5gkhr+IuYSahyW/NizqENnq
-         NzKS8NjgknrK1sa3HfitsxT6UNDs5gbLH3137XXZRc4oZfOl0ngFHRm1OzlAcocbpw/X
-         kW5q4a6MNnzaA57vavE4kwfGXPNyE3sYA9qAXemq8ByOkolbR0/kvmAqDZfu7AsEp7Tw
-         H0Pn3DuqRKMfpUZq9KEd6MwNJC9SG+C9SlWkk1M2+1uCMcp+ple0zysKHjx7Ug2oDaIH
-         +D1g==
+        d=chromium.org; s=google; t=1761674111; x=1762278911; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hrs+/SZt/Dp84KkQFuAowfk7ciIjCYoKYgFhbI0eCxo=;
+        b=Ks/uO4jDUE+R5flB+IeJSU1S2jahqmB7+vQGIFTMq/ZBTqJBFbINUBFWt+xFamwVsg
+         +j00QQ/pF+/U5hbHEhk4Cie1KiAsNRv5c8s1V0Gdwms2cx1bE7+IPCwZEZwOw34I8KA8
+         NNl7gosuHl/m1nQNkY8ddo3QjrPUJ92iavcRc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761674134; x=1762278934;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GcbFKXGjYARUNll6qoAP3bTKPOC/dQImP+gxnI1KcEM=;
-        b=axOAu80Duds/XpjTrQ8VeoY/IKG36EINYzcFquZULy8I/QFu3h1e19UVd2It/kRFHb
-         wy+JyPf1ZE7FiT7PZ0Pkw82Gg3fpH9axP0m2QDITb3jroUbZRG0JQA0FvrHNYBAL4pth
-         t7D0UxjVCWzohS9m8rJuo0RhzMk54pE68Dk6Lxn4Ksevx/U4De1i0VL3ObQQdJXFSmDr
-         D7VeStBwBvIoTkeDLQE6Yo/YOGhVXuFVt0ZxyRSMQngL18UfkJpHUKRvG9cdq55sEWct
-         YE8rIzPlVrnOf+3Um27R1grN6K6cjlrea59DijtiVaWPDfCsMLB944gzcTLi37u/zcOS
-         g7OA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4oY882pSu2iOe4f31iT48qHjQp7OzDDnz3iTkYV6CxoWLVzH/P9opIfHQZHcynCTIl9PS3m5qNwDHJhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqkwSoCXa8Uc9HOwj/i3i9/zrt4QoS+nMuUZsy4MyjQ/V+tVA0
-	4c1kdzXv89v7nBiVhQySLyYRdL0cmuv9PLertNuopBTrGMk5WVYeAFDC
-X-Gm-Gg: ASbGnctyGbZRHpiV4BB8k6jbEeaYaQqXhQiATNcjY0lWpa8PnglAd0lFc+g69qreqEr
-	lPETHYuj8aC6a1UJYsHJhlenh41JWJSEyUFtN3vTooAgprqr48eBSem0y11U+wGa/DLS4MFi8fX
-	Cy3lbzh85dDTxAtv50xERTYAT2vxsSklGDl4nApGWGrX2m0dfpqUW3oi9C2bwy/4ALtjtATBInz
-	FEEP8nuVVrURwdhVZIAijFO82MSPMpOoWDfEEztMvB/iT65oEar46y6gBEQOFfpSKBYKGiKtSGJ
-	CjyB3yYoBQEDXUAeO5JQNon6b110uHrPAb1sRERIXG+DBJ24r+yTuFVDbrm8fuypJaQwPhdQXP6
-	+NDGjGW27OK4sAJq+LpmK8yb5sKJGePWiWfFY6tBUwuk+Ub9khdyCQUZT7lF/KWI7H+F08JoT3L
-	e3FLxeqMX9/IVP8hk1aZxh5A==
-X-Google-Smtp-Source: AGHT+IHcjQCNFDv+QEbhdknouZk3pmVTOpMrG6k8YTEj4V1GdWRkgPpNZLOxpd08ubwbpZIDS45wXg==
-X-Received: by 2002:a17:902:db07:b0:28d:195a:7d79 with SMTP id d9443c01a7336-294dedf4305mr752395ad.5.1761674133743;
-        Tue, 28 Oct 2025 10:55:33 -0700 (PDT)
-Received: from iku.. ([2401:4900:1c06:77f0:168f:479e:bf92:ce93])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3410sm125713005ad.8.2025.10.28.10.55.29
+        d=1e100.net; s=20230601; t=1761674111; x=1762278911;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hrs+/SZt/Dp84KkQFuAowfk7ciIjCYoKYgFhbI0eCxo=;
+        b=Z/iAUqO2eNFiiuL5OVtFW50eUUuozHaFUmpN5MKr9u8J29p1t5xDco7ab9BE+Eqsed
+         D9Evb0ek6XSyUWNL9K9Uo45Ly6nfaUI+2y0gUi5/pHXc6x5izH3HfRQfwSDzNyGusHNu
+         Mh4fI6fXFaDAmtg5QFmDVF9cvZlFX5VC3t9BHG0dbWFh0M9/5GMKsmGNuGFDeZYZ02E+
+         2swcGDBRHUKvvfAWNp2eSvXM/SK7nTEioRrumWHHfNE0BBfzDmVK4edz2mnGhCwzylqD
+         NkIj6cYHb9omso3Mxf0rK8BYyboUTjkkM3iNM/y39haM/ZSjeV/J56dcxS/ZyKicAg+/
+         ztfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGhaPNF3haS/ZpNDkJ1DETuzgTBChuU2SqnoMIC++sx9/FAI2wA0aOts2JpXyAt8wsHgow8cHcQaTBWbI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZqA7OSzrJG1ukf+GBizq84N/abTUMme04MA5vk/5cCcoYXvIP
+	bZpM5RFIk7eLmGzHvV7rb220cdu34+rQ87QtrDgIiA+OOhpweaBomFKOp6plnIH6Vg==
+X-Gm-Gg: ASbGnctuXAwByuzp6qZAzkkQ8MCK1/Vyq+P7ISdPkjjrMHgeQYCEjA8LSC8W0+eDF6X
+	8SM2MuG+PbZNPsg+0BXuNWcS+jv26sHBCh/LX5IcbMoFUwGzcVh2jKlCFeu6a7PSpEuf6R7KI4F
+	/tBvzUiBmZOc1vl16uI4bjUaJoqvaw1DF1OXhq/38jIHMwWywp66RrLq62jufCViesfKxIS4hEz
+	L8VCNpgR+reMXwmEKC9/PNrJbCww0mBEEI478Hq3/x1PpewyjDt8Rj/ZS5Nz8uPhDxnRNVCRZkM
+	Kcj047PcpnUJdN8frFMc5x7XT1RcUhA7IVP6ix/bBtoDxWD0AYKPIX5taSg3Qo5qNTn4LZJ1nIS
+	HLyOSJjXPjTg3JawiH2HHZt1TOwJn2AFRwPHcjT+H82Nzch2GG1D628Bi/GbqTEMqdRqH2Pr5vD
+	MS+Z4raJIlihrsblJb0Vz5TgTd7WXBqVPGY4VydEoVaHwIOcp0YfHM31Ol3vSKbpCzIw==
+X-Google-Smtp-Source: AGHT+IFqGiYrkyFkibQDWmSYZpAF6eBWO6jYvlesQVDAePpNLhM3UWiTVV5GZ9/v+cj6r6VcAsgK+w==
+X-Received: by 2002:a05:6512:4012:b0:592:f935:cd8d with SMTP id 2adb3069b0e04-59412868c4bmr83783e87.15.1761674111422;
+        Tue, 28 Oct 2025 10:55:11 -0700 (PDT)
+Received: from ribalda.c.googlers.com (166.141.88.34.bc.googleusercontent.com. [34.88.141.166])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f7444bsm3239773e87.85.2025.10.28.10.55.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:55:33 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 5/5] arm64: dts: renesas: rzt2h-n2h-evk: Enable Ethernet support
-Date: Tue, 28 Oct 2025 17:54:58 +0000
-Message-ID: <20251028175458.1037397-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251028175458.1037397-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20251028175458.1037397-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 28 Oct 2025 10:55:11 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Tue, 28 Oct 2025 17:55:10 +0000
+Subject: [PATCH] media: uvcvideo: Fix support for
+ V4L2_CTRL_FLAG_HAS_WHICH_MIN_MAX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251028-uvc-fix-which-v1-1-a7e6b82672a3@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAH0DAWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyML3dKyZN20zArd8ozM5AzdZOOkRMO0JDOL1BRTJaCegqJUoCTYvOj
+ Y2loAMUR4ul8AAAA=
+X-Change-ID: 20251028-uvc-fix-which-c3ba1fb68ed5
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hansg@kernel.org>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Hans Verkuil <hverkuil@kernel.org>, Yunke Cao <yunkec@google.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+The VIDIOC_G_EXT_CTRLS with which V4L2_CTRL_WHICH_(MIN|MAX)_VAL can only
+work for controls that have previously announced support for it.
 
-Enable Ethernet support on the RZ/T2H and RZ/N2H EVKs.
+This patch fixes the following v4l2-compliance error:
 
-Configure the MIIC converter in mode 0x6:
-  Port 0 <-> ETHSW Port 0
-  Port 1 <-> ETHSW Port 1
-  Port 2 <-> GMAC2
-  Port 3 <-> GMAC1
+  info: checking extended control 'User Controls' (0x00980001)
+  fail: v4l2-test-controls.cpp(980): ret != EINVAL (got 13)
+        test VIDIOC_G/S/TRY_EXT_CTRLS: FAIL
 
-Enable the ETHSS, GMAC1 and GMAC2 nodes. ETHSW support will be added
-once the switch driver is available.
-
-Configure the MIIC converters to map ports according to the selected
-switching mode, with converters 0 and 1 mapped to switch ports and
-converters 2 and 3 mapped to GMAC ports.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Fixes: 39d2c891c96e ("media: uvcvideo: support V4L2_CTRL_WHICH_MIN/MAX_VAL")
+Cc: stable@vger.kernel.org
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
-v1->v2 changes:
-- Dropped *skew-psec properties which are not needed for
-  VSC8541 PHYs.
----
- .../dts/renesas/r9a09g077m44-rzt2h-evk.dts    | 70 ++++++++++++++++
- .../dts/renesas/r9a09g087m44-rzn2h-evk.dts    | 79 +++++++++++++++++++
- .../dts/renesas/rzt2h-n2h-evk-common.dtsi     | 70 ++++++++++++++++
- 3 files changed, 219 insertions(+)
+ drivers/media/usb/uvc/uvc_ctrl.c | 11 +++++++++--
+ drivers/media/usb/uvc/uvc_v4l2.c |  9 ++++++---
+ drivers/media/usb/uvc/uvcvideo.h |  2 +-
+ 3 files changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-index 799c58afd6fe..33cbf74933de 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g077m44-rzt2h-evk.dts
-@@ -149,7 +149,77 @@ &i2c1 {
- 	status = "okay";
- };
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index 2905505c240c060e5034ea12d33b59d5702f2e1f..2f7d5cdd18e072a47fb5906da0f847dd449911b4 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1432,7 +1432,7 @@ static bool uvc_ctrl_is_readable(u32 which, struct uvc_control *ctrl,
+  * auto_exposure=1, exposure_time_absolute=251.
+  */
+ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+-			   const struct v4l2_ext_controls *ctrls,
++			   const struct v4l2_ext_controls *ctrls, u32 which,
+ 			   unsigned long ioctl)
+ {
+ 	struct uvc_control_mapping *master_map = NULL;
+@@ -1442,14 +1442,21 @@ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+ 	s32 val;
+ 	int ret;
+ 	int i;
++	bool is_which_min_max = (ioctl == VIDIOC_G_EXT_CTRLS &&
++				 (which == V4L2_CTRL_WHICH_MIN_VAL ||
++				  which == V4L2_CTRL_WHICH_MAX_VAL));
  
-+&phy2 {
-+	/*
-+	 * PHY2 Reset Configuration:
-+	 *
-+	 * SW6[1] = OFF; SW6[2] = ON; SW6[3] = OFF;
-+	 * P17_5 is used as GMAC_RESETOUT2#
-+	 */
-+	reset-gpios = <&pinctrl RZT2H_GPIO(17, 5) GPIO_ACTIVE_LOW>;
-+};
-+
-+&phy3 {
-+	reset-gpios = <&pinctrl RZT2H_GPIO(32, 3) GPIO_ACTIVE_LOW>;
-+};
-+
- &pinctrl {
-+	/*
-+	 * ETH2 Pin Configuration:
-+	 *
-+	 * SW2[6] = OFF: MDC and MDIO of Ethernet port 2 are connected to GMAC2
-+	 * SW2[7] = ON:  Pins P29_1-P29_7, P30_0-P30_4, and P31_2-P31_5 are used for Ethernet port 2
-+	 */
-+	eth2_pins: eth2-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(29, 1, 0xf)>, /* ETH2_TXCLK */
-+			 <RZT2H_PORT_PINMUX(29, 2, 0xf)>, /* ETH2_TXD[0] */
-+			 <RZT2H_PORT_PINMUX(29, 3, 0xf)>, /* ETH2_TXD[1] */
-+			 <RZT2H_PORT_PINMUX(29, 4, 0xf)>, /* ETH2_TXD[2] */
-+			 <RZT2H_PORT_PINMUX(29, 5, 0xf)>, /* ETH2_TXD[3] */
-+			 <RZT2H_PORT_PINMUX(29, 6, 0xf)>, /* ETH2_TXEN */
-+			 <RZT2H_PORT_PINMUX(29, 7, 0xf)>, /* ETH2_RXCLK */
-+			 <RZT2H_PORT_PINMUX(30, 0, 0xf)>, /* ETH2_RXD[0] */
-+			 <RZT2H_PORT_PINMUX(30, 1, 0xf)>, /* ETH2_RXD[1] */
-+			 <RZT2H_PORT_PINMUX(30, 2, 0xf)>, /* ETH2_RXD[2] */
-+			 <RZT2H_PORT_PINMUX(30, 3, 0xf)>, /* ETH2_RXD[3] */
-+			 <RZT2H_PORT_PINMUX(30, 4, 0xf)>, /* ETH2_RXDV */
-+			 <RZT2H_PORT_PINMUX(31, 2, 0xf)>, /* ETH2_TXER */
-+			 <RZT2H_PORT_PINMUX(31, 3, 0xf)>, /* ETH2_RXER */
-+			 <RZT2H_PORT_PINMUX(31, 4, 0xf)>, /* ETH2_CRS */
-+			 <RZT2H_PORT_PINMUX(31, 5, 0xf)>, /* ETH2_COL */
-+			 <RZT2H_PORT_PINMUX(30, 5, 0x10)>, /* ETH2_MDC */
-+			 <RZT2H_PORT_PINMUX(30, 6, 0x10)>, /* ETH2_MDIO */
-+			 <RZT2H_PORT_PINMUX(31, 0, 0x02)>; /* ETH2_REFCLK */
-+	};
-+
-+	/*
-+	 * ETH3 Pin Configuration:
-+	 *
-+	 * SW2[8] = ON, P27_2, P33_2-P33_7, P34_0-P34_5, P34_7 and P35_0-P35_5
-+	 * are used for Ethernet port 3
-+	 */
-+	eth3_pins: eth3-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(33, 2, 0xf)>, /* ETH3_TXCLK */
-+			 <RZT2H_PORT_PINMUX(33, 3, 0xf)>, /* ETH3_TXD[0] */
-+			 <RZT2H_PORT_PINMUX(33, 4, 0xf)>, /* ETH3_TXD[1] */
-+			 <RZT2H_PORT_PINMUX(33, 5, 0xf)>, /* ETH3_TXD[2] */
-+			 <RZT2H_PORT_PINMUX(33, 6, 0xf)>, /* ETH3_TXD[3] */
-+			 <RZT2H_PORT_PINMUX(33, 7, 0xf)>, /* ETH3_TXEN */
-+			 <RZT2H_PORT_PINMUX(34, 0, 0xf)>, /* ETH3_RXCLK */
-+			 <RZT2H_PORT_PINMUX(34, 1, 0xf)>, /* ETH3_RXD[0] */
-+			 <RZT2H_PORT_PINMUX(34, 2, 0xf)>, /* ETH3_RXD[1] */
-+			 <RZT2H_PORT_PINMUX(34, 3, 0xf)>, /* ETH3_RXD[2] */
-+			 <RZT2H_PORT_PINMUX(34, 4, 0xf)>, /* ETH3_RXD[3] */
-+			 <RZT2H_PORT_PINMUX(34, 5, 0xf)>, /* ETH3_RXDV */
-+			 <RZT2H_PORT_PINMUX(34, 7, 0xf)>, /* ETH3_TXER */
-+			 <RZT2H_PORT_PINMUX(35, 0, 0xf)>, /* ETH3_RXER */
-+			 <RZT2H_PORT_PINMUX(35, 1, 0xf)>, /* ETH3_CRS */
-+			 <RZT2H_PORT_PINMUX(35, 2, 0xf)>, /* ETH3_COL */
-+			 <RZT2H_PORT_PINMUX(26, 1, 0x10)>, /* ETH3_MDC */
-+			 <RZT2H_PORT_PINMUX(26, 2, 0x10)>, /* ETH3_MDIO */
-+			 <RZT2H_PORT_PINMUX(34, 6, 0x02)>; /* ETH3_REFCLK */
-+	};
-+
- 	/*
- 	 * I2C0 Pin Configuration:
- 	 * ------------------------
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-index d698b6368ee7..7ebc89bafaf1 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g087m44-rzn2h-evk.dts
-@@ -186,7 +186,86 @@ &i2c1 {
- 	status = "okay";
- };
+ 	if (__uvc_query_v4l2_class(chain, v4l2_id, 0) >= 0)
+-		return -EACCES;
++		return is_which_min_max ? -EINVAL : -EACCES;
  
-+&phy2 {
-+	/*
-+	 * PHY2 Reset Configuration:
-+	 *
-+	 * DSW8[1] = ON; DSW8[2] = OFF
-+	 * DSW12[7] = OFF; DSW12[8] = ON
-+	 * P03_1 is used as GMAC_RESETOUT2#
-+	 */
-+	reset-gpios = <&pinctrl RZT2H_GPIO(3, 1) GPIO_ACTIVE_LOW>;
-+};
-+
-+&phy3 {
-+	/*
-+	 * PHY3 Reset Configuration:
-+	 *
-+	 * DSW12[5] = OFF; DSW12[6] = ON
-+	 * P03_2 is used as GMAC_RESETOUT3#
-+	 */
-+	reset-gpios = <&pinctrl RZT2H_GPIO(3, 2) GPIO_ACTIVE_LOW>;
-+};
-+
- &pinctrl {
-+	/*
-+	 * ETH2 Pin Configuration:
-+	 *
-+	 * DSW5[6] = OFF, P21_4-P21_5 are used for Ethernet port 2
-+	 * DSW5[7] = ON, P29_1-P29_7, P30_0-P30_4, P30_7, P31_2, P31_4
-+	 * and P31_5 are used for Ethernet port 2
-+	 */
-+	eth2_pins: eth2-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(29, 1, 0xf)>, /* ETH2_TXCLK */
-+			 <RZT2H_PORT_PINMUX(29, 2, 0xf)>, /* ETH2_TXD[0] */
-+			 <RZT2H_PORT_PINMUX(29, 3, 0xf)>, /* ETH2_TXD[1] */
-+			 <RZT2H_PORT_PINMUX(29, 4, 0xf)>, /* ETH2_TXD[2] */
-+			 <RZT2H_PORT_PINMUX(29, 5, 0xf)>, /* ETH2_TXD[3] */
-+			 <RZT2H_PORT_PINMUX(29, 6, 0xf)>, /* ETH2_TXEN */
-+			 <RZT2H_PORT_PINMUX(29, 7, 0xf)>, /* ETH2_RXCLK */
-+			 <RZT2H_PORT_PINMUX(30, 0, 0xf)>, /* ETH2_RXD[0] */
-+			 <RZT2H_PORT_PINMUX(30, 1, 0xf)>, /* ETH2_RXD[1] */
-+			 <RZT2H_PORT_PINMUX(30, 2, 0xf)>, /* ETH2_RXD[2] */
-+			 <RZT2H_PORT_PINMUX(30, 3, 0xf)>, /* ETH2_RXD[3] */
-+			 <RZT2H_PORT_PINMUX(30, 4, 0xf)>, /* ETH2_RXDV */
-+			 <RZT2H_PORT_PINMUX(31, 2, 0xf)>, /* ETH2_TXER */
-+			 <RZT2H_PORT_PINMUX(31, 3, 0xf)>, /* ETH2_RXER */
-+			 <RZT2H_PORT_PINMUX(31, 4, 0xf)>, /* ETH2_CRS */
-+			 <RZT2H_PORT_PINMUX(31, 5, 0xf)>, /* ETH2_COL */
-+			 <RZT2H_PORT_PINMUX(30, 5, 0x10)>, /* ETH2_MDC */
-+			 <RZT2H_PORT_PINMUX(30, 6, 0x10)>, /* ETH2_MDIO */
-+			 <RZT2H_PORT_PINMUX(31, 0, 0x02)>; /* ETH2_REFCLK */
-+
-+	};
-+
-+	/*
-+	 * ETH3 Pin Configuration:
-+	 *
-+	 * DSW5[8] = ON, P00_0-P00_2, P33_2-P33_7, P34_0-P34_6, are used for Ethernet port 3
-+	 * DSW12[1] = OFF;DSW12[2] = ON, P00_3 is used for Ethernet port 3
-+	 */
-+	eth3_pins: eth3-pins {
-+		pinmux = <RZT2H_PORT_PINMUX(33, 2, 0xf)>, /* ETH3_TXCLK */
-+			 <RZT2H_PORT_PINMUX(33, 3, 0xf)>, /* ETH3_TXD[0] */
-+			 <RZT2H_PORT_PINMUX(33, 4, 0xf)>, /* ETH3_TXD[1] */
-+			 <RZT2H_PORT_PINMUX(33, 5, 0xf)>, /* ETH3_TXD[2] */
-+			 <RZT2H_PORT_PINMUX(33, 6, 0xf)>, /* ETH3_TXD[3] */
-+			 <RZT2H_PORT_PINMUX(33, 7, 0xf)>, /* ETH3_TXEN */
-+			 <RZT2H_PORT_PINMUX(34, 0, 0xf)>, /* ETH3_RXCLK */
-+			 <RZT2H_PORT_PINMUX(34, 1, 0xf)>, /* ETH3_RXD[0] */
-+			 <RZT2H_PORT_PINMUX(34, 2, 0xf)>, /* ETH3_RXD[1] */
-+			 <RZT2H_PORT_PINMUX(34, 3, 0xf)>, /* ETH3_RXD[2] */
-+			 <RZT2H_PORT_PINMUX(34, 4, 0xf)>, /* ETH3_RXD[3] */
-+			 <RZT2H_PORT_PINMUX(34, 5, 0xf)>, /* ETH3_RXDV */
-+			 <RZT2H_PORT_PINMUX(0, 0, 0xf)>, /* ETH3_TXER */
-+			 <RZT2H_PORT_PINMUX(0, 1, 0xf)>, /* ETH3_RXER */
-+			 <RZT2H_PORT_PINMUX(0, 2, 0xf)>, /* ETH3_CRS */
-+			 <RZT2H_PORT_PINMUX(0, 3, 0xf)>, /* ETH3_COL */
-+			 <RZT2H_PORT_PINMUX(26, 1, 0x10)>, /* ETH3_MDC */
-+			 <RZT2H_PORT_PINMUX(26, 2, 0x10)>, /* ETH3_MDIO */
-+			 <RZT2H_PORT_PINMUX(34, 6, 0x02)>; /* ETH3_REFCLK */
-+	};
-+
- 	/*
- 	 * I2C0 Pin Configuration:
- 	 * ------------------------
-diff --git a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-index 924a38c6cb0f..c608d97586ff 100644
---- a/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzt2h-n2h-evk-common.dtsi
-@@ -7,10 +7,14 @@
+ 	ctrl = uvc_find_control(chain, v4l2_id, &mapping);
+ 	if (!ctrl)
+ 		return -EINVAL;
  
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/leds/common.h>
-+#include <dt-bindings/net/mscc-phy-vsc8531.h>
-+#include <dt-bindings/net/renesas,r9a09g077-pcs-miic.h>
- #include <dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h>
++	if ((!(ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX) ||
++	     !(ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)) && is_which_min_max)
++		return -EINVAL;
++
+ 	if (ioctl == VIDIOC_G_EXT_CTRLS)
+ 		return uvc_ctrl_is_readable(ctrls->which, ctrl, mapping);
  
- / {
- 	aliases {
-+		ethernet0 = &gmac1;
-+		ethernet1 = &gmac2;
- 		i2c0 = &i2c0;
- 		i2c1 = &i2c1;
- 		mmc0 = &sdhi0;
-@@ -70,10 +74,34 @@ &ehci {
- 	status = "okay";
- };
+diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+index 9e4a251eca88085a1b4e0e854370015855be92ee..d5274dc94da3c60f1f4566b307dd445f30c4f45f 100644
+--- a/drivers/media/usb/uvc/uvc_v4l2.c
++++ b/drivers/media/usb/uvc/uvc_v4l2.c
+@@ -765,6 +765,7 @@ static int uvc_ioctl_query_ext_ctrl(struct file *file, void *priv,
  
-+&ethss {
-+	status = "okay";
-+
-+	renesas,miic-switch-portin = <ETHSS_GMAC0_PORT>;
-+};
-+
- &extal_clk {
- 	clock-frequency = <25000000>;
- };
+ static int uvc_ctrl_check_access(struct uvc_video_chain *chain,
+ 				 struct v4l2_ext_controls *ctrls,
++				 u32 which,
+ 				 unsigned long ioctl)
+ {
+ 	struct v4l2_ext_control *ctrl = ctrls->controls;
+@@ -772,7 +773,8 @@ static int uvc_ctrl_check_access(struct uvc_video_chain *chain,
+ 	int ret = 0;
  
-+&gmac1 {
-+	pinctrl-0 = <&eth3_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy3>;
-+	phy-mode = "rgmii-id";
-+	pcs-handle = <&mii_conv3>;
-+	status = "okay";
-+};
-+
-+&gmac2 {
-+	pinctrl-0 = <&eth2_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy2>;
-+	phy-mode = "rgmii-id";
-+	pcs-handle = <&mii_conv2>;
-+	status = "okay";
-+};
-+
- &hsusb {
- 	dr_mode = "otg";
- 	status = "okay";
-@@ -87,6 +115,48 @@ eeprom: eeprom@50 {
- 	};
- };
+ 	for (i = 0; i < ctrls->count; ++ctrl, ++i) {
+-		ret = uvc_ctrl_is_accessible(chain, ctrl->id, ctrls, ioctl);
++		ret = uvc_ctrl_is_accessible(chain, ctrl->id, ctrls, which,
++					     ioctl);
+ 		if (ret)
+ 			break;
+ 	}
+@@ -806,7 +808,7 @@ static int uvc_ioctl_g_ext_ctrls(struct file *file, void *priv,
+ 		which = V4L2_CTRL_WHICH_CUR_VAL;
+ 	}
  
-+&mdio1 {
-+	phy3: ethernet-phy@3 {
-+		compatible = "ethernet-phy-id0007.0772", "ethernet-phy-ieee802.3-c22";
-+		reg = <3>;
-+		vsc8531,led-0-mode = <VSC8531_LINK_ACTIVITY>;
-+		vsc8531,led-1-mode = <VSC8531_LINK_ACTIVITY>;
-+		reset-assert-us = <2000>;
-+		reset-deassert-us = <15000>;
-+	};
-+};
-+
-+&mdio2 {
-+	phy2: ethernet-phy@2 {
-+		compatible = "ethernet-phy-id0007.0772", "ethernet-phy-ieee802.3-c22";
-+		reg = <2>;
-+		vsc8531,led-0-mode = <VSC8531_LINK_ACTIVITY>;
-+		vsc8531,led-1-mode = <VSC8531_LINK_ACTIVITY>;
-+		reset-assert-us = <2000>;
-+		reset-deassert-us = <15000>;
-+	};
-+};
-+
-+&mii_conv0 {
-+	renesas,miic-input = <ETHSS_ETHSW_PORT0>;
-+	status = "okay";
-+};
-+
-+&mii_conv1 {
-+	renesas,miic-input = <ETHSS_ETHSW_PORT1>;
-+	status = "okay";
-+};
-+
-+&mii_conv2 {
-+	renesas,miic-input = <ETHSS_GMAC2_PORT>;
-+	status = "okay";
-+};
-+
-+&mii_conv3 {
-+	renesas,miic-input = <ETHSS_GMAC1_PORT>;
-+	status = "okay";
-+};
-+
- &ohci {
- 	dr_mode = "otg";
- 	status = "okay";
+-	ret = uvc_ctrl_check_access(chain, ctrls, VIDIOC_G_EXT_CTRLS);
++	ret = uvc_ctrl_check_access(chain, ctrls, which, VIDIOC_G_EXT_CTRLS);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -840,7 +842,8 @@ static int uvc_ioctl_s_try_ext_ctrls(struct uvc_fh *handle,
+ 	if (!ctrls->count)
+ 		return 0;
+ 
+-	ret = uvc_ctrl_check_access(chain, ctrls, ioctl);
++	ret = uvc_ctrl_check_access(chain, ctrls, V4L2_CTRL_WHICH_CUR_VAL,
++				    ioctl);
+ 	if (ret < 0)
+ 		return ret;
+ 
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index ed7bad31f75ca474c1037d666d5310c78dd764df..d583425893a5f716185153a07aae9bfe20182964 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -786,7 +786,7 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
+ 		 struct v4l2_ext_control *xctrl);
+ int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl);
+ int uvc_ctrl_is_accessible(struct uvc_video_chain *chain, u32 v4l2_id,
+-			   const struct v4l2_ext_controls *ctrls,
++			   const struct v4l2_ext_controls *ctrls, u32 which,
+ 			   unsigned long ioctl);
+ 
+ int uvc_xu_ctrl_query(struct uvc_video_chain *chain,
+
+---
+base-commit: c218ce4f98eccf5a40de64c559c52d61e9cc78ee
+change-id: 20251028-uvc-fix-which-c3ba1fb68ed5
+
+Best regards,
 -- 
-2.43.0
+Ricardo Ribalda <ribalda@chromium.org>
 
 
