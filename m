@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-872849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF25CC122C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:34:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56CAC122F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 615A3563212
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082E94638F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D821EC01B;
-	Tue, 28 Oct 2025 00:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF227212552;
+	Tue, 28 Oct 2025 00:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0KJYVbFc"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0GVgDpE4"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC4319755B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:34:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAE520297E
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611649; cv=none; b=R7I7EIxFWAlcBkJx92g76PHx4TvEZLOJiR3/CadChkT/Jz9g0UOf2oCeniWItNb6DtFvLq5Lk5m6hxdBIWbhKiArSc6zE1N0akRWMj8QJFGayRGMagLcCBcApJgZFXbXjrMJpXRVd1abYrrMv7je7DC+r0xajODkVVysVOzG6U0=
+	t=1761611812; cv=none; b=YJpqDgRpLKsbuWKibtcaiFYS4laRu0vx/OvVN9eRoYRPJMAcOvgLpVKPRWFtAbidRikPwfJmq3sOOFv65R3UufBaaI9K5QFEPk1UV0s4nyIbx16qDIJpplREu1P4gLiMENnAIH8gBVTF9O3FlLx96gpfqnerXh+tr7oB95wfZrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611649; c=relaxed/simple;
-	bh=np9MHnvkGUDtn32mHRigCmaOIGhYbItN3DN6jEpgT4g=;
+	s=arc-20240116; t=1761611812; c=relaxed/simple;
+	bh=HfMKxWya+alo4HTeH/VJeMJH6ra+r5JHKOIwTNWoCcs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tVEzmoIsEMDlazdv0cVFcOWUfmPJNJx/exvOR6fISragLlwCvYEpBBOQE7zN/z764nCAELqz88NJre/JfV0fVbKl2mU49V5+crgquf7uGVVjft6Sx/4Soyz1vFwuTPQ0tYT+2vLwg6lHdLaNTOaq5PS1UN1dCWdj03Wl8GcyDbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0KJYVbFc; arc=none smtp.client-ip=209.85.160.176
+	 To:Cc:Content-Type; b=DlgDw8Ub3+klmO2QPMaEZY9MYsOP31r+FOBoY4AvybL9FBxfrg1g2n87hBLJUpuUV1pmIUn+bNUaAvU7UoDGCHUlMHmh9EdRsT5yE1P/RPdaL6Y95BNFyr5XoNYzQ8O5zV/DruECMcvsUJ4ZhAYbpcqblrTP9+idzAoJEjlbNbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0GVgDpE4; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4ecfd66059eso158251cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:34:06 -0700 (PDT)
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4ecfd66059eso158661cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:36:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761611646; x=1762216446; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761611809; x=1762216609; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=np9MHnvkGUDtn32mHRigCmaOIGhYbItN3DN6jEpgT4g=;
-        b=0KJYVbFcTrpGpo8qv399sSGsoBh0XICxBm8H0NXzCe4jFVymDIj+26neKMMjn9Bw9C
-         Xn8aMwprzdqCNgWzetXXQLq96D9k8ezsFH5L8v3AEzcar2BQ9ehqTlUIXqNYM+xSJW3e
-         l4kkqRioC0/LwSSD/LFh/4W3mBBdUeQ3R0ID42GqeWVJj/litLxsg3SJEHJ46EqjkNAB
-         H6FJJXbmA1p0+GdFC1pFC4DJ3yIQ91lno1CjP7Dj+0+0RtmGuvrZv1RJuSXR3vSQ98cX
-         aHDZRGNlppk1K4cfiuGCVS98uJ+GgG1F1FASLeWL7F3zK8aQ0hQz73tEJLQLZsFKYTv0
-         C0GA==
+        bh=i9airE2D5p1Y8Na0l8E2tZxHyd99hjP8VcmYGJ8nfrs=;
+        b=0GVgDpE49wQrtTRP2GiWnRfHni+5po3seRc/tXryRhv25DaEdfxD45cODcCAgL2NgX
+         fofdWTBVMTIED7xvQSvI2ZA7Xe3yGCvDcb/MbWIhNgRTh4fMMVyDaV7pcWUecevdA/ob
+         lbxzZdjaJpz+E1LYuR6X3T+uEbu0/qCbFlXojdxpcoY9zGQxxhIfOINHrTw3bJBow6Jc
+         yJ4B9akGwHy4zfkXZcPbc9WXX+J4hXNjhlS2XLlYHFV8k6zmayC3IEOUax+qdSJJCSol
+         FsWOa7f9yd/8WjNqo9/x89XnZOB2fZVzaxFTW4K6r11DE/BKNlyK5Dx2yduaoLZeDxEO
+         qnQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761611646; x=1762216446;
+        d=1e100.net; s=20230601; t=1761611809; x=1762216609;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=np9MHnvkGUDtn32mHRigCmaOIGhYbItN3DN6jEpgT4g=;
-        b=ZEPkoA/AdTSDLfUBPIqUwrZRVChTpoddBKkqiqQp27+Hfc/uPjyckHXfZ50Re95erZ
-         DQpHnN5JOmHN1zO9pJTXbT698jMwVQOA2+QuKMlCs0/bYFsIGYpCnCH2KumR8dkiqh6n
-         dr7aO2YI6gjWr1ZHsFRuin3i6/ERNsuwYkKrzXEGzPQJKikx9SzoYR9pHJ95w7piXtsz
-         aSm8a6xsKYURfChWHjFPbkjnc0qXoV5Tlghph5395O84L4nCooHvb0Ja0A4vxOpupZ7u
-         tuRdrvBGOyTd0xOjwhdlu9tqHP7HuHw6KGbB36Os3bXLdWpm6+kyOR6rfoc65EBjP9gw
-         541A==
-X-Forwarded-Encrypted: i=1; AJvYcCXN462NdAZgy4Lp7RxctMjJDW8tIwoGB7VoMtPPNkB/TogirR8VypklBuGAUXSBsgV3vsL3eDR15fID7UQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW1uADEiUNgdPuQb1pWWD2qNZ4MgZ68jM84TmjSz0J0yu2uB5Y
-	B6EKCq97zP9dZeiDXWL4a0NZnyPqFI8PkFXoxiot1kjluYAZfGB1FYNCm1OfUhlGepS6ZkTZ5lq
-	QxCZQxDeJlnJoFl8XKrsYz/6Vr9G7bfDvEODFHqQh
-X-Gm-Gg: ASbGncu8mU9SRXLWbEk1YJKzCcEirtVe5rBAqigUU4hzZZl48sxr7BlDsRoAC2URi3X
-	yTZFluCZ0YBVQb39+mbPMtLLPLq68YXIc7CQGm43g7KA7a7zi7tL9XNL0PSMSoZ5948JzwdXb5m
-	OpeGFGE3kbpK/Tkzr00fvvCL/obX/907Mvwchl3fvCjZ8PTxhADzHCvSezfXyowd9oEZ7TwEp/H
-	BeQyU8Gg/FcVYpnmTdFPGrE1ReukIRFIQPWssKmkyxnFZUWHQceW2u0rupw
-X-Google-Smtp-Source: AGHT+IGtobyKZr3Buf1Y+gJy9ka3rDheXwEbcoUOoOvotxlR0nNAoWhJDpymKwu6u/e0XgHLkC94HPaBwWYZ4rty/j0=
-X-Received: by 2002:a05:622a:4ccd:b0:4b7:9b06:ca9f with SMTP id
- d75a77b69052e-4ed08e325a7mr3265881cf.2.1761611645431; Mon, 27 Oct 2025
- 17:34:05 -0700 (PDT)
+        bh=i9airE2D5p1Y8Na0l8E2tZxHyd99hjP8VcmYGJ8nfrs=;
+        b=DdrN+8fHs5phCYS3PqnSOz3rWLlbzdqOMWgN92fEtRnY5ZfHqFBkmfoKPMcOjyO2cD
+         QA4SubvNOhDL2H7UL9O7Q7NqTWucXrG8JpxVKRMKaHtEEGrvN9OTWyaYoSW8PCKjOGky
+         diLGtcl6tAt3Ne9dBSrmQms86Qac5ccmOSQbS0rMGymtktwJgOjVA3rcSFnBe7chq5Au
+         /D6d8I9L2FYi3qoacOHF6Tdb+GF6l+Aqa1lfd2910yY5192Ic+Q9Pa4zTz1g7lWFpdHk
+         rNNklvuWHz+aG56GofnbIO7NWSjvBepxKJW21wbpSwTUtKW4rq5nzz/Xcfwb3vK0nq1K
+         uqcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVMBVefEFWpaKniILEnp+vxTzn9z0XcQ3wpCuboGn1lwh0phJCRoVQBR/CiGF+zkZG9zmmjAdE51+2/lmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxco/qLBt3CRKyfIeub4epjlWu51+8cecoddrt8WoGrWMiZCOLJ
+	k/eCJ8OzmPMBPf3cjbg/7xF/l9DzV8FaoBFwuBAjuisAGd0dj6s6gRUr4TbWgJ2tl0DIqqnRhYm
+	nsu/aRW0drRXIootGa1t2JZ/xJ0cFyZLhKFAkd2BF
+X-Gm-Gg: ASbGncvZ8nzldOL67g3w2hoLsEIGwBiksLOP99nIFjGrtE3Y1ujN9FeKeyIlao1Mb9g
+	xTJA3LXFPD/ZnhCml0STaBMCpqs2BizcDHbf2h/i6FU4ot/yv1wVNjHGfqpyPGQfon6/kYYLwSq
+	6ukfCgA6gmmU5scwXc2zee3zmZNXf3G/fd56HKehNmXKCcpUXPoODv9zG4JxXXYooTtgi/21+lT
+	0sL4c6IO62vOe9gNEJf3SwWEEMe0vHfnTfQeUD0EWI/udOEjPz6ziKF8TJr
+X-Google-Smtp-Source: AGHT+IGMk9j6UADKczeIdBycT7NeHvpUha15rA19nFLr68qYQwbYTKP3it0bS1on0J71a7haYB5nb6d1uLCJfAJbKPU=
+X-Received: by 2002:a05:622a:48d:b0:4b4:9590:e091 with SMTP id
+ d75a77b69052e-4ed09f3e5cbmr1623131cf.5.1761611809252; Mon, 27 Oct 2025
+ 17:36:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,14 +75,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-1-47cb85f5259e@meta.com>
-In-Reply-To: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-1-47cb85f5259e@meta.com>
+ <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-2-47cb85f5259e@meta.com>
+In-Reply-To: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-2-47cb85f5259e@meta.com>
 From: Mina Almasry <almasrymina@google.com>
-Date: Mon, 27 Oct 2025 17:33:45 -0700
-X-Gm-Features: AWmQ_bkh5rEwLV4cV0XCq-XK-tFW86EJg2CGfpJXDPMaZ1YEH67NgQRLYqXDCEI
-Message-ID: <CAHS8izNSO-4efu8x6OqxHdyuyqQgS_t6EDh3JjjC1k4R_Gtm2Q@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 1/4] net: devmem: rename tx_vec to vec in
- dmabuf binding
+Date: Mon, 27 Oct 2025 17:36:35 -0700
+X-Gm-Features: AWmQ_bkLe3qJG0bwA6CrmauGWKqYZgOx7-sOTZCMpb-2yOZRyd8jDNdsw2rnu0o
+Message-ID: <CAHS8izNB6s97X8srfZQ1upUNOOx0vwj4Aa9gMUZvneoyefqdrw@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 2/4] net: devmem: refactor sock_devmem_dontneed
+ for autorelease split
 To: Bobby Eshleman <bobbyeshleman@gmail.com>
 Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
@@ -98,15 +98,48 @@ On Thu, Oct 23, 2025 at 2:00=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmail=
 >
 > From: Bobby Eshleman <bobbyeshleman@meta.com>
 >
-> Rename the 'tx_vec' field in struct net_devmem_dmabuf_binding to 'vec'.
-> This field holds pointers to net_iov structures. The rename prepares for
-> reusing 'vec' for both TX and RX directions.
+> Refactor sock_devmem_dontneed() in preparation for supporting both
+> autorelease and manual token release modes.
 >
-> No functional change intended.
+> Split the function into two parts:
+> - sock_devmem_dontneed(): handles input validation, token allocation,
+>   and copying from userspace
+> - sock_devmem_dontneed_autorelease(): performs the actual token release
+>   via xarray lookup and page pool put
+>
+> This separation allows a future commit to add a parallel
+> sock_devmem_dontneed_manual_release() function that uses a different
+> token tracking mechanism (per-niov reference counting) without
+> duplicating the input validation logic.
+>
+> The refactoring is purely mechanical with no functional change. Only
+> intended to minimize the noise in subsequent patches.
 >
 > Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> ---
+>  net/core/sock.c | 52 ++++++++++++++++++++++++++++++++-------------------=
+-
+>  1 file changed, 32 insertions(+), 20 deletions(-)
+>
+> diff --git a/net/core/sock.c b/net/core/sock.c
+> index a99132cc0965..e7b378753763 100644
+> --- a/net/core/sock.c
+> +++ b/net/core/sock.c
+> @@ -1082,30 +1082,13 @@ static int sock_reserve_memory(struct sock *sk, i=
+nt bytes)
+>  #define MAX_DONTNEED_FRAGS 1024
+>
+>  static noinline_for_stack int
+> -sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int opt=
+len)
+> +sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_token *t=
+okens,
 
-Looks like a straightforward name change,
+Kind of a misnomer. This helper doesn't seem to autorelease, but
+really release the provided tokens, I guess. I would have
+sock_devmem_dontneed_tokens, but naming is hard :D
+
+Either way, looks correct code move,
 
 Reviewed-by: Mina Almasry <almasrymina@google.com>
 
