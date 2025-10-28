@@ -1,78 +1,56 @@
-Return-Path: <linux-kernel+bounces-873270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12EB3C138A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:28:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57780C138B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8A5473509F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:28:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 03544350BEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 892E12D877E;
-	Tue, 28 Oct 2025 08:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8792D8393;
+	Tue, 28 Oct 2025 08:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jIKURGR5"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoBU6eEa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D56824BD;
-	Tue, 28 Oct 2025 08:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B026D824BD;
+	Tue, 28 Oct 2025 08:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761640090; cv=none; b=Pp0kNd4brSGJ1oe9K4g4x7jL+DQZmFV4tIbVpq4Qx5fxG896OCwceL7pgJvqaF60nrKZWaJja6O57Wn2n2h2IlqSrq36p4kq3k36Rc84kV+hGeJfhXH0k4QFFC2Z1H7P+YgCc5uuK1dBr6n+YfxyYN8f41aUdI0NcyeNSLXChGA=
+	t=1761640165; cv=none; b=P0V8iltPFkE0c2K9sZhR0903WjPTNDe8xmZ0i1VUcpesk0iaUxQpMrJqvUJFqd+ikFZ0Ud7zBxZmQLQJeq6sY5CwO31U0IgbsIfQwlTpXeM1c5w2TIdkOZ+tq56LMUXcPy+GpPVV0WdZLHHSMNihXT+PnkgTFMEC57si6S7jZ8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761640090; c=relaxed/simple;
-	bh=oNlpkQO5cst6KsAukF9U7bQZ+Sa47oF2EkKRJDLHMeI=;
+	s=arc-20240116; t=1761640165; c=relaxed/simple;
+	bh=MxdxPkFbS7WE4/2scpiWgRVhmy2bTK4aDLhQCGZ8pGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OOH6EoQqE+ICnCi4/8bcLxBHA10KFCqjbYINsmlE9mPyPNEUjQVCDmRLQuzm0hYe2TwBrOh7RYyfDX4/u4Z40hIxV4MLmpICtJ/Uk1sWuRHuefN/0pzoaXcU5Xgco1jSWlZ4YuOW2L1tqjhgcKi04a5Hogqlyla7+8d7C9uOWmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jIKURGR5; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [193.209.96.36])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E545116CD;
-	Tue, 28 Oct 2025 09:26:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761639978;
-	bh=oNlpkQO5cst6KsAukF9U7bQZ+Sa47oF2EkKRJDLHMeI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=MR5KjGNFEXXfvcbO63GF7CP1kXuRm7U+J2KdA/2swi7joAPPrEgewhD8GzZHFIXJWTXgraHyK2jEPr6F6Q549Uffvk03ucxt7Qj+/6rO9eVK0dDljR/psruM5HeVGvk+BNYgUfCSgbRur8sq2c0Tp2gYjrN8IwDPqdo+8Ua7aFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JoBU6eEa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F086FC4CEE7;
+	Tue, 28 Oct 2025 08:29:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761640165;
+	bh=MxdxPkFbS7WE4/2scpiWgRVhmy2bTK4aDLhQCGZ8pGE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jIKURGR5U/AmwLf+zhFNmroQF9QQUBrT0sjXi/qZVnGFcfUdImrsM2j8NnW9HLYXZ
-	 gcATKbqYBMHtB0VeGe2ohVjfTiTypIovnOmECF9Un2qglKWztUtcfYYxECAvEG3R3z
-	 7BUVyheYs5jGK5m14Z1JQbpUiQLyX6EuiMkr8t4w=
-Date: Tue, 28 Oct 2025 10:27:53 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Sakari Ailus <sakari.ailus@iki.fi>, Rui Miguel Silva <rmfrfs@gmail.com>,
-	Martin Kepplinger <martink@posteo.de>,
-	Purism Kernel Team <kernel@puri.sm>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Eugen Hristev <eugen.hristev@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
-	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	linux-staging@lists.linux.dev, Luis Oliveira <lolivei@synopsys.com>
-Subject: Re: [PATCH v3 01/31] dt-bindings: media: add DW MIPI CSI-2 Host
- support
-Message-ID: <20251028082753.GZ13023@pendragon.ideasonboard.com>
-References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
- <20250821-95_cam-v3-1-c9286fbb34b9@nxp.com>
- <aP8t3YClrZxOnHea@valkosipuli.retiisi.eu>
- <aP+enPOHPkvZAkzS@lizhi-Precision-Tower-5810>
- <aP_bSQUIle_9-L-7@valkosipuli.retiisi.eu>
- <aP/ehdkppeVr5G6H@lizhi-Precision-Tower-5810>
+	b=JoBU6eEau5WZjJex7C5t1Cr95ex2gD/1SknKV58nW5MonsW3YWWEXlXmyIqeyMJRk
+	 DUdxzQ7bZo2e5Dh6pdfwyl38nHaz4Q4GnCf8lYgTtRiJI1dmJYzcVjiYBDoNbzS7PU
+	 zPkgzpEDYwlei/xvVp/Mi0KpIbxDxLzNsGa9f3VkZMSD5SmeHE69dlkH0VvhC/TiVy
+	 yGBGvYNm6psw02aciZvSldLd8AiOO7eLPa/YYngI6jPm1XKAKalV9Kz9joSmOEkV8X
+	 jg6a3i+ki3OE1RTrXEb5AVAuAj1ZTJYWwO3O8ds0NngEM05do7Lvjb82BYWoWTUFhS
+	 LcXZmO0jzRf/A==
+Date: Tue, 28 Oct 2025 09:29:22 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: soc: qcom: qcom,pmic-glink: Add
+ Kaanapali and Glymur compatibles
+Message-ID: <20251028-private-chirpy-earthworm-6fccfe@kuoka>
+References: <20251027212250.3847537-1-anjelique.melendez@oss.qualcomm.com>
+ <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,170 +59,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aP/ehdkppeVr5G6H@lizhi-Precision-Tower-5810>
+In-Reply-To: <20251027212250.3847537-2-anjelique.melendez@oss.qualcomm.com>
 
-On Mon, Oct 27, 2025 at 05:05:09PM -0400, Frank Li wrote:
-> On Mon, Oct 27, 2025 at 10:51:21PM +0200, Sakari Ailus wrote:
-> > On Mon, Oct 27, 2025 at 12:32:28PM -0400, Frank Li wrote:
-> > > On Mon, Oct 27, 2025 at 10:31:25AM +0200, Sakari Ailus wrote:
-> > > > On Thu, Aug 21, 2025 at 04:15:36PM -0400, Frank Li wrote:
-> > > > > From: Eugen Hristev <eugen.hristev@linaro.org>
-> > > > >
-> > > > > Add bindings for Synopsys DesignWare MIPI CSI-2 host, which used at i.MX93
-> > > > > and i.MX95 platform.
-> > > > >
-> > > > > Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
-> > > > > Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
-> > > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > > ---
-> > > > > Change in v3
-> > > > > - drop remote-endpoint: true
-> > > > > - drop clock-lanes
-> > > > >
-> > > > > Change in v2
-> > > > > - remove Eugen Hristev <eugen.hristev@microchip.com> from mantainer.
-> > > > > - update ugen Hristev's s-o-b tag to align original author's email address
-> > > > > - remove single snps,dw-mipi-csi2-v150 compatible string
-> > > > > - move additionalProperties after required
-> > > > > ---
-> > > > >  .../bindings/media/snps,dw-mipi-csi2-v150.yaml     | 151 +++++++++++++++++++++
-> > > > >  MAINTAINERS                                        |   1 +
-> > > > >  2 files changed, 152 insertions(+)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> > > > > new file mode 100644
-> > > > > index 0000000000000000000000000000000000000000..d950daa4ee9cfd504ef84b83271b2a1b710ffd6b
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/media/snps,dw-mipi-csi2-v150.yaml
-> > > > > @@ -0,0 +1,151 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/media/snps,dw-mipi-csi2-v150.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Synopsys DesignWare CSI-2 Host controller (csi2host)
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Frank Li <Frank.Li@nxp.com>
-> > > > > +
-> > > > > +description:
-> > > > > +  CSI2HOST is used to receive image coming from an MIPI CSI-2 compatible
-> > > > > +  camera. It will convert the incoming CSI-2 stream into a dedicated
-> > > > > +  interface called the Synopsys IDI (Image Data Interface).
-> > > > > +  This interface is a 32-bit SoC internal only, and can be assimilated
-> > > > > +  with a CSI-2 interface.
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    items:
-> > > > > +      - enum:
-> > > > > +          - fsl,imx93-mipi-csi2
-> > > > > +      - const: snps,dw-mipi-csi2-v150
-> > > > > +
-> > > > > +  reg:
-> > > > > +    items:
-> > > > > +      - description: MIPI CSI-2 core register
-> > > > > +
-> > > > > +  reg-names:
-> > > > > +    items:
-> > > > > +      - const: core
-> > > > > +
-> > > > > +  clocks:
-> > > > > +    maxItems: 2
-> > > > > +
-> > > > > +  clock-names:
-> > > > > +    items:
-> > > > > +      - const: per
-> > > > > +      - const: pixel
-> > > > > +
-> > > > > +  phys:
-> > > > > +    maxItems: 1
-> > > > > +    description: MIPI D-PHY
-> > > > > +
-> > > > > +  phy-names:
-> > > > > +    items:
-> > > > > +      - const: rx
-> > > > > +
-> > > > > +  resets:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  interrupts:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  power-domains:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  ports:
-> > > > > +    $ref: /schemas/graph.yaml#/properties/ports
-> > > > > +
-> > > > > +    properties:
-> > > > > +      port@0:
-> > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > +        unevaluatedProperties: false
-> > > > > +        description:
-> > > > > +          Input port node, single endpoint describing the input port.
-> > > > > +
-> > > > > +        properties:
-> > > > > +          endpoint:
-> > > > > +            $ref: video-interfaces.yaml#
-> > > > > +            unevaluatedProperties: false
-> > > > > +            description: Endpoint connected to input device
-> > > > > +
-> > > > > +            properties:
-> > > > > +              bus-type:
-> > > > > +                const: 4
-> > > >
-> > > > If 4 is the only value supported, you can drop the property altogether.
-> > >
-> > > Sorry, What's your means here? There are more options in video-interfaces.yaml.
-> > > here just add restriction for bus-type. otherwise other value can be
-> > > provide in dts file.
-> >
-> > It could, but wouldn't any other value be incorrect?
+On Mon, Oct 27, 2025 at 02:22:49PM -0700, Anjelique Melendez wrote:
+> Document the Kaanapali and Glymur compatibles used to describe the PMIC
+> glink on each platform.
+> Kaanapali will have the same battery supply properties as sm8550 platforms
+> so define qcom,sm8550-pmic-glink as fallback for Kaanapali.
+> Glymur will have the same battery supply properties as x1e80100 platforms
+> so define qcom,x1e80100-pmic-glink as fallback for Glymur.
+
+What does it mean "battery supply properties"? Binding does not define
+them, so both paragraphs do not help me understanding the logic behind
+such choice at all.
+
+What are you describing in this binding? Battery properties? No, battery
+properties go to the monitored-battery, right? So maybe you describe SW
+interface...
+
 > 
-> at least that 5 # Parallel doesn't make sense for CSI2's input.
+> Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml      | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> index 7085bf88afab..c57022109419 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,pmic-glink.yaml
+> @@ -37,12 +37,19 @@ properties:
+>            - const: qcom,pmic-glink
+>        - items:
+>            - enum:
+> +              - qcom,kaanapali-pmic-glink
+>                - qcom,milos-pmic-glink
+>                - qcom,sm8650-pmic-glink
+>                - qcom,sm8750-pmic-glink
 
-The point is that, if the only valid value is CSI-2 DPHY (4), then
-there's no need to specify it in DT. The driver would know the input bus
-is CSI-2 DPHY, so there's no need to convey that information in the
-device tree.
+Why qcom,kaanapali-pmic-glink is not compatible with
+qcom,sm8750-pmic-glink? If Glymur is compatible with previous
+generation, I would expect that here too.
 
-> > In other words, this property is redundant and should be dropped.
-> >
-> > > > > +
-> > > > > +              data-lanes:
-> > > > > +                minItems: 1
-> > > > > +                maxItems: 4
-> > > > > +                items:
-> > > > > +                  maximum: 4
-> > > > > +
-> > > > > +      port@1:
-> > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > +        unevaluatedProperties: false
-> > > > > +        description:
-> > > > > +          Output port node, single endpoint describing the output port.
-> > > > > +
-> > > > > +        properties:
-> > > > > +          endpoint:
-> > > > > +            unevaluatedProperties: false
-> > > > > +            $ref: video-interfaces.yaml#
-> > > > > +            description: Endpoint connected to output device
-> > > > > +
-> > > > > +            properties:
-> > > > > +              bus-type:
-> > > > > +                const: 4
-> > > >
-> > > > Are both input and output of this block CSI-2 with D-PHY?
-> > >
-> > > Yes, input from camera sensor, output to others image processors to do data
-> > > transfer or format convert.
-> >
-> > The description appears to be saying this is "Synopsys IDI", not CSI-2 with
-> > D-PHY. We don't have a bus-type for IDI. Couldn't you simply drop it?
-
--- 
-Regards,
-
-Laurent Pinchart
+>                - qcom,x1e80100-pmic-glink
+>            - const: qcom,sm8550-pmic-glink
+>            - const: qcom,pmic-glink
+> +      - items:
+> +          - enum:
+> +              - qcom,glymur-pmic-glink
+> +          - const: qcom,x1e80100-pmic-glink
+> +          - const: qcom,sm8550-pmic-glink
+> +          - const: qcom,pmic-glink
+>  
+>    '#address-cells':
+>      const: 1
+> -- 
+> 2.34.1
+> 
 
