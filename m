@@ -1,141 +1,249 @@
-Return-Path: <linux-kernel+bounces-872991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8040EC12CB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:44:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF075C12CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F97D461BA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:44:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B1B8464011
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 03:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E276B27F18F;
-	Tue, 28 Oct 2025 03:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBBF283CAF;
+	Tue, 28 Oct 2025 03:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4cefW23"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iAmm2afQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D92A6242D84
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1328000B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761623066; cv=none; b=K1XVv6FCpFXmuOcDP58QUDtyFGvMN/76FTzt1VCcUfIh0CuIvMteEsH1REn9u2VGkhjMS1TDcJE8BSZloHJR6K61fvCPCzRCL/nvObw9qTTnnARvvVnyJlV4JUtB5dxXrhrh7J54XXuiGiRL4b9ASnGskMp48LqmyeXin47Mijo=
+	t=1761623069; cv=none; b=E2WfV5CNpsugEL5DpvwTVzKy5EcGIxl6F8xTeK4itacCqmOIG0INM1Yyt2bcCX7H92DmH7BjRGl4Fg8ZpYwyv9rL2DnNc+DnuLZ3DzThkxAFyxLQnm6Oy3W8xfqNOCAWyaodg8xfKnQZ16jVJq6wgLyKWc+m4vlxg1UiqMU6E74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761623066; c=relaxed/simple;
-	bh=RENY3oPuBzYjGraycm4NaWcxhyTA5BMczejzi/9+Osc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PRLKJbTkaRGUuIeJWV8OKhNW3k8urkkzR3cBjbWMGZEJxr2ZGyVPW8j3septhetCBVJotNABVLr/dEgMUXxdvN0RpnDAhNvpjWXxjIwYkQM0w7Vgl38y34fVgDC5iJh2rty5H1XMqPK9+TOqu4s8z9d3wblJM/Sqt5N/exHimkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4cefW23; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-793021f348fso4750181b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 20:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761623064; x=1762227864; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w0JrnIhlm/tyRktTDJR6cB/aVJVLzjS3bo23HpgjFIA=;
-        b=B4cefW23QbxYjBWUE4CnJ++EM+aZg50LcwltldTGHXoCD6Tev1GAQVducrglQ0NuvC
-         CxYQmVBb/7JN3HwNvmTZMRfrUZMhDLUKMG6UcBRrzMxBUJzqKw6r1xEUNo3Ux2X8ZvaJ
-         4izxNn/jSU5ABqVYGWoTsxQ5AynLjBwOFhxClkG6Zv1IJg4bAbZ359yY13OqRMkNHf9G
-         9jL2W+ArXS6Dq4iqhX9qVLfCp4cLNxjAa96sy8Uwh5zQ/1CUzfX8Rwo2CGcWf26AZz9q
-         7OrmKjKYErRIzMDW9l/5FBJ0VxvPhQljjYUVM9qLAuEfnb5qTe3t3rAmSXXKPH7a0/gm
-         8dmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761623064; x=1762227864;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w0JrnIhlm/tyRktTDJR6cB/aVJVLzjS3bo23HpgjFIA=;
-        b=vLiDAn3JFKisU0e4NWYsMx36Hn7ETMp0lunm/29f4BIuXIKk8mh26JL0kv/55VPrVC
-         HPnKNf90A3p8KqU+/rL+sY83SC0PNJvBX5x/1BokRN/bnMOjPMppdVeaIhVfqkjCga6l
-         rpDpjxrQjlTiXpMnkdX55SsVukKB4rRwYWdI5npwKn2U+DAarz5fVKwZ+uvlrjbJCMTK
-         D3ogTlMASI0XkFey9htCn8K0sZGudWzKZ2htGQj4GZfPp1onxLFx5LXdNKnVahEAArWe
-         14yBEiIJ5JZs/0j/n5V9TwSATKteulUT7OtixceSQmunsRJptKhZKHe74FKQhDBU2Tj6
-         +4Cw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKPxyE4Gq6VACG95UVxD1xjr9WMur/gbzdjlTraqj2xCSrrjPMYafcL32JmTOJRr49/p6jjJ2bEMlxDGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4jWZvhmD7OtsBljgKfcGpbgo3a5ynR38svQlG4EP5cnzpzr5b
-	QsDNfGGdyRPioCP4m0LY6FMsc7N0bdtse0BTHKOU4uhcoEbFFCjHwKNR
-X-Gm-Gg: ASbGncv9lKBk0KMJrtZF+9a5hBVcrm7zgruZfLu8vydECqe9aafX/NcgzP06893gbT5
-	ofjTKlcU7bKsnRIhx2HgsQkRtMyb/33L4tsaa02brDgzxO0KN7J9aTFkm87raK8oMsGlAggcWm3
-	BqdiFAdRrPu1LLRhdAZKwPgobQ1GEmPggrdl2QgHLis0LwL1OARI9ZKZCHSMom0l6VRvrdj/LB/
-	mIT2YcJPPJ2laOUBHsUj5mrcAGIaOCutcVtj3qHb5KsyRzZoOuQdDL/oBoW/v1Zwwbnw5u4lboG
-	f0UDQ0kKNL/UJIUAdORJ7G2n9lvFvkr1vYXrujAl71AGee8+LhqBb1j94y0BmGx0gBCLKQi9AhB
-	Ehf7crmyscHynMmFn6wis0m8B6RqtvkoOScfHcsZ4p++++F7YpmbILeeFDAAgLH7skyPDJTBQYQ
-	0kmILMnrbFPF6pdspa+AsnQeKhQA4oNzYi
-X-Google-Smtp-Source: AGHT+IEt1om1kfGFI7LBBAzYyTXzZGznvpM+rLoorZyrqYnofQVBvIAI1Vb9MVfEwmR1vGMeyTbZqg==
-X-Received: by 2002:a05:6a20:7343:b0:341:3b91:69d1 with SMTP id adf61e73a8af0-344d1da82demr2405551637.5.1761623064155;
-        Mon, 27 Oct 2025 20:44:24 -0700 (PDT)
-Received: from cmpatel-home.hsd1.or.comcast.net ([2601:1c0:5780:9200:7eda:5d15:414e:cb9e])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712f0c0b1asm8946849a12.32.2025.10.27.20.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Oct 2025 20:44:23 -0700 (PDT)
-From: Chintan Patel <chintanlike@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	maxime.ripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com,
-	Chintan Patel <chintanlike@gmail.com>
-Subject: [PATCH v4] drm/vblank: Increase timeout in drm_wait_one_vblank()
-Date: Mon, 27 Oct 2025 20:43:37 -0700
-Message-ID: <20251028034337.6341-1-chintanlike@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761623069; c=relaxed/simple;
+	bh=DrgFTN5SAKh1Fi518Ox7qnPVRMAh1FKtSR4SGg3S7ZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IHf3j2h9lLbXJUDW1TdWJfTeLnEtS//yEI4bbyeEgq+5bM9gAmpoMZflusHSVHptNF5VyJAIbucCn1NJ/OI1VC8kNZisjgySgg3juCd7o1WVDwTCGkzdxe8cwWp7zkA2q8MXA/yBmP1dBtNTldkp934BJ5J2mk3tobnoNpLgQVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iAmm2afQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761623066;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YbJLFPX9piCwEK2blMA45kr+K/vXcoXA84QV3H2W/so=;
+	b=iAmm2afQP29hBk69S0u+/Vu876+l2mZg97xWtzL/r30FDwr57NhnKage3eMdm/R0eu90C2
+	TyRjHmULSx0YReEWWdfJoN3N1b+Yk7lQTjPWiFXgJFBn5toMymabeYjDmSRfjtqgkVEPdU
+	k0P1pugDckbWcwjn4cKk2lDXFGpCrOA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663-P8pfH06LM26kc7LKxAegMA-1; Mon,
+ 27 Oct 2025 23:44:24 -0400
+X-MC-Unique: P8pfH06LM26kc7LKxAegMA-1
+X-Mimecast-MFC-AGG-ID: P8pfH06LM26kc7LKxAegMA_1761623063
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B167119541AD;
+	Tue, 28 Oct 2025 03:44:23 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.72.112.84])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 08EE81800451;
+	Tue, 28 Oct 2025 03:44:18 +0000 (UTC)
+From: Pingfan Liu <piliu@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Pingfan Liu <piliu@redhat.com>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>
+Subject: [PATCHv4 1/2] sched/isolation: Split out the housekeeping part
+Date: Tue, 28 Oct 2025 11:43:55 +0800
+Message-ID: <20251028034357.11055-1-piliu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Currently, wait_event_timeout() in drm_wait_one_vblank() uses a 100ms
-timeout. Under heavy scheduling pressure or rare delayed vblank
-handling, this can trigger WARNs unnecessarily.
+A later patch will introduce a function in cpuset.h that refers to
+definitions in isolation.h. This would cause a circular header file
+inclusion issue.  To break the cycle, move the definitions into a
+dedicated file called 'housekeeping.h'."
 
-Increase the timeout to 1000ms to reduce spurious WARNs, while still
-catching genuine issues.
-
-Reported-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
-Tested-by: syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
-Signed-off-by: Chintan Patel <chintanlike@gmail.com>
-
-v2:
- - Dropped unnecessary in-code comment (suggested by Thomas Zimmermann)
- - Removed else branch, only log timeout case
-
-v3:
- - Replaced drm_dbg_kms()/manual logging with drm_err() (suggested by Ville Syrjälä)
- - Removed unnecessary curr = drm_vblank_count() (suggested by Thomas Zimmermann)
- - Fixed commit message wording ("invalid userspace calls" → "delayed vblank handling")
-
-v4:
- - Keep the original drm_WARN() to catch genuine kernel issues
- - Increased timeout from 100ms → 1000ms to reduce spurious WARNs (suggested by Thomas Zimmermann)
+Signed-off-by: Pingfan Liu <piliu@redhat.com>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Pierre Gondois <pierre.gondois@arm.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+To: linux-kernel@vger.kernel.org
 ---
- drivers/gpu/drm/drm_vblank.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/sched/housekeeping.h | 67 ++++++++++++++++++++++++++++++
+ include/linux/sched/isolation.h    | 65 +----------------------------
+ 2 files changed, 68 insertions(+), 64 deletions(-)
+ create mode 100644 include/linux/sched/housekeeping.h
 
-diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
-index 46f59883183d..f779103b261b 100644
---- a/drivers/gpu/drm/drm_vblank.c
-+++ b/drivers/gpu/drm/drm_vblank.c
-@@ -1303,7 +1303,7 @@ void drm_wait_one_vblank(struct drm_device *dev, unsigned int pipe)
+diff --git a/include/linux/sched/housekeeping.h b/include/linux/sched/housekeeping.h
+new file mode 100644
+index 0000000000000..99cfc8821a814
+--- /dev/null
++++ b/include/linux/sched/housekeeping.h
+@@ -0,0 +1,67 @@
++#ifndef _LINUX_SCHED_HOUSEKEEPING_H
++#define _LINUX_SCHED_HOUSEKEEPING_H
++
++enum hk_type {
++	HK_TYPE_DOMAIN,
++	HK_TYPE_MANAGED_IRQ,
++	HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_MAX,
++
++	/*
++	 * The following housekeeping types are only set by the nohz_full
++	 * boot commandline option. So they can share the same value.
++	 */
++	HK_TYPE_TICK    = HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
++	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
++};
++
++#ifdef CONFIG_CPU_ISOLATION
++DECLARE_STATIC_KEY_FALSE(housekeeping_overridden);
++extern int housekeeping_any_cpu(enum hk_type type);
++extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
++extern bool housekeeping_enabled(enum hk_type type);
++extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
++extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
++extern void __init housekeeping_init(void);
++
++#else
++
++static inline int housekeeping_any_cpu(enum hk_type type)
++{
++	return smp_processor_id();
++}
++
++static inline const struct cpumask *housekeeping_cpumask(enum hk_type type)
++{
++	return cpu_possible_mask;
++}
++
++static inline bool housekeeping_enabled(enum hk_type type)
++{
++	return false;
++}
++
++static inline void housekeeping_affine(struct task_struct *t,
++				       enum hk_type type) { }
++
++static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
++{
++	return true;
++}
++
++static inline void housekeeping_init(void) { }
++#endif /* CONFIG_CPU_ISOLATION */
++
++static inline bool housekeeping_cpu(int cpu, enum hk_type type)
++{
++#ifdef CONFIG_CPU_ISOLATION
++	if (static_branch_unlikely(&housekeeping_overridden))
++		return housekeeping_test_cpu(cpu, type);
++#endif
++	return true;
++}
++#endif
+diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
+index d8501f4709b58..e07b2c439365d 100644
+--- a/include/linux/sched/isolation.h
++++ b/include/linux/sched/isolation.h
+@@ -5,70 +5,7 @@
+ #include <linux/cpuset.h>
+ #include <linux/init.h>
+ #include <linux/tick.h>
+-
+-enum hk_type {
+-	HK_TYPE_DOMAIN,
+-	HK_TYPE_MANAGED_IRQ,
+-	HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_MAX,
+-
+-	/*
+-	 * The following housekeeping types are only set by the nohz_full
+-	 * boot commandline option. So they can share the same value.
+-	 */
+-	HK_TYPE_TICK    = HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_TIMER   = HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_RCU     = HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_MISC    = HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_WQ      = HK_TYPE_KERNEL_NOISE,
+-	HK_TYPE_KTHREAD = HK_TYPE_KERNEL_NOISE
+-};
+-
+-#ifdef CONFIG_CPU_ISOLATION
+-DECLARE_STATIC_KEY_FALSE(housekeeping_overridden);
+-extern int housekeeping_any_cpu(enum hk_type type);
+-extern const struct cpumask *housekeeping_cpumask(enum hk_type type);
+-extern bool housekeeping_enabled(enum hk_type type);
+-extern void housekeeping_affine(struct task_struct *t, enum hk_type type);
+-extern bool housekeeping_test_cpu(int cpu, enum hk_type type);
+-extern void __init housekeeping_init(void);
+-
+-#else
+-
+-static inline int housekeeping_any_cpu(enum hk_type type)
+-{
+-	return smp_processor_id();
+-}
+-
+-static inline const struct cpumask *housekeeping_cpumask(enum hk_type type)
+-{
+-	return cpu_possible_mask;
+-}
+-
+-static inline bool housekeeping_enabled(enum hk_type type)
+-{
+-	return false;
+-}
+-
+-static inline void housekeeping_affine(struct task_struct *t,
+-				       enum hk_type type) { }
+-
+-static inline bool housekeeping_test_cpu(int cpu, enum hk_type type)
+-{
+-	return true;
+-}
+-
+-static inline void housekeeping_init(void) { }
+-#endif /* CONFIG_CPU_ISOLATION */
+-
+-static inline bool housekeeping_cpu(int cpu, enum hk_type type)
+-{
+-#ifdef CONFIG_CPU_ISOLATION
+-	if (static_branch_unlikely(&housekeeping_overridden))
+-		return housekeeping_test_cpu(cpu, type);
+-#endif
+-	return true;
+-}
++#include <linux/sched/housekeeping.h>
  
- 	ret = wait_event_timeout(vblank->queue,
- 				 last != drm_vblank_count(dev, pipe),
--				 msecs_to_jiffies(100));
-+				 msecs_to_jiffies(1000));
- 
- 	drm_WARN(dev, ret == 0, "vblank wait timed out on crtc %i\n", pipe);
- 
+ static inline bool cpu_is_isolated(int cpu)
+ {
 -- 
-2.43.0
+2.49.0
 
 
