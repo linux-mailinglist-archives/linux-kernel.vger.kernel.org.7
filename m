@@ -1,228 +1,402 @@
-Return-Path: <linux-kernel+bounces-873264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 429B0C13859
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:24:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D42DC13858
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:23:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39DFE462AE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 279D2462062
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166452D7DF3;
-	Tue, 28 Oct 2025 08:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7EF2D8798;
+	Tue, 28 Oct 2025 08:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="stQ19Pvk"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010032.outbound.protection.outlook.com [52.101.56.32])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PA5YjWEI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037A72D7DCC
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761639672; cv=fail; b=fKBcH03W5HskDBYtQyE0yeLwiC4x7usV1FEO4IMIKdjQGEmv10BhU0QAug87ZGYnVzYYfozBHLKOT1FjA6dX96myXYN56hSuDuDAhRZkwCDu0Vt7qRDpaQXCEYy9UIV3DiWiCbPFxBlo1YkhYETxcNKjD/Nngnvm03TfRPQm/Sg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761639672; c=relaxed/simple;
-	bh=E30An3l4q/3UK8YSFBarCWS4RAaxjxmwNOatVTGwTAc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UmuDxP5lbvGsjdPmSa5KFG00Wexvy08Ip6I+oDLhiMc1Hnpk2EZi1Ey1C4C3mM/miXLWGX/bbchtp+mJyTJ2ojkMnlAIo22kWt9Af+vllQaJYIuLgdvCbTnKTQboPSd/8Xyh7PKhZzekhOAXFkYqRES/mIKVtXFOLG20Y+QOSQo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=stQ19Pvk; arc=fail smtp.client-ip=52.101.56.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aNqOfJmHjq99XFD2b/iH0QXlH0AdlsPnkt1Lm4jIRc2wzZIihCqzqltkn7BXElnHDcmXhBzx2Guibj2lvkUR9qrjpWBMIsedX6d83g/IvDo/AtD5J6qIxoF16aO/xnbJ+4LxJ197kfAyzQLSf3lRkf8U+c5nPmg1TtcrohY2I7PPTiTetClHznI60C+XzNZi1JkOkHbgMo2unD4ICFoS2TjrcRp7JJLm7KSZr/t+/F/RmMU2ChQPezmwd9EwQ9HiVamE8Shh2G/NtD2TXN9LgEdLYshgAE+F3UYXNnnqsBFrjVgdD8aEMkBaQT7DMqZQiEBlU4Lmq7FztqnKjLKueg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NiCND9U4OuxTnGhlbrAw/FIPcx5hIm1mcx2z0JjqLrw=;
- b=HGmtVTFKU/PP/7S0YEOiqkebzl9nbHkUz26LpD4bulbR95LqMC05b3BjbSITodTlJ2SyNTr8Ssw4qYvrbCFBXuURpJPl75/D8YmdRjIOM/iTllv1YWIKMVaSUlROxHsI8BnjyCRjIoBuHRHifbT3dE9sBVTcK10NZAiR0rswb+7fVr2J+0BbOyp2MG+rB2hOwRk31ZmYe7gpMeYAazCZxSNflhfiMjyrGzpgsFbxJqiyhJnLvAwNwTQ2AA/C34Ko8DAUNcliSdWVC0j0fUsQlsNWC1k3iUnDB+8PLj4ZNl8CXD9Xap0961CcDENA4m6evehYKBvOLmtDvPbnwu/Skw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NiCND9U4OuxTnGhlbrAw/FIPcx5hIm1mcx2z0JjqLrw=;
- b=stQ19PvkCMRE1wrPGSQin/7qrXgrM1C9aYwqxKvrYg4rDOT+dJGrNU9D5FtnVWax4B1NQ+J42DtbQ3jD1SAQsDzXfhhaSgwn3cJwfMFNDg1JXEFp+LgRvHNGxYAJeNKzhn/P1b0xwEb8u7VIG5Utdo8i8GR40lKHsK40xUSdlOo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH7PR12MB6694.namprd12.prod.outlook.com (2603:10b6:510:1b1::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
- 2025 08:21:04 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
- 08:21:04 +0000
-Message-ID: <f8e9766b-b813-42d1-b03b-563850130949@amd.com>
-Date: Tue, 28 Oct 2025 09:20:51 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/ttm: add pgprot handling for RISC-V
-To: Paul Walmsley <pjw@kernel.org>
-Cc: Icenowy Zheng <uwu@icenowy.me>, Huang Rui <ray.huang@amd.com>,
- Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Han Gao <rabenda.cn@gmail.com>, Vivian Wang <wangruikang@iscas.ac.cn>,
- Inochi Amaoto <inochiama@gmail.com>, Yao Zi <ziyao@disroot.org>
-References: <20251020053523.731353-1-uwu@icenowy.me>
- <dff6216d-b4a4-4d5d-89e3-e393dc018dec@amd.com>
- <5fed2297-4e51-6aa9-464a-6f8a2cf8fcc6@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <5fed2297-4e51-6aa9-464a-6f8a2cf8fcc6@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0280.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e6::16) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB0D2D73AB;
+	Tue, 28 Oct 2025 08:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761639670; cv=none; b=X/wBgx9qsDp3f2nMvRj5xnd5Chu5OkjG7o8xy8Te1leB4KBnk2DKEitXl6swydUH6f1BrYwAcJJaJXIB26kq/FYN/bN9sdSO+VwHTXtdW0t09wqc1PN65coJnaYS9Hax4CMy6IxcbtdV7IxsX7ytjFmH3kbcqsGq/85xbww1jkE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761639670; c=relaxed/simple;
+	bh=it5d+s+qFjiygrtw3yR/GLsBerISGax/FU8vTHZyhGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUAIqXcPKjWmZdWU9xo5CwlZb90OsEZagMYxta4CiY8TTdYgDYneT+kVBetKMGXOlgS+RtAJCWQOGnh5uxC8JANpQztaNV+JCHAKDmu0CLZCBNW+9J0XwQrulnprY/uk9mkyzabbgm5kukdNLy5NYzIanYO5OIJe9jBH54Yf2tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PA5YjWEI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [193.209.96.36])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 725C016CD;
+	Tue, 28 Oct 2025 09:19:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761639556;
+	bh=it5d+s+qFjiygrtw3yR/GLsBerISGax/FU8vTHZyhGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PA5YjWEIc1E634AtmZrZhNB7x2BtiYuUqs+pgEmkQA7VlGVK10i+/JBKsSW9ZcmRt
+	 P2WRluXFHxeEUv8rCcZEt5k/jZwM3ZxYUencFIJBcdXyBtM6uyr4TyxqyK9Y3R1JIz
+	 LMSUxgIQDHYn1wNp8psDJp3NWFPDQm40OZSuxZJA=
+Date: Tue, 28 Oct 2025 10:20:51 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 03/31] media: v4l2-common: Add helper function
+ media_bus_fmt_to_csi2_(bpp|dt)()
+Message-ID: <20251028082051.GY13023@pendragon.ideasonboard.com>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-3-c9286fbb34b9@nxp.com>
+ <20251027013204.GT13023@pendragon.ideasonboard.com>
+ <aP+lAoHwQ5L3qmt2@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB6694:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1ae15a27-e002-44de-0547-08de15faef63
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dFFZYjVuZ3E0RE5MTGRZQXZwdytURE1Db0FsVW82UFdRd01IT2psL2xEblVL?=
- =?utf-8?B?Z2hKUzdUWnNvd0lCOHh1RVhnZVhpclZXeGVySGJNQWExSmJYL3pITlgyUEEv?=
- =?utf-8?B?YUEyd0VPK29ub1A5YUxoMDJZSUo4Ny9Yd3BXdjF6WDRqQ1pWZEtkZlBrb2tT?=
- =?utf-8?B?V1NkVzR2RUxLYjhjcVhaWTdkVFpRY0VVd1N0akRLb2xPYUd5TVcveFRQTmxW?=
- =?utf-8?B?V1V2MGVEVHk4RXFhUnVGYTIyZGhPbTBkT0l1Rm1IaTRoQkZRNUE2OEtLODJq?=
- =?utf-8?B?RlhBS0ppZmRPZ0V5M0JqUDllb1RxSXM4UjczUjVoVkQyMGNkNCtueEhBZ3NM?=
- =?utf-8?B?MnZUbmtpL2JSUXB3bGU4WWl3RHdvTXNGUjNVUjlYSXdWeStJOGZRUllFUld2?=
- =?utf-8?B?ZG1XWHZLSWpWL0x3YTJTT0RRSFAxUldlZmdWYkFLSy9CT2dlY29VWjlqa2M1?=
- =?utf-8?B?RktuZllVdWpiK1NoZ0RRb04zdmhZOXA0b1QvcnMwUFhUUmxtdm5BZnBBK0hJ?=
- =?utf-8?B?akFUSmdEZndxZXJPTWx3L0JMVkVhUW5VV21BVG9FbGk0QkNSZ050eXpMeVh5?=
- =?utf-8?B?N0RrKzgvMGI5QU8zK2h5eHpNTGFsOWhVaENzbm9peWJreHZNbE1rRUt3azIx?=
- =?utf-8?B?N3pBT24ralBSZi81c2NyYm9hcUR1UTVsZSs5SFh0eXFRbGk4cGl6dFhWM05C?=
- =?utf-8?B?Nnd5SXVHYWtTM0JyNG9lbjhvb0RheDBRZWxad0YwT1N5SWNGVkZzRFNaSVl1?=
- =?utf-8?B?VEFoZ0tRZjVGWHZGNk5WNGJtQlZMWk9ObjNTNXlCd1hQL3dwSmZtNWVraEZ5?=
- =?utf-8?B?enNuY3phU1RYNWRqKzZRNTFISjh6bEtjY1NxWXFvbEJpUFZ4QXBJaytuc21U?=
- =?utf-8?B?U2dDOTVrZ3d2NFhheG13aHZEZ1FtZkh2NENXQWs1TmsyT1lZalloVWhhYVZh?=
- =?utf-8?B?RG83ME8wSURwdTNDcmxqdm9JazhwVzRtSlg1ZjBHdllTSG1XbVQwSnZ4THZl?=
- =?utf-8?B?N0g2cnhhUXhEUFNhSEp3K2I0UjBFcTA0VEhQL09aYWlHeFF2VzhjT0tSS3Q2?=
- =?utf-8?B?bUFwY1hHUUwxYTk4VFVNMXhXNDVkcVk0TEMzb1pmZXpyTzAxcVJ1ZGd1emtL?=
- =?utf-8?B?dktBeFQzS09lRnRxRmYwZFl0cy9HV0dVMVh6VXN3dG5WTHloaVZjNncwbGJq?=
- =?utf-8?B?L1ZIL1BRTmJhdlRsa1A0Y0FEczhjeHhPclZWOWRXZER2QnkyZ1VjdlZ1aTVy?=
- =?utf-8?B?VFF3ZEU3NVgyODI5eTNlS095ckxWUE55R21yVExURzN0akdRVXB6K1NrN25w?=
- =?utf-8?B?Vi9tSG4rL1pkckxOY0lHOUNqNHdLS09qdE4vYlhtdUpMQ0UxL2FmaURYZ3dj?=
- =?utf-8?B?dHZYVjgycHRMNHAyc1RnK3JMV3pZMTlqbEwxZnNkemIyb0JveUNVZFh2L0Zl?=
- =?utf-8?B?Sm9mK2R6dTFlOUIxcjRtRnlpNTJDSnZFR3ZyR1dnZVZjL3ZtZytPQWtmWTc4?=
- =?utf-8?B?S3J2MndXSndSeDVmMXUzb3l0dENGSU1HaDlkblNuYmhKR2tRWDgrRkltMWVX?=
- =?utf-8?B?Sk9RRGUvSHBzYldkRFZlajBzaXZPL01GTWVOc2szTjB6ODltdWQ5cTBvbURn?=
- =?utf-8?B?REJOdkQxZjRrb0hkOCt6ODIvY2F4aWlBcDZoWVpSQTIxMVIwa05PZGgvRW9M?=
- =?utf-8?B?K2w2eTlkYk8xL3FkUGxKMTBna2dGbHovUHdxaVdXbHoxdituNEdXTm1uNlpJ?=
- =?utf-8?B?dTdBRUl0REtYZ0Z6VDcva1ZkTjVkOGdwb1RiWmxiWjYybVhwYVdzbTNuOVox?=
- =?utf-8?B?MEJQYXFTSEFSWkp3SWloaWMyWE5SYTVxNENETkI0cVlsbEhEMERRTmhTODBt?=
- =?utf-8?B?eXFsOFk1QnI3anVNelVzZDlicTJBQU1heFVxRk5ab0w2K0N1T0pVd0EwM3hD?=
- =?utf-8?Q?gkla+dWLAEMGq4LptCQE/p3fYtmPOU3b?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ajB1UGR6c3VNaDVEVjE1bUV6ZnkwQkphV0lpQStZdFhhemo5NmZzamdDclhn?=
- =?utf-8?B?aGYxY01HeUQyZE1sdmpibUhEZmovZEk2bVp2WkdnYkxYekRVZThTNWh4TWM4?=
- =?utf-8?B?d3h6anhvZjVTdGtvMjNKQVh3VTdzQThpZWNoSVRiTFJYY0dpS0FhQzdrbmpF?=
- =?utf-8?B?ejZsU1RHd2dPMk9MeW5iWG4wbitZaEhTSzg2M2JDWjZFVW5kUGhnNkxkdUY0?=
- =?utf-8?B?RWx1ZE1OUGw5Nng0bVVrREFYeGd3YThobUZZcmprSEhlQ1NCSUlPUmJkRHIw?=
- =?utf-8?B?YlkxeWFnQ0NtWkVGRkNZbUhJOGdJSXM0Y0I3cktQMHQzQjZ1eVJPWm53aGxr?=
- =?utf-8?B?RHVLc0tJbWFkNE5ETnVZRzhDcEdHZEMvajh2VWdmdW1LcUtxdXJ3azgwTzNU?=
- =?utf-8?B?aU4vcC9ja1Z5ckdPelNtR21od0pzalJCVmY4TFhpbVo4VzFGaEVobHF2aHdX?=
- =?utf-8?B?SnBIRjM1OTIvNlpPSEJUR3lkREFybGlEU0VnS1MvcHlCS1JKN0oyenpYZ2dk?=
- =?utf-8?B?V2lWWXgrTjdwQ2xOQnNSOVN1V3BNQlpCN1dkNGVCd0tnV3R2Nyswci83aDI1?=
- =?utf-8?B?SnVWQ1FKRnpQMXQwY3M3T0drcjdOS0NYUllNNTQ1VlJGZDNlVnhRdUM1ODBL?=
- =?utf-8?B?VVdMamp3OGEzejdrQnc0M2FCRGNwNytpemZpZ3EzV1VpNFljSU1TSnVnQkti?=
- =?utf-8?B?NnVrNnBKTFFqNG9aZjBXWlFSbGlEV0YyQkc3dlNocWdDeWt6Q2QzWU90SzZ0?=
- =?utf-8?B?UVFOK25RZ1EwdTlodFNaVTdwcWlrSE5kcDlmODFrV2s2MjQ5VVJvU2ZiTERn?=
- =?utf-8?B?NFNoUG1rNHhUaWF5NXdlZTJIdXFNcG1IVC9ha0V5a0lRTmU3VEt6OUswSjNZ?=
- =?utf-8?B?TEtTbFluQU1nU2F1T2tET05HRmcybDZpZCtyQVJLSjVKbjUzc2ZxUk1Xam1t?=
- =?utf-8?B?WGd5Z3ZDdFlWMUlZRFRRT28vOVdBelYrUEZhdURhckpVWHJUMUIzZVMxRUdT?=
- =?utf-8?B?Y1pmNXRhbzhFSFp4U0lId3JtQU51aituYks3ZWhuK1BXTjc1R3lSSjlrZ0Jt?=
- =?utf-8?B?K1lJZzIzbFpxMWxkYWMrSXRHQ2traWMzN0dCaDZGaDZLNk1wZk9vUGx1bTVm?=
- =?utf-8?B?WWcwczN1a1FEYm5uUXFDQlFWQU1lcXk3cmFON1B6YVFhYXFtajM5cURta0NO?=
- =?utf-8?B?VEJDQTlSMDdDWkJVSHNWTkN0eTdEb2VjK0x0cGVrUStDdWxtSElKRUprSmZV?=
- =?utf-8?B?RUZUVlhPbUFvRlRwUktzN2JYbnFGMldSZGdyc0s2aHNDN21ZdVptZ1NuS3ZJ?=
- =?utf-8?B?OWUwQjVXazVac00rMWtuTUM0ODh5NGQ0TCtYL2NkNHJwSWVldlpKeThBN1Fv?=
- =?utf-8?B?OXJhK0xHSUdFTDVpY2R3N1MxUEk3L3Q4L2MzcVB1Tm9tWkR2SElhRDlBc2NU?=
- =?utf-8?B?OU85b0ZQNWJ4WnRHNFFQT3pmNG5oV0hibUZtNmkrMFRRVDh3VEZPUEk0K1pj?=
- =?utf-8?B?b2t0TVhaNHQ1NkxrU3hmNkk4S0p6NVRsREdVbWpwZWx6OS9yKzYwbERmdWU1?=
- =?utf-8?B?MXlBazZ1dVFjUHNIMnVyakdsU0RSS2FsQW16amNTckN1bG5DNmViUGNpQkwz?=
- =?utf-8?B?a094SDByS0FHU1l1TkE3Yy9xNWVrMG9VdWhaRVFSOUlELzRFUm5Hek5adFdF?=
- =?utf-8?B?OUljc3FvalovcGcxWSt5L1RQdDBBWlBVcDJDRUsrYjNEMjdaOFk0eDVtSGZk?=
- =?utf-8?B?bXk2eXI5YWZxMUxlOUtJOXhTVU5COHZZR0FkYWVsMkFlUkRNZHVGVXR1L3Bx?=
- =?utf-8?B?UDVmamQ4eXEvc2hnbFRnS3lJeXFzcTRXaFgwUW9EVGlUT0NwdGlTaGxRcXAx?=
- =?utf-8?B?VGc0V2RweHZHeXZDME5yNUttTml2SGN1M1BoYmJHb2NieHduU1lGSVY1OERY?=
- =?utf-8?B?UHZlWHRNcnlrTFlwREZGYVZTV1JNQ0YxSE9udG4yMFVneU05bTBYSU43ZXFu?=
- =?utf-8?B?czFLbGdQT3Z5bWhFTU54QVgxd3huMVd0YXprTk9CajJxTmxqL29qRTJleU51?=
- =?utf-8?B?eGpjVU8yblJob2t6SUtSLzY4UnJqZXFtOUNqTFA4S1pDUFQ5bEpPUFBzdkZZ?=
- =?utf-8?Q?BepY=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1ae15a27-e002-44de-0547-08de15faef63
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 08:21:03.8733
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qCv1yurtfLZ1I8t0dJB8wn7F1JojS7Fj+TFkOf9kMLFKPAyQgK0nIopAxa5UvItk
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6694
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aP+lAoHwQ5L3qmt2@lizhi-Precision-Tower-5810>
 
-On 10/27/25 17:41, Paul Walmsley wrote:
-> On Mon, 27 Oct 2025, Christian König wrote:
+On Mon, Oct 27, 2025 at 12:59:46PM -0400, Frank Li wrote:
+> On Mon, Oct 27, 2025 at 03:32:04AM +0200, Laurent Pinchart wrote:
+> > On Thu, Aug 21, 2025 at 04:15:38PM -0400, Frank Li wrote:
+> > > Add helper function media_bus_fmt_to_csi2_bpp() to get media bus fmt's bpp
+> > > to reduce codes such as
+> > >
+> > > 	static const struct imx7_csi_pixfmt pixel_formats[] = {
+> > >         {
+> > >                 .fourcc = V4L2_PIX_FMT_UYVY,
+> > >                 .codes  = IMX_BUS_FMTS(
+> > >                         MEDIA_BUS_FMT_UYVY8_2X8,
+> > >                         MEDIA_BUS_FMT_UYVY8_1X16
+> > >                 ),
+> > >                 .yuv    = true,
+> > >                 .bpp    = 16,
+> > >         },
+> > > 	....
+> > >
+> > > .bpp can be removed from pixel_formats with this helper function.
+> > >
+> > > CSI2 data type is defined by MIPI Camera Serial Interface 2 Spec Ver4.1.
+> > > See section 9.4.
+> > >
+> > > Add helper function media_bus_fmt_to_csi2_dt() to convert media bus fmt to
+> > > MIPI defined data type and avoid below duplicated static array in each CSI2
+> > > drivers.
+> > >
+> > > 	{
+> > > 		.code = MEDIA_BUS_FMT_UYVY8_1X16,
+> > > 		.data_type = MIPI_CSI2_DT_YUV422_8B,
+> > > 	}
+> > >
+> > > Only add known map for dt type. Need update media_bus_fmt_info when new
+> > > mapping used.
+> > >
+> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > ---
+> > > Change in v3:
+> > > - squash two help function patch to one.
+> > > - use media_bus_fmt_info to do map.
+> > > ---
+> > >  drivers/media/v4l2-core/v4l2-common.c | 149 ++++++++++++++++++++++++++++++++++
+> > >  include/media/mipi-csi2.h             |  30 +++++++
+> > >  2 files changed, 179 insertions(+)
+> > >
+> > > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+> > > index a5334aa35992e5f57fb228c33d40c51fdafdc135..a75987aa5fc69d6368709b7d521bede666da9513 100644
+> > > --- a/drivers/media/v4l2-core/v4l2-common.c
+> > > +++ b/drivers/media/v4l2-core/v4l2-common.c
+> > > @@ -46,6 +46,7 @@
+> > >  #include <linux/uaccess.h>
+> > >  #include <asm/io.h>
+> > >  #include <asm/div64.h>
+> > > +#include <media/mipi-csi2.h>
+> > >  #include <media/v4l2-common.h>
+> > >  #include <media/v4l2-device.h>
+> > >  #include <media/v4l2-ctrls.h>
+> > > @@ -757,3 +758,151 @@ struct clk *devm_v4l2_sensor_clk_get(struct device *dev, const char *id)
+> > >  	return clk_hw->clk;
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(devm_v4l2_sensor_clk_get);
+> > > +
+> > > +static const struct media_bus_fmt_info media_bus_fmt_info[] = {
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB444_1X12, .bpp = 12},
+> >
+> > Missing space before }.
+> >
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB444_2X8_PADHI_BE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB444_2X8_PADHI_LE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB555_2X8_PADHI_BE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB555_2X8_PADHI_LE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB565_1X16, .dt = MIPI_CSI2_DT_RGB565, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR565_2X8_BE, .dt = MIPI_CSI2_DT_RGB565, .bpp = 16},
+> >
+> > Let's not specify .dt for formats that must not be used with CSI-2
+> > buses.
 > 
->> On 10/20/25 07:35, Icenowy Zheng wrote:
->>> The RISC-V Svpbmt privileged extension provides support for overriding
->>> page memory coherency attributes, and, along with vendor extensions like
->>> Xtheadmae, supports pgprot_{writecombine,noncached} on RISC-V.
->>>
->>> Adapt the codepath that maps ttm_write_combined to pgprot_writecombine
->>> and ttm_noncached to pgprot_noncached to RISC-V, to allow proper page
->>> access attributes.
-> 
-> [ ... ]
-> 
->>> diff --git a/drivers/gpu/drm/ttm/ttm_module.c b/drivers/gpu/drm/ttm/ttm_module.c
->>> index b3fffe7b5062a..aa137ead5cc59 100644
->>> --- a/drivers/gpu/drm/ttm/ttm_module.c
->>> +++ b/drivers/gpu/drm/ttm/ttm_module.c
->>> @@ -74,7 +74,8 @@ pgprot_t ttm_prot_from_caching(enum ttm_caching caching, pgprot_t tmp)
->>>  #endif /* CONFIG_UML */
->>>  #endif /* __i386__ || __x86_64__ */
->>>  #if defined(__ia64__) || defined(__arm__) || defined(__aarch64__) || \
->>> -	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__)
->>> +	defined(__powerpc__) || defined(__mips__) || defined(__loongarch__) || \
->>> +	defined(__riscv)
->>
->> Looks reasonable, but does that work on all RISC-V variants?
-> 
-> From an RISC-V architectural perspective, yes.
-> 
-> Of course there might be a hardware bug in some given manufacturer's 
-> implementation, but then again, that could happen on the other 
-> architectures as well.
+> Do you know which not used CSI-2 bus, or where I can get such information?
 
-I've added my acked-by and pushed it to drm-misc-next.
+The discussion is ongoing, see
+https://lore.kernel.org/linux-media/20251013-csi-bgr-rgb-v4-0-55eab2caa69f@kernel.org/.
 
+I think we can safely assume that we won't change the policy of using a
+media bus code that transmits a pixel in a single sample. That means
+we'll use _1X16 codes but never _2X8. For the colour components order,
+we need to wait for a conclusion in the above mail thread.
+
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR565_2X8_LE, .dt = MIPI_CSI2_DT_RGB565, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB565_2X8_BE, .dt = MIPI_CSI2_DT_RGB565, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB565_2X8_LE, .dt = MIPI_CSI2_DT_RGB565, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_1X18, .bpp = 18},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_2X9_BE, .bpp = 18},
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR666_1X18, .bpp = 18},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RBG888_1X24, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_1X24_CPADHI, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR666_1X24_CPADHI, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB565_1X24_CPADHI, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG, .bpp = 21},
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR888_1X24, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_BGR888_3X8, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_GBR888_1X24, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X24, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_2X12_BE, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_2X12_LE, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_3X8, .dt = MIPI_CSI2_DT_RGB888, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_3X8_DELTA, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X7X4_SPWG, .bpp = 28},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA, .bpp = 28},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_1X30_CPADLO, .bpp = 30},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X30_CPADLO, .bpp = 30},
+> > > +	{ .fmt = MEDIA_BUS_FMT_ARGB8888_1X32, .bpp = 32},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X32_PADHI, .bpp = 32},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB101010_1X30, .bpp = 30},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB101010_1X7X5_SPWG, .bpp = 35},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB101010_1X7X5_JEIDA, .bpp = 35},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB666_1X36_CPADLO, .bpp = 36},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB888_1X36_CPADLO, .bpp = 36},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB121212_1X36, .bpp = 36},
+> > > +	{ .fmt = MEDIA_BUS_FMT_RGB161616_1X48, .bpp = 48},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y8_1X8, .dt = MIPI_CSI2_DT_RAW8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UV8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY8_1_5X8, .bpp = 40},
+> >
+> > This doesn't seem correct.
+> 
+> I add by surfix <m>X<n>, Is my understand about <m>X<n> wrong?  or
+> MEDIA_BUS_FMT_UYVY8_1_5X8 itself is wrong?
+
+
+1_5X8 means 1.5 * 8.
+
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY8_1_5X8, .bpp = 40},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV8_1_5X8, .bpp = 40},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU8_1_5X8, .bpp = 40},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY8_2X8, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY8_2X8, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV8_2X8, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU8_2X8, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y10_1X10, .dt = MIPI_CSI2_DT_RAW10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y10_2X8_PADHI_LE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY10_2X10, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY10_2X10, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV10_2X10, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU10_2X10, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y12_1X12, .dt = MIPI_CSI2_DT_RAW12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY12_2X12, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY12_2X12, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV12_2X12, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU12_2X12, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y14_1X14, .dt = MIPI_CSI2_DT_RAW14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_Y16_1X16, .dt = MIPI_CSI2_DT_RAW16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY8_1X16, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY8_1X16, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV8_1X16, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU8_1X16, .dt = MIPI_CSI2_DT_YUV422_8B, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YDYUYDYV8_1X16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY10_1X20, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY10_1X20, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV10_1X20, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU10_1X20, .dt = MIPI_CSI2_DT_YUV422_10B, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VUY8_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUV8_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYYVYY8_0_5X24, .dt = MIPI_CSI2_DT_YUV420_8B, .bpp = 120},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYVY12_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_VYUY12_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUYV12_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YVYU12_1X24, .bpp = 24},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUV10_1X30, .bpp = 30},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYYVYY10_0_5X30, .bpp = 150},
+> > > +	{ .fmt = MEDIA_BUS_FMT_AYUV8_1X32, .bpp = 32},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYYVYY12_0_5X36, .bpp = 180},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUV12_1X36, .bpp = 36},
+> > > +	{ .fmt = MEDIA_BUS_FMT_YUV16_1X48, .bpp = 48},
+> > > +	{ .fmt = MEDIA_BUS_FMT_UYYVYY16_0_5X48, .bpp = 240},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR8_1X8, .dt = MIPI_CSI2_DT_RAW8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG8_1X8, .dt = MIPI_CSI2_DT_RAW8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG8_1X8, .dt = MIPI_CSI2_DT_RAW8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB8_1X8, .dt = MIPI_CSI2_DT_RAW8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_ALAW8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG10_ALAW8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG10_ALAW8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB10_ALAW8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_DPCM8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG10_DPCM8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG10_DPCM8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB10_DPCM8_1X8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_BE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_2X8_PADLO_LE, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR10_1X10, .dt = MIPI_CSI2_DT_RAW10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG10_1X10, .dt = MIPI_CSI2_DT_RAW10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG10_1X10, .dt = MIPI_CSI2_DT_RAW10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB10_1X10, .dt = MIPI_CSI2_DT_RAW10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR12_1X12, .dt = MIPI_CSI2_DT_RAW12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG12_1X12, .dt = MIPI_CSI2_DT_RAW12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG12_1X12, .dt = MIPI_CSI2_DT_RAW12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB12_1X12, .dt = MIPI_CSI2_DT_RAW12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR14_1X14, .dt = MIPI_CSI2_DT_RAW14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG14_1X14, .dt = MIPI_CSI2_DT_RAW14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG14_1X14, .dt = MIPI_CSI2_DT_RAW14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB14_1X14, .dt = MIPI_CSI2_DT_RAW14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SBGGR16_1X16, .dt = MIPI_CSI2_DT_RAW16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGBRG16_1X16, .dt = MIPI_CSI2_DT_RAW16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SGRBG16_1X16, .dt = MIPI_CSI2_DT_RAW16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_SRGGB16_1X16, .dt = MIPI_CSI2_DT_RAW16, .bpp = 16},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_JPEG_1X8, .bpp = 8},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_S5C_UYVY_JPEG_1X8, .bpp = 8},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_AHSV8888_1X32, .bpp = 8},
+> > > +
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_8, .bpp = 8},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_10, .bpp = 10},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_12, .bpp = 12},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_14, .bpp = 14},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_16, .bpp = 16},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_20, .bpp = 20},
+> > > +	{ .fmt = MEDIA_BUS_FMT_META_24, .bpp = 24},
+> > > +};
+> > > +
+> > > +const struct media_bus_fmt_info *media_bus_fmt_info_get(u32 bus_fmt)
+> > > +{
+> > > +	int i;
+> >
+> > unsigned
+> >
+> > > +
+> > > +	for (i = 0; i < ARRAY_SIZE(media_bus_fmt_info); i++)
+> > > +		if (media_bus_fmt_info[i].fmt == bus_fmt)
+> > > +			return &media_bus_fmt_info[i];
+> >
+> > Add curly braces for the "for" statement.
+> >
+> > > +
+> > > +	return NULL;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(media_bus_fmt_info_get);
+> > > diff --git a/include/media/mipi-csi2.h b/include/media/mipi-csi2.h
+> > > index 40fc0264250d779ab5dfa7d2fe16e6f1382c07d4..3227d28224b7c32ef2745548391da9e792cfa559 100644
+> > > --- a/include/media/mipi-csi2.h
+> > > +++ b/include/media/mipi-csi2.h
+> > > @@ -8,6 +8,8 @@
+> > >  #ifndef _MEDIA_MIPI_CSI2_H
+> > >  #define _MEDIA_MIPI_CSI2_H
+> > >
+> > > +/* DT value ref to MIPI Camera Serial Interface 2 Spec Ver4.1 section 9.4 */
+> > > +
+> > >  /* Short packet data types */
+> > >  #define MIPI_CSI2_DT_FS			0x00
+> > >  #define MIPI_CSI2_DT_FE			0x01
+> > > @@ -44,4 +46,32 @@
+> > >  #define MIPI_CSI2_DT_RAW20		0x2f
+> > >  #define MIPI_CSI2_DT_USER_DEFINED(n)	(0x30 + (n))	/* 0..7 */
+> > >
+> > > +/**
+> > > + * struct media_bus_fmt_info - information about a media bus format
+> > > + * @fmt: media bus format identifier (MEDIA_BUS_FMT_*)
+> >
+> > We usually name this "code".
+> >
+> > > + * @dt: data type define in MIPI spec (MIPI_CSI2_DT *)
+> > > + * @bpp: bit width per pixel
+> >
+> > You will need to define this much more precisely. In particular, how is
+> > padding handled ? How about compressed formats such as JPEG ? How about
+> > the LVDS formats, how are the control bits accounted for ?
+> >
+> > I understand you're trying to share code between two drivers, but I'm
+> > not sure we will be able to come up with a standard definition of bpp
+> > that will match the needs of all drivers. It feels that this information
+> > would be better stored in driver-specific tables.
+> 
+> 80% is duplicated codes if stored in driver-specific tables. If driver use
+> difference defination, they can create customerized table. This one at
+> least cover more than 80% case.
+
+In that case we need a clear and precise definition of the 'bpp' field.
+
+> > > + */
+> > > +struct media_bus_fmt_info {
+> > > +	u32 fmt;
+> > > +	u32 dt;
+> > > +	u8 bpp;
+> > > +};
+> > > +
+> > > +const struct media_bus_fmt_info *media_bus_fmt_info_get(u32 bus_fmt);
+> > > +
+> > > +static inline int media_bus_fmt_to_csi2_dt(int bus_fmt)
+> > > +{
+> > > +	const struct media_bus_fmt_info *info = media_bus_fmt_info_get(bus_fmt);
+> > > +
+> > > +	return info ? info->dt : 0;
+> > > +}
+> > > +
+> > > +static inline int media_bus_fmt_to_csi2_bpp(int bus_fmt)
+> > > +{
+> > > +	const struct media_bus_fmt_info *info = media_bus_fmt_info_get(bus_fmt);
+> > > +
+> > > +	return info ? info->bpp : 0;
+> > > +}
+> > > +
+> >
+> > These are not specific to CSI-2, they belong to a different header.
+> > v4l2-common.h is an option, given that the implementation goes to
+> > v4l2-common.c.
+> >
+> > >  #endif /* _MEDIA_MIPI_CSI2_H */
+> > >
+> > >
+
+-- 
 Regards,
-Christian.
 
-  
-> 
-> 
-> - Paul
-
+Laurent Pinchart
 
