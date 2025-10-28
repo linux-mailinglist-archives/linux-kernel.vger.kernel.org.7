@@ -1,226 +1,92 @@
-Return-Path: <linux-kernel+bounces-874580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F86AC169E9
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F931C169EC
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:31:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EB04188D09C
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2CEE1892796
 	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C7E34FF6D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A560234FF77;
 	Tue, 28 Oct 2025 19:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxUFZdGh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAECF341ACB;
-	Tue, 28 Oct 2025 19:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD17129A9F9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761679864; cv=none; b=T1AQQDUSLiuK/LHAfCxOseK2ltNOuXfTfD8cLMXt73p64BuQbkm48stiYQlFbGWLPCOuDEBnqi6vzCLamkas9fIh5jbexny5V/WB0aB7n6O2NtKu8q/bry+d1iJlJk+S/5YEKDSGs6pyt/cIE6Xf0rSkI1krTfGSEBIBE1rYoPE=
+	t=1761679865; cv=none; b=dSZaHuv7evF2qooMhlTSma100yonAlRZIkog97bAS6qzFDzOy7zVD2QyJ+m/W8+2gWqPXfvC3JTSxiBE9OG1HMwL2eGWtN2sZ3JlFxtUgBRq9N7L6ZKczIaNW9ElFFJWMpZih2Bpe+mvhBpGMfaslANLFJYf1cKtT7uB5QhTu0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761679864; c=relaxed/simple;
-	bh=Ap2aDiKKgM3tKJAnZU4Q4B3TnDOwGltx6KfPJhNhQVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZ4eY7EJaA0DF+H1KfcvNg15uDdP7zf3bIe7Iv+PSI5ZEr/EhqzbEL8cJhtI7vj9vCyVftSGGWvhywAbc9KuHSOrKxbExt2vzlk1172feJ7tJJ5jmzoWSMyRn1JzPu6cvzLikLMFQLdSIHwcMtHQLtDRshe5TMNT1sTLtZZP2hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxUFZdGh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AA12C4CEE7;
-	Tue, 28 Oct 2025 19:31:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761679864;
-	bh=Ap2aDiKKgM3tKJAnZU4Q4B3TnDOwGltx6KfPJhNhQVc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VxUFZdGhRnZM0z40KMY6YSizaPIMvp6WZfdcSA0K9AHjK8AgltfHcdJvoY+97btXc
-	 WZ19OKL/Jx66G9ZFqHjkApnaKFNxiXTeHRc7FrK7e8zJKzIDGCnntpQilJsuhJPITt
-	 SNm+N1M233FJP4lcxwOOOkiHSk1Nnjbs5ehUGy+QqVGNVG6uLB8Xh4GATgxdZMj6jq
-	 EEKrf7waFqEoOW9Un5oeZ4rJEhGZIKldMHsbNwrAdB2NcSSCmSu30G3QE//Zkc2WWR
-	 /gDtNqJo0y1Z2zYGVBQMVxC0jnyAyO8nDY1dqOtcD8KJpDfXD/QwSNaQ80waMCKM+G
-	 UFa3RhVTCd6wQ==
-Date: Tue, 28 Oct 2025 19:30:59 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.au@gmail.com>
-Subject: Re: [PATCH 03/19] dt-bindings: serial: renesas,rsci: Document RZ/G3E
- support
-Message-ID: <20251028-mower-mundane-316cdd6b48b6@spud>
-References: <20251027154615.115759-1-biju.das.jz@bp.renesas.com>
- <20251027154615.115759-4-biju.das.jz@bp.renesas.com>
+	s=arc-20240116; t=1761679865; c=relaxed/simple;
+	bh=Yi9ZdkKUvT5kQdi7KhN/G5xEcH3zM03e7B2Cg1YT/Js=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cbg1BwAW3P6Ptn16MC0rIKENV/fcc00S+5PioiTMsVganM5X4yt0pkqDNzx7m7t4yLxaCCQ8glAWkDd14f+fO5O/URn0SfH6mqWGMvdK6x6j4JWndtRueFgHUCfJr7hZKp4ur6TXekB5YfoRd/XIQ78U8OqhXxVMJvSQ8S2OW8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430d7ace0ddso84044175ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 12:31:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761679862; x=1762284662;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypNwUHtYJLfsPaWjt/OGN+7vmfUgF+X9zS0vjQ5mmAM=;
+        b=vtHzgMh9vHexJ2Q71Bv9PHiuSi/cIlc1fIfm6+FwXBsRLvEr2DEll0noo+EhZ54Q4+
+         tIKFTPMrK8zoKP+L7aQv1Ow7+vrKuPlnEZv/EHmK2z2VfHsALY/TCISVCsHgV7UVV1bY
+         LpiOVdaYtKxVh/Phlv+GdE5fBge/hVB6Bzqg1kTWV0H4DCQ+iV+rTf1t8yhO/FRCYoIa
+         LY1OyUthr+pkEsb6wDP028GgK2/cU89RD6k7bU3GK1KA5Ukcluiye+q6MaMORwg0q0M1
+         Y1goObqYBSX8Y75vlg5zTLRgU08zSpbSip8CRHavOGhn0AGd3DsZJU9/OxAdrw4Dw++u
+         86Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCX731S8g6uZy9fZvDo6qBuGcAB+2viMjNhQ9+8ymLto8qSWEHmiiqy/YtStfKcY5897qkcUBcgi5osIOUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo/afrDfibW5SLnXuw/eHNCJVPq4LrfLkVHwQGt7ZtsdzBmc+7
+	rO0In8x7x2kDyMYU5F8BrzDrlpUCiev/LH6bNly1CBWOfBtN8HCCMFzMqQp+QZ6Ci2TR3yTD7d4
+	GnVhCOnm35AIbaBgIwBd+yFWKLTaxWq6pd3vckzB8hRB0MDICZLxxs2pUVUA=
+X-Google-Smtp-Source: AGHT+IHNTLk+yJl9rchINFeA06RXaKEII7YKSbh5JOTFNOfOblbiFIlw3F4TatsCfJXqGmWlRWfl4okJC49RA++Cei6tc9Od5/D0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hzAPfaYWKFynogrI"
-Content-Disposition: inline
-In-Reply-To: <20251027154615.115759-4-biju.das.jz@bp.renesas.com>
+X-Received: by 2002:a05:6e02:220e:b0:430:afb8:eb7a with SMTP id
+ e9e14a558f8ab-432f9036f17mr4465665ab.21.1761679861943; Tue, 28 Oct 2025
+ 12:31:01 -0700 (PDT)
+Date: Tue, 28 Oct 2025 12:31:01 -0700
+In-Reply-To: <20251028181937.VGTo3%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690119f5.050a0220.3344a1.03df.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate (2)
+From: syzbot <syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot tried to test the proposed patch but the build/boot failed:
+
+fs/ocfs2/ocfs2_fs.h:474:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:489:40: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:502:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:646:26: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:659:16: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:807:37: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:943:43: error: expected ';' at end of declaration list
+fs/ocfs2/ocfs2_fs.h:1030:39: error: expected ';' at end of declaration list
 
 
---hzAPfaYWKFynogrI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested on:
 
-On Mon, Oct 27, 2025 at 03:45:50PM +0000, Biju Das wrote:
-> Add documentation for the serial communication interface (RSCI) found on
-> the Renesas RZ/G3E (R9A09G047) SoC. The RSCI IP on this SoC is identical
-> to that on the RZ/T2H (R9A09G077) SoC, but it has a 32-stage FIFO compared
-> to 16 on RZ/T2H. It supports both FIFO and non-FIFO mode operation. RZ/G3E
-> has 6 clocks compared to 3 on RZ/T2H, and it has multiple resets.
->=20
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->  .../bindings/serial/renesas,rsci.yaml         | 82 ++++++++++++++++---
->  1 file changed, 71 insertions(+), 11 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml b=
-/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> index 6b1f827a335b..7cf6348e2b5b 100644
-> --- a/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,rsci.yaml
-> @@ -10,17 +10,16 @@ maintainers:
->    - Geert Uytterhoeven <geert+renesas@glider.be>
->    - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> =20
-> -allOf:
-> -  - $ref: serial.yaml#
-> -
->  properties:
->    compatible:
->      oneOf:
-> -      - items:
-> -          - const: renesas,r9a09g087-rsci # RZ/N2H
-> -          - const: renesas,r9a09g077-rsci # RZ/T2H
-> +      - enum:
-> +          - renesas,r9a09g047-rsci # RZ/G3E non FIFO mode
-> +          - renesas,r9a09g047-rscif # RZ/G3E FIFO mode
-> +          - renesas,r9a09g077-rsci # RZ/T2H
-> =20
->        - items:
-> +          - const: renesas,r9a09g087-rsci # RZ/N2H
->            - const: renesas,r9a09g077-rsci # RZ/T2H
-> =20
->    reg:
-> @@ -42,14 +41,40 @@ properties:
-> =20
->    clocks:
->      minItems: 2
-> -    maxItems: 3
-> +    maxItems: 6
-> =20
->    clock-names:
-> -    minItems: 2
-> +    oneOf:
-> +      - items:
-> +          - const: operation
-> +          - const: bus
-> +      - items:
-> +          - const: operation
-> +          - const: bus
-> +          - const: sck # optional external clock input
-> +      - items:
-> +          - const: bus
-> +          - const: tclk
-> +          - const: tclk_div64
-> +          - const: tclk_div16
-> +          - const: tclk_div4
-> +      - items:
-> +          - const: bus
-> +          - const: tclk
-> +          - const: tclk_div64
-> +          - const: tclk_div16
-> +          - const: tclk_div4
-> +          - const: sck # optional external clock input
-> +
-> +  resets:
-> +    items:
-> +      - description: Input for resetting the APB clock
-> +      - description: Input for resetting TCLK
-> +
-> +  reset-names:
->      items:
-> -      - const: operation
-> -      - const: bus
-> -      - const: sck # optional external clock input
-> +      - const: presetn
-> +      - const: tresetn
-> =20
->    power-domains:
->      maxItems: 1
-> @@ -62,6 +87,41 @@ required:
->    - clock-names
->    - power-domains
-> =20
-> +allOf:
-> +  - $ref: serial.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g077-rsci
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 3
-> +
-> +        clock-names:
-> +          maxItems: 3
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,r9a09g047-rsci
-> +              - renesas,r9a09g047-rscif
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 5
-> +
-> +        clock-names:
-> +          minItems: 5
-> +
-> +      required:
-> +        - resets
-> +        - reset-names
+commit:         d3d0b4e2 Linux 5.10.245
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f5b21423ca3f0a96
+dashboard link: https://syzkaller.appspot.com/bug?extid=7aef76bdb53b83d62a9e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13cc432f980000
 
-Does this need an "else: properties: resets: false"? Or do other devices
-actually have resets too?
-
-> +
->  unevaluatedProperties: false
-> =20
->  examples:
-> --=20
-> 2.43.0
->=20
-
---hzAPfaYWKFynogrI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQEZ8wAKCRB4tDGHoIJi
-0jr8AQC10zxwsXijde5bsel7snQi6OfPDcFW0GiEiqh+cx2nSgD+PIWDM1s3mr71
-8MFwrONSM+wgriZwn6Wp3KU/b6BVQgs=
-=Es4J
------END PGP SIGNATURE-----
-
---hzAPfaYWKFynogrI--
 
