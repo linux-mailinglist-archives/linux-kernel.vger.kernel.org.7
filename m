@@ -1,174 +1,211 @@
-Return-Path: <linux-kernel+bounces-873308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CCC6C13A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:55:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14EFDC13A22
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42FDD508785
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:51:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15D39563CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 08:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE012F39A6;
-	Tue, 28 Oct 2025 08:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8558296BC5;
+	Tue, 28 Oct 2025 08:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNWxWL8B"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="1p1v+ecK"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A09D2DF149
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20AFC209F43
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761641267; cv=none; b=BbyLPA4jzUklALZnl0+5GNg9s4n2hXz6zaOPvDGR3DkQx43ukhMOxwlbYNM4vLlN4LKt4tXe3ox9FIGdlWKVziVgVGoqGZjg7iNrLrcYizaIdet4fz4lbCWeoZO1aD/N2Uu222RPWAaAQF9atlk/5RdS7NHpX9fxn/f2dBM34TE=
+	t=1761641343; cv=none; b=PBKhOrxZFw0fYgO7vNfdUVwM+m5SnTMtfdtHSsBgD08FmR3mvHAKxiKmHBOHjKtVxjgWqqj3awQhOACljhGotT611tmHjC/pHcPBslhuDG/v/Y2VwFUc7WQ/C+VxSJ0Lh7nZs6TzQuNlwoathaOSbCu2Gi3EogKX2yVHxqlhJ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761641267; c=relaxed/simple;
-	bh=r9yRyupvds6l2O39gsnYYAgVBhowuzrjd1estJhrb0U=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kh4sYS5UkDe9Cupbiwm4gQUyHv6rxa5YRHhoNJzPiXk/nNWqCzNgJYFWwbX65ji/6yUkjHpxLezL04iJwb5xLR5jo2EHYq66MALLr7j284xx+QUBAZLz0chwNwXkZoaGhCgcWLKtoTnOTjtH9x6RYuVtcDNMXDMPLAiRcYId/DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XNWxWL8B; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-36d77de259bso37650171fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 01:47:44 -0700 (PDT)
+	s=arc-20240116; t=1761641343; c=relaxed/simple;
+	bh=JoSpd1Y2s+SKdaoAqTh1RDxCAqr82ccTDXUqiqK91Q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fmenQd4Cyq2wc9e70ctIXlx7pHU4U0TtD0yDYVzB1eNGv5eBcsosyvyJrjbPjOkpXjlvCy3DsLMLmgrCSNmFd+dmVdPAid+5oBbBalAqv00J3KCeJOH6XFP5kJRVbxmHyOyptVxy4fm+ZX3m3j2dB9WFsmpGGtPe6GYm3FGiNBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=1p1v+ecK; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-431da4fa224so54526205ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 01:49:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761641263; x=1762246063; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vRLc0auh5JUbiEVtJ5AkHNMy18AHU8gRSkIPhMjaAHY=;
-        b=XNWxWL8BieEMtl2dJSnHfFnomBr+y0dFhz8PqQ+d6tgS+flLNM+CZ5HDu32n/u8/Sm
-         nIUquQJdWQWK4BTgOu5ftwqEuh8KDE18u8IKUhSpRLSZ1McOekeBphVrxyccEiWiM/nH
-         53perlSUO32N/S5yElYe6J3uiZjzE4hNA6aSvj7q8guZUeXle9+JXObDi8bOtoZxjmQc
-         TUI/7ByIrWUwL+bOXQQgLQ6m2/+jguYVG8qatH1mh7roC+2Y5dH+ryEnOQGb9fyx1m7d
-         VAcYdOGn5GoP8ECagk8qqPeRsfX996TdBX9VC/OeAhFwy0d/W5qsW3mBgXfT7sotgruq
-         WvoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761641263; x=1762246063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1761641341; x=1762246141; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vRLc0auh5JUbiEVtJ5AkHNMy18AHU8gRSkIPhMjaAHY=;
-        b=itpcM2icxpnVXNDTxqvIeIZoSVTCRPQkG+lrD54PN6N4qKytyVniefcb9qahxdqOt2
-         QlJSrUjZPSuluJDdDJ7C7smAoILfFE1wYHDZB82wLxJiNUEqO2Ov/tFg4d41QDgu93p6
-         I9y0Y+PJrbwzjXYSYO5dabQJFYbZlEAnkSTI4VAr9DWcXao/B/2BazwXTmUM9uD92exl
-         fsg3bHBez79AS3dny8qXILKBm+2qkTdMoYp/noTpyGcYANg3i1Ge8aaM+Np0uBrbmtI/
-         6CK83WjgJe9UD5oixuinm/XHZFTbnQ1fuoDzevW7OdbiYMn2O8+zc+5SKf9nRMLvq9Wi
-         Nb3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdrqtkrvxts0SgAanVN+2SOdr2ftCASv8YMe6Esm3lDTVm61XMFkQacLbZDYTLN9RMBZMAQ+J5L8+Jytk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBgnLNCX+WbchPvsSJi01QqCoilVSZR/7Y+szLsTB88YSremFB
-	cWJh2aqsrzwObVSWq9Eqq6UWtgk8xhdgz6wAJQFjXJbdNe1g3Ihg93zB
-X-Gm-Gg: ASbGncv1JMNOxTT3lhr1knxyTkipC/1rtu0hfiotlFX/S0Y1r+MDjvvAsiRXqsrvJdg
-	2Uf+Xn1zmmIE+9hzh5INObPG6/vEaY+IbsVGO+rpmXXqNg/h7v3s8lQGNJJDjIqAKxDmxZ2g8Sd
-	/2UUqsAbz6ecm8RHoKdkMqtOeZ+zH9ey8+DAlJ8Uin6t/Hsv3YPYoU9eUMKlb5oqgA1iRXK1jBH
-	JhTttRIRYAxq4XV6aOa6dwWIGWMeS6Lr9pKTTp39JunwQ4ToDGnAvpS14eDZM5KWCz+P4RXU+PG
-	J6P4JwPDTHzjusv0jgS6szJ92cYLV9U7jwBVT+9OHx3/nboFUjFe0aBmBRKhpC6L7B8ScJcHizf
-	0e6K/D3Rn08szHiPI2lHKHQ6W6VuSTNvgtaddPjZ+UbE=
-X-Google-Smtp-Source: AGHT+IEdfnNRUozr4xhoAo4HjYXDAefDjAlsaDl5RblosO0jl3zzldZ8dEMI2G4Tp89Dq4IeKHLxhw==
-X-Received: by 2002:a05:651c:551:b0:378:cff9:93f with SMTP id 38308e7fff4ca-379076d81f5mr8932271fa.12.1761641262989;
-        Tue, 28 Oct 2025 01:47:42 -0700 (PDT)
-Received: from milan ([2001:9b1:d5a0:a500::24b])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-378ee0da49fsm24829691fa.44.2025.10.28.01.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 01:47:42 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@milan>
-Date: Tue, 28 Oct 2025 09:47:40 +0100
-To: Mikulas Patocka <mpatocka@redhat.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-	Alasdair Kergon <agk@redhat.com>, DMML <dm-devel@lists.linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dm-bufio: align write boundary on bdev_logical_block_size
-Message-ID: <aQCDLBie3fGwMDW2@milan>
-References: <20251020123350.2671495-1-urezki@gmail.com>
- <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com>
+        bh=7Nqa5RbaqHXJiWr4JVVo/GVQ9sZBLUjp7DYkmXle1AE=;
+        b=1p1v+ecKh0GRLSRHn9eknQ/oja0oZ3iz7m6fojCSPibe2HP45ICVDZDhGohSWPyacC
+         qVpRlYJOUr+GKAki+1PednBnuf/fOBXt1cAR6FJeKxyOaQn+SQDsYx6AxNOPKdf5qZqC
+         mWdlsCkAi81hkt1KbBJA4eNvxm9YTRTAb7Khz+a5hOn+eUu02d4T6suyeTaalvHEL3UM
+         kt7uQiqEdWbiQhm+S41qYjWnCzL0hbM4wSF1Uv+04yi5evfzL3DjiMJEgB2MGqQyCFln
+         FJgL1SphXAY1A1Zdcpji6swsDXol2Ya588GRl5vhZJ+XUuyY8nqcvMLUZcNQE+OC4Tc2
+         OPOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761641341; x=1762246141;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Nqa5RbaqHXJiWr4JVVo/GVQ9sZBLUjp7DYkmXle1AE=;
+        b=f8DzEBcjtqmVdWsuwhQL03XhKR/wa3U2VZEedEw1//m9HE42lMw94vXBuMc1ph2aix
+         wVYGWuY2wdJOtbIXNS4SR/ThC9j64vWYSQAZafRdLoJCRyaURhEBUmCcnFTHSAP4IYwA
+         8Yc150wPsb87mouTfvbXpRRAs1VMk7qQmnx6QsGziUI1BI2J6w4ZNb0WhxRYM4GXIsMl
+         as/rjlFONSb02eKyq36xrBbltbPPolRnu3mgk+aymL7auY71FZTv7DUtilMdDCTkOn64
+         qM8g3L6c/QKilt7k1fVsSFOwhZXYNXvVMNdhOBeRBZGxV+r2O7cANqEy5Vz4WEDnrBRk
+         yyWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHDpygvTs5MNzBN7IQiNFUMhH3ULljeuTMmhqDcuOIg5APMCjUwwB+5XKQMdB7mWRAKuXd4VXCsZ51Si8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzL5OAoUhVi5ufX1TsepyOsT24RqsKCbw30AEWyadct7k5VPxlz
+	+e3iHwKbxCSCcKwKrK/XKhMNSHfPAJ0tMYIOEr7ym+Y1Hgwh3v8+hk+gwfQX63Vlpsl60uLEPOB
+	RgNnoK+gkF3FGxiIrjLO6w0Gqkr7MAU6D4g4oHlWPoQ==
+X-Gm-Gg: ASbGnct6ti6xX4vTytW8im3U0+WGS52YrF7UhzFpS5eCXNb0RVZNDtO9tcZHRJiDnXK
+	+1FvhBqleGT7z/4jXDTwXk4UM/R/HGK2g0mqkKfF25EvGGhJPsqIHtvbjmA4Igl/WMheZYh0aPE
+	9CspYd0YtObmbsLvPUuP7ZETX0t8APpI/wcjdT9WL8UBSuMfRSMqURoqPBUIhcI0++LY7TfSSct
+	pIxXfg3M8FwS3wTh1V1HsayaKHAoCsm81QQ56extaiJwWbjWz/C8hyI5hYwFgtIbr3PAzwNicKH
+	wXvzf8obLq/KG49nZkueybujbvI6
+X-Google-Smtp-Source: AGHT+IEH7J7U7ktX4Uis4xGlSf/2jzsm1a9LrCcJPxeHAMh+NGwOe+bFbXW6utxN1p2P8zORVmeyzMyyBWVM07iRlGU=
+X-Received: by 2002:a05:6e02:240c:b0:423:fcd6:5488 with SMTP id
+ e9e14a558f8ab-4320f7bbbadmr48796285ab.12.1761641341073; Tue, 28 Oct 2025
+ 01:49:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com>
+References: <20250905122512.71684-1-apatel@ventanamicro.com> <0f7e6be5-f9ac-4019-93c6-295a068046a8@linux.dev>
+In-Reply-To: <0f7e6be5-f9ac-4019-93c6-295a068046a8@linux.dev>
+From: Anup Patel <anup@brainfault.org>
+Date: Tue, 28 Oct 2025 14:18:50 +0530
+X-Gm-Features: AWmQ_bmTYrN-PytsOBqPCeZ_JizA4VaPwRHendFWQXuSdLMWDi1UfvXqBxHKNLI
+Message-ID: <CAAhSdy1uGQaPc2SkcX5oHF-aP4dOS1gu5iHor5O8zmz-XWUtBA@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: Enable HOTPLUG_PARALLEL for secondary CPUs
+To: Atish Patra <atish.patra@linux.dev>
+Cc: Anup Patel <apatel@ventanamicro.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Sunil V L <sunilvl@ventanamicro.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello!
+On Tue, Oct 28, 2025 at 2:05=E2=80=AFPM Atish Patra <atish.patra@linux.dev>=
+ wrote:
+>
+>
+> On 9/5/25 5:25 AM, Anup Patel wrote:
+> > The core kernel already supports parallel bringup of secondary
+> > CPUs (aka HOTPLUG_PARALLEL). The x86 and MIPS architectures
+> > already use HOTPLUG_PARALLEL and ARM is also moving toward it.
+> >
+> > On RISC-V, there is no arch specific global data accessed in the
+> > RISC-V secondary CPU bringup path so enabling HOTPLUG_PARALLEL for
+> > RISC-V would only requires:
+> > 1) Providing RISC-V specific arch_cpuhp_kick_ap_alive()
+> > 2) Calling cpuhp_ap_sync_alive() from smp_callin()
+> >
+> > This patch is tested natively with OpenSBI on QEMU RV64 virt machine
+> > with 64 cores and also tested with KVM RISC-V guest with 32 VCPUs.
+> >
+> > Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+> > ---
+> >   arch/riscv/Kconfig          |  2 +-
+> >   arch/riscv/kernel/smpboot.c | 15 +++++++++++++++
+> >   2 files changed, 16 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index a4b233a0659e..d5800d6f9a15 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -196,7 +196,7 @@ config RISCV
+> >       select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+> >       select HAVE_STACKPROTECTOR
+> >       select HAVE_SYSCALL_TRACEPOINTS
+> > -     select HOTPLUG_CORE_SYNC_DEAD if HOTPLUG_CPU
+> > +     select HOTPLUG_PARALLEL if HOTPLUG_CPU
+> >       select IRQ_DOMAIN
+> >       select IRQ_FORCED_THREADING
+> >       select KASAN_VMALLOC if KASAN
+> > diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> > index 601a321e0f17..d85916a3660c 100644
+> > --- a/arch/riscv/kernel/smpboot.c
+> > +++ b/arch/riscv/kernel/smpboot.c
+> > @@ -39,7 +39,9 @@
+> >
+> >   #include "head.h"
+> >
+> > +#ifndef CONFIG_HOTPLUG_PARALLEL
+> >   static DECLARE_COMPLETION(cpu_running);
+> > +#endif
+> >
+> >   void __init smp_prepare_cpus(unsigned int max_cpus)
+> >   {
+> > @@ -179,6 +181,12 @@ static int start_secondary_cpu(int cpu, struct tas=
+k_struct *tidle)
+> >       return -EOPNOTSUPP;
+> >   }
+> >
+> > +#ifdef CONFIG_HOTPLUG_PARALLEL
+> > +int arch_cpuhp_kick_ap_alive(unsigned int cpu, struct task_struct *tid=
+le)
+> > +{
+> > +     return start_secondary_cpu(cpu, tidle);
+> > +}
+> > +#else
+> >   int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+> >   {
+> >       int ret =3D 0;
+> > @@ -199,6 +207,7 @@ int __cpu_up(unsigned int cpu, struct task_struct *=
+tidle)
+> >
+> >       return ret;
+> >   }
+> > +#endif
+> >
+> >   void __init smp_cpus_done(unsigned int max_cpus)
+> >   {
+> > @@ -225,6 +234,10 @@ asmlinkage __visible void smp_callin(void)
+> >       mmgrab(mm);
+> >       current->active_mm =3D mm;
+> >
+> > +#ifdef CONFIG_HOTPLUG_PARALLEL
+> > +     cpuhp_ap_sync_alive();
+> > +#endif
+> > +
+> >       store_cpu_topology(curr_cpuid);
+> >       notify_cpu_starting(curr_cpuid);
+> >
+> > @@ -243,7 +256,9 @@ asmlinkage __visible void smp_callin(void)
+> >        */
+> >       local_flush_icache_all();
+> >       local_flush_tlb_all();
+> > +#ifndef CONFIG_HOTPLUG_PARALLEL
+> >       complete(&cpu_running);
+> > +#endif
+>
+> LGTM.
+>
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
+>
+> Have you tried with 128 harts ? I was not able to boot 128 harts in Qemu
+> with NR_CPUS=3D256.
+> This is unrelated to this patch though. I can reproduce the issue on
+> upstream with 6.18-rc3.
 
-Sorry i have missed you email for unknown reason to me. It is
-probably because you answered to email with different subject
-i sent initially.
+I have tried upto 96 harts and that works fine.
 
-> 
-> On Mon, 20 Oct 2025, Uladzislau Rezki (Sony) wrote:
-> 
-> > When performing a read-modify-write(RMW) operation, any modification
-> > to a buffered block must cause the entire buffer to be marked dirty.
-> > 
-> > Marking only a subrange as dirty is incorrect because the underlying
-> > device block size(ubs) defines the minimum read/write granularity. A
-> > lower device can perform I/O only on regions which are fully aligned
-> > and sized to ubs.
-> 
-> Hi
-> 
-> I think it would be better to fix this in dm-bufio, so that other dm-bufio 
-> users would also benefit from the fix. Please try this patch - does it fix 
-> it?
-> 
-If it solves what i describe i do not mind :)
+For 128 harts, the memory used by OpenSBI goes beyond 2MB so
+OpenSBI can't run from the first 2MB of DRAM (0x80000000) as the
+first booting stage. Try with U-Boot SPL loading OpenSBI from FIT image.
 
-> 
-> 
-> From: Mikulas Patocka <mpatocka@redhat.com>
-> 
-> There may be devices with logical block size larger than 4k. Fix
-> dm-bufio, so that it will align I/O on logical block size. This commit
-> fixes I/O errors on the dm-ebs target on the top of emulated nvme device
-> with 8k logical block size created with qemu parameters:
-> 
-> -device nvme,drive=drv0,serial=foo,logical_block_size=8192,physical_block_size=8192
-> 
-> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Cc: stable@vger.kernel.org
-> 
-> ---
->  drivers/md/dm-bufio.c |    9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> Index: linux-2.6/drivers/md/dm-bufio.c
-> ===================================================================
-> --- linux-2.6.orig/drivers/md/dm-bufio.c	2025-10-13 21:42:47.000000000 +0200
-> +++ linux-2.6/drivers/md/dm-bufio.c	2025-10-20 14:40:32.000000000 +0200
-> @@ -1374,7 +1374,7 @@ static void submit_io(struct dm_buffer *
->  {
->  	unsigned int n_sectors;
->  	sector_t sector;
-> -	unsigned int offset, end;
-> +	unsigned int offset, end, align;
->  
->  	b->end_io = end_io;
->  
-> @@ -1388,9 +1388,10 @@ static void submit_io(struct dm_buffer *
->  			b->c->write_callback(b);
->  		offset = b->write_start;
->  		end = b->write_end;
-> -		offset &= -DM_BUFIO_WRITE_ALIGN;
-> -		end += DM_BUFIO_WRITE_ALIGN - 1;
-> -		end &= -DM_BUFIO_WRITE_ALIGN;
-> +		align = max(DM_BUFIO_WRITE_ALIGN, bdev_logical_block_size(b->c->bdev));
-> +		offset &= -align;
-> +		end += align - 1;
-> +		end &= -align;
->  		if (unlikely(end > b->c->block_size))
->  			end = b->c->block_size;
->  
-> 
-I will check it and get back soon.
+Regards,
+Anup
 
-Thank you.
-
---
-Uladzislau Rezki
+>
+>
+> >       /*
+> >        * Disable preemption before enabling interrupts, so we don't try=
+ to
+> >        * schedule a CPU that hasn't actually started yet.
 
