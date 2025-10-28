@@ -1,216 +1,157 @@
-Return-Path: <linux-kernel+bounces-874830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CF2C172E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:21:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC46C172EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A5924EB4C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:21:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2BA81AA1DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E073557F7;
-	Tue, 28 Oct 2025 22:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4217C2E11A6;
+	Tue, 28 Oct 2025 22:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="Waz7b385"
-Received: from ixit.cz (ip-94-112-25-9.bb.vodafone.cz [94.112.25.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HrlHnl8w"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0005F2DCC1A;
-	Tue, 28 Oct 2025 22:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.112.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1F12DE6E3
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761690092; cv=none; b=gmaqQc7vyl1WbqjGn8BhT5PIZa11saD+EnKKyOu4780nnKpppmul2ei1oi8XyVyzT7iQ7HH8Ocub5+E/8UXjPJc6tDqk7Nrtt6dk8ST1SVFzJzSNqgqNDZE+re1OdQdWo6Kj9cDrCoVmDoLBhSEJyL++iZsPinXdzOzhaV4o9R8=
+	t=1761690193; cv=none; b=Atq2EFTDlBHVOyEO33dQqlTNAeAhC1TEMnc+qRjDKzoYJfW2HZ+LUlSnmcQvCLu69RKFn9YtR31RTfRYbQ1xi2Mv3DLmnaXVc2Fud3k89178rGb4y7vYE3L46p+lnfaTt7/n1ThKiLdO9xx87ib2wdRPM2DFEHLEWPjrHygz5vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761690092; c=relaxed/simple;
-	bh=kOQwnveLNESBS5XSfIiu7xbSkWevnLBvX3n3tyH2iZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OpgX97fvdwPQrRSunRxlFNwelxOKGiSSFcyjy0C8qVGmigKLTn8zNMN+lebwBl9hG7PFntXNg4VGUrY4V3hIb3ST95INQY0RszyRCtjA2yFYKgGx9OchV9XRRMemTCrDgt3i4nyaYQ8FIxIn8IfoQAg+4I5E4LDIhUGzOjTBjH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=Waz7b385; arc=none smtp.client-ip=94.112.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.200] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id C7D3A5340881;
-	Tue, 28 Oct 2025 23:21:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1761690079;
+	s=arc-20240116; t=1761690193; c=relaxed/simple;
+	bh=L7K9HnqH2KFb1xTVC1XCnk3NZKxonWlqyMM1iA1YmCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BANlDZBd8pQ6FBw9FVk0YCa5wNf1LnBsN2Cu1l+GLxbjfkxTKCEAhV2ryQ7vnou7WvtF8S0UPkADtk4h8h22Z3bwSTpasbpUfY8WKWNk8ahmIbPJvkibSoXTlQcTPQ2PG3VvErZT0wKtUH7vy4vqYCSHWieTR68Gy3F0PIz3v/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HrlHnl8w; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 28 Oct 2025 22:23:02 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761690189;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=77Bg3T01vRKpoGhywDO/WQjALV4dBQVM+8I2GzO3egM=;
-	b=Waz7b385sQKp4FxSXBNqOjc3Oqk8Aoq7Rj4WZnjnhUZ9+oKjbMS5FYKEvbnFkd5Lt49k0b
-	X9DJ+5Unw/iPxwxBMFA6QgZSCgIFVwtUq+OzftjsywvChyM/VUKJSZ5ddkFi/f1vL+XqoZ
-	JhjasCS9giPlBIYb7RFobRB56Xa8oB0=
-Message-ID: <f6a6b24c-e41b-4da1-96a6-cd9102eacbe7@ixit.cz>
-Date: Tue, 28 Oct 2025 23:21:19 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=W8qPfg69aH85hJK/2NIrynP1wda3Qv85XlTue8Hsfnw=;
+	b=HrlHnl8wcOt30G4U6CIKp2eObmki4ed/Ly9TLL1vLd0cXjurfQy0W/nPlEekzldFR8nCSh
+	t3Yxc8JeYfc4T2cmVOjZSAY4WoyZcCmFkGzCNhXh3UmYeDWhzAEYG1aWeRg8Tv0y8lCjCm
+	Q5kL2bUAuLWPOKbkmyehr6PVf17K8Kg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Mathias Krause <minipli@grsecurity.net>, John Allen <john.allen@amd.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Chao Gao <chao.gao@intel.com>, 
+	Binbin Wu <binbin.wu@linux.intel.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>, Xin Li <xin@zytor.com>
+Subject: Re: [PATCH v16 36/51] KVM: nSVM: Save/load CET Shadow Stack state
+ to/from vmcb12/vmcb02
+Message-ID: <ngbxelfw4lvipsvnoykqo4sonuyjqhuyoh5yogvc6btqj4w6cr@y2jpmnyjphmc>
+References: <20250919223258.1604852-1-seanjc@google.com>
+ <20250919223258.1604852-37-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] arm64: dts: qcom: cleanup GPU's zap-shader node
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
-Content-Language: en-US
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <20251028-dt-zap-shader-v1-0-7eccb823b986@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250919223258.1604852-37-seanjc@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 28/10/2025 21:59, Dmitry Baryshkov wrote:
-> Historically all devices manually defined GPU zap-shader node in their
-> board DT files. This practice is frowned upon. Add the zap-shader node
-> on all platforms, define a label for it and use the label in order to
-> patch the node with the firmware name.
+On Fri, Sep 19, 2025 at 03:32:43PM -0700, Sean Christopherson wrote:
+> Transfer the three CET Shadow Stack VMCB fields (S_CET, ISST_ADDR, and
+> SSP) on VMRUN, #VMEXIT, and loading nested state (saving nested state
+> simply copies the entire save area).  SVM doesn't provide a way to
+> disallow L1 from enabling Shadow Stacks for L2, i.e. KVM *must* provide
+> nested support before advertising SHSTK to userspace.
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
-> Dmitry Baryshkov (7):
->        arm64: dts: qcom: sdm670: create common zap-shader node
->        arm64: dts: qcom: sdm845: create common zap-shader node
->        arm64: dts: qcom: sc8180x: create common zap-shader node
->        arm64: dts: qcom: sc8280xp: create common zap-shader node
->        arm64: dts: qcom: sm8250: drop duplicate memory-region defs
->        arm64: dts: qcom: sc7180: add gpu_zap_shader label
->        arm64: dts: qcom: add gpu_zap_shader label
-
-Reviewed-by: David Heidelberg <david@ixit.cz>
-
+>  arch/x86/kvm/svm/nested.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 > 
->   arch/arm64/boot/dts/qcom/apq8096-db820c.dts                |  6 +++---
->   arch/arm64/boot/dts/qcom/msm8996-oneplus3.dts              |  6 +++---
->   arch/arm64/boot/dts/qcom/msm8996-oneplus3t.dts             |  6 +++---
->   arch/arm64/boot/dts/qcom/msm8996-xiaomi-gemini.dts         |  6 ++----
->   arch/arm64/boot/dts/qcom/msm8996.dtsi                      |  2 +-
->   arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-natrium.dts     |  6 ++----
->   arch/arm64/boot/dts/qcom/msm8996pro-xiaomi-scorpio.dts     |  6 ++----
->   arch/arm64/boot/dts/qcom/qcm2290.dtsi                      |  2 +-
->   arch/arm64/boot/dts/qcom/qrb2210-rb1.dts                   |  6 +++---
->   arch/arm64/boot/dts/qcom/qrb4210-rb2.dts                   |  6 +++---
->   arch/arm64/boot/dts/qcom/qrb5165-rb5.dts                   |  7 +++----
->   arch/arm64/boot/dts/qcom/sa8295p-adp.dts                   | 14 +++-----------
->   arch/arm64/boot/dts/qcom/sc7180-acer-aspire1.dts           |  9 ++++-----
->   arch/arm64/boot/dts/qcom/sc7180-el2.dtso                   |  6 ++----
->   arch/arm64/boot/dts/qcom/sc7180-idp.dts                    |  1 +
->   arch/arm64/boot/dts/qcom/sc7180-trogdor.dtsi               |  1 +
->   arch/arm64/boot/dts/qcom/sc7180.dtsi                       |  4 ++++
->   arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts        | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8180x-primus.dts                |  9 +++++----
->   arch/arm64/boot/dts/qcom/sc8180x.dtsi                      |  9 +++++++++
->   arch/arm64/boot/dts/qcom/sc8280xp-crd.dts                  | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8280xp-el2.dtso                 |  6 ++----
->   arch/arm64/boot/dts/qcom/sc8280xp-huawei-gaokun3.dts       | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8280xp-microsoft-arcata.dts     | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8280xp-microsoft-blackrock.dts  | 12 +++---------
->   arch/arm64/boot/dts/qcom/sc8280xp.dtsi                     |  9 +++++++++
->   arch/arm64/boot/dts/qcom/sdm670-google-sargo.dts           |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm670.dtsi                       |  4 ++++
->   arch/arm64/boot/dts/qcom/sdm845-db845c.dts                 |  8 ++++----
->   arch/arm64/boot/dts/qcom/sdm845-lg-common.dtsi             |  4 ----
->   arch/arm64/boot/dts/qcom/sdm845-lg-judyln.dts              |  6 ++----
->   arch/arm64/boot/dts/qcom/sdm845-lg-judyp.dts               |  6 ++----
->   arch/arm64/boot/dts/qcom/sdm845-mtp.dts                    |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi        |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts    |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts          |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi      |  7 +++----
->   .../boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi      |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts         |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm845.dtsi                       |  4 ++++
->   arch/arm64/boot/dts/qcom/sdm850-huawei-matebook-e-2019.dts |  7 +++----
->   arch/arm64/boot/dts/qcom/sdm850-lenovo-yoga-c630.dts       |  9 ++++-----
->   arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts            |  6 +++---
->   arch/arm64/boot/dts/qcom/sm6115.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm6115p-lenovo-j606f.dts          |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8150.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm8250-mtp.dts                    |  7 +++----
->   arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi   |  7 +++----
->   arch/arm64/boot/dts/qcom/sm8250-xiaomi-pipa.dts            |  7 +++----
->   arch/arm64/boot/dts/qcom/sm8250.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm8350-hdk.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8350.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm8450-hdk.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8450.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm8550-hdk.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8550-mtp.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8550-qrd.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8550.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/sm8650-hdk.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8650-qrd.dts                    |  6 +++---
->   arch/arm64/boot/dts/qcom/sm8650.dtsi                       |  2 +-
->   arch/arm64/boot/dts/qcom/x1e001de-devkit.dts               |  6 +++---
->   .../arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi |  6 +++---
->   arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts    |  6 +++---
->   arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts      |  6 +++---
->   .../boot/dts/qcom/x1e80100-hp-elitebook-ultra-g1q.dts      |  6 ++----
->   arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   |  6 +++---
->   arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   |  8 ++++----
->   arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                  |  6 +++---
->   70 files changed, 198 insertions(+), 244 deletions(-)
-> ---
-> base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
-> change-id: 20251028-dt-zap-shader-df7c258f6ffc
+> diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
+> index 826473f2d7c7..a6443feab252 100644
+> --- a/arch/x86/kvm/svm/nested.c
+> +++ b/arch/x86/kvm/svm/nested.c
+> @@ -636,6 +636,14 @@ static void nested_vmcb02_prepare_save(struct vcpu_svm *svm, struct vmcb *vmcb12
+>  		vmcb_mark_dirty(vmcb02, VMCB_DT);
+>  	}
+>  
+> +	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
+> +	    (unlikely(new_vmcb12 || vmcb_is_dirty(vmcb12, VMCB_CET)))) {
+> +		vmcb02->save.s_cet  = vmcb12->save.s_cet;
+> +		vmcb02->save.isst_addr = vmcb12->save.isst_addr;
+> +		vmcb02->save.ssp = vmcb12->save.ssp;
+> +		vmcb_mark_dirty(vmcb02, VMCB_CET);
+> +	}
+> +
+
+According to the APM, there are some consistency checks that should be
+done on CET related fields in the VMCB12. Specifically from
+"Canonicalization and Consistency Checks. " in 15.5.1 in the APM Volume
+2 (24593—Rev. 3.42—March 2024):
+
+• Any reserved bit is set in S_CET
+• CR4.CET=1 when CR0.WP=0
+• CR4.CET=1 and U_CET.SS=1 when EFLAGS.VM=1
+• Any reserved bit set in U_CET (SEV-ES only):
+  - VMRUN results in VMEXIT(INVALID)
+  - VMEXIT forces reserved bits to 0
+
+Most consistency checks are done in __nested_vmcb_check_save(), but it
+only operates on the cached save area, which does not have everything
+you need. You'll probably need to add the needed fields to the cached
+save area, or move the consistency checks elsewhere.
+
+Related to this, I am working on patches to copy everything we use from
+vmcb12->save to the cache area to minimize directly accessing vmcb12
+from the guest memory as much as possible. So I already intend to add
+other fields to the cached save area.
+
+There's also a couple of other missing consistency checks that I will
+send patches for, which also need fields currently not in the cached
+save area.
+
+>  	kvm_set_rflags(vcpu, vmcb12->save.rflags | X86_EFLAGS_FIXED);
+>  
+>  	svm_set_efer(vcpu, svm->nested.save.efer);
+> @@ -1044,6 +1052,12 @@ void svm_copy_vmrun_state(struct vmcb_save_area *to_save,
+>  	to_save->rsp = from_save->rsp;
+>  	to_save->rip = from_save->rip;
+>  	to_save->cpl = 0;
+> +
+> +	if (kvm_cpu_cap_has(X86_FEATURE_SHSTK)) {
+> +		to_save->s_cet  = from_save->s_cet;
+> +		to_save->isst_addr = from_save->isst_addr;
+> +		to_save->ssp = from_save->ssp;
+> +	}
+>  }
+>  
+>  void svm_copy_vmloadsave_state(struct vmcb *to_vmcb, struct vmcb *from_vmcb)
+> @@ -1111,6 +1125,12 @@ int nested_svm_vmexit(struct vcpu_svm *svm)
+>  	vmcb12->save.dr6    = svm->vcpu.arch.dr6;
+>  	vmcb12->save.cpl    = vmcb02->save.cpl;
+>  
+> +	if (guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK)) {
+> +		vmcb12->save.s_cet	= vmcb02->save.s_cet;
+> +		vmcb12->save.isst_addr	= vmcb02->save.isst_addr;
+> +		vmcb12->save.ssp	= vmcb02->save.ssp;
+> +	}
+> +
+>  	vmcb12->control.int_state         = vmcb02->control.int_state;
+>  	vmcb12->control.exit_code         = vmcb02->control.exit_code;
+>  	vmcb12->control.exit_code_hi      = vmcb02->control.exit_code_hi;
+> -- 
+> 2.51.0.470.ga7dc726c21-goog
 > 
-> Best regards,
-
--- 
-David Heidelberg
-
 
