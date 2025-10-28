@@ -1,140 +1,137 @@
-Return-Path: <linux-kernel+bounces-874276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9EEC15F12
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:51:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C25C15E76
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B5C3421799
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:43:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 37FFB3435AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6FB3451D1;
-	Tue, 28 Oct 2025 16:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D3734405F;
+	Tue, 28 Oct 2025 16:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xUniYt29"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZZ5UCe1I"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DB4343D9E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FC133F8A3;
+	Tue, 28 Oct 2025 16:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761669760; cv=none; b=JSBC7gmDRuDzdF6xdfQ3VoVoqtbNOwaW9Omex4KK5tdkujKQ1bcLerkmVPkUx0/IMAXBQh+AGNaXX5ZN1bdBgZcjVMIKa2fBAvktx76FFCFBdM+zmO2LedZUdMY7EltBPmySKPTIc8ekTJVK6CqWZ0b6eMY1jurapSY/nLX/hvg=
+	t=1761669880; cv=none; b=qLbMsET11dUHvToc93xWpog+AtJ1rx1Q9F3H9BXAxe+J678Q+n9UnBzXmpU9m1n9KvoSzxgZABluf9YTQz97j9uFuN0xf2PHesYEnli54p9pq4mVk5uiH5N37+ZTq1ZLi24Q0gGZrmAudnzLCnuIWdGfyE4UYJcCorcFcvInges=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761669760; c=relaxed/simple;
-	bh=fmcSkCTWJXxMwOHEOfJ3aeHiFD/tJb5QoCCZSX55ODc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AYig35qzQS6QlOt+vQd4cimkm6cdwjCO+tgUELS0zg1edb006lQe5KBtYqGVpeYLeg4rs2k0A+twuhh+GALVpRUEJUAaVTJo9TMb5YEn9m99UFDsseDIQonINcwGRUSrPUClmoegVgT72DTILQj1xdDjrC7ONd1oma+nThP3Y+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xUniYt29; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b553412a19bso4058843a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 09:42:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761669758; x=1762274558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z/gmStdv3FU0oGBzCptCijx3MdjTDsamveWiRrc2ft4=;
-        b=xUniYt29jAvYMWDjJ2xXLF4SQ5kOdSmcpYAYlXnN0Fuu1y8a2tWyn+SC1aLvvwO/ej
-         5o5YCd1WkLze/1nTjVD9/bQqL94x8PIEMUIY77/fz0/+2HckIGDULqpKlf7STDwMV5BH
-         7Vwb+4TqfDvLWSDE3Stau6EgiT++8FGo+nInifZHq57dORwnsGEFDxGJlj+XLqkDVTCw
-         Szt0Os5BiSlN4hx5GrHDerPsTiVcgxLbdZCd4zJEt95O3OQhyBrfUVK28NWTJP+b4HXc
-         YgtPjIMAav+R6QguxAfh37D62f+mejz3NQlIoxGRfu+tUFRe1Y5zBm1F54bSx4XIDs2B
-         ktDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761669758; x=1762274558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z/gmStdv3FU0oGBzCptCijx3MdjTDsamveWiRrc2ft4=;
-        b=myUbGkh3MtlzCQX33s5aMOVIP8oguDztnXWHrSVTgF6WQh4KHuPkwAs33/1l0wSECv
-         gGQGqT0KYrKARN0BqFZBPXZEvAzI3ySUtG69cBlqQUGj64tyYqVa4U57gbdtlqlVs/MW
-         9qyDcTs7o4PUAxcYUWnbZONyfMKK18PHaYRG1v6p/9Bpgb6JYvb9PqInXBmC7gmAoGa/
-         AmAg/LQc1jJ7/Wfc4+p8I8hVVwnJ0EBkM8CJ/TB3lrtCLjLuUFk9VhJpvypDgDePh6zJ
-         5eh7JPWx9bYwYv8qiCEY0QRIPnUvgTh7UliESBG1nE2EEHC+fi40wbIGJj8a0aRKrYCE
-         9vTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVf16dzYuMc1YRXzo3jKpkTDNMRRvngRU7I9t0YQSwAOeGmy6dMNfqBJF/YzlQfPevQZorfkHhDHHy8CY4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx63Zk8N81UTWQtZ8zbKAgqlb7xpfbcOBNJMDolsg0S5XdaqdTB
-	9+v47kf4nPBExhk+6h9BVDn+Zg8JwmpaS/04V3QXPQLZf+IN18XXAHgMMFGDwpHdqolnnPjlHQ/
-	4jmMlPQqAY+JCldObBNbXfeMgpmvc3cyZ3xcs2QBC
-X-Gm-Gg: ASbGncv2NXgKzmxvegsu/fN8ehY8zMAUpPOy5D0AMtkTe4VMPs5VkO2Xi24+uka5sEd
-	l9Dq7VNZyO3GfxopT3m3rvb+p5ATGAoH89xqZMdtk3Ue38pwUugs9Cn1W8BMRN6njBcNvDHkLqG
-	pHMA5W/milf6GuqYXUsDlLSnw031K6crA1CDV3kWQvzH4H+/iTFPM+LLxISNq329YqXRp8xon/O
-	L9f2hpaibmJa3cqDHtL9NY/F5SN/eKpOVe9NDu0nQqnf6bFiiQnIyGwMACymdRrItYucnoTjzb8
-	a66uA+y3j1qkzUnTJPE/uoLn1g==
-X-Google-Smtp-Source: AGHT+IEA9HqIHKBrDRAdapOaEhdj5ptHdSYRpb4qWqp0AQjJ5Y7jaBBFwbe3KRRyVBlj5jpvCvwUbXxGS+XHLaIF4JY=
-X-Received: by 2002:a17:902:d484:b0:290:c0ed:de3a with SMTP id
- d9443c01a7336-294cb522c8bmr51946525ad.30.1761669757359; Tue, 28 Oct 2025
- 09:42:37 -0700 (PDT)
+	s=arc-20240116; t=1761669880; c=relaxed/simple;
+	bh=+zDR3syKjBS2kd+OGgcF0id7D9QlT0C1fTMMcdbDDkc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XsC/MrF2FMie1W5rtSrl+swNS8F4TwbrfBVTB0M5aigh4TDVqjMLy5vX4jzmtwdXDdBChXZlz3Pf+bCu+Di1+yEuAf5/8woR66HGxbv1LKOPpDYLx0jnNgWUSHnD2Sb2cCdmcUx/W96WFTYJw2qSljKrUsadl5O3zR1nZlGi8Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZZ5UCe1I; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761669876;
+	bh=+zDR3syKjBS2kd+OGgcF0id7D9QlT0C1fTMMcdbDDkc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ZZ5UCe1I+VEvGaETBjkABXqceD+4vP3AKUIGnEYq4VzFXR51M623FLgS/kA8qv4O3
+	 d/8ZpREhi2GnKYvdHwIvsixY9jMgira2oG+o/a2FjYacLib+u/dkfexby2xqWbDV28
+	 5QzbOfb+qj7hZ4jKImLRWcwJM4GwOJGJR4gcDCFn0+EwG0DIR2/48vwePA1MocWXc/
+	 FFgKn53F+k0LZRhqNrCMsUaKTPQ5GMB95jXROOIIcUVh/ruC6B0V2GAxQzww6tzuY3
+	 2jAY642APV2A2elQEOe5AbBYneeBjNv43SuRuB7B6ThqM6Y600X57An+wVIy7hySst
+	 WXTLkhbCmPYdw==
+Received: from [192.168.11.9] (ip-217-65-134-16.ptr.icomera.net [217.65.134.16])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 985C317E1278;
+	Tue, 28 Oct 2025 17:44:32 +0100 (CET)
+Message-ID: <c5d17fc824ac7091e63f9d1d9ed7c0666994089e.camel@collabora.com>
+Subject: Re: [PATCH v2 2/2] media: chips-media: wave5: Process ready frames
+ when CMD_STOP sent to Encoder
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Brandon Brnich <b-brnich@ti.com>, Nas Chung <nas.chung@chipsnmedia.com>,
+  Jackson Lee <jackson.lee@chipsnmedia.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, 	linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Darren Etheridge <detheridge@ti.com>
+Date: Tue, 28 Oct 2025 16:42:28 +0000
+In-Reply-To: <20251021204618.2441939-2-b-brnich@ti.com>
+References: <20251021204618.2441939-1-b-brnich@ti.com>
+	 <20251021204618.2441939-2-b-brnich@ti.com>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-fnIbwzv7kVFXSPSi8gAo"
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ea7552f1-842c-4bb8-b19e-0410bf18c305@intel.com>
- <20251028053330.2391078-1-kuniyu@google.com> <20251028095407.2bb53f85@pumpkin>
-In-Reply-To: <20251028095407.2bb53f85@pumpkin>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Tue, 28 Oct 2025 09:42:25 -0700
-X-Gm-Features: AWmQ_bmNBvZgs1Mp1FllgTi4GNPibwKiayJAa04sxsmAaaKLfS_gUEVbDU0m9lw
-Message-ID: <CAAVpQUARk-XeMdTeGy_s65sdwuLY2RzocGyJ=2_WkhsrFN-bUw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] epoll: Use __user_write_access_begin() and
- unsafe_put_user() in epoll_put_uevent().
-To: David Laight <david.laight.linux@gmail.com>
-Cc: dave.hansen@intel.com, alex@ghiti.fr, aou@eecs.berkeley.edu, 
-	axboe@kernel.dk, bp@alien8.de, brauner@kernel.org, catalin.marinas@arm.com, 
-	christophe.leroy@csgroup.eu, dave.hansen@linux.intel.com, edumazet@google.com, 
-	hpa@zytor.com, kuni1840@gmail.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linuxppc-dev@lists.ozlabs.org, maddy@linux.ibm.com, mingo@redhat.com, 
-	mpe@ellerman.id.au, npiggin@gmail.com, palmer@dabbelt.com, pjw@kernel.org, 
-	tglx@linutronix.de, torvalds@linux-foundation.org, will@kernel.org, 
-	x86@kernel.org
+
+
+--=-fnIbwzv7kVFXSPSi8gAo
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 2:54=E2=80=AFAM David Laight
-<david.laight.linux@gmail.com> wrote:
->
-> On Tue, 28 Oct 2025 05:32:13 +0000
-> Kuniyuki Iwashima <kuniyu@google.com> wrote:
->
-> ....
-> > I rebased on 19ab0a22efbd and tested 4 versions on
-> > AMD EPYC 7B12 machine:
->
-> That is zen5 which I believe has much faster clac/stac than anything else=
-.
-> (It might also have a faster lfence - not sure.)
+Le mardi 21 octobre 2025 =C3=A0 15:46 -0500, Brandon Brnich a =C3=A9crit=C2=
+=A0:
+> CMD_STOP being sent to encoder before last job is executed by device_run
+> can lead to an occasional dropped frame. Ensure that remaining ready
+> buffers are drained by making a call to v4l2_m2m_try_schedule.
+>=20
+> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
 
-This is the Zen 2 platform, so probably the stac/clac cost will be
-more expensive than you expect on Zen 5.
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
->
-> Getting a 3% change for that diff also seems unlikely.
-> Even if you halved the execution time of that code the system would have
-> to be spending 6% of the time in that loop.
-> Even your original post only shows 1% in ep_try_send_events().
+> ---
+> =C2=A0drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 2 ++
+> =C2=A01 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> index 0a2eab372913..7ee77c9a30c0 100644
+> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+> @@ -649,6 +649,8 @@ static int wave5_vpu_enc_encoder_cmd(struct file *fil=
+e,
+> void *fh, struct v4l2_en
+> =C2=A0
+> =C2=A0		m2m_ctx->last_src_buf =3D v4l2_m2m_last_src_buf(m2m_ctx);
+> =C2=A0		m2m_ctx->is_draining =3D true;
+> +
+> +		v4l2_m2m_try_schedule(m2m_ctx);
+> =C2=A0		break;
+> =C2=A0	case V4L2_ENC_CMD_START:
+> =C2=A0		break;
 
-We saw a similar improvement on the same platform by
-1fb0e471611d ("net: remove one stac/clac pair from
-move_addr_to_user()").
+--=-fnIbwzv7kVFXSPSi8gAo
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
->
-> An 'interesting' test is to replicate the code you are optimising
-> to see how much slower it goes - you can't gain more than the slowdown.
->
-> What is more likely is that breathing on the code changes the cache
-> line layout and that causes a larger performance change.
->
-> A better test for epoll_put_event would be to create 1000 fd (pipes or ev=
-ents).
-> Then time calls epoll_wait() that return lots of events.
->
->         David
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQDydAAKCRDZQZRRKWBy
+9H/SAPwI3yGHldwe6ZRqSHBVKktYayRKH5TXay0xDmFAHPHduQEApiUurKdcqoNF
+tgZCbD4Ej3iJr5/MKVWXBh9J3XOZ2wI=
+=IH2a
+-----END PGP SIGNATURE-----
+
+--=-fnIbwzv7kVFXSPSi8gAo--
 
