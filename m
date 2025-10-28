@@ -1,211 +1,207 @@
-Return-Path: <linux-kernel+bounces-874803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01AECC1721E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:07:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5A80C1722A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3009D4EB023
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:07:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C2E14F4DFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2763557FC;
-	Tue, 28 Oct 2025 22:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560A23557FF;
+	Tue, 28 Oct 2025 22:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHW75JCN"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lF+kY4sp"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDA23557EC
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB6C29C33F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761689216; cv=none; b=rQOiKtVFD6uuvCwbM8XQZp2Sfg/KHTJvf0RTXYzMj3uzRaQzagmGSjEkYag1HtrtgHssV6VHnOT0IJ7uNYoDigTHR1Z5BMTecmMaazC0033EQUN4v0WBSL1rF6H3dby4aDPipF+1gDUb9eaMPseQCzLPTlxTWOBUwAfXMNIJi5U=
+	t=1761689285; cv=none; b=iH3x2jzPmO+PYrBw3R7ssC1JVSePS7EIpXLeGtDo9g4uSOAHSOiY/PMs4ZRqv6vfQva8HFtNtI9wM+Clh091GwCpzED6o2UOC5TeIkLQd/WO/vcbArGsPOjZ6+OUXt8Get/a3eBIpLcd79uvMRNwRckGW5LxQc24hFpkVdbm258=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761689216; c=relaxed/simple;
-	bh=Wwnj1RJDEEH7kNnG3Exp5wbrfFvOh6M5yBUjVOuQzR0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qyvrgEaOyZl1h1HYLF1qA8x3tae4LC1Usz3TYQ61PTHZHtb6nbayGA/wj0+emE3TRrK4t2tdMBCuhYx/Q9taGp0d+3mSqNYHrTVUU2Fldm7cchhKKTRhfVB+p6hHIiIdF/CXa+UADrWzTl43FD6kXBN+BBygsCD2+oh1wTL7w/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHW75JCN; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1761689285; c=relaxed/simple;
+	bh=xxLjTcs49KVHsuBWJBp8+5TQJEuXYXCZzLvCqnDtD3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=leL/XnRGhuWUjL204ZRzT61YPhyylWXFGdUANvfl2v1C+r8rqoCWTwrbuB5Go6I/09NtxkzWHGkfzDiQb3NPiffcu3BUrLAFUVims/OXSqTuC1NDzqLHnvk5Bwd/k0UHKbHOum2fQhqElmJWXhViwGXFqjQPdW5y+Liy04aajIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lF+kY4sp; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-42992e68ea3so363407f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:06:54 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee12807d97so6120541f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:08:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761689213; x=1762294013; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RRXfwTdqAHsi2uCJ8KceGlZlVmKcYCN3Wqr2dA2XgsY=;
-        b=iHW75JCN+JWaOSgNd1erUBExxgs+Qj3frYJly98ocygAaAaZRokS4okiS06x1gkBTn
-         JbLuJ19zWOtUtBNBz5p/wdfJuyZReqRBaZFfqKDYYZFvFPCkA1aHW/ye7S58jjlB8Hf9
-         fGC9rOyxAnm2uDnq5fjCfZ43GjMHuD/Ynv5pbgSx97wMi+CELRBw6s+4KY/jh+e3ylor
-         weyqdmPCu4L+03vN3UNg8CYRlRejUkHF5YWf8rYcGcNa0gs7nyovjval7nmSAgnMJ0j7
-         PmzODpLYOWVs2xD1GZ0/xKsAY2r0Z6u801pdQJAIlLL4YoN2h/jGQMv942sRsfGYxlgz
-         w1eA==
+        d=gmail.com; s=20230601; t=1761689281; x=1762294081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7V+762A1daN4J9oNjmmT69+inXV9phu8pPtP3M7FAMM=;
+        b=lF+kY4spAEP0CrGbZfaCAYVN7tjQyJ5/IL8S82YAu/KyjKTunYI52v+6qy/xg2iw//
+         2Pi2f7HzzYPuj1lhyuMfD8Rx2xK+JiCvtEJyPmXulM0ugiz773sMLNM4Z2uzDz0LtMQz
+         R1D9Hs53WOC11wBg9ld1ltuUSCRYYkHvQMcQYu0F44xXeWnmoldnNqbTPjdDPxjuoZFc
+         jeber4tOBrgqsoJ/Pcvxy6biJejoZFO5BGnMLtHxMuxh5OxB7JnnuDWextrF1tC/8s2M
+         4653WgUejRDf3dfmvisPN3TAONI0sLwUwAjRtC8ZUqKPjWS8ZxYKQziRHPSMuCOOvEYA
+         +xtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761689213; x=1762294013;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RRXfwTdqAHsi2uCJ8KceGlZlVmKcYCN3Wqr2dA2XgsY=;
-        b=GFXGzGGFbph+Qwk3xW/OCB+ztr18pP243ZcaHM/bPyfAeOsYCz/eRPXtGsJlUJ7jaT
-         l9s5GPefwHg7VkR3/dtQ96hiPfTxCkF2tXfcKgCSSYX9M0jPSRZTEXc5jclffkGhur3F
-         HsIFmIr8RTjJBV29/BQO9BMrlyS7YFS9LGV3mardbrWz7aq7GNDS9DG1MMEU6R/KXH9D
-         Z4vKLuV3K30c2UUTavGwAYkgnA4dWCeuKeNYRDX7ytTZ1U2WQtveIuy0nia8dSshYJyH
-         On4u13GaJjI+1roil09/SzGguF3BvdGfyNOKRACygrZJkq5PW4VzMls7PjgXK3+vxBkb
-         mbzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSYYqWpJJK/30w7n22BWRS//4qs5jW636kSDrK8PKHomUUJgCDzYP7q/XIRLzxAF3lvbLs3ZwQ2j5+Hww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR6QJzoznPON6qQAnv7Wb8dKksy13KGbsSMQE0+7CLKrQCRIdL
-	sK3gBaL+Vl3hcHYVurQszWPH79r2B/WwJU1uQUtHPF0wJCb4awQejS+H
-X-Gm-Gg: ASbGncsccjE3KpinBcQnC0ub447HzR5DgzNNj5SQiPOp2MmH/8XgB2j1klXLOyB9KTM
-	HC61Tp0uF5Vxa+nF4dIVQoFpUQ4IRBQSD14mVHv31WrG2xYG4j9jDVwbXOwrBGXXSqCeVS+BPQW
-	4WRqGm4U9o5xZxUkOMoB/FcboF8/zPoSmx/UJ/fYNHuA5BMhOKtU50tWDE0cMp2E8xrGk6KXnQr
-	Ook+/snd2BAOioPvwWh6Pe3a6X8naQoFF+WgbbmYPh+CjyfgOaTwyWD0RYAwUKndKhqhH9XZeR0
-	GQNfsDcH4E6v4mDkdO0scbNEGZ0yLbH3a/0DC5zTNfR+JHpMT6phCaWMvdGKLscQdXCp0RRYsSG
-	qaEiieb4gXJNCXo4bwTyHyIxediJuQtwHWzGDVKR3ycNBxFfpMCOJr0MSZiNoJNC0vlSuO9PzQB
-	5ZY52w
-X-Google-Smtp-Source: AGHT+IF1chgC33kvFN4rIJiWEFsZev65rNr2rCfRs36/VyXkv4r/1FvebOBJNEzWYPGfZIUQ5yYJDg==
-X-Received: by 2002:a05:6000:288a:b0:429:8e79:a19d with SMTP id ffacd0b85a97d-429aefd2ed4mr259766f8f.10.1761689212570;
-        Tue, 28 Oct 2025 15:06:52 -0700 (PDT)
-Received: from localhost ([2a03:2880:31ff:48::])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b22sm22241724f8f.9.2025.10.28.15.06.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 15:06:51 -0700 (PDT)
-From: Gustavo Luiz Duarte <gustavold@gmail.com>
-Date: Tue, 28 Oct 2025 15:06:32 -0700
-Subject: [PATCH net v4] netconsole: Fix race condition in between reader
- and writer of userdata
+        d=1e100.net; s=20230601; t=1761689281; x=1762294081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7V+762A1daN4J9oNjmmT69+inXV9phu8pPtP3M7FAMM=;
+        b=pGxhl6I5WRRDoFryP5dubZCEGl5PeLhXZsQ+4hEV9IvUMF2tSlmKFHYTj0HranGxc2
+         JZ7D63usW6ll0PvhUi196Pga5GXnF1u7DcE3lwMSBOtXHLuaG4bV0VE7ajR8upIGmLh4
+         bjHq0Xw+PgGaD9L+AESuMchhxHP2OQS4mniFOkcgO9cGYdL5akcx4RedCL7Z9H0qWS0J
+         IwGt163IjfiVXiO21IDkJ+a/lONrfdjAQ4/nDP439YPqEVndu5edsRAFya/cFyttLiHj
+         VfmTTG9TBb03RhGkLpY8ZbSo+bSEzVrCN476aIqVfedSHzyUFgyppC5nd3kGPhL7XJLH
+         aPcg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0cpouu/atHK3X8cd5SZneYmIVyljTuEo7BCcNOe44zpmX8OJysddXFQBnblYRLM2271TEpCQg+pqa8VA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYyWQXWAKTnOpt0ThWGRsLoZQwMJA4ncLgP/8au7L7b6xv0hLJ
+	fCwilGL8FM0Zby42lM0dn6nj5/p1or/1vweOIm9KBpCz1/3ZX1ZHSzqHWG7yOWm0iE4G+3E3Wn1
+	y6L9JeMY11fhOhzypF1+49BgIAyOIOEs=
+X-Gm-Gg: ASbGncvzcOZ/oAsXI4NT36s7xN9WYYY7cCMXLL0LGs2+nH5PyccVNA4+Yw97U14ard9
+	fMSRgH6QVsVRwit9zmDsWnsUm1abqtbfWLlJbnOlH+jdw7sCM87uW8dWYy3c++Gy8TgB+9A3OMb
+	PFPgD7XwyK+CRlIxR4mhcAIvRt9wxy3hUprPArZfFLyUnfOYKoWezoHC/O8WLdNB60DhuxIH3TM
+	aN0Z9Av5gWYYmp5X1qFVa9ODoKZkQezJtQCkqcwJpqByAFV9EC8+uGahuWaHpkwg0HsauBX1Isd
+	wKJYQVz6/LGlLDen/g==
+X-Google-Smtp-Source: AGHT+IGICaO3BvlkXeLb+EbVNUOXQ0U63xZwGPTFrBoahOPE5MZiS6EG5jxPBtr1ZSjP3nUamu+JhVo3r42lsbR/Cqg=
+X-Received: by 2002:a5d:5849:0:b0:426:ff7c:86d3 with SMTP id
+ ffacd0b85a97d-429aef78c90mr552970f8f.13.1761689280869; Tue, 28 Oct 2025
+ 15:08:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-netconsole-fix-race-v4-1-63560b0ae1a0@meta.com>
-X-B4-Tracking: v=1; b=H4sIAGc+AWkC/23NwQ6CMAwG4FchPVszusHQk+9hPMxRZIkys5FFQ
- 3h3l8UDB25t//xfF4gcHEc4VwsETi46P+VFHSqwo5kejK7PO5CgphYkcOLZ+in6J+PgPhiMzYN
- qm0Hqe6PZQG6+A+esqFfIBbjl4+ji7MO3fEpUoj9Ku2giFCilJlVL2Ql9urx4NkfrX4VLckvof
- UJijV2vhGk1C+ppQ6zr+gN4NDq2/QAAAA==
-To: Andre Carvalho <asantostc@gmail.com>, Simon Horman <horms@kernel.org>, 
- Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Matthew Wood <thepacketgeek@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gustavo Luiz Duarte <gustavold@gmail.com>
-X-Mailer: b4 0.13.0
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-7-roman.gushchin@linux.dev> <CAADnVQKWskY1ijJtSX=N0QczW_-gtg-X_SpK_GuiYBYQodn5wQ@mail.gmail.com>
+ <87qzumq358.fsf@linux.dev>
+In-Reply-To: <87qzumq358.fsf@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 28 Oct 2025 15:07:49 -0700
+X-Gm-Features: AWmQ_bn1qYp03A-J3vHinawzwNNuHcAYrjS8vVp0NbrkX9UuC4qoOTSYxLLTXTE
+Message-ID: <CAADnVQ+iEcMaJ68LNt2XxOeJtdZkCzJwDk9ueovQbASrX7WMdg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, 
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The update_userdata() function constructs the complete userdata string
-in nt->extradata_complete and updates nt->userdata_length. This data
-is then read by write_msg() and write_ext_msg() when sending netconsole
-messages. However, update_userdata() was not holding target_list_lock
-during this process, allowing concurrent message transmission to read
-partially updated userdata.
+On Tue, Oct 28, 2025 at 11:42=E2=80=AFAM Roman Gushchin
+<roman.gushchin@linux.dev> wrote:
+>
+> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+>
+> > On Mon, Oct 27, 2025 at 4:18=E2=80=AFPM Roman Gushchin <roman.gushchin@=
+linux.dev> wrote:
+> >>
+> >> +bool bpf_handle_oom(struct oom_control *oc)
+> >> +{
+> >> +       struct bpf_oom_ops *bpf_oom_ops =3D NULL;
+> >> +       struct mem_cgroup __maybe_unused *memcg;
+> >> +       int idx, ret =3D 0;
+> >> +
+> >> +       /* All bpf_oom_ops structures are protected using bpf_oom_srcu=
+ */
+> >> +       idx =3D srcu_read_lock(&bpf_oom_srcu);
+> >> +
+> >> +#ifdef CONFIG_MEMCG
+> >> +       /* Find the nearest bpf_oom_ops traversing the cgroup tree upw=
+ards */
+> >> +       for (memcg =3D oc->memcg; memcg; memcg =3D parent_mem_cgroup(m=
+emcg)) {
+> >> +               bpf_oom_ops =3D READ_ONCE(memcg->bpf_oom);
+> >> +               if (!bpf_oom_ops)
+> >> +                       continue;
+> >> +
+> >> +               /* Call BPF OOM handler */
+> >> +               ret =3D bpf_ops_handle_oom(bpf_oom_ops, memcg, oc);
+> >> +               if (ret && oc->bpf_memory_freed)
+> >> +                       goto exit;
+> >> +       }
+> >> +#endif /* CONFIG_MEMCG */
+> >> +
+> >> +       /*
+> >> +        * System-wide OOM or per-memcg BPF OOM handler wasn't success=
+ful?
+> >> +        * Try system_bpf_oom.
+> >> +        */
+> >> +       bpf_oom_ops =3D READ_ONCE(system_bpf_oom);
+> >> +       if (!bpf_oom_ops)
+> >> +               goto exit;
+> >> +
+> >> +       /* Call BPF OOM handler */
+> >> +       ret =3D bpf_ops_handle_oom(bpf_oom_ops, NULL, oc);
+> >> +exit:
+> >> +       srcu_read_unlock(&bpf_oom_srcu, idx);
+> >> +       return ret && oc->bpf_memory_freed;
+> >> +}
+> >
+> > ...
+> >
+> >> +static int bpf_oom_ops_reg(void *kdata, struct bpf_link *link)
+> >> +{
+> >> +       struct bpf_struct_ops_link *ops_link =3D container_of(link, st=
+ruct bpf_struct_ops_link, link);
+> >> +       struct bpf_oom_ops **bpf_oom_ops_ptr =3D NULL;
+> >> +       struct bpf_oom_ops *bpf_oom_ops =3D kdata;
+> >> +       struct mem_cgroup *memcg =3D NULL;
+> >> +       int err =3D 0;
+> >> +
+> >> +       if (IS_ENABLED(CONFIG_MEMCG) && ops_link->cgroup_id) {
+> >> +               /* Attach to a memory cgroup? */
+> >> +               memcg =3D mem_cgroup_get_from_ino(ops_link->cgroup_id)=
+;
+> >> +               if (IS_ERR_OR_NULL(memcg))
+> >> +                       return PTR_ERR(memcg);
+> >> +               bpf_oom_ops_ptr =3D bpf_oom_memcg_ops_ptr(memcg);
+> >> +       } else {
+> >> +               /* System-wide OOM handler */
+> >> +               bpf_oom_ops_ptr =3D &system_bpf_oom;
+> >> +       }
+> >
+> > I don't like the fallback and special case of cgroup_id =3D=3D 0.
+> > imo it would be cleaner to require CONFIG_MEMCG for this feature
+> > and only allow attach to a cgroup.
+> > There is always a root cgroup that can be attached to and that
+> > handler will be acting as "system wide" oom handler.
+>
+> I thought about it, but then it can't be used on !CONFIG_MEMCG
+> configurations and also before cgroupfs is mounted, root cgroup
+> is created etc.
 
-This race condition could result in netconsole messages containing
-incomplete or inconsistent userdata - for example, reading the old
-userdata_length with new extradata_complete content, or vice versa,
-leading to truncated or corrupted output.
+before that bpf isn't viable either, and oom is certainly not an issue.
 
-Fix this by acquiring target_list_lock with spin_lock_irqsave() before
-updating extradata_complete and userdata_length, and releasing it after
-both fields are fully updated. This ensures that readers see a
-consistent view of the userdata, preventing corruption during concurrent
-access.
+> This is why system-wide things are often handled in a
+> special way, e.g. in by PSI (grep system_group_pcpu).
+>
+> I think supporting !CONFIG_MEMCG configurations might be useful for
+> some very stripped down VM's, for example.
 
-The fix aligns with the existing locking pattern used throughout the
-netconsole code, where target_list_lock protects access to target
-fields including buf[] and msgcounter that are accessed during message
-transmission.
+I thought I wouldn't need to convince the guy who converted bpf maps
+to memcg and it made it pretty much mandatory for the bpf subsystem :)
+I think the following is long overdue:
+diff --git a/kernel/bpf/Kconfig b/kernel/bpf/Kconfig
+index eb3de35734f0..af60be6d3d41 100644
+--- a/kernel/bpf/Kconfig
++++ b/kernel/bpf/Kconfig
+@@ -34,6 +34,7 @@ config BPF_SYSCALL
+        select NET_SOCK_MSG if NET
+        select NET_XGRESS if NET
+        select PAGE_POOL if NET
++       depends on MEMCG
+        default n
 
-Also get rid of the unnecessary variable complete_idx, which makes it
-easier to bail out of update_userdata().
-
-Fixes: df03f830d099 ("net: netconsole: cache userdata formatted string in netconsole_target")
-Signed-off-by: Gustavo Luiz Duarte <gustavold@gmail.com>
----
-This patch fixes a race condition in netconsole's userdata handling
-where concurrent message transmission could read partially updated
-userdata fields, resulting in corrupted netconsole output.
-
-The patch fixes the issue by ensuring update_userdata() holds
-the target_list_lock while updating both extradata_complete and
-userdata_length, preventing readers from seeing inconsistent state.
-
-Changes in v4:
-- Avoid calling WARN_ON_ONCE() while holding the spinlock.
-- Link to v3: https://lore.kernel.org/r/20251027-netconsole-fix-race-v3-1-8d40a67e02d2@meta.com
-
-Changes in v3:
-- Drop testcase.
-- Link to v2: https://lore.kernel.org/r/20251022-netconsole-fix-race-v2-0-337241338079@meta.com
-
-Changes in v2:
-- Added testcase to Makefile.
-- Reordered fix and testcase to avoid failure in CI.
-- testcase: delay cleanup until child process are killed, plus shellcheck fixes.
-- Link to v1: https://lore.kernel.org/all/20251020-netconsole-fix-race-v1-0-b775be30ee8a@gmail.com/
----
- drivers/net/netconsole.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 194570443493..5d8d0214786c 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -886,8 +886,11 @@ static ssize_t userdatum_value_show(struct config_item *item, char *buf)
- 
- static void update_userdata(struct netconsole_target *nt)
- {
--	int complete_idx = 0, child_count = 0;
- 	struct list_head *entry;
-+	int child_count = 0;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&target_list_lock, flags);
- 
- 	/* Clear the current string in case the last userdatum was deleted */
- 	nt->userdata_length = 0;
-@@ -897,8 +900,11 @@ static void update_userdata(struct netconsole_target *nt)
- 		struct userdatum *udm_item;
- 		struct config_item *item;
- 
--		if (WARN_ON_ONCE(child_count >= MAX_EXTRADATA_ITEMS))
--			break;
-+		if (child_count >= MAX_EXTRADATA_ITEMS) {
-+			spin_unlock_irqrestore(&target_list_lock, flags);
-+			WARN_ON_ONCE(1);
-+			return;
-+		}
- 		child_count++;
- 
- 		item = container_of(entry, struct config_item, ci_entry);
-@@ -912,12 +918,11 @@ static void update_userdata(struct netconsole_target *nt)
- 		 * one entry length (1/MAX_EXTRADATA_ITEMS long), entry count is
- 		 * checked to not exceed MAX items with child_count above
- 		 */
--		complete_idx += scnprintf(&nt->extradata_complete[complete_idx],
--					  MAX_EXTRADATA_ENTRY_LEN, " %s=%s\n",
--					  item->ci_name, udm_item->value);
-+		nt->userdata_length += scnprintf(&nt->extradata_complete[nt->userdata_length],
-+						 MAX_EXTRADATA_ENTRY_LEN, " %s=%s\n",
-+						 item->ci_name, udm_item->value);
- 	}
--	nt->userdata_length = strnlen(nt->extradata_complete,
--				      sizeof(nt->extradata_complete));
-+	spin_unlock_irqrestore(&target_list_lock, flags);
- }
- 
- static ssize_t userdatum_value_store(struct config_item *item, const char *buf,
-
----
-base-commit: 84a905290cb4c3d9a71a9e3b2f2e02e031e7512f
-change-id: 20251020-netconsole-fix-race-f465f37b57ea
-
-Best regards,
--- 
-Gustavo Duarte <gustavold@meta.com>
-
+With this we can cleanup a ton of code.
+Let's not add more hacks just because some weird thing
+still wants !MEMCG. If they do, they will survive without bpf.
 
