@@ -1,95 +1,97 @@
-Return-Path: <linux-kernel+bounces-874413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98514C16487
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:48:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDF22C1648A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06BD550705B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:43:25 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 484955072ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1740734DCE0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C1634DCF5;
 	Tue, 28 Oct 2025 17:42:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWeIwKxx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="smv/lP5o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C90C24291E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3B134C991;
+	Tue, 28 Oct 2025 17:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761673373; cv=none; b=OcwwqlRKfp6nRZnnDRGpQRWocK5D3fYGnGgjpuzyb0m+WAT9Nap6bLPSJLqsF2vcV8UNoXnyD5q2C4IUeAg7F5WjiVMH7YhYhEhgG9ywyKwVbk5fKLVykU321l6B8xDR8HsNNCo0Hvwywc5FiL9zcwpUGRArvjs6rmul0MctITM=
+	t=1761673373; cv=none; b=W84HQkTmwXBkT0jJMFtBCrKVAeaSuj/s5ws2swGBb9b+zKVCgdbCIVQwsTOH38Dn0hmtr7RNiqKbOse8m8/F4v1cJP11TE3OVB0aSRLMH0CwEy4vt6IrJCD6BcqTan0pWbG8PWZDWlfHQXD4tX58gCbdfaSItLoA4RwVsMBywTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761673373; c=relaxed/simple;
-	bh=9/W+G/NOWtoUPX3G1RgZn0RcBmOw21RSR4+GVFpHTNg=;
+	bh=O9h35W/5qIeYiR+aZ394LJfEnSiQZLZpjbezvmnwe7c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W7/pBgWb/cFy/zixK7/V7IDId1OkKdBJUPoj/CvU/Es9DvMIc+hlFvaNGH11aI1erUMJcs6rDgTPRp8Zc31X3j3Z6lQrA0dNcdn11BnoYz0jwiMTsDMJd4GGAw72o5Zwk/l78M7ZwQuV6+fUHInlzErSb1QuBe6U02vkLjCLLfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWeIwKxx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F6BEC4CEE7;
-	Tue, 28 Oct 2025 17:42:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=q15SzsgUuR3y8UhtEP8v/EXorvKG6HoOhyYYSWP2fbNZOiWQtpZqtLtJgaoFVxMsqXGvmR8CQvB+3967SKEnEG5GulYOrL3SvVdHrcop83twNA9LO8aaBIhM7VRZJXAnLXlIEts1nFuxMpAOGyOT8RFfsHi8QB7n3/lUAZZPArw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=smv/lP5o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188B7C113D0;
+	Tue, 28 Oct 2025 17:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761673371;
-	bh=9/W+G/NOWtoUPX3G1RgZn0RcBmOw21RSR4+GVFpHTNg=;
+	s=k20201202; t=1761673373;
+	bh=O9h35W/5qIeYiR+aZ394LJfEnSiQZLZpjbezvmnwe7c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NWeIwKxxqc/Z4GPSGOTFFo+9fS+pbKGU7c6S0kXNlpQgmbpdOxZ/FP0PAL1MiLFCa
-	 087eS4jfc5hcZqkCBQ+Y6WXg6Ob8mFGVHSj7mbNUrB1/rmqnemxMYlJKia7HSw+dIH
-	 6gly1tECAKcdS7hzkczLXpEfbEGAKeAQ11Q2x2cjqOhtcTPPcX886FqnCTYF7opUyi
-	 IIKL47B/tWYvFezeGjhdtyR9+7bGz5K4VIA8GFX485EknbKQdBsJIO4VDNxfF1AMU/
-	 LnmWBSX2aSX96OfA7buL1plgMd0YmtIaB+2p4NpN/zxHFCuvSvTQBPPWI9dAOJ7cRD
-	 fp8D8x0J7WXsQ==
-Date: Tue, 28 Oct 2025 13:42:50 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
-	Kees Cook <kees@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH] Documentation: Provide guidelines for kernel development
- tools
-Message-ID: <aQEAms7uBHLwiRJE@laps>
-References: <20251027201204.352890-1-dave.hansen@linux.intel.com>
- <CANiq72k7LQwXFnZgh8fCLNnx=v17Yb7yVcPQT_cdPi5k=17jbA@mail.gmail.com>
+	b=smv/lP5o9CsLvG21j5v2Heg6EF/lysOnQHrQpZJiX8DtUg2Lq+g99CODEbIkkrZy5
+	 OnjRJPcTk2LkvWjG2QWv+/uQ0Ww+4DXzENNaOCqTBqeroFUrss8437dc7sS66Uzdkd
+	 saBHMOWXQZgMHK0ZAe1/AA+uB1En7rv2Aefwc7TpOhguU26if64+pyj6FMRBrldQyP
+	 0jKG+7WgPyu8hiTKfkeJC+GIk/EtN71fzJen24goMLtLwd4sZbowqCWy+tNdr6/Ezc
+	 3z5sSEESJtbWEZHhKs1Y7lcFapuO723akp7KCBJlKkXmJurqWZgGNzlgHNtz186X/3
+	 +mbeVR8ykC8LQ==
+Date: Tue, 28 Oct 2025 07:42:52 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Subject: Re: [PATCH v2 08/23] mm: introduce BPF kfuncs to deal with memcg
+ pointers
+Message-ID: <aQEAnB7Gjs4vew8x@slm.duckdns.org>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-9-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72k7LQwXFnZgh8fCLNnx=v17Yb7yVcPQT_cdPi5k=17jbA@mail.gmail.com>
+In-Reply-To: <20251027231727.472628-9-roman.gushchin@linux.dev>
 
-On Tue, Oct 28, 2025 at 04:29:14PM +0100, Miguel Ojeda wrote:
->On Mon, Oct 27, 2025 at 9:13 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
->> + - ChatGPT generated a new function in your patch to sort list entries.
->> + - A .c file in the patch was originally generated by Gemini but cleaned
->> +   up by hand.
->
->Like Jon, it also crossed my mind using just LLM here or perhaps
->mentioning "open" models. On the other hand, it is clear commercial
->models are getting used already, e.g. Gemini is in the commit log
->already and Claude is in the mailing list.
+On Mon, Oct 27, 2025 at 04:17:11PM -0700, Roman Gushchin wrote:
+> +__bpf_kfunc struct mem_cgroup *
+> +bpf_get_mem_cgroup(struct cgroup_subsys_state *css)
+> +{
+> +	struct mem_cgroup *memcg = NULL;
+> +	bool rcu_unlock = false;
+> +
+> +	if (!root_mem_cgroup)
+> +		return NULL;
+> +
+> +	if (root_mem_cgroup->css.ss != css->ss) {
+> +		struct cgroup *cgroup = css->cgroup;
+> +		int ssid = root_mem_cgroup->css.ss->id;
+> +
+> +		rcu_read_lock();
+> +		rcu_unlock = true;
+> +		css = rcu_dereference_raw(cgroup->subsys[ssid]);
 
-I *think* that this was based on the experience[1] Kees had with LLMs, and my
-thoughts were that this example would match what a developer were to write if
-they were asked to document the usage of tooling.
+Would it make more sense to use cgroup_e_css()?
 
-And yes, we shouldn't mention proprietary brand names in kernel docs, so I
-fully agree with Jon and Miguel here. We should however encourage contributors
-to list the actual tools/LLMs they used, as this could be interesting down the
-road...
-
-
-[1] https://hachyderm.io/@kees/114907228284590439
+Thanks.
 
 -- 
-Thanks,
-Sasha
+tejun
 
