@@ -1,132 +1,76 @@
-Return-Path: <linux-kernel+bounces-874889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBFCC17572
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:24:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05E1C17590
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859F33B5A33
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:24:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E805401D7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883C036999B;
-	Tue, 28 Oct 2025 23:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bHOGkYGl"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907F536B960;
+	Tue, 28 Oct 2025 23:30:12 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C36221F17
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F30136B964
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761693855; cv=none; b=VkJhHxHEqo9+5Bak3/WtDdEquDMtmPMyYR2iYcy2fwoZjllDJUwlBiC6L7ooaFl8WBEgbNFin8YEoieCxOxsfdP6qkFO/DeQavSqWgnJRkzI7kGHhLFCo+oJexIS9r2y2ipLWbR/FTvl47CcwYK036Fy/e/kU9JPF8xUAX3nDpI=
+	t=1761694212; cv=none; b=t2qmkso73lNywVoQmp6jHdx6+0bNdHptBdZqPgB/iva1lZYtL/w0JyIEPFI+tmhmZNk4dDmYaWTAlnWla3ibDHBaTy2902FtWPfE7Y+CeVp4niO+W//y/GCTkihOhMdE5JFKlZGXE1TIGLXj70mJml09W9boIeQwlvZ2N25uFqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761693855; c=relaxed/simple;
-	bh=xADNPBQhTc3x0r+Uhy35KcjJVB8WvPcuvGGoxZTvq3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sx/WVqHpVWTQpa9yEI3fmr55ndJtXsYIKMJzCwxFmHv0I442VIFREjy3VidvAwFWNQEVKYCBGsTu/DedCscm8DIvKKV2O2ZOZYYzDr6BzkDWwo5UyU0y6x99/BxE6OMC+5Z+RLJUAsF7ZalsBB6oK32AP7wLKWkD35GX0/FnkOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bHOGkYGl; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761693850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nlB9WJAF3YhOSJlj9moFGTAHILvUEPk36z3X23Y7y8Y=;
-	b=bHOGkYGlqdYJuvtiAR/iv2AxNepGg0f5rNp8FrpwUHBrwiPDOVfZTtBT7gAhQftp/LaWRK
-	tkTBQeL5oFLzo4UE11YBLEIi9jliZWh71t8hN9r23n5Bn+fHdTYokChGvi/23PJv6usiFX
-	ESFA0MReO2ShiGO48zjD5eGfewGK3Fk=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Song Liu <song@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-  Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
-In-Reply-To: <CAHzjS_vrNZpEbBuHLhHwHaGzLaF3QEeKWz-VikCm0bYrFBq4UA@mail.gmail.com>
-	(Song Liu's message of "Tue, 28 Oct 2025 14:33:43 -0700")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-7-roman.gushchin@linux.dev>
-	<CAHzjS_vrNZpEbBuHLhHwHaGzLaF3QEeKWz-VikCm0bYrFBq4UA@mail.gmail.com>
-Date: Tue, 28 Oct 2025 16:24:04 -0700
-Message-ID: <878qguobjf.fsf@linux.dev>
+	s=arc-20240116; t=1761694212; c=relaxed/simple;
+	bh=GDf8Ul3RJyttQEhWKJl2eS4q73xdMHAKwY8j3vHSnnY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lz4MLsLuEJDgtqezo5LgfPnVKFoscGpAA3whewmDyBB126p7iz54MAeqrkMMM7itx2+jsxhiquwwSxxXBPM73cSM0w+/NCIQRSnXMh2ssjaplgWtYfyGVR02TJjexmXT9IOZkEn/VEyo6AUZnPZSOl788GN0S/8KSr9HTG7r1oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430d4a4dea3so6425275ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:30:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761694209; x=1762299009;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GDf8Ul3RJyttQEhWKJl2eS4q73xdMHAKwY8j3vHSnnY=;
+        b=IivVbz1DTYhyLiaB5MMC1CYHWKEPyIdADCEEuW+nD48JCH+7CmHKX6Gl5mQTe0C+lw
+         JD8Jxyp61GyYRJXTZoSFJtravdR0c77VnUJ9DIEWZ0pNf9Vsc/eZUMDw8Mw0BJh3Lexs
+         Chr97qjFGX6NTTyCK0tpTTMk9Gg/n9GZNWEpyXT1L2FG1qRse5GPb5WlwCd0hD2jjilX
+         mF+1L4viXkFvE1nxyx9ZEYRoqoTe0l93Ba170IW+h3sGnUbhc0ywX5IXi9/s8z96kcBL
+         +h2XgY4eOqy4/LMg/zBJwAPEI1CwXW37HS9dShWlhCP9Rlc9AOZNtajFQp344BUwuZWn
+         g7FA==
+X-Gm-Message-State: AOJu0YxhHyKa+etxLm28zcOl/GyECN4latZGICkykQ/wSPwETaV4zhCd
+	XsqJrmIM9m3km8CKnSYanAmww9usTeYsKCWVZWEn2qfSPC+oyYvwJUQwF5E3TefwnezvHTRTjnU
+	OalKHPyioVb7i+ymjIyJzrv9ALKRs/ain19jg0KmUppms650Tx3nSuhDC9RE=
+X-Google-Smtp-Source: AGHT+IHD38991iz8Pvj88XpEuGr2XPqjWmdIkhquN4nhCcM6z3TKsHTje3rDNr1dapgI2Vn9+itNDsDvezYHyN7DS+USYWsT2dBk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:17c9:b0:42f:8bdd:6e9c with SMTP id
+ e9e14a558f8ab-432f8e532e5mr15390705ab.14.1761694207782; Tue, 28 Oct 2025
+ 16:30:07 -0700 (PDT)
+Date: Tue, 28 Oct 2025 16:30:07 -0700
+In-Reply-To: <66f0a364.050a0220.a27de.0009.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690151ff.050a0220.32483.01e1.GAE@google.com>
+Subject: Forwarded: kernel BUG in ocfs2_truncate_file
+From: syzbot <syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Song Liu <song@kernel.org> writes:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-> On Mon, Oct 27, 2025 at 4:18=E2=80=AFPM Roman Gushchin <roman.gushchin@li=
-nux.dev> wrote:
-> [...]
->> +
->> +struct bpf_oom_ops {
->> +       /**
->> +        * @handle_out_of_memory: Out of memory bpf handler, called befo=
-re
->> +        * the in-kernel OOM killer.
->> +        * @ctx: Execution context
->> +        * @oc: OOM control structure
->> +        *
->> +        * Should return 1 if some memory was freed up, otherwise
->> +        * the in-kernel OOM killer is invoked.
->> +        */
->> +       int (*handle_out_of_memory)(struct bpf_oom_ctx *ctx, struct oom_=
-control *oc);
->> +
->> +       /**
->> +        * @handle_cgroup_offline: Cgroup offline callback
->> +        * @ctx: Execution context
->> +        * @cgroup_id: Id of deleted cgroup
->> +        *
->> +        * Called if the cgroup with the attached bpf_oom_ops is deleted.
->> +        */
->> +       void (*handle_cgroup_offline)(struct bpf_oom_ctx *ctx, u64 cgrou=
-p_id);
->
-> handle_out_of_memory() and handle_cgroup_offline() takes bpf_oom_ctx,
-> which is just cgroup_id for now. Shall we pass in struct mem_cgroup, which
-> should be easier to use?
+***
 
-I want it to be easier to extend, this is why the structure. But I can
-pass a memcg pointer instead of cgroup_id, not a problem.
+Subject: kernel BUG in ocfs2_truncate_file
+Author: eraykrdg1@gmail.com
 
-Thanks!
-
->
-> Thanks,
-> Song
->
->> +
->> +       /**
->> +        * @name: BPF OOM policy name
->> +        */
->> +       char name[BPF_OOM_NAME_MAX_LEN];
->> +};
->> +
->> +#ifdef CONFIG_BPF_SYSCALL
->> +/**
->> + * @bpf_handle_oom: handle out of memory condition using bpf
->> + * @oc: OOM control structure
->> + *
->> + * Returns true if some memory was freed.
->> + */
->> +bool bpf_handle_oom(struct oom_control *oc);
->> +
+#syz test
 
