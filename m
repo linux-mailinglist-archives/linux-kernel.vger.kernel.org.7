@@ -1,141 +1,134 @@
-Return-Path: <linux-kernel+bounces-873128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838D7C132E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:35:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17EDFC132EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 07:37:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 811933B21C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:35:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0EB8F4E7364
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 06:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676262BE020;
-	Tue, 28 Oct 2025 06:35:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1362BDC35;
+	Tue, 28 Oct 2025 06:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eacmh3Oj"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WAhKlf00"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9F7FBF6
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C388C78F29
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 06:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761633328; cv=none; b=ONxT9rjhMySGndDyU1801YmJiRQqU4df8SEHJ2QB5qUC0S0e57NztwA63v0Hooupjj4Hq+9ZEWC0B2fI4WL33ZpQ/2GgkpHqmahMLNASZbA1f+3Ca7B1kmUZXqrMu0zi8+d91ZU7PZUAgzHX1dkPf+lVQyFaShXzeL7h6ZAUsNw=
+	t=1761633378; cv=none; b=YYMCmRaUafJ8N2axWBqHahXob5kfAICiGz/0DqFYrccXEzsYXzNPyxktyf3FsAChYiAYLLopCJpeNuRd68pGetwDTiQFjw2wdxwsb/a/CO+6ARi3lVvJqauZpqDUF93x3SKcBLmzW3VGBnSzpPNr5p05XxUnM9Jp9ZXLhzcRcyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761633328; c=relaxed/simple;
-	bh=UTtdgGaS6zmAmqdFeDwWjiD0eGpcwLvqLgmPQgS9tSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sjIfL8lsccih+rhNmpmU5ltT4WzkUqhFzicMU8P/U/uzLH1dRKr/uerOStP2AlfNzq3c3hByQR3p4XHCOETSme2UrPsC2a4brdhkEkZx0oAPKjiAi42OKt4wDs8R0ILpMQ70+gm6BWiwSR9zQyfP3UUQRn8Cp/QHalsg4+bA4EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eacmh3Oj; arc=none smtp.client-ip=209.85.215.180
+	s=arc-20240116; t=1761633378; c=relaxed/simple;
+	bh=fIpLWlJZgNMVBNwv1Qi28QT9txbaMkE9WZofpeGLL44=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P8NJvGJbtsgm9zH8041o6oBukKre+hYVmjktgzVIH5xLcv6iNvmg3JyjN2W0ykgs8llHvtFgkYw7DFJ0IILA2DW4bEf+DYnB2ls2kqVs70Rb8lMznTBGD0+pa15rkB0se7spzl9muj2zRJyrZwts6oe8g+DRSFuKkvPapaHTDyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WAhKlf00; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6329b6e3b0so5437844a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:35:27 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-290a3a4c7ecso63488365ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 23:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761633327; x=1762238127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MYFfpLSRIIr+tKoWH91vBQZpy9R88bvJI5kLZcZ+Wa4=;
-        b=eacmh3OjeZj3dyR6fhv2CKsNUx0U997/bw+Q/Wyk53O4jlFA12vNzTR9KNsqNCLjCg
-         mYJSoqFjfMSchq6SWbeUBfs0QPE9w5SaT2Iywgzdzg9IJe4Ud/tGeITcumz2GsNg0lqW
-         WFV4Sy7y91MUwKDwBKvr7I5Z1P0Ub3GZqF4iQpD9Y6PFOrAOksDrVEuswQT2wCWolJr4
-         lnotYUm8768AsM7nRFhgrH4xslkfK6zFbTReIxFzGxUQxnFWkHfqZvzKwJe4Y3T2D4S1
-         Zeg/NFFHtLMpSvkmY1Viry0qTivh16ZTjovSbmm4um1SDv8OkK0xHt5uj7NmjNQ74PW0
-         efAw==
+        d=gmail.com; s=20230601; t=1761633376; x=1762238176; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eHCzvaSzIfjxLqqlWg+9YqHl2rYFybHFRYREuApfQng=;
+        b=WAhKlf00a90QiFnzImHQoIkAhc/wIBuKyFnC+lMM7EJQCTvPL0dl0HgQFGOkKK7Fmd
+         uZhtkcbluoVSwgY4e94hV6pHV1Aho+4N2UO7FISgTHfulzAAFodsDwrimwjOJf+IgHzH
+         1Sd2r/GHtRzDd+d67OMlPwh6fhMdVsCOQB5OXz83jUrx/o8/1lF1vV8IO2ud7hwerZ/l
+         ETybXYi9ptdRtqHkcCsQ8gyx+wDMVEj7nxSe/W8ruSSqAd7V+EyDqVv3jzf8oumfXThf
+         vVE2vcvlALANA8gvgyuUlENZYUxCUWslRgIJTFFMtX18FEEQuaW0zbESvaUqysTy3+v3
+         jQtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761633327; x=1762238127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MYFfpLSRIIr+tKoWH91vBQZpy9R88bvJI5kLZcZ+Wa4=;
-        b=j5GnFL4SSPI/2ygv3R6LiHPSvpk+v8Ta1ImWjDtBWy5pZlscUTuvGQveNyCfy6vPUn
-         76r4kqkYtqjJRatIOPRH9zEB8zSDx3qlnAQ0OdOyfLIm9YKmxLRtb96LGREY3aXT17oO
-         qg8eDGqlCeLq9yqagUde+3t0KbdvwFmVjQZHg++ZEVstp6etAjQOQIieF3L7wPsJqhf0
-         ayHRY1OfQnlglVxOffzAldgqH1YwQdhVlGRsasn/zwk+dU+QBbIL0C/1YIfrzTC7gjSP
-         /T91I/xV6n4oGeMI8Q5SAtuTthokqf5DL1qD65eH/6AQ2lfCOgZ166ooUpdeYdXWfnXI
-         tz9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXT/rLv01i3Ij8OnNBce53mPCWzx4nyQqTptrxfdXJnNyeRQTsG+iTDLiWvwO1DVDVxMUnVJ64H1OjOPJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1PSBWm5ZJzYH5uKmHzEzdM9aujylenLYHEOVNKsve1LkTbB/d
-	JHo+yuuXlg69WT74H9YUdCD0DgTFGzNp2KKOgaj0cHtpHcYlty+3+i/jORMDyMa59AyrZabgkfL
-	ImxbFZxbVANBJIkxpLnOYFjbsl5PV1Ic=
-X-Gm-Gg: ASbGncsdYugzzK6L+YQg44NxEdIpwJo4HOC3w7RCGNZzYL8aiWaZL/MLcFsGZpmSPkr
-	wTiV4tCpsgqiVe7vlquIbvjzku6kWRw8SO/CNbpBqUFVHogJXqEmshepjsEznLpMxG6DeIYee5P
-	Xm3RozYHaorwpMZrnfk3SKgVq8fC1l18y7Pr917sWzKd9qdaJ9hO6+bcL+OIX9ks9tfKGoNQvU6
-	ysr64vu7QjYW7Xw/4a1d8sWFGCuCf3KTjVRBOjyAWHGp+Dkp6oip3mNPsmkDWqI2RBncr26bPGO
-	O4APgmISdVajc2gVoB66vwuqkAeNniT5vaYC4G32aJxgzZ2b7wXwKcUWv+/2FEW/lQXxM6vFBps
-	LIno=
-X-Google-Smtp-Source: AGHT+IGI5kWyxWqZEosgvMYNCYQq9uVxqCQFsRJHyrDpDx9u3AcWbzeIC0CrQYCcyWwnQ9nB/xbi19OYITvuWVK5Paw=
-X-Received: by 2002:a17:902:c403:b0:24b:1585:6350 with SMTP id
- d9443c01a7336-294cc6ecfe4mr26856735ad.11.1761633326663; Mon, 27 Oct 2025
- 23:35:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761633376; x=1762238176;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eHCzvaSzIfjxLqqlWg+9YqHl2rYFybHFRYREuApfQng=;
+        b=jyp1TOrxmHHhY/q/STOnx1PByAmBPx7/sUsLVvjRAQ8pugbtdJEOSCvP3G4RJ0mUw+
+         YwEQIKfJz9nucAVIo0dOqfdl3hA2+O1w8sFV+FxIrYNMdgcW+ZKnx0pxOrV3ht3lVY0Z
+         tkemHEK6GDbnBBfjcY4iNd4ckI1/c7ozj3PhJoUy3LswSfX57WyqrGqKjQ3zkKbUx/Ti
+         rLBrFe7s9GuFIPxUn22b0+z1kCZHRbx68ZLROWDa1bicwt/L2odBoRzW4vgAzK+0g6ct
+         325KNNwQz9XDnMMxk1cA7GgXBqzDHelmxkcpTzi3ctGzWvZfXyBDEOsbgjc4rWorOTfw
+         b/7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUb8jWteW6QY5k0jfXrD77EHYxMlYoA32ButljuzsGHObv3ai1LjDLlyyL14qwe2WaUhM72Y4FgVBjXS8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/fYMgZJZWscp+sbmfw3RmsODFwojkTGEKs+xMggI9AvwCsJhb
+	6/14wa7dxeeGWFgmE4atHKBBYepzSYWjGa/cs/827BCDit3gIyQMOIiLx0r6NRIYw8AP0Q==
+X-Gm-Gg: ASbGnct5gNYS85miwgO07jEhU55vWH/rkZQ1ZASugIKuJxMV01i5PQLYp48x8UGY0/6
+	kL5rEio0D/H+LrTEpWSxRwa+C0JpxMCBXE41mV6pR3WNGPYLMLAYjHs6knmfFcu/iaJ9zbfErht
+	EUepI5rLBxHxFWH+feq1nHwHXSNgZYMBhacFo+a4b/EX33OrSIiIK16uUZYmcgoaRR2uMKEd1wg
+	+SZXUFF3jIwUBSb5jTTiR0Q4nuosoECz5ez3j0o5jB9PN4opIFDLtZ8xXcQ0taQIXQoCZqbzsal
+	zkIKm9p6Pu8g06jRTmMmwlRKLnUGdepxLwfttzN5yBvJMb8u21SVX5Sqe6fQx+rJZZKHgRsKrAg
+	tw+N/2lOY/DGakjuFp8koZLLBfEkHfpsuh+XoCiSMBTBRFg7fIIp3zI+lRTPPPdjFnCct4+d96q
+	jSLG1c58GQ3Ex1aTZHDkFwWA==
+X-Google-Smtp-Source: AGHT+IH2v3C/umCB14OlrxNqF3tzlUkDCN89YW3HVw9JkHJXqPm2mOQ48IiDSJJGHTDX9O7MPiIkwg==
+X-Received: by 2002:a17:903:b50:b0:264:a34c:c6d with SMTP id d9443c01a7336-294cb3ecbc3mr28327115ad.37.1761633375933;
+        Mon, 27 Oct 2025 23:36:15 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498cf4a53sm105914585ad.6.2025.10.27.23.36.13
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 27 Oct 2025 23:36:15 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Thierry Reding <treding@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] iommu/of: Fix device node reference leak in of_iommu_get_resv_regions
+Date: Tue, 28 Oct 2025 14:36:01 +0800
+Message-Id: <20251028063601.71934-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913105252.26886-1-opensource206@gmail.com>
- <8199bec4-b9e1-4d6e-98da-a4d7eb667437@kernel.org> <CAKPKb8-s96v+Nh29Z5E0wgyXYgoFHJT2SHA_WpZshXspo0WY0w@mail.gmail.com>
- <f9001f98-80d6-49d5-8665-d42fcef7b07d@kernel.org> <CAFyCYyOFFMrDetScx_8_VgRpCVyTq_O0PGn1hDt7+UwMygqeXw@mail.gmail.com>
- <7fc65c85-f75e-419c-aa1b-0c85376373d4@kernel.org> <CAKPKb88Tov27+c227p8k0KAuZtm_LNNxDkf=5YBfDYw94afFPw@mail.gmail.com>
- <3a565e1b-4d73-4d7d-a6bd-1dd8b7b973b3@kernel.org>
-In-Reply-To: <3a565e1b-4d73-4d7d-a6bd-1dd8b7b973b3@kernel.org>
-From: opensource india <opensource206@gmail.com>
-Date: Tue, 28 Oct 2025 12:05:13 +0530
-X-Gm-Features: AWmQ_bmvBR5Njruk9k5xijyYtYuIZPX8ibh8q0rNURIyqiBvdZwS-7zDkue7sJI
-Message-ID: <CAKPKb89WkMmTt2atSg-J0HhY08dapHGLmuOJDYQRWWz5hAyhdA@mail.gmail.com>
-Subject: Re: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-To: Hans Verkuil <hverkuil+cisco@kernel.org>
-Cc: jc@kynesim.co.uk, mchehab@kernel.org, hverkuil@kernel.org, 
-	ribalda@chromium.org, laurent.pinchart@ideasonboard.com, yunkec@google.com, 
-	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, 
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Hans,
-On Mon, Oct 27, 2025 at 9:24=E2=80=AFPM Hans Verkuil <hverkuil+cisco@kernel=
-.org> wrote:
->
-> Always compile v4l2-compliance from the git repo https://git.linuxtv.org/=
-v4l-utils.git/
-> 1.31 is old, and it is important to test with the latest version since it=
- will be kept
-> in sync with the head of the media-committers git repo.
+In of_iommu_get_resv_regions(), of_find_node_by_phandle() returns a device
+node with its reference count incremented. The caller is responsible for
+releasing this reference when the node is no longer needed.
 
-Apologies. i upgraded my v4l-utils repo to recent(version 1.33) and i
-can see the error now
+Add a call to of_node_put() to release the reference after the usage.
 
->
-> Debugging a bit in validate_av1_sequence() shows it fails here:
->
->         /* 4. Profile-specific rules */
->         switch (s->seq_profile) {
->         case 0:
->                 /* Profile 0: only 8/10-bit, subsampling=3D4:2:0 (sx=3D1,=
- sy=3D1) */
->                 if (s->bit_depth !=3D 8 && s->bit_depth !=3D 10)
->                         return -EINVAL;
->                 if (!(sx && sy))
->                         return -EINVAL;
->                 ^^^^^^^^^^^^^^^^ This is the test that fails the validati=
-on
->                 break;
->
-> Regards,
->
->         Hans
+Found via static analysis.
 
-yes. subsampling flags are set to 0 , which are not allowed as per our code=
-.
-tested v4l2-compliance successfully with below fix. please review
+Fixes: a5bf3cfce8cb ("iommu: Implement of_iommu_get_resv_regions()")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/iommu/of_iommu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-https://lore.kernel.org/linux-media/20251028062623.12700-1-opensource206@gm=
-ail.com/T/#u
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 6b989a62def2..02448da8ff90 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -256,6 +256,7 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
+ 				maps = of_translate_dma_region(np, maps, &iova, &length);
+ 				if (length == 0) {
+ 					dev_warn(dev, "Cannot reserve IOVA region of 0 size\n");
++					of_node_put(np);
+ 					continue;
+ 				}
+ 				type = iommu_resv_region_get_type(dev, &phys, iova, length);
+@@ -265,6 +266,7 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
+ 				if (region)
+ 					list_add_tail(&region->list, list);
+ 			}
++			of_node_put(np);
+ 		}
+ 	}
+ #endif
+-- 
+2.39.5 (Apple Git-154)
 
-Regards,
-Pavan
 
