@@ -1,81 +1,43 @@
-Return-Path: <linux-kernel+bounces-873402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 819D7C13DB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:38:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47275C13DDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B23A4226AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 768A73B7905
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720EA302745;
-	Tue, 28 Oct 2025 09:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fb36uv5q"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6287B304BDD;
+	Tue, 28 Oct 2025 09:34:56 +0000 (UTC)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E572BD5A8;
-	Tue, 28 Oct 2025 09:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4829E30499B;
+	Tue, 28 Oct 2025 09:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761644030; cv=none; b=TMjxRSpVYd4AEg3M0WwZ3Uhh+Aos3bII25wUqrA9NUg+iPCjXtqLZiuB2Bxx1vHG0L5n+9Om4U7oOihG/PpwSvkH7ebouz0tWdlqJy/mGAnn3E0+YuhGl47n5M1HqxWk6bUdQK4EJFma9S3G6t66UY6WhKWUGhdfzXlQ05FENNU=
+	t=1761644096; cv=none; b=nZPo7ZDseJXUXdhMHRncTot92lOviEAQU6/YZBDF7leyJKOla5fsaiG0uJaeRK4nUPsQ0ov0o/kfRRHQYjKRUdQeBaw4mBKQsRIWW3QGRUWrCqEbsf0e/OB3nvAZIc03Jbx73bF7ngDIKw148ybhdi8jAIZGwKEYODf5PLxQCl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761644030; c=relaxed/simple;
-	bh=gNIoYwnPGl2poq9hJhXrlXgYqCYv7k4kBJYh6yVqD2U=;
+	s=arc-20240116; t=1761644096; c=relaxed/simple;
+	bh=n3ag4l9DR9C7HYAl0AwhDUgt+hS/RPZwKzqoWc7z474=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LBpmlq+++MugpFnIOc88bHSe/XWA4TUDYg7iBlTcVJtHlIstnfV2240XQvGhc/cqZaRNEMw4fEyhPiJYYQ1oJnj+mToFfsYiqBj0tP6Vt80o+RBVeCjijzn5xfHXdt49CqgrW8JH//8eVfgHTxQb0wlE4LhlYB9iciuJ7lCK49g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fb36uv5q; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59S1jwrs012355;
-	Tue, 28 Oct 2025 09:33:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=QRyvVz
-	Y1aSZUvVTazOXD95pRWeNWcRO934GJDJqjh/w=; b=fb36uv5qukFk3JqFvVQvVI
-	GktXEJOPup1juHADYcyswf+EoH7DzRAwm0obR1OBlQb9Dm20auo9s2nluILsI4ew
-	UGIlt6juXUse+EDG8NxxY+KtJwlx/K8PSLpUIs4TmO1WqhduRkES0p9ug4lpDuVI
-	j9gJAD362d9eDnleVN80QTuDOp/53Z0/CLoRSfqkzxvV0csHK8V6nbA+p7KFbhaV
-	N/z+G2ZvwqUWvTac9W+vWp2gl+bTBcom1ONrb9kZlcs6n5BGagLeIlPWBhc4gDgJ
-	/o1uoFNjTd+ia7q9semQNgJ8883sqrOcVCUaQ+UZUtSElYtMgERJCIduUZnJFnDg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81u2g1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:33:41 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59S9Inhm017991;
-	Tue, 28 Oct 2025 09:33:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a0p81u2fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:33:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59S8lXfG030187;
-	Tue, 28 Oct 2025 09:33:40 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a1acjswxn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 Oct 2025 09:33:39 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59S9Xces2949800
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 28 Oct 2025 09:33:38 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 962FD58061;
-	Tue, 28 Oct 2025 09:33:38 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4BCFE58057;
-	Tue, 28 Oct 2025 09:33:32 +0000 (GMT)
-Received: from [9.109.248.153] (unknown [9.109.248.153])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 28 Oct 2025 09:33:31 +0000 (GMT)
-Message-ID: <0f70d4ff-ad35-42ee-8b99-cf6e3da7c49e@linux.ibm.com>
-Date: Tue, 28 Oct 2025 15:03:30 +0530
+	 In-Reply-To:Content-Type; b=pw3XrSX6UF5hX9LRGr2VHbHiiio430WvRMp7qnCoL1GqmNmGg4cLD+2gsHc04l5bMXif6/GVrcQQBqwKs/lNIHSqWDFkL7Of+7+cBkXGjs1N/vv7Hf/40+fuNTOqDhSPBfUthZcDTt1WEUgSVYwVkOtXWxYRdrEofZBJfsbf85g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
+X-QQ-mid: zesmtpip3t1761644020t944cb695
+X-QQ-Originating-IP: WmyZaQKgFgULUT5JCy5bTNzR7Fslt2fRzX9qsnX5Cns=
+Received: from [IPV6:240f:10b:7440:1:27fe:5767 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 28 Oct 2025 17:33:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 5111663429691748184
+Message-ID: <6443BD03B4C4F1FE+d20c3903-e2dc-4c2b-8f6e-fac38f242898@radxa.com>
+Date: Tue, 28 Oct 2025 18:33:33 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,72 +45,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v6 1/2] net/smc: make wr buffer count
- configurable
-To: Halil Pasic <pasic@linux.ibm.com>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "D. Wythe" <alibuda@linux.alibaba.com>,
-        Dust Li <dust.li@linux.alibaba.com>,
-        Sidraya Jayagond <sidraya@linux.ibm.com>,
-        Wenjia Zhang
- <wenjia@linux.ibm.com>,
-        Tony Lu <tonylu@linux.alibaba.com>, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org
-Cc: Wen Gu <guwen@linux.alibaba.com>,
-        Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-        Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20251027224856.2970019-1-pasic@linux.ibm.com>
- <20251027224856.2970019-2-pasic@linux.ibm.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: arm: rockchip: Add Radxa CM5 IO board
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Joseph Kogut <joseph.kogut@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Steve deRosier <derosier@cal-sierra.com>
+References: <174735136138.1544989.11909422896170025756.robh@kernel.org>
+ <20250528221823.2974653-1-joseph.kogut@gmail.com>
+ <20250528221823.2974653-2-joseph.kogut@gmail.com>
+ <20250529-impressive-real-monkey-a7818b@kuoka>
 Content-Language: en-US
-From: Mahanta Jambigi <mjambigi@linux.ibm.com>
-In-Reply-To: <20251027224856.2970019-2-pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+From: FUKAUMI Naoki <naoki@radxa.com>
+In-Reply-To: <20250529-impressive-real-monkey-a7818b@kuoka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=fIQ0HJae c=1 sm=1 tr=0 ts=69008df5 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=SRrdq9N9AAAA:8 a=ffDd5I00xDUYzGQUyCcA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: iLJI276jkQYFSUAkCfrGJUpPke3vGuVq
-X-Proofpoint-GUID: bZgTWHVMeG6WvbqmK9wxllVKaM1ya5qo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI1MDAyNCBTYWx0ZWRfX/RJ3mImZoIyY
- aTH2y+Y8353xw54oqcdtwUceZzf7eWySn7fGScsF62TaXsiSpp2HZZd1IkjWjmzyS7KyUwHxw8t
- YC4jJ8k9YjcQ/GJmDIR3UO/9cAFGxQHL9T5m2ht3f6U2wukpKiwmUvd5bqGkfRH9GUeKAlK67kv
- iB0IGTY+WZnaz4/PNdhw3Bg/XUwiXj6mkmlb9DkSX1VjBaXySSPtugMS3aLdP4ij8gg+y0pQ8I8
- S0gQEoJSUVzr3vwTxktDOJJrSeP32IFDVs5cNir/V49lsc5qj1yw118rbe4fHrBvEO/7RVSvidX
- hC4hpP8kBQLJ9yGrmArlKwdUciWtqWz1IP0T+97clb1FMXhQKAlAQKdVpyBRhNO5jO94TmD4uMs
- Eqs3tuEx+6vFve/NNyVDL5MH/qQxwQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_03,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 priorityscore=1501 adultscore=0 suspectscore=0 spamscore=0
- clxscore=1015 bulkscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510020000 definitions=main-2510250024
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:radxa.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: Mvaw++KQIsq0vFjigxIApDXHlXSParZbMBCXdY0NCnb+NjkVkf72zTUz
+	laU/rSvBCEYvwiw+KLYBl4tSL/kFDzndJUphGV64uhevw5fR+YgE1f6pgDdY2K8xTDEAeKF
+	2zoqnXNpF9nkAxmaPLGU78zQBDJ9G5GPrtSxYX+QjQQL/2bOXaorLnD78twqiI8dcUcXT6E
+	02KU1ZZa7C6eioZTW5kRfIXoU/M3SfXULgPheoaom0iYwgLlMOo3fRB0lNUlzHLxuSB40IM
+	uwVomI4M/Rq7Px0nTC5hTfCUrd6TqVKGm70pki/EaPCDCBstzOIOZJcOGCbvDd9k+c+Jkz7
+	Egs+6DeHoCH46JP69RlTofXDcfEsxm3IXYAlTfuAm/P2VcByHCdNCWlcF0pbUffc6VGnLuV
+	JlRi4QAs+eJiKuu2bsy8EA/MqBr/o6uhimhptr4KEYLxCFPTioL1tsiTMqfzXwF4aIJPvWE
+	IKLNCnOo0/6nszujGQzNPRHtwdlWOPJ88Q/0eHYCiVU1sVDGUQE/onMFQingUMrdzEAO2Aq
+	Q5aJoSX8ONSY7NbKrYGGqt2HrlSndi9JRpoECkCBRwYsrytLvH4CKL7bx5OtBnroSsibtc7
+	gj+tFAaQ4Ne+4Jd96Id4qwWeE+i+25YwaQnh8tHAJMEfE81Fk9D5SxQKj3b2Pe8EvMTupcD
+	FwHc7yyABBhtQ25ca6KC0VJ3mQ+uhLnWIXwOEaSwAOE2YbJF9GbYAusebMzaodlPzJuwocl
+	BPVHAbwsxI4YVhoMcnwYzcDQ1BZBJG97oC4iqBU02E+nVFL7b5OhZ9VvWrKOa6j404c4/YR
+	oCHnEI58mt9jlwGVnohX1PWbkur6pwr0+yyz2suvV5VOHoNC/mWrVX3Q7bb+cPa0j1Yqxhi
+	Zgk9FV3z7fhbsjrVOztksY0UelcIXjIv6cWY6J5kqjqOS3q3x4YIdZ5icffks/uvVa63zAX
+	6NVmbSGvvjDMjtZmeEYhqho8vBjQc1iAJj38bMMHBMReGvMr21/7nF1zg
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
+Hi Krzysztof,
 
+https://patchwork.kernel.org/project/linux-rockchip/patch/20250528221823.2974653-2-joseph.kogut@gmail.com/
 
-On 28/10/25 4:18 am, Halil Pasic wrote:
-> Think SMC_WR_BUF_CNT_SEND := SMC_WR_BUF_CNT used in send context and
-> SMC_WR_BUF_CNT_RECV := 3 * SMC_WR_BUF_CNT used in recv context. Those
-> get replaced with lgr->max_send_wr and lgr->max_recv_wr respective.
+On 5/29/25 18:19, Krzysztof Kozlowski wrote:
+> On Wed, May 28, 2025 at 03:18:21PM GMT, Joseph Kogut wrote:
+>> Add device tree binding for the Radxa CM5 IO board.
+>>
+>> This board is based on the rk3588s.
 > 
-> Please note that although with the default sysctl values
-> qp_attr.cap.max_send_wr ==  qp_attr.cap.max_recv_wr is maintained but
-> can not be assumed to be generally true any more. I see no downside to
-> that, but my confidence level is rather modest.
+> Do not attach (thread) your patchsets to some other threads (unrelated
+> or older versions). This buries them deep in the mailbox and might
+> interfere with applying entire sets.
 > 
-> Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-> Reviewed-by: Sidraya Jayagond <sidraya@linux.ibm.com>
-> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
-> ---
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Please explain the sorting rule used for this file. You must have known 
+the sorting rule; otherwise, how can you be sure this patch is correct?
 
-Tested-by: Mahanta Jambigi <mjambigi@linux.ibm.com>
+Best regards,
+
+--
+FUKAUMI Naoki
+Radxa Computer (Shenzhen) Co., Ltd.
+
 
