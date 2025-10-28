@@ -1,167 +1,175 @@
-Return-Path: <linux-kernel+bounces-872847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE520C122B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:29:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF170C122BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:32:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 66F504EC5EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:29:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7AB8A353AAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918CA1F03D2;
-	Tue, 28 Oct 2025 00:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5831E7C12;
+	Tue, 28 Oct 2025 00:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Qn5cXtj"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VTMdbrzN"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373C11E1E16
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33804A23
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761611387; cv=none; b=Aul3PNcjtHEa6r8WLhFXNj3vqUJMAIz4B/aZ/yTWRPXRMw6CLm+hgY5Ri+/B50JhYKguaSXbMx631vKMw43KtLVSmsnEq+dwscv0hMzCeuVKv14uGOfvYANBn7V1DOOnXY5oPz8Y9EMa1a1mvablZCW7Piy4WNMJ8mtAmmO8bIQ=
+	t=1761611549; cv=none; b=Z5M7JV8FPOVWu0mqoDBA7OHPffnxzsiImZnQacS9nSzOPv8rCEZHea4nk0C5PeEBJjEdgOE9vXryAe1tLFC5YSE/EqAw94wnfnjlUV0dQPD+7vCCsYOM5aAQeHYZrMAnZ7motpj6CF8Yii8FLLM7tVi2hMsm5IAMArZd9CGNi1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761611387; c=relaxed/simple;
-	bh=qyo5vYPBXQcSiICdjzpbw4YoCeaDaAVfCf6SQjhOYiM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Pp7u0Ycv8k4OPCxnEYd4aWXFIDiz0UDqMVjwP5G4Cm/F0PdawmYMzROfG7MqrJlXGJTRCJZdjpNHTxfX2KF4Cy0c1+zXHnCQgdiiBA+h+3Vzvd3mtcoZX9mhxBC4X1t4FJpKU53MejMk84p8xWtkqO7l3sGvmqwM74sPdroO+WQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Qn5cXtj; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1761611549; c=relaxed/simple;
+	bh=sZliMbiRU5IJnJ0zaE4gY5+HIkp6n6SZ0ixcB4Cdxy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bMtZJEsnBGP8IHrUrLz9Q+lXxwkwfzM2afOQiS8jvsiF8+h/x6aGSXjSKcMtXXR1TZz77G0bCha1IAgjlHaU+eIUYG71ppFqZXwKZ3um1TsNAk1BnBPFR+Ha7AdCKP1wzqRDkGOeB8eMaA3GtxYbYIRNsLsQioXw1EW78fJVyjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VTMdbrzN; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b57cf8dba28so3934196a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:29:44 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4eccff716f4so148601cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:32:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761611384; x=1762216184; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3fZq3tbinLN9iV6tR9wh+L1TcJJLRbds3pWQbE4SVPQ=;
-        b=0Qn5cXtjMYcc6CIS2H+1Z74GJ2Jp6I330AeAsK9DA0QGAjHitp8PleqTjjq5SHtwBW
-         X3TkCnWUkH+3mcXGED0VDYN52c8K3cbVb9vL64HYRyYfiMA5SX9KoQ9gk4hNvgA2UgCy
-         xfw3WSILSBjcye1CfHBueOPfGQ6Bdxc9Tyj0b3IAhJGQPROAM8FvJutS4SnzMxG1jP+G
-         mIGxPum8YQaHDI4U59yRipRLjLXdNGd0Ph9T87fnHeM/A57be2LkxC3QPnXB3GjUYp+V
-         27rPKJ4fjgRgiYmICJdxFuRjcgTMSflcJMczmosWgakqLLIiNU8LvX+USP6AyS0BlSGm
-         xh5A==
+        d=google.com; s=20230601; t=1761611547; x=1762216347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gDGupZg9RAC3q75DNbAlYNiWKv+uKA1nO+SLuFhCPek=;
+        b=VTMdbrzNhUyPF1yP4r9pK1vMwOutK7CyNY/DmCq3AW4O3Jw7hPNJX5nz+33PFbXdWj
+         SOuuXhzrU0bXso5b+IJ5As0/cCSkmojkWEExqPT/Lh3+hd54rAIse21ZFrnoNOU+Z4CI
+         rr/vzgeIINRpsi/u9L1/QV4jKugGikR+4p10GtPZCHpgiilta7MNMQmSY7XPc9VdfoLw
+         1ARFzDD/UxG4yVrbd+PMyT/Ew2dc49yTZ7fateieKpa6WbEr9x+1WGTaEc0rzXwNrdam
+         zJVBhlnbFEgbDSD5r4ld1b+/ZPeI9vZ/zgorFEBhAu4TloKXNPh8aHNCVxDzeDGwy5YD
+         8g9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761611384; x=1762216184;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3fZq3tbinLN9iV6tR9wh+L1TcJJLRbds3pWQbE4SVPQ=;
-        b=fIbI5iRcv0a3jx8x5eu5eXwBOfh7fZTZfHvxlIe0LNsM6Tg7dUI+Q8jKnf0szQHI5h
-         wmGcGlfNkvFqtRTYKPky4QXJ/GvPTn4Ti/uk6Vul9yXFP36vUevyDxfnwteZL2ptV5fV
-         Nr2C2G/HgqALQBPEMTOhQj5iDpkZoTrJZfCGah2Li2kiqsZYmweTugMDN/Ml/HXJNMF9
-         9bVqLFOyST6w14YoW1DdgxBWaausdg3OJ230uP7NdmVyQOBD9ALeQeneogb6lQ6dAMN0
-         XphJakDC4I7nJ8Z8kfOaAj5EC3H+QvxzGAQcqEQ1qlVfDbRGWZkSlrWBg8x7OkNuPaOW
-         /kzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCfwF6G81mxoYuNZVfScnBC9hj6AL585Qh4oS48GUqI7uP2whf9OecUSZOsPWfoOPvaRxE3Ld+3pys+2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWyXBAWWFpHIlJ/zAKoG7uCjMoXyx7yYzgxYbHr54gZ891/l7a
-	c3ZfXn0kEWIVp3Ibku93dv49+lnEoyGLcUoryBx3e8lmBkcdd0ejbLTATxpKCtO584GK9yVk//F
-	MX1wfAw==
-X-Google-Smtp-Source: AGHT+IEcbPffJX+DPzKHtANj5YoID2qTNS+wCvJIhOFTengBDdmvUTitjaF5SaOhKDAJ4Iu3BAJZiOrVVlg=
-X-Received: from pjqc14.prod.google.com ([2002:a17:90a:a60e:b0:33b:51fe:1a77])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d0f:b0:33e:30e8:81cb
- with SMTP id 98e67ed59e1d1-34027a0775bmr1898674a91.13.1761611384405; Mon, 27
- Oct 2025 17:29:44 -0700 (PDT)
-Date: Mon, 27 Oct 2025 17:29:42 -0700
-In-Reply-To: <59ae9957-88a8-4777-9bd2-196e8b4eb8ac@linux.intel.com>
+        d=1e100.net; s=20230601; t=1761611547; x=1762216347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gDGupZg9RAC3q75DNbAlYNiWKv+uKA1nO+SLuFhCPek=;
+        b=WOYwLfrbQLayKMCfYLoD8EJQmmXyw1YzWrQNERXrR3KU9HoVKzyNCQ8SEcx+tJFjZN
+         Qyc1AqvnnDHFH+1MLMP8kAGDLklFbJS0HsCQF4kdf/NTfFr20DSEBO4QNmR2CaKy4xyb
+         KKoKC9O/bz628g0HTpMvD9fyS4HUlIswFJduZJHHEVm98dhTze0Odo2QTBRkIV7ZXlCo
+         EuhfHfZwZ4hd5LPWsSg4osnUmhihUlI5TDcJH7aBt5ydnm40W2trtpaYsmCxNmM3F2sw
+         w1bZEw1xIXaGtV2BxIbLVCUT/SxevW/CwWEEIGfyYbVL5eaXNaFMA/5mbFyLjbbGCJO2
+         yumQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEMxpi/U7M2flp6EWHWKUvL9WkptxpIIika8aR/mHakh6IXwXWyPSUtVi8hS1KuKY3KQhzMcfDj74zWn8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcy/YaTn3k/hsMJtbUMZVdQKeAeUFarg6jTSgpdfDX7vVZp9ME
+	dcSgdx7tZlOb8peJep9wHJcGDSOHgmB1pH1QPL6YW1H83NXL/UZavGhN87ZfF6EDmAnNqs/b/tW
+	FPriVqKTbATrHfyGMXnya4Mn24yIqU20XESrjIOlUjhu3IbIkutFVh22a
+X-Gm-Gg: ASbGncsPaYmSsV8hTtxE7yndfzeyyOvscJkFGzpPCHd4YfsDdnlX17evKD5oAYEsm5h
+	Sx4h7Y6VhN1GekpRRd7BRFZAPnKGG1Nmy/36dWY1q8DClyRGvtkH2a3dU2rYrxcMIpVq1D9AX96
+	rXDQEA6rDiuWJ6MAWZhgyVpNSQb3Ak6diLsDBzrzSLhxEw8UcQzgimzI7pD8Jt1ooc0qZW9WBrR
+	1/9eCAzSHQQBLNXDNcJxLxjs0/nPFHTn2Fl0PLeSgewdi6lKlC1O/dnuU3S
+X-Google-Smtp-Source: AGHT+IGhbJ+GHyeWlSzN6ycqAXLoxb1EC+qLGQ2vsQUvm5izxjzksoM3aqy/R23b67xhbshxeno45TIc7lJlqTr+JaM=
+X-Received: by 2002:a05:622a:17c5:b0:4e5:8707:d31 with SMTP id
+ d75a77b69052e-4ed09f4b74amr1602631cf.7.1761611546407; Mon, 27 Oct 2025
+ 17:32:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251017003244.186495-1-seanjc@google.com> <20251017003244.186495-14-seanjc@google.com>
- <5dea4a3d-c7b7-48f0-b2d5-7597e0cd5f00@linux.intel.com> <aPuqYz3ly5a3__mf@google.com>
- <59ae9957-88a8-4777-9bd2-196e8b4eb8ac@linux.intel.com>
-Message-ID: <aQAOdiSUktmAJKsw@google.com>
-Subject: Re: [PATCH v3 13/25] KVM: TDX: Fold tdx_mem_page_record_premap_cnt()
- into its sole caller
-From: Sean Christopherson <seanjc@google.com>
-To: Binbin Wu <binbin.wu@linux.intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <pjw@kernel.org>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	"Kirill A. Shutemov" <kas@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Ira Weiny <ira.weiny@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Michael Roth <michael.roth@amd.com>, Yan Zhao <yan.y.zhao@intel.com>, 
-	Vishal Annapurve <vannapurve@google.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20251024-b4-devmem-remove-niov-max-v1-1-ba72c68bc869@meta.com>
+In-Reply-To: <20251024-b4-devmem-remove-niov-max-v1-1-ba72c68bc869@meta.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 27 Oct 2025 17:32:12 -0700
+X-Gm-Features: AWmQ_bmC9jAN48RJAgN8fH5cjcodcmrZUz535l1EvetlKGHj2iyHZZuQ7umrKFs
+Message-ID: <CAHS8izN0nXPxpNDB=b=3dLMuf5KjGq_AswHsJ-XQDhMi7Y3WYQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: netmem: remove NET_IOV_MAX from
+ net_iov_type enum
+To: Bobby Eshleman <bobbyeshleman@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Byungchul Park <byungchul@sk.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Bobby Eshleman <bobbyeshleman@meta.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025, Binbin Wu wrote:
->=20
->=20
-> On 10/25/2025 12:33 AM, Sean Christopherson wrote:
-> > On Fri, Oct 24, 2025, Binbin Wu wrote:
-> > >=20
-> > > On 10/17/2025 8:32 AM, Sean Christopherson wrote:
-> > > > Fold tdx_mem_page_record_premap_cnt() into tdx_sept_set_private_spt=
-e() as
-> > > > providing a one-off helper for effectively three lines of code is a=
-t best a
-> > > > wash, and splitting the code makes the comment for smp_rmb()  _extr=
-emely_
-> > > > confusing as the comment talks about reading kvm->arch.pre_fault_al=
-lowed
-> > > > before kvm_tdx->state, but the immediately visible code does the ex=
-act
-> > > > opposite.
-> > > >=20
-> > > > Opportunistically rewrite the comments to more explicitly explain w=
-ho is
-> > > > checking what, as well as _why_ the ordering matters.
-> > > >=20
-> > > > No functional change intended.
-> > > >=20
-> > > > Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-> > >=20
-> > > One nit below.
-> > >=20
-> > > [...]
-> > > > +	/*
-> > > > +	 * If the TD isn't finalized/runnable, then userspace is initiali=
-zing
-> > > > +	 * the VM image via KVM_TDX_INIT_MEM_REGION.  Increment the numbe=
-r of
-> > > > +	 * pages that need to be mapped and initialized via TDH.MEM.PAGE.=
-ADD.
-> > > > +	 * KVM_TDX_FINALIZE_VM checks the counter to ensure all mapped pa=
-ges
-> > >  =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0^
-> > >  =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 Nit: Is pre-mapped better?
-> > Yeah, updated (and then it gets deleted a few commits later :-) ).
-> Oh, right, nr_premapped will be dropped later.
->=20
-> Since the whole nr_premapped will be dropped, do we still need a cleanup =
-patch
-> like patch 12 which will be dropped finally?
+On Fri, Oct 24, 2025 at 11:03=E2=80=AFAM Bobby Eshleman <bobbyeshleman@gmai=
+l.com> wrote:
+>
+> From: Bobby Eshleman <bobbyeshleman@meta.com>
+>
+> Remove the NET_IOV_MAX workaround from the net_iov_type enum. This entry
+> was previously added to force the enum size to unsigned long to satisfy
+> the NET_IOV_ASSERT_OFFSET static assertions.
+>
+> After commit f3d85c9ee510 ("netmem: introduce struct netmem_desc
+> mirroring struct page") this approach became unnecessary by placing the
+> net_iov_type after the netmem_desc. Placing the net_iov_type after
+> netmem_desc results in the net_iov_type size having no effect on the
+> position or layout of the fields that mirror the struct page.
+>
+> The layout before this patch:
+>
+> struct net_iov {
+>         union {
+>                 struct netmem_desc desc;                 /*     0    48 *=
+/
+>                 struct {
+>                         long unsigned int _flags;        /*     0     8 *=
+/
+>                         long unsigned int pp_magic;      /*     8     8 *=
+/
+>                         struct page_pool * pp;           /*    16     8 *=
+/
+>                         long unsigned int _pp_mapping_pad; /*    24     8=
+ */
+>                         long unsigned int dma_addr;      /*    32     8 *=
+/
+>                         atomic_long_t pp_ref_count;      /*    40     8 *=
+/
+>                 };                                       /*     0    48 *=
+/
+>         };                                               /*     0    48 *=
+/
+>         struct net_iov_area *      owner;                /*    48     8 *=
+/
+>         enum net_iov_type          type;                 /*    56     8 *=
+/
+>
+>         /* size: 64, cachelines: 1, members: 3 */
+> };
+>
+> The layout after this patch:
+>
+> struct net_iov {
+>         union {
+>                 struct netmem_desc desc;                 /*     0    48 *=
+/
+>                 struct {
+>                         long unsigned int _flags;        /*     0     8 *=
+/
+>                         long unsigned int pp_magic;      /*     8     8 *=
+/
+>                         struct page_pool * pp;           /*    16     8 *=
+/
+>                         long unsigned int _pp_mapping_pad; /*    24     8=
+ */
+>                         long unsigned int dma_addr;      /*    32     8 *=
+/
+>                         atomic_long_t pp_ref_count;      /*    40     8 *=
+/
+>                 };                                       /*     0    48 *=
+/
+>         };                                               /*     0    48 *=
+/
+>         struct net_iov_area *      owner;                /*    48     8 *=
+/
+>         enum net_iov_type          type;                 /*    56     4 *=
+/
+>
+>         /* size: 64, cachelines: 1, members: 3 */
+>         /* padding: 4 */
+> };
+>
+> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
 
-We don't strictly "need" the cleanups, but IMO intermediate cleanups are of=
-ten
-worth doing even if they get thrown away, soo that the code is in a (hopefu=
-lly)
-better state when the "big" functional change comes along.  I.e. if code 'X=
-' is
-easier to understand than code 'Y', then theoretically/hopefully X=3D>Z is =
-also
-easier to understand than Y=3D>Z.
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
