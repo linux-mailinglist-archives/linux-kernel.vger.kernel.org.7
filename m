@@ -1,1950 +1,277 @@
-Return-Path: <linux-kernel+bounces-874638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A78EEC16C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:23:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8385BC16C18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:23:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9AE64F68CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:23:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7988E4F8BD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F9C2BD59C;
-	Tue, 28 Oct 2025 20:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15709281376;
+	Tue, 28 Oct 2025 20:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="c7MB7yi7";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Hp/bPJYe"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OE2v5JRy"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71D929E11E
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704F22C0F69
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761682985; cv=none; b=sYEU2cAWudZZbuJbz5nilaYITNNDmDZ7TKyDyC8CE/qnZZ8lb2bI9ioPQQafDajK3JGElauipVeCi1CLEADp3qHcOCJgBKpcyYbAoEfG9nO2eQU5TA7Jdh1kiIeocmyF2tTNPRGHDbqQvL/epD4zYC5IpMTpRljKe4eKZ3J+ufQ=
+	t=1761682990; cv=none; b=q8EyIfBqKKsrS1/Yl7kwYaiIYXH6YtAsTZxCkWs1ehgJoma+0aIf0upe3Oe0p491EoEKFP+0y64BA74L/Djxpk6wXP4K3/d04P4L02seLjUPtqK0plB57Q4zs53pylHwEneO8750N5eQjXlTFAjqGVx5obTgXcsmDVTUF5inY4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761682985; c=relaxed/simple;
-	bh=k7Pvh4+IZqOHbZLxiVDQt99E9hfg/xaz/UsTh3np7XE=;
+	s=arc-20240116; t=1761682990; c=relaxed/simple;
+	bh=6xTgr0EgqQcEGhc22AEUvOCC8fzx4jx00Q9+ncsQVEM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YRuNuPNa/PnQzKnvZdttWeDsvVhh3sQcbdFBGRrR5KMshEnKdk18v98dOfETZ8MWwTpr538KRgi+T0WYDhV3ve18ke+1ECRMZ/KB/hYe0lXrnh7nSmvF8iNw96LGV/puaePc6qoZKX4wsqwBVoK+dVCLD39qC7vs00rjOAGKrWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=c7MB7yi7; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Hp/bPJYe; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlVaG2539437
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:23:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=
-	qcppdkim1; bh=a+Vwz3fUljVkqmIN9UhEAG/5sDPTIna51tYgjfORPcg=; b=c7
-	MB7yi7P2NOci2vHETHVSUBx0oAtbHySifbO9cm4h0EOkQDQTEvUecI33w+aJoCH/
-	IxtXX8So5lhtPp5tWt9dDQ8pmWlLVKjr2QLwBt64xwESawh/okqTkg0OXgMvoA4t
-	B/m2rHc4L+vaCvXbRhCsqT/nfUM0hkBi4I6BMIoH/Nenk+f+yYC18aweuyu41txa
-	R2NMrMYJBZkWNrFrw8nDny06NH7r9kYBRQkbjU7oquRVR4j1nhfdd7gNBCo5QRmB
-	y1hlRDEteJpCP9o5tU4tZYICBvPj7a+zAJeRl2dZAEuyW7HoZWN2l53hxH5WBDNo
-	Jct/8h1WQQU8s4zekMsQ==
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com [209.85.161.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a1g2w7-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:23:00 +0000 (GMT)
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-654f1100759so1877121eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:23:00 -0700 (PDT)
+	 To:Cc:Content-Type; b=lrZDZH8ZRklzRJnsKIQLb/Lua6PYunTn+ghjffkHAlNSQss2KT69s7g7hWl04NkFB19C182Ozi2iM+F7oVpOkIyumQMaEar0q8x3PxbKFknSxVf6//ALp+rzaHJ37U+XLmSX5ZRC9dcgHGruSrWcHv8WS4u8sXhqm1DJvbMH+9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OE2v5JRy; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2698d47e776so51504145ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761682977; x=1762287777; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761682988; x=1762287788; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a+Vwz3fUljVkqmIN9UhEAG/5sDPTIna51tYgjfORPcg=;
-        b=Hp/bPJYeh503skr2qlIMhCGNSXf8N8g9jqRfJzS8ZBEh0RC44JM+EzaEGlR1S2SdFp
-         vppLBR2yXRVtW5DKAxGBWGeQ2W4fck2E0NcwtCVk+NH1ArlbCsxWuBGqBjVq1mpGo1mH
-         VBv2if2yS6QlWDjxoV/nN4ls/t7pntKu66PJvOR6ttTbkutJz6ittCPNzHgvSC/ayk5R
-         2ZDuazrIujI5H6DpFpolPAHbFRvUP9SH7y5YJrbItxgXsxE4lgIKYg6b1pTpD/5PDh5u
-         li0OTUssuizj+6GR2XimdU8aqHaakYOzxqR8SC0IVwBgylqjfaklpE+mk2MhXzKI9YNA
-         BK8g==
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0eiU5X0MtLg1AWy8TJMvL0p3KdK19oLqNSiclHjQzS4=;
+        b=OE2v5JRy5M27jqDfYDwiVduZezH0pwnsGgzp0Z4iZWTZq0+g5SnQ765FDh4O2gu3dh
+         FO/3x1aGm429ToYCdQ11hOHxfzRURwtRBimKYAkIzvM5wzYlrtuoxFsiKT879lZcbXj1
+         zIyg4YNyj7X8A9ZC3jNF7RI+y8oemOuWra+gtf3tT+fZBeWZBup91o6vLpOOL+QivYov
+         Ks5VX9/VbVQhn4b3qcLgH0WV9rkeoyY04aKWYpA3TK3in0xtFXLpWMI0m1AHpZRp736/
+         EYN6Cwq/0f91zNzxghYcp11gFUI2SqM0kh/qkDTkmvsQSAabQ1vmTrcH1ArXs+KPEcaT
+         IvGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761682977; x=1762287777;
+        d=1e100.net; s=20230601; t=1761682988; x=1762287788;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a+Vwz3fUljVkqmIN9UhEAG/5sDPTIna51tYgjfORPcg=;
-        b=p0EZ5lsLbTDvJbqWyLEEyWuuWN+OJCLBdwDPRkoxmZ4jYLO+l49Rmg28WXt3UGB11h
-         yiT0hCeH0qqQKpf0j6/5xrFFuv55WawmEFFI8e7N8YvPVmU2/VF87eLFGOG9H6HV2xYW
-         b4S1610cWTF30uLGNUXb3hU7BEYwROHZnZMLR7bbOJy8O2f27ZlZ4jc4drvtrWEVh3R3
-         H9b9U0gQcUjsBDZ9wvfxv3N7P8GVoq3wTIambDXGyCl4kuRh7uXshHUZvn9r4iUm/oqk
-         cdf9ngizw67/TJvXDUzaum7qlYLvSJJYTzh50zvwpyRb1vibCbl1z46Wh0QBLz8/SsX8
-         DXIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVimfAUKZBrxGnZgvKaqlTAg/tRHFlRpkvckkz2yYuug9dtJGFn0xuo4e8Y+1rxISEMBad3voveBtAosCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPg6EWEP4EGsRP1BTM7RGUQRSIeKPIItCwcyvK3C4wblOUWWZy
-	AO62xQ8Dkmp4YTqbnGpNsB2sSBRRtcsqHBIhhAfU+vTnHCxjqjxRd7EuWBS8r7+sRH8hoX9MWEi
-	4oOKOGAFCHGvcJYHsjgHq5K91v0PC/jEvT0guo416WMUoZqyp8mBGqJiR33kuvKkRQZagnlTQhl
-	Jg+wGBC7wOvFLqCLEiK90cOnj87BL3GS794IBCzFZb7A==
-X-Gm-Gg: ASbGnct3CRJ63SSzPF0YMcl2OIKqBPnNki9GYDnLddV8tJx61HCPLLp9HXFzq7Z6mnH
-	pxCwm5FKCmPS8od/CrTLT9g58uaURrbUQV4JhWQh9C3YjgGtcDHzUeYlq1+s3Co5J5rJBvw5siD
-	z6a4AXKYsYlDlu1FQa5rBmct9zvzOCCEEFKjvzJH2T57xnNB8Gw6UWETgV0nHR1OjAZxfStOE/U
-	SkfD0fnEvUdjeI=
-X-Received: by 2002:a05:6808:1983:b0:43f:68a3:625d with SMTP id 5614622812f47-44f7a75b3camr401587b6e.5.1761682976504;
-        Tue, 28 Oct 2025 13:22:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFDTTBeERnwNoIxP6/EU+teL5FUQPBhliZRB7borsBRdAq/SZUcL8Zar7hWpL+CJbupFaMLKuiHRtBTNf5WGSE=
-X-Received: by 2002:a05:6808:1983:b0:43f:68a3:625d with SMTP id
- 5614622812f47-44f7a75b3camr401548b6e.5.1761682975569; Tue, 28 Oct 2025
- 13:22:55 -0700 (PDT)
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0eiU5X0MtLg1AWy8TJMvL0p3KdK19oLqNSiclHjQzS4=;
+        b=QIE8FQJhfyqX8w1rGXRYoX7/fsfDUNRJpATYKg4obs8eqLUZHHNIFLGVzDxtm5IlD4
+         78dJAHdnTdxYhgBw+rdfVVMhXTRNr0kjxOPbM5BYuhDvMCbLqgWlrNsjZG1qYzr9mf9p
+         QrO9Im+pxZ2yxC99mT+R9I6gCK0Ssrr/oAUDC+3fnS9Ka2Gp0BdPxel+Kw5tet0JV7pV
+         KWB9QP6aX2pObJztfv1KMV3T1K/4eFh7ePrmOjBJSz76qmSvX54hsGM9eNx8lV3J0SwO
+         wX462iA0Hw/4EoyEe8iHdFsL5UnsbLqcRSjh7Fa6rQEwvI/GscKo+hi+8ZqEW06pqGwU
+         LR0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmG3reST3zaTz/bpO/zP81uuWTzGzwTOGCCKlx0tqBqyLnFSV7mgGJhQ+nr4EMy7WT8BsNRG2ggfhO4y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2v9U4H4wbDMDyyKgLkINlkGd7dguZpBvKsARrWc0R0qR8zZJy
+	UzUVqOTYWPBNwf05Yi58Wf9IuUdTy/Ml8v/gqArNL0A3w3DZDK6EskbpBlegSXGRyQ06iMdtQft
+	slulXMIR6glYUbKXKgdexZjXKO0Z+WtI=
+X-Gm-Gg: ASbGncvHD37TCrTYK3rHE7b47XaXmb/wO3InmnpYpZXbwJZCX5Vfmih3VoSjNCpvT+c
+	FlhNWweC3s6tzmrXKmX9iw7HD+UxpIFmjWj7OE3XYqwxRoBMQqhoAlkMatlbckOeopHWQ9NusP+
+	edi9NKbTh47MAOXuwKMV34qcIGsSLKCnASjX7HIlocA2d0yrZkw3j9VZMRpDy90/I3h6aJzH8Ao
+	Wb9+ZmovkYoMaR3lC/UIMZV++p/uKSheiuHmbxCpdyNyb2v6EDZfcCWQRkNkl9dMKXn6aVGwL0u
+X-Google-Smtp-Source: AGHT+IEanbLtV+A1uxD07yLCIAzVFpVbUlS7xrnuVYcPA5Fr5hRoHuCsYXkZerVpGBl8B3Cw1K0prKjboLbz9EwjhLA=
+X-Received: by 2002:a17:903:32d0:b0:270:e595:a440 with SMTP id
+ d9443c01a7336-294deea9fe0mr4170815ad.25.1761682987467; Tue, 28 Oct 2025
+ 13:23:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250930-kaana-gpu-support-v1-0-73530b0700ed@oss.qualcomm.com> <20250930-kaana-gpu-support-v1-12-73530b0700ed@oss.qualcomm.com>
-In-Reply-To: <20250930-kaana-gpu-support-v1-12-73530b0700ed@oss.qualcomm.com>
-Reply-To: rob.clark@oss.qualcomm.com
-From: Rob Clark <rob.clark@oss.qualcomm.com>
-Date: Tue, 28 Oct 2025 13:22:43 -0700
-X-Gm-Features: AWmQ_bmvzbFVf5keFUYm5Ti6gHrCrQR8_BAN8lrdz0I2ZeYNRAc7Y9etGPr4DP8
-Message-ID: <CACSVV03HaKAvfDa5A5LqRZM4_o8g-haVU3A6GgWqfTO0QNcK2w@mail.gmail.com>
-Subject: Re: [PATCH 12/17] drm/msm/adreno: Introduce A8x GPU Support
-To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Sean Paul <sean@poorly.run>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Jonathan Marek <jonathan@marek.ca>,
-        Jordan Crouse <jordan@cosmicpenguin.net>,
-        Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux.dev, devicetree@vger.kernel.org
+References: <20251026154000.34151-1-leon.hwang@linux.dev> <176167501101.2338015.15567107608462065375.git-patchwork-notify@kernel.org>
+In-Reply-To: <176167501101.2338015.15567107608462065375.git-patchwork-notify@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 28 Oct 2025 13:22:52 -0700
+X-Gm-Features: AWmQ_bmGSoBQBafD4RYC0uD63bU25UDV0ufQgzX3COvu8ZcTnEGFiwaaelmGWas
+Message-ID: <CAEf4BzbTJCUx0D=zjx6+5m5iiGhwLzaP94hnw36ZMDHAf4-U_w@mail.gmail.com>
+Subject: Re: [PATCH bpf v3 0/4] bpf: Free special fields when update hash and
+ local storage maps
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: Leon Hwang <leon.hwang@linux.dev>, bpf@vger.kernel.org, ast@kernel.org, 
+	andrii@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, 
+	linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Authority-Analysis: v=2.4 cv=Nu/cssdJ c=1 sm=1 tr=0 ts=69012624 cx=c_pps
- a=V4L7fE8DliODT/OoDI2WOg==:117 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
- a=2FcyS5ZzHI4p1F1skQsA:9 a=QEXdDO2ut3YA:10 a=WZGXeFmKUf7gPmL3hEjn:22
- a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-GUID: TtOLCWx-ZLiON9PDxt4UE1JTYPFMfR0-
-X-Proofpoint-ORIG-GUID: TtOLCWx-ZLiON9PDxt4UE1JTYPFMfR0-
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE3MSBTYWx0ZWRfX0pdNTbuvgmFG
- bFPaBdQ5Kee7H1bGGHM1aBLMWpfQr46+3GWQ0wzPkDV5eMfqstOmw9nVPGrPUz7sCVmJNKjpKhY
- 6uSh359gAzkzOwfEOwNiQ9niGauJzZRctEP35G5YulPPaivXZZD6jGLFc1wsKfX85kWNpArQ7Rh
- ssopGLR5RqexZm9vQyhMH2Wm8FmXE137FR5BRmP+Jlxj5tzl14zESD514/DDT1R6I4FbeonKA2R
- g9QlbsslcyekPSplNeRNBj/agOiX2O3KyCkcVenT1h29hnPDbiWP8BG7rjzwz4Z4JyyhA+/ZGXZ
- GJD1tLionqzL4EOlT13DQEhomzItLiZ/lL2wAsP7eXeAhNRSuqdxxuWb+c5HXzjfkDJ1f1nTcB2
- NcgvMwqIvO7/jckN48BWZF0oK3xiBg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-28_07,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 adultscore=0 suspectscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 impostorscore=0 bulkscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510280171
 
-On Mon, Sep 29, 2025 at 10:51=E2=80=AFPM Akhil P Oommen
-<akhilpo@oss.qualcomm.com> wrote:
+On Tue, Oct 28, 2025 at 11:10=E2=80=AFAM <patchwork-bot+netdevbpf@kernel.or=
+g> wrote:
 >
-> A8x is the next generation of Adreno GPUs, featuring a significant
-> hardware design change. A major update to the design is the introduction
-> of Slice architecture. Slices are sort of mini-GPUs within the GPU which
-> are more independent in processing Graphics and compute workloads. Also,
-> in addition to the BV and BR pipe we saw in A7x, CP has more concurrency
-> with additional pipes.
+> Hello:
 >
-> From a software interface perspective, these changes have a significant
-> impact on the KMD side. First, the GPU register space has been extensivel=
-y
-> reorganized. Second, to avoid  a register space explosion caused by the
-> new slice architecture and additional pipes, many registers are now
-> virtualized, instead of duplicated as in A7x. KMD must configure an
-> aperture register with the appropriate slice and pipe ID before accessing
-> these virtualized registers.
+> This series was applied to bpf/bpf-next.git (master)
+> by Andrii Nakryiko <andrii@kernel.org>:
 >
-> This patch adds only a skeleton support for the A8x family. An A8x GPU
-> support will be added in an upcoming patch.
+> On Sun, 26 Oct 2025 23:39:56 +0800 you wrote:
+> > In the discussion thread
+> > "[PATCH bpf-next v9 0/7] bpf: Introduce BPF_F_CPU and BPF_F_ALL_CPUS fl=
+ags for percpu maps"[1],
+> > it was pointed out that missing calls to bpf_obj_free_fields() could
+> > lead to memory leaks.
+> >
+> > A selftest was added to confirm that this is indeed a real issue - the
+> > refcount of BPF_KPTR_REF field is not decremented when
+> > bpf_obj_free_fields() is missing after copy_map_value[,_long]().
+> >
+> > [...]
 >
-> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-> ---
->  drivers/gpu/drm/msm/Makefile                      |    1 +
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.c             |  103 +-
->  drivers/gpu/drm/msm/adreno/a6xx_gpu.h             |   21 +
->  drivers/gpu/drm/msm/adreno/a8xx_gpu.c             | 1238 +++++++++++++++=
-++++++
->  drivers/gpu/drm/msm/adreno/adreno_gpu.h           |    7 +
->  drivers/gpu/drm/msm/registers/adreno/a6xx.xml     |    1 -
->  drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml |    1 +
->  7 files changed, 1344 insertions(+), 28 deletions(-)
+> Here is the summary with links:
+>   - [bpf,v3,1/4] bpf: Free special fields when update [lru_,]percpu_hash =
+maps
+>     https://git.kernel.org/bpf/bpf-next/c/f6de8d643ff1
+>   - [bpf,v3,2/4] bpf: Free special fields when update hash maps with BPF_=
+F_LOCK
+>     https://git.kernel.org/bpf/bpf-next/c/c7fcb7972196
+>   - [bpf,v3,3/4] bpf: Free special fields when update local storage maps
+>     (no matching commit)
+>   - [bpf,v3,4/4] selftests/bpf: Add tests to verify freeing the special f=
+ields when update hash and local storage maps
+>     https://git.kernel.org/bpf/bpf-next/c/d5a7e7af14cc
 >
-> diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
-> index 7acf2cc13cd047eb7f5b3f14e1a42a1cc145e087..8aa7d07303fb0cd66869767cb=
-6298b38a621b366 100644
-> --- a/drivers/gpu/drm/msm/Makefile
-> +++ b/drivers/gpu/drm/msm/Makefile
-> @@ -24,6 +24,7 @@ adreno-y :=3D \
->         adreno/a6xx_gmu.o \
->         adreno/a6xx_hfi.o \
->         adreno/a6xx_preempt.o \
-> +       adreno/a8xx_gpu.o \
->
->  adreno-$(CONFIG_DEBUG_FS) +=3D adreno/a5xx_debugfs.o \
->
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.c
-> index bd4f98b5457356c5454d0316e59d7e8253401712..4aeeaceb1fb30a9d68ac636c1=
-4249e3853ef73ac 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-> @@ -239,14 +239,21 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6x=
-x_gpu,
->         }
->
->         if (!sysprof) {
-> -               if (!adreno_is_a7xx(adreno_gpu)) {
-> +               if (!(adreno_is_a7xx(adreno_gpu) || adreno_is_a8xx(adreno=
-_gpu))) {
->                         /* Turn off protected mode to write to special re=
-gisters */
->                         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
->                         OUT_RING(ring, 0);
->                 }
->
-> -               OUT_PKT4(ring, REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CMD, 1);
-> -               OUT_RING(ring, 1);
-> +               if (adreno_is_a8xx(adreno_gpu)) {
-> +                       OUT_PKT4(ring, REG_A8XX_RBBM_PERFCTR_SRAM_INIT_CM=
-D, 1);
-> +                       OUT_RING(ring, 1);
-> +                       OUT_PKT4(ring, REG_A8XX_RBBM_SLICE_PERFCTR_SRAM_I=
-NIT_CMD, 1);
-> +                       OUT_RING(ring, 1);
-> +               } else {
-> +                       OUT_PKT4(ring, REG_A6XX_RBBM_PERFCTR_SRAM_INIT_CM=
-D, 1);
-> +                       OUT_RING(ring, 1);
-> +               }
->         }
->
->         /* Execute the table update */
-> @@ -275,7 +282,7 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6xx_=
-gpu,
->          * to make sure BV doesn't race ahead while BR is still switching
->          * pagetables.
->          */
-> -       if (adreno_is_a7xx(&a6xx_gpu->base)) {
-> +       if (adreno_is_a7xx(&a6xx_gpu->base) && adreno_is_a8xx(&a6xx_gpu->=
-base)) {
->                 OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
->                 OUT_RING(ring, CP_THREAD_CONTROL_0_SYNC_THREADS | CP_SET_=
-THREAD_BR);
->         }
-> @@ -289,20 +296,22 @@ static void a6xx_set_pagetable(struct a6xx_gpu *a6x=
-x_gpu,
->         OUT_RING(ring, CACHE_INVALIDATE);
->
->         if (!sysprof) {
-> +               u32 reg_status =3D adreno_is_a8xx(adreno_gpu) ?
-> +                       REG_A8XX_RBBM_PERFCTR_SRAM_INIT_STATUS :
-> +                       REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS;
->                 /*
->                  * Wait for SRAM clear after the pgtable update, so the
->                  * two can happen in parallel:
->                  */
->                 OUT_PKT7(ring, CP_WAIT_REG_MEM, 6);
->                 OUT_RING(ring, CP_WAIT_REG_MEM_0_FUNCTION(WRITE_EQ));
-> -               OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_LO(
-> -                               REG_A6XX_RBBM_PERFCTR_SRAM_INIT_STATUS));
-> +               OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_LO(reg_status));
->                 OUT_RING(ring, CP_WAIT_REG_MEM_POLL_ADDR_HI(0));
->                 OUT_RING(ring, CP_WAIT_REG_MEM_3_REF(0x1));
->                 OUT_RING(ring, CP_WAIT_REG_MEM_4_MASK(0x1));
->                 OUT_RING(ring, CP_WAIT_REG_MEM_5_DELAY_LOOP_CYCLES(0));
->
-> -               if (!adreno_is_a7xx(adreno_gpu)) {
-> +               if (!(adreno_is_a7xx(adreno_gpu) || adreno_is_a8xx(adreno=
-_gpu))) {
->                         /* Re-enable protected mode: */
->                         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
->                         OUT_RING(ring, 1);
-> @@ -441,6 +450,7 @@ static void a7xx_submit(struct msm_gpu *gpu, struct m=
-sm_gem_submit *submit)
->         struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
->         struct msm_ringbuffer *ring =3D submit->ring;
->         unsigned int i, ibs =3D 0;
-> +       u32 rbbm_perfctr_cp0, cp_always_on_counter;
->
->         adreno_check_and_reenable_stall(adreno_gpu);
->
-> @@ -460,10 +470,16 @@ static void a7xx_submit(struct msm_gpu *gpu, struct=
- msm_gem_submit *submit)
->         if (gpu->nr_rings > 1)
->                 a6xx_emit_set_pseudo_reg(ring, a6xx_gpu, submit->queue);
->
-> -       get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
-> -               rbmemptr_stats(ring, index, cpcycles_start));
-> -       get_stats_counter(ring, REG_A6XX_CP_ALWAYS_ON_COUNTER,
-> -               rbmemptr_stats(ring, index, alwayson_start));
-> +       if (adreno_is_a8xx(adreno_gpu)) {
-> +               rbbm_perfctr_cp0 =3D REG_A8XX_RBBM_PERFCTR_CP(0);
-> +               cp_always_on_counter =3D REG_A8XX_CP_ALWAYS_ON_COUNTER;
-> +       } else {
-> +               rbbm_perfctr_cp0 =3D REG_A7XX_RBBM_PERFCTR_CP(0);
-> +               cp_always_on_counter =3D REG_A6XX_CP_ALWAYS_ON_COUNTER;
-> +       }
-> +
-> +       get_stats_counter(ring, rbbm_perfctr_cp0, rbmemptr_stats(ring, in=
-dex, cpcycles_start));
-> +       get_stats_counter(ring, cp_always_on_counter, rbmemptr_stats(ring=
-, index, alwayson_start));
->
->         OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
->         OUT_RING(ring, CP_SET_THREAD_BOTH);
-> @@ -510,10 +526,8 @@ static void a7xx_submit(struct msm_gpu *gpu, struct =
-msm_gem_submit *submit)
->                 OUT_RING(ring, 0x00e); /* IB1LIST end */
->         }
->
-> -       get_stats_counter(ring, REG_A7XX_RBBM_PERFCTR_CP(0),
-> -               rbmemptr_stats(ring, index, cpcycles_end));
-> -       get_stats_counter(ring, REG_A6XX_CP_ALWAYS_ON_COUNTER,
-> -               rbmemptr_stats(ring, index, alwayson_end));
-> +       get_stats_counter(ring, rbbm_perfctr_cp0, rbmemptr_stats(ring, in=
-dex, cpcycles_end));
-> +       get_stats_counter(ring, cp_always_on_counter, rbmemptr_stats(ring=
-, index, alwayson_end));
->
->         /* Write the fence to the scratch register */
->         OUT_PKT4(ring, REG_A6XX_CP_SCRATCH(2), 1);
-> @@ -706,8 +720,11 @@ static int a6xx_calc_ubwc_config(struct adreno_gpu *=
-gpu)
->         /* Copy the data into the internal struct to drop the const quali=
-fier (temporarily) */
->         *cfg =3D *common_cfg;
->
-> -       cfg->ubwc_swizzle =3D 0x6;
-> -       cfg->highest_bank_bit =3D 15;
-> +       /* Use common config as is for A8x */
-> +       if (!adreno_is_a8xx(gpu)) {
-> +               cfg->ubwc_swizzle =3D 0x6;
-> +               cfg->highest_bank_bit =3D 15;
-> +       }
->
->         if (adreno_is_a610(gpu)) {
->                 cfg->highest_bank_bit =3D 13;
-> @@ -818,7 +835,7 @@ static void a6xx_set_ubwc_config(struct msm_gpu *gpu)
->                   cfg->macrotile_mode);
->  }
->
-> -static void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
-> +void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu)
->  {
->         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
->         struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> @@ -868,7 +885,7 @@ static void a7xx_patch_pwrup_reglist(struct msm_gpu *=
-gpu)
->         lock->dynamic_list_len =3D 0;
->  }
->
-> -static int a7xx_preempt_start(struct msm_gpu *gpu)
-> +int a7xx_preempt_start(struct msm_gpu *gpu)
->  {
->         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
->         struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> @@ -925,7 +942,7 @@ static int a6xx_cp_init(struct msm_gpu *gpu)
->         return a6xx_idle(gpu, ring) ? 0 : -EINVAL;
->  }
->
-> -static int a7xx_cp_init(struct msm_gpu *gpu)
-> +int a7xx_cp_init(struct msm_gpu *gpu)
->  {
->         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
->         struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> @@ -993,7 +1010,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gpu=
- *a6xx_gpu,
->                 return false;
->
->         /* A7xx is safe! */
-> -       if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
-> +       if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu) || a=
-dreno_is_a8xx(adreno_gpu))
->                 return true;
->
->         /*
-> @@ -2161,7 +2178,7 @@ void a6xx_bus_clear_pending_transactions(struct adr=
-eno_gpu *adreno_gpu, bool gx_
->  void a6xx_gpu_sw_reset(struct msm_gpu *gpu, bool assert)
->  {
->         /* 11nm chips (e.g. ones with A610) have hw issues with the reset=
- line! */
-> -       if (adreno_is_a610(to_adreno_gpu(gpu)))
-> +       if (adreno_is_a610(to_adreno_gpu(gpu)) || adreno_is_a8xx(to_adren=
-o_gpu(gpu)))
->                 return;
->
->         gpu_write(gpu, REG_A6XX_RBBM_SW_RESET_CMD, assert);
-> @@ -2192,7 +2209,12 @@ static int a6xx_gmu_pm_resume(struct msm_gpu *gpu)
->
->         msm_devfreq_resume(gpu);
->
-> -       adreno_is_a7xx(adreno_gpu) ? a7xx_llc_activate(a6xx_gpu) : a6xx_l=
-lc_activate(a6xx_gpu);
-> +       if (adreno_is_a8xx(adreno_gpu))
-> +               a8xx_llc_activate(a6xx_gpu);
-> +       else if (adreno_is_a7xx(adreno_gpu))
-> +               a7xx_llc_activate(a6xx_gpu);
-> +       else
-> +               a6xx_llc_activate(a6xx_gpu);
->
->         return ret;
->  }
-> @@ -2561,10 +2583,8 @@ static struct msm_gpu *a6xx_gpu_init(struct drm_de=
-vice *dev)
->         adreno_gpu->base.hw_apriv =3D
->                 !!(config->info->quirks & ADRENO_QUIRK_HAS_HW_APRIV);
->
-> -       /* gpu->info only gets assigned in adreno_gpu_init() */
-> -       is_a7xx =3D config->info->family =3D=3D ADRENO_7XX_GEN1 ||
-> -                 config->info->family =3D=3D ADRENO_7XX_GEN2 ||
-> -                 config->info->family =3D=3D ADRENO_7XX_GEN3;
-> +       /* gpu->info only gets assigned in adreno_gpu_init(). A8x is incl=
-uded intentionally */
-> +       is_a7xx =3D config->info->family >=3D ADRENO_7XX_GEN1;
->
->         a6xx_llc_slices_init(pdev, a6xx_gpu, is_a7xx);
->
-> @@ -2730,3 +2750,32 @@ const struct adreno_gpu_funcs a7xx_gpu_funcs =3D {
->         .bus_halt =3D a6xx_bus_clear_pending_transactions,
->         .mmu_fault_handler =3D a6xx_fault_handler,
->  };
-> +
-> +const struct adreno_gpu_funcs a8xx_gpu_funcs =3D {
-> +       .base =3D {
-> +               .get_param =3D adreno_get_param,
-> +               .set_param =3D adreno_set_param,
-> +               .hw_init =3D a8xx_hw_init,
-> +               .ucode_load =3D a6xx_ucode_load,
-> +               .pm_suspend =3D a6xx_gmu_pm_suspend,
-> +               .pm_resume =3D a6xx_gmu_pm_resume,
-> +               .recover =3D a8xx_recover,
-> +               .submit =3D a7xx_submit,
-> +               .active_ring =3D a6xx_active_ring,
-> +               .irq =3D a8xx_irq,
-> +               .destroy =3D a6xx_destroy,
-> +               .gpu_busy =3D a8xx_gpu_busy,
-> +               .gpu_get_freq =3D a6xx_gmu_get_freq,
-> +               .gpu_set_freq =3D a6xx_gpu_set_freq,
-> +               .create_vm =3D a6xx_create_vm,
-> +               .create_private_vm =3D a6xx_create_private_vm,
-> +               .get_rptr =3D a6xx_get_rptr,
-> +               .progress =3D a8xx_progress,
-> +       },
-> +       .init =3D a6xx_gpu_init,
-> +       .get_timestamp =3D a8xx_gmu_get_timestamp,
-> +       .submit_flush =3D a8xx_flush,
-> +       .feature_probe =3D a8xx_gpu_feature_probe,
-> +       .bus_halt =3D a8xx_bus_clear_pending_transactions,
-> +       .mmu_fault_handler =3D a8xx_fault_handler,
-> +};
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/msm/=
-adreno/a6xx_gpu.h
-> index 0b17d36c36a9567e6afa4269ae7783ed3578e40e..18300b12bf2a8bcd5601797df=
-0fcc7afa8943863 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
-> @@ -46,6 +46,7 @@ struct a6xx_info {
->         const struct adreno_protect *protect;
->         const struct adreno_reglist_list *pwrup_reglist;
->         const struct adreno_reglist_list *ifpc_reglist;
-> +       const struct adreno_reglist_pipe *nonctxt_reglist;
->         u32 gmu_chipid;
->         u32 gmu_cgc_mode;
->         u32 prim_fifo_threshold;
-> @@ -101,6 +102,11 @@ struct a6xx_gpu {
->         void *htw_llc_slice;
->         bool have_mmu500;
->         bool hung;
-> +
-> +       u32 cached_aperture;
-> +       spinlock_t aperture_lock;
 
-I don't see aperture_lock used.. but seems like maybe a good idea if
-a8xx_aperture_slice_set() acquired the lock and we had an
-corresponding _release() which dropped the lock, so that we couldn't
-have race conditions between the users of the aperture.
+Ok, I had to drop this from bpf-next after all. First,
+kptr_refcount_leak/cgroup_storage_refcount_leak needs to be adjusted
+due to that one line removal in patch 3.
 
-BR,
--R
+But what's worse, we started getting deadlock warning when running one
+of the tests, see [0]:
 
-> +
-> +       u32 slice_mask;
->  };
->
->  #define to_a6xx_gpu(x) container_of(x, struct a6xx_gpu, base)
-> @@ -299,4 +305,19 @@ void a6xx_bus_clear_pending_transactions(struct adre=
-no_gpu *adreno_gpu, bool gx_
->  void a6xx_gpu_sw_reset(struct msm_gpu *gpu, bool assert);
->  int a6xx_fenced_write(struct a6xx_gpu *gpu, u32 offset, u64 value, u32 m=
-ask, bool is_64b);
->
-> +void a7xx_patch_pwrup_reglist(struct msm_gpu *gpu);
-> +int a7xx_preempt_start(struct msm_gpu *gpu);
-> +int a7xx_cp_init(struct msm_gpu *gpu);
-> +
-> +void a8xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu, =
-bool gx_off);
-> +int a8xx_fault_handler(void *arg, unsigned long iova, int flags, void *d=
-ata);
-> +void a8xx_flush(struct msm_gpu *gpu, struct msm_ringbuffer *ring);
-> +int a8xx_gmu_get_timestamp(struct msm_gpu *gpu, uint64_t *value);
-> +u64 a8xx_gpu_busy(struct msm_gpu *gpu, unsigned long *out_sample_rate);
-> +int a8xx_gpu_feature_probe(struct msm_gpu *gpu);
-> +int a8xx_hw_init(struct msm_gpu *gpu);
-> +irqreturn_t a8xx_irq(struct msm_gpu *gpu);
-> +void a8xx_llc_activate(struct a6xx_gpu *a6xx_gpu);
-> +bool a8xx_progress(struct msm_gpu *gpu, struct msm_ringbuffer *ring);
-> +void a8xx_recover(struct msm_gpu *gpu);
->  #endif /* __A6XX_GPU_H__ */
-> diff --git a/drivers/gpu/drm/msm/adreno/a8xx_gpu.c b/drivers/gpu/drm/msm/=
-adreno/a8xx_gpu.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6a64b1f96d730a46301545c52=
-a83d62dddc6c2ff
-> --- /dev/null
-> +++ b/drivers/gpu/drm/msm/adreno/a8xx_gpu.c
-> @@ -0,0 +1,1238 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries. */
-> +
-> +
-> +#include "msm_gem.h"
-> +#include "msm_mmu.h"
-> +#include "msm_gpu_trace.h"
-> +#include "a6xx_gpu.h"
-> +#include "a6xx_gmu.xml.h"
-> +
-> +#include <linux/bitfield.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/firmware/qcom/qcom_scm.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/soc/qcom/llcc-qcom.h>
-> +
-> +#define GPU_PAS_ID 13
-> +
-> +static void a8xx_aperture_slice_set(struct msm_gpu *gpu, enum adreno_pip=
-e pipe, u32 slice)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       u32 val;
-> +
-> +       val =3D A8XX_CP_APERTURE_CNTL_HOST_PIPEID(pipe) | A8XX_CP_APERTUR=
-E_CNTL_HOST_SLICEID(slice);
-> +
-> +       if (a6xx_gpu->cached_aperture =3D=3D val)
-> +               return;
-> +
-> +       gpu_write(gpu, REG_A8XX_CP_APERTURE_CNTL_HOST, val);
-> +
-> +       a6xx_gpu->cached_aperture =3D val;
-> +}
-> +
-> +static void a8xx_aperture_set(struct msm_gpu *gpu, enum adreno_pipe pipe=
-)
-> +{
-> +       a8xx_aperture_slice_set(gpu, pipe, 0);
-> +}
-> +
-> +static void a8xx_write_pipe(struct msm_gpu *gpu, enum adreno_pipe pipe, =
-u32 offset, u32 data)
-> +{
-> +       a8xx_aperture_set(gpu, pipe);
-> +
-> +       gpu_write(gpu, offset, data);
-> +}
-> +
-> +static u32 a8xx_read_pipe(struct msm_gpu *gpu, enum adreno_pipe pipe, u3=
-2 offset)
-> +{
-> +       a8xx_aperture_set(gpu, pipe);
-> +
-> +       return gpu_read(gpu, offset);
-> +}
-> +
-> +static u32 a8xx_read_pipe_slice(struct msm_gpu *gpu, enum adreno_pipe pi=
-pe, u32 slice, u32 offset)
-> +{
-> +       a8xx_aperture_slice_set(gpu, pipe, slice);
-> +
-> +       return gpu_read(gpu, offset);
-> +}
-> +
-> +static void a8xx_gpu_get_slice_info(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +
-> +       if (adreno_gpu->info->family < ADRENO_8XX_GEN1)
-> +               return;
-> +
-> +       if (a6xx_gpu->slice_mask)
-> +               return;
-> +
-> +       a6xx_gpu->slice_mask =3D a6xx_llc_read(a6xx_gpu,
-> +                       REG_A8XX_CX_MISC_SLICE_ENABLE_FINAL) & GENMASK(3,=
- 0);
-> +}
-> +
-> +static u32 a8xx_get_first_slice(struct a6xx_gpu *a6xx_gpu)
-> +{
-> +       return ffs(a6xx_gpu->slice_mask) - 1;
-> +}
-> +
-> +static inline bool _a8xx_check_idle(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +
-> +       /* Check that the GMU is idle */
-> +       if (!a6xx_gmu_isidle(&a6xx_gpu->gmu))
-> +               return false;
-> +
-> +       /* Check that the CX master is idle */
-> +       if (gpu_read(gpu, REG_A8XX_RBBM_STATUS) &
-> +                       ~A8XX_RBBM_STATUS_CP_AHB_BUSY_CX_MASTER)
-> +               return false;
-> +
-> +       return !(gpu_read(gpu, REG_A8XX_RBBM_INT_0_STATUS) &
-> +               A6XX_RBBM_INT_0_MASK_RBBM_HANG_DETECT);
-> +}
-> +
-> +static bool a8xx_idle(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
-> +{
-> +       /* wait for CP to drain ringbuffer: */
-> +       if (!adreno_idle(gpu, ring))
-> +               return false;
-> +
-> +       if (spin_until(_a8xx_check_idle(gpu))) {
-> +               DRM_ERROR("%s: %ps: timeout waiting for GPU to idle: stat=
-us %8.8X irq %8.8X rptr/wptr %d/%d\n",
-> +                       gpu->name, __builtin_return_address(0),
-> +                       gpu_read(gpu, REG_A8XX_RBBM_STATUS),
-> +                       gpu_read(gpu, REG_A8XX_RBBM_INT_0_STATUS),
-> +                       gpu_read(gpu, REG_A6XX_CP_RB_RPTR),
-> +                       gpu_read(gpu, REG_A6XX_CP_RB_WPTR));
-> +               return false;
-> +       }
-> +
-> +       return true;
-> +}
-> +
-> +void a8xx_flush(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       uint32_t wptr;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&ring->preempt_lock, flags);
-> +
-> +       /* Copy the shadow to the actual register */
-> +       ring->cur =3D ring->next;
-> +
-> +       /* Make sure to wrap wptr if we need to */
-> +       wptr =3D get_wptr(ring);
-> +
-> +       /* Update HW if this is the current ring and we are not in preemp=
-t*/
-> +       if (!a6xx_in_preempt(a6xx_gpu)) {
-> +               if (a6xx_gpu->cur_ring =3D=3D ring)
-> +                       gpu_write(gpu, REG_A6XX_CP_RB_WPTR, wptr);
-> +               else
-> +                       ring->restore_wptr =3D true;
-> +       } else {
-> +               ring->restore_wptr =3D true;
-> +       }
-> +
-> +       spin_unlock_irqrestore(&ring->preempt_lock, flags);
-> +}
-> +
-> +static void a8xx_set_hwcg(struct msm_gpu *gpu, bool state)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       struct a6xx_gmu *gmu =3D &a6xx_gpu->gmu;
-> +       u32 val;
-> +
-> +       gmu_write(gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_MODE_CNTL,
-> +                       state ? adreno_gpu->info->a6xx->gmu_cgc_mode : 0)=
-;
-> +       gmu_write(gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_DELAY_CNTL,
-> +                       state ? 0x110111 : 0);
-> +       gmu_write(gmu, REG_A6XX_GPU_GMU_AO_GMU_CGC_HYST_CNTL,
-> +                       state ? 0x55555 : 0);
-> +
-> +       gpu_write(gpu, REG_A8XX_RBBM_CLOCK_CNTL_GLOBAL, 1);
-> +       gpu_write(gpu, REG_A8XX_RBBM_CGC_GLOBAL_LOAD_CMD, state ? 1 : 0);
-> +
-> +       if (state) {
-> +               gpu_write(gpu, REG_A8XX_RBBM_CGC_P2S_TRIG_CMD, 1);
-> +
-> +               if (gpu_poll_timeout(gpu, REG_A8XX_RBBM_CGC_P2S_STATUS, v=
-al,
-> +                                    val & A8XX_RBBM_CGC_P2S_STATUS_TXDON=
-E, 1, 10)) {
-> +                       dev_err(&gpu->pdev->dev, "RBBM_CGC_P2S_STATUS TXD=
-ONE Poll failed\n");
-> +                       return;
-> +               }
-> +
-> +               gpu_write(gpu, REG_A8XX_RBBM_CLOCK_CNTL_GLOBAL, 0);
-> +       } else {
-> +               /*
-> +                * GMU enables clk gating in GBIF during boot up. So, ove=
-rride that here when
-> +                * hwcg feature is disabled
-> +                */
-> +               gpu_rmw(gpu, REG_A8XX_GBIF_CX_CONFIG, BIT(0), 0);
-> +       }
-> +}
-> +
-> +static void a8xx_set_cp_protect(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       const struct adreno_protect *protect =3D adreno_gpu->info->a6xx->=
-protect;
-> +       unsigned int i;
-> +       u32 cntl;
-> +
-> +
-> +       cntl =3D A8XX_CP_PROTECT_CNTL_PIPE_ACCESS_PROT_EN |
-> +               A8XX_CP_PROTECT_CNTL_PIPE_ACCESS_FAULT_ON_VIOL_EN |
-> +               A8XX_CP_PROTECT_CNTL_PIPE_LAST_SPAN_INF_RANGE;
-> +       /*
-> +        * Enable access protection to privileged registers, fault on an =
-access
-> +        * protect violation and select the last span to protect from the=
- start
-> +        * address all the way to the end of the register address space
-> +        */
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_CP_PROTECT_CNTL_PIPE, cntl=
-);
-> +       a8xx_write_pipe(gpu, PIPE_BV, REG_A8XX_CP_PROTECT_CNTL_PIPE, cntl=
-);
-> +
-> +       /* Clear aperture */
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       for (i =3D 0; i < protect->count - 1; i++) {
-> +               /* Intentionally skip writing to some registers */
-> +               if (protect->regs[i])
-> +                       gpu_write(gpu, REG_A8XX_CP_PROTECT_GLOBAL(i), pro=
-tect->regs[i]);
-> +       }
-> +       /* last CP_PROTECT to have "infinite" length on the last entry */
-> +       gpu_write(gpu, REG_A8XX_CP_PROTECT_GLOBAL(protect->count_max - 1)=
-, protect->regs[i]);
-> +
-> +       /* Last span feature is only supported on PIPE specific register.=
- So update those here */
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_CP_PROTECT_PIPE(15), prote=
-ct->regs[i]);
-> +       a8xx_write_pipe(gpu, PIPE_BV, REG_A8XX_CP_PROTECT_PIPE(15), prote=
-ct->regs[i]);
-> +
-> +       /* Clear aperture */
-> +       a8xx_aperture_set(gpu, 0);
-> +}
-> +
-> +static void a8xx_set_ubwc_config(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       const struct qcom_ubwc_cfg_data *cfg =3D adreno_gpu->ubwc_config;
-> +       /*
-> +        * We subtract 13 from the highest bank bit (13 is the minimum va=
-lue
-> +        * allowed by hw) and write the lowest two bits of the remaining =
-value
-> +        * as hbb_lo and the one above it as hbb_hi to the hardware.
-> +        */
-> +       WARN_ON(cfg->highest_bank_bit < 13);
-> +       u32 hbb =3D cfg->highest_bank_bit - 13;
-> +       u32 level2_swizzling_dis =3D !(cfg->ubwc_swizzle & UBWC_SWIZZLE_E=
-NABLE_LVL2);
-> +       u32 level3_swizzling_dis =3D !(cfg->ubwc_swizzle & UBWC_SWIZZLE_E=
-NABLE_LVL3);
-> +       u32 ubwc_version =3D cfg->ubwc_enc_version;
-> +       bool yuvnotcomptofc =3D false, min_acc_len_64b =3D false;
-> +       bool rgb565_predicator =3D false, amsbc =3D false;
-> +       bool ubwc_mode =3D qcom_ubwc_get_ubwc_mode(cfg);
-> +       bool rgba8888_lossless =3D false, fp16compoptdis =3D false;
-> +       u8 uavflagprd_inv =3D 2;
-> +       u32 hbb_hi =3D hbb >> 2;
-> +       u32 hbb_lo =3D hbb & 3;
-> +       u32 mode =3D 1;
-> +
-> +       switch (ubwc_version) {
-> +       case UBWC_6_0:
-> +               yuvnotcomptofc =3D true;
-> +               mode =3D 5;
-> +               break;
-> +       case UBWC_5_0:
-> +               amsbc =3D true;
-> +               rgb565_predicator =3D true;
-> +               mode =3D 4;
-> +               break;
-> +       case UBWC_4_0:
-> +               amsbc =3D true;
-> +               rgb565_predicator =3D true;
-> +               fp16compoptdis =3D true;
-> +               rgba8888_lossless =3D true;
-> +               mode =3D 2;
-> +               break;
-> +       case UBWC_3_0:
-> +               amsbc =3D true;
-> +               mode =3D 1;
-> +               break;
-> +       default:
-> +               dev_err(&gpu->pdev->dev, "Unknown UBWC version: 0x%x\n", =
-ubwc_version);
-> +               break;
-> +       }
-> +
-> +       a8xx_write_pipe(gpu, PIPE_BV, REG_A8XX_GRAS_NC_MODE_CNTL, hbb << =
-5);
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_GRAS_NC_MODE_CNTL, hbb << =
-5);
-> +
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_RB_CCU_NC_MODE_CNTL,
-> +                       yuvnotcomptofc << 6 |
-> +                       hbb_hi << 3 |
-> +                       hbb_lo << 1);
-> +
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_RB_CMP_NC_MODE_CNTL,
-> +                       mode << 15 |
-> +                       yuvnotcomptofc << 6 |
-> +                       rgba8888_lossless << 4 |
-> +                       fp16compoptdis << 3 |
-> +                       rgb565_predicator << 2 |
-> +                       amsbc << 1 |
-> +                       min_acc_len_64b);
-> +
-> +       /* Clear aperture */
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       gpu_write(gpu, REG_A6XX_SP_NC_MODE_CNTL,
-> +                 level3_swizzling_dis << 13 |
-> +                 level2_swizzling_dis << 12 |
-> +                 hbb_hi << 10 |
-> +                 uavflagprd_inv << 4 |
-> +                 min_acc_len_64b << 3 |
-> +                 hbb_lo << 1 | ubwc_mode);
-> +
-> +       gpu_write(gpu, REG_A6XX_TPL1_NC_MODE_CNTL,
-> +                 level3_swizzling_dis << 7 |
-> +                 level2_swizzling_dis << 6 |
-> +                 hbb_hi << 4 |
-> +                 min_acc_len_64b << 3 |
-> +                 hbb_lo << 1 | ubwc_mode);
-> +}
-> +
-> +static int a8xx_zap_shader_init(struct msm_gpu *gpu)
-> +{
-> +       static bool loaded;
-> +       int ret;
-> +
-> +       if (loaded)
-> +               return 0;
-> +
-> +       ret =3D adreno_zap_shader_load(gpu, GPU_PAS_ID);
-> +
-> +       loaded =3D !ret;
-> +       return ret;
-> +}
-> +
-> +static void a8xx_nonctxt_config(struct msm_gpu *gpu, u32 *gmem_protect)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       const struct a6xx_info *info =3D adreno_gpu->info->a6xx;
-> +       const struct adreno_reglist_pipe *regs =3D info->nonctxt_reglist;
-> +       int pipe_id, i;
-> +
-> +       for (pipe_id =3D PIPE_NONE; pipe_id <=3D PIPE_DDE_BV; pipe_id++) =
-{
-> +               /* We don't have support for LPAC yet */
-> +               if (pipe_id =3D=3D PIPE_LPAC)
-> +                       continue;
-> +
-> +               for (i =3D 0; regs[i].offset; i++) {
-> +                       if (!(BIT(pipe_id) & regs[i].pipe))
-> +                               continue;
-> +
-> +                       if (regs[i].offset =3D=3D REG_A8XX_RB_GC_GMEM_PRO=
-TECT)
-> +                               *gmem_protect =3D regs[i].value;
-> +
-> +                       a8xx_write_pipe(gpu, pipe_id, regs[i].offset, reg=
-s[i].value);
-> +               }
-> +       }
-> +
-> +       a8xx_aperture_set(gpu, 0);
-> +}
-> +
-> +static int a8xx_cp_init(struct msm_gpu *gpu)
-> +{
-> +       struct msm_ringbuffer *ring =3D gpu->rb[0];
-> +       u32 mask;
-> +
-> +       /* Disable concurrent binning before sending CP init */
-> +       OUT_PKT7(ring, CP_THREAD_CONTROL, 1);
-> +       OUT_RING(ring, BIT(27));
-> +
-> +       OUT_PKT7(ring, CP_ME_INIT, 4);
-> +
-> +       /* Use multiple HW contexts */
-> +       mask =3D BIT(0);
-> +
-> +       /* Enable error detection */
-> +       mask |=3D BIT(1);
-> +
-> +       /* Set default reset state */
-> +       mask |=3D BIT(3);
-> +
-> +       /* Disable save/restore of performance counters across preemption=
- */
-> +       mask |=3D BIT(6);
-> +
-> +       OUT_RING(ring, mask);
-> +
-> +       /* Enable multiple hardware contexts */
-> +       OUT_RING(ring, 0x00000003);
-> +
-> +       /* Enable error detection */
-> +       OUT_RING(ring, 0x20000000);
-> +
-> +       /* Operation mode mask */
-> +       OUT_RING(ring, 0x00000002);
-> +
-> +       a8xx_flush(gpu, ring);
-> +       return a8xx_idle(gpu, ring) ? 0 : -EINVAL;
-> +}
-> +
-> +#define A8XX_INT_MASK \
-> +       (A6XX_RBBM_INT_0_MASK_CP_AHB_ERROR | \
-> +        A6XX_RBBM_INT_0_MASK_RBBM_ATB_ASYNCFIFO_OVERFLOW | \
-> +        A6XX_RBBM_INT_0_MASK_RBBM_GPC_ERROR | \
-> +        A6XX_RBBM_INT_0_MASK_CP_SW | \
-> +        A6XX_RBBM_INT_0_MASK_CP_HW_ERROR | \
-> +        A6XX_RBBM_INT_0_MASK_PM4CPINTERRUPT | \
-> +        A6XX_RBBM_INT_0_MASK_CP_RB_DONE_TS | \
-> +        A6XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS | \
-> +        A6XX_RBBM_INT_0_MASK_RBBM_ATB_BUS_OVERFLOW | \
-> +        A6XX_RBBM_INT_0_MASK_RBBM_HANG_DETECT | \
-> +        A6XX_RBBM_INT_0_MASK_UCHE_OOB_ACCESS | \
-> +        A6XX_RBBM_INT_0_MASK_UCHE_TRAP_INTR | \
-> +        A6XX_RBBM_INT_0_MASK_TSBWRITEERROR | \
-> +        A6XX_RBBM_INT_0_MASK_SWFUSEVIOLATION)
-> +
-> +#define A8XX_APRIV_MASK \
-> +       (A8XX_CP_APRIV_CNTL_PIPE_ICACHE | \
-> +        A8XX_CP_APRIV_CNTL_PIPE_RBFETCH | \
-> +        A8XX_CP_APRIV_CNTL_PIPE_RBPRIVLEVEL | \
-> +        A8XX_CP_APRIV_CNTL_PIPE_RBRPWB)
-> +
-> +#define A8XX_BR_APRIV_MASK \
-> +       (A8XX_APRIV_MASK | \
-> +        A8XX_CP_APRIV_CNTL_PIPE_CDREAD | \
-> +        A8XX_CP_APRIV_CNTL_PIPE_CDWRITE)
-> +
-> +#define A8XX_CP_GLOBAL_INT_MASK \
-> +       (A8XX_CP_GLOBAL_INT_MASK_HWFAULTBR | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTBV | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTLPAC | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTAQE0 | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTAQE1 | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTDDEBR | \
-> +        A8XX_CP_GLOBAL_INT_MASK_HWFAULTDDEBV | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTBR | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTBV | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTLPAC | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTAQE0 | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTAQE1 | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTDDEBR | \
-> +        A8XX_CP_GLOBAL_INT_MASK_SWFAULTDDEBV)
-> +
-> +#define A8XX_CP_INTERRUPT_STATUS_MASK_PIPE \
-> +       (A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFRBWRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFIB1WRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFIB2WRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFIB3WRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFSDSWRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFMRBWRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_CSFVSDWRAP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_OPCODEERROR | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_VSDPARITYERROR | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_REGISTERPROTECTIONERROR | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_ILLEGALINSTRUCTION | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_SMMUFAULT | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_VBIFRESP | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_RTWROVF | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_LRZRTWROVF | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_LRZRTREFCNTOVF | \
-> +        A8XX_CP_INTERRUPT_STATUS_MASK_PIPE_LRZRTCLRRESMISS)
-> +
-> +#define A8XX_CP_HW_FAULT_STATUS_MASK_PIPE \
-> +       (A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFRBFAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFIB1FAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFIB2FAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFIB3FAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFSDSFAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFMRBFAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_CSFVSDFAULT | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_SQEREADBURSTOVF | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_EVENTENGINEOVF | \
-> +        A8XX_CP_HW_FAULT_STATUS_MASK_PIPE_UCODEERROR)
-> +
-> +static int hw_init(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       struct a6xx_gmu *gmu =3D &a6xx_gpu->gmu;
-> +       unsigned int pipe_id, i;
-> +       u32 gmem_protect =3D 0;
-> +       u64 gmem_range_min;
-> +       int ret;
-> +
-> +       /* Read the slice info on A8x GPUs */
-> +       a8xx_gpu_get_slice_info(gpu);
-> +
-> +       ret =3D a6xx_gmu_set_oob(&a6xx_gpu->gmu, GMU_OOB_GPU_SET);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Clear the cached value to force aperture configuration next ti=
-me */
-> +       a6xx_gpu->cached_aperture =3D UINT_MAX;
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       /* Clear GBIF halt in case GX domain was not collapsed */
-> +       gpu_write(gpu, REG_A6XX_GBIF_HALT, 0);
-> +       gpu_read(gpu, REG_A6XX_GBIF_HALT);
-> +
-> +       gpu_write(gpu, REG_A8XX_RBBM_GBIF_HALT, 0);
-> +       gpu_read(gpu, REG_A8XX_RBBM_GBIF_HALT);
-> +
-> +       gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
-> +
-> +       /*
-> +        * Disable the trusted memory range - we don't actually supported=
- secure
-> +        * memory rendering at this point in time and we don't want to bl=
-ock off
-> +        * part of the virtual memory space.
-> +        */
-> +       gpu_write64(gpu, REG_A6XX_RBBM_SECVID_TSB_TRUSTED_BASE, 0x0000000=
-0);
-> +       gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_TRUSTED_SIZE, 0x00000000)=
-;
-> +
-> +       gpu_write(gpu, REG_A6XX_GBIF_QSB_SIDE0, 0x00071620);
-> +       gpu_write(gpu, REG_A6XX_GBIF_QSB_SIDE1, 0x00071620);
-> +       gpu_write(gpu, REG_A6XX_GBIF_QSB_SIDE2, 0x00071620);
-> +       gpu_write(gpu, REG_A6XX_GBIF_QSB_SIDE3, 0x00071620);
-> +       gpu_write(gpu, REG_A8XX_GBIF_CX_CONFIG, 0x20023000);
-> +       gmu_write(gmu, REG_A6XX_GMU_MRC_GBIF_QOS_CTRL, 0x33);
-> +
-> +       /* Make all blocks contribute to the GPU BUSY perf counter */
-> +       gpu_write(gpu, REG_A8XX_RBBM_PERFCTR_GPU_BUSY_MASKED, 0xffffffff)=
-;
-> +
-> +       /* Setup GMEM Range in UCHE */
-> +       gmem_range_min =3D SZ_64M;
-> +       /* Set the GMEM VA range [0x100000:0x100000 + gpu->gmem - 1] */
-> +       gpu_write64(gpu, REG_A8XX_UCHE_CCHE_GC_GMEM_RANGE_MIN, gmem_range=
-_min);
-> +       gpu_write64(gpu, REG_A8XX_SP_HLSQ_GC_GMEM_RANGE_MIN, gmem_range_m=
-in);
-> +
-> +       /* Setup UCHE Trap region */
-> +       gpu_write64(gpu, REG_A8XX_UCHE_TRAP_BASE, adreno_gpu->uche_trap_b=
-ase);
-> +       gpu_write64(gpu, REG_A8XX_UCHE_WRITE_THRU_BASE, adreno_gpu->uche_=
-trap_base);
-> +       gpu_write64(gpu, REG_A8XX_UCHE_CCHE_TRAP_BASE, adreno_gpu->uche_t=
-rap_base);
-> +       gpu_write64(gpu, REG_A8XX_UCHE_CCHE_WRITE_THRU_BASE, adreno_gpu->=
-uche_trap_base);
-> +
-> +       /* Turn on performance counters */
-> +       gpu_write(gpu, REG_A8XX_RBBM_PERFCTR_CNTL, 0x1);
-> +       gpu_write(gpu, REG_A8XX_RBBM_SLICE_PERFCTR_CNTL, 0x1);
-> +
-> +       /* Turn on the IFPC counter (countable 4 on XOCLK1) */
-> +       gmu_write(&a6xx_gpu->gmu, REG_A8XX_GMU_CX_GMU_POWER_COUNTER_SELEC=
-T_XOCLK_1,
-> +                 FIELD_PREP(GENMASK(7, 0), 0x4));
-> +
-> +       /* Select CP0 to always count cycles */
-> +       gpu_write(gpu, REG_A8XX_CP_PERFCTR_CP_SEL(0), PERF_CP_ALWAYS_COUN=
-T);
-> +
-> +       a8xx_set_ubwc_config(gpu);
-> +
-> +       /* Set weights for bicubic filtering */
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(0), 0);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(1), 0x3fe05ff4=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(2), 0x3fa0ebee=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(3), 0x3f5193ed=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(4), 0x3f0243f0=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(5), 0x00000000=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(6), 0x3fd093e8=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(7), 0x3f4133dc=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(8), 0x3ea1dfdb=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(9), 0x3e0283e0=
-);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(10), 0x0000ac2=
-b);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(11), 0x0000f01=
-d);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(12), 0x0011441=
-2);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(13), 0x0021980=
-a);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(14), 0x0051ec0=
-5);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(15), 0x0000380=
-e);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(16), 0x3ff0900=
-1);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(17), 0x3fc10bf=
-a);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(18), 0x3f9193f=
-7);
-> +       gpu_write(gpu, REG_A8XX_TPL1_BICUBIC_WEIGHTS_TABLE(19), 0x3f7227f=
-7);
-> +
-> +       /* Enable fault detection */
-> +       gpu_write(gpu, REG_A8XX_RBBM_INTERFACE_HANG_INT_CNTL, BIT(30) | 0=
-xcfffff);
-> +       gpu_write(gpu, REG_A8XX_RBBM_SLICE_INTERFACE_HANG_INT_CNTL, BIT(3=
-0));
-> +
-> +       gpu_write(gpu, REG_A8XX_UCHE_CLIENT_PF, BIT(7) | 0x1);
-> +
-> +       a8xx_nonctxt_config(gpu, &gmem_protect);
-> +
-> +       /* Enable the GMEM save/restore feature for preemption */
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A6XX_RB_CONTEXT_SWITCH_GMEM_SAV=
-E_RESTORE_ENABLE, 1);
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       /* Set up the CX GMU counter 0 to count busy ticks */
-> +       gmu_write(gmu, REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_MASK, 0xff000000);
-> +
-> +       /* Enable the power counter */
-> +       gmu_rmw(gmu, REG_A8XX_GMU_CX_GMU_POWER_COUNTER_SELECT_XOCLK_0, 0x=
-ff, BIT(5));
-> +       gmu_write(gmu, REG_A6XX_GMU_CX_GMU_POWER_COUNTER_ENABLE, 1);
-> +
-> +       /* Protect registers from the CP */
-> +       a8xx_set_cp_protect(gpu);
-> +
-> +       for (pipe_id =3D PIPE_BR; pipe_id <=3D PIPE_DDE_BV; pipe_id++) {
-> +               u32 apriv_mask =3D A8XX_APRIV_MASK;
-> +
-> +               if (pipe_id =3D=3D PIPE_LPAC)
-> +                       continue;
-> +
-> +               if (pipe_id =3D=3D PIPE_BR)
-> +                       apriv_mask =3D A8XX_BR_APRIV_MASK;
-> +
-> +               a8xx_write_pipe(gpu, pipe_id, REG_A8XX_CP_APRIV_CNTL_PIPE=
-, apriv_mask);
-> +               a8xx_write_pipe(gpu, pipe_id, REG_A8XX_CP_INTERRUPT_STATU=
-S_MASK_PIPE,
-> +                               A8XX_CP_INTERRUPT_STATUS_MASK_PIPE);
-> +               a8xx_write_pipe(gpu, pipe_id, REG_A8XX_CP_HW_FAULT_STATUS=
-_MASK_PIPE,
-> +                               A8XX_CP_HW_FAULT_STATUS_MASK_PIPE);
-> +       }
-> +
-> +       /* Clear aperture */
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       /* Enable interrupts */
-> +       gpu_write(gpu, REG_A8XX_CP_INTERRUPT_STATUS_MASK_GLOBAL, A8XX_CP_=
-GLOBAL_INT_MASK);
-> +       gpu_write(gpu, REG_A8XX_RBBM_INT_0_MASK, A8XX_INT_MASK);
-> +
-> +       ret =3D adreno_hw_init(gpu);
-> +       if (ret)
-> +               goto out;
-> +
-> +       gpu_write64(gpu, REG_A8XX_CP_SQE_INSTR_BASE, a6xx_gpu->sqe_iova);
-> +       /* Set the ringbuffer address */
-> +       gpu_write64(gpu, REG_A6XX_CP_RB_BASE, gpu->rb[0]->iova);
-> +       gpu_write(gpu, REG_A6XX_CP_RB_CNTL, MSM_GPU_RB_CNTL_DEFAULT);
-> +
-> +       /* Configure the RPTR shadow if needed: */
-> +       gpu_write64(gpu, REG_A6XX_CP_RB_RPTR_ADDR, shadowptr(a6xx_gpu, gp=
-u->rb[0]));
-> +       gpu_write64(gpu, REG_A8XX_CP_RB_RPTR_ADDR_BV, rbmemptr(gpu->rb[0]=
-, bv_rptr));
-> +
-> +       for (i =3D 0; i < gpu->nr_rings; i++)
-> +               a6xx_gpu->shadow[i] =3D 0;
-> +
-> +       /* Always come up on rb 0 */
-> +       a6xx_gpu->cur_ring =3D gpu->rb[0];
-> +
-> +       for (i =3D 0; i < gpu->nr_rings; i++)
-> +               gpu->rb[i]->cur_ctx_seqno =3D 0;
-> +
-> +       /* Enable the SQE_to start the CP engine */
-> +       gpu_write(gpu, REG_A8XX_CP_SQE_CNTL, 1);
-> +
-> +       ret =3D a8xx_cp_init(gpu);
-> +       if (ret)
-> +               goto out;
-> +
-> +       /*
-> +        * Try to load a zap shader into the secure world. If successful
-> +        * we can use the CP to switch out of secure mode. If not then we
-> +        * have no resource but to try to switch ourselves out manually. =
-If we
-> +        * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL regist=
-er will
-> +        * be blocked and a permissions violation will soon follow.
-> +        */
-> +       ret =3D a8xx_zap_shader_init(gpu);
-> +       if (!ret) {
-> +               OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
-> +               OUT_RING(gpu->rb[0], 0x00000000);
-> +
-> +               a8xx_flush(gpu, gpu->rb[0]);
-> +               if (!a8xx_idle(gpu, gpu->rb[0]))
-> +                       return -EINVAL;
-> +       } else if (ret =3D=3D -ENODEV) {
-> +               /*
-> +                * This device does not use zap shader (but print a warni=
-ng
-> +                * just in case someone got their dt wrong.. hopefully th=
-ey
-> +                * have a debug UART to realize the error of their ways..=
-.
-> +                * if you mess this up you are about to crash horribly)
-> +                */
-> +               dev_warn_once(gpu->dev->dev,
-> +                       "Zap shader not enabled - using SECVID_TRUST_CNTL=
- instead\n");
-> +               gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
-> +               ret =3D 0;
-> +       } else {
-> +               return ret;
-> +       }
-> +
-> +       /*
-> +        * GMEM_PROTECT register should be programmed after GPU is transi=
-tioned to
-> +        * non-secure mode
-> +        */
-> +       a8xx_write_pipe(gpu, PIPE_BR, REG_A8XX_RB_GC_GMEM_PROTECT, gmem_p=
-rotect);
-> +       WARN_ON(!gmem_protect);
-> +
-> +       /* Clear aperture */
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       /* Enable hardware clockgating */
-> +       a8xx_set_hwcg(gpu, true);
-> +out:
-> +       /*
-> +        * Tell the GMU that we are done touching the GPU and it can star=
-t power
-> +        * management
-> +        */
-> +       a6xx_gmu_clear_oob(&a6xx_gpu->gmu, GMU_OOB_GPU_SET);
-> +
-> +       return ret;
-> +}
-> +
-> +int a8xx_hw_init(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       int ret;
-> +
-> +       mutex_lock(&a6xx_gpu->gmu.lock);
-> +       ret =3D hw_init(gpu);
-> +       mutex_unlock(&a6xx_gpu->gmu.lock);
-> +
-> +       return ret;
-> +}
-> +
-> +static void a8xx_dump(struct msm_gpu *gpu)
-> +{
-> +       DRM_DEV_INFO(&gpu->pdev->dev, "status:   %08x\n",
-> +                       gpu_read(gpu, REG_A8XX_RBBM_STATUS));
-> +       adreno_dump(gpu);
-> +}
-> +
-> +void a8xx_recover(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       struct a6xx_gmu *gmu =3D &a6xx_gpu->gmu;
-> +       int i, active_submits;
-> +
-> +       adreno_dump_info(gpu);
-> +
-> +       for (i =3D 0; i < 4; i++)
-> +               DRM_DEV_INFO(&gpu->pdev->dev, "CP_SCRATCH_REG%d: %u\n", i=
-,
-> +                       gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(i)));
-> +
-> +       if (hang_debug)
-> +               a8xx_dump(gpu);
-> +
-> +       /*
-> +        * To handle recovery specific sequences during the rpm suspend w=
-e are
-> +        * about to trigger
-> +        */
-> +       a6xx_gpu->hung =3D true;
-> +
-> +       /* Halt SQE first */
-> +       gpu_write(gpu, REG_A8XX_CP_SQE_CNTL, 3);
-> +
-> +       pm_runtime_dont_use_autosuspend(&gpu->pdev->dev);
-> +
-> +       /* active_submit won't change until we make a submission */
-> +       mutex_lock(&gpu->active_lock);
-> +       active_submits =3D gpu->active_submits;
-> +
-> +       /*
-> +        * Temporarily clear active_submits count to silence a WARN() in =
-the
-> +        * runtime suspend cb
-> +        */
-> +       gpu->active_submits =3D 0;
-> +
-> +       reinit_completion(&gmu->pd_gate);
-> +       dev_pm_genpd_add_notifier(gmu->cxpd, &gmu->pd_nb);
-> +       dev_pm_genpd_synced_poweroff(gmu->cxpd);
-> +
-> +       /* Drop the rpm refcount from active submits */
-> +       if (active_submits)
-> +               pm_runtime_put(&gpu->pdev->dev);
-> +
-> +       /* And the final one from recover worker */
-> +       pm_runtime_put_sync(&gpu->pdev->dev);
-> +
-> +       if (!wait_for_completion_timeout(&gmu->pd_gate, msecs_to_jiffies(=
-1000)))
-> +               DRM_DEV_ERROR(&gpu->pdev->dev, "cx gdsc didn't collapse\n=
-");
-> +
-> +       dev_pm_genpd_remove_notifier(gmu->cxpd);
-> +
-> +       pm_runtime_use_autosuspend(&gpu->pdev->dev);
-> +
-> +       if (active_submits)
-> +               pm_runtime_get(&gpu->pdev->dev);
-> +
-> +       pm_runtime_get_sync(&gpu->pdev->dev);
-> +
-> +       gpu->active_submits =3D active_submits;
-> +       mutex_unlock(&gpu->active_lock);
-> +
-> +       msm_gpu_hw_init(gpu);
-> +       a6xx_gpu->hung =3D false;
-> +}
-> +
-> +static const char *a8xx_uche_fault_block(struct msm_gpu *gpu, u32 mid)
-> +{
-> +       static const char * const uche_clients[] =3D {
-> +               "BR_VFD", "BR_SP", "BR_VSC", "BR_VPC", "BR_HLSQ", "BR_PC"=
-, "BR_LRZ", "BR_TP",
-> +               "BV_VFD", "BV_SP", "BV_VSC", "BV_VPC", "BV_HLSQ", "BV_PC"=
-, "BV_LRZ", "BV_TP",
-> +               "STCHE",
-> +       };
-> +       static const char * const uche_clients_lpac[] =3D {
-> +               "-", "SP_LPAC", "-", "-", "HLSQ_LPAC", "-", "-", "TP_LPAC=
-",
-> +       };
-> +       u32 val;
-> +
-> +       /*
-> +        * The source of the data depends on the mid ID read from FSYNR1.
-> +        * and the client ID read from the UCHE block
-> +        */
-> +       val =3D gpu_read(gpu, REG_A8XX_UCHE_CLIENT_PF);
-> +
-> +       val &=3D GENMASK(6, 0);
-> +
-> +       /* mid=3D3 refers to BR or BV */
-> +       if (mid =3D=3D 3) {
-> +               if (val < ARRAY_SIZE(uche_clients))
-> +                       return uche_clients[val];
-> +               else
-> +                       return "UCHE";
-> +       }
-> +
-> +       /* mid=3D8 refers to LPAC */
-> +       if (mid =3D=3D 8) {
-> +               if (val < ARRAY_SIZE(uche_clients_lpac))
-> +                       return uche_clients_lpac[val];
-> +               else
-> +                       return "UCHE_LPAC";
-> +       }
-> +
-> +       return "Unknown";
-> +}
-> +
-> +static const char *a8xx_fault_block(struct msm_gpu *gpu, u32 id)
-> +{
-> +       switch (id) {
-> +       case 0x0:
-> +               return "CP";
-> +       case 0x1:
-> +               return "UCHE: Unknown";
-> +       case 0x2:
-> +               return "UCHE_LPAC: Unknown";
-> +       case 0x3:
-> +       case 0x8:
-> +               return a8xx_uche_fault_block(gpu, id);
-> +       case 0x4:
-> +               return "CCU";
-> +       case 0x5:
-> +               return "Flag cache";
-> +       case 0x6:
-> +               return "PREFETCH";
-> +       case 0x7:
-> +               return "GMU";
-> +       case 0x9:
-> +               return "UCHE_HPAC";
-> +       }
-> +
-> +       return "Unknown";
-> +}
-> +
-> +int a8xx_fault_handler(void *arg, unsigned long iova, int flags, void *d=
-ata)
-> +{
-> +       struct msm_gpu *gpu =3D arg;
-> +       struct adreno_smmu_fault_info *info =3D data;
-> +       const char *block =3D "unknown";
-> +
-> +       u32 scratch[] =3D {
-> +                       gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(0)),
-> +                       gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(1)),
-> +                       gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(2)),
-> +                       gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(3)),
-> +       };
-> +
-> +       if (info)
-> +               block =3D a8xx_fault_block(gpu, info->fsynr1 & 0xff);
-> +
-> +       return adreno_fault_handler(gpu, iova, flags, info, block, scratc=
-h);
-> +}
-> +
-> +static void a8xx_cp_hw_err_irq(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       u32 slice =3D a8xx_get_first_slice(a6xx_gpu);
-> +       u32 status =3D gpu_read(gpu, REG_A8XX_CP_INTERRUPT_STATUS_GLOBAL)=
-;
-> +       u32 hw_fault_mask =3D GENMASK(6, 0);
-> +       u32 sw_fault_mask =3D GENMASK(22, 16);
-> +       enum adreno_pipe pipe;
-> +       int i;
-> +
-> +       dev_err_ratelimited(&gpu->pdev->dev, "CP Fault Global INT status:=
- 0x%x\n", status);
-> +
-> +       switch (status) {
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTBR:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTBR:
-> +               pipe =3D PIPE_BR;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTBV:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTBV:
-> +               pipe =3D PIPE_BV;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTLPAC:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTLPAC:
-> +               pipe =3D PIPE_LPAC;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTAQE0:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTAQE0:
-> +               pipe =3D PIPE_AQE0;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTAQE1:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTAQE1:
-> +               pipe =3D PIPE_AQE1;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTDDEBR:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTDDEBR:
-> +               pipe =3D PIPE_DDE_BR;
-> +               break;
-> +       case A8XX_CP_GLOBAL_INT_MASK_HWFAULTDDEBV:
-> +       case A8XX_CP_GLOBAL_INT_MASK_SWFAULTDDEBV:
-> +               pipe =3D PIPE_DDE_BV;
-> +               break;
-> +       default:
-> +               dev_err_ratelimited(&gpu->pdev->dev, "CP Fault Unknown pi=
-pe\n");
-> +               return;
-> +       }
-> +
-> +       if (hw_fault_mask & status) {
-> +               status =3D a8xx_read_pipe_slice(gpu, pipe, slice, REG_A8X=
-X_CP_HW_FAULT_STATUS_PIPE);
-> +               dev_err_ratelimited(&gpu->pdev->dev,
-> +                               "CP HW FAULT pipe: %u status: 0x%x\n", pi=
-pe, status);
-> +               /* Clear aperture */
-> +               a8xx_aperture_set(gpu, 0);
-> +               return;
-> +       }
-> +
-> +       if (sw_fault_mask & status) {
-> +               status =3D a8xx_read_pipe_slice(gpu, pipe, slice, REG_A8X=
-X_CP_INTERRUPT_STATUS_PIPE);
-> +               dev_err_ratelimited(&gpu->pdev->dev,
-> +                               "CP SW FAULT pipe: %u status: 0x%x\n", pi=
-pe, status);
-> +
-> +               if (status & BIT(8)) {
-> +                       a8xx_write_pipe(gpu, pipe, REG_A8XX_CP_SQE_STAT_A=
-DDR_PIPE, 1);
-> +                       status =3D a8xx_read_pipe_slice(gpu, pipe, slice,
-> +                                       REG_A8XX_CP_SQE_STAT_DATA_PIPE);
-> +                       dev_err_ratelimited(&gpu->pdev->dev,
-> +                                       "CP Opcode error, opcode=3D0x%x\n=
-", status);
-> +               }
-> +
-> +               for (i =3D 0; i < 4; i++)
-> +                       DRM_DEV_INFO(&gpu->pdev->dev, "CP_SCRATCH_REG%d: =
-%u\n", i,
-> +                               gpu_read(gpu, REG_A8XX_CP_SCRATCH_GLOBAL(=
-i)));
-> +
-> +               for (pipe =3D PIPE_BR; pipe <=3D PIPE_DDE_BV; pipe++) {
-> +                       for (i =3D 0; i < 5; i++)
-> +                               DRM_DEV_INFO(&gpu->pdev->dev, "CP_SCRATCH=
-_PIPE_REG%d: %u\n", i,
-> +                                       a8xx_read_pipe(gpu, pipe, REG_A8X=
-X_CP_SCRATCH_PIPE(i)));
-> +               }
-> +
-> +               /* Clear aperture */
-> +               a8xx_aperture_set(gpu, 0);
-> +               return;
-> +       }
-> +}
-> +
-> +static u32 gpu_periph_read(struct msm_gpu *gpu, enum adreno_pipe pipe, u=
-32 dbg_offset)
-> +{
-> +       a8xx_write_pipe(gpu, pipe, REG_A8XX_CP_SQE_UCODE_DBG_ADDR_PIPE, d=
-bg_offset);
-> +
-> +       return a8xx_read_pipe(gpu, pipe, REG_A8XX_CP_SQE_UCODE_DBG_DATA_P=
-IPE);
-> +}
-> +
-> +static u64 gpu_periph_read64(struct msm_gpu *gpu, enum adreno_pipe pipe,=
- u32 dbg_offset)
-> +{
-> +       u64 lo, hi;
-> +
-> +       lo =3D gpu_periph_read(gpu, pipe, dbg_offset);
-> +       hi =3D gpu_periph_read(gpu, pipe, dbg_offset + 1);
-> +
-> +       return (hi << 32) | lo;
-> +}
-> +
-> +#define CP_PERIPH_IB1_BASE_LO   0x7005
-> +#define CP_PERIPH_IB1_BASE_HI   0x7006
-> +#define CP_PERIPH_IB1_SIZE      0x7007
-> +#define CP_PERIPH_IB1_OFFSET    0x7008
-> +#define CP_PERIPH_IB2_BASE_LO   0x7009
-> +#define CP_PERIPH_IB2_BASE_HI   0x700a
-> +#define CP_PERIPH_IB2_SIZE      0x700b
-> +#define CP_PERIPH_IB2_OFFSET    0x700c
-> +#define CP_PERIPH_IB3_BASE_LO   0x700d
-> +#define CP_PERIPH_IB3_BASE_HI   0x700e
-> +#define CP_PERIPH_IB3_SIZE      0x700f
-> +#define CP_PERIPH_IB3_OFFSET    0x7010
-> +
-> +static void a8xx_fault_detect_irq(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       struct msm_ringbuffer *ring =3D gpu->funcs->active_ring(gpu);
-> +
-> +       /*
-> +        * If stalled on SMMU fault, we could trip the GPU's hang detecti=
-on,
-> +        * but the fault handler will trigger the devcore dump, and we wa=
-nt
-> +        * to otherwise resume normally rather than killing the submit, s=
-o
-> +        * just bail.
-> +        */
-> +       if (gpu_read(gpu, REG_A8XX_RBBM_MISC_STATUS) & A8XX_RBBM_MISC_STA=
-TUS_SMMU_STALLED_ON_FAULT)
-> +               return;
-> +
-> +       /*
-> +        * Force the GPU to stay on until after we finish
-> +        * collecting information
-> +        */
-> +       if (!adreno_has_gmu_wrapper(adreno_gpu))
-> +               gmu_write(&a6xx_gpu->gmu, REG_A6XX_GMU_GMU_PWR_COL_KEEPAL=
-IVE, 1);
-> +
-> +       a8xx_aperture_set(gpu, PIPE_BR);
-> +
-> +       DRM_DEV_ERROR(&gpu->pdev->dev,
-> +               "gpu fault ring %d fence %x status %8.8X gfx_status %8.8X=
-\n",
-> +               ring ? ring->id : -1, ring ? ring->fctx->last_fence : 0,
-> +               gpu_read(gpu, REG_A8XX_RBBM_STATUS), gpu_read(gpu, REG_A8=
-XX_RBBM_GFX_STATUS));
-> +
-> +       DRM_DEV_ERROR(&gpu->pdev->dev,
-> +               "BR: status %8.8X rb %4.4x/%4.4x ib1 %16.16llX/%4.4x ib2 =
-%16.16llX/%4.4x ib3 %16.16llX/%4.4x\n",
-> +               gpu_read(gpu, REG_A8XX_RBBM_GFX_BR_STATUS),
-> +               gpu_read(gpu, REG_A6XX_CP_RB_RPTR),
-> +               gpu_read(gpu, REG_A6XX_CP_RB_WPTR),
-> +               gpu_periph_read64(gpu, PIPE_BR, CP_PERIPH_IB1_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BR, CP_PERIPH_IB1_OFFSET),
-> +               gpu_periph_read64(gpu, PIPE_BR, CP_PERIPH_IB2_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BR, CP_PERIPH_IB2_OFFSET),
-> +               gpu_periph_read64(gpu, PIPE_BR, CP_PERIPH_IB3_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BR, CP_PERIPH_IB3_OFFSET));
-> +
-> +       DRM_DEV_ERROR(&gpu->pdev->dev,
-> +               "BV: status %8.8X rb %4.4x/%4.4x ib1 %16.16llX/%4.4x ib2 =
-%16.16llX/%4.4x ib3 %16.16llX/%4.4x\n",
-> +               gpu_read(gpu, REG_A8XX_RBBM_GFX_BV_STATUS),
-> +               gpu_read(gpu, REG_A8XX_CP_RB_RPTR_BV),
-> +               gpu_read(gpu, REG_A6XX_CP_RB_WPTR),
-> +               gpu_periph_read64(gpu, PIPE_BV, CP_PERIPH_IB1_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BV, CP_PERIPH_IB1_OFFSET),
-> +               gpu_periph_read64(gpu, PIPE_BV, CP_PERIPH_IB2_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BV, CP_PERIPH_IB2_OFFSET),
-> +               gpu_periph_read64(gpu, PIPE_BV, CP_PERIPH_IB3_BASE_LO),
-> +               gpu_periph_read(gpu, PIPE_BV, CP_PERIPH_IB3_OFFSET));
-> +
-> +       a8xx_aperture_set(gpu, 0);
-> +
-> +       /* Turn off the hangcheck timer to keep it from bothering us */
-> +       timer_delete(&gpu->hangcheck_timer);
-> +
-> +       kthread_queue_work(gpu->worker, &gpu->recover_work);
-> +}
-> +
-> +static void a8xx_sw_fuse_violation_irq(struct msm_gpu *gpu)
-> +{
-> +       u32 status;
-> +
-> +       status =3D gpu_read(gpu, REG_A8XX_RBBM_SW_FUSE_INT_STATUS);
-> +       gpu_write(gpu, REG_A8XX_RBBM_SW_FUSE_INT_MASK, 0);
-> +
-> +       dev_err_ratelimited(&gpu->pdev->dev, "SW fuse violation status=3D=
-%8.8x\n", status);
-> +
-> +       /*
-> +        * Ignore FASTBLEND violations, because the HW will silently fall=
- back
-> +        * to legacy blending.
-> +        */
-> +       if (status & (A7XX_CX_MISC_SW_FUSE_VALUE_RAYTRACING |
-> +                     A7XX_CX_MISC_SW_FUSE_VALUE_LPAC)) {
-> +               timer_delete(&gpu->hangcheck_timer);
-> +
-> +               kthread_queue_work(gpu->worker, &gpu->recover_work);
-> +       }
-> +}
-> +
-> +irqreturn_t a8xx_irq(struct msm_gpu *gpu)
-> +{
-> +       struct msm_drm_private *priv =3D gpu->dev->dev_private;
-> +       u32 status =3D gpu_read(gpu, REG_A8XX_RBBM_INT_0_STATUS);
-> +
-> +       gpu_write(gpu, REG_A8XX_RBBM_INT_CLEAR_CMD, status);
-> +
-> +       if (priv->disable_err_irq)
-> +               status &=3D A6XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS;
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_RBBM_HANG_DETECT)
-> +               a8xx_fault_detect_irq(gpu);
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_CP_AHB_ERROR) {
-> +               u32 rl0, rl1;
-> +
-> +               rl0 =3D gpu_read(gpu, REG_A8XX_CP_RL_ERROR_DETAILS_0);
-> +               rl1 =3D gpu_read(gpu, REG_A8XX_CP_RL_ERROR_DETAILS_1);
-> +               dev_err_ratelimited(&gpu->pdev->dev,
-> +                               "CP | AHB bus error RL_ERROR_1: %x, RL_ER=
-ROR_2: %x\n", rl0, rl1);
-> +       }
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_CP_HW_ERROR)
-> +               a8xx_cp_hw_err_irq(gpu);
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_RBBM_ATB_ASYNCFIFO_OVERFLOW)
-> +               dev_err_ratelimited(&gpu->pdev->dev, "RBBM | ATB ASYNC ov=
-erflow\n");
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_RBBM_ATB_BUS_OVERFLOW)
-> +               dev_err_ratelimited(&gpu->pdev->dev, "RBBM | ATB bus over=
-flow\n");
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_UCHE_OOB_ACCESS)
-> +               dev_err_ratelimited(&gpu->pdev->dev, "UCHE | Out of bound=
-s access\n");
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_UCHE_TRAP_INTR)
-> +               dev_err_ratelimited(&gpu->pdev->dev, "UCHE | Trap interru=
-pt\n");
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_SWFUSEVIOLATION)
-> +               a8xx_sw_fuse_violation_irq(gpu);
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS) {
-> +               msm_gpu_retire(gpu);
-> +               a6xx_preempt_trigger(gpu);
-> +       }
-> +
-> +       if (status & A6XX_RBBM_INT_0_MASK_CP_SW)
-> +               a6xx_preempt_irq(gpu);
-> +
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +void a8xx_llc_activate(struct a6xx_gpu *a6xx_gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D &a6xx_gpu->base;
-> +       struct msm_gpu *gpu =3D &adreno_gpu->base;
-> +
-> +       if (!llcc_slice_activate(a6xx_gpu->llc_slice)) {
-> +               u32 gpu_scid =3D llcc_get_slice_id(a6xx_gpu->llc_slice);
-> +
-> +               gpu_scid &=3D GENMASK(5, 0);
-> +
-> +               gpu_write(gpu, REG_A6XX_GBIF_SCACHE_CNTL1,
-> +                         FIELD_PREP(GENMASK(29, 24), gpu_scid) |
-> +                         FIELD_PREP(GENMASK(23, 18), gpu_scid) |
-> +                         FIELD_PREP(GENMASK(17, 12), gpu_scid) |
-> +                         FIELD_PREP(GENMASK(11, 6), gpu_scid)  |
-> +                         FIELD_PREP(GENMASK(5, 0), gpu_scid));
-> +
-> +               gpu_write(gpu, REG_A6XX_GBIF_SCACHE_CNTL0,
-> +                         FIELD_PREP(GENMASK(27, 22), gpu_scid) |
-> +                         FIELD_PREP(GENMASK(21, 16), gpu_scid) |
-> +                         FIELD_PREP(GENMASK(15, 10), gpu_scid) |
-> +                         BIT(8));
-> +       }
-> +
-> +       llcc_slice_activate(a6xx_gpu->htw_llc_slice);
-> +}
-> +
-> +int a8xx_gpu_feature_probe(struct msm_gpu *gpu)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       u32 fuse_val;
-> +       int ret;
-> +
-> +       /*
-> +        * Assume that if qcom scm isn't available, that whatever
-> +        * replacement allows writing the fuse register ourselves.
-> +        * Users of alternative firmware need to make sure this
-> +        * register is writeable or indicate that it's not somehow.
-> +        * Print a warning because if you mess this up you're about to
-> +        * crash horribly.
-> +        */
-> +       if (!qcom_scm_is_available()) {
-> +               dev_warn_once(gpu->dev->dev,
-> +                       "SCM is not available, poking fuse register\n");
-> +               a6xx_llc_write(a6xx_gpu, REG_A7XX_CX_MISC_SW_FUSE_VALUE,
-> +                       A7XX_CX_MISC_SW_FUSE_VALUE_RAYTRACING |
-> +                       A7XX_CX_MISC_SW_FUSE_VALUE_FASTBLEND |
-> +                       A7XX_CX_MISC_SW_FUSE_VALUE_LPAC);
-> +               adreno_gpu->has_ray_tracing =3D true;
-> +               return 0;
-> +       }
-> +
-> +       ret =3D qcom_scm_gpu_init_regs(QCOM_SCM_GPU_ALWAYS_EN_REQ |
-> +                                    QCOM_SCM_GPU_TSENSE_EN_REQ);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /*
-> +        * On a750 raytracing may be disabled by the firmware, find out
-> +        * whether that's the case. The scm call above sets the fuse
-> +        * register.
-> +        */
-> +       fuse_val =3D a6xx_llc_read(a6xx_gpu,
-> +                                REG_A7XX_CX_MISC_SW_FUSE_VALUE);
-> +       adreno_gpu->has_ray_tracing =3D
-> +               !!(fuse_val & A7XX_CX_MISC_SW_FUSE_VALUE_RAYTRACING);
-> +
-> +       return 0;
-> +}
-> +
-> +
-> +#define GBIF_CLIENT_HALT_MASK          BIT(0)
-> +#define GBIF_ARB_HALT_MASK             BIT(1)
-> +#define VBIF_XIN_HALT_CTRL0_MASK       GENMASK(3, 0)
-> +#define VBIF_RESET_ACK_MASK            0xF0
-> +#define GPR0_GBIF_HALT_REQUEST         0x1E0
-> +
-> +void a8xx_bus_clear_pending_transactions(struct adreno_gpu *adreno_gpu, =
-bool gx_off)
-> +{
-> +       struct msm_gpu *gpu =3D &adreno_gpu->base;
-> +
-> +       if (gx_off) {
-> +               /* Halt the gx side of GBIF */
-> +               gpu_write(gpu, REG_A8XX_RBBM_GBIF_HALT, 1);
-> +               spin_until(gpu_read(gpu, REG_A8XX_RBBM_GBIF_HALT_ACK) & 1=
-);
-> +       }
-> +
-> +       /* Halt new client requests on GBIF */
-> +       gpu_write(gpu, REG_A6XX_GBIF_HALT, GBIF_CLIENT_HALT_MASK);
-> +       spin_until((gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK) &
-> +                       (GBIF_CLIENT_HALT_MASK)) =3D=3D GBIF_CLIENT_HALT_=
-MASK);
-> +
-> +       /* Halt all AXI requests on GBIF */
-> +       gpu_write(gpu, REG_A6XX_GBIF_HALT, GBIF_ARB_HALT_MASK);
-> +       spin_until((gpu_read(gpu,  REG_A6XX_GBIF_HALT_ACK) &
-> +                       (GBIF_ARB_HALT_MASK)) =3D=3D GBIF_ARB_HALT_MASK);
-> +
-> +       /* The GBIF halt needs to be explicitly cleared */
-> +       gpu_write(gpu, REG_A6XX_GBIF_HALT, 0x0);
-> +}
-> +
-> +int a8xx_gmu_get_timestamp(struct msm_gpu *gpu, uint64_t *value)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +
-> +       mutex_lock(&a6xx_gpu->gmu.lock);
-> +
-> +       /* Force the GPU power on so we can read this register */
-> +       a6xx_gmu_set_oob(&a6xx_gpu->gmu, GMU_OOB_PERFCOUNTER_SET);
-> +
-> +       *value =3D gpu_read64(gpu, REG_A8XX_CP_ALWAYS_ON_COUNTER);
-> +
-> +       a6xx_gmu_clear_oob(&a6xx_gpu->gmu, GMU_OOB_PERFCOUNTER_SET);
-> +
-> +       mutex_unlock(&a6xx_gpu->gmu.lock);
-> +
-> +       return 0;
-> +}
-> +
-> +u64 a8xx_gpu_busy(struct msm_gpu *gpu, unsigned long *out_sample_rate)
-> +{
-> +       struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> +       struct a6xx_gpu *a6xx_gpu =3D to_a6xx_gpu(adreno_gpu);
-> +       u64 busy_cycles;
-> +
-> +       /* 19.2MHz */
-> +       *out_sample_rate =3D 19200000;
-> +
-> +       busy_cycles =3D gmu_read64(&a6xx_gpu->gmu,
-> +                       REG_A8XX_GMU_CX_GMU_POWER_COUNTER_XOCLK_0_L,
-> +                       REG_A8XX_GMU_CX_GMU_POWER_COUNTER_XOCLK_0_H);
-> +
-> +       return busy_cycles;
-> +}
-> +
-> +bool a8xx_progress(struct msm_gpu *gpu, struct msm_ringbuffer *ring)
-> +{
-> +       return true;
-> +}
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
-m/adreno/adreno_gpu.h
-> index 9831401c3bc865b803c2f9759d5e2ffcd79d19f8..6a2157f31122ba0c2f2a7005c=
-98e3e4f1ada6acc 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
-> @@ -90,6 +90,13 @@ struct adreno_reglist {
->         u32 value;
->  };
->
-> +/* Reglist with pipe information */
-> +struct adreno_reglist_pipe {
-> +       u32 offset;
-> +       u32 value;
-> +       u32 pipe;
-> +};
-> +
->  struct adreno_speedbin {
->         uint16_t fuse;
->         uint16_t speedbin;
-> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/=
-drm/msm/registers/adreno/a6xx.xml
-> index ddde2e03b748f447b5e57571e2b04c68f8f2efc2..c3a202c8dce65d414c89bf76f=
-1cb458b206b4eca 100644
-> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
-> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
-> @@ -4876,7 +4876,6 @@ by a particular renderpass/blit.
->  <domain name=3D"A6XX_CX_MISC" width=3D"32" prefix=3D"variant" varset=3D"=
-chip">
->         <reg32 offset=3D"0x0001" name=3D"SYSTEM_CACHE_CNTL_0"/>
->         <reg32 offset=3D"0x0002" name=3D"SYSTEM_CACHE_CNTL_1"/>
-> -       <reg32 offset=3D"0x0087" name=3D"SLICE_ENABLE_FINAL" variants=3D"=
-A8XX-"/>
->         <reg32 offset=3D"0x0039" name=3D"CX_MISC_TCM_RET_CNTL" variants=
-=3D"A7XX-"/>
->         <reg32 offset=3D"0x0087" name=3D"CX_MISC_SLICE_ENABLE_FINAL" vari=
-ants=3D"A8XX"/>
->         <reg32 offset=3D"0x0400" name=3D"CX_MISC_SW_FUSE_VALUE" variants=
-=3D"A7XX-">
-> diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml b/drivers/=
-gpu/drm/msm/registers/adreno/a6xx_gmu.xml
-> index 5dce7934056dd6472c368309b4894f0ed4a4d960..c4e00b1263cda65dce89c2f16=
-860e5bf6f1c6244 100644
-> --- a/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
-> +++ b/drivers/gpu/drm/msm/registers/adreno/a6xx_gmu.xml
-> @@ -60,6 +60,7 @@ xsi:schemaLocation=3D"https://gitlab.freedesktop.org/fr=
-eedreno/ rules-fd.xsd">
->         <reg32 offset=3D"0x1f400" name=3D"GMU_ICACHE_CONFIG"/>
->         <reg32 offset=3D"0x1f401" name=3D"GMU_DCACHE_CONFIG"/>
->         <reg32 offset=3D"0x1f40f" name=3D"GMU_SYS_BUS_CONFIG"/>
-> +       <reg32 offset=3D"0x1f50b" name=3D"GMU_MRC_GBIF_QOS_CTRL"/>
->         <reg32 offset=3D"0x1f800" name=3D"GMU_CM3_SYSRESET"/>
->         <reg32 offset=3D"0x1f801" name=3D"GMU_CM3_BOOT_CONFIG"/>
->         <reg32 offset=3D"0x1f81a" name=3D"GMU_CM3_FW_BUSY"/>
->
+[  418.260323] bpf_testmod: oh no, recursing into test_1, recursion_misses =
+1
+  [  424.982201]
+  [  424.982207] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+  [  424.982216] WARNING: inconsistent lock state
+  [  424.982219] 6.18.0-rc1-gbb1b9387787c-dirty #1 Tainted: G        W  OE
+  [  424.982221] --------------------------------
+  [  424.982223] inconsistent {INITIAL USE} -> {IN-NMI} usage.
+  [  424.982225] new_name/11207 [HC1[1]:SC0[0]:HE0:SE1] takes:
+  [  424.982229] ffffe8ffffd9c000 (&loc_l->lock){....}-{2:2}, at:
+bpf_lru_pop_free+0x2c6/0x1a50
+  [  424.982244] {INITIAL USE} state was registered at:
+  [  424.982246]   lock_acquire+0x154/0x2d0
+  [  424.982252]   _raw_spin_lock_irqsave+0x39/0x60
+  [  424.982259]   bpf_lru_pop_free+0x2c6/0x1a50
+  [  424.982262]   htab_lru_map_update_elem+0x17e/0xa90
+  [  424.982266]   bpf_map_update_value+0x5aa/0x1230
+  [  424.982272]   __sys_bpf+0x33b4/0x4ef0
+  [  424.982275]   __x64_sys_bpf+0x78/0xe0
+  [  424.982278]   do_syscall_64+0x6a/0x2f0
+  [  424.982282]   entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  [  424.982287] irq event stamp: 236
+  [  424.982288] hardirqs last  enabled at (235): [<ffffffff959e4e70>]
+do_syscall_64+0x30/0x2f0
+  [  424.982292] hardirqs last disabled at (236): [<ffffffff959e65df>]
+exc_nmi+0x7f/0x110
+  [  424.982296] softirqs last  enabled at (0): [<ffffffff933fe7cf>]
+copy_process+0x1c3f/0x6ab0
+  [  424.982302] softirqs last disabled at (0): [<0000000000000000>] 0x0
+  [  424.982305]
+  [  424.982305] other info that might help us debug this:
+  [  424.982306]  Possible unsafe locking scenario:
+  [  424.982306]
+  [  424.982307]        CPU0
+  [  424.982308]        ----
+  [  424.982309]   lock(&loc_l->lock);
+  [  424.982311]   <Interrupt>
+  [  424.982312]     lock(&loc_l->lock);
+  [  424.982314]
+  [  424.982314]  *** DEADLOCK ***
+  [  424.982314]
+  [  424.982315] no locks held by new_name/11207.
+  [  424.982317]
+  [  424.982317] stack backtrace:
+  [  424.982326] CPU: 1 UID: 0 PID: 11207 Comm: new_name Tainted: G
+    W  OE       6.18.0-rc1-gbb1b9387787c-dirty #1 PREEMPT(full)
+  [  424.982332] Tainted: [W]=3DWARN, [O]=3DOOT_MODULE, [E]=3DUNSIGNED_MODU=
+LE
+  [  424.982334] Hardware name: QEMU Ubuntu 25.04 PC (i440FX + PIIX,
+1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+  [  424.982337] Call Trace:
+  [  424.982340]  <NMI>
+  [  424.982342]  dump_stack_lvl+0x5d/0x80
+  [  424.982356]  print_usage_bug.part.0+0x22b/0x2c0
+  [  424.982360]  lock_acquire+0x278/0x2d0
+  [  424.982364]  ? __irq_work_queue_local+0x133/0x360
+  [  424.982371]  ? bpf_lru_pop_free+0x2c6/0x1a50
+  [  424.982375]  _raw_spin_lock_irqsave+0x39/0x60
+  [  424.982379]  ? bpf_lru_pop_free+0x2c6/0x1a50
+  [  424.982382]  bpf_lru_pop_free+0x2c6/0x1a50
+  [  424.982387]  ? arch_irq_work_raise+0x3f/0x60
+  [  424.982394]  ? __pfx___irq_work_queue_local+0x10/0x10
+  [  424.982399]  htab_lru_map_update_elem+0x17e/0xa90
+  [  424.982405]  ? __pfx_htab_lru_map_update_elem+0x10/0x10
+  [  424.982408]  ? __kasan_check_byte+0x16/0x60
+  [  424.982414]  ? __htab_map_lookup_elem+0x95/0x220
+  [  424.982420]  bpf_prog_2c77131b3c031599_oncpu_lru_map+0xe4/0x168
+  [  424.982423]  __perf_event_overflow+0x8e8/0xea0
+  [  424.982430]  ? __pfx___perf_event_overflow+0x10/0x10
+  [  424.982436]  handle_pmi_common+0x3fe/0x810
+  [  424.982441]  ? __pfx_handle_pmi_common+0x10/0x10
+  [  424.982452]  ? __pfx_intel_bts_interrupt+0x10/0x10
+  [  424.982458]  intel_pmu_handle_irq+0x1c5/0x5d0
+  [  424.982461]  ? lock_acquire+0x1ef/0x2d0
+  [  424.982465]  ? nmi_handle.part.0+0x2f/0x380
+  [  424.982469]  perf_event_nmi_handler+0x3e/0x70
+  [  424.982476]  nmi_handle.part.0+0x13f/0x380
+  [  424.982480]  ? trace_rcu_watching+0x105/0x170
+  [  424.982486]  default_do_nmi+0x3b/0x110
+  [  424.982490]  ? irqentry_nmi_enter+0x6f/0x80
+  [  424.982493]  exc_nmi+0xe3/0x110
+  [  424.982497]  end_repeat_nmi+0xf/0x53
+  [  424.982502] RIP: 0010:fput_close_sync+0x56/0x1a0
+  [  424.982509] Code: 48 89 e5 48 c7 04 24 b3 8a b5 41 48 c7 44 24 08
+5c a2 3e 96 48 c1 ed 03 48 c7 44 24 10 10 a7 e0 93 42 c7 44 2d 00 f1
+f1 f1 f1 <42> c7 44 2d 04 00 f3 f3 f3 65 48 8b 05 91 98 56 04 48 89 44
+24 58
+  [  424.982513] RSP: 0018:ffffc900099d7e88 EFLAGS: 00000a06
+  [  424.982517] RAX: 0000000000000000 RBX: ffff888109fb48c0 RCX:
+0000000000000000
+  [  424.982520] RDX: 1ffff110099572bb RSI: 0000000000000008 RDI:
+ffff888109fb4a20
+  [  424.982522] RBP: 1ffff9200133afd1 R08: ffff888109fb48c0 R09:
+ffff888109278b40
+  [  424.982524] R10: ffff888109fb4920 R11: 0000000000000000 R12:
+0000000000000003
+  [  424.982526] R13: dffffc0000000000 R14: 0000000000000003 R15:
+0000000000000000
+  [  424.982532]  ? fput_close_sync+0x56/0x1a0
+  [  424.982537]  ? fput_close_sync+0x56/0x1a0
+  [  424.982541]  </NMI>
+  [  424.982542]  <TASK>
+  [  424.982544]  ? __pfx_fput_close_sync+0x10/0x10
+  [  424.982548]  ? do_raw_spin_unlock+0x59/0x250
+  [  424.982553]  __x64_sys_close+0x7d/0xd0
+  [  424.982559]  do_syscall_64+0x6a/0x2f0
+  [  424.982563]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  [  424.982566] RIP: 0033:0x7faae0f88fe2
+  [  424.982569] Code: 08 0f 85 71 3a ff ff 49 89 fb 48 89 f0 48 89 d7
+48 89 ce 4c 89 c2 4d 89 ca 4c 8b 44 24 08 4c 8b 4c 24 10 4c 89 5c 24
+08 0f 05 <c3> 66 2e 0f 1f 84 00 00 00 00 00 66 2e 0f 1f 84 00 00 00 00
+00 66
+  [  424.982571] RSP: 002b:00007ffe58ee5b08 EFLAGS: 00000246 ORIG_RAX:
+0000000000000003
+  [  424.982574] RAX: ffffffffffffffda RBX: 00007faae0a6cb00 RCX:
+00007faae0f88fe2
+  [  424.982577] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+0000000000000072
+  [  424.982579] RBP: 00007ffe58ee5b30 R08: 0000000000000000 R09:
+0000000000000000
+  [  424.982581] R10: 0000000000000000 R11: 0000000000000246 R12:
+0000000000000008
+  [  424.982583] R13: 0000000000000000 R14: 0000556f5e250c90 R15:
+00007faae11e9000
+  [  424.982588]  </TASK>
+  [  424.982606] perf: interrupt took too long (14417 > 12551),
+lowering kernel.perf_event_max_sample_rate to 13000
+
+We'll need to figure this out first.
+
+  [0] https://github.com/kernel-patches/bpf/actions/runs/18884827710/job/53=
+898669092
+
+> You are awesome, thank you!
 > --
-> 2.51.0
+> Deet-doot-dot, I am a bot.
+> https://korg.docs.kernel.org/patchwork/pwbot.html
+>
 >
 
