@@ -1,125 +1,184 @@
-Return-Path: <linux-kernel+bounces-873635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A03C144C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:12:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90015C14502
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:17:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B383A420EC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:11:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CE34508B27
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52412304BC8;
-	Tue, 28 Oct 2025 11:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDEC304BD6;
+	Tue, 28 Oct 2025 11:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FasfVChE"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RYXB6v26"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF289212575
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B9302150
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761649882; cv=none; b=iIIppAykbJ70lRA/0ls6jb7BZItacgI4i5V/HTekA+9frWrcnp9PJXn7zoXafbn4QdMEKmkMbWjV8SPrtRPOqVuGTm4zoLzVpILlTy/zU3b8sfxF9PAaqt2hruB4wCm89t4RGVDphFPZQvh5OECPWs2my0R9trtFbsTD55tj2fM=
+	t=1761649914; cv=none; b=UCNREFDyNqSpF3bLBTX1RxQDtcykJxLO4eI5JK5oYd912yriOv2WTVXy2hb1rOdlfnh9NQdbYqMamWnC7YJzxUexDwQQpAr7YdsBT49gkARMkcxtZhopjxHQ0jThm3EMWAziRpLEeiYR7uMWpHz7MGuwt3M+Q5o0CUipCQfSEvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761649882; c=relaxed/simple;
-	bh=4qzCYQcrCmvs1fI1Y2jGeN1q9TLaOaKK5NL7b0UxVTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GTjRItanv8Lseilm3NOVje8s+GiMMrOwPpO2H39Otdq/WCNVKgmbcctLBwGx7bt59Un8lJAaN6eu0BMMiqkzPlDvC6i/1b/RaE4Gv7bYZ/ZmV5cSImQFsznM83dobPZCNgZRl3PRjgAd6CbpstTLS4oe0mZVQPuR13T5XVjE8oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FasfVChE; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-472cbd003feso4458575e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761649879; x=1762254679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NvBepMQaluNKHheiFuZLoEpaFoQ4R3PwHCfLsenXn0o=;
-        b=FasfVChELow0zHK9NCh45bNPvfSrp0dgfoxwIPiRZjy3XQMxGw06xutf+9rwFL7vYz
-         RhNHPbAtq9Y6dc0bws/vZhsnlGT3AwjxarnvJVe2fTsozTZ4bzraNM8jXfKhM8Fe1wXV
-         FFRDALplmm+kMsZyxIrPF71Aoh+XtNkj31zAGBVXpFzW2IdoXBXH4/Qh29GWrJtXSqB0
-         PJDNi2j7Pa6El818EAXatXihZ4+7EAa0klNyDKf5cA5OiZmFo2cxQoZBG4ol6pTW/lYw
-         YXkgKoJrERa3/U6yhk/hfoEZAL5+cBQGz3vRBbos7EdynIsO22Xj+OJHbsJ1B4H8KnLY
-         MFuw==
+	s=arc-20240116; t=1761649914; c=relaxed/simple;
+	bh=tluPsZgS0AbUxys4VSNz7xRC3nOxi4aNyCC+IC+2QeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=reOzdN8ObGRm1G5yhgjoCKr0lU5KN2U/sVAACDTMjmPWnow5RaDyjbY9GgxSKTnfd/o5t/zYtMSIZU8SdD/O4aeuG5r7CAz+O+0VwrfnLVivuZewpOBB9FWKKW9V5czfMN6Q1zJXoWd86BCyLoyaQN1OPUs2ixalukISTNDNvoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RYXB6v26; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59S8jeS52881678
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	opUtdQf4QfMq9eW5ijzGVRszcOjE71sRMPdyYjws57U=; b=RYXB6v26+vYPhlCW
+	KKF4VCCEITpKOLNrnI1gTw4AV5aIiQj+sirAXsZ6mD8RPXAPXPeQY4FOrCfaSD8h
+	ICKkft255d0UpDS7qABN2w8koXf3skvpcuw6repqcQwO3Flc+ueYVJIwhp6O4/o2
+	W2bdn2mWWlNQh/bQfAa6W3gj2NDNfLMN2jwYsJKwB+kVPXa7+HgMtjnUM/Cm3L3k
+	WjHzTscfOSpnQUy9NvZIQDIzCcx7wniuBZZ0psIt8SBdmYNSkWCAq/ekd1fmUouW
+	ucgzIp24JLig6RQeoy8gOK7zSChbzE9rHeIwxxOyL/ZY6PkqV1F+BlUM56/kdRUu
+	NaDdVw==
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a29uhbjut-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:11:52 +0000 (GMT)
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-7a28ccb4c8aso2683856b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:11:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761649879; x=1762254679;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NvBepMQaluNKHheiFuZLoEpaFoQ4R3PwHCfLsenXn0o=;
-        b=LlG2f+6AEQ/E3RjTKcrbC3l0xGOhTwB3s7N3n89Ot2F8UcJT6O6IpBi812GR0lDUSb
-         qfSqeVS9vL9rSPtrSms+q/XXLc3s++wbAk7MObAPaM26EoQP+mHfaTPj4yC2LkT0b2he
-         4nritOORRFziboeCBnKdYPIdVIvHvQHsxrW621KI+QFi7C3WFvl0YfwgM4DOHPQv2mq2
-         oAsrfE7pihxjW3xEaBXrLTdqin8x66JqEkd9qLA6PEFNSQSI6R2zZjOM4Ja9wQnzrOdn
-         y9H3InOHUpa9s7etRSpBYP6y34vLlmWxSqhcBRcRGrU88aPF2OJT/Q9jes58nXFkLL3v
-         lJMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXA99IRXoQLSrQ5fiytp08JSCQQkYHUi4uydT2H7r3+d1keiRSBrBxGRCSE6vxJVd78cLbjJfSteP+/3eA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwRLL0s5pkBs5nuxyd/nZ75Jip1usy4sg73bYxH6uv4pziOL/W
-	S9cC5Qv6GHYrVUVEkaQ80vGSXmVtf9GCxvwTCe4XZNiQRF2bq00Zpu7+pHXfEx2pH5w=
-X-Gm-Gg: ASbGnctXHZ+mP5pAy1rs0MTUD31S8RHUI81DTr6N3mE3/8t0mfYeb/ZnuQYAORmzQLd
-	M5PbyTw2XfqWBdxZD659bHrKs2UUgUijxvQI1l6+J0A64M4JLakISVQCEf9kG73IordLzjM/OkS
-	29+AC7QteznHPsPgkae4lr7EJ1aFjvaoKcSTkiIKhEarGQwD+8LO8M37b7xzGk54Od1MJeguXHX
-	5duPTQUAzqQKUVyqCLEs6/HJQEvuVx1jHuQyGP7diHmTpvi6SpJgy6ZA0L+twunWbb/sTXhWian
-	lPHgF4hblqZEMTPcweUXAZibL2nWVPuK5X1tD6Gkih2iGKuX6L8HVGIkw3GtnD43yB3iAo0AJfr
-	FPX9KtnzpxOlIW0bsuBUwGbrqDyw4On6BextqTiylDesX4WhCI7x46/WSPj5ywuiZ00qQ3OJPdM
-	JXPmEtRhZdunH0xXqeM0zyxQ==
-X-Google-Smtp-Source: AGHT+IGp17y0AcHm5V/8RFGmqH7SfEi8yaRv3lm/N2wuwDnD5uW4xhUCEWW3XzRmWpPyCMaaL9vIMQ==
-X-Received: by 2002:a05:600c:3507:b0:471:1387:377e with SMTP id 5b1f17b1804b1-47717e787b0mr13605665e9.6.1761649879245;
-        Tue, 28 Oct 2025 04:11:19 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47718fe6382sm17268505e9.4.2025.10.28.04.11.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 04:11:18 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: "Bryan O'Donoghue" <bod@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] media: dt-bindings: qcom,x1e80100-camss: Fix typo in CSIPHY supply description
-Date: Tue, 28 Oct 2025 12:11:16 +0100
-Message-ID: <20251028111115.46261-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1761649911; x=1762254711;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=opUtdQf4QfMq9eW5ijzGVRszcOjE71sRMPdyYjws57U=;
+        b=DM60dHozlSbyG54LxYb00KPbk7+S4uUM98+T4Fd/rRygShQ5HA/p49tfcZGeZWSDvV
+         AqwNinMzDXmTvxXxXSHi/hmbcs0BolQSUQRnZw7GzlAoa+HtM7T553DUkxxjjrVmwx8T
+         5rE9r9H9ILPLmnXhB22t2fk01XkNp/vjojJ5OAiVh5PvERwfoTkmRzPCFxi2JjtJ0MU6
+         jw6Mz4P/cM6BY1H2jVMv2Cwro/7Pr9sWDoy0paIW3cV+xu7KFf3h/rDl+CIEtAYrMMJ5
+         nMoIFn5kPI1rNBN/nZU1Bjxh/y+YLIxYQwblu2E9Pg5n3Y6HjpUqnQPecctRbyR4kAQH
+         /RYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIAymG8Yp4WIHIG2LytQ0wJPbRtFDv7mm6PjbkQmhy2jgnXwPtSDqs4JpcdooKKUUJOh9bUBFfYSbTDws=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6zMmX/iu14xzP+JWZ3fIz5H74NZLP4oZpDbvtSKwtD9tQGU+R
+	Dy0E6lTpeu+bG5LbG/ANX43z7MJDd3OmZtCbVk/cY2DM0mqBfaXfsN/UNqooV6iLomkic7ioOmk
+	ORzt2cplHXNsVFL1stwwcMH1WkcNBVYNxVEpsEnb7tDrT3xxyYXxiiew7zisHzs5/qM/NuhVQ+W
+	Q=
+X-Gm-Gg: ASbGnct7buvHkFHsNkxpb9i20gH4UlSddYx3oKjuUD6DxE688S77ojF2gj3tFf/yLKx
+	mTLstNeQ7bIS+95+DFPKIDjhggbj3NHC4CB9GU/EkzfpkFsz0tyEh/eMIYupUfTeaD+FhRDNq52
+	HZiEmKwiEngCf6PCOFXkGtDY87uFf/cMzFEpJcgq+wM/g9iHrv9Tx81lM7QAiS5W/Dz+bVR/gEi
+	pZAmF34k0CHQFQEaFhmka9QSruGWEKRmEdslos10crN0vkCyFC1R9VU7l5I7g2BZIA8aa9ood2B
+	8OXWz3UdimjhqinkUfgCuoUCwM/zLdjrhkH/m2Q9ApoPmNCO/yKWig7+ZKbU4T8Ozd8DN0kwTqE
+	FeOY29VkC5XFGmFlBmwvtr5I9K0k=
+X-Received: by 2002:a05:6a20:9389:b0:334:a681:389c with SMTP id adf61e73a8af0-344d1e9d6f7mr4082416637.15.1761649911248;
+        Tue, 28 Oct 2025 04:11:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEir10gLmpuIQM7ApflZtUrLLZhaDCqOjyulYgaRdAjRBHf/P6MEgnu6ky/ldUcH5shRkkc9A==
+X-Received: by 2002:a05:6a20:9389:b0:334:a681:389c with SMTP id adf61e73a8af0-344d1e9d6f7mr4082378637.15.1761649910755;
+        Tue, 28 Oct 2025 04:11:50 -0700 (PDT)
+Received: from [10.218.10.142] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712791576dsm10053265a12.12.2025.10.28.04.11.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 04:11:49 -0700 (PDT)
+Message-ID: <17995927-b7fb-458a-a863-b03bd15e6073@oss.qualcomm.com>
+Date: Tue, 28 Oct 2025 16:41:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] phy: qualcomm: m31-eusb2: Add runtime pm ops
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20251027062458.1411096-1-prashanth.k@oss.qualcomm.com>
+ <daf0055b-7caf-4ace-8a06-071468273a37@oss.qualcomm.com>
+ <1c52e759-15fd-462b-a9fd-ad620da099f5@oss.qualcomm.com>
+ <e4f33bf0-05d9-4aad-b00e-fb7cc2c2633b@oss.qualcomm.com>
+Content-Language: en-US
+From: Prashanth K <prashanth.k@oss.qualcomm.com>
+In-Reply-To: <e4f33bf0-05d9-4aad-b00e-fb7cc2c2633b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: aQmT6uX0gJuHbMOEiwa6bJ7b2ECNwBDb
+X-Proofpoint-GUID: aQmT6uX0gJuHbMOEiwa6bJ7b2ECNwBDb
+X-Authority-Analysis: v=2.4 cv=QuFTHFyd c=1 sm=1 tr=0 ts=6900a4f8 cx=c_pps
+ a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=_xMILRQ3MvDrwl_WGjgA:9 a=QEXdDO2ut3YA:10
+ a=2VI0MkxyNR6bbpdq8BZq:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDA5NSBTYWx0ZWRfX+yIi+eXdcKHL
+ 1GtRhgkgBP5Y7Q7g4NF9+dZd4Nx+RuitUMW4vJs+SmsxDdeTRh8WU7SRFx0Mmwz9QA98eaMztj/
+ 18KNwWbP4nhR5+XtqC5N/q7e01n5LxNsIsw+4D7360+D/JE71B723ZpdoH4vHuAsVcx4kyhTuBT
+ P57Poud1A8rs+S5RbQiN3pvfqfvs10ApKTiG0tWCd7hcLqRHyJGRB3a2VKaU2hgv/m4uKkCC415
+ 5/PJ1HHJKv2dsj0ULCoWP2qCvT1hAYjpbwig2zzMTngNP/PzsjYq8EF646Tl3uPH4xB0BcNKaJX
+ ACRmvaWGRHlsCUbDXUaCGr0KgbsoqJbqIOWkgNGZ1erCpXhoFm71soAVM1Um9Mc2Y2yMLxpx0Kl
+ k5wGQJdxSTcsfMGXWwBFWQ3Obct5Ew==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 adultscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280095
 
-Correct description of the CSIPHY 1.2 V supply
-("vdd-csiphy-1p2-supply"), because it supplies 1.2 V, confirmed with DTS
-on the mailing lists.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/media/qcom,x1e80100-camss.yaml          | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-index b075341caafc..b87a13479a4b 100644
---- a/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-+++ b/Documentation/devicetree/bindings/media/qcom,x1e80100-camss.yaml
-@@ -124,7 +124,7 @@ properties:
- 
-   vdd-csiphy-1p2-supply:
-     description:
--      Phandle to 1.8V regulator supply to a PHY.
-+      Phandle to 1.2V regulator supply to a PHY.
- 
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
--- 
-2.48.1
+On 10/27/2025 4:41 PM, Konrad Dybcio wrote:
+> On 10/27/25 12:09 PM, Prashanth K wrote:
+>>
+>>
+>> On 10/27/2025 1:55 PM, Konrad Dybcio wrote:
+>>> On 10/27/25 7:24 AM, Prashanth K wrote:
+>>>> Add runtime power management operation callbacks for M31 EUSB2 PHY.
+>>>> Enable/disable the clocks based on the runtime suspend/resume calls.
+>>>>
+>>>> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+>>>> ---
+>>>
+>>> [...]
+>>>
+>>>>  static int m31eusb2_phy_probe(struct platform_device *pdev)
+>>>>  {
+>>>>  	struct phy_provider *phy_provider;
+>>>> @@ -270,6 +298,17 @@ static int m31eusb2_phy_probe(struct platform_device *pdev)
+>>>>  		return dev_err_probe(dev, PTR_ERR(phy->clk),
+>>>>  				     "failed to get clk\n");
+>>>>  
+>>>> +	dev_set_drvdata(dev, phy);
+>>>> +	pm_runtime_set_active(dev);
+>>>> +	pm_runtime_enable(dev);
+>>>> +
+>>>> +	/*
+>>>> +	 * Prevent runtime pm from being ON by default. Users can enable
+>>>> +	 * it using power/control in sysfs.
+>>>> +	 */
+>>>> +	pm_runtime_forbid(dev);
+>>>
+>>> This screams "this patch is broken" or "there are bad issues" which
+>>> you did not describe at all.
+>>>
+>>> Konrad
+>>
+>> Hi Konrad, I was followed the same sequence from other phy drivers
+>> containing pm_ops. I assume the runtime_forbid is added to control
+>> runtime pm from userspace.
+> 
+> Other drivers call runtime_forbid() because the implementation doesn't
+> work.. Or at least historically the usb3 part hasn't been able to sus/
+> res properly
+> 
+> Konrad
 
+Sure, I'll remove the runtime_forbid call and send v2. Let me know if
+there's anything else.
+
+Thanks in advance,
+Prashanth K
 
