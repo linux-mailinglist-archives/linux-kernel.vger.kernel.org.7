@@ -1,190 +1,133 @@
-Return-Path: <linux-kernel+bounces-874163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2840FC15A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:02:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E94C15AC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8887A3BA91D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:57:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F06EB508C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4285F342CB0;
-	Tue, 28 Oct 2025 15:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FF9345729;
+	Tue, 28 Oct 2025 15:58:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cknRZfDl"
-Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021088.outbound.protection.outlook.com [40.107.192.88])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lID+5GGV"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4FC340A6D
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761667061; cv=fail; b=kPzkz57GJUUCerZRT2878OcWe5KdqAUsfPPPMilER68AMEzo81LEWc29F42tejPnx2Z8WEUUmJDuLFTOusP3aWiTkwO+jLWD3a08N8pd+3dCG8MqxUDxRmBFBfHOpaxm2vuoF68Wfl9ZygInCCfpckcKovRnKiROp5vYlgYh1LE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761667061; c=relaxed/simple;
-	bh=8ZZrclI9tTMHYZ2DWm9/rluHMsBS51dBlBKp2M2BNQU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hKvceZvTSYuN4qBtR2TgZAsGPO/2g+nYEICYqHj8MSGWJxWL4QIANLTsQ/HBc82wiVLSneJE+0LDyi2qhkX1wSm7nMSewpjnkP2aj/yaqwfnPNsCuqcsPcMx0rWvYPWF8dLadGN//ymYjrtyb3RdMQYXeL8Juqi+MqbawN8gnhI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=cknRZfDl; arc=fail smtp.client-ip=40.107.192.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GQ9wOYo9gGj2vu+vqZI7V/ER3DlrnPffTtmonHSUt2y2RfTm7scneTO/bwrslceiwRfkvzdr70K9HInp9U5hbvBLM3kiqVzLOe1U6Kdvsl40gaZaOb+bJr9/Uf9+DvxB7AIM4wE+TtagXHRqPX3VK/jqlNQWU2z0yfRNKJxoZV+CtlVe/mlGRpQ+y1UhCucv8jKSzPus210JHYJ4YLeLJXnlanx9kuaxsjrejwcjhTrh7GOrboGZxzexIu3byOc0AF11Z3OFDxjgu/F6kCFteuLlG3nTK2xcgwPjXWmjQRuZKxbvRwJjY66p7kbSv+4cYUDf0/saucGv7GV3a5fNBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F6EqojRNLNo0Z8jH59kgAndEk0WuiVxcmh/szM2uosg=;
- b=TN6xb338MuNf/msL5OPsC3V4aFqmBAX1hW7txTIXyUfEvxS5C6+FiffIwShshS89MfLCf03JpLZAnioeaB2oCt8GnPww8Bp8mOKRxSoI7syX0D7Z7jFv2z7IGYVQ/wwcEyYi+cnXO+mQwI3H5c/pByKuNwIaR3pEB+vKk5E1VqoqPZu6PM9nk1LuOEtYEYJ1gaLHRklpywlvj+pe+wyBzeWs+hP17iiD72CvgAsynS4CE5f+D8xb0Fnd14fa3CO/C9XluIrBsbRcgY4N/bi1TdkQHGEhLP3jyDSAZ7u9VSBbTbKrfwxP4YAzV7Fu9YbkObeu0kQRBG69qZhLWuv2ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F6EqojRNLNo0Z8jH59kgAndEk0WuiVxcmh/szM2uosg=;
- b=cknRZfDla3aL27T0z6lnsgnuOZSkr3DBKkHFKdsb9KPoT7gzrn5TF4a1tNzriwLSV15EqIMSfqt2zT0bwJs/IBimNa9nOf5sO6k57/ZzhGvX9l9fmWVmW7v6pmHUYo3BduiM4OGa54tXxtiQVMd+3PbbjBnKdfUMhMEARwD3KEYeAkbKpmJJBRX3uHLkbDquc9M+kyIu8Qcse06hjOm8uavW6Ib8mR69KF/tKOVcoD682r3H9qYfJ+XvWYUcgxjlj8/8/BGJvTSyFI4G4mmB96VBKUoS0LjUOArnPk9pmiRksUAzeDChMM08CgDthBE93jlAFPZPIgnefYyWmkWn1A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB11271.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:147::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.20; Tue, 28 Oct
- 2025 15:57:35 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Tue, 28 Oct 2025
- 15:57:35 +0000
-Message-ID: <097af80d-a05f-4178-a73e-d59a56ad672a@efficios.com>
-Date: Tue, 28 Oct 2025 11:57:34 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V6 26/31] rseq: Optimize event setting
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, x86@kernel.org, Sean Christopherson
- <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
-References: <20251027084220.785525188@linutronix.de>
- <20251027084307.578058898@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251027084307.578058898@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0417.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:10b::21) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2550934574D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761667080; cv=none; b=ZUvykVFxvENuWHuYqIgfyRHXrttAcW8WsOdLSdYsBxfpDzlHvIXpJlbBKHPSFxSiiwNyTsS3RWv1j2aLgxpBa0SS+rKceADqyRkYAIWN9QHmKbS99I4vK90NaSjf19GRN070rHh8qxPsOBqJIBjMd68OPZTx6ukO5zR2oQae2+o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761667080; c=relaxed/simple;
+	bh=srMiYVzGarY3sG3QWMgla/QOJsi5tK5ro1nid71OW6M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=kfw5U9+iRbX6r9DwYC7VsaIpK8u+iZSMQHTdqWeCR8lGFYhthnlgjhBNz7IbR0vGT+OqemfC71F76/5i+lZgLeg7kWqRVh9qVywx4V2EOEGcDUZe6iajhEX6SHXsRzAzWe/sLRKiguSAJfOloh70PA17JKMnPcSUmRsCiauFd8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lID+5GGV; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761667076;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mgzHWai9b6XGwGZe0nQxw4+ISjl+G4EjaAYWoRIkLyE=;
+	b=lID+5GGVDlXXyYSyM63V7A9rsUjWgkwaGuNygOvbcOIxV8HufF4T46NYOSn33PTyeVZpCa
+	qPpwF1YPB6rSyaZR4D5wFdJBiw0wPdw1LRbpBJEK4hJH3G1V+2jv7TXR7LGYGL2Ppnkw9k
+	fWg3hoNIpQ3I7CPwtQejzFWQFx0x91M=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: bot+bpf-ci@kernel.org
+Cc: akpm@linux-foundation.org,  linux-kernel@vger.kernel.org,
+ ast@kernel.org, surenb@google.com, mhocko@kernel.org,
+ shakeel.butt@linux.dev, hannes@cmpxchg.org, andrii@kernel.org,
+ inwardvessel@gmail.com, linux-mm@kvack.org, cgroups@vger.kernel.org,
+ bpf@vger.kernel.org, martin.lau@kernel.org, song@kernel.org,
+ memxor@gmail.com, tj@kernel.org, daniel@iogearbox.net, eddyz87@gmail.com,
+ yonghong.song@linux.dev, clm@meta.com, ihor.solodrai@linux.dev
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
+ to cgroups
+In-Reply-To: <9fd0fbd3d6e704d106423a333106d1296c916f288c3c3600ffde0539e8c266ec@mail.kernel.org>
+	(bot's message of "Mon, 27 Oct 2025 23:48:17 +0000 (UTC)")
+References: <20251027231727.472628-3-roman.gushchin@linux.dev>
+	<9fd0fbd3d6e704d106423a333106d1296c916f288c3c3600ffde0539e8c266ec@mail.kernel.org>
+Date: Tue, 28 Oct 2025 08:57:46 -0700
+Message-ID: <87wm4f5891.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB11271:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1d44109-61a2-425f-baa4-08de163ab5da
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cmxuTG9zb3V2YnRheVJtMFd6VUF0S3UyMk5QMHFpdHVEQmFQc2lQMXBMKzdz?=
- =?utf-8?B?QkVqMTZYVkcwUCtnQWZQZzJPNGplOVV6Q29CSkJNVlpQaEFNeklseERUTzJK?=
- =?utf-8?B?UHJLT294SWNrTS9uWC9ZanlXRjhKQUFTT2U5VTNScVVjZ3hBYVJpOHU3b0Zu?=
- =?utf-8?B?ZzYzOW5IUG92M0VsVFpYTWVaWDFkSng0RysrVlBXZWQrMEpZanQxL2N1VkVh?=
- =?utf-8?B?Q0MwZW9MRVZ0dkgrVlpqbnlKeXMzbkx1QXRWc3hTZW50Q1pjK0RkN21vbWY3?=
- =?utf-8?B?QmFhZHk3RDdvQVNmTzE3L1hEUzhuSVpQemM2eUh1MXJmRWFNWmFqWjNLMDJQ?=
- =?utf-8?B?TnZPSlhIeDJSb1AwbFFXVkVVczNwTUd3eUJKZlpSSnNXNWY3VU9uVFE0YWdE?=
- =?utf-8?B?RXpwVjRjVHRHWVJ4VEFsZnpVdkFFZk9GMjN6KzUxYkJMMGJySHRhd21MWlRE?=
- =?utf-8?B?Rnc2Y2dxUm0raUhiRG1DOElQNXYyMXhpTVBXdW9jZU5ueksyZGM1TFZYaUEx?=
- =?utf-8?B?NEk4dElIU0xwcXZYSDBIMUN1Z25yTEZTRG12RWJES3ozUVNsaWFEQStOSWp1?=
- =?utf-8?B?WnpiaHZzb3N2dXpPb2d0UVNBdk9DNWY4ZkswbE11WFRZL2hBSWM2QktrSzBi?=
- =?utf-8?B?MWQzZTR0OVdKb0xnRS82alh6SnZROTd3NU9NVGZGK0JsNDdoK0VNanZMdFRn?=
- =?utf-8?B?S0FXaUtBd0VaZjgrUzFLV01OMXVKZkpheHRqUWNPN3RiWGtVRFJKRjYzdUpD?=
- =?utf-8?B?RkJPL25aNWtpcG1qWHcrYTA5MHlPSjF3TysxR1ppeEdqekdZUmN1dGcwTFp3?=
- =?utf-8?B?eEpvRElmY0tPUUJwOEp0cElIZVNaV0RMMGVhWVgxWTVoa2paVUJDM1dDVGJE?=
- =?utf-8?B?Y1B6OWhlSlN0YmNzdVdKTERXMVpDc2xhdit6M0lKd1RyMk05NUFPbWFrMFpN?=
- =?utf-8?B?NkRibkRzYzQvOCtObzV2bWMyelZEcEQwS2FmVWFJTGwxZ2VWdFVqc2ozMWFV?=
- =?utf-8?B?RjY0d0RXSER2N0NpbGtzZit3bS8zd0pQME45d09ZL1piWnJJeWhWNlRMVGFD?=
- =?utf-8?B?cU5MVUZidnZQS1ZRbXAyNGxKTmNmbm1xRHBEQkpUTWE5Wit6MDFHWm1RRXNZ?=
- =?utf-8?B?cVZ6M1RaV0xwamJzaXd4dk9KUk9nbHVqbFNkaGtEZDNnUEFXZERHcTdMenFJ?=
- =?utf-8?B?RiswanFYUEFlTG1zb1oxTjlJbjR5REdONkUwVmtwa2ZQL294ckVEVlJHaVdU?=
- =?utf-8?B?cmF0WjkzYitpdFFHWWtGLzBYQk9DYkRPaytaUk5FTWV1bU9Kb0xNY3IzTURs?=
- =?utf-8?B?SVladnJPYVFSenY3WC8wakpSRGd3WFYrOUxOZDBqRGxBVFN0NG93OElwbE40?=
- =?utf-8?B?OHFudlF1bjdSUVBEdHRzbU1UMGE4UjJLOGxKOGJ4S1IxR0dNb2VYQ01Ld1Qv?=
- =?utf-8?B?c29haHIzdzYzYkVTWVVLM0tuKzVNWVBSZDI1M1V0TllWMXZvZUF1TEpjNDhW?=
- =?utf-8?B?aDcwWW92bWpJUmFzMnR2QytsbmZhQk43LytIZkVQQ1RkbWd2Ry9BOTRtY285?=
- =?utf-8?B?UzZUWGcrOWZFNWZJN0FYV2Vkak92ZGowakllcDNPTEVnMXZQc3hQbGFJWFZ2?=
- =?utf-8?B?Y3B1RS9OcVdDNlFFWkVlVnplSXoyNGtqWFN4T2NRS2RpRk80WDhqVkJHK01R?=
- =?utf-8?B?OUxoRGR2YU1NOGx5OFZnbkFtNWozQzdhcFM5ZjJYSUQza29ac0dFUDZ1WXpH?=
- =?utf-8?B?KzQ3Vm9YQmJLMi9rck1EQ3BHTVpZaFhTczhHS0VleS9jMUpQY0NRNEx3SWxz?=
- =?utf-8?B?K3RDMG1TQ1JHRC9iZ0FlMmEyNlRia2lKSks2cWFFa245MjdWejJMeGI1ZTZr?=
- =?utf-8?B?czhDL3c3US9McDJKelhZbzdlaVcyNFV3MjJwNVoxSTZKa2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RWtLZG53MUZLSC9oV28wMEJpVWpVUENQemNOeXE0MGtENDdERW8yTXFJb0hX?=
- =?utf-8?B?bzBqTU11bWZla0dYYUlzWmZRcjM1OVFUZEQrM1FMaHlIdzJ1emdtL2E5OXJH?=
- =?utf-8?B?L3RqV3NtZGY0aUlYQlNEYXhsaUE5ZTlMUC9xWW9SOXNZbEJLWHdnNDQyWTdi?=
- =?utf-8?B?U09GVldLM0hJUFJrNWZITUUrK29veDJ0V0RJNUdmM3ovei82NjB1RktiNjBx?=
- =?utf-8?B?TmNtWnl5QzVZT21GRWlsVE44bEcvOUxpZzRjR2FVNXpOdTIzOGJSeFR3UUIw?=
- =?utf-8?B?dUhGSldTa0VkTTMzYm1PTXZ2c25FVXlRQWZ5U2lYdmx3cmlXaUpUbUFRTkF0?=
- =?utf-8?B?dVViL3NvbHN5VUthdDJxdy95MCtERFhTdlA3OVJ4cUlYaEZYRDBsVXBEd3Nx?=
- =?utf-8?B?SVpLRk1MOXBHeW5RVWIxM3Mza081aVNEVkZLQkxWK0ltZHRVdlBKZUNWbzJs?=
- =?utf-8?B?R1hsRDJ4T2JrMU5aTUpPalJqN1lROGttZzBMWGkzc0xzQnNaWXFLUllPUWRK?=
- =?utf-8?B?a2huN1JnVUR2RXpQWnhmSkJMeFRaOUMzU0FjNC9qaVVsbDZYZU5JbnMwZ05J?=
- =?utf-8?B?cThpa1ZmZVc1cFVlWlFaS29OdzI0UEtYR3hXd1FJcmcrS3h3UGhVdU0zY3pT?=
- =?utf-8?B?WThmUmRaaUtMT0N3NnphVEdNc2ROcGx2YVUwc2VpTVRiaEFjQ2cvaHByS0V4?=
- =?utf-8?B?ek94SWN2N3lsbEF6SW45Q3A2cWFBS0tUR2htVUZHajVUNTVtdVBMVmFURDhW?=
- =?utf-8?B?R3g4TTQ5MnJydm80NzRha3Q5TVVqMEZFblVLR2pQM25IRWlPdWlPUldpenhp?=
- =?utf-8?B?dE1lN29GNHVZNUhlTytQT2RqempJRFlwWG1UUWc0dDRUYmRqWGl5d0p3OVJt?=
- =?utf-8?B?a2l1bmNlWlhiYkpDZ0VxNlRnbDhaRmZwR1cvMndsY2xBeHV3K3JzdDF5UE00?=
- =?utf-8?B?RlVaU0l5bjBWbmdFU1grNDBaK2ZneVdCNXh6eXNHQnRCVzYva3R5L3NuSWwz?=
- =?utf-8?B?YkZFUEpycUxWZnRFMzFIUjVyRERwT3VnNXpSamtDaW9haHBJUG5ZVHdDQ04z?=
- =?utf-8?B?VGoyMjBFb2hPMVBkSWUzRHhoeW5pV21yQVF6TGUvRVBkd3kyQkFqY00ydCtC?=
- =?utf-8?B?bUVPSVdHQ2V0QTREQXhaSDMwZ1VFL3FMWVI4Y2w1WHVYdEY5bWkxRnJxRVZ2?=
- =?utf-8?B?K2RaekEwMmNSSmJYV2grY3NhOW9yb3hoWFBzdlhia05oUkhwQkpEcGRMOW9O?=
- =?utf-8?B?TXNQL1BSTUF6eWdpRGdJbXBRdXZETFhzbjlyaTFONklQaEgyc0V2dlM4bVVQ?=
- =?utf-8?B?b3IxZTdrdW9QRWNLUzRaeTRQcXhtTVRKdkNndmNnZEpqNS9ZaXRsRTJmTCtI?=
- =?utf-8?B?V3h0MGRnTlZUVzVZdjlnaU5LaUttZFI5TXZWQnJUWDZjVkF4S2Q2OHRnbEll?=
- =?utf-8?B?OGdOZy9ob0gvUDE2c051eUJGU2hiQnZTMFczT2NpSkFMSDlxLzVDNmVDUlVk?=
- =?utf-8?B?WlFJVTU3ZE11dGwxTjlaUjJsOWVLY0xOeWozQnE1SXpaZVZXVlFVSnJROU12?=
- =?utf-8?B?TWJCM0UxM1QvN3pYSDZoT3JuYVk0dEpxNDd5L010dEtwUGFDMzJVRTVKM0RE?=
- =?utf-8?B?OEtuUGoraUt4cDdKb3A2T2VNTEY4R0lYNTNHbElNSkpKZVVFZ0FKUmIxN05y?=
- =?utf-8?B?MDVyc2V1SEpVdWthb0doY2d5RkJUNGFzejB0amFmY2xIN3FiNWlFQ2dwRkk1?=
- =?utf-8?B?VTJtaVdwamM2OVRCaENrNnkvU2NkMmZQNzZabGowUlo0OUFPdjR4WEFWNC9H?=
- =?utf-8?B?S0xtVnVXRFpwQnVxMGtzRjB0MzZib0hXYXFid21HdFcybmhqMjBicGlPQkhU?=
- =?utf-8?B?cEtvTUVkd00wb2RMVjkyeG9nMDFnb0RJNWlIeXM5SjRERmdTVlpWQXl6ZjZH?=
- =?utf-8?B?dXowZG1KYm1Xd3BYYkVrWmpWSDRwZUpvNi9Oc1NGV0k4OWdDS2xiN09lVG5O?=
- =?utf-8?B?UnhDU2RlVFpVNnhrdmpqNzRwem9WUnN1Z3ZBYWphMU5rUTZaWHFES2Z5a1lF?=
- =?utf-8?B?YytzTnA1L2Z3M1d4ZExLUHc3THRXb3dmU0lBQVdSdHJwZExWWUZFRmw5T3hw?=
- =?utf-8?B?OWFzUlgwMHdSd0xaaExpN3RvOEZHanJBd0ozL3g2WGJyUFllbmxRYzZvQkQv?=
- =?utf-8?Q?//oaEDDCg6ZqoT0cPTvH5po=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1d44109-61a2-425f-baa4-08de163ab5da
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 15:57:35.0381
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UgE0pr4fxawq9WVwH4YjBvJttoKao0vmKijaN/Jn1/sGXPCM6mYsPJtnc2JPw8zEoVDuJzeWGlT7rUZhUTqf+7tfWkwhwgaAUh99Ck4RTNE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB11271
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-On 2025-10-27 04:45, Thomas Gleixner wrote:
-[...]
-> Add a event flag, which is set when the CPU or MM CID or both change.
+bot+bpf-ci@kernel.org writes:
 
-"Add an event flag...".
+> ```
+> commit 31d238f36a0a6a56efa48c847cb776e67ba2f079
+> Author: Roman Gushchin <roman.gushchin@linux.dev>
+>
+> bpf: initial support for attaching struct ops to cgroups
+>
+> When a struct ops is being attached and a bpf link is created, allow to
+> pass a cgroup fd using bpf attr, so that struct ops can be attached to a
+> cgroup instead of globally. Attached struct ops doesn't hold a reference
+> to the cgroup, only preserves cgroup id.
+>
+>> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+>> index eae907218..7205b813e 100644
+>> --- a/include/linux/bpf.h
+>> +++ b/include/linux/bpf.h
+>> @@ -1849,6 +1849,7 @@ struct bpf_struct_ops_link {
+>>  	struct bpf_link link;
+>>  	struct bpf_map __rcu *map;
+>>  	wait_queue_head_t wait_hup;
+>> +	u64 cgroup_id;
+>>  };
+>>
+>>  struct bpf_link_primer {
+>> diff --git a/kernel/bpf/bpf_struct_ops.c b/kernel/bpf/bpf_struct_ops.c
+>> index 45cc5ee19..58664779a 100644
+>> --- a/kernel/bpf/bpf_struct_ops.c
+>> +++ b/kernel/bpf/bpf_struct_ops.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/btf_ids.h>
+>>  #include <linux/rcupdate_wait.h>
+>>  #include <linux/poll.h>
+>> +#include <linux/cgroup.h>
+>>
+>>  struct bpf_struct_ops_value {
+>>  	struct bpf_struct_ops_common_value common;
+>
+> [ ... ]
+>
+>> @@ -1359,6 +1360,18 @@ int bpf_struct_ops_link_create(union bpf_attr *attr)
+>>  	}
+>>  	bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_ops_map_lops, NULL,
+>>  		      attr->link_create.attach_type);
+>> +#ifdef CONFIG_CGROUPS
+>> +	if (attr->link_create.cgroup.relative_fd) {
+>> +		struct cgroup *cgrp;
+>> +
+>> +		cgrp = cgroup_get_from_fd(attr->link_create.cgroup.relative_fd);
+>> +		if (IS_ERR(cgrp))
+>> +			return PTR_ERR(cgrp);
+>                         ^^^^^^^^^^^^^^^^^^^^^^
+>
+> Can this leak the link and map? In bpf_struct_ops_link_create(), the link
+> is allocated with kzalloc(GFP_USER) and map is obtained with bpf_map_get()
+> before this point. If cgroup_get_from_fd() fails, the early return skips
+> the err_out label which does kfree(link) and bpf_map_put(map).
+>
+> All other error paths in this function use "err = <error>; goto err_out;"
+> but this one returns directly.
 
-Other than this nit:
+Ok, this is indeed wrong, will fix in the next version.
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Thanks!
 
