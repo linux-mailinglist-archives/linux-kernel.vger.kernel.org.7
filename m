@@ -1,135 +1,263 @@
-Return-Path: <linux-kernel+bounces-874327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49B7C160AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BE2C160DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:08:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5966D4EEA56
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:05:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BABE51A66D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83F4345CAF;
-	Tue, 28 Oct 2025 17:04:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BE313D51E;
-	Tue, 28 Oct 2025 17:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671099; cv=none; b=HC9f+8vZ6nObEytKlKUItq3vuZmF8TJm0tX7sJNKnaF+/lwQWT97l+LPiXxi6/6imyA3oKLey93E84XzIZdLhxKL1kcMDjWZIpZ9agkLTyMoka7RO8SfZ8dyqJL38Eg1vAjpMsVe5D5FHSWuC+YZ/nHdGYLH6vEqrYCcet/k4/g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671099; c=relaxed/simple;
-	bh=OT+5A1kQwZizv6hxo2CJYKqoOrcvSA1bK0diOAcRiAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NieG0W+LFtGT9N0ykvn1S8jnuSxA1XVy4q13Ep/eSBCmQgnZ4X7PzQGr6Nh/7w1EvKsjCaNKDrCTxD+Xu5+NEICCJIE298OEzYkTpwCJoAJdOfi+DshQnR8ls1FKsXjECaMwhVhNJ16xpHFRYORFV8xguVuUr9GyHR7mQ6FVKRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3CDB168F;
-	Tue, 28 Oct 2025 10:04:47 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5E763F673;
-	Tue, 28 Oct 2025 10:04:49 -0700 (PDT)
-Message-ID: <4d77f16c-eeb7-40bc-ac37-2639308f8484@arm.com>
-Date: Tue, 28 Oct 2025 17:04:47 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B614933A01C;
+	Tue, 28 Oct 2025 17:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="XPUaSY9G";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="LAjIXLYA"
+Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124EE28A3EF
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761671129; cv=pass; b=m8dESfybeOHEmNH1IDtBErKGum19uBrG/H8uEtO1WuwX+5NKOxMI5VEeKJyOVWA1OVnAoINdAIHREPzgKw/bPtNPP+dCFE6VCsz2G9HyN/fqDt/p+Fb9YJRuEbI31w/vJaLxfK1LFx4FQe3BhqIweNjfZe1iMbGkUiA8ivcXtnU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761671129; c=relaxed/simple;
+	bh=OZ0ZtiH9Ffd/H3YhMXhZvm8XE+UAipi6AHVisU+hxWU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LdITW5I7BbBNrJFrd19JnNlNSijjnKentKrLsr9oUCCr35BBNj63wRAGAyKFc4wzpASQ2DcoMvhBhx1/Vv/Ps1Vjmfv01ChgKDaJsXZzbR3Ev69PboM94ax9XH7qGy7I912MzCc1d2ogqwT/yDeWXT+QLIqyUIVu3/Gk5c4zp9s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=XPUaSY9G; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=LAjIXLYA; arc=pass smtp.client-ip=185.56.87.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; s=arckey; t=1761671127;
+	 b=P2omGGEwROmecSyNaHG81rg8m7Ww3YS976nlfVkFceT+4ALMX0sf8LZ8vgKALnrKjG7Qtstevj
+	  HYKSvNuk0XCK4g2124E+aOUm8toZSEvQCxtEFCCe8wCGSzT5eRperSsEmPJna7QbfgHw0P0gQX
+	  IH38gfAUvQe8hrNLDz66qNBHgSy1cLLv2OsjmEhgk0kMLvOIAniNEJUPJzqDDjMjRjHKcWxJoE
+	  1WZKfcwSxm6/4HmpRnW90UUOXCiORXh7dr1qUUuJCKtgGeuii5m1w/IbCpcPps4cf7PZfM7Ysj
+	  PF1aPs9GPryMnxxEqoTXPQpwJ7gyV7gY1xHVBxoiAXM0hg==;
+ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com; s=arckey; t=1761671127;
+	bh=OZ0ZtiH9Ffd/H3YhMXhZvm8XE+UAipi6AHVisU+hxWU=;
+	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
+	  To:From:DKIM-Signature:DKIM-Signature;
+	b=GJDEfxoTS+OUxPbbTopq8KOjUx4TWJA1uhHz7PR22kskiMe11LRqPPpey1CR7xAd5fjM4ytAZI
+	  fn2B9uwHSOk9dSGWoe4FG5T/6UDbCaWAG0Ouy3xJB1pvc87HxrgikoYfj61C8LSNc1X77e1ytq
+	  dd5b2uC+1AgRGuoK3XES4anTe2toB6zWl7YqrK5EGlwkCNVViLlC4PxJ/F/qeowCie8418RUZ0
+	  YEm2Oow1Hxx508vx/Ce6jVVIxI/zJFs65fPZpWpGCrbKCj74tXgNAQ+HTfkJREz9ZXkxH8I0Ks
+	  MRuftlZ0NQlBHzmmpB70cieXXLYlZb1gsr3ODeVOlz7AFg==;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
+	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
+	List-Unsubscribe:Content-Transfer-Encoding;
+	bh=nFXGsd0wvJCB2aoq6ydUjxoEpP8AS5JY0g0UJ7Jo4rk=; b=XPUaSY9GM0qe4RKiJPoxKoWn4T
+	aICUJzD6pNO0bSg2sATeZMq/bF0b4nV3B6DVCwC0W9vr1uTIvpNS4ZIurrg5hVJCNRRxZprPFxIPD
+	MDG+t8/V0TApxpTP1cvl7hIPIJtyYp6o4UyspV3bQ1aJJbjPZlRvrHnBdoFl6nmDZPuA=;
+Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
+	by instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vDm9G-0000000F3xt-2gG4
+	for linux-kernel@vger.kernel.org;
+	Tue, 28 Oct 2025 16:02:16 +0000
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
+	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
+	list-subscribe:list-post:list-owner:list-archive;
+	bh=nFXGsd0wvJCB2aoq6ydUjxoEpP8AS5JY0g0UJ7Jo4rk=; b=LAjIXLYAuKe+nn91fplPC8zwte
+	Ub+TSBb3J+TqyLvVF4RU3DTnoGllzWP9T+jeUeALMF3MBgHttDcK3t6DYSFJnb/+D3Bp41AiTeG1l
+	xWRwKT05PmIKAGN487/QO54yYlwiqTgVuLa29SgACOLG1ZQO7W3YCgvCS2xQGS4abhg0=;
+Received: from [87.17.42.198] (port=63724 helo=fedora.localnet)
+	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <francesco@valla.it>)
+	id 1vDm8f-000000009YH-2cLa;
+	Tue, 28 Oct 2025 16:01:37 +0000
+From: Francesco Valla <francesco@valla.it>
+To: Liu Ying <victor.liu@nxp.com>, Marek Vasut <marex@denx.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org,
+ imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: ldb: add support for an external bridge
+Date: Tue, 28 Oct 2025 17:01:24 +0100
+Message-ID: <2860884.vuYhMxLoTh@fedora>
+In-Reply-To: <1944228.tdWV9SEqCh@steina-w>
+References:
+ <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
+ <1944228.tdWV9SEqCh@steina-w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mpam mpam/snapshot/v6.14-rc1] arm64/mpam: Fix MBWU monitor
- overflow handling
-To: Zeng Heng <zengheng4@huawei.com>, james.morse@arm.com
-Cc: amitsinght@marvell.com, baisheng.gao@unisoc.com,
- baolin.wang@linux.alibaba.com, bobo.shaobowang@huawei.com,
- carl@os.amperecomputing.com, catalin.marinas@arm.com, dakr@kernel.org,
- dave.martin@arm.com, david@redhat.com, dfustini@baylibre.com,
- fenghuay@nvidia.com, gregkh@linuxfoundation.org, gshan@redhat.com,
- guohanjun@huawei.com, jeremy.linton@arm.com, jonathan.cameron@huawei.com,
- kobak@nvidia.com, lcherian@marvell.com, lenb@kernel.org,
- linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, lpieralisi@kernel.org, peternewman@google.com,
- quic_jiles@quicinc.com, rafael@kernel.org, robh@kernel.org,
- rohit.mathew@arm.com, scott@os.amperecomputing.com, sdonthineni@nvidia.com,
- sudeep.holla@arm.com, tan.shaopeng@fujitsu.com, will@kernel.org,
- xhao@linux.alibaba.com, wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-References: <20251017185645.26604-25-james.morse@arm.com>
- <20251022133913.629859-1-zengheng4@huawei.com>
- <8e22c81e-5e78-41e0-a81e-0f9826e5edf0@arm.com>
- <a3e95937-b0c7-020e-d52d-7189d2540f8f@huawei.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <a3e95937-b0c7-020e-d52d-7189d2540f8f@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart5090209.OV4Wx5bFTl";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - esm19.siteground.biz
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - valla.it
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-SGantispam-id: 723bc1ca69d378485273679a25d3335b
+AntiSpam-DLS: false
+AntiSpam-DLSP: 
+AntiSpam-DLSRS: 
+AntiSpam-TS: 1.0
+CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
+CFBL-Feedback-ID: 1vDm9G-0000000F3xt-2gG4-feedback@antispam.mailspamprotection.com
+Authentication-Results: outgoing.instance-europe-west4-4wj9.prod.antispam.mailspamprotection.com;
+	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
+	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
+	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
+	arc=none
 
-Hi Zeng,
+--nextPart5090209.OV4Wx5bFTl
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Francesco Valla <francesco@valla.it>
+Date: Tue, 28 Oct 2025 17:01:24 +0100
+Message-ID: <2860884.vuYhMxLoTh@fedora>
+In-Reply-To: <1944228.tdWV9SEqCh@steina-w>
+MIME-Version: 1.0
 
-On 10/25/25 09:45, Zeng Heng wrote:
-> Hi Ben,
-> 
-> On 2025/10/23 0:17, Ben Horgan wrote:
->>>
->>> Also fix the handling of overflow amount calculation. There's no need to
->>> subtract mbwu_state->prev_val when calculating overflow_val.
->>
->> Why not? Isn't this the pre-overflow part that we are missing from the
->> running count?
->>
-> 
-> The MSMON_MBWU register accumulates counts monotonically forward and
-> would not automatically cleared to zero on overflow.
-> 
-> The overflow portion is exactly what mpam_msmon_overflow_val() computes,
-> there is no need to additionally subtract mbwu_state->prev_val.
+Hi,
 
-Yes, I now see you are correct. The 'correction' ends up holding
-(counter size) * (number of overflows) and the current value of the
-counter plus this gives you the bandwidth use up until now.
+On Tuesday, 28 October 2025 at 13:27:37 Alexander Stein <alexander.stein@ew.tq-group.com> wrote:
+> Hi Francesco,
+> 
+> Am Dienstag, 28. Oktober 2025, 13:12:29 CET schrieb Francesco Valla:
+> > One option for the LVDS port of the LDB is to be connected to an
+> > additional bridge, such as a LVDS to HDMI converter. Add support for
+> > such case, along with the direct connection to a panel.
+> > 
+> > Signed-off-by: Francesco Valla <francesco@valla.it>
+> > ---
+> > I was trying to add display support for the i.MX93 FRDM on top of the
+> > patch sent some time ago by Fabian Pflug [1], using some of the work
+> > already done by Alexander Stein but not yet merged [2], but then I
+> > noticed that the support for LVDS-HDMI converter bridges was missing
+> > from the LDB driver already present for the i.MX93.
+> > 
+> > Not a fail of the driver itself, obviously, but I wonder if/how the
+> > existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
+> > correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
+> > 
+> > Anyhow, a patch for such setup is attached; it was tested on the i.MX93
+> > FRDM using [1] and [2] plus some more devicetree modifications.
+> > 
+> > [1] https://lore.kernel.org/all/20251022-fpg-nxp-imx93-frdm-v3-1-03ec40a1ccc0@pengutronix.de
+> > [2] https://lore.kernel.org/all/20250304154929.1785200-1-alexander.stein@ew.tq-group.com
+> > [3] https://elixir.bootlin.com/linux/v6.17.5/source/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
+> > 
+> > Regards,
+> > Francesco
+> > ---
+> >  drivers/gpu/drm/bridge/fsl-ldb.c | 26 +++++++++++++++++---------
+> >  1 file changed, 17 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > index 5c3cf37200bcee1db285c97e2b463c9355ee6acb..fad436f2e0bfac8b42096a6fcd0022da0f35284e 100644
+> > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > @@ -294,7 +294,6 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+> >  	struct device *dev = &pdev->dev;
+> >  	struct device_node *panel_node;
+> >  	struct device_node *remote1, *remote2;
+> > -	struct drm_panel *panel;
+> >  	struct fsl_ldb *fsl_ldb;
+> >  	int dual_link;
+> >  
+> > @@ -335,15 +334,24 @@ static int fsl_ldb_probe(struct platform_device *pdev)
+> >  		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
+> >  		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
+> >  
+> > -	panel = of_drm_find_panel(panel_node);
+> > -	of_node_put(panel_node);
+> > -	if (IS_ERR(panel))
+> > -		return PTR_ERR(panel);
+> > -
+> > -	fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
+> > -	if (IS_ERR(fsl_ldb->panel_bridge))
+> > -		return PTR_ERR(fsl_ldb->panel_bridge);
+> > +	/* First try to get an additional bridge, if not found go for a panel */
+> > +	fsl_ldb->panel_bridge = of_drm_find_bridge(panel_node);
+> > +	if (fsl_ldb->panel_bridge) {
+> > +		of_node_put(panel_node);
+> > +	} else {
+> > +		struct drm_panel *panel;
+> >  
+> > +		panel = of_drm_find_panel(panel_node);
+> > +		of_node_put(panel_node);
+> > +		if (IS_ERR(panel))
+> > +			return dev_err_probe(dev, PTR_ERR(panel),
+> > +					     "Failed to find panel");
+> > +
+> > +		fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
+> > +		if (IS_ERR(fsl_ldb->panel_bridge))
+> > +			return dev_err_probe(dev, PTR_ERR(fsl_ldb->panel_bridge),
+> > +					     "Failed to add panel bridge");
+> > +	}
+> 
+> Without looking into the details this somehow looks similar to
+> drm_of_find_panel_or_bridge(), or drmm_of_get_bridge for the managed variant.
+> 
+> Best regards,
+> Alexander
+> 
+> >  
+> >  	if (fsl_ldb_is_dual(fsl_ldb)) {
+> >  		struct device_node *port1, *port2;
+> > 
+> > ---
+> > base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
+> > change-id: 20251028-imx93_ldb_bridge-3c011e7856dc
+> > 
+> > Best regards,
+> > 
+> 
+> 
+> 
 
-> 
->>>
->>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
->>> ---
->>>   drivers/resctrl/mpam_devices.c | 8 +++++---
->>>   1 file changed, 5 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/
->>> mpam_devices.c
->>> index 0dd048279e02..06f3ec9887d2 100644
->>> --- a/drivers/resctrl/mpam_devices.c
->>> +++ b/drivers/resctrl/mpam_devices.c
->>> @@ -1101,7 +1101,8 @@ static void __ris_msmon_read(void *arg)
->>>       clean_msmon_ctl_val(&cur_ctl);
->>>       gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
->>>       config_mismatch = cur_flt != flt_val ||
->>> -              cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
->>> +             (cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS) !=
->>> +             (ctl_val | MSMON_CFG_x_CTL_EN);
->>
->> This only considers 31 bit counters. I would expect any change here to
->> consider all lengths of counter. Also, as the overflow bit is no longer
->> reset due to the config mismatch it needs to be reset somewhere else.
-> 
-> Yes, overflow bit needs to be cleared somewhere. I try to point out in
-> the next patch mail.
+Well, I did not know of devm_drm_of_get_bridge(), and unfortunately the
+driver I checked (Samsung DSIM) has not yet been updated to use it.
+Sorry for the noise.
 
-I had misunderstood before but the current code in the series doesn't
-make use of overflow bit and just relies on prev_val > now. Using
-overflow status does give us a bit more lee-way for overflowing so is a
-useful enhancement.
+I'll wait for more feedback (if any) and then send a v2 - which looks
+much cleaner now.
 
-> 
-> Best Regards,
-> Zeng Heng
-> 
-> 
-Thanks,
+Thank you!
 
-Ben
+Regards,
+Francesco
+
+--nextPart5090209.OV4Wx5bFTl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQDo1AAKCRDir2xSXEi5
+AA83AP0VODlMOPiFo+Etj7oaFVsgFDTnwBhEX54ICokuPyWjewEA/RnsnW2CT6zy
+NlUewINvfCea60Pz3od7UPV/AbPhvgg=
+=eIuv
+-----END PGP SIGNATURE-----
+
+--nextPart5090209.OV4Wx5bFTl--
+
+
 
 
