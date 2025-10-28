@@ -1,87 +1,177 @@
-Return-Path: <linux-kernel+bounces-874784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DDD3C17149
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:44:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05B4C17154
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 22:44:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1F63B0512
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:41:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9478E3ACAEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480252DFA2B;
-	Tue, 28 Oct 2025 21:41:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749162DE71A;
+	Tue, 28 Oct 2025 21:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="inp9/OsL"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557052DECCB
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC797483;
+	Tue, 28 Oct 2025 21:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761687666; cv=none; b=M0fB3ec0OPl7vGq/nzCZfZde7utSchqqPLYAB65yd3/9qTfXZ1RFNeEa9/3oEiiWVZmLgMdl8D9jEk2dHyJdT51UClZw0E3XJHXno6hCKnTCk5UtPcuvAetx2/ftexm946l7zbnWJ9L/tH2uS3LHV5yee015qCVioxBBMAamq/4=
+	t=1761687729; cv=none; b=ZzSDm/dpFSnradyvhYSVZWRQmMTNe46b7+aIFiNpnhJ19K4aDnRMl5NvF+enTX1wKnoUsbbS771V3L5SeuBLhZ2kULGXGmwrVM8kUOyo6X9CVPv0XjhZx3Zt7eicGONXmw9n3O4KIdgG+SG0SCIwMzXM6jAo3LdJbmK/OKYlgYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761687666; c=relaxed/simple;
-	bh=/gN3clOYC01cpaZTKe0gQTSDXt/Y/5hVPoKKRSmCGTc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=fa9FIqIihPaqg/spZPkBdi9CQPlhep5NZV+cLcXOQvqSvqFWqrrXdMbWdJqx4f4s2fhl9+0lBceRA/0Y4cQ7R23HKVmJjb9QrWEDrSFCZFL9MP4XRJTW4tDjuMNl0olFKpPJSJTWFaPvRk0IZBS3U2Iua/hTACXtwsUfCPxAQbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430db5635d6so85757815ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:41:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761687664; x=1762292464;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1MkoY91eaH1BJN8fhI/RSr3kTURDmnJEi41nlvMViuk=;
-        b=EcOA73slvQjqKmximCztpuKfG/hn/ws5JD1lOBSJWnCK3ihL/p4hp/r4qL6tcqIme/
-         GGmdgsGJP/AshVnlZaHU5C6fTdbnC4CjoeKYC82BdK0/dAcAJbf5DndDxJo0WvNX/ELj
-         iG5cgIg2wkHvS/MxYfv0yKWhlJvBo9IZZ7vGEI0lc0Msj4yQnRNOr9SA4INVhyyg+6Lx
-         wfSkt5opFijHt5UxtXVcm8SpJWGIpzbmQ4bkgeYPu5QWrapHa3ee/pws+LGJxr03BNy2
-         6bTI9ISPLthoVH3QSmqcsVOeQgwZqAzNKZG4WuJFVLA16jl8rz9x6Ue+El4Ot0PrbrQN
-         vrag==
-X-Forwarded-Encrypted: i=1; AJvYcCVv7lM3rTiB7XNwNPFYhIUBert/MJrOQtHhdWKLUodqqcQMNe1zm/KEWQa387n+10ARcXaTGt72VpKj4q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ2hMjK2DBRYMV90at5iE+UsDoNWCTPd9oHph9nH1OyPMFby/8
-	r2wfUwBP2Ptax6eyICYbEXqs2qNnpHNDDuMGgGRSHF4bxgthTAEdqfpss/TpvRxoKkaf5hT2FMa
-	unOmCrYETAUX3SbTmk01xMic7PUxELjci/vf7q84sQAJtNx9pMEueu6QNa60=
-X-Google-Smtp-Source: AGHT+IH9J+ZtI3IrsE7kUkE7pDCxoEIkA7RszgRHVqwGVQktrP8YCrMH8wh5L4G+50gb0kEX3+2Eo72ZexXnPWrELEzIY3CURW4j
+	s=arc-20240116; t=1761687729; c=relaxed/simple;
+	bh=v7LYUfsNkmz/JAzdgXVKmsHX6f9E2tz/b7wzoTXnsAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV8M7RSBk3+mKbN2s1frFcIQM8s519N1hV/BfQZ6jnQFrd+BnLV8LH6eNEKYzi6C/jvyJZRpVnI989o7/kMrlJgdiwiAiuXOzm7Nbw+zGjjMGOdbK20ixyr1RyIUFGhf7komHYisSg6nCl7nfMKgAn9TuV7VOIOltcJbp2Xp+S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=inp9/OsL; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 35D6896376D;
+	Tue, 28 Oct 2025 22:41:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1761687718; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=gZ5NbpYQJrK4cD/+AbyhMOYq6Bv8S/UjgbyYkKNU+Oo=;
+	b=inp9/OsLLdIqL8yyl4LVrqRp7grNsLNrIOtcJILxcGEu/QUVCKR9ud7G174KyZVXqm1xzA
+	EXUJfGhDh9E1YpGwn3jyzJg6/GQHDb/pnME1+IGe/tA3zpyXJwKBRK56OK6b3I0dD/iy2M
+	Cr4xYL0mDojMOuPbAvRj1Yvvmz0EivIT/jvRpsLOU366duDdg9ouea40+CvU8BNsdhrU8L
+	vWctRfTHt6c65LkpEQqilThB6hE1j1jnwOyKR/+jZXW8J0gndcAXUGa1yAilqmkfxoNLtL
+	vLvOUj/0Hted5+u0GOrjO4mCTPpUAwox8n44YbVFZdbhgy7k0VPceUcgLdq7Qg==
+Message-ID: <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr>
+Date: Tue, 28 Oct 2025 22:41:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cdab:0:b0:42f:9eb7:759b with SMTP id
- e9e14a558f8ab-432f9044dffmr9290325ab.28.1761687664489; Tue, 28 Oct 2025
- 14:41:04 -0700 (PDT)
-Date: Tue, 28 Oct 2025 14:41:04 -0700
-In-Reply-To: <20251028182249.3Rgvk%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69013870.050a0220.3344a1.03f1.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
-From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big
+ Endian
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20251027171759.1484844-1-cjd@cjdns.fr>
+ <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 28/10/2025 21:19, Jonas Gorski wrote:
+> Hi,
+>
+> On Mon, Oct 27, 2025 at 6:19 PM Caleb James DeLisle <cjd@cjdns.fr> wrote:
+>> When on a Big Endian machine, PCI swaps words to/from LE when
+>> reading/writing them. This presents a problem when we're trying
+>> to copy an opaque byte array such as firmware or encryption key.
+>>
+>> Byte-swapping during copy results in two swaps, but solves the
+>> problem.
+>>
+>> Fixes:
+>> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+>> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+>> mt76x2e 0000:02:00.0: Build: 1
+>> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+>> mt76x2e 0000:02:00.0: Firmware failed to start
+>> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -145
+>>
+>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+>> ---
+>>   drivers/net/wireless/mediatek/mt76/mmio.c | 34 +++++++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>
+>> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net/wireless/mediatek/mt76/mmio.c
+>> index cd2e9737c3bf..776dbaacc8a3 100644
+>> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+>> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+>> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u32 offset, u32 mask, u32 val)
+>>          return val;
+>>   }
+>>
+>> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+>> +                                         const u8 *src, int len)
+>> +{
+>> +       __le32 val;
+>> +       int i = 0;
+>> +
+>> +       for (i = 0; i < ALIGN(len, 4); i += 4) {
+>> +               memcpy(&val, src + i, sizeof(val));
+>> +               writel(cpu_to_le32(val), dst + i);
+>> +       }
+>> +}
+>> +
+>>   static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+>>                                   const void *data, int len)
+>>   {
+>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+>> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
+>> +                                             len);
+>> +               return;
+>> +       }
+>>          __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len, 4));
+> Maybe just replace this with memcpy_toio() which does no swapping at
+> all instead of double swapping on BE?
 
-Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
-Tested-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
 
-Tested on:
+I'm not that informed about how PCI works so I had to test to confirm
+my understanding, but I can confirm that memcpy_toio() does not solve
+the problem.
 
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=104cf614580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16db57e2580000
+The issue as I understand it is that rather than making every driver
+carefully call cpu_to_le*() every MMIO write, someone decided to make
+the PCI host bridge itself transparently byte-swap all MMIO on the
+wire. Since most MMIO is hitting registers and most buffers are
+transferred by DMA, for the most part everything works and nobody
+notices.
 
-Note: testing is done by a robot and is best-effort only.
+But in the rare case that we need to write a blob to MMIO, it gets
+transparently swapped in hardware so you need to use cpu_to_le in that
+case. Doing a search of ./drivers for write.*cpu_to_le I can see this
+issue comes up a bit.
+
+
+Thanks,
+
+Caleb
+
+
+>
+>>   }
+>>
+>> +static void mt76_mmio_read_copy_portable(u8 *dst,
+>> +                                        const void __iomem *src, int len)
+>> +{
+>> +       u32 val;
+>> +       int i;
+>> +
+>> +       for (i = 0; i < ALIGN(len, 4); i += 4) {
+>> +               val = le32_to_cpu(readl(src + i));
+>> +               memcpy(dst + i, &val, sizeof(val));
+>> +       }
+>> +}
+>> +
+>>   static void mt76_mmio_read_copy(struct mt76_dev *dev, u32 offset,
+>>                                  void *data, int len)
+>>   {
+>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+>> +               mt76_mmio_read_copy_portable(data, dev->mmio.regs + offset,
+>> +                                            len);
+>> +               return;
+>> +       }
+>>          __ioread32_copy(data, dev->mmio.regs + offset, DIV_ROUND_UP(len, 4));
+> And memcpy_fromio() here.
+>
+> Best regards,
+> Jonas
 
