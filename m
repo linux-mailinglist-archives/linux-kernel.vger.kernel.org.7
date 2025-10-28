@@ -1,57 +1,99 @@
-Return-Path: <linux-kernel+bounces-873694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B13FEC1476B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:51:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F1AC14756
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 937001AA6379
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:49:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E1A623BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CBD30C373;
-	Tue, 28 Oct 2025 11:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9688630C37C;
+	Tue, 28 Oct 2025 11:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FoGiyTXp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oHisylFD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sd5JUpjC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oHisylFD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sd5JUpjC"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6C130C36F;
-	Tue, 28 Oct 2025 11:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547730BBB9
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 11:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761652069; cv=none; b=YciRZLsyV/SRnEpiTDVHrr+NcBBgbv27vrUnuwFzKzs5CXEqk0oO0P/DYrtk7TKWmI9rGU+oh5waaO3UXLk2XTFpbu3+1CkIi2wpZa6zPf5QvLwQPiPIgr1aWy47a3ZayFQRaveSJdLUa+c8x5aKJW0HU7Mq7hKVUmA7fereF2c=
+	t=1761652141; cv=none; b=UysXSF/CDnu4WppBNk4pQdLQPawTPihoa6+9/HfqVaQ+v7BU8st/YcvuvMNlp+IRbvXyYdqSDSN+TtUM2UrpWY5jj/cta64Wa5hRm03scZuzEoCFqJCjMSFU5fSKUbDs9rlO/lkp4jSxKlszInYro3VrhbREiJxejWPX4ECun5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761652069; c=relaxed/simple;
-	bh=o3Ygv9zJiM4QaoVWp21tdWP+/a1mP1M4inHPBsgO0Cg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=L7oAPZYeAVBDBVvmf5xhb60zR0WJIpBXLRr4asVZOrnf9dFtdSlwDznG8dVOIi6yO8gaBgdKHzkPoc7n66Vcq7zJunIo9YlgfdB9e0W3O8iqXz3nCn3vFYmtybq2nDFw2nV3P/2xEwxuJHeNCaGRkvdIt05+1IYK5DCYhY4hJ00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FoGiyTXp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF46C4CEFD;
-	Tue, 28 Oct 2025 11:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761652067;
-	bh=o3Ygv9zJiM4QaoVWp21tdWP+/a1mP1M4inHPBsgO0Cg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=FoGiyTXpyFdw86kawPliSOfWBZnCVOBF2RiTCyDIzqW5rSuS4IwbsQ4KZQaNQd8c7
-	 N6skGdZR2F397zvhJNw31ZhTyokWrP8I5HnpOqdqYU5JqpQhc35GqWzYcP6TDvzIgY
-	 3VgWuMK3CF7KML0MUpnrnwGLAqmqTb3twwv3HlzxuRMkyPGsaKoX1+wbvdRuBhcSVN
-	 e3BIfpj7y9SiWAaTiHPx9ZQ77QialZO0xSWj+9lq3iHyb5AzdcvKi7H63oA7S5A1rX
-	 h7473wjkesXMxV/8IyD2b5lkssWZ7LMRsUKKyjm8TfNoNNc0f+Dj9z5r3sAuNmrl0c
-	 T+9JDsevrOx8A==
-Date: Tue, 28 Oct 2025 06:47:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Siddharth Vadapalli <s-vadapalli@ti.com>
-Cc: kernel test robot <lkp@intel.com>, lpieralisi@kernel.org,
-	kwilczynski@kernel.org, mani@kernel.org, robh@kernel.org,
-	bhelgaas@google.com, unicorn_wang@outlook.com, kishon@kernel.org,
-	18255117159@163.com, oe-kbuild-all@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, srk@ti.com
-Subject: Re: [PATCH] PCI: cadence: Enable support for applying lane
- equalization presets
-Message-ID: <20251028114746.GA1505797@bhelgaas>
+	s=arc-20240116; t=1761652141; c=relaxed/simple;
+	bh=tFmkWJ5YQmGjz9zg7tYmzrM2CMk1xirapYw+td7U+08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=heyG7gM09G2hQqLaZ5a4rZ3BkRgOBHKMAfMQaGQGacDcdWpQhWnWey2dqtPpRhH6nYZKSfreZ1ZB0NcQEJx0bGBTCdzO9dYF3JhvrFBc4mCQh1NkVyzuhaxT2Nq++9oNhTcZK6ERZh/+HYZhQEJ7Fi1dZgFqdff5eQt+xqJoXT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oHisylFD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sd5JUpjC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oHisylFD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sd5JUpjC; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 291FC21A49;
+	Tue, 28 Oct 2025 11:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761652138; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EEDsYxFkkJHUjGWGL4EddzX8EcwO4m2OW9aFt7wKD4w=;
+	b=oHisylFDAuZV7QpEp9sT3pOu7poBnog3qCyORDuUTdG+ynWHjNS7PQ0KlqQlu4iHxsRiX4
+	D4lqUwf0IeeFjI54ZAQV9KAsXpD3fiDajoSApMpqDKQe9F8+6/reXn4Or9d4qkMyjBv3kC
+	sFOFa+WANwi38fkkkCP3r1igwdg+qUI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761652138;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EEDsYxFkkJHUjGWGL4EddzX8EcwO4m2OW9aFt7wKD4w=;
+	b=sd5JUpjCNPXFTvsLJDmZNd9p5AGpi7UtozPA5+iU1ir/e/GNibMP4ynI7wbKF7Wl39SJP2
+	VA+fmGcg/MJ8dvBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1761652138; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EEDsYxFkkJHUjGWGL4EddzX8EcwO4m2OW9aFt7wKD4w=;
+	b=oHisylFDAuZV7QpEp9sT3pOu7poBnog3qCyORDuUTdG+ynWHjNS7PQ0KlqQlu4iHxsRiX4
+	D4lqUwf0IeeFjI54ZAQV9KAsXpD3fiDajoSApMpqDKQe9F8+6/reXn4Or9d4qkMyjBv3kC
+	sFOFa+WANwi38fkkkCP3r1igwdg+qUI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1761652138;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EEDsYxFkkJHUjGWGL4EddzX8EcwO4m2OW9aFt7wKD4w=;
+	b=sd5JUpjCNPXFTvsLJDmZNd9p5AGpi7UtozPA5+iU1ir/e/GNibMP4ynI7wbKF7Wl39SJP2
+	VA+fmGcg/MJ8dvBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B57313A7D;
+	Tue, 28 Oct 2025 11:48:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wJN7FqmtAGlAegAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Tue, 28 Oct 2025 11:48:57 +0000
+Date: Tue, 28 Oct 2025 11:48:51 +0000
+From: Pedro Falcato <pfalcato@suse.de>
+To: Dev Jain <dev.jain@arm.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Barry Song <baohua@kernel.org>, 
+	"open list:MEMORY MAPPING" <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/mremap: Honour writable bit in mremap pte batching
+Message-ID: <jmxnalmkkc5ztfhokqtzqihsdji2gprnv5z4tzruxi6iqgfkni@aerronulpyem>
+References: <20251028063952.90313-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,135 +102,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e5c1aedfeadc9a8ccd386c85028ee3f43eddf07c.camel@ti.com>
+In-Reply-To: <20251028063952.90313-1-dev.jain@arm.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo,arm.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
-On Tue, Oct 28, 2025 at 10:56:33AM +0530, Siddharth Vadapalli wrote:
-> On Tue, 2025-10-28 at 13:16 +0800, kernel test robot wrote:
-> > Hi Siddharth,
-> > 
-> > kernel test robot noticed the following build warnings:
-> > 
-> > [auto build test WARNING on pci/next]
-> > [also build test WARNING on pci/for-linus linus/master v6.18-rc3 next-20251027]
-> > [If your patch is applied to the wrong git tree, kindly drop us a note.
-> > And when submitting patch, we suggest to use '--base' as documented in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> > 
-> > url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Vadapalli/PCI-cadence-Enable-support-for-applying-lane-equalization-presets/20251027-213657
-> > base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-> > patch link:    https://lore.kernel.org/r/20251027133013.2589119-1-s-vadapalli%40ti.com
-> > patch subject: [PATCH] PCI: cadence: Enable support for applying lane equalization presets
-> > config: x86_64-buildonly-randconfig-002-20251028 (https://download.01.org/0day-ci/archive/20251028/202510281329.racaZPSI-lkp@intel.com/config)
-> > compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510281329.racaZPSI-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202510281329.racaZPSI-lkp@intel.com/
-> > 
-> > All warnings (new ones prefixed by >>):
-> > 
-> >    drivers/pci/controller/cadence/pcie-cadence-host.c: In function 'cdns_pcie_setup_lane_equalization_presets':
-> > > > drivers/pci/controller/cadence/pcie-cadence-host.c:205:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> >      205 |                 if (presets_ngts[0] != PCI_EQ_RESV) {
-> >          |                    ^
-> >    drivers/pci/controller/cadence/pcie-cadence-host.c:225:9: note: here
-> >      225 |         case PCIE_SPEED_8_0GT:
-> >          |         ^~~~
-> 
-> Fallthrough is intentional. The lane equalization presets are programmed
-> starting from the Max Supported Link speed and we fallthrough until we get
-> to 8.0 GT/s.
+On Tue, Oct 28, 2025 at 12:09:52PM +0530, Dev Jain wrote:
+> Currently mremap folio pte batch ignores the writable bit during figuring
+> out a set of similar ptes mapping the same folio. Suppose that the first
+> pte of the batch is writable while the others are not - set_ptes will
+> end up setting the writable bit on the other ptes, which is a violation
+> of mremap semantics. Therefore, use FPB_RESPECT_WRITE to check the writable
+> bit while determining the pte batch.
+>
 
-It's poorly documented, but use "fallthrough" here:
+Hmm, it seems to be like we're doing the wrong thing by default here?
+I must admit I haven't followed the contpte work as much as I would've
+liked, but it doesn't make much sense to me why FPB_RESPECT_WRITE would
+be an option you have to explicitly pass, and where folio_pte_batch (the
+"simple" interface) doesn't Just Do The Right Thing for naive callers.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/deprecated.rst?id=v6.17#n200
+Auditing all callers:
+ - khugepaged clears a variable number of ptes
+ - memory.c clears a variable number of ptes
+ - mempolicy.c grabs folios for migrations
+ - mlock.c steps over nr_ptes - 1 ptes, speeding up traversal
+ - mremap is borked since we're remapping nr_ptes ptes
+ - rmap.c TTU unmaps nr_ptes ptes for a given folio
 
-> > vim +205 drivers/pci/controller/cadence/pcie-cadence-host.c
-> > 
-> >    170	
-> >    171	static void cdns_pcie_setup_lane_equalization_presets(struct cdns_pcie_rc *rc)
-> >    172	{
-> >    173		struct cdns_pcie *pcie = &rc->pcie;
-> >    174		struct device *dev = pcie->dev;
-> >    175		struct device_node *np = dev->of_node;
-> >    176		int max_link_speed, max_lanes, ret;
-> >    177		u32 lane_eq_ctrl_reg;
-> >    178		u16 cap;
-> >    179		u16 *presets_8gts;
-> >    180		u8 *presets_ngts;
-> >    181		u8 i, j;
-> >    182	
-> >    183		ret = of_property_read_u32(np, "num-lanes", &max_lanes);
-> >    184		if (ret)
-> >    185			return;
-> >    186	
-> >    187		/* Lane Equalization presets are optional, so error message is not necessary */
-> >    188		ret = of_pci_get_equalization_presets(dev, &rc->eq_presets, max_lanes);
-> >    189		if (ret)
-> >    190			return;
-> >    191	
-> >    192		max_link_speed = of_pci_get_max_link_speed(np);
-> >    193		if (max_link_speed < 0) {
-> >    194			dev_err(dev, "%s: link-speed unknown, skipping preset setup\n", __func__);
-> >    195			return;
-> >    196		}
-> >    197	
-> >    198		/*
-> >    199		 * Setup presets for data rates including and upward of 8.0 GT/s until the
-> >    200		 * maximum supported data rate.
-> >    201		 */
-> >    202		switch (pcie_link_speed[max_link_speed]) {
-> >    203		case PCIE_SPEED_16_0GT:
-> >    204			presets_ngts = (u8 *)rc->eq_presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS - 1];
-> >  > 205			if (presets_ngts[0] != PCI_EQ_RESV) {
-> >    206				cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_PL_16GT);
-> >    207				if (!cap)
-> >    208					break;
-> >    209				lane_eq_ctrl_reg = cap + PCI_PL_16GT_LE_CTRL;
-> >    210				/*
-> >    211				 * For Link Speeds including and upward of 16.0 GT/s, the Lane Equalization
-> >    212				 * Control register has the following layout per Lane:
-> >    213				 * Bits 0-3: Downstream Port Transmitter Preset
-> >    214				 * Bits 4-7: Upstream Port Transmitter Preset
-> >    215				 *
-> >    216				 * 'eq_presets_Ngts' is an array of u8 (byte).
-> >    217				 * Therefore, we need to write to the Lane Equalization Control
-> >    218				 * register in units of bytes per-Lane.
-> >    219				 */
-> >    220				for (i = 0; i < max_lanes; i++)
-> >    221					cdns_pcie_rp_writeb(pcie, lane_eq_ctrl_reg + i, presets_ngts[i]);
-> >    222	
-> >    223				dev_info(dev, "Link Equalization presets applied for 16.0 GT/s\n");
-> >    224			}
-> >    225		case PCIE_SPEED_8_0GT:
-> >    226			presets_8gts = (u16 *)rc->eq_presets.eq_presets_8gts;
-> >    227			if ((presets_8gts[0] & PCI_EQ_RESV) != PCI_EQ_RESV) {
-> >    228				cap = cdns_pcie_find_ext_capability(pcie, PCI_EXT_CAP_ID_SECPCI);
-> >    229				if (!cap)
-> >    230					break;
-> >    231				lane_eq_ctrl_reg = cap + PCI_SECPCI_LE_CTRL;
-> >    232				/*
-> >    233				 * For a Link Speed of 8.0 GT/s, the Lane Equalization Control register has
-> >    234				 * the following layout per Lane:
-> >    235				 * Bits   0-3:  Downstream Port Transmitter Preset
-> >    236				 * Bits   4-6:  Downstream Port Receiver Preset Hint
-> >    237				 * Bit      7:  Reserved
-> >    238				 * Bits  8-11:  Upstream Port Transmitter Preset
-> >    239				 * Bits 12-14:  Upstream Port Receiver Preset Hint
-> >    240				 * Bit     15:  Reserved
-> >    241				 *
-> >    242				 * 'eq_presets_8gts' is an array of u16 (word).
-> >    243				 * Therefore, we need to write to the Lane Equalization Control
-> >    244				 * register in units of words per-Lane.
-> >    245				 */
-> >    246				for (i = 0, j = 0; i < max_lanes; i++, j += 2)
-> >    247					cdns_pcie_rp_writew(pcie, lane_eq_ctrl_reg + j, presets_8gts[i]);
-> >    248	
-> >    249				dev_info(dev, "Link Equalization presets applied for 8.0 GT/s\n");
-> >    250			}
-> >    251		}
-> >    252	}
-> >    253	
+ so while the vast majority of callers don't seem to care, it would make
+ sense that folio_pte_batch() works conservatively by default, and
+ folio_pte_batch_flags() would allow for further batching (or maybe
+ we would add a separate folio_pte_batch_clear() or
+ folio_pte_batch_greedy() or whatnot).
+
+> Cc: stable@vger.kernel.org #6.17
+> Fixes: f822a9a81a31 ("mm: optimize mremap() by PTE batching")
+> Reported-by: David Hildenbrand <david@redhat.com>
+> Debugged-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+
+But the solution itself looks okay to me. so, fwiw:
+
+Acked-by: Pedro Falcato <pfalcato@suse.de>
+
+-- 
+Pedro
 
