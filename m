@@ -1,116 +1,146 @@
-Return-Path: <linux-kernel+bounces-873346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA35BC13BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:13:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38694C13BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3D09B562301
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:09:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2DD14F2C85
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 09:09:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055F92EA475;
-	Tue, 28 Oct 2025 09:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467A42E888A;
+	Tue, 28 Oct 2025 09:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gd1oIQom"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS8HsA3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23232D060D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67FF823507B;
 	Tue, 28 Oct 2025 09:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761642581; cv=none; b=u5ARvQ98GZDobysyNtRz39IZHo4hmm/1Pwole+xEgpA+/mPLMfkBHg5aFtfkw+Bs8+rXjwmfUMvNA3yBE4vM8MpI8abWNHHEWeUQw1+H7EF+mo09MRZqp4rYpM+9ABLAEJPdnqCjUIuRZm3gvNP621SbTiozqvnNyvAJ2qDK3E8=
+	t=1761642579; cv=none; b=oU/nqIfX/FeWW3u+vGgIMyzrqdG4HOM7Yjrsagcyp+uLdNnICF3U75TDJY8zOQkvw6ztkHCIwf6VsMhtozOgDegr7Wbe+K2ax/StHmPb51WNiFjOrC+GKDN8Ovxk1DPpovMyx4A19wy3+6cElRSUuFZJvBhfPOhv35asOWE6Dic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761642581; c=relaxed/simple;
-	bh=Wu3kHClzZm/yBtJftXjupb8//qLfBcni2nABKYf1f08=;
+	s=arc-20240116; t=1761642579; c=relaxed/simple;
+	bh=ZeszJ3G5pFbOJEm0PLsqfPwRQuGZps8vSqiFmYtwyKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lMHJprpU6ffb5yjE5Coir7uXf9Lcwh9f7QhI7ax1gJxSCEPxMFqs1QBCM8TXuG3SWGHdTMzeR/vTzIQcOEQbrowCfEXk2RD+mjOcDvI5bMVS4RS9yR8MOfMqOVTs2ZByJpd2CLgwLnXz27aHdIZpKV2TvCVUCOM2MOERAT7ET18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gd1oIQom; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761642579; x=1793178579;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Wu3kHClzZm/yBtJftXjupb8//qLfBcni2nABKYf1f08=;
-  b=gd1oIQomWzGdtlCJe35P7AjPaH3IwHReXL7GfGpsbWQ6bf6E+ZxcB7j3
-   AHe9zc/LRjzbxVnqq+Od0IzKJnQ75BS5t+YKanmAAAcQy2NB4yTFi4LWw
-   UUya/rdOYtdqgD5qrHKq3+LapV24vFRBM/4mcok2EKGMmCZJGV8Sv84SW
-   lMmBG/rV8JMAEo/NJYDOKS6NJF1MvugXAbkA478beFQVgts0Mxhmmh1Jo
-   i5i5+3Hxui/75rSF9B05pmmhJgYdIGboohXZ+bPzQpjinzl73WJjAf1Si
-   R1w9PL50/e68kPqzylfdSmfdaIt886g9mjqSV3DrDYYf83w1JGUxjXbcQ
-   w==;
-X-CSE-ConnectionGUID: Qv4U80ELQCStPjWAumad0g==
-X-CSE-MsgGUID: jxcFeR+3TC67J7EFNyq3CQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63639304"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63639304"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:09:39 -0700
-X-CSE-ConnectionGUID: 8xibrKxvSouQvWOZ+RALvQ==
-X-CSE-MsgGUID: W1IZdoFhRL6oE+BwG758lA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="190488942"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 02:09:36 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vDfhu-00000003GNN-1LvP;
-	Tue, 28 Oct 2025 11:09:34 +0200
-Date: Tue, 28 Oct 2025 11:09:34 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: KRIISHSHARMA <kriish.sharma2006@gmail.com>, nuno.sa@analog.com,
-	olivier.moysan@foss.st.com, jic23@kernel.org, andy@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v2] iio: fix kernel-doc warnings in industrialio-backend.c
-Message-ID: <aQCITnF4kft6g64z@smile.fi.intel.com>
-References: <20251027092159.918445-1-kriish.sharma2006@gmail.com>
- <23069e05-82d3-422f-9af7-fc100d4d1466@baylibre.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAIrBmo2N/rtSB6YqHBWUsfyr/JsvFXBVE7MQsIEC4TYmvGY/qIx4DEk2yGb53ZnVaJuu5JVpb8w38q482fJ0REqJ997VG7CpYF+C0IkNrZvQSU9hlTMivI1KrflIHk/+zUTCbnMJWvv7ubi5bOlaR2HjiqkCh1bgimHGGEJBtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS8HsA3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74176C4CEE7;
+	Tue, 28 Oct 2025 09:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761642579;
+	bh=ZeszJ3G5pFbOJEm0PLsqfPwRQuGZps8vSqiFmYtwyKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MS8HsA3gHTzSFAkqVuH2/l8x1ouMjR1uDE4ZkKX7gH9k7EojJyCK4fKjjovw27RTp
+	 A1c4+6iqPHZjJW0zXOtiHS0TV+vlW37gAldPWA/ImTJljpZHvNLVI4Jpgs667xo6lH
+	 s6PVRRtHGv1l2bngpH5Qr3X8nQbgInqUMxD3jS+U9DMtXvfp9N5u06k0wpc4ZwpDqE
+	 BLC9iKNMcNuKGU5nfR/s2rAprUa7Wn4sKzQykkWjXuZcUwNPiZ4XW3I3VHby96bEtl
+	 whB5SVnoVtD8+xHnOA63yI7RY2LpBw23xPm2x+Ixy/LtxcDvzhi8dEG4SBVU7s7JcT
+	 EmlAuKIT3Mi6A==
+Date: Tue, 28 Oct 2025 10:09:36 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, kernel@oss.qualcomm.com, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 01/12] dt-bindings: arm: coresight: Add cpu cluster
+ tmc/funnel/replicator support
+Message-ID: <20251028-enigmatic-astonishing-husky-f2c47a@kuoka>
+References: <20251027-cpu_cluster_component_pm-v1-0-31355ac588c2@oss.qualcomm.com>
+ <20251027-cpu_cluster_component_pm-v1-1-31355ac588c2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <23069e05-82d3-422f-9af7-fc100d4d1466@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20251027-cpu_cluster_component_pm-v1-1-31355ac588c2@oss.qualcomm.com>
 
-On Mon, Oct 27, 2025 at 10:35:02AM -0500, David Lechner wrote:
-> On 10/27/25 4:21 AM, KRIISHSHARMA wrote:
+On Mon, Oct 27, 2025 at 11:28:03PM -0700, Yuanfang Zhang wrote:
+> Add the following compatible strings to the bindings:
+> - arm,coresight-cpu-funnel
+> - arm,coresight-cpu-replicator
+> - arm,coresight-cpu-tmc
 
-...
+We see that from the diff. Explain here the hardware instead.
 
-> >   * iio_backend_oversampling_ratio_set - set the oversampling ratio
-> >   * @back: Backend device
-> > + * @chan: Channel number
-> >   * @ratio: The oversampling ratio - value 1 corresponds to no oversampling.
-> >   *
-> >   * Return:
 > 
-> I guess it would not hurt to change this to RETURNS: to match the
-> rest of the file either.
+> Each requires 'power-domains' when used.
+> 
+> Signed-off-by: Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>
+> ---
+>  .../bindings/arm/arm,coresight-dynamic-funnel.yaml | 23 +++++++++++++++++-----
+>  .../arm/arm,coresight-dynamic-replicator.yaml      | 22 +++++++++++++++++----
+>  .../devicetree/bindings/arm/arm,coresight-tmc.yaml | 22 +++++++++++++++++----
+>  3 files changed, 54 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
+> index b74db15e5f8af2226b817f6af5f533b1bfc74736..8f32d4e3bbb750f5a6262db0032318875739cf81 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
+> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-dynamic-funnel.yaml
+> @@ -28,19 +28,32 @@ select:
+>    properties:
+>      compatible:
+>        contains:
+> -        const: arm,coresight-dynamic-funnel
+> +        enum:
+> +          - arm,coresight-dynamic-funnel
+> +          - arm,coresight-cpu-funnel
 
-Good catch! KRIISHSHARMA, please check the whole file for this as it's not a
-direct mistake from kernel-doc perspective, there is a mistake from consistency
-point of view and hence needs to be addressed.
+Keep alphabetical sorting. We asked this multiple times already.
 
-...
+>    required:
+>      - compatible
+>  
+>  allOf:
+>    - $ref: /schemas/arm/primecell.yaml#
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: arm,coresight-cpu-funnel
+> +    then:
+> +      required:
+> +        - power-domains
 
-> > + * RETURNS:
-> > + * Pointer to the driver private data associated with the backend.
+Just move the allOf to the bottom like in example-schema.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> +
+>  properties:
+>    compatible:
+> -    items:
+> -      - const: arm,coresight-dynamic-funnel
+> -      - const: arm,primecell
+> -
 
+Why do you remove this?
+
+> +    oneOf:
+> +      - items:
+> +          - const: arm,coresight-dynamic-funnel
+> +          - const: arm,primecell
+> +      - items:
+> +          - const: arm,coresight-cpu-funnel
+
+Hm? Why do you need custom select if this is not primecell? And nothing
+in commit msg explains why this is not primecell anymore.
+
+You have entire commit msg to say something useful, WHY you are doing
+this, WHY you are doing it DIFFERENTLY. Don't say what you did - that's
+obvious, we are capable of reading diffs.
+
+Best regards,
+Krzysztof
 
 
