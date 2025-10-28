@@ -1,181 +1,217 @@
-Return-Path: <linux-kernel+bounces-874635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C190EC16BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:19:25 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19E3C16C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 21:26:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BC143A54FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:16:55 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14B9B355C9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 20:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5578267B89;
-	Tue, 28 Oct 2025 20:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEEA2C21C3;
+	Tue, 28 Oct 2025 20:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GkAvcBCU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dpIWx1Zs"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013044.outbound.protection.outlook.com [40.93.196.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217DCC8CE
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:16:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761682610; cv=none; b=DhvF+m+5VzgruaReZZQFykmazVt8haN8XZrrFCzGHOKkYapETLUAQj74H/GlOqC05kDR2hSBoRDA4E8fUvwBH6vITR1/K1XAILqcD0ZKQ66UR6hAV8KjS1Y/41YfTaY4xLsb+OWM6AlQ46/r6KvMO8SiJWTHe4P1C7SWLlF2kz0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761682610; c=relaxed/simple;
-	bh=bjWoD/QQIw7BZqWjVxwtv5BSU1enw2Lp1vGiEuHB1fM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CtcFEj56mQVb4vy1cPe+sTfDB/ZaEaPJyNCxf4ypR1qMJUm6rJyG8AgD3nRBCxZWKh8KOVOGR19LBVidljX/4i9z49CkFcDZedrpjbJfUKf25uxOfKf09ETTfX0ZhSIS0SmwqruAdImPVIrHX7zPqMY9keTazXSwzkWHvlIvjhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GkAvcBCU; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761682608; x=1793218608;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=bjWoD/QQIw7BZqWjVxwtv5BSU1enw2Lp1vGiEuHB1fM=;
-  b=GkAvcBCUde1pnYZRQ8zNGCJhx/VPyQZScf8MSv8j9m3oslyNu3yd+HoL
-   vurK8C7rzC8jCZHe8UiUAE5k0PjpFV+dp9/KuIyDLfNtXY7ntWTvslHpe
-   eUnPh/Xw5cU1sBKROm3H3m/ZrlnJvivEbbmGNP/kABrlpPVmw6+Z0ag10
-   JdpgHmUVPZo+XbixxXT3n+P5DyLRdIxk6ZNp4cNe6zr/vEVwRtgtK8LsU
-   3/55GztD3ctnj4BJmqKe8TgwxeVbH0wz+51jAApiBWKxl9sKKTdHmF6KP
-   qarVmmCwQH84idE4mhvOVO09Fmqc+yYRQLGvLAP4QbZ+iRgek674vuBs3
-   A==;
-X-CSE-ConnectionGUID: MvmgqFTpQ/aLZqd64kS1Ow==
-X-CSE-MsgGUID: n3Oy5dRGSi6SYL4VjGzKcw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63944502"
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="63944502"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 13:16:47 -0700
-X-CSE-ConnectionGUID: xn/e0EKeQv6OhzJO1E8dww==
-X-CSE-MsgGUID: 1RlI6c38Skqst6huCxhIVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
-   d="scan'208";a="189503741"
-Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa003.jf.intel.com with ESMTP; 28 Oct 2025 13:16:47 -0700
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Doug Nelson <doug.nelson@intel.com>,
-	Mohini Narkhede <mohini.narkhede@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: [PATCH v2] sched/fair: Skip sched_balance_running cmpxchg when balance is not due
-Date: Tue, 28 Oct 2025 13:23:30 -0700
-Message-Id: <248b775fc9030989c829d4061f6f85ae33dabe45.1761682932.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.32.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAA72BE7CC;
+	Tue, 28 Oct 2025 20:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761683143; cv=fail; b=etHkBoZ6nManWDioP3T9q6jDoU1nrVXPplYWAKk0uPaFlo+ETui/MRYeagIGDMMFoEhrnTcmGAOItConvAyYk8LW1VN5zcLIr4Zx1F+LWyklAv2u561tf6P1nFdSBWSN4ViphC1YL5VbD/ZLeYfWfPBtLrMW+AX5UQbXCJ+T7mc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761683143; c=relaxed/simple;
+	bh=aHiOAsJiTh2uvr6Cux/YNwCb6YZjZpGmt/3qAMtA/WE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fnkiJEyb1huMsLZFvROLY9yRc2fnKELc4bhcZ39Huei+bCj9yep3OhHHaVJXaC9y4Hg+qIb8UL0Pr4WqKG9l5oEGDZrBbF34rXQCbIzWEvL1xjZ6ZaCTjSbAEzT0lgIjDP1e6WRVcf7EG/W29zyNVYiUnyNfp9qsIXSHt6pUXF0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dpIWx1Zs; arc=fail smtp.client-ip=40.93.196.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bnn69n47i8kyLGEc5kmcQ6Qhl3i3bGuaii2ndHmKyfRnJKyQ4HHaIlvNlrxRhz7b7s7xnc0D6+JmVCD8aHlblFcuixZ5G1LolmLtDCO1FCbte/O6ftLE5LfxfzjX9R/UcR3XfU0RFSjQe+lVSuQKDT7+vEJkKtWIBUFNDd8RFHxSQCWbbj3LFJSMwCGhIGmG0YBoR3Y8ZfpdVoVLH+My2eWmNStnlib0DvCScec00HvlsQUwMmNkdEHKD/H7vgJTmTS6VqwZ1mKojN0ZrHZEws3lq8XeQOOqME26ev9YWH+RqwJtBgDC1WMG/K7/VQ9NM9j579xxqOVqRLfCi+6Edw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j3sHdWOf/A2WTBEFxXwZvPasEVfnJc6HBo7zbQpRC2k=;
+ b=oV/QaqeltQVJf1ffcvZB3lgcokb4YmQ8/wg7Xbogk6A/F2wJq33jIdB5KOc3t+oR3A+ajjP1ZhUwFHTic0bqRDhquYGnysf1qRACy9mKNxg1OiAXEzsfjXLru1qSSCTYzaPZ3K3UD185GzilW8P0cnr2/1CidQcAUCwCGIIKRwosj0P2tFJXCuNUDseZ+b9GyjoHABH7G/IYSudshBce+JTKbnuu63TUXJ1xT+GmxUbaIR1HQ8DWEfZUpToqP+lwgI3SrHocOuda6ybSuVo3zrsturJ4xJ/RqxzvEM1v69KNuzyQqA/wCJ0htMYTmxdmA3Q0LJS30g0wu6FmGYWJAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j3sHdWOf/A2WTBEFxXwZvPasEVfnJc6HBo7zbQpRC2k=;
+ b=dpIWx1Zs6/m3T0hhTjosp2NlQH8kWfKNB+ZsjaTlB+wKABE/gP3LTnLl+Pf0dTrp7aH/WGLoGPRl8I48iQpYLeNwp3ZGMtw3MeO9V5v/iWtAW00NR/DlkaI4W0AU9Pr7/Ir/OeIcMgsKdzoR1HvtdDWTfGd19cG3TUPx03+kJB3FUx5EvaJvMkfixxomb4DgGJl5gL5T14xMgJV6RHaJKTq4akDsjGYYbtnf/pe0b/KwUeCe5A9/sCXLnHXYYgwRg5J4z+OaUoy59rt74lAa8wx0TNbNbbtcpnQYA68dhUzL9DGO0odngQaRRl1CjXbpfZCJ2HiO/WHd0QVc14J9bA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by SA1PR12MB7344.namprd12.prod.outlook.com (2603:10b6:806:2b7::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.18; Tue, 28 Oct
+ 2025 20:25:34 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.011; Tue, 28 Oct 2025
+ 20:25:34 +0000
+Message-ID: <b1657e5c-5679-4e5a-a1b4-c8559bc7d891@nvidia.com>
+Date: Tue, 28 Oct 2025 13:24:53 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] gpu: nova-core: leverage FromBytes for VBIOS
+ structures
+To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: Alistair Popple <apopple@nvidia.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Edwin Peer <epeer@nvidia.com>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR13CA0034.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::47) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|SA1PR12MB7344:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6c5d8b8-ddca-4764-9024-08de166025e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|7416014|376014|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ajArM2N0V0haWmZiZzJmdFowdzlBekV1Qy9vN0tRV01aVU54bC9qVmk0RGZO?=
+ =?utf-8?B?bDhORElDR0Zsdms0VmNVUDlESmpRdlFJbzN4d2tWUFp6M0FTc0ZqTjNLTEx2?=
+ =?utf-8?B?K1N3dVkwQUZNSHFSMThhQVJxa0ZHNHBXWkJwdkY4UFNJR0FONG9ia1pWTmdp?=
+ =?utf-8?B?UWZZNEd2clhUNVpLcStMTG9ob1REVVlNQnMvZFYzSEVPaUVCbzhyMU05Und4?=
+ =?utf-8?B?WE80WDBIaXlOeWF6L3FiMFhpanZueGJVYklwcGo0amdwRk9kUlZ0ZXYvT1k1?=
+ =?utf-8?B?NWFudFNRdS90UE8yZ1dFU1MzTGh5KzJkU1M2aXJibFA5TGVkdGh5WVU5OGtt?=
+ =?utf-8?B?NUNIOUVJRHk4eXgzenVsZnZ3WWgxcHEzUUFrZ09UblRJSmRIOGx2QWF3UHl0?=
+ =?utf-8?B?RHRBNjNLMGF5Q25Nc09zRjFDL2QyT012cWNIWC9KbWszMzl0WGp3blhnRGhQ?=
+ =?utf-8?B?SWxKVXJsN2c2VXM5RXg5NkxzVHRvRzc1UVIrS0FjVUlkdEFGZUJkakdMaEp2?=
+ =?utf-8?B?dnV6LzBwVEVoRmlhRUkyWlFmTEpCd2pHWHh1YWhORGUwb0lSMm1pc2R4aGNE?=
+ =?utf-8?B?V0VGeWF1dkVVK0FuQlhsb09CVzc0aXhLZHBNYTgvdFRMUTJBQXNSTGhJVFZ5?=
+ =?utf-8?B?cm5CTFI0SFR5elYzeE51MTFVazVURWlmVHFvV3NjRXNpN2c3MVFyR0hKQWwy?=
+ =?utf-8?B?bnNocXdqUmRJbUFMNkp5VCtZUjNtaHl2dWJ6SXpockk1WXprcU1BYTlNWW14?=
+ =?utf-8?B?TzYrZzRLZUVGcnJieUhGcjE4aUI0M0tSWjM2M1VEeUZYTCt1ZVZDb01JQytv?=
+ =?utf-8?B?Zm1kK2hwTGF1MXhLNnlTM2tkZHQxMlkvRG9BSzlad0o2N3l5QTJ6OEJRbjRu?=
+ =?utf-8?B?NktQbjZWa2VJeXpkcjUrMGtzdk9TSzhjWEhiUG41TDY3cHVhQjhlUi9qQkF2?=
+ =?utf-8?B?N2IzOHVYS3ZuSkcydU12cUV0UThVZSsxcXYwcXV2aS9WME5LTVNqS1E4SFFC?=
+ =?utf-8?B?Q3lJYkJRTEJSbEorcGd2d0cvZDBreVowb0s5SjYwWTY2ZmhnUFY4bEJKekUy?=
+ =?utf-8?B?Z2ZYUlJnak5Ud0VuNi9wV2p5KzV0OVFSWGJNb21tdnZpT0lrdXNidVQxdkJo?=
+ =?utf-8?B?RlNVQzlBM3NjZFVVU3RnYmhkaEV0QnFlQjEyeVM0R3lHckVPUHdacDJGcnRK?=
+ =?utf-8?B?eG1kVjlPRUlrbjZCVFZxaCtpNnFleEd2bkFPUVhPbnV4eEVwRFkwckZrendp?=
+ =?utf-8?B?MnRUQU4zSnVXYS9ibzV5TEVGN3pKTU9xdERhQ2dQY0tFbGYySDFSUzA2UnFC?=
+ =?utf-8?B?ZWU2NjA4dytBQnc1NWtaWUFzbXhvUE5aRldVS1k2UThVc1FVL3hvaThWaTN2?=
+ =?utf-8?B?aGxydzJteWwvNWRPclVRd2F6VmRTMkQ1ZDMyeCt6SWwySXZqNjl6UkRzakRL?=
+ =?utf-8?B?ZFFaUjFSZC83MkY0YmVMQ2gyaituVDdLYWJ1d0Y0QytDL0RjMU9rTG9sNmdi?=
+ =?utf-8?B?Q1BFaHNhd29DcHdreWVFWlZYMDZUMmMxaEFCcDUwQ3d0SzF1UkNCREdQTTFJ?=
+ =?utf-8?B?VnlGeW1zOExTUkw1a3pYZ1I2TmVwUU5Bb3hYUkZzazI5d01HK2wyV2lUTDcx?=
+ =?utf-8?B?L0JQaU5HTDNxV3lDcUZzM1JCdVNUVzgxSDREWmpwTXJ3elZyK3ZrMWRFeWYx?=
+ =?utf-8?B?cDJJVzZQVDFKcXI0bHM5akZLVEdtb3N4YjRVc1djTEloT3d0K2g5aUpFZ2NF?=
+ =?utf-8?B?MGZRNjc2UHh1L2xMZVVOc2hGaDMwRTVDRW5JYm1DdUN2ZUJuclBnOU5pYXZP?=
+ =?utf-8?B?SUxYaEEwMW01VFE1a3NVSlhYZ2NvY3FINUhKdTZHWUVhbS9JSTNSWUxabUJp?=
+ =?utf-8?Q?fNECdfh8ZkiKr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ym5TUFQwMW13alorWmhsS0NmelFkdHZMZ3JvVlFQbFYxcEVpblJnc29vd1F5?=
+ =?utf-8?B?ajZMaGVlZmJPdHVLZXdIOXlRVzk0K0Jva0l1MXZQWXZ3Njg3bXdzUXJxQmRD?=
+ =?utf-8?B?VGQ4enRFR1VXcnU5NDZKQ3JBTHdTYTZYbGJWK1hZUXRxTjQwMmY1SEtFN3Ix?=
+ =?utf-8?B?dW9BRnQ2NlE2L1E1ZXNkN1JBYTFpa3NJWGdlUXBxdFdGYkhCampaemZhRWly?=
+ =?utf-8?B?eFpibzhHWHZ6QWs0OHZ3K2grMEVMSWd2dTM3UnlUSlpjSlI0T1RSZUZWU0pr?=
+ =?utf-8?B?cHYwcTI5RXJEeTQ1c3F3eHRlMnY1Z0FSTlV3YmtJTUIzZmtLOU9lbnppU2pS?=
+ =?utf-8?B?VU91TGxuenVqU0hXbERZRnRQODhNL05yK01iVmRaUGJiUU5YT2c5WGxTKytC?=
+ =?utf-8?B?K1E5VnhKSFdwSDYrWWZUUnYrTHo4eWYwSkh4cGVaWlZZd0JnZkNzaDlCUm4x?=
+ =?utf-8?B?VlJtWnRDbHZBNnlKM2VpOERUZVJrU2d3R2lLRGZnMThlZDdrZUpRcUprUjhO?=
+ =?utf-8?B?MjNYY1huQklseGxwM0JiVnEwY3JUWHBTUEtwSHBOcGo4ZjEwZlFkS1R4Qm1I?=
+ =?utf-8?B?T0FWU1JhK0ZnaS96N2FYdEY0UkR6RlZqOTNKRndDR0xPUWVRZ1VWNy9UbFVV?=
+ =?utf-8?B?ci96b05jL2JkWkUyYTg4QjJjY1BDUWNZaHlsQ2Y2Smh4a0RUcWNDWjFIK2c5?=
+ =?utf-8?B?ZmFQeC9GbXI1Tms1aUhoNW92cXBwRWtIcFRXSEljbC9PSnNMRk9tZThrNmky?=
+ =?utf-8?B?ZldHMEVybk1FLytGWVVuSVhLT0xudVBuMldUT25ZSFZyQ0t2VXIrTGljajY5?=
+ =?utf-8?B?UHMwVUhza1lQc0tEMFBUM1Y2K0lYZWZCczJmS0RoYkR0bW1EeVk1R1pKRW0r?=
+ =?utf-8?B?ekgva1lzTDdIUk5JU21mT2tnaWNYU0oxR0kxNHROOURGUklVZnFoaW1NK2pH?=
+ =?utf-8?B?a1l1UVA3eWx4WGtrVlQvaE1FT0loRW95bFV6b010THNxem9aLzhHY1lvTXQ2?=
+ =?utf-8?B?WFNoUXZJcUNOdUpqNE9BYkFuRit6a2tnS3IrSUwxUHJ5TDgvTzd3UVJRbWha?=
+ =?utf-8?B?a0gwZG1vY1BaRzdCZE5GSE1kUGdmZkxTVHNkSVJWS1dBUU9oaHJsQno2V041?=
+ =?utf-8?B?ekNJTGtxUktWUTB3ejcxaDZtTmFVV3g3ZENqSmZPZ0I5VVhIdWhobGdvN3Aw?=
+ =?utf-8?B?VkRaTDczRzZBWVVCblIwOG90ZStKVkk4S09rY2xrZ00renoxdEpuclU1NjFT?=
+ =?utf-8?B?SWVnajZBUC9vY1RFdFVTRm5wNUdnV2lETEUxL3puZE1OTEluZlk3dmlRdkxZ?=
+ =?utf-8?B?Z3ZuYXA5ZU5UZ1czSEovMHRLdnlHRXdxeDBwQUdMUE1UWHBGeHg0TzdRRG4y?=
+ =?utf-8?B?dy9Yc1ErY0hmVVdZR1JhWWtlR1R1MnRKL0VxcGc1RUh3dHlVcXVOYnE5Qmdp?=
+ =?utf-8?B?ZThpKzN3NDVYZjlZbUZCWVhxTHVPVUJ4Z3QvbWtweVFWZmthZTFXeHBYdE1j?=
+ =?utf-8?B?Zk9DS29reXlXU3B4UnJlVzNpYnpCTUtoM3dNZWJwcTdCSGszamlraktjYUtL?=
+ =?utf-8?B?bWdjS1F1dmt3Ylh2VUxZMTRKeGU3RlMzVFFsOE9GdVJxVDRJMzQ5QXZsNDJM?=
+ =?utf-8?B?NGhyTTAwWkpVQ3dtOUVETnVRM2lDeW5Ta3J4cktDTnNVeUNDQ0doaVlxS0Nm?=
+ =?utf-8?B?R2laclY0V1RISEt2SzlWdHZneGs3Y0tPSGhXbktMU0dNbHl4ejhFNU1mVTdl?=
+ =?utf-8?B?eE9YckhDNjlsNEhWaURHajJIamJ6Vk9EVmhvT0p5cU9MWENUUDBuWlhqeU1q?=
+ =?utf-8?B?ZTlYWVc5MUZiVlhIMWx4bklnTlR0YnV1Q3U0TmN2UmVWODJFVTVMdFZQbmNn?=
+ =?utf-8?B?dHlJS09Fd2xzcHl0VVUzaTZQY0JaOWZpVjR6eE96UjBnOXYyYUovQ2RlQXFZ?=
+ =?utf-8?B?aVhxSGZIZVRhblVuY1hydHU3TVg0aFZYM0pkRGFzWmVKN2RGLy83UzRpOFZR?=
+ =?utf-8?B?eDJWRUVNN252Q1A5QjBib1BJRFZsR01vNE9hUi9neDJ6dlJRSkxjc09ZaGlO?=
+ =?utf-8?B?M0hCSkFBcjdSa0dQM2hNb0liYWwrRmdTaVFjbktPRDJ0b1VPRzhYcnA0anBt?=
+ =?utf-8?Q?In1PTECjiYgoorkpCMEtMrmVA?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6c5d8b8-ddca-4764-9024-08de166025e0
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 20:25:34.3488
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xaNOBIkb1NHCfIvGK/X8dFZjeqpwODYgktHnzbSFIm48MBcVJuapd9xtdxQMQkX57y0qIyDCv7ot2HbFCkdlIg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7344
 
-The NUMA sched domain sets the SD_SERIALIZE flag by default, allowing
-only one NUMA load balancing operation to run system-wide at a time.
+On 10/28/25 8:07 AM, Alexandre Courbot wrote:
+... 
+> The base for this work is `drm-rust-next`, with [2] applied.
 
-Currently, each MC group leader in a NUMA domain attempts to acquire
-the global sched_balance_running flag via cmpxchg() before checking
-whether load balancing is due or whether it is the designated leader for
-that NUMA domain. On systems with a large number of cores, this causes
-significant cache contention on the shared sched_balance_running flag.
+Taking a look now, but unable to apply, using those steps. Do you have
+anything else perhaps in your tree?
 
-This patch reduces unnecessary cmpxchg() operations by first checking
-whether the balance interval has expired. If load balancing is not due,
-the attempt to acquire sched_balance_running is skipped entirely.
 
-On a 2-socket Granite Rapids system with sub-NUMA clustering enabled,
-running an OLTP workload, 7.8% of total CPU cycles were previously spent
-in sched_balance_domain() contending on sched_balance_running before
-this change.
+thanks,
+John Hubbard
 
-         : 104              static __always_inline int arch_atomic_cmpxchg(atomic_t *v, int old, int new)
-         : 105              {
-         : 106              return arch_cmpxchg(&v->counter, old, new);
-    0.00 :   ffffffff81326e6c:       xor    %eax,%eax
-    0.00 :   ffffffff81326e6e:       mov    $0x1,%ecx
-    0.00 :   ffffffff81326e73:       lock cmpxchg %ecx,0x2394195(%rip)        # ffffffff836bb010 <sched_balance_running>
-         : 110              sched_balance_domains():
-         : 12234            if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
-   99.39 :   ffffffff81326e7b:       test   %eax,%eax
-    0.00 :   ffffffff81326e7d:       jne    ffffffff81326e99 <sched_balance_domains+0x209>
-         : 12238            if (time_after_eq(jiffies, sd->last_balance + interval)) {
-    0.00 :   ffffffff81326e7f:       mov    0x14e2b3a(%rip),%rax        # ffffffff828099c0 <jiffies_64>
-    0.00 :   ffffffff81326e86:       sub    0x48(%r14),%rax
-    0.00 :   ffffffff81326e8a:       cmp    %rdx,%rax
+> 
+> [1] https://lore.kernel.org/rust-for-linux/DDTRW1P2I4PB.10ZTZDY95JBC5@nvidia.com/
+> [2] https://lore.kernel.org/rust-for-linux/20251026-nova-as-v1-1-60c78726462d@nvidia.com/
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> Alexandre Courbot (5):
+>       rust: transmute: add `from_bytes_prefix` family of methods
+>       gpu: nova-core: vbios: use FromBytes for PmuLookupTable header
+>       gpu: nova-core: vbios: use FromBytes for PcirStruct
+>       gpu: nova-core: vbios: use FromBytes for BitHeader
+>       gpu: nova-core: vbios: use FromBytes for NpdeStruct
+> 
+>  drivers/gpu/nova-core/vbios.rs | 137 ++++++++++++++++-------------------------
+>  rust/kernel/transmute.rs       |  60 ++++++++++++++++++
+>  2 files changed, 113 insertions(+), 84 deletions(-)
+> ---
+> base-commit: 639291d7c30cec5cf0d9a79371021c2e4404cfc9
+> change-id: 20251028-nova-vbios-frombytes-eb0cbb6a2f11
+> 
+> Best regards,
 
-After applying this fix, sched_balance_domain() is gone from
-the profile and there is a 8% throughput improvement.
-
-v2:
-1. Rearrange the patch to get rid of an indent level per Peter's
-   suggestion.
-2. Updated the data from new run by OLTP team.
-
-link to v1: https://lore.kernel.org/lkml/e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com/
-
-Reviewed-by: Chen Yu <yu.c.chen@intel.com>
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-Tested-by: Mohini Narkhede <mohini.narkhede@intel.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- kernel/sched/fair.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb279..a10c95e11ea5 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -12226,6 +12226,8 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
- 		}
- 
- 		interval = get_sd_balance_interval(sd, busy);
-+		if (time_before(jiffies, sd->last_balance + interval))
-+			goto out;
- 
- 		need_serialize = sd->flags & SD_SERIALIZE;
- 		if (need_serialize) {
-@@ -12233,19 +12235,18 @@ static void sched_balance_domains(struct rq *rq, enum cpu_idle_type idle)
- 				goto out;
- 		}
- 
--		if (time_after_eq(jiffies, sd->last_balance + interval)) {
--			if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
--				/*
--				 * The LBF_DST_PINNED logic could have changed
--				 * env->dst_cpu, so we can't know our idle
--				 * state even if we migrated tasks. Update it.
--				 */
--				idle = idle_cpu(cpu);
--				busy = !idle && !sched_idle_cpu(cpu);
--			}
--			sd->last_balance = jiffies;
--			interval = get_sd_balance_interval(sd, busy);
-+		if (sched_balance_rq(cpu, rq, sd, idle, &continue_balancing)) {
-+			/*
-+			 * The LBF_DST_PINNED logic could have changed
-+			 * env->dst_cpu, so we can't know our idle
-+			 * state even if we migrated tasks. Update it.
-+			 */
-+			idle = idle_cpu(cpu);
-+			busy = !idle && !sched_idle_cpu(cpu);
- 		}
-+		sd->last_balance = jiffies;
-+		interval = get_sd_balance_interval(sd, busy);
-+
- 		if (need_serialize)
- 			atomic_set_release(&sched_balance_running, 0);
- out:
--- 
-2.32.0
 
 
