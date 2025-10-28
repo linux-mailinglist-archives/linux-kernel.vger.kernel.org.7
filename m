@@ -1,150 +1,162 @@
-Return-Path: <linux-kernel+bounces-872869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-872862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980CAC127B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 02:05:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322B1C12707
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 489FB5E3B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 01:00:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ACB39560983
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 00:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E793C23AD;
-	Tue, 28 Oct 2025 01:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F53E21CC79;
+	Tue, 28 Oct 2025 00:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="aKPeZjdr"
-Received: from mail-m3271.qiye.163.com (mail-m3271.qiye.163.com [220.197.32.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KW6XEruL"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518B5221F17;
-	Tue, 28 Oct 2025 01:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A25021A95D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 00:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761613211; cv=none; b=WaQSaLtSXVtFETJHxIsMlfuT866XBEieAsBjWlJXK1p50HvfOOE9etAuUstYTayjYTjNDwX0PNrLaBOv3/hKlUh6Uy0Sl79RgKfi/2553MpkyGlSM/vQkfe9KmGK0T1BTjznPaE6P0/o2i/Ylj8d1IgqylbC3L2LQxXtA9JLCX8=
+	t=1761612560; cv=none; b=PYQLcODBPmwc6JmXlqH75QaJejMEG8O/YfJMLGfjV7c0zkyg2m/hh/SdeUfJLkAxDtvRoF4TQZGvQ0+sc7EpIAlbsUElW1l/CWPMdQcESBpzBs4+S+/XqAyLwzwj4X8RnhpKAnIgQzrB3BtmZQrtalBRDOzA0UsTpr0k3d03NzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761613211; c=relaxed/simple;
-	bh=/MgNSB4BmLt0vPgHTRHS6LKWGzxG4RX8Wp1NJWxp58Q=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HoU4wJm70B7XCn3JNUW++A4jp6i4nXz9f7X8Mazt9/XukyscqNgxgQ563uQp2GidcmjEtVKErauLmi0ZGC1iHhTrXSHslNrQTHFxPwsVYPVJy++O5awnZcpaPCuYXExu0r3c7uNgfsjP8RUolkEpfjkiwK+TpxsIm3lFSBO6c84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=aKPeZjdr; arc=none smtp.client-ip=220.197.32.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.129] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2764cdbd9;
-	Tue, 28 Oct 2025 08:44:37 +0800 (GMT+08:00)
-Message-ID: <cfaa4824-a59a-4106-b2c1-befce2af0324@rock-chips.com>
-Date: Tue, 28 Oct 2025 08:44:34 +0800
+	s=arc-20240116; t=1761612560; c=relaxed/simple;
+	bh=O8VymtBjWaCJA2EfX0QcuNTGoReZi4HICUsymcGhH4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yp65/MlsH5M1+9XmZlQHJkwlkJY3+OJOEGKXSF98YHBIkZma8TyAv/Vl9oaxz4pz02DMYuJCxxRnSina6xnN+qdmWZHy20iMCpYXt36vx3rwi2B4RRT3vnUzKv467PtJq9GvUjZ4vy1mXMSWbClY5FaE6HPNl7nqqh00L7OGm4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KW6XEruL; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ecfd66059eso161121cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 27 Oct 2025 17:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761612558; x=1762217358; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sCvXsZaHI1SIHLVxQNQkHzVv1jTQnPjDd1JLHsOJetk=;
+        b=KW6XEruLKyJmiddiSdjpY4wma817IEeFdfCSTWUilRGaFZYUyDVlbjfML7hrXR1SYf
+         PNidECLvaq45AMG4sV/JetP6zjSTz7uBp4IpEASGtn48jPprQbSQrbLp//A2EO2QIAer
+         W/ZsmMDeVK6FWW/eAesXhT1i47smktpY/BuSLkUR6YqeMIPIWeeJoa2c+IfwpiTGT/HJ
+         Z9xBX0FHw9obHobX0I9GuHHDCttfpuEBTgY4ft26KA/YLmV2scoGaQsBUpagEiXnEBjl
+         ymFJyBn744TgyQSubRUKo0SnVVR8ZYFsgiamnE8T42qyJaYyKy9X3wygRF14mF3sg2V6
+         Oy8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761612558; x=1762217358;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sCvXsZaHI1SIHLVxQNQkHzVv1jTQnPjDd1JLHsOJetk=;
+        b=RnW8zU20WGv25T9GhfwEuNy42cs593Hz7h0ZsbQkOAowtSufEK1ljkMN0pM9q1GrSM
+         5S9NX6DwpUZMckGokHoXBo9ytIrlK65VSYSyKLR+o1FwRFRU66p6L2hC7GcSu/H3lnw4
+         pW+4RyanY8NdXmP/slneXIaroqf16EYKpXKE5+7zsldPxhEXY1gojqk7PpsEbDOBgBtk
+         QSqDRAHYqVm2NXsio/WQpzj12cjh3q2RBvVpgMPMR5p0SQHLjZYEBxAkovIrFl+ys8Og
+         LsYjEhieh8DTc0HAOafqK3HLuM6ln/Tr4Uk/LKQcxAZsPF8BsImot1UGHeXxWnDj9917
+         P50w==
+X-Forwarded-Encrypted: i=1; AJvYcCU58JSety1GMvSgAt2E3u3jlWBEiZsqwG5njKbWYWBtqYUvlanbQamQljDQucd0QyyOF3fkRaLvEl057kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3/oPimtmWmQHGW1DgbTc7tjmD+G+9vt0X2/Zfx86zRwnPeEHO
+	Acdylkn/Uxw6mCNHFUdBDNnMygKNHZNYjg7/B+bmxS6pnhsbqC4lhb58TpQljYiTw4lOwGzDdgR
+	qDbZ40DUOLE/wgkNSDOw/1+Gb3AuuZ/NwY18omphL
+X-Gm-Gg: ASbGnctUTFsKUdjdU2LPjX96H+NoIT+ZZ7jvpPXCMQ5aGoqU0kmc/pCe33qgv8804u8
+	194JTMtBcEFIC7NA9dX2X+HM7s0ZbMC0lrhIpzry75aORVZLfNLSAAifVh5MvR9ecNJFO3nvaXl
+	yATaPbuPWti90pbEfc4RvCzUkMQHLsCW1hv65RY9V2cXwwEwg2wJbil71KgmxDG16GvJzsSF/DC
+	cfCwIqqUD6EaoEQx8ulDQWqv3YC5P2Addn5CfG3zn9xCO9tSSRgjF3cTnI=
+X-Google-Smtp-Source: AGHT+IEorvkOTXjQ2KD2Ost4McwQpoPr3o5PCGxowyBvDtZaGkaLLqZcQVCC+mQgIYrmlP9rxCJ4mPNNjDyS4LIvTSo=
+X-Received: by 2002:ac8:7d02:0:b0:4b7:9a9e:833f with SMTP id
+ d75a77b69052e-4ed09f3da7bmr2104801cf.7.1761612557521; Mon, 27 Oct 2025
+ 17:49:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: shawn.lin@rock-chips.com
-Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
- Rockchip PCIe driver
-To: Anand Moon <linux.amoon@gmail.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>,
- Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- "open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS"
- <linux-pci@vger.kernel.org>,
- "moderated list:ARM/Rockchip SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-3-linux.amoon@gmail.com>
-From: Shawn Lin <shawn.lin@rock-chips.com>
-In-Reply-To: <20251027145602.199154-3-linux.amoon@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a2846258d09cckunmfb2044f69bef6
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQxpJSVYfTE5DGRgZGk9MTEtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=aKPeZjdrPMbSfHYI71aE7ibLXgYuDZdEaanjrVCXkI88WLjfdtNNEkHyLOVQX4iP4ccGH9O87aczzz9yJgpt0qIvPf9vUNeBnOk5yYERMivQXertqgmAhYLcerqfPVC3t9fVqBs/V6CtNquFh6vxTcC1yCd6Obb6gD2aRfvr3FA=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=A+HDiRgC5t4Ys8kCexpdAvL//Urk5g0DuwaI2Z/zH6k=;
-	h=date:mime-version:subject:message-id:from;
+References: <20251024090902.1118174-1-lorenzo.stoakes@oracle.com>
+In-Reply-To: <20251024090902.1118174-1-lorenzo.stoakes@oracle.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 27 Oct 2025 17:49:06 -0700
+X-Gm-Features: AWmQ_bltDXnsUE1AyN7X4o_jxjknljjL692Itljid0i8j3vBpWBt3HxocYIVeB0
+Message-ID: <CAJuCfpG2f40hosmWVcgTs7O5jSgLNp8w4Mt50N2+t1k9CLLMtQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/vma: small VMA lock cleanups
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2025/10/27 星期一 22:55, Anand Moon 写道:
-> Add runtime power management support to the Rockchip DesignWare PCIe
-> controller driver by enabling devm_pm_runtime() in the probe function.
-> These changes allow the PCIe controller to suspend and resume dynamically,
-> improving power efficiency on supported platforms.
-> 
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On Fri, Oct 24, 2025 at 2:09=E2=80=AFAM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> We declare vma_start_read() as a static function in mm/mmap_lock.c, so
+> there is no need to provide a stub for !CONFIG_PER_VMA_LOCK.
+>
+> __is_vma_write_locked() is declared in a header and should therefore be s=
+tatic
+> inline.
+>
+> Put parens around (refcnt & VMA_LOCK_OFFSET) in is_vma_writer_only() to m=
+ake
+> precedence clear.
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Thanks for cleaning this up!
+
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+
 > ---
->   drivers/pci/controller/dwc/pcie-dw-rockchip.c | 21 +++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index b878ae8e2b3e..5026598d09f8 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -20,6 +20,7 @@
->   #include <linux/of_irq.h>
->   #include <linux/phy/phy.h>
->   #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->   #include <linux/regmap.h>
->   #include <linux/reset.h>
->   
-> @@ -690,6 +691,20 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
->   	if (ret)
->   		goto deinit_phy;
->   
-> +	ret = pm_runtime_set_suspended(dev);
-> +	if (ret)
-> +		goto disable_pm_runtime;
-> +
-> +	ret = devm_pm_runtime_enable(dev);
-> +	if (ret) {
-> +		ret = dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
-> +		goto deinit_clk;
-> +	}
-> +
-> +	ret = pm_runtime_resume_and_get(dev);
-> +	if (ret)
-> +		goto disable_pm_runtime;
-> +
->   	switch (data->mode) {
->   	case DW_PCIE_RC_TYPE:
->   		ret = rockchip_pcie_configure_rc(pdev, rockchip);
-> @@ -709,7 +724,10 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
->   
->   	return 0;
->   
-> +disable_pm_runtime:
-
-We need to call reset_control_assert(rockchip->rst) before releasing the
-the pm refcount. The problem we faced on vendor kernel is there might be 
-still on-going transaction from IP to the AXI which blocks genpd to be
-powered down.
-
-> +	pm_runtime_disable(dev);
->   deinit_clk:
-> +	pm_runtime_no_callbacks(dev);
->   	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
->   deinit_phy:
->   	rockchip_pcie_phy_deinit(rockchip);
-> @@ -725,6 +743,9 @@ static void rockchip_pcie_remove(struct platform_device *pdev)
->   	/* Perform other cleanups as necessary */
->   	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
->   	rockchip_pcie_phy_deinit(rockchip);
-> +	pm_runtime_put_sync(dev);
-> +	pm_runtime_disable(dev);
-> +	pm_runtime_no_callbacks(dev);
->   }
->   
->   static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
-
+>  include/linux/mmap_lock.h | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> index 2c9fffa58714..e05da70dc0cb 100644
+> --- a/include/linux/mmap_lock.h
+> +++ b/include/linux/mmap_lock.h
+> @@ -130,7 +130,7 @@ static inline bool is_vma_writer_only(int refcnt)
+>          * a detached vma happens only in vma_mark_detached() and is a ra=
+re
+>          * case, therefore most of the time there will be no unnecessary =
+wakeup.
+>          */
+> -       return refcnt & VMA_LOCK_OFFSET && refcnt <=3D VMA_LOCK_OFFSET + =
+1;
+> +       return (refcnt & VMA_LOCK_OFFSET) && refcnt <=3D VMA_LOCK_OFFSET =
++ 1;
+>  }
+>
+>  static inline void vma_refcount_put(struct vm_area_struct *vma)
+> @@ -183,7 +183,7 @@ static inline void vma_end_read(struct vm_area_struct=
+ *vma)
+>  }
+>
+>  /* WARNING! Can only be used if mmap_lock is expected to be write-locked=
+ */
+> -static bool __is_vma_write_locked(struct vm_area_struct *vma, unsigned i=
+nt *mm_lock_seq)
+> +static inline bool __is_vma_write_locked(struct vm_area_struct *vma, uns=
+igned int *mm_lock_seq)
+>  {
+>         mmap_assert_write_locked(vma->vm_mm);
+>
+> @@ -281,9 +281,6 @@ static inline bool mmap_lock_speculate_retry(struct m=
+m_struct *mm, unsigned int
+>         return true;
+>  }
+>  static inline void vma_lock_init(struct vm_area_struct *vma, bool reset_=
+refcnt) {}
+> -static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm=
+,
+> -                                                   struct vm_area_struct=
+ *vma)
+> -               { return NULL; }
+>  static inline void vma_end_read(struct vm_area_struct *vma) {}
+>  static inline void vma_start_write(struct vm_area_struct *vma) {}
+>  static inline void vma_assert_write_locked(struct vm_area_struct *vma)
+> --
+> 2.51.0
+>
 
