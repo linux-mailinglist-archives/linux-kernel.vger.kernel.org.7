@@ -1,124 +1,98 @@
-Return-Path: <linux-kernel+bounces-874050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C226C156A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:24:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03790C1565A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:21:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 60E2B507C78
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EB541B256EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A4233DEDB;
-	Tue, 28 Oct 2025 15:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410EC341AC8;
+	Tue, 28 Oct 2025 15:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UuEpn00l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NjJ8ru2j"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123A02E7BAA;
-	Tue, 28 Oct 2025 15:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B998433F8DC
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761664760; cv=none; b=fIEZp/DnEVp5uVSg+ZOYiaMg3+m19M1j2WH3gPI48aYD29xnFiLwVhRBRp0TzyyFPicEnxPouNW+BAPGnJVTTZYYWgx3Be3XKmadUKfJbrfkkitfHLEUWd6l4k96n42JtacnisWDzr9TiQbUf1QdyiVg/PSPgr0VDZUO1NHsdvU=
+	t=1761664819; cv=none; b=S1HsrnY1e7uo4UubBD3Y+67+eBo0HjJx7YlbPZ2FUiyWY0Hi8DdsrP0vQKm5KLECWnbO+T4JWSMD9cC8Gn6Wu61pU2vjSvfWwtTkEPOcTuBqNiis6TJbmHnvJGn3p2qu1GmWbMs5fem4TXoQ6sK8b6mwa4aqZBXl6NSbbARR2BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761664760; c=relaxed/simple;
-	bh=YfeA9WDImd+OY7C5WhOa1hQ4s8wAxkujvBRU2K6EBg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcKz/wHAEZ9VbTWKe6ofvRH0hfBuvm0dTyFFxANes7D3TnY+rzxk2zXSM+pjQUtfKs2DOi7vawvyG4tjOp9WmyghfyM5cp+jO67UiDmn0DY3wNpHMmavbjRR54OahH+0BfOyJcSCwUSx9TDfr9y/svSqDBB8ZECbMnxnycjpuq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UuEpn00l; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761664759; x=1793200759;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=YfeA9WDImd+OY7C5WhOa1hQ4s8wAxkujvBRU2K6EBg0=;
-  b=UuEpn00lwbrtw+EG4/wCEowCowkcStLEOySLOcVszOScbWtaqhgKBvUr
-   /7yZXE8eoVFB1hlc/3ScR1N9Nu33LPj3XmBrBc3MqHryyjSo0IHhy5QHi
-   YYZMByXRc3DTwGYp6zZUW7EswrS8pu7uRCxgjNgKVDbGICv07wR50FIa6
-   np1SLNNnTsScsslX9BMyhU3yDTFR9Fz0kaVjVueAPNRA8oEBYU2DPrw+G
-   Y8eIGMQ59cmT6sOBGvIzLcTbWe6gwRF5kusVEoo13tUqihWJfGZ9Sc/eu
-   7eu81xDhbujZdEGtLq95zhQBdQJiJkvQ54gVY8CW3trkSi0mMZWvAULrC
-   g==;
-X-CSE-ConnectionGUID: 6TkJkKBkT9WOHcVhpDeJPw==
-X-CSE-MsgGUID: CIuUfOADQTiiFpyHzFVpXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="67632035"
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="67632035"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:19:18 -0700
-X-CSE-ConnectionGUID: 23FxZjE0RhSi50fQRTKghQ==
-X-CSE-MsgGUID: zAQ6VqKPSP+GPyCHdgQyRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
-   d="scan'208";a="186122207"
-Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 08:19:15 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vDlTc-00000003LlR-0BQf;
-	Tue, 28 Oct 2025 17:19:12 +0200
-Date: Tue, 28 Oct 2025 17:19:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Miaoqian Lin <linmq006@gmail.com>, Markus Burri <markus.burri@mt.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Angelo Dureghello <adureghello@baylibre.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in
- ad3552r_hs_write_data_source
-Message-ID: <aQDe7-ienRpcfNV_@smile.fi.intel.com>
-References: <20251027150713.59067-1-linmq006@gmail.com>
- <aQB8PRlaBY_9-L8d@smile.fi.intel.com>
- <aQB8j7Hc3b9vAT5_@smile.fi.intel.com>
- <aQCHt9JL0Bc4Pduv@smile.fi.intel.com>
- <071e3da4d69e10d64c54a18b7dd34ae11ab68f58.camel@gmail.com>
- <aQDXF-AIF6wNIo76@smile.fi.intel.com>
- <aecd2e25900f2ef38f937a295e995269c433453b.camel@gmail.com>
+	s=arc-20240116; t=1761664819; c=relaxed/simple;
+	bh=KiMvJaTew1YHNiKfgdPOfLoDPJZ+GN7jRXSQJ5trAzw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=qatvehqhY9BaSQ+clO38kXvyPOU7vW4HQ56LpbeWF41+PbX2ACtJOEbuNAeVROUqdLWqUNbcA1Ia2ZqJ8Hy1pYhuX0XNzXUDPzk8erw8lNT8HJDU9d3/hMKMhBQpAAK26QbSy3DquXt9Wto9ZOf1Dfex1yFvVTGI7Y3hvsL9EgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NjJ8ru2j; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761664814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YyYvf+fvSrlf/zx6Wpz6IBTQDiN9neqrcFDocO0D1sU=;
+	b=NjJ8ru2j+6b8cBmW16gfEcMGb2HbcgvPS8khZJaxO/7eesTFgZ3CkJMGiqCPhjUyV09UF4
+	imbIaaSn2ELHHqkTVu2upRIM333J+x6xFLaJyhnFcDVKTgZi62tW23mNj02YrYC64qJTkk
+	zwDI/61ZxmSwr7BOPoys9FSco2fy9Ow=
+From: KaFai Wan <kafai.wan@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	shuah@kernel.org,
+	paul.chaignon@gmail.com,
+	m.shachnai@gmail.com,
+	kafai.wan@linux.dev,
+	harishankar.vishwanathan@gmail.com,
+	colin.i.king@gmail.com,
+	luis.gerhorst@fau.de,
+	shung-hsi.yu@suse.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH bpf-next v2 0/2] bpf: Fix tnum_overlap to check for zero mask intersection
+Date: Tue, 28 Oct 2025 23:19:36 +0800
+Message-ID: <20251028151938.3872003-1-kafai.wan@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aecd2e25900f2ef38f937a295e995269c433453b.camel@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Oct 28, 2025 at 03:12:29PM +0000, Nuno Sá wrote:
-> On Tue, 2025-10-28 at 16:45 +0200, Andy Shevchenko wrote:
-> > On Tue, Oct 28, 2025 at 12:31:04PM +0000, Nuno Sá wrote:
+This small patchset is about avoid verifier bug warning when tnum_overlap()
+is called with zero mask intersection.
 
-...
+v2:
+ - fix runtime error
 
-> > For the latter I want to see the real traceback and a reproducer. I also
-> > wonder why
-> > we never had reports from syzkaller on this. It has non-zero chance to stumble
-> > over
-> > the issue here (if there is an issue to begin with).
-> 
-> If I have the time, I might do it. If my suspicious are correct, it should be
-> fairly easy to reproduce.
+v1:
+ https://lore.kernel.org/all/20251026163806.3300636-1-kafai.wan@linux.dev/
+---
+KaFai Wan (2):
+  bpf: Fix tnum_overlap to check for zero mask intersection
+  selftests/bpf: Range analysis test case for JEQ
 
-My suspicious is also like this, if you have a working setup for one of such
-a user (like this chip) already, it's ~15 minutes to get it done without
-writing an additional code.
+ kernel/bpf/tnum.c                             |  2 ++
+ .../selftests/bpf/progs/verifier_bounds.c     | 23 +++++++++++++++++++
+ 2 files changed, 25 insertions(+)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
