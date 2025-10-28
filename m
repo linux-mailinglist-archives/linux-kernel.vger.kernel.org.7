@@ -1,192 +1,278 @@
-Return-Path: <linux-kernel+bounces-874876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5C8C174C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:15:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FE0C174B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590C81C80F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 135BF4F7B3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7931A375742;
-	Tue, 28 Oct 2025 23:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C995936B977;
+	Tue, 28 Oct 2025 23:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unqV5gJK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IhJuob+P"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012070.outbound.protection.outlook.com [52.101.53.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B87236C231;
-	Tue, 28 Oct 2025 23:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761693070; cv=none; b=OQGSw3XlYAnU3EoIcGB1gdG9Ccn81x1nlkgRmslRslyxf48KEloLO2byl+C2e2RELuLhMLYmobqFdlOtOPcpX1swiy1TE3ga8/9SSQ2LxQ4Bo8OfjbZXTr8gQ49pODBsuzTFdiP+02TksqJmSjrCHBUCvCEhlAeEtf/MyooXJ28=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761693070; c=relaxed/simple;
-	bh=v6HVi3+ezmsDitNvxonnm8ii3SaF/3B18gnealIqhSU=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=dVn+DU2xQIVPhBoxPAqA42ZGm3MphkDukOVZ4JB9X6u9FQlgJ2IZb8hoaUkTy69zT7Mt/FkCBwH6f/Fb6FncPOsQZXNv0oOOULxnNnh+iW6a9p57qtcGWXPqnlrZor9hOTI9Z9RKmOPhP9+6/zrc5hN5L6ZTuLPkFQuDtm3d8OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unqV5gJK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF294C113D0;
-	Tue, 28 Oct 2025 23:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761693069;
-	bh=v6HVi3+ezmsDitNvxonnm8ii3SaF/3B18gnealIqhSU=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=unqV5gJKwllyBDtYy4N9dCNsHQcocPufWwwc6S3NDmdMgmzB06INRy3nSOTzktMfq
-	 jaeVXpQj+aj/R+FEh4MyKMvKrTXqs8AODH2AZaaS129XTXR8VVB5YXbZOb00wSssfh
-	 QWPnCn0t/cCcfvYbbibrFpAeM/j3Op0nfCpx5sqbaJILZEmh6kEx7h2jrqq9b9nuAV
-	 X1ChrM/AflpMgE3Z2VerrEFBIm+6tIzvag53MU5VCFo+6avWmI6LRzCreuDt8cD+nm
-	 2tJ7gAlJMR7mQOSUZ1swjdLwgYRH72MAB42DF7QszBTUQBWZ8b9HlrD4sTq+L1p2hu
-	 YMe6xh4ltCeYQ==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1vDsqz-00000004qvA-11Yl;
-	Tue, 28 Oct 2025 19:11:49 -0400
-Message-ID: <20251028231149.097404581@kernel.org>
-User-Agent: quilt/0.68
-Date: Tue, 28 Oct 2025 19:11:27 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>,
- Tom Zanussi <zanussi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Ian Rogers <irogers@google.com>,
- Douglas Raillard <douglas.raillard@arm.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Ingo Molnar <mingo@redhat.com>
-Subject: [PATCH v5 13/13] tracing: Have persistent ring buffer print syscalls normally
-References: <20251028231114.820213884@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED8236A5EB;
+	Tue, 28 Oct 2025 23:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761693139; cv=fail; b=JmPowznCbHJ4HeK5wZ9j0kRQxA0CGgC32FySGkLIUnfjWkSZMbwNXr2oKYWRgW/0TXrKLAHSJc6Ua7UBVS2KwXV2iB+gTmgg85QL1YBv35vb3WUqtGPr8zyFdvhU7m9Xquwlx/b1M6je54EwlfX2bl2Rox6mGXQ2yRiStAhvd7Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761693139; c=relaxed/simple;
+	bh=j/BBKvfK9qG5julK4hG7WPFzOmGDCPpEpKFeBTJX+ig=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=Gj46MYtcvfAB51qvaliKgAaq9+XW4OE3uykktj9MtKeEfwpjOy2dfsdQ54GyQr1KflPIs4L8OYe1f2xirkg2FvxRWnzd7JHjvRWtoTh0AEXtxpEixd308aUyWFl8hP2YvcQbXR2Vw3KC6j6RuFaJdMrGa3c7J7ECchpMRHkBHTc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IhJuob+P; arc=fail smtp.client-ip=52.101.53.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=luGIY8YRQpHUBe4b21qaSDCL8KrIUgEjoY/R+QZT9suUZmcIXfJlzT2/loaKyKxM39eGFsGdU5JtQliiksQXFle8vA/uCx1qg9Aviz4WsxLpsWIZ5Dn9UyRQBMWALk8U6rQzW2k+RksFxmb9YFfZEsK2rCf0Prwq6yTZRIkYUl3jy7z6XhPRCUyuv3tMbq902OsCKEe8qnGMoRUYOCBtUeCJyXFL95QCDKwdQ7r/iU8j0f9g3ZVV7u4uSLqEvdEfRlLyQLDvP3aadQA2XD4O/vZL5KKQ6qxBwcO2CKl0rsbuJT4ZsP49HiEETwEIA8bXnjmiTX4mM1OpShOGxPdDig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=x4miekismvEdDNixSLZxOivypIf2TRTgiVGrgJllsFA=;
+ b=CM8iCjEqAi3iqEpFP0alnHnM3Ir3tHY2iA1K0Fo6ZjCl4xA/muZKeDoXfmzuGt58ut4yJQqXWgX/4pq6FKI6GBaa91F03wpmUpCaRcXRCEW51Uc68Igq8HndhHy0dhsPsFaGFBWciwwJ4ne7Oik2EFJ/OLvgMGVYy2T7e15pksXl3JUHGaYEqP7YXV8x9NgfbZl3E2ChwYXJHlqIdBmBe5eJ40Dy2AtXxGpBRUq5rxUx8FNUcK5HBcaAUJ9DUOtifpdUjImMgak0pQ6CtEimbpdI0ebqePyZsbJj2Z9QPKM/iIlNCdb1IPhfsZDaO9GxQitZOHLaTcmQ6uqM/FHNLQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=x4miekismvEdDNixSLZxOivypIf2TRTgiVGrgJllsFA=;
+ b=IhJuob+PMN89e2n4FEvh15phnbxG24yCiuB9FRKhtv6SnvaQuRxXheTAjqcGZZ6oyM2PaFe+K1emccN/jyJeZRGDA25Yo3FI7eZBuI/1ChzCO0q1zJmPaILyCZVbdQZbVSaKiuNtjNYhRqu2PSXSOp5mWDwT1ah3axqonT8exMljzTeH3KHKHKO6W0qkS0rT1QLksEm0vsV0m8eHhx75TGlRzLPJ3+oeUA3WtzqW3ZIgYtUeDxAKpa5Aa+6BRzCz8qlKwKyVRa7LRP000+9Tan4IBbTQN/V5tZ3KQIA689SXvLsCy+6FOVbyQq3e+X1EDRaVEABG9jLy/mvUcddYvQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by CH1PR12MB9646.namprd12.prod.outlook.com (2603:10b6:610:2af::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.15; Tue, 28 Oct
+ 2025 23:12:14 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9253.017; Tue, 28 Oct 2025
+ 23:12:13 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v3 0/6] gpu: nova-core: remove use of `as` for integer
+ conversions
+Date: Wed, 29 Oct 2025 08:12:08 +0900
+Message-Id: <20251029-nova-as-v3-0-6a30c7333ad9@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMhNAWkC/1XMTQ7CIBCG4as0sxYDI0LjynsYFyOgnYVgwBBN0
+ 7tLm/i3/CbzPiOUkDkU2HUj5FC5cIptbFYduIHiJQj2bQNK3CqJKGKqJKiIPriglcbeIkH7vuV
+ w5sciHY5tD1zuKT8XuKr5+jbMx6hKSGGksw0x2qDfx8qeae3SFWak4m9ovyG2kNCcvPLSWNJ/4
+ TRNL9ZEaJLYAAAA
+X-Change-ID: 20251022-nova-as-8ece4142872a
+To: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: John Hubbard <jhubbard@nvidia.com>, 
+ Alistair Popple <apopple@nvidia.com>, 
+ Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
+ Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
+ Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.3
+X-ClientProxiedBy: TYCPR01CA0210.jpnprd01.prod.outlook.com
+ (2603:1096:405:7a::9) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|CH1PR12MB9646:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbf4f493-e609-43fa-46e7-08de16776e10
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TlJZT3Btb0MvTi9va01wNUlVdnpDUzdoTGNSemFhL3VzTXVSNG9XNjZpMWVZ?=
+ =?utf-8?B?VGdmbXQ1eTU2dnZsS0toMGVCYWNIdDQvSTMvTkFCK0g4TkdsWjF3YWVIRits?=
+ =?utf-8?B?VFp0YWJCcUlMRVN0M1YzRDE3NmpucktvbnJVUCt6TWxwSzJFakN2TzZKT2Rl?=
+ =?utf-8?B?c2V3NFNKZ2hZWjVwZFQwaisyWEVrUlY2c2FNanRZZnZYYjFVeE1JcVdRYmVD?=
+ =?utf-8?B?R0piSlljY2M0OXR2WTZTaTVhSTZjZGY0S3hGaEJlQ1JtWlR0MWVHWWQrOEUy?=
+ =?utf-8?B?QnFTZGQ0aEtjU3BuVVVjWmd1djlndjBTamMwQ3E3Q1hEK2ovaGVGYTlBYldl?=
+ =?utf-8?B?TGNsY2JCSGFBN1ZVeEJUUS9PQk5FOUE4UmVWRG0wcksvVi9QMWJFaldiN3ZY?=
+ =?utf-8?B?dTQrYVZha0liblVOdS9nT2NqWE5NN3BpMEFHcXVVelJtMGVqZ3QxS0diWkox?=
+ =?utf-8?B?WmxPYWpIZHN1dWRaVk9xVTR4MVAwWUFpK2R4R2hvUGtlTStjTGZBZWpJcktF?=
+ =?utf-8?B?bnM5a2RCZ1EwTlQ5MUdmeVorRzFKTDIrcmwwUWViSTkrR2hNdEtaazljQmtJ?=
+ =?utf-8?B?SGNUTGVPTXBIdlEwL0h0YisydHpIdGRFTlR6UCtlODUwaGcrdmlScTAyaXJC?=
+ =?utf-8?B?MHFTdFZoaDJIZDk1WWVvN1Rzb1BWTWxXTm42bXhBUlpIQnNTQUQwR2hSb0Zv?=
+ =?utf-8?B?bjhSdlV1TnZSZ0VtczllamdLbERydWxiZThHZENRY1NWVzlLQ1NsbVBORmtW?=
+ =?utf-8?B?bWFVZUI2cU9jRFZmb0VxNEl5N3BjK0w4SlpjcXRvQzB3d2p3VmtwYTBGZTN3?=
+ =?utf-8?B?UkcwSkhPYjZBZUQrakdPa3ZMS0tjMWVyUjl5cTFGL2dXT1l4bHlZWVNadmtT?=
+ =?utf-8?B?U1RINEV5ZHd2OVVxUUtla3h6NENYNGhLcjNGa2lvNHVOQjVWVFQvTjVqZm1j?=
+ =?utf-8?B?OWZHc1ZhZXFOYzQ0TkgyQjErUE5aQmpVWGxhZ3FIWnBldmExZWc2T0x0ZFVB?=
+ =?utf-8?B?eXNlSWRIL05rdnFJVnNvNkNBc05PV1pzc2V5UXcxcEJyNEVxRVpsRGVkN0V0?=
+ =?utf-8?B?bDVFZDBpMkdtK2NPbHorT0FoTE94ckszeDdTYWlVcml6MTBicjJoYUpuZHBE?=
+ =?utf-8?B?UkhEeFhEdXhNZlZyTTkvTlpkdHZjK3VVMGdOaVBNRXBlWUtTUTRsQmVJNjZ6?=
+ =?utf-8?B?MGdkbTRkdHZacXdFQlFyUlIydE5TNGRXemJ0QlR5RHpibjJ0Mk8xSG53emIx?=
+ =?utf-8?B?UytOQkltbVQ5QlQ2MG90YmR4Mlh6M0FkNWhDQlJkZC9aQWhEOWhQd2hmTzZt?=
+ =?utf-8?B?Z28rSTk4TzN0WGJEcS9hay9VVkZSSmNjU2xwV25rc2JCV3puNDRmR0FDeEky?=
+ =?utf-8?B?d3JLbjFiaHBqTFl1WDNjdSs0czRMNXpZblY4MU8yKzNXak05SUJqTWxkVTlu?=
+ =?utf-8?B?cjR6aXJXU2JoU1RWTk5NQUNxU3dCdEY1dWF1SE9PcUNma3kycmRXWmxjaEZX?=
+ =?utf-8?B?UnJpRS9xeWNkcGZHRHFndkVsNlZ6RFBjQitWblhrUElYbjIvamtqZlBsdHBR?=
+ =?utf-8?B?TDR2S3J3NldOTzJaakQyYmdVWGlIczBPbHJEWDVsUFhaRzFQSTVVRSsvOFIw?=
+ =?utf-8?B?RmJnMTZzZjhxZkI0Ui9JS0pDOW5Ram1KbzRXS1hmNEo2Tk1YVEYvS0JxWUlV?=
+ =?utf-8?B?Tm5VL2ZiTWZrYzhBMlFQN0Iwa2dHMDBMMjkxSHBjQ2ROVk5naHp5ZU1GTXpN?=
+ =?utf-8?B?MDJWaDFIc0JlM1JzYUdnNlIrY2UzT1RwWkFJTHlGL3c5WXBHd0hGTU1GTjdE?=
+ =?utf-8?B?cWkveWpNTktaVytJT3NabUJWcXJjdFcxZSthMHJFSmNiL3ZkVXgrUkZnZ3Vk?=
+ =?utf-8?B?eVF6enpLcEZtOXFXajZ0bnR4c2gvaVg1Ym9Ram5mdUM3QmEyeE1zdnNBVVMy?=
+ =?utf-8?B?dTlKNGxwcm5mN0l3emdkSTBYREE4c3RZelRxL01SVmFmeUtaR0N3RGx3Y0FS?=
+ =?utf-8?B?b1ltaml0VUNhaUM0NlFxU3F2WUhKODh2Y1BFWUVvNmJoL3A2WThGckxDVkh2?=
+ =?utf-8?Q?bZx7o1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?V21ES3NMbDV0NllDakN2YTVVallSWUZTalZIRDY3TVhrRWh4YnpDRjVjMkdq?=
+ =?utf-8?B?ZDFjOHFBRVZ4SU5MUUNXaW1JeFQ5c2NNdjZMZEliZ0JpRzV2a2N4M0JpeExY?=
+ =?utf-8?B?blJzcGl4R3JxU2JiS0YxTE10RStTRFEyMDdhWmdSeE8xMjlyYUdpTlIvRGpx?=
+ =?utf-8?B?eEkxVGpiaEVjMDJRTzczemZPMzhob3h6N1BiVzBFUXVCdXFZc2V0emIvNGlm?=
+ =?utf-8?B?RGZFazROOXZsd2VHa2dhUWNOWWRmNldnc0VyMGxKU1dsU2tRa1QrTEl1Tjdq?=
+ =?utf-8?B?K3hHZlA4QXpqT3dKSVVNOXpzQmRVaTN4cnNBUk5Eb3VucXpYOHVGall3a2Uz?=
+ =?utf-8?B?cWpPOTBZYWY4d0ZCMEthZU5qVmFFN0ZLQ3dKQUdHMzVoT2JnaEY1TllWQ0Ix?=
+ =?utf-8?B?LzJ3d2pJMmRsTi94NDZ2Uk43SS93akxBeW9mMi9zNENFYWl4NTF4Ylk2WHJs?=
+ =?utf-8?B?cmRuVk1pd0l6TER1WGhPckpsMVhrTnh6NVp1VU9PakdtMlRMaTBFbVpiZ3Vn?=
+ =?utf-8?B?YlFHYlh5VVZKYkhaeEFZeXVjY2t4MWh0V3NaNEVwOUxKQytoMTVQU0c5aDBR?=
+ =?utf-8?B?S0h0OW9aWXR2cDdkVWRmZW1YOUMyZkt2QVc1ZzJ5bThFNjdJOCtPT1BwZ0py?=
+ =?utf-8?B?dTFnTmRUaG02Y24xV1BYZmZ5U2wxOWs4T1V3RTJseWh5b0tnaEhKOTFudTNO?=
+ =?utf-8?B?OFU2dWlhY01pd0cvNXVWVTlmVS9MKzFESFYxK1BOeSsyTW5Fckg1SWc2eXRo?=
+ =?utf-8?B?V3pZU1p0aUV5S0FuYWNvOEE5bExsMVZOU2R2ZUhSRnlzaXpMdkpXWnZKUUZ1?=
+ =?utf-8?B?QitMTWlnWURHMTFKbGVYM3VScDFQQkpIMmpOMzhvYWlNaUJWTmY2azF2WlBU?=
+ =?utf-8?B?aUJWcDhzSnJkUWtRRU1EQzRaZTBWZ0pwUW1DVnBGcUM4dStsdmc0cTlaNVln?=
+ =?utf-8?B?Ym5yd09KMXVGWlR4TExEZUNBOXRXaUltdDZ4WmFLc3pWYzBZZzZ6RHdZMFky?=
+ =?utf-8?B?ZmMvOHpRYkgrWW4waHl6NmgyTXlVcVFyd0s4a1ZBWElkQ2xzemJSemk5emRX?=
+ =?utf-8?B?Z2RTaCtvczdBcnIzVzFoY01XZFAzUHZQQklZUXdxZFlTUk9qdWJ4Vmx5ZHNR?=
+ =?utf-8?B?RlBBQUFrZWJ2UmZiL0l3NmhRbXBHK2hWd1NMVHBmTVkyY1IrMmdNbGtISGtJ?=
+ =?utf-8?B?QUNCYk1yenAvNGlUMmpHTkw5QURhdUs1c3BhOWRCTUdqU2NUM0NYbmMraUJa?=
+ =?utf-8?B?anZYeEtYRHFIdlJ3NUxlRTBBdVh2TC83amxmMWNXd1lSekJmYTMvS1VvMitq?=
+ =?utf-8?B?cGFvcVo0amNLOEZFKzZ3RlhjVTBGQW5GNTBybWViM0xkaFpTbnA3b01ocXcx?=
+ =?utf-8?B?eXNmSWNmelF3YTlWL3Z6Y0E4WXh4blJVOFJ2UDZUeWxlRVNzYmJ4RDZyOVJW?=
+ =?utf-8?B?YTdVR3hEN1d0WjBNTVE3MGpLSWhnSUpPSnBBQ2xrcjcxZmMwcE1yZElYdUE2?=
+ =?utf-8?B?dWMxdVNOVW1pQzhOQWloOTlmK3ZZQ1ZLTjNhazl6WEZxbmtnS09IdnFZaDRV?=
+ =?utf-8?B?a1RiQStoUWdHYlZDUEVOUWF3emtNNjlNVStJaFV1RlEzaXJVS044TkljYW41?=
+ =?utf-8?B?QmJLVVM1VzJpRXBxaUIrbEZUUW1abE56OFV0R0U1SmM1cW9ib0tiUHlpVU9M?=
+ =?utf-8?B?dFJvTUNEcmJFS1hZTGo2NytYSFRjQXg5bjdnRDJ0eGcvbnlONi8xak1yd1pr?=
+ =?utf-8?B?akp1YXExMVNwYXd2UnJCQ1FVRGFmODREc05VYUpiMzZ5cGhid0k0ZVpSVmVp?=
+ =?utf-8?B?MU90MVdKWUFQSVZvMTJMKy93dzVlSG9vN2ZYZXhzdXBaUjVUWmVla25SMWR0?=
+ =?utf-8?B?aEJVKzVaaTlGaFBKZS9sMEdTWURlR2RvbUxub0lKNkNZQWhiMWZkQTFkejdJ?=
+ =?utf-8?B?OWFIZjJhVUJ4UjJaaHdJTHFQc2I3djlWNS81aTZPZUd6cHF6bHcwOG1WN1lv?=
+ =?utf-8?B?NFRlRnEwWGxHVWpJem1tQVdSVXZlWGRFRXRWK2MzMGFMZiszS000UFJyc1JZ?=
+ =?utf-8?B?RktEUDlkUVdKWXpHYWdFZUZXMUZhTlZ5djg2bFpGbk95RmJYUVZncExWbXlo?=
+ =?utf-8?B?eE0rRWY0cUFFVFJ3VVg2N1RuTXMxQmpkM1hKOFN2VEpSSUEzUjgzZllxeFFF?=
+ =?utf-8?Q?P0P7R+2QMmomRwQ78Iq6TAynGsokoOPIGCmmICWR+7bx?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbf4f493-e609-43fa-46e7-08de16776e10
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2025 23:12:13.8707
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: U2/YNTTtqLWQr9SoQCzCGzZGR+VHTdiBpmVcddg+uuN/VfYjX3lCOXPocbXtGigwsdQaB47zhBkQ3SxgLQnEEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH1PR12MB9646
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Using the `as` operator for integer conversions is discouraged, as it
+silently strips data if the destination type is smaller than the source.
+Many such conversions can be replaced with `from`/`into` or (when
+justified) `try_from`/`try_into`, but these traits cannot unfortunately
+cover all conversions satisfyingly.
 
-The persistent ring buffer from a previous boot has to be careful printing
-events as the print formats of random events can have pointers to strings
-and such that are not available.
+There is for instance the case of converting a `usize` to `u64`, which,
+in the case of the kernel today, is completely lossless but cannot be
+done because the Rust standard library does not provide a `From`
+implementation for conversions that are not future-proof.
 
-Ftrace static events (like the function tracer event) are stable and are
-printed normally.
+Still, in the kernel it is very practical to be able to perform such
+conversions when they are safe to do for the current build target.
 
-System call event formats are also stable. Allow them to be printed
-normally as well:
+This patchset tries to eradicate the use of `as` in nova-core, by using
+existing means and introducing new ones.
 
-Instead of:
+The first 4 patches use the already-available `From` and `TryFrom` trait
+where it is possible or advisable.
 
-  <...>-1       [005] ...1.    57.240405: sys_enter_waitid: __syscall_nr=0xf7 (247) which=0x1 (1) upid=0x499 (1177) infop=0x7ffd5294d690 (140725988939408) options=0x5 (5) ru=0x0 (0)
-  <...>-1       [005] ...1.    57.240433: sys_exit_waitid: __syscall_nr=0xf7 (247) ret=0x0 (0)
-  <...>-1       [005] ...1.    57.240437: sys_enter_rt_sigprocmask: __syscall_nr=0xe (14) how=0x2 (2) nset=0x7ffd5294d7c0 (140725988939712) oset=0x0 (0) sigsetsize=0x8 (8)
-  <...>-1       [005] ...1.    57.240438: sys_exit_rt_sigprocmask: __syscall_nr=0xe (14) ret=0x0 (0)
-  <...>-1       [005] ...1.    57.240442: sys_enter_close: __syscall_nr=0x3 (3) fd=0x4 (4)
-  <...>-1       [005] ...1.    57.240463: sys_exit_close: __syscall_nr=0x3 (3) ret=0x0 (0)
-  <...>-1       [005] ...1.    57.240485: sys_enter_openat: __syscall_nr=0x101 (257) dfd=0xffffffffffdfff9c (-2097252) filename=(0xffff8b81639ca01c) flags=0x80000 (524288) mode=0x0 (0) __filename_val=/run/systemd/reboot-param
-  <...>-1       [005] ...1.    57.240555: sys_exit_openat: __syscall_nr=0x101 (257) ret=0xffffffffffdffffe (-2097154)
-  <...>-1       [005] ...1.    57.240571: sys_enter_openat: __syscall_nr=0x101 (257) dfd=0xffffffffffdfff9c (-2097252) filename=(0xffff8b81639ca01c) flags=0x80000 (524288) mode=0x0 (0) __filename_val=/run/systemd/reboot-param
-  <...>-1       [005] ...1.    57.240620: sys_exit_openat: __syscall_nr=0x101 (257) ret=0xffffffffffdffffe (-2097154)
-  <...>-1       [005] ...1.    57.240629: sys_enter_writev: __syscall_nr=0x14 (20) fd=0x3 (3) vec=0x7ffd5294ce50 (140725988937296) vlen=0x7 (7)
-  <...>-1       [005] ...1.    57.242281: sys_exit_writev: __syscall_nr=0x14 (20) ret=0x24 (36)
-  <...>-1       [005] ...1.    57.242286: sys_enter_reboot: __syscall_nr=0xa9 (169) magic1=0xfee1dead (4276215469) magic2=0x28121969 (672274793) cmd=0x1234567 (19088743) arg=0x0 (0)
+The fifth patch introduces a new module that proposes conversion
+functions for those that are infallible under the current build target.
+This is done through a set of const functions, and the `FromSafeCast`
+and `IntoSafeCast` extension traits which, as their names lightly
+suggest, offer conversion for those types on which the `as` operator can
+be used losslessly.
 
-Have:
+This new module is put to use in the sixth patch.
 
-  <...>-1       [000] ...1.    91.446011: sys_waitid(which: 1, upid: 0x4d2, infop: 0x7ffdccdadfd0, options: 5, ru: 0)
-  <...>-1       [000] ...1.    91.446042: sys_waitid -> 0x0
-  <...>-1       [000] ...1.    91.446045: sys_rt_sigprocmask(how: 2, nset: 0x7ffdccdae100, oset: 0, sigsetsize: 8)
-  <...>-1       [000] ...1.    91.446047: sys_rt_sigprocmask -> 0x0
-  <...>-1       [000] ...1.    91.446051: sys_close(fd: 4)
-  <...>-1       [000] ...1.    91.446073: sys_close -> 0x0
-  <...>-1       [000] ...1.    91.446095: sys_openat(dfd: 18446744073709551516, filename: 139732544945794 "/run/systemd/reboot-param", flags: O_RDONLY|O_CLOEXEC)
-  <...>-1       [000] ...1.    91.446165: sys_openat -> 0xfffffffffffffffe
-  <...>-1       [000] ...1.    91.446182: sys_openat(dfd: 18446744073709551516, filename: 139732544945794 "/run/systemd/reboot-param", flags: O_RDONLY|O_CLOEXEC)
-  <...>-1       [000] ...1.    91.446233: sys_openat -> 0xfffffffffffffffe
-  <...>-1       [000] ...1.    91.446242: sys_writev(fd: 3, vec: 0x7ffdccdad790, vlen: 7)
-  <...>-1       [000] ...1.    91.447877: sys_writev -> 0x24
-  <...>-1       [000] ...1.    91.447883: sys_reboot(magic1: 0xfee1dead, magic2: 0x28121969, cmd: 0x1234567, arg: 0)
+The idea was first suggested by Danilo.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+As Danilo suggested, this could eventually find its place in the kernel
+crate if the implementation is deemed to be fit, but for now let's
+review and let it mature in nova-core.
+
+Suggested-by: Danilo Krummrich <dakr@kernel.org>
+Link: https://lore.kernel.org/rust-for-linux/DDK4KADWJHMG.1FUPL3SDR26XF@kernel.org/
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- kernel/trace/trace.c | 27 +++++++++++++++++++++++----
- 1 file changed, 23 insertions(+), 4 deletions(-)
+Changes in v3:
+- Rename `FromAs`/`IntoAs` to `FromSafeCast`/`IntoSafeCast` (thanks
+  Gemini!).
+- Remove unused import.
+- Fix build error on second patch.
+- Fix build with Rust 1.78.
+- Use `image_type` instead of u8 comparisons for `BiosImageType`.
+- Rename generating macro to `impl_safe_as`.
+- Make the const functions `inline(always)`.
+- Link to v2: https://lore.kernel.org/r/20251027-nova-as-v2-0-a26bd1d067a4@nvidia.com
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 2aee9a3088f4..a765792d3428 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -20,6 +20,7 @@
- #include <linux/security.h>
- #include <linux/seq_file.h>
- #include <linux/irqflags.h>
-+#include <linux/syscalls.h>
- #include <linux/debugfs.h>
- #include <linux/tracefs.h>
- #include <linux/pagemap.h>
-@@ -4219,6 +4220,22 @@ static void test_cpu_buff_start(struct trace_iterator *iter)
- 				iter->cpu);
- }
- 
-+#ifdef CONFIG_FTRACE_SYSCALLS
-+static bool is_syscall_event(struct trace_event *event)
-+{
-+	return (event->funcs == &enter_syscall_print_funcs) ||
-+	       (event->funcs == &exit_syscall_print_funcs);
-+
-+}
-+#define syscall_buf_size CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT
-+#else
-+static inline bool is_syscall_event(struct trace_event *event)
-+{
-+	return false;
-+}
-+#define syscall_buf_size 0
-+#endif /* CONFIG_FTRACE_SYSCALLS */
-+
- static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
- {
- 	struct trace_array *tr = iter->tr;
-@@ -4251,10 +4268,12 @@ static enum print_line_t print_trace_fmt(struct trace_iterator *iter)
- 		 * safe to use if the array has delta offsets
- 		 * Force printing via the fields.
- 		 */
--		if ((tr->text_delta) &&
--		    event->type > __TRACE_LAST_TYPE)
-+		if ((tr->text_delta)) {
-+			/* ftrace and system call events are still OK */
-+			if ((event->type > __TRACE_LAST_TYPE) &&
-+			    !is_syscall_event(event))
- 			return print_event_fields(iter, event);
--
-+		}
- 		return event->funcs->trace(iter, sym_flags, event);
- 	}
- 
-@@ -11436,7 +11455,7 @@ __init static int tracer_alloc_buffers(void)
- 
- 	global_trace.flags = TRACE_ARRAY_FL_GLOBAL;
- 
--	global_trace.syscall_buf_sz = CONFIG_TRACE_SYSCALL_BUF_SIZE_DEFAULT;
-+	global_trace.syscall_buf_sz = syscall_buf_size;
- 
- 	INIT_LIST_HEAD(&global_trace.systems);
- 	INIT_LIST_HEAD(&global_trace.events);
+Changes in v2:
+- Use macro to generate const conversion functions.
+- Use `CAST:` comments to justify remaining `as` conversions.
+- Add more conditional compilation guards.
+- Link to v1: https://lore.kernel.org/r/20251026-nova-as-v1-0-60c78726462d@nvidia.com
+
+---
+Alexandre Courbot (6):
+      gpu: nova-core: replace `as` with `from` conversions where possible
+      gpu: nova-core: vbios: do not use `as` when comparing BiosImageType
+      gpu: nova-core: use `try_from` instead of `as` for u32 conversions
+      gpu: nova-core: add functions and traits for lossless integer conversions
+      gpu: nova-core: replace use of `as` with functions from `num`
+      gpu: nova-core: justify remaining uses of `as`
+
+ drivers/gpu/nova-core/falcon.rs           |   9 +-
+ drivers/gpu/nova-core/falcon/hal/ga102.rs |   6 +-
+ drivers/gpu/nova-core/fb.rs               |   7 +-
+ drivers/gpu/nova-core/fb/hal/ga100.rs     |   4 +
+ drivers/gpu/nova-core/fb/hal/tu102.rs     |  16 ++-
+ drivers/gpu/nova-core/firmware.rs         |   7 +-
+ drivers/gpu/nova-core/firmware/booter.rs  |  34 ++++---
+ drivers/gpu/nova-core/firmware/fwsec.rs   |  25 +++--
+ drivers/gpu/nova-core/firmware/gsp.rs     |   6 +-
+ drivers/gpu/nova-core/firmware/riscv.rs   |   7 +-
+ drivers/gpu/nova-core/nova_core.rs        |   1 +
+ drivers/gpu/nova-core/num.rs              | 163 ++++++++++++++++++++++++++++++
+ drivers/gpu/nova-core/regs.rs             |   5 +-
+ drivers/gpu/nova-core/vbios.rs            |  56 +++++-----
+ 14 files changed, 265 insertions(+), 81 deletions(-)
+---
+base-commit: ca16b15e78f4dee1631c0a68693f5e7d9b3bb3ec
+change-id: 20251022-nova-as-8ece4142872a
+
+Best regards,
 -- 
-2.51.0
-
+Alexandre Courbot <acourbot@nvidia.com>
 
 
