@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-873811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B1CC14CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:14:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA688C14CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B3F3BB39E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016CF1B25B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4842A3314DB;
-	Tue, 28 Oct 2025 13:11:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03202EFD90;
-	Tue, 28 Oct 2025 13:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79F518BC3D;
+	Tue, 28 Oct 2025 13:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WhdlgvXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B07379EA;
+	Tue, 28 Oct 2025 13:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761657115; cv=none; b=a3h63Cf0HfGlRM2GvXFT6ex6UsPYcVYTAHtzPT6PQaw2p8WpbCLFXoa/lzKqVX2PP4rNei7ls1LnWYsKauvDlbrC/60X32oApkbUV45Rw2R1KGsQ73pft9W09PtKzX76UXzuVhCg5LfqYmershiI0IoWvVBnGmgpyLmDX49i0pQ=
+	t=1761657352; cv=none; b=mHMI38LNTXjMcyNnGgDkr/USomb5Zs2oZDGaUVIkSjEWPdPdDYUb2n8EbAuaJoa7SJaCnxkLW8xm95JJQOUSfegt++3gziF72ZZaCStoFMYA7o1TECY7oylpWcHr2hMm+XdwCMc8yVWR8M+GwV54lRb4s5gxVNe6peJmtY/gGSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761657115; c=relaxed/simple;
-	bh=tGgMOwiHnEFu2eRiVpUtimjkdr+IfoZfTKO6O1q88+c=;
+	s=arc-20240116; t=1761657352; c=relaxed/simple;
+	bh=jgk53h7OSDfuZZih1qwRmh/i7Jrm083kbSCmk6tyGss=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E3qbDX3sKdPB5PliLjisQs6IqvMKA72RGDJJXLi+bWLzb/IzEcDZOnlknSZOaq/c5VrKOCOvoedhBBSTNXN9CLR/Wug3Dxd04aRHLrFT1BPRfHnfh8X9Xq0rz3K54lyboxlqhocQKRX0lBvaFagjB4e34zPjqGLcDaHSCx0kEcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E1E1168F;
-	Tue, 28 Oct 2025 06:11:43 -0700 (PDT)
-Received: from [10.57.39.55] (unknown [10.57.39.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1B6E3F673;
-	Tue, 28 Oct 2025 06:11:48 -0700 (PDT)
-Message-ID: <b4386726-9c50-47cb-b521-cd6f871d64de@arm.com>
-Date: Tue, 28 Oct 2025 13:12:21 +0000
+	 In-Reply-To:Content-Type; b=mw/Ofe7oyI6L8cA7tAF2seWGG1n6fxbbHp9EsOMbXocaDT3vOQeq5cI/RGdFiWh88pNCfK3oCN6FqLDjgDXug576gkxQCAxG558qE5aikAFF8q66txH4dgY4J8hxbxUDSx0hw60OTMk0RGXXQeEcmx6jQ0/V5iCXzZcUgsT32NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WhdlgvXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A23DDC4CEF7;
+	Tue, 28 Oct 2025 13:15:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761657350;
+	bh=jgk53h7OSDfuZZih1qwRmh/i7Jrm083kbSCmk6tyGss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WhdlgvXsdkUyMpn15dEY5mILwDw6umVD2N2R1lqoyLTBvGQUt1LS+lCFW4ugucwXR
+	 QVUQEyu7cC58JQQi9af+CFHr54y66WWUkLSq5oCg5AHReytX/pnlllglklzBPSqYzl
+	 TOf7+OoU2UrlNBHMnmsCQAhuVK0AXD1Siqj/aOerhAf1frPGCxJW0Go4vnBwt6Ej1L
+	 vNNtYUkGTiVixV4KWW+fEilkg+5dyL/EYi6PyiRnBry1s08tepgdQyyRXou53TU1Kj
+	 4Pyy8gRFRJuI+y3V4UtSDVCHybzDGsXPBBjAIU22c7rJENtKWcpFE6MoflnWxTOfU6
+	 fP4BkjZEj+XTg==
+Message-ID: <fb519d0e-9d7f-4835-964a-c21fd24b10e8@kernel.org>
+Date: Tue, 28 Oct 2025 08:15:48 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,220 +49,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
- resctrl integration
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>,
- Zhongqiu Han <quic_zhonhan@quicinc.com>
-Cc: linux-pm@vger.kernel.org, lenb@kernel.org, christian.loehle@arm.com,
- amit.kucheria@linaro.org, ulf.hansson@linaro.org, james.morse@arm.com,
- Dave.Martin@arm.com, reinette.chatre@intel.com, tony.luck@intel.com,
- pavel@kernel.org, linux-kernel@vger.kernel.org, rafael@kernel.org
-References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
- <eb9abe9d-3d12-4bf1-85da-deb38b8da321@arm.com>
- <f1195632-d973-4339-a89d-e1e62b98015d@oss.qualcomm.com>
+Subject: Re: [PATCH v10 3/4] fbcon: Use screen info to find primary device
+To: Aaron Erhardt <aer@tuxedocomputers.com>, David Airlie
+ <airlied@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+ Daniel Dadap <ddadap@nvidia.com>
+References: <20250811162606.587759-1-superm1@kernel.org>
+ <20250811162606.587759-4-superm1@kernel.org>
+ <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <f1195632-d973-4339-a89d-e1e62b98015d@oss.qualcomm.com>
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <e172ebf2-4b65-4781-b9e7-eb7bd4fa956a@tuxedocomputers.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/24/25 09:25, Zhongqiu Han wrote:
-> On 10/23/2025 9:09 PM, Lukasz Luba wrote:
->> Hi Zhongqui,
+On 10/28/25 5:16 AM, Aaron Erhardt wrote:
+> 
+> On Mon, Aug 11, 2025 at 11:26:05AM -0500, Mario Limonciello (AMD) wrote:
+>> On systems with non VGA GPUs fbcon can't find the primary GPU because
+>> video_is_primary_device() only checks the VGA arbiter.
 >>
->> My apologies for being a bit late with my comments...
->>
->> On 7/21/25 13:40, Zhongqiu Han wrote:
->>> Hi all,
->>>
->>> This patch series introduces support for CPU affinity-based latency
->>> constraints in the PM QoS framework. The motivation is to allow
->>> finer-grained power management by enabling latency QoS requests to 
->>> target
->>> specific CPUs, rather than applying system-wide constraints.
->>>
->>> The current PM QoS framework supports global and per-device CPU latency
->>> constraints. However, in many real-world scenarios, such as IRQ affinity
->>> or CPU-bound kernel threads, only a subset of CPUs are
->>> performance-critical. Applying global constraints in such cases
->>> unnecessarily prevents other CPUs from entering deeper C-states, leading
->>> to increased power consumption.
->>>
->>> This series addresses that limitation by introducing a new interface 
->>> that
->>> allows latency constraints to be applied to a CPU mask. This is
->>> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
->>> embedded systems where power efficiency is critical for example:
->>>
->>>                          driver A       rt kthread B      module C
->>>    CPU IDs (mask):         0-3              2-5              6-7
->>>    target latency(us):     20               30               100
->>>                            |                |                |
->>>                            v                v                v
->>>                            +---------------------------------+
->>>                            |        PM  QoS  Framework       |
->>>                            +---------------------------------+
->>>                            |                |                |
->>>                            v                v                v
->>>    CPU IDs (mask):        0-3            2-3,4-5            6-7
->>>    runtime latency(us):   20             20, 30             100
->>>
->>> The current implementation includes only cpu_affinity_latency_qos_add()
->>> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
->>> planned for future submission, along with PM QoS optimizations in the 
->>> UFS
->>> subsystem.
->>>
->>> Patch1 introduces the core support for CPU affinity latency QoS in 
->>> the PM
->>> QoS framework.
->>>
->>> Patch2 removes redundant KERN_ERR prefixes in WARN() calls in the global
->>> CPU PM QoS interface. This change addresses issues in existing code 
->>> and is
->>> not related to the new interface introduced in this patch series.
->>>
->>> Patch3 adds documentation for the new interface.
->>>
->>> Patch4 fixes a minor documentation issue related to the return type of
->>> cpu_latency_qos_request_active(). This change addresses issues in 
->>> existing
->>> doc and is not related to the new interface introduced in this patch
->>> series.
->>>
->>> Patch5 updates the resctrl pseudo-locking logic to use the new CPU
->>> affinity latency QoS helpers, improving clarity and consistency. The 
->>> only
->>> functional and beneficial change is that the new interface actively 
->>> wakes
->>> up CPUs whose latency QoS values have changed, ensuring the latency 
->>> limit
->>> takes effect immediately.
->>
->> Could you describe a bit more the big picture of this proposed design,
->> please?
->>
->> Ideally with some graph of connected frameworks & drivers and how they
->> are going to work together.
+>> Add a screen info check to video_is_primary_device() so that callers
+>> can get accurate data on such systems.
 > 
-> Hi Lukasz,
-> Thank you very much for your review and discussion~
-> 
-> I will describe you one big picture if needed, please allow me
-> illustrate a simple scenario using pseudo code first:
-> 
-> Suppose there is a USB driver. This driver uses the kernel existing
-> cpu_latency_qos_* interfaces to boost its IRQ execution efficiency. Its
-> IRQ affinity is set to core0 and core1 according to DTS config, and the
-> affinity of its threaded IRQ (bottom half) is also set to CPU0 and CPU1.
-> 
-> 
-> =================================================================
-> Using the kernel existing cpu_latency_qos_* interfaces:
-> =================================================================
-> static int dwc3_sample_probe(struct platform_device *pdev)
-> {
->    cpu_latency_qos_add_request(&foo->pm_qos_req,DEFAULT_VALUE);
->    xxxx;
->    ret = devm_request_threaded_irq(xxx,xxx,foo_dwc3_pwr_irq, ....)
->    xxxx;
-> }
-> 
-> static irqreturn_t foo_dwc3_pwr_irq(int irq, void *dev)
-> {
->    xxxx;
->    cpu_latency_qos_update_request(&foo->pm_qos_req, 0);
-> 
->    /*.... process interrupt ....*/
-> 
->    cpu_latency_qos_update_request(&foo->pm_qos_req, DEFAULT_VALUE);
-> 
->    return IRQ_HANDLED;
-> 
-> }
-> 
-> 
-> The number of IRQ executions on each CPU:
-> ==================================================================
-> IRQ  HWIRQ   affinity CPU0    CPU1   CPU2 CPU3 CPU4 CPU5 CPU6 CPU7
-> 320  0xb0    0x3      9782468 415472  0    0    0    0    0    0
-> ==================================================================
-> 
-> ==================================================================
-> Process: irq/320-dwc3, [affinity: 0x3]  cpu:1    pid:5250   ppid:2
-> ==================================================================
-> 
-> 
->  From the code, we can see that the USB module using the kernel existing
-> cpu_latency_qos_* interfaces sets the CPU latency to 0, which prevents
-> all CPUs from entering idle states—even C1. During operation, the USB
-> IRQs is triggered 9,782,468 times on CPU0, and each time it runs, all
-> CPUs are blocked from entering deeper C-states. However, only CPU0, CPU1
-> are actually involved in handling the IRQ and its threaded bottom half.
-> It will cause unnecessary power consumption on other CPUs.
-> (Please note, due to the simplicity of the pseudocode, I did not show
-> how the IRQ bottom-half thread is synchronized to restrict CPU idle
-> states via PM QoS. In reality, it's clear that we can also apply a CPU
-> latency limit to the bottom-half thread.)
-> 
-> 
-> If we use current patch series API cpu_affinity_latency_qos_xxx, such
-> as:
-> 
-> =================================================================
-> Using current patch series cpu_affinity_latency_qos_* interfaces:
-> =================================================================
-> static int dwc3_sample_probe(struct platform_device *pdev)
-> {
->    cpu_affinity_latency_qos_add(&foo->pm_qos_req,DEFAULT_VALUE, mask);
->    xxxx;
->    ret = devm_request_threaded_irq(xxx,xxx,foo_dwc3_pwr_irq, ....)
->    xxxx;
-> }
-> 
-> We can only constrain the CPU latency PM QoS on CPU0 and CPU1 in order
-> to save power.
-
-Thank you for this explanation. IMO this could be part of the
-documentation patch.
-
+> I have a question regarding this change. To me, the function name
+> video_is_primary_device() implies that there is only one primary GPU.
+> I would also expect that the 'boot_display' attribute added later in
+> the patch series based on this function is only set for one GPU, but
+> that is not necessarily the case. Since I'm working on a user-space
+> program that reads the 'boot_display' attribute, I need to know what
+> behavior is intended in order to do a correct implementation.
 > 
 >>
->> E.g.:
->> 1. what are the other components in the kernel which would use this
->> feature?
+>> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+>> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
+>> Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
+>> ---
+>> v10:
+>>   * Rebase on 6.17-rc1
+>>   * Squash 'fbcon: Stop using screen_info_pci_dev()'
+>> ---
+>>   arch/x86/video/video-common.c | 25 ++++++++++++++++++++++++-
+>>   1 file changed, 24 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/video/video-common.c b/arch/x86/video/video-common.c
+>> index 81fc97a2a837a..e0aeee99bc99e 100644
+>> --- a/arch/x86/video/video-common.c
+>> +++ b/arch/x86/video/video-common.c
+>> @@ -9,6 +9,7 @@
+>>   
+>>   #include <linux/module.h>
+>>   #include <linux/pci.h>
+>> +#include <linux/screen_info.h>
+>>   #include <linux/vgaarb.h>
+>>   
+>>   #include <asm/video.h>
+>> @@ -27,6 +28,11 @@ EXPORT_SYMBOL(pgprot_framebuffer);
+>>   
+>>   bool video_is_primary_device(struct device *dev)
+>>   {
+>> +#ifdef CONFIG_SCREEN_INFO
+>> +	struct screen_info *si = &screen_info;
+>> +	struct resource res[SCREEN_INFO_MAX_RESOURCES];
+>> +	ssize_t i, numres;
+>> +#endif
+>>   	struct pci_dev *pdev;
+>>   
+>>   	if (!dev_is_pci(dev))
+>> @@ -34,7 +40,24 @@ bool video_is_primary_device(struct device *dev)
+>>   
+>>   	pdev = to_pci_dev(dev);
+>>   
+>> -	return (pdev == vga_default_device());
+>> +	if (!pci_is_display(pdev))
+>> +		return false;
+>> +
+>> +	if (pdev == vga_default_device())
+>> +		return true;
 > 
-> 1.Drivers such as Audio, USB, and UFS, which currently rely on the
-> kernel's global CPU Latency PM QoS interface, but only require latency
-> constraints on a subset of CPUs, can leverage this new interface to
-> achieve improved power efficiency.
+> This can mark a VGA device as primary GPU.
 > 
-> 2.I’m considering supporting this feature in userspace.
-> Once implemented, userspace threads—such as mobile gaming threads that
-> aim to constrain CPU latency and are already bound to big cores—will be
-> able to use the API to help save power.
+>> +
+>> +#ifdef CONFIG_SCREEN_INFO
+>> +	numres = screen_info_resources(si, res, ARRAY_SIZE(res));
+>> +	for (i = 0; i < numres; ++i) {
+>> +		if (!(res[i].flags & IORESOURCE_MEM))
+>> +			continue;
+>> +
+>> +		if (pci_find_resource(pdev, &res[i]))
+>> +			return true;
+>> +	}
+>> +#endif
 > 
->> 2. is there also a user-space interface planned for it so a HAL in
->> the middle-ware would configure these "short-wake-up-CPU"?
+> And then the new code can also choose a primary GPU.
 > 
-> Yes, I am considering to support userspace on patch V3.
+>> +
+>> +	return false;
+>>   }
+>>   EXPORT_SYMBOL(video_is_primary_device);
+>>   
 > 
->> 3. Is it possible to view/debug from the user-space which component
->> requested this setting for some subsets of cpus?
+> In particular, I have hardware that has this exact configuration where
+> two GPUs are marked as primary and have a 'boot_display' attribute: the
+> first one through vga_default_device(), the second one through the new
+> detection method.
 > 
-> I'm uncertain whether we should provide the ability to inspect
-> which components are applying constraints on CPU latency. However,
-> what I do want to ensure is that—similar to the existing /dev
-> cpu_dma_latency interface in the current kernel—I can offer per-CPU
-> level latency value setting and querying.
+> Is this intended?
 > 
->
+> Kind regards
+> Aaron
+> 
 
-OK, I think this is a good approach to not tackle all in single
-step, but in some phases. The user-space would need more thinking.
+I wouldn't have expected a case like this and I think it means there is 
+a logic error.
 
-Regards,
-Lukasz
+Can you please file a kernel bugzilla with details about your system and 
+CC me?
+
+dmesg and lspci -vvnn please
+
+Also; please clarify which GPU shows something when booting up.
 
