@@ -1,251 +1,152 @@
-Return-Path: <linux-kernel+bounces-873612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C377FC1438B
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:00:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B2BC1442B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:06:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B99D581F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:58:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAD9C568571
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD50309DDB;
-	Tue, 28 Oct 2025 10:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C69302168;
+	Tue, 28 Oct 2025 10:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uozo1NG2"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gfPJFzVZ"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E88830C378
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9435C26C3A7
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761648935; cv=none; b=uTqGX/1hONrgTpVgTndPwDL1yZuv+1aoDk4hBORNIs9Grv/tg5VZV2m1jiFXJ4SZJ/y/gIXOF1452J8RCKq4TzvEGnU3vkWJDdr3YC3nBFnc0csCaJc0Hkh/z5TMYDIzOtFr1tmON96hOpeuR6KsRbHOVR7MkKi4SGWUoJu85vo=
+	t=1761649055; cv=none; b=MRojdM1XIrcjAxb5Zgja8HhqJSCqJMV+SGby4+eWagK0+JsSKI2ggJ24Z7HB5c4WbwCdVuvBGU3YR4JbQwMRDfD/TJyXejjCxw5ncn96a8x6JydhGq6/EgPweSO+px9Z/mSKexD1lVXBOov86wS+SXtProg4uGxvu2XMkK9LBOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761648935; c=relaxed/simple;
-	bh=udW1FE6CeJVfsDJwC6o78IFfdh17JFG2cGpHdZXuV68=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ePHSXNvp5XMhlJ+qJAoXy8BCkSdiVz8ewY0RWUEo3JUueC8g4ytzUXjTVElXE9dcs1LEJQZE9GMemLUGVa+aKqzjpKEr10yaNcbthyR1mD8XFVdnChHT2Zw2oWUd/4VEzKr467ucMWjZNmLYxBcCIuXe+0C6JXxDr6XDJbNRFWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uozo1NG2; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4711899ab0aso41244515e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:55:33 -0700 (PDT)
+	s=arc-20240116; t=1761649055; c=relaxed/simple;
+	bh=RdFi9B1xaFI5S7ACFIioFSiqRWi0o5djZe42hthAnQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BudyTUrQtGYrXUjH5LF0xIAZUN1jPV2vBHzeSHwaMO7NPpE1YyvqrmFmV3jkMrklJpEW51HYus2Om//j3nrSGAwc3AIyJYrpAMq4d1PTCzsOLJOGDQ2zlKM+Gi1QqQJGgP6vupc63w/jjyNDUBUXuqMSSzXG4JlZsaytqpSl4Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gfPJFzVZ; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-7815092cd22so75245747b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:57:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761648932; x=1762253732; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=usUdwV5qA+un71/eG88Mj+9iiBrsIeUHPYN64+4XrwA=;
-        b=uozo1NG2HB3KA8nOTG5cGvssqqKP88VhN5Hi+JGkZ7hc1R5E3S+2Tbw+Ng98nJyejy
-         o7wvKvim7DHpCxKXiBQrDCzqCcm9sZlNMo3yzy9w1U8TFFyTx4uKT9YxuZc8nZYKlhIC
-         ahEpDQ20/FCIR5zEigjM+TOE12YWHY/SuFMuGi2bak95H3nL8EcYVT1DqLO4rkbz2csj
-         +RNGYeSVI9T9GaylBRV2yTB3W+KnnVLJMKJ0rmuVcpApm/X2rhlxEhCV0g1WC2vBH1Oq
-         3zgKSa5h7ulln4oG1qWza8keGyZBgQM63X0YWj+P4XLkzn26mz8DgkW3r/ywKSovQ0eg
-         eCZg==
+        d=gmail.com; s=20230601; t=1761649052; x=1762253852; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sCicNmBtkxf7RoTr6oW3I01/BO6dQKtL8u3BkddbZOQ=;
+        b=gfPJFzVZXCFs0hA3CHarGNhm2BbnVViLYjS8h8U3Qo3rhfEyf3Xia4woVDlOTaFI2T
+         OxSsivKOuOVl3X1wCXRZ0JyXIIy/KLgcydn/VwMJJ9llfxGmc9za3aZQkkTp+hGdLsE9
+         Fwnlq1yCQVPa7xp3hTJ1Lripnmw1zH/PddN2vdouaj0+4wMDhKUh49H5k28j5k/jvBED
+         92WlR2g84f82rUHJ537XP8yV5xyq2tJDa/mwSN+YkYD/I/Wa39xwkcJ8CP/1hCabxIES
+         AZGquoqse5GDW5Y9KKokyMXRYAAyuoFP6DMnPJL9+wPrCYDp4++zEwV9Rd4zOehkNwvz
+         YSPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761648932; x=1762253732;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=usUdwV5qA+un71/eG88Mj+9iiBrsIeUHPYN64+4XrwA=;
-        b=Kkz4OtBDagpcFBupEs4o9DQEFsF/+aCj15R0omYH+64vm9u+D49JtpybQjk4Vf+xkt
-         6tkBAPeYSVdHY+NJi/K+n8xhtvcD0MbL0wAJJmVZn2/PnQoGtXuTWPnttcfXKXeDPy8a
-         RE8Vdtidw/NMpBrF1jPuXISqNj5GVwf37/C4+tMEgXjwS5ftOL/XafGTTcXogo9gph7y
-         r5oXnz/P7ngWqpLGQvDHmDJ4DlVcA3O/azevN4Yg0zFiy6lth/iSsvDGEeEgixidk9Pk
-         47FXQhB9ymrx5Nq2m1tpyc+/iPXCDcXF90gh9q/eQf6sDeGn98rh3/CBDjye+F0qYKt0
-         eJIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWhBoKCCmm7K0WlUXiXPqyp8gap6xlMAmbBuqS9sC1Ew8lmim08i7BEKnZmT/BMjy3LwPir9y0hk/KlvfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg3R7fHg1Ly7cE61VFYY+1s8WUYyqLQCfjWjvZGOAU4R31Cjmc
-	45C6IgMhF/vSbq4AK583NYLiQB4X08LLEA/XBeI6FQwLqlmLnSAsmGTTu8PmzRm1I/ZUd7zPO33
-	3ztVd/TQS4fC0Abg4gg==
-X-Google-Smtp-Source: AGHT+IFBSW6bF2q+Y3mewsY9Yj4Vi0BdA+pCImOnLmS8xiYMVzsIPBnvLC6oaJxCr7X7JpbuYJv3ec/ih7Towrw=
-X-Received: from wmht4.prod.google.com ([2002:a05:600c:41c4:b0:475:da28:9004])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1da3:b0:46e:4e6d:79f4 with SMTP id 5b1f17b1804b1-47717dfaa6dmr22114485e9.15.1761648932262;
- Tue, 28 Oct 2025 03:55:32 -0700 (PDT)
-Date: Tue, 28 Oct 2025 10:55:18 +0000
-In-Reply-To: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
+        d=1e100.net; s=20230601; t=1761649052; x=1762253852;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sCicNmBtkxf7RoTr6oW3I01/BO6dQKtL8u3BkddbZOQ=;
+        b=LQYy0+Qr7zB/Op5O4XtaIBQyZusH0U/DzhZ3vHEYD4U1IF6VAa+e8TQg5/qAuVsjZn
+         Rii0n8LJe+LtbG8wDX7hDN9n/drrohkbKF+EEy9sZiu2camOd9i2HV5Fmd7uEBflPZm3
+         6dGhYOq3edd8kxPHtWzKfzWLFQgCKHGN9VAIuWjsPhb1zihy3R6bDFQEpDm/ppKNhE+H
+         RngWpuTAGsijj7xcFtCqzogZJkdRVbiVZP9DXsfI/QDT7xrAus/iT/5MZzptoeCHY98L
+         gT2g8EZLFK7MI5wbW7wE3UbfFSdmoC0t1ZHjuD2dYwN6rvu2bryEc1jDMWsoSG1uGacX
+         qcNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5Dc1I6Tn7En3Hdwudo5khOelPWepomZ5P409/tbE8IOrqM4CBL9i7ekYAmvrEkmU5Ln5GJk5I9HhpcOY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4c3WtgYTjn7jsLmw70cv8e7TaUutTsiapSO02+4aoh2m9aDRu
+	dtR0F3U+AJzvxhrx0i/PoCt/zF7RIslIO2GBsps0ND1n+UUjaBZNO7TV
+X-Gm-Gg: ASbGncs8QZrp/VaIKYk1oeap/b8p4/XERBWggZ0xSFAhp2bwNEqK7ZBiftvWLqcKBm/
+	kqGXzfPJzdO+eeu+e97yjJHEuN8rh+BDg6PFExTbBHUgJL5Erozdzy2AufmWlczlR5FJQCB2nkc
+	7xRw+ce6AIF45OBIJu0MkIsIsn5mVUTxtHpyk+Y3lHATF7NWxAwThMf5HLC+fEj9q+iG+fWJCA1
+	gcfDxuS/XFs/oU6/fHuPvCReROgQD6Rm9wD4/lbGe6Y6vup/8lrX3cgn4AZq75qvzA7f7/2ajU4
+	tgrvoIbBYVKFZgXPH+6o263PgipSkSeek6glLtQdy/7WymM1pEt6dKdQBlxs5eElqboNEubujFL
+	AwrBIJmhVhQux5LgSyFUlEPMDOnxe5y6G4spXxjtUWHnBa9dzbQCxKDA6cb9xM+Y0tgOVanm/ZV
+	BtRpS/P9WGQg==
+X-Google-Smtp-Source: AGHT+IEi2f0dgYE9Vk92a9SmD0HH1iyYIXi0n9OL2O+HDNZl+ryMSfq/CMdNRR9eXmOYCxlxyZ85ag==
+X-Received: by 2002:a05:690c:6d0d:b0:783:796c:c1a9 with SMTP id 00721157ae682-78617f61d33mr29339177b3.37.1761649052434;
+        Tue, 28 Oct 2025 03:57:32 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:41::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed196a0dsm26357697b3.27.2025.10.28.03.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 03:57:31 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: dwmw@amazon.co.uk,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	ardb@kernel.org,
+	hpa@zytor.com
+Cc: x86@kernel.org,
+	apopple@nvidia.com,
+	thuth@redhat.com,
+	nik.borisov@suse.com,
+	kas@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>,
+	Michael van der Westhuizen <rmikey@meta.com>,
+	Tobias Fleig <tfleig@meta.com>
+Subject: [PATCH v2 0/2] x86: Fix kexec 5-level to 4-level paging transition
+Date: Tue, 28 Oct 2025 10:55:55 +0000
+Message-ID: <20251028105637.769470-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251028-binder-bitmap-v3-0-32822d4b3207@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6215; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=udW1FE6CeJVfsDJwC6o78IFfdh17JFG2cGpHdZXuV68=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBpAKEb6/jzR1A++T9KBHbdNW3hm55lNwI/Pvmlm
- Z6AdePXRS6JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCaQChGwAKCRAEWL7uWMY5
- RlrSEACw0LfP3ntIv+4pqRfxE26K0afKHBul8eqjdsDdO+y3l8yPFfLaZpNu8FSAmrch6mcB9dJ
- FqSwTE6YBV9hpyu1c92GJoaK7W9K1zctnhAfvzopCxdj3m7eHlBw5wInK8XnqK45Ozm5h7staQG
- f5W8ht4W5SSSWLSr2OTcO/NJTbDDctuVZSsYeyI8jjRmEHv9w2JNXNgL22s8gtqhGsuD3KZF01h
- k/has8YncnY9HUXzyaI2ZcsTJt+QhUZx+d11SaElf0SB8957/DE9ThOmvVeVhFpUQ2LJDzswjsl
- qMbQ1Q/AB3ML0/1iSA7S4LD6TzE81WZ/4LD5oWfXwtaiTFgSgHu4WKgNvKIPDVrLKZmaP3nquS3
- 4j2asU1qytUrZ4fH21VY3ds2N7NghuXdnYXCl68sN+bLASwxfQH1bYhdWNKohQ6AG/Vyja8+NPQ
- RrSDk4gJY0zZCEDzAD7CLyshcZ9BtKPZL1mLWBxISUCDW+x+HOz0Q/9R3MVCioDbWaUuA/O4eHB
- Jxe9J5MqxENjB/4ak20GcrRmJrO1ZcAc4RONusT3MFLzewBnBVbKfEDp1nXJQ7RSI9RmvD2HLAt
- xLM9FLEq+rVxs9ybWf6W8IjV+2fBrc2xY9vmI4bVE2Fb2qXgF3ajKmbBP1IbC18YdRwYavPTBrS Q/4inrBC73RRMqg==
-X-Mailer: b4 0.14.2
-Message-ID: <20251028-binder-bitmap-v3-5-32822d4b3207@google.com>
-Subject: [PATCH v3 5/5] rust_binder: use bitmap for allocation of handles
-From: Alice Ryhl <aliceryhl@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Yury Norov <yury.norov@gmail.com>
-Cc: "=?utf-8?q?Arve_Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Christian Brauner <brauner@kernel.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Burak Emir <bqe@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-To find an unused Binder handle, Rust Binder currently iterates the
-red/black tree from the beginning until it finds a gap in the keys. This
-is extremely slow.
+This series addresses critical bugs in the kexec path when transitioning
+from a kernel using 5-level page tables to one using 4-level page tables.
 
-To improve the performance, add a bitmap that keeps track of which
-indices are actually in use. This allows us to quickly find an unused
-key in the red/black tree.
+The root cause is improper handling of PGD entry value during the page level
+transition. Specifically PGD entry value is masked with PAGE_MASK instead of
+PTE_PFN_MASK, failing to account for high-order software bits like
+_PAGE_BIT_NOPTISHADOW (bit 58).
 
-This logic matches the approach used by C Binder. It was chosen
-partially because it's the most memory efficient solution.
+When bit 58 (_PAGE_BIT_NOPTISHADOW) is set in the source kernel, the target
+4-level kernel doesn't recognize it and fails to mask it properly, leading
+to kexec failure.
 
-Reviewed-by: Burak Emir <bqe@google.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- drivers/android/binder/process.rs | 63 ++++++++++++++++++++++++++++-----------
- 1 file changed, 46 insertions(+), 17 deletions(-)
+Patch 1: Fixes the x86 boot compressed code path by replacing direct CR3
+dereferencing with read_cr3_pa() and using PTE_PFN_MASK instead
+of PAGE_MASK.
 
-diff --git a/drivers/android/binder/process.rs b/drivers/android/binder/process.rs
-index f13a747e784c84a0fb09cbf47442712106eba07c..933b0f737b38ffac536b19c9330dfc63ffc72f2b 100644
---- a/drivers/android/binder/process.rs
-+++ b/drivers/android/binder/process.rs
-@@ -19,6 +19,7 @@
-     cred::Credential,
-     error::Error,
-     fs::file::{self, File},
-+    id_pool::IdPool,
-     list::{List, ListArc, ListArcField, ListLinks},
-     mm,
-     prelude::*,
-@@ -367,6 +368,8 @@ impl ListItem<{Self::LIST_NODE}> for NodeRefInfo {
- struct ProcessNodeRefs {
-     /// Used to look up nodes using the 32-bit id that this process knows it by.
-     by_handle: RBTree<u32, ListArc<NodeRefInfo, { NodeRefInfo::LIST_PROC }>>,
-+    /// Used to quickly find unused ids in `by_handle`.
-+    handle_is_present: IdPool,
-     /// Used to look up nodes without knowing their local 32-bit id. The usize is the address of
-     /// the underlying `Node` struct as returned by `Node::global_id`.
-     by_node: RBTree<usize, u32>,
-@@ -381,6 +384,7 @@ impl ProcessNodeRefs {
-     fn new() -> Self {
-         Self {
-             by_handle: RBTree::new(),
-+            handle_is_present: IdPool::new(),
-             by_node: RBTree::new(),
-             freeze_listeners: RBTree::new(),
-         }
-@@ -775,7 +779,7 @@ pub(crate) fn get_node(
-     pub(crate) fn insert_or_update_handle(
-         self: ArcBorrow<'_, Process>,
-         node_ref: NodeRef,
--        is_mananger: bool,
-+        is_manager: bool,
-     ) -> Result<u32> {
-         {
-             let mut refs = self.node_refs.lock();
-@@ -794,7 +798,32 @@ pub(crate) fn insert_or_update_handle(
-         let reserve2 = RBTreeNodeReservation::new(GFP_KERNEL)?;
-         let info = UniqueArc::new_uninit(GFP_KERNEL)?;
+Patch 2: Applies the same fix to the EFI stub code path. (Done in a
+separate patch as Fixes tag is different).
+
+
+Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
+Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+Reported-by: Michael van der Westhuizen <rmikey@meta.com>
+Reported-by: Tobias Fleig <tfleig@meta.com>
+
+The patches are based on aaa9c3550b60d6259d6ea8b1175ade8d1242444e (next-20251022)
+
+v1 -> v2:
+- Remove patch 3 from v1 to fix kexec for source kernel in 5-level to 4-level
+  transition where the 4 level kernel doesnt have patch 1 and 2 (Dave Hansen)
+- Add include for asm/pgtable.h to fix build for x86_64-allnoconfig (kernel test bot)
+- Use native_read_cr3_pa and for both paths (Ard Biesheuvel)
  
--        let mut refs = self.node_refs.lock();
-+        let mut refs_lock = self.node_refs.lock();
-+        let mut refs = &mut *refs_lock;
-+
-+        let (unused_id, by_handle_slot) = loop {
-+            // ID 0 may only be used by the manager.
-+            let start = if is_manager { 0 } else { 1 };
-+
-+            if let Some(res) = refs.handle_is_present.find_unused_id(start) {
-+                match refs.by_handle.entry(res.as_u32()) {
-+                    rbtree::Entry::Vacant(entry) => break (res, entry),
-+                    rbtree::Entry::Occupied(_) => {
-+                        pr_err!("Detected mismatch between handle_is_present and by_handle");
-+                        res.acquire();
-+                        continue;
-+                    }
-+                }
-+            }
-+
-+            let grow_request = refs.handle_is_present.grow_request().ok_or(ENOMEM)?;
-+            drop(refs_lock);
-+            let resizer = grow_request.realloc(GFP_KERNEL)?;
-+            refs_lock = self.node_refs.lock();
-+            refs = &mut *refs_lock;
-+            refs.handle_is_present.grow(resizer);
-+        };
-+        let handle = unused_id.as_u32();
- 
-         // Do a lookup again as node may have been inserted before the lock was reacquired.
-         if let Some(handle_ref) = refs.by_node.get(&node_ref.node.global_id()) {
-@@ -804,20 +833,9 @@ pub(crate) fn insert_or_update_handle(
-             return Ok(handle);
-         }
- 
--        // Find id.
--        let mut target: u32 = if is_mananger { 0 } else { 1 };
--        for handle in refs.by_handle.keys() {
--            if *handle > target {
--                break;
--            }
--            if *handle == target {
--                target = target.checked_add(1).ok_or(ENOMEM)?;
--            }
--        }
--
-         let gid = node_ref.node.global_id();
-         let (info_proc, info_node) = {
--            let info_init = NodeRefInfo::new(node_ref, target, self.into());
-+            let info_init = NodeRefInfo::new(node_ref, handle, self.into());
-             match info.pin_init_with(info_init) {
-                 Ok(info) => ListArc::pair_from_pin_unique(info),
-                 // error is infallible
-@@ -838,9 +856,10 @@ pub(crate) fn insert_or_update_handle(
-         // `info_node` into the right node's `refs` list.
-         unsafe { info_proc.node_ref2().node.insert_node_info(info_node) };
- 
--        refs.by_node.insert(reserve1.into_node(gid, target));
--        refs.by_handle.insert(reserve2.into_node(target, info_proc));
--        Ok(target)
-+        refs.by_node.insert(reserve1.into_node(gid, handle));
-+        by_handle_slot.insert(info_proc, reserve2);
-+        unused_id.acquire();
-+        Ok(handle)
-     }
- 
-     pub(crate) fn get_transaction_node(&self, handle: u32) -> BinderResult<NodeRef> {
-@@ -905,6 +924,16 @@ pub(crate) fn update_ref(
-                 let id = info.node_ref().node.global_id();
-                 refs.by_handle.remove(&handle);
-                 refs.by_node.remove(&id);
-+                refs.handle_is_present.release_id(handle as usize);
-+
-+                if let Some(shrink) = refs.handle_is_present.shrink_request() {
-+                    drop(refs);
-+                    // This intentionally ignores allocation failures.
-+                    if let Ok(new_bitmap) = shrink.realloc(GFP_KERNEL) {
-+                        refs = self.node_refs.lock();
-+                        refs.handle_is_present.shrink(new_bitmap);
-+                    }
-+                }
-             }
-         } else {
-             // All refs are cleared in process exit, so this warning is expected in that case.
+Usama Arif (2):
+  x86/boot: Fix page table access in 5-level to 4-level paging
+    transition
+  efi/libstub: Fix page table access in 5-level to 4-level paging
+    transition
+
+ arch/x86/boot/compressed/pgtable_64.c   | 11 +++++++----
+ drivers/firmware/efi/libstub/x86-5lvl.c |  4 ++--
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
 -- 
-2.51.1.838.g19442a804e-goog
+2.47.3
 
 
