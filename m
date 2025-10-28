@@ -1,85 +1,139 @@
-Return-Path: <linux-kernel+bounces-874233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19281C15D2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:31:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A1DDC15D01
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:30:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B708F403B71
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:25:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71B52506FC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E04682877DA;
-	Tue, 28 Oct 2025 16:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809472750E6;
+	Tue, 28 Oct 2025 16:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="B9zf4fnZ"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HXHVqMcd"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402D122A1D5
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD79F27A47F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761668685; cv=none; b=FuWgc5TavMZktH7K3rtS15R7hrWtxoM9+BZPicHHv6IFdcfplYcXoeQNzFZlc1GayfQaLP+sLUDGdLDHfzZhT71aeEzwGLFVmwU2EmskMFYNCDj7CBn1zarJHYP4o+445RxxoiETwNCOmJNH2KI0AstWwrV3hpAJY689VuOFR2g=
+	t=1761668769; cv=none; b=byZH+ac5WWHIyp/t2eSgB5LXoLFjgDf7tIVTB9laRP9OAqR4QfCvGnn4p9hr/oGTBSav194qVnyE6foeAmgEplGajWBvSsmGuAzUeqaYFJIDji4drL0TG+rA9p2wSEZgrd0li+0qjEpvDGJzQ4OVqizZWR6KBPeF3SeLJS5jt+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761668685; c=relaxed/simple;
-	bh=HNLCSr4FXQd/7ll40qCSdRZ4P9xFpVh1iCX5RuPBAzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BNvOqrofVmH7GWnibUEYA2dgbJnYD2zuOVvoqJ+V50Ol0hYc3h5KZ3Z2S0TmH7MLwlhA2AZKMl7elEdjuU9n1j1ziOntQK93EV+F9bETYJ1nwh92YUAGBMbO0leflzEtH2aZlYhxGAvR7MUmAvvfQswllfZG/vMMOtPRvqiZHSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=B9zf4fnZ; arc=none smtp.client-ip=95.215.58.171
+	s=arc-20240116; t=1761668769; c=relaxed/simple;
+	bh=Gut23H+vLbBU8WnL9h+ExoPk62kwRW1OvEs3CVzZH9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A9zDPnH3oW+n8+x8fYb56DGfkKWS+Nh/sIR1Q9v4TZUqeX7/FxViqcRwAptSwbTZsjFJWnUZwkDi7aZK6jCaFLZ1dLjfN1aE+oQHK0l0BvcNSvzfxp8mZgSqCyBI8we9VYtSpg11rH7yr2r+9CbcwDRDtQ6D07LH01ZV8gPj/XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HXHVqMcd; arc=none smtp.client-ip=91.218.175.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <01719c2d-ddd1-4f96-8bae-40144f0410c7@linux.dev>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761668681;
+	t=1761668763;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HNLCSr4FXQd/7ll40qCSdRZ4P9xFpVh1iCX5RuPBAzw=;
-	b=B9zf4fnZva6RF7EwZrAdUUCNqXhMYSXOaX1qOloois9lkiJH3PuoKnP4QWQOxHRMwLNGUe
-	w18ht4zhn94tcAqMyhImUmdOhC/o7bpR7XjkwhLSVaR3bMZeXxs1JZnOzD7uELn7Y8IfxC
-	Bo8sPxicr6CBWCud2HMDjTzvhAJ2Guk=
-Date: Tue, 28 Oct 2025 09:24:32 -0700
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zSkSma7mbiNDwjyN0Eo4/+PbZjdcy6kJHldE9TQrU04=;
+	b=HXHVqMcdEQX3V2MroWxF3mq5nsKHDcnpdurKn7BKW/vm6UuKFJuF6l/50TO7YkfUiwXDGt
+	GXfvTgsKZ2EcyXeihP2wVMPsyLPTRP6g961i/ZgEUD4fz7bKOpObzEsY22VjFkqJEWSCkk
+	9YS8XKW33DIiPPi89oDKFHju/KAKRVs=
+From: Tao Chen <chen.dylane@linux.dev>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	song@kernel.org,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next v4 0/2] Pass external callchain entry to get_perf_callchain
+Date: Wed, 29 Oct 2025 00:25:00 +0800
+Message-ID: <20251028162502.3418817-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] libbpf: optimize the redundant code in the
- bpf_object__init_user_btf_maps() function.
-Content-Language: en-GB
-To: Jianyun Gao <jianyungao89@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>,
- "open list:BPF [LIBRARY] (libbpf)" <bpf@vger.kernel.org>
-References: <20251024080802.642189-1-jianyungao89@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20251024080802.642189-1-jianyungao89@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
+Background
+==========
+Alexei noted we should use preempt_disable to protect get_perf_callchain
+in bpf stackmap.
+https://lore.kernel.org/bpf/CAADnVQ+s8B7-fvR1TNO-bniSyKv57cH_ihRszmZV7pQDyV=VDQ@mail.gmail.com
 
+A previous patch was submitted to attempt fixing this issue. And Andrii
+suggested teach get_perf_callchain to let us pass that buffer directly to
+avoid that unnecessary copy.
+https://lore.kernel.org/bpf/20250926153952.1661146-1-chen.dylane@linux.dev
 
-On 10/24/25 1:08 AM, Jianyun Gao wrote:
-> In the elf_sec_data() function, the input parameter 'scn' will be
-> evaluated. If it is NULL, then it will directly return NULL. Therefore,
-> the return value of the elf_sec_data() function already takes into
-> account the case where the input parameter scn is NULL. Therefore,
-> subsequently, the code only needs to check whether the return value of
-> the elf_sec_data() function is NULL.
->
-> Signed-off-by: Jianyun Gao <jianyungao89@gmail.com>
+Proposed Solution
+=================
+Add external perf_callchain_entry parameter for get_perf_callchain to
+allow us to use external buffer from BPF side. The biggest advantage is
+that it can reduce unnecessary copies.
 
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Todo
+====
+But I'm not sure if this modification is appropriate. After all, the
+implementation of get_callchain_entry in the perf subsystem seems much more
+complex than directly using an external buffer.
+
+Comments and suggestions are always welcome.
+
+Change list:
+ - v1 -> v2
+   From Jiri
+   - rebase code, fix conflict
+ - v1: https://lore.kernel.org/bpf/20251013174721.2681091-1-chen.dylane@linux.dev
+ 
+ - v2 -> v3:
+   From Andrii
+   - entries per CPU used in a stack-like fashion
+ - v2: https://lore.kernel.org/bpf/20251014100128.2721104-1-chen.dylane@linux.dev
+
+ - v3 -> v4:
+   From Peter
+   - refactor get_perf_callchain and add three new APIs to use perf
+     callchain easily.
+   From Andrii
+   - reuse the perf callchain management.
+
+   - rename patch1 and patch2.
+ - v3: https://lore.kernel.org/bpf/20251019170118.2955346-1-chen.dylane@linux.dev
+
+Tao Chen (2):
+  perf: Refactor get_perf_callchain
+  bpf: Hold the perf callchain entry until used completely
+
+ include/linux/perf_event.h | 11 +++++-
+ kernel/bpf/stackmap.c      | 61 ++++++++++++++++++++++++-------
+ kernel/events/callchain.c  | 75 ++++++++++++++++++++++++--------------
+ kernel/events/core.c       |  2 +-
+ 4 files changed, 107 insertions(+), 42 deletions(-)
+
+-- 
+2.48.1
 
 
