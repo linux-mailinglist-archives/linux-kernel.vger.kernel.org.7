@@ -1,136 +1,146 @@
-Return-Path: <linux-kernel+bounces-873036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78F7C12E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:55:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03D57C12E2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 05:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5031896DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:55:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A95B4E6855
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 04:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C27AC27F00A;
-	Tue, 28 Oct 2025 04:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD84A286D73;
+	Tue, 28 Oct 2025 04:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W75aNDa+"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gC1Rm9kZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED98220F21;
-	Tue, 28 Oct 2025 04:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70254279327
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 04:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761627320; cv=none; b=mlzw7GpBK7KqT9DyVhtgQDxGRDorkgNUDUpKqciAdTo2t+S2dGxzkg8/54+ganfpm1bKvrypfakNPuQqRVI2ICboktSw0Sjt1ZHrOVcPqf0P2GKiMXxfSiWoK/8mT5tJ3FYVGbJ+UvfsNJsnKndDE1FBe66ouOzC4jOglkWiH1k=
+	t=1761627442; cv=none; b=PiOGiMC5SykQN2wlBg//Zkx04kaMuQgs5ZwtT9PC7rZ+eiIx42zJBRk1ieJM5/o7vjLzdo3gSpdXQ8MoDaAZCiztcBv27VIfc+u/KwGvBTckHUKosxvlXnJl3pNOwaTzMGRetOcV4Xs/r9iBh1fahYRj9r5bJyiTlNCPJ3KPOYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761627320; c=relaxed/simple;
-	bh=VW4ffFj1JqUqF9Dw59lZsILROjW/IzzB3ffJCoGw6vk=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zh/TWBqOU9KE6MjGhk3YKsoJ+iIB9oB6Qf3owT0gXsmBZm9nfnCWFGvqWOboMI/DkCC1/lcWekv8W4Ub5KkcrUiFIK8nJ7361pm+Y5UpTpRK1npJvUt7uyuouBep8H6T2O3UtPcRP8CtKLsSztcvOQZhAgktPGyijHr7zX13JHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=W75aNDa+; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 59S4smQQ2554711;
-	Mon, 27 Oct 2025 23:54:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1761627288;
-	bh=TqaWtbjCCQta5htr0klKwsxO0Blg0VSeqN2ETZLOGxc=;
-	h=Subject:From:To:CC:Date:In-Reply-To:References;
-	b=W75aNDa+LO/wUyG4fF7coUwKIwzKg6vRPQIdf6nFfSMT4u6xR6L6DB0bq6DjXf06s
-	 q/y+wPYiHmNEWU60tlpyHsJcAwZaZZA5Z+lCK8f6Zbzz2z5Tr31IIbD4oYnkbWAW3e
-	 kA80TTqHH2QUQc8SpmwkZw/B71AKn2PKbyniZd4g=
-Received: from DFLE202.ent.ti.com (dfle202.ent.ti.com [10.64.6.60])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 59S4slrc1407743
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 27 Oct 2025 23:54:47 -0500
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 27 Oct
- 2025 23:54:47 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 27 Oct 2025 23:54:47 -0500
-Received: from [10.24.73.74] (uda0492258.dhcp.ti.com [10.24.73.74])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59S4sfDS1777174;
-	Mon, 27 Oct 2025 23:54:41 -0500
-Message-ID: <44b90ca1a10fe737cb20b76327846c5cda420924.camel@ti.com>
-Subject: Re: [PATCH v4 4/4] PCI: keystone: Add support to build as a
- loadable module
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: kernel test robot <lkp@intel.com>
-CC: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-        <quic_wenbyao@quicinc.com>, <inochiama@gmail.com>,
-        <mayank.rana@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <cassel@kernel.org>, <kishon@kernel.org>,
-        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
-        <rongqianfeng@vivo.com>, <jirislaby@kernel.org>,
-        <oe-kbuild-all@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Date: Tue, 28 Oct 2025 10:24:51 +0530
-In-Reply-To: <202510281008.jw19XuyP-lkp@intel.com>
-References: <20251022095724.997218-5-s-vadapalli@ti.com>
-	 <202510281008.jw19XuyP-lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1 
+	s=arc-20240116; t=1761627442; c=relaxed/simple;
+	bh=gPQfuEP/NZtPxYyRhADM36SQ+VAYokglStYcpOmvZ0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I44Li4GEIJos6R04olXLFzHA5xEAj974n37GAECMDSZZ4mmPNDgib20g6L4YZZo0itvX7q5nZh4KTdA9HcgY4Zn+GaHSofK4RCmqFhJ4EVjo4XiAbVgX9It9PbS5JHmD/kWN75Lb9idZy6rn50JiWDr4KsrbGvATx8V6ndAtTZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gC1Rm9kZ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761627441; x=1793163441;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=gPQfuEP/NZtPxYyRhADM36SQ+VAYokglStYcpOmvZ0c=;
+  b=gC1Rm9kZzEb+1IdZOpGQyaRaAvww721WV0IR2BLbWSm15nf4hiUQ/pDa
+   6bHxDCQ9vSgFF5TEPvGQOKN6iX190AIp3o9ZtPRmoi5EwDRJU3T5+p/kq
+   L7J7oAs/dMw5TOvItlapSDMfwc5AA6I3ScHX+K6K2coVjUXS68eKkUcwz
+   ZqTB7lvAPNH1UiW14yF4+aZeIwKOVWROPDjB+mRAI37bTbFnV6gMzWo67
+   OgpZnAze2nq8pNGy/+ULp8YurJatXV7TyGGJf4ehBpOG7AVKulZbhaoy7
+   +F43SQ5BNG1e2tXTeB3XzAK4ro0O4m9sAVEKELqP36h9kLND+NfZjAGiX
+   A==;
+X-CSE-ConnectionGUID: qcT0wP1dRIKeOEivBIpSBA==
+X-CSE-MsgGUID: nLaT4OImTqehdNEp6xXO2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63606250"
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="63606250"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2025 21:57:20 -0700
+X-CSE-ConnectionGUID: yU3cw6qhRyWiUC1Pp48qsg==
+X-CSE-MsgGUID: Wfa3N62LRJ+5gui+d0i2TA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,260,1754982000"; 
+   d="scan'208";a="184420275"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 27 Oct 2025 21:57:18 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDblj-000IlV-0j;
+	Tue, 28 Oct 2025 04:57:15 +0000
+Date: Tue, 28 Oct 2025 12:56:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Breno Leitao <leitao@debian.org>, Mike Galbraith <efault@gmx.de>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 1/1] printk: nbcon: Allow unsafe write_atomic()
+ for panic
+Message-ID: <202510281206.cLKMJ90G-lkp@intel.com>
+References: <20251027161212.334219-2-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027161212.334219-2-john.ogness@linutronix.de>
 
-On Tue, 2025-10-28 at 11:06 +0800, kernel test robot wrote:
-> Hi Siddharth,
->=20
-> kernel test robot noticed the following build errors:
->=20
-> [auto build test ERROR on pci/next]
-> [also build test ERROR on pci/for-linus linus/master v6.18-rc3 next-20251=
-027]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->=20
-> url:    https://github.com/intel-lab-lkp/linux/commits/Siddharth-Vadapall=
-i/PCI-Export-pci_get_host_bridge_device-for-use-by-pci-keystone/20251022-18=
-0213
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-> patch link:    https://lore.kernel.org/r/20251022095724.997218-5-s-vadapa=
-lli%40ti.com
-> patch subject: [PATCH v4 4/4] PCI: keystone: Add support to build as a lo=
-adable module
-> config: arm-allmodconfig (https://download.01.org/0day-ci/archive/2025102=
-8/202510281008.jw19XuyP-lkp@intel.com/config)
-> compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251028/202510281008.jw19XuyP-lkp@intel.com/reproduce)
->=20
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202510281008.jw19XuyP-lkp=
-@intel.com/
->=20
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
->=20
-> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/arm/probes/kprobes=
-/test-kprobes.o
-> > > ERROR: modpost: "hook_fault_code" [drivers/pci/controller/dwc/pci-key=
-stone.ko] undefined!
-> ERROR: modpost: "__ffsdi2" [drivers/spi/spi-amlogic-spifc-a4.ko] undefine=
-d!
+Hi John,
 
-I had built the driver for ARM64 platforms but missed building it for ARM32
-platforms. I will fix the build error for ARM32 platforms and will post the
-v5 series.
+kernel test robot noticed the following build errors:
 
-Regards,
-Siddharth.
+[auto build test ERROR on 62627bf0cadf6eae87d92fecf604c42160fe16ef]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/John-Ogness/printk-nbcon-Allow-unsafe-write_atomic-for-panic/20251028-001756
+base:   62627bf0cadf6eae87d92fecf604c42160fe16ef
+patch link:    https://lore.kernel.org/r/20251027161212.334219-2-john.ogness%40linutronix.de
+patch subject: [PATCH printk v2 1/1] printk: nbcon: Allow unsafe write_atomic() for panic
+config: m68k-allnoconfig (https://download.01.org/0day-ci/archive/20251028/202510281206.cLKMJ90G-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251028/202510281206.cLKMJ90G-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510281206.cLKMJ90G-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/printk/nbcon.c: In function 'nbcon_kdb_release':
+>> kernel/printk/nbcon.c:1938:9: error: too many arguments to function '__nbcon_atomic_flush_pending_con'; expected 2, have 3
+    1938 |         __nbcon_atomic_flush_pending_con(ctxt->console, prb_next_reserve_seq(prb), false);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                                           ~~~~~
+   kernel/printk/nbcon.c:1519:12: note: declared here
+    1519 | static int __nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq)
+         |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/__nbcon_atomic_flush_pending_con +1938 kernel/printk/nbcon.c
+
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1916  
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1917  /**
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1918   * nbcon_kdb_release - Exit unsafe section and release the nbcon console
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1919   *
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1920   * @wctxt:	The nbcon write context initialized by a successful
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1921   *		nbcon_kdb_try_acquire()
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1922   */
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1923  void nbcon_kdb_release(struct nbcon_write_context *wctxt)
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1924  {
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1925  	struct nbcon_context *ctxt = &ACCESS_PRIVATE(wctxt, ctxt);
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1926  
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1927  	if (!nbcon_context_exit_unsafe(ctxt))
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1928  		return;
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1929  
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1930  	nbcon_context_release(ctxt);
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1931  
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1932  	/*
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1933  	 * Flush any new printk() messages added when the console was blocked.
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1934  	 * Only the console used by the given write context was	blocked.
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1935  	 * The console was locked only when the write_atomic() callback
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1936  	 * was usable.
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16  1937  	 */
+49f7d3054e84617 Marcos Paulo de Souza 2025-10-16 @1938  	__nbcon_atomic_flush_pending_con(ctxt->console, prb_next_reserve_seq(prb), false);
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
