@@ -1,284 +1,243 @@
-Return-Path: <linux-kernel+bounces-874121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7E6C15967
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:49:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312A1C15925
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49F4A3AD9A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:42:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEA761A21EE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2C0341ADE;
-	Tue, 28 Oct 2025 15:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F4933469D;
+	Tue, 28 Oct 2025 15:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Si30Bw38"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YZlIzKDI"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C1F273D77
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F6E21883F
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761666114; cv=none; b=irdgrmBj5hS/JL1Fqtd/gWtHNlx5X4q0h3MGc87Jai2PSX2vkQ4yhwL60Ho/GcVE+1pmhRlnMgEdvbeMgICtTr/SxQ4lIE4g4CHnUxCpiza4zHyTkG0dfLIYMyu3AtdUyVjMhmZgcmaMzD/ZJvCrQGz2oEa7uTF3jJuaX8VbgkA=
+	t=1761666133; cv=none; b=GzlT+W5tielz+u+zZGQohRvfwKibwOI3VWkp6jbgt+jeePowDsAzurIqE5j6ngIhckGU8HxjmHriO4STmDeMVLmDkiQPVpFvUDA7iz9U/G7lJJQZm7XyhjDiQUzKJW7pD1DjObchqS1LODivbxlBFRd1U4RDHabDb/IvOgBnFP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761666114; c=relaxed/simple;
-	bh=bEbBGo6SDi3T7IlWHXIwQmSF5urPM5A7yPazEXssXV4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tg2WC6TWDn1KI+ivlg/vGMXoZmDDs5qpVffjpQk0JRHuiYta5qi0+RpDntteMiQrPRoOehy4/FTQQm6yVwDsHNio6+ftX48DuVh+GMVGp3DV9Z3GWEKKmTz3+cDgu/kO7g+16DUKv2YuAATuR3X+cCOOhHgRvl31pOlwbWMbZOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Si30Bw38; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-475dab5a5acso22223145e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 08:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761666111; x=1762270911; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rER/cj499mXACNSk+6J53aPnWJLF10EoyWFEaSt4oo=;
-        b=Si30Bw389g3GhWg/ZXSUIuBfJTWNR+sdZH0c8/S1/EjF3PeXWMFvmw+6jE2FeSqHFt
-         dhfk36NNCa+o8lwOn/5IZFWBB7FLcTMz5sbzHbB6r/0WbPqoVVPSnq0xntuihul+1OhT
-         SuTzLmC81Tye4LKtX+VCcSp89JJTUVs5RhTkY1AdnYYgezMXS9nbXvhExzXOMApkCUzs
-         HBdmS3+7EGL5QbmmYRMTgqeN00jXy4Ri7CWAXlstkLWLx+NmncpxBZxcDnfahG4XZZm6
-         D4HmfM/RKiHAFdR6w9gT/pTGPDMKHaknMx3VVw1RlLCYYKpfW1bJpcA5Nm6jM/f7mN8/
-         YU/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761666111; x=1762270911;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rER/cj499mXACNSk+6J53aPnWJLF10EoyWFEaSt4oo=;
-        b=AJuUaB8wbP4bXMng9wSku/GzcLoRF6tqOfTYx1GQKuT4gTcLlWhn0MnUzf5zjPJxny
-         cOlbG29UCYtBf75VHsFkCHaDga9nmoyQOVZRm7W9RlpDchLjQyAYHU7E/oQk2yPi15BQ
-         9+fbjl92umoHYpJz2WWYJSF9VWMa1GoYlHoKiEJmBD1khZr2kAZ5ghhxRSUZ3rWzXnui
-         XnBh41szHXEq/mFFV8nmjX99Gcj0xmlbVOrfDID7ijbXwled/2SWkH/PMlyKRSJ5TRz6
-         OtKGhwHnblecrUDg22DmAMx8jMsYn+8IeSkI/e3k0GmnW1VF/ntWRemeoL/2H6tnZnTV
-         +fTw==
-X-Forwarded-Encrypted: i=1; AJvYcCX87qO72JE/N0MCxMmscMuIcmawTtDkm9koArbA69DlOujD7FMv+6bmhyh3+T2reJGxnAqkHefF65QlHys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGfDYuCd/TMZovypBCvNVw35jGXoXXdkMOHecJ7IT9uMujBc+O
-	aZAPqBeMBdsf6YNkk5vL4USBpqZuMT2g2xLdXlBCarBvbgKD69QoEcxi
-X-Gm-Gg: ASbGnctF9gXifIZme1YFxsxRTOlSB1j1XSdMizeUT0/syU8jw1+W0QEMBdW5YZBYf+L
-	npTaKaFfRU8GjS702Wbvf2iWvfhLssh8KzCNaufQTkmf0cnQqMfBXR4Hz4anhJR+J+QGfOjGxpl
-	0IP0FjMR+5MieVpkcKu7GK8XH5JGCuuJycB1OEhoL52fvwBJcALOFFZfnNZazV5+ve+o0N7psiQ
-	bRWPvEbx98Ro07qBVIKiiPmRxTtKLwwYJNnhRcsqhUhfU0KsiEho8bZSUUKk58KJ9S66FmTWbGc
-	M7gqFY4DtTvvd5PDaKq7rf9yAguHGnLR0NCgfq2hFRsYpO+xRPmwCmngY7EsA+jXO2KXoHBZbIL
-	cEV5Y0AJoak9PzQprSoI/Wl61NZrmR1SZA2k/Sw3V8F1P0MK5dhtnO8WgO51tLDfxj+IDdy95Zo
-	O4bVA8AEC1AHTSCpoVeXMFfxr1j19DQKxJTq9FZc+geWc0+H5hE4+cIVN3HQ==
-X-Google-Smtp-Source: AGHT+IHebAO0DlmEIORl7j8QOrOeKPGgCfKBhqbrcWGKnJH7ybidW69hal8hNOSPewAyQmQdvtJXuA==
-X-Received: by 2002:a05:600c:1d1e:b0:46e:6a6a:5cec with SMTP id 5b1f17b1804b1-47717def7b5mr42201915e9.2.1761666110720;
-        Tue, 28 Oct 2025 08:41:50 -0700 (PDT)
-Received: from jernej-laptop.localnet (178-79-73-218.dynamic.telemach.net. [178.79.73.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771843eabfsm23130265e9.2.2025.10.28.08.41.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 08:41:50 -0700 (PDT)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Richard Genoud <richard.genoud@bootlin.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Wentao Liang <vulab@iscas.ac.cn>, Johan Hovold <johan@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, Richard Genoud <richard.genoud@bootlin.com>
-Subject:
- Re: [PATCH v4 07/16] mtd: rawnand: sunxi: rework pattern found registers
-Date: Tue, 28 Oct 2025 16:41:48 +0100
-Message-ID: <6097267.MhkbZ0Pkbq@jernej-laptop>
-In-Reply-To: <20251028073534.526992-8-richard.genoud@bootlin.com>
-References:
- <20251028073534.526992-1-richard.genoud@bootlin.com>
- <20251028073534.526992-8-richard.genoud@bootlin.com>
+	s=arc-20240116; t=1761666133; c=relaxed/simple;
+	bh=nmb9otoxS9qo4PpMlQE1HojBqVA53t1oBHFeByRsR9Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HmP1rGA9JOh8UXwEUhfrpixWqrFv3Or8DZ6v7ZcBPjYOJ0lQdhvGSa2nH5OCYEN4DwqKsJ/A0yWYkqEPudJa9K2jprePiVmi0INGVVNorviuqQa1KXja1VA7O3bk35bW8WA81ckHF4j2iHewebZ8GnNTlf2xgaK5Iz+SYhSjeVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YZlIzKDI; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 18ED3C0BEA1;
+	Tue, 28 Oct 2025 15:41:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 44E7B606AB;
+	Tue, 28 Oct 2025 15:42:01 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C5F77117A932D;
+	Tue, 28 Oct 2025 16:41:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761666120; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=nDSVs9lhw+F4YKSYneSSWC5JzdOFTeNiVqf0bisny44=;
+	b=YZlIzKDI2uuOlCIyIc2f7SjHrk4BtxyZB5m8F2TanV1WkB0xo4/Bl/0fnuCZqdFFWFLxVJ
+	Y6tFo4ygPXXz0LK5Db9RC/r7PvBfOfS2RSB0fJAum4Sh2GIsVUnXLuOy+4TAyEVxUVt0ng
+	r8u6miAXNCJKzQLpgWPhQm1TuF9itzKJVfNvcV4H2xhpHGbwbo8zCrSnI4fLpFfQMwDS2M
+	f3ub86hwLg7UELL40PKCVuccrdieUDLaE8U6TT/RtNeXBr8DHKDBB8xgk3YbbA7tcLR0Da
+	orq83w3vBtzziMwPNeXpYalN6/SxLjEyz5HMqz36hTPft03JfG6n5bdgBMYPMg==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Santhosh Kumar K <s-k6@ti.com>
+Cc: <richard@nod.at>,  <vigneshr@ti.com>,  <broonie@kernel.org>,
+  <tudor.ambarus@linaro.org>,  <pratyush@kernel.org>,  <mwalle@kernel.org>,
+  <p-mantena@ti.com>,  <linux-spi@vger.kernel.org>,
+  <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
+  <a-dutta@ti.com>,  <u-kumar1@ti.com>,  <praneeth@ti.com>
+Subject: Re: [RFC PATCH 01/10] spi: spi-mem: Introduce support for tuning
+ controller
+In-Reply-To: <cb04a4ec-c643-4b80-9288-8fd8944cb4f7@ti.com> (Santhosh Kumar
+	K.'s message of "Sat, 20 Sep 2025 23:25:31 +0530")
+References: <20250811193219.731851-1-s-k6@ti.com>
+	<20250811193219.731851-2-s-k6@ti.com> <87seguemzu.fsf@bootlin.com>
+	<cb04a4ec-c643-4b80-9288-8fd8944cb4f7@ti.com>
+User-Agent: mu4e 1.12.7; emacs 30.2
+Date: Tue, 28 Oct 2025 16:41:51 +0100
+Message-ID: <87qzunt4n4.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Dne torek, 28. oktober 2025 ob 08:35:00 Srednjeevropski standardni =C4=8Das=
- je Richard Genoud napisal(a):
-> On H6/H616, the register ECC_PAT_FOUND is at its own address, and not
-> part of ECC status register.
-> So, introduce the pattern found register offset in sunxi_nfc_caps, along
-> with its mask.
->=20
-> Also, introduce a non compile-time field_get() because FIELD_GET() and
-> u32_get_bits() don't work with non compile-time constant.
-> https://lore.kernel.org/all/cover.1761588465.git.geert+renesas@glider.be
+Hello Santhosh,
 
-Urls should use Link: tag and be placed at the bottom.
+On 20/09/2025 at 23:25:31 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
 
-Code itself looks fine.
+> Hello,
+>
+> On 10/09/25 13:51, Miquel Raynal wrote:
+>> On 12/08/2025 at 01:02:10 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
+>>=20
+>>> From: Pratyush Yadav <pratyush@kernel.org>
+>>>
+>>> Some controllers like the Cadence OSPI controller need to perform a
+>>> tuning sequence to operate at high data rates. Tuning is needs to happen
+>>> once the device is switched to appropriate mode (say 8S-8S-8S or
+>>> 8D-8D-8D).
+>
+> Apologies for the delay in response - I started prototyping new solution
+> based on our discussions earlier, which took some additional time.
 
-Best regards,
-Jernej
+My turn to apologize for the delay, especially since your feedback is
+very complete.
 
->=20
-> No functional change.
->=20
-> Signed-off-by: Richard Genoud <richard.genoud@bootlin.com>
-> ---
->  drivers/mtd/nand/raw/sunxi_nand.c | 36 ++++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mtd/nand/raw/sunxi_nand.c b/drivers/mtd/nand/raw/sun=
-xi_nand.c
-> index 89495d786293..021034a761b7 100644
-> --- a/drivers/mtd/nand/raw/sunxi_nand.c
-> +++ b/drivers/mtd/nand/raw/sunxi_nand.c
-> @@ -29,6 +29,9 @@
->  #include <linux/iopoll.h>
->  #include <linux/reset.h>
-> =20
-> +/* non compile-time field get */
-> +#define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +
->  #define NFC_REG_CTL		0x0000
->  #define NFC_REG_ST		0x0004
->  #define NFC_REG_INT		0x0008
-> @@ -150,7 +153,13 @@
->  /* define bit use in NFC_ECC_ST */
->  #define NFC_ECC_ERR(x)		BIT(x)
->  #define NFC_ECC_ERR_MSK		GENMASK(15, 0)
-> -#define NFC_ECC_PAT_FOUND(x)	BIT(x + 16)
-> +
-> +/*
-> + * define bit use in NFC_REG_PAT_FOUND
-> + * For A10/A23, NFC_REG_PAT_FOUND =3D=3D NFC_ECC_ST register
-> + */
-> +#define NFC_ECC_PAT_FOUND_MSK(nfc) (nfc->caps->pat_found_mask)
-> +
->  #define NFC_ECC_ERR_CNT(b, x)	(((x) >> (((b) % 4) * 8)) & 0xff)
-> =20
->  #define NFC_DEFAULT_TIMEOUT_MS	1000
-> @@ -227,6 +236,8 @@ static inline struct sunxi_nand_chip *to_sunxi_nand(s=
-truct nand_chip *nand)
->   * @reg_io_data:	I/O data register
->   * @reg_ecc_err_cnt:	ECC error counter register
->   * @reg_user_data:	User data register
-> + * @reg_pat_found:	Data Pattern Status Register
-> + * @pat_found_mask:	ECC_PAT_FOUND mask in NFC_REG_PAT_FOUND register
->   * @dma_maxburst:	DMA maxburst
->   * @ecc_strengths:	Available ECC strengths array
->   * @nstrengths:		Size of @ecc_strengths
-> @@ -236,6 +247,8 @@ struct sunxi_nfc_caps {
->  	unsigned int reg_io_data;
->  	unsigned int reg_ecc_err_cnt;
->  	unsigned int reg_user_data;
-> +	unsigned int reg_pat_found;
-> +	unsigned int pat_found_mask;
->  	unsigned int dma_maxburst;
->  	const u8 *ecc_strengths;
->  	unsigned int nstrengths;
-> @@ -776,7 +789,8 @@ static void sunxi_nfc_hw_ecc_update_stats(struct nand=
-_chip *nand,
->  }
-> =20
->  static int sunxi_nfc_hw_ecc_correct(struct nand_chip *nand, u8 *data, u8=
- *oob,
-> -				    int step, u32 status, bool *erased)
-> +				    int step, u32 status, u32 pattern_found,
-> +				    bool *erased)
->  {
->  	struct sunxi_nfc *nfc =3D to_sunxi_nfc(nand->controller);
->  	struct nand_ecc_ctrl *ecc =3D &nand->ecc;
-> @@ -787,7 +801,7 @@ static int sunxi_nfc_hw_ecc_correct(struct nand_chip =
-*nand, u8 *data, u8 *oob,
->  	if (status & NFC_ECC_ERR(step))
->  		return -EBADMSG;
-> =20
-> -	if (status & NFC_ECC_PAT_FOUND(step)) {
-> +	if (pattern_found & BIT(step)) {
->  		u8 pattern;
-> =20
->  		if (unlikely(!(readl(nfc->regs + NFC_REG_PAT_ID) & 0x1))) {
-> @@ -821,6 +835,7 @@ static int sunxi_nfc_hw_ecc_read_chunk(struct nand_ch=
-ip *nand,
->  	struct sunxi_nfc *nfc =3D to_sunxi_nfc(nand->controller);
->  	struct nand_ecc_ctrl *ecc =3D &nand->ecc;
->  	int raw_mode =3D 0;
-> +	u32 pattern_found;
->  	bool erased;
->  	int ret;
-> =20
-> @@ -848,8 +863,12 @@ static int sunxi_nfc_hw_ecc_read_chunk(struct nand_c=
-hip *nand,
-> =20
->  	*cur_off =3D oob_off + ecc->bytes + USER_DATA_SZ;
-> =20
-> +	pattern_found =3D readl(nfc->regs + nfc->caps->reg_pat_found);
-> +	pattern_found =3D field_get(NFC_ECC_PAT_FOUND_MSK(nfc), pattern_found);
-> +
->  	ret =3D sunxi_nfc_hw_ecc_correct(nand, data, oob_required ? oob : NULL,=
- 0,
->  				       readl(nfc->regs + NFC_REG_ECC_ST),
-> +				       pattern_found,
->  				       &erased);
->  	if (erased)
->  		return 1;
-> @@ -930,7 +949,7 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct na=
-nd_chip *nand, uint8_t *buf
->  	unsigned int max_bitflips =3D 0;
->  	int ret, i, raw_mode =3D 0;
->  	struct scatterlist sg;
-> -	u32 status, wait;
-> +	u32 status, pattern_found, wait;
-> =20
->  	ret =3D sunxi_nfc_wait_cmd_fifo_empty(nfc);
->  	if (ret)
-> @@ -971,6 +990,8 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct na=
-nd_chip *nand, uint8_t *buf
->  		return ret;
-> =20
->  	status =3D readl(nfc->regs + NFC_REG_ECC_ST);
-> +	pattern_found =3D readl(nfc->regs + nfc->caps->reg_pat_found);
-> +	pattern_found =3D field_get(NFC_ECC_PAT_FOUND_MSK(nfc), pattern_found);
-> =20
->  	for (i =3D 0; i < nchunks; i++) {
->  		int data_off =3D i * ecc->size;
-> @@ -981,7 +1002,8 @@ static int sunxi_nfc_hw_ecc_read_chunks_dma(struct n=
-and_chip *nand, uint8_t *buf
-> =20
->  		ret =3D sunxi_nfc_hw_ecc_correct(nand, randomized ? data : NULL,
->  					       oob_required ? oob : NULL,
-> -					       i, status, &erased);
-> +					       i, status, pattern_found,
-> +					       &erased);
-> =20
->  		/* ECC errors are handled in the second loop. */
->  		if (ret < 0)
-> @@ -2195,6 +2217,8 @@ static const struct sunxi_nfc_caps sunxi_nfc_a10_ca=
-ps =3D {
->  	.reg_io_data =3D NFC_REG_A10_IO_DATA,
->  	.reg_ecc_err_cnt =3D NFC_REG_A10_ECC_ERR_CNT,
->  	.reg_user_data =3D NFC_REG_A10_USER_DATA,
-> +	.reg_pat_found =3D NFC_REG_ECC_ST,
-> +	.pat_found_mask =3D GENMASK(31, 16),
->  	.dma_maxburst =3D 4,
->  	.ecc_strengths =3D sunxi_ecc_strengths_a10,
->  	.nstrengths =3D ARRAY_SIZE(sunxi_ecc_strengths_a10),
-> @@ -2205,6 +2229,8 @@ static const struct sunxi_nfc_caps sunxi_nfc_a23_ca=
-ps =3D {
->  	.reg_io_data =3D NFC_REG_A23_IO_DATA,
->  	.reg_ecc_err_cnt =3D NFC_REG_A10_ECC_ERR_CNT,
->  	.reg_user_data =3D NFC_REG_A10_USER_DATA,
-> +	.reg_pat_found =3D NFC_REG_ECC_ST,
-> +	.pat_found_mask =3D GENMASK(31, 16),
->  	.dma_maxburst =3D 8,
->  	.ecc_strengths =3D sunxi_ecc_strengths_a10,
->  	.nstrengths =3D ARRAY_SIZE(sunxi_ecc_strengths_a10),
->=20
+>> This is actually wrong. Tuning is way more generic than that :)
+>> If someone wants to use a chip at a high frequency (50MHz in your
+>> case,
+>> but whatever, there is a threshold above which additional care must be
+>> taken), it must go through the calibration step. It does not matter in
+>> which mode you are. Calibration would still be relevant in single SDR
+>> mode.
+>> This 50MHz bothered Mark because it is too Cadence specific. Maybe
+>> this
+>> should be a controller parameter? If the spi-mem core (or even the spi
+>> core, by extensino) sees that the design allows running at XMHz (due to
+>> the SPI peripheral properties or simply the absence of any limitation),
+>> and if the controller states that it requires an extra tuning step above
+>> YMHz (and X > Y), then it launches the calibration.
+>>  From a core perspective, I would like the calibration hook to be as
+>> simple as possible, because what "calibration" means is highly
+>> controller and chip specific.
+>
+> I understand the concern here.
+>
+> Let me point out the options for launching the tuning procedure, along
+> with the issues in each approach.
 
+Very good summary.
 
+> Option 1: Launch tuning as part of spi_mem_exec_op()
+>    - After spi_mem_access_start(), introduce a spi_mem_needs_tuning()
+> check (a new callback to SPI MEM controller) to check whether the
+> current op requires tuning
+>    - If yes, we call spi_mem_execute_tuning()
+>         - on success, mark tuning complete in a flag within SPI MEM
+> Controller private data
+>         - on failure, we attempt a fallback by calling
+> spi_mem_adjust_op_freq() and drop to a lower supported frequency
+>
+> Option 2: Launch tuning within spi_controller->exec_op() implementation
+>    - Very similar to option 1, except that the spi_mem_execute_tuning()
+> is triggered from within the controller's exec_op() implementation
+> (no need for spi_mem_needs_tuning())
+>
+> Drawbacks in option 1 and 2:
+>    - Tuning requires multiple reads of a known pattern, but the flash
+> may not always be in a state to allow read commands
+>    - No fallback on failures, can't make flash-specific adjustments in
+> case of a tuning failure
+>    - No access to write_op() to write known pattern temporarily to an
+> on-die cache. Pattern needs to be always burnt into the flash
+>
+>    - Plus, in option 2 - we can't call spi_mem_adjust_op_freq()
 
+Two more significant drawbacks:
+- it adds an extra step in the "fast path" -maybe negligible?-
+- spi_mem_exec_op()/->exec_op() are called way before being ready for
+  calibration.
 
+> While the need for tuning is dictated by Controller specific
+> characteristics the ops (and state of the chip) required to complete
+> tuning is under the control of spi-mem users (spi-nand/spi-nor).
+> So, it's impossible to achieve tuning without the help of spi-mem users.
+
+Sounds like a constraint we can afford indeed, especially since the ops
+that can be optimized, are flash specific (relatively few content to
+share between spi nor and spi nand).
+
+> So, Option 3: Launch from SPI MEM clients
+>                           (mtd/nand/spi or mtd/spi-nor, etc.,)
+>    - Once the spi-mem chip is completely enumerated and best read and
+> write ops are chosen call spi_mem_needs_tuning(read_op, write_op) as
+> a part of .probe()
+
+This looks like a decent place, but there is one limitation to
+workaround: picking best read and write ops require knowing what the
+controller is capable of in terms of frequency, which means we must in
+advance expect to set up calibration or not. I don't think it's a
+problem, this is something we know in advance thanks to
+eg. spi-max-frequency in the DT, but I still think a controller specific
+"maximum frequency without calibration" capability must be carried for
+the controller to decide whether this step is needed or not when asked
+by the spi mem client.
+
+>    - If tuning is required, call
+
+I guess "tuning being required" is a controller choice, based on the
+target frequency for both read/write ops and the controller capability
+to achieve this.
+
+> spi_mem_execute_tuning(read_op, write_op)
+>         - If only read_op is provided, it implies the tuning pattern is
+> pre-flashed to the partition
+
+Interesting. I guess that lives some room for tuning PHYs during writes as
+well without more core modifications later, isn't it?
+
+>    - On tuning failure, retry by re-running spi_mem_needs_tuning() with
+> the second best set of ops (max throughput - 1)
+
+I would like to challenge this need. Can the same calibration fail if
+attempted multiple times (eg. because of the heat?) If yes, then we need
+a fallback indeed. Otherwise, I'd be in favor of just failing the
+probe. Calibration is an opt-in -> users must allow a higher frequency
+than they use to in order to enable the feature?
+
+> With option 3, spi_mem users are limited to calling
+> spi_mem_needs_tuning() and spi_mem_execute_tuning().
+
+I would even go for a single spi_mem_tune_phy()? Or is there a point in
+having two helpers?
+
+> Rest is hidden
+> within the controller drivers. If spi-mem users change read/write ops,
+> the above sequence can be re-issued.
+
+I don't have use cases for that in mind, but why not.
+
+> The controller can store the read_op and write_op in case of a tuning
+> success and periodically re-run tuning, ensuring we always have valid
+> tuning parameters.
+
+You'll have to make sure you only use PHY calibration for the ops that
+have been used for the tuning though, because for example as I am
+working on octal DDR support: during S2RAM there may be the need for
+returning to SDR mode, which in turns will have to work without the
+tuning (tuning parameters will be incorrect for this mode for the time
+we run slowly). So either the controller knows which operation should
+enable PHY optimizations, or we must perform the whole calibration again
+every time we suspend (meh).
+
+> One concern with option 3 is that we may not be able to make use of
+> static data on certain flash as tuning patterns (like reading parameter
+> page or SFDP table for tuning instead of controller specific attack
+> patterns).
+
+This is true, I know some devices can send patterns during dummy cycles
+by I have no idea how powerful that is, nor if it can actually be used
+in Linux. One need a controller that is aware of these bits and can
+itself adjust/fine tune its own configuration. For now, I propose to let
+this aside until we get real hardware that can be tested.
+
+> Please let me know your thoughts on which of these directions makes the
+> most sense.
+
+Let's got for option 3. I'm eager to see this moving forward!
+
+Thanks, Miqu=C3=A8l
 
