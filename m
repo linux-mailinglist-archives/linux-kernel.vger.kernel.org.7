@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-874903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76927C1769B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B38C176A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3350D1A2445E
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378C71A61A5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 23:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F913064AE;
-	Tue, 28 Oct 2025 23:52:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1222D9EE2;
+	Tue, 28 Oct 2025 23:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I4hiubbC"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BEA305E27
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C092D877D
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761695524; cv=none; b=p85A/VMDFWSR64qVrseXjyAi52E0GFTWgO6FGCtDdrmHW6/15vgcYVUOSqx6dc3+hlnqw0MRKuiUQ3TcDnITYuMgqCZP1lGbhpAYIoHiRa4N47CUpXFD+QXF5b2HNsbjkbx/qL9pNcYuFOokn77ZSMh6I4lRUF0nVrJaYQYQ1lA=
+	t=1761695658; cv=none; b=l7emyDEDKkVyRZ9azQjhcRqn97NKu4gMDmHGdoKRbzneFEUkwNBGA5IQlW1oysQc4oH/NeoYMKUcxaKW3u1eHYjeGkZxs8OsfxIejIyReTsi3wNjC+c7RzOGzWATyDBBMk50E5myEokIcCzzQOgzuStor5mAkC2lKRNYauADRvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761695524; c=relaxed/simple;
-	bh=uGkSSVuJ/N5l/TIQFimhCSNNpG2nEsvsPNgXu999t7A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mLJv4+mE14hMaH260Mu0ox33tsv51yuBQ+4+T157A3WUkXMQ25Ycx1YEbsqUOeO9VO7RfYB2lVdYlrmoP+qmMklZ54VlUQo1btnH5LOduitDdWmeJr2egapeh87fCVZnmVPHlmwb7hLUy6iQwSzxbtgrnjvF2KEhKxq3JFAxl50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430ced58cd2so242919665ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:52:02 -0700 (PDT)
+	s=arc-20240116; t=1761695658; c=relaxed/simple;
+	bh=cWlgHGOtfSt7tIaISCcbrIt/pV55e5WSj3LRJbov54U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nIXk8qUwbKunNzKel668xwd+kKkR5yWepSid+gIJ41FtJ6BmdhD6aYWzvp5IiFl5Oz6iZocHW3zFofZF5VX9r0pj3UOOh4/BktWqsH1gY8slmKfpNGdYAJFliizKpOWKcMPux+IFvYOTlQro8xO+T1QfJPzQjpryCJiUOT3rboE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I4hiubbC; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2697899a202so3018225ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 16:54:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761695656; x=1762300456; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWlgHGOtfSt7tIaISCcbrIt/pV55e5WSj3LRJbov54U=;
+        b=I4hiubbCZajyJIcq0EzybQmQ+4TBp/+SzA2Rh9wEsGnH/XqMUf6ddMpA5oz2LHY9/y
+         U6K5i2kj9ahilHC1zGslEUPVycin10XLvpjGKUmw3cJzk5xIlNAZ2jcvjR2rYOS+TRXv
+         NWj5WNgoRzJpRWUQNdhrWg7duJUIr78ukQWhpVXY9oLcAdDuJhpHQHQ9fH/AHhxsRvvh
+         bnJVeUvi8B9StMWwLnJvB61+LTVE4mCgXbEQUX5SgGlBk5gop1+ZoOJA/D4zt7mdxYEw
+         2PuItCQ66BiDwf5h5++nIurG4DNGjnJD4szqpMmSmbVupNejYInPlEPHnm+FEgPUrm7j
+         VXCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761695522; x=1762300322;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T9+vde9L9W9dBoPTK0llIL2Hwu+poqDEZvWXXwYtUkU=;
-        b=grKsIFSR6XBUUnvC1cnhFS3+//2ZpnO89+fuqI8RE8hOTuqnHCPGTNk1FRRbfUXWqZ
-         wwe3524olhVBJBBRyIzEM3qL0EB+ksHcXI5Zy8jC4NysN8teJskBeQtjZmFmmTCq/R9p
-         xsKahaRov7s5eCEG/55dPqer1qirz2J/cMSz7XT6HYsql09ik1LaGXInprV3K0eq002l
-         xDF7FwPspsdy0oymBM35dDUg9o6qYEmeUFVjCdGygp3Wkw7n9AExe85DF998xVSWVcoG
-         HVzENdBkC09YB4WgtaDrgt/pSs9ozywIaOEjREBql0Yydkl+tGw7q95VjPvaCtE/bQXN
-         jj7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVFaom606mCBP+RE5M3IY9/8RgCr5rSz7AImXjofGCZWa3/HNXDw6KXEEwp5fPvHpVII9ZAXAZ68rYPgWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz5Bm8kXrdVK9lGoVfRZg1yyPlz8lYdwUiosDOygadog121cUo
-	JQjgl3IQupOTREglWQX4eKEAHVVLQTFMZlHZxJFbqSBybMyUMeL8EGFfDZCVPdLk2+KeGIUfH2/
-	iBjFKIVuG/k4kGOvXdgWJ6V5z7MiAT92rECTHXHBMydGRVnfKrcpkwZGO+4Q=
-X-Google-Smtp-Source: AGHT+IHLCKXGea3x7t6x8GYyLSvZ3wAcPoXwuHWrv1qbT1B1ofzinJX52+1Di/ExcUqu1G/NTz/45Fao5mEogVv63ciVvdU3T6v1
+        d=1e100.net; s=20230601; t=1761695656; x=1762300456;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cWlgHGOtfSt7tIaISCcbrIt/pV55e5WSj3LRJbov54U=;
+        b=vq48+Wd9rW4w+mLAvxdzGKt4XfgJcmAUwCTAdIxAO6FZ1yWu/k53nKkgA8Gf/62Sgc
+         VbtK2bPcqGwCCQkSFhFxbwMId9bzV88uh9n+ZI1V+0oXqKfKX/jCVyLSLjRA5AKHqMQp
+         xHUEAwbtfTEBeM58mRTy6pOXsGbBA+IXJgeLyKSHsT/M3YYa3+lrOmS6tWS/f6m44dyq
+         BNZdEcvLdFPWqDoCt1LeZDIA53GAPBuESIe2Avyrn+LYrRiUb+DPjYOs30wf54bZV5wi
+         KIn9G8klcdT011z7EswMiV6RDUUhrGZtjY6YPl8hc+mu0pT6mjCC67hxcJ8eA5VNDf2I
+         +pvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZNh+BaCZYhUHU6f44AtM3OFLQX4uG7g8vJMe9PH50dXgleVFweYyVa7IMl8uzeJdBD/BgpTnDU74EaQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5l5VgRxpa8VafnhqYs1D37makJqAWfS/3Nq7bVxnCvH+wwEe+
+	4omseSCL5zHklIpdH90wIDbnL2YP57fIvXhP6gWU/aUayXNQqlBEPS2/2D1ld39/fmp42MeERQu
+	6IqxONFlSeGt/Y3ZLIqBuw4SJpqwp5hU3P1SN3HPR
+X-Gm-Gg: ASbGncvDMjYpukXLUPeM2J04yOSR3tu88MbORIT/NsMDiVUzW44s2qLkOJT2Wi/OqUN
+	PX5L7IuSONnj9V1k2f7YIIiVIOQ72e/STBYTKWsaKjJCidtRBFIkFNpDhAgkchKk4TOHWebWko4
+	khusXWP4SNV9u9dgJeXcGFrWVSHQvGxgoNBQfYVQ4/jzyh+B5uGtwjjmoA94RiY6zMLsza+CNbf
+	VXxEvx20UEnM9TVvA/EIdv237YD52TVMmuBMcPzBMWgwueYmYeO0OfW5mkEzatFHI+YSuzau2F1
+	OaTWegoQXX5zWhOAEiCiSEOcqg==
+X-Google-Smtp-Source: AGHT+IFup0B2nTqV79YPEbtafgKs655fF3V8G4NXh7YZFmx8qXmynLB/NFFmZEI3BEJKq/dfY7xg41/30IZOzA6kP5E=
+X-Received: by 2002:a17:902:e808:b0:267:44e6:11d6 with SMTP id
+ d9443c01a7336-294de7f3b95mr12979265ad.6.1761695655715; Tue, 28 Oct 2025
+ 16:54:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:23c6:b0:430:9f96:23bb with SMTP id
- e9e14a558f8ab-432f8fad442mr12682955ab.8.1761695522035; Tue, 28 Oct 2025
- 16:52:02 -0700 (PDT)
-Date: Tue, 28 Oct 2025 16:52:02 -0700
-In-Reply-To: <CAHxJ8O-DsKCj085k8N97bGqgWnHUpa++2HE4Au+axkvMkAPRcw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69015722.050a0220.32483.01e2.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_file
-From: syzbot <syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com>
-To: eraykrdg1@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <aQDOpeQIU1G4nA1F@hoboy.vegasvil.org> <20251028155318.2537122-1-kuniyu@google.com>
+ <20251028161309.596beef2@kernel.org> <cd154e3c-0cac-4ead-a3d0-39dc617efa74@linux.dev>
+In-Reply-To: <cd154e3c-0cac-4ead-a3d0-39dc617efa74@linux.dev>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Tue, 28 Oct 2025 16:54:03 -0700
+X-Gm-Features: AWmQ_blCRWQ09fMUDpVGLUvfkkotj1qXZ_C99Ycg2hp8MBCvCnTaAW7B48KRr2I
+Message-ID: <CAAVpQUCYFoKhUn1MU47koeyhD6roCS0YpOFwEikKgj4Z_2M=YQ@mail.gmail.com>
+Subject: Re: [PATCH] ptp: guard ptp_clock_gettime() if neither gettimex64 nor
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, junjie.cao@intel.com, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com, thostet@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Oct 28, 2025 at 4:45=E2=80=AFPM Vadim Fedorenko
+<vadim.fedorenko@linux.dev> wrote:
+>
+> On 28.10.2025 23:13, Jakub Kicinski wrote:
+> > On Tue, 28 Oct 2025 15:51:50 +0000 Kuniyuki Iwashima wrote:
+> >> From: Richard Cochran <richardcochran@gmail.com>
+> >> Date: Tue, 28 Oct 2025 07:09:41 -0700
+> >>> On Tue, Oct 28, 2025 at 05:51:43PM +0800, Junjie Cao wrote:
+> >>>> Syzbot reports a NULL function pointer call on arm64 when
+> >>>> ptp_clock_gettime() falls back to ->gettime64() and the driver provi=
+des
+> >>>> neither ->gettimex64() nor ->gettime64(). This leads to a crash in t=
+he
+> >>>> posix clock gettime path.
+> >>>
+> >>> Drivers must provide a gettime method.
+> >>>
+> >>> If they do not, then that is a bug in the driver.
+> >>
+> >> AFAICT, only GVE does not have gettime() and settime(), and
+> >> Tim (CCed) was preparing a fix and mostly ready to post it.
+> >
+> > cc: Vadim who promised me a PTP driver test :) Let's make sure we
+> > tickle gettime/setting in that test..
+>
+> Heh, call gettime/settime is easy. But in case of absence of these callba=
+cks
+> the kernel will crash - not sure we can gather good signal in such case?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+At least we could catch it on NIPA.
 
-Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Tested-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         8eefed8f Merge tag 'nfsd-6.18-2' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135c1258580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9dd0e4f446d638a
-dashboard link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=114af614580000
-
-Note: testing is done by a robot and is best-effort only.
+but I suggested Tim adding WARN_ON_ONCE(!info->gettime64 &&
+!info-> getimex64) in ptp_clock_register() so that a developer can
+notice that even while loading a buggy module.
 
