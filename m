@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-874068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48509C156EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:26:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329F8C15775
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46F281AA0315
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:27:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A1F0506629
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351DB340D91;
-	Tue, 28 Oct 2025 15:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B0340DBE;
+	Tue, 28 Oct 2025 15:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llQGr5a1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YHCpIrRA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CE5340293
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED74340DBB
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665192; cv=none; b=jxOkb4JxPyIS1AVsok49VXl6fNlixqDqTQ/F4Ow19xCNaryiJjwPszarar2KjIxjTyYanfi6gu1RpEfs5owLr2CCGx0Xtx5ry/bQkw7R4P0Cmqwtqrk/fvUwvxmKBoIDBmBXxRTgcfpu9ley5iUtGNrWhtXQ1l2IPbZoCZcvGbc=
+	t=1761665195; cv=none; b=QSKSRa5AukW+z/TYFU+OPEgSl8iyXLMgglB76a1tkNIWEBEawSWzLSxdgZiD4XpXlgR3o1yi1A2jPbSYv5KSMuShW0lGwKGoAkn0A05q6yjwgxOT6TrBefTTFTMrBkcl2+74PZomUrBgBBS8dTkoq+8C0pK+prSiLz4GPkfWdvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665192; c=relaxed/simple;
-	bh=GTIbNeoxU6ONRl0I+KD8gbQC9oD3AKOkwvSlwjKDCsI=;
+	s=arc-20240116; t=1761665195; c=relaxed/simple;
+	bh=Ak6jGISt8Tnwrl6aQtFstbUZY6A+aNV03E07Eu6cuf0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pf95QKgrKDencZ76N3fW0ceFt8f3L9+oxopVhKXs1Ll/kQbUVzpyGpTgImstgVPzPCikrNnVXWW/0J6uRsrXpyHLYfr50fUJ6gfGuTn9IgYkrBaBW0KI5qlNk/qMbClISrkAy0TvW51Tv3kz0cmAJ2Av2TYIQNfx6qhIAjQIADg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llQGr5a1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEEDDC4CEFD;
-	Tue, 28 Oct 2025 15:26:31 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=XzxYDVweD8nLybaAzJ/+F/VOYfJUD4qgSxAqNU92JH5FhJuJiJMuIpih/Durzy79r11oZ8DP5TaMzr1OnfiIYCofobUKgvcE+s5cicYa/AgnvDkPlYd+/qNK7h8YmXVLosKFS2zwlT7+3lj+TuGSc7hONmZMYmNPEzT5Fy8NIns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YHCpIrRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B88EC4CEF7;
+	Tue, 28 Oct 2025 15:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761665192;
-	bh=GTIbNeoxU6ONRl0I+KD8gbQC9oD3AKOkwvSlwjKDCsI=;
+	s=k20201202; t=1761665195;
+	bh=Ak6jGISt8Tnwrl6aQtFstbUZY6A+aNV03E07Eu6cuf0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=llQGr5a1BBWCntIQeV9zjqYoyxE+seNU1Zw5jkmdOLxnsjCFuguj5txU0sxwS+50a
-	 Z5QZChZeL0H2DknXq/Sz7fs5cUKfphY/nzoGH5Wpu7/PyyS1MX5glZ78ZpiOTIdjoe
-	 Wj8fIPjpSZhg0WRCxRVxxUIvBwTbz7quh7swuXAyMwCPNE9fdnqWf0fVXrhzI3/0PW
-	 GgFRqVKts7wIhdGxEU02VTM0gTgS1LRRAmVvAWnYFQBCDdpAAsOtW96t+Gd72fFuMA
-	 Qb95KsV/Eop1151XfVwckglZ75Nq4DYOp8FA3533VdZNnDOFqbQiXri2SjxpNP6R3G
-	 6UtBKfurXnwSA==
+	b=YHCpIrRADrOHpz/kLnfTOZNXd5IKsPMlV2ysYBdKG6lH2z56BQECWKKKwsmbD6cA8
+	 JY2fJRLbSSmYWl9XeP1Dwo/wQlrLL3/ifOUUn5rsiXFd0vGJh3FRVZxFoSMvL+A8aY
+	 32fJ0npjLfR8UXFIyuTBEL4cG7H3xX1c/oCU4Ajn5MtkHbi1a4X1LvnNPT9hU2amvM
+	 6s5d6R6jP70mu/7dmhGQiMb0259RH5vAjjHJReigsQfB+5GpsEEKR/z0dnXw7mmoUV
+	 pzTb5xgtMouxunlc85k9p+T1H638Vc8zw+CXj2TSIhLk0N/bLL8cz1+D4sFhqKnGtJ
+	 Y7pfLOtnl08Eg==
 From: Daniel Wagner <wagi@kernel.org>
-Date: Tue, 28 Oct 2025 16:26:20 +0100
-Subject: [PATCH 1/5] nvme-fc: don't hold rport lock when putting ctrl
+Date: Tue, 28 Oct 2025 16:26:21 +0100
+Subject: [PATCH 2/5] nvme-fc: check all request and response have been
+ processed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251028-nvmet-fcloop-fixes-v1-1-765427148613@kernel.org>
+Message-Id: <20251028-nvmet-fcloop-fixes-v1-2-765427148613@kernel.org>
 References: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org>
 In-Reply-To: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org>
 To: Justin Tee <justin.tee@broadcom.com>, Christoph Hellwig <hch@lst.de>, 
@@ -61,14 +62,8 @@ Cc: James Smart <james.smart@broadcom.com>, Jens Axboe <axboe@kernel.dk>,
  Daniel Wagner <wagi@kernel.org>
 X-Mailer: b4 0.14.3
 
-nvme_fc_ctrl_put can acquire the rport lock when freeing the
-ctrl object:
-
-nvme_fc_ctrl_put
-  nvme_fc_ctrl_free
-    spin_lock_irqsave(rport->lock)
-
-Thus we can't hold the rport lock when calling nvme_fc_ctrl_put.
+When the rport is removed there shouldn't be any in flight request or
+responses.
 
 Signed-off-by: Daniel Wagner <wagi@kernel.org>
 ---
@@ -76,19 +71,18 @@ Signed-off-by: Daniel Wagner <wagi@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
-index 03987f497a5b..2c0ea843ae57 100644
+index 2c0ea843ae57..dcb7fc2ca0b7 100644
 --- a/drivers/nvme/host/fc.c
 +++ b/drivers/nvme/host/fc.c
-@@ -1488,7 +1488,9 @@ nvme_fc_match_disconn_ls(struct nvme_fc_rport *rport,
- 		if (ret)
- 			/* leave the ctrl get reference */
- 			break;
-+		spin_unlock_irqrestore(&rport->lock, flags);
- 		nvme_fc_ctrl_put(ctrl);
-+		spin_lock_irqsave(&rport->lock, flags);
- 	}
+@@ -520,6 +520,8 @@ nvme_fc_free_rport(struct kref *ref)
  
- 	spin_unlock_irqrestore(&rport->lock, flags);
+ 	WARN_ON(rport->remoteport.port_state != FC_OBJSTATE_DELETED);
+ 	WARN_ON(!list_empty(&rport->ctrl_list));
++	WARN_ON(!list_empty(&rport->ls_req_list));
++	WARN_ON(!list_empty(&rport->ls_rcv_list));
+ 
+ 	/* remove from lport list */
+ 	spin_lock_irqsave(&nvme_fc_lock, flags);
 
 -- 
 2.51.0
