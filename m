@@ -1,129 +1,95 @@
-Return-Path: <linux-kernel+bounces-874110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AA0C15943
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:47:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66257C15892
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 16:41:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CCD3A58E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:37:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A50A7583E9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705BD3469F6;
-	Tue, 28 Oct 2025 15:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78346346E5B;
+	Tue, 28 Oct 2025 15:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGxEJAQM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJmp6vL6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BF1343201
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C381C343201;
+	Tue, 28 Oct 2025 15:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761665720; cv=none; b=hvWiBGmS3pPUEI+2MbNH5/gMbameNuKt+TNe1Mn9fBXF27wIIrEyakQo3UC/5P7Z0zH1JuhUmEwkMNFszqsMr4R1tiprU2EL1rAi9T/C6BhczHOu2ZbXVmvAyiSTg0bTAxlLSk+Rskg3KnxVCnAGD6ezVGYJb8TsMucVZjMoJ+s=
+	t=1761665727; cv=none; b=k39n4KY06rsOaZ0g6bt3JuRtovb9mv8nz7XgVKuKHVB2sBDWa+wifaZOFe+djV5XwGWRazLWtwpQxsktYj2oWqBD50FLq4SZl3AvxPULrBvW77pEU2RVp296hG1UiMiNXyJU4KpATSHpFlMFkhsgQEqA7Qsz+KV2rgaFfXzdZPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761665720; c=relaxed/simple;
-	bh=idLuRWoO+38vK6VRnFxiDUoDHFUs+D0A09Hb5MHGJrA=;
+	s=arc-20240116; t=1761665727; c=relaxed/simple;
+	bh=XDSphA7M0KqEyT9oZXf8qdOBa7UTta4TwmsLygt7ZTc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6bJXRJjAzN/+M8UEmczUMKAdgG+oBZIkOBpqYTqvqhCt7nJsGBehaKz8gwwWLXfa5BsuEAi+wPdN9i7KG588O5W0MNQDuxDOHZzVdJsBNC+ILhi5qeuX3+ko+LuIxooBWkgjppv2T6Ta4jC82eGxLWIBIoNOFtcHAHm44Id2sY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGxEJAQM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF3FC4CEE7;
-	Tue, 28 Oct 2025 15:35:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXn1C0LWy4r9HYVocmBHPvg5HEYgrvLSKybXNAQVa2YybLAfPFiqei60XvMSaekRo5CVATZNgHvXqOtKaYOvGZIWAjELUajt/o6w6Tvus1FfHt9L5weF1ysGVrR1SvahEhwrAWmmvSJm8CDCcUoVIeioZacau9gSf7ZO0gqBpRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJmp6vL6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CE1C4CEE7;
+	Tue, 28 Oct 2025 15:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761665720;
-	bh=idLuRWoO+38vK6VRnFxiDUoDHFUs+D0A09Hb5MHGJrA=;
+	s=k20201202; t=1761665727;
+	bh=XDSphA7M0KqEyT9oZXf8qdOBa7UTta4TwmsLygt7ZTc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JGxEJAQMRAoubDH7yBud7nIGS2ACn25Z+fPf0wgYi87/LQq+3Mft4971TG3JdvGJZ
-	 S02RRI+YPvB0Y978BvnLdGQ/h8yqR6Ss3Qee6PjNLc9vuiKZ5e5vaP34ouiEpIayua
-	 BZwZ91iaLAZVj1u4xWnKFEFFiKarFCIbdweVC/DQ6AdApS2sg9vsXO+POiPfaCss0g
-	 GOwKF7vKNKpu6spb36aJ0TJQRDlsAQgelhAEL34MeC0z4bAnV8XdjG2W3qpy33D917
-	 seipQ2KgA8N1N+XV9/MitQ2UPPsRx/SNhwIdz8aY5in3awlN2+2K225/MT8Gn/8o64
-	 mryuNFfc5QVQw==
-Date: Tue, 28 Oct 2025 15:35:11 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Algea Cao <algea.cao@rock-chips.com>,
-	Derek Foreman <derek.foreman@collabora.com>,
-	Daniel Stone <daniels@collabora.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 0/6] Add HDMI CEC support to Rockchip RK3588/RK3576
- SoCs
-Message-ID: <21eb9cb1-18b2-4cad-9422-c8e995183d53@sirena.org.uk>
-References: <20250903-rk3588-hdmi-cec-v4-0-fa25163c4b08@collabora.com>
- <6f3f126d-72c1-48cb-a9c8-8d354af2a3d5@sirena.org.uk>
- <410fa913-e86b-4ffd-9d79-ce804f0271ff@collabora.com>
- <63003a7e-8d3d-433a-8a44-54fe8740bc3a@collabora.com>
- <5678895e-2647-42db-b3f0-86a21b9bc225@sirena.org.uk>
- <13c3810b-8197-4a42-9089-d20a78b8126f@collabora.com>
+	b=HJmp6vL6dppxzvX5qFWqUolObLjzw6jDD6PsYBDge2koSgO179wZQjpg53H/YEIwF
+	 hQ0rOkVXG38cq/NgEGr2MKN/LKb5Q5qO3o30f32OrvYuMzcHmZQuIHT6vr/LFcpZIm
+	 01SrOw3aNABZL1r3Kjh37SxWZ3tnFkpD5T/LmwDFNUHA5++K+Kzb5pVdaJ/CLs8Zn2
+	 Z7hUrPOuP+PqfpLDkG0HxK5yQNX6MmAMH9TTly9tJQWAOQ8Y6Px6p6CVbc+QBxZKgY
+	 cEEdxRaOiaG1UpTqvwhjp+lvisu/653SH68Z6dT6EMbJh5Bl3Fnor1qnHOA8eMoFcU
+	 q2mQjY2ho+OuQ==
+Date: Tue, 28 Oct 2025 16:35:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 05/70] nsfs: raise SB_I_NODEV and SB_I_NOEXEC
+Message-ID: <20251028-neigen-parken-d722bb0aafc4@brauner>
+References: <20251024-work-namespace-nstree-listns-v3-0-b6241981b72b@kernel.org>
+ <20251024-work-namespace-nstree-listns-v3-5-b6241981b72b@kernel.org>
+ <bbfabc89c545bb7c4bddf48c04408c3d9fc442e7.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Lf6kj6LVwO02h80q"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <13c3810b-8197-4a42-9089-d20a78b8126f@collabora.com>
-X-Cookie: Your canceled check is your receipt.
+In-Reply-To: <bbfabc89c545bb7c4bddf48c04408c3d9fc442e7.camel@kernel.org>
 
+On Mon, Oct 27, 2025 at 09:13:21AM -0400, Jeff Layton wrote:
+> On Fri, 2025-10-24 at 12:52 +0200, Christian Brauner wrote:
+> > There's zero need for nsfs to allow device nodes or execution.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/nsfs.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/nsfs.c b/fs/nsfs.c
+> > index 0e3fe8fda5bf..363be226e357 100644
+> > --- a/fs/nsfs.c
+> > +++ b/fs/nsfs.c
+> > @@ -589,6 +589,8 @@ static int nsfs_init_fs_context(struct fs_context *fc)
+> >  	struct pseudo_fs_context *ctx = init_pseudo(fc, NSFS_MAGIC);
+> >  	if (!ctx)
+> >  		return -ENOMEM;
+> > +	fc->s_iflags |= SB_I_NOEXEC;
+> > +	fc->s_iflags |= SB_I_NODEV;
+> 
+> nit: why not do this in one?
+> 
+> 	fc->s_iflags |= SB_I_NOEXEC | SB_I_NODEV;
 
---Lf6kj6LVwO02h80q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Oct 28, 2025 at 05:24:42PM +0200, Cristian Ciocaltea wrote:
-> On 10/28/25 5:08 PM, Mark Brown wrote:
-> > On Tue, Oct 28, 2025 at 04:57:03PM +0200, Cristian Ciocaltea wrote:
-
-> >> This seems to have been already addressed:
-
-> >> https://lore.kernel.org/all/20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com/
-
-> > Ah, good.  Hopefully that lands soon, do you have any idea what's
-> > holding it up?
-
-> I guess it's just the complexity, since that is part of a larger work concerning DRM bridges:
-
-> https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-
-Oh dear, I'll perhaps follow up there - sometimes this breaks boot
-entirely depending on which way we hit the issue so at least getting the
-revert in would be good.
-
---Lf6kj6LVwO02h80q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkA4q4ACgkQJNaLcl1U
-h9Cw9Qf/biFN62QMrYgXYDbDsegoqDqqsXcMbeehM/Q3ysme4lJKK5trLO/dF7Tx
-AQavE6VnzV0RUdLDEI58E+gA4bQGo+Ox5jnuocJ6P9xN9Bkb1lalO2qQ4WFNWAom
-Tn7WNQxynhmHv55tadxwM7oz/24FsvaI5u5y9CY4TlI7KSPhlps7npoBBusvGZkW
-RHf2O6oHFI9ARVozT57pYoSmiaaa/F7Kf6JBO9okHu6fouEEWBRDnaaXkDt+ooSF
-g7/E8yU8MyapkQCuWdOTsV8DXr0qucasdaAfODubHxv3Y9nRjYt0tL0pyvXKUvCc
-irvr/g+8r0jxqUIgrCg2LbfnyEWDWg==
-=4VOq
------END PGP SIGNATURE-----
-
---Lf6kj6LVwO02h80q--
+done.
 
