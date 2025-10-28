@@ -1,224 +1,126 @@
-Return-Path: <linux-kernel+bounces-873675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66240C14680
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:40:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 927C7C1469B
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 12:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DFD1C3524B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:40:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8EEAC4E633D
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8207307AFB;
-	Tue, 28 Oct 2025 11:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D136E3090DD;
+	Tue, 28 Oct 2025 11:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b="NfyzdffH"
-Received: from mail1.perex.cz (mail1.perex.cz [77.48.224.245])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XDZWADUh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569A51BC41;
-	Tue, 28 Oct 2025 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.48.224.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56031303A38;
+	Tue, 28 Oct 2025 11:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761651600; cv=none; b=PtCS8WTdXmgS/CIvWdaqcXLwuaIUF4y9wMdTEuDlOWR4rA3KYmyd1xoXjHyOT9ATzdN9rEskCSgyhCIPgh5o4RTNRmbD/QCNvSnVDZk02m/40Ay8sBeLWXZw2siXkfIh+gpKsIpKLEHQ0vdbZphtyyDlW/52wwunZQE7WmpE6x4=
+	t=1761651649; cv=none; b=PPxw8iVTHpk3Ti5P1cI0DJL6XYJW/sRyo4YjZHhJuulrYd7XfYcc0zDQFp8ytvbHkrYmfEO8HutERNIebbD/enLEj4sboMsU4iOWgExtWUn8wY7YiVfaChRfsXOnHaS7E2oz64gvvGx9GTc3ZEfwqHB99jHu1khvlHATrrWOelE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761651600; c=relaxed/simple;
-	bh=XVFx8SJbdZrM/48CxwReR4w+sE1ZL93VFdW81KWJopo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=NOMXObQgh2+jltfO8wp/JPoa7fVALAw/9AA/cev9bu32W2N6w0X02hhS0pzGCpQrhbsM2s32+SCfAvjG3wAG9kn4bh6casZ6I4F1jwvQFJSdDqF+VMXrQ7pzoJ45SEQswj5sTjixVEMwc1TubzqZKaXYfsKB7rMG2QadySSFl74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz; spf=pass smtp.mailfrom=perex.cz; dkim=pass (1024-bit key) header.d=perex.cz header.i=@perex.cz header.b=NfyzdffH; arc=none smtp.client-ip=77.48.224.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=perex.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perex.cz
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-	by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 6F7D538C38;
-	Tue, 28 Oct 2025 12:39:47 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 6F7D538C38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-	t=1761651587; bh=PS3nwoVEr99X0Be/ELVpdNni95tGHNA/TGoMqBq23cY=;
-	h=Date:Subject:To:References:From:Cc:In-Reply-To:From;
-	b=NfyzdffHf8xlnFkMcCL3sMT7QIu7PcSGlWoMcbi4pCCllYnRcAhQrIM221PCQkDOs
-	 FydawLfzWDj7cX7KvIwLfbAjaGHgIr6x+CgpTV3vojVT8H2+2gHXer8ryIF9NoAY23
-	 jBipAIAMHmWCpQhofbGhhCIxr7lzUFmuKo2q1aEk=
-Received: from [192.168.100.98] (unknown [192.168.100.98])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: perex)
-	by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-	Tue, 28 Oct 2025 12:39:40 +0100 (CET)
-Message-ID: <9b05914d-34f0-4149-b715-b4af6bba6701@perex.cz>
-Date: Tue, 28 Oct 2025 12:39:38 +0100
+	s=arc-20240116; t=1761651649; c=relaxed/simple;
+	bh=Zm+ETHfHQTaVVdtsPF1GJ121hJhiaTf4ApL7QLbkG78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BfKuKPDF4YimChJI5UtbDwlb01nCOQCY6mGeydDJOU56nLxcfooQeFsMRfVcHEJHdVHx2l1KUSq5qLOmGgTYcBDJE6CqHttvtdLZEcVLRqJyN/MiJNoiUK0OVv/x84iowjVqa2z94YX1QITMzyJU5JlKAbGap+6Yr4sy+jCHK5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XDZWADUh; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761651647; x=1793187647;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Zm+ETHfHQTaVVdtsPF1GJ121hJhiaTf4ApL7QLbkG78=;
+  b=XDZWADUhEfXnkda/C/PomLUW6YV7oKDb4KDmQhS8aZRdSRrEoSVDcS8M
+   M8Tcjku/wXS7JjOzIX0cae1L5YONThvzavSJACVTCw601fRhuyHyNzdzx
+   3izIyWxB66Zpg927Yv5a/cCgMPCM104BBsclyaRYgiTSpkQk5IZaP3gMk
+   DIJCKBD5GNWocKb0P+3aKDOjEnWnKm1I4eHN9AGwQYDZKs7hvMkZY3eSu
+   PtjrNr7Y2mvnbyhjytpEk3FteS6ywlpLOT2EBeJwspCZEZMQIOqrF3Vlk
+   jfe+AQ0zpLzuiQEKghgTFIhVxOLBgCoCEO6/WTV+2LP34wCGujctuUVBS
+   g==;
+X-CSE-ConnectionGUID: 8kDi/7gDSVusayX+TWQurQ==
+X-CSE-MsgGUID: NeNjj0acTLSHXtNjF4+yUg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63784833"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63784833"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 04:40:47 -0700
+X-CSE-ConnectionGUID: K3LoQzDVTaaqlrUpRPVskw==
+X-CSE-MsgGUID: 9hahvjJkTBSqd3lLPuLjog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="222533468"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 04:40:44 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDi49-00000003IcZ-110I;
+	Tue, 28 Oct 2025 13:40:41 +0200
+Date: Tue, 28 Oct 2025 13:40:41 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Miaoqian Lin <linmq006@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Angelo Dureghello <adureghello@baylibre.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] iio: dac: ad3552r-hs: fix out-of-bound write in
+ ad3552r_hs_write_data_source
+Message-ID: <aQCruaNsGD24PFEk@smile.fi.intel.com>
+References: <20251027150713.59067-1-linmq006@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: sound: Increase max size of components field
-To: Maciej Strozek <mstrozek@opensource.cirrus.com>,
- Takashi Iwai <tiwai@suse.de>
-References: <20251023092754.84095-1-mstrozek@opensource.cirrus.com>
- <318f2ed3-57e6-495c-a773-4a094a3784cb@perex.cz> <87ikg03ecf.wl-tiwai@suse.de>
- <3cb73dae8e8ac1a29c856dc5c86064d568003316.camel@opensource.cirrus.com>
-From: Jaroslav Kysela <perex@perex.cz>
-Content-Language: en-US
-Autocrypt: addr=perex@perex.cz; keydata=
- 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
-Cc: ALSA development <alsa-devel@alsa-project.org>,
- patches@opensource.cirrus.com,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- Kernel development <linux-kernel@vger.kernel.org>
-In-Reply-To: <3cb73dae8e8ac1a29c856dc5c86064d568003316.camel@opensource.cirrus.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027150713.59067-1-linmq006@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/27/25 12:50, Maciej Strozek wrote:
-> W dniu pon, 27.10.2025 o godzinie 10∶04 +0100, użytkownik Takashi Iwai
-> napisał:
->> On Thu, 23 Oct 2025 13:56:26 +0200,
->> Jaroslav Kysela wrote:
->>>
->>> Or, we may introduce a separate ioctl for the components string.
->>> The
->>> stripped components string in struct snd_ctl_card_info may have a
->>> special ASCII mark like '>' at the end of string specifying the
->>> availability of the complete string through another ioctl. I would
->>> prefer this solution.
->>>
->>> Also, the components string may be dynamic in the kernel structure
->>> (pointer) to save some space. 256 bytes is not small number.
->>
->> As Jaroslav suggested, we need a different solution to keep the
->> compatibility.
->>
->> My gut feeling is for the option to provide a new ioctl as it can be
->> most straightforward, but we can discuss further which is the good
->> choice.
->>
+On Mon, Oct 27, 2025 at 11:07:13PM +0800, Miaoqian Lin wrote:
+> When simple_write_to_buffer() succeeds, it returns the number of bytes
+> actually copied to the buffer, which may be less than the requested
+> 'count' if the buffer size is insufficient. However, the current code
+> incorrectly uses 'count' as the index for null termination instead of
+> the actual bytes copied, leading to out-of-bound write.
 > 
-> Thank you for the advice! Not sure if I understand Jaroslav's new ioctl
-> approach properly, can you have a look at the quick draft below and say
-> if this is (more or less) what you would expect? If it is OK then I
-> will prepare a proper V2 patch here with a corresponding change for
-> alsa-lib repo too.
-> 
-> 
-> diff --git a/include/sound/core.h b/include/sound/core.h
-> index 0eb2e3ee0dd5..c4e52fb1704b 100644
-> --- a/include/sound/core.h
-> +++ b/include/sound/core.h
-> @@ -88,7 +88,9 @@ struct snd_card {
->          char irq_descr[32];             /* Interrupt description */
->          char mixername[80];             /* mixer name */
->          char components[256];           /* card components delimited
-> with
-> -                                                               space
-> */
-> +                                                       space */
-> +       char *components_pointer;       /* full components string */
-
-Keep only this, remove the array and don't use the length member (null 
-terminated string).
-
-> +       size_t components_pointer_len;  /* length of full components
-> string */
->          struct module *module;          /* top-level module */
->   
->          void *private_data;             /* private data for soundcard
-> */
-> @@ -297,6 +299,7 @@ int snd_card_info_init(void);
->   int snd_card_add_dev_attr(struct snd_card *card,
->                            const struct attribute_group *group);
->   int snd_component_add(struct snd_card *card, const char *component);
-> +int snd_card_add_components(struct snd_card *card, const char
-> *component);
->   int snd_card_file_add(struct snd_card *card, struct file *file);
->   int snd_card_file_remove(struct snd_card *card, struct file *file);
->   
-> diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
-> index c302698fb685..7d53f6da59e2 100644
-> --- a/include/uapi/sound/asound.h
-> +++ b/include/uapi/sound/asound.h
+> Add a check for the count and use the return value as the index.
 
 ...
 
-> +struct snd_ctl_card_components {
-> +       int len;
-> +       unsigned char *components;
->   };
+> +	if (count >= sizeof(buf))
+> +		return -ENOSPC;
 
-Use array here. It makes things simpler. Perhaps, we can use 512 bytes / 
-characters here to avoid future problems.
+This is already done below.
 
->   int snd_component_add(struct snd_card *card, const char *component)
->   {
->          char *ptr;
->          int len = strlen(component);
-> +       int new_len;
-> +       char *buffer;
->   
->          ptr = strstr(card->components, component);
->          if (ptr != NULL) {
-> @@ -1035,8 +1040,28 @@ int snd_component_add(struct snd_card *card,
-> const char *component)
->                          return 1;
->          }
->          if (strlen(card->components) + 1 + len + 1 > sizeof(card-
->> components)) {
+>  	ret = simple_write_to_buffer(buf, sizeof(buf) - 1, ppos, userbuf,
+>  				     count);
+>  	if (ret < 0)
+>  		return ret;
 
-I don't think that it's the right place to do the striping here. Just keep the 
-full string in snd_card structure and handle the split/trim in 
-snd_ctl_card_info().
+...
 
-The new ioctl should return the full components string.
+> -	buf[count] = '\0';
+> +	buf[ret] = '\0';
 
-					Jaroslav
+Do we have an actual issue right now? Can you model it and show a real
+traceback?
 
 -- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+With Best Regards,
+Andy Shevchenko
+
 
 
