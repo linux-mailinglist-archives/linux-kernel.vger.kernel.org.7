@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-873870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC99C14F90
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:50:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBA9BC14F5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 492C964005A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:46:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA154188DE9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 13:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10A821A425;
-	Tue, 28 Oct 2025 13:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFF92253EC;
+	Tue, 28 Oct 2025 13:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbIWaBei"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zx7oSTRF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBFC21257A
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED626221F24
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 13:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761659175; cv=none; b=m/5RXg3K7niBQUoLHXkbPLdzUEu0KEdmGImVqFeykptGHJUctRWMlqfDvmfDSt40Ie7+cwnbc4w7HnreWbZJYBi8Qyudbc6Mnl9HBSCqwa8mOGy00dQ+SWzr9pxZOJSQ1UZpmNt5Dv1pHFzwJ4JoN+Y+OOlkEl9KhIgWQOyLZPU=
+	t=1761659177; cv=none; b=hcevC4zRzuEXqUFFraQ0b2UJXWCgdj2u7TO4Cy0Fp1CpdoTe5flol+bkiEv/OuvSgi2up8AOsRLmj66CqUpwZ00eHafgKjo9RMeDmFFWUiELWmfSV+XZPavis/XkyiVOzl/XWf1FGBmm/WESkr/CoP8qunhkMp5h35Q5gETvP8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761659175; c=relaxed/simple;
-	bh=LlBb+fjEXY7pk5bLYeRPSGKs235lp02bYGC9Yerww5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CY+VVFetWw41bIjfUs2cIQL5ZfSWjy75hKAGc3VvsXM8CdTJxWZBngeLoa0JeRMdmjAE8Empt6pZn7Jv4mDPMArxZhmcRJbUyrHrPLe4vZ3yJbhsM6HJ9S84+urdAZUnB08R88L/0zTx8zgQ0Gu1kv1WKs9q3byA2t4GYVuQxic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbIWaBei; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D961C4CEFD;
-	Tue, 28 Oct 2025 13:46:10 +0000 (UTC)
+	s=arc-20240116; t=1761659177; c=relaxed/simple;
+	bh=w7f3xidSiMuMp3mDXJlUUc5D0wccUhU3tupiMlxaRc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=CtnYX5IaPtf9uMSbLqzJ+Xj8ge+oyXH3zedYnbJDBVA9xhKUf7JLJwPa38np7a/3mmwYwjX5Lll8c34k533m4Fgpc4ifrtEmPssVNkMWkWcInzvQmSbVDT15cV5wL0qg7T0tCT6/SBNYVr2F2gxjhACNtFBtOOh8ak1t2QAhLNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zx7oSTRF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0478FC4CEF7;
+	Tue, 28 Oct 2025 13:46:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761659173;
-	bh=LlBb+fjEXY7pk5bLYeRPSGKs235lp02bYGC9Yerww5s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=nbIWaBeiEYMseuyMZPlLpTCcCAWZ+d4qj/0opPJvaTB2UecTlKEnY6AYxodojKA0d
-	 aFE6qBst7TuCBV7AxhcfHz30XbTxNSxPDF1JGJ2UWSOkwyxUFP1SXCpRUYMylpbOuJ
-	 5Q0smUVG9B+sThYBACe8XjEpLS71QsDLltnxN9+fU/KVq6DPtDYzjBHcfHj+ckGLOn
-	 cAX2xGsD+u8ObwTRKPDjk2BDQON/feCriS2me2CXM8oLBAIz4JfZW11p1NvXZPtENZ
-	 505iBHXpxsc41AfzpS3FSrLENLGuL/fQ7ale6Tpvo10kZtnJi15LyJM7GJsKtD0qfU
-	 md7OiTlGssrqA==
+	s=k20201202; t=1761659176;
+	bh=w7f3xidSiMuMp3mDXJlUUc5D0wccUhU3tupiMlxaRc0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Zx7oSTRFwurmTdWXau1Z5IYE1gJR/tV9SO4p/Ycxp5J5gqUa4EVZiXTDQw7EMmww0
+	 fJ7GOUecF3mfVIVyQvXD/Gn/rJ+UH6togC0DNUVAEc6v6Bdwm0TbtjyJkGmx2EC1Yx
+	 e4Pb6WKzbseYp8fk0qIdvvJ7n7qR7sU0hZqco4RKlUyDLBlRJOmmGxAPQqfW67/7bc
+	 W09jBQgot9r1DgricVqPjJ/MIM+WgBCtsNyGvo/q+//c54kQdrV++ZDInpwlxDchbR
+	 EkidB072S6NQlCijuPnBx8TeEivoLS9NLH6vPrIf1JlN9NuAlS0U4XnJVQHir6lN9l
+	 BISEH5KanAWQw==
 From: Philipp Stanner <phasta@kernel.org>
 To: Matthew Brost <matthew.brost@intel.com>,
 	Danilo Krummrich <dakr@kernel.org>,
@@ -52,33 +53,52 @@ To: Matthew Brost <matthew.brost@intel.com>,
 	tursulin@ursulin.net
 Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] drm/sched: Document potential forever-hang
-Date: Tue, 28 Oct 2025 14:46:00 +0100
-Message-ID: <20251028134602.94125-2-phasta@kernel.org>
+Subject: [PATCH 1/2] drm/sched: Fix comment in drm_sched_run_job_work()
+Date: Tue, 28 Oct 2025 14:46:01 +0100
+Message-ID: <20251028134602.94125-3-phasta@kernel.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251028134602.94125-2-phasta@kernel.org>
+References: <20251028134602.94125-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-While implementing a similar feature for drm_jobqueue I was looking for
-inspiration in drm_sched and found this problem here. Now I have two
-problems instead of one ^^'
+drm_sched_run_job_work() contains a comment which explains that an
+entity being NULL means that there is no more work to do. It can,
+however, also mean that there is work, but the scheduler doesn't have
+enough credits to process the jobs right now.
 
-Anyways, this is not a huge issue since it's unlikely to occur – but we
-should document it.
+Provide this detail in the comment.
 
-Philipp Stanner (2):
-  drm/sched: Fix comment in drm_sched_run_job_work()
-  drm/sched: Add FIXME detailing potential hang
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+---
+ drivers/gpu/drm/scheduler/sched_main.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
- drivers/gpu/drm/scheduler/sched_main.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index c39f0245e3a9..492e8af639db 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -1237,8 +1237,13 @@ static void drm_sched_run_job_work(struct work_struct *w)
+ 
+ 	/* Find entity with a ready job */
+ 	entity = drm_sched_select_entity(sched);
+-	if (!entity)
+-		return;	/* No more work */
++	if (!entity) {
++		/*
++		 * Either no more work to do, or the next ready job needs more
++		 * credits than the scheduler has currently available.
++		 */
++		return;
++	}
+ 
+ 	sched_job = drm_sched_entity_pop_job(entity);
+ 	if (!sched_job) {
 -- 
 2.49.0
 
