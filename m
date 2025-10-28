@@ -1,203 +1,369 @@
-Return-Path: <linux-kernel+bounces-874444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65D8C165C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:01:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151E0C165CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 19:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE99E3BAECB
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 212353B2E0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47BF534B1A1;
-	Tue, 28 Oct 2025 17:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CFC347BA3;
+	Tue, 28 Oct 2025 17:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eHx5i/SY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZQMZwasl";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="aV2KYEJn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE2347BA3
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B33147C9B
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761674179; cv=none; b=BVVpS3cBlPkQK+wBMHa8PodhOKKFUocM28TXGi3iJESO5dIgVfc3ngYSweSlrUJgTXlcsHCtJdJi5IQ7BYyKRgo1y46fUu7151MbGzCWND+FSKFXwGmfqrg++bucUZc7RPlzQHVKnfMbImZXT9H2Bv9OZGOt/OcMlQD82iUzh9s=
+	t=1761674190; cv=none; b=KdeFeqvIIZntPuD66rdY7Vccy6vwTE4C93+qQpcAvEEFS7V2NWenFHqWE7m92g+0czQvvnbYi9oaK0ujAYsA5Xgor2cRrb0jBddqQi7Jx9HA3kHsTtcQY/eIOhIVbI1XrSWP42dpUDuPQzECVz7B/XENZItUYtVVTgu0VToLqnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761674179; c=relaxed/simple;
-	bh=ixAv4f+ol10qMkv/OLbSXev4ui1XzEtPKfJ3O1UP9lM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LawgvYM93EIwCrRSnCTy4e7ahIQ7vlp5Sq6y7DvgrHcR5RjQHP/GoT3gaXudjZRX+Gm531oMhVOvcWiPttXZ0AAPiKPMBMhDKRopYgqBblwcJSRotUWnUuaKTaSNx/rSUGYCYhTRAZbSZeeVEWSfluGHBSZ9G2DTTu1hMRmqmqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eHx5i/SY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761674177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=g6eToIGweByE2pHgRfb2gPb2S77u3+GTDDQYyAyPH+k=;
-	b=eHx5i/SYMOBOsGES7TldI6jgNaJkmrY+mNjvjUP3f7HV55MTId6U7KIfxwgNCbtUhDAGDb
-	xLPTkw3XK4JnK3I5XbfPU5iUmVDgjVeQqa7s30qlb4fZQrt0Ssbpgo/4g/UO8hOaHUMCf7
-	hku9QQx+9CnrVb6UOkDqFzNHsCNfFGo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-287-yVSi86L_MTudQ7rEldBHfQ-1; Tue, 28 Oct 2025 13:56:15 -0400
-X-MC-Unique: yVSi86L_MTudQ7rEldBHfQ-1
-X-Mimecast-MFC-AGG-ID: yVSi86L_MTudQ7rEldBHfQ_1761674174
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-475db4369b1so27533175e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:56:15 -0700 (PDT)
+	s=arc-20240116; t=1761674190; c=relaxed/simple;
+	bh=BU+1uKz5/jgwSY1VQmOs7TZswDg7x58zBa+tGrlAkYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iNbqbUf16lJyfF0cVbLS3vcg1/lDn2A9hXnvhI+r7kpAPIazVlbrMz7Sh7Z7GnX6DLjowRxvs7fjscVFYA+wy5boKcoHJGzswI8Qr2+W6ffuFuWpEV3Jxlj1oHuiHFmyCFe/PpqChqyKu3D1Q30Tt2d1ioJZoRIa0aLrXCcrE0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZQMZwasl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=aV2KYEJn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SEoBqi1966786
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:56:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=CY9mwslQZrSmHpkIizgzfQQ2+GJStg23eN8
+	tQn05XQo=; b=ZQMZwasldXcYJDgrLA4j0Az+52AFAe0dR2C4SgdrGysElleU/mn
+	tkeMymAT+kVlfS8cJGNgXaMrome+6covd/PV9gw0sfqtST9TiWyoEBC96qSntzfC
+	sI05m3RZCi3AxGnbpKLmXkPSIfSZDv5g3fKWyzhz8gxjKtbAzrKMUvzYr0fUibMb
+	pCJb/CZXtmDA/aiVbU6ldHSUJMLFQnPHL9QWeSznImbh97txzZpmjvpvZPMJRFdX
+	J0Avk49y43m0MaoBcqql2PO2/Uoshz81s0tCOC9nKWz+9nLnqLa/54HYNDr+iFZN
+	J3EqnxSDaFxNNKe8A0FNSP5kIJ0thtov/IQ==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a2w51s5wf-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:56:28 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-294baa12981so1393575ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:56:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761674187; x=1762278987; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CY9mwslQZrSmHpkIizgzfQQ2+GJStg23eN8tQn05XQo=;
+        b=aV2KYEJnKYcGEAsM5ta9OhtcFmm9yACkFf2rBrVz9sKXTcgfY4xz/xyOR7/cQb9xUL
+         aFTYDqNzFoyx6zhMgj3JjC/ZyI2yuqlzwysiXfYNn8mUpl31zGPKLr2GDvyZsnm37pYW
+         Ad7bO0GN7KC/YEcO/8S4EVtalBnIzm/53DEwkAHWi7BAGLUp0hjdFfGPrFMJx0iNhMam
+         CVfXGlQJRicDsLCC6nMgx7SQogDEH10orSYXiWivTgY1ZpSDzk/EPt4LH4uXY+FPSBBN
+         I3jWxk+Qw471VdO0MS/x7x3B4B1XwFLWfx9D1DNzPkp+vd6+pxireCpWg5VNO8W4EJ/K
+         7jaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761674174; x=1762278974;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761674187; x=1762278987;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g6eToIGweByE2pHgRfb2gPb2S77u3+GTDDQYyAyPH+k=;
-        b=SZBS7G9ep3E7vX8G8swBXydp6JZS+zdYZwklHgK1c46sWdDv0Fhqs0SLlCv9hUaIFA
-         UKcXm38d7z3RR0u/JmHEdj5F/V2WWYjUSXp7y6ZsFEinBVk8cUbHSeis9FM8KN2csSAe
-         eFyKTNt5gyZ32V/esLCwbSDwN8A6cxkaUTdbZSKdlO9XCFtzk2LHcBf0Efd6Ezi5ngdG
-         RJVwvz1MOt/q9iq5ao5+m2UwdU6zf7FRRhtviFuH/U9xFjcSu1OCbCDubLurMZEQtNb3
-         GcUg5WxWK2kXBRa6zgqq+umR92s4yPWGjxrEBlB0LrCJkpIDALj1acvhgTGG6BiSw8PL
-         FkyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHoksLqZCD8JPf0jctAV2nhCsXSttO1+FCRVl/4XdMuc9A/h/2vRQx5RCQP7o5vo/uJUWnCmZ7/fELyxs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZg/6Men0FQQPMkkppYcEdy4DuW4d2GYxmbJloy9i8awJ5Owp6
-	6SqgdmZXV5mvGxBkpdFGxRldg5H4+r8eM525VWqQgLosZgNqwaNLOz+aNQFBNKxyisLURlhabtx
-	ZR4RlJ+McylsQJ7RufSVmQ5c/bYDSyRMKDoCV5PWUzwsSWjRG3FYYDwkmKecbc37L3g==
-X-Gm-Gg: ASbGncs36uO22/hTPF5MUzEeHuGVsrsrXo1azt1GW+N6+cRsggRCWh9NFJB+BGiSXgn
-	ezCGPwR/aoq9TksW2/eTW0ixaRRPu1tMFoRAUBOgO39eEuIjOD5zjdxP+gIB/Hk9rWWAQY37kXA
-	7gjdj7FG4kGWoaPCaSt/WW2OcfYcYRwn7AqMETlXzMp2sJDIsdiez5N0IsjaWt2twGYVAeiZiR6
-	V7VigCYAUAUoGWf92vsv0yJkn0LQeJYtaHGJuZaZXWF0few4xeDHTH+FQJRmHADSalfxLKKiKZk
-	ojfQmFhfoSGvzOqtkJp8mRgPS9aiImkjBlGHVjl660jwiptR2FP/cbWcB70FF9szVjViT6WAfNd
-	DTARe8VZpoz5PqDXxT1pBbjCF7416DmNKVn8194s=
-X-Received: by 2002:a05:600c:4e56:b0:471:989:9d7b with SMTP id 5b1f17b1804b1-4771e1de250mr3042785e9.21.1761674174513;
-        Tue, 28 Oct 2025 10:56:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEY4oqI01ymhTqStAjkQ0EYI9rwIiErh5/4NzRqUPCO8tW2HD5t4ifGkOgJh9RHOuRsKfElhQ==
-X-Received: by 2002:a05:600c:4e56:b0:471:989:9d7b with SMTP id 5b1f17b1804b1-4771e1de250mr3042165e9.21.1761674174052;
-        Tue, 28 Oct 2025 10:56:14 -0700 (PDT)
-Received: from [192.168.200.155] (host-80-81-2-50.customer.m-online.net. [80.81.2.50])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de4a1sm21724189f8f.37.2025.10.28.10.56.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 10:56:13 -0700 (PDT)
-Message-ID: <e2a89e74-1533-4a83-8d0f-3f4821750e25@redhat.com>
-Date: Tue, 28 Oct 2025 18:56:10 +0100
+        bh=CY9mwslQZrSmHpkIizgzfQQ2+GJStg23eN8tQn05XQo=;
+        b=ulHWbNA5kKeJZZxhBrfDPLk+Z39agX7IwfSFIByRvOnwYWb6/TQBfIiZQFk9m6lr3m
+         /N5YLv0sOLL2jN/V16Fk0OV7UBIqdnHPHu7xfZFcPIll957ym9NIQr0+aXlw7gSZ2HLg
+         TNbhSnOJRyKe15Z6sl/uvylT/aSjbtCxhuvd4fVK5idVm21ohy3FWhljz+zG947xmSb7
+         a6SJ2QFBjwpumx1M8ylFzklVKjsCp6WmZS/NRZFFVw8p7iSVJDtmZ+X1wQ6U2s9ZwnNV
+         eqmvK2E1pwlJkBlk5iIYQmzqmRjdY61ChffND+eJwLtsLGToeSGumHrqHDAwboIYtkJ5
+         8BWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwUFaqU9B0GdjAxmgZRq8Pl5p0GrrF8aqrB7Ghk3026sO/LbQkcUd9JNcQz2azeX8x6Snk0vbwd13psFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdtoILoU8zmdr0coEIGogSgdG3LA9bgbo7JEemNcI5sx5v5Wnh
+	xJVBWhdTlD5AA8Jhqmfoxb83x+5k4t7MpCc9ScpOydZtBwAH1xpEAW8nnx1x3wkhLYrM9ZWA/8h
+	RkiKQQAR9SIAvxCgScyt0uaJ/9gz7b5D68AZvM9dHbHmN2bn8Jg27m2DtI3tgg4Crg4JPFIE1V1
+	M=
+X-Gm-Gg: ASbGncsVGpgycXVeELqaDyq9kOgH5sKmfQ521u9FE/7IdGRE39qQhB39DQ54U8soXp5
+	GkQr9EinSQTnAcRSVM7I5Cxv7oo9QTqegEXVWk8aSBRNuej2K/PyPeL2P5aCu0bVO2ccjt1bzgO
+	5rmcsyAwnPoGCpeOP6hB+JastGasTZq7XLi4/N/A17IHzEXVchUgG0Ru1Mc1bJ5SFoYxErhzUOC
+	4Zvx6UqfMZJk2MWdGopwy3l1T3ltDBi0f2Ov+IwWFe/xTZdKcZssEFGVuZ5Zsv/4FJLG0duKaa8
+	TYf8kyHTcb5IR6bc8HtTY4TBnOUYnjCCdDj2fCQuJKfsEeXgCWXMxwzOuHvc21YcVDqM5TvZvEx
+	2k4BL6KxO11omi7srpppBiDQK4G0Htw==
+X-Received: by 2002:a17:902:c402:b0:25b:e5a2:fb29 with SMTP id d9443c01a7336-294de82e2d6mr1592025ad.12.1761674187320;
+        Tue, 28 Oct 2025 10:56:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHPuFgeocQDH0Y+5SaMQQ4Is2hmA57zZXLDOQQK2fjGOF5JGuBzPwVO7n9W9+CQy6rRjA3x3A==
+X-Received: by 2002:a17:902:c402:b0:25b:e5a2:fb29 with SMTP id d9443c01a7336-294de82e2d6mr1591575ad.12.1761674186643;
+        Tue, 28 Oct 2025 10:56:26 -0700 (PDT)
+Received: from hu-neersoni-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d4254asm126628705ad.82.2025.10.28.10.56.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 10:56:26 -0700 (PDT)
+From: Neeraj Soni <neeraj.soni@oss.qualcomm.com>
+To: andersson@kernel.org, konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        neeraj.soni@oss.qualcomm.com
+Subject: [PATCH v2] soc: qcom: ice: Add HWKM v1 support for wrapped keys
+Date: Tue, 28 Oct 2025 23:26:23 +0530
+Message-Id: <20251028175623.1054084-1-neeraj.soni@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 mm-new 06/15] khugepaged: introduce
- collapse_max_ptes_none helper function
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Nico Pache <npache@redhat.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, ziy@nvidia.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- akpm@linux-foundation.org, baohua@kernel.org, willy@infradead.org,
- peterx@redhat.com, wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- kas@kernel.org, aarcange@redhat.com, raquini@redhat.com,
- anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
- will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- pfalcato@suse.de
-References: <20251022183717.70829-1-npache@redhat.com>
- <20251022183717.70829-7-npache@redhat.com>
- <5f8c69c1-d07b-4957-b671-b37fccf729f1@lucifer.local>
- <063f8369-96c7-4345-ab28-7265ed7214cb@linux.alibaba.com>
- <9a3f2d8d-abd1-488c-8550-21cd12efff3e@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <9a3f2d8d-abd1-488c-8550-21cd12efff3e@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: JmdOBaQo3kWjuDIbmbMnNJObIX9BQ8ON
+X-Authority-Analysis: v=2.4 cv=YMiSCBGx c=1 sm=1 tr=0 ts=690103cc cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=vY7nf_sd2vNLmu096JAA:9 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-ORIG-GUID: JmdOBaQo3kWjuDIbmbMnNJObIX9BQ8ON
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE1MCBTYWx0ZWRfX3Cso8+O55ow4
+ j09kmHXrSOT2GUUHEfeh0y1TMo8cHzFt67LN0V8KBOCgiqLNmlgN+5Hpns3JDbSCfhzXh8iLlNN
+ b51z7ek416D711DY75BVW/rkzrD8V+htleK6hUKJvNgPs4SoijSmuj4BDvGzbYMmXb7eByzDHoZ
+ UYwVzUR4d9cKDu+KRJdqnRq4G7MtSIeJjvZLSXIXV/7CYNDRR0ilUjnPJp4orcLkM4ykgHbJZii
+ eG4XgQBzxRGWB/2t/OvPkcNZCVyTO+kTKomHT7qvHtkKVCCKLBcui2PSDGGcW27xkt7Vbs/GbkX
+ VtOse+J0rPbznRLOtzuPe7g0bochqHYVtFPDkPFmAgQSol63+JzB3p8ebVBBcyKJePnAXHcRlpB
+ GrlcXCQPHlJm35OPxGxGbJAetIoD5A==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-28_06,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 suspectscore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 spamscore=0 bulkscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510020000 definitions=main-2510280150
 
-[...]
+HWKM v1 and v2 differ slightly in wrapped key size and the bit fields for
+certain status registers and operating mode (legacy or standard).
 
-> 
->> towards David's earlier simplified approach:
->> 	max_ptes_none == 511 -> collapse mTHP always
->> 	max_ptes_none != 511 -> collapse mTHP only if all PTEs are non-none/zero
-> 
-> Pretty sure David's suggestion was that max_ptes_none would literally get set to
-> 511 if you specified 511, or 0 if you specified anything else.
+Add support to select HWKM version based on the major and minor revisions.
+Use this HWKM version to select wrapped key size and to configure the bit
+fields in registers for operating modes and hardware status.
 
-We had multiple incarnations of this approach, but the first one really was:
+Support for SCM calls for wrapped keys is being added in the TrustZone for
+few SoCs with HWKM v1. Existing check of qcom_scm_has_wrapped_key_support()
+API ensures that HWKM is used only if these SCM calls are supported in
+TrustZone for that SoC.
 
-max_ptes_none == 511 -> collapse mTHP always
-max_ptes_none == 0 -> collapse mTHP only if all non-none/zero
+Signed-off-by: Neeraj Soni <neeraj.soni@oss.qualcomm.com>
+---
 
-And for the intermediate values
+Changes in [v2]
+- Added "ice:" in subject.
+- Introduced QCOM_ICE_HWKM_MAX_WRAPPED_KEY_SIZE macro for maximum HWKM
+  wrapped key size.
+- Updated comment for HWKM availability in qcom_ice_check_supported() for
+  ICE version earlier to "3.2.0".
+- Updated the if (major == 4) check in qcom_ice_check_supported() to
+  if (major > 3) to select HWKM v2 version for all ICE revisions after
+  "3.2.0".
+- Fixed "Hard Ware" to "Hardware" in dev_info() print for HWKM version in
+  qcom_ice_check_supported().
+- Used QCOM_ICE_HWKM_MAX_WRAPPED_KEY_SIZE in BUILD_BUG_ON() in
+  qcom_ice_hwkm_init().
+- Removed redundant else condition for HWKM version in qcom_ice_hwkm_init()
+  as it was impossible to reach.
+- Removed redundant parentheses in translate_hwkm_slot().
 
-(1) pr_warn() when mTHPs are enabled, stating that mTHP collapse is not 
-supported yet with other values
-(2) treat it like max_ptes_none == 0 or (maybe better?) just disable 
-mTHP collapse
+Change in [v1]
+- Added initial support for HWKM v1 for wrapped keys.
+---
+ drivers/soc/qcom/ice.c | 84 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 61 insertions(+), 23 deletions(-)
 
-
-I still like that approach because it let's us defer solving the creep 
-problem later and doesn't add a silent capping.
-
-Using intermediate max_ptes_none values are really only reasonable with 
-the deferred shrinker today. And that one does not support mTHP even 
-with this series, so it's future work either way.
-
+diff --git a/drivers/soc/qcom/ice.c b/drivers/soc/qcom/ice.c
+index c467b55b4174..20584384ed31 100644
+--- a/drivers/soc/qcom/ice.c
++++ b/drivers/soc/qcom/ice.c
+@@ -22,7 +22,18 @@
+ #include <soc/qcom/ice.h>
+ 
+ #define AES_256_XTS_KEY_SIZE			64   /* for raw keys only */
+-#define QCOM_ICE_HWKM_WRAPPED_KEY_SIZE		100  /* assuming HWKM v2 */
++
++#define QCOM_ICE_HWKM_V1			1    /* HWKM version 1 */
++#define QCOM_ICE_HWKM_V2			2    /* HWKM version 2 */
++
++#define QCOM_ICE_HWKM_MAX_WRAPPED_KEY_SIZE	100  /* Maximum HWKM wrapped key size */
++
++/*
++ * Wrapped key size depends upon HWKM version:
++ * HWKM version 1 supports 68 bytes
++ * HWKM version 2 supports 100 bytes
++ */
++#define QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(v)	((v) == QCOM_ICE_HWKM_V1 ? 68 : 100)
+ 
+ /* QCOM ICE registers */
+ 
+@@ -62,13 +73,15 @@ union crypto_cfg {
+ 
+ #define QCOM_ICE_REG_HWKM_TZ_KM_CTL		(HWKM_OFFSET + 0x1000)
+ #define QCOM_ICE_HWKM_DISABLE_CRC_CHECKS_VAL	(BIT(1) | BIT(2))
++/* In HWKM v1 the ICE legacy mode is controlled from HWKM register space */
++#define QCOM_ICE_HWKM_ICE_LEGACY_MODE_ENABLED	BIT(5)
+ 
+ #define QCOM_ICE_REG_HWKM_TZ_KM_STATUS		(HWKM_OFFSET + 0x1004)
+ #define QCOM_ICE_HWKM_KT_CLEAR_DONE		BIT(0)
+ #define QCOM_ICE_HWKM_BOOT_CMD_LIST0_DONE	BIT(1)
+ #define QCOM_ICE_HWKM_BOOT_CMD_LIST1_DONE	BIT(2)
+-#define QCOM_ICE_HWKM_CRYPTO_BIST_DONE_V2	BIT(7)
+-#define QCOM_ICE_HWKM_BIST_DONE_V2		BIT(9)
++#define QCOM_ICE_HWKM_CRYPTO_BIST_DONE(v)	(((v) == QCOM_ICE_HWKM_V1) ? BIT(14) : BIT(7))
++#define QCOM_ICE_HWKM_BIST_DONE(v)		(((v) == QCOM_ICE_HWKM_V1) ? BIT(16) : BIT(9))
+ 
+ #define QCOM_ICE_REG_HWKM_BANK0_BANKN_IRQ_STATUS (HWKM_OFFSET + 0x2008)
+ #define QCOM_ICE_HWKM_RSP_FIFO_CLEAR_VAL	BIT(3)
+@@ -97,6 +110,7 @@ struct qcom_ice {
+ 	struct clk *core_clk;
+ 	bool use_hwkm;
+ 	bool hwkm_init_complete;
++	u8 hwkm_version;
+ };
+ 
+ static bool qcom_ice_check_supported(struct qcom_ice *ice)
+@@ -114,9 +128,26 @@ static bool qcom_ice_check_supported(struct qcom_ice *ice)
+ 		return false;
+ 	}
+ 
++	/* HWKM version v2 is present from ICE 3.2.1 onwards while version v1
++	 * is present only in ICE 3.2.0. Earlier ICE version don't have HWKM.
++	 */
++	if (major > 3 ||
++	   (major == 3 && (minor >= 3 || (minor == 2 && step >= 1))))
++		ice->hwkm_version = QCOM_ICE_HWKM_V2;
++	else if ((major == 3) && (minor == 2))
++		ice->hwkm_version = QCOM_ICE_HWKM_V1;
++	else
++		ice->hwkm_version = 0;
++
+ 	dev_info(dev, "Found QC Inline Crypto Engine (ICE) v%d.%d.%d\n",
+ 		 major, minor, step);
+ 
++	if (!ice->hwkm_version)
++		dev_info(dev, "QC Hardware Key Manager (HWKM) not supported\n");
++	else
++		dev_info(dev, "QC Hardware Key Manager (HWKM) version v%d\n",
++			 ice->hwkm_version);
++
+ 	/* If fuses are blown, ICE might not work in the standard way. */
+ 	regval = qcom_ice_readl(ice, QCOM_ICE_REG_FUSE_SETTING);
+ 	if (regval & (QCOM_ICE_FUSE_SETTING_MASK |
+@@ -131,19 +162,18 @@ static bool qcom_ice_check_supported(struct qcom_ice *ice)
+ 	 * v3.2.1 and later have HWKM v2.  ICE v3.2.0 has HWKM v1.  Earlier ICE
+ 	 * versions don't have HWKM at all.  However, for HWKM to be fully
+ 	 * usable by Linux, the TrustZone software also needs to support certain
+-	 * SCM calls including the ones to generate and prepare keys.  That
+-	 * effectively makes the earliest supported SoC be SM8650, which has
+-	 * HWKM v2.  Therefore, this driver doesn't include support for HWKM v1,
+-	 * and it checks for the SCM call support before it decides to use HWKM.
++	 * SCM calls including the ones to generate and prepare keys. Support
++	 * for these SCM calls is present for SoCs with HWKM v2 and is being
++	 * added for SoCs with HWKM v1 as well but not every SoC with HWKM v1
++	 * currently supports this. So, this driver checks for the SCM call
++	 * support before it decides to use HWKM.
+ 	 *
+ 	 * Also, since HWKM and legacy mode are mutually exclusive, and
+ 	 * ICE-capable storage driver(s) need to know early on whether to
+ 	 * advertise support for raw keys or wrapped keys, HWKM cannot be used
+ 	 * unconditionally.  A module parameter is used to opt into using it.
+ 	 */
+-	if ((major >= 4 ||
+-	     (major == 3 && (minor >= 3 || (minor == 2 && step >= 1)))) &&
+-	    qcom_scm_has_wrapped_key_support()) {
++	if (ice->hwkm_version && qcom_scm_has_wrapped_key_support()) {
+ 		if (qcom_ice_use_wrapped_keys) {
+ 			dev_info(dev, "Using HWKM. Supporting wrapped keys only.\n");
+ 			ice->use_hwkm = true;
+@@ -212,8 +242,8 @@ static int qcom_ice_wait_bist_status(struct qcom_ice *ice)
+ 	    (QCOM_ICE_HWKM_KT_CLEAR_DONE |
+ 	     QCOM_ICE_HWKM_BOOT_CMD_LIST0_DONE |
+ 	     QCOM_ICE_HWKM_BOOT_CMD_LIST1_DONE |
+-	     QCOM_ICE_HWKM_CRYPTO_BIST_DONE_V2 |
+-	     QCOM_ICE_HWKM_BIST_DONE_V2)) {
++	     QCOM_ICE_HWKM_CRYPTO_BIST_DONE(ice->hwkm_version) |
++	     QCOM_ICE_HWKM_BIST_DONE(ice->hwkm_version))) {
+ 		dev_err(ice->dev, "HWKM self-test error!\n");
+ 		/*
+ 		 * Too late to revoke use_hwkm here, as it was already
+@@ -230,7 +260,7 @@ static void qcom_ice_hwkm_init(struct qcom_ice *ice)
+ 	if (!ice->use_hwkm)
+ 		return;
+ 
+-	BUILD_BUG_ON(QCOM_ICE_HWKM_WRAPPED_KEY_SIZE >
++	BUILD_BUG_ON(QCOM_ICE_HWKM_MAX_WRAPPED_KEY_SIZE >
+ 		     BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE);
+ 	/*
+ 	 * When ICE is in HWKM mode, it only supports wrapped keys.
+@@ -238,9 +268,15 @@ static void qcom_ice_hwkm_init(struct qcom_ice *ice)
+ 	 *
+ 	 * Put ICE in HWKM mode.  ICE defaults to legacy mode.
+ 	 */
+-	regval = qcom_ice_readl(ice, QCOM_ICE_REG_CONTROL);
+-	regval &= ~QCOM_ICE_LEGACY_MODE_ENABLED;
+-	qcom_ice_writel(ice, regval, QCOM_ICE_REG_CONTROL);
++	if (ice->hwkm_version == QCOM_ICE_HWKM_V2) {
++		regval = qcom_ice_readl(ice, QCOM_ICE_REG_CONTROL);
++		regval &= ~QCOM_ICE_LEGACY_MODE_ENABLED;
++		qcom_ice_writel(ice, regval, QCOM_ICE_REG_CONTROL);
++	} else if (ice->hwkm_version == QCOM_ICE_HWKM_V1) {
++		regval = qcom_ice_readl(ice, QCOM_ICE_REG_HWKM_TZ_KM_CTL);
++		regval &= ~QCOM_ICE_HWKM_ICE_LEGACY_MODE_ENABLED;
++		qcom_ice_writel(ice, regval, QCOM_ICE_REG_HWKM_TZ_KM_CTL);
++	}
+ 
+ 	/* Disable CRC checks.  This HWKM feature is not used. */
+ 	qcom_ice_writel(ice, QCOM_ICE_HWKM_DISABLE_CRC_CHECKS_VAL,
+@@ -298,7 +334,8 @@ EXPORT_SYMBOL_GPL(qcom_ice_suspend);
+ 
+ static unsigned int translate_hwkm_slot(struct qcom_ice *ice, unsigned int slot)
+ {
+-	return slot * 2;
++	/* The slot offset depends upon HWKM version */
++	return ice->hwkm_version == QCOM_ICE_HWKM_V1 ? slot : slot * 2;
+ }
+ 
+ static int qcom_ice_program_wrapped_key(struct qcom_ice *ice, unsigned int slot,
+@@ -451,11 +488,12 @@ int qcom_ice_generate_key(struct qcom_ice *ice,
+ {
+ 	int err;
+ 
+-	err = qcom_scm_generate_ice_key(lt_key, QCOM_ICE_HWKM_WRAPPED_KEY_SIZE);
++	err = qcom_scm_generate_ice_key(lt_key,
++					QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version));
+ 	if (err)
+ 		return err;
+ 
+-	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE;
++	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
+ }
+ EXPORT_SYMBOL_GPL(qcom_ice_generate_key);
+ 
+@@ -478,13 +516,13 @@ int qcom_ice_prepare_key(struct qcom_ice *ice,
+ 	int err;
+ 
+ 	err = qcom_scm_prepare_ice_key(lt_key, lt_key_size,
+-				       eph_key, QCOM_ICE_HWKM_WRAPPED_KEY_SIZE);
++				       eph_key, QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version));
+ 	if (err == -EIO || err == -EINVAL)
+ 		err = -EBADMSG; /* probably invalid key */
+ 	if (err)
+ 		return err;
+ 
+-	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE;
++	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
+ }
+ EXPORT_SYMBOL_GPL(qcom_ice_prepare_key);
+ 
+@@ -506,11 +544,11 @@ int qcom_ice_import_key(struct qcom_ice *ice,
+ 	int err;
+ 
+ 	err = qcom_scm_import_ice_key(raw_key, raw_key_size,
+-				      lt_key, QCOM_ICE_HWKM_WRAPPED_KEY_SIZE);
++				      lt_key, QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version));
+ 	if (err)
+ 		return err;
+ 
+-	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE;
++	return QCOM_ICE_HWKM_WRAPPED_KEY_SIZE(ice->hwkm_version);
+ }
+ EXPORT_SYMBOL_GPL(qcom_ice_import_key);
+ 
 -- 
-Cheers
-
-David / dhildenb
+2.34.1
 
 
