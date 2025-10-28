@@ -1,121 +1,140 @@
-Return-Path: <linux-kernel+bounces-874339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71537C1618A
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:17:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B2C1611A
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 18:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B65F3BCAFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:10:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DFA94E31A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 17:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3F1344047;
-	Tue, 28 Oct 2025 17:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1AB34889F;
+	Tue, 28 Oct 2025 17:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeRHG5qE"
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c2pDM5Aq"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0388534402F
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4A12BB17
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761671428; cv=none; b=ePscbiSI+s3KazXSSyAXlE/McdQO4JYuG0Cl15AaxsLvWMpnWjYZrqfIprqac9UpT/D6/ADpcEGhqyI4+o/rCfYBC4aEsteREXYCsycsNWBXm17YtWhi7of7wWucQheQzbOucWKsDW/mfKtKVuZd9Pq8j5PSCZifzC5yLQNgGfo=
+	t=1761671527; cv=none; b=Q4kf16jcWyzvqBNiudnCVaItN9RhT0ON7sZue/jFcbqTmWwaBliJCY/Ui/2hnHIE67pG0w2DCk6yE7XC4xe/0oUHLqqfh9sb85BNBahhBnxF3eHkVXyCFbOW7mxS/TSMeHcspEikq9YYdNUTgGxhJWnfeK5AwRiK/Zh1JHNJIRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761671428; c=relaxed/simple;
-	bh=m3I9dtve6TdfQpeD/5c1k/FwNdSdObvUw7hMoEvNVYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=In6y0fKyQV+k3dcQVPu8fd6fBMpBY3l26LRWndhcBjkyEM4vTYR4sCOafIcLjb0UDjyIFbHTsm0ekKo05Exq9UR3CrAztu5SOYwa5EJTeZeRBXvqRXmCs/ON0Lnyl4DDLo6XjczfEulQxzzO3VvkJMpgFyQDGiIBc6MKDOXsAZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeRHG5qE; arc=none smtp.client-ip=209.85.210.195
+	s=arc-20240116; t=1761671527; c=relaxed/simple;
+	bh=uRk8EwEwcOWT3u2NM1bPYXtYi7WeFHtlYV5DrUELKj4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d7qr3/Ec/3MuTtcslORearFK5ENZU0viNTj2704c3apHROhJ4XxBjzFjBCkiQvIsX3wcCOMVfcN3ZKfnkxdaKuvaegZndhy8p4tTBFP1rAPETHpgfmV73VzFXsVAmdmt4L+rGzUf1lZVAacvB4UqpmgPk+MC/yfy6IPS90X0T2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c2pDM5Aq; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-78af743c232so5786762b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:10:26 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-57e8e67aa3eso132137e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:12:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761671426; x=1762276226; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NkkeBtodNmN2EMa9qJLybudRjmngQqkOpn4I47bN1Os=;
-        b=HeRHG5qEN5uTjjY3ibkWq33IiamipujAhi60b9r1rM5RRPJZix2+MocaWLMsgNdzzn
-         rCRaFyrKnHeUaypQDn1k3K/dqscVruRVqMTp+igbGbC+db5aiAfFYeE0f5PSLqzGly0B
-         Ovbu07ITP9IM/2fwN+YgCr6l72LfCsLXcf98t50rQ2aT51I9i9QHnWZBcPUJfgmI0dRC
-         hcDVe7L3na0X+uTihwIrNh/OF7NNAdsSDaUs/thpRtSEuaO3pAwmuCxPhAYF4SvzmzBq
-         +g5mLWYTq+KRd+hIVppWWv9JlGPQ/3UNy/vJ92ZwMl4d1BKAHGUXeTSQGuqNK8db6i73
-         GIMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761671426; x=1762276226;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1761671523; x=1762276323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NkkeBtodNmN2EMa9qJLybudRjmngQqkOpn4I47bN1Os=;
-        b=Dq3Y5OlBzfzsjfjVyBJjzZqABJdkF/KmuHnSJultFfipvJnqm+uGiIDaXHTLEGQ7r7
-         bXlxLWuxLcXPXwpuS1uLlEgQJI95XY5SlzM/zKtyGavj4wqC670Jqka9qMfnetZc5r8I
-         BOVOBHHf+FI5TLEAcik6sD35GqLkYTpAcZrzzsWfOH4RIg/ZdkkPFhTuuhPCev9gHaU5
-         Ac17cXGm3K5pL4XtjP8GjtLeVyflKFEwBZ96u9CygQ3H0hu4VQsIrVv7OQ/d8BdBMKnn
-         CgVmlGMU8kcTh9e24FbAT9Ya1lQN/fEpbJavkrEKwXKc5x6gmZS0VnX5K6Mo2Vic65ny
-         OLFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ0vYngkZWOhJo7s7KxUx7egatHojS4aa1NRxerHUiMqsMRcCYjV9XzAZfSso+WCEpuOdMmuHgGmTT4g4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzps4BLa8LsBx44Xw9finQHJdDAHX9KR1axquQwMinpkY0iGZNj
-	aLvqbHImVi1ONpuEmaDMwaSMORScB9+M7EeBKJVI2j6VqC29SSfAMJrT
-X-Gm-Gg: ASbGncvFxkmXL5+K4F4cTia2I8F8McvVpUTaY6bdaSwoO+HBPhOCM+OGoNFNT8jQyFZ
-	ZPJWhlvFtZWx/M/mwkXKZ6GHepSb/jBvIJWcpg5QeC23MlM52QaAC3qkNvnVE+0pjcGqbAPyB0W
-	cyWQJk1Voe0z2oD+XQ7tQM9sZI1MZm4RVzD1ma02j0EYcHaxX3/xn2s5Q9vmygQ553+KnlMOzMd
-	mNR+yJamIZKa8cas8XXTFVZUGP5KK4FSuN5bhrXAgN6XNyvHudSNnUNUuIIgqQAacZQcu13SUEq
-	dVkmXR2IEKjG4TEiutmFCo+9ODvg+ECPid6c3SLBa5eXaRfCEnIHRTB0Xq5+oMy2OSlS+4pDIw9
-	EtXlFpKMh2plfiMJIz47Xm2oWumGOnbvXHnLZgLcLydip9eGtC3ItTtKcCLOb6YHd1VqRdLri/1
-	VWw5TjtnxxdDdO5KdD5qk=
-X-Google-Smtp-Source: AGHT+IGQ8ffNexl4HmIkFUmg1fdyuZl4JbBMFVH6xuxPDuvHwL2uHadtShWy1RlMi1Xof4Eda3TnCw==
-X-Received: by 2002:a17:902:ec83:b0:27e:ec72:f67 with SMTP id d9443c01a7336-294cb391897mr51139475ad.6.1761671426009;
-        Tue, 28 Oct 2025 10:10:26 -0700 (PDT)
-Received: from fedora ([103.120.31.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3bbcsm121911965ad.15.2025.10.28.10.10.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 10:10:25 -0700 (PDT)
-Date: Tue, 28 Oct 2025 22:40:14 +0530
-From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftest: net: fix socklen_t type mismatch in
- sctp_collision test
-Message-ID: <aQD49ukK0XMUHTUP@fedora>
-References: <20251026174649.276515-1-ankitkhushwaha.linux@gmail.com>
- <aQDyGhMehBxVL1Sy@horms.kernel.org>
+        bh=y3Pj3kvcN6aBQ6j/0SMZsas3fPFyjC2TU5uVuC6Co/U=;
+        b=c2pDM5AqZHFsKfkYmLLw5UuryD3LRgp7av7ErMnEYUk2Ct6b2uxR0nhomol9QHFsDJ
+         avThxUfWEzlz29LWRE2eQRwKFL58N5hPFdKvODpu8WxlqKL6YRK7LchLyr8+ewWL5JnK
+         NXrpgYRnHHXlwoJo7voZh9LDjgpnY5okgFQCH5guJ5gqrykdIFEjezPMYvcuzGOtryBC
+         3AdfrMnWKu+1v/CJhfeb4yUJ8ovT9j/9t0fIoiQF7qOkbxfq6+q184f/h6XB7bMjg78o
+         ps+q+uVPTnT92ewFAi1qQBelbns3bbnJkMF2i2PJxTQY9VEEYCl6gqLa5H+Y2ax8UMRt
+         taIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761671523; x=1762276323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y3Pj3kvcN6aBQ6j/0SMZsas3fPFyjC2TU5uVuC6Co/U=;
+        b=s8SUx7vSLgpTeoxc0Xt8ElxsghAO1Mmn0nyXByMJKy5dOpYehztD4RTAywJEahnJVr
+         Xxn+yzP963+UuDuQogaoONuGc/5ZFUDcKvPLAqsvjp4ws+Bne0zqQX7xkkHTLFYpzZdb
+         2zlsi/hoRrDZYTKTuOKUqVDEfGvStGde8HT8GKOyFYtK/r/IRD+VlfD1wq30xWj0O4d2
+         L6BhfGa7zHRIeLIeEO/jIqhNAdluKQHKnrTZmc2cyPWQ3BUa/L/qVv6bg2FsENwTWYg/
+         IeMBoQpGYrIWc4FG/dzPtE+pMi4xqI/pHD3om1BEbgbMm70YNVQZOGHjo+DKyqhRITqW
+         yUOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUEL98a2snXem3v6+Vbswh1aR5v8K/L5FqlDsBthMQ5mmzET5Qd5W+736eNLXxltgTQztc5UiE/HyFNCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynGTDlG6n6IqV8DCpStgwol8oK5q5UeLIpr2q6rC0U701B3+dl
+	Oqxnv6aoR4Cb9Kvhwbmw7lGzP54uYdQTb5J0aevO8RtzhsJAoVYTEyngHkeXpf7UFzzvo2n2FuX
+	DFD0y6OB4Xt9iGNcINx96MzijOvxPf1Q=
+X-Gm-Gg: ASbGnct0H+34Txbzw6qiBYK2FkRpg3dfoV0fB4TGMRR1LsZCoTLkNRctsuvptWfha+F
+	7mftmqsB82igiE4xITMPkKUpG4Zx66Neoau9NEB80BpsWCFGQk3mXZCZ7t/YadbmLYS/IudTAy2
+	5ZEcw9YdmeB7bLXN+SlSwQ8QrLu0ytUYmpky5ClwFPlo/h78LI7UoG5BsUXw2NpUWLuPXbaLQ3X
+	khLfxogh8DYyjVGGHFq22XnKyEdbhrvfjHjB1ZhaOP18y78rVwSygNPvdHFmqopmvHJLA8qD7as
+	o/1PgIFWBnA97/ipqA==
+X-Google-Smtp-Source: AGHT+IFiHrUMwVmkTCLb9w5Mom04LhEQB7TPo2rlpYqTBqyrPAneD8NpZPc6wf+wC2DY8YSbv1v4z9OiFrCUDrWhegI=
+X-Received: by 2002:a05:6512:2312:b0:55f:3f57:a64 with SMTP id
+ 2adb3069b0e04-5930edf7cf6mr1431299e87.18.1761671521998; Tue, 28 Oct 2025
+ 10:12:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQDyGhMehBxVL1Sy@horms.kernel.org>
+References: <20251027183453.919157109@linuxfoundation.org>
+In-Reply-To: <20251027183453.919157109@linuxfoundation.org>
+From: Dileep malepu <dileep.debian@gmail.com>
+Date: Tue, 28 Oct 2025 22:41:49 +0530
+X-Gm-Features: AWmQ_blC5Fm1cvehLp8Fe4c8zA-3g-SfayVM4q9tWXtt4kuTKi3hE7u8Q4HxCIM
+Message-ID: <CAC-m1ro02LHYLz4-J_9_+XUOBs9YXRO9sAr+Otd4ddj6gxndog@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/117] 6.12.56-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org, sr@sladewatkins.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 04:40:58PM +0000, Simon Horman wrote:
-> Hi Ankit,
-> 
-> Please preserve reverse xmas tree order - longest line to shortest - for
-> local variable declarations in Networking code.
-> 
-> In this case, I think that would be as follows (completely untested).
-> 
-> 	struct sockaddr_in saddr = {}, daddr = {};
-> 	socklen_t len = sizeof(daddr);
-> 	struct timeval tv = {25, 0};
-> 	char buf[] = "hello";
-> 	int sd, ret;
+Hii Greg..
+
+On Tue, Oct 28, 2025 at 1:21=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-Hi Simon,
-Thanks for your reply, i will send v2 patch with requested changes.
+> This is the start of the stable review cycle for the 6.12.56 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.56-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
+> -------------
 
--- 
-Ankit
+Build and Boot Report for 6.12.56-rc1
+
+The kernel version 6.12.56-rc1 was built and boot-tested using qemu-x86_64
+and qemu-arm64 with the default configuration (defconfig). The build and bo=
+ot
+processes completed successfully, and the kernel operated as expected
+in the virtualized environments without any issues.
+
+Build Details :
+Kernel Version: 6.12.56-rc1
+Source: linux-stable-rc.git
+Commit: 426f7f601ca06d40c899834021f62b7cf90894ca
+
+Tested-by: Dileep Malepu <dileep.debian@gmail.com>
+
+Best regards,
+Dileep Malepu
 
