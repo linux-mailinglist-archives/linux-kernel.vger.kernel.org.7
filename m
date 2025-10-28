@@ -1,149 +1,128 @@
-Return-Path: <linux-kernel+bounces-873983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C38C15417
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:53:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9457FC153C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 15:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2393B90FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:48:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E4DB84EB11C
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 14:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6C424C66F;
-	Tue, 28 Oct 2025 14:48:25 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3119824C06A;
+	Tue, 28 Oct 2025 14:48:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GQKaAQq/"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA25F23AB88;
-	Tue, 28 Oct 2025 14:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6DF224AF1
+	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 14:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761662905; cv=none; b=Gq7zUdqg8oXohVlPWpgdY0eKrCOjkIMAVEQfu6LgKvbKdueeWh2Vh4e1MyJYKTlKgCqhJgz6XiQ+JMN7eJS9rOi7BkxD1976JdX5nHDFvhFC6N344RjRH1jgZHF94GlWX3+v3F5VxUK96hz76IqNnXbiLQDI9+cqcqKJ83PL6aA=
+	t=1761662934; cv=none; b=FyA7IT2kqAbcrGEJFs3IzvlC9NvMjvpqAqwTwnTsVqFpeKaUXh2oVoLZVifRymvSmMkcik0UghZ7/TZNG3R/3yRs3ELBc88gMPzVHlmu5QQDwqqxBOw6f+uKIqB9RaAuY/73Ew6AFhmh+9fYiYfl84PZhkRuU1M1ZBBYg9nXleI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761662905; c=relaxed/simple;
-	bh=u5tgenMRvxilh77m58rybstaqB+YjCZ+fqhpsL+7yLw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mq9gL0wZWsTB9kTKImcCnK73lnSJTd6ZCZCt9Ausw1czj50z0Ydeqod8MY4okFcuielxAYdVJEUOUKKsyXb84XOQzR/33YLljUQYNKimBQJdPDe/77almzqnyIhhoBjqpEvihSaXSk7JOxfJ87S7OoZEcUzthknCtf1RSs+8uX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cwtSH23J8z6M4hV;
-	Tue, 28 Oct 2025 22:44:31 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9749D1400D3;
-	Tue, 28 Oct 2025 22:48:20 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 28 Oct
- 2025 14:48:18 +0000
-Date: Tue, 28 Oct 2025 14:48:16 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-CC: <linux-cxl@vger.kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
-	"Len Brown" <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>, Borislav
- Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>, Mauro Carvalho
- Chehab <mchehab@kernel.org>, Shuai Xue <xueshuai@linux.alibaba.com>,
-	"Davidlohr Bueso" <dave@stgolabs.net>, Dave Jiang <dave.jiang@intel.com>,
-	"Alison Schofield" <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-	Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
-	Mario Limonciello <mario.limonciello@amd.com>, Huacai Chen
-	<chenhuacai@kernel.org>, Heinrich Schuchardt
-	<heinrich.schuchardt@canonical.com>, Arnd Bergmann <arnd@arndb.de>, "Peter
- Zijlstra" <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, "Guo
- Weikang" <guoweikang.kernel@gmail.com>, Xin Li <xin@zytor.com>, Will Deacon
-	<will@kernel.org>, Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan
-	<gshan@redhat.com>, Smita Koralahalli
-	<Smita.KoralahalliChannabasappa@amd.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6n?=
- =?ISO-8859-1?Q?ig?= <u.kleine-koenig@baylibre.com>, Li Ming
-	<ming.li@zohomail.com>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>, Kuppuswamy Sathyanarayanan
-	<sathyanarayanan.kuppuswamy@linux.intel.com>, Karolina Stolarek
-	<karolina.stolarek@oracle.com>, Jon Pan-Doh <pandoh@google.com>, "Lukas
- Wunner" <lukas@wunner.de>, Shiju Jose <shiju.jose@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-pci@vger.kernel.org>
-Subject: Re: [PATCH 2/6 v6] ACPI: extlog: Trace CPER PCI Express Error
- Section
-Message-ID: <20251028144816.000018a3@huawei.com>
-In-Reply-To: <20251023122612.1326748-3-fabio.m.de.francesco@linux.intel.com>
-References: <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
-	<20251023122612.1326748-3-fabio.m.de.francesco@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761662934; c=relaxed/simple;
+	bh=nsp/vYBKPAKXSXwyzefzj3kkAqAeGqOO5aOAfMQ1t1U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lVWJdunS7EL7d0F6tr5Q8ifxAQZifwrep/mkXhlX1YzjarMB9Iwit31R2GpI/AAo9zR85hVroIegNd73ZwugP12+Y1wZX7dkeXz3R5gkOpTsfvnDUiK4srIPXXlm6JrYL/2UVmDCaZ22mXfLER2PXMWt5A1ad6lridrUy+Pcx0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GQKaAQq/; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <971495da-bc0e-46d4-bda4-5e9b8310ca3e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761662930;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KO8xNdDiC0GfQKPOVB85ZS7KFE86udwGgsf60vNTK3g=;
+	b=GQKaAQq/twkOLdGTujtKKebi9ryX/7K8MOLDeRG7WGWYcBwDj4BxC5Evs2/h9PHfViwS19
+	8XHqPtRsvDDGpiX6s7bCti+YucePdyFRYzd5RnLKGRMf+gMvpos+hEyGh4TS9vj2trJgSY
+	1DElGaNSIt2pkbOza2k3VLgPK3prR+g=
+Date: Tue, 28 Oct 2025 22:48:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Subject: Re: [PATCH bpf v3 3/4] bpf: Free special fields when update local
+ storage maps
+To: Amery Hung <ameryhung@gmail.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com,
+ song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+ memxor@gmail.com, linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
+References: <20251026154000.34151-1-leon.hwang@linux.dev>
+ <20251026154000.34151-4-leon.hwang@linux.dev>
+ <CAMB2axPhcYctJYz0bH032-Kc1h2LcJL74O5iS5g=8Qp74GPK_g@mail.gmail.com>
+ <377791b5-2294-4ced-a0d3-918c7e078b2b@linux.dev>
+ <CAMB2axPx2RajLzhoOsnffhrOxkw7Zy=D=vHam_Y_5wKS0cqf0g@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leon Hwang <leon.hwang@linux.dev>
+In-Reply-To: <CAMB2axPx2RajLzhoOsnffhrOxkw7Zy=D=vHam_Y_5wKS0cqf0g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 23 Oct 2025 14:25:37 +0200
-"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
 
-> I/O Machine Check Architecture events may signal failing PCIe components
-> or links. The AER event contains details on what was happening on the wire
-> when the error was signaled.
+
+On 2025/10/28 01:04, Amery Hung wrote:
+> On Mon, Oct 27, 2025 at 9:15 AM Leon Hwang <leon.hwang@linux.dev> wrote:
+>>
+>> Hi Amery,
+>>
+>> On 2025/10/27 23:44, Amery Hung wrote:
+>>> On Sun, Oct 26, 2025 at 8:41 AM Leon Hwang <leon.hwang@linux.dev> wrote:
+
+[...]
+
+>>>>                 selem = SELEM(old_sdata);
+>>>>                 goto unlock;
+>>>>         }
+>>>> @@ -654,6 +656,7 @@ bpf_local_storage_update(void *owner, struct bpf_local_storage_map *smap,
+>>>>
+>>>>         /* Third, remove old selem, SELEM(old_sdata) */
+>>>>         if (old_sdata) {
+>>>> +               bpf_obj_free_fields(smap->map.record, old_sdata->data);
+>>>
+>>> Is this really needed? bpf_selem_free_list() later should free special
+>>> fields in this selem.
+>>>
+>>
+>> Yes, it’s needed. The new selftest confirms that the special fields are
+>> not freed when updating a local storage map.
+>>
 > 
-> Trace the CPER PCIe Error section (UEFI v2.10, Appendix N.2.7) reported
-> by the I/O MCA.
+> Hmmm. I don't think so.
 > 
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.com>
-Hi Fabio,
+>> Also, bpf_selem_unlink_storage_nolock() doesn’t invoke
+>> bpf_selem_free_list(), unlike bpf_selem_unlink_storage(). So we need to
+>> call bpf_obj_free_fields() here explicitly to free those fields.
+>>
+> 
+> bpf_selem_unlink_storage_nolock() unlinks the old selem and adds it to
+> old_selem_free_list. Later, bpf_selem_free_list() will call
+> bpf_selem_free() to free selem in bpf_selem_free_list, which should
+> also free special fields in the selem.
+> 
+> The selftests may have checked the refcount before an task trace RCU
+> gp and thought it is a leak. I added a 300ms delay before the checking
+> program runs and the test did not detect any leak even without this
+> specific bpf_obj_free_fields().
 
-Was taking a fresh look at this as a precursor to looking at later
-patches in series and spotted something that I'm doubtful about.
+Yeah, you're right. Thanks for the clear explanation.
 
-> diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-> index 47d11cb5c912..cefe8d2d8aff 100644
-> --- a/drivers/acpi/acpi_extlog.c
-> +++ b/drivers/acpi/acpi_extlog.c
-> @@ -132,6 +132,34 @@ static int print_extlog_rcd(const char *pfx,
->  	return 1;
->  }
->  
-> +static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
-> +			      int severity)
-> +{
-> +	struct aer_capability_regs *aer;
-> +	struct pci_dev *pdev;
-> +	unsigned int devfn;
-> +	unsigned int bus;
-> +	int aer_severity;
-> +	int domain;
-> +
-> +	if (!(pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID ||
-> +	      pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO))
+I also verified it by adding a 300ms delay.
 
-Looking again, I'm not sure this is as intended.  Is the aim to
-allow for either one of these two?  Or check that that are both present? 
-That is should it be !(A && B) rather than !(A || B)?
+So this bpf_obj_free_fields() call isn't needed — I'll drop it in the
+next revision.
 
-
-> +		return;
-> +
-> +	aer_severity = cper_severity_to_aer(severity);
-> +	aer = (struct aer_capability_regs *)pcie_err->aer_info;
-> +	domain = pcie_err->device_id.segment;
-> +	bus = pcie_err->device_id.bus;
-> +	devfn = PCI_DEVFN(pcie_err->device_id.device,
-> +			  pcie_err->device_id.function);
-> +	pdev = pci_get_domain_bus_and_slot(domain, bus, devfn);
-> +	if (!pdev)
-> +		return;
-> +
-> +	pci_print_aer(pdev, aer_severity, aer);
-> +	pci_dev_put(pdev);
-> +}
+Thanks,
+Leon
 
 
