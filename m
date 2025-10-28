@@ -1,141 +1,103 @@
-Return-Path: <linux-kernel+bounces-873481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-873482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E56C1407D
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:16:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DA36C14062
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 11:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EEC14685D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:14:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 821534E83C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 28 Oct 2025 10:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9133043CB;
-	Tue, 28 Oct 2025 10:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D18192FF679;
+	Tue, 28 Oct 2025 10:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IHqbs53u"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UNJ4L9Ul"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA9323507B
-	for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 10:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC1F23507B;
+	Tue, 28 Oct 2025 10:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761646444; cv=none; b=UdzNI+tIj3d1YeMXvphcvaOoRj22mDSVDViOqEy+0tlCK+KMVsbrU2voQaSjVeHJD/Ij5BLkhUdXhaeHv/6Zn1P1iPomxF/stxUYHyE+H1rsxoHF44H2dqdsw+/31nhBOqMpOviWpzdCMDjfrSGH3117MLK4N/f6H81NxLNI+QI=
+	t=1761646499; cv=none; b=IrPesmVbjOli/DaeEx9sTa+1WoQm2zuzbqdQYureQxxftFGGs2jAbL39k0fPhkYLybGXeSXDJTUkq5VbvoVV0glZRxH6vqWAHeqIT/3+5uI16Oey+THBAUF3Sq33gRc9r8vGdKo3ErP3C/nZDuT6yzC2Fe10jpshP1UjiUkgFOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761646444; c=relaxed/simple;
-	bh=m4so6IGFPXEcYvbhKAT6MoOPeAqvtbCZnJg8zIhms94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uBiEIe/O2JOgdg0B0RLI+rdO8tLJU+1fno8cxVud3ZYkaq9m/q4TabQ83zct4/CGNG96zCHkS0SVesnTJXAs8BMt8v7bGb7YzWaLFzY96c5Vo8LGhTLPxBLjdHrNa5fHOXMv4zZApoa2Nve1FL29KEppBUrdjRCvukBOwzkRNpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IHqbs53u; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761646442;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B6UDUZTk5Iy4k44e3/ML5QCHFRg0Z07tvb3WKav93qg=;
-	b=IHqbs53uJN4PtK4h0T3ZnXNgiR+qOQ1SPywVGurkKEcZBUoFsNi0qeS44yO3xK/A2RmVzb
-	SmpOMVsN4cPnVKaWmY0BozcwaNwKs738l0d5xfZn+PtYfANMTn+jWoe9SepXF+0BWr03Gs
-	H56aWenpKusZiP28sooIqMeSgfkPreM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-321-pv07Ld3cOZKUHFbP2VwSMg-1; Tue, 28 Oct 2025 06:14:00 -0400
-X-MC-Unique: pv07Ld3cOZKUHFbP2VwSMg-1
-X-Mimecast-MFC-AGG-ID: pv07Ld3cOZKUHFbP2VwSMg_1761646439
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-475c422fd70so47172715e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 03:13:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761646439; x=1762251239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B6UDUZTk5Iy4k44e3/ML5QCHFRg0Z07tvb3WKav93qg=;
-        b=uzTVsVbezNCd0H4ddFCMOehroq7Jn9pemldZHxZczfJgkWtJrFRPgyEVZ1YgOl8jM3
-         W+2wkgyWEa2CkqA8mQQpnwFvcl4m8MGNb5XG0UkmJEGkvEqURivs00nw1OqQ81tVKlfE
-         Yj2AAsZKHl6aZ0DAOjSiPJ5yuK5Hky3t0bwaWxRLxzKzQGCAXbDAsWu0VgSLBDtdIIxM
-         yInZ/QY1PtYf6JdjcLqsMwhUWEvm9DfXJvOFvY5IyzfCdcTp5vbvzzUsyAjNs7kwN0+c
-         vNwkKfX9xx2G2HgKUuI767onLZTXhoAWZWYyKU8wMPRUu+l+FCdFr9Lb+pAwVjwvzuFO
-         LSqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAlRxg5fT/7guj7Mr4jn1vFfQFthWYVmnIvNIKNaOkhRlAdYWOT+JHWY2ZtDQCBYbP6DgKviCnMZ9Mb20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmQ2IdQGWfVu8HnHAO0Px+/f1jNE1V3aITr3gdVrdfbSRFRWmm
-	IXT2ZMlZFXmCo2rPDwaiYpb2kB6VjWgKoEwDrU2Gs20iupGILozlIHJI76yyAC50wQmxeTPCggM
-	fZJ/RElcQXOHNKHl5O5h1GB1CKoW0bGzUAyG+NEV+vmza6jiYeOVPgiER1xFjuy71uQ==
-X-Gm-Gg: ASbGncv/Bp65oKUgvY7PympQKn1zMoSiRp6TSTXwtcQTXcVd62cvFuThXthN9ipH4ZI
-	dwEFrky00UoyOESLyci1tAiExLW1zn6l9WCoDMKCekb60akGcxN/l6YapSQ4GarX0D4hTNPffea
-	UkOnqnVlS2fGo3svh9a98XPdVIMjF/+F7I8vmF+q836Wb0d0CPHxVqA8li78rahrY5g+fXwOtW9
-	HlFa9fSaIEBKLvHKG3vDhZ7+pf/AGp3NCxG5hy4QE8YvkSUD7ujwKXawnArINJoLYu38d96hLcy
-	7Avi/iNk48RCH4sfp0B90V5ovNlZwbxjjXGEaSb7cUVVrv0PXK7QAupRePLpsw2wiDbKAbOP84D
-	jjBTbh7BygBbVuoDtGp40to3OvdxQxtk/TdEgHTFvNEmuCSQ=
-X-Received: by 2002:a05:600c:4fd4:b0:475:e09c:960e with SMTP id 5b1f17b1804b1-47717e6befcmr28032175e9.32.1761646438791;
-        Tue, 28 Oct 2025 03:13:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEJ0ZBf/JaFACw6W5VidqgGCD57Uclj71azPGP6UqMT6JqtBFJAx5Wu2NucJErwaxI1+vp7eg==
-X-Received: by 2002:a05:600c:4fd4:b0:475:e09c:960e with SMTP id 5b1f17b1804b1-47717e6befcmr28031835e9.32.1761646438355;
-        Tue, 28 Oct 2025 03:13:58 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:2712:7e10:4d59:d956:544f:d65c? ([2a0d:3344:2712:7e10:4d59:d956:544f:d65c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb55asm19552829f8f.17.2025.10.28.03.13.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 03:13:57 -0700 (PDT)
-Message-ID: <b95eecd5-3dab-4557-aa2a-36f58779c230@redhat.com>
-Date: Tue, 28 Oct 2025 11:13:55 +0100
+	s=arc-20240116; t=1761646499; c=relaxed/simple;
+	bh=4xas4y94vi3/3tBwp2J+Ktp/jrZPl//0sQ0Xoe5S36I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=COwahyOlbizxFS79DxQMFia0FHJ+7TB/L4iITwKQpkWA4QJNML2190OB0HR0ZuaonkUb8cI50shF10FFPAyDf2P+YFYc0M/wiSGuT9ae+NoJq2CwwpxnP17VAxlLrMDsPKsbGhU7VyQd1BxaBxqpIAM7QtFSq5On636XWieVHzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UNJ4L9Ul; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761646498; x=1793182498;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4xas4y94vi3/3tBwp2J+Ktp/jrZPl//0sQ0Xoe5S36I=;
+  b=UNJ4L9UlT5T2EsQF4T+SDfV+GoZE3lWl0GXyb/7rtV1Hi4EMT0L/iQtC
+   5Q5BEblpwkQjmYR6KZLDPjK1KELmvL7ufZ1vLNoYv9eUln31RIVBhj7cG
+   jyaA3I7sFJlXyXOHq0KvjdSXU+J7Yp9ZcdGUc7bksjzTmr8g3kC+iQkfw
+   2KDik9+B0PLtPGXI+QwV7HxQgkdoJ/fPUm+5o5O38hD8xHl5yLYbDDL8y
+   uaU1GNu9XB0QNwQE0Y627633mq5ihDWPl4SJqx+98xM2xtzXnNAGLThMr
+   OHyhDca4yiBj7CIunJPVVnW1vebnnh6y3ioWJ8KkBZj5DOqLmFv5M0Xaf
+   Q==;
+X-CSE-ConnectionGUID: iC3VGzNfSkOevWOn6dKqWQ==
+X-CSE-MsgGUID: HlhxQ3ICSQ+E7ZL3KPXZSg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="63444473"
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="63444473"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:14:57 -0700
+X-CSE-ConnectionGUID: iFQ8YCGpRB2ERMJDAZdzpg==
+X-CSE-MsgGUID: 721JDO40R1+Z9Qpg7Dkeug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,261,1754982000"; 
+   d="scan'208";a="215964946"
+Received: from dalessan-mobl3.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.136])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 03:14:55 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vDgj5-00000003HMI-2Wgx;
+	Tue, 28 Oct 2025 12:14:51 +0200
+Date: Tue, 28 Oct 2025 12:14:51 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	linux-iio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: aspeed: clear reference voltage bits before
+ configuring vref
+Message-ID: <aQCXm_rvwpB6-UUq@smile.fi.intel.com>
+References: <20251028054102.1954503-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/5] net/mlx5: Add balance ID support for LAG
- multiplane groups
-To: Tariq Toukan <ttoukan.linux@gmail.com>, Zhu Yanjun
- <yanjun.zhu@linux.dev>, Tariq Toukan <tariqt@nvidia.com>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Mark Bloch <mbloch@nvidia.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Moshe Shemesh <moshe@nvidia.com>,
- Shay Drori <shayd@nvidia.com>
-References: <1761211020-925651-1-git-send-email-tariqt@nvidia.com>
- <328ebb4f-b1ce-4645-9cea-5fe81d3483e0@linux.dev>
- <2f84a4ee-8e45-460a-8e62-3f9a48da892a@gmail.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <2f84a4ee-8e45-460a-8e62-3f9a48da892a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028054102.1954503-1-billy_tsai@aspeedtech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/26/25 1:53 PM, Tariq Toukan wrote:
-> On 26/10/2025 1:59, Zhu Yanjun wrote:
->> 在 2025/10/23 2:16, Tariq Toukan 写道:
->>> 1. Add the hardware interface bits (load_balance_id and lag_per_mp_group)
->>> 2. Clean up some duplicate code while we're here
->>> 3. Rework the system image GUID infrastructure to handle variable lengths
->>> 4. Update PTP clock pairing to use the new approach
->>> 5. Restructure capability setting to make room for the new feature
->>> 6. Actually implement the balance ID support
->>>
->>> The key insight is in patch 6: we only append the balance ID when both
->>
->> In the above, patch 6 is the following patch? It should be patch 5?
->>
->> [PATCH net-next 5/5] net/mlx5: Add balance ID support for LAG multiplane 
->> groups
->>
->> Yanjun.Zhu
+On Tue, Oct 28, 2025 at 01:41:02PM +0800, Billy Tsai wrote:
+> Ensures the reference voltage bits are cleared in the ADC engine
+> control register before configuring the voltage reference. This
+> avoids potential misconfigurations caused by residual bits.
 > 
-> Right.
-> 
-> Indices shifted because we sent the preparation IFC patch a priori:
-> 137d1a635513 net/mlx5: IFC add balance ID and LAG per MP group bits
+> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> ---
 
-No need to repost. I'll adjust the indexes while applying the series.
+It's a v2 and here a changelog is missing.
+No need to resend, just reply with a missing piece.
 
-Thanks,
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Paolo
 
 
