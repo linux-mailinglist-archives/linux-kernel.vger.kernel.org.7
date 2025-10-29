@@ -1,54 +1,45 @@
-Return-Path: <linux-kernel+bounces-876074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CBFC1AA4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:24:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9728FC1A905
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52365587885
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:06:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFC71A265E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC733F38D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F16E33F385;
 	Wed, 29 Oct 2025 12:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="w9+QA2Em"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="EpvyDtnD"
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C72EF33F370;
-	Wed, 29 Oct 2025 12:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC47333507B;
+	Wed, 29 Oct 2025 12:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742527; cv=none; b=Vagb9sEdRKtPGR0YT3cO/FrhAGbYdxyODjHckdKKTbW/ypjaBJy++VathHD4mhZvV3XWTMIMQeSiO3YR//odY3YbGlsTmX3PoH1HblU4rhnR2fQfEGxrsul/JEquMzi/9LEvX9kKuOB+GvM2fMu0Wij/ihSewntIicC0+ac3rHM=
+	t=1761742527; cv=none; b=cUzjCDZz/WuXbj/Qiisp7+SR0t7+34H6q0lOzXHnSjaBA90qlWEf+dKOwx9pfY90BEWkZyOgvPx81Zx3AO/+xaBqgU2BeNF9nI2PHe48Klie4hBB6XN6R26PnKVvGxIzh2v/dz1esJOujGcvxIkMc+EB3ZWarxdEMij04/v8Y3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761742527; c=relaxed/simple;
-	bh=KLr/rVys8cf4ET81BIFgdQElmUphQ+bJoIvhCz/fKWA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=nnHc0YWKjhwAa63XfYZLwC+leJAK2TaOb0ydxZoUHSaBQAzNJWUfbwj4PuuNTtUfcYf86DtH0kFaPChs6bDjnf4a0553u/lyX+wDO7QYZGeWBV8ZYdKxHQzjmVfTARgx6CHX0l0b5NWdNFOIYpJKajj3lOqjsQ3CQE4D+ng/mt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=w9+QA2Em; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761742511; x=1762347311; i=markus.elfring@web.de;
-	bh=KLr/rVys8cf4ET81BIFgdQElmUphQ+bJoIvhCz/fKWA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=w9+QA2Em3husCV8tbOJqiF7COLDPh7azZRz25Gy/rR7xpCGp6sA1L3Kc+wqYAlzm
-	 6YLfBk7Cn8QQ0J00/ykHU5cAepZoBOM1qd9+IHcJBRFT9rMOZbGvQwFjQkK0sgBC6
-	 8v+lkzhVLkqKGY1Q9emyDBSC9Nef0Zm6FOMD3mnXBSNewXdJbgkK+Auf6VJ7DGesS
-	 dUByMgTcFfMnLAkE7Xf2N207o1JeM6KZl4XS33Aelm/U0NJ4gCObckSCgqp2NNFJc
-	 9Gk1bjvFQ1D7Dfqamx2uytuGp+MtdA7TYbcRNDaltnBSbuiwZYSnADkD1VUIDlpec
-	 Ccwc0mvyJ3g39YsNCg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9LEU-1wJRKl23Sm-00vIZz; Wed, 29
- Oct 2025 13:55:11 +0100
-Message-ID: <0e5a16e1-80a1-4817-b07a-c5001f89d80e@web.de>
-Date: Wed, 29 Oct 2025 13:55:09 +0100
+	bh=0wMW0XC224Kej5/7Y/10VzAOIoK/Gr9bBang0zCkkec=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=T4bY+lSVbxM65yT2xAuzqMRgeM8p6rGBY5nCuDg+qUf/AEOem63Ca4oE6OVu50GjphiOsAZL//WlIgURp/a0a87KEc8FPX04go6oIroxussfVNY5WCs6b+pKyUCam8QnQ/HrutoZmKJwt/zN4fq05AqTiEw+pN2ctXqPrm7UN+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=EpvyDtnD; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761742520; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=1/s8TOdfgqqMhs6MPkKtJvuM4gO1U3iasXipTZ9JtZQ=;
+	b=EpvyDtnDaPezKIVx6Xq+/nz15ofVNiB9hS5v2gD51IH2AIe1VbxozYCjthGjchjAPSJFCtkyQgrsaoABfiMgdBP+04T0gK2i6072iYq/0JBVP+L/IISKd5XsKnzU9Pt+vWOk8ifbxhBl/YsH/e72mzN4Sgp+LipR7LpMYUCSJ4s=
+Received: from 30.246.176.102(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrG16KC_1761742518 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 29 Oct 2025 20:55:19 +0800
+Message-ID: <eed27aaf-fd0a-4609-a30b-68e7c5c11890@linux.alibaba.com>
+Date: Wed, 29 Oct 2025 20:55:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,100 +47,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-leds@vger.kernel.org, Lee Jones
- <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20251028082117.276-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] leds: netxbig: fix GPIO descriptor leak in error paths
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20251028082117.276-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:JHaXgRknZADdY9RA6kyhTl8Dv/nZS3ryqdrGd9pM1t26yzovNCm
- rugVxo2sAxm0/WNjbO/DhP2kj922uPBis8Kb1GORuPzT747WAn4yuSLfFhtxvwchsZzXVc/
- ueklWkOeeOwfxrS0+Dg7gslJMGBGAsPv1HlA0261v2IlvI7BOf59fpEyJaYgAWvpHZ/I/8y
- j3rQ5fqnQTvPY8sNbMogA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YJfynFhwARI=;F69JRhFt4BlU0pr18InfdPDOhnU
- 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
+Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: Ian Rogers <irogers@google.com>
+Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org,
+ james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com,
+ baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com,
+ jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nathan@kernel.org, bpf@vger.kernel.org
+References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
+ <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
+ <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com>
+In-Reply-To: <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Add goto-based error handling to release all acquired GPIOs before
-> returning errors.
 
-I propose to move the statement =E2=80=9Cret =3D PTR_ERR(gpiod);=E2=80=9D =
-behind
-an additional label.
 
-Regards,
-Markus
+在 2025/10/24 10:45, Shuai Xue 写道:
+> 
+> 
+> 在 2025/10/24 00:08, Ian Rogers 写道:
+>> On Wed, Oct 22, 2025 at 6:50 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+>>>
+>>> When using perf record with the `--overwrite` option, a segmentation fault
+>>> occurs if an event fails to open. For example:
+>>>
+>>>    perf record -e cycles-ct -F 1000 -a --overwrite
+>>>    Error:
+>>>    cycles-ct:H: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+>>>    perf: Segmentation fault
+>>>        #0 0x6466b6 in dump_stack debug.c:366
+>>>        #1 0x646729 in sighandler_dump_stack debug.c:378
+>>>        #2 0x453fd1 in sigsegv_handler builtin-record.c:722
+>>>        #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
+>>>        #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-events.c:1862
+>>>        #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-events.c:1943
+>>>        #6 0x458090 in record__synthesize builtin-record.c:2075
+>>>        #7 0x45a85a in __cmd_record builtin-record.c:2888
+>>>        #8 0x45deb6 in cmd_record builtin-record.c:4374
+>>>        #9 0x4e5e33 in run_builtin perf.c:349
+>>>        #10 0x4e60bf in handle_internal_command perf.c:401
+>>>        #11 0x4e6215 in run_argv perf.c:448
+>>>        #12 0x4e653a in main perf.c:555
+>>>        #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
+>>>        #14 0x43a3ee in _start ??:0
+>>>
+>>> The --overwrite option implies --tail-synthesize, which collects non-sample
+>>> events reflecting the system status when recording finishes. However, when
+>>> evsel opening fails (e.g., unsupported event 'cycles-ct'), session->evlist
+>>> is not initialized and remains NULL. The code unconditionally calls
+>>> record__synthesize() in the error path, which iterates through the NULL
+>>> evlist pointer and causes a segfault.
+>>>
+>>> To fix it, move the record__synthesize() call inside the error check block, so
+>>> it's only called when there was no error during recording, ensuring that evlist
+>>> is properly initialized.
+>>>
+>>> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
+>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>
+>> This looks great! I wonder if we can add a test, perhaps here:
+>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/shell/record.sh?h=perf-tools-next#n435
+>> something like:
+>> ```
+>> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep 0.1
+>> ```
+>> in a new test subsection for test_overwrite? foobar would be an event
+>> that we could assume isn't present. Could you help with a test
+>> covering the problems you've uncovered and perhaps related flags?
+>>
+> 
+> Hi, Ian,
+> 
+> Good suggestion, I'd like to add a test. But foobar may not a good case.
+> 
+> Regarding your example:
+> 
+>    perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
+>    event syntax error: 'foobar'
+>                         \___ Bad event name
+> 
+>    Unable to find event on a PMU of 'foobar'
+>    Run 'perf list' for a list of valid events
+> 
+>     Usage: perf record [<options>] [<command>]
+>        or: perf record [<options>] -- <command> [<options>]
+> 
+>        -e, --event <event>   event selector. use 'perf list' to list available events
+> 
+> 
+> The issue with using foobar is that it's an invalid event name, and the
+> perf parser will reject it much earlier. This means the test would exit
+> before reaching the part of the code path we want to verify (where
+> record__synthesize() could be called).
+> 
+> A potential alternative could be testing an error case such as EACCES:
+> 
+>    perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
+> 
+> This could reproduce the scenario of a failure when attempting to access
+> a valid event, such as due to permission restrictions. However, the
+> limitation here is that users may override
+> /proc/sys/kernel/perf_event_paranoid, which affects whether or not this
+> test would succeed in triggering an EACCES error.
+> 
+> 
+> If you have any other suggestions or ideas for a better way to simulate
+> this situation, I'd love to hear them.
+> 
+> Thanks.
+> Shuai
+
+Hi, Ian,
+
+Gentle ping.
+
+Thanks.
+Shuai
+
 
