@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-876111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D46BC1A9E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 741E4C1A9F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:22:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BF421A623D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68F81A65CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490A633F38E;
-	Wed, 29 Oct 2025 13:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1200633F398;
+	Wed, 29 Oct 2025 13:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Xiy7l/AD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="euZOs+5p"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FbteK22I";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XuKxcZMd"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F2033F36F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A845B33F378
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743349; cv=none; b=f3ag9Do0cD8x6Iu1PrCxtX+Rhw0eTFsQZRBItG+HpnOtj3cWT8DASRNr+RxoKd3+IkC1nUggCIXe+bZ/1B7U6YOM2rbhs/aahwMCR1ogYdb4WwBS8t+ajaMUBNlDygsgP9IBwdFczyTnMKPxtgGX9R6+yxuHB2tJ3p6mWTFlz/I=
+	t=1761743350; cv=none; b=MzZK9V2ASW81yFS9X1REhZFvDATCjeIbMHEA1uvJbYWuPJLhO/08pJ8G8x4+wc07rJT7tWq1JQk2nw8eaeNorD1HGQZcJVq05iVQ8AN+xFLyvBd5z1ceTh8kdLmU+V/IkgsoqbBwAl9VUlVuOcU6DO0WRl/8jLMbtfzuf9xJCaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743349; c=relaxed/simple;
-	bh=ttqBwccblDnlUgT85u24m8F8ReEsQpSy2xqoZ61jUTo=;
+	s=arc-20240116; t=1761743350; c=relaxed/simple;
+	bh=gdMgSk/0F0owVeYpIT+yMfQdWp7yp9FtNkok/BlzeZI=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=gCXNa41/lfsQSM9vNfdvnOGGzEJW277xBeWlCicmxbPYMOC0jMOc2x9B9bOSAkduX9sLl548bwPBZ4EfkhUPdLeB9k3dakpsoMCtPAF76kb96f1OQTPtcnILC0FNltD+Qk/bPzgVMKLOHgyConrqifpGICQLpeHu643dGF/TQas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Xiy7l/AD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=euZOs+5p; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=Z2Da1UMvDWss2VxxBTWXYvG4FprAXdEjdnvW6ZDtRU1qc090hblkWwMAX5kVLXOSVAbsjpI/ssRXeNrdc8w0M91gzl4crwtOxPY+BORspgR7SmCqdCklsIr0C21YlOfNeX4k9MVFFi3CrU4R0sTlXxacqT2rMCddAMi2P8tpIF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FbteK22I; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XuKxcZMd; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251029124515.529672945@linutronix.de>
+Message-ID: <20251029124515.592186000@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761743342;
+	s=2020; t=1761743344;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=MyiYc5XDcaSkPhhdDFhhQoCiJrczopI5QkPnfs+aYFg=;
-	b=Xiy7l/AD53MGis2PTrxuDJCQPFI8uTzNUysn5L3qHOeMfq8kLRGQrUBHig3D83OOxgYDrO
-	dTZfddROpWXl4WkZW9YBKCIC9XeOfFYfRnyjJcLwRPqmKVIKzP5XjJQBhhOX4GX9i/2nxP
-	dyLEG4exQ/hZIfWHVVIlZWF0dZzrd+tnCM/YaHcF3hvSwTfnkRYO1I7J5DtTHttRg2Pxho
-	LdZ9P/MCGlQrg7lYgHgbSEkvgABIxXZpzjkyz9UaV76ZSn4p0rmZqvfHxx/goI6d5828k0
-	PAoUwmms/NhNK5Lz1FotWF9Flh46dr5XPfUHr1qBXXdeGYLE4H2tn6ssLcUS4A==
+	 references:references; bh=pq5f3X7zE4Uy3TxW2RkGficvYnAYg1R3XjmToNIXbKM=;
+	b=FbteK22IMpV0Ia4ko+3awmye/+GSvIsJ5dqhKqd1OgZBJFxZY/Ctp8eD2ITYbeUicYnplk
+	3H3T3gNl7k2j7Ri4I1ZNDXJqqr4/R1VF94e1RZgetrOEsen9a1MJ4/oCqqrvq2ZrVSHQi+
+	q1AWl2aviWJ7UZNpqLg5W8fl4pabXEqjmn+dG7vv2hX2i9ZB6rMBcj+pwGryKhsEzvKuc4
+	pc+ISAWbTID98gaZURrZg/LjX4reK7MK3ctNQGVwC4brmlfTTMHX4CdQZpncOCdgplunhq
+	GS7jIE1K2W9g/65yHOfQ+IeDiHECsVSjFYO6DapPfH92qBGUlmDWCF8Tfe9ksQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761743342;
+	s=2020e; t=1761743344;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=MyiYc5XDcaSkPhhdDFhhQoCiJrczopI5QkPnfs+aYFg=;
-	b=euZOs+5ppAgKYIfGIKd/RMYllvzBHZ5av3jDUbF0smwpOFm/GNTnFCWnSPT/BMqhWtVfNQ
-	8i9QMz1FgVNx1NBA==
+	 references:references; bh=pq5f3X7zE4Uy3TxW2RkGficvYnAYg1R3XjmToNIXbKM=;
+	b=XuKxcZMdOLpnQsT76AXYUm0o7pWoGfi9ed4oX/0ZNvygb7/z77AYhdpA0QCusfup1m3dXo
+	LBb/cMHAuH3MKODg==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -62,7 +62,8 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Tim Chen <tim.c.chen@intel.com>,
  Yury Norov <yury.norov@gmail.com>,
  Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: [patch V3 04/20] sched: Fixup whitespace damage
+Subject: [patch V3 05/20] sched/mmcid: Move scheduler code out of global
+ header
 References: <20251029123717.886619142@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -71,48 +72,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 14:09:01 +0100 (CET)
+Date: Wed, 29 Oct 2025 14:09:03 +0100 (CET)
 
-With whitespace checks enabled in the editor this makes eyes bleed.
+This is only used in the scheduler core code, so there is no point to have
+it in a global header.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/sched/core.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ include/linux/mm_types.h |   13 -------------
+ kernel/sched/core.c      |   20 ++++++++++++++++++--
+ 2 files changed, 18 insertions(+), 15 deletions(-)
 
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1387,27 +1387,14 @@ static inline unsigned int mm_cid_size(v
+ 	return 2 * cpumask_size();	/* mm_cpus_allowed(), mm_cidmask(). */
+ }
+ 
+-static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask)
+-{
+-	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
+-
+-	if (!mm)
+-		return;
+-	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
+-	guard(raw_spinlock)(&mm->mm_cid.lock);
+-	cpumask_or(mm_allowed, mm_allowed, cpumask);
+-	WRITE_ONCE(mm->mm_cid.nr_cpus_allowed, cpumask_weight(mm_allowed));
+-}
+ #else /* CONFIG_SCHED_MM_CID */
+ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
+ static inline int mm_alloc_cid(struct mm_struct *mm, struct task_struct *p) { return 0; }
+ static inline void mm_destroy_cid(struct mm_struct *mm) { }
+-
+ static inline unsigned int mm_cid_size(void)
+ {
+ 	return 0;
+ }
+-static inline void mm_set_cpus_allowed(struct mm_struct *mm, const struct cpumask *cpumask) { }
+ #endif /* CONFIG_SCHED_MM_CID */
+ 
+ struct mmu_gather;
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -5277,19 +5277,16 @@ context_switch(struct rq *rq, struct tas
- 	 *
- 	 * kernel ->   user   switch + mmdrop_lazy_tlb() active
- 	 *   user ->   user   switch
--	 *
--	 * switch_mm_cid() needs to be updated if the barriers provided
--	 * by context_switch() are modified.
- 	 */
--	if (!next->mm) {                                // to kernel
-+	if (!next->mm) {				// to kernel
- 		enter_lazy_tlb(prev->active_mm, next);
+@@ -2669,6 +2669,8 @@ int push_cpu_stop(void *arg)
+ 	return 0;
+ }
  
- 		next->active_mm = prev->active_mm;
--		if (prev->mm)                           // from user
-+		if (prev->mm)				// from user
- 			mmgrab_lazy_tlb(prev->active_mm);
- 		else
- 			prev->active_mm = NULL;
--	} else {                                        // to user
-+	} else {					// to user
- 		membarrier_switch_mm(rq, prev->active_mm, next->mm);
- 		/*
- 		 * sys_membarrier() requires an smp_mb() between setting
-@@ -5302,7 +5299,7 @@ context_switch(struct rq *rq, struct tas
- 		switch_mm_irqs_off(prev->active_mm, next->mm, next);
- 		lru_gen_use_mm(next->mm);
++static inline void mm_update_cpus_allowed(struct mm_struct *mm, const cpumask_t *affmask);
++
+ /*
+  * sched_class::set_cpus_allowed must do the below, but is not required to
+  * actually call this function.
+@@ -2728,7 +2730,7 @@ static void
+ 		put_prev_task(rq, p);
  
--		if (!prev->mm) {                        // from kernel
-+		if (!prev->mm) {			// from kernel
- 			/* will mmdrop_lazy_tlb() in finish_task_switch(). */
- 			rq->prev_mm = prev->active_mm;
- 			prev->active_mm = NULL;
+ 	p->sched_class->set_cpus_allowed(p, ctx);
+-	mm_set_cpus_allowed(p->mm, ctx->new_mask);
++	mm_update_cpus_allowed(p->mm, ctx->new_mask);
+ 
+ 	if (queued)
+ 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
+@@ -10370,6 +10372,18 @@ void call_trace_sched_update_nr_running(
+  * When a task exits, the MM CID held by the task is not longer required as
+  * the task cannot return to user space.
+  */
++static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk)
++{
++	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
++
++	if (!mm)
++		return;
++	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
++	guard(raw_spinlock)(&mm->mm_cid.lock);
++	cpumask_or(mm_allowed, mm_allowed, affmsk);
++	WRITE_ONCE(mm->mm_cid.nr_cpus_allowed, cpumask_weight(mm_allowed));
++}
++
+ void sched_mm_cid_exit_signals(struct task_struct *t)
+ {
+ 	struct mm_struct *mm = t->mm;
+@@ -10409,7 +10423,9 @@ void sched_mm_cid_fork(struct task_struc
+ 	WARN_ON_ONCE(!t->mm || t->mm_cid.cid != MM_CID_UNSET);
+ 	t->mm_cid.active = 1;
+ }
+-#endif /* CONFIG_SCHED_MM_CID */
++#else /* CONFIG_SCHED_MM_CID */
++static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk) { }
++#endif /* !CONFIG_SCHED_MM_CID */
+ 
+ #ifdef CONFIG_SCHED_CLASS_EXT
+ void sched_deq_and_put_task(struct task_struct *p, int queue_flags,
 
 
