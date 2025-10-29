@@ -1,218 +1,207 @@
-Return-Path: <linux-kernel+bounces-875876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C395C1A02C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A508C1A03B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4D284FFD7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:26:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 019355080D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221C433031D;
-	Wed, 29 Oct 2025 11:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8A132F757;
+	Wed, 29 Oct 2025 11:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjjuyGwS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="G6c7LF4e"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED9032ED3D;
-	Wed, 29 Oct 2025 11:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9085332E13A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761737199; cv=none; b=RqGHRvVmox11lZmUVd/oFF6JdU7at4u1105fP0R7d256f31P5v7fKb65XwaLTdcGWh+4Nd+IbjHfgKmmRq5S19WWzGv9IX9dtcapb8I1pRUx8+ikukQe7OCRUMCv4k7sHjCTL5Yf1lzhw+m8z4/YBQCwPQP8Cri20x/MPOwAKEA=
+	t=1761737227; cv=none; b=O06OCMJ9bpzryIrSSwy7KM5anjwqO3p1wZFJZxeDfh3KRFbBHj61WJ9s13LCDkyxpqIl0CkaNSTsiZ7FqOdH+OvI6NJrUCQK59XInraaP/XwOhkN8wwwRWUKvlVlDaS4WQP2XpPyQbkY4KRfGazZRtXvyiYcIEw9WDhBCAIze8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761737199; c=relaxed/simple;
-	bh=Jy2Nmn1rHJmpbulUrLW0Fx610dEyh5d9CQubhs7LzL4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=HUOO56UhxF08r9N20HkSez0eX7zXUXqi5dMnlKVhvvXN0wv364ZzTFff37nnrWPKpRQiou63nT4GUbdpsW0wF1tj4LzoJ0eZdgSVvPbsXvWc/Mqty3qQd2QZlrsTwZEDbMUSTnBfbbBnhnrzyGdO8roa3aTi46eVsTF9VGZLOwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjjuyGwS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CCB5C4CEFD;
-	Wed, 29 Oct 2025 11:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761737198;
-	bh=Jy2Nmn1rHJmpbulUrLW0Fx610dEyh5d9CQubhs7LzL4=;
-	h=Date:From:Subject:Cc:To:References:In-Reply-To:From;
-	b=SjjuyGwS/uydZTXSG9ee2QjevRPbg7DIrLDq7pDEvzhL86InZ0z0l686C+RZG6bus
-	 p6ZQEvM9zLTYaW0OYmzjnXg4r12YaBvAiD2gsnO5E7ny1X939hvuVA/3k3p8D44GOo
-	 H45Em2qVNSRdk1GY5pHr0cUeJNxuQfp8dXYGeUIhkP48LUNYR2TICd3+bqvy2N4rlq
-	 JGwd3oMkA/RU/mfvXiIbQPL0l5s5H2TY4qRrKaqdXAAvKh4/tvqrcNIDtciPg9juy/
-	 XnkmY9bDC4ZU+s0HjqSDmZ/YdrT8euuAwrzEWEa29mo+XInQDbIEbPpSdKiJfktNKu
-	 l2YbkOUFgB5bQ==
+	s=arc-20240116; t=1761737227; c=relaxed/simple;
+	bh=Hjkf53zqmGuffTDA/lEf7CNxn/oGC5EWuEOnSQGpNUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z3kmHxCKx2Q4/dABZ8CNJk+QGPZAtMCEcWtKnIqcxFz6D3f0Fb+CBDupP/nCFtSzB1WPizWswZDr3eKkeP/+1WIJV86LIWgEZ998ciGF0CcuvNMsS1qqwoC5+7v0ECDeAp9S67aUR7kr8Pr4DFTlIsWpaOMmakGh2i1iLBNtLRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=G6c7LF4e; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33d896debe5so7876512a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:27:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1761737224; x=1762342024; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o/A6oM3VT03v+OO6JYlGjLYI0SFwHFSmDU7wY8ZWBxg=;
+        b=G6c7LF4e+f4s2AYPLQKTLRnc9nPT3davp1/XTjgz645UVttXKTA2x4v9WbO+BsWI0O
+         h3ogonXDJQtdomshXokrrcrZpAv/mM2PRpHchjAJFvQ3YqOjWVmI23dqJyvXeg/EVghf
+         GmP7iBDNxYJGwbPjNbUzplnd9w0Kp1mm96ugwmeQxdVxyU39iRSTcv5veq0/qLjU7UxF
+         nFYJ2waVwj7tVnKG3u5YmWpAPmFhPOxiyBvtjEyoS1baWJJZxGOOvAHCdqL7Iox1dCkt
+         kZhJSzFsLy9M0mlFhE6G8jCUABby4+QRoK1t4ts2xpc9Mpytwx/PeXsS5qtZjJ71se8t
+         b7kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761737224; x=1762342024;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=o/A6oM3VT03v+OO6JYlGjLYI0SFwHFSmDU7wY8ZWBxg=;
+        b=FlFzY9YGcrAL4xx6Txl15PGeoOVyu6T3SzUudKdBOjID5/O1VHbzEYmyTpdGUunF+u
+         XT2AGT0NuOTIQrGWGDh4FXAX/hVN1Xf/oTuewzrenCaCAScb5gMcXMNbsoqSZI01t9lo
+         mPuzEnvW+J4IeQlehD9yzDt6yqcj09L6G10O1bq0Dyg6ZVcV57Rew+YoipZBLTts4zRy
+         Bz1dduC2wqF6iynq+YJVS1wT3/BcZcidb0oszayA8Up8jB6ZDAEJSQGmMEe+yxWVgP1C
+         Yw74YOnQ6uuQkiLlkg5iFQtmLQYPZtmauTucenph0AnVIEXwd7OT5V+16qPpBlGgGyrm
+         dRyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrGorpvGpHf0BFoxfot0+9Cn9tESbbqb4E0fmcsgMqRgnffd5eZizZ96ADqejMGYdODw/p28D9KXhghog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaJhwM/MzEzeORcg4w7vYsIisxYPfeuhHFF9x0wrAemtEvysEU
+	hgsGzbIRbTpFuJFQXCbush7kg3+ufSKnG9Lhnthuul13GIfqOub9Z+xwiLncyAEYIEQ=
+X-Gm-Gg: ASbGnctUZnBz2ZILx50jAPPEE7Fo8MOr1Oumb2msLCR8lJq557yVUEmMb/U6PfUFr8H
+	XtwuibngCTy2TVZkZrVexa1wgZ01UlklAXElI0qHQtPlZn09aJr/Gn+mK7dkbRu0ET4b9ExdFcv
+	3nT2CLeEm67HkZAbezoVYj8gYehMXHFDodUN4G+JtewAqsgFqPoCe8WTIcWe9ptxJrPKXswcX1c
+	ZTENdUN141o+K8ZrvEgb4poJl/pW3Irf2QIMghL1bDmnM74S4XGKUMjTDDZkftV2rUVNJ/cpdjG
+	VuOu0Q2QggHEuQs1eatOjqmBP+e/RQ30e3Gj0VH5XV/T/O0I8Mik9l+WWB1Rej6oAQut0RTvn3D
+	6RgrPQKeu2N6ksexhfaKb0LQC67JLFvB/H4Gp65fslVVfBkcZVATwDpnB/r7O6ckLAP3pOGHVGd
+	x9FaNeyjMi3Oe1Hv9dLil3kF8iEc+a
+X-Google-Smtp-Source: AGHT+IHpjKO2jUEb6+cQytmuQWp7mpQLNMuWE1ztXt3I54KFHlYNvHVC4AHhBNanzFdemT5w+k0ovA==
+X-Received: by 2002:a17:90b:134b:b0:32d:db5b:7636 with SMTP id 98e67ed59e1d1-3403a28efb0mr2855484a91.27.1761737223563;
+        Wed, 29 Oct 2025 04:27:03 -0700 (PDT)
+Received: from ventana-desktop.localhost ([2405:201:d019:c0ce:f7f5:7789:48e5:c03f])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm15316918a91.16.2025.10.29.04.26.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 04:27:03 -0700 (PDT)
+From: Himanshu Chauhan <hchauhan@ventanamicro.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-efi@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Cc: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	lenb@kernel.org,
+	james.morse@arm.com,
+	tony.luck@intel.com,
+	ardb@kernel.org,
+	conor@kernel.org,
+	cleger@rivosinc.com,
+	robert.moore@intel.com,
+	sunilvl@ventanamicro.com,
+	apatel@ventanamicro.com,
+	Himanshu Chauhan <hchauhan@ventanamicro.com>
+Subject: [RFC PATCH v2 00/10] Add RAS support for RISC-V architecture
+Date: Wed, 29 Oct 2025 16:56:38 +0530
+Message-ID: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 12:26:33 +0100
-Message-Id: <DDURPPIWWIA7.27RFSM7KRLN7I@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
- GPUs
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>, "Zhi Wang"
- <zhiw@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
- <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>, "LKML"
- <linux-kernel@vger.kernel.org>
-To: "John Hubbard" <jhubbard@nvidia.com>
-References: <20251029030332.514358-1-jhubbard@nvidia.com>
- <20251029030332.514358-3-jhubbard@nvidia.com>
-In-Reply-To: <20251029030332.514358-3-jhubbard@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed Oct 29, 2025 at 4:03 AM CET, John Hubbard wrote:
-> diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-> index 6f1486d4e9c6..6762493206ec 100644
-> --- a/drivers/gpu/nova-core/gpu.rs
-> +++ b/drivers/gpu/nova-core/gpu.rs
-> @@ -134,6 +134,34 @@ pub(crate) struct Revision {
->      minor: u8,
->  }
-> =20
-> +impl TryFrom<regs::NV_PMC_BOOT_0> for Spec {
-> +    type Error =3D Error;
-> +
-> +    fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Self> {
-> +        Ok(Self {
-> +            chipset: boot0.chipset()?,
-> +            revision: Revision {
-> +                major: boot0.major_revision(),
-> +                minor: boot0.minor_revision(),
-> +            },
+RAS stands for Reliability, Availability and Serviceability.
 
-Actually, would be nice to handle this just like chipset for consistency, i=
-.e.
+This series implements the RAS support for RISC-V architecture using
+RISC-V RERI specification. It is conformant to ACPI platform error
+interfaces (APEI). It uses the highest priority Supervisor Software
+Events (SSE)[2] to deliver the hardware error events to the kernel.
+The SSE implementation has already been merged in OpenSBI. Clement
+has sent a patch series for its implemenation in Linux kernel.[5]
 
-	revision: boot0.revision()
+The GHES driver framework is used as is with the following changes for RISC-V:
+	1. Register each ghes entry with SSE layer. Ghes notification vector is SSE event.
+	2. Add RISC-V specific entries for processor type and ISA string
+	3. Add fixmap indices GHES SSE Low and High Priority to help map and read from
+	   physical addresses present in GHES entry.
+	4. Other changes to build/configure the RAS support
 
-> +        })
-> +    }
-> +}
-> +
-> +impl TryFrom<regs::NV_PMC_BOOT_42> for Spec {
-> +    type Error =3D Error;
-> +
-> +    fn try_from(boot42: regs::NV_PMC_BOOT_42) -> Result<Self> {
-> +        Ok(Self {
-> +            chipset: boot42.chipset()?,
-> +            revision: Revision {
-> +                major: boot42.major_revision(),
-> +                minor: boot42.minor_revision(),
-> +            },
+How to Use:
+----------
+This RAS stack consists of Qemu[3], OpenSBI, EDK2[4], Linux kernel and devmem utility to inject and trigger
+errors. Qemu [Ref.] has support to emulate RISC-V RERI. The RAS agent is implemented in OpenSBI which
+creates CPER records. EDK2 generates HEST table and populates it with GHES entries with the help of
+OpenSBI.
 
-Same here, could be
+Qemu Command:
+------------
+<qemu-dir>/build/qemu-system-riscv64 \
+    -s -accel tcg -m 4096 -smp 2 \
+    -cpu rv64,smepmp=false \
+    -serial mon:stdio \
+    -d guest_errors -D ./qemu.log \
+    -bios <opensbi-dir>/build/platform/generic/firmware/fw_dynamic.bin \
+    -monitor telnet:127.0.0.1:55555,server,nowait \
+    -device virtio-gpu-pci -full-screen \ 
+    -device qemu-xhci \
+    -device usb-kbd \
+    -blockdev node-name=pflash0,driver=file,read-only=on,filename=<edk2-build-dir>/RiscVVirtQemu/RELEASE_GCC5/FV/RISCV_VIRT_CODE.fd \
+    -blockdev node-name=pflash1,driver=file,filename=<edk2-build-dir>/RiscVVirtQemu/RELEASE_GCC5/FV/RISCV_VIRT_VARS.fd \
+    -M virt,pflash0=pflash0,pflash1=pflash1,rpmi=true,reri=true,aia=aplic-imsic \
+    -kernel <kernel image> \
+    -initrd <rootfs image> \
+    -append "root=/dev/ram rw console=ttyS0 earlycon=uart8250,mmio,0x10000000"
 
-	revision: boot42.revision()
+Error Injection & Triggering:
+----------------------------
+devmem 0x4010040 32 0x2a1
+devmem 0x4010048 32 0x9001404
+devmem 0x4010044 8 1
 
-> +        })
-> +    }
-> +}
-> +
->  impl fmt::Display for Revision {
->      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
->          write!(f, "{:x}.{:x}", self.major, self.minor)
-> @@ -151,13 +179,43 @@ impl Spec {
->      fn new(bar: &Bar0) -> Result<Spec> {
->          let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
-> =20
-> -        Ok(Self {
-> -            chipset: boot0.chipset()?,
-> -            revision: Revision {
-> -                major: boot0.major_revision(),
-> -                minor: boot0.minor_revision(),
-> -            },
-> -        })
-> +        // "next-gen" GPUs (some time after Blackwell) will zero out boo=
-t0, and put the architecture
-> +        // details in boot42 instead. Avoid reading boot42 unless we are=
- in that case.
-> +        let boot42 =3D if boot0.is_next_gen() {
-> +            Some(regs::NV_PMC_BOOT_42::read(bar))
-> +        } else {
-> +            None
-> +        };
-> +
-> +        // Some brief notes about boot0 and boot42, in chronological ord=
-er:
-> +        //
-> +        // NV04 through Volta:
-> +        //
-> +        //    Not supported by Nova. boot0 is necessary and sufficient t=
-o identify these GPUs.
-> +        //    boot42 may not even exist on some of these GPUs.boot42
-> +        //
-> +        // Turing through Blackwell:
-> +        //
-> +        //     Supported by both Nouveau and Nova. boot0 is still necess=
-ary and sufficient to
-> +        //     identify these GPUs. boot42 exists on these GPUs but we d=
-on't need to use it.
-> +        //
-> +        // Future "next-gen" GPUs:
-> +        //
-> +        //    Only supported by Nova. boot42 has the architecture detail=
-s, boot0 is zeroed out.
-> +
-> +        // NV04, the very first NVIDIA GPU to be supported on Linux, is =
-identified by a specific bit
-> +        // pattern in boot0. Although Nova does not support NV04 (see ab=
-ove), it is possible to
-> +        // confuse NV04 with a "next-gen" GPU. Therefore, return early i=
-f we specifically detect
-> +        // NV04, thus simplifying the remaining selection logic.
-> +        if boot0.is_nv04() {
-> +            Err(ENODEV)?
-> +        }
-> +
-> +        // Now that we know it is something more recent than NV04, use b=
-oot42 if we previously
-> +        // determined that boot42 was both valid and relevant, and boot0=
- otherwise.
-> +        boot42
-> +            .map(Spec::try_from)
-> +            .unwrap_or_else(|| Spec::try_from(boot0))
->      }
->  }
+The above commands injects a TLB error on CPU 0.
 
-Without the comments this currently is:
+Sample Output (CPU 0):
+---------------------
+[   34.370282] {1}[Hardware Error]: Hardware error from APEI Generic Hardware Error Source: 1
+[   34.371375] {1}[Hardware Error]: event severity: recoverable
+[   34.372149] {1}[Hardware Error]:  Error 0, type: recoverable
+[   34.372756] {1}[Hardware Error]:   section_type: general processor error
+[   34.373357] {1}[Hardware Error]:   processor_type: 3, RISCV
+[   34.373806] {1}[Hardware Error]:   processor_isa: 6, RISCV64
+[   34.374294] {1}[Hardware Error]:   error_type: 0x02
+[   34.374845] {1}[Hardware Error]:   TLB error
+[   34.375448] {1}[Hardware Error]:   operation: 1, data read
+[   34.376100] {1}[Hardware Error]:   target_address: 0x0000000000000000
 
-	let boot42 =3D if boot0.is_next_gen() {
-	    Some(regs::NV_PMC_BOOT_42::read(bar))
-	} else {
-	    None
-	};
-=09
-	if boot0.is_nv04() {
-	    Err(ENODEV)?
-	}
-=09
-	boot42
-	    .map(Spec::try_from)
-	    .unwrap_or_else(|| Spec::try_from(boot0))
+References:
+----------
+[1] RERI Specification: https://github.com/riscv-non-isa/riscv-ras-eri/releases/download/v1.0/riscv-reri.pdf
+[2] SSE Section in OpenSBI v3.0: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v3.0/riscv-sbi.pdf
+[3] Qemu source (with RERI emulation support): https://github.com/ventanamicro/qemu.git (branch: dev-upstream)
+[4] EDK2: https://github.com/ventanamicro/edk2.git (branch: dev-upstream)
+[5] SSE Kernel Patches (v7): https://lore.kernel.org/all/20250908181717.1997461-1-cleger@rivosinc.com/
 
-Which I think is a bit heavy-handed. Let's simplify this a bit:
+Changes in v2:
+ - Made changes to be conformant with SSE v7 patches
+ - Fixed some bot warnings
 
-	let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
+Himanshu Chauhan (10):
+  riscv: Define ioremap_cache for RISC-V
+  riscv: Define arch_apei_get_mem_attribute for RISC-V
+  acpi: Introduce SSE in HEST notification types
+  riscv: Add fixmap indices for GHES IRQ and SSE contexts
+  riscv: conditionally compile GHES NMI spool function
+  riscv: Add functions to register ghes having SSE notification
+  riscv: Add RISC-V entries in processor type and ISA strings
+  riscv: Introduce HEST SSE notification handlers
+  riscv: Select HAVE_ACPI_APEI required for RAS
+  riscv: Enable APEI GHES driver in defconfig
 
-	if boot0.is_nv04() {
-	    return Err(ENODEV);
-	}
+ arch/riscv/Kconfig                     |   1 +
+ arch/riscv/configs/defconfig           |   3 +
+ arch/riscv/include/asm/acpi.h          |  20 ++++
+ arch/riscv/include/asm/fixmap.h        |   8 ++
+ arch/riscv/include/asm/io.h            |   3 +
+ drivers/acpi/apei/Kconfig              |   5 +
+ drivers/acpi/apei/ghes.c               | 103 +++++++++++++++--
+ drivers/firmware/efi/cper.c            |   3 +
+ drivers/firmware/riscv/riscv_sbi_sse.c | 147 +++++++++++++++++++++++++
+ include/acpi/actbl1.h                  |   3 +-
+ include/linux/riscv_sbi_sse.h          |  16 +++
+ 11 files changed, 300 insertions(+), 12 deletions(-)
 
-	Spec::try_from(
-	    if boot0.is_next_gen() {
-	        regs::NV_PMC_BOOT_42::read(bar)
-	    } else {
-	        boot0
-	    }
-	)
+-- 
+2.43.0
+
 
