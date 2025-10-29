@@ -1,129 +1,97 @@
-Return-Path: <linux-kernel+bounces-875926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EA4C1A26C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:02 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D3DC1A278
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDBF64E9060
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:12:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 60AAB350F3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401BE33A035;
-	Wed, 29 Oct 2025 12:12:26 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3BB3321AA;
+	Wed, 29 Oct 2025 12:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FNjg/KK3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GHI1xpu7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30312EA490;
-	Wed, 29 Oct 2025 12:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F322F6900
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761739945; cv=none; b=AoD6gFyNTv/F11reyhTejOxMGec2dHYCw+yyJmIUthJ/585hQKHit66xqcW1XfJMv42qteXLraOGIAOW+Z8OJNoIJ4UUzKIZVTlKeLRV/hnh12be1oeoRjRZ0GHgtxPV7mcXl60MC20DtkO9wQdn/Z0UHptKCyvpw2kE8F2wJ7k=
+	t=1761740031; cv=none; b=c1SJXX+H5N1mSDEbOg/g3abxM8CRTIdPCOdtP4VfHXXTM3BQKAlERdddl2Qn02rHGRnfWKd2VdxZ/Xbz7XSK0wtqbaxZv4nWfy3gNpWsvSiWJOqObBPzeZ4LxeSncsX5z2UtKmkETUTHkD4AL53jQNj2d2LA0WoAPtlrQO7MfeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761739945; c=relaxed/simple;
-	bh=D9ubV1MzwQjGbT7HGhaPF/W0DxBMGpzGkD/kypt2MLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fc9UPzXu+TjIFF+6izhtDY8f4BWrabK83E19ks5d1ytyQpvGY+3h9tIZcQQgmHVv/UwPcG/c+rk2tb2s3FEOn/BU36xOpQpHSxfUVlkR7im8NTwEhvu7BOap73nTYKs3CcHMO70eMfQ3MHq3sNOEdnED6mAVmsjU6pAk1nCGczg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vE52C-000000007C6-3Tbc;
-	Wed, 29 Oct 2025 12:12:12 +0000
-Date: Wed, 29 Oct 2025 12:12:08 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v4 05/12] net: dsa: lantiq_gswip: define and use
- GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID
-Message-ID: <aQIEmPfkaYPTtTaY@makrotopia.org>
-References: <cover.1761693288.git.daniel@makrotopia.org>
- <7d1a0368e95da42999af379d90de5d791283d24e.1761693288.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1761740031; c=relaxed/simple;
+	bh=/+GujrSsGiAjLCU1622acqoeslKR4CJn2Yy4gWDqG9c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FiV/QOWkYCj0+FPd014nzBWp/zdyvn3Y4P0hiVVAE4lk4M1f2GIDo6RsrvXDgRHE/94VYO0uh5HqKt1uotwTsInPk76sD+LnhEHLpj8jMcDyaoK+rsOFL4eQYv2oDQ66KJ10+I38x24dbTJoY85DoGLBC1ZgGIj9E/4syEE+PpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FNjg/KK3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GHI1xpu7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761740027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=esT651bRTLMfYO64YXGQAJOBt0V7qx7+gpXmLKe21Vg=;
+	b=FNjg/KK3z43CBxdoBj4DiMOs6lEpaVT2c19t+sCcU5AnFVO//ILQqObKmdgVNHei83gaxh
+	z9RxPcTXVixWGXfKVv6CO/prEPtQ38fEiG2sZEiHcpNexDuMUHydc8WO/9cVpIn9BMTUOL
+	E1PFsRI3MNyAs2jMaXjU5fK1c0LW82/lHXZn3RtxqyT0cxzWpvgypVIYup8sRwglobt4ge
+	xe33rDmF8gDrlitIgs7AFwCzwBXaZteHgvLktvsEUkToWNiEx15RjVwQyYIttgB+2sCLP4
+	nyV92pk6a+XfkG621JknI8y5xftNJVuiQ+QLKqyqDBbqxWDrP3kqu2ECjGrwxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761740027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=esT651bRTLMfYO64YXGQAJOBt0V7qx7+gpXmLKe21Vg=;
+	b=GHI1xpu7ATaNuoTDBNyIGte1DBj98hRzidFOeQS/Z6SjdbJBBv14xsj9/Duna/GlphZwf2
+	KelyW71TWP5MkEBw==
+To: Pingfan Liu <piliu@redhat.com>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org, Waiman Long
+ <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+ <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Valentin Schneider <vschneid@redhat.com>, "Rafael
+ J. Wysocki" <rafael.j.wysocki@intel.com>, Joel Granados
+ <joel.granados@kernel.org>
+Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when
+ shutting down nonboot cpus
+In-Reply-To: <aQH8KJ8RsnzbLfN2@fedora>
+References: <20251022121345.23496-1-piliu@redhat.com>
+ <20251022121345.23496-3-piliu@redhat.com> <877bwgw9yf.ffs@tglx>
+ <aQAvnjVvJOUx78Nk@fedora> <87qzunuqqo.ffs@tglx> <aQH8KJ8RsnzbLfN2@fedora>
+Date: Wed, 29 Oct 2025 13:13:46 +0100
+Message-ID: <874irhvrb9.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d1a0368e95da42999af379d90de5d791283d24e.1761693288.git.daniel@makrotopia.org>
+Content-Type: text/plain
 
-I've just received a definite answer from MaxLinear confirming that
+On Wed, Oct 29 2025 at 19:36, Pingfan Liu wrote:
+> On Tue, Oct 28, 2025 at 01:59:11PM +0100, Thomas Gleixner wrote:
+>> If you freeze stuff there is nothing to do. Hibernation works exactly
+>> that way without any magic hacks in a particular scheduling class, no?
+>> 
+>
+> There is a nuance: DL bandwidth represents a commitment, not necessarily
+> the actual payload. Even a blocked DL task still occupies DL bandwidth.
+> The system's DL bandwidth remains unchanged as long as the CPUs stay
+> online, which is the case in hibernation.
 
-"The condition of GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID is: (ETHSW_VERSION &
-0x00ff) >= 0x22"
+No. Hibernation brings the non-boot CPUs down in order to create the
+disk image.
 
-This matches the implementation now suggested.
+Thanks,
 
-On Wed, Oct 29, 2025 at 12:17:18AM +0000, Daniel Golle wrote:
-> When adding FDB entries to the MAC bridge table on GSWIP 2.2 or later it
-> is needed to set an (undocumented) bit to mark the entry as valid. If this
-> bit isn't set for entries in the MAC bridge table, then those entries won't
-> be considered as valid MAC addresses.
-> 
-> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> ---
-> v4: keep previous behavior for GSWIP 2.1 and earlier
-> 
->  drivers/net/dsa/lantiq/lantiq_gswip.h        | 1 +
->  drivers/net/dsa/lantiq/lantiq_gswip_common.c | 7 ++++++-
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.h b/drivers/net/dsa/lantiq/lantiq_gswip.h
-> index 56de869fc472..42000954d842 100644
-> --- a/drivers/net/dsa/lantiq/lantiq_gswip.h
-> +++ b/drivers/net/dsa/lantiq/lantiq_gswip.h
-> @@ -224,6 +224,7 @@
->  #define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
->  #define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
->  #define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
-> +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
->  
->  #define XRX200_GPHY_FW_ALIGN	(16 * 1024)
->  
-> diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> index 0ac87eb23bb5..ff2cdb230e2c 100644
-> --- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> +++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
-> @@ -1149,7 +1149,12 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
->  	mac_bridge.key[2] = addr[1] | (addr[0] << 8);
->  	mac_bridge.key[3] = FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_KEY3_FID, fid);
->  	mac_bridge.val[0] = add ? BIT(port) : 0; /* port map */
-> -	mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
-> +	if (GSWIP_VERSION_GE(priv, GSWIP_VERSION_2_2_ETC))
-> +		mac_bridge.val[1] = add ? (GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC |
-> +					   GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID) : 0;
-> +	else
-> +		mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
-> +
->  	mac_bridge.valid = add;
->  
->  	err = gswip_pce_table_entry_write(priv, &mac_bridge);
-> -- 
-> 2.51.1
-> 
+        tglx
 
