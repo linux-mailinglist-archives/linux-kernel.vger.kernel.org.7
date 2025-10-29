@@ -1,68 +1,94 @@
-Return-Path: <linux-kernel+bounces-874950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5CBC17B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:00:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85985C17B75
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 999191896AD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:00:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B484218980EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EAB22D7DC2;
-	Wed, 29 Oct 2025 01:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF182D7D2F;
+	Wed, 29 Oct 2025 01:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C+uHI4yJ"
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OijO5ShB"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796DA2D949A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3151FE47B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699614; cv=none; b=oGYtpziCUVbzv/UX78+iBaLWkZidJZHXvBn8yWDTJuXgI01YpUyaQU8vO6S3ijPMs0geBlerIoJGOebSvf1NZN8f2IEW3CEHEjxOXY7S/BI3j2iXzHuxMNtCmyZZ4rhfJDclh5QduHWRBi+816fVtx1oD2VYHnfGlvQalcORT+w=
+	t=1761699664; cv=none; b=dEl88/lhwii7AafGgwOc+WC8vhmPgtKFAIhc0HTzQ7lOK1/YEwkoE0CE2bcdpAP1/HldsDLWO5kIVarGHDQE2XMW2OH7XrIilJktlNiAGqyIadZVRfVFWMSxG2Iuu2YYS1b7UNBkqzXybBaAF28FNK47NyGvnObV7e8//7rBh18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699614; c=relaxed/simple;
-	bh=m2TntnE29Ayjgb90lea7jgHxSXwtxhfaO+9MYo3cUqA=;
+	s=arc-20240116; t=1761699664; c=relaxed/simple;
+	bh=uTnDRKOlvzmL7s/ezFOD6tLmfxhtqIVOOmhIkAE8y/Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kv5fDA1kAS3FBtn8YmqOqodLa4mWQwU5xwPFRMCjsncTZp4sADH0tZTb67h8+igCSFG1BO8Dc1xVluASabd9h7bFK0NjiBKxpaelF76+rWn96j8USVMJXfHtqk1oUds+HQUMBzQHDj42SwL4QbwKIGmlozakf0SsBRUYnarSwFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C+uHI4yJ; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 29 Oct 2025 08:59:49 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761699600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=axfy//ogFDe/yGbFMo1sZMCFPL+4baIeWWIdu2LpDI8=;
-	b=C+uHI4yJrnTWHNX09+K4A6XEe9JSPPUru03wyNSgVfHv61E7wLAa4TZ331QLDUnPoQ1P6E
-	VjUIg4YW3JXeZ4EO+p4elnyhBy5vg944BCDQMdxymYkrakt5HKwr3RRDjZBvBZO2zy4wqQ
-	Odu3Jg8x6KTSeZ3PTZpwj1+hNJQKZC4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Troy Mitchell <troy.mitchell@linux.dev>
-To: Michal Wilczynski <m.wilczynski@samsung.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Troy Mitchell <troy.mitchell@linux.dev>
-Subject: Re: [PATCH 3/4] pwm: th1520: Use module_pwm_platform_driver! macro
-Message-ID: <aQFnBYc7C-nQslJ9@kernel.org>
-References: <20251028-pwm_fixes-v1-0-25a532d31998@samsung.com>
- <CGME20251028122318eucas1p17161f0e1f2281c868688e8a4cc3d8f68@eucas1p1.samsung.com>
- <20251028-pwm_fixes-v1-3-25a532d31998@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l4ywGquSMNUKvNybUnd3Nsywk5UR0ObommnLMTad1cXP+my0ftbFr2oUvadekP4dEGzmDs/inq/QCD0Kfl6uLdcKj3Xyr8P7tHyaeinqrntBJOOi5pB7RksHKboRqf0bcuIkG5XRCpOeKZmBSz7QNN1hxMN5hZnxJ7dGOdxbH2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OijO5ShB; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a27053843bso9157150b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761699661; x=1762304461; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EOFIBRmcwlFaN9bXxhzQe/4jdraVkcYuslQKkiUSHs4=;
+        b=OijO5ShBtwVjynG12Z/cGAYPQAK4ZsUGsdY8YlydIx1OV7aO5xYBgllvk+N4roNQg7
+         U+UreZ7QqQ0c4km7EH//LbR8gjnf93NUJbH6s/Lwi+GftkYGdYf9gqMRul8IxLIat+up
+         zbzoskAKKAsVTk+dldwvvW16LL9HY3EIl2Jsat62RrVVs31H2g8BuIfaTfdSf9Oh1Bqx
+         hWTtNDUq6K8UTNjGlsrOq92OaPZNJU1lULDQQmp/cRDr0/E9XrT5tAyKPbXdjXaAojv1
+         cmqjeXggGEPLoruEenCuywr3otRJXGFLnTjhGQmRR/t32h5YrU9WiFmujzjHQ4Kd9hxz
+         sBKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761699661; x=1762304461;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EOFIBRmcwlFaN9bXxhzQe/4jdraVkcYuslQKkiUSHs4=;
+        b=ZX2q71WtFNOh2PFkzr0k6wEyJcaHUf8Kzfu9ChBu4brCVjhE0RkYrosI77t2G6o1ee
+         6hDPNAh1pEPWh7OAaLlu9Usg8HDCrOxfOEJ3DC5tU4oUEfQlDQb5Ok4p+zYO7FIb8px0
+         /UKCazu2ocWWWLJCaVirKNkdJCTo0ybt7PKFf935xGtkDMC6Do+prz4Vp+5QUoc93u9f
+         IaTc4L5T82ISLbBbI78DEvnJy7aIO45Oa1NUyqVExiW8Z350KoIXtzEHuE4EvjaWv4IF
+         KSNszTNdNlW56bEKU7+yk/eygArvo6t2rFKZG8Z0/3/B+EdwFPp31bzvTF8Pm5jUAPhZ
+         TrXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUYyXXfwYDl//jeOBBUi8bLKIlHyRY9FIlKEwEWaCM4fNBl0YPnEL6pK2389tQ7XU4NE+6j4OPEc2UFos=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwORU3/dxy/5rl76BbF1/5DRuFM+dSLpRY7ogY2X7F9MVRedrqS
+	yXHK88yVI1c2ijGbuAFItyJ3gXjOVH2TJaM2lgLSohPtAMfaUj8CSbdn
+X-Gm-Gg: ASbGncu3Mv8604IBfsSDxflzc2TU8WzV3pT8zVEIoH7S8zvz2wdr515Qdl70ZLtHyIF
+	hFY9A9O0UsU330/ZViNWXfICvBBSrCq4ltBHuxVysbrJp8WhsNKhHIQS/Bf6lPSngxc3mdpDDss
+	cjd0Juf0OMtNG7j0nplpNd3Xo55RJj8/Xo9ugGI1u0825FqYVRFaijw6DTo/ZNbGRTU0q6+/YKo
+	wMPiqnqSF5vt+lPAX/cZQm/5d/A0Xh6ccZLCZB0BMT7eZn2NYmuv4yd/dSHctgC2zVFbMPs1uXE
+	NoamEAqbiPBbRYBO/L4Ihd42Ru/QKjQhwJXctJUCiJpwhWjm51XZzyCPK8mAnx5DxFhNxwnH3/5
+	DrqGyuufYH+glFsaftE/A6hWPkwt6aYOx2xWoFmD1nt1o33zK03o5V4UkfgdHtOl8dCjPEefL/D
+	HrLqjHXI6R9g==
+X-Google-Smtp-Source: AGHT+IEMe32xqVGqKCj2DGI+hZvdmpFIC/0PTrMJHiFO3ihM2p5pLrA2hxJkIMoSwNxbQFCypenenQ==
+X-Received: by 2002:a05:6a20:914a:b0:2f1:302d:1285 with SMTP id adf61e73a8af0-34657f5b873mr1069767637.17.1761699660885;
+        Tue, 28 Oct 2025 18:01:00 -0700 (PDT)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414015724sm13039315b3a.14.2025.10.28.18.01.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 18:01:00 -0700 (PDT)
+Date: Wed, 29 Oct 2025 09:00:52 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>, Han Gao <rabenda.cn@gmail.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicornxw@gmail.com>, u.kleine-koenig@baylibre.com, 
+	aou@eecs.berkeley.edu, alex@ghiti.fr, conor+dt@kernel.org, krzk+dt@kernel.org, 
+	mani@kernel.org, liujingqi@lanxincomputing.com, palmer@dabbelt.com, 
+	pjw@kernel.org, robh@kernel.org, tglx@linutronix.de, sycamoremoon376@gmail.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	sophgo@lists.linux.dev, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, 
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH 0/4] Add PCIe support in DTS for Sophgo SG2042 SoC
+Message-ID: <ilkog5axxgj2vexc2wegkpyyysrrcjhejamnpc2wmb3ilakbwq@f25veozfglr6>
+References: <cover.1760929111.git.unicorn_wang@outlook.com>
+ <PN6PR01MB1171791524E2BC1C227E342F6FEF5A@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
+ <CAAT7Ki_4nkKM1-D_8ybwusxTTsR=Lf09v8Cx6QDWfuy8KLtbBg@mail.gmail.com>
+ <PN6PR01MB1171739409EDE88BC4453D09AFEFFA@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,20 +97,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028-pwm_fixes-v1-3-25a532d31998@samsung.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <PN6PR01MB1171739409EDE88BC4453D09AFEFFA@PN6PR01MB11717.INDPRD01.PROD.OUTLOOK.COM>
 
-On Tue, Oct 28, 2025 at 01:22:34PM +0100, Michal Wilczynski wrote:
-> The `pwm_th1520` Rust driver calls C functions from the `PWM` namespace,
-> triggering `modpost` warnings due to missing namespace import
-> declarations in its `.modinfo` section.
+On Sun, Oct 26, 2025 at 08:31:49AM +0800, Chen Wang wrote:
 > 
-> Fix these warnings and simplify the module declaration by switching from
-> the generic `kernel::module_platform_driver!` macro to the newly
-> introduced PWM-specific `kernel::module_pwm_platform_driver!` macro.
-> The new macro automatically handles the required `imports_ns: ["PWM"]`
-> declaration.
+> On 10/25/2025 7:58 PM, Han Gao wrote:
+> [......]
+> > > > base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> > EVB1.X/2.0 can be started normally.
 > 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-Reviewed-by: Troy Mitchell <troy.mitchell@linux.dev>
+> Thank you, Han.
+> 
+> Inochi, please add "Tested-by: Han Gao <rabenda.cn@gmail.com>" when you pick
+> this patchset for next.
+> 
+
+Just add the tag is fine and no quote, I can collect the tag with b4.
+
+Like this.
+
+Tested-by: Han Gao <rabenda.cn@gmail.com>
+
+Regards,
+Inochi
 
