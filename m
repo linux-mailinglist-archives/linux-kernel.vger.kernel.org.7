@@ -1,313 +1,193 @@
-Return-Path: <linux-kernel+bounces-876978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A5BC1CE5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:06:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4ADC1CF1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:13:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4CD4234C370
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:06:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ED4B4E4327
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2813590BC;
-	Wed, 29 Oct 2025 19:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4BF261B62;
+	Wed, 29 Oct 2025 19:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="AOyiR+rx"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="cz/dFH6R"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012033.outbound.protection.outlook.com [52.101.43.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2662E6127;
-	Wed, 29 Oct 2025 19:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764754; cv=none; b=jeLR2fUH3Q/yEIZ5V2vvgEawuYFn2j2nF0l9k2UDZ0/cE+E2XbhB3fsmkPAC+vi8gC6u+hfLeO9o+TkioV/0N1iOQ3YSATaiyWhdpABnGbqAIplBBvrcqAQjoJd+pmHQUo/1ekbeod5CmQVVBuulswKxCeY9u0LaaiSmXKIudNM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764754; c=relaxed/simple;
-	bh=xKY6sWDSn9QH5vGZMFNxNDCBwD1Q1OcZh+NHOOl4Biw=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=L6aw2NxrRCQKch+V8PgI1BUq2sK8YO/pdeIJYzg6ivMt9ET1tPAbM1EqC1/jIIqXSbODTdXozlEJaIKuFV7HldHOfGt0S1sEzPFAJ+eLAzq/UPxhSJsCetCbSDOxd03C1oBM0ksVX2UO3C7BCHkSEv6ZUIVIP+NAaVK7XxbF/cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=AOyiR+rx; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1761764742; x=1762023942;
-	bh=B6CFw+JSCNGBsZMvctblIxAviwt5E/Cc+YlSpcKbM2E=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=AOyiR+rxjPfuH7pfkccCI8rMLfkmxjFsngbdMFMpi0zT4M9D/FWZ0qEvVFsr1QqeG
-	 aeZ2rEk2blvOc+RXJxXre8BTUUVbzPiTtUZ4eHKV9bHrVYAJlsoMd05Lslow36MqQ8
-	 K1GqlN+S8D2tbrEFnke0JQzVh5/x0+dix/wvoZunNpTeIQfxlVbATxihUfV2eK9PjX
-	 bABFBwRA4NtMKHqlPZVAPKUYV8KiyMUeMOTqMz/oiwTf4WOAPtgU3CPBKYhT/PbkYQ
-	 FEroosHwGZzCM4S0jlQmRJf2mw83e0gfpA5QM23gVgTomBwocLeKV2LF5dkPZpAIJl
-	 DKnDSNw2AvrHg==
-Date: Wed, 29 Oct 2025 19:05:27 +0000
-To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
-	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
-From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
-Subject: [PATCH v6 00/18] kasan: x86: arm64: KASAN tag-based mode for x86
-Message-ID: <cover.1761763681.git.m.wieczorretman@pm.me>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: b23693d0cf530e4c8a53771e64b6fdea3be223c5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62B83596E5;
+	Wed, 29 Oct 2025 19:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.33
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761764874; cv=fail; b=eQ5BPR698qHLheGGwDlqBwgqaAGXCnvQq+d+2VM4RD2WCzCND4CWGWC4UT8ysG+kPgUV5LiBPHmIXF6UDDcpgrSp0bWh6sgM05uyzRyYEyXyYNAKBSZQkyn+NNCkyfBJQgkJbSByIwPrHFyh4mhWGQQwRVDQmKqJdUal1XKLKUg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761764874; c=relaxed/simple;
+	bh=r4UIl/UKl9DHi4g7sXMVNSaBtyekNFPsDYRmLNjsO04=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hlCSwZT8+tuhQeLoUkSaYm8o7X9rWt4a4PNBNID/CljIY9/fzn2QgiVAKLu5XYweOVi1vtSdscpK6yJ6sJnKbEDFUS6SI0SStdxWLLq7bzHn8voEEE8WoWgPGxX/JqGbVCEn2/lltjgXP8rCugIXnNNOleyNZhzAGqfqHLtCcFc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=cz/dFH6R; arc=fail smtp.client-ip=52.101.43.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eKyXGAmK5FrbUwimr0RSrHmdAvtM3w0Yji0Oywae8QzbJrZndB35eBWt74d4+azE4VHTWrJpRKmIkb4bNyt2XuLZ67DZgje2KpLxgNALPXarL/NYBBBvyEPUHEuS7RTjfJLNGZSZ5aBPeOrOXQn6625yXflsS2Fd5ktaIZX+jOfeGg7aUuoUyCfWghEjT99U8Up5r4xwwrPh60DBqXXDgnI2gfas4uXt8tni9UWk2UgcGESQYVhsFXx7N5vSG0KpM/M7YHR8rhg2GaRAu4feX7+6cnOSTcoDcaPieVsjcebwZdXYiTZK+/qIg0WYpCuX6BtquMMIr7Xo+/hALfbiBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PKF3aIJDw6pOngsBvz6oUnxUIMFaual0x1to6OhopH4=;
+ b=YkWZbpzuzCC4jXyjGoBb1RqFiBPuT2hpAtw1aec1aIl24oNDxFM7L65BYKlyLD35ivJhZkWlg+jPkcEjc1CxnwlWQwkYRNwnvmJikXp0a3eE+RF/mDoTuAujK71JbpoJ6KI054d/1Gvd3n5sUNRT5p+B3xhXA9xSpg2GnRxz4z3RSrG3QBJoEKJewbTDFbpxkn1Lo3p3zhQSVFtBuvah1QlyZI5JShWJyiz5XQe2fJSexwnm5bgMsYOgtHRUemz30JwrPuiTpoi03l6i3L2PAt1aCJ4q1o5IYIafiZ6hohV2U40UVcFuVyxzOyi0yPWWtWNRe2LMRp+2B192T23HIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PKF3aIJDw6pOngsBvz6oUnxUIMFaual0x1to6OhopH4=;
+ b=cz/dFH6RM6m3RVqnxwaqaKpDVelQ7s9SN2TQuFn/ZeNjKjMSffJS91mZLpg0f0irgjPRoH4SO/DUWXMQq89FBNSW3fP55eSTQBI9I+PPZLKhF3KfkBW1+nYsAva8UU+Vlf8NYE6R/TDwodC66Zb7lJ4PU4Yc78gnzcigk5FCgPMEvNnYSLIlWz8PO2O07llPGpn5dY4hAhWfFjMKez+7z2b1R2rXMctwv4laMXunV167iihctAOgHNjEbgEXOEJOmTU3GUfRdQ25Wb2+dVUdFbGdhBbbFKSJNcV5VIrXLIjXgMHihjWNjZuQ+Q+9U9jaFmzmUGCAVuyhkSf7utfUvA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from PH0PR03MB5893.namprd03.prod.outlook.com (2603:10b6:510:32::6)
+ by DS7PR03MB5510.namprd03.prod.outlook.com (2603:10b6:5:2ce::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
+ 2025 19:07:50 +0000
+Received: from PH0PR03MB5893.namprd03.prod.outlook.com
+ ([fe80::d003:bc08:7968:c605]) by PH0PR03MB5893.namprd03.prod.outlook.com
+ ([fe80::d003:bc08:7968:c605%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 19:07:50 +0000
+From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
+Subject: [RESEND][PATCH 1/1] fpga: altera-cvp: Limit driver registration to specific device ID
+Date: Thu, 30 Oct 2025 03:05:44 +0800
+Message-Id: <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+References: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: KU2P306CA0072.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:3a::12) To PH0PR03MB5893.namprd03.prod.outlook.com
+ (2603:10b6:510:32::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR03MB5893:EE_|DS7PR03MB5510:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2ccc054c-f3ab-49d0-44bb-08de171e747a
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?fMgqGb1VFvkKfbAQVvH4d7ZJonlFJ5cnKX1QD1jMZW3IBDbNFL+jSZ2VnsOT?=
+ =?us-ascii?Q?R5f0P6JE6xJtomsygIzZ9Y2TakyRUw3j2CzZUzkhMSmZVIE7yInEjCHWvQuv?=
+ =?us-ascii?Q?bgeL06GAKgHcRV8+vGmqHdUsP6IIAE3jpVsE22epe99C635F5sqe4Y45eQfq?=
+ =?us-ascii?Q?/I22s18JXimheEPqCURnmczu4rAgn/b0T2jKd1II5/aNPGbXxeLu5yn47aqO?=
+ =?us-ascii?Q?GPk/e+5crivM3Z1Wg2qdFKQju6h84az91zi7NtIH6wbW7UwzKGmI0J3TMlys?=
+ =?us-ascii?Q?kf0O37DSkIm92vM7KwxwhlDin5vmMZ0b0xEOrhHFAJu0ffXdGBIgYMRFecT/?=
+ =?us-ascii?Q?+8t+8Etnzk5wspWhfRhEx26NZDiiVdr5lz7UofW5brbfGJq8ZMZc+JMURvoK?=
+ =?us-ascii?Q?SyOyzd8wFqpq2eF8lC5EBtr9c4oG1/w+UZ+JsIwrLugTYtMjjgbkSfUiL5bu?=
+ =?us-ascii?Q?KrfRuaZVPbhSDnULRoAEo8vVy9dxvzmUI2MSA7MX2AOScUH5Dgg7IJmTry3o?=
+ =?us-ascii?Q?mFIRcMjLpuTV9G7/TvMdZaE0954jkbWrv+ZRfxnR8+TQWMuUa1+HXBSLYHk0?=
+ =?us-ascii?Q?6Wz0Nq+ofcW2ySzd+pLwfVhDLk3n11bqqvjKFkXiJ7KCgs9nhIBWeYqxtCi6?=
+ =?us-ascii?Q?MJmwwwwy4b9GUO694bhzbOhBsHI2Qy5Jx5u0zQQ8Kk3oFavurt0r+xUwt2pe?=
+ =?us-ascii?Q?DUOHCpPKQsQUO7PYfy/JoO0WO8eH8qei1Hl0RxdKT7efyIjfFz3H0tNFJIyZ?=
+ =?us-ascii?Q?gSD6ARFUeEdFUaWT/zqY0t5dc51zVThQ62D6PHOGAIVWJxadazxty2ifK0zP?=
+ =?us-ascii?Q?VOonm5iqlcvNMv+SNqUi5JtSYe74g9LGgjezk+E6ty1j2ZZYPOwEjcAYE3tg?=
+ =?us-ascii?Q?+By+3uEUg3vq201UkBjZc/8AyCxIDvQS6t7uyWTxghRI1YD/CTi4VN1Bq55V?=
+ =?us-ascii?Q?yQBv+PIwFmM4OaYq88jpcl+Bk01gZGWHtcRmKO73kT4RhuOxHUUYeyDWXguk?=
+ =?us-ascii?Q?fB2a2kCp3JwRHmDwwR3gTEUy3wgFbMR4p7Pm+XHAdCbKoS+BAETglVzcdjeQ?=
+ =?us-ascii?Q?5205dK6ValwhPHQQoocR2CAgv853nVaFsz5mKwn5+1vId4k2QOdUXoGiCd0Q?=
+ =?us-ascii?Q?nRjD7qbrROj3TQuPIplPJlXuB95UYHQEid7e68Ud5pOSeQGrFN7E6NiJsLe2?=
+ =?us-ascii?Q?wG3baDFJdjGYvloMEbIyWde+s5ggsJdg2cOviUggv4LQ0d0BLJ82ZfDvLUF+?=
+ =?us-ascii?Q?Fa86tjectb7T5IxvAUiNBWFPHkdo7jmVifeCj6zYq4pptgQEHpK0cADqgai3?=
+ =?us-ascii?Q?jhSPO0jGiBFhVd8eM1ZXQL11cbcF31mCciZqAubnUEeh1Eb5sg+4v5UK0MIP?=
+ =?us-ascii?Q?QijgOTE8W0pPl2EYqcYu1PeoD69Jhbp3qp19RcaSv5/MCi7X49SmcjFmTqqn?=
+ =?us-ascii?Q?9ER2VmCQJGXJRrBD3GkaPtxfM7pg8Beo?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB5893.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Z7e+Q3Zudx3RGMu0WjH1BjgCPbjNAgaTYqRgk5H8IFMPT/E/H1+jgNDFDlFH?=
+ =?us-ascii?Q?Tv81xgsb+ywwftN+pHZ+0UXbpUmd7xqSJMsSwFhSe1LjWE38dy8UhrbERf/4?=
+ =?us-ascii?Q?CrwNb+ik4IWn7+g4iHY+R/tH0CSWWw3mqNRziINr9uIQFiMobsSigl3kxkw3?=
+ =?us-ascii?Q?nWNpOTPQ8VAkD8vd7qLLL0L1cFZ4w9ClajBH6HAPOSIs/oIAY/PvNs1PVkHQ?=
+ =?us-ascii?Q?0kCQ9QO7SvizAI8w57sDNtylp69SSHAXmITSuUVDb1pAVfFyGjD6oJtDnRhL?=
+ =?us-ascii?Q?B3aFvtDQ/mIMlx6Q1SYVQE/mHTYQ0z6EPOR8n8bFlrorHFMaMmWtxN9+8MEa?=
+ =?us-ascii?Q?N1zTRSrpdydfsrFAfSKggJHEtoziHk/N8GBrFMMMsmw1aHspcAosh0R34CF0?=
+ =?us-ascii?Q?gnBn22RPwjHAX8kMJb5SGNxC9hGVwOmk155tTE/y0aNCZ4imb76lLMOXovnS?=
+ =?us-ascii?Q?XxUQ7RsQ9mKjFbrZTmaro9TcAjAgpzL1hRxVRStr9jzvHbuJnPyoYd1gomjl?=
+ =?us-ascii?Q?m+FVsJaZ5upLEWPv2e7hV819AWl1/rST72o+sIdd8bJ6AZXizV9oW+jBsUOn?=
+ =?us-ascii?Q?eHBdOYAXiNU7aK9lC/BKXepvIDZ9sSNWwFX+B6KNKpfTbQ/x7UT0aaEUi7Wv?=
+ =?us-ascii?Q?0vayEv3B3Ev+17VZGrIGToyDzl1iID0yGbDZNrUPIyfrWERFV9mUKmYraDEi?=
+ =?us-ascii?Q?e7O8w8sOpapJeLtBM86nEVA7/YBiVyPZIrynWeDmVdEZJmnAr/QLw09hBnau?=
+ =?us-ascii?Q?riIJk3R5gK+PDTsMtXAXoV6vDjXkyvbKlc+sOUflBceZR1YRQm6uqaoecRXf?=
+ =?us-ascii?Q?xDD2G4d58rFeVFn+UZ0lXhFBuMJAiUxrjxqdxlTI2M+bJj1Ye65ZFvbIpgp5?=
+ =?us-ascii?Q?cP485GseqMLsPLZUTbKI6ubWcYmUe9stBh6+TB5hCfKbWu0No/guGALa5fMH?=
+ =?us-ascii?Q?rH7QBHkkk9HyPNlmO/lp8kYYoh2rjulax9dbtphhXDIyagaMCzHTeUc3f2kC?=
+ =?us-ascii?Q?nuChqL9raw+h9Rvmhuh59SU9qkL9DPqFpStURkePsUggLF9LLVqW/6agFMUI?=
+ =?us-ascii?Q?VWe2q4f5xWmuzPPUfHohiUwv/3Hs+CqU8qyMj4Wv2pv4wo6tNLKKBwoBb2qU?=
+ =?us-ascii?Q?YsVL0VXOEgVHxPr8dubQuPkHQt3u2PqVGtnvIIYhmRM0ttJQw1LnUwaN5ADP?=
+ =?us-ascii?Q?MCKx37iXIWLLFRdA5rPNf7ZA0eVIWsUxTwdIGSbfVumZCVObG/PaiGop5OMc?=
+ =?us-ascii?Q?tnqzd0xc4cQiRAL6IvrskHSfdYLA8AOb19tG41CA7nWYfnHxegU2Bgv3hf2L?=
+ =?us-ascii?Q?VMGG8Y+hwHXduVnocHaGL5TN87M7NzHfnabzX53sZDBPDtFdNNbpY68vZCYa?=
+ =?us-ascii?Q?Q4oQQL5x1IVpvCyazBoLkDcFxKXtlhK22p+lwqnM8rhLIHke2qoStCjpPUeF?=
+ =?us-ascii?Q?YUdc57JDe5elhRSIhZRxjewkCbIgHvXCSNV63Sx9A0HEA0LbrAHt2n+7gGyT?=
+ =?us-ascii?Q?fGsfVUT37vmt3xR8bga0hjlR6Pb3gyL15MvmDoeVWcKk7nOePtcA/jOA3kk4?=
+ =?us-ascii?Q?IryfTI8C8DxaML2/qMWNyxbeGi24U+ZLQzPkyTX33EklZsBtb8QwBq7Hjfix?=
+ =?us-ascii?Q?ExNbEEwoPZJjOApXZewSlEs=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2ccc054c-f3ab-49d0-44bb-08de171e747a
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB5893.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 19:07:50.7563
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OzcM0+LCVogykWWe3mkxsJvYyO8rsNKWQsG14W+7XI30E9/chrR8mTSSvejZ/dCPL08ORxyeUNzYuaAGeWstTX2PiUn6F/t5iZjjyuj3lt18NH9842rvagga2z3HIoxK
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR03MB5510
 
-=3D=3D=3D=3D=3D=3D=3D Introduction
-The patchset aims to add a KASAN tag-based mode for the x86 architecture
-with the help of the new CPU feature called Linear Address Masking
-(LAM). Main improvement introduced by the series is 2x lower memory
-usage compared to KASAN's generic mode, the only currently available
-mode on x86. The tag based mode may also find errors that the generic
-mode couldn't because of differences in how these modes operate.
+From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
 
-=3D=3D=3D=3D=3D=3D=3D How does KASAN' tag-based mode work?
-When enabled, memory accesses and allocations are augmented by the
-compiler during kernel compilation. Instrumentation functions are added
-to each memory allocation and each pointer dereference.
+The Altera CvP driver previously used PCI_ANY_ID, which caused it to
+bind to all PCIe devices with the Altera vendor ID. This led to
+incorrect driver association when multiple PCIe devices with different
+device IDs were present on the same platform.
 
-The allocation related functions generate a random tag and save it in
-two places: in shadow memory that maps to the allocated memory, and in
-the top bits of the pointer that points to the allocated memory. Storing
-the tag in the top of the pointer is possible because of Top-Byte Ignore
-(TBI) on arm64 architecture and LAM on x86.
+Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
+the driver only attaches to the intended device.
 
-The access related functions are performing a comparison between the tag
-stored in the pointer and the one stored in shadow memory. If the tags
-don't match an out of bounds error must have occurred and so an error
-report is generated.
+Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
+Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
+Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
+---
+ drivers/fpga/altera-cvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The general idea for the tag-based mode is very well explained in the
-series with the original implementation [1].
-
-[1] https://lore.kernel.org/all/cover.1544099024.git.andreyknvl@google.com/
-
-=3D=3D=3D=3D=3D=3D=3D Differences summary compared to the arm64 tag-based m=
-ode
-- Tag width:
-=09- Tag width influences the chance of a tag mismatch due to two
-=09  tags from different allocations having the same value. The
-=09  bigger the possible range of tag values the lower the chance
-=09  of that happening.
-=09- Shortening the tag width from 8 bits to 4, while it can help
-=09  with memory usage, it also increases the chance of not
-=09  reporting an error. 4 bit tags have a ~7% chance of a tag
-=09  mismatch.
-
-- Address masking mechanism
-=09- TBI in arm64 allows for storing metadata in the top 8 bits of
-=09  the virtual address.
-=09- LAM in x86 allows storing tags in bits [62:57] of the pointer.
-=09  To maximize memory savings the tag width is reduced to bits
-=09  [60:57].
-
-- Inline mode mismatch reporting
-=09- Arm64 inserts a BRK instruction to pass metadata about a tag
-=09  mismatch to the KASAN report.
-=09- On x86 the INT3 instruction is used for the same purpose.
-
-=3D=3D=3D=3D=3D=3D=3D Testing
-Checked all the kunits for both software tags and generic KASAN after
-making changes.
-
-In generic mode the results were:
-
-kasan: pass:59 fail:0 skip:13 total:72
-Totals: pass:59 fail:0 skip:13 total:72
-ok 1 kasan
-
-and for software tags:
-
-kasan: pass:63 fail:0 skip:9 total:72
-Totals: pass:63 fail:0 skip:9 total:72
-ok 1 kasan
-
-=3D=3D=3D=3D=3D=3D=3D Benchmarks [1]
-All tests were ran on a Sierra Forest server platform. The only
-differences between the tests were kernel options:
-=09- CONFIG_KASAN
-=09- CONFIG_KASAN_GENERIC
-=09- CONFIG_KASAN_SW_TAGS
-=09- CONFIG_KASAN_INLINE [1]
-=09- CONFIG_KASAN_OUTLINE
-
-Boot time (until login prompt):
-* 02:55 for clean kernel
-* 05:42 / 06:32 for generic KASAN (inline/outline)
-* 05:58 for tag-based KASAN (outline) [2]
-
-Total memory usage (512GB present on the system - MemAvailable just
-after boot):
-* 12.56 GB for clean kernel
-* 81.74 GB for generic KASAN
-* 44.39 GB for tag-based KASAN
-
-Kernel size:
-* 14 MB for clean kernel
-* 24.7 MB / 19.5 MB for generic KASAN (inline/outline)
-* 27.1 MB / 18.1 MB for tag-based KASAN (inline/outline)
-
-Work under load time comparison (compiling the mainline kernel) (200 cores)=
-:
-*  62s for clean kernel
-* 171s / 125s for generic KASAN (outline/inline)
-* 145s for tag-based KASAN (outline) [2]
-
-[1] Currently inline mode doesn't work on x86 due to things missing in
-the compiler. I have written a patch for clang that seems to fix the
-inline mode and I was able to boot and check that all patches regarding
-the inline mode work as expected. My hope is to post the patch to LLVM
-once this series is completed, and then make inline mode available in
-the kernel config.
-
-[2] While I was able to boot the inline tag-based kernel with my
-compiler changes in a simulated environment, due to toolchain
-difficulties I couldn't get it to boot on the machine I had access to.
-Also boot time results from the simulation seem too good to be true, and
-they're much too worse for the generic case to be believable. Therefore
-I'm posting only results from the physical server platform.
-
-=3D=3D=3D=3D=3D=3D=3D Compilation
-Clang was used to compile the series (make LLVM=3D1) since gcc doesn't
-seem to have support for KASAN tag-based compiler instrumentation on
-x86.
-
-=3D=3D=3D=3D=3D=3D=3D Dependencies
-The base branch for the series is the mainline kernel, tag 6.18-rc3.
-
-=3D=3D=3D=3D=3D=3D=3D Previous versions
-v5: https://lore.kernel.org/all/cover.1756151769.git.maciej.wieczor-retman@=
-intel.com/
-v4: https://lore.kernel.org/all/cover.1755004923.git.maciej.wieczor-retman@=
-intel.com/
-v3: https://lore.kernel.org/all/cover.1743772053.git.maciej.wieczor-retman@=
-intel.com/
-v2: https://lore.kernel.org/all/cover.1739866028.git.maciej.wieczor-retman@=
-intel.com/
-v1: https://lore.kernel.org/all/cover.1738686764.git.maciej.wieczor-retman@=
-intel.com/
-
-Changes v6:
-- Initialize sw-tags only when LAM is available.
-- Move inline mode to use UD1 instead of INT3
-- Remove inline multishot patch.
-- Fix the canonical check to work for user addresses too.
-- Revise patch names and messages to align to tip tree rules.
-- Fix vdso compilation issue.
-
-Changes v5:
-- Fix a bunch of arm64 compilation errors I didn't catch earlier.
-  Thank You Ada for testing the series!
-- Simplify the usage of the tag handling x86 functions (virt_to_page,
-  phys_addr etc.).
-- Remove within() and within_range() from the EXECMEM_ROX patch.
-
-Changes v4:
-- Revert x86 kasan_mem_to_shadow() scheme to the same on used in generic
-  KASAN. Keep the arithmetic shift idea for the KASAN in general since
-  it makes more sense for arm64 and in risc-v.
-- Fix inline mode but leave it unavailable until a complementary
-  compiler patch can be merged.
-- Apply Dave Hansen's comments on series formatting, patch style and
-  code simplifications.
-
-Changes v3:
-- Remove the runtime_const patch and setup a unified offset for both 5
-  and 4 paging levels.
-- Add a fix for inline mode on x86 tag-based KASAN. Add a handler for
-  int3 that is generated on inline tag mismatches.
-- Fix scripts/gdb/linux/kasan.py so the new signed mem_to_shadow() is
-  reflected there.
-- Fix Documentation/arch/arm64/kasan-offsets.sh to take new offsets into
-  account.
-- Made changes to the kasan_non_canonical_hook() according to upstream
-  discussion.
-- Remove patches 2 and 3 since they related to risc-v and this series
-  adds only x86 related things.
-- Reorder __tag_*() functions so they're before arch_kasan_*(). Remove
-  CONFIG_KASAN condition from __tag_set().
-
-Changes v2:
-- Split the series into one adding KASAN tag-based mode (this one) and
-  another one that adds the dense mode to KASAN (will post later).
-- Removed exporting kasan_poison() and used a wrapper instead in
-  kasan_init_64.c
-- Prepended series with 4 patches from the risc-v series and applied
-  review comments to the first patch as the rest already are reviewed.
-
-Maciej Wieczor-Retman (16):
-  kasan: Unpoison pcpu chunks with base address tag
-  kasan: Unpoison vms[area] addresses with a common tag
-  kasan: Fix inline mode for x86 tag-based mode
-  x86/kasan: Add arch specific kasan functions
-  kasan: arm64: x86: Make special tags arch specific
-  x86/mm: Reset tag for virtual to physical address conversions
-  mm/execmem: Untag addresses in EXECMEM_ROX related pointer arithmetic
-  x86/mm: Physical address comparisons in fill_p*d/pte
-  x86/kasan: KASAN raw shadow memory PTE init
-  x86/mm: LAM compatible non-canonical definition
-  x86/mm: LAM initialization
-  x86: Minimal SLAB alignment
-  x86/kasan: Handle UD1 for inline KASAN reports
-  arm64: Unify software tag-based KASAN inline recovery path
-  x86/kasan: Logical bit shift for kasan_mem_to_shadow
-  x86/kasan: Make software tag-based kasan available
-
-Samuel Holland (2):
-  kasan: sw_tags: Use arithmetic shift for shadow computation
-  kasan: sw_tags: Support tag widths less than 8 bits
-
- Documentation/arch/arm64/kasan-offsets.sh |  8 ++-
- Documentation/arch/x86/x86_64/mm.rst      |  6 +-
- MAINTAINERS                               |  4 +-
- arch/arm64/Kconfig                        | 10 ++--
- arch/arm64/include/asm/kasan-tags.h       | 14 +++++
- arch/arm64/include/asm/kasan.h            |  2 -
- arch/arm64/include/asm/memory.h           | 14 ++++-
- arch/arm64/include/asm/uaccess.h          |  1 +
- arch/arm64/kernel/traps.c                 | 17 +-----
- arch/arm64/mm/kasan_init.c                |  7 ++-
- arch/x86/Kconfig                          |  4 ++
- arch/x86/boot/compressed/misc.h           |  1 +
- arch/x86/include/asm/bug.h                |  1 +
- arch/x86/include/asm/cache.h              |  4 ++
- arch/x86/include/asm/kasan-tags.h         |  9 +++
- arch/x86/include/asm/kasan.h              | 73 ++++++++++++++++++++++-
- arch/x86/include/asm/page.h               | 33 +++++++++-
- arch/x86/include/asm/page_64.h            |  1 +
- arch/x86/kernel/head_64.S                 |  3 +
- arch/x86/kernel/traps.c                   |  8 +++
- arch/x86/mm/Makefile                      |  2 +
- arch/x86/mm/init.c                        |  3 +
- arch/x86/mm/init_64.c                     | 11 ++--
- arch/x86/mm/kasan_init_64.c               | 24 +++++++-
- arch/x86/mm/kasan_inline.c                | 21 +++++++
- arch/x86/mm/physaddr.c                    |  2 +
- include/linux/kasan-tags.h                | 21 +++++--
- include/linux/kasan.h                     | 46 ++++++++++++--
- include/linux/mm.h                        |  6 +-
- include/linux/page-flags-layout.h         |  9 +--
- lib/Kconfig.kasan                         |  3 +-
- mm/execmem.c                              |  2 +-
- mm/kasan/report.c                         | 37 ++++++++++--
- mm/kasan/tags.c                           | 19 ++++++
- mm/vmalloc.c                              |  6 +-
- scripts/Makefile.kasan                    |  3 +
- scripts/gdb/linux/kasan.py                |  5 +-
- scripts/gdb/linux/mm.py                   |  5 +-
- 38 files changed, 370 insertions(+), 75 deletions(-)
- mode change 100644 =3D> 100755 Documentation/arch/arm64/kasan-offsets.sh
- create mode 100644 arch/arm64/include/asm/kasan-tags.h
- create mode 100644 arch/x86/include/asm/kasan-tags.h
- create mode 100644 arch/x86/mm/kasan_inline.c
-
---=20
-2.51.0
-
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 5af0bd33890c..97e9d4d981ad 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ static void altera_cvp_remove(struct pci_dev *pdev);
+ 
+ static struct pci_device_id altera_cvp_id_tbl[] = {
+-	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
++	{ PCI_VDEVICE(ALTERA, 0x00) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
+-- 
+2.25.1
 
 
