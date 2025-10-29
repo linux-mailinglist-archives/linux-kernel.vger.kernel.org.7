@@ -1,412 +1,342 @@
-Return-Path: <linux-kernel+bounces-876863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE7FC1C980
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:52:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A53AC1C998
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C58524E4BC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:49:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 188A84E2DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BE13502AE;
-	Wed, 29 Oct 2025 17:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8C63112B7;
+	Wed, 29 Oct 2025 17:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="XfBHCnkZ";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="BaH7Mgdd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J0isvBb6";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="FKtjbfzt"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0022F8BEE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:49:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760150; cv=none; b=XJ23PPcnmbI8+dIu35EkQMcfmsIh9DHjnz7zKB70lvrIciBZsdW77e27VZS4ZPbBV38aPFlAjYOYgtu27LEJdx/LsKQTs+GZUW1sIbMIIgyN31P60f+6HPf8BoEqn0AWm4X2j57pFWGntxtTxT52t/f40WCFcrHU2jBJ5FT6GV0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760150; c=relaxed/simple;
-	bh=s3xBk+WH4G9lHuayprGFgPbsI1G+D4ZgrNl9qI03RLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UVufBHKwOYEuglLb1c/Q1k8b2RcbdR0ONFaxKs9DQxcW6DnLqYIZjI2G7ib4W77gc2oa8D9iv3TCwB6HPFzUE0dY7SqyiQpIxsb4GAX1RsleAuHqLT/JJos4esEeZjzZTVnrzuViGQHmBZnND0EkHlgIu131AmdQFG+Khs0brrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=XfBHCnkZ; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=BaH7Mgdd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TDdDaF569373
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:49:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zBBOWdMy0EgPxsuEOw/+fgZm8ur/jhP/dUsIn5rcIuY=; b=XfBHCnkZqZCpX5+4
-	3XL1BDMC0yRIVhFhvx9ni80s/OSQIxl/SHDpwMLzGrAV9qYYcOst84ikZxZRMlxc
-	R9Kihscce2h9DuJ6Vt4osioH3iSnlLIQlO13S50u0VPL/GB/aLVaBH9+HuLjQmUZ
-	cCLgeLaifXa01vvgwqKymuKpRkIewGcVK0xHkswlOenMNES3bLp5o1X3u5lKXPG0
-	LYwj1RZtyPpHGZzpAdAjZLGxBQdZ0OKOraZeqtoO8RiVmhmHMRMWlfYryHOfLp+d
-	JLtFyU9XOgnS9NwomeF6f6pkIktAgWX7ji1UvHH3ZxlTlRV6k7cW9RYtta9d3dzj
-	zH4gEA==
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3m0bgutg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:49:06 +0000 (GMT)
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so139937a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:49:06 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327402EC086;
+	Wed, 29 Oct 2025 17:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761760254; cv=fail; b=hZR6AODWcl61lJ5hpnWl8oYCQrG3efAG5czfl34TRgxAvbD0Ct5nv3dcLPB9Wws6rXsPxYU+ilaXqo4s6OuNjrmaDIL1Yh/k2NPq6LiiTIjd2KilIoKpg4lNSeUGjg6if9G9HB/B7QSIKtm88AEYp6kk6HBwFTQ8g67bgwGqL/g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761760254; c=relaxed/simple;
+	bh=hYuBBL5Y4z6++SrDe2V1D0A229u5hQxcxNWqjxAbhDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=ZFp37MnUT44RC707ed8TUMV+vAz/d0EFwyD94w8oZonOpTA1Hy2i/TtWhh97Wro1EwLpiZo8OiWtyw9Xs0IM42TSo1P+7xYBVaVBYBRM3a7i3FXqMrc0NK/tuqkiDcln+ruOoCW4yml4Ejv6A/B7+k5GWilyzl3v4eHbbdRlXEM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=J0isvBb6; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=FKtjbfzt; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59TGfsAl011054;
+	Wed, 29 Oct 2025 17:49:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=xGqO5D5EtIQzCO9G
+	7kBawBJiIrNeeoDKgPGbzvVZZAE=; b=J0isvBb6xO92sr7v6aRDzzGYjQJ82/ph
+	UK0KcxWJSKsSyQt6/Nqju7YI9xryaxWIilJW3ylJNkS9w62EbS3SEP410OFQbwaj
+	9gNCEbuZAP96ZeEvOVyGOlP4oxxn+9LypPQ1di8buqQGbhN1lcsErqr6e0ka1Haj
+	flEIxiFaW+254fs+ZONVEaObqKd4m57OMdImUrmB5D9aWvbtDYS3hgBtOZf54rem
+	xQNWare+hf82SQy/YBFea5BlxCg4igKLJlvmmUJBTRsPX+kyTvsNKcKKc3XKkWXY
+	tK1nd49ekgkUaBwCNhEi+1JopLAP8QoSfv8KQyoZSuH+85AHexOvKA==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a33vxjh6h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 Oct 2025 17:49:49 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 59TGEIGm021287;
+	Wed, 29 Oct 2025 17:49:48 GMT
+Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011025.outbound.protection.outlook.com [40.107.208.25])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 4a359u6xpc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 Oct 2025 17:49:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QiMvpGZ9yDHtvNjmCUmzwu8+j7+UrKjE4mbebikNbUAkYItCCimje+o6uqa5xFXO8Pnrf1fXc55jhwIaxRYvXWoawTsLQbBUcgG0BI2sboEfHpoaDKDZxPC6n4l6eUs+iRDLTM8ofAHQc9YyjZnOKil4uwU/YytXXnhWog0CaIhThsXXaSe0mWxrS76CT+mtxaItdOZsrGzap/9gev9sC9nGTzuLQyGcXJR9Qkwc2gtPhVjJQa8damIU1tPLsMHW/WXo1xwO+A84ImQQztD1RxxOfVb4lXIJ/vrtuyg74VcUYj7ex1VzH/wbaM/GUYlnwqV48MTBWH5w3RaIJ0YD3Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xGqO5D5EtIQzCO9G7kBawBJiIrNeeoDKgPGbzvVZZAE=;
+ b=EXRvL2dLeDTd/aV43yviNVPrOaTc2zDXcvAmHQMAAGL0Vqh1QauMx+kNOmZrmNd5sbm7ojFkheugCvb1vjIdO+Ff4JG+Oc3Aulj+yrJcljetjRdLXt3oVqg1eLl5zVIV6m7gtyru4aVUcSBGtRbJfSgLg/Nj5JysZQb3RStSzcYS+ixOUgj+9b72aZ3P67VAnFbkba9EbP0u6E3Vy5Xe9V9ckayTz1ornW3nQhapUGomocJE1LqvN61kkIRfJGiDEUJWrHGySoqzSqvohivLY1kUjzLO7a2RmQdwpH/WBN1QXLoWqkbDdebRcNq4s9hSR3qvkTOovKyUb7JtBeVqWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761760146; x=1762364946; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zBBOWdMy0EgPxsuEOw/+fgZm8ur/jhP/dUsIn5rcIuY=;
-        b=BaH7MgddxfjWCcSyfCUMISSkYlLFZ3978m9xpj+/Xk+DrO0aPeLmrT2CD3qV4Vz491
-         /uxWTvLjWy7zBPCqGCbekReb9C0JB0jElSIn/BEYhKGt0N7lotHITrvhB/Kpjj7J7ntP
-         mtPbm4lXoQsgmqoIrOLXPDL+DjmtRir+Lrnzcgb+HI8k+gMZDrYfkrL1wLaRqohpSXJ1
-         UlVm+voNIrWOm3xzlSSjHVTE4razv+h7yScAVYYzc1bAa9IGxldpT95eOEtB5QtCg3CZ
-         aDfMdtm2257pdywWhkhhiVkxD0dYle5GbsLq3Are6Dall+D+PYKZtOkKBSJRDKSjQr8L
-         h/Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761760146; x=1762364946;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zBBOWdMy0EgPxsuEOw/+fgZm8ur/jhP/dUsIn5rcIuY=;
-        b=Yi0uHnc653HlOfwz+FQPz9kCAEQaILeujQtJogWTsOQcblnYtEvVkdyM2fOXIDSCsI
-         j0rYlH+RQp561vmg2XaFayH/LKhBCpqeIXcBmrTyJGm6wE+AwXTXbwlcPy7ewNca7vx9
-         cbeqR6nu5xq7kvheIZJx7ZFET7Q/H5z1JhIPEY8JafQo6kgwH2Vbl0yj1OLK0SjYoFpZ
-         +ebiyZUy+ir7NmHxSF4MmIxWq6oUtZJiaxy+1dAe0cchlVEqsWbPgX+JWLUhVW/Ve33Z
-         p1/IUxSsinxvv6DvonSOjVEkElZckMzxZeKoB5nxUfayXALyXJcDqlnHDisYpJLjnju9
-         odRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUlxQsN5mew/9oasLc2GW/xOJgjKg1W6RcvRc8Fx2K1KiLnSGJQnspYDit5FqNh7tIMNhXic5lFyJsHuAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdFE2Ju+ALoOPSms0NbK8fB2W0sBMpuWuImrw1+Y8u+z4qCUye
-	QliHqs+06rJ70tIOSlGblQkX9lhX5IwY49tWKvW5NwA6B8Tesx3Iae+Hoskejj21t9CeBo8wpW8
-	movqEKIibpSKjg78xD0tiVpK+i6l7NE8FMFzKU5hmdNEOgzelyk3BHZci8D99zRy9R6g=
-X-Gm-Gg: ASbGnctnlGynRcNgV0uztIpvGEEiNWut4s2r9Anmrs9uaseUAMlHudwBPVtvkSZEe/Z
-	mdbE0s4XGOC4ITjbetQEuOYRbklq/EGZCwS1LD4bq6NZtloYPZ3tr34Ge1MjCwtI2kviJyRKdlM
-	ggmQ1BOuFNu3If10Yz3CSJLZUKcSZ04nj4kPQYBztKEUpiXFSvisGTpOHm8MaEqmxe0AEjv7+0E
-	VkAL8zMMDHNGzF5yvRcg4bvlUmqNEJxx+0rCJjizo1XRMnon6OJb7YxqPSqJEgIOI579u3vz5fS
-	EfEGzYWOOFMR3lhcO+lJG1O+2TMx/1BXNlaSTGbgOHPqw4zbh+Sn3i/9dfdGm0ezs1aV5mqMF1h
-	6bT21XfRhkajdbAxCVh/RSIBiZFks6oQ0
-X-Received: by 2002:a17:90b:52ce:b0:32b:6151:d1b with SMTP id 98e67ed59e1d1-3403a160f49mr4241491a91.8.1761760145304;
-        Wed, 29 Oct 2025 10:49:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVJJ72rkoSQSQ2NSo1xC7KWX04uCUKN6W0tdBTOXGaqbvhURfKhLjwT83FJ6lFL/2Ey+77rQ==
-X-Received: by 2002:a17:90b:52ce:b0:32b:6151:d1b with SMTP id 98e67ed59e1d1-3403a160f49mr4241443a91.8.1761760144652;
-        Wed, 29 Oct 2025 10:49:04 -0700 (PDT)
-Received: from [10.216.40.51] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f604dsm16430255a91.15.2025.10.29.10.48.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 10:49:04 -0700 (PDT)
-Message-ID: <efb52d01-0430-8bdb-e0c7-86c5a2857ef6@oss.qualcomm.com>
-Date: Wed, 29 Oct 2025 23:18:52 +0530
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xGqO5D5EtIQzCO9G7kBawBJiIrNeeoDKgPGbzvVZZAE=;
+ b=FKtjbfztNjE3azl5oEMInNeFjgvgpGIJqC1TQysdeWGCDTFnWTgx+sN9gXP12Q3f+T0fiEXwwBGgt5Kv7BJSe5Qq9IDnaNSYV/KiYf13kPOI0QFEPHWF5yW51eV/8ZApOOtVfN7mhlE2nrpm1tYxTyKLEjF7tZHKVqxHc8OWNbE=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by DM6PR10MB4298.namprd10.prod.outlook.com (2603:10b6:5:21f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 17:49:41 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%2]) with mapi id 15.20.9253.018; Wed, 29 Oct 2025
+ 17:49:41 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>,
+        David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+        Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, John Hubbard <jhubbard@nvidia.com>,
+        Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+        Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+        Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>,
+        Chengming Zhou <chengming.zhou@linux.dev>,
+        Jann Horn <jannh@google.com>, Matthew Brost <matthew.brost@intel.com>,
+        Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+        Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+        Ying Huang <ying.huang@linux.alibaba.com>,
+        Alistair Popple <apopple@nvidia.com>, Pedro Falcato <pfalcato@suse.de>,
+        Shakeel Butt <shakeel.butt@linux.dev>,
+        David Rientjes <rientjes@google.com>, Rik van Riel <riel@surriel.com>,
+        Harry Yoo <harry.yoo@oracle.com>,
+        Kemeng Shi <shikemeng@huaweicloud.com>,
+        Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+        Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH 0/4] initial work on making VMA flags a bitmap
+Date: Wed, 29 Oct 2025 17:49:34 +0000
+Message-ID: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO6P123CA0008.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::16) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v16 01/14] power: reset: reboot-mode: Synchronize list
- traversal
-Content-Language: en-US
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Moritz Fischer <moritz.fischer@ettus.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Andre Draszik
- <andre.draszik@linaro.org>,
-        Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20251015-arm-psci-system_reset2-vendor-reboots-v16-0-b98aedaa23ee@oss.qualcomm.com>
- <20251015-arm-psci-system_reset2-vendor-reboots-v16-1-b98aedaa23ee@oss.qualcomm.com>
- <5l2tcjbdtikkhkuhuz64ymk5et6wtl4kwf2mc265su27oh57rt@3shmo3wfx7fb>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <5l2tcjbdtikkhkuhuz64ymk5et6wtl4kwf2mc265su27oh57rt@3shmo3wfx7fb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 53MWbxyZ--7HNsL_GoqzXY_ttDf5H3Xt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDE0MiBTYWx0ZWRfX7dexImMmupS+
- zOleGCWeEBvT2f9kcSgIv5+ePmWmqXEhXENAR3AUdvZGKF8mBpOAIUL1FNaaIRCauSsAdf/fYFH
- PFDm8fJ88dXe0XUTXPBHHrvBnqbWbKFq29HEX/eE2O0vPSSb8ApL0p2m3wowxZsoAFQcwXrsggD
- ZhMIDcffjZ+vwuxrnqo4W9Yji9DDDsJYqTp5FP2U7I5UKJpE/uPzycUnvwNYDsUCJQzjs13II3I
- F1cJejCtmEXhpFFsLBuP82CFjPnwRuogSjqrrILttuDz6Y4d+nSd/92U08isZqMMCbMO30mcfsl
- H5oEkuVvNEWabsh6bBXIDiuydq/B+nz1xxsD4zqT37snF0PYzAmq5hFJK1E6CDI9SJt1qqZWDmf
- meYQx+1ConU6hgdm2giWAlgQ2L2D8w==
-X-Proofpoint-GUID: 53MWbxyZ--7HNsL_GoqzXY_ttDf5H3Xt
-X-Authority-Analysis: v=2.4 cv=YLySCBGx c=1 sm=1 tr=0 ts=69025392 cx=c_pps
- a=vVfyC5vLCtgYJKYeQD43oA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=n0NvOUcOdHF0XYJju0UA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM6PR10MB4298:EE_
+X-MS-Office365-Filtering-Correlation-Id: a2c1736c-c8d1-46a9-5e13-08de1713895c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Uan6OgpC3q6fPAZuTuv0mtA9DoyPAPce/AnTfx1jgOpBhzz9oFej9LjF/DSo?=
+ =?us-ascii?Q?7AJcqksm+RA2GzoSw/ci5ugCsGPwPCJ26Auy0SA4pYDDJU2Iou0flaPu3Ks3?=
+ =?us-ascii?Q?48ymmZIwiM0WD71RCElGHmmeaNPeqA3uAMhmj2ZBdsH88KFSJscBKcH/P61y?=
+ =?us-ascii?Q?0FDOx6g15SO8C865hc8/ZUmfrB/SCLyuvHdFxNQsM4P2wtqWTe/RaKl7tpo+?=
+ =?us-ascii?Q?O5wZaOAtuVpVx+awAG6XUoloASqyAurWCtlBNWaVMw2cjnLEINe01wF8TQmr?=
+ =?us-ascii?Q?sQGz6EXgTnsIo+rcJqS9At5flFgiUYigVQ9dmxlhFSuiMf5PJpuuEMVBEEVT?=
+ =?us-ascii?Q?0eKwgOiBVQ8u42hsYZyiyjs0a6d3rIfaE2DQZm9YQrSDZkPdRZrkNEQFISbB?=
+ =?us-ascii?Q?KqP83AKEODPSS7GdecjWLxDhQWlYcDywBy9GwGKSCkec6+hCWW29x5hNUW/Z?=
+ =?us-ascii?Q?1WpXb6C5tIvcF8+K/h1tcD7nWtYJQNerN5Bidfuhls2cbVmYWqEIutC6Oz+B?=
+ =?us-ascii?Q?hmM4rf7Lohvghgcz8QvUJfDcmuFs4LNXdIcODFTTh7yiTJB03paHfbkpNwZ4?=
+ =?us-ascii?Q?OQx7WrwjodstHyfOTNJObhlyclnzVjByOJtwxtt9+t0DOC3/Zq0ngUj7zd2h?=
+ =?us-ascii?Q?htaKnFIltE5QOQnFqbG7eOEG+bowU2/4XCpWqJOKIEiWWQqbgqP/eU/LW7PU?=
+ =?us-ascii?Q?KL+lby8j0YoVaJMwpTDM4rI9W9kmSzfm1yJpyqlcOFe1xV8t0sfmUKWzZkGI?=
+ =?us-ascii?Q?unRUE8M9lVDEni+rRmyCsNIfgXU6+xBsqPRD9zhJzcAYxMAFpgCKFGE8jtz5?=
+ =?us-ascii?Q?A5gn6lBkDAszIIKIWlWqLfGzUNqkRACQ7khcdPiAr/d+ddwf24yOjShDjCdd?=
+ =?us-ascii?Q?PdH1iTYD4wZm72BQGZh8cZWr5jekrEjgP78m9+H6yn+EwR1nKQyvUNSSWEmb?=
+ =?us-ascii?Q?G4Qi1hhq2t/4LEAVv9FsAIEhZEF9qsfM74RLX77A2d0ylCbjh/nfB6Rvo98l?=
+ =?us-ascii?Q?SVIPzIF6l/SaDpxXZfbvjmFXsfW4q7qST43zyXku5wiYVFHz3c2zoOwzZ6qy?=
+ =?us-ascii?Q?rR0g0zFmaKTb5abD8BSO4MoSWxBeP/dajLbkA91zkiXTmEM72fLJKDdIfmu7?=
+ =?us-ascii?Q?8JX2eoyY5ySvjqstP4+oae9Y4Yk6n8kJbgvqWKKagsgq3sIWDgogFFDEN7r2?=
+ =?us-ascii?Q?K5u/bL6FAkc0tMAcAzf32XH/DRqPt4CkMwMp7XhjokYw35UH0SOlmaeMang1?=
+ =?us-ascii?Q?n3ZT2J1lgMmaT1h/i9wGiN5vNQ1ryhal16rmqu4fpAvXjbUOgqQcNb/LtZm3?=
+ =?us-ascii?Q?Y4GNBKX4AWYz7WGTXPZMC6h9BTkEJQzpDFB2hfgjxbR9fD/x3bZouBExsLvk?=
+ =?us-ascii?Q?zb4sK22iNYu9mL6PbaiLJ6oXEmJ300ucpTcS/EE1OXS1rpOdX1uST0qYU+cv?=
+ =?us-ascii?Q?7z6ThqvA7N5D1SiqPPosAPgkk2M/j5g2Bf37iTt5BtKxjcV5oCn19Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?o1449lP3Ft+xwck92dTKrTHmn2hd5lkoOclHRx7tW1vUIx3N8sR75mpJR8iw?=
+ =?us-ascii?Q?1HPdxikdPj6mmqrGYRUaHON6MS/uJ+SKZQjMgZaN/nfWJfnD0HPm85+YiGjZ?=
+ =?us-ascii?Q?7vsLIoJyvQZeDgvBlIAa3eHCSbIfpBR6k59ca789EI80lElzNA573s6cy0DS?=
+ =?us-ascii?Q?0RX3PvmPY8vGfc9JWTkczSlVCTLH5OpC+7esXZGiSnudp8Xo0N89aJmzXzsS?=
+ =?us-ascii?Q?YJaZcYCTphUetIYN0i8VNY4mgQU9mdhgvIZPeVkAT0RGQwsQhn59pI/AOuCK?=
+ =?us-ascii?Q?OjD177A/0fvxmJye8zCOF4klkvB1yknoHqj30cwbW5MAWDc7i1lFqUlA0T0D?=
+ =?us-ascii?Q?vp28lN2615Kl3bO4pamzk7VzHhgqynjh20xV0WVWZGpLxxGXhsofWdL3R+/8?=
+ =?us-ascii?Q?fOtu82sB4TJHus6vWHvNLiUF/oeLLiWDqISd13e1vzZSaxkIiBo0FocCxWtZ?=
+ =?us-ascii?Q?laUWPK7hCcUQR/HAF1J4Igj3uOAWVKr03tX/Oi1tyYOs1LEj5QhmpayOmIRx?=
+ =?us-ascii?Q?2sS34piN7MrjeGvUd57BhYEvXeoyx8QrzoPDxRSie0D1HEyB+zp+bCw7RBCv?=
+ =?us-ascii?Q?+MAw7LSxVDk+NUlgqs8Sum4pXMR0NsRol2yOARxkV0If62izv5H8o6xVBwRK?=
+ =?us-ascii?Q?OyhPA0B5+FCmcD+sQTO7muWjkXCLNehyOR1oDfDVgQOf3kXs5BY0qNidg26H?=
+ =?us-ascii?Q?A5vnJ7zARpphO+Wk3qT6Zy2LWprBghEgwZxiZyTB06Jz62x4hYbTLQMLVrDl?=
+ =?us-ascii?Q?4ISdz12IOpRKkDMiEK041IT4DMvN1Zch6/PBAc6XTer/emfni38tdlfTwVRo?=
+ =?us-ascii?Q?y6qS2m9+5ESy/WW/Y46FqAUPLgZ+M8j4V31xhQmJYmzdiR5BnXi9PaxwAXNQ?=
+ =?us-ascii?Q?hjb/blyBr68EnIYTimwZ9DIBOqCnhBdyUCG+M46tXgLFi1xiUsz1Z/59LB6Z?=
+ =?us-ascii?Q?GttHeMec6JgUwCRCRv7hHajdhtLXkONotB6VvcTCPuR2yBLLhYu73UkVvkGB?=
+ =?us-ascii?Q?Y+W1A6geLA4QkiZeiZgn6yeXtsoP6dkzjjeWJa5S+7rfIazfbLM1vglmAHOq?=
+ =?us-ascii?Q?jbjFDBb2UTxeKDrE9NNwwqbpNnQgJDSjCag88rI1gW7jUdYgg6bBgu0RC8vj?=
+ =?us-ascii?Q?Qo1wknAFqbQkDwgh+PNlfthdnZh6d/kuMlDdwNAgCRNF4tKz66h9BWdpSUkZ?=
+ =?us-ascii?Q?32BN+MR/65HqBYFn1Aw8O3YWvQlt2AL28V1JYT1xP5g9P4E5e3PHWB1WZhmk?=
+ =?us-ascii?Q?mLjzpG1GIe52P/Rwkr0NcPhz/VKyJiLcrlnMaFrlq1zAQRw84C8jLwoO9FOP?=
+ =?us-ascii?Q?1meRpIv+Xx2mVA8O1EZW/Wlfzonj+8htFvl8i69zYloqToyJPI8dMjHkNAbe?=
+ =?us-ascii?Q?SPu4Jhxb4/5cZQT5EdU+eo72yN1ZMJxNM0oU3/M29nlGintpoPFL9p2mHCo+?=
+ =?us-ascii?Q?nZFe0uxWbzOUsZ5uUROz0jm0FqBejTqlsVTHyHZaD5brWfbjkkeqhpo2lWvo?=
+ =?us-ascii?Q?zAGMN4yCuMDtyJm/PRmXzZnQmJSd7H8aD67Y6zrjeKVM2Ji4J7/Lm4kEAK1B?=
+ =?us-ascii?Q?9IhLatXtS5S0wD0SxTeozC6gpr0+eD7+9kmEHmCvMiZ8J/Wmu67AP/5T+da8?=
+ =?us-ascii?Q?mA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	wFnbN6UIzVErgYnpzzol7LV/kVHqhbjpWu+VTg4UZRa+/Nyg1gqQYBl/QINiqIPzP5K8pRtBf2NeneBoetYUY05gDzIsSnu135BaRRRcaB0ufI9HaiFw/CKO2G5bRtsSHMpLTievM80yS0p2aBsu8NeK/eWqiiXTmtaGG1myq24pYkEcngF5xdOC65bK+OWAdAPB/qS69Ov0AFpdJ1vMmhozltdnZ2tXbHcUQ8fUTHsuPkBc8wmsN7GYL25lHbV2dgjS0/A8qXc0OLStFz9Z6erTI0vaB/Fja8oGmUnuiKFBb95lK3hgBTzFAp+4CITIUCZF1lzgJzqWwkipUyjdb1auU70vM2srga7N2kict/OdlxpKfcZ0Aat698PWidRWp84nfXR6NO+8B7wksD3LlMwA79hC3u/CBW66dMM7B7h6fV8HEqD64qPeaRH4amTjbCOSF/aixUSoZiV5tTR4HsCtgYatoXAWrQg2xDW0qaxgu+epRPogFa/L0pIPtv1BJP+NTQjxief7dtNGXX5VfTbwXRIlia4L+/wjKdeE6LzkjH2hD1aj2TSZfmGDUv6ccmXSPccsOdyJdlmNTWyn50MPO0A9j6RPD/6Kaf+wURg=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a2c1736c-c8d1-46a9-5e13-08de1713895c
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 17:49:41.0273
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D3AWgUX//ATaJl1Ga75kS9z05y7bkqgz4Vdot20Oz6nAnRU8LBYuEjqC2nR8KzyC2i6/uGuNeC0PUe2tCJHNP3o66IgOaqn/FDAUEQ1dRzE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4298
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-10-29_07,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0 malwarescore=0
- adultscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0 suspectscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290142
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=723
+ malwarescore=0 bulkscore=0 suspectscore=0 phishscore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2510240000 definitions=main-2510290142
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2MiBTYWx0ZWRfX/WSs0MwnDXSc
+ qGE8f0wFEiiMlmwoJz3JfZzYRPBBJHm4mZs84pc78LzkLrS2egfLhnKlIi2US2v3xY06++C7han
+ p8sNKPaQJqJxEkjii24uhO4bSgsfcD2LMlikJnY1INZHgxZgciBqDzPZGeQEt7mshXLy9mlgkjH
+ KrPq8ZvJ3yJ+Rqlxd6vOCuXd0AjMgBj78ZzNyv6FmdnV/kvMBL3hA8xotNCsxRbaDjSkt3Fe3Iv
+ oV8OberBnRmPZVgm3JBubR4coWuKkFzdPaKDxI0NyTvTYzaZp+mAbXYnGU949MKNc9L0lMkB/pi
+ GakkzYoT1Foflk5Oda8tb173KWyouQtvYfzYUXJB4ZGU6fqaXtzlA1ytCBnfAt4qvrol9/MCxZL
+ 8DHI3nhkIPXcQRk5wkZS50A6jNox9QtVlLgH/mvkz6MIwAl49zc=
+X-Authority-Analysis: v=2.4 cv=M/9A6iws c=1 sm=1 tr=0 ts=690253bd b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=x6icFKpwvdMA:10
+ a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8
+ a=Is72dkD1bUUwoFXTfKkA:9 cc=ntf awl=host:12123
+X-Proofpoint-ORIG-GUID: v70zDqWfNSPV97opzTaLgkWdzDtd5rJJ
+X-Proofpoint-GUID: v70zDqWfNSPV97opzTaLgkWdzDtd5rJJ
+
+We are in the rather silly situation that we are running out of VMA flags
+as they are currently limited to a system word in size.
+
+This leads to absurd situations where we limit features to 64-bit
+architectures only because we simply do not have the ability to add a flag
+for 32-bit ones.
+
+This is very constraining and leads to hacks or, in the worst case, simply
+an inability to implement features we want for entirely arbitrary reasons.
+
+This also of course gives us something of a Y2K type situation in mm where
+we might eventually exhaust all of the VMA flags even on 64-bit systems.
+
+This series lays the groundwork for getting away from this limitation by
+establishing VMA flags as a bitmap whose size we can increase in future
+beyond 64 bits if required.
+
+This is necessarily a highly iterative process given the extensive use of
+VMA flags throughout the kernel, so we start by performing basic steps.
+
+Firstly, we declare VMA flags by bit number rather than by value, retaining
+the VM_xxx fields but in terms of these newly introduced VMA_xxx_BIT
+fields.
+
+While we are here, we use sparse annotations to ensure that, when dealing
+with VMA bit number parameters, we cannot be passed values which are not
+declared as such - providing some useful type safety.
+
+We then introduce an opaque VMA flag type, much like the opaque mm_struct
+flag type introduced in commit bb6525f2f8c4 ("mm: add bitmap mm->flags
+field"), which we establish in union with vma->vm_flags (but still set at
+system word size meaning there is no functional or data type size change).
+
+We update the vm_flags_xxx() helpers to use this new bitmap, introducing
+sensible helpers to do so.
+
+We then provide vma_flags_test() and vma_test() to allow for testing of VMA
+flag bits, and utilise these across the memory management subsystem.
+
+Since it would be entirely inefficient to do away with the bitwise
+operations used throughout the kernel with respect to VMA flags, we permit
+these to exist, providing helpers for these operations against the new
+bitmap.
+
+These operate on the assumption that such operations will only be required
+for flags which can exist within a system word. This allows the fundamental
+flags to be used efficiently as before.
+
+This series lays the foundation for further work to expand the use of
+bitmap VMA flags and eventually eliminate these arbitrary restrictions.
 
 
+ANDREW/REVIEWS NOTES:
 
-On 10/28/2025 9:04 AM, Bjorn Andersson wrote:
-> On Wed, Oct 15, 2025 at 10:08:16AM +0530, Shivendra Pratap wrote:
->> List traversals must be synchronized to prevent race conditions
->> and data corruption. The reboot-mode list is not protected by a
->> lock currently, which can lead to concurrent access and race.
-> 
-> Is it a theoretical future race or something that we can hit in the
-> current implementation?
-> 
->>
->> Introduce a mutex lock to guard all operations on the reboot-mode
->> list and ensure thread-safe access. The change prevents unsafe
->> concurrent access on reboot-mode list.
-> 
-> I was under the impression that these lists where created during boot
-> and then used at some later point, which at best would bring a
-> theoretical window for a race... Reviewing the code supports my
-> understanding, but perhaps I'm missing something?
-> 
->>
->> Fixes: 4fcd504edbf7 ("power: reset: add reboot mode driver")
->> Fixes: ca3d2ea52314 ("power: reset: reboot-mode: better compatibility with DT (replace ' ,/')")
->>
-> 
-> Skip this empty line, please.
-> 
-> 
-> And given that you have fixes here, I guess this is a problem today. In
-> which case, this shouldn't have been carried for 16 versions - but have
-> sent and been merged on its own already.
-> 
-> So please, if this is a real issue, start your commit message with a
-> descriptive problem description, to make it clear that this needs to be
-> merged yesterday - or drop the fixes.
-> 
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
->>  drivers/power/reset/reboot-mode.c | 96 +++++++++++++++++++++------------------
->>  include/linux/reboot-mode.h       |  4 ++
->>  2 files changed, 57 insertions(+), 43 deletions(-)
->>
->> diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
->> index fba53f638da04655e756b5f8b7d2d666d1379535..8fc3e14638ea757c8dc3808c240ff569cbd74786 100644
->> --- a/drivers/power/reset/reboot-mode.c
->> +++ b/drivers/power/reset/reboot-mode.c
->> @@ -29,9 +29,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->>  	if (!cmd)
->>  		cmd = normal;
->>  
->> -	list_for_each_entry(info, &reboot->head, list)
->> -		if (!strcmp(info->mode, cmd))
->> -			return info->magic;
->> +	scoped_guard(mutex, &reboot->rb_lock) {
->> +		list_for_each_entry(info, &reboot->head, list)
->> +			if (!strcmp(info->mode, cmd))
->> +				return info->magic;
->> +	}
->>  
->>  	/* try to match again, replacing characters impossible in DT */
->>  	if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
->> @@ -41,9 +43,11 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
->>  	strreplace(cmd_, ',', '-');
->>  	strreplace(cmd_, '/', '-');
->>  
->> -	list_for_each_entry(info, &reboot->head, list)
->> -		if (!strcmp(info->mode, cmd_))
->> -			return info->magic;
->> +	scoped_guard(mutex, &reboot->rb_lock) {
->> +		list_for_each_entry(info, &reboot->head, list)
->> +			if (!strcmp(info->mode, cmd_))
->> +				return info->magic;
->> +	}
->>  
->>  	return 0;
->>  }
->> @@ -78,46 +82,50 @@ int reboot_mode_register(struct reboot_mode_driver *reboot)
->>  
->>  	INIT_LIST_HEAD(&reboot->head);
->>  
->> -	for_each_property_of_node(np, prop) {
->> -		if (strncmp(prop->name, PREFIX, len))
->> -			continue;
->> -
->> -		info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->> -		if (!info) {
->> -			ret = -ENOMEM;
->> -			goto error;
->> -		}
->> -
->> -		if (of_property_read_u32(np, prop->name, &info->magic)) {
->> -			dev_err(reboot->dev, "reboot mode %s without magic number\n",
->> -				info->mode);
->> -			devm_kfree(reboot->dev, info);
->> -			continue;
->> -		}
->> -
->> -		info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->> -		if (!info->mode) {
->> -			ret =  -ENOMEM;
->> -			goto error;
->> -		} else if (info->mode[0] == '\0') {
->> -			kfree_const(info->mode);
->> -			ret = -EINVAL;
->> -			dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
->> -				prop->name);
->> -			goto error;
->> +	mutex_init(&reboot->rb_lock);
->> +
->> +	scoped_guard(mutex, &reboot->rb_lock) {
-> 
-> I don't see how this can race with anything, reboot_mode_register() is
-> supposed to be called from some probe function, with reboot_mode_driver
-> being a "local" object.
-> 
-> The guard here "protects" &reboot->head, but that is not a shared
-> resources at this point.
-> 
->> +		for_each_property_of_node(np, prop) {
->> +			if (strncmp(prop->name, PREFIX, len))
->> +				continue;
->> +
->> +			info = devm_kzalloc(reboot->dev, sizeof(*info), GFP_KERNEL);
->> +			if (!info) {
->> +				ret = -ENOMEM;
->> +				goto error;
->> +			}
->> +
->> +			if (of_property_read_u32(np, prop->name, &info->magic)) {
->> +				dev_err(reboot->dev, "reboot mode %s without magic number\n",
->> +					info->mode);
->> +				devm_kfree(reboot->dev, info);
->> +				continue;
->> +			}
->> +
->> +			info->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
->> +			if (!info->mode) {
->> +				ret =  -ENOMEM;
->> +				goto error;
->> +			} else if (info->mode[0] == '\0') {
->> +				kfree_const(info->mode);
->> +				ret = -EINVAL;
->> +				dev_err(reboot->dev, "invalid mode name(%s): too short!\n",
->> +					prop->name);
->> +				goto error;
->> +			}
->> +
->> +			list_add_tail(&info->list, &reboot->head);
->>  		}
->>  
->> -		list_add_tail(&info->list, &reboot->head);
->> -	}
->> -
->> -	reboot->reboot_notifier.notifier_call = reboot_mode_notify;
->> -	register_reboot_notifier(&reboot->reboot_notifier);
->> +		reboot->reboot_notifier.notifier_call = reboot_mode_notify;
->> +		register_reboot_notifier(&reboot->reboot_notifier);
-> 
-> Once register_reboot_notifier() has been called, &reboot->head is
-> visible outside the specific driver instance.
-> 
-> So, there's no reason to lock in reboot_mode_register().
-> 
->>  
->> -	return 0;
->> +		return 0;
->>  
->>  error:
->> -	list_for_each_entry(info, &reboot->head, list)
->> -		kfree_const(info->mode);
->> +		list_for_each_entry(info, &reboot->head, list)
->> +			kfree_const(info->mode);
->> +	}
->>  
->>  	return ret;
->>  }
->> @@ -133,8 +141,10 @@ int reboot_mode_unregister(struct reboot_mode_driver *reboot)
->>  
->>  	unregister_reboot_notifier(&reboot->reboot_notifier);
->>  
->> -	list_for_each_entry(info, &reboot->head, list)
->> -		kfree_const(info->mode);
->> +	scoped_guard(mutex, &reboot->rb_lock) {
-> 
-> get_reboot_mode_magic() is only called from reboot_mode_notify(), which
-> is only invoked by blocking_notifier_call_chain().
-> 
-> blocking_notifier_call_chain() takes a read semaphore.
-> unregister_reboot_notifier() take a write semaphore.
-> 
-> So, if we're racing with a shutdown or reboot, I see two possible
-> things:
-> 
-> 1) blocking_notifier_call_chain() happens first and calls
->    reboot_mode_notify(), blocking unregister_reboot_notifier(). Once it
->    returns, the unregister proceeds and we enter case #2
-> 
-> 2) unregister_reboot_notifier() happens first (or after the
->    blocking_notifier_call_chain() returns). Our reboot object is removed
->    from the list and blocking_notifier_call_chain() will not invoke
->    reboot_mode_notify().
-> 
-> In either case, the list has a single owner here.
-> 
-> 
-> As far as I can see, the only race left is if multiple concurrent calls
-> happens to blocking_notifier_call_chain(), the behavior of
-> reboot->write() might be undefined. But I think that is reasonable.
-> 
-> 
-> Please let me know if I'm missing something.
+Apologies, but the nature of this series is that it's going to be a little
+painful, I've based it on [0] to make life a bit easier. Let me know if you
+need rebases etc.
 
-Thank you for the detailed review. Tried to summarize below:
+[0]: https://lore.kernel.org/linux-mm/cover.1761756437.git.lorenzo.stoakes@oracle.com/
 
-The mutex lock was introduced in v13 following earlier discussions about
-whether the issue was a theoretical future race or something that could
-occur in the current implementation.
+Lorenzo Stoakes (4):
+  mm: declare VMA flags by bit
+  mm: simplify and rename mm flags function for clarity
+  mm: introduce VMA flags bitmap type
+  mm: introduce and use VMA flag test helpers
 
-At the time (prior to v13), we concluded that while no race condition was
-observable in the current code, there could be a potential in future
-changes or usage patterns — making it a theoretical concern.
+ fs/proc/task_mmu.c               |   4 +-
+ include/linux/hugetlb.h          |   2 +-
+ include/linux/mm.h               | 341 +++++++++++++-------
+ include/linux/mm_inline.h        |   2 +-
+ include/linux/mm_types.h         | 120 ++++++-
+ include/linux/userfaultfd_k.h    |  12 +-
+ kernel/fork.c                    |   4 +-
+ mm/filemap.c                     |   4 +-
+ mm/gup.c                         |  16 +-
+ mm/hmm.c                         |   6 +-
+ mm/huge_memory.c                 |  34 +-
+ mm/hugetlb.c                     |  48 +--
+ mm/internal.h                    |   8 +-
+ mm/khugepaged.c                  |   2 +-
+ mm/ksm.c                         |  12 +-
+ mm/madvise.c                     |   8 +-
+ mm/memory.c                      |  77 +++--
+ mm/mempolicy.c                   |   4 +-
+ mm/migrate.c                     |   4 +-
+ mm/migrate_device.c              |  10 +-
+ mm/mlock.c                       |   8 +-
+ mm/mmap.c                        |  16 +-
+ mm/mmap_lock.c                   |   4 +-
+ mm/mprotect.c                    |  12 +-
+ mm/mremap.c                      |  18 +-
+ mm/mseal.c                       |   2 +-
+ mm/msync.c                       |   4 +-
+ mm/nommu.c                       |  16 +-
+ mm/oom_kill.c                    |   4 +-
+ mm/pagewalk.c                    |   2 +-
+ mm/rmap.c                        |  16 +-
+ mm/swap.c                        |   3 +-
+ mm/userfaultfd.c                 |  33 +-
+ mm/vma.c                         |  37 ++-
+ mm/vma.h                         |   6 +-
+ mm/vmscan.c                      |   4 +-
+ tools/testing/vma/vma.c          |  20 +-
+ tools/testing/vma/vma_internal.h | 536 +++++++++++++++++++++++++++----
+ 38 files changed, 1037 insertions(+), 422 deletions(-)
 
-During review, there was further discussion around whether it's acceptable
-to leave the list unprotected simply because no race is currently suspected.
-The general consensus was that it's better practice to protect shared data
-structures like lists with a mutex to ensure correctness and future-proofing.
-
-Based on that feedback, the mutex lock introduced in v13.
-
-Later in v15, the reboot-mode maintainer suggested that the patch should
-include a Fixes tag, which was incorporated accordingly.
-
-So both the mutex addition in v13 and the Fixes tag in v15 were made in
-response to upstream review comments.
-
-Need some guidance on how to take this forward or is it ok to protect all
-list operation, as done in this patch and keep the fixes tag as suggested
-in earlier reviews?
-
-thanks,
-Shivendra
+--
+2.51.0
 
