@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-876501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3889C1BB34
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:36:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DADC1BAE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB0C62305E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0490C58623F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89901325713;
-	Wed, 29 Oct 2025 15:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1010238171;
+	Wed, 29 Oct 2025 15:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO8wlahf"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IW+X0DpF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9DC310624
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36F1C5D44;
+	Wed, 29 Oct 2025 15:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751247; cv=none; b=W4PsT0EaZBlsPpjhELrNLpOM05NsSGE5gUtfzf5sPEYv+exSd4MhazZ8OEvFB8Bo//03fRIMHeEQJON3JAdgjIfPUsdJzT1HPA1yqLh9IgR180WOTOuVGDfQPxZI2GVVd4JS4qxoKUaGqCLXlgOD2gJaNrw+ZbGv63NuEINzNis=
+	t=1761751298; cv=none; b=qEITy7ZzH9Bc835QDfJeuFGDGUKeNQn+AI9iUBrk9ydY2JK3OzjHD+qWf+9MAvTY5qKzJkqd5s0cNSO7IVJTYHPyyDOlYgByfEyaFnMoC8GijJQ4BTSHFKTC2XVZIv4h0Q5NpKdhvXNbpPePGaoY5W96Pq9eFRcs2uGXjPe7X6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751247; c=relaxed/simple;
-	bh=HtJoUupx6d/yAjUM+7GHFEp8E2bMSioh2TQ2z1eUvkg=;
+	s=arc-20240116; t=1761751298; c=relaxed/simple;
+	bh=i8zZ/Az2AU7gAws4QhPWy+UIC3UsU5SjQYR63Fz7QG4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uo3QTpNuxR6MvVgjjp3HwydUcfjHR2kN3z5ZwjbIiKMEbqSwkkAreqcEW8X6LAzbpWvrxKMnG/aj9iWABhnAdlROm03GurcsDwBWCEPpiBmZqmJLgF/DqSgkS39yr55UYP3oNwY8uImTH5dcAk+VYg0q26TeEj/iwZ4J0kjj0oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YO8wlahf; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-27c369f8986so67034175ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761751245; x=1762356045; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=StYPN+Xnv/FlnNbB7eCIIAuswaamCaMZ2VJSzNeBonw=;
-        b=YO8wlahfk7zhuSu1taBkNV56d397C4+ZSInUL/QkrdiaOsPQ5MA0soEKfiN1TYN4Qn
-         CVmAV0FikZzMfUd5O4x7D7OxEgG6fnDOv3H7rfs0hJRemFrbiibfJzRJIQ4dHMS5jQKS
-         Srl1pIJR42ieowOEibynXL6YaR8rd9bpVw7yDvaexC6ZxnDSViS+zAWs/ixP9306ZgnI
-         mHA+umwm3ksAqMkg+n9sGZ5r+5SWmMuBl3j+uz0RdkM/xVdZRgHRWyOOg1CN3uw41hC1
-         1OXydasfIbqaSRVSdu9PIhk2aWeweSg929CU5mfJSCKROZqApyga5796HyQf5hm9A/u7
-         usqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761751245; x=1762356045;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=StYPN+Xnv/FlnNbB7eCIIAuswaamCaMZ2VJSzNeBonw=;
-        b=addl4c1QMPw7rUSW7uRrmlLwXLQ/mmGQ6N4PZIcFdi8NquTTqHtIojqbuUa9+xidlP
-         t4NHe6ELzLVXBbOtHXukEdrYrGX9N6dm5PqIsZ8liCiFXpxmW+Gutdnl2B3l9mKXT4pr
-         taJJK7sCkbif6V2HJu0nLjNMWr4iyHSgoiCtvEkaKQwHselAcD0xyZr32uAhAc1Y0sKY
-         +TKuYIvS+uzK7ShMwEnsf21v4ZxuDGK18lS508abdjUv+27qmYd3SD1AZelEVgMr2ovc
-         FuaCf+T55XIpuucFV2OD57tbcMvSrl0wtrfMfS++ghg81YvsiwhglsThhjyUQ5AYDZQ6
-         p1hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDczCJHOuHWCC3R0qF2GebFO/u9ApXqWf0v7HJeYNEMBqe3t32hC1sCHa51hOPY0unAr+XGS5ZEaGNPE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRlHNOg7J04KuBkl/199zKPHMjMvRDqEBrgyZbgUUb5cYq18y3
-	yjk7lZIDecnn+0JYuWnZA/zi/TY8k0erbVg6pOZiEZZGl6x9MjNLSvGg
-X-Gm-Gg: ASbGncumOs0yQRMkw/dSpEkCIoWBaOiHPE1HfVcAaKhfdgH2D+LF3cm6hhdhhNbmox7
-	Er0xRc1zhK4+PvbcsqZCAxvJY7srnNPXZmw1LX7qJ+a1swKwl1oyZma+M5SeUf3IETY/NexuHjc
-	pxaUNUZGWlJTGQpA9ffPfWcUM6k+rFRuXM6cjxEQGR4eb6RLe3zrDel7zUFxMpzFi8KL97Z0aKM
-	ZlkDjaIJLaq2uWA//YLx5LYXCqdiOW/n400vxCiz/i28N+0Mpe3+ux3cejTXWJNAwKCkuNof0OJ
-	CUUZLKFK79ojidWq+E6nkxPmrHGQk+HVWNzPw7AFvhvoyhCwUg7n4rEcm5kIPXN3MPo0eHRrLa3
-	Zdv1NTjS5ZHI2yhuFBQ3e6l+p/QS+SE1RtPDWi/RywBC2luT/DLn+HX4Io8Z/oJclkmDV/bpYNP
-	0S73cXDF4dYWiUonUJcLk=
-X-Google-Smtp-Source: AGHT+IEpwGryO+Dsdw+yBiLYzvfG216rbfuFmYTVEwK59maJasPtn26KCM1zCvZKBwTCZ0ScENApeA==
-X-Received: by 2002:a17:902:f550:b0:277:3488:787e with SMTP id d9443c01a7336-294dee0cebemr41194955ad.12.1761751245449;
-        Wed, 29 Oct 2025 08:20:45 -0700 (PDT)
-Received: from fedora ([103.120.31.122])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3bfesm157605975ad.4.2025.10.29.08.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 08:20:44 -0700 (PDT)
-Date: Wed, 29 Oct 2025 20:50:38 +0530
-From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
-	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH] selftests/user_events: Avoid taking address of packed
- member in perf_test
-Message-ID: <aQIwxjBNonW5Py_I@fedora>
-References: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
- <20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
- <aQD2Igc3svAF3klc@fedora>
- <20251028132605.2926d3ef5eb6ea60d22ceffe@linux-foundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppiybPDcKDWjNlWyr1XV1S7PRy4OEdFdtRbSs+wayPslqe80hKRpnSlQT2FSqbKT728mlviXf70Dwt6e4GY5GzyO9yLUTkgErXlDlp+ZYbsyA6tz5xpUwIxyP5+lqhuQksWfFUZ/i1cooSfomf0WlhxCHyQaaSkJrFycMPlLjdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IW+X0DpF; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761751297; x=1793287297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=i8zZ/Az2AU7gAws4QhPWy+UIC3UsU5SjQYR63Fz7QG4=;
+  b=IW+X0DpFZBYVBDDuMggBGs+UQJY8+49YM7BPmzlgf3R4Du80+CnZHA1V
+   /MknELQZeXcg0A7pJjrYWsf33zg96IzmzA5tTnj6B5BQXkzIEXTI0OHLz
+   9ctjy5F74DYukZl9+Y/5B3OiaUM/D8Sw2NNKKQWPXQXb2pRFKxuxGU5/w
+   MBxL6Vq0FNCDiHX0KzUzri20e5qvy5eqSmeD6Q5ADTsuMb/q1mNifC0c/
+   9cCBNkN/QayLXabx53NiVJZleUBwpOPab5jtoTqGSax8bFy5r5nkuUA0j
+   1OilmOPameQstHHA6+dXmZvwg3kyy3VBl2tXLSKGXT5uGqXqv872PHmLL
+   g==;
+X-CSE-ConnectionGUID: Ldf6sa7ORr2OfFo5apCJMA==
+X-CSE-MsgGUID: YxtL4VCvQ96h3fnF66X2dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63785032"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="63785032"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:21:36 -0700
+X-CSE-ConnectionGUID: VsQXzBaVQf6rqhBeifR3xg==
+X-CSE-MsgGUID: tGWyFCvWRma3haaaGIshVw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="216557885"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:21:30 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vE7zL-00000003ePq-2SlB;
+	Wed, 29 Oct 2025 17:21:27 +0200
+Date: Wed, 29 Oct 2025 17:21:27 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 10/10] regulator: make the subsystem aware of shared
+ GPIOs
+Message-ID: <aQIw97qdO43NXHWi@smile.fi.intel.com>
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
+ <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
+ <aQIAXO1hUrw4Yp9V@smile.fi.intel.com>
+ <CAMRc=McT+HinKvajHmBYPcQKoboapAf2E3ErJSP=2jXW9B0omA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251028132605.2926d3ef5eb6ea60d22ceffe@linux-foundation.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=McT+HinKvajHmBYPcQKoboapAf2E3ErJSP=2jXW9B0omA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 28, 2025 at 01:26:05PM -0700, Andrew Morton wrote:
-> On Tue, 28 Oct 2025 22:28:10 +0530 Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
+On Wed, Oct 29, 2025 at 01:41:10PM +0100, Bartosz Golaszewski wrote:
+> On Wed, Oct 29, 2025 at 12:54 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Wed, Oct 29, 2025 at 12:20:46PM +0100, Bartosz Golaszewski wrote:
+> > >
+> > > GPIOLIB is now aware of shared GPIOs and - for platforms where access to
+> > > such pins is managed internally - we don't need to keep track of the
+> > > enable count.
+> > >
+> > > Once all users in the kernel switch to using the new mechanism, we'll be
+> > > able to drop the internal counting of users from the regulator code.
+> >
+> > I am wondering if you took into account the layering violation (or others
+> > put it as "transferring of ownership") in the regulator core for the platform
+> > based GPIO regulators? This popped up during the discussion of
+> > https://lore.kernel.org/platform-driver-x86/20251024050537.92440-1-qiuwenbo@gnome.org/
 > 
-> > > > @@ -236,7 +237,8 @@ TEST_F(user, perf_empty_events) {
-> > > >  	ASSERT_EQ(1 << reg.enable_bit, self->check);
-> > > >  
-> > > >  	/* Ensure write shows up at correct offset */
-> > > > -	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
-> > > > +	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
-> > > > +	ASSERT_NE(-1, write(self->data_fd, &write_index,
-> > > >  	                    sizeof(reg.write_index)));
-> > > 
-> > > Simply casting &write_index to void* would fix this?
-> > 
-> > yes, this hides the type mismatch from the compiler. But i think
-> > casting to void * will not fix the alignment mismatch for packed struct.
-> > It works on x86, but might break on other platform.
+> I am aware of this weird ownership transfer in regulator but these
+> changes don't affect it. The layering is still being violated though.
 > 
-> It's the second argument to write(2)!  write(2) expects a const char *,
-> but void* will work.
+> This should be fixed and I've looked into it but it's not trivial so
+> it's another big rework for the future.
 
-Hi Andrew,
-Indeed 
-`ASSERT_NE(-1, write(self->data_fd, (void *)&reg.write_index, 
-		     sizeof(reg.write_index)));`
+OK, thanks for clarifications!
 
-would work. However since `reg` is packed struct, directly taking the 
-address of its member  `&reg.write_index` may lead to unaligned access 
-on some architectures. as indicated by the compiler warning
+-- 
+With Best Regards,
+Andy Shevchenko
 
-	perf_test.c:239:38: warning: taking address of packed member
-	'write_index' of class or structure 'user_reg' may result in 
-	an unaligned pointer value [-Waddress-of-packed-member]
-	239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
-      	    |						  ^~~~~~~~~~~~~~~
 
-Using `memcpy` avoids this by performing a byte-wise copy, which is safe 
-to use for packed structures.
-
-Thanks
--- Ankit
 
