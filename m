@@ -1,423 +1,243 @@
-Return-Path: <linux-kernel+bounces-877222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEF5C1D788
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:41:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB18C1D7D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:45:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BE284E3FD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5AD4189108C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BBB31B127;
-	Wed, 29 Oct 2025 21:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD02532254E;
+	Wed, 29 Oct 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pUS0jZZh"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IuiniI53"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46BDD31B11D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8A031961C;
+	Wed, 29 Oct 2025 21:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774064; cv=none; b=An1wv6c7KYIwNep+xuDtpPlYP7APXnvLb2SOHAdmP5+tdXzrELT+JccD9CRj7QQy13CrnthIFoJD8/CRH+fVIr77Pas/COsABh7UizhWNK84In/n+BN3Mj2S6N0qNyV7F1W9C0PKGGuXrCWYhEPnOuH/7g2CtqErrTHpzImf51U=
+	t=1761774268; cv=none; b=d/0/4Tl+/2EDmwhknVsaFyUno5Mq5Zjbj7fu2T5cZbXan1GrivKRqW8kddDLyOTl75Yb598wQAlIN1qz757c3v9/ooOlpa77CDiwvkuPL4hOLMt9YanhuSmi5gWloyEIe0HwhAgFfdNVwfE1WqCG1wMjCZyaApLTFQpq+lKhhsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774064; c=relaxed/simple;
-	bh=neF3Fi0sXnJm1U9OAdPuiEM1w+TSdwNCf78x0u+9EMM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=GcR3x2pzAblb0x6IYSM5RA8sMToZmW6wa24Owdk+N1jRnYN375gk8AmUkYXD08s0ok0Gfw18AIGwqIiU6rSYkCmYVVi10dMFcA2vbHH4HXizrzTaSPx5DUYtWRVjs/mRbbvIacShYA4CfGoY/JLHfdof0yjbD3JMHfLpdIDsEKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pUS0jZZh; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--royluo.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3324538ceb0so564502a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761774061; x=1762378861; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsD+60KDxRA63pKuk3kGCvoA2vQ4JCKP7PSH6fRAYgs=;
-        b=pUS0jZZh9+wSFK+Qv456MvdTe8eN0ld9sEJqcsLqW/RQydW+pghU3UMDz6hDXxDPs+
-         glUA9cBJSqbtgs+ky6FxP14u82h54c7FjIqU/6EMmfISu9e5BTB4oSg2Jhnr+IT7D4E2
-         41iy5m+q9eE4tqz5q6SBggMjnPO8WhvHb0Y8BRupAjHaRMWRZhYACV3NVwEtr6lu86IO
-         BARZjO+0qmlNKFz5awpOJyQD7ivJW/6i/nG1QdvRHAAiming2OQ6446B62bJTKhZXduj
-         mHkdMrCapwZQL35mTTmD6KVhgSqWdY9q/txpHUpQf+bv5llhKDbBQIGLGGdylx82pZTK
-         QJnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761774062; x=1762378862;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PsD+60KDxRA63pKuk3kGCvoA2vQ4JCKP7PSH6fRAYgs=;
-        b=Nbhap8Rg33VgLhTshjxpPYcTOkmj3zR2DcHdtPjdumctQvhwDoGf3Ylm5qw0n19XCg
-         FK2G93s0s8yquK7pUsFSXnzm8wmisv9yKSI3qLIuDoTwtm1nNZKx09FPLrULU5a8zdzC
-         CGCWexFBT9VbI/MMg+5AfAK3ZmOhB3EvyQa2Tb06aOORVmkD7ACPuxlDV+ENc42QAI4s
-         Bag8JaHwAzr7j9PljOpkLlaHKyoD9Odp7SseUEwsaAmSVPvssBXcCWc/7h1f57EGJJLY
-         Vns9nG1RNJueb3U1kWDJZC12gQO8qq6F4ndbH3uCb1BaMSYx3OVXlXF/3toMYJzDbft+
-         ArhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVsY74VczSuZppLMdqK3poLOs4V5Rsi1ZXec5VWixB1OaXaAcTPZpN9ytBgD0FrkGc9+Rpgy/aG6wonPPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwteaFrXoqSbUqLwlaJjVTAgqHnVTYvs8diKFAeLE/gTPd7txzg
-	6KxBcXL/d6cTmU8TwgkxRhfRYLrJNsRwBKmMEzB1zFOdT3foDR3mpqezgiEZD8Usz4opas7FHfC
-	Xk0FJGQ==
-X-Google-Smtp-Source: AGHT+IEMfFp8ZCC0xNU0mSbhzy5iC7snXPJKFHRF56WugTXlGgarRnyuyK6BjOFtMaCJF60s6FLDD+G3tTU=
-X-Received: from plbli15.prod.google.com ([2002:a17:903:294f:b0:267:fa7d:b637])
- (user=royluo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ec8d:b0:269:87a3:43b8
- with SMTP id d9443c01a7336-294ee217833mr7098535ad.4.1761774061567; Wed, 29
- Oct 2025 14:41:01 -0700 (PDT)
-Date: Wed, 29 Oct 2025 21:40:32 +0000
-In-Reply-To: <20251029214032.3175261-1-royluo@google.com>
+	s=arc-20240116; t=1761774268; c=relaxed/simple;
+	bh=YXc7W1+8aXkj/MTURnzetUWMChz932dRKCGUNsVl1kw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AdCyhLUygMtrfQxlqNdhL0uBRO2B7vEPYe6zPxOOLyB3GLFnmNaK8XRmg2SHh9cM9Dl7F4peClHzsnfZ27x/Su9svrRVl6FknyfKloXxo+oSP16EgGgWG5+lPwSerPWgqrTw/mExwmhXzVWAx/qXpc2M9pDFyfXDAybYbS+obtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IuiniI53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5309BC4CEF7;
+	Wed, 29 Oct 2025 21:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761774268;
+	bh=YXc7W1+8aXkj/MTURnzetUWMChz932dRKCGUNsVl1kw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IuiniI53wyVLQccuU+xSAxbLhQBdar90D2tWgA0Z+YnbeEArJ/XLK3T2VnRWqPbGh
+	 CIu3TuCcBcfFtKr8a7/f0dYi+0bMC9D3NvGp98A2ei5qaLo2RLcHXod6eOw9LF+urI
+	 4f0r+mMJi4huay93IGnqLXF/v2OvqiNMfB2Wmf5ZcfE9PVoEvOUCt085sZLATvsPHB
+	 Qn58l09UwCVkh5QigTDeekGk7SaMvqv0lTc5WhUdlqBk/8iysqNju4ZAdMuLnulgK/
+	 WkEM3mfmujnPhncS6QboGzCBVldEbUT+ziTFck8dEqPIOKmP8WZuAmDTF2qHbKQOX7
+	 oVMxL34TY3e1w==
+From: Kees Cook <kees@kernel.org>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Willem de Bruijn <willemb@google.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [net-next PATCH v4 0/7] net: Introduce struct sockaddr_unsized
+Date: Wed, 29 Oct 2025 14:43:57 -0700
+Message-Id: <20251029214355.work.602-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251029214032.3175261-1-royluo@google.com>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251029214032.3175261-3-royluo@google.com>
-Subject: [PATCH v5 2/2] phy: Add Google Tensor SoC USB PHY driver
-From: Roy Luo <royluo@google.com>
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	"=?UTF-8?q?Andr=C3=A9=20Draszik?=" <andre.draszik@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Doug Anderson <dianders@google.com>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Roy Luo <royluo@google.com>, 
-	Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9442; i=kees@kernel.org; h=from:subject:message-id; bh=YXc7W1+8aXkj/MTURnzetUWMChz932dRKCGUNsVl1kw=; b=owGbwMvMwCVmps19z/KJym7G02pJDJlMXQvqLblD3sgp9BwwnXUqPStia7lazCurmuW7Vzz9W 9wSfyO7o5SFQYyLQVZMkSXIzj3OxeNte7j7XEWYOaxMIEMYuDgFYCIP1jP8jzI7krllzkPLNec/ bPtyc/K0vJoJnbP3Cxz8Z7pqak7oEUVGhgt71e/u1Yjjq9vUHb1L/XyBUwd/UcnyXY79ahe4O/4 nMAAA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Support the USB PHY found on Google Tensor G5. This particular USB PHY
-supports both high-speed and super-speed operations, and is integrated
-with the SNPS DWC3 controller that's also on the SoC.
-This initial patch specifically adds functionality for high-speed.
+Hi!
 
-Co-developed-by: Joy Chakraborty <joychakr@google.com>
-Signed-off-by: Joy Chakraborty <joychakr@google.com>
-Co-developed-by: Naveen Kumar <mnkumar@google.com>
-Signed-off-by: Naveen Kumar <mnkumar@google.com>
-Signed-off-by: Roy Luo <royluo@google.com>
----
- drivers/phy/Kconfig          |  13 ++
- drivers/phy/Makefile         |   1 +
- drivers/phy/phy-google-usb.c | 271 +++++++++++++++++++++++++++++++++++
- 3 files changed, 285 insertions(+)
- create mode 100644 drivers/phy/phy-google-usb.c
+ v4:
+   - dropped pppol2tp_sockaddr_get_info validation changes
+   - renamed "struct sockaddr_unspec" to "struct sockaddr_unsized"
+ v3: https://lore.kernel.org/linux-hardening/20251020212125.make.115-kees@kernel.org/
+ v2: https://lore.kernel.org/linux-hardening/20251014223349.it.173-kees@kernel.org/
+ v1: https://lore.kernel.org/all/20250723230354.work.571-kees@kernel.org/
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index 58c911e1b2d2..be237847efed 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -101,6 +101,19 @@ config PHY_NXP_PTN3222
- 	  schemes. It supports all three USB 2.0 data rates: Low Speed, Full
- 	  Speed and High Speed.
- 
-+config PHY_GOOGLE_USB
-+	tristate "Google Tensor SoC USB PHY driver"
-+	depends on HAS_IOMEM
-+	depends on OF
-+	depends on TYPEC
-+	select GENERIC_PHY
-+	help
-+	  Enable support for the USB PHY on Google Tensor SoCs, starting with
-+	  the G5 generation. This driver provides the PHY interfaces to
-+	  interact with the SNPS eUSB2 and USB 3.2/DisplayPort Combo PHY, both
-+	  of which are integrated with the DWC3 USB DRD controller.
-+	  This driver currently supports USB high-speed.
-+
- source "drivers/phy/allwinner/Kconfig"
- source "drivers/phy/amlogic/Kconfig"
- source "drivers/phy/broadcom/Kconfig"
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index c670a8dac468..1d7a1331bd19 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_PHY_SNPS_EUSB2)		+= phy-snps-eusb2.o
- obj-$(CONFIG_USB_LGM_PHY)		+= phy-lgm-usb.o
- obj-$(CONFIG_PHY_AIROHA_PCIE)		+= phy-airoha-pcie.o
- obj-$(CONFIG_PHY_NXP_PTN3222)		+= phy-nxp-ptn3222.o
-+obj-$(CONFIG_PHY_GOOGLE_USB)		+= phy-google-usb.o
- obj-y					+= allwinner/	\
- 					   amlogic/	\
- 					   broadcom/	\
-diff --git a/drivers/phy/phy-google-usb.c b/drivers/phy/phy-google-usb.c
-new file mode 100644
-index 000000000000..02c6e9f2912e
---- /dev/null
-+++ b/drivers/phy/phy-google-usb.c
-@@ -0,0 +1,271 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * phy-google-usb.c - Google USB PHY driver
-+ *
-+ * Copyright (C) 2025, Google LLC
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/reset.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/phy/phy.h>
-+#include <linux/platform_device.h>
-+#include <linux/mutex.h>
-+#include <linux/cleanup.h>
-+#include <linux/usb/typec_mux.h>
-+
-+#define USBCS_USB2PHY_CFG19_OFFSET 0x0
-+#define USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV GENMASK(19, 8)
-+
-+#define USBCS_USB2PHY_CFG21_OFFSET 0x8
-+#define USBCS_USB2PHY_CFG21_PHY_ENABLE BIT(12)
-+#define USBCS_USB2PHY_CFG21_REF_FREQ_SEL GENMASK(15, 13)
-+#define USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL BIT(19)
-+
-+#define USBCS_PHY_CFG1_OFFSET 0x28
-+#define USBCS_PHY_CFG1_SYS_VBUSVALID BIT(17)
-+
-+enum google_usb_phy_id {
-+	GOOGLE_USB2_PHY,
-+	GOOGLE_USB_PHY_NUM,
-+};
-+
-+struct google_usb_phy_instance {
-+	int index;
-+	struct phy *phy;
-+	int num_clks;
-+	struct clk_bulk_data *clks;
-+	struct reset_control *rsts;
-+};
-+
-+struct google_usb_phy {
-+	struct device *dev;
-+	void __iomem *usb2_cfg_base;
-+	void __iomem *usb3_top_base;
-+	struct google_usb_phy_instance insts[GOOGLE_USB_PHY_NUM];
-+	/* serialize phy access */
-+	struct mutex phy_mutex;
-+	struct typec_switch_dev *sw;
-+	enum typec_orientation orientation;
-+};
-+
-+static inline struct google_usb_phy *to_google_usb_phy(struct google_usb_phy_instance *inst)
-+{
-+	return container_of(inst, struct google_usb_phy, insts[inst->index]);
-+}
-+
-+static void set_vbus_valid(struct google_usb_phy *gphy)
-+{
-+	u32 reg;
-+
-+	if (gphy->orientation == TYPEC_ORIENTATION_NONE) {
-+		reg = readl(gphy->usb3_top_base + USBCS_PHY_CFG1_OFFSET);
-+		reg &= ~USBCS_PHY_CFG1_SYS_VBUSVALID;
-+		writel(reg, gphy->usb3_top_base + USBCS_PHY_CFG1_OFFSET);
-+	} else {
-+		reg = readl(gphy->usb3_top_base + USBCS_PHY_CFG1_OFFSET);
-+		reg |= USBCS_PHY_CFG1_SYS_VBUSVALID;
-+		writel(reg, gphy->usb3_top_base + USBCS_PHY_CFG1_OFFSET);
-+	}
-+}
-+
-+static int google_usb_set_orientation(struct typec_switch_dev *sw,
-+				      enum typec_orientation orientation)
-+{
-+	struct google_usb_phy *gphy = typec_switch_get_drvdata(sw);
-+
-+	dev_dbg(gphy->dev, "set orientation %d\n", orientation);
-+
-+	gphy->orientation = orientation;
-+
-+	if (pm_runtime_suspended(gphy->dev))
-+		return 0;
-+
-+	guard(mutex)(&gphy->phy_mutex);
-+
-+	set_vbus_valid(gphy);
-+
-+	return 0;
-+}
-+
-+static int google_usb2_phy_init(struct phy *_phy)
-+{
-+	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
-+	struct google_usb_phy *gphy = to_google_usb_phy(inst);
-+	u32 reg;
-+	int ret = 0;
-+
-+	dev_dbg(gphy->dev, "initializing usb2 phy\n");
-+
-+	guard(mutex)(&gphy->phy_mutex);
-+
-+	reg = readl(gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+	reg &= ~USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL;
-+	reg &= ~USBCS_USB2PHY_CFG21_REF_FREQ_SEL;
-+	reg |= FIELD_PREP(USBCS_USB2PHY_CFG21_REF_FREQ_SEL, 0);
-+	writel(reg, gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+
-+	reg = readl(gphy->usb2_cfg_base + USBCS_USB2PHY_CFG19_OFFSET);
-+	reg &= ~USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV;
-+	reg |= FIELD_PREP(USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV, 368);
-+	writel(reg, gphy->usb2_cfg_base + USBCS_USB2PHY_CFG19_OFFSET);
-+
-+	set_vbus_valid(gphy);
-+
-+	ret = clk_bulk_prepare_enable(inst->num_clks, inst->clks);
-+	if (ret)
-+		return ret;
-+
-+	ret = reset_control_deassert(inst->rsts);
-+	if (ret) {
-+		clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
-+		return ret;
-+	}
-+
-+	reg = readl(gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+	reg |= USBCS_USB2PHY_CFG21_PHY_ENABLE;
-+	writel(reg, gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+
-+	return ret;
-+}
-+
-+static int google_usb2_phy_exit(struct phy *_phy)
-+{
-+	struct google_usb_phy_instance *inst = phy_get_drvdata(_phy);
-+	struct google_usb_phy *gphy = to_google_usb_phy(inst);
-+	u32 reg;
-+
-+	dev_dbg(gphy->dev, "exiting usb2 phy\n");
-+
-+	guard(mutex)(&gphy->phy_mutex);
-+
-+	reg = readl(gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+	reg &= ~USBCS_USB2PHY_CFG21_PHY_ENABLE;
-+	writel(reg, gphy->usb2_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-+
-+	reset_control_assert(inst->rsts);
-+	clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
-+
-+	return 0;
-+}
-+
-+static const struct phy_ops google_usb2_phy_ops = {
-+	.init		= google_usb2_phy_init,
-+	.exit		= google_usb2_phy_exit,
-+};
-+
-+static struct phy *google_usb_phy_xlate(struct device *dev,
-+					const struct of_phandle_args *args)
-+{
-+	struct google_usb_phy *gphy = dev_get_drvdata(dev);
-+
-+	if (args->args[0] >= GOOGLE_USB_PHY_NUM) {
-+		dev_err(dev, "invalid PHY index requested from DT\n");
-+		return ERR_PTR(-ENODEV);
-+	}
-+	return gphy->insts[args->args[0]].phy;
-+}
-+
-+static int google_usb_phy_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct google_usb_phy *gphy;
-+	struct phy *phy;
-+	struct google_usb_phy_instance *inst;
-+	struct phy_provider *phy_provider;
-+	struct typec_switch_desc sw_desc = { };
-+	int ret;
-+
-+	gphy = devm_kzalloc(dev, sizeof(*gphy), GFP_KERNEL);
-+	if (!gphy)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, gphy);
-+	gphy->dev = dev;
-+
-+	ret = devm_mutex_init(dev, &gphy->phy_mutex);
-+	if (ret)
-+		return ret;
-+
-+	gphy->usb2_cfg_base = devm_platform_ioremap_resource_byname(pdev,
-+								    "usb2_cfg");
-+	if (IS_ERR(gphy->usb2_cfg_base))
-+		return dev_err_probe(dev, PTR_ERR(gphy->usb2_cfg_base),
-+				    "invalid usb2 cfg\n");
-+
-+	gphy->usb3_top_base = devm_platform_ioremap_resource_byname(pdev,
-+								    "usb3_top");
-+	if (IS_ERR(gphy->usb3_top_base))
-+		return dev_err_probe(dev, PTR_ERR(gphy->usb3_top_base),
-+				    "invalid usb3 top\n");
-+
-+	inst = &gphy->insts[GOOGLE_USB2_PHY];
-+	inst->index = GOOGLE_USB2_PHY;
-+	phy = devm_phy_create(dev, NULL, &google_usb2_phy_ops);
-+	if (IS_ERR(phy))
-+		return dev_err_probe(dev, PTR_ERR(phy),
-+				     "failed to create usb2 phy instance\n");
-+	inst->phy = phy;
-+	phy_set_drvdata(phy, inst);
-+	ret = devm_clk_bulk_get_all_enabled(dev, &inst->clks);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get u2 phy clks\n");
-+	inst->num_clks = ret;
-+
-+	inst->rsts = devm_reset_control_array_get_exclusive(dev);
-+	if (IS_ERR(inst->rsts))
-+		return dev_err_probe(dev, PTR_ERR(inst->rsts),
-+				     "failed to get u2 phy resets\n");
-+
-+	phy_provider = devm_of_phy_provider_register(dev, google_usb_phy_xlate);
-+	if (IS_ERR(phy_provider))
-+		return dev_err_probe(dev, PTR_ERR(phy_provider),
-+				     "failed to register phy provider\n");
-+
-+	pm_runtime_enable(dev);
-+
-+	sw_desc.fwnode = dev_fwnode(dev);
-+	sw_desc.drvdata = gphy;
-+	sw_desc.name = fwnode_get_name(dev_fwnode(dev));
-+	sw_desc.set = google_usb_set_orientation;
-+
-+	gphy->sw = typec_switch_register(dev, &sw_desc);
-+	if (IS_ERR(gphy->sw))
-+		return dev_err_probe(dev, PTR_ERR(gphy->sw),
-+				     "failed to register typec switch\n");
-+
-+	return 0;
-+}
-+
-+static void google_usb_phy_remove(struct platform_device *pdev)
-+{
-+	struct google_usb_phy *gphy = dev_get_drvdata(&pdev->dev);
-+
-+	typec_switch_unregister(gphy->sw);
-+	pm_runtime_disable(&pdev->dev);
-+}
-+
-+static const struct of_device_id google_usb_phy_of_match[] = {
-+	{
-+		.compatible = "google,gs5-usb-phy",
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, google_usb_phy_of_match);
-+
-+static struct platform_driver google_usb_phy = {
-+	.probe	= google_usb_phy_probe,
-+	.remove = google_usb_phy_remove,
-+	.driver = {
-+		.name		= "google-usb-phy",
-+		.of_match_table	= google_usb_phy_of_match,
-+	}
-+};
-+
-+module_platform_driver(google_usb_phy);
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Google USB phy driver");
+The historically fixed-size struct sockaddr is part of UAPI and embedded
+in many existing structures. The kernel uses struct sockaddr extensively
+within the kernel to represent arbitrarily sized sockaddr structures,
+which caused problems with the compiler's ability to determine object
+sizes correctly. The "temporary" solution was to make sockaddr explicitly
+use a flexible array, but this causes problems for embedding struct
+sockaddr in structures, where once again the compiler has to guess about
+the size of such objects, and causes thousands of warnings under the
+coming -Wflex-array-member-not-at-end warning.
+
+Switching to sockaddr_storage internally everywhere wastes a lot of memory,
+so we are left with needing two changes:
+- introduction of an explicitly arbitrarily sized sockaddr struct
+- switch struct sockaddr back to being fixed size
+
+Doing the latter step requires all "arbitrarily sized" uses of struct
+sockaddr to be replaced with the new struct from the first step.
+
+So, introduce the new struct and do enough conversions that we can
+switch sockaddr back to a fixed-size sa_data.
+
+Thanks!
+
+-Kees
+
+Kees Cook (7):
+  net: Convert proto_ops bind() callbacks to use sockaddr_unsized
+  net: Convert proto_ops connect() callbacks to use sockaddr_unsized
+  net: Remove struct sockaddr from net.h
+  net: Convert proto callbacks from sockaddr to sockaddr_unsized
+  bpf: Convert cgroup sockaddr filters to use sockaddr_unsized
+    consistently
+  bpf: Convert bpf_sock_addr_kern "uaddr" to sockaddr_unsized
+  net: Convert struct sockaddr to fixed-size "sa_data[14]"
+
+ include/linux/bpf-cgroup.h                      | 17 ++++++++++-------
+ include/linux/filter.h                          |  2 +-
+ include/linux/net.h                             |  9 ++++-----
+ include/linux/socket.h                          |  6 ++----
+ include/net/inet_common.h                       | 13 ++++++-------
+ include/net/ip.h                                |  4 ++--
+ include/net/ipv6.h                              | 10 +++++-----
+ include/net/ipv6_stubs.h                        |  2 +-
+ include/net/ping.h                              |  2 +-
+ include/net/sctp/sctp.h                         |  2 +-
+ include/net/sock.h                              | 14 +++++++-------
+ include/net/tcp.h                               |  2 +-
+ include/net/udp.h                               |  2 +-
+ include/net/vsock_addr.h                        |  2 +-
+ net/rds/rds.h                                   |  2 +-
+ net/smc/smc.h                                   |  4 ++--
+ tools/perf/trace/beauty/include/linux/socket.h  |  5 +----
+ crypto/af_alg.c                                 |  2 +-
+ drivers/block/drbd/drbd_receiver.c              |  6 +++---
+ drivers/infiniband/hw/erdma/erdma_cm.c          |  6 +++---
+ drivers/infiniband/sw/siw/siw_cm.c              |  8 ++++----
+ drivers/isdn/mISDN/l1oip_core.c                 |  2 +-
+ drivers/isdn/mISDN/socket.c                     |  4 ++--
+ drivers/net/ppp/pppoe.c                         |  4 ++--
+ drivers/net/ppp/pptp.c                          |  8 ++++----
+ drivers/net/wireless/ath/ath10k/qmi.c           |  2 +-
+ drivers/net/wireless/ath/ath11k/qmi.c           |  2 +-
+ drivers/net/wireless/ath/ath12k/qmi.c           |  2 +-
+ drivers/nvme/host/tcp.c                         |  4 ++--
+ drivers/nvme/target/tcp.c                       |  2 +-
+ drivers/slimbus/qcom-ngd-ctrl.c                 |  2 +-
+ drivers/target/iscsi/iscsi_target_login.c       |  2 +-
+ drivers/xen/pvcalls-back.c                      |  4 ++--
+ fs/afs/rxrpc.c                                  |  6 +++---
+ fs/coredump.c                                   |  2 +-
+ fs/dlm/lowcomms.c                               |  8 ++++----
+ fs/ocfs2/cluster/tcp.c                          |  6 +++---
+ fs/smb/client/connect.c                         |  4 ++--
+ fs/smb/server/transport_tcp.c                   |  4 ++--
+ kernel/bpf/cgroup.c                             |  8 ++++----
+ net/9p/trans_fd.c                               |  8 ++++----
+ net/appletalk/ddp.c                             |  4 ++--
+ net/atm/pvc.c                                   |  4 ++--
+ net/atm/svc.c                                   |  4 ++--
+ net/ax25/af_ax25.c                              |  4 ++--
+ net/bluetooth/hci_sock.c                        |  2 +-
+ net/bluetooth/iso.c                             |  6 +++---
+ net/bluetooth/l2cap_sock.c                      |  4 ++--
+ net/bluetooth/rfcomm/core.c                     |  6 +++---
+ net/bluetooth/rfcomm/sock.c                     |  5 +++--
+ net/bluetooth/sco.c                             |  4 ++--
+ net/caif/caif_socket.c                          |  2 +-
+ net/can/bcm.c                                   |  2 +-
+ net/can/isotp.c                                 |  2 +-
+ net/can/j1939/socket.c                          |  4 ++--
+ net/can/raw.c                                   |  2 +-
+ net/ceph/messenger.c                            |  2 +-
+ net/core/dev.c                                  |  2 +-
+ net/core/dev_ioctl.c                            |  2 +-
+ net/core/filter.c                               |  5 +++--
+ net/core/sock.c                                 |  6 +++---
+ net/ieee802154/socket.c                         | 12 ++++++------
+ net/ipv4/af_inet.c                              | 16 ++++++++--------
+ net/ipv4/arp.c                                  |  2 +-
+ net/ipv4/datagram.c                             |  4 ++--
+ net/ipv4/ping.c                                 |  8 ++++----
+ net/ipv4/raw.c                                  |  3 ++-
+ net/ipv4/tcp.c                                  |  2 +-
+ net/ipv4/tcp_ipv4.c                             |  4 ++--
+ net/ipv4/udp.c                                  |  6 ++++--
+ net/ipv4/udp_tunnel_core.c                      |  4 ++--
+ net/ipv6/af_inet6.c                             |  6 +++---
+ net/ipv6/datagram.c                             |  8 ++++----
+ net/ipv6/ip6_udp_tunnel.c                       |  4 ++--
+ net/ipv6/ping.c                                 |  2 +-
+ net/ipv6/raw.c                                  |  3 ++-
+ net/ipv6/tcp_ipv6.c                             |  6 +++---
+ net/ipv6/udp.c                                  |  5 +++--
+ net/iucv/af_iucv.c                              |  6 +++---
+ net/l2tp/l2tp_core.c                            |  8 ++++----
+ net/l2tp/l2tp_ip.c                              |  6 ++++--
+ net/l2tp/l2tp_ip6.c                             |  5 +++--
+ net/l2tp/l2tp_ppp.c                             |  2 +-
+ net/llc/af_llc.c                                |  4 ++--
+ net/mctp/af_mctp.c                              |  4 ++--
+ net/mctp/test/route-test.c                      |  2 +-
+ net/mctp/test/utils.c                           |  5 +++--
+ net/mptcp/pm_kernel.c                           |  4 ++--
+ net/mptcp/protocol.c                            |  5 +++--
+ net/mptcp/subflow.c                             |  4 ++--
+ net/netfilter/ipvs/ip_vs_sync.c                 |  6 +++---
+ net/netlink/af_netlink.c                        |  4 ++--
+ net/netrom/af_netrom.c                          |  6 +++---
+ net/nfc/llcp_sock.c                             |  6 +++---
+ net/nfc/rawsock.c                               |  2 +-
+ net/packet/af_packet.c                          | 15 ++++++++-------
+ net/phonet/pep.c                                |  3 ++-
+ net/phonet/socket.c                             | 10 +++++-----
+ net/qrtr/af_qrtr.c                              |  4 ++--
+ net/qrtr/ns.c                                   |  2 +-
+ net/rds/af_rds.c                                |  2 +-
+ net/rds/bind.c                                  |  2 +-
+ net/rds/tcp_connect.c                           |  4 ++--
+ net/rds/tcp_listen.c                            |  2 +-
+ net/rose/af_rose.c                              |  5 +++--
+ net/rxrpc/af_rxrpc.c                            |  4 ++--
+ net/rxrpc/rxperf.c                              |  2 +-
+ net/sctp/socket.c                               | 13 +++++++------
+ net/smc/af_smc.c                                |  6 +++---
+ net/socket.c                                    | 14 +++++++-------
+ net/sunrpc/clnt.c                               |  6 +++---
+ net/sunrpc/svcsock.c                            |  2 +-
+ net/sunrpc/xprtsock.c                           |  9 +++++----
+ net/tipc/socket.c                               |  6 +++---
+ net/unix/af_unix.c                              | 12 ++++++------
+ net/vmw_vsock/af_vsock.c                        |  6 +++---
+ net/vmw_vsock/vsock_addr.c                      |  2 +-
+ net/x25/af_x25.c                                |  4 ++--
+ net/xdp/xsk.c                                   |  2 +-
+ samples/qmi/qmi_sample_client.c                 |  2 +-
+ .../selftests/bpf/test_kmods/bpf_testmod.c      |  4 ++--
+ 121 files changed, 303 insertions(+), 290 deletions(-)
+
 -- 
-2.51.1.851.g4ebd6896fd-goog
+2.34.1
 
 
