@@ -1,58 +1,97 @@
-Return-Path: <linux-kernel+bounces-876172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D862C1AC0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:36:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 696D8C1AE9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B4BF5A0402
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:28:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C39D5830A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37430258CE5;
-	Wed, 29 Oct 2025 13:23:22 +0000 (UTC)
-Received: from localhost.localdomain (unknown [147.136.157.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120B533C523;
+	Wed, 29 Oct 2025 13:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QhI0WtG4"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013058.outbound.protection.outlook.com [40.107.201.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80062139CE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E700824BBEE;
 	Wed, 29 Oct 2025 13:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.2
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744201; cv=none; b=bD88G4KXyAxddKx1SxVooGVvbNqpIbh66MX1kNOiS/VkMJFVoEFyfyFLGl5wqB4YIEREICI6lg41GlklDLP2nUk3OhsWcH547CaYj3+2PuxTTDaDqLLEvXn38Qw8FXGEJ4r9FnnKm5Ww44s1e8gMucM1PSl19BB5LoqIiwJfQrE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744201; c=relaxed/simple;
-	bh=pchtt63Oh3F2HNObMqsCdLZ8QHoH/Yw2B2nuwJg8ogw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bhYN8eZkSShuhX7e0xjZPKg5MjOObLSpD01JQ59DBMa4TXcjvRDrXa8qYg/WRzS6lG8gRO+K6juevPOvCeg0x3AzFBPuvapYzq4QiIcGU8GaxkjCFLyPP5m6rJs08M9sXX06TYbDYR9A/CAP/Mq68F0Ek5GwBeYDFtEj2SfAZPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
-Received: by localhost.localdomain (Postfix, from userid 1007)
-	id C6E1F8B2A0E; Wed, 29 Oct 2025 21:23:11 +0800 (+08)
-From: Jiayuan Chen <jiayuan.chen@linux.dev>
-To: linux-kernel@vger.kernel.org
-Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
-	Jiayuan Chen <jiayuan.chen@shopee.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Gabriele Monaco <gmonaco@redhat.com>,
-	Libo Chen <libo.chen@oracle.com>,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v1] sched/numa: Add tracepoint to track NUMA migration cost
-Date: Wed, 29 Oct 2025 21:22:55 +0800
-Message-ID: <20251029132300.23519-1-jiayuan.chen@linux.dev>
-X-Mailer: git-send-email 2.43.0
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761744203; cv=fail; b=PBAgRXYLfgcP1tzDlzUZcYNLNkfjwy2kUrsPoZDv5Yn3FFkoEej2Iku3fGbk5NVuB8LZw/4mZHH7300zi62e7KVmoIPCkVKKrai2cDHGSusSaBQf6Xj9VZEODO6xSh6KsOh328cYCVDpOsRruLYm2PP137c+aAEsTk9vofd5pu0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761744203; c=relaxed/simple;
+	bh=gTXtZBP0WXapVLrfDNs5GEZpqzcRdv4A5omaPatxdGY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sG7o5zV0Y4rO9+0nxpHteJ2YfY/3KXAPSVt77gFuRorYlrgDCAtPiw1P9Hg8Uq4BrBW36WVa8cOqOpFL3yb18COrch79S1cw6t5/MxqrawS1WHrC/3O9s/uaDLGQAkH3EvZSAaGkPa0CfrKxFGOXIO9K14++ImKPrmV49Pgi4v8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=QhI0WtG4; arc=fail smtp.client-ip=40.107.201.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y0cvvKc800oI5dCvKKBAM4KTHQWuFbXdrpsQvth4esJu/OT83qvPcj4d72/kxCdryUhykgM189SQWVtJVSNy1xfcQOavzw34q5Oeylp8BO1CjtBZXqOo/y+9AJbXj1vPBMQ7if7Beq5PBBUPvAAEauL9+uf8+mqaHNRPJWv+AkxvEqh1fiGE21snhXpJbtJ7yHPViUGJsiwtP7omLehM+RBFyBXnpHTQjgiooSwgD0t1SfoWknFEK6EBU4B/glSvUt8i0zeh5p6ZFR6oHLJI4ALLKAgffnVexYbJFow1oKGFYYX79UlvxKTORuXV3o0RTTJF7FXoy+5FKSS2KY6yBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DSDz+8N9mv1hZLz6pp7/WsNrtsuB8oKPf3zOw/TSkcs=;
+ b=g0CsU3ZtcrMm1ZcI0v5r4t791LKrBsz3Lzpxhmk30YY3T4749tK63s+K3LreYGgq/lTcqhGMLTyxV8mCGvQlJnVuQXl2A+xJC+nD9NGq84FDrwlv2q4lwF5dlsWR93UiXzJuuT4Lr5j4XebwpN3ky2MzVzg0F2sqF2DmvmhRbuQGLGjiaeGk6+T4cXyLBcSwyyoz8tnmQ1nKhoYmD0mt8mDGfR+dStctMoPoZIwurqYO6/KoNIvqOWZJjp7m+sgQUFP9jbgeqxm9sIg0jivRV6j74kYouE05Wrub3w8nZNdji5fwqAHOU2l83acV0bSIPrKCQhD2VAGbiSgMI0+CrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DSDz+8N9mv1hZLz6pp7/WsNrtsuB8oKPf3zOw/TSkcs=;
+ b=QhI0WtG45Vc21n/nhZDsCBPm72hMd21VxrNuZ7iWBxByfQUoUkz6ya+pHnMQhTMfu1d8JNgaanQwTLAdzGvcKJrTbYRuJRHQgviUIpCBAAcD/TSDgrTeX889kBUyhxWIsV7aqebB6oF5dt3vFUztzOkjoomUaGKqOU5QY78jPwY=
+Received: from SJ0PR05CA0181.namprd05.prod.outlook.com (2603:10b6:a03:330::6)
+ by SJ2PR10MB6990.namprd10.prod.outlook.com (2603:10b6:a03:4d2::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9228.17; Wed, 29 Oct
+ 2025 13:23:16 +0000
+Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
+ (2603:10b6:a03:330:cafe::2b) by SJ0PR05CA0181.outlook.office365.com
+ (2603:10b6:a03:330::6) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.14 via Frontend Transport; Wed,
+ 29 Oct 2025 13:23:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 13:23:16 +0000
+Received: from DLEE202.ent.ti.com (157.170.170.77) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 08:23:11 -0500
+Received: from DLEE210.ent.ti.com (157.170.170.112) by DLEE202.ent.ti.com
+ (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 08:23:11 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE210.ent.ti.com
+ (157.170.170.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 29 Oct 2025 08:23:11 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59TDNBHO4055221;
+	Wed, 29 Oct 2025 08:23:11 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Jakub Kicinski <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>
+CC: Jacob Keller <jacob.e.keller@intel.com>, Simon Horman <horms@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, "Eric
+ Dumazet" <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "Santosh
+ Shilimkar" <ssantosh@kernel.org>, Siddharth Vadapalli <s-vadapalli@ti.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, Nishanth Menon <nm@ti.com>
+Subject: [PATCH V3] net: ethernet: ti: netcp: Standardize knav_dma_open_channel to return NULL on error
+Date: Wed, 29 Oct 2025 08:23:10 -0500
+Message-ID: <20251029132310.3087247-1-nm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,179 +99,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|SJ2PR10MB6990:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1d65d5b2-cfb8-4e8a-1383-08de16ee51df
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024|34020700016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?izTvof/HXTK+8rsRCYRGVsZ2Pjprl4KTqd4cY3OgQsBYm8b3V1JoK1hc4uZy?=
+ =?us-ascii?Q?9Lp/A/MlYjf7wIm3fhUp+o4jpF9gAB1EXCk0k04+BqMvTlw+9wSw7yJuTKzK?=
+ =?us-ascii?Q?AAWB/TbX5tKlmhGf4tMdUdfMF4kaaoLrkosnSkjz85tcVcmY2g7M/6HGDhXu?=
+ =?us-ascii?Q?wpnZaPfJo5+WHu+ZBUL2rivuJ0ElJBWJn8uZCjg0yJtUF+smgTU5LUHZlJqV?=
+ =?us-ascii?Q?owyZvJnKrFEy8XAH6ZK+hsJJIC6DhUbqyPf2bHldbI2bt0f/QVD/FGsaZltb?=
+ =?us-ascii?Q?tJBnuRioBUZo8uBiY01G4DABLQAyxQXgkAhNlB454X2+RDHyLgPZAKpOZ+rr?=
+ =?us-ascii?Q?MLNHdq2/+A98uGgy09NW4hwq66aZPzyr9bn4o/tMUeb0ZAaMPmzkEF4qMRn6?=
+ =?us-ascii?Q?Ff8IZxzampUvdkg1Www6rp5ezKQDJHAM1TQXOCPHn5dIvET2id+qn0RZrh9+?=
+ =?us-ascii?Q?7curCDJZ7iOAzqkAbL80pAfL+MuYRYBFiMRlUnVZLdxR9bITkLFnfpk+rSJW?=
+ =?us-ascii?Q?iu7LT1v2WHOJ1zLBWUEsCnMQMWMeWAWTgtPH9L/z5Zl79vjaT1vuB7xB8Tpj?=
+ =?us-ascii?Q?t0ZNOU4+FOmje4xSSiiQ9cIFBWdtb/Q+bz0lRBS5kaNmcB/gatYUqlwW9pdM?=
+ =?us-ascii?Q?2CDSFIZbylwE8PMy9iLCwdJx5cpLpnZBAPYzUQ1nY0xDxwKPewwwF8Qw1QmU?=
+ =?us-ascii?Q?7yB73Mf9VKFdCFw1tia3xnTeJs7XbWaEBh34oAvz1tUULql6xufkbi+n1GlZ?=
+ =?us-ascii?Q?43v0V+vDYBqRkcMGMAV9XFbSLEmuzjPig05CRFvclwVFmrG9T9NfvtVNu2BD?=
+ =?us-ascii?Q?ifmWqBMKnFLgJmShSBW3rc9h2qFvCB40h/x8yOLxc0WEY+cE/kFB/o2MeG00?=
+ =?us-ascii?Q?1d9LHgiMLnwb7ipOB0iWXEByN7nx/rGZv647BKwH4SgmLNunlqn9eyUfE4Hx?=
+ =?us-ascii?Q?bYrdoEjgYlLOONPwAkTSFXDCAZ7WqTN8N6TcrQ+B2BCgRNikfDwejf8+z9nJ?=
+ =?us-ascii?Q?31t5La4meVbVMAgBEYErL2czHmFBTrRGhOhKFsmgAyAIfEIpKGT1A+8HMK8L?=
+ =?us-ascii?Q?lAY5xBqXvnOAzbol3OMWzC5TQPFoUY3lwGh3juUm+s0ufnYETywqfKcW7QFM?=
+ =?us-ascii?Q?0pKlWRz+Ldnci7vrhVvr0zdvxCZKI3kvoQ48rH1HSVPkgp+IbjCR0DDDLZY+?=
+ =?us-ascii?Q?rfi96l4PpzuVSpcPalCvCQh11bkovTaDbDpXEogrAx2Y0XDpGaZPpE5/tZsz?=
+ =?us-ascii?Q?qkOPxZ1V45JFllc8j22JtPBREcnL8DG9Nv3z3igO/WWxfr6atrksTD0rDYor?=
+ =?us-ascii?Q?cbGTfftiDL6dQkaY93P3XO01HjHuxw6445EARJdzQ9FOJMlx9lR7QNac7Hx5?=
+ =?us-ascii?Q?86sxPL31PhSmWW7GuNIoEhKFbCwgfwQLqXEg51aiGoLhjvGgUgDZCDul78c3?=
+ =?us-ascii?Q?c3bP0h+p93uwtMZ3040zF3OQoNvCY9froV/cWcHHLbVQmDL28FNSvBtzHHnm?=
+ =?us-ascii?Q?hFvJl29GNhgTuRo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024)(34020700016);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 13:23:16.3744
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1d65d5b2-cfb8-4e8a-1383-08de16ee51df
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00001CE8.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB6990
 
-From: Jiayuan Chen <jiayuan.chen@shopee.com>
+Make knav_dma_open_channel consistently return NULL on error instead
+of ERR_PTR. Currently the header include/linux/soc/ti/knav_dma.h
+returns NULL when the driver is disabled, but the driver
+implementation does not even return NULL or ERR_PTR on failure,
+causing inconsistency in the users. This results in a crash in
+netcp_free_navigator_resources as followed (trimmed):
 
-In systems with multiple NUMA nodes, memory imbalance between nodes often
-occurs.  To address this, we typically tune parameters like scan_size_mb or
-scan_period_{min,max}_ms to allow processes to migrate pages between NUMA
-nodes.
+Unhandled fault: alignment exception (0x221) at 0xfffffff2
+[fffffff2] *pgd=80000800207003, *pmd=82ffda003, *pte=00000000
+Internal error: : 221 [#1] SMP ARM
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.17.0-rc7 #1 NONE
+Hardware name: Keystone
+PC is at knav_dma_close_channel+0x30/0x19c
+LR is at netcp_free_navigator_resources+0x2c/0x28c
 
-Currently, the migration task task_numa_work() holds the mmap_lock during
-the entire migration process, which can significantly impact process
-performance, especially for memory operations. This patch introduces a new
-tracepoint that records the migration duration, along with the number of
-scanned pages and migrated pages. These metrics can be used to calculate
-efficiency metrics similar to %vmeff in 'sar -B'.
+[... TRIM...]
 
-These metrics help evaluate whether the adjusted NUMA balancing parameters
-are properly tuned.
+Call trace:
+ knav_dma_close_channel from netcp_free_navigator_resources+0x2c/0x28c
+ netcp_free_navigator_resources from netcp_ndo_open+0x430/0x46c
+ netcp_ndo_open from __dev_open+0x114/0x29c
+ __dev_open from __dev_change_flags+0x190/0x208
+ __dev_change_flags from netif_change_flags+0x1c/0x58
+ netif_change_flags from dev_change_flags+0x38/0xa0
+ dev_change_flags from ip_auto_config+0x2c4/0x11f0
+ ip_auto_config from do_one_initcall+0x58/0x200
+ do_one_initcall from kernel_init_freeable+0x1cc/0x238
+ kernel_init_freeable from kernel_init+0x1c/0x12c
+ kernel_init from ret_from_fork+0x14/0x38
+[... TRIM...]
 
-Here's an example bpftrace script:
-```bash
+Standardize the error handling by making the function return NULL on
+all error conditions. The API is used in just the netcp_core.c so the
+impact is limited.
 
-bpftrace -e '
-tracepoint:sched:sched_numa_balance_start
-{
-    @start_time[cpu] = nsecs;
-}
+Note, this change, in effect reverts commit 5b6cb43b4d62 ("net:
+ethernet: ti: netcp_core: return error while dma channel open issue"),
+but provides a less error prone implementation.
 
-tracepoint:sched:sched_numa_balance_end {
-    if (@start_time[cpu] > 0) {
-        $cost = nsecs - @start_time[cpu];
-        printf("task '%s' migrate cost %lu, scanned %lu, migrated %lu\n",
-               args.comm, $cost, args.scanned, args.migrated);
-    }
-}
-'
-```
-Sample output:
-Attaching 2 probes...
-task 'rs:main Q:Reg' migrate cost 5584655, scanned 24516, migrated 22373
-task 'systemd-journal' migrate cost 123191, scanned 6308, migrated 0
-task 'wrk' migrate cost 894026, scanned 5842, migrated 5841
-
-Signed-off-by: Jiayuan Chen <jiayuan.chen@shopee.com>
+Suggested-by: Simon Horman <horms@kernel.org>
+Suggested-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Nishanth Menon <nm@ti.com>
 ---
- include/trace/events/sched.h | 60 ++++++++++++++++++++++++++++++++++++
- kernel/sched/fair.c          | 14 +++++++--
- 2 files changed, 72 insertions(+), 2 deletions(-)
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 7b2645b50e78..e24bf700a614 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -804,6 +804,66 @@ TRACE_EVENT(sched_skip_cpuset_numa,
- 		  __entry->ngid,
- 		  MAX_NUMNODES, __entry->mem_allowed)
- );
-+
-+TRACE_EVENT(sched_numa_balance_start,
-+
-+	TP_PROTO(struct task_struct *tsk),
-+
-+	TP_ARGS(tsk),
-+
-+	TP_STRUCT__entry(
-+		__array(char,	comm, TASK_COMM_LEN)
-+		__field(pid_t,	pid)
-+		__field(pid_t,	tgid)
-+		__field(pid_t,	ngid)
-+	),
-+
-+	TP_fast_assign(
-+		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->pid		 = task_pid_nr(tsk);
-+		__entry->tgid		 = task_tgid_nr(tsk);
-+		__entry->ngid		 = task_numa_group_id(tsk);
-+	),
-+
-+	TP_printk("comm=%s pid=%d tgid=%d ngid=%d",
-+		  __entry->comm,
-+		  __entry->pid,
-+		  __entry->tgid,
-+		  __entry->ngid)
-+);
-+
-+TRACE_EVENT(sched_numa_balance_end,
-+
-+	TP_PROTO(struct task_struct *tsk, unsigned long scanned, unsigned long migrated),
-+
-+	TP_ARGS(tsk, scanned, migrated),
-+
-+	TP_STRUCT__entry(
-+		__array(char,		comm, TASK_COMM_LEN)
-+		__field(pid_t,		pid)
-+		__field(pid_t,		tgid)
-+		__field(pid_t,		ngid)
-+		__field(unsigned long,	migrated)
-+		__field(unsigned long,	scanned)
-+	),
-+
-+	TP_fast_assign(
-+		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->pid		 = task_pid_nr(tsk);
-+		__entry->tgid		 = task_tgid_nr(tsk);
-+		__entry->ngid		 = task_numa_group_id(tsk);
-+		__entry->migrated	 = migrated;
-+		__entry->scanned	 = scanned;
-+	),
-+
-+	TP_printk("comm=%s pid=%d tgid=%d ngid=%d scanned=%lu migrated=%lu",
-+		  __entry->comm,
-+		  __entry->pid,
-+		  __entry->tgid,
-+		  __entry->ngid,
-+		  __entry->scanned,
-+		  __entry->migrated)
-+);
- #endif /* CONFIG_NUMA_BALANCING */
+Changes since V2:
+* All patches squashed to a single patch
+* Updated commit message
+* rebased to next-20251029
+
+V2: https://lore.kernel.org/linux-arm-kernel/20250930121609.158419-1-nm@ti.com/
+V1: https://lore.kernel.org/all/20250926150853.2907028-1-nm@ti.com/
+
+Crash seen: https://dashboard.kernelci.org/log-viewer?itemId=ti%3A2eb55ed935eb42c292e02f59&org=ti&type=test&url=http%3A%2F%2Ffiles.kernelci.org%2F%2Fti%2Fmainline%2Fmaster%2Fv6.17-rc7-59-gbf40f4b87761%2Farm%2Fmulti_v7_defconfig%2BCONFIG_EFI%3Dy%2BCONFIG_ARM_LPAE%3Dy%2Bdebug%2Bkselftest%2Btinyconfig%2Fgcc-12%2Fbaseline-nfs-boot.nfs-k2hk-evm.txt.gz
+
+ drivers/net/ethernet/ti/netcp_core.c | 10 +++++-----
+ drivers/soc/ti/knav_dma.c            | 14 +++++++-------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
+index 857820657bac..5ee13db568f0 100644
+--- a/drivers/net/ethernet/ti/netcp_core.c
++++ b/drivers/net/ethernet/ti/netcp_core.c
+@@ -1338,10 +1338,10 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
  
- /*
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 25970dbbb279..173c9c8397e2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3294,6 +3294,9 @@ static void task_numa_work(struct callback_head *work)
- 	struct vm_area_struct *vma;
- 	unsigned long start, end;
- 	unsigned long nr_pte_updates = 0;
-+	unsigned long nr_scanned = 0;
-+	unsigned long total_migrated = 0;
-+	unsigned long total_scanned = 0;
- 	long pages, virtpages;
- 	struct vma_iterator vmi;
- 	bool vma_pids_skipped;
-@@ -3359,6 +3362,7 @@ static void task_numa_work(struct callback_head *work)
- 	if (!mmap_read_trylock(mm))
- 		return;
+ 	tx_pipe->dma_channel = knav_dma_open_channel(dev,
+ 				tx_pipe->dma_chan_name, &config);
+-	if (IS_ERR(tx_pipe->dma_channel)) {
++	if (!tx_pipe->dma_channel) {
+ 		dev_err(dev, "failed opening tx chan(%s)\n",
+ 			tx_pipe->dma_chan_name);
+-		ret = PTR_ERR(tx_pipe->dma_channel);
++		ret = -EINVAL;
+ 		goto err;
+ 	}
  
-+	trace_sched_numa_balance_start(p);
- 	/*
- 	 * VMAs are skipped if the current PID has not trapped a fault within
- 	 * the VMA recently. Allow scanning to be forced if there is no
-@@ -3477,6 +3481,10 @@ static void task_numa_work(struct callback_head *work)
- 			end = min(end, vma->vm_end);
- 			nr_pte_updates = change_prot_numa(vma, start, end);
+@@ -1359,7 +1359,7 @@ int netcp_txpipe_open(struct netcp_tx_pipe *tx_pipe)
+ 	return 0;
  
-+			nr_scanned = (end - start) >> PAGE_SHIFT;
-+			total_migrated += nr_pte_updates;
-+			total_scanned += nr_scanned;
-+
- 			/*
- 			 * Try to scan sysctl_numa_balancing_size worth of
- 			 * hpages that have at least one present PTE that
-@@ -3486,8 +3494,8 @@ static void task_numa_work(struct callback_head *work)
- 			 * areas faster.
- 			 */
- 			if (nr_pte_updates)
--				pages -= (end - start) >> PAGE_SHIFT;
--			virtpages -= (end - start) >> PAGE_SHIFT;
-+				pages -= nr_scanned;
-+			virtpages -= nr_scanned;
+ err:
+-	if (!IS_ERR_OR_NULL(tx_pipe->dma_channel))
++	if (tx_pipe->dma_channel)
+ 		knav_dma_close_channel(tx_pipe->dma_channel);
+ 	tx_pipe->dma_channel = NULL;
+ 	return ret;
+@@ -1678,10 +1678,10 @@ static int netcp_setup_navigator_resources(struct net_device *ndev)
  
- 			start = end;
- 			if (pages <= 0 || virtpages <= 0)
-@@ -3528,6 +3536,8 @@ static void task_numa_work(struct callback_head *work)
- 		mm->numa_scan_offset = start;
- 	else
- 		reset_ptenuma_scan(p);
-+
-+	trace_sched_numa_balance_end(p, total_scanned, total_migrated);
- 	mmap_read_unlock(mm);
+ 	netcp->rx_channel = knav_dma_open_channel(netcp->netcp_device->device,
+ 					netcp->dma_chan_name, &config);
+-	if (IS_ERR(netcp->rx_channel)) {
++	if (!netcp->rx_channel) {
+ 		dev_err(netcp->ndev_dev, "failed opening rx chan(%s\n",
+ 			netcp->dma_chan_name);
+-		ret = PTR_ERR(netcp->rx_channel);
++		ret = -EINVAL;
+ 		goto fail;
+ 	}
  
- 	/*
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index a25ebe6cd503..e69f0946de29 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -402,7 +402,7 @@ static int of_channel_match_helper(struct device_node *np, const char *name,
+  * @name:	slave channel name
+  * @config:	dma configuration parameters
+  *
+- * Returns pointer to appropriate DMA channel on success or error.
++ * Returns pointer to appropriate DMA channel on success or NULL on error.
+  */
+ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 					struct knav_dma_cfg *config)
+@@ -414,13 +414,13 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 
+ 	if (!kdev) {
+ 		pr_err("keystone-navigator-dma driver not registered\n");
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	chan_num = of_channel_match_helper(dev->of_node, name, &instance);
+ 	if (chan_num < 0) {
+ 		dev_err(kdev->dev, "No DMA instance with name %s\n", name);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	dev_dbg(kdev->dev, "initializing %s channel %d from DMA %s\n",
+@@ -431,7 +431,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	if (config->direction != DMA_MEM_TO_DEV &&
+ 	    config->direction != DMA_DEV_TO_MEM) {
+ 		dev_err(kdev->dev, "bad direction\n");
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	/* Look for correct dma instance */
+@@ -443,7 +443,7 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	}
+ 	if (!dma) {
+ 		dev_err(kdev->dev, "No DMA instance with name %s\n", instance);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	/* Look for correct dma channel from dma instance */
+@@ -463,14 +463,14 @@ void *knav_dma_open_channel(struct device *dev, const char *name,
+ 	if (!chan) {
+ 		dev_err(kdev->dev, "channel %d is not in DMA %s\n",
+ 				chan_num, instance);
+-		return (void *)-EINVAL;
++		return NULL;
+ 	}
+ 
+ 	if (atomic_read(&chan->ref_count) >= 1) {
+ 		if (!check_config(chan, config)) {
+ 			dev_err(kdev->dev, "channel %d config miss-match\n",
+ 				chan_num);
+-			return (void *)-EINVAL;
++			return NULL;
+ 		}
+ 	}
+ 
 -- 
-2.43.0
+2.47.0
 
 
