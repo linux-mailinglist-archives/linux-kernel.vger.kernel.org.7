@@ -1,245 +1,305 @@
-Return-Path: <linux-kernel+bounces-877180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 180D0C1D622
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:10:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17041C1D616
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 39DE44E4FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5EA188290D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24AC31A555;
-	Wed, 29 Oct 2025 21:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0183161B9;
+	Wed, 29 Oct 2025 21:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NlKua9O6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iq627on8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F4C314B93;
-	Wed, 29 Oct 2025 21:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761772011; cv=fail; b=WU9yiWycPe0B4n/K8VyiAm63Cf+HTyav2k+tssbLtp3Pcf8ojVaLBjRzw/p2NNx56VyDV9nN4ySX8VJbDHGgHXWkFEaCVOGpNarCXuVIsS5MeB0MSLLEcWZXV9i0Y8mOidsyh6V2puH38g32a+1XycE0fEurxWt+SlUyWj8CHQ4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761772011; c=relaxed/simple;
-	bh=zI4/Gr9g0C1F4uKhEb8/BI2qj0tr+joBGVmkRWsbzog=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a4pUhW9VfOpoVCuK1P152QT0TYJ7znVRE5M7GNv8UMZoWZrJkdVsiuupF7rowD6o66uRHG8c8ErkY/nyEthizYEeIqcvUgzQs4cJQ6dYkwdwMLPJ7wnRvyZl6MBz9HdJrFPe7doKcBRYbpO8+2gA1YBGMdC2x9nRJTZFWNQ2ny4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NlKua9O6; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF932EA470
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761772149; cv=none; b=nf3b+8rc8bIvORQzI0PZuqshPcY/6GL3voIMnk8l5jmgIzH+qhNWeGOz+EDTGw8wvfWE00tSwmJ5dso8RZ1o9OAGaZC3gTeZ8fk2Hk9AHiLNJA6rdFxS8IoWTqAVp5WTIhN2v73uuNAFdcwumtcM0dLH7YOMZjQrKHeh4cFJUzs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761772149; c=relaxed/simple;
+	bh=pJsxYRhXFPi762w8ANStIAerwKS3VhKif9rQMWThbRQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gKGljqYCAwPVvwOCdi9Xz19AbhNEm+2sfayTTKfYan9Y84zRm5x4M6rg4ZPCbNjVCIejmaO0nDnOlJukHWZQlAb1rYD2PxfZablh5Rbs1vC+Gt6DpdusO0HQHPXCrS6/Hhal9L0Fa2UYXk5RzOE6oUeAO64aGg+x9KTwFwdCzJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iq627on8; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761772011; x=1793308011;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=zI4/Gr9g0C1F4uKhEb8/BI2qj0tr+joBGVmkRWsbzog=;
-  b=NlKua9O6bAjqphQ8iLD0wb7ZlPfoY9DNAyNmmBJtfx00CTyXc22SEI5K
-   4tSOJck5Q5TQjAtP1jH6MQYT9W5Kufdol/y3oJGaCtgBpKbvV6TTFlYiL
-   gN/snKkh91n+UXmg6qIm56MhLceLv3/Re+c0xOGycQv39gpr7FUstIcvy
-   musdTOrU9xQD+aEEB4UwmQbSkaASX9E7rCo1ZV8ln2NLxpemUeiivK4cJ
-   hP4ImSUU8C+GMQzJunrvEz1bCa/FGsTP7Apq1Jq4xOlfgFeOJW3S95829
-   Gtp5IKbRuQbAi3P9rJ1qShFlnhO+5JMFijQmip0o1kX5kQVKIbMGKh7FZ
+  t=1761772147; x=1793308147;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=pJsxYRhXFPi762w8ANStIAerwKS3VhKif9rQMWThbRQ=;
+  b=Iq627on853QBV0aG1Zgp7sgtTXqudVl0LTrYTEOhSLRXvOmd60UJGCeb
+   mvnRSWSve5zFGxFui+VtejHvPrPLU2htY3B62TN1Qet3NCOjzheW8UFxj
+   ZuGPRd+HYv6eafiWqrnYg+ljbuDTWRtbQ1wp0NHXNVhkVZ3nqzU+0jT1C
+   kalQF1tDPsZwunZgz22K7CmefajIjd5Iguz08YWR0jPz+6/KrB/7InaRr
+   I2WrK/ZKLso/YIoScnKMZu2RzSvkebJkBXO1aJouTnSMI3sUlQcfXlaRh
+   WImGE7P4DmOoeQg+eCSDL+US/ZxcY7vz7s8kf0hCoLbCO7mBXEyhHYXG0
    A==;
-X-CSE-ConnectionGUID: sRH3QwIVT8iXzo+fgiUe6Q==
-X-CSE-MsgGUID: USyfMVtES2ugVoPUW4r05A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64054698"
+X-CSE-ConnectionGUID: cnjAZkO1QuGuiFgarx+vcw==
+X-CSE-MsgGUID: iuQgA+9KRySe121niTPBzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75354413"
 X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="64054698"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:06:50 -0700
-X-CSE-ConnectionGUID: 61VF1bOQSbe94dUzA1RPvw==
-X-CSE-MsgGUID: pt2luEmkRzqbYOtXypb1JA==
+   d="scan'208";a="75354413"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:09:07 -0700
+X-CSE-ConnectionGUID: p2htDQpCRfaDYWqEbUrGRQ==
+X-CSE-MsgGUID: 5e7e8m9uTACqMn1Q7s+haQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="216631043"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:06:49 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 14:06:49 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 29 Oct 2025 14:06:49 -0700
-Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.54) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 14:06:48 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DHTRNVxxWFivy22uh8ZBRpuIQ6UPgLTWe6JTIxZEJyFDaENmSQJgYlwlWkhFnIWGHbEUzngTNCLtwdxU8X6FxA+MwNePg2IWQxsu8TrjR1IUtDfmefOSmZTjIZcH+tB/JQsZst+yprfbwp1Mg+xOCzZhTJPUocWAN+ZnfsFN7KtE7yiohl4Uio80DqiyN1amH1aRYfr9Hzr30y5qcKoM+OIIuby3A8nQq41veYSWB7lEtpe8ingdeKpi0UnYH+eZYD/O7atEr3jTZMt+e5l8pAqXETGZGAL1Al9cHphwD1sNkcB0WmrOHefzdLRyAZaVWNwqNvvLuU28WvbpUXt/5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zI4/Gr9g0C1F4uKhEb8/BI2qj0tr+joBGVmkRWsbzog=;
- b=XVj/YbslyO/o57yzdGasoxkW7e4vpPHDqDLfZjC5Ia1VUaSJV0CkEEijR7k/NHshxBYDaxmObKmiL84Q3SOE6y0G5BKwe7tvIjsttwonvRo9NmUdOJIYAv79e6eqRAtXkzfz5i8msKIfrSZhseBW/8OX7oJ8fLGIlMIon8qLjIg14HLxYChWKTiDnfLqEew1avGBOQSgzTSfsk8Rsl6vkdrVH5GQB+FUkiiufrjgUelMkvZ/CSip/0S+R2tebsAC8JouS6j3ovW5eNmgk7jVo412A7EGBqWK4BwEpf0s03Aplm45jg9+2/VBR5xXTwG1yIFWP+qzbe0GqO+EumZkvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by SJ0PR11MB6791.namprd11.prod.outlook.com (2603:10b6:a03:484::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 21:06:46 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 21:06:46 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>
-CC: "seanjc@google.com" <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
-	"kas@kernel.org" <kas@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>
-Subject: Re: [PATCH 1/2] x86/virt/tdx: Remove __user annotation from kernel
- pointer
-Thread-Topic: [PATCH 1/2] x86/virt/tdx: Remove __user annotation from kernel
- pointer
-Thread-Index: AQHcSQ0H51MgOsZw60KbSdU9hLqTKrTZncOA
-Date: Wed, 29 Oct 2025 21:06:46 +0000
-Message-ID: <6bfe570e35364bd121b648fe8475f705666183d6.camel@intel.com>
-References: <20251029194829.F79F929D@davehans-spike.ostc.intel.com>
-	 <20251029194831.6819B2E7@davehans-spike.ostc.intel.com>
-In-Reply-To: <20251029194831.6819B2E7@davehans-spike.ostc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|SJ0PR11MB6791:EE_
-x-ms-office365-filtering-correlation-id: 820dba45-65f5-4e1d-3e66-08de172f11db
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021;
-x-microsoft-antispam-message-info: =?utf-8?B?dzl3UHhPaCtFeVhBL2ExV01qMDdNOGNCcHNaTVh1eEJlWFh0V2NIMERqUmhJ?=
- =?utf-8?B?dytPTzRvS1crUHE3WGlJTTZJaDJHRHYzR2s5TjRTUWY2YldzSWYzWCsvdDFU?=
- =?utf-8?B?aXpIS1V0bDVqc1ExWEJsM0JMNTNDditDdElET2xIeTlHMksyY2dySEdnMFFs?=
- =?utf-8?B?bUVUU2xNTXBwZmRMSWsrZ28yTkZnTDEvWEN5d3ZDbU9FSFcwdWNNcTVlTE9s?=
- =?utf-8?B?SENCbC9ENDI3WnVmSVNwZ1lYVkpyMjkzVjlrMVU3WEtreG0zdmpRTEduQVFp?=
- =?utf-8?B?cC9hUlBXM243eng5ZmN0MWRJU0s0S1Z3NDZMZEtLckhUUmpTUVBRNVlCR0ZC?=
- =?utf-8?B?czlZeGQ0NTMzN0gvR1l0M3V5MVMzVDl6dWkzNmhrS2R1anNLVk9ObmFVN3E0?=
- =?utf-8?B?b201WTBKTDhBbnFpKy9DQWVRUDNnUE5XNFZTdFgwcDNuNlZFSW0xYzhUZG9o?=
- =?utf-8?B?M2FPUmJLalg0dTI4MXFGUGJPdm4rSUd2aTRBMmhEVkIvdXoxY0VKakNKenFt?=
- =?utf-8?B?a3Q4UWZ3Y25NUTJiTVJYMUFsQ2dsaXhUZFVMVEtqb05XaDB3SjN3MUhaVFlz?=
- =?utf-8?B?RCs3akxzNUFDZlI2Q3Z1S3c2SmFzZEhhbTVJaDBiVlFSZ3dGYmw2QTJJdTc0?=
- =?utf-8?B?WHRzUkF0WFlMZVdMdkVOeTRJR0YxNkp4MkN2dTZjeStUYTRhRkpQanpKUjd5?=
- =?utf-8?B?QlR4dHZHRXBZdWswTzlsL3h2MmQ3UlFXUVpNUVh2VjNnUjJEaUx2Z09ZWlNE?=
- =?utf-8?B?SGExNnM5L3RPMEVwSmVldjNCOFQyRldyVFMwYU43SDNEb093bUJmbGppYzBK?=
- =?utf-8?B?b3ZiZW9sdFMxWkxmUzk4WkNTbnlaYjIwdEMzMThVMEtsMy8wMXNPR1J0WnNl?=
- =?utf-8?B?Uko1RFJ1dVp5QzNiZjlYM2NQN3lSaGhmOTd1cXk1b1M3ZjRvUjdkY1JSMUVW?=
- =?utf-8?B?TnROUnYzbW1FTGxINEJzSDlBWkNsRkxNaHdSZ0NmQi9pWElzK3pKVjRoUTRL?=
- =?utf-8?B?STdna2lFMXlRVU1rK3BIenZMcHYyb1BjQTNzbzFSWC9VWmYxY1JpK25kMzhP?=
- =?utf-8?B?cVprc3p2cXNkcnlUSTJqM0VkeGdrcjNRTUhFUC9ucjR2OGc5NXhjeU53NHZ6?=
- =?utf-8?B?dm1WZ3hzNmphbHhsVzB1REUvdnBTYW9va0NLVkRENXVHd2V6WndibFExK3pl?=
- =?utf-8?B?emsybVR4bks1c0x5VWdXbC82UlRsdXgva3QrNmhkODRNOWhUb2wyYjk1TFFO?=
- =?utf-8?B?K2ptYmcvKzZpK1I4Rm1RS3FVLy8vQTFlZTV0WlByL1JLVWpWR2F6VFlmbFNx?=
- =?utf-8?B?VWhnRlo1NGMvYldlS0N0Z2xDRjdweG15ZjVKYW50RkJuZkhjcDJ2SGU1VG5G?=
- =?utf-8?B?UXJpRjl6UW9NOFR3RmdpNGtpNGpPQ0Y5L0xmSVJ4UHhibDQzWG5DdVV1WHNx?=
- =?utf-8?B?ZlAwZ2draGREZmlqMGlobitxWEZkWmFKOFVEKzZlUWtGY21sTHI1dW1EMkdV?=
- =?utf-8?B?MElpSHJmMVd2N1FXOVdnM21ZSExiMndCZTMwT1gyUFFzemRzY0VoZnNhbFBt?=
- =?utf-8?B?M1prNDY4WFErVVI1K3JhVUZPd2ZiMUpKaWxkWUtWdTVSWDhqZkNPVlVGdTJT?=
- =?utf-8?B?NU9OVFRFV1AyaGdjdWdWNVZWaWpGNmc4eVRyeTBEMXBDN2M3ZUtmUW05dXRB?=
- =?utf-8?B?UVZ1bFkxa2t6RW8xL3pLVTVvbWtlRWpkcFJKSDc1Y3AvS2xSaWo1K0x6WW94?=
- =?utf-8?B?U1dYN1BYUm1NcFExcFNSRXFEQ1lBbUxUTXpxWXN0MWo1VW1qeDRNTTY0cGdG?=
- =?utf-8?B?NlpZeENrdlBhWnJienhnaHhZaGt6aVNTcW9xU09adUtCWFBQdldLeUJpMjVI?=
- =?utf-8?B?dlJ4aGxNSmd2WUkzVkpGMkJTWGhmUTRrYUdGZ1orZENrVnJyY0tzSGRkRDVK?=
- =?utf-8?B?YklML3B3anBvTUtQYndSNEJVSDRBOGl3Wm5FQlZ0L2FXVGNCL2FoV0owNk9s?=
- =?utf-8?B?dlQxcHFSaVdvUndRN0w2bnF1R28xYndwM21lMmlkaWN5SDN4UGpYanRtTmV2?=
- =?utf-8?Q?jLxMIV?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YkExZlJmaS8vbmJqZklOVjdiK2pJRmFiZVoxM1Zyb1hKbnh2UDgweFR6K01J?=
- =?utf-8?B?QjRMVHpJYW9pNVZNOXRZV2dJQ1JVTksrbUhJTXZhVjZ4a2YvSkVHSUg4eEJY?=
- =?utf-8?B?VTRpdGx0NXZuVmJGZW50UC9FK0pSRnZwTjFsU0FpMThaYzhwMWhRbXNpcjFt?=
- =?utf-8?B?aHByRlNnN2tkRzIzVTQ1bm5ZRTd4UU9tNHo3NGd0UlZvbVhLYmtpOGU0MmhZ?=
- =?utf-8?B?ZWlkcm53dzlVODAxNEw5OWdxQTJUS1lEdVlDeTRYUFRiOUM5NG0zeWFZdklG?=
- =?utf-8?B?TDZMcDdDb2thbEhnYnFBOGtydmtXc0RIdDh2KzA2ajdnQzVWam5Wci9YM3Ru?=
- =?utf-8?B?cFVCV2tXVHRYYzBISEkyN3BsdXV2NldlcXZuRy9CWW9pbWJOc1krYXhBVzc3?=
- =?utf-8?B?cFVhZlRNdTVicDRmRHRFMjJjZ2o4V1dDRW9kRTlvRmZsMUFwU3dzK1Z0L2VN?=
- =?utf-8?B?MXpsU05MRFhkdEpYd1dQUjNIZWF4SXlMSEpYNXRYZnJmT004WENpSjNaR2h6?=
- =?utf-8?B?NkNyVG9oT090YUJ4ZXdVdlFPLzlUU2hDdU81VTlHR0pyK0xHS2M4S25LUHJI?=
- =?utf-8?B?c3RvZndMdU1OZ0l5TFBEbER1bWlra3ljemwvMktPejhUVkF5b213QUVNN29k?=
- =?utf-8?B?Y1ZESHRZeVpjQUdsNDBXWnV2TlJQT0pVdXh6M0JqbHFFYU5wbHlLRTlQTG9N?=
- =?utf-8?B?WWlRalJ0TlhIdlA2SWx1aWxSeEtYMWhoeXc1QTBYcU41eUQzUjZmbnlBUkMv?=
- =?utf-8?B?WnR3LytJSjkwaFRZRnpnTWgyMWpRU2xCTzUwYmI4UmhwcDJGczZkMEpSMUhL?=
- =?utf-8?B?V21nYlRncU5DQ2JRdmU0dzUvTXRXbmdhUFRHSTFXWFloZGZuWWgwZ0xPTjFq?=
- =?utf-8?B?VnUyUkIrSEF1NjBrSmVWcll0bVJFUE02TVBuUDNRRmpoOTRDSCtsNFh6NDUx?=
- =?utf-8?B?RC9jcmhFZHVMSllTTnV4SFlaNTkwNEk2NkNTMmxzSmlUV3dGSFFvZ0hhV1My?=
- =?utf-8?B?emZaM3prSDlvYmt2ajBXV1h6NzlNN0VRWjBIMUlwZ2hkZEllTTlmT0w2SGNw?=
- =?utf-8?B?MTRCNjZyZTBxd0lwc0gzR29oaURPaDBXMzl1MlFLa1hTYjBBN3FqcnZTSWZj?=
- =?utf-8?B?U0RyUkNTbE9WaXBFR2kxYWZsanJ2R3ZvSWdLRWxmU0diOU5ZT1BSM3hRNkRY?=
- =?utf-8?B?TTBkQXhxakUrZUduVzllOU9BUnoyRHp3WWZhT2VnbFhEUENzL3Y1Q2NmMEN0?=
- =?utf-8?B?ZnFOeUlzdEFTTWVEdGZQVThEYmJLVDNHdUlXL0lyWDlsVEZNQmV3cEtWL2s4?=
- =?utf-8?B?eXloa3RpV0ZaLzg1SS9YVGxES2RqdzBZbU9XYWNNZzlGNjFKT0M1NzgrT3h6?=
- =?utf-8?B?UHdsZlA1RlpyLy85OW5YdVZ4MDdYNHhXekFZUnowdEF0eTcyeW1tNW5SdGZ2?=
- =?utf-8?B?V3pNRHlEeTNKMHlDa0NmV0JUc3M3RE90WkhLVDlSQVVHT2FBd2VXWjU4R2FI?=
- =?utf-8?B?NTluOFM0OWw2VFRJOXQrOVFVem5hS1FmbTBWK3pleUprQXNRd2h4bDVmTmE3?=
- =?utf-8?B?clgyT0dnbWJPSktDa0diRTFuZjVqdW5HM0ppejltcGREYmNOY1dub2FTekFY?=
- =?utf-8?B?cEZqV0wwUG5RTTNYUUl3eDdSdjVUdHNhWGN2SVNYdExOWThmSlpBRGdjTFJt?=
- =?utf-8?B?MFh6MzZKSkdwV2VxM0JsM25wOVZFUm5pKytxOUdJV2xHZVFEZ3lHaEVsd3E1?=
- =?utf-8?B?VVc0MTVLOENGY3VFL0dBY2szQUhTbEdhM0grYzk2U2J5UjZOUG53aWRBUkVr?=
- =?utf-8?B?cU9MT3NuVkRYbkh3Z1dBYy83WGV0ZVNwaW54MWxvd1d3bVZFTWZiU2Nsd2J4?=
- =?utf-8?B?NTcrMHFLZ3J4ai81bzZ0Uk5NYUlrV1B4VThMNHE1ekNUVXNFbk5yazh3ZWtx?=
- =?utf-8?B?ajFvaDk3QjI2YVZOZXB0a3VuK0lrR2Y1cGdiVVgzUHc3RkEydGx6eEpIQW1G?=
- =?utf-8?B?aDdkL1oyVFpEV3pxanpiWEUrZ3Z0UHBOQzYzNlBJMFJxakJ0SVR1SlR4SUJv?=
- =?utf-8?B?YmtZbnU5QXhmVGtOY2l4cTkvbDVHSnU3MnUwMVYrL0ZJNWlGY3h3ZldidVRX?=
- =?utf-8?B?U3hYSU5tRTl0V1FvSlgwaUFqUFdrVWoxakpsKzlXWmFqSnFXbFJDSWQzL05Y?=
- =?utf-8?B?R3c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E48C664C07FCD24B884B723E3A118C83@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:09:05 -0700
+Message-ID: <ebe994addb5624089db71df8fee402a664f8800a.camel@linux.intel.com>
+Subject: Re: [PATCH 15/19] sched/fair: Respect LLC preference in task
+ migration and detach
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>, "Chen, Yu C"
+ <yu.c.chen@intel.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
+ <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
+ Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
+ <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
+ <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
+ <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
+ <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
+ <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Adam Li	
+ <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar
+ <mingo@redhat.com>
+Date: Wed, 29 Oct 2025 14:09:04 -0700
+In-Reply-To: <2c57d76f-fb31-4e1b-a3ce-ca13713e1b86@amd.com>
+References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
+	 <d3afcff5622222523c843f5c1b023bfe43f9c67c.1760206683.git.tim.c.chen@linux.intel.com>
+	 <5cdf379c-b663-424d-8505-d91046e63c20@amd.com>
+	 <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
+	 <2c57d76f-fb31-4e1b-a3ce-ca13713e1b86@amd.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+ uQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 820dba45-65f5-4e1d-3e66-08de172f11db
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 21:06:46.3120
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AjwLJgWtuFB3Km6ziNxd4XKJLFrP7CGYhgHQp+y61KfwHmTTQcZUCWy2uy2H1t5Gu/SNg9JEV1GZvgBsZ8XVG2Kz91Kb5bvvPluEoimqtNo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB6791
-X-OriginatorOrg: intel.com
 
-Rm9yIHRoZSBLVk0gc2lkZSBvZiB0ZHgsIHRoZSBjb21taXRzIGFyZSBnZXR0aW5nIHByZWZpeGVk
-IHdpdGggIktWTTogVERYOiAiLCBhbmQNCiJ4ODYvdmlydC90ZHgiIGlzIGJlaW5nIHVzZWQgYXJj
-aC94ODYvdmlydC92bXgvdGR4L3RkeC5jLiBJdCdzIHByb2JhYmx5IG5vdCB0b28NCmxhdGUgdG8g
-YWRvcHQgdGhlIG9uZSB0cnVlIG5hbWluZyBzY2hlbWUuIEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyBw
-cmVmZXJlbmNlDQpleGNlcHQgc29tZSBjb25zaXN0ZW5jeSBhbmQgdGhhdCB0aGUgbWFpbnRhaW5l
-cnMgYWdyZWUgOikNCg0KDQpPbiBXZWQsIDIwMjUtMTAtMjkgYXQgMTI6NDggLTA3MDAsIERhdmUg
-SGFuc2VuIHdyb3RlOg0KPiBGcm9tOiBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50
-ZWwuY29tPg0KDQpQcmV0dHkgbXVjaCB0aGUgb25seSBkaWZmZXJlbmNlIGJldHdlZW4gdGlwIHN0
-eWxlIGxvZ3MgYW5kIGt2bS94ODYgc3R5bGUgbG9ncyBpcw0KdG8gbGVhZCB3aXRoIGEgc2hvcnQg
-IndoYXQgaXMgdGhlIGNoYW5nZSIgYmx1cmIgYmVmb3JlIGxhdW5jaGluZyBpbnRvIHRoZQ0KYmFj
-a2dyb3VuZC4gTGlrZToNCg0KS1ZNOiBURFg6IFJlbW92ZSBfX3VzZXIgYW5ub3RhdGlvbiBmcm9t
-IGtlcm5lbCBwb2ludGVyDQoNCkZpeCBzcGFyc2Ugd2FybmluZyBpbiB0ZHhfdmNwdV9nZXRfY3B1
-aWQoKS4NCg0KVGhlcmUgYXJlIHR3byAna3ZtX2NwdWlkMicgcG9pbnRlcnMgaW52b2x2ZWQgaGVy
-ZS4uLg0KDQo+IA0KPiBUaGVyZSBhcmUgdHdvICdrdm1fY3B1aWQyJyBwb2ludGVycyBpbnZvbHZl
-ZCBoZXJlLiBUaGVyZSdzIGFuICJpbnB1dCINCj4gc2lkZTogJ3RkX2NwdWlkJyB3aGljaCBpcyBh
-IG5vcm1hbCBrZXJuZWwgcG9pbnRlciBhbmQgYW4gJ291dHB1dCcNCj4gc2lkZS4gVGhlIG91dHB1
-dCBoZXJlIGlzIHVzZXJzcGFjZSBhbmQgdGhlcmUgaXMgYW4gYXR0ZW1wdCBhdCBwcm9wZXJseQ0K
-PiBhbm5vdGF0aW5nIHRoZSB2YXJpYWJsZSB3aXRoIF9fdXNlcjoNCj4gDQo+IAlzdHJ1Y3Qga3Zt
-X2NwdWlkMiBfX3VzZXIgKm91dHB1dCwgKnRkX2NwdWlkOw0KPiANCj4gQnV0LCBhbGFzLCB0aGlz
-IGlzIHdyb25nLiBUaGUgX191c2VyIGluIHRoZSBkZWZpbml0aW9uIGFwcGxpZXMgdG8gYm90aA0K
-PiAnb3V0cHV0JyBhbmQgJ3RkX2NwdWlkJy4NCj4gDQo+IEZpeCBpdCB1cCBieSBjb21wbGV0ZWx5
-IHNlcGFyYXRpbmcgdGhlIHR3byBkZWZpbml0aW9ucyBzbyB0aGF0IGl0IGlzDQo+IG9idmlvdXNs
-eSBjb3JyZWN0IHdpdGhvdXQgZXZlbiBoYXZpbmcgdG8ga25vdyB3aGF0IHRoZSBDIHN5bnRheCBy
-dWxlcw0KPiBldmVuIGFyZS4NCg0KSWYgd2Ugd2FudCBpdDoNCkZpeGVzOiA0ODg4MDhlNjgyZTcg
-KCJLVk06IHg4NjogSW50cm9kdWNlIEtWTV9URFhfR0VUX0NQVUlEIikNCg0KVElMIG9uIHRoZSBz
-eW50YXggYXNzb2NpYXRpb24gaGVyZS4NCg==
+On Wed, 2025-10-29 at 09:24 +0530, K Prateek Nayak wrote:
+> Hello Chenyu,
+>=20
+> On 10/28/2025 5:28 PM, Chen, Yu C wrote:
+> > Hi Prateek,
+> >=20
+> > On 10/28/2025 2:02 PM, K Prateek Nayak wrote:
+> > > Hello Tim,
+> > >=20
+> > > On 10/11/2025 11:54 PM, Tim Chen wrote:
+> > > > @@ -9969,6 +9969,12 @@ int can_migrate_task(struct task_struct *p, =
+struct lb_env *env)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (env->flags & LBF_ACTIVE_LB)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 1;
+> > > > =C2=A0 +#ifdef CONFIG_SCHED_CACHE
+> > > > +=C2=A0=C2=A0=C2=A0 if (sched_cache_enabled() &&
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 can_migrate_llc_task(en=
+v->src_cpu, env->dst_cpu, p) =3D=3D mig_forbid)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > > > +#endif
+> > > > +
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 degrades =3D migrate_degrades_locali=
+ty(p, env);
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!degrades)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hot =3D task=
+_hot(p, env);
+> > >=20
+> > > Should we care for task_hot() w.r.t. migration cost if a task is bein=
+g
+> > > moved to a preferred LLC?
+> > >=20
+> >=20
+> > This is a good question. The decision not to migrate a task when its
+> > LLC preference is violated takes priority over the check in task_hot().
+> >=20
+> > The main reason is that we want cache aware aggregation to be more
+> > aggressive than generic migration; otherwise, cache-aware migration
+> > =C2=A0might not take effect according to our previous test. This seems =
+to
+> > be a trade-off. Another consideration might be: should we consider
+> > the occupancy of a single thread or that of the entire process?
+> > For example, suppose t0, t1, and t2 belong to the same process. t0
+> > and t1 are running on the process's preferred LLC0, while t2 is
+> > running on the non-preferred LLC1. Even though t2 has high occupancy
+> > on LLC1 (making it cache-hot on LLC1), we might still want to move t2
+> > to LLC0 if t0, t1, and t2 read from and write to each other - since we =
+don't want to generate cross-LLC access.
+>=20
+> Makes sense. That would need some heuristics based on the avg_running
+> to know which LLC can be be a potential target with fewest migrations.
+> But then again, in a dynamic system things change so quickly - what
+> you have now seems to be a good start to further optimize on top of.
+>=20
+> >=20
+> > > Also, should we leave out tasks under core scheduling from the llc
+> > > aware lb? Even discount them when calculating "mm->nr_running_avg"?
+> > >=20
+> > Yes, it seems that the cookie match check case was missed, which is
+> > embedded in task_hot(). I suppose you are referring to the p->core_cook=
+ie
+> > check; I'll look into this direction.
+>=20
+> Yup! I think if user has opted into core scheduling, they should ideally
+> not bother about cache aware scheduling.
+>=20
+> >=20
+> > > > @@ -10227,6 +10233,20 @@ static int detach_tasks(struct lb_env *env=
+)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (env->imb=
+alance <=3D 0)
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 break;
+> > > > =C2=A0 +#ifdef CONFIG_SCHED_CACHE
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Don't detach mo=
+re tasks if the remaining tasks want
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * to stay. We kno=
+w the remaining tasks all prefer the
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * current LLC, be=
+cause after order_tasks_by_llc(), the
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * tasks that pref=
+er the current LLC are at the tail of
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the list. The i=
+nhibition of detachment is to avoid too
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * many tasks bein=
+g migrated out of the preferred LLC.
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (sched_cache_enabled=
+() && detached && p->preferred_llc !=3D -1 &&
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ llc_id(env->src_cpu) =3D=3D p->preferred_llc)
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ break;
+> > >=20
+> > > In all cases?=C2=A0
+> > >=20
+
+Not in all cases, but only when we know that the remaining tasks prefer to
+stay in current LLC and not be moved to an LLC it doesn't like.
+
+I think we need to add the check that
+llc_id(env->dst_cpu) !=3D p->preferred_llc in the above condition=20
+
+> > > Should we check can_migrate_llc() wrt to util migrated and
+> > > then make a call if we should move the preferred LLC tasks or not?
+> > >=20
+> >=20
+> > Prior to this "stop of detaching tasks", we performed a can_migrate_tas=
+k(p)
+> > to determine if the detached p is dequeued from its preferred LLC, and =
+in
+> > can_migrate_task(), we use can_migrate_llc_task() -> can_migrate_llc() =
+to
+> > carry out the check. That is to say, only when certain tasks have been
+> > detached, will we stop further detaching.
+> >=20
+> > > Perhaps disallow it the first time if "nr_balance_failed" is 0 but
+> > > subsequent failed attempts should perhaps explore breaking the prefer=
+red
+> > > llc restriction if there is an imbalance and we are under
+> > > "mig_unrestricted" conditions.
+> > >=20
+> >=20
+> > I suppose you are suggesting that the threshold for stopping task detac=
+hment
+> > should be higher. With the above can_migrate_llc() check, I suppose we =
+have
+> > raised the threshold for stopping "task detachment"?
+>=20
+> Say the LLC is under heavy load and we only have overloaded groups.
+> can_migrate_llc() would return "mig_unrestricted" since
+> fits_llc_capacity() would return false.
+>=20
+> Since we are under "migrate_load", sched_balance_find_src_rq() has
+> returned the CPU with the highest load which could very well be the
+> CPU with with a large number of preferred LLC tasks.
+>=20
+> sched_cache_enabled() is still true and when detach_tasks() reaches
+> one of these preferred llc tasks (which comes at the very end of the
+> tasks list),=C2=A0
+> we break out even if env->imbalance > 0 leaving
+
+Yes, but at least one task has been removed to even the load (making forwar=
+d progress) and
+the remaining tasks all wish to stay in the current LLC and will
+preferred not to be moved. My thought was to not even all the load out
+in one shot and pull more tasks out of their preferred LLC.
+If the imbalance still remain, we'll come to that in the next load balance.
+
+Pulling tasks more slowly when we come to tasks that preferred to stay (if =
+possible)
+would also help to prevent tasks bouncing between LLC.
+
+Tim
+
+> potential imbalance for the "migrate_load" case.
+>=20
+> Instead, we can account for the util moved out of the src_llc and
+> after accounting for it, check if can_migrate_llc() would return
+> "mig_forbid" for the src llc.
 
