@@ -1,244 +1,134 @@
-Return-Path: <linux-kernel+bounces-875233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C29EFC18766
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:30:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F7CC1880A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 49C27351655
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:30:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CC7775633D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A71931158A;
-	Wed, 29 Oct 2025 06:27:49 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA38A2F619A;
+	Wed, 29 Oct 2025 06:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2v0awYy"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E014830C609
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9BD20B81B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761719269; cv=none; b=SWEu6pn6kNXkqi4svHcuG8414cS5B8tMaDaY7a9QZZn4EBmKYf28Pf20/A0Dlgt4MK0ukIcYXSuqHyVQ37MdK/gTQml3DuOn2dcEt3YBXQV36+w3a3+5tivvIlav4aUABoB17O1LZW3jqNi19ezNlLzbjhIf+nWTB6MZ/NGD+mY=
+	t=1761719398; cv=none; b=FUerwtirlRWMYkfyfi3cWyv7uTwdiW6lWnHol+ywttH0nB4eBZLpZDuYrka0F13536bVWtymNaqPs0ET7u6HmRicKqX70b/9xLNDEqQlZPV0GElvgtsL3Ga3ZjiR1CSi7Wc2/eiKErIm3KO3YOsM/OzJEm0QUQNpLF+g9xJ5xvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761719269; c=relaxed/simple;
-	bh=MHk0VGoORqSwLv64h4cOzEUN4Mamvjo88LN3fRF9PGA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=kEsvz1yo2P9qhuzM4f2M6p2zmwOOLVv9Opf4Xzkv3GAbwWeW2g3XGChoVpsuE3UyouYeWqqcoIrmYpMzFHgNDyR84jIAEq+weeQ9gbV8DgpDlbQ3W/9LGOJToA51DYfsiqhu/VgqdABTn9dzNQkIk++Lb8E9GNN3h3Ap5Lsk3xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430afaea1beso90661145ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:27:46 -0700 (PDT)
+	s=arc-20240116; t=1761719398; c=relaxed/simple;
+	bh=kicBV7oIuS5DOwkjSIlCZ9hu2/48zXNrTZNbiv8Kemk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jlilbQenFPgfH8aAt9WSb6EUFfLY/nSA8BWB3IM8ALPpzmWoobge8b/t1s70ZrpaLVtYoWD/RqGTiYw+84zd12ZulMdqIhjT/PEKaSWsCZTdbA63wYoXEqK9heP4AnEoAQRY263Igg3ewnfDBC5kaDHLa1HBmr8JVfgX5/uFDJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2v0awYy; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63c4b41b38cso14563062a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761719395; x=1762324195; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uMONH+8GVOxyEjApROS3jg17q6oAv/cnPEMuimC2yEw=;
+        b=Z2v0awYyw58Jtve/dcpJqh0rgNk/vH2V9iUFa+cjuSMULYPHwXYNvh7RzS/1wp8BZf
+         4rZ78d12XvJywPZz1fyG3TnkhVkFEDNilqdKemF4gIg57FCIXIO7Hq/LC7GdL9/e7Pdk
+         g4n/Ax8JMKeR3TKBkOZ55anskR+Bd9rc+ZPfBrIJ6300ndA/gX7ORAV0sHaMcLQhl0oV
+         UCPb07N7br1/ymkVmC9AhEvjWA8ynySCezff9Y0wBqD4fIRyrD3m2jpK4rc+kl0/IOor
+         85zXm9aEz9+8UPk2x19p7ZLBu0bq76rROeFxeYPK6xSbV2pZcVxANhh/fA/Mdqz2Dli6
+         hMlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761719266; x=1762324066;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lPETPdnmj6lHNQGDjl39LsiEXpLbvR2j7XmdxR2Bghg=;
-        b=PjEqhhQ/CEcFy4SSd/U+ogAAGijqMX0t+kdAq0zbQIWuJWxbxn0NYQb62DQN9EEUNw
-         ws/peXaeHDbu1Dm1wZwIRiQLZWP4rlVW1na+lsIEd0RE8AzUg3Qj8/klVBltTAqiDGfZ
-         DcfaKHpz2s783SdX/DlYlKlBUMSLsPYfGREYw4OaN3r/wdX3YY3WjXO3cZwBpxq/r998
-         AgLdURXTzGCYLjp/f9tpEux9KCoxVbkprKtwBSpc7CmPcVlHpLpSL8JJm0th+NXdvZU2
-         eeQNQBeSeyurRdAE/1b8/P9Nu/Sh0yCIx0bEjXVKz/umxRzXuqtRAC0wmvb6e9HK+85v
-         VI/g==
-X-Gm-Message-State: AOJu0Yyjp9uKoECM6N8IFTm9cE2ecc/mjsEBH+9sgjX6ZpOLj8xOEqIN
-	AeFwWlAZLjz/nIf113EmLF2dvGylxsdw4hGcfxioMEBWnbj+6g+3VXTNvgdWRa2PicPPZ6rLcHi
-	x6M+B58HC618tIpMaejhKT1z5tv+Ai9QmDdioOxULu3XS3u8Vh+BD0j6yNY8=
-X-Google-Smtp-Source: AGHT+IGhktjEmr7+lOhxiv3fkFVDFL3Rm3s+//GjRETEwKd4nvgQ0+BZj9uulkBrx6o4QtwtDnaPCaTaVHGk+4fu/qZOq7dg5lTJ
+        d=1e100.net; s=20230601; t=1761719395; x=1762324195;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uMONH+8GVOxyEjApROS3jg17q6oAv/cnPEMuimC2yEw=;
+        b=bC4P7V11/yyghsEXy4k04+huGGnfNpaD+jqHj3A003KuvgF1p9bj09BzDETNODscY+
+         xeNpQ67kn003FL2PZUMSfHlOahK/8LkieivxJXZ8PenK9evwGW13JlSBkQ5oYEI63Fnb
+         YmqMRDOid/4YK7ZKbAI0CEF7JGVHguvxHj7bTAo18GujOoBX8LCvLGVA1r/Ctvh2T/jw
+         W7YCpuei4cNMnLgKNIRmHi4zdaGJpS3hEO4oKp8fdre8+v8wMW63cVf8kUoVIzipbZmi
+         EmmjOidzUs0z4DXfCIZKr0Vg6PGSeuk3kRrQYr7IVTJK3JMHDYrg5tKriElDaDIpks6M
+         E6RA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQWyNA31Iq5QVWiCh+/Q6kB/oYWeIx/JrLIdisaeO0rBl7JbXbiQR9INyBQb2sm8yQ8ISP6FGM5ExB9gM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8pVP8HdLgERo/IuzT9bfqo+vVIQ2tEFwJ7BUyLtsRXzbijrmY
+	vJHalNRYxrPU5desla2KgWdAmYbRMUokElR2LlRH1JUZDG+rE0VI9DnUqiNRtSrLt5A3gTLwgq/
+	WWdFSfSKgi8+VrCzeoYECF53CjyhZCFk=
+X-Gm-Gg: ASbGncvEIag3zmI4lkO6u8lcCOoVWs7Njis3YJOxqT0nW4kHhOnX0/2wbwnUpxT9vtf
+	fH32I+jjqiE6aMqx0cX2E2+8qlGb6hGn7ean45yHsr/MPWGV8XZfDV/rTqg4uQn/2PXeQrDAHqK
+	HbreenyyQpM9/IkdmU3WEv3xKhvd6Qnpx5svq17sVyLwizBhXEWGe9xHqXQM6hsMGaw4biGJwTD
+	M/zaDnA39xSD9AjC8SOpOR6BIUqhFSi3/wLs0TfwAWkbYhJu1S8xl97OW0DLC51gK4S8w==
+X-Google-Smtp-Source: AGHT+IGkpMP2JV93jKtrqYcUv2doQVUVgTWnNctMEjS6Xs0nmKSaC8SY+NE+YO+7RTCK8H8Slnh23fd4/D0WvABiTU8=
+X-Received: by 2002:a05:6402:26d3:b0:63c:1f3e:6462 with SMTP id
+ 4fb4d7f45d1cf-64044251e38mr1273131a12.23.1761719394933; Tue, 28 Oct 2025
+ 23:29:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:74a:b0:430:af13:accc with SMTP id
- e9e14a558f8ab-432f8f81c3amr24296865ab.7.1761719265991; Tue, 28 Oct 2025
- 23:27:45 -0700 (PDT)
-Date: Tue, 28 Oct 2025 23:27:45 -0700
-In-Reply-To: <68f4abbe.050a0220.1186a4.052a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901b3e1.050a0220.32483.01fd.GAE@google.com>
-Subject: Forwarded: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
- linux-6.12.y
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20251027145602.199154-1-linux.amoon@gmail.com> <5264377.31r3eYUQgx@workhorse>
+In-Reply-To: <5264377.31r3eYUQgx@workhorse>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 29 Oct 2025 11:59:38 +0530
+X-Gm-Features: AWmQ_bkhkw-pZtArjJD2gcBzKDEhehQeURBZRDtuYYptEbI6fqoAKgnKeMTW7xw
+Message-ID: <CANAwSgQts0B2Sq0V2psa53WzTLEdU-Z=jkqGkW1ESmvKf_6EyA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/2] Add runtime PM support to Rockchip DW PCIe driver
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>, 
+	Shawn Lin <shawn.lin@rock-chips.com>, Hans Zhang <18255117159@163.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hi Nicolas,
 
-***
-
-Subject: #syz test https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-Author: dmantipov@yandex.ru
-
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index 5d9388b44e5b..b84e164c6314 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6162,6 +6162,9 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 	int status;
- 	struct inode *inode = NULL;
- 	struct buffer_head *bh = NULL;
-+	struct ocfs2_dinode *di;
-+	struct ocfs2_truncate_log *tl;
-+	unsigned int tl_count, tl_used;
- 
- 	inode = ocfs2_get_system_file_inode(osb,
- 					   TRUNCATE_LOG_SYSTEM_INODE,
-@@ -6179,6 +6182,19 @@ static int ocfs2_get_truncate_log_info(struct ocfs2_super *osb,
- 		goto bail;
- 	}
- 
-+	di = (struct ocfs2_dinode *)bh->b_data;
-+	tl = &di->id2.i_dealloc;
-+	tl_used = le16_to_cpu(tl->tl_used);
-+	tl_count = le16_to_cpu(tl->tl_count);
-+	if (unlikely(tl_count > ocfs2_truncate_recs_per_inode(osb->sb) ||
-+		     tl_count == 0 || tl_used > tl_count)) {
-+		status = -EFSCORRUPTED;
-+		iput(inode);
-+		brelse(bh);
-+		mlog_errno(status);
-+		goto bail;
-+	}
-+
- 	*tl_inode = inode;
- 	*tl_bh    = bh;
- bail:
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index 7799f4d16ce9..46f392374388 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -302,8 +302,21 @@ static int ocfs2_check_dir_entry(struct inode *dir,
- 				 unsigned long offset)
- {
- 	const char *error_msg = NULL;
--	const int rlen = le16_to_cpu(de->rec_len);
--	const unsigned long next_offset = ((char *) de - buf) + rlen;
-+	unsigned long next_offset;
-+	int rlen;
-+
-+	if (offset > size - OCFS2_DIR_REC_LEN(1)) {
-+		/* Dirent is (maybe partially) beyond the buffer
-+		 * boundaries so touching 'de' members is unsafe.
-+		 */
-+		mlog(ML_ERROR, "directory entry (#%llu: offset=%lu) "
-+		     "too close to end or out-of-bounds",
-+		     (unsigned long long)OCFS2_I(dir)->ip_blkno, offset);
-+		return 0;
-+	}
-+
-+	rlen = le16_to_cpu(de->rec_len);
-+	next_offset = ((char *) de - buf) + rlen;
- 
- 	if (unlikely(rlen < OCFS2_DIR_REC_LEN(1)))
- 		error_msg = "rec_len is smaller than minimal";
-@@ -778,6 +791,14 @@ static int ocfs2_dx_dir_lookup_rec(struct inode *inode,
- 	struct ocfs2_extent_block *eb;
- 	struct ocfs2_extent_rec *rec = NULL;
- 
-+	if (le16_to_cpu(el->l_count) !=
-+	    ocfs2_extent_recs_per_dx_root(inode->i_sb)) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %lu has invalid extent list length %u\n",
-+				  inode->i_ino, le16_to_cpu(el->l_count));
-+		goto out;
-+	}
-+
- 	if (el->l_tree_depth) {
- 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, major_hash,
- 				      &eb_bh);
-@@ -3415,6 +3436,14 @@ static int ocfs2_find_dir_space_id(struct inode *dir, struct buffer_head *di_bh,
- 		offset += le16_to_cpu(de->rec_len);
- 	}
- 
-+	if (!last_de) {
-+		ret = ocfs2_error(sb, "Directory entry (#%llu: size=%lld) "
-+				  "is unexpectedly short",
-+				  (unsigned long long)OCFS2_I(dir)->ip_blkno,
-+				  i_size_read(dir));
-+		goto out;
-+	}
-+
- 	/*
- 	 * We're going to require expansion of the directory - figure
- 	 * out how many blocks we'll need so that a place for the
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index 4a7509389cf3..e226219a0798 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1419,6 +1419,39 @@ int ocfs2_validate_inode_block(struct super_block *sb,
- 		goto bail;
- 	}
- 
-+	if (le32_to_cpu(di->i_flags) & OCFS2_CHAIN_FL) {
-+		struct ocfs2_chain_list *cl = &di->id2.i_chain;
-+		u16 bpc = 1 << (OCFS2_SB(sb)->s_clustersize_bits -
-+				sb->s_blocksize_bits);
-+
-+		if (le16_to_cpu(cl->cl_count) != ocfs2_chain_recs_per_inode(sb)) {
-+			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list count %u\n",
-+					 (unsigned long long)bh->b_blocknr,
-+					 le16_to_cpu(cl->cl_count));
-+			goto bail;
-+		}
-+		if (le16_to_cpu(cl->cl_next_free_rec) > le16_to_cpu(cl->cl_count)) {
-+			rc = ocfs2_error(sb, "Invalid dinode %llu: chain list index %u\n",
-+					 (unsigned long long)bh->b_blocknr,
-+					 le16_to_cpu(cl->cl_next_free_rec));
-+			goto bail;
-+		}
-+		if (le16_to_cpu(cl->cl_bpc) != bpc) {
-+			rc = ocfs2_error(sb, "Invalid dinode %llu: bits per cluster %u\n",
-+					 (unsigned long long)bh->b_blocknr,
-+					 le16_to_cpu(cl->cl_bpc));
-+			goto bail;
-+		}
-+	}
-+
-+	if ((le16_to_cpu(di->i_dyn_features) & OCFS2_INLINE_DATA_FL) &&
-+	    le32_to_cpu(di->i_clusters)) {
-+		rc = ocfs2_error(sb, "Invalid dinode %llu: %u clusters\n",
-+				 (unsigned long long)bh->b_blocknr,
-+				 le32_to_cpu(di->i_clusters));
-+		goto bail;
-+	}
-+
- 	rc = 0;
- 
- bail:
-diff --git a/fs/ocfs2/move_extents.c b/fs/ocfs2/move_extents.c
-index f9d6a4f9ca92..b10c8acd469b 100644
---- a/fs/ocfs2/move_extents.c
-+++ b/fs/ocfs2/move_extents.c
-@@ -98,7 +98,13 @@ static int __ocfs2_move_extent(handle_t *handle,
- 
- 	rec = &el->l_recs[index];
- 
--	BUG_ON(ext_flags != rec->e_flags);
-+	if (ext_flags != rec->e_flags) {
-+		ret = ocfs2_error(inode->i_sb,
-+				  "Inode %llu has corrupted extent %d with flags 0x%x at cpos %u\n",
-+				  (unsigned long long)ino, index, rec->e_flags, cpos);
-+		goto out;
-+	}
-+
- 	/*
- 	 * after moving/defraging to new location, the extent is not going
- 	 * to be refcounted anymore.
-@@ -1032,6 +1038,12 @@ int ocfs2_ioctl_move_extents(struct file *filp, void __user *argp)
- 	if (range.me_threshold > i_size_read(inode))
- 		range.me_threshold = i_size_read(inode);
- 
-+	if (range.me_flags & ~(OCFS2_MOVE_EXT_FL_AUTO_DEFRAG |
-+			       OCFS2_MOVE_EXT_FL_PART_DEFRAG)) {
-+		status = -EINVAL;
-+		goto out_free;
-+	}
-+
- 	if (range.me_flags & OCFS2_MOVE_EXT_FL_AUTO_DEFRAG) {
- 		context->auto_defrag = 1;
- 
+On Mon, 27 Oct 2025 at 20:37, Nicolas Frattaroli
+<nicolas.frattaroli@collabora.com> wrote:
+>
+> On Monday, 27 October 2025 15:55:28 Central European Standard Time Anand Moon wrote:
+> > Introduce runtime power management support in the Rockchip DesignWare PCIe
+> > controller driver.  These changes allow the PCIe controller to suspend and
+> > resume dynamically, improving power efficiency on supported platforms.
+> >
+> > Can Patch 1 can be backpoted to stable? It helps clean shutdown of PCIe.
+>
+> You can do this by adding a Fixes tag to your patch. In your case, it
+> might be fixing whatever introduced the clk_bulk_prepare_enable, i.e.:
+>
+> Fixes: 0e898eb8df4e ("PCI: rockchip-dwc: Add Rockchip RK356X host controller driver")
+>
+> This would be put above your Signed-off-by in the first patch, after
+> the empty line.
+>
+> To generate fixes tags like this, I use the following pretty format
+> in my .git/config:
+>
+>     [pretty]
+>         fixes = Fixes: %h (\"%s\")
+>
+> I can then do `git log --pretty=fixes` to show commits formatted
+> the right way. To find which commit to pick, `git blame` and
+> some sleuthing are helpful.
+>
+> With this tag, stable bots can pick the commit into any release
+> that the commit it fixes is in.
+>
+Thanks for your input.
+I will leave this to the maintainers to decide on this.
+> Kind regards,
+> Nicolas Frattaroli
+>
+Thanks
+-Anand
 
