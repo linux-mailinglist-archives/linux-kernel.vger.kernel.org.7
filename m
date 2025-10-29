@@ -1,268 +1,252 @@
-Return-Path: <linux-kernel+bounces-875046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144EEC18134
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:38:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 586B6C1813D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:39:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 99B18500C72
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:38:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 440BA501DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774A42EC554;
-	Wed, 29 Oct 2025 02:37:54 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841742E9EB5;
+	Wed, 29 Oct 2025 02:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="i0+RHhJc"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023142.outbound.protection.outlook.com [52.101.127.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D522E2DD4;
-	Wed, 29 Oct 2025 02:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761705473; cv=none; b=e7/mt3XDtkGtMJledctuOtC5fsJn4BLISAwmvlqBV800c3pDXmaZNXQu1Rhr0j36HMKVJbHxBGuPZTJxZ91DQ68NF1nhdC9eC/+Pz8qSaXwx1z/YenIQlwv1DhkELmTetlZ4fS5xLiv02ljMbgxmsp9GuP36IRkaOsjsB27Z92w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761705473; c=relaxed/simple;
-	bh=s/0/p6BOCbNErGvHbgvIDpUUcxbDrA0SSOsdGNifWeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LqL+YlLOlbIaI+ZdzzCMLVTnaHqOWH74LmE7Mlp9ndZUPeHOJuOIMaXlngc+Dt9sVkFgHtupd3BX1SGaQ3r1W3+4NEiPWXcWd/y4ngvco6kjk7+jCA+o8H8Sks6qHXA5A0w9NwFLcNDmNFVXQsEAC8Q83D/Iop5AL3GPqoAsMa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cxBHF1wp7zYQtmy;
-	Wed, 29 Oct 2025 10:37:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9FBA31A06DC;
-	Wed, 29 Oct 2025 10:37:49 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP1 (Coremail) with SMTP id cCh0CgBHt0r7fQFpx9LEBw--.51264S2;
-	Wed, 29 Oct 2025 10:37:49 +0800 (CST)
-Message-ID: <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
-Date: Wed, 29 Oct 2025 10:37:47 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF4D18C31;
+	Wed, 29 Oct 2025 02:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.142
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761705516; cv=fail; b=lMBH4eim8uQQmxvYHmvU55/gsklNjqHEHMjT1B1XOvIzmLI26C2j9GOWClUNvRbfX31bbS42dXQ1DSN2zitwtWB1/1z2toW+tbQDAENyKcUhWKU0fAfE7lRTU8O8CKMq/uEZ/bmZAXyiDqEG0wZwQ6bbO+IBb1pd0rXMDkxF0jw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761705516; c=relaxed/simple;
+	bh=S4pfOlbDwaa4H6/ux/Zll59zAelvwFM8VCjnJjYv0tI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=ls2fDwsu7dGnnsl158wjzdvtkZ/zKNvjXCmefAR2dXMe80+C2DwoBCmNjhN4BxVWekEAke+DQ/NDBuIIzXRhLl9Pekl/rH4nBGVQj0f/tZpagQlGCqJApI5xWfT7XV7VO/Zn5w62k2XLyZX1Y6ixngkrjdJw2GUNYZBWb3W0Z8g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=i0+RHhJc; arc=fail smtp.client-ip=52.101.127.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kpbXq4ZqxqobQXhaGp/4OKwB3eoJ4+2K5d+/dEiYVtZ5dj7/A3VFbgQM5lW1r+uGCC1WmbqmiRz41bhMUrWwXYszz1fpGhP+GRyxntXEXjrX+m6lQ1qSqAKaiF97JbwIrS8i4RjurYzMAvecvPswP/PqxI4KDS0dxQHQwXxD4dVK1rXSyhbs1twwEzTnzLW99Q9jWiBc8giLG+Kv3utaBxCLUiKtRebWugod80pVrIFW+xMiYlhJcusdZB6mLmQHx9S6ftmfHsIllpx5ME33IJZt9QKzNI+ARA//WrBMRalIswOp7UD0eVLdEzHodC0sduXfhgVuvL2vid/pzz4rfA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=S4pfOlbDwaa4H6/ux/Zll59zAelvwFM8VCjnJjYv0tI=;
+ b=suOMoFrZ49Hes2Ddo7BMZFW0E0mVgcH/5EL4vD6GxNhMgx6cooSA/ErWx6tiUxbxBOivcbbCNzHeRgKsloio4vfHcpKQsYGVCE0VD+31MaK1j6dF6ooInB27c/xhz3e4QMXmLS4+DstZM2aMuIpvVou8U9i8LTaz/Iw0YsGHO02CUoMi7v44UhqfwPVnXKyYnGWVIRbDHg9duNBSmwTxs+RlZ2jPBHsta16g+jcSZ7z/ACENW/edFjn0isCUNoY8yhjp5EYAgC3YXoAQ7ES1K+MYJCsbe97/uoVT2VzD5iLcZhxY2QiD6Uf/RhH5f77D1Lw3+n/u6XLbE3mwjXQKMQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=S4pfOlbDwaa4H6/ux/Zll59zAelvwFM8VCjnJjYv0tI=;
+ b=i0+RHhJcMbgfDkl3jFNFQnvcW4PZtveOiB9oz4YJNEPheiKEIN6AY1KSjX2I2AdyvTEy0pBo+9kltG/uPOSnG93PMQxar/wIUn+Qf0DPm67Mx6oVd+tCPSKCjAA1p1ql9DSdOCAYFzwYb9RfF9ZYyjuXM4X7K6g1juvoYMJ2yi3CJhN6fvh7JlwvcyNrEXx4gw0WhmelvxazSJZ/79eDC5Rev1T4CABH4YJRTGze5JlHj+eOT0yUcqRII2SWn6tbovqvo6hra0k5RmyKDLdz3fTz4w/sXp8TzK1I8h97fe6n+s0t8364l/iGjEMq81koLDEORH4mW7kC9drG9cNCHw==
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com (2603:1096:408::791)
+ by SEZPR06MB6976.apcprd06.prod.outlook.com (2603:1096:101:1f0::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.19; Wed, 29 Oct
+ 2025 02:38:30 +0000
+Received: from TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80]) by TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+ ([fe80::df4f:b1a1:1825:4a80%7]) with mapi id 15.20.9253.018; Wed, 29 Oct 2025
+ 02:38:30 +0000
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Lunn <andrew@lunn.ch>
+CC: Arnd Bergmann <arnd@arndb.de>, BMC-SW <BMC-SW@aspeedtech.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Jeremy Kerr <jk@codeconstruct.com.au>, Lee
+ Jones <lee@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will
+ Deacon <will@kernel.org>, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+	Nishanth Menon <nm@ti.com>, =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?=
+	<nfraprado@collabora.com>, Taniya Das <quic_tdas@quicinc.com>, "Lad,
+ Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>, Kuninori Morimoto
+	<kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device
+ tree
+Thread-Topic: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC
+ device tree
+Thread-Index:
+ AQHcQyJQr8Cg3wF4TE29hMu8e6S4P7TOr5mAgACf3YCAANyZAIAAeR6AgACX8gCAAPRVAIADDnEAgAAO3MCAAJ3UAIAADpuAgAJ3fVA=
+Date: Wed, 29 Oct 2025 02:38:30 +0000
+Message-ID:
+ <TY2PPF5CB9A1BE6D0FC241696E44EB1F463F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
+ <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch>
+ <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
+ <TY2PPF5CB9A1BE6DD93D0F397C961D5CB5AF2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <01573262-69a8-44cf-ae02-2e9842c59dde@lunn.ch>
+ <CAMuHMdXAOPemhTjdJqminXhi+1+Dsc5rN1GLqAUcfF3ZyphRoQ@mail.gmail.com>
+In-Reply-To:
+ <CAMuHMdXAOPemhTjdJqminXhi+1+Dsc5rN1GLqAUcfF3ZyphRoQ@mail.gmail.com>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY2PPF5CB9A1BE6:EE_|SEZPR06MB6976:EE_
+x-ms-office365-filtering-correlation-id: 8f02b3bc-bb19-43a4-0c06-08de16943f25
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NFd5Y3Z2VkVlM1lTNUVvZWlqOTA2b0hSamUyaW1jRVc3cGVuOXI1dUxPQ0pD?=
+ =?utf-8?B?QXUwZGIyZy9vWm1RVXpFakxJNXlRdzZ5YytDYjFMV3NlRGZNcVMzd05hbnR5?=
+ =?utf-8?B?VnBZYVFUUXdHQ25vcUFyNW1OZGpldUk4ek4vemR3Rms2UlZSYTA2WjhLd1Y5?=
+ =?utf-8?B?czNXaUxCY083N3d4WDVLVmM3USt1b1cwREhLcGVyZGlWOGlYT3NDRjNHZW9I?=
+ =?utf-8?B?VzAwcHhqWU05cnNqWFNSSmVPYW9XRWtMVjgzNnBZZzd6eDJySUQvcFZTeGhF?=
+ =?utf-8?B?TkovWW9wQVdjb3dha3EwUEtKMEs0cTlQRzI0ZnlZaHR0VnNTWXlOOCtlbXNl?=
+ =?utf-8?B?M1VQQ3ROelhpVStPNEllL3J3OVlVWTJ1b0xaRWF4dVhWZC9PVUFpUitDQnRB?=
+ =?utf-8?B?RVpLak1HL3ZaR1FrUUgvUkdCK2JRaWt6MjZFcUorbWwvaVBLc2lETFdlenQr?=
+ =?utf-8?B?NUJGS1MwdHRMZzd1ME1nZTA5QXRxTWVmK2NsQ2oxaW81ai9Sem02RmkzNURC?=
+ =?utf-8?B?YW4rdkRLQ21scVlGMzJxT1JValNpVVUzYnBZL1U4Y3ZrNyttS28weVZXcXc3?=
+ =?utf-8?B?NjJodkhSUkRYWkcycGF6VExOdkJaZ2lGMjhicWRLb3BWV2hYRUdWcjAveVRk?=
+ =?utf-8?B?ZUxiUEgxNTNLNWZRNkZxV1NtSUMyVkE2a0lHa3NxVWE3WnoyeWxQZGJ1K25J?=
+ =?utf-8?B?ZWsrUE8vRVVmMGswdEFNakFXNkpDdi9YdnBKcVIvam1TeWplN2xRMWdTUkJj?=
+ =?utf-8?B?aHh1SGpSUUFTajM3ZGpPS2tIMjVKemdmMXRQczhoYkZDODl2dm5GZ0pXdjB6?=
+ =?utf-8?B?WGtKVkNKT2owWWdaRXM4UDFHNUJYTGRGNzNJWURkb05hMjhNUlBKMTNsOU9F?=
+ =?utf-8?B?c3dTWVZQTGVjZ2pjT1U1U1U1Y1BjUXZ2ZkhqSVZwczNlTDMvdzY1QW1IRzZN?=
+ =?utf-8?B?U2o1ZUxra0JheW5KUk5PdTRoSk9CUWwvM2FlZXlBdndEVGtQT1hUbCswUlZr?=
+ =?utf-8?B?YVhMOERxY1M0SmlVSlZFQ0hURitoNkVwY0lka1VySnlvR251LzdWeXgyb0Zs?=
+ =?utf-8?B?Q3hITG5HdXR0NWJyUjlEWVQ5dzZ2WFFibWpCdktZdjQ5SXNlWEVpS3piSCs0?=
+ =?utf-8?B?SU9zUjZBLzN1MGpJWHpzcm5hWWpBemN0WEhzREtiRkFteEdvd0VSUjVxUjhS?=
+ =?utf-8?B?VjFZeThQSkx4WFNMTW5CUXQ3elAwckFGNmhQNnU5YmJDajJJdTYxMzErN2ow?=
+ =?utf-8?B?V1ZBWFZPcEdkaHY3Q3FLU2U2Q1lScHkwTnMrRVIrNlluVSs4QWJYaHFiSlA1?=
+ =?utf-8?B?S3E5emRCZDJFbWtFcG5LS1VUSitqY1NlNThWemhTL3Bkb1dSaSthcEVBdU5s?=
+ =?utf-8?B?cnAyZkhiY3hVZStCbDg1Zi9LMDFEQTFETXluNXRiNVRabWtHQVd6U2NBYXJn?=
+ =?utf-8?B?bklqaTVhSVpmR0xSL01ScWpWekl2VjM2WGxKUThheUk3bzZvbXJ1VFdpcXJE?=
+ =?utf-8?B?OWpKVWZUVk5kZk5KN0k3aXVaQUZhU21uaDhNUWtUYVpXa3BjMWZQR1FIYkxM?=
+ =?utf-8?B?M3pWVVJqSStuc25HbDNiZHg3K215OUlxV3d4L0xGVlZDTHRFWXdGNUQycDZ0?=
+ =?utf-8?B?RktXTERWZ0xUdTB1eXgxRUU1OVV4MXNyVGNXeENROU1BaitIRytsbUF0bmYy?=
+ =?utf-8?B?Tng4Zi9SbTE0WC9XcTBXRjVCa21JWnluYW1FSytHQWVoZ3hNS0RJSTE3OFFq?=
+ =?utf-8?B?TUFZU2RRdUJGZ1V1L0ZSNVYyWGU0RnFWQWttaitTc3EvbjFoWjk0U1ZrWTIr?=
+ =?utf-8?B?eEpOaUlJTmh4bkVhVFF1cEZ6M0c5WFRwajFTZ3dqeHdsYU95YTA5bTNldVZK?=
+ =?utf-8?B?clFqVHBKVEFEaFFmTjlUeVErNUtIcUQwRFB5VGJ1Y1p4VU0xOW1UY0tVRVhI?=
+ =?utf-8?B?OXFZdWpVZmZSaXVzNHE3SWtYakV2SDZyaDdGWDhuQXlENHQ3TFZoVllpN1Ba?=
+ =?utf-8?B?RW1xdWZNUisrdUt2VndqcW9yRW9wSUgzd2d4NUR1UnU5eTc4NHdEaDNkMlU5?=
+ =?utf-8?Q?vPeN3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700021);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?alNkOEd1ajhTSklGUW5KbzJ3SExMNzc4d05ZWVkrWTFuS0JHZW5zZnE4MzBw?=
+ =?utf-8?B?eklBZnp0MmdJR3YzMERwOVFSaE1XSnlJb2ZKM3pVRXpDaDNWMXQzb1h3dlAz?=
+ =?utf-8?B?OEY5Q0tGQnpkUURoZTRJcGxjSTVteWhOOE9EYzNHa1ZPTUJjNjlyc2xmeEZM?=
+ =?utf-8?B?cmFRcjBOV1R4T1FaY2w5STBiL2V1TlBUQXZjVVh4bmllczFicnEzVHNmQU9Y?=
+ =?utf-8?B?V0pQYm1FWVhqUmlQSTlXUUd0Z3prRjZPNmllZGI2dEFGMVVLUjMxMEJJaG5w?=
+ =?utf-8?B?N29VOFU2eGlGdTA5R2NpUUZJWFNqd250dTY2MVNtQVZYNk9HQjkyYUQ5T0w5?=
+ =?utf-8?B?WUk3M2xHQjI1REgxOUNyTEI2NlVTTkFNeEZ4U3c1QXBaSGtQRSt2M0VqWmpN?=
+ =?utf-8?B?Nkg4VGREVXAzOURsc29DZHVWa1VBYk5aajhPQ29oTWVqT2ppQWw2ZmtNc3px?=
+ =?utf-8?B?L1grdVdBeitBQ241dW1RN1BuSy8xa3VxbHJFRGdmT1d5U3h3eDhNZkhFbGZu?=
+ =?utf-8?B?YVBmZFFEQzNxTkRwa3FiSjJJamxIRFhnems5UjVtRENjQVNhcE9LRDcyWDVi?=
+ =?utf-8?B?KzlDOUVoL1dYTFpxb0pITHVZNE95STlTOHoydUdvUzJSR3UzRDlad0FrNlY3?=
+ =?utf-8?B?MXlMSHFDdmwxbUJhR2RFcWZnY0J2c2pYM1o3c3FGbUNoTklCWDFBcVBSRjZ1?=
+ =?utf-8?B?YjRxRklSK0xXZmQ4SGIwdmlRVGdkcVp3R3V1S2hYNjBBeEVvY1NJaHYxM0pj?=
+ =?utf-8?B?RkNwcGpUL0hDVVY1VXpON1VBaFdIQWQ0Q0RsYkxieHRaenU4aW95WlVuazBo?=
+ =?utf-8?B?K2JzY1pTNk9IWmR6QWU2cWpDZkovbGQ5L0t0N01oS2pwVk9NSWVNYXZBRG1G?=
+ =?utf-8?B?Q2xnMWhMdzJ2QUdHYTlYTjRGYVpqWUZFcCsyWWE1WXJlajBqZDdDYUxwOUFZ?=
+ =?utf-8?B?UU5iaHR0NmhSdHpocU01S2hxUnJhZGF5MFhMdVI2K2dXM2ZzVEZuU2I3ekIr?=
+ =?utf-8?B?YnRlV2Z6K0U0Nnd2L0o3TWJldmIzYU4wQitvRys3NjVOWVlUcXY4Q2hManBy?=
+ =?utf-8?B?T0RFcHdVaDZ1NmRZY0o4NlhtODJHWTAwcXQ4b1BVdVhsdnZqSTRxYzVIK1l2?=
+ =?utf-8?B?SnpMTVJxdVlsaXNKUmdTMVdyVnNnM0RnRmlsOVdaam5ndVh1djlQRGRuemVn?=
+ =?utf-8?B?OCtjNGRob3BlWGR4Z0hkY1ZnRXY3cmNUZ1Nqbjd4blVEbVdzNmxqdFBVMi9M?=
+ =?utf-8?B?UUhrLzN0UncvR3BTRVFKTHVRWjVUOXB4empDeFJLY09xamFzVzZLdGFOa3FZ?=
+ =?utf-8?B?M1BMM3VLam1MaFZCU0xxZ2ZxSDVaVFlXOTdvUEU0NUhpbllhdk1FOFlNZ1Yy?=
+ =?utf-8?B?ZEw4REFnU0VMeGRBdlRUSVRGQ1dSNkRub292blZ4WGw5TUhxR0NTN29ZMER3?=
+ =?utf-8?B?ZkJsRnU3bC9tODNjQjhnTkYrKzBkNVR1bTFybmN4NldsRVRCNnQ2azVEdWYy?=
+ =?utf-8?B?Vk9UdUVZQkZ6bi84ci9RRmFXT1RmdkdsdU9oVE1ROHB6NHZiUElaV0RqaHZs?=
+ =?utf-8?B?eUFyemZ0VWE0dHN1VTBzaGk1NTZOUW9nOXZ1eTBmTlFyaXJJcm9oRVcvWlRB?=
+ =?utf-8?B?Y0R6ZkIxYThHd285ZERSMHNSaU9PN09pR3hhQWtVUmFobEFCVFBwTGxuaDJv?=
+ =?utf-8?B?UjdkNXI4b1ZHY29QaVlwQjIrcm9Nb21SS09Qa3NaVjlGNTlsT3h4K05QQVJP?=
+ =?utf-8?B?emJPeWpYV1l3dzIyQnR1VDJKT1Buc3RnbVRwejkvRXpnSXJYNWlyMXBGWjM1?=
+ =?utf-8?B?cGtmelhEak4xcXJTS1lnZFRYWVBiZkdCZHZ1aGZnTlFib0E5eDg2MGZUUkxK?=
+ =?utf-8?B?c20zSmQyYi8wVzgxMEtkeTduNHp4eGFwK2ZNc1dpbVExYTBVbEl0T3p1TjFQ?=
+ =?utf-8?B?WDBjT0o5R2s2QlFOclo5WitkTC9Id3hPOGlpTmRpZ0cwYWM5ZjAwdmhhZmx3?=
+ =?utf-8?B?OVk5NGRTMGgvWGM5NXhtTkxiTytuRUsvVXFEbTY5djVCS3pHTUYrNk5JKzh3?=
+ =?utf-8?B?cTNaTlczbXoxMUdNOXdGNDNkUUNyWmYvdThwNTB5VnE4dGl5cE9pck9ZeGZz?=
+ =?utf-8?Q?aY9gJLdnNa4EFNpSI3KjAqLyQ?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-To: Pingfan Liu <piliu@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Cc: Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20251028034357.11055-1-piliu@redhat.com>
- <20251028034357.11055-2-piliu@redhat.com>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251028034357.11055-2-piliu@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHt0r7fQFpx9LEBw--.51264S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKw43GF15Cr4kCF4xtF1xGrg_yoWxKFW7pF
-	yDCr43Xr4kJr1xCay3Xw4UuFyFg3ykJF17AFnxG3yrAF9IyF1vvr1v9Fn8AF97ur9xCr4U
-	ZrZFgrsI93WDAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f02b3bc-bb19-43a4-0c06-08de16943f25
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 02:38:30.2975
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: xklNZeILkR9gFHHZ7/0k7zdZg6NgU3DtP+aeyiDob2R+SqJ7QpXW9qyTrRaaQiB9G40TGjb4dDDvDLbJMEQtn9xUJSPbLFJMiGGID6xJw8Y=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6976
 
-
-
-On 2025/10/28 11:43, Pingfan Liu wrote:
-> *** Bug description ***
-> When testing kexec-reboot on a 144 cpus machine with
-> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> encounter the following bug:
-> 
-> [   97.114759] psci: CPU142 killed (polled 0 ms)
-> [   97.333236] Failed to offline CPU143 - error=-16
-> [   97.333246] ------------[ cut here ]------------
-> [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> [...]
-> 
-> In essence, the issue originates from the CPU hot-removal process, not
-> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
-> program that waits indefinitely on a semaphore, spawning multiple
-> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
-> one by one. When attempting this, CPU 143 failed to go offline.
->   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
-> 
-> `
-> *** Issue ***
-> Tracking down this issue, I found that dl_bw_deactivate() returned
-> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> But that is not the fact, and contributed by the following factors:
-> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
-> blocked-state deadline task (in this case, "cppc_fie"), it was not
-> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
-> points to def_root_domain instead of the one shared with CPU0.  As a
-> result, its bandwidth is wrongly accounted into a wrong root domain
-> during domain rebuild.
-> 
-> The key point is that root_domain is only tracked through active rq->rd.
-> To avoid using a global data structure to track all root_domains in the
-> system, there should be a method to locate an active CPU within the
-> corresponding root_domain.
-> 
-> *** Solution ***
-> To locate the active cpu, the following rules for deadline
-> sub-system is useful
->   -1.any cpu belongs to a unique root domain at a given time
->   -2.DL bandwidth checker ensures that the root domain has active cpus.
-> 
-> Now, let's examine the blocked-state task P.
-> If P is attached to a cpuset that is a partition root, it is
-> straightforward to find an active CPU.
-> If P is attached to a cpuset that has changed from 'root' to 'member',
-> the active CPUs are grouped into the parent root domain. Naturally, the
-> CPUs' capacity and reserved DL bandwidth are taken into account in the
-> ancestor root domain. (In practice, it may be unsafe to attach P to an
-> arbitrary root domain, since that domain may lack sufficient DL
-> bandwidth for P.) Again, it is straightforward to find an active CPU in
-> the ancestor root domain.
-> 
-> This patch groups CPUs into isolated and housekeeping sets. For the
-> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
-> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> 
-> Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: "Michal Koutný" <mkoutny@suse.com>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Pierre Gondois <pierre.gondois@arm.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> To: cgroups@vger.kernel.org
-> To: linux-kernel@vger.kernel.org
-> ---
-> v3 -> v4:
-> rename function with cpuset_ prefix
-> improve commit log
-> 
->  include/linux/cpuset.h  | 18 ++++++++++++++++++
->  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
->  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
->  3 files changed, 68 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> index 2ddb256187b51..d4da93e51b37b 100644
-> --- a/include/linux/cpuset.h
-> +++ b/include/linux/cpuset.h
-> @@ -12,6 +12,7 @@
->  #include <linux/sched.h>
->  #include <linux/sched/topology.h>
->  #include <linux/sched/task.h>
-> +#include <linux/sched/housekeeping.h>
->  #include <linux/cpumask.h>
->  #include <linux/nodemask.h>
->  #include <linux/mm.h>
-> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
->  
->  extern void cpuset_print_current_mems_allowed(void);
->  extern void cpuset_reset_sched_domains(void);
-> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
->  
->  /*
->   * read_mems_allowed_begin is required when making decisions involving
-> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
->  	partition_sched_domains(1, NULL, NULL);
->  }
->  
-> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
-> +		struct cpumask *cpus)
-> +{
-> +	const struct cpumask *hk_msk;
-> +
-> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> +			/* isolated cpus belong to a root domain */
-> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> +			return;
-> +		}
-> +	}
-> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
-> +}
-> +
->  static inline void cpuset_print_current_mems_allowed(void)
->  {
->  }
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index 27adb04df675d..6ad88018f1a4e 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
->  	mutex_unlock(&cpuset_mutex);
->  }
->  
-> +/* caller hold RCU read lock */
-> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> +{
-> +	const struct cpumask *hk_msk;
-> +	struct cpuset *cs;
-> +
-> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> +			/* isolated cpus belong to a root domain */
-> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> +			return;
-> +		}
-> +	}
-> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
-> +	cs = task_cs(p);
-> +	while (cs != &top_cpuset) {
-> +		if (is_sched_load_balance(cs))
-> +			break;
-> +		cs = parent_cs(cs);
-> +	}
-> +
-> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
-> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> +}
-> +
-
-It seems you may have misunderstood what Longman intended to convey.
-
-First, you should add comments to this function because its purpose is not clear. When I first saw
-this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
-However, I'm genuinely confused about the function's actual purpose.
-
-Regarding the isolated partition concept: isolated CPUs (isolcpus) can be included in cpusets. For
-example, if the system boots with isolcpus=9, and when process p is in a isolated partition that
-only contains CPU 9 (which is listed in isolcpus), will this function return all CPUs except CPU 9?
-Is that the behavior you intended?
-
--- 
-Best regards,
-Ridong
-
+PiBTdWJqZWN0OiBSZTogW1BBVENIIHY2IDQvNl0gYXJtNjQ6IGR0czogYXNwZWVkOiBBZGQgaW5p
+dGlhbCBBU1QyNzAwIFNvQyBkZXZpY2UNCj4gdHJlZQ0KPiANCj4gSGkgQW5kcmV3LA0KPiANCj4g
+T24gTW9uLCAyNyBPY3QgMjAyNSBhdCAxMzowMSwgQW5kcmV3IEx1bm4gPGFuZHJld0BsdW5uLmNo
+PiB3cm90ZToNCj4gPiBPbiBNb24sIE9jdCAyNywgMjAyNSBhdCAwMjo0MjowMUFNICswMDAwLCBS
+eWFuIENoZW4gd3JvdGU6DQo+ID4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjYgNC82XSBhcm02
+NDogZHRzOiBhc3BlZWQ6IEFkZCBpbml0aWFsDQo+ID4gPiA+IEFTVDI3MDAgU29DIGRldmljZSB0
+cmVlDQo+ID4gPiA+DQo+ID4gPiA+ID4gU29DMCwgcmVmZXJyZWQgdG8gYXMgdGhlIENQVSBkaWUs
+IGNvbnRhaW5zIGEgZHVhbC1jb3JlDQo+ID4gPiA+ID4gQ29ydGV4LUEzNSBjbHVzdGVyIGFuZCB0
+d28gQ29ydGV4LU00IGNvcmVzLCBhbG9uZyB3aXRoIGl0cyBvd24NCj4gPiA+ID4gPiBjbG9jay9y
+ZXNldCBkb21haW5zIGFuZCBoaWdoLXNwZWVkIHBlcmlwaGVyYWwgc2V0Lg0KPiA+ID4gPg0KPiA+
+ID4gPiA+IFNvQzEsIHJlZmVycmVkIHRvIGFzIHRoZSBJL08gZGllLCBjb250YWlucyB0aGUgQm9v
+dCBNQ1UgYW5kIGl0cw0KPiA+ID4gPiA+IG93biBjbG9jay9yZXNldCBkb21haW5zIGFuZCBsb3ct
+c3BlZWQgcGVyaXBoZXJhbCBzZXQsIGFuZCBpcw0KPiA+ID4gPiA+IHJlc3BvbnNpYmxlIGZvciBz
+eXN0ZW0gYm9vdCBhbmQgY29udHJvbCBmdW5jdGlvbnMuDQo+ID4gPiA+DQo+ID4gPiA+IFNvIGlz
+IHRoZSBzYW1lIC5kdHNpIGZpbGUgc2hhcmVkIGJ5IGJvdGggc3lzdGVtcz8NCj4gPiA+DQo+ID4g
+PiBUaGlzIC5kdHNpIHJlcHJlc2VudHMgdGhlIENvcnRleC1BMzUgdmlldyBvbmx5IGFuZCBpcyBu
+b3Qgc2hhcmVkDQo+ID4gPiB3aXRoIHRoZSBDb3J0ZXgtTTQgb3IgdGhlIEJvb3QgTUNVIHNpZGUs
+IHNpbmNlIHRoZXkgYXJlIHNlcGFyYXRlDQo+ID4gPiAzMi1iaXQgYW5kIDY0LWJpdCBzeXN0ZW1z
+IHJ1bm5pbmcgaW5kZXBlbmRlbnQgZmlybXdhcmUuDQo+ID4NCj4gPiBEVCBkZXNjcmliZXMgdGhl
+IGhhcmR3YXJlLiBUaGUgLmR0c2kgZmlsZSBjb3VsZCBiZSBzaGFyZWQsIHlvdSBqdXN0DQo+ID4g
+bmVlZCBkaWZmZXJlbnQgc3RhdHVzID0gPD47IGxpbmVzIGluIHRoZSBkdGIgYmxvYi4NCj4gPg0K
+PiA+ID4gPiBIb3cgZG8geW91IHBhcnRpdGlvbiBkZXZpY2VzDQo+ID4gPiA+IHNvIGVhY2ggQ1BV
+IGNsdXN0ZXIga25vd3MgaXQgaGFzIGV4Y2x1c2l2ZSBhY2Nlc3MgdG8gd2hpY2ggcGVyaXBoZXJh
+bHM/DQo+ID4gPg0KPiA+ID4gQmVmb3JlIHRoZSBzeXN0ZW0gaXMgZnVsbHkgYnJvdWdodCB1cCwg
+Qm9vdCBNQ1UgY29uZmlndXJlIGhhcmR3YXJlDQo+ID4gPiBjb250cm9sbGVycyBoYW5kbGUgdGhl
+IHJlc291cmNlIHBhcnRpdGlvbmluZyB0byBlbnN1cmUgZXhjbHVzaXZlIGFjY2Vzcy4NCj4gPg0K
+PiA+IEFyZSB5b3Ugc2F5aW5nIGl0IG1vZGlmaWVzIHRoZSAuZHRiIGJsb2IgYW5kIGNoYW5nZXMg
+c29tZSBzdGF0dXMgPQ0KPiA+ICJva2F5IjsgdG8gImRpc2FibGVkIjs/DQo+IA0KPiAicmVzZXJ2
+ZWQiIGlzIHRoZSBhcHByb3ByaWF0ZSBzdGF0dXMgdmFsdWUgZm9yIHRoYXQuDQoNClRoYW5rcyBm
+b3IgdGhlIGNsYXJpZmljYXRpb24uDQoNClNpbmNlIHRoZSBTb0MtbGV2ZWwgLmR0c2kgaXMgc2hh
+cmVkIGJ5IGFsbCB1c2VycyAocG90ZW50aWFsbHkgb3RoZXIgcGxhdGZvcm1zKSwNCkkgZG9u4oCZ
+dCBhY3R1YWxseSBrbm93IGluIGFkdmFuY2Ugd2hpY2ggcGVyaXBoZXJhbHMgd2lsbCBiZSBhc3Np
+Z25lZCB0bw0Kd2hpY2ggQ1BVLiBGb3IgdGhpcyByZWFzb24sIG1hcmtpbmcgbm9kZXMgYXMgYHN0
+YXR1cyA9ICJyZXNlcnZlZCJgIGluIHRoZQ0KLmR0c2kgbWlnaHQgYmUgbWlzbGVhZGluZy4NCg0K
+SSB0aGluayBpdOKAmXMgbW9yZSBhcHByb3ByaWF0ZSB0byBrZWVwIGFsbCBwZXJpcGhlcmFscyBh
+cw0KYHN0YXR1cyA9ICJkaXNhYmxlZCJgIGluIHRoZSBjb21tb24gLmR0c2ksIGFuZCBsZXQgZWFj
+aCBib2FyZC1sZXZlbCAuZHRzIG9yDQpmaXJtd2FyZS1zcGVjaWZpYyBEVCBkZWNpZGUgd2hldGhl
+ciBhIGRldmljZSBzaG91bGQgYmUgYG9rYXlgIG9yIGByZXNlcnZlZGANCmRlcGVuZGluZyBvbiB0
+aGUgYWN0dWFsIHJlc291cmNlIGFzc2lnbm1lbnQuDQoNCj4gDQo+IEdye29ldGplLGVldGluZ31z
+LA0KPiANCj4gICAgICAgICAgICAgICAgICAgICAgICAgR2VlcnQNCj4gDQo+IC0tDQo+IEdlZXJ0
+IFV5dHRlcmhvZXZlbiAtLSBUaGVyZSdzIGxvdHMgb2YgTGludXggYmV5b25kIGlhMzIgLS0NCj4g
+Z2VlcnRAbGludXgtbTY4ay5vcmcNCj4gDQo+IEluIHBlcnNvbmFsIGNvbnZlcnNhdGlvbnMgd2l0
+aCB0ZWNobmljYWwgcGVvcGxlLCBJIGNhbGwgbXlzZWxmIGEgaGFja2VyLiBCdXQNCj4gd2hlbiBJ
+J20gdGFsa2luZyB0byBqb3VybmFsaXN0cyBJIGp1c3Qgc2F5ICJwcm9ncmFtbWVyIiBvciBzb21l
+dGhpbmcgbGlrZSB0aGF0Lg0KPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tIExp
+bnVzIFRvcnZhbGRzDQo=
 
