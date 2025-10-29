@@ -1,179 +1,283 @@
-Return-Path: <linux-kernel+bounces-877094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F397C1D2C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:12:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D28C1D2D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2DB134CF5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C9BF188A45C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE235A93E;
-	Wed, 29 Oct 2025 20:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42013314B85;
+	Wed, 29 Oct 2025 20:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Gxy4Iskh"
-Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com [209.85.210.226])
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Q2aEghgF"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C231314B85
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5631E1D5AC0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768752; cv=none; b=FKiktdDW8BMRS0Q9YT8sPK+Ijojt9ek7cIJRZmjuRYVOiBfadGeC7ZPV/OlTzD7vkzF6l23EFn1wG7PnOIIRiy6jlHi4gX5YYmbiWC/4QtMmWxiG15FIv7Nwdywa8vmLrIXQ2mRFJJ3jFTRuvhRRYsJxKexZkzQR3hcCszpQ9qI=
+	t=1761768836; cv=none; b=QhJ4n11nyzSg7IJ/IeMPAtLSwFdTzEX0Q8YVzRBGcWA9Nn0bp6dPmMNzbhYRLkfnR7pWygZo9o4tskcAKKOjj5cs4frIjj1tZX/0z0zQLYbbU+OcahjSdiYrlTVmVnTbWHJjNmaWdo9cm9SIS4If5AHzlEL6LBhf5grqtlgaDK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768752; c=relaxed/simple;
-	bh=iR5HlGQtmcmSHHCwOzTzIF4RYlsm+yyeAoY4efZXbdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQ7EuwYZU5or6Bmui2ggBNcVbKTorBPVD2xm404PlElnMRRg00RzES6mYsQjji6GLWUnuHdCNWwGLVMnBGaBnrpI9JukF2odkuBq4oaPmaB+IJ6MO8aSKkjeOZVmvAbCDafV/v7gL4aFOg+HnN+UsF1KtABlAsDxWmFHnnktG+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Gxy4Iskh; arc=none smtp.client-ip=209.85.210.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pf1-f226.google.com with SMTP id d2e1a72fcca58-7a2738daea2so319040b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761768750; x=1762373550;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v1OxuFPXRzNkf/jjOfMwnR5HsdSbozk+lpDYi7pEr48=;
-        b=DpEoAf5dhoBkjafoFKKNUZqgx9+IrWSvtcwQzQJEDc8yPUnf/QQRFpoCHUsh6lfep4
-         HvC/18v70vApWoOneFt1namSg/LKk5XD9Cq40ymeDBGNxltAONnxW1wBBuSoDOe1zKJe
-         kKzU2Nq61tp30JSCBt1xWV1gjaPsw1kO8YHeNgAw6lgWEI7dZFNnzvO1QgkzqDoXvvjy
-         eB/6fK3di1VZjIczXZuasdJb4PQrI6FD30K7qR7en6TjfVbI7UidGizo5FmfBToqMoxR
-         HPn05Tjj3TjupUn7DogOv1lRKxdph4J7svnz2OJ55jVC90F+Pddvzmnsf33RufGA0xCv
-         dFpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUy7u8P0PWCNoCHmLnImoL2L7am/5fRVN2eJ4aQVwv0iea5f6m+zD2iI17HeL5AYFidLq4594YI3957MGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4mlErNRSP1H3ej4RmrOq83SCK7AqpFrh+ICDESeNaxJUKeAtY
-	duXUrREYxLAPA9SDPDoyfrn7O9HlFw7jK2S1gckMk0jVI+zoYQawa83fP7r36vsaJ9JBLE42fYJ
-	VAEk6XEKMtUFs7zuPbRQL+Aek/XT3rQUgtA2yJT1qIkE3j6sp+/BTC02i4uDnRjt60dp9eVWmQ4
-	ANRd5zUoBbDuCN17+8Tt2E/OEL2hByu5aN4yI9MDqN4fT/LvKiUicC0bIvmYoBt4UlWCcE/NABw
-	817Pgiq6LbwtwNxcA2qoFWU
-X-Gm-Gg: ASbGncsdoMMWi/LFAFY5TH+O27c0IvDPbMUREgnCTbru2LWTj/P6nfDkAKQOQrkFc1h
-	jfrftCJF6MB7+WA3xzseXzI2kVstipXIqleqEqNHssJR6fqzSk/C+1WHXlfdJSn4DJo+NzaC/02
-	gMlfBPEjcpDwyvVBgi/8u4oq1b1XNsK0VBNUgeA6/D2bR5fx1CiZzaXSmxnTUuRqI3l1454QSt8
-	QpBsvJg7WXtqx+zuOpR/mGIwQ213tlxYGMUqpU4Xl1mIkXgA0fp6bGwIbVopXU30HhmC7tJFBAT
-	B+SHGKCGQXZ2tT4MI1DYwu4npQtuQTaHgUxQRXs8OlONLGUyFiimH57ouuQUYFQUtljGgkMwCs5
-	KvNga6Juk/CMiAMo+5Eon3LvX9mkZUCkAy+2svi28Km3R8tX6CR6hAOfx3sbQCOBrqp5CkZMqA3
-	ZhAdV2B4f8crNwNMdR8yzVdMcrcCM1PccMOzGHInErMg==
-X-Google-Smtp-Source: AGHT+IESIngUABpsBtmwGQ7/1iNcr3IqurLjPvzWfIeunJUHcn7gHQWbTLxrMk4XLVCK7rHrejN4A8dyOg9Y
-X-Received: by 2002:a17:902:b10b:b0:282:2c52:5094 with SMTP id d9443c01a7336-294deeb5a9amr32591045ad.37.1761768750261;
-        Wed, 29 Oct 2025 13:12:30 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-102.dlp.protect.broadcom.com. [144.49.247.102])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29498cf41cfsm13410735ad.7.2025.10.29.13.12.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 29 Oct 2025 13:12:30 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-892637a3736so87744785a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:29 -0700 (PDT)
+	s=arc-20240116; t=1761768836; c=relaxed/simple;
+	bh=/m2x2MhZTK99jvIZnV9WiC+2RFNXEYnnV84Nk0+ZbG8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S491EcuY6KpQvZGb4DnrIm+TntPnFTp7+t9jjqTPH2O8Z4qOjoAsop0pD6BkEtjmnlT4dRVCjtCgeUTaHknj46C+4Po9XDF6ef11cWxWymxPbt8Ve/T1ScGEnWUpGBfK0bZrfDUq4bcy77uf7fsFgUQO2arAlc9rIxLiaZKYvQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Q2aEghgF; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b5e19810703so40963366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:13:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1761768749; x=1762373549; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v1OxuFPXRzNkf/jjOfMwnR5HsdSbozk+lpDYi7pEr48=;
-        b=Gxy4IskhNmDgIj0uYMc6sGDQSkagyCqwrQP/MGgn9GeLnTCjSuNqQlC4SOZ5RmEMRA
-         6Pc6Sjbn7vPu8APNKj6YFxn8qpa9uH7VvNwftUCjM+qarpK45Id6HA9afaA/RYsLwpPy
-         OPM+bJ9R2yg4zncxLgb2+qexnND2bMZfqfyWQ=
-X-Forwarded-Encrypted: i=1; AJvYcCWjGdIgDos2NDI3enxhYiGq5bsg18DeAbDqLoO4fSx+7OrNLtHVLynaDelLxjb9/BkxUD6j7nBNSp9HBAk=@vger.kernel.org
-X-Received: by 2002:a05:620a:44c5:b0:8a3:c4fa:9b75 with SMTP id af79cd13be357-8a8e30e42afmr645985585a.16.1761768749054;
-        Wed, 29 Oct 2025 13:12:29 -0700 (PDT)
-X-Received: by 2002:a05:620a:44c5:b0:8a3:c4fa:9b75 with SMTP id af79cd13be357-8a8e30e42afmr645981185a.16.1761768748624;
-        Wed, 29 Oct 2025 13:12:28 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f261747efsm1093976585a.55.2025.10.29.13.12.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 13:12:27 -0700 (PDT)
-Message-ID: <a2ff8f41-816e-4f87-867e-cbb39e513473@broadcom.com>
-Date: Wed, 29 Oct 2025 13:12:25 -0700
+        d=soleen.com; s=google; t=1761768832; x=1762373632; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fxNKUqsLJOnot7UUBS6WN0bVpwUbu+IjTrx41B9jW8k=;
+        b=Q2aEghgF/7lpX6vBLcltuHqDvb/zoSnI23KkhfLsKYxkbO+nBX2L5QfOL3XW1RHs7r
+         36q83zQArkvdhhKBd3pqX4c8u1IomZBP/ZZH47BiMi4w0UBYOPiSQHX3YiP4LGAgEwvY
+         JZb4hkg+H8BbZxRIqI0dN8+fLdGo1WUTJVh0L+Kc6q4TRCHpPAmmbf4v2Ldbbkk2/JgA
+         e1BUpVop5VfPvOK78pj0UwKGo/3De+6wUmy2yyIkVlD/Bv1Zj1RQuu5P8nV50hC+lJSu
+         blJWDQhu/3JMniqh2qcZqrj6FFf2L3hKJ4PK6IR4y9hWKXj+2xmAderMD/Aggw1eVJk1
+         ZO4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761768832; x=1762373632;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fxNKUqsLJOnot7UUBS6WN0bVpwUbu+IjTrx41B9jW8k=;
+        b=wBrQCMUpr6rR4xv5LkpEPBj8PFEZ85l2GusMI/i4ju/EnOwM9M5Bsv2SGHsUiWeHZT
+         adpa+89u1JncPkHpJwONIE45jelc64r6CZ565Wee9OnJWQwEcCGE1vQodvdCgFGrTjJI
+         toLvMev6JXYIVOGPbanJGUwJFFp4ysNBbotI8daoB3EmjejLdKHwJ+OBSPajXR1e24f5
+         DQKrDp+yhesHNUpBLX+RwunmjD3zPOECb8dWeEbHQqltZYyVO09rBZAml5QbBpQpRh4O
+         ZOQPS1O8uuQCXFoHY/Xixu4CUOOemc2wkrUYwT1W6gml7thyVwsRONShrXSsH105yUbw
+         TMQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeqBGox/dJR38DKu79MVpkIJuNXlpSNV/Ml1GmND09RA4dXN+WAfTQhGPIujZFvipBIdR+o27k0w2Rw3Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiUFDzADzaKsD52emZxpAuknXJ1TBm33ijUguovJqGdyMbueDl
+	JffaBP8pGgK5mNM0wNyIrgmZc6yM8EORBtypBxT8ILo5boe7VfnrfFwxY9R8551GVsdvNPmZF5T
+	NR/CpTNT7fDh9H+UpYVxxcUWtbaHdVArKRcmb5SXBpg==
+X-Gm-Gg: ASbGncvbbE1SN+pTvJUYuau8xjtymdmVH5V7dMGxhRRIa6ygXS01wVT2V9KyfZxTQOh
+	plbX6ubg/FpCukea6pxk6DQ3irVpmtjEzHHp+S+bqDA75dIvov9++oBYngA+YFG1yJI8+D1Iede
+	v36rfn1dhnHjBsO+nUHvdPio6nfRkx/wQRtYXqIEcKgKGYUXW5/GwsgFid3hBActmhP/ELl5cvL
+	Nu3A2R2hGNkhzQhlLUYmJNAvsxvGOec6Mx37bzkVsQhnnUs3aW0a6GYH34Db7+Sz4Ui
+X-Google-Smtp-Source: AGHT+IGrqbF9PW88BwcvYbeFbvOXRwoCun/iE1ZSEaorTMP1Ihb1MtG0h6t2CJQLQRZKh3kqkmFzEpEHa7ehLYOu0M8=
+X-Received: by 2002:a17:907:72c4:b0:b45:60ad:daf9 with SMTP id
+ a640c23a62f3a-b7053b0cf7amr50121266b.3.1761768831381; Wed, 29 Oct 2025
+ 13:13:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] PCI: brcmstb: Add panic/die handler to driver
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
- jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251029193616.3670003-1-james.quinlan@broadcom.com>
- <20251029193616.3670003-3-james.quinlan@broadcom.com>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251029193616.3670003-3-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
+In-Reply-To: <mafs0tszhcyrw.fsf@kernel.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 29 Oct 2025 16:13:14 -0400
+X-Gm-Features: AWmQ_bnKVfAOoreyDJlaPrAp9h8ss-TNKXA3PtoSrf7r-Gv5W7RZKx9AA8z_D0k
+Message-ID: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
+Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
+ preservation and state management
+To: Pratyush Yadav <pratyush@kernel.org>
+Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
+	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
+	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
+	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
+	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
+	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
+	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
+	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
+	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
+	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
+	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
+	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
+	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
+	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/25 12:36, Jim Quinlan wrote:
-> Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
-> by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
-> 7216 and its descendants -- have new HW that identifies error details.
-> 
-> This simple handler determines if the PCIe controller was the cause of the
-> abort and if so, prints out diagnostic info.  Unfortunately, an abort still
-> occurs.
-> 
-> Care is taken to read the error registers only when the PCIe bridge is
-> active and the PCIe registers are acceptable.  Otherwise, a "die" event
-> caused by something other than the PCIe could cause an abort if the PCIe
-> "die" handler tried to access registers when the bridge is off.
-> 
-> Example error output:
->    brcm-pcie 8b20000.pcie: Error: Mem Acc: 32bit, read, @0x38000000
->    brcm-pcie 8b20000.pcie:  Type: TO=0 Abt=0 UnspReq=1 AccDsble=0 BadAddr=0
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
+> wrote:
+>
+> Hi Pasha,
+>
+> On Mon, Sep 29 2025, Pasha Tatashin wrote:
+>
+> > Introducing the userspace interface and internal logic required to
+> > manage the lifecycle of file descriptors within a session. Previously, =
+a
+> > session was merely a container; this change makes it a functional
+> > management unit.
+> >
+> > The following capabilities are added:
+> >
+> > A new set of ioctl commands are added, which operate on the file
+> > descriptor returned by CREATE_SESSION. This allows userspace to:
+> > - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
+> >   to be preserved across the live update.
+> > - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
+> >   descriptor from the session.
+> > - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
+> >   new kernel using its unique token.
+> >
+> > A state machine for each individual session, distinct from the global
+> > LUO state. This enables more granular control, allowing userspace to
+> > prepare or freeze specific sessions independently. This is managed via:
+> > - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
+> >   CANCEL, or FINISH events to a single session.
+> > - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
+> >   of a single session.
+> >
+> > The global subsystem callbacks (luo_session_prepare, luo_session_freeze=
+)
+> > are updated to iterate through all existing sessions. They now trigger
+> > the appropriate per-session state transitions for any sessions that
+> > haven't already been transitioned individually by userspace.
+> >
+> > The session's .release handler is enhanced to be state-aware. When a
+> > session's file descriptor is closed, it now correctly cancels or
+> > finishes the session based on its current state before freeing all
+> > associated file resources, preventing resource leaks.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> [...]
+> > +/**
+> > + * struct liveupdate_session_get_state - ioctl(LIVEUPDATE_SESSION_GET_=
+STATE)
+> > + * @size:     Input; sizeof(struct liveupdate_session_get_state)
+> > + * @incoming: Input; If 1, query the state of a restored file from the=
+ incoming
+> > + *            (previous kernel's) set. If 0, query a file being prepar=
+ed for
+> > + *            preservation in the current set.
+>
+> Spotted this when working on updating my test suite for LUO. This seems
+> to be a leftover from a previous version. I don't see it being used
+> anywhere in the code.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+thank you will remove this.
+
+> Also, I think the model we should have is to only allow new sessions in
+> normal state. Currently luo_session_create() allows creating a new
+> session in updated state. This would end up mixing sessions from a
+> previous boot and sessions from current boot. I don't really see a
+> reason for that and I think the userspace should first call finish
+> before starting new serialization. Keeps things simpler.
+
+It does. However, yesterday Jason Gunthorpe suggested that we simplify
+the uapi, at least for the initial landing, by removing the state
+machine during boot and allowing new sessions to be created at any
+time. This would also mean separating the incoming and outgoing
+sessions and removing the ioctl() call used to bring the machine into
+a normal state; instead, only individual sessions could be brought
+into a 'normal' state.
+
+Simplified uAPI Proposal
+The simplest uAPI would look like this:
+IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
+LIVEUPDATE_IOCTL_CREATE_SESSION
+LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+
+IOCTLs on session FDs:
+LIVEUPDATE_CMD_SESSION_PRESERVE_FD
+LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
+LIVEUPDATE_CMD_SESSION_FINISH
+
+Happy Path
+The happy path would look like this:
+- luod creates a session with a specific name and passes it to the vmm.
+- The vmm preserves FDs in a specific order: memfd, iommufd, vfiofd.
+(If the order is wrong, the preserve callbacks will fail.)
+- A reboot(KEXEC) is performed.
+- Each session receives a freeze() callback to notify it that
+mutations are no longer possible.
+- During boot, liveupdate_fh_global_state_get(&h, &obj) can be used to
+retrieve the global state.
+- Once the machine has booted, luod retrieves the incoming sessions
+and passes them to the vmms.
+- The vmm retrieves the FDs from the session and performs the
+necessary IOCTLs on them.
+- The vmm calls LIVEUPDATE_CMD_SESSION_FINISH on the session. Each FD
+receives a finish() callback in LIFO order.
+- If everything succeeds, the session becomes an empty "outgoing"
+session. It can then be closed and discarded or reused for the next
+live update by preserving new FDs into it.
+- Once the last FD for a file-handler is finished,
+h->ops->global_state_finish(h, h->global_state_obj) is called to
+finish the incoming global state.
+
+Unhappy Paths
+- If an outgoing session FD is closed, each FD in that session
+receives an unpreserve callback in LIFO order.
+- If the last FD for a global state is unpreserved,
+h->ops->global_state_unpreserve(h, h->global_state_obj) is called.
+- If freeze() fails, a cancel() is performed on each FD that received
+freeze() cb, and reboot(KEXEC) returns a failure.
+- If an incoming session FD is closed, the resources are considered
+"leaked." They are discarded only during the next live-update; this is
+intended to prevent implementing rare and untested clean-up code.
+- If a user tries to finish a session and it fails, it is considered
+the user's problem. This might happen because some IOCTLs still need
+to be run on the retrieved FDs to bring them to a state where finish
+is possible.
+
+This would also mean that subsystems would not be needed, leaving only
+FLB (File-Lifecycle-Bound Global State) to use as a handle for global
+state. The API I am proposing for FLB keeps the same global state for
+a single file-handler type. However, HugeTLB might have multiple file
+handlers, so the API would need to be extended slightly to support
+this case. Multiple file handlers will share the same global resource
+with the same callbacks.
+
+Pasha
+
+> > + * @reserved: Must be zero.
+> > + * @state:    Output; The live update state of this FD.
+> > + *
+> > + * Query the current live update state of a specific preserved file de=
+scriptor.
+> > + *
+> > + * - %LIVEUPDATE_STATE_NORMAL:   Default state
+> > + * - %LIVEUPDATE_STATE_PREPARED: Prepare callback has been performed o=
+n this FD.
+> > + * - %LIVEUPDATE_STATE_FROZEN:   Freeze callback ahs been performed on=
+ this FD.
+> > + * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully rebooted =
+into the
+> > + *                               new kernel.
+> > + *
+> > + * See the definition of &enum liveupdate_state for more details on ea=
+ch state.
+> > + *
+> > + * Return: 0 on success, negative error code on failure.
+> > + */
+> > +struct liveupdate_session_get_state {
+> > +     __u32           size;
+> > +     __u8            incoming;
+> > +     __u8            reserved[3];
+> > +     __u32           state;
+> > +};
+> > +
+> > +#define LIVEUPDATE_SESSION_GET_STATE                                 \
+> > +     _IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_STATE)
+> [...]
+>
+> --
+> Regards,
+> Pratyush Yadav
 
