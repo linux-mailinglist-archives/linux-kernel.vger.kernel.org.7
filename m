@@ -1,223 +1,114 @@
-Return-Path: <linux-kernel+bounces-875320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BCFC18B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:30:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 587C2C18AC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182321C86771
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:24:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 079E94E83BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D73A30E0FB;
-	Wed, 29 Oct 2025 07:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jiH99c5n"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A1F3126D1;
+	Wed, 29 Oct 2025 07:21:56 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5452AD3D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED8030FC12;
+	Wed, 29 Oct 2025 07:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722501; cv=none; b=W0mcRwnv28DO8PspFk85xeIRNGF/8hyrQVFrwqFEflIAxN4sDrhFrnJhOquzMGEAC9zBFMt6FBoZ9Y+HkSmGMKCxjlG8n+QeGFQt/sr5VoOVVFwXAIF+P9sMrHWXaQ63sN766HRZTj4gPuK9rthksIkDze86qbgnXzLDYL54Z9Q=
+	t=1761722516; cv=none; b=hk39fhrFOYgdBkvWfYWNVhRn5e51GgVJAxLPGkxQe4249pJLny0RZmF/7pUZGgyTSfgM7riDXmtBMEdocULiDaBM5s7t/FBwvpMMdqOz92+oyoceF3wtkp7qvzY0QfInYN5Cbbx2JhWbhoM5bid3OZh5ddee6hg6pjozYpa2BIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722501; c=relaxed/simple;
-	bh=82h/49PYzpE5xQ22tmxCOWMryIrsDdu6pWVR50htg30=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d8+MmRLr5KaWUyE/yO7euZFptoCPYmb2zQPCnBEqK238PDGBp123sP7yo3A9fRRdfTBzi/3/wwJdn/v7pG6wFAz5CCKBjBuvuP4XSYwNawyMeeXnXmiYyvs+9/Zil6aYa+REa4Il1UuSFQ8SlTQ7tog78Lw4emoolzHP2A21Z4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jiH99c5n; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71d6014810fso69633867b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761722498; x=1762327298; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Frg/0nqceIUC3qt+WffkLD7GwnU9kx+yGwPbsNn3Q/A=;
-        b=jiH99c5nXpibeXkGChGlUeuUBSCmDaDjN8RN2swzMGfppWGdcq0/bl8s8X8HFbHzta
-         phCYmOt1v2K0i87zdZeqNHYZpMq+ZR1IctMqnGDpERcaU8Coh0+TZ9ISz7RfkPzwcjls
-         yf96kyfaTS3zIPHV9GKeejZlQGzG9vvmTbVY/G4nMKZi0vIfZNEcj7uEn2lBUdTYTN/Z
-         OiHuRJnedba114fp1WOTbfseeuTnrmj7Mh2ZN8gZ/DyRv2Ujx7VzKNHt9YivLC9RG21C
-         iJmYT2oPy5Q4g/SAKAwZjQqi2u4Wl8qLwI3IlzkacHS663AkyYg+jb5GGqoq5SfpQFwU
-         THkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761722498; x=1762327298;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Frg/0nqceIUC3qt+WffkLD7GwnU9kx+yGwPbsNn3Q/A=;
-        b=q175zrt5GrOgDB7zx0l164YM76cLvXYwLTMGROSdgrYyaaUnE1CI9725DABEgf4l1T
-         NDq1ffKf8qN1CFpzXx815PF1+f4NGoQdJqJtGf/5IJONRTQWN3RF/h8hZx6gGYo4OhpW
-         67h+smSESa/Qrzqj1dZ77Qtxa0lQQFbQQ/xjzJililjRe/y+xiLwnCJ74mZ0UGc0GdXP
-         cMRGUUQ7AvA6UDHmDKdw5PqZhTm4sdb+V44nITfVm0YbOUHUUOtQ1oq+TBEvAYGGg7HL
-         ab5c98+CHwJa7siulDyliC+AR3pBZlgElbdzX14aigxRrYDv2uhxkUlHB9jaA+jOKXXY
-         lW8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFuZ1MBMSMNQ6PUaFXXJTkinlm3YItK5keAmbJ+sr7GIBsx59PxISXiUQYhHVPfzuDeCFS84zs2gaHP2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxERdHJd6HbZlMhrTfZSvzK2FsXipLETesffYqXQD96BGsJjk/S
-	8kxPfaKr1COc6BVckxROKYKc5zF70ogvvdmqaGcAF7cL9jUAB1qRmOMVkhdvknUq7FWRK1aNm+d
-	GM/WXqZcxeE8GMTyF6wMiuidE/fo76OglSkG+Q6DSoCXbdX1Oi3dGZSdpxQ==
-X-Gm-Gg: ASbGncsFRg2NV3OGBuAyjH00qIfIFp3HFm+lWjGY0M4841nGyAQS0r6tA/+zdpd3wFg
-	DnoqJxOZZMy1Eo/mq4GHaTfwbyQFJ/yZG+c9f0eeDdSYxkAeJKbm8lOljKeuk9kguuHSosijukz
-	K1iEwMkVBv+l94R1KH7W1lFXKEmOuVOXkGsOwR5wHfHPg3XhrjcJfnU/YVW/YLHyxVeK+dU6k16
-	pn4VNZMwQmHtdFnp/0OhHwaK8ZqD/sicPCqcbiJyeUm2rmfSuwl9pk7HibtoBYFjX46GqLOeAl9
-	uQErx7Q439nt08LqeLaUFcazuLjL+zAJ32cd/E3FEYv1u229VA==
-X-Google-Smtp-Source: AGHT+IEXcM1mqw1ZlJaRGUx0zSWPe47Z2BK9WBLcgt67RjOAutzpXt8R+IIXitPeSQ55F/RJPTqwxSBBB2JtLUaXCe0=
-X-Received: by 2002:a05:690c:3510:b0:739:c8f0:a151 with SMTP id
- 00721157ae682-78628e10856mr19151357b3.14.1761722498288; Wed, 29 Oct 2025
- 00:21:38 -0700 (PDT)
+	s=arc-20240116; t=1761722516; c=relaxed/simple;
+	bh=sbpGRrS3bGxlkdNpjl2GSjJ8e9OBn9VI/Px/4Foe9do=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X09yV/Hw6XD0myOEtUCGcG9LRJJYC1UIEKzXE48zkwx3Lz0C/DCr744TH8K7Kw++ZUQhyQVsaCDUokVGbtjryta4ceno6+ZK7LZ4ziNPOv0rokS3nnmvUa3+EFzj06AKF7vpVP8KyzHDSGH2mWB+oHpEOFCau8YXADKq3+hgctI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201619.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510291521419705;
+        Wed, 29 Oct 2025 15:21:41 +0800
+Received: from jtjnmail201626.home.langchao.com (10.100.2.36) by
+ jtjnmail201619.home.langchao.com (10.100.2.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 29 Oct 2025 15:21:39 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ jtjnmail201626.home.langchao.com (10.100.2.36) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Wed, 29 Oct 2025 15:21:39 +0800
+Received: from inspur.com (10.100.2.113) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Wed, 29 Oct 2025 15:21:39 +0800
+Received: from localhost.localdomain.com (unknown [10.94.19.60])
+	by app9 (Coremail) with SMTP id cQJkCsDwlHiCwAFp5TgHAA--.5620S2;
+	Wed, 29 Oct 2025 15:21:39 +0800 (CST)
+From: Bo Liu <liubo03@inspur.com>
+To: <ecree.xilinx@gmail.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-net-drivers@amd.com>,
+	<linux-kernel@vger.kernel.org>, Bo Liu <liubo03@inspur.com>
+Subject: [PATCH] sfc: Fix double word in comments
+Date: Wed, 29 Oct 2025 15:21:31 +0800
+Message-ID: <20251029072131.17892-1-liubo03@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028092846.265406861@linuxfoundation.org>
-In-Reply-To: <20251028092846.265406861@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Wed, 29 Oct 2025 12:51:25 +0530
-X-Gm-Features: AWmQ_bkC9ks8cuQ5KHFp4abqoySRrGFkhZ73SET9Q0VBFDKbJ2lMUFjdw6TxZ04
-Message-ID: <CA+G9fYsk9qL_BTDmHaw=jXrUXV3VuHwLv+R+t3cFGQh1cLtn_w@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/325] 5.10.246-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: cQJkCsDwlHiCwAFp5TgHAA--.5620S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZF13Wr4DWrykAr15twb_yoWDGwc_C3
+	sYgF1vga1jyF9rt3y2grWUZw12vwn8Xrn3ZFW7t34ftr9rWF15Jrs7Cr4xGw1DWw4UAF92
+	9r17XF4fA34aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64
+	vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8G
+	jcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2I
+	x0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGjg7UUUUU==
+X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?wGQPBmLVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
+	KIpXHRcRXlc8Cu07eTD/f+RnFgEhwHZY1GCVlt3dPFUTU3qnWib4AJttzNif5nUtmENQ/m
+	7GVnSw1ZoFM5AiCEqoM=
+Content-Type: text/plain
+tUid: 20251029152141f06600ee6afcf59d2a6780407597b773
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On Tue, 28 Oct 2025 at 14:59, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 5.10.246 release.
-> There are 325 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Thu, 30 Oct 2025 09:28:09 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.246-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Remove the repeated word "the" in comments.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Signed-off-by: Bo Liu <liubo03@inspur.com>
+---
+ drivers/net/ethernet/sfc/mcdi_pcol.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+diff --git a/drivers/net/ethernet/sfc/mcdi_pcol.h b/drivers/net/ethernet/sfc/mcdi_pcol.h
+index b9866e389e6d..e0415d08d862 100644
+--- a/drivers/net/ethernet/sfc/mcdi_pcol.h
++++ b/drivers/net/ethernet/sfc/mcdi_pcol.h
+@@ -9560,7 +9560,7 @@
+  * DMA synchronizaion. Always the last entry in the DMA buffer and set to the
+  * same value as GENERATION_START. The host driver must compare the
+  * GENERATION_START and GENERATION_END values to verify that the DMA buffer is
+- * consistent upon copying the the DMA buffer. If they do not match, it means
++ * consistent upon copying the DMA buffer. If they do not match, it means
+  * that new DMA transfer has started while the host driver was copying the DMA
+  * buffer. In this case, the host driver must repeat the copy operation.
+  */
+-- 
+2.31.1
 
-## Build
-* kernel: 5.10.246-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 98417fb6195f935428760a5fab4912492685ea1c
-* git describe: v5.10.245-326-g98417fb6195f
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.245-326-g98417fb6195f
-
-## Test Regressions (compared to v5.10.244-123-g9abf794d1d5c)
-
-## Metric Regressions (compared to v5.10.244-123-g9abf794d1d5c)
-
-## Test Fixes (compared to v5.10.244-123-g9abf794d1d5c)
-
-## Metric Fixes (compared to v5.10.244-123-g9abf794d1d5c)
-
-## Test result summary
-total: 38069, pass: 30748, fail: 1930, skip: 5243, xfail: 148
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 100 total, 100 passed, 0 failed
-* arm64: 28 total, 27 passed, 1 failed
-* i386: 20 total, 20 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 21 total, 20 passed, 1 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 9 total, 8 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 24 total, 24 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-intel_pstate
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
