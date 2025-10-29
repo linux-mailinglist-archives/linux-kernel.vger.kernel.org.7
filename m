@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-877234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 963BCC1D82D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:49:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F068C1D845
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47386401467
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:49:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16A304E3712
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217272D2391;
-	Wed, 29 Oct 2025 21:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663EC26AA94;
+	Wed, 29 Oct 2025 21:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="UpZPb28H"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EdWGTwUf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E98420C00C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B632299A8F;
+	Wed, 29 Oct 2025 21:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774564; cv=none; b=G/+NGUmNMuvZSh1jnr/7pz0NVzU9xUQfaptjT+M0Sno+p8GhFnwVqPgbhr+tkgKWq+AopI2fzxDyooCNS3QQyic44RkzSK/ei49fspVsRLcCNORoYGUF0gkqHSsydEC7Bb5RDpNXfcu6N0kQfzG9QISsOIO3PWRGgXbGGsQuHyM=
+	t=1761774727; cv=none; b=gnGOjkc9+RGaN+3k6MQSBwN5SIk8dbXkeN9PJ6tVVv3QVKhOYt0d0jn7I1jsG+CrFGuzJPqoVChAl9DUagkl9EGoxlHGyGexQxBJAyqLvAH5O/1KJi99ixgNs9dhz0APTAVbTyAeACa3xWy3Mat+NYoewvDauJ0zvvv6h/ygS/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774564; c=relaxed/simple;
-	bh=4y9V70WFBvxyqJjplO9V+cIfxz5Th6UpWFken6ZSSjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=klVNTNFnpzG9Cn+FHCB3lyeq95UkEJhLYd91NrgAKewnmI3O2TQY9B950+mUSyBL0k5aCLD0+b+hyqn5VVBgrLhTLaoJNph31cg1/XpVqMZMT9VfW+TA68OeKywIW053jpfoE3GdwXhcy7kcsMHHnwoHAsLxIaxuAtSMcCp0ME4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=UpZPb28H; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-87c103928ffso4719616d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1761774561; x=1762379361; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rE1JyEMJ3v3jXraVaSIO/rQxseox2pYjQmRppVzrLvc=;
-        b=UpZPb28H4f4dICsWtZ1LtUhJ+DoPAHLiDJIcEEkYOGZ528pFDB92iDL5Radi75VKvE
-         m6At3BfLyakLSd4yM3n3tMZntsQIjT3X06GCqIrOxG+EDXHC0Aey1DrhjvfzTsER+YDV
-         veu3YI2H+o25YXQFAUZ9u7D+XCj5wA+VRT+0pFn+RqJK8LARvLT2WStG8fQ426z0UWre
-         vq42+qKqNCYntIZtm6Mfcs1yT4Up5wM7Awcbge5DdDihkdKC1xPHI6MF85qg1pIOeiAa
-         CnffT7aYM9tUhPcVA9A9wqiQQ6JdRUrFRODnKOm6BuwWtav2e3GLdeiFT+VPansqYo8g
-         wbBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761774561; x=1762379361;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rE1JyEMJ3v3jXraVaSIO/rQxseox2pYjQmRppVzrLvc=;
-        b=aKbhAui8Uoz1MPxF5lxCuUk7KQBGAmZeu6s71PeI1XkTjvUf5Af3HNHFx7qS/Ry92y
-         vrJaQX0++pz6XQpWDgsAST9fxbA2Mhlag542dEb1ZlgH2Pg2YDO+14xTWoIwcIGGpEzV
-         h35o6+F4vEJ8d4tiF81B9jIj7WrNnljoXdTl2zSn6wHB5cT5ebgslWdKxMYcfAWS+34u
-         1p3xmjh/LQ0M9f592Zt7KhxdV6dARf5Q/a++/841JQWbOZD5aoyNdSc0odK66VxF4Ks5
-         vWl9x1YEEvu8RWHmNR8fIV9lh3YDydQhKLEr/hvkBK5gLST2GLhiw1U36f48VzYan6lz
-         8v1A==
-X-Gm-Message-State: AOJu0YyYHKwlEmvYRFbh8ANvOKXsKN/zYedec044WX7R3J7F3S16d6FR
-	D2yRGCret31nusmrxxPJuR3QeSdHJR0tiOpqNvWI4TmeBnBghP1gm9rxYY7WMA0KYA==
-X-Gm-Gg: ASbGncvBEtX/pp8ITHFOF2whxpfwMPXzb7exl+lECEVw1JUgE8m9vh6ceyRRU6MOJAD
-	W4JLPVp1kAB3URfy6qbxbhEJx317rhSemdlDDDYct0PGZ4bkcQArWlp5PmaHdyr0Wq6Q8fW+WhK
-	iS5cb9MkLJStNpjeQJckmQ+YeEEisRGBDBvAGz5dHvR/9JFcuTnI6gDfb/oy4ksc6smr/wp0obW
-	ZxHWJGwj52dWXQP9uTfUYz8yHA8W1d4Frh0ndbX+G2z029pB2VNz1CL5eHHLI+VLeYFUo+QgqRm
-	yp7yIkbCSUBzkeR7kYTAzRthTUQnA5aoPHs39SOhvsRDolsNLVnLvglKfbT4F9eereovJComH42
-	VNtRTfk7kUUHlSHIJqVsAm8nTck/gUNvR4WE0kTw9842FFfi+dI9hkc/eW3lckRyu8oP8GtqE28
-	L8hQ==
-X-Google-Smtp-Source: AGHT+IEia63DWtt3sJ/hE8wQB6V+RWNyg4QYX5RQRa/XSY65kZ2z6hDGlDeovmsAIVmEGP2Uj0ltIw==
-X-Received: by 2002:a05:6214:29e2:b0:87c:2ba1:16b4 with SMTP id 6a1803df08f44-8801b2113camr15045546d6.46.1761774561522;
-        Wed, 29 Oct 2025 14:49:21 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:d03:1700::ba76])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc4944a84sm108980116d6.36.2025.10.29.14.49.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 14:49:20 -0700 (PDT)
-Date: Wed, 29 Oct 2025 17:49:17 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Desnes Nunes <desnesn@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	gregkh@linuxfoundation.org, stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] usb: storage: Fix memory leak in USB bulk transport
-Message-ID: <2ecf4eac-8a8b-4aef-a307-5217726ea3d4@rowland.harvard.edu>
-References: <20251029191414.410442-1-desnesn@redhat.com>
- <20251029191414.410442-2-desnesn@redhat.com>
+	s=arc-20240116; t=1761774727; c=relaxed/simple;
+	bh=FLS8RyiGm0u2wczORyexcBCuRP8pAa4MB0CjK9Bw1pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BetCpgwS6oV4a0IW8wW1moICXci3bUxpvX01oQFsWPJvF0k0TZX+Sf4ZnHmy2wHHvpQmAHZ5Pc26oKk86P29b3sHs1o/7TcQh4YH4L5B4Ioli2jlV5ol93pSxwYzkzLNalD3lW7hFPKKBHEsmbDj7Rp7IeVlTvqw/V4iz3Ocp88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EdWGTwUf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761774720;
+	bh=YTY23PpFudMI3M3HdegKuqvRuIxptco4kHRxtOA/Iow=;
+	h=Date:From:To:Cc:Subject:From;
+	b=EdWGTwUf3shaV/AnBFR3aIToUPJuGTeG9n1ZKJk/+g4yYw+6MVSieZf0ZaGCnkFSm
+	 y4XDMC7CSMNLOBxkQXNeidjcuRk32Gd+I9MUGPPImHvL1TYAmxtTY7+C335rcRH7TD
+	 G5Ni76+7W4RlzJM+6HpIhlUDks4Z5yH48/wEfaEwN85zereu/ZcUOSuviHJcaLdTiZ
+	 wKao9RB3QZcvDhm4SruoY+CSrBffuYrXyXv/3vVfAEMR6qFVATzj6dJEkyy4CEJqky
+	 Y9zx2zyz4OnW98JKZAwc3chP1kkDsk0N0MoFxNFbfw1y28czgqZejNV2hft56JavSK
+	 2IJOEIj8E5QTA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cxgv44c19z4w2B;
+	Thu, 30 Oct 2025 08:52:00 +1100 (AEDT)
+Date: Thu, 30 Oct 2025 08:51:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Alex Shi <alexs@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the jc_docs tree
+Message-ID: <20251030085146.37ab6bd4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029191414.410442-2-desnesn@redhat.com>
+Content-Type: multipart/signed; boundary="Sig_/pcVQcAoYVK/VWzca5yVN6p2";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Oct 29, 2025 at 04:14:13PM -0300, Desnes Nunes wrote:
-> A kernel memory leak was identified by the 'ioctl_sg01' test from Linux
-> Test Project (LTP). The following bytes were maily observed: 0x53425355.
-> 
-> When USB storage devices incorrectly skip the data phase with status data,
-> the code extracts/validates the CSW from the sg buffer, but fails to clear
-> it afterwards. This leaves status protocol data in srb's transfer buffer,
-> such as the US_BULK_CS_SIGN 'USBS' signature observed here. Thus, this
-> leads to USB protocols leaks to user space through SCSI generic (/dev/sg*)
-> interfaces, such as the one seen here when the LTP test requested 512 KiB.
-> 
-> Fix the leak by zeroing the CSW data in srb's transfer buffer immediately
-> after the validation of devices that skip data phase.
-> 
-> Note: Differently from CVE-2018-1000204, which fixed a big leak by zero-
-> ing pages at allocation time, this leak occurs after allocation, when USB
-> protocol data is written to already-allocated sg pages.
-> 
-> Fixes: a45b599ad808 ("scsi: sg: allocate with __GFP_ZERO in sg_build_indirect()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Desnes Nunes <desnesn@redhat.com>
-> ---
->  drivers/usb/storage/transport.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
-> index 1aa1bd26c81f..8e9f6459e197 100644
-> --- a/drivers/usb/storage/transport.c
-> +++ b/drivers/usb/storage/transport.c
-> @@ -1200,7 +1200,17 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
->  						US_BULK_CS_WRAP_LEN &&
->  					bcs->Signature ==
->  						cpu_to_le32(US_BULK_CS_SIGN)) {
-> +				unsigned char buf[US_BULK_CS_WRAP_LEN];
+--Sig_/pcVQcAoYVK/VWzca5yVN6p2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-You don't have to define another buffer here.  bcs is still available
-and it is exactly the right size.
+Hi all,
 
-Alan Stern
+Commits
 
-> +
-> +				sg = NULL;
-> +				offset = 0;
-> +				memset(buf, 0, US_BULK_CS_WRAP_LEN);
->  				usb_stor_dbg(us, "Device skipped data phase\n");
-> +
-> +				if (usb_stor_access_xfer_buf(buf, US_BULK_CS_WRAP_LEN, srb,
-> +						&sg, &offset, TO_XFER_BUF) != US_BULK_CS_WRAP_LEN)
-> +					usb_stor_dbg(us, "Failed to clear CSW data\n");
-> +
->  				scsi_set_resid(srb, transfer_length);
->  				goto skipped_data_phase;
->  			}
-> -- 
-> 2.51.0
-> 
+  564f84128bd2 ("docs/zh_CN: Add translation of rust/testing.rst")
+  6d4a6d623098 ("docs/zh_CN: Add secrets coco Chinese translation")
+  344657696e9a ("docs/zh_CN: Add sd-parameters.rst translation")
+  989a716b1677 ("docs/zh_CN: Add link_power_management_policy.rst translati=
+on")
+  6c07193cb80f ("docs/zh_CN: Add scsi-parameters.rst translation")
+  cfd923323d14 ("docs/zh_CN: Add scsi_eh.rst translation")
+  da6572ec7105 ("docs/zh_CN: Add scsi_mid_low_api.rst translation")
+  16dfba1581b5 ("docs/zh_CN: Add scsi.rst translation")
+  9162cb790b42 ("docs/zh_CN: Add scsi/index.rst translation")
+  fe67964dd6e2 ("docs/zh_CN: Update Rust index translation and add referenc=
+e label")
+  1e108599ebfe ("docs/zh_CN: Add security SCTP Chinese translation")
+  b12bb7728152 ("Docs/zh_CN: Translate timestamping.rst to Simplified Chine=
+se")
+  4d926084ce6d ("docs/zh_CN: Add security lsm-development Chinese translati=
+on")
+  6d624576ca3f ("Docs/zh_CN: fix the format of proofreader")
+  25cf7924b579 ("Docs/zh_CN: align title underline for ubifs.rst")
+  e3f873992cc4 ("Docs/zh_CN: add fixed format for the header of gfs2-glocks=
+.rst")
+  37b1e0d4ab11 ("docs/zh_CN: Add security ipe Chinese translation")
+  ab530c5fca9b ("Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chine=
+se")
+  d3e7609c6e5e ("Docs/zh_CN: Translate skbuff.rst to Simplified Chinese")
+  6d35e61606d0 ("Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chine=
+se")
+  0694113d49b5 ("Docs/zh_CN: Translate inotify.rst to Simplified Chinese")
+  f4121e639fd3 ("Docs/zh_CN: Translate dnotify.rst to Simplified Chinese")
+  250fc3d68a90 ("Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chines=
+e")
+  a502ffe48523 ("Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chine=
+se")
+  46ea6a90b59d ("Docs/zh_CN: Translate gfs2.rst to Simplified Chinese")
+  e0bb4c3524df ("Docs/zh_CN: Translate ubifs-authentication.rst to Simplifi=
+ed Chinese")
+  fe460c3ec8b1 ("Docs/zh_CN: Translate ubifs.rst to Simplified Chinese")
+
+are missing a Signed-off-by from their committers.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/pcVQcAoYVK/VWzca5yVN6p2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkCjHIACgkQAVBC80lX
+0GyDgAf9E1T7UmhECxjpyZ4JaTZW9GKiD2fasDteSj5l+uLPxlx9p0uoq1Nejtqj
+TOm4bExwhTzNzE3aAV9nBw4qOGoJ3qsyZ0qIIpJNshUetOaLrzDYyXPDyJBSP2Vv
+duSYyPW2ILKNYhyfOOpfLb3afnY+Lzk85PUVaT3p3L9IwU9hl96p3qoEMAWj/XWZ
+VSWHwBWS0S8Mq6SyFRyN6pj6K07SGByT4lQVNdmyDsIh4pHiajK0SKcuZroPYke3
+X53gu0HSazAJcNpprh5mHCBsYibgZUTFH/6PjMSln7c4+RBV6o0CyOgdEd2Lsf2C
+Phs3eUWOLBJhPUKgFutUTc8HvWBZng==
+=+40m
+-----END PGP SIGNATURE-----
+
+--Sig_/pcVQcAoYVK/VWzca5yVN6p2--
 
