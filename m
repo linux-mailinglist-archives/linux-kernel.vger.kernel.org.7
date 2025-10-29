@@ -1,170 +1,141 @@
-Return-Path: <linux-kernel+bounces-876500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE7BC1BDC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:58:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3889C1BB34
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:36:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F45C1250
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB0C62305E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4100830C60F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89901325713;
 	Wed, 29 Oct 2025 15:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="T22IUOzV"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO8wlahf"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E072F6912
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B9DC310624
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751247; cv=none; b=Z5xXdG9b9inymXsjO5XlIJyIj+fhesB1b2dXssa4+Ly4jj5RmDe5BLufE6DeBTLfj+n0hpuiZD7j96Q2BEIF+g0Wj3FGYKjMclBCTjs/MgJXhVBpCccVkOsZu23O71H1X1SJ5pK8sGPJh4Irg9KrISUF8ioqefaBDZUh1FwPlYM=
+	t=1761751247; cv=none; b=W4PsT0EaZBlsPpjhELrNLpOM05NsSGE5gUtfzf5sPEYv+exSd4MhazZ8OEvFB8Bo//03fRIMHeEQJON3JAdgjIfPUsdJzT1HPA1yqLh9IgR180WOTOuVGDfQPxZI2GVVd4JS4qxoKUaGqCLXlgOD2gJaNrw+ZbGv63NuEINzNis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761751247; c=relaxed/simple;
-	bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CWMno6Xpo6pwXxPq+2Wz/+0YNtjTAn7LSykLrlQjWaZ40KhNfXKfEXxyrKYl7LqK0blOOu0N9N+9cA1CA6by94mM9zXHNbx/XlG8bIRO9ceqIuACKckyuyFT6zw9cMCH69YOUI1qJ1v/kpt9HleDrzaqc9Hc1DuzfZlcmWcrczo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=T22IUOzV; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1761751242;
-	bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=T22IUOzV/MsCEGMHkrD5VbnbP7/xZR0Rk4JduAqAJb4uU0gEjZFI2KHDMheeadKy0
-	 Gdp9NkeTyt2rl8pGUK+7AkOLJ2Jfbjoo6+WS4/Dw8afsrRkykPM2aDi5ERJvghF5vu
-	 xS8cB3U7TAcDC1gWg2n3zGdCsRmJxb2MjLtDlnPg=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 29 Oct 2025 16:20:34 +0100
-Subject: [PATCH] LoongArch: ptrace: Use UAPI types in UAPI header
+	bh=HtJoUupx6d/yAjUM+7GHFEp8E2bMSioh2TQ2z1eUvkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uo3QTpNuxR6MvVgjjp3HwydUcfjHR2kN3z5ZwjbIiKMEbqSwkkAreqcEW8X6LAzbpWvrxKMnG/aj9iWABhnAdlROm03GurcsDwBWCEPpiBmZqmJLgF/DqSgkS39yr55UYP3oNwY8uImTH5dcAk+VYg0q26TeEj/iwZ4J0kjj0oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YO8wlahf; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-27c369f8986so67034175ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:20:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761751245; x=1762356045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=StYPN+Xnv/FlnNbB7eCIIAuswaamCaMZ2VJSzNeBonw=;
+        b=YO8wlahfk7zhuSu1taBkNV56d397C4+ZSInUL/QkrdiaOsPQ5MA0soEKfiN1TYN4Qn
+         CVmAV0FikZzMfUd5O4x7D7OxEgG6fnDOv3H7rfs0hJRemFrbiibfJzRJIQ4dHMS5jQKS
+         Srl1pIJR42ieowOEibynXL6YaR8rd9bpVw7yDvaexC6ZxnDSViS+zAWs/ixP9306ZgnI
+         mHA+umwm3ksAqMkg+n9sGZ5r+5SWmMuBl3j+uz0RdkM/xVdZRgHRWyOOg1CN3uw41hC1
+         1OXydasfIbqaSRVSdu9PIhk2aWeweSg929CU5mfJSCKROZqApyga5796HyQf5hm9A/u7
+         usqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761751245; x=1762356045;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=StYPN+Xnv/FlnNbB7eCIIAuswaamCaMZ2VJSzNeBonw=;
+        b=addl4c1QMPw7rUSW7uRrmlLwXLQ/mmGQ6N4PZIcFdi8NquTTqHtIojqbuUa9+xidlP
+         t4NHe6ELzLVXBbOtHXukEdrYrGX9N6dm5PqIsZ8liCiFXpxmW+Gutdnl2B3l9mKXT4pr
+         taJJK7sCkbif6V2HJu0nLjNMWr4iyHSgoiCtvEkaKQwHselAcD0xyZr32uAhAc1Y0sKY
+         +TKuYIvS+uzK7ShMwEnsf21v4ZxuDGK18lS508abdjUv+27qmYd3SD1AZelEVgMr2ovc
+         FuaCf+T55XIpuucFV2OD57tbcMvSrl0wtrfMfS++ghg81YvsiwhglsThhjyUQ5AYDZQ6
+         p1hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDczCJHOuHWCC3R0qF2GebFO/u9ApXqWf0v7HJeYNEMBqe3t32hC1sCHa51hOPY0unAr+XGS5ZEaGNPE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRlHNOg7J04KuBkl/199zKPHMjMvRDqEBrgyZbgUUb5cYq18y3
+	yjk7lZIDecnn+0JYuWnZA/zi/TY8k0erbVg6pOZiEZZGl6x9MjNLSvGg
+X-Gm-Gg: ASbGncumOs0yQRMkw/dSpEkCIoWBaOiHPE1HfVcAaKhfdgH2D+LF3cm6hhdhhNbmox7
+	Er0xRc1zhK4+PvbcsqZCAxvJY7srnNPXZmw1LX7qJ+a1swKwl1oyZma+M5SeUf3IETY/NexuHjc
+	pxaUNUZGWlJTGQpA9ffPfWcUM6k+rFRuXM6cjxEQGR4eb6RLe3zrDel7zUFxMpzFi8KL97Z0aKM
+	ZlkDjaIJLaq2uWA//YLx5LYXCqdiOW/n400vxCiz/i28N+0Mpe3+ux3cejTXWJNAwKCkuNof0OJ
+	CUUZLKFK79ojidWq+E6nkxPmrHGQk+HVWNzPw7AFvhvoyhCwUg7n4rEcm5kIPXN3MPo0eHRrLa3
+	Zdv1NTjS5ZHI2yhuFBQ3e6l+p/QS+SE1RtPDWi/RywBC2luT/DLn+HX4Io8Z/oJclkmDV/bpYNP
+	0S73cXDF4dYWiUonUJcLk=
+X-Google-Smtp-Source: AGHT+IEpwGryO+Dsdw+yBiLYzvfG216rbfuFmYTVEwK59maJasPtn26KCM1zCvZKBwTCZ0ScENApeA==
+X-Received: by 2002:a17:902:f550:b0:277:3488:787e with SMTP id d9443c01a7336-294dee0cebemr41194955ad.12.1761751245449;
+        Wed, 29 Oct 2025 08:20:45 -0700 (PDT)
+Received: from fedora ([103.120.31.122])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf3bfesm157605975ad.4.2025.10.29.08.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 08:20:44 -0700 (PDT)
+Date: Wed, 29 Oct 2025 20:50:38 +0530
+From: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+	Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>,
+	Wei Yang <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] selftests/user_events: Avoid taking address of packed
+ member in perf_test
+Message-ID: <aQIwxjBNonW5Py_I@fedora>
+References: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
+ <20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
+ <aQD2Igc3svAF3klc@fedora>
+ <20251028132605.2926d3ef5eb6ea60d22ceffe@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251029-loongarch-uapi-ptrace-types-v1-1-5c84855a348d@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAMEwAmkC/x3MQQqEMAwAwK9IzgZqocr6FdlDiVEDS1tSV5Ti3
- y0e5zIFMqtwhrEpoHxIlhgqurYB2nxYGWWuBmus64z94C/GsHqlDf8+CaZdPTHuV+KMhhz1g+u
- XgQ3UISkvcr779L3vB4uWWa5tAAAA
-X-Change-ID: 20251029-loongarch-uapi-ptrace-types-0c5c6756f7e0
-To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761751240; l=2467;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
- b=iRGJc3xKWpH8P8tHfaNUxQgjaPLqEMXyIUdYMwkHmnUIDlVkOxJKQd8MbhR2Pb4O9f7J3yvU8
- qCeHgSmlM/5BoDUlgE1aB0wVgdYcHKtrv01J4B/PlkUphgBZ54+WYqc
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028132605.2926d3ef5eb6ea60d22ceffe@linux-foundation.org>
 
-The kernel UAPI headers already contain fixed-width integer types,
-there is no need to rely on libc types. There may not be a libc
-available or it may not provide <stdint.h>, like for example on nolibc.
+On Tue, Oct 28, 2025 at 01:26:05PM -0700, Andrew Morton wrote:
+> On Tue, 28 Oct 2025 22:28:10 +0530 Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
+> 
+> > > > @@ -236,7 +237,8 @@ TEST_F(user, perf_empty_events) {
+> > > >  	ASSERT_EQ(1 << reg.enable_bit, self->check);
+> > > >  
+> > > >  	/* Ensure write shows up at correct offset */
+> > > > -	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+> > > > +	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
+> > > > +	ASSERT_NE(-1, write(self->data_fd, &write_index,
+> > > >  	                    sizeof(reg.write_index)));
+> > > 
+> > > Simply casting &write_index to void* would fix this?
+> > 
+> > yes, this hides the type mismatch from the compiler. But i think
+> > casting to void * will not fix the alignment mismatch for packed struct.
+> > It works on x86, but might break on other platform.
+> 
+> It's the second argument to write(2)!  write(2) expects a const char *,
+> but void* will work.
 
-This also aligns the header with the rest of the LoongArch UAPI headers.
+Hi Andrew,
+Indeed 
+`ASSERT_NE(-1, write(self->data_fd, (void *)&reg.write_index, 
+		     sizeof(reg.write_index)));`
 
-Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-I'd like to take this through the nolibc tree, as this currently breaks
-the upcoming nolibc ptrace support.
----
- arch/loongarch/include/uapi/asm/ptrace.h | 40 ++++++++++++++------------------
- 1 file changed, 18 insertions(+), 22 deletions(-)
+would work. However since `reg` is packed struct, directly taking the 
+address of its member  `&reg.write_index` may lead to unaligned access 
+on some architectures. as indicated by the compiler warning
 
-diff --git a/arch/loongarch/include/uapi/asm/ptrace.h b/arch/loongarch/include/uapi/asm/ptrace.h
-index aafb3cd9e943..215e0f9e8aa3 100644
---- a/arch/loongarch/include/uapi/asm/ptrace.h
-+++ b/arch/loongarch/include/uapi/asm/ptrace.h
-@@ -10,10 +10,6 @@
- 
- #include <linux/types.h>
- 
--#ifndef __KERNEL__
--#include <stdint.h>
--#endif
--
- /*
-  * For PTRACE_{POKE,PEEK}USR. 0 - 31 are GPRs,
-  * 32 is syscall's original ARG0, 33 is PC, 34 is BADVADDR.
-@@ -41,44 +37,44 @@ struct user_pt_regs {
- } __attribute__((aligned(8)));
- 
- struct user_fp_state {
--	uint64_t fpr[32];
--	uint64_t fcc;
--	uint32_t fcsr;
-+	__u64 fpr[32];
-+	__u64 fcc;
-+	__u32 fcsr;
- };
- 
- struct user_lsx_state {
- 	/* 32 registers, 128 bits width per register. */
--	uint64_t vregs[32*2];
-+	__u64 vregs[32*2];
- };
- 
- struct user_lasx_state {
- 	/* 32 registers, 256 bits width per register. */
--	uint64_t vregs[32*4];
-+	__u64 vregs[32*4];
- };
- 
- struct user_lbt_state {
--	uint64_t scr[4];
--	uint32_t eflags;
--	uint32_t ftop;
-+	__u64 scr[4];
-+	__u32 eflags;
-+	__u32 ftop;
- };
- 
- struct user_watch_state {
--	uint64_t dbg_info;
-+	__u64 dbg_info;
- 	struct {
--		uint64_t    addr;
--		uint64_t    mask;
--		uint32_t    ctrl;
--		uint32_t    pad;
-+		__u64    addr;
-+		__u64    mask;
-+		__u32    ctrl;
-+		__u32    pad;
- 	} dbg_regs[8];
- };
- 
- struct user_watch_state_v2 {
--	uint64_t dbg_info;
-+	__u64 dbg_info;
- 	struct {
--		uint64_t    addr;
--		uint64_t    mask;
--		uint32_t    ctrl;
--		uint32_t    pad;
-+		__u64    addr;
-+		__u64    mask;
-+		__u32    ctrl;
-+		__u32    pad;
- 	} dbg_regs[14];
- };
- 
+	perf_test.c:239:38: warning: taking address of packed member
+	'write_index' of class or structure 'user_reg' may result in 
+	an unaligned pointer value [-Waddress-of-packed-member]
+	239 |         ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+      	    |						  ^~~~~~~~~~~~~~~
 
----
-base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
-change-id: 20251029-loongarch-uapi-ptrace-types-0c5c6756f7e0
+Using `memcpy` avoids this by performing a byte-wise copy, which is safe 
+to use for packed structures.
 
-Best regards,
--- 
-Thomas Weißschuh <linux@weissschuh.net>
-
+Thanks
+-- Ankit
 
