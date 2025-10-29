@@ -1,79 +1,49 @@
-Return-Path: <linux-kernel+bounces-875029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC34DC180CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:30:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0C04C180D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D39564F17FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:30:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED5204F9202
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D487F2EB846;
-	Wed, 29 Oct 2025 02:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A22827D77D;
+	Wed, 29 Oct 2025 02:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VR5BoMPT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8hSh2qv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389492E7F29;
-	Wed, 29 Oct 2025 02:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B378C86323;
+	Wed, 29 Oct 2025 02:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761705008; cv=none; b=HbSbqwoO2XX3mN0BAn96FRzsUyXi+npyeKRgHljpvyDVLi+W/27KSSvJSMZquA2vk9MEqHIy+aR/IQ4ZmfMBDdn7heIc1fWlO3HBxuOr9ykLmB5Fw1e9w6EAzqSnEWkXDCDokQSPxccclhmvTtyUgoA/oylPNn50YcqJq3KxYZ4=
+	t=1761705033; cv=none; b=EpyVqsrVtPvFqdQjWUUDG105wJdXQDcWo/hQUOSU3a96tcsQq0mx6V/SqeZOa+b2/YMoSa7OyjLOmmm8mKkGKXP9HFINRSqUFIfXxhkkk6BtQC7Lm6q+IsPfOTdWstM3Z5uG2QNfecXJSjSDvqMeiUzcBFKNI4beWRRFQHrtrsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761705008; c=relaxed/simple;
-	bh=BeESw+vKw6cYDcN/A4G65c0j8zVSiMecMyBznJqncsc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AazJvCrQeX9/T3bGH+ellaAfe3eNDBCRVwkak/Q+nUcibJTAgfGxi9ZowITlDN/Zp1iIoz6FCloMAxZQcYz41IHRLi9BCzZLKG8zxQahyFA2NRceKEgHA6dk109aeFfwrOziSRVtIWviggzU5c5kzCdgLJUf+bCysczAjaBkhpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VR5BoMPT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJqeNp2511129;
-	Wed, 29 Oct 2025 02:30:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=ZW+/KCGQS+z
-	Y7T27U6tDMtmZERCSPv6YdAILEXmxBD4=; b=VR5BoMPTm2WBdYcbSGT5pwDr6RF
-	cJifbSRDTFa57taqgIX6OD23/Aw0tpGqvQFtvD6+uWYcgvwD3vBlUIFUNnam2vbU
-	+g7Mpf2V7kROju0oZixsWB6DG0bwsYRziSCTZ/DOaj5fKtJZY8WTcvjQJlJ3skCV
-	59yRWINTDhr0mH0xAu+Ad+WUpmglLCJghBIvjjLoc+kpECSeYOulgBz2STcU1x3y
-	VZL6GUwP3B56h9Qqld5D/2eukSMRsJLLeyHfsAFGSRu5Z0HnpueGWMsXm3C144w0
-	mYqq7tTr+O9/DgGXvgnRCDJqzk2ssGAns29OY1sVfBppvASkgi4hIrEA6CA==
-Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34cd8vbe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 02:30:02 +0000 (GMT)
-Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 59T2Tx7Q017890;
-	Wed, 29 Oct 2025 02:29:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 4a0qmm5k25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 02:29:59 +0000
-Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 59T2Txcr017885;
-	Wed, 29 Oct 2025 02:29:59 GMT
-Received: from bt-iot-sh02-lnx.ap.qualcomm.com (bt-iot-sh02-lnx.qualcomm.com [10.253.144.65])
-	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 59T2Txbx017883
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 02:29:59 +0000
-Received: by bt-iot-sh02-lnx.ap.qualcomm.com (Postfix, from userid 4467449)
-	id 6AAD5231FD; Wed, 29 Oct 2025 10:29:58 +0800 (CST)
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-To: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org,
-        luiz.dentz@gmail.com
-Cc: linux-bluetooth@vger.kernel.org, stable@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_chejiang@quicinc.com, Shuai Zhang <quic_shuaz@quicinc.com>
-Subject: [PATCH v2 1/1] Bluetooth: btusb: add default nvm file
-Date: Wed, 29 Oct 2025 10:29:55 +0800
-Message-Id: <20251029022955.827475-2-quic_shuaz@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251029022955.827475-1-quic_shuaz@quicinc.com>
-References: <20251029022955.827475-1-quic_shuaz@quicinc.com>
+	s=arc-20240116; t=1761705033; c=relaxed/simple;
+	bh=CVpJtmL1FdG28qO/fDboA1mMwi/59287bA8TQeWmj+c=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=He59YK1QkYWQN5kB2DLXia3sUir5SAGRIl8pNzh9oApsp+VtnDxFL1mRCzKq1SiMGGJAIeYsuesiJ/zhCISQtKx4R6JJSFNEJPdjKD5MXrHIv/3lt/NTG72vmmva2JwuDgomeVo/zjL/Rxm+N5lOeCjrpcqZPP3d+qtva6Aq9xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8hSh2qv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D93DC4CEE7;
+	Wed, 29 Oct 2025 02:30:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761705032;
+	bh=CVpJtmL1FdG28qO/fDboA1mMwi/59287bA8TQeWmj+c=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=e8hSh2qvvhN+MTPjiT3RTfr/Pmn3KTUKXUUoeFFiHoBqtYFOhSD2fYE3fzeUa9R6F
+	 PmYyPVefsj1VZXN9ZO1Xhmx3bnUjEFA6UrcIPlYaboMDxHo29+2M1RdH7XxBVvGro7
+	 xnnPF3xaG+Y9XmrmOJDPl7/LE2f4nOqlvLjOOCWOVf7SQzE83R9b60J8Lvq3iqifqp
+	 MyjN97/+orrZMvqM5UseWiPOhCanvEfQLTOexTtwZulGVcUlJjX/rsBXCegBGtLuDQ
+	 8yJmQinKZPk4PJ/FPLH/M7u9aIOJ5XZLK7JYItAHywYx9TBKwCuTR7uYaduYW3XPha
+	 iM9PHDCaqPL8w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EADE739FEB75;
+	Wed, 29 Oct 2025 02:30:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,95 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LkC8NCGV3P16O0rzWGoTyfKTtmEWGbGT
-X-Proofpoint-GUID: LkC8NCGV3P16O0rzWGoTyfKTtmEWGbGT
-X-Authority-Analysis: v=2.4 cv=avi/yCZV c=1 sm=1 tr=0 ts=69017c2a cx=c_pps
- a=nuhDOHQX5FNHPW3J6Bj6AA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8
- a=icOeAstkKu_1uK2K-hUA:9 a=TjNXssC_j7lpFel5tvFf:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAxOCBTYWx0ZWRfX7O1S2jagMtJ2
- 3wlbHoPbI5UUpvSD5651HfIOPWqs0ZUUwGhI8mM2UIDNjk3RLNdl2Zz6ZV6Pk6P58k8s2RTQ/xP
- CcgX2aaPwKcWy8GZ3C6LjxEhmykALXUnH5yxwGtRvhp8ebzJZef5gGTNttf5ptdxNXPLkYl92SA
- zNlHA6iQ0ufxbk/GJ0U/Ra5OLltq+rpbgF1vdCG6EBTKvDB4tFgiRRgoNFkr3QNxQcSjKoxOPRd
- 5zigAFyhkTlGTi+qgQ5xb3gd/0683rxut+3vs8fHeerNdya9UVsA6R4qGNYr/Q1/l7utHv7Nget
- AMZw+dZ0o8AZd3b1P+TO+VoHL4ON2GUQOIQdN+cw7EVDR9OKjspFE8tt2TDWX2D1tOnNF2RhoU1
- SgKswQpoXxipwe+nTLGah6Ga1e10LQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 impostorscore=0 malwarescore=0
- suspectscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0
- lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2510290018
+Subject: Re: [PATCH V2 net 0/3] bug fixes for the hibmcge ethernet driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176170500975.2468647.13996100995604445036.git-patchwork-notify@kernel.org>
+Date: Wed, 29 Oct 2025 02:30:09 +0000
+References: <20251025014642.265259-1-shaojijie@huawei.com>
+In-Reply-To: <20251025014642.265259-1-shaojijie@huawei.com>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ shenjian15@huawei.com, liuyonglong@huawei.com, chenhao418@huawei.com,
+ lantao5@huawei.com, huangdonghua3@h-partners.com,
+ yangshuaisong@h-partners.com, jacob.e.keller@intel.com,
+ jonathan.cameron@huawei.com, salil.mehta@huawei.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-If no NVM file matches the board_id, load the default NVM file.
+Hello:
 
-Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: stable@vger.kernel.org
----
- drivers/bluetooth/btusb.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+This series was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index dcbff7641..6903606d3 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
- }
- 
- static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
--					const struct qca_version *ver)
-+					const struct qca_version *ver,
-+					u16 board_id)
- {
- 	u32 rom_version = le32_to_cpu(ver->rom_version);
- 	const char *variant, *fw_subdir;
- 	int len;
--	u16 board_id;
- 
- 	fw_subdir = qca_get_fw_subdirectory(ver);
--	board_id = qca_extract_board_id(ver);
- 
- 	switch (le32_to_cpu(ver->ram_version)) {
- 	case WCN6855_2_0_RAM_VERSION_GF:
-@@ -3522,14 +3521,28 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
- 	const struct firmware *fw;
- 	char fwname[80];
- 	int err;
-+	u16 board_id = 0;
- 
--	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
-+	board_id = qca_extract_board_id(ver);
- 
-+retry:
-+	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
- 	err = request_firmware(&fw, fwname, &hdev->dev);
- 	if (err) {
-+		if (err == -EINVAL) {
-+			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
-+			return err;
-+		}
-+
- 		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
- 			   fwname, err);
--		return err;
-+		if (err == -ENOENT && board_id != 0) {
-+			board_id = 0;
-+			goto retry;
-+		} else {
-+			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
-+			return err;
-+		}
- 	}
- 
- 	bt_dev_info(hdev, "using NVM file: %s", fwname);
+On Sat, 25 Oct 2025 09:46:39 +0800 you wrote:
+> This patch set is intended to fix several issues for hibmcge driver:
+> 1. Patch1 fixes the issue where buf avl irq is disabled after irq_handle.
+> 2. Patch2 eliminates the error logs in scenarios without phy.
+> 3. Patch3 fixes the issue where the network port becomes unusable
+>    after a PCIe RAS event.
+> 
+> 
+> [...]
+
+Here is the summary with links:
+  - [V2,net,1/3] net: hibmcge: fix rx buf avl irq is not re-enabled in irq_handle issue
+    https://git.kernel.org/netdev/net/c/12d2303db892
+  - [V2,net,2/3] net: hibmcge: remove unnecessary check for np_link_fail in scenarios without phy.
+    https://git.kernel.org/netdev/net/c/71eb8d1e0756
+  - [V2,net,3/3] net: hibmcge: fix the inappropriate netif_device_detach()
+    https://git.kernel.org/netdev/net/c/7e2958aee59c
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
