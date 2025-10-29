@@ -1,233 +1,123 @@
-Return-Path: <linux-kernel+bounces-876482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CB3C1B958
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:16:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00921C1BD6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F371880641
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:10:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9766A5C9918
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:09:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89242E3AEA;
-	Wed, 29 Oct 2025 15:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D342E040D;
+	Wed, 29 Oct 2025 15:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2XONnZUx"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011022.outbound.protection.outlook.com [40.93.194.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IE76H9/8"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8232DC76A;
-	Wed, 29 Oct 2025 15:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750563; cv=fail; b=MTXe1saXm4guOJrdqi6vRG74U6x3PmXoaMD6+S3cFEPQb+b/SVDVnoDIhXnQxcMi6a+TNFSBeChwY4BsQdp2Wq2kB6bMDbCUBQASmqZPxLot17G2uJAxTwXXNDKtOmhkpRFokP13fwWa6Utrxn+3jJXSJQd5fzTjWqa6TtSS/ag=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750563; c=relaxed/simple;
-	bh=0lLZ/QxFL+hpG5igz5bhAAmc4iZcPr18cxIlUSA+DG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=I6UXWLnSf0RBhRcytD1CaKmDL4dbyoxXDoPbBq3TF8xOy3jSlyv01tsuiY7uWFFIfqgmnI4TvrXcXQGOAbhiD/i2m1mOylhBSNpobMFIKYv1L/jj5Lz7P11FdxObvXTgdzLKXlHgRPfy8Ur2uaoTinZvW5BsaB8tPDcMG9TZRBk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2XONnZUx; arc=fail smtp.client-ip=40.93.194.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oXCEqO9t4XiFgtNBgs50o1ovWzrzYs6JLpbvXhpEO3HT7x3/My5hZ4WMmoMVgwTVTNcZLzhW8DXr6vv6++igHIv4/Uqll75wtCFnTtghe3t/SF7BWSdK5KfahL4PxTCnJ+kvbyD9nKp6Z6I8Z4CjOKTttPcYqTrMm9LgV+wZ944A0Tes4b+1wr+U/rEgd1kRp8f3Nm6YAOEK0pkmflAyFs/TO3LySSUWOJzI65oHsvUSzGX0xTIvkc+3puvZ0hw7Ye//3/p0ma75Kdx5D+1YIhLaDz4Ae7ZtT7qchOZq0krX0mU7AEI9xyJJQcLSj/9ahXyN6jr1IOkJSnjFiMJIuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e530uwJsw02MgJsiZOJDJSpIwvKvAGjkyqBxlUcN4EM=;
- b=vCq+uUT0TdyXQXsJMLymgp696LOLhYJPafTY3oNLOSsppCHXeIX+QjnvwzgSVpUjb3ZF8DIEYurAzRKbbhtNBC6eJ9EAEhlMT4fFydPh6QIn5f9KsN34Vb43rSWA8OpwnpLxPFcUPKMNoPvub5QzWeXfhM3u9b8OAeqqVqChaJec+nNWOYnRrwj0F7lEfracbAJtxiW+0MNCRAZkxiR79RDA1Lf5XSNRdjwQbcv2gT4m+lzAcVhd7f2+ZnM0AA5q3HzCkjHB5i0k+Io+RMuIIj8uDQy+rK7ybgY5s352bNioAmOKIysABuw521ouOSBaNw9hz8GcQ6plCUyiT1mKtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e530uwJsw02MgJsiZOJDJSpIwvKvAGjkyqBxlUcN4EM=;
- b=2XONnZUxRBi7P8duSkhfkaBJUBzioaJt2o87oRwC5JkQkdCqmC36x+rRaV+s7nSHfOsOjxvP7b7nJWYSe+uPaLzLrtAdJcnumIyLXKv9vzjk9tZ0bElbbw8+T+RIEy06y/5xFzEVGTDOOdcPT9pBgAckoMA/cScR968IynNzy5E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- SJ2PR12MB9242.namprd12.prod.outlook.com (2603:10b6:a03:56f::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 15:09:17 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%6]) with mapi id 15.20.9253.018; Wed, 29 Oct 2025
- 15:09:17 +0000
-Date: Wed, 29 Oct 2025 11:09:12 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
-Message-ID: <20251029150912.GA113329@yaz-khff2.amd.com>
-References: <20251024203012.GA251815@yaz-khff2.amd.com>
- <20251024212723.GGaPvvO3l2OlUEG7Xn@fat_crate.local>
- <20251025150304.GXaPzmqFawI0NrCC-0@fat_crate.local>
- <20251027133542.GA8279@yaz-khff2.amd.com>
- <20251027141139.GA51741@yaz-khff2.amd.com>
- <20251028152231.GAaQDft32eXtTZBBzg@fat_crate.local>
- <20251028154258.GA526743@yaz-khff2.amd.com>
- <20251028174656.GBaQEBkOErfNAJbJsf@fat_crate.local>
- <20251028203719.GA655216@yaz-khff2.amd.com>
- <20251028231825.GDaQFPQflC7gyVOwMa@fat_crate.local>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028231825.GDaQFPQflC7gyVOwMa@fat_crate.local>
-X-ClientProxiedBy: BL1PR13CA0195.namprd13.prod.outlook.com
- (2603:10b6:208:2be::20) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD796248F75
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761750586; cv=none; b=HqVIr3+6FrATYXLl29Wr1WHHzB0CmFtrTtZ098xJJSwcfhoAXJehTzz6lU3hRYs3EFGweuvpOVIPflzz4ormoKqgS6R0SrX4SvwxhgfEm+7Mntc2VQIsF4O1ce7lU18YzdnooS9cc76odJd2S02h0Dh+6oqbDlB69mgZtE/qVFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761750586; c=relaxed/simple;
+	bh=mub5xq+d3zwD3Tp9LeI2+uD7gtWzrddfCYJvWD4LlFM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=It2TGEaPzw2hmfwIawlchPEMhBo6Otrj9kbOUhROd/PvlFJ1he0NK5QxKvf92vz3L2hnzbtxOdKBRu7fuW05pXj13Wb2zeLDQm9Iq9Isc0ywtoj2DPm+BPos8TDP2SDqvldRoejU7k4bc8/Z5Xx7YlOiO+KjWOfignaRjLb5tnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IE76H9/8; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-421851bcb25so4525045f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:09:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761750583; x=1762355383; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TDVcuv1mfeIpSK3q83K0a2QfXRJdbHArp+wCNkw9rZI=;
+        b=IE76H9/8IsDiife9EzjaxPnjZm7teCC+SifZM8uND+dHsRxR6UrSWljzJ1EmoOKEhr
+         VQ/FMghPQ2PjvDGscj01I1pSIKsIaiGxM6u+sy7VHse+3udhy/I5aU3WFRMU7kgJSN9q
+         NP06QVmQxX1U+uBmIZgedVnB37NkRvz6ABPkommTgbo4GHcnDPq9+4GDMMLWIOAwOmtE
+         d2YsBTKp/GXuN9UH9VCPxpUWti2fabWKjBmPsJHdT1ZvUgEzzJnHLrGRTSo2kAh0N7SB
+         ZnPnxAjqzqOGYasAAuYuGikzz1G+/+76yYJbQYT+zwpxZY6SMp33RJnsXOsnTEhG0j2a
+         fA+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761750583; x=1762355383;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TDVcuv1mfeIpSK3q83K0a2QfXRJdbHArp+wCNkw9rZI=;
+        b=BXJYU7GtbxNCMGXMmyzDgOqtXIJmyi4w9eu2k80VnpNKcXaGpRJRDrnEyuEg8X9Vf4
+         t3ad7bj89edaoTO/qnE+UZehWrtDqAxNPf7cReAePGe3TyGUuKATAlz8P+XPvmgwmtBK
+         xAhvs+EZNiLGMBQkug7Q9fnZsRuzpMgHeMYib043TKZpmOx/zTyELwagdmI61UnV5WtF
+         r1WA+ZPKnTmqtDlUNM1rrzrRrNZR5ctz888AytAEmyg+e+d13gwCs/gO0CeqgbcwoJuu
+         OPkak2WEJjMGDsKOkWyzj/hYRGZJjeyEc/z20kyBgt1fjKFo3qqnvskLUCFTWAK4NfvO
+         iXPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXycHBQEqZSQGqomBlYea430HEazCBjrpsnL4FXmfUlbJepD3l5PV8e8gJ+jedr1NjZtYyL7GR685GrDjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQN5wq/l6G1tk9y370B8Pm73ahLvO7QIKER85vgKU4fVvJMUMw
+	QexbP53NFq3LfKAEMGMtaSHByEtrwtKO6j6F0mbEBITh/qYVWeJbznLW
+X-Gm-Gg: ASbGncuT3UrEN6/GUVzf7qs+7ZuW6+qNg1GfdF/UCeCywiTt/JQ3TVhp1UeZuFaISi7
+	A+vbXFp6CoWS/+PqsZ52CrNbJWFy/ompjvbdctCeAdq9Ql5BSs857zvafKpVnIzt8x+S2eQhpKH
+	NzG+rtbud4C24Vvb7bB6sykMvDXLLR0atuwYspD8UPJxXWvTD8D4yMaPRcUPMaWy+h1lvl9yA2v
+	e3p+JWow4NRF3rMNF11q1x8hLe6OCiBKG4aJhAzIdBOju4ca0hj+RCXNS11EOZe//Oju8imwqMr
+	y41voTdZN+QuaR6R52zgUP3wzx5Q6SCWo952NYmaN6615m4kgeWuwjWzF0wSxeRrAruyLAoa5GX
+	Utco4OOtidFTYrJrFKWlcjO8NM87PMvEi/DrJ+jGuvjinpDOeZsknnQbugKXHs1dI+NIYyE6iEl
+	JyECZxOTd/My+decwWcYYVmCEpQusmrDkfiCtLdt0ZW8JVCmoRt28WlypFUfiLgKRtA38+
+X-Google-Smtp-Source: AGHT+IFr5lXTMPj28TgIXEQnhqGrZvFG8wCr+BEM+nWtQqin9EbEnz1MWXEHn3P+VkAb6rw3PLOvqA==
+X-Received: by 2002:a05:6000:4712:b0:3ee:109a:3a83 with SMTP id ffacd0b85a97d-429aefbe00dmr2910419f8f.29.1761750582940;
+        Wed, 29 Oct 2025 08:09:42 -0700 (PDT)
+Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4771e3c878fsm54565375e9.17.2025.10.29.08.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 08:09:41 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] arch/powerpc: Add missing includes
+Date: Wed, 29 Oct 2025 16:09:38 +0100
+Message-ID: <20251029150940.2523328-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|SJ2PR12MB9242:EE_
-X-MS-Office365-Filtering-Correlation-Id: e8ea14ae-8217-43c7-c413-08de16fd20fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?uwwO4NB9GJOrM1ptRVkIjNPF50whvcqB8PaEWgLlI1GYg7qQyH2W8QAPZh9T?=
- =?us-ascii?Q?CgZgqm+1RI8PpTUZ77QJof8yT4l3lcmvZXuohn4nhAV+LW31VtzFCupemmAe?=
- =?us-ascii?Q?s+4PDrxih61wYIjl5ceKS6vKLkqJJ08iaHf00UMG6mp/y1z8mw7rCM/gnaKB?=
- =?us-ascii?Q?jEz/cAslWAzIrC1hHgq1zzUvuuHKJ3QPrewFrjVtEMXISSNqww5bcZP2b3eU?=
- =?us-ascii?Q?GsuKrdi6L30C6ZN212Ek2wzXx5olShtI4y/nFJyOqiVpiohfEr/JBB0zX4/Z?=
- =?us-ascii?Q?GF+sW7opKgtaCC/rIh/A7dcnC/SdeGjzjIkFT9F5JAGjEY4/Kir1Y5Rj4Uug?=
- =?us-ascii?Q?d9e0Mg71+D6M1Vn4jH8Au0oyEnwoAJQTSQ+fVKHXM33G24Ro2jybtdxcpofv?=
- =?us-ascii?Q?t9vbIHRHpWVkmK+6G36AL79YFdTVWtzJZO9XiWK9uvdPuWQuuQi6oibyV0V8?=
- =?us-ascii?Q?XDM4Pt5IqSxFDMe1JDpesE0sYW1QgCI9VH9rTKakyNsSaIMat12W8bUB8bFF?=
- =?us-ascii?Q?XP7Tsgch0QqCofTUsh4yXeJQCfz6c05svBFAZhlWdjhi1oOwUrZAcUWOOP0E?=
- =?us-ascii?Q?m7G0Aw9Gx16c1H38IRdZ4+waORSoC5RCQvh5L50UlDqlLUXXlRlALCwvKTYp?=
- =?us-ascii?Q?tH1t2VGy1yHVlz2uwjJBP7hhTbs1JEkKZYOHEPNASMkSJRTk3UX48WxQ39H7?=
- =?us-ascii?Q?upKblBvuY9u+H/e8akd+jRmzo6yWvyI4aG8e/qIe8Oqc/bcE0P3opOU2O1uq?=
- =?us-ascii?Q?bS/VB6n08CSw8n05uIDWE13M88pXhLhZydOG3JITBd3/+SjPEatQbOGPI47P?=
- =?us-ascii?Q?3dMdcVGZ2nzShKlavdCg07TelTTY6VkrKlA0hGkkNOEBdPAz+56jt5d2GUwn?=
- =?us-ascii?Q?y7bJUxLLAp78cEmL3KyxtX+evINumMdTiQ8m2dXEaIXPUjl2FAywGsVSlFME?=
- =?us-ascii?Q?9fnaJomZJOa1CGGl6zMXy8xO9L/yRav3nqAmaqMpCqudxmiHE8o77iVFJH90?=
- =?us-ascii?Q?HndPZztB1pYk0U5FBndro5z5DLngH1cwBf032BECuZDBKiv6temZi57fa5KA?=
- =?us-ascii?Q?1t4zOki22eXqYl6mnXqWdlKTsbCO15hVATnboMm6Yu7YjUL88QJAGUsSOdcN?=
- =?us-ascii?Q?mkuiIWWU3qu9XbZDvYBfP9VFzMNy80023RkNkkBcAzaqOJ1YUc7VJFqpvvkF?=
- =?us-ascii?Q?lxe7hS4dnFwKu7RE05e3/fhpM9IfxtE7beDh4fTI36LkADwgiE74fDfUhE2f?=
- =?us-ascii?Q?XzS7NP3s59X2f5L8qVwdPI0oOPqrSE90i9MOtbMuiUQ9/UUaK8MggN4+dmOp?=
- =?us-ascii?Q?NOTWyD1uxWMB3+Wym7QR9hQP5WsZ5GlM5qBOWM42w27cY6px131lYuFaXXUO?=
- =?us-ascii?Q?bZXaT7VO6ogiBrxn/zJGAINmEfiVCDoLTTZwICus2VPfs6KA5EqjuwtO0aCD?=
- =?us-ascii?Q?NXOBn9vkd+sdaUEErdXatsYMICHXVWbGuaH2UUuvjXQd1Ui5XzkJIA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AXDcQkhlEgXVwz/dMULkkozmAYLoznLF5+M07I2aEgF4OxkaGzFtNbUB9j5O?=
- =?us-ascii?Q?2HblxJE/ypct5A2eONNDIwodcEqH7OIBX8z6bhDV2kN3vbclQL6kmRDWjwmK?=
- =?us-ascii?Q?fDoWW2pgxDUsfXo7c7uvc0h/i45hKIT92XrPYefXUcEhBMCtjNQ9RNAzRVXn?=
- =?us-ascii?Q?NQeDOx37zO6c1t78cAYcqkVw9IbjSld8qwmsDaVQzBKio2VH1pNIr/GR5z7V?=
- =?us-ascii?Q?YiHCwhW6NG6FUx+2wN6QFWNftFNtToywra/7AkdZiZyYovC4+y7Rv/culeMo?=
- =?us-ascii?Q?kfzZtnPHi/TIAUIiPEImSNWh/WbSS06p36E8gy8cclvGeri9hUgSZLiKRUdx?=
- =?us-ascii?Q?jrIM1lWucGLYEfOwuALmJLldm5VJCDHYXhoZccb54LobEWX3ws1g33n+q3TL?=
- =?us-ascii?Q?pjiWhcHtSlLMydfwfTF/tU2DZD7frQL6lJ99ygcPjihM97YciPiOWu1MEqHG?=
- =?us-ascii?Q?NgKLHo5r1hlyDvivZK0X0QmkRmcwWbR36GKb5VTfwHPq/SltkLtZe5avqtRN?=
- =?us-ascii?Q?3kXXMV3iCbBa8ky2KdetVK0/hTlo6nlIX6cETdZmPAF0ouh6xn3SNxYBleWi?=
- =?us-ascii?Q?wpYuhoR4TsxrEgiF6i9MxpaQplckJMbVMkZf3CjRh38SkyJ9seQo39kU0bsL?=
- =?us-ascii?Q?YZkDFMZ7wOnAonRm5aCPWqluanhCpKX+Bht+FNrIi+x1k/epc54b+pyiOMkd?=
- =?us-ascii?Q?bpJEd9iug93zh5taebZ2mLUOgEBx7T44XHlbd8+M7bybPq1YVXaUTxev+Z4u?=
- =?us-ascii?Q?bgKuVDEkyENy3bS0qplD1IQvV/2YWNcynZv/NWGLv7NHma0+wMwWu6pXUDGe?=
- =?us-ascii?Q?/cRlPiCtM0cEHu+YP67+7C3k9T9N3mMZDNhyBNghdSbhaFyjIYf73vRdFKbI?=
- =?us-ascii?Q?ZdhmIed2+CPH7lhjkNLli2/w4irGV3dzBiK2OY/r4v21M7rCtHpzxwkTM+7H?=
- =?us-ascii?Q?h56C38f1YgDg9l8NHXtN0Mq5LaRatjKH4bi3MncYYIgpO+33kRtCgJeM/Sey?=
- =?us-ascii?Q?/zvwSjDVoWvZ6Qxc7zUDnKtR9o3KPO01woZU8PlUNIZzl7uyBEUy/CXF0l8D?=
- =?us-ascii?Q?u9/RL7hWdolNB6ZXwAHWdMBFwpLQUSWy934lwOOdV+GegEXq4cUiErYh8Z8w?=
- =?us-ascii?Q?+3JZjmCUJnO6anlwmxPV/0k8fbOZEYTwhcPDoCjjOeVtYkpMWjrp9E5lHhfk?=
- =?us-ascii?Q?kCGXgbU7ZsDnbrXy2lpOpcbSeA/5Oj30ktXeuOPprFbgOyaJXPxGGrcl7k0K?=
- =?us-ascii?Q?t8+8vzI7dDo9NQibSMdpUsfgeF1YG5ne/KS/9WOrFhv55jFq77FHssS8JRJL?=
- =?us-ascii?Q?WJtHipaewV/w3QUaz2+ASQESZHEikPX9+tNbpnwgl9T/y2lp7debLXJ3UMx7?=
- =?us-ascii?Q?QnJNfvKYpVThYMGxBOIdmpdVRdA6BLmcr+En5aK6A/hvS4HRSnJChDnJLo11?=
- =?us-ascii?Q?PBCFvvAwVY6eaFXxhhs1MLiXgyKgKh1uXjCpEVOcAKC3P1yWC2C6BdV4EAKr?=
- =?us-ascii?Q?Xw4aad84tIePfdVCJf87RIinzJ8BEulcrjg6dIBniptj9y0JP9yJAwd4fKGF?=
- =?us-ascii?Q?jd9qJcTcQLk/y4+vhxZRQ3FsD+BB/ovP2Zr0mU7c?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8ea14ae-8217-43c7-c413-08de16fd20fa
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:09:17.1409
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: chWWCI9h4kJmEKilT9mqP211jzYRETPE3xHk2ZJ7StZU1DyFBGTU7kBzpb0ninMaoitqx3L6zREUtyWi9pOXmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9242
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 12:18:25AM +0100, Borislav Petkov wrote:
-> On Tue, Oct 28, 2025 at 04:37:19PM -0400, Yazen Ghannam wrote:
-> > Yep, that's it. Much cleaner. :)
-> 
-> :-)
-> 
-> Final version:
-> 
-> From dd705221b2b3fb06fd2dc25dd51a8aaa1b1bd6d5 Mon Sep 17 00:00:00 2001
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> Date: Thu, 16 Oct 2025 16:37:48 +0000
-> Subject: [PATCH] x86/mce/amd: Enable interrupt vectors once per-CPU on SMCA
->  systems
-> 
+From: Thierry Reding <treding@nvidia.com>
 
-^^^ This is the following patch.
-https://lore.kernel.org/all/20251016-wip-mca-updates-v7-3-5c139a4062cb@amd.com/
+Hi,
 
-Why apply the fix ups to that?
+I've recently been doing a few test builds for some of the more exotic
+platforms out there for a patch series that I'm working on and ran into
+some issues that seem to have been caused by the framebuffer include
+rework. I see that Thomas did address some of those already, but it
+looks like I've been running with slightly different configurations or
+something that caused these additional ones to come up.
 
-Thanks,
-Yazen
+Given that theese seem to have been broken for more than a year and it's
+not exactly clear which commit it caused, I didn't bother adding a Fixes
+line, but still wanted to send these out in case we want to keep these
+platforms building.
 
-[...]
+Thierry
 
-> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-> index 7be062429ce3..4aff14e04287 100644
-> --- a/arch/x86/kernel/cpu/mce/core.c
-> +++ b/arch/x86/kernel/cpu/mce/core.c
-> @@ -726,24 +726,11 @@ DEFINE_PER_CPU(unsigned, mce_poll_count);
->   * 3) SMCA systems check MCA_DESTAT, if error was not found in MCA_STATUS, and
->   *    log it.
->   */
-> -static bool smca_should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
-> +static bool smca_should_log_poll_error(struct mce *m)
->  {
-> -	struct mce *m = &err->m;
-> -
-> -	/*
-> -	 * If the MCA_STATUS register has a deferred error, then continue using it as
-> -	 * the status register.
-> -	 *
-> -	 * MCA_DESTAT will be cleared at the end of the handler.
-> -	 */
-> -	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED))
-> +	if (m->status & MCI_STATUS_VAL)
->  		return true;
->  
-> -	/*
-> -	 * If the MCA_DESTAT register has a deferred error, then use it instead.
-> -	 *
-> -	 * MCA_STATUS will not be cleared at the end of the handler.
-> -	 */
->  	m->status = mce_rdmsrq(MSR_AMD64_SMCA_MCx_DESTAT(m->bank));
->  	if ((m->status & MCI_STATUS_VAL) && (m->status & MCI_STATUS_DEFERRED)) {
->  		m->kflags |= MCE_CHECK_DFR_REGS;
-> @@ -780,7 +767,7 @@ static bool should_log_poll_error(enum mcp_flags flags, struct mce_hw_err *err)
->  	struct mce *m = &err->m;
->  
->  	if (mce_flags.smca)
-> -		return smca_should_log_poll_error(flags, err);
-> +		return smca_should_log_poll_error(m);
->  
->  	/* If this entry is not valid, ignore it. */
->  	if (!(m->status & MCI_STATUS_VAL))
-> -- 
+Thierry Reding (2):
+  arch/powerpc: Add missing linux/of.h include
+  macintosh/via-pmu-backlight: Include uapi/linux/fb.h
+
+ arch/powerpc/platforms/powermac/backlight.c | 1 +
+ drivers/macintosh/via-pmu-backlight.c       | 1 +
+ 2 files changed, 2 insertions(+)
+
+-- 
+2.51.0
+
 
