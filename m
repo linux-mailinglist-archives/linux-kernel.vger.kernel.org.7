@@ -1,133 +1,212 @@
-Return-Path: <linux-kernel+bounces-875576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DF8EC19595
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:21:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E30C1956B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83B823A834F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4B11C26A99
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42757320A03;
-	Wed, 29 Oct 2025 09:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA3CA2EBBB3;
+	Wed, 29 Oct 2025 09:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RPdF8Xqf"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RsTbBoAK"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5020301483
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BB328E571
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761729303; cv=none; b=LySA3IjeRgr4/bkNYrZv8795veQ7/Y5I6Ff+tliWEvnbjZ+5hy2iwGVUXj1mrmHSkvSCf1pvTOUA9IrJirn8OWsMn8KIGh20JX2JHbGXNJV1ez2ETyx21s/7357GL80OCLikXS0lz2yyhFm0n/vbn7Sr7T+0FlGKLbZmjMfn1ZU=
+	t=1761729339; cv=none; b=kcqH7WeAdDbOY0H6m0kzMQ42BGDRur50bXyT8XSjVKa/uLGYIL7eLZpGF0v/r05yvKN9jst6cL1YRYtiSROAPddW1Dr0MtCx3Ud5vBpVhkLZQz94pEAHdqxXpGSTYOdxbVBt975ElEpsG12FtmUSmocRrQxUY925U/Q0jPLwjRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761729303; c=relaxed/simple;
-	bh=aKg/dTYkKJuSKY4S6pQwZeiHexpMmm8CZZ4NB6VQNM4=;
+	s=arc-20240116; t=1761729339; c=relaxed/simple;
+	bh=itjsDcySguGaFki53FVnzohhMjE5+9HRovLjl7e5KEQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L6UK5emKYr746whpXboY7ydsrQ+JdApqWTwijKSWXcKi4Z3nOFf/anjMEnAFN7wxQ/F64mATrCoCmA915O1TPs2WNKw13y2K9qldB1bHL5toiWGYXMN8LBa/h+XC4KoG24r8To+O2GHAnoZbFPVFJJo7ZGr9i4alGpMzufIDd/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RPdF8Xqf; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-592f22b1e49so6368559e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:15:01 -0700 (PDT)
+	 To:Cc:Content-Type; b=j7e/QXlPKOO7k5W3GbNzXCkLR1j2PsZGOmBlcRVsdl96FL+mLE7EpQ/BxpLxG7VBoZXNNI1HuF/Av8SzLXcQXWFwDqJlBkCi80rfk22FuGBo4Vfk+bQ+pQUs1HQBs9MhryjMzX/SaH0Bv0bKi9XAut+y+/4/FrRtxdAdSlkxq8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RsTbBoAK; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7815092cd22so91967747b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:15:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761729300; x=1762334100; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761729336; x=1762334136; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T5TG0ueaKuFAyQO0OV9etRSInulzLHrCU1Q3MeGK1uY=;
-        b=RPdF8Xqf1Mj99taZigzOxjfOZl+JG2zfkjEEqQU8Q2NHT4LV0XAUrnvJGotDvJVmRs
-         mGdT3gn7qUYFlRl7FgE1zjzTjYAzHiMx1kO8hzM4oAhfLJWK8jhbzX2JK046ujcFjvBX
-         G4QbO6ynWg/MLDLUS3iIq/k9ql3z+2GCN0nGk=
+        bh=UygssEPwtyV4QTrYeX1AiLSpA4gBFv6ObS7fU3X7V2U=;
+        b=RsTbBoAKdChs3u8HeEImtn3XsdxcY/nT5avZ8hOVQGdIKxahhuxWZMWoIXPTbzOdAs
+         wVjUSQBwHfj1vVvdNIJDUKxNXntGysUDVm0jdjFIwbARqbFwReho2jI3R2eY4p3ENNqK
+         4KDccfNWLImRaXZ7QUYCst8M9sOv6MOlBo2AHEVoDsX9v6s9vsBstqQoO6SE2A/usQzI
+         ApGUF8OeaSoB3tGuIv/iQT7BibIvX7zPzJbSviq1ENHVTYo066GI359S0QHFYOMkrtgT
+         fcSi0QRBD60W6ckqaJIS7oqSozJXCUvce2midHR8CpUo4aBcruTTVqXkVwNAT+4veBg2
+         82LQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761729300; x=1762334100;
+        d=1e100.net; s=20230601; t=1761729336; x=1762334136;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T5TG0ueaKuFAyQO0OV9etRSInulzLHrCU1Q3MeGK1uY=;
-        b=CoPfGf2LU6EMXwSuLuPV8kkccWhc/sZ/jl7dnE5DJC1+oQN+IAL1UMxNl1CfimuKXH
-         0ly46oyqE/ACo8OaRGoenVyyidivd78Sz6KnZUirgg9FYLg7saIGOC3ucc1sHI0mz+Vo
-         GiH6TctQKsEYGqQn09wewLvTGqOk28lwYg+8kDMlgXOXDh1cxXPa6U5HCzSowO2BaJiD
-         rOJetKa5MaxOqqGRic68WTEKWtPZSKUXNcWdL6iwVQP214nv39w7Xjw3N8UkLzhTmVHO
-         7/Nvmth4jjlCBK6+iokFtfb5HBPFChmN/oUuSI500JVXyeGoJzz3PrGY1llyoqCK/TQt
-         MC7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVjQ+bCPH19bkBgRnxHoWGV2V2cx0/mf9zHUca9rjFB90Id1RNHmYN99WccQ8NJfjI69wOVbvRuc9kLSw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvhl0xzFobchamFUR+U00rbPDJenzUHRyNPBf3Rtz/02zZBDd3
-	tHoTIqegkEmPitUIA4n9vWuBWAJGU/Hhhx69/5sircb+K5gzszIB9zMYS8ecNePDw8RYQFfMERW
-	iCBlKsFj97SvjOTKVfvMb/GLhiTm99IXfjKZ+WpC0
-X-Gm-Gg: ASbGncsNYfPUaTSMZQMdZDdcDcd7JPPUV8blNTYJvh5A2ow6yruZ8ObqGEEWQCdmJpP
-	81nr29Ru/1ZNWukkMmGkZjizhP97PP6/YwRX9lKAWGpGAdplHUs8pQdbvvG2bV0RFXmW1p06gyQ
-	MyHTMjAlBEmpaacD6tGm3/lSkL8+03XHYKtIYFwbEsLGzzyfdmGvdUmKNE8gLIdqKLfosVqbqPh
-	bS6S0+382ZV6m7ItDvVdxkFcMFrPSQNcM8S58ufAmQhlM1MPW9QpZJjp+Mbwsbn331hlEcPUn+h
-	c4TAbN7fJ+p2rA==
-X-Google-Smtp-Source: AGHT+IEdzCz5CagXh2U1asZRsfKQhXvsI7kXu6etELWvVx9B3yH4c3fTQRn6qbqQRMN7bG9dn46906V22dlPmaM6Xt8=
-X-Received: by 2002:a05:6512:1150:b0:592:f2fc:51f0 with SMTP id
- 2adb3069b0e04-594128b54famr828019e87.30.1761729299812; Wed, 29 Oct 2025
- 02:14:59 -0700 (PDT)
+        bh=UygssEPwtyV4QTrYeX1AiLSpA4gBFv6ObS7fU3X7V2U=;
+        b=E/1m4sAC8wsfJAgpN7l9GtyGkylmXX7OwMFWlM+LFIcKK7tq7m9QPbZ1Ugl8qdlguV
+         9UMefJmEzo7VWnl9XApsO81LisX5YLjdTk3dNbqdbsh12WNp++npRP/l4A8gc3YHiBP2
+         F3M2r9zk6IQULPfdliGqH5Iqv1A9P10SIJeb3+GzQQy+TJPB7QEYfoAfb9AmuNjU5sJA
+         nJTXjA1SSaKQvFIr+J24Okd9zTv7C+ysaG8/GXY17pE1c5skg0rV6Ap6AFTdfkieTaee
+         kyCUJL/cIKY2YGJIoWq42KOvzsXrdDIIgJKDuS+5Fr1dvAQtuESR2DwiHigC4BwqXY+X
+         YuZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsaWM7Ox8YQedKpXBI+jLoe+tNyRd2A2HfI2yOQbW/577TkOQwlY/Ok2O4BlueFprHHz0YSwYAWHru3rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyws7f4eSV+K620pFyyV3l9qmnxVACMnNZN+Go+jqUtM/mzpHxI
+	tZJ6ss0yWO5bqseZX3xkct3tIu+9XBH8kr9Ab9j7HdoJ/XsiMu6RXmR+bN8sEuQkbHYfpJ7mUz0
+	yaA8Gma8NAHU00OfTnLsZ+fLUHbGUMDk=
+X-Gm-Gg: ASbGnctuyzBzHJ2otdzdZBb7pUSAVrfcOgZMOgHlP/Vtm7h2g9luyZq/6TzTATOoXjv
+	JM/+c8Igc/rCldHFGhztelYZznaWZgWLKoSee9Mqz3mz6JMuLIVjUxcuUA/XCtYCxExR+9FxU0V
+	3k3y9f+OOffTUyf7qmFXk2mWXuxZIVRDaO1Gn3BVm4dZPBi3L1BvaBiyB2E8hppecbvTz4X1tdS
+	oXoToAxf/0iwMo6PlJ3H3YJgFPkxi5daEJY0Jj93wt06H+3pzfXynYM0kE=
+X-Google-Smtp-Source: AGHT+IEQDyFSthCYxiKEqlJv14a8jhCmiZaL70iGNaUt1WzUGm5AZRwZxAZ/eefAJU3mVt3LlAEv2c8FlDqRddjvGN8=
+X-Received: by 2002:a05:690c:74c2:b0:781:1c9e:fc82 with SMTP id
+ 00721157ae682-7862903d263mr21137247b3.48.1761729336254; Wed, 29 Oct 2025
+ 02:15:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 29 Oct 2025 17:14:48 +0800
-X-Gm-Features: AWmQ_bkTadC0tGmcwZKXgN_YyBG7Nl3lIGZgDu08N9ula1vkSppNL4aPMzmz71k
-Message-ID: <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
- firmware-name not present
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, arnd@arndb.de, andersson@kernel.org, 
-	matthias.bgg@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	kernel@collabora.com
+References: <20251027171759.1484844-1-cjd@cjdns.fr> <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+ <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr>
+In-Reply-To: <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Wed, 29 Oct 2025 10:15:24 +0100
+X-Gm-Features: AWmQ_bmyo1Vk5GBvVeX6G5wl6wdQm6iXyIxD4JsyZ1GGxh0xGeFFX2edoLr2NHM
+Message-ID: <CAOiHx=nqWEdHEMf5immXO0VwyzDakDV9AMsoDETcJ0F4FqUt=w@mail.gmail.com>
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com, 
+	shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 15, 2025 at 4:41=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
+On Tue, Oct 28, 2025 at 10:42=E2=80=AFPM Caleb James DeLisle <cjd@cjdns.fr>=
+ wrote:
 >
-> After a reply on the mailing lists [1] it emerged that the DT
-> property "firmware-name" should not be relied on because of
-> possible issues with firmware versions.
-> For MediaTek SCP, there has never been any firmware version vs
-> driver version desync issue but, regardless, the firmwares are
-> always using the same name and they're always located in a path
-> with a specific pattern.
 >
-> Instead of unconditionally always relying on the firmware-name
-> devicetree property to get a path to the SCP FW file, drivers
-> should construct a name based on what firmware it knows and
-> what hardware it is running on.
+> On 28/10/2025 21:19, Jonas Gorski wrote:
+> > Hi,
+> >
+> > On Mon, Oct 27, 2025 at 6:19=E2=80=AFPM Caleb James DeLisle <cjd@cjdns.=
+fr> wrote:
+> >> When on a Big Endian machine, PCI swaps words to/from LE when
+> >> reading/writing them. This presents a problem when we're trying
+> >> to copy an opaque byte array such as firmware or encryption key.
+> >>
+> >> Byte-swapping during copy results in two swaps, but solves the
+> >> problem.
+> >>
+> >> Fixes:
+> >> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+> >> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+> >> mt76x2e 0000:02:00.0: Build: 1
+> >> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+> >> mt76x2e 0000:02:00.0: Firmware failed to start
+> >> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -145
+> >>
+> >> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> >> ---
+> >>   drivers/net/wireless/mediatek/mt76/mmio.c | 34 +++++++++++++++++++++=
+++
+> >>   1 file changed, 34 insertions(+)
+> >>
+> >> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net/w=
+ireless/mediatek/mt76/mmio.c
+> >> index cd2e9737c3bf..776dbaacc8a3 100644
+> >> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+> >> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+> >> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u32=
+ offset, u32 mask, u32 val)
+> >>          return val;
+> >>   }
+> >>
+> >> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+> >> +                                         const u8 *src, int len)
+> >> +{
+> >> +       __le32 val;
+> >> +       int i =3D 0;
+> >> +
+> >> +       for (i =3D 0; i < ALIGN(len, 4); i +=3D 4) {
+> >> +               memcpy(&val, src + i, sizeof(val));
+> >> +               writel(cpu_to_le32(val), dst + i);
+> >> +       }
+> >> +}
+> >> +
+> >>   static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+> >>                                   const void *data, int len)
+> >>   {
+> >> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+> >> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offset,=
+ data,
+> >> +                                             len);
+> >> +               return;
+> >> +       }
+> >>          __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(=
+len, 4));
+> > Maybe just replace this with memcpy_toio() which does no swapping at
+> > all instead of double swapping on BE?
 >
-> In order to do that, add a `scp_get_default_fw_path()` function
-> that constructs the path and filename based on two of the infos
-> that the driver can get:
->  1. The compatible string with the highest priority (so, the
->     first one at index 0); and
->  2. The type of SCP HW - single-core or multi-core.
 >
-> This means that the default firmware path is generated as:
->  - Single core SCP: mediatek/(soc_model)/scp.img
->    for example:     mediatek/mt8183/scp.img;
+> I'm not that informed about how PCI works so I had to test to confirm
+> my understanding, but I can confirm that memcpy_toio() does not solve
+> the problem.
+
+Ah, right, I misread _iowrite32_copy() to do conversion to LE, but it doesn=
+'t.
+
+What architecture is this you have? PowerPC? ARM? MIPS? 32 bit? 64 bit?
+
+So the differences I see are:
+
+1. __iowrite32_copy() uses __raw_writel(), which has different memory
+semantics than writel()
+2. __iowrite32_copy() assumed src is aligned to 32 bit, while you
+explicitly align it
+3. memcpy_toio() will handle unaligned src properly, but does 64 bit
+accesses on 64 bit systems (and uses __raw* again).
+
+Is src aligned? If not, then the issue might be 2. And if your system
+is 64 bit, it would explain why 3 didn't help.
+
+As a first step you could try to replace the writel(cpu_to_le32(val)
+with a iowrite32be(val, ...) which should do the same except avoiding
+the doubled byte swapping. If that works, you can try to replace it
+with __raw_writel(), which then would make this the same as
+__iowrite32_copy, except making sure that src is aligned.
+
+Also you could replace your memcpy() with get_unaligned((u32 *)(src +
+i)); Should do the same but inline.
+
 >
->  - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
->    for example:     mediatek/mt8188/scp_c0.img for Core 0, and
->                     mediatek/mt8188/scp_c1.img for Core 1.
+> The issue as I understand it is that rather than making every driver
+> carefully call cpu_to_le*() every MMIO write, someone decided to make
+> the PCI host bridge itself transparently byte-swap all MMIO on the
+> wire. Since most MMIO is hitting registers and most buffers are
+> transferred by DMA, for the most part everything works and nobody
+> notices.
+>
+> But in the rare case that we need to write a blob to MMIO, it gets
+> transparently swapped in hardware so you need to use cpu_to_le in that
+> case. Doing a search of ./drivers for write.*cpu_to_le I can see this
+> issue comes up a bit.
 
-I know this patch has been applied, but this scheme doesn't actually
-follow what is already in the linux-firmware repository.
+Every (PCI) driver does conversion to LE implicitly by using
+writel/readl (or iowrite32/ioread32) etc do the conversion to/from LE.
+So writel(foo, dst )is a __raw_writel(cpu_to_le32(foo), dst) etc. PCI
+memory is assumed to be in LE. If you are on a little endian system,
+then no byte swapping happens, and on BE it will do byte swapping
+before writing the value.
 
-For all the supported platforms, the first core, even for multi core SCP,
-already have their firmware uploaded as just "scp.img". Multicore SCP
-is seen in MT8195 and MT8188.
-
-I guess I can send a followup patch?
-
-
-ChenYu
+Best regards,
+Jonas
 
