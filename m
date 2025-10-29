@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-876679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFE2C1C01B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:18:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F386C1C360
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:47:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69CE319C15AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:15:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5CF05C0D18
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B77284894;
-	Wed, 29 Oct 2025 16:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB6F33F380;
+	Wed, 29 Oct 2025 16:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8+lEigM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjE37pNN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED122D8779;
-	Wed, 29 Oct 2025 16:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACD12ECE86;
+	Wed, 29 Oct 2025 16:15:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754489; cv=none; b=g7JTgFFd1qpw997pKDZn7apLktIuhbfb+hFDcODwYQePlmj2T3N3pkwY3OBGDuXgojVFR13tomrJoOnrvLgo1n0a8+bZb7z7S7ZyVXkYZIlYG5ZzoEdVG++VG+fs4xcgUTNmICi4JyFYhyB/Xy0AHp78hPF/eqpZc/uzIZwtEbw=
+	t=1761754500; cv=none; b=g/VWG6+1pIIq89KorSbW6mRnHS+rFojA/GGZ5dUcPmY6xJYUvgtQwryVU9KeDX1BJviO0FHPgVe+g19UoEBlGJq7NSjw0cL1eJu3YBj7nDfLJetoZKcg/wKGOdszBqZsdSybnzj/n0KjPJ6yHJnqOQ2qVfyAGacRwZuS0EisxyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754489; c=relaxed/simple;
-	bh=BU/KJ2BFrWdN2k7V2JQhqCYa+EJvjFnOYlY5BUSYT9s=;
+	s=arc-20240116; t=1761754500; c=relaxed/simple;
+	bh=MzDiNBwjOd5bG+qpBunqHUPL5TbDLkEqeHNOr5ncI3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aqhKKRU5uK9r7gBurFD+F5lPyAuR9sy0CFA0IaAT0+EIZFOuhfgpfVBboilQ39mVEPI4SV/LAZMV1MHhoSQaZHgT8XFVSWf1xvddB73LWzVjJJh8n0gp9DMO2kpT1MpEKaBMd0QD1uPEmFc2Fh0X2YrAP8jPMRgChySpQ8UYETo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8+lEigM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BFFCC4CEF7;
-	Wed, 29 Oct 2025 16:14:48 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KIZs+SS4rpvGAtrximgLZwMy3Pf1+tPfenLl49vM9sMw7i6EXaa/n1wKkIvNRbkUm/zBDwT9poLyxsc3DhE2TADlHOsI5iyaqaEEq+3SxlRi9Ztn3jwwsy/awY0wLaW3+yeYIbgqVpYEFOKS6CQ4UViCN5LV9bD/hArWKh/TJkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjE37pNN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E76FC4CEF7;
+	Wed, 29 Oct 2025 16:14:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761754488;
-	bh=BU/KJ2BFrWdN2k7V2JQhqCYa+EJvjFnOYlY5BUSYT9s=;
+	s=k20201202; t=1761754500;
+	bh=MzDiNBwjOd5bG+qpBunqHUPL5TbDLkEqeHNOr5ncI3U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R8+lEigMCWnv6jmZw7f3tuW9pVGrdDzpaYzGpAmok0dAUywXkVhHfV+pEpY2S+ObD
-	 MhgPMLz7+QpkFbjwJYYIzG3s4I34eOY9QZMCh5UWa0bSNXYsIoJoDuuarPMRLkGjqC
-	 gyhFFH9+wwU4JmNGpKCinn0H33s7pLrMaPetcPVJaTGU+Z1J6xLIHixm20IX7VQees
-	 3rRU25vTn3ZJeR4IYwNfj8YAzomS2wcdKfgSboFTHfdT8LfvdashHSYGQmIhLbcN89
-	 FY5vptUOjJ5+fh75bKtGOIuYb6tbOZjCA8zWZ3O0iqTvmwnqvuLcXlVxp2TiWXqLfc
-	 ew7CKmj0W7s2g==
-Date: Wed, 29 Oct 2025 09:14:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bart Van Assche <bart.vanassche@gmail.com>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <20251029161447.GG3356773@frogsfrogsfrogs>
-References: <20251029071537.1127397-1-hch@lst.de>
- <ea07dede-5baa-41e5-ad5d-a9f6a90ac6e8@gmail.com>
+	b=QjE37pNN/L94+0MLl21IS08uJ68If0bQz6Nldnoci1SWL74a5JkjwbGiXLqZBK6Cv
+	 3f77yW0B2+xKct/DP4OFLB6B/MDEmlMZJ/Im+RzJYLT7Kxdl4EoItpZcu9WEUPbjhx
+	 7wbSgeOp1IkG6gqY0wLC7QitMyN6pUXzJyty7urTyi/C/Tf0XE+Oqo0he9Es0uUo0J
+	 zycg7LRL6yN2spgA6gBOiOrBjQNRhTULUdvrG/w90LDoVakhV9uaEXZr7VTRwHwDNi
+	 KQUmoMx/Ltsm/rjj8vJLGIsdCh6fg0SSt8YuQMnKSHtniDuiP+KHFwPR4X8Tc4wyZ1
+	 CvdB7/RRxn4xg==
+Date: Wed, 29 Oct 2025 16:14:55 +0000
+From: Mark Brown <broonie@kernel.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
+	tiwai@suse.com, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
+Message-ID: <56911e0e-0f25-4134-92fd-f89cb47fd9b6@sirena.org.uk>
+References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
+ <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
+ <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JpTtvZk+/JgRadlt"
+Content-Disposition: inline
+In-Reply-To: <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
+X-Cookie: Goes (Went) over like a lead balloon.
+
+
+--JpTtvZk+/JgRadlt
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea07dede-5baa-41e5-ad5d-a9f6a90ac6e8@gmail.com>
 
-On Wed, Oct 29, 2025 at 08:58:52AM -0700, Bart Van Assche wrote:
-> On 10/29/25 12:15 AM, Christoph Hellwig wrote:
-> > we've had a long standing issue that direct I/O to and from devices that
-> > require stable writes can corrupt data because the user memory can be
-> > modified while in flight.  This series tries to address this by falling
-> > back to uncached buffered I/O.  Given that this requires an extra copy it
-> > is usually going to be a slow down, especially for very high bandwith
-> > use cases, so I'm not exactly happy about.
-> > 
-> > I suspect we need a way to opt out of this for applications that know
-> > what they are doing, and I can think of a few ways to do that:
-> > 
-> > 1a) Allow a mount option to override the behavior
-> > 
-> > 	This allows the sysadmin to get back to the previous state.
-> > 	This is fairly easy to implement, but the scope might be to wide.
+On Wed, Oct 29, 2025 at 05:22:26PM +0200, claudiu beznea wrote:
+> On 10/29/25 16:37, Mark Brown wrote:
 
-/me dislikes mount options because getting rid of them is hard.
+> > The theory here is that the power management core uses the device
+> > instantiation order for both suspend and resume (reversed on suspend) so
+> > the fact that we use probe deferral to make sure that the card
+> > components are ready should ensure that the card suspends before
+> > anything in the card.  If that is no longer the case then we need to
+> > ensure that all drivers have system PM ops which trigger the card, this
+> > won't be a driver specific issue.
 
-> > 1b) Sysfs attribute
-> > 
-> > 	Same as above.  Slightly easier to modify, but a more unusual
-> > 	interface.
-> > 
-> > 2) Have a per-inode attribute
-> > 
-> > 	Allows to set it on a specific file.  Would require an on-disk
-> > 	format change for the usual attr options.
-> > 
-> > 3) Have a fcntl or similar to allow an application to override it
-> > 
-> > 	Fine granularity.  Requires application change.  We might not
-> > 	allow any application to force this as it could be used to inject
-> > 	corruption.
-> > 
-> > In other words, they are all kinda horrible.
+> I also saw the behavior described in this commit with the rz-ssi.c driver as
+> well. The fix there was commit c1b0f5183a44 ("ASoC: renesas: rz-ssi: Use
+> NOIRQ_SYSTEM_SLEEP_PM_OPS()").
 
-Yeah, I don't like the choices either.  Bart's prctl sounds the least
-annoying but even then I still don't like "I KNOW WHAT I'M DOING!!"
-flags.
+> In case of this this codec, I saw the code in da7213_runtime_resume() and
+> soc_resume_deferred() racing each other on system resume.
 
-> Hi Christoph,
-> 
-> Has the opposite been considered: only fall back to buffered I/O for buggy
-> software that modifies direct I/O buffers before I/O has
-> completed?
+So I guess we need the more general fix then, with everything calling
+into the core to suspend the cards.
 
-How would xfs detect that?  For all we know the dio buffer is actually a
-piece of device memory or something, and some hardware changed the
-memory without the kernel knowing that.  Later on the raid scrub fails a
-parity check and it's far too late to do anything about it.
+> > If the device actually lost power during a runtime
+> > suspend then we'll end up having a bad time.  There was also no mention
+> > of runtime PM in the patch description...
 
---D
+> I had no issues with runtime PM, but only with suspend to RAM, when this
+> function was called though
+> struct dev_pm_ops::resume = pm_runtime_force_resume().
 
-> Regarding selecting the direct I/O behavior for a process, how about
-> introducing a new prctl() flag and introducing a new command-line
-> utility that follows the style of ionice and sets the new flag before
-> any code runs in the started process?
-> 
-> Thanks,
-> 
-> Bart.
-> 
+Calling regulator_disable() doesn't guarantee the regulator will be
+disabled, the constraints or other devices can ensure that the device
+retains power so there's no effect on the actual hardware.
+
+> Would keeping the regcache_cache_only() + regcache_sync() here along with
+> populating the struct snd_soc_component_driver::{suspend, resume} be an
+> acceptable solution for you? I think that will work as well.
+
+I'm not sure what you're intending to populate the component with there.
+
+--JpTtvZk+/JgRadlt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkCPX4ACgkQJNaLcl1U
+h9DVIAf/cAd0aKUG7ztZYiPY/cyhA7SyqjfnlvJMZkM4AqWOp+nc2Lq76IWOKckx
+esVqlDB71tZI+wtddbYyDVc8G4OQUAFnftjSyFl97/CYACADQ9FjUzWpUgbaUo0h
+9KbIQUFejzoao8zsg6jIfMgeh8F90M9JaxoMjNjpTfpLfpGw0XHGZZPfRq7z1v41
+B1Oxl52EIMC9enrkF8sKEOJ3WQwNK9w6XjAY9vctTbSgkAdb/twf0BQEmWOxcOkU
+U1zK/LTjNfbBtl3ZMhXcupoyLVBXOuYdNxT76ZH2ziGhB3hGvl6UYVorkXf9+kzY
+foTIXsTVHNwWQz6ZpmpwcgZmwCzIhw==
+=MYlh
+-----END PGP SIGNATURE-----
+
+--JpTtvZk+/JgRadlt--
 
