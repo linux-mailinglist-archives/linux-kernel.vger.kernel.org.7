@@ -1,159 +1,84 @@
-Return-Path: <linux-kernel+bounces-876344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9820EC1B4EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:42:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E50C1B47C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35E335881B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211F71894443
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A49A2BEC3D;
-	Wed, 29 Oct 2025 14:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EG7uUYc+";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="eTW0Kw/x"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEA629B8F8;
+	Wed, 29 Oct 2025 14:26:53 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC94A279DAD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1530F27B353;
+	Wed, 29 Oct 2025 14:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747965; cv=none; b=Yv9HVuHs4ZmEOEvaeV5rf+atcPU3LAIjPS4XMfLJeSBcZcsIisId+7IPg9dm4+IN6UWxitLrnR30/p52ETTeEQKnjSWErbJXnfL+nsdxmVZctuwha9K77ROzVMrJtU8tZL0f/dmG+zVxXSyTW4lPFQHlDfDD/hkCmnX28YU2KGE=
+	t=1761748013; cv=none; b=ChuhmQA2AzG+6ZPzJTlqRL51LQkBlV2oHEDzStCLWXJr63Wywc92y3hAdIEIloYf9/KVLYKJ7WQhpSZx/cSjSEMFxBQWBJv/mvxo5yW3af5KJUISZSzJRunh+uNlb61Mcj8M4/2u4eTXOn6XctIW2g0IBMl/l4cUZy4sSMl2svk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747965; c=relaxed/simple;
-	bh=HKUSPmcUj2Xtfi53LB6PGs3J2vl36BecbCI5CMafn/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNFJN8tmNxdRQFfzgUiH/DyL+BIu8Uwl1EgUiWCz8x5qNVCZ7OejgE/ARmwa0vfuptGgNhiDP+TTgkpicXONQ3zIjWuzzq6Gq374eCr3gazGWFnd4G2AvmlE+OHqs8g6aYUepPBn8FXZXR4la0cA6+1JOhjcYhuGxjyOXt0MMUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EG7uUYc+; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=eTW0Kw/x; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TCEjCn3692115
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:26:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8lRCEMmy9OZlhkQ8RmEl5rJEU/q4AS+Z5wN60SHfen4=; b=EG7uUYc+8OTWFxlc
-	AbPYX791VJcYlKkwwm6u57Y8YcEtntoUAkKf5o8AWtM8pWtaN9Gz6ZhvfwXR5w+a
-	uNcIPAOnpJ+Oq2LbYIA5nx4We0DvIUn7o2nwb94GoCqRRIg3/8+KsX/7Hmi74En3
-	r2ceN9B76Udfu2u9UIfBfgyfGSOAZqyXRRVKVw+u68F4gYI5Sdgf7RmlyypmJDiN
-	8PFVjeW28runf14z5AbVeTNlHZ17rprZBEZ9g1R3dMguM3U7+pfAUvpQU9i8Srq7
-	GIesfSJ3dom1nhU9YoW5od6nXgnkH5yUWSrdF/aurrd3z2ERh+skYcFJQPjdG2dO
-	Bs5P0Q==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a2juqp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:26:02 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-28eb14e3cafso140640325ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:26:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761747961; x=1762352761; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8lRCEMmy9OZlhkQ8RmEl5rJEU/q4AS+Z5wN60SHfen4=;
-        b=eTW0Kw/x8o0zP1+zeopzLQetVJ1d73m/WMgrM6ap/iZMrJoyE/jbVN9e9mMM+CKIEr
-         Esey7D5gfAj4Y0TkgGU6cInPeSKYv5xMO3vzaBHlHL36ld2qxtji+DIyib73m9u+za2C
-         fXy/VRM0NkOXf2btvqj/TM0/N4bd2NGEuPNVKyg8efZTu5XWaSD2tJbcKDBXXZoMnGa+
-         ugOTWMe7DDk3bLZyR6hVrn/lIno/oMy+BOqoBqf8EUCU88VC7UzzLi+WAsMwhwFNlL8K
-         olMGcJzAlYlsBxEFX30fFoOkybge1r3f+mX0Fcp1Hd/nWoIfju8vcjj9OO2O00TPFUUn
-         xiEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761747961; x=1762352761;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8lRCEMmy9OZlhkQ8RmEl5rJEU/q4AS+Z5wN60SHfen4=;
-        b=GLUyobVTexIiz4jkRj8CFYNIGF7iVHJ/co8EYKuk+7jNUAczkMPEVbyi3NF3dbArci
-         aMf7pkWo/SC6dLfdE8HE2Xa8q1k8W5oBD9W/gWXfJ0biiQRqOe69QWXanB+Tf4/rhoKF
-         O7zufdXLYBX2gInSBljHAKy04ieWq5XwoDmYLyd3f8lIgFCI+LXF6ddZp+TBRQV4O7vO
-         Yuy+HtbAjKlJxfThgwP093AUFd6Fz5qgmo/ZO+1FerGavp38tRJGsCaDzwTdy9ArNZj4
-         BqpJSQBpGLmPTZdNxByDXzdcD1ors48pu4WDx3pAyRm4U/Gy0YSNYhvGs13cd9Zj2yTT
-         4VIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxVryRquVLf6Ee2Oe+BFfn73zWe90RAj2Yw9lqnht6hxJhj/h9cQlcGEBeDFovmlokIJzmBnKvsysy69k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3u5ki6iNekOu1z+PyTpmWZydHTZAEYUmmWbkFUaS3l0F9yoaI
-	0jBeKqGynyq1dPYT2ONP+alg+ot+yNLME9bbuBbQ/im3WaPon9DsGTo5CjC9NgLsb0beWDIAxal
-	6F9gVx7WDw2ESLoTxlp5R9ZH7njU2BHREKsvgh71LDkdlxWRu1ZCk+BogsX7/CGJDChM=
-X-Gm-Gg: ASbGncuFr5jcS2MWd+QD8GXo/mKOYzDMeTu8ba4MKlLlFxWuCdN/ZwIBeYp0S05uxxb
-	fdustBQI8eKynHOYOa0BEewc6nYFSraSUGYiXtnme6ki9M0P2B3wz0UpzK6v1O1uWvRMb1WGGz0
-	KfDWsi8wy2rGzeyOzEKhXIubvaw4JjpUVabHPyOmx8mGR9Qx6ahkJfyVW78cLeHIrxzjp/HKV83
-	65mK8I+eabu7Helttr+h1LOBtpFzDpkC5zBzWSRZ3LbwcoSvt/ZzHUBdvGPS44Us+1ADhS6lPXD
-	ASn6emQWvKtFAYSBJxlf/QOJ+RJKB+Mi5g9WFEhbUdl6iABoNH6B2j8bcJ/ujN4ZDh8XBI31PkC
-	Ux0wecgT6QaX79TEQsG6Ap+DliSgmMoFuhR0WTyNQCIPQNOmSJf00/q4WDhU=
-X-Received: by 2002:a17:902:d491:b0:269:4741:6d33 with SMTP id d9443c01a7336-294dee4b276mr35510245ad.23.1761747961329;
-        Wed, 29 Oct 2025 07:26:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVs9ARm8Q5wCdoLG9mCSaU6IsMR0Zt2w484KzdbhKLh1iw8y3iST3S4vvTj/Qii13tEl5pOg==
-X-Received: by 2002:a17:902:d491:b0:269:4741:6d33 with SMTP id d9443c01a7336-294dee4b276mr35509925ad.23.1761747960807;
-        Wed, 29 Oct 2025 07:26:00 -0700 (PDT)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d0996esm152263505ad.28.2025.10.29.07.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:26:00 -0700 (PDT)
-Message-ID: <c7b1a108-6831-4e48-becf-45bac0e73d54@oss.qualcomm.com>
-Date: Wed, 29 Oct 2025 07:25:59 -0700
+	s=arc-20240116; t=1761748013; c=relaxed/simple;
+	bh=NVqYGgr6qdo986oUW8Ip5NNWWkRzmFjH5+Nm6cQ701k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N5OGKWinUoIUZ+Cki01Hq1zMke3JEqmsnOxLV0OYBvF95tJ7vaCIq9RyKq4o2ldf6tuKDq+wkZ7jea57U1OjEx/3+QzWM5Y5gzHE+FPF2EZ7qCrSCRV/38qcNjKhqeAT6a5UAAj/cDKgqHwAb5F0Vjnt12XJ56ED/1ozdIbeTIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=permerror header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 59TEQUhB080378
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Wed, 29 Oct 2025 22:26:30 +0800 (+08)
+	(envelope-from cl634@andestech.com)
+Received: from swlinux02.andestech.com (10.0.15.183) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 29 Oct
+ 2025 22:26:30 +0800
+From: CL Wang <cl634@andestech.com>
+To: <cl634@andestech.com>, <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <tim609@andestech.com>
+Subject: [PATCH V2 0/2] dmaengine: atcdmac300: Add Andes ATCDMAC300 DMA driver
+Date: Wed, 29 Oct 2025 22:26:19 +0800
+Message-ID: <20251029142621.4170368-1-cl634@andestech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH ath-current] Revert "wifi: ath12k: Fix missing station
- power save configuration"
-To: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>, jjohnson@kernel.org
-Cc: ath12k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Ross Brown <true.robot.ross@gmail.com>
-References: <20251028060744.897198-1-miaoqing.pan@oss.qualcomm.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <20251028060744.897198-1-miaoqing.pan@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: M7OIjsJ5Hux-6UyoHzHB9SfdgTfEAc2e
-X-Proofpoint-ORIG-GUID: M7OIjsJ5Hux-6UyoHzHB9SfdgTfEAc2e
-X-Authority-Analysis: v=2.4 cv=PcvyRyhd c=1 sm=1 tr=0 ts=690223fa cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8
- a=WZLPHaEoEJzMMJhDTEQA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDExMCBTYWx0ZWRfX0goCunSwZrUL
- v+eYc4f0slGv3PQ4K9zv7rTyr0IjoEmcbWBvFn/zBx5HUXpFxVLWQUBxysO2hqIX/FS/zA4GH1P
- r//jauzKgAXy658NygXKYmHQBTVT4ghpbyJcKLIeT51fmuYipPaBb017XhC9KHxliz169Tnit9M
- luoXTHiC1tU17Myap3eZwX4RNWLRQ8EzBDEtxTO3ky4+CFb6CR7jVL+mHa13S8vVjE9+Tr5s9+R
- oqMomQ4IyAREy74PlsOcxyz8s6ukPmk6NBGbJYKrcHaY2hA3zH4jxaO3SvEOpxHv1Ao+nXUxzgU
- rP7Q2sADHXpHo81xHwhafNc74lhEceRfjuNeDl2ENrGbA2AORFV5MQ6RiqAOauvhefrEfbjIWVc
- H4srloIBoQ7gv+YXgGnhXm+5SAQ3Hg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-29_06,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290110
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 59TEQUhB080378
 
-On 10/27/2025 11:07 PM, Miaoqing Pan wrote:
-> This reverts commit 4b66d18918f8e4d85e51974a9e3ce9abad5c7c3d.
-> 
-> In [1], Ross Brown reports poor performance of WCN7850 after enabling
-> power save. Temporarily revert the fix; it will be re-enabled once
-> the issue is resolved.
-> 
-> Tested-on: WCN7850 hw2.0 PCI WLAN.IOE_HMT.1.1-00011-QCAHMTSWPL_V1.0_V2.0_SILICONZ-1
-> 
-> Fixes: 4b66d18918f8 ("wifi: ath12k: Fix missing station power save configuration")
-> Reported-by: Ross Brown <true.robot.ross@gmail.com>
-> Closes: https://lore.kernel.org/all/CAMn66qZENLhDOcVJuwUZ3ir89PVtVnQRq9DkV5xjJn1p6BKB9w@mail.gmail.com/ # [1]
-> Signed-off-by: Miaoqing Pan <miaoqing.pan@oss.qualcomm.com>
+This patch series adds support for the Andes ATCDMAC300 DMA controller. 
+Please kindly review.
 
-Note to maintainers:
+CL Wang (2):
+  dt-bindings: dmaengine: Add support for ATCDMAC300 DMA engine
+  dmaengine: atcdmac300: Add driver for Andes ATCDMAC300 DMA controller
 
-This patch to ath/ath-current has a trivial conflict with code coming
-in ath/ath-next.  The resolution is to take both hunks, ordering them
-in reverse xmas tree style.
+ .../bindings/dma/andestech,qilai-dma.yaml     |   51 +
+ MAINTAINERS                                   |    6 +
+ drivers/dma/Kconfig                           |   12 +
+ drivers/dma/Makefile                          |    1 +
+ drivers/dma/atcdmac300.c                      | 1556 +++++++++++++++++
+ drivers/dma/atcdmac300.h                      |  276 +++
+ 6 files changed, 1902 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/andestech,qilai-dma.yaml
+ create mode 100644 drivers/dma/atcdmac300.c
+ create mode 100644 drivers/dma/atcdmac300.h
+
+-- 
+2.34.1
 
 
