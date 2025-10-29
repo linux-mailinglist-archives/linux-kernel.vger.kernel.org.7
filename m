@@ -1,244 +1,114 @@
-Return-Path: <linux-kernel+bounces-877216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B34C1D752
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:37:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E7CC1D75B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A803AA9F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425B0188C27E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED84331987A;
-	Wed, 29 Oct 2025 21:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDE931A07B;
+	Wed, 29 Oct 2025 21:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Z/kQAgm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LplNfuDh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fjMn/gm/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3AD13C914;
-	Wed, 29 Oct 2025 21:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACABF13C914
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761773841; cv=none; b=oobkQxFrldUvkZEGo8BvrGyKR8255VB8Vga+R30R2vUzdq5XKd7pe2z12btLzHfQw/xAsTWy34RTx9xC4Vr5+m6SBqWwsd98QHgikTjr/m0pmBtPW0fbk4/ZbLSs78ljqBpgr/+fGDIhDNjx4b1pYJVelcHj6C3f3d4IMJecc9c=
+	t=1761773870; cv=none; b=RIaDkp1RQDA49bQZ5fV2NWp5tS085HT1h8qmxe1FWVgiI1BM4+ULZ6+ZI1w+hYOvLn0jtE+ZjEdYLU7n28IQmopJ2287y4O8Wqh3Xv0yqyRlrvmsu4RlTqaWHa9V2AboBz+FHrln0zJdb7uibgk/nTngvY5dJTEmgtU6fk9xtEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761773841; c=relaxed/simple;
-	bh=/6NAAiKqdPU9WwnzqHNIq3AzKl8jVMeea4+qrYpblg8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qRXdFkmo1rZy/mhuZJUNhghooyBImf8Zf+DRBgLfODUCwvu76NH8xaidJKkAAOidXviOw3YTX2Ji8dPm+4ZjN+ST5IkxrlN+ftMafCPWdGSEDgIJ/ncGyj64Zqm0lW75aKfpZTq2socGJFyeH3IJNKIQt0yS7jdpYczwG0r/bwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Z/kQAgm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LplNfuDh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761773837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NyOjAPbVVoq3R+vYHIIlKhyz4q3mwtc5uiKlsJciins=;
-	b=0Z/kQAgmSiw21n3lCILuFOPlzZvCZYwftlhi9Mvv/6d247uP9oRiUkJJ4N+/QnIUOL5wtv
-	/x3XAxQvhjDBFJmHo34qyRHQSeoNUJimYXBEMVB0yjJ6hC8PzgEwvHZ9T0/fkvoaoRZUNI
-	ERHA5PXe8vnlKyaO1XWK7FNEM4Pd+MPDNKQhMV6YIJxLrm6GN1XGSF83TYm5SVnFmwO0DM
-	OPnTZa+/ca9uU9VkpxE39zpgExbHlbron3Oz3vUt+OwzZRkfiInBopbilNoWh8tlNpPf8e
-	ykYHMCMqdIU1Z8Zj6vPpvPqvFV0EGeEK5S1FDmD4ypkOJ4TSYtP8bxhnRwY+sA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761773837;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NyOjAPbVVoq3R+vYHIIlKhyz4q3mwtc5uiKlsJciins=;
-	b=LplNfuDh1UuhG/s6RLNiysNRpxVCVje4Ntub6/S5kskNx1+WXvFXNp6NCF/H+moma8Bm5O
-	JDL0xzS1aZKX95Cg==
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Prakash Sangappa <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann
- <arnd@arndb.de>, linux-arch@vger.kernel.org
-Subject: Re: [patch V3 08/12] rseq: Implement time slice extension
- enforcement timer
-In-Reply-To: <20251029144538.5eb5c772@gandalf.local.home>
-References: <20251029125514.496134233@linutronix.de>
- <20251029130403.923191772@linutronix.de>
- <20251029144538.5eb5c772@gandalf.local.home>
-Date: Wed, 29 Oct 2025 22:37:17 +0100
-Message-ID: <87ms59tmnm.ffs@tglx>
+	s=arc-20240116; t=1761773870; c=relaxed/simple;
+	bh=2m6E3KOecuxoequ8DNsV+fUpEVK37fOzsOWy6portyM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o/Pg7LuLJlvWl21LZCU/v6u9u7UucnoBLRC2ckubil9bXZV2rOGze34KuidoDAkLq2scLmLHfA7R66cz/+N55qjM8bxsF2uaYY/As1CKbE4U8PdU8wty7UUpR4gwOhL7Uio5aBJ5iRBm22onb6qKOBj6IOrSTPUZGqt4kwhp6Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fjMn/gm/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51388C4CEF8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:37:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761773870;
+	bh=2m6E3KOecuxoequ8DNsV+fUpEVK37fOzsOWy6portyM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fjMn/gm/CDewlocIko0JwpcUbQNTVXJfqhcLmVmlIxZ6TEhg012hI0UEbsfewfbTt
+	 NEyzf/ciIDB8DT5NwyBP5NPO8ILWXAt1x7lpFo9imF6bbuGnHyJ/mm9OCM9/UqxEPe
+	 plTDtO4nfJPJ8wxcKHUSEtnGNQ7iq5GlRWi3es698U/Sc1WL9UsfXczphrDyg8BanY
+	 DVLK+k+n74VW2UgrrsiUeRKXL1OSpeGiQ61wxlR43E3jshlTrZft9QUKvMIBWF7s3j
+	 c9MKG+ZSAKw7+Spt9tjivzpDHxKdgWQp2aBUkFEh3LOxq9paAqCf3V2B3kLGCpbR3f
+	 kb7GKkZj7Y+XA==
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4eba313770dso3076171cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7YJ+xqFRea5sg9sbVvuVv44xpY8fs4zW9hrTz4Ws5C+/6zA2P5Ckl//O/PJPGkKFoBZEPczBsZmgREbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUC73HJEWwCuFvvHPVdytnufcwq60Sime7S30j0f1MpWc+V38Z
+	rDMFivWMLh8llOcryUUFp10u+ZrRj3rHscDC+idQHp9kW8VTTqlnUpTcVvShziZctha32G+TgPv
+	XvRReYUpzayhG4HgB5k3EJCzw1eODQg0=
+X-Google-Smtp-Source: AGHT+IHf7xJb92TiwVJcd4HpaDmN2Evk7yYp3/gpWQvWWAHb0Jqi2EVJBlDw942F/nUwWhx1w32vHDcnFFGm0iLiRgo=
+X-Received: by 2002:ac8:7dc2:0:b0:4e8:acc0:1e86 with SMTP id
+ d75a77b69052e-4ed15c1cd6emr57252001cf.45.1761773869510; Wed, 29 Oct 2025
+ 14:37:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-3-roman.gushchin@linux.dev> <aQJZgd8-xXpK-Af8@slm.duckdns.org>
+ <87ldkte9pr.fsf@linux.dev> <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+ <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com> <aQKGrqAf2iKZQD_q@slm.duckdns.org>
+In-Reply-To: <aQKGrqAf2iKZQD_q@slm.duckdns.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 29 Oct 2025 14:37:38 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_tEYA2oboJ-SPq5wJLJTpJDNiA2Fk1wMRgyEpH0gjZRJw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnEP6btBVaHkNJVps6IoG-AZx4A3wkxixrfqUMH1dY2e5xFkESMzpATyCo
+Message-ID: <CAHzjS_tEYA2oboJ-SPq5wJLJTpJDNiA2Fk1wMRgyEpH0gjZRJw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
+To: Tejun Heo <tj@kernel.org>
+Cc: Song Liu <song@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29 2025 at 14:45, Steven Rostedt wrote:
-> On Wed, 29 Oct 2025 14:22:26 +0100 (CET)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
->>  rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
->>  {
->> -	if (likely(!test_tif_rseq(ti_work)))
->> -		return false;
->> -
->> -	if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
->> -		current->rseq.event.slowpath = true;
->> -		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
->> -		return true;
->> +	if (unlikely(test_tif_rseq(ti_work))) {
->> +		if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
->> +			current->rseq.event.slowpath = true;
->> +			set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
->> +			return true;
+On Wed, Oct 29, 2025 at 2:27=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
 >
-> Just to make sure I understand this. By setting TIF_NOTIFY_RESUME and
-> returning true it can still comeback to set the timer?
-
-No. NOTIFY_RESUME is only set when the access faults or when the user
-space memory is corrupted and the grant is moot in that case.
-
-But if TIF_RSEQ is set then a previously granted extensionn is anyway
-revoked because that means:
-
-        granted();
-        ---> preemption (evtl. migration): Set's TIF_RSEQ
-           schedule()
-        rseq_exit_to_user_mode_restart()
-           if (TIF_RSEQ is set)
-              handle_rseq()
-                 revoke_grant()
-                 
-> I guess this also begs the question of if user space can use both the
-> restartable sequences at the same time as requesting an extended time slice?
-
-It can and that actually makes sense.
-
-       enter_cs()
-         request_grant()
-         set_cs()
-         ...
-
-interrupt
-        set_need_resched()
-        exit_to_user_mode()
-           if (need_resched()
-              grant_extention() // clears NEED_RESCHED
-           ...
-        rseq_exit_to_user_mode_restart()
-           if (IF_RSEQ is set)  // Branch not taken
-              ...
-           arm_timer()
-        return_to_user()
-
-        leave_cs()
-          if (granted)
-             sys_rseq_sched_yield()
-
-which means the extension grant prevented the critical section to be
-aborted. If the extension is not granted or revoked then this behaves
-like a regular RSEQ CS abort.
-
->> +	 * This check prevents that a granted time slice extension exceeds
+> Hello,
 >
->	   This check prevents a granted time slice ...
+> On Wed, Oct 29, 2025 at 02:18:00PM -0700, Song Liu wrote:
+> ...
+> > How about we pass a pointer to mem_cgroup (and/or related pointers)
+> > to all the callbacks in the struct_ops? AFAICT, in-kernel _ops structur=
+es like
+> > struct file_operations and struct tcp_congestion_ops use this method. A=
+nd
+> > we can actually implement struct tcp_congestion_ops in BPF. With the
+> > struct tcp_congestion_ops model, the struct_ops map and the struct_ops
+> > link are both shared among multiple instances (sockets).
+> >
+> > With this model, the system admin with root access can load a bunch of
+> > available oom handlers, and users in their container can pick a preferr=
+ed
+> > oom handler for the sub cgroup. AFAICT, the users in the container can
+> > pick the proper OOM handler without CAP_BPF. Does this sound useful
+> > for some cases?
 >
->> +	 * the maximum scheduling latency when the grant expired before
+> Doesn't that assume that the programs are more or less stateless? Wouldn'=
+t
+> oom handlers want to track historical information, running averages, whic=
+h
+> process expanded the most and so on?
 
-I'm not a native speaker, but your suggested edit is bogus. Let me
-put it into the full sentence:
-
-	   This check prevents a granted time slice extension exceeds
-           the maximum ....
-
-Can you spot the fail?
-
->> +	/*
->> +	 * Store the task pointer as a cookie for comparison in the timer
->> +	 * function. This is safe as the timer is CPU local and cannot be
->> +	 * in the expiry function at this point.
->> +	 */
->
-> I'm just curious in this scenario:
->
->   1) Task A requests an extension and is granted.
->       st->cookie = Task A
->       hrtimer_start();
->
->   2) Before getting back to user space, a RT kernel thread wakes up and
->      preempts Task A. Does this clear the timer?
-
-No.
-
->   3) RT kernel thread finishes but then schedules Task B within the expiry.
->
->   4) Task B requests an extension (assuming it had a short time slice that
->      allowed it to end before the expiry of the original timer).
->
-> I guess it doesn't matter that st->cookie = Task B, as Task A was already
-> scheduled out. But would calling hrtimer_start() on an existing timer cause
-> any issue?
-
-No. The timer is canceled and reprogrammed.
-
-> I guess it doesn't matter as it looks like the code in hrtimer_start() does
-> indeed remove an existing timer.
-
-You guessed right :)
-
->> +	st->cookie = curr;
->> +	hrtimer_start(&st->timer, curr->rseq.slice.expires, HRTIMER_MODE_ABS_PINNED_HARD);
->> +	/* Arm the syscall entry work */
->> +	set_task_syscall_work(curr, SYSCALL_RSEQ_SLICE);
->> +	return false;
->> +}
->> +
->> +static void rseq_cancel_slice_extension_timer(void)
->> +{
->> +	struct slice_timer *st = this_cpu_ptr(&slice_timer);
->> +
->> +	/*
->> +	 * st->cookie can be safely read as preemption is disabled and the
->> +	 * timer is CPU local.
->> +	 *
->> +	 * As this is most probably the first expiring timer, the cancel is
->
->            As this is probably the first ...
->
->> +	 * expensive as it has to reprogram the hardware, but that's less
->> +	 * expensive than going through a full hrtimer_interrupt() cycle
->> +	 * for nothing.
->> +	 *
->> +	 * hrtimer_try_to_cancel() is sufficient here as the timer is CPU
->> +	 * local and once the hrtimer code disabled interrupts the timer
->> +	 * callback cannot be running.
->> +	 */
->> +	if (st->cookie == current)
->> +		hrtimer_try_to_cancel(&st->timer);
->
-> If the above scenario did happen, the timer will go off as
-> st->cookie == current would likely be false?
->
-> Hmm, if it does go off and the task did schedule back in, would it get its
-> need_resched set? This is a very unlikely scenario thus I guess it doesn't
-> really matter.
-
-Correct.
-
-> I'm just thinking about corner cases and how it could affect this code and
-> possibly cause noticeable issues.
-
-Right. That corner case exists and there is not much to be done about it
-unless you inflict the timer cancelation into schedule(), which is not
-an option at all.
-
-> -- Steve
-
-/me trims 50+ lines of pointless quotation.
+Yes, this does mean the program needs to store data in some BPF maps.
+Do we have concern with the performance of BPF maps?
 
 Thanks,
-
-        tglx
+Song
 
