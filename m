@@ -1,259 +1,310 @@
-Return-Path: <linux-kernel+bounces-877092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 768CEC1D2A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:11:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE99C1D2BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:12:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1622B3AD1D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:11:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A08B1889383
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB3535A924;
-	Wed, 29 Oct 2025 20:11:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5790358D21;
+	Wed, 29 Oct 2025 20:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="cXdMGkjY"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqVKZDfl"
+Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FF635A13D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414EF1D5AC0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768694; cv=none; b=oV4pr20NlKqj/tdWS2liOLslwww/03YUATIjClWzxBh5/Vv44OF7y86Rn9TjY3oMtC7tiojTst67+ICzr/yhZmaSE6sefaii/xFmxjV0Pay8Si+HgLMEvoClZRa31uqLIbHrBa75fObNaVR46oyvgsbT7pMElUqLhWKIK6Sng1o=
+	t=1761768746; cv=none; b=Urqa27k+IjwSJw+QgDNr93KNljeFmXje6grhX/Yy2e+qkntz3AR7mEQF+25zmHNW0YaWqAiWNCyz8shKrXxTzlr/p5WE7ujf9Lag6FtdqwQeYrwJV8jvfjpN87zxcWvfA7GCot6CWOK8qOdkRlE1gEzkDvjqNLJCaW4RDat2zuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768694; c=relaxed/simple;
-	bh=i2x6FuRzHHu3DqZfnTFMfT434IIQFJZMu963TwDZRwE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MLeQSBh8AnxvoVaqtLP+gEdz2ntnK6PrY5VxiZN/Q9fWe4Dld+CYXXYl72iEo+E+ZhTNfaDVTYhB9+SK469MjIj709rXhkASeXwYsGVvq0ikG8v4doRXrQuCJG79B5/2zGT1ZL0s9MubiOhDgFoWJANDfyGrZSG09P1fd/OroAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=cXdMGkjY; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
-	s=protonmail3; t=1761768688; x=1762027888;
-	bh=801m/BDnq+4IDZrRjH01sT6fZRZq5h0m340QBaMU7xk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cXdMGkjYQPcz0Nv21dBbiab8WuIQ4hr8ZJRQqwUepbPD1rbiz/vhDeUFcNs+IGjar
-	 od6iv3/pch7jNVp38Q2cmI4VQR0pGdQZyx7xwgvOjcMGXYKinHJUeISc801+Y8WgrO
-	 SCNfKcZPXZtF2+rk0dIn06Lyyoiy42cPczWw1N9Ui8kQDW0LXKyASTAfV23YHt8/QB
-	 FHk6Lay8dA8JodN9I7Vt57QyS2WDP7aNMHr/4vq1HuuEYHnPPI3dMERBgdU9EwiM+L
-	 Mj22z+1Gh8UFKiZFiqV8G56jWG5bH3ehdlP3bMiXUuyMKOD3PJOh+zXTgfnU3nZFJH
-	 7Bb570r+dWC+Q==
-Date: Wed, 29 Oct 2025 20:11:22 +0000
-To: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org, akpm@linux-foundation.org, nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com, wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com, fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com, ubizjak@gmail.com, ada.coupriediaz@arm.com, nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com, elver@google.com, pankaj.gupta@amd.com, glider@google.com, mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org, thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com, jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com, mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com, vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
-	ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev, ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com, broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com, maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org, rppt@kernel.org, will@kernel.org, luto@kernel.org
-From: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, x86@kernel.org, linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev, linux-doc@vger.kernel.org, m.wieczorretman@pm.me
-Subject: [PATCH v6 18/18] x86/kasan: Make software tag-based kasan available
-Message-ID: <d98f04754c3f37f153493c13966c1e02852f551d.1761763681.git.m.wieczorretman@pm.me>
-In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
-References: <cover.1761763681.git.m.wieczorretman@pm.me>
-Feedback-ID: 164464600:user:proton
-X-Pm-Message-ID: f951758d099748a231d1551fe212ba144d88e29b
+	s=arc-20240116; t=1761768746; c=relaxed/simple;
+	bh=um/tVoXbdEDWtRKbDPvUuQcW+0FcwrOb0U/tmwLwaek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nDL3juRmxKVKvrYFK0+RxFrnRpQwOuwnFe5V2YRV2jtB+3a9+YUmozAjJciulNlZ2J92IWayDR++zNv60aR3QuanaHso/NozJq8DZ6lbkJrhsL9SQbfyrBi5NBlVpblqMn2vcSXmEMjIbbLkPy9I2VcaTaO+xnMZWgl++KpTADk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqVKZDfl; arc=none smtp.client-ip=74.125.224.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-63e1a326253so438519d50.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761768743; x=1762373543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OC8sv5nVVI5JjZAVR+hifwSr8nAzhJqQduX4ujCZR7I=;
+        b=jqVKZDflRIaeh9eC2sCmAFs0sCyLWyxBlpfDzcln0UrqC67YFTdikbEBwjLa7dGXdE
+         BzEibpp9ualSyfxUs1kJCZeFWp/mdvvHRMfmy3HIuzezjgFLakSd2mkd2lKmpMUt3VNB
+         AJWEE2BCayboNzDmWryI5LO+kKkARB5x0t5KBN44uKbFYu6Lp+/2vdqXIs7e87ewz2Z2
+         Yco4UI2uecN55KnGbrKd2c7uzvzb6FrvUDA+kRzJ2hxu4sXjsddsYdQ3LiX4f2QtqIUd
+         uUzhM4+4/7dh9SRVqlppWfMPZwB3Plg/RestcMWLzhSPLUxQ9GkhmAKwRlPTajONNC/m
+         7p1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761768743; x=1762373543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OC8sv5nVVI5JjZAVR+hifwSr8nAzhJqQduX4ujCZR7I=;
+        b=DGAyn8/6siTHrB1LRNDFiv3kVc3v8KPwLPUZJgPfxDv+OcoXuIenjNBQ9W68hp87sx
+         YpNcsjtM9TtWHObyp8xDoU6vhoDitCz7JZGfw0u10IopjZGk5wXf80nXBH0ZTMF4+apc
+         zgAsinK5TgAm/JXcT+6P/SRgTgL6rLnKshN5JgXliRE184BxPWRAZbHViVHgcasfNG/j
+         K2OL3I+o8tRyMN6GEi9/5b6k9BayJKnZq+KXYNTIiz8Qj30a4cSyUKCiJfe2MuLmHkdI
+         IPDmZYXJmlsYi9MjE+zJ2sa2/UtesQqKRDAK8seHTAVRrautT4a7MKHbazcSGjyTe1MM
+         hk8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWCVackUKeAcaj1ES9Ylhq5kmBERtIrljFZIieEaY3I6zhnmsDP9QbKfTVL2IQbXcCnL4iMbtbltSIhxME=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+E5P6jj4ZAoFS4U0dRPWcnTFBB8TP+iEjYNhyYaSWHxDNley/
+	nVOxtDc+7WJ6JiNMv6vhAEXXc4vwW1ut2xyHivEdMGHjUUstYgfKlhakknjVodythm7VExX4AML
+	jynQwQiS04gqoj30tKp7ULAZAb8wRFjI=
+X-Gm-Gg: ASbGncvgV9XeNV1ZEJS/5PKiP4l9S0mZv2t9WBG2h8i8nCvuQnFCphhRiVUeOjrHFT1
+	glmA7K8ngpYO6sYKxNxMdR1Q/F/UMqrJvsxQrHz9GFtHM174btzhAUyQFXAi4MLXMUyeRMTXJ4g
+	rH6wwemcSfNApHt32eVAkM8TAHJ5M3Xmk7AyHOXiFE2YsbXwmrZoGmaDBCvidbNy5SlDunwE+cy
+	hclfkDnsH/hqgLoyDep5WORAosuDdBtuZbwNeLwfGjdwSq30GdsMXWz4fw=
+X-Google-Smtp-Source: AGHT+IHlC2vJ9MOy5SMuyr39csRGDgW2ebq4sozUhofv3qG694XVnBM5XEojvBZU5ygeiuDc1oaYIAG7PDq9K61FKLk=
+X-Received: by 2002:a05:690e:dc2:b0:63e:2204:9416 with SMTP id
+ 956f58d0204a3-63f76d91439mr3487993d50.31.1761768742872; Wed, 29 Oct 2025
+ 13:12:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251027171759.1484844-1-cjd@cjdns.fr> <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+ <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr> <CAOiHx=nqWEdHEMf5immXO0VwyzDakDV9AMsoDETcJ0F4FqUt=w@mail.gmail.com>
+ <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
+In-Reply-To: <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
+From: Jonas Gorski <jonas.gorski@gmail.com>
+Date: Wed, 29 Oct 2025 21:12:10 +0100
+X-Gm-Features: AWmQ_bnMO20yjsceLB8hiFSFJ1UyPWeJK08ZHhht06brEKUVc81COenzYsB_XPk
+Message-ID: <CAOiHx=kfAwLzuoP2Y-AnGz4GysmszXq-f_et0rgd1j0thYv4Ew@mail.gmail.com>
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com, 
+	shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Daniel Golle <daniel@makrotopia.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+On Wed, Oct 29, 2025 at 4:24=E2=80=AFPM Caleb James DeLisle <cjd@cjdns.fr> =
+wrote:
+>
+>
+> On 29/10/2025 10:15, Jonas Gorski wrote:
+> > On Tue, Oct 28, 2025 at 10:42=E2=80=AFPM Caleb James DeLisle <cjd@cjdns=
+.fr> wrote:
+> >>
+> >> On 28/10/2025 21:19, Jonas Gorski wrote:
+> >>> Hi,
+> >>>
+> >>> On Mon, Oct 27, 2025 at 6:19=E2=80=AFPM Caleb James DeLisle <cjd@cjdn=
+s.fr> wrote:
+> >>>> When on a Big Endian machine, PCI swaps words to/from LE when
+> >>>> reading/writing them. This presents a problem when we're trying
+> >>>> to copy an opaque byte array such as firmware or encryption key.
+> >>>>
+> >>>> Byte-swapping during copy results in two swaps, but solves the
+> >>>> problem.
+> >>>>
+> >>>> Fixes:
+> >>>> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+> >>>> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+> >>>> mt76x2e 0000:02:00.0: Build: 1
+> >>>> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+> >>>> mt76x2e 0000:02:00.0: Firmware failed to start
+> >>>> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -1=
+45
+> >>>>
+> >>>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+> >>>> ---
+> >>>>    drivers/net/wireless/mediatek/mt76/mmio.c | 34 ++++++++++++++++++=
++++++
+> >>>>    1 file changed, 34 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net=
+/wireless/mediatek/mt76/mmio.c
+> >>>> index cd2e9737c3bf..776dbaacc8a3 100644
+> >>>> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+> >>>> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+> >>>> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u=
+32 offset, u32 mask, u32 val)
+> >>>>           return val;
+> >>>>    }
+> >>>>
+> >>>> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+> >>>> +                                         const u8 *src, int len)
+> >>>> +{
+> >>>> +       __le32 val;
+> >>>> +       int i =3D 0;
+> >>>> +
+> >>>> +       for (i =3D 0; i < ALIGN(len, 4); i +=3D 4) {
+> >>>> +               memcpy(&val, src + i, sizeof(val));
+> >>>> +               writel(cpu_to_le32(val), dst + i);
+> >>>> +       }
+> >>>> +}
+> >>>> +
+> >>>>    static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset=
+,
+> >>>>                                    const void *data, int len)
+> >>>>    {
+> >>>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+> >>>> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offse=
+t, data,
+> >>>> +                                             len);
+> >>>> +               return;
+> >>>> +       }
+> >>>>           __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_=
+UP(len, 4));
+> >>> Maybe just replace this with memcpy_toio() which does no swapping at
+> >>> all instead of double swapping on BE?
+> >>
+> >> I'm not that informed about how PCI works so I had to test to confirm
+> >> my understanding, but I can confirm that memcpy_toio() does not solve
+> >> the problem.
+> > Ah, right, I misread _iowrite32_copy() to do conversion to LE, but it d=
+oesn't.
+> >
+> > What architecture is this you have? PowerPC? ARM? MIPS? 32 bit? 64 bit?
+>
+>
+> MIPS32 (EcoNet EN751221 34Kc)
+>
+>
+> >
+> > So the differences I see are:
+> >
+> > 1. __iowrite32_copy() uses __raw_writel(), which has different memory
+> > semantics than writel()
+> > 2. __iowrite32_copy() assumed src is aligned to 32 bit, while you
+> > explicitly align it
+> > 3. memcpy_toio() will handle unaligned src properly, but does 64 bit
+> > accesses on 64 bit systems (and uses __raw* again).
+> >
+> > Is src aligned? If not, then the issue might be 2. And if your system
+> > is 64 bit, it would explain why 3 didn't help.
+>
+>
+> I'm not a regular developer of mt76 so I wasn't sure if that was
+> guaranteed and I just wanted to code for safety.
+>
+> After reviewing the code, I see that there are a few places where
+> mt76_mmio_write_copy is being called with stack-allocated u8 arrays
+> so it's pretty clear to me that this is being treated as a memcpy-like
+> function and we should be handling unaligned inputs.
+>
+>
+> >
+> > As a first step you could try to replace the writel(cpu_to_le32(val)
+> > with a iowrite32be(val, ...) which should do the same except avoiding
+> > the doubled byte swapping. If that works, you can try to replace it
+>
+> This works.
+>
+> These symbols are a bit of a nightmare to trace, so I ended up making
+> an .i file so I could confirm what's happening.
+>
+> iowrite32be() uses the version in iomap.c so I understand that's using
+> writel(swab32(val),port), so a writel with an unconditional byte swap.
 
-Make CONFIG_KASAN_SW_TAGS available for x86 machines if they have
-ADDRESS_MASKING enabled (LAM) as that works similarly to Top-Byte Ignore
-(TBI) that allows the software tag-based mode on arm64 platform.
+>
+> writel() is more complicated, it's an inline function that is generated
+> in a rat's nest of preprocessor macros in mips/include/asm/io.h
+>
+> The preprocessed is this:
+>
+> __mem =3D (void *)((unsigned long)(mem)); __val =3D (val); if (sizeof(u32=
+)
+> !=3D sizeof(u64) || sizeof(u64) =3D=3D sizeof(long)) { *__mem =3D __val;
+>
+> The source is this:
+>
+>      __mem =3D (void *)__swizzle_addr_##bwlq((unsigned long)(mem));    \
+>      __val =3D pfx##ioswab##bwlq(__mem, val);                \
+>      if (sizeof(type) !=3D sizeof(u64) || sizeof(u64) =3D=3D sizeof(long)=
+) \
+>          *__mem =3D __val;                        \
+>
+> The line "pfx##ioswab##bwlq(__mem, val);" is ioswabl() and the source
+> of that explains the issue:
+>
+>   * Sane hardware offers swapping of PCI/ISA I/O space accesses in hardwa=
+re;
+>   * less sane hardware forces software to fiddle with this...
+>
+> So this confirms my initial understanding, the PCI hardware is doing the
+> byte swapping unconditionally.
+>
+>
+> > with __raw_writel(), which then would make this the same as
+> > __iowrite32_copy, except making sure that src is aligned.
+>
+>
+> This fails.
+>
+> Since I'm the maintainer of this SoC and it's still fairly new, I wrote
+> a trivial kmod to verify that unaligned access is not just silently
+> returning trash, it works as though it were aligned so alignment is
+> not the issue.
+>
+>
+> >
+> > Also you could replace your memcpy() with get_unaligned((u32 *)(src +
+> > i)); Should do the same but inline.
+> Good idea, I will do this.
+> >> The issue as I understand it is that rather than making every driver
+> >> carefully call cpu_to_le*() every MMIO write, someone decided to make
+> >> the PCI host bridge itself transparently byte-swap all MMIO on the
+> >> wire. Since most MMIO is hitting registers and most buffers are
+> >> transferred by DMA, for the most part everything works and nobody
+> >> notices.
+> >>
+> >> But in the rare case that we need to write a blob to MMIO, it gets
+> >> transparently swapped in hardware so you need to use cpu_to_le in that
+> >> case. Doing a search of ./drivers for write.*cpu_to_le I can see this
+> >> issue comes up a bit.
+> > Every (PCI) driver does conversion to LE implicitly by using
+> > writel/readl (or iowrite32/ioread32) etc do the conversion to/from LE.
+> > So writel(foo, dst )is a __raw_writel(cpu_to_le32(foo), dst) etc. PCI
+> > memory is assumed to be in LE. If you are on a little endian system,
+> > then no byte swapping happens, and on BE it will do byte swapping
+> > before writing the value.
+>
+> Okay so it seems that in the case of MIPS, that's not always how it
+> works.
+>
+> https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c=
+595ea6/arch/mips/include/asm/mach-generic/mangle-port.h#L17
+>
+> Since we don't know if the swap will happen in hardware or software
+> and (AFAIK) this is not a hot enough path that double-swapping will
+> have a notable performance penalty, I think the most sane thing to
+> do is use writel(cpu_to_le32()) and not care if it's swapped back
+> in the kernel or hardware.
 
-Set scale macro based on KASAN mode: in software tag-based mode 16 bytes
-of memory map to one shadow byte and 8 in generic mode.
+Oh, I think I see what it happening here. ECONET is a Big Endian MIPS
+platform, but does not select SWAP_IO_SPACE (most other BE platforms
+do).
 
-Disable CONFIG_KASAN_INLINE and CONFIG_KASAN_STACK when
-CONFIG_KASAN_SW_TAGS is enabled on x86 until the appropriate compiler
-support is available.
+Does that mean the PCI space is swapped in hardware there?
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v6:
-- Don't enable KASAN if LAM is not supported.
-- Move kasan_init_tags() to kasan_init_64.c to not clutter the setup.c
-  file.
-- Move the #ifdef for the KASAN scale shift here.
-- Move the gdb code to patch "Use arithmetic shift for shadow
-  computation".
-- Return "depends on KASAN" line to Kconfig.
-- Add the defer kasan config option so KASAN can be disabled on hardware
-  that doesn't have LAM.
+I guess that means that anything that uses __raw accessors to PCI
+space directly or indirectly is broken, as the raw data is now
+actually in the wrong order and needs to be swab'd.
 
-Changelog v4:
-- Add x86 specific kasan_mem_to_shadow().
-- Revert x86 to the older unsigned KASAN_SHADOW_OFFSET. Do the same to
-  KASAN_SHADOW_START/END.
-- Modify scripts/gdb/linux/kasan.py to keep x86 using unsigned offset.
-- Disable inline and stack support when software tags are enabled on
-  x86.
+I don't know if it is a good idea to change this in __iowrite32_copy()
+/ __ioread32_copy() (and other helpers), or if there are drivers that
+use it on non-PCI spaces and would be broken by that.
 
-Changelog v3:
-- Remove runtime_const from previous patch and merge the rest here.
-- Move scale shift definition back to header file.
-- Add new kasan offset for software tag based mode.
-- Fix patch message typo 32 -> 16, and 16 -> 8.
-- Update lib/Kconfig.kasan with x86 now having software tag-based
-  support.
+If there is a way, I would suggest disabling hardware conversion and
+selecting SWAP_IO_SPACE, but that will affect a lot of your code that
+assumes that writel() etc don't convert to/from little endian.
 
-Changelog v2:
-- Remove KASAN dense code.
-
- Documentation/arch/x86/x86_64/mm.rst | 6 ++++--
- arch/x86/Kconfig                     | 4 ++++
- arch/x86/boot/compressed/misc.h      | 1 +
- arch/x86/include/asm/kasan.h         | 4 ++++
- arch/x86/mm/kasan_init_64.c          | 5 +++++
- lib/Kconfig.kasan                    | 3 ++-
- 6 files changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/Documentation/arch/x86/x86_64/mm.rst b/Documentation/arch/x86/=
-x86_64/mm.rst
-index a6cf05d51bd8..ccbdbb4cda36 100644
---- a/Documentation/arch/x86/x86_64/mm.rst
-+++ b/Documentation/arch/x86/x86_64/mm.rst
-@@ -60,7 +60,8 @@ Complete virtual memory map with 4-level page tables
-    ffffe90000000000 |  -23    TB | ffffe9ffffffffff |    1 TB | ... unused=
- hole
-    ffffea0000000000 |  -22    TB | ffffeaffffffffff |    1 TB | virtual me=
-mory map (vmemmap_base)
-    ffffeb0000000000 |  -21    TB | ffffebffffffffff |    1 TB | ... unused=
- hole
--   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shad=
-ow memory
-+   ffffec0000000000 |  -20    TB | fffffbffffffffff |   16 TB | KASAN shad=
-ow memory (generic mode)
-+   fffff40000000000 |   -8    TB | fffffbffffffffff |    8 TB | KASAN shad=
-ow memory (software tag-based mode)
-   __________________|____________|__________________|_________|___________=
-_________________________________________________
-                                                               |
-                                                               | Identical =
-layout to the 56-bit one from here on:
-@@ -130,7 +131,8 @@ Complete virtual memory map with 5-level page tables
-    ffd2000000000000 |  -11.5  PB | ffd3ffffffffffff |  0.5 PB | ... unused=
- hole
-    ffd4000000000000 |  -11    PB | ffd5ffffffffffff |  0.5 PB | virtual me=
-mory map (vmemmap_base)
-    ffd6000000000000 |  -10.5  PB | ffdeffffffffffff | 2.25 PB | ... unused=
- hole
--   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
-ow memory
-+   ffdf000000000000 |   -8.25 PB | fffffbffffffffff |   ~8 PB | KASAN shad=
-ow memory (generic mode)
-+   ffeffc0000000000 |   -6    PB | fffffbffffffffff |    4 PB | KASAN shad=
-ow memory (software tag-based mode)
-   __________________|____________|__________________|_________|___________=
-_________________________________________________
-                                                               |
-                                                               | Identical =
-layout to the 47-bit one from here on:
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index fa3b616af03a..7c73a2688172 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -67,6 +67,7 @@ config X86
- =09select ARCH_CLOCKSOURCE_INIT
- =09select ARCH_CONFIGURES_CPU_MITIGATIONS
- =09select ARCH_CORRECT_STACKTRACE_ON_KRETPROBE
-+=09select ARCH_DISABLE_KASAN_INLINE=09if X86_64 && KASAN_SW_TAGS
- =09select ARCH_ENABLE_HUGEPAGE_MIGRATION if X86_64 && HUGETLB_PAGE && MIGR=
-ATION
- =09select ARCH_ENABLE_MEMORY_HOTPLUG if X86_64
- =09select ARCH_ENABLE_MEMORY_HOTREMOVE if MEMORY_HOTPLUG
-@@ -196,6 +197,8 @@ config X86
- =09select HAVE_ARCH_JUMP_LABEL_RELATIVE
- =09select HAVE_ARCH_KASAN=09=09=09if X86_64
- =09select HAVE_ARCH_KASAN_VMALLOC=09=09if X86_64
-+=09select HAVE_ARCH_KASAN_SW_TAGS=09=09if ADDRESS_MASKING
-+=09select ARCH_NEEDS_DEFER_KASAN=09=09if ADDRESS_MASKING
- =09select HAVE_ARCH_KFENCE
- =09select HAVE_ARCH_KMSAN=09=09=09if X86_64
- =09select HAVE_ARCH_KGDB
-@@ -406,6 +409,7 @@ config AUDIT_ARCH
- config KASAN_SHADOW_OFFSET
- =09hex
- =09depends on KASAN
-+=09default 0xeffffc0000000000 if KASAN_SW_TAGS
- =09default 0xdffffc0000000000
-=20
- config HAVE_INTEL_TXT
-diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/mis=
-c.h
-index db1048621ea2..ded92b439ada 100644
---- a/arch/x86/boot/compressed/misc.h
-+++ b/arch/x86/boot/compressed/misc.h
-@@ -13,6 +13,7 @@
- #undef CONFIG_PARAVIRT_SPINLOCKS
- #undef CONFIG_KASAN
- #undef CONFIG_KASAN_GENERIC
-+#undef CONFIG_KASAN_SW_TAGS
-=20
- #define __NO_FORTIFY
-=20
-diff --git a/arch/x86/include/asm/kasan.h b/arch/x86/include/asm/kasan.h
-index 2372397bc3e5..8320fffc71a1 100644
---- a/arch/x86/include/asm/kasan.h
-+++ b/arch/x86/include/asm/kasan.h
-@@ -7,6 +7,7 @@
- #include <linux/types.h>
- #define KASAN_SHADOW_OFFSET _AC(CONFIG_KASAN_SHADOW_OFFSET, UL)
-=20
-+#ifdef CONFIG_KASAN_SW_TAGS
- /*
-  * LLVM ABI for reporting tag mismatches in inline KASAN mode.
-  * On x86 the UD1 instruction is used to carry metadata in the ECX registe=
-r
-@@ -24,7 +25,10 @@
- #define KASAN_ECX_WRITE=09=090x10
- #define KASAN_ECX_SIZE_MASK=090x0f
- #define KASAN_ECX_SIZE(ecx)=09(1 << ((ecx) & KASAN_ECX_SIZE_MASK))
-+#define KASAN_SHADOW_SCALE_SHIFT 4
-+#else
- #define KASAN_SHADOW_SCALE_SHIFT 3
-+#endif
-=20
- /*
-  * Compiler uses shadow offset assuming that addresses start
-diff --git a/arch/x86/mm/kasan_init_64.c b/arch/x86/mm/kasan_init_64.c
-index e69b7210aaae..4a5a4a4d43db 100644
---- a/arch/x86/mm/kasan_init_64.c
-+++ b/arch/x86/mm/kasan_init_64.c
-@@ -465,4 +465,9 @@ void __init kasan_init(void)
-=20
- =09init_task.kasan_depth =3D 0;
- =09kasan_init_generic();
-+
-+=09if (boot_cpu_has(X86_FEATURE_LAM))
-+=09=09kasan_init_sw_tags();
-+=09else
-+=09=09pr_info("KernelAddressSanitizer not initialized (sw-tags): hardware =
-doesn't support LAM\n");
- }
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index a4bb610a7a6f..d13ea8da7bfd 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -112,7 +112,8 @@ config KASAN_SW_TAGS
-=20
- =09  Requires GCC 11+ or Clang.
-=20
--=09  Supported only on arm64 CPUs and relies on Top Byte Ignore.
-+=09  Supported on arm64 CPUs that support Top Byte Ignore and on x86 CPUs
-+=09  that support Linear Address Masking.
-=20
- =09  Consumes about 1/16th of available memory at kernel start and
- =09  add an overhead of ~20% for dynamic allocations.
---=20
-2.51.0
-
-
+Best regards,
+Jonas
 
