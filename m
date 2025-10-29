@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-875842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9740EC19EFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:14:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4ADC19F2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A46A3B8A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:13:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C9F64E9957
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D305D323403;
-	Wed, 29 Oct 2025 11:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E2732E732;
+	Wed, 29 Oct 2025 11:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ancwp3/X"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4B11zFT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C9932ABFA;
-	Wed, 29 Oct 2025 11:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF48228CA9;
+	Wed, 29 Oct 2025 11:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736375; cv=none; b=jhY/0EzObcVM77JyxHuTzqkQLfyDIlkAKFC3tRohtJLk+tfU0kXl9xjNKvV4C630O2unbsN6RWpEXKS/j0OLfbj4/izU352erpFomBGQRTx7m7JZgWjaPua2sRzJft6QG+nnF1mrrwsVwFpYqebT+EaF01PCDeaIhrJuW5RcSZE=
+	t=1761736417; cv=none; b=X2Cm9EbZ6+r4ErbSb5H5WK4m0401XVY9SDrAT9Y2fj5fuw028F0fzReD/GFUfnSgGWkmrgNy1LryWvUc/SB77rUwm06LbGkDpouYkUaraPcfuF394x+flpd22KENssKAMKXdtphP/YP7Y1v3vIT5QilDBvF+Y9onSojhDoFj9do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736375; c=relaxed/simple;
-	bh=s35qvMWiPZye3mUq5eDEkpYwlGbij9U1I7wTMhBYFyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Jco0aGNuuvTKDNwCAOL+0t7QbGLAAllHlg1f8jUkNfhpska59kkl37bUcBsbZIO0dYXdPfxOZMzodU3rzQ8uCLsV3Is8KJkkrrBq654wvUh56Lq7r2dc4+AlI6M1HRlFwP16k/dtQey3Zl/H+DvofmD8fSBU7Cu+TPJ2RajN0/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ancwp3/X; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761736371;
-	bh=s35qvMWiPZye3mUq5eDEkpYwlGbij9U1I7wTMhBYFyI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ancwp3/XUPKjTQvDhJuUU/IpaBlsnpvEiPhZsSTX2lmXUrROvRFfktCfKVyYdFuAk
-	 57F0XzYcMuB8hr40V6pD7NAbiOjIkUwf4r0b6Yd2ucGNYhWyfU5SbKxLifyscl8a/W
-	 a9S2E1f4CwNWV/ufrd7uWNuyVY2JQALxqu5ND4GIsgRpwQRW8Fbu5cZb83+K2tkk/S
-	 rlUMaBiaVCpgAS6+ocypqSOcomhDaBQnEqKJm6YPbtOMfmIFjl9hWVXrL4OlfGfn61
-	 pDmZ5eVgmCKit0O2HtSRPEkOh4OI+Fbfq7vGTFKgFFMquuqfdavABm3t6QUrF957fk
-	 BlMl0l1gxsUpA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D41B317E00A6;
-	Wed, 29 Oct 2025 12:12:50 +0100 (CET)
-Message-ID: <0ddae136-3c25-4d70-9bc2-4e423873cd43@collabora.com>
-Date: Wed, 29 Oct 2025 12:12:50 +0100
+	s=arc-20240116; t=1761736417; c=relaxed/simple;
+	bh=NSnH+E+jSW6jSODYU4V9JtFGATLzpMIWV0ZGRvO47SI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmTQMcHghWC1rEgiqgtPy85UneNlmriiGxi/0x4Lr0k27DKgj+XeEmD0hbfgxvrSOdGqjlGK57J92CBXojt9CDPoIgCeB3iXFy/NDZn4RHAZ5/n0qSU0McWRfjJxjap4xZ0Ix47HTsfMFam50ss6XLnnA6b3Ixdw2D+CGKyCYKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4B11zFT; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761736416; x=1793272416;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NSnH+E+jSW6jSODYU4V9JtFGATLzpMIWV0ZGRvO47SI=;
+  b=d4B11zFTjoWd9i9vq99xkrHgI3Kr7d/NFqD/Xdba8XesYGXaB7GHynD6
+   bMVCmO1/mv1isIf/8E3jYNDT/xccVyMt88s2/nSdfQBYmdVVLVjN86xDg
+   S9tbHoPl1xOuu599LtD02aL4mevk4hNXiWfWVQjmWEPpTNirwNFXawLKR
+   jlcQK9r4MwfSCsuSAvmlOpmR0CosRn2C9wTrtaeD8jbWwZ8lyY+uRFk2U
+   /RzQrQAuqUM3GY+5rSnOVc7lCR2y6cGCaJtTuI6JauRZMZcdjwVdVjPAk
+   lziRJ0s6m6NTA+7W3VJu5ocJqKP5lLQ5LS5gXZFYa6S5ZIi99y7EPzP+A
+   w==;
+X-CSE-ConnectionGUID: Yev54jRvTViEkChWp6/UGA==
+X-CSE-MsgGUID: fQSziircSr2rrS5C8JehXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="89322928"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="89322928"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:13:35 -0700
+X-CSE-ConnectionGUID: PCKALzsOTA6gs24ryGIYNw==
+X-CSE-MsgGUID: dAa9QsizQbiGV73T38XL0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="185977478"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:13:33 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vE47P-00000003am4-08ZS;
+	Wed, 29 Oct 2025 13:13:31 +0200
+Date: Wed, 29 Oct 2025 13:13:30 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Raag Jadav <raag.jadav@intel.com>, hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com, linus.walleij@linaro.org,
+	platform-driver-x86@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] gpio: elkhartlake: Convert to auxiliary driver
+Message-ID: <aQH22oSGllHuOkBI@smile.fi.intel.com>
+References: <20251029062050.4160517-1-raag.jadav@intel.com>
+ <20251029062050.4160517-3-raag.jadav@intel.com>
+ <CAMRc=Mcz3df6KUx6q5MLGfB06jQhBTGfhCM7yovHBE3k1vn+nQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 01/12] media: mediatek: jpeg: fix jpeg hw count
- setting
-To: Kyrie Wu <kyrie.wu@mediatek.com>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20251029065354.22257-1-kyrie.wu@mediatek.com>
- <20251029065354.22257-2-kyrie.wu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20251029065354.22257-2-kyrie.wu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Mcz3df6KUx6q5MLGfB06jQhBTGfhCM7yovHBE3k1vn+nQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Il 29/10/25 07:53, Kyrie Wu ha scritto:
-> Different ICs have different amounts of hardware,
-> use a variable to set the amount of hardware.
-> 
-> Fixes: 934e8bccac95 ("mtk-jpegenc: support jpegenc multi-hardware")
-> Fixes: 0fa49df4222f ("media: mtk-jpegdec: support jpegdec multi-hardware")
-> 
-> Signed-off-by: Kyrie Wu <kyrie.wu@mediatek.com>
+On Wed, Oct 29, 2025 at 11:40:17AM +0100, Bartosz Golaszewski wrote:
+> On Wed, Oct 29, 2025 at 7:21 AM Raag Jadav <raag.jadav@intel.com> wrote:
+> >
+> > Since PCI device should not be abusing platform device, MFD parent to
+> > platform child path is no longer being pursued for this driver. Convert
+> > it to auxiliary driver, which will be used by EHL PSE auxiliary device.
+> >
+> Are there build-time dependencies between this and patch 1/2?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+There is a new header file which is shared IIUC. So, yes.
 
-> 
-> ---
->   drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c   | 8 ++++----
->   drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h   | 2 ++
->   drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c | 1 +
->   drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c | 1 +
->   4 files changed, 8 insertions(+), 4 deletions(-)
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
