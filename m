@@ -1,110 +1,138 @@
-Return-Path: <linux-kernel+bounces-876143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C395C1AC62
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:38:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A12C1B414
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15151587E99
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638AE660CBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9643358B0;
-	Wed, 29 Oct 2025 13:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214FA3358D3;
+	Wed, 29 Oct 2025 13:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YOgXQA/H"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="RuSYPpDF"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B99335084
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5361EF09D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743737; cv=none; b=Z9GGoMpeGC/bbQxU9+bpjmRBmzwocemcdht/Ch527bM/2sjEZZtWCr8pNy5n7aS/2cMxe7UVz06+OhpBP5QMIlXgnfsfXA/oOw8TsSqCG6iJnk2XDbtiqikKtNvabh5AQnB+BrV4p7XiLgulYeKewHegTWvB+Yka9n+fIl74en8=
+	t=1761743754; cv=none; b=MXR19m9qnycVtdlFPY45Z7bu1QQXOV32lxYKDDOMScdL/T/P26ruLDA2xn2TgDgjB9pstRfFBb83v7gRg2QNi2mEWhs4SD+Eu+WW+YpfK7t8etHmRw0b/xLfwUUg78jU+4Bs61KsWtlcTry23fO1ZeEWD81n8feqRRggJmF2C4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743737; c=relaxed/simple;
-	bh=QSkYrsKGtfQWVlvr23O4MmAbfJgkBiIAbT7qzxIWS5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VsduHRxksy+cGJQtqH54AwoDuMuJ8h2ylLiWaFiwjEpoDgIl3t267gAni//36dM/BmLc0qhrvSP1WqBhTCa+O5GMdM81Q9lkzsOBADP2rZz6V7cT9jSp9K55LDG3Tb0keqy181EB+5T81k6O3XycaLUTuWFiCvGjrGeuQvCi+cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YOgXQA/H; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-427091cd4fdso4208369f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:15:34 -0700 (PDT)
+	s=arc-20240116; t=1761743754; c=relaxed/simple;
+	bh=idJ1/xpsY9Qz5yevc36Vw8gxViLPchWiyXx0zGa+jFw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qdHFLSUrgHG4ZOJkLigIf54FO3q4cWqMEmsqJOvV+SN8l5wMPTKYCjrIHUGhJgnWIWTKVK+LmOFFVZd7gIDdJi8y4mf7GtLKgrmmGu0Cv3ZWhDZFm27X9dxtYj2I3c+DROAOxhqVW9Uzs8Qk0U6Z4pC1wO6fkQddEN7pgn0ab7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=RuSYPpDF; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592fb80c2faso8596101e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:15:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761743733; x=1762348533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tFbTde2fDHNouWfBvSlhZDqarLKcRx/QalhPQzPz0lg=;
-        b=YOgXQA/H7NiNjvBZ7XWhaFUdfNGBBNBtHg7MhsjMUpgBP5i1b71EDE9UcYONCzoUPx
-         VoArM6/HW/C6CDdXN8ZR6L/Q2rYVXMru8n1KVGJ4TOdAcp+Q3NkcO6SP6hmVW1QLG+EX
-         J7hWtp3hGAznYCh6zqcBffn66F/gGFk9ZKUI7TbTQNsj+cGpvUE8tmZj48mmdA/x7SaD
-         +xTO1oohsSzZ5r16QUIt0fOcumLk808Pvk2kq/zl2ZOjZ1QRgXDKYaaMStZNKp1qGAsd
-         Qgo4g2rGctotCuaTX+jvYGkO/95xZUddsbU7TTXdJ0492T7E9BpfGDJjLIkeABTW479D
-         b8Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761743733; x=1762348533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761743751; x=1762348551; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tFbTde2fDHNouWfBvSlhZDqarLKcRx/QalhPQzPz0lg=;
-        b=hnf3P6hB+pgL26bDVNIjHGk9qOoqgqoYzHM0DsiQ6sud3HlbUeo5gKEfokkY3hpe64
-         +hH7diIaUv+eGkaTGtKzDptsKf6mtLsw0t9/UBnI64jKIeuZe1/AMjWBgAYjs+T89wp9
-         xo0MQWTFgVz9sPU2iAkTgid7IQkovyPauO8vY68eaYHq3hcbPs/Nmn3532H9FJAbwnRx
-         gwOOIK8vO1OYlow9qHYFArwZCJYTmEl7sCv4zL3gRI0DcPGujquq4glgpuZi+nbfW8MS
-         gcrugQvGjAm7h3dj214bIdLlaSI0sye+C7P2oK8oiXButbzWm6HOYr+DWchBZqSYoZNN
-         EwJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXiWgUUYzSPEruhhwAFTsdkgDOdPfppeF+mUcVecEWRFUNW7kQgGd/jY1wjAmz4zYjo9DrUco082y4sUDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1hh6P/FELYyFp0nyGE8aD4Zv+TLGqaoqMktwaSbI+FAAFkCzc
-	uRGg55gHhc8/6lfSxcCUVrta6AK6eXUFVmYbdLz2gUWwsl+V4p+6qvwnvESCavjPbpNDesa6RIA
-	dFFOx
-X-Gm-Gg: ASbGncvBQhs1s1ZoruTskgtl2WACMtFBVxDqFAbG1oPItn+GNLD0wR4lr8QRYTYKJJa
-	6i7+klHsv/A9bC3qNHeEqbIlFdvohTIvDnATl6chXlvix90VTRbDDzNHepXM2mLsvlCE8B3EZlG
-	LI8D+Pu4RTfas4SpXkd/nm5K0vbFmDWAGFCPXh4xAWYpB+K71nx2N9znK0m/PHO1bMeKEo++IC3
-	I47mnLIrMaB0GcATCbmBR4zZ/FZfgVArbAkbB3FSaH3c9U6zaNFKTvUKw3ID2TG38pF2SdmTS5R
-	J2jT94/F1z1spHgZuZDCCeJRsiaFp42DiC1qgQz/FKze63mcbFf2vo49wvrWw1xt/CD7bc88UbX
-	hjLv+2omR17dOfw8Bvb/ab2EFQClaHe2xL/LW/Hjc+E5NTz0qx4weOh6lNu/tZYRrO0ta5lteds
-	dkv0lBxFE+ZPri1Q==
-X-Google-Smtp-Source: AGHT+IEtv+shD5qN468+pGeDHwlQ+N3lOPs5PRYdn5kzJfcSYnjwq5e1uphyPzA+uI9UtUPIQ4ilMw==
-X-Received: by 2002:a05:6000:4007:b0:427:854:773 with SMTP id ffacd0b85a97d-429aefba9a1mr2219240f8f.37.1761743732725;
-        Wed, 29 Oct 2025 06:15:32 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de4a1sm26863611f8f.37.2025.10.29.06.15.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:15:32 -0700 (PDT)
-Date: Wed, 29 Oct 2025 14:15:30 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] printk_legacy_map: use LD_WAIT_CONFIG instead of
- LD_WAIT_SLEEP
-Message-ID: <aQITctViD_iSi6R4@pathway.suse.cz>
-References: <20251022154115.GA22400@redhat.com>
- <20251026150726.GA23223@redhat.com>
+        bh=oOUisOdkXU0bOduvB/ByBLb4wJp/5x2Vdu+Ct3A15wo=;
+        b=RuSYPpDFB4REAVfafBOGVygb/P7rkfXo3U5o7RAbKuf+FFtQdoHehowXFNnsFCLPKM
+         lsahh6Goc7ckmd8JBWRgi/E9gqB8MQg96XDwUWi1d+nXwsaHUHRbwiqSfcNcm1EzSoVf
+         jitUK50/2fXnjO1Dg+OKrHZouoTWCKozi3cLm9ahFPz0neptppiUdWslHosJ+xsEqvLh
+         qsoDLF3LmbaI28247Tn9fpyI7UXyXiTgY7h1kNq0Jd4W6EJiW+hPhx7bEenLKS2YGnbg
+         M2a9IsdyW1RGosdkcI5gUgKW8d8oE0Zm2V25u9/caZzaH3cme21/ZyVfMtLzK7BUnoIf
+         PAbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761743751; x=1762348551;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oOUisOdkXU0bOduvB/ByBLb4wJp/5x2Vdu+Ct3A15wo=;
+        b=ETF6w1iwjltaZ73INCNb6q4eTeihGJWhpRgpzBArnXjewnWfhVX9a1LUvoaDCcN/6D
+         1I8ICtwefhyB9xrPbEHI/iholXnmSYiwAYMqcNg7Dp5v4Wc4edrUvwxuv6XDfIvUhFGV
+         Imb3tqwZMPQdDwMdSy0FxUipIzzmntTjEVdWwe91eMkoIsqoKJqabfJh9mnRNV0ByEf9
+         52X+9grLQlU70z+pUovpEFaOxz6hQvVId+7oXUbKWnaw0MhCzj/Cg2suiggx2v+Giy0O
+         iGpWDP9zm+wudTAFr2izN2M5fdeM4LNuwZAVSG6Wdnwgjxtj5hhQw9/y0pJtfVRFd5de
+         lfrA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlrddUJpA+iDOXBBmrzKxbDA01Bv/H90cG4j/3Fv+Ec64CMtRv7wt6aOQCdhEe9uxI9A/9QK5rQ3NOAsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4LYqHuwj4+dMCEPEA9N1ckHBiUO0yvclhchy//p+9y1WpLB/y
+	1iJnqI+JDZwXLKiYCTHvEQAC0OL9/3PyanD7PBlKV3XPI5DbJK3dzeiaP11aNlc2t9o46QKWj3a
+	ajo6qjhRU7JChollYJwCjFD7PrpTgF/8zwJ35ykvKIg==
+X-Gm-Gg: ASbGncskGm9NblAnJl1GQyLHMeb7+EEQfVLNrC9Sq4Anv8xlezBK/pyyGRi8m0Sm152
+	FUmgHhYj+q+D9AGK9/x+LhCNdJbUK8QvpOxVmnHMUHa2VtQ18hR1V/wHujH5ZWEhLTIjERbxIlF
+	F5uZpvPXj+Fuc/rwqQADlwkyAIEsPiufbOZrWc8f5avyiILdas5tIkP+3JRfvFNgTIcKtsl1LyB
+	Wz0Q9nMyt5/q8o0D31I3qZNp/rgRImU7Neaxo4MsfmqsNefZ+lljxs4gkhm2HbFsGUOd7AI0v53
+	T9nDe766PRaa8CcE7B52rDQ3P6s=
+X-Google-Smtp-Source: AGHT+IERc+XWdsch1n0sjpOQOzD+cW2IjfHO0Rpz1QeHwY2DnN9gsWkr3+lO2lQRgACmeZoFB2eG85VNyJBLdF9v7Qc=
+X-Received: by 2002:a05:6512:e84:b0:593:5066:8e35 with SMTP id
+ 2adb3069b0e04-59412878b7emr1119097e87.13.1761743750670; Wed, 29 Oct 2025
+ 06:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251026150726.GA23223@redhat.com>
+References: <20251029-qps615_v4_1-v7-0-68426de5844a@oss.qualcomm.com> <20251029-qps615_v4_1-v7-7-68426de5844a@oss.qualcomm.com>
+In-Reply-To: <20251029-qps615_v4_1-v7-7-68426de5844a@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 29 Oct 2025 14:15:37 +0100
+X-Gm-Features: AWmQ_bnxen2afRHV8wd2ApkjxBH0TleB__nu5t1NsDGu_HDLvXbdqDWBWRF_WWQ
+Message-ID: <CAMRc=McWw6tAjjaa6wst6y3+Dw=JT8446wwvQ0_c5LHHm=1Y-Q@mail.gmail.com>
+Subject: Re: [PATCH v7 7/8] arm64: defconfig: Enable TC9563 PWRCTL driver
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	chaitanya chundru <quic_krichai@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, 
+	Jingoo Han <jingoohan1@gmail.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	quic_vbadigan@quicnic.com, amitk@kernel.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Dmitry Baryshkov <lumag@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun 2025-10-26 16:07:26, Oleg Nesterov wrote:
-> printk_legacy_map is used to hide lock nesting violations caused by
-> legacy drivers and is using the wrong override type. LD_WAIT_SLEEP is
-> for always sleeping lock types such as mutex_t. LD_WAIT_CONFIG is for
-> lock type which are sleeping while spinning on PREEMPT_RT such as
-> spinlock_t.
-> 
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+On Wed, Oct 29, 2025 at 12:30=E2=80=AFPM Krishna Chaitanya Chundru
+<krishna.chundru@oss.qualcomm.com> wrote:
+>
+> Enable TC9563 PCIe switch pwrctl driver by default. This is needed
+> to power the PCIe switch which is present in Qualcomm RB3gen2 platform.
+> Without this the switch will not powered up and we can't use the
+> endpoints connected to the switch.
+>
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.co=
+m>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index e3a2d37bd10423b028f59dc40d6e8ee1c610d6b8..fe5c9951c437a67ac76bf939a=
+9e436eafa3820bf 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -249,6 +249,7 @@ CONFIG_PCIE_LAYERSCAPE_GEN4=3Dy
+>  CONFIG_PCI_ENDPOINT=3Dy
+>  CONFIG_PCI_ENDPOINT_CONFIGFS=3Dy
+>  CONFIG_PCI_EPF_TEST=3Dm
+> +CONFIG_PCI_PWRCTRL_TC9563=3Dm
+>  CONFIG_DEVTMPFS=3Dy
+>  CONFIG_DEVTMPFS_MOUNT=3Dy
+>  CONFIG_FW_LOADER_USER_HELPER=3Dy
+>
+> --
+> 2.34.1
+>
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Can't we just do the following in the respective Kconfig entry?
 
-Best Regards,
-Petr
+config PCI_PWRCTRL_TC9563
+    tristate ...
+    default m if ARCH_QCOM
+
+Bart
 
