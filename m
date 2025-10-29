@@ -1,310 +1,179 @@
-Return-Path: <linux-kernel+bounces-877093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE99C1D2BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:12:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F397C1D2C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A08B1889383
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:13:00 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C2DB134CF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5790358D21;
-	Wed, 29 Oct 2025 20:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBE235A93E;
+	Wed, 29 Oct 2025 20:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqVKZDfl"
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com [74.125.224.46])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Gxy4Iskh"
+Received: from mail-pf1-f226.google.com (mail-pf1-f226.google.com [209.85.210.226])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414EF1D5AC0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C231314B85
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768746; cv=none; b=Urqa27k+IjwSJw+QgDNr93KNljeFmXje6grhX/Yy2e+qkntz3AR7mEQF+25zmHNW0YaWqAiWNCyz8shKrXxTzlr/p5WE7ujf9Lag6FtdqwQeYrwJV8jvfjpN87zxcWvfA7GCot6CWOK8qOdkRlE1gEzkDvjqNLJCaW4RDat2zuc=
+	t=1761768752; cv=none; b=FKiktdDW8BMRS0Q9YT8sPK+Ijojt9ek7cIJRZmjuRYVOiBfadGeC7ZPV/OlTzD7vkzF6l23EFn1wG7PnOIIRiy6jlHi4gX5YYmbiWC/4QtMmWxiG15FIv7Nwdywa8vmLrIXQ2mRFJJ3jFTRuvhRRYsJxKexZkzQR3hcCszpQ9qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768746; c=relaxed/simple;
-	bh=um/tVoXbdEDWtRKbDPvUuQcW+0FcwrOb0U/tmwLwaek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDL3juRmxKVKvrYFK0+RxFrnRpQwOuwnFe5V2YRV2jtB+3a9+YUmozAjJciulNlZ2J92IWayDR++zNv60aR3QuanaHso/NozJq8DZ6lbkJrhsL9SQbfyrBi5NBlVpblqMn2vcSXmEMjIbbLkPy9I2VcaTaO+xnMZWgl++KpTADk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jqVKZDfl; arc=none smtp.client-ip=74.125.224.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f46.google.com with SMTP id 956f58d0204a3-63e1a326253so438519d50.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761768743; x=1762373543; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OC8sv5nVVI5JjZAVR+hifwSr8nAzhJqQduX4ujCZR7I=;
-        b=jqVKZDflRIaeh9eC2sCmAFs0sCyLWyxBlpfDzcln0UrqC67YFTdikbEBwjLa7dGXdE
-         BzEibpp9ualSyfxUs1kJCZeFWp/mdvvHRMfmy3HIuzezjgFLakSd2mkd2lKmpMUt3VNB
-         AJWEE2BCayboNzDmWryI5LO+kKkARB5x0t5KBN44uKbFYu6Lp+/2vdqXIs7e87ewz2Z2
-         Yco4UI2uecN55KnGbrKd2c7uzvzb6FrvUDA+kRzJ2hxu4sXjsddsYdQ3LiX4f2QtqIUd
-         uUzhM4+4/7dh9SRVqlppWfMPZwB3Plg/RestcMWLzhSPLUxQ9GkhmAKwRlPTajONNC/m
-         7p1w==
+	s=arc-20240116; t=1761768752; c=relaxed/simple;
+	bh=iR5HlGQtmcmSHHCwOzTzIF4RYlsm+yyeAoY4efZXbdU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQ7EuwYZU5or6Bmui2ggBNcVbKTorBPVD2xm404PlElnMRRg00RzES6mYsQjji6GLWUnuHdCNWwGLVMnBGaBnrpI9JukF2odkuBq4oaPmaB+IJ6MO8aSKkjeOZVmvAbCDafV/v7gL4aFOg+HnN+UsF1KtABlAsDxWmFHnnktG+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Gxy4Iskh; arc=none smtp.client-ip=209.85.210.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f226.google.com with SMTP id d2e1a72fcca58-7a2738daea2so319040b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761768743; x=1762373543;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1761768750; x=1762373550;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OC8sv5nVVI5JjZAVR+hifwSr8nAzhJqQduX4ujCZR7I=;
-        b=DGAyn8/6siTHrB1LRNDFiv3kVc3v8KPwLPUZJgPfxDv+OcoXuIenjNBQ9W68hp87sx
-         YpNcsjtM9TtWHObyp8xDoU6vhoDitCz7JZGfw0u10IopjZGk5wXf80nXBH0ZTMF4+apc
-         zgAsinK5TgAm/JXcT+6P/SRgTgL6rLnKshN5JgXliRE184BxPWRAZbHViVHgcasfNG/j
-         K2OL3I+o8tRyMN6GEi9/5b6k9BayJKnZq+KXYNTIiz8Qj30a4cSyUKCiJfe2MuLmHkdI
-         IPDmZYXJmlsYi9MjE+zJ2sa2/UtesQqKRDAK8seHTAVRrautT4a7MKHbazcSGjyTe1MM
-         hk8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWCVackUKeAcaj1ES9Ylhq5kmBERtIrljFZIieEaY3I6zhnmsDP9QbKfTVL2IQbXcCnL4iMbtbltSIhxME=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+E5P6jj4ZAoFS4U0dRPWcnTFBB8TP+iEjYNhyYaSWHxDNley/
-	nVOxtDc+7WJ6JiNMv6vhAEXXc4vwW1ut2xyHivEdMGHjUUstYgfKlhakknjVodythm7VExX4AML
-	jynQwQiS04gqoj30tKp7ULAZAb8wRFjI=
-X-Gm-Gg: ASbGncvgV9XeNV1ZEJS/5PKiP4l9S0mZv2t9WBG2h8i8nCvuQnFCphhRiVUeOjrHFT1
-	glmA7K8ngpYO6sYKxNxMdR1Q/F/UMqrJvsxQrHz9GFtHM174btzhAUyQFXAi4MLXMUyeRMTXJ4g
-	rH6wwemcSfNApHt32eVAkM8TAHJ5M3Xmk7AyHOXiFE2YsbXwmrZoGmaDBCvidbNy5SlDunwE+cy
-	hclfkDnsH/hqgLoyDep5WORAosuDdBtuZbwNeLwfGjdwSq30GdsMXWz4fw=
-X-Google-Smtp-Source: AGHT+IHlC2vJ9MOy5SMuyr39csRGDgW2ebq4sozUhofv3qG694XVnBM5XEojvBZU5ygeiuDc1oaYIAG7PDq9K61FKLk=
-X-Received: by 2002:a05:690e:dc2:b0:63e:2204:9416 with SMTP id
- 956f58d0204a3-63f76d91439mr3487993d50.31.1761768742872; Wed, 29 Oct 2025
- 13:12:22 -0700 (PDT)
+        bh=v1OxuFPXRzNkf/jjOfMwnR5HsdSbozk+lpDYi7pEr48=;
+        b=DpEoAf5dhoBkjafoFKKNUZqgx9+IrWSvtcwQzQJEDc8yPUnf/QQRFpoCHUsh6lfep4
+         HvC/18v70vApWoOneFt1namSg/LKk5XD9Cq40ymeDBGNxltAONnxW1wBBuSoDOe1zKJe
+         kKzU2Nq61tp30JSCBt1xWV1gjaPsw1kO8YHeNgAw6lgWEI7dZFNnzvO1QgkzqDoXvvjy
+         eB/6fK3di1VZjIczXZuasdJb4PQrI6FD30K7qR7en6TjfVbI7UidGizo5FmfBToqMoxR
+         HPn05Tjj3TjupUn7DogOv1lRKxdph4J7svnz2OJ55jVC90F+Pddvzmnsf33RufGA0xCv
+         dFpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUy7u8P0PWCNoCHmLnImoL2L7am/5fRVN2eJ4aQVwv0iea5f6m+zD2iI17HeL5AYFidLq4594YI3957MGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4mlErNRSP1H3ej4RmrOq83SCK7AqpFrh+ICDESeNaxJUKeAtY
+	duXUrREYxLAPA9SDPDoyfrn7O9HlFw7jK2S1gckMk0jVI+zoYQawa83fP7r36vsaJ9JBLE42fYJ
+	VAEk6XEKMtUFs7zuPbRQL+Aek/XT3rQUgtA2yJT1qIkE3j6sp+/BTC02i4uDnRjt60dp9eVWmQ4
+	ANRd5zUoBbDuCN17+8Tt2E/OEL2hByu5aN4yI9MDqN4fT/LvKiUicC0bIvmYoBt4UlWCcE/NABw
+	817Pgiq6LbwtwNxcA2qoFWU
+X-Gm-Gg: ASbGncsdoMMWi/LFAFY5TH+O27c0IvDPbMUREgnCTbru2LWTj/P6nfDkAKQOQrkFc1h
+	jfrftCJF6MB7+WA3xzseXzI2kVstipXIqleqEqNHssJR6fqzSk/C+1WHXlfdJSn4DJo+NzaC/02
+	gMlfBPEjcpDwyvVBgi/8u4oq1b1XNsK0VBNUgeA6/D2bR5fx1CiZzaXSmxnTUuRqI3l1454QSt8
+	QpBsvJg7WXtqx+zuOpR/mGIwQ213tlxYGMUqpU4Xl1mIkXgA0fp6bGwIbVopXU30HhmC7tJFBAT
+	B+SHGKCGQXZ2tT4MI1DYwu4npQtuQTaHgUxQRXs8OlONLGUyFiimH57ouuQUYFQUtljGgkMwCs5
+	KvNga6Juk/CMiAMo+5Eon3LvX9mkZUCkAy+2svi28Km3R8tX6CR6hAOfx3sbQCOBrqp5CkZMqA3
+	ZhAdV2B4f8crNwNMdR8yzVdMcrcCM1PccMOzGHInErMg==
+X-Google-Smtp-Source: AGHT+IESIngUABpsBtmwGQ7/1iNcr3IqurLjPvzWfIeunJUHcn7gHQWbTLxrMk4XLVCK7rHrejN4A8dyOg9Y
+X-Received: by 2002:a17:902:b10b:b0:282:2c52:5094 with SMTP id d9443c01a7336-294deeb5a9amr32591045ad.37.1761768750261;
+        Wed, 29 Oct 2025 13:12:30 -0700 (PDT)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-102.dlp.protect.broadcom.com. [144.49.247.102])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29498cf41cfsm13410735ad.7.2025.10.29.13.12.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 29 Oct 2025 13:12:30 -0700 (PDT)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-892637a3736so87744785a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1761768749; x=1762373549; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1OxuFPXRzNkf/jjOfMwnR5HsdSbozk+lpDYi7pEr48=;
+        b=Gxy4IskhNmDgIj0uYMc6sGDQSkagyCqwrQP/MGgn9GeLnTCjSuNqQlC4SOZ5RmEMRA
+         6Pc6Sjbn7vPu8APNKj6YFxn8qpa9uH7VvNwftUCjM+qarpK45Id6HA9afaA/RYsLwpPy
+         OPM+bJ9R2yg4zncxLgb2+qexnND2bMZfqfyWQ=
+X-Forwarded-Encrypted: i=1; AJvYcCWjGdIgDos2NDI3enxhYiGq5bsg18DeAbDqLoO4fSx+7OrNLtHVLynaDelLxjb9/BkxUD6j7nBNSp9HBAk=@vger.kernel.org
+X-Received: by 2002:a05:620a:44c5:b0:8a3:c4fa:9b75 with SMTP id af79cd13be357-8a8e30e42afmr645985585a.16.1761768749054;
+        Wed, 29 Oct 2025 13:12:29 -0700 (PDT)
+X-Received: by 2002:a05:620a:44c5:b0:8a3:c4fa:9b75 with SMTP id af79cd13be357-8a8e30e42afmr645981185a.16.1761768748624;
+        Wed, 29 Oct 2025 13:12:28 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f261747efsm1093976585a.55.2025.10.29.13.12.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 13:12:27 -0700 (PDT)
+Message-ID: <a2ff8f41-816e-4f87-867e-cbb39e513473@broadcom.com>
+Date: Wed, 29 Oct 2025 13:12:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027171759.1484844-1-cjd@cjdns.fr> <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
- <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr> <CAOiHx=nqWEdHEMf5immXO0VwyzDakDV9AMsoDETcJ0F4FqUt=w@mail.gmail.com>
- <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
-In-Reply-To: <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Wed, 29 Oct 2025 21:12:10 +0100
-X-Gm-Features: AWmQ_bnMO20yjsceLB8hiFSFJ1UyPWeJK08ZHhht06brEKUVc81COenzYsB_XPk
-Message-ID: <CAOiHx=kfAwLzuoP2Y-AnGz4GysmszXq-f_et0rgd1j0thYv4Ew@mail.gmail.com>
-Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
-To: Caleb James DeLisle <cjd@cjdns.fr>
-Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com, 
-	shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com, 
-	angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	Daniel Golle <daniel@makrotopia.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] PCI: brcmstb: Add panic/die handler to driver
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, bcm-kernel-feedback-list@broadcom.com,
+ jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251029193616.3670003-1-james.quinlan@broadcom.com>
+ <20251029193616.3670003-3-james.quinlan@broadcom.com>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251029193616.3670003-3-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Wed, Oct 29, 2025 at 4:24=E2=80=AFPM Caleb James DeLisle <cjd@cjdns.fr> =
-wrote:
->
->
-> On 29/10/2025 10:15, Jonas Gorski wrote:
-> > On Tue, Oct 28, 2025 at 10:42=E2=80=AFPM Caleb James DeLisle <cjd@cjdns=
-.fr> wrote:
-> >>
-> >> On 28/10/2025 21:19, Jonas Gorski wrote:
-> >>> Hi,
-> >>>
-> >>> On Mon, Oct 27, 2025 at 6:19=E2=80=AFPM Caleb James DeLisle <cjd@cjdn=
-s.fr> wrote:
-> >>>> When on a Big Endian machine, PCI swaps words to/from LE when
-> >>>> reading/writing them. This presents a problem when we're trying
-> >>>> to copy an opaque byte array such as firmware or encryption key.
-> >>>>
-> >>>> Byte-swapping during copy results in two swaps, but solves the
-> >>>> problem.
-> >>>>
-> >>>> Fixes:
-> >>>> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
-> >>>> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
-> >>>> mt76x2e 0000:02:00.0: Build: 1
-> >>>> mt76x2e 0000:02:00.0: Build Time: 201607111443____
-> >>>> mt76x2e 0000:02:00.0: Firmware failed to start
-> >>>> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -1=
-45
-> >>>>
-> >>>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
-> >>>> ---
-> >>>>    drivers/net/wireless/mediatek/mt76/mmio.c | 34 ++++++++++++++++++=
-+++++
-> >>>>    1 file changed, 34 insertions(+)
-> >>>>
-> >>>> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net=
-/wireless/mediatek/mt76/mmio.c
-> >>>> index cd2e9737c3bf..776dbaacc8a3 100644
-> >>>> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
-> >>>> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
-> >>>> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u=
-32 offset, u32 mask, u32 val)
-> >>>>           return val;
-> >>>>    }
-> >>>>
-> >>>> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
-> >>>> +                                         const u8 *src, int len)
-> >>>> +{
-> >>>> +       __le32 val;
-> >>>> +       int i =3D 0;
-> >>>> +
-> >>>> +       for (i =3D 0; i < ALIGN(len, 4); i +=3D 4) {
-> >>>> +               memcpy(&val, src + i, sizeof(val));
-> >>>> +               writel(cpu_to_le32(val), dst + i);
-> >>>> +       }
-> >>>> +}
-> >>>> +
-> >>>>    static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset=
-,
-> >>>>                                    const void *data, int len)
-> >>>>    {
-> >>>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
-> >>>> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offse=
-t, data,
-> >>>> +                                             len);
-> >>>> +               return;
-> >>>> +       }
-> >>>>           __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_=
-UP(len, 4));
-> >>> Maybe just replace this with memcpy_toio() which does no swapping at
-> >>> all instead of double swapping on BE?
-> >>
-> >> I'm not that informed about how PCI works so I had to test to confirm
-> >> my understanding, but I can confirm that memcpy_toio() does not solve
-> >> the problem.
-> > Ah, right, I misread _iowrite32_copy() to do conversion to LE, but it d=
-oesn't.
-> >
-> > What architecture is this you have? PowerPC? ARM? MIPS? 32 bit? 64 bit?
->
->
-> MIPS32 (EcoNet EN751221 34Kc)
->
->
-> >
-> > So the differences I see are:
-> >
-> > 1. __iowrite32_copy() uses __raw_writel(), which has different memory
-> > semantics than writel()
-> > 2. __iowrite32_copy() assumed src is aligned to 32 bit, while you
-> > explicitly align it
-> > 3. memcpy_toio() will handle unaligned src properly, but does 64 bit
-> > accesses on 64 bit systems (and uses __raw* again).
-> >
-> > Is src aligned? If not, then the issue might be 2. And if your system
-> > is 64 bit, it would explain why 3 didn't help.
->
->
-> I'm not a regular developer of mt76 so I wasn't sure if that was
-> guaranteed and I just wanted to code for safety.
->
-> After reviewing the code, I see that there are a few places where
-> mt76_mmio_write_copy is being called with stack-allocated u8 arrays
-> so it's pretty clear to me that this is being treated as a memcpy-like
-> function and we should be handling unaligned inputs.
->
->
-> >
-> > As a first step you could try to replace the writel(cpu_to_le32(val)
-> > with a iowrite32be(val, ...) which should do the same except avoiding
-> > the doubled byte swapping. If that works, you can try to replace it
->
-> This works.
->
-> These symbols are a bit of a nightmare to trace, so I ended up making
-> an .i file so I could confirm what's happening.
->
-> iowrite32be() uses the version in iomap.c so I understand that's using
-> writel(swab32(val),port), so a writel with an unconditional byte swap.
+On 10/29/25 12:36, Jim Quinlan wrote:
+> Whereas most PCIe HW returns 0xffffffff on illegal accesses and the like,
+> by default Broadcom's STB PCIe controller effects an abort.  Some SoCs --
+> 7216 and its descendants -- have new HW that identifies error details.
+> 
+> This simple handler determines if the PCIe controller was the cause of the
+> abort and if so, prints out diagnostic info.  Unfortunately, an abort still
+> occurs.
+> 
+> Care is taken to read the error registers only when the PCIe bridge is
+> active and the PCIe registers are acceptable.  Otherwise, a "die" event
+> caused by something other than the PCIe could cause an abort if the PCIe
+> "die" handler tried to access registers when the bridge is off.
+> 
+> Example error output:
+>    brcm-pcie 8b20000.pcie: Error: Mem Acc: 32bit, read, @0x38000000
+>    brcm-pcie 8b20000.pcie:  Type: TO=0 Abt=0 UnspReq=1 AccDsble=0 BadAddr=0
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
->
-> writel() is more complicated, it's an inline function that is generated
-> in a rat's nest of preprocessor macros in mips/include/asm/io.h
->
-> The preprocessed is this:
->
-> __mem =3D (void *)((unsigned long)(mem)); __val =3D (val); if (sizeof(u32=
-)
-> !=3D sizeof(u64) || sizeof(u64) =3D=3D sizeof(long)) { *__mem =3D __val;
->
-> The source is this:
->
->      __mem =3D (void *)__swizzle_addr_##bwlq((unsigned long)(mem));    \
->      __val =3D pfx##ioswab##bwlq(__mem, val);                \
->      if (sizeof(type) !=3D sizeof(u64) || sizeof(u64) =3D=3D sizeof(long)=
-) \
->          *__mem =3D __val;                        \
->
-> The line "pfx##ioswab##bwlq(__mem, val);" is ioswabl() and the source
-> of that explains the issue:
->
->   * Sane hardware offers swapping of PCI/ISA I/O space accesses in hardwa=
-re;
->   * less sane hardware forces software to fiddle with this...
->
-> So this confirms my initial understanding, the PCI hardware is doing the
-> byte swapping unconditionally.
->
->
-> > with __raw_writel(), which then would make this the same as
-> > __iowrite32_copy, except making sure that src is aligned.
->
->
-> This fails.
->
-> Since I'm the maintainer of this SoC and it's still fairly new, I wrote
-> a trivial kmod to verify that unaligned access is not just silently
-> returning trash, it works as though it were aligned so alignment is
-> not the issue.
->
->
-> >
-> > Also you could replace your memcpy() with get_unaligned((u32 *)(src +
-> > i)); Should do the same but inline.
-> Good idea, I will do this.
-> >> The issue as I understand it is that rather than making every driver
-> >> carefully call cpu_to_le*() every MMIO write, someone decided to make
-> >> the PCI host bridge itself transparently byte-swap all MMIO on the
-> >> wire. Since most MMIO is hitting registers and most buffers are
-> >> transferred by DMA, for the most part everything works and nobody
-> >> notices.
-> >>
-> >> But in the rare case that we need to write a blob to MMIO, it gets
-> >> transparently swapped in hardware so you need to use cpu_to_le in that
-> >> case. Doing a search of ./drivers for write.*cpu_to_le I can see this
-> >> issue comes up a bit.
-> > Every (PCI) driver does conversion to LE implicitly by using
-> > writel/readl (or iowrite32/ioread32) etc do the conversion to/from LE.
-> > So writel(foo, dst )is a __raw_writel(cpu_to_le32(foo), dst) etc. PCI
-> > memory is assumed to be in LE. If you are on a little endian system,
-> > then no byte swapping happens, and on BE it will do byte swapping
-> > before writing the value.
->
-> Okay so it seems that in the case of MIPS, that's not always how it
-> works.
->
-> https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c=
-595ea6/arch/mips/include/asm/mach-generic/mangle-port.h#L17
->
-> Since we don't know if the swap will happen in hardware or software
-> and (AFAIK) this is not a hot enough path that double-swapping will
-> have a notable performance penalty, I think the most sane thing to
-> do is use writel(cpu_to_le32()) and not care if it's swapped back
-> in the kernel or hardware.
-
-Oh, I think I see what it happening here. ECONET is a Big Endian MIPS
-platform, but does not select SWAP_IO_SPACE (most other BE platforms
-do).
-
-Does that mean the PCI space is swapped in hardware there?
-
-I guess that means that anything that uses __raw accessors to PCI
-space directly or indirectly is broken, as the raw data is now
-actually in the wrong order and needs to be swab'd.
-
-I don't know if it is a good idea to change this in __iowrite32_copy()
-/ __ioread32_copy() (and other helpers), or if there are drivers that
-use it on non-PCI spaces and would be broken by that.
-
-If there is a way, I would suggest disabling hardware conversion and
-selecting SWAP_IO_SPACE, but that will affect a lot of your code that
-assumes that writel() etc don't convert to/from little endian.
-
-Best regards,
-Jonas
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
