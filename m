@@ -1,178 +1,150 @@
-Return-Path: <linux-kernel+bounces-876284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C73B1C1B1BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:13:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB01C1B4B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B7731B2700C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:01:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15ADB5A1B4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA45734CFB9;
-	Wed, 29 Oct 2025 13:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFF535772B;
+	Wed, 29 Oct 2025 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f8PDFSmV"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hgLu4PU5"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4660134AB09;
-	Wed, 29 Oct 2025 13:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A143570BF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745981; cv=none; b=kXmVG+8hy4wix7Ht+w/NP4zoTLiYYoLDdfWbvSF2vYKwa8dINUGPdyTnk3w3oGgbyJWaphEOIAWexfS2FAVF53KORCMNrhWaXNPnfaALI84ukBPHggHrdQ6Ani/L7VDfS827XHGmdDcN3u2UA6sI1BXN5zgJYMBuSHY0ZBxQt94=
+	t=1761746182; cv=none; b=McKWdPwyzBCE25lQS4IieMP/PlX+EdPaqbGnHpTQLDllmMVPZBC8PEz6wQPobLrXHIlKXcicEzzBZ/0uYt2DTGEBFMGbUHomNur5wKHbnIo/x3WQ9mNOBKHjBZ0xTe2YxIA/vnRmPw+1cNPijJ+YvDrti2LeRx+yWTNpNkSzKBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745981; c=relaxed/simple;
-	bh=gF9eLDsdFl0MFtqsAFZWcBEyY4Q/iUjVarktp2n/spA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ugogKocioVMvj3v2MTutVxm4Zk6Ti1r/JSre8JtgkS7Q5Ez3dlBq1LHzV8iUq7O38/i+KPxU/u8dauRmEI3egrRsj6iTtjPcOILTsFFZD7khmkO3QNLCtI7S3VLjLm4pXA8YtpkS1dspHk8FOYfbh/6BIF/QZ6acohl09d1ydTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f8PDFSmV; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 98443C0DBC1;
-	Wed, 29 Oct 2025 13:52:37 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id EF722606E8;
-	Wed, 29 Oct 2025 13:52:57 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 134C0117F80A4;
-	Wed, 29 Oct 2025 14:52:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761745976; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=UceLpeKVjdxHZmkAym7kcj/ErVu2YZm4GdUaf7zWckE=;
-	b=f8PDFSmVqMrpxQ0Y0oTU8aACT2C7p5uITUoLc0acz/vhQHt5xw8pTHzXhyRFNaOhMy9ivR
-	l34Hn9Bgg4YubKnkqrGalF/1zpM0bZC1CNscAb4bDs7u+7kkbDE4pl88VSlQWnQk60grK5
-	kHmwtSTx4xPQwZfH59qkkpEiUSM9WEgStbpFg7cnTYkWYySSb+7yD+8AgHzPp+Z2NtwKRn
-	ccyGeFRBq0aL6fHLxYHDhLKGjeAy6d5ZB3LnazjkLzvjEuyJ0VzlIzSygMKThYoxcJl7Ql
-	yFMveRrdZ2z9abEe3avOUgSfhD181V3ogM8c/nLa9XVNopKufhES+Y1j7bN/Wg==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 29 Oct 2025 14:52:29 +0100
-Subject: [PATCH bpf-next v6 08/15] selftests/bpf: test_xsk: Add return
- value to init_iface()
+	s=arc-20240116; t=1761746182; c=relaxed/simple;
+	bh=1SwFiJpxAb50wR90lDV9GpdBP4ZnluzVr2Oqr/5Sic0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rp4EPuvUIwY055SK1grF3erxLqm7IQC6fJrg68Jrl2bHUwN8ixkq8zRxPihL3pintxGpLuCOSZoZUY877FdxxM3QbfrKsYxDYjPtR3YFS3ynWLuVY9Zr6PGyBb1SH/eIskBffK+3C0E3+2IKK7GD1CFffMTh4zNN+t5jp7whcvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hgLu4PU5; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b6d5e04e0d3so449994466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761746178; x=1762350978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j0cpIgxLTVdTLX0iNNMuhpQhnr9g2pYoxLx5ardGUNs=;
+        b=hgLu4PU5YBghE+Bva5VnUOvc5VBOgH+VZGzwdK0exUJACfOFNEArxwR9T7Nj7JAr9e
+         BdCNvEyOJ2EEqj27dz1vS1ONW91GtVrbRlKBuXvAKG3M04vh8Bte5+3d837FsrTc9hVf
+         sZc1fLDVwucMViW6r+YeUw5JuoPTBAaOrZPXH9ZItn9qfBLrl2FcfZiLrvKDUZC7/cX3
+         UiCMnMFEWZJLn6kC8ufkhyQqZ7w5zMq/HICTesCGYWD+ZeUywDvL5hWk1JgScbVm1moE
+         ynbuytIcHNVKeAP7LVLBeqRxALjNrG5GC+HLO0p5t8IGHb8riLIjrtBL+3Hw6hfAyxvR
+         feyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761746178; x=1762350978;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j0cpIgxLTVdTLX0iNNMuhpQhnr9g2pYoxLx5ardGUNs=;
+        b=NJrBPR+AhbSyUqiZO91sEse5CLaPePfGelo7tdBUpgJ1oT9n+mnunE2YgzgZdP7sys
+         TdISSGlYGGh6KbzeOUMaKpPOoO+ZMWiwYlpv7Lv2gKoeLVbHImrTAmECWk3WNzhsMvNK
+         FDbOfOOWbOMThEqLfsgQm3wsAahKXJqB1CvIht8WtwYYINiQxyzjNelZDFytDKf90dhN
+         vxotOsYFKb0ZsQLtzCVoJAROfvqF54XbECsaKV/bPpBYxpMno64wOqsqPWxecs0S8gwj
+         6SqAgfo2rZY7SFJDdzLch44qIKVhmzIO/+GBUfYTpVt662P79xsJKbkPJQ9sYShOO1Uo
+         nvHA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9y9Z2pe0IY/iSVAYDoNuaZrpVPI1X+kKNn+9vrB045LLog4HLsmX8ISZroO3y5zfcXEREw8svVMeaLPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypaqZKoYMfU219yTKKSfs5wjpx0OAiTOYHti+/3NmJtymYVnGm
+	VYmPjJh7P7v/nZ9ZU+oOtmJ2WUAiMXMnQujYv+3r+NMtMXEMzJy96gXR
+X-Gm-Gg: ASbGnct/gexZ1yD5Mtvqjujeq9cEBZIxgCbG5MMhHhCtswibXroYfeV5ZxZTupEfBFa
+	RvchIktPtm6g/mK+QUd0Zn5c3dZLBJQVaIUKTrKtV/JXnJucwXpYHbTQfoq/1M0FeRxBPezJ4MI
+	pRHhf2o8k/RY8ZbjPyN7eNV+DJPK9m+vzS4lGGt60oSU7g1I2N7muNinLWFu+/4w0V4VH91I6i3
+	a87vhBMZJjgQC0HzcGk72FIDkyPKCz0FJoIq6NcFEIyC8xqNaR8xBErCGipjK0aW+CSyzUZnroc
+	NLMXrIVDRJwCF4bqp8HLIkO94Qqjq+xiC4erY3etRmoOFqGlD1n9RCCIDP/GfREXtM8Gt6ebssc
+	h7lJ5dCKf4pMheWN/SN8KL8GSzwHMRkaNaD+moaYwFc1t0Eo1hddZf09Y12bYDvRw7bB4aAN25o
+	mHCaf+61tvx3eDkA0MxiSam3jcgQ==
+X-Google-Smtp-Source: AGHT+IHh8OQ9HuceV0x8UwkKlSqVAt2/vQfWGgDAkzGZJb3jVpWZ2ATrrXxIPTpiHa8TEAAPPuvBtg==
+X-Received: by 2002:a17:907:ea8:b0:b6d:55ce:fd29 with SMTP id a640c23a62f3a-b703d4d6347mr263106466b.34.1761746178397;
+        Wed, 29 Oct 2025 06:56:18 -0700 (PDT)
+Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8534d99dsm1444960766b.21.2025.10.29.06.56.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 06:56:18 -0700 (PDT)
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+To: Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v3 8/8] arm64: dts: imx8ulp: add sim lpav node
+Date: Wed, 29 Oct 2025 06:52:29 -0700
+Message-ID: <20251029135229.890-9-laurentiumihalcea111@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
+References: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-xsk-v6-8-5a63a64dff98@bootlin.com>
-References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Jonathan Lemon <jonathan.lemon@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-init_iface() doesn't have any return value while it can fail. In case of
-failure it calls exit_on_error() which exits the application
-immediately. This prevents the following tests from being run and isn't
-compliant with the CI
+From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 
-Add a return value to init_iface() so errors can be handled more
-smoothly.
+Add DT node for the SIM LPAV module.
 
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 ---
- tools/testing/selftests/bpf/test_xsk.c   | 8 +++++---
- tools/testing/selftests/bpf/test_xsk.h   | 2 +-
- tools/testing/selftests/bpf/xskxceiver.c | 7 +++++--
- 3 files changed, 11 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8ulp.dtsi | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
-index 8fe75845d7a6aa5342229fa419fcbaa411ae9e70..7db1d974e31511e93b05bf70be991cee4cd444c6 100644
---- a/tools/testing/selftests/bpf/test_xsk.c
-+++ b/tools/testing/selftests/bpf/test_xsk.c
-@@ -2189,7 +2189,7 @@ static bool hugepages_present(void)
- 	return true;
- }
+diff --git a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
+index 13b01f3aa2a4..9b5d98766512 100644
+--- a/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8ulp.dtsi
+@@ -776,6 +776,23 @@ edma2: dma-controller@2d800000 {
+ 						"ch28", "ch29", "ch30", "ch31";
+ 			};
  
--void init_iface(struct ifobject *ifobj, thread_func_t func_ptr)
-+int init_iface(struct ifobject *ifobj, thread_func_t func_ptr)
- {
- 	LIBBPF_OPTS(bpf_xdp_query_opts, query_opts);
- 	int err;
-@@ -2199,7 +2199,7 @@ void init_iface(struct ifobject *ifobj, thread_func_t func_ptr)
- 	err = xsk_load_xdp_programs(ifobj);
- 	if (err) {
- 		ksft_print_msg("Error loading XDP program\n");
--		exit_with_error(err);
-+		return err;
- 	}
- 
- 	if (hugepages_present())
-@@ -2208,7 +2208,7 @@ void init_iface(struct ifobject *ifobj, thread_func_t func_ptr)
- 	err = bpf_xdp_query(ifobj->ifindex, XDP_FLAGS_DRV_MODE, &query_opts);
- 	if (err) {
- 		ksft_print_msg("Error querying XDP capabilities\n");
--		exit_with_error(-err);
-+		return err;
- 	}
- 	if (query_opts.feature_flags & NETDEV_XDP_ACT_RX_SG)
- 		ifobj->multi_buff_supp = true;
-@@ -2220,6 +2220,8 @@ void init_iface(struct ifobject *ifobj, thread_func_t func_ptr)
- 			ifobj->xdp_zc_max_segs = 0;
- 		}
- 	}
++			sim_lpav: clock-controller@2da50000 {
++				compatible = "fsl,imx8ulp-sim-lpav";
++				reg = <0x2da50000 0x10000>;
++				clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
++					 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
++					 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
++				clock-names = "bus", "core", "plat";
++				#clock-cells = <1>;
++				#reset-cells = <1>;
 +
-+	return 0;
- }
- 
- int testapp_send_receive(struct test_spec *test)
-diff --git a/tools/testing/selftests/bpf/test_xsk.h b/tools/testing/selftests/bpf/test_xsk.h
-index fb546cab39fdfbd22dcb352784a7c5ef383f8ac6..f4e192264b140c21cc861192fd0df991c46afd24 100644
---- a/tools/testing/selftests/bpf/test_xsk.h
-+++ b/tools/testing/selftests/bpf/test_xsk.h
-@@ -137,7 +137,7 @@ struct ifobject {
- };
- struct ifobject *ifobject_create(void);
- void ifobject_delete(struct ifobject *ifobj);
--void init_iface(struct ifobject *ifobj, thread_func_t func_ptr);
-+int init_iface(struct ifobject *ifobj, thread_func_t func_ptr);
- 
- int xsk_configure_umem(struct ifobject *ifobj, struct xsk_umem_info *umem, void *buffer, u64 size);
- int xsk_configure_socket(struct xsk_socket_info *xsk, struct xsk_umem_info *umem,
-diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
-index 8e108e3162695d5d50b3e3805672601024e385e2..a874f27b590d8ba615e16c612728b2f515ac8dff 100644
---- a/tools/testing/selftests/bpf/xskxceiver.c
-+++ b/tools/testing/selftests/bpf/xskxceiver.c
-@@ -373,8 +373,11 @@ int main(int argc, char **argv)
- 		ifobj_tx->set_ring.default_rx = ifobj_tx->ring.rx_pending;
- 	}
- 
--	init_iface(ifobj_rx, worker_testapp_validate_rx);
--	init_iface(ifobj_tx, worker_testapp_validate_tx);
-+	if (init_iface(ifobj_rx, worker_testapp_validate_rx) ||
-+	    init_iface(ifobj_tx, worker_testapp_validate_tx)) {
-+		ksft_print_msg("Error : can't initialize interfaces\n");
-+		ksft_exit_xfail();
-+	}
- 
- 	test_init(&test, ifobj_tx, ifobj_rx, 0, &tests[0]);
- 	tx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-
++				sim_lpav_mux: mux-controller {
++					compatible = "reg-mux";
++					#mux-control-cells = <1>;
++					mux-reg-masks = <0x8 0x00000200>;
++				};
++			};
++
+ 			cgc2: clock-controller@2da60000 {
+ 				compatible = "fsl,imx8ulp-cgc2";
+ 				reg = <0x2da60000 0x10000>;
 -- 
-2.51.0
+2.43.0
 
 
