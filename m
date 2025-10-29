@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-875001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A75BCC17FC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0053BC17FEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:05:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A3E1A252C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262141C82932
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8AB2EC094;
-	Wed, 29 Oct 2025 02:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F782EA485;
+	Wed, 29 Oct 2025 02:02:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M300f0Mi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gEANWOkC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5B72EAB71
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4EF2D063E;
+	Wed, 29 Oct 2025 02:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761703284; cv=none; b=C2HJwc8pNR+nNBvN0/H46rlw3umZBUXxoEzYTrwe7h/Hhvke32qk5aMLVEydpZ7vvQ6vZZDvBwX7kzCVMMPsljKaoOhOiELxWYe/NbHRO82v5FkwLCzO4R70YgvT66M5loJZWyOun2JdjJd/5ONHN9JiGL3cjyllMHrnliaIMAA=
+	t=1761703337; cv=none; b=uCczaKPlvqj+b4sck/MOOWe9Bspv6nt/LSE5dfOPDOPe3K2gMenO3lkOTyzR0PRjmXg2RrmG48+XNvnkpp+U55rrQ2R432L8ulGTvlO44SIbWeLZzvC2lP7NY0nfBNSRXij3WlHMYJ1asbEOYlOk0esZNlLXrffSVMeuYMXJz0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761703284; c=relaxed/simple;
-	bh=SXQxPsN26Co6NKBGJZdxYDwuDG6nvbInjqG4fC87DO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MkX7bjyZcx9zZeevMqOJ2G354bKduEs1nRwlycsHuW02mVXwK97ENQHRuQxPDmZcQNPUpccelaYy3WKkzaxECJYpzqgA7U9HeUfPFdomKnGbk1jC7PDWdaE2yNGmUYn3IsVjabHGVuIS9qn/wbEgidprQDKLISu8Sv8qQ7+++RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M300f0Mi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761703281;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WYTH6r4pMzG++s76D15s6Jao2UHZD14Avc7KSLviCz4=;
-	b=M300f0MiNNDaoysVDb0vl+cSLCUnaLrK+a1zZhn7VqvgUNbmRVzAHTkQcetB9IeHCfac8z
-	AqPevGANYtCrCkMMJrRltcwEEJgVJCAh80MSOmZIlQXFTuhqJ0KL9+lsAMQddsOylc4sY5
-	FmiUg7/JaUPZyqQMVfZN/C17bImTdyk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-BuRRDu5BMS6XHxBgXgGynA-1; Tue,
- 28 Oct 2025 22:01:18 -0400
-X-MC-Unique: BuRRDu5BMS6XHxBgXgGynA-1
-X-Mimecast-MFC-AGG-ID: BuRRDu5BMS6XHxBgXgGynA_1761703276
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E4A519541B7;
-	Wed, 29 Oct 2025 02:01:15 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.80])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8E3FD180035A;
-	Wed, 29 Oct 2025 02:01:12 +0000 (UTC)
-Date: Wed, 29 Oct 2025 10:01:09 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCHv2 2/2] kernel/kexec: Stop all userspace deadline tasks
-Message-ID: <aQF1ZZfjLBXuRl-s@fedora>
-References: <20251028030914.9520-1-piliu@redhat.com>
- <20251028030914.9520-3-piliu@redhat.com>
- <20251028163911.98990cbf1516d1c6d221f92b@linux-foundation.org>
+	s=arc-20240116; t=1761703337; c=relaxed/simple;
+	bh=XPYo+OcuJfY4bg4iIJy8r60Ch0ORGWa4PGjWOKP83B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g2eqve4sm9MEpK9ic+jlKEfKMWPahudZQXon/zyYjTG+G7bEGr67tbWzcFazZvw5TwvoM+o5HPFbJVGVdv3xzt3A3/dlk2ANgsdCsbboOXBIfv2WCiD+F27PD/6AEVjGZ7OqwisDcL3FLmP1pcEHMsy5vQWKBHkNACy0dP4C0pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gEANWOkC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlp1Q2524410;
+	Wed, 29 Oct 2025 02:02:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Viz5wsOpGT8upDjX2IF3pJhY3V85XL5P9gmczHCL13U=; b=gEANWOkC62cDsFcj
+	A19DD8os7BEvxjR8/TUC4gDrl8lXFzCm59f9VKl4Q6zdbp+OwXsFnv9kqT7cKpuz
+	twqJkiFtAfvPqA2q+7z/cLpW3oeGYhidRA/QcUqn9NMnz8f3URkUummwqj/WRlqF
+	4PBQopXIapUTnZBsgm9WNRQzGzGsCsiGya2IOF8M31bxSdV5hitYr3cK26hMCAS3
+	9QR8ub/LPtnr4xV/LOBnbl2e5cSWxzgXOIXpgvzMTEKgstkTlHxcUNzJGgNQv/a3
+	TPyKE9tXlKU1/whra6H8GWkmC9ggOM8ZQ2dV7PDu2XL0G0L2bhW+4rrfDXZaLl5j
+	4bXlWA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a1rtuj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 02:02:10 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59T22A28025262
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 02:02:10 GMT
+Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 28 Oct
+ 2025 19:02:08 -0700
+Message-ID: <ee4478c6-32ca-4c30-aee6-994f39532dc7@quicinc.com>
+Date: Wed, 29 Oct 2025 10:02:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028163911.98990cbf1516d1c6d221f92b@linux-foundation.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] Bluetooth: btusb: add default nvm file
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <marcel@holtmann.org>, <luiz.dentz@gmail.com>,
+        <linux-bluetooth@vger.kernel.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_chejiang@quicinc.com>
+References: <20251028120550.2225434-1-quic_shuaz@quicinc.com>
+ <3fluuwp2gxkc7ev5ddd2y5niga3tn77bxb6ojbpaoblbufepek@owcrah4exoky>
+Content-Language: en-US
+From: Shuai Zhang <quic_shuaz@quicinc.com>
+In-Reply-To: <3fluuwp2gxkc7ev5ddd2y5niga3tn77bxb6ojbpaoblbufepek@owcrah4exoky>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RZvxOyEZTw_UzKXaejm8NiWkPU5kwe08
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAxNCBTYWx0ZWRfX+6bE2sZ+PTaw
+ vD+FJIz3X+2exuRiJQjjL5vsIwct249vV0sSt/2zTdS1MvBqzIPXctUan/p9Bt3i2NU5vW55bTf
+ 6bV34Mdo58qtqdj+5SeU8y1ZiyebSxhdMnYQBs82qao++vqoGOi/TKzXJc5QjUh9SMcRNAOHz/Z
+ zIjiZsds04zcTLgw9wGf9wkWXGkDLWFnmP8bxzgvxauUEKZ8Prm5B/6UQ4Imf5o+RhCZTpv5qHf
+ 7avFDwO74yt2o2IOMzSD2mvTXKSlE+0j9YzmO8kMtB4TadWbLHb2sKISGYLD+9uHHoLU8MCE5wc
+ /nWmwiTrtzlFIkE7S0DwXxDUCyCJPgbcR9dMAUo4KxUqEDUzAMJKvWmV1t36KjuAEfjirCVPjZk
+ c5KY7fKQXGS88b1Zu2qZs5aweeJpsA==
+X-Proofpoint-ORIG-GUID: RZvxOyEZTw_UzKXaejm8NiWkPU5kwe08
+X-Authority-Analysis: v=2.4 cv=UObQ3Sfy c=1 sm=1 tr=0 ts=690175a3 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=GyBpgepc4qxS4VxvXCQA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ spamscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290014
 
-On Tue, Oct 28, 2025 at 04:39:11PM -0700, Andrew Morton wrote:
-> On Tue, 28 Oct 2025 11:09:14 +0800 Pingfan Liu <piliu@redhat.com> wrote:
+Hi Dmitry
+
+On 10/29/2025 12:57 AM, Dmitry Baryshkov wrote:
+> On Tue, Oct 28, 2025 at 08:05:50PM +0800, Shuai Zhang wrote:
+>> If no NVM file matches the board_id, load the default NVM file.
+>>
+>> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
+>> ---
+>>  drivers/bluetooth/btusb.c | 19 +++++++++++++++----
+>>  1 file changed, 15 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+>> index dcbff7641..998dfd455 100644
+>> --- a/drivers/bluetooth/btusb.c
+>> +++ b/drivers/bluetooth/btusb.c
+>> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
+>>  }
+>>  
+>>  static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
+>> -					const struct qca_version *ver)
+>> +					const struct qca_version *ver,
+>> +					u16 board_id)
+>>  {
+>>  	u32 rom_version = le32_to_cpu(ver->rom_version);
+>>  	const char *variant, *fw_subdir;
+>>  	int len;
+>> -	u16 board_id;
+>>  
+>>  	fw_subdir = qca_get_fw_subdirectory(ver);
+>> -	board_id = qca_extract_board_id(ver);
+>>  
+>>  	switch (le32_to_cpu(ver->ram_version)) {
+>>  	case WCN6855_2_0_RAM_VERSION_GF:
+>> @@ -3522,13 +3521,25 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
+>>  	const struct firmware *fw;
+>>  	char fwname[80];
+>>  	int err;
+>> +	u16 board_id = 0;
+>>  
+>> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
+>> +	board_id = qca_extract_board_id(ver);
+>>  
+>> +retry:
+>> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
+>>  	err = request_firmware(&fw, fwname, &hdev->dev);
+>>  	if (err) {
+>> +		if (err == -EINVAL) {
+>> +			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
+>> +			return err;
+>> +		}
+>> +
+>>  		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
+>>  			   fwname, err);
+>> +		if (err == -ENOENT && board_id != 0) {
+>> +			board_id = 0;
+>> +			goto retry;
+>> +		}
 > 
-> > Now that the deadline bandwidth check has been skipped, there is nothing
-> > to prevent CPUs from being unplugged. But as deadline tasks are crowded
-> > onto the remaining CPUs, they may starve normal tasks, especially the
-> > hotplug kthreads. As a result, the kexec process will hang indefinitely.
-> > 
-> > Send SIGSTOP to all userspace deadline tasks at the beginning of kexec
-> > to allow other tasks to run as CPUs are unplugged.
+> I'd rather see here:
 > 
-> This all looks a bit hacky.
-> 
-> What's special about kexec?  If many CPUs are being unplugged via other
-> means, won't the kernel still hit the very problems which are being
-> addressed here for kexec?  If so, we should seek a general fix for these
-
-No, they are in different situations. For normal CPU hot-removal, the
-deadline bandwidth validation will prevent the CPU hot-removal if the
-bandwidth requirements are not met. But in the kexec case, there is no
-way to roll back, so it must try its best to proceed. That is why the
-previous patch is introduced.
-
-> issues rather than a kexec-specific one?
-> 
-> > --- a/kernel/kexec_core.c
-> > +++ b/kernel/kexec_core.c
-> > @@ -1132,6 +1132,18 @@ bool kexec_load_permitted(int kexec_image_type)
-> >  	return true;
-> >  }
-> >  
-> > +static void stop_user_deadline_tasks(void)
-> > +{
-> > +	struct task_struct *task;
-> > +
-> > +	rcu_read_lock();
-> > +	for_each_process(task) {
-> > +		if (task->policy == SCHED_DEADLINE && task->mm)
-> > +			send_sig(SIGSTOP, task, 1);
-> > +	}
-> > +	rcu_read_unlock();
-> > +}
-> 
-> If we can safely stop all SCHED_DEADLINE user tasks then presumably we
-> can safely stop all user tasks.  Why not do that?
+>   } else {
+> 	bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
+> 	return err;
+>   }
 > 
 
-I think it can be done that way.  Normal user tasks cannot block the CPU
-hotplug kthread. Once the other CPUs are offlined, kexec can jump to the
-new kernel immediately. However, DL tasks may starve the hotplug kthread
-and kexec task, which is why I take this cautious approach.
+This will make the log clearer. Thank you for your suggestion;I will update it.
 
-
-Thanks,
-
-Pingfan
+>>  		return err;
+>>  	}
+>>  
+>> -- 
+>> 2.34.1
+>>
+> 
+BR，
+Shuai
 
 
