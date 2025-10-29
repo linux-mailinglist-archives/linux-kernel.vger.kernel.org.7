@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-876040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB7BC1A81D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:06:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A824C1AE6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6903B562DEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:58:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64FF96206E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C1E340DA1;
-	Wed, 29 Oct 2025 12:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8026634B185;
+	Wed, 29 Oct 2025 12:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F87I/2HK"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="WG6GeAEa"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5AA3587A3
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1468033970F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761741431; cv=none; b=XHr1zLwFuKkQcsYyWEz6NMc9xeHHWIEYMNlPImPFLCGDf2hai054EgmnSzb6yrTXpvsUsCLdDv/9fNhgc1y9UmrVkX1a5VFG6NhaFwPwURr0yO98BDRuu8iO391R6rhzmeu8aJJAALnBsQBqtCfgFGQfyh0jPKcpSsKozNMCpbc=
+	t=1761741526; cv=none; b=s9XwP/zUeGtyzLW+q40Dgm8r3k7TRCzzE+HNJNxdH8EGN+n1AIx7vfyhqIGAZfA0gKh1/W5rv8GP7Vkzrltr6KoQskj5kueSawmhxm6YquKd7Qz3f1IXQiX98yiI1zJXc4bEAl/mk553el61q+UpScS2bqULjaMG3fM3FsIh2sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761741431; c=relaxed/simple;
-	bh=ni2P6AAAIna0hjFuAO82zYVMn0J7WfuU6b6IJiF1kKs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXRXVjb9knIiiGpwOFnaQJSi4rNtNFLJs+DEvr+eZyg99H5CX731tChip56QMT2gTUZueGlTCbyF0DCQoQfvCv87Zpe0ffOjai1Vpp0CTAwPeaLhNeIBRZzEe6Jz8Pl0clcMpaKF15fToHdaUsHFZw0vFT+HIArwd71CZy9hsvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F87I/2HK; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-592f1988a2dso1030525e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761741427; x=1762346227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e7av6/+8iNuXmmgvTwlUka4Y7XmkOmuVd9YoxH52DeM=;
-        b=F87I/2HK8EHJQ7q4NQauRZSN2gkF3Pa6uWaxKT5wFbnJ02O9XJM9CVQa76aAk0TSaF
-         76edmu0GN4qf8O7hLOGmgl2m1E/wZWlSCbCwBKWravWbrzWOVNd2Wqlt7J+Ua6qOxZxV
-         Vo25gJ6FNxMMGcNYpCsgsF/Dew11WFweBBQN5b/PSxkUJYaDWPJMhjW8sS4ajHDy6GUk
-         UcOdOSnXu53Sjp2FtHMI3QAxxu+nHioY2KQfxl0H50DDrK7277Tkwx4zmGEf+2VqRYAC
-         XTokfkhjUfDrPSSnkP3OTTs8R08HxGteHAfjxqZNthOIwQp4OQb3FHhc2UN/G9S0PpM9
-         LdQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761741427; x=1762346227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e7av6/+8iNuXmmgvTwlUka4Y7XmkOmuVd9YoxH52DeM=;
-        b=cdh2NTbNk4x6kkgQ8WwVM4Uut3N8GIdw2O+B8JhOobmi7dopCkt13rokImBrftSH1D
-         atzu/YZkFE7u9s0Az5Bqogh4i7m0pEz7P9scBmqcvD3cbY6w4aVSyBgh9CnX6xbv3OCB
-         6UYS0wS20jS8/yF5FgqzX1/TCAVi/ELRcf7kb8eHm5h6TiPCiTMDCakGbYHCE3KMiptn
-         DBfm6YEdu3a5VfwAo44KdatMEldI21NnLwSsAD3M3gc/d9xhIvQEeeja8Tc8Wq/HEMI/
-         Bc38m6cLdtpnRLK5loCG7IRptuvOcdOAEgUwQA5k36yocZjyoZhby6/te4XqjYtvhGXQ
-         GDmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQhSLGqw5BmTkvuCwSKL/5UY3vPabv+PzfA6cWKVqBqkTacCfm0sZqWNj2MtSBFZ6aVZOm2R0s2XVnYbA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP86RFdFPNoukrOnvmXFu2N/ZEAOlGUEB1/4vbCnKergHq278Q
-	Cxoqb6zc5pRySpjOyS1C2nfkA0PaiKYhca0+byu522wTnRpVeFeX05w95882GzNTrWLUpO4JWep
-	3Zo29gtUxIRXVkTE6NbdhE25VkY9LJvtCn+9GiD57rA==
-X-Gm-Gg: ASbGncs9f702zbvKJiftViPWfHdhdYRk4k9NR6ZGrFYqHuD6aAikJb0TFxG4PBBCfcu
-	p3vtlgM9RBHxDnTmLt5wLAINZK4eMRNgNfHWZ2pYDTRfmjEN4+NI1964t4DSpTTWiiQLpow81nQ
-	9S2Nr2SwxwLRZfI9+lluc+goiu/QEsBe1NzT4Vev0LpGBwvlWI7FJQ7cM1NCcv1WorjiP5Wu7vj
-	ncs85h51CVuVVRNr3VndZM3otf+1PTeUmWzE6Nm03zAywAWbhnF9wG5czvPi7mh+1a28SOzsUQb
-	D+eHLMsoiI4PlNJtDuEjr1XD/wg=
-X-Google-Smtp-Source: AGHT+IEUmGu04036ormM4pltNB2Am321w2VXbEnKTAs3EJCIFCtIkYSiyRchfH1o5wZ/LZR6U90hsv4wZnUUYh2RdrI=
-X-Received: by 2002:a05:6512:31d5:b0:591:c763:78e5 with SMTP id
- 2adb3069b0e04-5930ee00135mr2032537e87.23.1761741427164; Wed, 29 Oct 2025
- 05:37:07 -0700 (PDT)
+	s=arc-20240116; t=1761741526; c=relaxed/simple;
+	bh=Bfi6AIAIv6V6tA7X/XVFSYzwK0kevfl9k/HCUlrw+j8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvGH05VgN71wHD2Pp9RZLyGKALVmZ6B674EdH1TCYYxqFnP1COGKRjxa2supNY0e/axWXTZB/PLI1jsiTCod62FV4JL1S9L6vb0cmDvYQN2AaT4/MPdGdNEC0iGBmGROewmrB7RcS+QeIJGSF2mr5ELlh81ZDHs6ovO4w1BizvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=WG6GeAEa; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9ABEB40E0225;
+	Wed, 29 Oct 2025 12:38:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id a_Gzp9zZ6Qsq; Wed, 29 Oct 2025 12:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761741517; bh=rRUOrtCsg5ArrgR/3s+68EP1MNq16vBaqojRFKBA7Ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WG6GeAEaRE3VjHaJvddiMKl5SZQK/49GS9A23YbOk+fCIk7LWfb55P6ngkeC4L/Cb
+	 tVACIygQHaFb91yDoucRRRDtSB/J8p5/E4t9hJvq0DoAApPO18XED9pCHIO4hQ3Jz9
+	 I30ynUeCTCqNLOgmAae+K+w/62iiC6dvQm3O9UCQqpUGjznzqlB5MXvLa8sLtXFUug
+	 v0Zb10Y0NztEs0jhMBwGbArIYdCCQs6nhGUbcXbT8UuiLoVwzDeKqWRspMqpmcjba/
+	 /6/+GzBXZ2kNrYM7bg0dHvy45PHMffmlSG5sQ8dMehJAaSrnT13kr235JK6rqNXkAZ
+	 2OT+XI7ZVPVV4WhEYpGR3F2+VmJbK+dhmyKcvdlinz1UjBTSecX/EWdjSXtRv8+3TF
+	 jmPEAJfQVil/71vtSXgtBrJc3Is98aB/S0fAHTuRwo94WqvLgvvLSa+Mz8jCp/oVch
+	 9os5gxqaJhzjRN3JuAOfKYVwrr6NzxXsOc6/V3twqTASKs8Q9EJj++KevIyCoMh8iP
+	 Qgid5DoQdbD0utQIu65TorYNYxD/eGmi7+4HBptM+Rh20Fud+1Zydqs/qqURZnwaJO
+	 dmBaSKtumrQ9+04y1d5r55IR6tCVniKabn4mBKcBnKKprXdM/eQhdArh7UPHdC/YYo
+	 7m+4mN6FtOTBvqC2LYump8mo=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1FD7640E021A;
+	Wed, 29 Oct 2025 12:38:29 +0000 (UTC)
+Date: Wed, 29 Oct 2025 13:38:23 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yu Peng <pengyu@kylinos.cn>
+Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
+	Yu Peng <pengyu@kylinos.com>
+Subject: Re: [PATCH v2] arch/x86/microcode: Mark early_parse_cmdline() as
+ __init
+Message-ID: <20251029123823.GAaQIKvz4gUk3Nsaj4@fat_crate.local>
+References: <20251029081644.4082219-1-pengyu@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
- <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org> <aQH9gE_fB119CW3l@smile.fi.intel.com>
-In-Reply-To: <aQH9gE_fB119CW3l@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 29 Oct 2025 13:36:55 +0100
-X-Gm-Features: AWmQ_blmOzETrnBiOxNQNAG3OMw6fz-E4Nx4SOD4Wgu8a41SpvuD7mJ9RHyBeG8
-Message-ID: <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
-Subject: Re: [PATCH v3 01/10] string: provide strends()
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Alexey Klimov <alexey.klimov@linaro.org>, linux-hardening@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251029081644.4082219-1-pengyu@kylinos.cn>
 
-On Wed, Oct 29, 2025 at 12:42=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
->
-> On Wed, Oct 29, 2025 at 12:20:37PM +0100, Bartosz Golaszewski wrote:
-> >
-> > Implement a function for checking if a string ends with a different
-> > string and add its kunit test cases.
->
-> ...
->
-> > +/**
-> > + * strends - Check if a string ends with another string.
-> > + * @str - NULL-terminated string to check against @suffix
-> > + * @suffix - NULL-terminated string defining the suffix to look for in=
- @str
-> > + *
-> > + * Returns:
-> > + * True if @str ends with @suffix. False in all other cases.
-> > + */
-> > +static inline bool strends(const char *str, const char *suffix)
-> > +{
-> > +     unsigned int str_len =3D strlen(str), suffix_len =3D strlen(suffi=
-x);
-> > +
-> > +     if (str_len < suffix_len)
-> > +             return false;
-> > +
-> > +     return !(strcmp(str + str_len - suffix_len, suffix));
-> > +}
->
-> Can you rather re-use strcmp_suffix() from drivers/of/property.c?
->
+On Wed, Oct 29, 2025 at 04:16:44PM +0800, Yu Peng wrote:
+> From: Yu Peng <pengyu@kylinos.com>
+> 
+> Fix section mismatch warning reported by modpost:
+>   .text:early_parse_cmdline() -> .init.data:boot_command_line
 
-I think that strends() and its boolean return value are a bit more
-intuitive to use than strcmp_suffix() and its integer return value,
-the meaning of which you typically have to look-up to figure out. If
-there are no objections, I'd like to keep it and - when it's upstream
-- convert property.c to using it instead. Also: the name
-strcmp_suffix() could use some improvement, seeing how I wasn't able
-to find it, even though I looked hard across the kernel source, while
-I easily stumbled upon a similar implementation of strends() already
-existing in dtc sources.
+How do you trigger this?
 
-Bart
+CONFIG_DEBUG_SECTION_MISMATCH=y
+CONFIG_SECTION_MISMATCH_WARN_ONLY=y
+
+in my config doesn't cause anything.
+
+That's because
+
+$ readelf -s vmlinux | grep early_parse_cmdline
+
+doesn't give anything because my compiler inlines it anyway.
+
+So it must be something about your .config or toolchain or whatnot, which
+causes it.
+
+I mean, the patch is obviously correct but I'd still like to know how it
+triggers.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
