@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-876244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B44BC1B782
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:17 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38340C1B148
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7905A64072A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:49:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C4F7F506DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CBA34F492;
-	Wed, 29 Oct 2025 13:38:44 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CE8834F481;
+	Wed, 29 Oct 2025 13:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="znqZ9PNP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jM42F88i"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E4E34F46F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039AA1B4257;
+	Wed, 29 Oct 2025 13:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745123; cv=none; b=lNPQ5S5yVG0PxYi3HuKpoEk0Q4aKp40Vb0EpNlygorTdEt41TSGFuvEYaW/Hv29MOA4C8S75suO1II5QJJErcF1ruE4i8grPWZXcu5dttSuaMmOR5Swno/4tIIalXnSDQSmJjUBok4Oh7EkbrnPLsna+zyAt4yEF+E09fIuQXLI=
+	t=1761745122; cv=none; b=AsTJrnv510HRbUnxDaCKAZAlaCrMO6aId0u4jiwzqvW/wEovTwiXDqtZ5AULo8KkWZFzDzxhSsNy46GE0D/Q+QESdqzf4uDid+KqQuoWl3R2MuFzHFEg0+/Ce0nRQIkrdGBiFvvIX3GikU78157L8ofdUzOX3whmBXObRemfLRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745123; c=relaxed/simple;
-	bh=nXrQrLOZQlSlfYKWTFEOIitrE9LrhACr5dPWPL9oHJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLQWRbEdb8IHW/b7mUbNhCmuwispPL5eYHgPCC76DXTQ25aQFm2/GCE1F5cr5n6WRU0/nqQNup6B5Bu6JxCZWZheVKlUfp+kfUYwOPzArepkjeVXVJpKpkHnum6PZBF4OhOb0Ql46CkgxzGAO6e6r3cqIcTBFbSA/do4PE+QuEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 64D4B227A8E; Wed, 29 Oct 2025 14:38:35 +0100 (CET)
-Date: Wed, 29 Oct 2025 14:38:34 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Christoph Hellwig <hch@lst.de>, Daniel Wagner <wagi@kernel.org>,
-	Keith Busch <kbusch@kernel.org>,
-	John Meneghini <jmeneghi@redhat.com>,
-	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme: drop bogus nid quirk for multipath devices which
- passed id test
-Message-ID: <20251029133834.GB14596@lst.de>
-References: <20251028-bogus-id-check-v1-1-c087a98b5466@kernel.org> <20251029074403.GA30412@lst.de> <bd91a6c1-cefc-43e2-8dd8-48b7ea241ded@flourine.local> <20251029095907.GA1652@lst.de> <831d8af6-5bb0-4869-b9a5-6a4442ec8d67@flourine.local>
+	s=arc-20240116; t=1761745122; c=relaxed/simple;
+	bh=hFZLjU9NPVF/W1rkjz2cM6ZlnNo6t2/RL2LgX2vWtaQ=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=FttviHGp3icClzvzkoGsD1tQC1af2GHyx/TU+p9tD8UPpAKfO2c2+0HK3YW1vfm1UeDTIwruKzSU+uvCTDhYr3vHl0J41KGJZoovKH1Z43vzZRJ2CJbkIQ0vGmZAtkje3WOk7kBHP0jA1fD6lCnFpCuJLS7RvRu9jBOI8aIMdmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=znqZ9PNP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jM42F88i; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 13:38:37 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761745119;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=lpHN9woy0RN37Ctf4Men1kb0Bi10pWWNAL9apjOKfIc=;
+	b=znqZ9PNPfGLQXmrWCb1sRMfHr7KCKEAuo5+GhdShXw3ZP/Z/dI05dASg1Y9hsCXLJm43zP
+	uIqUexeOrxw4TqbVKEtr5mn7rbzJyBpaurAGGMdUfMjttz0/41C20G27dAkEN9NnIRX1JP
+	1P/fcCdoHpCrXCdkJdQwLYlA+pqvDXKRMr+urfGC6M0bPp+WJjj0J+15RGsJmqWmtEi7OO
+	LAMCNx3gj1JBeWoGq41ycc6uDT4VkqSuD/Gto2OD8g1T1/dheqxqEIImb54o7TizMUeusc
+	hOdBp0UV57vvgkhh5heoWDxQ8nbGdcL5c8McwqP6fiR94htiskOyXyh7c6dQ7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761745119;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=lpHN9woy0RN37Ctf4Men1kb0Bi10pWWNAL9apjOKfIc=;
+	b=jM42F88ioC2IiLZgWmJTiE7I+MzvcO+wZPyny6DJQX00m12o8Wwh10CAjlXMdJa9wZGY05
+	0iYiAvE9G0edz1DQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] Subject: unwind_user/x86: Fix arch=um build
+Cc: kernel test robot <lkp@intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <831d8af6-5bb0-4869-b9a5-6a4442ec8d67@flourine.local>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Message-ID: <176174511766.2601451.10946132380682286777.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 11:14:27AM +0100, Daniel Wagner wrote:
-> On Wed, Oct 29, 2025 at 10:59:07AM +0100, Christoph Hellwig wrote:
-> > The problem is that there is no such thing as a sanity check.  Otherwise
-> > life would be easy.  But I really can't believe that Dell is incompetent
-> > enough to not leave a mark of their OEM Firmware version anywhere.
-> 
-> Got it. Sure, there are version strings though not really 'stable' as
-> Hannes told me. Maybe there is a way to filter these out. But isn't this
-> what the command line idea overwrite feature is?
+The following commit has been merged into the perf/core branch of tip:
 
-Version isn't optimal, but model numbers often encode model numbers,
-and some devices have identifiers in the vendor specific regions of
-identify commands.
+Commit-ID:     e56b519d9d7742f3b2ad1debb4e231c46cdda218
+Gitweb:        https://git.kernel.org/tip/e56b519d9d7742f3b2ad1debb4e231c46cd=
+da218
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 29 Oct 2025 14:24:57 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 29 Oct 2025 14:29:08 +01:00
 
-> John, did you have some progress with this?
-> 
-> The sad thing is that the Intel device needs the quirk. If the Dell
-> device just would use it's own IDs...
+Subject: unwind_user/x86: Fix arch=3Dum build
 
-I'm pretty sure they are one and the same device, just with slightly
-different firmware versions.  It might be that Dell actually reported
-the bogus IDs to Intel as part of compliance testing and Intel only
-fixed it for them and not the generic firmware build :(
+Add CONFIG_HAVE_UNWIND_USER_FP guards to make sure this code
+doesn't break arch=3Dum builds.
+
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Closes: https://lore.kernel.org/oe-kbuild-all/202510291919.FFGyU7nq-lkp@intel=
+.com/
+---
+ arch/x86/include/asm/unwind_user.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind=
+_user.h
+index c4f1ff8..1206428 100644
+--- a/arch/x86/include/asm/unwind_user.h
++++ b/arch/x86/include/asm/unwind_user.h
+@@ -2,6 +2,8 @@
+ #ifndef _ASM_X86_UNWIND_USER_H
+ #define _ASM_X86_UNWIND_USER_H
+=20
++#ifdef CONFIG_HAVE_UNWIND_USER_FP
++
+ #include <asm/ptrace.h>
+ #include <asm/uprobes.h>
+=20
+@@ -34,4 +36,6 @@ static inline bool unwind_user_at_function_start(struct pt_=
+regs *regs)
+ 	return is_uprobe_at_func_entry(regs);
+ }
+=20
++#endif /* CONFIG_HAVE_UNWIND_USER_FP */
++
+ #endif /* _ASM_X86_UNWIND_USER_H */
 
