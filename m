@@ -1,405 +1,300 @@
-Return-Path: <linux-kernel+bounces-877242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E954DC1D897
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:57:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61288C1D8B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:00:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72AF53B5505
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:57:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 577A74E2E0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 833372F999A;
-	Wed, 29 Oct 2025 21:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C9C3128BA;
+	Wed, 29 Oct 2025 22:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="grrI8IpM"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZJR0SwWs"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69C1D2FFDC1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147521CAA85
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761775016; cv=none; b=HkCjypJpqcwIXWSViL/ttfm/lE9OPx4yAfmAcwce0PRU4JMx/bUu4Ep5C+WwEJ1HU9FKTy/PxgP4yEKPfLiSj+6NvD1EnyBLlhqzidhnjYRYsOl+WPckcuRZKjjOvxWdXXltLYCCvRuisaNc6uy6yuqHBoqCoAxEszliedNGsEQ=
+	t=1761775236; cv=none; b=B4wEh/ZYf+4+Uxt8661lQptEMiyVzc7ENino4cJzSZ2DCSpHe2C5pQUyZutxPqVqaZc2YqbMJgq8ERU+cJfHlS77wJJgsu56ZPxJVLTvROQq0MVrS2hlALDC1WIoaty2lMMM6iXl3m1R73hcYo1+tcCNoIAaeAJUsIxyW/4IXPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761775016; c=relaxed/simple;
-	bh=pc8MWSenSbrjlakZ4BTNZ5oyU4Qr0k6vYW6lu4WTNh0=;
+	s=arc-20240116; t=1761775236; c=relaxed/simple;
+	bh=6b6tWgoOYv1BDlNMVl9v4FQpfmpLkAx8er/On0TLus4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RlwAvx7Yyk1vUyVSQ4EaFNRrJF66AGRhR65On4pe5ydu0vojFxRgen2hMowK+je0/PMQz0CM4Xw5VbLi91f222+3/VufSa16WfzclOs+CZQ9vgHSmqPRyUY6ng2Ke6DBHop/bY/0F62ms5c1wfq7n9sKQXIGjqZph22jHvcEf90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=grrI8IpM; arc=none smtp.client-ip=209.85.215.179
+	 To:Cc:Content-Type; b=VMK35y9htiwz7dhAcfV72zgU/vgYV+YSZA7QwP4EGOIV6DvqJoE3osMhS08YP6B+YHmTQl+/WE1VQbdXV4QcuBXXg+h/FGpEDSe3goHk4ceUlYptAN+MbBQj6EhhEl4NhCrEjtK7BzBZ7CnNAWvmvRc8Zl3GHk6ttTLAT1BUlPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZJR0SwWs; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6cea3f34ebso208224a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:56:54 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-27eeafd4882so35245ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761775014; x=1762379814; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761775234; x=1762380034; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TJTLgOh8jsaRPCjdQQVu2n3V/rJ9ZSz5eRUC9ZjNuFk=;
-        b=grrI8IpMnLxk6h9JZbCVGxw4w3+d5WKdrCl9qehbS6eODz6N4KKa5TLEzRmuH/SjgB
-         zWj42S0XejbA0WY8PAg50PI2uHI9Jr6EV/xOv7J9R6cH6gtdy71n54hmcyTU2oJ0gl5m
-         Ct30ZztFR6VnXtyGASuqwW9GVNOv9fAhRwhPsM1vR/aAaqBH9PHd0XOffhvIc608GtIT
-         8oz4Y8tuWKdpcRNvT97qM4c4U/YXeE0UYtrTXsw5MN4IB7rKQbU9/a4ONroaZk/iRkGV
-         jHmn8zBnapiI8g0C9KYmTkM3j4CfVeUPIRW/72n9Jqc3jJtWVVA3Zc6ckgxzdxm/0YeX
-         KfUg==
+        bh=iLD3TQVOiWY5r3Odhgs8R7i+r0sY0ies83ZNYoXLOpk=;
+        b=ZJR0SwWsOdlfHJUtIWxy3O92CkUVWqkobeGiHJJENzAtYTaeQ3EWg+E/JxkTfbJmim
+         fLqn8P93BT++vQ1qvcHtjOqrO9e91WYDetDyZGfgYjdxvfOysQSebNkrK6FDynIoNRqA
+         2pYVOb7rdJZrYkm+JBzMUZYYzCX+SFYMtpFb9S7kZVtnC5N8e9cG49wW7HIsqgDPZ0Sq
+         1uh8cK0O+9bG0tIAUxjmzw6llGmqoxoAB5r0XONQaXiD3ZqVdYkFHSvB8cLc1yu6L4bD
+         NFHpDzhVzAw5Pu59HXdpeE3QDvaDxJSQT4ftrJOZvwqn0IQkkbjIDhjDknNSuGRsEcUi
+         J6Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761775014; x=1762379814;
+        d=1e100.net; s=20230601; t=1761775234; x=1762380034;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TJTLgOh8jsaRPCjdQQVu2n3V/rJ9ZSz5eRUC9ZjNuFk=;
-        b=LjygQB4ojhddhaMDodYoCWqoF/cEwKznxsFsNbB4sPsp5qsNzoTLAJO/kYX5OMDpI6
-         Cu99iBlmBPuyJtnAZ2taPj0hqQhd45VGBBmDiBS4L4F3/Zbp7L0MIJzqTgPvnMEywFTZ
-         wwtFZIXKsTvhdp4G/dPPtFKgvzEHbZyPMCziN+2IuDLpUlek0Hgn8yUgOVL0dTtLQz+p
-         wc1Gfy41X6nyPPAfUzsTOGcRqBbII7ufSPZZi/3T/NdRpZmV6CkIMQI9skUlyIb5/HVy
-         pgMdaZ/7gdNdRhAn3hnB2LmC4Y5c0Oo5tAsMmXr1UqCXvschfc8d0wAFsVhjlV5Mhcwn
-         VFyA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOZJxfW0u0hPqhlPo+6wBU3gCtUgQBbpIEGHE0dIvB4FJOygd82WGA1po9Q0KxLRc25H1ksom1LZcddVk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywbi8EBcE+cwNbOO8gcFjJXNIFLquOt1LWNW2KOgK5HNFdInNZ4
-	o2u5I12JkYiiT+weKacOS6va7C5Q1n/HIC7piZcfSmVzMzIK9N178xAumLUvP5Yai+UuxaDmqHe
-	YBZKVPdMMw28Wbf8qlKDPCofi+t36/BiTVsBrTJPt
-X-Gm-Gg: ASbGncvg7Z8hgwAzrAYRuf4tyfjuAUDN5QhV28+LwasXCbJ27Y+l08t9tHBnolqkmS/
-	brffU/eBAz+WVwsc8218tv3nkwQvN4c02SXfuQAQ+XMgLPlkLdzGB8HkYFf90L4rBHi4UxVylXw
-	9O1NBy7pXTtCMtRg32U8u6HgjQCkMnQ71oIWUuCPx5uQtO4uMQmbuXkKmETwVO5wpu0/KmKWVBv
-	YmO1JP8YB3dZ8NMgQ8bk8qYUWMoW4B99PcWSFOFdQxI5QDf71SK6ktXc9m1txOex8JySfYRu8x1
-	uzNZP3EUk8NQcPY=
-X-Google-Smtp-Source: AGHT+IE7MK0ouzOxdgxbbJICpwKKB/m/kuER8QUSyeE8WkSLtloBkkEzSk6YhBjjZ6+dAw+dHj+t4Lwls8B0wpVK58k=
-X-Received: by 2002:a17:903:41c1:b0:276:d3e:6844 with SMTP id
- d9443c01a7336-294ede84e2cmr10876965ad.33.1761775013281; Wed, 29 Oct 2025
- 14:56:53 -0700 (PDT)
+        bh=iLD3TQVOiWY5r3Odhgs8R7i+r0sY0ies83ZNYoXLOpk=;
+        b=ELsP/ARHVq0b4tESiv9HevunQ3tzWY+nCSZNdvdwdErsr1tDVd2WI8TQ+6TSvGuLq7
+         CCZ1G8+gCFcQU2HD2jnsFGs7Gd4ma38L325jtWEK+d7hYJjEE95gKeVb3vhHzgIxmrgn
+         u3XrMKWjrkpt1A1nwXlp+QxJdK+2rrrbNeiopDZa+X6QYLhTVUmfW5crMw6yhEIOhSRJ
+         eq3w0h9wem7Rkf+m6gLGiLo7xLNiOGBtn906SqEzEyZDbD0W0jfBj0REtKRCgcR2qe2l
+         3mEFlwcIuDLwGvEpKuFdIngLuLp0x1/EMxii/4kcoT67jYv7yp/Q3rr/e1S0zSch5hTa
+         N28g==
+X-Forwarded-Encrypted: i=1; AJvYcCWm5q3P9BploxmW0Q4Dhed5bPdSaFmDxMLmuXrjtOauvoy3bqg5BuvNehjlMK8plPc0uSb7sCcLAS8eNeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5YcLIT+xAoFZNzbvekB4h/G7IdDsVZiWSwbZ6A0TFYoXcjvYs
+	cfTnsuLT0FIvd2v2mydvS013n4FxSvvSKiENuTjDA0cEghzSvGiSwBXr8XTCLcXM20/FhJeAIVK
+	JaVRKR4xhnxFyUnDrl9A8+ePaZLXqreXP81qlrOuH
+X-Gm-Gg: ASbGncsbEqbLxnC6M02BzYiLVXveG4hkLcNbJa3Co/tgf55zZCEjAcrYAicaSZsV9v3
+	R22BlcAx61H3vg1kkY7Qs7IuDfEQ3/a+Gp/JymddC2KS4WVNluzcGeBf5+F4LT2iNiEzR8mAI8a
+	Ai5aW2b9Z7qb8sutYDpbIgNj/zZZBGXa+ZqnyuJJ21C8bRy9SBmm7ZtR56QuGuFfKhmy8qSgS7B
+	AnGhDLLbLBYLPLSQSz6O/PLDovieHM/C5D9Fu53Kle4ubQcj0bkenz3xX4mH/PvSo2GbsigLRZP
+	ETrq6gyx2d9NbgcoPWmsFORqxJNs
+X-Google-Smtp-Source: AGHT+IGQiEL8ReoIvOwZKzbVpHBeTpPCQv29yrRij7Hwfs/n1+GX5gwd67TK3b+ch8zjTS1IjIo6qaeBI23B0BA9NWI=
+X-Received: by 2002:a17:902:c40e:b0:26d:72f8:8cfa with SMTP id
+ d9443c01a7336-294ef8d21c6mr633415ad.13.1761775233734; Wed, 29 Oct 2025
+ 15:00:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017235159.2417576-1-royluo@google.com> <20251017235159.2417576-3-royluo@google.com>
- <37daba64-5233-4573-95de-38612c2358f2@gmail.com> <CA+zupgwbmKt8BhHEM-76CLLH_dE_vmyHvKwqpC2WzwED9irEVw@mail.gmail.com>
-In-Reply-To: <CA+zupgwbmKt8BhHEM-76CLLH_dE_vmyHvKwqpC2WzwED9irEVw@mail.gmail.com>
-From: Roy Luo <royluo@google.com>
-Date: Wed, 29 Oct 2025 14:56:16 -0700
-X-Gm-Features: AWmQ_blXw1Xn8pKPUfoc6ad6zDhTM7hi1hzEqd7lDJfXI9Cm3_Ji6rmIfYSQ3kQ
-Message-ID: <CA+zupgyywiKajEbTf34P1E0kz_1hni_gApXG+ObrjTHaBRRdWA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] phy: Add Google Tensor SoC USB PHY driver
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, Joy Chakraborty <joychakr@google.com>, 
-	Naveen Kumar <mnkumar@google.com>, Badhri Jagan Sridharan <badhri@google.com>, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
+ <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
+ <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
+In-Reply-To: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
+From: Samiullah Khawaja <skhawaja@google.com>
+Date: Wed, 29 Oct 2025 15:00:20 -0700
+X-Gm-Features: AWmQ_bkGoprZL04a0uQTcZsPv3KjOr3HxUN9sapy64_kyfy98s5fgevUjY0pmjs
+Message-ID: <CAAywjhTbBx+rYGpPGtTw_--9XhoYZBX8ase5ddM6rxmC5J-2JQ@mail.gmail.com>
+Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
+ preservation and state management
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
+	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
+	witu@nvidia.com, hughd@google.com, chrisl@kernel.org, 
+	steven.sistare@oracle.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 20, 2025 at 12:55=E2=80=AFPM Roy Luo <royluo@google.com> wrote:
+On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
 >
-> On Sat, Oct 18, 2025 at 1:13=E2=80=AFAM Ivaylo Ivanov
-> <ivo.ivanov.ivanov1@gmail.com> wrote:
+> On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel.o=
+rg> wrote:
 > >
-> > On 10/18/25 02:51, Roy Luo wrote:
-> > > Support the USB PHY found on Google Tensor G5. This particular USB PH=
-Y
-> > > supports both high-speed and super-speed operations, and is integrate=
-d
-> > > with the SNPS DWC3 controller that's also on the SoC.
-> > > This initial patch specifically adds functionality for high-speed.
+> > Hi Pasha,
+> >
+> > On Mon, Sep 29 2025, Pasha Tatashin wrote:
+> >
+> > > Introducing the userspace interface and internal logic required to
+> > > manage the lifecycle of file descriptors within a session. Previously=
+, a
+> > > session was merely a container; this change makes it a functional
+> > > management unit.
 > > >
-> > > Co-developed-by: Joy Chakraborty <joychakr@google.com>
-> > > Signed-off-by: Joy Chakraborty <joychakr@google.com>
-> > > Co-developed-by: Naveen Kumar <mnkumar@google.com>
-> > > Signed-off-by: Naveen Kumar <mnkumar@google.com>
-> > > Signed-off-by: Roy Luo <royluo@google.com>
-> > > ---
-> > >  drivers/phy/Kconfig          |  13 ++
-> > >  drivers/phy/Makefile         |   1 +
-> > >  drivers/phy/phy-google-usb.c | 271 +++++++++++++++++++++++++++++++++=
-++
-> > >  3 files changed, 285 insertions(+)
-> > >  create mode 100644 drivers/phy/phy-google-usb.c
+> > > The following capabilities are added:
 > > >
-> > > diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> > > index 58c911e1b2d2..fe32d1356002 100644
-> > > --- a/drivers/phy/Kconfig
-> > > +++ b/drivers/phy/Kconfig
-> > > @@ -101,6 +101,19 @@ config PHY_NXP_PTN3222
-> > >         schemes. It supports all three USB 2.0 data rates: Low Speed,=
- Full
-> > >         Speed and High Speed.
+> > > A new set of ioctl commands are added, which operate on the file
+> > > descriptor returned by CREATE_SESSION. This allows userspace to:
+> > > - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
+> > >   to be preserved across the live update.
+> > > - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
+> > >   descriptor from the session.
+> > > - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
+> > >   new kernel using its unique token.
 > > >
-> > > +config PHY_GOOGLE_USB
-> > > +     tristate "Google Tensor SoC USB PHY driver"
-> > > +     depends on HAS_IOMEM
-> > > +     depends on OF
-> > > +     depends on TYPEC
-> > > +     select GENERIC_PHY
-> > > +     help
-> > > +       Enable support for the USB PHY on Google Tensor SoCs, startin=
-g with
-> > > +       the G5 generation. This driver provides the PHY interfaces to
-> > > +       interact with the SNPS eUSB2 and USB 3.2/DisplayPort Combo PH=
-Y, both
-> > > +       of which are integrated with the DWC3 USB controller.
+> > > A state machine for each individual session, distinct from the global
+> > > LUO state. This enables more granular control, allowing userspace to
+> > > prepare or freeze specific sessions independently. This is managed vi=
+a:
+> > > - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
+> > >   CANCEL, or FINISH events to a single session.
+> > > - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
+> > >   of a single session.
+> > >
+> > > The global subsystem callbacks (luo_session_prepare, luo_session_free=
+ze)
+> > > are updated to iterate through all existing sessions. They now trigge=
+r
+> > > the appropriate per-session state transitions for any sessions that
+> > > haven't already been transitioned individually by userspace.
+> > >
+> > > The session's .release handler is enhanced to be state-aware. When a
+> > > session's file descriptor is closed, it now correctly cancels or
+> > > finishes the session based on its current state before freeing all
+> > > associated file resources, preventing resource leaks.
+> > >
+> > > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > [...]
+> > > +/**
+> > > + * struct liveupdate_session_get_state - ioctl(LIVEUPDATE_SESSION_GE=
+T_STATE)
+> > > + * @size:     Input; sizeof(struct liveupdate_session_get_state)
+> > > + * @incoming: Input; If 1, query the state of a restored file from t=
+he incoming
+> > > + *            (previous kernel's) set. If 0, query a file being prep=
+ared for
+> > > + *            preservation in the current set.
 > >
-> > So it's more like a DRD controller, since it encapsulates multiple phys=
-?
+> > Spotted this when working on updating my test suite for LUO. This seems
+> > to be a leftover from a previous version. I don't see it being used
+> > anywhere in the code.
 >
-> Yes, it's a DRD controller, I will make it clear in the next version.
+> thank you will remove this.
 >
-> >
-> > > +       This driver currently supports USB high-speed.
-> > > +
-> > >  source "drivers/phy/allwinner/Kconfig"
-> > >  source "drivers/phy/amlogic/Kconfig"
-> > >  source "drivers/phy/broadcom/Kconfig"
-> > > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> > > index c670a8dac468..1d7a1331bd19 100644
-> > ...
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/phy/phy.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/cleanup.h>
-> > > +#include <linux/usb/typec_mux.h>
-> > > +
-> > > +#define USBCS_USB2PHY_CFG19_OFFSET 0x0
-> > > +#define USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV GENMASK(19, 8)
-> >
-> > I'd suggest implementing the eUSB support in the existing snps-eusb2
-> > driver for the sake of clarity. That way, you can pass it as a phandle
-> > to this driver and probe it when drd is probing.
+> > Also, I think the model we should have is to only allow new sessions in
+> > normal state. Currently luo_session_create() allows creating a new
+> > session in updated state. This would end up mixing sessions from a
+> > previous boot and sessions from current boot. I don't really see a
+> > reason for that and I think the userspace should first call finish
+> > before starting new serialization. Keeps things simpler.
 >
-> If I understand it correctly, you're referring to the pattern used in
-> Documentation/devicetree/bindings/phy/samsung,exynos2200-eusb2-phy.yaml a=
-nd
-> Documentation/devicetree/bindings/phy/samsung,usb3-drd-phy.yaml.
-> Please correct me if I'm wrong.
+> It does. However, yesterday Jason Gunthorpe suggested that we simplify
+> the uapi, at least for the initial landing, by removing the state
+> machine during boot and allowing new sessions to be created at any
+> time. This would also mean separating the incoming and outgoing
+> sessions and removing the ioctl() call used to bring the machine into
+> a normal state; instead, only individual sessions could be brought
+> into a 'normal' state.
 >
-> At first glance, this approach seems feasible. Custom logic, such
-> as vbus valid handling, would need to stay within this driver. Most
-> of the eUSB block configuration in google_usb2_phy_init() could
-> be moved to the snps-eusb2 driver by adding one more compatible
-> for Google's version of the SNSP eUSB IP. However, I'd argue
-> 1. This approach would introduce an extra layer of PHY interface,
->     which adds unnecessary complexity.
-> 2. Not much of the code is reused in snps-eusb2 driver: the register
->     definition and programming sequence are specific to Google,
->     hence the logic in google_usb2_phy_init() would have to be
->     moved to snps-eusb2 driver almost word-by-word.
+> Simplified uAPI Proposal
+> The simplest uAPI would look like this:
+> IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
+> LIVEUPDATE_IOCTL_CREATE_SESSION
+> LIVEUPDATE_IOCTL_RETRIEVE_SESSION
 >
-> I understand this approach was suggested for the sake of clarity,
-> but I'm not sure whether that makes for the best trade-off. Since
-> there is a precedent for this approach, I do not have a strong
-> objection. It would be helpful if the maintainers could also provide
-> their input on this specific point.
+> IOCTLs on session FDs:
+> LIVEUPDATE_CMD_SESSION_PRESERVE_FD
+> LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
+> LIVEUPDATE_CMD_SESSION_FINISH
+>
+> Happy Path
+> The happy path would look like this:
+> - luod creates a session with a specific name and passes it to the vmm.
+> - The vmm preserves FDs in a specific order: memfd, iommufd, vfiofd.
+> (If the order is wrong, the preserve callbacks will fail.)
+> - A reboot(KEXEC) is performed.
+> - Each session receives a freeze() callback to notify it that
+> mutations are no longer possible.
+> - During boot, liveupdate_fh_global_state_get(&h, &obj) can be used to
+> retrieve the global state.
+> - Once the machine has booted, luod retrieves the incoming sessions
+> and passes them to the vmms.
+> - The vmm retrieves the FDs from the session and performs the
+> necessary IOCTLs on them.
+> - The vmm calls LIVEUPDATE_CMD_SESSION_FINISH on the session. Each FD
+> receives a finish() callback in LIFO order.
+> - If everything succeeds, the session becomes an empty "outgoing"
+> session. It can then be closed and discarded or reused for the next
+> live update by preserving new FDs into it.
+> - Once the last FD for a file-handler is finished,
+> h->ops->global_state_finish(h, h->global_state_obj) is called to
+> finish the incoming global state.
+>
+> Unhappy Paths
+> - If an outgoing session FD is closed, each FD in that session
+> receives an unpreserve callback in LIFO order.
+> - If the last FD for a global state is unpreserved,
+> h->ops->global_state_unpreserve(h, h->global_state_obj) is called.
+> - If freeze() fails, a cancel() is performed on each FD that received
+> freeze() cb, and reboot(KEXEC) returns a failure.
 
-Hi Ivaylo,
+nit: Maybe we can rename cancel to unfreeze. So it matches preserve/unprese=
+rve?
+> - If an incoming session FD is closed, the resources are considered
+> "leaked." They are discarded only during the next live-update; this is
+> intended to prevent implementing rare and untested clean-up code.
 
-I'm still hesitant to make the changes you suggested without
-maintainer input as it involves significant changes in the driver
-architecture. I've Incorporated enough changes for review in
-the other patch in this series, hence I've sent out a new version
-v5 [1] to keep the review process going. Hope I can get some
-feedback from phy maintainers there.
+I am assuming the preserved folios will become unpreserved during
+shutdown and in the next kernel those folios are free.
+> - If a user tries to finish a session and it fails, it is considered
+> the user's problem. This might happen because some IOCTLs still need
+> to be run on the retrieved FDs to bring them to a state where finish
+> is possible.
 
-Thanks,
-Roy Luo
-
-[1]  https://lore.kernel.org/linux-phy/20251029214032.3175261-1-royluo@goog=
-le.com
-
+Sounds great.
 >
-> >
-> > > +
-> > > +#define USBCS_USB2PHY_CFG21_OFFSET 0x8
-> > > +#define USBCS_USB2PHY_CFG21_PHY_ENABLE BIT(12)
-> > > +#define USBCS_USB2PHY_CFG21_REF_FREQ_SEL GENMASK(15, 13)
-> > > +#define USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL BIT(19)
-> > > +
-> > > +#define USBCS_PHY_CFG1_OFFSET 0x28
-> > > +#define USBCS_PHY_CFG1_SYS_VBUSVALID BIT(17)
-> > > +
-> > > +enum google_usb_phy_id {
-> > > +     GOOGLE_USB2_PHY,
-> > > +     GOOGLE_USB_PHY_NUM,
+> This would also mean that subsystems would not be needed, leaving only
+> FLB (File-Lifecycle-Bound Global State) to use as a handle for global
+> state. The API I am proposing for FLB keeps the same global state for
+> a single file-handler type. However, HugeTLB might have multiple file
+> handlers, so the API would need to be extended slightly to support
+> this case. Multiple file handlers will share the same global resource
+> with the same callbacks.
+>
+> Pasha
+>
+> > > + * @reserved: Must be zero.
+> > > + * @state:    Output; The live update state of this FD.
+> > > + *
+> > > + * Query the current live update state of a specific preserved file =
+descriptor.
+> > > + *
+> > > + * - %LIVEUPDATE_STATE_NORMAL:   Default state
+> > > + * - %LIVEUPDATE_STATE_PREPARED: Prepare callback has been performed=
+ on this FD.
+> > > + * - %LIVEUPDATE_STATE_FROZEN:   Freeze callback ahs been performed =
+on this FD.
+> > > + * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully reboote=
+d into the
+> > > + *                               new kernel.
+> > > + *
+> > > + * See the definition of &enum liveupdate_state for more details on =
+each state.
+> > > + *
+> > > + * Return: 0 on success, negative error code on failure.
+> > > + */
+> > > +struct liveupdate_session_get_state {
+> > > +     __u32           size;
+> > > +     __u8            incoming;
+> > > +     __u8            reserved[3];
+> > > +     __u32           state;
 > > > +};
 > > > +
-> > > +struct google_usb_phy_instance {
-> > > +     int index;
-> > > +     struct phy *phy;
-> > > +     int num_clks;
-> > > +     struct clk_bulk_data *clks;
-> > > +     struct reset_control *rsts;
-> > > +};
-> > > +
-> > > +struct google_usb_phy {
-> > > +     struct device *dev;
-> > > +     void __iomem *u2phy_cfg_base;
-> > > +     void __iomem *dp_top_base;
-> > > +     struct google_usb_phy_instance insts[GOOGLE_USB_PHY_NUM];
-> > > +     /* serialize phy access */
-> > > +     struct mutex phy_mutex;
-> > > +     struct typec_switch_dev *sw;
-> > > +     enum typec_orientation orientation;
-> > > +};
-> > > +
-> > > +static inline struct google_usb_phy *to_google_usb_phy(struct google=
-_usb_phy_instance *inst)
-> > > +{
-> > > +     return container_of(inst, struct google_usb_phy, insts[inst->in=
-dex]);
-> > > +}
-> > > +
-> > > +static void set_vbus_valid(struct google_usb_phy *gphy)
-> > > +{
-> > > +     u32 reg;
-> > > +
-> > > +     if (gphy->orientation =3D=3D TYPEC_ORIENTATION_NONE) {
-> > > +             reg =3D readl(gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET=
-);
-> > > +             reg &=3D ~USBCS_PHY_CFG1_SYS_VBUSVALID;
-> > > +             writel(reg, gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
-> > > +     } else {
-> > > +             reg =3D readl(gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET=
-);
-> > > +             reg |=3D USBCS_PHY_CFG1_SYS_VBUSVALID;
-> > > +             writel(reg, gphy->dp_top_base + USBCS_PHY_CFG1_OFFSET);
-> > > +     }
-> > > +}
-> > > +
-> > > +static int google_usb_set_orientation(struct typec_switch_dev *sw,
-> > > +                                   enum typec_orientation orientatio=
-n)
-> > > +{
-> > > +     struct google_usb_phy *gphy =3D typec_switch_get_drvdata(sw);
-> > > +
-> > > +     dev_dbg(gphy->dev, "set orientation %d\n", orientation);
-> > > +
-> > > +     gphy->orientation =3D orientation;
-> > > +
-> > > +     if (pm_runtime_suspended(gphy->dev))
-> > > +             return 0;
-> > > +
-> > > +     guard(mutex)(&gphy->phy_mutex);
-> > > +
-> > > +     set_vbus_valid(gphy);
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static int google_usb2_phy_init(struct phy *_phy)
-> > > +{
-> > > +     struct google_usb_phy_instance *inst =3D phy_get_drvdata(_phy);
-> > > +     struct google_usb_phy *gphy =3D to_google_usb_phy(inst);
-> > > +     u32 reg;
-> > > +     int ret =3D 0;
-> > > +
-> > > +     dev_dbg(gphy->dev, "initializing usb2 phy\n");
-> > > +
-> > > +     guard(mutex)(&gphy->phy_mutex);
-> > > +
-> > > +     reg =3D readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET=
-);
-> > > +     reg &=3D ~USBCS_USB2PHY_CFG21_PHY_TX_DIG_BYPASS_SEL;
-> > > +     reg &=3D ~USBCS_USB2PHY_CFG21_REF_FREQ_SEL;
-> > > +     reg |=3D FIELD_PREP(USBCS_USB2PHY_CFG21_REF_FREQ_SEL, 0);
-> > > +     writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-> > > +
-> > > +     reg =3D readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG19_OFFSET=
-);
-> > > +     reg &=3D ~USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV;
-> > > +     reg |=3D FIELD_PREP(USBCS_USB2PHY_CFG19_PHY_CFG_PLL_FB_DIV, 368=
-);
+> > > +#define LIVEUPDATE_SESSION_GET_STATE                                =
+ \
+> > > +     _IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_STATE)
+> > [...]
 > >
-> > Yeah, it's definitely the eUSB IP, but wired differently.
-> >
-> > phy-snps-eusb2.c:
-> > #define EXYNOS_USB_PHY_CFG_PLLCFG0 (0x8)
-> > #define PHY_CFG_PLL_FB_DIV_19_8_MASK GENMASK(19, 8)
-> > #define DIV_19_8_19_2_MHZ_VAL (0x170)
-> >
-> > > +     writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG19_OFFSET);
-> > > +
-> > > +     set_vbus_valid(gphy);
-> > > +
-> > > +     ret =3D clk_bulk_prepare_enable(inst->num_clks, inst->clks);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret =3D reset_control_deassert(inst->rsts);
-> > > +     if (ret) {
-> > > +             clk_bulk_disable_unprepare(inst->num_clks, inst->clks);
-> > > +             return ret;
-> > > +     }
-> > > +
-> > > +     reg =3D readl(gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET=
-);
-> > > +     reg |=3D USBCS_USB2PHY_CFG21_PHY_ENABLE;
-> > > +     writel(reg, gphy->u2phy_cfg_base + USBCS_USB2PHY_CFG21_OFFSET);
-> > > +
-> > > +     return ret;
-> > > +}
-> > > +
-> > ...
-> > > +
-> > > +     gphy->sw =3D typec_switch_register(dev, &sw_desc);
-> > > +     if (IS_ERR(gphy->sw))
-> > > +             return dev_err_probe(dev, PTR_ERR(gphy->sw),
-> > > +                                  "failed to register typec switch\n=
-");
-> > > +
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +static void google_usb_phy_remove(struct platform_device *pdev)
-> > > +{
-> > > +     struct google_usb_phy *gphy =3D dev_get_drvdata(&pdev->dev);
-> > > +
-> > > +     typec_switch_unregister(gphy->sw);
-> > > +     pm_runtime_disable(&pdev->dev);
-> > > +}
-> > > +
-> > > +static const struct of_device_id google_usb_phy_of_match[] =3D {
-> > > +     {
-> > > +             .compatible =3D "google,gs5-usb-phy",
-> >
-> > Did the naming scheme also change from gs{N}01 to gsN?
->
-> Starting from Tensor G5, there's no model number [1], hence
-> the change. The prefix "gs" is kept as their family name.
->
-> [1] https://en.wikipedia.org/wiki/Google_Tensor
->
-> >
-> > > +     },
-> > > +     { }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, google_usb_phy_of_match);
-> > > +
-> > > +static struct platform_driver google_usb_phy =3D {
-> > > +     .probe  =3D google_usb_phy_probe,
-> > > +     .remove =3D google_usb_phy_remove,
-> > > +     .driver =3D {
-> > > +             .name           =3D "google-usb-phy",
-> > > +             .of_match_table =3D google_usb_phy_of_match,
-> > > +     }
-> > > +};
-> > > +
-> > > +module_platform_driver(google_usb_phy);
-> > > +MODULE_LICENSE("GPL");
-> > > +MODULE_DESCRIPTION("Google USB phy driver");
-> >
-> > Great work!
-> >
-> > Best regards,
-> > Ivaylo
->
-> Thank you for the review!
->
-> Regards,
-> Roy Luo
+> > --
+> > Regards,
+> > Pratyush Yadav
 
