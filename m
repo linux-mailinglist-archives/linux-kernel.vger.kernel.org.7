@@ -1,123 +1,174 @@
-Return-Path: <linux-kernel+bounces-876869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D13C1CB18
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:10:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5248EC1CB75
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAAA76258E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:52:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C645662F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C494B351FBA;
-	Wed, 29 Oct 2025 17:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23F235470C;
+	Wed, 29 Oct 2025 17:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tr8RjkwN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2tj5JN3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD882D8DA4;
-	Wed, 29 Oct 2025 17:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFB51DF271;
+	Wed, 29 Oct 2025 17:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760356; cv=none; b=DwDrOO8kS1FWdqnzRRIHJ/S/gBK6z2KDVKG4H9g0rJ+dGqf+rtMZi2FT4I0gbHWJ3VLQGIsG63QyxEmlt03fbnpQmX79QFcMEydohoyM7+euZKWYAsaN4Td1oIZDZDUr21EvldUQqZ4Hl/qP5xOmZpa7+KxEL3v2eFv0qrJJ+s8=
+	t=1761760497; cv=none; b=KERDGwmHBcExE++Uw+H/OtHQPDk3EzMrypDuVjOO7TNBQkliIZfS8b8IUYBXK03QxeRe4xmqfek3e9ur0CHRLNNANAn7a/PCGr3nUXZgtqO9pnsU8m3270L6PbQLXs8DUmgIER2Gys4UOVI7eIbwBAfxd2YnNn+5EkJBb6GUoy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760356; c=relaxed/simple;
-	bh=0YBScoJ8j4SEyGyzFWW4kdvZXQlp+HgJ7s1KzaPXNDA=;
+	s=arc-20240116; t=1761760497; c=relaxed/simple;
+	bh=bCXLipd8jw4UWfF/s5HKsZqILEHRwryjypVy7tkLUjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bn/Ac/DCcmFMiHFrpVOqRK17qssEHt2ONWTV32Wq6gh8nohSEg7rdhdS7J8W8sGbKt7qqo71y/5mN5WK9jXZJUoz7o3SPsTgVazJ1lSHEsDQ9Vak/a6UtOcoUSkuQ4BerZ1t9Wr+/XAdSkkuZiMm6BkIGZTh1n8O7alIbsQG1vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tr8RjkwN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EBE6C4CEF7;
-	Wed, 29 Oct 2025 17:52:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SE8hhSF6VjXj3UE8gGu0sTtWBR3mQErjtPDknQEHe0uyy/a1yF8OrTv6POX16q2y+TKBwdWV2BdOI0vuYl2Z9JyNk/1oHf7a1024ACHc7HABI9luhkbIdKa0UiqxlK2jMwA0Kpsnb2rQNT2aigIgSmveEik/dorqlAFnD1gm+Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2tj5JN3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99C8C4CEF7;
+	Wed, 29 Oct 2025 17:54:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761760355;
-	bh=0YBScoJ8j4SEyGyzFWW4kdvZXQlp+HgJ7s1KzaPXNDA=;
+	s=k20201202; t=1761760496;
+	bh=bCXLipd8jw4UWfF/s5HKsZqILEHRwryjypVy7tkLUjI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tr8RjkwNuP9TI9R6Dv4328MqMFROy/G1RzcO3D+YUqrzInGDBmSUn6dWtqJl4ViHD
-	 RwWjAcNHTuYjNFImMaLZE7bHMtLXm+2kE+086j9yN/NONlyNv8JHtglIkMWnZIsvXf
-	 FalyX9cBXS4k8sNIlnmP0ADnY+1FeeIECSsC9cBHU2OQvxRs1n47fq4Aw5G/1L3/mk
-	 tOweAgQRN+NTuyN2RWGuAyvQ1ujoSuPFwZRXNjuISPfWGGRGS+lo+DIcswLY7fy9u1
-	 4HxpKFB38E/VhrBd9r1GMZiiVY4DtPSzzpBeG4xRujhI9bX9uKWVgVyO3cFABWRley
-	 WU+A6rf3lbhTg==
-Date: Wed, 29 Oct 2025 17:53:31 +0000
-From: Daniel Thompson <danielt@kernel.org>
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
+	b=e2tj5JN387EOqfUzqfbcncN6EFYT4OwAISQxnGTNRwt+7QYfTddUa14wSsM/M0eA/
+	 lY+4h6ETkKg7o3jpW85ZU0y2lae7avMVcvFP7v/SEFsbARyqbD0oNiAiLvpe1CYzaT
+	 IuuzqvjzurbH11uNGwmCPkUZ546lWRVfgAUGPFrvFYOTckwvUFggfO++KsGCS+GWm1
+	 /xbtIUCkwcQ31tp67OcF3lTVc55SJPPSso6hov6boz113Vahc+Jifr4Q5NNedVELLK
+	 jLA5Jby4dX9uSizqMTZpb9knFrinWRP79P6aK0nswAcv++PSsewUjwlZK90MSo9Nlt
+	 NG/j0vZNGZQHQ==
+Date: Wed, 29 Oct 2025 17:54:49 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
-Subject: Re: [PATCH 2/2] backlight: aw99706: Add support for Awinic AW99706
- backlight
-Message-ID: <aQJUmx5elYOW2TvO@aspen.lan>
-References: <20251026123923.1531727-1-caojunjie650@gmail.com>
- <20251026123923.1531727-3-caojunjie650@gmail.com>
- <aQDDjzl65dMZEnwM@aspen.lan>
- <CAK6c68h3Mc0=JbbbVAmo_cYeOR_T-_rRy5EacgYQh7HgQZOPBg@mail.gmail.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: net: sophgo,sg2044-dwmac: add phy
+ mode restriction
+Message-ID: <20251029-fading-expulsion-f0911c28d23d@spud>
+References: <20251028003858.267040-1-inochiama@gmail.com>
+ <20251028003858.267040-2-inochiama@gmail.com>
+ <20251028-parka-proud-265e5b342b8e@spud>
+ <rclupbdjyk67fee2lgf74k6tkf7mnjcxzwcjvyk2bohgpetqt5@toxvy3m5orm2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xiR9j6m1veV/qNYv"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK6c68h3Mc0=JbbbVAmo_cYeOR_T-_rRy5EacgYQh7HgQZOPBg@mail.gmail.com>
+In-Reply-To: <rclupbdjyk67fee2lgf74k6tkf7mnjcxzwcjvyk2bohgpetqt5@toxvy3m5orm2>
 
-On Wed, Oct 29, 2025 at 07:49:35PM +0800, Junjie Cao wrote:
-> On Tue, Oct 28, 2025 at 9:21 PM Daniel Thompson <danielt@kernel.org> wrote:
-> >
-> > On Sun, Oct 26, 2025 at 08:39:23PM +0800, Junjie Cao wrote:
-> > > Add support for Awinic AW99706 backlight, which can be found in
-> > > tablet and notebook backlight, one case is the Lenovo Legion Y700
-> > > Gen4. This driver refers to the official datasheets and android
-> > > driver, they can be found in [1].
-> > >
-> > > [1] https://www.awinic.com/en/productDetail/AW99706QNR
-> > >
-> > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > > Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
+
+--xiR9j6m1veV/qNYv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Oct 29, 2025 at 08:56:09AM +0800, Inochi Amaoto wrote:
+> On Tue, Oct 28, 2025 at 07:22:37PM +0000, Conor Dooley wrote:
+> > On Tue, Oct 28, 2025 at 08:38:56AM +0800, Inochi Amaoto wrote:
+> > > As the ethernet controller of SG2044 and SG2042 only supports
+> > > RGMII phy. Add phy-mode property to restrict the value.
+> > >=20
+> > > Also, since SG2042 has internal rx delay in its mac, make
+> > > only "rgmii-txid" and "rgmii-id" valid for phy-mode.
+> >=20
+> > Should this have a fixes tag?
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >=20
+>=20
+> Although I add a fixes tag to the driver, I am not sure whether the
+> binding requires it. But if it is required, I think it should be
+
+Kinda depends for bindings, amending a binding for completeness probably
+doesn't need one but amending it to actually permit a functional
+configuration does. This is somewhere in-between I suppose. If a driver
+change is coming along with it which is likely to be backported, that'd
+be a vote in favour of a fixes tag here too, so that the binding and
+driver match in stable.
+
+>=20
+> Fixes: e281c48a7336 ("dt-bindings: net: sophgo,sg2044-dwmac: Add support =
+for Sophgo SG2042 dwmac")
+>=20
+> > >=20
+> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
 > > > ---
-> > > diff --git a/drivers/video/backlight/aw99706.c b/drivers/video/backlight/aw99706.c
-> > > <snip>
-> > > +static void aw99706_dt_parse(struct aw99706_device *aw)
-> > > +{
-> > > +     struct aw99706_dt_prop *prop;
-> > > +     int ret, i;
+> > >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++++++++++=
+++
+> > >  1 file changed, 20 insertions(+)
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwma=
+c.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > index ce21979a2d9a..916ef8f4838a 100644
+> > > --- a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > @@ -70,6 +70,26 @@ required:
+> > > =20
+> > >  allOf:
+> > >    - $ref: snps,dwmac.yaml#
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            const: sophgo,sg2042-dwmac
+> > > +    then:
+> > > +      properties:
+> > > +        phy-mode:
+> > > +          enum:
+> > > +            - rgmii-txid
+> > > +            - rgmii-id
+> > > +    else:
+> > > +      properties:
+> > > +        phy-mode:
+> > > +          enum:
+> > > +            - rgmii
+> > > +            - rgmii-rxid
+> > > +            - rgmii-txid
+> > > +            - rgmii-id
 > > > +
-> > > +     for (i = 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
-> > > +             prop = &aw99706_dt_props[i];
-> > > +             ret = device_property_read_u32(aw->dev, prop->name,
-> > > +                                            &prop->raw_val);
-> > > +             if (ret < 0) {
-> > > +                     dev_warn(aw->dev, "Missing property %s: %d\n",
-> > > +                              prop->name, ret);
-> >
-> > Why is there a warning when an optional property is not present. A DT
-> > not including an optional property needs no message at all.
-> >
->
-> They are mandatory in the downstream, and providing all properties is
-> difficult sometimes, so I set a default value if one is missing. But
-> one device may use a configuration different from the component
-> vendor's. These default values may be not optimal, so I issue a
-> warning for property missing. (I forgot to address it)
+> > > =20
+> > >  unevaluatedProperties: false
+> > > =20
+> > > --=20
+> > > 2.51.1
+> > >=20
+>=20
+>=20
 
-All sensible but to be clear...
+--xiR9j6m1veV/qNYv
+Content-Type: application/pgp-signature; name="signature.asc"
 
-From my point-of-view the driver should match the upstream bindings.
-Either the properties are required (in which case missing them can be
-dev_err() and/or fail to probe) or they are optional (in which case
-there should be no warnings).
+-----BEGIN PGP SIGNATURE-----
 
-Similarly if missing values is likely to lead to very sub-optimal
-behavior (or something that has a risk of over-current or component
-failure) then consider making the options mandatory.
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJU6QAKCRB4tDGHoIJi
+0r18AP9YHrFoYXPV2dEPqru+c49A0QRQ0TNcKAkMQ1H/ppaEYgD9FQ3HpD0h2vUk
+e+BRSTPq5uaZbxl+044FWdyYYKRVCQE=
+=moFb
+-----END PGP SIGNATURE-----
 
-
-Daniel.
+--xiR9j6m1veV/qNYv--
 
