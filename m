@@ -1,129 +1,122 @@
-Return-Path: <linux-kernel+bounces-875808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60C6C19DC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:50:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 394E3C19D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A812567249
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:44:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D0989357DD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A12E2FA0ED;
-	Wed, 29 Oct 2025 10:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B387329C57;
+	Wed, 29 Oct 2025 10:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="R2PZTCn8"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l1Mjxkx8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rt24Fr3b"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4172FDC56
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED2A2FBE15;
+	Wed, 29 Oct 2025 10:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734524; cv=none; b=XCCAKUN01lENjCTrGGE+z1uBWpPXlcin2gjSoTFMLyQzTyCTdLAr+W1Cj9CQxWegKPYXF88ylTr1BVK9CNRt2yvqliAO4Wuan138f8yrp25SN55hYoZwLrGwzsk5OnyI9fCCfC3xEfGCSM2TjWPv2FU4ni+wTBbCkpiZM9hiJqE=
+	t=1761734540; cv=none; b=EJL8bYso34WIEn+OxjPY0DqlvPSYruqCjYtcLnUJITiw7Cwzo3HDWOxtRfKA3assSMptVrFXmoXGBHekgcxevHGFnppQ76T9oss3nTSCEizuaN1U2js1/exBkbyRNabAxZm7kl3MVcoNRTVdB1oaDQk3Gimthv+x6plNRhJ5waU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734524; c=relaxed/simple;
-	bh=AUDqFfVw/6OEV65Z6YZ8rdLCW3TA1z/nedV4oyotdPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tImAZ7guGcUdIOxhK0Tpa79fareGH8lXF31E9071KryN41B516zCoIlQFdIztc26Y3Rkn4QMxzLYQrxvT47fRjpQxe9UiB3D/Jk7FG4+YqZMbRoN/bjt/DxNTxT+WrheflZTptMkV40MiQKMvV7t0eGYf9iU4JcunqnahLMbnyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=R2PZTCn8; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47109187c32so38816375e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:42:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761734520; x=1762339320; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b3X4E3hHQ4vm0fEjCZ5UPCa76r6tX7WxRSfwf39l4Uw=;
-        b=R2PZTCn8Vxye1cwzPwcvsrc+w83i+sfM+Ny3gEMZoKT6XhJB9jY48Dkpb/LSg/QUvJ
-         D6fpevYhbnAjX431AnxdDnZqyrq7XaDKwQTSRGdzzf7jsa83oGDJd42mQBvDcgHuX0nM
-         IQPBqE5nju71NUNhZo+4kseVQTh0qsT58h5WlCUT7YF2OkR5x6F4olpRCQOvA38rw0Dl
-         pqISNDaaE1oR7j4ji3PnAICgqdv0cckNx8n96Qa1jvM/FjYGb1f96RWaGPeeecO+0/Qt
-         BV17vFTHxIQr0H4VQDeDTMZmaro4UVMmeWkIGG5aaq71LH4i1DBSWX7wMxI0GKqB01il
-         Hq5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761734520; x=1762339320;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3X4E3hHQ4vm0fEjCZ5UPCa76r6tX7WxRSfwf39l4Uw=;
-        b=MUJivhbYqpvddeCsf0wJLTw/+ouQ4DYKGtCu7+VHAq8miXukSzVQsiZmVDEAsxYusp
-         ik79XJMxAkk5M+XqugnvLle9E7A8vpX5HtdnfBaTgt3F54UgqS/3N2XGjvB6AEyDWy1R
-         y/9QJHbFEeg9R2CmGBvHnHlXZ89lEER/nSapLMEAm0mVZXc2fbTai+g14lvw2BGBNYsZ
-         UAL89kM7HLZJvxXJ/R80FzcuNioHLMhbiPtoj+G6T0HGXYdfjJFoM7b/szPcgYSQ1B5g
-         ZDAF/9URFqcgAMleutZ14St8//GGZEQRL9MnhkRlD4zCYH58aS5LBrVe+1lUI4a2Wkb1
-         JeQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXD1dVHkGJbRqSTEcTJWk4s4CIDoYnRWm2hhjBZt9JRhpb9iVnx2z+yJOFxr0JBoLbgHVnkrpu8Dftwn5U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAIf8OLm3XXb6gDBHwGn4f8/qhbqahkWSHW1N+ARQcDep2kdNA
-	A/MTAqgg0m3hYLhhy/tFEr2/I9JruwQk0IA+WxYx7Dggqfwzm+ImQZQn/Is7J0cm+I0=
-X-Gm-Gg: ASbGncvOul98DlIJ84+xUJKpmwDmGK3ZTdOvAWXjmi6LFR6Sukpot/f/eyEDSAE6C8W
-	q2SJOpKM7yx6FAt4draNA6xpl5srGxvlR0JmW0Y5qMZLhQ4VAvtDPOb91YDo4km5KOWSUXYiQPU
-	dJQc1mI8j71RL0jfuurKCyBuPtE0+QCv3cJ+nctIQcxYxGok90g12ThsbIX5j0VN7GETtvxOKM4
-	+WeG+iAxfFbRfU6D6VtMMO6LLor5v0vCh4aXWvXSAzW5JxaQa/Ln405mGqYAyb2X+LkLsPedJsg
-	FywhIg41g9myE4WGBhz2ut5yISULmZItVifp5Dh8NLxDZcw68t3xKmXuLwy4ygcVblXFpiwjhGF
-	EiCpYpkeaeRHPnhfibr6rl2NyDsuNNUeiht/OC9XGqhstla6/GdfDH+wvkPLEE7HlHiulrWuXp0
-	Zc0VPb+hngCzrR
-X-Google-Smtp-Source: AGHT+IEr0/AZFy2/29X+tk87HEM/p5Fa5fWpVSnd5/YgcWtERKefh8/xi2PyHwwU7M4yWjRk//ZiAA==
-X-Received: by 2002:a05:600c:3e07:b0:46e:48fd:a1a9 with SMTP id 5b1f17b1804b1-4771e3fbdcemr21558395e9.33.1761734520102;
-        Wed, 29 Oct 2025 03:42:00 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69f2:5f2d:9ffc:a805])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7ce1sm25165417f8f.0.2025.10.29.03.41.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 03:41:59 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Loic Poulain <loic.poulain@oss.qualcomm.com>,
-	Robert Foss <rfoss@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca@lucaweiss.eu>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v2 0/7] Camera I2C (CCI) enablement on MSM8953 and Fairphone 3
-Date: Wed, 29 Oct 2025 11:41:58 +0100
-Message-ID: <176173451403.17889.9951642355826230455.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
-References: <20251028-msm8953-cci-v2-0-b5f9f7135326@lucaweiss.eu>
+	s=arc-20240116; t=1761734540; c=relaxed/simple;
+	bh=En191ZlHD3MzJ+xkuht8nvwtRAQonSDwIJ8NrAGThOc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=awpKlZQxqrM7YnV4sVlp0i2VFbJOZxEdFcz8Sdacc5cMBxmcD79C55xj6eG4IKYgs2toVgxdg6ppBBgs+GkdvkcSIbGSOtFIR5cxhohoJGQnVAkjZY7PUUHXOs2a8DFCN6gVTTTu3zYRxkFh0CdaD5RWXGCiH4JQYdOXddJnDRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l1Mjxkx8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rt24Fr3b; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 10:42:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761734536;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ICizyKXON+wU+sTV07oz1rHpUQLB5mVMaKb2cgAEgkU=;
+	b=l1Mjxkx86rvk4G8RNGd+hffGG4q0MfQ25VYnG+nipfuthnWRJZe+rrsdhaKyWi/mKQ1Cf/
+	4aN5MdSVoVTZulazaDDmeKdYLDGGpkT40wl0Qfy0xCLscMcFq3razY7iJHKM8ZYXB+noGi
+	LgIMQYncXwMe9ly8zDBVFVGvm7FPRkiff6vNMzkSbq7JA1RHkF/ZHPm+dokmN7BjvkLx8D
+	p7I2ga/HjsOY64hH77cAv66KNoR+CL07SN+jRH2v7a00lNN6+FSOWOYnG33p4xn3oBOX3W
+	rI+ZMo7i3qkfnnxWUfqavvIPqrVoOxLTg9dNBiloi6IHlRn0NY+j45oYLf8LhA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761734536;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ICizyKXON+wU+sTV07oz1rHpUQLB5mVMaKb2cgAEgkU=;
+	b=rt24Fr3bXy7H/Rz19gOjUIhQuF2/Wz86flywDfZkLO2kLjjyazZD1SjvtYfs0rZEiH4c/y
+	KyPEY9BF2L0DyOBQ==
+From: "tip-bot2 for dongsheng" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/urgent] perf/x86/intel/uncore: Add uncore PMU support for
+ Wildcat Lake
+Cc: dongsheng <dongsheng.x.zhang@intel.com>,
+ Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250908061639.938105-2-dapeng1.mi@linux.intel.com>
+References: <20250908061639.938105-2-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <176173453474.2601451.16883737397804706362.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The following commit has been merged into the perf/urgent branch of tip:
 
+Commit-ID:     f4c12e5cefc8ec2eda93bc17ea734407228449ab
+Gitweb:        https://git.kernel.org/tip/f4c12e5cefc8ec2eda93bc17ea734407228=
+449ab
+Author:        dongsheng <dongsheng.x.zhang@intel.com>
+AuthorDate:    Mon, 08 Sep 2025 14:16:39 +08:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 29 Oct 2025 11:31:44 +01:00
 
-On Tue, 28 Oct 2025 17:40:45 +0100, Luca Weiss wrote:
-> Add the compatibles and config for CCI on MSM8953, then enable these I2C
-> busses on Fairphone 3 and configure the EEPROM found with one of the
-> camera modules.
-> 
-> 
+perf/x86/intel/uncore: Add uncore PMU support for Wildcat Lake
 
-Applied, thanks!
+WildcatLake (WCL) is a variant of PantherLake (PTL) and shares the same
+uncore PMU features with PTL. Therefore, directly reuse Pantherlake's
+uncore PMU enabling code for WildcatLake.
 
-[3/7] dt-bindings: eeprom: at24: Add compatible for Belling BL24S64
-      https://git.kernel.org/brgl/linux/c/aef72ebe9c86b516c6e126d4b453c96496547f0b
+Signed-off-by: dongsheng <dongsheng.x.zhang@intel.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://patch.msgid.link/20250908061639.938105-2-dapeng1.mi@linux.intel=
+.com
+---
+ arch/x86/events/intel/uncore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index a762f7f..d6c945c 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -1895,6 +1895,7 @@ static const struct x86_cpu_id intel_uncore_match[] __i=
+nitconst =3D {
+ 	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&mtl_uncore_init),
+ 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_uncore_init),
+ 	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&ptl_uncore_init),
++	X86_MATCH_VFM(INTEL_WILDCATLAKE_L,	&ptl_uncore_init),
+ 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&spr_uncore_init),
+ 	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,	&spr_uncore_init),
+ 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	&gnr_uncore_init),
 
