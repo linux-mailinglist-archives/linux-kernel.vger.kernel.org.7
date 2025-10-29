@@ -1,153 +1,169 @@
-Return-Path: <linux-kernel+bounces-874969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D02C17E49
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:26:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E02FC17E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:28:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 461C61891C8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FFA1884199
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7F12C1583;
-	Wed, 29 Oct 2025 01:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA952DA774;
+	Wed, 29 Oct 2025 01:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K40/aHis"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VQ1Ke5Rg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4611A2D8DB1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5FA722097
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761700975; cv=none; b=hYhzAQVQBDf7DZrxfGCIhos6n0EAlbLlqZ+5+qf8YFypqXodYes5Yjolh3sV6pFlSYfFM/p0MncskAxZujuA0zf5q7kIiCkZ17ou9qZHntLCxfsj1ZiK7T53ZkB/SIeZrZSD92M+vYzu912Kly0/OWBKdB7IdG9SlWCX93a0ZIk=
+	t=1761701093; cv=none; b=equEUVnRdbv8F0rG5i4Gw9BGzzt71Mg5eQ9kDey4NHwUdH9nkZGZu4jmEKoT2+bE3XC47O0mxrorZnL1mrfzBteVnnuy+4NTaaEu7LaItC6odRDS0h8tc10ApO9wGU5u6EL6TwTqtKdazoLbHU1MdhbjZmrGYiEwHBVWmgKtpmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761700975; c=relaxed/simple;
-	bh=rsaJG5G5GdirEwKDjvrHHZERxpQoyUS1q602EMtCKZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=huTkQ8mpfmMva+7gZlPXHKenSgwAIkT7cMAro5TGGijBpR0TIDgf1hOovKqdXeCNRniES/sLnyAXJ8yMoezkC1C+dPb/YNteBv8GTPpAvXIAkh2GTXqC5Ka5/HmE0sA93zNt0aDRRBDU55yb7CQLL6/462hdHpXS1nqro0dU1no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K40/aHis; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ed0c8e4dbcso181411cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 18:22:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761700973; x=1762305773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VJXU/seAFsL4mACUPVLDxeMiP7ShQNJYKccWkDiEgL0=;
-        b=K40/aHisIALT/bJrJArF8FyIAQTOSGsuPb+txW08SeAGqTZEe9mJyIblcke43DpwkD
-         qGs4DUAx8Oty9NxaHf9b4bBNikVtHXOSAgYCgmCoYPmrVMJVPuuRS6E3g0iBxTzwQ2mm
-         LkiC2QAW1jc0VRq94RDHuTGO87uyUlSSAu5ecd+t4ak9jYt2zlvp5Po4FevxEgE6lvo2
-         nv3+7xWXyOFlp3bfa3Sonc/qlIPXCtgS5Iq42UxttE1D14zZOBRKnG1fTVPO4EJMcaas
-         2DdZ8BWxmquNv+o/anXyu9zLRrNGKJAoN0TS+FDmv2i/CkxhlGxHVL1LCJpQEbPRXh9N
-         aaMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761700973; x=1762305773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VJXU/seAFsL4mACUPVLDxeMiP7ShQNJYKccWkDiEgL0=;
-        b=FDKlcHY7P2HrWdlu231DsjZO0VnfwkWtLzmyxNSAYYMm9jaHIPE6igXYiZWhsowvCz
-         IU94TLHYzWTVY/QzdBbJip/GLn5sEAyckScP38fUKlEKishejhVvPxOsYonbUQcbGihn
-         WEvCT41Rx5loryVwX/su27URzVp70o+KrIgs3JHAXkMa3hSMQ11Yff/49TP/yQVJwdHO
-         7utJO3jgIvu2X7jkRcA3eHu87EMXcm+ju/qWQ1AVqcYz/gHXXmJo4KbypLGXfCImtuGf
-         X2pKG9vl2Ca029ob4Mm8bqaEwDdxf0+EY7DNdmVjo3kGk65BUZb1kATgZU18YeukIdyj
-         RdpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+iywcl+KSe/g+Ayn31WWttGCrw3ZRI1PWpbXyv6MBZIa0OhZOl9uuwBPgU5ipODFKcLr89wjyedCGNRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkbmPS8+oU57GiLDytST7OeRsdxxWkYiKL3UfZgB83pQLCSxUX
-	sG7M6/Ek1H2/SVNYU0s1076O/z0k+5+cw0qRiELfC5MM8kqRRbS/T4x/v4qAlt3QLD6mUZZUzKi
-	JugfWl+EVrgeZya44jLnqDtJOgCGJBlw6yOcmqNwo
-X-Gm-Gg: ASbGncvNeOcKXmcxMmijfSlCi/7a3WgMmCV8Y9HQuFJbcvuI499tivzluRTq/78OFn7
-	ikwIPsOrVDIvpsr25ILU3sJn9wyt2FqVfQYFGktVcUeL0y7rAAIcIww4qtXKabI/Evn/dIVmYz+
-	FhkFb4JMdPPVvRn5J70EJELo3C7zrMcOuvC5tJYxMongDvEd74KOU3HbSh3Sa+pAx65IeXHJJ8q
-	n3b/mH8NbPIpK8SifSCFT+Ni6A7Kbt/KHeON4qlBXAp03evhwy4HaEkx94=
-X-Google-Smtp-Source: AGHT+IHK7V7bGcz0b0sGmw21GNrHcXYdY1gAn79xg7vp99JFrGhfcfBXR2vDKXRNfGzHuAPD7elxkQxreFFRRjhl424=
-X-Received: by 2002:a05:622a:11c8:b0:4e4:d480:ef3a with SMTP id
- d75a77b69052e-4ed165a8088mr2292611cf.13.1761700972959; Tue, 28 Oct 2025
- 18:22:52 -0700 (PDT)
+	s=arc-20240116; t=1761701093; c=relaxed/simple;
+	bh=PKRuTRimF4SYTLZRofdH+Kyncm9Idj+SwpxtXEnIAdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=fzFXVVgW38r36MWNyY1azxpK+AIDjiJKVMobG20gEV59olLYxC4KBl3TH4W+BvYriW1UvVrILR4AXevLYOPCD8hO5b721ldkqG0CB4T8EmG2LO9etTZ90bo/OLvvd3lcJrB4uNIzzFiIQgR4ym7BzKwa+IpekjXbR4NGxCkOLLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VQ1Ke5Rg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761701090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wVSi1lcrQ2LPNL0uA8+lcsf92i/aD7113jgr/Mo2pIg=;
+	b=VQ1Ke5RgzybAAAiefZvdfTOyHtNjsFNun75bscayY0StZQJa5cTbGcZH6t4Sb+iG5tXSeC
+	IfWd+lU2q5K7lOiTJsyL5cOy57Svr4wt9D3wD6q+TLgqychtEYXex9OW7RFv1Ykexiep7e
+	ecDk4fnvQlcXpQ7/g7xmDEribD6jR5A=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-505-ScP-ngM9N06ur7kDs7233w-1; Tue,
+ 28 Oct 2025 21:24:49 -0400
+X-MC-Unique: ScP-ngM9N06ur7kDs7233w-1
+X-Mimecast-MFC-AGG-ID: ScP-ngM9N06ur7kDs7233w_1761701087
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4745618002C1;
+	Wed, 29 Oct 2025 01:24:46 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.136])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0F43119560B8;
+	Wed, 29 Oct 2025 01:24:39 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net] virtio_net: fix alignment for virtio_net_hdr_v1_hash
+Date: Wed, 29 Oct 2025 09:24:34 +0800
+Message-ID: <20251029012434.75576-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029005448.495880-1-isaacmanjarres@google.com> <CAHC9VhRp0QTAZqux8JbL1JUfLxMV9G22Q0rKZ5fQL2C_8mod_Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhRp0QTAZqux8JbL1JUfLxMV9G22Q0rKZ5fQL2C_8mod_Q@mail.gmail.com>
-From: Isaac Manjarres <isaacmanjarres@google.com>
-Date: Tue, 28 Oct 2025 18:22:42 -0700
-X-Gm-Features: AWmQ_blUwNjwIC7xRjXcpWEQg6_GFvt3ZzX8vmFZE37J-4-bwe8KZznN-0pMazU
-Message-ID: <CABfwK109-4zzBUiQRdNg1re0dQ+dRdau=OXNFhtNsUc6YAEyBA@mail.gmail.com>
-Subject: Re: [PATCH v1] audit: Improve path logging for unlinked files
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>, surenb@google.com, aliceryhl@google.com, 
-	tweek@google.com, kernel-team@android.com, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Oct 28, 2025 at 6:09=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Tue, Oct 28, 2025 at 8:54=E2=80=AFPM Isaac J. Manjarres
-> <isaacmanjarres@google.com> wrote:
-> >
-> > When logging the path associated with a denial, the path is scanned
-> > to ensure that it does not contain control characters, unprintable
-> > characters, double quote marks, or spaces. If it does, the hexadecimal
-> > representation of the path is emitted.
-> >
-> > This can make debugging difficult in scenarios where the file name that
-> > was given to the file does not contain any of those characters,
-> > but the hexadecimal representation of the path is still emitted when a
-> > denial occurs because the file is unlinked.
-> >
-> > For example, suppose a memfd is created with the name "MemoryHeapBase".
-> > Memfds are unlinked, so when a denial related to that memfd is
-> > encountered, and the the path name for it is obtained via d_path(), the
-> > name will be: "/memfd:MemoryHeapBase (deleted)". Since the name has a
-> > space, the audit logic will just print the hexadecimal representation
-> > instead of the name:
-> >
-> > type=3D1400 audit(0.0:319): avc:  denied  { read write } for
-> > path=3D2F6D656D66643A4D656D6F72794865617042617365202864656C6574656429
-> > dev=3D"tmpfs" ino=3D75 scontext=3Du:r:audioserver:s0
-> > tcontext=3Du:object_r:system_server:s0 tclass=3Dmemfd_file permissive=
-=3D0
-> >
-> > To improve debuggability of denials related to unlinked files, check
-> > if the " (deleted)" suffix is detected in a path name and remove it
-> > if so. This allows the actual filename to be validated and emitted
-> > if appropriate, making denials easier to read and more actionable:
-> >
-> > type=3D1400 audit(0.0:254): avc:  denied  { read write } for
-> > path=3D"/memfd:MemoryHeapBase" dev=3D"tmpfs" ino=3D67
-> > scontext=3Du:r:audioserver:s0 tcontext=3Du:object_r:system_server:s0
-> > tclass=3Dmemfd_file permissive=3D0
-> >
-> > Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> > ---
-> >  kernel/audit.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
->
-> I'd prefer not to add any additional string processing to the audit hot p=
-ath.
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
-Hi Paul,
+Changing alignment of header would mean it's no longer safe to cast a
+2 byte aligned pointer between formats. Use two 16 bit fields to make
+it 2 byte aligned as previously.
 
-Thank you for taking the time to look through the patch. Would it help
-if I could
-optimize the logic to scan for the " (deleted)" string from the end of
-the string
-so that the search is bounded by at most 10 characters? I can also switch t=
-o
-calling audit_log_n_untrustedstring() instead to avoid another call to strl=
-en().
+This fixes the performance regression since
+commit ("virtio_net: enable gso over UDP tunnel support.") as it uses
+virtio_net_hdr_v1_hash_tunnel which embeds
+virtio_net_hdr_v1_hash. Pktgen in guest + XDP_DROP on TAP + vhost_net
+shows the TX PPS is recovered from 2.4Mpps to 4.45Mpps.
 
-If not, do you have any other suggestions to help make this improvement?
+Fixes: 56a06bd40fab ("virtio_net: enable gso over UDP tunnel support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/net/virtio_net.c        | 15 +++++++++++++--
+ include/uapi/linux/virtio_net.h |  3 ++-
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-Thanks,
-Isaac
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index a757cbcab87f..5e998d88db44 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2534,6 +2534,13 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 	return NULL;
+ }
+ 
++static inline u32
++virtio_net_hash_value(const struct virtio_net_hdr_v1_hash *hdr_hash)
++{
++	return __le16_to_cpu(hdr_hash->hash_value_lo) |
++		(__le16_to_cpu(hdr_hash->hash_value_hi) << 16);
++}
++
+ static void virtio_skb_set_hash(const struct virtio_net_hdr_v1_hash *hdr_hash,
+ 				struct sk_buff *skb)
+ {
+@@ -2560,7 +2567,7 @@ static void virtio_skb_set_hash(const struct virtio_net_hdr_v1_hash *hdr_hash,
+ 	default:
+ 		rss_hash_type = PKT_HASH_TYPE_NONE;
+ 	}
+-	skb_set_hash(skb, __le32_to_cpu(hdr_hash->hash_value), rss_hash_type);
++	skb_set_hash(skb, virtio_net_hash_value(hdr_hash), rss_hash_type);
+ }
+ 
+ static void virtnet_receive_done(struct virtnet_info *vi, struct receive_queue *rq,
+@@ -3306,6 +3313,10 @@ static int xmit_skb(struct send_queue *sq, struct sk_buff *skb, bool orphan)
+ 
+ 	pr_debug("%s: xmit %p %pM\n", vi->dev->name, skb, dest);
+ 
++	/* Make sure it's safe to cast between formats */
++	BUILD_BUG_ON(__alignof__(*hdr) != __alignof__(hdr->hash_hdr));
++	BUILD_BUG_ON(__alignof__(*hdr) != __alignof__(hdr->hash_hdr.hdr));
++
+ 	can_push = vi->any_header_sg &&
+ 		!((unsigned long)skb->data & (__alignof__(*hdr) - 1)) &&
+ 		!skb_header_cloned(skb) && skb_headroom(skb) >= hdr_len;
+@@ -6745,7 +6756,7 @@ static int virtnet_xdp_rx_hash(const struct xdp_md *_ctx, u32 *hash,
+ 		hash_report = VIRTIO_NET_HASH_REPORT_NONE;
+ 
+ 	*rss_type = virtnet_xdp_rss_type[hash_report];
+-	*hash = __le32_to_cpu(hdr_hash->hash_value);
++	*hash = virtio_net_hash_value(hdr_hash);
+ 	return 0;
+ }
+ 
+diff --git a/include/uapi/linux/virtio_net.h b/include/uapi/linux/virtio_net.h
+index 8bf27ab8bcb4..1db45b01532b 100644
+--- a/include/uapi/linux/virtio_net.h
++++ b/include/uapi/linux/virtio_net.h
+@@ -193,7 +193,8 @@ struct virtio_net_hdr_v1 {
+ 
+ struct virtio_net_hdr_v1_hash {
+ 	struct virtio_net_hdr_v1 hdr;
+-	__le32 hash_value;
++	__le16 hash_value_lo;
++	__le16 hash_value_hi;
+ #define VIRTIO_NET_HASH_REPORT_NONE            0
+ #define VIRTIO_NET_HASH_REPORT_IPv4            1
+ #define VIRTIO_NET_HASH_REPORT_TCPv4           2
+-- 
+2.42.0
+
 
