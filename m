@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-876795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D18C1C581
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:05:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB01C1C5C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D91521895319
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:02:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7480E58754E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B78A34A764;
-	Wed, 29 Oct 2025 17:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA2233A014;
+	Wed, 29 Oct 2025 15:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zu711m+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWSOPckp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B827D325487;
-	Wed, 29 Oct 2025 17:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65E42EB87F;
+	Wed, 29 Oct 2025 15:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761757279; cv=none; b=JbnyLluT18lGdgCIGV53M005SrQycHhbNMlccVVt3/3wH7vcl9xqxVKrhXsO8wotYVT/JEEY9uDw5jailcgzpvTmy6J891KlfIxOnVW7fPWVEdijOxqGpVd7xL6wloOuAeUm4tYnqm05uvSqXzyoIt5l8/wlOrmSfFZrwYlhHqI=
+	t=1761752440; cv=none; b=CldX/6PhQ6xZrRSO5rqzHoi/eWmVer9fADmx4nLnPr85WKRHmRMs6093o+rulrl2lP2q2I3Mvk25pkQYE5/+2GO0q25XxrvoNFQHKFiLl+mFfNYwosWs8s8GYf0Aaf1mE9AYqVQCQLKrH7T9Ur3YeY3H/R7S2MfEdZiPtGH00Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761757279; c=relaxed/simple;
-	bh=k3byeLcVOKPHdmvu7ueh69faz2jI7pjQAcxa1p62ckY=;
+	s=arc-20240116; t=1761752440; c=relaxed/simple;
+	bh=PbZwkdXNfvQm13fSa8McCaVV+TGgfVCC2xR6UwY+jzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CYscKOPLVZRVjOwfFqWV9kl/mRrhbE9uY6GYBXKWifYOFmB4W5wQ7wZZxTI0303pVXGXIoxvPpSUe79sVcVQPsz++8FdygBKNrJzOwPdV+dY6aLOq2frSf/Pfjf0/EDMQbv7iGsMzMDhY3XzVcbjSqjdT6tMOsBYI36k0UjORnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zu711m+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F967C4CEF7;
-	Wed, 29 Oct 2025 17:01:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUHEvu4Xz5bhQOXw8TMgXcR6wr8KFIczDVZsacZXAR8hKm+lR9W0XyrufJBu1C+LMNp0+f5BP1niTAmh9zw7LHNoEb+enWzUKUulDRdPmDd3tywRE7Tu03YnclzzmNS1dcU4NS8XZ9v4QVL4eOUkRT17I+1bf/6McsWZPUa/dQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWSOPckp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA3CEC4CEF7;
+	Wed, 29 Oct 2025 15:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761757279;
-	bh=k3byeLcVOKPHdmvu7ueh69faz2jI7pjQAcxa1p62ckY=;
+	s=k20201202; t=1761752439;
+	bh=PbZwkdXNfvQm13fSa8McCaVV+TGgfVCC2xR6UwY+jzk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zu711m+N+fJ2KQqcxeqOJBhzhogcWZmD4nMAZA+88M/KFM28pAQqKcu2AtrSy8BT+
-	 jNJNmsB/B9Y26Hrgre1Mjnz49nNFeLd1VGEofroOCL/kqWnU+mCDWIX5IKBhlpe8Nu
-	 ra0GlDEBBAVG8oP4OROkxuPsTtmgIPPdhCXSslS4u35Ja7vRPosno3YdcARqYs3LHg
-	 hw3lMOLWyTjmvbQWW3qcIGyyPIIC8tEmCiSPRrrWdJQ4BEirpECcHtan18y8QIU4K/
-	 eeixI3DeWwWRkSGldGIRPSDh5qs/SCRiIo+9xYfXQIRQmgPPI24+K3RtMsvVQiiAt8
-	 m4UlkIMd/42EQ==
-Date: Wed, 29 Oct 2025 17:01:15 +0000
-From: Simon Horman <horms@kernel.org>
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>, virtualization@lists.linux.dev,
-	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next 11/12] selftests/vsock: add 1.37 to tested
- virtme-ng versions
-Message-ID: <aQJIW9ooMiAHZ6Np@horms.kernel.org>
-References: <20251022-vsock-selftests-fixes-and-improvements-v1-0-edeb179d6463@meta.com>
- <20251022-vsock-selftests-fixes-and-improvements-v1-11-edeb179d6463@meta.com>
+	b=JWSOPckpSDYIkfQgJ4q/e1tdXS7lUiyCrMsZHqBM8SQ5b+pzOtyNAC8TcRTbHeWKU
+	 NTlWKlOGh7qKzmxUhx8qP0gZK84ZayCIReYqTH9FQ9enQvQcp3dM4xH4ELfQWYP0bN
+	 Dek14LFcV3PHvn0JUNRZRxFv7Dz0SJ0eNGQclYa3pZ1rthjcHJ3MdTQAb+wTESF/EP
+	 qYodeU/KEL2l0n7Zc+Hqjee4TX0bv4t/fhfQxwReT0WxJo+rPbG7bgUoRCSqZq/5ZB
+	 fMvuXnW+VNHFBgGF+2kHC44A9jn0YgTzqPsu312hwk5XxJC28Ls3rLkUMzBSQ3yJfN
+	 A5VRWFyWqkkqQ==
+Date: Wed, 29 Oct 2025 10:43:42 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sudarshan Shetty <tessolveupstream@gmail.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/1] arm64: dts: qcom: Add dual-channel LVDS support
+ on QCS615 Talos EVK
+Message-ID: <sygckhfcazo56jpmuldhctu3jnf3unekl4ahh7n3yels63ntpg@3esgqmoewfuo>
+References: <20251028061636.724667-1-tessolveupstream@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,21 +58,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251022-vsock-selftests-fixes-and-improvements-v1-11-edeb179d6463@meta.com>
+In-Reply-To: <20251028061636.724667-1-tessolveupstream@gmail.com>
 
-On Wed, Oct 22, 2025 at 06:00:15PM -0700, Bobby Eshleman wrote:
-> From: Bobby Eshleman <bobbyeshleman@meta.com>
+On Tue, Oct 28, 2025 at 11:46:35AM +0530, Sudarshan Shetty wrote:
+> Hi all,
 > 
-> Testing with 1.37 shows all tests passing but emits the warning:
-> 
-> warning: vng version 'virtme-ng 1.37' has not been tested and may not function properly.
-> 	The following versions have been tested: 1.33 1.36
-> 
-> This patch adds 1.37 to the virtme-ng versions to get rid of the above
-> warning.
-> 
-> Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
+> This patch introduces a new device tree for the QCS615 Talos EVK platform
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+"This patch"? There shouldn't be a need for a cover letter for a single
+patch, the patch commit message should describe itself; as any
+information in the cover-letter is lost in the mail archive when the
+patch is merged.
 
+
+Also, please transition to b4, per our internal guidelines.
+
+Regards,
+Bjorn
+
+> with dual-channel LVDS display support.
+> 
+> The new DTS file (`talos-evk-lvds.dts`) is based on the existing
+> `talos-evk.dts` and extends it to enable a dual-channel LVDS display
+> configuration using the TI SN65DSI84 DSI-to-LVDS bridge.
+> 
+> In this setup:
+> - LVDS Channel A carries odd pixels.
+> - LVDS Channel B carries even pixels.
+> 
+> This patch only adds the new DTS and corresponding Makefile entry.
+> 
+> Thanks,
+> Sudarshan
+> 
+> ---
+> 
+> Sudarshan Shetty (1):
+>   arm64: dts: qcom: talos-evk: Add support for dual-channel LVDS panel
+> 
+>  arch/arm64/boot/dts/qcom/Makefile           |   1 +
+>  arch/arm64/boot/dts/qcom/talos-evk-lvds.dts | 128 ++++++++++++++++++++
+>  2 files changed, 129 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
+> 
+> -- 
+> 2.34.1
+> 
 
