@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-876229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09953C1B0A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:00:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B014DC1ADD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A0C05A932F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:44:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A44E34F1BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6322333B6CB;
-	Wed, 29 Oct 2025 13:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2D933B6F9;
+	Wed, 29 Oct 2025 13:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ayJJBTnU"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="DH0fqoJ5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v1425Yqs"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9BFF3385BE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CD12874E0;
+	Wed, 29 Oct 2025 13:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744878; cv=none; b=V5SjiGfXg49JwIEwne4zYbTLWFeqxOLB0waZ6jeFt7neQRYWnMFM+9OheEUeHDXAEeb1FfQ8F3MJt0IphY8IK1grXAeIkpnkoxf9Anw3Rguk4Tdy9g8F2nO/gSskkJhNLStBR4lPAW+t33pgTe9lO99KO9o32w0iu/I7q7E6i/w=
+	t=1761744914; cv=none; b=PuzkLfQsRMkr0dX7STfldcwIP1b6YafuT5EZRi4BV3XB6VmkiRgZPYCqMXA15wq3KR4kZDTYBwFZT/dAra3UAkwKenVkvGAGMv+4Sw6r9IHnM8vBSVyimlojrDF4j9ZsAhEgKQp5vQFl0yRsEMPjymPLzJmz19KpormS/szbzi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744878; c=relaxed/simple;
-	bh=oM5QySZdtAOBCoyNMz4xxycx+fUx6QiRo34fuhCV6ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a5T34g4+CuD+Hg5BfEM8t5UVI9KlLg8sWwkjwBsEdmLm81DQmsbpntgmLso/WTHP3Udp6RRMHC3s69QqVRipKLJGfANydpNJoGoMTH39Bx/nEiWI7rTjCuv7UL5513WxfDVaUOgtN93TNr80xH5tTFU1jr+Erw5HHFthLMiYx8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ayJJBTnU; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4eb9fa69fb8so62024771cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1761744875; x=1762349675; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RgADETiD5u9wqQNfgMacoJuuGaSmA2poVcbRTgfiI8k=;
-        b=ayJJBTnUtE7fPGnFkBrdcp5L0ZUTnPAaIcOoeMwanmxXW468ezR0P17/K6FW12BJ9d
-         6faXk8ry0n1zHBOjB55fkj3d0KOIBJ6AmE3w41Jat4FSBnKTCZK33Wk8CTwW7Jr2k5A4
-         uE3DzDmOixwyHE90GtEGiHY9dhJZnyBhKjOcOhu8fgkZ7AJ4nMST0wezd3Sn0SwkXFHB
-         D7WxLPVT3c5eSeudOxI1bOuJbB8M7TrzUiY/Nlw92+RirBBewWC+PuwyTpAgD6cJEFNP
-         d+2nszp5w4bwkpXmpE/gLxyJ11bYzjLmsCfokWaWHztHyUmX2Yi9Snryzh6/Niub3TaR
-         hwKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761744875; x=1762349675;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RgADETiD5u9wqQNfgMacoJuuGaSmA2poVcbRTgfiI8k=;
-        b=idpsilAoUwQ5QdGtinA83ldzQtSnbKDJHLtKI7DK1rMRi77yaQ2PfkPQcAAYaI1AJy
-         kx1PuQLyMs0gO+jD++davbQgGfVC2CMCzh7/mEr7/59deIH3ROoqVp3AUrBey4AmSjPP
-         JJozVi+Dpxw3lLUGsgon8F4SaRH0M558GyqwDMOqGT8XQoylrHXQ7jkmfx07SqoQpC/g
-         XkvUXiX63dvezSe+RG6n7SPGDlGEjbftABjub4z2mgo6i9TivBrDhZM6n/pEQDMs8XUQ
-         95TgucFTItFHKYmLMN261DN+V0S+FWKZ5eAha8xv0oojmmGgTp5ZMxZwYP9iAj97Iq6Z
-         +phQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrbJEh2zrfSl24AxnohZn3xrwmuY3CI9F/QVjL4sQ6p4l9fGW6h2ihxrfpOTyqWCQ2ofzR7O1Fh6vzzDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKZO/PwnFkyRTUQgrUL9hULsI8KDNfTbSMhNRI9pmLCmnPWns5
-	RXdwk9f+9ddrIjJP4j8nweTBNNg4E3+c8TtfTrQnwvi9Xiog6iL+1voinWPZ1W8uqavufrR+8kw
-	gZ58l
-X-Gm-Gg: ASbGnctkOHndEzSqQetYTrfChS/JHY8JciV7nalgDjY7JxdtObq0NiaIdnfoShGSqaK
-	GoTDs3LCtZVCxTXNdq+n0yOhM6V3X+8lIMbUiFclAjva6lz40k09YOxgUJSgDZihFaRpUxxncCD
-	P87bRmGv6sIX8dnitwrn0CF4sNVPoCf7G2nLgZfj04xgAN+eV4jkNikWWk4KLgF94QTbIssHYtZ
-	eeYn9oxBgVpGbGzAtVcFZdjRZBxm8pdMntN8QB+BLNIhJhutohcQrvDHuvLfPZb4FF1kWPw8ImX
-	fcMBD77cE/RmOlvvLTfpb5ZDpB0uEZJCUvCQkO22fgjKxD14rTBLRapD0OU6vUDhfWMwR8s/njN
-	rUi5UCaK4x9pYuYE6+hVIyRgmZCBiY+IiQzbsXx7sX3zaMQEvYM4mRThySIbbKkj/X3tNqXXv0O
-	d8JHHKEscl1s42sYDjJ8hZRQh4rILJtY8Wclm54d9VsSCl1zGE36kE2AyK
-X-Google-Smtp-Source: AGHT+IFdgVvZSdHjEy8GA0OS5tZk1Dvc3yZ1jqJfpcS1F8qZqGGicMQtvw7HnfgbOqouiYpmJyOhTA==
-X-Received: by 2002:a05:622a:91:b0:4ed:698:e3af with SMTP id d75a77b69052e-4ed15b336c0mr38693411cf.13.1761744875380;
-        Wed, 29 Oct 2025 06:34:35 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba37d68e9sm93871021cf.8.2025.10.29.06.34.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:34:34 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1vE6Ju-00000004eMm-0ufq;
-	Wed, 29 Oct 2025 10:34:34 -0300
-Date: Wed, 29 Oct 2025 10:34:34 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: iommu@lists.linux.dev, kevin.tian@intel.com, joro@8bytes.org,
-	will@kernel.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iommu: iommufd: Explicitly check for VM_PFNMAP in
- iommufd_ioas_map
-Message-ID: <20251029133434.GL760669@ziepe.ca>
-References: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1761744914; c=relaxed/simple;
+	bh=zk6u99OtGnbAQaUuV35Pxy7dNCuKsP/fJdfEn8rLNbw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=SeP6IF49Qq9/aJ8eTcZbpldnZFSdlHlDt6Fr7qqtz8+Frz/GFnQf6CfBCalNe7dJFMOtHEp/qJ3oGvBXV7ZCyDnaMLouwB+zT6Y1KqPupCdYE3mlSOg41mP0b5iCFVWjknSxsIyTZu+TXbZXJMca/3YRJqoALy4uaeiIAHddaZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=DH0fqoJ5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=v1425Yqs; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 8511AEC080F;
+	Wed, 29 Oct 2025 09:35:09 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Wed, 29 Oct 2025 09:35:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761744909;
+	 x=1761831309; bh=LOXt9ukdE/myXtxPN27g0WsvCr/T7HGAPyXOfP8W8tw=; b=
+	DH0fqoJ5K3HA9N2X714F+VSdjfUN8x6I0Yy338O0/zXvHrNjnx6dtVpN/vhvTmoF
+	D+PmDG3coSa3j+ik/57On2kUJwnnTZzm19+L1VS77ee81nNiLFoWY5ELlDPl7dps
+	sPWnjYTKoqCzA9O7OM56RuIwdWyGOdQIYd57OBvZhiWVxqQe+RglNmxSS/u+fAtS
+	XfzgUT/VbWo7G8j8LavNv+GitBKp+k7yS4CYcY/8yZkvRHzICIRHDGCHnHZ3/8rz
+	Dta2UFz1D50ymvMLAX8nRz8SQ8hdRGB033r6ScN+kfzpFU0Z2Z0e+lVY7QDJtpel
+	pZ9asHO8pnp5WVJToaastg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761744909; x=
+	1761831309; bh=LOXt9ukdE/myXtxPN27g0WsvCr/T7HGAPyXOfP8W8tw=; b=v
+	1425Yqsk7qoEPHLQtxftO7qN2WuSsFyZkfZTNyEFrDQugn1/t1WxJQrie+5o8zFA
+	2kz7hZQnPRF8G9zjMj/ixPsyaqSL/QWAPfQhphAnOt3/Fud+MjmmWPk2qYlUnws/
+	+HK40ckOlZ5BZom6Y6429taSSil/YTGkoGu21z97GRg5XaEjOgRk44ZWs14du47C
+	iydKfJxAv7Uw81QL2EV9RLnAumk9Rw5ED/9cNZfjH1gCbOF0ug70Ixuo5+Vu4QEB
+	X7qYzRuHVQKSj7khMDo7J+nN33JqIOqqet+HU6ziN5qFdR6JVrh0HjpMItdh+6kw
+	rX6mgv6C1bPIGEuOWi8rA==
+X-ME-Sender: <xms:DBgCaSY0nyzSH69wt4S9SKgdeX-vyU_MkPQLwA3wjj7r9g7bqTfRCQ>
+    <xme:DBgCaQMsOusvQV3Dpz0STi0OrbHQw538x24XIzc9FW-PHrEEZ-VTYNnkHUs5elnI0
+    dmjBgMbx9NzpnnpV89IsccuLBb3XD5RxZN0tUuJ0ISEbdVqY4pNA2c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefkeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepmhgrughhuhhrkhhumhgrrhdttdegsehgmhgrihhlrdgtohhmpdhrtg
+    hpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthht
+    ohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoh
+    epmhhirhhqqdhlihhnuhigsehrvghrvgdrqhhmqhhmrdhplhdprhgtphhtthhopehkvghr
+    nhgvlhdqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    eplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:DBgCac_GRxcACcOKBLRJHk3p5ta3k2kzB7hfJWT9BqdbhyBoFOEw4w>
+    <xmx:DBgCaW-kzy0T9cr2b0KRDM8Pkxc5LDqEIOeI86nZSUDI6diTxFh4bg>
+    <xmx:DBgCaUSZvNJVOnJJ-XWnjGzQDrqxky0cpdXIFxP-eH1G_7xpyz44iw>
+    <xmx:DBgCaSfIX_3rFJG3Y9y2FO6fxyKLiovnSlxY_qquXQCtxSc8SOwqaQ>
+    <xmx:DRgCaYTEMg8szP4v9qWjhcmzKqzNCEilTzrtgCcxOXbj4dFekjY7x4t2>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 82F08700063; Wed, 29 Oct 2025 09:35:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
+X-ThreadId: AhXEKh3rk67k
+Date: Wed, 29 Oct 2025 14:34:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Madhur Kumar" <madhurkumar004@gmail.com>
+Cc: =?UTF-8?Q?Micha=C5=82_Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Message-Id: <25164f38-842b-4b35-8012-e2c548b2a4f8@app.fastmail.com>
+In-Reply-To: <aQITFDPyuzjNN4GN@stanley.mountain>
+References: <aQITFDPyuzjNN4GN@stanley.mountain>
+Subject: Re: [PATCH next] misc: cb710: Fix a NULL vs IS_ERR() check in probe()
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 08:52:26PM +0800, Shuai Xue wrote:
-> The iommufd_ioas_map function currently returns -EFAULT when attempting
-> to map VM_PFNMAP VMAs because pin_user_pages_fast() cannot handle such
-> mappings. This error code is misleading and does not accurately reflect
-> the nature of the failure.
+On Wed, Oct 29, 2025, at 14:13, Dan Carpenter wrote:
+> The pcim_iomap_region() function never returns NULL, it returns error
+> pointers.  Update the checking to match.
+>
+> Fixes: b91c13534a63 ("misc: cb710: Replace deprecated PCI functions")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-Sure, but why do you care? Userspace should know not to do this based
-on how it created the mmaps, not rely on errnos to figure it out after
-the fact.
-
-> +static bool iommufd_check_vm_pfnmap(unsigned long vaddr)
-> +{
-> +	struct mm_struct *mm = current->mm;
-> +	struct vm_area_struct *vma;
-> +	bool ret = false;
-> +
-> +	mmap_read_lock(mm);
-> +	vaddr = untagged_addr_remote(mm, vaddr);
-> +	vma = vma_lookup(mm, vaddr);
-> +	if (vma && vma->vm_flags & VM_PFNMAP)
-> +		ret = true;
-> +	mmap_read_unlock(mm);
-
-This isn't really sufficient, the range can span multiple VMAs and you
-can hit special PTEs in PFNMAPs, or you can hit P2P struct pages in
-fully normal VMAs.
-
-I think if you really want this errno distinction it should come from
-pin_user_pages() directly as only it knows the reason it didn't work.
-
-Jason
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
