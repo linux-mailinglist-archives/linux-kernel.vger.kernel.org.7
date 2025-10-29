@@ -1,119 +1,71 @@
-Return-Path: <linux-kernel+bounces-875540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCE33C1953A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:14:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E10C1949E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D7AB56894A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1D83464092
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13959320382;
-	Wed, 29 Oct 2025 08:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Qd9ah1dL"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4B131D748;
+	Wed, 29 Oct 2025 08:51:35 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082AF31B111
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2F931D374
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761727821; cv=none; b=WLo0qIXbtgoEXjCJADUYTspO3vHfKIn7vT91/NgG/G93BZDLTRvPSuagvbPZi4UBavFwL6oCqsMj2useCa2rbiT3E5yiqxNXZ1YPj3Z1szOGYt5KWwmkwnbJlKpSHcKqXk3awqUsHWolzD1MghagTVenF8H/iGYHJilEnzL7UnI=
+	t=1761727895; cv=none; b=egBX5O7i0NZp0dkCsAPhfO3oWL0IiPXVjL4KmolGjxY0ClGwlivhMc64JYYJyB8JG346P+zIp/6UkUwPuqVnmIQk8f5ksDEDqHPEDFNPotiWUMBLThzY/1wofgHUF9YJXcIF6PdmV/v6R2EVPpNB4VKFXInIgVy9RxIatr4K7BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761727821; c=relaxed/simple;
-	bh=n0euRFB7gWfEM4REy6W9bGSiZeq9pZRm2S2BPlJhkH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=BZC2lR7mwq+D6K8LueqgudTf7VxqmnYuytSzqAeABI+rVvnCQRtES2xAVW9jLsRD27c5tEEAuuI5ARKCuEjANukteqgPdDZ+0c+iQZd25+BSnBJUl5O5n+sUtA5E0LhCqrBDADK4buTcLqgrjmNW8WYhTD3S+VRoy9sgxItiQ0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Qd9ah1dL; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251029085017euoutp01f4d70c53b853ff83d22578e584f7532b~y6h2V-uv_1406014060euoutp010
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:50:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251029085017euoutp01f4d70c53b853ff83d22578e584f7532b~y6h2V-uv_1406014060euoutp010
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761727817;
-	bh=xwfkOFZVwI3gkfo6lbTR619jwqrwqG3gDKV0KKwf95s=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Qd9ah1dLFECOzDeqpRRLAMGaMQZu+YEXJSZBFVOHF/+JOk/BIUJMpTAZc/7QKb5s8
-	 9raZCPJkCj862Ohp+zXVlWmxp7Ts1tYEcuvqNEBoQXguUqhn56awoSRN8/pxDt9cOO
-	 awusNs/42HINstr9V27RIV5GNl78NRWgHuUXWVA4=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029085016eucas1p2b6acb52ed4c2ac940db72dd0e95ef66d~y6h2FrF2Y1329313293eucas1p2Q;
-	Wed, 29 Oct 2025 08:50:16 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251029085016eusmtip16e2fb817f49f299f9f43bedf2ccf86c1~y6h1kmZbu1417114171eusmtip16;
-	Wed, 29 Oct 2025 08:50:16 +0000 (GMT)
-Message-ID: <c1d459dd-df6c-4ba3-b193-06015918df06@samsung.com>
-Date: Wed, 29 Oct 2025 09:50:15 +0100
+	s=arc-20240116; t=1761727895; c=relaxed/simple;
+	bh=4jIQ2V7Zc6PYJnu0a9K6h/pa7TDpgleDHH+rtkxiew0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4ceoXF6ALV+swKbhba77G9L6cMH/OhRzkMMCkSWuC4s/Wf+8W1+IZJPVXjE3upXt1lMQgwNbk4Q/tulRiOPjtA26b9chuzEkm0qN5b362yAQMaVx3FzeDN/739U1LQhQyYT0hNhuI8ZuZqnuEp4bKukuzRbPOpmH0v8nwQK1eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E2108227A88; Wed, 29 Oct 2025 09:51:27 +0100 (CET)
+Date: Wed, 29 Oct 2025 09:51:27 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Justin Tee <justin.tee@broadcom.com>, Christoph Hellwig <hch@lst.de>,
+	Keith Busch <kbusch@kernel.org>,
+	James Smart <james.smart@broadcom.com>,
+	Jens Axboe <axboe@kernel.dk>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] nvme-fc: don't hold rport lock when putting ctrl
+Message-ID: <20251029085127.GA32307@lst.de>
+References: <20251028-nvmet-fcloop-fixes-v1-0-765427148613@kernel.org> <20251028-nvmet-fcloop-fixes-v1-1-765427148613@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH v5 1/2] dma-mapping: benchmark: Restore padding to
- ensure uABI remained consistent
-To: Barry Song <21cnbao@gmail.com>, Qinxin Xia <xiaqinxin@huawei.com>
-Cc: robin.murphy@arm.com, prime.zeng@huawei.com, fanghao11@huawei.com,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com, wangzhou1@hisilicon.com,
-	stable@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CAGsJ_4wy2B7=KwLfODySky+FADkLZYowWCNm28FBmri_Opv7ZQ@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20251029085016eucas1p2b6acb52ed4c2ac940db72dd0e95ef66d
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42
-X-EPHeader: CA
-X-CMS-RootMailID: 20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42
-References: <20251028120900.2265511-1-xiaqinxin@huawei.com>
-	<20251028120900.2265511-2-xiaqinxin@huawei.com>
-	<CGME20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42@eucas1p2.samsung.com>
-	<CAGsJ_4wy2B7=KwLfODySky+FADkLZYowWCNm28FBmri_Opv7ZQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028-nvmet-fcloop-fixes-v1-1-765427148613@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 28.10.2025 20:57, Barry Song wrote:
-> On Tue, Oct 28, 2025 at 8:09 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
->> The padding field in the structure was previously reserved to
->> maintain a stable interface for potential new fields, ensuring
->> compatibility with user-space shared data structures.
->> However,it was accidentally removed by tiantao in a prior commit,
->> which may lead to incompatibility between user space and the kernel.
->>
->> This patch reinstates the padding to restore the original structure
->> layout and preserve compatibility.
->>
->> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header file for map_benchmark definition")
-> It would be preferable to include the following as well:
->
-> Reported-by: Barry Song <baohua@kernel.org>
-> Closes: https://lore.kernel.org/lkml/CAGsJ_4waiZ2+NBJG+SCnbNk+nQ_ZF13_Q5FHJqZyxyJTcEop2A@mail.gmail.com/
->
->> Cc: stable@vger.kernel.org
->> Acked-by: Barry Song <baohua@kernel.org>
->> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
-> Thank you. We also need to include Jonathan’s tag[1]:
->
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
->
-> [1] https://lore.kernel.org/lkml/20250616105318.00001132@huawei.com/
->
-> I assume Marek can assist with adding those tags when you apply the patch?
+On Tue, Oct 28, 2025 at 04:26:20PM +0100, Daniel Wagner wrote:
+> nvme_fc_ctrl_put can acquire the rport lock when freeing the
+> ctrl object:
+> 
+> nvme_fc_ctrl_put
+>   nvme_fc_ctrl_free
+>     spin_lock_irqsave(rport->lock)
+> 
+> Thus we can't hold the rport lock when calling nvme_fc_ctrl_put.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 
-Thanks, applied to dma-mapping-fixes 
-branch with all the above additional tags.
+Looks good:
 
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
