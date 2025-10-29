@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-876136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA2CC1AA96
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:27:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EF9C1AAFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C749A565AC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:20:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5113585EA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:20:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714D2BE032;
-	Wed, 29 Oct 2025 13:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C2B2C3276;
+	Wed, 29 Oct 2025 13:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zRq4ZVv3"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="hlOtlWVn"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293CD2BDC3F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:13:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCB3230BF6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743601; cv=none; b=hOiR98c4YF8QOyvxVOiqgVpTe5IUVr77kGhAhZhVCy4qyiSkAw44GPW1ih/52UA7T/3VGBycnkWfYK4oyGP+cWbSMek8ThrNHccD28JjbxE7A1BH7244REA/39v8a01i+bDbLo2X0b55NJojg69LvY5P8z72WCzmvlEhVeVeGaQ=
+	t=1761743644; cv=none; b=rtUtEPBIf+4ndzVi47Q/8RHr2Dz7bhn4XHuDbClspPRq6xcSD2MmEiYDPxiINHZZ0pOZkWZkKU65unwiaqnGGmOwFx9BTG5ql9EMaMnIaTiU/5SubJhlOBtEIvgR8rFCpAaPfnJin1lNlUovfZcDPSC0kIfGxPENGaUM2/tfqvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743601; c=relaxed/simple;
-	bh=gKP7Hj4PgjLdlCElLMQoEHfgYE8vw4zIpqeIgVCFNzg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tWNBAdxM4GbjVgGU4gch4Le+jBhfeupiBtMJ5XVCOpwYvVUFG3u2DgTwHlpviuWSg1XXd31V0ivFqEN68idzSnZkgug9t5+I7lSft4RYQ+dotaITIBYW6hPisjL8hfb1KcNry4l2hVuysc8sBFqJJdk5I4Vnjag/MOA+L/KrDV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zRq4ZVv3; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee64bc6b85so7277401f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:13:18 -0700 (PDT)
+	s=arc-20240116; t=1761743644; c=relaxed/simple;
+	bh=HXh8XVhftIlOuBLfg8NVk9leceRLV9HU/K4pAv4S7GA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D0Ganit2uDJWE15UrD5lZ/lcM0knViPqzDY1INBCqwlDfLRhI035I2OOXune7WR9N9yyLu89lvboN0Tvn30LOKkG9+HUjPOQxmLxvc2E7m5uqYrej7Qo9krPpXpSqA/3ftuccoO+wzVNn2pqTmCoLZegzg370QpHSyoiQPq/PEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=hlOtlWVn; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-362acd22c78so67758141fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:14:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761743597; x=1762348397; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fuIsZJAikyEekZcQ72lnOaH5lxPiOYkA7xu56IYCNWg=;
-        b=zRq4ZVv3ZfmNe56SwASuyxsdNsJWgIA2rm0czxuAwnoQ/oa0ozvwewyxCewZ4XySnm
-         t0s7+jAMeV3rRuSvvDBkVYO4isGWsoTD4ZU1V/n0T/XJdbQr7DgMpq+DAiSDCpQzD7Bc
-         iRIpd1PEzDsY2HP9JwTZROtwOma3levQKCxvrTAyes/0l+Uo6Ogxkj194Ffxn9Fb+0Ie
-         knFN/sw2b/21qgWW3wNxbNcPgE8rz12hA2/JdSV9cKbNsp9zCtrjL/9fOkBfWLYUDy6+
-         hMZfGe2TDxwQtHRsAKLzZWEHMhLTRDSZvrkhIjCR/J34TBB3VfBtWKnJmhULiDGkRtaZ
-         gQ/w==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761743641; x=1762348441; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cqA6GSygQlCbGGE92uS1aB1PWjkaAYd841Sg4SieyII=;
+        b=hlOtlWVnpwS3XHlygstKeC9HQVK9qNA2JkqB1DjoDbBqjJI28RY8aBgzwcu5zobn6v
+         sjQKZ51sZzwj9Yo3JpjAfR/gZAs04ZPoLxvUkc0MZf4YpTU9O0erq77GdSZybw37WnP7
+         IfJ5EgphNSGdC4Kr55/1gLYQkQ2fb+iRbNM4z7fVFcxL5D0bt72gcgGRbSX1tc4Pz0He
+         f4lSbcZRI3eg6XPKLdtuJiQ+PJAuk5eTwYBfPhc8LP4zZtl2al59/lFALKr+pI86Jqow
+         isqLqslnToa664tkOsZ4Texuq9tE6N7j0k/gFF8LE/O0HEo88CCre1sa+lOpNVE/vQ9A
+         rZQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761743597; x=1762348397;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fuIsZJAikyEekZcQ72lnOaH5lxPiOYkA7xu56IYCNWg=;
-        b=r/hf1SWDIgnUIpeArblHxudacdweX5uJ3YjMFp3Ekns8qyYM8CxxWrPhA/2Zo332HB
-         +Q6kV0sm1V9uzr8yFwcayeHLH6Fd2U9hDyVMBQ3aEXoD014QNSgOwZ2sac1yOECBharE
-         qwOKc9jb+fb+9L+W67Kny4+Ct98602Dzjm/fwzn6cvfQY9Pf723HdE92Yxif8yq3/cGq
-         PNqTt8filvjqWlR7S9TKm/YrQSGkYgPhAW0eXu7NeoTU4gad3U0FMGXR6hC/H7mI2fPi
-         n8a5yS18v1injxQRUh9D22uGR18q1SuQAnPgWVDfF0iD1QoSGW8HXHKL7pu9Vdj8Bh+G
-         9MHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSsB2OuTNFtKfFcBiWP/4C4mi2L+FK4UoaTtbTypEYPgoaCGem/+3SwSsRcjf3uvNu6bSsu2wEO7PPkcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlXJswKhG8dHHMqi25aVx6ovAGR52Dsn0hedybKaRtinkU+OQ6
-	exM5XGGw9hVSay5ykjBApkPigRm1PknC+Nwq8dGua3q+BptzVZ7mTnpEBI39m9Iopl0=
-X-Gm-Gg: ASbGncsHdDNmulsgXNlYmbQhbd29gHe0dviUFCYZEICJvND4p8W3665JWr9mi2oXR5a
-	kkh/+KhuoWVfFTpPWHX6kqSjYRtS5Sv5hIOAa6BNX/ps1CNOVT1/JXFWHFbSJvr3aRN0R5QMe6b
-	lsPhyDrLppv9+Bn4jLjZCb5YmoqfTrKhYD1CFyE6itZsKWVuifrlN83Wd2InWsLJyAusCGCw3Gi
-	tAydN1tI1+tZSargLtHNW7MpwRYazMmpcuxkrVRon/hTYkOIOfsGR7YqvRYrFus8Wn2tBlAGZxj
-	N5Fa+Gvq50/Wu9Xk9OWbX1UTDIUjKGwxI55sNLTKl0uMNS0z9wV7MirmqtvHjsMiAyH3Yx6Jqw1
-	qweXnakfe2WCM7oQzDRtOMXiKqf/JICsmTdvkgCTweoMUmudSlFGqKZ+OJqlcE4G7PE/B3xFRZO
-	PFhp5PqK1Cw7VzBUXo
-X-Google-Smtp-Source: AGHT+IHWVrau2m4RaNjTyO72rP9dhKVo76M6sAXBvO9VLZ1VFeKc3lw8F8BaYPpaPHfy3t8Vo31Ixw==
-X-Received: by 2002:a05:6000:238a:b0:425:76e3:81c5 with SMTP id ffacd0b85a97d-429aef795fcmr2632000f8f.17.1761743597111;
-        Wed, 29 Oct 2025 06:13:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952df5c9sm26362401f8f.41.2025.10.29.06.13.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:13:16 -0700 (PDT)
-Date: Wed, 29 Oct 2025 16:13:13 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Umang Jain <uajain@igalia.com>, Stefan Wahren <wahrenst@gmx.net>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Rohit Chavan <roheetchavan@gmail.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] staging: vchiq_arm: delete unnecessary check
-Message-ID: <aQIS6Q73Ss8xyJTD@stanley.mountain>
+        d=1e100.net; s=20230601; t=1761743641; x=1762348441;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cqA6GSygQlCbGGE92uS1aB1PWjkaAYd841Sg4SieyII=;
+        b=okBNxoxYOP7+SAN4IVKb16o8fyz6l6heoZSj8vVLpvpdcyEaqp36fsnqKDRyckv9D1
+         BVKwtdPntdYMCmbsipRREpfOPWz7vvb2t5IVoSbuuWWPLCrltXwqfzyA8JMjsL9tOys9
+         GsLkN/yXnJB5lUE4wRe4RRQAO/xRGnjF8QxwPPOHA05b/jiiWur8W0e41kj3wWop+Fok
+         MGTRQZbK4j/A15LRs/GQ34F5AAPy41SDX7GG5d4962Qpcb4DLmjyj8G1O4wTQEOGv1c5
+         Ltq85NbJJjmI2YbDzLlgnMHbdGmLPL+CYYGh+pZry0Ke4CwHic/oVI9ioE988hgqGlEp
+         c1/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8RuL7QrrkxzFOgZnQHihr1ant2cITHsz80/ttXFSPNL0pn84bo0zKYTDtdysIHTZPO/ZuKi2RJJZsbfM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPe7R+bqUXvWL9ITO087RQKn6SoIqX2csz775ImcenvPghemRx
+	QveInSGBU45gTNNowftpqwubTULNz0L5/bnWu+SBgCAqrVeydE5AZitEK1FD/7xxya0IMzgPGUG
+	qwHH9H7hazDCFMIAGFIZ1aUn0HATI9K3jY3VFELpaCQ==
+X-Gm-Gg: ASbGncs7afjJiw0MTi6WNxYlgBbJu6ceUB9h2SeXPTxi1GvIjVW0SHQJYf4XtXEGNfc
+	F6JWGAXh7h/HR9ar1VtUj6OGH1dJ/4J8QT1FdrS/U3Q/Jpu3tF4ATjnE8FYfoDebu8lYaRNGaBI
+	kTIt63pAFNyb4HvkFVQFog1KYkMilPJ89S71GH8aeViagKiEhB43oVADTMBacE5joaj13voKnQJ
+	epcVJ+2f+w6oRS4T9PVDKh013HpDAscbYT3Dd5WMPvcuWgsxqy1ZlFSjPHgS6I4rCKdy/aIKACH
+	FmxVuexVug54KH41z12Gows8Llo=
+X-Google-Smtp-Source: AGHT+IEDeO7pOWXIiKISaidNbH4GhhTTnet358H+WU8HbsJA+qhtiRiRxFILoq29B6HEL7w4GKQI73DKFNYwKm/mQwI=
+X-Received: by 2002:a05:651c:1107:10b0:36f:4c94:b583 with SMTP id
+ 38308e7fff4ca-37a052cfe5emr7976601fa.16.1761743640602; Wed, 29 Oct 2025
+ 06:14:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
+In-Reply-To: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 29 Oct 2025 14:13:47 +0100
+X-Gm-Features: AWmQ_bm2G7-iNhdxoXC19qDeGT6XRmVTZTDbAiHUQ68hSenSjedNVmrrWyCNe44
+Message-ID: <CAMRc=MeGLUvyM5GGv=eFpKd8_KCcSOnfKXCtZqJwpTGuRTixxA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Bluetooth: dt-bindings: qualcomm: Split binding
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Both sides of this if else statement print exactly the same thing.
-Delete the unnecessary if statement.
+On Wed, Oct 29, 2025 at 8:44=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Changes in v2:
+> - Drop in few commits the properties (supplies) from
+>   qualcomm-bluetooth.yaml which are not used by devices left there,
+>   instead of removing them in final patch (qcom,wcn7850-bt).
+> - Fix dt_binding_check error - missing gpio.h header in the example.
+> - Drop maintainers update - split into separate patch.
+> - Add also Bartosz as maintainer of two bindings because he was working
+>   with these in the past.
+> - Link to v1: https://patch.msgid.link/20251028-dt-bindings-qcom-bluetoot=
+h-v1-0-524a978e3cda@linaro.org
+>
+> One big Qualcomm Bluetooth schema is hardly manageable: it lists all
+> possible properties (19 supplies).  Split qcom,qca6390-bt to separate
+> bindings, so device schema will be easier to read/maintain and list only
+> relevant properties.
+>
+> What's more it messes up old (pre-PMU) and new (post-PMU) description in
+> one place adding to the total mess.
+>
+> Best regards,
+> Krzysztof
+>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Thanks for doing this. I would argue that the deprecation of the
+legacy supplies could happen before the split but that's not really
+important and would probably be harder to read.
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index e2cac0898b8f..130be2f58342 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -4001,10 +4001,7 @@ void vchiq_log_dump_mem(struct device *dev, const char *label, u32 addr,
- 		}
- 		*s++ = '\0';
- 
--		if (label && (*label != '\0'))
--			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
--		else
--			dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
-+		dev_dbg(dev, "core: %s: %08x: %s\n", label, addr, line_buf);
- 
- 		addr += 16;
- 		mem += 16;
--- 
-2.51.0
-
+Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
