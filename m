@@ -1,196 +1,179 @@
-Return-Path: <linux-kernel+bounces-877118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670BDC1D3D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:40:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14BFC1D3E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9ECC5349AEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8D118931F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B8F35A927;
-	Wed, 29 Oct 2025 20:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692533559FB;
+	Wed, 29 Oct 2025 20:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CC0XWT/g"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO+G0kcb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C789726D4F7;
-	Wed, 29 Oct 2025 20:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2BE3559E0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770407; cv=none; b=Ep74pMR8ih/rRU+2RPBnRrPvgEFnFxieabQtPfJE5DWwXoAAd9b17T98s8kR3pZ1oErWZoe2QPZQZZs0a8avL2g7irwLPuUREPb26IKouopmkY6Ml4HetXSU9+0MowGXd3/xNiYifyQFtOji9YJJYrwPGpkQMCqamqdQnzgdrUw=
+	t=1761770423; cv=none; b=D1CoVMnBVCJqkfC543dsHqWjOr90bj8m0g5mbZzgqgv5F2i5bEUJVdu32/Quwx5EiU2fRRSTsPmf+WqaEv3sA2rn2xGJWnRnhjtf3G4VKMQrDez61r0gVrC4vZV4OXsr0IW38zNLR6INs4vdyz9+jdtjgscteri+mJHN3nYFKUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770407; c=relaxed/simple;
-	bh=Hldxg5wIX16oQThtCclBJU/YEZZATtqu9a9yX5sNY5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QZ0fCnPflbTLcpKfZ6DYIrzt3az7f8kzLy/dA6KWjVgEP35boqSDOGJaU1kq9JedA4cJVKbGqy/vAFsOGAQknp6AEj8MnTnARbvCos2hpL1KvK+ojudODfNJ40ztpVF7ae1WwWknIxXBacv+bCHPpouP9yhJ4WnMX/IbIVISjWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CC0XWT/g; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=UV/VmOJCOfLSipmv50W1vAFDC6k/baUxYyh/BQCyEpA=; b=CC0XWT/gfXNtu9Xw5kcAcNJ/7D
-	yWbrdA638vB4KAJV8RGlYsc6Ws5RkqqKz45UMdC50XRJ4pnRFP2l49817DC8qVTbMtEebXL3maUOZ
-	DRdErQwugmWKqXn/Gf+GxJOzI1obcnkSQ7BdSbmaIRxDsT6Znsn8gnzNg6x3wTuYcC5Z65B/n9PyO
-	8M/z8w05VAfLdi1mFm7xbI9OY5a6mtub8h1LeGKLwAOXasLScVh1w1ftwWuoMKKPSqR+13y2saV9w
-	Kgju7ioVCuGwVwR+Ym3oXehyVm1F4POmZ5szpJVB8Iy12mekI2xUeEQ/qT8dVY1CpUP/4v40VRmwU
-	3MkSU6Gg==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vECxY-00000002pOM-05SB;
-	Wed, 29 Oct 2025 20:39:56 +0000
-Message-ID: <f226af11-adbb-444f-9322-1dd3116321f7@infradead.org>
-Date: Wed, 29 Oct 2025 13:39:55 -0700
+	s=arc-20240116; t=1761770423; c=relaxed/simple;
+	bh=ns4b6aM37ZgOxDoSOaW+r8bQOQRHH+MqybA/pg189gM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cEQYlbOH7SvV8OxZHqrpIgrS+QUs7wie88FaRRrK+Vk3RHP7wfeB5QUPBVWGdCAFpZCjrPXuPRL3Li2f9dJvh/FAMrfiXrpUrY7CFsVIOR8x8hFafUqUDgQn+6YeSF/EtjrAFAEDAF/XSDiHlvN3rSgDowAeWPNxV73A0YMkZts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO+G0kcb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52D1EC4CEFB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761770423;
+	bh=ns4b6aM37ZgOxDoSOaW+r8bQOQRHH+MqybA/pg189gM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=nO+G0kcbM7pNCV0+74zGKKhYXh12qoB3q0zZmRBWcYbpkgzrJfDHLPwweS33YDqtH
+	 4fLk99/ctjqqTJFXzdR7IR24tezAvcNATOb9PV3teZreG47IbvhRaWfoQDb6+NMWpx
+	 Rl7todaGEC1nCqhTTfkTN6JenHoNvynolojOHGLMoBgtA3031Kr6uG3J7EpQv6DnPb
+	 5VS+dQtY6Q1ZY6bHCzvnCVblIZqSPtpoTFCg7U/wldYh0H0O8ZYn14VxGLsS6hhENW
+	 FCB5FYBkJtUXPT78XUAn4s6kzVKmGxMiCbJiFNVtKh4lLgdEmlNkez3epdQigRZl6I
+	 p1B6Ikr30M6PA==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-65682227f37so78869eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:40:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVyWWLRGicx/LyvXcoF0i/SNxhDhBJf1hrJ6XIo6u2nR28xG1JxLizBarPv9gEzU0qIsuJeC7bOqvJeC6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm8cGRaYww7oNUjItsV1GVnsI3TV7SkOziPZyAn0QR15zz3lga
+	blRXsR45c2sP5xZqnrvDEx4ZBNoTgG/0LXHu10o8xKgkpWc/mqlNxAG4W+KYZfIObPZUTmec5nW
+	NaCyGgqqeuo8ZNICk8JACIVhf+2auzYc=
+X-Google-Smtp-Source: AGHT+IGkw0errFUiWgHSegfRuc0UV+uiohV9K9kD6XTBbEYcHl6IYdAr8WV+LfSRejWvHXoyL9ZP+xb3OppXM4LdNZ0=
+X-Received: by 2002:a05:6820:161e:b0:653:827d:1abb with SMTP id
+ 006d021491bc7-65677e52479mr1754431eaf.2.1761770422550; Wed, 29 Oct 2025
+ 13:40:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: kdoc: fix duplicate section warning message
-To: Jacob Keller <jacob.e.keller@intel.com>, Jonathan Corbet
- <corbet@lwn.net>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251029-jk-fix-kernel-doc-duplicate-return-warning-v1-1-28ed58bec304@intel.com>
- <94b517b7-ff20-463b-a748-12e080840985@infradead.org>
- <e8e0cc0d-3f71-42a9-b549-39840952ef0c@intel.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <e8e0cc0d-3f71-42a9-b549-39840952ef0c@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251029134737.42229-1-swarajgaikwad1925@gmail.com>
+ <aQHyhU78m-9RPQ8q@archie.me> <81b03d82-6dc7-4af1-bca1-3632e1a0b4c0@infradead.org>
+In-Reply-To: <81b03d82-6dc7-4af1-bca1-3632e1a0b4c0@infradead.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 29 Oct 2025 21:40:11 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g_v+21S=vq-B9H-vvyYRJjBUtc8fW2MSoP1JvQd9xsWw@mail.gmail.com>
+X-Gm-Features: AWmQ_bnS4mODpTkuRjShVDMELlV7btLcndAf7AWIMblYKgESQ_nlIvEOpV4S5lI
+Message-ID: <CAJZ5v0g_v+21S=vq-B9H-vvyYRJjBUtc8fW2MSoP1JvQd9xsWw@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: pm: fix duplicate hyperlink target errors
+To: Randy Dunlap <rdunlap@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
+	Jonathan Corbet <corbet@lwn.net>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	skhan@linuxfoundation.org, david.hunter.linux@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 29, 2025 at 6:01=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
+> wrote:
+>
+>
+>
+> On 10/29/25 3:55 AM, Bagas Sanjaya wrote:
+> > On Wed, Oct 29, 2025 at 01:47:37PM +0000, Swaraj Gaikwad wrote:
+> >> Fix reST warnings in
+> >> Documentation/admin-guide/pm/intel_pstate.rst caused by missing explic=
+it
+> >> hyperlink labels for section titles.
+> >>
+> >> Before this change, the following errors were printed during
+> >> `make htmldocs`:
+> >>
+> >>   Documentation/admin-guide/pm/intel_pstate.rst:401:
+> >>     ERROR: Indirect hyperlink target (id=3D"id6") refers to target
+> >>     "passive mode", which is a duplicate, and cannot be used as a
+> >>     unique reference.
+> >>   Documentation/admin-guide/pm/intel_pstate.rst:517:
+> >>     ERROR: Indirect hyperlink target (id=3D"id9") refers to target
+> >>     "active mode", which is a duplicate, and cannot be used as a
+> >>     unique reference.
+> >>   Documentation/admin-guide/pm/intel_pstate.rst:611:
+> >>     ERROR: Indirect hyperlink target (id=3D"id15") refers to target
+> >>     "global attributes", which is a duplicate, and cannot be used as
+> >>     a unique reference.
+> >>   ERROR: Duplicate target name, cannot be used as a unique reference:
+> >>   "passive mode", "active mode", "global attributes".
+> >
+> > Hmm... I don't see these warnings when I build htmldocs by:
+> >
+> >   $ make SPHINXOPTS=3D'-j 1' htmldocs
+> >
+> > My environment uses docutils 0.21.2 and Sphinx 8.2.3, though. What are =
+yours?
+>
+>
+> I do see the warnings and this patch fixes them in my testing.
+>
+> Acked-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>
+> docutils-3.13 (Docutils 0.22.2, Python 3.13.9, on linux)
+> sphinx-build 8.2.3
+>
+> >> diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documenta=
+tion/admin-guide/pm/intel_pstate.rst
+> >> index 26e702c7016e..9cdd9dad6516 100644
+> >> --- a/Documentation/admin-guide/pm/intel_pstate.rst
+> >> +++ b/Documentation/admin-guide/pm/intel_pstate.rst
+> >> @@ -62,6 +62,8 @@ a certain performance scaling algorithm.  Which of t=
+hem will be in effect
+> >>  depends on what kernel command line options are used and on the capab=
+ilities of
+> >>  the processor.
+> >>
+> >> +.. _Active Mode:
+> >> +
+> >>  Active Mode
+> >>  -----------
+> >>
+> >> @@ -94,6 +96,8 @@ Which of the P-state selection algorithms is used by=
+ default depends on the
+> >>  Namely, if that option is set, the ``performance`` algorithm will be =
+used by
+> >>  default, and the other one will be used by default if it is not set.
+> >>
+> >> +.. _Active Mode With HWP:
+> >> +
+> >>  Active Mode With HWP
+> >>  ~~~~~~~~~~~~~~~~~~~~
+> >>
+> >> @@ -192,6 +196,8 @@ This is the default P-state selection algorithm if=
+ the
+> >>  :c:macro:`CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE` kernel configurati=
+on option
+> >>  is not set.
+> >>
+> >> +.. _Passive Mode:
+> >> +
+> >>  Passive Mode
+> >>  ------------
+> >>
+> >> @@ -432,6 +438,8 @@ the ``energy_model`` directory in ``debugfs`` (typ=
+lically mounted on
+> >>  User Space Interface in ``sysfs``
+> >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >>
+> >> +.. _Global Attributes:
+> >> +
+> >>  Global Attributes
+> >>  -----------------
+> >>
+> >>
+> >
+> > The diff LGTM, nevertheless.
+> >
+> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-
-On 10/29/25 1:04 PM, Jacob Keller wrote:
-> 
-> 
-> On 10/29/2025 12:45 PM, Randy Dunlap wrote:
->> Hi Jacob,
->>
->> On 10/29/25 11:30 AM, Jacob Keller wrote:
->>> The python version of the kernel-doc parser emits some strange warnings
->>> with just a line number in certain cases:
->>>
->>> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
->>> Warning: 174
->>> Warning: 184
->>> Warning: 190
->>> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
->>> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
->>> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
->>> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
->>>
->>> I eventually tracked this down to the lone call of emit_msg() in the
->>> KernelEntry class, which looks like:
->>>
->>>   self.emit_msg(self.new_start_line, f"duplicate section name '{name}'\n")
->>>
->>> This looks like all the other emit_msg calls. Unfortunately, the definition
->>> within the KernelEntry class takes only a message parameter and not a line
->>> number. The intended message is passed as the warning!
->>>
->>> Pass the filename to the KernelEntry class, and use this to build the log
->>> message in the same way as the KernelDoc class does.
->>>
->>> To avoid future errors, mark the warning parameter for both emit_msg
->>> definitions as a keyword-only argument. This will prevent accidentally
->>> passing a string as the warning parameter in the future.
->>>
->>> Also fix the call in dump_section to avoid an unnecessary additional
->>> newline.
->>>
->>> Fixes: e3b42e94cf10 ("scripts/lib/kdoc/kdoc_parser.py: move kernel entry to a class")
->>> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
->>> ---
->>> We recently discovered this while working on some netdev text
->>> infrastructure. All of the duplicate section warnings are not being logged
->>> properly, which was confusing the warning comparison logic we have for
->>> testing patches in NIPA.
->>>
->>> This appears to have been caused by the optimizations in:
->>> https://lore.kernel.org/all/cover.1745564565.git.mchehab+huawei@kernel.org/
->>>
->>> Before this fix:
->>> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
->>> Warning: 174
->>> Warning: 184
->>> Warning: 190
->>> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
->>> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
->>> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
->>> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
->>>
->>> After this fix:
->>> $ ./scripts/kernel-doc -Wall -none 'include/linux/virtio_config.h'
->>> Warning: include/linux/virtio_config.h:174 duplicate section name 'Return'
->>> Warning: include/linux/virtio_config.h:184 duplicate section name 'Return'
->>> Warning: include/linux/virtio_config.h:190 duplicate section name 'Return'
->>> Warning: include/linux/virtio_config.h:226 No description found for return value of '__virtio_test_bit'
->>> Warning: include/linux/virtio_config.h:259 No description found for return value of 'virtio_has_feature'
->>> Warning: include/linux/virtio_config.h:283 No description found for return value of 'virtio_has_dma_quirk'
->>> Warning: include/linux/virtio_config.h:392 No description found for return value of 'virtqueue_set_affinity'
->>> ---
->>>  scripts/lib/kdoc/kdoc_parser.py | 20 ++++++++++++--------
->>>  1 file changed, 12 insertions(+), 8 deletions(-)
->>>
->>
->>> ---
->>> base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
->>> change-id: 20251029-jk-fix-kernel-doc-duplicate-return-warning-bd57ea39c628
->>
->> What is that base-commit? I don't have it.
->> It doesn't apply to linux-next (I didn't check docs-next).
->> It does apply cleanly to kernel v6.18-rc3.
->>
-> 
-> Hm. Its e53642b87a4f ("Merge tag 'v6.18-rc3-smb-server-fixes' of
-> git://git.samba.org/ksmbd") which was the top of
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git as of
-> when I made the commit. I wasn't sure which tree to base on since I'm
-> not a regular contributor to the docs stuff, so I just based on Linus's
-> tree instead of linux-next.
-> 
->> and it does fix the Warning messages to be something useful. Thanks.
->>
->> We'll have to see if Mauro already has a fix for this. (I reported
->> it a couple of weeks ago.)
-> 
-> I searched mail archives but didn't find a report, so hence the patch.
-> If this already has a proper fix thats fine.
-> 
-
-It was discussed here and Mauro said that he sent a patch but I still
-see those warnings in linux-next-20251029.
-
-https://lore.kernel.org/all/jd5uf3ud2khep2oqyos3uhfkuptvcm4zgboelfxjut43bxpr6o@ye24ej7g3p7n/
-
->> If not, then this will need to apply to docs-next AFAIK.
->>  
-> 
-> Ok, I can rebase if it is necessary. I'll check that out, and can send a
-> v2 if Mauro hasn't already fixed it somehow else.
-> 
->> And not a problem with this patch, but those Returns: lines for
->> each callback function shouldn't be there as Returns:. This is a
->> struct declaration, not a function (or macro) declaration/definition.
->>
-> 
-> Yep, thats an issue with the header. They're doing something weird by
-> doing some sort of sub-documentation for each method of an ops struct. I
-> don't really know what the best fix is for this doc file, nor do I
-> particularly care. I just used it as an example because its the one that
-> we ran into while looking at output from the netdev testing infrastructure.
-
--- 
-~Randy
-
+Applied as 6.19 material, thanks!
 
