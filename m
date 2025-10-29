@@ -1,157 +1,102 @@
-Return-Path: <linux-kernel+bounces-877112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7267C1D37C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:35:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95333C1D37F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:36:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8CD644E1835
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:35:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101A3407883
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4682B2773F0;
-	Wed, 29 Oct 2025 20:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED12337699;
+	Wed, 29 Oct 2025 20:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1MmPlY5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrC5gWSU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992BD28488F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2782773F0;
+	Wed, 29 Oct 2025 20:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770141; cv=none; b=DOP1xeAetzbgDW99ULfF8EHJcM2jOxc+N8gKSeKrpzBpe1/mMHpdhVgqs51DBE6zOMVEk1/zDVfixJIC076NvyoDhZtTCJfK57bfh1aShyBs6to5MhDBt1bXr6QE8+GUc+pwlUqU4Dq5DJTnOfP0VfeyEtCLpIVOgUAbrlu9r+w=
+	t=1761770201; cv=none; b=QvmnMQ6e5o5UnZxCFMB2wSEPJBncuBYr0ffTbwpLWre2XTSRnwoMRpIP9NagsMlM7XaUJ2boREPDXnp1u+5cVnf/vAD8ra6X8WY3rUpitjiLVizlmqrx/XZE1lMipqupJM7vj6PA8CTyOogiGUtEROg2Msb4Rl9sK38SZ2R5wZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770141; c=relaxed/simple;
-	bh=lYD0muXFu9fggdu87VY6CF+5BTZQ2OUkE9xGyXbV8Vc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XStLNmYJX0VsI9G3NWa1Bk4F5hv2vLiyypJJCjbJ63bJxIOPz0VchuM3ORAh/myVl1BgUIoqhV5A3Gjrlab8WSYmlai9ElXX7K5HMt9gypz5MXCH5jOeZt6w7bi3+RHorGR/AhXz8UWrdetpqWHErHzb1cpGD/osS8ygaWL/7MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1MmPlY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27080C4AF09
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:35:41 +0000 (UTC)
+	s=arc-20240116; t=1761770201; c=relaxed/simple;
+	bh=iOgHS+eZEE/s/+7/l6K7Sr/3V+3Pj70ijnv3Cvpoook=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwTNo8Cu/OgZv6mCQo3VgmgqF4NFBjzYxlgxL1TbIwSTEfnWTXRBJoxtdvkorsQoSMU/EmrA3B4aEm/of9RJ5zPDiZLE+GHrv/+5ovKnAahwuQNTdXH4E9oShKturquOkHRV12uv5GmvcyA/pr6yy9AZLP8fkRDUdY1WW3fjCT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrC5gWSU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E19A6C4CEF7;
+	Wed, 29 Oct 2025 20:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761770141;
-	bh=lYD0muXFu9fggdu87VY6CF+5BTZQ2OUkE9xGyXbV8Vc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=X1MmPlY5o2VbkE0S75tTCpdthU5ybWfKqePEfp52gvDWiZFVzBWSJDzNm2vZYw5VP
-	 fysHPzqHX9gKxfKo1Y5L57s+p2kk+xRv938lhV2lnS1WbnX7Co5+vdcml4M7QjBz+D
-	 pfq0TetxgKjpKgFzYnwF+5sr/pPxfm6pnslZQFDKO+dbTLEYzT+Nu16Y4ALeK3W3pS
-	 mhM2hhqO3tKHrToNuQ+NvCfFUaMp709Ld+PkAznWX/2BgbZlHa4LSt3OLrAkGl8Eeq
-	 kuDW3m4SFVl9GtP8E9EFDI21LpoVPPmT0q7Eg5aL5qPNPz6Fm01MDJyq7Vo1ofBNLD
-	 G2sQtKnGCp2eA==
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-44db11c7ed6so185806b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:35:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3uNMFgt55GhhIj2iDgNg8jYhr/Dv4hWkbN976a6d898wb/f2A3hQRgb20/eKpaUnQKCHUvSz4XIcxp+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxngsZ+AP7jOleVafIofIlFHsimbKu9B4IrykioNZlc+0PlIhHb
-	5UdDCnKf6Ufwzh2ukfcwWAKdggemvrVaMwVTVVblMnzSAbP0j1TnrmqyY/yBkLbJlL51RHXY3xD
-	XWkMh3Pl/9GOfPXLbnmMw/dFqU5AtI+I=
-X-Google-Smtp-Source: AGHT+IFbVxi7LbsX5YUUfQ1aT5pnE/KDuR8YytDX/7ChhJDUz+pyYC60KiLVJJhi8rQ2OM8j3vjPwGLR7TACFHK8M9E=
-X-Received: by 2002:a05:6808:2e4e:b0:437:eb1d:cdde with SMTP id
- 5614622812f47-44f89e61cf1mr307471b6e.33.1761770140410; Wed, 29 Oct 2025
- 13:35:40 -0700 (PDT)
+	s=k20201202; t=1761770201;
+	bh=iOgHS+eZEE/s/+7/l6K7Sr/3V+3Pj70ijnv3Cvpoook=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DrC5gWSUJMcUvoYLDXbfHIwK1tb2VBfHwJxQHwh7TzSL5xh8sdvcpQx06xLCpGTzD
+	 6QQbbuzI+A/83Qlo+5BQGNuXpAkQyO09qgmnhxbREexwqrM9/pbeWYilD3XQafjfXD
+	 HLxEIloCvEhH93/Qn0m2ZleVlXUNdrWWQldZwdOuIPMn2PXL+rj2ACGEwkcb3AhzfC
+	 8VL8fzNYLHsdvEe95oaGzi6RelBNNgGhKSWy70B1SDCA6SFjt2zL0ax7ezldRCYICq
+	 v5gj8faxK3Pe1LhmNADlsWAcETHsfwvDKTaSu7gFesptWU5Y/ZMOVqtl5nwTqZCsqJ
+	 P7/gghhtBrsOw==
+Date: Wed, 29 Oct 2025 10:36:39 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
+ to cgroups
+Message-ID: <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-3-roman.gushchin@linux.dev>
+ <aQJZgd8-xXpK-Af8@slm.duckdns.org>
+ <87ldkte9pr.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251017233907.2305303-1-wusamuel@google.com> <CAJZ5v0g37NNj3inHcrZG8NHeTAGAncLAY7t9Yj3bTAv7GgAQJQ@mail.gmail.com>
- <CAGETcx8ZL3jAwFRxO1B8SFSWmC2jCitc9_61hBG-N2AvzRQv7w@mail.gmail.com>
- <CAJZ5v0jiLzMvwBfcXKJEOMqa_U=6OeWymnBCBdxYfcgU+7P1Aw@mail.gmail.com>
- <CAJZ5v0hpG19Tj9qmTkXQ_6N+wTSBD4Lzx9UvFwTh3WtUagCOGQ@mail.gmail.com> <CAG2KctqoOPg4E6dN0UCjkTF8w0hC7FUwfYOWkw+i37G8OxcttQ@mail.gmail.com>
-In-Reply-To: <CAG2KctqoOPg4E6dN0UCjkTF8w0hC7FUwfYOWkw+i37G8OxcttQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Oct 2025 21:35:28 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i_is4JZFGZcZhc3oiCzeUygKziPEtw5MwF5aZZxdPdvA@mail.gmail.com>
-X-Gm-Features: AWmQ_blOrHFIHQp7OefqbbO1cKs3vHtaUIUrw5h3o2TrZ7nKp3yKIFOibyMnnKE
-Message-ID: <CAJZ5v0i_is4JZFGZcZhc3oiCzeUygKziPEtw5MwF5aZZxdPdvA@mail.gmail.com>
-Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
-To: Samuel Wu <wusamuel@google.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, tuhaowen@uniontech.com, 
-	kernel-team@android.com, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldkte9pr.fsf@linux.dev>
 
-On Wed, Oct 29, 2025 at 8:13=E2=80=AFPM Samuel Wu <wusamuel@google.com> wro=
-te:
->
-> On Wed, Oct 29, 2025 at 6:23=E2=80=AFAM Rafael J. Wysocki <rafael@kernel.=
-org> wrote:
-> >
-> > On Fri, Oct 24, 2025 at 10:37=E2=80=AFAM Rafael J. Wysocki <rafael@kern=
-el.org> wrote:
-> > >
-> > > On Fri, Oct 24, 2025 at 12:47=E2=80=AFAM Saravana Kannan <saravanak@g=
-oogle.com> wrote:
-> > > >
-> > > > On Thu, Oct 23, 2025 at 12:43=E2=80=AFPM Rafael J. Wysocki <rafael@=
-kernel.org> wrote:
-> > > > >
-> > > > > On Sat, Oct 18, 2025 at 1:39=E2=80=AFAM Samuel Wu <wusamuel@googl=
-e.com> wrote:
-> > > > > >
-> >
-> > [cut]
-> >
-> > > > >
-> > > > > If I'm not mistaken, the mechanism by which one more sync is star=
-ted
-> > > > > right after completing the previous one (that was in progress whe=
-n
-> > > > > suspend started) can be designed differently.
-> > > > >
-> > > > > 1. Use a dedicated ordered workqueue for the sync work items.
-> > > > > 2. Use a counter instead of the two boolean vars for synchronizat=
-ion.
-> > > > > 3. In pm_sleep_fs_sync(), if the counter is less than 2, incremen=
-t the
-> > > > > counter and queue up a sync work item.
-> > > > > 4. In sync_filesystems_fn(), decrement the counter.
-> > > >
-> > > > The problem with this is that we can't reuse the same work item. We=
-'ll
-> > > > have to allocate one each time. Otherwise, we'll be queuing one tha=
-t's
-> > > > already queued. Right?
-> > >
-> > > Of course you can't queue up an already queued work, but there may be
-> > > two of them and then in 3 above use work0 when the counter is 0 and
-> > > use work1 when the counter is 1.  No big deal.
-> >
-> > Moreover, sync_filesystems_fn() doesn't use its work argument, so the
-> > work can be requeued as soon as it is not pending.
-> >
-> > Now, when it is not pending, it has not been queued yet or the work
-> > function is running, which is exactly when you want it to be queued:
-> >
-> > 1. Use a dedicated ordered workqueue for the sync work items.
-> > 2. Use a counter instead of the two boolean vars for synchronization.
-> > 3. In pm_sleep_fs_sync(), if the work is not pending, queue it up and
-> > increment the counter.
-> > 4. In sync_filesystems_fn(), decrement the counter (after carrying out
-> > the fs sync) and complete the completion if the counter is 0.
->
-> Thank you for the thoughtful feedback Rafael.
->
-> I agree with these points and will incorporate it in v6; this approach
-> seems more elegant.
->
-> > Of course, the above requires locking, but I don't think that the lock
-> > needs to be spinlock.  A mutex would work just as well AFAICS.
-> >
-> > Thanks!
->
-> I'm still thinking this needs to be spin_lock_irqsave(), since
-> pm_stop_waiting_for_fs_sync() is called in an interrupt context and
-> needs the lock such that the abort signals don't get lost.
+On Wed, Oct 29, 2025 at 01:25:52PM -0700, Roman Gushchin wrote:
+> > BTW, for sched_ext sub-sched support, I'm just adding cgroup_id to
+> > struct_ops, which seems to work fine. It'd be nice to align on the same
+> > approach. What are the benefits of doing this through fd?
+> 
+> Then you can attach a single struct ops to multiple cgroups (or Idk
+> sockets or processes or some other objects in the future).
+> And IMO it's just a more generic solution.
 
-OK, I see.  __pm_stay_awake() will call it under a spinlock, for one exampl=
-e.
+I'm not very convinced that sharing a single struct_ops instance across
+multiple cgroups would be all that useful. If you map this to normal
+userspace programs, a given struct_ops instance is package of code and all
+the global data (maps). ie. it's not like running the same program multiple
+times against different targets. It's more akin to running a single program
+instance which can handle multiple targets.
 
-Yes, you need a spinlock, but in thread context it is sufficient to
-use spin_lock_irq() (no need to save the flags).
+Maybe that's useful in some cases, but that program would have to explicitly
+distinguish the cgroups that it's attached to. I have a hard time imagining
+use cases where a single struct_ops has to service multiple disjoint cgroups
+in the hierarchy and it ends up stepping outside of the usual operation
+model of cgroups - commonality being expressed through the hierarchical
+structure.
+
+Thanks.
+
+-- 
+tejun
 
