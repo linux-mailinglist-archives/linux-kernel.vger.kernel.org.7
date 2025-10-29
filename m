@@ -1,115 +1,251 @@
-Return-Path: <linux-kernel+bounces-875122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAA6C1843C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:58:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47486C18452
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:02:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6A81A27138
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 382883A7215
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E84C2F617A;
-	Wed, 29 Oct 2025 04:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842501B983F;
+	Wed, 29 Oct 2025 05:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ASucv68z"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9352F1FE2;
-	Wed, 29 Oct 2025 04:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Foi/6yUF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3AE22AE45;
+	Wed, 29 Oct 2025 05:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761713890; cv=none; b=rlubtWYKWD583DQyiplgzLs5zKDdGISiSLT1uWK2pLD8nsDZGDNJfoBirysssOHXnkY4mNg58m4ZqrGOkBs2wB+83aX+8CfDZRgVHlCQ6orZfSJ4jpvMOxOVdfoGoCA4leKVgNjWH7udgVw3rpjpkVM80OjBaG4YLtza2jB6M/0=
+	t=1761714115; cv=none; b=lq8x069LNckvQrpopTJ4jq6/VqNFaGrjpubPNooLSNF/KMCFd6kdEax8KcLyFEopGZq3h7giiMApWpAGvPFrLd8m8g0YrJtRMZVKaKkYeqKNw2ThExXIHAis6iZ53WEEQflD6FppoGuGQ3Hk92BkUiHwTgIgfp6RgpyxeCJfizA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761713890; c=relaxed/simple;
-	bh=GZYXUSYtyIYlOo3QBlsYXoJE5H9ioNVFGr9aV1N/wgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFUEF5Odyw4gPhzPQmBSQNq8YmVxrGwtfle3H6EpE08ySHOPglgDqsh+Qk2IW61QFVPCqMZZOCNt4f48Nfw1KTEqLA6UNu4fxd1KVboaFCWMtyuBopx2rxE1O14BjTPWxZSUeGlcRVS0RHJP/+fQhD+FqGurlPBi5DHeKyMgBgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ASucv68z; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=iLHGpr68jMu20RQ5Q/dozEDn13xb9hZQEqbOYuypP0M=; b=ASucv68zdF4Bj4WO3PElcBVkHf
-	V9mvI48KrW4m8hLw8diA2TdLycxk0Y2vKRkbw8CigUVJAhZS+ESl2r3GRycaox9O7EjbEiBvFMOk1
-	VWkDsBoGRNcy53PDotKOAhcF4ljQ94shQ/IYKMZp7c8pn9sjI8Qdeoh4BbgnAZsBsQO/P84RRoN49
-	8W6pJOu15RSMYqS4KNQpPgP+MvM0EtqOFiC2RXB1vzu+XmAu0V+BpixJeajkJF0YOljJUi9hU5ZWK
-	ekMDFhkcPoMe20XSAGMhpR36seKM4FIiai/NMGSDRQ7pw36FEFpM8FZYzdlvja1xyFv2x5qvKBl3R
-	3GVmqMTw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vDyG8-0000000HFMh-1mJe;
-	Wed, 29 Oct 2025 04:58:08 +0000
-Message-ID: <4521c29e-e6c3-4d9b-bbce-8ada0dd2065c@infradead.org>
-Date: Tue, 28 Oct 2025 21:58:07 -0700
+	s=arc-20240116; t=1761714115; c=relaxed/simple;
+	bh=onFVLHaGIAcOOv4qGlrIg5HkmAhMCYcJCT72zX99sJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVpLXHJBm5WHHJAA6H3soRoOBPt4RH5rdBFRi6v22DyXwI4RGcj7ceDWlqKOdjOqCdplGzmSZXhE2QSjlSZ6YagK1HP6XhVzd6fZFNIvaTh/Kx0C5cFZCj+j3FYwdXLvwutXNh3ew7LHtDAvryJzT6WjNVwaGq0pykMVBbTQIEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Foi/6yUF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from CPC-namja-1AYIP.redmond.corp.microsoft.com (unknown [4.213.232.42])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8C43F211D8DD;
+	Tue, 28 Oct 2025 22:01:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8C43F211D8DD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761714108;
+	bh=FgeKnxqByS7wC2/xBz4BK7tjh8skPgXPfIMThl9ihBs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Foi/6yUFfvfs9hKjDcX2+zTIWWrqnVvVyck9C7SOKv0kD792/8E1mS92z9Kny1VPh
+	 esCX2jCXTIOjfqzGRFWdJ4BG9Du/x2HHTh5xy2e+fmrJMnkEbjOcbEfhf3Ma2x5V8a
+	 0n+y09Cwjwf6ymdzXAByujwXaWnSiEFkNSZKDC5k=
+From: Naman Jain <namjain@linux.microsoft.com>
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>
+Cc: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Mukesh Rathor <mrathor@linux.microsoft.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Naman Jain <namjain@linux.microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	ALOK TIWARI <alok.a.tiwari@oracle.com>
+Subject: [PATCH v10 0/2] Drivers: hv: Introduce new driver - mshv_vtl
+Date: Wed, 29 Oct 2025 05:01:37 +0000
+Message-ID: <20251029050139.46545-1-namjain@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] Doucmentation: netconsole: Separate literal code
- blocks for full netcat command name versions
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Networking <netdev@vger.kernel.org>
-Cc: Breno Leitao <leitao@debian.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-References: <20251029015940.10350-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251029015940.10350-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+
+Introduce a new mshv_vtl driver to provide an interface for Virtual
+Machine Monitor like OpenVMM and its use as OpenHCL paravisor to
+control VTL0 (Virtual trust Level).
+Expose devices and support IOCTLs for features like VTL creation,
+VTL0 memory management, context switch, making hypercalls,
+mapping VTL0 address space to VTL2 userspace, getting new VMBus
+messages and channel events in VTL2 etc.
+
+OpenVMM : https://openvmm.dev/guide/
+
+Changes since v9:
+https://lore.kernel.org/all/20251017074507.142704-1-namjain@linux.microsoft.com/
+* Fixed CR2 restore logic in VTL return assembly code
+* Fixed an issue with rbp register clobbering in the wrapper function mshv_vtl_return_hypercall
+  and marked it with STACK_FRAME_NON_STANDARD_FP to prevent objtool warning.
+  This addresses an issue which manifested as a crash in VTL0, as the rbp register value set up
+  by VTL2 before VTL transition changes in this wrapper function as part of save restore of
+  stack pointer.
+* Minor checkpatch fix for use of extern function in hv_vtl.c
+* Rebased to tag: next-20251028
+
+Changes since v8:
+https://lore.kernel.org/all/20251013060353.67326-1-namjain@linux.microsoft.com/
+Addressed Sean's comments:
+* Removed forcing SIGPENDING, and other minor changes, in
+  mshv_vtl_ioctl_return_to_lower_vtl after referring
+  to Sean's earlier changes for xfer_to_guest_mode_handle_work.
+
+* Rebased and resolved merge conflicts, compilation errors on latest
+  linux-next kernel tip, after Roman's Confidential VM changes,
+  which merged recently. No functional changes.
+  https://lore.kernel.org/all/20251008233419.20372-1-romank@linux.microsoft.com/
+
+Changes since v7:
+https://lore.kernel.org/all/20250729051436.190703-1-namjain@linux.microsoft.com/
+Addressed Peter's concerns. Thanks Peter, Paolo, Sean for valuable inputs.
+Discussion- https://lore.kernel.org/all/20250825055208.238729-1-namjain@linux.microsoft.com/
+* moved assembly code to arch/x86/
+  * This prevents the need to export hv_hypercall_pg
+  * Will make it easier to add support for other architectures in the future
+* moved assembly code to a separate .S file (arch/x86/hyperv/mshv_vtl_asm.S)
+* Used noinstr for this new function in .S file
+* Fixed save/restore logic of callee registers, rbp to fix previous objtool warning
+* used static call instead of indirect call
+* used asm offsets similar to KVM code in assembly file (arch/x86/hyperv/mshv-asm-offsets.c)
+* Removed the usage of STACK_FRAME_NON_STANDARD.
+
+Other changes-
+* Changed logic to use xfer_to_guest_mode_handle_work and VIRT_XFER_TO_GUEST_WORK
+  after recently merged changes.
+* Removed Reviewed-by Tags after recent changes.
+
+Changes since v6:
+https://lore.kernel.org/all/20250724082547.195235-1-namjain@linux.microsoft.com/
+Addressed Michael's comments:
+* Corrected MAX_BITMAP_SIZE size - finally
+* Added missing __packed to hv_synic_overlay_page_msr
+* Fixed typo in comment, added CPU hotplug info in comments
+* Reverted to mutex_lock/unlock in mshv_vtl_ioctl_set_poll_file
+* Unified mshv_vtl_set_reg and mshv_vtl_get_reg
+* Dynamic to static allocation of reg in mshv_vtl_ioctl_(get|set)_regs
+* Fixed error handling in mshv_vtl_sint_ioctl_signal_event()
+
+Changes since v5:
+https://lore.kernel.org/all/20250611072704.83199-1-namjain@linux.microsoft.com/
+Addressed Michael Kelley's suggestions:
+* Added "depends on HYPERV_VTL_MODE", removed "depends on HYPERV" in Kconfig
+* Removed unused macro MAX_GUEST_MEM_SIZE
+* Made macro dependency explicit: MSHV_PG_OFF_CPU_MASK and MSHV_REAL_OFF_SHIFT
+* Refactored and corrected how allow_bitmap is used and defined. Removed PAGE_SIZE dependency.
+* Added __packed for structure definitions wherever it was missing.
+* Moved hv_register_vsm_* union definitions to hvgdk_mini.h, kept mshv_synic_overlay_page_msr
+  in the driver, renamed it and added a comment. (Nuno)
+* Introduced global variables input_vtl_zero and input_vtl_normal and used them everywhere these
+  were defined locally
+* s/"page_to_phys(reg_page) >> HV_HYP_PAGE_SHIFT"/"page_to_hvpfn(reg_page)" in
+  mshv_vtl_configure_reg_page
+* Refactored mshv_vtl_vmbus_isr() to reduce complexity in finding and resetting bits similar to
+  how vmbus_chan_sched is implemented.
+* Used __get_free_page() instead in mshv_vtl_alloc_context()
+* Added fallback hv_setup_vmbus_handler(vmbus_isr) in hv_vtl_setup_synic() and in
+  hv_vtl_remove_synic().
+* Maintained symmetry of functions in hv_vtl_remove_synic
+* Added a note for explanation of excluding last PFN in the range provided in
+  mshv_vtl_ioctl_add_vtl0_mem()
+* Added comments for hotplug being not supported, wherever cpu_online() was used to check if CPU
+  is online or not.
+* Added a check for input.cpu to make sure it's less than nr_cpu_ids in
+  mshv_vtl_ioctl_set_poll_file()
+* Removed switch-case and implemented static tables in mshv_vtl_(get|set)_reg for reducing LOC
+* Simplified mshv_vtl_ioctl_(get|set)_regs to process one register at a time, and fixed earlier
+  bug with array of registers processing.
+* Used hv_result_to_errno() in mshv_vtl_sint_ioctl_signal_event()
+* Added a READ_ONCE() while reading old_eventfd in mshv_vtl_sint_ioctl_set_eventfd()
+* Renamed mshv_vtl_hvcall and mshv_vtl_hvcall_setup to remove ambiguity
+* Took care of latest mm patches regarding PFN_DEV, pfn_t deprecation
+* Few other minor changes while reorganizing code.
+
+Addressed Markus Elfring's suggestions:
+* Used guard(mutex) for better mutex handling.
 
 
-(typo in Subject: "Doucmentation")
+Changes since v4:
+https://lore.kernel.org/all/20250610052435.1660967-1-namjain@linux.microsoft.com/
+* Fixed warnings from kernel test robot for missing export.h when the
+  kernel is compiled with W=1 option.
+  Some recent changes in kernel flags these warnings and that's why it
+  was not seen in previous runs. Warnings in other Hyper-V drivers
+  will be fixed separately.
+* No functional changes
 
-On 10/28/25 6:59 PM, Bagas Sanjaya wrote:
-> Both full and short (abbreviated) command name versions of netcat
-> example are combined in single literal code block due to 'or::'
-> paragraph being indented. Unindent it to separate the versions.
+Changes since v3:
+https://lore.kernel.org/all/20250519045642.50609-1-namjain@linux.microsoft.com/
+Addressed Stanislav's, Nuno's comments.
+* Change data types for different variables, excluding the ones in uapi headers
+* Added comment for the need of HUGEPAGES config in Kconfig.
+* generalized new IOCTL names by removing VTL in their name.
 
-            being indented one more space than the preceding
-	    paragraph (before the command example).
+* Rebased and added Saurabh's Reviewed-by tag
 
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Changes since v2:
+https://lore.kernel.org/all/20250512140432.2387503-1-namjain@linux.microsoft.com/
+* Removed CONFIG_OF dependency (addressed Saurabh's comments)
+* Fixed typo in "allow_map_intialized" variable name
 
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Changes since v1:
+https://lore.kernel.org/all/20250506084937.624680-1-namjain@linux.microsoft.com/
+Addressed Saurabh's comments:
+* Split the patch in 2 to keep export symbols separate
+* Make MSHV_VTL module tristate and fixed compilation warning that would come when HYPERV is
+  compiled as a module.
+* Remove the use of ref_count
+* Split functionality of mshv_vtl_ioctl_get_set_regs to different functions
+  mshv_vtl_ioctl_(get|set)_regs as it actually make things simpler
+* Fixed use of copy_from_user in atomic context in mshv_vtl_hvcall_call.
+  Added ToDo comment for info.
+* Added extra code to free memory for vtl in error scenarios in mshv_ioctl_create_vtl()
 
-Thanks.
+Addressed Alok's comments regarding:
+* Additional conditional checks
+* corrected typo in HV_X64_REGISTER_MSR_MTRR_PHYS_MASKB case
+* empty lines before return statement
+* Added/edited comments, variable names, structure field names as suggested to improve
+  documentation - no functional change here.
 
-> ---
->  Documentation/networking/netconsole.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/networking/netconsole.rst b/Documentation/networking/netconsole.rst
-> index 59cb9982afe60a..0816ce64dcfd68 100644
-> --- a/Documentation/networking/netconsole.rst
-> +++ b/Documentation/networking/netconsole.rst
-> @@ -91,7 +91,7 @@ for example:
->  
->  	nc -u -l -p <port>' / 'nc -u -l <port>
->  
-> -    or::
-> +   or::
->  
->  	netcat -u -l -p <port>' / 'netcat -u -l <port>
->  
-> 
-> base-commit: 61958b33ef0bab1c1874c933cd3910f495526782
+Naman Jain (2):
+  Drivers: hv: Export some symbols for mshv_vtl
+  Drivers: hv: Introduce mshv_vtl driver
 
+ arch/x86/hyperv/Makefile           |   10 +-
+ arch/x86/hyperv/hv_vtl.c           |   44 +
+ arch/x86/hyperv/mshv-asm-offsets.c |   37 +
+ arch/x86/hyperv/mshv_vtl_asm.S     |   98 ++
+ arch/x86/include/asm/mshyperv.h    |   32 +
+ drivers/hv/Kconfig                 |   26 +-
+ drivers/hv/Makefile                |    7 +-
+ drivers/hv/hv.c                    |    3 +
+ drivers/hv/hyperv_vmbus.h          |    1 +
+ drivers/hv/mshv_vtl.h              |   25 +
+ drivers/hv/mshv_vtl_main.c         | 1392 ++++++++++++++++++++++++++++
+ drivers/hv/vmbus_drv.c             |    4 +-
+ include/hyperv/hvgdk_mini.h        |  106 +++
+ include/uapi/linux/mshv.h          |   80 ++
+ 14 files changed, 1861 insertions(+), 4 deletions(-)
+ create mode 100644 arch/x86/hyperv/mshv-asm-offsets.c
+ create mode 100644 arch/x86/hyperv/mshv_vtl_asm.S
+ create mode 100644 drivers/hv/mshv_vtl.h
+ create mode 100644 drivers/hv/mshv_vtl_main.c
+
+
+base-commit: f7d2388eeec24966fc4d5cf32d706f0514f29ac5
 -- 
-~Randy
+2.43.0
+
 
