@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-876645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3ABFC1BF31
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:09:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A752C1BF9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E41E119C233C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9950419C13A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:08:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3995A343D6D;
-	Wed, 29 Oct 2025 16:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFFF3546F6;
+	Wed, 29 Oct 2025 16:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UZazVAyw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="nNs7kBlK"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6E12C237F;
-	Wed, 29 Oct 2025 16:03:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB2F34DCFE;
+	Wed, 29 Oct 2025 16:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753814; cv=none; b=KxopV5VkZa8RiAmu1A1cQx96+K9OlkZz0fywwROfzG4cJWTWaVAYFCwHithScJ1fhIaXeTmh34/f+M+aSAPjJ2QkLfZuTLl6y3+O5qMaL+Hn5yRyZsM9AWBYvsKCf6nLdfegSVM2wk2YPloBXDkh4BxoWVSn8ICTUhdVGPCXW6M=
+	t=1761753895; cv=none; b=lo2/w+JMtW60m53AMYPLh7f/lxgHeWk6gWT3gTZTtTgoWALIL6uNHf2IxiuxvL56rK2VxkZe8PAsJVacX4nuNADdBRpZflLN0KKHlIZL6gINpBfAYcT8ZI/sXuapg6PElWS4EErdkvQIYMfATuI3FWK1RgRut40uTrH26b7hkNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753814; c=relaxed/simple;
-	bh=FfclYtQFAd0PtMjK3+qpS/yxBf1x+RaiFiNBULZ/U3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqb1iCXu6cxo6cHgEq/nCB0eCoAWKIdd7Ha9CKMsmf8lPCI44yugGKzqFCrIR0jE/QlngDLtKxWZI1AD9USA4JwXwmtejNAjgaIbJRDWid9weOwZWILcKqkb++zImRXPZsOT2frjknQpbtfP4o0CjXNF0laF3popbWRq6gV6LG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UZazVAyw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7E2FF40E0225;
-	Wed, 29 Oct 2025 16:03:22 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id b68SWlHqScrq; Wed, 29 Oct 2025 16:03:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761753796; bh=NvADcwzZ1+racrdbp/ZQj9cqiUpC7r3/HTARgxhUBZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UZazVAywJ8fgK3v+5Ph2A87PExEsGP6o2Tr7wjzOks8MgwYk8e/ed4ihqHj8/1UU6
-	 +1NiW4ic16ccHZwUWJHu9e1Szr/ZC/TuhCi9iTexIqgSDeQDjXHVgJBRfREeQIchMu
-	 I1GMqHHn4kLs2U8hFA/Vl304GjYjHlyE5Fo8NJcO4hDwwE8UEYeeIBH+4+D/Aa3K35
-	 TGWMakik5IMwj3LkOQPWRPpshYDclgA81vK9mhxiVHyifRHiaw8sE25AhkQQT5ZM3c
-	 ruY0BWgcSw26h+DOTXr66HH12/5C+XaBn+vxvSRGUmRCHBvXRbvIvF2OXAhNplHEsz
-	 G3+0316aJT4Xm3RWnlNXgpVIq+JjXqALqDp2cpJB5wqPCcJUJY1JwRfXxFdNkcc9/8
-	 yKAOC9Rz8VZmC+01w2dMedFt3Jw9qdpRMUbswEC0Y3G/RLZTgOy9nXJj3/2mm9/9de
-	 rxRks8su3d8eEWW4FEznn0ZQVzDxZLrZ5Nu/ZGKfi6C2Zz1ZZEitsMR44itfiMi7Yq
-	 jA3qHOoFuYYn42Ofk8f4r4dplKdro2idX58lofQWDaSaQiJv4JrASTsZtjIAJPbk3q
-	 Qkdmbb9KYtjWtJ9O7kpdWo2z5D267cDDqKBlquqI7u0mFQO88OcU7NmyynRYrfG0Fx
-	 3GkRMLOduj+mQOI1JbMCqCwI=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 7AE9640E00DA;
-	Wed, 29 Oct 2025 16:03:04 +0000 (UTC)
-Date: Wed, 29 Oct 2025 17:02:58 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v7 2/8] x86/mce: Unify AMD DFR handler with MCA Polling
-Message-ID: <20251029160258.GCaQI6suTDcmG4UHwy@fat_crate.local>
-References: <20251024212723.GGaPvvO3l2OlUEG7Xn@fat_crate.local>
- <20251025150304.GXaPzmqFawI0NrCC-0@fat_crate.local>
- <20251027133542.GA8279@yaz-khff2.amd.com>
- <20251027141139.GA51741@yaz-khff2.amd.com>
- <20251028152231.GAaQDft32eXtTZBBzg@fat_crate.local>
- <20251028154258.GA526743@yaz-khff2.amd.com>
- <20251028174656.GBaQEBkOErfNAJbJsf@fat_crate.local>
- <20251028203719.GA655216@yaz-khff2.amd.com>
- <20251028231825.GDaQFPQflC7gyVOwMa@fat_crate.local>
- <20251029150912.GA113329@yaz-khff2.amd.com>
+	s=arc-20240116; t=1761753895; c=relaxed/simple;
+	bh=AbQbaLL02m4q7n1RQ5l0qlfzrr5SAXjX10+R/1QVLKw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hBPwGpC7HUFzr5UN/PZzbvbDWFjEk9/KPE2y5WkfNlpiizm5NHErz4tUYpmhkFIBPvUPafaDz9Ly9RjxhD7Wx+WSzsNWm1vjMUpJBlQ68KYOy2AWwxt9WMf5RGn5ipPx1ak4aGi+8xVe65xsXhhFSI4PYPtu2ei0VZlljQB5FCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=nNs7kBlK; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1761753884;
+	bh=AbQbaLL02m4q7n1RQ5l0qlfzrr5SAXjX10+R/1QVLKw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nNs7kBlK0zX6EsyuvY5TFW5u3KdFEMK5pLUGnzQqPnPewzNFxMNekeckLMPBZtlLE
+	 +J+1oo/7nkY9Vxjl9AchG6Go31Moy8XHGOvandvSsM5P1Ufz7OZgBkvcjmjEkjfHoi
+	 utIfRb/LJwJaGSwQSMC3MI0I9iS8TiyTUyCPkg9I=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 29 Oct 2025 17:02:59 +0100
+Subject: [PATCH 09/12] tools/nolibc: use a custom struct timespec
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251029150912.GA113329@yaz-khff2.amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251029-nolibc-uapi-types-v1-9-e79de3b215d8@weissschuh.net>
+References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
+In-Reply-To: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761753881; l=1391;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=AbQbaLL02m4q7n1RQ5l0qlfzrr5SAXjX10+R/1QVLKw=;
+ b=HmhPLCn3lnGdNx/D/+asK+nOBGjQ9BfJjj/EI1BBRCYDniMlxOGZUf3cbhp5CL4xbAoVeRKIP
+ fOufAYOYL2yAosmunVs6TMuTTXy0gVhcmGfzeiRH6VjJ1hqBVr5jiWj
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, Oct 29, 2025 at 11:09:12AM -0400, Yazen Ghannam wrote:
-> Why apply the fix ups to that?
+A custom 'struct timespec' will be necessary for 64-bit time types on
+32-bit architectures. <linux/time.h> will define other time-related
+types in terms of the custom definition.
 
-Too many patches flying back'n'forth. :-\
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ tools/include/nolibc/arch-s390.h | 3 +++
+ tools/include/nolibc/types.h     | 9 ++++++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-Lemme finish going through them and you can send a new set, pls.
-
-Thx.
+diff --git a/tools/include/nolibc/arch-s390.h b/tools/include/nolibc/arch-s390.h
+index 6237211385c0..1e87ac42ab9c 100644
+--- a/tools/include/nolibc/arch-s390.h
++++ b/tools/include/nolibc/arch-s390.h
+@@ -5,6 +5,9 @@
+ 
+ #ifndef _NOLIBC_ARCH_S390_H
+ #define _NOLIBC_ARCH_S390_H
++
++#include "types.h"
++
+ #include <linux/signal.h>
+ #include <linux/unistd.h>
+ 
+diff --git a/tools/include/nolibc/types.h b/tools/include/nolibc/types.h
+index 16c6e9ec9451..4f5a25567e5c 100644
+--- a/tools/include/nolibc/types.h
++++ b/tools/include/nolibc/types.h
+@@ -13,9 +13,16 @@
+ #include "std.h"
+ #include <linux/mman.h>
+ #include <linux/stat.h>
+-#include <linux/time.h>
+ #include <linux/wait.h>
+ 
++struct timespec {
++	time_t	tv_sec;
++	long	tv_nsec;
++};
++#define _STRUCT_TIMESPEC
++
++#include <linux/time.h>
++
+ 
+ /* Only the generic macros and types may be defined here. The arch-specific
+  * ones such as the O_RDONLY and related macros used by fcntl() and open()
 
 -- 
-Regards/Gruss,
-    Boris.
+2.51.1.dirty
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
