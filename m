@@ -1,140 +1,87 @@
-Return-Path: <linux-kernel+bounces-876802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB4EC1C656
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:16:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F7A1C1C7AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:37:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBB694E4EE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:11:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5703D5826E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34D334AB14;
-	Wed, 29 Oct 2025 17:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TPh9yUpp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC74E34AB06;
+	Wed, 29 Oct 2025 17:12:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCAEA3358BF;
-	Wed, 29 Oct 2025 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1700234AB12
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761757879; cv=none; b=hWIIyAUpbOOV8U5O18YNqOHaLBqo24toqoLlys1cdpRIFh02EDojg4YiP4xPDMhI1TPWuS0MEUXOOLF9pkepvvnmbJmZfyUgVeiS17015fLiHRdNhxZADBV/95nDDqP5QdiolLfLt9S8kEo7EGaTszptj5xWkfrySkwiJQkrFe4=
+	t=1761757924; cv=none; b=Hro1RYS+8MfLb/5eE5lMaC1sEJzZSOhmjc0xCWDyBcbkaKchcX08FgW2nv8cunpA+CnSCkYCeOHjPSc7WwXUmamaY5oYhy/41gDI2k21eUPw9nBspYbuZ3AdoHuHMuXrf6fjBhT3xjMXBdTU+u0hqOGWuIaWORL3coRx8N5J0lM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761757879; c=relaxed/simple;
-	bh=b/3xAp3gtlPCyOU2i6iKiC+6rwrJRI2LJEUZeFm3BI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KID6xZce7kB4BNd7jOYUyQSPvVAXiOSKTfkIOOhhclakuMYAvcCKMFZTMsuTg0CsyNx5lqa7Eok6HQ718d7kaBVtsP+beeimoTmZKHmXXIHgpYnpgqZXnSNjyTRZVWTcqMApnsklxb1tE9Nxo5INAmzqW17Y2mmMSO/N1AyTWag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TPh9yUpp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 84E0D40E021A;
-	Wed, 29 Oct 2025 17:11:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id XvSr6Ssn179V; Wed, 29 Oct 2025 17:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761757867; bh=6mCBYYZdn0PhLS3ufcM12xD6DGHvVl4j7clRBlgywMo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TPh9yUppyPGugYHAAwonSPZ09LUmJjUB3aKL9T5JCd5TSys9IAefzgfUU4orL5ErF
-	 spbm4r6q6ZJJJcJP8l7pwjyMuCGbWHupvEgXR9DG4mf1ZWqh+ytGg5frb+YwrYrGQS
-	 oVg9C5OEFA/s7/7H4hd+7hxiI87K9lV2WEcXhhg+c2nLeSb0YA/uDaf6DR86f0JOOy
-	 m8UJEpdbuN1rlxTYIox+WdPTALvBQki/RQHWxvuscLDSE2XnCnyUOOxZ1c4XophgY1
-	 Q+ZARQ9RmygsMQXC1FWDaxa0KMrrfOdWQK5Q6LYs3f30Tyotb/FlqyI2hyK974IoWJ
-	 hELyoBMbsinsN/UdAEDW3YD2S29QokQyQw7PR5DN+i2oWSk7qBViBXyl4UclRhbc0I
-	 J8KR+xpfCB+EjuZeFUudysNz0FqeoDlU3blxKb9/O7LXk/AoTu1mBrFbCWDC6Q4dLV
-	 beSWqxELs3IpUifLIN2mbWk0qU1hUsQgtE3utdG1KbBm+fj+ItSB5DzqlXm9MfNkkp
-	 om+9TMZ8Q5rDHt8HBb5AC0IPfa9ACGsvv6fs2jvhDH/LWS5kCtHjq0/uIJXVs7b2sw
-	 7P824UfpGfZuW/KeJzoTDS3Q9M/Fnm05YLpapPNidKAtYnRq0F2oKX7bPO5kR2QQHX
-	 Ui3GOuA7fOrrmWd1EDnUvMxg=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8D0C340E00DA;
-	Wed, 29 Oct 2025 17:11:03 +0000 (UTC)
-Date: Wed, 29 Oct 2025 18:10:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: linux-edac@vger.kernel.org, yazen.ghannam@amd.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] EDAC/amd64: Set zn_regs_v2 flag for all AMD Family
- 1Ah-based SOCs
-Message-ID: <20251029171057.GFaQJKoUUKI_VM2GXn@fat_crate.local>
-References: <20251013173632.1449366-1-avadhut.naik@amd.com>
- <20251013173632.1449366-4-avadhut.naik@amd.com>
+	s=arc-20240116; t=1761757924; c=relaxed/simple;
+	bh=LLI9Yc/5PylDKmnFXxl/RUIyH+Qewg4oeZGyh+FD4hQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mmVv2WkuuO8fsZgZ/X9a0kauijwTHX9LdvoKpcXmeQ76fALRWySvdNzpQZq/cBv0SBNDU1jWPxc2JlvgRJ1W2xVXVCXNHXIfulTnZMyBq/tW7QteaYQkwnrP/9t3j7r5w7UqhT0HMHRWXMYPi2lGWiDxf8AxSeIAxVe8ptSLI+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-94389ae547cso11648539f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:12:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761757922; x=1762362722;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uiqjft2r6zNLuSdN7NRRYGNuHbmCMPA+2iq1zWhMGcU=;
+        b=oTHRDA/0pqfc/qiFUi0XnZvf2RXlxqxwpbykEENWWkiDOX6iU5K98hc4woCF0Y8gNt
+         S/n7RBQh5Kt028cFxIgE0mD8oR6banE7OeA1XaTZiSxow1rOz9+Bsf4TV+SibBmusAUJ
+         M432uUASFNoyPSY3oBlCsjfLxBkcDiiFnNvSeZXcmWuKgCKjATDhlNcdtAF2a8yoklW4
+         i4boI+xkPa0+MGq3BJTub/6Vsn/mmX8pNp1PksOIwcS+TMxf/7hFBl9EyOjA2+Ee4kzE
+         yB8nZUvahN5zcuUEBXJCB6igVFP31P0nzKAs03/1TJXX+GtM/uGFCi6ouITtsZXCbUU/
+         RGvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVzPaPuke2dHXD5IB/iL1FnaVgMui4X65kHwYni5UxtNgkWxwdFgNw+++gCozXHGZ+BWhg0K5JjFHP1FjI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznSk1oIBdBM1rKkAdCsfY2CsgB3Sh1S64VF/oA4d8xxutMUnl6
+	oPnwvAfcXnPaFxUGw54gAZcl4IgfgwXETdExyAhYcDFI+zE+g6MfauXSnI1Olem1T1rW+DHkTHi
+	UuiuAz4Od4EVy0TsHBGv6U2pR5gUxxLGLlEVrvLXHBrGJlIejOUhJk0GHEuE=
+X-Google-Smtp-Source: AGHT+IFVGWhk4uNuq/3XSr2HmsTKn5LODCeLBH6XGXHRcYkXEMP7JELHoB/KmwKV/iNtHfluoy9qCfkKgvdGa6NILIQg7YNEKktQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251013173632.1449366-4-avadhut.naik@amd.com>
+X-Received: by 2002:a05:6e02:2409:b0:432:109d:cb12 with SMTP id
+ e9e14a558f8ab-432f9073efemr47555025ab.28.1761757922110; Wed, 29 Oct 2025
+ 10:12:02 -0700 (PDT)
+Date: Wed, 29 Oct 2025 10:12:02 -0700
+In-Reply-To: <CAPqLRf0faZTieiVe_6XuJdhR7A02Uv6xjO2adVRUqwRLaWK29Q@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69024ae2.050a0220.3344a1.042c.GAE@google.com>
+Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in bcmp (3)
+From: syzbot <syzbot+0399100e525dd9696764@syzkaller.appspotmail.com>
+To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 13, 2025 at 05:30:42PM +0000, Avadhut Naik wrote:
-> The zn_regs_v2 flag should be set for all AMD Family 1Ah-based SOCs.
-> 
-> Set the flag once for all 1Ah-based SOCs and avoid repetetive assignment.
+Hello,
 
-Unknown word [repetetive] in commit message.
-Suggestions: ['repetitive', 'repetitively', 'recitative', 'putative']
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Please introduce a spellchecker into your patch creation workflow.
+Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
 
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> ---
->  drivers/edac/amd64_edac.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-> index 2391f3469961..832f9675e7b0 100644
-> --- a/drivers/edac/amd64_edac.c
-> +++ b/drivers/edac/amd64_edac.c
-> @@ -3779,6 +3779,8 @@ static int per_family_init(struct amd64_pvt *pvt)
->  	else
->  		pvt->ops = &dct_ops;
->  
-> +	pvt->flags.zn_regs_v2 = (pvt->fam >= 0x1A) ? 1 : 0;
-> +
->  	switch (pvt->fam) {
->  	case 0xf:
->  		tmp_name				= (pvt->ext_model >= K8_REV_F) ?
-> @@ -3887,20 +3889,14 @@ static int per_family_init(struct amd64_pvt *pvt)
->  		switch (pvt->model) {
->  		case 0x00 ... 0x1f:
->  			pvt->max_mcs            = 12;
-> -			pvt->flags.zn_regs_v2   = 1;
-> -			break;
-> -		case 0x40 ... 0x4f:
-> -			pvt->flags.zn_regs_v2   = 1;
->  			break;
->  		case 0x50 ... 0x57:
->  		case 0xc0 ... 0xc7:
->  			pvt->max_mcs            = 16;
-> -			pvt->flags.zn_regs_v2   = 1;
->  			break;
->  		case 0x90 ... 0x9f:
->  		case 0xa0 ... 0xaf:
->  			pvt->max_mcs            = 8;
-> -			pvt->flags.zn_regs_v2   = 1;
->  			break;
->  		}
+Tested on:
 
-I'm not sure about this: if we hoist this particular assignment up, then
-what's the point of the tabellary switch-case where you can see at a quick
-glance, all the settings that we do per model...?
+commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10264fe2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c95b0be0c2d0972f
+dashboard link: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16913e7c580000
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Note: testing is done by a robot and is best-effort only.
 
