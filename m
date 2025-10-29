@@ -1,131 +1,90 @@
-Return-Path: <linux-kernel+bounces-876819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A1C3C1C6C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:26:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05017C1C6F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 988DF189D532
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:26:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98AE34E1B03
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0234EEF4;
-	Wed, 29 Oct 2025 17:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAE834C9A1;
+	Wed, 29 Oct 2025 17:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWuHWZJ+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlU1971g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68EB3112B7;
-	Wed, 29 Oct 2025 17:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1984D145355
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761758756; cv=none; b=qLJzXNSVm7tsSdyKAMJjGxjQFKF+TlGRt56wiFmefa8YsO1a+NN02kBOlKUxs3CFrn7IHUUu+Qq7ukMcLlCVMiu05CQmRsOVtWPf3QjgP9GLNCroKk5UEgtA8v3QGS7lYt8tS1XXqoelvr+g18krpDnyLmGDv8ZFM9Qwwf8wzRM=
+	t=1761758792; cv=none; b=Q4tjeNoJl5fCyR7UHgpLjXWPFWBeOgBYepGwNEq5mNpwibmm4OSRS+6Wlj4m+OPiCU1mMX7vA22vGixWrVxy3MeEUEfGg0XlVk3WLNWnAkZyOygnHLfg18IybykUJF5WvajmLGjCC9LlsKP2yWnmcFrpmGLp4Thttsj3fv1KNy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761758756; c=relaxed/simple;
-	bh=UNCv/SLEKVdIM0/F5Qh+o3LkOisYzz/k4Ngw7LOuDtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=p0lugZHE2BIj377K/CMISoCk59TqCapBwoxAI1ezwql2M6k7brcMu6U885L74Xmx4HBZvuPkKtSziO3mIJp9LgNWf8V2vNEzeOPxuzuMycx8Ll7y17Lfl1/npkCbuLRbspg2bRiEa4L0cjqAG1GRVJA2jM8avcKC+lnaruCRw84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWuHWZJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4A8C4CEF7;
-	Wed, 29 Oct 2025 17:25:56 +0000 (UTC)
+	s=arc-20240116; t=1761758792; c=relaxed/simple;
+	bh=COCBHjoGNg+MNgwpImmfllkJEQc0gKS1BnO36JSJT+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hKvliw/j7WwkutG82u83PmhnkvdEah8EHIexD6PFCjzZPFy2/mqCzo2Vqryo5MKJ+RyjSe/BUixlwH0Kifmei3MB9zoG5fNsoX1DDnttafPWfxzmyEoBoS8h/jeZaQrbqJVda16OHVDhKHqBT4dF2mpWFeRnrx7nji+1cvDX/YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlU1971g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48640C4CEF7;
+	Wed, 29 Oct 2025 17:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761758756;
-	bh=UNCv/SLEKVdIM0/F5Qh+o3LkOisYzz/k4Ngw7LOuDtI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=PWuHWZJ+oT416PmcdJeCl9fvjHCkJFvtKNX1frItmY4dqgCUDhAjz0oSZ9qODt2ef
-	 Io0O15PkPD/uyhqnbe/y9MiXW+KucYH9xYGU25wyKLDab0A3ELRwYUAHplXUIumVdO
-	 rg60yYQWUd/mefNR48m2K6ssxnsTARoDO0CREaMYhAARUKqxOwe1UMO0QEws9iAxai
-	 4VXTheLLFK1WBzjkyTWZiYk4EVK/ZqrBXYe63qdVM/xS0geger8Twg0mQvBB1ZwZKS
-	 dFAY9v4BQ9fbHFwx9W76Wrc0ho0S+1pglHvzoKxq8/sE+EVHKfhHGHBcgXvgxLqnGX
-	 STD/Opd53ruzQ==
-Date: Wed, 29 Oct 2025 12:25:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc: Johan Hovold <johan@kernel.org>, linux-pci@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
-	Naoki FUKAUMI <naoki@radxa.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Diederik de Haas <diederik@cknow-tech.com>,
-	Dragan Simic <dsimic@manjaro.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, Frank Li <Frank.li@nxp.com>,
-	"R.T.Dickinson" <rtd2@xtra.co.nz>,
-	mad skateman <madskateman@gmail.com>, hypexed@yahoo.com.au,
-	Christian Zigotzky <info@xenosoft.de>
-Subject: Re: [PATCH] PCI/ASPM: Enable only L0s and L1 for devicetree platforms
-Message-ID: <20251029172554.GA1571455@bhelgaas>
+	s=k20201202; t=1761758791;
+	bh=COCBHjoGNg+MNgwpImmfllkJEQc0gKS1BnO36JSJT+E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YlU1971gG22p/Dx7YV2h8reYt3n6Ia0q89xAHaMn7GmLNBp5rFBbyAZ4IDm/WZpg0
+	 /yO6WAp4trikzy/F7HsLTrqEL5wwOvy96jfkjuAyl80mI0ZMWUvfcKnkUrLb7Mho9u
+	 P2ZTeNVUBw+g+bbbj7u67EQXPgWT1/kXRZRnr4mxZl8x7q5+CIqOf02/T+VJs0UlZz
+	 p8I7SPHE9M1ElOfOKfJnRPVpQPcALfqQkbhyEi1vcsqB/aVokbwEkfsNxY7Aw/cBpy
+	 p6M1gej5wi8aCYPm0Uui+AFFG0mcV3rmqqYgHAr4ParDDVCw3QyZ07NloSfs78wLwB
+	 xAuOLjoBcazwQ==
+Date: Wed, 29 Oct 2025 10:26:30 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Gal Pressman <gal@nvidia.com>, Johan Hovold <johan@kernel.org>, Nicolas
+ Palix <nicolas.palix@imag.fr>, Alexei Lazar <alazar@nvidia.com>, Simon
+ Horman <horms@kernel.org>, cocci@inria.fr, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "scripts/coccinelle: Find PTR_ERR() to %pe
+ candidates"
+Message-ID: <20251029102630.2a9bd6e7@kernel.org>
+In-Reply-To: <47ef2f61-85c1-92fa-12dc-e5918d90488@inria.fr>
+References: <20251029132922.17329-1-johan@kernel.org>
+	<826f2fdb-bad8-44f4-8c8e-9353c3de73cd@nvidia.com>
+	<47ef2f61-85c1-92fa-12dc-e5918d90488@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D6280EFB-08D7-41EC-BAC6-FD7793A98A16@xenosoft.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 06:47:19AM +0100, Christian Zigotzky wrote:
-> > On 29 October 2025 at 00:33 am, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > ﻿On Mon, Oct 27, 2025 at 06:12:24PM +0100, Christian Zigotzky wrote:
-> >> Hi All,
-> >> 
-> >> I activated CONFIG_PCIEASPM and CONFIG_PCIEASPM_DEFAULT again for the RC3 of
-> >> kernel 6.18. Unfortunately my AMD Radeon HD6870 doesn't work with the latest
-> >> patches.
-> >> 
-> >> But that doesn't matter because we disable the above kernel options by
-> >> default. We don't need power management for PCI Express because of boot
-> >> issues and performance issues.
-> > 
-> > If you have a chance, could you try the patch below on top of
-> > v6.18-rc3 with CONFIG_PCIEASPM=y?
-> > 
-> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> > index 214ed060ca1b..2b6d4e0958aa 100644
-> > --- a/drivers/pci/quirks.c
-> > +++ b/drivers/pci/quirks.c
-> > @@ -2524,6 +2524,7 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
-> >  * disable both L0s and L1 for now to be safe.
-> >  */
-> > DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
-> > +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1);
-> > 
-> > /*
-> >  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
+On Wed, 29 Oct 2025 15:04:36 +0100 (CET) Julia Lawall wrote:
+> > The test by no means mandates authors to use %pe, as the output says:
+> > WARNING: Consider using %pe to print PTR_ERR()
+> >
+> > "Consider" :).
+> >
+> > I would consider it best practice to use it, and a few drivers were
+> > converted thanks to this test.
+> >
+> > If the issue is with automatic build bots, then maybe this test should
+> > be excluded from them, rather than deleted?  
 > 
-> Thanks for the patch. 
-> 
-> I will test it on my FSL Cyrus+ board over the weekend.
-> BTW, I also tested my PASemi Nemo board with the RC3 of kernel 6.18
-> and with power management for PCI Express enabled. Unfortunately,
-> the installed AMD Radeon HD5870 does not work with power management
-> for PCI Express enabled either.
+> This is easy to do.  Or I can discard them when they come to me for
+> approval.
 
-Oops, I made that fixup run too late.  Instead of the patch above, can
-you test the one below?
+FWIW I'd also prefer for the script to say in the tree.
+Some kind of opt-out mechanism per subsystem would be ideal, 
+and presumably belongs in the bots themselves. We maintain 
+a list of regexp's in netdev CI to silence cocci checks we 
+don't find worth complaining about. But the %pe check so far 
+have not been too bad. 
 
-You'll likely see something like this, which is a little misleading
-because even though we claim "default L1" for 01:00.0 (or whatever
-your Radeon is), the fact that L0s and L1 are disabled at the other
-end of the link (00:00.0) should prevent us from actually enabling it:
-
-  pci 0000:00:00.0: Disabling ASPM L0s/L1
-  pci 0000:01:00.0: ASPM: default states L1
-
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 214ed060ca1b..27777ded9a2c 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -2524,6 +2524,7 @@ static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
-  * disable both L0s and L1 for now to be safe.
-  */
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_ASMEDIA, 0x1080, quirk_disable_aspm_l0s_l1);
-+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_FREESCALE, 0x0451, quirk_disable_aspm_l0s_l1);
- 
- /*
-  * Some Pericom PCIe-to-PCI bridges in reverse mode need the PCIe Retrain
+And we have a policy against semi-automated patches which "clean up"
+cocci or checkpatch warnings. Something we may want to adopt more
+widely.
 
