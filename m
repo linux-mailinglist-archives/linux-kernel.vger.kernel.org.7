@@ -1,174 +1,221 @@
-Return-Path: <linux-kernel+bounces-876870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5248EC1CB75
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:13:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562FCC1CA27
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:59:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18C645662F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:55:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9108C4E2391
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23F235470C;
-	Wed, 29 Oct 2025 17:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A53354AC8;
+	Wed, 29 Oct 2025 17:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2tj5JN3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nrf0lCxh"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CFB51DF271;
-	Wed, 29 Oct 2025 17:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3E3354AD0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760497; cv=none; b=KERDGwmHBcExE++Uw+H/OtHQPDk3EzMrypDuVjOO7TNBQkliIZfS8b8IUYBXK03QxeRe4xmqfek3e9ur0CHRLNNANAn7a/PCGr3nUXZgtqO9pnsU8m3270L6PbQLXs8DUmgIER2Gys4UOVI7eIbwBAfxd2YnNn+5EkJBb6GUoy4=
+	t=1761760605; cv=none; b=PlFDxXfk/0SFqNQXtOHW21FnF+YThUsXnq9vSsAMeVssvkHRK7ANgv1tZVdQYPmTu95ln74EiJoJqvfiKzOUwImiyShhVenjbKgJ+m/pwlLFxuC0eSgNMvIcdGJ+wzfkfGTrml4re3/gCaosS3HdHzWjU65Prw1i8m7Y9qhWeAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760497; c=relaxed/simple;
-	bh=bCXLipd8jw4UWfF/s5HKsZqILEHRwryjypVy7tkLUjI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SE8hhSF6VjXj3UE8gGu0sTtWBR3mQErjtPDknQEHe0uyy/a1yF8OrTv6POX16q2y+TKBwdWV2BdOI0vuYl2Z9JyNk/1oHf7a1024ACHc7HABI9luhkbIdKa0UiqxlK2jMwA0Kpsnb2rQNT2aigIgSmveEik/dorqlAFnD1gm+Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2tj5JN3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99C8C4CEF7;
-	Wed, 29 Oct 2025 17:54:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761760496;
-	bh=bCXLipd8jw4UWfF/s5HKsZqILEHRwryjypVy7tkLUjI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e2tj5JN387EOqfUzqfbcncN6EFYT4OwAISQxnGTNRwt+7QYfTddUa14wSsM/M0eA/
-	 lY+4h6ETkKg7o3jpW85ZU0y2lae7avMVcvFP7v/SEFsbARyqbD0oNiAiLvpe1CYzaT
-	 IuuzqvjzurbH11uNGwmCPkUZ546lWRVfgAUGPFrvFYOTckwvUFggfO++KsGCS+GWm1
-	 /xbtIUCkwcQ31tp67OcF3lTVc55SJPPSso6hov6boz113Vahc+Jifr4Q5NNedVELLK
-	 jLA5Jby4dX9uSizqMTZpb9knFrinWRP79P6aK0nswAcv++PSsewUjwlZK90MSo9Nlt
-	 NG/j0vZNGZQHQ==
-Date: Wed, 29 Oct 2025 17:54:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Han Gao <rabenda.cn@gmail.com>, Icenowy Zheng <uwu@icenowy.me>,
-	Vivian Wang <wangruikang@iscas.ac.cn>, Yao Zi <ziyao@disroot.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: net: sophgo,sg2044-dwmac: add phy
- mode restriction
-Message-ID: <20251029-fading-expulsion-f0911c28d23d@spud>
-References: <20251028003858.267040-1-inochiama@gmail.com>
- <20251028003858.267040-2-inochiama@gmail.com>
- <20251028-parka-proud-265e5b342b8e@spud>
- <rclupbdjyk67fee2lgf74k6tkf7mnjcxzwcjvyk2bohgpetqt5@toxvy3m5orm2>
+	s=arc-20240116; t=1761760605; c=relaxed/simple;
+	bh=dQC30MHTvswSnusn5NOPjHmGoeeb2j1cD3HcbesEOFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfi0fO5u2ZkeTuDsb19BLgj470d2ciA8Wnq+QadbZvOASpat97WfPdU2CqstqY6a9Qyp5pFCFT1yeleXdLcfgpgZxQeWeXXEvg+DNpuEcog4ohW+RWdnQSD59zawxsJ0WW/l9VNzjhnNzZo61TblR9YNIoYIBjT9BmQOMZgxT0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nrf0lCxh; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7a6be149-9e04-444e-a433-49450385d6a0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761760590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ppd0RHap4q7bSCes82xlTLvMUFropcMpTg+3MxryB3c=;
+	b=nrf0lCxhmc2lqlJiWe4YAO99sFd0VWUhwpdBQuozQojjIKuPKXFjvPd6+SDExpptyAoSW+
+	rtEHu8cGVS5FatxkW3l8Xsu7eCTWzdvE0lP7zhPDwyP94kto5OW1YVfadpn2ys/7/3aVE5
+	jdxCVH0oM92ZV21XRgiZl07i28tmDoM=
+Date: Wed, 29 Oct 2025 10:56:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xiR9j6m1veV/qNYv"
-Content-Disposition: inline
-In-Reply-To: <rclupbdjyk67fee2lgf74k6tkf7mnjcxzwcjvyk2bohgpetqt5@toxvy3m5orm2>
+Subject: Re: [RFC bpf-next 1/2] bpftool: Print map ID upon creation and
+ support JSON output
+Content-Language: en-GB
+To: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
+ bpf@vger.kernel.org
+Cc: alan.maguire@oracle.com, Quentin Monnet <qmo@kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20251028125705.3586552-1-harshit.m.mogalapalli@oracle.com>
+ <20251028125705.3586552-2-harshit.m.mogalapalli@oracle.com>
+ <89b12696-26ff-411f-9cd3-74361f0f1ecd@linux.dev>
+ <cc32d3db-60ef-4046-8988-289cd0cc8c26@oracle.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <cc32d3db-60ef-4046-8988-289cd0cc8c26@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
---xiR9j6m1veV/qNYv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 08:56:09AM +0800, Inochi Amaoto wrote:
-> On Tue, Oct 28, 2025 at 07:22:37PM +0000, Conor Dooley wrote:
-> > On Tue, Oct 28, 2025 at 08:38:56AM +0800, Inochi Amaoto wrote:
-> > > As the ethernet controller of SG2044 and SG2042 only supports
-> > > RGMII phy. Add phy-mode property to restrict the value.
-> > >=20
-> > > Also, since SG2042 has internal rx delay in its mac, make
-> > > only "rgmii-txid" and "rgmii-id" valid for phy-mode.
-> >=20
-> > Should this have a fixes tag?
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> >=20
->=20
-> Although I add a fixes tag to the driver, I am not sure whether the
-> binding requires it. But if it is required, I think it should be
+On 10/29/25 9:05 AM, Harshit Mogalapalli wrote:
+> Hi Yonghong,
+>
+>
+> On 29/10/25 07:44, Yonghong Song wrote:
+>>
+>>
+>> On 10/28/25 5:57 AM, Harshit Mogalapalli wrote:
+>>> It is useful to print map ID on successful creation.
+>>>
+>>> JSON case:
+>>> $ ./bpftool -j map create /sys/fs/bpf/test_map4 type hash key 4 
+>>> value 8 entries 128 name map4
+>>> {"id":12}
+>>>
+>>> Generic case:
+>>> $ ./bpftool  map create /sys/fs/bpf/test_map5 type hash key 4 value 
+>>> 8 entries 128 name map5
+>>> Map successfully created with ID: 15
+>>>
+>>> Bpftool Issue: https://github.com/libbpf/bpftool/issues/121
+>>> Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+>>> ---
+>>>   tools/bpf/bpftool/map.c | 24 ++++++++++++++++++++----
+>>>   1 file changed, 20 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/tools/bpf/bpftool/map.c b/tools/bpf/bpftool/map.c
+>>> index c9de44a45778..b6580f25361d 100644
+>>> --- a/tools/bpf/bpftool/map.c
+>>> +++ b/tools/bpf/bpftool/map.c
+>>> @@ -1251,6 +1251,8 @@ static int do_create(int argc, char **argv)
+>>>       LIBBPF_OPTS(bpf_map_create_opts, attr);
+>>>       enum bpf_map_type map_type = BPF_MAP_TYPE_UNSPEC;
+>>>       __u32 key_size = 0, value_size = 0, max_entries = 0;
+>>> +    struct bpf_map_info map_info = {};
+>>> +    __u32 map_info_len = sizeof(map_info);
+>>>       const char *map_name = NULL;
+>>>       const char *pinfile;
+>>>       int err = -1, fd;
+>>> @@ -1353,13 +1355,27 @@ static int do_create(int argc, char **argv)
+>>>       }
+>>>       err = do_pin_fd(fd, pinfile);
+>>> -    close(fd);
+>>> -    if (err)
+>>> +    if (err) {
+>>> +        close(fd);
+>>
+>> I think you can remove close(fd) here,
+>>
+>>>           goto exit;
+>>> +    }
+>>> -    if (json_output)
+>>> -        jsonw_null(json_wtr);
+>>> +    err = bpf_obj_get_info_by_fd(fd, &map_info, &map_info_len);
+>>> +    if (err) {
+>>> +        p_err("Failed to fetch map info: %s\n", strerror(errno));
+>>> +        close(fd);
+>>
+>> and here
+>>
+>>> +        goto exit;
+>>> +    }
+>>> +    close(fd);
+>>
+>> and here,
+>>
+>>> +
+>>> +    if (json_output) {
+>>> +        jsonw_start_object(json_wtr);
+>>> +        jsonw_int_field(json_wtr, "id", map_info.id);
+>>> +        jsonw_end_object(json_wtr);
+>>> +    } else {
+>>> +        printf("Map successfully created with ID: %u\n", map_info.id);
+>>> +    }
+>>>   exit:
+>>
+>> and put close(fd) here.
+>
+> I think we need one more close_fd: label and then put a close(fd); 
+> here. As there are other gotos to exit earlier in this function when 
+> fd is uninitialized, which can the error like:
+>
+> map.c: In function ‘do_create’:
+> map.c:1375:9: warning: ‘fd’ may be used uninitialized 
+> [-Wmaybe-uninitialized]
+>  1375 |         close(fd);
+>       |         ^~~~~~~~~
+> map.c:1258:23: note: ‘fd’ was declared here
+>  1258 |         int err = -1, fd;
+>       |                       ^~
+>
+>
+>
+> So, maybe we could do something like this:
+>
+>         err = do_pin_fd(fd, pinfile);
+> -       close(fd);
+>         if (err)
+> -               goto exit;
+> +               goto close_fd;
+>
+> -       if (json_output)
+> -               jsonw_null(json_wtr);
+> +       err = bpf_obj_get_info_by_fd(fd, &map_info, &map_info_len);
+> +       if (err) {
+> +               p_err("Failed to fetch map info: %s\n", strerror(errno));
+> +               goto close_fd;
+> +       }
+>
+> +       if (json_output) {
+> +               jsonw_start_object(json_wtr);
+> +               jsonw_int_field(json_wtr, "id", map_info.id);
+> +               jsonw_end_object(json_wtr);
+> +       } else {
+> +               printf("Map successfully created with ID: %u\n", 
+> map_info.id);
+> +       }
+> +close_fd:
+> +       close(fd);
+>  exit:
+>         if (attr.inner_map_fd > 0)
+>                 close(attr.inner_map_fd);
+>
+> I can prepare a v2 with this change, but wouldn't it be simpler to add a
+> direct close(fd); on the few error paths instead of introducing an
+> additional label for close(fd);?
 
-Kinda depends for bindings, amending a binding for completeness probably
-doesn't need one but amending it to actually permit a functional
-configuration does. This is somewhere in-between I suppose. If a driver
-change is coming along with it which is likely to be backported, that'd
-be a vote in favour of a fixes tag here too, so that the binding and
-driver match in stable.
+The above change LGTM. Thanks!
 
->=20
-> Fixes: e281c48a7336 ("dt-bindings: net: sophgo,sg2044-dwmac: Add support =
-for Sophgo SG2042 dwmac")
->=20
-> > >=20
-> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > ---
-> > >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 20 +++++++++++++++++=
-++
-> > >  1 file changed, 20 insertions(+)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwma=
-c.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > index ce21979a2d9a..916ef8f4838a 100644
-> > > --- a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > @@ -70,6 +70,26 @@ required:
-> > > =20
-> > >  allOf:
-> > >    - $ref: snps,dwmac.yaml#
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: sophgo,sg2042-dwmac
-> > > +    then:
-> > > +      properties:
-> > > +        phy-mode:
-> > > +          enum:
-> > > +            - rgmii-txid
-> > > +            - rgmii-id
-> > > +    else:
-> > > +      properties:
-> > > +        phy-mode:
-> > > +          enum:
-> > > +            - rgmii
-> > > +            - rgmii-rxid
-> > > +            - rgmii-txid
-> > > +            - rgmii-id
-> > > +
-> > > =20
-> > >  unevaluatedProperties: false
-> > > =20
-> > > --=20
-> > > 2.51.1
-> > >=20
->=20
->=20
+>
+> Thoughts/Suggestions ?
+>
+> Thanks,
+> Harshit
+>
+>>
+>>>       if (attr.inner_map_fd > 0)
+>>>           close(attr.inner_map_fd);
+>>
+>>
+>
+>
 
---xiR9j6m1veV/qNYv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJU6QAKCRB4tDGHoIJi
-0r18AP9YHrFoYXPV2dEPqru+c49A0QRQ0TNcKAkMQ1H/ppaEYgD9FQ3HpD0h2vUk
-e+BRSTPq5uaZbxl+044FWdyYYKRVCQE=
-=moFb
------END PGP SIGNATURE-----
-
---xiR9j6m1veV/qNYv--
 
