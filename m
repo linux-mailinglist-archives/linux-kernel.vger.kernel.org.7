@@ -1,288 +1,721 @@
-Return-Path: <linux-kernel+bounces-876404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72393C1B658
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:50:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEEC0C1B6C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:53:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4206B1883ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F251889E4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F99A34FF7C;
-	Wed, 29 Oct 2025 14:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157223358D3;
+	Wed, 29 Oct 2025 14:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy2ejHyb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXvv7lfk";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy2ejHyb";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXvv7lfk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CXj5t/5N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93EF2D7392
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949972C2369
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748703; cv=none; b=AQo9/1HswmWL2EJmyfKOcxR35u0HmJLoYLnNF5sEhYg9uMAwATGE4hh3w8O+QAOzZADTRdVwjo0Z3YiSelgxYQUowY5Y8GJmwYifiK5/mI8fFb8mOxr36UY8YmM9ffcIUn+GzRMywAlBXgrjgAwRdDqdU4BH2UGq6FAZ6s/h52E=
+	t=1761748843; cv=none; b=jVu4b3UUag4N7Zt24XIX5GeWiJgGOUCrhYY3Y/PJf3vnBlG70XoOxox8EWufdT5F9ytD16UfdsEQvAVdK7wP5gIqBJXVvEP7ND7mDu7Cqb0Lhzfk/gZHbj+8u+7uYYpsG5vxiMvGvi7cLDEqPoO8Y+0xvZd22b+P1LwvfRpt77Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748703; c=relaxed/simple;
-	bh=+OYNezwCdHPcIa2xj8N5yM4i1P7ax/j/IBNi13xhreE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aU3WyS+WqlnXK0W1teu3uQDU7xMv6SW/nGeYYs24Z4Bp4yP50Gv+6No43U19MobA9N67nTG2pKk8OoCBOvj/XABGADE9Cs/0K1hbZmmH8ohUdNiBeomDop0Hqf6EIVxHhnxR2Z0QkaEyZdKL2qwk5vE+eiCGyW6Z6ZNU0BVscZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy2ejHyb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXvv7lfk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy2ejHyb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXvv7lfk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B80E020E00;
-	Wed, 29 Oct 2025 14:38:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761748698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
-	b=Dy2ejHybghJItGmopa/mI7O5bjUrZCtn3b4fnZGRLGrPLEOkqsmOrS5cP0XTNuPIWJaCQr
-	yPGkp+x0d9V4weD10d9dD5TuxNIxhCR0zxzJZp+8Dm+W/inaVh+TXmqekiOf5DWHR/y6ui
-	zIUvY2G25Azrbf2zHT4q8LcEg5VZuGg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761748698;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
-	b=YXvv7lfku3lTexPm4eW8ZyAx/WioeWafv3duPsNvEUqN1pgAIKXLHSx5HQH1JkQo+myXA9
-	2ul1Eue4yN0YgrAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Dy2ejHyb;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=YXvv7lfk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761748698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
-	b=Dy2ejHybghJItGmopa/mI7O5bjUrZCtn3b4fnZGRLGrPLEOkqsmOrS5cP0XTNuPIWJaCQr
-	yPGkp+x0d9V4weD10d9dD5TuxNIxhCR0zxzJZp+8Dm+W/inaVh+TXmqekiOf5DWHR/y6ui
-	zIUvY2G25Azrbf2zHT4q8LcEg5VZuGg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761748698;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
-	b=YXvv7lfku3lTexPm4eW8ZyAx/WioeWafv3duPsNvEUqN1pgAIKXLHSx5HQH1JkQo+myXA9
-	2ul1Eue4yN0YgrAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9980F1349D;
-	Wed, 29 Oct 2025 14:38:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TG6wJNomAmldPgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 14:38:18 +0000
-Message-ID: <0f630d2a-3057-49f7-a505-f16866e1ed08@suse.cz>
-Date: Wed, 29 Oct 2025 15:38:18 +0100
+	s=arc-20240116; t=1761748843; c=relaxed/simple;
+	bh=RkrWx9wGlQVwPI3vNG5RRIbEUgZ2eb5Z5N4c850R3s8=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=V7nGj2mEP03Jf9v/U9op4oB7EW3Qn3EZSF5w3T+LSHMx6wkY9rPDK+bpolBGJMm2VMRw+mi8UEDuIupc1FlYJsf8P3e8FOvZRaV3/B7mhUHxjloQKKsoJcc8zyHsnMkfhMNPuOb3Ji0k7fr5oBXADZEMJ7xjriHNcS47Jm06zek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CXj5t/5N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23813C116B1;
+	Wed, 29 Oct 2025 14:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761748843;
+	bh=RkrWx9wGlQVwPI3vNG5RRIbEUgZ2eb5Z5N4c850R3s8=;
+	h=Date:From:To:Cc:Subject:References:From;
+	b=CXj5t/5Nkl/brVIktYpOSR8CIjfvuD0qZjqOk7KnXjYW7OGCsP3iAk18VV9vJmcQV
+	 LYD6P3ehoohqQbuGil7f8b4nxSfGSdb/SlNhxozWWbq1uM9CqRKbjmd3qeVaH0WRBn
+	 HdkaeVvw2kV+lXS3KxlO1b6CBOax5wyEBWR+c0T2yDWrgr8PImLKprMH2ReIIvRlVU
+	 OM0L8Sw08Q4pgVC5IvZOV908s+iH4Tv4W8BUdjrmH7gEmxKk6oIcRPzyL2w/BP9saw
+	 zBivC3V1WW2R6qHDdFMxQEouYzw+1Mi+Oyyehm9YgBWESMGU4GVCWeKQ8SKXct8Ogj
+	 m1Fdh7kmY4tzw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1vE7MZ-000000052uk-3noK;
+	Wed, 29 Oct 2025 10:41:23 -0400
+Message-ID: <20251029144123.760202581@kernel.org>
+User-Agent: quilt/0.68
+Date: Wed, 29 Oct 2025 10:40:43 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>,
+ Takaya Saeki <takayas@google.com>,
+ Tom Zanussi <zanussi@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ian Rogers <irogers@google.com>,
+ Douglas Raillard <douglas.raillard@arm.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Ingo Molnar <mingo@redhat.com>
+Subject: [for-next][PATCH 02/13] tracing: Have syscall trace events read user space string
+References: <20251029144041.475297995@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 01/19] slab: move kfence_alloc() out of internal bulk
- alloc
-Content-Language: en-US
-To: Marco Elver <elver@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- bpf@vger.kernel.org, kasan-dev@googlegroups.com,
- Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
- <20251023-sheaves-for-all-v1-1-6ffa2c9941c0@suse.cz>
- <CANpmjNM06dVYKrraAb-XfF02u8+Jnh-rA5rhCEws4XLqVxdfWg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CANpmjNM06dVYKrraAb-XfF02u8+Jnh-rA5rhCEws4XLqVxdfWg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: B80E020E00
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
 
-On 10/23/25 17:20, Marco Elver wrote:
-> On Thu, 23 Oct 2025 at 15:53, Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> SLUB's internal bulk allocation __kmem_cache_alloc_bulk() can currently
->> allocate some objects from KFENCE, i.e. when refilling a sheaf. It works
->> but it's conceptually the wrong layer, as KFENCE allocations should only
->> happen when objects are actually handed out from slab to its users.
->>
->> Currently for sheaf-enabled caches, slab_alloc_node() can return KFENCE
->> object via kfence_alloc(), but also via alloc_from_pcs() when a sheaf
->> was refilled with KFENCE objects. Continuing like this would also
->> complicate the upcoming sheaf refill changes.
->>
->> Thus remove KFENCE allocation from __kmem_cache_alloc_bulk() and move it
->> to the places that return slab objects to users. slab_alloc_node() is
->> already covered (see above). Add kfence_alloc() to
->> kmem_cache_alloc_from_sheaf() to handle KFENCE allocations from
->> prefilled sheafs, with a comment that the caller should not expect the
->> sheaf size to decrease after every allocation because of this
->> possibility.
->>
->> For kmem_cache_alloc_bulk() implement a different strategy to handle
->> KFENCE upfront and rely on internal batched operations afterwards.
->> Assume there will be at most once KFENCE allocation per bulk allocation
->> and then assign its index in the array of objects randomly.
->>
->> Cc: Alexander Potapenko <glider@google.com>
->> Cc: Marco Elver <elver@google.com>
->> Cc: Dmitry Vyukov <dvyukov@google.com>
->> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
->> ---
->> @@ -7457,6 +7458,20 @@ int kmem_cache_alloc_bulk_noprof(struct kmem_cache *s, gfp_t flags, size_t size,
->>         if (unlikely(!s))
->>                 return 0;
->>
->> +       /*
->> +        * to make things simpler, only assume at most once kfence allocated
->> +        * object per bulk allocation and choose its index randomly
->> +        */
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Here's a comment...
+As of commit 654ced4a1377 ("tracing: Introduce tracepoint_is_faultable()")
+system call trace events allow faulting in user space memory. Have some of
+the system call trace events take advantage of this.
 
->> +       kfence_obj = kfence_alloc(s, s->object_size, flags);
->> +
->> +       if (unlikely(kfence_obj)) {
->> +               if (unlikely(size == 1)) {
->> +                       p[0] = kfence_obj;
->> +                       goto out;
->> +               }
->> +               size--;
->> +       }
->> +
->>         if (s->cpu_sheaves)
->>                 i = alloc_from_pcs_bulk(s, size, p);
->>
->> @@ -7468,10 +7483,23 @@ int kmem_cache_alloc_bulk_noprof(struct kmem_cache *s, gfp_t flags, size_t size,
->>                 if (unlikely(__kmem_cache_alloc_bulk(s, flags, size - i, p + i) == 0)) {
->>                         if (i > 0)
->>                                 __kmem_cache_free_bulk(s, i, p);
->> +                       if (kfence_obj)
->> +                               __kfence_free(kfence_obj);
->>                         return 0;
->>                 }
->>         }
->>
->> +       if (unlikely(kfence_obj)) {
-> 
-> Might be nice to briefly write a comment here in code as well instead
-> of having to dig through the commit logs.
+Use the trace_user_fault_read() logic to read the user space buffer from
+user space and instead of just saving the pointer to the buffer in the
+system call event, also save the string that is passed in.
 
-... is the one above enough? The commit log doesn't have much more on this
-aspect. Or what would you add?
+The syscall event has its nb_args shorten from an int to a short (where
+even u8 is plenty big enough) and the freed two bytes are used for
+"user_mask".  The new "user_mask" field is used to store the index of the
+"args" field array that has the address to read from user space. This
+value is set to 0 if the system call event does not need to read user
+space for a field. This mask can be used to know if the event may fault or
+not. Only one bit set in user_mask is supported at this time.
 
-> The tests still pass? (CONFIG_KFENCE_KUNIT_TEST=y)
+This allows the output to look like this:
 
-They do.
+ sys_access(filename: 0x7f8c55368470 "/etc/ld.so.preload", mode: 4)
+ sys_execve(filename: 0x564ebcf5a6b8 "/usr/bin/emacs", argv: 0x7fff357c0300, envp: 0x564ebc4a4820)
 
-Thanks,
-Vlastimil
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Takaya Saeki <takayas@google.com>
+Cc: Tom Zanussi <zanussi@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Douglas Raillard <douglas.raillard@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Link: https://lore.kernel.org/20251028231147.261867956@kernel.org
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ include/trace/syscall.h       |   4 +-
+ kernel/trace/trace_syscalls.c | 436 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 420 insertions(+), 20 deletions(-)
 
->> +               int idx = get_random_u32_below(size + 1);
->> +
->> +               if (idx != size)
->> +                       p[size] = p[idx];
->> +               p[idx] = kfence_obj;
->> +
->> +               size++;
->> +       }
->> +
->> +out:
->>         /*
->>          * memcg and kmem_cache debug support and memory initialization.
->>          * Done outside of the IRQ disabled fastpath loop.
->>
->> --
->> 2.51.1
+diff --git a/include/trace/syscall.h b/include/trace/syscall.h
+index 8e193f3a33b3..85f21ca15a41 100644
+--- a/include/trace/syscall.h
++++ b/include/trace/syscall.h
+@@ -16,6 +16,7 @@
+  * @name: name of the syscall
+  * @syscall_nr: number of the syscall
+  * @nb_args: number of parameters it takes
++ * @user_mask: mask of @args that will read user space
+  * @types: list of types as strings
+  * @args: list of args as strings (args[i] matches types[i])
+  * @enter_fields: list of fields for syscall_enter trace event
+@@ -25,7 +26,8 @@
+ struct syscall_metadata {
+ 	const char	*name;
+ 	int		syscall_nr;
+-	int		nb_args;
++	short		nb_args;
++	short		user_mask;
+ 	const char	**types;
+ 	const char	**args;
+ 	struct list_head enter_fields;
+diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
+index 0f932b22f9ec..528ac90eda5d 100644
+--- a/kernel/trace/trace_syscalls.c
++++ b/kernel/trace/trace_syscalls.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <trace/syscall.h>
+ #include <trace/events/syscalls.h>
++#include <linux/kernel_stat.h>
+ #include <linux/syscalls.h>
+ #include <linux/slab.h>
+ #include <linux/kernel.h>
+@@ -123,6 +124,9 @@ const char *get_syscall_name(int syscall)
+ 	return entry->name;
+ }
+ 
++/* Added to user strings when max limit is reached */
++#define EXTRA "..."
++
+ static enum print_line_t
+ print_syscall_enter(struct trace_iterator *iter, int flags,
+ 		    struct trace_event *event)
+@@ -132,7 +136,9 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
+ 	struct trace_entry *ent = iter->ent;
+ 	struct syscall_trace_enter *trace;
+ 	struct syscall_metadata *entry;
+-	int i, syscall;
++	int i, syscall, val;
++	unsigned char *ptr;
++	int len;
+ 
+ 	trace = (typeof(trace))ent;
+ 	syscall = trace->nr;
+@@ -167,6 +173,19 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
+ 		else
+ 			trace_seq_printf(s, "%s: 0x%lx", entry->args[i],
+ 					 trace->args[i]);
++
++		if (!(BIT(i) & entry->user_mask))
++			continue;
++
++		/* This arg points to a user space string */
++		ptr = (void *)trace->args + sizeof(long) * entry->nb_args;
++		val = *(int *)ptr;
++
++		/* The value is a dynamic string (len << 16 | offset) */
++		ptr = (void *)ent + (val & 0xffff);
++		len = val >> 16;
++
++		trace_seq_printf(s, " \"%.*s\"", len, ptr);
+ 	}
+ 
+ 	trace_seq_putc(s, ')');
+@@ -223,15 +242,27 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
+ 
+ 	pos += snprintf(buf + pos, LEN_OR_ZERO, "\"");
+ 	for (i = 0; i < entry->nb_args; i++) {
+-		pos += snprintf(buf + pos, LEN_OR_ZERO, "%s: 0x%%0%zulx%s",
+-				entry->args[i], sizeof(unsigned long),
+-				i == entry->nb_args - 1 ? "" : ", ");
++		if (i)
++			pos += snprintf(buf + pos, LEN_OR_ZERO, ", ");
++		pos += snprintf(buf + pos, LEN_OR_ZERO, "%s: 0x%%0%zulx",
++				entry->args[i], sizeof(unsigned long));
++
++		if (!(BIT(i) & entry->user_mask))
++			continue;
++
++		/* Add the format for the user space string */
++		pos += snprintf(buf + pos, LEN_OR_ZERO, " \\\"%%s\\\"");
+ 	}
+ 	pos += snprintf(buf + pos, LEN_OR_ZERO, "\"");
+ 
+ 	for (i = 0; i < entry->nb_args; i++) {
+ 		pos += snprintf(buf + pos, LEN_OR_ZERO,
+ 				", ((unsigned long)(REC->%s))", entry->args[i]);
++		if (!(BIT(i) & entry->user_mask))
++			continue;
++		/* The user space string for arg has name __<arg>_val */
++		pos += snprintf(buf + pos, LEN_OR_ZERO, ", __get_str(__%s_val)",
++				entry->args[i]);
+ 	}
+ 
+ #undef LEN_OR_ZERO
+@@ -277,8 +308,12 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+ {
+ 	struct syscall_trace_enter trace;
+ 	struct syscall_metadata *meta = call->data;
++	unsigned long mask;
++	char *arg;
+ 	int offset = offsetof(typeof(trace), args);
++	int idx;
+ 	int ret = 0;
++	int len;
+ 	int i;
+ 
+ 	for (i = 0; i < meta->nb_args; i++) {
+@@ -291,9 +326,148 @@ static int __init syscall_enter_define_fields(struct trace_event_call *call)
+ 		offset += sizeof(unsigned long);
+ 	}
+ 
++	if (ret || !meta->user_mask)
++		return ret;
++
++	mask = meta->user_mask;
++	idx = ffs(mask) - 1;
++
++	/*
++	 * User space strings are faulted into a temporary buffer and then
++	 * added as a dynamic string to the end of the event.
++	 * The user space string name for the arg pointer is "__<arg>_val".
++	 */
++	len = strlen(meta->args[idx]) + sizeof("___val");
++	arg = kmalloc(len, GFP_KERNEL);
++	if (WARN_ON_ONCE(!arg)) {
++		meta->user_mask = 0;
++		return -ENOMEM;
++	}
++
++	snprintf(arg, len, "__%s_val", meta->args[idx]);
++
++	ret = trace_define_field(call, "__data_loc char[]",
++				 arg, offset, sizeof(int), 0,
++				 FILTER_OTHER);
++	if (ret)
++		kfree(arg);
+ 	return ret;
+ }
+ 
++#define SYSCALL_FAULT_BUF_SZ 512
++
++/* Use the tracing per CPU buffer infrastructure to copy from user space */
++struct syscall_user_buffer {
++	struct trace_user_buf_info	buf;
++	struct rcu_head			rcu;
++};
++
++static struct syscall_user_buffer *syscall_buffer;
++
++static int syscall_fault_buffer_enable(void)
++{
++	struct syscall_user_buffer *sbuf;
++	int ret;
++
++	lockdep_assert_held(&syscall_trace_lock);
++
++	if (syscall_buffer) {
++		trace_user_fault_get(&syscall_buffer->buf);
++		return 0;
++	}
++
++	sbuf = kmalloc(sizeof(*sbuf), GFP_KERNEL);
++	if (!sbuf)
++		return -ENOMEM;
++
++	ret = trace_user_fault_init(&sbuf->buf, SYSCALL_FAULT_BUF_SZ);
++	if (ret < 0) {
++		kfree(sbuf);
++		return ret;
++	}
++
++	WRITE_ONCE(syscall_buffer, sbuf);
++
++	return 0;
++}
++
++static void rcu_free_syscall_buffer(struct rcu_head *rcu)
++{
++	struct syscall_user_buffer *sbuf =
++		container_of(rcu, struct syscall_user_buffer, rcu);
++
++	trace_user_fault_destroy(&sbuf->buf);
++	kfree(sbuf);
++}
++
++
++static void syscall_fault_buffer_disable(void)
++{
++	struct syscall_user_buffer *sbuf = syscall_buffer;
++
++	lockdep_assert_held(&syscall_trace_lock);
++
++	if (trace_user_fault_put(&sbuf->buf))
++		return;
++
++	WRITE_ONCE(syscall_buffer, NULL);
++	call_rcu_tasks_trace(&sbuf->rcu, rcu_free_syscall_buffer);
++}
++
++static int syscall_copy_user(char *buf, const char __user *ptr,
++			     size_t size, void *data)
++{
++	unsigned long *ret_size = data;
++	int ret;
++
++	ret = strncpy_from_user(buf, ptr, size);
++	if (ret < 0)
++		return 1;
++	*ret_size = ret;
++	return 0;
++}
++
++static char *sys_fault_user(struct syscall_metadata *sys_data,
++			    struct syscall_user_buffer *sbuf,
++			    unsigned long *args, unsigned int *data_size)
++{
++	unsigned long size = SYSCALL_FAULT_BUF_SZ - 1;
++	unsigned long mask = sys_data->user_mask;
++	int idx = ffs(mask) - 1;
++	char *ptr;
++	char *buf;
++
++	/* Get the pointer to user space memory to read */
++	ptr = (char *)args[idx];
++	*data_size = 0;
++
++	buf = trace_user_fault_read(&sbuf->buf, ptr, size,
++				    syscall_copy_user, &size);
++	if (!buf)
++		return NULL;
++
++	/* Replace any non-printable characters with '.' */
++	for (int i = 0; i < size; i++) {
++		if (!isprint(buf[i]))
++			buf[i] = '.';
++	}
++
++	/*
++	 * If the text was truncated due to our max limit, add "..." to
++	 * the string.
++	 */
++	if (size > SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA)) {
++		strscpy(buf + SYSCALL_FAULT_BUF_SZ - sizeof(EXTRA),
++			EXTRA, sizeof(EXTRA));
++		size = SYSCALL_FAULT_BUF_SZ;
++	} else {
++		buf[size++] = '\0';
++	}
++
++	*data_size = size;
++	return buf;
++}
++
+ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ {
+ 	struct trace_array *tr = data;
+@@ -302,15 +476,17 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ 	struct syscall_metadata *sys_data;
+ 	struct trace_event_buffer fbuffer;
+ 	unsigned long args[6];
++	char *user_ptr;
++	int user_size = 0;
+ 	int syscall_nr;
+-	int size;
++	int size = 0;
++	bool mayfault;
+ 
+ 	/*
+ 	 * Syscall probe called with preemption enabled, but the ring
+ 	 * buffer and per-cpu data require preemption to be disabled.
+ 	 */
+ 	might_fault();
+-	guard(preempt_notrace)();
+ 
+ 	syscall_nr = trace_get_syscall_nr(current, regs);
+ 	if (syscall_nr < 0 || syscall_nr >= NR_syscalls)
+@@ -327,7 +503,32 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ 	if (!sys_data)
+ 		return;
+ 
+-	size = sizeof(*entry) + sizeof(unsigned long) * sys_data->nb_args;
++	/* Check if this syscall event faults in user space memory */
++	mayfault = sys_data->user_mask != 0;
++
++	guard(preempt_notrace)();
++
++	syscall_get_arguments(current, regs, args);
++
++	if (mayfault) {
++		struct syscall_user_buffer *sbuf;
++
++		/* If the syscall_buffer is NULL, tracing is being shutdown */
++		sbuf = READ_ONCE(syscall_buffer);
++		if (!sbuf)
++			return;
++
++		user_ptr = sys_fault_user(sys_data, sbuf, args, &user_size);
++		/*
++		 * user_size is the amount of data to append.
++		 * Need to add 4 for the meta field that points to
++		 * the user memory at the end of the event and also
++		 * stores its size.
++		 */
++		size = 4 + user_size;
++	}
++
++	size += sizeof(*entry) + sizeof(unsigned long) * sys_data->nb_args;
+ 
+ 	entry = trace_event_buffer_reserve(&fbuffer, trace_file, size);
+ 	if (!entry)
+@@ -335,9 +536,36 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
+ 
+ 	entry = ring_buffer_event_data(fbuffer.event);
+ 	entry->nr = syscall_nr;
+-	syscall_get_arguments(current, regs, args);
++
+ 	memcpy(entry->args, args, sizeof(unsigned long) * sys_data->nb_args);
+ 
++	if (mayfault) {
++		void *ptr;
++		int val;
++
++		/*
++		 * Set the pointer to point to the meta data of the event
++		 * that has information about the stored user space memory.
++		 */
++		ptr = (void *)entry->args + sizeof(unsigned long) * sys_data->nb_args;
++
++		/*
++		 * The meta data will store the offset of the user data from
++		 * the beginning of the event.
++		 */
++		val  = (ptr - (void *)entry) + 4;
++
++		/* Store the offset and the size into the meta data */
++		*(int *)ptr = val | (user_size << 16);
++
++		/* Nothing to do if the user space was empty or faulted */
++		if (user_size) {
++			/* Now store the user space data into the event */
++			ptr += 4;
++			memcpy(ptr, user_ptr, user_size);
++		}
++	}
++
+ 	trace_event_buffer_commit(&fbuffer);
+ }
+ 
+@@ -386,39 +614,50 @@ static void ftrace_syscall_exit(void *data, struct pt_regs *regs, long ret)
+ static int reg_event_syscall_enter(struct trace_event_file *file,
+ 				   struct trace_event_call *call)
+ {
++	struct syscall_metadata *sys_data = call->data;
+ 	struct trace_array *tr = file->tr;
+ 	int ret = 0;
+ 	int num;
+ 
+-	num = ((struct syscall_metadata *)call->data)->syscall_nr;
++	num = sys_data->syscall_nr;
+ 	if (WARN_ON_ONCE(num < 0 || num >= NR_syscalls))
+ 		return -ENOSYS;
+-	mutex_lock(&syscall_trace_lock);
+-	if (!tr->sys_refcount_enter)
++	guard(mutex)(&syscall_trace_lock);
++	if (sys_data->user_mask) {
++		ret = syscall_fault_buffer_enable();
++		if (ret < 0)
++			return ret;
++	}
++	if (!tr->sys_refcount_enter) {
+ 		ret = register_trace_sys_enter(ftrace_syscall_enter, tr);
+-	if (!ret) {
+-		WRITE_ONCE(tr->enter_syscall_files[num], file);
+-		tr->sys_refcount_enter++;
++		if (ret < 0) {
++			if (sys_data->user_mask)
++				syscall_fault_buffer_disable();
++			return ret;
++		}
+ 	}
+-	mutex_unlock(&syscall_trace_lock);
+-	return ret;
++	WRITE_ONCE(tr->enter_syscall_files[num], file);
++	tr->sys_refcount_enter++;
++	return 0;
+ }
+ 
+ static void unreg_event_syscall_enter(struct trace_event_file *file,
+ 				      struct trace_event_call *call)
+ {
++	struct syscall_metadata *sys_data = call->data;
+ 	struct trace_array *tr = file->tr;
+ 	int num;
+ 
+-	num = ((struct syscall_metadata *)call->data)->syscall_nr;
++	num = sys_data->syscall_nr;
+ 	if (WARN_ON_ONCE(num < 0 || num >= NR_syscalls))
+ 		return;
+-	mutex_lock(&syscall_trace_lock);
++	guard(mutex)(&syscall_trace_lock);
+ 	tr->sys_refcount_enter--;
+ 	WRITE_ONCE(tr->enter_syscall_files[num], NULL);
+ 	if (!tr->sys_refcount_enter)
+ 		unregister_trace_sys_enter(ftrace_syscall_enter, tr);
+-	mutex_unlock(&syscall_trace_lock);
++	if (sys_data->user_mask)
++		syscall_fault_buffer_disable();
+ }
+ 
+ static int reg_event_syscall_exit(struct trace_event_file *file,
+@@ -459,6 +698,163 @@ static void unreg_event_syscall_exit(struct trace_event_file *file,
+ 	mutex_unlock(&syscall_trace_lock);
+ }
+ 
++/*
++ * For system calls that reference user space memory that can
++ * be recorded into the event, set the system call meta data's user_mask
++ * to the "args" index that points to the user space memory to retrieve.
++ */
++static void check_faultable_syscall(struct trace_event_call *call, int nr)
++{
++	struct syscall_metadata *sys_data = call->data;
++
++	/* Only work on entry */
++	if (sys_data->enter_event != call)
++		return;
++
++	switch (nr) {
++	/* user arg at position 0 */
++#ifdef __NR_access
++	case __NR_access:
++#endif
++	case __NR_acct:
++	case __NR_add_key: /* Just _type. TODO add _description */
++	case __NR_chdir:
++#ifdef  __NR_chown
++	case __NR_chown:
++#endif
++#ifdef  __NR_chmod
++	case __NR_chmod:
++#endif
++	case __NR_chroot:
++#ifdef __NR_creat
++	case __NR_creat:
++#endif
++	case __NR_delete_module:
++	case __NR_execve:
++	case __NR_fsopen:
++	case __NR_getxattr: /* Just pathname, TODO add name */
++#ifdef __NR_lchown
++	case __NR_lchown:
++#endif
++	case __NR_lgetxattr: /* Just pathname, TODO add name */
++	case __NR_lremovexattr: /* Just pathname, TODO add name */
++#ifdef __NR_link
++	case __NR_link: /* Just oldname. TODO add newname */
++#endif
++	case __NR_listxattr: /* Just pathname, TODO add list */
++	case __NR_llistxattr: /* Just pathname, TODO add list */
++	case __NR_lsetxattr: /* Just pathname, TODO add list */
++#ifdef __NR_open
++	case __NR_open:
++#endif
++	case __NR_memfd_create:
++	case __NR_mount: /* Just dev_name, TODO add dir_name and type */
++#ifdef __NR_mkdir
++	case __NR_mkdir:
++#endif
++#ifdef __NR_mknod
++	case __NR_mknod:
++#endif
++	case __NR_mq_open:
++	case __NR_mq_unlink:
++	case __NR_pivot_root: /* Just new_root, TODO add old_root */
++#ifdef __NR_readlink
++	case __NR_readlink:
++#endif
++	case __NR_removexattr: /* Just pathname, TODO add name */
++#ifdef __NR_rename
++	case __NR_rename: /* Just oldname. TODO add newname */
++#endif
++	case __NR_request_key: /* Just _type. TODO add _description */
++#ifdef  __NR_rmdir
++	case __NR_rmdir:
++#endif
++	case __NR_setxattr: /* Just pathname, TODO add list */
++	case __NR_shmdt:
++#ifdef __NR_statfs
++	case __NR_statfs:
++#endif
++	case __NR_swapon:
++	case __NR_swapoff:
++#ifdef __NR_symlink
++	case __NR_symlink: /* Just oldname. TODO add newname */
++#endif
++#ifdef __NR_truncate
++	case __NR_truncate:
++#endif
++#ifdef __NR_unlink
++	case __NR_unlink:
++#endif
++	case __NR_umount2:
++#ifdef __NR_utime
++	case __NR_utime:
++#endif
++#ifdef __NR_utimes
++	case __NR_utimes:
++#endif
++		sys_data->user_mask = BIT(0);
++		break;
++	/* user arg at position 1 */
++	case __NR_execveat:
++	case __NR_faccessat:
++	case __NR_faccessat2:
++	case __NR_finit_module:
++	case __NR_fchmodat:
++	case __NR_fchmodat2:
++	case __NR_fchownat:
++	case __NR_fgetxattr:
++	case __NR_flistxattr:
++	case __NR_fsetxattr:
++	case __NR_fspick:
++	case __NR_fremovexattr:
++#ifdef __NR_futimesat
++	case __NR_futimesat:
++#endif
++	case __NR_getxattrat: /* Just pathname, TODO add name */
++	case __NR_inotify_add_watch:
++	case __NR_linkat: /* Just oldname. TODO add newname */
++	case __NR_listxattrat: /* Just pathname, TODO add list */
++	case __NR_mkdirat:
++	case __NR_mknodat:
++	case __NR_mount_setattr:
++	case __NR_move_mount: /* Just from_pathname, TODO add to_pathname */
++	case __NR_name_to_handle_at:
++#ifdef __NR_newfstatat
++	case __NR_newfstatat:
++#endif
++	case __NR_openat:
++	case __NR_openat2:
++	case __NR_open_tree:
++	case __NR_open_tree_attr:
++	case __NR_readlinkat:
++#ifdef __NR_renameat
++	case __NR_renameat: /* Just oldname. TODO add newname */
++#endif
++	case __NR_renameat2: /* Just oldname. TODO add newname */
++	case __NR_removexattrat: /* Just pathname, TODO add name */
++	case __NR_quotactl:
++	case __NR_setxattrat: /* Just pathname, TODO add list */
++	case __NR_syslog:
++	case __NR_symlinkat: /* Just oldname. TODO add newname */
++	case __NR_statx:
++	case __NR_unlinkat:
++	case __NR_utimensat:
++		sys_data->user_mask = BIT(1);
++		break;
++	/* user arg at position 2 */
++	case __NR_init_module:
++	case __NR_fsconfig:
++		sys_data->user_mask = BIT(2);
++		break;
++	/* user arg at position 4 */
++	case __NR_fanotify_mark:
++		sys_data->user_mask = BIT(4);
++		break;
++	default:
++		sys_data->user_mask = 0;
++	}
++}
++
+ static int __init init_syscall_trace(struct trace_event_call *call)
+ {
+ 	int id;
+@@ -471,6 +867,8 @@ static int __init init_syscall_trace(struct trace_event_call *call)
+ 		return -ENOSYS;
+ 	}
+ 
++	check_faultable_syscall(call, num);
++
+ 	if (set_syscall_print_fmt(call) < 0)
+ 		return -ENOMEM;
+ 
+-- 
+2.51.0
+
 
 
