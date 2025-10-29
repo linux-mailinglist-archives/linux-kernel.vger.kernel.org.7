@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-876395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0559C1B738
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:56:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA0A3C1B826
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFFCA569764
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42A6584CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF653347FC6;
-	Wed, 29 Oct 2025 14:37:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2901D2D7DE9;
+	Wed, 29 Oct 2025 14:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="zhEyh2Wc"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oKYdSMPi"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6F5A346A11
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F38B3491FB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748663; cv=none; b=GKqnd2eNjFiiIgc9woq09s+pR9iJlyFVLLFCE2BqI2dt/Jgi5igZfHNh2XF1k2nM7hj0qxR/q83HHaOfkkQ24t1D0CB3RdswGJrahy+vzZWvIiuHIkCP0cIXUyeJu0fNAq39slz26+rUTpalu3XLDqwsyhq4U/qHfZBl1LtAv78=
+	t=1761748668; cv=none; b=IC8lWkA3JkY1Li09TEBKzX5/mRzV6p6eZgo5fvSQ1IqyrgsE3DomujmQTl0FqIybjnju2GbVzDHGqjvDjgtdKeeaQ5g+MgUjui7MFEqUPP1KBrw6tgvE5q3WZtlenyYxMyAp4w2rP+7mDaTNvszitleb5+/6FKkKoWX403tY/gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748663; c=relaxed/simple;
-	bh=cfHMITCkhuA9xDg6rR5Pf2S96MFpLvOh5N7v63PxojQ=;
+	s=arc-20240116; t=1761748668; c=relaxed/simple;
+	bh=vHE+KXN44+uY83YhKjAEjkHqNWJmb39F47iujVDrYRg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r27dkEpqnRs6q+4b1akmrd4ruBAnRqMirBKY58RzOdy4vSAcBuioceYgYee1HNUzaC4N93A1ZKsVhJXdazAoth5UI1pEJrFKjot0roIhYUW6TzPM13BJcYJ+Ewx5wOTdXGG1sw1OkMf3qPNjChvKsuTAg08iWaQm46CXUn+TnJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=zhEyh2Wc; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=oP02jETr/QwyP6JKB7L51ZctChf5HWWnc++EQpmBvba0NzMDElSa7fFc6u4LCSx4bIIO9uxF6XlCivkbv33/M1OmIUWBDhwNPYEIpT/n+/x1hZAsWOpJ1Nyz9FdWFEVu/EVPWdmHn4MF54RTYPeTkH1In9G78VDpPpluGWXxEvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oKYdSMPi; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 62CE04E413CF;
-	Wed, 29 Oct 2025 14:37:40 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 2AFAB4E413CF;
+	Wed, 29 Oct 2025 14:37:45 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 33FBD606E8;
-	Wed, 29 Oct 2025 14:37:40 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3DB12117F81B5;
-	Wed, 29 Oct 2025 15:37:37 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 001E9606E8;
+	Wed, 29 Oct 2025 14:37:45 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CDB87117F81B6;
+	Wed, 29 Oct 2025 15:37:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761748658; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761748664; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Zs7cFfDnZhyAxSYFH45RdpuYGVq+BUPOPTG7RxnjHZc=;
-	b=zhEyh2Wc3M22YiW14zB+NlN4hmLGR8Csix5S4OMutycu4eMw2nxZZOVTB2H9SX0tz/Yx8c
-	WeyXa4wrzXSNbHmFzEVO2SJ1LdtGoTgcggoe64uU/Pr6mR0i0iObGd4sriLp7lM34Ie0Ai
-	cGpSZMrSqHHr4n53aUaL1CO0RmjFkcxtZF7Mslnim8rbdQRY22iDMQL8nNbXuy4IHLIU6C
-	LvyHKUdr1UNfIhUxaifHIxx43ilpxM+KhONQRBE/Oqp8Kvu/++0UUmEP+9R0urWsjIDZEI
-	dFbgQaL+Qjpa81mfyXlVfVz13xjCoHIYfy7zUWwadypXORHDZTuQCRbOUOiFag==
+	bh=g6EoLHIVrvJ3bH8/8VH0gkiHKWy94ZpuwGW0qU4+WeE=;
+	b=oKYdSMPiZSk2DOm8uPrfg94cfMUHhxMRy+YQGf+qNgZRgKufiWztXSNfvKonx9zh44Gw1V
+	xXt8kME+XRRx6UXXQSaMUaPBI3K+jsOE5aCxLh4vKEsTl8Ov+GJwSNWKAxvDWXTn6UtgwD
+	7Judm/z/eJdUkasM2wrc9N7c8EyFoDNAEYBo08KksxkBSq9A1oI8SJnDb78qloYgyHAuik
+	xW2cudl6Hv2X0cdOmIJfjCq1DBqXKbHGHprkcD9wp3NhX1TYJ3qn0yhlHHuAP8ZMmevNzJ
+	qr9cFjqIS2DpMSGzG3B0OH9rjroYjaHGSDfh9iQqk8b3Vw2Qz896ecsDduTwUA==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 29 Oct 2025 15:37:04 +0100
-Subject: [PATCH RESEND v2 27/32] drm/vkms: Introduce configfs for connector
- EDID
+Date: Wed, 29 Oct 2025 15:37:07 +0100
+Subject: [PATCH RESEND v2 30/32] drm/vkms: Extract common code for
+ connector initialization
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-vkms-all-config-v2-27-a49a2d4cba26@bootlin.com>
+Message-Id: <20251029-vkms-all-config-v2-30-a49a2d4cba26@bootlin.com>
 References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 In-Reply-To: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
@@ -73,176 +73,97 @@ Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5286;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2773;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=cfHMITCkhuA9xDg6rR5Pf2S96MFpLvOh5N7v63PxojQ=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ9QZXTe3vOpXepw9nuYtb3Y4yisFW2olhnp
- SZA+trfPaWJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImfQAKCRAgrS7GWxAs
- 4hxDD/4y5QG7UGhC3l9vvaNlm2b2jriMyxoU2wTRUnnQbyKYIO/Y3SWTYJg7xu3gZUSFSbT3wRB
- T+kCRh9S/aTQvhtqdlr/3wVJQ2KcNHv4z1r5ZUJhCW84+KP0+P5uBh+HJ7TMKdqzeXyTUjXyYlx
- XItkpZTU4lW7q0yGTVGn/rUAXPy4N3b8+ACSG+uUhrICqiqXJfok4VS7tDihbSrk5U+54v7y49q
- rlOhFcQ5NEvesYQjThdEfA0OqPHSaEfn/Vk3WcbUOX4eThGyKDDiuZCSaUnB66RvFJh+MdDnYSf
- uqjeXfeXGrBMJQ/c7K7QgiS9W/Gx1eQnw1wT9wWP9psR9vnSir8Jq6HwRm5T0gARZ/dHuOvCE16
- 6PvAuQrLgDglYzWO/iKUKNdT6a3er5TF4BT12hyXLIsBE6EGxB63DIchi5lo7hyqRJyz3pPzvsT
- c1gN+VQhzThoBaNB5Ctfq+rfGTRXMIVhUsGoh9xM98GgYb2jql9qOdYGfptURunVRjfUdREpa3T
- u149TCN1GOdPq89nGtq7IqJorWuwIt2fKGNTZSPjbup+CUtVghOgPKjlBEcHYSwDa84pKGuOjMD
- BsagDPkJ2nnPykxMBjVwoh7O4BzedGvcQ37j++eSDJ2dMbc1GOom9pCE9oYkp998Lw886cBniZq
- RJ6WoRG2V4BLTfQ==
+ bh=vHE+KXN44+uY83YhKjAEjkHqNWJmb39F47iujVDrYRg=;
+ b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ+aT+Hp1j2FV+wXkQMqRjY099iOPC0rTWV+
+ 10CqY7fnE+JAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImfgAKCRAgrS7GWxAs
+ 4hsOD/495loX/gzxt0xaWy06ZIi5nyYDBl5hYpWgYAnL3rBeay1pjCoANE1bg3gSwSrRDAYnopb
+ 17DPTzIBBWwlM5zchMWsLLkgbDmiUY2Q9TZ3ccN+Qapp3yZ687mBTUhLLlOoipvdsANBux4MLb7
+ K1URkc6YCbzf7zUJhg6VP3tQ5rr8iCzm5KV4LFu3cnWjhKXKYzir+Tm9rJEvlVj7Lx+eh3Anig0
+ thzIRj44BVF4AcxoEXTgCNEaR+3YkKC9VF9fcm8jhoTpOzVEuuTg93iKAsdgGNZU+S74bRyZwZV
+ 6Xer2pZ/sP9RAc1LpxAJmWsldcmQBf3FN4+D6rf3wl8Ujf+Vso0cDY4WiEvSasWSPruhufKD8PY
+ Xnbme4bgrzbi4WnruqD/goVrmGLN1b6r6CCTWTeByLoYwarx/QCxlKWbDnCZiz+1B1HNy+jVYI7
+ KAprzh1cNFEB9reEOJpeoSbsFZrTZAvYjudDNzfgnTEALJlnhzlH6n+KlfR7a0yPi7OV06QSB7N
+ l23jc2m692Cm6nEhdGk3KG9xd3Kog0RZzInKd5A8FaIUJYMPGoTuaz4oBXeuDoluYM8ZXU9hpa+
+ kQaymMAT2YCeGYt/9UJY6BQpdeuDw9DWXfM2a0ibud39FPFOK/QkNpYM3AtxrD8ePK70ZIsfkSe
+ NgA6RoZJIJMOhdQ==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-Last-TLS-Session-Version: TLSv1.3
 
-Introduce new attributes to configure EDID of a connector:
-- edid_enable - chose if the connector will have an EDD or not
-- edid - raw edid content
-
-Due to limitation of ConfigFS, the max len of EDID is PAGE_SIZE (4kB on
-x86), it should be sufficient for many tests. One possible evolution is
-using a ConfigFS blob to allow bigger EDID.
+With the introduction of dynamic connector, some code will be shared
+between dynamic and static connectors. Extract this part to avoid code
+duplication
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- Documentation/gpu/vkms.rst            |  5 ++-
- drivers/gpu/drm/vkms/vkms_configfs.c  | 80 +++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_connector.c |  3 ++
- 3 files changed, 87 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/vkms/vkms_connector.c | 44 +++++++++++++++++++++++------------
+ 1 file changed, 29 insertions(+), 15 deletions(-)
 
-diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index c762cadac6f4..0cc7897d7b83 100644
---- a/Documentation/gpu/vkms.rst
-+++ b/Documentation/gpu/vkms.rst
-@@ -138,7 +138,7 @@ Last but not least, create one or more connectors::
- 
-   sudo mkdir /config/vkms/my-vkms/connectors/connector0
- 
--Connectors have 3 configurable attribute:
-+Connectors have 5 configurable attribute:
- 
- - status: Connection status: 1 connected, 2 disconnected, 3 unknown (same values
-   as those exposed by the "status" property of a connector)
-@@ -147,6 +147,9 @@ Connectors have 3 configurable attribute:
-   If supported_colorspaces is not 0, the HDR_OUTPUT_METADATA will also be created.
-   Value is a bitfield, 0x1 = NO_DATA, 0x2 = SMPTE_170M_YCC... see enum drm_colorspace
-   for full list.
-+- edid_enabled: Enable or not EDID for this connector. Some connectors may not have an
-+  EDID but just a list of modes, this attribute allows to disable EDID property.
-+- edid: Content of the EDID. Ignored if edid_enabled is not set
- 
- 
- To finish the configuration, link the different pipeline items::
-diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index a7f4589403ce..1843e5d9e1e1 100644
---- a/drivers/gpu/drm/vkms/vkms_configfs.c
-+++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -1260,14 +1260,94 @@ static ssize_t connector_supported_colorspaces_store(struct config_item *item,
- 	return count;
- }
- 
-+static ssize_t connector_edid_enabled_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_connector *connector;
-+	bool enabled;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+		enabled = vkms_config_connector_get_edid_enabled(connector->config);
-+
-+	return sprintf(page, "%d\n", enabled);
-+}
-+
-+static ssize_t connector_edid_enabled_store(struct config_item *item,
-+					    const char *page, size_t count)
-+{
-+	struct vkms_configfs_connector *connector;
-+	struct vkms_config_connector *connector_cfg;
-+	bool enabled;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+	connector_cfg = connector->config;
-+
-+	if (kstrtobool(page, &enabled))
-+		return -EINVAL;
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		vkms_config_connector_set_edid_enabled(connector_cfg, enabled);
-+
-+		if (connector->dev->enabled &&
-+		    vkms_config_connector_get_status(connector_cfg) !=
-+		    connector_status_disconnected)
-+			vkms_trigger_connector_hotplug(connector->dev->config->dev);
-+	}
-+	return count;
-+}
-+
-+static ssize_t connector_edid_show(struct config_item *item, char *page)
-+{
-+	struct vkms_configfs_connector *connector;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		unsigned int len = 0;
-+		const u8 *edid = vkms_config_connector_get_edid(connector->config, &len);
-+
-+		memcpy(page, edid, min(len, PAGE_SIZE));
-+		return min(len, PAGE_SIZE);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static ssize_t connector_edid_store(struct config_item *item,
-+				    const char *page, size_t count)
-+{
-+	struct vkms_configfs_connector *connector;
-+
-+	connector = connector_item_to_vkms_configfs_connector(item);
-+
-+	scoped_guard(mutex, &connector->dev->lock)
-+	{
-+		vkms_config_connector_set_edid(connector->config, page, count);
-+
-+		if (connector->dev->enabled &&
-+		    vkms_config_connector_get_status(connector->config) !=
-+		    connector_status_disconnected)
-+			vkms_trigger_connector_hotplug(connector->dev->config->dev);
-+	}
-+
-+	return count;
-+}
-+
- CONFIGFS_ATTR(connector_, status);
- CONFIGFS_ATTR(connector_, type);
- CONFIGFS_ATTR(connector_, supported_colorspaces);
-+CONFIGFS_ATTR(connector_, edid_enabled);
-+CONFIGFS_ATTR(connector_, edid);
- 
- static struct configfs_attribute *connector_item_attrs[] = {
- 	&connector_attr_status,
- 	&connector_attr_type,
- 	&connector_attr_supported_colorspaces,
-+	&connector_attr_edid_enabled,
-+	&connector_attr_edid,
- 	NULL,
- };
- 
 diff --git a/drivers/gpu/drm/vkms/vkms_connector.c b/drivers/gpu/drm/vkms/vkms_connector.c
-index 339d747e729e..699b6779a46c 100644
+index 1b7ccca2abc0..2c5f04af8784 100644
 --- a/drivers/gpu/drm/vkms/vkms_connector.c
 +++ b/drivers/gpu/drm/vkms/vkms_connector.c
-@@ -141,6 +141,9 @@ struct vkms_connector *vkms_connector_init(struct vkms_device *vkmsdev,
+@@ -108,22 +108,17 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+ 	.best_encoder = vkms_conn_best_encoder,
+ };
  
- 	drm_connector_helper_add(&connector->base, &vkms_conn_helper_funcs);
+-struct vkms_connector *vkms_connector_init_static(struct vkms_device *vkmsdev,
+-						  struct vkms_config_connector *connector_cfg)
++/**
++ * vkms_connector_init() - Common initialization of vkms connector
++ * @vkmsdev: VKMS device containing the device
++ * @connector: VKMS connector to init. @connector->base must be
++ *             already initialized by DRM core.
++ * @connector_cfg: Connector configuration to apply
++ */
++static void vkms_connector_init(struct vkms_device *vkmsdev,
++				struct vkms_connector *connector,
++				const struct vkms_config_connector *connector_cfg)
+ {
+-	struct drm_device *dev = &vkmsdev->drm;
+-	struct vkms_connector *connector;
+-	int ret;
+-
+-	connector = drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
+-	if (!connector)
+-		return ERR_PTR(-ENOMEM);
+-
+-	ret = drmm_connector_init(dev, &connector->base, &vkms_connector_funcs,
+-				  vkms_config_connector_get_type(connector_cfg), NULL);
+-	if (ret)
+-		return ERR_PTR(ret);
+-
+ 	if (vkms_config_connector_get_supported_colorspaces(connector_cfg)) {
+ 		if (connector_cfg->type == DRM_MODE_CONNECTOR_HDMIA) {
+ 			drm_mode_create_hdmi_colorspace_property(&connector->base,
+@@ -143,6 +138,25 @@ struct vkms_connector *vkms_connector_init_static(struct vkms_device *vkmsdev,
  
-+	if (vkms_config_connector_get_edid_enabled(connector_cfg))
-+		drm_connector_attach_edid_property(&connector->base);
+ 	if (vkms_config_connector_get_edid_enabled(connector_cfg))
+ 		drm_connector_attach_edid_property(&connector->base);
++}
 +
++struct vkms_connector *vkms_connector_init_static(struct vkms_device *vkmsdev,
++						  struct vkms_config_connector *connector_cfg)
++{
++	struct drm_device *dev = &vkmsdev->drm;
++	struct vkms_connector *connector;
++	int ret;
++
++	connector = drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
++	if (!connector)
++		return ERR_PTR(-ENOMEM);
++
++	ret = drmm_connector_init(dev, &connector->base, &vkms_connector_funcs,
++				  vkms_config_connector_get_type(connector_cfg), NULL);
++	if (ret)
++		return ERR_PTR(ret);
++
++	vkms_connector_init(vkmsdev, connector, connector_cfg);
+ 
  	return connector;
  }
- 
 
 -- 
 2.51.0
