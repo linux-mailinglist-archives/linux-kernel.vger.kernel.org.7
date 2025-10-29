@@ -1,283 +1,168 @@
-Return-Path: <linux-kernel+bounces-877095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D28C1D2D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:14:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5685C1D2E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C9BF188A45C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:14:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 875EA4E1C75
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42013314B85;
-	Wed, 29 Oct 2025 20:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Q2aEghgF"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C73B35A942;
+	Wed, 29 Oct 2025 20:15:54 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5631E1D5AC0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02532E22BD;
+	Wed, 29 Oct 2025 20:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761768836; cv=none; b=QhJ4n11nyzSg7IJ/IeMPAtLSwFdTzEX0Q8YVzRBGcWA9Nn0bp6dPmMNzbhYRLkfnR7pWygZo9o4tskcAKKOjj5cs4frIjj1tZX/0z0zQLYbbU+OcahjSdiYrlTVmVnTbWHJjNmaWdo9cm9SIS4If5AHzlEL6LBhf5grqtlgaDK0=
+	t=1761768954; cv=none; b=WHWPUtXLUZjCT6yagf5ZbnoK2ahrd6n0km5KZeO03kVXX+x+ysCYcGy8OunvUde3YP7jZfAvbqxbqyW3SKrZr/NeRzqFMw/3mKxI5FPse/DehHl8YZtMN1yP7ZuWezRIzhEAOtl1r92e5/rQ0e8GhVoNAEf1G81Kl4buK8VPuDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761768836; c=relaxed/simple;
-	bh=/m2x2MhZTK99jvIZnV9WiC+2RFNXEYnnV84Nk0+ZbG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S491EcuY6KpQvZGb4DnrIm+TntPnFTp7+t9jjqTPH2O8Z4qOjoAsop0pD6BkEtjmnlT4dRVCjtCgeUTaHknj46C+4Po9XDF6ef11cWxWymxPbt8Ve/T1ScGEnWUpGBfK0bZrfDUq4bcy77uf7fsFgUQO2arAlc9rIxLiaZKYvQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=Q2aEghgF; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b5e19810703so40963366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:13:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761768832; x=1762373632; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxNKUqsLJOnot7UUBS6WN0bVpwUbu+IjTrx41B9jW8k=;
-        b=Q2aEghgF/7lpX6vBLcltuHqDvb/zoSnI23KkhfLsKYxkbO+nBX2L5QfOL3XW1RHs7r
-         36q83zQArkvdhhKBd3pqX4c8u1IomZBP/ZZH47BiMi4w0UBYOPiSQHX3YiP4LGAgEwvY
-         JZb4hkg+H8BbZxRIqI0dN8+fLdGo1WUTJVh0L+Kc6q4TRCHpPAmmbf4v2Ldbbkk2/JgA
-         e1BUpVop5VfPvOK78pj0UwKGo/3De+6wUmy2yyIkVlD/Bv1Zj1RQuu5P8nV50hC+lJSu
-         blJWDQhu/3JMniqh2qcZqrj6FFf2L3hKJ4PK6IR4y9hWKXj+2xmAderMD/Aggw1eVJk1
-         ZO4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761768832; x=1762373632;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fxNKUqsLJOnot7UUBS6WN0bVpwUbu+IjTrx41B9jW8k=;
-        b=wBrQCMUpr6rR4xv5LkpEPBj8PFEZ85l2GusMI/i4ju/EnOwM9M5Bsv2SGHsUiWeHZT
-         adpa+89u1JncPkHpJwONIE45jelc64r6CZ565Wee9OnJWQwEcCGE1vQodvdCgFGrTjJI
-         toLvMev6JXYIVOGPbanJGUwJFFp4ysNBbotI8daoB3EmjejLdKHwJ+OBSPajXR1e24f5
-         DQKrDp+yhesHNUpBLX+RwunmjD3zPOECb8dWeEbHQqltZYyVO09rBZAml5QbBpQpRh4O
-         ZOQPS1O8uuQCXFoHY/Xixu4CUOOemc2wkrUYwT1W6gml7thyVwsRONShrXSsH105yUbw
-         TMQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeqBGox/dJR38DKu79MVpkIJuNXlpSNV/Ml1GmND09RA4dXN+WAfTQhGPIujZFvipBIdR+o27k0w2Rw3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiUFDzADzaKsD52emZxpAuknXJ1TBm33ijUguovJqGdyMbueDl
-	JffaBP8pGgK5mNM0wNyIrgmZc6yM8EORBtypBxT8ILo5boe7VfnrfFwxY9R8551GVsdvNPmZF5T
-	NR/CpTNT7fDh9H+UpYVxxcUWtbaHdVArKRcmb5SXBpg==
-X-Gm-Gg: ASbGncvbbE1SN+pTvJUYuau8xjtymdmVH5V7dMGxhRRIa6ygXS01wVT2V9KyfZxTQOh
-	plbX6ubg/FpCukea6pxk6DQ3irVpmtjEzHHp+S+bqDA75dIvov9++oBYngA+YFG1yJI8+D1Iede
-	v36rfn1dhnHjBsO+nUHvdPio6nfRkx/wQRtYXqIEcKgKGYUXW5/GwsgFid3hBActmhP/ELl5cvL
-	Nu3A2R2hGNkhzQhlLUYmJNAvsxvGOec6Mx37bzkVsQhnnUs3aW0a6GYH34Db7+Sz4Ui
-X-Google-Smtp-Source: AGHT+IGrqbF9PW88BwcvYbeFbvOXRwoCun/iE1ZSEaorTMP1Ihb1MtG0h6t2CJQLQRZKh3kqkmFzEpEHa7ehLYOu0M8=
-X-Received: by 2002:a17:907:72c4:b0:b45:60ad:daf9 with SMTP id
- a640c23a62f3a-b7053b0cf7amr50121266b.3.1761768831381; Wed, 29 Oct 2025
- 13:13:51 -0700 (PDT)
+	s=arc-20240116; t=1761768954; c=relaxed/simple;
+	bh=HDfewOV5mACxbjXjrW/oald4KFBK1ql0agAzRq4tGg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=of9v1cDNu12n+wm3BF6pomOfQG5GderqfR7+aokEn+BBAt3zV3r32uOx0xa/QY8dfsU9aBrwQgL6Da1BVa/U6QWRHSy8AMyrHhe3TEGnKKu4WZhPWSxxbxQZB3fE/yK8cArSxGF6loE+1Tl3Hdbv3ehzyPdKKgphnnNJtZSy8QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.2.214] (p57bd9c51.dip0.t-ipconnect.de [87.189.156.81])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5914B617C4FA6;
+	Wed, 29 Oct 2025 21:15:31 +0100 (CET)
+Message-ID: <9778a6a1-ffb0-4972-a2e7-893128a51e52@molgen.mpg.de>
+Date: Wed, 29 Oct 2025 21:15:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
-In-Reply-To: <mafs0tszhcyrw.fsf@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Oct 2025 16:13:14 -0400
-X-Gm-Features: AWmQ_bnKVfAOoreyDJlaPrAp9h8ss-TNKXA3PtoSrf7r-Gv5W7RZKx9AA8z_D0k
-Message-ID: <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com>
-Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
- preservation and state management
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: jasonmiu@google.com, graf@amazon.com, changyuanl@google.com, 
-	rppt@kernel.org, dmatlack@google.com, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Bluetooth: rfcomm: fix modem control handling
+To: Johan Hovold <johan@kernel.org>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Marcel Holtmann <marcel@holtmann.org>,
+ Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20251023120530.5685-1-johan@kernel.org>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251023120530.5685-1-johan@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 3:07=E2=80=AFPM Pratyush Yadav <pratyush@kernel.org=
-> wrote:
->
-> Hi Pasha,
->
-> On Mon, Sep 29 2025, Pasha Tatashin wrote:
->
-> > Introducing the userspace interface and internal logic required to
-> > manage the lifecycle of file descriptors within a session. Previously, =
-a
-> > session was merely a container; this change makes it a functional
-> > management unit.
-> >
-> > The following capabilities are added:
-> >
-> > A new set of ioctl commands are added, which operate on the file
-> > descriptor returned by CREATE_SESSION. This allows userspace to:
-> > - LIVEUPDATE_SESSION_PRESERVE_FD: Add a file descriptor to a session
-> >   to be preserved across the live update.
-> > - LIVEUPDATE_SESSION_UNPRESERVE_FD: Remove a previously added file
-> >   descriptor from the session.
-> > - LIVEUPDATE_SESSION_RESTORE_FD: Retrieve a preserved file in the
-> >   new kernel using its unique token.
-> >
-> > A state machine for each individual session, distinct from the global
-> > LUO state. This enables more granular control, allowing userspace to
-> > prepare or freeze specific sessions independently. This is managed via:
-> > - LIVEUPDATE_SESSION_SET_EVENT: An ioctl to send PREPARE, FREEZE,
-> >   CANCEL, or FINISH events to a single session.
-> > - LIVEUPDATE_SESSION_GET_STATE: An ioctl to query the current state
-> >   of a single session.
-> >
-> > The global subsystem callbacks (luo_session_prepare, luo_session_freeze=
-)
-> > are updated to iterate through all existing sessions. They now trigger
-> > the appropriate per-session state transitions for any sessions that
-> > haven't already been transitioned individually by userspace.
-> >
-> > The session's .release handler is enhanced to be state-aware. When a
-> > session's file descriptor is closed, it now correctly cancels or
-> > finishes the session based on its current state before freeing all
-> > associated file resources, preventing resource leaks.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> [...]
-> > +/**
-> > + * struct liveupdate_session_get_state - ioctl(LIVEUPDATE_SESSION_GET_=
-STATE)
-> > + * @size:     Input; sizeof(struct liveupdate_session_get_state)
-> > + * @incoming: Input; If 1, query the state of a restored file from the=
- incoming
-> > + *            (previous kernel's) set. If 0, query a file being prepar=
-ed for
-> > + *            preservation in the current set.
->
-> Spotted this when working on updating my test suite for LUO. This seems
-> to be a leftover from a previous version. I don't see it being used
-> anywhere in the code.
+Dear Johan,
 
-thank you will remove this.
 
-> Also, I think the model we should have is to only allow new sessions in
-> normal state. Currently luo_session_create() allows creating a new
-> session in updated state. This would end up mixing sessions from a
-> previous boot and sessions from current boot. I don't really see a
-> reason for that and I think the userspace should first call finish
-> before starting new serialization. Keeps things simpler.
+Thank you for your patch.
 
-It does. However, yesterday Jason Gunthorpe suggested that we simplify
-the uapi, at least for the initial landing, by removing the state
-machine during boot and allowing new sessions to be created at any
-time. This would also mean separating the incoming and outgoing
-sessions and removing the ioctl() call used to bring the machine into
-a normal state; instead, only individual sessions could be brought
-into a 'normal' state.
 
-Simplified uAPI Proposal
-The simplest uAPI would look like this:
-IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
-LIVEUPDATE_IOCTL_CREATE_SESSION
-LIVEUPDATE_IOCTL_RETRIEVE_SESSION
+Am 23.10.25 um 14:05 schrieb Johan Hovold:
+> The RFCOMM driver confuses the local and remote modem control signals,
+> which specifically means that the reported DTR and RTS state will
+> instead reflect the remote end (i.e. DSR and CTS).
+> 
+> This issue dates back to the original driver (and a follow-on update)
+> merged in 2002, which resulted in a non-standard implementation of
+> TIOCMSET that allowed controlling also the TS07.10 IC and DV signals by
+> mapping them to the RI and DCD input flags, while TIOCMGET failed to
+> return the actual state of DTR and RTS.
+> 
+> Note that the bogus control of input signals in tiocmset() is just
+> dead code as those flags will have been masked out by the tty layer
+> since 2003.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 
-IOCTLs on session FDs:
-LIVEUPDATE_CMD_SESSION_PRESERVE_FD
-LIVEUPDATE_CMD_SESSION_RETRIEVE_FD
-LIVEUPDATE_CMD_SESSION_FINISH
+There is a linux-history git archive [1], if somebody wants dig further. 
+But not relevant for the tag used by the stable folks.
 
-Happy Path
-The happy path would look like this:
-- luod creates a session with a specific name and passes it to the vmm.
-- The vmm preserves FDs in a specific order: memfd, iommufd, vfiofd.
-(If the order is wrong, the preserve callbacks will fail.)
-- A reboot(KEXEC) is performed.
-- Each session receives a freeze() callback to notify it that
-mutations are no longer possible.
-- During boot, liveupdate_fh_global_state_get(&h, &obj) can be used to
-retrieve the global state.
-- Once the machine has booted, luod retrieves the incoming sessions
-and passes them to the vmms.
-- The vmm retrieves the FDs from the session and performs the
-necessary IOCTLs on them.
-- The vmm calls LIVEUPDATE_CMD_SESSION_FINISH on the session. Each FD
-receives a finish() callback in LIFO order.
-- If everything succeeds, the session becomes an empty "outgoing"
-session. It can then be closed and discarded or reused for the next
-live update by preserving new FDs into it.
-- Once the last FD for a file-handler is finished,
-h->ops->global_state_finish(h, h->global_state_obj) is called to
-finish the incoming global state.
+Is there any way to test your change, to read DTR and RTS state?
 
-Unhappy Paths
-- If an outgoing session FD is closed, each FD in that session
-receives an unpreserve callback in LIFO order.
-- If the last FD for a global state is unpreserved,
-h->ops->global_state_unpreserve(h, h->global_state_obj) is called.
-- If freeze() fails, a cancel() is performed on each FD that received
-freeze() cb, and reboot(KEXEC) returns a failure.
-- If an incoming session FD is closed, the resources are considered
-"leaked." They are discarded only during the next live-update; this is
-intended to prevent implementing rare and untested clean-up code.
-- If a user tries to finish a session and it fails, it is considered
-the user's problem. This might happen because some IOCTLs still need
-to be run on the retrieved FDs to bring them to a state where finish
-is possible.
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+> 
+> Changes in v2
+>   - fix a compilation issue discovered before sending v1 but never folded
+>     into the actual patch...
+> 
+> 
+>   net/bluetooth/rfcomm/tty.c | 26 +++++++++++---------------
+>   1 file changed, 11 insertions(+), 15 deletions(-)
+> 
+> diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
+> index 376ce6de84be..b783526ab588 100644
+> --- a/net/bluetooth/rfcomm/tty.c
+> +++ b/net/bluetooth/rfcomm/tty.c
+> @@ -643,8 +643,8 @@ static void rfcomm_dev_modem_status(struct rfcomm_dlc *dlc, u8 v24_sig)
+>   		tty_port_tty_hangup(&dev->port, true);
+>   
+>   	dev->modem_status =
+> -		((v24_sig & RFCOMM_V24_RTC) ? (TIOCM_DSR | TIOCM_DTR) : 0) |
+> -		((v24_sig & RFCOMM_V24_RTR) ? (TIOCM_RTS | TIOCM_CTS) : 0) |
+> +		((v24_sig & RFCOMM_V24_RTC) ? TIOCM_DSR : 0) |
+> +		((v24_sig & RFCOMM_V24_RTR) ? TIOCM_CTS : 0) |
+>   		((v24_sig & RFCOMM_V24_IC)  ? TIOCM_RI : 0) |
+>   		((v24_sig & RFCOMM_V24_DV)  ? TIOCM_CD : 0);
+>   }
+> @@ -1055,10 +1055,14 @@ static void rfcomm_tty_hangup(struct tty_struct *tty)
+>   static int rfcomm_tty_tiocmget(struct tty_struct *tty)
+>   {
+>   	struct rfcomm_dev *dev = tty->driver_data;
+> +	struct rfcomm_dlc *dlc = dev->dlc;
+> +	u8 v24_sig;
+>   
+>   	BT_DBG("tty %p dev %p", tty, dev);
+>   
+> -	return dev->modem_status;
+> +	rfcomm_dlc_get_modem_status(dlc, &v24_sig);
+> +
+> +	return (v24_sig & (TIOCM_DTR | TIOCM_RTS)) | dev->modem_status;
+>   }
+>   
+>   static int rfcomm_tty_tiocmset(struct tty_struct *tty, unsigned int set, unsigned int clear)
+> @@ -1071,23 +1075,15 @@ static int rfcomm_tty_tiocmset(struct tty_struct *tty, unsigned int set, unsigne
+>   
+>   	rfcomm_dlc_get_modem_status(dlc, &v24_sig);
+>   
+> -	if (set & TIOCM_DSR || set & TIOCM_DTR)
+> +	if (set & TIOCM_DTR)
+>   		v24_sig |= RFCOMM_V24_RTC;
+> -	if (set & TIOCM_RTS || set & TIOCM_CTS)
+> +	if (set & TIOCM_RTS)
+>   		v24_sig |= RFCOMM_V24_RTR;
+> -	if (set & TIOCM_RI)
+> -		v24_sig |= RFCOMM_V24_IC;
+> -	if (set & TIOCM_CD)
+> -		v24_sig |= RFCOMM_V24_DV;
+>   
+> -	if (clear & TIOCM_DSR || clear & TIOCM_DTR)
+> +	if (clear & TIOCM_DTR)
+>   		v24_sig &= ~RFCOMM_V24_RTC;
+> -	if (clear & TIOCM_RTS || clear & TIOCM_CTS)
+> +	if (clear & TIOCM_RTS)
+>   		v24_sig &= ~RFCOMM_V24_RTR;
+> -	if (clear & TIOCM_RI)
+> -		v24_sig &= ~RFCOMM_V24_IC;
+> -	if (clear & TIOCM_CD)
+> -		v24_sig &= ~RFCOMM_V24_DV;
+>   
+>   	rfcomm_dlc_set_modem_status(dlc, v24_sig);
+>   
 
-This would also mean that subsystems would not be needed, leaving only
-FLB (File-Lifecycle-Bound Global State) to use as a handle for global
-state. The API I am proposing for FLB keeps the same global state for
-a single file-handler type. However, HugeTLB might have multiple file
-handlers, so the API would need to be extended slightly to support
-this case. Multiple file handlers will share the same global resource
-with the same callbacks.
 
-Pasha
+Kind regards,
 
-> > + * @reserved: Must be zero.
-> > + * @state:    Output; The live update state of this FD.
-> > + *
-> > + * Query the current live update state of a specific preserved file de=
-scriptor.
-> > + *
-> > + * - %LIVEUPDATE_STATE_NORMAL:   Default state
-> > + * - %LIVEUPDATE_STATE_PREPARED: Prepare callback has been performed o=
-n this FD.
-> > + * - %LIVEUPDATE_STATE_FROZEN:   Freeze callback ahs been performed on=
- this FD.
-> > + * - %LIVEUPDATE_STATE_UPDATED:  The system has successfully rebooted =
-into the
-> > + *                               new kernel.
-> > + *
-> > + * See the definition of &enum liveupdate_state for more details on ea=
-ch state.
-> > + *
-> > + * Return: 0 on success, negative error code on failure.
-> > + */
-> > +struct liveupdate_session_get_state {
-> > +     __u32           size;
-> > +     __u8            incoming;
-> > +     __u8            reserved[3];
-> > +     __u32           state;
-> > +};
-> > +
-> > +#define LIVEUPDATE_SESSION_GET_STATE                                 \
-> > +     _IO(LIVEUPDATE_IOCTL_TYPE, LIVEUPDATE_CMD_SESSION_GET_STATE)
-> [...]
->
-> --
-> Regards,
-> Pratyush Yadav
+Paul
+
+
+[1]: 
+https://web.git.kernel.org/pub/scm/linux/kernel/git/history/history.git/
 
