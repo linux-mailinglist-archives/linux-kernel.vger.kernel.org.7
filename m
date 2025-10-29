@@ -1,80 +1,96 @@
-Return-Path: <linux-kernel+bounces-877280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E479C1DA4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:11:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4443FC1DA61
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:13:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790D4188EDA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28EED18980B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048862F12C8;
-	Wed, 29 Oct 2025 23:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146EB2F39CE;
+	Wed, 29 Oct 2025 23:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C1tmLb7m"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="im3LP7Wh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B072EC0A0;
-	Wed, 29 Oct 2025 23:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCF22E0B59;
+	Wed, 29 Oct 2025 23:13:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761779467; cv=none; b=cPxf73t364DigSCh9ovAJ6Hjl6LuKEFtL8HyYxO9y7uE6UZjFwYKbP/zruXgX+72JXoAZUxFFJxtyjGJJoL34VKiNbs/nVR6NvEqDt6UOhGHEwr+0/vX7v8+cwm6PzNbx9m6Pw4uIvUkwNz/dz/+v7HyLtKEiDK++tOB605zliI=
+	t=1761779593; cv=none; b=hmrDkmTLKOrR7Y/X4SxTuh/C88wJItpUmqFr+Jii49rIgWMHkX9HmFqqasaVOFiqHglVg9GddiOUPtA2LPF7iokPNcR3Z8J8lAasc9JiBT1jmyor3uQW9JBkWfuit+IEe4nJd+/Cr5aQKmzb6FWI2ZXLfaGJubD5ANNUEILHeU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761779467; c=relaxed/simple;
-	bh=eHlQ2ZALLjGdsa88lWgTESQ22heSRABB6bxl7CsGUww=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=U8TETcdWk/ZAy6+238zgrf2qEPthsisedKpRh7kmku0yecNIeaObP0pfSujTyJ4mNx8ejVUTBXi63K1UfRR3U57svtp7/6T9iKQsHOqNRVBKlrvWe6x81E0yP6GCLZU6K/nVz7v4Nrm33yQV/cd9iX3OE/Ppavo5Wp4KNnAcUH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C1tmLb7m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 812A4C4CEF7;
-	Wed, 29 Oct 2025 23:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761779466;
-	bh=eHlQ2ZALLjGdsa88lWgTESQ22heSRABB6bxl7CsGUww=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=C1tmLb7mh4BjAht6SYKF9rf3E5ABcFVOINxHcK7CjmzQ398z2SAAuitNQkhsyWAXj
-	 xNUGo9R6um8sdlaF7tTnnwcjylb6Hy3x27qfCnai9SSW+zaGEJgH3XKB+dQ6C/55S1
-	 OFxBaFVfIatdHz/gy4117dT7Poo4G8Y/r2EhXEhkWAnsS+Yqc6khm0mYqPooQ7Suty
-	 FhaKMD+sNsPy+SSSkymX+V87/ohpuYei2+8/fXbMXpzUfm8I+INFt4tzLxDde8+MJX
-	 dKLQmQSgYmapfYnzafjIm3AeV5zzL85G2Ix8P6DA+Dl5Ae+lCFtvFxvbjqXwYpzAXC
-	 BMr89O3kAt/hg==
-Date: Wed, 29 Oct 2025 18:11:05 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v4 4/9] PCI: dw-rockchip: Add helper function for
- enhanced LTSSM control mode
-Message-ID: <20251029231105.GA1601725@bhelgaas>
+	s=arc-20240116; t=1761779593; c=relaxed/simple;
+	bh=z4SnXRipUzz35y/BzThyGakaFJrTo847VpmitD4DBYQ=;
+	h=Date:From:To:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=DtYgxJnNtLEm9P+YoPUQJGLQJziQaAuaQe+0GeiZFBKfal1QOydZ41IyJdcJKZBKPsJ/KLqT2LFrrxq+kBRpC9Jr/lgCHgYD0Kz8+pUJgQhngUFzsE5FOBhH9Vl0WcKyyvz47NNZTA1/aQeySH7sto8TW4K6+t5dGmQFukVebyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=im3LP7Wh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A30C4CEF7;
+	Wed, 29 Oct 2025 23:13:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761779592;
+	bh=z4SnXRipUzz35y/BzThyGakaFJrTo847VpmitD4DBYQ=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=im3LP7Wh6PwlT0Uu4EFypO7HRZK3HCj/cZx1dZQ6EVD75bjhnAw2+T3Ml0qTTPVH4
+	 2VAAAUaPpjfKb+je7NI4Wfo1AhVCe3/XyQOFVeK15Lu/uNgRGGyHbqQUpPLiCw+piC
+	 qVOPw5OaKjEApJmT/RyYG0NdSjlS7qVmJofNHRn8=
+Date: Wed, 29 Oct 2025 16:13:10 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>, xin@zytor.com,
+ peterz@infradead.org, kaleshsingh@google.com, kbingham@kernel.org,
+ nathan@kernel.org, ryabinin.a.a@gmail.com, dave.hansen@linux.intel.com,
+ bp@alien8.de, morbo@google.com, jeremy.linton@arm.com, smostafa@google.com,
+ kees@kernel.org, baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com,
+ wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com,
+ fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com,
+ ubizjak@gmail.com, ada.coupriediaz@arm.com,
+ nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com,
+ elver@google.com, pankaj.gupta@amd.com, glider@google.com,
+ mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org,
+ thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com,
+ jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com,
+ mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com,
+ vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
+ ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev,
+ ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com,
+ maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org,
+ rppt@kernel.org, will@kernel.org, luto@kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 00/18] kasan: x86: arm64: KASAN tag-based mode for
+ x86
+Message-Id: <20251029161310.61308a6b61b1423feb655d2a@linux-foundation.org>
+In-Reply-To: <20251029150806.e001a669d9dad6ff9167c1f0@linux-foundation.org>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+	<20251029150806.e001a669d9dad6ff9167c1f0@linux-foundation.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-rockchip-pcie-system-suspend-v4-4-ce2e1b0692d2@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 06:56:43PM +0100, Sebastian Reichel wrote:
-> Remove code duplocation and improve readability by introducing a new
-> function to setup the enhanced LTSSM mode.
+On Wed, 29 Oct 2025 15:08:06 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-s/duplocation/duplication/
-s/setup/set up/
+> However patches 1&2 are fixes that have cc:stable.  It's best to
+> separate these out from the overall add-a-feature series please - their
+> path-to-mainline will be quite different.
+> 
+> I grabbed just those two patches for some testing,
 
-Maybe also include the actual function name instead of just "a new
-function".  "rockchip_pcie_enable_enhanced_ltssm_control_mode()" is
-pretty long; I wouldn't object to a shorter version :)
+x86_64 allmodconfig:
+
+/opt/crosstool/gcc-13.2.0-nolibc/x86_64-linux/bin/x86_64-linux-ld: vmlinux.o: in function `pcpu_get_vm_areas':
+(.text+0x101cc0f): undefined reference to `__kasan_unpoison_vmap_areas'
+
+
 
