@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-875524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6308C1927A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:47:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90560C1942E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5BA51C81FDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61E0D563887
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7D32FABE0;
-	Wed, 29 Oct 2025 08:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A417431E0E1;
+	Wed, 29 Oct 2025 08:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fc1b2abA"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rm10YfvX"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377B2313E13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03AA31618F
 	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761727243; cv=none; b=WB3C4vBmsTZFProaUbzzOXMIcp5LtXedXNthp/5stWByiNXq+LOkNUOzuPrOtB2BLdlvWl8VwZzz4Nxb3+8M4kJQrxd8wLE0rTABM6PJaUB97EoOFDYwWyy67hgRC3C0qpSKjmld/nQV6b3X16+Oq5WMHO2RVXyvAvVQpp15gZQ=
+	t=1761727243; cv=none; b=Jr7nrNzqWc/MZQcJyUYq8s2itWvAMJ6CNNskJHoYahXN3ukTaVjcz9tLkgDfQ1imGaOeXO1eZN7rqOjnYbF6/CCNbFJXjhsJLEAEkS6s1ifblNQhQwdmSNDt9xzp/zjSsdfYFodYpdH1RsNx/eoycNnQLiUlANzdZ+/sll0q1Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761727243; c=relaxed/simple;
-	bh=ByNPBZVkQaRvvDMo6YDk7cXzzfRGMjEtnqu+EzYfgyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nlhOPkkxtzmmMXhIVQ0oclupzT0Qc76yDxibY3sE8wZtoca29xz3X9w80SM/nRGGN8QnbEBkICoYsPNAhu6BDSXYaluoMSonxQCiiAQulgSsJ7NmICftyr+WTEr50Lya3KPSWUAjIbloznjdiQJcC2RBnhN7gWXE3MwpJIVifxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fc1b2abA; arc=none smtp.client-ip=209.85.128.48
+	bh=3dfxHvLEODjIsoBymhUDZZGiO3PfPaDxRfipDf2Q+eU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YaiH6UkHU1jpr7wiv3RGUw2ATlBKgWB4ox/7K6eHmMg0LHwZDHCBSW6tYRbB1S6JT0TB1L6j0LW0E8GBXpiCfVcGVosVW8XLgxgbqb+e5FAvvJ3IFqcXUcIugiG2SujwnuIkx3d/xcBu+yZzyfhn0VXY9QyjY+XviWpiVfRlAzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rm10YfvX; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4710683a644so6744525e9.0
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3ece1102998so4953602f8f.2
         for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:40:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761727239; x=1762332039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BWxjeRjOEhcNVgfP/QkxqsBAhufcjSTlJ37Z8hpahuU=;
-        b=fc1b2abACXsGrYVYbOoRbk1aU9GwCAixenwSUb+70ZEoEYVI2UMcVw5og8SrRI0hWm
-         plD5ndoxhZictdq0i0DZIF1V01lDGUBRxVuv9sRjJueikVmP/R8uIX/8HfoyX6OkpYyU
-         QZbBksKXPNNsMHtzS0TeoBWBAbzdP9ZuExuT1QNinz08ElqYYqLvKyGSPeZdoawBwNAl
-         mYP7LgpEaFLgXEXvo2p+vMr0HAkm38ncqI6CdNVYO1n761/olzxn92pRlPrAJCfyz7UK
-         ARGQKzkJrHWfY9E/ABBd5sYbiW+xtvI4G6rLF4bhvdiGTgB0/NCaPzlz7y0bjBls+MsU
-         Ki3g==
+        d=gmail.com; s=20230601; t=1761727240; x=1762332040; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5zDKBowBIfgO2OmsFcxAdae/8qYwuZcAE+WV1T/cljM=;
+        b=Rm10YfvX39NGehU72t5+bv4SznCrV20Ajt+EeSvYl+Mm6LRpHQt3O5zIq8n7Cik6pc
+         4lR2UxNyF+uqb/tnh5Uc2lGCTAnfZB127b6XN75hV13gTzyjJnaasoYoLPTnypw60iMF
+         fWA5wUpFtzIWQyKI5rySOd3j4iSYDPVnj4BvMNbixh1t7h9SDo3I5b2y0YiUtlguxthd
+         wLlaR2ICjNP+n2UM5gDX6799S++NHaVLng1R/TfAVb46FmYdTy4mfiYYdILPwyp87FE4
+         IvJky5X+6ERZYpOC9udc1HZ38JDYLqEVAGGI+nP8IXOrqWpN5uOSwCXQ9FY3pSdxkfOk
+         fTJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761727239; x=1762332039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BWxjeRjOEhcNVgfP/QkxqsBAhufcjSTlJ37Z8hpahuU=;
-        b=gKMJGQJuum/pMSt5EZO4euTLKQsfkjMveqdFGeXO8f2gT5eWN6ebOfaBQtlkiX3zaO
-         r0jiezF9IelkIwADHKDPh3zd5dPunZ46J+P9kD/YDV9Mcv9UC9RTvDMpttg4f9Bdo3Xx
-         mPUqyOwFJJe0v/ek9NR+f3AtFljPRYZfvndtrXC6qlD41Ao4Rqv5+qOgzfkcGiegCWiK
-         JxnaMLBhgtiT12FS3xHwANQmJqk2+IOCDukHSDTTg2HzDc8rXYZVoWuCSPebI+LSeJDT
-         hEHcmXCKmF3j0/LTOcy0E6vZ30NyigKEZJ6k8cFCoRj3IcaVUA//r+uPVomsYSUcu44K
-         OCBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdxUTpLxy2JpNXkuhH8ASmM2sDyiKwIq6PzjZXNSv+Lf+E1fkq0f830kGYzRCvv2qok0ZTYoQlhTHCRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrLbYw/CwxYbrpa69kSwArrah6xDmIJnMwqNM686a1Ww/6tyT5
-	zcTmL/bG6mITnzeA5u8DYNDMZtKicu4V1ioK5+1/E8tn/IF3O/i3B61+
-X-Gm-Gg: ASbGnctuOcaldbuvCQAHjlzygIyvt4tgD62XO8JjiVy+6WjdRiG8KFhh9dbiBU8qp5X
-	r7atRuaSSwny2oVMytV8psBN8LWhRG1zWlopiizT04IDVkoaA8r6M+eX/TOXzLizAsDZzSwsVk4
-	MFY49OUJaE5QMA+w5KTdUzGr++F15Tm4tziXT2Ed2g+LmbQlLbOYnJX38gwHFkSrYABICjCDdzg
-	XZCrdvcboBp1Jv3QGgBuByR++kkh6z1kg2M4pDBB3puVWhsjHVxgWtDkseMUIBSjBI2tq+BMqdH
-	rIG58D1eTHGQA0Ny/KupRE84Gwdn/L13PylO2zOfBGDjR9wYSosuua5BXZ1g1K+XbloEgGROA6r
-	52DyeKtVLugQMKresBxsxQJBcVYiqhRZiqZrOu0eGee1+XkY/ZqxkabSjFvM2N8ua7kYskXjE+2
-	I3QjovglaX+ZJQleeLNF1Y8VWabZFQouoehBe37IjUTU05ZM0zdTxtqGyG6j8i
-X-Google-Smtp-Source: AGHT+IHzDG9SBUzGPViM4O6XUORkMfXDOjYXSdJLjQD/Nfqn6/OKgCqHeLDZcWlwFIAoLgO8gs3hzQ==
-X-Received: by 2002:a05:600c:4450:b0:46f:b42e:e38f with SMTP id 5b1f17b1804b1-4771e6a188bmr20563075e9.19.1761727239422;
+        d=1e100.net; s=20230601; t=1761727240; x=1762332040;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5zDKBowBIfgO2OmsFcxAdae/8qYwuZcAE+WV1T/cljM=;
+        b=bwN7MH/ozomCQq260Tdcr+U1Bcl1J12LPI4Uh6sncqxPGrt96WC1JYoVme6oTXIFC2
+         FD5faEAknlenNNG7aYTCVfxInolvzggVCi+qD3wU7Ct8BqTNoOAdUDLBgVsqGWw80xpy
+         /Eju7rca+tau9xn13Hs+dm0eH4GAlxIZknxhXUwdezAPLYEgT5GZv06/epOYf3oZzvTj
+         JRt4FLkFuhs99fWdUEPBDxyuYG08TD8HP9MeMPc67bDG7HKaUomvmyVzPv/iHb8AqxSI
+         LGQxKyHwJITGbCOrgFZuVhJuyTv6aFCz/oWct9R3DTYiDnPVNaNmXamKwUD6tLUhQKY7
+         fXtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy8PJVYovZEsGAJwD9hxJhUk8yGcTDJPEcgzX8+ULlhZlZe12QX4IJC7aq7svTGm+gzOZ1eX4Y19/vkKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYL7KR06GeSDssXhjVQZRfgmolb4SasRCzml23VDBoHlDY5row
+	UkkHnlC+b2LCPw64DQ20m97e/O9NAPtpyULhbDYiZ2RTN94PAeSS4bG0
+X-Gm-Gg: ASbGncvhjSakuCj+tyrP3amovhKvSzUYd61hgqs730Q7S6COjD5+t8O6xNtLtDp0XRC
+	uthC3PrL/gMosLppZQu56E13MJmzvoxt/18hf0ZgdJvxGb1GyjI8tyr7Et4StJN87Tl4GPv4r+J
+	zQc+D1V17f1cYq7qbTYZwDBfP5wkELmS3WN+HWkLRC01AZxoBtn7xI1f38ukgo7eonEHqFBcUxz
+	wrIKrH7zSHuRBQAOs9vEH7XjW8NyZ1W+lx/7auDp7/Z9iqbKkWVzCgUKT/c4Jb3hABRjp479y0T
+	mQ6x8DVykSOuI4pSv+R8YsMw7kXwARy7zLg+rauX6FZB7K1rblamngthS8/QXcqqXOWGjq1tonA
+	kLv5sZfxV+UcyLq/UF6K+aruIkVrUBMUTr6doF4NBCl3vwq0jYnzKMJCjYDj4X/uIyU4a4MM/km
+	gD2or+MhuZlK4hr/LGK2vrRFHrT53rRN0NBAxJSxIjGxuAfyGU64xBZN8R5b59
+X-Google-Smtp-Source: AGHT+IF3LoH+MVR8GJt0HNUZBmCSpCGxlcDgvQw6PVT+Io7cZd3fZ9aRwEFQRwsDZ93XErw9fNatZA==
+X-Received: by 2002:a05:600c:4e91:b0:46e:39e1:fc27 with SMTP id 5b1f17b1804b1-4771e16596fmr20457285e9.5.1761727239965;
         Wed, 29 Oct 2025 01:40:39 -0700 (PDT)
 Received: from biju.lan (host86-162-200-138.range86-162.btcentralplus.com. [86.162.200.138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3a88fdsm39485785e9.10.2025.10.29.01.40.38
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3a88fdsm39485785e9.10.2025.10.29.01.40.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 29 Oct 2025 01:40:39 -0700 (PDT)
 From: Biju <biju.das.au@gmail.com>
@@ -78,7 +80,6 @@ To: Vinod Koul <vkoul@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Magnus Damm <magnus.damm@gmail.com>
 Cc: Biju Das <biju.das.jz@bp.renesas.com>,
@@ -87,11 +88,14 @@ Cc: Biju Das <biju.das.jz@bp.renesas.com>,
 	linux-kernel@vger.kernel.org,
 	linux-renesas-soc@vger.kernel.org,
 	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>
-Subject: [PATCH v4 0/2] Add Renesas RZ/G3E USB3.0 PHY driver
-Date: Wed, 29 Oct 2025 08:40:32 +0000
-Message-ID: <20251029084037.108610-1-biju.das.jz@bp.renesas.com>
+	Biju Das <biju.das.au@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v4 1/2] dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
+Date: Wed, 29 Oct 2025 08:40:33 +0000
+Message-ID: <20251029084037.108610-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251029084037.108610-1-biju.das.jz@bp.renesas.com>
+References: <20251029084037.108610-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,32 +106,97 @@ Content-Transfer-Encoding: 8bit
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-This patch series aims to add Renesas RZ/G3E USB3.0 PHY driver support.
-This module is connected between USB3 Host and PHY module. The main
-functions of this module are:
- 1) Reset control
- 2) Control of PHY input pins
- 3) Monitoring of PHY output pins
+Document Renesas RZ/G3E USB3.0 PHY. This IP is connected between
+USB3HOST and PHY module. The main functions of the module are
+as follows:
+ - Reset control
+ - Control of PHY input pins
+ - Monitoring of PHY output pins
 
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 v3->v4:
- * This patch series split from[1] as this series can be merged
-   without any issues.
  * Collected tag from Geert.
- 
-[1] https://lore.kernel.org/all/20250916150255.4231-1-biju.das.jz@bp.renesas.com/
-
-Biju Das (2):
-  dt-bindings: phy: renesas: Document Renesas RZ/G3E USB3.0 PHY
-  phy: renesas: Add Renesas RZ/G3E USB3.0 PHY driver
-
- .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  |  63 +++++
- drivers/phy/renesas/Kconfig                   |   7 +
- drivers/phy/renesas/Makefile                  |   1 +
- drivers/phy/renesas/phy-rzg3e-usb3.c          | 259 ++++++++++++++++++
- 4 files changed, 330 insertions(+)
+v2->v3:
+ * No change.
+v1->v2:
+ * Collected tag.
+---
+ .../bindings/phy/renesas,rzg3e-usb3-phy.yaml  | 63 +++++++++++++++++++
+ 1 file changed, 63 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
- create mode 100644 drivers/phy/renesas/phy-rzg3e-usb3.c
 
+diff --git a/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+new file mode 100644
+index 000000000000..b86dc7a291a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/renesas,rzg3e-usb3-phy.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/phy/renesas,rzg3e-usb3-phy.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/G3E USB 3.0 PHY
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++properties:
++  compatible:
++    const: renesas,r9a09g047-usb3-phy
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB bus clock
++      - description: USB 2.0 PHY reference clock
++      - description: USB 3.0 PHY reference clock
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: core
++      - const: ref_alt_clk_p
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  '#phy-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - resets
++  - '#phy-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/renesas,r9a09g047-cpg.h>
++
++    usb-phy@15870000 {
++        compatible = "renesas,r9a09g047-usb3-phy";
++        reg = <0x15870000 0x10000>;
++        clocks = <&cpg CPG_MOD 0xb0>, <&cpg CPG_CORE 13>, <&cpg CPG_CORE 12>;
++        clock-names = "pclk", "core", "ref_alt_clk_p";
++        power-domains = <&cpg>;
++        resets = <&cpg 0xaa>;
++        #phy-cells = <0>;
++    };
 -- 
 2.43.0
 
