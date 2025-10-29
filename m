@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-875106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3548C1839C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:15:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22B2C183A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56B4C420D8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:15:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAF4B1C2863F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB6632797B5;
-	Wed, 29 Oct 2025 04:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1F12F290A;
+	Wed, 29 Oct 2025 04:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="u4scja2m"
-Received: from CH1PR05CU001.outbound.protection.outlook.com (mail-northcentralusazon11010068.outbound.protection.outlook.com [52.101.193.68])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Lu/RiMpx"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010029.outbound.protection.outlook.com [52.101.46.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7D4E19D065
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.193.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7D320DD48;
+	Wed, 29 Oct 2025 04:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.29
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761711344; cv=fail; b=ae5Jx03ss/LEoPlOn7pqV8tN9ZI0OESejVZCLTEYUAd2AMUitkPiyNDBmRudHaSjBtLxXqbH1rkzMw5yhIKPuAjVnVEmaBsjkHJ75mmR3NThjcX+jA+2exUTEBlx/rXOaIAwgXqTQEiSkvU2/nheFSEj/D3eAlyrF/nhMmQSxlg=
+	t=1761711354; cv=fail; b=NSExGGxDaJn2iEuQpoGlpxN/lxfMg2KNC2ruu+EDvEHRlTlHeFhN3KVF4JNBpycl92/pF6HxVi1Q3LXfT4b6CZszGLoZCx+ZTBbqh4CmwBQ+kwtDYTV0bezp9YumsdrLrLHKeMi1or7leeVrSy+HRFsiadWruJcK+RYGHQehRCU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761711344; c=relaxed/simple;
-	bh=eNTHIbV0Jc6XcLUwn4foSc6mQmgj3PVadMfEd8y+Hhs=;
+	s=arc-20240116; t=1761711354; c=relaxed/simple;
+	bh=CloLRCH5ihb/rczTWTazVyyApCF/iRIZq57cyVdSKxc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ssKuu1i5muWjTsE5Atzmk8UDjXnWSHWXTVtpmQ1gY8Yr3QQdA3kwJA2EtO3s07BnmEbS7x80AZ+1i3g2JvRZeL8O7CwabptW3D04YGVF43j1/wo5R394aekFO37hre36ZUeofY7P/tgnW0N49xYuzzLaPS7I603Tj29hwx/YJTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=u4scja2m; arc=fail smtp.client-ip=52.101.193.68
+	 In-Reply-To:Content-Type; b=KPIoIwTTlOHT49lqkk+WEgfCbLIAkibWd/OgDxVOJSdmjJK4Qyb0gh3kwsOHUlaV63OSauXYHVMPIpkvvZjVHcgKxs5Zd4yNqj4/WhcPVtE17aE7PXId2asIIcsSJ539xo0sUyfUuZjGTkitpj69V0lunJ6ZIm7xt8Dqwuqb6zo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Lu/RiMpx; arc=fail smtp.client-ip=52.101.46.29
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tK4BwkpAaJ/HcgbGYjFSwsc1kjwBYqciwtT6sc3caxIO3ar0XkoL9CYwOoCy1F8AOgyVjivl88lzhzikfZeiQJetQY40rHMtZazYC71x1k326y9Leh2uUYZ5bDsavs9iPbxn9QizXiQcuaSyswCZAjW04hwEa5VseoOAoCYAI1KOIcRrctCKqGblXDhTZpdL54r6VTMd0qY1GbnXpjOhD11ccHVywan4oTkMe6NR9sMbwiz0U5tEhdj8448YBQY8JXJQJzFmp3GdBDbf0hYtSIvu6ZvSNK5/aLNnZU3PBxtSMTUb1ddLRYZbbBFMEPZ3hdP15NdxIYnloMyOrP2RPw==
+ b=YhjoI4wCfRRhgFRQ7kt0+KrKLL+gk4404CYLlRDNo+XwBV32NHIVi+k9xl+1kyXS2P8wzL36WvqUfljr5CvrPRnqoHYdbeshHGwxQIuchUSW8s1BVBXrvezjt5gQDV/HTn/HzhCPwr8rNuYW9jpVs6fRthpN3MoRnX3jlwBK38YUj5k0E4Hqikj9r4s4Z9UKq7xMX6OldGgqZDW2mNZaerEje89w5IGfl5EW63tWL2rloPlwClAO9oqgTlzJqf7dUD2UvvFP/TTc4FkjhdloHnW+IQS0tb2ijm6qLPKJkWTCM5fqsKA6BpyLn/kxtVpA5bggrbychEBLyWuI3qWrUQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z0863RSbB5j6HEBTx3NeoOZ0hLYQ9bw3bpBR3+ZqS4g=;
- b=ZsIyUT90JUOcTwJrEwmUJK8FDiGzCJRn+xJH59+SCHKJscCcdF8ib6ZpwEVpmL6j0WT3FwCVjfF55oxsNr6/Gm6iII/fR/zr0CNcSau7NHri2HbtLDWMdU6c+7QpsT7VJQmBFLx+macnYZLwKDyFk9fkiq6/m0ZGCwWz7hyAbG34lmlO7vJyVLZqC6VXff52e1nsxmc1C/P4gjDoYjzHBAHH92xKjDCdZrTtOYHgQ9cSGAZ7D7W3wmQCaoxXogObU5croVZnDPK6BBUALCwqXD53VPtfmf9vXMrEXOYoChHZZL6YFqZ0Ai17tGPro2nzc/TVvWZ0OJENzpLavbdHLA==
+ bh=mUdBRxiA3cOeoCWKUku9TB9V77qDbkVwRsLRchA+OIQ=;
+ b=uiNhY6BDiQ5PeTMDJVPrUAwUZYLvnx2cJt7G4Vb7rM+NjWwR6VnTHfOnWsnAdwoX+SF9fe5kcEAKaLX5nH39fiSaPUVZUdHBFwEUkA29B4fzj6kSehvjU9JXVNBqqEMRH4IdlOcePQxtuakVs3ChsTDR1/FeNJYUqmHiIUFsfptywnSJaTvU4gy0o6B5RSPA5Ku6MHrGvVju4jSkEe1XdJoES3FPFZhEg3N8JM22Dlv7Gd+oz07Sjzp3eClKNgk9lXuS9j+amw/Zyk9zLschueifUUIWjg2qiy2TmfARCPwx3yD5UsLYchMtC94dQBUiucrEO8mkNg3dJqUn81YLFw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ 165.204.84.17) smtp.rcpttodomain=oss.nxp.com smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z0863RSbB5j6HEBTx3NeoOZ0hLYQ9bw3bpBR3+ZqS4g=;
- b=u4scja2mx4yXyCMDtu1UyDCxmAz23nvtrjP6Un5AgL3+wLQgx1/rw7dkuthsNPL/WNxb7dgrjqs/MC1fTovdEE/QdzQv+7HsdkxhZs7MX/0mXEFwT7jhL1khbycriXeX6CMukImUT/p09n8+xKyA2xQju2C4m5SNSPezWTXUGX8=
-Received: from SA1PR04CA0011.namprd04.prod.outlook.com (2603:10b6:806:2ce::18)
- by LV2PR12MB5726.namprd12.prod.outlook.com (2603:10b6:408:17e::9) with
+ bh=mUdBRxiA3cOeoCWKUku9TB9V77qDbkVwRsLRchA+OIQ=;
+ b=Lu/RiMpxWBSXY2ANIWNfFOEr5hfF/RCxAL7zGmQGD7eh62qQxIYJqAlPEw/j9Xy1ZUUnZkDk2Q3lKjackv953aZCuk7M+4DxRD60Fa8GQcUnQS6Lp0cmYF16k6R9hg5+QPGOmReRKLPmg/IkQr+VqsmEm1Wrn+8ZFM3ck7wrokI=
+Received: from PH2PEPF00003847.namprd17.prod.outlook.com (2603:10b6:518:1::64)
+ by IA0PR12MB8984.namprd12.prod.outlook.com (2603:10b6:208:492::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
- 2025 04:15:39 +0000
-Received: from SA2PEPF000015CD.namprd03.prod.outlook.com
- (2603:10b6:806:2ce:cafe::c4) by SA1PR04CA0011.outlook.office365.com
- (2603:10b6:806:2ce::18) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 04:15:48 +0000
+Received: from SA2PEPF000015C9.namprd03.prod.outlook.com
+ (2a01:111:f403:c931::1) by PH2PEPF00003847.outlook.office365.com
+ (2603:1036:903:48::3) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13 via Frontend Transport; Wed,
- 29 Oct 2025 04:15:38 +0000
+ 29 Oct 2025 04:15:48 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,22 +62,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
 Received: from satlexmb08.amd.com (165.204.84.17) by
- SA2PEPF000015CD.mail.protection.outlook.com (10.167.241.203) with Microsoft
+ SA2PEPF000015C9.mail.protection.outlook.com (10.167.241.199) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 04:15:38 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
+ 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 04:15:48 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
  (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Tue, 28 Oct
- 2025 21:15:38 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 21:15:47 -0700
+Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 28 Oct
- 2025 23:15:37 -0500
-Received: from [172.31.184.125] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Tue, 28 Oct 2025 21:15:32 -0700
-Message-ID: <d1dc82c4-19d1-4897-b4a2-438512969868@amd.com>
-Date: Wed, 29 Oct 2025 09:45:31 +0530
+ 2025 23:15:47 -0500
+Received: from [172.31.8.141] (10.180.168.240) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Tue, 28 Oct 2025 21:15:47 -0700
+Message-ID: <b9ce8b9c-6391-47fd-b7b5-be5cddf9cd4e@amd.com>
+Date: Tue, 28 Oct 2025 23:15:41 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,159 +85,203 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/19] sched/fair: Respect LLC preference in task
- migration and detach
-To: Tim Chen <tim.c.chen@linux.intel.com>, "Chen, Yu C" <yu.c.chen@intel.com>
-CC: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli
-	<juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, "Steven
- Rostedt" <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, "Madadi Vineeth
- Reddy" <vineethr@linux.ibm.com>, Hillf Danton <hdanton@sina.com>, "Shrikanth
- Hegde" <sshegde@linux.ibm.com>, Jianyong Wu <jianyong.wu@outlook.com>, Yangyu
- Chen <cyy@cyyself.name>, Tingyin Duan <tingyin.duan@gmail.com>, "Vern Hao"
-	<vernhao@tencent.com>, Len Brown <len.brown@intel.com>, Aubrey Li
-	<aubrey.li@intel.com>, Zhao Liu <zhao1.liu@intel.com>, Chen Yu
-	<yu.chen.surf@gmail.com>, Adam Li <adamli@os.amperecomputing.com>, Tim Chen
-	<tim.c.chen@intel.com>, <linux-kernel@vger.kernel.org>, Peter Zijlstra
-	<peterz@infradead.org>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, "Ingo
- Molnar" <mingo@redhat.com>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <d3afcff5622222523c843f5c1b023bfe43f9c67c.1760206683.git.tim.c.chen@linux.intel.com>
- <5cdf379c-b663-424d-8505-d91046e63c20@amd.com>
- <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
- <4560ffb7eab64f7b9c6f7eb2ad7430827e19f849.camel@linux.intel.com>
+Reply-To: <tanmay.shah@amd.com>
+Subject: Re: [PATCH 0/3] remoteproc: xlnx: remote crash recovery
+To: Peng Fan <peng.fan@oss.nxp.com>
+CC: <andersson@kernel.org>, <mathieu.poirier@linaro.org>,
+	<linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20251028045730.1622685-1-tanmay.shah@amd.com>
+ <20251029032422.GA7297@nxa18884-linux.ap.freescale.net>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <4560ffb7eab64f7b9c6f7eb2ad7430827e19f849.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Tanmay Shah <tanmay.shah@amd.com>
+In-Reply-To: <20251029032422.GA7297@nxa18884-linux.ap.freescale.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Received-SPF: None (SATLEXMB04.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
+Received-SPF: None (SATLEXMB05.amd.com: tanmay.shah@amd.com does not designate
+ permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015CD:EE_|LV2PR12MB5726:EE_
-X-MS-Office365-Filtering-Correlation-Id: a01702b4-426f-4792-26ab-08de16a1d114
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015C9:EE_|IA0PR12MB8984:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08234d2b-90ab-4db3-e05a-08de16a1d6c0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|32650700017|36860700013|1800799024;
+	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z0NkWUlUVVhJM04zaFFVWXo5b2tUTVgxUXhMNXUrNm5WUnhIbUtJWEl3UlBN?=
- =?utf-8?B?dmlkb01RMm5EMU9FZzlIMVdyWlJGZzdaMFRUUU5oUyt6NjVsRjdDa3I3YzNl?=
- =?utf-8?B?WG9IRkVFTlM0MUZOTXZteFVIczQzdUM2UWRSazR2RjJqSkdKNUQ0SGhGRHZL?=
- =?utf-8?B?aFpLTkZyRmovekk1TFVYNThIRkNYZFh5Mjk3bXd2aXpRdVVZWFNUbms4ek1T?=
- =?utf-8?B?WWp6eU05dlAyOU15YnZJTE5xRTZMUDN2aE9YQzgxcEk4bWJSa3dTUWVSTE02?=
- =?utf-8?B?SzI4dStIZHJxTlo2YUZyWFdQT3Z6aERqcjNReXo1d1lXNGxjK3E5MEV3WnJD?=
- =?utf-8?B?VUhwTjkrZnVkOU8xT1FnMzZlS0N3RldsZkVxS3FOOEZmVktaVFl4eVQ0YVA4?=
- =?utf-8?B?VG15V2FtYWYzQTlIakFOYmc4R3pGdk9nQ1ZvZk5VYlVjMTlDZXFBMjJxK2px?=
- =?utf-8?B?akNKejlVVzJQbU90VWhGZHBrS3JOblJDWTJscFZvbkpYdEkrek1rRzN3bzJL?=
- =?utf-8?B?QnZpV2tISWRGajhKTU10bmJnZ1ZGNm51SDM1RjFTK3hmU09ZMEc2SmhuN1Z5?=
- =?utf-8?B?SXpMdk9nV00zQWhobkJWaXd5NGRMeUk5S3V2VlZLVXhTRFVweG1KMUFUbm1u?=
- =?utf-8?B?YldnSjRGRVJvZFNydFRNd3N5aDgxWWIxcDczbEpmeVRaSG93MG1YNTBQN1ZG?=
- =?utf-8?B?d29WdEtYVSthV0R5M3ZHL2pTV1dWb2FnK0VFdnhOT1BsK3VDaktSVE5nQlZm?=
- =?utf-8?B?bjFpaHNQVVVoSXNOWDRrYldack1hTHpsOTNRWWVoVHczOFdVWWhEV2dINWFP?=
- =?utf-8?B?Zk1RL1NBL1IrSy85SElaU3VQZDVtRXVnRUVkMU00djFaRk1EVFd0T2h5bW1a?=
- =?utf-8?B?VWpRcE5xY0Y1ZW05c0RoblZndWNyMS9oeVdpRlEwSmd5N2VRZmEzNGV4S2Rn?=
- =?utf-8?B?VEpqZXFZQW54dEpWOXJDY0JPMWUyYTUrb0ZRbVRwTURzM1hSbmpJemQ3ajVt?=
- =?utf-8?B?T1g0YTczMldsMjFyMHdzRC9IMlNzWWdEd0YrZURaZk1yWTFyWkNGT1plVlh3?=
- =?utf-8?B?N1dPUXpNcmdUYWViU3F6QVUySVlYNU9VaEJOU3BWektDSXBza2owZWtvRWxR?=
- =?utf-8?B?ZXhjSnZGam9ENFlxZ3U3WUJ4L3ZuZEV5cWdCYWIzUWNQdkhpeG9BbXpjZzdE?=
- =?utf-8?B?Y1c3TjJLUXlJTnl4YUpxMXNHRmIzcFlGRDZXR1FnSmtIamVTZ2xLbFVyMHJC?=
- =?utf-8?B?UDg2amNUc1Z3a0VoZ04xcEQvWHVURzZvdmtaTVowSGMwblZJeTZaNkIwVStW?=
- =?utf-8?B?S0lZUG9vT0Q0Y3JHQXoxT0ZYZUE4TXdKS3krdmVyY09lTThZZWIxcVR3YUw2?=
- =?utf-8?B?K3pzc1VEVld3Y01hd2VYME52Tnk2Ky9aZitZMWVMeDlXZU5JNzVsc2h1VHNB?=
- =?utf-8?B?RWpqK0F3Wk05MFovd1d0RC8ybzJPMk1Ka29aV0NpdjE4U1l2SStDQnoyQS85?=
- =?utf-8?B?b1FpTzBvcWlRY0NqY1VWb0xNeVovYVVHTWRubmdWTGxGVVA4T2lkWWFaamt0?=
- =?utf-8?B?QnhjdEEzeklZQjJka2lqS213T2E3SGloT1ZBZU1KUG5vRW9xNTRDaUw4ZzlM?=
- =?utf-8?B?WkQ2eGRKeWNSKzlvVnVKblZwM2Y0dzlZTnVnaUJISkFVV0FLN1RJMXhGdjNQ?=
- =?utf-8?B?Mk52eERtMElFRWdEWG1DKy9xcGdSeEI3WHAxRG9ER0ZWRTU2MzJnTXRhb1A0?=
- =?utf-8?B?QkpIVUY1SUM2WjdTQTYwdDhUM2p1RndJRU5oeitDMGFpai9sa09rSHp6My84?=
- =?utf-8?B?dFE5N1BGWXhCZ1BoelFsOXhZcHh3eGN1ait1ajIvcUFydFJKOUtKaTI5eDFu?=
- =?utf-8?B?VFRlRlpoSVJEaUFvTzBJVUk4WkVIMHhvR2ltVThKdVk4TzJqUGJvek0vVEFj?=
- =?utf-8?B?QUc0aGozenhPdGNzZTFGWVJ3TVhlVUI4TVhzUzBmcnY3RXI5SUMvdlRPaDYv?=
- =?utf-8?B?cU1pMFdMelhwQnowS1ZvN0FHYWQ3Mm1vL1pIczh3U0M1WHoxQVJ5cEZERkpO?=
- =?utf-8?B?WkFEUW1JVU5RVU4xNU9vbXBlZWlET2R3dHZhSmw1M0RnRTFYMDZwSlFsbXg4?=
- =?utf-8?Q?CtO8=3D?=
+	=?utf-8?B?Z1hRMmwrRDVCdzRCZHV0N0tDOWdiakxIV1BxbnFqRERuQTVFNVU2c0M5bk4z?=
+ =?utf-8?B?elgySlhlU1lmTkJqR2tDclhYNGE2KzVacUJBNGdKRHExM2tzNEVXTytORDRL?=
+ =?utf-8?B?MUFIbE9HYW1MWGU4TG1LeW9PK0I2WjhrMDYrWHI1dTRwYXc1dy9wTXNIdVVB?=
+ =?utf-8?B?TWYrUlVraU9RL1Yxd2hBY3FLZnRaUWV2bTRZQ3AybDBnSllKVjRSdElyUEc4?=
+ =?utf-8?B?bnlycFFyTWNrSE1rQ25CS0NQRVlKTXZpWTZrK1d5UVJQNjVvQVovUnh0MzQ4?=
+ =?utf-8?B?SVZqWjE1ekorQVJ6MWk3VklURmlYWFRxUnF2KzQwLzFLZlJ4bkI2dW9XaHN1?=
+ =?utf-8?B?RXozVnlZSnhtNG5pb1UwdTQ3L0laU210SVlzejl5Vk1hQ01Zbzk0NnpqRCtD?=
+ =?utf-8?B?MHhMUVdySG1BVm9STEcvS3BPOE5VeGRld0xUVU5PazJ3THQ2elJSUjh2Z0NM?=
+ =?utf-8?B?WWlzSjFUanp2RXZNWjNRWCs3VUdWM25mRWlpejdGNEFNK3B6WGpVdFdIdElt?=
+ =?utf-8?B?bDYzS2RMSlU5MkRHaFZTYkhqV1AwWGFkZTc4dnN5eE04Sy90OFB2NFNEbzNv?=
+ =?utf-8?B?U3dzbUNwbTVlRUZ4bkxmVi9pV0NhWlVJejlhbG1HMlZlb0h3T2dSSzIxWmFi?=
+ =?utf-8?B?VlNRTFEwUEJtTnRPTlkyUldmWDl4N1dqUGNWM3pKOHBrNHpVQ1U5TnJLRzRI?=
+ =?utf-8?B?Y05HTjgvU2wvWjBTL0pxMkJpejBCWUFQU29Kd3BKOEpMRldGOWNERGpYV2JL?=
+ =?utf-8?B?Y0t1SExMd245TVVHVTJBbC9SWEpzM3ZZMTUwNXhDaXZHbXNiVWs0ZzA0Slkv?=
+ =?utf-8?B?M3V5c0xaWkhaZ094VDRaSDd1T2tqNDlQN0ViOHd5YTRKTHE1ODRsNGUxT1p1?=
+ =?utf-8?B?NDZvVnJQb1FaSUhBcDRWb1k1cjFSVGFwVHZ4ekhDZFB6TGxFQzlXVVdtUzJE?=
+ =?utf-8?B?ZjZLMnpiRmswQkN5RmRVOWZOWW9mM3hEYkV5ZmNnSisrYTBnYXFsNXh4MU93?=
+ =?utf-8?B?bE41SE1VdFdqcytZaXpwSU1HMzVGVUxHUXo3bFA2UGRyeHB2UDhMemNPZm5S?=
+ =?utf-8?B?QjdKYmY2bnJnOUxGS1hVa0RnZTNOTmNYT2F2TTE1WDFWZWtLZjNBcS9zUS9z?=
+ =?utf-8?B?UzNldnZzUzlsT3c4a2Y2S0xUS0JYS2VFTGpVNURsZmZ6bXVOOENsUm50N0lE?=
+ =?utf-8?B?YndLWFNob1c0RkljNDZtdFg5RzMyUWdzcmU1UVFkY1FtRkQrRkFZbGx4K29a?=
+ =?utf-8?B?dTh2Rm5Mc05zdGc2a0l3ZFFMZUdOaldjK3pENE5EUVVJd1ViaTlKeEl3WjN3?=
+ =?utf-8?B?UVlrMWxiemt4SDQ5a2Vad3FXc1Z3UFF5U0JRVFFnL3pURDhONFJLbEN0NXIr?=
+ =?utf-8?B?aFBQVTQ1ck5uSnY1YkJjbXRqWGZUdy9KZHlMMVpBT1dhTW96ZXBhdzJ2QTVk?=
+ =?utf-8?B?WlJGaEtyZExlNkNEeGZqY0kzN2o2UE5CQjNaUmp4OGxMcmpsdWtJazR5L3h5?=
+ =?utf-8?B?azVjZnpDSkVmTGxJeWVkVjdrY1NsU1VZdEhDUE5KcDFRUjJIdlRweXBTclRF?=
+ =?utf-8?B?Rmo1SWxOVHVGMnZRNFRhMHl5dHE1SkNBRXN3T05xZTRHdnR1THh1aEZCaXln?=
+ =?utf-8?B?V0hBNE5SdXBzUnM0dXBFMVNKR0dDMzNQbVEwY0ZaUjJ0RllIQzl5blE3R0hV?=
+ =?utf-8?B?b2FrblJtL0VFTGlTa0xiV0xheStyMHFia2U0UjRCVjl3R2l3NGtjRjhQMCtm?=
+ =?utf-8?B?RHBWdTBiVHNqSERUb2tvQSsxRWFnWjdwWVhuQXB0V0loblhxU0hZdVc5cWhE?=
+ =?utf-8?B?NXhRZk1IYzQ0ejdxTUkrN0RkditUTGpOZUNLUUxkYXA4WHRaeGZFS09LTUJG?=
+ =?utf-8?B?SGZZcnhPVHRvSmtXZWxmVjVIV3ExaTgyVHhjU2lDeFpib1VhSEtWK21reTNK?=
+ =?utf-8?B?YU4rWUEzSmt4NnM2WDZEcEJXMW93QjJlRHkwM0VHcGF0Qlczd1JtbGJaeDRM?=
+ =?utf-8?B?Tkc4RFZaQndSU3dQVEw3dXloVTJPRXBRYnZyYjN0SXpwNDFWMmdZQncrTmoz?=
+ =?utf-8?B?bHgxNm91bEdiekJNdmRGbnI4QUpNTkpadStEWTBuaWtGNzZ1V0pORVdpbVZm?=
+ =?utf-8?Q?qHH0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(32650700017)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 04:15:38.5872
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 04:15:48.1099
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a01702b4-426f-4792-26ab-08de16a1d114
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08234d2b-90ab-4db3-e05a-08de16a1d6c0
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015CD.namprd03.prod.outlook.com
+	SA2PEPF000015C9.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5726
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8984
 
-Hello Tim,
 
-On 10/28/2025 9:00 PM, Tim Chen wrote:
->>>> +#ifdef CONFIG_SCHED_CACHE
->>>> +		/*
->>>> +		 * Don't detach more tasks if the remaining tasks want
->>>> +		 * to stay. We know the remaining tasks all prefer the
->>>> +		 * current LLC, because after order_tasks_by_llc(), the
->>>> +		 * tasks that prefer the current LLC are at the tail of
->>>> +		 * the list. The inhibition of detachment is to avoid too
->>>> +		 * many tasks being migrated out of the preferred LLC.
->>>> +		 */
->>>> +		if (sched_cache_enabled() && detached && p->preferred_llc != -1 &&
->>>> +		    llc_id(env->src_cpu) == p->preferred_llc)
->>>> +			break;
->>>
->>> In all cases? Should we check can_migrate_llc() wrt to util migrated and
->>> then make a call if we should move the preferred LLC tasks or not?
->>>
+
+On 10/28/25 10:24 PM, Peng Fan wrote:
+> Hi Tanmay,
+> 
+> On Mon, Oct 27, 2025 at 09:57:28PM -0700, Tanmay Shah wrote:
+>> Remote processor can crash or hang during normal execution. Linux
+>> remoteproc framework supports different mechanisms to recover the
+>> remote processor and re-establish the RPMsg communication in such case.
 >>
->> Prior to this "stop of detaching tasks", we performed a can_migrate_task(p)
->> to determine if the detached p is dequeued from its preferred LLC, and in
->> can_migrate_task(), we use can_migrate_llc_task() -> can_migrate_llc() to
->> carry out the check. That is to say, only when certain tasks have been
->> detached, will we stop further detaching.
+>> Crash reporting:
 >>
->>> Perhaps disallow it the first time if "nr_balance_failed" is 0 but
->>> subsequent failed attempts should perhaps explore breaking the preferred
->>> llc restriction if there is an imbalance and we are under
->>> "mig_unrestricted" conditions.
->>>
+>> 1) Using debugfs node
+>>
+>> User can report the crash to the core framework via debugfs node using
+>> following command:
+>>
+>> echo 1 > /sys/kernel/debug/remoteproc/remoteproc0/crash
+>>
+>> 2) Remoteproc notify to the host about crash state and crash reason
+>> via the resource table
+>>
+>> This is a platform specific method where the remote firmware contains
+>> vendor specific resource to update the crash state and the crash
+>> reason. Then the remote notifies the crash to the host via mailbox
+>> notification. The host then will check this resource on every mbox
+>> notification and reports the crash to the core framework if needed.
+>>
+>> Crash recovery mechanism:
+>>
+>> There are two mechanisms available to recover the remote processor from
+>> the crash. 1) boot recovery, 2) attach on recovery
+>>
+>> Remoteproc core framework will choose proper mechanism based on the
+>> rproc features set by the platform driver.
+>>
+>> 1) Boot recovery
+>>
+>> This is the default mechanism to recover the remote processor.
+>> In this method core framework will first stop the remote processor,
+>> load the firmware again and then starts the remote processor. On
+>> AMD-Xilinx platforms this method is supported. The coredump callback in
+>> the platform driver isn't implemented so far, but that shouldn't cause
+>> the recovery failure.
+>>
+>> 2) Attach on recovery
+>>
+>> If RPROC_ATTACH_ON_RECOVERY feature is enabled by the platform driver,
+>> then the core framework will choose this method for recovery.
+>>
+>> On zynqmp platform following is the sequence of events expected during
+>> remoteproc crash and attach on recovery:
+>>
+>> a) rproc attach/detach flow is working, and RPMsg comm is established
+>> b) Remote processor (RPU) crashed (crash not reported yet)
+>> c) Platform management controller stops and reloads elf on inactive
+>>    remote processor before reboot
+>> d) platform management controller reboots the remote processor
+>> e) Remote processor boots again, and detects previous crash (platform
+>>    specific mechanism to detect the crash)
+>> f) Remote processor Reports crash to the Linux (Host) and wait for
+>>    the recovery.
+>> g) Linux performs full detach and reattach to remote processor.
+>> h) Normal RPMsg communication is established.
+>>
+>> It is required to destroy all RPMsg related resource and re-create them
+>> during recovery to establish successful RPMsg communication. To achieve
+>> this complete rproc_detach followed by rproc_attach calls are needed.
+>>
+>>
+>> Tanmay Shah (3):
+>>   remoteproc: xlnx: enable boot recovery
+>>   remoteproc: core: full attach detach during recovery
+>>   remoteproc: xlnx: add crash detection mechanism
 >>
 > 
-> Pratek,
+> I gave a test on i.MX8QM-MEK, there are failures, 1st test pass, 2nd test fail.
+> Without this patch, I not see failures.
+> root@imx8qmmek:~#
+> remoteproc remoteproc0: crash detected in imx-rproc: type watchdog
+> Partition3 reset!
+> remoteproc remoteproc0: handling crash #1 in imx-rproc
+> remoteproc remoteproc0: detached remote processor imx-rproc
+> rproc-virtio rproc-virtio.1.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio0: rpmsg host is online
+> rproc-virtio rproc-virtio.1.auto: registered virtio0 (type 7)
+> rproc-virtio rproc-virtio.2.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio1: rpmsg host is online
+> rproc-virtio rproc-virtio.2.auto: registered virtio1 (type 7)
+> remoteproc remoteproc0: remote processor imx-rproc is now attached
+> virtio_rpmsg_bus virtio1: creating channel rpmsg-openamp-demo-channel addr 0x1e
 > 
-> We have to actually allow for imbalance between LLCs with task
-> aggregation.
+> remoteproc remoteproc0: crash detected in imx-rproc: type watchdog
+> Partition3 reset!
+> remoteproc remoteproc0: handling crash #2 in imx-rproc
+> rproc-virtio rproc-virtio.1.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio4: probe with driver virtio_rpmsg_bus failed with error -12
+> rproc-virtio rproc-virtio.1.auto: registered virtio4 (type 7)
+> rproc-virtio rproc-virtio.2.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio5: probe with driver virtio_rpmsg_bus failed with error -12
+> rproc-virtio rproc-virtio.2.auto: registered virtio5 (type 7)
+> rproc-virtio rproc-virtio.5.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio6: probe with driver virtio_rpmsg_bus failed with error -12
+> rproc-virtio rproc-virtio.5.auto: registered virtio6 (type 7)
+> rproc-virtio rproc-virtio.6.auto: assigned reserved memory node vdevbuffer@90400000
+> virtio_rpmsg_bus virtio7: probe with driver virtio_rpmsg_bus failed with error -12
+> rproc-virtio rproc-virtio.6.auto: registered virtio7 (type 7)
+> remoteproc remoteproc0: remote processor imx-rproc is now attached
 > 
-> Say we have 2 LLCs and only one process running. Suppose all tasks in the process
-> can fit in one LLC and not overload it. Then we should not pull tasks from
-> the preferred LLC, and allow the imbalance. If we balance the tasks the
-> second time around, that will defeat the purpose.
-> 
-> That's why we have the knob llc_overload_pct (50%), which will start spreading
-> tasks to non-preferred LLC once load in preferred LLC excees 50%.
-> And llc_imb_pct(20%), which allows for a 20% higher load between preferred LLC
-> and non-preferred LLC if the preferred LLC is operating above 50%.
-> 
-> So if we ignore the LLC policy totally the second time around, we may be breaking
-> LLC aggregation and have tasks be moved to their non-preferred LLC.
 
-Ack! I have replied to Chenyu's response with an example of
-"migrate_load" case that, as per my understanding, would be restricted
-by this condition. If I'm missing something, please do let me know.
-Otherwise, the intention looks good to me.
+Hi Peng,
 
-> 
-> Will take a closer look to see if nr_balance_failed > 0
-> because we cannot move tasks to their preferred LLC repeatedly, and if
-> we should do anything different to balance tasks better without violating
-> LLC preference.
+I don't understand why it should fail. The patch simply implements 
+rproc_detach() -> rproc_attach() sequence.
 
-Thank you!
+In your case, when you do detach -> attach via sysfs that sequence 
+works? If that works, then crash recovery should work as well.
 
--- 
-Thanks and Regards,
-Prateek
+Could you give steps how do you generate the crash?
+
+Thanks,
+Tanmay
+
+> Thanks,
+> Peng
 
 
