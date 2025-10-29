@@ -1,114 +1,125 @@
-Return-Path: <linux-kernel+bounces-875917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675D0C1A1DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:52:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F78EC1A1F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEE401A67128
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC6F1899060
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5052F33A012;
-	Wed, 29 Oct 2025 11:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540B82FDC5D;
+	Wed, 29 Oct 2025 11:54:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZNhZavJ"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hAxze3cv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5833396EE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D592D47FD;
+	Wed, 29 Oct 2025 11:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761738678; cv=none; b=rqSP//cenAKP8IhjrhKMwog409w0SHpsyybnOxvHonumq0d73iunnVqAPhFlo40xEXoqdpzkdX0ec5Bia/VTKAGmouyeUiVFuKvqqWZbFH64i7OswmPFy6UF0tCSEuQWVic5V2YEe/5WfGhUTHuHTNpnYHsPBE5aDSewbO9k9Yg=
+	t=1761738855; cv=none; b=aWow6+ncgmVCT3oHx2SZMoGWD7lhBLkP2qbsn9FpCNXkVRchi+ITvPAkWwcDV8HPRP+lPJ4LuHH1k43KXcLVIIs8b1Pum8gWAUTbM5gBLpknPFZkgyPl3Lk9ppNAldx8PXUOMCZ0lzyWEAwFksWDim49rlaq/xkwUXDier+elcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761738678; c=relaxed/simple;
-	bh=4eAuxRdra6xYn2AEu5URxIFLv0U3aPRV4JUn3Rr/2D0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jih1vmgMncmX2Jslr6sKVYirlGqIgofdrSMHYeX2u+NRKCGfDpsBCe2OAUWtJRnI452eRndxEDIvrZIjcc0ZDZ73OZqQtVsnzcTZLfow4lmUzfkANH7EbVjewsbmsUMCyScW0aEG77rhbRBXQkZp3k4rO6/W56okEwcdPh8nmrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZNhZavJ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-26808b24a00so9844585ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:51:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761738676; x=1762343476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4eAuxRdra6xYn2AEu5URxIFLv0U3aPRV4JUn3Rr/2D0=;
-        b=YZNhZavJSqfaJP3lGCg5xmuwsDrK3PMeTIXFKOFMbd/zeYvMmNHdthI7to4fL7CFDG
-         FkWYH7RX1+7ztmcKe/vd/Q8ZUI9xHAipPxMUZbYZxJ3V3KUfdrVb0/7MP2DX2EtHyL/R
-         NkhxXDpvBBgnhmeozECfV5WdCtp9JEnXWnSWA4RWusRdxorBmVcWFvWjjjuf2C7Jm6AS
-         Xf4VL0wnxlxu9KJtOeCdJ/prKJLXaS+uRTlu4qB2mwB6+aU/+NVGVpqxZ+tYJxLlumKZ
-         9jzJtJAtpByn0VCBuBxYLEvk6gUNndUYst10HUhJVo3lF1Jjcyx9iL+2ntcg6kxl87sT
-         +KIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761738676; x=1762343476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4eAuxRdra6xYn2AEu5URxIFLv0U3aPRV4JUn3Rr/2D0=;
-        b=UJJBxHwl7ETly+PlDvxVpf1ZIL7h8+8ZIivuX5F3TnwVs3evbURCAshiAPFPON51/j
-         f4ATm3WohO74AjSESvaBy/FueMhXqsBGA+LOcf/6b2+mBOUNHy8P1aG3b7/0hU61CW0r
-         sl55pYqXW30qaGJOobT3RN4FpaOQP2ncAj0ifg/KqSG0Nntx2bEtmDSqbHRuj/LqHAlj
-         zdC3liso1yaM1QqM2Cp9ULMfQhFFYRJWuAPdlt01sSYj9bBuI3zg6vuTGAiTbsb+InYv
-         Oo8P3/cVC+Om5xE1fZi+MnnVQy/na7QMg5+0/TNmBHEELJK61dvdUFCgHg2LMc/BwgBJ
-         7o3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXz5GDtg6y49jLM9nAwfbEU6udrPeNezA/+vnWTTB2F3GOd384Tzwddr0LgdQFTFvB/cIPq180yKKU+FsI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZNT3xErsJoLCEzIwVghHYeQjl8cMm9YNt/rRsh6ypGzg6pYgb
-	NuFuMBdOBiVhgq9VpZFsRf8KpCXLT9RyyaVU3szyO4st9YnU49DuOUhHGs8/NkcnsZoCeLpX0dM
-	RjI9yalUNzPZmAaL4idEe7aMItTnHPdE=
-X-Gm-Gg: ASbGncv3li3NTY7xoGvfzRJacPuMWBlIA2GfXek/5bNRbfQAZTIo67jBVgx2yiUJ9U2
-	MZHHKEMChuAZhqpb+Z+POi6cdXUmIP+K84By/BYc7zdG6Dntf2R25tatdkDkZl8NLkI6emK9vOz
-	79aJxzkwrm0yrB3lF5WA3vYmBESvLcpMxBT65RZtr63ijP0Djph85jFDYxQOO3cIYvbEusgveKa
-	BiFm99URDL6dpnGA7ozRELTAWS/9VhjprFmC3kd3VnAHxnSo/7RiBNO94wmHioZBREbyn9zeVdO
-	bPlt9qQbpDq3QDvjC8FCuw10MnFkolmU5TVVB6kZjmczg2ycULN5/UrWcl811UF7aRlLeMqoQqz
-	l2p0=
-X-Google-Smtp-Source: AGHT+IHydl5eW0/Dx2EkVGLSZgmAKiTuqfAbgJdkgdsRFye8YTtzwH3XYU7OFAr/IP3WtWR2QZHXmGbjwyn2fqhtndQ=
-X-Received: by 2002:a17:902:d4c4:b0:290:bde0:bffa with SMTP id
- d9443c01a7336-294dedef47amr16261185ad.1.1761738676328; Wed, 29 Oct 2025
- 04:51:16 -0700 (PDT)
+	s=arc-20240116; t=1761738855; c=relaxed/simple;
+	bh=fuf1LfWN4j/837jd0hVGkh7BL7pxjiKOctcvPtmTalI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VZvmbkMy+YRAbQc9Y3YFhmyKdLov45WbW//KbePOP4aSdVP5+aqkX0BIzhOn7cri65zUVTwXbD45ABiRaU+JYIdo+xfIBxlgPz87+p84QmMM73neSH+X3oXaVXY1aZ8H9GR2LVGwyPfpbzc08+85EQ7IY9VIsZQu0CYJieWL65I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hAxze3cv; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761738854; x=1793274854;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=fuf1LfWN4j/837jd0hVGkh7BL7pxjiKOctcvPtmTalI=;
+  b=hAxze3cvHdSOJFwLIp37wK+P++/GVMZgrvzlZ1jQK4RcehSNEc54hs/5
+   H/et+wNbdKkT5rhQFxWV5OaGC5wRWr0mY9Ssrq4d5lh7sR1ZHko/cjkqg
+   FZ1xG/QnKwTZHRgxSdQ8BaHmfTVG1AxWUwrPpSqA4dRHFSQ5f7/7TgIYe
+   e3vFJ5pBlimnHT9yi6QGhADNkYt875bQwqCBVk+FT8HXZIDw+3Xp4jKJ4
+   +gxYBIR3P27Dc2FSPYqe6lSBTbNF6M+PXG+Vn0C87SFnmv9YdqwbxQ+MS
+   TfskKyBbKhjBgtMOxt6wAdeojXO8C+GY+QTmlqxq+raxR7QpBPzxV5GZb
+   g==;
+X-CSE-ConnectionGUID: tsKMYEY9RgioO/W/jQi7ZQ==
+X-CSE-MsgGUID: DmivzIm2TXaGOdb1U+dfEQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="51430558"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="51430558"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:54:13 -0700
+X-CSE-ConnectionGUID: 5r6AkawHSf6SHNTAxhpQGg==
+X-CSE-MsgGUID: 6g6unhV9Sm+rGyvN/M0+Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="222855207"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:54:07 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vE4ke-00000003bMP-1GBg;
+	Wed, 29 Oct 2025 13:54:04 +0200
+Date: Wed, 29 Oct 2025 13:54:04 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 10/10] regulator: make the subsystem aware of shared
+ GPIOs
+Message-ID: <aQIAXO1hUrw4Yp9V@smile.fi.intel.com>
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
+ <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029071406.324511-1-ojeda@kernel.org> <DDURZLGB2VRJ.28Y4AP92FNFPS@kernel.org>
-In-Reply-To: <DDURZLGB2VRJ.28Y4AP92FNFPS@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 29 Oct 2025 12:51:03 +0100
-X-Gm-Features: AWmQ_bmrmooyzWnmY9GxFiFIfc56zKAyCS5p4B1qi25Pm2Uzdfv_Hs5RDQeg1vo
-Message-ID: <CANiq72=HhDQP1ucccLzZj0mtb5Qa8u-1oorRwCqNv+aEJfZh7g@mail.gmail.com>
-Subject: Re: [PATCH] rust: devres: fix private intra-doc link
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 29, 2025 at 12:39=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> Given that, do you want to take this one through your tree? If so, please=
- do,
-> otherwise please let me know.
->
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
+On Wed, Oct 29, 2025 at 12:20:46PM +0100, Bartosz Golaszewski wrote:
+> 
+> GPIOLIB is now aware of shared GPIOs and - for platforms where access to
+> such pins is managed internally - we don't need to keep track of the
+> enable count.
+> 
+> Once all users in the kernel switch to using the new mechanism, we'll be
+> able to drop the internal counting of users from the regulator code.
 
-Yeah, I sent it independently in case I take it as a fix earlier;
-otherwise, I will put it before the `syn` series that will go via
-rust-next since it is not an urgent fix anyway.
+I am wondering if you took into account the layering violation (or others
+put it as "transferring of ownership") in the regulator core for the platform
+based GPIO regulators? This popped up during the discussion of
+https://lore.kernel.org/platform-driver-x86/20251024050537.92440-1-qiuwenbo@gnome.org/
 
-Thanks for the quick Acked-by!
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Cheers,
-Miguel
+
 
