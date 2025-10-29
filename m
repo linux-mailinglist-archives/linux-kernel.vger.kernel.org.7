@@ -1,109 +1,143 @@
-Return-Path: <linux-kernel+bounces-875437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AD8C19055
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:27:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D64EC19019
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D723567B00
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9E8B1C873B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03530313549;
-	Wed, 29 Oct 2025 08:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167B7313E21;
+	Wed, 29 Oct 2025 08:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1quZ97a"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q/MSmyNE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C15313E22;
-	Wed, 29 Oct 2025 08:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A353B2F7454
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761725637; cv=none; b=iA3jBL62bjTRXpFvSFZGilfwp8EBIWA6arX8DMrCqlimUvIKOUP6gtD357hB/dZ94MAETLPj+Oy0J1jsXqYmU4xOv/99P+m/jEk4/d0sO31r8qlrLw2eD6q1r1ha6SOYN4JxXdLahYrCou38z58OlQ5OrEldTsEC6ccCvAWHQj4=
+	t=1761725677; cv=none; b=BwwaKvZcGRMj2uXzsJGBNem/MMaQllRlO3InlXCsATZFl6EaV6ZLQzMSfZZjAYNoezqGTrI+AXGUkzOX8Jh2pD+YL47KS+xx8ApubRghswhvB1RUzSf7UlrlqeFwr19luZw7AMdXMUz0ZRpAZG/x4HXLxwpsVo4g0j64Hf8A3Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761725637; c=relaxed/simple;
-	bh=Dzv/pCCsahShivNzdwwnXPDb373keXPupORPmlHLcHA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QRnbEy4UAP10EwGBCwJRgUzUCmwM/nCv+srZUJIwMHTg4HkJN5NAl3Axom5tPzaQT36LeR7Kja49poX9Gj6tIaJWXU9LEv2ut1D98X0L0XGu9FDfXSw6DcL8dP/ChBsC9/htVEPygrc20k7TzGhl8dLra/k1s+534/PETPHPZ1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1quZ97a; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761725635; x=1793261635;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dzv/pCCsahShivNzdwwnXPDb373keXPupORPmlHLcHA=;
-  b=A1quZ97aB2MKdWvYVaMEMvDTZJ9cfqXV1NvLu9u78FtJqPlo0+u8IO4o
-   HRTIWJlk6kLk1shjWYXg3q8olOG4GzGt+bJKPpgwEyKSYjUHqi5zZ0YI4
-   H1gzdd96j2cLcWUH9/ru2hIapyY36GWbDxx4bgnEVQCUMU+xsa6K8gOvh
-   klp8BzYO+4y5gkygpPGySDY4rv6aLfVR6SZ3nPdlNhecV8syu0WN7OJna
-   koePKLSMEEhYNgwCrByLN81aGPYUjnB3UbvpLToX4Zklnnw+SpicNa83W
-   ucs+ZStHXZ2mVIDinka4Ct6dQ7MaqgZEiOmZbflO4V+/Y/Eesn9SMm0Dv
-   w==;
-X-CSE-ConnectionGUID: /RfdCP+uT8KhvuK3XoIq+w==
-X-CSE-MsgGUID: URZ9qdm5SMu5lM3P488PYg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67675818"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67675818"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 01:13:55 -0700
-X-CSE-ConnectionGUID: TrhRsUlVSxmcy34w0n0yTQ==
-X-CSE-MsgGUID: hXGR3vlTSZO3A2t9pb8FSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="216247061"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 01:13:53 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vE1JW-00000003YGY-0x7h;
-	Wed, 29 Oct 2025 10:13:50 +0200
-Date: Wed, 29 Oct 2025 10:13:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Sukrut Heroorkar <hsukrut3@gmail.com>
-Cc: Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Pop Ioan Daniel <pop.ioan-daniel@analog.com>,
-	"open list:IIO BACKEND FRAMEWORK" <linux-iio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, shuah@kernel.org,
-	david.hunter.linux@gmail.com
-Subject: Re: [PATCH] iio: backend: document @chan in
- iio_backend_oversampling_ratio_set kernel-doc comment
-Message-ID: <aQHMvdQXD4eRvPSV@smile.fi.intel.com>
-References: <20251029075117.104758-1-hsukrut3@gmail.com>
+	s=arc-20240116; t=1761725677; c=relaxed/simple;
+	bh=N8+rq+xZPmi2I8g0y9aIjmTjbWxMyaupeqzQVgZxcEI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=udAQ/1nvLX7Z9hXjy/vRTPMr3fD655tPpvRN9co7kb0y8zgEGcqIBWeF3PaIWAbqpaCPtG6M5WVxxJXlN8inffQxejTSAUVgE0XcT7io+vPcWl4N6iKpyYM1Dt3JESolALIHN4mio5SAZCq+hWwGjcpvNM0Z5QCmVX8udDgDiJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q/MSmyNE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-4270a3464bcso5344332f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761725673; x=1762330473; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N8+rq+xZPmi2I8g0y9aIjmTjbWxMyaupeqzQVgZxcEI=;
+        b=q/MSmyNErSG3WrJuo8/S4qizy8/Mkzrlj/B7AzKZIy7NEkcpvM/f4ISfNOTyUnyQzT
+         i+4TIwCi68sSruMXfSTxunglgueGWKTOgmsajVc5L37vhEj3h5UR6CzIJHDrV147VZDm
+         +PPAm/jSQZNCOjFA4AGlkzHU0kq5sduBUe6brCmjZWQ1K4+tkvKYmB13b0YgdRnCk3lN
+         gc5KZcE5Tn+DC7Ve0toGHwd3eAFKzq20ZLwc2OxJ8reXsbhjiXJkKQk1FR+WJg1XNWTk
+         yTThh1FpCY2GoexZYjIm3umvwGarOwVk7B6AnhpHreWwy7vho0ShK+5Y5eegCOAGyIM7
+         NsUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761725673; x=1762330473;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N8+rq+xZPmi2I8g0y9aIjmTjbWxMyaupeqzQVgZxcEI=;
+        b=enwKmJRmBQfQsIgyMNB41Itxzf7CtzM1d5waxJHrAoNkUrb7zOzbJo59M7zrB0Mvjm
+         Nh3nI44kHUKU6wa10ovmkZ2qlFgRiZkGl2AWyQig17oGUR39JXNDCkcWbAF2y33KFz3k
+         ZMm7mWqx+yvWCyKsfSz2dWn/wToXDpOvN84Zq+RYHqnbRtD73LIiV+h2e/bvuEWl8KPK
+         MjA5GfvHs+V6LY34vCZOsLg2mnCx29eVYP9Fxm8r8HU+BVUOWBOkX23+J47G1y1rgy7D
+         35VKwtXGbM4lfzE1awlSVn5Nzavf2Y/aJuv9DhnpHEcBMWHi382D5oKkkIGHoAiELlQc
+         ZHaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMk5kT5zMnm/OG2hj+UEHCJWt/5qM/EwekmSrWJ/PlW6TyrYh1uTI6ZbpLrxvQXHjWvdDb+MgNjTKf3Y4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNei/G4aC0TGmxMRnmtPbwIriuyGkAkPo3mb0yY+SIu5DxYi3f
+	yuF7iLuDRXDjnaH+m5Bh6ixlaVLSzKZtjbj2mFVExXI3Wmx62BoQjbUhcDgF/kaWe70=
+X-Gm-Gg: ASbGncvHSOD+1MMAzDqIgGm8QNffQbpiPR6SJTC31BiAebEgJxJ1TiCNphUBJFVGxF6
+	Y6bvHYih71L8k6q620XJaAmdAuAFABLHp+qlOboD4aLM5U15bkoholHFvDXrD+pvoa7Sgq91+nn
+	eoIHscXLvfI5D0DZ9s1fPJyaUl92OtCoZyNIPcPASW9amVTt9PkBvNl1Yv+eA79Zc224WZ5Nbep
+	6KwQpdf8QoYV9BLkEvLC6mDN6BnN+u//rX/qKHFx9uUIcZO6zr1Y+1fFsJUhc7aLKJbrPKo0fMj
+	MMzblGEWmD45DJHHJWt2KR/YyWnkSkovRls85JBBoxrr9rW4JgpY5klbwWE3u+O7+ItKst4uSDb
+	hacCRQCwN8Qv8nkz9wJThr7xFLQtyBZ6NFtze4heRDm/i78kdqYVqGI0ysDN8Wm6PbmHG6UsIjo
+	HQE80=
+X-Google-Smtp-Source: AGHT+IEwzzvxzDwy2hXfDTMyKk2u3q3b4WDeoC3Cd1r42aF64N8QkWqyq5rTqATRPlQPagJ+AbKIrw==
+X-Received: by 2002:a05:6000:240f:b0:428:52d1:73ab with SMTP id ffacd0b85a97d-429aefcd0f0mr1311537f8f.58.1761725672718;
+        Wed, 29 Oct 2025 01:14:32 -0700 (PDT)
+Received: from localhost ([195.52.63.148])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df6b9sm25774340f8f.44.2025.10.29.01.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 01:14:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029075117.104758-1-hsukrut3@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Mime-Version: 1.0
+Content-Type: multipart/signed;
+ boundary=47d5f61bca1ab14c9eafcd8930ddd77eb5a3992e8bb0bd44140ee03f8bb9;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Wed, 29 Oct 2025 09:14:23 +0100
+Message-Id: <DDUNMKXD4HRX.DXUT67S354TJ@baylibre.com>
+To: "Miaoqian Lin" <linmq006@gmail.com>, "Chun-Kuang Hu"
+ <chunkuang.hu@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Matthias
+ Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno"
+ <angelogioacchino.delregno@collabora.com>, "Markus Schneider-Pargmann"
+ <msp@baylibre.com>, "CK Hu" <ck.hu@mediatek.com>, "Dmitry Osipenko"
+ <dmitry.osipenko@collabora.com>, "Guillaume Ranquet"
+ <granquet@baylibre.com>, <dri-devel@lists.freedesktop.org>,
+ <linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>
+Cc: <stable@vger.kernel.org>
+Subject: Re: [PATCH] drm/mediatek: Fix device node reference leak in
+ mtk_dp_dt_parse()
+From: "Markus Schneider-Pargmann" <msp@baylibre.com>
+X-Mailer: aerc 0.21.0
+References: <20251029072307.10955-1-linmq006@gmail.com>
+In-Reply-To: <20251029072307.10955-1-linmq006@gmail.com>
 
-On Wed, Oct 29, 2025 at 01:21:16PM +0530, Sukrut Heroorkar wrote:
-> Buidling with W=1 reports:
-> Warning: drivers/iio/industrialio-backend.c:727 function parameter 'chan'
-> not described in 'iio_backend_oversampling_ratio_set'
-> 
-> The @chan parameter was added when iio_backend_oversampling_ratio_set() was
-> updated so the contexts could specify the channel, but the parameter was
-> never documented. Document @chan to silence this warning.
+--47d5f61bca1ab14c9eafcd8930ddd77eb5a3992e8bb0bd44140ee03f8bb9
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-There is already more comprehensive patch available:
-https://lore.kernel.org/linux-iio/20251028093326.1087660-1-kriish.sharma2006@gmail.com/
+On Wed Oct 29, 2025 at 8:23 AM CET, Miaoqian Lin wrote:
+> The function mtk_dp_dt_parse() calls of_graph_get_endpoint_by_regs()
+> to get the endpoint device node, but fails to call of_node_put() to relea=
+se
+> the reference when the function returns. This results in a device node
+> reference leak.
+>
+> Fix this by adding the missing of_node_put() call before returning from
+> the function.
+>
+> Found via static analysis and code review.
+>
+> Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort drive=
+r")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
 
+Best
+Markus
 
+--47d5f61bca1ab14c9eafcd8930ddd77eb5a3992e8bb0bd44140ee03f8bb9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaQHM3xsUgAAAAAAEAA5t
+YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlMY
+BQEAuHoHmQztjd0qDVochaQgMwU/UDAYYFg9Pt2qLtKUZoIA/RVh2U8TuEbNs/4U
+K3J+cqEkOl1LVK9aUjFYUv90UyQJ
+=nF+A
+-----END PGP SIGNATURE-----
+
+--47d5f61bca1ab14c9eafcd8930ddd77eb5a3992e8bb0bd44140ee03f8bb9--
 
