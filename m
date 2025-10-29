@@ -1,111 +1,141 @@
-Return-Path: <linux-kernel+bounces-876181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B81BC1ACB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:39:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61913C1AB5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:32:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B210B1881530
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:32:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9062734EB4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9782E62B9;
-	Wed, 29 Oct 2025 13:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15B5B2139CE;
+	Wed, 29 Oct 2025 13:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zfwd39Cw"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns+hBSjr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044E82DA75B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583481482E8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744462; cv=none; b=SahLtF8BWWiO0rOk2mWlJ+TtP6t/hlwQyFBxginMubYXpvfGLWHKTPhPc2u0v3xuiR9K1syvt1iMHOKC/AHgz/oXGUR3dEXtZ73uQd3G6wUF51MSnwl/agMAjaqSjplZw4iHP73cdtwYBSBpWJ4bwFQN3sAxK5V4zcnTaYQHPrE=
+	t=1761744543; cv=none; b=qs+XeOOpmgRaiLSg7bIc93ZPeIW58KfcQEeOr9o+dXa+rPTtXHgE/Q3DDxKd+zTCzWYPOREpFzS20uabVDMNw9j8y10jDbwtJ5H4t0sSZH+FKFpaSSF1P11NqrnkkvwHRyW9AmRHb26MAkuZxZM6keTbEOXYL5AD3E98oEJVwwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744462; c=relaxed/simple;
-	bh=4jQlm4QL0G/HlPu6AaqVyYXrKj03YxyBn06mrBxHybg=;
+	s=arc-20240116; t=1761744543; c=relaxed/simple;
+	bh=V8J0xvZ85AOyFUwvxTu3obUZitEUBIFVJbjXz+jtx9A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pcFsSpQXr+uRsAI0sgUrOKq7N+GxT7dr56w80kbSJwZTQKH44RPHhmoFdq/Zg1a+xsNArzII7+h8Uo/YWJNy30EQFLIsr18nEipIvk2bpLxZ28iwM7Sgdr6m7ofkmPhnHhYagSpqNbKqboF1twBd9pcQJfquCiWPLgQ6hP/Ba3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zfwd39Cw; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592f22b1e49so6614654e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:27:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761744459; x=1762349259; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4jQlm4QL0G/HlPu6AaqVyYXrKj03YxyBn06mrBxHybg=;
-        b=zfwd39CwqfnA3m/tPDkDdoBU6TkYek2sWsR8NAlNhxIC7QNbq7wi6vgWLzylLiE3uB
-         mk9E9tBXFxH5R7Xdl9SAdCxXK3PMbrcgakY2epD6frjbn9rtRcAQEUSoS9EDNhk/OjDj
-         kNPoRSgNt9BJnpMNAOTz8raqmznKBu7DlDPDm25L6XveXjngUUIuBjVzUGQJW8/1eh60
-         eHTH5jK9Qmkmz8+xyTQKaeovTtxhCQT2u4qLipjq3RsVPbpX7EvB4Ug+oJ/Z3fb/ccs5
-         RKBe9KFJyb3aKGNUTXbggu1dslr7QkO+Zm0oZ1LVU6vv18tMs8P1HUjc11IOyzj9Gttn
-         AoBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761744459; x=1762349259;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4jQlm4QL0G/HlPu6AaqVyYXrKj03YxyBn06mrBxHybg=;
-        b=uii6KshUtF7iwiqLFWPXQFIghtiekXW1X0mYr9d/6k1juT+8ZrtZfUb2h5wr7rxuwm
-         do3cPykSGNFNeuMB9IfLXW+dnbOYsPx9EzVCDmk3Q82xukABz9qp3jGcYjSPFU295+Jl
-         fE+54kd/TDqmbKWQsqdwuutqFiRf3cIlmK27q2zHLiZ4fETtaQ1XlZ6o//LOjNyFdcnQ
-         ceGtLJBAukM+HUVaY2ZLGEMrPioSKOFd8sNA+25PbSldwhl/j7UcfQa65HffDM7N0tIp
-         KCb77bqZSDSnalTPJqXGJQclfea8Ms2LrC9IRVpN9RzVxFWti/iKlsoNaWSfEk7YSHlb
-         UboA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkdhW+MMIkFKjrbWpkf4r2hlUFlcs2ZZm03yMXqCDpBZ2XOcxAqLuXCTyeibJpcZsGapbUYJEiLYBFO2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO9OCLmhLibWQhGng6O09W94+LCalG19hWiIJ/OSFvc8xTTUTw
-	OGGeOajoa9nQf7mMdtuxbs+PHk3selWAAyiJvfqkjMK/NwuWjbDdlFm0IxEhzB4h/zMLQHMxhqf
-	ndEylGNCE01eltAntSIGhRRES5N5N9KTnModxuJPFzw==
-X-Gm-Gg: ASbGnctFazmBIy6Vw1XvVGh8Ys6B1pu+takbySK9/+Ylvfjj+qC+i179uER7FEph/AO
-	biZmipAsomQxKiZoq0Re5Wy9VW5TwRDqx+U0tq3hAQMn+3fhAyfwH7+VPtqu48nyh8CGg8XAFor
-	9PzQZmcLaWQzFnZ3MmA3xkVWwFCGTqdVt8IBExgcgZLMNeqoKW+cNXZSApLEg4i1GDj6fhv9oSp
-	NFi1yARJiaezQewGDF+PKUFGDwwODS3Jghh5ZHMZtfH8mgp+Quzu3TUDux72eKm5GBttf4=
-X-Google-Smtp-Source: AGHT+IHNfCne47Z1eBbRQa58ZTteY04bLS9xhtCisnJoPUShci5UwjCrSgpL8aWwPI1wivqZluOA5wXGysoEwwSDBuM=
-X-Received: by 2002:a05:6512:2284:b0:594:155a:a055 with SMTP id
- 2adb3069b0e04-594155aa157mr499507e87.43.1761744459075; Wed, 29 Oct 2025
- 06:27:39 -0700 (PDT)
+	 To:Cc:Content-Type; b=iD6uBtXohRJ2PM1WJHW2RiW9ewtzOVh7iOw0MvA5Lm4FSEDsBS3IZgo3UMfHZzRz00t3dbJ3NWXhHaXipY3jXjPQMss/3KhXhaMZQ0hdsglz9XL24yb3u5tMchgxYkmXaTNOmn6gNe3yDBFUu4uYYRnPuXDqfHF0vFavyA28x2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns+hBSjr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBCFCC4AF0B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:29:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761744542;
+	bh=V8J0xvZ85AOyFUwvxTu3obUZitEUBIFVJbjXz+jtx9A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ns+hBSjr/WyBh3K1F3sAyZiXTk0bBgP2+BJYgAUZquOnMGf1mlsVpS78Yv86/b/m4
+	 CPMVkMiH9/4coZ7HtkXcNnqPVqlFaHRKwgKz+aXblha7cfoxgV7TvQFp4C39Cks6Aa
+	 T/XwD000zfxgqh3txVB+TtIwAe36ND8kw78D2xn2QIA9JS6tyJO+CutAU249x42DrO
+	 zpKxl+xQFtzLr55gO0KMj1toECeb7F/oupInCK1mxSH+S4bqOuO9vj+U7CUxv5/bOF
+	 zgtCb1oG+OJdYjtdglqPBSmVOo2LLsgnnyxYV7bseQ8tC7jTHoAHE77DZiUaDoY3/k
+	 WSP9P7ShZheVg==
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-63b9da57cecso11147659a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:29:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUP/dn45jLQY5GAed0v7ELdtB5heeCT/AtY0Pa7uQw1BoQxqUr9X+StIIuyVClo6HNEtYVIPIT3CLVFNys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhjhcNOsnAaQRsH7DDwz3v0dgPTmTfMiglDfT3crJEbvksCixV
+	qwCQZntMz4f6nvSlvaDCsIQwSuTJJ0NcrkO1KdfYunfCpWZmNj9BwZgNq+lrtpLdv14X8bFiso1
+	T6QRJJMFnY6aRT1CMJ7RmxekVwrIPOw==
+X-Google-Smtp-Source: AGHT+IHI66z2+Wy1IZFMnUdx5g+GMlZnEl4AgfredAbI3iQtA8d/rgYvCJw+HiU2ycuaI9mOG0aE98R28JLtoJ52E7Y=
+X-Received: by 2002:a05:6402:44cd:b0:640:464a:56ce with SMTP id
+ 4fb4d7f45d1cf-640464a5bf9mr1937220a12.2.1761744540388; Wed, 29 Oct 2025
+ 06:29:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029091138.7995-1-brgl@bgdev.pl>
-In-Reply-To: <20251029091138.7995-1-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Oct 2025 14:27:27 +0100
-X-Gm-Features: AWmQ_bkhP4GKHMHamZ9_Sw4YqnmBMd1h4uFCvo1UTXA6q8F0rg4J5dsGaF40x6o
-Message-ID: <CACRpkdYxe9A_xtA62zH=7LOKURQZ+vmObhLidzEn4FvYav2CcQ@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mm-lantiq: update kernel docs
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, kernel test robot <lkp@intel.com>
+References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
+ <20251029-knp-remoteproc-v2-6-6c81993b52ea@oss.qualcomm.com> <20251029132340.GA668444-robh@kernel.org>
+In-Reply-To: <20251029132340.GA668444-robh@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 29 Oct 2025 08:28:48 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJALs2=qAv5OkXzAvteSc0uUza_FMubTdEcrs7fe2r1rg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmQUz1cUpz-qP4YsTh-ZRfrLy4fDLLOGOf77uIu22TQpbJbLmGmD_zxXy0
+Message-ID: <CAL_JsqJALs2=qAv5OkXzAvteSc0uUza_FMubTdEcrs7fe2r1rg@mail.gmail.com>
+Subject: Re: [PATCH v2 6/7] dt-bindings: remoteproc: qcom,sm8550-pas: Document
+ Glymur ADSP
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, 
+	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 10:11=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
-
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Oct 29, 2025 at 8:23=E2=80=AFAM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> Update kernel docs which are now outdated following the conversion to
-> using the modern GPIO provider API.
+> On Wed, Oct 29, 2025 at 01:05:44AM -0700, Jingyi Wang wrote:
+> > From: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> >
+> > Document compatible for Qualcomm Glymur SoC ADSP which is fully compati=
+ble
+> > with SM8750 ADSP. Also with the Linux Host running on EL2, the remotepr=
+ocs
+> > need to be hypervisor independent, the iommu property is mandatory to
+> > ensure proper functionality.
+> >
+> > Signed-off-by: Sibi Sankar <sibi.sankar@oss.qualcomm.com>
+> > Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> > ---
+> >  .../devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml     | 13 +++++=
+++++++++
+> >  1 file changed, 13 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-p=
+as.yaml b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> > index 3b66bd106737..8cb839ba1058 100644
+> > --- a/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> > +++ b/Documentation/devicetree/bindings/remoteproc/qcom,sm8550-pas.yaml
+> > @@ -29,6 +29,7 @@ properties:
+> >            - qcom,x1e80100-cdsp-pas
+> >        - items:
+> >            - enum:
+> > +              - qcom,glymur-adsp-pas
+> >                - qcom,kaanapali-adsp-pas
+> >                - qcom,sm8750-adsp-pas
+> >            - const: qcom,sm8550-adsp-pas
+> > @@ -101,6 +102,7 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > +              - qcom,glymur-adsp-pas
+> >                - qcom,kaanapali-adsp-pas
+> >                - qcom,kaanapali-cdsp-pas
+> >                - qcom,sm8750-adsp-pas
+> > @@ -247,6 +249,17 @@ allOf:
+> >              - const: mxc
+> >              - const: nsp
+> >
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - qcom,glymur-adsp-pas
+> > +    then:
+> > +      properties:
+> > +        iommus:
+> > +          maxItems: 1
 >
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Fixes: 8d0d46da40c8 ("gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h heade=
-r from GPIO driver")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510290348.IpSNHCxr-lkp@i=
-ntel.com/
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> This doesn't make 'iommus' mandatory as the commit msg says.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Also, 'iommus' needs to be defined at the top-level of the schema.
 
-Yours,
-Linus Walleij
+Rob
 
