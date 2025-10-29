@@ -1,226 +1,112 @@
-Return-Path: <linux-kernel+bounces-875271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C2CC1890F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:59:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F53FC188FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DE831C61D03
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:58:24 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CE5D5350E22
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836542D061D;
-	Wed, 29 Oct 2025 06:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D06430B533;
+	Wed, 29 Oct 2025 06:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSUP2HTZ"
-Received: from mail-yw1-f195.google.com (mail-yw1-f195.google.com [209.85.128.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LVi7hKHx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4251F4606
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550B91F4606;
+	Wed, 29 Oct 2025 06:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721062; cv=none; b=GTLFDksybWLXNBycDUPu7N0lGtSikME+iyfrp7Y2biHIbuN6wexxvCFnPwmqB2uPNt3p6Q0kbbBZ315rfiqBc2dt7YSRiazQQOhdXXfWFUDJEH6UNJq244Unyzg1HRxQnWZ1v11TIkbmX4LWWx8UJ5Y4NsIw5KDC0iIREL+4E/o=
+	t=1761721076; cv=none; b=BmhG5y1if+FYrUeopjtHKX+8KhjaQ9yJWk+nozxTeJ0YfiwUWRtsdHqEMqB9mkJu+6yTZ16fQp2eGKAzwSdoUWrt007QugyH7k2ebxfD/Tlfv0oPA5RIrfjXwsBoZi4w+TX50VmQbmVKoVFkgz43g5/ubgsEy3+4izCLL7CK2l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721062; c=relaxed/simple;
-	bh=o70LrdaTcmZAep8Ppo/GXv6T0uH5MZcqOulGJyJB3sI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h95/2xKaFZEg+WCipDWWFi3dzWJjR+RZWxParhj4he3Uoi6tSauUMGQzBKnWdzanhxdMW/a88FV8LW7O3IJEWdcqPvSdyefLloSu3qqxEysFjqVl1F6noKk6m2bjJb1YJNN/GR1LDJfVOUBgNFbjztXe6xNcw0FuAjZrxdhdGpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSUP2HTZ; arc=none smtp.client-ip=209.85.128.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f195.google.com with SMTP id 00721157ae682-7847f4265e3so72624287b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:57:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761721060; x=1762325860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HbCgVFEzX8577A9DDwWGOWRS7BulG4xBlkKpiiYDRug=;
-        b=CSUP2HTZk8EGA4uK2hQQphzWIA7XMYYTnNxFFz8DEY2OcSmdE9RrXEczbNv3TnwPFq
-         FSJuRXjfactlnBmfjuFK+Ru4p3XL8LacortiAoI0stAzZjZaVMmgz0TG4Md37+s+d1+E
-         CzZqpln0n4VkeNLcKVyI33KA65iGOxMnaamPMEoV2VuHZJMd/V9Bn4EwdVXnaHAcW4Ef
-         2iEN2TnCQvECo4Hs89FGlXqyWnmfDNQL88HJO7uaZq4z0UWcRyQYlr4m7+VOlhDgPHRO
-         AQXPSLYM2dXtr0Ps8o8ghNjQc7w/5lLMhayx2yFhvbm7BLaW5qI399xcqGr9kR4X9Suv
-         OVMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761721060; x=1762325860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HbCgVFEzX8577A9DDwWGOWRS7BulG4xBlkKpiiYDRug=;
-        b=J5EeXc73hqCykp2oDnsScotL8oKKmzLOiLPcd8VEFHsW9BzqPZXHtYrYUIGaF9U4kz
-         HpOxsCe/s6kVD07YM3RKEL3ZdeBMPukP8VVMSXCyMETHBzTLqciLoINVabIze8LYYMvY
-         S2aKj6x3AEo6/baOS7sU0szLZKRpLc8CJWeruMZ477DIE1QCnOK8lbZG+Rzta8b4Gjit
-         0LQeSgwFp6P7U5vF9Ecp5LaXYPkaJHMGaYvjukhi8qQ/A0yL1bseUjhl9oRmrFdsrc+d
-         ihjsS6GFAMWY/33JprjlkjSCV+iPRbUireA2u8DyBhHVDLbhAxD4QKNkeQM+UPbmJ6kH
-         06zw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOybmlry8GU7PgZwXY7fYdTKBewGCM3hQxB+dv/QMWufERRYMZqlkURskeBT9wI32JovxOzhuujh2BpJw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztZFyFVYWWVGT2tbX5Ov0phOS/QYl8ewKpci1cKI4gRcVeV6Sn
-	f3c/WoRSzewdJ2jOEZTWG+sgq/2JzWkzvxUwMBzBTf3Vnk4c/EL8EDkacgK96wcyTV3FIENEVtW
-	fpsXh7mVwD+DWIBLKYo4K6H15AvMqLAA=
-X-Gm-Gg: ASbGncubjrNfgyeUiJwUIYV1cwY5FZJTdlMyxHXf5t5AI511C8Z5wZybmapkIxkEUpF
-	6EVSmV0O8UCieNcN3qb0IPuf8BePvvT2WSi7XJJ9ZtBjS9rQ3yGrK3a/kDt304jKZq3MeDvJkP7
-	kojRdOw/BAOHcvWUdDEF504T6w1Qgk9vWtB4/CNaSAE5a5DlhmXBQqchsudqAuEFz/tO+DWTka0
-	f3J0fTTTsVrJbG76MLKzHJ59UfNVxuft4SnjRfXz7ZdlTazMmHUR7hSBAZ3M3ZgPePGFrwlvEw=
-X-Google-Smtp-Source: AGHT+IGG3tSEotsRGPM/qL2Z7zc/4Vnb7Qt9+XB1zXw/dQYTAIJgwEQOEjw7RLjJIeE1mnaPSJKaCOwEtapvnSLPTW4=
-X-Received: by 2002:a05:690c:5c12:b0:783:72c4:5bc2 with SMTP id
- 00721157ae682-78628f93d7cmr13723697b3.35.1761721059935; Tue, 28 Oct 2025
- 23:57:39 -0700 (PDT)
+	s=arc-20240116; t=1761721076; c=relaxed/simple;
+	bh=GRPJ23z2L3uMq7YCt/UEA/ttP3KePbP/XYQFWN9kbOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VfaLYeCA4aClrUjK8qboFNUmjLUr7WSYdeRUxG+r3Eav3icpZs9S55RXqdtYgejl89yWGnt0N9W7VZ54uYkLVygtigZLSq7LVfYc2Hm6qPv2d4Cu5pkGHQ80mZVrdYu/a6f/8KWe0t1CiQeVHttANuCL0BxuO0RSUVwLeDBC0fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LVi7hKHx; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761721074; x=1793257074;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GRPJ23z2L3uMq7YCt/UEA/ttP3KePbP/XYQFWN9kbOU=;
+  b=LVi7hKHxz3qUjAzn+Zz+H6awRY8AFeFXbEoBQkjjkekO9O8CplBjBUva
+   tFh29RcNyrv2YLUEf9/BFpcC711kX6H6IvW2c+HjHp0aSHulPyHsSUkzn
+   P42Bsj/OGliGwjz4+Inrr+h5cTnQ4/dmk1FtdnQHJCFGzRlq6OBnZzoCO
+   DIBgEgboANR+2/GmLSirqqlafg/1qzXu7PZ4d9oZsCnJbbzn5Bo+sFzS8
+   tY1/18ZE6kj8pPaVDzgds91L2avp7pe/aFjXM6DNyw4fUArWjSQ8Hona7
+   QUiDteUlLbNrNcS/vTdlYFlc6PjmvY33kbyuG1Evbu4Z96fZw6zFz4OXO
+   w==;
+X-CSE-ConnectionGUID: I+dJraKlQ+OAoxpEsA9ckw==
+X-CSE-MsgGUID: oTN/HKKBSFWhGmxMs/A8DA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="51405926"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="51405926"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 23:57:53 -0700
+X-CSE-ConnectionGUID: RhYMO8kASxy1El5X2eLAvw==
+X-CSE-MsgGUID: crDPbSVAQqmlx50EFFQecA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="190705190"
+Received: from yinghaoj-desk.ccr.corp.intel.com (HELO [10.238.1.225]) ([10.238.1.225])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 23:57:49 -0700
+Message-ID: <43e36e8a-5875-489c-8baa-9a9b589c000a@linux.intel.com>
+Date: Wed, 29 Oct 2025 14:57:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026154000.34151-1-leon.hwang@linux.dev> <176167501101.2338015.15567107608462065375.git-patchwork-notify@kernel.org>
- <CAEf4BzbTJCUx0D=zjx6+5m5iiGhwLzaP94hnw36ZMDHAf4-U_w@mail.gmail.com> <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
-In-Reply-To: <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 29 Oct 2025 14:57:29 +0800
-X-Gm-Features: AWmQ_bkLvcykX8zmNuKPqnBYs3bc5ZytYMQH3yHLtNht1gNW5lGGNuEzgcKcGSs
-Message-ID: <CADxym3YRi+ACP1+uCDaDZDPGobrZiUmZrPZfr73W1cHCtKHEgw@mail.gmail.com>
-Subject: Re: [PATCH bpf v3 0/4] bpf: Free special fields when update hash and
- local storage maps
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, patchwork-bot+netdevbpf@kernel.org, 
-	bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, memxor@gmail.com, 
-	linux-kernel@vger.kernel.org, kernel-patches-bot@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 01/23] KVM: selftests: Add macros so simplify creating
+ VM shapes for non-default types
+To: Sagi Shahar <sagis@google.com>
+Cc: linux-kselftest@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
+ Andrew Jones <ajones@ventanamicro.com>,
+ Isaku Yamahata <isaku.yamahata@intel.com>,
+ Erdem Aktas <erdemaktas@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Roger Wang <runanwang@google.com>, Oliver Upton <oliver.upton@linux.dev>,
+ "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny
+ <ira.weiny@intel.com>, Chao Gao <chao.gao@intel.com>,
+ Chenyi Qiang <chenyi.qiang@intel.com>, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+References: <20251028212052.200523-1-sagis@google.com>
+ <20251028212052.200523-2-sagis@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251028212052.200523-2-sagis@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 2:50=E2=80=AFPM Leon Hwang <leon.hwang@linux.dev> w=
-rote:
->
->
->
-> On 29/10/25 04:22, Andrii Nakryiko wrote:
-> > On Tue, Oct 28, 2025 at 11:10=E2=80=AFAM <patchwork-bot+netdevbpf@kerne=
-l.org> wrote:
-[......]
-> >   [  424.982379]  ? bpf_lru_pop_free+0x2c6/0x1a50
-> >   [  424.982382]  bpf_lru_pop_free+0x2c6/0x1a50
->
-> Right, this is the classic NMI vs spinlock deadlock:
->
-> Process Context (CPU 0)         NMI Context (CPU 0)
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D    =
-     =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->     syscall()
->        |
->        +-> htab_lru_map_update_elem()
->        |
->        +-> bpf_lru_pop_free()
->        |
->        +-> spin_lock_irqsave(&lock)
->        |   +-------------------+
->        |   | LOCK ACQUIRED [Y] |
->        |   | IRQs DISABLED     |
->        |   +-------------------+
->        |
->        +-> [Critical Section]
->        |   |
->        |   | Working with LRU...
->        |   |
->        |   |                      +-----------------------+
->        |   |<---------------------+ ! NMI FIRES!          |
->        |   |                      +-----------------------+
->        |   |                      | (IRQs disabled but    |
->        |   |                      |  NMI ignores that!)   |
->        |   |                      +-----------------------+
->        |   |                                 |
->        |   | [INTERRUPTED]                   |
->        |   | [Context saved]                 |
->        |   |                                 v
->        |   |                     perf_event_nmi_handler()
->        |   |                                 |
->        |   |                                 +-> BPF program
->        |   |                                 |
->        |   |                                 +-> htab_lru_map_
->        |   |                                 |   update_elem()
->        |   |                                 |
->        |   |                                 +-> bpf_lru_pop_
->        |   |                                 |   free()
->        |   |                                 |
->        |   |                                 +-> spin_lock_
->        |   |                                 |   irqsave(&lock)
->        |   |                                 |   +------------+
->        |   |                                 |   | TRIES TO   |
->        |   |                                 |   | ACQUIRE    |
->        |   |                                 |   | SAME LOCK! |
->        |   |                                 |   +------------+
->        |   |                                 |        |
->        |   |                                 |        v
->        |   |                                 |   +------------+
->        |   |<--------------------------------+---+ ! DEADLOCK |
->        |   |                                 |   +------------+
->        |   |                                 |   | Lock held  |
->        |   | Still holding lock...           |   | by process |
->        |   | Waiting for NMI to finish ---+  |   | context    |
->        |   |                              |  |   |            |
->        |   |                              |  |   | NMI waits  |
->        |   |                              |  |   | for same   |
->        |   |                              |  |   | lock       |
->        |   |                              |  |   +------------+
->        |   |                              |  |        |
->        |   |                              |  |        v
->        |   |                              |  |   [Spin forever]
->        |   |                              |  |        |
->        |   |                              |  +--------+
->        |   |                              |  (Circular wait)
->        |   |                              |
->        |   |                              +-> SYSTEM HUNG
->        |   |
->        |   +-> [Never reached]
->        |
->        +-> spin_unlock_irqrestore(&lock)
->            [Never reached]
->
->
-> +---------------------------------------------------------------------+
-> |                       DEADLOCK SUMMARY                              |
-> +---------------------------------------------------------------------+
-> |                                                                     |
-> | Process Context: Holds &loc_l->lock, waiting for NMI to finish      |
-> |                                                                     |
-> | NMI Context:     Trying to acquire &loc_l->lock                     |
-> |                  (same lock, same CPU)                              |
-> |                                                                     |
-> | Result:          Both contexts wait for each other =3D DEADLOCK       |
-> |                                                                     |
-> +---------------------------------------------------------------------+
->
-> We can fix this by converting the raw_spinlock_t to trylock-based
-> approach, similar to the fix for ringbuf in
-> commit a650d38915c1 ("bpf: Convert ringbuf map to rqspinlock").
 
-Nice shot!
 
+On 10/29/2025 5:20 AM, Sagi Shahar wrote:
+> From: Sean Christopherson <seanjc@google.com>
 >
-> In bpf_common_lru_pop_free(), we could use:
+> Add VM_TYPE() and __VM_TYPE() macros to create a vm_shape structure given
+> a type (and mode), and use the macros to define VM_SHAPE_{SEV,SEV_ES,SNP}
+> shapes for x86's SEV family of VM shapes.  Providing common infrastructure
+> will avoid having to copy+paste vm_sev_create_with_one_vcpu() for TDX.
 >
->     if (!raw_res_spin_lock_irqsave(&loc_l->lock, flags))
->         return NULL;
+> Use the new SEV+ shapes and drop vm_sev_create_with_one_vcpu().
 >
-> However, this deadlock is pre-existing and not introduced by this
-> series. It's better to send a separate fix for this deadlock.
+> No functional change intended.
 >
-> Hi Menglong, could you follow up on the deadlock fix?
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> Signed-off-by: Sagi Shahar <sagis@google.com>
 
-Yeah, with pleasure. As I see, this is not the only place
-that can cause deadlock and rqspinlock should be used. And
-I'll follow up on such deadlocks.
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-Thanks!
-Menglong Dong
-
->
-> Thanks,
-> Leon
->
 
