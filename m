@@ -1,276 +1,294 @@
-Return-Path: <linux-kernel+bounces-876951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CDAC1CD66
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9956C1CD84
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5234038C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9669189EDE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6D6357739;
-	Wed, 29 Oct 2025 18:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38F4357735;
+	Wed, 29 Oct 2025 18:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVS4zzVo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dSi1Fvbp"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3156357710;
-	Wed, 29 Oct 2025 18:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20770357725
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764095; cv=none; b=IxyGrAS/qUiKSjg7UyXbCjoP+VppbsOWsZCCcoeWTKg++paWV7Lw9ibN5bfu3bnBF7LRwJwys0fVcQgyXN+66075M8PtM/7mJM7bu4e9LbEtxe9R2IYiDAKAZoVotpAzyHzmafYTjLaSXs0hXe/qzsCbXVbo+TaFG8GMNJWc9GM=
+	t=1761764104; cv=none; b=dVeSpx0GxbBY9ipIqIEqIMKDBEvBPbxwgcqyMRgyhzpfCtnmPaLNi5rey9O8XwUJiUyBPrBVRuEc80n6f3RvsUs4jmt4htGS5MZqbqSE5AMZUDSFI9UIr/I7z2Nt0yH52UpVHtJEoLj7oojo5xRrLhQmmfdaIQwsykeQbJQAdH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764095; c=relaxed/simple;
-	bh=Ux2ENO/i6V+guiQo5qhqzoW+zBs4ctUVICsR7hoAkmM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iUlXq4GdNLnJLVkWvpULDqDvpDdyez4k0w3XpTNfwZAk82v5JbB9XFHy1U5+Mx1r0LbUYm4AuxwnlKU6qS2AlTYWSobLsTPdqrItb9XuHp1ZAPJZS1Ld5G1X3w6SqjaBpQ+zYwnXJAowIGIp2LRcA9QeQLpZa2jGyPn3rjrdn0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVS4zzVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7164C4CEF8;
-	Wed, 29 Oct 2025 18:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761764095;
-	bh=Ux2ENO/i6V+guiQo5qhqzoW+zBs4ctUVICsR7hoAkmM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sVS4zzVoWEbn3QNcolgohy69sS19mV2rlckr+Nb1zlcn94jHeFxnwQuWxg2DHk6BR
-	 igkJp82NMhShSfHOAPUq24eD+mGpH0QvxJv5r2lWjm9GKBe3az64cj9fhB0eZGaidy
-	 GtcLGhr4poM+za/wWzkLrP2at6lO0Bhu58WHOlV5yNHL7cswjeNgNX3vOkTdBy11BH
-	 Ax2+WrZY59Ww4m0riErBCGxbdr7U53xiZeruL+TohdZjmleelKKid3663ihTaWc/NG
-	 rHGxe2y6yJMfGcbI6AGlNEtck/TQC+G2RhMfqKzDX1qVj1LKBNW/oR+U+dQTVXGUbX
-	 aBEXlLI3AR2jQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: hwmon: Convert aspeed,ast2400-pwm-tacho to DT schema
-Date: Wed, 29 Oct 2025 13:54:47 -0500
-Message-ID: <20251029185448.2121857-1-robh@kernel.org>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761764104; c=relaxed/simple;
+	bh=2XhS8GGcxGCear9erpTpn4oh4Qmdqsxs0ZLWsVhb0kw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lulPslNFwNKwSAIGUI7FoIrMDQtC6/mQ5iI67UqimNafqlrdy5rU7+09Lnd1ZbbpqL23BQ3WnBiPCKAKha2EwPHFeL549wtUCIlklCoVXa8MCtDSz5q044ZGLl48m/XnJ9ixzo/PtF8UxEiQU7jGSa1GCJu0XxyjC0QzppQcMhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dSi1Fvbp; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--blakejones.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-7837a5e5b46so4021457b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:55:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761764102; x=1762368902; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vkpqegQyBOZz0rOmiDppUlNMv+L6R4/uLounZ9FhWFE=;
+        b=dSi1FvbpgoXLOidh22BVNtzORK5qVic8Sr7fK5iX4h4cgr/fLI33fPBYl9NrgYY6XK
+         mxC3VNUV8ca9jr2duEFKu2wSbZqrnj3KQHOUA2yqXhC0m3ROetGj1yssd760PL7M6rvV
+         yRTkFInwef+lQMuvuZje9/TLU9a34vYTdLMJw2rwsgKxzCYfi1IwlBLlF8L/gPbvjwna
+         IqlKCJSlN/DU2m7kZ6KN/Qlhet14djvEQdmE8AL+D3gawIRsc6161eogyejaU3t179GO
+         2ZvzjSg1IQxR+u4pd3zxpBObqxMIOQrfymQvkbI1FHOBdmf1+dQg9o/y/gtNszLke1m+
+         wpNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761764102; x=1762368902;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vkpqegQyBOZz0rOmiDppUlNMv+L6R4/uLounZ9FhWFE=;
+        b=nRzLrAR7lXfNRg8oJT/Q5KIPkc8eSpo1UTmtQY+WrRYXj+87RY8uOJhfK4g1H1DImr
+         9GVgXU2yftDvt6wPYU0yINS9W3jWlEGl0QatQitKLFLvuGK2yTszzfC1reRxm0HTERjJ
+         /hlxLwZn6DBxHnoCRpbtQ2lkoemkws+/hmkenpvDymX6UWBE2MoXaSVqQN4O4ybAVqUl
+         wPT1tof0Jdy32m4yQg79f1re37sbgkahyLM/Tl+oJ5MtTB7dCTyyohHDME4tJUGppJQn
+         fWAFi0LawFDPiJ44FC045RMdF+rSs3KWdlwbG1B1bxTIEHoafYyWfBZPY8HbkvY0WzAN
+         QU/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXFfpAJFx3sakVga3cG8rJU3lsF5EYAk7NDC7oXaDolsUOqdpByQKUt/EJaadVXmVWeOK7V1IONwFCCGW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7LfEGkF/Tx/zknxdNBQYRQ9ESYf9ChZ49Nx2VLWwfpQaWRLYo
+	1mwdar8RTAeRbw0Q9kKis7mcLteqreTWynG/HLWuT9cUFbGh1uoWsqWeDOvmu8hVNtxvCWL0+vy
+	9FRQP//PO0NGlulAmQbxgVA==
+X-Google-Smtp-Source: AGHT+IEmPCAkf/q/NREVku034tEZSuR3/zMJu7kIOqSeuRwwtb9j7tzpnYrDREZ2sFSVciPRsyd9tA6VyK7468L3
+X-Received: from yxsr12.prod.google.com ([2002:a53:c98c:0:b0:63f:2d9a:6511])
+ (user=blakejones job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:690c:9a11:b0:784:88df:d9d with SMTP id 00721157ae682-78638e1411dmr10249467b3.2.1761764101933;
+ Wed, 29 Oct 2025 11:55:01 -0700 (PDT)
+Date: Wed, 29 Oct 2025 11:54:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
+Message-ID: <20251029185458.3040228-1-blakejones@google.com>
+Subject: [PATCH v4] sched: reorder some fields in struct rq
+From: Blake Jones <blakejones@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Josh Don <joshdon@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, linux-kernel@vger.kernel.org, 
+	Blake Jones <blakejones@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Convert the ASpeed fan controller binding to DT schema format.
+This colocates some hot fields in "struct rq" to be on the same cache line
+as others that are often accessed at the same time or in similar ways.
 
-The '#cooling-cells' value used is 1 rather than 2. '#size-cells' is 0
-rather 1.
+Using data from a Google-internal fleet-scale profiler, I found three
+distinct groups of hot fields in struct rq:
 
-Some users define more that 8 fan nodes where 2 fans share a PWM. The
-driver seems to let the 2nd fan just overwrite the 1st one. That also
-creates some addressing errors in the DT (duplicate addresses and wrong
-unit-addresses).
+- (1) The runqueue lock: __lock.
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+- (2) Those accessed from hot code in pick_next_task_fair():
+      nr_running, nr_numa_running, nr_preferred_running,
+      ttwu_pending, cpu_capacity, curr, idle.
+
+- (3) Those accessed from some other hot codepaths, e.g.
+      update_curr(), update_rq_clock(), and scheduler_tick():
+      clock_task, clock_pelt, clock, lost_idle_time,
+      clock_update_flags, clock_pelt_idle, clock_idle.
+
+The cycles spent on accessing these different groups of fields broke down
+roughly as follows:
+
+- 50% on group (1) (the runqueue lock, always read-write)
+- 39% on group (2) (load:store ratio around 38:1)
+-  8% on group (3) (load:store ratio around 5:1)
+-  3% on all the other fields
+
+Most of the fields in group (3) are already in a cache line grouping; this
+patch just adds "clock" and "clock_update_flags" to that group. The fields
+in group (2) are scattered across several cache lines; the main effect of
+this patch is to group them together, on a single line at the beginning of
+the structure. A few other less performance-critical fields (nr_switches,
+numa_migrate_on, has_blocked_load, nohz_csd, last_blocked_load_update_tick)
+were also reordered to reduce holes in the data structure.
+
+Since the runqueue lock is acquired from so many different contexts, and is
+basically always accessed using an atomic operation, putting it on either
+of the cache lines for groups (2) or (3) would slow down accesses to those
+fields dramatically, since those groups are read-mostly accesses.
+
+This patch does not change the size of "struct rq" on machines with 64-byte
+cache lines. The additional "____cacheline_aligned" to put the runqueue
+lock on the next cache line will add an additional 64 bytes of padding on
+machines with 128-byte cache lines; although this is unfortunate, it seemed
+more likely to lead to stably good performance than e.g. by just putting
+the runqueue lock somewhere in the middle of the structure and hoping it
+wasn't on an otherwise busy cache line.
+
+The "__no_randomize_layout" was added to reflect the fact that performance
+of this data structure is unusually sensitive to placement of its members.
+
+Signed-off-by: Blake Jones <blakejones@google.com>
+Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Tested-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
 ---
- .../hwmon/aspeed,ast2400-pwm-tacho.yaml       | 105 ++++++++++++++++++
- .../bindings/hwmon/aspeed-pwm-tacho.txt       |  73 ------------
- 2 files changed, 105 insertions(+), 73 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
- delete mode 100644 Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
+ kernel/sched/sched.h | 77 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 47 insertions(+), 30 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml b/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
-new file mode 100644
-index 000000000000..018249f97a5d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
-@@ -0,0 +1,105 @@
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/hwmon/aspeed,ast2400-pwm-tacho.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: ASPEED AST2400/AST2500 PWM and Fan Tacho controller
-+
-+maintainers:
-+  - Joel Stanley <joel@jms.id.au>
-+  - Andrew Jeffery <andrew@codeconstruct.com.au>
-+
-+description: >
-+  The ASPEED PWM controller can support upto 8 PWM outputs. The ASPEED Fan Tacho
-+  controller can support upto 16 Fan tachometer inputs.
-+
-+  There can be up to 8 fans supported. Each fan can have 1 PWM output and
-+  1-2 Fan tach inputs.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - aspeed,ast2400-pwm-tacho
-+      - aspeed,ast2500-pwm-tacho
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#address-cells':
-+    const: 1
-+
-+  '#size-cells':
-+    const: 0
-+
-+  '#cooling-cells':
-+    const: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+patternProperties:
-+  '^fan@[0-7]$':
-+    description: Fan subnode
-+    type: object
-+    additionalProperties: false
-+
-+    properties:
-+      reg:
-+        description: PWM source port index (0 = PWM A, ..., 7 = PWM H)
-+        maximum: 7
-+
-+      cooling-levels:
-+        description: PWM duty cycle values for cooling states
-+        $ref: /schemas/types.yaml#/definitions/uint8-array
-+        minItems: 1
-+        maxItems: 16  # Should be enough
-+
-+      aspeed,fan-tach-ch:
-+        description: Fan tachometer input channel
-+        $ref: /schemas/types.yaml#/definitions/uint8-array
-+        minItems: 1
-+        maxItems: 2
-+        items:
-+          maximum: 15
-+
-+    required:
-+      - reg
-+      - aspeed,fan-tach-ch
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#address-cells'
-+  - '#size-cells'
-+  - clocks
-+  - resets
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/aspeed-clock.h>
-+
-+    fan-controller@1e786000 {
-+        compatible = "aspeed,ast2500-pwm-tacho";
-+        reg = <0x1e786000 0x1000>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        #cooling-cells = <1>;
-+        clocks = <&syscon ASPEED_CLK_APB>;
-+        resets = <&syscon ASPEED_RESET_PWM>;
-+
-+        fan@0 {
-+            reg = <0x00>;
-+            cooling-levels = /bits/ 8 <125 151 177 203 229 255>;
-+            aspeed,fan-tach-ch = /bits/ 8 <0x00>;
-+        };
-+
-+        fan@1 {
-+            reg = <0x01>;
-+            aspeed,fan-tach-ch = /bits/ 8 <0x01 0x02>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt b/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
-deleted file mode 100644
-index 8645cd3b867a..000000000000
---- a/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
-+++ /dev/null
-@@ -1,73 +0,0 @@
--ASPEED AST2400/AST2500 PWM and Fan Tacho controller device driver
+v3 -> v4 changes:
+- Updated comment, moved "nr_iowait" to the end of the structure, and added
+  "__no_randomize_layout" tag to the structure.
+  Link to v3: https://lore.kernel.org/lkml/20251028080348.2177469-1-blakejones@google.com/T/#u
+  (v3 includes details of previous perf testing)
+
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index e7718f12bc55..e1c3fefb14b7 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1114,28 +1114,50 @@ DECLARE_STATIC_KEY_FALSE(sched_uclamp_used);
+  * acquire operations must be ordered by ascending &runqueue.
+  */
+ struct rq {
+-	/* runqueue lock: */
+-	raw_spinlock_t		__lock;
 -
--The ASPEED PWM controller can support upto 8 PWM outputs. The ASPEED Fan Tacho
--controller can support upto 16 Fan tachometer inputs.
+-	/* Per class runqueue modification mask; bits in class order. */
+-	unsigned int		queue_mask;
++	/*
++	 * The following members are loaded together, without holding the
++	 * rq->lock, in an extremely hot loop in update_sg_lb_stats()
++	 * (called from pick_next_task()). To reduce cache pollution from
++	 * this operation, they are placed together on this dedicated cache
++	 * line. Even though some of them are frequently modified, they are
++	 * loaded much more frequently than they are stored.
++	 */
+ 	unsigned int		nr_running;
+ #ifdef CONFIG_NUMA_BALANCING
+ 	unsigned int		nr_numa_running;
+ 	unsigned int		nr_preferred_running;
+-	unsigned int		numa_migrate_on;
+ #endif
++	unsigned int		ttwu_pending;
++	unsigned long		cpu_capacity;
++#ifdef CONFIG_SCHED_PROXY_EXEC
++	struct task_struct __rcu	*donor;  /* Scheduling context */
++	struct task_struct __rcu	*curr;   /* Execution context */
++#else
++	union {
++		struct task_struct __rcu *donor; /* Scheduler context */
++		struct task_struct __rcu *curr;  /* Execution context */
++	};
++#endif
++	struct task_struct	*idle;
++	/* padding left here deliberately */
++
++	/*
++	 * The next cacheline holds the (hot) runqueue lock, as well as
++	 * some other less performance-critical fields.
++	 */
++	u64			nr_switches	____cacheline_aligned;
++
++	/* runqueue lock: */
++	raw_spinlock_t		__lock;
++
+ #ifdef CONFIG_NO_HZ_COMMON
+-	unsigned long		last_blocked_load_update_tick;
+-	unsigned int		has_blocked_load;
+-	call_single_data_t	nohz_csd;
+ 	unsigned int		nohz_tick_stopped;
+ 	atomic_t		nohz_flags;
++	unsigned int		has_blocked_load;
++	unsigned long		last_blocked_load_update_tick;
++	call_single_data_t	nohz_csd;
+ #endif /* CONFIG_NO_HZ_COMMON */
+ 
+-	unsigned int		ttwu_pending;
+-	u64			nr_switches;
 -
--There can be upto 8 fans supported. Each fan can have one PWM output and
--one/two Fan tach inputs.
--
--Required properties for pwm-tacho node:
--- #address-cells : should be 1.
--
--- #size-cells : should be 1.
--
--- #cooling-cells: should be 2.
--
--- reg : address and length of the register set for the device.
--
--- pinctrl-names : a pinctrl state named "default" must be defined.
--
--- pinctrl-0 : phandle referencing pin configuration of the PWM ports.
--
--- compatible : should be "aspeed,ast2400-pwm-tacho" for AST2400 and
--	       "aspeed,ast2500-pwm-tacho" for AST2500.
--
--- clocks : phandle to clock provider with the clock number in the second cell
--
--- resets : phandle to reset controller with the reset number in the second cell
--
--fan subnode format:
--===================
--Under fan subnode there can upto 8 child nodes, with each child node
--representing a fan. If there are 8 fans each fan can have one PWM port and
--one/two Fan tach inputs.
--For PWM port can be configured cooling-levels to create cooling device.
--Cooling device could be bound to a thermal zone for the thermal control.
--
--Required properties for each child node:
--- reg : should specify PWM source port.
--	integer value in the range 0 to 7 with 0 indicating PWM port A and
--	7 indicating PWM port H.
--
--- cooling-levels: PWM duty cycle values in a range from 0 to 255
--                  which correspond to thermal cooling states.
--
--- aspeed,fan-tach-ch : should specify the Fan tach input channel.
--                integer value in the range 0 through 15, with 0 indicating
--		Fan tach channel 0 and 15 indicating Fan tach channel 15.
--		At least one Fan tach input channel is required.
--
--Examples:
--
--pwm_tacho: pwmtachocontroller@1e786000 {
--	#address-cells = <1>;
--	#size-cells = <1>;
--	#cooling-cells = <2>;
--	reg = <0x1E786000 0x1000>;
--	compatible = "aspeed,ast2500-pwm-tacho";
--	clocks = <&syscon ASPEED_CLK_APB>;
--	resets = <&syscon ASPEED_RESET_PWM>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
--
--	fan@0 {
--		reg = <0x00>;
--		cooling-levels = /bits/ 8 <125 151 177 203 229 255>;
--		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+ #ifdef CONFIG_UCLAMP_TASK
+ 	/* Utilization clamp values based on CPU's RUNNABLE tasks */
+ 	struct uclamp_rq	uclamp[UCLAMP_CNT] ____cacheline_aligned;
+@@ -1158,6 +1180,9 @@ struct rq {
+ 	struct list_head	*tmp_alone_branch;
+ #endif /* CONFIG_FAIR_GROUP_SCHED */
+ 
++#ifdef CONFIG_NUMA_BALANCING
++	unsigned int		numa_migrate_on;
++#endif
+ 	/*
+ 	 * This is part of a global counter where only the total sum
+ 	 * over all CPUs matters. A task can increase this counter on
+@@ -1166,36 +1191,31 @@ struct rq {
+ 	 */
+ 	unsigned long 		nr_uninterruptible;
+ 
+-#ifdef CONFIG_SCHED_PROXY_EXEC
+-	struct task_struct __rcu	*donor;  /* Scheduling context */
+-	struct task_struct __rcu	*curr;   /* Execution context */
+-#else
+-	union {
+-		struct task_struct __rcu *donor; /* Scheduler context */
+-		struct task_struct __rcu *curr;  /* Execution context */
 -	};
+-#endif
+ 	struct sched_dl_entity	*dl_server;
+-	struct task_struct	*idle;
+ 	struct task_struct	*stop;
+ 	unsigned long		next_balance;
+ 	struct mm_struct	*prev_mm;
+ 
+-	unsigned int		clock_update_flags;
+-	u64			clock;
+-	/* Ensure that all clocks are in the same cache line */
++	/* Per class runqueue modification mask; bits in class order. */
++	unsigned int		queue_mask;
++
++	/*
++	 * The following fields of clock data are frequently referenced
++	 * and updated together, and should go on their own cache line.
++	 */
+ 	u64			clock_task ____cacheline_aligned;
+ 	u64			clock_pelt;
++	u64			clock;
+ 	unsigned long		lost_idle_time;
++	unsigned int		clock_update_flags;
+ 	u64			clock_pelt_idle;
+ 	u64			clock_idle;
++
+ #ifndef CONFIG_64BIT
+ 	u64			clock_pelt_idle_copy;
+ 	u64			clock_idle_copy;
+ #endif
+ 
+-	atomic_t		nr_iowait;
 -
--	fan@1 {
--		reg = <0x01>;
--		aspeed,fan-tach-ch = /bits/ 8 <0x01 0x02>;
--	};
+ 	u64 last_seen_need_resched_ns;
+ 	int ticks_without_resched;
+ 
+@@ -1206,8 +1226,6 @@ struct rq {
+ 	struct root_domain		*rd;
+ 	struct sched_domain __rcu	*sd;
+ 
+-	unsigned long		cpu_capacity;
+-
+ 	struct balance_callback *balance_callback;
+ 
+ 	unsigned char		nohz_idle_balance;
+@@ -1317,7 +1335,9 @@ struct rq {
+ 	call_single_data_t	cfsb_csd;
+ 	struct list_head	cfsb_csd_list;
+ #endif
 -};
++
++	atomic_t		nr_iowait;
++} __no_randomize_layout;
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
 -- 
-2.51.0
+2.51.2.997.g839fc31de9-goog
 
 
