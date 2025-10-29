@@ -1,99 +1,144 @@
-Return-Path: <linux-kernel+bounces-875678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5E5C19931
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:08:03 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DB7C19928
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:07:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A98E23564E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:08:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 34FD6355D94
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFAD2E5402;
-	Wed, 29 Oct 2025 10:07:52 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1E32E6CB8;
+	Wed, 29 Oct 2025 10:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Tz7q9xu6"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E72D63F6;
-	Wed, 29 Oct 2025 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E112B2E3AF2;
+	Wed, 29 Oct 2025 10:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761732472; cv=none; b=oJsaygWP83tR9oeseh2IOCVUD8b0Ptk/Nlh6oPbIzbqfyUftYrNqq/+7ylch/T9dT1cP109ElpvpeGIsbbMd4gaZ1Jz4O8/OE9Y/g8HIlpEXwyPihtYSBgqF2cZ7qOOJe5prYwaJOKLq/jBtWSkUjiH5FUhejxZaEDatz00wS44=
+	t=1761732421; cv=none; b=lIVo3MQb7OCo2EsHagzpIIqGx4ccSUmZqhla/m0pFC6nIfp40Jr9N42eizsNaJvcicCdIF+UvKTdVK+F8Nip6H3nVIf9AYcFFpcUTINpZhcI1lYoHh3A1+oxBWEb43H7cTtkPrr8w0nmo3daNb7qK1Rmg1lZhMWO3sd9WxxCuYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761732472; c=relaxed/simple;
-	bh=US3KADJxNAGjpbXSwqf+py4gYwCFfPb0CGQWdSTV7I8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=necYnxhiVjY6Oz5EKh+qQg9x2LJV+TJmHmz/41a1g0L4JW8SugwpzkWpX+i4gXz6s95aVixpKG+v1OCKBrEqdPan2c2ZlQPLiPVFi/fQ3b+RzP/8PTT/1twlp91F3C3zdyusiYkuFenlcyEiDIclb0t2o8TIwC0PnmyR454TW8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 59TA6kLO038858;
-	Wed, 29 Oct 2025 19:06:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 59TA6kIm038850
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 29 Oct 2025 19:06:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <d2b28f73-49c8-4e30-9913-01702da4dfe4@I-love.SAKURA.ne.jp>
-Date: Wed, 29 Oct 2025 19:06:46 +0900
+	s=arc-20240116; t=1761732421; c=relaxed/simple;
+	bh=lnkJcczclvPYTFrmVPc+RABtS9RQehFIWvK9WghsEwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CXKt6SAEWw2ijYRbmCkZD3R9rz/QPXYXWljfM3HNJxyZE/bouiaEg+OzCzrVStcgGRArVsUB0xo9fZt46zLxFpcWfuMinhQp6HSkYZzYARzrB2jFEQkL0wWgzFyTbjHoySkQ6qlBn17Wtwom7ILI0FW3mlcAZbNxEaLfiURh/tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Tz7q9xu6; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id D7D5B4E413C6;
+	Wed, 29 Oct 2025 10:06:56 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 9D8DE606E8;
+	Wed, 29 Oct 2025 10:06:56 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 985DF117F20FD;
+	Wed, 29 Oct 2025 11:06:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761732416; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=srQGehJNPlliVCDWLxoOJNAi36h0guxibWQc1xxoBBQ=;
+	b=Tz7q9xu6Fv6aN1JPzSJ8MuzLFYhZuIn+B54dFrLBuz1cnU2oG15fa7juuEgZvZsixtdp2e
+	aultH7ner3XuRnKk0HMSjTKIgGPGXVXOpJpafRgar4JexHMGIViXoDAbcRr+LabM1aT8yP
+	N64rbNg6c8xuhcFfKlAg6ZqwBakT/5TQhr6nmx342IuuK0G1ULuCRdI9w28MN8hdiDYeMF
+	7/KlVSJNW+i6I5KKzfdjsj2gNrVRR/baFrzwMGdTyt2NZEQWzeuwvaLc43C3kS9ZB/ewQJ
+	IdjBhHd7gLYNthdImzoUsRvTXmjfNGPv8FAk1jHlkdCQ2kYBT6rY5rxnVig9/Q==
+Date: Wed, 29 Oct 2025 11:06:51 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Jiaming Zhang <r772577952@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, horms@kernel.org,
+ kuniyu@google.com, linux-kernel@vger.kernel.org, sdf@fomichev.me,
+ syzkaller@googlegroups.com, Vladimir Oltean <vladimir.oltean@nxp.com>
+Subject: Re: [Linux Kernel Bug] KASAN: null-ptr-deref Read in
+ generic_hwtstamp_ioctl_lower
+Message-ID: <20251029110651.25c4936d@kmaincent-XPS-13-7390>
+In-Reply-To: <CANypQFZ8KO=eUe7YPC+XdtjOAvdVyRnpFk_V3839ixCbdUNsGA@mail.gmail.com>
+References: <CANypQFZ8KO=eUe7YPC+XdtjOAvdVyRnpFk_V3839ixCbdUNsGA@mail.gmail.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hfs: Validate CNIDs in hfs_read_inode
-To: George Anthony Vernon <contact@gvernon.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>,
-        Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel-mentees@lists.linux.dev"
- <linux-kernel-mentees@lists.linux.dev>,
-        "syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com"
- <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20251003024544.477462-1-contact@gvernon.com>
- <405569eb2e0ec4ce2afa9c331eb791941d0cf726.camel@ibm.com>
- <aOB3fME3Q4GfXu0O@Bertha>
- <6ec98658418f12b85e5161d28a59c48a68388b76.camel@dubeyko.com>
- <559c331f-4838-49fb-95aa-2d1498c8a41e@I-love.SAKURA.ne.jp>
- <aQGIBSZkIWr4Ym7I@Bertha>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <aQGIBSZkIWr4Ym7I@Bertha>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav104.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2025/10/29 12:20, George Anthony Vernon wrote:
-> I think HFS_POR_CNID case should be disallowed. There is no real
-> underlying file with that CNID. If we ever found a record with that CNID
-> it would mean the filesystem image was broken, and if we ever try to
-> write a record with that CNID, it means we screwed up.
+Hello Jiaming,
 
-Hmm, your interpretation does not match what Viacheslav Dubeyko interpreted
++Vlad
 
-  hfs_read_inode() can be called for the root directory and parent of
-  the root cases. So, HFS_POR_CNID and HFS_ROOT_CNID are legitimate values.
+On Wed, 29 Oct 2025 16:45:37 +0800
+Jiaming Zhang <r772577952@gmail.com> wrote:
 
-at https://lkml.kernel.org/r/9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com .
+> Dear Linux kernel developers and maintainers,
+>=20
+> We are writing to report a null pointer dereference bug discovered in
+> the net subsystem. This bug is reproducible on the latest version
+> (v6.18-rc3, commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa).
+>=20
+> The root cause is in tsconfig_prepare_data(), where a local
+> kernel_hwtstamp_config struct (cfg) is initialized using {}, setting
+> all its members to zero. Consequently, cfg.ifr becomes NULL.
+>=20
+> cfg is then passed as: tsconfig_prepare_data() ->
+> dev_get_hwtstamp_phylib() -> vlan_hwtstamp_get() (via
+> dev->netdev_ops->ndo_hwtstamp_get) -> generic_hwtstamp_get_lower() ->
+> generic_hwtstamp_ioctl_lower().
+>=20
+> The function generic_hwtstamp_ioctl_lower() assumes cfg->ifr is a
+> valid pointer and attempts to access cfg->ifr->ifr_ifru. This access
+> dereferences the NULL pointer, triggering the bug.
 
-But if HFS_POR_CNID is not allowed, you can inline is_valid_cnid() for HFS_CDR_DIR case
-like https://lkml.kernel.org/r/23498435-ee11-4eb9-9be9-8460a6fa17f1@I-love.SAKURA.ne.jp .
+Thanks for spotting this issue!
 
-> I agree your check is good to catch root inode's i_ino > 15 (is this
-> reachable?) and I'd like to add it. Would you be happy if I make a
-> 2-part patch series with your patch second, keeping your sign-off on it?
+In the ideal world we would have all Ethernet driver supporting the
+hwtstamp_get/set NDOs but that not currently the case.=09
+Vladimir Oltean was working on this but it is not done yet.=20
+$ git grep SIOCGHWTSTAMP drivers/net/ethernet | wc -l
+16
+=20
+> As a potential fix, we can declare a local struct ifreq variable in
+> tsconfig_prepare_data(), zero-initializing it, and then assigning its
+> address to cfg.ifr before calling dev_get_hwtstamp_phylib(). This
+> ensures that functions down the call chain receive a valid pointer.
 
-OK.
+If we do that we will have legacy IOCTL path inside the Netlink path and th=
+at's
+not something we want.
+In fact it is possible because the drivers calling
+generic_hwtstamp_get/set_lower functions are already converted to hwtstamp =
+NDOs
+therefore the NDO check in tsconfig_prepare_data is not working on these ca=
+se.
 
+IMO the solution is to add a check on the ifr value in the
+generic_hwtstamp_set/get_lower functions like that:
+
+int generic_hwtstamp_set_lower(struct net_device *dev,
+			       struct kernel_hwtstamp_config *kernel_cfg,
+			       struct netlink_ext_ack *extack)
+{
+...
+
+	/* Netlink path with unconverted lower driver */
+	if (!kernel_cfg->ifr)
+		return -EOPNOTSUPP;
+
+	/* Legacy path: unconverted lower driver */
+	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
+}
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
