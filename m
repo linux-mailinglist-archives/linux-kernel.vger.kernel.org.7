@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-876902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90431C1CB06
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:09:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFFBC1CAB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BEF844E1E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 640E24E65D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFA12E7BA2;
-	Wed, 29 Oct 2025 18:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680BD354AD8;
+	Wed, 29 Oct 2025 18:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="De52S7tY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgJGfjhJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8D92F83A7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF4A31E0E4
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761195; cv=none; b=ij5FszUsqQRSNB+mVv9T0zmLDoN+Ft8UILEaDIAhLN2CxCzEGEAJe44rrkFrWmU1EGl3+YiI9mcLKFgeKJN+xmE+fDDgjSZSqOMTJYrvLejRLqrvlbZBRpvMnf7NTKaOkRISf/LhRsFGC6YvW3Ac+SdcQdyzxgmFyIcuT1smKCY=
+	t=1761760872; cv=none; b=M4upVkogQel1ZAHzPTEtk9Rp5EP9qaW3qkl68+UN0nwdhXNATmC0v8MxCyAfaHlXXqyieLRXeBnnlpXFli4UY0M7C5cwPohll8PbxCIx8pNP0Y+jnPsqAcN7mDwBfVWHQEp9d/HyRy5kKUasrx7zfteEjShGuXXEaKWj11JIYME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761195; c=relaxed/simple;
-	bh=jAwR0FEppp70EDS/Twsw9Vf9H35YJ1O5nYY1Nk8dhxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F92BWoyUXwlQy7MMHiv2V3pKE9SxR+TfhoZKQ00X2ASw9hLuIykcxCe0AIMnkC4sBOx/UX0ZlWA5aunlEtj3mAep7WC1M0BkPKDbvf+g0ILJPcGKCE4G581f8Ao5B89dgWdsAX0YQu6so3OuhdjF/azSuZmeQ4pB/IeqCXGnFIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=De52S7tY; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761761192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=wumwQhKDr4iir+pQkfkb9IFCpsaAZD5YzM/xo1tfMww=;
-	b=De52S7tYmgZb9O+MX31d2ly6Auji0yZpOXEB9f3JilyUfpuRGyRmSsml5IWDbEdBtKkHeT
-	TgWpx5DQ0+5jAiSmH1CgZ+lfpPQlvDJYuZ5SY/GJ0B5ryBpjQpyzFNnaCptBIVA11S/i/Z
-	egQwU9nI2mI+BFVYs505kIbFmUjKGIs=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-677-ykqEynArOoiIBZUT7czK4w-1; Wed,
- 29 Oct 2025 14:06:27 -0400
-X-MC-Unique: ykqEynArOoiIBZUT7czK4w-1
-X-Mimecast-MFC-AGG-ID: ykqEynArOoiIBZUT7czK4w_1761761186
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D4DAC19560BE;
-	Wed, 29 Oct 2025 18:06:26 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 78CCE19540E9;
-	Wed, 29 Oct 2025 18:06:26 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id AAAE6400E5DC8; Wed, 29 Oct 2025 15:00:56 -0300 (-03)
-Date: Wed, 29 Oct 2025 15:00:56 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sched/idle: disable tick in idle=poll idle entry
-Message-ID: <aQJWWIDMMUxqDxnR@tpad>
+	s=arc-20240116; t=1761760872; c=relaxed/simple;
+	bh=JkICoGulKusPgrOc+3fQ7LIX9fdSC22eFlUBUNRokJk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MtyHf9IMfaLs0j0Udns+MxBlTrc//N/E4CAMMGRuPRtGphGkTKhPQYNcKoonTNeNPZqjOFSJHJktrHqrueWerGvN1ekr8/+VWGSU0lrl0X/Nmmh71TCCvKG5t/8Yu1hpgLb+R9qIvtdYw5xPm2DDEltXsiRUJSV9ny65a/V2GMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgJGfjhJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4B0C16AAE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761760872;
+	bh=JkICoGulKusPgrOc+3fQ7LIX9fdSC22eFlUBUNRokJk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NgJGfjhJaNs4l82+eMSh2r1EAx9uk5HPJAyypHw9PeFAnh2Pd/T9Ut6BEUZDAxvMW
+	 C51qBFa5otR/uKQ7dcLeycr0Ay+T0GY6ye9UTaCGCjrJu/lkMmwtbaJOSfdo3XJHd1
+	 ObCh5UYVDwzRvT+NLz+PqSgB5CBSK1564+6og8MbDc86VgxBGBy1xAjPIcIDlPsT0u
+	 hW5hzztdbZa2bABOBiKSqpn0d4KBxiMJThHlo5sPOMM2g34vAqpZgX63HfzlaZ4nN2
+	 H0VO0XKTKApg1SgG+qo2ojtqWg35sQ3GMu5U4W5++yNuGiU1RZ3tsm73dC8fHRQsUt
+	 ASSg8KjoiFbFg==
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5db1e29edbcso135653137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:01:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXF430X448hZE6q3AxBrAA47+kLn7BBSqStiwMB98yBYpXPNIayuzW+jDDaLzWU182hvMIIoBnh14N/hQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+JdZhSTHwfgCcoyzUVTqxRlZYSSu5z7ji6eMo34bwyVf3uMAr
+	eob3OKZ4/qpvcM+47vMi+qFeFj5TScsnYyKTgVMLszy3qsZXBBGGZ7kk/2gzKcKYKEZN6SBrjvW
+	D2FC1b0BYqcShDMMRPG07QXVQVC2nABU=
+X-Google-Smtp-Source: AGHT+IGGluDTc586NCbCdlpQu935QL/Y8fXJ0sSPv0be/Dt3sEhhVMZJsoK1V7je9HKakunNObg8WJdRv0NwLivAn6M=
+X-Received: by 2002:a05:6102:2c06:b0:5d6:6e6:e097 with SMTP id
+ ada2fe7eead31-5db906819d1mr1467428137.33.1761760871248; Wed, 29 Oct 2025
+ 11:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-3-roman.gushchin@linux.dev>
+In-Reply-To: <20251027231727.472628-3-roman.gushchin@linux.dev>
+From: Song Liu <song@kernel.org>
+Date: Wed, 29 Oct 2025 11:01:00 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
+X-Gm-Features: AWmQ_bmAg580HVj5YBdyFsS189BaIn-vGa9b15QV_82EsPqPQmTP0zb5M7q-qAQ
+Message-ID: <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+[...]
+>  struct bpf_struct_ops_value {
+>         struct bpf_struct_ops_common_value common;
+> @@ -1359,6 +1360,18 @@ int bpf_struct_ops_link_create(union bpf_attr *att=
+r)
+>         }
+>         bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_=
+ops_map_lops, NULL,
+>                       attr->link_create.attach_type);
+> +#ifdef CONFIG_CGROUPS
+> +       if (attr->link_create.cgroup.relative_fd) {
+> +               struct cgroup *cgrp;
+> +
+> +               cgrp =3D cgroup_get_from_fd(attr->link_create.cgroup.rela=
+tive_fd);
 
-Commit a5183862e76fdc25f36b39c2489b816a5c66e2e5 
-("tick/nohz: Conditionally restart tick on idle exit") allows
-a nohz_full CPU to enter idle and return from it with the 
-scheduler tick disabled (since the tick might be undesired noise).
+We should use "target_fd" here, not relative_fd.
 
-The idle=poll case still unconditionally restarts the tick when entering
-idle.
+Also, 0 is a valid fd, so we cannot use target_fd =3D=3D 0 to attach to
+global memcg.
 
-To reduce the noise for that case as well, stop the tick when entering
-idle, for the idle=poll case.
+Thanks,
+Song
 
-Change tick_nohz_full_kick_cpu to set NEED_RESCHED bit, to handle the
-case where a new timer is added from an interrupt. This breaks out of
-cpu_idle_poll and rearms the timer if necessary.
-
----
-
-v2: Handle the case where a new timer is added from an interrupt (Frederic Weisbecker)
-
- include/linux/sched.h    |    2 ++
- kernel/sched/core.c      |   10 ++++++++++
- kernel/sched/idle.c      |    2 +-
- kernel/time/tick-sched.c |    1 +
- 4 files changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index cbb7340c5866..1f6938dc20cd 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -2428,4 +2428,6 @@ extern void migrate_enable(void);
- 
- DEFINE_LOCK_GUARD_0(migrate, migrate_disable(), migrate_enable())
- 
-+void set_tif_resched_if_polling(int cpu);
-+
- #endif
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index f1ebf67b48e2..f0b84600084b 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -988,6 +988,11 @@ static bool set_nr_if_polling(struct task_struct *p)
- 	return true;
- }
- 
-+void set_tif_resched_if_polling(int cpu)
-+{
-+	set_nr_if_polling(cpu_rq(cpu)->idle);
-+}
-+
- #else
- static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
- {
-@@ -999,6 +1004,11 @@ static inline bool set_nr_if_polling(struct task_struct *p)
- {
- 	return false;
- }
-+
-+void set_tif_resched_if_polling(int cpu)
-+{
-+	set_tsk_need_resched(cpu_rq(cpu)->idle);
-+}
- #endif
- 
- static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index c39b089d4f09..428c2d1cbd1b 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -324,7 +324,7 @@ static void do_idle(void)
- 		 * idle as we know that the IPI is going to arrive right away.
- 		 */
- 		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
--			tick_nohz_idle_restart_tick();
-+			tick_nohz_idle_stop_tick();
- 			cpu_idle_poll();
- 		} else {
- 			cpuidle_idle_call();
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index c527b421c865..efc3653999dc 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -408,6 +408,7 @@ void tick_nohz_full_kick_cpu(int cpu)
- 	if (!tick_nohz_full_cpu(cpu))
- 		return;
- 
-+	set_tif_resched_if_polling(cpu);
- 	irq_work_queue_on(&per_cpu(nohz_full_kick_work, cpu), cpu);
- }
- 
-
+> +               if (IS_ERR(cgrp))
+> +                       return PTR_ERR(cgrp);
+> +
+> +               link->cgroup_id =3D cgroup_id(cgrp);
+> +               cgroup_put(cgrp);
+> +       }
+> +#endif /* CONFIG_CGROUPS */
+>
+>         err =3D bpf_link_prime(&link->link, &link_primer);
+>         if (err)
+> --
+> 2.51.0
+>
 
