@@ -1,133 +1,117 @@
-Return-Path: <linux-kernel+bounces-874987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAACC17F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:50:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C2AC17F45
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 239323522C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:50:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66724057BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73226279DB6;
-	Wed, 29 Oct 2025 01:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u3zEMTLc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF58C23EA80
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E15C2E62DA;
+	Wed, 29 Oct 2025 01:56:24 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68B572D0C7A;
+	Wed, 29 Oct 2025 01:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761702623; cv=none; b=opOEUKFGAp4KthEBHVocwW3bZc/mNGbzYXXZjN4iXFKsFS+GC/KM4Z/DMAYDs4geJDhvpwnz5sQ+g87FMYfipb2eqPmvl6P/o7OMFRI2kSO9XFvWwbKrRbrJErOn0F8k655St/7kFF7+FgPQpH5w8paohGHakkN66InRMIUwgpc=
+	t=1761702983; cv=none; b=gB6BdnOVcDL0D1rYvYxjHADIDpA6jvgR8UDD4xjQ2Kv9gANCLij0nxJB9SVwtoooeuOdz6LS2m89sOHaP4QiIKpXEygKBGrVqnkPheYkpWmeNJ9XH/ltAxQ4OP4A2VKxsZRq9C3MFDiw38KXL3Nh67SxYv9/+m1dt5+eVnKMnzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761702623; c=relaxed/simple;
-	bh=Gc6TRF3YI5Z9kV69Bszu6Ljoaa/1ceinuOGcIMvHDfs=;
+	s=arc-20240116; t=1761702983; c=relaxed/simple;
+	bh=oNEBHuq2LmK+th/kjOkTgOWVlI8Rc6Yn1bP3zYucX84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nG4NEVCKy/1c/sFEAKPY1xW7Matuka0i2aR2dfwPWyVv+x1QFN0/wf5TpxOj83edId1/BNk3PkFwj4IaWMY15vPqm/wsPr11DnBHZXOqD8UZtIZh3Si23xD6OBfJNn68W3WHVmBk45DTwIJJ8wLlmZpRrXxcpK3geGkhBRSFNaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u3zEMTLc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB000C4CEE7;
-	Wed, 29 Oct 2025 01:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761702623;
-	bh=Gc6TRF3YI5Z9kV69Bszu6Ljoaa/1ceinuOGcIMvHDfs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u3zEMTLcHqLxHzj8Zsugr60+coVne9GMpHWor4CC17dPUHDczEevNo/yZVw4ZgGNs
-	 U8UZ/qxYrM7UCEKL8JIjZ1IW8Fd5ubsmmcclSdzB9R6DkXZ6rmAz1okaQ7dPgoXl4n
-	 sjySRr9E+iHfO5gLmyfpP4xL5cUcaO0A8vqShcu4JcyAVUjYQ+4GAc1HJnQnNFpzap
-	 i59ZC2sjsowTlfi24xM2NQeEnzyYJp77ErppCWUixZ9cBforiLZnTyb7Q1ik9jnbUf
-	 9PRnPA80OWICMxbyDrTSaqv7Q0pRoawzWstlB+wUrnmC+nOeykHyy9qLQtpMC3qWtA
-	 LBDEYSkMgSASQ==
-Date: Tue, 28 Oct 2025 18:50:21 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Chartre <alexandre.chartre@oracle.com>
-Subject: Re: odd objtool 'unreachable instruction' warning
-Message-ID: <es4awalt6i63cy5kkrbz7f22cxpt4zbmq6zsbol3yafek2375e@6b6stnc6k6h2>
-References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
- <ubqjeplvslhnspqw6pnqwo7c6sq2ygdtmkuqr4q3hjlxfkuwii@xn63k6qz22mz>
- <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUgrdtD2rLDnF5HKNmFK7kIx0uZmPAO2d+9LVGvSi9rSLnVeOyy9gaI+PTMC8fyoWE6NP7hx+rPoO/Qn5kdrFJURLuHwb/Ow9hq6yuXPrKU04LG8tB1kxQgM/Z5eIx/bcfWE2HUfQ1T6oBMCd/9wWKWHxhPmuNpqj1ne8lIEhuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-f7-6901743d1673
+Date: Wed, 29 Oct 2025 10:56:08 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+	sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org,
+	tariqt@nvidia.com, mbloch@nvidia.com, andrew+netdev@lunn.ch,
+	edumazet@google.com, pabeni@redhat.com, akpm@linux-foundation.org,
+	david@redhat.com, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, horms@kernel.org,
+	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+	ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+	sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+	dtatulea@nvidia.com
+Subject: Re: [RFC mm v4 1/2] page_pool: check if nmdesc->pp is !NULL to
+ confirm its usage as pp for net_iov
+Message-ID: <20251029015608.GA37879@system.software.com>
+References: <20251023074410.78650-1-byungchul@sk.com>
+ <20251023074410.78650-2-byungchul@sk.com>
+ <20251028183356.29601348@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgs8+xVbv5tu9kv5n=LwWFZ0FW4GPwVmXBPjLQ0goLfjQ@mail.gmail.com>
+In-Reply-To: <20251028183356.29601348@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTZxTH99zn9t5LY81dBXmmm3GdZoYEBILmbEHDzBKfDyok+mXMZDb2
+	blTbYlpeTVyqYhQjlSEqLSwDjbzWsJWNvgTMVqCAmM1UwetgoPhCVECCiPIi2GrM/PbLOf/z
+	O+fDEbC6R7FC0JuyJLNJa9BwSlY5tqQqdlMW0sc/7l4HFY1ODhpe5kHNHY8CZpwjDFTUNyOY
+	munnYbE1gOBZeycHT9omEVysmsZQ8U8BC88bZzF4fSMIHpdd5uBBYJiHBtd2GKp+yELLcTeG
+	4dNdHBQVzGFonRnn4YinNiRusvJwvdmmgNLZSxjc1js83PBVcDDoXFTAQ38RC92OOhYmzrZj
+	GLKlQKByOUz3jCJob3QzMH3qZw567T4G/mjt5eFMsJKDewVDCIJtwyycnT/BQflhG4K5lyHl
+	ePGUAso7BvmUOHpYljnaNvoU09/rbjO0r+wnlspXrjLU6/iPp5WubNpUG0NPykFMXfWFHHVN
+	lvB0oK+Fo11lcyz13v2Cej3PGFp0dJxLi0pXJuskgz5HMq/fvEeZ8cpn4w4EFXkNVX8jK3Kz
+	J1GEQMQkci101Ds+d+T8G2bFtcR3vFQRZk78nMjyDA5zpLiGFDTZQxmlgMUJnpTJg6GQICwT
+	jaSj1xjOqEQgiy/qcTijFk8g0ubtZd42PiTd9vtvFmAxhsgLj5jwLBZXkpoFIVyOEBOIvfoC
+	F+Yo8TPyZ3MnE/YQcUogo4XX8NtDPyJ/1cpsMRId72kd72kd/2srEa5Har0px6jVG5LiMvJN
+	+ry4vZlGFwq9WPWh+W89aPL6Tj8SBaRZooq/8IFerdDmWPKNfkQErIlUjZ4OlVQ6bf5ByZz5
+	nTnbIFn8aKXAaqJVidO5OrX4gzZL2i9JByTzuy4jRKywovMls/ZF54ODxbryru9tm+qid3nu
+	5+7QrS10zKcNDJiTTQmfXKI/Pi3eMpt3c9mtY6WuuaHUX9PZWNfwwpUNO7Y4X/TYU5N2GwKJ
+	W0sDzC8l+RtTsrdZ+hOqc79aerfT/Y1nbNXXp2K/3DdiDc4n7mlUGVb3J+8aW9OS+vHF35pv
+	fur/V8NaMrQJMdhs0b4Gq9SA+l4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SXUhTcRjG+5//Of9zthyczOxUdtEqpEEfRtHbJ14EHYoiuonqQtc65HBb
+	taloFCwbZZbTPiy3ZkwlLbWEWepGVmxmWdGHpp2o1OzDPsSkzHLmbCui7h6e5/c8783L4ehL
+	zFROb0qTzCatQU2UtHLD8oNzV6Yh/QJvLg+ummoCVT8yoaK7gYHh6l4KXJV1CAaHn7Mw1tiM
+	4GvTbQKfAl8QlJUMYXA9tNHwrSaIwevrRfCx6BKBt809LFR51kNX+Tsarh2ux9CTf4dAnm0E
+	Q+NwPwvZDRfCw7VWFgLFLQw8qrMzcCp4HkO9tZuFNp+LQGf1GAPv/Hk0tDgv0jBQ2IShy54I
+	ze5YGLrXh6Cppp6CoWPFBNodPgquNrazcLLVTeC1rQtBa6CHhsKfOQTOHrAjGPkRnuwvGGTg
+	7K1ONnG+eECWiRjo+4zFKxefUWJH0XFalK/fpUSv8yUruj3pYu0FjZgrt2LRU3mEiJ4vJ1jx
+	Rcc1It4pGqFF76ulorfhKyXmHewnG2O3KlfskAz6DMk8f1WyMmXUZye7W5nMqpIHyIrq6Vyk
+	4AR+kXA6+8xvTfOzBd/hU0xEEz5ekOVhHNEx/CzBVusIM0oO8wOsUCR3hiGOm8gbhVvtxgij
+	4kEY+16JI0w0n4OEgLed+hNMEFocb34fwLxGkEMfqEgX89OEihAXsRV8guAoLyURPYmfKdys
+	u00VIJXzv7bzv7bzX9uNcCWK0ZsyjFq9YfE8S2pKlkmfOU+3y+hB4Scq3//zeAMabFvjRzyH
+	1FGqBaXj9NGMNsOSZfQjgcPqGFVffthS7dBm7ZXMu5LM6QbJ4kfTOFo9WbV2s5Qcze/Upkmp
+	krRbMv9NKU4x1Yq6O3XeMWaKYU1B/uWOwkMz6kYSEzRRtn56TvrCh0/8CteS6Sv7NOMLXsXH
+	jeriP0PbfeK4Ejq6ddU5zdOBM8GPul5tRtU63Z4cHbW5efEbU1KNNVNxQ97HrzOPixNWV9i3
+	LMl/v6yMCXY8z45NjQps2p6b/DipJy748sXT16Fto2rakqJN0GCzRfsLmdJKBkADAAA=
+X-CFilter-Loop: Reflected
 
-On Tue, Oct 28, 2025 at 05:59:01PM -0700, Linus Torvalds wrote:
-> On Tue, 28 Oct 2025 at 17:21, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > See the diff below, hopefully that fixes things for you?
+On Tue, Oct 28, 2025 at 06:33:56PM -0700, Jakub Kicinski wrote:
+> On Thu, 23 Oct 2025 16:44:09 +0900 Byungchul Park wrote:
+> > As a preparation, the check for net_iov, that is not page-backed, should
+> > avoid using ->pp_magic since net_iov doens't have to do with page type.
 > 
-> Bingo, that patch works for me.
+> doesn't
+> 
+> > Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
+> > page pool, by making sure nmdesc->pp is NULL otherwise.
+> 
+> Please explain in the commit message why the new branch in
+> netmem_is_pp() is necessary. We used to identify the pages based
+> on PP_SIGNATURE, now we identify them based on page_type.
 
-Thanks, let me run that through some testing and then I'll post a proper
-patch.
+Yes, I will.  It'd be much better.  Thank you very much for the comment.
 
-> > On a related note, it would be nice if we could make that codegen more
-> > readable...  Here were a few formats I had played with before, any
-> > thoughts?
-> 
-> I don't think any of this is ever going to be remotely readable,
-> because of the whole horrible section noise.
-> 
-> If I recall correctly, one of the ideas you had was to use macros to
-> make things more legible, but that sadly didn't work with clang or
-> something like that?
-
-Right.  Those macros were actually pretty nice.  They worked great with
-GCC but Clang wouldn't cooperate.  Maybe I can talk to some Clang people
-to try to get that working.
-
-> > Note there's also an objtool "disas" feature Alexandre is working on
-> > which will show the disassembly annotated with runtime patching info
-> > (alternatives, static branches, etc):
-> 
-> Yeah, that would be a good feature to have, although I wouldn't
-> obviate the asm cleanup for me.
-> 
-> Depending on what I am looking for, I end up looking at either the asm
-> output and the objdump output (or at both) because they each have
-> their good and bad parts.
-> 
-> Sometimes I *want* the comments that gcc in particular adds to the
-> assembler, and sometimes I prefer the "raw objdump" format.
-> 
-> Oh, and Alexandre: if you are working on improving objdump - are you
-> perhaps also looking at making the relocation output saner?
-
-Just to clarify, Alexandre is working on objTOOL, not objDUMP :-)
-
-> Because I absolutely detest the odd relocation output format. I use it
-> occasionally, but it's just crazy to see things like
-> 
-> <delayed_put_task_struct>:
->         ...
->         call   <delayed_put_task_struct+0x1a>
->                         R_X86_64_PLT32  rethook_flush_task-0x4
-> 
-> when any *sane* tool would just output the simple
-> 
->         call   rethook_flush_task
-> 
-> instead.  Because as it is, the line without the relocation info is
-> useless, and then the separate relocation line (with -r) is just
-> crazy.
-
-FWIW, this can be slightly improved by adding '-w' (objdump -drw) which
-at least puts the function name on the same line:
-
-     call   34d <delayed_put_task_struct+0x1d>       349: R_X86_64_PLT32     rethook_flush_task-0x4
-
-The good news is that we will have the ability to print things however
-we want with "objtool disas".
-
--- 
-Josh
+	Byungchul
 
