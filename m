@@ -1,114 +1,140 @@
-Return-Path: <linux-kernel+bounces-875371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22577C18CEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB24C18D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:59:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F0DB407309
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5994E3ADC81
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FBD3101AD;
-	Wed, 29 Oct 2025 07:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310C831076A;
+	Wed, 29 Oct 2025 07:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="V014Fm/0"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="34+pqqiA"
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B303E30DD33
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2B253B71;
+	Wed, 29 Oct 2025 07:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761724434; cv=none; b=Q8rC672cFTZ0JK3l8owwUjcvSA6oCRnU0hgzUHSIb7swjhEfCAdD1zScoHreIKwtnGNDnayJLjNiKVuhgQK8qmQGKvuoa9eNN3mg4HfRhVHmiR6+snE2Ev5QruzcBVKZ6ClFg9su4iexbFVCtMZR46vI/r4DKoRVtNWEKabNS08=
+	t=1761724581; cv=none; b=Da5pvXBM6b28iUKBfM8bHWxcDTvtP5ml0AfpszLO3SQmTTYJ2o1DgTpKj8wOq3TkDBaBz0pqAWUqA7UEPtXHKcpWIneTRNZ/JUe4o59TJUeGV1f5Njn8uJgVHSYljEcjuKDj83JZ6Seo8yeviPtsbGKkLrtNkZ07gRQgpc9jXjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761724434; c=relaxed/simple;
-	bh=9sBqHtMzkgHNQvGNmaU6cyr7BjLPfntGjyHDzqjj1q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eVx5GmeIQ3FnOXRS96FR+ElDjiiYgTvx8Wqp7Uva1ckI7jbjgAkN31IUOqL25Gi4HitCU/pZIaGMi4ERNEwJWIJ6qj1sm7FaPZoy2DuWren0QADYr6BLRHv7XDXnDT0xKNQFZVeGk1z8B0ReFfA9F6DVyX4ozZSsTcpNwmwRGrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=V014Fm/0; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3f99ac9acc4so6513335f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:53:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761724431; x=1762329231; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=swQK60xfML17J80u6tuXniIURK0iR+v6N89D6/+kOL8=;
-        b=V014Fm/08zxPpn2lnh71iGn9yRnXk3VNrVPUMNjoZwlY/YWv+3rA6vLTv607oEFt40
-         KQNqS+sAGlIfOLG8PTJGxb/NFgP2XKPR7VRVFvBI9Lk4JXlxcQVNRlOAiUxC4ua3YoGc
-         w/TZuTN++48ehToSjt5EUhpTMG6uUg9xnatQBkpWpI0OqTdESilNfwJu5lGl2bcT+HGr
-         NlgbE3F2t0N+I1K7XKpcmkyz5lOaQWwxs7Qu9SIx1JBVhcyP+LnG0vKcUY592yMG59Do
-         hK7OtxeQiDDe8/hhMw+e1gb3Cn4yRS8ghcrGorvxn4TmS7P7isQ6lChD8grIp6N9qsDB
-         7fwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761724431; x=1762329231;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=swQK60xfML17J80u6tuXniIURK0iR+v6N89D6/+kOL8=;
-        b=bkOEbf0Pe8SgYOTytY3enXAkVsFH+CkV+2fmLJ8QtqlbzaVSPWpwXKuncUHi8oWZb/
-         vOM0lbP5Mbs42F6qBGMAPY1OEwvIoJYjvTGbcYsOttI+2zzGL9ZIrjcsHwwvkT3g8Xye
-         N12HbDKf2Xd29jm/YNbd44gt7IMXO/qsnw2DwA47/Qzr+w9Gww9SmrIrNSAj5Z6hX02x
-         c5AsDskGCNdjilOKwKbaEruqQ6EJj8+Z8PWwZIo6tDS/tn9DPgiQAzNgw759eOUd3vDY
-         MMFej0CS6RogZXQ4SFGqysHgha6DQNUVqgZeL06tKH5ZNdATlECpmxCM/jLD9XnuWRyu
-         a4+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVNaeFSCr3SVVrvLDJCSgL7H/ynTKHp9HA6giQSEc93386lORazyvWlHC0r4w527fATHI62EcU4k11HqNg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvI2ds+yk/CKi2NsigEa4PfrzTCzqI6Wv0pNI8aM3iSprKm84Q
-	m4h8RuJhIuhveCJVDA3Uuwt8u2imBMeLR2wYQU8eLSsnmwopGQVbDz1nfMzJk5HNeAM=
-X-Gm-Gg: ASbGnctjogqBaLV/e3V/1HTEFySERRMhPb2xuO4Jny3+gkx+G7BQjCw/No6AAL/8koT
-	3YUnzhq4MNoaMfzcBqfXIIP+GMp3z2QByFBL4L+egUlNTOi6I0bcuns373v3fyb+R+KKs0viYnt
-	kIt/Nln0S0t/qTnFQ/9hHimQBuEarnRUtRW63o4jYv+Pii7fdFH6u3Jj8NpEIYRvI/V3o8RQdSh
-	XwrBV/BzqPn6S80PUTcNYASbErOXFwO61YlI9mk+9ZAGl7IR7S3JwEVAlBO+HqWwSp1XJPHppFU
-	3R4+LdQO2StKkAkxuyUm3von64qzHe7Dal8RU4zG9XpMWtOo6lWC6S0Hl9/az86WSzhmJkiyuus
-	dNOiqioArMEw121MdzyaTDciPF6s+a6tx0n6C5n+edbmYxeH0Hxn1Kb9/XGLEWqj4eRniWWwCmY
-	qJZqYTMT3Icpz2SQ==
-X-Google-Smtp-Source: AGHT+IHZNv776MNAkq85ErWoiCefggPtR3LZHBTitBCxq6kWhcvpDiu2NWRGcgIae8q/Y/YRXY63yQ==
-X-Received: by 2002:a05:6000:288f:b0:429:8d46:fc58 with SMTP id ffacd0b85a97d-429aefd2c2cmr1389158f8f.60.1761724431036;
-        Wed, 29 Oct 2025 00:53:51 -0700 (PDT)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7b2dsm24452114f8f.2.2025.10.29.00.53.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 00:53:50 -0700 (PDT)
-Date: Wed, 29 Oct 2025 08:53:49 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Qi Zheng <qi.zheng@linux.dev>
-Cc: hannes@cmpxchg.org, hughd@google.com, roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
-	lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com,
-	imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
-	axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: Re: [PATCH v1 00/26] Eliminate Dying Memory Cgroup
-Message-ID: <aQHIDWDx3puT5XZd@tiehlicka>
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+	s=arc-20240116; t=1761724581; c=relaxed/simple;
+	bh=yq5i/1jdK4GAdk/5gCKcUxzz6h9TQBP5e3VMa+tJ48c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jYjLMCE13cEGQcWPPRdczCwjhbY6UgBY8Sji3B9l5sfIN+m4ykzT28+mv4MVkfKEE+FWCZsnjlsgzQjh5PTbpneD41Fn5FrEmx/zPEW72PaOh3LTqBTJDVCdSuRxBp3/iFBQfKIcucWpYUAXc+66+PuatCRAm4EoxkNKPhexowo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=34+pqqiA; arc=none smtp.client-ip=113.46.200.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=vuHKXm+OhQijHCGxbJTJ7gKVGu/cyR9t2WAMa/3qIME=;
+	b=34+pqqiAaUgpKjc0zQxXqV5Ay+UUIAS5jzBDK/oAvbWPu2Bp347b/gH29D8uVWd9xBPWVjC+1
+	hVVt0oGQXvWfZ/QkLnPzub9kgOsrIqZ1DCIfwKFG7+zaeUE4kFvK/ZCie55YGmCeiwqXuDfJFcT
+	W3rf4E+rGPYpl9u+5qeCpjk=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cxKL01jyFz12LFQ;
+	Wed, 29 Oct 2025 15:55:36 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7E08F180B5A;
+	Wed, 29 Oct 2025 15:56:13 +0800 (CST)
+Received: from [10.174.177.19] (10.174.177.19) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 29 Oct 2025 15:56:12 +0800
+Message-ID: <0feb2a87-b93d-4a99-9180-03a9ccab562e@huawei.com>
+Date: Wed, 29 Oct 2025 15:56:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-coalesce.sh fail by
+ installing ethtool-common.sh
+To: Simon Horman <horms@kernel.org>
+CC: <kuba@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
+	<acardace@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
+References: <20251027043007.1315917-1-wangliang74@huawei.com>
+ <aQD52zzmW1YDC1iH@horms.kernel.org>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <aQD52zzmW1YDC1iH@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
-On Tue 28-10-25 21:58:13, Qi Zheng wrote:
-> From: Qi Zheng <zhengqi.arch@bytedance.com>
-> 
-> Hi all,
-> 
-> This series aims to eliminate the problem of dying memory cgroup. It completes
-> the adaptation to the MGLRU scenarios based on the Muchun Song's patchset[1].
 
-I high level summary and main design decisions should be describe in the
-cover letter.
+在 2025/10/29 1:14, Simon Horman 写道:
+> On Mon, Oct 27, 2025 at 12:30:07PM +0800, Wang Liang wrote:
+>> The script "ethtool-common.sh" is not installed in INSTALL_PATH, and
+>> triggers some errors when I try to run the test
+>> 'drivers/net/netdevsim/ethtool-coalesce.sh':
+>>
+>>    TAP version 13
+>>    1..1
+>>    # timeout set to 600
+>>    # selftests: drivers/net/netdevsim: ethtool-coalesce.sh
+>>    # ./ethtool-coalesce.sh: line 4: ethtool-common.sh: No such file or directory
+>>    # ./ethtool-coalesce.sh: line 25: make_netdev: command not found
+>>    # ethtool: bad command line argument(s)
+>>    # ./ethtool-coalesce.sh: line 124: check: command not found
+>>    # ./ethtool-coalesce.sh: line 126: [: -eq: unary operator expected
+>>    # FAILED /0 checks
+>>    not ok 1 selftests: drivers/net/netdevsim: ethtool-coalesce.sh # exit=1
+>>
+>> Install this file to avoid this error. After this patch:
+>>
+>>    TAP version 13
+>>    1..1
+>>    # timeout set to 600
+>>    # selftests: drivers/net/netdevsim: ethtool-coalesce.sh
+>>    # PASSED all 22 checks
+>>    ok 1 selftests: drivers/net/netdevsim: ethtool-coalesce.sh
+>>
+>> Fixes: fbb8531e58bd ("selftests: extract common functions in ethtool-common.sh")
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> ---
+>>   tools/testing/selftests/drivers/net/netdevsim/Makefile | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/drivers/net/netdevsim/Makefile b/tools/testing/selftests/drivers/net/netdevsim/Makefile
+>> index daf51113c827..653141a654a0 100644
+>> --- a/tools/testing/selftests/drivers/net/netdevsim/Makefile
+>> +++ b/tools/testing/selftests/drivers/net/netdevsim/Makefile
+>> @@ -20,4 +20,6 @@ TEST_PROGS := \
+>>   	udp_tunnel_nic.sh \
+>>   # end of TEST_PROGS
+>>   
+>> +TEST_FILES := ethtool-common.sh
+>> +
+>>   include ../../../lib.mk
+> Hi Wang Liang,
+>
+> As per commit f07f91a36090 ("selftests: net: unify the Makefile formats")
+> I think the desired format is as follows (completely untested!):
+>
+> TEST_FILES := \
+> 	ethtool-common.sh \
+> # end of TEST_PROGS
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+
+Thanks for the reminder!
+
+I will correct it, and send v2 later.
+
+------
+Best regards
+Wang Liang
+
+>
 
