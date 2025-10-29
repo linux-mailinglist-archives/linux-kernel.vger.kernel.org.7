@@ -1,162 +1,189 @@
-Return-Path: <linux-kernel+bounces-876316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D253C1B324
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:26:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FACEC1B35E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9C21A65416
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:12:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EAE58582AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497B31A2C25;
-	Wed, 29 Oct 2025 14:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174DC24468A;
+	Wed, 29 Oct 2025 14:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMx5+jUn"
-Received: from mail-yx1-f68.google.com (mail-yx1-f68.google.com [74.125.224.68])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="XtYF3cBQ"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2AC126BF7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33D548EE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746994; cv=none; b=d8kQ4jRXi0SADvIc9rV7KpFXXBO6TDf2TwR1W3WijEUE+e3poB1o9AtMOob0MLUC+4PFMcuQ+E+kut73+dZW831w2DsYgMW2bMxGMNN61mGOxLdAw+5sECRGNKgIKjm9dOP/gq6bXjs7fj0mZvf6FSJ1DM6JlvCWUIgjvUpO2u4=
+	t=1761747053; cv=none; b=Kz/db3D5NZYDVpZZU3idEIu/iRLlKvgg8/s2wLUGpzeTdAlUEbsFoF5437keQW+W2yMD9QzCrliCLnVYh+b3ZtaqpETYLYKtU6eYWnsw95RkwAiSGQ58+yfoNsU4KFclH46ZRX+lNQ3oL+rxDD6RdU253N/MCTnFlEXalsbPUYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746994; c=relaxed/simple;
-	bh=t8Je67MYz78CSeDapeZWXFbw8UTnijHwDfsQ0oJzpBw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WYQrkA5WyqAZcW0kkM6E64LQKR4Z2irj3jIuUr7fJvvABcsjZBcFarpWk4HGXI7yRCyx668/TN8x4HIGzmtPLcoo+hN89ysuKPcUer56nJMScMjG6AY+oRgBV6o+uzNuwoeenYwshK9Negf4EWJ+j8FGkWo6MqfQ7ksvG9VjA4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMx5+jUn; arc=none smtp.client-ip=74.125.224.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f68.google.com with SMTP id 956f58d0204a3-63d0692136bso8547126d50.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:09:51 -0700 (PDT)
+	s=arc-20240116; t=1761747053; c=relaxed/simple;
+	bh=FtkXBRR1i74hdYvMHxT8SXn72fikHIr5QYRX/FKzjvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ranJotoDOxFfz/aHh1pmf9EZboNypt+HNKDUfpqVUY4OOpbmwgjcNqIBONj+YyzMEYnWWBtVsy9IeS04g+wZkX8sEE5U6lr9L6PNdfwlSsIpw9rgy20nn5hdGF2v9GViepuWdp2ASfs6nNtWzvtw6CZ925uqCDD+aGCBCBksyeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=XtYF3cBQ; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-87fc4d29301so71603826d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:10:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761746991; x=1762351791; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ycwR5keqCwJzvgHRE2PU/x6zSUHdoe+fklvAVma4ZAo=;
-        b=JMx5+jUntRlcJQLqr27dNA+ixkWY0WcL3QE4C6TlU95MlE9ivCX/UHo1gba0ho5nrY
-         mRL8BMdRbegHhnja22M47l9YmSUUG4mExAaHz2q9X09/LMKT6wYbedeQGpKeLfREenEL
-         RRLDGbSAjc+PVCDfeBjfiuWVHXBvRYDjTbGMp+23Vb/taj4QtkbNxVQmDnY6e+LUZ+lx
-         VQ7FnD9x3qdcxLt3aliZwhxvaMtub+o8d3d0FXSA07CNvcImsgdeqtaUvhRjnEUDczTM
-         NoI1OZeKCvM4qC++6c7xW5EbYWMRJWlOuDPFk/QvB7Kj9aAd6dZEVdeCRKY3bmAhvkaS
-         DWgA==
+        d=ziepe.ca; s=google; t=1761747050; x=1762351850; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3gCBuq56/59adr8Ol0O4W3+IsGMOD3y6s+9TcTsiPOY=;
+        b=XtYF3cBQ/iUolTaq0Qh4Wu/3nUIzHeTXQKWw3P1uEJ7RX5J/q+NHSZ90s2g+2F7tak
+         5b0nlI5yabJThUBrmRjLTa1MrbtK2boO52QUqXpoG6pvXqItN1ByTDfFCk4wvSnbwVII
+         UHKzqgWf/eR154V2f2iL1FBzr4RYaiE8Nxtrvpdwrlak7AmslIVYFSHLhJwSPdN0tmSU
+         qUi6Iy2fUwbuXQPhaIkM/RLKVJXdsQOuUjUZZqz2Dy/XIrEkzLae8amIgt4NXfgy2Lnj
+         AVKHykL6FOst8ffgc7l9mWVm9m8WEj3JTFjJAAE/YvzZmx03GvBm0xnVYzF5tmSl4PLV
+         V6IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746991; x=1762351791;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ycwR5keqCwJzvgHRE2PU/x6zSUHdoe+fklvAVma4ZAo=;
-        b=eaR6DrqRp2spg2CWWbg2FFO2/NPwxMHFtDGzx+qTNY+bn3Q0EuG5MPgxymJF5XbHjA
-         lkge3E75K+Dkvxdc/fB9qmrnwJYHuP82C0JbVW4CBPf0NfZT+990V90FbOUc0J2eMEAs
-         jp1lpYJ/n4NJRsURqlTfPVZrC/m+qc0grmQ0gY/1A5UyatclXjyPUu3F5qAlMWwQKLJq
-         ltokBNz6mTBVXycOo6gI+c2jwuX6l0bh07/4q6lanIcJAzXGKEMIZ/WqxtBeAG9aMtO2
-         14hA20SdRySAVh9zhGDG1/yS5u1iRoKVCM+6j5aotOVpZsUGOGtL6eIcs5JK4RGNaTBJ
-         8lVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCNTepM/LmyleBROHFWHgOjppqfuGAarFvk8KvqAscyZuHSylv7pV3sW6SqBmoGexg/cm5BX9ZT91RveQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsG+3J8/fsdWMYx7RBeGXhsasqk/9RxByizlJlN5M3SsdJi8yl
-	fjY5bXrhGaCCzwuRxKkL843TOhSahtHYyTWqilKg7ONOSv5KxXdHE+nX6n9aRuK28DEMsYM49fx
-	LH3Momm+a41q0DENIKljbBLDXhiQ8389uMFHi8MsnJQ==
-X-Gm-Gg: ASbGnctD+qfSmt6duTpAGJybu3Aogz/WjXzjAEZHHYoWm/PPIKHmzAek10nBV72vaLF
-	QAupxU2dB5JfaTRTtyM9+HiPVECg2rqKS5s5UuSKNnRxbkBXuusBzlEeTD32DFs93prRFRXtQis
-	eywWltZ0fNaId+yeKrntXpXrL70ZTmYylkX1swd43kMj8s/nICmizsEqaTDvHfBHeUgYHlg/x0w
-	wMmVm3+UxE85naAFjO1Tz439/tJy+x+iVCt16lw4jkO7wMst/7afyFePV6NKxLf
-X-Google-Smtp-Source: AGHT+IF+osjOqvoulkw8NO3HUmXRkTZBaKFJ2uh5+H+b3awpIW0yi0ceflqPVNZ93HSbPbOv8l1IEkL2tLogOY1edPQ=
-X-Received: by 2002:a05:690c:7241:b0:782:9804:c939 with SMTP id
- 00721157ae682-786290a02c5mr29214567b3.67.1761746990928; Wed, 29 Oct 2025
- 07:09:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761747050; x=1762351850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3gCBuq56/59adr8Ol0O4W3+IsGMOD3y6s+9TcTsiPOY=;
+        b=taMEpv4KydOLlfZUYkFfpUNmqbdpCLQ3SHM5oRNTNpK9bYqNLl36YxLqqEnVbKH6eN
+         /m3Vm101A344+wGSVr+1/qxoqsMDg3iO6UzkPNa+5LSPmQpLhJSbLZfjpzQG+hKBm6lQ
+         E1HFCBrzgFUH5d3wmuyzFCdxVOV9m4G1EZTm6C63DO4CFiTylycnMvC7eJoJulPYBqcS
+         ts9Nw0IAg79bvUISGGcwwy2zCeznMXoXUQvUO/sZAgqVinswGQ0un9j59lBS4v7eAaW9
+         pKOJZS03AGShX782L3tmzS3T2FqNt+t2LNAobdGjlq2RAbT98PJaILKMUhD6u/eHHodT
+         nBhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDOniWK0DXccajPsOUS6TVOQDjGDnyScS/Zz6yQTQdSXUnK4Bqm1ntDw1I0AatZq6rhKl1UTnkUoQ2SfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPkClObJNyBrrh7iqQpLb2csxkF8+WGHkHJqnWDoJJRqcDv1mA
+	//crnWjppSge2ThfID1heEOFNkVWIdMJZZs2oLBn8Qzt3GJP2rywaK55PoySh/FpKHE=
+X-Gm-Gg: ASbGncsW/2jgpnsNh1Recjm/QlEJsA4Cn/6Q2/71mVGDfuLjcLRXOQgwd0z8wFUx+PH
+	ulFpTiHhxPRoxaijJJ5vlko+Srb58jM9SLm/afLH8Oo7TEPIXwapvkDEvZrKfqr543Ejc+WJhpS
+	WEgvBT7NUvo2VE7V/h5n/Bhbcf1y9LDysAJl3jaPFKyQkU5LL95XHNnQ94i+kcNWulABqd+GH7N
+	yC8JvEU+KChOhRzDzZIMvlti7lm10dEki89ic7cOzBB5PbF7a/9idJUap7ujHRBPBnfCMQcGSud
+	pXnphLeTAvst0oIbE0vvjsvxNSFajRPpKaFmoioy0n8Lk1Zpse8KdCOaNkA9vNweS2j6thPOKTW
+	MwpRpPH6oZA/6O34MMI5a4Dmz67L4l8LsaE8b5D3rzA7sGYu4q9P8bmjUh8VAAXWTAMm7aCsEBP
+	BGcUe25jwwIc2uDegM4eLcs67OrPoy+m5UzLcPEjcJ7NsbtF8IubHv0W+x
+X-Google-Smtp-Source: AGHT+IFN9EEFBAzfjpvQnmAHpqKEJbqdqdrZ9KL1PtSYGMem5wdE9qnodevFJl+GDHD76k8KE97qmg==
+X-Received: by 2002:a05:6214:23cb:b0:70d:fa79:baf0 with SMTP id 6a1803df08f44-88009be5c01mr41077486d6.38.1761747050399;
+        Wed, 29 Oct 2025 07:10:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc494ab16sm98679066d6.39.2025.10.29.07.10.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 07:10:49 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vE6sy-00000004etU-2Jns;
+	Wed, 29 Oct 2025 11:10:48 -0300
+Date: Wed, 29 Oct 2025 11:10:48 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Peter Xu <peterx@redhat.com>, Matthew Wilcox <willy@infradead.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	kvm@vger.kernel.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 00/12] remove is_swap_[pte, pmd]() + non-swap
+ confusion
+Message-ID: <20251029141048.GN760669@ziepe.ca>
+References: <cover.1761288179.git.lorenzo.stoakes@oracle.com>
+ <20251027160923.GF760669@ziepe.ca>
+ <8d4da271-472b-4a32-9e51-3ff4d8c2e232@lucifer.local>
+ <20251028124817.GH760669@ziepe.ca>
+ <ce71f42f-e80d-4bae-9b8d-d09fe8bd1527@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029021514.25076-1-dongml2@chinatelecom.cn> <20251029100045.1bacc491@gandalf.local.home>
-In-Reply-To: <20251029100045.1bacc491@gandalf.local.home>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Wed, 29 Oct 2025 22:09:40 +0800
-X-Gm-Features: AWmQ_blsBI_DFdiQF48RKMGt-Buyb8d0mgmMYGrEuLR2v4XIcFJRfldKRW4N2B4
-Message-ID: <CADxym3YcR+WYjRv-0+SOiE1yoO85FaqffCF2XbLZ9H7+qHet6w@mail.gmail.com>
-Subject: Re: [PATCH] tracing: fprobe: use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: mhiramat@kernel.org, jolsa@kernel.org, mathieu.desnoyers@efficios.com, 
-	jiang.biao@linux.dev, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ce71f42f-e80d-4bae-9b8d-d09fe8bd1527@lucifer.local>
 
-On Wed, Oct 29, 2025 at 10:00=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
-> On Wed, 29 Oct 2025 10:15:14 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
->
-> > -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> > +#if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC=
-_FTRACE_WITH_REGS)
-> > +#define FPROBE_USE_FTRACE
-> > +#endif
-> > +
-> > +#ifdef FPROBE_USE_FTRACE
-> >  /* ftrace_ops callback, this processes fprobes which have only entry_h=
-andler. */
-> >  static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent=
-_ip,
-> >       struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> > @@ -295,7 +299,7 @@ NOKPROBE_SYMBOL(fprobe_ftrace_entry);
+On Tue, Oct 28, 2025 at 06:20:54PM +0000, Lorenzo Stoakes wrote:
+> > > And use the new type right away.
 > >
-> >  static struct ftrace_ops fprobe_ftrace_ops =3D {
-> >       .func   =3D fprobe_ftrace_entry,
-> > -     .flags  =3D FTRACE_OPS_FL_SAVE_REGS,
-> > +     .flags  =3D FTRACE_OPS_FL_SAVE_ARGS,
->
-> If an arch defines DYNAMIC_FTRACE_WITH_REGS but not
-> DYNAMIC_FTRACE_WITH_ARGS, then this will fail to build.
+> > Then the followup series is cleaning away swap_entry_t as a name.
+> 
+> OK so you're good with the typedef? This would be quite nice actually as we
+> could then use leaf_entry_t in all the core leafent_xxx() logic ahead of
+> time and reduce confusion _there_ and effectively document that swp_entry_t
+> is just badly named.
 
-Hi, it won't fail here, as FTRACE_OPS_FL_SAVE_ARGS has
-following definition:
+Yeah, I think so, a commit message explaining it is temporary and a
+future series will mechanically rename it away and this is
+preparation.
 
-#ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-#define FTRACE_OPS_FL_SAVE_ARGS                        FTRACE_OPS_FL_SAVE_R=
-EGS
-#else
-#define FTRACE_OPS_FL_SAVE_ARGS                        0
-#endif
+> I mean I'm not so sure that's all that useful, you often want to skip over
+> things that are 'none' entries without doing this conversion.
 
-Which means it will fallback to FTRACE_OPS_FL_SAVE_REGS if
-CONFIG_DYNAMIC_FTRACE_WITH_ARGS not defined.
+Maybe go directly from a pte to the leaf entry type for this check?
 
-I have commit a PR to the bpf CI, and all testings passed and no
-building error happens:
-  https://github.com/kernel-patches/bpf/pull/10110
+#define __swp_type(x) ((x).val >> (64 - SWP_TYPE_BITS))
 
-Thanks!
-Menglong Dong
+That's basically free on most arches..
 
->
-> >  };
-> >  static int fprobe_ftrace_active;
+> We could use the concept of 'none is an empty leaf_entry_t' more thoroughly
+> internally in functions though.
+> 
+> I will see what I can do.
+
+Sure, maybe something works out
+
+Though if we want to keep them seperate then maybe pte_is_leafent() is
+the right name for pte_none(). Reads so much better like this:
+
+if (pte_is_leafent(pte)) {
+    leafent_t leaf = leafent_from_pte(pte)
+
+     if (leafent_is_swap(leaf)) {..}
+}
+
+> > Then this:
 > >
->
-> Perhaps do:
->
-> #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> # define FPROBE_FTRACE_TYPE FTRACE_OPS_FL_SAVE_ARGS
-> #elif defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-> # define FPROBE_FTRACE_TYPE FTRACE_OPS_FL_SAVE_REGS,
-> #endif
->
-> #ifdef FPROBE_FTRACE_TYPE
-> [..]
-> static struct ftrace_ops fprobe_ftrace_ops =3D {
->         .func   =3D fprobe_ftrace_entry,
->         .flags  =3D FTRACE_FTRACE_TYPE,
->
->
-> ?
->
-> -- Steve
+> >   pmd_is_present_or_leafent(pmd)
+> 
+> A PMD can be present and contain an entry pointing at a PTE table so I'm
+> not sure that helps... naming is hard :)
+
+pmd_is_leaf_or_leafent()
+
+In the PTE API we are calling present entries that are address, not
+tables, leafs.
+
+Jason
 
