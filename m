@@ -1,170 +1,383 @@
-Return-Path: <linux-kernel+bounces-875744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B111C19BE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:31:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD957C19BB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C929B507CB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:28:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 72A6A506305
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0AC433CEA2;
-	Wed, 29 Oct 2025 10:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF330334C09;
+	Wed, 29 Oct 2025 10:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="CnnkWMw9"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RiAX/HcB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZK1bSSiv"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1472336EE6;
-	Wed, 29 Oct 2025 10:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BCB2333721;
+	Wed, 29 Oct 2025 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733438; cv=none; b=HIHNbqOlcKfoPaQoGkCBdEe+JR3j2StN9bkNLmOZV6iH70vC/AfPKyJ0Bf87kBeMV+ot8793BrAtWsypsuWakrvkTZTgEqkU8fnTafmijAnt+FD5Xo7ZfH0ec07GFatEMn10XcX1s3sCnPFc5j6tQBJr2eQ+pGvOzZ4Hvfu8a90=
+	t=1761733430; cv=none; b=FnznXDSJbMcxti2CE9jaoTTurxzckjUwjYIbh761sKNgx3Anz82qPMmbDkS2IoWZsBfgpNwvmsShnNS5mWgjUS9C5atKbnX6MOgG0sIm7kb2qP6nHaLWrHTR5tcMSoWWw2AeoXlA31p3RgipwiZHKRCjzJS+F0Vse0bdSwa959o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733438; c=relaxed/simple;
-	bh=gdDyCJFwXhEzN5BdFc3KdmJ+d9teKB6ElyWgJOpoEnI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BPXxnZWtK/ReY5T0F70/ACJABlP45mgklg1tu7YTDk5GBZpny1AqTjfDXm0m3Oedagk2UkJm2YWu7/4Ff7iMldxkVUH4m3Xpb2MM8br1/LlDj8ek/Iqgr+DW+KwbqvGZpmYlUFQxqrQdP4Ia/pP6QXvRlNGww1ZNxgQJv84p4XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=CnnkWMw9; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 05AACA103D;
-	Wed, 29 Oct 2025 11:23:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=WZc19MxEdOgnJCHscmbM
-	xcyD19MjLAKNwWL8Njb/7d8=; b=CnnkWMw990cF1ir2vyXC4pHUz3iPpgpXyfbL
-	UZMthiHCl0JoX/ahk3X3BWls6Gi0gQzIAme4nz1qBCO1NE00wQhWqa9GKesLvxfh
-	RiOfH6lnyvF2ywM2kNTR779+o97kIUwbnqlPQnTI3r6IPpafkMtOSiy3KhamocMP
-	wwk8qo9ddab+k3rpxls61+hrEqt8Gk8d95C/H7HDrMCngasguKbpEX6RPCfk4c20
-	KM8pntKL/vT01ypy4Jp+qSfwETO8+Xqv7j1hei5TAix/nZi5pUPw5bEmbjWvBd2L
-	JwBg5/yM+N54/zK4yBde1y37irNLFklvfGgxAo+G8K5hhPTNfBANpVt8dAg1YyEW
-	/dqJ6dGhOT26aKtkB5WXTVAchku8C+nwZqPqlxEISECRIGP4qaG5pu5A/Ji7CkVu
-	h2oOb0QISEtsRXym2OlS5PSDfSbPHwrMTn70Ma7IrVrTBJwkPn4MfkjAhTlcGevO
-	meLvMH9HY/oUhpIHo4Dkb6bxaDmHIIvIoxDg0jIwYxpNvQPb6yARtxXn9ovVuDL/
-	ruINkIo0WNHecZtzdGrmo7qKQq3flXOUBC7aeEfVyxMhr4WtQ2cx0nvwPUWu91VU
-	v85TEQyzbtPpYcLQTRPXPjhB7K4eJkZ//f20eBfapYQ6FU/wPh5u0DkaOQ19SzNW
-	zgW4jbo=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>
-Subject: [PATCH net-next v5 3/4] net: mdio: reset PHY before attempting to access registers in fwnode_mdiobus_register_phy
-Date: Wed, 29 Oct 2025 11:23:43 +0100
-Message-ID: <5f8d93021a7aa6eeb4fb67ab27ddc7de9101c59f.1761732347.git.buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <cover.1761732347.git.buday.csaba@prolan.hu>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
+	s=arc-20240116; t=1761733430; c=relaxed/simple;
+	bh=ZC5A60JHOLROGRMiGTHfdWiAwOlVoY2/zKpAJ3EiND0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=kfLxh0Cg05j/ehWjl7QcBzZu+yVIU/N3t6spxl6OBizTurQVCzOsUMhBwlR4365/kzs3aLsGUswxnmLc6Gw8r7oHGSa9Xe9JvwGmB+dgf4/elfrHppjzzq1KPIUjQxZZO/GFZLRtMy3eFlGecHGnkgf3ICeB/oNaopbsXZAN628=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RiAX/HcB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZK1bSSiv; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 10:23:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761733425;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bPKuIYzRb8/5+PbIkzj9DcdS1xVp+0GAf5GlsfyOE5w=;
+	b=RiAX/HcBlsXAARKPZljy4PKCg3rE6wniPauca+6ng5xdOZpzhLRHk3aAyh1VQmUmS5hRN8
+	RRpdYY65/FYs5Cofx3zU6ZMpgrhF1ZKrpBJTQgnI08P4Qd/8fLpLi/AhF1FcslS9lT26OZ
+	qF21gqFwr3TrNTyQmXYSb1F19aOUAxlY5/6y3xI7Ay2rYicEgHPWxGk55liIReyuX8wd5S
+	2p7rrZhSAKEID7ysZ8HEM52ijwHyNwnwZjnycW1+cnLzUt6ch96pTcKA9jsq/o9dPDbUIQ
+	Y3umGXcY4nuWtdrdcad59/ZTprANayQCZ904WPZ2NtTViF+pSwA0E2vfIKWX8A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761733425;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bPKuIYzRb8/5+PbIkzj9DcdS1xVp+0GAf5GlsfyOE5w=;
+	b=ZK1bSSivenBXEKTl2M0rmQ4upSSXG0M9AwSCkPIAc4nHyajPty3EFhzLnboEiG992J8qcZ
+	aOAdo/Cc2e4HbTAw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rseq] rseq: Expose lightweight statistics in debugfs
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251027084307.027916598@linutronix.de>
+References: <20251027084307.027916598@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761733432;VERSION=8000;MC=2688889924;ID=148164;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F677066
+Message-ID: <176173342406.2601451.9320994029728406233.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-When the ID of an Ethernet PHY is not provided by the 'compatible'
-string in the device tree, its actual ID is read via the MDIO bus.
-For some PHYs this could be unsafe, since a hard reset may be
-necessary to safely access the MDIO registers.
+The following commit has been merged into the core/rseq branch of tip:
 
-Add a fallback mechanism for these devices: when reading the
-ID fails, the reset will be asserted, and the ID read is retried.
+Commit-ID:     18e0aab129d3940b5d588e3eea3d2ee9286d6516
+Gitweb:        https://git.kernel.org/tip/18e0aab129d3940b5d588e3eea3d2ee9286=
+d6516
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 27 Oct 2025 09:44:52 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 29 Oct 2025 11:07:16 +01:00
 
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+rseq: Expose lightweight statistics in debugfs
+
+Analyzing the call frequency without actually using tracing is helpful for
+analysis of this infrastructure. The overhead is minimal as it just
+increments a per CPU counter associated to each operation.
+
+The debugfs readout provides a racy sum of all counters.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://patch.msgid.link/20251027084307.027916598@linutronix.de
 ---
-V4 -> V5:
- - when fwnode_reset_phy() returns with -EPROBE_DEFER, that error
-   is now propagated upstream instead of being discarded.
- - info message removed (it will be a separate commit)
- - 'err' variable changed to 'rc' in fwnode_reset_phy()
- - removed last fwnode_handle_put() in fwnode_reset_phy()
-   The cleanup is performed by mdio_device_free().
-V3 -> V4: dropped DT property `phy-id-read-needs-reset` to control
-	  the reset behaviour, asserting reset as a fallback
-	  mechanism instead. Added info level message for resetting.
-V2 -> V3: kernel-doc replaced with a comment (fixed warning)
-V1 -> V2:
- - renamed fwnode_reset_phy_before_probe() to
-   fwnode_reset_phy()
- - added kernel-doc for fwnode_reset_phy()
- - improved error handling in fwnode_reset_phy()
----
- drivers/net/mdio/fwnode_mdio.c | 38 +++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
+ include/linux/rseq.h       | 16 +-------
+ include/linux/rseq_entry.h | 49 +++++++++++++++++++++++-
+ init/Kconfig               | 12 ++++++-
+ kernel/rseq.c              | 79 +++++++++++++++++++++++++++++++++----
+ 4 files changed, 133 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/net/mdio/fwnode_mdio.c b/drivers/net/mdio/fwnode_mdio.c
-index ba7091518..9669da2b7 100644
---- a/drivers/net/mdio/fwnode_mdio.c
-+++ b/drivers/net/mdio/fwnode_mdio.c
-@@ -114,6 +114,34 @@ int fwnode_mdiobus_phy_device_register(struct mii_bus *mdio,
+diff --git a/include/linux/rseq.h b/include/linux/rseq.h
+index eb0dd13..2023c50 100644
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -29,21 +29,6 @@ static inline void rseq_sched_switch_event(struct task_str=
+uct *t)
+ 	}
  }
- EXPORT_SYMBOL(fwnode_mdiobus_phy_device_register);
- 
-+/* Hard-reset a PHY before registration */
-+static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-+			    struct fwnode_handle *phy_node)
+=20
+-static __always_inline void rseq_exit_to_user_mode(void)
+-{
+-	struct rseq_event *ev =3D &current->rseq.event;
+-
+-	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
+-		WARN_ON_ONCE(ev->sched_switch);
+-
+-	/*
+-	 * Ensure that event (especially user_irq) is cleared when the
+-	 * interrupt did not result in a schedule and therefore the
+-	 * rseq processing did not clear it.
+-	 */
+-	ev->events =3D 0;
+-}
+-
+ /*
+  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
+  * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
+@@ -92,7 +77,6 @@ static inline void rseq_sched_switch_event(struct task_stru=
+ct *t) { }
+ static inline void rseq_virt_userspace_exit(void) { }
+ static inline void rseq_fork(struct task_struct *t, u64 clone_flags) { }
+ static inline void rseq_execve(struct task_struct *t) { }
+-static inline void rseq_exit_to_user_mode(void) { }
+ #endif  /* !CONFIG_RSEQ */
+=20
+ #ifdef CONFIG_DEBUG_RSEQ
+diff --git a/include/linux/rseq_entry.h b/include/linux/rseq_entry.h
+index 5be507a..ff9080b 100644
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -2,6 +2,37 @@
+ #ifndef _LINUX_RSEQ_ENTRY_H
+ #define _LINUX_RSEQ_ENTRY_H
+=20
++/* Must be outside the CONFIG_RSEQ guard to resolve the stubs */
++#ifdef CONFIG_RSEQ_STATS
++#include <linux/percpu.h>
++
++struct rseq_stats {
++	unsigned long	exit;
++	unsigned long	signal;
++	unsigned long	slowpath;
++	unsigned long	ids;
++	unsigned long	cs;
++	unsigned long	clear;
++	unsigned long	fixup;
++};
++
++DECLARE_PER_CPU(struct rseq_stats, rseq_stats);
++
++/*
++ * Slow path has interrupts and preemption enabled, but the fast path
++ * runs with interrupts disabled so there is no point in having the
++ * preemption checks implied in __this_cpu_inc() for every operation.
++ */
++#ifdef RSEQ_BUILD_SLOW_PATH
++#define rseq_stat_inc(which)	this_cpu_inc((which))
++#else
++#define rseq_stat_inc(which)	raw_cpu_inc((which))
++#endif
++
++#else /* CONFIG_RSEQ_STATS */
++#define rseq_stat_inc(x)	do { } while (0)
++#endif /* !CONFIG_RSEQ_STATS */
++
+ #ifdef CONFIG_RSEQ
+ #include <linux/rseq.h>
+=20
+@@ -39,8 +70,26 @@ static __always_inline void rseq_note_user_irq_entry(void)
+ 		current->rseq.event.user_irq =3D true;
+ }
+=20
++static __always_inline void rseq_exit_to_user_mode(void)
 +{
-+	struct mdio_device *tmpdev;
-+	int rc;
++	struct rseq_event *ev =3D &current->rseq.event;
 +
-+	tmpdev = mdio_device_create(bus, addr);
-+	if (IS_ERR(tmpdev))
-+		return PTR_ERR(tmpdev);
++	rseq_stat_inc(rseq_stats.exit);
 +
-+	fwnode_handle_get(phy_node);
-+	device_set_node(&tmpdev->dev, phy_node);
-+	rc = mdio_device_register_reset(tmpdev);
-+	if (rc) {
-+		mdio_device_free(tmpdev);
-+		return rc;
++	if (IS_ENABLED(CONFIG_DEBUG_RSEQ))
++		WARN_ON_ONCE(ev->sched_switch);
++
++	/*
++	 * Ensure that event (especially user_irq) is cleared when the
++	 * interrupt did not result in a schedule and therefore the
++	 * rseq processing did not clear it.
++	 */
++	ev->events =3D 0;
++}
++
+ #else /* CONFIG_RSEQ */
+ static inline void rseq_note_user_irq_entry(void) { }
++static inline void rseq_exit_to_user_mode(void) { }
+ #endif /* !CONFIG_RSEQ */
+=20
+ #endif /* _LINUX_RSEQ_ENTRY_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index cab3ad2..f39fdfb 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1913,6 +1913,18 @@ config RSEQ
+=20
+ 	  If unsure, say Y.
+=20
++config RSEQ_STATS
++	default n
++	bool "Enable lightweight statistics of restartable sequences" if EXPERT
++	depends on RSEQ && DEBUG_FS
++	help
++	  Enable lightweight counters which expose information about the
++	  frequency of RSEQ operations via debugfs. Mostly interesting for
++	  kernel debugging or performance analysis. While lightweight it's
++	  still adding code into the user/kernel mode transitions.
++
++	  If unsure, say N.
++
+ config DEBUG_RSEQ
+ 	default n
+ 	bool "Enable debugging of rseq() system call" if EXPERT
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index f49d311..c0dbe2e 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -67,12 +67,16 @@
+  *   F1. <failure>
+  */
+=20
++/* Required to select the proper per_cpu ops for rseq_stats_inc() */
++#define RSEQ_BUILD_SLOW_PATH
++
++#include <linux/debugfs.h>
++#include <linux/ratelimit.h>
++#include <linux/rseq_entry.h>
+ #include <linux/sched.h>
+-#include <linux/uaccess.h>
+ #include <linux/syscalls.h>
+-#include <linux/rseq_entry.h>
++#include <linux/uaccess.h>
+ #include <linux/types.h>
+-#include <linux/ratelimit.h>
+ #include <asm/ptrace.h>
+=20
+ #define CREATE_TRACE_POINTS
+@@ -108,6 +112,56 @@ void __rseq_trace_ip_fixup(unsigned long ip, unsigned lo=
+ng start_ip,
+ }
+ #endif /* CONFIG_TRACEPOINTS */
+=20
++#ifdef CONFIG_RSEQ_STATS
++DEFINE_PER_CPU(struct rseq_stats, rseq_stats);
++
++static int rseq_debug_show(struct seq_file *m, void *p)
++{
++	struct rseq_stats stats =3D { };
++	unsigned int cpu;
++
++	for_each_possible_cpu(cpu) {
++		stats.exit	+=3D data_race(per_cpu(rseq_stats.exit, cpu));
++		stats.signal	+=3D data_race(per_cpu(rseq_stats.signal, cpu));
++		stats.slowpath	+=3D data_race(per_cpu(rseq_stats.slowpath, cpu));
++		stats.ids	+=3D data_race(per_cpu(rseq_stats.ids, cpu));
++		stats.cs	+=3D data_race(per_cpu(rseq_stats.cs, cpu));
++		stats.clear	+=3D data_race(per_cpu(rseq_stats.clear, cpu));
++		stats.fixup	+=3D data_race(per_cpu(rseq_stats.fixup, cpu));
 +	}
 +
-+	mdio_device_reset(tmpdev, 1);
-+	mdio_device_reset(tmpdev, 0);
-+
-+	mdio_device_unregister_reset(tmpdev);
-+	mdio_device_free(tmpdev);
-+
++	seq_printf(m, "exit:   %16lu\n", stats.exit);
++	seq_printf(m, "signal: %16lu\n", stats.signal);
++	seq_printf(m, "slowp:  %16lu\n", stats.slowpath);
++	seq_printf(m, "ids:    %16lu\n", stats.ids);
++	seq_printf(m, "cs:     %16lu\n", stats.cs);
++	seq_printf(m, "clear:  %16lu\n", stats.clear);
++	seq_printf(m, "fixup:  %16lu\n", stats.fixup);
 +	return 0;
 +}
 +
- int fwnode_mdiobus_register_phy(struct mii_bus *bus,
- 				struct fwnode_handle *child, u32 addr)
++static int rseq_debug_open(struct inode *inode, struct file *file)
++{
++	return single_open(file, rseq_debug_show, inode->i_private);
++}
++
++static const struct file_operations dfs_ops =3D {
++	.open		=3D rseq_debug_open,
++	.read		=3D seq_read,
++	.llseek		=3D seq_lseek,
++	.release	=3D single_release,
++};
++
++static int __init rseq_debugfs_init(void)
++{
++	struct dentry *root_dir =3D debugfs_create_dir("rseq", NULL);
++
++	debugfs_create_file("stats", 0444, root_dir, NULL, &dfs_ops);
++	return 0;
++}
++__initcall(rseq_debugfs_init);
++#endif /* CONFIG_RSEQ_STATS */
++
+ #ifdef CONFIG_DEBUG_RSEQ
+ static struct rseq *rseq_kernel_fields(struct task_struct *t)
  {
-@@ -129,8 +157,16 @@ int fwnode_mdiobus_register_phy(struct mii_bus *bus,
- 		return PTR_ERR(mii_ts);
- 
- 	is_c45 = fwnode_device_is_compatible(child, "ethernet-phy-ieee802.3-c45");
--	if (is_c45 || fwnode_get_phy_id(child, &phy_id))
-+	if (is_c45 || fwnode_get_phy_id(child, &phy_id)) {
- 		phy = get_phy_device(bus, addr, is_c45);
-+		if (IS_ERR(phy)) {
-+			rc = fwnode_reset_phy(bus, addr, child);
-+			if (rc == -EPROBE_DEFER)
-+				goto clean_mii_ts;
-+			else if (!rc)
-+				phy = get_phy_device(bus, addr, is_c45);
-+		}
+@@ -187,12 +241,13 @@ static int rseq_update_cpu_node_id(struct task_struct *=
+t)
+ 	u32 node_id =3D cpu_to_node(cpu_id);
+ 	u32 mm_cid =3D task_mm_cid(t);
+=20
+-	/*
+-	 * Validate read-only rseq fields.
+-	 */
++	rseq_stat_inc(rseq_stats.ids);
++
++	/* Validate read-only rseq fields on debug kernels */
+ 	if (rseq_validate_ro_fields(t))
+ 		goto efault;
+ 	WARN_ON_ONCE((int) mm_cid < 0);
++
+ 	if (!user_write_access_begin(rseq, t->rseq.len))
+ 		goto efault;
+=20
+@@ -403,6 +458,8 @@ static int rseq_ip_fixup(struct pt_regs *regs, bool abort)
+ 	struct rseq_cs rseq_cs;
+ 	int ret;
+=20
++	rseq_stat_inc(rseq_stats.cs);
++
+ 	ret =3D rseq_get_rseq_cs(t, &rseq_cs);
+ 	if (ret)
+ 		return ret;
+@@ -412,8 +469,10 @@ static int rseq_ip_fixup(struct pt_regs *regs, bool abor=
+t)
+ 	 * If not nested over a rseq critical section, restart is useless.
+ 	 * Clear the rseq_cs pointer and return.
+ 	 */
+-	if (!in_rseq_cs(ip, &rseq_cs))
++	if (!in_rseq_cs(ip, &rseq_cs)) {
++		rseq_stat_inc(rseq_stats.clear);
+ 		return clear_rseq_cs(t->rseq.usrptr);
 +	}
- 	else
- 		phy = phy_device_create(bus, addr, phy_id, 0, NULL);
- 	if (IS_ERR(phy)) {
--- 
-2.39.5
-
-
+ 	ret =3D rseq_check_flags(t, rseq_cs.flags);
+ 	if (ret < 0)
+ 		return ret;
+@@ -422,6 +481,7 @@ static int rseq_ip_fixup(struct pt_regs *regs, bool abort)
+ 	ret =3D clear_rseq_cs(t->rseq.usrptr);
+ 	if (ret)
+ 		return ret;
++	rseq_stat_inc(rseq_stats.fixup);
+ 	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
+ 			    rseq_cs.abort_ip);
+ 	instruction_pointer_set(regs, (unsigned long)rseq_cs.abort_ip);
+@@ -462,6 +522,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, s=
+truct pt_regs *regs)
+ 	if (unlikely(t->flags & PF_EXITING))
+ 		return;
+=20
++	if (ksig)
++		rseq_stat_inc(rseq_stats.signal);
++	else
++		rseq_stat_inc(rseq_stats.slowpath);
++
+ 	/*
+ 	 * Read and clear the event pending bit first. If the task
+ 	 * was not preempted or migrated or a signal is on the way,
 
