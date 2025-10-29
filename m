@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-876324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D5FC1B3BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:33:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3299C1B78D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6C00B5C31C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A2A565A24
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF731A9FA8;
-	Wed, 29 Oct 2025 14:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8DE265623;
+	Wed, 29 Oct 2025 14:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="QcyZ4nx4"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2g8vCBS"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D3742AA6;
-	Wed, 29 Oct 2025 14:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58625B687
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747258; cv=none; b=c3pRdT7UW16s3nO4I25NpnOm5MMQbNOwCM0dFTl6GXkLhqVz1h5lKIbrLFvEV9SVsvf1fpjLR5c2P7a7e9yQb4KQ67J3FXTlje4/S9Rc5bOIKTMZv0n633sWD+5Xs2K4aghEk3nzB3kk/KIPA0Z2YkU4xlLz9+wrbmLRpaurHtc=
+	t=1761747316; cv=none; b=PY9iFblTECFRuCigEn1NvQCE9kRoONzu07aWR0tC4yPo3FT523tbjslKDkiMIqGpm6H80ZLiQYmW4ncUmArju4WxJ+kwTPysRzL4KTCj6ayPiW6uUi+QsA7H0OJ6DoYPmdcpyGeNZWIugmGrrEXYOLlwSFAZjccoedaV2X+P+AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747258; c=relaxed/simple;
-	bh=ooJGMuUWaGN8KnGlNB6N5d0ufiuUZYKb/ug80ZWMPDk=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=JU5ZuCUsek4lEbTmqiwml/BEBGysXlWlb7GsTMlnRQodQUMUNeNHV3tPxYr33qQDyJVHnGT6xgcrdBiPFPPYahA5s0cpmZVtuapG5zSMJXETKLmvaz9lJgENLJhka96lUDgEoMlFsyGjmpM+G8zuwSA8LuMQxvDteXxHymXzMmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=QcyZ4nx4; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id 0E72940D1B;
-	Wed, 29 Oct 2025 15:14:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1761747252; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=eb/tlKO9/Zxp9vLJznUadT+d0q6ZWEudok8Oi1J/AHc=;
-	b=QcyZ4nx4bzFvgRTgGGjXFoCKjtw0QC0NoAjioyQ/+bdgjcXHZ4AGxqJrpfZGxowXwRSAll
-	5/B9SxX9ve4hpr9DHSvyCdy50RvSKIJn/bYEHXB79NRVg2JU9tJP6cBPHDLx5k1JYawqr8
-	pYrQ49hp8vnF/cdHklssIQPxH/Ei2bYLuPAq20ZTw3xTQB3Ce1HrkMYCkTGebaC+fVpWIr
-	AXfkV3g20E3C75Yi7Jr2jjNQPDm7RgovKrVo04CHiiQGe0jDLDB4Za5eHGDLawjeUWTrcp
-	a4IwMIu4AvtkhOstRyoAZoQBFZdF7BmizJ640LBEkcT2KwIT3v4pfS9VDIf8BA==
-From: "Dragan Simic" <dsimic@manjaro.org>
-In-Reply-To: <20251029-rk3399-op1-include-v1-1-2472ee60e7f8@cherry.de>
-Content-Type: text/plain; charset="utf-8"
-References: <20251029-rk3399-op1-include-v1-1-2472ee60e7f8@cherry.de>
-Date: Wed, 29 Oct 2025 15:14:09 +0100
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Quentin Schulz" <quentin.schulz@cherry.de>, stable@vger.kernel.org
-To: "Quentin Schulz" <foss+kernel@0leil.net>
+	s=arc-20240116; t=1761747316; c=relaxed/simple;
+	bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MqAqgc/vpCortbcwwEVANzlazREfcbL+2eWSVvf1ReFdSJlbWCi/d3tQYMtwvd0SEFyEN3QT1CcKLeI29/SHATcjlJKMB2KMLAyUQy1bz4wHW6kM2TgCCTeFsABqLImvBLLbZLnxEnwdCU8Ft61kfwKlrf9Pt/6A3qxQca6uaVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P2g8vCBS; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-591c98ebe90so7276217e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761747312; x=1762352112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
+        b=P2g8vCBSKm9qQSx8QMCRipO+Xunm+j0kPjkxsG64Pa2AOUwbg8kkHaKAGR0ysqs4ZE
+         7nCpNOO4ghqFN+9+aZtZvEolZbEwDWhY72CBEXuKZuzIe0kcLpkrDGivAWWaJt/cjixC
+         ChVGaU/exsl35QMJWjWHqe8BgtmKJTK0NMiFpH2nW91PFrzqGRYdkjTWIq65qchYOGQD
+         hVihrAC+CEAHE/utWhWqNk6lzGVoNW/3hlKFs1oUxQAU+mAzk8o8epDhvTu4zMsPmzNA
+         qrPd4IcYiE8TK7qOQa6pyi5mP84Nx8R5M3toFhZ9450iSivFZQrPlt6lnKZd98d8Zpbo
+         DFSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761747312; x=1762352112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
+        b=Be0ZlGJ7Oo2wROoH8NgS/wUQT9wMS3TDeBIvAJdKQbqlIw9jz9afA/qUuLcHsczgGC
+         GQjAlVRs4aWBUFHVQ/XZjg2Sd27wYOf8/W2EK06wwM5I/GbeNqeGMaKGfT0owU5G1fK+
+         LWN1xcettxjUcK3So1/lw948NbsMCbX8t9qjMRXlhMnXO7FxAFvCf2koYcZh+uZaDO4y
+         fu0tHkUQx0ZTMMwBhZnkykU1mJvvUuhvTRjBWWqrd1h9+ysQYC1A+2bve7eGWopLoDzb
+         vUSEasm+KuO8JhlsJsOG+onM7nt8bHioJZzH2ceaLrFsHtEQwoP3Ih1OkZZtVIsBn3cp
+         YKtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhyyYTgJY2CIkISkgRg5+z8oCK+1LXEvmRkij7TqlTyzn4egaJPoJBwIimlSxLcaiVNkMzD5naZbsprss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyudzFEnrZ/7gM10VSZffwWTfr9btbaa9g6rqU59NiRksB8oFJn
+	gBM6+kON5CUs9iCKV2gdQT1ofrCrOHnVXX6PIBk83YIJxpOkLKDIwz/cu3MWDVM27pzXf5Hnrfk
+	dBfETtRnMcOEDljqFGtCix2p+EW3ORkNDNi0x5XpbWQ2QcXV1Whxj
+X-Gm-Gg: ASbGncs1rV5Kq7JhpFD64wyQU+1XNujFRbRISLwrJpgFQ+hHD5P4dAyzxX7AxQpaslJ
+	fu/l26xedur+jQOXdCuOnHZQfEO8xfKPY4Lk0jaG+z341o7JD6scFBuDG1F+4W8WGFn011m1Fkh
+	tp2EKpahTOENJ/SdyDCC95BTINOdW77h8Ycsvyr1Gv5bmVQ7r9EU/LXCue797/tM0frH/HVqQkd
+	hFyF24QyWuZ9gRDpJ9b+iLNoi0F+aGegcME0Htf7LguBSSX7PE7FBJ8ELxPEWsleIXnIWwZKWay
+	PVhzVw==
+X-Google-Smtp-Source: AGHT+IFHbNWWVxA87snhrR4IbvJu5TGV5/GUfJgAIFivqMT+b8PLCXPg6xBSIPiXG/dy8RZjJuiqgOtncZYWj0XE3mk=
+X-Received: by 2002:a05:6512:4027:b0:579:fbe5:447b with SMTP id
+ 2adb3069b0e04-59412877a64mr997730e87.25.1761747312519; Wed, 29 Oct 2025
+ 07:15:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <f4149b94-30e5-ff0f-44b2-0806b2747890@manjaro.org>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
- =?utf-8?q?_rockchip=3A?= include rk3399-base instead of rk3399 in 
- rk3399-op1
-User-Agent: SOGoMail 5.12.3
+References: <20251027123601.77216-1-herve.codina@bootlin.com>
+In-Reply-To: <20251027123601.77216-1-herve.codina@bootlin.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Oct 2025 15:14:59 +0100
+X-Gm-Features: AWmQ_bnA7g7AcaUJgpDisQ6qYyEHOuq4LuFcqR2x-CFiQFCGVVARLA-FUYgDIHk
+Message-ID: <CACRpkdZMj84AJu1ZgDLin1Ef1JaBRHsevB2auTFvn4h3M66yGw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
+	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
 
-Hello Quentin,
+On Mon, Oct 27, 2025 at 1:36=E2=80=AFPM Herve Codina (Schneider Electric)
+<herve.codina@bootlin.com> wrote:
 
-On Wednesday, October 29, 2025 14:50 CET, Quentin Schulz <foss+kernel@0=
-leil.net> wrote:
-> From: Quentin Schulz <quentin.schulz@cherry.de>
->=20
-> In commit 296602b8e5f7 ("arm64: dts: rockchip: Move RK3399 OPPs to dt=
-si
-> files for SoC variants"), everything shared between variants of RK339=
-9
-> was put into rk3399-base.dtsi and the rest in variant-specific DTSI,
-> such as rk3399-t, rk3399-op1, rk3399, etc.
-> Therefore, the variant-specific DTSI should include rk3399-base.dtsi =
-and
-> not another variant's DTSI.
->=20
-> rk3399-op1 wrongly includes rk3399 (a variant) DTSI instead of
-> rk3399-base DTSI, let's fix this oversight by including the intended
-> DTSI.
->=20
-> Fortunately, this had no impact on the resulting DTB since all nodes
-> were named the same and all node properties were overridden in
-> rk3399-op1.dtsi. This was checked by doing a checksum of rk3399-op1 D=
-TBs
-> before and after this commit.
->=20
-> No intended change in behavior.
+> This series adds support for GPIO and GPIO IRQ mux available in the
+> RZ/N1 SoCs.
 
-Thank you for spotting this issue and for fixing it!  That was
-an honest oversight on my part, but it actually resulted in no
-ill effects, which is the main reason why and how it managed to
-slip by originally.
+I think I sent some review tag at some point?
 
-Your description of the issue is pretty much perfect, so I've
-got nothing else to add but
+Anyways, here is another one:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Reviewed-by: Dragan Simic <dsimic@manjaro.org>
-
-> Fixes: 296602b8e5f7 ("arm64: dts: rockchip: Move RK3399 OPPs to dtsi =
-files for SoC variants")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi b/arch/arm6=
-4/boot/dts/rockchip/rk3399-op1.dtsi
-> index c4f4f1ff6117b..9da6fd82e46b2 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
-> @@ -3,7 +3,7 @@
->   * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
->   */
-> =20
-> -#include "rk3399.dtsi"
-> +#include "rk3399-base.dtsi"
-> =20
->  / {
->  	cluster0=5Fopp: opp-table-0 {
-
+Yours,
+Linus Walleij
 
