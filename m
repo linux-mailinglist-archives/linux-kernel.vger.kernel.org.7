@@ -1,164 +1,270 @@
-Return-Path: <linux-kernel+bounces-875774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B82EC19CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:42:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2F42C19C5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:37:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDF961CC1D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:36:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 38C31357A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B2A32D438;
-	Wed, 29 Oct 2025 10:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82742FBE15;
+	Wed, 29 Oct 2025 10:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B35ptEd5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yqcBlwp5"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A552F3C12
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCC32E5437
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733481; cv=none; b=mpzNrGRn8dkIGqK2MjFr0RWf8TjjGPlhVrvgtAL0mtck1lR3T0AlIgYcYBduYys321wwELFkDmBSQWAsrqjF4QsgwpJfWVwo1cZY4Qy0f1r+HJz+YgtToSMXzmbYiRkof+lH7pbinSdsaGSGa8eDtCNXzW1ah+pZa9H6EdrKbBg=
+	t=1761733555; cv=none; b=FxNZ9yTzBtWB+nwV25lKGbj6rLmQmGe76M9u0uRFtufwQb8BYU+cX5Mwyku4g8zAUcehMJF5lfXCIYOD49Y6sT1RwjEHDvbMPi+XJ03wcfFFcFm0FRIvFai86mBm8HcuF0s4DsU4wFAr8l4e1AJ1ItNs6zHhppQkZwlw8kUutiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733481; c=relaxed/simple;
-	bh=Z44vuyu2MrVYwfTW/yc0pB6Ji3RTlKJKYIQJbHC8uPw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=t0mNdFdsIfXaP3LHP/p4c6wZ5w0Yy5PyTUelHC8ArCoPt3a+8CM79TVNoXXlyQ+1ilIJEKyty6tYyrjEyltyCcGFdUGnNJ7STqHf5k6vEqJyJdLHj9QRye9e6xND+MMpfnawl793XecItweRncEaiUGyWyqW3zjQltQXzQw2f6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B35ptEd5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761733478;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E6f+84ImUEYc+D1CR/6xPUPVSLmLeBI4AIreT3xba8s=;
-	b=B35ptEd5QpTBcTkFbcpVNSQuk1Lg1at0CjdhCMgDJ0r8+wQpTng9uyau7kv0+J7/laiGDQ
-	ACJT2Ld+q5iBl/pKK+nT3SyyJ1GJknZ7arIs1MpRraLLpCrvbS2WJEnZDCq3ZY69RVfJpK
-	piWHNiA/ok19bgk6wZqVkvyE0E4XR5s=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-MXXfm3ZgNZ-qtSdGulSP5A-1; Wed,
- 29 Oct 2025 06:24:35 -0400
-X-MC-Unique: MXXfm3ZgNZ-qtSdGulSP5A-1
-X-Mimecast-MFC-AGG-ID: MXXfm3ZgNZ-qtSdGulSP5A_1761733474
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DC6FB19540DF;
-	Wed, 29 Oct 2025 10:24:33 +0000 (UTC)
-Received: from [10.45.225.163] (unknown [10.45.225.163])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 315FC1800579;
-	Wed, 29 Oct 2025 10:24:30 +0000 (UTC)
-Date: Wed, 29 Oct 2025 11:24:25 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-cc: Alasdair Kergon <agk@redhat.com>, DMML <dm-devel@lists.linux.dev>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dm-bufio: align write boundary on
- bdev_logical_block_size
-In-Reply-To: <aQDCmAPfpIGZiceo@milan>
-Message-ID: <b791d8e8-5e30-b50c-04ca-e823c0a06747@redhat.com>
-References: <20251020123350.2671495-1-urezki@gmail.com> <cdb598ce-88ec-0c3c-8e4b-b557093bea92@redhat.com> <aQCDLBie3fGwMDW2@milan> <aQDCmAPfpIGZiceo@milan>
+	s=arc-20240116; t=1761733555; c=relaxed/simple;
+	bh=6N/SzBDlJU5/Vt/rR1nm44+5vCO8BylMryJ0mQThc9k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=t/oyrddg5kIL5hou7Ps98KZaU7RToMZtFrYyvuzbz0cxy3fZ0rCMuDXz0ZglGmNaxayqWBVdcb6A7K3LODAVKyST1NdZVxtlBQtTakSgI2zmjW+jx+VKbofVBO2pVBsuZxA7WW+cAWSrvz4ajoIRrmdHdgITpe/LfYEEVQSrsKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yqcBlwp5; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429a0d1c31aso573736f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761733552; x=1762338352; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CU7TWVmxUfjdS/j+fhhfS1Lr/4BtUCHNuC4l5CHyDbI=;
+        b=yqcBlwp52wKPWL+psGPLtZhIjoSQhjTQgEf018KfkXw3mXZMgC1e/dkOCFpt0qp6Ht
+         I6py2Ux/RkRCkGTpX5lK3lpi7n7D0tEOw708uYpGqhpjHEcnqA+KelMwBiaSolBY+rBl
+         P/xG16GUBPkQ/jKNw4Gk9SxRrcclbku0B2INPEgz48wmOrYXL8OU2TwBCH6s/mVy781g
+         xU5oKtNsH346t63lZMc+jJ2y8uYJvdUqXg2w1ZJGl/fHOFCLCu66wFbDrmEOu3Sb9UI9
+         kRtYCQv/7c7ErepHz+wapyOmhzfZpaKyo3Zivyp3uahF/grTjRX1rRRuElJdpg8hePX2
+         Jh0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761733552; x=1762338352;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CU7TWVmxUfjdS/j+fhhfS1Lr/4BtUCHNuC4l5CHyDbI=;
+        b=NZnB0bfbqsXOLy2RQXCeK44jcYSZjfXtYNYcB4CkcNwqW2WzoBr96Vk4ZbyNL0J1JQ
+         jT+zQfV3voDil38O6IugRIHX0+8pJbYFJ0ctUoU6VnvSiCdGUNaMRfjNi4SDXSBSmJNJ
+         xa86DRTFQqcMaPpyyK58fBBXzO4PuRUIt79jKzUaAuukcgg9tZ0ecR6K8Z/5QRb7QeF0
+         /VIq89VSHwJzp+YqmgfJYjXQS2p/QbhQZ1JtJS3NOFbN70kiC44t67O/ykHpjkRNdXRX
+         WjvrRTSXdu4HCv912Pgp4GPYfX04hsuweM3s4hs0rF6R6a/Y1hJIpHgIw1Kq09KePEGa
+         CYew==
+X-Forwarded-Encrypted: i=1; AJvYcCUiAcmGtdUAWCBNXwCNi8CwNZYztWqbUns3AUwp2QpYj/QsPDHmbzPHZ4c/4Io8GSirlu2P9ww+wcfxelI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL3aWULctM15Q6DGckoHZCCufYH4q1tTZ/E3mtEmT3YGTy1xTD
+	n8MhVSVQ2R3w/fMSBzBsskCj2VLXzKO1PPbluasrlFW6mTVxt2ECPv24+7p1FHYvEko=
+X-Gm-Gg: ASbGncs+318EuxcUsjNwfJklOq905MVtDsVgHyGDlBr11XPlaszCItsJY8An3jyiYXa
+	lThkxUtKWFmT7pXxcZFn05ByT50sufqwih8PxjI+6sOL5Dwa/ZggrO41EUgBRZb8kbK3DsmEyqJ
+	v3JXf7elGuFzCocDvnb57WIbQvun7UACxhratAh0v2EDJ2vRmVqOq8FEE9px/OITVLk2/1Im+i9
+	wBOfm1wGnmmtlt2D2PiM7A0L3LA3mSDxnbBheo7UUt1kPAkYjB6xUptnXdTkUmTiJWeugd7CYEB
+	WlVkaJLb1Zlwif1WuAs+JwRFikos5DykWLofco5jXJge0Lpay3/E8pqzpbA0zWhi4a5rNICaGps
+	tnfU7PrFpQwVWUi/Zpo26oQMZDAuo0bLtyy7SjW2le9AqavjH4YqGjApBsnYkexH/eO+D6zDmIo
+	KwB+CkfyDOMhjEFI+F6qytYQFvLcZU1TOOWXvaWf8/3dYKpWceOA==
+X-Google-Smtp-Source: AGHT+IEaHuD6PBgXNpeW/yrwt9PlnJGDUDO8+HVfKS6ur9Ofnl58vj3by9OfMJOoTchhrlGpuEduUg==
+X-Received: by 2002:a05:6000:1acd:b0:425:70cb:9ba8 with SMTP id ffacd0b85a97d-429ae8de800mr1917995f8f.1.1761733551856;
+        Wed, 29 Oct 2025 03:25:51 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:3447:eb7a:cb9f:5e0? ([2a01:e0a:cad:2140:3447:eb7a:cb9f:5e0])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5c9dsm26655869f8f.26.2025.10.29.03.25.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 03:25:51 -0700 (PDT)
+Message-ID: <e9e117ed-823c-47e3-8ed6-14dbecc844bc@linaro.org>
+Date: Wed, 29 Oct 2025 11:25:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RFC RFT] drm/msm: adreno: attach the GMU device to a
+ driver
+To: Jens Reidel <adrian@mainlining.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251022-topic-adreno-attach-gmu-to-driver-v1-1-999037f7c83e@linaro.org>
+ <02356e35-0a3a-4a50-ad38-3032f9f166c9@mainlining.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <02356e35-0a3a-4a50-ad38-3032f9f166c9@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
+On 10/26/25 02:31, Jens Reidel wrote:
+> On 10/22/25 14:44, Neil Armstrong wrote:
+>> Due to the sync_state is enabled by default in pmdomain & CCF since v6.17,
+>> the GCC and GPUCC sync_state would stay pending, leaving the resources in
+>> full performance:
+>> gcc-x1e80100 100000.clock-controller: sync_state() pending due to 3d6a000.gmu
+>> gpucc-x1e80100 3d90000.clock-controller: sync_state() pending due to 3d6a000.gmu
+>>
+>> In order to fix this state and allow the GMU to be properly
+>> probed, let's add a proper driver for the GMU and add it to
+>> the MSM driver components.
+>>
+>> Only the proper GMU has been tested since I don't have
+>> access to hardware with a GMU wrapper.
+>>
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 354 ++++++++++++++---------------
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |   6 -
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h      |   3 -
+>>   drivers/gpu/drm/msm/adreno/adreno_device.c |   4 +
+>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |   4 +
+>>   drivers/gpu/drm/msm/msm_drv.c              |  16 +-
+>>   6 files changed, 192 insertions(+), 195 deletions(-)
+>>
 
-On Tue, 28 Oct 2025, Uladzislau Rezki wrote:
+<snip>
 
-> On Tue, Oct 28, 2025 at 09:47:40AM +0100, Uladzislau Rezki wrote:
-> > Hello!
-> > 
-> > Sorry i have missed you email for unknown reason to me. It is
-> > probably because you answered to email with different subject
-> > i sent initially.
-> > 
-> > > 
-> > > On Mon, 20 Oct 2025, Uladzislau Rezki (Sony) wrote:
-> > > 
-> > > > When performing a read-modify-write(RMW) operation, any modification
-> > > > to a buffered block must cause the entire buffer to be marked dirty.
-> > > > 
-> > > > Marking only a subrange as dirty is incorrect because the underlying
-> > > > device block size(ubs) defines the minimum read/write granularity. A
-> > > > lower device can perform I/O only on regions which are fully aligned
-> > > > and sized to ubs.
-> > > 
-> > > Hi
-> > > 
-> > > I think it would be better to fix this in dm-bufio, so that other dm-bufio 
-> > > users would also benefit from the fix. Please try this patch - does it fix 
-> > > it?
-> > > 
-> > If it solves what i describe i do not mind :)
-> > 
-> > > 
-> > > 
-> > > From: Mikulas Patocka <mpatocka@redhat.com>
-> > > 
-> > > There may be devices with logical block size larger than 4k. Fix
-> > > dm-bufio, so that it will align I/O on logical block size. This commit
-> > > fixes I/O errors on the dm-ebs target on the top of emulated nvme device
-> > > with 8k logical block size created with qemu parameters:
-> > > 
-> > > -device nvme,drive=drv0,serial=foo,logical_block_size=8192,physical_block_size=8192
-> > > 
-> > > Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> > > Cc: stable@vger.kernel.org
-> > > 
-> > > ---
-> > >  drivers/md/dm-bufio.c |    9 +++++----
-> > >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > > 
-> > > Index: linux-2.6/drivers/md/dm-bufio.c
-> > > ===================================================================
-> > > --- linux-2.6.orig/drivers/md/dm-bufio.c	2025-10-13 21:42:47.000000000 +0200
-> > > +++ linux-2.6/drivers/md/dm-bufio.c	2025-10-20 14:40:32.000000000 +0200
-> > > @@ -1374,7 +1374,7 @@ static void submit_io(struct dm_buffer *
-> > >  {
-> > >  	unsigned int n_sectors;
-> > >  	sector_t sector;
-> > > -	unsigned int offset, end;
-> > > +	unsigned int offset, end, align;
-> > >  
-> > >  	b->end_io = end_io;
-> > >  
-> > > @@ -1388,9 +1388,10 @@ static void submit_io(struct dm_buffer *
-> > >  			b->c->write_callback(b);
-> > >  		offset = b->write_start;
-> > >  		end = b->write_end;
-> > > -		offset &= -DM_BUFIO_WRITE_ALIGN;
-> > > -		end += DM_BUFIO_WRITE_ALIGN - 1;
-> > > -		end &= -DM_BUFIO_WRITE_ALIGN;
-> > > +		align = max(DM_BUFIO_WRITE_ALIGN, bdev_logical_block_size(b->c->bdev));
-> >
-> Should it be physical_block_size of device? It is a min_io the device
-> can perform. The point is, a user sets "ubs" size which should correspond
-> to the smallest I/O the device can write, i.e. physically.
-
-physical_block_size is unreliable - some SSDs report physical block size 
-512 bytes, some 4k. Regardless of what they report, all current SSDs have 
-4k sector size internally and they do slow read-modify-write cycle on 
-requests that are not aligned on 4k boundary.
-
-Mikulas
-
-> --
-> Uladzislau Rezki
+>>
+>> ---
+>> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+>> change-id: 20251022-topic-adreno-attach-gmu-to-driver-e47025fd7ebb
+>>
+>> Best regards,
 > 
+> Hi Neil,
+> 
+> thanks for the patch. With it applied, my GPU fails to initialize.
+> Here's the related dmesg section:
+> 
+> [    1.733062] [drm:dpu_kms_hw_init:1173] dpu hardware revision:0x50020000
+> [    1.735229] [drm] Initialized msm 1.13.0 for ae01000.display-controller on minor 0
+> [    1.735403] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a630_sqe.fw from new location
+> [    1.735513] msm_dpu ae01000.display-controller: [drm:adreno_request_fw] loaded qcom/a630_gmu.bin from new location
+> [    1.746710] a6xx_gmu 506a000.gmu: [drm:a6xx_gmu_set_oob] *ERROR* Timeout waiting for GMU OOB set BOOT_SLUMBER: 0x800000
+> [    1.746766] msm_dpu ae01000.display-controller: [drm:adreno_load_gpu] *ERROR* Couldn't power up the GPU: -110
+> 
+> This could be because I have an Adreno 630-family GPU, which is marked as legacy in a6xx_gmu_init / a6xx_gmu_bind. Previously, the rest of the init code would just always run, while now, some parts are conditionally disabled for legacy GPUs - that may be unintentional? However, unconditionally enabling those parts seems to fail to initialize the GPU followed by a reset shortly after, so there's probably more to this.
+> 
+> Please let me know if there's anything I can do to help debug this.
+
+Thanks for the report, it's an sdm845 based right ?
+
+I may have mismatched the role of the legacy parameter...
+
+Could you try this on top:
+===========================><=====================================
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 6e7c3e627509..403675ed18c7 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1925,6 +1925,7 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+  	struct msm_drm_private *priv = dev_get_drvdata(master);
+  	struct msm_gpu *gpu = dev_to_gpu(&priv->gpu_pdev->dev);
+  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
++	bool is_wrapper = adreno_has_gmu_wrapper(adreno_gpu);
+  	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
+  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
+  	struct device_link *link;
+@@ -1936,18 +1937,18 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+  	if (ret)
+  		return ret;
+
+-	if (adreno_has_gmu_wrapper(adreno_gpu))
++	if (is_wrapper)
+  		/* Mark legacy for manual SPTPRAC control */
+  		gmu->legacy = true;
+
+-	if (!gmu->legacy)
++	if (!is_wrapper)
+  		/* Set GMU idle level */
+  		gmu->idle_level = (adreno_gpu->info->quirks & ADRENO_QUIRK_IFPC) ?
+  			GMU_IDLE_STATE_IFPC : GMU_IDLE_STATE_ACTIVE;
+
+  	pm_runtime_enable(gmu->dev);
+
+-	if (!gmu->legacy) {
++	if (!is_wrapper) {
+  		/* Get the list of clocks */
+  		ret = a6xx_gmu_clocks_probe(gmu);
+  		if (ret)
+@@ -2063,7 +2064,7 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+  		goto detach_cxpd;
+  	}
+
+-	if (!gmu->legacy) {
++	if (!is_wrapper) {
+  		/* Other errors are handled during GPU ACD probe */
+  		gmu->qmp = qmp_get(gmu->dev);
+  		if (PTR_ERR_OR_ZERO(gmu->qmp) == -EPROBE_DEFER) {
+@@ -2082,7 +2083,7 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+  	 */
+  	gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
+
+-	if (!gmu->legacy) {
++	if (!is_wrapper) {
+  		/* Get the power levels for the GMU and GPU */
+  		a6xx_gmu_pwrlevels_probe(gmu);
+
+@@ -2115,7 +2116,7 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+
+  err_mmio:
+  	iounmap(gmu->mmio);
+-	if (!gmu->legacy) {
++	if (!is_wrapper) {
+  		if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
+  			iounmap(gmu->rscc);
+  		free_irq(gmu->gmu_irq, gmu);
+@@ -2123,7 +2124,7 @@ static int a6xx_gmu_bind(struct device *dev, struct device *master, void *data)
+  	}
+
+  err_memory:
+-	if (!gmu->legacy)
++	if (!is_wrapper)
+  		a6xx_gmu_memory_free(gmu);
+
+  	return ret;
+===========================><=====================================
+
+Thanks,
+Neil
+
+> 
+> Best regards,
+> Jens
 
 
