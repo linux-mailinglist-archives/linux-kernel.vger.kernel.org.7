@@ -1,110 +1,150 @@
-Return-Path: <linux-kernel+bounces-876749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D7C4C1C5D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:09:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 076B3C1C6BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14386432F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6803C644690
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020462F0676;
-	Wed, 29 Oct 2025 16:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291B434573C;
+	Wed, 29 Oct 2025 16:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1nadL5U"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeRm2lPc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B5B2F3C39
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A04299A8F;
+	Wed, 29 Oct 2025 16:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761755907; cv=none; b=k//l5gHYfctcHbDfwO0TPnsoBCYQ58eiSqH33joTWcW31wbllToUR2ab5qmgM2B4UDrSFVgKMe+fGUQtF2a0afTEj4Vm8wWIhybe0fdL0hm2DYw4GDemLAHrnrghDF7tZje/N8lNpF8JURcRSCQy76VzfksqODJ6N03ZSccgA7g=
+	t=1761755963; cv=none; b=imPY/sT1Yu+V7v+g7+IyeBiR3eULjTTI6f+FwZWuGU1znasf5LEjaE7ST2K2qVh9ainLdZNGYIt6qhxIHmdtfPR2dtsDTdtspYQvvKkSYNURo9+w2ZVkULOIxBx4qqbRW9jwOgAgxxpnpyYcaR6Aug9kPX6v+tghfq+of+gJ8L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761755907; c=relaxed/simple;
-	bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kJ6fNmiQBf1K2rOrMhRgoEib3BkXttmpn7JdjXX6W2uxpPjg/a19LEOB/C3VbaGjeelU6BPzv81XM4zwTVBhs5sUkbXESQGuZk9/dzXnQLU2c4+UFWjrR3zBL4uNDjgTq6vJy0sY8vI3NlvdCxdrr3L1sKnqNrvFhi8adu5FGes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1nadL5U; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-427091cd4fdso30557f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:38:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761755904; x=1762360704; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
-        b=W1nadL5U2bSeY+TcybSfsiTmgoOo1IBL3eWyzAmk+ejKJLex8rTwklOpr5Wp6tbIF7
-         vlCCnk9+GP9GAVg6ht+UoYBWX7I9eKQR6e+Jwh78ZZKd7W860tD3onMfHsE984SionrB
-         aHU+/2Irpe7vs+rq1CaWv3kMktI99CgtgB7vpKQx/25dRFefirSHj4bGdQFtStBr/aCK
-         /luzX45L1aDfa8+Gs5PzSfj67m58UpTCvyN0WBUpc6rHg5+ueLKSqBegSV92jrpsUexs
-         zffEuiqF+t+IPqoWUEdYAJnU76BdL4/Vr0xXp42MHCyoy3hWuKPemWM7vXYwE6hN48wX
-         6zjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761755904; x=1762360704;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
-        b=ITJ/hRbx3L26pGUt/EKjR8SsD6MWXhJXiT70jXcaB/CX+n+ohsEX4YyB0lpgLTLo5k
-         hg9FeRwgO/tkiFWNjgdvA6EOvNCLQA7wuEKArYa+phjyWt0PU1ZbI9V9PfmH+KCa2QQ6
-         3g3iSa8HIHjXZFXZkfhQuX0Zg0mqw/GU1BsFwogM7zBbl/6kzUQcxBIkTT894tUQMOxc
-         4VfK0bhw6OT0bOocvmnvgVwh8s2Q3snPQZ4bTuKeN/tuDhk0yMpG7MK214qONLzIqqPI
-         km3Bm4MRJ+aswCYIdolFt/DWY4IQbZ1ZBxG92j6bx2y2AiEgxVoLZDrSTakHBCM+rVNI
-         YtcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoYw4OPw6PWWQzxo0P3ALYvpP+QJrEx/kjPeWoAWCY8TBRtQAevktCp1Dx7n90AlB0TnlQcUcLl5S468E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1OJPBJytaz3IIn4b/HD8k2NyiYEWwZB4vpyv/Jz2q74hD+db5
-	JcjUd2be7jewDVdUq4KMFRXOjci/u+BoCTEUGk0fHfBWdGpwG0UKqCzGZmT2nkJ0yAL0CFV/clu
-	e3C8GWoNJJUdVxi747rbesceR+t6Op9w=
-X-Gm-Gg: ASbGncuAZPCFVK4kWfFNORBd8o+z8zaVBSvwaCTa4kCnEXRsHiZw+Zzk80KC7ykAWdO
-	whpcAvV4JiCAzU1qLQ3cEufP7wonyixRDLp0Mk+NlOfI2odZ1DvcHPNNk857gh1hQPMKzsFn/n5
-	m2hj3FSJUSBGXcLP9SDzNQej2/wAo5R/08BBgIgdk07zBNxAiNhQaRzSYANEmIEL/yxRtXf10+7
-	PQGi/SwJLNAzSZNjsaBnqEA7UnPkIQkXy0/vev9HaXRDcQaPzx9Qn5ZZ/lFTUKBuIEu13HkeS6J
-	2KOeEaeX4RL/bHjbLS0feRLbPXsz
-X-Google-Smtp-Source: AGHT+IHOKbYQRjb7noEtg9viqdiV0KOSoE8fwPGm5DiruA+2k83MA/tyzn39j/Xj8DclgnRtviyPtE2Cakz8DDAsYdo=
-X-Received: by 2002:a05:6000:144d:b0:429:8b44:57b7 with SMTP id
- ffacd0b85a97d-429aefca83emr2893529f8f.51.1761755903765; Wed, 29 Oct 2025
- 09:38:23 -0700 (PDT)
+	s=arc-20240116; t=1761755963; c=relaxed/simple;
+	bh=k/THoufCsFgPBRIhXt6rhIAnwVeM2wUTW1HoSJUyun8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvSKi0QBUdn+Hi4x9uYAZkImgxYIOTleNdS65b4D6nNGUOlZEMp8BhAjEtB6RFJqb5UxXLKyfocDsQNF0jSTPWUU8gMWZ9BQs4Phj1eO6kfpZsp6B4JdEtMqMDBtDkalWO7PDWl42SiHzg96M/1BlFatlVtAGOGvDz6AmuVFFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeRm2lPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A65C4CEF8;
+	Wed, 29 Oct 2025 16:39:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761755962;
+	bh=k/THoufCsFgPBRIhXt6rhIAnwVeM2wUTW1HoSJUyun8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oeRm2lPcNLRrYndKKmwVVpubn9BNybVM8rAZJlFfLxVuwlBgFuVKAeWfzJIbw+/6v
+	 B//Fzw8Sj3kzbDJlCI0LPNUylzDYSat5ksVPpjcZ+9lkSlBxnSxi0KPWfm1y82OROd
+	 UugFPKSPeO3pCdkSXN7ZDGoZ3VSd7Jld1gFmI6tnWn6j01DJ1x7SUtN3W3bA1fUGsO
+	 YVfOu6YbWzIV2RZN2+d71K1S9M4pM7ajQkfF1yI3jHLg0IGCgTuPOXEPmVK/JGbFs4
+	 raG/iKgxHm/BHJZCUjvKOdqX7MzRFAkV/rMhD00hQB3frIls5NlDvOdd48AiRDXlNq
+	 2wEE2IkfcxG/A==
+Date: Wed, 29 Oct 2025 11:42:26 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Sibi Sankar <sibi.sankar@oss.qualcomm.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, stable@vger.kernel.org, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Subject: Re: [PATCH v4 2/3] phy: qcom: edp: Make the number of clocks flexible
+Message-ID: <wjvec7fiqjzlyo6y5kpzsd5u7rz47anaytu25w2j4yqgtdntx6@zuapdsayoio2>
+References: <20251029-phy-qcom-edp-add-missing-refclk-v4-0-adb7f5c54fe4@linaro.org>
+ <20251029-phy-qcom-edp-add-missing-refclk-v4-2-adb7f5c54fe4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026154000.34151-1-leon.hwang@linux.dev> <176167501101.2338015.15567107608462065375.git-patchwork-notify@kernel.org>
- <CAEf4BzbTJCUx0D=zjx6+5m5iiGhwLzaP94hnw36ZMDHAf4-U_w@mail.gmail.com> <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
-In-Reply-To: <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 29 Oct 2025 09:38:12 -0700
-X-Gm-Features: AWmQ_blZBI4M6hqka-WDWjrJS6mwNo50xI2IEFe-TA0xh4CdlMem_GYEsm3tD7A
-Message-ID: <CAADnVQJHAxKmhDdJ_SkgHMf3adiS8MmD5MJCfiFfxU+8peT9-Q@mail.gmail.com>
-Subject: Re: [PATCH bpf v3 0/4] bpf: Free special fields when update hash and
- local storage maps
-To: Leon Hwang <leon.hwang@linux.dev>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, patchwork-bot+netdevbpf@kernel.org, 
-	Menglong Dong <menglong8.dong@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
-	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-patches-bot@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-phy-qcom-edp-add-missing-refclk-v4-2-adb7f5c54fe4@linaro.org>
 
-On Tue, Oct 28, 2025 at 11:50=E2=80=AFPM Leon Hwang <leon.hwang@linux.dev> =
-wrote:
->
->
-> Right, this is the classic NMI vs spinlock deadlock:
+On Wed, Oct 29, 2025 at 03:31:31PM +0200, Abel Vesa wrote:
+> On X Elite, the DP PHY needs another clock called ref, while all other
+> platforms do not.
+> 
+> The current X Elite devices supported upstream work fine without this
+> clock, because the boot firmware leaves this clock enabled. But we should
+> not rely on that. Also, even though this change breaks the ABI, it is
+> needed in order to make the driver disables this clock along with the
+> other ones, for a proper bring-down of the entire PHY.
+> 
+> So in order to handle these clocks on different platforms, make the driver
+> get all the clocks regardless of how many there are provided.
+> 
+> Cc: stable@vger.kernel.org # v6.10
+> Fixes: db83c107dc29 ("phy: qcom: edp: Add v6 specific ops and X1E80100 platform support")
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-edp.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+> index f1b51018683d51df064f60440864c6031638670c..ca9bb9d70e29e1a132bd499fb9f74b5837acf45b 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+> @@ -103,7 +103,9 @@ struct qcom_edp {
+>  
+>  	struct phy_configure_opts_dp dp_opts;
+>  
+> -	struct clk_bulk_data clks[2];
+> +	struct clk_bulk_data *clks;
+> +	int num_clks;
+> +
+>  	struct regulator_bulk_data supplies[2];
+>  
+>  	bool is_edp;
+> @@ -218,7 +220,7 @@ static int qcom_edp_phy_init(struct phy *phy)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(edp->clks), edp->clks);
+> +	ret = clk_bulk_prepare_enable(edp->num_clks, edp->clks);
+>  	if (ret)
+>  		goto out_disable_supplies;
+>  
+> @@ -885,7 +887,7 @@ static int qcom_edp_phy_exit(struct phy *phy)
+>  {
+>  	struct qcom_edp *edp = phy_get_drvdata(phy);
+>  
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(edp->clks), edp->clks);
+> +	clk_bulk_disable_unprepare(edp->num_clks, edp->clks);
+>  	regulator_bulk_disable(ARRAY_SIZE(edp->supplies), edp->supplies);
+>  
+>  	return 0;
+> @@ -1092,11 +1094,9 @@ static int qcom_edp_phy_probe(struct platform_device *pdev)
+>  	if (IS_ERR(edp->pll))
+>  		return PTR_ERR(edp->pll);
+>  
+> -	edp->clks[0].id = "aux";
+> -	edp->clks[1].id = "cfg_ahb";
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(edp->clks), edp->clks);
+> -	if (ret)
+> -		return ret;
+> +	edp->num_clks = devm_clk_bulk_get_all(dev, &edp->clks);
+> +	if (edp->num_clks < 0)
+> +		return dev_err_probe(dev, edp->num_clks, "failed to parse clocks\n");
 
-Leon,
+Nit...We're not really failing to "parse" clocks...
 
-please stop copy pasting what AI told you.
-I'd rather see a human with typos and grammar mistakes.
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+>  
+>  	edp->supplies[0].supply = "vdda-phy";
+>  	edp->supplies[1].supply = "vdda-pll";
+> 
+> -- 
+> 2.48.1
+> 
 
