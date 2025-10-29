@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-876010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D858C1A927
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:15:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E13AC1ABAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06537467F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:50:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967A6583E53
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86611366FAC;
-	Wed, 29 Oct 2025 12:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DECD2350D60;
+	Wed, 29 Oct 2025 12:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+xANKgV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efcNJ+8u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B476620297E;
-	Wed, 29 Oct 2025 12:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142EE36E364;
+	Wed, 29 Oct 2025 12:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740778; cv=none; b=Ag5CUlJD94LRe1yi8+RTOkA/rnMaxKmsEhoTlaoHxGpwiD2fRBhtt7a6jZkPdKWaifcX1j9JUo9C597090Pkk6r9x1PX93zamGxt5kjv2lQoHbOEoawjnL4nrq9aJMb1bewgTE+gfjS0eZza349ESpXbOaPEwh8KAG6Fj5l6gzs=
+	t=1761740804; cv=none; b=dUmlNxkuZ2nlMcAtr5LpA03TKpna64U/GnolDi9fYx3/j2BwELeO8suRxa5GIwJ8pMh9AhYZ4jOyQjihty19GCFCTqqqG7qAnxxtpE8O/r+noVGnVgOdjwO0MS8tM1iW2AKJCnfa1AUOn8c3BpasmkXfqHR2d9pU7BfrnZmOX08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740778; c=relaxed/simple;
-	bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
+	s=arc-20240116; t=1761740804; c=relaxed/simple;
+	bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j3MzkurliOWIKzpm3YpRdiI8a8AxmBCCbeJ+Jio+DUPRVZZ60ZCSFFAbKzFeTF5aZYJ7YEsma85V/o5VL7pZTo7aKwivJnnvotTnSXsfZ123RIJ7jTBk/r0xaPFmf0MIan7QTqUOSVYgQM78yDmB09ZTGI6JIQegqoiSU3gNM9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+xANKgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0430AC4CEFD;
-	Wed, 29 Oct 2025 12:26:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=kgnelzXUPcVlxlSI7qSUeg5IWGVj4exXoycE66qhMr2t5kWuA57SPUL+buhxzIhm7HPnsFZNq5mdtrbbogR2El/pA328n+n22Qk5gkT+rWhywcXvaxNAe5bDCwGGj6ZgWF11vwUDwOu0Sy82GwGgZVcup2UMHAVzrx2H6GrWmo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efcNJ+8u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FF3C4CEFD;
+	Wed, 29 Oct 2025 12:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740778;
-	bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
+	s=k20201202; t=1761740803;
+	bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=d+xANKgVfY71ePdCHybG5/aMzz1+TAc44E0JLm2Tp5UASh6EQOWACcXf6j+f4Y0v/
-	 LO62kmki04543e8HhBlco8GA2neM+Eh3xgDiBb2rxQdOl/XvhntP70gqzlK49/H/H3
-	 xft51m1uJWZSV//q9iKm/oJs5dQfzlD554aOe8laJJolt9VM0XsC3Si2OPGdchN9DV
-	 F7bqoyY1KsPEZKIOLbhYkvSj6KYX4Wf13n2R7tswdOv2Ts+Uf1RR1/TWpWMmqlSgxn
-	 YrVBqfY0ZpGIXVwPaeOTTJOD9DD+34FqNgPseBMna9noDgq582PdDSLCzylRyxkMBT
-	 vyRF3XPYZTLbQ==
+	b=efcNJ+8uAGYgVJbZ2+NBccn0ZQjG0fPIeB9bz8Nq0SvOmbsmZbWL2tJv0RmtWuAcT
+	 6zjksw5gEJUS3CTWxDoMFibgLEB6AUF2Q7gb2xiMSUXtFtWn/R23M4jOL7ltrbeb/u
+	 ol8T5k8j2uI36alxuWbyjFpN2yh7nG2YVvLZ2jnHaycmO1CiR3Mgvg7JyP2LGmIYiG
+	 +rZ9q07n80+XgXbYUo7iiqhpAueRLthbXqwJfOlMJ3cZZDTiz5X3Rv/FWRu7/ys5fc
+	 plACgDT26f5t1kqpEDGrpKLNv9NHobqbxbvmjqzWpAzf61uvI7d9JY44s3T43Yd6fv
+	 x+fe2AFckhDvw==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:20 +0100
-Subject: [PATCH v4 67/72] selftests/namespace: first threaded active
- reference count test
+Date: Wed, 29 Oct 2025 13:21:25 +0100
+Subject: [PATCH v4 72/72] selftests/namespace: test listns() pagination
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-67-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-72-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,180 +68,197 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4736; i=brauner@kernel.org;
- h=from:subject:message-id; bh=WqVUkxH4ZBiU30MvQT3O+adj44+G6SHOGkbS5VtGikk=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU3QST1zYOGsaM0dk/bseh9u7lknY+Zo0a/4f97Ww
- vNqt+53d5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEkI3hf9C/sOT1nTeanidX
- BViHmJ9KWHVq2VmT5Ki4pXtdZhUfiGVk2FcTtXDvV5eDKlkiJvXWcq4e76PNmo6VW6SrSsn3131
- mAQA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5137; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=QwDkSH3kLhu9Ya7BrIayv5fawfziMOL3Z/w1iCrFClA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU2Q6TYOOrAk4Uqv2a6PU97OSDk4V3iXc2lF9qw7V
+ 9bLNs/f0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRr7cY/ns7ZRsJZzbwPppe
+ 8cv9zwKpRUsNd3+Z+mvKtucPDonOmLybkWGV8ufIx7KLt98y1tn/RHRfXY2bu71myPa+d+eblx/
+ 4ncAFAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that namespace becomes inactive after thread exits. This verifies
-active reference counting works with threads, not just processes.
+Minimal test case to reproduce KASAN out-of-bounds in listns pagination.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/ns_active_ref_test.c      | 138 +++++++++++++++++++++
- 1 file changed, 138 insertions(+)
+ tools/testing/selftests/namespaces/.gitignore      |   1 +
+ tools/testing/selftests/namespaces/Makefile        |   4 +-
+ .../selftests/namespaces/listns_pagination_bug.c   | 138 +++++++++++++++++++++
+ 3 files changed, 142 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/namespaces/ns_active_ref_test.c b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-index b7fa973a2572..0c6c4869bb16 100644
---- a/tools/testing/selftests/namespaces/ns_active_ref_test.c
-+++ b/tools/testing/selftests/namespaces/ns_active_ref_test.c
-@@ -12,9 +12,12 @@
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/wait.h>
-+#include <sys/syscall.h>
- #include <unistd.h>
-+#include <pthread.h>
- #include "../kselftest_harness.h"
- #include "../filesystems/utils.h"
+diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
+index f6dcf769f150..f4d2209ca4e4 100644
+--- a/tools/testing/selftests/namespaces/.gitignore
++++ b/tools/testing/selftests/namespaces/.gitignore
+@@ -7,3 +7,4 @@ listns_permissions_test
+ siocgskns_test
+ cred_change_test
+ stress_test
++listns_pagination_bug
+diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
+index 3c776740f3ac..01569e0abbdb 100644
+--- a/tools/testing/selftests/namespaces/Makefile
++++ b/tools/testing/selftests/namespaces/Makefile
+@@ -10,7 +10,8 @@ TEST_GEN_PROGS := nsid_test \
+ 		  listns_permissions_test \
+ 		  siocgskns_test \
+ 		  cred_change_test \
+-		  stress_test
++		  stress_test \
++		  listns_pagination_bug
+ 
+ include ../lib.mk
+ 
+@@ -20,4 +21,5 @@ $(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
+ $(OUTPUT)/siocgskns_test: ../filesystems/utils.c
+ $(OUTPUT)/cred_change_test: ../filesystems/utils.c
+ $(OUTPUT)/stress_test: ../filesystems/utils.c
++$(OUTPUT)/listns_pagination_bug: ../filesystems/utils.c
+ 
+diff --git a/tools/testing/selftests/namespaces/listns_pagination_bug.c b/tools/testing/selftests/namespaces/listns_pagination_bug.c
+new file mode 100644
+index 000000000000..da7d33f96397
+--- /dev/null
++++ b/tools/testing/selftests/namespaces/listns_pagination_bug.c
+@@ -0,0 +1,138 @@
++// SPDX-License-Identifier: GPL-2.0
++#define _GNU_SOURCE
++#include <errno.h>
++#include <sched.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/socket.h>
++#include <sys/wait.h>
++#include <unistd.h>
++#include "../kselftest_harness.h"
++#include "../filesystems/utils.h"
 +#include "wrappers.h"
- 
- #ifndef FD_NSFS_ROOT
- #define FD_NSFS_ROOT -10003 /* Root of the nsfs filesystem */
-@@ -2113,4 +2116,139 @@ TEST(ns_mixed_types_same_owner)
- 	ASSERT_LT(u_fd, 0);
- }
- 
-+/* Thread test helpers and structures */
-+struct thread_ns_info {
-+	__u64 ns_id;
-+	int pipefd;
-+	int syncfd_read;
-+	int syncfd_write;
-+	int exit_code;
-+};
-+
-+static void *thread_create_namespace(void *arg)
-+{
-+	struct thread_ns_info *info = (struct thread_ns_info *)arg;
-+	int ret;
-+
-+	/* Create new network namespace */
-+	ret = unshare(CLONE_NEWNET);
-+	if (ret < 0) {
-+		info->exit_code = 1;
-+		return NULL;
-+	}
-+
-+	/* Get namespace ID */
-+	int fd = open("/proc/thread-self/ns/net", O_RDONLY);
-+	if (fd < 0) {
-+		info->exit_code = 2;
-+		return NULL;
-+	}
-+
-+	ret = ioctl(fd, NS_GET_ID, &info->ns_id);
-+	close(fd);
-+	if (ret < 0) {
-+		info->exit_code = 3;
-+		return NULL;
-+	}
-+
-+	/* Send namespace ID to main thread */
-+	if (write(info->pipefd, &info->ns_id, sizeof(info->ns_id)) != sizeof(info->ns_id)) {
-+		info->exit_code = 4;
-+		return NULL;
-+	}
-+
-+	/* Wait for signal to exit */
-+	char sync_byte;
-+	if (read(info->syncfd_read, &sync_byte, 1) != 1) {
-+		info->exit_code = 5;
-+		return NULL;
-+	}
-+
-+	info->exit_code = 0;
-+	return NULL;
-+}
 +
 +/*
-+ * Test that namespace becomes inactive after thread exits.
-+ * This verifies active reference counting works with threads, not just processes.
++ * Minimal test case to reproduce KASAN out-of-bounds in listns pagination.
++ *
++ * The bug occurs when:
++ * 1. Filtering by a specific namespace type (e.g., CLONE_NEWUSER)
++ * 2. Using pagination (req.ns_id != 0)
++ * 3. The lookup_ns_id_at() call in do_listns() passes ns_type=0 instead of
++ *    the filtered type, causing it to search the unified tree and potentially
++ *    return a namespace of the wrong type.
 + */
-+TEST(thread_ns_inactive_after_exit)
++TEST(pagination_with_type_filter)
 +{
-+	pthread_t thread;
-+	struct thread_ns_info info;
-+	struct file_handle *handle;
-+	int pipefd[2];
-+	int syncpipe[2];
-+	int ret;
-+	char sync_byte;
-+	char buf[sizeof(*handle) + MAX_HANDLE_SZ];
++	struct ns_id_req req = {
++		.size = sizeof(req),
++		.spare = 0,
++		.ns_id = 0,
++		.ns_type = CLONE_NEWUSER,  /* Filter by user namespace */
++		.spare2 = 0,
++		.user_ns_id = 0,
++	};
++	pid_t pids[10];
++	int num_children = 10;
++	int i;
++	int sv[2];
++	__u64 first_batch[3];
++	ssize_t ret;
 +
-+	ASSERT_EQ(pipe(pipefd), 0);
-+	ASSERT_EQ(pipe(syncpipe), 0);
++	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
 +
-+	info.pipefd = pipefd[1];
-+	info.syncfd_read = syncpipe[0];
-+	info.syncfd_write = -1;
-+	info.exit_code = -1;
++	/* Create children with user namespaces */
++	for (i = 0; i < num_children; i++) {
++		pids[i] = fork();
++		ASSERT_GE(pids[i], 0);
 +
-+	/* Create thread that will create a namespace */
-+	ret = pthread_create(&thread, NULL, thread_create_namespace, &info);
-+	ASSERT_EQ(ret, 0);
++		if (pids[i] == 0) {
++			char c;
++			close(sv[0]);
 +
-+	/* Read namespace ID from thread */
-+	__u64 ns_id;
-+	ret = read(pipefd[0], &ns_id, sizeof(ns_id));
-+	if (ret != sizeof(ns_id)) {
-+		sync_byte = 'X';
-+		write(syncpipe[1], &sync_byte, 1);
-+		pthread_join(thread, NULL);
-+		close(pipefd[0]);
-+		close(pipefd[1]);
-+		close(syncpipe[0]);
-+		close(syncpipe[1]);
-+		SKIP(return, "Failed to read namespace ID from thread");
++			if (setup_userns() < 0) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			/* Signal parent we're ready */
++			if (write(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			/* Wait for parent signal to exit */
++			if (read(sv[1], &c, 1) != 1) {
++				close(sv[1]);
++				exit(1);
++			}
++
++			close(sv[1]);
++			exit(0);
++		}
 +	}
 +
-+	TH_LOG("Thread created namespace with ID %llu", (unsigned long long)ns_id);
++	close(sv[1]);
 +
-+	/* Construct file handle */
-+	handle = (struct file_handle *)buf;
-+	handle->handle_bytes = sizeof(struct nsfs_file_handle);
-+	handle->handle_type = FILEID_NSFS;
-+	struct nsfs_file_handle *fh = (struct nsfs_file_handle *)handle->f_handle;
-+	fh->ns_id = ns_id;
-+	fh->ns_type = 0;
-+	fh->ns_inum = 0;
++	/* Wait for all children to signal ready */
++	for (i = 0; i < num_children; i++) {
++		char c;
++		if (read(sv[0], &c, 1) != 1) {
++			close(sv[0]);
++			for (int j = 0; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
 +
-+	/* Namespace should be active while thread is alive */
-+	TH_LOG("Attempting to open namespace while thread is alive (should succeed)");
-+	int nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_GE(nsfd, 0);
-+	close(nsfd);
++	/* First batch - this should work */
++	ret = sys_listns(&req, first_batch, 3, 0);
++	if (ret < 0) {
++		if (errno == ENOSYS) {
++			close(sv[0]);
++			for (i = 0; i < num_children; i++)
++				kill(pids[i], SIGKILL);
++			for (i = 0; i < num_children; i++)
++				waitpid(pids[i], NULL, 0);
++			SKIP(return, "listns() not supported");
++		}
++		ASSERT_GE(ret, 0);
++	}
 +
-+	/* Signal thread to exit */
-+	TH_LOG("Signaling thread to exit");
-+	sync_byte = 'X';
-+	ASSERT_EQ(write(syncpipe[1], &sync_byte, 1), 1);
-+	close(syncpipe[1]);
++	TH_LOG("First batch returned %zd entries", ret);
 +
-+	/* Wait for thread to exit */
-+	ASSERT_EQ(pthread_join(thread, NULL), 0);
-+	close(pipefd[0]);
-+	close(pipefd[1]);
-+	close(syncpipe[0]);
++	if (ret == 3) {
++		__u64 second_batch[3];
 +
-+	if (info.exit_code != 0)
-+		SKIP(return, "Thread failed to create namespace");
++		/* Second batch - pagination triggers the bug */
++		req.ns_id = first_batch[2];  /* Continue from last ID */
++		ret = sys_listns(&req, second_batch, 3, 0);
 +
-+	TH_LOG("Thread exited, namespace should be inactive");
++		TH_LOG("Second batch returned %zd entries", ret);
++		ASSERT_GE(ret, 0);
++	}
 +
-+	/* Namespace should now be inactive */
-+	nsfd = open_by_handle_at(FD_NSFS_ROOT, handle, O_RDONLY);
-+	ASSERT_LT(nsfd, 0);
-+	/* Should fail with ENOENT (inactive) or ESTALE (gone) */
-+	TH_LOG("Namespace inactive as expected: %s (errno=%d)", strerror(errno), errno);
-+	ASSERT_TRUE(errno == ENOENT || errno == ESTALE);
++	/* Signal all children to exit */
++	for (i = 0; i < num_children; i++) {
++		char c = 'X';
++		if (write(sv[0], &c, 1) != 1) {
++			close(sv[0]);
++			for (int j = i; j < num_children; j++)
++				kill(pids[j], SIGKILL);
++			for (int j = 0; j < num_children; j++)
++				waitpid(pids[j], NULL, 0);
++			ASSERT_TRUE(false);
++		}
++	}
++
++	close(sv[0]);
++
++	/* Cleanup */
++	for (i = 0; i < num_children; i++) {
++		int status;
++		waitpid(pids[i], &status, 0);
++	}
 +}
 +
- TEST_HARNESS_MAIN
++TEST_HARNESS_MAIN
 
 -- 
 2.47.3
