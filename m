@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-875378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC43C18DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:08:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282C9C18D7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9703B260A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:02:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50ACD1C63089
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A7D3126C0;
-	Wed, 29 Oct 2025 08:02:19 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A9B31282A;
+	Wed, 29 Oct 2025 08:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/0U2rEl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D420C037
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B5C3112C9;
+	Wed, 29 Oct 2025 08:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761724939; cv=none; b=VRSiHY9MkztaOp/z5UVVU2E8o9k/mbxnGT5i7h9IKkAbe8CMTMVrJE3ngcriTn7JSQ4jnbxRnkFkLrUilP5tTnbpjH1CuklsWb9/DtuAuc9Fp5JtTiEHGRxB5ndThnkNgOeZwizYr2PWFj9GQvxRzJNkk9+IfsQMKnNTYRPG1cg=
+	t=1761724943; cv=none; b=H/ZX7Mm5PtKefexzNmBza+xEcMKlVyrzIdbiQEcEVkPFjKM+D+2Dk4n+CvIksZDxlUmNyrtLyBHOHJxQdURE9AenQdATWBJHdKsG5Wv3clVDmCc6NQxW1+yCppZyIdGRixKyEWjcDfbVUHcwk5FMVIlOUswUITNGTMWWck0ZC2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761724939; c=relaxed/simple;
-	bh=zGUy6hqxcL5f9M8JFmyZUwsjQ5k/RnOvGiYJQhndEsw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=I/YgSGIvcPuS0g93XYFqxlZs4YaE0SmPHGqsa1Kk14jm8EuTZcVQhpms7qDKWtY3MN0FnQ5otSUTuREH1Z3h0dIJW4zLZtFZ2LnnOFG3jJVYO6qHHkWsEgB0rbp41lnD86UgTMYt77bFa3WAtE2anBg9IUg/JRnmUPbCaVEfmX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-431d3a4db56so297097945ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:02:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761724936; x=1762329736;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E52llTg5hG4h7f2w5EXV6ipfF9ukal88Q5zlnLcQ3lA=;
-        b=TUBrvp3uOlrFdTkpNRWWAhygDpicTdV1tXeZa7P9ebx9k1bbsBz46EmH5lg+7wlZA/
-         selh4Sku2a26bBEd1nghUQHXBpXPuSP3Zz1/QMrFL62sVCqzRjxwU4DWnNd4ViHZbGnp
-         p6yc+7k9rf1i8fHy1nt3tWr7yxSayo+Rl8/uNBM89wd1DeNIYqnmv02l8JkOhayWjREQ
-         hGJssL9Z3TUn36necnbMPaHfOV+iAGJPQu32OkXd1iRpHMD4kZMKlAUIfKhIwtBjH284
-         y9Po5ewnsaTCH5nuh6dgs6XTu4rh1uWYiDFzOO+MkBsAHWXdXOmwAJwe1Cdn26rb9DjT
-         zHRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWOuovg4aor0LTd98vjIK7OPqfL5lBHnSV4Ork2j15ntf8mpuWnPs/wn3Hm0JVbGcRfy+lhbCvLOPm8o0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYCWwsPt045c3U/AqTd5V3UZkv/kSeB7idQmL66GpcbkLIP7iP
-	fmUjbR3wCpGraVdhoETqxMcQJ1+RHZfCLa/zg6TRson+LCB7uL+nA4EEL8H25UX9Ub3CZFOmMoC
-	2k1YxnbEr9cX7wbNOKm7KShE8lwqfcQErXLCj17SdJFWpES3DMEHftbkVS/k=
-X-Google-Smtp-Source: AGHT+IGuAkS+kBelZkgkYBXnh8Ydxok/gFhSI2sRqKyODADqLmrDS4C+0roN4qO08yaVySmm4LkK2EX8UKQnx0QMJzBGmtLJJ7Rf
+	s=arc-20240116; t=1761724943; c=relaxed/simple;
+	bh=4NhXRDNPaTg7dt2sB4GYQydq0S49msE50ZIJ6tEffuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lagO18wnZfbLtQ3QvOoKExZNZw2JybTCt3ycP/9wv7KULAmrj3byTOl08avU/Pc4HYWIzgubNmHwMpTLIo/tQfqT37CtxJOHw979gi4n6+aRGtSgVtp6L+S5dUNig8JVfh0sSEbzqYOTXxLktgUuQS3pIc3i0N0h3LAXa21dAf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/0U2rEl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E751EC113D0;
+	Wed, 29 Oct 2025 08:02:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761724943;
+	bh=4NhXRDNPaTg7dt2sB4GYQydq0S49msE50ZIJ6tEffuE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/0U2rElVzA7v/7MvMGSKpon2GmHuref9Y6wGWBdaXZBut9hjG2HFQVmcDkY3/9Zo
+	 eySsnOX1Pw7olZ4XKLdxR8q8jxVdKgjQ8v3IjkY3CaEKO/1lRDQ7YgmaP8AkOEzd66
+	 qAgZyB8qR3kBjZGqlLR6CO4YwBCnFYSwg6ScjUb2OpDnkEtvkfCn4r4F3HkoJ2DzHF
+	 2yVpQdJOjNqKskqrAJTEWDtMzgHknF4nZYUE0ioISzbFIkzVZXfY2xK67cNunaN39v
+	 zZaT6xZzWhUovJeXZ02LhE5oT7eqvEpuyMhFEHO8vfp19HOpQ5utSUdQM6pJUIKRTH
+	 9q6r15+9C3fsA==
+Message-ID: <6b76d7d9-4f82-4eec-880c-3da2386971a3@kernel.org>
+Date: Wed, 29 Oct 2025 09:02:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4b:0:b0:431:da08:d652 with SMTP id
- e9e14a558f8ab-432f8e5dfb9mr29694955ab.0.1761724936071; Wed, 29 Oct 2025
- 01:02:16 -0700 (PDT)
-Date: Wed, 29 Oct 2025 01:02:03 -0700
-In-Reply-To: <20251029062151.Gq0gL%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901c9fb.050a0220.3344a1.0414.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in __ocfs2_flush_truncate_log
-From: syzbot <syzbot+4d55dad3a9e8e9f7d2b5@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sm8750: Add USB support for
+ SM8750 QRD platform
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+References: <20251024151521.2365845-1-krishna.kurapati@oss.qualcomm.com>
+ <20251024151521.2365845-4-krishna.kurapati@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251024151521.2365845-4-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 24/10/2025 17:15, Krishna Kurapati wrote:
+> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> 
+> Enable USB support on SM8750 QRD variant.  The current definition
+> will start the USB controller in peripheral mode by default until
+> dependencies are added, such as USB role detection.
+> 
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> [Krishna: Flattened usb node QRD DTS]
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750-qrd.dts | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+> index 13c7b9664c89..fc5d12bb41a5 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+> @@ -1054,3 +1054,25 @@ &ufs_mem_hc {
+>  
+>  	status = "okay";
+>  };
+> +
+> +&usb_1 {
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: signed-integer-overflow in ip_idents_reserve
+Still wrongly ordered. Please follow DTS coding style.
 
-IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_batadv: link becomes ready
-================================================================================
-UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
-360654889 + 1871359415 cannot be represented in type 'int'
-CPU: 1 PID: 128 Comm: kworker/u4:3 Not tainted syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
-Call Trace:
- dump_stack+0xfd/0x16e lib/dump_stack.c:118
- ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
- handle_overflow+0x192/0x1b0 lib/ubsan.c:180
- arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
- atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
- ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
- __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
- iptunnel_xmit+0x465/0x840 net/ipv4/ip_tunnel_core.c:80
- udp_tunnel_xmit_skb+0x1b7/0x280 net/ipv4/udp_tunnel_core.c:190
- send4+0x5d4/0xaf0 drivers/net/wireguard/socket.c:85
- wg_socket_send_skb_to_peer+0xcd/0x1c0 drivers/net/wireguard/socket.c:175
- wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
- wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
- process_one_work+0x85b/0xfe0 kernel/workqueue.c:2282
- worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
- kthread+0x384/0x410 kernel/kthread.c:328
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-================================================================================
-Kernel panic - not syncing: UBSAN: panic_on_warn set ...
-CPU: 1 PID: 128 Comm: kworker/u4:3 Not tainted syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: wg-kex-wg0 wg_packet_handshake_send_worker
-Call Trace:
- dump_stack+0xfd/0x16e lib/dump_stack.c:118
- panic+0x2f0/0x9c0 kernel/panic.c:308
- check_panic_on_warn+0x95/0xe0 kernel/panic.c:228
- handle_overflow+0x192/0x1b0 lib/ubsan.c:180
- arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
- atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
- ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
- __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
- iptunnel_xmit+0x465/0x840 net/ipv4/ip_tunnel_core.c:80
- udp_tunnel_xmit_skb+0x1b7/0x280 net/ipv4/udp_tunnel_core.c:190
- send4+0x5d4/0xaf0 drivers/net/wireguard/socket.c:85
- wg_socket_send_skb_to_peer+0xcd/0x1c0 drivers/net/wireguard/socket.c:175
- wg_packet_send_handshake_initiation drivers/net/wireguard/send.c:40 [inline]
- wg_packet_handshake_send_worker+0x16b/0x280 drivers/net/wireguard/send.c:51
- process_one_work+0x85b/0xfe0 kernel/workqueue.c:2282
- worker_thread+0xa9b/0x1430 kernel/workqueue.c:2428
- kthread+0x384/0x410 kernel/kthread.c:328
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:298
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
-Tested on:
-
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=10759f34580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf23b541eb2e03cb
-dashboard link: https://syzkaller.appspot.com/bug?extid=4d55dad3a9e8e9f7d2b5
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12983e7c580000
-
+Best regards,
+Krzysztof
 
