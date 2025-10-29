@@ -1,95 +1,67 @@
-Return-Path: <linux-kernel+bounces-875925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21386C1A251
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:10:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74EA4C1A26C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314FE1AA1EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:11:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDBF64E9060
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B943396E0;
-	Wed, 29 Oct 2025 12:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCdfCEyk"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401BE33A035;
+	Wed, 29 Oct 2025 12:12:26 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D62D3A7C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30312EA490;
+	Wed, 29 Oct 2025 12:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761739841; cv=none; b=RgIQ7CQGABaFvye77XkLc+sNQh0hXFd6f+tIXzmpoTaQazhHsWcGP9XhW6ahisj/8oFqIoNlepOav1MeVHv9kaWO6t3mUAZ7bS39LZZ1+MrWaWujUPnUpmCVzGnrVYIUm5HmE6zIh0A/sEgSVhcy0Gg7mvweMgNSnRoPhvwmHiU=
+	t=1761739945; cv=none; b=AoD6gFyNTv/F11reyhTejOxMGec2dHYCw+yyJmIUthJ/585hQKHit66xqcW1XfJMv42qteXLraOGIAOW+Z8OJNoIJ4UUzKIZVTlKeLRV/hnh12be1oeoRjRZ0GHgtxPV7mcXl60MC20DtkO9wQdn/Z0UHptKCyvpw2kE8F2wJ7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761739841; c=relaxed/simple;
-	bh=nmmmsqfKVAJAISlF0v0aoOiHV4ihW5X2wUL2HaVO778=;
+	s=arc-20240116; t=1761739945; c=relaxed/simple;
+	bh=D9ubV1MzwQjGbT7HGhaPF/W0DxBMGpzGkD/kypt2MLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKXdpvccIajvQUjEl45mS0+Av1994QZurCuA/ijn/ljjiNDtjD64O9jjW5KkosMHnIVgP1vXtkT/cNsXa8W5rGQfqz4vo9VUiVIZb1HQr+tcmvEuO0M+EF47QUHVUsfrn8J5fdGwDoozITen7nAuSdLPiqV0HBpUYs/6whUij1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TCdfCEyk; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47112a73785so45703795e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:10:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761739837; x=1762344637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9+YREs/dwvkAURlYBalhERi7T5HA8/ejvJOwTN6088=;
-        b=TCdfCEykDlIyKPRaDyfq3dspvlguOsGDd2iM1TEE2w0+GReHGftA3RMZGpE0Xa+4CB
-         c0MiMOkirRDjEnG0jRpbokT9wDAgcRXV2wXxCf8jgrghxDE2/4Lb5lvCEF3SDgcoVzMV
-         ZlftlOOfvyGqPVj6IXkGpVu7LM7vXeki2RzUGsvbqicviUnBX6W0ni7u06RTs5DDSqRV
-         PjnP0+zC8ZH5gAQN4TT91SICU/tUA1Ytci0S/VxzYtP1gzJp2QVfuv7zvBfwt1cIFEy+
-         nEdXDKUU948rQren+hehbA/MMA7gvuHcDM7wXwg1wRA9dTHaQ/XhL3JAiJ5T707htePc
-         m3VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761739837; x=1762344637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d9+YREs/dwvkAURlYBalhERi7T5HA8/ejvJOwTN6088=;
-        b=ToqXdHxaDf6Phsz5zHDErktlwojm+Yv8oNF9Wvhlc9cwNrG01l0+cy6qney6hbgrwR
-         YhJvn0Fw/0/OFz/1cW4JT7gQrk0wYj6P9H21HYFSGR3Y2Xp21uKh43xGHlYFEaZxSdXO
-         BtvlmgF3Dw8qHQtldrzuMn1NRDR7ORjEMyCohbuLKf/dMTrPFzN9M/plvgulGWypi+Qh
-         BvAmHrXWGsP2QIas65Lo1sSGB7JOI955RyAoz6roTRpbPsAgQvFHPO5qMMtrEO/dAJ7l
-         T9E9YcqkYwI78opUrwW3m0k0Zrm0zh9IfZhtoWsivia7N5mKLMzRXAEsi7Xq3TIjZzwu
-         TbYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVScEcqFYxi5ZwiNkVwnvr8UB8gDDHahZsJ1MdKCC3knuTeqP14mlx/YBbXO5maIiLjfBJmeuheL1DcuyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOyFGR2Cqz+TjY1xNS2dQbvo66BTw/wW3T6G90+u3o29ZNUO6
-	WZzXdvVe8YbAy6e5UPQ3i8DUGl6bNZTnDfcsD8q1+KbNNlucBwjJ807YgsLxXmYevYs=
-X-Gm-Gg: ASbGncsafWPiLVxLni48TMBHvDM0TrBpFmLRFrp+NJORFuNQdkdwPSL2KktSO/EgqXq
-	YreDJnFmILKXVFuFPKd/Vp8SW4EcJoZ0AdtZVqc0BYEr026KloG7rw56nzN+VUQ09dsWB7LL+AT
-	cSnIsOzDS38w0K5qMldAADW4B8pfu6ADETMXKT67M6IEGer4dLXlCcfLdyDRzyznFzKgpLkbEuO
-	uvwQ8JV8mpPRTzSLUtaS/UEbNYjiRAxGwQIAigdFDMldUJqHObnU3AJlFCt1fOr3d53EOoloyUg
-	X3Y36a3xy8NR8uXkL7FBxTOe3JTaPmfo1m1qo1PKjRuXKWkFb9SXrGp7sQbZHtO2Xqwcj7AE47u
-	/C6LGB+3rKEJH1AEzfDrY+aKqyF6mv4zPPi1RdcR4z4b1HQpxfnE576x5tVwwKxY4iqKHZ3wjMd
-	x5To9v5PN5XCw5L/GO
-X-Google-Smtp-Source: AGHT+IGIDloDBN8XL8rmy10flsio+t482MTy1ZQ7mnd0IkV1PLp8bTgCqmolXedNqKzaaInabxjXJw==
-X-Received: by 2002:a05:600c:528b:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-4771e3937a8mr26462945e9.23.1761739837097;
-        Wed, 29 Oct 2025 05:10:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4771e3b68fesm44788135e9.13.2025.10.29.05.10.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 05:10:36 -0700 (PDT)
-Date: Wed, 29 Oct 2025 15:10:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Phil Elwell <phil@raspberrypi.com>, Umang Jain <uajain@igalia.com>
-Subject: Re: [PATCH v3 0/7] staging: Destage VCHIQ interface and MMAL
-Message-ID: <aQIEOJUHdVMriz7S@stanley.mountain>
-References: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fc9UPzXu+TjIFF+6izhtDY8f4BWrabK83E19ks5d1ytyQpvGY+3h9tIZcQQgmHVv/UwPcG/c+rk2tb2s3FEOn/BU36xOpQpHSxfUVlkR7im8NTwEhvu7BOap73nTYKs3CcHMO70eMfQ3MHq3sNOEdnED6mAVmsjU6pAk1nCGczg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vE52C-000000007C6-3Tbc;
+	Wed, 29 Oct 2025 12:12:12 +0000
+Date: Wed, 29 Oct 2025 12:12:08 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v4 05/12] net: dsa: lantiq_gswip: define and use
+ GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID
+Message-ID: <aQIEmPfkaYPTtTaY@makrotopia.org>
+References: <cover.1761693288.git.daniel@makrotopia.org>
+ <7d1a0368e95da42999af379d90de5d791283d24e.1761693288.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,44 +70,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com>
+In-Reply-To: <7d1a0368e95da42999af379d90de5d791283d24e.1761693288.git.daniel@makrotopia.org>
 
-I did a review of some Smatch warnings.  These aren't published because
-they generate too many false positives.  Only number 3 and number 7
-are actual issues the rest are style nit-picks.
+I've just received a definite answer from MaxLinear confirming that
 
-1. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:2728 vchiq_add_service_internal() info: returning a literal zero is cleaner
-s/return service;/return NULL;/
+"The condition of GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID is: (ETHSW_VERSION &
+0x00ff) >= 0x22"
 
-2. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:408 vchiq_shutdown() info: returning a literal zero is cleaner
-Delete the "ret" variable.
+This matches the implementation now suggested.
 
-3. drivers/staging/vc04_services/bcm2835-camera/controls.c:198 ctrl_set_iso() warn: array off by one? 'iso_values[ctrl->val]'
-There seems to be a mixup between iso_qmenu[] and iso_values[].  The one
-is only used for ARRAY_SIZE() and the other is never checked for
-ARRAY_SIZE().
-
-4. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:337 buffer_cb() warn: can 'buf' even be NULL?
-Delete the NULL check.
-
-5. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:513 start_streaming() pedantic: propagate return from 'enable_camera' instead of returning '-EINVAL'
--       if (enable_camera(dev) < 0) {
-+       ret = enable_camera(dev);
-+       if (ret) {
-                v4l2_err(&dev->v4l2_dev, "Failed to enable camera\n");
--               return -EINVAL;
-+               return ret;
-        }
-6. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:576 start_streaming() pedantic: propagate return from 'disable_camera' instead of returning '-EINVAL'
-Same.
-
-7. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidioc_querycap() error: uninitialized symbol 'major'.
-   drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidioc_querycap() error: uninitialized symbol 'minor'.
-No error checking on vchiq_mmal_version()
-
-8. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:1276 mmal_setup_components() info: returning a literal zero is cleaner
-s/return ret;/return 0;/
-
-regards,
-dan carpenter
+On Wed, Oct 29, 2025 at 12:17:18AM +0000, Daniel Golle wrote:
+> When adding FDB entries to the MAC bridge table on GSWIP 2.2 or later it
+> is needed to set an (undocumented) bit to mark the entry as valid. If this
+> bit isn't set for entries in the MAC bridge table, then those entries won't
+> be considered as valid MAC addresses.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+> v4: keep previous behavior for GSWIP 2.1 and earlier
+> 
+>  drivers/net/dsa/lantiq/lantiq_gswip.h        | 1 +
+>  drivers/net/dsa/lantiq/lantiq_gswip_common.c | 7 ++++++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.h b/drivers/net/dsa/lantiq/lantiq_gswip.h
+> index 56de869fc472..42000954d842 100644
+> --- a/drivers/net/dsa/lantiq/lantiq_gswip.h
+> +++ b/drivers/net/dsa/lantiq/lantiq_gswip.h
+> @@ -224,6 +224,7 @@
+>  #define  GSWIP_TABLE_MAC_BRIDGE_KEY3_FID	GENMASK(5, 0)	/* Filtering identifier */
+>  #define  GSWIP_TABLE_MAC_BRIDGE_VAL0_PORT	GENMASK(7, 4)	/* Port on learned entries */
+>  #define  GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC	BIT(0)		/* Static, non-aging entry */
+> +#define  GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID	BIT(1)		/* Valid bit */
+>  
+>  #define XRX200_GPHY_FW_ALIGN	(16 * 1024)
+>  
+> diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> index 0ac87eb23bb5..ff2cdb230e2c 100644
+> --- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> +++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+> @@ -1149,7 +1149,12 @@ static int gswip_port_fdb(struct dsa_switch *ds, int port,
+>  	mac_bridge.key[2] = addr[1] | (addr[0] << 8);
+>  	mac_bridge.key[3] = FIELD_PREP(GSWIP_TABLE_MAC_BRIDGE_KEY3_FID, fid);
+>  	mac_bridge.val[0] = add ? BIT(port) : 0; /* port map */
+> -	mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
+> +	if (GSWIP_VERSION_GE(priv, GSWIP_VERSION_2_2_ETC))
+> +		mac_bridge.val[1] = add ? (GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC |
+> +					   GSWIP_TABLE_MAC_BRIDGE_VAL1_VALID) : 0;
+> +	else
+> +		mac_bridge.val[1] = GSWIP_TABLE_MAC_BRIDGE_VAL1_STATIC;
+> +
+>  	mac_bridge.valid = add;
+>  
+>  	err = gswip_pce_table_entry_write(priv, &mac_bridge);
+> -- 
+> 2.51.1
+> 
 
