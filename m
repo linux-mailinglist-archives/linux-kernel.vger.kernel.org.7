@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-876943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AAAC1CD2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:46:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151FEC1CD33
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18494188D051
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:47:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DADC44E5244
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8923570D3;
-	Wed, 29 Oct 2025 18:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB883570D3;
+	Wed, 29 Oct 2025 18:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vyqGUxnW"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZSaB6st"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA80135770A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE8A3563F3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761763590; cv=none; b=FQUhpK7ryJx3SYEjZcjMpU0lAENKdvr+2VuRwr6fm4QAdZCveapmypkrEMRqtIaYE2XExbdCr+SDxKXUWYMYd12JNzzluScVmJvywHEg3kjp50MjgpfaAPfgiIEC9SNeMtstJpNz82JlWHxcMAIiOOLnpMjYJLRWDbRnoZY5zBQ=
+	t=1761763670; cv=none; b=axYV/MDRTpJVYItvjYLNl7XmGUUiMMuzVHLk+x/adozWITOnPwBOmBKX5o45p6rF3o2vnusCU/tAjFmQb5CGKo/ZcqcLZ1H90OQLK39FKfKn7hyiSkJgqWYlXSPAvaA27tD6c/t70sOL2SqvEZs9PsqxnpZS/Clcbl2tMJSqOKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761763590; c=relaxed/simple;
-	bh=U62r/fOtJQtPieiV20zK2df1a6i4gyeJChvtG9Zp0uE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Nmp/tNTKykvD4P4yfQ9gWqsxduDL7FBHHP2CekIMIey+WYmFLxs72BugPECpAiAbUmmhiRFe/pJuyOhFkWguJxRp+M054slwON6unKmP1Nx34WCCfWZya8IFC9o1id+g66l4zmuknfAtHCNkYFsg4ICXRQAe+zTriOwkoh9RzDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vyqGUxnW; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f610f7325so183858b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:46:26 -0700 (PDT)
+	s=arc-20240116; t=1761763670; c=relaxed/simple;
+	bh=0Tr3LCSHb84ftOumUd9propiyWY/G1DK/xvBH3c4z0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4c4VhGIG7wFxo9Anj5BVXQsG8B5JXTuZm8rkhEPymI1eCh0zOHgnJUlQLG9Caks2WqxgUdHNr3yTe0DNI94+cSOHPUbuFbAkIwHGaQaOeTtdhkoDHX0aMH9n1nuoI54oh0WTLMgfW/qD3ZRnLHSklAqKq34UaCi0G3vxCmOD+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hZSaB6st; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47719ad0c7dso1802865e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:47:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761763586; x=1762368386; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwXxkHaUQ2Itwxa70IRVOY6FUcTZ8h4FSg8gJ3GP+iY=;
-        b=vyqGUxnWSfuM6gNzvCAUPRSEhIZ+wcLCbHMjIT+8BdsbnzqEfSkEW/QR7gCEL9xAzU
-         ublzSeVhH6CLlfGowrVegJnFDLzwqkyJUbLyPtc+B4LLW02oqNqgg58aQzIo8WQQLDk7
-         SpMbhb+JZcLVBee9WXeghSSfmjwtamEjt95PlWGWz0E+8ZWCkZdbgIPZUIVBIBnSBWIV
-         mSDXqQq6qlyj9021Y/ndN5P1xtNXksbVqAcFBs0XNTeUXNCkeGoYhV7wVIp276dGC4LO
-         M3twMhi0l9qYHXl6+wGvU8/RjCqym4+TWlhVIexXw8/Qx65l343Jaoqkat4N25QNPFWQ
-         zy1A==
+        d=linaro.org; s=google; t=1761763666; x=1762368466; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7UlL3GKzUDEprO6nc/X4PQZdsoNuJnhVXYl9pMuUgU=;
+        b=hZSaB6stfLACJmEqNsUdwjSf2xtOI5p6B3TGS/c5ftCfg7bSAZ6/pTAloV+Cwgxl/t
+         Bh2YMigTgCP3OfdV31YYEMKAdOoKj5hgVHMv/pMpFtJ6as6GdbSu8R27zJoLBI5S7fOn
+         xn9UWzWrK1orsjyrfi+0oo3e4MhBxvQ7znYr7cdFedmj+rF27Y4USBbK2t+M7iJhxg6C
+         EKIQCWOsxGvLOIY1urX8aAOEQCdqq0mqYGLnCj6KFUmOBML8/nftx5THwq2utv+lqbiS
+         PeLeRNI24xFY5zFec19VrJEUSLqbLyzbMJND7suffct6Ll1SbcwiAJjtBtNdEaWevh/q
+         9hOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761763586; x=1762368386;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hwXxkHaUQ2Itwxa70IRVOY6FUcTZ8h4FSg8gJ3GP+iY=;
-        b=w32eJplbumFvyPcwhZmgzRsxOqPtIoaIHKFalWlhdLY0f39z1Uhera0A4K70UU7hBu
-         t+bE9p3ypFVZp/NnNdC5/L5/7AhW1VJaok8y2TdlBSA+WXUXLNhEp9fRhUeCgIDhcWwZ
-         UyjDIoJDJjnpMkDDSl07if1/o9x8u1YpL4fesvTBys/tUWrEkLKQkPLIs3xIK++SMw1T
-         AfSfRgeMCGbk6yJXxr33QyTz8hFiba/O7/fsGdZHBz8eAxPcy23Mgufw6i9RLmcUnTEt
-         xjlrj42Wlbpdnx0spA5ehg62NHfg8Qo7Bj6cluThJHuMaezAVOzTSzHFeqRrVp81nRdT
-         jL3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUVMiqwxvkiK+lyhHqsbz5z/ZIxntshhpF9BxqoaAhujNaOOusy/oTF2DfR+inEM+msrkCV+/ZcYayzyGA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxabUw/MM+2NoK/FX8c57hwhuvvlkWSvMlTcYfWwyJdahtQF8hA
-	vsGxONVJU+nJMjMUtc2up2KC0Rt72yuyYD2ZOjWucLLTfsntqz8w0udKYnzwoY9ydnN1I9wpvPN
-	C3pnHmQvjmzfyjA==
-X-Google-Smtp-Source: AGHT+IEb8imeJZc3wTyKz41hV95DU4DMFq/L+E+K9W8WpFaQM2j7DiK2tfOxXrcoiZMttlqmrXtWeGjhIqlpIQ==
-X-Received: from pgbfq12.prod.google.com ([2002:a05:6a02:298c:b0:b63:7a61:419c])
- (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:12c9:b0:334:a9b0:1c87 with SMTP id adf61e73a8af0-3465250ee69mr5270481637.1.1761763585755;
- Wed, 29 Oct 2025 11:46:25 -0700 (PDT)
-Date: Wed, 29 Oct 2025 11:45:40 -0700
-In-Reply-To: <20251029184555.3852952-1-joshwash@google.com>
+        d=1e100.net; s=20230601; t=1761763666; x=1762368466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n7UlL3GKzUDEprO6nc/X4PQZdsoNuJnhVXYl9pMuUgU=;
+        b=dpsmESjK+5IfH/63VgrNOtaJAdlvwSpyyIbb9uMfxYbYLIZRuy6ZghLAP8jbwMIMdE
+         DJWWmKtrRL5Jdn+XTg4cVnOvlLqaESC32ixgaLaWddRlfel8a4tF4oa0q0OQOQbuSg09
+         S2jccOYFhdKjUw2dP571wIYg4hc9DodFbDBrEqKC3QySvjiv+sj9S8KfW1K+TeYquWAM
+         SkbNEJ03GYGwd4IsIhFsaJcBXEpsWb9N4Pwcs9qOpa+fuJa8wq4ZfOS/3bYCjVqr/JXa
+         jT2fFDoB9I5r+aVhZEXjUS24CDNAb2F0GfwePwH1ZZJD2wonm3kU4HDzV0p8A9M8yn/d
+         Jp4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUOSRiGuTFD8uaAyA9B/litVWqZl+JBiVwXH2Y9E/ci7ADOwyOI0DkIBUCXAb89oncePAtRc9Tc967yyPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx29OwlVlb/GhJ+MnAbr1KOKln7EW+xuPte6NAT7CIIh49/HlU0
+	T7FmgxBhA0AUTHZWoz/fKWlxegPZ+zwBT1fYayeCVYV6l4NN+LIxIw6T1nExwY2A704=
+X-Gm-Gg: ASbGncsokUTLSgYQ9/rwwD6UirsE7jLqU8P/0cQUCzdRjjL64yR6H6g3hEeQo7Yn9yQ
+	wFOBZEC3fyAqjMG82U/IhvbSMpfCHqbFOrcDeOUmQm2TQmEMRauTbFF6fAKK6dZjlQftYR5yuef
+	XI4pTleafKlgETd5z6ul9Yxws9lwjS/U+qFVwKjj9G/tlg6axnNT2PLmgLwb3Lzb10gEDhg/7ru
+	OUUmdv/cQMpgm6/KMALXhupE3zAHMNcNVVa/uCxhILvpxahqfZ7UneBkRo+UM4b+8fD+AAWCE2t
+	I0GTxcaE8Xn1bAxM8H3ypKqPMhzQg42dKV7YXJIqc1ASWdrKSJyrxWoCGKrKouUuSL9oy0RJvUa
+	PeLF+/RLeQTIDLPwFjQnwjQEA41Ppzjwlt4+PsUdS7jZkedd03vWrF82ZxDdjBfeMCE3PPyubpC
+	rVAhlWbVlpea1dtk0+
+X-Google-Smtp-Source: AGHT+IGpoPX9hNhKmRBMmW2j12M72FSxxCuC4T9cB82GM76vjMbsT/vObteBlRgx4MZwjCJgYtHIEw==
+X-Received: by 2002:a05:6000:26c3:b0:427:45f:ee1a with SMTP id ffacd0b85a97d-429b4c8748cmr573409f8f.25.1761763666459;
+        Wed, 29 Oct 2025 11:47:46 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952d5773sm29704529f8f.27.2025.10.29.11.47.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 11:47:45 -0700 (PDT)
+Date: Wed, 29 Oct 2025 21:47:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: introduce no-auto-mmio
+ property for syscons
+Message-ID: <aQJhTbNJkezeipoc@stanley.mountain>
+References: <cover.1761753288.git.dan.carpenter@linaro.org>
+ <230cf12861a4f0b9effc72522444d3e28c1de2c9.1761753288.git.dan.carpenter@linaro.org>
+ <20251029-ambiance-snooper-43dc00dcee68@spud>
+ <aQJR36s0cY34cLrr@stanley.mountain>
+ <20251029-embroider-plunging-6356f50c7acd@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251029184555.3852952-1-joshwash@google.com>
-X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
-Message-ID: <20251029184555.3852952-3-joshwash@google.com>
-Subject: [PATCH net 2/2] gve: Implement settime64 with -EOPNOTSUPP
-From: Joshua Washington <joshwash@google.com>
-To: netdev@vger.kernel.org
-Cc: Tim Hostetler <thostet@google.com>, Richard Cochran <richardcochran@gmail.com>, 
-	syzbot+a546141ca6d53b90aba3@syzkaller.appspotmail.com, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Joshua Washington <joshwash@google.com>, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ziwei Xiao <ziweixiao@google.com>, 
-	Kevin Yang <yyd@google.com>, Willem de Bruijn <willemb@google.com>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-embroider-plunging-6356f50c7acd@spud>
 
-From: Tim Hostetler <thostet@google.com>
+On Wed, Oct 29, 2025 at 06:37:26PM +0000, Conor Dooley wrote:
+> On Wed, Oct 29, 2025 at 08:41:51PM +0300, Dan Carpenter wrote:
+> > On Wed, Oct 29, 2025 at 05:33:48PM +0000, Conor Dooley wrote:
+> > > On Wed, Oct 29, 2025 at 08:27:05PM +0300, Dan Carpenter wrote:
+> > > > Generally, syscons are created automatically and accessed direclty via
+> > > > MMIO however sometimes syscons might only be accessible from the secure
+> > > > partition or through SCMI etc.  Introduce the no-auto-mmio property to
+> > > > tell the operating system that the syscon needs to be handled manually.
+> > > 
+> > > "System controller node represents a register region containing a set
+> > > of miscellaneous registers."
+> > > 
+> > > If this isn't actually a register region, but is instead an interface
+> > > provided by SCMI or whatever "secure partition" is (optee?), why is the
+> > > syscon compatible being used for the device in the first place?
+> > 
+> > In the case that I'm looking at, it really is a syscon.  So right now
+> > we're upstreaming it and it's an MMIO syscon.  Very straight forward.
+> > But later, I guess, they want to have a new firmware which will only let
+> > you access the same registers through SCMI.
+> 
+> When the programming model changes, the compatible should too, no?
+> 
 
-ptp_clock_settime() assumes every ptp_clock has implemented settime64().
-Stub it with -EOPNOTSUPP to prevent a NULL dereference.
+I wasn't planning on it.  I haven't been asked to upstream the SCMI
+module but once my thinking was the transition would work like this.
 
-Fixes: acd16380523b ("gve: Add initial PTP device support")
-Reported-by: syzbot+a546141ca6d53b90aba3@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=a546141ca6d53b90aba3
-Signed-off-by: Tim Hostetler <thostet@google.com>
-Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
-Signed-off-by: Joshua Washington <joshwash@google.com>
----
- drivers/net/ethernet/google/gve/gve_ptp.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Step 1: It would work as is with an MMIO syscon.
+Step 2: We would upstream the SCMI driver which would provide an
+        MMIO syscon as a fallback.  At that stage you would still get an
+        MMIO yscon regardless of whether the phandle was parsed before
+        or after the driver loaded.
+Step 3: We would set the no-auto-mmio property so you have to use the
+        driver and update the firmware so only the SCMI interface can
+        be used.
 
-diff --git a/drivers/net/ethernet/google/gve/gve_ptp.c b/drivers/net/ethernet/google/gve/gve_ptp.c
-index 19ae699d4b18..a384a9ed4914 100644
---- a/drivers/net/ethernet/google/gve/gve_ptp.c
-+++ b/drivers/net/ethernet/google/gve/gve_ptp.c
-@@ -33,6 +33,12 @@ static int gve_ptp_gettimex64(struct ptp_clock_info *info,
- 	return -EOPNOTSUPP;
- }
- 
-+static int gve_ptp_settime64(struct ptp_clock_info *info,
-+			     const struct timespec64 *ts)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- static long gve_ptp_do_aux_work(struct ptp_clock_info *info)
- {
- 	const struct gve_ptp *ptp = container_of(info, struct gve_ptp, info);
-@@ -55,6 +61,7 @@ static const struct ptp_clock_info gve_ptp_caps = {
- 	.owner          = THIS_MODULE,
- 	.name		= "gve clock",
- 	.gettimex64	= gve_ptp_gettimex64,
-+	.settime64	= gve_ptp_settime64,
- 	.do_aux_work	= gve_ptp_do_aux_work,
- };
- 
--- 
-2.51.2.997.g839fc31de9-goog
-
+regards,
+dan carpenter
 
