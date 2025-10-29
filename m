@@ -1,55 +1,99 @@
-Return-Path: <linux-kernel+bounces-875309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D64CCC18AC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:25:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 255F6C18A9C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4701D421570
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:20:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1197A4ED84A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD9E312809;
-	Wed, 29 Oct 2025 07:17:56 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B0530E0FB;
+	Wed, 29 Oct 2025 07:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MDQCTVCm"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F771AA1D2;
-	Wed, 29 Oct 2025 07:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1012AD3D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722276; cv=none; b=P66cRWQeFEmIDV+95s4C6OyZsZNGgrRSHbMY+rZNe+th3V+zd5ZtaMM1yi/nJvW9jbuUZUn1T4SdOifuPM0GhmEUvtAcPr+B7+criPMgHEjOkBduo2WfcUMDVRdM0atuJpQJDbfjl04bsXujUyywrNyKQGMYUBXw+flnYHZAFHU=
+	t=1761722303; cv=none; b=ZXeNscQTIy6tBGtKCGfQqhTDfqaddniA7b0dcYdgVp/Y9Wu40XXkm1P5zmgChWJdi3qcl6FpWLuX+qAA+M5z1zKQuA4NxzpPQ3Q3HUbO8KPLocnFRQfJEtGOENLIpq2WzdoDpVvwy+OOlxh0BFXTYxFFleqPpc5jUA5ffYRFxaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722276; c=relaxed/simple;
-	bh=nHrYKnq0A3RI6YrxImuLci6NbNAExaip2UClgnU6Hng=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Py+q17WPqhtjI8N6EMU9JgzFtYyeTZwNbcAraPtoBxkGvxXyLD7akR8XTKGBBQADXKtbS1+05HfbGdg4iKFdqErZcjFWSutHGczoevt1SB943n4O6olXFuVPgwdSeDiy/AEeC53fOHuZFnykckFsDoh7Nztc6Ac/1zCkGFb/tjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201620.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510291517433647;
-        Wed, 29 Oct 2025 15:17:43 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:17:44 +0800
-Received: from inspur.com (10.100.2.113) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 29 Oct 2025 15:17:44 +0800
-Received: from localhost.localdomain.com (unknown [10.94.19.60])
-	by app9 (Coremail) with SMTP id cQJkCsDwSHmXvwFpdDgHAA--.5676S2;
-	Wed, 29 Oct 2025 15:17:44 +0800 (CST)
-From: Bo Liu <liubo03@inspur.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <catalin.marinas@arm.com>,
-	<will@kernel.org>, <maz@kernel.org>, <oliver.upton@linux.dev>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH] arm64: Fix double word in comments
-Date: Wed, 29 Oct 2025 15:17:42 +0800
-Message-ID: <20251029071742.17732-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761722303; c=relaxed/simple;
+	bh=ecmgWyt/r3NhyI7KAZNK27WV0ALYJNBfyBVF8Ko8M+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z9+Uqgc8REsDpAuzFqhRrdvDcwWSi7O80XFlpqJbuftUKO9Od+Gfl5h7LUuve/z+pOLoz1lDFGHTRwHLE5KExuD4vSAXQXgpCeVqC1ha3vic7etcoT2H5jd2nQRX2eR+v5yuugA4UmbHPVVqyQnDGE0upUhmSR+e3E+NyPLjgeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MDQCTVCm; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-780fc3b181aso4365179b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:18:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761722301; x=1762327101; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yKR2JIltJZH3d6vVv5ttIX5RgDXhzdjyF6WPgCyyT+Q=;
+        b=MDQCTVCmZeJ+qqaZ3RDqhw0rJGyAPPzPOsQXY+GTWdKptbSIQnSNaAcqvagcs91cA5
+         S3kqfgIyz9hgulz0BoDJ2R6wYWkaXzQNam7P2v4EPqxmeNs0C/NDMP419yrNM3uiX3Oj
+         v2A9KC+iPw7lbUwh9ZP40im5OTS9/GLjSz6WDsVJOSSIVFuvD2e4u6bR5Ukf0MeAuhgF
+         n7Ta0Hoj4SVLN9KPPUKPb9asuHUmdfosWCzpQ1p0CmHaaGgPLQA3LNHUyiiNe/9o1KJH
+         qdtodEORxdJGsge8V0zEdf2ug+1D+OjI6z1IPCu7m8WeJ8XquQ67a0AvP9VZHYJh3Bcz
+         kLNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761722301; x=1762327101;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yKR2JIltJZH3d6vVv5ttIX5RgDXhzdjyF6WPgCyyT+Q=;
+        b=SnWsYp5CrLjhIO5fCIoSJDnZweiPC0Jq1OOthWZBSB8rSiEUxqcvg0kRUE3u+8xefT
+         RiIk+wW1KqIaM9KqnQJrYK7Rd5cpOJVdtFgr+g9K+DvcjHzGVlRCsPkt2VSaI4Wbmv1e
+         9PtglkHLpSNKWEhmDwNEO8Ff+gGPTvJ/t8SLho5YhKDwcUk+TYJO6FPtRsDxdlYB3CyV
+         DOkHEcTx7YBGNHlfroY/3HY3J8PDmJGYGdNV41RWYLCNtZLSKj41Ga0fV1vZZX0XGnbO
+         hNwrZ1EbElfSCzn5e51SWYYOGSDAgyAsBGZLyPxUbhfUleWh8aCd3L4ehXg1fDxWqPUF
+         DVUA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3w6g+fYUp9Z4xG0Pt3+Mexcjrce6CLVhnC1yQezbmfTIkA/YyI9VZD7AoxUhBXQt9lIi+y7Pi5HwLzXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOkhPl0PS3OQBiEeibNSRunrcLQ39k1J1R49vMDMm8wYiYKVZ6
+	qaQ3c7IzzO2eyZeF/AMimbpz2NxztsCKxWyyQiXUSczqdXElIPPUl6ws
+X-Gm-Gg: ASbGncvxMfH1JV3EZ4GcJdY8y1/1AbDwo+6AeQf2Dv7r7auGOYPWo1MYx1cKTbNlL5H
+	6oxZghh2YZdeEM/dt20QONfWTf15JcZtSTq1Hw7ezaOiXeJm7O0e6gMFBwLNt6ZpuV0pVoUuhzH
+	0X5kU3ZUbs5f9J4tje8up5hNnmqhwD0jpOxX+cYp/1Ffs4Y8f/H8959x/dhvh6N41+H0+rVRIeP
+	pmCbfGm2BRpPvrnxTVOGoKd0J8dg1r5ESjUemJD/PKItEy16/1q9mJW0q42lSUo3zIpk1snl/EN
+	VpOlaVwGHJ6Qs+lTRzaHnA+cRLPdoTRxpuySoDqIK5ayM9Ne997dh53PkObF0wOzCpKaPSIqiiZ
+	7Mr4iP84fHZuCsgcuY1S3oXN9O217Y2Ps7EhPDISxqd2u+Rpz0esf0wrRGVIdrwbU43bfY0fUTf
+	pLB/IJqYHrT/xZSMsTXM60Ow==
+X-Google-Smtp-Source: AGHT+IGsSohj8ZyfRUklbkOshcfGyTov32rF3rhJPbt86LKk5fmrvTuOuT8071qzdtGvIsEZK/0xXw==
+X-Received: by 2002:a05:6a20:3ca6:b0:342:44f3:d1bc with SMTP id adf61e73a8af0-34653146b2amr2346432637.35.1761722301330;
+        Wed, 29 Oct 2025 00:18:21 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41407a0fasm13910908b3a.54.2025.10.29.00.18.17
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 29 Oct 2025 00:18:20 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Niranjan H Y <niranjan.hy@ti.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Shuming Fan <shumingf@realtek.com>,
+	Charles Keepax <ckeepax@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] ASoC: sdw_utils: fix device reference leak in is_sdca_endpoint_present()
+Date: Wed, 29 Oct 2025 15:17:58 +0800
+Message-Id: <20251029071804.8425-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,69 +101,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: cQJkCsDwSHmXvwFpdDgHAA--.5676S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF4DGFyfAw47Zr1ftryDAwb_yoW8Grykp3
-	4DurykAw4kC3WYka4DCwsxXFs8A395trWUGw1UZrWrtr90k348Wrn2vr1Y9rWrXrWrXayf
-	uFyqyr15W3WkArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
-	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
-X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?073cd2LVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
-	KIpW5E45D/ppzVTEP3m+j7VajTAnWQJGywx+S+ZzlAJpWdDBKU+9ND03LjUKXr5WWebhqV
-	UxgGA21U09ARJ3pXvdw=
-Content-Type: text/plain
-tUid: 2025102915174356467725e5a955cb26b5d87bf08cd158
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Remove the repeated word "the" in comments.
+The bus_find_device_by_name() function returns a device pointer with an
+incremented reference count, but the original code was missing put_device()
+calls in some return paths, leading to reference count leaks.
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
+Fix this by ensuring put_device() is called before function exit after
+  bus_find_device_by_name() succeeds
+
+This follows the same pattern used elsewhere in the kernel where
+bus_find_device_by_name() is properly paired with put_device().
+
+Found via static analysis and code review.
+
+Fixes: 4f8ef33dd44a ("ASoC: soc_sdw_utils: skip the endpoint that doesn't present")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
 ---
- arch/arm64/kernel/entry-ftrace.S | 2 +-
- arch/arm64/kvm/arm.c             | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sdw_utils/soc_sdw_utils.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index 169ccf600066..025140caafe7 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -94,7 +94,7 @@ SYM_CODE_START(ftrace_caller)
- 	stp	x29, x30, [sp, #FREGS_SIZE]
- 	add	x29, sp, #FREGS_SIZE
+diff --git a/sound/soc/sdw_utils/soc_sdw_utils.c b/sound/soc/sdw_utils/soc_sdw_utils.c
+index 270c66b90228..ea594f84f11a 100644
+--- a/sound/soc/sdw_utils/soc_sdw_utils.c
++++ b/sound/soc/sdw_utils/soc_sdw_utils.c
+@@ -1278,7 +1278,7 @@ static int is_sdca_endpoint_present(struct device *dev,
+ 	struct sdw_slave *slave;
+ 	struct device *sdw_dev;
+ 	const char *sdw_codec_name;
+-	int i;
++	int ret, i;
  
--	/* Prepare arguments for the the tracer func */
-+	/* Prepare arguments for the tracer func */
- 	sub	x0, x30, #AARCH64_INSN_SIZE		// ip (callsite's BL insn)
- 	mov	x1, x9					// parent_ip (callsite's LR)
- 	mov	x3, sp					// regs
-diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index 870953b4a8a7..9886bebc7263 100644
---- a/arch/arm64/kvm/arm.c
-+++ b/arch/arm64/kvm/arm.c
-@@ -2448,7 +2448,7 @@ static void kvm_hyp_init_symbols(void)
- 	kvm_nvhe_sym(__icache_flags) = __icache_flags;
- 	kvm_nvhe_sym(kvm_arm_vmid_bits) = kvm_arm_vmid_bits;
+ 	dlc = kzalloc(sizeof(*dlc), GFP_KERNEL);
+ 	if (!dlc)
+@@ -1308,13 +1308,16 @@ static int is_sdca_endpoint_present(struct device *dev,
+ 	}
  
--	/* Propagate the FGT state to the the nVHE side */
-+	/* Propagate the FGT state to the nVHE side */
- 	kvm_nvhe_sym(hfgrtr_masks)  = hfgrtr_masks;
- 	kvm_nvhe_sym(hfgwtr_masks)  = hfgwtr_masks;
- 	kvm_nvhe_sym(hfgitr_masks)  = hfgitr_masks;
+ 	slave = dev_to_sdw_dev(sdw_dev);
+-	if (!slave)
+-		return -EINVAL;
++	if (!slave) {
++		ret = -EINVAL;
++		goto put_device;
++	}
+ 
+ 	/* Make sure BIOS provides SDCA properties */
+ 	if (!slave->sdca_data.interface_revision) {
+ 		dev_warn(&slave->dev, "SDCA properties not found in the BIOS\n");
+-		return 1;
++		ret = 1;
++		goto put_device;
+ 	}
+ 
+ 	for (i = 0; i < slave->sdca_data.num_functions; i++) {
+@@ -1323,7 +1326,8 @@ static int is_sdca_endpoint_present(struct device *dev,
+ 		if (dai_type == dai_info->dai_type) {
+ 			dev_dbg(&slave->dev, "DAI type %d sdca function %s found\n",
+ 				dai_type, slave->sdca_data.function[i].name);
+-			return 1;
++			ret = 1;
++			goto put_device;
+ 		}
+ 	}
+ 
+@@ -1331,7 +1335,11 @@ static int is_sdca_endpoint_present(struct device *dev,
+ 		"SDCA device function for DAI type %d not supported, skip endpoint\n",
+ 		dai_info->dai_type);
+ 
+-	return 0;
++	ret = 0;
++
++put_device:
++	put_device(sdw_dev);
++	return ret;
+ }
+ 
+ int asoc_sdw_parse_sdw_endpoints(struct snd_soc_card *card,
 -- 
-2.31.1
+2.39.5 (Apple Git-154)
 
 
