@@ -1,239 +1,100 @@
-Return-Path: <linux-kernel+bounces-876658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7C06C1C32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:45:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8A4C1C3C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B7D5F5A10C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1394A802514
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CB7354713;
-	Wed, 29 Oct 2025 16:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B4E2EC088;
+	Wed, 29 Oct 2025 16:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="Kkxox6cT"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="b1RkBQGD"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9078D34E764;
-	Wed, 29 Oct 2025 16:04:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6C21A255C;
+	Wed, 29 Oct 2025 16:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753895; cv=none; b=oKFNBp7w1Hh3S9EUGsoXp0/W1lX2vYLE+SbWR4t8d9zl3+njp3Ibh1HeUwv/v6zO6h3EI81f8d4EWlOuDFMKjwVoKlFKRQ7Iv6NXX93oyLBtcKtuCC5qDSIPLIdWl0IS6/n+p9LMjW0lEwWGP9u498wXmgHlC8dPUB/cHkGSnN0=
+	t=1761753787; cv=none; b=CjK41x+c74xaFKT7tx9iLy8smjQ4EVKgZRxlTjuLCNdXumYbMzzohRxlZ6/KS27RWXN2d5MZ+3pnfRyDzYNd2gJOF8S929lZWh6uGEIV9nFOMCEKzRp+nXrxqKxIFCh8s52P1YBKuZiPqFN+J7SXJfj9jerRdRGlfN4yGY1eASA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753895; c=relaxed/simple;
-	bh=GtkjF7rfQn7TQm0crhYcfGtMpmzfYsF+k5h5qY8e3Co=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VT7h3vhW6S8KAJDzkF4LwJS+V1CUjLhDIAublPW8UwsGLrVoqL+MJ0x1HLwoAWTIpBytZgipSdglf45xQ086yzKECgcYmi7N1SMXYdQAjxCiiaHT3swco/HB80zFY9lrCEZbJivAVJCoo6i0tk3CyS4U8IxWlvfB8grbmFtkHzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=Kkxox6cT; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1761753884;
-	bh=GtkjF7rfQn7TQm0crhYcfGtMpmzfYsF+k5h5qY8e3Co=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Kkxox6cTNzSSQ6rPmaegFAJ1n4+XfftClQ8criH4o2lvH3fRBlrMR0vbTIp8TGUEr
-	 xtjWQUd2e+9jWFA622muXj6/0Ik/o9eZucKqhB0xA1xXuWIbKc9iGbp7hmAnrY6V/g
-	 UIaNl5ESVwLP35C0vtAlv0DDaGPk4J1o9sGGiMBM=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 29 Oct 2025 17:03:02 +0100
-Subject: [PATCH 12/12] tools/nolibc: remove time conversions
+	s=arc-20240116; t=1761753787; c=relaxed/simple;
+	bh=uRNPV9MngKW+lezm1n1ktFoo6wCvoNd35Z5TJVwbwf4=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pnBvhI0Yo0Pnv0eZoJCCN2VsJ3RJtLdrs725j1JRK+n8X/utQnvrLXBKBGJ1CV/cPZAW2CfHvupng/4/Cd8m7CPQwZqIC8dfB7uTdgY73ot11j135Qy/mh1DnYFrP3uth5mK9YRFI8IG9bHd/nDSqrlkhIGpDmkDTJh+aYn455o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=b1RkBQGD; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 15B08406FB
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761753785; bh=QtzHjZyXHyMCInwQmhq+8jXm4YdKxK8TiahIvSTGhq8=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=b1RkBQGD9jhQSErffieuRihnAsquzKFoDYj22OS9bxmpBzx14/emKDJ7zAKUfVBwW
+	 4Z0glreF3/HPu0VInfok8qV8LQ0T11NgJXQa2iKSD076cSEIoAlHwtFRCjCz4SLjOe
+	 /e5dALvYeTBYOv0kajxNhMCUaVEt5jIFweU4rEQmz+GG8Q9+rm43rdvVCtzKe5G1KO
+	 PiykQx06/VnUM8pXP/opKjpWWVQcdPBsH9iSYppSyvMkXDYPPFlrHLIyzQ52QMnibl
+	 cVvFdKuqiInazDtNNPMFg452mX/cCVs7xO/yuDq7BPaVjV580wK6utVQgASpKac/U3
+	 uaf54QyY5OFZw==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 15B08406FB;
+	Wed, 29 Oct 2025 16:03:05 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Alex Shi <seakeel@gmail.com>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, Yanteng Si <si.yanteng@linux.dev>, Dongliang
+ Mu <dzm91@hust.edu.cn>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] Chinese-docs changes for v6.18
+In-Reply-To: <CAJy-Am=nupkp6V6L1oA5DPxFNKq=4qM=ZVxxLeAw+uSQGSVhrw@mail.gmail.com>
+References: <CAJy-Am=nupkp6V6L1oA5DPxFNKq=4qM=ZVxxLeAw+uSQGSVhrw@mail.gmail.com>
+Date: Wed, 29 Oct 2025 10:03:04 -0600
+Message-ID: <87o6ppr8zr.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251029-nolibc-uapi-types-v1-12-e79de3b215d8@weissschuh.net>
-References: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
-In-Reply-To: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761753881; l=6395;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=GtkjF7rfQn7TQm0crhYcfGtMpmzfYsF+k5h5qY8e3Co=;
- b=/PCU/C/63g9wiNu+eGhqLpwQAAEYVqDHCcw8Eup7UHr6uJdQjhW5dl+K/MRv2WgqqMKSake/a
- 5VwvTS4Q0tBAP5bMt2nnNPCiiG2u3NOXRuCCoaMTahOLt+wD+wtR0eQ
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Type: text/plain
 
-Now that 'struct timespec' and 'struct __kernel_timespec' are
-compatible, the conversions are not necessary anymore.
-The same holds true for 'struct itimerspec' and 'struct
-__kernel_itimerspec'.
+Alex Shi <seakeel@gmail.com> writes:
 
-Remove the conversions.
+> The following changes since commit f44a29784f685804d9970cfb0d3439c9e30981d7:
+>
+>   Documentation: update maintainer-pgp-guide for latest best practices
+> (2025-09-09 13:43:55 -0600)
+>
+> are available in the Git repository at:
+>
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/alexs/linux.git
+> Chinese-docs-6.18
+>
+> for you to fetch changes up to b5750c27d395f865030d2ab084c447e1df718dd6:
+>
+>   Revert "Docs/zh_CN: Translate skbuff.rst to Simplified Chinese"
+> (2025-10-26 21:33:45 +0800)
+>
+> ----------------------------------------------------------------
+> Chinese translation docs for 6.18
+>
+> This is the Chinese translation subtree for 6.18. It includes
+> the following changes:
+>         - docs/zh_CN: Add rust Chinese translations
+>         - docs/zh_CN: Add scsi Chinese translations
+>         - docs/zh_CN: Add gfs2 Chinese translations
+>         - Add some other Chinese translations and fixes
+>
+> Above patches are tested by 'make htmldocs'
+>
+> Signed-off-by: Alex Shi <alexs@kernel.org>
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/include/nolibc/sys/timerfd.h | 20 ++----------
- tools/include/nolibc/time.h        | 64 ++++----------------------------------
- 2 files changed, 8 insertions(+), 76 deletions(-)
+Pulled, thanks.
 
-diff --git a/tools/include/nolibc/sys/timerfd.h b/tools/include/nolibc/sys/timerfd.h
-index 5dd61030c991..ae3153b7635d 100644
---- a/tools/include/nolibc/sys/timerfd.h
-+++ b/tools/include/nolibc/sys/timerfd.h
-@@ -35,13 +35,7 @@ int sys_timerfd_gettime(int fd, struct itimerspec *curr_value)
- #if defined(__NR_timerfd_gettime)
- 	return my_syscall2(__NR_timerfd_gettime, fd, curr_value);
- #else
--	struct __kernel_itimerspec kcurr_value;
--	int ret;
--
--	ret = my_syscall2(__NR_timerfd_gettime64, fd, &kcurr_value);
--	__nolibc_timespec_kernel_to_user(&kcurr_value.it_interval, &curr_value->it_interval);
--	__nolibc_timespec_kernel_to_user(&kcurr_value.it_value, &curr_value->it_value);
--	return ret;
-+	return my_syscall2(__NR_timerfd_gettime64, fd, curr_value);
- #endif
- }
- 
-@@ -59,17 +53,7 @@ int sys_timerfd_settime(int fd, int flags,
- #if defined(__NR_timerfd_settime)
- 	return my_syscall4(__NR_timerfd_settime, fd, flags, new_value, old_value);
- #else
--	struct __kernel_itimerspec knew_value, kold_value;
--	int ret;
--
--	__nolibc_timespec_user_to_kernel(&new_value->it_value, &knew_value.it_value);
--	__nolibc_timespec_user_to_kernel(&new_value->it_interval, &knew_value.it_interval);
--	ret = my_syscall4(__NR_timerfd_settime64, fd, flags, &knew_value, &kold_value);
--	if (old_value) {
--		__nolibc_timespec_kernel_to_user(&kold_value.it_interval, &old_value->it_interval);
--		__nolibc_timespec_kernel_to_user(&kold_value.it_value, &old_value->it_value);
--	}
--	return ret;
-+	return my_syscall4(__NR_timerfd_settime64, fd, flags, new_value, old_value);
- #endif
- }
- 
-diff --git a/tools/include/nolibc/time.h b/tools/include/nolibc/time.h
-index 45df9b09d7b6..ab67f209c99f 100644
---- a/tools/include/nolibc/time.h
-+++ b/tools/include/nolibc/time.h
-@@ -18,20 +18,6 @@
- #include <linux/signal.h>
- #include <linux/time.h>
- 
--static __inline__
--void __nolibc_timespec_user_to_kernel(const struct timespec *ts, struct __kernel_timespec *kts)
--{
--	kts->tv_sec = ts->tv_sec;
--	kts->tv_nsec = ts->tv_nsec;
--}
--
--static __inline__
--void __nolibc_timespec_kernel_to_user(const struct __kernel_timespec *kts, struct timespec *ts)
--{
--	ts->tv_sec = kts->tv_sec;
--	ts->tv_nsec = kts->tv_nsec;
--}
--
- /*
-  * int clock_getres(clockid_t clockid, struct timespec *res);
-  * int clock_gettime(clockid_t clockid, struct timespec *tp);
-@@ -44,13 +30,7 @@ static __attribute__((unused))
- int sys_clock_getres(clockid_t clockid, struct timespec *res)
- {
- #if defined(__NR_clock_getres_time64)
--	struct __kernel_timespec kres;
--	int ret;
--
--	ret = my_syscall2(__NR_clock_getres_time64, clockid, &kres);
--	if (res)
--		__nolibc_timespec_kernel_to_user(&kres, res);
--	return ret;
-+	return my_syscall2(__NR_clock_getres_time64, clockid, res);
- #else
- 	return my_syscall2(__NR_clock_getres, clockid, res);
- #endif
-@@ -66,13 +46,7 @@ static __attribute__((unused))
- int sys_clock_gettime(clockid_t clockid, struct timespec *tp)
- {
- #if defined(__NR_clock_gettime64)
--	struct __kernel_timespec ktp;
--	int ret;
--
--	ret = my_syscall2(__NR_clock_gettime64, clockid, &ktp);
--	if (tp)
--		__nolibc_timespec_kernel_to_user(&ktp, tp);
--	return ret;
-+	return my_syscall2(__NR_clock_gettime64, clockid, tp);
- #else
- 	return my_syscall2(__NR_clock_gettime, clockid, tp);
- #endif
-@@ -88,10 +62,7 @@ static __attribute__((unused))
- int sys_clock_settime(clockid_t clockid, struct timespec *tp)
- {
- #if defined(__NR_clock_settime64)
--	struct __kernel_timespec ktp;
--
--	__nolibc_timespec_user_to_kernel(tp, &ktp);
--	return my_syscall2(__NR_clock_settime64, clockid, &ktp);
-+	return my_syscall2(__NR_clock_settime64, clockid, tp);
- #else
- 	return my_syscall2(__NR_clock_settime, clockid, tp);
- #endif
-@@ -108,14 +79,7 @@ int sys_clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqt
- 			struct timespec *rmtp)
- {
- #if defined(__NR_clock_nanosleep_time64)
--	struct __kernel_timespec krqtp, krmtp;
--	int ret;
--
--	__nolibc_timespec_user_to_kernel(rqtp, &krqtp);
--	ret = my_syscall4(__NR_clock_nanosleep_time64, clockid, flags, &krqtp, &krmtp);
--	if (rmtp)
--		__nolibc_timespec_kernel_to_user(&krmtp, rmtp);
--	return ret;
-+	return my_syscall4(__NR_clock_nanosleep_time64, clockid, flags, rqtp, rmtp);
- #else
- 	return my_syscall4(__NR_clock_nanosleep, clockid, flags, rqtp, rmtp);
- #endif
-@@ -190,13 +154,7 @@ static __attribute__((unused))
- int sys_timer_gettime(timer_t timerid, struct itimerspec *curr_value)
- {
- #if defined(__NR_timer_gettime64)
--	struct __kernel_itimerspec kcurr_value;
--	int ret;
--
--	ret = my_syscall2(__NR_timer_gettime64, timerid, &kcurr_value);
--	__nolibc_timespec_kernel_to_user(&kcurr_value.it_interval, &curr_value->it_interval);
--	__nolibc_timespec_kernel_to_user(&kcurr_value.it_value, &curr_value->it_value);
--	return ret;
-+	return my_syscall2(__NR_timer_gettime64, timerid, curr_value);
- #else
- 	return my_syscall2(__NR_timer_gettime, timerid, curr_value);
- #endif
-@@ -213,17 +171,7 @@ int sys_timer_settime(timer_t timerid, int flags,
- 		      const struct itimerspec *new_value, struct itimerspec *old_value)
- {
- #if defined(__NR_timer_settime64)
--	struct __kernel_itimerspec knew_value, kold_value;
--	int ret;
--
--	__nolibc_timespec_user_to_kernel(&new_value->it_value, &knew_value.it_value);
--	__nolibc_timespec_user_to_kernel(&new_value->it_interval, &knew_value.it_interval);
--	ret = my_syscall4(__NR_timer_settime64, timerid, flags, &knew_value, &kold_value);
--	if (old_value) {
--		__nolibc_timespec_kernel_to_user(&kold_value.it_interval, &old_value->it_interval);
--		__nolibc_timespec_kernel_to_user(&kold_value.it_value, &old_value->it_value);
--	}
--	return ret;
-+	return my_syscall4(__NR_timer_settime64, timerid, flags, new_value, old_value);
- #else
- 	return my_syscall4(__NR_timer_settime, timerid, flags, new_value, old_value);
- #endif
-
--- 
-2.51.1.dirty
-
+jon
 
