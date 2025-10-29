@@ -1,120 +1,129 @@
-Return-Path: <linux-kernel+bounces-875816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04FBC19E2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:54:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D965C19E0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B957567FA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3DD81CC2D46
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F7F2FA0ED;
-	Wed, 29 Oct 2025 10:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC2D32B9BC;
+	Wed, 29 Oct 2025 10:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b="HFb/Lsp4"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MV3K0OsY"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 435A82D47FD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23BC24293C;
+	Wed, 29 Oct 2025 10:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734748; cv=none; b=AyUsia98lEf6T986+qzdT2r4N8g3K5OmyfyRl/EZM+PsCKay5cYPf7C7hk52ug6WZSacS4NGfvkL5zK1l8avv/5kXf5WSOssH8E2jgCHoWTNjPKArc/ZLKSqKoBXtLcoC19K/xOCApjybzc6+nA/e/oA7cFp8Lk5UADF0FpZxxc=
+	t=1761734753; cv=none; b=LaEnXsDyeWQg2mll9xErIFk3ivVkT2w2hFcaVr/dfoMiaPwNW6u+fJqb3A6WFXh1Q7OrXS//HAILySdQ5j531DFxxaguHlhwVzFOlN35j12rkKpdozBa2YPxnH4D/Kx37BmBakAg206CnrxROYBgX7ZzmQn5fSm2r7SvZJmUn9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734748; c=relaxed/simple;
-	bh=0tyHkxDgHNgvSmrogo42iKYjIzo7rgV6g6hOBIWoz3c=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itL3rYIvjxZyNqM9ftoAmWYnQwHNd6eohQbTsBR6pWjMWEYm1J/pcuq4PDePf7fRl2q+NCHRtYW/JvUzLpHbUGNyfH/m0hPQ6etd81ZOLsd4K05f8z22wGaFUz0IiX3+ETjurpDPE+BCrOF7EHr/k33XEDDesmNqvkP334gU6tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (4096-bit key) header.d=canonical.com header.i=@canonical.com header.b=HFb/Lsp4; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com [209.85.217.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 363863F6E8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20251003; t=1761734745;
-	bh=0tyHkxDgHNgvSmrogo42iKYjIzo7rgV6g6hOBIWoz3c=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=HFb/Lsp4LqRqC2XSWPGYnE6Y8ySIUGDWrcyoxT5adktWHUalgS6LbW9+1a99dhCIb
-	 vb6ppz1hnBmBLtNzmjorT4Fl7nXCB1xto7F378NX5WZduo6NtEg9AZhV8Z+ZcDnJ1v
-	 hwyXtPWHlrhCQMVMSDG8Rc9VPf5phYPUO5Nq1jPvMgudaIIP70sQXnlg3C44wFOSMv
-	 PX44tuz9vVAKlnGp+e2kQwPaDTMn8sN2XP3GPeMCLOuXjXNDG0HrsxDBDgGTNvsoxW
-	 cy/PJxyyWBUVtRvfnN2WHoL6iHg0WWVztsMwA/j+rfNMZXgspSp3Y4rUG/ft9m0ItG
-	 mqWgyXjDuU9gIlLo1f0v630RbajClZMgfylz3AEWiZXjHMQigZPkfzvGj4AGAcSB49
-	 h167cKv0i2OAocXT5uPHAJyeBrl4dcH5KOSNgjFbHdsBCdztUOON7rr3En5Focyrj+
-	 xHCkQNEU52X1ikzKE1wnvhD7pvnwqVsFBfm2Ux7PmY9wnBZPd9dZIEQUYX67u3mJmW
-	 fJ8HcqI8J9Kxn3i47l5YXBwcPjxIz6nNWzyO7ndodJVi8D6R5dxHvuQ3P1Tgh2HESn
-	 OT7yKrPOEa+vw8Xq8L0h7q0QIGwveCXkmXxYJ33q4MMlxj/JLhihdsvuLHaoxFeTr6
-	 sgZ3+LWsVQttdRVKZfJQYVPQ=
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-5db21e347d4so16076836137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:45:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761734743; x=1762339543;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0tyHkxDgHNgvSmrogo42iKYjIzo7rgV6g6hOBIWoz3c=;
-        b=ltAZ+xt1Je/DAmOmOuBS+8UBsynfe86vQK0Z04eQxz/E16h0hgBjZXt7c7pGCNBCyz
-         6g7Hz+VFBIabSeX0HNVa72Ogq31RlvaUJODgLNoCig3SdaISw38WrW88gQ33AyLGDcpv
-         cvTy4tZTfiI8/+AQyBpdSFqBDA8OoNWvyeCl6NiR+cr8r5Ewoholy3HsuE07PlUIzVR0
-         kFsPjP/HKZzpRjfYNiludzV2i5SYIiQmrFlHigbqSY6NJs3vs00vzwfgL+MYfEb8Mwtw
-         +sW66Y/PSvnAV+XRo0YVL+T8Ts3K2Zv1i4Pkg5jGju2kJuu2EIrOb8ICUmr/+/ous8eb
-         ySsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXivzU0wA/Cw7Pga8JC1/In/xRxYaMSItBan8BCvGqqryzkkmxuRzHVBEc1sfn0SJr0gXp7DszsNVzsSz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzugWDw9k7OTYJuRF5qf54Gs8GXMUjYEOHLvjDcD+MznCIKkiRc
-	Z2/JVRrOecF6/nmBxIggUbqfIJwVRf0OgbBmHXsj3uvFN20WsAhLfwTUsv9KML7DLiWo0cT7Vx3
-	MxgbkqEWzS1pjHmo09qK1KJKAVinHq+nbMeP6oFODzg2qQ7Zba26Gk9qD615NOmlUT/xGKTXQjx
-	d/d/ax0N2jvM+/ruBWnYN0VxLFOT5D0QLWcoRCQgqGLGVrhkqz0LJMxiPz
-X-Gm-Gg: ASbGncts9ZMO4HrF9AughWsn4SuIHHrQJQO9O7pFWZ6+uXdGjNLeq3YJkMDCLgh+6b6
-	ggzgZvkl8/Rhvm6QPEJ0R2PizyECGueCg4KI22fJq06iqMcbgWSga9ba7D1BI8tS6mlnK02GIpH
-	hx6GNgiavQQiAKVYc+LrnoFpLAPRplzlLczObfqldjIKIvHlcYbhB2j8kad5deoHoM9qJn3Kn7E
-	hrgAkYoS3Pn
-X-Received: by 2002:a05:6102:66cb:b0:5db:3c5b:abe7 with SMTP id ada2fe7eead31-5db90577019mr433728137.4.1761734743669;
-        Wed, 29 Oct 2025 03:45:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFOVt8iQYzU/SmRrxo+cWMPRTylIgThuFXCVvWS3O6j7CcEyxEorxIzby6E/hdIkwnQRzyJ6Gq3Z30LFhvJABU=
-X-Received: by 2002:a05:6102:66cb:b0:5db:3c5b:abe7 with SMTP id
- ada2fe7eead31-5db90577019mr433723137.4.1761734743376; Wed, 29 Oct 2025
- 03:45:43 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 29 Oct 2025 03:45:41 -0700
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 29 Oct 2025 03:45:41 -0700
+	s=arc-20240116; t=1761734753; c=relaxed/simple;
+	bh=gp1J/3XvL43QuO/PbnJy0L/Um1JZ738iV4lNmjvkcIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LDho7P+kgGFutz4NCtphp19GusORIuRZNMkPHAcclxdzAsZCh2INUSmkACVeOR5NlDiV68UY/XIzqw/XAY2ZDPNE6pWr8Y41twnW6sZAdAa8d8FpbfOFTvsLhZHv1pgKbPAWy/zQsM5q0r5B6mfWAOPz8yB4OitngxjTsw7QNFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MV3K0OsY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OLEcKOx+r/E6W6c62wz9ndwid6HQuJrvFy2p+wBounI=; b=MV3K0OsYRnrK1Rr/Pbqu/uPwNc
+	5Kt9NRV4bli4gteiGL5eMwMdvT0+e6ioIlk/VYB1rFt8sZMiUAqUfMOB5IKjPWVD66NiRJnh63HGV
+	YkqVTixFwk3ov98ZkA7NGspmfpGbgq0vOdj4Qusw/4ISvkIh5wDDEcB6U9qzS75XEDuc1siOxrN2x
+	KMWXHbPJsizooWvAz4NvrHsNwRKdVc7couXfYBR9sSDzvyX+hNJjUI5FD/lUxG+IrcQ8hbwol9cAh
+	19YOAUOy4Q1Pye+/A028MIL96RqQKdpLUe9cy9ZpObGBXn98cdv/nBNythqW1nP1Rft0+Pe0Ujsjp
+	d4TGm0Sw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE3gY-00000007k01-1TcV;
+	Wed, 29 Oct 2025 10:45:48 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 57694300323; Wed, 29 Oct 2025 11:45:46 +0100 (CET)
+Date: Wed, 29 Oct 2025 11:45:46 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>,
+	Andrea Righi <andrea.righi@linux.dev>,
+	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
+Subject: Re: [PATCH v2 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
+ called from anywhere
+Message-ID: <20251029104546.GI3419281@noisy.programming.kicks-ass.net>
+References: <20251025001849.1915635-1-tj@kernel.org>
+ <20251025001849.1915635-4-tj@kernel.org>
+ <aP-3vOtH9Dyg_R9w@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20251029094429.553842-1-jiangfeng@kylinos.cn>
-References: <20251029094429.553842-1-jiangfeng@kylinos.cn>
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-User-Agent: alot/0.0.0
-Date: Wed, 29 Oct 2025 03:45:41 -0700
-X-Gm-Features: AWmQ_blVMwdcu26nurRyUZs5wcTHqNKLb4D73h1KM2q_eXnA-ueZisVJmUt935s
-Message-ID: <CAJM55Z9SMwV0Lrf2i-D+1fe4L+v1M6aC1hrQoOWi6Rc1PA-XTQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] riscv: Build loader.bin exclusively for Canaan K210
-To: Feng Jiang <jiangfeng@kylinos.cn>, alex@ghiti.fr, aou@eecs.berkeley.edu, 
-	masahiroy@kernel.org, nicolas.schier@linux.dev, palmer@dabbelt.com, 
-	pjw@kernel.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP-3vOtH9Dyg_R9w@slm.duckdns.org>
 
-Quoting Feng Jiang (2025-10-29 10:44:28)
-> According to the explanation in commit ef10bdf9c3e6 ("riscv:
-> Kconfig.socs: Split ARCH_CANAAN and SOC_CANAAN_K210"),
-> loader.bin is a special feature of the Canaan K210 and
-> is not applicable to other SoCs.
->
-> Fixes: e79dfcbfb902 ("riscv: make image compression configurable")
-> Signed-off-by: Feng Jiang <jiangfeng@kylinos.cn>
+On Mon, Oct 27, 2025 at 08:19:40AM -1000, Tejun Heo wrote:
+> The ops.cpu_acquire/release() callbacks are broken - they miss events under
+> multiple conditions and can't be fixed without adding global sched core hooks
+> that sched maintainers don't want.
 
-Sounds reasonable to me.
+I think I'll object to that statement just a wee bit. I think we can
+make it work -- just not with the things proposed earlier.
 
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+Anyway, if you want to reduce the sched_ext interface and remove
+cpu_acquire/release entirely, this is fine too.
+
+I might still do that wakeup_preempt() change if I can merge / replace
+the queue_mask RETRY_TASK logic -- I have vague memories the RT people
+also wanted something like this a while ago and it isn't that big of a
+change.
+
+> There are two distinct task dispatch gaps that can cause cpu_released flag
+> desynchronization:
+> 
+> 1. balance-to-pick_task gap: This is what was originally reported. balance_scx()
+>    can enqueue a task, but during consume_remote_task() when the rq lock is
+>    released, a higher priority task can be enqueued and ultimately picked while
+>    cpu_released remains false. This gap is closeable via RETRY_TASK handling.
+> 
+> 2. ttwu-to-pick_task gap: ttwu() can directly dispatch a task to a CPU's local
+>    DSQ. By the time the sched path runs on the target CPU, higher class tasks may
+>    already be queued. In such cases, nothing on sched_ext side will be invoked,
+>    and the only solution would be a hook invoked regardless of sched class, which
+>    isn't desirable.
+> 
+> Rather than adding invasive core hooks, BPF schedulers can use generic BPF
+> mechanisms like tracepoints. From SCX scheduler's perspective, this is congruent
+> with other mechanisms it already uses and doesn't add further friction.
+> 
+> The main use case for cpu_release() was calling scx_bpf_reenqueue_local() when
+> a CPU gets preempted by a higher priority scheduling class. However, the old
+> scx_bpf_reenqueue_local() could only be called from cpu_release() context.
+> 
+> Add a new version of scx_bpf_reenqueue_local() that can be called from any
+> context by deferring the actual re-enqueue operation. This eliminates the need
+> for cpu_acquire/release() ops entirely. Schedulers can now use standard BPF
+> mechanisms like the sched_switch tracepoint to detect and handle CPU preemption.
+> 
+> Update scx_qmap to demonstrate the new approach using sched_switch instead of
+> cpu_release, with compat support for older kernels. Mark cpu_acquire/release()
+> as deprecated. The old scx_bpf_reenqueue_local() variant will be removed in
+> v6.23.
+> 
+> Reported-by: Wen-Fang Liu <liuwenfang@honor.com>
+> Link: https://lore.kernel.org/all/8d64c74118c6440f81bcf5a4ac6b9f00@honor.com/
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+
+Yeah, this Changelog is much better, thanks!
+
+6.23 is a long time, can't we throw this out quicker? This thing wasn't
+supposed to be an ABI after all. A 1 release cycle seems fine to me ;-)
 
