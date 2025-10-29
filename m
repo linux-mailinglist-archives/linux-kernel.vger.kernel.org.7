@@ -1,106 +1,139 @@
-Return-Path: <linux-kernel+bounces-876520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E15EC1BA8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:30:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D400C1BFDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF94189681E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:30:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4951E5C1B7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FD43358B0;
-	Wed, 29 Oct 2025 15:30:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5FB1F5827;
+	Wed, 29 Oct 2025 15:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WdfjfiNw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AyPmYQXN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3208D2D879A;
-	Wed, 29 Oct 2025 15:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D13D2BEC28;
+	Wed, 29 Oct 2025 15:30:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751817; cv=none; b=e+Wbhlgj8cu2o8jaTA/4Qc5oJNJYNrFY5GPadK2x3O7ropgxom3YsA2EibR2j5bouErrB1JaRaOJLp4IH1son83NZW3AUJO1GG7iB/YSimNiA/Sa1+/vZ94nsrgDFCUxIRceeT3GDcO+lyACDh2YRmXstXcag66lkfZsZ8v+o2I=
+	t=1761751828; cv=none; b=hK/vNQVCfNWD8wlXzkUwxjnWuo1Dx3EjEhbEaPhjHACXXqdwXVeV4Ggs+OnTe52VhwsM/ltWa/jg5kHoU1eGFY3EA7MdmTnMeYXMjTKXc1lOtNJj4G5wWYOTQQhmaI1pvm8x5enbo8yxkl9xOUvjcTslpPkms7zy7K+gqnaGxuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751817; c=relaxed/simple;
-	bh=U9mGeEcrHqinq3HxjVPLJq14ZfqhrhMXcqrSU/F4H50=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=PRZaCx7EbmeZx9Apgr1rf2twLSqElHvZZ6MumDVfN7Yv5cNdAjFlXQTfT06vU3q0crVQalMD6ky48CmfiEq6Q04zZiov0WLPXSWom5n8mVfII64UnOr8IUZVxXeUo8C5LOJQOe1PmAuNV6ANxUBVvbbd7WuL6E4vWClcoLWknJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WdfjfiNw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1B7EC4CEF7;
-	Wed, 29 Oct 2025 15:30:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761751816;
-	bh=U9mGeEcrHqinq3HxjVPLJq14ZfqhrhMXcqrSU/F4H50=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=WdfjfiNw+1jh+N9+Eg8fRC4v1MwTmrzU4Zis7KzPrwjpee/pB461hVtmuDoQU+S0R
-	 J2OWERNJft+bd2JSZJe6h+AjXZ3eOa/Tf3j0bXYCBFfx1N2PdGERUiVZ6PQN3+N8LI
-	 pqHRJB7+ncXIw/Hb6pZfhW5zypvjUYMlgs9BgTCxF+WWUY4Qa8FZs68XsRc5C/EI5U
-	 W6sC5NL8JirxIxmOD8zJw7VTFluocMK0K7tjvmLrHywp8jN69AILYQXTvIR9Cir9pJ
-	 DFmMD7x3JmOQFg21TI1xF+6ZBGjWdTqpqsNAmxJv+slivZKDYYnJVTRKs5XhbCh0f1
-	 c3ladtwNtSZ0Q==
+	s=arc-20240116; t=1761751828; c=relaxed/simple;
+	bh=QI+3NuHAULegYSg+VL29kjpFXdr9o+ejvnVWqLJLfPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S9MsB5tSFJIJZ9AF+oQGQWpPKQyRNrS6n2Lj5EIcIjNti1+IEpVx5senbJDchaRO2rGePiKvmOo1aMS6pgKUH6CdJjSoQh4kzKeWu3+2lKT0yQxbakFcp7QeCzLPNbWjBdcmIZjPda6nyftzHhxTCusnv7u61kCMQ+yGNUOm+go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AyPmYQXN; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761751827; x=1793287827;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QI+3NuHAULegYSg+VL29kjpFXdr9o+ejvnVWqLJLfPA=;
+  b=AyPmYQXNmRCE/jeEW46V2J1bHy5w878fG3PdTGafbU5e60Tj6kPP4Y7d
+   8eaKVhgb9QyB3/1sWEKO1iHyWmd62SsWKtq5MGM+kK9nfa//tDVlpQ66C
+   c4gSnzOfa2i0SXLyaCEv5nUEuJ+pEs6vHRx6fQz5UacDOfVDU6wrG3imf
+   zewErOVbTgVPRd3l3D/YgjjOXQ0PKWS/ntTYzmvn50MBtF9w4RzgSNJh5
+   UpmnLEwXBKMA3h0u8tkgiICKTyHGonkM+Ef4fWq/wYOFwUgTb4NdoiN+L
+   hwDke3gj732KR1AXlNRX/8BjYYhIh/ZyPzh3fQkAI0rPXVtCemNvtuU12
+   w==;
+X-CSE-ConnectionGUID: C7GA/+psTYePIrq5Jt606Q==
+X-CSE-MsgGUID: XpjhBACIRGa/o9kfzv7y1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74994808"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="74994808"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:30:26 -0700
+X-CSE-ConnectionGUID: QAp6n/FITk6+MHT+dMkLdA==
+X-CSE-MsgGUID: 2K0V7+sYTO664w/WZy1PQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="185580899"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:30:23 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vE87w-00000003eWe-2GpP;
+	Wed, 29 Oct 2025 17:30:20 +0200
+Date: Wed, 29 Oct 2025 17:30:20 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Raag Jadav <raag.jadav@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+Message-ID: <aQIzDItA9vo0b9FB@smile.fi.intel.com>
+References: <20251029133323.24565-1-ansuelsmth@gmail.com>
+ <20251029133323.24565-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 16:30:11 +0100
-Message-Id: <DDUWW90NZIDY.2TVA8S0RDSXZJ@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH 2/8] rust: device: introduce Device::drvdata()
-Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
- <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
- <acourbot@nvidia.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
- <pcolberg@redhat.com>, <rust-for-linux@vger.kernel.org>,
- <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20251020223516.241050-1-dakr@kernel.org>
- <20251020223516.241050-3-dakr@kernel.org> <aQIPvaFJIXySV-Q5@google.com>
-In-Reply-To: <aQIPvaFJIXySV-Q5@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029133323.24565-3-ansuelsmth@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed Oct 29, 2025 at 1:59 PM CET, Alice Ryhl wrote:
-> Are you going to open that docs PR to the Rust compiler about the size
-> of TypeID that we talked about? :)
+On Wed, Oct 29, 2025 at 02:33:21PM +0100, Christian Marangi wrote:
+> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
+> case for some Google devices (the OnHub family) that can't make use of
+> SMEM to detect the SoC ID.
+> 
+> To handle these specific case, check if the SMEM is not initialized (by
+> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
+> OF machine compatible checking to identify the SoC variant.
+> 
+> Notice that the checking order is important as the machine compatible
+> are normally defined with the specific one following the generic SoC.
+> (for example compatible = "qcom,ipq8065", "qcom,ipq8064")
 
-Yes, I will -- thanks for the reminder.
+Misplaced period, should be at the end of closing parenthesis.
 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
->
->> +// Compile-time checks.
->> +const _: () =3D {
->> +    // Assert that we can `read()` / `write()` a `TypeId` instance from=
- / into `struct driver_type`.
->> +    static_assert!(core::mem::size_of::<bindings::driver_type>() =3D=3D=
- core::mem::size_of::<TypeId>());
->> +};
->
-> You don't need the "const _: ()" part. See the definition of
-> static_assert! to see why.
+...
 
-Indeed, good catch -- same for the suggestions below.
+>  	ret = qcom_smem_get_soc_id(&msm_id);
+> -	if (ret)
+> -		goto exit;
+> +	if (ret) {
+> +		if (ret != -ENODEV)
+> +			goto exit;
 
-> Also, I would not require equality. The Rust team did not think that it
-> would ever increase in size, but it may decrease.
->
->>  /// The core representation of a device in the kernel's driver model.
->>  ///
->>  /// This structure represents the Rust abstraction for a C `struct devi=
-ce`. A [`Device`] can either
->> @@ -198,12 +204,29 @@ pub unsafe fn as_bound(&self) -> &Device<Bound> {
->>  }
->> =20
->>  impl Device<CoreInternal> {
->> +    fn type_id_store<T: 'static>(&self) {
->
-> This name isn't great. How about "set_type_id()" instead?
->
-> Alice=20
+	if (ret == ...) {
+		...
+	} else if (ret)
+		goto exit;
+
+Even patch will look better after that.
+
+> +		/* Fallback to compatible match with no SMEM initialized */
+> +		if (of_machine_is_compatible("qcom,ipq8062"))
+> +			msm_id = QCOM_ID_IPQ8062;
+> +		else if (of_machine_is_compatible("qcom,ipq8065") ||
+> +			 of_machine_is_compatible("qcom,ipq8069"))
+> +			msm_id = QCOM_ID_IPQ8065;
+> +		else if (of_machine_is_compatible("qcom,ipq8064") ||
+> +			 of_machine_is_compatible("qcom,ipq8066") ||
+> +			 of_machine_is_compatible("qcom,ipq8068"))
+> +			msm_id = QCOM_ID_IPQ8064;
+> +	}
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
