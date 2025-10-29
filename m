@@ -1,54 +1,81 @@
-Return-Path: <linux-kernel+bounces-875275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED45C1891E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:59:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D45C18937
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:01:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91291C83967
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BB5D424D07
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABD23090D5;
-	Wed, 29 Oct 2025 06:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA6A30BB9E;
+	Wed, 29 Oct 2025 07:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o/f2BvsK"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qt9O+/xp"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17ED2236E3
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28382ED846
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721169; cv=none; b=o6noUOJsTg/PEVUqPVB/j17lcxeahRirYCwOvP80eIm+rjBaS6l+z5MKk+AKvc+O89DV+TOa6yNhe9tLEdYeQVHRQzIBZYyK0IuZh2q7atYBwXYvR49S6YGVNXPqiBDDmNE5tXw7bipjaDyzS57tyk3cL2jxMpnoRRNdGwftit0=
+	t=1761721222; cv=none; b=f0S9zm1Ug2q2uqwhya2tWaJXZi08eha0jpR34eUXMbD5uxFyv6FZf1L/eurV56Zh+amKnVRIVdYN45cDTtXxx1xnBu299+e/EJdZGuv817/I/gEGSrOseiMP+VOYrrmrbUpKqIPWYmzjRxH5vbletMil176WDLk8ItEgAvhGoR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721169; c=relaxed/simple;
-	bh=kWhnFmEBQExl8DKtrg8teAgBLG0Bzqsg1+3VyWXOmm4=;
+	s=arc-20240116; t=1761721222; c=relaxed/simple;
+	bh=gkjQTtCLf0j42+7c4QiatRaAEiOfdoHMhDAaPnHUHTE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r+dvksYWAN6cNxPa0FROiWy7ESHtMlsLCYEVp2YthXS97LF/az/9bo0WxDZJvXWHfE4vFxLsnEwuApGIC4izxkPy1Xk5H/K/yDnV37ldfrbzyFiieJCh7MIFSXYHGTvQY8VrscodABXK4ZYXz9vGGAatk8YHYZISmwyYvoMqoAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o/f2BvsK; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id EFDE11A1722;
-	Wed, 29 Oct 2025 06:59:23 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C0F63606E8;
-	Wed, 29 Oct 2025 06:59:23 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D513F103115AD;
-	Wed, 29 Oct 2025 07:59:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761721162; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=F+KTjI1TM7mg6rcCTezA/+UdyBmDty2R5itDbwstprQ=;
-	b=o/f2BvsK1UFERMGggVndtxtQP6Off6yNARbRDm45ax8eVzx6q68dtBRTepmeXOju2Zrq3a
-	jaH+noqfpaC8Gu9aTjShhjImZRq0X0lMCzzDXyVJkOV7o4wSw+RMjBH+bXzHKaF9tkTROV
-	xfMczXjE0dkfTw6GY31uyOk+FWRoY+ASP+3TunTC9hMPsZKyBfeTrlkyznVPrxgBCea9mQ
-	2Xi6esdXpqoG2p1KkVm/nKFR0lzaKIy8qT0jhpGlqno5jw0YDmn+UgDngAdIfvQmhRa5BL
-	6T0m1GLtxuLgtVRF0l+z7bz9fdL2atrz2GKf0Q2UD7zXVuJDHwzF8H2BIqxAaw==
-Message-ID: <71310577-7cea-42ce-8442-49e09e0b958a@bootlin.com>
-Date: Wed, 29 Oct 2025 07:59:10 +0100
+	 In-Reply-To:Content-Type; b=G8ObjYJvIMAIDEkdxXYHbQwCCBR01aPjZ6VBdZCUMwAZaAOpkns/WBO89C+BQnJNOK8abkz4n/iGn60eRBXSzf5KtS86kaCFRWOP+6UzGz9wlfKf32cJlN3ISvYLSM3+Q3b8CT3tLGTJBsa2E2Olt59aIevAJDOQTzyLa24Ccng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qt9O+/xp; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7a226a0798cso5718233b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:00:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761721220; x=1762326020; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJXiYv+0JaCGm/J27+WUyeK7V+2nQTA8wgQaLCrqXU0=;
+        b=Qt9O+/xpw+cg/cSQD29SeUf00j4R4fyrxs5tpZTExwE440AMJzVlThbsg5M0UNlfcu
+         LC2HILR/4Knc87y2fM8o0VU3zIhx9F6lku253LSHF9QvOwm2UrFMnbG7GzHg7CrG+PY+
+         fLrf5L05HdvxtTZ+GRiP2uiRFwJTYGUl+4n1U/UGObfJ0fCgL1AndvXfopZcFkVv4VWt
+         OpXGAnWWL8LPTuCSQggIh7U/ieUQJ7M7u/nEOnxrlv1bKnlngu6pxd+YoZr+cMvKimtQ
+         7k2YmksjcYpg8nFFB/YLzyBkJtzn6qmcypboJzTo5VJ5YEKslie56H6ub7e5OyHwCwjN
+         lr6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761721220; x=1762326020;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KJXiYv+0JaCGm/J27+WUyeK7V+2nQTA8wgQaLCrqXU0=;
+        b=W6kkl7+PONjeAfR3rs9GkW9VriYNfPfrM48CSYUIpyI4PdGRv4XHd5vp2ZPKll5pGL
+         ehvcLtI0Y68o4qMt4B61M9YYczL2mtTlhy7sksIBlxzch9Y4aHA6tbd3PBsOOBj4Keba
+         VN6RLyHuznOGBL5tRMSZYvq3ZUoCEIwBTgH+gL29FBObB3bFj0WCx8FMONeCZbdggILC
+         NRNmXYc2XzskiLyU3dpSEsuxohpWBuYfajydGO/VEmZI36VuZ+y1TTpqUnPKpMXA244X
+         QNI1yVfjQXSSvuORRrgz93eiC0LE+7Ju3Nu1k9j+ItPsa+TdJFyF5WhIwWs0f8E1kf32
+         eyMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBihi1T9zSKRMS6+Ek6z1JJfDz2Nm+dtiuqcbEuxDjidQcIMijAfg35Wcwtp9U3nm/WFHWmF7zhALks+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdWjYM0u46O6VOWkFugOd2PWWt6+dNzwvtyMrIHqoy7y6PdWeL
+	cBzbl7asuhTY5Z0xLWGFobnirj++W2YYwb6YFt9g/3ak40gKrBWStgar
+X-Gm-Gg: ASbGncvpcZFsVBMBRNxr2iOqo0V6PtgRaskHiqltCyfM92nNm8ZU5CIwPH8EZg3KVVI
+	tOtTpimEKBqYn13ddFAFbGNXDSJQqvQWRQkjjBYKprp9FkbBo4AIY/q/3WkQlnKmAcL02lV/HKZ
+	Ae10A8tWjSokw+UUjHFaKsOs5/PWzDop/cIRD48FGrZ6iMCy1HKFfCLBaPudtqWVFcoHhYTMtNj
+	iEEkqS3ub0AMHuls+YW6TM2/nzpIiHk+EiW3UG3mnYiOizV6LgA4oHADAzkppfREm9ahpT70muw
+	++Zux1KOi/ohf5whRgdbPL8wKIocSHw5lmtq3UUWB+oBFt+aRzkkVoio/1PVGeuL6a+Bo0BzMuo
+	s2iWNmek/1kZY2N0ZCAYZPhY/x661j5J2wmsEPQs/HWm6tjIXHB5j4ETslM6ffu9IetDXrKYbmB
+	T62PwB6OlEUAgUdrb5l0gNhQkyj1GuBpw/tD37+Q5goP8QPR86G48=
+X-Google-Smtp-Source: AGHT+IFPikg+hMI4IFqA6vaJO2l1s8acnlRUaJizqFH3e6TpbdLv1AcvrswIyXSpjFqa9G3n1MszZQ==
+X-Received: by 2002:a05:6a00:1391:b0:7a2:7d09:cf40 with SMTP id d2e1a72fcca58-7a4e2cfc52emr2017185b3a.9.1761721219674;
+        Wed, 29 Oct 2025 00:00:19 -0700 (PDT)
+Received: from ?IPV6:2405:201:8000:a149:4670:c55c:fe13:754d? ([2405:201:8000:a149:4670:c55c:fe13:754d])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a4140168f7sm13939567b3a.11.2025.10.29.00.00.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 00:00:19 -0700 (PDT)
+Message-ID: <60657a94-8b91-41d5-9cf7-61ed5ceb2161@gmail.com>
+Date: Wed, 29 Oct 2025 12:30:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,89 +83,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] net: stmmac: Add a devlink attribute to
- control timestamping mode
+Subject: Re: [PATCH v3] net: ethernet: emulex: benet: fix adapter->fw_on_flash
+ truncation warning
 To: Jakub Kicinski <kuba@kernel.org>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
- Russell King <linux@armlinux.org.uk>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251024070720.71174-1-maxime.chevallier@bootlin.com>
- <20251024070720.71174-3-maxime.chevallier@bootlin.com>
- <20251028151925.12784dca@kernel.org>
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: ajit.khaparde@broadcom.com, sriharsha.basavapatna@broadcom.com,
+ somnath.kotur@broadcom.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, khalid@kernel.org,
+ david.hunter.linux@gmail.com, linux-kernel-mentees@lists.linux.dev
+References: <20251024181541.5532-1-spyjetfayed@gmail.com>
+ <20251028184254.1d902b50@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20251028151925.12784dca@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+From: Ankan Biswas <spyjetfayed@gmail.com>
+Autocrypt: addr=spyjetfayed@gmail.com; keydata=
+ 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
+ TRpGew2ozniUMliyaLH9UH6/e9Us
+In-Reply-To: <20251028184254.1d902b50@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+
+On 10/29/25 7:12 AM, Jakub Kicinski wrote:
+> On Fri, 24 Oct 2025 23:45:41 +0530 Ankan Biswas wrote:
+>> The benet driver copies both fw_ver (32 bytes) and fw_on_flash (32 bytes)
+>> into ethtool_drvinfo->fw_version (32 bytes), leading to a potential
+>> string truncation warning when built with W=1.
+>>
+>> Store fw_on_flash in ethtool_drvinfo->erom_version instead, which some
+>> drivers use to report secondary firmware information.
+> 
+> You are changing user-visible behavior to silence a W=1 warning.
+> I can't stress enough how bad of an idea this is.
+> Please find a better fix.. or leave this code be.
 
 Hi Jakub,
 
-On 28/10/2025 23:19, Jakub Kicinski wrote:
-> Sorry didn't get to review this in time.
-> 
-> On Fri, 24 Oct 2025 09:07:18 +0200 Maxime Chevallier wrote:
->> +   * - ``ts_coarse``
-> 
-> This is not a great name IMHO. Is "coarse" from the PRM?
+Thanks for the feedback. I felt this would be better than the value 
+appearing truncated to the user. However, yes this is not the ideal fix. 
+Will avoid modifying user-visible behavior.
 
-Yes, it uses "fine/coarse"
+An ideal fix may require a lot more changes, which may not be worth the 
+effort at this point, so I guess it is better to drop this patch.
 
-> It's the increment that's coarse, right? Not the timestamp
-> This naming confuses me greatly.
 
-That is true, the ts_ was added as this configuration is done based
-on the timestamping control registers, and is refered to as
-"timestamping control fine update" in the register defs :(
-
-So you are correct that in the end the clock frequency is coarsely
-adjusted.
-
-The patch was applied, should we revert or add another patch to rename
-that parameter ?
-
-> 
->> +     - Boolean
->> +     - runtime
->> +     - Enable the Coarse timestamping mode. In Coarse mode, the ptp clock is
->> +       expected to be updated through an external PPS input, but the subsecond
-> 
-> I guess the definition of "PPS input" got diluted but technically it
-> means Pulse Per Second, right? Here IIUC we need an actual 50MHz clock
-> fed in?
-
-For GM, yes indeed. I can update the doc accordingly.
-
-> 
->> +       increment used for timestamping is set to 1/ptp_clock_rate. In Fine mode
->> +       (i.e. Coarse mode == false), the ptp clock frequency is adjusted more
->> +       frequently, but the subsecond increment is set to 2/ptp_clock_rate.
->> +       Coarse mode is suitable for PTP Grand Master operation. If unsure, leave
->> +       the parameter to False.
-> 
-> My understanding based on your previous explanation is that basically
-> in one of the modes the frequency cannot be adjusted. It's only usable
-> if a very stable reference clock is fed into the device (or otherwise
-> we "trust" the clock that's fed in). So that's why Grand Master.
-> 
-> In the other mode we can tweak the frequency more accurately.
-> But it comes at a cost of the HW time incrementing 2x larger step.
-> 
-> If that's the case I think we should update the documentation and
-> rename the knob to indicate that it's the frequency adjustment that's
-> coarse.
-
-That's fine by me, just let me know abut the exact process, I can followup
-on that :)
-
-Maxime
+Best Regards,
+Ankan Biswas
 
