@@ -1,113 +1,106 @@
-Return-Path: <linux-kernel+bounces-876731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34077C1C22C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:38:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CCDC1C1D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77AD188443E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:33:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6E7CD3426A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E53A2F5306;
-	Wed, 29 Oct 2025 16:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C477E34C147;
+	Wed, 29 Oct 2025 16:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dsfb1GSa"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpph1lWv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1581B2BE7CD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0067034A76D;
+	Wed, 29 Oct 2025 16:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761755556; cv=none; b=FjPxBVEmW/ZFBQztnskMYLM/pv4muTjP/twL+BKxM8/uA/8CqQEOzL8XOcmvdX+YZHWHLuiQLuh6CJuDFkt7pEY1AM4d3wlua9jhjvN/gPrQMFvUtuQLGQBTD5/96xNkSxnug9i0iHCTIKtzk1zilpM2TJWL9F304WQrmbBKCVY=
+	t=1761755634; cv=none; b=kju8uGN7d20lD6QkFABzzbrmJmOTMyPzdiW40cOMCOyWbQxmgJXDYjfcoAHslhMshXAOJ5JbgGfNL3SZwi9tTWDyjcIAOCPtzELtuJYVbZEcDLjxyq37mygWbRopL3BYD/EaYqvy8+53yBmwhwMZ9MSvgVuOyKRiZBhTJOA+10g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761755556; c=relaxed/simple;
-	bh=Ca7xEzFRwrwszkpl4txHQpXwetMMS+OAj7NM+yP3tuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQGRNlgjbf2uBPV0cRsvrr5oLfL7Zm1O7OleMv0COqLjmLyGExD/Hs8Y8/zOxp3A37xJUWLsGn99CR7fhuI6VpTbAzA9Mht8mib2OX7BJrXkBvw1Fc3zPZd/0lVK10wcXC/CGhH76pEyHNv2zJ20xk8WOBsDacYJ0AbzU60zt1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dsfb1GSa; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761755543;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GOAJ/2xYVpU7WKRC8hlYtRql72lR/1lCG+XFgyo4CmM=;
-	b=Dsfb1GSa8mB+EMKzo+G38eO/WnewpdrJhs1oiAo1Li435FydEB6Afj4u9H9uG0Oe569RrQ
-	BLD+KIslC0Z3QEForE0vzS4NojqugJLrS7SM43Sa3lV6u/qQ+QmKHY2AH5w1Xzx1qbNt09
-	/ZiesvcXOAgBy7p1GCXac+1orbPZuA0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1761755634; c=relaxed/simple;
+	bh=LGi6MODFZls9CrCr3ugh6OSlLYqrlRDsSAt7naei7ck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdZFdjoQOGvKqFoYUesxde4oqqOmHP2Kf+nK7icb22RiU7WqtxO51Wkc6WgLG9U8LeWTFX0YlS5G6XWpyf3m9HJeaCXM9lJEZUnoDJBTteSRpxY98kXyuEFDBoh+KI7yh2TWFSy0V564wrjCmNO4BLI5dCZGHBsrm67DFzHIcJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpph1lWv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28EC0C16AAE;
+	Wed, 29 Oct 2025 16:33:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761755633;
+	bh=LGi6MODFZls9CrCr3ugh6OSlLYqrlRDsSAt7naei7ck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kpph1lWvH6yRtjf9i40827+1RXbebmo0ZQWcr6DIT77YMPZCdi4ps4po0VbwMQ8Oz
+	 4aB1MPG2mSm36IlhKds/vByYFqOcBRNwk/GkoNAa/C+CNMa6nBDbZ0hFzsoPT3YjaJ
+	 uS2Lt/xh/wtdYrQTefRp+zbWSsko8rYBwh6cQPi6MAGwn8ZT0Eq8MX8yo9gfpNJdUn
+	 qLFPEfZpTqjPEgH0s23N+XfgvIgx4wNeFqtElawFj/cC7RFbDIDXGclQxv6vT2an4M
+	 aJ1PZJaSoPFOexHriqJ1Gtxb1Gz6M2PLxfVihJMcqJVHy5iE9nJRb23tF+8jRaHFKK
+	 71FwYULh1jhaw==
+Date: Wed, 29 Oct 2025 09:32:16 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Harald Freudenberger <freude@linux.ibm.com>
+Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] KEYS: encrypted: Return early on allocation failure and drop goto
-Date: Wed, 29 Oct 2025 17:31:56 +0100
-Message-ID: <20251029163157.119000-1-thorsten.blum@linux.dev>
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Message-ID: <20251029163216.GA1603@sol>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+ <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com>
 
-Return ERR_PTR(-ENOMEM) immediately if memory allocation fails, instead
-of using goto and returning a NULL pointer, and remove the now-unused
-'out' label.
+On Wed, Oct 29, 2025 at 10:30:40AM +0100, Harald Freudenberger wrote:
+> > If the s390 folks could re-test the s390 optimized SHA-3 code (by
+> > enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
+> > would be helpful.  QEMU doesn't support the instructions it uses.  Also,
+> > it would be helpful to provide the benchmark output from just before
+> > "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
+> > and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
+> > functions".  Then we can verify that each change is useful.
+[...]
+> 
+> Picked this series from your ebiggers repo branch sha3-lib-v2.
+> Build on s390 runs without any complains, no warnings.
+> As recommended I enabled the KUNIT option and also CRYPTO_SELFTESTS_FULL.
+> With an "modprobe tcrypt" I enforced to run the selftests
+> and in parallel I checked that the s390 specific CPACF instructions
+> are really used (can be done with the pai command and check for
+> the KIMD_SHA3_* counters). Also ran some AF-alg tests to verify
+> all the the sha3 hashes and check for thread safety.
+> All this ran without any findings. However there are NO performance
+> related tests involved.
 
-At the call site, check 'ascii_buf' with IS_ERR() and propagate the
-error code returned by datablob_format().
+Thanks!  Just to confirm, did you actually run the sha3 KUnit test and
+verify that all its test cases passed?  That's the most important one.
+It also includes a benchmark, if CONFIG_CRYPTO_LIB_BENCHMARK=y is
+enabled, and I was hoping to see your results from that after each
+change.  The results get printed to the kernel log when the test runs.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- security/keys/encrypted-keys/encrypted.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+> What's a little bit tricky here is that the sha3 lib is statically
+> build into the kernel. So no chance to unload/load this as a module.
+> For sha1 and the sha2 stuff I can understand the need to have this
+> statically enabled in the kernel. Sha3 is only supposed to be available
+> as backup in case of sha2 deficiencies. So I can't see why this is
+> really statically needed.
 
-diff --git a/security/keys/encrypted-keys/encrypted.c b/security/keys/encrypted-keys/encrypted.c
-index be1f2118447c..25df00b7dbe9 100644
---- a/security/keys/encrypted-keys/encrypted.c
-+++ b/security/keys/encrypted-keys/encrypted.c
-@@ -276,7 +276,7 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
- 
- 	ascii_buf = kmalloc(asciiblob_len + 1, GFP_KERNEL);
- 	if (!ascii_buf)
--		goto out;
-+		return ERR_PTR(-ENOMEM);
- 
- 	ascii_buf[asciiblob_len] = '\0';
- 
-@@ -288,7 +288,6 @@ static char *datablob_format(struct encrypted_key_payload *epayload,
- 	bufp = &ascii_buf[len];
- 	for (i = 0; i < (asciiblob_len - len) / 2; i++)
- 		bufp = hex_byte_pack(bufp, iv[i]);
--out:
- 	return ascii_buf;
- }
- 
-@@ -932,8 +931,8 @@ static long encrypted_read(const struct key *key, char *buffer,
- 		goto out;
- 
- 	ascii_buf = datablob_format(epayload, asciiblob_len);
--	if (!ascii_buf) {
--		ret = -ENOMEM;
-+	if (IS_ERR(ascii_buf)) {
-+		ret = PTR_ERR(ascii_buf);
- 		goto out;
- 	}
- 
--- 
-2.51.0
+CONFIG_CRYPTO_LIB_SHA3 is a tristate option.  It can be either built-in
+or a loadable module, depending on what other kconfig options select it.
+Same as all the other crypto library modules.
 
+- Eric
 
