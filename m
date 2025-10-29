@@ -1,268 +1,228 @@
-Return-Path: <linux-kernel+bounces-876086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B482DC1AE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:46:56 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AAE2C1A885
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE34C6266B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:12 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F383C358D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FB470830;
-	Wed, 29 Oct 2025 13:01:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A192798E8;
+	Wed, 29 Oct 2025 13:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sjGAoRmS"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CBD153BD9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11982271450
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742895; cv=none; b=Jzka93GQUnAea19R7HDa2AHRBSZZbj5xFzYlAjuixqaHsVIQ7hkSRbDOPJw7+3bFEWcGLsJnLQs71KYuw9iHKY603zk/oTaWe4uzPZVhPWOMF7s1XKffXQT7sbusRhbjkbugvLZPLXZaGeTSo8b7bo8SsBsZS3+GkdiPgCkHFNM=
+	t=1761743004; cv=none; b=vCoziM7td8KbLttKGyyWQFeBbC+ueLtH0g4lUadzT8wRYBFlqtQUoSGJ5Thbq+7t9AV67j4eX8Kwi0FSViBau2FMw8QFgwXKlitJpEvtiZY26edHRpwVbtk7KyEt/0Qq91Ug4Ff/WZeHVxBE2lcbZ/L1RzSb8hEaHygbKbvaqc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742895; c=relaxed/simple;
-	bh=zhINIyNBIxbSz6z5BgTMThjlPu5ih/7UFryr1xO89+k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OiFAQa5DsxfnaqI5+pJVbMddCuZ+7nFFI7jahj2Ht2FX87jIcZWMyLrjyvOuQPngSPTID5ccMMRFvbW0e80d/RB3OpFuOwFXC1o2r2YCmn1SFSWi4GAgKdq8JuvKxO/SxAZXIKnwONtSAkvOmmx85qNO+CymVBw6XDZZfhMXBSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-945a5690cb4so1261010139f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:01:33 -0700 (PDT)
+	s=arc-20240116; t=1761743004; c=relaxed/simple;
+	bh=pi5yuhKxOE0klx8JCfsVD+GqZGX1kT6HdPKMNpthFto=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=KYuHuI+CULrIGj0404HDNlQuzJPDv5/zmPmfAQVD98RL6qRyNS02sV93i/z8Q7gxZ5uJlEJIQqmBrPazZ1CNm6bsae/7WAzyHoYM1c8UvKqq81Y13RCMS78W9pG8+i1qpjlMwKbMWY44qceOTUhWwDWJVb5d0m0W4ncDYaNUh+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sjGAoRmS; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3ee888281c3so5195790f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761743000; x=1762347800; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Udy7SqhBXKYC8gHDKeSCQJFDpbdKzPFYXaEf65zBeu4=;
+        b=sjGAoRmSWjF5qBw7a+8Zh3RcSGPUExLIbTwok0B0F5NrgzWUmC7sCgbSC33Ua58Odz
+         4ACsw7BYKI2crv3xjOh61dhmf+BChAXoV3o3KBsT7Z6WEAI6AdFL4CfJB0zsyYZ2r4W/
+         Ent6fV/syZmAh2lzhhsRYdSb0PnwzXsNtD9IO1PfB6mFKk22Gi0LbjdfAMZPJEdj9oIG
+         kTKVDHnd4jpNXIQqAPQVDuxGd2VDhrWm82e8WuV0jQ2JSIXgF3xIgmRAjoVlDtm8OA3E
+         r7rF97e4QSCWKcNgwT92zBlmxBLKYjIy54IuE3VQnicL7iGSrOK3Cjqn8ZyDez1US/50
+         ugXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761742893; x=1762347693;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qhc9/9BSZcBCT2PDLCFj4u2QQurrcg6m9v9HE8ceWrU=;
-        b=nebnuShnjhhecyHs8iPwSUSKZT2kmrDblK3cUPpMEOzgJ1U4VfN3dWJxpNJLi5Oxtw
-         2GAhZy2b0JotgWKw4OCc5GMv60uUVUqXaAiLs6dHtvjKVf5S8ci+cIs8o9k20ZmQ8jOb
-         qszKMv1OLOELDJCx8Jz4advgkhRcavAf8Xk+lApUqRDKZW7mUZfZ9lQvPRcbCOMTqVsd
-         ab0U2oeHylWnszFzweW6CSzLf/Vkv6MkRB2eowbAttsNge93TkMvukkJ9v8W9LPHtCNe
-         wlnRyONY1qs9pNRYInYcVw7SGZ7mq3hha+PqVkGaoMWzwnikMkjVeMi2WnP5pXFiC5Y0
-         FdmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU3vpmFoKf1Cl3RWk7NOaAE+l5Z/2bR/TjHcxmkNH2NzHGgXQQpIyaCrKf322gIj8y3cysg9eZ088LQIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8S8tQZD2jtSB5gvANMisOokCDed0dsNmTdtvY9xV9Q+tQSgjW
-	bTJKyD7oq7RJTE3gsIien/QBv1xAbtcMTX8sGHJnU1jk9Vop+ffkCB5GfdxYGqTdi1WEdHKKDu7
-	yHPnhuVv29NQKYSSiAZFx2H2ktlPoukk7EhswJTKelFTebOSk/erfQMpOZ/I=
-X-Google-Smtp-Source: AGHT+IGzZTTmtszlDZr4cDI5oEOBxJawItxGytprSH4d+qDgm7CDcD5qG6EYsPc4lL7/xyarsuozxoVfMNIeB8DF/qoZ+pDKatBk
+        d=1e100.net; s=20230601; t=1761743000; x=1762347800;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Udy7SqhBXKYC8gHDKeSCQJFDpbdKzPFYXaEf65zBeu4=;
+        b=fd+SzuCDDr4EH5AgcIA4gsZg//n58ZHYQZeKQG9pG617xv2FoqctijxskN2zBWY2ms
+         lyPfGXNKWZ+M6Eqib9v0eTnmPW11yXtVDiCvZdcldATMvRaSb9+CErWDy6v64Nih1o1u
+         gUzb6AHZIXB3rM4DJlbLrdoco1NuY/q1LCo099zAjks/rnt/4FBKhHaoFHMeuHUSjbN4
+         50ZwHiqalHO0SaBG1ocHUUB9sPQyKnDVXnuNC6kA0wmdfRPQtHYHY2UTD2LWHk1fAIzg
+         dQRtWPI70TcGcscmUwVfG7HPwiVKVKfVXzJDmNrUjaoF/d9h6IvUblAibkWh92Ad/U0O
+         g7UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8VaS811I96ZAlOCD39sWU58eI3geoKNI6NhLH3PE3HHuAItdgpyzbcM7O9PJan27wAw/DNqe1ovLIU2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRldcfnH8fjpjsDOLwdBtT/AKk8aOQo037772d6Ovyu6vJYWDa
+	8VA7pWBm0sEEN4ScY/tU3EtfCj6dvt5/2xJirLO3s32zH/9ephyQmaPjwrwAAT9By4z/+xHJelq
+	IOoLEEULejMwcms670A==
+X-Google-Smtp-Source: AGHT+IENECAAoljYNXJnRu1Y9gGPhJkJ3Bue+J1Hc+807eNndTdTYUWDuu128dSwta2oivz2LOgodjnqaCtDDIo=
+X-Received: from wrhm10.prod.google.com ([2002:a05:6000:180a:b0:427:60a:e74c])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:18a5:b0:429:8b44:57bc with SMTP id ffacd0b85a97d-429af002335mr2543993f8f.60.1761743000569;
+ Wed, 29 Oct 2025 06:03:20 -0700 (PDT)
+Date: Wed, 29 Oct 2025 13:03:19 +0000
+In-Reply-To: <20251020223516.241050-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c8:b0:430:ab94:4223 with SMTP id
- e9e14a558f8ab-432f8fac79cmr31652505ab.8.1761742889715; Wed, 29 Oct 2025
- 06:01:29 -0700 (PDT)
-Date: Wed, 29 Oct 2025 06:01:29 -0700
-In-Reply-To: <68fe7262.050a0220.3344a1.0145.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69021029.050a0220.3344a1.041e.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_destroy_inode (3)
-From: syzbot <syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20251020223516.241050-1-dakr@kernel.org>
+Message-ID: <aQIQl8lMhztucZhK@google.com>
+Subject: Re: [PATCH 0/8] Device::drvdata() and driver/driver interaction (auxiliary)
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	kwilczynski@kernel.org, david.m.ertman@intel.com, ira.weiny@intel.com, 
+	leon@kernel.org, acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	pcolberg@redhat.com, rust-for-linux@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Oct 21, 2025 at 12:34:22AM +0200, Danilo Krummrich wrote:
+> tl;dr:
+> 
+> Implement a safe Device<Bound>::drvdata() accessor (used for driver to
+> driver interactions) based on the auxiliary bus.
+> 
+> This provides a way to derive a driver's device private data when
+> serving as a parent in a driver hierarchy, such as a driver utilizing
+> the auxiliary bus.
+> 
+> Please have a look at patch 8 ("samples: rust: auxiliary: illustrate
+> driver interaction") to see how it turns out.
+> 
+> --
+> 
+> Full cover letter:
+> 
+> In C dev_get_drvdata() has specific requirements under which it is valid
+> to access the returned pointer. That is, drivers have to ensure that
+> 
+>   (1) for the duration the returned pointer is accessed the driver is
+>       bound and remains to be bound to the corresponding device,
+> 
+>   (2) the returned void * is treated according to the driver's private
+>       data type, i.e. according to what has been passed to
+>       dev_set_drvdata().
+> 
+> In Rust, (1) can be ensured by simply requiring the Bound device
+> context, i.e. provide the drvdata() method for Device<Bound> only.
+> 
+> For (2) we would usually make the device type generic over the driver
+> type, e.g. Device<T: Driver>, where <T as Driver>::Data is the type of
+> the driver's private data.
+> 
+> However, a device does not have a driver type known at compile time and
+> may be bound to multiple drivers throughout its lifetime.
+> 
+> Hence, in order to be able to provide a safe accessor for the driver's
+> device private data, we have to do the type check on runtime.
+> 
+> This is achieved by letting a driver assert the expected type, which is
+> then compared to a type hash stored in struct device_private when
+> dev_set_drvdata() is called [2].
+> 
+> Example:
+> 
+>         // `dev` is a `&Device<Bound>`.
+>         let data = dev.drvdata::<SampleDriver>()?;
+> 
+> There are two aspects to note:
+> 
+>   (1) Technically, the same check could be achieved by comparing the
+>       struct device_driver pointer of struct device with the struct
+>       device_driver pointer of the driver struct (e.g. struct
+>       pci_driver).
+> 
+>       However, this would - in addition the pointer comparison - require
+>       to tie back the private driver data type to the struct
+>       device_driver pointer of the driver struct to prove correctness.
+> 
+>       Besides that, accessing the driver struct (stored in the module
+>       structure) isn't trivial and would result into horrible code and
+>       API ergonomics.
+> 
+>   (2) Having a direct accessor to the driver's private data is not
+>       commonly required (at least in Rust): Bus callback methods already
+>       provide access to the driver's device private data through a &self
+>       argument, while other driver entry points such as IRQs,
+>       workqueues, timers, IOCTLs, etc. have their own private data with
+>       separate ownership and lifetime.
+> 
+>       In other words, a driver's device private data is only relevant
+>       for driver model contexts (such a file private is only relevant
+>       for file contexts).
+> 
+> Having that said, the motivation for accessing the driver's device
+> private data with Device<Bound>::drvdata() are interactions between
+> drivers. For instance, when an auxiliary driver calls back into its
+> parent, the parent has to be capable to derive its private data from the
+> corresponding device (i.e. the parent of the auxiliary device).
+> 
+> Therefore this patch series also contains the corresponding patches for
+> the auxiliary bus abstraction, i.e. guarantee that the auxiliary
+> device's parent is guaranteed to be bound when the auxiliary device
+> itself is guaranteed to be bound, plus the corresponding
+> Device<Bound>::parent() method.
+> 
+> Finally, illustrate how things turn out by updating the auxiliary sample
+> driver.
+> 
+> Similarly, the same thing can be done for PCI virtual function drivers
+> calling back into the corresponding physical function driver or MFD.
+> 
+> The former (PCI PF/VF interaction) will be addressed by a separate patch
+> series. Both, auxiliary and PCI PF/VF is required by the Nova project.
+> 
+> A branch containing the series can be found in [1].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=drvdata
+> [2] Type hash (TypeId) stored in struct device_private:
+> 
+>         The Rust type stored in struct device_private could be replaced
+>         by a dedicated (and transparent) private pointer (e.g.
+>         struct device_private::rust).
+> 
+>         While I'm not overly concerned about the extra allocation (not a
+>         hot path at all), I still wanted to try to store it directly in
+>         struct device_private, see how it turns out and gather opinions.
+> 
+>         Additionally, I don't expect any additional Rust specific
+>         private data to be required. But even if, changing things up to
+>         use a separate transparent allocation in the future is trivial.
+> 
+> Danilo Krummrich (8):
+>   rust: device: narrow the generic of drvdata_obtain()
+>   rust: device: introduce Device::drvdata()
+>   rust: auxiliary: consider auxiliary devices always have a parent
+>   rust: auxiliary: unregister on parent device unbind
+>   rust: auxiliary: move parent() to impl Device
+>   rust: auxiliary: implement parent() for Device<Bound>
+>   samples: rust: auxiliary: misc cleanup of ParentDriver::connect()
+>   samples: rust: auxiliary: illustrate driver interaction
+> 
+>  drivers/base/base.h                   |  16 ++++
+>  drivers/gpu/drm/nova/file.rs          |   2 +-
+>  drivers/gpu/nova-core/driver.rs       |   8 +-
+>  rust/bindings/bindings_helper.h       |   6 ++
+>  rust/kernel/auxiliary.rs              | 108 ++++++++++++++++----------
+>  rust/kernel/device.rs                 |  83 ++++++++++++++++++--
+>  rust/kernel/pci.rs                    |   2 +-
+>  rust/kernel/platform.rs               |   2 +-
+>  rust/kernel/usb.rs                    |   4 +-
+>  samples/rust/rust_driver_auxiliary.rs |  44 +++++++----
+>  10 files changed, 207 insertions(+), 68 deletions(-)
 
-HEAD commit:    b98c94eed4a9 arm64: mte: Do not warn if the page is alread..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=15febd42580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=158bd6857eb7a550
-dashboard link: https://syzkaller.appspot.com/bug?extid=25df068cd8509f8c0fe1
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13febd42580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10ca0e14580000
+It looks like there are some patches that add code that doesn't pass
+rustfmt, which are then fixed in follow-up commits. You might want to do
+a pass of rustfmt after each commit.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2c82e514449b/disk-b98c94ee.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a322ed38c368/vmlinux-b98c94ee.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/059db7d7114e/Image-b98c94ee.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7af3d5d4bd72/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=174a0e14580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+25df068cd8509f8c0fe1@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7942 btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
-Modules linked in:
-CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
-lr : btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942
-sp : ffff8000a6067900
-x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
-x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
-x23: ffff0000cb81c000 x22: 0000000000010000 x21: ffff0000f1b90b10
-x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
-x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
-x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
-x2 : 0000000000000000 x1 : 0000000000010000 x0 : 0000000000000000
-Call trace:
- btrfs_destroy_inode+0x258/0x798 fs/btrfs/inode.c:7942 (P)
- destroy_inode fs/inode.c:396 [inline]
- evict+0x6e4/0x928 fs/inode.c:834
- dispose_list fs/inode.c:852 [inline]
- evict_inodes+0x638/0x6d0 fs/inode.c:906
- generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
- kill_anon_super+0x4c/0x7c fs/super.c:1281
- btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
- deactivate_locked_super+0xc4/0x12c fs/super.c:473
- deactivate_super+0xe0/0x100 fs/super.c:506
- cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 140212
-hardirqs last  enabled at (140211): [<ffff8000805b8d70>] __call_rcu_common kernel/rcu/tree.c:3148 [inline]
-hardirqs last  enabled at (140211): [<ffff8000805b8d70>] call_rcu+0x65c/0x978 kernel/rcu/tree.c:3243
-hardirqs last disabled at (140212): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (138874): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
-softirqs last  enabled at (138874): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
-softirqs last disabled at (138851): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7943 btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
-Modules linked in:
-CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
-lr : btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943
-sp : ffff8000a6067900
-x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
-x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
-x23: ffff0000cb81c000 x22: 0000000000010000 x21: 0000000000010000
-x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
-x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
-x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
-x2 : 0000000000000000 x1 : 0000000000010000 x0 : 0000000000000000
-Call trace:
- btrfs_destroy_inode+0x264/0x798 fs/btrfs/inode.c:7943 (P)
- destroy_inode fs/inode.c:396 [inline]
- evict+0x6e4/0x928 fs/inode.c:834
- dispose_list fs/inode.c:852 [inline]
- evict_inodes+0x638/0x6d0 fs/inode.c:906
- generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
- kill_anon_super+0x4c/0x7c fs/super.c:1281
- btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
- deactivate_locked_super+0xc4/0x12c fs/super.c:473
- deactivate_super+0xe0/0x100 fs/super.c:506
- cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 140270
-hardirqs last  enabled at (140269): [<ffff80008adef224>] irqentry_exit+0xd8/0x108 kernel/entry/common.c:214
-hardirqs last disabled at (140270): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (140254): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
-softirqs last  enabled at (140254): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
-softirqs last disabled at (140215): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
----[ end trace 0000000000000000 ]---
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6657 at fs/btrfs/inode.c:7948 btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
-Modules linked in:
-CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
-lr : btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948
-sp : ffff8000a6067900
-x29: ffff8000a6067920 x28: dfff800000000000 x27: 1fffe0001e3721a3
-x26: ffff700014c0cf38 x25: dfff800000000000 x24: 1fffe0001e372114
-x23: ffff0000cb81c000 x22: 0000000000010000 x21: 0000000000001000
-x20: ffff0000f1b90c48 x19: ffff0000f1b908a0 x18: 00000000ffffffff
-x17: ffff800093305000 x16: ffff800082de95c8 x15: 0000000000000001
-x14: 1fffe0001e3721cc x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001e3721cd x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d166dc40 x7 : ffff800080e995c0 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : ffff800080f03e80
-x2 : 0000000000000000 x1 : 0000000000001000 x0 : 0000000000000000
-Call trace:
- btrfs_destroy_inode+0x294/0x798 fs/btrfs/inode.c:7948 (P)
- destroy_inode fs/inode.c:396 [inline]
- evict+0x6e4/0x928 fs/inode.c:834
- dispose_list fs/inode.c:852 [inline]
- evict_inodes+0x638/0x6d0 fs/inode.c:906
- generic_shutdown_super+0xa0/0x2b8 fs/super.c:627
- kill_anon_super+0x4c/0x7c fs/super.c:1281
- btrfs_kill_super+0x40/0x58 fs/btrfs/super.c:2129
- deactivate_locked_super+0xc4/0x12c fs/super.c:473
- deactivate_super+0xe0/0x100 fs/super.c:506
- cleanup_mnt+0x31c/0x3ac fs/namespace.c:1327
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1334
- task_work_run+0x1dc/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xfc/0x178 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- arm64_exit_to_user_mode arch/arm64/kernel/entry-common.c:103 [inline]
- el0_svc+0x170/0x254 arch/arm64/kernel/entry-common.c:747
- el0t_64_sync_handler+0x84/0x12c arch/arm64/kernel/entry-common.c:765
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:596
-irq event stamp: 140312
-hardirqs last  enabled at (140311): [<ffff80008adef224>] irqentry_exit+0xd8/0x108 kernel/entry/common.c:214
-hardirqs last disabled at (140312): [<ffff80008ade9670>] el1_brk64+0x20/0x54 arch/arm64/kernel/entry-common.c:434
-softirqs last  enabled at (140306): [<ffff8000803d7488>] softirq_handle_end kernel/softirq.c:468 [inline]
-softirqs last  enabled at (140306): [<ffff8000803d7488>] handle_softirqs+0xaf8/0xc88 kernel/softirq.c:650
-softirqs last disabled at (140273): [<ffff800080022024>] __do_softirq+0x14/0x20 kernel/softirq.c:656
----[ end trace 0000000000000000 ]---
-BTRFS info (device loop0): last unmount of filesystem c9fe44da-de57-406a-8241-57ec7d4412cf
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6657 at fs/btrfs/block-group.c:4462 check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463
-Modules linked in:
-CPU: 1 UID: 0 PID: 6657 Comm: syz-executor Tainted: G        W           syzkaller #0 PREEMPT 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463
-lr : check_removing_space_info+0x260/0x280 fs/btrfs/block-group.c:4462
-sp : ffff8000a6067930
-x29: ffff8000a6067930 x28: 1fffe0001bc4a12c x27: dfff800000000000
-x26: ffff0000ca5681c0 x25: 0000000000000001 x24: 1fffe0001bc4a002
-x23: dfff800000000000 x22: 0000000000000000 x21: 0000000000010000
-x20: ffff0000cb314000 x19: ffff0000de250000 x18: 00000000ffffffff
-x17: ffff800093305000 x16: ffff800080536230 x15: 0000000000000001
-x14: 1fffe0001bc4a004 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff60001bc4a005 x10: 0000000000ff0100 x9 : 0000000000000000
-x8 : ffff0000d166dc40 x7 : ffff800082594440 x6 : 0000000000000000
-x5 : ffff8000934e52c0 x4 : 0000000000000008 x3 : 0000000000000000
-x2 : 0000000000000000 x1 : ffff0000de250000 x0 : ffff0000cb314000
-Call trace:
- check_removing_space_info+0x10c/0x280 fs/btrfs/block-group.c:4463 (P)
- btrfs_free_block_groups+0xa80/0xd10 fs/btrfs/block-group.c:4580
- close_ctree+0x650/0x113c fs/btrfs/disk-io.c:4426
- btrfs_put_super+0x1ac/0x1c0 fs/btrfs/super.c:74
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
