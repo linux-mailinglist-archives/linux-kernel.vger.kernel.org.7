@@ -1,443 +1,559 @@
-Return-Path: <linux-kernel+bounces-876078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0BC2C1A830
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:07:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0405AC1A939
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7557E35935C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537B91AA0EBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2044E223DE8;
-	Wed, 29 Oct 2025 12:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C629637A3B0;
+	Wed, 29 Oct 2025 13:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="gtzejsd5"
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KWwLZh34"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1306C248891
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B0228C99
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742724; cv=none; b=r9UCUEvMunH/ublVXdIjgkKeyOBS0lZlN+A9P8nt2mXHr8kMbbRvGXwS0n1Wza38JYuPSq5ZCVrZXVsZV3zcH6qgF4xZ8A8r4uZFAmfbJrcc59Wkqn2b3vWU1jzO4r/NCI4w8miCjpJYMPW0lORKp/ONw37gbaVsE6lEf/xot+k=
+	t=1761742802; cv=none; b=WBjS5hw+G4yK5B1GhCsm1aQd+yrkZL0uuv2z0xeOagHXRXbMhsI/4s0qBbuI61xRWwXtc+WZPQOCT/opeh94xbhzv6QWWzIzB3SBveYxd2xvjgRSWqeA9qoIpJlhkcrP0FQEhPX5P7gSOlvP4MnmtlSejd9s7EH3vgTf2NEFweg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742724; c=relaxed/simple;
-	bh=3OUFHALSNxajFQbORCsRI5sfbIW/vjZgu5p/1taJmNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IH24QDNKSr0F9ka2bKkKU9P3t8S0SOHYWLb1rgYpqh3Q9cwz1OWICAhV3p7g2Bp4yKXesubWvVONOsV6cGdS6Cge5HnSbTVt0bI5EKSK8XptLq9UhfLnbWYWWXpyPISCSPUI1wMZZ0r7fh9zig5o7WCvNrvBnCZ+sG3S3wGT1Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=gtzejsd5; arc=none smtp.client-ip=113.46.200.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=9BzrX0O8ESOuDbM3g5UW8lKiQkiSPq85xOnGilDOBH8=;
-	b=gtzejsd53Nce94Gss1t9gNzIPSDEv/UkXA1fRz0NbsMPhIQ0iR/3+xbRO/nyDf6l0vH+VMaSy
-	Zr3uprDBDKeVBq/jXtdck37Bg9YpxKyOyrWh1wq2rRTDMI4OHPfUQS34LsdED6J5nc/aoFcXRp0
-	Z6inYuM07ouKE5Z1Zu4I80Q=
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cxS351y9mz1prLt;
-	Wed, 29 Oct 2025 20:58:09 +0800 (CST)
-Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0C181402DF;
-	Wed, 29 Oct 2025 20:58:38 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 20:58:38 +0800
-Message-ID: <1137d069-6f19-471e-ac4d-ae5d9ee8407f@huawei.com>
-Date: Wed, 29 Oct 2025 20:58:37 +0800
+	s=arc-20240116; t=1761742802; c=relaxed/simple;
+	bh=wQSd47TgFpgU0WslxV8kopKNw/S6+IbSE/2n+ho5r4g=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=f7h18opNDAs0Y07y/DXFmJXD+s9AjyNUv9i7m6TeQfpGiwlKmWhH7TbNSx0+SO1wuFz3Nq5XaQQLExCAATUUlm96mAy2YyUB2ojdFRoFlx2jfrsir1hcRaNy5V676Mj5tATcee84zdS9tpbM1dgs89mj4sisKZ7Fg53wpWwE2iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KWwLZh34; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251029125958epoutp04580305f39dfcf62f0cf4a435aa045dae~y972vndDR0591705917epoutp04e
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251029125958epoutp04580305f39dfcf62f0cf4a435aa045dae~y972vndDR0591705917epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761742798;
+	bh=/Rg447nv4jG7ZTaZ3yR+37uySv7fYSYGLbahg4p5atw=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=KWwLZh34ITlFKDfm15ckNQzqgQeuL4uoT305VZHOZXt9c+Rh7w6DVJBHCZ58KM3Fn
+	 +p9rhcaKdErfAe4Z+Xy7ZvOcRSOrrNQvSFLoci9/UN/VCNQs5KQsGy/MM/cwTkQDGv
+	 wGsG3Za8k7OuDJsvng7hv+WKrRSu4fCNGZCraC8Q=
+Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20251029125957epcas5p45a2618cc34abf33c1a1aed13de41a7ee~y9714fZFw0337603376epcas5p4n;
+	Wed, 29 Oct 2025 12:59:57 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
+	epsnrtp02.localdomain (Postfix) with ESMTP id 4cxS583Phtz2SSKZ; Wed, 29 Oct
+	2025 12:59:56 +0000 (GMT)
+Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b~y970N6Nn52434424344epcas5p2I;
+	Wed, 29 Oct 2025 12:59:55 +0000 (GMT)
+Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029125941epsmtip2e6e2867e049bc84527036b7dbb53b7b3~y97nNjiRN0547705477epsmtip2b;
+	Wed, 29 Oct 2025 12:59:40 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
+	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	cw00.choi@samsung.com
+Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
+	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com, kenkim@coasia.com
+Subject: [PATCH v2 1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
+Date: Wed, 29 Oct 2025 18:29:29 +0530
+Message-Id: <20251029125929.40560-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-CMS-MailID: 20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b
+References: <CGME20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 0/7] erofs: inode page cache share feature
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, <chao@kernel.org>,
-	<brauner@kernel.org>, <hongzhen@linux.alibaba.com>
-CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
-References: <20251021104815.70662-1-lihongbo22@huawei.com>
- <6f4086fd-97de-49d4-8de8-424eaa4fdba5@linux.alibaba.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <6f4086fd-97de-49d4-8de8-424eaa4fdba5@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemr500015.china.huawei.com (7.202.195.162)
 
-Hi Xiang,
+From: GyoungBo Min <mingyoungbo@coasia.com>
 
-On 2025/10/21 21:04, Gao Xiang wrote:
-> Hi Hongbo,
-> 
-> On 2025/10/21 18:48, Hongbo Li wrote:
->> Enabling page cahe sharing in container scenarios has become increasingly
->> crucial, as it can significantly reduce memory usage. In previous 
->> efforts,
->> Hongzhen has done substantial work to push this feature into the EROFS
->> mainline. Due to other commitments, he hasn't been able to continue his
->> work recently, and I'm very pleased to build upon his work and continue
->> to refine this implementation.
->>
->> This is a forward-port of Hongzhen's original erofs shared pagecache
->> posted a half yeas ago at (the latest):
->> https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
->>
->> In addition to the forward-port, I have also fixed a couple bugs and
->> some minor cleanup during the migration.
->>
->> Notes: Currently, only compilation tests and basic function have been
->> verified. Validation for the shared page cache feature is pending until
->> the erofs-utils tool is complete.
->>
->> (A recap of Hongzhen's original cover letter is below, edited slightly
->> for this serise:)
-> 
-> I'm still left behind of this (currently heavily working on erofs-utils
-> and containerd), but could we have a workable erofs-utils implementation
-> first?
-> 
+Add dt-schema for Axis ARTPEC-9 SoC clock controller.
 
-Understood, I will implement a simple debug version first and will send 
-the revised code later to address the noted issues.
+The Clock Management Unit (CMU) has a top-level block CMU_CMU
+which generates clocks for other blocks.
 
-Thanks,
-Hongbo
+Add device-tree binding definitions for following CMU blocks:
+- CMU_CMU
+- CMU_BUS
+- CMU_CORE
+- CMU_CPUCL
+- CMU_FSYS0
+- CMU_FSYS1
+- CMU_IMEM
+- CMU_PERI
 
-> Also, Amir's previous suggestion needs to be resolved too..
-> https://lore.kernel.org/r/CAOQ4uxjFcw7+w4jfjRKZRDitaXmgK1WhFbidPUFjXFt_6Kew5A@mail.gmail.com
-> 
-> Finally, thanks for remaining Hongzhen's email (but he was already
-> left, thanks for remaining our credits).
-> 
-> Thanks,
-> Gao Xiang
-> 
-> 
->>
->> Background
->> ==============
->> Currently, reading files with different paths (or names) but the same
->> content can consume multiple copies of the page cache, even if the
->> content of these caches is identical. For example, reading identical
->> files (e.g., *.so files) from two different minor versions of container
->> images can result in multiple copies of the same page cache, since
->> different containers have different mount points. Therefore, sharing
->> the page cache for files with the same content can save memory.
->>
->> Proposal
->> ==============
->>
->> 1. determining file identity
->> ----------------------------
->> First, a way needs to be found to check whether the content of two files
->> is the same. Here, the xattr values associated with the file
->> fingerprints are assessed for consistency. When creating the EROFS
->> image, users can specify the name of the xattr for file fingerprints,
->> and the corresponding name will be stored in the packfile. The on-disk
->> `ishare_key_start` indicates the offset of the xattr's name within the
->> packfile:
->>
->> ```
->> struct erofs_super_block {
->>     __le32 build_time;      /* seconds added to epoch for mkfs time */
->>     __le64 rootnid_8b;      /* (48BIT on) nid of root directory */
->> -    __le64 reserved2;
->> +    __le32 ishare_key_start;        /* start of ishare key */
->> +    __le32 reserved2;
->>     __le64 metabox_nid;     /* (METABOX on) nid of the metabox inode */
->>     __le64 reserved3;       /* [align to extslot 1] */
->> };
->> ```
->>
->> For example, users can specify the first long prefix as the name for the
->> file fingerprint as follows:
->>
->> ```
->> mkfs.erofs  --ishare_key=trusted.erofs.fingerprint  erofs.img ./dir
->> ```
->>
->> In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
->> for the file fingerprint. The relevant patches for erofs-utils will be
->> released later.
->>
->> At the same time, for security reasons, this patch series only shares
->> files within the same domain, which is achieved by adding
->> "-o domain_id=xxxx" during the mounting process:
->>
->> ```
->> mount -t erofs -o domain_id=xxx erofs.img /mnt
->> ```
->>
->> If no domain ID is specified, it will fall back to the non-page cache
->> sharing mode.
->>
->> 2. whose page cache is shared?
->> ------------------------------
->>
->> 2.1. share the page cache of inode_A or inode_B
->> -----------------------------------------------
->> For example, we can share the page cache of inode_A, referred to as
->> PGCache_A. When reading file B, we read the contents from PGCache_A to
->> achieve memory savings. Furthermore, if we need to read another file C
->> with the same content, we will still read from PGCache_A. In this way,
->> we fulfill multiple read requests with just a single page cache.
->>
->> 2.2. share the de-duplicated inode's page cache
->> -----------------------------------------------
->> Unlike in 2.1, we allocate an internal deduplicated inode and use its
->> page cache as shared. Reads for files with identical content will
->> ultimately be routed to the page cache of the deduplicated inode. In
->> this way, a single page cache satisfies multiple read requests for
->> different files with the same contents.
->>
->> 2.3. discussion of the two solutions
->> -----------------------------------------------
->> Although the solution in 2.1 allows for page cache sharing, it has
->> inherent drawbacks. The creation and destruction of inode nodes in the
->> file system mean that when inode_A is destroyed, PGCache_A is also
->> released. Consequently, if we need to read the file content afterward,
->> we must retrieve the data from the disk again. This conflicts with the
->> design philosophy of page cache (caching contents from the disk).
->>
->> Therefore, I choose to implement the solution in 2.2, which is to
->> allocate an internal deduplicated inode and use its page cache as
->> shared.
->>
->> 3. Implementation
->> ==================
->>
->> 3.1. file open & close
->> ----------------------
->> When the file is opened, the ->private_data field of file A or file B is
->> set to point to an internal deduplicated file. When the actual read
->> occurs, the page cache of this deduplicated file will be accessed.
->>
->> When the file is opened, if the corresponding erofs inode is newly
->> created, then perform the following actions:
->> 1. add the erofs inode to the backing list of the deduplicated inode;
->> 2. increase the reference count of the deduplicated inode.
->>
->> The purpose of step 1 above is to ensure that when a real I/O operation
->> occurs, the deduplicated inode can locate one of the disk devices
->> (as the deduplicated inode itself is not bound to a specific device).
->> Step 2 is for managing the lifecycle of the deduplicated inode.
->>
->> When the erofs inode is destroyed, the opposite actions mentioned above
->> will be taken.
->>
->> 3.2. file reading
->> -----------------
->> Assuming the deduplication inode's page cache is PGCache_dedup, there
->> are two possible scenarios when reading a file:
->> 1) the content being read is already present in PGCache_dedup;
->> 2) the content being read is not present in PGCache_dedup.
->>
->> In the second scenario, it involves the iomap operation to read from the
->> disk.
->>
->> 3.2.1. reading existing data in PGCache_dedup
->> -------------------------------------------
->> In this case, the overall read flowchart is as follows (take ksys_read()
->> for example):
->>
->>           ksys_read
->>               │
->>               │
->>               ▼
->>              ...
->>               │
->>               │
->>               ▼
->> erofs_ishare_file_read_iter (switch to backing deduplicated file)
->>               │
->>               │
->>               ▼
->>
->>   read PGCache_dedup & return
->>
->> At this point, the content in PGCache_dedup will be read directly and
->> returned.
->>
->> 3.2.2 reading non-existent content in PGCache_dedup
->> ---------------------------------------------------
->> In this case, disk I/O operations will be involved. Taking the reading
->> of an uncompressed file as an example, here is the reading process:
->>
->>           ksys_read
->>               │
->>               │
->>               ▼
->>              ...
->>               │
->>               │
->>               ▼
->> erofs_ishare_file_read_iter (switch to backing deduplicated file)
->>               │
->>               │
->>               ▼
->>              ... (allocate pages)
->>               │
->>               │
->>               ▼
->> erofs_read_folio/erofs_readahead
->>               │
->>               │
->>               ▼
->>              ... (iomap)
->>               │
->>               │
->>               ▼
->>          erofs_iomap_begin
->>               │
->>               │
->>               ▼
->>              ...
->>
->> Iomap and the layers below will involve disk I/O operations. As
->> described in 3.1, the deduplicated inode itself is not bound to a
->> specific device. The deduplicated inode will select an erofs inode from
->> the backing list (by default, the first one) to complete the
->> corresponding iomap operation.
->>
->> 3.2.3 optimized inode selection
->> -------------------------------
->> The inode selection method described in 3.2.2 may select an "inactive"
->> inode. An inactive inode indicates that there may have been no read
->> operations on the inode's device for a long time, and there is a high
->> likelihood that the device may be unmounted. In this case, unmounting
->> the device may experience a slight delay due to other read requests
->> being routed to that device. Therefore, we need to select some "active"
->> inodes for the iomap operation.
->>
->> To achieve optimized inode selection, an additional `processing` list
->> has been added. At the beginning of erofs_{read_folio,readahead}(), the
->> corresponding erofs inode will be added to the `processing` list
->> (because they are active). And it is removed at the end of
->> erofs_{read_folio,readahead}(). In erofs_iomap_begin(), the selected
->> erofs inode's count is incremented, and in erofs_iomap_end(), the count
->> is decremented.
->>
->> In this way, even after the erofs inode is removed from the `processing`
->> list, the increment in the reference count can ensure the integrity of
->> the data reading process. This is somewhat similar to RCU (not exactly
->> the same, but similar).
->>
->> 3.3. release page cache
->> -----------------------
->> Similar to overlayfs, when dropping the page cache via .fadvise, erofs
->> locates the deduplicated file and applies vfs_fadvise to that specific
->> file.
->>
->> Effect
->> ==================
->> I conducted experiments on two aspects across two different minor
->> versions of container images:
->>
->> 1. reading all files in two different minor versions of container images
->>
->> 2. run workloads or use the default entrypoint within the containers^[1]
->>
->> Below is the memory usage for reading all files in two different minor
->> versions of container images:
->>
->> +-------------------+------------------+-------------+---------------+
->> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
->> |                   |                  |             | Reduction (%) |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     241     |       -       |
->> |       redis       +------------------+-------------+---------------+
->> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     872     |       -       |
->> |      postgres     +------------------+-------------+---------------+
->> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     2771    |       -       |
->> |     tensorflow    +------------------+-------------+---------------+
->> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     926     |       -       |
->> |       mysql       +------------------+-------------+---------------+
->> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     390     |       -       |
->> |       nginx       +------------------+-------------+---------------+
->> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
->> +-------------------+------------------+-------------+---------------+
->> |       tomcat      |        No        |     924     |       -       |
->> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
->> |                   |        Yes       |     474     |      49%      |
->> +-------------------+------------------+-------------+---------------+
->>
->> Additionally, the table below shows the runtime memory usage of the
->> container:
->>
->> +-------------------+------------------+-------------+---------------+
->> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
->> |                   |                  |             | Reduction (%) |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     34.9    |       -       |
->> |       redis       +------------------+-------------+---------------+
->> |   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |    149.1    |       -       |
->> |      postgres     +------------------+-------------+---------------+
->> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |    1027.9   |       -       |
->> |     tensorflow    +------------------+-------------+---------------+
->> |  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |    155.0    |       -       |
->> |       mysql       +------------------+-------------+---------------+
->> |  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
->> +-------------------+------------------+-------------+---------------+
->> |                   |        No        |     25.4    |       -       |
->> |       nginx       +------------------+-------------+---------------+
->> |   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
->> +-------------------+------------------+-------------+---------------+
->> |       tomcat      |        No        |     186     |       -       |
->> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
->> |                   |        Yes       |      99     |      47%      |
->> +-------------------+------------------+-------------+---------------+
->>
->> It can be observed that when reading all the files in the image, the
->> reduced memory usage varies from 16% to 49%, depending on the specific
->> image. Additionally, the container's runtime memory usage reduction
->> ranges from 4% to 47%.
->>
->> [1] Below are the workload for these images:
->>        - redis: redis-benchmark
->>        - postgres: sysbench
->>        - tensorflow: app.py of tensorflow.python.platform
->>        - mysql: sysbench
->>        - nginx: wrk
->>        - tomcat: default entrypoint
->>
->> The patch in this version has made the following changes compared to
->> the previous versionv(patch v5):
->>
->> - support user-defined fingerprint name;
->> - support domain-specific page cache share;
->> - adjusted the code style;
->> - adjustments in code implementation, etc.
->>
->> v5: 
->> https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
->> v4: 
->> https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
->> v3: 
->> https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
->> v2: 
->> https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
->> v1: 
->> https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
->>
-> 
+Signed-off-by: GyoungBo Min <mingyoungbo@coasia.com>
+Reviewed-by: Kyunghwan Kim <kenkim@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/clock/axis,artpec9-clock.yaml    | 232 ++++++++++++++++++
+ include/dt-bindings/clock/axis,artpec9-clk.h  | 195 +++++++++++++++
+ 2 files changed, 427 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+ create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+
+diff --git a/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml b/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+new file mode 100644
+index 000000000000..63442b91e7ac
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
+@@ -0,0 +1,232 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/axis,artpec9-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Axis ARTPEC-9 SoC clock controller
++
++maintainers:
++  - Jesper Nilsson <jesper.nilsson@axis.com>
++
++description: |
++  ARTPEC-9 clock controller is comprised of several CMU (Clock Management Unit)
++  units, generating clocks for different domains. Those CMU units are modeled
++  as separate device tree nodes, and might depend on each other.
++  The root clock in that root tree is an external clock: OSCCLK (25 MHz).
++  This external clock must be defined as a fixed-rate clock in dts.
++
++  CMU_CMU is a top-level CMU, where all base clocks are prepared using PLLs and
++  dividers, all other clocks of function blocks (other CMUs) are usually
++  derived from CMU_CMU.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  'include/dt-bindings/clock/axis,artpec9-clk.h' header.
++
++properties:
++  compatible:
++    enum:
++      - axis,artpec9-cmu-cmu
++      - axis,artpec9-cmu-bus
++      - axis,artpec9-cmu-core
++      - axis,artpec9-cmu-cpucl
++      - axis,artpec9-cmu-fsys0
++      - axis,artpec9-cmu-fsys1
++      - axis,artpec9-cmu-imem
++      - axis,artpec9-cmu-peri
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 5
++
++  clock-names:
++    minItems: 1
++    maxItems: 5
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-cmu
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++
++        clock-names:
++          items:
++            - const: fin_pll
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-bus
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_BUS bus clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: bus
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-core
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_CORE main clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: main
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-cpucl
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_CPUCL switch clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: switch
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-fsys0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_FSYS0 bus clock (from CMU_CMU)
++            - description: CMU_FSYS0 IP clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: bus
++            - const: ip
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-fsys1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_FSYS1 scan0 clock (from CMU_CMU)
++            - description: CMU_FSYS1 scan1 clock (from CMU_CMU)
++            - description: CMU_FSYS1 bus clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: scan0
++            - const: scan1
++            - const: bus
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-imem
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_IMEM ACLK clock (from CMU_CMU)
++            - description: CMU_IMEM CA5 clock (from CMU_CMU)
++            - description: CMU_IMEM JPEG clock (from CMU_CMU)
++            - description: CMU_IMEM SSS clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: aclk
++            - const: ca5
++            - const: jpeg
++            - const: sss
++
++  - if:
++      properties:
++        compatible:
++          const: axis,artpec9-cmu-peri
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (25 MHz)
++            - description: CMU_PERI IP clock (from CMU_CMU)
++            - description: CMU_PERI DISP clock (from CMU_CMU)
++
++        clock-names:
++          items:
++            - const: fin_pll
++            - const: ip
++            - const: disp
++
++additionalProperties: false
++
++examples:
++  # Clock controller node for CMU_FSYS1
++  - |
++    #include <dt-bindings/clock/axis,artpec9-clk.h>
++
++    soc {
++        #address-cells = <2>;
++        #size-cells = <2>;
++
++        cmu_fsys1: clock-controller@14c10000 {
++            compatible = "axis,artpec9-cmu-fsys1";
++            reg = <0x0 0x14c10000 0x0 0x4000>;
++            #clock-cells = <1>;
++            clocks = <&fin_pll>,
++                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_SCAN0>,
++                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_SCAN1>,
++                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_BUS>;
++            clock-names = "fin_pll", "scan0", "scan1", "bus";
++        };
++    };
++...
+diff --git a/include/dt-bindings/clock/axis,artpec9-clk.h b/include/dt-bindings/clock/axis,artpec9-clk.h
+new file mode 100644
+index 000000000000..c6787be8d686
+--- /dev/null
++++ b/include/dt-bindings/clock/axis,artpec9-clk.h
+@@ -0,0 +1,195 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2025 Samsung Electronics Co., Ltd.
++ *             https://www.samsung.com
++ * Copyright (c) 2025  Axis Communications AB.
++ *             https://www.axis.com
++ *
++ * Device Tree binding constants for ARTPEC-9 clock controller.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_ARTPEC9_H
++#define _DT_BINDINGS_CLOCK_ARTPEC9_H
++
++/* CMU_CMU */
++#define CLK_FOUT_SHARED0_PLL						1
++#define CLK_DOUT_SHARED0_DIV2						2
++#define CLK_DOUT_SHARED0_DIV3						3
++#define CLK_DOUT_SHARED0_DIV4						4
++#define CLK_FOUT_SHARED1_PLL						5
++#define CLK_DOUT_SHARED1_DIV2						6
++#define CLK_DOUT_SHARED1_DIV3						7
++#define CLK_DOUT_SHARED1_DIV4						8
++#define CLK_FOUT_AUDIO_PLL						9
++#define CLK_DOUT_CMU_ADD						10
++#define CLK_DOUT_CMU_BUS						11
++#define CLK_DOUT_CMU_CDC_CORE						12
++#define CLK_DOUT_CMU_CORE_MAIN						13
++#define CLK_DOUT_CMU_CPUCL_SWITCH					14
++#define CLK_DOUT_CMU_DLP_CORE						15
++#define CLK_DOUT_CMU_FSYS0_BUS						16
++#define CLK_DOUT_CMU_FSYS0_IP						17
++#define CLK_DOUT_CMU_FSYS1_BUS						18
++#define CLK_DOUT_CMU_FSYS1_SCAN0					19
++#define CLK_DOUT_CMU_FSYS1_SCAN1					20
++#define CLK_DOUT_CMU_GPU_3D						21
++#define CLK_DOUT_CMU_GPU_2D						22
++#define CLK_DOUT_CMU_IMEM_ACLK						23
++#define CLK_DOUT_CMU_IMEM_CA5						24
++#define CLK_DOUT_CMU_IMEM_JPEG						25
++#define CLK_DOUT_CMU_IMEM_SSS						26
++#define CLK_DOUT_CMU_IPA_CORE						27
++#define CLK_DOUT_CMU_LCPU						28
++#define CLK_DOUT_CMU_MIF_SWITCH						29
++#define CLK_DOUT_CMU_MIF_BUSP						30
++#define CLK_DOUT_CMU_PERI_DISP						31
++#define CLK_DOUT_CMU_PERI_IP						32
++#define CLK_DOUT_CMU_RSP_CORE						33
++#define CLK_DOUT_CMU_TRFM						34
++#define CLK_DOUT_CMU_VIO_CORE_L						35
++#define CLK_DOUT_CMU_VIO_CORE						36
++#define CLK_DOUT_CMU_VIP0						37
++#define CLK_DOUT_CMU_VIP1						38
++#define CLK_DOUT_CMU_VPP_CORE						39
++#define CLK_DOUT_CMU_VIO_AUDIO						40
++
++/* CMU_BUS */
++#define CLK_MOUT_BUS_ACLK_USER						1
++
++/* CMU_CORE */
++#define CLK_MOUT_CORE_ACLK_USER						1
++
++/* CMU_CPUCL */
++#define CLK_FOUT_CPUCL_PLL0						1
++#define CLK_MOUT_CPUCL_PLL0						2
++#define CLK_FOUT_CPUCL_PLL1						3
++#define CLK_MOUT_CPUCL_PLL_SCU						4
++#define CLK_MOUT_CPUCL_SWITCH_SCU_USER					5
++#define CLK_MOUT_CPUCL_SWITCH_USER					6
++#define CLK_DOUT_CPUCL_CPU						7
++#define CLK_DOUT_CPUCL_CLUSTER_PERIPHCLK				8
++#define CLK_DOUT_CPUCL_CLUSTER_GICCLK					9
++#define CLK_DOUT_CPUCL_CLUSTER_PCLK					10
++#define CLK_DOUT_CPUCL_CMUREF						11
++#define CLK_DOUT_CPUCL_CLUSTER_ATCLK					12
++#define CLK_DOUT_CPUCL_CLUSTER_SCU					13
++#define CLK_DOUT_CPUCL_DBG						14
++#define CLK_GOUT_CPUCL_SHORTSTOP					15
++#define CLK_GOUT_CPUCL_CLUSTER_CPU					16
++#define CLK_GOUT_CPUCL_CSSYS_IPCLKPORT_ATCLK				17
++#define CLK_GOUT_CPUCL_CSSYS_IPCLKPORT_PCLKDBG				18
++
++/* CMU_FSYS0 */
++#define CLK_MOUT_FSYS0_BUS_USER						1
++#define CLK_MOUT_FSYS0_IP_USER						2
++#define CLK_MOUT_FSYS0_MAIN_USER					3
++#define CLK_DOUT_FSYS0_125						4
++#define CLK_DOUT_FSYS0_ADC						5
++#define CLK_DOUT_FSYS0_BUS_300						6
++#define CLK_DOUT_FSYS0_EQOS0						7
++#define CLK_DOUT_FSYS0_EQOS1						8
++#define CLK_DOUT_FSYS0_MMC_CARD0					9
++#define CLK_DOUT_FSYS0_MMC_CARD1					10
++#define CLK_DOUT_FSYS0_MMC_CARD2					11
++#define CLK_DOUT_FSYS0_QSPI						12
++#define CLK_DOUT_FSYS0_SFMC_NAND					13
++#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_ACLK_I			14
++#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_CLK_CSR_I			15
++#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_I_RGMII_PHASE_CLK_250	16
++#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_I_RGMII_TXCLK		17
++#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_I_RGMII_PHASE_CLK_250	18
++#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_I_RGMII_TXCLK		19
++#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_ACLK_I			20
++#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_CLK_CSR_I			21
++#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_APB_S_PCLK			22
++#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_CORE_CLK			23
++#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_DMA_CLK				24
++#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_HDR_TX_CLK			25
++#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_APB_S_PCLK			26
++#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_CORE_CLK			27
++#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_DMA_CLK				28
++#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_HDR_TX_CLK			29
++#define CLK_GOUT_FSYS0_MMC0_IPCLKPORT_SDCLKIN				30
++#define CLK_GOUT_FSYS0_MMC1_IPCLKPORT_SDCLKIN				31
++#define CLK_GOUT_FSYS0_MMC2_IPCLKPORT_SDCLKIN				32
++#define CLK_GOUT_FSYS0_QSPI_IPCLKPORT_HCLK				33
++#define CLK_GOUT_FSYS0_QSPI_IPCLKPORT_SSI_CLK				34
++#define CLK_GOUT_FSYS0_SFMC_IPCLKPORT_I_ACLK_NAND			35
++#define CLK_GOUT_FSYS0_I2C0_IPCLKPORT_I_PCLK				36
++#define CLK_GOUT_FSYS0_I2C1_IPCLKPORT_I_PCLK				37
++#define CLK_GOUT_FSYS0_MMC0_IPCLKPORT_I_ACLK				38
++#define CLK_GOUT_FSYS0_MMC1_IPCLKPORT_I_ACLK				39
++#define CLK_GOUT_FSYS0_MMC2_IPCLKPORT_I_ACLK				40
++#define CLK_GOUT_FSYS0_PWM_IPCLKPORT_I_PCLK_S0				41
++
++/* CMU_FSYS1 */
++#define CLK_FOUT_FSYS1_PLL						1
++#define CLK_MOUT_FSYS1_SCAN0_USER					2
++#define CLK_MOUT_FSYS1_SCAN1_USER					3
++#define CLK_MOUT_FSYS1_BUS_USER						4
++#define CLK_DOUT_FSYS1_200						5
++#define CLK_DOUT_FSYS1_BUS_300						6
++#define CLK_DOUT_FSYS1_OTP_MEM						7
++#define CLK_DOUT_FSYS1_PCIE_PHY_REFCLK_SYSPLL				8
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_PHY_APB2CR_PCLK_100		9
++#define CLK_GOUT_FSYS1_UART0_PCLK					10
++#define CLK_GOUT_FSYS1_UART0_SCLK_UART					11
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_PHY_APB2CR_PCLK_300		12
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_DBI_ACLK_SOC		13
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_MSTR_ACLK_SOC		14
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_SLV_ACLK_SOC		15
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_DBI_ACLK_SOC		16
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_MSTR_ACLK_SOC		17
++#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_SLV_ACLK_SOC		18
++#define CLK_GOUT_FSYS1_USB20DRD_IPCLKPORT_ACLK_PHYCTRL_20		19
++#define CLK_GOUT_FSYS1_USB20DRD_IPCLKPORT_BUS_CLK_EARLY			20
++#define CLK_GOUT_FSYS1_XHB_AHBBR_FSYS1_IPCLKPORT_CLK			21
++#define CLK_GOUT_FSYS1_XHB_USB_IPCLKPORT_CLK				22
++
++/* CMU_IMEM */
++#define CLK_MOUT_IMEM_ACLK_USER						1
++#define CLK_MOUT_IMEM_CA5_USER						2
++#define CLK_MOUT_IMEM_SSS_USER						3
++#define CLK_MOUT_IMEM_JPEG_USER						4
++#define CLK_DOUT_IMEM_PCLK						5
++#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_ATCLK				6
++#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_CLKIN				7
++#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_PCLK_DBG				8
++#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_ATCLK				9
++#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_CLKIN				10
++#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_PCLK_DBG				11
++#define CLK_GOUT_IMEM_MCT0_PCLK						12
++#define CLK_GOUT_IMEM_MCT1_PCLK						13
++#define CLK_GOUT_IMEM_MCT2_PCLK						14
++#define CLK_GOUT_IMEM_MCT3_PCLK						15
++#define CLK_GOUT_IMEM_PCLK_TMU0_APBIF					16
++
++/* CMU_PERI */
++#define CLK_MOUT_PERI_IP_USER						1
++#define CLK_MOUT_PERI_DISP_USER						2
++#define CLK_DOUT_PERI_125						3
++#define CLK_DOUT_PERI_PCLK						4
++#define CLK_DOUT_PERI_SPI						5
++#define CLK_DOUT_PERI_UART1						6
++#define CLK_DOUT_PERI_UART2						7
++#define CLK_GOUT_PERI_DMA4DSIM_IPCLKPORT_CLK_APB_CLK			8
++#define CLK_GOUT_PERI_DMA4DSIM_IPCLKPORT_CLK_AXI_CLK			9
++#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_APB_S_PCLK			10
++#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_CORE_CLK				11
++#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_DMA_CLK				12
++#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_HDR_TX_CLK			13
++#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_APB_S_PCLK			14
++#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_CORE_CLK				15
++#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_DMA_CLK				16
++#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_HDR_TX_CLK			17
++#define CLK_GOUT_PERI_APB_ASYNC_DSIM_IPCLKPORT_PCLKS			18
++#define CLK_GOUT_PERI_I2C2_IPCLKPORT_I_PCLK				19
++#define CLK_GOUT_PERI_I2C3_IPCLKPORT_I_PCLK				20
++#define CLK_GOUT_PERI_SPI0_PCLK						21
++#define CLK_GOUT_PERI_SPI0_SCLK_SPI					22
++#define CLK_GOUT_PERI_UART1_PCLK					23
++#define CLK_GOUT_PERI_UART1_SCLK_UART					24
++#define CLK_GOUT_PERI_UART2_PCLK					25
++#define CLK_GOUT_PERI_UART2_SCLK_UART					26
++
++#endif /* _DT_BINDINGS_CLOCK_ARTPEC9_H */
+-- 
+2.17.1
+
 
