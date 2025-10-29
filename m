@@ -1,132 +1,111 @@
-Return-Path: <linux-kernel+bounces-876673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E39C1C74A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:33:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A82C1C617
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2643965ABF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:12:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E2280150A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83254346E7D;
-	Wed, 29 Oct 2025 16:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C93451D4;
+	Wed, 29 Oct 2025 16:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shL+YnIa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="EMxl0AuB"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8A9345759;
-	Wed, 29 Oct 2025 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F56334C10;
+	Wed, 29 Oct 2025 16:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754307; cv=none; b=AwP0C8LEL6uzAEuLaDXncxv+qjiHfU1vj5wZGB0g5nguP7J3tATPc1SXloxo6/OfWCCv8gku2sGUvvlZLRDNq/Bzu18PS8HzN2Z7Czc5ii35MkRU6jkUwOO94G4Uf7WjwpaOmWQp21y4jg9AMhi3nW228mswnCRaNke2RV2hHco=
+	t=1761754506; cv=none; b=MCcHemmFY0slz9QTyBfVp4IcAr/wCRsbt07dOD02Y+gmLME2araEwBNtf3xO5zWiJ7PWOOA/Xi/ePy4fvR0B9IMpQUjdFVVqS/lhAu/AieDuTxxWx6hqYsI8D/No+igXoQ1NTe/K793kihDpwH4Zwbp33TcAjASIrOWWYGhgBUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754307; c=relaxed/simple;
-	bh=yx40n6aW+7axlHFIv+/k4z1XcQ+4QDorszZ6b/jKM44=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KWKJJ9LWS/MCIjRF9KV+/m9Dvgqh0UtsTBglVa5Mz0D2FYnNsBy6KRpWdgHanoIpa4oGo3HDOf8dGExGm1O1yLHaCIyckNZF8wCRi17MCPCKXtBLdIsmVUkw1kPtc/t5v/cdD2h+pXbmjw8AyL1UJG+I3/sVMo+ZXCG5r/YlUxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shL+YnIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D989AC4CEF8;
-	Wed, 29 Oct 2025 16:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761754307;
-	bh=yx40n6aW+7axlHFIv+/k4z1XcQ+4QDorszZ6b/jKM44=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=shL+YnIan2zZqQcm7YTriVz713DFPhdH2niLVFZdiWRW4nO2yK9V7sJqSwkLrdaeU
-	 30wlimwKz1xybhPt5ctiYBaJZ0Zm6lx1H2HOUzcd1dglYp8MnMewMg2/b7ik2a9vIh
-	 FZCk5zEYSv33GfdwyKV9eHgmxadTkeFdhXZiFXGrIAYy34itjnm0w/4oCh03FYn2/i
-	 6gJVSEPYEjToVkeDk8Klf425qY4BYiwndogt4aWvqoZb9IU8vSse4xnl91pNKt9a3x
-	 vRHJO0SkyIfEe/FbRWv/VEoKXikG/b7TXSEaNZUfDdDcHFO6I8CWsQZlXpx3MV0BUv
-	 9vj3BL8KeO1aA==
-From: Conor Dooley <conor@kernel.org>
-To: claudiu.beznea@tuxon.dev
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	pierre-henry.moussay@microchip.com,
-	valentina.fernandezalanis@microchip.com,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 4/7] riscv: dts: microchip: fix mailbox description
-Date: Wed, 29 Oct 2025 16:11:20 +0000
-Message-ID: <20251029-cobbler-unwritten-b907859d048d@spud>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
-References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
+	s=arc-20240116; t=1761754506; c=relaxed/simple;
+	bh=LBomVPTeyBl1Pycs2O5KKxLcBIfHhZ3qnDqA5zcS7rs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dx/Twfs4FDOlNxgExQc+qN5Rvq4s7/UWXS4IkVmqHdTkk5HsZ2nKsSftD/8xL3R47H3P2TIG6JnTu3v621ty3IbWNweW3hUHCxzajMXBA/oNdkNkTsHKQBEh8VWUhZmLpdx5MBUkKNQDoUHXjaTDf88xNE0N9gUQLCKeuhM96fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=EMxl0AuB; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W1uta8p/W5QNqzGp1HZ4zz99/QdMe5/qSC/Dn+nw3nE=; b=EMxl0AuB+F5NhLkZJJB1QEOz6d
+	izBrPIejNaEZTbx1kB9++36hpSVq4VrbjowPsYx+wxYn1n6hWtIB2p5LFEgSEk/losPNx3B0CY8ye
+	sCxHCGOBRk+cYdYfJk9L4R3/NETijwSnOr9s4M4h5TtLy+Q3wdwNr7yeJrRKRN49SHAvUE3t2UPDS
+	2/uJDN6FCVpX5sQz5b799RklPXywAZOGOzW9PGUHHsIavoD61BRVcRTFi4dwPW6ed0PjSnx/V2gXm
+	rQMmufWZRvlV+4WEHLOYcFA5nixNaF4W/UirLbd+QGwTPGcino/bth4BxE6Ag7pzYPwpD0ZV5ryvT
+	ZeBJ7pZw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:56504)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vE8ow-000000004ci-1h3W;
+	Wed, 29 Oct 2025 16:14:46 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vE8os-000000007eD-12kw;
+	Wed, 29 Oct 2025 16:14:42 +0000
+Date: Wed, 29 Oct 2025 16:14:42 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: rohan.g.thomas@altera.com
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/4] net: stmmac: socfpga: Agilex5 EMAC platform
+ configuration
+Message-ID: <aQI9ckiHEybp3c_y@shell.armlinux.org.uk>
+References: <20251029-agilex5_ext-v1-0-1931132d77d6@altera.com>
+ <20251029-agilex5_ext-v1-1-1931132d77d6@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2048; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=CJ93zZ/gwT2VF26tXat2Gljwq2Roq9NVUZwBFI4dODQ=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDJlMNusz1M0/cvfZGng1c7NuXpdx5OO+aHaF2IqGnKU1t pyPb2p0lLIwiHExyIopsiTe7muRWv/HZYdzz1uYOaxMIEMYuDgFYCJn3zMybHtncCWt+N3sea8i xVQSLZemCSVx1R8PWRN21D1hyuavDxj+p9lc2dbM/t7u/gE1nhKHBQHuWdb/Z620FFgVLZSzljm LBQA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-agilex5_ext-v1-1-1931132d77d6@altera.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, Oct 29, 2025 at 04:06:13PM +0800, Rohan G Thomas via B4 Relay wrote:
+> +static void socfpga_common_plat_dat(struct socfpga_dwmac *dwmac)
+> +{
+> +	struct plat_stmmacenet_data *plat_dat = dwmac->plat_dat;
+> +
+> +	plat_dat->bsp_priv = dwmac;
 
-When the binding for the mailbox on PolarFire SoC was originally
-written, and later modified, mistakes were made - and the precise
-nature of the later modification should have been a giveaway, but alas
-I was naive at the time.
+Surely this is something which is always done? What's the point in
+moving this to a function that always needs to be called from the
+implementation specific setup_plat_dat() method?
 
-A more correct modelling of the hardware is to use two syscons and have
-a single reg entry for the mailbox, containing the mailbox region. The
-two syscons contain the general control/status registers for the mailbox
-and the interrupt related registers respectively. The reason for two
-syscons is that the same mailbox is present on the non-SoC version of
-the FPGA, which has no interrupt controller, and the shared part of the
-rtl was unchanged between devices.
+> +	plat_dat->fix_mac_speed = socfpga_dwmac_fix_mac_speed;
+> +	plat_dat->init = socfpga_dwmac_init;
+> +	plat_dat->pcs_init = socfpga_dwmac_pcs_init;
+> +	plat_dat->pcs_exit = socfpga_dwmac_pcs_exit;
+> +	plat_dat->select_pcs = socfpga_dwmac_select_pcs;
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
- arch/riscv/boot/dts/microchip/mpfs.dtsi | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+From what I can see in your patch series, these are never changed.
+So, I question the value of having this "common_plat_dat"
+initialisation function. Why not leave this code in
+socfpga_dwmac_probe(), and just move the initialisation of
+plat_dat->core_type and plat_dat->riwt_off ?
 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-index 9883ca3554c5..f9d6bf08e717 100644
---- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-@@ -259,6 +259,11 @@ clkcfg: clkcfg@20002000 {
- 			#reset-cells = <1>;
- 		};
- 
-+		sysreg_scb: syscon@20003000 {
-+			compatible = "microchip,mpfs-sysreg-scb", "syscon";
-+			reg = <0x0 0x20003000 0x0 0x1000>;
-+		};
-+
- 		ccc_se: clock-controller@38010000 {
- 			compatible = "microchip,mpfs-ccc";
- 			reg = <0x0 0x38010000 0x0 0x1000>, <0x0 0x38020000 0x0 0x1000>,
-@@ -521,10 +526,14 @@ usb: usb@20201000 {
- 			status = "disabled";
- 		};
- 
--		mbox: mailbox@37020000 {
-+		control_scb: syscon@37020000 {
-+			compatible = "microchip,mpfs-control-scb", "syscon";
-+			reg = <0x0 0x37020000 0x0 0x100>;
-+		};
-+
-+		mbox: mailbox@37020800 {
- 			compatible = "microchip,mpfs-mailbox";
--			reg = <0x0 0x37020000 0x0 0x58>, <0x0 0x2000318C 0x0 0x40>,
--			      <0x0 0x37020800 0x0 0x100>;
-+			reg = <0x0 0x37020800 0x0 0x1000>;
- 			interrupt-parent = <&plic>;
- 			interrupts = <96>;
- 			#mbox-cells = <1>;
 -- 
-2.51.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
