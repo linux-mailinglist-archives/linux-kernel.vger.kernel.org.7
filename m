@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-876703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0CC1C1C111
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:27:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392E7C1C0A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CDDF1885E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8CD81343680
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26431351FAE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C703C3546EB;
 	Wed, 29 Oct 2025 16:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K0KQ9Uti"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y5Xfmo8k"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E5A34FF78
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4523502A7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754897; cv=none; b=mTXVtulhO8myHyd0toQeAnz44DPPB4K/hJXWmGh7osRIl7kODZhY0b4Ac+h3cB7mLOEHXpLZhTN38HBBRgbpJ6hGmqsIZGsHZpxFLj34E585OIpsoiWkzunxz6xxf3oBn5CDgMCMVzzW7qBNYXG2T+VFMxLIK7lNHjftHrYNato=
+	t=1761754897; cv=none; b=gyIrlo5XCAQDMBdOjB2EkIxyrkEqG7nQPfoHwCPcb81ck7gBw/t/ObIllliTCYB7J/uAECzMNmxL1p/8HnjomeRbvPd139dKU+P64X9XkcPvAwFeSLxJGFm6LMniRM8BY4Exa99LpQTycdF3cMQ6OFyczD6Oc3h9BQU4PZ9AU/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761754897; c=relaxed/simple;
-	bh=besaz890jtzjVt0kgHuI7dQ4aUz9CByTrzOdg471i0M=;
+	bh=s2zdXPkf13ijZs2d4buZOE2qMfzjJns3mV7fq2x2DPE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J0p5u5tu4j2l48WCmdJmWhBmwbjrQVZGKjA4vyTX8ixKpPdtcsRXQ1MmGcvrEH65jNueNtAPSBi7ZBIYX6GdfFT1kP24/58mSzGdyACWiz9HfCEbDN7MxAes5573bBLb+JOf0+rOkvAK6ycRrfHiFtqBUUFkABWU46wkC2Da08o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K0KQ9Uti; arc=none smtp.client-ip=198.175.65.12
+	 MIME-Version; b=DtE7Iar8qNlV9PBRjJSN4IemKepeLVRUYyhYfbK8fRwuY2Qtsd9/oqGO4Qj5s22PxXQpzazILoVcnvjNhzt0x/QXIisyNTVoeYI+5DlLGQnotPduF28LoH1sal+y57dHk/HRie5ZHnHdLi2BgT7w3sb/8S2y2U+sh2aK23cFMBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y5Xfmo8k; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761754895; x=1793290895;
+  t=1761754896; x=1793290896;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=besaz890jtzjVt0kgHuI7dQ4aUz9CByTrzOdg471i0M=;
-  b=K0KQ9Uti/z9IW1BpG/stCnlbgiPz3uTZPNTDWlp7CbTSTUY3WYG/lfnn
-   XKC6tqva8DhDdosX4yRDYQrC2E/5USLee8rPlaAvMG/ZxKiHL30QWLjWA
-   8JG6tRU7O4kU10b7IGT0nmL4TLVbMMjsUAtN1VJZe2IgSn3mP+Y3SXTDJ
-   xJ880/FfgxQyQh7aNk6EPyz+vWenxN8z1VykuW4V/z1x5HS/hQsudkkVz
-   MZLH6gESLJ/X+0sZllGsxNUYFy0+uKz+zMezDdmz2J2prCP4/mjeBkQo0
-   FVBvYjeluvigm8eXrhq9fugqFOux51oe6c6Cf9RwF3p3HaKN7OgIMJ8oB
-   w==;
-X-CSE-ConnectionGUID: 3VRbI6l4TPW+LoB0M/fB+Q==
-X-CSE-MsgGUID: POPtBL3dRbObX9hsnnAW9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75331015"
+  bh=s2zdXPkf13ijZs2d4buZOE2qMfzjJns3mV7fq2x2DPE=;
+  b=Y5Xfmo8k59J3b+HrsM1LwBbewDS5kX31Ve+bBSJAPEbKDRMxDrcZtRyj
+   kLgdmrDv4v4bUNeu9SvwLTzVLGK9zMsNI/nDo+u4aDF3KpCremuvWqjEp
+   j1RTBMyffODh+UnDrgzj5U3LPhnanJhcd4Hp1nvD7tIjJrJbHqFCZ+KOc
+   stS+KTwtlgXQis8MvmUtIaErf4do+W18FkcGRGveCbxjjazsd94wLcp2k
+   zSHmHGsUNmx/r8BBKMGDfNFaES+X+E9qNhfnxofsgAKb6dM0fAerhzRz4
+   DBaXensXRO3jlbPUGu6AvPuuhUI9YTGsq1co/AJTyhb4KLwSihwbJM8iU
+   A==;
+X-CSE-ConnectionGUID: W0z7qzdoQHuqw266enrInQ==
+X-CSE-MsgGUID: qt87rog5TLaNSuq7mRXyqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75331017"
 X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="75331015"
+   d="scan'208";a="75331017"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:29 -0700
-X-CSE-ConnectionGUID: UFhYpRuOSPaqsSKZMM0nRA==
-X-CSE-MsgGUID: mPmxVy7NSqaIy6b4Dw50oQ==
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:30 -0700
+X-CSE-ConnectionGUID: +idACTJmTKy55vp4bSyo0g==
+X-CSE-MsgGUID: YzZ/H8LKT+ifM2DkD69b3Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="184901341"
+   d="scan'208";a="184901354"
 Received: from mgerlach-mobl1.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.223.146])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:29 -0700
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:30 -0700
 From: Tony Luck <tony.luck@intel.com>
 To: Fenghua Yu <fenghuay@nvidia.com>,
 	Reinette Chatre <reinette.chatre@intel.com>,
@@ -71,9 +71,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v13 13/32] x86,fs/resctrl: Add an architectural hook called for each mount
-Date: Wed, 29 Oct 2025 09:20:56 -0700
-Message-ID: <20251029162118.40604-14-tony.luck@intel.com>
+Subject: [PATCH v13 14/32] x86,fs/resctrl: Add and initialize rdt_resource for package scope monitor
+Date: Wed, 29 Oct 2025 09:20:57 -0700
+Message-ID: <20251029162118.40604-15-tony.luck@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251029162118.40604-1-tony.luck@intel.com>
 References: <20251029162118.40604-1-tony.luck@intel.com>
@@ -85,84 +85,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Enumeration of Intel telemetry events is an asynchronous process involving
-several mutually dependent drivers added as auxiliary devices during
-the device_initcall() phase of Linux boot. The process finishes after
-the probe functions of these drivers completes. But this happens after
-resctrl_arch_late_init() is executed.
+Add a new PERF_PKG resource and introduce package level scope for
+monitoring telemetry events so that CPU hot plug notifiers can build
+domains at the package granularity.
 
-Tracing the enumeration process shows that it does complete a full seven
-seconds before the earliest possible mount of the resctrl file system
-(when included in /etc/fstab for automatic mount by systemd).
-
-Add a hook at the beginning of the mount code that will be used
-to check for telemetry events and initialize if any are found.
-
-Call the hook on every attempted mount. Expectations are that
-most actions (like enumeration) will only need to be performed
-on the first call.
-
-resctrl filesystem calls the hook with no locks held. Architecture code
-is responsible for any required locking.
+Use the physical package ID available via topology_physical_package_id()
+to identify the monitoring domains with package level scope. This enables
+user space to use:
+ /sys/devices/system/cpu/cpuX/topology/physical_package_id
+to identify the monitoring domain a CPU is associated with.
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- include/linux/resctrl.h            | 6 ++++++
- arch/x86/kernel/cpu/resctrl/core.c | 9 +++++++++
- fs/resctrl/rdtgroup.c              | 2 ++
- 3 files changed, 17 insertions(+)
+ include/linux/resctrl.h            |  2 ++
+ fs/resctrl/internal.h              |  2 ++
+ arch/x86/kernel/cpu/resctrl/core.c | 10 ++++++++++
+ fs/resctrl/rdtgroup.c              |  2 ++
+ 4 files changed, 16 insertions(+)
 
 diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index a7e5a546152d..1634db6176c3 100644
+index 1634db6176c3..9fe6205743b7 100644
 --- a/include/linux/resctrl.h
 +++ b/include/linux/resctrl.h
-@@ -511,6 +511,12 @@ void resctrl_offline_mon_domain(struct rdt_resource *r, struct rdt_domain_hdr *h
- void resctrl_online_cpu(unsigned int cpu);
- void resctrl_offline_cpu(unsigned int cpu);
+@@ -53,6 +53,7 @@ enum resctrl_res_level {
+ 	RDT_RESOURCE_L2,
+ 	RDT_RESOURCE_MBA,
+ 	RDT_RESOURCE_SMBA,
++	RDT_RESOURCE_PERF_PKG,
  
-+/*
-+ * Architecture hook called at beginning of each file system mount attempt.
-+ * No locks are held.
-+ */
-+void resctrl_arch_pre_mount(void);
-+
+ 	/* Must be the last */
+ 	RDT_NUM_RESOURCES,
+@@ -267,6 +268,7 @@ enum resctrl_scope {
+ 	RESCTRL_L2_CACHE = 2,
+ 	RESCTRL_L3_CACHE = 3,
+ 	RESCTRL_L3_NODE,
++	RESCTRL_PACKAGE,
+ };
+ 
  /**
-  * resctrl_arch_rmid_read() - Read the eventid counter corresponding to rmid
-  *			      for this resource and domain.
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index f5189b6771a0..96d97f4ff957 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -255,6 +255,8 @@ struct rdtgroup {
+ 
+ #define RFTYPE_ASSIGN_CONFIG		BIT(11)
+ 
++#define RFTYPE_RES_PERF_PKG		BIT(11)
++
+ #define RFTYPE_CTRL_INFO		(RFTYPE_INFO | RFTYPE_CTRL)
+ 
+ #define RFTYPE_MON_INFO			(RFTYPE_INFO | RFTYPE_MON)
 diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index c435319552be..980a4d9e5267 100644
+index 980a4d9e5267..af555dadf024 100644
 --- a/arch/x86/kernel/cpu/resctrl/core.c
 +++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -721,6 +721,15 @@ static int resctrl_arch_offline_cpu(unsigned int cpu)
- 	return 0;
- }
+@@ -100,6 +100,14 @@ struct rdt_hw_resource rdt_resources_all[RDT_NUM_RESOURCES] = {
+ 			.schema_fmt		= RESCTRL_SCHEMA_RANGE,
+ 		},
+ 	},
++	[RDT_RESOURCE_PERF_PKG] =
++	{
++		.r_resctrl = {
++			.name			= "PERF_PKG",
++			.mon_scope		= RESCTRL_PACKAGE,
++			.mon_domains		= mon_domain_init(RDT_RESOURCE_PERF_PKG),
++		},
++	},
+ };
  
-+void resctrl_arch_pre_mount(void)
-+{
-+	static atomic_t only_once = ATOMIC_INIT(0);
-+	int old = 0;
-+
-+	if (!atomic_try_cmpxchg(&only_once, &old, 1))
-+		return;
-+}
-+
- enum {
- 	RDT_FLAG_CMT,
- 	RDT_FLAG_MBM_TOTAL,
+ u32 resctrl_arch_system_num_rmid_idx(void)
+@@ -435,6 +443,8 @@ static int get_domain_id_from_scope(int cpu, enum resctrl_scope scope)
+ 		return get_cpu_cacheinfo_id(cpu, scope);
+ 	case RESCTRL_L3_NODE:
+ 		return cpu_to_node(cpu);
++	case RESCTRL_PACKAGE:
++		return topology_physical_package_id(cpu);
+ 	default:
+ 		break;
+ 	}
 diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
-index e0eb766c5cf4..a4d4d4080e87 100644
+index a4d4d4080e87..26f0d1f93da2 100644
 --- a/fs/resctrl/rdtgroup.c
 +++ b/fs/resctrl/rdtgroup.c
-@@ -2720,6 +2720,8 @@ static int rdt_get_tree(struct fs_context *fc)
- 	struct rdt_resource *r;
- 	int ret;
+@@ -2330,6 +2330,8 @@ static unsigned long fflags_from_resource(struct rdt_resource *r)
+ 	case RDT_RESOURCE_MBA:
+ 	case RDT_RESOURCE_SMBA:
+ 		return RFTYPE_RES_MB;
++	case RDT_RESOURCE_PERF_PKG:
++		return RFTYPE_RES_PERF_PKG;
+ 	}
  
-+	resctrl_arch_pre_mount();
-+
- 	cpus_read_lock();
- 	mutex_lock(&rdtgroup_mutex);
- 	/*
+ 	return WARN_ON_ONCE(1);
 -- 
 2.51.0
 
