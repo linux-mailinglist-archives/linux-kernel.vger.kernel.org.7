@@ -1,253 +1,160 @@
-Return-Path: <linux-kernel+bounces-876573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF3A8C1BDD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:58:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0F3C1C1F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 272265E0A9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:47:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12AB15E292C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D7033EAEB;
-	Wed, 29 Oct 2025 15:45:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB17033970F;
+	Wed, 29 Oct 2025 15:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="so3PFGmE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="t5CmFmH/"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93CA34DCEE;
-	Wed, 29 Oct 2025 15:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCCC1F30A9;
+	Wed, 29 Oct 2025 15:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752710; cv=none; b=aqMchBIot/FFrA24hNGZj5oeLfz51D80QElRKVSaH2ogMVaMr03XpMP8SFFj8StF0S6timzCZn2/4TrhWZusFmmTDOk8HYYe6lQQ35sR5OMko11whNvnD7Az/TOFFxueGCNxQge/9sJNKWLFk9VEAq//GpSfdPO0YBUVG5NGwlI=
+	t=1761752911; cv=none; b=G4QA7VtC+vVnPeOzEm7ugjpmSGXhkDdmdZ231ulf4S/RsXWApSFgrj+fsmbDjznAONo6pE8uZWc42U61n8A0RSlvO393zTD/3b59T3E+Qc/xlFXsxGQBbk25cUy/wQJ3Z87cHjE6v9DprjUZMhMqMnMb7NxHaiTBKVi5Fwwcqu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752710; c=relaxed/simple;
-	bh=MRm3TarntppjsXNsPEV5BrslhGYY00w4hNhu+KLG8aU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmlysj4SzsxMOMY70901tmPeWYimm6LniXUlE/JBrQP17aRF/8zJqFD/n2w5qgwqr7mbqI/SKVb1KtVnOfXVlZRA0lzrJCtVHJ/veU0dWQ3sIECJiPn1Wnmiz75pXsOI5iLOGL5L9HysOQwg87T1EryOaq6/1KnVutzmEYcIs8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=so3PFGmE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B650AC4CEFF;
-	Wed, 29 Oct 2025 15:45:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761752709;
-	bh=MRm3TarntppjsXNsPEV5BrslhGYY00w4hNhu+KLG8aU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=so3PFGmEZuT750aOPrHlhbF4UJ0j8S7oDGjJ1rjZNzv7YYtc3iBCeN9yBYRJ5H06K
-	 45s440ei6aqy6fE+REiwHevRCmnc9lkVm3zC6JuApW0GgXKOa5bDpzu17Q5RbknV06
-	 vEG7XMZex5/85/ApPRli5W0WaStGZW5M3K8fL21aTXpD4/jPh+ynsLEGgpntmWYdVk
-	 9iBBBot8my6aFqD3JCGtHpdRQ1r79+ksohdGZswuMjeFPH0hkW07ZhR46O1As9fPCr
-	 UUcml3QnN2IT78W3fPz7rRrZsaWUKhx8QSu93Y+lD2+FfMNPL7B+0rCWRA3AzPw4Di
-	 KfEOH1SouBFpg==
-Date: Wed, 29 Oct 2025 10:48:13 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Sudarshan Shetty <tessolveupstream@gmail.com>
-Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: talos-evk: Add support for
- dual-channel LVDS panel
-Message-ID: <fvtwdsthi242vxxlaqsbvqec4xkduch3fcslwqsjzkz4fidewn@mku374rrwlp7>
-References: <20251028061636.724667-1-tessolveupstream@gmail.com>
- <20251028061636.724667-2-tessolveupstream@gmail.com>
+	s=arc-20240116; t=1761752911; c=relaxed/simple;
+	bh=ORggRG7XLphs1kQMYY+pAGuzz7PShwMTXh/OgtED/r8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Zzv0RQdxT2TvejaSbg0fUygilpjvFZ8llB27WqPz/Ock5lNTbeD7ByoXHYEZOKqBYFHnNIOkhuiLSyc+wAFtOFXz/T9ouqWFpvhMxP6h2nnXrtg6U0wdFftx4HUT4ebdWt16NjRdtEGDabe5dZdpxvivc0OB88efNlqbuaz2I/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=t5CmFmH/; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761752896; x=1762357696; i=markus.elfring@web.de;
+	bh=ORggRG7XLphs1kQMYY+pAGuzz7PShwMTXh/OgtED/r8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=t5CmFmH/rZHNLDBsJ8Q7MnnEONRIiVU8UMfZE5NZx53JkvCEVHA/OdiXSQdC32EM
+	 PkK7pEorjXK40j9MM4HZHpgL74vKZsMGqjYi5EGMoboTEqg+Q5QWIp8vMs0CO3pOt
+	 ugy3hrRtTdohzsvsgqYkniDmWuJTDjaEe1A376cWZPcfYhnL0NdY2V5GYjvY0fP2S
+	 N5CvWS+4rxPDWLkagEUO6JAvo4lVVh7vm7vM++lb/PZ+UxQiXTUPoWyhj+GmZZhYr
+	 QGS4x4wVkbbQlknOWd/hRzias12Dmmqst/dfZjikao+fJ3f2tSofEpOR6RChwqgWn
+	 iTSsMJtbc9ITdlvmzA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MrOdp-1w1R4R2q3z-00hs3W; Wed, 29
+ Oct 2025 16:48:16 +0100
+Message-ID: <53cf045d-e3f4-451d-a809-8714d00add70@web.de>
+Date: Wed, 29 Oct 2025 16:48:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251028061636.724667-2-tessolveupstream@gmail.com>
+User-Agent: Mozilla Thunderbird
+To: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org,
+ Christian Brauner <brauner@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+References: <20251029134952.658450-1-mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: touch up predicts in putname()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251029134952.658450-1-mjguzik@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:PLSUOweGdhevhmj0ntWcsdqoK74qTUTA4I63IHuyLe734rEhYbF
+ pB3c3rA3+Ogaqzu46WRGxQ5fNuD4t4GAkx2qlKigsMJX8QRweILQuX7GqcfyyuH2w2Xk4t7
+ Im8vGOXy6c+8PuiYQE4qWbP7Cs8cvsCBL7b71bKfcraJ+Rn9WBeorNu6EuzhGVDWi6Bl3x5
+ O5S+n/WZXacYbqUBu5wSw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ojacwNjdiU4=;voKfmcn/jXB6jnv1tjKTVZEJYnN
+ 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
+ Mzr8bKig1NhpQFBWStVoJaq8rY9PpAb2XNk=
 
-On Tue, Oct 28, 2025 at 11:46:36AM +0530, Sudarshan Shetty wrote:
-> This patch introduces a new device tree for the QCS615 Talos
+=E2=80=A6
+> I verified this straightens out the asm, no functional changes.
 
-"This patch" doesn't make sense when you look at the git log once the
-patch has been accepted, please avoid it.
+Would a corresponding imperative wording become helpful for an improved ch=
+ange description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.18-rc3#n94
 
-Please read https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
 
-Start your commit message with a "problem description", describe what
-this LVDS talos is, why it should have it's own dts file etc.
-
-> EVK platform with dual-channel LVDS display support.
-> 
-> The new DTS file (`talos-evk-lvds.dts`) is based on the existing
-> `talos-evk.dts` and extends it to enable a dual-channel LVDS display
-> configuration using the TI SN65DSI84 DSI-to-LVDS bridge.
-> 
-> where channel-A carries odd pixel and channel-B carries even pixel
-> on the QCS615 talos evk platform.
-> 
-> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile           |   1 +
->  arch/arm64/boot/dts/qcom/talos-evk-lvds.dts | 128 ++++++++++++++++++++
->  2 files changed, 129 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index d5a3dd98137d..6e7b04e67287 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -307,6 +307,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
->  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-dsi.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-lvds.dtb
->  x1e001de-devkit-el2-dtbs	:= x1e001de-devkit.dtb x1-el2.dtbo
->  dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb x1e001de-devkit-el2.dtb
->  x1e78100-lenovo-thinkpad-t14s-el2-dtbs	:= x1e78100-lenovo-thinkpad-t14s.dtb x1-el2.dtbo
-> diff --git a/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> new file mode 100644
-> index 000000000000..7ba4ab96ada6
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> @@ -0,0 +1,128 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +/dts-v1/;
-> +#include "talos-evk.dts"
-
-We don't include .dts files, split the existing one in a dtsi and dts
-file and then include the dtsi here. Or provide provide this as a dtso
-overlay on top of the dts.
-
-It's not clear to me which is the correct way, because you didn't
-adequately described how the SN65DSI84 enter the picture. Is it always
-there, but not part of the standard dip-switch configuration? Or is this
-some mezzanine?
+How do you think about to refer to predictions for condition checks?
 
 Regards,
-Bjorn
-
-> +
-> +/ {
-> +
-> +	backlight: backlight {
-> +		compatible = "gpio-backlight";
-> +		gpios = <&tlmm 115 GPIO_ACTIVE_HIGH>;
-> +		default-on;
-> +	};
-> +
-> +	lcd0_pwm_en {
-> +		compatible = "pwm-gpio";
-> +		gpios = <&tlmm 59 GPIO_ACTIVE_HIGH>;
-> +		pinctrl-0 = <&lcd0_bklt_pwm>;
-> +		pinctrl-names = "default";
-> +		#pwm-cells = <3>;
-> +	};
-> +
-> +	panel-lvds {
-> +		compatible = "auo,g133han01";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			/* LVDS A (Odd pixels) */
-> +			port@0 {
-> +				reg = <0>;
-> +				dual-lvds-odd-pixels;
-> +
-> +				lvds_panel_out_a: endpoint {
-> +					remote-endpoint = <&sn65dsi84_out_a>;
-> +				};
-> +			};
-> +
-> +			/* LVDS B (Even pixels) */
-> +			port@1 {
-> +				reg = <1>;
-> +				dual-lvds-even-pixels;
-> +
-> +				lvds_panel_out_b: endpoint {
-> +					remote-endpoint = <&sn65dsi84_out_b>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&adv7535 {
-> +	status = "disabled";
-> +};
-> +
-> +&i2c1 {
-> +	clock-frequency = <400000>;
-> +
-> +	status = "okay";
-> +
-> +	sn65dsi84: sn65dsi84@2c {
-> +		compatible = "ti,sn65dsi84";
-> +		reg = <0x2c>;
-> +		enable-gpios = <&tlmm 42 GPIO_ACTIVE_HIGH>;
-> +		ti,dsi-lanes = <4>;
-> +		ti,lvds-format = "jeida-24";
-> +		ti,lvds-bpp = <24>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				sn65dsi84_in: endpoint {
-> +					data-lanes = <0 1 2 3>;
-> +					remote-endpoint = <&mdss_dsi0_out>;
-> +				};
-> +			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +
-> +				sn65dsi84_out_a: endpoint {
-> +					data-lanes = <0 1 2 3>;
-> +					remote-endpoint = <&lvds_panel_out_a>;
-> +				};
-> +			};
-> +
-> +			port@3 {
-> +				reg = <3>;
-> +
-> +				sn65dsi84_out_b: endpoint {
-> +					data-lanes = <0 1 2 3>;
-> +					remote-endpoint = <&lvds_panel_out_b>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
-> +&mdss_dsi0 {
-> +	vdda-supply = <&vreg_l11a>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dsi0_out {
-> +	remote-endpoint = <&sn65dsi84_in>;
-> +	data-lanes = <0 1 2 3>;
-> +};
-> +
-> +&tlmm {
-> +	lcd0_bklt_en: lcd0-bklt-en-state {
-> +		pins = "gpio115";
-> +		function = "gpio";
-> +		bias-disable;
-> +	};
-> +
-> +	lcd0_bklt_pwm: lcd0-bklt-pwm-state {
-> +		pins = "gpio59";
-> +		function = "gpio";
-> +		bias-disable;
-> +	};
-> +};
-> -- 
-> 2.34.1
-> 
+Markus
 
