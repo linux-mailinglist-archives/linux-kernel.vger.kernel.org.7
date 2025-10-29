@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-876371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12F5C1B801
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBB7C1B51F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D3EAE5A8FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:37:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423D01885A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979822D3ECA;
-	Wed, 29 Oct 2025 14:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359E22DC76F;
+	Wed, 29 Oct 2025 14:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LP4xLJtC"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wlC79MD3"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43292BD001
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0682D5C6C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748619; cv=none; b=dYwsw3RPBiHHawvxUxgpY3duA8krzFKIB8niITCxcvBBLqwQcWKO7wY2KNEIhmNZ0zxW3OqY7F7sdtrfga5TQx/ZuqAqa7+GnZyrqoVfHzfg79KzdFyueAaarb5Mx26tuYoQMHpr0VGjHLc45DdSoDwPQWnQ95pV/K1eQdAXf2c=
+	t=1761748623; cv=none; b=RAZjqQKN7EW6Vhk3dRr0alcPCfQ6uSYtdarFR9B2xuUfJLSpC977UYWjl7FIXzsYZa2ZzciZR9E9hGjOlldMtyNHHLm6tbj4KNNmHwClJ+u9AeoujkExuiBdFbRnJMW/dLVa6nDSDmATnqN2/I+bVczL43hpiBlTTS3QJvmQTH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748619; c=relaxed/simple;
-	bh=P2YQYyxAPSZpXd/i/92Ex57u+40+oZJvWkUOQRGtaCI=;
+	s=arc-20240116; t=1761748623; c=relaxed/simple;
+	bh=JI6BJsuj4AXbzLKNzvB4FHoZVsIkkY5eZBTNuNhEyrQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pT0wf0argkwyqhIKYOifvZjx1CsF+emN5Htyj5VN3RM7wtiunk9yR/QQqGlOa33v1WAwEL39v5HrGBMHW7S+zSwuT6UiA47OeTYr+eg+Oat7tfKfQO7oyPR6HeOwxqDYpJ2BiWqfBrLzJ3Q++Hn4edzeV+UoML91ThfMProMWyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LP4xLJtC; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=lIGaFho+VX+pEviC8Wz7qvqhVThezwGzF8s9EycZvfFstzLQ18n5ZmxQCHSjpmJnHela8/eXHtahtr58KoG+k2xfqqAiuSngxlN35USyj565CBUo+WJV2dKJKmrra3PLy+HWLmxQ+uQXasvD4HbVoQm3KVQclmhuBC51b5LMFgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wlC79MD3; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 1BC5D4E413CF;
-	Wed, 29 Oct 2025 14:36:56 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id BF4DF4E413D1;
+	Wed, 29 Oct 2025 14:36:59 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E59ED606E8;
-	Wed, 29 Oct 2025 14:36:55 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9BEF7102F24F9;
-	Wed, 29 Oct 2025 15:36:53 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8ED09606E8;
+	Wed, 29 Oct 2025 14:36:59 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6C182117F81B1;
+	Wed, 29 Oct 2025 15:36:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761748615; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761748618; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=Cp6JpAtoASV5c2ZHnxjic8luGPShZOCddn0tveS2zCk=;
-	b=LP4xLJtCpeo0/5dDEGlvCen7w4edznxJlfh4hXIodgwC983y8R+ka7JswykSJVMQfzmKhs
-	7lqUDNOq/iD6uuMldL5pGETpUyT20yXfyIAxuggiVpJI/IjEYzv57GpuN9AxR7NBjI8pqC
-	v8i0/4FIP9gVRWJ0Gkgym79AZk9XMw+9ivEKalIg/U/R8m2NY748Qj1JMe3wqPJ7wND2DU
-	zclGw7bK3OXJhnYO+4++30uGjZmhqacQKSlxgx3dZmc40KwBwf97F7wQfBxxQKK8mJKlgC
-	q1PRAm5Uu+hNublx+XJEpK/aw/v5BNKPkmDbi8QOjZvMnCLeTgkY9rl2kO7iow==
+	bh=6J4X9HET4WTHRHuQARwrxqHYhuRpm2UMz/V2um5iVtU=;
+	b=wlC79MD3D3AwIKWRSLcPNc7KDGLZeXcEmYO8e2rxkunCMy6dTD5v/CTUpBF5cvCrNPG17E
+	83GRqGztqYjPwJHoHueYde4d2y7tBAVBIH60AMUXezhtimNZv7crUZ0L2S6MOle950L10o
+	ViXldQCfsoyEP9zn67WQLJBFZD9pIkebnY02G8m3eE7mKKdPZLXk5lpCBXK+IQwqzv/oJl
+	wSMM4dRmL9UdKJK+OnGHukIDmixcb+FXOT+zw1DbWHOjcou0T8y4w95HW3PWKt2oKDzxHy
+	iXeaalidTarJlcK0hgsW8bAgt0tLMFkVJzc3sbl54E/5HsGloUqs0LwbYfvQGg==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 29 Oct 2025 15:36:40 +0100
-Subject: [PATCH RESEND v2 03/32] drm/vkms: Use enabled/disabled instead of
- 1/0 for debug
+Date: Wed, 29 Oct 2025 15:36:42 +0100
+Subject: [PATCH RESEND v2 05/32] drm/vkms: Introduce config for plane name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-vkms-all-config-v2-3-a49a2d4cba26@bootlin.com>
+Message-Id: <20251029-vkms-all-config-v2-5-a49a2d4cba26@bootlin.com>
 References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 In-Reply-To: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
@@ -73,56 +72,190 @@ Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1094;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6014;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=P2YQYyxAPSZpXd/i/92Ex57u+40+oZJvWkUOQRGtaCI=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ67gTBmoyopTr26ee+sA1L9TqFeiljDye1u
- t9L9WYhhSuJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImegAKCRAgrS7GWxAs
- 4hISEADIvecDEqTRDOMd30EJrvFoLJdurexYYJOpbiRQw32Oo0Ll7HkT5kVmCYbk6vOUlNeabLI
- ukxPUg3edy1pY/s5xkiaNiN0pg01HOlEyx50gjhEG1Ex7ghFrb2bWXnJVJaW/I0Pl+nWqkgLvNl
- 9197W66mCD+UWEejgbsWAjbSESG3z6dpDxlwntcik+aDufgGSBgwvEW6nU4gMiK8C0/Zj13RbLq
- HhbC1mKkmH8rWOx90ovac8t5BTM4VrUioQBD6OxQgfpNLBWKDnk2QTIy8ljmA2K/WTkmU4sK5eU
- XsL2MCVmfym8zUMSiptCb9Zvx8lRkUppFfdZQLnb0bxefbL+vFDVGnJ3tgIggrvVDX6qC7rbuBL
- gOQHsbzmQd9k5cq7QvBqA4hUHyAWj5yG0thY5oVILmTHM8ch1tzOn7bT5Hw/PD3eomR3ttXrk1i
- uURqRgLALZlCoSzGZy1TL9FV8dhG6F8waG9J54ZR1xc0RsqGp40OKjfUZaNyU0RWixD+VJH06LQ
- XkKxZcq0erG1J8+Aep2CnS8CukaMXoToZT7T4X4DnC3XFIyXh+gXlHziZtzm1yBE2ejcRK+2DwB
- qJIGbwWX53TZITJWhU5W7dMUqHgkRIPSqn3kQo6GOdEASwk0JnISOsK4OYHgBWHJnzsYZrKTxV+
- jkMXTqKG18EtldA==
+ bh=JI6BJsuj4AXbzLKNzvB4FHoZVsIkkY5eZBTNuNhEyrQ=;
+ b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ6C1weX5fTU9+PdO7CwUHjy6vS1s+/aI9kq
+ brM4O2VESCJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImegAKCRAgrS7GWxAs
+ 4tVtD/43B0pLg3N80G3RigoAqofUn0kuJ0bHb758KSCFLBCJmlXCTFpyVvJmveMdQeKahELv6Ka
+ kfXyTMyhvVDlzqK6RtYZvPEv0j9wt3KuInYbzplbjClMpEqN3Yn0faHULeOPnZJw2Br/wtpkGm7
+ XiwNPmEYiAoY1NjqNjqWsapvW4TcGKbNVGrnmDa5/pZkTyhKkGX0yrxSLewJ7aT/hEvXUdPhqGP
+ X002QQ1eSS3zYQpY3WRKkGKJ0gr3Pia1YOPL2m6F1UxyeJVbszH+lgG+x5pvqGGz9uVXkWVw5j+
+ RV7mDlaAkDYxsiTqLWa6eKZW9mxJlGgbXpxtSoNI/mI9R4cBzcVeJH8cMamrFBT6uMdcU7sw3Cc
+ Wl6UB3/HZo0D3G7P77S4DFnkJYVKUYETDCpqI3f14Pgw1eMVQG0awBPhHbMJYFyEdc9wQut5L0h
+ UoyX3fqU4vuP3iXn/NL0e/CE2/y1FvrIYhAyMhcHMdQS0p6DxaPrKk0e688rCA8yalxDhXlFyL0
+ vpZ+kE9xpF4o0rMkskiRedMdq7eFqJpdz9xcmerLaoWjO87HY4f9fU6qCqCfo5tf/9dBVmXvQBw
+ tS1zmilyr21E2+z2og031GpgnFILLRYtCHf99RfF0FErAfJ1Cg/4MC+OXj0ul9zMIJpThAO6zqL
+ e4a29Oexuu6IZ3A==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-Last-TLS-Session-Version: TLSv1.3
 
-Debug information are mainly read by human, so display human
-readable values.
+As planes can have a name in DRM, prepare VKMS to configure it using
+ConfigFS.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/gpu/drm/vkms/vkms_config.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vkms/vkms_config.c |  4 ++++
+ drivers/gpu/drm/vkms/vkms_config.h | 26 ++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_drv.h    |  5 +++--
+ drivers/gpu/drm/vkms/vkms_output.c |  6 +-----
+ drivers/gpu/drm/vkms/vkms_plane.c  |  6 ++++--
+ 5 files changed, 38 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-index cfdd5f32f234..391794d391c5 100644
+index 858bec2d1312..bfafb5d2504d 100644
 --- a/drivers/gpu/drm/vkms/vkms_config.c
 +++ b/drivers/gpu/drm/vkms/vkms_config.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0+
- 
- #include <linux/slab.h>
-+#include <linux/string_choices.h>
- 
- #include <drm/drm_print.h>
- #include <drm/drm_debugfs.h>
-@@ -354,8 +355,8 @@ static int vkms_config_show(struct seq_file *m, void *data)
- 
- 	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
- 		seq_puts(m, "crtc:\n");
--		seq_printf(m, "\twriteback=%d\n",
--			   vkms_config_crtc_get_writeback(crtc_cfg));
-+		seq_printf(m, "\twriteback=%s\n",
-+			   str_enabled_disabled(vkms_config_crtc_get_writeback(crtc_cfg)));
+@@ -352,6 +352,8 @@ static int vkms_config_show(struct seq_file *m, void *data)
+ 		seq_puts(m, "plane:\n");
+ 		seq_printf(m, "\ttype=%s\n",
+ 			   drm_get_plane_type_name(vkms_config_plane_get_type(plane_cfg)));
++		seq_printf(m, "\tname=%s\n",
++			   vkms_config_plane_get_name(plane_cfg));
  	}
  
- 	vkms_config_for_each_encoder(vkmsdev->config, encoder_cfg)
+ 	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
+@@ -392,6 +394,7 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
+ 
+ 	plane_cfg->config = config;
+ 	vkms_config_plane_set_type(plane_cfg, DRM_PLANE_TYPE_OVERLAY);
++	vkms_config_plane_set_name(plane_cfg, NULL);
+ 	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
+ 
+ 	list_add_tail(&plane_cfg->link, &config->planes);
+@@ -404,6 +407,7 @@ void vkms_config_destroy_plane(struct vkms_config_plane *plane_cfg)
+ {
+ 	xa_destroy(&plane_cfg->possible_crtcs);
+ 	list_del(&plane_cfg->link);
++	kfree_const(plane_cfg->name);
+ 	kfree(plane_cfg);
+ }
+ EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy_plane);
+diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+index 4c8d668e7ef8..57342db5795a 100644
+--- a/drivers/gpu/drm/vkms/vkms_config.h
++++ b/drivers/gpu/drm/vkms/vkms_config.h
+@@ -35,6 +35,7 @@ struct vkms_config {
+  *
+  * @link: Link to the others planes in vkms_config
+  * @config: The vkms_config this plane belongs to
++ * @name: Name of the plane
+  * @type: Type of the plane. The creator of configuration needs to ensures that
+  *        at least one primary plane is present.
+  * @possible_crtcs: Array of CRTCs that can be used with this plane
+@@ -47,6 +48,7 @@ struct vkms_config_plane {
+ 	struct list_head link;
+ 	struct vkms_config *config;
+ 
++	const char *name;
+ 	enum drm_plane_type type;
+ 	struct xarray possible_crtcs;
+ 
+@@ -288,6 +290,30 @@ vkms_config_plane_set_type(struct vkms_config_plane *plane_cfg,
+ 	plane_cfg->type = type;
+ }
+ 
++/**
++ * vkms_config_plane_set_name() - Set the plane name
++ * @plane_cfg: Plane to set the name to
++ * @name: New plane name. The name is copied.
++ */
++static inline void
++vkms_config_plane_set_name(struct vkms_config_plane *plane_cfg,
++			   const char *name)
++{
++	if (plane_cfg->name)
++		kfree_const(plane_cfg->name);
++	plane_cfg->name = kstrdup_const(name, GFP_KERNEL);
++}
++
++/**
++ * vkms_config_plane_get_name - Get the plane name
++ * @plane_cfg: Plane to get the name from
++ */
++static inline const char *
++vkms_config_plane_get_name(const struct vkms_config_plane *plane_cfg)
++{
++	return plane_cfg->name;
++}
++
+ /**
+  * vkms_config_plane_attach_crtc - Attach a plane to a CRTC
+  * @plane_cfg: Plane to attach
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index db260df1d4f6..9ad286f043b5 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -225,6 +225,7 @@ struct vkms_output {
+ };
+ 
+ struct vkms_config;
++struct vkms_config_plane;
+ 
+ /**
+  * struct vkms_device - Description of a VKMS device
+@@ -298,10 +299,10 @@ int vkms_output_init(struct vkms_device *vkmsdev);
+  * vkms_plane_init() - Initialize a plane
+  *
+  * @vkmsdev: VKMS device containing the plane
+- * @type: type of plane to initialize
++ * @config: plane configuration
+  */
+ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				   enum drm_plane_type type);
++				   struct vkms_config_plane *config);
+ 
+ /* CRC Support */
+ const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 2ee3749e2b28..22208d02afa4 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -19,11 +19,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+ 		return -EINVAL;
+ 
+ 	vkms_config_for_each_plane(vkmsdev->config, plane_cfg) {
+-		enum drm_plane_type type;
+-
+-		type = vkms_config_plane_get_type(plane_cfg);
+-
+-		plane_cfg->plane = vkms_plane_init(vkmsdev, type);
++		plane_cfg->plane = vkms_plane_init(vkmsdev, plane_cfg);
+ 		if (IS_ERR(plane_cfg->plane)) {
+ 			DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
+ 			return PTR_ERR(plane_cfg->plane);
+diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+index e592e47a5736..73180cbb78b1 100644
+--- a/drivers/gpu/drm/vkms/vkms_plane.c
++++ b/drivers/gpu/drm/vkms/vkms_plane.c
+@@ -9,6 +9,7 @@
+ #include <drm/drm_gem_atomic_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ 
++#include "vkms_config.h"
+ #include "vkms_drv.h"
+ #include "vkms_formats.h"
+ 
+@@ -217,7 +218,7 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
+ };
+ 
+ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+-				   enum drm_plane_type type)
++				   struct vkms_config_plane *config)
+ {
+ 	struct drm_device *dev = &vkmsdev->drm;
+ 	struct vkms_plane *plane;
+@@ -225,7 +226,8 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
+ 	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
+ 					   &vkms_plane_funcs,
+ 					   vkms_formats, ARRAY_SIZE(vkms_formats),
+-					   NULL, type, NULL);
++					   NULL, vkms_config_plane_get_type(config),
++					   vkms_config_plane_get_name(config));
+ 	if (IS_ERR(plane))
+ 		return plane;
+ 
 
 -- 
 2.51.0
