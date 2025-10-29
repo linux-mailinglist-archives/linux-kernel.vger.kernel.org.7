@@ -1,274 +1,107 @@
-Return-Path: <linux-kernel+bounces-875802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F6BC19DA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:49:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02304C19DB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7483582B01
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572441C6047C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785434403C;
-	Wed, 29 Oct 2025 10:37:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88205302176;
+	Wed, 29 Oct 2025 10:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oVqOBANR"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B397330327;
-	Wed, 29 Oct 2025 10:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kGOneHR8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F9E24C068;
+	Wed, 29 Oct 2025 10:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734278; cv=none; b=JLxSWVMZ+lFT0BsFB9ffFJgVI7tV7gfsVikYtF+O6GevcTxKUH4nhNLBdpq+0MBowp9zh4WVAdD1hDntuHPA24Hq0llVvem5kXJ/6raT0a6eAR4+KO//eoCJbMxgpn7jiyU2pvqw0C9kmMTqX8vV2sRqxBK0/KDnC/U/Lx98/2Q=
+	t=1761734317; cv=none; b=nFwMxbFiylsM6UypxvbWDeCyYEkHRW2bhLjTk5V+B+5vsKdHtwT0KSaqZzaqK4rBiooAdPQulZUfGmA1HY7NgbK4aZUEvB6nRt7xEErR6LnA76S8quMVdIscS0QCKiu9j6mzqPGsNrhGDTus9O9z+/sMu7NehHM/ryhSgiyoQZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734278; c=relaxed/simple;
-	bh=h4ktVjJwrvb+bW+hTEgjMWw+BOzwEf7vjzxDc/TH23U=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=qpmXbiRY0ec1uuyBury7ch3azMdtNFcDUKzcaRIJKqchvzLEBKn2TLxYv7cX9k6oP3Aag8m6ggUPtjZdZijvSQlsp9YdtnqvGoNVqAe2C4TJOVSiiZjywlxVuu6BbowzbDuj0xsBPY2fbm8cTJeiSBB7/g/YCaB7dUAbHUeJRY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oVqOBANR; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 24176211CF97; Wed, 29 Oct 2025 03:37:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 24176211CF97
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761734276;
-	bh=sFK0LEa0ZlLnJ1Tx9uM2+AFX9+Izg/RNjd0uSAEK018=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=oVqOBANRtDzf05i5fW2QhJukQmI+aTusWxEvH5e5YOpwO5uoL3c7sZ0TK7UVFGiJq
-	 otpcFzKh+ILDLkzO5W/RreqrSTmytnzntEQuYi1gDXCL6GQSr4f6otjs8E2mE5RgSi
-	 Ii2BbiyKzcNN3siHsKu1nVak2RRYICcaaMeiKTNM=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	longli@microsoft.com,
-	kotaranov@microsoft.com,
-	horms@kernel.org,
-	shradhagupta@linux.microsoft.com,
-	ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com,
-	dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com,
-	rosenp@gmail.com,
-	linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: [PATCH net-next v2 2/2] net: mana: Add standard counter rx_missed_errors
-Date: Wed, 29 Oct 2025 03:37:52 -0700
-Message-Id: <1761734272-32055-3-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1761734272-32055-1-git-send-email-ernis@linux.microsoft.com>
-References: <1761734272-32055-1-git-send-email-ernis@linux.microsoft.com>
+	s=arc-20240116; t=1761734317; c=relaxed/simple;
+	bh=3s31/yBaG51d9qnkQpUcKyMtEB4jvcWcKzIO66o2Bdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7WjMRXuMGoYHNyrrIL2sUQ/FOT5Ze7hP/bqFLgq8pjQL5r/F2h8nW6+yE2wznLaI9qel9r4ac+zKsvzc3LUfO7FIoLTUNMX38SmrWsV/yuliNA2C/79gbvVXTqU8+LVDpr8Gu2UyCYysfAIqdjBKQ8W6a1oZyHAL4WbpW7FMMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kGOneHR8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eHGSKAl2qgha8GO/z2VZF0A4lrkYk6RSodk4W7L/YGU=; b=kGOneHR8G49DYpxW0CsTg/SSBu
+	1QLUKocXaBLRrboFtgp9rpEIe90u8Ac8mpcto3HR0Pi9YcXQvxTWmJrhjY1Jrm75WDk/SvW0tfdJp
+	g3vGSwBWIhAHwNfE1FrEAFY1V+33c4QsWkRM8KqSysLu0tkgOd+Uag90pc5q1gtxX4XlqqI4t8whm
+	vQJ4S3KphBNAefAKEzxzstdcBKIPVk1swmAs4UjS7Fz501D2KRkokYp43CpgEpu+7RHJN6LRC4319
+	ghkkOnNXGyeewm0piiI0tP9nsuoactzwTtaE4P6pweEbE+kY4qydJOVeYShLOzp5CAzCsMN9heZpd
+	B6B7vytA==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE3ZM-00000007WWi-1SWE;
+	Wed, 29 Oct 2025 10:38:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 17B29300289; Wed, 29 Oct 2025 11:38:21 +0100 (CET)
+Date: Wed, 29 Oct 2025 11:38:21 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	x86@kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Florian Weimer <fweimer@redhat.com>, Sam James <sam@gentoo.org>,
+	Kees Cook <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [PATCH v16 4/4] perf tools: Merge deferred user callchains
+Message-ID: <20251029103821.GH3419281@noisy.programming.kicks-ass.net>
+References: <20250908175319.841517121@kernel.org>
+ <20250908175430.639412649@kernel.org>
+ <20251002134938.756db4ef@gandalf.local.home>
+ <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
+ <20251028200955.0340ae1c@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028200955.0340ae1c@gandalf.local.home>
 
-Report standard counter stats->rx_missed_errors
-using hc_rx_discards_no_wqe from the hardware.
+On Tue, Oct 28, 2025 at 08:09:55PM -0400, Steven Rostedt wrote:
+> On Fri, 24 Oct 2025 15:02:03 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > > The sample__merge_deferred_callchain() initializes both
+> > > orig_sample.deferred_callchain and the callchain. But now that it's not
+> > > being called, it can cause the below free to happen with junk as the
+> > > callchain. This needs:
+> > > 
+> > > 		else
+> > > 			orig_sample.deferred_callchain = false;  
+> > 
+> > Ah, so I saw crashes from here and just deleted both free()s and got on
+> > with things ;-)
+> 
+> I just downloaded your tree again and it doesn't look like it was updated.
+> 
+> Just didn't want you to forget about this ;)
 
-Add a dedicated workqueue to periodically run
-mana_query_gf_stats every 2 seconds to get the latest
-info in eth_stats and define a driver capability flag
-to notify hardware of the periodic queries.
-
-To avoid repeated failures and log flooding, the workqueue
-is not rescheduled if mana_query_gf_stats fails on HWC timeout
-error and the stats are reset to 0. Other errors are transient
-which will not need a VF reset for recovery.
-
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-Reviewed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
----
-Changes in v2:
-* Update commit message.
-* Stop rescheduling workqueue only when HWC timeout is observed.
-* Introduce new variable in mana_context for detecting HWC timeout.
-* Warn once in mana_get_stat64 when HWC timeout is observed.
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 46 +++++++++++++++++--
- .../ethernet/microsoft/mana/mana_ethtool.c    |  2 -
- include/net/mana/gdma.h                       |  6 ++-
- include/net/mana/mana.h                       |  6 ++-
- 4 files changed, 53 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index 009e869ef296..48df44889f05 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -494,6 +494,11 @@ static void mana_get_stats64(struct net_device *ndev,
- 
- 	netdev_stats_to_stats64(st, &ndev->stats);
- 
-+	if (apc->ac->hwc_timeout_occurred)
-+		netdev_warn_once(ndev, "HWC timeout occurred\n");
-+
-+	st->rx_missed_errors = apc->ac->hc_stats.hc_rx_discards_no_wqe;
-+
- 	for (q = 0; q < num_queues; q++) {
- 		rx_stats = &apc->rxqs[q]->stats;
- 
-@@ -2769,7 +2774,7 @@ int mana_config_rss(struct mana_port_context *apc, enum TRI_STATE rx,
- 	return 0;
- }
- 
--void mana_query_gf_stats(struct mana_context *ac)
-+int mana_query_gf_stats(struct mana_context *ac)
- {
- 	struct mana_query_gf_stat_resp resp = {};
- 	struct mana_query_gf_stat_req req = {};
-@@ -2812,14 +2817,14 @@ void mana_query_gf_stats(struct mana_context *ac)
- 				sizeof(resp));
- 	if (err) {
- 		dev_err(dev, "Failed to query GF stats: %d\n", err);
--		return;
-+		return err;
- 	}
- 	err = mana_verify_resp_hdr(&resp.hdr, MANA_QUERY_GF_STAT,
- 				   sizeof(resp));
- 	if (err || resp.hdr.status) {
- 		dev_err(dev, "Failed to query GF stats: %d, 0x%x\n", err,
- 			resp.hdr.status);
--		return;
-+		return err;
- 	}
- 
- 	ac->hc_stats.hc_rx_discards_no_wqe = resp.rx_discards_nowqe;
-@@ -2854,6 +2859,8 @@ void mana_query_gf_stats(struct mana_context *ac)
- 	ac->hc_stats.hc_tx_mcast_pkts = resp.hc_tx_mcast_pkts;
- 	ac->hc_stats.hc_tx_mcast_bytes = resp.hc_tx_mcast_bytes;
- 	ac->hc_stats.hc_tx_err_gdma = resp.tx_err_gdma;
-+
-+	return 0;
- }
- 
- void mana_query_phy_stats(struct mana_port_context *apc)
-@@ -3390,6 +3397,24 @@ int mana_rdma_service_event(struct gdma_context *gc, enum gdma_service_type even
- 	return 0;
- }
- 
-+#define MANA_GF_STATS_PERIOD (2 * HZ)
-+
-+static void mana_gf_stats_work_handler(struct work_struct *work)
-+{
-+	struct mana_context *ac =
-+		container_of(to_delayed_work(work), struct mana_context, gf_stats_work);
-+	int err;
-+
-+	err = mana_query_gf_stats(ac);
-+	if (err == -ETIMEDOUT) {
-+		/* HWC timeout detected - reset stats and stop rescheduling */
-+		ac->hwc_timeout_occurred = true;
-+		memset(&ac->hc_stats, 0, sizeof(ac->hc_stats));
-+		return;
-+	}
-+	queue_delayed_work(ac->gf_stats_wq, &ac->gf_stats_work, MANA_GF_STATS_PERIOD);
-+}
-+
- int mana_probe(struct gdma_dev *gd, bool resuming)
- {
- 	struct gdma_context *gc = gd->gdma_context;
-@@ -3478,6 +3503,15 @@ int mana_probe(struct gdma_dev *gd, bool resuming)
- 	}
- 
- 	err = add_adev(gd, "eth");
-+	ac->gf_stats_wq = create_singlethread_workqueue("mana_gf_stats");
-+	if (!ac->gf_stats_wq) {
-+		err = -ENOMEM;
-+		goto out;
-+	}
-+
-+	INIT_DELAYED_WORK(&ac->gf_stats_work, mana_gf_stats_work_handler);
-+	queue_delayed_work(ac->gf_stats_wq, &ac->gf_stats_work, MANA_GF_STATS_PERIOD);
-+
- out:
- 	if (err) {
- 		mana_remove(gd, false);
-@@ -3501,6 +3535,12 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
- 	int err;
- 	int i;
- 
-+	if (ac->gf_stats_wq) {
-+		cancel_delayed_work_sync(&ac->gf_stats_work);
-+		destroy_workqueue(ac->gf_stats_wq);
-+		ac->gf_stats_wq = NULL;
-+	}
-+
- 	/* adev currently doesn't support suspending, always remove it */
- 	if (gd->adev)
- 		remove_adev(gd);
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-index 3dfd96146424..99e811208683 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
-@@ -213,8 +213,6 @@ static void mana_get_ethtool_stats(struct net_device *ndev,
- 
- 	if (!apc->port_is_up)
- 		return;
--	/* we call mana function to update stats from GDMA */
--	mana_query_gf_stats(apc->ac);
- 
- 	/* We call this mana function to get the phy stats from GDMA and includes
- 	 * aggregate tx/rx drop counters, Per-TC(Traffic Channel) tx/rx and pause
-diff --git a/include/net/mana/gdma.h b/include/net/mana/gdma.h
-index 57df78cfbf82..88a81fb164a0 100644
---- a/include/net/mana/gdma.h
-+++ b/include/net/mana/gdma.h
-@@ -591,6 +591,9 @@ enum {
- /* Driver can self reset on FPGA Reconfig EQE notification */
- #define GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE BIT(17)
- 
-+/* Driver can send HWC periodically to query stats */
-+#define GDMA_DRV_CAP_FLAG_1_PERIODIC_STATS_QUERY BIT(21)
-+
- #define GDMA_DRV_CAP_FLAGS1 \
- 	(GDMA_DRV_CAP_FLAG_1_EQ_SHARING_MULTI_VPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_NAPI_WKDONE_FIX | \
-@@ -599,7 +602,8 @@ enum {
- 	 GDMA_DRV_CAP_FLAG_1_DEV_LIST_HOLES_SUP | \
- 	 GDMA_DRV_CAP_FLAG_1_DYNAMIC_IRQ_ALLOC_SUPPORT | \
- 	 GDMA_DRV_CAP_FLAG_1_SELF_RESET_ON_EQE | \
--	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE)
-+	 GDMA_DRV_CAP_FLAG_1_HANDLE_RECONFIG_EQE | \
-+	 GDMA_DRV_CAP_FLAG_1_PERIODIC_STATS_QUERY)
- 
- #define GDMA_DRV_CAP_FLAGS2 0
- 
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index 519c4384c51f..79532490cee6 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -480,6 +480,10 @@ struct mana_context {
- 	struct mana_eq *eqs;
- 	struct dentry *mana_eqs_debugfs;
- 
-+	struct workqueue_struct *gf_stats_wq;
-+	struct delayed_work gf_stats_work;
-+	bool hwc_timeout_occurred;
-+
- 	struct net_device *ports[MAX_PORTS_IN_MANA_DEV];
- };
- 
-@@ -577,7 +581,7 @@ u32 mana_run_xdp(struct net_device *ndev, struct mana_rxq *rxq,
- struct bpf_prog *mana_xdp_get(struct mana_port_context *apc);
- void mana_chn_setxdp(struct mana_port_context *apc, struct bpf_prog *prog);
- int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf);
--void mana_query_gf_stats(struct mana_context *ac);
-+int mana_query_gf_stats(struct mana_context *ac);
- int mana_query_link_cfg(struct mana_port_context *apc);
- int mana_set_bw_clamp(struct mana_port_context *apc, u32 speed,
- 		      int enable_clamping);
--- 
-2.34.1
-
+Done, this should all be in tip/perf/core now. Thanks!
 
