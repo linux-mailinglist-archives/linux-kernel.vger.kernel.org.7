@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-875535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE84C19504
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE33C1953A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B2F9E50948A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:47:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D7AB56894A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C22B31C58E;
-	Wed, 29 Oct 2025 08:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13959320382;
+	Wed, 29 Oct 2025 08:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ltgxf6Dp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Qd9ah1dL"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E69E313537
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 082AF31B111
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761727654; cv=none; b=TY7P8pxM6h4NSObH7NzGgc9cXE92BaGw7p1vZM7YyERXW5TZSuyUhzpuz3ZlrEp2XvHs6YQW+9skGql1o6QZ46jgvNREYRmnnoR9OzYzGEXHRrep8M2Sk+u9oQ9Ocbf2SrcDEGYcpn9Uk2fGvqIkSMUUMeioVGNVUtSDO8Wyuhg=
+	t=1761727821; cv=none; b=WLo0qIXbtgoEXjCJADUYTspO3vHfKIn7vT91/NgG/G93BZDLTRvPSuagvbPZi4UBavFwL6oCqsMj2useCa2rbiT3E5yiqxNXZ1YPj3Z1szOGYt5KWwmkwnbJlKpSHcKqXk3awqUsHWolzD1MghagTVenF8H/iGYHJilEnzL7UnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761727654; c=relaxed/simple;
-	bh=0/LbIq8FYu8/MpLbsaNJgC3U+0IkScP4kX+eSZTK3xA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cn7nK2lIPvpIOdj3e7pSIohqttj+j9gDoG+jzZx1+BSWszxiTxwCeCUsL9hsqIICZmIqG66T76ZUSottQJCHRzxsLK08dQ6Dde4wVRzWnFDfV6tVA+v2XiFPUXWwHV6u9TwhLdSzBnafVUE+LbppF8a2vq89nFpavuGwfAlWfOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ltgxf6Dp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=keXt38H1uTmvhd6ELqtGFVSawOg4mCXiGWwRI1amyBs=; b=Ltgxf6DpGvKq52Czy/kWUsEHWU
-	tPGTEYG5tZnYQKARNRdTWC0RAgXE0h9VanIh9osh9FgavHg+IM/N3qlIeX47WR4uX/HXNRNnGBV4w
-	Lzdb3TePvKAGp2uYls+nl8Sczhmo4rOwZ8kjerZPZTihp0+Tj8Dbxh4AcagnpSrmDXQKr0S12K4mo
-	S+1pxqzmeRRmCzZPWA6UAGFfGzF9ZpK60Uxnb2QqnalhpxJ2h0RAO0TW3qILXb+yExDdQxAFRKzlv
-	j6VDWTV1Z1fLB3cOPdK7lisvKYDPTCPDz/9QFx82laBZUb+fH4rQjYuvTneN8a9rZ6Rt5AVeTJOC+
-	Zuohsicw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vE0yJ-00000006F70-1QcH;
-	Wed, 29 Oct 2025 07:51:55 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8F555300220; Wed, 29 Oct 2025 09:47:25 +0100 (CET)
-Date: Wed, 29 Oct 2025 09:47:25 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Chen Yu <yu.c.chen@intel.com>,
-	Doug Nelson <doug.nelson@intel.com>,
-	Mohini Narkhede <mohini.narkhede@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>
-Subject: Re: [PATCH v2] sched/fair: Skip sched_balance_running cmpxchg when
- balance is not due
-Message-ID: <20251029084725.GC988547@noisy.programming.kicks-ass.net>
-References: <248b775fc9030989c829d4061f6f85ae33dabe45.1761682932.git.tim.c.chen@linux.intel.com>
+	s=arc-20240116; t=1761727821; c=relaxed/simple;
+	bh=n0euRFB7gWfEM4REy6W9bGSiZeq9pZRm2S2BPlJhkH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=BZC2lR7mwq+D6K8LueqgudTf7VxqmnYuytSzqAeABI+rVvnCQRtES2xAVW9jLsRD27c5tEEAuuI5ARKCuEjANukteqgPdDZ+0c+iQZd25+BSnBJUl5O5n+sUtA5E0LhCqrBDADK4buTcLqgrjmNW8WYhTD3S+VRoy9sgxItiQ0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Qd9ah1dL; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251029085017euoutp01f4d70c53b853ff83d22578e584f7532b~y6h2V-uv_1406014060euoutp010
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:50:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251029085017euoutp01f4d70c53b853ff83d22578e584f7532b~y6h2V-uv_1406014060euoutp010
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761727817;
+	bh=xwfkOFZVwI3gkfo6lbTR619jwqrwqG3gDKV0KKwf95s=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Qd9ah1dLFECOzDeqpRRLAMGaMQZu+YEXJSZBFVOHF/+JOk/BIUJMpTAZc/7QKb5s8
+	 9raZCPJkCj862Ohp+zXVlWmxp7Ts1tYEcuvqNEBoQXguUqhn56awoSRN8/pxDt9cOO
+	 awusNs/42HINstr9V27RIV5GNl78NRWgHuUXWVA4=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029085016eucas1p2b6acb52ed4c2ac940db72dd0e95ef66d~y6h2FrF2Y1329313293eucas1p2Q;
+	Wed, 29 Oct 2025 08:50:16 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251029085016eusmtip16e2fb817f49f299f9f43bedf2ccf86c1~y6h1kmZbu1417114171eusmtip16;
+	Wed, 29 Oct 2025 08:50:16 +0000 (GMT)
+Message-ID: <c1d459dd-df6c-4ba3-b193-06015918df06@samsung.com>
+Date: Wed, 29 Oct 2025 09:50:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <248b775fc9030989c829d4061f6f85ae33dabe45.1761682932.git.tim.c.chen@linux.intel.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v5 1/2] dma-mapping: benchmark: Restore padding to
+ ensure uABI remained consistent
+To: Barry Song <21cnbao@gmail.com>, Qinxin Xia <xiaqinxin@huawei.com>
+Cc: robin.murphy@arm.com, prime.zeng@huawei.com, fanghao11@huawei.com,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com, wangzhou1@hisilicon.com,
+	stable@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAGsJ_4wy2B7=KwLfODySky+FADkLZYowWCNm28FBmri_Opv7ZQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251029085016eucas1p2b6acb52ed4c2ac940db72dd0e95ef66d
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42
+X-EPHeader: CA
+X-CMS-RootMailID: 20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42
+References: <20251028120900.2265511-1-xiaqinxin@huawei.com>
+	<20251028120900.2265511-2-xiaqinxin@huawei.com>
+	<CGME20251028195814eucas1p2a4fc5571fb2d272fc40dc4b0dcf60a42@eucas1p2.samsung.com>
+	<CAGsJ_4wy2B7=KwLfODySky+FADkLZYowWCNm28FBmri_Opv7ZQ@mail.gmail.com>
 
-On Tue, Oct 28, 2025 at 01:23:30PM -0700, Tim Chen wrote:
-> The NUMA sched domain sets the SD_SERIALIZE flag by default, allowing
-> only one NUMA load balancing operation to run system-wide at a time.
-> 
-> Currently, each MC group leader in a NUMA domain attempts to acquire
-> the global sched_balance_running flag via cmpxchg() before checking
-> whether load balancing is due or whether it is the designated leader for
-> that NUMA domain. On systems with a large number of cores, this causes
-> significant cache contention on the shared sched_balance_running flag.
-> 
-> This patch reduces unnecessary cmpxchg() operations by first checking
-> whether the balance interval has expired. If load balancing is not due,
-> the attempt to acquire sched_balance_running is skipped entirely.
-> 
-> On a 2-socket Granite Rapids system with sub-NUMA clustering enabled,
-> running an OLTP workload, 7.8% of total CPU cycles were previously spent
-> in sched_balance_domain() contending on sched_balance_running before
-> this change.
-> 
->          : 104              static __always_inline int arch_atomic_cmpxchg(atomic_t *v, int old, int new)
->          : 105              {
->          : 106              return arch_cmpxchg(&v->counter, old, new);
->     0.00 :   ffffffff81326e6c:       xor    %eax,%eax
->     0.00 :   ffffffff81326e6e:       mov    $0x1,%ecx
->     0.00 :   ffffffff81326e73:       lock cmpxchg %ecx,0x2394195(%rip)        # ffffffff836bb010 <sched_balance_running>
->          : 110              sched_balance_domains():
->          : 12234            if (atomic_cmpxchg_acquire(&sched_balance_running, 0, 1))
->    99.39 :   ffffffff81326e7b:       test   %eax,%eax
->     0.00 :   ffffffff81326e7d:       jne    ffffffff81326e99 <sched_balance_domains+0x209>
->          : 12238            if (time_after_eq(jiffies, sd->last_balance + interval)) {
->     0.00 :   ffffffff81326e7f:       mov    0x14e2b3a(%rip),%rax        # ffffffff828099c0 <jiffies_64>
->     0.00 :   ffffffff81326e86:       sub    0x48(%r14),%rax
->     0.00 :   ffffffff81326e8a:       cmp    %rdx,%rax
-> 
-> After applying this fix, sched_balance_domain() is gone from
-> the profile and there is a 8% throughput improvement.
-> 
+On 28.10.2025 20:57, Barry Song wrote:
+> On Tue, Oct 28, 2025 at 8:09 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
+>> The padding field in the structure was previously reserved to
+>> maintain a stable interface for potential new fields, ensuring
+>> compatibility with user-space shared data structures.
+>> However,it was accidentally removed by tiantao in a prior commit,
+>> which may lead to incompatibility between user space and the kernel.
+>>
+>> This patch reinstates the padding to restore the original structure
+>> layout and preserve compatibility.
+>>
+>> Fixes: 8ddde07a3d28 ("dma-mapping: benchmark: extract a common header file for map_benchmark definition")
+> It would be preferable to include the following as well:
+>
+> Reported-by: Barry Song <baohua@kernel.org>
+> Closes: https://lore.kernel.org/lkml/CAGsJ_4waiZ2+NBJG+SCnbNk+nQ_ZF13_Q5FHJqZyxyJTcEop2A@mail.gmail.com/
+>
+>> Cc: stable@vger.kernel.org
+>> Acked-by: Barry Song <baohua@kernel.org>
+>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+> Thank you. We also need to include Jonathan’s tag[1]:
+>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+>
+> [1] https://lore.kernel.org/lkml/20250616105318.00001132@huawei.com/
+>
+> I assume Marek can assist with adding those tags when you apply the patch?
 
-this..
+Thanks, applied to dma-mapping-fixes 
+branch with all the above additional tags.
 
-> v2:
-> 1. Rearrange the patch to get rid of an indent level per Peter's
->    suggestion.
-> 2. Updated the data from new run by OLTP team.
-> 
-> link to v1: https://lore.kernel.org/lkml/e27d5dcb724fe46acc24ff44670bc4bb5be21d98.1759445926.git.tim.c.chen@linux.intel.com/
 
-... stuff goes under the '---' sign.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-Also, what happened to my other suggestion:
-
-  https://lkml.kernel.org/r/20251014092436.GK4067720@noisy.programming.kicks-ass.net
-
-? That seemed like a better place to put things.
 
