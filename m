@@ -1,138 +1,125 @@
-Return-Path: <linux-kernel+bounces-876944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151FEC1CD33
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:50:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CC4C1CD37
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:52:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DADC44E5244
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:47:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63AD23BB560
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:52:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB883570D3;
-	Wed, 29 Oct 2025 18:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA4E35772B;
+	Wed, 29 Oct 2025 18:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hZSaB6st"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YFumTbjG"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE8A3563F3
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D97B354705
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761763670; cv=none; b=axYV/MDRTpJVYItvjYLNl7XmGUUiMMuzVHLk+x/adozWITOnPwBOmBKX5o45p6rF3o2vnusCU/tAjFmQb5CGKo/ZcqcLZ1H90OQLK39FKfKn7hyiSkJgqWYlXSPAvaA27tD6c/t70sOL2SqvEZs9PsqxnpZS/Clcbl2tMJSqOKg=
+	t=1761763921; cv=none; b=XcgjVGneUfYoss8BDPaZ7nRzckShthvsPSnVExhTpQhgn9NX/UH9kPG1jiaaQQW42zpSL8b/+zk6d+8VbaGO09a3ipbXY0LxM8RkRwoHtqjCcQRohfpPTH3w4DFvn+9kPSRv2jzb0FHW0/slT7tmd8G3r6zNM/nnQJtX75O50W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761763670; c=relaxed/simple;
-	bh=0Tr3LCSHb84ftOumUd9propiyWY/G1DK/xvBH3c4z0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4c4VhGIG7wFxo9Anj5BVXQsG8B5JXTuZm8rkhEPymI1eCh0zOHgnJUlQLG9Caks2WqxgUdHNr3yTe0DNI94+cSOHPUbuFbAkIwHGaQaOeTtdhkoDHX0aMH9n1nuoI54oh0WTLMgfW/qD3ZRnLHSklAqKq34UaCi0G3vxCmOD+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hZSaB6st; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-47719ad0c7dso1802865e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:47:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761763666; x=1762368466; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n7UlL3GKzUDEprO6nc/X4PQZdsoNuJnhVXYl9pMuUgU=;
-        b=hZSaB6stfLACJmEqNsUdwjSf2xtOI5p6B3TGS/c5ftCfg7bSAZ6/pTAloV+Cwgxl/t
-         Bh2YMigTgCP3OfdV31YYEMKAdOoKj5hgVHMv/pMpFtJ6as6GdbSu8R27zJoLBI5S7fOn
-         xn9UWzWrK1orsjyrfi+0oo3e4MhBxvQ7znYr7cdFedmj+rF27Y4USBbK2t+M7iJhxg6C
-         EKIQCWOsxGvLOIY1urX8aAOEQCdqq0mqYGLnCj6KFUmOBML8/nftx5THwq2utv+lqbiS
-         PeLeRNI24xFY5zFec19VrJEUSLqbLyzbMJND7suffct6Ll1SbcwiAJjtBtNdEaWevh/q
-         9hOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761763666; x=1762368466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n7UlL3GKzUDEprO6nc/X4PQZdsoNuJnhVXYl9pMuUgU=;
-        b=dpsmESjK+5IfH/63VgrNOtaJAdlvwSpyyIbb9uMfxYbYLIZRuy6ZghLAP8jbwMIMdE
-         DJWWmKtrRL5Jdn+XTg4cVnOvlLqaESC32ixgaLaWddRlfel8a4tF4oa0q0OQOQbuSg09
-         S2jccOYFhdKjUw2dP571wIYg4hc9DodFbDBrEqKC3QySvjiv+sj9S8KfW1K+TeYquWAM
-         SkbNEJ03GYGwd4IsIhFsaJcBXEpsWb9N4Pwcs9qOpa+fuJa8wq4ZfOS/3bYCjVqr/JXa
-         jT2fFDoB9I5r+aVhZEXjUS24CDNAb2F0GfwePwH1ZZJD2wonm3kU4HDzV0p8A9M8yn/d
-         Jp4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUOSRiGuTFD8uaAyA9B/litVWqZl+JBiVwXH2Y9E/ci7ADOwyOI0DkIBUCXAb89oncePAtRc9Tc967yyPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx29OwlVlb/GhJ+MnAbr1KOKln7EW+xuPte6NAT7CIIh49/HlU0
-	T7FmgxBhA0AUTHZWoz/fKWlxegPZ+zwBT1fYayeCVYV6l4NN+LIxIw6T1nExwY2A704=
-X-Gm-Gg: ASbGncsokUTLSgYQ9/rwwD6UirsE7jLqU8P/0cQUCzdRjjL64yR6H6g3hEeQo7Yn9yQ
-	wFOBZEC3fyAqjMG82U/IhvbSMpfCHqbFOrcDeOUmQm2TQmEMRauTbFF6fAKK6dZjlQftYR5yuef
-	XI4pTleafKlgETd5z6ul9Yxws9lwjS/U+qFVwKjj9G/tlg6axnNT2PLmgLwb3Lzb10gEDhg/7ru
-	OUUmdv/cQMpgm6/KMALXhupE3zAHMNcNVVa/uCxhILvpxahqfZ7UneBkRo+UM4b+8fD+AAWCE2t
-	I0GTxcaE8Xn1bAxM8H3ypKqPMhzQg42dKV7YXJIqc1ASWdrKSJyrxWoCGKrKouUuSL9oy0RJvUa
-	PeLF+/RLeQTIDLPwFjQnwjQEA41Ppzjwlt4+PsUdS7jZkedd03vWrF82ZxDdjBfeMCE3PPyubpC
-	rVAhlWbVlpea1dtk0+
-X-Google-Smtp-Source: AGHT+IGpoPX9hNhKmRBMmW2j12M72FSxxCuC4T9cB82GM76vjMbsT/vObteBlRgx4MZwjCJgYtHIEw==
-X-Received: by 2002:a05:6000:26c3:b0:427:45f:ee1a with SMTP id ffacd0b85a97d-429b4c8748cmr573409f8f.25.1761763666459;
-        Wed, 29 Oct 2025 11:47:46 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-429952d5773sm29704529f8f.27.2025.10.29.11.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 11:47:45 -0700 (PDT)
-Date: Wed, 29 Oct 2025 21:47:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: introduce no-auto-mmio
- property for syscons
-Message-ID: <aQJhTbNJkezeipoc@stanley.mountain>
-References: <cover.1761753288.git.dan.carpenter@linaro.org>
- <230cf12861a4f0b9effc72522444d3e28c1de2c9.1761753288.git.dan.carpenter@linaro.org>
- <20251029-ambiance-snooper-43dc00dcee68@spud>
- <aQJR36s0cY34cLrr@stanley.mountain>
- <20251029-embroider-plunging-6356f50c7acd@spud>
+	s=arc-20240116; t=1761763921; c=relaxed/simple;
+	bh=6i5LK+KHZzajbekQNpRqxZg1AvqmhETrZZtaa2laC10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=jItOk+gkxlld8CUdG2mr7KapqMpGgcEEvVt+d0oS/FVovhmthYYQWG1EnZNLknXMXYM8Ha4iLVEg5uyVnZKP+8hxR9RKPDE+9FNUcGb+Y+1o23iy6ybl0sX/idyGkrPYb8sRLzeiRJh4wQ61lX00hJpuvZ25tu98d3mRWgaeh5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YFumTbjG; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20251029185152euoutp01507d9d223b75332f9a0324a75fd5ed09~zCvGkLFQQ0895408954euoutp01L
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:51:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20251029185152euoutp01507d9d223b75332f9a0324a75fd5ed09~zCvGkLFQQ0895408954euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761763912;
+	bh=bQNGVhOQyRYDAT6f5LbiqaQukE8P3fTErRwmbu+uxa0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=YFumTbjG41C6tu1h2AUDSfornvKlbUCc8GAUJqm8oid7casxs71+RYNRvPHlNqyv6
+	 1mtSDA459GHvBRsbZsN5QcKz+KUPGDzvN2lPaObSEeQLGe0E5p404Gsb9mFBbZopkR
+	 Hf8AvMOgG6UVxHkmQu/Fh4s4oeHx3Avqn4wgy+C0=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20251029185151eucas1p1d0537f2fc24d4dbc400c773168f20bb8~zCvFn56t52969429694eucas1p1m;
+	Wed, 29 Oct 2025 18:51:51 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251029185150eusmtip13980126f40913ce41b484d6f44f45dde~zCvE0SljI2995129951eusmtip1b;
+	Wed, 29 Oct 2025 18:51:50 +0000 (GMT)
+Message-ID: <1287f917-dc25-4c80-8b09-3d0a7bc8eb6b@samsung.com>
+Date: Wed, 29 Oct 2025 19:51:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-embroider-plunging-6356f50c7acd@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Introduce import_ns support for Rust
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
+	<lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
+	<aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+	<dakr@kernel.org>, Drew Fustini <fustini@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Stephen Rothwell
+	<sfr@canb.auug.org.au>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <CANiq72n8QvygNsdHjaMgYrXiErT82BkWm1XMkc3eUZB1Xy_uAQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251029185151eucas1p1d0537f2fc24d4dbc400c773168f20bb8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5
+X-EPHeader: CA
+X-CMS-RootMailID: 20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5
+References: <CGME20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5@eucas1p1.samsung.com>
+	<20251028-pwm_fixes-v1-0-25a532d31998@samsung.com>
+	<2dedlnknikkrwg5f6ocuvjrogdjuqyg4sg6zkkao4w4yyvvsje@dkt7rco3fen3>
+	<CANiq72n8QvygNsdHjaMgYrXiErT82BkWm1XMkc3eUZB1Xy_uAQ@mail.gmail.com>
 
-On Wed, Oct 29, 2025 at 06:37:26PM +0000, Conor Dooley wrote:
-> On Wed, Oct 29, 2025 at 08:41:51PM +0300, Dan Carpenter wrote:
-> > On Wed, Oct 29, 2025 at 05:33:48PM +0000, Conor Dooley wrote:
-> > > On Wed, Oct 29, 2025 at 08:27:05PM +0300, Dan Carpenter wrote:
-> > > > Generally, syscons are created automatically and accessed direclty via
-> > > > MMIO however sometimes syscons might only be accessible from the secure
-> > > > partition or through SCMI etc.  Introduce the no-auto-mmio property to
-> > > > tell the operating system that the syscon needs to be handled manually.
-> > > 
-> > > "System controller node represents a register region containing a set
-> > > of miscellaneous registers."
-> > > 
-> > > If this isn't actually a register region, but is instead an interface
-> > > provided by SCMI or whatever "secure partition" is (optee?), why is the
-> > > syscon compatible being used for the device in the first place?
-> > 
-> > In the case that I'm looking at, it really is a syscon.  So right now
-> > we're upstreaming it and it's an MMIO syscon.  Very straight forward.
-> > But later, I guess, they want to have a new firmware which will only let
-> > you access the same registers through SCMI.
+
+
+On 10/29/25 19:18, Miguel Ojeda wrote:
+> On Wed, Oct 29, 2025 at 11:04 AM Uwe Kleine-König <ukleinek@kernel.org> wrote:
+>>
+>> If you could mention the command that makes this warning visible, I'd be
+>> glad to add that to my repertoire of build checks.
 > 
-> When the programming model changes, the compatible should too, no?
+> Yeah, please do!
+> 
+> I do my best to keep even linux-next and stable kernels Clippy clean
+> as much as possible, so it would be nice to have that Clippy fix added
+> to -next soon.
+> 
+> I have other steps that maintainers/contributors should run here:
+> 
+>     https://protect2.fireeye.com/v1/url?k=0d35e0d3-6dd77d8e-0d346b9c-000babd9f1ba-e5d27bbbccd997ca&q=1&e=d4a64c99-aab6-4741-9747-63f10e63aed4&u=https%3A%2F%2Frust-for-linux.com%2Fcontributing%23submit-checklist-addendum
+> 
+> Essentially / most importantly: `rustfmt`, `rustdoc` and `CLIPPY=1`.
+
+Oh yeah I think I remembered to run 'rustfmt' couple months ago, but
+over time when sending revisions forgot about that, sorry. I guess it
+would be great to extend 'b4 prep --check' for those checks as well.
+
+> 
+> I am sending a couple fixes for those.
+> 
+> Thanks!
+> 
+> Cheers,
+> Miguel
 > 
 
-I wasn't planning on it.  I haven't been asked to upstream the SCMI
-module but once my thinking was the transition would work like this.
-
-Step 1: It would work as is with an MMIO syscon.
-Step 2: We would upstream the SCMI driver which would provide an
-        MMIO syscon as a fallback.  At that stage you would still get an
-        MMIO yscon regardless of whether the phandle was parsed before
-        or after the driver loaded.
-Step 3: We would set the no-auto-mmio property so you have to use the
-        driver and update the firmware so only the SCMI interface can
-        be used.
-
-regards,
-dan carpenter
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
