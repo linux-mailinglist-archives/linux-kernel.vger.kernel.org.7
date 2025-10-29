@@ -1,158 +1,107 @@
-Return-Path: <linux-kernel+bounces-877271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D848BC1D9EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:52:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B923C1D9FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE412188A62A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:53:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB09242310B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEEA72E1747;
-	Wed, 29 Oct 2025 22:52:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6FB2E4254;
+	Wed, 29 Oct 2025 22:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeM6XZZP"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNSYdcVI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8562E0904
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC9B1F4617;
+	Wed, 29 Oct 2025 22:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761778353; cv=none; b=rPdDaTcRrq5GNexLvKmncJ9z60t/zCUOmTPTDipSqj7zBkrNwi/NGlP20Eq5CXpLWzz8jw7UztovcKVYtmwL3FzhUcD1o2JJhl8gBjrGPmJJKZTtAUj6vgSH44KFkk+DrtU3udbjTgPy8if/dLtt3H1dixxgwnUYF/3uRNJiULY=
+	t=1761778406; cv=none; b=JVkxcwcsOWY11dcPnChh3FDYpHZ7lcUKrFxMYYD0GFIAHsaI6IgjvEtwHKnORjFc5jdhq+FqedYLj31JoBGhpIHTmdSqo7Lur/qtJHAnhsO2sQcoPa0XcVFJMKH6+SDbcUW6gh6F5GfeaEBQ4/ZvT5h5eaJnhsm2Hpm9sHdCDHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761778353; c=relaxed/simple;
-	bh=1ZhsIcRLP7+IYtwf3LWzzjumhrTQGEFECTJ35YVT8uk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gpbc//5mXPYjXmiC7XkzK1wQQa+iXA+dPbUO472c2uvIPYZgH4D8mZYcZHQ9vvbxwA3yj0mFULIXrBK2Kj75TbK9/YL5uQZXImhshQIgF80bWfr0h/ewp/2PZ4goNnupru5DCB1FSUgWWdZhgVmurcl9EyDr00bik+IBHhK6Kf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeM6XZZP; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-294cc96d187so4673395ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761778351; x=1762383151; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sa/M9rWrlNILi0zFUiuPfvMm44JyZKpzB3uqveEBnzM=;
-        b=AeM6XZZP7+v14dT4V7+2Bz6QaBm9o5pcqcmHXjyxqwK3IBcpd58Xlxmov4jLp2Q6Xq
-         FH2Nrf0k7ZWmPUKIjT63AvE3aD7J/WY+LUrie7zkzx46j5tQbx+m43OIP6TmKTiylz2g
-         pJTMIS4LO8PyHjexbx9YnWKfzmtC+wSS0v1KwqEZKX7wYd/VwyM2PR5V4mjEK2xD8H/4
-         Fktvfi8mScNJ6o2gBlKtFsEsIIo3LN9PGIT34bZ2soE6FX5bxCLgykueBLIJy4b6ZotO
-         WSbfZ+NFKqCjvjzKpjvS7vOMCdX2V4ogq//ho9paAo58tFhSHMRUndchSmnaGjl9lEhr
-         wMXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761778351; x=1762383151;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sa/M9rWrlNILi0zFUiuPfvMm44JyZKpzB3uqveEBnzM=;
-        b=h5TG4BzJlftJIaxb+lsFvt8Gibu1vI7zLE/HeS0jpDslztfi40CtwlB1rT4Der1kQm
-         XvM8QIkmZeU1UPzzDQAqIVtrD5FuEt1bKkGIFut0XXJ8A3l63PZHXJ/QhPZppKFgDT7n
-         i9IKAC2KA+uaJoShEAbmZds/GHXhbaDgkqi60BApzFPpyspsTQjCGpMzu83IFkN05DBp
-         DUWYqGKR1phKbH0873/1X0eA/UYZe+1RXBSeaQiYGZZ2okJmJj9qI+RUHnzBw8CS7cCK
-         OUhw9m3CS3NzpibyDaSNhpOxUwPBhJzVoziYluWjRdmGXFF92P3GCY8JiRlgqY7NRtqg
-         TbyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNkm+xWUeByJaRT8jLW8m3yO8nqnviclg60xZ8nWNnBmK9VU2O1ssxrgUOftXN9dDKgXKYhSQ5hEG5ym0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4DF5xVKyQGifPB0sNLslroULSySOk5pHsdseWTK5hUn1jWIxp
-	pHSDglmz8+ODQLQEIS6u5tv3tggyyA3jxMnUHp82LF43PE8oMWLxFZ+E
-X-Gm-Gg: ASbGncuJLdQDl18+fY3iIPpNHDIdgaVtQaWA7ACgj/+cfqnas6eVjOV3wD1PPEdOygb
-	VKzMOze3WFKjYGmtAnZ5zP0OEgO0lPfBj09DgiMDFsneXLH5r2d0+wsNf9zWSbVxbQ5wpWNTLw0
-	0s1vYMIauqBpqtewDu6XGzFMIL1NayLUYgtu/VxpetJbMKCjJ2nxWnN32iRUBSQRoFUt6IsiwoL
-	IqAKmPIgj3/Y7JXApKWCi8ab2QhXd5eWrn5OQ7tAhXRQ7rS9FhSh/BKl9MzQSwpLX6CP/PU9/Gy
-	trHnU0MMpMbPj2a02mXIXZbtoRbtUsbZoqQpBH/W6XCF8jevHIw+dD7sarPWQ/lrnaK7rauHOaZ
-	1FIDyyvQHu/ZFNTO9nwxqgycFK6PBjEv7UKZ3CSNWT/nUSSWL0fi3BJ1ptuXrX5EK/i/xUuTpgg
-	JFI2ZxrTTn+UmZTt3PzC1w22myWt09Baft6nf3TLjmNQnKX4a0XUwtRo0narM=
-X-Google-Smtp-Source: AGHT+IHuHo99Vd2q+n3paxG/Mdr/LKbfWyALc22D4g6ejN4rzMFZ1N7kqVPTYkcjWnoApxq6lFrDPg==
-X-Received: by 2002:a17:903:22c3:b0:294:df5f:ffc1 with SMTP id d9443c01a7336-294ee3637f1mr8643055ad.23.1761778351175;
-        Wed, 29 Oct 2025 15:52:31 -0700 (PDT)
-Received: from carrot.home.local (i114-180-53-102.s42.a014.ap.plala.or.jp. [114.180.53.102])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498e42ea7sm162387445ad.101.2025.10.29.15.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 15:52:30 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs@vger.kernel.org,
-	syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com,
-	Edward Adam Davis <eadavis@qq.com>,
-	syzkaller-bugs@googlegroups.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nilfs2: Avoid having an active sc_timer before freeing sci
-Date: Thu, 30 Oct 2025 07:51:52 +0900
-Message-ID: <20251029225226.16044-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <68ffe1a8.050a0220.3344a1.03a1.GAE@google.com>
-References: <68ffe1a8.050a0220.3344a1.03a1.GAE@google.com>
+	s=arc-20240116; t=1761778406; c=relaxed/simple;
+	bh=yggvcjk/2WC81qOKt/PWdb/tjbxgvfTjTX2rpHVXUJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OF7Je91oLv80LkJDQL4nrfRCAgPHElE4z5ijrJcJj5PI4G2BB2en56xRSCqBGPbgv8S6RRcB/GFmcuQQmDXOonp7ysv1Pv7LKaBGoWkCbLHH9zeMVMxkP/0SoZ/rRd2vst/K+lr4R1B1XmgjrWfWgqR0NbRqokrHtq1r0VtUn2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNSYdcVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 631A7C4CEF7;
+	Wed, 29 Oct 2025 22:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761778405;
+	bh=yggvcjk/2WC81qOKt/PWdb/tjbxgvfTjTX2rpHVXUJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vNSYdcVIlQppVl9XK6Hmux4x204Rz0Mjmv+zw+0fcgfwr2x5GT4uX2JIaJmKiL//X
+	 +aVu/bx794bAn1J5gyNKRxxVz0q+8aZp9uL5cv8EqLQOy8Lyt/hP6VcqQBR/FvyaY/
+	 /QeBzY8X2r50hITutJxTZGLKOmj5UHqgcGJXQu1/XGEaqCUzqPwlFf7hYBuQgTOnvI
+	 36PMZHtc6/ylag+OHYh+k+JFW56ct0PXqZZzkrq9q1+pn8B5JxaHI58umNFDsW2n2V
+	 wOBsUqUMv5PrXWZdrlXBAU1YQZC0UIRB+gnQWHO5sJEmr/2Sxzfw9OChifWcsUkMGI
+	 9D4KgdYDIKG4Q==
+Date: Wed, 29 Oct 2025 12:53:24 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Song Liu <song@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm <linux-mm@kvack.org>,
+	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>,
+	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
+ to cgroups
+Message-ID: <aQKa5L345s-vBJR1@slm.duckdns.org>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-3-roman.gushchin@linux.dev>
+ <aQJZgd8-xXpK-Af8@slm.duckdns.org>
+ <87ldkte9pr.fsf@linux.dev>
+ <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+ <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
+ <871pmle5ng.fsf@linux.dev>
+ <CAADnVQJ+4a97bp26BOpD5A9LOzfJ+XxyNt4bdG8n7jaO6+nV3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADnVQJ+4a97bp26BOpD5A9LOzfJ+XxyNt4bdG8n7jaO6+nV3Q@mail.gmail.com>
 
-From: Edward Adam Davis <eadavis@qq.com>
+Hello,
 
-Because kthread_stop did not stop sc_task properly and returned -EINTR,
-the sc_timer was not properly closed, ultimately causing the problem [1]
-reported by syzbot when freeing sci due to the sc_timer not being closed.
+On Wed, Oct 29, 2025 at 03:43:39PM -0700, Alexei Starovoitov wrote:
+...
+> I think the general bpf philosophy that load and attach are two
+> separate steps. For struct-ops it's almost there, but not quite.
+> struct-ops shouldn't be an exception.
+> The bpf infra should be able to load a set of progs (aka struct-ops)
+> and attach it with a link to different entities. Like cgroups.
+> I think sched-ext should do that too. Even if there is no use case
+> today for the same sched-ext in two different cgroups.
 
-Because the thread sc_task main function nilfs_segctor_thread() returns 0
-when it succeeds, when the return value of kthread_stop() is not 0 in
-nilfs_segctor_destroy(), we believe that it has not properly closed
-sc_timer.
-We use timer_shutdown_sync() to sync wait for sc_timer to shutdown, and set
-the value of sc_task to NULL under the protection of lock sc_state_lock,
-so as to avoid the issue caused by sc_timer not being properly shutdowned.
+I'm not sure it's just that there's no use case.
 
-[1]
-ODEBUG: free active (active state 0) object: 00000000dacb411a object type: timer_list hint: nilfs_construction_timeout
-Call trace:
- nilfs_segctor_destroy fs/nilfs2/segment.c:2811 [inline]
- nilfs_detach_log_writer+0x668/0x8cc fs/nilfs2/segment.c:2877
- nilfs_put_super+0x4c/0x12c fs/nilfs2/super.c:509
+- How would recursion work with private stacks? Aren't those attached to
+  each BPF program?
 
-Reported-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=24d8b70f039151f65590
-Tested-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-Fixes: 3f66cc261ccb ("nilfs2: use kthread_create and kthread_stop for the log writer thread")
-Cc: <stable@vger.kernel.org> # 6.12+
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
----
-Hi Andrew,
+- Wouldn't that also complicate attributing kfunc calls to the handle
+  instance? If there is one struct_ops per cgroup, the oom kill kfunc can
+  look that up and then verify that the struct_ops has authority over the
+  target process. Multiple attachments can work too but that'd require
+  iterating all attachments, right?
 
-Please apply this patch as a bug fix.  It addresses a recently reported
-issue by syzbot, where a timer might not be properly shut down.
+Thanks.
 
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/segment.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index f15ca6fc400d..deee16bc9d4e 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -2768,7 +2768,12 @@ static void nilfs_segctor_destroy(struct nilfs_sc_info *sci)
- 
- 	if (sci->sc_task) {
- 		wake_up(&sci->sc_wait_daemon);
--		kthread_stop(sci->sc_task);
-+		if (kthread_stop(sci->sc_task)) {
-+			spin_lock(&sci->sc_state_lock);
-+			sci->sc_task = NULL;
-+			timer_shutdown_sync(&sci->sc_timer);
-+			spin_unlock(&sci->sc_state_lock);
-+		}
- 	}
- 
- 	spin_lock(&sci->sc_state_lock);
 -- 
-2.43.0
-
+tejun
 
