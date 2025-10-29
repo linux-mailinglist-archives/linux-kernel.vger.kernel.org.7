@@ -1,229 +1,108 @@
-Return-Path: <linux-kernel+bounces-876444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A17C1B73E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:56:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1D9C1B829
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4AD32347108
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B7C1891EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CA626A0DB;
-	Wed, 29 Oct 2025 14:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a7EepXCN"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410C62DC331;
+	Wed, 29 Oct 2025 14:52:31 +0000 (UTC)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C946C2C11EB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6417E5478D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749457; cv=none; b=nr/axhDxVY5b+pvWR5h+WtYNSbuSsgsdlkfhgHKaLakZ3VbZCPURkmFix24PhA07q33TMmqSEgDJ/VYaIpvHHvgml4tLEf6z7KDP7oQDIx4vLvH/LxZDJz6nDNOMSOxZJ0d4SADkNd6bBpYgm8NrnCRigDzAeRhDSUycNlO0csI=
+	t=1761749550; cv=none; b=UwlIRNLBGSopkwwgxMlFgLW9ePt7/SzW7e93wCXEqBCFixj7tbFrzDB5BO3Z/1kSUEUjhg/yK7Fcor8mEs3yHvPM7m/65V3eyLBWvSyKPBH75rBXl0El/hQKGGo808gGruEKXkneqcHNjDLw1Qw8O97QEiBdMWGbrR6rFRPvOBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749457; c=relaxed/simple;
-	bh=4jDnpiNa5vbDQniS7C9yLyN0Nt34xAnHa+GBFlsVZP4=;
+	s=arc-20240116; t=1761749550; c=relaxed/simple;
+	bh=lfiaCy81o+Yc4E3VYzi/mV8FENlkKHuoO0aA7zcUcY0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RKfsXXoRnmamh6FSI9HEreNFyOAnaH6XNNmenUD8drvHZojC9JGiTrPOM44/8CR6O0FIDtsqRIT/GLAf2xkagr7gE5AOb7GWtpCLi8Oyc9//wB11xUtakYqGsliSpekjbzgKkNzjvABq7lhELexVoMYu2l3OvyvXT8BQJPDNTyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a7EepXCN; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ea12242d2eso335621cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761749455; x=1762354255; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t2GCr3HjnIb/dxyIVffNrVApa0qBSUzyDC5g+dFTLPA=;
-        b=a7EepXCNBGQVU1Uf1JxPgjdBD0SLTP+To5jO1xwFEQwJuIuvDJZNpwO4xWQHLWGRVj
-         fVyOqr70qtstT+EKneLoB+Wx17eR+DqdsT5g7D1K8I4g5aqI6QJGQW0fRqweENq6RXoM
-         uK/T1XIInRGj2MQfqkIGOofJJGAsYp9gXVR3KwzngnGpxnP7PSIkMBbWjSXy9TD8QVU6
-         Yndl4RquacOI7hHBGSMPWeU7j+J/mTvNcgIUZCvgRAs18Ow2L2ETPPk7EASSxm4r3Cyy
-         NF7GJcx6D/BB1Y1dscQTlP9HeGVr81nM1aXYgEVb8b+vZtFWgu5kGWkbbWFXejBPitSX
-         0xvw==
+	 To:Cc:Content-Type; b=FWhquJr5RXh5MqcZCf3JhiA1DWBOiJvk97yaEJ0lWp25xIguonRhTIreZcYaJgf48BvomZndq8x+fThnNfMT0oSn9YExB42UN8PL3gCS/IL239ziiXugwJrvwb+QYlDxjYbO5o03Oa5FsNu7ZSmLRN8Z14ybvMtbmg1Mj4SQp3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-5d5fbfca7e2so11817137.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749455; x=1762354255;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t2GCr3HjnIb/dxyIVffNrVApa0qBSUzyDC5g+dFTLPA=;
-        b=c+uv1OsfD3tupt3kklyDJQ/FA3UjHQBH/ayCwRfv3HB/7vSH2vsPRVe2brNx+XDCN/
-         FZpiLva7ZCRyVtl5wMCtksaAMhjWP/QEL16yzOx+h3jnucpqpO3TXHnq4Bv4N2fFGAC+
-         Y+MSnoflTVVWMhX9+v30bgFg8U9EuA/G7QPRaF+7LjLNlZQApAniGCybJWYf/wFztY6/
-         TnyvgWM+WIegkiSj63t0fYwHCVJQ4AIBzEqS1ZfkP1qA/MUVWPd1mF3nS382dqsmRth5
-         cW2jeUzxeaXLSuMTaGSp84eE+hGSvbPaVXUxuEGPT+YSAiZFWPo9QJAXYiMRihftT6/x
-         fB0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTJ+1CdG0OcBh3zecVhxznOLU0D/Z5UmDa9cpFwZvNfxKwEpeaMHEs/zPzYu4oANYY3eswjkWplbqQ8PM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYXE5OPHsjzwOe7EYX9ZTKcmwjWv6+TYh3eR1M3anoThuTjlfS
-	6GjfNX1alavtBbtBWM6405aVK7N5YieNqWHXlOQySl/laSc4oolPUQ3h98nMTUMWavTXLq5bLkU
-	kZ+xWvll7OWvrRsUN/814l7aUFPz2K2rS3hyfXeM5
-X-Gm-Gg: ASbGncuwoJ83xVXeBEJZ+m9X7ObKeFeqNZw+EBdAcMbs+B1vqxbDOfndLWbIRDxsuRo
-	JUUuLhtHqbLTAt4dvbJwFSrLMglKCasYx/vfrWMohwQ69xumRbN38xQkCTAh/ZMmquQOlb9tfz6
-	htiBwqhzwK4RrmIGJrmFkCcjk3QOhZIiOFSgGgVC5dygs51VT+uuQDcHBre0zB7zt7bI61KCPDI
-	EwTixTusLeR2lDFk0QZ/ccKssQ0vm3FfYXbfaNNJVzONWmkiyPKFITU+wnXy95kOrUm3GMCPhQS
-	QaQPCw4Omlatzq4=
-X-Google-Smtp-Source: AGHT+IGcOdn9pM+HsKz6/HPyK4Wssb1I6KCFZrss7CNVm3EJz7jqpksJBJFyetZbqo0GJdRvVDAHhYRJiYcnTEIRG7s=
-X-Received: by 2002:a05:622a:4c0c:b0:4e6:eaea:af3f with SMTP id
- d75a77b69052e-4ed1657e953mr6438561cf.3.1761749454320; Wed, 29 Oct 2025
- 07:50:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761749548; x=1762354348;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9FLpuySnjEqiS9qmBmDDye9ClI7f1GY+eT111Ebu1EY=;
+        b=akvB6jCAg5Gz446gQUt27PYOmjsUkj8pzRJJnYTyhQI6k5YbMzhcrvtakdNugq3pWN
+         aw4W2Ct+g0pFRdr1fxsYSbaFni/i5J90PeWXa9cB3mgDEHjBoXY6ha8LFjh4bdQcrbWq
+         9956Ty7vb5RNA3QfdlJ1bR5kzuMVIKiu2WzTVkMY64j3fqhuxc+IGxQ28CB0uREaB81L
+         65yGzn6Q/5GpSC/r5KRVhTe7i2hxa1SThbYNRpQHC3gMzvEajYRbf97LmCeGMZfNEfIw
+         VHbW9bDoObRXwy986qdtA+lO0Zu1YPEeJGcUD2AfWHVL24wUrkjS8bRyd8sowVHusayb
+         8S7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUinkEA7MphWNnSQ6FLismAnhVh3HOeN5xa63KSxR+wK0Azy30VO6dhZGORtCw4NC3a4meS0imrJPLnh04=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTl6WsroQ/7qEftloz+HaGXda2uCZiXsmCTrj2hp4oEfAY1chC
+	Lyu3WnLyhYf1Z/X/bTTCFBuX+MkDRgi6y942x8veFfA39DHYwy/BZhGiugoSHrZx
+X-Gm-Gg: ASbGncuR1AGxXK+dF8AZHacT6vtnmK/JcIXiCtUL7V0xWx9v/OWAwZpUcasatZOOcmQ
+	McZnzbNdJZtfT4iK4dMedOA0CPyL0rvkSxcfnQkHyXNWEuywCL4K1tLsRJlGA8KFWkuWEGOBtmK
+	MTQKB2uI1ML9V1n8oEynoD4jGdBzprODAqEHYDj3iNYWqLOdwVKLFdc8n/h1ivw1qmJsBGEnieh
+	NePy3Bm4YMF3qF1fgsO0ywT6ceUtWXGov4/zA/wOfDh1Iv366TDtkYFjqGLD77yYZlMBCO0IA/C
+	RwEv16CqkLIwCCUurTjbFEoAIe0qNPi6+y6ZVg/SIsBG7ywolKXl/1+uIhVW4GpdO6pBH7akq20
+	JEaJPreP7dsXIQdKRizEY0Wyzbg9uFziIAM0HpaP0q4ZtewAywmnslj8KJOSXdQpreKJMc6Jb5U
+	drHbkoxUPZekGVSfUP8+GB0sUynh+clEQXfjApTxVDtg==
+X-Google-Smtp-Source: AGHT+IEyyRN+sL1ArS4Wc/6dI/cA70LjsNS2v1TNGAOrBLgchOW7TG8aGyRHo5ZUCkFNOwpbQ0F59Q==
+X-Received: by 2002:a05:6102:18d7:b0:596:9fd8:9268 with SMTP id ada2fe7eead31-5db7e0ae09amr1940589137.8.1761749548045;
+        Wed, 29 Oct 2025 07:52:28 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934c4050425sm5369866241.9.2025.10.29.07.52.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 07:52:27 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-932c2071cf5so991516241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVM04d3RMGjgHKzECqHf7exKUyCjjgK3RbgS1lkDRdSxFzCy9y+EYHQ4j49qJR5DXzh9KfJ8g7mGKxR1fI=@vger.kernel.org
+X-Received: by 2002:a05:6102:2c06:b0:5ca:714b:2dcd with SMTP id
+ ada2fe7eead31-5db7e20592fmr2373437137.10.1761749546310; Wed, 29 Oct 2025
+ 07:52:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929014227.430-1-xuewen.yan@unisoc.com> <CAJuCfpE_aZKFB8O=KPq5uTv=WeJf6TCmneMnr8pp88SNWy3K-Q@mail.gmail.com>
- <CAB8ipk8oC2UKJu6f6qun3PYFwrzGZUT=YjQhfNGaVrF4GM2wdA@mail.gmail.com>
-In-Reply-To: <CAB8ipk8oC2UKJu6f6qun3PYFwrzGZUT=YjQhfNGaVrF4GM2wdA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 07:50:42 -0700
-X-Gm-Features: AWmQ_bnCUdUZHMVJ1c32YJT4uabxF-Awnj_KVPGmYQ_uHFarqcy7EANdQw094Fo
-Message-ID: <CAJuCfpF6sakmsDeqrVTxwqUjRtid-7oG9KjGSQYmb0R=BCp9zw@mail.gmail.com>
-Subject: Re: [RFC PATCH V4] sched: psi: Add psi events trace point
-To: peterz@infradead.org, hannes@cmpxchg.org, 
-	Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, rostedt@goodmis.org, mingo@redhat.com, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	ke.wang@unisoc.com, yuming.han@unisoc.com, 
-	Roman Gushchin <roman.gushchin@linux.dev>
+References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org> <20251027211249.95826-2-marek.vasut+renesas@mailbox.org>
+In-Reply-To: <20251027211249.95826-2-marek.vasut+renesas@mailbox.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Oct 2025 15:52:15 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV2Kr4WcYRERHCYR1zGAh0n2N3D=LYbRSYLJnRTYDB4+w@mail.gmail.com>
+X-Gm-Features: AWmQ_bkKsdjAWwO1kVg5eGvvrllD1NL0DkP6oF9YOfmHIHPrQOIMjaePzAGpSiU
+Message-ID: <CAMuHMdV2Kr4WcYRERHCYR1zGAh0n2N3D=LYbRSYLJnRTYDB4+w@mail.gmail.com>
+Subject: Re: [PATCH 2/5] arm64: dts: renesas: r8a77960-salvator-x: Enable GPU support
+To: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 1:53=E2=80=AFAM Xuewen Yan <xuewen.yan94@gmail.com>=
- wrote:
+On Mon, 27 Oct 2025 at 22:13, Marek Vasut
+<marek.vasut+renesas@mailbox.org> wrote:
+> Enable GPU on Salvator-X with R-Car M3-W.
 >
-> Gentle ping....
->
-> Sorry to ask, but may I know if this patch can be merged into the mainlin=
-e?
+> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
 
-Hi Peter,
-If you have no objections to this patch, could you please accept it
-into your tree?
-Thanks,
-Suren.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
->
-> Thanks!
->
-> On Tue, Sep 30, 2025 at 7:17=E2=80=AFAM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Sun, Sep 28, 2025 at 6:43=E2=80=AFPM Xuewen Yan <xuewen.yan@unisoc.c=
-om> wrote:
-> > >
-> > > Add trace point to psi triggers. This is useful to
-> > > observe the psi events in the kernel space.
-> > >
-> > > One use of this is to monitor memory pressure.
-> > > When the pressure is too high, we can kill the process
-> > > in the kernel space to prevent OOM.
-> >
-> > Just FYI, Roman is working on a BPF-based oom-killer solution [1]
-> > which might be also interesting for you and this tracepoint might be
-> > useful for Roman as well. CC'ing him here.
-> >
-> > [1] https://lore.kernel.org/all/20250818170136.209169-1-roman.gushchin@=
-linux.dev/
-> > >
-> > > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> >
-> > Acked-by: Suren Baghdasaryan <surenb@google.com>
-> >
-> > > ---
-> > > V4:
-> > > -generate the event only after cmpxchg() passes the check
-> > > ---
-> > > V3:
-> > > -export it in the tracefs;
-> > > ---
-> > > v2:
-> > > -fix compilation error;
-> > > -export the tp;
-> > > -add more commit message;
-> > > ---
-> > >  include/trace/events/sched.h | 27 +++++++++++++++++++++++++++
-> > >  kernel/sched/psi.c           |  5 +++++
-> > >  2 files changed, 32 insertions(+)
-> > >
-> > > diff --git a/include/trace/events/sched.h b/include/trace/events/sche=
-d.h
-> > > index 7b2645b50e78..db8b8f25466e 100644
-> > > --- a/include/trace/events/sched.h
-> > > +++ b/include/trace/events/sched.h
-> > > @@ -826,6 +826,33 @@ TRACE_EVENT(sched_wake_idle_without_ipi,
-> > >         TP_printk("cpu=3D%d", __entry->cpu)
-> > >  );
-> > >
-> > > +#ifdef CONFIG_PSI
-> > > +TRACE_EVENT(psi_event,
-> > > +
-> > > +       TP_PROTO(int aggregator, int state, u64 threshold, u64 win_si=
-ze),
-> > > +
-> > > +       TP_ARGS(aggregator, state, threshold, win_size),
-> > > +
-> > > +       TP_STRUCT__entry(
-> > > +               __field(int,    aggregator)
-> > > +               __field(int,    state)
-> > > +               __field(u64,    threshold)
-> > > +               __field(u64,    win_size)
-> > > +       ),
-> > > +
-> > > +       TP_fast_assign(
-> > > +               __entry->aggregator     =3D aggregator;
-> > > +               __entry->state          =3D state;
-> > > +               __entry->threshold      =3D threshold;
-> > > +               __entry->win_size       =3D win_size;
-> > > +       ),
-> > > +
-> > > +       TP_printk("aggregator=3D%d state=3D%d threshold=3D%llu window=
-_size=3D%llu",
-> > > +               __entry->aggregator, __entry->state, __entry->thresho=
-ld,
-> > > +               __entry->win_size)
-> > > +);
-> > > +#endif /* CONFIG_PSI */
-> > > +
-> > >  /*
-> > >   * Following tracepoints are not exported in tracefs and provide hoo=
-king
-> > >   * mechanisms only for testing and debugging purposes.
-> > > diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> > > index 59fdb7ebbf22..e8a7fd04ba9f 100644
-> > > --- a/kernel/sched/psi.c
-> > > +++ b/kernel/sched/psi.c
-> > > @@ -141,6 +141,8 @@
-> > >  #include <linux/psi.h>
-> > >  #include "sched.h"
-> > >
-> > > +EXPORT_TRACEPOINT_SYMBOL_GPL(psi_event);
-> > > +
-> > >  static int psi_bug __read_mostly;
-> > >
-> > >  DEFINE_STATIC_KEY_FALSE(psi_disabled);
-> > > @@ -515,6 +517,9 @@ static void update_triggers(struct psi_group *gro=
-up, u64 now,
-> > >                                 kernfs_notify(t->of->kn);
-> > >                         else
-> > >                                 wake_up_interruptible(&t->event_wait)=
-;
-> > > +
-> > > +                       trace_psi_event(aggregator, t->state, t->thre=
-shold,
-> > > +                                       t->win.size);
-> > >                 }
-> > >                 t->last_event_time =3D now;
-> > >                 /* Reset threshold breach flag once event got generat=
-ed */
-> > > --
-> > > 2.25.1
-> > >
-> > >
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
