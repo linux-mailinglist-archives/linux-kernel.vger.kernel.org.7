@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-875839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E507DC19EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:13:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99DF2C19EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:13:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D66E94F2FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:13:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482153AF3FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D4B32ED5B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10632F761;
 	Wed, 29 Oct 2025 11:12:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WrdRN/yG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ih58e1Zw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA58324B25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9DA323403
 	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736365; cv=none; b=LT7lsNcrHe3TcvpGUeeA4inhIThf8W/BnJakcmPm1v1XQTWzC5sQD13QPeeRX2WCmI19BwZSBgmZcZNjaczuDWSxTj+z8HQFl1vSz/0MWVnpcbqBUZ4M+udhp4QCsgyR+dI7t3E4X1Bbxgxqr+l1fWOaeAlnCxVaBqnevUZEz/w=
+	t=1761736366; cv=none; b=OVXXn0LOoP/jHNCnksVc6lo3KKzdxtRpw1wxSIE3E0F5BVJePkVljuXsNk0ZaE1qGsyURejGNgC/jkHYR7qW6FafO0895PQ+EFdpUP4+xX7A2REGPThHrJnqlD1/t+kLGry0mxvUEUU67ftgVZwH3r7/Zx6dYv46EfMBcmQs2FA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736365; c=relaxed/simple;
-	bh=0uzXrShVPuyyihm9bQTA7lPbESHpuHws075tcEruaY4=;
+	s=arc-20240116; t=1761736366; c=relaxed/simple;
+	bh=3pRP7yxnE+8iPkw51mswvJbqXQU4QWREKIulx3P8Fqc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tAySaEHq/jxQwJVLxhl6+SdBlhVunjBorwRtXI5VCFcu2m8MAG63A7UQu/jCneU8zEKgOyRMYeG1zu3YKV1m1O2S+SQUrQJNr9HkBVsIcs192pT/Gj+UwTg6MCC+zQmNB9Hkbl9v9bq7uKGU2A1bT7eTw28K46gBoke/bT75jug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WrdRN/yG; arc=none smtp.client-ip=192.198.163.18
+	 MIME-Version; b=Hg4FtP8mKDOSNoVb6EHIjo/LddCgOzn1k+lDyw8wquGg5qSrUCanGKZ0z9ef0OAwMRYSMpHpl7DMj52viMswh2RMuGkuxbF3EOwe8SvdMUyydoN/zMTdNRKZ/IX0++LhgNj7iEN7hG6AFGxF+HkC6hG0G64ckqgdNVEcWK8utG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ih58e1Zw; arc=none smtp.client-ip=198.175.65.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,39 +35,39 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1761736364; x=1793272364;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=0uzXrShVPuyyihm9bQTA7lPbESHpuHws075tcEruaY4=;
-  b=WrdRN/yGHuototwyxFVHw3tBHNhBv6M95IzKH0ljbKVMPIPDKd8SKKSU
-   0Js+4nbQWBQe9Xwd9k2CkUHaSwSbZIa4f6OW/KfzIB7tnb9TO3163bYiM
-   99Oum6I+UF8Ue9T7ZZjUOdNoUR4xv/GiEdE6cxm1HUbSnlWvRQI0kakDN
-   XpdCnqbH+SlLDRJX98wIDQTm5XWlQcro4wo26p5WD3/9XykRU5w3a1tqb
-   Bp3vfwkKlrF9qcCCuzo5nJQLPnIVHFVUuTRL+Md7a7Vw+UrGvEarY+biI
-   YBuCGwdtm4tyBzDLvBMWnEq4qCNLr1xWHsIilEZq8r+q0O2JDNO5U/Nqm
-   g==;
-X-CSE-ConnectionGUID: bqijWOU3SCOqV5Vgi8cNtQ==
-X-CSE-MsgGUID: pO+cO4rqT4yPCY7CaTQa7g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="63060495"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="63060495"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:12:43 -0700
-X-CSE-ConnectionGUID: oxkUqQ9UQmmY+z9DtGyGow==
-X-CSE-MsgGUID: 2l83DR6hRF2VfUGURAS9sA==
+  bh=3pRP7yxnE+8iPkw51mswvJbqXQU4QWREKIulx3P8Fqc=;
+  b=Ih58e1Zwik7WqRkQvRi9XkngdGpwSr5x2HhCg66CPXWLnIKHlE0ZbWXV
+   l27ueCkedZFEmee9GFTLwElPBkjJIHGqd994mBEPJn2MIVkfJMqdN5uqT
+   dF7AT+j5sFtFocS+CpEylbI8A7Qeea/8gqvd/vf3AemgMKJ22okXGO+Bi
+   jWWwsAs+FM87PzjG7kBsbyHMKxMGwULXk9DN+mhaV1bE2vvs7odxP8+w0
+   7S7/m9leBWGC7x4ema+V8gQWk/Hlz9J/lAn4o6Nl1Y6V5btz450e9gVxA
+   zn4GQCkDbinC5Yx0Si6B/eU8PiLnE97SJiw4EP9iCRpH4NyJzPHOeavBt
+   w==;
+X-CSE-ConnectionGUID: KRRTvgh1SwyNt4etWrfVBw==
+X-CSE-MsgGUID: 3ytxKmDHSqC/Md7r5toaaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63757587"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63757587"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:12:44 -0700
+X-CSE-ConnectionGUID: PBCwiIR4T32FjLxNRsJNKg==
+X-CSE-MsgGUID: GHUgm2+AQrqSDTQEHlSepg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="186376726"
+   d="scan'208";a="184816544"
 Received: from black.igk.intel.com ([10.91.253.5])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Oct 2025 04:12:42 -0700
+  by orviesa006.jf.intel.com with ESMTP; 29 Oct 2025 04:12:42 -0700
 Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id ED71C9A; Wed, 29 Oct 2025 12:12:39 +0100 (CET)
+	id F1B699B; Wed, 29 Oct 2025 12:12:39 +0100 (CET)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Feng Tang <feng.tang@linux.alibaba.com>,
 	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2 5/6] panic: sys_info: Deduplicate local variable 'table; assignments
-Date: Wed, 29 Oct 2025 12:07:40 +0100
-Message-ID: <20251029111202.3217870-7-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 6/6] panic: sys_info: Factor out read and write handlers
+Date: Wed, 29 Oct 2025 12:07:41 +0100
+Message-ID: <20251029111202.3217870-8-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
 References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
@@ -79,45 +79,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The both handlers use the local 'table' variable and assign
-the same data to it, deduplicate that.
+For the sake of the code readability and easier maintenance
+factor out read and write sys_info handlers.
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- lib/sys_info.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ lib/sys_info.c | 72 ++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 44 insertions(+), 28 deletions(-)
 
 diff --git a/lib/sys_info.c b/lib/sys_info.c
-index 027b2c432d07..c86f52644857 100644
+index c86f52644857..8ed3b4b55854 100644
 --- a/lib/sys_info.c
 +++ b/lib/sys_info.c
-@@ -63,12 +63,13 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 	if (!names)
- 		return -ENOMEM;
+@@ -43,13 +43,52 @@ unsigned long sys_info_parse_param(char *str)
  
-+	table = *ro_table;
-+	table.data = names;
-+	table.maxlen = maxlen;
+ #ifdef CONFIG_SYSCTL
+ 
++static int sys_info_write_handler(struct ctl_table *table,
++				  void *buffer, size_t *lenp, loff_t *ppos,
++				  unsigned long *si_bits_global)
++{
++	unsigned long si_bits;
++	int ret;
 +
- 	if (write) {
- 		int ret;
++	ret = proc_dostring(table, 1, buffer, lenp, ppos);
++	if (ret)
++		return ret;
++
++	si_bits = sys_info_parse_param(table->data);
++
++	/* The access to the global value is not synchronized. */
++	WRITE_ONCE(*si_bits_global, si_bits);
++
++	return 0;
++}
++
++static int sys_info_read_handler(struct ctl_table *table,
++				 void *buffer, size_t *lenp, loff_t *ppos,
++				 unsigned long *si_bits_global)
++{
++	unsigned long si_bits;
++	unsigned int len = 0;
++	char *delim = "";
++	unsigned int i;
++
++	/* The access to the global value is not synchronized. */
++	si_bits = READ_ONCE(*si_bits_global);
++
++	for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
++		len += scnprintf(table->data + len, table->maxlen - len,
++				 "%s%s", delim, si_names[i]);
++		delim = ",";
++	}
++
++	return proc_dostring(table, 0, buffer, lenp, ppos);
++}
++
+ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+ 					  void *buffer, size_t *lenp,
+ 					  loff_t *ppos)
+ {
+ 	struct ctl_table table;
+ 	unsigned long *si_bits_global;
+-	unsigned long si_bits;
+ 	unsigned int i;
+ 	size_t maxlen;
  
--		table = *ro_table;
--		table.data = names;
--		table.maxlen = maxlen;
- 		ret = proc_dostring(&table, write, buffer, lenp, ppos);
- 		if (ret)
- 			return ret;
-@@ -91,9 +92,6 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 			delim = ",";
- 		}
+@@ -67,33 +106,10 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
+ 	table.data = names;
+ 	table.maxlen = maxlen;
  
--		table = *ro_table;
--		table.data = names;
--		table.maxlen = maxlen;
- 		return proc_dostring(&table, write, buffer, lenp, ppos);
- 	}
+-	if (write) {
+-		int ret;
+-
+-		ret = proc_dostring(&table, write, buffer, lenp, ppos);
+-		if (ret)
+-			return ret;
+-
+-		si_bits = sys_info_parse_param(names);
+-		/* The access to the global value is not synchronized. */
+-		WRITE_ONCE(*si_bits_global, si_bits);
+-		return 0;
+-	} else {
+-		/* for 'read' operation */
+-		unsigned int len = 0;
+-		char *delim = "";
+-
+-		/* The access to the global value is not synchronized. */
+-		si_bits = READ_ONCE(*si_bits_global);
+-
+-		for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
+-			len += scnprintf(names + len, maxlen - len,
+-					 "%s%s", delim, si_names[i]);
+-			delim = ",";
+-		}
+-
+-		return proc_dostring(&table, write, buffer, lenp, ppos);
+-	}
++	if (write)
++		return sys_info_write_handler(&table, buffer, lenp, ppos, si_bits_global);
++	else
++		return sys_info_read_handler(&table, buffer, lenp, ppos, si_bits_global);
  }
+ #endif
+ 
 -- 
 2.50.1
 
