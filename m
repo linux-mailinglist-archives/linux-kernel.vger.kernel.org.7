@@ -1,79 +1,139 @@
-Return-Path: <linux-kernel+bounces-875058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7948C1818E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:50:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85EB6C18194
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA64D1C63FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8FC71C61F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498362EBB8C;
-	Wed, 29 Oct 2025 02:49:58 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC052EBB8A;
+	Wed, 29 Oct 2025 02:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YyoAlZeZ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C252EAB72
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13422D8771;
+	Wed, 29 Oct 2025 02:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761706197; cv=none; b=ACoTqGSeb4s0NPJvFmZkfwUnOB/K7r/4CeE1jCxzj52uAYwu52bcVKGUDdlOxa0BlD2twvNmPobL0/u08MpELjlX5b/JCyW0YoMOjan9tzUMsZricjH62lEKU5M2C1cJ4ZxGTrtDqhSKPWz9AYWYLNRXWYJ4fc0+9HuJBmlCGQ0=
+	t=1761706275; cv=none; b=Raclevhfsd0FbXzuftJcpYjEZnpE+xAGGsb6uBDeopV75g9jMCXyWzdaKaPq2Mo3a8P8iPmHHgFYeopK6rFDQF0AM5eRA3t/5R+W4neUyDRZ6VPyd3qP+XJBmbcJJ8DdnoHYpGyCGqIfNA1iapJ7qI/m9lFcFeRjJlQR3hWLrrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761706197; c=relaxed/simple;
-	bh=Ae5i9RbwIx9CKFb2YmhcSXY+Fe9uMh0vjYf0j9fjrPk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aMR+dxY9rR06VSMrv0QLpngGTPFdaLQixWJju7nf744v68vzZtQQOiopqhScSQxg2nZraAw4JW9CPfiYasvsXvUMHzRfASFmjlc8/GQMhKCcX02wRqcDQDXckuXlvvuuij0ib+5AtRbhyd/nrDQrz1+gxh1S+OBk6emCW2O4kSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430ce62d138so84129955ab.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:49:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761706195; x=1762310995;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ae5i9RbwIx9CKFb2YmhcSXY+Fe9uMh0vjYf0j9fjrPk=;
-        b=AeEDP7DTrDRcyOxdw8E+T0KSMqrIuSBCMOWJ4F9oafLlQ1mvtlXqTo75D/sJhxYw02
-         kTpQWSERfmjZrLtEDfzYEHAfhPiWggge11LmpS7ED5vg6hAuoGYHhTBCoP/Squotnv87
-         yjlcONWMEXQuzRcl29LAOHXj4SSIZ+cj3qAnOLwRD14rz6qNS0Aa5D/FViXRsAsooKme
-         KhbhpQ/5twb4DK7f/a6p/mjj5lL0OgrnE3o9NjDNkUIoxRoyDvWovUANyLSGKRJRzImd
-         f3pw/TIey6UP6KxF2Ij+x+GQKjmWcN//JoVDaBdswjL9+0e8iYPhwCrQHzgR2KZnam43
-         amyA==
-X-Gm-Message-State: AOJu0YzdGOaFGt36xWqH02ox6RgxpylvvU1l/cLzX+7WhNoz4gFEUH5+
-	tcOoXqn2cXq7oEABF3jsQkdpf/RTn4NvvCxWcyTvw7/uQ5dkSklqhym6eq9Q1jXsYW+lrK4jbIg
-	CyRxsn2rKtBE0Arqlaz0lp1L0gV5BWmaI7KeADFSJIlPyKozoTBe1R3jQKeA=
-X-Google-Smtp-Source: AGHT+IHlmVhKdMpY8w6fWQi1S+xScIshBinNbfYvQqyfVFy1HKKCtpj55APT7V9OeOqS3za9pgr9iNOLuy5SKqva2Cs6yD1hXaAi
+	s=arc-20240116; t=1761706275; c=relaxed/simple;
+	bh=W9VoCT4gQBCMLqQaUXPnZORlOcgCbfiASlcaHQdclFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GoebTC+prNoKOOB2VMzi1PXW3zycfomgbhHAa+CqVfnm31SYyYL3jD0rLf3KePfNhmf+Obg2QbmVaMO5Tm51JGXMlg3qzdKSjHWyDJKBLkGR2VwZWvZur5WKdkKgoRPqTXkXhWuJoN2zN/kMInM5tFdBuQe0Xtm/lX+Fqortmo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YyoAlZeZ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4CA2925BEE;
+	Wed, 29 Oct 2025 03:51:10 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id clOHwhEflVSb; Wed, 29 Oct 2025 03:51:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1761706269; bh=W9VoCT4gQBCMLqQaUXPnZORlOcgCbfiASlcaHQdclFg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=YyoAlZeZm5c21EOABCq3ODJ1Iod3fPlMv5bzMYxcTOU+Y48qwdWYDc+ZL5IhshSuT
+	 vE3u2jENFI7jbeh0QqmFqa7lt7svL84Vr8DHa4J/HF4AWME4RNlc0Sryn1g7Z9LNyU
+	 WyX5X3hDFKbdDJQ8HC00Hry90gKdx0bf+QH+XsNMW0ARCYqEXYRrblbm4o4d6YJy8B
+	 a62ZyPJG0O0t+EqcBfw8276QZQeqs60qIHv/VSBpx4UlfWp7YRsjo6iVuReTc9safK
+	 XNXRUec+aarsC80YiYA+krgMJTJAC2Oki1JriJmzLSw4g0xEbSFmXRX9HeTP+bMcEX
+	 gI1ckP8k6lqUw==
+Date: Wed, 29 Oct 2025 02:50:50 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Yanteng Si <si.yanteng@linux.dev>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Qunqin Zhao <zhaoqunqin@loongson.cn>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Jacob Keller <jacob.e.keller@intel.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] net: stmmac: Add generic suspend/resume
+ helper for PCI-based controllers
+Message-ID: <aQGA8b5Il-U2IlJi@pie>
+References: <20251028154332.59118-1-ziyao@disroot.org>
+ <20251028154332.59118-2-ziyao@disroot.org>
+ <aQDoZaET4D64KfQA@shell.armlinux.org.uk>
+ <91de05f5-3475-45eb-bbf7-162365186297@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:378b:b0:430:aec5:9bd9 with SMTP id
- e9e14a558f8ab-432f8f81cb8mr20171275ab.5.1761706195618; Tue, 28 Oct 2025
- 19:49:55 -0700 (PDT)
-Date: Tue, 28 Oct 2025 19:49:55 -0700
-In-Reply-To: <00000000000089f55405ee486239@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690180d3.050a0220.3344a1.03ff.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [hfs?] kernel BUG in hfs_write_inode
-From: syzbot <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <91de05f5-3475-45eb-bbf7-162365186297@linux.dev>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Wed, Oct 29, 2025 at 10:27:18AM +0800, Yanteng Si wrote:
+> 
+> 在 2025/10/28 下午11:59, Russell King (Oracle) 写道:
+> > On Tue, Oct 28, 2025 at 03:43:30PM +0000, Yao Zi wrote:
+> > > Most glue driver for PCI-based DWMAC controllers utilize similar
+> > > platform suspend/resume routines. Add a generic implementation to reduce
+> > > duplicated code.
+> > > 
+> > > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > > ---
+> > >   drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +
+> > >   .../net/ethernet/stmicro/stmmac/stmmac_main.c | 37 +++++++++++++++++++
+> > I would prefer not to make stmmac_main.c even larger by including bus
+> > specific helpers there. We already have stmmac_pltfm.c for those which
+> > use struct platform_device. The logical name would be stmmac_pci.c, but
+> > that's already taken by a driver.
+> > 
+> > One way around that would be to rename stmmac_pci.c to dwmac-pci.c
+> > (glue drivers tend to be named dwmac-foo.c) and then re-use
+> > stmmac_pci.c for PCI-related stuff in the same way that stmmac_pltfm.c
+> > is used.
+> > 
+> > Another idea would be stmmac_libpci.c.
+> 
+> I also don't want stmmac_main.c to grow larger, and I prefer
+> 
+> stmmac_libpci.c instead.
 
-***
+Okay, then I'll separate the code into stmmac_libpci.c instead. This
+also avoids moving code around, making it easier to track git log in the
+future.
 
-Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_write_inode
-Author: contact@gvernon.com
+> Another approach - maybe we can
+> 
+> keep these helper functions in stmmac_pci.c and just declare
+> 
+> them as extern where needed?
 
-On Tue, Oct 28, 2025 at 07:47:05PM -0700, syzbot wrote:
-> want either no args or 2 args (repo, branch), got 1
+stmmac_pci.c is a standalone DWMAC glue driver, none of its symbols are
+for external usage. I don't think it's appropriate to put these helpers
+in the driver. Furthermore, this will also require PCI-based glues
+making use of these helpers to depend on an unrelated driver,
+introducing unnecessary code size, which doesn't sound like a good idea
+to me.
 
-#syz test
+I'd still like to introduce stmmac_libpci.c for these helpers.
+
+> Thanks,
+> 
+> Yanteng
+> 
+> > 
+
+Best regards,
+Yao Zi
 
