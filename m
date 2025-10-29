@@ -1,125 +1,88 @@
-Return-Path: <linux-kernel+bounces-875110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB57C183AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:21:19 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096F7C183B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:24:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26628420CF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:21:17 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 644F435137E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EC12F5478;
-	Wed, 29 Oct 2025 04:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bk3CgiKM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A63F2F5A01;
+	Wed, 29 Oct 2025 04:24:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C632F5463
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBC025FA29
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761711673; cv=none; b=B78LV1VH+A1FkPfUBjjV4JeIUu8TJOB0KHLkrjEAAXnu54ktAN1nqps+MvZztfFqDvAo1iP2CZ/rzKwH6cjXOR0Vl0bonW2rrGHYIGzFB0ycf0CBpYTR/plnx3GRKPQF/tta1iSl6LIARi7eg6Nsv/aFHPJ6Zi0FZ4awXXrCTWc=
+	t=1761711845; cv=none; b=hbm+VUqZlwu8/FasIzUfRAWa9vCVRm02GclM7LM9y7YuwA1cZC33NinvjSCBw8TaaT8nTMgq1RrfTCH45VSBC4/w4T2Q4LbuKfShwijm3SvPqRfHGNGOz6y8QysJGKJIv5rBk+mwW4g1N2nAxUOX9IrCcHRiOuXNXrI7SO8YXH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761711673; c=relaxed/simple;
-	bh=k92QA5za9+f78U5qrvozAswYIELUsEv9BnnrIg10L/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nQj+BM+Vsq+Nfqb/C6EU2l32SARNPKTRQjxN+2/mUDTsE9JG+LsoGXtJ79tAJqdvchwuiX4yCx3Y43pHVRVQoM9NFRnBtz/Z3AC6GgXElz0LRkcdRbcP85+/CTUpqARsPucWTXszJYNbLLvuMgqvpw4Wxm7xYit6PGlMx4hbEtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bk3CgiKM; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761711671; x=1793247671;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=k92QA5za9+f78U5qrvozAswYIELUsEv9BnnrIg10L/I=;
-  b=Bk3CgiKMwjoa99bUAgFgjgF8QjYGqGi2DOgu1WkaqDZ2RNRQ83x5pinz
-   mMViTQPe36bKlORByGrVwsw5i79vCqcNVoEAmvFox+M1xg5PYeH5W77D0
-   Ww7+1mc+BcooNhHnJDAjnjBT25wzGJU/CvA7ORA/632dD+1xHOivPiR/2
-   L7orWmkat1cyCVckwfCJNprGd5U18x6gr2sR0UaSOQuA8F8tmRbV76apQ
-   u8ksTLWgo1kCOFHuxF2Qyhj1+Ua8O7c6xyN+uBLZ/dkWj7zLrmKrctbQJ
-   WPz0jl5L6uiAOPzdoUcLkWg412szdOqNjNTuyG1uLo5zeQH9t478YFS9b
-   w==;
-X-CSE-ConnectionGUID: O0XQlBPmSB2406ImViRCLQ==
-X-CSE-MsgGUID: xkYsjPM6TZ+u04Mw2uYKIQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="81243996"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="81243996"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 21:21:11 -0700
-X-CSE-ConnectionGUID: zkABTT1EQqWwOKetxsdjCA==
-X-CSE-MsgGUID: lHSFdfJrSdCTiq++m50U8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="185177781"
-Received: from igk-lkp-server01.igk.intel.com (HELO c2fcd27ee2f4) ([10.211.93.152])
-  by orviesa009.jf.intel.com with ESMTP; 28 Oct 2025 21:21:09 -0700
-Received: from kbuild by c2fcd27ee2f4 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1vDxgJ-000000000s8-1a82;
-	Wed, 29 Oct 2025 04:21:07 +0000
-Date: Wed, 29 Oct 2025 05:20:58 +0100
-From: kernel test robot <lkp@intel.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0
- (altr,pio-1.0): 'oneOf' conditional failed, one must be fixed:
-Message-ID: <202510290539.UPoG7YbJ-lkp@intel.com>
+	s=arc-20240116; t=1761711845; c=relaxed/simple;
+	bh=UbvujcQMZ8LUmiFNvZwfWb8fqF93TIdoQTs+9b/gwnc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NYLOdoT9PgtZENJpmxaCz5H6+aSIPs5TZbdfBnIlyZ+FgH+VTvazE8ujQRffuYlzrd3fozWe7gr57iU2nSXRPgPVojdpe1fgwrDk6bbYzjiNZ2lxcgA2QD7fpgG6vpBpmNqec0yOe39lnN9t+eTnyl3tsp+cScKYZrXgXiupbKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c684035eso7435995ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:24:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761711843; x=1762316643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k0+bcIjSuIlbcfy+h7iYgchQvQ3SGlGN19/Nz1UJTv8=;
+        b=pAQWWQo2AkYvySTAc5GMP5zvatA5o4BARH2NLuB2ZN7XWmcvdTHK2BVeig+xay1wmq
+         dUYJHCcfPUKgFEOoBmIQuEKyCBI2kbrhY7fUSsAazHzui+YlCL5OVgJU4KJJmuFsHOHZ
+         zHC4XV09b6qL2gypK/JI9mE5Do7LQnft7es5REPesaCY+GbQWtZlwiZ2R1nBv3Qwfvhk
+         9RINhPWaLUZ9VM2zxnRLie5TTBQ8pw0rkGN5wO8c0/KB8h2Ck5tH44VJXE2/TrWqUD3P
+         baKfAEKDhuk40k94oSyXttZqpvbXdIhhTpT/Hv3vgUNYDJSWc8iPiRwh2yNa8xuTlUku
+         4W+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWGnKqTzH6MTv6kAdkHA+LZBVZU/xX/gBKhtjI5UytpKzmFcukCQawOjf2FwPgMgSAIPZ1REfBNMvWJemE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyduHzw8mWFNdtAmfhA1VcCTd93T59rUgUC/gnM8fKMgXwLbtIo
+	MsyVwWe+js9xrpS4Hmaq3rYjnHt3DNzRyy6MHO2vPlHVYq6DzeDpa7JkXBqDdaxBV+fWX6YqF5s
+	MsAWGoBczqkJYMScRrYCDY2QSSrpfOedTIcxxICus30u3jCOTq5MCJqK/ggM=
+X-Google-Smtp-Source: AGHT+IF3TNOw+Nfh8K2sRqUOacvr45PJS8UO8XrlU1lvB3SVDr1gDkQvmq8ypL6ncttVjKbqGTngtKtZCMNEtJfeKWTMMgS20zBJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:1949:b0:431:da98:3519 with SMTP id
+ e9e14a558f8ab-432f8c55920mr25195695ab.0.1761711843444; Tue, 28 Oct 2025
+ 21:24:03 -0700 (PDT)
+Date: Tue, 28 Oct 2025 21:24:03 -0700
+In-Reply-To: <tencent_EFA7FBC6CC92D88645C98F6EEB2EC04C8706@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690196e3.050a0220.32483.01e7.GAE@google.com>
+Subject: Re: [syzbot] [nilfs?] WARNING: ODEBUG bug in nilfs_detach_log_writer (2)
+From: syzbot <syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
-commit: 695f375b2a881544d112edbb60a35a884c7604ae dt-bindings: gpio: Convert altr,pio-1.0 to DT schema
-date:   3 months ago
-config: nios2-randconfig-2052-20251024 (https://download.01.org/0day-ci/archive/20251029/202510290539.UPoG7YbJ-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 11.5.0
-dtschema version: 2025.9.dev12+gd6be03029
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510290539.UPoG7YbJ-lkp@intel.com/reproduce)
+Hello,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510290539.UPoG7YbJ-lkp@intel.com/
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): reg-names:3: 's1' was expected
-   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
-   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): reg-names: ['control_port', 'rx_csr', 'rx_desc', 'rx_resp', 'tx_csr', 'tx_desc'] is too long
-   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
-   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): compatible: ['altr,tse-msgdma-1.0', 'altr,tse-1.0'] is too long
-   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
-   arch/nios2/boot/dts/10m50_devboard.dtb: ethernet@400 (altr,tse-msgdma-1.0): Unevaluated properties are not allowed ('altr,enable-hash', 'altr,enable-sup-addr' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/net/altr,tse.yaml
-   arch/nios2/boot/dts/10m50_devboard.dtb: /sopc@0/clock@0: failed to match any schema with compatible: ['altr,pll-1.0']
-   arch/nios2/boot/dts/10m50_devboard.dtb: /sopc@0/clock@1: failed to match any schema with compatible: ['altr,pll-1.0']
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): 'oneOf' conditional failed, one must be fixed:
-   	'interrupts' is a required property
-   	'interrupts-extended' is a required property
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014d0 (altr,pio-1.0): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): 'edge_type', 'level_trigger' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): 'interrupt-controller' is a required property
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
->> arch/nios2/boot/dts/10m50_devboard.dtb: gpio@180014c0 (altr,pio-1.0): '#interrupt-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/gpio/altr-pio-1.0.yaml
-   arch/nios2/boot/dts/10m50_devboard.dtb: leds (gpio-leds): 'fpga0', 'fpga1', 'fpga2', 'fpga3' do not match any of the regexes: '(^led-[0-9a-f]$|led)', '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/leds/leds-gpio.yaml
+Reported-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
+Tested-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Tested on:
+
+commit:         b98c94ee arm64: mte: Do not warn if the page is alread..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11a09c92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=158bd6857eb7a550
+dashboard link: https://syzkaller.appspot.com/bug?extid=24d8b70f039151f65590
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=128b8fe2580000
+
+Note: testing is done by a robot and is best-effort only.
 
