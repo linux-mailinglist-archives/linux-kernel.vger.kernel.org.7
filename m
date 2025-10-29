@@ -1,94 +1,54 @@
-Return-Path: <linux-kernel+bounces-876825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ABC1C1CA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B29C1CA00
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 703A662353B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE905844D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D633502AD;
-	Wed, 29 Oct 2025 17:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658E934FF4E;
+	Wed, 29 Oct 2025 17:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVEIVOaQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ctF9xyK7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LVEIVOaQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ctF9xyK7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="c+WwoiC/"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAF734F27D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C60D31283D;
+	Wed, 29 Oct 2025 17:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761759004; cv=none; b=Ix3vaLEBQZ2CEuYwMJFtzMkccQ0L1q6+hOff3N/JqUvzoKaHhhuiKUSxARYElKsBrrR8aq3YOJjkqwurWp3HWsOg/Xm2luY7L3CiJNe16hOtlLPtmedeSD5SUcm7WqerhCNhn5gXbHf0b3XF9aEX3VP7TIfmFcQMLdwpicC1Pok=
+	t=1761759139; cv=none; b=fr9hLC1j+0SktO6roc/DJRKjA6whGnT00V4OnTbG+hmxDOTKJbxY7x0Z3GVOHxEQhHjQ7fu+hgUl+rjZ8+dZz7EPqOe6xzrJD7e4BBXYIvuTTOhAoswZxk0Oz6due6quDvigmQFN4TVNjs1i5u9fnPGV4Gtc1htgfLeDfzOardk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761759004; c=relaxed/simple;
-	bh=qVTH40A5JCbCOMaD/Tpex0QWcx3jmKhVZXMoHraElUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=geq+rJO4SqDlog9I/IefZyJtSIwQEO0hPjDFCns4UopmxMBuCRwo74/Mpt7hW3+VkX5uVP8hVM32Vg/ISDsNGWSWbagf785FAbPOV1tt/iRn2IrkiuxZmfPtPsmxYwk9jC+fA1oiy7FkMbdf4Qp1X80+R59RKD937eAYuhBAwPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVEIVOaQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ctF9xyK7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LVEIVOaQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ctF9xyK7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9C6873410D;
-	Wed, 29 Oct 2025 17:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761759000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oRycsl2hppTtVF2hMtZZwaQ8XfejV47sf0TtOJTd2k4=;
-	b=LVEIVOaQiQihyyVUrP032S89inzygkFWyPglGyhCVKJys7tNMO6HUJzV4u69AGh6ilDhGs
-	MkzoCxej3zPDuphsnF+Hp1VA2ZsYuV14fngmFbHOhu0qDjTL0mVq3oUguLEh8loNejGcqJ
-	0G9uHfoch0uFMiMIsjFJtTWHalG0q0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761759000;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oRycsl2hppTtVF2hMtZZwaQ8XfejV47sf0TtOJTd2k4=;
-	b=ctF9xyK7ak253elPpv+mWxgHFLYAJ390A0negsSyH/lt8REDr2T6ttS1j2ikK1D5xSvd54
-	AiwoEjokQlAAJLDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761759000; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oRycsl2hppTtVF2hMtZZwaQ8XfejV47sf0TtOJTd2k4=;
-	b=LVEIVOaQiQihyyVUrP032S89inzygkFWyPglGyhCVKJys7tNMO6HUJzV4u69AGh6ilDhGs
-	MkzoCxej3zPDuphsnF+Hp1VA2ZsYuV14fngmFbHOhu0qDjTL0mVq3oUguLEh8loNejGcqJ
-	0G9uHfoch0uFMiMIsjFJtTWHalG0q0I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761759000;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oRycsl2hppTtVF2hMtZZwaQ8XfejV47sf0TtOJTd2k4=;
-	b=ctF9xyK7ak253elPpv+mWxgHFLYAJ390A0negsSyH/lt8REDr2T6ttS1j2ikK1D5xSvd54
-	AiwoEjokQlAAJLDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7E70C1396A;
-	Wed, 29 Oct 2025 17:30:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sfBnHhhPAml+ZwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 17:30:00 +0000
-Message-ID: <1e4e6ddd-e4a4-4f3a-ae47-93b69d25ff88@suse.cz>
-Date: Wed, 29 Oct 2025 18:30:00 +0100
+	s=arc-20240116; t=1761759139; c=relaxed/simple;
+	bh=Acb2I2Pbu/oogzK66zhV/cfqmGZOdhf365tnACPEP70=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ppjP5bV9s2O7PU7ogmeqz/VR4YFPFsbRsiYRpr2v1CcOLTstrTYuqAn4ZmId5PSTC/d4AbzrGVvbI1ImaDibd9/JspRdg+A7fLCITfykhkpevYd38cl1NFgCDOgpbLmYhiczE02aU8/ldu7f8qFKvS5AVXddJYDVMjSTlYx7gQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=c+WwoiC/; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761759127; x=1762363927; i=markus.elfring@web.de;
+	bh=t1w9nAB21BkiIR25+rIX4DpNqAPP3pbaX5HFUHEmtK4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=c+WwoiC/V1OuEFgY9F5mj3Wv1D3h2Z/5jqWAhfpfNLOkcF6OZcfkrIg4qNNiDjhJ
+	 +dJXp/ByiBqSp0QBBnlhDCDKe1Xy4JCrTJCKl2FHrt1fEvQfRbwXpWKwACi7TCqOY
+	 7CSMLCIMZsSgHyUOOIeELVTgEtrnf9bxCz0PITGxnYz7tr9NEPCsaV6Zj+Q1aHjNq
+	 yw8Y092uv+7gBKGfkgBRwauJDNJQUUQyjrsSIKsOsW1atwL5DXBCkmpnh/FOA6oXI
+	 C+rBdGKZ2Gb9IsHZKURWDH4k4goVGk0hh5/iX1sTOpNdG7va4jQ1XpgMBS88vaVY9
+	 TbSt53n30FQSYO0G+A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbkSC-1vqEKv1mJy-00klzo; Wed, 29
+ Oct 2025 18:32:07 +0100
+Message-ID: <6069f4ab-252e-4f83-8c8f-cbab4ae8cd94@web.de>
+Date: Wed, 29 Oct 2025 18:32:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,146 +56,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 07/19] slab: make percpu sheaves compatible with
- kmalloc_nolock()/kfree_nolock()
-Content-Language: en-US
-To: Chris Mason <clm@meta.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- bpf@vger.kernel.org, kasan-dev@googlegroups.com
-References: <20251024140416.642903-1-clm@meta.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251024140416.642903-1-clm@meta.com>
+To: Miaoqian Lin <linmq006@gmail.com>, dmaengine@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Dmitry Baryshkov <lumag@kernel.org>,
+ Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Vinod Koul <vkoul@kernel.org>
+Cc: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+References: <20251029123421.91973-1-linmq006@gmail.com>
+Subject: Re: [PATCH] dma: qcom: gpi: Fix memory leak in
+ gpi_peripheral_config()
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20251029123421.91973-1-linmq006@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9i0KtE9HrbmwcWBSDN86jgBGkdf9Q3K4aeCLNAMVoMUwXDJhTFU
+ 8EpjSB1y52TE1dDQZKcSWKYTX9aqfqSvzZCdgVoIKqr2222KUo6j41Yzb0hB0aJ1vZOVcIc
+ +Pz69qWZ5BXG5FtKgbaqVJlyrQOhRj2ZnmFx7hsI6GXmb0kK0qnAuope50yMaeAJq/vZtpU
+ OPBecA7LtAT/GTC2rpoRg==
 X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:w65fqY1kmcE=;lD4EDGnKVlSpuV5M0j8cSCE2bcI
+ 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
+ foHcjfC6gpHloCzqDIHsIeIvjkJ2ZLwkPTc=
 
-On 10/24/25 16:04, Chris Mason wrote:
-> On Thu, 23 Oct 2025 15:52:29 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->> Before we enable percpu sheaves for kmalloc caches, we need to make sure
->> kmalloc_nolock() and kfree_nolock() will continue working properly and
->> not spin when not allowed to.
->> 
->> Percpu sheaves themselves use local_trylock() so they are already
->> compatible. We just need to be careful with the barn->lock spin_lock.
->> Pass a new allow_spin parameter where necessary to use
->> spin_trylock_irqsave().
->> 
->> In kmalloc_nolock_noprof() we can now attempt alloc_from_pcs() safely,
->> for now it will always fail until we enable sheaves for kmalloc caches
->> next. Similarly in kfree_nolock() we can attempt free_to_pcs().
->>
-> 
-> Hi Vlastimil,
-> 
-> We're trying out the AI patch review automation on the BPF commits and it had
-> some questions about a few of these.  Since the goal is to actually test the
-> automation, I'm putting them in unedited, but I did try and make sure they
-> were valid before sending.
-> 
-> This one is a little verbose for s/NULL/ERR_PTR/ suggestions, but:
-> 
->> diff --git a/mm/slub.c b/mm/slub.c
->> index ecb10ed5acfe..5d0b2cf66520 100644
->> --- a/mm/slub.c
->> +++ b/mm/slub.c
-> 
-> [ ... ]
-> 
->> @@ -2990,7 +2998,8 @@ barn_replace_empty_sheaf(struct node_barn *barn, struct slab_sheaf *empty)
->>   * barn. But if there are too many full sheaves, reject this with -E2BIG.
->>   */
->>  static struct slab_sheaf *
->> -barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
->> +barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full,
->> +			bool allow_spin)
->>  {
->>  	struct slab_sheaf *empty;
->>  	unsigned long flags;
->> @@ -3001,7 +3010,10 @@ barn_replace_full_sheaf(struct node_barn *barn, struct slab_sheaf *full)
->>  	if (!data_race(barn->nr_empty))
->>  		return ERR_PTR(-ENOMEM);
->>
->> -	spin_lock_irqsave(&barn->lock, flags);
->> +	if (likely(allow_spin))
->> +		spin_lock_irqsave(&barn->lock, flags);
->> +	else if (!spin_trylock_irqsave(&barn->lock, flags))
->> +		return NULL;
-> 
-> barn_replace_full_sheaf() now returns NULL when the trylock fails, in
-> addition to its existing ERR_PTR(-ENOMEM) and ERR_PTR(-E2BIG) returns.
+=E2=80=A6
+> +++ b/drivers/dma/qcom/gpi.c
+> @@ -1605,14 +1605,16 @@ static int
+>  gpi_peripheral_config(struct dma_chan *chan, struct dma_slave_config *c=
+onfig)
+>  {
+=E2=80=A6
+> +	new_config =3D krealloc(gchan->config, config->peripheral_size, GFP_NO=
+WAIT);
+> +	if (!new_config)
+>  		return -ENOMEM;
+> =20
+> +	gchan->config =3D new_config;
+>  	memcpy(gchan->config, config->peripheral_config, config->peripheral_si=
+ze);
 
-Good catch, cool it can find such bugs.
-I'll return ERR_PTR(-EBUSY) which should be compatible with the callers.
+How do you think about to apply the following source code variant?
 
+	gchan->config =3D memcpy(new_config, config->peripheral_config, config->p=
+eripheral_size);
+
+
+Regards,
+Markus
 
