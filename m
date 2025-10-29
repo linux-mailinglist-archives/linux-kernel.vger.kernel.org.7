@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-874911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD78EC17797
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:08:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D1FC177A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2DE4A4EF829
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:08:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7393A40566E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF941DE4CE;
-	Wed, 29 Oct 2025 00:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeMkeJor"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DC71DF270;
+	Wed, 29 Oct 2025 00:09:27 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB31D63E4;
-	Wed, 29 Oct 2025 00:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 733C11D6187;
+	Wed, 29 Oct 2025 00:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761696524; cv=none; b=tD7dT0hy0VSZVNCWtOgDZ5xvsriBlCMFQk+7n1k/2+7Tied+RnwByvx+rLqjEYHOcjCHcCoof3K2WRHgqnZqx4o0q9oR7WvBqbb/JMFLFX8Tc9bxNecf5P7iRD8+UhPgrT+iI6GAXy9Lpd0rwn43fI7w4PrPXk9CQAA18iFzjGk=
+	t=1761696566; cv=none; b=SennGiQ9oA3+GgOQsGpzMLcbDgl5HV8yfpmtWjY094asq4JP4z3YWLE+Vb+++RSlbqhtvaJvMbfEDJ2utUkNJNbJGeCcHIEaStILYMJasyBERHQHU7zqg+tQxxTBHy/+mJSq45gdo4RIktm7BblmKnfQ0xc2bFYQS/TZg1SKKEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761696524; c=relaxed/simple;
-	bh=qEiYyKozecfeo83I5FVNC3qRO4tj4kVQPdT7HZ0bS08=;
+	s=arc-20240116; t=1761696566; c=relaxed/simple;
+	bh=zn7/Mgfu6z/4MIpO86n81HjFLAX8EANlwORyqEV34j0=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hHwhlVJ33huvgug2l9iPHDnSXZzmhKoSyqVLLyWn+P/GegwHN3AlcztH4VLh/UglwhZhau5c3tr7NPmNkXqHO21hb9wvMnYQ8CFJf6acTIXVAiWSb0ZQ4p92AM+u5kaYLtxiClW0oOPYg6WPAAKbIMQuosPhej4qaxn2/edVSis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeMkeJor; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1D6C4CEE7;
-	Wed, 29 Oct 2025 00:08:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761696524;
-	bh=qEiYyKozecfeo83I5FVNC3qRO4tj4kVQPdT7HZ0bS08=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jeMkeJor/+Uq3t9AnY+wccZDzAkhDRNVWeHHfaZxXEI0/e6o2rslWiFEhUM7FnQHH
-	 HHbhpAbk4JNyoC767NYeWd66QDgR53j6oFkWxVM6EiHozM+mqryKS0NodyIxy5B7+U
-	 VTehJ4MdkRUOntCWK1IVeDM5waO3FEbwctvotbz1ciNQIXy3ot9aCUpEaz2bw22DBC
-	 /OnnPz9yVT3DPgtcwUTKq6Jsm5cwCPxe+IzY29de/l9Efjc81iJCrUQj5C6SOxMJHF
-	 9wqwSbueacFlVgWtehPMgWIgyg5OBwgYo3NUUGsmTyXEAZrKfAoGjPsq8Gvc+fYmP8
-	 kq7D8MXEvSQHA==
-Date: Tue, 28 Oct 2025 17:08:42 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Wang Liang <wangliang74@huawei.com>, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- shuah@kernel.org, acardace@redhat.com, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-coalesce.sh fail
- by installing ethtool-common.sh
-Message-ID: <20251028170842.3fdaea7e@kernel.org>
-In-Reply-To: <aQD52zzmW1YDC1iH@horms.kernel.org>
-References: <20251027043007.1315917-1-wangliang74@huawei.com>
-	<aQD52zzmW1YDC1iH@horms.kernel.org>
+	 MIME-Version:Content-Type; b=rrCdw/nKb43aEQtuP6GUzn4lWI8W33KS8igHFD4EYG0Ag0jv0D6hK/fgTV22Ir3mEcHKeyUYtNBXBA3laHcbRcFZePxhaY+levmnb+Ph5Pkwj9yUoDBwcomrW0kFslPNg4hx7WqjIlq1sZ8yx79W+9bjqLQQFU50rEEmRnmb9Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 8101449945;
+	Wed, 29 Oct 2025 00:09:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 867FE20024;
+	Wed, 29 Oct 2025 00:09:16 +0000 (UTC)
+Date: Tue, 28 Oct 2025 20:09:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, x86@kernel.org,
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Andrii Nakryiko <andrii@kernel.org>,
+ Indu Bhagat <indu.bhagat@oracle.com>, "Jose E. Marchesi" <jemarch@gnu.org>,
+ Beau Belgrave <beaub@linux.microsoft.com>, Jens Remus
+ <jremus@linux.ibm.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>, Kees Cook
+ <kees@kernel.org>, Carlos O'Donell <codonell@redhat.com>
+Subject: Re: [PATCH v16 4/4] perf tools: Merge deferred user callchains
+Message-ID: <20251028200955.0340ae1c@gandalf.local.home>
+In-Reply-To: <20251024130203.GC3245006@noisy.programming.kicks-ass.net>
+References: <20250908175319.841517121@kernel.org>
+	<20250908175430.639412649@kernel.org>
+	<20251002134938.756db4ef@gandalf.local.home>
+	<20251024130203.GC3245006@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,22 +65,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: s83ogzogzibnpwpdr7u1e4k6r9bahc13
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 867FE20024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19rKG5R5mSBL4RI6DA9hDmkitecXs2Ve6E=
+X-HE-Tag: 1761696556-616127
+X-HE-Meta: U2FsdGVkX186yRanWr15TKP/V7dgTJ5pJjNT8Qf8W1MTctYl1Wud062AX/34wZL7UA3kO+CIHwvKBGtEm+Fe5ZR8+ENT9XdsvdRwqAtQ/XNx26Km/RI3T8zO1A0YrtnEU/6E6u49zw2MSnQvM+9bFjLjmnzjMlGu00fZONCaCkrhThdHIpCLQLdKYRXGK7+2PIq9vzDT/Zdbb+u6FlQ9R+zGdzue2aMEUAbAuL+QUNGEaFKfgHn5dmyssE3Im47Qkb/tuVx3MGnM56pYldJCzI7S87uA9i77m/fTSW5PE8yTYzuq9DQwNDTseCyrWOZubu9I+jL0jkWBzOBLeEvxJfG7RWB62xXf7tMfZJngxeeDJ8R5NXyrJMim4DFXBQDu
 
-On Tue, 28 Oct 2025 17:14:03 +0000 Simon Horman wrote:
-> > +TEST_FILES := ethtool-common.sh
-> > +
-> >  include ../../../lib.mk  
-> 
-> Hi Wang Liang,
-> 
-> As per commit f07f91a36090 ("selftests: net: unify the Makefile formats")
-> I think the desired format is as follows (completely untested!):
-> 
-> TEST_FILES := \
-> 	ethtool-common.sh \
-> # end of TEST_PROGS
+On Fri, 24 Oct 2025 15:02:03 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-I believe we (intentionally) allow simple single entry assignment like
-in this patch. But there have been bugs in this check which I only fixed
-last weekend so please LMK if I'm missing something..
+> > The sample__merge_deferred_callchain() initializes both
+> > orig_sample.deferred_callchain and the callchain. But now that it's not
+> > being called, it can cause the below free to happen with junk as the
+> > callchain. This needs:
+> > 
+> > 		else
+> > 			orig_sample.deferred_callchain = false;  
+> 
+> Ah, so I saw crashes from here and just deleted both free()s and got on
+> with things ;-)
+
+I just downloaded your tree again and it doesn't look like it was updated.
+
+Just didn't want you to forget about this ;)
+
+-- Steve
 
