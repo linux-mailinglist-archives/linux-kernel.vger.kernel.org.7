@@ -1,127 +1,158 @@
-Return-Path: <linux-kernel+bounces-876305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F24C1B264
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:19:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D19CC1B312
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B81B22FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:08:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8211C2429B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2A1299AB3;
-	Wed, 29 Oct 2025 13:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2922D63E8;
+	Wed, 29 Oct 2025 14:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W2AkzQhR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="e30NhYV5"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBAA1EF0B0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAA62C08BB;
+	Wed, 29 Oct 2025 14:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746304; cv=none; b=CEjp3s9GNYyh/naLoLeUWnEbCuos675PDVRk/fu5TCEShiiAk4VVbmNNSerWgDOhb/vu+GjNcV1GxvoiH+sE2VMi1h04O6HdqENMFDNKBKHX76VTfAFJJZ3eOlDXOYOJxiU6fokU8B1oQbF51TsVGqg4tSnlxurmViQsTAKar8I=
+	t=1761746404; cv=none; b=bd+lN7YmwGbmlUHLWJeRoLqKraMc6ricvuZxG3YCnMIt5li/VsrYD8L+JpYUvohi6whwhat/RbB9O6/sbQgbcfUHjYMuxP7md3FAmfV0/SQOyQBUYo4LJMdX51HIaDgWrNHrEwruqrS43g2ise7wcZrzDB7xTFPjPmdOqUF+SLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746304; c=relaxed/simple;
-	bh=eb/lecgSj7pZ4dVPEsUUj8TIQ+srrjC8ULRf0Jm2+SA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bBfzv+QbsmQLM2A2ZakltVU4SOUqpm+jGY9TPo3r1TalomiYs/tcHp1UBafEPJ1nDkwxSvAoHUjqSF5OnHuOuOqo2ZH/Bt9N8aeunIrE4lHJcCspO7JC4bci6qSbbVCG8TIrjnqTCLmFXqT7se9unsizerLLgCJRW0PxpQyrWSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W2AkzQhR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761746302;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YzNMOzms2O5d2a24CLqvGn9BwifdwOkeEqcANjalJ2g=;
-	b=W2AkzQhRX+sHxJa6EdA/ov+a4Ytgld4E6Yf7SPGDF9wdsezncw/aukWggJ1fLtpuBouQyG
-	91IwKSr5WhD3um8NpLUGeINFlqfRaRlWVQDrCmFF5vceQK0ArOjws91/8Attp8Ps290Sgc
-	qfwcyVGZQTUSq/3bmA5WLY9yeRcFEow=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-225-_xOKjgr1MVeubqIfHZqDmg-1; Wed, 29 Oct 2025 09:58:20 -0400
-X-MC-Unique: _xOKjgr1MVeubqIfHZqDmg-1
-X-Mimecast-MFC-AGG-ID: _xOKjgr1MVeubqIfHZqDmg_1761746299
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-592f33729c6so4045299e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:58:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746298; x=1762351098;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzNMOzms2O5d2a24CLqvGn9BwifdwOkeEqcANjalJ2g=;
-        b=Ti1eTM6s7yrM6aVeDVXEwUtTeSzTf6c2w70tigTw9QokIHjv8+9Kp68xcrwvB+jRzC
-         bN7HdRHtmClxbqVUqaHOqXyNqt6JylD4kRJfbnmUfjeZtmeU7Rvax0WPwf6wxHPS6D/9
-         5nG7DhB5oSrcoyON1DgTgVt3lVU68uu2YRsToqDHHeVJo0Q7dVRejRH7zSJn+UxI7jtY
-         JM2a+8CfAoiT0K7dk5WAZrwNER9TgS5pzvmPEGHQ3gk1RrhA+wIgxBV4CS5umcUV6LaN
-         NXemWGy+ROz2tZk8Hz1RQxH+If4niNHMno3f6+qAOJd5HG97O38JDs3JgTTS67+qw7R+
-         1K9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxkRczjhAoJ03+qHysEc690WDjIM1UgMZYZZeYWQmdR4u7HkwfC9Ru6zU1SipDPBD4iG6P6lalPmy4Zzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOUWRN7/JbCMNVlwvZhWVVGZw5LmiA1pRiiXLn0cRjmvMPzZ+S
-	1qhVTIi7zIacFYKzWtxfTeaZC3X23MgdHmnS7/yPm8SCif65KB1C86RxoBGXiYKbcpavw8FUAmO
-	h+3cSLPfxCB2hQtmnYScKowUirwwC4cYGt/8pd6xaKCwN0c2N6f7DoeLmB/KmeRX3vBI72RXhF7
-	4WiCF7D15NKiGbxlOb/B1PD/pcOrYkJRu5r70cnMx0ztL9urgj
-X-Gm-Gg: ASbGncv33FQPJPAKfe8EPl48tQfXRu4114NeG8yDzN4tLlZNXWlHGj0nTWmA+n+HTM6
-	P5ILedmCRFqKb8cYhRIEKdv0GhQs/iJHwV2FMHfR8R4SrHThQ5nI6g8vdGHYm710+JfUpueLO/H
-	r6lCI1CxmhOlaeWbPj8wLEHz1D5IBAHABQ0wiSwY8rB6Wsj1paIes0C7sIvViIvtxqAld9CugYB
-	bdicQ2F+biCLA==
-X-Received: by 2002:a05:6512:238f:b0:591:ec59:2d4e with SMTP id 2adb3069b0e04-594128bfbc2mr948406e87.33.1761746296960;
-        Wed, 29 Oct 2025 06:58:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHENcild87oyJavKrMajfFtJmvIPZWqbmuIDtqlYAc21RXT91r25XmwlhMpaWQmY1koiPE7JQjfkX6UdmNgtqU=
-X-Received: by 2002:a05:6512:238f:b0:591:ec59:2d4e with SMTP id
- 2adb3069b0e04-594128bfbc2mr948391e87.33.1761746296236; Wed, 29 Oct 2025
- 06:58:16 -0700 (PDT)
+	s=arc-20240116; t=1761746404; c=relaxed/simple;
+	bh=B9N5m4FMkeZUHUzR55GjpsvD3RNy4NqgzEWOKwz8dgM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+xisBf19E6sBwt7Jf+V3bJgcUJTMxY2P6AFvusVtUWHhmyup8PODh9LtsaKW01k73MeN64tc7Tvwsne6HM70v9PBWA6lLaF043KCfiqwkGyvy0XwaG8GvUBQ5C7xhDbzTLWfaXAuKeltucoO/IDdS8urgh9BXr3MpzHxstq5Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=e30NhYV5; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C77E7A1477;
+	Wed, 29 Oct 2025 14:59:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-type:content-type:date:from:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=mail; bh=Th5b5crsMjrM5576TzmgnufvSOw4CYAbIgMlncT6eYE=; b=
+	e30NhYV55d72/DmQIXSob8phZ2V1oXf6zxY+J8wp5scQfdlVBX323YgYdFcBN9dI
+	/awjtjLN2r27xTce5tMNHCBKO4gh0fg9JorD1lSR/ja59xy1KtGdLrlYw1tJxkzE
+	stFz+hJhB5V79rdYLM59HgbgsltcpF8EzfX1c6rmsXLetQT4w+fPMusiIMn+Zh6X
+	FIXoAg3rjeJu4V7QN2KM+gA5LJ7yddCP6Cu4mDRBLsAkoo+ieVsw03NXR2tc96+W
+	872DjeeqbfmypePYMRsYVXQ76J6aamXhJ8wFOBfO5H6R3EkUbrXgEYS0miAP2VXh
+	LH2LbyxV6WNP6mxZ+ySxSMgYB9CaLVQuhb1spMFUGOdfWTjBvHEgPmDxKV82endi
+	ydJXasIOGmliexAKJ3rQi081oQldTWk2FAWOMU3G+DHdfO2bEtkky55ILNwppsnA
+	EKHBfDxgRWJ4xltO8qZUXzVHczK47WRuI0+zCzwVX8tkWDRtKu9MZk5acHFjlpC1
+	vTyoR2ihhOsrpfNR2Mb/a2YfjeQKpnjXAsMgU9OE2jBuLz+jkzZ3NjKtS187eX8B
+	9pys1d9Y4pE9Yoy2+wgjcxXS9TzVjArjipHQ9xswg+VaCisosNFGPCTVh6Crg5af
+	BqBtJI8n+qjHMwK1PKu9SjSC+gfiwIJPRJ16drVp4hI=
+Date: Wed, 29 Oct 2025 14:59:58 +0100
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 1/4] net: mdio: common handling of phy reset
+ properties
+Message-ID: <aQId3lVoDBE0557D@debianbuilder>
+References: <cover.1761732347.git.buday.csaba@prolan.hu>
+ <a96ac9a58165a4ea15b1c96cab3bbc5d568e9cba.1761732347.git.buday.csaba@prolan.hu>
+ <3a937e5c-0c0f-431f-a300-9d4c60f3a3ff@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251002170846.437888-1-costa.shul@redhat.com>
-In-Reply-To: <20251002170846.437888-1-costa.shul@redhat.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 29 Oct 2025 14:58:04 +0100
-X-Gm-Features: AWmQ_bk_Pa7PjTlfBu4mI5xpRQYogtwTJ-LtD_tM-yThYPQIs4QykeGaTsRutv0
-Message-ID: <CAP4=nvT5WTKBfeihWy-FAc4hKFuJj45Be=P4U2Acs-jVnRv9oA@mail.gmail.com>
-Subject: Re: [PATCH v1] tools/rtla: Fix unassigned nr_cpus
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Crystal Wood <crwood@redhat.com>, 
-	John Kacur <jkacur@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3a937e5c-0c0f-431f-a300-9d4c60f3a3ff@lunn.ch>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761746399;VERSION=8000;MC=3337100537;ID=153779;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155F677362
 
-=C4=8Dt 2. 10. 2025 v 19:09 odes=C3=ADlatel Costa Shulyupin
-<costa.shul@redhat.com> napsal:
->
-> In recently introduced timerlat_free(),
-> the variable 'nr_cpus' is not assigned.
->
-> Assign it with sysconf(_SC_NPROCESSORS_CONF) as done elsewhere.
-> Remove the culprit: -Wno-maybe-uninitialized. The rest of the
-> code is clean.
+On Wed, Oct 29, 2025 at 02:03:30PM +0100, Andrew Lunn wrote:
+> On Wed, Oct 29, 2025 at 11:23:41AM +0100, Buday Csaba wrote:
+> > Unify the handling of reset properties for an `mdio_device`.
+> > Replace mdiobus_register_gpiod() and mdiobus_register_reset() with
+> > mdio_device_register_reset() and mdio_device_unregister_reset(),
+> > and move them from mdio_bus.c to mdio_device.c, where they belong.
+> 
+> You should probably mention here that there are two sets of reset
+> properties. One set applies to the bus as a whole, and the second is
+> per device on the bus. You would expect the whole bus properties to be
+> handled in mdio_bus.c, where as the per device properties might make
+> more sense in mdio_device.c. So you can comment you are only moving
+> the per device reset code.
+> 
 
-I suspected that the warning was disabled because of issues with an
-old version of GCC, but that is not the case: I tried building RTLA on
-RHEL 7 with GCC 4.8, and got no warnings, beside the real bug that you
-fix here.
+Okay, I will do that.
 
-Therefore, it can be removed, so that such bugs are caught in the future.
+> > 
+> > The new functions handle both reset-controllers and reset-gpios,
+> > and also read the corresponding firmware properties from the
+> > device tree, which were previously handled in fwnode_mdio.c.
+> > This makes tracking the reset properties easier.
+> 
+> Please split this patch.
+> 
+> It is normal when moving a function to just move it, make no
+> additional changes. That makes the change smaller, easier to review,
+> since it is all about, does the new location make sense?
+> 
+> Once it is in the new location, you can then have patches which
+> refactor it.
 
->
-> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
-> ---
->  tools/tracing/rtla/Makefile.rtla  | 2 +-
->  tools/tracing/rtla/src/timerlat.c | 3 ++-
->  2 files changed, 3 insertions(+), 2 deletions(-)
->
+Understood, I will change it accordingly.
 
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+> 
+> > -static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
+> > -{
+> > -	/* Deassert the optional reset signal */
+> > -	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
+> > -						 "reset", GPIOD_OUT_LOW);
+> > -	if (IS_ERR(mdiodev->reset_gpio))
+> > -		return PTR_ERR(mdiodev->reset_gpio);
+> > -
+> > -	if (mdiodev->reset_gpio)
+> > -		gpiod_set_consumer_name(mdiodev->reset_gpio, "PHY reset");
+> > -
+> > -	return 0;
+> > -}
+> > -
+> 
+> > +/**
+> > + * mdio_device_register_reset - Read and initialize the reset properties of
+> > + *				an mdio device
+> > + * @mdiodev: mdio_device structure
+> > + *
+> > + * Return: Zero if successful, negative error code on failure
+> > + */
+> > +int mdio_device_register_reset(struct mdio_device *mdiodev)
+> > +{
+> > +
+> > +	return 0;
+> > +}
+> > +EXPORT_SYMBOL(mdio_device_register_reset);
+> 
+> Before it did not require an EXPORT_SYMBOL, but now it does?  That
+> makes me wounder if it is in the correct place. This should be a core
+> function, why would something outside of the core need it?
 
-Tomas
+I am using these in the third patch in fwnode_mdio.c, so I assumed it was
+necessary. But you are right, neither can be in a module. I will remove it.
+
+> 
+> Also, please use the _GPL variant.
+> 
+> 	Andrew
+> 
+
+Csaba
 
 
