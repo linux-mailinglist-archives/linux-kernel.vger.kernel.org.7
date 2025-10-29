@@ -1,144 +1,203 @@
-Return-Path: <linux-kernel+bounces-875288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B5A2C189AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:14:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE58CC18D12
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA8713BD5E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BD51C66787
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0622830F939;
-	Wed, 29 Oct 2025 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE163112C2;
+	Wed, 29 Oct 2025 07:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RYucon6r"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b="NkAaHME4"
+Received: from mo-csw-fb.securemx.jp (mo-csw-fb1802.securemx.jp [210.130.202.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FA130DEC0;
-	Wed, 29 Oct 2025 07:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EE231195F;
+	Wed, 29 Oct 2025 07:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.130.202.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722007; cv=none; b=ofN6j9kEYpv/JeQRuzfGaK/PrZ9pCXetKh+V8pHWaqDz25SFiGS5wFGMHYAK4DQEN5kFp6znp1bCy9UIwR/LbwNLhcA36dGsUt/dm71XoApW7lt9n/W2SF6hAaE+ZOBh3a+baLVcj1+whT06wxZqhsNVtX+Vs1QIBnaQs+KqObg=
+	t=1761724708; cv=none; b=dV7HlPQRRy4rrcNUTJyt2F3GA5eZSXGEsIQIma5Yqdep9tlc6GIY6NkAXjtAAX94pcINemosHTR4vgkicS2InR16kR3AIUh2JwlxAlz07t2CSTXL1aZ+YUqNCk5Ot//iuFzWyyAgx+uGQUSLlVo6tJYUNgh+zh8SlxpX2k9wz3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722007; c=relaxed/simple;
-	bh=ukb8+zQXgoIv/RxchmgxmWgDizmIF+87yEdWqKqnMm0=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 MIME-Version:Date; b=Q+gdH5SToTLfjJvGJqebuiuz5Bt/EYhTRHpUH2F5FTN5xn+LzY7b8uBeiWnU8RoFu/Nl9vJPz830QB7LVUw0VYcdPh881vQUssSDj7xHcIcLPL2aZ36gQ/xQRjVk8V2zgaDWuqOX9hPubdWHZKdVTYQhky3rfi4bemBW/4BXk7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RYucon6r; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761722003;
-	bh=ukb8+zQXgoIv/RxchmgxmWgDizmIF+87yEdWqKqnMm0=;
-	h=Subject:From:To:Cc:In-Reply-To:References:Date:From;
-	b=RYucon6rtt1nM9lh6pAygFlWvSeUYhrdQ0qa0QkI4UX63ahJAX52EbW1EI7yhJffh
-	 ozhiAmimg3yoJ/IXSmztPtT1fVr2D5apaKuulfnpM7NRLoRKKYTED67k6nO6jMI85K
-	 ckEDWygEZkbLgPjd9ifPDTtJCoScXt8wD6+wkxRUUf+4zMuUzIUfA0Uc4yGeH7KWxO
-	 iGenvFd9FOmM1li1yiaVolBKruV1iIEALqwNKEzyxHxO/rohdTYuEvWjCibXqOJT5c
-	 lBYcNoNI8N3OHJuPu2xBJPhrdbt7la5XFoMQMubuh6HedQaFoVAy+msZFDsEEfp4Lg
-	 LZyRSSIpoaf6Q==
-Received: from [10.43.10.217] (cust-east-lon-46-193-228-77.cust.wifirst.net [46.193.228.77])
+	s=arc-20240116; t=1761724708; c=relaxed/simple;
+	bh=XQbm9gT0FmsvNn/DCDwiVeIZ+/JgLi9QBanOXYYx3M4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MMG6cR0HZFhJ3x8ht76RpvK/96lbSmeLsdw+3N+bpeqOPWYmqxj2aw+SIe+/xnu9moRj+XpZiM/HKfAEiW4w7aB+SXAG837eEKW3ZSdD4iMyTzS33vWFaCSgGKKedRJbVMoNulhEdVqV9oYdnf7pNnudMBZLJrcuWdxdxaZHocs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp; spf=pass smtp.mailfrom=toshiba.co.jp; dkim=pass (2048-bit key) header.d=toshiba.co.jp header.i=yuji2.ishikawa@toshiba.co.jp header.b=NkAaHME4; arc=none smtp.client-ip=210.130.202.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toshiba.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toshiba.co.jp
+Received: by mo-csw-fb.securemx.jp (mx-mo-csw-fb1802) id 59T6JjeM2015011; Wed, 29 Oct 2025 15:19:45 +0900
+DKIM-Signature: v=1;a=rsa-sha256;c=relaxed/simple;d=toshiba.co.jp;h=From:To:Cc
+	:Subject:Date:Message-Id:In-Reply-To:References:MIME-Version:
+	Content-Transfer-Encoding;i=yuji2.ishikawa@toshiba.co.jp;s=key1.smx;t=
+	1761718755;x=1762928355;bh=XQbm9gT0FmsvNn/DCDwiVeIZ+/JgLi9QBanOXYYx3M4=;b=NkA
+	aHME4WgdZ7HUujpiLX+NIB4iI1nTVQSXiXv/6MO5bBDcP4r+mZH19HjpSCi6LjbF+7zyLVFINqLIp
+	DIXVVdxsucADivJDWH4yEavDpaAQ/Uzcqmc8aqnHf1q8V4xIesR1I9rrukTPJC76psKbPw5OLKppT
+	kyGI/ZzpZqDqNl/gxZJOQjEYjlbDe9xTZDT2jH3xrSCleFSGo9G5FjIoN6AhPoe4jAuyWYHILVRoC
+	plYvTl1okMVlqSdqEVb82TpmICTfYpdMhLvLuHGuIq0pgschGYdJq6P2WelqDg7TvBXtGjls8pY5s
+	Eq5pcM4a1kUvbwmnRGfyZ1AuGP8YpDg==;
+Received: by mo-csw.securemx.jp (mx-mo-csw1800) id 59T6JEMD1316549; Wed, 29 Oct 2025 15:19:14 +0900
+X-Iguazu-Qid: 2yAbDoX6mRH41gehdo
+X-Iguazu-QSIG: v=2; s=0; t=1761718753; q=2yAbDoX6mRH41gehdo; m=pclAYtZ7pBrHZt8LYmpYud/jNnTsExEG04RaG1tDPQk=
+Received: from imx2-a.toshiba.co.jp (imx2-a.toshiba.co.jp [106.186.93.35])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 535F317E013C;
-	Wed, 29 Oct 2025 08:13:19 +0100 (CET)
-Message-ID: <420ba3c838b7fe2a6f2414d09fe1226c581ca09d.camel@collabora.com>
-Subject: Re: [PATCH v2 1/2] media: chips-media: wave5: Fix conditional in
- start_streaming
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Brandon Brnich <b-brnich@ti.com>, Nas Chung
- <nas.chung@chipsnmedia.com>,  Jackson Lee <jackson.lee@chipsnmedia.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, 	linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Darren Etheridge <detheridge@ti.com>
-In-Reply-To: <20251021204618.2441939-1-b-brnich@ti.com>
-References: <20251021204618.2441939-1-b-brnich@ti.com>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
- /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
- cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
- CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
- abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
- nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
- AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
- smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
- AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
- iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
- ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
- bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-ya/lnR4dF2hqC45jLuRZ"
+	 id 4cxHBm4wzRz1xnc; Wed, 29 Oct 2025 15:19:12 +0900 (JST)
+X-SA-MID: 53851528
+From: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Subject: [PATCH v2 2/2] clk: visconti: Add definition of VIIF on Toshiba Visconti TMPV770x SoC
+Date: Wed, 29 Oct 2025 15:13:44 +0900
+X-TSB-HOP2: ON
+Message-Id: <20251029061344.451222-3-yuji2.ishikawa@toshiba.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251029061344.451222-1-yuji2.ishikawa@toshiba.co.jp>
+References: <20251029061344.451222-1-yuji2.ishikawa@toshiba.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 28 Oct 2025 16:42:12 +0000
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+Content-Transfer-Encoding: 8bit
+
+Add the control sequence of register bits to handle the clocks and the
+resets of Video Input Interface.
+
+Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+---
+Changelog v2:
+- Update clk_gate_tables to reflect changes in bindings identifiers.
+---
+ drivers/clk/visconti/clkc-tmpv770x.c | 71 ++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+
+diff --git a/drivers/clk/visconti/clkc-tmpv770x.c b/drivers/clk/visconti/clkc-tmpv770x.c
+index 6c753b2cb..b3f4de671 100644
+--- a/drivers/clk/visconti/clkc-tmpv770x.c
++++ b/drivers/clk/visconti/clkc-tmpv770x.c
+@@ -28,6 +28,10 @@ static const struct clk_parent_data pietherplls_parent_data[] = {
+ 	{ .fw_name = "pietherpll", .name = "pietherpll", },
+ };
+ 
++static const struct clk_parent_data pidnnplls_parent_data[] = {
++	{ .fw_name = "pidnnpll", .name = "pidnnpll", },
++};
++
+ static const struct visconti_fixed_clk fixed_clk_tables[] = {
+ 	/* PLL1 */
+ 	/* PICMPT0/1, PITSC, PIUWDT, PISWDT, PISBUS, PIPMU, PIGPMU, PITMU */
+@@ -64,6 +68,41 @@ static const struct visconti_clk_gate_table pietherpll_clk_gate_tables[] = {
+ 		TMPV770X_RESET_PIETHER_125M, },
+ };
+ 
++static const struct visconti_clk_gate_table pidnnpll_clk_gate_tables[] = {
++	{ TMPV770X_CLK_VIIFBS0, "viifbs0",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 1, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS0_PROC, "viifbs0_proc",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 18, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS0_L1ISP, "viifbs0_l1isp",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 17, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS0_L2ISP, "viifbs0_l2isp",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 16, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS1, "viifbs1",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 5, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS1_PROC, "viifbs1_proc",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 22, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS1_L1ISP, "viifbs1_l1isp",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 21, 1,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIFBS1_L2ISP, "viifbs1_l2isp",
++		pidnnplls_parent_data, ARRAY_SIZE(pidnnplls_parent_data),
++		0, 0x58, 0x158, 20, 1,
++		NO_RESET, },
++};
++
+ static const struct visconti_clk_gate_table clk_gate_tables[] = {
+ 	{ TMPV770X_CLK_HOX, "hox",
+ 		clks_parent_data, ARRAY_SIZE(clks_parent_data),
+@@ -185,6 +224,22 @@ static const struct visconti_clk_gate_table clk_gate_tables[] = {
+ 		clks_parent_data, ARRAY_SIZE(clks_parent_data),
+ 		0, 0x14, 0x114, 0, 4,
+ 		TMPV770X_RESET_SBUSCLK, },
++	{ TMPV770X_CLK_VIIF0_CFGCLK, "csi2rx0cfg",
++		clks_parent_data, ARRAY_SIZE(clks_parent_data),
++		0, 0x58, 0x158, 0, 24,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIF0_APBCLK, "csi2rx0apb",
++		clks_parent_data, ARRAY_SIZE(clks_parent_data),
++		0, 0x58, 0x158, 2, 4,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIF1_CFGCLK, "csi2rx1cfg",
++		clks_parent_data, ARRAY_SIZE(clks_parent_data),
++		0, 0x58, 0x158, 4, 24,
++		NO_RESET, },
++	{ TMPV770X_CLK_VIIF1_APBCLK, "csi2rx1apb",
++		clks_parent_data, ARRAY_SIZE(clks_parent_data),
++		0, 0x58, 0x158, 6, 4,
++		NO_RESET, },
+ };
+ 
+ static const struct visconti_reset_data clk_reset_data[] = {
+@@ -220,6 +275,14 @@ static const struct visconti_reset_data clk_reset_data[] = {
+ 	[TMPV770X_RESET_PIPCMIF]	= { 0x464, 0x564, 0, },
+ 	[TMPV770X_RESET_PICKMON]	= { 0x410, 0x510, 8, },
+ 	[TMPV770X_RESET_SBUSCLK]	= { 0x414, 0x514, 0, },
++	[TMPV770X_RESET_VIIFBS0]	= { 0x458, 0x558, 0, },
++	[TMPV770X_RESET_VIIFBS0_APB]	= { 0x458, 0x558, 1, },
++	[TMPV770X_RESET_VIIFBS0_L2ISP]	= { 0x458, 0x558, 16, },
++	[TMPV770X_RESET_VIIFBS0_L1ISP]	= { 0x458, 0x558, 17, },
++	[TMPV770X_RESET_VIIFBS1]	= { 0x458, 0x558, 4, },
++	[TMPV770X_RESET_VIIFBS1_APB]	= { 0x458, 0x558, 5, },
++	[TMPV770X_RESET_VIIFBS1_L2ISP]	= { 0x458, 0x558, 20, },
++	[TMPV770X_RESET_VIIFBS1_L1ISP]	= { 0x458, 0x558, 21, },
+ };
+ 
+ static int visconti_clk_probe(struct platform_device *pdev)
+@@ -272,6 +335,14 @@ static int visconti_clk_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = visconti_clk_register_gates(ctx, pidnnpll_clk_gate_tables,
++				    ARRAY_SIZE(pidnnpll_clk_gate_tables),
++				    clk_reset_data, &tmpv770x_clk_lock);
++	if (ret) {
++		dev_err(dev, "Failed to register pidnnpll clock gate: %d\n", ret);
++		return ret;
++	}
++
+ 	return of_clk_add_hw_provider(np, of_clk_hw_onecell_get, &ctx->clk_data);
+ }
+ 
+-- 
+2.34.1
 
 
---=-ya/lnR4dF2hqC45jLuRZ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Le mardi 21 octobre 2025 =C3=A0 15:46 -0500, Brandon Brnich a =C3=A9crit=C2=
-=A0:
-> When STREAMON(CAP) is called after STREAMON(OUT), the driver was failing =
-to
-> switch states from VPU_INST_STATE_OPEN to VPU_INST_STATE_INIT_SEQ and
-> VPU_INST_STATE_PIC_RUN because the capture queue streaming boolean had no=
-t
-> yet been set to true. This led to a hang in the encoder since the state
-> was stuck in VPU_INST_STATE_OPEN. During the second call to
-> start_streaming, the sequence initialization and frame buffer allocation
-> should occur.
->=20
-> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
-
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-
-> ---
-> =C2=A0drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 3 ++-
-> =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> index 1978551a28fa..0a2eab372913 100644
-> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-> @@ -1367,7 +1367,8 @@ static int wave5_vpu_enc_start_streaming(struct
-> vb2_queue *q, unsigned int count
-> =C2=A0		if (ret)
-> =C2=A0			goto return_buffers;
-> =C2=A0	}
-> -	if (inst->state =3D=3D VPU_INST_STATE_OPEN && m2m_ctx-
-> >cap_q_ctx.q.streaming) {
-> +	if (inst->state =3D=3D VPU_INST_STATE_OPEN && (m2m_ctx-
-> >cap_q_ctx.q.streaming ||
-> +		q->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)) {
-> =C2=A0		ret =3D initialize_sequence(inst);
-> =C2=A0		if (ret) {
-> =C2=A0			dev_warn(inst->dev->dev, "Sequence not found: %d\n",
-> ret);
-
---=-ya/lnR4dF2hqC45jLuRZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaQDyVwAKCRDZQZRRKWBy
-9Hi0AQDWWJIcFjRcJHYOVGM/K10PrfhqA3vCjVUEU66BEELihQD+Jv1PZSvragkO
-BhWOf5ZvgiHAtsE4im22SJg17TC+oQc=
-=6FGj
------END PGP SIGNATURE-----
-
---=-ya/lnR4dF2hqC45jLuRZ--
 
