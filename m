@@ -1,156 +1,182 @@
-Return-Path: <linux-kernel+bounces-875650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74568C197D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:52:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712EEC1987A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCD851899CF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:52:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86BEC19C3216
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BB531AF25;
-	Wed, 29 Oct 2025 09:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UVGIRTeP"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADEE328618;
+	Wed, 29 Oct 2025 09:58:15 +0000 (UTC)
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E647930C378
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 244C42F6596
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731497; cv=none; b=Bkowy9HHEABs+4Mc0JoednZW5q6CktpK/kOH0Tv3d28bwJV2tCVVM1UJcq5OYNVOheJV14tCiLH1tPmlAzKnxgnIonkul1uuMBYptq4eB62WHjJMRJsOqjv+IE2bU1c8MrtF80ChlMpnNJGDoLmNzRtcV2hpfCbtroGHdQB56Tk=
+	t=1761731895; cv=none; b=XbSdRTUJBCsKnb0FXpWKHklyzU4LU85BfWrNr+CI37X73BJjWZoI1fiphfjYWz2uKFOsGoAS5jXhWlxeFfuwq7z7sadpIciChulVs5M5klpDfibViJDxYDppLPSEUb43IcB1wFs3W6Sw1hcMUFaAtfGNTUTqxxsqsGySlrnHor0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731497; c=relaxed/simple;
-	bh=9o8f2QPsHB29PhlPOfpuhRMcLB8kVSzBEgAs8oiMhrw=;
-	h=References:In-Reply-To:From:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fQL5QbxWRNHxvNuKAak0kD/WKlF+VRn4CJV3+dKJw3HfjCcDjRAVmdBGYRMVr2k6SPzLAK27cCOQq3Ogrr5WW+MsKq5XBdny3ZjE2tJqRBNz72K7rT5SKCJFv6bR8brttjMSRVfYw0VLJ2otM+fqxG2xGMz0txcAYPgJXYd7X78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UVGIRTeP; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c21467e5bso5180572a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:51:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1761731493; x=1762336293; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:mime-version:from:in-reply-to
-         :references:from:to:cc:subject:date:message-id:reply-to;
-        bh=XUmz5Wl9yfT1FobYM412c0HSZzBiDUV4FimmeLGj8uc=;
-        b=UVGIRTeP7HVSsixLHH5Xyu0M76udZnING5yq5VxvF+iMkmA61Dks5xkcwCGbStWGmo
-         /7RxM6puMeWCLra5IbPMDN2h6kUU4vNaKDuY+ijVQA4DoDkOvSNTV1/xJeT1Dc1Wg9SH
-         B4qAzFKn0Xc7xOKjGtUn4ZTQE4t3adVOy1NX5cgKjnO7SA66TD3YrlIhyyAVvMG64ixy
-         vIDtt9Pan9+vnc5sCbc9PtvrMkktFAA3d87ESseqZCl9BwaCEPVspM2q/i3fZ2VBYBQm
-         f6Cp3MCfTsEJzzs265QGqjdz9CUKz1k8lWXU8/T/8ndyDBE8upMBaPlkTT6vKvfw4YEQ
-         dn0w==
+	s=arc-20240116; t=1761731895; c=relaxed/simple;
+	bh=6umXQY7PxYDhxCFHBGVvm62ZCKDd9XvEuaC2neC8JOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BaryaAfTUkjliBmEoycM1Hf50ECI/ouR+HxpYwVclPuGF+rDLisWNHSspBC6pZsJiqP5cIKenLfqEt//+AqachrGWg8QVrnDdm3U2hruQELMVzsseaQrw7xMJl7iOHQEogzEwHQzOpzlDuagigNxFbzGzNoc+QVHVkRGwTYomCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-943b8b69734so467482539f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:58:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761731493; x=1762336293;
-        h=cc:to:subject:message-id:date:mime-version:from:in-reply-to
-         :references:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XUmz5Wl9yfT1FobYM412c0HSZzBiDUV4FimmeLGj8uc=;
-        b=R9Vta2TP+A/VYeqIQCs2AzdNN4OuPOMXkuzWPJd73sALXxlSH9grL63TTzQjWweIcG
-         +IwZkvoc7BWrFGoXyHysZqHbRXqmAFGAPP5xKvtdCTpzLuuUsSqXHcw1531+LfHfD99q
-         gYfotnDoLcGTyBuPynwL+9HRR4v90UkM5y4uHe+P8ShKS03Rho91AxWqfqrX66XXSFTh
-         xAJR7GiCTyZJuMzcbd6HLSTx7oe+/IaVGt8CHiv/X+To8jEQgeAkLpVTHz7+noalozMp
-         cEl59XsnIbr+219nyzt5g4eTTlc66uKdV9LZavx6cFQkF3fjn8XoI8MVNtBKOyoTV5kR
-         B1OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNSZSGRXPtpLnthepBW315QP3joFIRMHlkfi2D2MbcwEmwuyisQEXlx+g7eUmUwRwzRbbjVCpbLCEcEl0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPnpZCLmzVHu+4X8MFX9eTUQCZPsTQ1JhTmeyeCSJhcid+5o0g
-	pj5J188OqEGwADbgHERjHbwxUvmQfTELeu9HlauVhCgP5ylFws/LNQuk0J2nDAHpbfFvxiwr0ID
-	CkS71xt9rPCCJ8nhSoV7yvYkgVxcSefWwwn34mZ1x
-X-Gm-Gg: ASbGncv4gMJ1iO6hFXVo56BE58896bNSPEhuSuwWY/xFk742WtvjIauAqQOVam7zaPC
-	DEjFwOMZh3De2HFo+kLjmIQ5D6L/2FqWt+JzNX5A2kuIgFuzad9Oe5eWFUYBxzitz2Wf2lEmfTR
-	UVl81J91vWPcc+Fz23m1WK9OQTfsB0vbJr5BP4JwxMG8GOjrnSutIfnZPtwSE/993JcndbzCKEX
-	1MOZHo/C8czsSkFlavKZ3lMe1/tAsxybCr5qXdwhzh2e3xU8eC3xrg4AqaaxQ==
-X-Google-Smtp-Source: AGHT+IE6gf/2RPFdgrMbFHjLjryoV3+l5B6OMa04r8DuNPFjjzuUhXH5NGIvrh0WsHKiuCElPRosHWTO4sXcv9YjMkw=
-X-Received: by 2002:a05:6402:1598:b0:62f:2f9f:88bf with SMTP id
- 4fb4d7f45d1cf-64044380388mr1628399a12.38.1761731493186; Wed, 29 Oct 2025
- 02:51:33 -0700 (PDT)
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Wed, 29 Oct 2025 05:51:32 -0400
-Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
- Wed, 29 Oct 2025 05:51:32 -0400
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
- <ca1946de63ad9f0ae99e079a74d70c55879cc0b6.1760206683.git.tim.c.chen@linux.intel.com>
- <20251024093258.GA1630077@bytedance> <cc8284e8-c8f2-4f2c-bcab-4920b80a5a87@intel.com>
-In-Reply-To: <cc8284e8-c8f2-4f2c-bcab-4920b80a5a87@intel.com>
-X-Original-From: Aaron Lu <ziqianlu@bytedance.com>
-From: Aaron Lu <ziqianlu@bytedance.com>
+        d=1e100.net; s=20230601; t=1761731892; x=1762336692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dn3HJmw1LqF1sl88KtOEIxVUxtlj7baFmpOOANtcNAA=;
+        b=mQcTA6HvIWjBJEJzX1andwBxFiI2ARAlB0AvefsSSU54LhZRdJPzUkC1tw41GM+Eyo
+         0GFaJWthDRLaLG2D53dXdci7Y4eSmTWDGHCb4LxyXek6bOpZlTa2T4UoCKf7JPLdlVw2
+         iYtTQyhKo9s1Z+RdMmgej5J/cc3MOoNQlaVzA9ehUzVicHGVybkclhm3wqu//ut3kc5P
+         t42aqERkJizLE7d2l4TXL3GcS0zOQxRGM/gFTQZrv3lL/tOHhMDinqCN02wjC8kI2QKT
+         JS6jhtHAe93gPg6T8d5WQKDL+zKhNCVgUv+OcWpv6T4WSJw1DV2LzRubN+eT4TdrnnId
+         dCnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXAtUreV4ejo5OiclRWYOx4GPVdI0T0jj0dA0zCFX8rz4zgvsRJFaLKr9n7T2W6SVpj9Zm53oOJbrqhvtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSYzNPdVnSintiaOV9SX605RpxRqoG/dUFzz7otLMUsQzM+hP3
+	oXF1PupCndzqCx2enCh9fut9H5Ncel06lazQQp4U2zzogiTf/tigK3GktDmwVWVS
+X-Gm-Gg: ASbGncuODDLy8eGbv0CLFj1otr9nY9/vSzaREk3c5CqonN757fPrGT9EG8ImpMLIR74
+	b4+yNMUqnPs7nhKAGKeS18sSPdYoMCj5WinAo1nEOFa49mG8p4Kd3kUbVgCDgElI51mpiJESL7q
+	DX7p+M9dPgUefHuKlYQZzUjYrd93FS0GL7fy0SPmBo+cQnU1Ze7hhlMESWQZp8tcOBg8vmJM2kL
+	3h9gqhzWkjlyoNq2b99N0Kf9YPxzKIoDAQ4a9E1nMGAv0ZUq0kkSGqJBMlQMq+2FqJuNCaAa2A+
+	1iR2GVe3/KWYa5v4it9U/i5amPWbwQx0aRzQ+IaQMwmKfRxKipeuCjDs5RmCPH504uATQzj/6fL
+	7IE7MemZxz4rj3b77znAkt1NCNTWUIuRbywBUH3zolLXdBccWsbAiNApNgJutw53Ge/ALAJxoQI
+	CnfK5+HZcMuUe3upDas7y+vcQvHxiyJNnfgbydUA==
+X-Google-Smtp-Source: AGHT+IH2TXxqZJrpO8wgcWMGnFMGestfRw8J4c39fHbTqWKqyzT0NZP2zVSEssm/NDMLUugyReiCXw==
+X-Received: by 2002:a92:cda3:0:b0:423:fcd6:5488 with SMTP id e9e14a558f8ab-432f8fad5a7mr36621095ab.12.1761731891933;
+        Wed, 29 Oct 2025 02:58:11 -0700 (PDT)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com. [209.85.166.49])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-431f688b589sm52781005ab.25.2025.10.29.02.58.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 02:58:11 -0700 (PDT)
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-94359aa7f60so479539139f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:58:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWEskru+5Lm+wh9LKdmWpTYj07IZrPnQ8cFK9IOZ4zlYwXZhDlWr3q+w9rfvwwdJuwmTI1JX++yM9uS5+c=@vger.kernel.org
+X-Received: by 2002:a05:6102:942:b0:5d7:de89:ddd6 with SMTP id
+ ada2fe7eead31-5db9057bad9mr557441137.1.1761731536861; Wed, 29 Oct 2025
+ 02:52:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Wed, 29 Oct 2025 05:51:32 -0400
-X-Gm-Features: AWmQ_bmY94Q-iUIgJ17BVXAq76T8_WTyyJr0aSN_4vibhw8FSNtbG_LGYXNh6xQ
-Message-ID: <CANCG0GdR-0Yh16nuAWq477RyWXhzbo_ppDsH9hQrbkxRqw1+-g@mail.gmail.com>
-Subject: Re: [PATCH 10/19] sched/fair: Prioritize tasks preferring destination
- LLC during balancing
-To: "Chen, Yu C" <yu.c.chen@intel.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Madadi Vineeth Reddy <vineethr@linux.ibm.com>, 
-	Hillf Danton <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, 
-	Jianyong Wu <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, 
-	Tingyin Duan <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, 
-	Len Brown <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, 
-	Zhao Liu <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, 
-	Libo Chen <libo.chen@oracle.com>, Adam Li <adamli@os.amperecomputing.com>, 
-	Tim Chen <tim.c.chen@intel.com>, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com> <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com> <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch> <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch> <TY2PPF5CB9A1BE6DD93D0F397C961D5CB5AF2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <01573262-69a8-44cf-ae02-2e9842c59dde@lunn.ch> <CAMuHMdXAOPemhTjdJqminXhi+1+Dsc5rN1GLqAUcfF3ZyphRoQ@mail.gmail.com>
+ <TY2PPF5CB9A1BE6D0FC241696E44EB1F463F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+In-Reply-To: <TY2PPF5CB9A1BE6D0FC241696E44EB1F463F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 Oct 2025 10:52:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWKsyt_bXaJ=smtCaGst_5O2trQakxmaKp2K1Jzc=Y9uA@mail.gmail.com>
+X-Gm-Features: AWmQ_bnPsVrgzrwpS4yuU54P6rGfuwJuhD3QhZm5C-G0nVGXJf4URRbbI7AGLcc
+Message-ID: <CAMuHMdWKsyt_bXaJ=smtCaGst_5O2trQakxmaKp2K1Jzc=Y9uA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device tree
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Arnd Bergmann <arnd@arndb.de>, BMC-SW <BMC-SW@aspeedtech.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Jeremy Kerr <jk@codeconstruct.com.au>, Lee Jones <lee@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Nishanth Menon <nm@ti.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, 
+	"Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Eric Biggers <ebiggers@kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 10:00:52AM +0800, Chen, Yu C wrote:
-> Hi Aaron,
+Hi Ryan,
+
+On Wed, 29 Oct 2025 at 03:38, Ryan Chen <ryan_chen@aspeedtech.com> wrote:
+> > Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC=
+ device
+> > On Mon, 27 Oct 2025 at 13:01, Andrew Lunn <andrew@lunn.ch> wrote:
+> > > On Mon, Oct 27, 2025 at 02:42:01AM +0000, Ryan Chen wrote:
+> > > > > Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial
+> > > > > AST2700 SoC device tree
+> > > > >
+> > > > > > SoC0, referred to as the CPU die, contains a dual-core
+> > > > > > Cortex-A35 cluster and two Cortex-M4 cores, along with its own
+> > > > > > clock/reset domains and high-speed peripheral set.
+> > > > >
+> > > > > > SoC1, referred to as the I/O die, contains the Boot MCU and its
+> > > > > > own clock/reset domains and low-speed peripheral set, and is
+> > > > > > responsible for system boot and control functions.
+> > > > >
+> > > > > So is the same .dtsi file shared by both systems?
+> > > >
+> > > > This .dtsi represents the Cortex-A35 view only and is not shared
+> > > > with the Cortex-M4 or the Boot MCU side, since they are separate
+> > > > 32-bit and 64-bit systems running independent firmware.
+> > >
+> > > DT describes the hardware. The .dtsi file could be shared, you just
+> > > need different status =3D <>; lines in the dtb blob.
+> > >
+> > > > > How do you partition devices
+> > > > > so each CPU cluster knows it has exclusive access to which periph=
+erals?
+> > > >
+> > > > Before the system is fully brought up, Boot MCU configure hardware
+> > > > controllers handle the resource partitioning to ensure exclusive ac=
+cess.
+> > >
+> > > Are you saying it modifies the .dtb blob and changes some status =3D
+> > > "okay"; to "disabled";?
+> >
+> > "reserved" is the appropriate status value for that.
 >
-> On 10/24/2025 5:32 PM, Aaron Lu wrote:
-> > Hi Tim,
-> >
-> > On Sat, Oct 11, 2025 at 11:24:47AM -0700, Tim Chen wrote:
-> > > @@ -10849,11 +10849,45 @@ static void record_sg_llc_stats(struct lb_env *env,
-> > >   	if (unlikely(READ_ONCE(sd_share->capacity) != sgs->group_capacity))
-> > >   		WRITE_ONCE(sd_share->capacity, sgs->group_capacity);
-> > >   }
-> > > +
-> > > +/*
-> > > + * Do LLC balance on sched group that contains LLC, and have tasks preferring
-> > > + * to run on LLC in idle dst_cpu.
-> > > + */
-> > > +static inline bool llc_balance(struct lb_env *env, struct sg_lb_stats *sgs,
-> > > +			       struct sched_group *group)
-> > > +{
-> > > +	struct sched_domain *child = env->sd->child;
-> > > +	int llc;
-> > > +
-> > > +	if (!sched_cache_enabled())
-> > > +		return false;
-> > > +
-> > > +	if (env->sd->flags & SD_SHARE_LLC)
-> > > +		return false;
-> > > +
-> > > +	/* only care about task migration among LLCs */
-> > > +	if (child && !(child->flags & SD_SHARE_LLC))
-> > > +		return false;
-> > > +
-> > > +	llc = llc_idx(env->dst_cpu);
-> > > +	if (sgs->nr_pref_llc[llc] > 0 &&
-> > > +	    can_migrate_llc(env->src_cpu, env->dst_cpu, 0, true) == mig_llc)
-> >
-> > llc_balance() is called from update_sg_lb_stats() and at that time,
-> > env->src_cpu is not determined yet so should not be used here?
-> >
+> Thanks for the clarification.
 >
-> You are right, I think we should check the candidate group's first
-> CPU rather than the env->src_cpu. Will fix it in the next version.
+> Since the SoC-level .dtsi is shared by all users (potentially other platf=
+orms),
+> I don=E2=80=99t actually know in advance which peripherals will be assign=
+ed to
+> which CPU. For this reason, marking nodes as `status =3D "reserved"` in t=
+he
+> .dtsi might be misleading.
 
-Looks like can_migrate_llc() doesn't care an exact cpu but any cpu in the
-same LLC should do, so either the candidate group's first cpu or any
-other cpus in that group should make no difference.
+Sure, not in the SoC-specific .dtsi.
 
-It might be more intuitive to prototype can_migrate_llc() with sd_shared
-as param than using cpu, just a thought.
+> I think it=E2=80=99s more appropriate to keep all peripherals as
+> `status =3D "disabled"` in the common .dtsi, and let each board-level .dt=
+s or
+> firmware-specific DT decide whether a device should be `okay` or `reserve=
+d`
+> depending on the actual resource assignment.
+
+Correct.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
