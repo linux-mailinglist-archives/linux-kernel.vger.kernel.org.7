@@ -1,86 +1,89 @@
-Return-Path: <linux-kernel+bounces-876852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25D6C1C856
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:41:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB76DC1C8CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F32D34C5ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:41:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 46A484E6F80
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E297350D74;
-	Wed, 29 Oct 2025 17:40:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B041D354AD0;
+	Wed, 29 Oct 2025 17:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdoTTqrB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA49350D5D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98D626B2A5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761759605; cv=none; b=oxBFz4tuEluyh4dNfRWkv5JN1wu2TzvHajjlJhXPm7g0t6vbzxYTFHzym+xb5I1r+3fSa/DELrTNA4L/HTuZmtUHPD7vryLce54Kdp7mYDfgXPnN85prqZvgUL3Dk/XC5qD23+bTOybSJ5SBtN11DmsgT7wDaM0jTNZhCbNVXlM=
+	t=1761759666; cv=none; b=H5n4n8cu3pxKQU3GdqB2nv6n5Dd8NHbfz/6v1zPYCls+8l3mluCjL1poXkV+KiDOIowd+RzRn6gzaHhwJrBdGCFbJkuC/QRQz46pruv+OeswgfxZVkOIczcw0UiEUtkGTz0m54RWM6HSgO3rlJljX6MwkiaPfUEkgCv5Y4+X9kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761759605; c=relaxed/simple;
-	bh=JA7LBvak9Mpey+GHorqRd6zMhqicvhChfPMlfhZMgAY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FcYGrOsxhyZk0H0Jgf6C5Ma8IIe4KuLEJb4t125JUFM9+27UuPJJdub8ETbeJvdco8QTcx2Yku6xPRUepBLnDzUfDgJOoAA2R4SLPxLmY7GYgNEAFtjwUWEJ9PUgpKqA/NcmoXmn0mwt6lk3FTaVe7/TOzUOcAXFykGTjnM76CQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430db5635d6so701885ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:40:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761759602; x=1762364402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGiNCz4/dF2dENqcuNoLFjsOAZpECL9FMGCiSPWvYnU=;
-        b=Jv/ehO0FeG0KmNBbDRZkWWXPJLlUHKDjSLputRughjzWEe6sXcfjdtuD9UNY5eT8Aw
-         WvOGE9+keKp4QWtl48gVVX4MuXb02H87u9B6J4BZXMnX4DqeK4goQvNgFuKT8EFhnKQo
-         BpqFxpB3bf4FOu3i/yECmi+44I4u1CIkMFNv8taOtVDfB1HjOy6wvYmROhEectzmvvdU
-         HCgcocB1Yw69XgS3J0hI228GXoMU3QHVcsKjHEcj6TRpnmbthjJrz5z36d2/bo5AhA2c
-         RWtQM7kdPxl5F0QYVbFcFjI0eAUCGy+F1ItMHvoPy1XlyYJ9gGNV4IuvkkmUiVTbp1Zs
-         Ijsw==
-X-Gm-Message-State: AOJu0YwYT7cjXvYtFBKIPzlhShttA1Sw6qMFqSC00nqmIhMwB2sAooqn
-	sIGTSgo5xwMTFmttiKHmnTcD7FaQJ3Mh2QWMzhyB4ibOmUhXw1ttKxAhR+PNjEWQTnwEy7dwu14
-	P4+T6P4jQKGUTbK3dMuA5RDsMZiIH4C4695HxpUAnZimztx/jrmoMXyt4s0g=
-X-Google-Smtp-Source: AGHT+IFZAx6GR2jM/xki8Dfd5lyhp+TefZKvMlyrq68IvL/WbOOELnXNJLIFPI8RwhTDdKSj/nwzGIomXb5EoQYBx5Twcp8GtNmU
+	s=arc-20240116; t=1761759666; c=relaxed/simple;
+	bh=iPr8+Z1bwHsaNyPHs/N4eEQetvDlzmbe8TK2+r6mUk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iyA0IvcaRxcaDxFmI220i31zJe6nBxQTqMqSdLcWntR0Ob6fh6tvZNGck9REdzsBN9l2z+5wvRQWuAK7ielluIE76N5QUzVJ3dJAk7YOifNczXDwqPGH1YThC20EcTAAAPqHAsotypFMDsTjBmE9kzRyIUFKhIlRmPEqJ/qsKCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdoTTqrB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97AC1C4CEF7;
+	Wed, 29 Oct 2025 17:41:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761759665;
+	bh=iPr8+Z1bwHsaNyPHs/N4eEQetvDlzmbe8TK2+r6mUk8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tdoTTqrBykeIDu/xpcw5kRMYvX8Qs8OL3nIpG7/EbzWnXeo6/nXDEy1+yHMP++Qa3
+	 Qj2goPtSUDkjPjxa/h3QdNYEmeiGwm/d4v7TP0lKtzMWomTYSQ3YC3SB5UzdiSiTVM
+	 n6/F9CF8PwwZ+ENRGLH1j5sCw3Jn/Gx3DxmQlUbwDq6FFVhoSXWyUcU4TP2/Q/DCut
+	 Ov9lxmhAbVxnt2FqABqTv1RNEZ4rVI9ZSe1fUQW+TjnxkjTcRP8vCUp33dD0zH6c6+
+	 6Buhwge9XeC9efuubO10f7vrAz6miLEDaNiVM6WcCK7G1Rr5JZ3GQ0hSA5DiBT3BqV
+	 7ljgmdGmEgvOg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Stan Johnson <userm57@yahoo.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/prom_init: Fixup missing #size-cells on PowerMac media-bay nodes
+Date: Wed, 29 Oct 2025 12:40:46 -0500
+Message-ID: <20251029174047.1620073-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2701:b0:430:ea1f:ff82 with SMTP id
- e9e14a558f8ab-432f90446a3mr48018275ab.23.1761759602299; Wed, 29 Oct 2025
- 10:40:02 -0700 (PDT)
-Date: Wed, 29 Oct 2025 10:40:02 -0700
-In-Reply-To: <CAHjv_atXD_F0pMfDS5z36mR=inYx+pnODBLF+oj7uZuBMnK+9g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69025172.050a0220.3344a1.042d.GAE@google.com>
-Subject: Re: [syzbot] [net?] kernel BUG in ipgre_header (3)
-From: syzbot <syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	zlatistiv@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Similar to other PowerMac mac-io devices, the media-bay node is missing the
+"#size-cells" property.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Depends-on: commit 045b14ca5c36 ("of: WARN on deprecated #address-cells/#size-cells handling")
+Reported-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ arch/powerpc/kernel/prom_init.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reported-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
-Tested-by: syzbot+a2a3b519de727b0f7903@syzkaller.appspotmail.com
+diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+index 827c958677f8..f26e80cbc615 100644
+--- a/arch/powerpc/kernel/prom_init.c
++++ b/arch/powerpc/kernel/prom_init.c
+@@ -2893,7 +2893,8 @@ static void __init fixup_device_tree_pmac(void)
+ 	for (node = 0; prom_next_node(&node); ) {
+ 		type[0] = '\0';
+ 		prom_getprop(node, "device_type", type, sizeof(type));
+-		if (prom_strcmp(type, "escc") && prom_strcmp(type, "i2s"))
++		if (prom_strcmp(type, "escc") && prom_strcmp(type, "i2s") &&
++		    prom_strcmp(type, "media-bay"))
+ 			continue;
+ 
+ 		if (prom_getproplen(node, "#size-cells") != PROM_ERROR)
+-- 
+2.51.0
 
-Tested on:
-
-commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10e64fe2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=486aa0235ebabcac
-dashboard link: https://syzkaller.appspot.com/bug?extid=a2a3b519de727b0f7903
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12609258580000
-
-Note: testing is done by a robot and is best-effort only.
 
