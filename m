@@ -1,237 +1,158 @@
-Return-Path: <linux-kernel+bounces-877107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 534A5C1D34F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E435C1D35B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:32:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175D53BEB99
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:30:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97DB240002F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8194236335B;
-	Wed, 29 Oct 2025 20:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EA2286D7E;
+	Wed, 29 Oct 2025 20:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUcjl/s1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/AdxRXv"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE20735BDDC
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EC3283FEA
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761769810; cv=none; b=fz6X2F5PmpX+WKGquYrvdTZeIESvsOa58v/Ixy3N+KsvQzb74xtv7Lz2lmjl7+B3mpk9C/GLSTMs/vuKCeh+rQ/GrbRP1+6SsAip2Ou/ZoEVVvAKJKJmRLmtIQxqoHkoNTBCZELtYaZuZzwE0tJ7ptPqeSHoXyqlwUzDn/g0VUk=
+	t=1761769924; cv=none; b=FMJvUhEY9rP8SCZ8uxZY0mduZRVOHZiFoLIzIbA9u5QliYkUh4ndF+23Md9s5c8gpiVE+cmOYuI/zd6DUxCwfFaJYKIWS1v+ZzC3dedzUMpmfSvZdDxk6xrrwNXT56wfFUKFGrYtEEh43tC1keyWmxwtbIp3HTsmIrjFzNQvvT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761769810; c=relaxed/simple;
-	bh=GOCTkUGLRQCwRuz7gY4C3QuQ/60lhuEdpy3XpjbsPDQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YSowIMDYprvTxzPVB2XRD+a//Lf8k4XL9bfFaoMFz7WInAl2kMz/pMzXAqrfgYX/vGQCxLVTBnFkf773Dk09LMjpnuoQKtZ2DQ+NxBjkXqYZDeIKhjNY2NPkkPEUQSfRhFkRxXFIW0z8MqmiQiML8RS45G83fYeZlv/MScedkyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUcjl/s1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60904C19423
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:30:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761769810;
-	bh=GOCTkUGLRQCwRuz7gY4C3QuQ/60lhuEdpy3XpjbsPDQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PUcjl/s14mLr6JgLAvYAvnZgA6MqBs8Iu7CBSaEqJBFaJx5B6bXJEoTEgxFWy7Oud
-	 7+cSqpzXRI8wiFSCkhg1+Kif0wI/OF7CPgiTw+kV0PD782paa60U0Aq3e2QXjeJWbI
-	 t7JdgaY6JEFIv3c5Qg/bNWHeiDjIWotZR1+uiUsl7hDC3cmiRnF7eRMajhYuJUlC/u
-	 Mwkc36rVb39Pqew94b7dYa+T4DadHlUrk33A2UF1TkD5/+tf8r3kALKb3T6NXCU6O7
-	 o3gfNe4ryokwsPaOU8zxy/qUQN3UGMrhLwolHNQIsyPUmR0s2QjZRAF1tdhrSikFd/
-	 /OuxUfSd3yPUQ==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-654e25cc7d7so139306eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:30:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWDEAvWli9HJk0YaP/UPhyk575t2UvKnPkbskZbqlXSI/d8TfxnBNv4nAr3iy5EDdXhpRaDTFwxzJAKbW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6ZTN6Rz7ulnnX+DCL7ZhhPdtgPut25mOljnoDp2bOa4kLPxQD
-	BgdT3cPIBvpnyXJzCHi+WzRvXPYQ7R97ZhkfI2A6I2g0plN8iDfzXWCar0hSA198U0QX5edlOBO
-	2/miKwGlJWI7vhyOlP5LCK3pbXqz9Jv8=
-X-Google-Smtp-Source: AGHT+IHW5uDP7MsolaMgn8jVjNqIsXYfFdWF7n+vPR5mI6Oev9ZYaWWAWl38Nzs+ZKhKkYITN6nyOLzYlFHqUlA5Z1k=
-X-Received: by 2002:a05:6820:2207:b0:654:eb8d:a91 with SMTP id
- 006d021491bc7-65682418834mr281105eaf.8.1761769809367; Wed, 29 Oct 2025
- 13:30:09 -0700 (PDT)
+	s=arc-20240116; t=1761769924; c=relaxed/simple;
+	bh=YaHtD09W7I9VYtLMrk7MCUuLeIYkfwLpiWs2SkdvK4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7fGq1p7FPljtclh/oCY8zTo3Cgq3DuIq5zFN4Ops+l27hf0yyVpX1gk76GpgbQhSUE8OfBp9izBZ1C+4dlYopgNf0jyR2RqfGOPXGuD0m7wT9nLA5/NGXVngAl7Un68geTQiDnvgnGOUNngFGy0/OwI/Fl/mq4ZZ8Fok9sUlvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/AdxRXv; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a4c202a30aso380900b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761769922; x=1762374722; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=wOfwJ8bWKZa4YFr/NutNmAuLp8W/TU0LOxvVKX01rbE=;
+        b=B/AdxRXv4tvXaGrZCx2HDA7LoS/HfSQtXSp5WH7mpZk+Qp3ad5gvG05Etwat/kMHdX
+         /JmVBoRU1awUG8YotIQAKXj3bgM5C0jsr+00uQrVuH79cvPxFyj8NG7BzqjPgp1x085n
+         8zCu/zAD4MZxA2T8Qxy5c09uYLtCvkZhY2P10ppl077sd3M5jXUiOxxjC8+DHPHyqX4i
+         Zll3fXqT45GuUT82JFbZbBCBjVYp6vaLFc+HBrB/9nQB3yxpmOXXBimyNKN89Syfp3ht
+         zg3qcURgmHlbUPagoxGPLxCW4+c7OqUDeXW2WK4Lz6pjiH0hM1MfI54ivee/Xuwa136r
+         oXWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761769922; x=1762374722;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wOfwJ8bWKZa4YFr/NutNmAuLp8W/TU0LOxvVKX01rbE=;
+        b=ugwt81u6ca2Wgnppq1l7NRc/I7kDyE/MvyKp60B+HvmPhauEnvzwDAdKMAGSd39QFP
+         nKf3/SWPjMy82HvhPvAj9nWFb6qyRXmhG1j3QqEn8lZ6aG0kopjjNXCBmUJ8mCb86wl6
+         oC7nmRcb+N5AjliZ2QNcUnTyAhBgjbXtknzO/Oq+XHqEYk2iQI1+rsRw50zTrfJypWLT
+         6vY2RRk4S6O1O1eu22i5c2l38T0pv6W9q2STKIhY/EU30pzhZRWVcIIsgcdixFAg3Sut
+         g6vQjdUhmoQ5XB1HaZnLUM70lMN4NLV6+WkYQcuM4eqT6Ol8wD2aR2lNM/kr34RbTXJB
+         YAGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJ6Qy4NAZX8W3xD5NEnLKCUJnovx6yrZ8v1sOjycOyKF56O1x/7I0V8U3fAvIhwnoemZ3lWvD8QYh7L2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzjf4rgd9bnLytrgTOzb3QLRipMqztIUIaK6ZCZp6vJ+VrPzCW7
+	ZT9psZl2SPdQ7VAYrlaYT626gl4sc11gqeJNubjIumeddaD2XuyijUJO
+X-Gm-Gg: ASbGncuv94JRsRFm8QFMoz6DdFxOPbktCYK2U3DuA3DqeR2QHFdezYQRg3wT3lLGjP6
+	+NXoH3SkRe8mUDEw9GM73qx4ex5yid+BjHVr3pGV154nmMD2o3KaGV7IbbL8NO44XnkkR7w4K3d
+	ZSsdZ7a9eZ+Xc3eIoJuDvi/E5ICssNjbJ6NuYG1H+vq8mtFBHSgrDpUtQfKw1pKoHLH7i6zJYRO
+	qWX6T74NIUHF29Ui3vYwwd+2vTfqYpIoQzyh2sv6Dq2GkGh4h6FQRywFmDdH6tmVSeabQNcO1Ah
+	NnIfiLboaFG/w57mZk9o6Fz3vAiGiJH2Y40XiV7POnLJbKevsiDBjINRCuf1IYdZbGsf6iOIGM8
+	xfzHtnpaqWaXb5oU8VyUcKgwaL1MRl6CP/gqzs7NySf15Vz9Lg16fZM1PPkDLnSMosTEwMdEFMF
+	uRaRgS7hZfsbhvX53f2MxjdfixV5we9rKavE/Zr4AHde0iGns2
+X-Google-Smtp-Source: AGHT+IFpShubPNxGrw+11hp3PVUyV7xz2+3u2+DGXZIeSF8hccmhTEB6eMksfzjbjPtC3NenMVVflg==
+X-Received: by 2002:a05:6a21:3288:b0:341:e79b:9495 with SMTP id adf61e73a8af0-3478768fb4cmr1044825637.54.1761769922069;
+        Wed, 29 Oct 2025 13:32:02 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414069164sm16398977b3a.45.2025.10.29.13.32.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 13:32:01 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <049ec6bc-d869-4f93-891a-13a0640f882e@roeck-us.net>
+Date: Wed, 29 Oct 2025 13:32:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251028053136.692462-1-ankur.a.arora@oracle.com>
- <20251028053136.692462-8-ankur.a.arora@oracle.com> <CAJZ5v0hSvzHfsE4nrEW-Ey0dnJ+m=dSU-f1RywGNU0Xyi3jXtQ@mail.gmail.com>
- <87ms5ajp4c.fsf@oracle.com> <CAJZ5v0hQ7G9jvOv9VtRmsCKahBpUcPJMMOe07k_2mqsvggWcWg@mail.gmail.com>
- <874irhjzcf.fsf@oracle.com>
-In-Reply-To: <874irhjzcf.fsf@oracle.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Oct 2025 21:29:58 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i5-8eO6T_-Sr-K=3Up89+_qtJW7NSjDknJSkk3Nhu8BQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bk-kPvfwcU7JMvzIW3LgFhb5fas4TUCYzr6Ntlxek5O_3tqCEg-J-2w8JI
-Message-ID: <CAJZ5v0i5-8eO6T_-Sr-K=3Up89+_qtJW7NSjDknJSkk3Nhu8BQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v7 7/7] cpuidle/poll_state: Poll via smp_cond_load_relaxed_timeout()
-To: Ankur Arora <ankur.a.arora@oracle.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org, bpf@vger.kernel.org, arnd@arndb.de, 
-	catalin.marinas@arm.com, will@kernel.org, peterz@infradead.org, 
-	akpm@linux-foundation.org, mark.rutland@arm.com, harisokn@amazon.com, 
-	cl@gentwo.org, ast@kernel.org, daniel.lezcano@linaro.org, memxor@gmail.com, 
-	zhenglifeng1@huawei.com, xueshuai@linux.alibaba.com, 
-	joao.m.martins@oracle.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] hwmon: temperature: add support for EMC1812
+To: Marius Cristea <marius.cristea@microchip.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20251029-hw_mon-emc1812-v1-0-be4fd8af016a@microchip.com>
+ <20251029-hw_mon-emc1812-v1-2-be4fd8af016a@microchip.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <20251029-hw_mon-emc1812-v1-2-be4fd8af016a@microchip.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 8:13=E2=80=AFPM Ankur Arora <ankur.a.arora@oracle.c=
-om> wrote:
->
->
-> Rafael J. Wysocki <rafael@kernel.org> writes:
->
-> > On Wed, Oct 29, 2025 at 5:42=E2=80=AFAM Ankur Arora <ankur.a.arora@orac=
-le.com> wrote:
-> >>
-> >>
-> >> Rafael J. Wysocki <rafael@kernel.org> writes:
-> >>
-> >> > On Tue, Oct 28, 2025 at 6:32=E2=80=AFAM Ankur Arora <ankur.a.arora@o=
-racle.com> wrote:
-> >> >>
-> >> >> The inner loop in poll_idle() polls over the thread_info flags,
-> >> >> waiting to see if the thread has TIF_NEED_RESCHED set. The loop
-> >> >> exits once the condition is met, or if the poll time limit has
-> >> >> been exceeded.
-> >> >>
-> >> >> To minimize the number of instructions executed in each iteration,
-> >> >> the time check is done only intermittently (once every
-> >> >> POLL_IDLE_RELAX_COUNT iterations). In addition, each loop iteration
-> >> >> executes cpu_relax() which on certain platforms provides a hint to
-> >> >> the pipeline that the loop busy-waits, allowing the processor to
-> >> >> reduce power consumption.
-> >> >>
-> >> >> This is close to what smp_cond_load_relaxed_timeout() provides. So,
-> >> >> restructure the loop and fold the loop condition and the timeout ch=
-eck
-> >> >> in smp_cond_load_relaxed_timeout().
-> >> >
-> >> > Well, it is close, but is it close enough?
-> >>
-> >> I guess that's the question.
-> >>
-> >> >> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> >> >> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> >> >> Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> >> >> ---
-> >> >>  drivers/cpuidle/poll_state.c | 29 ++++++++---------------------
-> >> >>  1 file changed, 8 insertions(+), 21 deletions(-)
-> >> >>
-> >> >> diff --git a/drivers/cpuidle/poll_state.c b/drivers/cpuidle/poll_st=
-ate.c
-> >> >> index 9b6d90a72601..dc7f4b424fec 100644
-> >> >> --- a/drivers/cpuidle/poll_state.c
-> >> >> +++ b/drivers/cpuidle/poll_state.c
-> >> >> @@ -8,35 +8,22 @@
-> >> >>  #include <linux/sched/clock.h>
-> >> >>  #include <linux/sched/idle.h>
-> >> >>
-> >> >> -#define POLL_IDLE_RELAX_COUNT  200
-> >> >> -
-> >> >>  static int __cpuidle poll_idle(struct cpuidle_device *dev,
-> >> >>                                struct cpuidle_driver *drv, int inde=
-x)
-> >> >>  {
-> >> >> -       u64 time_start;
-> >> >> -
-> >> >> -       time_start =3D local_clock_noinstr();
-> >> >> +       u64 time_end;
-> >> >> +       u32 flags =3D 0;
-> >> >>
-> >> >>         dev->poll_time_limit =3D false;
-> >> >>
-> >> >> +       time_end =3D local_clock_noinstr() + cpuidle_poll_time(drv,=
- dev);
-> >> >
-> >> > Is there any particular reason for doing this unconditionally?  If
-> >> > not, then it looks like an arbitrary unrelated change to me.
-> >>
-> >> Agreed. Will fix.
-> >>
-> >> >> +
-> >> >>         raw_local_irq_enable();
-> >> >>         if (!current_set_polling_and_test()) {
-> >> >> -               unsigned int loop_count =3D 0;
-> >> >> -               u64 limit;
-> >> >> -
-> >> >> -               limit =3D cpuidle_poll_time(drv, dev);
-> >> >> -
-> >> >> -               while (!need_resched()) {
-> >> >> -                       cpu_relax();
-> >> >> -                       if (loop_count++ < POLL_IDLE_RELAX_COUNT)
-> >> >> -                               continue;
-> >> >> -
-> >> >> -                       loop_count =3D 0;
-> >> >> -                       if (local_clock_noinstr() - time_start > li=
-mit) {
-> >> >> -                               dev->poll_time_limit =3D true;
-> >> >> -                               break;
-> >> >> -                       }
-> >> >> -               }
-> >> >> +               flags =3D smp_cond_load_relaxed_timeout(&current_th=
-read_info()->flags,
-> >> >> +                                                     (VAL & _TIF_N=
-EED_RESCHED),
-> >> >> +                                                     (local_clock_=
-noinstr() >=3D time_end));
-> >> >
-> >> > So my understanding of this is that it reduces duplication with some
-> >> > other places doing similar things.  Fair enough.
-> >> >
-> >> > However, since there is "timeout" in the name, I'd expect it to take
-> >> > the timeout as an argument.
-> >>
-> >> The early versions did have a timeout but that complicated the
-> >> implementation significantly. And the current users poll_idle(),
-> >> rqspinlock don't need a precise timeout.
-> >>
-> >> smp_cond_load_relaxed_timed(), smp_cond_load_relaxed_timecheck()?
-> >>
-> >> The problem with all suffixes I can think of is that it makes the
-> >> interface itself nonobvious.
-> >>
-> >> Possibly something with the sense of bail out might work.
-> >
-> > It basically has two conditions, one of which is checked in every step
-> > of the internal loop and the other one is checked every
-> > SMP_TIMEOUT_POLL_COUNT steps of it.  That isn't particularly
-> > straightforward IMV.
->
-> Right. And that's similar to what poll_idle().
+On 10/29/25 08:50, Marius Cristea wrote:
+> This is the hwmon driver for Microchip EMC1812/13/14/15/33
+> Multichannel Low-Voltage Remote Diode Sensor Family.
+> 
+> Signed-off-by: Marius Cristea <marius.cristea@microchip.com>
+> ---
+...
+> +			convrate = find_closest_descending(interval, emc1812_conv_time,
+> +							   ARRAY_SIZE(emc1812_conv_time));
 
-My point is that the macro in its current form is not particularly
-straightforward.
+This needs to include linux/util_macros.h.
 
-The code in poll_idle() does what it needs to do.
+Guenter
 
-> > Honestly, I prefer the existing code.  It is much easier to follow and
-> > I don't see why the new code would be better.  Sorry.
->
-> I don't think there's any problem with the current code. However, I'd lik=
-e
-> to add support for poll_idle() on arm64 (and maybe other platforms) where
-> instead of spinning in a cpu_relax() loop, you wait on a cacheline.
-
-Well, there is MWAIT on x86, but it is not used here.  It just takes
-too much time to wake up from.  There are "fast" variants of that too,
-but they have been designed with user space in mind, so somewhat
-cumbersome for kernel use.
-
-> And that's what using something like smp_cond_load_relaxed_timeout()
-> would enable.
->
-> Something like the series here:
->   https://lore.kernel.org/lkml/87wmaljd81.fsf@oracle.com/
->
-> (Sorry, should have mentioned this in the commit message.)
-
-I'm not sure how you can combine that with a proper timeout.  The
-timeout is needed because you want to break out of this when it starts
-to take too much time, so you can go back to the idle loop and maybe
-select a better idle state.
 
