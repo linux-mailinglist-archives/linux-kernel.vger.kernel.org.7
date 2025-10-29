@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-875015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB1D5C1804F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:10:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67DF2C1806D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3A642079C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:10:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E2B1A606EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD61D2EA177;
-	Wed, 29 Oct 2025 02:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64BF2EAB61;
+	Wed, 29 Oct 2025 02:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rNWuKYHM"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaYS9G2N"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6216E2D2391
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39C724BBF4
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761703814; cv=none; b=bXv5qLj/GvuxE7dmn4RyrsvlVASGKpsX/UPbQBjgUHpS/F8SVbGX6mJqqKWtUY0JJs96I8Wx/1aV1AEwkRDXmgx7NtSZaEQDVFiNYNnuFNrkjdrdbEo3QaeqCoZjjoFN6qKBjGWFiYq3EgEH9tjsWneeBqGDWHXCf2e2xZVVNdI=
+	t=1761704101; cv=none; b=cJKlYe7wU8EZ7tEKQuTKrLbOerI20vBxDsQBtyQ/wks03LdhmNvJ/1hGGZuPPn0Fu0mMGmEvT96KyEYb4ieBBDNuglQKTwT50nIIPF+0DY0OunvWQSyJdEiuISCG0XsFWlvDfL8bicvtqK/t9G2A2zFfl0fvuJvl+yydwlo1p9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761703814; c=relaxed/simple;
-	bh=ZLh0HlWnhacXMlrR5BhoWOl5kF7rDUf50gDtd1Bbnt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r9oLEBukJv3sQcWsXRYnMFF/FpXwGUsgtRj87Utgz4RTtnH/h0cF3MKhrdOmlz0UDRV6TSbccpQmtgtgVGMBdSFYzJkEhd4QG7adPQYEhFrJdAAva1TAIQ35SWsFNatm5+c9E0JjuTGbXh7TZ/pauJOcGQG/0tSUTVOObwYthCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rNWuKYHM; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-58b027beea6so2533e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:10:12 -0700 (PDT)
+	s=arc-20240116; t=1761704101; c=relaxed/simple;
+	bh=12I7O+T/BB5vXrNWDf+G6+4oR7EW0ESEut/5OnczsIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cPieJbL9vnCvqeEaKuwV8R9pnxEwkiFL+IOSlcRe0ymTg3+C58qsG12gjtK4oKeFdw/U7GwYzxzPeGb3A29QJfIFeKQo3fvASz1fWy+7bZSE95ZDHtzFo9uRudbEP69CzUVD2DyWKeIoKBnOqGZ9iKACCrNHeuTirKws7r//ZEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaYS9G2N; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-3c9c379af8aso397552fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:14:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761703810; x=1762308610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E9lWbIyuET21BV3jefDHD4hEs4Ep+M4AnO2qpSJ9Lmc=;
-        b=rNWuKYHMpoNsbW5MZAcQUpDba2pNTCv6mZEerDSRhHJizm965zTsuWMrOgb0R8ITUR
-         rr5/Ohn5Is4dFNOzQ9B1yeof1eiAtkk5mbatfHxnHDdMgQYwllWgy7wXhkmHy8DyFz3W
-         AmGYQsyC2TenwWnEhjUboECFWel6unfPTLF2mFXr2RdhCYfS/qMjZNT7689D1R5dfri2
-         OWn6SAWIG4oSv4NYwGo96+WgT9y9oCOMB0tMrAKAfoDjnHznGFi4fVbsmyF/KB8d4AoC
-         wNO5cr3HDJ9LhOO50LknuLgflpOdhedxRWZHgHl1fU6j/AJg2j7aTgD1CLGaQH2a4Rff
-         nSLA==
+        d=gmail.com; s=20230601; t=1761704099; x=1762308899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHoGag4qYuBHkU394iiXcv5SpnjOGE5n7s42K/stQF0=;
+        b=SaYS9G2N/oElX13SfAdvY8/BgZwu0ui3SYNgp3wdNQCcmBOAGAlzAOzohWApxeQIOc
+         ztScGqjsVpASOAoqa2jizOtqXp42OW3FN06cwIMXPmHUSeCPIVMkzxnGmFZ3nJHf+DWq
+         1eAjDLHm/EUgGQS4ohX41jM1YW7GLV/A0jv4ey0+l3Tdi8zamaXtv+G8xhpVlajvBoX3
+         6bZgjWN931Vk8HZLxaL+b6Q3JO01U8vyFPIenCE8ZeeZlCUb0468763dw5QebwOo2hZu
+         IWL9YHupwKnt6kIqlBlE2+QWHYS8Se7pysLcN4/rgJU3ZQNwSZ+90GQDGKBGvtvqhKKr
+         DwrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761703810; x=1762308610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E9lWbIyuET21BV3jefDHD4hEs4Ep+M4AnO2qpSJ9Lmc=;
-        b=fjISPWO33+g2VynZWhV886eWNggbzJl/AWtW8IaA4wbxAAIgbx+7g+OundWQpi8a3c
-         IhUynb3VxvX2v7cFjC/guQvAlbc7OmcsGcT8DkrJrza+bmF7SMiYzAbcOtz+5GCCUf72
-         uiBYDeiH1Y0VuMhdfF+clKfPFmh7gk9HAWQcUILm2Y/0cQP+uGwWIn+OBvLigQKy1kPD
-         jk8awi9nz9QL/dmGoO5F1Wk+fnAmNxC6PMhxB/j0GAgS8kdc4rVzjCQXf9B8+wI7bLnZ
-         f8s2HIvKkbo+N0vJ9Zzph5kHi1H31hcdzjBKjw/Pj4KM5gMzgDJSFTVIIekOMWixWOq+
-         TEvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXR0dOGB1yXuZnNH2e7TW6LLwiK1DEAeorgRBsl8ceAc+GlTXaYACXslKyf/Ly3gVPSNDNKtl42qgSc3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEDPj6Ss1pLPxoxt+IrNFhS+bfiRXGCxyacpawOOg5PiElcuJ2
-	Sm8YHayaStO1IupfWNHjf1Lt7PbxoNsndgTma9JxvlGUwTkkJoWbf+SLTmR7J4hnCFAI7UmQTHr
-	uh/HyrvjHkCalst8YV22UApnsriMZ8qyb3qM99NRI
-X-Gm-Gg: ASbGnctsEyk0tsEFZfygd0Yo/Pd/oRfZtLjyKVJGgsYcdL0wzXkng4j568K4fSYhZ8s
-	E4cRLA0eb/g7CdgdpY6dhN7LO1NWVMYulIsvpLAlhsKZboMB3DRDPj/8sF+sWemDYGK8TkB7Dxo
-	XhzFA01F7wvDGqgFXIV6PL2h3YG3Hug8Cc9yvMtJ9eSSA32kt+7jIK/zLdeMJnjuLLN4U391bSY
-	7APRVmNcqAEMNDSD1xe1jRpy3YARHQRawWRR7f7va0utU2Mj6ApIDFWZtXK3b5W+XzY3Bc=
-X-Google-Smtp-Source: AGHT+IGl9Y9GqxxvDKMo/6fF2Rx0aNzgG8K8zH4GCOKZlaSF98H334A80Kbn6ua00QewNRYJME87yOhYU0lYXUUWLs4=
-X-Received: by 2002:a05:6512:4141:b0:57a:653d:ff94 with SMTP id
- 2adb3069b0e04-594133eb3a3mr127371e87.1.1761703810319; Tue, 28 Oct 2025
- 19:10:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761704099; x=1762308899;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FHoGag4qYuBHkU394iiXcv5SpnjOGE5n7s42K/stQF0=;
+        b=hz6uATt7SROm0FlOR6EO3jDC79vLVXR2wvwzAXQfNU9exLR4K1NsXQKjYT8TGJKmbD
+         xlY3/yvqYKQK0loC+KguXVch233JMBzek9sAYViPX1Kx7kfyxkfgDbCPJ9YhSbD0Kz3q
+         Zpop1imEVIRRiGsZYqN0cU63anBhQJH7n23AKt7QwdkiP2xcipN3S6BJzgA5ozxAOV/B
+         AlFs/p1HxEO9FmTjDYZC1n+4Go9Y+CI7I8WJTFNcKuvGjdXwT8K4AfqBm3YgIXsj9w4w
+         CJJNZIO0Dgvb0Xy5VqO8xuvo3dwBuWdxSUhr/pB6lOVemiUK/W+G2BnMf1Oz9k5/I8aG
+         BFew==
+X-Forwarded-Encrypted: i=1; AJvYcCWvgD6A1DwWE0zSTHttaya6MqC0R4TicNn0rhDBR7XhdtyzvsuOkYlnP0NewDHbyOtwHm5F7/cQoTwqOI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXs3CqBgv1yvI9BDJOvyxieP7k6XEVNmQJHn4eaXqjSYnn1RHr
+	u/k2/b4o/JWE+4Vs+5AMITwzHItsTHP6rQWR2yLs714ckEkbKykO3UzH
+X-Gm-Gg: ASbGncuZXcHASnZUWuhNHUn4HKf5ybMsZbMCPPptdchHN6HSJcQkS7LhuOH/pLF26xm
+	PLYbomwxZfSA74AfYbpHBn6zsp8yOJvWnF4le8SwXz8tHNIB5gMqMp3cmP0EeyhVKKbglFr1a/U
+	wGGeMOuf7u6tD4Anv+NkgyPq5wl6v74Vb7ScNpg1ju5d9yn8q3wVomaQknfLqq/s6iDYBwPiHP2
+	3LzliTaCeYfYs5GZOyIWo2IbwLZm0sdq+wK9IInLbJpm7BilS8ZXG6ReO8rXI5VkqxPAfY2EgIL
+	SKZtIurQckLBYzIU9T87WXo0rSnqgq9avBnUFNgTUQXy6DQXj3ufgfC5fqwWbbIH6JuAnvsX/ZF
+	fUGTUwCkGunM0La3nRO/wSR3MOQM8lBWIw3XovNehVoxpYzrCGGK6oYzTrTtrgj/P2nHABccdHb
+	SzegXCaZW5Kxrzs+x7uFIkicMoW07bzzfR
+X-Google-Smtp-Source: AGHT+IGfgTz8g+xqtQI6DArhNfNdTHyjQWmRw2+ZzPnzomIZgLnkO3eFgWsHbdYW5iK7yEBnpMbcNw==
+X-Received: by 2002:a05:6870:e99f:b0:3d2:3429:b243 with SMTP id 586e51a60fabf-3d5e7264ca5mr2344497fac.16.1761704098667;
+        Tue, 28 Oct 2025 19:14:58 -0700 (PDT)
+Received: from localhost.localdomain ([104.247.98.2])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3d1e27123d5sm4190377fac.7.2025.10.28.19.14.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 19:14:57 -0700 (PDT)
+From: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
+To: sudip.mukherjee@gmail.com
+Cc: teddy.wang@siliconmotion.com,
+	gregkh@linuxfoundation.org,
+	linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Cristian Del Gobbo <cristiandelgobbo87@gmail.com>,
+	Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH v2] staging: sm750fb: style fixes: align call and split chained assignment
+Date: Wed, 29 Oct 2025 03:14:49 +0100
+Message-Id: <20251029021449.5420-1-cristiandelgobbo87@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-4-47cb85f5259e@meta.com>
- <CAHS8izP2KbEABi4P=1cTr+DGktfPWHTWhhxJ2ErOrRW_CATzEA@mail.gmail.com> <aQEyQVyRIchjkfFd@devvm11784.nha0.facebook.com>
-In-Reply-To: <aQEyQVyRIchjkfFd@devvm11784.nha0.facebook.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 28 Oct 2025 19:09:58 -0700
-X-Gm-Features: AWmQ_blPOzhHIri3399hiWRunYMSkTopiADU8tgIF1xFYS1SKs5IrXz8b7aA-_c
-Message-ID: <CAHS8izPB6Fn+_Kn-6PWU19rNYOn_0=EngvXyg9Qu48s32Zs9gQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 4/4] net: add per-netns sysctl for devmem autorelease
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 28, 2025 at 2:14=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmail=
-.com> wrote:
->
-> On Mon, Oct 27, 2025 at 06:22:16PM -0700, Mina Almasry wrote:
-> > On Thu, Oct 23, 2025 at 2:00=E2=80=AFPM Bobby Eshleman <bobbyeshleman@g=
-mail.com> wrote:
->
-> [...]
->
-> > > diff --git a/net/core/devmem.c b/net/core/devmem.c
-> > > index 8f3199fe0f7b..9cd6d93676f9 100644
-> > > --- a/net/core/devmem.c
-> > > +++ b/net/core/devmem.c
-> > > @@ -331,7 +331,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
-> > >                 goto err_free_chunks;
-> > >
-> > >         list_add(&binding->list, &priv->bindings);
-> > > -       binding->autorelease =3D true;
-> > > +       binding->autorelease =3D dev_net(dev)->core.sysctl_devmem_aut=
-orelease;
-> > >
-> >
-> > Do you need to READ_ONCE this and WRITE_ONCE the write site? Or is
-> > that silly for a u8? Maybe better be safe.
->
-> Probably worth it to be safe.
-> >
-> > Could we not make this an optional netlink argument? I thought that
-> > was a bit nicer than a sysctl.
-> >
-> > Needs a doc update.
-> >
-> >
-> > -- Thanks, Mina
->
-> Sounds good, I'll change to nl for the next rev. Thanks for the review!
->
+- Drop previous change that made g_fbmode[] elements const (broke build).
+- Align the continued arguments of sm750_hw_cursor_set_size() with the
+  opening parenthesis.
+- Replace a chained assignment of red/green/blue with a temporary
+  variable to satisfy checkpatch and improve readability.
 
-Sorry to pile the requests, but any chance we can have the kselftest
-improved to cover the default case and the autorelease=3Don case?
+No functional change intended.
 
-I'm thinking out loud here: if we make autorelease a property of the
-socket like I say in the other thread, does changing the value at
-runtime blow everything up. My thinking is that no, what's important
-is that the sk->devmem_info.autorelease **never** gets toggled for any
-active sockets, but as long as the value is constant, everything
-should work fine, yes?
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 
---=20
-Thanks,
-Mina
+Signed-off-by: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
+---
+ drivers/staging/sm750fb/sm750.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/staging/sm750fb/sm750.c b/drivers/staging/sm750fb/sm750.c
+index 3659af7e519d..94a99af4320e 100644
+--- a/drivers/staging/sm750fb/sm750.c
++++ b/drivers/staging/sm750fb/sm750.c
+@@ -121,8 +121,8 @@ static int lynxfb_ops_cursor(struct fb_info *info, struct fb_cursor *fbcursor)
+ 	sm750_hw_cursor_disable(cursor);
+ 	if (fbcursor->set & FB_CUR_SETSIZE)
+ 		sm750_hw_cursor_set_size(cursor,
+-					fbcursor->image.width,
+-					fbcursor->image.height);
++					 fbcursor->image.width,
++					 fbcursor->image.height);
+ 
+ 	if (fbcursor->set & FB_CUR_SETPOS)
+ 		sm750_hw_cursor_set_pos(cursor,
+@@ -538,7 +538,11 @@ static int lynxfb_ops_setcolreg(unsigned int regno,
+ 	}
+ 
+ 	if (info->var.grayscale)
+-		red = green = blue = (red * 77 + green * 151 + blue * 28) >> 8;
++		int y = (red * 77 + green * 151 + blue * 28) >> 8;
++
++		red = y;
++		green = y;
++		blue = y;
+ 
+ 	if (var->bits_per_pixel == 8 &&
+ 	    info->fix.visual == FB_VISUAL_PSEUDOCOLOR) {
+-- 
+2.34.1
+
 
