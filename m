@@ -1,63 +1,58 @@
-Return-Path: <linux-kernel+bounces-876492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F7DC1BC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:49:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428F5C1BB4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:38:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9E2358947C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:15:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0285E5A373E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998322E9741;
-	Wed, 29 Oct 2025 15:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C122E6CD9;
+	Wed, 29 Oct 2025 15:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sUm7pKr8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZYIf+Uz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437182DC321;
-	Wed, 29 Oct 2025 15:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BE22E1EE1;
+	Wed, 29 Oct 2025 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750943; cv=none; b=JWmIrGG82GZFfQKR1HSch7ajEXOewvxeUBf08HQQ6cigim9XzlEEbZUU2WYbR8GoRw/HEvHwNldDK3gPIrdvvfzPJyXk8jbBeP1nFV54+HCfI6pzcBnxWn46uw5WqhkaY/VQss0N//bZUVNSnKql8rrkk1VKzUf/RULCOd28XGw=
+	t=1761750783; cv=none; b=PCoZTZemfX8Tqegys6VXhs9LfurRm1yhq9n2OyTqy8c50SuYAax0b+o80Vu9dMw+bunbWQK72qUDlDsvIVNpLw9W2s/krR+Z4lu/QWkGBZBU0Yxafm5wT5bVuscpAb9K053MTRc8XZwNoohHpIOjz1x9eaDaI2NZfqFlcMgyc48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750943; c=relaxed/simple;
-	bh=YpOiN16OOmgQKGfgwWpCdhOG6sGEAhkAnM4rvwsc+Gg=;
+	s=arc-20240116; t=1761750783; c=relaxed/simple;
+	bh=a9WjV/wXG3p5oU/CJtQ3zKP/hL+FTs3eFaCuiRYs17Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVGVxaR/IjiMqgFXija+EnuY6Ce9jqamaAHpHUr5nxozjRrb4Lik95bn5rpDXdEfzKnlMWpKZ1JdH+k9b5gv56+2N7Ib3UyjVqJxoRVIuMHNYTEMXbrIlgGz3aEfrD5VTXXSgn5mnoDK6Mj3vw8c2rffgw/52E4OW/Y3blK1vNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sUm7pKr8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=WghT21IWeW06NETfCppiitPVHTb4Mn61Llspnfp9sqY=; b=sUm7pKr8zCcva9ENEdrHLEfwNv
-	A+5k4SgmrB/gt7ugyupv25YRpTmNDF/mdvjRMbQry0+PyRZ5VdEH0ECdTP16eYZwHAHidF+XqFenQ
-	8pPX26qH9s4DKWrXQhcofMY5FVQCH0s4t2mEmtV+ITHiigphbbvLU6Ac8qqVPp3kZtCI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vE7tX-00CQ6R-AF; Wed, 29 Oct 2025 16:15:27 +0100
-Date: Wed, 29 Oct 2025 16:15:27 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Buday Csaba <buday.csaba@prolan.hu>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 3/4] net: mdio: reset PHY before attempting
- to access registers in fwnode_mdiobus_register_phy
-Message-ID: <c01fc3d0-050e-4ea7-970f-393268430824@lunn.ch>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
- <5f8d93021a7aa6eeb4fb67ab27ddc7de9101c59f.1761732347.git.buday.csaba@prolan.hu>
- <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
- <aQIhf3dXOxS4vd2W@debianbuilder>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NqilnILpKGffcb7sySoZ7g2yy2w8N/8sGebHAWWbSImNW8qDWK7md7Gay4BD6eWDEMuR/chHqicEGdLSvS8ZCmBCBUnsEHY9eAdsomPT8rLVrjhPk8iRzdBjmfc5BBF/+KUc1SdrpBicoCKMI2x1r/Gf9RJLzAT+EaDVHHOTjGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZYIf+Uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC160C4CEF7;
+	Wed, 29 Oct 2025 15:13:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761750782;
+	bh=a9WjV/wXG3p5oU/CJtQ3zKP/hL+FTs3eFaCuiRYs17Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IZYIf+Uz4+89T54FW3qFLqoyKBERl8NRLyfKThXmSWgS8Uh2F4i5IyU9QXZ5DO+Dk
+	 F5Zuu9p2xyy1msMIXON20/m3VOtkVeNG6v/fzyuBTo669cIPqL9WHFRw3z/tlv6xBD
+	 YMixdh6PlEXcI3gsvF77c6TlKfC0rty+1kgy0kxKuYLV6ss7mh3pf2u+89C9eur4q5
+	 YvesDgCeRxH9+OD1ODfMt+jW1c8HMHvEBClWSD3GLke1A8xShGixVru5D5Nn/iFAQo
+	 IH4b/Dl+zmCkjkuNCbQshts7Erx3DbI+8cbmf0cNgz8+n5rCR/0Dy8E63+qOUNanhz
+	 vEhNW5+KG5d4Q==
+Date: Wed, 29 Oct 2025 10:16:05 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com, 
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: mailbox: qcom: Add IPCC support for
+ Kaanapali Platform
+Message-ID: <k2wgpzkfklso42nsd6w527gqiadgdb235kzmvgk4wy27vievir@vlyxti5y7yan>
+References: <20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com>
+ <20251029-knp-ipcc-v2-1-8ba303ab82de@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,80 +61,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQIhf3dXOxS4vd2W@debianbuilder>
+In-Reply-To: <20251029-knp-ipcc-v2-1-8ba303ab82de@oss.qualcomm.com>
 
-On Wed, Oct 29, 2025 at 03:15:27PM +0100, Buday Csaba wrote:
-> On Wed, Oct 29, 2025 at 02:20:14PM +0100, Andrew Lunn wrote:
-> > > +/* Hard-reset a PHY before registration */
-> > > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-> > > +			    struct fwnode_handle *phy_node)
-> > > +{
-> > > +	struct mdio_device *tmpdev;
-> > > +	int rc;
-> > > +
-> > > +	tmpdev = mdio_device_create(bus, addr);
-> > > +	if (IS_ERR(tmpdev))
-> > > +		return PTR_ERR(tmpdev);
-> > > +
-> > > +	fwnode_handle_get(phy_node);
-> > 
-> > You add a _get() here. Where is the corresponding _put()?
+On Wed, Oct 29, 2025 at 01:15:09AM -0700, Jingyi Wang wrote:
+> Add the physical client ids and binding for Kaanapali platform. Physical
+> client IDs instead of virtual client IDs are used for qcom new platforms
+> in the Inter Process Communication Controller (IPCC) driver as virtual to
+> physical mapping logic is removed in HW.
+
+Happy to see the description of what changed wrt physical vs virtual
+client IDs, but you're leaving the task of figuring out how this
+explanation is applicable to the imagination of the reader.
+
+Nobody knows that the values in dt-bindings/mailbox/qcom-ipcc.h are
+"virtual client IDs", so it's not clear that you're trying to provide an
+explanation to why a new, platform-specific, header file is needed here.
+
+
+Change looks good, but please update the commit message.
+
+Regards,
+Bjorn
+
 > 
-> When mdio_device_free() is called, it eventually invokes
-> mdio_device_release(). There is the corresponding _put(), that will
-> release the reference. I also verified this with a stack trace.
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/mailbox/qcom-ipcc.yaml     |  1 +
+>  include/dt-bindings/mailbox/qcom,kaanapali-ipcc.h  | 58 ++++++++++++++++++++++
+>  2 files changed, 59 insertions(+)
 > 
-> > 
-> > Also, fwnode_handle_get() returns a handle. Why do you throw it away?
-> > What is the point of this get?
-> >
+> diff --git a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> index e5c423130db6..ee3fe093e3ca 100644
+> --- a/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/qcom-ipcc.yaml
+> @@ -24,6 +24,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> +          - qcom,kaanapali-ipcc
+>            - qcom,milos-ipcc
+>            - qcom,qcs8300-ipcc
+>            - qcom,qdu1000-ipcc
+> diff --git a/include/dt-bindings/mailbox/qcom,kaanapali-ipcc.h b/include/dt-bindings/mailbox/qcom,kaanapali-ipcc.h
+> new file mode 100644
+> index 000000000000..b6208ad155ad
+> --- /dev/null
+> +++ b/include/dt-bindings/mailbox/qcom,kaanapali-ipcc.h
+> @@ -0,0 +1,58 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> + */
+> +
+> +#ifndef __DT_BINDINGS_MAILBOX_IPCC_KAANAPALI_H
+> +#define __DT_BINDINGS_MAILBOX_IPCC_KAANAPALI_H
+> +
+> +/* Physical client IDs */
+> +#define IPCC_MPROC_AOP			0
+> +#define IPCC_MPROC_TZ			1
+> +#define IPCC_MPROC_MPSS			2
+> +#define IPCC_MPROC_LPASS		3
+> +#define IPCC_MPROC_SDC			4
+> +#define IPCC_MPROC_CDSP			5
+> +#define IPCC_MPROC_APSS			6
+> +#define IPCC_MPROC_SOCCP		13
+> +#define IPCC_MPROC_DCP			14
+> +#define IPCC_MPROC_SPSS			15
+> +#define IPCC_MPROC_TME			16
+> +#define IPCC_MPROC_WPSS			17
+> +
+> +#define IPCC_COMPUTE_L0_CDSP		2
+> +#define IPCC_COMPUTE_L0_APSS		3
+> +#define IPCC_COMPUTE_L0_GPU		4
+> +#define IPCC_COMPUTE_L0_CVP		8
+> +#define IPCC_COMPUTE_L0_CAM		9
+> +#define IPCC_COMPUTE_L0_CAM1		10
+> +#define IPCC_COMPUTE_L0_DCP		11
+> +#define IPCC_COMPUTE_L0_VPU		12
+> +#define IPCC_COMPUTE_L0_SOCCP		16
+> +
+> +#define IPCC_COMPUTE_L1_CDSP		2
+> +#define IPCC_COMPUTE_L1_APSS		3
+> +#define IPCC_COMPUTE_L1_GPU		4
+> +#define IPCC_COMPUTE_L1_CVP		8
+> +#define IPCC_COMPUTE_L1_CAM		9
+> +#define IPCC_COMPUTE_L1_CAM1		10
+> +#define IPCC_COMPUTE_L1_DCP		11
+> +#define IPCC_COMPUTE_L1_VPU		12
+> +#define IPCC_COMPUTE_L1_SOCCP		16
+> +
+> +#define IPCC_PERIPH_CDSP		2
+> +#define IPCC_PERIPH_APSS		3
+> +#define IPCC_PERIPH_PCIE0		4
+> +#define IPCC_PERIPH_PCIE1		5
+> +
+> +#define IPCC_FENCE_CDSP			2
+> +#define IPCC_FENCE_APSS			3
+> +#define IPCC_FENCE_GPU			4
+> +#define IPCC_FENCE_CVP			8
+> +#define IPCC_FENCE_CAM			8
+> +#define IPCC_FENCE_CAM1			10
+> +#define IPCC_FENCE_DCP			11
+> +#define IPCC_FENCE_VPU			20
+> +#define IPCC_FENCE_SOCCP		24
+> +
+> +#endif
 > 
-> I copied this initialization stub from of_mdiobus_register_device()
-> in of_mdio.c. The same pattern is used there:
+> -- 
+> 2.25.1
 > 
-> 	fwnode_handle_get(fwnode);
-> 	device_set_node(&mdiodev->dev, fwnode);
-
-This looks broken, but i'm not sure...
-
-static int of_mdiobus_register_device(struct mii_bus *mdio,
-				      struct device_node *child, u32 addr)
-{
-	struct fwnode_handle *fwnode = of_fwnode_handle(child);
-	struct mdio_device *mdiodev;
-	int rc;
-
-	mdiodev = mdio_device_create(mdio, addr);
-	if (IS_ERR(mdiodev))
-		return PTR_ERR(mdiodev);
-
-	/* Associate the OF node with the device structure so it
-	 * can be looked up later.
-	 */
-	fwnode_handle_get(fwnode);
-	device_set_node(&mdiodev->dev, fwnode);
-
-	/* All data is now stored in the mdiodev struct; register it. */
-	rc = mdio_device_register(mdiodev);
-	if (rc) {
-		device_set_node(&mdiodev->dev, NULL);
-		fwnode_handle_put(fwnode);
-		mdio_device_free(mdiodev);
-
-In this error handling, it appears the fwnode is put() and then the
-mdiodev freed. I assume that results in a call to
-mdio_device_release() which does a second put() on fwnode.
-
-That is why code like this should look symmetric. If the put() is in
-free, the get() should be in the create.
-
-> It is kind of awkward that we need to half-establish a device, just
-> to assert the reset, but I could not think of any better solution, that
-> does not lead to a large amount of code duplication.
-
-And this is another argument against this approach. What does the
-documentation say about what you can do with a half-established
-device?
-
-	Andrew
+> 
 
