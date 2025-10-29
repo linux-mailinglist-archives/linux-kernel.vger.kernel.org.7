@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-875432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C78C19061
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:27:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B91C1902B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EE1E55083D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:18:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FCF2567531
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2CA321F5F;
-	Wed, 29 Oct 2025 08:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7390322DCB;
+	Wed, 29 Oct 2025 08:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+cEwTvY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="QiF3Cw61"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D149F2EAB6E;
-	Wed, 29 Oct 2025 08:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5EB311C3B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761725557; cv=none; b=dksIxJLCvwCUtfJV6I520JZyX9opzXUznu9KBsMq9sgFthcyWxpsqG2bxxhqmNX3NeGmVjyDBN793Q+BSrZL9DsSu9J2X+BlAgeyjjUWQt3og9Ei64fcHhW/nIQhmVPPLHKkB1yZnz54sLp1AU1qSIy7uu6dhf6G74QVucZm1dM=
+	t=1761725584; cv=none; b=ONWQV/OnSjFvwVkZ7k43UghgbwHryfqYh5icyVrPrlwh9x3MVhZEA0CSd3SOF6wpqVB4dzOMM7WDYUrYrfbfYKobLNKGp85PhCjTJ9i0kSMG9uWRJk0vjHvD0i7hv9H3M2i5Tw+n5is/fAUibUIMrYIab4Ym+uZYah4xc29+C7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761725557; c=relaxed/simple;
-	bh=UEX+PITVHKlo9AnT7BLJjmxSxBaXgUp2KRsbZwnJVMA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qfTI5Fe2MPP9RME26Ey27SzHbNc+g3x7XaX5FqNV4fN40AMuLiIB1nZWWn3eMc4nWC65C8oh8GC72n/QfaPdm9bhPZfO05uKlpvB7N1mguHp9m1Z54Ca2hb3QCuuP3yMjWCzOJ16GNuqoM44mp7OUCsFLwDtRoudr1SQYjZ4EBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+cEwTvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD75C4CEF7;
-	Wed, 29 Oct 2025 08:12:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761725557;
-	bh=UEX+PITVHKlo9AnT7BLJjmxSxBaXgUp2KRsbZwnJVMA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=E+cEwTvYPYh6km2yxCBsNKO9KHYtHEd5D/XctREYLQAsPy+Tv8rpU+18HKqqhJ82J
-	 +Et+RW9xRj4GLctOvVRK9R+EQeV6dCo9ANR2M/zE67MVxhqNzWv9ffGorfHvbB3n/X
-	 U2aD9UVcdoTLU10ydhs1zTHaaivIGdWoEFxfsCS+RZKwIZK91uBGXUP93bGcX1LV14
-	 TRCrajafXFVgIdC33NZMLCHQsgoz7h8zf0cQJ18lRGp2V2OAXlKnsSEkevBMTHs4w+
-	 d45e0gdoEjmmxbpnr5nacZMVSQOoiLbKd3NNNR0srz2O2OH+88ebZNqdEuz1gxP6Xp
-	 KFF4VRQLrZocA==
-Message-ID: <121dd488-6c2c-4f5f-84da-f81466192acb@kernel.org>
-Date: Wed, 29 Oct 2025 09:12:32 +0100
+	s=arc-20240116; t=1761725584; c=relaxed/simple;
+	bh=XXRRXFWdZ0VxQByzpM6FNRkKGXzZZbWI//Uo2d8F8UE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SlwJzhpAodcXh4tGBuEAJqQCcxsBwrGZEBA/F5Xr3PazWqgZs3Oiz4izEM3ejDL1HeSfNMzB8nq0FmKtgI07ld7tyQZnPkzV6PirMSrPnMHQeo+f8RQioPJP5HyzqfJ37ckfy3E3Scb+QlOFpFuT4WVXqAZVROWKyaXvKD1CRu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=QiF3Cw61; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from terra.vega.svanheule.net (2a02-1812-162c-8f00-1e2d-b404-3319-eba8.ip6.access.telenet.be [IPv6:2a02:1812:162c:8f00:1e2d:b404:3319:eba8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id B87FA690567;
+	Wed, 29 Oct 2025 09:12:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1761725575;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TE8ZOOM73wGhypAggpwfjVvh8bO3PXtAh1vc0y4Fz/o=;
+	b=QiF3Cw61U0JHuiYjrNd4wJTzZGnkMaTDEVsrOzOrX5mPi4nX/Zz9ZkkmrSmQSwoXBroULc
+	K+bg0NBauF4d9jW3K90nG+CPwTNyy4nvEBnDZ71bu36AoOo08GBRX6QW0oIbfO7p+ncp/U
+	dateRUsJstymlLexMTM099CP/rRsQeNrTBRhXFoXs5AhyEnAbK9doDczbaOciDYfVMX1Oc
+	/1oCvnz9a+y/34EUSPduX1AKIiMaEjicWCa7ijyBAuOFiDe1x/Hy4v2uU6DWmvreX6LccK
+	Io3AMYj6t9XUmnVn1278uXVPIaIfj2I8qfaYIPVrccDHLWzGkxxXi3foVVMkVg==
+From: Sander Vanheule <sander@svanheule.net>
+To: Mark Brown <broonie@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Sander Vanheule <sander@svanheule.net>
+Subject: [PATCH v6 0/2] regmap: Introduce validity info for flat cache
+Date: Wed, 29 Oct 2025 09:12:46 +0100
+Message-ID: <20251029081248.52607-1-sander@svanheule.net>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/3] arm64: dts: qcom: sm8750: Add USB support for
- SM8750 QRD platform
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-References: <20251024151521.2365845-1-krishna.kurapati@oss.qualcomm.com>
- <20251024151521.2365845-4-krishna.kurapati@oss.qualcomm.com>
- <6b76d7d9-4f82-4eec-880c-3da2386971a3@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <6b76d7d9-4f82-4eec-880c-3da2386971a3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 09:02, Krzysztof Kozlowski wrote:
-> On 24/10/2025 17:15, Krishna Kurapati wrote:
->> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
->>
->> Enable USB support on SM8750 QRD variant.  The current definition
->> will start the USB controller in peripheral mode by default until
->> dependencies are added, such as USB role detection.
->>
->> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
->> [Krishna: Flattened usb node QRD DTS]
->> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sm8750-qrd.dts | 22 ++++++++++++++++++++++
->>  1 file changed, 22 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
->> index 13c7b9664c89..fc5d12bb41a5 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
->> +++ b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
->> @@ -1054,3 +1054,25 @@ &ufs_mem_hc {
->>  
->>  	status = "okay";
->>  };
->> +
->> +&usb_1 {
-> 
-> Still wrongly ordered. Please follow DTS coding style.
+The flat cache behaves differently from the other caches, in that it has
+no way of knowing if a cache entry is valid. Initialization has to
+happen either by providing defaults, by loading defaults from hardware
+(via num_reg_defaults_raw), or by performing the required register
+writes. This difference in behavior may be unexpected to the user [1].
 
+To provide feature parity between the different cache types, a new
+variant of the flat cache is proposed. This allows user to migrate to
+the sparse flat cache (or a different cache type) when possible.
 
-My bad, this is actually correctly ordered, your previous patches were
-incorrect. Nothing in the changelog explained that, though.
+In order to encourage migration, the second patch adds a new warning to
+inform the user of their suspicious cache.
 
-Best regards,
-Krzysztof
+[1] https://lore.kernel.org/linux-gpio/e461ca08-ad28-44fe-85f1-afe332c1d43d@topic.nl/
+---
+Changes since v5:
+Link: https://lore.kernel.org/lkml/20251023135032.229511-1-sander@svanheule.net/
+- zero-initialize cache for compatibiliy
+- Update regcache_type comment to document the difference between the
+  flat caches
+
+Changes since v4:
+Link: https://lore.kernel.org/lkml/20251022200408.63027-1-sander@svanheule.net/
+- Improve formatting of log message
+- Reduce logging to not confuse KUnit test result parser
+- Add sparse flat cache to all KUnit config lists
+
+Changes since v3:
+Link: https://lore.kernel.org/lkml/20250109180256.6269-1-sander@svanheule.net/
+- Split changes into two patches to provide a migration path
+
+Changes since v2:
+Link: https://lore.kernel.org/all/20250109151106.38645-1-sander@svanheule.net/
+- Complete renaming of index variables so regcache-flat.c compiles again
+
+Changes since v1:
+Link: https://lore.kernel.org/all/20241231100256.194753-1-sander@svanheule.net/
+- Fix off-by-one in length for bitmap_clear()
+- Add REGCACHE_FLAT to the list of sparse cache tests
+
+Sander Vanheule (2):
+  regmap: add flat cache with sparse validity
+  regmap: warn users about uninitialized flat cache
+
+ drivers/base/regmap/internal.h      |  1 +
+ drivers/base/regmap/regcache-flat.c | 96 +++++++++++++++++++++++++----
+ drivers/base/regmap/regcache.c      |  1 +
+ drivers/base/regmap/regmap-kunit.c  | 22 +++++++
+ include/linux/regmap.h              | 17 +++--
+ 5 files changed, 120 insertions(+), 17 deletions(-)
+
+-- 
+2.51.0
+
 
