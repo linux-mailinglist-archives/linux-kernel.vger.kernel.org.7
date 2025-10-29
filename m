@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-875983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC0EC1A5CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC4EC1A53A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035B1584155
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7961A24EB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2444381E50;
-	Wed, 29 Oct 2025 12:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94D934D936;
+	Wed, 29 Oct 2025 12:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQ/hHN5s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ji+buok9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357AF34CFB9;
-	Wed, 29 Oct 2025 12:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B5842E339B;
+	Wed, 29 Oct 2025 12:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740667; cv=none; b=Meu+wNofhZc4uU9WXvLMtZhCeQg263wp+ddZHIAYg/7q5he6FjntSzMjGPQFKaY/tfrWaU5ki89lMWGj1HHaPtjrEiQRkvVm8Y/1RkRu0gSFEZw6jKkAwDUwLdynPskt46BTPPiXHUyHB9piZHDqxEjm4xG1F6rv8XfPM4Nrhm8=
+	t=1761740677; cv=none; b=cHWvFgJufqpMABzLOpkugYE2OenR5+bzcbqtPMqoENtCu1QOuF9w6xrLyt/fUPr45d6/boPFHOg9WUp7t0tVoz7NAmxHZB7PR8C0a+5sUUyErb8UoWRi5ff+SAF1kDbeowyl6CDGVzulrVix/SbWxpOOCBsoAuJ2FbFdVaTkzXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740667; c=relaxed/simple;
-	bh=QzUkya/eQ/QDDIuBeLk9Y5q5aIl9eBXy2tswIGkyHaQ=;
+	s=arc-20240116; t=1761740677; c=relaxed/simple;
+	bh=EesZuqsIPfrlBbuqThECgtbHVtp6afgnRdhVk6MbMkE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jKYTst1XGv+C6KgoghrE6bUO6gqKAVmbk/Ld6QhTW+T3KbM+vIHLz7dnCcppfaQgg3j1jGrHVcAwgsqlpV02xj3NzFbKPUDkCwV8oC00YAfRSnVbYWEkUDxLTmZbDKzf/bKwqs7lBHvPUmePAQb1WDOrqL4tOcsGaVxcwqyCzbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQ/hHN5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 343D6C4CEFF;
-	Wed, 29 Oct 2025 12:24:22 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=jUDmfM638DFEPIWcOy77GYo60sVYEdj6N0SoX0D6fiNf4Ss289l53UIGjkkvbilELwXBN1BgcmqrYS0odxP9iIo8c9umLQiC+hWIdCM/A/rqNkbcb3NzQrNSDq0LbnBYP0jgtb8etxLm2SJxxGljnWeXcYJsUbRhjmJt4mB+H1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ji+buok9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EDA2C4CEFD;
+	Wed, 29 Oct 2025 12:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740666;
-	bh=QzUkya/eQ/QDDIuBeLk9Y5q5aIl9eBXy2tswIGkyHaQ=;
+	s=k20201202; t=1761740676;
+	bh=EesZuqsIPfrlBbuqThECgtbHVtp6afgnRdhVk6MbMkE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rQ/hHN5seJlN/J7XFSIS1mGMrL6/52yYcUdF2xi2nh4TpOEKwTTTAry4AYiQi51p8
-	 frQ5DZVsp6SxC/PZx8pEIwBcST2PTkl8GxVe4LNGyVwQnzrYwg7pBE1twqsxlI6Re9
-	 46XEa08DAitt+kV6mLOs8JgqU7BLkjDmd7uhWft/IQ/UmdMqUh2Av6bAjANHMzzZsy
-	 X4qKVRgyH5JzxTwv9Nt+EB702nSyD1k+G+IuJCOMvoGaczTn8wEFFhto2zNVnLwTXw
-	 Z2iYAfZ+I1RBezBEbjsAkO9y8GsP/LD0uweSdaRxA1D+fhSRHwSSKnQj+eJzm1LziG
-	 RZSfe0KOu0NOw==
+	b=ji+buok9FQwu3sc6mKYwAtx20blAq5aaOZcuG5QpgZtUMfmAd9TNkyeYdIfhuD5e3
+	 9FfuGgyUzYIC5WxfWN/4imol0BSg6ImUtV1A/+69ht75FYpeYJd0Pb9SKAy0EiDXPv
+	 Kcy9wMOAbThoP5yGzc67hxHMg6K6jVKcKGYDGo5SWL/EoXL6XL4UaqZJPWnSI9rCLn
+	 B0OFO+xbX3ReF1Y3dfQxKWYVvyJevF7X2qOz3RhoO1D5MhVtzklc0f/74bsAEBwDfI
+	 9+4SQKPKFlJ0GxZaxkwE6LsvEkuKC4B1s6NnsbxUZ8sw7kV2X/De9P21CKGbLeOoVF
+	 hecfYN+nK2jLg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:20:58 +0100
-Subject: [PATCH v4 45/72] selftests/namespaces: seventh listns() test
+Date: Wed, 29 Oct 2025 13:21:00 +0100
+Subject: [PATCH v4 47/72] selftests/namespaces: ninth listns() test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +51,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-45-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-47-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -68,59 +68,77 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1404; i=brauner@kernel.org;
- h=from:subject:message-id; bh=QzUkya/eQ/QDDIuBeLk9Y5q5aIl9eBXy2tswIGkyHaQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfWJTbO5k1X+9Wxq9OfVih+Oz3L6+y2xNz5rV/z30
- LpAnel8HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMxEWf4K7Ryf5z7uqLzaw5X
- hy+wLZsqxTp/zpQbf7KO7VuQKP82dxvD/zR+/kdbly594VLEw/9vu60P70bewv1TAz+Yf+LvML2
- 1mw8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1703; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=EesZuqsIPfrlBbuqThECgtbHVtp6afgnRdhVk6MbMkE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfXJHRS+s8Fv5f2vLx9LTK3MftnPkRpuzzmp6Ipq8
+ v77EpwbOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaS9p/hv4v9xhYusad+b1tf
+ ML4s+hI1aXFb6UOrB5v/nbxguFTOZz4jw+ytbbZRbzUVJr/Qt07Sf8ejb/JchPVaQ3BmS0Bx6Kz
+ 5bAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test listns() with multiple namespace types filter.
+Test error cases for listns().
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- tools/testing/selftests/namespaces/listns_test.c | 31 ++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ tools/testing/selftests/namespaces/listns_test.c | 49 ++++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
 diff --git a/tools/testing/selftests/namespaces/listns_test.c b/tools/testing/selftests/namespaces/listns_test.c
-index f5b8bc5d111f..d73c2a2898cf 100644
+index d3be6f97d34e..8a95789d6a87 100644
 --- a/tools/testing/selftests/namespaces/listns_test.c
 +++ b/tools/testing/selftests/namespaces/listns_test.c
-@@ -446,4 +446,35 @@ TEST(listns_specific_userns)
+@@ -627,4 +627,53 @@ TEST(listns_hierarchical_visibility)
  	waitpid(pid, &status, 0);
  }
  
 +/*
-+ * Test listns() with multiple namespace types filter.
++ * Test error cases for listns().
 + */
-+TEST(listns_multiple_types)
++TEST(listns_error_cases)
 +{
 +	struct ns_id_req req = {
 +		.size = sizeof(req),
 +		.spare = 0,
 +		.ns_id = 0,
-+		.ns_type = CLONE_NEWNET | CLONE_NEWUTS,  /* Network and UTS */
++		.ns_type = 0,
 +		.spare2 = 0,
 +		.user_ns_id = 0,
 +	};
-+	__u64 ns_ids[100];
-+	ssize_t ret;
++	__u64 ns_ids[10];
++	int ret;
 +
-+	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
-+	if (ret < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		TH_LOG("listns failed: %s (errno=%d)", strerror(errno), errno);
-+		ASSERT_TRUE(false);
++	/* Test with invalid flags */
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0xFFFF);
++	if (errno == ENOSYS) {
++		/* listns() not supported, skip this check */
++	} else {
++		ASSERT_LT(ret, 0);
++		ASSERT_EQ(errno, EINVAL);
 +	}
-+	ASSERT_GE(ret, 0);
 +
-+	TH_LOG("Found %zd active network/UTS namespaces", ret);
++	/* Test with NULL ns_ids array */
++	ret = sys_listns(&req, NULL, 10, 0);
++	ASSERT_LT(ret, 0);
 +
-+	for (ssize_t i = 0; i < ret; i++)
-+		TH_LOG("  [%zd] ns_id: %llu", i, (unsigned long long)ns_ids[i]);
++	/* Test with invalid spare field */
++	req.spare = 1;
++	ret = sys_listns(&req, ns_ids, ARRAY_SIZE(ns_ids), 0);
++	if (errno == ENOSYS) {
++		/* listns() not supported, skip this check */
++	} else {
++		ASSERT_LT(ret, 0);
++		ASSERT_EQ(errno, EINVAL);
++	}
++	req.spare = 0;
++
++	/* Test with huge nr_ns_ids */
++	ret = sys_listns(&req, ns_ids, 2000000, 0);
++	if (errno == ENOSYS) {
++		/* listns() not supported, skip this check */
++	} else {
++		ASSERT_LT(ret, 0);
++	}
 +}
 +
  TEST_HARNESS_MAIN
