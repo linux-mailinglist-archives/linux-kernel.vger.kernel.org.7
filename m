@@ -1,93 +1,156 @@
-Return-Path: <linux-kernel+bounces-876472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B02CC1B919
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:12:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C343EC1BBA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983F7188A15F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:07:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B402F5E3EB7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D3D2DE200;
-	Wed, 29 Oct 2025 15:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAE42E0B59;
+	Wed, 29 Oct 2025 15:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QsqMwvur"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CR4ItZ9n"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FFC2DC76E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D72DE70B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750409; cv=none; b=ECDVTji57Td3MeugWs9dzbvAAR+qvLkJXbj4C9HdHWiO57Ul95X1/xytP6+oyVeLdRmM+p4nEXkeDypWMiadpQlopIMDUE3od2U/W9nKNN2QhppGaH8Z6pLCiXiLfuFFEWJOnXiY9hfeo58XDmhk1zSC6/LsW9TDhzOLFHNo3pQ=
+	t=1761750536; cv=none; b=dGHKTjBWPROgStCC1zCkbsWRDYjP6QUjBk1fiYqOfOZMpfru3R9zWjmuiQtOprSb14rmvrV2MSTMNFcvaESuqArQqEKFRmN6zubJ72YyxchwgDNPlPYjIrWUmHfPVF6D44558mAZbeIlEAGO16wjTvD2h9mhSFaNwixrg/s/jw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750409; c=relaxed/simple;
-	bh=x4tq1577DDMCaHW3fTcMZ1a5KydbuBLTN+yqRePgwcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qn1feNZifCdiNF3ORd1EMqQyLAcciMjox2QxHeisGcSd1+axGLlOsbHKwwhIZHXQE8KOyTaEANrUoWhf+kPBS1HR1cdnS2xEg/J+6OIcnCpDhxyCcxx406yIhxVrw4A5+FEdKZS70/OOzVk4Kzr86PWGgVAUQ7vI6G9RHEepKXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QsqMwvur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E3F2C4CEF7;
-	Wed, 29 Oct 2025 15:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761750408;
-	bh=x4tq1577DDMCaHW3fTcMZ1a5KydbuBLTN+yqRePgwcg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QsqMwvurh6t/xZMpEDwlS2InZJzz9Bh9oJpaJ9ISVQTJWSBOwYn6SZjMQvVyIoxla
-	 dbjetpiIGRIu97loeqgJEZMZ/pHBMo7CKIoh+vcjq3HTfcknz/FC/NWpRfIxtWYXcm
-	 21/11Z35cVqHB23xlDJUmHJI62tieaztlO3aOXty41BPNzjd8u/pXYCSRMt3bjVZns
-	 EM0zNLHYK0LnzEtmlb+yjBqZ13A5WQknpqvNcIyk2vwPKOC/DwoWJTmab1pGeBUmKw
-	 9uQ1QsgUkwzlMgBUzsGXIWtWLRX0lJ0jiUy7u0ZrgjTOhUyQ0TbKCu81PN5QaSJX9A
-	 eNCReRnTcEkfA==
-Date: Wed, 29 Oct 2025 05:06:46 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, jiangshanlai@gmail.com,
-	simona.vetter@ffwll.ch, pstanner@redhat.com, dakr@kernel.org
-Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
- lockdep with reclaim
-Message-ID: <aQIthmQmKfztyaQZ@slm.duckdns.org>
-References: <20251021213952.746900-1-matthew.brost@intel.com>
- <20251021213952.746900-2-matthew.brost@intel.com>
- <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
- <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
+	s=arc-20240116; t=1761750536; c=relaxed/simple;
+	bh=pB94C7kPrYSAxlvhyehWFWqV6sR9eKAIcw2W2uEuiRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=npllONyNnqxLv6tzKzXIYahPJ3aSbcwVIClE7hwXpscingdyjlemIVdBU3mOXi87/29JGszcSa7JdULtdJifLBEiT9vCXicgigC7VuHZJpsJojGmNJuqi7SQxQV2d9jjkPln58hhr9DnS/I1KMfIxi3gfx2OQ8y7dGwLhaBxGRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CR4ItZ9n; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-637e9f9f9fbso13459039a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:08:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761750533; x=1762355333; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CWh76PP8SfKKjG0pMeYPtMLj4ZkKRRhoTpYTJJfEHZs=;
+        b=CR4ItZ9nFZ+utiN7AkC7jW5orQBrF1NkzuNeG113Y6WYgA1bqZUXaDL3kjbUbPNmYB
+         GZdNy6i+EboUw87FJAqUXM/ky7yYTBW+/qX1nLHWcp9eIgTca8/O+/8I5+MIrD7umSoc
+         8H1zsFrS2/kwRWt4ZxWnKUjmPxPlZYw+SFAh0Idlh+GRVLEdLMaYqsZQnGT8OMdVpnu5
+         S6O3SnG1YLpnLq14vWJzpzJqMqqLqYDZNwgg1eEfoksWZy+8/1nA2i9YS9huLSNYNJV6
+         nCpfrYN2gmF1uy8R49cA6Hg4xMjd2M7dcDj8P+M5FCz7vgT98dw45uTilfUgdBniY6Jw
+         fGgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761750533; x=1762355333;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CWh76PP8SfKKjG0pMeYPtMLj4ZkKRRhoTpYTJJfEHZs=;
+        b=CKNThifIqpqSx1Ta2KF0eYRmp4IDN3kaBjliYfyRPkMIF3O8eKbiGkJncX1igK2CSC
+         qSFd7NBP8SOh8YwH3rZfhZ4+zN2BTitS6ZjyC2QnHwBNgIFuWu1DpHXajqhOKp6DQbim
+         rr4zGObCTT/UkCUff+q6h/zyDirnri7i0lS6YPq80zwHGK6GMNjyu1CvhF99ZQ3zR9lR
+         1o6D15Hf5koJ4mJq3sTmnfxV6kGIGxXnOGqKWTOt2Lxn7mZNilnXeO/6FlQZV5Fut3+0
+         S9HuxZ8qyAV9S5P4qZ8Xf/LhjZGccNqvptHW8a7XgSTgCYFziU7BqsFLlwcWtfTOG8Ft
+         C6lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdMPSg6JsOMajb7pj3en6awC8UVMqMCy9HJ+8AYwKS+yP6go67Kru4zni0Ql9qWj7qjGGLg5074ZAwhXc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUARRC5yR/HhBYStQoAyKpdUH6nMesXodbSqk+tyRej41Qj0vt
+	vLaZ4SxGqpq+OktxPNTdG9ELQsc/eiI38RvtQWKx3GC3R97SC5xJ5czPHD8K9m0OZ+LxVY8nOQA
+	tbVC1eAiFkCEtJUc8x9802wrYWTDpr1o=
+X-Gm-Gg: ASbGncsRAnnTtoZWcQUcXpQuFzHPdxBeenAe8SmS6kbzo/QrXB+/0T+AR5CTP96wupZ
+	V04u1J3e76AfCPhjAiSgb/S/bGqIe3HkI+v25aZVqh/gh2yM6PK2vY7b1yalXN8gpL/Zjd7kctW
+	GM8DlPKkJuKfixqAWB8K2bH8Lidj0HWqJLrTQhsayOE4rP3I3RPLYwa4n2yMmfcSgqT9UTvNHRU
+	BD2ht04BB91BQmjEYEUuYFRuakjqJEWvfoCeDfLs7uHiBPc6D5eGRKQ+Qea24TRv9VSsa42ladU
+	WUmAWX2jVQ7y5+ZQrzMSS9wxbg==
+X-Google-Smtp-Source: AGHT+IEXSkBuzSyvc9QTdpw+t/LbyAMbPQDaHOlChqWwbq247x3QM//46PQpilrawaF80E+nqaix/QeMVOudWanVNt8=
+X-Received: by 2002:a05:6402:1ed3:b0:63c:33f8:f05e with SMTP id
+ 4fb4d7f45d1cf-64044251d98mr2597431a12.22.1761750532597; Wed, 29 Oct 2025
+ 08:08:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
+References: <20251029135538.658951-1-mjguzik@gmail.com>
+In-Reply-To: <20251029135538.658951-1-mjguzik@gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 29 Oct 2025 16:08:40 +0100
+X-Gm-Features: AWmQ_bl2NSRme7C9fCgHqa9CUb0wHphZYvyxaW8JRN8tVXA4dZUYtnKuH3PY_1c
+Message-ID: <CAGudoHF4i7m=aMGhC-8gcOo9m82VyLaawP73Y-8wdwgVqg0Wcg@mail.gmail.com>
+Subject: Re: [WIP RFC PATCH] fs: hide names_cachep behind runtime_const machinery
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 29, 2025 at 2:55=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
+rote:
+>
+> All path lookups end up allocating and freeing a buffer. The namei cache
+> is created and at boot time and remains constant, meaning there is no
+> reason to spend a cacheline to load the pointer.
+>
+> I verified this boots on x86-64.
+>
+> The problem is that when building I get the following:
+> ld: warning: orphan section `runtime_ptr_names_cachep' from `vmlinux.o' b=
+eing placed in section `runtime_ptr_names_cachep'
+>
+> I don't know what's up with that yet, but I will sort it out. Before I
+> put any effort into it I need to know if the idea looks fine.
+>
 
-On Tue, Oct 28, 2025 at 01:16:43PM -0700, Matthew Brost wrote:
-> On Tue, Oct 28, 2025 at 10:32:54AM +0100, Christian König wrote:
-> > On 10/21/25 23:39, Matthew Brost wrote:
-> > > Drivers often use workqueues that are in the reclaim path (e.g., DRM
-> > > scheduler workqueues). It is useful to teach lockdep that memory cannot
-> > > be allocated on these workqueues. Add an interface to taint workqueue
-> > > lockdep with reclaim.
-> > 
-> > Oh that is so wonderfully evil. I'm absolutely in favor of doing this.
-> > 
-> > But can't we check for the existing WQ_MEM_RECLAIM flag in the workqueue handling instead?
-> > 
-> 
-> Tejun suggested tying the lockdep annotation to WQ_MEM_RECLAIM, but the
-> entire kernel explodes because many workqueues throughout Linux don’t
-> adhere to this rule. Here's a link to my latest reply to Tejun [1].
+The good news is that Pedro Falcato stepped in and found a spot I
+failed to add the var to, this clears up the warning.
 
-How about making it a WQ flag?
+However, after further testing I found that kernel modules are not
+being patched. I'll be sending a v2 with some more commentary.
 
-Thanks.
-
--- 
-tejun
+> ---
+>  fs/dcache.c        | 1 +
+>  include/linux/fs.h | 5 +++--
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/dcache.c b/fs/dcache.c
+> index 035cccbc9276..786d09798313 100644
+> --- a/fs/dcache.c
+> +++ b/fs/dcache.c
+> @@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
+>  {
+>         names_cachep =3D kmem_cache_create_usercopy("names_cache", PATH_M=
+AX, 0,
+>                         SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL)=
+;
+> +       runtime_const_init(ptr, names_cachep);
+>
+>         dcache_init();
+>         inode_init();
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 68c4a59ec8fb..08ea27340309 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2960,8 +2960,9 @@ extern void __init vfs_caches_init(void);
+>
+>  extern struct kmem_cache *names_cachep;
+>
+> -#define __getname()            kmem_cache_alloc(names_cachep, GFP_KERNEL=
+)
+> -#define __putname(name)                kmem_cache_free(names_cachep, (vo=
+id *)(name))
+> +#define __const_names_cachep   runtime_const_ptr(names_cachep)
+> +#define __getname()            kmem_cache_alloc(__const_names_cachep, GF=
+P_KERNEL)
+> +#define __putname(name)                kmem_cache_free(__const_names_cac=
+hep, (void *)(name))
+>
+>  extern struct super_block *blockdev_superblock;
+>  static inline bool sb_is_blkdev_sb(struct super_block *sb)
+> --
+> 2.34.1
+>
 
