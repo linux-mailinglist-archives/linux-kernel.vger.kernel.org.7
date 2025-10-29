@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-877249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33533C1D8F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:07:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0552DC1D908
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881B73B3F09
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:07:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7EBB4E37E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD2931691D;
-	Wed, 29 Oct 2025 22:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F3B3191C6;
+	Wed, 29 Oct 2025 22:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hihwOsXl"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="lhbf5xPG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF52580E2;
-	Wed, 29 Oct 2025 22:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9E3314D2F;
+	Wed, 29 Oct 2025 22:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761775665; cv=none; b=kX/sIJ6rZ4LINEFfN/vKimbJgrftN/i1E3Pk946ZW5X/If1xJKkG665Ob2p6T5TWaNASstc1ABp/WfGZY6mzx0u+k2lePgdSTyNCXEPDkdwcdQ0IMFA4TwBB3mldSnXc9N3tcYb7o4PIqQmbCeDs0WuR0mbYNHZyghXGptLNZpE=
+	t=1761775690; cv=none; b=nOJuZWevX3nyaFrkds2IsaJ3+zt2bTAeoR6jdpc568Z9jyEl4iYRKkhbXta+p556kOmc3SBMEO5+0r2zCXGk3Je/QIKjvvFhuWm64hH16tBXEdITAN0DN5XUVWf4ZEwfha7tr6R+USWyrmr4bCC4tdWzKWL4pQs4KSVc3eYuaZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761775665; c=relaxed/simple;
-	bh=WDkOUQsc/GNM02IItNB/fO+zB61bn/RMRYCt5QAMnvM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/da0YJT2RFSGQaSKFU6mBvo2f/x2hTWrX6teasPXpwmCdwO77osJTWkP9aTDa3xncorMHV06umpKvRDVghbxUOipK09mt5i5mlGKdV5+Mf4jcmzRp748hmaiPMeCASC3OZQK5y62J2nCHdGF3nA4bcAkRZSQDsLPspAclqFqBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hihwOsXl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAB5CC4CEF7;
-	Wed, 29 Oct 2025 22:07:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761775665;
-	bh=WDkOUQsc/GNM02IItNB/fO+zB61bn/RMRYCt5QAMnvM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hihwOsXllSzaiRpSiqfqNcIgwNBnOs9CSG7YYPEBxXs9DhGh2zWxbMYpKpMwsMBdo
-	 Q0gQo+Z4xhrSkFYvbuj+0Tw7EVnknX09mmeIHy8JAV0D8rAzuMsWGvRLJI5s2rE0lD
-	 At068wNIE5vnhzGqsPCA+lFSvQPgKRle3fFPmsEfsMlM2pMmxxO/MBxgS/GG8If9me
-	 liyr0feFzMz3NghWylYnApgI5JQo56Mm/L58El9iX+k79RBNYHzfAtZ4zFO6xGqRvJ
-	 UWER+WjT+5ePoeDb0ZGOweKMiN8raX6yyHt9h9DkgJy31PM+geU1K1aEVjc5xzVV6P
-	 gAMuYVqjIxJ+w==
-Date: Wed, 29 Oct 2025 17:07:38 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Simona Vetter <simona@ffwll.ch>, devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, David Airlie <airlied@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
-	Matt Coster <matt.coster@imgtec.com>,
-	Frank Binns <frank.binns@imgtec.com>
-Subject: Re: [PATCH] dt-bindings: gpu: img,powervr-rogue: Drop duplicate
- newline
-Message-ID: <176177565555.3093261.18405131754587729535.robh@kernel.org>
-References: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
+	s=arc-20240116; t=1761775690; c=relaxed/simple;
+	bh=PCMUQE0BW2QoEo1rc9q0qVRgJ7LwUgidps/XqX0NgMs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=o20ETxqvzB7K4wc4//MRwYZ0iCDAr520AEZOcSWrEpY5+EMLfNDSvVoInEsh1cBmXGoC6ezOG+mKHl4r4hcnl7OBxLIuMPVRsmJYJ+TddENo2qdNe3nmr1B2tTOGzjgIfJ4hk9Isv1N8ren/gwOrG+wwo2oVmO8LWbFA/v5jXrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=lhbf5xPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B9C4CEF7;
+	Wed, 29 Oct 2025 22:08:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761775690;
+	bh=PCMUQE0BW2QoEo1rc9q0qVRgJ7LwUgidps/XqX0NgMs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lhbf5xPG+TbHCIl7DykXGj8gTac6GbCqNpXa1cRwVKEwgahz2Xm/rL9q7pwxoGeN2
+	 1+wl3Z2jRhboHibxncTbneKp8ycFKVUwsFckuGoRJXy20OgJHVd2/6hhEFlSIa5KAz
+	 7Pt61sgYPDT+ud4PyWxwBjwCBaxoEAqXXSB8nXj0=
+Date: Wed, 29 Oct 2025 15:08:06 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
+Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com,
+ kbingham@kernel.org, nathan@kernel.org, ryabinin.a.a@gmail.com,
+ dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com,
+ jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org,
+ baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com,
+ wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com,
+ fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com,
+ ubizjak@gmail.com, ada.coupriediaz@arm.com,
+ nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com,
+ elver@google.com, pankaj.gupta@amd.com, glider@google.com,
+ mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org,
+ thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com,
+ jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com,
+ mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com,
+ vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
+ ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev,
+ ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com,
+ maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org,
+ rppt@kernel.org, will@kernel.org, luto@kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 00/18] kasan: x86: arm64: KASAN tag-based mode for
+ x86
+Message-Id: <20251029150806.e001a669d9dad6ff9167c1f0@linux-foundation.org>
+In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
+References: <cover.1761763681.git.m.wieczorretman@pm.me>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 29 Oct 2025 19:05:27 +0000 Maciej Wieczor-Retman <m.wieczorretman@pm.me> wrote:
 
-On Wed, 29 Oct 2025 20:42:02 +0100, Marek Vasut wrote:
-> Fix the following DT schema check warning:
-> 
-> ./Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml:103:1: [warning] too many blank lines (2 > 1) (empty-lines)
-> 
-> One newline is enough. No functional change.
-> 
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
-> ---
-> Cc: Conor Dooley <conor+dt@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Frank Binns <frank.binns@imgtec.com>
-> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Matt Coster <matt.coster@imgtec.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: devicetree@vger.kernel.org
-> Cc: dri-devel@lists.freedesktop.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
+> The patchset aims to add a KASAN tag-based mode for the x86 architecture
+> with the help of the new CPU feature called Linear Address Masking
+> (LAM). Main improvement introduced by the series is 2x lower memory
+> usage compared to KASAN's generic mode, the only currently available
+> mode on x86. The tag based mode may also find errors that the generic
+> mode couldn't because of differences in how these modes operate.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks.  Quite a lot of these patches aren't showing signs of review at
+this time, so I'll skip v6 for now.
 
+However patches 1&2 are fixes that have cc:stable.  It's best to
+separate these out from the overall add-a-feature series please - their
+path-to-mainline will be quite different.
+
+I grabbed just those two patches for some testing, however their
+changelogging isn't fully appropriate.  Can I ask that you resend these
+as a two-patch series after updating the changelogs to clearly describe
+the userspace-visible effects of the flaws which the patches fix?
+
+This is to help -stable maintainers understand why we're proposing the
+backports and it is to help people to predict whether these fixes might
+address an issue which they or their customers are experiencing.
 
