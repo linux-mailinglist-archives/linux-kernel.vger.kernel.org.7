@@ -1,146 +1,143 @@
-Return-Path: <linux-kernel+bounces-876544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F22F2C1BB70
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834E0C1BFBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E88791896D3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:39:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E2A427531
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F09D33769D;
-	Wed, 29 Oct 2025 15:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448B43385A9;
+	Wed, 29 Oct 2025 15:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acl3aMc7"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAlRS1mA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641982DEA8C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D9F37A3AF;
+	Wed, 29 Oct 2025 15:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752343; cv=none; b=bb7Q+ulXj2/PXPfyWCdYY3tuoGTrVbkbq858tj5Z1RkqVjfnElkOFj7Sby0djHdtvbe3lwq5oVl6Ox/SkBy0DpTILquHG8P1EPclWRviSgePB/iKi8CFBKTAEglIOTvMreQoQuL/P3wkcUQ2QgWUNzbCdK/4u9P8gSTW3MYrOlw=
+	t=1761752378; cv=none; b=YHwJX4dn/Xu99TTDzOAfs86Y3e1Ee25TbVwLjYfX3jTxhyP5Q/XRyio0ZGYTiLV6B7FZb98GZOEYgGxtUJxtG+gWGawa0trsA/dq8kMcyT4jhbaDgWwP3Mo7Mf7vzjZkLfB4p2lMERLU45luLfy5OIKk+h+Fck9zEN4mAbFL9uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752343; c=relaxed/simple;
-	bh=Zw9Abyl2gi+Yxti27ETWddwvP2cLZARrh4XjUeuUrG4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H/VTiBwLE/OVgy4V6mn6AvpV8pF24YlPJQ9N2e4SRAcoaGR8ARY70DxsSGi0e49Bt7FeHS6t5Db2TIZQKYcCjErBcsC0QtEOsQ08gVE9iXQJLzL2MLtpuxtsV6BcnE0q4xxC+fKEtn6wRJ7HIhIWbEJnzIT9de5YrPUfX+NgB5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acl3aMc7; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4710665e7deso39642805e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:39:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761752340; x=1762357140; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G/SkdXpdQ2mlM7MBq3PkE7aXo/4arz2IJ0OU1Ygc0S4=;
-        b=acl3aMc7R33B1Ggd25dH8hebrv90bObJjLzkHPoM94n/6dJ76Lk9bVLDJXzIAGJYlQ
-         9TlSNDg3qZyBWpe3q5nsrXIqZgIYcgSIh7GLXubh2clDTJF6vxpO7ULxp5KxJ0ABjQ4V
-         xh3poVOq+vQojsz8qgnTh2oVDaDfX+b3a6OtPAeurGoHtYYU416iG6dFws+MWToCjQ4q
-         y+TB74nxOFYYyVa5MGrv/ZWoz1REjgKaGGYBfdMIN+D2Bs8V/fPKnRxISy6P3Uhi7/F2
-         PnR0PWaIYClWLBojzQs0BcOlAVfkH1PSyqoFRjsJyxbvtSg6Eq9VwpVNlyCt7rp84pW4
-         +uAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761752340; x=1762357140;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G/SkdXpdQ2mlM7MBq3PkE7aXo/4arz2IJ0OU1Ygc0S4=;
-        b=YK8pErviyGErBptRBEVHGmwm2UCpw5fjI4LZCco9j1oBUBiYZPL+rPBSu3x0MojmvB
-         0ZOGOkZnwFPu0EjsrIYCFru1GzSHaoFuSMG0bJnaptyaK+42PaK4weug6R8Gntdtcw1h
-         +oQ4EuwjwL+C2cqainlSOSKxTnMZp+unM3Ssb5/wgRbJ8i2Ynkk5Gco4AbdcNGBvmsQx
-         ZQV6G2m3LMzKyYzMbSbGn2Nm+E2lD2Hz7PNdvDIC51TtjIxn1mKMGqMHtnFeAhlDl32t
-         sUDjJiqYZGmRanEJWxrIpErI/ku/6lzur36PWZP4CGMKM/PyktTekcRb8jHNas1/XxDg
-         jW6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXZfNe348meDTDvHHFvZHfoUDnziJtkreDo2UqEUWJeavcFI0mqHuzOfb77Grn4si/ibE4QJO9zUj83OL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypSLeqDzXVwQxsT8OeP5Qn17l8y6mNgB9kLSvBZ23fFS85tSkw
-	n3nML3mr169AsTnSUtZ5gvtUltXlTh67YdYbaDUG2SHYykOFCUI6kEuj
-X-Gm-Gg: ASbGncuj2pE7gTGUFxUAGttPKXyiuwetMfk1N5vpDREHigrpiWQCDTLaWyiXC54yIl6
-	SXv7R6MZCjHhjdz6ciGQxmb8M9OpQbFz5uC8vYTV6HQ6b5/rhaVehYjzzHnqU/oFbeW06z5rm5G
-	yN339yKPf3FiYpizE2xZTuVtXjV/e5LiUS1Onl5P2GWFB4TBtV9UQ8XFUhSYQs4Mrzz6hgszdd6
-	O7Wpludb8v0+iWWG+GTTKyx9a4tZR7TSbGVe/Wv3v+whZnl1EclrHTnCaF0ouQwTgYFXbdfAfG/
-	NOhZXUqRqkyPZS7SMKjsbc/62KmD5tNGe4hGDOqx6UIrhHeXZ8YcMf76Uma7rUXsJD2VnUPHDT9
-	skOl+EJVYWyOey4kzk0lNYbGNiEglghFEgFO+tDYCyZxyx7oC1vjvmHhdSi5+RLEP85FNoD8OTu
-	DYPWQ41GZ9K0vIFh3lTXwGemy9JrIV
-X-Google-Smtp-Source: AGHT+IEzD+uGSug6873FGiGzyiOsrvPNmJnfAKGaP1jUpjdYCDVFQsBwG2AhSPlYElGJj06L5fCBdA==
-X-Received: by 2002:a05:6000:1a8a:b0:428:3be9:b465 with SMTP id ffacd0b85a97d-429aefbe046mr2473566f8f.51.1761752339128;
-        Wed, 29 Oct 2025 08:38:59 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de4a1sm27473610f8f.37.2025.10.29.08.38.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 08:38:58 -0700 (PDT)
-Message-ID: <69023512.5d0a0220.3cccb7.8e65@mx.google.com>
-X-Google-Original-Message-ID: <aQI1DSo99grsrFdk@Ansuel-XPS.>
-Date: Wed, 29 Oct 2025 16:38:53 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Raag Jadav <raag.jadav@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	s=arc-20240116; t=1761752378; c=relaxed/simple;
+	bh=grPwEietiNbq1mSlzDL7WcODrofYGlPESBXp1qQNHsQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QTo88vE5BGEYbMoPWQEK5UJmHwJD7W7hIu7df5c2pE9i1VWdvGhUhwNRfqxqTkDWVCsjL2um+x4tahSD1SQFGHiiVc45isMbg4HRZKgjiG2eeEIDzFAQ3c6vppVYuc4+7k3a2w6RQ3uluCOLUMiTvr9Rpj4KsZwrkOqw7vW1yYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vAlRS1mA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1186C4CEF7;
+	Wed, 29 Oct 2025 15:39:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761752377;
+	bh=grPwEietiNbq1mSlzDL7WcODrofYGlPESBXp1qQNHsQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=vAlRS1mAFJLTp2ybW94RNMrdBL9c7LEqcafqarKYgFiPNlZ7pwx3TuoKI8thB7qcr
+	 4Bv7O/FqSAg7KTv4URkhPYbf7f5z28e7nawJfc+P55eiNrkVOo5FrUAxfJqpNl7lEN
+	 GUrpJtm03ct3XDlLhq+l9uOtujZBhKLpF792XMD+VWVxZDsbTEu0wo2EfmSMWfnYBm
+	 GQjiYgdwHeaNQ4WylG8ZP/9xH0Krj5OreqhS72QdXT3WJ8HCDWf0ZqDAqCRK6U5NT5
+	 NdbixIdBFcaLj6hnZnNMF1XWdrwilBcZDpjbxHmWEGWOF3IXSYoZnI7BAAuKD/IBDw
+	 HpytFTCoAhvgg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] err.h: add ERR_PTR_CONST macro
-References: <20251029133323.24565-1-ansuelsmth@gmail.com>
- <aQIzoGnvZWYuHuoQ@smile.fi.intel.com>
+Subject: [PATCH] arm64/arm: dts: marvell: Rename "nand-rb" pinctrl node names
+Date: Wed, 29 Oct 2025 10:39:25 -0500
+Message-ID: <20251029153927.1065446-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQIzoGnvZWYuHuoQ@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 05:32:48PM +0200, Andy Shevchenko wrote:
-> On Wed, Oct 29, 2025 at 02:33:19PM +0100, Christian Marangi wrote:
-> > Add ERR_PTR_CONST macro to initialize global variables with error
-> 
-> ERR_PTR_CONST()
-> 
-> > pointers. This might be useful for specific case where there is a global
-> > variables initialized to an error condition and then later set to the
-> > real handle once probe finish/completes.
-> 
-> Okay, this has two caveats:
-> 
-> 1) naming is bad as it suggests something about const qualifier (and not, it's
-> not about that at all);
-> 
-> 2) it doesn't explain what's wrong with ERR_PTR().
->
+Update the "nand-rb" pinctrl child node names to use the defined "-pins"
+suffix fixing DT schema warnings.
 
-It can't be used for global variables as it does cause compilation
-error.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ arch/arm/boot/dts/marvell/armada-38x.dtsi         | 2 +-
+ arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi | 2 +-
+ arch/arm64/boot/dts/marvell/armada-70x0.dtsi      | 2 +-
+ arch/arm64/boot/dts/marvell/armada-80x0.dtsi      | 2 +-
+ arch/arm64/boot/dts/marvell/cn9130-db.dtsi        | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-I wanted to use ERR_PTR to set the __smem handle instead of freecode
-(void *) -EPROBE_DEFER and notice the compiler doesn't like using
-ERR_PTR().
-
-Then the problem is clear as static declaration require constant value
-for initialization and ERR_PTR is a inline function.
-
-This is why ERR_PTR_CONST following the pattern that was used for
-FIELD_PREP -> FIELD_PREP_CONST that was also introduced for similar
-case.
-
-So yes this is specific for case of static global variables.
-
-> ...
-> 
-> Note, I'm not objecting an idea as a whole.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
-
+diff --git a/arch/arm/boot/dts/marvell/armada-38x.dtsi b/arch/arm/boot/dts/marvell/armada-38x.dtsi
+index 1181b13deabc..1d616edda322 100644
+--- a/arch/arm/boot/dts/marvell/armada-38x.dtsi
++++ b/arch/arm/boot/dts/marvell/armada-38x.dtsi
+@@ -247,7 +247,7 @@ nand_pins: nand-pins {
+ 					marvell,function = "dev";
+ 				};
+ 
+-				nand_rb: nand-rb {
++				nand_rb: nand-rb-pins {
+ 					marvell,pins = "mpp41";
+ 					marvell,function = "nand";
+ 				};
+diff --git a/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi b/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi
+index 7a7e2066c498..a9a71326aafc 100644
+--- a/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi
++++ b/arch/arm/boot/dts/marvell/armada-xp-98dx3236.dtsi
+@@ -322,7 +322,7 @@ nand_pins: nand-pins {
+ 		marvell,function = "dev";
+ 	};
+ 
+-	nand_rb: nand-rb {
++	nand_rb: nand-rb-pins {
+ 		marvell,pins = "mpp19";
+ 		marvell,function = "nand";
+ 	};
+diff --git a/arch/arm64/boot/dts/marvell/armada-70x0.dtsi b/arch/arm64/boot/dts/marvell/armada-70x0.dtsi
+index 293403a1a333..df939426d258 100644
+--- a/arch/arm64/boot/dts/marvell/armada-70x0.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-70x0.dtsi
+@@ -56,7 +56,7 @@ nand_pins: nand-pins {
+ 			marvell,function = "dev";
+ 		};
+ 
+-		nand_rb: nand-rb {
++		nand_rb: nand-rb-pins {
+ 			marvell,pins = "mpp13";
+ 			marvell,function = "nf";
+ 		};
+diff --git a/arch/arm64/boot/dts/marvell/armada-80x0.dtsi b/arch/arm64/boot/dts/marvell/armada-80x0.dtsi
+index ee67c70bf02e..fb361d657a77 100644
+--- a/arch/arm64/boot/dts/marvell/armada-80x0.dtsi
++++ b/arch/arm64/boot/dts/marvell/armada-80x0.dtsi
+@@ -89,7 +89,7 @@ nand_pins: nand-pins {
+ 			marvell,function = "dev";
+ 		};
+ 
+-		nand_rb: nand-rb {
++		nand_rb: nand-rb-pins {
+ 			marvell,pins = "mpp13", "mpp12";
+ 			marvell,function = "nf";
+ 		};
+diff --git a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi b/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
+index 50e9e0724828..3cc320f569ad 100644
+--- a/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
++++ b/arch/arm64/boot/dts/marvell/cn9130-db.dtsi
+@@ -379,7 +379,7 @@ nand_pins: nand-pins {
+ 				       "mpp27";
+ 			marvell,function = "dev";
+ 		};
+-		nand_rb: nand-rb {
++		nand_rb: nand-rb-pins {
+ 			marvell,pins = "mpp13";
+ 			marvell,function = "nf";
+ 		};
 -- 
-	Ansuel
+2.51.0
+
 
