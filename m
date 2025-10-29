@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-876373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBB7C1B51F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:44:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78F9C1B525
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:44:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423D01885A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:38:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49AA91AA4C9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359E22DC76F;
-	Wed, 29 Oct 2025 14:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651B82DA77E;
+	Wed, 29 Oct 2025 14:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="wlC79MD3"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SGBIFUvN"
 Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0682D5C6C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD3B2DEA9B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748623; cv=none; b=RAZjqQKN7EW6Vhk3dRr0alcPCfQ6uSYtdarFR9B2xuUfJLSpC977UYWjl7FIXzsYZa2ZzciZR9E9hGjOlldMtyNHHLm6tbj4KNNmHwClJ+u9AeoujkExuiBdFbRnJMW/dLVa6nDSDmATnqN2/I+bVczL43hpiBlTTS3QJvmQTH0=
+	t=1761748626; cv=none; b=YXdc05PqdgYfu6pv0qrXWzFVA1Z+FtUDczaGrQz1rtsbfVjW3tvsIajIH6LYPgEhAPpshOVCCSYe7myzPNHzhmBxU6ueDgin7YXCNHw1VyrEwDKtiYwfDETd52jcVYdzSUpPVmt9+8PbIBNnitRwppeAQApEyZykqdieWWHJQaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748623; c=relaxed/simple;
-	bh=JI6BJsuj4AXbzLKNzvB4FHoZVsIkkY5eZBTNuNhEyrQ=;
+	s=arc-20240116; t=1761748626; c=relaxed/simple;
+	bh=Pl8/wLHil1+4yaisV9T8jn/VjcUTIXsuX+80D3wrKXM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lIGaFho+VX+pEviC8Wz7qvqhVThezwGzF8s9EycZvfFstzLQ18n5ZmxQCHSjpmJnHela8/eXHtahtr58KoG+k2xfqqAiuSngxlN35USyj565CBUo+WJV2dKJKmrra3PLy+HWLmxQ+uQXasvD4HbVoQm3KVQclmhuBC51b5LMFgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=wlC79MD3; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=fAPlGeWunncf3XqxvRW8rkke3oCCC34VHzQmkRqNVMgONIhE/FSn+qG57Hu7t/woAq1rK66zkOgnCgFZodSjVWrbo87pWYGnBhuW4Bezy3d6hHkV2xr/zwHZKgrLSckKRs1cP4eHPTyhfKeou+Ctty65ltPNpKWIHj8JpQN1mH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SGBIFUvN; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id BF4DF4E413D1;
-	Wed, 29 Oct 2025 14:36:59 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 36F674E413CB;
+	Wed, 29 Oct 2025 14:37:03 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8ED09606E8;
-	Wed, 29 Oct 2025 14:36:59 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6C182117F81B1;
-	Wed, 29 Oct 2025 15:36:57 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0BE7E606E8;
+	Wed, 29 Oct 2025 14:37:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 98AE7117F81A9;
+	Wed, 29 Oct 2025 15:37:00 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761748618; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761748622; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=6J4X9HET4WTHRHuQARwrxqHYhuRpm2UMz/V2um5iVtU=;
-	b=wlC79MD3D3AwIKWRSLcPNc7KDGLZeXcEmYO8e2rxkunCMy6dTD5v/CTUpBF5cvCrNPG17E
-	83GRqGztqYjPwJHoHueYde4d2y7tBAVBIH60AMUXezhtimNZv7crUZ0L2S6MOle950L10o
-	ViXldQCfsoyEP9zn67WQLJBFZD9pIkebnY02G8m3eE7mKKdPZLXk5lpCBXK+IQwqzv/oJl
-	wSMM4dRmL9UdKJK+OnGHukIDmixcb+FXOT+zw1DbWHOjcou0T8y4w95HW3PWKt2oKDzxHy
-	iXeaalidTarJlcK0hgsW8bAgt0tLMFkVJzc3sbl54E/5HsGloUqs0LwbYfvQGg==
+	bh=gZH4XqHEnkgG+WiGf4L3QVJCg6jApM4gvYwyfSScQxU=;
+	b=SGBIFUvNgkvxzALshu7uZRgC/6m33HWE96lB+htAPa5eJmAuvZop1qi9dakIqwwcv6Ik0X
+	JECpYAm6EB0hGWZon7ZUlqn0toStq8OoU9HoIxDPbIGip9FQgcaNAVvQVChFcDXbwRyfUJ
+	wvGOrDCYMAG7gHiQr5PHW3IzGBbJzSt0awTJmL3rRuiQPphH+HmRS58Fjh9NDK3ayT2Ort
+	rVv+8m+J9Ctxw+7NP0SC98VrLrrDpWPExGCxYnIkHZWx1ULuiF++XufBadpiB0GdTh7tqr
+	GBxZHYURPIrhGRzOXsBLH/ygdoeWeWmVYnXqGWcqqLdnJxUSZq8IkIME0Vbj0w==
 From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 29 Oct 2025 15:36:42 +0100
-Subject: [PATCH RESEND v2 05/32] drm/vkms: Introduce config for plane name
+Date: Wed, 29 Oct 2025 15:36:44 +0100
+Subject: [PATCH RESEND v2 07/32] drm/blend: Get a rotation name from it's
+ bitfield
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-vkms-all-config-v2-5-a49a2d4cba26@bootlin.com>
+Message-Id: <20251029-vkms-all-config-v2-7-a49a2d4cba26@bootlin.com>
 References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 In-Reply-To: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
@@ -72,190 +73,108 @@ Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
 X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6014;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3321;
  i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=JI6BJsuj4AXbzLKNzvB4FHoZVsIkkY5eZBTNuNhEyrQ=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ6C1weX5fTU9+PdO7CwUHjy6vS1s+/aI9kq
- brM4O2VESCJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImegAKCRAgrS7GWxAs
- 4tVtD/43B0pLg3N80G3RigoAqofUn0kuJ0bHb758KSCFLBCJmlXCTFpyVvJmveMdQeKahELv6Ka
- kfXyTMyhvVDlzqK6RtYZvPEv0j9wt3KuInYbzplbjClMpEqN3Yn0faHULeOPnZJw2Br/wtpkGm7
- XiwNPmEYiAoY1NjqNjqWsapvW4TcGKbNVGrnmDa5/pZkTyhKkGX0yrxSLewJ7aT/hEvXUdPhqGP
- X002QQ1eSS3zYQpY3WRKkGKJ0gr3Pia1YOPL2m6F1UxyeJVbszH+lgG+x5pvqGGz9uVXkWVw5j+
- RV7mDlaAkDYxsiTqLWa6eKZW9mxJlGgbXpxtSoNI/mI9R4cBzcVeJH8cMamrFBT6uMdcU7sw3Cc
- Wl6UB3/HZo0D3G7P77S4DFnkJYVKUYETDCpqI3f14Pgw1eMVQG0awBPhHbMJYFyEdc9wQut5L0h
- UoyX3fqU4vuP3iXn/NL0e/CE2/y1FvrIYhAyMhcHMdQS0p6DxaPrKk0e688rCA8yalxDhXlFyL0
- vpZ+kE9xpF4o0rMkskiRedMdq7eFqJpdz9xcmerLaoWjO87HY4f9fU6qCqCfo5tf/9dBVmXvQBw
- tS1zmilyr21E2+z2og031GpgnFILLRYtCHf99RfF0FErAfJ1Cg/4MC+OXj0ul9zMIJpThAO6zqL
- e4a29Oexuu6IZ3A==
+ bh=Pl8/wLHil1+4yaisV9T8jn/VjcUTIXsuX+80D3wrKXM=;
+ b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ7f0FokT9zbt4H75Ux7Gi1z9UBY3E04ndK1
+ LaXAHSYYQmJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImewAKCRAgrS7GWxAs
+ 4u6tD/9v7Oce9o8e3V/RCjZhhBS6FHRp7LdcCaev5iu3YO8Sqkgn88tyalFUMSUs1JVgyNuYej4
+ 6mX1qu+Dh0mrJvfyO7vyPnrFFQmGX6O84+2OUYkVqFhSQYQlNB3opr/cjJbhPsS65CbqT4ql4qX
+ B/UDbjpeY3rPs1k4/jCXDe1rG+ClWGiQGz2MwC+56bT6VvmsLgnUjJaU/r6rKW3M9EXVWsgRuiy
+ 0zEKi3VFcGGS4EIHz1j0AFt9l3a+N8hYDwvhbfFsdMzMzR4+LtTDNsir6qm3H3ob7ANEn47xiIN
+ OLqwAPt5TbX+LQCWSPhFIDRucRxOVaj44r/wTfpjgFk4VjeFCOkEOtGnfNdEnNvTCUJyzKOKLY+
+ 44NcTnTyQOKFuO8kEaVnuXtrNBvt5KMKMPQFSj+Ja//qjr4a0Gmy8aI2S3/+7GrS9dLKry+/7XQ
+ R2eEWuQCrT0ljVLou7tiFkfCMWewSSd8cZ+gsyXkjLm062ST5qVP1mFmmgYB53EsZ61lLENolvL
+ osFx1odxRLoDjpBEQVWvKs+eUeyPFhgIlCAfCOlXoggyIfPBPMzUVJhLfr1pLww8BwR2Oaj5iNs
+ 9uh/fp01i3JEizdhpUiJCoJFWaQmBfG6nzjr57BIk+XbOkD39/qvMo/AcaCikRFgVFiOyVkZBaa
+ 6pjvCa0aeUeMHaQ==
 X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
  fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
 X-Last-TLS-Session-Version: TLSv1.3
 
-As planes can have a name in DRM, prepare VKMS to configure it using
-ConfigFS.
+Having the rotation/reflection name from its value can be useful for
+debugging purpose. Extract the rotation property table and implement
+drm_get_rotation_name.
 
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/gpu/drm/vkms/vkms_config.c |  4 ++++
- drivers/gpu/drm/vkms/vkms_config.h | 26 ++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_drv.h    |  5 +++--
- drivers/gpu/drm/vkms/vkms_output.c |  6 +-----
- drivers/gpu/drm/vkms/vkms_plane.c  |  6 ++++--
- 5 files changed, 38 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/drm_blend.c | 35 ++++++++++++++++++++++++++---------
+ include/drm/drm_blend.h     |  2 ++
+ 2 files changed, 28 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-index 858bec2d1312..bfafb5d2504d 100644
---- a/drivers/gpu/drm/vkms/vkms_config.c
-+++ b/drivers/gpu/drm/vkms/vkms_config.c
-@@ -352,6 +352,8 @@ static int vkms_config_show(struct seq_file *m, void *data)
- 		seq_puts(m, "plane:\n");
- 		seq_printf(m, "\ttype=%s\n",
- 			   drm_get_plane_type_name(vkms_config_plane_get_type(plane_cfg)));
-+		seq_printf(m, "\tname=%s\n",
-+			   vkms_config_plane_get_name(plane_cfg));
- 	}
- 
- 	vkms_config_for_each_crtc(vkmsdev->config, crtc_cfg) {
-@@ -392,6 +394,7 @@ struct vkms_config_plane *vkms_config_create_plane(struct vkms_config *config)
- 
- 	plane_cfg->config = config;
- 	vkms_config_plane_set_type(plane_cfg, DRM_PLANE_TYPE_OVERLAY);
-+	vkms_config_plane_set_name(plane_cfg, NULL);
- 	xa_init_flags(&plane_cfg->possible_crtcs, XA_FLAGS_ALLOC);
- 
- 	list_add_tail(&plane_cfg->link, &config->planes);
-@@ -404,6 +407,7 @@ void vkms_config_destroy_plane(struct vkms_config_plane *plane_cfg)
- {
- 	xa_destroy(&plane_cfg->possible_crtcs);
- 	list_del(&plane_cfg->link);
-+	kfree_const(plane_cfg->name);
- 	kfree(plane_cfg);
+diff --git a/drivers/gpu/drm/drm_blend.c b/drivers/gpu/drm/drm_blend.c
+index 6852d73c931c..bc7c05e20242 100644
+--- a/drivers/gpu/drm/drm_blend.c
++++ b/drivers/gpu/drm/drm_blend.c
+@@ -241,6 +241,31 @@ int drm_plane_create_alpha_property(struct drm_plane *plane)
  }
- EXPORT_SYMBOL_IF_KUNIT(vkms_config_destroy_plane);
-diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-index 4c8d668e7ef8..57342db5795a 100644
---- a/drivers/gpu/drm/vkms/vkms_config.h
-+++ b/drivers/gpu/drm/vkms/vkms_config.h
-@@ -35,6 +35,7 @@ struct vkms_config {
-  *
-  * @link: Link to the others planes in vkms_config
-  * @config: The vkms_config this plane belongs to
-+ * @name: Name of the plane
-  * @type: Type of the plane. The creator of configuration needs to ensures that
-  *        at least one primary plane is present.
-  * @possible_crtcs: Array of CRTCs that can be used with this plane
-@@ -47,6 +48,7 @@ struct vkms_config_plane {
- 	struct list_head link;
- 	struct vkms_config *config;
+ EXPORT_SYMBOL(drm_plane_create_alpha_property);
  
-+	const char *name;
- 	enum drm_plane_type type;
- 	struct xarray possible_crtcs;
- 
-@@ -288,6 +290,30 @@ vkms_config_plane_set_type(struct vkms_config_plane *plane_cfg,
- 	plane_cfg->type = type;
- }
- 
-+/**
-+ * vkms_config_plane_set_name() - Set the plane name
-+ * @plane_cfg: Plane to set the name to
-+ * @name: New plane name. The name is copied.
-+ */
-+static inline void
-+vkms_config_plane_set_name(struct vkms_config_plane *plane_cfg,
-+			   const char *name)
-+{
-+	if (plane_cfg->name)
-+		kfree_const(plane_cfg->name);
-+	plane_cfg->name = kstrdup_const(name, GFP_KERNEL);
-+}
++static const struct drm_prop_enum_list rotation_props[] = {
++	{ __builtin_ffs(DRM_MODE_ROTATE_0) - 1,   "rotate-0" },
++	{ __builtin_ffs(DRM_MODE_ROTATE_90) - 1,  "rotate-90" },
++	{ __builtin_ffs(DRM_MODE_ROTATE_180) - 1, "rotate-180" },
++	{ __builtin_ffs(DRM_MODE_ROTATE_270) - 1, "rotate-270" },
++	{ __builtin_ffs(DRM_MODE_REFLECT_X) - 1,  "reflect-x" },
++	{ __builtin_ffs(DRM_MODE_REFLECT_Y) - 1,  "reflect-y" },
++};
 +
 +/**
-+ * vkms_config_plane_get_name - Get the plane name
-+ * @plane_cfg: Plane to get the name from
++ * drm_get_rotation_name - Return the name of a rotation
++ * @rotation: The rotation mask (DRM_MODE_ROTATE_* | DRM_MODE_REFLECT_*)
++ *
++ * Returns: the name of the rotation type (unknown) if rotation is not
++ * a known rotation/reflection
 + */
-+static inline const char *
-+vkms_config_plane_get_name(const struct vkms_config_plane *plane_cfg)
++const char *drm_get_rotation_name(unsigned int rotation)
 +{
-+	return plane_cfg->name;
++	if (rotation < ARRAY_SIZE(rotation_props))
++		return rotation_props[rotation].name;
++
++	return "(unknown)";
 +}
++EXPORT_SYMBOL(drm_get_rotation_name);
 +
  /**
-  * vkms_config_plane_attach_crtc - Attach a plane to a CRTC
-  * @plane_cfg: Plane to attach
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index db260df1d4f6..9ad286f043b5 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -225,6 +225,7 @@ struct vkms_output {
- };
- 
- struct vkms_config;
-+struct vkms_config_plane;
- 
- /**
-  * struct vkms_device - Description of a VKMS device
-@@ -298,10 +299,10 @@ int vkms_output_init(struct vkms_device *vkmsdev);
-  * vkms_plane_init() - Initialize a plane
-  *
-  * @vkmsdev: VKMS device containing the plane
-- * @type: type of plane to initialize
-+ * @config: plane configuration
-  */
- struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
--				   enum drm_plane_type type);
-+				   struct vkms_config_plane *config);
- 
- /* CRC Support */
- const char *const *vkms_get_crc_sources(struct drm_crtc *crtc,
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index 2ee3749e2b28..22208d02afa4 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -19,11 +19,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
- 		return -EINVAL;
- 
- 	vkms_config_for_each_plane(vkmsdev->config, plane_cfg) {
--		enum drm_plane_type type;
--
--		type = vkms_config_plane_get_type(plane_cfg);
--
--		plane_cfg->plane = vkms_plane_init(vkmsdev, type);
-+		plane_cfg->plane = vkms_plane_init(vkmsdev, plane_cfg);
- 		if (IS_ERR(plane_cfg->plane)) {
- 			DRM_DEV_ERROR(dev->dev, "Failed to init vkms plane\n");
- 			return PTR_ERR(plane_cfg->plane);
-diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-index e592e47a5736..73180cbb78b1 100644
---- a/drivers/gpu/drm/vkms/vkms_plane.c
-+++ b/drivers/gpu/drm/vkms/vkms_plane.c
-@@ -9,6 +9,7 @@
- #include <drm/drm_gem_atomic_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- 
-+#include "vkms_config.h"
- #include "vkms_drv.h"
- #include "vkms_formats.h"
- 
-@@ -217,7 +218,7 @@ static const struct drm_plane_helper_funcs vkms_plane_helper_funcs = {
- };
- 
- struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
--				   enum drm_plane_type type)
-+				   struct vkms_config_plane *config)
+  * drm_plane_create_rotation_property - create a new rotation property
+  * @plane: drm plane
+@@ -279,14 +304,6 @@ int drm_plane_create_rotation_property(struct drm_plane *plane,
+ 				       unsigned int rotation,
+ 				       unsigned int supported_rotations)
  {
- 	struct drm_device *dev = &vkmsdev->drm;
- 	struct vkms_plane *plane;
-@@ -225,7 +226,8 @@ struct vkms_plane *vkms_plane_init(struct vkms_device *vkmsdev,
- 	plane = drmm_universal_plane_alloc(dev, struct vkms_plane, base, 0,
- 					   &vkms_plane_funcs,
- 					   vkms_formats, ARRAY_SIZE(vkms_formats),
--					   NULL, type, NULL);
-+					   NULL, vkms_config_plane_get_type(config),
-+					   vkms_config_plane_get_name(config));
- 	if (IS_ERR(plane))
- 		return plane;
+-	static const struct drm_prop_enum_list props[] = {
+-		{ __builtin_ffs(DRM_MODE_ROTATE_0) - 1,   "rotate-0" },
+-		{ __builtin_ffs(DRM_MODE_ROTATE_90) - 1,  "rotate-90" },
+-		{ __builtin_ffs(DRM_MODE_ROTATE_180) - 1, "rotate-180" },
+-		{ __builtin_ffs(DRM_MODE_ROTATE_270) - 1, "rotate-270" },
+-		{ __builtin_ffs(DRM_MODE_REFLECT_X) - 1,  "reflect-x" },
+-		{ __builtin_ffs(DRM_MODE_REFLECT_Y) - 1,  "reflect-y" },
+-	};
+ 	struct drm_property *prop;
  
+ 	WARN_ON((supported_rotations & DRM_MODE_ROTATE_MASK) == 0);
+@@ -294,7 +311,7 @@ int drm_plane_create_rotation_property(struct drm_plane *plane,
+ 	WARN_ON(rotation & ~supported_rotations);
+ 
+ 	prop = drm_property_create_bitmask(plane->dev, 0, "rotation",
+-					   props, ARRAY_SIZE(props),
++					   rotation_props, ARRAY_SIZE(rotation_props),
+ 					   supported_rotations);
+ 	if (!prop)
+ 		return -ENOMEM;
+diff --git a/include/drm/drm_blend.h b/include/drm/drm_blend.h
+index 88bdfec3bd88..381d1f8d815b 100644
+--- a/include/drm/drm_blend.h
++++ b/include/drm/drm_blend.h
+@@ -42,6 +42,8 @@ static inline bool drm_rotation_90_or_270(unsigned int rotation)
+ 
+ #define DRM_BLEND_ALPHA_OPAQUE		0xffff
+ 
++const char *drm_get_rotation_name(unsigned int rotation);
++
+ int drm_plane_create_alpha_property(struct drm_plane *plane);
+ int drm_plane_create_rotation_property(struct drm_plane *plane,
+ 				       unsigned int rotation,
 
 -- 
 2.51.0
