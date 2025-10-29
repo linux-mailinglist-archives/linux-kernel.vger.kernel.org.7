@@ -1,281 +1,107 @@
-Return-Path: <linux-kernel+bounces-875092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B3CC18345
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:41:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EC1C18387
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:05:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC853A5CCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D61BB3AB9FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465FA2ED869;
-	Wed, 29 Oct 2025 03:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="USNTdWnH"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11013054.outbound.protection.outlook.com [52.101.83.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080CF2F0699;
+	Wed, 29 Oct 2025 04:03:35 +0000 (UTC)
+Received: from wxsgout04.xfusion.com (wxsgout04.xfusion.com [36.139.87.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6B62EBBB0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761709291; cv=fail; b=SwZ9QD45v8o8/1qCsRnDeIjyyAA3WLnt3uYyFxsycDrxvXgyTJxdjEn2hBNKJ6yT/ZSgPoDN5mC3Uif6d7Dp1SLB9d8sPppJJqzNG/rN74j2fJlzqM44RbwEYvZn7NPZvhi56YpUQJl12605wX02DUnoDU5dHDXYBSwVxdP9EsA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761709291; c=relaxed/simple;
-	bh=WP17TfO8k9C+Zdihk2SqrYmpiiHjv82+6Z/DFmZe6Fo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fUXX8hK3UirQk+iDxm4DQyYWRZoWXBxeDZtTk/5uFxTs7vW5czMfn3r6iymDuNo7H1v76gAfv8IlwIUqw3sxzvvlfASj+EXS7JIdifSTHHWmEsiUea4DCsT1zrGV5sR37VwtcDAPv23FiwYjdZgHiXmlvqvUts137uzcR+9F4S4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=USNTdWnH; arc=fail smtp.client-ip=52.101.83.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xyi/JnXu6T3ORChwqBUjuwPbAb3LIs7kg4XwxSZsOqLZ6OgLzOe+aUBIZvuAzpdurTq1xrDsc8fp4+rLd79MeLbpcdowNUrhOAIiTqzVHwsVSGBzWD/6j6QvdNKCN2m7LERJdTWqpBGn8Za0yFF8ogAtPrkhfqpPu1iU52Y6jMT2zHo08aG6C6vzctCpZlrWIKogtatkNxfi0YSsRoP1jaP17Bb4A0ryVmnvaLzy3ndjdlKCr+flVuF8B1Nj1ACkX0sbmVNKGtYHXz67zbQKrRtOqW62Dn12cjxCmMTHajo5rvJtrqW4KaOjn87A/JwSxxjFUXJcDJ7qXwGY3TNxAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KYQgwnmaor9RKCTk1Uc+s/xyFObYDmBrxhvDmWZQ+0I=;
- b=SgV94L9+J7a8ar5lva5Qj/oeZXb2aqbg8lO4iOlRW7cOhoUTJKfqiaNHidoz58E3SIBwjh3bVBYNnjWP7aq3DIBs3PVqYAQpB9ijJ4sbIBkut54lrYItUZQMj+FFQko/gOMIIQrhrltVkYehXVF+HVYb0tS+ZKiQ0qn4Uz9rRjasuoRiAZgvX/CN8kqUBXF5/BH0OVjtKYbyiwLBwZv9UdOMOnC1MhTevtW/pMNGZlrotLfg43AbyIDX4s5+8NI4i7MY+s/IUUGQ1QTet69H9sdhoihFfO+J8r7xq1rXjtWTyWqK0H3YZKjQtcb7pRHJR/H1hJgqXhOS9PERd077Sg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KYQgwnmaor9RKCTk1Uc+s/xyFObYDmBrxhvDmWZQ+0I=;
- b=USNTdWnHraSJSROjG5RV/pjJxQ9SrhGeP2JpISKKxMYm7GzUndX0p+3JcAP/itUPxHxs1jx6Izc7uwkBB4BQaeoDiD49F0INR1ywnJno8zRaIdEv/lnrTCS5UIiOwWOlKAufdJnRAslKUaKk2UuQZCfwyB53pdKt9Gofc9osNBdmwSK1/KTATkjnD8Bm0VPdRSE5zm0HAykHYm+CkKzspLYN21S4szvySToV4pbzeZYkCewzvZyYcRt9eCWMM+AoNR3Sm2Nz+fzBkCQrDuD29Dwu6g7DbJifH2pl/+XtAHeGLKrXEI/E6HrO6JJR6kYalDS65xv46JuOt/frasGpFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by VI0PR04MB10975.eurprd04.prod.outlook.com (2603:10a6:800:26b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9253.15; Wed, 29 Oct
- 2025 03:41:24 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::4609:64af:8a4b:fd64%6]) with mapi id 15.20.9253.017; Wed, 29 Oct 2025
- 03:41:24 +0000
-Message-ID: <1a52c081-ebb7-487b-850f-e50fb36b739a@nxp.com>
-Date: Wed, 29 Oct 2025 11:41:51 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/bridge: ldb: add support for an external bridge
-To: Francesco Valla <francesco@valla.it>, Marek Vasut <marex@denx.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Fabian Pflug <f.pflug@pengutronix.de>, dri-devel@lists.freedesktop.org,
- imx@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SG2P153CA0044.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::13)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529C61D63F7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=36.139.87.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761710614; cv=none; b=ZvAF5ubot2vH14elD8L2Q+zbdpmelZn0ur/zukZjZuQo5Zss57OFhmk2kaihARBmBUsPwd/2wXi6CJ+pJFHU+Qw0cXDElsjroWwOCkQEDHRso4Fb9wt0oM2RfpyYLyjdSJgw+Bnm8ODPkfUpN6sR0V2wx3ZOv2P2M1DkS+F42I0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761710614; c=relaxed/simple;
+	bh=zrFmmUIXMOCdMAOoV7laydL0QAUCSBQLsJZH0rCuNP4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C/7/Dc1ioK1kYE1pAE/Kn/edgodcO0CUIfxf766on6uZ0izhl+xPUCIu9A2tAk/OnY2QvlLqzIdZq607F3aP8ay9TIRw7OBVHNzqV/PWO2h+lP8faFgYx5nXlppTbKsjZEsczFhiAyCEZHYs+z/sXUSyAs6h18ma4oiYPX7Sd3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com; spf=pass smtp.mailfrom=xfusion.com; arc=none smtp.client-ip=36.139.87.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xfusion.com
+Received: from wuxpheds03048.xfusion.com (unknown [10.32.143.30])
+	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4cxClK0Jz4zBCLfh;
+	Wed, 29 Oct 2025 11:43:41 +0800 (CST)
+Received: from DESKTOP-Q8I2N5U.xfusion.com (10.82.130.100) by
+ wuxpheds03048.xfusion.com (10.32.143.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20;
+ Wed, 29 Oct 2025 11:46:01 +0800
+From: shechenglong <shechenglong@xfusion.com>
+To: <mark.rutland@arm.com>, <catalin.marinas@arm.com>, <will@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<stone.xulei@xfusion.com>, <chenjialong@xfusion.com>, <yuxiating@xfusion.com>
+Subject: [RESEND v2 0/2] arm64: spectre: Fix hard lockup and cleanup mitigation messages
+Date: Wed, 29 Oct 2025 11:45:52 +0800
+Message-ID: <20251029034554.1839-1-shechenglong@xfusion.com>
+X-Mailer: git-send-email 2.37.1.windows.1
+In-Reply-To: <20250918064907.1832-1-shechenglong@xfusion.com>
+References: <20250918064907.1832-1-shechenglong@xfusion.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|VI0PR04MB10975:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5927a15a-848e-4132-5dfe-08de169d0895
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|19092799006|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?UWJvRUYzaE5PN0tXNnpieWpuRWZleStpYlhzL0hLWkFOUTZvQWFrTXJkUFNu?=
- =?utf-8?B?anRXd2xiczdWRlBwbmtJekF5b04wb1FscDBPRitxc3VxWUkwNkp0RWhGeU1M?=
- =?utf-8?B?MjlNcm9RejByMG5CYUxWQ3dHYW1YdFFHT0JzMitCNkxJSVZCaU1Pdkowb09G?=
- =?utf-8?B?cGVpY1JVcFNkNG9yUmZEdy9ERUNKcXZFV01UYkx5Tkg5TnR0ZC9xeWJPcFhB?=
- =?utf-8?B?c25aQVpBSDduWW0vNDJNU3pVbjlPc2xpZzZIR1MzWVUxSWcvd3dPclUvN29I?=
- =?utf-8?B?WHpYWVhmU0NOeEZwY1gzcWJqcWoxQTZSMjcySXF1aThQRzhteGpFekVDczZL?=
- =?utf-8?B?bWF6SVdWRVlwV2kxamZSZkJkblhTQmZDaGhMVjdlSGZpNGFPcXI4VWNQMjRn?=
- =?utf-8?B?MGxMWkNKOTBVYldwbDVUenlrenpTUEY2a3dHTEV4TlFtOVE0d2tXL216YmxR?=
- =?utf-8?B?TGx4dDNTcG9VZGp3cHlRc3V1VzJzNG5UOEFjQmJDeGZlbXduckFvbTgwTkZl?=
- =?utf-8?B?SzdFOGVtUXZPY3QrL2tzNGwvUFd4TzFDT01EKzQvUXJCNjVWR2FGN3RLdW9o?=
- =?utf-8?B?WDhHdm9hQUdQRG9YeE1jNWlkWGNHNmpJczlxVUJRU1ZnRUUwa2xTZWVxOU82?=
- =?utf-8?B?VDJWc09oZGIvdmhyRWlWb1dMOXlGTWcycUIxRmk0NmV2T0xhVDExUGtuTXZV?=
- =?utf-8?B?ZFFFM3NLSWFsakJNUnhsdEdBWkM1a1NzdmhnenJlRmFQUFV5K3ZodWxmVUdP?=
- =?utf-8?B?TlZtaU95Y1pPSE56MkEyYTdrZVU3TmhHQUxVdWdXZUJNVkJHajhLM2k1T3Ax?=
- =?utf-8?B?RzJCQU1NeThrYUJOUTVLNlh5OCtXN0swWWJMdGl4NUdiNkdFTnUzaVJCSks5?=
- =?utf-8?B?SmgrTmR0OWJ6anVqRW1rUHlySnlRN0RxTnZaY1d3R1lBOTZ3ckhMTEFSY2lZ?=
- =?utf-8?B?Z0U3WXN3MXBwK3g4SjFSVkphVHZsblJ1R2w1YlpuTlhjMk5Kc2dhOFVrUTVq?=
- =?utf-8?B?REYvOVVpZmh1SEQzZUN4MkVWL2ZPbzBQVGl0Q2FxY3p5RHNwY2dCL0pQMWNl?=
- =?utf-8?B?bWUrYnBjd3lpamtDYkJmS1V4bWhYSEZ1cE5nTVh2bFZwUjRBNS9RS0lwcFRG?=
- =?utf-8?B?TlNBa1dNNkhhd2VuUWFwVVNFZkcxM3drT2JyMFRwUDlldjJ0Wjl6Q0dHSXd3?=
- =?utf-8?B?YVJDMWxmMEh0SDIzbjVZWWhtTHJCd1BPNEpIZm5SN3I4bDBWWjZwb0FFRVF2?=
- =?utf-8?B?UWkrSytvNHluUGxKUGMyNnlmTlU3TjFDM2tRLzhNYnR4a1B2SXhpbitVTUdQ?=
- =?utf-8?B?d2FSVktXbUMwTllSa1BSQkFrTEtPb09FR2xIWTR5Q2hCTmxFTW40YUxmOS83?=
- =?utf-8?B?dWFYTVZ3aXpwcm0rSW5zVEdHc3Rwd1JJUEtzWE5MWm1xSk9HdEFTQkphUUhB?=
- =?utf-8?B?cDVidzV1QzBvUDZ0Z2VvN0dWRHpWaEQrQlJHakFGWmNmTXo3Z0hHYldGNWgy?=
- =?utf-8?B?Vmx1UW5KUTVhdDYwRnVCSTZUd0lrUzBVOHpUWE1FUk13UWNoVEZIMHRXWkxE?=
- =?utf-8?B?c0d6ZDlnbnBXVG9meURCVkpGMjQxa2N1WEY4RXJrSk1LSWw0M3EwVEppVFBz?=
- =?utf-8?B?Smt4dVU0bzlIRUk4NkQ4cEdCR2pZeCtLek9hS1dYd1llMTNmVFRCNE5sNWQ5?=
- =?utf-8?B?MEY2SEFDNGxUc1JNWmVBdlRYckZnYUlORHUxZS9MMnlNNWh6aVp4aFA5Ukp4?=
- =?utf-8?B?WVBOUEh4ZTJsbGFxcjNSdk1UdlA0N2lnVFBHb0hJY1VlbC9BRWJkNUhTZXVk?=
- =?utf-8?B?c09ROTRqRXJ4a2hqeWwwaHRIQUNnZS9vNUpxVWlPdEgvTnNQMEVxSWI3L1Iw?=
- =?utf-8?B?dGlwRjYyNDFJYUQxQWpKdlhJeDRvdW5iaUVaNHhQTTFXbUJJUFFPckw1dHI5?=
- =?utf-8?Q?hjM51Wr+qsKfFNGkKyf/ao7T+rXpolDC?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(19092799006)(7053199007)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?ZzBkMys5d3FVdURCemdKakxUaS94NVMvK0J4eDNDQitEK1htNDV4aUQzOG8v?=
- =?utf-8?B?Z1JFOWR5VnR5YXo5QUZJY2U4WktvNG4zYmwyajB2RzkxSFRMU1MwUGdwL2dZ?=
- =?utf-8?B?MXRlanNqR2dRQUtmNlFLZ3VhTGFFWjB3aFFuckZiRjA2MXdWaG91a2E1akxx?=
- =?utf-8?B?RHhSdHdGVjZ3UkExMGM2LytORXlKdVQwNUtwZ0dEdkdTZGdGQnB6QkRNQlpO?=
- =?utf-8?B?UFY3SzdNdDlNRFhEb1pPSTFpamJ0TkVsMnI1eXdVL09IUm5ETFNJUXQveHBx?=
- =?utf-8?B?TW1Mbng3emp1ak14TjlKSXFrUUZlRXUrUVhVVTlOMkVjVWxNR3ZRWFBKdnRG?=
- =?utf-8?B?U0wxMFpHMWpyNjVBcFBBVGlrQnl0T3ZkTHhpVVE1WWVhcGMzbjhkSXUxdUJw?=
- =?utf-8?B?MDVBM1RkV2JTUVhtYnNRbGtRM1dpcGF0Y1pRSTZ5SGZsaURHczJPdmRHenla?=
- =?utf-8?B?eEtGYStQbnppRTIyNnNwTGZKeVFjUXVtTzB2SEg5Z3UxRUVNcnlKVVdZd1dR?=
- =?utf-8?B?L3cwakxmMDdraDJJbjdGbXljbW9BMjdRY0NtM0RZVFNCTkRUVnVQZXM4b1Y2?=
- =?utf-8?B?L1ZHVCtWdTFZbzZTaDZiZUEwU2MvNEhobjJXU0d0Mk5jcEsyVUFDTU9peFhT?=
- =?utf-8?B?b2dUUDBvVzI5cmRlTFc2eWlJYlJLMWtIcnVkYTVtczZtcWlRMkpveXZzT242?=
- =?utf-8?B?NzlWS3lMcituenMwdkkvR3FmYVZtcEtXMWcrOUMrL3FsNVNUVzBQbWZQZnla?=
- =?utf-8?B?VitLQm1GQnhXMy9NSFZ3M3pja1FoOE1VV1VSSDloUXJLMXFZTW5Mc29xYUw1?=
- =?utf-8?B?aWErMk92V0RwSkdmbVRsbWdoa2RkTm41dElmUmJXUW81UmFUYm93WlAzU21P?=
- =?utf-8?B?VlpHZ3dRT0VsLzAxSVRUYkR2enBKL0R3d2I3S2g5dm93WUd1WldnRW5rNTl6?=
- =?utf-8?B?dG02QlU0QUZsVTRSY2kvNzJ1WGxGSVdDNVAzRVpTRTlkM0xjYXlUU05hOFd6?=
- =?utf-8?B?SjZBcEVMOXhuc1pTVUdZTVM0TUpCT0F5Zm1qOUNlMllaQ3RjdWNmMWtUaE56?=
- =?utf-8?B?U3VSRElJd3A3djFzRkp6ZzEyY0VYNjVCaUJ3dW1OYm44WEdvbEs2RWVFNTNn?=
- =?utf-8?B?WEVWMndjc1drUHFwM1A2VnFZT1dHRmlXZTArSlZ6ZlpPcVlGblNGeGs2NFg2?=
- =?utf-8?B?T0g0R2dIKzB4MSt2akpZdG9Cb0pXQkRsSXo1U1d6eG04Z2NFSGVlWGpoUSsz?=
- =?utf-8?B?eTZEOFg5eWsrRm5wNDVmQ1Q1RmVZcUpKc084WTNtbytBQ1R4TkEzR1g5blNH?=
- =?utf-8?B?Qy8wVzdIODlvOVJYOFkzSGRxZW0wY0lzK3hQdFZZcHNLNzREYks2V3M5a0cw?=
- =?utf-8?B?RUdyV0pRUXptWlIzMTh3dWhtb3Y4R3ZKdnN0V3NqNy84WXcwcnlsU2wyWk05?=
- =?utf-8?B?VVh1QmRjY2FuQWxnYUVxQlhGUkIwWDBDU3ptSGU3MGhTZTZaVGZqV0wzUWxF?=
- =?utf-8?B?c1ZVcDBFU2gyTmxnSktEcWNITEt2eElZUnRhb1dzVTd6L1E2QmNnQ2h0T0lh?=
- =?utf-8?B?d2VGTW9xaU9pZVRjaUxZUlFnVEEwaDk2UHMxZkpka3k2UTZkcjd1NnFQOFpN?=
- =?utf-8?B?VEJyVzNNSHVhQXRPdzMwaEZtWUYxanJ4TThpK2Z0d3hoSUdxUU5TWGdrVTM4?=
- =?utf-8?B?RGo0UmM0alQ2WWpCQ0svQzVrOUN5VS90aytia0NyTmt3TXZSRU5tZnhoQWJa?=
- =?utf-8?B?bThmbVVPUys5RndZZUdtV3N0bGN4LzR4RHV5bEtkOWZnQ3pnS3N6R1JlNTN6?=
- =?utf-8?B?TDlNTWZpQ202NFhRK0xEdk40R0o1TjUxWnQvZ0FNc2tyL0kzWmFxSU1OenhM?=
- =?utf-8?B?Q2ZsTi9RMW1pa0ZEbzYyYUh4UnN0QnJrbTdQcHNqY3R2bFRRMVFiNG1SL2g2?=
- =?utf-8?B?MVhFOHF1Mi9QUk5oTWpuUVFNOHpyN05LUFJ0d2EyU0VGWlcydUd2eXlCd2Z5?=
- =?utf-8?B?S1o4YmFpcXRTSTMrejJiWXBRQjFmV29YSlQxOTJVU0lUT1RlK3U5VDVtNktj?=
- =?utf-8?B?QXR4bnpvaURIY2hmV0grc1R5UlRpZmE1eVl5Z1RSTnRpTTZRSnFPNWVpOXZJ?=
- =?utf-8?Q?p6jtVmOqyCjslGFlFj/zjdx52?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5927a15a-848e-4132-5dfe-08de169d0895
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 03:41:24.5055
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LeYPeDQffVh+6KmHQXj1TNB5lYhlJwVZZtA6wVoSIyw+sa2cSJ16JE1EpdBSaf4dDU3MkMjECRD3h83o1chdEA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10975
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: wuxpheds03046.xfusion.com (10.32.128.186) To
+ wuxpheds03048.xfusion.com (10.32.143.30)
 
-On 10/28/2025, Francesco Valla wrote:
-> [You don't often get email from francesco@valla.it. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
-> 
-> One option for the LVDS port of the LDB is to be connected to an
-> additional bridge, such as a LVDS to HDMI converter. Add support for
-> such case, along with the direct connection to a panel.
-> 
-> Signed-off-by: Francesco Valla <francesco@valla.it>
-> ---
-> I was trying to add display support for the i.MX93 FRDM on top of the
-> patch sent some time ago by Fabian Pflug [1], using some of the work
-> already done by Alexander Stein but not yet merged [2], but then I
-> noticed that the support for LVDS-HDMI converter bridges was missing
-> from the LDB driver already present for the i.MX93.
-> 
-> Not a fail of the driver itself, obviously, but I wonder if/how the
-> existing i.MX8MP setups (e.g.: [3]), which use the same driver, work
-> correclty. Unfortunately I don't have the i.MX8MP hardware to test them.
-
-[3] was in my previous patch series[a].  Only patch 6&7 of [a] are applied,
-so for now [3] doesn't actually work with i.MX8MP.
-
-And, patch 3 of [a] supports the external bridge this patch tries to support.
-
-[b] is another patch series which includes my patch.
-
-[a] https://patchwork.freedesktop.org/series/139266/#rev7
-[b] https://patchwork.freedesktop.org/series/154381/
-
-> 
-> Anyhow, a patch for such setup is attached; it was tested on the i.MX93
-> FRDM using [1] and [2] plus some more devicetree modifications.
-> 
-> [1] https://lore.kernel.org/all/20251022-fpg-nxp-imx93-frdm-v3-1-03ec40a1ccc0@pengutronix.de
-> [2] https://lore.kernel.org/all/20250304154929.1785200-1-alexander.stein@ew.tq-group.com
-> [3] https://elixir.bootlin.com/linux/v6.17.5/source/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-> 
-> Regards,
-> Francesco
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 5c3cf37200bcee1db285c97e2b463c9355ee6acb..fad436f2e0bfac8b42096a6fcd0022da0f35284e 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -294,7 +294,6 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->         struct device *dev = &pdev->dev;
->         struct device_node *panel_node;
->         struct device_node *remote1, *remote2;
-> -       struct drm_panel *panel;
->         struct fsl_ldb *fsl_ldb;
->         int dual_link;
-> 
-> @@ -335,15 +334,24 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->                 fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
->                 fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
-> 
-> -       panel = of_drm_find_panel(panel_node);
-> -       of_node_put(panel_node);
-> -       if (IS_ERR(panel))
-> -               return PTR_ERR(panel);
-> -
-> -       fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> -       if (IS_ERR(fsl_ldb->panel_bridge))
-> -               return PTR_ERR(fsl_ldb->panel_bridge);
-> +       /* First try to get an additional bridge, if not found go for a panel */
-> +       fsl_ldb->panel_bridge = of_drm_find_bridge(panel_node);
-> +       if (fsl_ldb->panel_bridge) {
-> +               of_node_put(panel_node);
-> +       } else {
-> +               struct drm_panel *panel;
-> 
-> +               panel = of_drm_find_panel(panel_node);
-> +               of_node_put(panel_node);
-> +               if (IS_ERR(panel))
-> +                       return dev_err_probe(dev, PTR_ERR(panel),
-> +                                            "Failed to find panel");
-> +
-> +               fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> +               if (IS_ERR(fsl_ldb->panel_bridge))
-> +                       return dev_err_probe(dev, PTR_ERR(fsl_ldb->panel_bridge),
-> +                                            "Failed to add panel bridge");
-> +       }
-> 
->         if (fsl_ldb_is_dual(fsl_ldb)) {
->                 struct device_node *port1, *port2;
-> 
-> ---
-> base-commit: fd57572253bc356330dbe5b233c2e1d8426c66fd
-> change-id: 20251028-imx93_ldb_bridge-3c011e7856dc
-> 
-> Best regards,
-> --
-> Francesco Valla <francesco@valla.it>
-> 
-
-
--- 
-Regards,
-Liu Ying
+On Wed, Sep 24, 2025 at 08:32:47PM +0800, shechenglong wrote:=0D
+> relocate the printk() calls from spectre_v4_mitigations_off() and=0D
+> spectre_v2_mitigations_off() into setup_system_capabilities() =0D
+> function, preventing hard lockups that occur when printk() is invoked fro=
+m scheduler context.=0D
+> =0D
+> Link: =0D
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/2025091806=0D
+> 4907.1832-1-shechenglong@xfusion.com/=0D
+> Suggested-by: Mark Rutland <mark.rutland@arm.com>=0D
+> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>=0D
+> Signed-off-by: shechenglong <shechenglong@xfusion.com>=0D
+=0D
+Thanks for the review and suggestions, Will!=0D
+=0D
+This v2 series addresses your comments:=0D
+- Fixed the message to use "command-line" consistently=0D
+- Created spectre_print_disabled_mitigations() function to handle all spect=
+re mitigation messages=0D
+- Added a separate patch to remove the CONFIG_MITIGATE_SPECTRE_BHB option=0D
+=0D
+The series includes two patches:=0D
+=0D
+Patch 1: "fix hard lockup triggered by printk calls within scheduling conte=
+xt"=0D
+- Moves printk calls from scheduler context to setup_system_capabilities()=
+=0D
+- Prevents hard lockups by avoiding printk in unsafe contexts=0D
+- Consolidates spectre mitigation status reporting=0D
+=0D
+Patch 2: "Remove the print when the CONFIG_MITIGATE_SPECTRE_BRANCH_HISTORY =
+Kconfig option is disabled"=0D
+- Removes the obsolete CONFIG_MITIGATE_SPECTRE_BHB Kconfig option=0D
+- Cleans up the spectre mitigation code as suggested=0D
+=0D
+shechenglong (2):=0D
+  arm64: spectre: fix hard lockup triggered by printk calls within scheduli=
+ng context=0D
+  arm64: spectre: Remove the print when the CONFIG_MITIGATE_SPECTRE_BRANCH_=
+HISTORY Kconfig option is disabled=0D
+=0D
+ arch/arm64/include/asm/spectre.h |  2 ++=0D
+ arch/arm64/kernel/cpufeature.c   |  7 ++++++-=0D
+ arch/arm64/kernel/proton-pack.c  | 28 ++++++++++++++--------------=0D
+ 3 files changed, 22 insertions(+), 17 deletions(-)=0D
+=0D
+-- =0D
+2.25.1=
 
