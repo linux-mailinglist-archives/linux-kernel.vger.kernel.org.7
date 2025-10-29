@@ -1,178 +1,158 @@
-Return-Path: <linux-kernel+bounces-876440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7352DC1B7F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D4BC1B7FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1718188E988
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3955E188D2AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7541D34F465;
-	Wed, 29 Oct 2025 14:47:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4AF3358AC;
+	Wed, 29 Oct 2025 14:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PM288K1s"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlja5Mq4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0BC34DB53
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D748A2FDC5D;
+	Wed, 29 Oct 2025 14:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749244; cv=none; b=snNiFi7T0KzemeKuO81iVz33f9Lr6Aa3McgDvx0/O4H7fb7puRHW3EQv/tl8b0hjn9+D1ZEj9XtbW+ZaCLz96pCzUDRB1kvSmz6+ESy7Ka9pcaDK1JIb3Wa/OY9OPO8PsMQfxQHxjylPlZwaXdcvGERlH4k/h+X1kR8uKYEkbas=
+	t=1761749347; cv=none; b=jzGBiDs4CJYsnGmHG0a9eMBjO+vAg9A8tfI8Rb7WDw1lVuVBj/XAZ2U3eBazDglORs8Cs2iSowBISCyy60prMdfVRLz/a02p4Lm5oEgLlN+Ozn1DuVIA03T7CwR+eFRKAEU3swZily9tJQfSjR3SmAq6kO8QFioWGeS2u7cAHf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749244; c=relaxed/simple;
-	bh=LTP67G+nQEoavdX5Wqu457R19zx0Ya1qFOJgtgAcoUw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iPyH4+0copfGlmxn5uBjvhu9qSbdH9c9GoUNiuG/FtMO8EBZ1Rx6xF/Yfb9dqvXqldhPProdozFjf09h2iqtD2yAkbUdnpyBIDZ99nm4pDX836qYhrWpJqtE54r7g0AUaArmFl6SRn/in7J3G98A/BjTUou5e3DlDBGywu8RxEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PM288K1s; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63c556b4e0cso6301690a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:47:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761749241; x=1762354041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8y7IaEKl9ZSpE7jjzq1dSeS8kFbTxAEVZQkW1AF3jcE=;
-        b=PM288K1sfc5A4Y24S8iNRievBziGWuT7SU/q9fNQRDvhqwutGEWjs9YApCinTSbr9z
-         RNmQPd/zQH/hHzxXnfjVajK936l7VqI2pIx3N3grAfp9Qx3kGO5qtha3YgX3dxrDCYuI
-         j91zXH4uj3lKt9aFHrhzGRPnuhBm9cvqYM8rbAJxv4oAXX+QtzNX4Yii+DvJXzv6Q5DZ
-         PxF/lWgyVQay78EGmZsBfuJS4zGctPZnpCZz4tcyNhUS9kK51SEP7g7ZS4uIlTjpgjt+
-         DK79vXNN6IiuR2mYo6dPv+lU91w/FLyvFk5zygd+FIHuV6zw9B/DJwclf83SiDfmBLkR
-         uOwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749241; x=1762354041;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8y7IaEKl9ZSpE7jjzq1dSeS8kFbTxAEVZQkW1AF3jcE=;
-        b=SY+vwdVMTl8AwzDkGDA2OquYuDePB6knI5nwSHHXJYKoSO/d/67RV+zrs8/c68bO0z
-         7Eo785IL6jzCXLWxlRMqDB7UcSmtYHiloPL1+MQM6CJ8ARdHBQxzDIeL6xGT3/5mGlH7
-         Z69ljjqFbJVcO8/3PcFH8sxZArae8HcadMRzvH9cN/NIS4PfoM7aO4xaWucayEMlal3W
-         18JLdFvvVZi3X/ijhEvn+qf8u1aQEhwtpSsTN8UyMGqGCj8WI5gVyAyfaVB88eSHuKw3
-         Ib0NrhN/EgvBXUNNEqPIZievzA8p6TxPhTA7VSXr8H7xhg3F81+zxtq16fgQzRnYZW6A
-         WJAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtx/toyto/UANRu586mL5vxs53n69tgYD9tBIFpJYZzaFPXi6pkTB9zrWcfz4L+G4uyOtmtEz4fk2/iKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy67hCt5DuJ+F+fPSF22F7960pGEs64RcNHl/iMarktz6KSt8xa
-	M5M3cBR0pp2iItjLyF8rIXbjJfGaONLoECBUTiPln9/19zSrZEIAOGVf
-X-Gm-Gg: ASbGncujA6gNhsXqJ5OWrAjUOCEmNXwpFMfFCpTg5+k1NHzQRAoLy1URw4r2dnBxmD3
-	bXw2LkE+BtWKQz3hLqsU9xj4Xji1g7nlZuAZ0fywwi9Itcr9G023BVbrwk3EthZjMEVnJSbMaUr
-	+FiCt0c681GwS8RAZJJou/2Hv4wwIMBfy+A/MUIXe4fV8bMH2iXoBhqIBN25/RpZmksnk82imWf
-	kKFHzJaja8Hu0nLykr1K3hqQWGkLD/m5XqO268nvEzc7Kz18Nmfu+dDxCVc8tM9YIbYmzA3KSr+
-	lPGuR627BSkdvsNd3Hciv73S8NR/qF7Dmpr77I2JEVk+nGF9DOWwfi2kswUN+B43f/5zWqmMPel
-	+X6obnXKjVoUROLUbY/snpMjeX4Isy47n0TPhyiJiy9MVPq1F0xTElj3+j/7TmSgWaulZb/4wlB
-	ITGgJfCoXBNhrS6nF8sTDKNscl77Xk0G9h
-X-Google-Smtp-Source: AGHT+IHgORKDGPw+ITEWuAutZRKq+hGzvmS0B08lzp6+SYDYojWyhecKTsUlp7KruwEoQhiFvx9elA==
-X-Received: by 2002:a05:6402:5207:b0:639:c9c2:3956 with SMTP id 4fb4d7f45d1cf-640442692d9mr2330509a12.28.1761749241215;
-        Wed, 29 Oct 2025 07:47:21 -0700 (PDT)
-Received: from [10.25.210.164] ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-63e7ef9a5cbsm12168527a12.23.2025.10.29.07.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 07:47:20 -0700 (PDT)
-Message-ID: <20a3325e-d8be-4a1d-890d-bf112d170bcc@gmail.com>
-Date: Wed, 29 Oct 2025 07:47:18 -0700
+	s=arc-20240116; t=1761749347; c=relaxed/simple;
+	bh=HxTqJgI/0X/CEmspyZav8h3FXPWX3qB1qsKFzsoN4as=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYu099VPX9kg+ssE1FryC8Ij4MEKVQ3MMQKmk2jZMqQQk+18WfXRWH2y/XrUbpbvEf6N0FFYtwcbnPLFdBw9QuCqD4cU+WTrS5fai+uzxA6EUoq55GrNLvZkSvleVWQawSJyG1wQk+CsHB6GSQWfMqgm7+VL1Kf6Z2bIwfg0n38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlja5Mq4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA588C4CEF7;
+	Wed, 29 Oct 2025 14:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761749346;
+	bh=HxTqJgI/0X/CEmspyZav8h3FXPWX3qB1qsKFzsoN4as=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tlja5Mq4eRWp697QA/xQ+7a9KJbcnrMdob9cxsXt9OIQA755+bFzbNzRv16bZ4K7i
+	 B9LDftZXKO7gStpMqGdXCVrWsVQ+ROKQ4K+QvkxPz38VTj++u90ce6yRHNCsPSi5pD
+	 v/JhE3LMKbYoWFWsQEzSVXb3Hm7XB2z8+8xOj7ZC7Xvnlx4rEDqU8ejlyTgLe/T9R2
+	 3vUJArOhgOLb46RZqe+pCWQx7olKyL6EJb+OqaocNuhbMh3d/KGFm/ek9z7wlrO99H
+	 rF7V3yVMeDSwqgzEw1be+gsJR70/J/KwRrqpNcrj62az9WVQF5F5bIT1qWPQ84EK24
+	 yw1IH2IxbPQpw==
+Date: Wed, 29 Oct 2025 15:49:03 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
+	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
+	Jann Horn <jannh@google.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
+Subject: Re: [RFC PATCH v6 27/29] x86/mm/pti: Implement a TLB flush
+ immediately after a switch to kernel CR3
+Message-ID: <aQIpXyX-z8ltB1i5@localhost.localdomain>
+References: <20251010153839.151763-1-vschneid@redhat.com>
+ <20251010153839.151763-28-vschneid@redhat.com>
+ <aQDoVAs5UZwQo-ds@localhost.localdomain>
+ <xhsmh3472qah4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <aQHtBudA4aw4a3gT@localhost.localdomain>
+ <xhsmhwm4dpzh4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] arm64: dts: imx8mp: convert 'aips5' to 'aipstz5'
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250821105634.1893-1-laurentiumihalcea111@gmail.com>
- <20250821105634.1893-3-laurentiumihalcea111@gmail.com>
- <e25494da-9d27-4416-ac79-317c8b9a6653@kernel.org>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <e25494da-9d27-4416-ac79-317c8b9a6653@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <xhsmhwm4dpzh4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
+Le Wed, Oct 29, 2025 at 03:13:59PM +0100, Valentin Schneider a écrit :
+> On 29/10/25 11:31, Frederic Weisbecker wrote:
+> > Le Wed, Oct 29, 2025 at 11:16:23AM +0100, Valentin Schneider a écrit :
+> >> On 28/10/25 16:59, Frederic Weisbecker wrote:
+> >> > Le Fri, Oct 10, 2025 at 05:38:37PM +0200, Valentin Schneider a écrit :
+> >> >> @@ -171,8 +172,27 @@ For 32-bit we have the following conventions - kernel is built with
+> >> >>      andq    $(~PTI_USER_PGTABLE_AND_PCID_MASK), \reg
+> >> >>  .endm
+> >> >>
+> >> >> -.macro COALESCE_TLBI
+> >> >> +.macro COALESCE_TLBI scratch_reg:req
+> >> >>  #ifdef CONFIG_COALESCE_TLBI
+> >> >> +	/* No point in doing this for housekeeping CPUs */
+> >> >> +	movslq  PER_CPU_VAR(cpu_number), \scratch_reg
+> >> >> +	bt	\scratch_reg, tick_nohz_full_mask(%rip)
+> >> >> +	jnc	.Lend_tlbi_\@
+> >> >
+> >> > I assume it's not possible to have a static call/branch to
+> >> > take care of all this ?
+> >> >
+> >>
+> >> I think technically yes, but that would have to be a per-cpu patchable
+> >> location, which would mean something like each CPU having its own copy of
+> >> that text page... Unless there's some existing way to statically optimize
+> >>
+> >>   if (cpumask_test_cpu(smp_processor_id(), mask))
+> >>
+> >> where @mask is a boot-time constant (i.e. the nohz_full mask).
+> >
+> > Or just check housekeeping_overriden static key before everything. This one is
+> > enabled only if either nohz_full, isolcpus or cpuset isolated partition (well,
+> > it's on the way for the last one) are running, but those are all niche, which
+> > means you spare 99.999% kernel usecases.
+> >
+> 
+> Oh right, if NOHZ_FULL is actually in use.
+> 
+> Yeah that housekeeping key could do since, at least for the cmdline
+> approach, it's set during start_kernel(). I need to have a think about the
+> runtime cpuset case.
 
-On 8/24/2025 4:29 AM, Krzysztof Kozlowski wrote:
-> On 21/08/2025 12:56, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> AIPS5 is actually AIPSTZ5 as it offers some security-related
->> configurations. Since these configurations need to be applied before
->> accessing any of the peripherals on the bus, it's better to make AIPSTZ5
->> be their parent instead of keeping AIPS5 and adding a child node for
->> AIPSTZ5. Also, because of the security configurations, the address space
->> of the bus has to be changed to that of the configuration registers.
->>
->> Finally, since AIPSTZ5 belongs to the AUDIOMIX power domain, add the
->> missing 'power-domains' property. The domain needs to be powered on before
->> attempting to configure the security-related registers.
->>
->> The DT node name is not changed to avoid potential issues with DTs in
->> which this node is referenced.
->>
->> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Where did it happen?
+You can ignore the runtime thing and simply check the static key before reading
+the housekeeping mask. For now nohz_full is only enabled by cmdline.
 
+> Given we have ALTERNATIVE's in there I assume something like a
+> boot-time-driven static key could do, but I haven't found out yet if and
+> how that can be shoved in an ASM file.
 
-https://lore.kernel.org/lkml/Z+xY4wZ8ZFSOJhGS@lizhi-Precision-Tower-5810/ <https://lore.kernel.org/lkml/Z+xY4wZ8ZFSOJhGS@lizhi-Precision-Tower-5810/>
+Right, I thought I had seen static keys in ASM already but I can't find it
+anymore. arch/x86/include/asm/jump_label.h is full of reusable magic
+though.
 
+Thanks.
 
->
->> ---
->>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 10 ++++++----
->>  1 file changed, 6 insertions(+), 4 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> index bb24dba7338e..b62bb821cf61 100644
->> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
->> @@ -1396,12 +1396,14 @@ eqos: ethernet@30bf0000 {
->>  			};
->>  		};
->>  
->> -		aips5: bus@30c00000 {
->> -			compatible = "fsl,aips-bus", "simple-bus";
->
-> This breaks all the users. I understood explanation as "it is better",
-> no real reasons.
-
-
-sorry, a rather poor choice of wording on my part....
-
-
-the reason we're doing this change is because we need to configure the bridge's
-
-security-related registers. If we don't, masters such as the DSP core won't be able to
-
-access the peripherals connected to this bridge after the AUDIOMIX PD is turned off
-
-and then on. The configuration needs to be done before any of the masters attempt to
-
-perform transactions to the peripherals.
-
-
-yes, this change is not ideal and we've had problems caused by this
-
-(seeÂ https://lore.kernel.org/lkml/20250707234628.164151-2-laurentiumihalcea111@gmail.com/ <https://lore.kernel.org/lkml/20250707234628.164151-2-laurentiumihalcea111@gmail.com/>)
-
-so if you have any suggestions that would be much appreciated.
-
-
->
-> No, you cannot do that.
->
-> Best regards,
-> Krzysztof
+-- 
+Frederic Weisbecker
+SUSE Labs
 
