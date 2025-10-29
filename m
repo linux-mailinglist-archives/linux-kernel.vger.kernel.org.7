@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-876408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E97C1B7A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DEFC1B6DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E97C1586316
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC131886EEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716663358A9;
-	Wed, 29 Oct 2025 14:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CFB35471F;
+	Wed, 29 Oct 2025 14:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLMPmw1D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZck+EXT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94A882D2388
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFDCD334C10
 	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748843; cv=none; b=SGbsLKbwGPs8FLFwK3ADklZ/wGLJLu5w1/GsKaKOb3m0xWpSl7V8fKEIklKPvIf2oaHtN2R8RdUs62CnyXO+9TIi5ue/KSmSvTBLftJfQBRcCt4nupyKjghOhtMgOaDdXnrBXd+8rAnz5bcAe7PCPcTA/r3buaCH541GdmqAWl0=
+	t=1761748844; cv=none; b=RcEx4mOv/q6V2KSPfd5xOkZrr84Our9ZWUNoJMe/YOmxhYddy18DQnGhsNLs4EQY0szVFUWL+5s5comIYUtKhA1s8OjWWE4bwrkq01JYAfrQb47uLEkG8wyr0nowhuQZq2CZgdHm2SwVFrbCs+LIMXqpCPAut3hOJYnhrRVDsKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748843; c=relaxed/simple;
-	bh=wg37EDSPNiuppcK5YThO5GZtGFA0XcoRUs2ElGjIviU=;
+	s=arc-20240116; t=1761748844; c=relaxed/simple;
+	bh=alfYw/p8bOUa+Gg/w3r1+y5k7YJzf/w9htpvP4PF8vY=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=euYKOqO7WJb6zcuyecw5PH2AuJ/+agUP/5b+7O3zM6cr4rcF3BepvXVP9+WKMs5WFuM2mEkGZH8lyFLpouhdDz6wujpEvMjgXhmrolF+umN4Bku9799yEfCuEjA2YxUkfeDqnO/tRYgB3lmxlSvlcK43X6hvHS0vXd+WEUmdx8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLMPmw1D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D8EAC4CEFF;
+	 Content-Type; b=rfFhJEXwXKqSYN2EjOoUL+PEQaZHcgCDQNp+qfRwlyD75x6oa3WmxPxLcD+SGzQXdsJ2h1vAQcXD0MULuQe7zJ6ZSWlYbM2cRLVe9htq+SHFC+D4jwtcdfxh/DcZsQZHxhb/3eUwxGhOz744I0une70cMC7xcPzjF1652KZEBLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WZck+EXT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B99A4C116D0;
 	Wed, 29 Oct 2025 14:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761748843;
-	bh=wg37EDSPNiuppcK5YThO5GZtGFA0XcoRUs2ElGjIviU=;
+	bh=alfYw/p8bOUa+Gg/w3r1+y5k7YJzf/w9htpvP4PF8vY=;
 	h=Date:From:To:Cc:Subject:References:From;
-	b=pLMPmw1DUTJyoqkVPR8AMOevonqEn8uP9DzIJc6gbsuUPawSfgL7cr7t8MYEtEsnM
-	 ddTEd+WEdYGmglkWqeL+o+nJwqHlHyhyOdsISnIvFeKpmG4mNRvCf0f7LI/KVFWnkI
-	 yQobS5VrSB/jxBRYSYGsbayLzK4T4YivtHPbzTs5Xler9JlqvkG0S/2H5Zykzevu8s
-	 Er80Hir620l5g8GgUG+8igPMZfFl71bUI+r0OBfTl6aGFjlS3qk2EyU4N7/rTrFkft
-	 FKC53KfAWm06M244RGXvHXfQVy9TQl+Ep3NkJ/ge578Isjs9E885shEgGPtlFDMRll
-	 VRh6Kojp0HbWQ==
+	b=WZck+EXTmk5oGHB3zjKYVDwaC4FqBgWCg0ZL9vN6sHNWLaxf6VE0mJDLcBeqfIlDR
+	 RXjh0UPm+iCV9kB94UMQM6cFUwFQ7t/mXFCBZcqDWIeampyBUgH6VeZgT3qaIVq38k
+	 DNFr+70FsQ77tjWwT1IxFAhnw8JlOhtJ5bMglk1u4lCqqd65e6Q97JnB2zu4R0bH5n
+	 qJJQU8zLZh2pyl8d7l1IMzRFC0MZ4KbyLoNF2o5O68vUUK6cuBQPKfLIUmh5RWGe+X
+	 EJyxpvPuvARL86NqLcmf7y7x92PzXymXdFnNLUS23bHvn14gFjs0JJKUEVuPecPi6a
+	 D/DOeIBgWIq7w==
 Received: from rostedt by gandalf with local (Exim 4.98.2)
 	(envelope-from <rostedt@kernel.org>)
-	id 1vE7Ma-000000052vE-0KNa;
+	id 1vE7Ma-000000052wh-2SzN;
 	Wed, 29 Oct 2025 10:41:24 -0400
-Message-ID: <20251029144123.925809276@kernel.org>
+Message-ID: <20251029144124.436727459@kernel.org>
 User-Agent: quilt/0.68
-Date: Wed, 29 Oct 2025 10:40:44 -0400
+Date: Wed, 29 Oct 2025 10:40:47 -0400
 From: Steven Rostedt <rostedt@kernel.org>
 To: linux-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
@@ -64,7 +64,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Jiri Olsa <jolsa@kernel.org>,
  Adrian Hunter <adrian.hunter@intel.com>,
  Ingo Molnar <mingo@redhat.com>
-Subject: [for-next][PATCH 03/13] perf: tracing: Simplify perf_sysenter_enable/disable() with guards
+Subject: [for-next][PATCH 06/13] tracing: Display some syscall arrays as strings
 References: <20251029144041.475297995@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,10 +76,17 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-Use guard(mutex)(&syscall_trace_lock) for perf_sysenter_enable() and
-perf_sysenter_disable() as well as for the perf_sysexit_enable() and
-perf_sysexit_disable(). This will make it easier to update these functions
-with other code that has early exit handling.
+Some of the system calls that read a fixed length of memory from the user
+space address are not arrays but strings. Take a bit away from the nb_args
+field in the syscall meta data to use as a flag to denote that the system
+call's user_arg_size is being used as a string. The nb_args should never
+be more than 6, so 7 bits is plenty to hold that number. When the
+user_arg_is_str flag that, when set, will display the data array from the
+user space address as a string and not an array.
+
+This will allow the output to look like this:
+
+  sys_sethostname(name: 0x5584310eb2a0 "debian", len: 6)
 
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Mark Rutland <mark.rutland@arm.com>
@@ -96,110 +103,96 @@ Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Ingo Molnar <mingo@redhat.com>
-Link: https://lore.kernel.org/20251028231147.429583335@kernel.org
+Link: https://lore.kernel.org/20251028231147.930550359@kernel.org
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_syscalls.c | 48 ++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 26 deletions(-)
+ include/trace/syscall.h       |  4 +++-
+ kernel/trace/trace_syscalls.c | 22 +++++++++++++++++++---
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
+diff --git a/include/trace/syscall.h b/include/trace/syscall.h
+index 9413c139da66..0dd7f2b33431 100644
+--- a/include/trace/syscall.h
++++ b/include/trace/syscall.h
+@@ -16,6 +16,7 @@
+  * @name: name of the syscall
+  * @syscall_nr: number of the syscall
+  * @nb_args: number of parameters it takes
++ * @user_arg_is_str: set if the arg for @user_arg_size is a string
+  * @user_arg_size: holds @arg that has size of the user space to read
+  * @user_mask: mask of @args that will read user space
+  * @types: list of types as strings
+@@ -27,7 +28,8 @@
+ struct syscall_metadata {
+ 	const char	*name;
+ 	int		syscall_nr;
+-	u8		nb_args;
++	u8		nb_args:7;
++	u8		user_arg_is_str:1;
+ 	s8		user_arg_size;
+ 	short		user_mask;
+ 	const char	**types;
 diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 528ac90eda5d..42d066d8c0ab 100644
+index 3f3cdfc9958e..b8e9774a8abd 100644
 --- a/kernel/trace/trace_syscalls.c
 +++ b/kernel/trace/trace_syscalls.c
-@@ -1049,22 +1049,21 @@ static void perf_syscall_enter(void *ignore, struct pt_regs *regs, long id)
+@@ -184,7 +184,7 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
+ 		ptr = (void *)ent + (val & 0xffff);
+ 		len = val >> 16;
  
- static int perf_sysenter_enable(struct trace_event_call *call)
+-		if (entry->user_arg_size < 0) {
++		if (entry->user_arg_size < 0 || entry->user_arg_is_str) {
+ 			trace_seq_printf(s, " \"%.*s\"", len, ptr);
+ 			continue;
+ 		}
+@@ -249,6 +249,7 @@ print_syscall_exit(struct trace_iterator *iter, int flags,
+ static int __init
+ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
  {
--	int ret = 0;
- 	int num;
++	bool is_string = entry->user_arg_is_str;
+ 	int i;
+ 	int pos = 0;
  
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
+@@ -266,7 +267,7 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
+ 			continue;
  
--	mutex_lock(&syscall_trace_lock);
--	if (!sys_perf_refcount_enter)
--		ret = register_trace_sys_enter(perf_syscall_enter, NULL);
--	if (ret) {
--		pr_info("event trace: Could not activate syscall entry trace point");
--	} else {
--		set_bit(num, enabled_perf_enter_syscalls);
--		sys_perf_refcount_enter++;
-+	guard(mutex)(&syscall_trace_lock);
-+	if (!sys_perf_refcount_enter) {
-+		int ret = register_trace_sys_enter(perf_syscall_enter, NULL);
-+		if (ret) {
-+			pr_info("event trace: Could not activate syscall entry trace point");
-+			return ret;
-+		}
- 	}
--	mutex_unlock(&syscall_trace_lock);
--	return ret;
-+	set_bit(num, enabled_perf_enter_syscalls);
-+	sys_perf_refcount_enter++;
-+	return 0;
- }
- 
- static void perf_sysenter_disable(struct trace_event_call *call)
-@@ -1073,12 +1072,11 @@ static void perf_sysenter_disable(struct trace_event_call *call)
- 
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
- 
--	mutex_lock(&syscall_trace_lock);
-+	guard(mutex)(&syscall_trace_lock);
- 	sys_perf_refcount_enter--;
- 	clear_bit(num, enabled_perf_enter_syscalls);
- 	if (!sys_perf_refcount_enter)
- 		unregister_trace_sys_enter(perf_syscall_enter, NULL);
--	mutex_unlock(&syscall_trace_lock);
- }
- 
- static int perf_call_bpf_exit(struct trace_event_call *call, struct pt_regs *regs,
-@@ -1155,22 +1153,21 @@ static void perf_syscall_exit(void *ignore, struct pt_regs *regs, long ret)
- 
- static int perf_sysexit_enable(struct trace_event_call *call)
- {
--	int ret = 0;
- 	int num;
- 
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
- 
--	mutex_lock(&syscall_trace_lock);
--	if (!sys_perf_refcount_exit)
--		ret = register_trace_sys_exit(perf_syscall_exit, NULL);
--	if (ret) {
--		pr_info("event trace: Could not activate syscall exit trace point");
--	} else {
--		set_bit(num, enabled_perf_exit_syscalls);
--		sys_perf_refcount_exit++;
-+	guard(mutex)(&syscall_trace_lock);
-+	if (!sys_perf_refcount_exit) {
-+		int ret = register_trace_sys_exit(perf_syscall_exit, NULL);
-+		if (ret) {
-+			pr_info("event trace: Could not activate syscall exit trace point");
-+			return ret;
-+		}
- 	}
--	mutex_unlock(&syscall_trace_lock);
--	return ret;
-+	set_bit(num, enabled_perf_exit_syscalls);
-+	sys_perf_refcount_exit++;
-+	return 0;
- }
- 
- static void perf_sysexit_disable(struct trace_event_call *call)
-@@ -1179,12 +1176,11 @@ static void perf_sysexit_disable(struct trace_event_call *call)
- 
- 	num = ((struct syscall_metadata *)call->data)->syscall_nr;
- 
--	mutex_lock(&syscall_trace_lock);
-+	guard(mutex)(&syscall_trace_lock);
- 	sys_perf_refcount_exit--;
- 	clear_bit(num, enabled_perf_exit_syscalls);
- 	if (!sys_perf_refcount_exit)
- 		unregister_trace_sys_exit(perf_syscall_exit, NULL);
--	mutex_unlock(&syscall_trace_lock);
- }
- 
- #endif /* CONFIG_PERF_EVENTS */
+ 		/* Add the format for the user space string or array */
+-		if (entry->user_arg_size < 0)
++		if (entry->user_arg_size < 0 || is_string)
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, " \\\"%%s\\\"");
+ 		else
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, " (%%s)");
+@@ -279,7 +280,7 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
+ 		if (!(BIT(i) & entry->user_mask))
+ 			continue;
+ 		/* The user space data for arg has name __<arg>_val */
+-		if (entry->user_arg_size < 0) {
++		if (entry->user_arg_size < 0 || is_string) {
+ 			pos += snprintf(buf + pos, LEN_OR_ZERO, ", __get_str(__%s_val)",
+ 					entry->args[i]);
+ 		} else {
+@@ -781,6 +782,21 @@ static void check_faultable_syscall(struct trace_event_call *call, int nr)
+ 		sys_data->user_mask = BIT(1);
+ 		sys_data->user_arg_size = 2;
+ 		break;
++	/* user arg 0 with size arg at 1 as string */
++	case __NR_setdomainname:
++	case __NR_sethostname:
++		sys_data->user_mask = BIT(0);
++		sys_data->user_arg_size = 1;
++		sys_data->user_arg_is_str = 1;
++		break;
++#ifdef __NR_kexec_file_load
++	/* user arg 4 with size arg at 3 as string */
++	case __NR_kexec_file_load:
++		sys_data->user_mask = BIT(4);
++		sys_data->user_arg_size = 3;
++		sys_data->user_arg_is_str = 1;
++		break;
++#endif
+ 	/* user arg at position 0 */
+ #ifdef __NR_access
+ 	case __NR_access:
 -- 
 2.51.0
 
