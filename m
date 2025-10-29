@@ -1,349 +1,303 @@
-Return-Path: <linux-kernel+bounces-876291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6B76C1B231
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:18:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3007BC1B255
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2969D1A27586
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72B501B2380F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5BE355022;
-	Wed, 29 Oct 2025 13:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E83521420B;
+	Wed, 29 Oct 2025 13:54:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I9BzlVuV"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="SdjtVdXO"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011050.outbound.protection.outlook.com [52.101.52.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1541354AC2;
-	Wed, 29 Oct 2025 13:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746005; cv=none; b=oTTEt/IGKMnIlokrlzVHvJJqgrTrl4wu170NDgRgZY2ScWbVgb92am9WUZ1Ih1KrEsujzkVz+9vGKaDbyqaUu47iruKzhKUC6OPvv+IJImm90kaevDXYePG7+mdfMUHZTCA2LMWSu4IMCHX3BEXBhs6s/bV5GaRduj6kjkFWnUA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746005; c=relaxed/simple;
-	bh=aKHfmfSS+LgZ5jTbLsgfV6ReDnR/p8yx2GH2r8uyEDc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Dy+pZcXXUpWYsIgzdTvsoPo+0PRmUZ/Ih68GbuGT4YmKZV8sGr6vtMdy27dcM8tas0Ju8ICM5M6NGUFuPnTi09zLKMZFJ/WAqvmGpbfD0Wipvk5yQ0cwLzj5hka2aDPtazIKzAjGoPRgXl8i+xAvkXKBYEXTs6W1fc2ZVSxjQwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I9BzlVuV; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 5A68E4E413BF;
-	Wed, 29 Oct 2025 13:53:21 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2F19C606E8;
-	Wed, 29 Oct 2025 13:53:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B91E4117F80A4;
-	Wed, 29 Oct 2025 14:53:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761746000; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=p46hFX01ylzlsNCZzl+O7XBxanARmaLcWBkwZPs2L18=;
-	b=I9BzlVuV+Kt9cMGmLnhRcUo7NY7xCFqzbg3GyA8NUZqmcVgjORJN9qChHqAcCQlC+SICiz
-	EGRpwrzc7Jf/mc3/lfpVVKBttufaT+zYXkwr132ZwsRlAuBLoQMHeu6Pkj5dZEBjer6y3/
-	gutWdYS25mRSlETcEaEyqJPro/2coTHfu3wh3YUcMB2yGfnyArqu3e7rN8j5f1+21QK/G/
-	0YTS6QgRwiHTrvA1BpFrRUhXPvZqv9PJP8GA/H6Q349N8f9c+3d2ZbBNsjQcI8LEFsl+7R
-	PwGdRKUDhZqPn/vn/h9uIQn5kM5rhEixb65P8wRtLYzgMJqT5Qbk4fJiVry8vQ==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Wed, 29 Oct 2025 14:52:36 +0100
-Subject: [PATCH bpf-next v6 15/15] selftests/bpf: test_xsk: Integrate
- test_xsk.c to test_progs framework
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25262C0296;
+	Wed, 29 Oct 2025 13:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761746069; cv=fail; b=segQtbny6IOnDeHhTPdkvyT8OAQ6MxQV98dHZCH17VNQI+BPZMRm3+ODMjC4bAHRtWQcJM3XfWEPCVMCOcWF8r0xE8PA5R4Ds4uQXf9qF20UQPGiptghrCoQZ6IHQK9izKw/eP5XcYxT1feLKVpMWUXQkPc1uqwgsv51XrZSJ7Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761746069; c=relaxed/simple;
+	bh=BGc5YewuFSvb20FnpnrRuOftPUTlWzV4XR7T2JIZRoM=;
+	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
+	 In-Reply-To:MIME-Version; b=YghvQCtevEFx51vgJGWZVasNQ6nCVTTprFVs0HyIbkdZm3dLZyi47SChTQD0g2/E5kpI1QezwggLPZObVbehvKKBJCQupcdYgaRBh3ivkTezJuailvn+Xu5Wtt5jJKGdVuuphREuxBGnAXz904Lw7xFb12s4YQUcTE2J+mROjcw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=SdjtVdXO; arc=fail smtp.client-ip=52.101.52.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FV0RDTQb5juP3YrL9hWiPa+vwhmktrXNMXX6KENgnY8pAcx6r77SD9ZekdWYRvT6dcu+gM1VBbxzBVi75pMsYm/56IymXxjEXWwhIipHEFULaSUf3VFWuZAxbfuV6yQT+QINX2VyCVLwCKX8c4bNxf+ZDF3ZjfMUulalI6l6kfqzfFlDZildOZ0d/ONf7Tk+EGsq8SVKZWvujN93QbxPrx174f6ScWQOUNnkN+xt6/tUBlkQb1VvHc7zhcTS4DiASTqPgekxsOYsbqjim6iwEtMN0f1ZAY3u60KHSVZtZzQ7FbFoCkXLZdZeYhvMmaqTcwXZh9wC2TvATWu32xsv+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=g6Hd6475qHziokJnEX/3tFyLhMrD4HERqib29nc2Gyo=;
+ b=Ix9snYbiyk4l6ZzURdb7wjP/Cauw4zdhgE6An63nSoZkcHzUGxHuCqCmAWv4jQh9Ipm6prHvYFzjjTGimXXt/SC/7mRySwIhIQMPL4ajt4gxg490yt4I+2zR2JsieOwJqz4TRQ+CwVC0mIAGKnLioUo2wDvcsuqfpEfbsbOnDzQAbeejEOHrHNAL+jnIUvwM7A9bLLj1nGGtc56S9qzAMQIdQvrMxXwoTCSZhrl1F4DQQyF+7qLxdg/UxgYsgJgn4+hfRxrw3rs/nQNzl+0vMAqm1po3cc/1c13uWaIu78znBkKwXcIWIFAyHCygJqTYfMIx9OfFbHJ11mkkfvIAYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g6Hd6475qHziokJnEX/3tFyLhMrD4HERqib29nc2Gyo=;
+ b=SdjtVdXOXLeKYNSsNCzLantxXuC6vRzDi807uWHYpoV6qqZasGNIjpYiCKeswPNH5rJCCRJv940WAhBgouhmScoFW9EhcYVmE2rz9b5Zm0y3P/vAv/rtG5PHd44KbnS0Xin2Tcz/SYnP7Y05dt5mtBqfmZ+pDRgFUagX01QTAkWQo2MDcR6EnQ0bw1QziIa0P3QOt6xECKwFlqaejnOWYFUI0X0Xo137yBH51M7NKPLG3whC4j1OoWUuXhlZr1bqDn6XD1xtx73M3CeN2hD7oFgSlO0M+1HlutCPLUezIcrARFO+elIOzYRk+1xc9z0Bn+K2AtwdBX+A7xYD5dZliQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH8PR12MB7376.namprd12.prod.outlook.com (2603:10b6:510:214::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
+ 2025 13:54:23 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 13:54:22 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 22:54:19 +0900
+Message-Id: <DDUUUUL0GXAM.2LNWCIEW124JY@nvidia.com>
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>, "John Hubbard"
+ <jhubbard@nvidia.com>
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
+ <joelagnelf@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Alistair Popple"
+ <apopple@nvidia.com>, "Edwin Peer" <epeer@nvidia.com>, "Zhi Wang"
+ <zhiw@nvidia.com>, "David Airlie" <airlied@gmail.com>, "Simona Vetter"
+ <simona@ffwll.ch>, "Bjorn Helgaas" <bhelgaas@google.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
+ <nouveau@lists.freedesktop.org>, <rust-for-linux@vger.kernel.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, "Nouveau"
+ <nouveau-bounces@lists.freedesktop.org>
+Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251029030332.514358-1-jhubbard@nvidia.com>
+ <20251029030332.514358-3-jhubbard@nvidia.com>
+ <DDURPPIWWIA7.27RFSM7KRLN7I@kernel.org>
+In-Reply-To: <DDURPPIWWIA7.27RFSM7KRLN7I@kernel.org>
+X-ClientProxiedBy: TYCP286CA0318.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3b7::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-xsk-v6-15-5a63a64dff98@bootlin.com>
-References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
- Magnus Karlsson <magnus.karlsson@intel.com>, 
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
- Jonathan Lemon <jonathan.lemon@gmail.com>, 
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB7376:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64c6f270-ed5f-4a6e-a1f0-08de16f2a9c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1RoSmlWTEtGQnFKbTVUTnlIWlF2cGFDOStrZ1c5QlNpTlVJcTM2NDh5L0Ew?=
+ =?utf-8?B?ZlhYU1R5WXcrVmhBWjJnWC9qbVhvL2M5RGY4V2EyaWZZY04rU3pSc1JmUWJa?=
+ =?utf-8?B?cEhBQzJBL0FYa3BLcEk5WVE4ZmtRa1VyVmwwUDFZeWJJQkZKeHBESXdzR2lB?=
+ =?utf-8?B?V0ZTVXpNT2oyamxtTWo0SmtVUnB6TUV2YkIrbkVPa3UyTDBSN2R4cnF5MEVP?=
+ =?utf-8?B?b0lNR0dHK1hkOExIMEhGeG91TC90c1lmQXU1bUpmUng5K3RIUDdFVEdxVUxa?=
+ =?utf-8?B?OFFNLzI5WkJzUFpnZHFLcWZMQThYQklzdE1MMytuYW9SLzhzQ1RYcmFFL1pO?=
+ =?utf-8?B?Mi9BWFZzUzNmRDV0eXc4VkRBV1d5NmtCWFo5RG1aY05zWk4vUy9xa1h0bzRu?=
+ =?utf-8?B?ZFB4V25NaCtlNWxYQmIzZit6bVJrR2NKanJ2OWxBOVdCa1hYUllXYmxQTkNE?=
+ =?utf-8?B?VUxiQm8zdWtYTGtwT1QzeEJUc3NQN29aSFBHb2JkNWJITGtabW5NOEpHYUFR?=
+ =?utf-8?B?ajFyckIxSlQ5Q0dIdWxUQ21ya1k1UGVvUUhqcVh4QmR1dE5BMG1uRTFQL0ll?=
+ =?utf-8?B?cjU3by9zWDdLQmxrb1JsK0FTdEpoK0VMeEhEMGpIdFVrRWRlWjRCQXhENGI0?=
+ =?utf-8?B?enNySi9SOFEwa0FmNUtRUThKVmRHZ3dPZVI4Y1FhcDhZU2E0dEpVaXIxbFlm?=
+ =?utf-8?B?U2FMOW5yUkNORW5VRGg3dTY5TkhGTEZHM29wVEN4aFozeHpVR2szRUI0RG5S?=
+ =?utf-8?B?TEc2YU9zaFdqUGhJeWxldDZjNWdabzU5elJEekdYZWR0dHBMaDI4Z3VSU00w?=
+ =?utf-8?B?U0pQME03K29nZHBHNXdzNXFwd2dvbG9kb3V1cVBUd0orK3hHUTVkSWpsZEN5?=
+ =?utf-8?B?N1VKaWRGL2JlRTE0dFZXWjcyamJDY0FXUXQ4M3MyZ2s1clVGeUxOaFE3ZWM1?=
+ =?utf-8?B?QjBvcTlMNlZLcGluNG1hNVVVNTJYR3hzbDRoL3ozQlc2VTF2V2dlM1JDMXc4?=
+ =?utf-8?B?NlFBdWl0S21nRlFiaUpWcDlGV3RqZlc2M0U2eUxOT0F2c0RBN05PdkRXbk02?=
+ =?utf-8?B?L1RPOHBuUzMyQ1l5NzZpMTFCdU5FY05rUEZDMmJaQUZPdEZSVmtkbU1WMXY2?=
+ =?utf-8?B?NENwcklLaVE3U0lpdlM1bmNSTGJOckI0a1FiWDZwRW1pZGdDNnNjVkUyT3Ji?=
+ =?utf-8?B?TnkzaW5lZU1rTjNmK2dpc3lxbEUyQTBpK2hvMmhNVExxNlN4Sjl3RmYrbmNi?=
+ =?utf-8?B?MjB4RkNFU2xpOS9TTXNaSldBVjJkeW1MZU9QWDQ0dHR0VmFjbzd3MUVVVjNJ?=
+ =?utf-8?B?cnBaT3lDSVZGOUE3Znh4MjFqMFhpcTVUcFkxeHloZGVXa0hsaTRSVGFJaHBK?=
+ =?utf-8?B?dTQ4VlJxTEV0ZXVnNVlxS3loSFdjdWhmMHVDOXJhN2kwMFRVY0JGWURLWVlO?=
+ =?utf-8?B?QmVrYTdqdnBXcGRmeC82a2NWL3pqQUNRRXFBQmFEcGZvcU96MEowTldvdlpa?=
+ =?utf-8?B?cjByak9ZUVNibUVCRUVnaDdpOFprRU9CS0tpR2hsbXBicTJPeTM0TDkrUmlT?=
+ =?utf-8?B?c3o3SGlmRTRNZDNSMGdGdzNpUURtL0tFRkNORE5kS0tKaDVPMjZESm0rRzlL?=
+ =?utf-8?B?aHMrOXZRNGR6S1hQSW00dkdTNjByK2ppYm5ITDdocGVINGw1eXcvVEUydHAw?=
+ =?utf-8?B?djFlMWVVejBOamlHd1MvR3N5ZXErdUUwQ2VJRTVZZXZpd2pBT3hLRjZqRlhW?=
+ =?utf-8?B?aFdwN2tENjc3cUdBdndTcTZVREcvWGp2MC9Eb3FMQ0k4bFVvTWlXcnNkWVVV?=
+ =?utf-8?B?STl4RDNWc3lwQWtqNTJ2NzlNMUdkOUZaK1hUVW1JMmJzWDVVYzdLMUxKUVJ1?=
+ =?utf-8?B?b2ZYM3ZCd3paUDhkRVNPOTduWUE0UVNFdXc4a2JxMGVPZDdtTFRsR2VHM3My?=
+ =?utf-8?Q?CYARRqDg7/X4Eu8U90LRgOElJkoH9HBs?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eGJ5TEdkYnZ3cENwMlZsS0ZIbG53bkFXNEVpSWJQYlRSbnFQU0VhNkdxcEM3?=
+ =?utf-8?B?SnQwRlNHN0xrZExRSGhGRExrTElld0VaaFJqemFEWW96UjJHQXBiWEF0d2FE?=
+ =?utf-8?B?TTg5NmxYM0tEaDZ6cVl2blVRLzNlNHdISW8xaUIzRHFYdElzZ1N3RzBoSk5V?=
+ =?utf-8?B?NkhmaWtUOERrTGtRMVJNQmQ2SFRHeUVJd3NxTEFza1NFSnhaSVhsR2JmbDRL?=
+ =?utf-8?B?ZFpWOXZEMjB5VWVFRHdPcU5SK0lLNStqRG1SVktTRnV1cVRramdTMmRKZW14?=
+ =?utf-8?B?dGErRkRqNTNFN2grUFBkQkRjSVJyTnlhSnVyR3FCUTFzZldlZHZuTjFmRnpo?=
+ =?utf-8?B?bmZBVGdhU2xwN25pd2FQWUl5ZndwNE03WGlKN1JKblBaYkpjdHFhUEprSi9O?=
+ =?utf-8?B?TVN5WHcvTFJiTjluVmVMTGdNaTFDeHMyNEJnQkZxaVl0RnFJZUxhWG9yQXRN?=
+ =?utf-8?B?Z3dxQ2x5bmR1aXE5VkFkUkFxWm0rbVJleUtkNUg4Tms4RFFSUGRtVEVoeDZy?=
+ =?utf-8?B?Qmh6dmh0NmlrL3B2cnJlY1VmeHF0VXhwa3lyY2prUmJYU0tsZEEvOTYrTk5z?=
+ =?utf-8?B?ZmVYY28vcGxaTGFLdkd5N0FNV1MzbUxlZnBZcWNYdFh4cjQwVk9mbHpZaHRY?=
+ =?utf-8?B?Tk42U0VGREVWZlEvYnpiTXptTkgzOXRhNHBwNUdjZG9UYXNkS2ROWlhEWmlF?=
+ =?utf-8?B?WWZMUWpVUnlyYlZPd3RWNVBkVGhSc1oxQ0NKSHlHYU5rQ2RaNGlBd29Lczl3?=
+ =?utf-8?B?bk9jWmZJZTF0ak1ZN2RkcHVuWGo0RzVMeks2djJ2bWY5UHFiYWtaRWVROVda?=
+ =?utf-8?B?bzdMcUM1b3NDdFBoWTV2QWFmSkVyRkFrRFpVeWROTys1bFFZdzZQRzhtRVJR?=
+ =?utf-8?B?K1hSQkhLK3lPTFRMNkZNOXFac21UZ0h5OFY1Mmg5MVR0dnBLWHZ1TDltQ1Yx?=
+ =?utf-8?B?NGZyUjNqWVZVczE5ZVN3SnMxZGVlNzFTcVZ1Qmx0L2Y2NnNNZyszM3dXdW01?=
+ =?utf-8?B?bkRZcGFkQTRQcVFuUld2Y3oxc09GMnY0MER2bUtTZVJyclRRMXY4OVY1dUxl?=
+ =?utf-8?B?MDQzRDZlbkFibC9HNjV1ekV6RVFRck9EbXc4ajNYcWtOblVMWlhZb2NNYlp0?=
+ =?utf-8?B?VlFMZ2JkSVpqSmY4TklubmxHdFZSUWpQbmFJemsvc1hpY2hHK0duRUo1eFVy?=
+ =?utf-8?B?MmJib3NFNkxiMkJmVmR5c1IzSklNZTYvbEVQdlEzdmNJTXhkQmw0aVhjd0Vj?=
+ =?utf-8?B?dy9wQmVTQmVSSVd5WU1zYjhqYVEveS81UmlENTZKLy81NlhGaHNJZlB5R1E0?=
+ =?utf-8?B?aVc1ODhTMXpPSlFLWW1pUTZIdVBTcis1S1RkUmMzQjhMdm42RDJLenFPTldw?=
+ =?utf-8?B?VEk3eWVmSlBkczZIeHFOc2VkU2RWQk5DQmwyNXk5bXVyTk5MV2M1endPLy93?=
+ =?utf-8?B?K0MrcVlmV0xGREF1T0QvS0tOZ3lPaFlUR0RuWXRhL29SWmxKTXRWeXorUXpw?=
+ =?utf-8?B?Nks4VkcxeHFjek04Z0diVmdZMkpTUXNzQzZ0T0xVRTFTelNmSHYvTkdEdCtU?=
+ =?utf-8?B?ZDNIZjR2RmRYbnpseGlZTC85SGEyRS9vT3FQWXZzd2x5ZUxyRkwybVlGZFpz?=
+ =?utf-8?B?aXpGbE03RHlHWm84VEFDT0VMTEVldnRpL3FCTVlDbjJmQld3dUxjb1d0b0h5?=
+ =?utf-8?B?WkUxT1NzbDE2TWp1YW1nNVVSYWNkOXlQTFZ6TkNlamErdmdURmswMldwS3My?=
+ =?utf-8?B?b2xlVEh5SHl6WnpvbDhuWDNodFVBNThHSTltQmxDQk8zV2IzUkJxY3RtNW14?=
+ =?utf-8?B?UVROKzVxdjFJS3hiVzNCRDZFQ1ZlczNjL2c2WEVaZmkzTnVLQUVaVzdIMUtu?=
+ =?utf-8?B?NGtHYjZQU3MwSDMrUUJlQW55L0NmUlhkOE9scHdTZFlZUHU3ZHY1TjNiUVFO?=
+ =?utf-8?B?V1dvMnlvVDBJWVNocnNabHJDWmsyUUhJV2EyeTNIN0ppKzNGM1NBUmtzU0Vr?=
+ =?utf-8?B?Ym5uTnQvcFBEYmRNb1hLcUVlWmJUSWQrR3lFZWlLV09lN2I0bjZReWkySmlY?=
+ =?utf-8?B?czJEc25tWFdlMnNoSXMrWjhJVVJPb3FKTEVwZFBydlpEaWY1bFBja1FyNUtS?=
+ =?utf-8?B?Z1VPUTdLNHVKUWY1UWozRkpqMkQxamRnR2Vnd3FNR0lrS3gxQ085eGRWdFhx?=
+ =?utf-8?Q?Ac4kMIgA+8VOkmtD+CM3d5PocEpC8Ofklj6tBhY4gg5j?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64c6f270-ed5f-4a6e-a1f0-08de16f2a9c4
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 13:54:22.1540
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hQZSiKTNHiufx38fnU/Beph/vuC2ABxZy/Q8d3mMbB0zTW4m7PY9Pkgp/GD5MHcF1iGMHntGiX2FlxqYzsYGKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7376
 
-test_xsk.c isn't part of the test_progs framework.
+On Wed Oct 29, 2025 at 8:26 PM JST, Danilo Krummrich wrote:
+<snip>
+>> @@ -151,13 +179,43 @@ impl Spec {
+>>      fn new(bar: &Bar0) -> Result<Spec> {
+>>          let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
+>> =20
+>> -        Ok(Self {
+>> -            chipset: boot0.chipset()?,
+>> -            revision: Revision {
+>> -                major: boot0.major_revision(),
+>> -                minor: boot0.minor_revision(),
+>> -            },
+>> -        })
+>> +        // "next-gen" GPUs (some time after Blackwell) will zero out bo=
+ot0, and put the architecture
+>> +        // details in boot42 instead. Avoid reading boot42 unless we ar=
+e in that case.
+>> +        let boot42 =3D if boot0.is_next_gen() {
+>> +            Some(regs::NV_PMC_BOOT_42::read(bar))
+>> +        } else {
+>> +            None
+>> +        };
+>> +
+>> +        // Some brief notes about boot0 and boot42, in chronological or=
+der:
+>> +        //
+>> +        // NV04 through Volta:
+>> +        //
+>> +        //    Not supported by Nova. boot0 is necessary and sufficient =
+to identify these GPUs.
+>> +        //    boot42 may not even exist on some of these GPUs.boot42
+>> +        //
+>> +        // Turing through Blackwell:
+>> +        //
+>> +        //     Supported by both Nouveau and Nova. boot0 is still neces=
+sary and sufficient to
+>> +        //     identify these GPUs. boot42 exists on these GPUs but we =
+don't need to use it.
+>> +        //
+>> +        // Future "next-gen" GPUs:
+>> +        //
+>> +        //    Only supported by Nova. boot42 has the architecture detai=
+ls, boot0 is zeroed out.
+>> +
+>> +        // NV04, the very first NVIDIA GPU to be supported on Linux, is=
+ identified by a specific bit
+>> +        // pattern in boot0. Although Nova does not support NV04 (see a=
+bove), it is possible to
+>> +        // confuse NV04 with a "next-gen" GPU. Therefore, return early =
+if we specifically detect
+>> +        // NV04, thus simplifying the remaining selection logic.
+>> +        if boot0.is_nv04() {
+>> +            Err(ENODEV)?
+>> +        }
+>> +
+>> +        // Now that we know it is something more recent than NV04, use =
+boot42 if we previously
+>> +        // determined that boot42 was both valid and relevant, and boot=
+0 otherwise.
+>> +        boot42
+>> +            .map(Spec::try_from)
+>> +            .unwrap_or_else(|| Spec::try_from(boot0))
+>>      }
+>>  }
+>
+> Without the comments this currently is:
+>
+> 	let boot42 =3D if boot0.is_next_gen() {
+> 	    Some(regs::NV_PMC_BOOT_42::read(bar))
+> 	} else {
+> 	    None
+> 	};
+> =09
+> 	if boot0.is_nv04() {
+> 	    Err(ENODEV)?
+> 	}
+> =09
+> 	boot42
+> 	    .map(Spec::try_from)
+> 	    .unwrap_or_else(|| Spec::try_from(boot0))
+>
+> Which I think is a bit heavy-handed. Let's simplify this a bit:
+>
+> 	let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
+>
+> 	if boot0.is_nv04() {
+> 	    return Err(ENODEV);
+> 	}
+>
+> 	Spec::try_from(
+> 	    if boot0.is_next_gen() {
+> 	        regs::NV_PMC_BOOT_42::read(bar)
+> 	    } else {
+> 	        boot0
+> 	    }
+> 	)
 
-Integrate the tests defined by test_xsk.c into the test_progs framework
-through a new file : prog_tests/xsk.c. ZeroCopy mode isn't tested in it
-as veth peers don't support it.
+I don't think this will work because `NV_PMC_BOOT_0` and
+`NV_PMC_BOOT_42` are different types, so we cannot alternate them in the
+same call to `try_from`. But the following should:
 
-Move test_xsk{.c/.h} to prog_tests/.
+    let boot0 =3D regs::NV_PMC_BOOT_0::read(bar);
+    ...
 
-Add the find_bit library to test_progs sources in the Makefile as it is
-is used by test_xsk.c
+    if boot0.is_nv04() {
+        Err(ENODEV)?
+    }
 
-Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile               |  13 +-
- .../selftests/bpf/{ => prog_tests}/test_xsk.c      |   0
- .../selftests/bpf/{ => prog_tests}/test_xsk.h      |   0
- tools/testing/selftests/bpf/prog_tests/xsk.c       | 151 +++++++++++++++++++++
- tools/testing/selftests/bpf/xskxceiver.c           |   2 +-
- 5 files changed, 163 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 9fd9bf0780f023423b7ccf29b4fc5f16bef07f53..fa8bf4a18d3bb55d253de281cc8b0ab9073b983a 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -545,6 +545,8 @@ TRUNNER_TEST_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.test.o,	\
- 				 $$(notdir $$(wildcard $(TRUNNER_TESTS_DIR)/*.c)))
- TRUNNER_EXTRA_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
- 				 $$(filter %.c,$(TRUNNER_EXTRA_SOURCES)))
-+TRUNNER_LIB_OBJS := $$(patsubst %.c,$$(TRUNNER_OUTPUT)/%.o,		\
-+				 $$(filter %.c,$(TRUNNER_LIB_SOURCES)))
- TRUNNER_EXTRA_HDRS := $$(filter %.h,$(TRUNNER_EXTRA_SOURCES))
- TRUNNER_TESTS_HDR := $(TRUNNER_TESTS_DIR)/tests.h
- TRUNNER_BPF_SRCS := $$(notdir $$(wildcard $(TRUNNER_BPF_PROGS_DIR)/*.c))
-@@ -688,6 +690,10 @@ $(TRUNNER_EXTRA_OBJS): $(TRUNNER_OUTPUT)/%.o:				\
- 	$$(call msg,EXT-OBJ,$(TRUNNER_BINARY),$$@)
- 	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
- 
-+$(TRUNNER_LIB_OBJS): $(TRUNNER_OUTPUT)/%.o:$(TOOLSDIR)/lib/%.c
-+	$$(call msg,LIB-OBJ,$(TRUNNER_BINARY),$$@)
-+	$(Q)$$(CC) $$(CFLAGS) -c $$< $$(LDLIBS) -o $$@
-+
- # non-flavored in-srctree builds receive special treatment, in particular, we
- # do not need to copy extra resources (see e.g. test_btf_dump_case())
- $(TRUNNER_BINARY)-extras: $(TRUNNER_EXTRA_FILES) | $(TRUNNER_OUTPUT)
-@@ -701,6 +707,7 @@ $(OUTPUT)/$(TRUNNER_BINARY): | $(TRUNNER_BPF_OBJS)
- 
- $(OUTPUT)/$(TRUNNER_BINARY): $(TRUNNER_TEST_OBJS)			\
- 			     $(TRUNNER_EXTRA_OBJS) $$(BPFOBJ)		\
-+			     $(TRUNNER_LIB_OBJS)			\
- 			     $(RESOLVE_BTFIDS)				\
- 			     $(TRUNNER_BPFTOOL)				\
- 			     $(OUTPUT)/veristat				\
-@@ -747,6 +754,7 @@ TRUNNER_EXTRA_SOURCES := test_progs.c		\
- 			 $(VERIFY_SIG_HDR)		\
- 			 flow_dissector_load.h	\
- 			 ip_check_defrag_frags.h
-+TRUNNER_LIB_SOURCES := find_bit.c
- TRUNNER_EXTRA_FILES := $(OUTPUT)/urandom_read				\
- 		       $(OUTPUT)/liburandom_read.so			\
- 		       $(OUTPUT)/xdp_synproxy				\
-@@ -784,6 +792,7 @@ endif
- TRUNNER_TESTS_DIR := map_tests
- TRUNNER_BPF_PROGS_DIR := progs
- TRUNNER_EXTRA_SOURCES := test_maps.c
-+TRUNNER_LIB_SOURCES :=
- TRUNNER_EXTRA_FILES :=
- TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
-@@ -805,8 +814,8 @@ $(OUTPUT)/test_verifier: test_verifier.c verifier/tests.h $(BPFOBJ) | $(OUTPUT)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
- # Include find_bit.c to compile xskxceiver.
--EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c
--$(OUTPUT)/xskxceiver: $(EXTRA_SRC) test_xsk.c test_xsk.h xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
-+EXTRA_SRC := $(TOOLSDIR)/lib/find_bit.c prog_tests/test_xsk.c prog_tests/test_xsk.h
-+$(OUTPUT)/xskxceiver: $(EXTRA_SRC) xskxceiver.c xskxceiver.h $(OUTPUT)/network_helpers.o $(OUTPUT)/xsk.o $(OUTPUT)/xsk_xdp_progs.skel.h $(BPFOBJ) | $(OUTPUT)
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CC) $(CFLAGS) $(filter %.a %.o %.c,$^) $(LDLIBS) -o $@
- 
-diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/prog_tests/test_xsk.c
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.c
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.c
-diff --git a/tools/testing/selftests/bpf/test_xsk.h b/tools/testing/selftests/bpf/prog_tests/test_xsk.h
-similarity index 100%
-rename from tools/testing/selftests/bpf/test_xsk.h
-rename to tools/testing/selftests/bpf/prog_tests/test_xsk.h
-diff --git a/tools/testing/selftests/bpf/prog_tests/xsk.c b/tools/testing/selftests/bpf/prog_tests/xsk.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..127ad61c923f675aaba44ed10e100bdc4c3de746
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/xsk.c
-@@ -0,0 +1,151 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <net/if.h>
-+#include <stdarg.h>
-+
-+#include "network_helpers.h"
-+#include "test_progs.h"
-+#include "test_xsk.h"
-+#include "xsk_xdp_progs.skel.h"
-+
-+#define VETH_RX "veth0"
-+#define VETH_TX "veth1"
-+#define MTU	1500
-+
-+int setup_veth(bool busy_poll)
-+{
-+	SYS(fail,
-+	"ip link add %s numtxqueues 4 numrxqueues 4 type veth peer name %s numtxqueues 4 numrxqueues 4",
-+	VETH_RX, VETH_TX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_RX);
-+	SYS(fail, "sysctl -wq net.ipv6.conf.%s.disable_ipv6=1", VETH_TX);
-+
-+	if (busy_poll) {
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_RX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_RX);
-+		SYS(fail, "echo 2 > /sys/class/net/%s/napi_defer_hard_irqs", VETH_TX);
-+		SYS(fail, "echo 200000 > /sys/class/net/%s/gro_flush_timeout", VETH_TX);
-+	}
-+
-+	SYS(fail, "ip link set %s mtu %d", VETH_RX, MTU);
-+	SYS(fail, "ip link set %s mtu %d", VETH_TX, MTU);
-+	SYS(fail, "ip link set %s up", VETH_RX);
-+	SYS(fail, "ip link set %s up", VETH_TX);
-+
-+	return 0;
-+
-+fail:
-+	return -1;
-+}
-+
-+void delete_veth(void)
-+{
-+	SYS_NOFAIL("ip link del %s", VETH_RX);
-+	SYS_NOFAIL("ip link del %s", VETH_TX);
-+}
-+
-+int configure_ifobj(struct ifobject *tx, struct ifobject *rx)
-+{
-+	rx->ifindex = if_nametoindex(VETH_RX);
-+	if (!ASSERT_OK_FD(rx->ifindex, "get RX ifindex"))
-+		return -1;
-+
-+	tx->ifindex = if_nametoindex(VETH_TX);
-+	if (!ASSERT_OK_FD(tx->ifindex, "get TX ifindex"))
-+		return -1;
-+
-+	tx->shared_umem = false;
-+	rx->shared_umem = false;
-+
-+
-+	return 0;
-+}
-+
-+static void test_xsk(const struct test_spec *test_to_run, enum test_mode mode)
-+{
-+	struct ifobject *ifobj_tx, *ifobj_rx;
-+	struct test_spec test;
-+	int ret;
-+
-+	ifobj_tx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_tx, "create ifobj_tx"))
-+		return;
-+
-+	ifobj_rx = ifobject_create();
-+	if (!ASSERT_OK_PTR(ifobj_rx, "create ifobj_rx"))
-+		goto delete_tx;
-+
-+	if (!ASSERT_OK(configure_ifobj(ifobj_tx, ifobj_rx), "conigure ifobj"))
-+		goto delete_rx;
-+
-+	ret = get_hw_ring_size(ifobj_tx->ifname, &ifobj_tx->ring);
-+	if (!ret) {
-+		ifobj_tx->hw_ring_size_supp = true;
-+		ifobj_tx->set_ring.default_tx = ifobj_tx->ring.tx_pending;
-+		ifobj_tx->set_ring.default_rx = ifobj_tx->ring.rx_pending;
-+	}
-+
-+	if (!ASSERT_OK(init_iface(ifobj_rx, worker_testapp_validate_rx), "init RX"))
-+		goto delete_rx;
-+	if (!ASSERT_OK(init_iface(ifobj_tx, worker_testapp_validate_tx), "init TX"))
-+		goto delete_rx;
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, 0, &tests[0]);
-+
-+	test.tx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.tx_pkt_stream_default, "TX pkt generation"))
-+		goto delete_rx;
-+	test.rx_pkt_stream_default = pkt_stream_generate(DEFAULT_PKT_CNT, MIN_PKT_SIZE);
-+	if (!ASSERT_OK_PTR(test.rx_pkt_stream_default, "RX pkt generation"))
-+		goto delete_rx;
-+
-+
-+	test_init(&test, ifobj_tx, ifobj_rx, mode, test_to_run);
-+	ret = test.test_func(&test);
-+	if (ret != TEST_SKIP)
-+		ASSERT_OK(ret, "Run test");
-+	pkt_stream_restore_default(&test);
-+
-+	if (ifobj_tx->hw_ring_size_supp)
-+		hw_ring_size_reset(ifobj_tx);
-+
-+	pkt_stream_delete(test.tx_pkt_stream_default);
-+	pkt_stream_delete(test.rx_pkt_stream_default);
-+	xsk_xdp_progs__destroy(ifobj_tx->xdp_progs);
-+	xsk_xdp_progs__destroy(ifobj_rx->xdp_progs);
-+
-+delete_rx:
-+	ifobject_delete(ifobj_rx);
-+delete_tx:
-+	ifobject_delete(ifobj_tx);
-+}
-+
-+void test_xsk_skb(void)
-+{
-+	int i;
-+
-+	if (!ASSERT_OK(setup_veth(false), "setup veth"))
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_SKB);
-+	}
-+
-+	delete_veth();
-+}
-+
-+void test_xsk_drv(void)
-+{
-+	int i;
-+
-+	if (!ASSERT_OK(setup_veth(false), "setup veth"))
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(tests); i++) {
-+		if (test__start_subtest(tests[i].name))
-+			test_xsk(&tests[i], TEST_MODE_DRV);
-+	}
-+
-+	delete_veth();
-+}
-+
-diff --git a/tools/testing/selftests/bpf/xskxceiver.c b/tools/testing/selftests/bpf/xskxceiver.c
-index 57fa4b3f0decf76b022c79b543b1a906f0c89076..9234a58b0a972dffc2f4a4909334cd67ad0d4a25 100644
---- a/tools/testing/selftests/bpf/xskxceiver.c
-+++ b/tools/testing/selftests/bpf/xskxceiver.c
-@@ -90,7 +90,7 @@
- #include <sys/mman.h>
- #include <sys/types.h>
- 
--#include "test_xsk.h"
-+#include "prog_tests/test_xsk.h"
- #include "xsk_xdp_progs.skel.h"
- #include "xsk.h"
- #include "xskxceiver.h"
-
--- 
-2.51.0
+    if boot0.is_next_gen() {
+        Spec::try_from(regs::NV_PMC_BOOT_42::read(bar))
+    } else {
+        Spec::try_from(boot0)
+    }
 
 
