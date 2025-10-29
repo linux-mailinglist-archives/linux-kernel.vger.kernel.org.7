@@ -1,139 +1,141 @@
-Return-Path: <linux-kernel+bounces-875832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766DFC19EC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:05:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A851C19EC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 665F44E100C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA161AA4384
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A464C30B512;
-	Wed, 29 Oct 2025 11:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E60F31D742;
+	Wed, 29 Oct 2025 11:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eRfHB5ns"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AyEMWVjr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6361E5B70;
-	Wed, 29 Oct 2025 11:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7AA30F93C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761735938; cv=none; b=XfShl0A24QI2ELx5x4f4p9atgjrd4wJPmg/l8hyqTmq6vg7Ztp98cKi7V0zqMe1goAZl+D6olxlrBT4Om8QVCs/K2HCOBO+HEXHIIC+JoxHlm4tHfTLscdwEv7n1bP4MfEJfBximjox5J3bRln5Kslqb91kRs160b4oyvCDcu2w=
+	t=1761735992; cv=none; b=MEHfR6VPr6bH2zeHar02SF04Izy0sGzT3WTnel9XALrhWjD54JNzTUP8reNq0FvVEZ8wzlh5sze4NS4hZ56cZU2VPBsBuRG3mX20LhKPde0bu5hdd0d+a7B2AcP8ogZvg20KGZWQz+QbBr9s1XW4lGe4/RTWxvrXgdyAZk6mQgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761735938; c=relaxed/simple;
-	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YnbSPi/y1mEacbqn/MvKidc6Ll3dlE+M/lwVCqGZT8tEVxQ/kCSsT/srXjTNbOXjRVfdnF1CK+V34bM5ae0qQx0W9NMY0A+SzdodWAH75Rm3jbx5Sr52H5SraYU8ffa7AwotnHhrxsf4uXJXvMI4jCfKjLvpBsX4PSMd5JSUyoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eRfHB5ns; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761735934;
-	bh=mUg1Il3vEFNsxJBIHBHWg1fUx+lCuD7mOLuml/XS/kA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eRfHB5nsrIx60bM6lSYTUZqKtS5Pa1OP6sGcYsJddJ0b05Uodu+JnvDDIS6sACk99
-	 50QDCdU8GShKx6PB8udgn8h1R5GvWHl/Mda9iQ97OTt3saA0BRGWK4Zlv5DknpJNti
-	 7DdaYDPP+5pJRotYCu9a03ChBbPmnENIsYaWfcDb+DzywBoKUYaG9YRtp/AnBPd3zG
-	 XOAC6jemBWGFUMxkXcmuOZNYu1yLpMSWMGtTmyhvX2yQy3dcaGGFKtzX/QlZVs6iJ9
-	 0pPhc7W1jsX/4H7ghLo8Wr1/+hB6RaMfTRjf0NR8n7CsExfF5IdhPYQ7yjkGp/aqc/
-	 ftDzSawq8J3lQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0BA117E00AC;
-	Wed, 29 Oct 2025 12:05:33 +0100 (CET)
-Message-ID: <9f5a3dc5-d0f8-4172-a4b4-867919612a2d@collabora.com>
-Date: Wed, 29 Oct 2025 12:05:33 +0100
+	s=arc-20240116; t=1761735992; c=relaxed/simple;
+	bh=jKGLCRj7hWPj6nCNCOR0lDjd3tjy9+HvWQH6dH7MB6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a5LyHneGtIneP6RyF1fsGl+O6HqOpegKoMdsulx+YEwmVzRpKEIt+FmeI5bLYxn9aiX0+sW6fyZ9Nl0rQ3fM5K3nFt4CZObANhrduzejLOLt0RHM4zKZf0Ot8TSXQqnYVGUshUx9qDvxhbDdAF1kClavmHMNVhWiijCg8MeFc9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AyEMWVjr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761735990;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wq8ujO9Dpm/7YPTf3iw45Jy/+tYmVu6IfrY/4dh0q7w=;
+	b=AyEMWVjrdCfSxya38FkRF3wz9MtgYRHON3Mqea29OB7uqMIS11VWyG+dWCcY5lwQunx7lY
+	4841PKwKrT4ke21+/dPpa8jpmuU66yM2266I/v68B6pnhGjK5iNsxC4uy02N7S3ycIMusR
+	9pa46AP/M80n45OfESyivwKRnpiJpNo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-244-BZOl0apnMTCdH4MYR4uOXQ-1; Wed, 29 Oct 2025 07:06:29 -0400
+X-MC-Unique: BZOl0apnMTCdH4MYR4uOXQ-1
+X-Mimecast-MFC-AGG-ID: BZOl0apnMTCdH4MYR4uOXQ_1761735988
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-426feed0016so2370375f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:06:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761735988; x=1762340788;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wq8ujO9Dpm/7YPTf3iw45Jy/+tYmVu6IfrY/4dh0q7w=;
+        b=hYDhWH3ARUkRVv/BzuMxK+A1AaTeEZwQXZTxZj5RQBWZvlhIsQTndMrxBKE98k4AYl
+         +TFIskGRhUZ8NogRFvT+fXKGpZ4iCTMGBKsLgSWvx34aL99pLfW/fECwWU1wQOEnNCxW
+         Bpj+w0n8wkYnnwQO091FSn4ki37GdzIYIA7/talDtUAxYrZAnrBCR8JsaIY37Ap91Ikj
+         ig5oKZclt/kLwybs0aamPyOwBGPHY4ion7vgPPflrIDKCqBLsRbTQn1gavfykRLkjoOn
+         fCIC1ILsBaNvnoaL1PcvLDlx6h/Qk7AlLEjyJKNNj8Dj5wwEqZ7WcxLias2if4xUtmw2
+         0kzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhkjsaChqLaLPvAS4Ybg/XqAvdI0ItNuuK2ALloJJtgsuOyo5Oy2DlYaUXBTxMHYT1lQfNtKaQToYGve4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/xNgbIqw68KVMgkxGFHM8jDcMXqTGg8t/OISdoq1dxDnHnA3F
+	eZv18Ib3v/2alaGAQeMRdti2iTcbvxzYqouag6UMo324QaC7vILnar5CdwLLKs3F3pHQ3DCxwTL
+	MHRzolPgmK0YCa0AhUHpDyOINwifl67odxkcp+81StegkhZMaCEx83efG+7paBKgm6A==
+X-Gm-Gg: ASbGncsCdxvPxUe1DcWq17d4uUczsH/fKqi8/7Pc9GKD6snEj8/eRfPdnrv17PRweP/
+	kfhlAGBSnmIdY4zYQxlR78+NMLQ+TphFqEN2ggqLzsub61/OlkzxOxecSdh8vxPDVmwOFFFj6Ts
+	vvPXE/QSajWI8G9A1gaiv6MhT2bncmp8EF4gcfy4tMs+HVo3cKrUjL2lGcbSnSmNuDE19dTHlSL
+	7WdOA7srzOjvCp42so7IzpwkjoXwLQArpIqjAk9Oekh2+cp2yXIM+rFEXNviy5nm8bXTQ/NhvKr
+	c83aazx+48SIiWdffSBnyAnlUEiKd4jBPFc6cBcwO2sfSYHJOarZaQyWVfx9gdga+aXiez5y+sE
+	Fo84S8RS0xBePdhcOYpP2hDo5IgJDp9WuxLhRrJGyCJGLGgX6
+X-Received: by 2002:a05:6000:2882:b0:427:e1bf:13db with SMTP id ffacd0b85a97d-429aefd0840mr1957013f8f.54.1761735987807;
+        Wed, 29 Oct 2025 04:06:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHB8RsWZ0SjBkvUi9VbRgSefrwznyNGIlSzLxxkHxgmXUspqFq3z5NvztJjJO8HtqyDc5C8pg==
+X-Received: by 2002:a05:6000:2882:b0:427:e1bf:13db with SMTP id ffacd0b85a97d-429aefd0840mr1956977f8f.54.1761735987352;
+        Wed, 29 Oct 2025 04:06:27 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:ff56:9b88:c93b:ed43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952ca979sm26665735f8f.14.2025.10.29.04.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 04:06:26 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entry in MEDIATEK MDP DRIVER
+Date: Wed, 29 Oct 2025 12:06:23 +0100
+Message-ID: <20251029110623.96661-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] remoteproc: mtk_scp: Construct FW path if
- firmware-name not present
-To: Chen-Yu Tsai <wenst@chromium.org>, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, arnd@arndb.de, andersson@kernel.org,
- matthias.bgg@gmail.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-References: <20251015084103.10737-1-angelogioacchino.delregno@collabora.com>
- <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5Gs5_j5L3+HT7K-XYwVG6S8ZGhHZkEcS0HpdkcjRQq2oQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 29/10/25 10:14, Chen-Yu Tsai ha scritto:
-> On Wed, Oct 15, 2025 at 4:41 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> After a reply on the mailing lists [1] it emerged that the DT
->> property "firmware-name" should not be relied on because of
->> possible issues with firmware versions.
->> For MediaTek SCP, there has never been any firmware version vs
->> driver version desync issue but, regardless, the firmwares are
->> always using the same name and they're always located in a path
->> with a specific pattern.
->>
->> Instead of unconditionally always relying on the firmware-name
->> devicetree property to get a path to the SCP FW file, drivers
->> should construct a name based on what firmware it knows and
->> what hardware it is running on.
->>
->> In order to do that, add a `scp_get_default_fw_path()` function
->> that constructs the path and filename based on two of the infos
->> that the driver can get:
->>   1. The compatible string with the highest priority (so, the
->>      first one at index 0); and
->>   2. The type of SCP HW - single-core or multi-core.
->>
->> This means that the default firmware path is generated as:
->>   - Single core SCP: mediatek/(soc_model)/scp.img
->>     for example:     mediatek/mt8183/scp.img;
->>
->>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
->>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
->>                      mediatek/mt8188/scp_c1.img for Core 1.
-> 
-> I know this patch has been applied, but this scheme doesn't actually
-> follow what is already in the linux-firmware repository.
-> 
-> For all the supported platforms, the first core, even for multi core SCP,
-> already have their firmware uploaded as just "scp.img". Multicore SCP
-> is seen in MT8195 and MT8188.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-The only one that is affected is MT8188, which needs a rename or a symlink in
-linux-firmware.
+Commit 169ac4bc5bc4 ("dt-bindings: media: Convert MediaTek mt8173-mdp
+bindings to DT schema") renames mediatek-mdp.txt to
+mediatek,mt8173-mdp.yaml as part of this dt-binding conversion, but misses
+to adjust the file entry in MEDIATEK MDP DRIVER.
 
-MT8195 is not affected by this change, because the SCP is used as single-core,
-hence this code will look for scp.img and not for scp_c0.img.
+Adjust the file entry after the conversion.
 
-> 
-> I guess I can send a followup patch?
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The only followup patch that I deem to be necessary is one adding a symlink
-or renaming for MT8188's SCP and nothing else.
-
-Please remember that some of those SoCs (including MT8195) allow the SCP to be
-configured as *either* single-core *or* dual-core - and usually firmwares for
-single-core configurations are not compatible with dual-core ones, because of
-the SRAM carveout/usage.
-
-Cheers,
-Angelo
-
-> 
-> 
-> ChenYu
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e428ec79dd24..c094b2fef0fc 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15881,7 +15881,7 @@ M:	Minghsiu Tsai <minghsiu.tsai@mediatek.com>
+ M:	Houlong Wei <houlong.wei@mediatek.com>
+ M:	Andrew-CT Chen <andrew-ct.chen@mediatek.com>
+ S:	Supported
+-F:	Documentation/devicetree/bindings/media/mediatek-mdp.txt
++F:	Documentation/devicetree/bindings/media/mediatek,mt8173-mdp.yaml
+ F:	drivers/media/platform/mediatek/mdp/
+ F:	drivers/media/platform/mediatek/vpu/
+ 
+-- 
+2.51.0
 
 
