@@ -1,158 +1,132 @@
-Return-Path: <linux-kernel+bounces-875902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D8ADC1A171
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:42:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E33AC1A16E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F11A23BF478
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D8CC58120D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E0C32ED3A;
-	Wed, 29 Oct 2025 11:35:08 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B8E330337;
+	Wed, 29 Oct 2025 11:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3Labvbx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9192ECD37
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C73161B8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761737707; cv=none; b=omCuDuo0FgHHQyz2w5jVl8+2ALaQ7gETYcwtPBgMG7Nd5iAgB4e90YWe4UZuInNvy/WMDzSBiUpVeZVO3hzeXC/Cd9Ob+grVjhhcimtDad47iROyDgbRb1fius+ihx8DSeJfMiwrdfwjomKhMiypw8owWsZCU2Z0UETymnYs17E=
+	t=1761737795; cv=none; b=M0XEBxKtAhYZ6YbaACgSiDTkXcaCyCwEU7Q3hD8HogCXJVn+mi0aijboL5rRPpqVckp64g4O4KOysAxPfhmWGT8HQIuDwksDoj+M1DmXZlJWIp+PQiX/s2W2++pr51tSgf2Ck1CLsb5qJCJzJvW1+lD8ubkPKlGcd9d8dL0fybU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761737707; c=relaxed/simple;
-	bh=cycjCEmer8CF69McwOOJYETSxlUEifPjL3eEryiXWWs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aObmKj3yqUUHunVgW6pN+ID/mXvDl7Q/YOrMLjZFDDmLGMyY7GLUohHYHQDce/eL1GZL64KowWQVA2n9DvoYpMa4AwRdzZOWrnYAhhMqM8ELc2fKvCovUyhKnOK/Vs6QzLurmafUU8Mml2U9eFIPFtoiLCUFBun3aiSkADZbd1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-430da49fb0aso197530545ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761737703; x=1762342503;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x3ap6J21l7WRnVdZ+fP4h2wyxFYZwrCB+m43maOPG98=;
-        b=NAbn0ViFGsl4N40W61bXMyhNhrlb216fVZWzEGAacNx2ajUQqsi8alHwyFSWr00fLi
-         Vrkl/GhLQ9usYpYx9FxfkdQY+BxhMqEA0su29ACxW9sndn7rq6VeNb+dJPbjBXDFlMxZ
-         3OV3c3795eZ7xCMI52SMpa8EEJzkVPFa2Qv2b3Y3tEwaVaTyJj+pqSBfm70r4CoPwkTR
-         yyNevCno6xOmPlC9VgaPvfGnh5BV6awFkqqZTxR+CSv5ZnwUlALo8DFnjxgUTKQDFB4P
-         8kXccwX2FQGinKCttYbZd+l6aQCLyFy2zZ7y+BRKWXcZSCAnI48oEcM/CN9/2s/czURp
-         reGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1AT6Slvl6ilfgDiyK8tcPtRIU177ap407C4Rqaf/TtaVeYcIYVqWj2DHGwze5PfjlnC76yiH1rKQGN/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNiYm3cP7bfkzW24Ds6vQc0oOXIS2kdPi6Wukyk+MizIf/vi+P
-	5xUTRC3dG7LxKEtkm6EIUQqiOyI7pgCBJ96+/Xtl0QeZ+tuDIgnTsgtDZHTiFzlQsxEsnyhWaPq
-	KE7fBc3bYMoUtKyjobY9jJZEaODi/3Zy4E9CbgYeDqQPlXerZFOCUBq88Faw=
-X-Google-Smtp-Source: AGHT+IHhkFGecbOljndc9gBDF4nmm+PlhncrG7Qcw7c4zhKIScLeCG1d5JpQU0EgjyjoL+ZhS5biDPXFmyZMmwRAvVpnmx0T9gBy
+	s=arc-20240116; t=1761737795; c=relaxed/simple;
+	bh=uBh/VIvn4X+SWEQPE+uFpXGqcS5G3IgcPGIJmDTsaWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkSfpE8pqRVNC2dfmtI80ogEz91+FqLzOkHyJZehueFT0qCL5wfeRJgmdEZu9SmXL1p0HRifFEWUhCBLd0+NPUlMO2vfEpJ0v2FKHDRQPEoo76PK+RHqSI68dAZ5LZIvyfwo7mi4BQR+T1uJvgfhq2V/u8A2QYowVRh7Etiv/6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3Labvbx; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761737792;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JewGrExeY4YUsH2Q4/QPO/3tV8s8JWgMbXOK4V6Kv3s=;
+	b=h3LabvbxEb6SceoL9YIVUJ8j4gIcYfZ75O5IU1AiJR2jSIhjqJnwwIfb05iZbE2+SKy3ZX
+	jBfDDlvwRX0q4l5/pyhkn5TBTxiQkYFlX2GAxAwBHPJJrL6rlc5U8eLIWWYrx2LDJuggLz
+	21cj+G4IstnnhftDvCM1qKlZaNPzaJc=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-YWvrsIZNM_63qENBF2bUfQ-1; Wed,
+ 29 Oct 2025 07:36:29 -0400
+X-MC-Unique: YWvrsIZNM_63qENBF2bUfQ-1
+X-Mimecast-MFC-AGG-ID: YWvrsIZNM_63qENBF2bUfQ_1761737786
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AF401180899A;
+	Wed, 29 Oct 2025 11:36:24 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.80])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 015433000223;
+	Wed, 29 Oct 2025 11:36:20 +0000 (UTC)
+Date: Wed, 29 Oct 2025 19:36:08 +0800
+From: Pingfan Liu <piliu@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	Joel Granados <joel.granados@kernel.org>
+Subject: Re: [RFC 2/3] kernel/cpu: Mark nonboot cpus as inactive when
+ shutting down nonboot cpus
+Message-ID: <aQH8KJ8RsnzbLfN2@fedora>
+References: <20251022121345.23496-1-piliu@redhat.com>
+ <20251022121345.23496-3-piliu@redhat.com>
+ <877bwgw9yf.ffs@tglx>
+ <aQAvnjVvJOUx78Nk@fedora>
+ <87qzunuqqo.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:c:b0:430:a8c5:fdad with SMTP id
- e9e14a558f8ab-432f8f8719dmr36160185ab.6.1761737703397; Wed, 29 Oct 2025
- 04:35:03 -0700 (PDT)
-Date: Wed, 29 Oct 2025 04:35:03 -0700
-In-Reply-To: <20251029062155.ZlWxZ%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901fbe7.050a0220.3344a1.041d.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KASAN: slab-use-after-free Read in ocfs2_fault
-From: syzbot <syzbot+a49010a0e8fcdeea075f@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87qzunuqqo.ffs@tglx>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hello,
+On Tue, Oct 28, 2025 at 01:59:11PM +0100, Thomas Gleixner wrote:
+> On Tue, Oct 28 2025 at 10:51, Pingfan Liu wrote:
+> > On Mon, Oct 27, 2025 at 06:06:32PM +0100, Thomas Gleixner wrote:
+> >> When kexec() is in progress, then running user space tasks at all is a
+> >> completely pointless exercise.
+> >> 
+> >> So the obvious solution to the problem is to freeze all user space tasks
+> >
+> > I agree, but what about a less intrusive approach? Simply stopping the 
+> > DL tasks should suffice, as everything works correctly without them.
+> 
+> What's intrusive about that? Task freezing exists already.
+> 
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-UBSAN: signed-integer-overflow in ip_idents_reserve
+Thanks for your guidance. That's a good point -- system suspending is a
+good analogy. I will check how PM handles it.
 
-================================================================================
-UBSAN: signed-integer-overflow in ./arch/x86/include/asm/atomic.h:165:11
-1495198172 + 1093622763 cannot be represented in type 'int'
-CPU: 0 PID: 7104 Comm: syz-executor Not tainted syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Call Trace:
- <IRQ>
- dump_stack+0xfd/0x16e lib/dump_stack.c:118
- ubsan_epilogue+0xa/0x30 lib/ubsan.c:148
- handle_overflow+0x192/0x1b0 lib/ubsan.c:180
- arch_atomic_add_return arch/x86/include/asm/atomic.h:165 [inline]
- atomic_add_return include/asm-generic/atomic-instrumented.h:73 [inline]
- ip_idents_reserve+0x14a/0x170 net/ipv4/route.c:521
- __ip_select_ident+0xe4/0x1c0 net/ipv4/route.c:538
- iptunnel_xmit+0x466/0x7b0 net/ipv4/ip_tunnel_core.c:80
- udp_tunnel_xmit_skb+0x1ba/0x290 net/ipv4/udp_tunnel_core.c:190
- geneve_xmit_skb drivers/net/geneve.c:1004 [inline]
- geneve_xmit+0x1d05/0x2140 drivers/net/geneve.c:1117
- __netdev_start_xmit include/linux/netdevice.h:4824 [inline]
- netdev_start_xmit include/linux/netdevice.h:4838 [inline]
- xmit_one net/core/dev.c:3601 [inline]
- dev_hard_start_xmit+0x294/0x780 net/core/dev.c:3617
- __dev_queue_xmit+0x1678/0x28b0 net/core/dev.c:4203
- neigh_output include/net/neighbour.h:509 [inline]
- ip6_finish_output2+0x1020/0x1490 net/ipv6/ip6_output.c:130
- NF_HOOK+0x45/0x2c0 include/linux/netfilter.h:297
- mld_sendpack+0x5f9/0xa70 net/ipv6/mcast.c:1676
- mld_send_cr net/ipv6/mcast.c:1972 [inline]
- mld_ifc_timer_expire+0x7e1/0x990 net/ipv6/mcast.c:2471
- call_timer_fn+0x105/0x440 kernel/time/timer.c:1444
- expire_timers kernel/time/timer.c:1489 [inline]
- __run_timers+0x5d8/0x7a0 kernel/time/timer.c:1783
- run_timer_softirq+0x19/0x30 kernel/time/timer.c:1796
- __do_softirq+0x23c/0x8ae kernel/softirq.c:298
- asm_call_irq_on_stack+0xf/0x20
- </IRQ>
- __run_on_irqstack arch/x86/include/asm/irq_stack.h:26 [inline]
- run_on_irqstack_cond arch/x86/include/asm/irq_stack.h:77 [inline]
- do_softirq_own_stack+0x6d/0xb0 arch/x86/kernel/irq_64.c:77
- do_softirq+0xa9/0xf0 kernel/softirq.c:343
- __local_bh_enable_ip+0x10e/0x170 kernel/softirq.c:195
- spin_unlock_bh include/linux/spinlock.h:399 [inline]
- netif_addr_unlock_bh include/linux/netdevice.h:4425 [inline]
- dev_uc_add+0xbe/0x110 net/core/dev_addr_lists.c:593
- vlan_dev_set_mac_address+0x1b3/0x530 net/8021q/vlan_dev.c:322
- dev_set_mac_address+0x1d4/0x330 net/core/dev.c:8784
- dev_set_mac_address_user+0x2d/0x50 net/core/dev.c:8802
- do_setlink+0x6c2/0x39b0 net/core/rtnetlink.c:2687
- __rtnl_newlink net/core/rtnetlink.c:3410 [inline]
- rtnl_newlink+0x1195/0x1530 net/core/rtnetlink.c:3530
- rtnetlink_rcv_msg+0x9b8/0xe40 net/core/rtnetlink.c:5610
- netlink_rcv_skb+0x187/0x390 net/netlink/af_netlink.c:2503
- netlink_unicast_kernel net/netlink/af_netlink.c:1314 [inline]
- netlink_unicast+0x7b7/0x9b0 net/netlink/af_netlink.c:1340
- netlink_sendmsg+0x968/0xb50 net/netlink/af_netlink.c:1914
- sock_sendmsg_nosec net/socket.c:651 [inline]
- __sock_sendmsg+0x15c/0x170 net/socket.c:663
- __sys_sendto+0x323/0x430 net/socket.c:2005
- __do_sys_sendto net/socket.c:2017 [inline]
- __se_sys_sendto net/socket.c:2013 [inline]
- __x64_sys_sendto+0xda/0xf0 net/socket.c:2013
- do_syscall_64+0x34/0x50 arch/x86/entry/common.c:46
- entry_SYSCALL_64_after_hwframe+0x67/0xd1
-RIP: 0033:0x7fab23a02a3c
-Code: 2a 5f 02 00 44 8b 4c 24 2c 4c 8b 44 24 20 89 c5 44 8b 54 24 28 48 8b 54 24 18 b8 2c 00 00 00 48 8b 74 24 10 8b 7c 24 08 0f 05 <48> 3d 00 f0 ff ff 77 34 89 ef 48 89 44 24 08 e8 70 5f 02 00 48 8b
-RSP: 002b:00007ffdf0a7a370 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007fab24776620 RCX: 00007fab23a02a3c
-RDX: 000000000000002c RSI: 00007fab24776670 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 00007ffdf0a7a3c4 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 0000000000000000 R14: 00007fab24776670 R15: 0000000000000000
-================================================================================
+> > I have a draft patch ready. Let's discuss it and go from there.
+> >
+> >> when kexec() is invoked. No horrible hacks in the deadline scheduler and
+> >> elsewhere required to make that work. No?
+> >
+> > To clarify, skipping the dl_bw_deactivate() validation is necessary 
+> > because it prevents CPU hot-removal.
+> 
+> If you freeze stuff there is nothing to do. Hibernation works exactly
+> that way without any magic hacks in a particular scheduling class, no?
+> 
+
+There is a nuance: DL bandwidth represents a commitment, not necessarily
+the actual payload. Even a blocked DL task still occupies DL bandwidth.
+The system's DL bandwidth remains unchanged as long as the CPUs stay
+online, which is the case in hibernation.
 
 
-Tested on:
+Best Regards,
 
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-5.10.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=138c4fe2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39182a54870857eb
-dashboard link: https://syzkaller.appspot.com/bug?extid=a49010a0e8fcdeea075f
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14d89c92580000
+Pingfan
 
 
