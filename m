@@ -1,98 +1,147 @@
-Return-Path: <linux-kernel+bounces-876047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4D3AC1A849
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAB7BC1A81D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EC13B584774
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:59:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6903B562DEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEEC34CFDF;
-	Wed, 29 Oct 2025 12:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C1E340DA1;
+	Wed, 29 Oct 2025 12:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dwurp.de header.i=@dwurp.de header.b="xiKzlm+H"
-Received: from mail.dwurp.de (mail.dwurp.de [185.183.156.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="F87I/2HK"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A75630748D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.183.156.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5AA3587A3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761741624; cv=none; b=A6tbgKKfKCPj54YIvSfN20IA6BzejL5X/zPFdwrinDLDro+72sEjERVypxjZDZ4Poqpi+r5zLxdNRgFWgSU7+Le9sA/MpPKRBuOgUO1hU6kpkzCy5oxGnRJjk2q8FHdnm8xFqXOV/WCEPCLlqATq/h8VNs0TMEFkMPyc6+KNxlA=
+	t=1761741431; cv=none; b=XHr1zLwFuKkQcsYyWEz6NMc9xeHHWIEYMNlPImPFLCGDf2hai054EgmnSzb6yrTXpvsUsCLdDv/9fNhgc1y9UmrVkX1a5VFG6NhaFwPwURr0yO98BDRuu8iO391R6rhzmeu8aJJAALnBsQBqtCfgFGQfyh0jPKcpSsKozNMCpbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761741624; c=relaxed/simple;
-	bh=OZqfzFdxoIzorBe7PjAS4/RI5ndFQdger9fTPlhH6ys=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bZS02U5jGvuIltGbGz75Md2kT+ZP6jO6UuqYCcnES8x2+ZTJT87fQ5E23P8jYA043quFGVXJMxPA4+PgvaPeocVQ0rR0BLBfp+C7YrsbrtMqDKte/Tr77QIhA1C3piVQBJbfc4Ir0eEuqAF01mwoWXROUtkhSVrfGIO/oQ7W7ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dwurp.de; spf=pass smtp.mailfrom=dwurp.de; dkim=pass (1024-bit key) header.d=dwurp.de header.i=@dwurp.de header.b=xiKzlm+H; arc=none smtp.client-ip=185.183.156.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dwurp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dwurp.de
-From: Sebastian Fleer <dev@dwurp.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dwurp.de; s=mail;
-	t=1761741619;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=VJB18FjU3ZpQ6gifGhjmuB4V1Bz7InYQSrBtNNvS9nY=;
-	b=xiKzlm+HnHTnGz2qD52EB+8BPoj+bdgDWpbATTdUSjax05wDaVRieLomD/HxkN4iIUIm1n
-	RLMPjULfR4H9d55XcPS7k3u/BRxTdIickyIz8RYzMfhVYlnwlvnjb+TlgSd7PQg9xYX2TQ
-	NbK2HqFU5bQGKtitAL1ncqKSYnmEXTM=
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Christoph Fritz <chf.fritz@googlemail.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jesszhan0024@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jens Reidel <adrian@postmarketos.org>
-Subject: [PATCH v2] drm/panel: kingdisplay-kd097d04: Disable EoTp
-Date: Wed, 29 Oct 2025 13:35:28 +0100
-Message-ID: <20251029124007.232333-1-dev@dwurp.de>
+	s=arc-20240116; t=1761741431; c=relaxed/simple;
+	bh=ni2P6AAAIna0hjFuAO82zYVMn0J7WfuU6b6IJiF1kKs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XXRXVjb9knIiiGpwOFnaQJSi4rNtNFLJs+DEvr+eZyg99H5CX731tChip56QMT2gTUZueGlTCbyF0DCQoQfvCv87Zpe0ffOjai1Vpp0CTAwPeaLhNeIBRZzEe6Jz8Pl0clcMpaKF15fToHdaUsHFZw0vFT+HIArwd71CZy9hsvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=F87I/2HK; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-592f1988a2dso1030525e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761741427; x=1762346227; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e7av6/+8iNuXmmgvTwlUka4Y7XmkOmuVd9YoxH52DeM=;
+        b=F87I/2HK8EHJQ7q4NQauRZSN2gkF3Pa6uWaxKT5wFbnJ02O9XJM9CVQa76aAk0TSaF
+         76edmu0GN4qf8O7hLOGmgl2m1E/wZWlSCbCwBKWravWbrzWOVNd2Wqlt7J+Ua6qOxZxV
+         Vo25gJ6FNxMMGcNYpCsgsF/Dew11WFweBBQN5b/PSxkUJYaDWPJMhjW8sS4ajHDy6GUk
+         UcOdOSnXu53Sjp2FtHMI3QAxxu+nHioY2KQfxl0H50DDrK7277Tkwx4zmGEf+2VqRYAC
+         XTokfkhjUfDrPSSnkP3OTTs8R08HxGteHAfjxqZNthOIwQp4OQb3FHhc2UN/G9S0PpM9
+         LdQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761741427; x=1762346227;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e7av6/+8iNuXmmgvTwlUka4Y7XmkOmuVd9YoxH52DeM=;
+        b=cdh2NTbNk4x6kkgQ8WwVM4Uut3N8GIdw2O+B8JhOobmi7dopCkt13rokImBrftSH1D
+         atzu/YZkFE7u9s0Az5Bqogh4i7m0pEz7P9scBmqcvD3cbY6w4aVSyBgh9CnX6xbv3OCB
+         6UYS0wS20jS8/yF5FgqzX1/TCAVi/ELRcf7kb8eHm5h6TiPCiTMDCakGbYHCE3KMiptn
+         DBfm6YEdu3a5VfwAo44KdatMEldI21NnLwSsAD3M3gc/d9xhIvQEeeja8Tc8Wq/HEMI/
+         Bc38m6cLdtpnRLK5loCG7IRptuvOcdOAEgUwQA5k36yocZjyoZhby6/te4XqjYtvhGXQ
+         GDmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQhSLGqw5BmTkvuCwSKL/5UY3vPabv+PzfA6cWKVqBqkTacCfm0sZqWNj2MtSBFZ6aVZOm2R0s2XVnYbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyP86RFdFPNoukrOnvmXFu2N/ZEAOlGUEB1/4vbCnKergHq278Q
+	Cxoqb6zc5pRySpjOyS1C2nfkA0PaiKYhca0+byu522wTnRpVeFeX05w95882GzNTrWLUpO4JWep
+	3Zo29gtUxIRXVkTE6NbdhE25VkY9LJvtCn+9GiD57rA==
+X-Gm-Gg: ASbGncs9f702zbvKJiftViPWfHdhdYRk4k9NR6ZGrFYqHuD6aAikJb0TFxG4PBBCfcu
+	p3vtlgM9RBHxDnTmLt5wLAINZK4eMRNgNfHWZ2pYDTRfmjEN4+NI1964t4DSpTTWiiQLpow81nQ
+	9S2Nr2SwxwLRZfI9+lluc+goiu/QEsBe1NzT4Vev0LpGBwvlWI7FJQ7cM1NCcv1WorjiP5Wu7vj
+	ncs85h51CVuVVRNr3VndZM3otf+1PTeUmWzE6Nm03zAywAWbhnF9wG5czvPi7mh+1a28SOzsUQb
+	D+eHLMsoiI4PlNJtDuEjr1XD/wg=
+X-Google-Smtp-Source: AGHT+IEUmGu04036ormM4pltNB2Am321w2VXbEnKTAs3EJCIFCtIkYSiyRchfH1o5wZ/LZR6U90hsv4wZnUUYh2RdrI=
+X-Received: by 2002:a05:6512:31d5:b0:591:c763:78e5 with SMTP id
+ 2adb3069b0e04-5930ee00135mr2032537e87.23.1761741427164; Wed, 29 Oct 2025
+ 05:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
+ <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org> <aQH9gE_fB119CW3l@smile.fi.intel.com>
+In-Reply-To: <aQH9gE_fB119CW3l@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 29 Oct 2025 13:36:55 +0100
+X-Gm-Features: AWmQ_blmOzETrnBiOxNQNAG3OMw6fz-E4Nx4SOD4Wgu8a41SpvuD7mJ9RHyBeG8
+Message-ID: <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/10] string: provide strends()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andy Shevchenko <andy@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Srinivas Kandagatla <srini@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Alexey Klimov <alexey.klimov@linaro.org>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since commit d97e71e44937 ("drm/bridge: synopsys: dw-mipi-dsi: enable EoTp by
-default") panel output on an Acer Chromebook Tab 10 (google-dru) is corrupted.
-The tablet I use is equipped with a kingdisplay-kd097d04 panel, disabling EoTp
-restores the correct functionality.
+On Wed, Oct 29, 2025 at 12:42=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Wed, Oct 29, 2025 at 12:20:37PM +0100, Bartosz Golaszewski wrote:
+> >
+> > Implement a function for checking if a string ends with a different
+> > string and add its kunit test cases.
+>
+> ...
+>
+> > +/**
+> > + * strends - Check if a string ends with another string.
+> > + * @str - NULL-terminated string to check against @suffix
+> > + * @suffix - NULL-terminated string defining the suffix to look for in=
+ @str
+> > + *
+> > + * Returns:
+> > + * True if @str ends with @suffix. False in all other cases.
+> > + */
+> > +static inline bool strends(const char *str, const char *suffix)
+> > +{
+> > +     unsigned int str_len =3D strlen(str), suffix_len =3D strlen(suffi=
+x);
+> > +
+> > +     if (str_len < suffix_len)
+> > +             return false;
+> > +
+> > +     return !(strcmp(str + str_len - suffix_len, suffix));
+> > +}
+>
+> Can you rather re-use strcmp_suffix() from drivers/of/property.c?
+>
 
-Fixes: 2a994cbed6b2 ("drm/panel: Add Kingdisplay KD097D04 panel driver")
-Suggested-by: Jens Reidel <adrian@postmarketos.org>
-Signed-off-by: Sebastian Fleer <dev@dwurp.de>
----
+I think that strends() and its boolean return value are a bit more
+intuitive to use than strcmp_suffix() and its integer return value,
+the meaning of which you typically have to look-up to figure out. If
+there are no objections, I'd like to keep it and - when it's upstream
+- convert property.c to using it instead. Also: the name
+strcmp_suffix() could use some improvement, seeing how I wasn't able
+to find it, even though I looked hard across the kernel source, while
+I easily stumbled upon a similar implementation of strends() already
+existing in dtc sources.
 
-Changes in v2:
-- Reference correct commit in Fixes tag
-- Added Suggested-by
-
----
- drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c b/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
-index 2fc7b0779b37..893af9b16756 100644
---- a/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
-+++ b/drivers/gpu/drm/panel/panel-kingdisplay-kd097d04.c
-@@ -359,7 +359,7 @@ static int kingdisplay_panel_probe(struct mipi_dsi_device *dsi)
- 	dsi->lanes = 4;
- 	dsi->format = MIPI_DSI_FMT_RGB888;
- 	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
--			  MIPI_DSI_MODE_LPM;
-+			  MIPI_DSI_MODE_LPM | MIPI_DSI_MODE_NO_EOT_PACKET;
- 
- 	kingdisplay = devm_drm_panel_alloc(&dsi->dev, __typeof(*kingdisplay), base,
- 					   &kingdisplay_panel_funcs,
--- 
-2.51.2
-
+Bart
 
