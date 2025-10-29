@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-876085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8FEC1A96A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:17:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF79C1A954
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686601A21400
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A65A56559F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF1D32572F;
-	Wed, 29 Oct 2025 13:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFD8302CA2;
+	Wed, 29 Oct 2025 13:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U1YiPXJ0"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/02/VCQ"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC4432571A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3652D8391
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742876; cv=none; b=kzhJRYw6f0xH77k8+m35zrjjC1Cx4kUhj1MF1AXNLMysJpA9tn/NTw8qyS2c/KsDwVh7FPJx6g65ZWtmZnK32e9OdFVvIGI+WBYVLfqb/756VVHhAweaSO8Nr3ZoFCmheQMOhxEuygTl7eJ+i9736/fdJorXSbTgS5j9835a1FU=
+	t=1761742863; cv=none; b=t8BARhuzhhJcAlTpUhH5e00G0STVd1HWtx/5OfDQXY7XXwQhyyErSFN6nFOCtLuLBhT1S//AEgBv3g84bngAJ8xsHDM2kbsETHq1yVXlPDzTBa6XpTzGW0KOoWqaPlBkiqGPMXEwY9B1pTEp3apNfVnsWPhwtdso7ZfRmnC8q1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742876; c=relaxed/simple;
-	bh=+p+VvNckarVASnJXjTVrkxxDDckYCgPyzbagx3UZjQA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=CforYR+HMgkOTza5yCRDtOhb8/epXJ1pU4oUqGbtHGTiuq8CMIEp0xoDOFbGKusfSWfMRwVcxjEFNDaW1Zj9fm4mCDZe44HhDULHcuESW36eKCj00d+9qyz8lgjxiaoca/9W1eB6VrVX+sV1N+NhR8zxJE2rd78E58OcVH77ubs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U1YiPXJ0; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251029130113epoutp03aa55147d47b1c6f93a42e230661d2c20~y988fW9Oz0833208332epoutp03N
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251029130113epoutp03aa55147d47b1c6f93a42e230661d2c20~y988fW9Oz0833208332epoutp03N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761742873;
-	bh=mhdCUOJguwRxW0Me6zDM1dADDQ0Txm6u4urbm0RY+sY=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=U1YiPXJ0Mvk/SQhYUXIekTxhFpOPW3XHKJY9iDWCJ99NuahwfRvQ5dH38KN9foMF1
-	 sHiIPtW3jhXHrk9rji9fSxmC9hp5S1uUlUltkUsSA33INpjqDz+Xp6kPigzxcBM20F
-	 EYss5SPUWfbrjIqEk32m1jwkSYslVWeBSw+dK800=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
-	20251029130112epcas5p196a19b1861a9fb5ad13d06e4e0c79662~y987osXKe2737327373epcas5p18;
-	Wed, 29 Oct 2025 13:01:12 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4cxS6b2JrSz6B9m6; Wed, 29 Oct
-	2025 13:01:11 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897~y985uqZvX0109501095epcas5p2n;
-	Wed, 29 Oct 2025 13:01:10 +0000 (GMT)
-Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20251029130057epsmtip131d105497324d9ff01d56fa0a3a647df~y98tmANYd0989609896epsmtip1A;
-	Wed, 29 Oct 2025 13:00:57 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
-	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
-	cw00.choi@samsung.com
-Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
-	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
-	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
-	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com
-Subject: [PATCH v2 4/4] dt-bindings: samsung: exynos-pmu: Add compatible for
- ARTPEC-9 SoC
-Date: Wed, 29 Oct 2025 18:30:47 +0530
-Message-Id: <20251029130047.42499-1-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-CMS-MailID: 20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897
-References: <CGME20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897@epcas5p2.samsung.com>
+	s=arc-20240116; t=1761742863; c=relaxed/simple;
+	bh=J0j9Fu1hpTGL+B/gSUeYs4SAcX3AxlY77L1M7JFd8p0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GbD5Ta96oYqcnCWFv502TtiDO2IkME8gmVYmI+EePr77fz6vRW3vTjl2tGDh4lmKqTNL2a/aFPNFOed2UmTfl9Rozo7dGYKGbX9rRBxLQJzfa1hhkNzDvHdweGfQnnOSLVS/QJvfsmM7UYRV6DHUeMYgjzahzNR5TRz00TYDF80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/02/VCQ; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-4270a3464caso3604795f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:01:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761742860; x=1762347660; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T2ovjL+MYzVmXGq6CvAvmhX8k8P4mycC2CPxReUa6E4=;
+        b=T/02/VCQ2qc/Iry8InWzjSbPTrOnrPnomXRWijrhDbsyzvxoWoV5sHnEMwu6MfQeq/
+         DS6ZfpMXrkRRvizyaLnTsxKhqN+OlO+4MsLtut1T8r6g8Zox1U7x5MRDcfOt01Pv4uQ2
+         nnzVrfWV2kFXSZv1w0evGwyTW1K234exSMb4jh4GB8JxEHBQo6Q+UQu9zeW8UbMFF+lH
+         SnJjMSvdMRZCdt0PnTszcUAppNaEWXT6eGBf4TpggXK06HRroCGZdKdSTA8orIkSiWXE
+         28p1SA975SDuImJO7lF9avVyvSoZ9oJAnc+i2ALJaxfoEb9YbQHaZCPBkPTmLtiYbeEY
+         HmhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761742860; x=1762347660;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T2ovjL+MYzVmXGq6CvAvmhX8k8P4mycC2CPxReUa6E4=;
+        b=wLVT6azpPtkD0USMtri6LexZFAy43C6w7rvIraVdnnpkR7P0J3cbEiin0U8CfkBmIB
+         OOMBZH/qTTZ1Cy/NTVKOuMtu7C6FFerNcRlyhMW9FS9dXpV38UThaKmm23gEH32Q0iqZ
+         sljjjaJ1GxAX5Azw88sCUmXA04RqwosmdvVxoDDMMlGHnJ0VsKzESoFNRCC++GFBXDTh
+         vEAC0CwQ1c8D/GUm13/sYRNvpfCbEPmkxW2AGByNQyBRGClmMhcb/bTGiigkvn5pGgQP
+         g7U15mAUGGH2B7uzdmbcF+w1IOnptjW0HFAfweY8WocT39Q7xK26sk5SwDmGEjpY6n3E
+         z6Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+Oyg27zXJ4GBEqYZzDtNNDW2eOWCtybZBFeBVujHou82ApIpSJPC5AJkZJkiztZKvx1fMNcJE3ZlRw50=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2ztpCBWkHecRt8Q/Br7Atpk6d+YilYCk2iUTEvNbsRi1fXYTt
+	0AcfYAYgF0H0wzyBlnFT/CT8iDFbWD0Y5CXbV8L0ySAfy6W/W2nUEAGd
+X-Gm-Gg: ASbGncudCW+YgNdH6LtDpzDBWkopYyRqJVqASDyTylq6HNmbzPSv6rsUWvUxIRoV4Ao
+	cwVx/78aJNvcKQCXMeDl0CwZky90dEZPk7K+z4MuccI9GsjqUacqpP2nVmnYnU5iInsXDXRgUJy
+	KjoSWZUKw8CmbHCrS6en9o+6erYej8AhKUEUz59XNw7YgDntORzrVPEWkjgsTomWnWDMCB9R+GX
+	SIp/5lhpp2Movg/lyVOKIbHFdyjrdxRefSB5pJZUVGRmffxK3o/2bPV5/GFWif/+IrljNbpDCN0
+	dGs2wLsik4rWl5tOars82iD183ccNBcOVJmZzWP6o3y1qzWo0ibOc7tP5OgWLkDWE+jMYWgjnul
+	96YL0OBKHYfsJEgh2yFBgltqMqnU64gYXGqD4YkPAS6U6y1bfgVlCxupStWqnGOVw4+Q4BKAp4m
+	PfDPDPY033E34z5KiVAa3749mxC3Awvjz/dDis6Qnbbw==
+X-Google-Smtp-Source: AGHT+IGqJlBrEpAy+D80nAwqaMFt+XjmQ9xBuEOWAMuScJNB3nO+jGrpfT4FhLOl1SIvEzsKPLCG/A==
+X-Received: by 2002:a05:6000:615:b0:3e7:4893:f9be with SMTP id ffacd0b85a97d-429aef71443mr2281897f8f.12.1761742859629;
+        Wed, 29 Oct 2025 06:00:59 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df5c9sm26292539f8f.41.2025.10.29.06.00.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 06:00:59 -0700 (PDT)
+Date: Wed, 29 Oct 2025 13:00:57 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: Re: odd objtool 'unreachable instruction' warning
+Message-ID: <20251029130057.70a8f487@pumpkin>
+In-Reply-To: <20251029100533.GF3419281@noisy.programming.kicks-ass.net>
+References: <CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com>
+ <20251029095638.06cce7c7@pumpkin>
+ <20251029100533.GF3419281@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: SungMin Park <smn1196@coasia.com>
+On Wed, 29 Oct 2025 11:05:33 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Add Axis ARTPEC-9 pmu compatible to the bindings documentation.
-It reuses the older samsung,exynos7-pmu design.
+> On Wed, Oct 29, 2025 at 09:56:38AM +0000, David Laight wrote:
+> > On Tue, 28 Oct 2025 12:29:11 -0700
+> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> >   
+> > > Josh, Peter,
+> > >  due to another entirely unrelated discussion, I ended up resurrecting
+> > > my "make asm readable" patch that I have had in my local tree when I
+> > > want to look at the actual generated code for user accesses.
+> > > 
+> > > That is a local hack that just removes the alternative noise for the
+> > > common ops, so that I actually see the fences and clac/stac
+> > > instructions as such, instead of seeing them as nops in the object
+> > > file or as horrible noise in the assembler output.  
+> > 
+> > I've toyed with using explicit nop sequences that would be identifiable
+> > as stac, clac and lfence.
+> > 
+> > At least that would tell you which is which.
+> > 
+> > Since the flags can be trashed there are plenty to choose from.
+> > (eg all the cmpb $n,%reg if you don't mind a false dependency.)  
+> 
+> As long as you ensure that insn_is_nop() recognises it as such, they
+> won't actually ever get ran after alternative patching, since they'll be
+> rewritten in canonical nops by optimize_nops().
 
-Signed-off-by: SungMin Park <smn1196@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
- Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Ah - I've wondered about the 'nop; nop; nop' being slightly sub-optimal.
+But it is hard enough to see what happens to the alternative that is
+selected never mind the ones that aren't.
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-index be1441193fee..9d3e8e9817fb 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
-@@ -52,6 +52,7 @@ properties:
-           - const: syscon
-       - items:
-           - enum:
-+              - axis,artpec9-pmu
-               - samsung,exynos2200-pmu
-               - samsung,exynos7870-pmu
-               - samsung,exynos7885-pmu
--- 
-2.17.1
+Instructions that change the flags can't be changed to nops.
+So possibly the best options are the 0f-1f-cx (for x 0..7).
+So 'long_nop %reg' rather than 0f-1f-00 'long_nop [%rax]'.
+
+(But I've not checked the full rules for the addressing modes of
+'long_nop'.)
+
+	David
+
 
 
