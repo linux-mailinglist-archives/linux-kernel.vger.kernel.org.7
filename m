@@ -1,165 +1,696 @@
-Return-Path: <linux-kernel+bounces-877016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8444C1CFE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:25:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3387EC1CFEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D865D1889456
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:26:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 927574E1746
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142B33557F7;
-	Wed, 29 Oct 2025 19:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A6F357A31;
+	Wed, 29 Oct 2025 19:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eG6pf10s"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mPeb3YrF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D8E336EF1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A3C3563DA
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761765937; cv=none; b=iLP0FIty8t3XYT0DrAaXKSLyz3nfYP/JocCGP8jBpTBgOZ7x6Q/1e4ZGu0+l2ka4tfG+VIBuiP/3B6J6qryWLcWCT/eVTCV4+j7j48ehKiW1wZzZgaMbgddIQ9YpaGaYcfQ5isRVgf7lFMsn5AD6bZEUhoPwStiHsy5kUry8NOA=
+	t=1761766001; cv=none; b=de2kO1bYn2BwCxV8lzoJxF5QnMKKxJu51P4GkEx+xqZumH48vpGI18juXoLCatrcFOYgFgtx4rcAz0HNQ1llcOJTNiS1yaORbBcWiLZZkNCyEjr20jGd4WbDlpJ6KSX7AMBv8Enr7lj0A97OZEY9M83PfeVIDnuCU10gdHIrKAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761765937; c=relaxed/simple;
-	bh=PggnXzkhetiF8XVSPKz3gVEmsscdfqc3b3AA9jaU5fA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jVwRiF+9s/YoOb2rB6oz0ioXd13AbyD4/H3aAb5rwzlQXEtoIrvPTV/0UFmF8eeK/NrFw51tJpB2t4c0r2o3MSaB66/B+yxKiPrN6XgeetkHeasztce5dOUZ3MgZAfxdwvsFuiccfFvaCRZttRzUfh+tIQD8HLa6c04fpPlgF0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eG6pf10s; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761765932; x=1762370732; i=markus.elfring@web.de;
-	bh=PggnXzkhetiF8XVSPKz3gVEmsscdfqc3b3AA9jaU5fA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eG6pf10sQEQuskwrVFuy65Pg8cfnaUSP6h4ZeoNbqDBHss7Q+RLS3Rd88PFoMI+y
-	 0oy/XrsxFzd6cooWJFqB4QvE/tiIm5oiKimZsuRbJBx5LqNbHkyBnOi/91ZNFd+h4
-	 gaRhdYunBRX3QMbK0tsm5HXKchSoBGtyS9+oaa6uDusX+wy4cRqrl9iOUWzWnzrbb
-	 /hVjQj/GSf+dehBSjWmNJvZM/MJHMWHW1TokmCfxQma/kKUhSJ4jChLpdEJ2abWqa
-	 oFs4Ma7c6MJAFGUNdTiesvpXJMhU6UkBcXD3kh76uJno9miax0JrM8EBMER+WNWGg
-	 AjyK6Hc2OC3moPdJFA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mtgub-1w84hf1f0p-011mWX; Wed, 29
- Oct 2025 20:25:32 +0100
-Message-ID: <b7de2d4b-f876-429a-9ed0-7d826b9ed966@web.de>
-Date: Wed, 29 Oct 2025 20:25:30 +0100
+	s=arc-20240116; t=1761766001; c=relaxed/simple;
+	bh=beMPeGN4MaJT9fWx9tZ7EqmiURgdCSilOmHGU7r1DaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPc69ZuIyiyYt3NRspdxo5drmi59F0noliiTlqx8Xw8/0JMUHP/cyk1cMWjhXNy9hEmAUwUfzysm5us9zkBV008GuCLRy0HchAv5NcgXPUVPIhwfFWbF0kYgR6StUnZioHwphO52DE8O2Pe2i7Ze3yIup/e8PfUfGNAwpnLNal4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mPeb3YrF; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761765999; x=1793301999;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=beMPeGN4MaJT9fWx9tZ7EqmiURgdCSilOmHGU7r1DaQ=;
+  b=mPeb3YrFJiUbeQvFH2WQrm7D7Hg8byA3UbBk+z0myBEv9GSlSHIhaI7P
+   rqdtDbdVpW1z0Bozlts+yXQcP4WaU9LwzpWQJrXv9dXSh9nUTvARjViMh
+   uY54WqhgbLdAZKSQDDLJILj5n0sxtrkH/nkj2vZDwkMi6Kmp+Quxaj2cH
+   alyxX/dda3PvQQu2+j0TSaGhCJCIGe4UxOOAPz6kU84R7rxk402lclzfx
+   zTez7hn7zwjujqV5yKAE98rl74Pz3PvRBPNwradSpeohOh0aYzYxLixYz
+   AoCYuhhWx4gpn54Qq+dzHmB6uLu6oyZX5aNrB1FSdx+R4Vs2/RyeaKRMA
+   A==;
+X-CSE-ConnectionGUID: U8xftrGaRjy9hsTBOv5daA==
+X-CSE-MsgGUID: WmUllrxmRTGfXeicFhFyYg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="51472363"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="51472363"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 12:26:38 -0700
+X-CSE-ConnectionGUID: Y63VVkv5TIexc6mJkaAcgw==
+X-CSE-MsgGUID: vqrvbAUNS7KWouksLLEMPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="185402287"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2025 12:26:32 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEBoT-000L5y-2q;
+	Wed, 29 Oct 2025 19:26:29 +0000
+Date: Thu, 30 Oct 2025 03:25:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Baoquan He <bhe@redhat.com>, Barry Song <baohua@kernel.org>,
+	Chris Li <chrisl@kernel.org>, Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Youngjun Park <youngjun.park@lge.com>,
+	Hugh Dickins <hughd@google.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+Subject: Re: [PATCH 14/19] mm, swap: sanitize swap entry management workflow
+Message-ID: <202510300316.UL4gxAlC-lkp@intel.com>
+References: <20251029-swap-table-p2-v1-14-3d43f3b6ec32@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: accel/amdxdna: Fix incorrect command state for timed out job
-To: Lizhi Hou <lizhi.hou@amd.com>, dri-devel@lists.freedesktop.org,
- Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Maciej Falkowski <maciej.falkowski@linux.intel.com>,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>, Max Zhen <max.zhen@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20251028175452.2329497-1-lizhi.hou@amd.com>
- <b7a2ac2a-53c3-49ce-862d-eaba86f0b298@web.de>
- <605e6f4f-8e96-dbe4-d43d-16bcac63f94e@amd.com>
- <3dd7e061-8e6f-4d3d-b56c-7005da8197f6@web.de>
- <b2cf67a4-6795-d743-e90b-db10f636db2e@amd.com>
- <6238912a-8733-4b2c-a155-82bb081e6063@web.de>
- <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
- <80fe1dd3-7541-4629-a540-021603d1f150@web.de>
- <260d8ab9-c986-9dab-a447-ebb55df302c9@amd.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <260d8ab9-c986-9dab-a447-ebb55df302c9@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:ZUSy0IPVT5AA5kwN1cVg8lBlI5PrtvmHQV98LDoevn5JFCozmuN
- kpl1ZZJvk7/z7tKI8qHPvhus3IQFT3vDqoVRDg2oxi7vStJomDg2VOcLUgare1UdQO5W7tX
- NxYbyox5pGDEWTL2/kDMCO+j6S/4QWw4RlfcgjatoBEcgixh506rLRo+U1b9hdhmQqgDuvm
- 1ASXSvQLfEu3Dm3eEN9dA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Z43RzW6dcfc=;rNXMVGwz/hjZfs4NnL8ZIwjruEt
- 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
- U9hA/IvYWWVFY3zvCQSCsfla7jCVkvoLN/U=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-swap-table-p2-v1-14-3d43f3b6ec32@tencent.com>
 
-> What do you mean here for "determine the state value before it would be passed to a concrete call?". What is your concern here?
+Hi Kairui,
 
-How often are the (same) state values passed to amdxdna_cmd_set_state() calls?
+kernel test robot noticed the following build errors:
 
-Regards,
-Markus
+[auto build test ERROR on f30d294530d939fa4b77d61bc60f25c4284841fa]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kairui-Song/mm-swap-rename-__read_swap_cache_async-to-swap_cache_alloc_folio/20251030-000506
+base:   f30d294530d939fa4b77d61bc60f25c4284841fa
+patch link:    https://lore.kernel.org/r/20251029-swap-table-p2-v1-14-3d43f3b6ec32%40tencent.com
+patch subject: [PATCH 14/19] mm, swap: sanitize swap entry management workflow
+config: i386-allnoconfig (https://download.01.org/0day-ci/archive/20251030/202510300316.UL4gxAlC-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251030/202510300316.UL4gxAlC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510300316.UL4gxAlC-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from mm/vmscan.c:70:
+   mm/swap.h: In function 'swap_cache_add_folio':
+   mm/swap.h:465:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     465 | }
+         | ^
+   mm/vmscan.c: In function 'shrink_folio_list':
+>> mm/vmscan.c:1298:37: error: too few arguments to function 'folio_alloc_swap'
+    1298 |                                 if (folio_alloc_swap(folio)) {
+         |                                     ^~~~~~~~~~~~~~~~
+   mm/swap.h:388:19: note: declared here
+     388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp)
+         |                   ^~~~~~~~~~~~~~~~
+   mm/vmscan.c:1314:45: error: too few arguments to function 'folio_alloc_swap'
+    1314 |                                         if (folio_alloc_swap(folio))
+         |                                             ^~~~~~~~~~~~~~~~
+   mm/swap.h:388:19: note: declared here
+     388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp)
+         |                   ^~~~~~~~~~~~~~~~
+--
+   In file included from mm/shmem.c:44:
+   mm/swap.h: In function 'swap_cache_add_folio':
+   mm/swap.h:465:1: warning: no return statement in function returning non-void [-Wreturn-type]
+     465 | }
+         | ^
+   mm/shmem.c: In function 'shmem_writeout':
+>> mm/shmem.c:1649:14: error: too few arguments to function 'folio_alloc_swap'
+    1649 |         if (!folio_alloc_swap(folio)) {
+         |              ^~~~~~~~~~~~~~~~
+   mm/swap.h:388:19: note: declared here
+     388 | static inline int folio_alloc_swap(struct folio *folio, gfp_t gfp)
+         |                   ^~~~~~~~~~~~~~~~
+
+
+vim +/folio_alloc_swap +1298 mm/vmscan.c
+
+d791ea676b6648 NeilBrown               2022-05-09  1072  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1073  /*
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1074)  * shrink_folio_list() returns the number of reclaimed pages
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1075   */
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1076) static unsigned int shrink_folio_list(struct list_head *folio_list,
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1077) 		struct pglist_data *pgdat, struct scan_control *sc,
+7d709f49babc28 Gregory Price           2025-04-24  1078  		struct reclaim_stat *stat, bool ignore_references,
+7d709f49babc28 Gregory Price           2025-04-24  1079  		struct mem_cgroup *memcg)
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1080  {
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1081) 	struct folio_batch free_folios;
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1082) 	LIST_HEAD(ret_folios);
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1083) 	LIST_HEAD(demote_folios);
+a479b078fddb0a Li Zhijian              2025-01-10  1084  	unsigned int nr_reclaimed = 0, nr_demoted = 0;
+730ec8c01a2bd6 Maninder Singh          2020-06-03  1085  	unsigned int pgactivate = 0;
+26aa2d199d6f2c Dave Hansen             2021-09-02  1086  	bool do_demote_pass;
+2282679fb20bf0 NeilBrown               2022-05-09  1087  	struct swap_iocb *plug = NULL;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1088  
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1089) 	folio_batch_init(&free_folios);
+060f005f074791 Kirill Tkhai            2019-03-05  1090  	memset(stat, 0, sizeof(*stat));
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1091  	cond_resched();
+7d709f49babc28 Gregory Price           2025-04-24  1092  	do_demote_pass = can_demote(pgdat->node_id, sc, memcg);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1093  
+26aa2d199d6f2c Dave Hansen             2021-09-02  1094  retry:
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1095) 	while (!list_empty(folio_list)) {
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1096  		struct address_space *mapping;
+be7c07d60e13ac Matthew Wilcox (Oracle  2021-12-23  1097) 		struct folio *folio;
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1098) 		enum folio_references references = FOLIOREF_RECLAIM;
+d791ea676b6648 NeilBrown               2022-05-09  1099  		bool dirty, writeback;
+98879b3b9edc16 Yang Shi                2019-07-11  1100  		unsigned int nr_pages;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1101  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1102  		cond_resched();
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1103  
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1104) 		folio = lru_to_folio(folio_list);
+be7c07d60e13ac Matthew Wilcox (Oracle  2021-12-23  1105) 		list_del(&folio->lru);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1106  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1107) 		if (!folio_trylock(folio))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1108  			goto keep;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1109  
+1b0449544c6482 Jinjiang Tu             2025-03-18  1110  		if (folio_contain_hwpoisoned_page(folio)) {
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1111  			/*
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1112  			 * unmap_poisoned_folio() can't handle large
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1113  			 * folio, just skip it. memory_failure() will
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1114  			 * handle it if the UCE is triggered again.
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1115  			 */
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1116  			if (folio_test_large(folio))
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1117  				goto keep_locked;
+9f1e8cd0b7c4c9 Jinjiang Tu             2025-06-27  1118  
+1b0449544c6482 Jinjiang Tu             2025-03-18  1119  			unmap_poisoned_folio(folio, folio_pfn(folio), false);
+1b0449544c6482 Jinjiang Tu             2025-03-18  1120  			folio_unlock(folio);
+1b0449544c6482 Jinjiang Tu             2025-03-18  1121  			folio_put(folio);
+1b0449544c6482 Jinjiang Tu             2025-03-18  1122  			continue;
+1b0449544c6482 Jinjiang Tu             2025-03-18  1123  		}
+1b0449544c6482 Jinjiang Tu             2025-03-18  1124  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1125) 		VM_BUG_ON_FOLIO(folio_test_active(folio), folio);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1126  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1127) 		nr_pages = folio_nr_pages(folio);
+98879b3b9edc16 Yang Shi                2019-07-11  1128  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1129) 		/* Account the number of base pages */
+98879b3b9edc16 Yang Shi                2019-07-11  1130  		sc->nr_scanned += nr_pages;
+80e4342601abfa Christoph Lameter       2006-02-11  1131  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1132) 		if (unlikely(!folio_evictable(folio)))
+ad6b67041a4549 Minchan Kim             2017-05-03  1133  			goto activate_locked;
+894bc310419ac9 Lee Schermerhorn        2008-10-18  1134  
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1135) 		if (!sc->may_unmap && folio_mapped(folio))
+80e4342601abfa Christoph Lameter       2006-02-11  1136  			goto keep_locked;
+80e4342601abfa Christoph Lameter       2006-02-11  1137  
+e2be15f6c3eece Mel Gorman              2013-07-03  1138  		/*
+894befec4d70b1 Andrey Ryabinin         2018-04-10  1139  		 * The number of dirty pages determines if a node is marked
+8cd7c588decf47 Mel Gorman              2021-11-05  1140  		 * reclaim_congested. kswapd will stall and start writing
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1141) 		 * folios if the tail of the LRU is all dirty unqueued folios.
+e2be15f6c3eece Mel Gorman              2013-07-03  1142  		 */
+e20c41b1091a24 Matthew Wilcox (Oracle  2022-01-17  1143) 		folio_check_dirty_writeback(folio, &dirty, &writeback);
+e2be15f6c3eece Mel Gorman              2013-07-03  1144  		if (dirty || writeback)
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1145) 			stat->nr_dirty += nr_pages;
+e2be15f6c3eece Mel Gorman              2013-07-03  1146  
+e2be15f6c3eece Mel Gorman              2013-07-03  1147  		if (dirty && !writeback)
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1148) 			stat->nr_unqueued_dirty += nr_pages;
+e2be15f6c3eece Mel Gorman              2013-07-03  1149  
+d04e8acd03e5c3 Mel Gorman              2013-07-03  1150  		/*
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1151) 		 * Treat this folio as congested if folios are cycling
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1152) 		 * through the LRU so quickly that the folios marked
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1153) 		 * for immediate reclaim are making it to the end of
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1154) 		 * the LRU a second time.
+d04e8acd03e5c3 Mel Gorman              2013-07-03  1155  		 */
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1156) 		if (writeback && folio_test_reclaim(folio))
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1157) 			stat->nr_congested += nr_pages;
+e2be15f6c3eece Mel Gorman              2013-07-03  1158  
+e62e384e9da8d9 Michal Hocko            2012-07-31  1159  		/*
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1160) 		 * If a folio at the tail of the LRU is under writeback, there
+283aba9f9e0e48 Mel Gorman              2013-07-03  1161  		 * are three cases to consider.
+283aba9f9e0e48 Mel Gorman              2013-07-03  1162  		 *
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1163) 		 * 1) If reclaim is encountering an excessive number
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1164) 		 *    of folios under writeback and this folio has both
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1165) 		 *    the writeback and reclaim flags set, then it
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1166) 		 *    indicates that folios are being queued for I/O but
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1167) 		 *    are being recycled through the LRU before the I/O
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1168) 		 *    can complete. Waiting on the folio itself risks an
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1169) 		 *    indefinite stall if it is impossible to writeback
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1170) 		 *    the folio due to I/O error or disconnected storage
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1171) 		 *    so instead note that the LRU is being scanned too
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1172) 		 *    quickly and the caller can stall after the folio
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1173) 		 *    list has been processed.
+283aba9f9e0e48 Mel Gorman              2013-07-03  1174  		 *
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1175) 		 * 2) Global or new memcg reclaim encounters a folio that is
+ecf5fc6e9654cd Michal Hocko            2015-08-04  1176  		 *    not marked for immediate reclaim, or the caller does not
+ecf5fc6e9654cd Michal Hocko            2015-08-04  1177  		 *    have __GFP_FS (or __GFP_IO if it's simply going to swap,
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1178  		 *    not to fs), or the folio belongs to a mapping where
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1179  		 *    waiting on writeback during reclaim may lead to a deadlock.
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1180  		 *    In this case mark the folio for immediate reclaim and
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1181  		 *    continue scanning.
+283aba9f9e0e48 Mel Gorman              2013-07-03  1182  		 *
+d791ea676b6648 NeilBrown               2022-05-09  1183  		 *    Require may_enter_fs() because we would wait on fs, which
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1184) 		 *    may not have submitted I/O yet. And the loop driver might
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1185) 		 *    enter reclaim, and deadlock if it waits on a folio for
+283aba9f9e0e48 Mel Gorman              2013-07-03  1186  		 *    which it is needed to do the write (loop masks off
+283aba9f9e0e48 Mel Gorman              2013-07-03  1187  		 *    __GFP_IO|__GFP_FS for this reason); but more thought
+283aba9f9e0e48 Mel Gorman              2013-07-03  1188  		 *    would probably show more reasons.
+283aba9f9e0e48 Mel Gorman              2013-07-03  1189  		 *
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1190) 		 * 3) Legacy memcg encounters a folio that already has the
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1191) 		 *    reclaim flag set. memcg does not have any dirty folio
+283aba9f9e0e48 Mel Gorman              2013-07-03  1192  		 *    throttling so we could easily OOM just because too many
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1193) 		 *    folios are in writeback and there is nothing else to
+283aba9f9e0e48 Mel Gorman              2013-07-03  1194  		 *    reclaim. Wait for the writeback to complete.
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1195  		 *
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1196) 		 * In cases 1) and 2) we activate the folios to get them out of
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1197) 		 * the way while we continue scanning for clean folios on the
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1198  		 * inactive list and refilling from the active list. The
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1199  		 * observation here is that waiting for disk writes is more
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1200  		 * expensive than potentially causing reloads down the line.
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1201  		 * Since they're marked for immediate reclaim, they won't put
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1202  		 * memory pressure on the cache working set any longer than it
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1203  		 * takes to write them to disk.
+e62e384e9da8d9 Michal Hocko            2012-07-31  1204  		 */
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1205) 		if (folio_test_writeback(folio)) {
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1206  			mapping = folio_mapping(folio);
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1207  
+283aba9f9e0e48 Mel Gorman              2013-07-03  1208  			/* Case 1 above */
+283aba9f9e0e48 Mel Gorman              2013-07-03  1209  			if (current_is_kswapd() &&
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1210) 			    folio_test_reclaim(folio) &&
+599d0c954f91d0 Mel Gorman              2016-07-28  1211  			    test_bit(PGDAT_WRITEBACK, &pgdat->flags)) {
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1212) 				stat->nr_immediate += nr_pages;
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1213  				goto activate_locked;
+283aba9f9e0e48 Mel Gorman              2013-07-03  1214  
+283aba9f9e0e48 Mel Gorman              2013-07-03  1215  			/* Case 2 above */
+b5ead35e7e1d34 Johannes Weiner         2019-11-30  1216  			} else if (writeback_throttling_sane(sc) ||
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1217) 			    !folio_test_reclaim(folio) ||
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1218  			    !may_enter_fs(folio, sc->gfp_mask) ||
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1219  			    (mapping &&
+0c4f8ed498cea1 Joanne Koong            2025-04-14  1220  			     mapping_writeback_may_deadlock_on_reclaim(mapping))) {
+c3b94f44fcb072 Hugh Dickins            2012-07-31  1221  				/*
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1222) 				 * This is slightly racy -
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1223) 				 * folio_end_writeback() might have
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1224) 				 * just cleared the reclaim flag, then
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1225) 				 * setting the reclaim flag here ends up
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1226) 				 * interpreted as the readahead flag - but
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1227) 				 * that does not matter enough to care.
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1228) 				 * What we do want is for this folio to
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1229) 				 * have the reclaim flag set next time
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1230) 				 * memcg reclaim reaches the tests above,
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1231) 				 * so it will then wait for writeback to
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1232) 				 * avoid OOM; and it's also appropriate
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1233) 				 * in global reclaim.
+c3b94f44fcb072 Hugh Dickins            2012-07-31  1234  				 */
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1235) 				folio_set_reclaim(folio);
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1236) 				stat->nr_writeback += nr_pages;
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1237  				goto activate_locked;
+283aba9f9e0e48 Mel Gorman              2013-07-03  1238  
+283aba9f9e0e48 Mel Gorman              2013-07-03  1239  			/* Case 3 above */
+283aba9f9e0e48 Mel Gorman              2013-07-03  1240  			} else {
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1241) 				folio_unlock(folio);
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1242) 				folio_wait_writeback(folio);
+d33e4e1412c8b6 Matthew Wilcox (Oracle  2022-05-12  1243) 				/* then go back and try same folio again */
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1244) 				list_add_tail(&folio->lru, folio_list);
+7fadc820222497 Hugh Dickins            2015-09-08  1245  				continue;
+e62e384e9da8d9 Michal Hocko            2012-07-31  1246  			}
+283aba9f9e0e48 Mel Gorman              2013-07-03  1247  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1248  
+8940b34a4e082a Minchan Kim             2019-09-25  1249  		if (!ignore_references)
+d92013d1e5e47f Matthew Wilcox (Oracle  2022-02-15  1250) 			references = folio_check_references(folio, sc);
+02c6de8d757cb3 Minchan Kim             2012-10-08  1251  
+dfc8d636cdb95f Johannes Weiner         2010-03-05  1252  		switch (references) {
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1253) 		case FOLIOREF_ACTIVATE:
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1254  			goto activate_locked;
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1255) 		case FOLIOREF_KEEP:
+98879b3b9edc16 Yang Shi                2019-07-11  1256  			stat->nr_ref_keep += nr_pages;
+645747462435d8 Johannes Weiner         2010-03-05  1257  			goto keep_locked;
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1258) 		case FOLIOREF_RECLAIM:
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1259) 		case FOLIOREF_RECLAIM_CLEAN:
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1260) 			; /* try to reclaim the folio below */
+dfc8d636cdb95f Johannes Weiner         2010-03-05  1261  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1262  
+26aa2d199d6f2c Dave Hansen             2021-09-02  1263  		/*
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1264) 		 * Before reclaiming the folio, try to relocate
+26aa2d199d6f2c Dave Hansen             2021-09-02  1265  		 * its contents to another node.
+26aa2d199d6f2c Dave Hansen             2021-09-02  1266  		 */
+26aa2d199d6f2c Dave Hansen             2021-09-02  1267  		if (do_demote_pass &&
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1268) 		    (thp_migration_supported() || !folio_test_large(folio))) {
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1269) 			list_add(&folio->lru, &demote_folios);
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1270) 			folio_unlock(folio);
+26aa2d199d6f2c Dave Hansen             2021-09-02  1271  			continue;
+26aa2d199d6f2c Dave Hansen             2021-09-02  1272  		}
+26aa2d199d6f2c Dave Hansen             2021-09-02  1273  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1274  		/*
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1275  		 * Anonymous process memory has backing store?
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1276  		 * Try to allocate it some swap space here.
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1277) 		 * Lazyfree folio could be freed directly
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1278  		 */
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1279) 		if (folio_test_anon(folio) && folio_test_swapbacked(folio)) {
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1280) 			if (!folio_test_swapcache(folio)) {
+63eb6b93ce725e Hugh Dickins            2008-11-19  1281  				if (!(sc->gfp_mask & __GFP_IO))
+63eb6b93ce725e Hugh Dickins            2008-11-19  1282  					goto keep_locked;
+d4b4084ac3154c Matthew Wilcox (Oracle  2022-02-04  1283) 				if (folio_maybe_dma_pinned(folio))
+feb889fb40fafc Linus Torvalds          2021-01-16  1284  					goto keep_locked;
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1285) 				if (folio_test_large(folio)) {
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1286) 					/* cannot split folio, skip it */
+8710f6ed34e7bc David Hildenbrand       2024-08-02  1287  					if (!can_split_folio(folio, 1, NULL))
+b8f593cd0896b8 Ying Huang              2017-07-06  1288  						goto activate_locked;
+747552b1e71b40 Ying Huang              2017-07-06  1289  					/*
+5ed890ce514785 Ryan Roberts            2024-04-08  1290  					 * Split partially mapped folios right away.
+5ed890ce514785 Ryan Roberts            2024-04-08  1291  					 * We can free the unmapped pages without IO.
+747552b1e71b40 Ying Huang              2017-07-06  1292  					 */
+8422acdc97ed58 Usama Arif              2024-08-30  1293  					if (data_race(!list_empty(&folio->_deferred_list) &&
+8422acdc97ed58 Usama Arif              2024-08-30  1294  					    folio_test_partially_mapped(folio)) &&
+5ed890ce514785 Ryan Roberts            2024-04-08  1295  					    split_folio_to_list(folio, folio_list))
+747552b1e71b40 Ying Huang              2017-07-06  1296  						goto activate_locked;
+747552b1e71b40 Ying Huang              2017-07-06  1297  				}
+7d14492199f93c Kairui Song             2025-10-24 @1298  				if (folio_alloc_swap(folio)) {
+d0f048ac39f6a7 Barry Song              2024-04-12  1299  					int __maybe_unused order = folio_order(folio);
+d0f048ac39f6a7 Barry Song              2024-04-12  1300  
+09c02e56327bda Matthew Wilcox (Oracle  2022-05-12  1301) 					if (!folio_test_large(folio))
+98879b3b9edc16 Yang Shi                2019-07-11  1302  						goto activate_locked_split;
+bd4c82c22c367e Ying Huang              2017-09-06  1303  					/* Fallback to swap normal pages */
+5ed890ce514785 Ryan Roberts            2024-04-08  1304  					if (split_folio_to_list(folio, folio_list))
+0f0746589e4be0 Minchan Kim             2017-07-06  1305  						goto activate_locked;
+fe490cc0fe9e6e Ying Huang              2017-09-06  1306  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+5ed890ce514785 Ryan Roberts            2024-04-08  1307  					if (nr_pages >= HPAGE_PMD_NR) {
+5ed890ce514785 Ryan Roberts            2024-04-08  1308  						count_memcg_folio_events(folio,
+5ed890ce514785 Ryan Roberts            2024-04-08  1309  							THP_SWPOUT_FALLBACK, 1);
+fe490cc0fe9e6e Ying Huang              2017-09-06  1310  						count_vm_event(THP_SWPOUT_FALLBACK);
+5ed890ce514785 Ryan Roberts            2024-04-08  1311  					}
+fe490cc0fe9e6e Ying Huang              2017-09-06  1312  #endif
+e26060d1fbd31a Kanchana P Sridhar      2024-10-02  1313  					count_mthp_stat(order, MTHP_STAT_SWPOUT_FALLBACK);
+7d14492199f93c Kairui Song             2025-10-24  1314  					if (folio_alloc_swap(folio))
+98879b3b9edc16 Yang Shi                2019-07-11  1315  						goto activate_locked_split;
+0f0746589e4be0 Minchan Kim             2017-07-06  1316  				}
+b487a2da3575b6 Kairui Song             2025-03-14  1317  				/*
+b487a2da3575b6 Kairui Song             2025-03-14  1318  				 * Normally the folio will be dirtied in unmap because its
+b487a2da3575b6 Kairui Song             2025-03-14  1319  				 * pte should be dirty. A special case is MADV_FREE page. The
+b487a2da3575b6 Kairui Song             2025-03-14  1320  				 * page's pte could have dirty bit cleared but the folio's
+b487a2da3575b6 Kairui Song             2025-03-14  1321  				 * SwapBacked flag is still set because clearing the dirty bit
+b487a2da3575b6 Kairui Song             2025-03-14  1322  				 * and SwapBacked flag has no lock protected. For such folio,
+b487a2da3575b6 Kairui Song             2025-03-14  1323  				 * unmap will not set dirty bit for it, so folio reclaim will
+b487a2da3575b6 Kairui Song             2025-03-14  1324  				 * not write the folio out. This can cause data corruption when
+b487a2da3575b6 Kairui Song             2025-03-14  1325  				 * the folio is swapped in later. Always setting the dirty flag
+b487a2da3575b6 Kairui Song             2025-03-14  1326  				 * for the folio solves the problem.
+b487a2da3575b6 Kairui Song             2025-03-14  1327  				 */
+b487a2da3575b6 Kairui Song             2025-03-14  1328  				folio_mark_dirty(folio);
+bd4c82c22c367e Ying Huang              2017-09-06  1329  			}
+e2be15f6c3eece Mel Gorman              2013-07-03  1330  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1331  
+98879b3b9edc16 Yang Shi                2019-07-11  1332  		/*
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1333) 		 * If the folio was split above, the tail pages will make
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1334) 		 * their own pass through this function and be accounted
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1335) 		 * then.
+98879b3b9edc16 Yang Shi                2019-07-11  1336  		 */
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1337) 		if ((nr_pages > 1) && !folio_test_large(folio)) {
+98879b3b9edc16 Yang Shi                2019-07-11  1338  			sc->nr_scanned -= (nr_pages - 1);
+98879b3b9edc16 Yang Shi                2019-07-11  1339  			nr_pages = 1;
+98879b3b9edc16 Yang Shi                2019-07-11  1340  		}
+98879b3b9edc16 Yang Shi                2019-07-11  1341  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1342  		/*
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1343) 		 * The folio is mapped into the page tables of one or more
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1344  		 * processes. Try to unmap it here.
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1345  		 */
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1346) 		if (folio_mapped(folio)) {
+013339df116c2e Shakeel Butt            2020-12-14  1347  			enum ttu_flags flags = TTU_BATCH_FLUSH;
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1348) 			bool was_swapbacked = folio_test_swapbacked(folio);
+bd4c82c22c367e Ying Huang              2017-09-06  1349  
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1350) 			if (folio_test_pmd_mappable(folio))
+bd4c82c22c367e Ying Huang              2017-09-06  1351  				flags |= TTU_SPLIT_HUGE_PMD;
+73bc32875ee9b1 Barry Song              2024-03-06  1352  			/*
+73bc32875ee9b1 Barry Song              2024-03-06  1353  			 * Without TTU_SYNC, try_to_unmap will only begin to
+73bc32875ee9b1 Barry Song              2024-03-06  1354  			 * hold PTL from the first present PTE within a large
+73bc32875ee9b1 Barry Song              2024-03-06  1355  			 * folio. Some initial PTEs might be skipped due to
+73bc32875ee9b1 Barry Song              2024-03-06  1356  			 * races with parallel PTE writes in which PTEs can be
+73bc32875ee9b1 Barry Song              2024-03-06  1357  			 * cleared temporarily before being written new present
+73bc32875ee9b1 Barry Song              2024-03-06  1358  			 * values. This will lead to a large folio is still
+73bc32875ee9b1 Barry Song              2024-03-06  1359  			 * mapped while some subpages have been partially
+73bc32875ee9b1 Barry Song              2024-03-06  1360  			 * unmapped after try_to_unmap; TTU_SYNC helps
+73bc32875ee9b1 Barry Song              2024-03-06  1361  			 * try_to_unmap acquire PTL from the first PTE,
+73bc32875ee9b1 Barry Song              2024-03-06  1362  			 * eliminating the influence of temporary PTE values.
+73bc32875ee9b1 Barry Song              2024-03-06  1363  			 */
+e5a119c4a6835a Barry Song              2024-06-30  1364  			if (folio_test_large(folio))
+73bc32875ee9b1 Barry Song              2024-03-06  1365  				flags |= TTU_SYNC;
+1f318a9b0dc399 Jaewon Kim              2020-06-03  1366  
+869f7ee6f64773 Matthew Wilcox (Oracle  2022-02-15  1367) 			try_to_unmap(folio, flags);
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1368) 			if (folio_mapped(folio)) {
+98879b3b9edc16 Yang Shi                2019-07-11  1369  				stat->nr_unmap_fail += nr_pages;
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1370) 				if (!was_swapbacked &&
+1bee2c1677bcb5 Matthew Wilcox (Oracle  2022-05-12  1371) 				    folio_test_swapbacked(folio))
+1f318a9b0dc399 Jaewon Kim              2020-06-03  1372  					stat->nr_lazyfree_fail += nr_pages;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1373  				goto activate_locked;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1374  			}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1375  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1376  
+d824ec2a154677 Jan Kara                2023-04-28  1377  		/*
+d824ec2a154677 Jan Kara                2023-04-28  1378  		 * Folio is unmapped now so it cannot be newly pinned anymore.
+d824ec2a154677 Jan Kara                2023-04-28  1379  		 * No point in trying to reclaim folio if it is pinned.
+d824ec2a154677 Jan Kara                2023-04-28  1380  		 * Furthermore we don't want to reclaim underlying fs metadata
+d824ec2a154677 Jan Kara                2023-04-28  1381  		 * if the folio is pinned and thus potentially modified by the
+d824ec2a154677 Jan Kara                2023-04-28  1382  		 * pinning process as that may upset the filesystem.
+d824ec2a154677 Jan Kara                2023-04-28  1383  		 */
+d824ec2a154677 Jan Kara                2023-04-28  1384  		if (folio_maybe_dma_pinned(folio))
+d824ec2a154677 Jan Kara                2023-04-28  1385  			goto activate_locked;
+d824ec2a154677 Jan Kara                2023-04-28  1386  
+5441d4902f9692 Matthew Wilcox (Oracle  2022-05-12  1387) 		mapping = folio_mapping(folio);
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1388) 		if (folio_test_dirty(folio)) {
+e2a80749555d73 Baolin Wang             2025-10-17  1389  			if (folio_is_file_lru(folio)) {
+49ea7eb65e7c50 Mel Gorman              2011-10-31  1390  				/*
+49ea7eb65e7c50 Mel Gorman              2011-10-31  1391  				 * Immediately reclaim when written back.
+5a9e34747c9f73 Vishal Moola (Oracle    2022-12-21  1392) 				 * Similar in principle to folio_deactivate()
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1393) 				 * except we already have the folio isolated
+49ea7eb65e7c50 Mel Gorman              2011-10-31  1394  				 * and know it's dirty
+49ea7eb65e7c50 Mel Gorman              2011-10-31  1395  				 */
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1396) 				node_stat_mod_folio(folio, NR_VMSCAN_IMMEDIATE,
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1397) 						nr_pages);
+e2a80749555d73 Baolin Wang             2025-10-17  1398  				if (!folio_test_reclaim(folio))
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1399) 					folio_set_reclaim(folio);
+49ea7eb65e7c50 Mel Gorman              2011-10-31  1400  
+c55e8d035b28b2 Johannes Weiner         2017-02-24  1401  				goto activate_locked;
+ee72886d8ed5d9 Mel Gorman              2011-10-31  1402  			}
+ee72886d8ed5d9 Mel Gorman              2011-10-31  1403  
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1404) 			if (references == FOLIOREF_RECLAIM_CLEAN)
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1405  				goto keep_locked;
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1406) 			if (!may_enter_fs(folio, sc->gfp_mask))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1407  				goto keep_locked;
+52a8363eae3872 Christoph Lameter       2006-02-01  1408  			if (!sc->may_writepage)
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1409  				goto keep_locked;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1410  
+d950c9477d51f0 Mel Gorman              2015-09-04  1411  			/*
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1412) 			 * Folio is dirty. Flush the TLB if a writable entry
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1413) 			 * potentially exists to avoid CPU writes after I/O
+d950c9477d51f0 Mel Gorman              2015-09-04  1414  			 * starts and then write it out here.
+d950c9477d51f0 Mel Gorman              2015-09-04  1415  			 */
+d950c9477d51f0 Mel Gorman              2015-09-04  1416  			try_to_unmap_flush_dirty();
+809bc86517cc40 Baolin Wang             2024-08-12  1417  			switch (pageout(folio, mapping, &plug, folio_list)) {
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1418  			case PAGE_KEEP:
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1419  				goto keep_locked;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1420  			case PAGE_ACTIVATE:
+809bc86517cc40 Baolin Wang             2024-08-12  1421  				/*
+809bc86517cc40 Baolin Wang             2024-08-12  1422  				 * If shmem folio is split when writeback to swap,
+809bc86517cc40 Baolin Wang             2024-08-12  1423  				 * the tail pages will make their own pass through
+809bc86517cc40 Baolin Wang             2024-08-12  1424  				 * this function and be accounted then.
+809bc86517cc40 Baolin Wang             2024-08-12  1425  				 */
+809bc86517cc40 Baolin Wang             2024-08-12  1426  				if (nr_pages > 1 && !folio_test_large(folio)) {
+809bc86517cc40 Baolin Wang             2024-08-12  1427  					sc->nr_scanned -= (nr_pages - 1);
+809bc86517cc40 Baolin Wang             2024-08-12  1428  					nr_pages = 1;
+809bc86517cc40 Baolin Wang             2024-08-12  1429  				}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1430  				goto activate_locked;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1431  			case PAGE_SUCCESS:
+809bc86517cc40 Baolin Wang             2024-08-12  1432  				if (nr_pages > 1 && !folio_test_large(folio)) {
+809bc86517cc40 Baolin Wang             2024-08-12  1433  					sc->nr_scanned -= (nr_pages - 1);
+809bc86517cc40 Baolin Wang             2024-08-12  1434  					nr_pages = 1;
+809bc86517cc40 Baolin Wang             2024-08-12  1435  				}
+c79b7b96db8b12 Matthew Wilcox (Oracle  2022-01-17  1436) 				stat->nr_pageout += nr_pages;
+96f8bf4fb1dd26 Johannes Weiner         2020-06-03  1437  
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1438) 				if (folio_test_writeback(folio))
+41ac1999c3e356 Mel Gorman              2012-05-29  1439  					goto keep;
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1440) 				if (folio_test_dirty(folio))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1441  					goto keep;
+7d3579e8e61937 KOSAKI Motohiro         2010-10-26  1442  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1443  				/*
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1444  				 * A synchronous write - probably a ramdisk.  Go
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1445) 				 * ahead and try to reclaim the folio.
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1446  				 */
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1447) 				if (!folio_trylock(folio))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1448  					goto keep;
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1449) 				if (folio_test_dirty(folio) ||
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1450) 				    folio_test_writeback(folio))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1451  					goto keep_locked;
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1452) 				mapping = folio_mapping(folio);
+01359eb2013b4b Gustavo A. R. Silva     2020-12-14  1453  				fallthrough;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1454  			case PAGE_CLEAN:
+49bd2bf9679f4a Matthew Wilcox (Oracle  2022-05-12  1455) 				; /* try to free the folio below */
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1456  			}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1457  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1458  
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1459  		/*
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1460) 		 * If the folio has buffers, try to free the buffer
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1461) 		 * mappings associated with this folio. If we succeed
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1462) 		 * we try to free the folio as well.
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1463  		 *
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1464) 		 * We do this even if the folio is dirty.
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1465) 		 * filemap_release_folio() does not perform I/O, but it
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1466) 		 * is possible for a folio to have the dirty flag set,
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1467) 		 * but it is actually clean (all its buffers are clean).
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1468) 		 * This happens if the buffers were written out directly,
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1469) 		 * with submit_bh(). ext3 will do this, as well as
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1470) 		 * the blockdev mapping.  filemap_release_folio() will
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1471) 		 * discover that cleanness and will drop the buffers
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1472) 		 * and mark the folio clean - it can be freed.
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1473  		 *
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1474) 		 * Rarely, folios can have buffers and no ->mapping.
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1475) 		 * These are the folios which were not successfully
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1476) 		 * invalidated in truncate_cleanup_folio().  We try to
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1477) 		 * drop those buffers here and if that worked, and the
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1478) 		 * folio is no longer mapped into process address space
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1479) 		 * (refcount == 1) it can be freed.  Otherwise, leave
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1480) 		 * the folio on the LRU so it is swappable.
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1481  		 */
+0201ebf274a306 David Howells           2023-06-28  1482  		if (folio_needs_release(folio)) {
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1483) 			if (!filemap_release_folio(folio, sc->gfp_mask))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1484  				goto activate_locked;
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1485) 			if (!mapping && folio_ref_count(folio) == 1) {
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1486) 				folio_unlock(folio);
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1487) 				if (folio_put_testzero(folio))
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1488  					goto free_it;
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1489  				else {
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1490  					/*
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1491  					 * rare race with speculative reference.
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1492  					 * the speculative reference will free
+0a36111c8c20b2 Matthew Wilcox (Oracle  2022-05-12  1493) 					 * this folio shortly, so we may
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1494  					 * increment nr_reclaimed here (and
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1495  					 * leave it off the LRU).
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1496  					 */
+9aafcffc18785f Miaohe Lin              2022-05-12  1497  					nr_reclaimed += nr_pages;
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1498  					continue;
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1499  				}
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1500  			}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1501  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1502  
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1503) 		if (folio_test_anon(folio) && !folio_test_swapbacked(folio)) {
+802a3a92ad7ac0 Shaohua Li              2017-05-03  1504  			/* follow __remove_mapping for reference */
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1505) 			if (!folio_ref_freeze(folio, 1))
+49d2e9cc454436 Christoph Lameter       2006-01-08  1506  				goto keep_locked;
+d17be2d9ff6c68 Miaohe Lin              2021-09-02  1507  			/*
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1508) 			 * The folio has only one reference left, which is
+d17be2d9ff6c68 Miaohe Lin              2021-09-02  1509  			 * from the isolation. After the caller puts the
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1510) 			 * folio back on the lru and drops the reference, the
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1511) 			 * folio will be freed anyway. It doesn't matter
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1512) 			 * which lru it goes on. So we don't bother checking
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1513) 			 * the dirty flag here.
+d17be2d9ff6c68 Miaohe Lin              2021-09-02  1514  			 */
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1515) 			count_vm_events(PGLAZYFREED, nr_pages);
+64daa5d818ae34 Matthew Wilcox (Oracle  2022-05-12  1516) 			count_memcg_folio_events(folio, PGLAZYFREED, nr_pages);
+be7c07d60e13ac Matthew Wilcox (Oracle  2021-12-23  1517) 		} else if (!mapping || !__remove_mapping(mapping, folio, true,
+b910718a948a91 Johannes Weiner         2019-11-30  1518  							 sc->target_mem_cgroup))
+802a3a92ad7ac0 Shaohua Li              2017-05-03  1519  			goto keep_locked;
+9a1ea439b16b92 Hugh Dickins            2018-12-28  1520  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1521) 		folio_unlock(folio);
+e286781d5f2e9c Nicholas Piggin         2008-07-25  1522  free_it:
+98879b3b9edc16 Yang Shi                2019-07-11  1523  		/*
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1524) 		 * Folio may get swapped out as a whole, need to account
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1525) 		 * all pages in it.
+98879b3b9edc16 Yang Shi                2019-07-11  1526  		 */
+98879b3b9edc16 Yang Shi                2019-07-11  1527  		nr_reclaimed += nr_pages;
+abe4c3b50c3f25 Mel Gorman              2010-08-09  1528  
+f8f931bba0f920 Hugh Dickins            2024-10-27  1529  		folio_unqueue_deferred_split(folio);
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1530) 		if (folio_batch_add(&free_folios, folio) == 0) {
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1531) 			mem_cgroup_uncharge_folios(&free_folios);
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1532) 			try_to_unmap_flush();
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1533) 			free_unref_folios(&free_folios);
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1534) 		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1535  		continue;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1536  
+98879b3b9edc16 Yang Shi                2019-07-11  1537  activate_locked_split:
+98879b3b9edc16 Yang Shi                2019-07-11  1538  		/*
+98879b3b9edc16 Yang Shi                2019-07-11  1539  		 * The tail pages that are failed to add into swap cache
+98879b3b9edc16 Yang Shi                2019-07-11  1540  		 * reach here.  Fixup nr_scanned and nr_pages.
+98879b3b9edc16 Yang Shi                2019-07-11  1541  		 */
+98879b3b9edc16 Yang Shi                2019-07-11  1542  		if (nr_pages > 1) {
+98879b3b9edc16 Yang Shi                2019-07-11  1543  			sc->nr_scanned -= (nr_pages - 1);
+98879b3b9edc16 Yang Shi                2019-07-11  1544  			nr_pages = 1;
+98879b3b9edc16 Yang Shi                2019-07-11  1545  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1546  activate_locked:
+68a22394c286a2 Rik van Riel            2008-10-18  1547  		/* Not a candidate for swapping, so reclaim swap space. */
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1548) 		if (folio_test_swapcache(folio) &&
+9202d527b715f6 Matthew Wilcox (Oracle  2022-09-02  1549) 		    (mem_cgroup_swap_full(folio) || folio_test_mlocked(folio)))
+bdb0ed54a4768d Matthew Wilcox (Oracle  2022-09-02  1550) 			folio_free_swap(folio);
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1551) 		VM_BUG_ON_FOLIO(folio_test_active(folio), folio);
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1552) 		if (!folio_test_mlocked(folio)) {
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1553) 			int type = folio_is_file_lru(folio);
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1554) 			folio_set_active(folio);
+98879b3b9edc16 Yang Shi                2019-07-11  1555  			stat->nr_activate[type] += nr_pages;
+246b648038096c Matthew Wilcox (Oracle  2022-05-12  1556) 			count_memcg_folio_events(folio, PGACTIVATE, nr_pages);
+ad6b67041a4549 Minchan Kim             2017-05-03  1557  		}
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1558  keep_locked:
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1559) 		folio_unlock(folio);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1560  keep:
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1561) 		list_add(&folio->lru, &ret_folios);
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1562) 		VM_BUG_ON_FOLIO(folio_test_lru(folio) ||
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1563) 				folio_test_unevictable(folio), folio);
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1564  	}
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1565) 	/* 'folio_list' is always empty here */
+26aa2d199d6f2c Dave Hansen             2021-09-02  1566  
+c28a0e9695b724 Matthew Wilcox (Oracle  2022-05-12  1567) 	/* Migrate folios selected for demotion */
+a479b078fddb0a Li Zhijian              2025-01-10  1568  	nr_demoted = demote_folio_list(&demote_folios, pgdat);
+a479b078fddb0a Li Zhijian              2025-01-10  1569  	nr_reclaimed += nr_demoted;
+a479b078fddb0a Li Zhijian              2025-01-10  1570  	stat->nr_demoted += nr_demoted;
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1571) 	/* Folios that could not be demoted are still in @demote_folios */
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1572) 	if (!list_empty(&demote_folios)) {
+6b426d071419a4 Mina Almasry            2022-12-01  1573  		/* Folios which weren't demoted go back on @folio_list */
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1574) 		list_splice_init(&demote_folios, folio_list);
+6b426d071419a4 Mina Almasry            2022-12-01  1575  
+6b426d071419a4 Mina Almasry            2022-12-01  1576  		/*
+6b426d071419a4 Mina Almasry            2022-12-01  1577  		 * goto retry to reclaim the undemoted folios in folio_list if
+6b426d071419a4 Mina Almasry            2022-12-01  1578  		 * desired.
+6b426d071419a4 Mina Almasry            2022-12-01  1579  		 *
+6b426d071419a4 Mina Almasry            2022-12-01  1580  		 * Reclaiming directly from top tier nodes is not often desired
+6b426d071419a4 Mina Almasry            2022-12-01  1581  		 * due to it breaking the LRU ordering: in general memory
+6b426d071419a4 Mina Almasry            2022-12-01  1582  		 * should be reclaimed from lower tier nodes and demoted from
+6b426d071419a4 Mina Almasry            2022-12-01  1583  		 * top tier nodes.
+6b426d071419a4 Mina Almasry            2022-12-01  1584  		 *
+6b426d071419a4 Mina Almasry            2022-12-01  1585  		 * However, disabling reclaim from top tier nodes entirely
+6b426d071419a4 Mina Almasry            2022-12-01  1586  		 * would cause ooms in edge scenarios where lower tier memory
+6b426d071419a4 Mina Almasry            2022-12-01  1587  		 * is unreclaimable for whatever reason, eg memory being
+6b426d071419a4 Mina Almasry            2022-12-01  1588  		 * mlocked or too hot to reclaim. We can disable reclaim
+6b426d071419a4 Mina Almasry            2022-12-01  1589  		 * from top tier nodes in proactive reclaim though as that is
+6b426d071419a4 Mina Almasry            2022-12-01  1590  		 * not real memory pressure.
+6b426d071419a4 Mina Almasry            2022-12-01  1591  		 */
+6b426d071419a4 Mina Almasry            2022-12-01  1592  		if (!sc->proactive) {
+26aa2d199d6f2c Dave Hansen             2021-09-02  1593  			do_demote_pass = false;
+26aa2d199d6f2c Dave Hansen             2021-09-02  1594  			goto retry;
+26aa2d199d6f2c Dave Hansen             2021-09-02  1595  		}
+6b426d071419a4 Mina Almasry            2022-12-01  1596  	}
+abe4c3b50c3f25 Mel Gorman              2010-08-09  1597  
+98879b3b9edc16 Yang Shi                2019-07-11  1598  	pgactivate = stat->nr_activate[0] + stat->nr_activate[1];
+98879b3b9edc16 Yang Shi                2019-07-11  1599  
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1600) 	mem_cgroup_uncharge_folios(&free_folios);
+72b252aed506b8 Mel Gorman              2015-09-04  1601  	try_to_unmap_flush();
+bc2ff4cbc3294c Matthew Wilcox (Oracle  2024-02-27  1602) 	free_unref_folios(&free_folios);
+abe4c3b50c3f25 Mel Gorman              2010-08-09  1603  
+49fd9b6df54e61 Matthew Wilcox (Oracle  2022-09-02  1604) 	list_splice(&ret_folios, folio_list);
+886cf1901db962 Kirill Tkhai            2019-05-13  1605  	count_vm_events(PGACTIVATE, pgactivate);
+060f005f074791 Kirill Tkhai            2019-03-05  1606  
+2282679fb20bf0 NeilBrown               2022-05-09  1607  	if (plug)
+2282679fb20bf0 NeilBrown               2022-05-09  1608  		swap_write_unplug(plug);
+05ff51376f01fd Andrew Morton           2006-03-22  1609  	return nr_reclaimed;
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1610  }
+^1da177e4c3f41 Linus Torvalds          2005-04-16  1611  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
