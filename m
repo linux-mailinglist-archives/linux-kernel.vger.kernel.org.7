@@ -1,83 +1,135 @@
-Return-Path: <linux-kernel+bounces-876065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC465C1A8CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:12:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E085CC1A8D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE520189EB91
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:04:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB17B1A6712A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 250EC32721E;
-	Wed, 29 Oct 2025 12:52:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA0D37A3A9;
+	Wed, 29 Oct 2025 12:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eR089nn/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Yqv4m7Zg"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2E820297E;
-	Wed, 29 Oct 2025 12:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF9D329393
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742342; cv=none; b=n+yH3+27KYbYg4tWagR1vC2+QDsnFp0s3PckHL+HDeJh1jwMYZ7OuHNriQQ60372uL7vyHiCmTC/zaDgfpS8S35J5C9fjQxXOLa3Wf42YBuUjItyKjatPGEhD37WmNhMa7bzY04GWIZiCt6QIKB/Yf/t1Yx4UP6YtXinRIA4FEg=
+	t=1761742364; cv=none; b=XgA7ISv+KuFSRfJ7CyPGQpqDoAx0aQAYwZ8dcYZM2s/5v0DYxrAOpqwrC+dm54e3hVTfDWrAdpizY18HGFgCHG1gAWno78C/KsXCQmhSXIz9V3S9sft2heQfhGW22Xomvqw6AlcYDEGWA/cGW9xMsea/Ufgs1utWdsAV/03Qf6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742342; c=relaxed/simple;
-	bh=1HAJ1BJ3hJr4rMA1mSnM4Z+EA/gpodPOwk5FC2dXS+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhMVYMTBSGc7S9VH+e45U1t2IAvUKu5v+ijowcdP9gMEkXFw4Hl5OuY0bnyqllnbsYB5QI4p1TtZMStSCshsM0C7io8yshXrkzB0wu9uNi2DI1xgebnFb5fdXEBwN9r08IifAG8TXIFlM9AII+weQ/0vvQt/SQLWXzaUd3RztyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eR089nn/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F402C4CEF7;
-	Wed, 29 Oct 2025 12:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761742342;
-	bh=1HAJ1BJ3hJr4rMA1mSnM4Z+EA/gpodPOwk5FC2dXS+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eR089nn/rglpiimPihlYCj2SAY7spC2qAj5Lr7H6Goy6akWpAa25G5+gOrKYvQ424
-	 MoaGPeC0uz358YVaYuA68Xmgpu+OTQO3hZ+xSYhXinicU4oLgbMDuN+tndeRCNsWki
-	 jenc5xV1wdfqBHdaxOJ/1pv+/eQyxjndYz45Qi7IYLuuxgRKGVSe1TbkSVX1e2PYmq
-	 2jq5hqWLHMD4bRNG6H/vlmS8WV618g19vR/E5AeXpInNitu+gGfbaXJW2HSbfKCIjG
-	 OuafbZLakfKlxk7EWUkm24lWPX9UccCbRtdWTLxiIH0RxWJD31ryDwlbS3NcZR4sSf
-	 7h6QQMFcwwLsw==
-Date: Wed, 29 Oct 2025 12:52:14 +0000
-From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
-	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
-Subject: Re: [PATCH v3 4/5] reset: th1520: Support reset controllers in more
- subsystems
-Message-ID: <aQIN_lVnn3wcwBCg@gen8>
-References: <20251014131032.49616-1-ziyao@disroot.org>
- <20251014131032.49616-5-ziyao@disroot.org>
+	s=arc-20240116; t=1761742364; c=relaxed/simple;
+	bh=X5YkO56fqtFK/lXLL7rNg81RTPAPJ//X5hkVZfx7cko=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DW4xePnBteXC2ZcmrClL3Ki7onRU4BBl/VtoRTtmMgcL1o8whWTBDJxFNKPeUn9T8HD9YK8hYIt+OQDJ7kE/FU7T5IOtO7gg7aXJqecaMrUTmIBkhcd86jcp0uJ7echP90JkOi2pTPkzrMkZO25kSb6xFdTWAzf/FwEz8OloN1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Yqv4m7Zg; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761742352; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=0GV8hXLCtMunxr5n+XrWMvLJYJWHZBZqTR+DhgCUQYM=;
+	b=Yqv4m7ZgrU75paJAPkpZCmg3cA4DQc7Q2KVJsAF0dcP9XiAVa30OHjrEde66fMRHi8CL/PZdhLF5Bu8B3DksksBRK4/RlOC/3ux7vytX2m3mkyV350t2OSYmUdc4IGZhzOCCHqOPmv+JZjBxpFpJEbT6VqzDrzkttC+aRYspMPU=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrG1q.C_1761742350 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 29 Oct 2025 20:52:31 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: jgg@ziepe.ca,
+	iommu@lists.linux.dev
+Cc: kevin.tian@intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	linux-kernel@vger.kernel.org,
+	xueshuai@linux.alibaba.com
+Subject: [PATCH] iommu: iommufd: Explicitly check for VM_PFNMAP in iommufd_ioas_map
+Date: Wed, 29 Oct 2025 20:52:26 +0800
+Message-Id: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251014131032.49616-5-ziyao@disroot.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 14, 2025 at 01:10:31PM +0000, Yao Zi wrote:
-> Introduce reset controllers for AP, MISC, VI, VP and DSP subsystems and
-> add their reset signal mappings.
-> 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  drivers/reset/reset-th1520.c | 793 +++++++++++++++++++++++++++++++++++
->  1 file changed, 793 insertions(+)
+The iommufd_ioas_map function currently returns -EFAULT when attempting
+to map VM_PFNMAP VMAs because pin_user_pages_fast() cannot handle such
+mappings. This error code is misleading and does not accurately reflect
+the nature of the failure.
 
-Reviewed-by: Drew Fustini <fustini@kernel.org>
+Add an explicit check for the VM_PFNMAP flag before attempting the
+pin_user_pages operation. If VM_PFNMAP is set, return -EOPNOTSUPP to
+clearly indicate that PFNMAP regions are not supported through the
+IOMMU_IOAS_MAP interface.
+
+This change improves error reporting and helps userspace applications
+distinguish between different failure modes when working with special
+mappings like MMIO regions.
+
+Note that Jason Gunthorpe is working on extending IOMMU_IOAS_MAP_FILE to
+support dma-buf file descriptors for MMIO BARs[1], which will provide a
+secure and controlled method for sharing device memory. Until that
+support is available, PFNMAP mappings through IOMMUFD are not supported.
+[1]https://lore.kernel.org/all/0-v1-64bed2430cdb+31b-iommufd_dmabuf_jgg@nvidia.com/
+
+Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+---
+ drivers/iommu/iommufd/ioas.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/iommu/iommufd/ioas.c b/drivers/iommu/iommufd/ioas.c
+index 0dee38d7252d..0c4f242eba49 100644
+--- a/drivers/iommu/iommufd/ioas.c
++++ b/drivers/iommu/iommufd/ioas.c
+@@ -241,6 +241,32 @@ int iommufd_ioas_map_file(struct iommufd_ucmd *ucmd)
+ 	return rc;
+ }
+ 
++/**
++ * iommufd_check_vm_pfnmap - Check if a user address has the VM_PFNMAP flag set
++ * @vaddr: User virtual address to check
++ *
++ * This function checks if the VMA (Virtual Memory Area) containing the given
++ * virtual address has the VM_PFNMAP flag set. This flag is typically used for
++ * memory regions that directly map hardware resources (e.g., PCI BARs).
++ *
++ * Returns: true if VM_PFNMAP is set, false otherwise.
++ */
++static bool iommufd_check_vm_pfnmap(unsigned long vaddr)
++{
++	struct mm_struct *mm = current->mm;
++	struct vm_area_struct *vma;
++	bool ret = false;
++
++	mmap_read_lock(mm);
++	vaddr = untagged_addr_remote(mm, vaddr);
++	vma = vma_lookup(mm, vaddr);
++	if (vma && vma->vm_flags & VM_PFNMAP)
++		ret = true;
++	mmap_read_unlock(mm);
++
++	return ret;
++}
++
+ int iommufd_ioas_map(struct iommufd_ucmd *ucmd)
+ {
+ 	struct iommu_ioas_map *cmd = ucmd->cmd;
+@@ -254,6 +280,8 @@ int iommufd_ioas_map(struct iommufd_ucmd *ucmd)
+ 	       IOMMU_IOAS_MAP_READABLE)) ||
+ 	    cmd->__reserved)
+ 		return -EOPNOTSUPP;
++	if (iommufd_check_vm_pfnmap(cmd->user_va))
++		return -EOPNOTSUPP;
+ 	if (cmd->iova >= ULONG_MAX || cmd->length >= ULONG_MAX)
+ 		return -EOVERFLOW;
+ 
+-- 
+2.39.3
+
 
