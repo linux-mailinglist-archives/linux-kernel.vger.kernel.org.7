@@ -1,95 +1,141 @@
-Return-Path: <linux-kernel+bounces-876334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10C6C1B67A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:51:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4730FC1B388
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 938415A082C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:22:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E407189F1BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37EC2267B89;
-	Wed, 29 Oct 2025 14:22:31 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5908F26E719;
+	Wed, 29 Oct 2025 14:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bHgCxoCf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DA51DF994;
-	Wed, 29 Oct 2025 14:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356241BC41
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747750; cv=none; b=lOuxx7x9E3y4jJODa173Wng5hTu+UFHMqWqLGvwXtDoDCLy3PqOIwoxHqy/GPTgZbpsR96O2yICl9LPLkhTmqCcVQUiVwIZPAWbhR3gUg3v1iqlFqPf/w6iFgzE/6rBawwiGzNvqyvju+JCcIk4WUk7nFwARl+3a0hZwyJBe4VM=
+	t=1761747828; cv=none; b=p8lRhwesZh01rgg/l0POrd7w8KtsVIOCdsPdDgnk4K3ftk9OaA/StBcfM7Gk/HNTekNZ6YyxLNdqPUwFI8RBLrY0oGZrVXFm+LLXzYmotFVDlBK9qkahULZHbyGT1ckRa8SXdFK/hUnHsR0Ry+350LD2wtTGsjizBS4BcPP30UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747750; c=relaxed/simple;
-	bh=/K2tNKpSH7o52ver8MEmXEoa5wWhvu+EL/PZwy8lTuM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kTcXc+okXgNhr2cxMTSbtuDE0znGluJownCXvzPWrhcXWRLLQAjzVMPlB7hMijNRlTpULJvfq0dkU3K601sGp2dxHN5VunE2kP8s2rja0cID4rR0z4IvEUqGXMhpHye/ub6h1hUea0+p3rGjNUIuOgL4PmCwBb5ZSPtlAklt1HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 9C44B140773;
-	Wed, 29 Oct 2025 14:22:26 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id 88CA920010;
-	Wed, 29 Oct 2025 14:22:24 +0000 (UTC)
-Date: Wed, 29 Oct 2025 10:23:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: mhiramat@kernel.org, jolsa@kernel.org, mathieu.desnoyers@efficios.com,
- jiang.biao@linux.dev, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] tracing: fprobe: use ftrace if
- CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-Message-ID: <20251029102304.2db99b7d@gandalf.local.home>
-In-Reply-To: <CADxym3YcR+WYjRv-0+SOiE1yoO85FaqffCF2XbLZ9H7+qHet6w@mail.gmail.com>
-References: <20251029021514.25076-1-dongml2@chinatelecom.cn>
-	<20251029100045.1bacc491@gandalf.local.home>
-	<CADxym3YcR+WYjRv-0+SOiE1yoO85FaqffCF2XbLZ9H7+qHet6w@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761747828; c=relaxed/simple;
+	bh=DNo1hgqNvRCyVfNHnBGy4JS7DKjy9pyFK/LBe0nXLBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QVofE108+WAwFlbVu1qsd76wkoWsDVQy+kpcoyQzTdjuXxV0sL8YFK6giMdCafA4Z4YKuokP7nnuZNavpe8P7qT7Zf768SGMkpuaYs49ltc9ZHwsepE5hhxs7i/5S9As61ufoogLyZQH9eZyWeSP19YgGtqnUYWWnj5XJlfBNYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bHgCxoCf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761747826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tRvYYOi3Wkd2PUfDCfc7B7Ic5qwV5aXr9YzsvzLTMYY=;
+	b=bHgCxoCf4d9LJxnIPUH3f1j8P3Gz8uOhK/xcrMwVTfDGgemL0cfjV/rjeUkd6eu7PFlbCj
+	OiHAfN1d9vt/fwJHmKWvk2/MRJ5zPWMyl1ShRQIXRNfM/55Z7wr4drHVQy2PG2I0wOpbY8
+	vKdlOGoKJz3SIXUsyglLuacgqEgHc1E=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-sL-eGKieMs28B54T7H_vEA-1; Wed, 29 Oct 2025 10:23:42 -0400
+X-MC-Unique: sL-eGKieMs28B54T7H_vEA-1
+X-Mimecast-MFC-AGG-ID: sL-eGKieMs28B54T7H_vEA_1761747821
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-b5c4d76589aso608276666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:23:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761747821; x=1762352621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tRvYYOi3Wkd2PUfDCfc7B7Ic5qwV5aXr9YzsvzLTMYY=;
+        b=I6JD9iEn57wkWkDKL6T+9c9nzWhHv8g3nZq+tiJ6Cmp+9v2IVeA0aeNEtjeBgulafs
+         YP3i1WV1lnMZO+lnVG7uoyaXjYBdYs+R8dlxz6PgKphf0nHTCOCbvEUchcNyuM9DlUcc
+         XnXV3jMh/bZartTFP/a65ifoe00UZ5Rzickt/It3SoZD5pwF+AR0xnjHeGfnHZNb8MUI
+         hUHXA/0/Q8mOXSw9kNpa9cmZT8qKxxcQP3BHpuY9vzPR+ogGeuGnq9IvI0thUnQy6FLT
+         yF5EEAE2+/BkwArV7NnJGyJn2Kvkg5h5GVPbtbKcO6h5V8wDTzH+039uy5HPQAVAZOTA
+         h4nA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAmc4BKCxIEDibh9JHkVBhbUwYfhPXL/t3j42ygqi7cn9p3ZY4xyaPZzGcZFrj40KznwhP68oDCsIbJpw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyrsb/wJOJZG/v1wWxwFvSWgXwl0GHg184Z1i61Lx/lfJSLzE6
+	u4EVt9b1pbpRtQqCMB0UoEnY1oXAmwQhrA3chQhahFCEIgoEiPH8+5NssfIcFHOBsMmcL6KEG5m
+	01IMiQMpoQt2ugH5olh61Ndvx2HDviF8C3+1nAK3C4C1U3dqJqoMEjCpI30h1MlnFkBrQtxYbaS
+	v0GYsGQomXCHRRrXwoEr9uzFUAnOpj4pRkxKCnNau5
+X-Gm-Gg: ASbGnct9gXnAR8e38zv2VArJdSBA5Hm45jmmxp6umK7frgEi3+KJlm9NKU0L313oEfF
+	mudUAUYcDjIKBLW6LTkhN8rj/G77ZnXT/PTVMIxZp4EbPW3T1zyUI5/P7NbP7ylnAhS6FqbQOqJ
+	0iSGk2AC1AZc6tZMh/bwVpXofQBq4UfNCecfpGHCAF69+rYE9yBRkCm6hEWnX2oL4APMXYxlrmm
+	l769xQVf1j8Lw==
+X-Received: by 2002:a17:906:f5a9:b0:b6d:c3b8:8611 with SMTP id a640c23a62f3a-b703d5b4967mr287115266b.61.1761747821453;
+        Wed, 29 Oct 2025 07:23:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IExh0b3u6BWRWoAABr1Huy6PhU+hinwtnzc675AfZTC2+zrSaIIz72xAgHbBa56QuCvP02Fk/rwvNoJCpS7CqU=
+X-Received: by 2002:a17:906:f5a9:b0:b6d:c3b8:8611 with SMTP id
+ a640c23a62f3a-b703d5b4967mr287110666b.61.1761747820414; Wed, 29 Oct 2025
+ 07:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 88CA920010
-X-Stat-Signature: g4475fqsyit9fhjxs19fgwpit7od6mt6
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+CZcth+8LZL07aYVm63mr9pIYIh09s7ik=
-X-HE-Tag: 1761747744-170205
-X-HE-Meta: U2FsdGVkX19ddoRVo88WcsKPVVcsqnBhvb+psz/OqmsSQshP0ZpQkT7xMAAaHxMzif85O3cZbw/GfEBUxdjH1MIDY6GoptXBSRx1fbS+84C4AxtOhCSIxnCTfd6CdFSsuHPTkOU70GFDHCU7ajeYyDCmHj8okErDeixeaN+6F6DUGPh5ZZd9JLPrhh0o8kS2wZ++fQ+kPjH4+H5E2Cg2aPsKnrUFJNRy2ETbsNgiLSxZ/lWD1tFsieYFZ7yBLfmmBIIOyTz2buqm3c4LEnbiYq0pxoZCPQEjVf9wjgAk9nyjcWFQuvRSa6kkd01jyxvyu9xyV4AA22g0HRt+F7doA9NawAoqnCFWt2BP3eoLygAv8LvYElPelXFg+7KaQrOd6NRYJocOQok=
+References: <20251011082738.173670-1-costa.shul@redhat.com>
+In-Reply-To: <20251011082738.173670-1-costa.shul@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Wed, 29 Oct 2025 15:23:29 +0100
+X-Gm-Features: AWmQ_bne8eATCgcz-kIZPYttDtQkP6BK84Xmqvl3A-YIoIrM1rI1wUSAK_U5m4o
+Message-ID: <CAP4=nvT_MUKx5JzsLBg1XoFMmku3z9NZ4NjY1WFc2QKaGnPZVQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] tools/rtla: Improve argument processing
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Crystal Wood <crwood@redhat.com>, 
+	John Kacur <jkacur@redhat.com>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 Oct 2025 22:09:40 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
+so 11. 10. 2025 v 10:28 odes=C3=ADlatel Costa Shulyupin
+<costa.shul@redhat.com> napsal:
+>
+> The long-term goal of this patch series is to reduce code duplication
+> and unify argument display and parsing across all four tools.
+>
+> Costa Shulyupin (5):
+>   tools/rtla: Add fatal() and replace error handling pattern
+>   tools/rtla: Replace timerlat_top_usage("...") with fatal("...")
+>   tools/rtla: Replace timerlat_hist_usage("...") with fatal("...")
+>   tools/rtla: Replace osnoise_top_usage("...") with fatal("...")
+>   tools/rtla: Replace osnoise_hist_usage("...") with fatal("...")
 
-> Hi, it won't fail here, as FTRACE_OPS_FL_SAVE_ARGS has
-> following definition:
-> 
-> #ifndef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> #define FTRACE_OPS_FL_SAVE_ARGS                        FTRACE_OPS_FL_SAVE_REGS
-> #else
-> #define FTRACE_OPS_FL_SAVE_ARGS                        0
-> #endif
+It's perhaps unnecessary to do one commit per <tool>_usage() change.
+On the other hand, separating changes like this helps backporting (not
+much relevant here but relevant in other case).
 
-Bah, I should have known that, as I think I requested it :-p
+>
+>  tools/tracing/rtla/src/osnoise_hist.c  | 74 +++++++++--------------
+>  tools/tracing/rtla/src/osnoise_top.c   | 68 ++++++++-------------
+>  tools/tracing/rtla/src/timerlat_hist.c | 82 ++++++++++----------------
+>  tools/tracing/rtla/src/timerlat_top.c  | 76 +++++++++---------------
+>  tools/tracing/rtla/src/timerlat_u.c    | 12 ++--
+>  tools/tracing/rtla/src/utils.c         | 15 +++++
+>  tools/tracing/rtla/src/utils.h         |  1 +
+>  7 files changed, 128 insertions(+), 200 deletions(-)
+>
+> --
+> 2.51.0
+>
 
-[ chalks this up for a senior moment! ]
+Otherwise, I agree. Especially the timerlat tools have so many
+arguments that for a typical terminal size, you won't even see the
+error message, as it will be pushed outside the view. I was not even
+aware RTLA prints error messages in some of those cases, I thought it
+just prints the help for some time.
 
+For entire patchset:
 
-> 
-> Which means it will fallback to FTRACE_OPS_FL_SAVE_REGS if
-> CONFIG_DYNAMIC_FTRACE_WITH_ARGS not defined.
-> 
-> I have commit a PR to the bpf CI, and all testings passed and no
-> building error happens:
->   https://github.com/kernel-patches/bpf/pull/10110
+Reviewed-by: Tomas Glozar <tglozar@redhat.com>
 
-OK, thanks,
-
--- Steve
+Tomas
 
 
