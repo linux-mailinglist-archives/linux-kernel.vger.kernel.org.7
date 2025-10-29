@@ -1,124 +1,196 @@
-Return-Path: <linux-kernel+bounces-875085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5533BC1831B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:38:36 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6265DC18312
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5C024FE00F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:36:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC425353B59
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3141D63F7;
-	Wed, 29 Oct 2025 03:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEF71D63F7;
+	Wed, 29 Oct 2025 03:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMjbPFCu"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Zja2bjye"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9F9A285042
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0221D63EF;
+	Wed, 29 Oct 2025 03:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761708982; cv=none; b=ULWODgCQy5bSEyP/aF84jeSwpMVCwt3n5rr/b7ZP45j+ZQjD31sPkLs7ys4Rypm84uppb4qNqV7HZok07QufXz/TKvZcT7IXoh5mPkuKmr6a/JZtGQt+GW+AdkrKba2ZeKlK7+r8DJLlNftJI5AXgKDDw7mpAZnSlzHu4hGh5Lc=
+	t=1761709024; cv=none; b=WLu5Y2tKKocvNW4f9C13XzUCprEJ27PXZ9SdHpOLvgPRSvWB7l2Gf06TO3ONzl+dtZO2x97CO6tN/JFrzlkLXfCFd27P/JVuBqBnu0rsAOnTuCyKvA5F65kWJkWmt/gNaj7KPdPfPnRhd57BP3RDNXCRAFnTVwyqvyPlIzwzc2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761708982; c=relaxed/simple;
-	bh=JjeI8UAzfBC854auP7OdUILptuEOBu9o+fyhFZjyqrE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tNa8eafDxWgUhm6jeSmVc0V3DQLVCXlydbGAy76bdhmB1ri7MMgxE8c0i+CfRSewEooyJ+HybCc/rQghBG8YUW3cMei4NPlFIpYcEBKtY8zqQMzUcaCK8sireL5+aurAUAlivuWCFeeMLfc+xrtZiygpBBAZuEWlBPPH6RSUM3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mMjbPFCu; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b6cf1a9527fso360238a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761708980; x=1762313780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4KFQRQSGfTM2DCXucYOUjxAN7CzQGIAPT4+vm618YSs=;
-        b=mMjbPFCuel5fFYKOEpA3WIbTLIe6ZKHMPKfgAIIKkfbEXZscCcgkNCERQw+n392xww
-         fbU63PuJmg/+37Vg3KFSKJI8MzruQmQw3ouxzCEiPW6lzc3zHRoAaYbbd36ZOqkjoS6y
-         40fkmiUrSnWyBECBkwQYYTJchyrdJhsdc+6po/vpKfPiDkoVInze6u6+IwvW8Nm9FGbQ
-         ae2c0K7OpEXP4eWwmi08Ir3QGZk2+bmdz8+t+MvEVSIkRlviecEqvTr8oQAvcDgl23Wz
-         Zkya5ejGo1fhtQf2RUKFMPxyeWyTJkcscDS70CuUsaQYvpwJgGSz7n2k4zzj9zhsMu1e
-         9wug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761708980; x=1762313780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4KFQRQSGfTM2DCXucYOUjxAN7CzQGIAPT4+vm618YSs=;
-        b=rQRxZQC3zLPqMOOrSH+mwtNL9t/GiT11cTJr8r0TR8Zt5SIAj+Ix0eEPy/gPND+5OU
-         qwusHW1cOZAiUXLXuh6PAuSHognpg30+i7EQZT6x00Xho5iRbOEWH7gSNlDVZYwneGtV
-         tOpsrzw/dYrN8P2WbpCgc/0hKlHgNKxyDXBbHKdSdGTeW/y/R9ACmT1IToPcyeyxr58T
-         JPGrBPXAzAYcipMSSdZIHdcJ2+kJA6M7B8y94h9UTyPSAvOBtgZCa8trRfzYpB2mgclt
-         lq153epFNg1SubFvp1gk+jfF0SOBHArYUaaeEHDZHNf02GItIGCH7CWPlYdgkpxWLhkm
-         /LKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTp5ikWmcEF5LiarigIdOxKCzfuMzMh9SUxZpmDlSgrDMe8dD22U0EQTEvIsqDPfxAoAeKaMVCIBO8aMM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXHZDi4b2+nDyOhkO/I1iIV1lPaCxKhhukxZafv1HVLZ3i/lSu
-	FBjYbHvOuAAHKKKxyp+Lbn9oAXlwfuSYGxRW2RyW0Y+wRoDigpl+7g5T
-X-Gm-Gg: ASbGncvEFSbaNnugBJN9lFFpyUaKmo9uL4MV6EI8fCCRmCk/NK1X+tCDg7DzCWJcszU
-	Yi/SMfNJsjqo/vdhAqQplO80HKCAALarBTPZnddIobp9xGsSpKJqLamPRyJlo39ocCLsK0pd9gS
-	GIo3mtJSvCc9UqDYV14iTSlFLJznXJK7jmB/SAaJV519n/vmDbJx/8x2gs5lEb5dn2VqdklLz38
-	dwozWbWshn8Vm2nF+Yso0i2EByG9KTExgSul6irxlTDMy5Qd7zNkffKGZqnr7bR2sVOQ53XGto9
-	9nQP/gWBP50Qh1P5e4VS7OtCyY/nGsHyLeE0XBC0B6GZh3TEBF6dKo18LszWExOVZlv1Zeeel6d
-	wdcdnBRvdIK/qj7UZYgxIPWWQn9XBOevK/IRnCt5kRwViRxa1yTd1GxOYOIlGFhkt3Zrmow==
-X-Google-Smtp-Source: AGHT+IESE7CJsQY/WY628QryMAKelqQ/Edj6cNUuCksIAiMU46Z8F5oD6rzOrts+HuduuM1Ib5/7Hw==
-X-Received: by 2002:a17:902:fc4e:b0:27d:6cb6:f7c2 with SMTP id d9443c01a7336-294de9cf938mr17416625ad.17.1761708980026;
-        Tue, 28 Oct 2025 20:36:20 -0700 (PDT)
-Received: from hsukr3.. ([2405:201:d019:4872:4680:8a:2bce:378c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40b50sm135972885ad.75.2025.10.28.20.36.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 20:36:19 -0700 (PDT)
-From: Sukrut Heroorkar <hsukrut3@gmail.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
-	virtualization@lists.linux.dev (open list:VIRTIO CORE AND NET DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Cc: shuah@kernel.org,
-	david.hunter.linux@gmail.com,
-	Sukrut Heroorkar <hsukrut3@gmail.com>
-Subject: [PATCH] virtio: document @vaddr in virtqueue_map_free_coherent kernel-doc comment
-Date: Wed, 29 Oct 2025 09:05:58 +0530
-Message-ID: <20251029033559.83145-1-hsukrut3@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761709024; c=relaxed/simple;
+	bh=JsCEz7SzYUh8SRB7/FN7skKARlT8LKYCZc3aWMrN5Xc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yai2dWO355ueA3Xfj2clLYWVcuqY1Dwqzcz92X+Ffjvvoqs0Ah6y6+2M7GNra/nCTr+tJHdwhlgiSuFOT7CGMZbnSgG0hP9cA/v0PAgbkXj54vg3WLNf95lntPLB6eNXndIR9iTUAso1gD6xn0vVHYiFoJI7AxoYa781bwNeZWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Zja2bjye; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59SNNCWH005139;
+	Wed, 29 Oct 2025 03:36:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=QzMvpTHaJmVKbIXvoFw0cw6ZziWr5D
+	OyEsikXtCGN78=; b=Zja2bjyejZsSyWZU0YbnY+z2mr+9BRh6vlNvXfIw56P4Mm
+	0sjNDYDdovzSqLzkL/L/GfyF4OnGDdiMnt6iIfLbPccCGN25PFKaRRgV5r3tjOkZ
+	Mi1C2Td78Jnvy8QafBojMaK8eWJcmyxVeAuQRxk5A5t80IKkvCFRxYTEX8b795W4
+	kmD4SRCo6wfW/bm4SrLO0H36El5KJK8ir5oURJ5ALSAkshleyZcqNMhmwtjYp2LZ
+	4Ur1KBUbax30eJtCrlPLbfkedtUefH8XpVXNXLVBb4NWCMM2gQcwjueZoiR3mIBI
+	+DWCHylNIARRxe8ASetpgHZicDrvZPPOUzQ3gbiw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34ajh6v6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 03:36:45 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 59T3ajCS008179;
+	Wed, 29 Oct 2025 03:36:45 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34ajh6v2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 03:36:45 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59T02Xwo019157;
+	Wed, 29 Oct 2025 03:36:44 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xy1f7t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 29 Oct 2025 03:36:44 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59T3ae1m60883382
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 29 Oct 2025 03:36:40 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43D5520043;
+	Wed, 29 Oct 2025 03:36:40 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D331420040;
+	Wed, 29 Oct 2025 03:36:39 +0000 (GMT)
+Received: from localhost (unknown [9.43.31.117])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 29 Oct 2025 03:36:39 +0000 (GMT)
+Date: Wed, 29 Oct 2025 09:06:38 +0530
+From: "Nysal Jan K.A." <nysal@linux.ibm.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Srikar Dronamraju <srikar@linux.ibm.com>,
+        Sachin P Bappalige <sachinpb@linux.ibm.com>, stable@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Laurent Dufour <ldufour@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH v2] powerpc/kexec: Enable SMT before waking offline CPUs
+Message-ID: <knhs5gainynhozku6kb2ygxy63gyy73sbnqg3vcizk45oatzry@uig2z3mlux5u>
+References: <20251025080512.85690-1-nysal@linux.ibm.com>
+ <20251028105516.26258-1-nysal@linux.ibm.com>
+ <f19a9080-8d6d-492b-b5de-88f24ce5c015@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f19a9080-8d6d-492b-b5de-88f24ce5c015@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=C/XkCAP+ c=1 sm=1 tr=0 ts=69018bcd cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pdyEjUt-03yZH7Vt8f0A:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-GUID: qGox9TmZr_I6z2dz0QchiiIJ8wqnTGgu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX22qf3S+UnQPN
+ So4IyXKzEu1wspyocduwEdhAEGFLdlo51zS10xNVniKwDVmrfQVQTBRxIDe45Fp2JZoUc9V4KyK
+ WDov73i8L/xRVe8349Vpn2AKUM0WWaEVHp6Ss0YcsNcR8i2bzQhfROm3Mr6hx3tCxLSNytuAOdu
+ GKtfd3TRWEKD71KAcfj/48sObrZy51dlRM4/iOQu+iU+cnP+R+KnuoyMIsnYE3CqlcXqGVcbgKl
+ Y3I8FpKN82HHkxHw/TH/wrhZe1XmXxrgXJNNJyhs6yTp4GeG52SmRQOy06vpagvDudThhvY6Wuh
+ OFkVjdu3q759X7ZXw2Jgt8zuS3l40+9Lqi9HgS4SFJAHixDTTrWk3sE6vkyuewRJnHEWW/JXp6E
+ f0NHcYnexMButBwO7mm+zfnTnPsvpQ==
+X-Proofpoint-ORIG-GUID: jQY3FGIrBfmGOWdrz3YpfNC3vzFNxcKs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ spamscore=0 phishscore=0 malwarescore=0 priorityscore=1501 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2510280166
 
-Building with W=1 reports:
-Warning: drivers/virtio/virtio_ring.c:3174 function parameter 'vaddr'
-not described in 'virtqueue_map_free_coherent'
+hi Shrikanth,
 
-The @vaddr parameter was introduced when virtqueue_map_free_coherent
-was added in order to provide map operations to virtio device, but it
-was never documented. Document @vaddr to silence this warning.
+On Tue, Oct 28, 2025 at 10:56:05PM +0530, Shrikanth Hegde wrote:
+> Hi Nysal.
+> 
+> On 10/28/25 4:25 PM, Nysal Jan K.A. wrote:
 
-Fixes: bee8c7c24b73 ("virtio: introduce map ops in virtio core")
-Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
----
- drivers/virtio/virtio_ring.c | 1 +
- 1 file changed, 1 insertion(+)
+[snip]
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 7b6205253b46..d763060ff0f6 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -3166,6 +3166,7 @@ EXPORT_SYMBOL_GPL(virtqueue_map_alloc_coherent);
-  * @vdev: the virtio device we are talking to
-  * @map: metadata for performing mapping
-  * @size: the size of the buffer
-+ * @vaddr: virtual address of the buffer
-  * @map_handle: the mapped address that needs to be freed
-  *
-  */
--- 
-2.43.0
+> > --- a/arch/powerpc/kexec/core_64.c
+> > +++ b/arch/powerpc/kexec/core_64.c
+> > @@ -202,6 +202,23 @@ static void kexec_prepare_cpus_wait(int wait_state)
+> >   	mb();
+> >   }
+> > +
+> > +/*
+> > + * The add_cpu() call in wake_offline_cpus() can fail as cpu_bootable()
+> > + * returns false for CPUs that fail the cpu_smt_thread_allowed() check
+> > + * or non primary threads if SMT is disabled. Re-enable SMT and set the
+> > + * number of SMT threads to threads per core.
+> > + */
+> > +static void kexec_smt_reenable(void)
+> > +{
+> > +#if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+> > +	lock_device_hotplug();
+> 
+> I was looking at usage of lock_device_hotplug, looks like a good candidate for
+> guard() use case. Could be done on its own patch/series.
+> 
 
+Agree, we can look at it as a separate patch.
+
+> > +	cpu_smt_num_threads = threads_per_core;
+> > +	cpu_smt_control = CPU_SMT_ENABLED;
+> > +	unlock_device_hotplug();
+> > +#endif
+> > +}
+> 
+> 
+> Will this work too? It might be better since we anyway going to bring that CPU up
+> by doing add_cpu afterwords.
+> 
+> 	cpu_smt_num_threads = threads_per_core;
+> 	cpuhp_smt_enable()
+> 
+
+There is some reasoning in 4d37cc2dc3df, which made the switch to use the core
+device API, against calling cpu_up() directly. The other issue is 
+cpuhp_smt_enable() can skip bringing up a CPU in certain cases, for example
+when a core is offline.
+
+> > +
+> >   /*
+> >    * We need to make sure each present CPU is online.  The next kernel will scan
+> >    * the device tree and assume primary threads are online and query secondary
+> > @@ -216,6 +233,8 @@ static void wake_offline_cpus(void)
+> >   {
+> >   	int cpu = 0;
+> > +	kexec_smt_reenable();
+> > +
+> 
+> If we do above, just change the below logic to complain if any present CPU is offline.
+> 
+> >   	for_each_present_cpu(cpu) {
+> >   		if (!cpu_online(cpu)) {
+> >   			printk(KERN_INFO "kexec: Waking offline cpu %d.\n",
+> 
+
+Thanks for the review.
+
+--Nysal
 
