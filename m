@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-876139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92232C1AF8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030B6C1B23A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503FE6604F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504B5623A85
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB592D6E42;
-	Wed, 29 Oct 2025 13:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0922302161;
+	Wed, 29 Oct 2025 13:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbOM1L9h"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GuD2vn8y"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24722BE7A7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E16D2E283B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743680; cv=none; b=Q78T1BO6HskANaW87Txxz4V+6uZHH+0rAuf96XG6sfTvDviADoFunCsXMDLVgvD8/sEYUJ8bqUPBctDFSSDa9JlB0jJQN3A7zJk91Lo7MtB1J5MSAGgVktgni8JfeEWXxsJ26xQyOECkBkuv8nLSYoEwgbQ2+/hGEEb1ZkISKi4=
+	t=1761743683; cv=none; b=ZhvSOuyQhQ6nHjgSFFVFpjbFRfuNxFeNJ7V9BKmoILSKsK9UnoU9Hqx5DR8QTmtOJe/u0mT83t69ZxFHDs1X8ksQBD/vJ6dgb4fq26iy++BeUvkz2rUUhnhzgF7r5B4ST1IXTok1CRFWbUcplGWOISWN8s9SaGvn5CQ6CFhmjWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743680; c=relaxed/simple;
-	bh=Bs2aNP4TbRyZDZpueTzP2CRA8p/I1ZXMSqkyS31vJuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eEnKAziqQuAj0XRocxb9PckVj2yWoX3cNL01oJY7sITUJjpgwSyAUW0HPpKxmCzv8y+sKwGEAPbCmZpD99ItKD1027X7UnNGJsFH04GmozaC5TJKZCyNMIVtTYvJfaUMX+lw9d8YdHNu9yXuAdKCTK1oAp5ku0sr6dA5a3sJN5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbOM1L9h; arc=none smtp.client-ip=209.85.218.54
+	s=arc-20240116; t=1761743683; c=relaxed/simple;
+	bh=OYU/Dje9H9FpozBAA7LNtnyEiB9c0fWO3w+NnDf2nLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NzZXjxaF2zsz7XNkg03DYH3UsRZdZs9i26USwJeO1BOSB+2XxJSczDmRSLJIJIReafpJP+X81FhjVv+vYxHsoGU6w8UgMq/0oz8szi7uKxCfX6HnYlUIQsqh4lQMr2NpsWGzc2pRANaLvRvXMCc72SPzBz6hNv2ApBp4x2+0FpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GuD2vn8y; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b70406feed3so66377766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:14:38 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b3b27b50090so1282298966b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:14:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761743677; x=1762348477; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNptwftA6qXI1uXJ5WhqR8qfOzZwZcqLImk6T9du9b8=;
-        b=HbOM1L9hU0WCun2aAiSzKe5Cd44pazjf4GRtMmgMyr1d4O7wzHuBkPdC2rVY32tAf9
-         zcoFxzmYzoo88t1hg0/rK3avpOphV/kbtGbmZmUAdJ2qCF66cUWTUdeQriUvdYIF2dGe
-         2JoA8yVySMGZGvwt6+lcd5O9CpJcc5ftE/5j/tGENRIL9UDD3/X4GRCXejaf0YCorMFR
-         y5HF8zzbgYMfzoqVNKkZoqxP6j0GJ81NIwXFVN/EyIKLCbaBsb2cvBlXYdHJlYBwVIS9
-         +QSghfvtzP4oCaM8TNXMxiNfIVjhyny0W4n7Dg+UU6o7VoWejOqGxzuS/JkSui8tCmQr
-         dcwA==
+        d=gmail.com; s=20230601; t=1761743680; x=1762348480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IKi4pskh2/O6Tl9UKo5qMtZ2dHOoVoEiKiGXfF2wGGI=;
+        b=GuD2vn8yS6LzigBy68HsHw1Urh8jSWKqLBQAVC89COiX9JwNlKG6tVBY3hVCMy2OZz
+         7Gk4v1z7ZilhSW3iZXDRhg/eOjJeYm55K5zWoWRo5llxyXEuruX0mlsMku/ODWLi8eem
+         BI3WYOhUn6mFl+aDMgvAGwKuIwB2i6tBYIrf65A15sYQquW5tJmx89R64x7QkDXPXM6U
+         HZEZk8QiNlHG9Wj+cCbpqo3g+QKFXG4qTcgYNbN/+7BjFicpB8KMNvL7KqwKM1X0nB6D
+         c9T42ugcrLVkWV6zHv0bGj2h4upCI+qeiiA/fPR4GJnWCZ9LbscEQQowI6PB1kpQ7v2g
+         C5/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761743677; x=1762348477;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lNptwftA6qXI1uXJ5WhqR8qfOzZwZcqLImk6T9du9b8=;
-        b=IQddTwugrD6IeVqiMKXzImNYzYMsDzfamZ1TA+nM0Vc5QCX3/BTW4GPddGHC2KyApt
-         NfZZ3TRcxx9eZxZEOs7VbkzQC7o1zEUI3IigPsQrxxbugJrktX3wIybaWbGoAElladiG
-         RiB3o4emkNbGez7uhVDqcJLPqcxJKSkzuGTLiUi1ufgBrmlSUgfFXDddwlDwLpzLPxkh
-         vPHiGGwyQn68H7/8NmxYtWe8Nvk/aI1jvmNWZRh2Ape2viqRrrD2S4Slxh1SlwgHKEUC
-         fgyAh667tqxmB1bC5PxQ0t2bwIFhxjqx83pWs+4gO3/1B8VWtnVd+t/H1mE/aorAk3r7
-         Ppgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnEADfkovYd6HJtHFwNOL4w635txgFehgiZQGPjJDPrdLw//PkmLXQO2w9diP1jsIYPJrp+m9f3au8V78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0z0Q6K8DPuzAL4vd7tZT3ubj2yx7Ib/ez3ku9EZVsDvTcB/A8
-	zEsc2fCiZQXut7BG+lukO+XfcclM9TfS+01kaDKF99GQQY/skQe9SJ2q
-X-Gm-Gg: ASbGnctpUEqSDFzLykHgZ46G4cPfGrn3QJxlOCiW5qBmWwjZ4GXm5RXwxI3FPb0Ngt/
-	tMm69/aPguwCSO9iWJYwBFWmVjorY/DcANnFx0LZBbaxbqgfY7aYJv/JBeS7rlAtpTj4pGnyyHw
-	D3tF2hB6JazNYBryLHk2HWhr3zZWB9yUjZRUMV3wgI69pmLtwiVVva+zIcaB4hPdHCjSV4GQZkw
-	4vLtC0eLOySXMsthcB+T3PrkSKkDuGxHKnpX2ENS30h38Oze9/4e9lbiShmg7fOjz26nXRtyhEx
-	voPX34xfQ59j/JemweVC173TDPoysbeIW8NBc0mnGxr4QcKAx2ujipOxUZ2rEfcEPw3qB+K2yfK
-	z0k/CZhtRZNwcFr3pwlZiMSFcz06paWaCmeRvhA9DA7L5CcjatndaLSXBOcwFbYi2d7eDuKN5Ds
-	QBoWClfhuJw0QJibvNuHUeVrfoPVFAI0ixj1npd9p4T+0PQsXuwMTrQSBqWc0=
-X-Google-Smtp-Source: AGHT+IHVtHIdZ2ky/5bjC1MvT8sxsNCpYJpQ/+gGoxQ/iDVsMSO6E2C7S/XUZYFkx8AFTD2zqZBBUQ==
-X-Received: by 2002:a17:906:604b:b0:b6d:7f84:633 with SMTP id a640c23a62f3a-b703d311be6mr227117866b.20.1761743676960;
-        Wed, 29 Oct 2025 06:14:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761743680; x=1762348480;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IKi4pskh2/O6Tl9UKo5qMtZ2dHOoVoEiKiGXfF2wGGI=;
+        b=ogxbL2anPHET7uYuXthqvyZzxf8fUSs1xlkE2IItxjr87ElJSdBQlGFDu+lgyJwII2
+         dGTwcAfOMsz94Lx/YGKJyrl1ARe9wptKcy28Qio0/Sg6bsyGo5GI/wNPoPazTucE5KJT
+         r+CcYf58Yq2mAv+rn/ywWU+U/xG9HVpqKzwG9DAkUq3IMKMc3PnwQ9OA7uY1M45ARrwu
+         ek2hLzDSSK6x0RfmEohbO0EDjiVuCMl48P2fxZwafFucnHQ8VAw4q7w5/e9JasRP3OrX
+         JQJo12jgqNNqTvyIGyYSMUJZbMcrPq2TmeXoWcgM7j+xhgUhcl3dgPht1kjjJkYGrN0y
+         Ahjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxCr96R8ZiiimI0PNcXhsSCgAhs+FXmifL7guSnO3EU32NBe6ESD1cfu5AOS1KsbRjzGCAB6Xj2uQAPuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFd4csk9K01pzXuDO4nYDkz0bEC+PyNtnSWNV/YBtpFSd2A9uO
+	avs7diTiH5VURYXIUUAObMY30ngLclr2Bd0CU4E1HHSNtNSnRLhIRjnK
+X-Gm-Gg: ASbGncuZQNW4nCUm/sDeb+92imPERQ34MCdNsTsFEkVpiqzN5XBvZ5lPH4uIpfPs3+o
+	2KxwAAFDvT/BYwM2BEE+BAC4xWSzSURwRtYbu3tX4mU7VbH7d3DGwjH5lnPek9al+KbuD8C4QAM
+	y+WuJwHRp4MTGb6q4i8Bs/i9Bc+ibVQAFsLBKPpip1x5iGTPRKVjTKZISB0lrxRR+Cjrt8LEHhE
+	o6EG6MdyT6Bdln1W1OY1Zvog08/5wMOUBrOIb3/Sy2YWSb64gLrXBC7CnThDFVRqrpHHPkwuBb6
+	QDG6CrGbfgWMLoUf8N5+3ng9KkkbhPyYlDnE0E4ZKYlSZoGUjla40vS/z3V2esSjgPC5ePxp2nZ
+	ldUqljs5p4ne9fCmkxE7U8h9A7ZiSdByir7p6xUNmk3Gf7/ehaPq/XAXon5fAr0YOFJF/7j0NKy
+	Vc6GobCDgPBpI8bQ0yWB8KJDmlpZDhnOtUaO5vtB/Y0GdcHoxpEe0+JUkrPOk=
+X-Google-Smtp-Source: AGHT+IGiT10giP2pAEdF8uoMC+sS/XjdPsElaOpA+NUH4DHVYuqRIS7aNnrU/qMYT7hyurS1akCEXQ==
+X-Received: by 2002:a17:906:f58f:b0:b3d:b8c3:768d with SMTP id a640c23a62f3a-b703d2cc2c0mr253246366b.7.1761743680139;
+        Wed, 29 Oct 2025 06:14:40 -0700 (PDT)
 Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85308c82sm1451840566b.5.2025.10.29.06.14.34
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85308c82sm1451840566b.5.2025.10.29.06.14.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:14:35 -0700 (PDT)
+        Wed, 29 Oct 2025 06:14:39 -0700 (PDT)
 From: Mateusz Guzik <mjguzik@gmail.com>
 To: brauner@kernel.org
 Cc: viro@zeniv.linux.org.uk,
@@ -78,10 +80,12 @@ Cc: viro@zeniv.linux.org.uk,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2 1/2] fs: push list presence check into inode_io_list_del()
-Date: Wed, 29 Oct 2025 14:14:27 +0100
-Message-ID: <20251029131428.654761-1-mjguzik@gmail.com>
+Subject: [PATCH v2 2/2] fs: cosmetic fixes to lru handling
+Date: Wed, 29 Oct 2025 14:14:28 +0100
+Message-ID: <20251029131428.654761-2-mjguzik@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251029131428.654761-1-mjguzik@gmail.com>
+References: <20251029131428.654761-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,46 +94,225 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For consistency with sb routines.
+1. inode_bit_waitqueue() was somehow placed between __inode_add_lru() and
+   inode_add_lru(). move it up
+2. assert ->i_lock is held in __inode_add_lru instead of just claiming it is
+   needed
+3. s/__inode_add_lru/__inode_lru_list_add/ for consistency with itself
+   (inode_lru_list_del()) and similar routines for sb and io list
+   management
+4. push list presence check into inode_lru_list_del(), just like sb and
+   io list
 
 Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
 
 rebased
 
- fs/fs-writeback.c | 3 +++
- fs/inode.c        | 4 +---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fs/fs-writeback.c  |  2 +-
+ fs/inode.c         | 50 ++++++++++++++++++++++++----------------------
+ include/linux/fs.h |  2 +-
+ mm/filemap.c       |  4 ++--
+ mm/truncate.c      |  6 +++---
+ mm/vmscan.c        |  2 +-
+ mm/workingset.c    |  2 +-
+ 7 files changed, 35 insertions(+), 33 deletions(-)
 
 diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index f784d8b09b04..5dccbe5fb09d 100644
+index 5dccbe5fb09d..c81fffcb3648 100644
 --- a/fs/fs-writeback.c
 +++ b/fs/fs-writeback.c
-@@ -1349,6 +1349,9 @@ void inode_io_list_del(struct inode *inode)
- {
- 	struct bdi_writeback *wb;
+@@ -1455,7 +1455,7 @@ static void inode_sync_complete(struct inode *inode)
  
-+	if (list_empty(&inode->i_io_list))
-+		return;
-+
- 	wb = inode_to_wb_and_lock_list(inode);
- 	spin_lock(&inode->i_lock);
- 
+ 	inode_state_clear(inode, I_SYNC);
+ 	/* If inode is clean an unused, put it into LRU now... */
+-	inode_add_lru(inode);
++	inode_lru_list_add(inode);
+ 	/* Called with inode->i_lock which ensures memory ordering. */
+ 	inode_wake_up_bit(inode, __I_SYNC);
+ }
 diff --git a/fs/inode.c b/fs/inode.c
-index 1396f79b2551..b5c2efebaa18 100644
+index b5c2efebaa18..faf99d916afc 100644
 --- a/fs/inode.c
 +++ b/fs/inode.c
-@@ -815,9 +815,7 @@ static void evict(struct inode *inode)
- 	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
- 	BUG_ON(!list_empty(&inode->i_lru));
+@@ -530,23 +530,6 @@ void ihold(struct inode *inode)
+ }
+ EXPORT_SYMBOL(ihold);
  
--	if (!list_empty(&inode->i_io_list))
--		inode_io_list_del(inode);
+-static void __inode_add_lru(struct inode *inode, bool rotate)
+-{
+-	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE))
+-		return;
+-	if (icount_read(inode))
+-		return;
+-	if (!(inode->i_sb->s_flags & SB_ACTIVE))
+-		return;
+-	if (!mapping_shrinkable(&inode->i_data))
+-		return;
 -
-+	inode_io_list_del(inode);
- 	inode_sb_list_del(inode);
+-	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
+-		this_cpu_inc(nr_unused);
+-	else if (rotate)
+-		inode_state_set(inode, I_REFERENCED);
+-}
+-
+ struct wait_queue_head *inode_bit_waitqueue(struct wait_bit_queue_entry *wqe,
+ 					    struct inode *inode, u32 bit)
+ {
+@@ -584,18 +567,38 @@ void wait_on_new_inode(struct inode *inode)
+ }
+ EXPORT_SYMBOL(wait_on_new_inode);
  
- 	spin_lock(&inode->i_lock);
++static void __inode_lru_list_add(struct inode *inode, bool rotate)
++{
++	lockdep_assert_held(&inode->i_lock);
++
++	if (inode_state_read(inode) & (I_DIRTY_ALL | I_SYNC | I_FREEING | I_WILL_FREE))
++		return;
++	if (icount_read(inode))
++		return;
++	if (!(inode->i_sb->s_flags & SB_ACTIVE))
++		return;
++	if (!mapping_shrinkable(&inode->i_data))
++		return;
++
++	if (list_lru_add_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
++		this_cpu_inc(nr_unused);
++	else if (rotate)
++		inode_state_set(inode, I_REFERENCED);
++}
++
+ /*
+  * Add inode to LRU if needed (inode is unused and clean).
+- *
+- * Needs inode->i_lock held.
+  */
+-void inode_add_lru(struct inode *inode)
++void inode_lru_list_add(struct inode *inode)
+ {
+-	__inode_add_lru(inode, false);
++	__inode_lru_list_add(inode, false);
+ }
+ 
+ static void inode_lru_list_del(struct inode *inode)
+ {
++	if (list_empty(&inode->i_lru))
++		return;
++
+ 	if (list_lru_del_obj(&inode->i_sb->s_inode_lru, &inode->i_lru))
+ 		this_cpu_dec(nr_unused);
+ }
+@@ -1924,7 +1927,7 @@ static void iput_final(struct inode *inode)
+ 	if (!drop &&
+ 	    !(inode_state_read(inode) & I_DONTCACHE) &&
+ 	    (sb->s_flags & SB_ACTIVE)) {
+-		__inode_add_lru(inode, true);
++		__inode_lru_list_add(inode, true);
+ 		spin_unlock(&inode->i_lock);
+ 		return;
+ 	}
+@@ -1948,8 +1951,7 @@ static void iput_final(struct inode *inode)
+ 		inode_state_replace(inode, I_WILL_FREE, I_FREEING);
+ 	}
+ 
+-	if (!list_empty(&inode->i_lru))
+-		inode_lru_list_del(inode);
++	inode_lru_list_del(inode);
+ 	spin_unlock(&inode->i_lock);
+ 
+ 	evict(inode);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index a813abdcf218..33129cda3a99 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3502,7 +3502,7 @@ static inline void remove_inode_hash(struct inode *inode)
+ }
+ 
+ extern void inode_sb_list_add(struct inode *inode);
+-extern void inode_add_lru(struct inode *inode);
++extern void inode_lru_list_add(struct inode *inode);
+ 
+ extern int sb_set_blocksize(struct super_block *, int);
+ extern int sb_min_blocksize(struct super_block *, int);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 13f0259d993c..add5228a7d97 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -256,7 +256,7 @@ void filemap_remove_folio(struct folio *folio)
+ 	__filemap_remove_folio(folio, NULL);
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (mapping_shrinkable(mapping))
+-		inode_add_lru(mapping->host);
++		inode_lru_list_add(mapping->host);
+ 	spin_unlock(&mapping->host->i_lock);
+ 
+ 	filemap_free_folio(mapping, folio);
+@@ -335,7 +335,7 @@ void delete_from_page_cache_batch(struct address_space *mapping,
+ 	page_cache_delete_batch(mapping, fbatch);
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (mapping_shrinkable(mapping))
+-		inode_add_lru(mapping->host);
++		inode_lru_list_add(mapping->host);
+ 	spin_unlock(&mapping->host->i_lock);
+ 
+ 	for (i = 0; i < folio_batch_count(fbatch); i++)
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 91eb92a5ce4f..ad9c0fa29d94 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -46,7 +46,7 @@ static void clear_shadow_entries(struct address_space *mapping,
+ 
+ 	xas_unlock_irq(&xas);
+ 	if (mapping_shrinkable(mapping))
+-		inode_add_lru(mapping->host);
++		inode_lru_list_add(mapping->host);
+ 	spin_unlock(&mapping->host->i_lock);
+ }
+ 
+@@ -111,7 +111,7 @@ static void truncate_folio_batch_exceptionals(struct address_space *mapping,
+ 
+ 	xas_unlock_irq(&xas);
+ 	if (mapping_shrinkable(mapping))
+-		inode_add_lru(mapping->host);
++		inode_lru_list_add(mapping->host);
+ 	spin_unlock(&mapping->host->i_lock);
+ out:
+ 	folio_batch_remove_exceptionals(fbatch);
+@@ -622,7 +622,7 @@ int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
+ 	__filemap_remove_folio(folio, NULL);
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (mapping_shrinkable(mapping))
+-		inode_add_lru(mapping->host);
++		inode_lru_list_add(mapping->host);
+ 	spin_unlock(&mapping->host->i_lock);
+ 
+ 	filemap_free_folio(mapping, folio);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index b2fc8b626d3d..bb4a96c7b682 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -811,7 +811,7 @@ static int __remove_mapping(struct address_space *mapping, struct folio *folio,
+ 		__filemap_remove_folio(folio, shadow);
+ 		xa_unlock_irq(&mapping->i_pages);
+ 		if (mapping_shrinkable(mapping))
+-			inode_add_lru(mapping->host);
++			inode_lru_list_add(mapping->host);
+ 		spin_unlock(&mapping->host->i_lock);
+ 
+ 		if (free_folio)
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 68a76a91111f..d32dc2e02a61 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -755,7 +755,7 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
+ 	xa_unlock_irq(&mapping->i_pages);
+ 	if (mapping->host != NULL) {
+ 		if (mapping_shrinkable(mapping))
+-			inode_add_lru(mapping->host);
++			inode_lru_list_add(mapping->host);
+ 		spin_unlock(&mapping->host->i_lock);
+ 	}
+ 	ret = LRU_REMOVED_RETRY;
 -- 
 2.34.1
 
