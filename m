@@ -1,282 +1,294 @@
-Return-Path: <linux-kernel+bounces-876962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A37C1CDCA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:01:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9953AC1CE01
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 851B44064F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:01:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A5AF4E32DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F712F12CC;
-	Wed, 29 Oct 2025 19:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641722F12CC;
+	Wed, 29 Oct 2025 19:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b="BI76c9ck";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H0NNwfju"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="hQOdvw+f"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FB12773CB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6267D32D440
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764486; cv=none; b=mpLkemciNXf7s14fX68+YkutlRYyUx5pW8W0cv4Ipxu/MJ010+gne89xdataya5gU6voP5zS+7mSFJGtQmjEdHj7lFd60oGjp3Iuajx6pDwpIdMSTW06mNQ2CAvr/2wdcpEWRpX+HGB22X2UUMoW3jIZN8fbwT99dUsF0CeP9yI=
+	t=1761764553; cv=none; b=Iik0/jzfHYXmqXP7T2VNE9bbbN2lZdoqEbBBDJOGaeoqB0fseooiFR1dDYj1CPRa76BAh/qwUF3tnbzCJCUghwVCWvhDk3N7adWFZHIf2Vu+78CHWjsVc7JI59AmvqVyV7DjXTiIOw/+uUI8fI/9j9sK7jn9qv/VVNzFeaIylfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764486; c=relaxed/simple;
-	bh=6RVaaDYLV8Xqm/aUiQEembBKj8/wT7Kkzmf8Wb5G410=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=PakGHW3ksEdIz99yfWpAs4M8RbgvyIChuAq4YYcbaggdP1+GGl2Mj9tiaFlTYpp3hJmuIeNdiJPRjjVel2nQM6c5WGjEG++zZMsm1xuv70tQamdMlVzEKDbIUva2KfRtbNTvUsp0mi4N+c26e6zXjOwjN6UN8+tukLWfdigyRL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net; spf=pass smtp.mailfrom=fluxnic.net; dkim=pass (2048-bit key) header.d=fluxnic.net header.i=@fluxnic.net header.b=BI76c9ck; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H0NNwfju; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fluxnic.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fluxnic.net
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 510317A00A4;
-	Wed, 29 Oct 2025 15:01:23 -0400 (EDT)
-Received: from phl-frontend-01 ([10.202.2.160])
-  by phl-compute-06.internal (MEProxy); Wed, 29 Oct 2025 15:01:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fluxnic.net; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1761764483; x=1761850883; bh=q2OBwSfOLH
-	7FZF6AMuMNLtPUlxRtKZ8gLw3EkIWFXps=; b=BI76c9ckDsGXDHtC4NhY/i+cWY
-	RwlTbZwoBVQrGSLAoQ16HkMsFKE6ik9DkMOQqIpMsohMAYYZODfRl0OFbnou2siB
-	j0aIicNtRfCmHqpT4YHUfaI35d/8vOkpOos8UM/USeposuAKv9lEIaCZ1zVhK/MN
-	nD0s5uzbWNxpIrkVKJMlTIj5b8dtE3HBY6bQrJasOY7UxiH8u909YLxhXqGnW8gf
-	FU95St3zEKeQkw/RW9ip7dgbokYMLg5oggW9kF/rPQf/HYzOD7t1nxTEXz+tKR5o
-	SBlMA72oRK8VxzHjCjxH1nWrKYAKb+tJwjfBZOGiZxnFEaSsveScCHe2KarQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761764483; x=1761850883; bh=q2OBwSfOLH7FZF6AMuMNLtPUlxRtKZ8gLw3
-	EkIWFXps=; b=H0NNwfjuVVMmC7RCBmVhIopBUI1xfaftwIlB+BmxZ15JtnQoAW0
-	fITdLYO+9mvvuuIRVrcLeyQIJ5a8kZVEZvXrBUFY3/zwZxoInhCNJz1FldpVe+L2
-	glyv11thTQb2WHY7DQ4b7TZDLcDhJpIE3IH7tCxpYJ2NLHdELfH8y/7jAr58k6jD
-	nm71b3imzyGCWDPC1H+vhdMyN1nbwY3F/jdZlyvRSxymnYTF5xyqbt00mBzhFxo7
-	JHR1sy2OBKdbi3p7z6MG5sz9VMj2iZmHh4+HlYcbXmvODzgD7rlblK7W8/4DejsM
-	MzLK/xru8Y76ZvPQLRdDhSEKqea/B+uXEgQ==
-X-ME-Sender: <xms:gWQCaSdbSxCdmsYlDzllWEO0oCHHbDX3hSEEUirRCrkq7Ji5Ui6Dnw>
-    <xme:gWQCaW7fm1yAnpCDXiShLhNXI32MIiGIejNMx4Lk_bIX85VAwbMoS8wAInq_qDGZL
-    06LF1Uycby69sxYNe1Shw_N0uOQdw-SJh2M-1-hdDKyhszL9S06Fas>
-X-ME-Received: <xmr:gWQCacO_BIQiEfCcDLS9v-HStL6iJJ4bSApQUFFeDgw7Np4KSG-zxjYwaO5a96kR1mDGwboeJAjeWiq0T7wDFrC3WbkgLzyezTdauCDi>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieegheduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefpihgtohhlrghs
-    ucfrihhtrhgvuceonhhitghosehflhhugihnihgtrdhnvghtqeenucggtffrrghtthgvrh
-    hnpefgvedvhfefueejgefggfefhfelffeiieduvdehffduheduffekkefhgeffhfefveen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihgtoh
-    esfhhluhignhhitgdrnhgvthdpnhgspghrtghpthhtohepudejpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehlihhroh
-    hnghhqihhnghessggrihguuhdrtghomhdprhgtphhtthhopehurdhklhgvihhnvgdqkhho
-    vghnihhgsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopegsihhjuhdruggrshdrjh
-    iisegsphdrrhgvnhgvshgrshdrtghomhdprhgtphhtthhopehkhhgriihhhiestghhrhho
-    mhhiuhhmrdhorhhgpdhrtghpthhtohepuggrvhhiugdrlhgrihhghhhtrdhlihhnuhigse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohephihukhhurghifeeshhhurgifvghirdgtohhm
-    pdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    eprgigsghovgeskhgvrhhnvghlrdgukh
-X-ME-Proxy: <xmx:gWQCaXF6CBYVAX745E7tcqS45F1XOUrOhgNxw_QPMTz9-9V67Negaw>
-    <xmx:gWQCaQRnDie7oBc8ReKqW_qI1mEVq6UxCZgI4nRTUdZCm3jdi0ZLtA>
-    <xmx:gWQCafQQQcQO0bGmjR9_dTCief0NeekyJqBBVjBkNXklg85SDBYFrg>
-    <xmx:gWQCabdIhWBnwz5JN2tJIDli00cGF4_9XNeVJ4FdEJ3AsedsgIEFig>
-    <xmx:g2QCaZLprdr9tvpb-sSefcqQFG_1TtJ7N6YQOPnTCcn_18CBWTJdRDqO>
-Feedback-ID: i58514971:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Oct 2025 15:01:21 -0400 (EDT)
-Received: from xanadu (xanadu.lan [192.168.1.120])
-	by yoda.fluxnic.net (Postfix) with ESMTPSA id C263013E377B;
-	Wed, 29 Oct 2025 15:01:20 -0400 (EDT)
-Date: Wed, 29 Oct 2025 15:01:20 -0400 (EDT)
-From: Nicolas Pitre <nico@fluxnic.net>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
-    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
-    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 7/9] lib: mul_u64_u64_div_u64() optimise multiply
- on 32bit x86
-In-Reply-To: <20251029173828.3682-8-david.laight.linux@gmail.com>
-Message-ID: <2r385158-3144-32rp-38ro-r1opo37qsq1r@syhkavp.arg>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-8-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1761764553; c=relaxed/simple;
+	bh=yO1Opye+qc3JYrzAXa0i9zBPEzqerL6uatQVYdTfnV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3gpJza5k4MTtlWQ0cLmRZzn8olcSAQoUfYJnDxp0eZwSl/95wOCsShFQP3yjxaArSiZ4JYCIHBJu3XlWLj1uQB2K2NUMmBIA10mKMsj5g4J8JILyuQQALn69pdKct1YF3FQElKbrAEQTeZm3gnHhtQzOyi4lcY+0hMY0v/myCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=hQOdvw+f; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-89e8a3fa70fso14758285a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:02:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1761764550; x=1762369350; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6sw72SXv9wDgu6p9YjUITDDH7nA95nOzLTT0dvLDWRw=;
+        b=hQOdvw+fj+jtW3r9+9NQ13s4GPkZMNozPxyPEu1z69B9zHbOzVBVBC/HmpoVTc6TFm
+         XvluiZHSkJGugnIq3ge2wwgua5RECtQs4Dn7/foiznF5m7TzSO2E3ubURTfduC5u3Bt/
+         OXckmY5CXqsXNnsustPUZjAjWCX8BW7g05MwaObJbOr99OPm3uy4hUo7QIRVjgiiBKVt
+         P00ybNGq2huXk6cI8WLt3aRtjmyiR79fsLO17PrT3TLOms7vmHG2Ihkr6QMsUjE7aaUQ
+         vfqvSn55K+ikFm9NVJhqDZai3a9ifjYRKURJQ4vWLurIFAb7Yi7023pPF6tUWScBt5fj
+         2BQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761764550; x=1762369350;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6sw72SXv9wDgu6p9YjUITDDH7nA95nOzLTT0dvLDWRw=;
+        b=XXlMSl/ECU3Mrjx+VGWB1Vx9nj9/9Fodh174CqWdP3U2HxtxmAvxQJx3H8ugELA6lP
+         nwFCzLCatMxs5e9vFJGsUmrmosXADFJk3Zv/vZg99q8BhFWo7F15dSjy6HWMcsS3UT81
+         lyqiPEDLdDdHjZFlR9Rq9XtWLmB3TyzV1HI5xLMQMEmWRn4SeiEuiqZvUfhK8WJVbg93
+         Aew6MVBjufbqclJaXPjFUCUcKJbTgYXhw5IDw3hS/TKWLueiR9OIbwONReChlVxMJ7m2
+         QzjbzRHPRFi79cJyA7xQgl2OKM3ZFMXUZINdbSJBEh0/8QAoUGV6M40LhvgWlN7dIeGm
+         HdNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVFcNofMVmZ2FHG9poHstUMSudDEsI6lcvrlvV1tJEMqgBdyyWgbAGBJlX6tE4dkqNItZagyIZ3P3IJJ9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUywucJ5oAbHQ++5t3O0dY6jfeB5JmEXkXzCXw8u/7pXbpEbND
+	h85eWYb3ky4ur1lLUtsuJmE8+x+CexdCLeGS5+loA2u/RCFut36ABUi7WXJPwyN701s=
+X-Gm-Gg: ASbGncs9QYadVEPKwDzZUBychWZwYoV1IPnuzQ25VePhMNg9umo0UDQZ9fAog7vjr6B
+	m9JGonqWvWhq4hM3O3ssXd+B58zZKi2brCnuGrlqMudI5rU+Q+82XdEuBP5s1imfe74YfZhoK8f
+	zKP5/ovsB64+yIWuYMWvSIGWZv+7kFJ9MThWEBQ15KAq20IGyOVi9cI6rLvpNRXuikL2G1DpAHl
+	0n7slHe/oXVfwwR5rtZUA/h/wi4x2tGNya/trs/mPsNxZgnuVy8e8agZWut7gwzn957PJXNdROD
+	Uz5u0+h/e6A/+p/t4hWUFh3YU3uENWEq3m0LfGtsuB/m+k+6XqtnamL/uJe8718gaKSMDjdU1uQ
+	2RCMoBpuLBeliK7iODB8ZQf+9zqxHPl2j+5z7nIrCWPWQi8cowdVkL4gMa7k59oEn3aPdtlxkjW
+	tEIfyYjXJ8lh2+1M+aD6r2ZdmXWxm/LCe5N7gz4oxxORuJSg==
+X-Google-Smtp-Source: AGHT+IFEZVVWBSeU6miQg9ukzVA2Omdwgy9xE3uJN2mdElXkmiiS2fX8FwhQFoumPSYknIKRu1v6vg==
+X-Received: by 2002:a05:620a:2915:b0:8a2:234a:17be with SMTP id af79cd13be357-8aa2c08ed8emr119910685a.7.1761764549800;
+        Wed, 29 Oct 2025 12:02:29 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f254a6461sm1145536585a.30.2025.10.29.12.02.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 12:02:29 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vEBRE-000000051Qy-2L0s;
+	Wed, 29 Oct 2025 16:02:28 -0300
+Date: Wed, 29 Oct 2025 16:02:28 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Oscar Salvador <osalvador@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Yuanchu Xie <yuanchu@google.com>, Wei Xu <weixugc@google.com>,
+	Peter Xu <peterx@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Kees Cook <kees@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Lance Yang <lance.yang@linux.dev>, Xu Xin <xu.xin16@zte.com.cn>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Jann Horn <jannh@google.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	David Rientjes <rientjes@google.com>,
+	Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>,
+	Kemeng Shi <shikemeng@huaweicloud.com>,
+	Kairui Song <kasong@tencent.com>, Nhat Pham <nphamcs@gmail.com>,
+	Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Qi Zheng <zhengqi.arch@bytedance.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 1/4] mm: declare VMA flags by bit
+Message-ID: <20251029190228.GS760669@ziepe.ca>
+References: <cover.1761757731.git.lorenzo.stoakes@oracle.com>
+ <a94b3842778068c408758686fbb5adcb91bdbc3c.1761757731.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a94b3842778068c408758686fbb5adcb91bdbc3c.1761757731.git.lorenzo.stoakes@oracle.com>
 
-On Wed, 29 Oct 2025, David Laight wrote:
+On Wed, Oct 29, 2025 at 05:49:35PM +0000, Lorenzo Stoakes wrote:
+> We declare a sparse-bitwise type vma_flag_t which ensures that users can't
+> pass around invalid VMA flags by accident and prepares for future work
+> towards VMA flags being a bitmap where we want to ensure bit values are
+> type safe.
 
-> gcc generates horrid code for both ((u64)u32_a * u32_b) and (u64_a + u32_b).
-> As well as the extra instructions it can generate a lot of spills to stack
-> (including spills of constant zeros and even multiplies by constant zero).
+Does sparse attach the type to the enum item? Normal C says the enum
+item's type is always 'int' if the value fits in int..
+
+And I'm not sure bitwise rules work quite the way you'd like for this
+enum, it was ment for things that are |'d..
+
+I have seen an agressively abuse-resistent technique before, I don't
+really recommend it, but FYI:
+
+struct vma_bits {
+  u8 VMA_READ_BIT;
+  u8 VMA_WRITE_BIT;
+  ..
+};
+#define VMA_BIT(bit_name) BIT(offsetof(struct vma_bits, bit_name))
+
+> Finally, we have to update some rather silly if-deffery found in
+> mm/task_mmu.c which would otherwise break.
 > 
-> mul_u32_u32() already exists to optimise the multiply.
-> Add a similar add_u64_32() for the addition.
-> Disable both for clang - it generates better code without them.
+> Additionally, update the VMA userland testing vma_internal.h header to
+> include these changes.
 > 
-> Move the 64x64 => 128 multiply into a static inline helper function
-> for code clarity.
-> No need for the a/b_hi/lo variables, the implicit casts on the function
-> calls do the work for us.
-> Should have minimal effect on the generated code.
-> 
-> Use mul_u32_u32() and add_u64_u32() in the 64x64 => 128 multiply
-> in mul_u64_add_u64_div_u64().
-> 
-> Signed-off-by: David Laight <david.laight.linux@gmail.com>
-
-Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
-
-
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
-> 
-> Changes for v4:
-> - merge in patch 8.
-> - Add comments about gcc being 'broken' for mixed 32/64 bit maths.
->   clang doesn't have the same issues.
-> - use a #defdine for define mul_add() to avoid 'defined but not used'
->   errors.
-> 
->  arch/x86/include/asm/div64.h | 19 +++++++++++++++++
->  include/linux/math64.h       | 11 ++++++++++
->  lib/math/div64.c             | 40 +++++++++++++++++++++++-------------
->  3 files changed, 56 insertions(+), 14 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
-> index cabdc2d5a68f..a18c045aa8a1 100644
-> --- a/arch/x86/include/asm/div64.h
-> +++ b/arch/x86/include/asm/div64.h
-> @@ -60,6 +60,12 @@ static inline u64 div_u64_rem(u64 dividend, u32 divisor, u32 *remainder)
->  }
->  #define div_u64_rem	div_u64_rem
->  
-> +/*
-> + * gcc tends to zero extend 32bit values and do full 64bit maths.
-> + * Define asm functions that avoid this.
-> + * (clang generates better code for the C versions.)
+>  fs/proc/task_mmu.c               |   4 +-
+>  include/linux/mm.h               | 286 +++++++++++++++++---------
+>  tools/testing/vma/vma_internal.h | 341 +++++++++++++++++++++++++++----
+
+Maybe take the moment to put them in some vma_flags.h and then can
+that be included from tools/testing to avoid this copying??
+
+> +/**
+> + * vma_flag_t - specifies an individual VMA flag by bit number.
+> + *
+> + * This value is made type safe by sparse to avoid passing invalid flag values
+> + * around.
 > + */
-> +#ifndef __clang__
->  static inline u64 mul_u32_u32(u32 a, u32 b)
->  {
->  	u32 high, low;
-> @@ -71,6 +77,19 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
->  }
->  #define mul_u32_u32 mul_u32_u32
->  
-> +static inline u64 add_u64_u32(u64 a, u32 b)
-> +{
-> +	u32 high = a >> 32, low = a;
+> +typedef int __bitwise vma_flag_t;
 > +
-> +	asm ("addl %[b], %[low]; adcl $0, %[high]"
-> +		: [low] "+r" (low), [high] "+r" (high)
-> +		: [b] "rm" (b) );
+> +enum {
+> +	/* currently active flags */
+> +	VMA_READ_BIT = (__force vma_flag_t)0,
+> +	VMA_WRITE_BIT = (__force vma_flag_t)1,
+> +	VMA_EXEC_BIT = (__force vma_flag_t)2,
+> +	VMA_SHARED_BIT = (__force vma_flag_t)3,
 > +
-> +	return low | (u64)high << 32;
-> +}
-> +#define add_u64_u32 add_u64_u32
+> +	/* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+> +	VMA_MAYREAD_BIT = (__force vma_flag_t)4, /* limits for mprotect() etc */
+> +	VMA_MAYWRITE_BIT = (__force vma_flag_t)5,
+> +	VMA_MAYEXEC_BIT = (__force vma_flag_t)6,
+> +	VMA_MAYSHARE_BIT = (__force vma_flag_t)7,
+> +
+> +	VMA_GROWSDOWN_BIT = (__force vma_flag_t)8, /* general info on the segment */
+> +#ifdef CONFIG_MMU
+> +	VMA_UFFD_MISSING_BIT = (__force vma_flag_t)9, /* missing pages tracking */
+> +#else
+> +	/* nommu: R/O MAP_PRIVATE mapping that might overlay a file mapping */
+> +	VMA_MAYOVERLAY_BIT = (__force vma_flag_t)9,
+> +#endif
+> +	/* Page-ranges managed without "struct page", just pure PFN */
+> +	VMA_PFNMAP_BIT = (__force vma_flag_t)10,
+> +
+> +	VMA_MAYBE_GUARD_BIT = (__force vma_flag_t)11,
+> +
+> +	VMA_UFFD_WP_BIT = (__force vma_flag_t)12, /* wrprotect pages tracking */
+> +
+> +	VMA_LOCKED_BIT = (__force vma_flag_t)13,
+> +	VMA_IO_BIT = (__force vma_flag_t)14, /* Memory mapped I/O or similar */
+> +
+> +	/* Used by madvise() */
+> +	VMA_SEQ_READ_BIT = (__force vma_flag_t)15, /* App will access data sequentially */
+> +	VMA_RAND_READ_BIT = (__force vma_flag_t)16, /* App will not benefit from clustered reads */
+> +
+> +	VMA_DONTCOPY_BIT = (__force vma_flag_t)17, /* Do not copy this vma on fork */
+> +	VMA_DONTEXPAND_BIT = (__force vma_flag_t)18, /* Cannot expand with mremap() */
+> +	VMA_LOCKONFAULT_BIT = (__force vma_flag_t)19, /* Lock pages covered when faulted in */
+> +	VMA_ACCOUNT_BIT = (__force vma_flag_t)20, /* Is a VM accounted object */
+> +	VMA_NORESERVE_BIT = (__force vma_flag_t)21, /* should the VM suppress accounting */
+> +	VMA_HUGETLB_BIT = (__force vma_flag_t)22, /* Huge TLB Page VM */
+> +	VMA_SYNC_BIT = (__force vma_flag_t)23, /* Synchronous page faults */
+> +	VMA_ARCH_1_BIT = (__force vma_flag_t)24, /* Architecture-specific flag */
+> +	VMA_WIPEONFORK_BIT = (__force vma_flag_t)25, /* Wipe VMA contents in child. */
+> +	VMA_DONTDUMP_BIT = (__force vma_flag_t)26, /* Do not include in the core dump */
+> +
+> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> +	VMA_SOFTDIRTY_BIT = (__force vma_flag_t)27, /* Not soft dirty clean area */
 > +#endif
 > +
->  /*
->   * __div64_32() is never called on x86, so prevent the
->   * generic definition from getting built.
-> diff --git a/include/linux/math64.h b/include/linux/math64.h
-> index e889d850b7f1..cc305206d89f 100644
-> --- a/include/linux/math64.h
-> +++ b/include/linux/math64.h
-> @@ -158,6 +158,17 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
->  }
->  #endif
->  
-> +#ifndef add_u64_u32
-> +/*
-> + * Many a GCC version also messes this up.
-> + * Zero extending b and then spilling everything to stack.
-> + */
-> +static inline u64 add_u64_u32(u64 a, u32 b)
-> +{
-> +	return a + b;
-> +}
+> +	VMA_MIXEDMAP_BIT = (__force vma_flag_t)28, /* Can contain struct page and pure PFN pages */
+> +	VMA_HUGEPAGE_BIT = (__force vma_flag_t)29, /* MADV_HUGEPAGE marked this vma */
+> +	VMA_NOHUGEPAGE_BIT = (__force vma_flag_t)30, /* MADV_NOHUGEPAGE marked this vma */
+> +	VMA_MERGEABLE_BIT = (__force vma_flag_t)31, /* KSM may merge identical pages */
+> +
+> +#ifdef CONFIG_64BIT
+> +	/* These bits are reused, we define specific uses below. */
+> +#ifdef CONFIG_ARCH_USES_HIGH_VMA_FLAGS
+> +	VMA_HIGH_ARCH_0_BIT = (__force vma_flag_t)32,
+> +	VMA_HIGH_ARCH_1_BIT = (__force vma_flag_t)33,
+> +	VMA_HIGH_ARCH_2_BIT = (__force vma_flag_t)34,
+> +	VMA_HIGH_ARCH_3_BIT = (__force vma_flag_t)35,
+> +	VMA_HIGH_ARCH_4_BIT = (__force vma_flag_t)36,
+> +	VMA_HIGH_ARCH_5_BIT = (__force vma_flag_t)37,
+> +	VMA_HIGH_ARCH_6_BIT = (__force vma_flag_t)38,
 > +#endif
 > +
->  #if defined(CONFIG_ARCH_SUPPORTS_INT128) && defined(__SIZEOF_INT128__)
->  
->  #ifndef mul_u64_u32_shr
-> diff --git a/lib/math/div64.c b/lib/math/div64.c
-> index f92e7160feb6..f6da7b5fb69e 100644
-> --- a/lib/math/div64.c
-> +++ b/lib/math/div64.c
-> @@ -186,33 +186,45 @@ EXPORT_SYMBOL(iter_div_u64_rem);
->  #endif
->  
->  #if !defined(mul_u64_add_u64_div_u64) || defined(test_mul_u64_add_u64_div_u64)
-> -u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
-> -{
+> +	VMA_ALLOW_ANY_UNCACHED_BIT = (__force vma_flag_t)39,
+> +	VMA_DROPPABLE_BIT = (__force vma_flag_t)40,
 > +
-> +#define mul_add(a, b, c) add_u64_u32(mul_u32_u32(a, b), c)
+> +#ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+> +	VMA_UFFD_MINOR_BIT = (__force vma_flag_t)41,
+> +#endif
 > +
->  #if defined(__SIZEOF_INT128__) && !defined(test_mul_u64_add_u64_div_u64)
->  
-> +static inline u64 mul_u64_u64_add_u64(u64 *p_lo, u64 a, u64 b, u64 c)
-> +{
->  	/* native 64x64=128 bits multiplication */
->  	u128 prod = (u128)a * b + c;
-> -	u64 n_lo = prod, n_hi = prod >> 64;
+> +	VMA_SEALED_BIT = (__force vma_flag_t)42,
+> +#endif /* CONFIG_64BIT */
+> +};
 > +
-> +	*p_lo = prod;
-> +	return prod >> 64;
-> +}
->  
->  #else
->  
-> -	/* perform a 64x64=128 bits multiplication manually */
-> -	u32 a_lo = a, a_hi = a >> 32, b_lo = b, b_hi = b >> 32;
-> +static inline u64 mul_u64_u64_add_u64(u64 *p_lo, u64 a, u64 b, u64 c)
-> +{
-> +	/* perform a 64x64=128 bits multiplication in 32bit chunks */
->  	u64 x, y, z;
->  
->  	/* Since (x-1)(x-1) + 2(x-1) == x.x - 1 two u32 can be added to a u64 */
-> -	x = (u64)a_lo * b_lo + (u32)c;
-> -	y = (u64)a_lo * b_hi + (u32)(c >> 32);
-> -	y += (u32)(x >> 32);
-> -	z = (u64)a_hi * b_hi + (u32)(y >> 32);
-> -	y = (u64)a_hi * b_lo + (u32)y;
-> -	z += (u32)(y >> 32);
-> -	x = (y << 32) + (u32)x;
-> -
-> -	u64 n_lo = x, n_hi = z;
-> +	x = mul_add(a, b, c);
-> +	y = mul_add(a, b >> 32, c >> 32);
-> +	y = add_u64_u32(y, x >> 32);
-> +	z = mul_add(a >> 32, b >> 32, y >> 32);
-> +	y = mul_add(a >> 32, b, y);
-> +	*p_lo = (y << 32) + (u32)x;
-> +	return add_u64_u32(z, y >> 32);
-> +}
->  
->  #endif
->  
-> +u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
-> +{
-> +	u64 n_lo, n_hi;
-> +
-> +	n_hi = mul_u64_u64_add_u64(&n_lo, a, b, c);
-> +
->  	if (unlikely(n_hi >= d)) {
->  		/* trigger runtime exception if divisor is zero */
->  		if (d == 0) {
-> -- 
-> 2.39.5
-> 
-> 
+> +#define VMA_BIT(bit)	BIT((__force int)bit)
+
+> -/* mprotect() hardcodes VM_MAYREAD >> 4 == VM_READ, and so for r/w/x bits. */
+> -#define VM_MAYREAD	0x00000010	/* limits for mprotect() etc */
+> -#define VM_MAYWRITE	0x00000020
+> -#define VM_MAYEXEC	0x00000040
+> -#define VM_MAYSHARE	0x00000080
+> +#define VM_MAYREAD	VMA_BIT(VMA_MAYREAD_BIT)
+> +#define VM_MAYWRITE	VMA_BIT(VMA_MAYWRITE_BIT)
+> +#define VM_MAYEXEC	VMA_BIT(VMA_MAYEXEC_BIT)
+> +#define VM_MAYSHARE	VMA_BIT(VMA_MAYSHARE_BIT)
+
+I suggest removing some of this duplication..
+
+#define DECLARE_VMA_BIT(name, bitno) \
+    NAME ## _BIT = (__force vma_flag_t)bitno,
+    NAME = BIT(bitno),
+
+enum {
+   DECLARE_VMA_BIT(VMA_READ, 0),
+}
+
+Especially since the #defines and enum need to have matching #ifdefs.
+
+It is OK to abuse the enum like the above, C won't get mad and works
+better in gdb/clangd.
+
+Later you can have a variation of the macro for your first sytem
+word/second system word idea.
+
+Otherwise I think this is a great thing to do, thanks!
+
+Jason
 
