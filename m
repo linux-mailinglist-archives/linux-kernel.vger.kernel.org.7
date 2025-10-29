@@ -1,76 +1,143 @@
-Return-Path: <linux-kernel+bounces-876724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82D24C1C3E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:52:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1A6C1C354
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CD9315A22AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:28:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B732B5A36AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B68346E6B;
-	Wed, 29 Oct 2025 16:22:22 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A91347BCF;
+	Wed, 29 Oct 2025 16:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuBTOGtI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E263358C8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B56E286416;
+	Wed, 29 Oct 2025 16:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754942; cv=none; b=NHTmT01VGN/z+b+hQo8IiqI6IQQv2pKJAc4u2kvItr6UomUscxhaT2AC8QL7Shlgpzo4R0NvghrhqqAzM+LJrF29H9b55FqBkC2MjBN+YFifvAHDZc5Z0/PAcVIpHyqDzRFz5MglIC40IbBjnhYupTrpxNs0E+L3nj9XJyq3Hwk=
+	t=1761755118; cv=none; b=eozBlZQEFGyUzrkfRSX2QLyH7k1KgiVzv0okFNA/nCdCgIYDnaP0Q/pNHHYFLFIOnm7AiG+j7Om9r13WAZVrsOVmjjVGZ/cuzTN13t2pQFz09ZbQctgwdGivZJ9y3j+JQPtsAWA1TwskRKVRWuaHeQJuOxsABFQ0L1KNPjkNr2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754942; c=relaxed/simple;
-	bh=M/+PNDGbTJ6UlJZ1qvScMWL/4DVx4AED5y1LpqrNEHc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NELzTqFyWnAzSZ/Oo+J2ByurqOGp4mGLVCtXpU3QT4vDgj1sUsZ4guBA7ESpUVpP0qVnVdJRQ7RRv1RysgB3jhPLdXEEeBVEzcLvyS131HzsxvkLcDX+maeYIelDQ85qNKAgMlcY+c4FQ3jpjipMGc1iBt/fbw481E6RMHDi89Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-940d395fd10so17741439f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:22:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761754940; x=1762359740;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M/+PNDGbTJ6UlJZ1qvScMWL/4DVx4AED5y1LpqrNEHc=;
-        b=qo0BUL7j6FyqfsSYmrOwaT1ecqWkWNQIKd8QJhk6bgPvvd3SmHZDE8lbp3oGAVA8ql
-         vPlH2aU2goW3RjwsxjxZWtQrlb+ieHz5IJU/3EeJdh9ct+foYraOWnOTmvw4bCfWNvQD
-         Wy+Al2uVFDPx170GTZBuqRp+2UuE0bq56lH2abk/BxbKjHo/rrDwSXV8L3WKSFfVkJId
-         MhjXdAB7GvIYtqHHOQnahnZ6WUUXA8wCcHBpV6m6tJz/8LUDhUObOjF9H6uDSslZgaOS
-         1ZJ4uBTmhMe0YY0UdEqQXg0kk2O/WZ+UzBOFF7RteELyyE+t/1XryJKpT/7sDL2UYoeV
-         H4XQ==
-X-Gm-Message-State: AOJu0Yyi6HzXgFpa6H4ZgVtJ/iqE2q/y1WHehynVzUjd762LxQ6gpCHW
-	VyYDO4V+T7w/HeIXLwn5o6tMtvGmsT7sDODLL/x9VLouNX9jgdiPsnSBeJeYbehobeY/qqFFLyb
-	z/3InbyRmwNzrCPCeSMLue8S7TtZuj2zsKJcwPmaeeBPj0JQxL0W9nfrbFl8=
-X-Google-Smtp-Source: AGHT+IHiJhB9cgP/0RnIa+2LV5sBWYRGoN+/lQTwfsNuMz6pfmtMpoTWkXir+WtDgzydaFUiZw0P3DfWx74yIB+EwGUOOib+oWtI
+	s=arc-20240116; t=1761755118; c=relaxed/simple;
+	bh=7UCXhxFAQkX4hGKF8jO2mccSg5UuWXfviYXMhXekzOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nphhKmL897Wv002rosP7FTaSoKbpy8HgCxUTWOc/BF9hG9+OmrZ3P5tCZzmnuEPOhn3I1mNjTsZhfrJ/Gf+g2lOH77Tl/gxpkwdPpBILk3nCUaG79doNNSlpYz44NyjOJlAbMZk1q9hdVBcjxhVcrtG4TDNaqq7y2Vt+uJFvf7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuBTOGtI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E8EC4CEF7;
+	Wed, 29 Oct 2025 16:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761755117;
+	bh=7UCXhxFAQkX4hGKF8jO2mccSg5UuWXfviYXMhXekzOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OuBTOGtISsiYiDhjq8NuYo71luDf78P8fNwJFdRdywNes8abgxtPqigKf2GlHmibf
+	 kKb6NVd9mxjJJm/af7kkdBFvWiOyiFqnCNAuY3F6BZpFC+4YDso4ZKLc0OIrO2u6bW
+	 35cVkiWxZukmfKpsd1niAMj3R4u6L6kqekQ7uWYhs2+geapiVNwjn4jgp17mSnHvDS
+	 MyLlJngBzQaVLCcGQDDK1tIwxZER5wpPDGa4lzKhRC/GJqGDzMqk+H4wxhTkXzI6Iy
+	 Fpe0gjR7vJLLH5BItzhd86TqSClN9jit0iH9Wzff1x+LweRyt0i4IpF14I9cPDxwkg
+	 tVJqK7GvPTfDQ==
+Date: Wed, 29 Oct 2025 13:25:14 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Athira Rajeev <atrajeev@linux.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>, Song Liu <song@kernel.org>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	Zhongqiu Han <quic_zhonhan@quicinc.com>,
+	Blake Jones <blakejones@google.com>,
+	Anubhav Shelat <ashelat@redhat.com>,
+	Chun-Tse Shao <ctshao@google.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	Gautam Menghani <gautam@linux.ibm.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+	Weilin Wang <weilin.wang@intel.com>
+Subject: Re: [RFC PATCH v1 12/15] perf evlist: Add reference count
+Message-ID: <aQI_6vZUbjhnl4ZJ@x1>
+References: <20251029053413.355154-1-irogers@google.com>
+ <20251029053413.355154-13-irogers@google.com>
+ <aQI_OJziRPMRqzM9@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1563:b0:432:f835:2576 with SMTP id
- e9e14a558f8ab-432f904dfd1mr42773115ab.27.1761754940084; Wed, 29 Oct 2025
- 09:22:20 -0700 (PDT)
-Date: Wed, 29 Oct 2025 09:22:20 -0700
-In-Reply-To: <000000000000a53ecf061f700fbf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69023f3c.050a0220.3344a1.0427.GAE@google.com>
-Subject: Forwarded: Re: KMSAN: uninit-value in bcmp (3)
-From: syzbot <syzbot+0399100e525dd9696764@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQI_OJziRPMRqzM9@x1>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Wed, Oct 29, 2025 at 01:22:21PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, Oct 28, 2025 at 10:34:10PM -0700, Ian Rogers wrote:
+> > This a no-op for most of the perf tool. The reference count is set to
+> > 1 at allocation, the put will see the 1, decrement it and perform the
+> > delete. The purpose for adding the reference count is for the python
+> > code. Prior to this change the python code would clone evlists, but
+> > this has issues if events are opened, etc. This change adds a
+> > reference count for the evlists and a later change will add it to
+> > evsels. The combination is needed for the python code to operate
+> > correctly (not hit asserts in the evsel clone), but the changes are
+> > broken apart for the sake of smaller patches.
+ 
+> Looks ok, noisy for all the s/delete/put/ but that is ok, but then you
+> are not using the RC_CHK_ACCESS stuff from the get go, why not?
+ 
+> All the prep patches looks ok, assuming they build in succession.
 
-***
+Also I tried to run the test case before the patches on a 9950x3d, AMD,
+with ibs and couldn't, some perf.data format error, then on Intel I had
+to hit control+c and got a deprecation warning, both, of course
+completely unrelated to your work, so just FYI:
 
-Subject: Re: KMSAN: uninit-value in bcmp (3)
-Author: kubik.bartlomiej@gmail.com
+root@five:~# perf mem record -a sleep 1
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 2.247 MB perf.data (12814 samples) ]
+root@five:~# time perf script mem-phys-addr
+/home/acme/libexec/perf-core/scripts/python/mem-phys-addr.py:49: DeprecationWarning: 'maxsplit' is passed as positional argument
+  m = re.split('-|:', line, 2)
+^CWarning:
+929 out of order events recorded.
+Event: cpu_core/mem_inst_retired.all_loads/P
+Memory type                                    count  percentage
+----------------------------------------  ----------  ----------
+100000000-8bfbfffff : System RAM              149050        87.4
+  2ac600000-2ad75cfff : Kernel rodata           1567         0.9
+  2ad800000-2adc6a47f : Kernel data              517         0.3
+  2ae7e8000-2aedfffff : Kernel bss               282         0.2
+  2ab000000-2ac54d27e : Kernel code               21         0.0
+0-fff : Reserved                               18990        11.1
+100000-30093fff : System RAM                    2566         1.5
 
-#syz test
+real	11m46.282s
+user	0m1.317s
+sys	0m0.344s
+root@five:~# grep -m1 'model name' /proc/cpuinfo
+model name	: Intel(R) Core(TM) i7-14700K
+root@five:~# cat /etc/redhat-release
+Fedora release 42 (Adams)
+root@five:~# uname -a
+Linux five 6.16.9-200.fc42.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Sep 25 18:05:50 UTC 2025 x86_64 GNU/Linux
+root@five:~#
+
+- Arnaldo
 
