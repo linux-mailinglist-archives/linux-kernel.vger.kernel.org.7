@@ -1,173 +1,87 @@
-Return-Path: <linux-kernel+bounces-876638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B6EC1BECE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:07:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE4CC1C348
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C3D19C0E45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:04:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C00D45A0BC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F761354ACB;
-	Wed, 29 Oct 2025 16:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elq99ej+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC9E33F37D;
+	Wed, 29 Oct 2025 16:02:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78D35470D;
-	Wed, 29 Oct 2025 16:01:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAFD30AAD6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753673; cv=none; b=TVoSfyP4Lfy1MQ0wCxqSY73W/UBvPfoBxgSmvYeEx4A31twib38ag7uvUp1Em7sbv2SlFrngq/iEixZtycX9DqxXjJdeEphq0Suc+Itjs96oXm+hoRWLjwKi2qBogkUy39/Nac5NB52X1B4EVAldHn6WwkNWn8Lb/1aqU3tgVd8=
+	t=1761753726; cv=none; b=DhMTanWzVFydZ3MvuVjpKCKfBIC/dN/kEERVrtxcRy3C+32w/PK+hcHf7ncb3FV3EvMSSx4vNJ5H+pOLegxM69xEbaTAnSGu2LPtvpevXfJzWZEzayA+0umzyopaoOSxaDDKgWhBEULw5I3JP6UOtwUd4hng0vZznMC0KE9+bF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753673; c=relaxed/simple;
-	bh=3vuvuxbp2D3rSBsSe0LIAeWtEdZFTpQ44jA3h2ArYZw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ni2WGkaQUtyHKF3CxriPPTZEdjWbRtOueHg7swx69AvbK3YAHhlDj2Rs+4dK15qQWW6yn0LXCyUzlOJt13dRXNz+u6zDZLuS/kOHYV5+oEryYbtD6nGI/JE+kQCQ8DIScUgTEcqzwhalNJo4D+ff4KyedKYD12PVG7Vvm997r94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elq99ej+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0CAC4CEF7;
-	Wed, 29 Oct 2025 16:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761753673;
-	bh=3vuvuxbp2D3rSBsSe0LIAeWtEdZFTpQ44jA3h2ArYZw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=elq99ej+LrJrNzw+yNeRp9JwUpl9kOKeYZdOHyS4MCk+1ApYNm3v0nmcNABe0P1Je
-	 hgISnmXUt5RsUAJdGnpWMCVPVKeP8SjDLgogM6InzUMx9udIoPoLRTBBiuLHQcSj4/
-	 hh4mP2hY7LniKki/cnmMy8pc+9Jl6g2XB3YCFNSBWrFBRGeKbvH9Glu/8N9ONVb6/Q
-	 yky4SIkV15hgCX/00m7g3PleET0IsRzELoOrWC1YIBf+CrCCuGUn9E7D0o1YMD0X1B
-	 F0JGUQMUqqnxOFVKPz2uZjJ31rbQzvTn+FS6+/8XV77C+h0r8ZIkfgBA4UyEAYPq5Z
-	 vkPjSCxwa+YoQ==
-Date: Wed, 29 Oct 2025 09:01:12 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH 1/4] fs: replace FOP_DIO_PARALLEL_WRITE with a fmode bits
-Message-ID: <20251029160112.GF3356773@frogsfrogsfrogs>
-References: <20251029071537.1127397-1-hch@lst.de>
- <20251029071537.1127397-2-hch@lst.de>
+	s=arc-20240116; t=1761753726; c=relaxed/simple;
+	bh=zryJeOFIioGRa3ReXb5nBHNZ/8ebazhRhxeVr7WRTo4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=IXTpcQTf3mwvbwb9+ZiwXkKQg8LYd7GhJH/k5tc/o+ISojfoF6K/nzTFqSczmzxAOp+DsGwOfs7q9LBPv9sjH20e3VDWKhktpweGSllISf675PZnw1ye9rbFiRBe5s25NRbyFr3lU85s5ykGWkBJwyW/KBvZK6xwvHYEeyUNwEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940d395fd10so11737239f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761753723; x=1762358523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jgxe8fqHOQwwzuu6r9RZwZgaplbJltlwb5Ltfe8xl5Q=;
+        b=G+6bRc9674mR1QJDl71OaIh4t7JhffHAPQBBwQ482KdfG/TkVzTdYWqyAHLtMpYjhO
+         YTZGMe3VvBDBy/Kz8cm/cpwMoFjSR8ZBXxXYyR41d17Htm26iz3/vxuJXRrK9lbTx5Uk
+         q3lQ7q7G/BY9xyV85p0TkwfCXDECKJP0gR3lNFmbo/4pO9QdULPAQTekVfC6mBzXSnO/
+         t+18hKmKdCPCToreHsFVzEeSAhAv/2lC4tK5oKEL0PtwzXNd0Pp5hXYJP4mOMK4W+ydj
+         6/6Iqdm4jocO1Pf/2u3Tn8+hlf+IbkzBQzx3qJLZpbnoRm43MrKmwB80MlhNXsXlV4oY
+         uElw==
+X-Forwarded-Encrypted: i=1; AJvYcCXuZ+CrP7dkJiEYxawdy4m7jTLDAuKnG8tYwakBaoRHqN4HtYpJZLIyNo84x1Y+0x26ljFaGFNJCgLbw28=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh6GV+c9qHlukoIFXuq0r9syVTOLJcPk9viwMk160qQGeeAUnF
+	V8OHMfds8KaFXil15DwQe8k3AW7qbHoRaRu0SByZ1YJe2Vh/BmSgP1u3zQZZ5sKSo/N2tRnMz6s
+	wEVAF1xtoR6AFb6Upf+xatREprbSYtuXpMfE6K9aVhSavYud+NZNl7zRZSFw=
+X-Google-Smtp-Source: AGHT+IHoOu5xtTcf/RjPjhD0W1hagIukpNrUXFM7uVCcu6ZdF03m+qrREYQ7nY4Js9Y50zVLLMmETwMcDeSzzSc9QY1vs4hgkU6I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029071537.1127397-2-hch@lst.de>
+X-Received: by 2002:a05:6e02:240f:b0:430:a013:b523 with SMTP id
+ e9e14a558f8ab-432f904538dmr48877115ab.25.1761753723546; Wed, 29 Oct 2025
+ 09:02:03 -0700 (PDT)
+Date: Wed, 29 Oct 2025 09:02:03 -0700
+In-Reply-To: <20251029062740.cE49P%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69023a7b.050a0220.3344a1.0426.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] KASAN: use-after-free Read in ocfs2_claim_suballoc_bits
+From: syzbot <syzbot+5054473a31f78f735416@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 29, 2025 at 08:15:02AM +0100, Christoph Hellwig wrote:
-> To properly handle the direct to buffered I/O fallback for devices that
-> require stable writes, we need to be able to set the DIO_PARALLEL_WRITE
-> on a per-file basis and no statically for a given file_operations
-> instance.
-> 
-> This effectively reverts a part of 210a03c9d51a ("fs: claw back a few
-> FMODE_* bits").
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Hello,
 
-Looks ok,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
---D
+Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
+Tested-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
 
-> ---
->  fs/ext4/file.c      | 2 +-
->  fs/xfs/xfs_file.c   | 4 ++--
->  include/linux/fs.h  | 7 ++-----
->  io_uring/io_uring.c | 2 +-
->  4 files changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> index 7a8b30932189..b484e98b9c78 100644
-> --- a/fs/ext4/file.c
-> +++ b/fs/ext4/file.c
-> @@ -924,6 +924,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
->  		filp->f_mode |= FMODE_CAN_ATOMIC_WRITE;
->  
->  	filp->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-> +	filp->f_mode |= FMODE_DIO_PARALLEL_WRITE;
->  	return dquot_file_open(inode, filp);
->  }
->  
-> @@ -978,7 +979,6 @@ const struct file_operations ext4_file_operations = {
->  	.splice_write	= iter_file_splice_write,
->  	.fallocate	= ext4_fallocate,
->  	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
-> -			  FOP_DIO_PARALLEL_WRITE |
->  			  FOP_DONTCACHE,
->  };
->  
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 2702fef2c90c..5703b6681b1d 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -1553,6 +1553,7 @@ xfs_file_open(
->  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
->  		return -EIO;
->  	file->f_mode |= FMODE_NOWAIT | FMODE_CAN_ODIRECT;
-> +	file->f_mode |= FMODE_DIO_PARALLEL_WRITE;
->  	if (xfs_get_atomic_write_min(XFS_I(inode)) > 0)
->  		file->f_mode |= FMODE_CAN_ATOMIC_WRITE;
->  	return generic_file_open(inode, file);
-> @@ -1951,8 +1952,7 @@ const struct file_operations xfs_file_operations = {
->  	.fadvise	= xfs_file_fadvise,
->  	.remap_file_range = xfs_file_remap_range,
->  	.fop_flags	= FOP_MMAP_SYNC | FOP_BUFFER_RASYNC |
-> -			  FOP_BUFFER_WASYNC | FOP_DIO_PARALLEL_WRITE |
-> -			  FOP_DONTCACHE,
-> +			  FOP_BUFFER_WASYNC | FOP_DONTCACHE,
->  };
->  
->  const struct file_operations xfs_dir_file_operations = {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index c895146c1444..09b47effc55e 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -128,9 +128,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_WRITE_RESTRICTED	((__force fmode_t)(1 << 6))
->  /* File supports atomic writes */
->  #define FMODE_CAN_ATOMIC_WRITE	((__force fmode_t)(1 << 7))
-> -
-> -/* FMODE_* bit 8 */
-> -
-> +/* Supports non-exclusive O_DIRECT writes from multiple threads */
-> +#define FMODE_DIO_PARALLEL_WRITE ((__force fmode_t)(1 << 8))
->  /* 32bit hashes as llseek() offset (for directories) */
->  #define FMODE_32BITHASH         ((__force fmode_t)(1 << 9))
->  /* 64bit hashes as llseek() offset (for directories) */
-> @@ -2317,8 +2316,6 @@ struct file_operations {
->  #define FOP_BUFFER_WASYNC	((__force fop_flags_t)(1 << 1))
->  /* Supports synchronous page faults for mappings */
->  #define FOP_MMAP_SYNC		((__force fop_flags_t)(1 << 2))
-> -/* Supports non-exclusive O_DIRECT writes from multiple threads */
-> -#define FOP_DIO_PARALLEL_WRITE	((__force fop_flags_t)(1 << 3))
->  /* Contains huge pages */
->  #define FOP_HUGE_PAGES		((__force fop_flags_t)(1 << 4))
->  /* Treat loff_t as unsigned (e.g., /dev/mem) */
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index 296667ba712c..668937da27e8 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -469,7 +469,7 @@ static void io_prep_async_work(struct io_kiocb *req)
->  
->  		/* don't serialize this request if the fs doesn't need it */
->  		if (should_hash && (req->file->f_flags & O_DIRECT) &&
-> -		    (req->file->f_op->fop_flags & FOP_DIO_PARALLEL_WRITE))
-> +		    (req->file->f_mode & FMODE_DIO_PARALLEL_WRITE))
->  			should_hash = false;
->  		if (should_hash || (ctx->flags & IORING_SETUP_IOPOLL))
->  			io_wq_hash_work(&req->work, file_inode(req->file));
-> -- 
-> 2.47.3
-> 
-> 
+Tested on:
+
+commit:         4408a3d6 Linux 6.12.56
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e10e14580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=5054473a31f78f735416
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=136bf614580000
+
+Note: testing is done by a robot and is best-effort only.
 
