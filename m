@@ -1,115 +1,142 @@
-Return-Path: <linux-kernel+bounces-877200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D6ECC1D6BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:24:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D54C1D6D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8295918934C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:25:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E43A33B11B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261E5319619;
-	Wed, 29 Oct 2025 21:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59273319840;
+	Wed, 29 Oct 2025 21:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="l4LgjgNs"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AuVrNRHI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E93195FC;
-	Wed, 29 Oct 2025 21:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9D954763;
+	Wed, 29 Oct 2025 21:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761773054; cv=none; b=RgMbyQKXI7+FaJENs/VohJCV2IApaKz4ZhwlXaLiW8zO59lfeq5GkjxjfyrvD7/AmP0hr07BTC76Bm3hExWU75q+FHHZvU7qbKD3mCXWlemHnTsPoDAxHFiHTsdHdFB5DgF/CQNGpUqnIQwaAPjoammeYO8M5/ZOET36jdpfIBc=
+	t=1761773175; cv=none; b=lG5RCHLVYO/geShZOsxDP7rNSlRczYUdM84EZWcwTy058j54hOh73ih1rN9BL9uUc7KZjkIuBP+fCQWkGE+x7YaZgStrpLmUh+9INBNr+0qM+gCiAM0fI03zfSjeRrgtgdV/3+wUXWpdrz8oXT8EI5v5zohulC3n7fw1F5PSr+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761773054; c=relaxed/simple;
-	bh=AoWJkaeuPELhOLcErmA+AIqNOI83/H7VbD7V4mPgde8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=MNRJRymx3zrmZO2XTiqBxaXJyNWrilCyTsz3QkKJ/p2LR0GnqWrKIWUFRDEwN4iYFYd8awaOrZyBjxaRetiDwmMzJ1Fz5kjahVTfmA5xHuz/YIXAqX+tvC9Rdv0WurfT/Iab+/kkyEJQmO9jiux91ilp3oTGMCaKGcNI9e5ea1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=l4LgjgNs; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=FERmsB+tS9xO1ykNi67NXdFvsLGuPfJXUcOk6M+xjwo=;
-  b=l4LgjgNse9C2yymulJpUXI76EyG66UuPXFBWOd3zZQdypaNsyrbIdf6u
-   ITfTyetuwWDSwJP7lXikmkY1J+y/zibBw2JQBymcw3C+fsFvfs18EONMZ
-   wgdUd8p8PpnLJUX/nZunXR1usZMA48/eIo7vN+rvpymSPO2ORnQJVtdIy
-   U=;
-X-CSE-ConnectionGUID: 3nQfdhFETqCNj1Uo4OorKw==
-X-CSE-MsgGUID: 3JezrcibS/2QdtaevInyXQ==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.19,265,1754949600"; 
-   d="scan'208";a="246753524"
-Received: from 231.85.89.92.rev.sfr.net (HELO hadrien) ([92.89.85.231])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 22:24:01 +0100
-Date: Wed, 29 Oct 2025 22:24:01 +0100 (CET)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>, 
-    kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [cocci] [RFC] Increasing usage of direct pointer assignments
- from memcpy() calls with SmPL?
-In-Reply-To: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
-Message-ID: <e54a6e57-6bde-f489-f06f-fed9537688df@inria.fr>
-References: <ddc8654a-9505-451f-87ad-075bfa646381@web.de>
+	s=arc-20240116; t=1761773175; c=relaxed/simple;
+	bh=IGB37qvB9T4vmHfJISA/2oS5kdVJPeAyRTPqjRCt9B8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=r8IQ0+54Hb3Uv7fjqYiy9GUsrq9IDMVlZ87mHeh2nrBPMyGhsePOhQFNpjIT5FA46dMuYEwnlVSBIyZ14NbHq8LBQ3WQQ4wrcJ/1CngMT0UqlJcoqiVxtFkYHW8PwbGbcnQQaV/IRDlUEI5O2eOTSlamw1DZ8HB4dpkiMeiWqQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AuVrNRHI; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761773173; x=1793309173;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IGB37qvB9T4vmHfJISA/2oS5kdVJPeAyRTPqjRCt9B8=;
+  b=AuVrNRHICWVvnmE/93Vo4SrJscDDCr+mxKxwCK3eHVZ2YxGpDZrTro0z
+   4b1fMKf4N6iRNk2XrvSeu9GLLg7wsT16okTcKOn7EhayVQ20n+1QhXUsr
+   AaqmkbsbXW4PvE4gsFGnDOctxvIQ+ziKfFtF6EZBgqaXcnbRix0Qlrvc1
+   O5m/BTd7661LGlnVZ3NhEV8cbOZwbZWO5dxlo/2+6D/OSMQFNOzD6hOUL
+   bILMqO8GRqwDsSpHzSW5GxQM43/0BrJLC7Rty//J/BI3M8xC/NKM5PmaL
+   HHkAKU7p+1aQB4tzrJdWYB40gvANqKc5uONRnrO7XFr9wRa4Kj0FLSzMO
+   g==;
+X-CSE-ConnectionGUID: qfvqsAJ6SxmTLm919IWKMw==
+X-CSE-MsgGUID: Wdp8oBFaQEit493r7ZPeVA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75252306"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="75252306"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:26:12 -0700
+X-CSE-ConnectionGUID: 20s/SqlSRiagrk0d28hd6A==
+X-CSE-MsgGUID: rDSB8zy7QCaNscbZNFNPOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="185024806"
+Received: from vverma7-desk1.amr.corp.intel.com (HELO desk) ([10.124.223.151])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:26:11 -0700
+Date: Wed, 29 Oct 2025 14:26:10 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Tao Zhang <tao1.zhang@intel.com>, Jim Mattson <jmattson@google.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: [PATCH 0/3] Unify VERW mitigation for guests
+Message-ID: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+X-B4-Tracking: v=1; b=H4sIABSGAmkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1NDAyML3bLUonLdslxdsyRLIyNLQ4NEoyRjJaDqgqLUtMwKsEnRsbW1ACX
+ Yq1JZAAAA
+X-Change-ID: 20251028-verw-vm-6b922910a2b3
+X-Mailer: b4 0.14.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-899333787-1761773041=:4032"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+This series unifies the VERW execution sites in KVM, specifically
+addressing inconsistencies in how MMIO Stale Data mitigation is handled
+compared to other data sampling attacks (MDS/TAA/RFDS).
 
---8323329-899333787-1761773041=:4032
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Problem
+=======
+Currently, MMIO Stale Data mitigation is handled differently from other
+VERW-based mitigations. While MDS/TAA/RFDS perform VERW clearing in
+assembly code, MMIO Stale Data mitigation uses a separate code path with
+x86_clear_cpu_buffer() calls. This inconsistency exists because MMIO Stale
+Data mitigation only needs to be applied when guests can access host MMIO,
+which was previously difficult to check in assembly. The other
+inconsistency is VERW execution MMIO Stale Data dependency on L1TF
+mitigation.
+
+Solution
+========
+Remove the VERW mitigation for MMIO in C, and use the asm VERW callsite for
+all VERW mitigations in KVM. Also decoupling MMIO mitigation from L1TF
+mitigation.
+
+Roadmap:
+
+Patch 1: Switch to VM_CLEAR_CPU_BUFFERS usage in VMX to align Intel
+	 mitigations with AMD's TSA mitigation.
+
+Patch 2: Renames cpu_buf_vm_clear to cpu_buf_vm_clear_mmio_only to
+	 avoid confusion with the broader X86_FEATURE_CLEAR_CPU_BUF_VM.
+
+Patch 3: Unifies MMIO Stale Data mitigation with other VERW-based
+         mitigations.
+
+---
+Pawan Gupta (3):
+      x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
+      x86/mmio: Rename cpu_buf_vm_clear to cpu_buf_vm_clear_mmio_only
+      x86/mmio: Unify VERW mitigation for guests
+
+ arch/x86/include/asm/nospec-branch.h |  2 +-
+ arch/x86/kernel/cpu/bugs.c           | 17 +++++++++++------
+ arch/x86/kvm/mmu/spte.c              |  2 +-
+ arch/x86/kvm/vmx/run_flags.h         | 12 ++++++------
+ arch/x86/kvm/vmx/vmenter.S           |  8 +++++++-
+ arch/x86/kvm/vmx/vmx.c               | 26 ++++++++++----------------
+ 6 files changed, 36 insertions(+), 31 deletions(-)
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251028-verw-vm-6b922910a2b3
+
+Best regards,
+-- 
+Pawan
 
 
-
-On Wed, 29 Oct 2025, Markus Elfring wrote:
-
-> Hello,
->
-> I got into the mood to try another simple source code transformation out which
-> can be achieved also by the means of the semantic patch language.
->
-> @replacement@
-> expression object, size, source, target;
-> @@
->  target =
-> -         object;
->  memcpy(
-> -       target
-> +       object
->         , source,
->         size);
->
->
-> Test result (according to the software combination “Coccinelle 1.3.0”):
-> Markus_Elfring@Sonne:…/Projekte/Linux/next-analyses> time /usr/bin/spatch --max-width 100 --timeout 23 -j4 --chunksize 1 --no-loops -dir . …/Projekte/Coccinelle/janitor/use_memcpy_assignment.cocci > …/Projekte/Bau/Linux/scripts/Coccinelle/use_memcpy_assignment-no_loops-20251029.diff 2> …/Projekte/Bau/Linux/scripts/Coccinelle/use_memcpy_assignment-no_loops-errors-20251029.txt
-> real    5m35,579s
-> user    20m20,037s
-> sys     0m14,467s
->
->
-> It can be determined then from the generated diff file that mentioned
-> implementation details can be transformed in 304 source files at the moment.
-> Thus I became curious if it would be supported to adjust any places there
-> according to (Linux) coding style preferences.
-
-If you have a concern, you have to say what it is.  It doesn't seem it is
-about the running time, so why do you include that information?
-
-I should not have to repeat your experiment to figure out what you are
-asking about.
-
-julia
---8323329-899333787-1761773041=:4032--
 
