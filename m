@@ -1,444 +1,251 @@
-Return-Path: <linux-kernel+bounces-875280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574DAC18969
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:08:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D6FDC18973
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4AFE1A23CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:08:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A974B3B3F20
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372B71F9F47;
-	Wed, 29 Oct 2025 07:08:08 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001C530BF64;
+	Wed, 29 Oct 2025 07:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="WVkT+neN";
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="ByihXoBx"
+Received: from esa19.fujitsucc.c3s2.iphmx.com (esa19.fujitsucc.c3s2.iphmx.com [216.71.158.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9AC2FC031
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761721687; cv=none; b=W9fpcBOyIpte6aqwtgcv1AXCiZunpAtH2vfYqFa2UKdpHUhWDRPXVtrKXpk8Y/7JwHwXw+MxntqbIRtRnL/nMpapAzsEIZ5bPcn16nvZActxjYi8YsvXbraZ+hrhNjnSS0kd9ujVzaOXD3V9Flry8m5Ks8AJISnjlsxDiBaW1zo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761721687; c=relaxed/simple;
-	bh=kM+HgtfdGKgCP9FhORJi6vyvmPrCC2r26jFoThertAs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gUwoQluW7SvDMIQa7cqUAV1ge6aTUKhZgfJSOwLAhg4EoZaPgycguOE0XHqf7QPk4Hik7nfma+WmvDLe/IRpU9r5w14CySLho6dfDURStZRcK8JSXgoi+S/Zz31KNZb7K3X6N4J8P6rvLeGyt/EqeKAp9LCXDm1IF9xlAydezWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-430c684035eso8403995ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:08:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761721684; x=1762326484;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A5WPkgVB9VgCR68wvwFpvhoArwULd0FfPO9B1YEHsKQ=;
-        b=KnrjXCKRutfz475CqmV0hHRgMhtkonCaP83xc7kzGrXDCjFspkrSa79H6htn/x+wNR
-         Sbk1M9Sxo53IaNheoJYL6Gqt/acp9oXP4SAyeoddMKA8PlbBtQpbHMZoiJN9ZwHxYN0p
-         grWExiWH+waT39aW/QfIxf/mgkTH828ijjvLEdjg1pvq8zTzDfayr6b+Oez/Rz//evpP
-         YZtjJikK1cCtcZT15+c+r2++L26Fa16XpM34iygCb5BLJXD7wm+gcxsVXoL0wRiEqrhg
-         Hkh9d/FGX9DLpU4pMCWaMgWRx5imnUTRbYUMlZYF0vRqo+KbYqV3enGrOZsbrZEq7kj7
-         Ds2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVaVIGBSQq08dReVkCoxACWW4zZ+Vr+I51/lIMZKxr660dC1PAxfS4LvCKRezV637t3CS/jKb58guYnumM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlyPI9Hh133MEqb/38P63IC1VKrKw0P5HQBtLSNRoGQokNlLcv
-	aKUB+VNsgJvYvgTVnVAzb6uA/Y7u38d5ozIfGe85sYDJxQrrGSu9wIaDskjomQLsZPpUtBI6m4d
-	tPD4baBD56FbuHhyuduHFeeohNiFrew0SiiUaZOyWy1D4Ss2q5aAPmtoMJjs=
-X-Google-Smtp-Source: AGHT+IHd/fPPAOgs8RJJ+llCsNOuTplQSNq/64DbC3Uju45tzht/IqQWY2wUfUUNd1D46Qu280Cj7ippdJpgWjLKrL2MoJ0jyEWa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8856E2F692E;
+	Wed, 29 Oct 2025 07:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.158.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761721836; cv=fail; b=kMRuOVoOuoFTNK9KOPaVF/cgS4LK9TtYHUbi27gNN1bz5YZlvLLN9C1F9cZ6YjhjMl/wnUMKTSYrKhDrGKspkK/dHWuVmUyJSg3soKXLCMLG54VIhx/SXVGrUgW0WQrZIZyhzUdIDaN8eKQNYxKI2Y4IjLcppNTHYsRku/sRkNw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761721836; c=relaxed/simple;
+	bh=yiuowjO5qm205v1ygTsJNnwjbomWBlJV/6SqSoRpZCM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RT0lqrPoTjs5kOfTB455vK7xlVYQGf7VHyKbosrDMeeMBEnQM/LBY0QgwoAPitbLOCc6irBH6DBm8S0sFC6xlRWaaqmFWw4WEkVNuuHRzD07NmiqKHDHb4vW9pdeYGZu1BwPOp+jMHxVtJQw4GKl23r2p5XhkjqdimQsMTXzw9I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=WVkT+neN; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=ByihXoBx; arc=fail smtp.client-ip=216.71.158.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1761721835; x=1793257835;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=yiuowjO5qm205v1ygTsJNnwjbomWBlJV/6SqSoRpZCM=;
+  b=WVkT+neNLNBHKJjXILbq89zqjPXzMxVopFLgtJMNihpX+afizcw14nCN
+   CUcWhoRCgJtr5ackfnYnDTGKeju3T4MUnrAV3XmUqnMw4fqHWdQRglXwz
+   aLcGXbNJ3RnN7JbFwhNJubxcOVipgBBWudT1JQ7TqAjKE6aQ50AR+tUqy
+   T4qHSo1IfXdXRQjlmkwZG9XkVSdi6nnXYf6ehg+OQhHR9qVwZTW2O19O0
+   bN1qSdnd113YfLALdkQKYf/7P8yhtqXfmEHDd3F5JxpJmufz9TqNZweVJ
+   BHn9BkjM+zYvAYc/cZmob3EVoBZJvbvUDBoDubOQgeVBsxN+lfIPq0AEn
+   w==;
+X-CSE-ConnectionGUID: woQilOqcTxKsLT7Ooad+0Q==
+X-CSE-MsgGUID: vUxv3QItRQKJVnQ9EVfWzg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="171738959"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754924400"; 
+   d="scan'208";a="171738959"
+Received: from mail-japanwestazon11011045.outbound.protection.outlook.com (HELO OS0P286CU010.outbound.protection.outlook.com) ([40.107.74.45])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 16:09:13 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cV+tN7mgLhgq0NWaIBOqNyPoCJXcOR2RFY6xJ89s7OXgd6BIraRLebq+wtuuX5LRJEydTi0AVQ2ymJDSV5eMx6L+Ld5OeL8JyG07wUQH3ze8W4JYIHLvdtN5Rq3XI4eRFuemuGVP1eKsDs5oG8czpRVfrGyWG/IQgACij9u+yujpeexwQ/Vc6+WpfYrNRpyep9nJH5NAdNozkry5qxZDhL7belq4FcR6F5G4OigG8cGH1sWbZ8TQI2K26w8yt6pXNjR9NuUMQyLNZ3I3suiXnU5lV66vRgE15r2U109CJmcZmLV3RaeQrcjQESyhhDjhQRoXD8FI+qc54t6YlpG5zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yiuowjO5qm205v1ygTsJNnwjbomWBlJV/6SqSoRpZCM=;
+ b=C6eD19CDEqeXEliAqfS1q04LAI/evuWie5YwiputNQeExhCpMvXUoIK3xG6d+Y3A2BPDV/HCUYy5+2h1F/e6+JLeB08fUldCLgOHNlbpmyfqn/XqQJ4VItzspdzMUjLANl5gxC6l7lp4DlcenkxK7fY9dXhwSHch/brXYZ6d73yJCy+gx9zKZgOQauh18IjU3LpuGoxr0o2F5BsPfZbXDO75jnUPksV+s7lhYsE9z/sq6GedULSf4SZnwa3k17hOx2BaXw7GQDeCRtEDqZVP5c0akO/lqjoLAxW/na42cNFRvAc8lc1qCPEmDDbbCE1YOW7cMxgxlfcEwDq0KEwwew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yiuowjO5qm205v1ygTsJNnwjbomWBlJV/6SqSoRpZCM=;
+ b=ByihXoBxBDWq4D5eYxMx1kCHrsAqASp9gStz/rBW70MyrEuxaWjO+ZIWMbMiIpyjpPNfeLg87Zoyu7YR2B5vAk0mi0RQuLPVtc46tTX94dEcuoTEScADqROqP/4PZc6l9Kr1JmDdW1eGUo/FTaxmMdWe3CS2MBEhSZlDO+7j8d3Iq5W3QPyIw6ZE4mgMJyOwcWRU1CZkxUezT4nzs4D5pIz6nGwPSGmaH1V1lt/BnBlIASg086PmXbkf54IsBkQKpsy9QiN0sJuyJ8C7JTLg1pc5DfbQ1llUultQ91soz4jZIfm3mna4H3+5xfR7wbcMltvuQeSjns7G/CcxDiQh2A==
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
+ by TYCPR01MB7361.jpnprd01.prod.outlook.com (2603:1096:400:e4::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 07:09:07 +0000
+Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
+ ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 07:09:07 +0000
+From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
+To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
+	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
+	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
+	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
+	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
+	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
+	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
+	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
+	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
+	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Jeremy
+ Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, Dave Martin
+	<Dave.Martin@arm.com>, Ben Horgan <ben.horgan@arm.com>
+Subject: RE: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
+ restored during cpu online
+Thread-Topic: [PATCH v3 20/29] arm_mpam: Allow configuration to be applied and
+ restored during cpu online
+Thread-Index: AQHcP5gc9dQ0/jFTe065wirKGjIQ9LTYxmgw
+Date: Wed, 29 Oct 2025 07:09:07 +0000
+Message-ID:
+ <OSZPR01MB879846D16BB360C90B5A2FA38BFAA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
+References: <20251017185645.26604-1-james.morse@arm.com>
+ <20251017185645.26604-21-james.morse@arm.com>
+In-Reply-To: <20251017185645.26604-21-james.morse@arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=196cc6bd-77d1-4899-b70e-3a6d0b00949e;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-10-29T07:08:16Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|TYCPR01MB7361:EE_
+x-ms-office365-filtering-correlation-id: 6cb535fd-34d0-498d-e2a6-08de16ba0d19
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|1580799027|38070700021;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?cHBZM3E3UGs4TjdySW9qK1dkSTQxR3R1YVBkbGpMNUR1c2RMemR6Qm5i?=
+ =?iso-2022-jp?B?S3Yvb1laNC96dmpxRHNtclNqaHZHdDF1ei94M1BVNGIxV2gyem4vaEky?=
+ =?iso-2022-jp?B?azBGVDBpN0FyWFpYSURSYzBTVEkvNGlmc0hIR0lpOSt2bkRiQ0dseXIx?=
+ =?iso-2022-jp?B?eXpyZ1lnUVc3RFFUdlVoeXZlY0EzdUcrVG8vZ2REeTkxQ3d2TSt4dE01?=
+ =?iso-2022-jp?B?QVhrekFhTUN3N1czMW9RUUx5bW44TVBKN1l3bW5uMVpWR2l2dEMwK2VS?=
+ =?iso-2022-jp?B?OXZuK3JQMGMrZ1Vrd1N2SnFwY0JiUU81L3pDRk5jbzc5d2locmo4U3Ba?=
+ =?iso-2022-jp?B?bDNacEhTeG9DK21UMEV6L3FHQWg5K29WNDFDVnJiQXVXMW0zUXNJZVZY?=
+ =?iso-2022-jp?B?dWRZN080dUYraWpqSk5BS1pCeXNXYncrOUVzVjdrSTRWSDRFekFzQ01P?=
+ =?iso-2022-jp?B?YXFndmNmS0laTEpnOU90N2ZodS9tdmxpc2Z4TmNlNjl3dTR1SmErL2hm?=
+ =?iso-2022-jp?B?OHgvcHB1VnY2QXdiK2lydUJFYS92SmYxVGFrUkZCc3R4MmNiWEpiYUZP?=
+ =?iso-2022-jp?B?cXhtMi9NWi91ZEVjb2N1bVFwejJWdEcrVVFVL2pERTJ0Qk1Nb1YvT1Fy?=
+ =?iso-2022-jp?B?ZHMyOHg2L2E5UGRKT2l4TjU3MzIvbTdEdERKcTkvcWVVMEFwTHQwOEVE?=
+ =?iso-2022-jp?B?TVQ3ejJqdkE2MGE5a01GRy9BOW94MXN6cFU1SmIyelUvTGFXS0FYcWc0?=
+ =?iso-2022-jp?B?MHgvYm5xTFFrUTMvN0JuYUhqZ0UxbjRpQ1Q2dkxFZ3l6VU9ETGU1Mm5C?=
+ =?iso-2022-jp?B?YU9Jc0N2bTIwTUwxcFBVWWJ6Qk42NnppMGtQVk9GNElDS2tPWGpsZDl6?=
+ =?iso-2022-jp?B?a1o1TUl4a21YTENWNjBPd1NKUGMwM3d5MkRoNnRpYmRRNkcza3Rid2ky?=
+ =?iso-2022-jp?B?M0FIbEh6YmxOUUJZVXdEanI5aXVXeEJXNGJvT3o4amdsT3RNbTVuTDZV?=
+ =?iso-2022-jp?B?Z21ic0NPNkQ2V1VwS1AwT0dmbEo3R01SaWcxVW4vY05DbFg4dUc1aktj?=
+ =?iso-2022-jp?B?eVlKMnpycmNnMGc1c0hKT09PNERYVEN3SHRSWmtJNElNbFpMQllVQkhH?=
+ =?iso-2022-jp?B?aGdBRC9iaHZmM2lkMU1udXhjNTlsQVptd1F3NHVoSnA2RjhlZkdyZmhW?=
+ =?iso-2022-jp?B?UDVmd1J5QWcrTWlLZEIrcUdyb01WMm9YWXpXSm13SklRZmtMQ0tuRVcv?=
+ =?iso-2022-jp?B?MXJWMGMrSkFEMFliVldPZU1Bd2NCTERrT1NxckRmOXJ1TEtxbUxtdXMv?=
+ =?iso-2022-jp?B?WXM5eElPR2hIZkNYc1RnYmUxVDdobVpqeVg0bEY0MG85OFJRODFHMDZz?=
+ =?iso-2022-jp?B?YnJoOFN0TjhLdS9ELzNudi82Zm9iSnpHVjEzamlxMVRRR2VIT1FMVkVX?=
+ =?iso-2022-jp?B?dDhyaWJzd2tSeXJSWFk2N3IxQjFOT3pVN3RSZGpDajU0eEhnWTlBaG90?=
+ =?iso-2022-jp?B?ZGhYVDh6RnhtN3ByTWhCMmNzKzVvMkEzT2RnQkg4c3pld2ppMjZ1ek1s?=
+ =?iso-2022-jp?B?T0toRW1XUFFpZmdCak1OY2FScTh0QmI1dG5DZWlBZDNTbnRWMy9qeCtY?=
+ =?iso-2022-jp?B?RkpBb3ZCNEs1Wmw1cHdjcW0yMWFZTmJRbUtCbitZTENrbTVxdm8ycU5H?=
+ =?iso-2022-jp?B?RmJDcitVaHZVSWttVjBEUHZ3WWU0ZkdGT0hXbmxFSnNCUjY0cnFram52?=
+ =?iso-2022-jp?B?V0E5L1FJMFd2QXFJeHFLMFUvTldmL05Cc1F5Qmh2L3AwQUo5R0prWnUw?=
+ =?iso-2022-jp?B?YVBkMy9zVDdEQjlvTjJkTmI3WG9XQTVybkpMT0pDSTVQdHdXckJFLzJ1?=
+ =?iso-2022-jp?B?aWJEZGhlTWJDL2hCcU1udHA1VXQwa0hDN2dRajdOaFJUUWVuZ0VydWlK?=
+ =?iso-2022-jp?B?SGNzWTd3RGFZYW16Ungzc3ZtWVU2d3g1R3FwcFJ5czVCSkRIZVh4UFI5?=
+ =?iso-2022-jp?B?SWRWdXppTGplZkFsWE1XOEdqVUxTUlJWMWlPamQ5SXVFZDBFNWU5RW85?=
+ =?iso-2022-jp?B?RldEK2tlaGdNdE9uWFlIdGlHM0R1NDJlblIzOU5iQjRJbk1hQUJxVm03?=
+ =?iso-2022-jp?B?RXpXRkFNc1NzTEUvQUxCNFZaRkZzNEFwcXIvVmlzc3hhRnVMV2llQUM5?=
+ =?iso-2022-jp?B?MSsyTnV3cUF1ZXRvbDNzSy9FVmxtRzREWHkyS0x4c1FVQ0M3b2J2ZGRC?=
+ =?iso-2022-jp?B?QkYydz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(1580799027)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?OXlSK2tvU3A0SnlRU0ptQkVhN1piZktqNVdnT1dTVlZMODRMQStCSCtV?=
+ =?iso-2022-jp?B?Szk1WjF6cDc2NGJqSXRMVkUwMTF1RjZzeVhHbENIVVlSdzdKeFBxUUFx?=
+ =?iso-2022-jp?B?L1JKek1JTFpGc2ROdTh4SHM0SzJOR2xrbnNuZTM0VXRPazgvOUJwbk5u?=
+ =?iso-2022-jp?B?UWZmWTBIaDJmV24raElHakc2N1pQZ1IvK01ZZm5MOWhQcFZpT0lVajBZ?=
+ =?iso-2022-jp?B?dEp2MjA4U0VLUGVTdFVHampZVDF4S3pSY0FpbllxWi9EWGJoRm0zRG50?=
+ =?iso-2022-jp?B?SFJlQUdXNmhrdVA4ZDF3WnBML2J4TWpLQjkrQkx3RVFTcTZqZHo4TTlK?=
+ =?iso-2022-jp?B?c3d4blRWVHppelo5UEo2M0hicWZxUWJFeDNkYWwrZE1TbUQvYWUyMlpZ?=
+ =?iso-2022-jp?B?bEM3cmtiRHQyUnIyYXhWcWNhU3hab3RXVTNadHdiQUVxN0RpQjQ0aG9h?=
+ =?iso-2022-jp?B?QzJyenl1ZDZzQ3B3UTYxdUZ1SnJ6MUp4QmhEWjl4clo3cmhVV24ySVZt?=
+ =?iso-2022-jp?B?MGthbVhtelY3U1dKYVYwMEhFSE02MnBNLys2dGdBbkFIMFh1SVVtVGtm?=
+ =?iso-2022-jp?B?dFlsVGFlbTFVSHdtZHVrZUJ6ZWNLSDF2SlRVT2pQbVVrbkM2czE1QUdw?=
+ =?iso-2022-jp?B?aVhhM2dzSWkvN2ZHaWNwd1h5YWNkU2NaaTMrVjl3dHNpMkFlT0NaRnl3?=
+ =?iso-2022-jp?B?ekE4NEY2OE1uKzV1b01STmpueHdaU2hFeHNUYm14YW9RQWdxR0FqSzNv?=
+ =?iso-2022-jp?B?MkZscmhOeVlJWlBoUnRzd2xkQlFGVTJTWVVoS2dNd1hxdHhFQnFwcmR1?=
+ =?iso-2022-jp?B?SDBLdXNIK1l1VHErbnJiZU9DbTBscjVrOWRPaysrVEVLNWNOVXROc0xO?=
+ =?iso-2022-jp?B?OURNODlCZ2RDYUxYMzE2TXVmQ3RLVHU4OFFka0xocjgzdnFNZHQyaTdX?=
+ =?iso-2022-jp?B?M2dsY2MyWUFkZ2JXbGk5Nzk4MkI5M1FVamxpdDRyL2tKS3IySTYwMlRv?=
+ =?iso-2022-jp?B?NmREY1djNFMzQkZ5aHU3NVhlajh2YnNlWTJHa0htU0hvZ1R3VEVwdHls?=
+ =?iso-2022-jp?B?YTBhY3Y3ZUNPbU1QbTd1NWl0dzc2MGI1TmltOXVyWXEwTnZrNUZnN1Y1?=
+ =?iso-2022-jp?B?V1oybWtGVHNXaEN5bjlLY3hXT2ZLWk1FZEQ5d3pCbUFlV2hIT095emR5?=
+ =?iso-2022-jp?B?cFpNa3FGZEw4WEZ6Z254YTVvM2tPUjN3MCszQ2hoR0pMU2lHVjdOVXJ3?=
+ =?iso-2022-jp?B?RmpoRmxvamFseWR2Mm9LVlV1K3VMVm0vK0I0RkdaR2wvUDY0UHhOZThq?=
+ =?iso-2022-jp?B?QlIrSHlibEFXbDRML1hVN0dBcktacjJLRlZENDdWeTRvV2tnWU14R1Uw?=
+ =?iso-2022-jp?B?alhYN1JkS3ZSNGJqMitYT3FKb2U4L09kQzk3TzhTTXZQYlBYVy9JYVZ5?=
+ =?iso-2022-jp?B?K2MvUjczNk5ndVVreDJaaXdPY201TDZ6bW1KcXhhVjhNR2F2MFlNRUZM?=
+ =?iso-2022-jp?B?YjFrc0tYUnorZjNqWitWVW5HWStMRXU1RkUybU1TSkVCNlVpTlBNajhD?=
+ =?iso-2022-jp?B?QkRLTmhyVm5LL2d4NXJTd0ZLL3VRSG5GMVNSRVM4RWFNMStFaDJtTXhV?=
+ =?iso-2022-jp?B?MmgxbFVBM2JkY1RTbjY1OFFFRWpjaVE2TUoyWUJJdTEvdU50bkhlQzF1?=
+ =?iso-2022-jp?B?amFycHcxNTBYU0Z0eUMwZ0dVa3JzK1RTdkJZai9KUG9NSElndkx5VWMv?=
+ =?iso-2022-jp?B?Zm5wcWZjQ3lYWkpDY1JOOXJSdkQ2MC84YklXdmFaK3Rvb1hMOC9CNGp5?=
+ =?iso-2022-jp?B?bzdzdmpKOTQ1TE1Ib0NsWUNhcWVOcE15bnN2Sk4wdm1YK2RYQWU5N2NI?=
+ =?iso-2022-jp?B?S0ZtdDdYWklvMTE0T0hwSXcwdmliQkx2YW1QekE0TzFwaXRybm1wMDhD?=
+ =?iso-2022-jp?B?NTg5V1EyTHRaUGhnOHl5M282UkJ1T3l4eWJMbU1OQ3h6UXg2dk5FUEQ5?=
+ =?iso-2022-jp?B?VjBWc25EYlowT1J0MkNid3FQMHNSeGVsaWtrODFwQ0RWZ2s2cHd6UXlx?=
+ =?iso-2022-jp?B?VHhrUDVGRVFiTEw1L2tQQy9MSmZiZEx2bHpjMGhQZUEyaSt2MXByeTVk?=
+ =?iso-2022-jp?B?eFdIckVhVXBJcTk1QlJuNzJsdXJrdWNCb255WldiZEt0UDBkQ1kwYnBG?=
+ =?iso-2022-jp?B?OVhsMThyRlFEZHdxZFNZdUNqYjc0RXBYRnRTR2gwQTdPUGRtQ2hiUUhx?=
+ =?iso-2022-jp?B?VzJhbC9qWnhlb3F6YmxOZ1doa1ZscHJubHRrLzcvTWpkRGtuRGx4dy9H?=
+ =?iso-2022-jp?B?L2V5c1dVOC9aNXdVK3dnZ1VzbDNlSDJIbWc9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180d:b0:42f:94f5:4684 with SMTP id
- e9e14a558f8ab-432f8db63bdmr24962205ab.5.1761721684205; Wed, 29 Oct 2025
- 00:08:04 -0700 (PDT)
-Date: Wed, 29 Oct 2025 00:08:04 -0700
-In-Reply-To: <20251029062156.pGggr%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901bd54.050a0220.3344a1.0412.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] divide error in ocfs2_block_group_fill (3)
-From: syzbot <syzbot+fd8af97c7227fe605d95@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hello,
-
-syzbot tried to test the proposed patch but the build/boot failed:
-
-NGE): bond0: link becomes ready
-[   67.659882][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes r=
-eady
-[   67.668876][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes r=
-eady
-[   67.678299][ T5618] 8021q: adding VLAN 0 to HW filter on device team0
-[   67.696904][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_bridge: link=
- becomes ready
-[   67.706412][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_0: link =
-becomes ready
-[   67.713355][ T3025] bridge0: port 1(bridge_slave_0) entered blocking sta=
-te
-[   67.719917][ T3025] bridge0: port 1(bridge_slave_0) entered forwarding s=
-tate
-[   67.737997][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): bridge0: link becomes=
- ready
-[   67.746170][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_bridge: link=
- becomes ready
-[   67.753255][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): bridge_slave_1: link =
-becomes ready
-[   67.761424][ T3025] bridge0: port 2(bridge_slave_1) entered blocking sta=
-te
-[   67.767981][ T3025] bridge0: port 2(bridge_slave_1) entered forwarding s=
-tate
-[   67.776501][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_0: link be=
-comes ready
-[   67.789834][ T5618] hsr0: Slave A (hsr_slave_0) is not up; please bring =
-it up to get a fully working HSR network
-[   67.801676][ T5618] hsr0: Slave B (hsr_slave_1) is not up; please bring =
-it up to get a fully working HSR network
-[   67.811910][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): team0: link becomes r=
-eady
-[   67.819404][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): team_slave_1: link be=
-comes ready
-[   67.826626][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_0: link bec=
-omes ready
-[   67.833692][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): hsr_slave_1: link bec=
-omes ready
-[   67.844888][ T3025] IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes re=
-ady
-[   67.896486][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan1: link becomes =
-ready
-[   67.902785][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): vxcan0: link becomes =
-ready
-[   67.913137][ T5618] 8021q: adding VLAN 0 to HW filter on device batadv0
-[   67.926115][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_virt_wifi: link=
- becomes ready
-[   67.939812][ T5618] device veth0_vlan entered promiscuous mode
-[   67.946170][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_vlan: link beco=
-mes ready
-[   67.953459][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): vlan0: link becomes r=
-eady
-[   67.960715][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): vlan1: link becomes r=
-eady
-[   67.970061][ T5618] device veth1_vlan entered promiscuous mode
-[   67.976977][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan0: link become=
-s ready
-[   67.992070][ T5618] device veth0_macvtap entered promiscuous mode
-[   67.998994][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): macvlan1: link become=
-s ready
-[   68.006989][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_macvtap: link b=
-ecomes ready
-[   68.014090][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): macvtap0: link become=
-s ready
-[   68.022742][ T5618] device veth1_macvtap entered promiscuous mode
-[   68.035409][ T5618] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_0
-[   68.042220][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): veth0_to_batadv: link=
- becomes ready
-[   68.052325][ T5618] batman_adv: batadv0: Interface activated: batadv_sla=
-ve_1
-[   68.060379][ T3027] IPv6: ADDRCONF(NETDEV_CHANGE): veth1_to_batadv: link=
- becomes ready
-[   68.069464][ T5618] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   68.077570][ T5618] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   68.087228][ T5618] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   68.094986][ T5618] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 f=
-amily 0 port 6081 - 0
-[   68.108021][ T3027] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   68.115942][ T3027] UBSAN: signed-integer-overflow in ./arch/x86/include=
-/asm/atomic.h:165:11
-[   68.123034][ T3027] 1282323313 + 2084770655 cannot be represented in typ=
-e 'int'
-[   68.130978][ T3027] CPU: 0 PID: 3027 Comm: kworker/u2:5 Not tainted syzk=
-aller #0
-[   68.137549][ T3027] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-[   68.146666][ T3027] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
-r
-[   68.152603][ T3027] Call Trace:
-[   68.155328][ T3027]  dump_stack+0xfd/0x16e
-[   68.158916][ T3027]  ubsan_epilogue+0xa/0x30
-[   68.162641][ T3027]  handle_overflow+0x192/0x1b0
-[   68.166622][ T3027]  ? prandom_u32+0x217/0x260
-[   68.170495][ T3027]  ip_idents_reserve+0x14a/0x170
-[   68.174600][ T3027]  __ip_select_ident+0xe4/0x1c0
-[   68.178693][ T3027]  iptunnel_xmit+0x468/0x850
-[   68.182482][ T3027]  udp_tunnel_xmit_skb+0x1ba/0x290
-[   68.186731][ T3027]  send4+0x5d4/0xaf0
-[   68.189985][ T3027]  wg_socket_send_skb_to_peer+0xcd/0x1c0
-[   68.194732][ T3027]  wg_packet_handshake_send_worker+0x16b/0x280
-[   68.200781][ T3027]  process_one_work+0x85e/0xff0
-[   68.204929][ T3027]  worker_thread+0xa9b/0x1430
-[   68.208868][ T3027]  ? rcu_lock_release+0x20/0x20
-[   68.212846][ T3027]  kthread+0x386/0x410
-[   68.216206][ T3027]  ? rcu_lock_release+0x20/0x20
-[   68.220336][ T3027]  ? kthread_blkcg+0xd0/0xd0
-[   68.224057][ T3027]  ret_from_fork+0x1f/0x30
-[   68.227707][ T3027] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[   68.235718][ T3027] Kernel panic - not syncing: UBSAN: panic_on_warn set=
- ...
-[   68.242148][ T3027] CPU: 0 PID: 3027 Comm: kworker/u2:5 Not tainted syzk=
-aller #0
-[   68.248871][ T3027] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), =
-BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-[   68.258217][ T3027] Workqueue: wg-kex-wg0 wg_packet_handshake_send_worke=
-r
-[   68.264036][ T3027] Call Trace:
-[   68.266727][ T3027]  dump_stack+0xfd/0x16e
-[   68.270510][ T3027]  panic+0x2f0/0x9c0
-[   68.273874][ T3027]  check_panic_on_warn+0x95/0xe0
-[   68.277943][ T3027]  handle_overflow+0x192/0x1b0
-[   68.281940][ T3027]  ? prandom_u32+0x217/0x260
-[   68.285754][ T3027]  ip_idents_reserve+0x14a/0x170
-[   68.289821][ T3027]  __ip_select_ident+0xe4/0x1c0
-[   68.293511][ T3027]  iptunnel_xmit+0x468/0x850
-[   68.297020][ T3027]  udp_tunnel_xmit_skb+0x1ba/0x290
-[   68.301331][ T3027]  send4+0x5d4/0xaf0
-[   68.304697][ T3027]  wg_socket_send_skb_to_peer+0xcd/0x1c0
-[   68.309587][ T3027]  wg_packet_handshake_send_worker+0x16b/0x280
-[   68.314737][ T3027]  process_one_work+0x85e/0xff0
-[   68.318718][ T3027]  worker_thread+0xa9b/0x1430
-[   68.322372][ T3027]  ? rcu_lock_release+0x20/0x20
-[   68.326207][ T3027]  kthread+0x386/0x410
-[   68.329499][ T3027]  ? rcu_lock_release+0x20/0x20
-[   68.333489][ T3027]  ? kthread_blkcg+0xd0/0xd0
-[   68.337061][ T3027]  ret_from_fork+0x1f/0x30
-[   68.340939][ T3027] Kernel Offset: disabled
-[   68.344406][ T3027] Rebooting in 86400 seconds..
-
-VM DIAGNOSIS:
-07:07:22  Registers:
-info registers vcpu 0
-
-CPU#0
-RAX=3D1ffffffff2c32060 RBX=3D00000000000003fd RCX=3D0000000000000000 RDX=3D=
-00000000000003fd
-RSI=3D0000000000000000 RDI=3D0000000000000020 RBP=3D0000000000000020 RSP=3D=
-ffffc90000a1f488
-R8 =3Ddffffc0000000000 R9 =3Dfffff52000143e9e R10=3Dfffff52000143e9e R11=3D=
-ffffffff83f95e70
-R12=3Ddffffc0000000000 R13=3D1ffffffff2ad4c63 R14=3Dffffffff961903c0 R15=3D=
-0000000000000000
-RIP=3Dffffffff83f95ee3 RFL=3D00000002 [-------] CPL=3D0 II=3D0 A20=3D1 SMM=
-=3D0 HLT=3D0
-ES =3D0000 0000000000000000 ffffffff 00c00000
-CS =3D0010 0000000000000000 ffffffff 00a09b00 DPL=3D0 CS64 [-RA]
-SS =3D0018 0000000000000000 ffffffff 00c09300 DPL=3D0 DS   [-WA]
-DS =3D0000 0000000000000000 ffffffff 00c00000
-FS =3D0000 0000000000000000 ffffffff 00c00000
-GS =3D0000 ffff888020600000 ffffffff 00c00000
-LDT=3D0000 0000000000000000 ffffffff 00c00000
-TR =3D0040 fffffe0000003000 00004087 00008b00 DPL=3D0 TSS64-busy
-GDT=3D     fffffe0000001000 0000007f
-IDT=3D     fffffe0000000000 00000fff
-CR0=3D80050033 CR2=3D00007fc76d01b6b0 CR3=3D000000003bbb8000 CR4=3D00350ef0
-DR0=3D0000000000000000 DR1=3D0000000000000000 DR2=3D0000000000000000 DR3=3D=
-0000000000000000=20
-DR6=3D00000000fffe0ff0 DR7=3D0000000000000400
-EFER=3D0000000000000d01
-FCW=3D037f FSW=3D0000 [ST=3D0] FTW=3D00 MXCSR=3D00001f80
-FPR0=3D0000000000000000 0000 FPR1=3D0000000000000000 0000
-FPR2=3D0000000000000000 0000 FPR3=3D0000000000000000 0000
-FPR4=3D0000000000000000 0000 FPR5=3D0000000000000000 0000
-FPR6=3D0000000000000000 0000 FPR7=3D0000000000000000 0000
-Opmask00=3D0000000040410888 Opmask01=3D0000000000000fff Opmask02=3D00000000=
-ffffffef Opmask03=3D0000000000000000
-Opmask04=3D0000000000000000 Opmask05=3D0000000000000000 Opmask06=3D00000000=
-00000000 Opmask07=3D0000000000000000
-ZMM00=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 4fbe43ac9f8dee1f 13ce8330a1ae1a97
-ZMM01=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 72ec250c5763c9fd 529fd701c037efee
-ZMM02=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 c1f3a78accefb53d 505a38d2fce3eab4
-ZMM03=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 5c4df8ddb4770ea3 dbe5344bbf7daa56
-ZMM04=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 00000000ffffffff 00000000000000b4
-ZMM05=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000034
-ZMM06=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 a077df95440950b9 0c00cc7265aa82be
-ZMM07=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 d81ebb973342967d 0000000000000000
-ZMM08=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 8efeaa65cdb9a13e d150fd9eae3be657
-ZMM09=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 ddc10fdc00000000 e4660e17edb0aedd
-ZMM10=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 a0e979bdc8075c8b a5c0b2d4b44f4d4b
-ZMM11=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 345505ce4c1a3a43 40c8945a3b014bfb
-ZMM12=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM13=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM14=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 a54ff53a3c6ef372 bb67ae856a09e667
-ZMM15=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 5be0cd191f83d9ab 9b05688c510e527f
-ZMM16=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM17=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 2525252525252525 2525252525252525 2525252525252525 2525252525252525
-ZMM18=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 00306e6170737265 0030657267367069 00306c6e74367069 00306974765f3670
-ZMM19=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 6900306974765f70 6900306c6e757400 3074697300326777 0031677700306777
-ZMM20=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM21=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM22=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM23=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM24=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM25=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM26=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM27=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM28=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM29=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM30=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
-ZMM31=3D0000000000000000 0000000000000000 0000000000000000 0000000000000000=
- 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	zEzwQGfw5zRdvfIZlQ+jVb8xh8Nbptn5BwOV9KaeFk5jALVaPng4xDGjYwoT8fkDm4P/2uFPBi0X536v5Ek5ugfBz15rdCJ9U8szR/WkLgbZPSNMUgw21pEpVvjabzsxzDEFg5Zo6Nxf9aUkwKPUkzBRl12dKmrbh5K/MLPOMAoaB2Vfik78stJvAiaAEX53FnvZTrzbDksp+MmwxR9HAIHgs9dCYIIbBM4OkPrsASNPpJG4w1r+FZ3wtYmFhJcWRGm1hp/NuIaiKBlgqh94mzIF3m1M37mdbqRanpsvW4CTDhrcvaiI6rLhXgT5QgWdQxPk13whKVof0MSqmNFX2gpJvH8HPpFb0e8zXM+OnNAXTjt7/O9rmHvECPPEf7SCKO4rniQMmET5ex8Zer9tdX9UAH3dWwZS/0XQkrCjU4D6iTeuc9cRR4GlrYtC0mVXxRu5+pzPbUEcQMgKXDtef6wN1UvRhXO0kLOFjArFxTo0QVC0HHtRPiLL4AWL+BHbGX7S9z/VGF7IbZEr7DI8Wwuxsa2Cf9c6xV5msCj94sxGkMbg8Cmie18D5ZqweE8/KJTxSkg8gjhoZAQRxGhLtJuyRHX+d7pETh5GnfcqPY9B6iW/1FDb69n4otnoLUN2
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cb535fd-34d0-498d-e2a6-08de16ba0d19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 07:09:07.2147
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZW5sq5EsRGD+3LABKpHHmtS493OKt3vxZLg18JBXaMa/IdETYhNtTvozHlSCLW2R9N+hrGtNMS4w76pMX4QLPeAZ8lIeL9sXJFlOdUeSCbE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7361
 
 
-syzkaller build log:
-go env (err=3D<nil>)
-AR=3D'ar'
-CC=3D'gcc'
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_ENABLED=3D'1'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-CXX=3D'g++'
-GCCGO=3D'gccgo'
-GO111MODULE=3D'auto'
-GOAMD64=3D'v1'
-GOARCH=3D'amd64'
-GOAUTH=3D'netrc'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOCACHEPROG=3D''
-GODEBUG=3D''
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFIPS140=3D'off'
-GOFLAGS=3D''
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build2361257849=3D/tmp/go-build -gno-record-gc=
-c-switches'
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
-d'
-GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.24.4'
-GOWORK=3D''
-PKG_CONFIG=3D'pkg-config'
+> When CPUs come online the MSC's original configuration should be restored=
+.
+>=20
+> Add struct mpam_config to hold the configuration. This has a bitmap of
+> features that were modified. Once the maximum partid is known, allocate a
+> configuration array for each component, and reprogram each RIS configurat=
+ion
+> from this.
+>=20
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
 
-git status (err=3D<nil>)
-HEAD detached at c0460fcde70
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' -ldflags=3D"-s -w -X github.com/google/syzkaller/pr=
-og.GitRevision=3Dc0460fcde7051a8d07612ec2a17718d3c3019bb0 -X github.com/goo=
-gle/syzkaller/prog.gitRevisionDate=3D20251022-142038"  ./sys/syz-sysgen | g=
-rep -q false || go install -ldflags=3D"-s -w -X github.com/google/syzkaller=
-/prog.GitRevision=3Dc0460fcde7051a8d07612ec2a17718d3c3019bb0 -X github.com/=
-google/syzkaller/prog.gitRevisionDate=3D20251022-142038"  ./sys/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3Dc0460fcde7051a8d07612ec2a17718d3c3019bb0 -X g=
-ithub.com/google/syzkaller/prog.gitRevisionDate=3D20251022-142038"  -o ./bi=
-n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"c0460fcde7051a8d07612ec2a17718d3c3=
-019bb0\"
-/usr/bin/ld: /tmp/ccCE9RT8.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-./tools/check-syzos.sh 2>/dev/null
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D102fc32f980000
-
-
-Tested on:
-
-commit:         d3d0b4e2 Linux 5.10.245
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linu=
-x.git linux-5.10.y
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D7686d7adbdbe480
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dfd8af97c7227fe605=
-d95
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-=
-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D123a99325800=
-00
-
+Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
 
