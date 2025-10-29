@@ -1,167 +1,205 @@
-Return-Path: <linux-kernel+bounces-876796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5EAC1C5C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:07:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51A6C1C599
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68D824FAD68
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D621894700
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89B034DB53;
-	Wed, 29 Oct 2025 17:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B520347BBA;
+	Wed, 29 Oct 2025 17:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1i6Bbq6c"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sis5XiZU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01E634CFCC;
-	Wed, 29 Oct 2025 17:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1B923A994;
+	Wed, 29 Oct 2025 17:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761757284; cv=none; b=TFJDl/faGBituMyF4Z3ssRYnkCWIX8iK4N5nCJSR2Dampsg9FmJL5QTYhyC95kNtoUoAO3Ho1Cn/8HLEceQkDGAr5F2hshTycP53PJRb1IXpEqrbXNwmsnTOcVh1+sRNPShD2dv5Ur16Z/wZMcEjRUFu0CdIaQAQykl8EWhCxTM=
+	t=1761757371; cv=none; b=fnfMYSn5xqaz2qoqbumG8gi0ufVEU9gk+mY0zyLhoCoLalLu1eJaCtXHs8ODSS7/UtMC2AEYYWvM5rA4ZIIJb7WVJAPr4zE3smkGzjO3ljP6VR5q1jqbVCzHD9KWe2NuKInULDslmi1oM9Cm92p3pxiZfSoG4D8SSPznqBpHlew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761757284; c=relaxed/simple;
-	bh=NZJYysHiAM5CyJPbZNHUi54aIKJJhG8RzrgvEH1LOwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tI088b++8wrZgdKuA19ZIwScj+yKMvDifdwNyEh/fgts//8OpmGF/E5DPCV6qMhDSL0gDRCgH8fyO3+8JQaUpBo7IkFdGvmh3A5/5alNnHNRbBwo46X1FPvFxUBacVBRvOkwYEm76OCAhuDry58EpL6MW4tiD/TqnntcbK2JEDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=1i6Bbq6c; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=atzT68l7oLan9uOLNG+v9Cm7uq3EwwtnbjhWXxRE+LA=; b=1i6Bbq6cmEfmZDARMgVoO6aL8T
-	5PEjHQj0cYfOADiNuwt1CMbUAbmBbY/BRGj45GQcOXEOMNL776Qua3alx5hxHYCJgZ7/m1GLhwHaN
-	KnqK7hzX9mhouNgMKacZtOdrAUpiQEzvkvH0jUYTZ3xUhdcx+mXwZmYeF1bGolhGEirwlSGHueAxC
-	GQesIuXn741YzoGqOzsv9ociE8+6UnGsdVut6eoeabKXE5flGEiJy6y55UsIcabpYFoHY+S7I4DRn
-	oL5QnJcdAqTAw6oYxJ7h9bxmw/0FzSuLbv3JgZZM6SCOhACdx0t+DQbJH/5snG2HtPXnBuqyoAT8G
-	YqCAbtHw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vE9Xz-000000027lK-3kSi;
-	Wed, 29 Oct 2025 17:01:19 +0000
-Message-ID: <81b03d82-6dc7-4af1-bca1-3632e1a0b4c0@infradead.org>
-Date: Wed, 29 Oct 2025 10:01:19 -0700
+	s=arc-20240116; t=1761757371; c=relaxed/simple;
+	bh=UnDARnYIG3wueo5oOGgTK3bYf/ken2YDQuLHjxtY2Zc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=sR6rASFTVjqT2efml6YeoxKeKCmSv1Wgx0iIFA+RmHk3igejOucaXqBotKrBY7wHJnFxzR2TmmbMAAmiBZnGFz3cyn++xMJEZ0SThDxtI1KOA0eamkdzcfksupdVY0efNLsFno6bnXbzMXl1vd45Es/8lHEsI5dMZpMfBi3Aeto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sis5XiZU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF496C4CEF7;
+	Wed, 29 Oct 2025 17:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761757370;
+	bh=UnDARnYIG3wueo5oOGgTK3bYf/ken2YDQuLHjxtY2Zc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=sis5XiZUF3cBmnMfqRMDyTQ8k+5kwHcKlIM8duFrUaVYVDRlZJr+YLBuEyK53AZbe
+	 CeSpPbi7+GzarNtWHjmPymX8PgYJlbzXYD0eCPI7CUpZbmUpw6fVh6dmTAOSTdhfDh
+	 OWW7HUczdIXyIjOHQBgPNqlilJcaot8nc992Un5cHpXUH2OtWrxWduWFkeJjG5K76R
+	 CJJoTl/TA2d1MMdtwrVhG9YItTff39DlqMN9o7zdKvvXcldOd/SfBWI5Pnnf2g98i8
+	 LIgjd/hNXuexhFOo/DtDI9rxiH1UZcJDtFeQRQGzWBnmz7c4Wks6zX1sAgqxUv+1QS
+	 2fI510xQVnB1Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: pm: fix duplicate hyperlink target errors
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Swaraj Gaikwad <swarajgaikwad1925@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-References: <20251029134737.42229-1-swarajgaikwad1925@gmail.com>
- <aQHyhU78m-9RPQ8q@archie.me>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <aQHyhU78m-9RPQ8q@archie.me>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Wed, 29 Oct 2025 18:02:45 +0100
+Message-Id: <DDUYV4ETTD50.3UCGLW45AK740@kernel.org>
+Subject: Re: [PATCH 2/8] rust: device: introduce Device::drvdata()
+Cc: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+ <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+ <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
+ <acourbot@nvidia.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
+ <pcolberg@redhat.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To: "Alice Ryhl" <aliceryhl@google.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251020223516.241050-1-dakr@kernel.org>
+ <20251020223516.241050-3-dakr@kernel.org> <aQIPvaFJIXySV-Q5@google.com>
+ <DDUWW90NZIDY.2TVA8S0RDSXZJ@kernel.org>
+In-Reply-To: <DDUWW90NZIDY.2TVA8S0RDSXZJ@kernel.org>
 
+On Wed Oct 29, 2025 at 4:30 PM CET, Danilo Krummrich wrote:
+> On Wed Oct 29, 2025 at 1:59 PM CET, Alice Ryhl wrote:
+>> Are you going to open that docs PR to the Rust compiler about the size
+>> of TypeID that we talked about? :)
+>
+> Yes, I will -- thanks for the reminder.
+>
+>> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+>>
+>>> +// Compile-time checks.
+>>> +const _: () =3D {
+>>> +    // Assert that we can `read()` / `write()` a `TypeId` instance fro=
+m / into `struct driver_type`.
+>>> +    static_assert!(core::mem::size_of::<bindings::driver_type>() =3D=
+=3D core::mem::size_of::<TypeId>());
+>>> +};
+>>
+>> You don't need the "const _: ()" part. See the definition of
+>> static_assert! to see why.
+>
+> Indeed, good catch -- same for the suggestions below.
+>
+>> Also, I would not require equality. The Rust team did not think that it
+>> would ever increase in size, but it may decrease.
+>>
+>>>  /// The core representation of a device in the kernel's driver model.
+>>>  ///
+>>>  /// This structure represents the Rust abstraction for a C `struct dev=
+ice`. A [`Device`] can either
+>>> @@ -198,12 +204,29 @@ pub unsafe fn as_bound(&self) -> &Device<Bound> {
+>>>  }
+>>> =20
+>>>  impl Device<CoreInternal> {
+>>> +    fn type_id_store<T: 'static>(&self) {
+>>
+>> This name isn't great. How about "set_type_id()" instead?
 
+Here's the diff, including a missing check in case someone tries to call
+Device::drvdata() from probe().
 
-On 10/29/25 3:55 AM, Bagas Sanjaya wrote:
-> On Wed, Oct 29, 2025 at 01:47:37PM +0000, Swaraj Gaikwad wrote:
->> Fix reST warnings in
->> Documentation/admin-guide/pm/intel_pstate.rst caused by missing explicit
->> hyperlink labels for section titles.
->>
->> Before this change, the following errors were printed during
->> `make htmldocs`:
->>
->>   Documentation/admin-guide/pm/intel_pstate.rst:401:
->>     ERROR: Indirect hyperlink target (id="id6") refers to target
->>     "passive mode", which is a duplicate, and cannot be used as a
->>     unique reference.
->>   Documentation/admin-guide/pm/intel_pstate.rst:517:
->>     ERROR: Indirect hyperlink target (id="id9") refers to target
->>     "active mode", which is a duplicate, and cannot be used as a
->>     unique reference.
->>   Documentation/admin-guide/pm/intel_pstate.rst:611:
->>     ERROR: Indirect hyperlink target (id="id15") refers to target
->>     "global attributes", which is a duplicate, and cannot be used as
->>     a unique reference.
->>   ERROR: Duplicate target name, cannot be used as a unique reference:
->>   "passive mode", "active mode", "global attributes".
-> 
-> Hmm... I don't see these warnings when I build htmldocs by:
-> 
->   $ make SPHINXOPTS='-j 1' htmldocs
-> 
-> My environment uses docutils 0.21.2 and Sphinx 8.2.3, though. What are yours?
+diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+index 36c6eec0ceab..1a307be953c2 100644
+--- a/rust/kernel/device.rs
++++ b/rust/kernel/device.rs
+@@ -17,11 +17,8 @@
 
+ pub mod property;
 
-I do see the warnings and this patch fixes them in my testing.
+-// Compile-time checks.
+-const _: () =3D {
+-    // Assert that we can `read()` / `write()` a `TypeId` instance from / =
+into `struct driver_type`.
+-    static_assert!(core::mem::size_of::<bindings::driver_type>() =3D=3D co=
+re::mem::size_of::<TypeId>());
+-};
++// Assert that we can `read()` / `write()` a `TypeId` instance from / into=
+ `struct driver_type`.
++static_assert!(core::mem::size_of::<bindings::driver_type>() >=3D core::me=
+m::size_of::<TypeId>());
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+ /// The core representation of a device in the kernel's driver model.
+ ///
+@@ -204,7 +201,7 @@ pub unsafe fn as_bound(&self) -> &Device<Bound> {
+ }
 
-docutils-3.13 (Docutils 0.22.2, Python 3.13.9, on linux)
-sphinx-build 8.2.3
+ impl Device<CoreInternal> {
+-    fn type_id_store<T: 'static>(&self) {
++    fn set_type_id<T: 'static>(&self) {
+         // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
+         let private =3D unsafe { (*self.as_raw()).p };
 
->> diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documentation/admin-guide/pm/intel_pstate.rst
->> index 26e702c7016e..9cdd9dad6516 100644
->> --- a/Documentation/admin-guide/pm/intel_pstate.rst
->> +++ b/Documentation/admin-guide/pm/intel_pstate.rst
->> @@ -62,6 +62,8 @@ a certain performance scaling algorithm.  Which of them will be in effect
->>  depends on what kernel command line options are used and on the capabilities of
->>  the processor.
->>
->> +.. _Active Mode:
->> +
->>  Active Mode
->>  -----------
->>
->> @@ -94,6 +96,8 @@ Which of the P-state selection algorithms is used by default depends on the
->>  Namely, if that option is set, the ``performance`` algorithm will be used by
->>  default, and the other one will be used by default if it is not set.
->>
->> +.. _Active Mode With HWP:
->> +
->>  Active Mode With HWP
->>  ~~~~~~~~~~~~~~~~~~~~
->>
->> @@ -192,6 +196,8 @@ This is the default P-state selection algorithm if the
->>  :c:macro:`CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE` kernel configuration option
->>  is not set.
->>
->> +.. _Passive Mode:
->> +
->>  Passive Mode
->>  ------------
->>
->> @@ -432,6 +438,8 @@ the ``energy_model`` directory in ``debugfs`` (typlically mounted on
->>  User Space Interface in ``sysfs``
->>  =================================
->>
->> +.. _Global Attributes:
->> +
->>  Global Attributes
->>  -----------------
->>
->>
-> 
-> The diff LGTM, nevertheless.
-> 
-> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> 
-> Thanks.
-> 
+@@ -226,7 +223,7 @@ pub fn set_drvdata<T: 'static>(&self, data: impl PinIni=
+t<T, Error>) -> Result {
 
+         // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
+         unsafe { bindings::dev_set_drvdata(self.as_raw(), data.into_foreig=
+n().cast()) };
+-        self.type_id_store::<T>();
++        self.set_type_id::<T>();
 
+         Ok(())
+     }
+@@ -242,6 +239,9 @@ pub unsafe fn drvdata_obtain<T: 'static>(&self) -> Pin<=
+KBox<T>> {
+         // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
+         let ptr =3D unsafe { bindings::dev_get_drvdata(self.as_raw()) };
 
--- 
-~Randy
++        // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
++        unsafe { bindings::dev_set_drvdata(self.as_raw(), core::ptr::null_=
+mut()) };
++
+         // SAFETY:
+         // - By the safety requirements of this function, `ptr` comes from=
+ a previous call to
+         //   `into_foreign()`.
+@@ -286,7 +286,7 @@ unsafe fn drvdata_unchecked<T: 'static>(&self) -> Pin<&=
+T> {
+         unsafe { Pin::<KBox<T>>::borrow(ptr.cast()) }
+     }
+
+-    fn type_id_match<T: 'static>(&self) -> Result {
++    fn match_type_id<T: 'static>(&self) -> Result {
+         // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
+         let private =3D unsafe { (*self.as_raw()).p };
+
+@@ -311,11 +311,16 @@ fn type_id_match<T: 'static>(&self) -> Result {
+     /// Returns a pinned reference to the driver's private data or [`EINVA=
+L`] if it doesn't match
+     /// the asserted type `T`.
+     pub fn drvdata<T: 'static>(&self) -> Result<Pin<&T>> {
+-        self.type_id_match::<T>()?;
++        // SAFETY: By the type invariants, `self.as_raw()` is a valid poin=
+ter to a `struct device`.
++        if unsafe { bindings::dev_get_drvdata(self.as_raw()) }.is_null() {
++            return Err(ENOENT);
++        }
++
++        self.match_type_id::<T>()?;
+
+         // SAFETY:
+-        // - The `Bound` device context guarantees that this is only ever =
+call after a call
+-        //   to `set_drvdata()` and before `drvdata_obtain()`.
++        // - The above check of `dev_get_drvdata()` guarantees that we are=
+ called after
++        //   `set_drvdata()` and before `drvdata_obtain()`.
+         // - We've just checked that the type of the driver's private data=
+ is in fact `T`.
+         Ok(unsafe { self.drvdata_unchecked() })
+     }
+
 
