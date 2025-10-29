@@ -1,62 +1,100 @@
-Return-Path: <linux-kernel+bounces-875005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0053BC17FEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:05:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A35C17FB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:03:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262141C82932
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:03:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E2053AD74A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F782EA485;
-	Wed, 29 Oct 2025 02:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49A02EA473;
+	Wed, 29 Oct 2025 02:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gEANWOkC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="moCLACVv";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WBgMfq1x"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4EF2D063E;
-	Wed, 29 Oct 2025 02:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3395C2E92D1
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761703337; cv=none; b=uCczaKPlvqj+b4sck/MOOWe9Bspv6nt/LSE5dfOPDOPe3K2gMenO3lkOTyzR0PRjmXg2RrmG48+XNvnkpp+U55rrQ2R432L8ulGTvlO44SIbWeLZzvC2lP7NY0nfBNSRXij3WlHMYJ1asbEOYlOk0esZNlLXrffSVMeuYMXJz0E=
+	t=1761703369; cv=none; b=nXFbD9WufGYYM5HWuFMbkpAzez+IQMANRtMKxG8O4WUMP8A/H4OoB1OtUs7BLBfqHfJGf/LiF6iETO6pUwy+r8zJzqNMt9SFBNecc7gOhMnjVeiqFQG8ZLx0TEBce0sdUEbwuMvimgzQ8qNi6H4ef2mW70xkk8tahlSo/6bqQqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761703337; c=relaxed/simple;
-	bh=XPYo+OcuJfY4bg4iIJy8r60Ch0ORGWa4PGjWOKP83B0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g2eqve4sm9MEpK9ic+jlKEfKMWPahudZQXon/zyYjTG+G7bEGr67tbWzcFazZvw5TwvoM+o5HPFbJVGVdv3xzt3A3/dlk2ANgsdCsbboOXBIfv2WCiD+F27PD/6AEVjGZ7OqwisDcL3FLmP1pcEHMsy5vQWKBHkNACy0dP4C0pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gEANWOkC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJlp1Q2524410;
-	Wed, 29 Oct 2025 02:02:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1761703369; c=relaxed/simple;
+	bh=Pz7NzoD2T5f8kPsfdEb9COLkFyV5JhRt5+fFgrda5KU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FLJlBliI96xNBnQqGqNgGoat8B10e9MeWYZimMCOcY7nrddnsv1PWNyQI4MXXWt/5Qd43VB1723LUvwxFcTtOVGLcWiiuxshVJnUQ7agk7Dep6m+DvwC94Ik4kMlDD48B+slqtboD+J4O3BD1L37LcRbziSRtRPFhANQESmQonY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=moCLACVv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WBgMfq1x; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJm3mH2554005
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:02:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Viz5wsOpGT8upDjX2IF3pJhY3V85XL5P9gmczHCL13U=; b=gEANWOkC62cDsFcj
-	A19DD8os7BEvxjR8/TUC4gDrl8lXFzCm59f9VKl4Q6zdbp+OwXsFnv9kqT7cKpuz
-	twqJkiFtAfvPqA2q+7z/cLpW3oeGYhidRA/QcUqn9NMnz8f3URkUummwqj/WRlqF
-	4PBQopXIapUTnZBsgm9WNRQzGzGsCsiGya2IOF8M31bxSdV5hitYr3cK26hMCAS3
-	9QR8ub/LPtnr4xV/LOBnbl2e5cSWxzgXOIXpgvzMTEKgstkTlHxcUNzJGgNQv/a3
-	TPyKE9tXlKU1/whra6H8GWkmC9ggOM8ZQ2dV7PDu2XL0G0L2bhW+4rrfDXZaLl5j
-	4bXlWA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a1rtuj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 02:02:10 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 59T22A28025262
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 29 Oct 2025 02:02:10 GMT
-Received: from [10.239.96.215] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Tue, 28 Oct
- 2025 19:02:08 -0700
-Message-ID: <ee4478c6-32ca-4c30-aee6-994f39532dc7@quicinc.com>
-Date: Wed, 29 Oct 2025 10:02:05 +0800
+	+XHD3qAsYq7bk8sAiSss2ZM7l6bFmO2byTwWLdGl1uY=; b=moCLACVvtXJYioCm
+	xM4rt6KPH9Mqtg0ZB5RMJqSan/DxiWnPwMHrqaD7A8XhwR2HdSusHkSpJECCUGSN
+	J/gP3Chb8gOvReqNfc8JObnuRGpw0R7jXjVV95nN2YLwQW9xIWeMXV2AT6oczXzp
+	x9SXOWec7dmmsinlgjlkXSr1aR0SjZo8M3q2+7iokPSCYYZ/azq1UkZMf8zcncGU
+	FtK+N95fE6dytdHwaaRGIFugzaTLxedY1w3WEBMAI+/pz/io+/g74rqQhf7/+8sE
+	PuuAEGE6EDUCPBFkJ2dTi3e1XMEP7xucQvMQBwg7cBPNJmqThLPH5ZdKJf6+hW4A
+	/HT0gA==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a2gtf2-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:02:45 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3304def7909so5137492a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761703365; x=1762308165; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+XHD3qAsYq7bk8sAiSss2ZM7l6bFmO2byTwWLdGl1uY=;
+        b=WBgMfq1xHdkkZ08LAuUE5Y6MJtnnHpjlLHUh4ZKKpsvrlfA0wo8qkvWZR4TVtENvBn
+         CYHahkQjz9Jcbav2Gbewla2h6mk9+uXIv1KfE9xE/Y1VgJyMtMhMOibHeWqBRQOKpG4h
+         WBrRKydXXcm39YVxQ5C+vbf0qFhgdpy7xXk6/RD26kYymLvG9ZmKl3VCvqFu5/pSN4vR
+         t6i6xB6Edb4sr/DarSYWHcmmpR0YrymK8kzFxqr2d7e186JMhCTinoaRTIKVtKVaLSAN
+         2TXLpb1QZtoSOFnUMZBOS4hPFhwF8kxx+K45yrYZqr1S4cZKIQhCXs83DN1OwCYnvjd0
+         H65A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761703365; x=1762308165;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+XHD3qAsYq7bk8sAiSss2ZM7l6bFmO2byTwWLdGl1uY=;
+        b=osZc2PDi+VBmNbdRYoP73IdJnlnaeMqXlswKV/dtjF45gmXRYya9XwfKkM8VbBtz3I
+         ULt8C68BMfp38r6JCWSLWPRvsS3ttQ+KM4K7iU/4i598Gm76yWEZkOMKY/cpM3GyxNC/
+         wkDv8XbkihBymdmVu4cu/6UCKMOydSHXn2aTWy+dah7TNHmKZgbDKMD2y4NKF7dpaozk
+         yH6smB5EMflrQPh75KKo4ygDVb8Unn+hNTIOCkj3nJW2yHFCAOvRZK8XHqYmb3DtfgeC
+         hTF32VFwbKs0Le233xUxOzXaJF4e+RM0qBp8tuDfPB8WBbHf0yJ94wed/p9nG2eLf0ws
+         h8YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSWH3NUOpQObUeyciprXkVLVrbx4gASIoPKsmmgteOmEcEsBhncFOUi1aQuVZCAHU031TWW5pk/IzhQRI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2H9MUDgc4S9yrq9moW2yVqUNcGBmyDhmmjOxz6MD0+oEABSJW
+	qEdsBhSwwsFuPsx464lZImVraFSPldd70Q4uvtcZO6IVrHDVu2c4NS6SowgHIClPrfWfR1KkkvE
+	WReEUFiWgb8UUbgHNDHUY2TRyaqNe0OIF4gGMzqSfUqdsFeDKijg2WclkcQcpElhkn+0=
+X-Gm-Gg: ASbGncuOFY0Wr9THn485c5r3GbwiJ1ki7uNWohJc76a84Xkmjj3ZUdkw/OSz0bin7cN
+	XSq6vQpr0iQrB09alVtUrCDeA77pE8RbS5cbOoI4nGt6rL+Ms3HIXA76yycfBqkSm8VM/mTJ3Ag
+	S7KcD69xm9YcqoZdtslqvzlGjhhc/2b/BfzSe1vRazMvkhFjwwwl8p7136FPPkM6HchtsZjJHhk
+	IUTR1vj5v8vzT3BF0i6dQaZNLFVzYDYxzr25hpOLhi3SNSBYHGM0km8EK10175JNHcpnvFXysaS
+	YZU07lAj7in7OjdMdXWOrX4Rpxm8PJyecst0raApz031JcVRD4Vb7YM2iAG8tZRaiRWQFnBOGkv
+	YgEv97f00aNIf8Q2jaYWsZ1gYN6mT4Y7kvp9s1Sopsvcv4PqN0ubKbQ0qfFGp
+X-Received: by 2002:a17:90b:5285:b0:32d:e75a:5009 with SMTP id 98e67ed59e1d1-3403a15d171mr1330239a91.1.1761703364840;
+        Tue, 28 Oct 2025 19:02:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGcScMXLm268C0Dm3zeV/yJI6TOPZWieAH/ad6aJnRDTo8npsq612B2XwRMppYY/qaERJ3iA==
+X-Received: by 2002:a17:90b:5285:b0:32d:e75a:5009 with SMTP id 98e67ed59e1d1-3403a15d171mr1330204a91.1.1761703364290;
+        Tue, 28 Oct 2025 19:02:44 -0700 (PDT)
+Received: from [10.133.33.233] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a41408757csm13100312b3a.59.2025.10.28.19.02.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 19:02:44 -0700 (PDT)
+Message-ID: <606e4570-46ad-454d-a018-3bf2dd582dc2@oss.qualcomm.com>
+Date: Wed, 29 Oct 2025 10:02:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,123 +102,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] Bluetooth: btusb: add default nvm file
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <marcel@holtmann.org>, <luiz.dentz@gmail.com>,
-        <linux-bluetooth@vger.kernel.org>, <stable@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_chejiang@quicinc.com>
-References: <20251028120550.2225434-1-quic_shuaz@quicinc.com>
- <3fluuwp2gxkc7ev5ddd2y5niga3tn77bxb6ojbpaoblbufepek@owcrah4exoky>
+Subject: Re: [PATCH] wifi: ath12k: fix potential memory leak in
+ ath12k_wow_arp_ns_offload()
+To: Abdun Nihaal <nihaal@cse.iitm.ac.in>, jjohnson@kernel.org
+Cc: linux-wireless@vger.kernel.org, ath12k@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20251028170457.134608-1-nihaal@cse.iitm.ac.in>
+From: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 Content-Language: en-US
-From: Shuai Zhang <quic_shuaz@quicinc.com>
-In-Reply-To: <3fluuwp2gxkc7ev5ddd2y5niga3tn77bxb6ojbpaoblbufepek@owcrah4exoky>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RZvxOyEZTw_UzKXaejm8NiWkPU5kwe08
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAxNCBTYWx0ZWRfX+6bE2sZ+PTaw
- vD+FJIz3X+2exuRiJQjjL5vsIwct249vV0sSt/2zTdS1MvBqzIPXctUan/p9Bt3i2NU5vW55bTf
- 6bV34Mdo58qtqdj+5SeU8y1ZiyebSxhdMnYQBs82qao++vqoGOi/TKzXJc5QjUh9SMcRNAOHz/Z
- zIjiZsds04zcTLgw9wGf9wkWXGkDLWFnmP8bxzgvxauUEKZ8Prm5B/6UQ4Imf5o+RhCZTpv5qHf
- 7avFDwO74yt2o2IOMzSD2mvTXKSlE+0j9YzmO8kMtB4TadWbLHb2sKISGYLD+9uHHoLU8MCE5wc
- /nWmwiTrtzlFIkE7S0DwXxDUCyCJPgbcR9dMAUo4KxUqEDUzAMJKvWmV1t36KjuAEfjirCVPjZk
- c5KY7fKQXGS88b1Zu2qZs5aweeJpsA==
-X-Proofpoint-ORIG-GUID: RZvxOyEZTw_UzKXaejm8NiWkPU5kwe08
-X-Authority-Analysis: v=2.4 cv=UObQ3Sfy c=1 sm=1 tr=0 ts=690175a3 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=COk6AnOGAAAA:8 a=GyBpgepc4qxS4VxvXCQA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
+In-Reply-To: <20251028170457.134608-1-nihaal@cse.iitm.ac.in>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: 24NxUrAygeljxJlxLmyAd-7zLeUJrlmg
+X-Proofpoint-ORIG-GUID: 24NxUrAygeljxJlxLmyAd-7zLeUJrlmg
+X-Authority-Analysis: v=2.4 cv=PcvyRyhd c=1 sm=1 tr=0 ts=690175c5 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=QpG1ZDNR6MNC-5z7ugsA:9
+ a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAxNCBTYWx0ZWRfX4qFFkDbjs7FP
+ 6jzHK5F2DDZ8OWfqK1wnBau+KmXLsemugimmDjSc2XXt6qt6ba4pk+UPk5z9Lagyn2QYmXd0210
+ UHqbyeBqp1/5N+Q5DBZZixH3MdVOw89ep5+kUQxCYNouaJz6raYQYpRinzKuRohWKvmIYzl9LAa
+ U6Ea9afcoY/9WJf3U+4j/V3YWAvHbctQpKzZdC9FGIOrBnOq2fTrHudcx2g1u8tiI9uqvAjCagz
+ T1eE2idnQBjlWw+XmBV1nN1uf4J99cvzLwU/hTxzmBQ7WnkO8z00BdUfRZjo06YzE66ar3GRcyF
+ +T++hLPWj8RN+HH2W0FaGkOnvR8j9WXM38t+pgymO8AaNp1dvvqLh65Ik2bCxjeje8WhGwcCijK
+ BK7gTcSIMLzMeWIGv+7WzaSUDXy1TQ==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 malwarescore=0 phishscore=0 bulkscore=0 priorityscore=1501
- spamscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
+ phishscore=0 clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290014
 
-Hi Dmitry
 
-On 10/29/2025 12:57 AM, Dmitry Baryshkov wrote:
-> On Tue, Oct 28, 2025 at 08:05:50PM +0800, Shuai Zhang wrote:
->> If no NVM file matches the board_id, load the default NVM file.
->>
->> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
->> ---
->>  drivers/bluetooth/btusb.c | 19 +++++++++++++++----
->>  1 file changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
->> index dcbff7641..998dfd455 100644
->> --- a/drivers/bluetooth/btusb.c
->> +++ b/drivers/bluetooth/btusb.c
->> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct hci_dev *hdev,
->>  }
->>  
->>  static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
->> -					const struct qca_version *ver)
->> +					const struct qca_version *ver,
->> +					u16 board_id)
->>  {
->>  	u32 rom_version = le32_to_cpu(ver->rom_version);
->>  	const char *variant, *fw_subdir;
->>  	int len;
->> -	u16 board_id;
->>  
->>  	fw_subdir = qca_get_fw_subdirectory(ver);
->> -	board_id = qca_extract_board_id(ver);
->>  
->>  	switch (le32_to_cpu(ver->ram_version)) {
->>  	case WCN6855_2_0_RAM_VERSION_GF:
->> @@ -3522,13 +3521,25 @@ static int btusb_setup_qca_load_nvm(struct hci_dev *hdev,
->>  	const struct firmware *fw;
->>  	char fwname[80];
->>  	int err;
->> +	u16 board_id = 0;
->>  
->> -	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
->> +	board_id = qca_extract_board_id(ver);
->>  
->> +retry:
->> +	btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id);
->>  	err = request_firmware(&fw, fwname, &hdev->dev);
->>  	if (err) {
->> +		if (err == -EINVAL) {
->> +			bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
->> +			return err;
->> +		}
->> +
->>  		bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
->>  			   fwname, err);
->> +		if (err == -ENOENT && board_id != 0) {
->> +			board_id = 0;
->> +			goto retry;
->> +		}
-> 
-> I'd rather see here:
-> 
->   } else {
-> 	bt_dev_err(hdev, "QCOM BT firmware file request failed (%d)", err);
-> 	return err;
->   }
-> 
 
-This will make the log clearer. Thank you for your suggestion;I will update it.
-
->>  		return err;
->>  	}
->>  
->> -- 
->> 2.34.1
->>
+On 10/29/2025 1:04 AM, Abdun Nihaal wrote:
+> When the call to ath12k_wmi_arp_ns_offload() fails, the temporary memory
+> allocation for offload is not freed before returning. Fix that by
+> freeing offload in the error path.
 > 
-BR，
-Shuai
+> Fixes: 1666108c74c4 ("wifi: ath12k: support ARP and NS offload")
+> Signed-off-by: Abdun Nihaal <nihaal@cse.iitm.ac.in>
+> ---
+> Compile tested only. Issue found using static analysis.
+> 
+>  drivers/net/wireless/ath/ath12k/wow.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/wow.c b/drivers/net/wireless/ath/ath12k/wow.c
+> index dce9bd0bcaef..e8481626f194 100644
+> --- a/drivers/net/wireless/ath/ath12k/wow.c
+> +++ b/drivers/net/wireless/ath/ath12k/wow.c
+> @@ -758,6 +758,7 @@ static int ath12k_wow_arp_ns_offload(struct ath12k *ar, bool enable)
+>  		if (ret) {
+>  			ath12k_warn(ar->ab, "failed to set arp ns offload vdev %i: enable %d, ret %d\n",
+>  				    arvif->vdev_id, enable, ret);
+> +			kfree(offload);
+>  			return ret;
+>  		}
+>  	}
 
+Reviewed-by: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
 
