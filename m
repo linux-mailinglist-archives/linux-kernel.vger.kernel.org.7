@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-875918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F78EC1A1F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:54:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73277C1A204
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC6F1899060
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0F5518968ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540B82FDC5D;
-	Wed, 29 Oct 2025 11:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B13D337BB1;
+	Wed, 29 Oct 2025 11:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hAxze3cv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="aAAX7Bhe"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D592D47FD;
-	Wed, 29 Oct 2025 11:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA4DB2D0611
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761738855; cv=none; b=aWow6+ncgmVCT3oHx2SZMoGWD7lhBLkP2qbsn9FpCNXkVRchi+ITvPAkWwcDV8HPRP+lPJ4LuHH1k43KXcLVIIs8b1Pum8gWAUTbM5gBLpknPFZkgyPl3Lk9ppNAldx8PXUOMCZ0lzyWEAwFksWDim49rlaq/xkwUXDier+elcc=
+	t=1761739066; cv=none; b=Vn+lCxVCIwaASA7NGHTlJXf37B1t8xkRQCfpHwbNy/OY/FHdLiJ5vBWcPkmLWQjusL3njHmEb7XNvK/EeOFBg+2g54ruOCNJysWBNFACgAjcuHs42sPg8GNVmu/MklCjgPjoBAhOz9WWOaUb60aEAU/dN7WedbeerT9yixzrV0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761738855; c=relaxed/simple;
-	bh=fuf1LfWN4j/837jd0hVGkh7BL7pxjiKOctcvPtmTalI=;
+	s=arc-20240116; t=1761739066; c=relaxed/simple;
+	bh=cU6CUeX0WDZCOmqHQ4fKt2cp+Z4CkhdPcJlg6nz2cTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZvmbkMy+YRAbQc9Y3YFhmyKdLov45WbW//KbePOP4aSdVP5+aqkX0BIzhOn7cri65zUVTwXbD45ABiRaU+JYIdo+xfIBxlgPz87+p84QmMM73neSH+X3oXaVXY1aZ8H9GR2LVGwyPfpbzc08+85EQ7IY9VIsZQu0CYJieWL65I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hAxze3cv; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761738854; x=1793274854;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fuf1LfWN4j/837jd0hVGkh7BL7pxjiKOctcvPtmTalI=;
-  b=hAxze3cvHdSOJFwLIp37wK+P++/GVMZgrvzlZ1jQK4RcehSNEc54hs/5
-   H/et+wNbdKkT5rhQFxWV5OaGC5wRWr0mY9Ssrq4d5lh7sR1ZHko/cjkqg
-   FZ1xG/QnKwTZHRgxSdQ8BaHmfTVG1AxWUwrPpSqA4dRHFSQ5f7/7TgIYe
-   e3vFJ5pBlimnHT9yi6QGhADNkYt875bQwqCBVk+FT8HXZIDw+3Xp4jKJ4
-   +gxYBIR3P27Dc2FSPYqe6lSBTbNF6M+PXG+Vn0C87SFnmv9YdqwbxQ+MS
-   TfskKyBbKhjBgtMOxt6wAdeojXO8C+GY+QTmlqxq+raxR7QpBPzxV5GZb
-   g==;
-X-CSE-ConnectionGUID: tsKMYEY9RgioO/W/jQi7ZQ==
-X-CSE-MsgGUID: DmivzIm2TXaGOdb1U+dfEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="51430558"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="51430558"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:54:13 -0700
-X-CSE-ConnectionGUID: 5r6AkawHSf6SHNTAxhpQGg==
-X-CSE-MsgGUID: 6g6unhV9Sm+rGyvN/M0+Tw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="222855207"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:54:07 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vE4ke-00000003bMP-1GBg;
-	Wed, 29 Oct 2025 13:54:04 +0200
-Date: Wed, 29 Oct 2025 13:54:04 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 10/10] regulator: make the subsystem aware of shared
- GPIOs
-Message-ID: <aQIAXO1hUrw4Yp9V@smile.fi.intel.com>
-References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
- <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFqguF7TzPvBku75TbYX43sYjaIz3MjLXDlWS/9io+nw1MJe7ULjXW2ilbxTmDb7RJlwMOrYg17T8tlTUymEU9699k9csPcf9QP7/3T2YCspHWKHkJrNhAqYXJ+Evs+FpV3f0+W43AoiuHcHXuEx7vjTE/uUfgAxFL/9nk80wks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=aAAX7Bhe; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3A24C40E00DA;
+	Wed, 29 Oct 2025 11:57:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id kxTD_tmuFiYK; Wed, 29 Oct 2025 11:57:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1761739057; bh=uxMWbr+yPlEQ0CzH2y8lP/730Ox/Qwdjd32apfHt8L4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aAAX7BheLbrXVmy5ALc+q1c5OPUbRcmE0bSVmBTUAeMZlluVZZUKIuK2qOHj16aie
+	 0Fq9uumSb5HzboWusWm8fQODoEkB8baiD5kO767o+yN3lu8WfMbaZYSUF71jsa2vbE
+	 t2yMP3U6TctC/EOF/OwnHthAF2DiCmdqX0rSxAOQWKdJ1BzyzomkPWKrozkY0d8QBj
+	 M5dWShM8LSo3JUl4kJWzo8aFMzQMhPmftQYdmNR5M2PqswekwokciGNaPB8bdaIV94
+	 al+GTP1F2s7Wh6VR9f6RFPOAx4QOAVOSWBtwfv8RcUaaldqNVAhfMELFuzDuPZGsDZ
+	 KesShhyZpNooLyDXSD2ubv8CJQdxFoM7Z9/MItyMLKP4wS7F69umjqe7N/pbCMODDZ
+	 kCO13n2bUITPQi1WXeM9w5Pmq4bSO/nFrNjm/uDhwg/NmfYJyrhhnQdx6wdlDro+9f
+	 H46SRuNeGFY5r7pQvuv+fjOPqnybN/GHMpf5eQYPJKYj5Q8Qa+YduesyNaTTzygL/v
+	 DKNLOc7kC1wVxsGc8fykJl7I4OZr5TOe33vtsfdeYWEc89esmA84Y70TW2D9BM+Pzm
+	 7vTPzYQ3NYQmbGpRATMj9NMTDCf/qAorl8kDTDTsUnt5xxWPY6jdJcMYZFhBS4hAgE
+	 pZKRbA/Fx1BwUiVbLG1R3kMo=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 9919440E021B;
+	Wed, 29 Oct 2025 11:57:25 +0000 (UTC)
+Date: Wed, 29 Oct 2025 12:57:19 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Kaplan <david.kaplan@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/56] x86/bugs: Reset spectre_v1 mitigations
+Message-ID: <20251029115719.GEaQIBH1j4vVEQLas9@fat_crate.local>
+References: <20251013143444.3999-1-david.kaplan@amd.com>
+ <20251013143444.3999-5-david.kaplan@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20251013143444.3999-5-david.kaplan@amd.com>
 
-On Wed, Oct 29, 2025 at 12:20:46PM +0100, Bartosz Golaszewski wrote:
-> 
-> GPIOLIB is now aware of shared GPIOs and - for platforms where access to
-> such pins is managed internally - we don't need to keep track of the
-> enable count.
-> 
-> Once all users in the kernel switch to using the new mechanism, we'll be
-> able to drop the internal counting of users from the regulator code.
+On Mon, Oct 13, 2025 at 09:33:52AM -0500, David Kaplan wrote:
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 6a526ae1fe99..9d5c6a3e50e1 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -46,6 +46,8 @@
+>   *				   may want to change based on other choices
+>   *				   made.  This function is optional.
+>   *   <vuln>_apply_mitigation() -- Enable the selected mitigation.
+> + *   <vuln>_reset_mitigation() -- Undo's the apply_mitigation step, this is used
 
-I am wondering if you took into account the layering violation (or others
-put it as "transferring of ownership") in the regulator core for the platform
-based GPIO regulators? This popped up during the discussion of
-https://lore.kernel.org/platform-driver-x86/20251024050537.92440-1-qiuwenbo@gnome.org/
+"Undoes" no?
+
+> + *				  with runtime mitigation patching.
+>   *
+>   * The compile-time mitigation in all cases should be AUTO.  An explicit
+>   * command-line option can override AUTO.  If no such option is
+> @@ -1247,6 +1249,15 @@ static void __init spectre_v1_apply_mitigation(void)
+>  	pr_info("%s\n", spectre_v1_strings[spectre_v1_mitigation]);
+>  }
+>  
+> +#ifdef CONFIG_DYNAMIC_MITIGATIONS
+> +static void spectre_v1_reset_mitigation(void)
+> +{
+> +	setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_USER);
+> +	setup_clear_cpu_cap(X86_FEATURE_FENCE_SWAPGS_KERNEL);
+> +	spectre_v1_mitigation = SPECTRE_V1_MITIGATION_AUTO;
+> +}
+> +#endif
+
+Right, let's see in the end what is easier: we have the cross-dependencies
+between mitigations so having separate "undo" functions might require them to
+run in reverse order to the "apply" functions. I can imagine a single "undo"
+function would be easier because you have everything in one place.
+
+We'll see.
+
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
