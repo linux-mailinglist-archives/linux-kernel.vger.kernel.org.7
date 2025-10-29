@@ -1,147 +1,311 @@
-Return-Path: <linux-kernel+bounces-875718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C864AC19B45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:26:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5557C19B42
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:26:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E491946823C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9AB3560E57
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8DB032C331;
-	Wed, 29 Oct 2025 10:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB38E32144F;
+	Wed, 29 Oct 2025 10:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="QvtZDDQW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eEIX6CxS"
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YaQ3NHHt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="57ztk8oO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5044026F2BF;
-	Wed, 29 Oct 2025 10:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AD93074B4;
+	Wed, 29 Oct 2025 10:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733393; cv=none; b=nrWMY/5WHLxuDwds7Kghf16HR+TdFjNUkEZIBFJn+i/3LZ33oK2SfIXa6kjWrh1+eGoMlGtTvWDXLmUGxA5M9hyC4TZQxtDMxkHaaxvcAUPD9K84kYfOw/e2TVVaGYJ2WnLD0Qa6X2R7w9rSWQJd+tGjTqZT4OMMBbHjgUAkl+c=
+	t=1761733412; cv=none; b=D9lLZpPcJ8BIL+QARCoxQVI8dEYnHQe6JgJifTKL49hTdizwUnztRXRk1yMMmB/3471UfB6hWVeL16pI/CPbXaAgBFuNTFQsn/DVhqxtUk4T8c/sSv6STURXkTKbyOArx3SFvlGSohxcOvcIFaEymu0Z9TtCO16n5hlHW3vOBIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733393; c=relaxed/simple;
-	bh=kjNmqzCdBdjVNLBIsEuwWffdtMn4lIO1+Kr2vft1cBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLtAbvhKckSDlcTDxLCxSnDau7Islkg1gAUecLuB1vJ8KdktmRF+ShBAaO3aZvhCM5HmxDn84AlM80K5NrSsoMwKju6fAPdWLbpKSEoRUIExj/SUpa0uI6jEayOWgUw+VUa0KEAyVFqJ8ZQQGdpFAw1GswF8CF+pC7nkI7jnKb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=QvtZDDQW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eEIX6CxS; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailflow.phl.internal (Postfix) with ESMTP id EE62313800EC;
-	Wed, 29 Oct 2025 06:23:09 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Wed, 29 Oct 2025 06:23:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1761733389; x=
-	1761740589; bh=+FDSli0Ph+bdYBu+TscfPXcdJYFYx/LYMRlry+8ZbcE=; b=Q
-	vtZDDQW9pEdBAuAXgxnvLXFet8BhgvMj64eAfEieZJsGSKfdggXQ7Lu8rUVMZ9ED
-	xxh8p3vftnb1d+RKtJ00wNKNNQ0uxcodP8zZjkA1FuoOJZ0M3rL1HOQ/oiO21WBX
-	ORLwZuW8xKFdHsXX0nj/jYSMyGICCpPIkYYJW/lNSdzMvQB7BLQ8YOSLQVV8I0jl
-	HOxp+ZhIXHdEFparR6fH9KHl0dCRSM+KLFA9dC2OUFEgeXLENp1dO1tBnKFc78+n
-	XKGy8zr5F5VF00EkYSl8KqApFNKvO3iPZIaJAIXPhQp8L0K4AZoSYCLxk/TXrJ7y
-	3GTTFfONQZloJiUj33tmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1761733389; x=1761740589; bh=+FDSli0Ph+bdYBu+TscfPXcdJYFYx/LYMRl
-	ry+8ZbcE=; b=eEIX6CxSlpYir8DMLvaYZs9klDBDvzZvWOTeqamZTjxt84uch//
-	Sigb37GvtiqfVsapAg630PZZtxhnFR9ePvo18FrUeCdqf+dKxiH/+kCHYFcvxxjD
-	oOiUTNdsFZHex8hu+ik65LxyAmayASorUBnvDC/iEA4kazibr9TKIsSGcqu/EAlz
-	gqkf+1GrCeLQnBFk86AEy08TU3a63O4eB9bWl62b/Sii27aTiF2fpiCLRvuGg3VE
-	w6tVBKSwtCFqIEeT5eVlq9v6yVBMEh+phG5KqFbMw1+iB2EexD70HeINaPDhpGqI
-	onMpfg4RIRdsl1MltbyIVF9aUjUS4sVchrg==
-X-ME-Sender: <xms:DesBafCIr96SHdLVEP-ppkZ3zTrNQkKQKZ_xZNORbigQMXDEqOk3pg>
-    <xme:DesBadMEptUA5BbMaWv_gNgntmKBdjc7ZIjQHe3-4yKcLOqMwRzJfVzMDKz_SqpO5
-    kKVJp9Xb293Aviz96fkaNq_rVnG3d-lomT6aBpjPHBGH1ZYVBLGGYA>
-X-ME-Received: <xmr:DesBacyvN--A9IoQ57sFmqxDSjn4H-0uH_c6qjNoY1cw_qGlb4Z7_amF8iwGMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefgeekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepmfhirhihlhcu
-    ufhhuhhtshgvmhgruhcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgeqnecugg
-    ftrfgrthhtvghrnhepjeehueefuddvgfejkeeivdejvdegjefgfeeiteevfffhtddvtdel
-    udfhfeefffdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
-    homhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhopeeg
-    gedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohephhhughhhugesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhr
-    ghdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopeifih
-    hllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepvhhirhhoseiivghnihhv
-    rdhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsrhgruhhnvghrsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdr
-    tghomhdprhgtphhtthhopehlihgrmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpd
-    hrtghpthhtohepvhgsrggskhgrsehsuhhsvgdrtgii
-X-ME-Proxy: <xmx:DesBaQenYKO6Awlcf2f2OqlDhXwNlTwpYzafHsuzytn6ICrcPt-i-g>
-    <xmx:DesBaX3RSp8lRmYJbORMxetuIv3d2yE2gpXvSv-IIGHRthCf5-Wgrg>
-    <xmx:DesBaZk1Jcbo1zuURKahglAfAx4dFiFC6ySlby_1BDGjODtKhSMWrw>
-    <xmx:DesBaeoiWzHVKzLEnt3Da9gb5QZDUceAejk8QwX9E27L_5PJs24VPg>
-    <xmx:DesBaZs429W1TDgPTtOCx6BEsoyjQs5VmQv18QKCZj6li8Y3JSHbml6->
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 Oct 2025 06:23:08 -0400 (EDT)
-Date: Wed, 29 Oct 2025 10:23:06 +0000
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>, 
-	Harry Yoo <harry.yoo@oracle.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <l264zv6qfnvzhfdiwe3nzjydqz7w4t3ddumntopdq6qmyx4ktk@svdhieca6abe>
-References: <20251027115636.82382-1-kirill@shutemov.name>
- <20251027115636.82382-2-kirill@shutemov.name>
- <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
- <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
- <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+	s=arc-20240116; t=1761733412; c=relaxed/simple;
+	bh=pK/YYuwVw0dNMGDL/4xiOBeTZmWnv16C/Y9ZBRz/zjU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=snl8OmU2W1wGu9D04l4QJyLPNrFqa/acrIj5zDrDW68OrUpp1EBIEVhtkDSHXsSEuhuuJKxn6plRFdNl7k63BhIHtVHLzM1/xcGd+PVUfL5e7IZsdkOGgVOolhjOSJDuWboEWA9qWN//C5oOVXYLf2ejM3N0K0OooAFjQwZMWPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YaQ3NHHt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=57ztk8oO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 10:23:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761733407;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RiNjME06pBslSDUZ8GBMvErZDQeYLiu5OEX+k65dpBk=;
+	b=YaQ3NHHtQKj9u0q1dcJfVbfjhOXy6N3WNIwksehazqL1FhywjjE5GKn5lzZb8zXyNyZBsq
+	/H3WzvkPLjrLUVX6zeZba27oBfMHSO3S9/MmxkY1TeaBZVgG9Bj0Z8K5Niaf6bzNp1Z25e
+	G83Xa5xWMY36jDPPLutBS4rM3V4BYwdy75bU2wjsxlLN68wXimwQ13fC6zO2Xg9LwXsGGo
+	DN/vtd/c93nZ/InBXqM0V9luOG/VL49VrEAS5heBpMHkL6nX1t+pX49hCOkZGnrO0VTu3F
+	WJEuKd7JpWYYPMS6yLKT58H9wtdEAiWseNcMs7DGh0aSNbrOVY9UoKM/rvGjqg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761733407;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RiNjME06pBslSDUZ8GBMvErZDQeYLiu5OEX+k65dpBk=;
+	b=57ztk8oOHrsHqx5AqSRAH+fx5z/PsDQ4c2/1jhyZNvqR4sNOxuHfrGOShoQGrRwpliWwUs
+	ACYm0QEv/pmS4oAA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rseq] rseq: Switch to TIF_RSEQ if supported
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251027084307.903622031@linutronix.de>
+References: <20251027084307.903622031@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+Message-ID: <176173340598.2601451.1818282942506757405.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
-> On Tue, 28 Oct 2025, Kiryl Shutsemau wrote:
-> > 
-> > > Also, is [2/2] to be backported?  The changelog makes it sound that way,
-> > > but no Fixes: was identified?
-> > 
-> > Looking at split-on-truncate history, looks like this is the right
-> > commit to point to:
-> > 
-> > Fixes: b9a8a4195c7d ("truncate,shmem: Handle truncates that split large folios")
-> 
-> I agree that's the right Fixee for 2/2: the one which introduced
-> splitting a large folio to non-shmem filesystems in 5.17.
-> 
-> But you're giving yourself too hard a time of backporting with your
-> 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
-> flag then was tmpfs, which you're now excepting.  The flag got
-> renamed later (in 5.16) and then in 5.17 at last there was another
-> filesystem to set it.  So, this 1/2 would be
-> 
-> Fixes: 6795801366da ("xfs: Support large folios")
+The following commit has been merged into the core/rseq branch of tip:
 
-Good point.
+Commit-ID:     69c8e3d1610588d677faaa6035e1bd5de9431d6e
+Gitweb:        https://git.kernel.org/tip/69c8e3d1610588d677faaa6035e1bd5de94=
+31d6e
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 27 Oct 2025 09:45:26 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 29 Oct 2025 11:07:20 +01:00
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+rseq: Switch to TIF_RSEQ if supported
+
+TIF_NOTIFY_RESUME is a multiplexing TIF bit, which is suboptimal especially
+with the RSEQ fast path depending on it, but not really handling it.
+
+Define a seperate TIF_RSEQ in the generic TIF space and enable the full
+seperation of fast and slow path for architectures which utilize that.
+
+That avoids the hassle with invocations of resume_user_mode_work() from
+hypervisors, which clear TIF_NOTIFY_RESUME. It makes the therefore required
+re-evaluation at the end of vcpu_run() a NOOP on architectures which
+utilize the generic TIF space and have a seperate TIF_RSEQ.
+
+The hypervisor TIF handling does not include the seperate TIF_RSEQ as there
+is no point in doing so. The guest does neither know nor care about the VMM
+host applications RSEQ state. That state is only relevant when the ioctl()
+returns to user space.
+
+The fastpath implementation still utilizes TIF_NOTIFY_RESUME for failure
+handling, but this only happens within exit_to_user_mode_loop(), so
+arguably the hypervisor ioctl() code is long done when this happens.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://patch.msgid.link/20251027084307.903622031@linutronix.de
+---
+ include/asm-generic/thread_info_tif.h |  3 +++-
+ include/linux/irq-entry-common.h      |  2 +-
+ include/linux/rseq.h                  | 22 ++++++++++++++-------
+ include/linux/rseq_entry.h            | 27 ++++++++++++++++++++++++--
+ include/linux/thread_info.h           |  5 +++++-
+ kernel/entry/common.c                 | 10 ++++++++--
+ 6 files changed, 57 insertions(+), 12 deletions(-)
+
+diff --git a/include/asm-generic/thread_info_tif.h b/include/asm-generic/thre=
+ad_info_tif.h
+index ee3793e..da1610a 100644
+--- a/include/asm-generic/thread_info_tif.h
++++ b/include/asm-generic/thread_info_tif.h
+@@ -45,4 +45,7 @@
+ # define _TIF_RESTORE_SIGMASK	BIT(TIF_RESTORE_SIGMASK)
+ #endif
+=20
++#define TIF_RSEQ		11	// Run RSEQ fast path
++#define _TIF_RSEQ		BIT(TIF_RSEQ)
++
+ #endif /* _ASM_GENERIC_THREAD_INFO_TIF_H_ */
+diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-commo=
+n.h
+index 3ee0f16..b5baf22 100644
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -30,7 +30,7 @@
+ #define EXIT_TO_USER_MODE_WORK						\
+ 	(_TIF_SIGPENDING | _TIF_NOTIFY_RESUME | _TIF_UPROBE |		\
+ 	 _TIF_NEED_RESCHED | _TIF_NEED_RESCHED_LAZY |			\
+-	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL |			\
++	 _TIF_PATCH_PENDING | _TIF_NOTIFY_SIGNAL | _TIF_RSEQ |		\
+ 	 ARCH_EXIT_TO_USER_MODE_WORK)
+=20
+ /**
+diff --git a/include/linux/rseq.h b/include/linux/rseq.h
+index ded4baa..b5e4803 100644
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -42,7 +42,7 @@ static inline void rseq_signal_deliver(struct ksignal *ksig=
+, struct pt_regs *reg
+=20
+ static inline void rseq_raise_notify_resume(struct task_struct *t)
+ {
+-	set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	set_tsk_thread_flag(t, TIF_RSEQ);
+ }
+=20
+ /* Invoked from context switch to force evaluation on exit to user */
+@@ -114,17 +114,25 @@ static inline void rseq_force_update(void)
+=20
+ /*
+  * KVM/HYPERV invoke resume_user_mode_work() before entering guest mode,
+- * which clears TIF_NOTIFY_RESUME. To avoid updating user space RSEQ in
+- * that case just to do it eventually again before returning to user space,
+- * the entry resume_user_mode_work() invocation is ignored as the register
+- * argument is NULL.
++ * which clears TIF_NOTIFY_RESUME on architectures that don't use the
++ * generic TIF bits and therefore can't provide a separate TIF_RSEQ flag.
+  *
+- * After returning from guest mode, they have to invoke this function to
+- * re-raise TIF_NOTIFY_RESUME if necessary.
++ * To avoid updating user space RSEQ in that case just to do it eventually
++ * again before returning to user space, because __rseq_handle_slowpath()
++ * does nothing when invoked with NULL register state.
++ *
++ * After returning from guest mode, before exiting to userspace, hypervisors
++ * must invoke this function to re-raise TIF_NOTIFY_RESUME if necessary.
+  */
+ static inline void rseq_virt_userspace_exit(void)
+ {
+ 	if (current->rseq.event.sched_switch)
++	/*
++	 * The generic optimization for deferring RSEQ updates until the next
++	 * exit relies on having a dedicated TIF_RSEQ.
++	 */
++	if (!IS_ENABLED(CONFIG_HAVE_GENERIC_TIF_BITS) &&
++	    current->rseq.event.sched_switch)
+ 		rseq_raise_notify_resume(current);
+ }
+=20
+diff --git a/include/linux/rseq_entry.h b/include/linux/rseq_entry.h
+index 98d70a8..d14719d 100644
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -507,13 +507,36 @@ static __always_inline bool __rseq_exit_to_user_mode_re=
+start(struct pt_regs *reg
+ 	return false;
+ }
+=20
+-static __always_inline bool rseq_exit_to_user_mode_restart(struct pt_regs *r=
+egs)
++/* Required to allow conversion to GENERIC_ENTRY w/o GENERIC_TIF_BITS */
++#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
++static __always_inline bool test_tif_rseq(unsigned long ti_work)
+ {
++	return ti_work & _TIF_RSEQ;
++}
++
++static __always_inline void clear_tif_rseq(void)
++{
++	static_assert(TIF_RSEQ !=3D TIF_NOTIFY_RESUME);
++	clear_thread_flag(TIF_RSEQ);
++}
++#else
++static __always_inline bool test_tif_rseq(unsigned long ti_work) { return tr=
+ue; }
++static __always_inline void clear_tif_rseq(void) { }
++#endif
++
++static __always_inline bool
++rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
++{
++	if (likely(!test_tif_rseq(ti_work)))
++		return false;
++
+ 	if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
+ 		current->rseq.event.slowpath =3D true;
+ 		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+ 		return true;
+ 	}
++
++	clear_tif_rseq();
+ 	return false;
+ }
+=20
+@@ -557,7 +580,7 @@ static inline void rseq_debug_syscall_return(struct pt_re=
+gs *regs)
+ }
+ #else /* CONFIG_RSEQ */
+ static inline void rseq_note_user_irq_entry(void) { }
+-static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs)
++static inline bool rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsi=
+gned long ti_work)
+ {
+ 	return false;
+ }
+diff --git a/include/linux/thread_info.h b/include/linux/thread_info.h
+index dd925d8..b40de9b 100644
+--- a/include/linux/thread_info.h
++++ b/include/linux/thread_info.h
+@@ -67,6 +67,11 @@ enum syscall_work_bit {
+ #define _TIF_NEED_RESCHED_LAZY _TIF_NEED_RESCHED
+ #endif
+=20
++#ifndef TIF_RSEQ
++# define TIF_RSEQ	TIF_NOTIFY_RESUME
++# define _TIF_RSEQ	_TIF_NOTIFY_RESUME
++#endif
++
+ #ifdef __KERNEL__
+=20
+ #ifndef arch_set_restart_data
+diff --git a/kernel/entry/common.c b/kernel/entry/common.c
+index 523a3e7..5c792b3 100644
+--- a/kernel/entry/common.c
++++ b/kernel/entry/common.c
+@@ -11,6 +11,12 @@
+ /* Workaround to allow gradual conversion of architecture code */
+ void __weak arch_do_signal_or_restart(struct pt_regs *regs) { }
+=20
++#ifdef CONFIG_HAVE_GENERIC_TIF_BITS
++#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK & ~_TIF_RSEQ)
++#else
++#define EXIT_TO_USER_MODE_WORK_LOOP	(EXIT_TO_USER_MODE_WORK)
++#endif
++
+ static __always_inline unsigned long __exit_to_user_mode_loop(struct pt_regs=
+ *regs,
+ 							      unsigned long ti_work)
+ {
+@@ -18,7 +24,7 @@ static __always_inline unsigned long __exit_to_user_mode_lo=
+op(struct pt_regs *re
+ 	 * Before returning to user space ensure that all pending work
+ 	 * items have been completed.
+ 	 */
+-	while (ti_work & EXIT_TO_USER_MODE_WORK) {
++	while (ti_work & EXIT_TO_USER_MODE_WORK_LOOP) {
+=20
+ 		local_irq_enable_exit_to_user(ti_work);
+=20
+@@ -68,7 +74,7 @@ __always_inline unsigned long exit_to_user_mode_loop(struct=
+ pt_regs *regs,
+ 	for (;;) {
+ 		ti_work =3D __exit_to_user_mode_loop(regs, ti_work);
+=20
+-		if (likely(!rseq_exit_to_user_mode_restart(regs)))
++		if (likely(!rseq_exit_to_user_mode_restart(regs, ti_work)))
+ 			return ti_work;
+ 		ti_work =3D read_thread_flags();
+ 	}
 
