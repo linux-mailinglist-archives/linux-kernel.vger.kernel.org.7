@@ -1,237 +1,343 @@
-Return-Path: <linux-kernel+bounces-877266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B02AC1D9B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:44:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C050C1D9C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD8DF3B4642
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:44:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 11F7834BA9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7898A2D7DE3;
-	Wed, 29 Oct 2025 22:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB862DC77D;
+	Wed, 29 Oct 2025 22:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KuE6dmbh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rrpE4k7p";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KuE6dmbh";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rrpE4k7p"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q7j/LnSg"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93F92D63EF
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3641F13FEE
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761777877; cv=none; b=HFBWK6en4zHGld85ALQzQEl8bN9BMLnPEdLZeqodG9Qhzbb79kCMGNG1JpDI1D93kTK0eaaLfIuPfUQRV2IFG7sPSBGdL+nCUdQCq0i+zLwMCigfYsB/0dPrEaKWXwJFvXyOkz14fmeM3TBTeZ9RbE5gkztc9PK3TbuzkHQZDOk=
+	t=1761777991; cv=none; b=MHZbVuvIfdvOEVi9fO/FcJT54bafb1O0pUf07/HTA5Ni0QT79snEyeDvxZp6HK0njdqhlHO/gZ8c+dwEQgyaBVNn4grv9jYEeRIJo1VWnyKcuGWKaaUtWqn5wL+0mPpdEmy0T5q1477YOBABxA8DTl46i3e0CZsrtJtwiGWCuG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761777877; c=relaxed/simple;
-	bh=+o6hECYebyRFMZx7ZS5dyB6V4FBVvPzdgxvwlnKIap8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M3HOl6bEW836xT9H4xLIOYhhJe6zVN1lBNPvIxdalvkTr05+ewSVryzozqMPM89oR/19Hv8THS9NDpIt3TdETIRLitUdWwMo3ujdCfJdTs1+9HkC2evanpJIMmRuQk5M2pTltJ2YwDgtuW4X+FVM89Y5i0UMcQBRWHPr8VbTOEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KuE6dmbh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rrpE4k7p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KuE6dmbh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rrpE4k7p; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F1EC322809;
-	Wed, 29 Oct 2025 22:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761777874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nGeK7bx3Hm62BR80qyLU/cEzRG1dQ+GIaNgmFFG3WZk=;
-	b=KuE6dmbhj3b4/ZjtupyKEiIeT4ZjL+cZZgw2VyuQrj+ANCIYosjf7UNZe+PTbnLl6NVuTs
-	/5E3V0pItQqNqQDwpwRfZ4shHI0yGaKaKsH0M+TjWp/XOc1/PsIwa6d22FdhSu3LNGkZCZ
-	rCPGXFKmwtdJto6uv6bqUqGsLzdF6kw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761777874;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nGeK7bx3Hm62BR80qyLU/cEzRG1dQ+GIaNgmFFG3WZk=;
-	b=rrpE4k7pcP11GeKmOrNuaHpgSCvtvT1MmCr56Q/kxNqL8uSFkgzBdPOWdCpSjUvhCTZWHL
-	YMzANhVFXuX0dlAg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KuE6dmbh;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=rrpE4k7p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761777874; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nGeK7bx3Hm62BR80qyLU/cEzRG1dQ+GIaNgmFFG3WZk=;
-	b=KuE6dmbhj3b4/ZjtupyKEiIeT4ZjL+cZZgw2VyuQrj+ANCIYosjf7UNZe+PTbnLl6NVuTs
-	/5E3V0pItQqNqQDwpwRfZ4shHI0yGaKaKsH0M+TjWp/XOc1/PsIwa6d22FdhSu3LNGkZCZ
-	rCPGXFKmwtdJto6uv6bqUqGsLzdF6kw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761777874;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nGeK7bx3Hm62BR80qyLU/cEzRG1dQ+GIaNgmFFG3WZk=;
-	b=rrpE4k7pcP11GeKmOrNuaHpgSCvtvT1MmCr56Q/kxNqL8uSFkgzBdPOWdCpSjUvhCTZWHL
-	YMzANhVFXuX0dlAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D52821396A;
-	Wed, 29 Oct 2025 22:44:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6jm4M9GYAmlwFAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 22:44:33 +0000
-Message-ID: <a110ffdb-1e87-4a5a-b01b-2e7b0658ae33@suse.cz>
-Date: Wed, 29 Oct 2025 23:44:33 +0100
+	s=arc-20240116; t=1761777991; c=relaxed/simple;
+	bh=jOXVNBp21d6LAP5gElhEiaLtnhLBJdjWja+P/lcNTeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZZiEK3tF7zLAF19QL0VkBOCKz+1xh1PurpwbeXRoWBW5XHXHvdp9cD7UQ26lOp93IXGA71yX7OQTaFYvP0T53jfZPpS4VOfp/2iiC//sma8FF1m9zJrnAR4MrMKIWDzLnWjIh4r4gqO55UQxGO+SyOEo1E4ymZg/clJ5Ta+rYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q7j/LnSg; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-427084a641aso316245f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:46:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761777989; x=1762382789; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VF8ZKyr3ZTfy82XIYaeDjMzSL78nhQTOJhUiruXf8W8=;
+        b=Q7j/LnSgvcxO6ESyZALzvWJUm4+RDRtHKO8OVEXY/F196jW7WWFrm5h4WkqUJkyALX
+         NQtPxy4nqu2ZKs6Wz+agMTHfzZ8PTjDlG7SeI3HEUL0AwpwleEe6ClUP/1LrvkIWJ5xl
+         ibfEI0ZPhdg1qjimuvDhCkwNSN0MT9LrdAjmjYVX75qgf/wF9xXm50Vkw1r2gvduDMxK
+         VdFvAtkcrZD90u/7tGJzkBYOjAKhB1WJlWw1ZNkF1XRaB6UVIzqczrkXK3Q9Ne0tYMni
+         YYwkbr3EGAqAuPtjgRhF64RQcsonSlfbAUi1GkOtSQmYEEPUPKERgMVr7GUXEAV8apon
+         axsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761777989; x=1762382789;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VF8ZKyr3ZTfy82XIYaeDjMzSL78nhQTOJhUiruXf8W8=;
+        b=H3TNAmAESNMzvXNzLBWFGs9iGGn2KdJJvxw3IuMaS1D6rYEkrMcdc4cHWE5iwk0m04
+         ZgQ4COD3fx07Kf4pIMxfiSc5ZYZtYUPo8K7nDmi1d3tKiZ2SC9TQVux9JmV56jjWKsUk
+         JEDK2kxGMfxp0nShFiJy7feJ+J7fMND2NwPivL56QuGH6yeCa/6DtHL6NmfvR54aI6cj
+         vYGvoNyApEtHhb8rWO4OtK1ir85K5N/PhSs5j2AHOwX6cfSChrzwWYCCsER6GlIRA5J+
+         9E18gJJDGhKvpGgcCN/C6HNDX3sUrEH4LHPJT1YylwvG1VBiVYeqgp6321yPQar6ltG7
+         EBdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPO20caiMXB7q+YpVpddD9f5+zt+z9aNUCdu+dwNjeZ7qcFXdfqSbEoDeOHNAvdZkt4ree9hmevvPdtUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqFrl81wQUNUs4b16hPAOpVSDIUkRlf4fliBZd9874XW9UjGZO
+	K7Mn3gEakZXYIlm/kic6ZgOgZJGy+Tp534k9puN+sAYq1sz3trZ1gmGX
+X-Gm-Gg: ASbGncsAvzBgfdn55cV1Lo7hWkwsDWWtzETYTBABTSrSP7WRxeP6xqZU1N7qkGkFzet
+	afyHkpYMsnSAwQ9Vc5D5MjN1m2x1Z20fft8mKBoBIVRpYICc7B7aK3tNisGT0prdzjbyd6AqCQl
+	5aVDOBc8OqLcrpqQ7dENnPkfGfA7LVGRx0+dkmuMJlSQqdqd4hrPAPM6HVqYnuXYOxs+1da6idO
+	rXxY8ApIZp5gjPlCbhDjYEJK65whFjB5WXR1YTBcstEnAU1JK061jzctLOj6oP0GLspgzCOCNyp
+	xbuhecfdmQMYQaIBFEDFAKWVX59IJ3ylh6D8XpMjK9UwdJ1bC9O0tKCHZqz5S8j1yX+INTzA9xs
+	a1EwrHWkCi5dXkA58akayfThCp0/Dqo4Wzn7i5vwinXjN1ejOwA2IE8RlAD1lro1lnHeHyabs8T
+	t99exL6j2p1xMnZZAf8FprIlenYaxOcWSjs6Hir6KgcXA=
+X-Google-Smtp-Source: AGHT+IFIbAtMObhmtPyCgMPcO1Opp+Xy+pPXm2lE4u/n9a432p5A5AvgL2F2qHUK5dDeTjGyXPbmEw==
+X-Received: by 2002:a05:6000:18a7:b0:428:3d75:b0e8 with SMTP id ffacd0b85a97d-429b4ca2941mr936653f8f.62.1761777988338;
+        Wed, 29 Oct 2025 15:46:28 -0700 (PDT)
+Received: from antoni-VivoBook-ASUSLaptop-X512FAY-K512FA ([78.211.131.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb7d1sm29049186f8f.16.2025.10.29.15.46.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 15:46:27 -0700 (PDT)
+Date: Wed, 29 Oct 2025 23:46:05 +0100
+From: Antoni Pokusinski <apokusinski01@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>, jic23@kernel.org,
+	dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+	marcelo.schmitt1@gmail.com
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: mpl3115: add threshold events support
+Message-ID: <20251029224605.3ixkvmmkm36iwh22@antoni-VivoBook-ASUSLaptop-X512FAY-K512FA>
+References: <20251028213351.77368-1-apokusinski01@gmail.com>
+ <20251028213351.77368-3-apokusinski01@gmail.com>
+ <aQHPUQ5bU7sFojul@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 12/19] slab: remove the do_slab_free() fastpath
-Content-Language: en-US
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, linux-rt-devel@lists.linux.dev,
- bpf <bpf@vger.kernel.org>, kasan-dev <kasan-dev@googlegroups.com>
-References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
- <20251023-sheaves-for-all-v1-12-6ffa2c9941c0@suse.cz>
- <CAADnVQ+nAA5OeCbjskbrtgYbPR4Mp-MtOfeXoQE5LUgcZOawEQ@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <CAADnVQ+nAA5OeCbjskbrtgYbPR4Mp-MtOfeXoQE5LUgcZOawEQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: F1EC322809
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQHPUQ5bU7sFojul@smile.fi.intel.com>
 
-On 10/25/25 00:32, Alexei Starovoitov wrote:
-> On Thu, Oct 23, 2025 at 6:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->> @@ -6444,8 +6316,13 @@ void kfree_nolock(const void *object)
->>          * since kasan quarantine takes locks and not supported from NMI.
->>          */
->>         kasan_slab_free(s, x, false, false, /* skip quarantine */true);
->> +       /*
->> +        * __slab_free() can locklessly cmpxchg16 into a slab, but then it might
->> +        * need to take spin_lock for further processing.
->> +        * Avoid the complexity and simply add to a deferred list.
->> +        */
->>         if (!free_to_pcs(s, x, false))
->> -               do_slab_free(s, slab, x, x, 0, _RET_IP_);
->> +               defer_free(s, x);
+On Wed, Oct 29, 2025 at 10:24:49AM +0200, Andy Shevchenko wrote:
+> On Tue, Oct 28, 2025 at 10:33:52PM +0100, Antoni Pokusinski wrote:
+> > Add support for pressure and temperature rising threshold events.
 > 
-> That should be rare, right?
-> free_to_pcs() should have good chances to succeed,
-> and pcs->spare should be there for kmalloc sheaves?
+> ...
+> 
+> > @@ -322,7 +339,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
+> >  			.storagebits = 32,
+> >  			.shift = 12,
+> >  			.endianness = IIO_BE,
+> > -		}
+> > +		},
+> > +		.event_spec = mpl3115_temp_press_event,
+> > +		.num_event_specs = ARRAY_SIZE(mpl3115_temp_press_event),
+> >  	},
+> >  	{
+> >  		.type = IIO_TEMP,
+> > @@ -338,7 +357,9 @@ static const struct iio_chan_spec mpl3115_channels[] = {
+> >  			.storagebits = 16,
+> >  			.shift = 4,
+> >  			.endianness = IIO_BE,
+> > -		}
+> > +		},
+> 
+> Just a side note below, no action from you required on this!
+> 
+> Yeah, yet another reminder for the comma/not-a-comma choices made initially and
+> why it's important to follow the advice
+> 
+> > +		.event_spec = mpl3115_temp_press_event,
+> > +		.num_event_specs = ARRAY_SIZE(mpl3115_temp_press_event),
+> >  	},
+> >  	IIO_CHAN_SOFT_TIMESTAMP(2),
+> >  };
+> 
+> ...
+> 
+> > -	if (!(ret & MPL3115_INT_SRC_DRDY))
+> > +	if (!(ret & (MPL3115_INT_SRC_DRDY | MPL3115_INT_SRC_PTH |
+> > +		     MPL3115_INT_SRC_TTH)))
+> 
+> Can we rather keep this split logical?
+> 
+> 	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
+> 		     MPL3115_INT_SRC_DRDY)))
+> 
+> >  		return IRQ_NONE;
+> 
+> ...
+> 
+> > -	u8 ctrl_reg1 = data->ctrl_reg1;
+> > -	u8 ctrl_reg4 = data->ctrl_reg4;
+> > +	u8 ctrl_reg1, ctrl_reg4;
+> 
+> > +	guard(mutex)(&data->lock);
+> 
+> Why this is moved? Before the access to the data->ctrl* was done without
+> locking. Is it an existing bug?
+> 
+Since this patchset adds `write_event_config()` in which CTRL_REG1.ACTIVE
+and CTRL_REG4 are modified, the lock now needs to guard the read of
+data->ctrl_regX as well. Otherwise, we could have e.g. 2 concurrent
+threads executing `set_trigger_state()` and `write_event_config()` that
+would read data->ctrl_regX at the same time and then one would overwrite
+the other's values in `config_interrupt()`.
 
-Yes.
+In the current driver I don't think there is any bug in here. The only
+place (except probe) where the data->ctrl_regX is modified is
+`config_interrupt()`, called from `set_trigger_state()`. If we had
+concurrent calls to this function, then the final values of CTRL_REG1
+and CTRL_REG4 would simply depend on which thread is scheduled as the last one.
+With the `guard(mutex)` before accessing data->ctrl_reg1, the situation
+would be exactly the same.
 
-> So trylock failure due to contention in barn_get_empty_sheaf()
-> and in barn_replace_full_sheaf() should be rare.
+> > +	ctrl_reg1 = data->ctrl_reg1;
+> > +	ctrl_reg4 = data->ctrl_reg4;
+> >  
+> >  	if (state) {
+> >  		ctrl_reg1 |= MPL3115_CTRL1_ACTIVE;
+> >  		ctrl_reg4 |= MPL3115_CTRL4_INT_EN_DRDY;
+> >  	} else {
+> > -		ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
+> >  		ctrl_reg4 &= ~MPL3115_CTRL4_INT_EN_DRDY;
+> > -	}
+> >  
+> > -	guard(mutex)(&data->lock);
+> > +		if (!ctrl_reg4)
+> > +			ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
+> > +	}
+> >  
+> >  	return mpl3115_config_interrupt(data, ctrl_reg1, ctrl_reg4);
+> 
+> ...
+> 
+> > +static int mpl3115_write_event_config(struct iio_dev *indio_dev,
+> > +				      const struct iio_chan_spec *chan,
+> > +				      enum iio_event_type type,
+> > +				      enum iio_event_direction dir,
+> > +				      bool state)
+> > +{
+> > +	struct mpl3115_data *data = iio_priv(indio_dev);
+> > +	u8 int_en_mask;
+> > +	u8 ctrl_reg1, ctrl_reg4;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PRESSURE:
+> > +		int_en_mask = MPL3115_CTRL4_INT_EN_PTH;
+> > +		break;
+> > +	case IIO_TEMP:
+> > +		int_en_mask = MPL3115_CTRL4_INT_EN_TTH;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> 
+> > +	guard(mutex)(&data->lock);
+> 
+> Similar Q here, why do you protect data that was (still is?) not protected before?
+> 
+Same situation here as in `set_trigger_state()`
+> > +	ctrl_reg1 = data->ctrl_reg1;
+> > +	ctrl_reg4 = data->ctrl_reg4;
+> > +
+> > +	if (state) {
+> > +		ctrl_reg1 |= MPL3115_CTRL1_ACTIVE;
+> > +		ctrl_reg4 |= int_en_mask;
+> > +	} else {
+> > +		ctrl_reg4 &= ~int_en_mask;
+> > +
+> > +		if (!ctrl_reg4)
+> > +			ctrl_reg1 &= ~MPL3115_CTRL1_ACTIVE;
+> > +	}
+> > +
+> > +	return mpl3115_config_interrupt(data, ctrl_reg1, ctrl_reg4);
+> > +}
+> 
+> ...
+> 
+> > +static int mpl3115_read_thresh(struct iio_dev *indio_dev,
+> > +			       const struct iio_chan_spec *chan,
+> > +			       enum iio_event_type type,
+> > +			       enum iio_event_direction dir,
+> > +			       enum iio_event_info info,
+> > +			       int *val, int *val2)
+> > +{
+> > +	struct mpl3115_data *data = iio_priv(indio_dev);
+> > +	int ret, press_pa;
+> > +	__be16 tmp;
+> > +
+> > +	if (info != IIO_EV_INFO_VALUE)
+> > +		return -EINVAL;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PRESSURE:
+> > +		ret = i2c_smbus_read_i2c_block_data(data->client,
+> > +						    MPL3115_PRESS_TGT, 2,
+> 
+> sizeof() ?
+> 
+> > +						    (u8 *) &tmp);
+> 
+> Here and elsewhere, drop the space between casting and operand.
+> 
+> > +		if (ret < 0)
+> > +			return ret;
+> > +
+> > +		/**
+> 
+> It's not a kernel-doc.
+> 
+> > +		 * Target value for the pressure is
+> > +		 * 16-bit unsigned value in 2 Pa units
+> > +		 */
+> > +		press_pa = be16_to_cpu(tmp) << 1;
+> > +		*val = press_pa / KILO;
+> > +		*val2 = (press_pa % KILO) * MILLI;
+> > +
+> > +		return IIO_VAL_INT_PLUS_MICRO;
+> > +	case IIO_TEMP:
+> > +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +
+> > +		/* Target value for the temperature is 8-bit 2's complement */
+> > +		*val = sign_extend32(ret, 7);
+> > +
+> > +		return IIO_VAL_INT;
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> 
+> ...
+> 
+> > +static int mpl3115_write_thresh(struct iio_dev *indio_dev,
+> > +				const struct iio_chan_spec *chan,
+> > +				enum iio_event_type type,
+> > +				enum iio_event_direction dir,
+> > +				enum iio_event_info info,
+> > +				int val, int val2)
+> > +{
+> > +	struct mpl3115_data *data = iio_priv(indio_dev);
+> > +	u8 tmp[2];
+> 
+> Use proper __be16 type.
+> 
+> > +	if (info != IIO_EV_INFO_VALUE)
+> > +		return -EINVAL;
+> > +
+> > +	switch (chan->type) {
+> > +	case IIO_PRESSURE:
+> > +		val = (val * KILO + val2 / MILLI) >> 1;
+> 
+> > +		if (val < 0 || val > 0xffff)
+> > +			return -EINVAL;
+> 
+> U16_MAX?
+> 
+> > +		tmp[0] = FIELD_GET(GENMASK(15, 8), val);
+> > +		tmp[1] = FIELD_GET(GENMASK(7, 0), val);
+> > +
+> > +		return i2c_smbus_write_i2c_block_data(data->client,
+> > +						      MPL3115_PRESS_TGT, 2, tmp);
+> 
+> sizeof()
+> 
+> > +	case IIO_TEMP:
+> > +		if (val < -128 || val > 127)
+> > +			return -EINVAL;
+> 
+> S8_MIN, S8_MAX ?
+> 
+> > +		return i2c_smbus_write_byte_data(data->client,
+> > +						 MPL3115_TEMP_TGT, val);
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +}
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+>
+Kind regards,
+Antoni
 
-Yeah, while of course stress tests like will-it-scale can expose nasty
-corner cases.
-
-> But needs to be benchmarked, of course.
-> The current fast path cmpxchg16 in !RT is very reliable
-> in my tests. Hopefully this doesn't regress.
-
-You mean the one that doesn't go the "if (unlikely(slab != c->slab))" way?
-Well that unlikely() there might be quite misleading. It will be true when
-free follows shortly after alloc. If not, c->slab can be exhausted and
-replaced with a new one. Or the process is migrated to another cpu before
-freeing. The probability of slab == c->slab staying true drops quickly.
-
-So if your tests were doing frees shortly after alloc, you would be indeed
-hitting it reliably, but is it representative?
-However sheaves should work reliably as well too with such a pattern, so if
-some real code really does that significantly, it will not regress.
 
