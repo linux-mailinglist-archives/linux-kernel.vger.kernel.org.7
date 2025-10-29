@@ -1,149 +1,215 @@
-Return-Path: <linux-kernel+bounces-876430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC0AC1B6AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:52:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31F1EC1B859
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EEEC1349F7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 013D858777E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:54:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2612DF14C;
-	Wed, 29 Oct 2025 14:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCF1331A4A;
+	Wed, 29 Oct 2025 14:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VuH9sMo3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="XXzWV4ja"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30862BEC30;
-	Wed, 29 Oct 2025 14:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 051143321BB;
+	Wed, 29 Oct 2025 14:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749178; cv=none; b=KuIK2i/+Ebhlttf1jzc/hwiOH5r/wkPyu8NURO6ro2buZ6GfFUKxeMzfz+2OOE1DXYEy3XtKAKmUNoXMxONY2Tw5bAzIVA9ex26shfha9j11dxAw370n5Cy6tbDZRQk+5CSSrzaksYXNDsL3oAT9LNHWjOoEGDxZ6odiwdCIrTs=
+	t=1761749235; cv=none; b=SvhRB8huTQCDL/3G9VC2ikJt5uYZF9PF1U0JF+zskP4dBDirle1+Oo7wE1OhQb9OiO2kydl+pcL8FWnXzrx4FVy2DLMna6/5hS+JYr0CaX1yN+bP0o76bLvk5tJm+yJeYITVDnBI+YqIssPJPksy0NsgumJjuVfFQZTYlMqMSFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749178; c=relaxed/simple;
-	bh=aP4SRqzhIO34pea2vImSc5uKj7MEAAvxWjOUF/PMYV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ruLvGcXSqoEbobEOnHp0olYq64OsRdGqJmP0+XWtMJx7CE34Q3Ekyx8vk7iEo+Zz9M5gKEDf/7PODB0BbABRmmAzXkOqmk4Yb+uUIJHf5XlD277f0bhqJ3KDGB1sSLS2juiFtxsvFEE7ed4TVQNxCtfQ0uqm7cnVd06VEU9cMTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VuH9sMo3; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761749176; x=1793285176;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aP4SRqzhIO34pea2vImSc5uKj7MEAAvxWjOUF/PMYV0=;
-  b=VuH9sMo3aGw8/lXVbh6sJSS8TdqLg814VhkS+Bh+0LnqLll+dNJ0TpRq
-   fRdVmxLJ4UJs/n2u7qdjm87/ojUhzCNmuC2Zjd1o2vbNFza/5CHZIi6n/
-   qxudfNVFI5WBb2soBeOf9HmG55TC4G2zbl1M2aSh52zBGJCgVOcg1tDKn
-   uR1h15aqnyktQNWanHW7jTRils22fsqfBPBSQhyry+ygc2/s7YunKBlmo
-   UhbyHLUejxwEGx1xrHrHPjyJDlTrXpM0tCwCKsOaStJfwaayr5z/my30a
-   uWs+AeuoA7+VHi9GS0h1YxRE1nBPI0XiU6PABQiw12ZRi0zWYQlKdnil+
-   w==;
-X-CSE-ConnectionGUID: JKLML0W5T8uqTDAv35TM0A==
-X-CSE-MsgGUID: matE8uiiRyqwxvwcuN7+tQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="74471903"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="74471903"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 07:46:16 -0700
-X-CSE-ConnectionGUID: y7+oPJ0FT2eMMEpgfAyiIw==
-X-CSE-MsgGUID: Cjs2nBxMRSawNbM/GhMaWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="185323418"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2025 07:46:10 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vE7Qo-000Khd-0U;
-	Wed, 29 Oct 2025 14:45:55 +0000
-Date: Wed, 29 Oct 2025 22:44:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v4 13/72] nstree: introduce a unified tree
-Message-ID: <202510292247.swX8RW4u-lkp@intel.com>
-References: <20251029-work-namespace-nstree-listns-v4-13-2e6f823ebdc0@kernel.org>
+	s=arc-20240116; t=1761749235; c=relaxed/simple;
+	bh=b243boCCaTbSMrqckzOBVcc5N40k8Nqv3axAi+ugjIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SpckSBV33MFfWNIfHYZHwujC43mehuGjA6k7jB/7ke5ztGDnxiMl5e1ABBm8mVvu0TpRHuTmVPKQdNH4eCFpEE+lOaM/XV7MeQ7FdtrgXHxqpzo3mgJOdSylFEOOH5Jkitiw01JZd88e0q8L0Drkf9nIbqbmYTReqVWD6WYnbYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=XXzWV4ja; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 7BD8A1A1749;
+	Wed, 29 Oct 2025 14:47:12 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 43FA7606E8;
+	Wed, 29 Oct 2025 14:47:12 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 30B1B117F81D9;
+	Wed, 29 Oct 2025 15:47:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761749231; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=fm/+HpeO68MBCP6BcE/IdTzwkeA3DkIILyT2jptsYkQ=;
+	b=XXzWV4jarvRgdIdVxhjeaqgO+ujGNnl1bGEAJRnhevh7HP8QBPlOah3EoED79UqvixVmMo
+	VCooERib60ZQbimKQj6aVxbX3+NgDousfqRI7lJ9fork9UJ1SIczrv4xDKZ4ZVOPjXLZB+
+	Kh9zNbs7Iby7bf5WksKz0MMg4mT07KkSHB5bjuRYyrVH61iZDLv7fhonYyCkiLGUqIZgZH
+	KjB+KnafPNs62NJesSLfCN9e6RBDkFHCFtH1NFQLwd2z9n1i+Q6w4ZIFWema98Qx1TLuGT
+	1Ree+S74B8Mgm6aYHwOgwJArUMyT0cTDg91Hc4JGNuizNHh7m+cV37kxedbASA==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v2 1/4] dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
+Date: Wed, 29 Oct 2025 15:46:41 +0100
+Message-ID: <20251029144644.667561-2-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251029144644.667561-1-herve.codina@bootlin.com>
+References: <20251029144644.667561-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-work-namespace-nstree-listns-v4-13-2e6f823ebdc0@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Christian,
+The Renesas RZ/N1 ADC controller is the ADC controller available in the
+Renesas RZ/N1 SoCs family.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+---
+ .../bindings/iio/adc/renesas,rzn1-adc.yaml    | 111 ++++++++++++++++++
+ 1 file changed, 111 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
 
-[auto build test ERROR on 3a8660878839faadb4f1a6dd72c3179c1df56787]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Brauner/libfs-allow-to-specify-s_d_flags/20251029-205841
-base:   3a8660878839faadb4f1a6dd72c3179c1df56787
-patch link:    https://lore.kernel.org/r/20251029-work-namespace-nstree-listns-v4-13-2e6f823ebdc0%40kernel.org
-patch subject: [PATCH v4 13/72] nstree: introduce a unified tree
-config: loongarch-allnoconfig (https://download.01.org/0day-ci/archive/20251029/202510292247.swX8RW4u-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510292247.swX8RW4u-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510292247.swX8RW4u-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> kernel/nstree.c:170:43: error: no member named 'type' in 'struct ns_tree'
-     170 |         VFS_WARN_ON_ONCE(ns->ns_type != ns_tree->type);
-         |                                         ~~~~~~~  ^
-   kernel/nstree.c:297:93: error: no member named 'type' in 'struct ns_tree'
-     297 |         VFS_WARN_ON_ONCE(list_entry_rcu(list, struct ns_common, ns_list_node)->ns_type != ns_tree->type);
-         |                                                                                           ~~~~~~~  ^
-   2 errors generated.
-
-
-vim +170 kernel/nstree.c
-
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  165  
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  166  void __ns_tree_remove(struct ns_common *ns, struct ns_tree *ns_tree)
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  167  {
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  168  	VFS_WARN_ON_ONCE(RB_EMPTY_NODE(&ns->ns_tree_node));
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  169  	VFS_WARN_ON_ONCE(list_empty(&ns->ns_list_node));
-4055526d35746ce Christian Brauner 2025-09-24 @170  	VFS_WARN_ON_ONCE(ns->ns_type != ns_tree->type);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  171  
-01da9c6ec4269ba Christian Brauner 2025-10-29  172  	write_seqlock(&ns_tree_lock);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  173  	rb_erase(&ns->ns_tree_node, &ns_tree->ns_tree);
-01da9c6ec4269ba Christian Brauner 2025-10-29  174  	rb_erase(&ns->ns_unified_tree_node, &ns_unified_tree);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  175  	list_bidir_del_rcu(&ns->ns_list_node);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  176  	RB_CLEAR_NODE(&ns->ns_tree_node);
-01da9c6ec4269ba Christian Brauner 2025-10-29  177  	write_sequnlock(&ns_tree_lock);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  178  }
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  179  EXPORT_SYMBOL_GPL(__ns_tree_remove);
-885fc8ac0a4dc70 Christian Brauner 2025-09-12  180  
-
+diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
+new file mode 100644
+index 000000000000..1a40352165fb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
+@@ -0,0 +1,111 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/renesas,rzn1-adc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1 Analog to Digital Converter (ADC)
++
++maintainers:
++  - Herve Codina <herve.codina@bootlin.com>
++
++description:
++  The Renesas RZ/N1 ADC controller available in the Renesas RZ/N1 SoCs family
++  can use up to two internal ADC cores (ADC1 and ADC2) those internal cores are
++  handled through ADC controller virtual channels.
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r9a06g032-adc   # RZ/N1D
++      - const: renesas,rzn1-adc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: APB internal bus clock
++      - description: ADC clock
++
++  clock-names:
++    items:
++      - const: pclk
++      - const: adc
++
++  power-domains:
++    maxItems: 1
++
++  adc1-avdd-supply:
++    description:
++      ADC1 analog power supply.
++
++  adc1-vref-supply:
++    description:
++      ADC1 reference voltage supply.
++
++  adc2-avdd-supply:
++    description:
++      ADC2 analog power supply.
++
++  adc2-vref-supply:
++    description:
++      ADC2 reference voltage supply.
++
++  '#io-channel-cells':
++    const: 1
++    description: |
++      Channels numbers available:
++        if ADC1 is used (i.e. adc1-{avdd,vref}-supply present):
++          - 0: ADC1 IN0
++          - 1: ADC1 IN1
++          - 2: ADC1 IN2
++          - 3: ADC1 IN3
++          - 4: ADC1 IN4
++          - 5: ADC1 IN6
++          - 6: ADC1 IN7
++          - 7: ADC1 IN8
++        if ADC2 is used (i.e. adc2-{avdd,vref}-supply present):
++          - 8: ADC2 IN0
++          - 9: ADC2 IN1
++          - 10: ADC2 IN2
++          - 11: ADC2 IN3
++          - 12: ADC2 IN4
++          - 13: ADC2 IN6
++          - 14: ADC2 IN7
++          - 15: ADC2 IN8
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - '#io-channel-cells'
++
++# At least one of avvd/vref supplies
++anyOf:
++  - required:
++      - adc1-vref-supply
++      - adc1-avdd-supply
++  - required:
++      - adc2-vref-supply
++      - adc2-avdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
++
++    adc: adc@40065000 {
++      compatible = "renesas,r9a06g032-adc", "renesas,rzn1-adc";
++      reg = <0x40065000 0x200>;
++      clocks = <&sysctrl R9A06G032_HCLK_ADC>, <&sysctrl R9A06G032_CLK_ADC>;
++      clock-names = "pclk", "adc";
++      power-domains = <&sysctrl>;
++      adc1-avdd-supply = <&adc1_avdd>;
++      adc1-vref-supply = <&adc1_vref>;
++      #io-channel-cells = <1>;
++    };
++...
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
