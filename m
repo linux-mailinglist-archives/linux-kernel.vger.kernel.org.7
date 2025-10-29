@@ -1,759 +1,176 @@
-Return-Path: <linux-kernel+bounces-876014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69F9C1A627
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:52:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE8FC1A525
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BADF6358710
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:52:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A7DCE4FCB1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F74236E348;
-	Wed, 29 Oct 2025 12:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D530035A945;
+	Wed, 29 Oct 2025 12:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCi5gfVQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdTfVIXh"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EEAA3683B9;
-	Wed, 29 Oct 2025 12:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7699B33F8C5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740799; cv=none; b=qvbDwA8HBzsrViMPA8W+1e7gqpTRlnQ3xKBYs+h9OUybjI1nylpBYE6sF5j/JFqAhr3g2vj1LLK3YHSeY7nX7H/9EOMEIuHWHRvUWKqHFEOSKvyzj8X7HfQpuvXG0N7yhT9H30mxlrRVt/FL5f3UyUt2oWSsPqhjpkoiYdmh+SA=
+	t=1761740586; cv=none; b=is8uakT0ksVsTdcj7FDqN7Abc/wCi7qcW7gpyXuY0GCnWMwKJaJGYFFSIKa8V6agrlOpMl2Yqa7NO09lO6hG2I/3yN8mCCCQC/9LOPdW1n0U14x871A5RnGh5uHTKVH41DLdrrUKQajFndD06rs8sT8xQAtGAcQGTQUjp2RO+bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740799; c=relaxed/simple;
-	bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hoiuttsab3iBg8Efsxkc/Ai4MT1iFWdCfvvIf4ILrRJ+tXpHh6wM0DR0hYB6rmTDSCadPe2GCI1vwVfuM8Pq7hfSlqZMiOi7F16MZkrDCK7IvOMs14+s9sH3mLKgqBml4hprlkHgHM23lOZM1riSrJTU4rqoW5BH4LrKRIX/ACE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCi5gfVQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B3C4CEF7;
-	Wed, 29 Oct 2025 12:26:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740799;
-	bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=mCi5gfVQ1ogC3uJvRobyxHX0o38fMzvhkOBgOQIL6/LApcATtRvNmQof/SAeBoBNQ
-	 AYSIeNo01+s3UM+SAdSEZqDRijlDB6AuVWhEgDEvcSEyzzGJZ6cWVSuVXKlQP+8N4g
-	 rzGgIONmyCV3EjatMIAMnHeayERsTlq0k9jk3xGT0cfn6bhlzitUzmet5Cctfy4Ao9
-	 r/mKQfQtw3yAVO4KMSYWIzSSzRk5LLnV1MCGk/SOHMiyuy5Kfsck52QfEA8E4tBpj1
-	 qYKqQEyOt2/90KVzyr45GjNZWtfwy1MRh5sgUq3B34+64oEmtZXGF6AKRQ58e9fsXc
-	 TXnZDZD+kdZuw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:24 +0100
-Subject: [PATCH v4 71/72] selftests/namespace: add stress test
+	s=arc-20240116; t=1761740586; c=relaxed/simple;
+	bh=lMz9fVEHjNsR89opwTxfGLHpbSSbTkwW22XDxfNJNo8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GQYhRMS2jsZ6MbslU5MUgwAaDJ/tcRHKKTyKk566WXq2UYcNzha9MqADrbf3ajHv3GPdzizW2khGpaposwkIi/0OLbdvh3+iGnR0Sfen3vywAtAFUfAePGS+l5UWKtcaqH1tsVFe0Ut3vRJcH8GIQVqtansymqVLydPw8oBhI58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdTfVIXh; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-63c09141cabso10708054a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:23:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761740581; x=1762345381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T0c/4hWZsozl7YTWr0GTKUdnk9cs1fYSN3DX9TuRcw8=;
+        b=QdTfVIXh9/dOsJGVosuYXyu2OI4ULunmyzx9bU4iudMY1LHGpxZH9hzJrIOvg0isvQ
+         tks0nuDAITBPssvR+rSCsFu4HSc2JnCjz2zZpDNnylnQwZS9GuRVLT/ifyOsIv0pxxGs
+         Vu+1xNdZN1K4cgR5tL+ouhkUMNx+eJyc3s5pX/HkWVkcYuEwp2KrRqUj/3QfuJF3kUvo
+         cr/5tb7szhacJAkneL1ckmZKUFNPK1LdDed8RSJo2LhYYYj5dK8vzHqGZR24C3eILIli
+         XnUYXGRax6amNgFhkjo0Xnk62aVRIV9T9Fr9og2SfsjvCk7LqZvvSYEmEosSxL8LUiuI
+         Q1Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761740581; x=1762345381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T0c/4hWZsozl7YTWr0GTKUdnk9cs1fYSN3DX9TuRcw8=;
+        b=qJLOO8xzNLcnsXQamAVNOYp940qTDqTitqvBAVpVVUf+XmDQ8Pku45rMQVwPoEklUi
+         c4nYDpe4iBe9gUfaiufKMBefuT/iCYtMLwOS8KrcYhg2sQmQ29kc5ujVdwSTlZmkboKo
+         NfWBmG/61XZC7Tg7Ul2hK/IGVCOBe9MYhUdjTd8iJoyWAirHTDWyVk0dmEItFdi6mAC/
+         VA7WUqZ5NMbRhrd5TvTSIMSrmIdqcRFXrwVsc9BM5R0KGJc8b0wSKvcI60C4v7q5Epic
+         V9RSNiSU2CjmF0ZrUbDQgnDufb43zc6uoMWi1WBuo5anqw1aQBy+x1Z51Vk202hrBpox
+         eMiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWyFyH20i3KSZbAzTzD6AxIFsU2Wpe6lDwS8QjySIndQzI5V+5IFSBDQ0cLTPTpq+auPBCzYkSkhbG8mPQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJuHQJ+zGabOHJhJhlvAw7bKoPirdJxwjNrnz6sxgV7glBrQ16
+	qVynxEnREmREMaxqiWW/lZ5Cma1/jrJ/ZdKX2vneIQOb3TVRluzbujdeHUX/fNGGs4tAyz3rbOU
+	D9j9RWE7/4b35tn34Fn8oKiair5bhYNXo9GKlCI0XHwZ5
+X-Gm-Gg: ASbGnct2BWFUPviMhoz5Q3xs/aWs+R0BhJohW9tEJOtVySJmMOm2Qt3FjsKz6kQCRhg
+	+RUaqklJxRBi6j0aoWvsLNrrTVrhUA/AuW1ibbva29KLpYxN/qJWiRlw/vrJsYw8VXulqhQOdiY
+	ejEUOxvLZrI/3mdR/Zhph/laufB4JhIirCtdeIaak5FXZ2YYx8QCwnIq5P6BGCATwCf4/QZwX+K
+	7nK4CltIj6A9HRuOKl5X+f6+scnwPLWoGDNxuYPmAQhqrteWQcSHGfMG28SP+4=
+X-Google-Smtp-Source: AGHT+IFHLKb7GuMaTant0mZZh+7DkoNItPLMFom70+IZl/TSaLwjrPzARyq58A9cf3m49Eb6OHGyh8pSiSaoLoPR9ug=
+X-Received: by 2002:a17:906:6a0e:b0:b45:1063:fb62 with SMTP id
+ a640c23a62f3a-b703d342998mr257605866b.24.1761740580026; Wed, 29 Oct 2025
+ 05:23:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-71-2e6f823ebdc0@kernel.org>
-References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
-In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
- Jeff Layton <jlayton@kernel.org>
-Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- Lennart Poettering <mzxreary@0pointer.de>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
- Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, 
- Johannes Weiner <hannes@cmpxchg.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, bpf@vger.kernel.org, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=18002; i=brauner@kernel.org;
- h=from:subject:message-id; bh=g358ZvosiSM60y9eCxcqiXUo4S81KVXpq23srWS/+30=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysU244mfp277OuGWemdr7LfsfalhwpkrFVHfGKr1I5
- WK9lbG5o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCI5bIwM+/8tatdJvv7urIF0
- eayC6CL2uSody7wyg/SiC6S4fs85yPDPYL/yV4lvTZ/ns14RuLDx5ZcXEyyW3/q9an7b5iVF6cH
- M7AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <CANypQFZ8KO=eUe7YPC+XdtjOAvdVyRnpFk_V3839ixCbdUNsGA@mail.gmail.com>
+ <20251029110651.25c4936d@kmaincent-XPS-13-7390>
+In-Reply-To: <20251029110651.25c4936d@kmaincent-XPS-13-7390>
+From: Jiaming Zhang <r772577952@gmail.com>
+Date: Wed, 29 Oct 2025 20:22:23 +0800
+X-Gm-Features: AWmQ_bkoWlg1YTPn_cPJZ6nI1pu6U1-lm4Q2dEOkydz0FKu0JfF4g7H6BwfQWow
+Message-ID: <CANypQFZhFdSZdEXjEysET58DWYik-8bMVRP4Nqvz=1WB53BrfQ@mail.gmail.com>
+Subject: Re: [Linux Kernel Bug] KASAN: null-ptr-deref Read in generic_hwtstamp_ioctl_lower
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	kuniyu@google.com, linux-kernel@vger.kernel.org, sdf@fomichev.me, 
+	syzkaller@googlegroups.com, Vladimir Oltean <vladimir.oltean@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Stress tests for namespace active reference counting.
+Hi Kory,
 
-These tests validate that the active reference counting system can
-handle high load scenarios including rapid namespace
-creation/destruction, large numbers of concurrent namespaces, and
-various edge cases under stress.
+Thank you for the suggestions!
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/namespaces/.gitignore    |   1 +
- tools/testing/selftests/namespaces/Makefile      |   4 +-
- tools/testing/selftests/namespaces/stress_test.c | 626 +++++++++++++++++++++++
- 3 files changed, 630 insertions(+), 1 deletion(-)
+I will prepare a patch and submit it shortly :)
 
-diff --git a/tools/testing/selftests/namespaces/.gitignore b/tools/testing/selftests/namespaces/.gitignore
-index 0091a7dfff20..f6dcf769f150 100644
---- a/tools/testing/selftests/namespaces/.gitignore
-+++ b/tools/testing/selftests/namespaces/.gitignore
-@@ -6,3 +6,4 @@ listns_test
- listns_permissions_test
- siocgskns_test
- cred_change_test
-+stress_test
-diff --git a/tools/testing/selftests/namespaces/Makefile b/tools/testing/selftests/namespaces/Makefile
-index 5d73f8dde6a0..3c776740f3ac 100644
---- a/tools/testing/selftests/namespaces/Makefile
-+++ b/tools/testing/selftests/namespaces/Makefile
-@@ -9,7 +9,8 @@ TEST_GEN_PROGS := nsid_test \
- 		  listns_test \
- 		  listns_permissions_test \
- 		  siocgskns_test \
--		  cred_change_test
-+		  cred_change_test \
-+		  stress_test
- 
- include ../lib.mk
- 
-@@ -18,4 +19,5 @@ $(OUTPUT)/listns_test: ../filesystems/utils.c
- $(OUTPUT)/listns_permissions_test: ../filesystems/utils.c
- $(OUTPUT)/siocgskns_test: ../filesystems/utils.c
- $(OUTPUT)/cred_change_test: ../filesystems/utils.c
-+$(OUTPUT)/stress_test: ../filesystems/utils.c
- 
-diff --git a/tools/testing/selftests/namespaces/stress_test.c b/tools/testing/selftests/namespaces/stress_test.c
-new file mode 100644
-index 000000000000..dd7df7d6cb27
---- /dev/null
-+++ b/tools/testing/selftests/namespaces/stress_test.c
-@@ -0,0 +1,626 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <limits.h>
-+#include <sched.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <sys/stat.h>
-+#include <sys/syscall.h>
-+#include <sys/types.h>
-+#include <sys/wait.h>
-+#include <unistd.h>
-+#include <linux/nsfs.h>
-+#include "../kselftest_harness.h"
-+#include "../filesystems/utils.h"
-+#include "wrappers.h"
-+
-+/*
-+ * Stress tests for namespace active reference counting.
-+ *
-+ * These tests validate that the active reference counting system can handle
-+ * high load scenarios including rapid namespace creation/destruction, large
-+ * numbers of concurrent namespaces, and various edge cases under stress.
-+ */
-+
-+/*
-+ * Test rapid creation and destruction of user namespaces.
-+ * Create and destroy namespaces in quick succession to stress the
-+ * active reference tracking and ensure no leaks occur.
-+ */
-+TEST(rapid_namespace_creation_destruction)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[256], ns_ids_after[256];
-+	ssize_t ret_before, ret_after;
-+	int i;
-+
-+	/* Get baseline count of active user namespaces */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active user namespaces", ret_before);
-+
-+	/* Rapidly create and destroy 100 user namespaces */
-+	for (i = 0; i < 100; i++) {
-+		pid_t pid = fork();
-+		ASSERT_GE(pid, 0);
-+
-+		if (pid == 0) {
-+			/* Child: create user namespace and immediately exit */
-+			if (setup_userns() < 0)
-+				exit(1);
-+			exit(0);
-+		}
-+
-+		/* Parent: wait for child */
-+		int status;
-+		waitpid(pid, &status, 0);
-+		ASSERT_TRUE(WIFEXITED(status));
-+		ASSERT_EQ(WEXITSTATUS(status), 0);
-+	}
-+
-+	/* Verify we're back to baseline (no leaked namespaces) */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After 100 rapid create/destroy cycles: %zd active user namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+/*
-+ * Test creating many concurrent namespaces.
-+ * Verify that listns() correctly tracks all of them and that they all
-+ * become inactive after processes exit.
-+ */
-+TEST(many_concurrent_namespaces)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[512], ns_ids_during[512], ns_ids_after[512];
-+	ssize_t ret_before, ret_during, ret_after;
-+	pid_t pids[50];
-+	int num_children = 50;
-+	int i;
-+	int sv[2];
-+
-+	/* Get baseline */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active user namespaces", ret_before);
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
-+
-+	/* Create many children, each with their own user namespace */
-+	for (i = 0; i < num_children; i++) {
-+		pids[i] = fork();
-+		ASSERT_GE(pids[i], 0);
-+
-+		if (pids[i] == 0) {
-+			/* Child: create user namespace and wait for parent signal */
-+			char c;
-+
-+			close(sv[0]);
-+
-+			if (setup_userns() < 0) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Signal parent we're ready */
-+			if (write(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Wait for parent signal to exit */
-+			if (read(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			close(sv[1]);
-+			exit(0);
-+		}
-+	}
-+
-+	close(sv[1]);
-+
-+	/* Wait for all children to signal ready */
-+	for (i = 0; i < num_children; i++) {
-+		char c;
-+		if (read(sv[0], &c, 1) != 1) {
-+			/* If we fail to read, kill all children and exit */
-+			close(sv[0]);
-+			for (int j = 0; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	/* List namespaces while all children are running */
-+	ret_during = sys_listns(&req, ns_ids_during, ARRAY_SIZE(ns_ids_during), 0);
-+	ASSERT_GE(ret_during, 0);
-+
-+	TH_LOG("With %d children running: %zd active user namespaces", num_children, ret_during);
-+
-+	/* Should have at least num_children more namespaces than baseline */
-+	ASSERT_GE(ret_during, ret_before + num_children);
-+
-+	/* Signal all children to exit */
-+	for (i = 0; i < num_children; i++) {
-+		char c = 'X';
-+		if (write(sv[0], &c, 1) != 1) {
-+			/* If we fail to write, kill remaining children */
-+			close(sv[0]);
-+			for (int j = i; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	close(sv[0]);
-+
-+	/* Wait for all children */
-+	for (i = 0; i < num_children; i++) {
-+		int status;
-+		waitpid(pids[i], &status, 0);
-+		ASSERT_TRUE(WIFEXITED(status));
-+	}
-+
-+	/* Verify we're back to baseline */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After all children exit: %zd active user namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+/*
-+ * Test rapid namespace creation with different namespace types.
-+ * Create multiple types of namespaces rapidly to stress the tracking system.
-+ */
-+TEST(rapid_mixed_namespace_creation)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = 0,  /* All types */
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[512], ns_ids_after[512];
-+	ssize_t ret_before, ret_after;
-+	int i;
-+
-+	/* Get baseline count */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active namespaces (all types)", ret_before);
-+
-+	/* Rapidly create and destroy namespaces with multiple types */
-+	for (i = 0; i < 50; i++) {
-+		pid_t pid = fork();
-+		ASSERT_GE(pid, 0);
-+
-+		if (pid == 0) {
-+			/* Child: create multiple namespace types */
-+			if (setup_userns() < 0)
-+				exit(1);
-+
-+			/* Create additional namespace types */
-+			if (unshare(CLONE_NEWNET) < 0)
-+				exit(1);
-+			if (unshare(CLONE_NEWUTS) < 0)
-+				exit(1);
-+			if (unshare(CLONE_NEWIPC) < 0)
-+				exit(1);
-+
-+			exit(0);
-+		}
-+
-+		/* Parent: wait for child */
-+		int status;
-+		waitpid(pid, &status, 0);
-+		ASSERT_TRUE(WIFEXITED(status));
-+	}
-+
-+	/* Verify we're back to baseline */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After 50 rapid mixed namespace cycles: %zd active namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+/*
-+ * Test nested namespace creation under stress.
-+ * Create deeply nested namespace hierarchies and verify proper cleanup.
-+ */
-+TEST(nested_namespace_stress)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[512], ns_ids_after[512];
-+	ssize_t ret_before, ret_after;
-+	int i;
-+
-+	/* Get baseline */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active user namespaces", ret_before);
-+
-+	/* Create 20 processes, each with nested user namespaces */
-+	for (i = 0; i < 20; i++) {
-+		pid_t pid = fork();
-+		ASSERT_GE(pid, 0);
-+
-+		if (pid == 0) {
-+			int userns_fd;
-+			uid_t orig_uid = getuid();
-+			int depth;
-+
-+			/* Create nested user namespaces (up to 5 levels) */
-+			for (depth = 0; depth < 5; depth++) {
-+				userns_fd = get_userns_fd(0, (depth == 0) ? orig_uid : 0, 1);
-+				if (userns_fd < 0)
-+					exit(1);
-+
-+				if (setns(userns_fd, CLONE_NEWUSER) < 0) {
-+					close(userns_fd);
-+					exit(1);
-+				}
-+				close(userns_fd);
-+			}
-+
-+			exit(0);
-+		}
-+
-+		/* Parent: wait for child */
-+		int status;
-+		waitpid(pid, &status, 0);
-+		ASSERT_TRUE(WIFEXITED(status));
-+	}
-+
-+	/* Verify we're back to baseline */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After 20 nested namespace hierarchies: %zd active user namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+/*
-+ * Test listns() pagination under stress.
-+ * Create many namespaces and verify pagination works correctly.
-+ */
-+TEST(listns_pagination_stress)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	pid_t pids[30];
-+	int num_children = 30;
-+	int i;
-+	int sv[2];
-+	__u64 all_ns_ids[512];
-+	int total_found = 0;
-+
-+	ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM, 0, sv), 0);
-+
-+	/* Create many children with user namespaces */
-+	for (i = 0; i < num_children; i++) {
-+		pids[i] = fork();
-+		ASSERT_GE(pids[i], 0);
-+
-+		if (pids[i] == 0) {
-+			char c;
-+			close(sv[0]);
-+
-+			if (setup_userns() < 0) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Signal parent we're ready */
-+			if (write(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			/* Wait for parent signal to exit */
-+			if (read(sv[1], &c, 1) != 1) {
-+				close(sv[1]);
-+				exit(1);
-+			}
-+
-+			close(sv[1]);
-+			exit(0);
-+		}
-+	}
-+
-+	close(sv[1]);
-+
-+	/* Wait for all children to signal ready */
-+	for (i = 0; i < num_children; i++) {
-+		char c;
-+		if (read(sv[0], &c, 1) != 1) {
-+			/* If we fail to read, kill all children and exit */
-+			close(sv[0]);
-+			for (int j = 0; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	/* Paginate through all namespaces using small batch sizes */
-+	req.ns_id = 0;
-+	while (1) {
-+		__u64 batch[5];  /* Small batch size to force pagination */
-+		ssize_t ret;
-+
-+		ret = sys_listns(&req, batch, ARRAY_SIZE(batch), 0);
-+		if (ret < 0) {
-+			if (errno == ENOSYS) {
-+				close(sv[0]);
-+				for (i = 0; i < num_children; i++)
-+					kill(pids[i], SIGKILL);
-+				for (i = 0; i < num_children; i++)
-+					waitpid(pids[i], NULL, 0);
-+				SKIP(return, "listns() not supported");
-+			}
-+			ASSERT_GE(ret, 0);
-+		}
-+
-+		if (ret == 0)
-+			break;
-+
-+		/* Store results */
-+		for (i = 0; i < ret && total_found < 512; i++) {
-+			all_ns_ids[total_found++] = batch[i];
-+		}
-+
-+		/* Update cursor for next batch */
-+		if (ret == ARRAY_SIZE(batch))
-+			req.ns_id = batch[ret - 1];
-+		else
-+			break;
-+	}
-+
-+	TH_LOG("Paginated through %d user namespaces", total_found);
-+
-+	/* Verify no duplicates in pagination */
-+	for (i = 0; i < total_found; i++) {
-+		for (int j = i + 1; j < total_found; j++) {
-+			if (all_ns_ids[i] == all_ns_ids[j]) {
-+				TH_LOG("Found duplicate ns_id: %llu at positions %d and %d",
-+				       (unsigned long long)all_ns_ids[i], i, j);
-+				ASSERT_TRUE(false);
-+			}
-+		}
-+	}
-+
-+	/* Signal all children to exit */
-+	for (i = 0; i < num_children; i++) {
-+		char c = 'X';
-+		if (write(sv[0], &c, 1) != 1) {
-+			close(sv[0]);
-+			for (int j = i; j < num_children; j++)
-+				kill(pids[j], SIGKILL);
-+			for (int j = 0; j < num_children; j++)
-+				waitpid(pids[j], NULL, 0);
-+			ASSERT_TRUE(false);
-+		}
-+	}
-+
-+	close(sv[0]);
-+
-+	/* Wait for all children */
-+	for (i = 0; i < num_children; i++) {
-+		int status;
-+		waitpid(pids[i], &status, 0);
-+	}
-+}
-+
-+/*
-+ * Test concurrent namespace operations.
-+ * Multiple processes creating, querying, and destroying namespaces concurrently.
-+ */
-+TEST(concurrent_namespace_operations)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = 0,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[512], ns_ids_after[512];
-+	ssize_t ret_before, ret_after;
-+	pid_t pids[20];
-+	int num_workers = 20;
-+	int i;
-+
-+	/* Get baseline */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active namespaces", ret_before);
-+
-+	/* Create worker processes that do concurrent operations */
-+	for (i = 0; i < num_workers; i++) {
-+		pids[i] = fork();
-+		ASSERT_GE(pids[i], 0);
-+
-+		if (pids[i] == 0) {
-+			/* Each worker: create namespaces, list them, repeat */
-+			int iterations;
-+
-+			for (iterations = 0; iterations < 10; iterations++) {
-+				int userns_fd;
-+				__u64 temp_ns_ids[100];
-+				ssize_t ret;
-+
-+				/* Create a user namespace */
-+				userns_fd = get_userns_fd(0, getuid(), 1);
-+				if (userns_fd < 0)
-+					continue;
-+
-+				/* List namespaces */
-+				ret = sys_listns(&req, temp_ns_ids, ARRAY_SIZE(temp_ns_ids), 0);
-+				(void)ret;
-+
-+				close(userns_fd);
-+
-+				/* Small delay */
-+				usleep(1000);
-+			}
-+
-+			exit(0);
-+		}
-+	}
-+
-+	/* Wait for all workers */
-+	for (i = 0; i < num_workers; i++) {
-+		int status;
-+		waitpid(pids[i], &status, 0);
-+		ASSERT_TRUE(WIFEXITED(status));
-+		ASSERT_EQ(WEXITSTATUS(status), 0);
-+	}
-+
-+	/* Verify we're back to baseline */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After concurrent operations: %zd active namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+/*
-+ * Test namespace churn - continuous creation and destruction.
-+ * Simulates high-churn scenarios like container orchestration.
-+ */
-+TEST(namespace_churn)
-+{
-+	struct ns_id_req req = {
-+		.size = sizeof(req),
-+		.spare = 0,
-+		.ns_id = 0,
-+		.ns_type = CLONE_NEWUSER | CLONE_NEWNET | CLONE_NEWUTS,
-+		.spare2 = 0,
-+		.user_ns_id = 0,
-+	};
-+	__u64 ns_ids_before[512], ns_ids_after[512];
-+	ssize_t ret_before, ret_after;
-+	int cycle;
-+
-+	/* Get baseline */
-+	ret_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+	if (ret_before < 0) {
-+		if (errno == ENOSYS)
-+			SKIP(return, "listns() not supported");
-+		ASSERT_GE(ret_before, 0);
-+	}
-+
-+	TH_LOG("Baseline: %zd active namespaces", ret_before);
-+
-+	/* Simulate churn: batches of namespaces created and destroyed */
-+	for (cycle = 0; cycle < 10; cycle++) {
-+		pid_t batch_pids[10];
-+		int i;
-+
-+		/* Create batch */
-+		for (i = 0; i < 10; i++) {
-+			batch_pids[i] = fork();
-+			ASSERT_GE(batch_pids[i], 0);
-+
-+			if (batch_pids[i] == 0) {
-+				/* Create multiple namespace types */
-+				if (setup_userns() < 0)
-+					exit(1);
-+				if (unshare(CLONE_NEWNET) < 0)
-+					exit(1);
-+				if (unshare(CLONE_NEWUTS) < 0)
-+					exit(1);
-+
-+				/* Keep namespaces alive briefly */
-+				usleep(10000);
-+				exit(0);
-+			}
-+		}
-+
-+		/* Wait for batch to complete */
-+		for (i = 0; i < 10; i++) {
-+			int status;
-+			waitpid(batch_pids[i], &status, 0);
-+		}
-+	}
-+
-+	/* Verify we're back to baseline */
-+	ret_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
-+	ASSERT_GE(ret_after, 0);
-+
-+	TH_LOG("After 10 churn cycles (100 namespace sets): %zd active namespaces", ret_after);
-+	ASSERT_EQ(ret_before, ret_after);
-+}
-+
-+TEST_HARNESS_MAIN
+Best regards,
+Jiaming Zhang
 
--- 
-2.47.3
-
+Kory Maincent <kory.maincent@bootlin.com> =E4=BA=8E2025=E5=B9=B410=E6=9C=88=
+29=E6=97=A5=E5=91=A8=E4=B8=89 18:06=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hello Jiaming,
+>
+> +Vlad
+>
+> On Wed, 29 Oct 2025 16:45:37 +0800
+> Jiaming Zhang <r772577952@gmail.com> wrote:
+>
+> > Dear Linux kernel developers and maintainers,
+> >
+> > We are writing to report a null pointer dereference bug discovered in
+> > the net subsystem. This bug is reproducible on the latest version
+> > (v6.18-rc3, commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa).
+> >
+> > The root cause is in tsconfig_prepare_data(), where a local
+> > kernel_hwtstamp_config struct (cfg) is initialized using {}, setting
+> > all its members to zero. Consequently, cfg.ifr becomes NULL.
+> >
+> > cfg is then passed as: tsconfig_prepare_data() ->
+> > dev_get_hwtstamp_phylib() -> vlan_hwtstamp_get() (via
+> > dev->netdev_ops->ndo_hwtstamp_get) -> generic_hwtstamp_get_lower() ->
+> > generic_hwtstamp_ioctl_lower().
+> >
+> > The function generic_hwtstamp_ioctl_lower() assumes cfg->ifr is a
+> > valid pointer and attempts to access cfg->ifr->ifr_ifru. This access
+> > dereferences the NULL pointer, triggering the bug.
+>
+> Thanks for spotting this issue!
+>
+> In the ideal world we would have all Ethernet driver supporting the
+> hwtstamp_get/set NDOs but that not currently the case.
+> Vladimir Oltean was working on this but it is not done yet.
+> $ git grep SIOCGHWTSTAMP drivers/net/ethernet | wc -l
+> 16
+>
+> > As a potential fix, we can declare a local struct ifreq variable in
+> > tsconfig_prepare_data(), zero-initializing it, and then assigning its
+> > address to cfg.ifr before calling dev_get_hwtstamp_phylib(). This
+> > ensures that functions down the call chain receive a valid pointer.
+>
+> If we do that we will have legacy IOCTL path inside the Netlink path and =
+that's
+> not something we want.
+> In fact it is possible because the drivers calling
+> generic_hwtstamp_get/set_lower functions are already converted to hwtstam=
+p NDOs
+> therefore the NDO check in tsconfig_prepare_data is not working on these =
+case.
+>
+> IMO the solution is to add a check on the ifr value in the
+> generic_hwtstamp_set/get_lower functions like that:
+>
+> int generic_hwtstamp_set_lower(struct net_device *dev,
+>                                struct kernel_hwtstamp_config *kernel_cfg,
+>                                struct netlink_ext_ack *extack)
+> {
+> ...
+>
+>         /* Netlink path with unconverted lower driver */
+>         if (!kernel_cfg->ifr)
+>                 return -EOPNOTSUPP;
+>
+>         /* Legacy path: unconverted lower driver */
+>         return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cf=
+g);
+> }
+>
+> Regards,
+> --
+> K=C3=B6ry Maincent, Bootlin
+> Embedded Linux and kernel engineering
+> https://bootlin.com
 
