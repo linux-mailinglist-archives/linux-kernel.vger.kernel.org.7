@@ -1,183 +1,129 @@
-Return-Path: <linux-kernel+bounces-877023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F11C1D006
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:28:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 262F6C1D018
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 741E23A9D7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:28:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0E81400CCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7969357A31;
-	Wed, 29 Oct 2025 19:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66093596F3;
+	Wed, 29 Oct 2025 19:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YQI9gRm6"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HV8reXkb"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D070F2749C4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CC330CD81
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761766130; cv=none; b=YoEkAvbIbLxTVPNpgmq+zjfAlEtDbA3P0Q+3G1kGDLfaEWVojCxOpOz+EX+ZblO1cv6qxGsKraK2rsDpEHITWwAe6Y2ac98DmFx5e59KNpNqdM7JpJ2jZjC3LFc2l6AR7lvFgDP7BmjFGzCzjfavUIKfS3oE+YC51XPnyScBJak=
+	t=1761766151; cv=none; b=QpzjswX1rpOagI30xUADElhSWuQxumDVuoJfrB2/pMQPC5xbCJDX2vPKRsUEm4+jCRkjL6E7nmu4wyN59WakMsfPJe0D532WtT/iqfw1dUf0+y/vx9IqfeBRgAp9/ztVNKcrXJb19Gy6wcTaqWzS1GrdMd/hfGuTppDoMrGuXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761766130; c=relaxed/simple;
-	bh=fU6xgrz9SAUr3d0giA8VMjk5cn1m3CdR+l6cyZzTx6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n2xPYpdYEsuOgH5YWd8JTImsVNUwxqLmJU/DDRYXyTkBdpuLsNOxC9WON19vztG4Ku+8r58ji0S4CqiDc2IwCvPFB4s/3HTgEr9dTZiSE5mgp6+cDbBG2DkGFqSJH0XOxpFH8IozIXvINs+WzeGO2DrP7hh94ptYyCQkV9jErj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YQI9gRm6; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <cd6a7056-fa6d-43f8-b78a-f5e811247ba8@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761766115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=76a6h3KK7ED1ZCKb1Hx0rF+dSuEgbWH0hrQ/nz0xYnU=;
-	b=YQI9gRm6tFD7iQp621k9PbsyyHpF9hDCLRYOKK8nA+Y3dlK0/1ulqxV3IAnHAbkMZ853oi
-	A8rde/e3tOhdHzUH1ZHFFW0PxCl1EPpNsanYWIk0t0YP4ovhb+cz+IA20gwzG7E/fglWtc
-	PrEah+4POiLP3Jl6VUAvFi4sgoIbYlQ=
-Date: Wed, 29 Oct 2025 19:28:30 +0000
+	s=arc-20240116; t=1761766151; c=relaxed/simple;
+	bh=2wqxvv1LyQFzj8yk+I9X6hMiGmB+zBuKRmM0nZOP2cs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kEc9qJF+CkYyl8viob/ICfasXN4HrCdufkRMHp+l8MGh3Sr4FoMao80KE3z+N5eowTemW2TMhUUQbH5arP4c9DmkX2VJ0JrVlqQL8cug6dkE1nT41aqlWWZBKsrfVgYJX2sBUWN8mOhP1oWcl6P/1b3uzXXZ99fOQT5gcdnyBKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HV8reXkb; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b4736e043f9so43830566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761766148; x=1762370948; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NKKJA6fRomltCp481BiLWPXK7LT4XBfRN+VIaJM7fMU=;
+        b=HV8reXkbUK1Ebe1t+6oHtOQHE5GtRzTimSUH0QMURm46xDZQQo+HVUn2nQqAG84GhY
+         NI7Qg8xshfo0kHde4UPuQcQvPoX+eo/humrQvd1TrN3uxHCYpKOhmb+5PNJV2AfdQ4H5
+         UPzBhYCXUqezxy0tRNN52in992rjPVnAUCFtiXHUK30YaGUZ5R11exm1l+/F/xhlLsRh
+         j2G2ZPvkKyHXxWhq7g4IjkpZVitV6IJ7uxXyTfzifgZzIh079Wf4LCdIiA8uVKzaur4Z
+         oQLdATU1PL96ijVE1/ofbPGNRvT0PMdv7WvNTu4Jgoz5ZZBOfHCka8FkiGG1ajBCCA9O
+         yG+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761766148; x=1762370948;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NKKJA6fRomltCp481BiLWPXK7LT4XBfRN+VIaJM7fMU=;
+        b=UZSSVAGtdE833voejwGuARC5p/HHUSwh4C0fElnrJzhM6BiYIiBqkgoPcDp4SibmNq
+         DFFhafcPEev5m6dzpSNg4IZeNUxpFE5NqIBhFpkSEoLuSRJq38BdxDaqOZ33+4ON35/m
+         SlusbQI/sTUKFFeyfptwsD28zrKvr2sGO5bSE0V7E3W46eP+5mV6DeJYqkGSVI6fuoML
+         1eq6aRRhzZUL16wGm1iFFwqdbxpUQfUUA0PWOchyd3Ojv0YGndvaDJlgxend/0dQHRLe
+         Q1e8skkYp2uOn9hNb8GFScV2Dcquq2YrqDxNsWdfOToFv3nLhcahpE1EyEk52OpvDKJI
+         UMoA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7g0AJ10cK7bOQbsm/FoMhnKDqNO65ddp1JWlVxlp8bj1/q5sSq4Q62X8tt0n7oNXaZBEcpmKr+0f8/o4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzifdUtGHST2sQlxU3CO1vvGKKqNY3BEbQoWU9dDWFPPDYfNQMq
+	ss6eu7Sef6ttkLLWhCgN4AglbE1tEDlOn5kW3ETwXZ1zHHOsMvQ3G4YK
+X-Gm-Gg: ASbGncuAhXoNzn4XC34AMcAGS8Jfy6DQLOMuZmtiCZD1cckw69g4DvXFYOXv5fjPjcW
+	NdmtHLg06ghsnv988/G9hEbookcZsgJ6Iav1AmR/G1A3dQOF0d/56BoAe5P2V1PhiW1gEvemRpY
+	7MAZrLnef3M5j3nFQuEwyVcIIqN/9bR1/z6HzgxJHXrdC+YTu24lSLTZcHZRJBQCmXfcZ4KfyJ2
+	ZdcI8WFS2Q1K+m176Z73HfLew5jY/EaBUFt7seSjfVoRazI0vUF/SQvxoALY4xvUAL1Xem51KjQ
+	iNkPdaAmV8+UB6ME8Z6LMVbhNTMfYyiouzxMg9Qt5gTUIb0UZPvsP9cqanQeTdmDW3+Qy++m6XH
+	r0WJXTJvqKJkw0h3DNe312ZdAxeHPHXDCG+F+8mdkhUH5s26/2+kIitOC7VxIUdVVvyECarVd/C
+	kF3vF3JvfPG62oYY1Ymv1D5ScRJlZXCm5x5HrxNKtqJFmDjrsU2uVbqdRJYeH8bw==
+X-Google-Smtp-Source: AGHT+IEDxtG1HkFG0ON1dBWQF24t0hiWuuyPwYA2hBUikGtOaNbTeVCqCxQo2KWiYZfh50Es8IqNeQ==
+X-Received: by 2002:a17:907:9721:b0:b3f:f207:b755 with SMTP id a640c23a62f3a-b7053b2a721mr28389066b.6.1761766148261;
+        Wed, 29 Oct 2025 12:29:08 -0700 (PDT)
+Received: from Lord-Beerus.station (net-93-146-98-100.cust.vodafonedsl.it. [93.146.98.100])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8548eda6sm1496673266b.75.2025.10.29.12.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 12:29:07 -0700 (PDT)
+From: Stefano Radaelli <stefano.radaelli21@gmail.com>
+To: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Stefano Radaelli <stefano.radaelli21@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1 0/4] arm64: dts: freescale: imx93-var-som: Align DTS with hardware revision
+Date: Wed, 29 Oct 2025 20:28:45 +0100
+Message-ID: <20251029192852.656806-1-stefano.radaelli21@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [Linux Kernel Bug] KASAN: null-ptr-deref Read in
- generic_hwtstamp_ioctl_lower
-To: Kory Maincent <kory.maincent@bootlin.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Jiaming Zhang <r772577952@gmail.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, netdev@vger.kernel.org,
- pabeni@redhat.com, horms@kernel.org, kuniyu@google.com,
- linux-kernel@vger.kernel.org, sdf@fomichev.me, syzkaller@googlegroups.com
-References: <CANypQFZ8KO=eUe7YPC+XdtjOAvdVyRnpFk_V3839ixCbdUNsGA@mail.gmail.com>
- <20251029110651.25c4936d@kmaincent-XPS-13-7390>
- <20251029161934.xwxzqoknqmwtrsgv@skbuf>
- <20251029174740.0f064865@kmaincent-XPS-13-7390>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20251029174740.0f064865@kmaincent-XPS-13-7390>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 16:47, Kory Maincent wrote:
-> On Wed, 29 Oct 2025 18:19:34 +0200
-> Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
-> 
->> On Wed, Oct 29, 2025 at 11:06:51AM +0100, Kory Maincent wrote:
->>> Hello Jiaming,
->>>
->>> +Vlad
->>>
->>> On Wed, 29 Oct 2025 16:45:37 +0800
->>> Jiaming Zhang <r772577952@gmail.com> wrote:
->>>    
->>>> Dear Linux kernel developers and maintainers,
->>>>
->>>> We are writing to report a null pointer dereference bug discovered in
->>>> the net subsystem. This bug is reproducible on the latest version
->>>> (v6.18-rc3, commit dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa).
->>>>
->>>> The root cause is in tsconfig_prepare_data(), where a local
->>>> kernel_hwtstamp_config struct (cfg) is initialized using {}, setting
->>>> all its members to zero. Consequently, cfg.ifr becomes NULL.
->>>>
->>>> cfg is then passed as: tsconfig_prepare_data() ->
->>>> dev_get_hwtstamp_phylib() -> vlan_hwtstamp_get() (via
->>>> dev->netdev_ops->ndo_hwtstamp_get) -> generic_hwtstamp_get_lower() ->
->>>> generic_hwtstamp_ioctl_lower().
->>>>
->>>> The function generic_hwtstamp_ioctl_lower() assumes cfg->ifr is a
->>>> valid pointer and attempts to access cfg->ifr->ifr_ifru. This access
->>>> dereferences the NULL pointer, triggering the bug.
->>>
->>> Thanks for spotting this issue!
->>>
->>> In the ideal world we would have all Ethernet driver supporting the
->>> hwtstamp_get/set NDOs but that not currently the case.	
->>> Vladimir Oltean was working on this but it is not done yet.
->>> $ git grep SIOCGHWTSTAMP drivers/net/ethernet | wc -l
->>> 16
->>
->> Vadim also took the initiative and submitted (is still submitting?) some
->> more conversions, whereas I lost all steam.
-> 
-> Ok no worry I was simply pointing this out, people will convert it when they
-> want to use the new netlink API.
->   
->>>> As a potential fix, we can declare a local struct ifreq variable in
->>>> tsconfig_prepare_data(), zero-initializing it, and then assigning its
->>>> address to cfg.ifr before calling dev_get_hwtstamp_phylib(). This
->>>> ensures that functions down the call chain receive a valid pointer.
->>>
->>> If we do that we will have legacy IOCTL path inside the Netlink path and
->>> that's not something we want.
->>> In fact it is possible because the drivers calling
->>> generic_hwtstamp_get/set_lower functions are already converted to hwtstamp
->>> NDOs therefore the NDO check in tsconfig_prepare_data is not working on
->>> these case.
->>
->> I remember we had this discussion before.
->>
->> | This is why I mentioned by ndo_hwtstamp_set() conversion, because
->> | suddenly it is a prerequisite for any further progress to be done.
->> | You can't convert SIOCSHWTSTAMP to netlink if there are some driver
->> | implementations which still use ndo_eth_ioctl(). They need to be
->> | UAPI-agnostic.
->>
->> https://lore.kernel.org/netdev/20231122140850.li2mvf6tpo3f2fhh@skbuf/
->>
->> I'm not sure what was your agreement with the netdev maintainer
->> accepting the tsconfig netlink work with unconverted device drivers left
->> in the tree.
-> 
-> I did like 21th versions and there was not many people active in the reviews.
-> No one stand against this work.
-> 
->>> IMO the solution is to add a check on the ifr value in the
->>> generic_hwtstamp_set/get_lower functions like that:
->>>
->>> int generic_hwtstamp_set_lower(struct net_device *dev,
->>> 			       struct kernel_hwtstamp_config *kernel_cfg,
->>> 			       struct netlink_ext_ack *extack)
->>> {
->>> ...
->>>
->>> 	/* Netlink path with unconverted lower driver */
->>> 	if (!kernel_cfg->ifr)
->>> 		return -EOPNOTSUPP;
->>>
->>> 	/* Legacy path: unconverted lower driver */
->>> 	return generic_hwtstamp_ioctl_lower(dev, SIOCSHWTSTAMP, kernel_cfg);
->>> }
->>
->> This plugs one hole (two including _get). How many more are there? If
->> this is an oversight, the entire tree needs to be reviewed for
->> ndo_hwtstamp_get() / ndo_hwtstamp_test() pointer tests which were used
->> as an indication that this net device is netlink ready. Stacked
->> virtual interfaces are netlink-ready only when the entire chain down to
->> the physical interface is netlink-ready.
-> 
-> I don't see this as a hole. The legacy ioctl path still works.
-> If people want to use the new Netlink path on their board, yes they need to
-> convert all the parts of the chain to hwtstamp NDOs. If they don't they will
-> get now a EOPNOTSUPP error instead of a null pointer dereference koops.
+This patch series updates the device tree for the VAR-SOM-MX93 to align it
+with the latest hardware revision of the module.
 
-I agree with Kory - we don't have many spots in the code calling HW
-timestamping configuration. The ones to check is actually phy code and
-can drivers. But anyways, we have this interface exposed to UAPI, and we
-have ethtool with supports it already. And there is a bug, which can be
-fixed with the proposed code.
+The updates include the addition of missing peripherals and devices present
+on the current SOM version, namely:
+ - WiFi and Bluetooth module (NXP IW611/IW612)
+ - PMIC (Dual NXP PCA9541)
+ - Audio codec (NXP WM8904)
+ - Resistive touch controller (TI ADS7846)
 
-I'm working right now to finish conversion by the end of this term, both
-can and phy will be switched to new API as well as mlx5/ti_netcp
-ethernet drivers.
+These changes ensure the DTS reflects the real hardware configuration and
+enable full support for the mentioned peripherals.
+
+Stefano Radaelli (4):
+  arm64: dts: freescale: imx93-var-som: Add WiFi and Bluetooth support
+  arm64: dts: freescale: imx93-var-som: Add PMIC support
+  arm64: dts: freescale: imx93-var-som: Add support for WM8904 audio
+    codec
+  arm64: dts: freescale: imx93-var-som: Add support for ADS7846
+    touchscreen
+
+ .../boot/dts/freescale/imx93-var-som.dtsi     | 332 +++++++++++++++++-
+ 1 file changed, 331 insertions(+), 1 deletion(-)
+
+
+base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+prerequisite-patch-id: bfa4df6e3787b415218cd441317fb838824e06c3
+-- 
+2.43.0
+
 
