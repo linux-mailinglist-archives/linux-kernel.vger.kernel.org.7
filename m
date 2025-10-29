@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-877256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6445C1D94E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:23:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC81C1D948
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:23:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AB04057B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:23:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89FAF4E0EF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7128131A059;
-	Wed, 29 Oct 2025 22:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D5431961E;
+	Wed, 29 Oct 2025 22:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="d/Y8YxX1"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="V4INLZaB"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBDD618FDBD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A8B2DC32E;
+	Wed, 29 Oct 2025 22:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761776606; cv=none; b=uzh6/3v0eAeH47HA3AR1LB2ipb1I6icrixsSJTdJjFO3ZcoJaXGglJ0cV4jWIQOL1A/RvPFIJPAqK4eWsIVu06X12eAUhpLXD0nxEilvrRt0YxsL7zSPWfC8uw+jGVcRJxcUrqBvrEH2AgQzJ+q9+7UMr2B3T4wPV+1P1Xjn32Q=
+	t=1761776582; cv=none; b=j5nyZLm3vleCkrFnlTXt2cGzCnqWU/XD7f6FwEeSTtf2sbEA6I4KbfpnKWDDTc+SXpBYu4QAhUw1+z82BxgY98FkGIN/OVwZeFXA4gxIlcxWiPszwSYFEsTteAHN90/INAPKzSwB/ejJkLsmIlT1E5HpjUeImK1TGNXVSRkzEsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761776606; c=relaxed/simple;
-	bh=0Y78CioIXcFYqCT7J2U6NFL9zXeL/myq9J1+6AArRCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XlVpbfkKzDcqmhSyOcA882ohoN0GGt370+WUdDPQVZh3+LFrfVrKHWn5jCKpLwfT6eaah5bAQqcgA51KWyPi+eGBvxW9YABLp3wJcGkBJroTs01XoKiRygDqenO0BbcmVSmayCSdbpi70TBntQ9vlrbDL+3/I0KIFGmlI5cxrlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=d/Y8YxX1; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b6d3effe106so73636366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:23:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761776603; x=1762381403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gpv6Bu1gRrUbx52oNEm6LTdZ6YidJrARd+ghcU8tGMU=;
-        b=d/Y8YxX1VAiOmpiGt3Ue0chFji5sf3GJonQNt5/XOkqwB20wHfYB6mEKMYe5tI792u
-         6wDsIf2IuH6Hk7J0mF98aRquNvwi3u7OyO1kGnjg5tSa1ghm5RB/0gAAPJB+dT2efM7n
-         mvqDhL8WUKoJNuCtE11MqByHdzA4wivQsgb8PvL0u0snM95mDS67G8zT1ct5YuCZ2634
-         JuQnZB64xoi0nuz+1XNqOV2h5Zjve8VPtPcS3Cg7//evwQufRApn8q2AqCRbVFowO1JZ
-         JRfs6iy2UWyYFgec/V/wPXw4S+f6EXZ2eDlQZAq2LiBjUa2khZhT7UCm6p+BIiZ2oWia
-         EWMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761776603; x=1762381403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gpv6Bu1gRrUbx52oNEm6LTdZ6YidJrARd+ghcU8tGMU=;
-        b=QTvqDsqy+PxdZtEs2llN8SYUxSMzE+xepCl7quRlo00QI2+rVwimJAkZ4VhUq+PMVr
-         4dacnJ/to31YAg4UvE1AY8aWfcnqAdZX9RffX2x5Z81DiadPHJKgUtyFCXrQz0BSv23C
-         NMRbaBPb48+kb83O4285hzQKFQLTBErMsWtNwcJEw/o7YeQGBP4iLgxHWhNbtj6IsDpE
-         zIjjD75CCTEVD3NWVxdhYN+yL/v6UUA2QEhcC+HjRRknHot+giS2x7WKVjNE93nMkEJH
-         Xc4ImiuJOFgsRW0McXLQSQmGJ68Lpc2oQKq7eXamzLmamodAvejojPTunoJkIkZO72q/
-         53AA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJrhTRNXgDaxb3+IhWzLpz4+aIbHxOF6JrsrFarv6bm1leMykp0asweUBb8dAcvh7jqNK2EmXcW+cA4iE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLqB0wQIwgYz+EMxMfKrqcg/j47AhFJ+zOXQUDMiThygGAxLFT
-	fYeK/ACcmkZIGJ98D58ZzhNoNE22H9py1piS2T/0fJn9/qJkNBnAggTBlsnWSV4qJMzfjviNFjN
-	t7Ks6moDES7FfX70LWpDcrr+KkNdoUgSqalercAIivg==
-X-Gm-Gg: ASbGncuTon1E7Il06WALYZhZqvcWIPe13qYkKQGq7i1Vurxj88hlEip3s/1QDtQPECI
-	Ok+I/wuMcK0VIIyUQsUt6FnLM9dl4LW9lhmDC1qYl8rPc44ocn28XebmaYKNMmEj02KhC+2+DdO
-	IdjyIDcJ4fWuu2EvMWmdQrqI5jXXN1ksN7Bbdvov2KWR9k1R45RhGS40QhvPOjFJkX3C8KoOQJF
-	u0Wt3H/Hl9WWKVCmjEGcqamCzTcVuO4AmWZFSo5sxq69fdGkeW0ElTmF8Wcn5V2Kvug
-X-Google-Smtp-Source: AGHT+IEGXWbi1zL2MYQq1jWo5fkcmj13mveE6SjemKqwCk4bOIMfIzJadEzaXl9lawQXtRHdx+HKvLwQpuN1CFTNwBw=
-X-Received: by 2002:a17:907:7292:b0:b33:a2ef:c7 with SMTP id
- a640c23a62f3a-b703d5cb7efmr522068666b.55.1761776603191; Wed, 29 Oct 2025
- 15:23:23 -0700 (PDT)
+	s=arc-20240116; t=1761776582; c=relaxed/simple;
+	bh=/JJ4eWhU2NJtysIL6pvhPHf/EaOJKo1ecN2UGEuYUF4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bfnFh/f+uWhR3ZQ5DkmoeLq3oyEMR7w7EXCmRzuIucAA70H63fWpyu+pSTz+P+QDHoC0Yieo4ypjItUjo18UaopnwXAgMTgXywI0ZxDhHrkUUyYlv4l+vJLSMceepwgB6rH6wakXN2BEZisHeQNT6vyPLYMBJ9dBFkkBcHtpfLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=V4INLZaB; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D147A40AED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1761776574; bh=HvWY8jWznZyhCYX572LrF/H6qVaifHtnmvXlLo5QC6I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=V4INLZaBkGdxmwR4wMmyYAn3wEFzK/gG4lEyhXfIGpzaa/zireEy4R+fBdkk54iJv
+	 qn9VDfJb4jFzZskcKbGentpeMif8YD8l5G3CQUPtg3k9JMYwmfP/uEt+ECoTHZACN8
+	 ndgUPJDpsJuTrVMlns3qPObGhgcu/iGUX7FJtkLCKgZNENRfpPqTDERF0q1sulGIeM
+	 HQL3dgqKTDI2H9a2yiEWzkZB6iiNGurtSRwuWC5bn8ONeC5nP0T3dEZ7DVL2F+s7WF
+	 OKV7hRDMyPjkulF+369HzZrMHLyCoiE48Z9WuCkAT5lUW+4wg/1UbRnO6CVHXcxP2j
+	 Mw3i8dhk2f3NA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D147A40AED;
+	Wed, 29 Oct 2025 22:22:53 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alex Shi <alexs@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the jc_docs tree
+In-Reply-To: <20251030085146.37ab6bd4@canb.auug.org.au>
+References: <20251030085146.37ab6bd4@canb.auug.org.au>
+Date: Wed, 29 Oct 2025 16:22:53 -0600
+Message-ID: <87ecqlny9u.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021000852.2924827-1-pasha.tatashin@soleen.com>
- <20251021000852.2924827-2-pasha.tatashin@soleen.com> <aQHUyyFtiNZhx8jo@kernel.org>
-In-Reply-To: <aQHUyyFtiNZhx8jo@kernel.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Oct 2025 18:22:46 -0400
-X-Gm-Features: AWmQ_bmdWz_K-6x0FqPYXVy37hUITH8KVofabeFsr0NG2wwGh65pPSXncqtE7HQ
-Message-ID: <CA+CK2bB=k6ZxeEuLC9Xwtzmgm5MZdpH2sRgk84WQVm4uoeHsVw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] liveupdate: kho: warn and fail on metadata or
- preserved memory in scratch area
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, brauner@kernel.org, corbet@lwn.net, 
-	graf@amazon.com, jgg@ziepe.ca, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, masahiroy@kernel.org, 
-	ojeda@kernel.org, pratyush@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	jasonmiu@google.com, dmatlack@google.com, skhawaja@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Andrew,
+Stephen Rothwell <sfr@canb.auug.org.au> writes:
 
-Would you like me to resend the series with the "+       depends on
-KEXEC_HANDOVER" fix from Mike, or would you apply it into your tree
-directly?
+> Hi all,
+>
+> Commits
+>
+>   564f84128bd2 ("docs/zh_CN: Add translation of rust/testing.rst")
+>   6d4a6d623098 ("docs/zh_CN: Add secrets coco Chinese translation")
+>   344657696e9a ("docs/zh_CN: Add sd-parameters.rst translation")
+>   989a716b1677 ("docs/zh_CN: Add link_power_management_policy.rst translation")
+>   6c07193cb80f ("docs/zh_CN: Add scsi-parameters.rst translation")
+>   cfd923323d14 ("docs/zh_CN: Add scsi_eh.rst translation")
+>   da6572ec7105 ("docs/zh_CN: Add scsi_mid_low_api.rst translation")
+>   16dfba1581b5 ("docs/zh_CN: Add scsi.rst translation")
+>   9162cb790b42 ("docs/zh_CN: Add scsi/index.rst translation")
+>   fe67964dd6e2 ("docs/zh_CN: Update Rust index translation and add reference label")
+>   1e108599ebfe ("docs/zh_CN: Add security SCTP Chinese translation")
+>   b12bb7728152 ("Docs/zh_CN: Translate timestamping.rst to Simplified Chinese")
+>   4d926084ce6d ("docs/zh_CN: Add security lsm-development Chinese translation")
+>   6d624576ca3f ("Docs/zh_CN: fix the format of proofreader")
+>   25cf7924b579 ("Docs/zh_CN: align title underline for ubifs.rst")
+>   e3f873992cc4 ("Docs/zh_CN: add fixed format for the header of gfs2-glocks.rst")
+>   37b1e0d4ab11 ("docs/zh_CN: Add security ipe Chinese translation")
+>   ab530c5fca9b ("Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chinese")
+>   d3e7609c6e5e ("Docs/zh_CN: Translate skbuff.rst to Simplified Chinese")
+>   6d35e61606d0 ("Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chinese")
+>   0694113d49b5 ("Docs/zh_CN: Translate inotify.rst to Simplified Chinese")
+>   f4121e639fd3 ("Docs/zh_CN: Translate dnotify.rst to Simplified Chinese")
+>   250fc3d68a90 ("Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese")
+>   a502ffe48523 ("Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese")
+>   46ea6a90b59d ("Docs/zh_CN: Translate gfs2.rst to Simplified Chinese")
+>   e0bb4c3524df ("Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese")
+>   fe460c3ec8b1 ("Docs/zh_CN: Translate ubifs.rst to Simplified Chinese")
+>
+> are missing a Signed-off-by from their committers.
 
-Thank you,
-Pasha
+Argh.  Thanks for the heads-up.
 
-On Wed, Oct 29, 2025 at 4:48=E2=80=AFAM Mike Rapoport <rppt@kernel.org> wro=
-te:
->
-> Hi Pasha,
->
-> On Mon, Oct 20, 2025 at 08:08:50PM -0400, Pasha Tatashin wrote:
-> > It is invalid for KHO metadata or preserved memory regions to be locate=
-d
-> > within the KHO scratch area, as this area is overwritten when the next
-> > kernel is loaded, and used early in boot by the next kernel. This can
-> > lead to memory corruption.
-> >
-> > Adds checks to kho_preserve_* and KHO's internal metadata allocators
-> > (xa_load_or_alloc, new_chunk) to verify that the physical address of th=
-e
-> > memory does not overlap with any defined scratch region. If an overlap
-> > is detected, the operation will fail and a WARN_ON is triggered. To
-> > avoid performance overhead in production kernels, these checks are
-> > enabled only when CONFIG_KEXEC_HANDOVER_DEBUG is selected.
-> >
-> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> > ---
-> >  kernel/Kconfig.kexec             |  9 ++++++
-> >  kernel/Makefile                  |  1 +
-> >  kernel/kexec_handover.c          | 53 ++++++++++++++++++++++----------
-> >  kernel/kexec_handover_debug.c    | 25 +++++++++++++++
-> >  kernel/kexec_handover_internal.h | 16 ++++++++++
-> >  5 files changed, 87 insertions(+), 17 deletions(-)
-> >  create mode 100644 kernel/kexec_handover_debug.c
-> >  create mode 100644 kernel/kexec_handover_internal.h
-> >
-> > diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> > index 422270d64820..c94d36b5fcd9 100644
-> > --- a/kernel/Kconfig.kexec
-> > +++ b/kernel/Kconfig.kexec
-> > @@ -109,6 +109,15 @@ config KEXEC_HANDOVER
-> >         to keep data or state alive across the kexec. For this to work,
-> >         both source and target kernels need to have this option enabled=
-.
-> >
-> > +config KEXEC_HANDOVER_DEBUG
-> > +     bool "Enable Kexec Handover debug checks"
-> > +     depends on KEXEC_HANDOVER_DEBUGFS
->
-> I missed that in the earlier review, should be "depends on KEXEC_HANDOVER=
-"
->
-> @Andrew, can you please fold this into what's now commit 0e0faeffd144
-> ("kho: warn and fail on metadata or preserved memory in scratch area")
->
-> diff --git a/kernel/Kconfig.kexec b/kernel/Kconfig.kexec
-> index c94d36b5fcd9..54e581072617 100644
-> --- a/kernel/Kconfig.kexec
-> +++ b/kernel/Kconfig.kexec
-> @@ -111,7 +111,7 @@ config KEXEC_HANDOVER
->
->  config KEXEC_HANDOVER_DEBUG
->         bool "Enable Kexec Handover debug checks"
-> -       depends on KEXEC_HANDOVER_DEBUGFS
-> +       depends on KEXEC_HANDOVER
->         help
->           This option enables extra sanity checks for the Kexec Handover
->           subsystem. Since, KHO performance is crucial in live update
->
-> > +     help
-> > +       This option enables extra sanity checks for the Kexec Handover
-> > +       subsystem. Since, KHO performance is crucial in live update
-> > +       scenarios and the extra code might be adding overhead it is
-> > +       only optionally enabled.
-> > +
-> >  config CRASH_DUMP
-> >       bool "kernel crash dumps"
-> >       default ARCH_DEFAULT_CRASH_DUMP
->
-> --
-> Sincerely yours,
-> Mike.
+Alex, I have dropped the Chinese pull from docs-next ... needless to
+say, you need to pay attention to details like this if I am to be able
+to pull your tree.  Please fix these up, and we'll try again.
+
+Thanks,
+
+jon
 
