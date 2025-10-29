@@ -1,189 +1,148 @@
-Return-Path: <linux-kernel+bounces-875840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99DF2C19EF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:13:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF302C19EDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 482153AF3FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:13:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 479854E247B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C10632F761;
-	Wed, 29 Oct 2025 11:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94CB31E0EB;
+	Wed, 29 Oct 2025 11:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ih58e1Zw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YpDVt42i"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9DA323403
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2D92ECEBC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736366; cv=none; b=OVXXn0LOoP/jHNCnksVc6lo3KKzdxtRpw1wxSIE3E0F5BVJePkVljuXsNk0ZaE1qGsyURejGNgC/jkHYR7qW6FafO0895PQ+EFdpUP4+xX7A2REGPThHrJnqlD1/t+kLGry0mxvUEUU67ftgVZwH3r7/Zx6dYv46EfMBcmQs2FA=
+	t=1761736068; cv=none; b=tsfqKBhVfNBbnR723ZAyVhjQccn1w3gcRQUI2c9r8qpt7KUtRdSXiSoCpFaB2xPKSbsvy8kWzXwvfnEUBif7UEgoR80gOnFxCOrsfGQfjd9+4M3y7RQn23ij52KIWnaK4Tu/P8Nyw3GoGcq+DDQlt6NNpdteQ8OZux39f0CxsMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736366; c=relaxed/simple;
-	bh=3pRP7yxnE+8iPkw51mswvJbqXQU4QWREKIulx3P8Fqc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hg4FtP8mKDOSNoVb6EHIjo/LddCgOzn1k+lDyw8wquGg5qSrUCanGKZ0z9ef0OAwMRYSMpHpl7DMj52viMswh2RMuGkuxbF3EOwe8SvdMUyydoN/zMTdNRKZ/IX0++LhgNj7iEN7hG6AFGxF+HkC6hG0G64ckqgdNVEcWK8utG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ih58e1Zw; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761736364; x=1793272364;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=3pRP7yxnE+8iPkw51mswvJbqXQU4QWREKIulx3P8Fqc=;
-  b=Ih58e1Zwik7WqRkQvRi9XkngdGpwSr5x2HhCg66CPXWLnIKHlE0ZbWXV
-   l27ueCkedZFEmee9GFTLwElPBkjJIHGqd994mBEPJn2MIVkfJMqdN5uqT
-   dF7AT+j5sFtFocS+CpEylbI8A7Qeea/8gqvd/vf3AemgMKJ22okXGO+Bi
-   jWWwsAs+FM87PzjG7kBsbyHMKxMGwULXk9DN+mhaV1bE2vvs7odxP8+w0
-   7S7/m9leBWGC7x4ema+V8gQWk/Hlz9J/lAn4o6Nl1Y6V5btz450e9gVxA
-   zn4GQCkDbinC5Yx0Si6B/eU8PiLnE97SJiw4EP9iCRpH4NyJzPHOeavBt
-   w==;
-X-CSE-ConnectionGUID: KRRTvgh1SwyNt4etWrfVBw==
-X-CSE-MsgGUID: 3ytxKmDHSqC/Md7r5toaaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63757587"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="63757587"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:12:44 -0700
-X-CSE-ConnectionGUID: PBCwiIR4T32FjLxNRsJNKg==
-X-CSE-MsgGUID: GHUgm2+AQrqSDTQEHlSepg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="184816544"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa006.jf.intel.com with ESMTP; 29 Oct 2025 04:12:42 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id F1B699B; Wed, 29 Oct 2025 12:12:39 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Feng Tang <feng.tang@linux.alibaba.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2 6/6] panic: sys_info: Factor out read and write handlers
-Date: Wed, 29 Oct 2025 12:07:41 +0100
-Message-ID: <20251029111202.3217870-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
-References: <20251029111202.3217870-2-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1761736068; c=relaxed/simple;
+	bh=ahR3HRSJo8qKD60jg5w+z9uYVqi4L0q68depQWcBYVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=P4Fb+STd0AGXAfV5d1qcAXbT0ZQr2CQ1BLXXHWz4rOuGNOdo7qR1yg63XvqgTdy55JTvzGK3BWVbv3j0v+0o4JsHiXLhAK5zhpyXnOlNym0iOpdxfp3m2s8bA5ajpLtCTuIs8wCz2vVs0rFkk+CDRkVvsCwmZ/DVTpz9PRVDY2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YpDVt42i; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20251029110744euoutp026dbe7865806946d515d7213bbeb03146~y8Z3iK2q20977409774euoutp020
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:07:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20251029110744euoutp026dbe7865806946d515d7213bbeb03146~y8Z3iK2q20977409774euoutp020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761736064;
+	bh=lPkyz42wIiMyZmus3DHo3oNI5NGGYmhnJqmDuHgt9uk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=YpDVt42i6ENE90ifkPIK8ff7mUWGpAs48GVM277YEUpoZdL0YMzvdGQlg7soPU+ee
+	 I3u7UjbsCTWJYGcObN4COCMicvvRC/pdHqUUE66u6Y85gah/knLAPkzS9ghrGTF3m3
+	 +5DAIIXEouCH3JTqnFtJzw5Xi3WcKuGw1kKf3lIs=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029110744eucas1p2f95c4c628e2ff2b2366972eda79aa4c0~y8Z3GEnOl2119121191eucas1p2v;
+	Wed, 29 Oct 2025 11:07:44 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029110743eusmtip2db58b6b7ea6eca6ca55bb0d62e38368f~y8Z2VSdww0319503195eusmtip2j;
+	Wed, 29 Oct 2025 11:07:43 +0000 (GMT)
+Message-ID: <df1827bd-628b-424f-80a6-63cea6bf7a39@samsung.com>
+Date: Wed, 29 Oct 2025 12:07:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Introduce import_ns support for Rust
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin
+	<lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl
+	<aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+	<dakr@kernel.org>, Drew Fustini <fustini@kernel.org>, Guo Ren
+	<guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Stephen Rothwell
+	<sfr@canb.auug.org.au>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <2dedlnknikkrwg5f6ocuvjrogdjuqyg4sg6zkkao4w4yyvvsje@dkt7rco3fen3>
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20251029110744eucas1p2f95c4c628e2ff2b2366972eda79aa4c0
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5
+X-EPHeader: CA
+X-CMS-RootMailID: 20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5
+References: <CGME20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5@eucas1p1.samsung.com>
+	<20251028-pwm_fixes-v1-0-25a532d31998@samsung.com>
+	<2dedlnknikkrwg5f6ocuvjrogdjuqyg4sg6zkkao4w4yyvvsje@dkt7rco3fen3>
 
-For the sake of the code readability and easier maintenance
-factor out read and write sys_info handlers.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/sys_info.c | 72 ++++++++++++++++++++++++++++++--------------------
- 1 file changed, 44 insertions(+), 28 deletions(-)
 
-diff --git a/lib/sys_info.c b/lib/sys_info.c
-index c86f52644857..8ed3b4b55854 100644
---- a/lib/sys_info.c
-+++ b/lib/sys_info.c
-@@ -43,13 +43,52 @@ unsigned long sys_info_parse_param(char *str)
- 
- #ifdef CONFIG_SYSCTL
- 
-+static int sys_info_write_handler(struct ctl_table *table,
-+				  void *buffer, size_t *lenp, loff_t *ppos,
-+				  unsigned long *si_bits_global)
-+{
-+	unsigned long si_bits;
-+	int ret;
-+
-+	ret = proc_dostring(table, 1, buffer, lenp, ppos);
-+	if (ret)
-+		return ret;
-+
-+	si_bits = sys_info_parse_param(table->data);
-+
-+	/* The access to the global value is not synchronized. */
-+	WRITE_ONCE(*si_bits_global, si_bits);
-+
-+	return 0;
-+}
-+
-+static int sys_info_read_handler(struct ctl_table *table,
-+				 void *buffer, size_t *lenp, loff_t *ppos,
-+				 unsigned long *si_bits_global)
-+{
-+	unsigned long si_bits;
-+	unsigned int len = 0;
-+	char *delim = "";
-+	unsigned int i;
-+
-+	/* The access to the global value is not synchronized. */
-+	si_bits = READ_ONCE(*si_bits_global);
-+
-+	for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
-+		len += scnprintf(table->data + len, table->maxlen - len,
-+				 "%s%s", delim, si_names[i]);
-+		delim = ",";
-+	}
-+
-+	return proc_dostring(table, 0, buffer, lenp, ppos);
-+}
-+
- int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 					  void *buffer, size_t *lenp,
- 					  loff_t *ppos)
- {
- 	struct ctl_table table;
- 	unsigned long *si_bits_global;
--	unsigned long si_bits;
- 	unsigned int i;
- 	size_t maxlen;
- 
-@@ -67,33 +106,10 @@ int sysctl_sys_info_handler(const struct ctl_table *ro_table, int write,
- 	table.data = names;
- 	table.maxlen = maxlen;
- 
--	if (write) {
--		int ret;
--
--		ret = proc_dostring(&table, write, buffer, lenp, ppos);
--		if (ret)
--			return ret;
--
--		si_bits = sys_info_parse_param(names);
--		/* The access to the global value is not synchronized. */
--		WRITE_ONCE(*si_bits_global, si_bits);
--		return 0;
--	} else {
--		/* for 'read' operation */
--		unsigned int len = 0;
--		char *delim = "";
--
--		/* The access to the global value is not synchronized. */
--		si_bits = READ_ONCE(*si_bits_global);
--
--		for_each_set_bit(i, &si_bits, ARRAY_SIZE(si_names)) {
--			len += scnprintf(names + len, maxlen - len,
--					 "%s%s", delim, si_names[i]);
--			delim = ",";
--		}
--
--		return proc_dostring(&table, write, buffer, lenp, ppos);
--	}
-+	if (write)
-+		return sys_info_write_handler(&table, buffer, lenp, ppos, si_bits_global);
-+	else
-+		return sys_info_read_handler(&table, buffer, lenp, ppos, si_bits_global);
- }
- #endif
- 
+On 10/29/25 11:04, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Tue, Oct 28, 2025 at 01:22:31PM +0100, Michal Wilczynski wrote:
+>> This series addresses build warnings reported by `modpost` for the Rust
+>> PWM driver (`pwm_th1520`) in linux-next:
+>>
+>> WARNING: modpost: module pwm_th1520 uses symbol pwmchip_release from
+>> namespace PWM, but does not import it.
+>>
+>> These warnings occur because Rust modules, like C modules, need to
+>> declare their dependencies on C symbols exported to specific namespaces
+>> (using `EXPORT_SYMBOL_NS` in C). This is done by embedding
+>> "import_ns=<NAMESPACE>" tags into the module's `.modinfo` section, which
+>> `modpost` verifies.  The C macro `MODULE_IMPORT_NS()` handles this, but
+>> the Rust `module!` macro lacked equivalent functionality.
+>>
+>> This series introduces the necessary support:
+>>
+>> Patch 1 extends the core `module!` macro in `rust/macros/module.rs`
+>> to parse an optional `imports_ns: [...]` field and generate the required
+>> `import_ns` tags in the `.modinfo` section.
+>>
+>> Patch 2 adds a convenience macro `module_pwm_platform_driver!` to
+>> `rust/kernel/pwm.rs`. This macro wraps the standard
+>> `module_platform_driver!` and automatically adds `imports_ns: ["PWM"]`,
+>> simplifying module declaration for PWM driver authors.
+>>
+>> Patch 3 updates the `pwm_th1520` driver to use the new helper macro,
+>> fixing the build warnings.
+> 
+> Given that for now the pwm_th1520 driver is the only user, does it make
+> sense to merge this series via my pwm tree? If it goes via a different
+> tree, I'd like to have a tag to merge into my tree to hand over code
+> which is free of warnings to Linus in the next merge window.
+
+Hi,
+
+I agree with you. Hopefully we can get an ack from the Rust maintainers
+and the series can go through your tree.
+
+> 
+>> Patch 4 includes a minor clippy style fix for the `pwm_th1520` driver.
+> 
+> If you could mention the command that makes this warning visible, I'd be
+> glad to add that to my repertoire of build checks.
+
+I'm using the following command to compile the kernel:
+$ make ARCH=riscv -j20 LLVM=1 CLIPPY=1
+
+I guess you were missing the 'CLIPPY=1' part.
+
+> 
+> Thanks for addressing the issue
+> Uwe
+
+Best regards,
 -- 
-2.50.1
-
+Michal Wilczynski <m.wilczynski@samsung.com>
 
