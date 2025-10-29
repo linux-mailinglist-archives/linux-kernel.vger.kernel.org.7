@@ -1,329 +1,339 @@
-Return-Path: <linux-kernel+bounces-877150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5524AC1D504
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:54:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A57CC1D4B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:51:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 69E694E3C7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:54:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9368F4E385D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8A0323416;
-	Wed, 29 Oct 2025 20:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECF130B511;
+	Wed, 29 Oct 2025 20:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="LPmGxZIH"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBVrC2eb"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AD23161B9;
-	Wed, 29 Oct 2025 20:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B86D72F5A23
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761771130; cv=none; b=quNnNC3X1Jx2QCvnm+NQOOvaXSCYn4BD6tNC8SEgcAfDx/6WNO176QjVq27GjsHnBUHiMZHGc3cNjLe7nc0ONFhBMws48cMz7X3GaDBdKuDNpJ0GVWE3GV2PX3sBcyI+T5gdTKTVb3U2tprUBphOJ1d/YyVO0Ye6z95bwyRDYyc=
+	t=1761771084; cv=none; b=qDy4ElZ2dJkIGtKvzoqNdNzc14SQkafItD6fXAKHsILyth4Su3fLrwAP6NH72krWM2hlfAm7Kx6JJAom21zcAdR/jhuHoLYWOsTsWJL8/hjDEjgkuS7oYF+BHeXFe9xkMssPpzERerV3KO1OVbngx6PR3FgUcK+b63snUmAGh5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761771130; c=relaxed/simple;
-	bh=5pTRIlOaXCnvQr9a+6pDQBfAYdxnSC8s8hd2C76jPPg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CK8k1VDXX4ivh0URBxF9IwiDpPnnpxK48wEVPY/FS6CL30TGePCpn7/zQyUoXZ1YeX8Lb88cK7Dp4H2n0MoVwnydK2E02XSVNJwMJo/SsIstZJmkC0nv3kpKkForR8X4jcIcXKlNFJ9i006hSOQOIQZd1Bo7SudrabEE0Ae10GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=LPmGxZIH; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1761771115;
-	bh=5pTRIlOaXCnvQr9a+6pDQBfAYdxnSC8s8hd2C76jPPg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LPmGxZIHaHnGFYdwh2l6dTCfrjKGbjSsnka3g6g+lfJDfRmt5oKwX9LYAcGdvnifw
-	 +BCDmWXdwPgNPBe2FMouyIHrBVSxIV04jn6P9sbn0dKvuAMO8b/y5aQXXBHU6Am0By
-	 cg0aumYWpAjrf1x94pC+MpitBBJ/he0OAlOwLqkbY/x8O0GUlDU/2XgJEuKxrtz0Ks
-	 aqvYAkxetq8ut7xVZL1vWIA2JOqTPmj7IFklvMRA9amAum8zsxed3PuW3DYqw9laXr
-	 gCYn7BnYGKTdiQBQTqhcrL1BtddjMOJnfyIlEDq/9cW31VWwdJkFIHWj4UPAA87Gpg
-	 hd1KR52qqs6xQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id 3280E6010D;
-	Wed, 29 Oct 2025 20:51:55 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 264AB205025; Wed, 29 Oct 2025 20:51:30 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v1 08/11] tools: ynl: add sample for wireguard
-Date: Wed, 29 Oct 2025 20:51:16 +0000
-Message-ID: <20251029205123.286115-9-ast@fiberby.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251029205123.286115-1-ast@fiberby.net>
-References: <20251029205123.286115-1-ast@fiberby.net>
+	s=arc-20240116; t=1761771084; c=relaxed/simple;
+	bh=vYGQTNXu/pUrR4RRZ9S3jUSTz+VGSBn4Ky9Tk38U6eI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gbAR3ZYP1iNVLJYDFCgXNznpK3L8ARQqGrZzgYHpCB6xYecQWD32I7Xs2Sax6/GsIHCYYxMtlQlAivjH8/mqr4s/P7RNmHbzRi+W1jvSR2+MnD8Rx9gbYmxhru4YYvpGZgzdxe08+508HFHHqG4mXYh1kfhf6uwUY8JAfWq5jnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBVrC2eb; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-4298a028de6so996918f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761771080; x=1762375880; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HUleLLa8ND574xXra2RGEF6RaI7Xj9xpL5ZJVlCE2lI=;
+        b=IBVrC2eb1w7MtVjrZ6o3GEotf2+11RdD9vT++Yt6ABLsDhkGC+uC3QXN4aUgwdHR+7
+         c8yTB0YxPb5rnmrmy3fy2+q+/IhZDsNE5GlIUkeEJAs1i6wRYqmDUvlSGKcaeuuWLWv0
+         JenSz2kV94IJ73JaOfW3cgqw2+IgtC4BHlypbHyfzxCp2TFbS4JD+O4Y3LSGhvfR1S0t
+         63nQ/YgqH0K998DnfN/wtw2HYKSVOnT8T8s1lek3lgrefYWWynThsnZimqyColgf8D+N
+         u72rASeyVZj8Qo1S1fMo+Kw/13ip+MonSSr8UMV8Kfaijx8pwvxWCcblm6TFUNPWz02T
+         cLTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761771080; x=1762375880;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUleLLa8ND574xXra2RGEF6RaI7Xj9xpL5ZJVlCE2lI=;
+        b=LEgaKRNc5A53aISNepxryCp1JAEBJzxifDjtmFesnzRNLrTfw5myLNc475bTZ1QXnI
+         NVm5DUZ6BqEZCh3mDAP1+w1qOmPHz4EEhNNcpCuN2brlkyte1CsDRzKPrjPSR/Okj94v
+         ujk3UMUvmq7BFmt4jYzZtSR8CJRAJ+CNR5rjc+dSg8qFqjqnm/3wswCn6cEY63HU1DAl
+         7wQXKgCag9Z/kniCCPYchMZ1DiG60gitdV/vdjSJx+sJm5ivA50Wk07lEPC2traDijmf
+         rIZoUrKvgJklOEn5ZVVe5WO18o98aTyV7knySxpRcPrqQopgSAdpsDqApqtG7Pe+PnnT
+         CcBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/oE5iMkVFjbGyy8AC/zOFMKTHirpSY+VhlVSveMtrmDkEyGe2XqbQDLDX4QyIJisYm6/0xAZHZtb1JOE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTR2UphZfj+Zy1TMXGxWCDtLTY5nqK07amce0wMIfwj6exR4BH
+	QOFe1qjJ5kd82DM2rDXGxuKnV2NLfnL1AuUJGMztzlni4Wh0E2haO7Cu
+X-Gm-Gg: ASbGncvmoCk9YBtkQ7w6rdMhrJNOmapE3niGrzpdW05OJCGcFqp+5p9y1850giEdkCi
+	zo5Nyz5scXzctkX5+/i8Ae3SiLXl0P1vvLnb6OMbGX/jfBxX8Po2tMAfq4jrYIne+YihSoVltJu
+	Jb6fRIICzXTKZ0NGPseHu+DKD7Sndve5gpEzn1Xdiq/nhu3jUDXEmFsm9j72LkE/mf2RDEi1FPU
+	EjwRJJnMH0w2XwtiSSTn9KDolvguNSCQrW531q4xEaQCwVgOg3h01/IrCLHaiT/CRYFPiWArp/0
+	x6ODMbUhrAZLZCUvSjux5GgTbanDarkUAfPsn21sq5yvTvWi3h4yA7vpKq+MjSfFdEK5CiyFCku
+	tm/ysJse9hbXTuwu1sEv2/RNrqYucW9PVoA+Z2bXsgJdN1GZxSmBqkyB7GfT+UAo4bf/RZRWozB
+	cWjAK57cC0cmYXVNh/FHnMV9QOlbiRreg=
+X-Google-Smtp-Source: AGHT+IFeQbHeDjZUFHA43UkkMBSaS+cIVCuepwH/xR58asrUxhv9+gT0KhY234gaLSA+Vobfb3QPkw==
+X-Received: by 2002:a05:6000:3110:b0:426:ff91:2f25 with SMTP id ffacd0b85a97d-429b4c81d13mr953533f8f.21.1761771079656;
+        Wed, 29 Oct 2025 13:51:19 -0700 (PDT)
+Received: from [192.168.1.129] ([82.79.237.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477289b3956sm2680805e9.10.2025.10.29.13.51.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 13:51:19 -0700 (PDT)
+Message-ID: <c8fdbb57-d152-4c85-be06-cfbc7e0b1550@gmail.com>
+Date: Wed, 29 Oct 2025 22:51:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] reset: imx8mp-audiomix: Switch to using regmap API
+To: Frank Li <Frank.li@nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Fabio Estevam <festevam@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
+ <20251029135229.890-6-laurentiumihalcea111@gmail.com>
+ <aQJCtZjAGiQdzfDz@lizhi-Precision-Tower-5810>
+Content-Language: en-US
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <aQJCtZjAGiQdzfDz@lizhi-Precision-Tower-5810>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Add a sample application for wireguard, using the generated C library,
 
-The main benefit of this is to exercise the generated library,
-which might be useful for future selftests.
+On 10/29/2025 6:37 PM, Frank Li wrote:
+> On Wed, Oct 29, 2025 at 06:52:26AM -0700, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> As far as the Linux kernel is concerned, block devices such as i.MX8MP's
+>> AUDIOMIX block control or i.MX8ULP's SIM LPAV can simultaneously act as
+>> clock controllers, reset controllers or mux controllers. Since these IPs
+>> offer different functionalities through different subsystem APIs, it's
+>> important to make sure that the register R-M-W cycles are performed under
+>> the same lock across all subsystem APIs. This will ensure that registers
+>> will not end up with the wrong values because of race conditions (e.g.
+>> clock consumer tries to update block control register A, while, at the
+>> same time, reset consumer tries to update the same block control register).
+>>
+>> However, the aforementioned race conditions will only impact block control
+>> IPs which use the same register for multiple functionalities. For example,
+>> i.MX8MP's AUDIOMIX block control IP provides clock gating functionalities
+>> and reset control functionalities through different registers. This is why
+>> the current approach (i.e. clock control and reset control work using
+>> different locks) has worked well so far.
+>>
+>> Since we want to extend this driver to be usable for i.MX8ULP's SIM LPAV
+>> block control IP, we need to make sure that clock control, reset control,
+>> and mux control APIs use the same lock since all of these functionalities
+>> are performed using the SYSCTRL0 register.
+>>
+>> To do so, we need to switch to the regmap API and, if possible, use the
+>> parent device's regmap, which, in the case of i.MX8ULP, will be the clock
+>> controller. This way, we can make sure that the clock gates and the reset
+>> controller will use the same lock to perform the register R-M-W cycles.
+>>
+>> This change will also work fine for cases where we don't really need to
+>> share the lock across multiple APIs (e.g. i.MX8MP's AUDIOMIX block
+>> control) since regmap will take care of the locking we were previously
+>> explicitly performing in the driver.
+>>
+>> The transition to the regmap API also involves some cleanup. Specifically,
+>> we can make use of devres to unmap the device's memory and get rid of the
+>> memory mapping-related error paths and the remove() function altogether.
+> Can you simpifly commit message? The key points are 1: lock, 2: nice API.
+> like regmap_update_bits().
+>
+> Switch to using the regmap API to simplify register access. The regmap
+> infrastructure provides synchronized register access and richer helpers
+> such as regmap_update_bits().
 
-The UAPI header is copied to tools/include/uapi/, when the header
-changes ynl-gen will regenerate both copies.
 
-Example:
-  $ make -C tools/net/ynl/lib
-  $ make -C tools/net/ynl/generated
-  $ make -C tools/net/ynl/samples wireguard
-  $ ./tools/net/ynl/samples/wireguard
-  usage: ./tools/net/ynl/samples/wireguard <ifindex|ifname>
-  $ sudo ./tools/net/ynl/samples/wireguard wg-test
-  Interface 3: wg-test
-      Peer 6adfb183a4a2c94a2f92dab5ade762a4788[...]:
-          Data: rx: 42 / tx: 42 bytes
-          Allowed IPs:
-              0.0.0.0/0
-              ::/0
+this change isn't about simplifying the register access, nor is it about synchronizing
 
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- MAINTAINERS                          |   2 +
- tools/include/uapi/linux/wireguard.h |  79 ++++++++++++++++++++
- tools/net/ynl/samples/.gitignore     |   1 +
- tools/net/ynl/samples/wireguard.c    | 104 +++++++++++++++++++++++++++
- 4 files changed, 186 insertions(+)
- create mode 100644 tools/include/uapi/linux/wireguard.h
- create mode 100644 tools/net/ynl/samples/wireguard.c
+the register access. Previous version was already doing that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1bceeb4f5d122..e7ec4cb4d044f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -27632,6 +27632,8 @@ L:	netdev@vger.kernel.org
- S:	Maintained
- F:	Documentation/netlink/specs/wireguard.yaml
- F:	drivers/net/wireguard/
-+F:	tools/include/uapi/linux/wireguard.h
-+F:	tools/net/ynl/samples/wireguard.c
- F:	tools/testing/selftests/wireguard/
- 
- WISTRON LAPTOP BUTTON DRIVER
-diff --git a/tools/include/uapi/linux/wireguard.h b/tools/include/uapi/linux/wireguard.h
-new file mode 100644
-index 0000000000000..dc3924d0c5524
---- /dev/null
-+++ b/tools/include/uapi/linux/wireguard.h
-@@ -0,0 +1,79 @@
-+/* SPDX-License-Identifier: ((GPL-2.0 WITH Linux-syscall-note) OR BSD-3-Clause) */
-+/* Do not edit directly, auto-generated from: */
-+/*	Documentation/netlink/specs/wireguard.yaml */
-+/* YNL-GEN uapi header */
-+
-+#ifndef _UAPI_LINUX_WIREGUARD_H
-+#define _UAPI_LINUX_WIREGUARD_H
-+
-+#define WG_GENL_NAME	"wireguard"
-+#define WG_GENL_VERSION	1
-+
-+#define WG_KEY_LEN	32
-+
-+enum wgdevice_flag {
-+	WGDEVICE_F_REPLACE_PEERS = 1,
-+};
-+
-+enum wgpeer_flag {
-+	WGPEER_F_REMOVE_ME = 1,
-+	WGPEER_F_REPLACE_ALLOWEDIPS = 2,
-+	WGPEER_F_UPDATE_ONLY = 4,
-+};
-+
-+enum wgallowedip_flag {
-+	WGALLOWEDIP_F_REMOVE_ME = 1,
-+};
-+
-+enum wgdevice_attribute {
-+	WGDEVICE_A_UNSPEC,
-+	WGDEVICE_A_IFINDEX,
-+	WGDEVICE_A_IFNAME,
-+	WGDEVICE_A_PRIVATE_KEY,
-+	WGDEVICE_A_PUBLIC_KEY,
-+	WGDEVICE_A_FLAGS,
-+	WGDEVICE_A_LISTEN_PORT,
-+	WGDEVICE_A_FWMARK,
-+	WGDEVICE_A_PEERS,
-+
-+	__WGDEVICE_A_LAST
-+};
-+#define WGDEVICE_A_MAX (__WGDEVICE_A_LAST - 1)
-+
-+enum wgpeer_attribute {
-+	WGPEER_A_UNSPEC,
-+	WGPEER_A_PUBLIC_KEY,
-+	WGPEER_A_PRESHARED_KEY,
-+	WGPEER_A_FLAGS,
-+	WGPEER_A_ENDPOINT,
-+	WGPEER_A_PERSISTENT_KEEPALIVE_INTERVAL,
-+	WGPEER_A_LAST_HANDSHAKE_TIME,
-+	WGPEER_A_RX_BYTES,
-+	WGPEER_A_TX_BYTES,
-+	WGPEER_A_ALLOWEDIPS,
-+	WGPEER_A_PROTOCOL_VERSION,
-+
-+	__WGPEER_A_LAST
-+};
-+#define WGPEER_A_MAX (__WGPEER_A_LAST - 1)
-+
-+enum wgallowedip_attribute {
-+	WGALLOWEDIP_A_UNSPEC,
-+	WGALLOWEDIP_A_FAMILY,
-+	WGALLOWEDIP_A_IPADDR,
-+	WGALLOWEDIP_A_CIDR_MASK,
-+	WGALLOWEDIP_A_FLAGS,
-+
-+	__WGALLOWEDIP_A_LAST
-+};
-+#define WGALLOWEDIP_A_MAX (__WGALLOWEDIP_A_LAST - 1)
-+
-+enum wg_cmd {
-+	WG_CMD_GET_DEVICE,
-+	WG_CMD_SET_DEVICE,
-+
-+	__WG_CMD_MAX
-+};
-+#define WG_CMD_MAX (__WG_CMD_MAX - 1)
-+
-+#endif /* _UAPI_LINUX_WIREGUARD_H */
-diff --git a/tools/net/ynl/samples/.gitignore b/tools/net/ynl/samples/.gitignore
-index 7f5fca7682d74..09c61e4c18cd4 100644
---- a/tools/net/ynl/samples/.gitignore
-+++ b/tools/net/ynl/samples/.gitignore
-@@ -7,3 +7,4 @@ rt-addr
- rt-link
- rt-route
- tc
-+wireguard
-diff --git a/tools/net/ynl/samples/wireguard.c b/tools/net/ynl/samples/wireguard.c
-new file mode 100644
-index 0000000000000..43f3551eb101a
---- /dev/null
-+++ b/tools/net/ynl/samples/wireguard.c
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <arpa/inet.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <ynl.h>
-+
-+#include "wireguard-user.h"
-+
-+static void print_allowed_ip(const struct wireguard_wgallowedip *aip)
-+{
-+	char addr_out[INET6_ADDRSTRLEN];
-+
-+	if (!inet_ntop(aip->family, aip->ipaddr, addr_out, sizeof(addr_out))) {
-+		addr_out[0] = '?';
-+		addr_out[1] = '\0';
-+	}
-+	printf("\t\t\t%s/%u\n", addr_out, aip->cidr_mask);
-+}
-+
-+/* Only printing public key in this demo. For better key formatting,
-+ * use the constant-time implementation as found in wireguard-tools.
-+ */
-+static void print_peer_header(const struct wireguard_wgpeer *peer)
-+{
-+	unsigned int i;
-+	uint8_t *key = peer->public_key;
-+	unsigned int len = peer->_len.public_key;
-+
-+	if (len != 32)
-+		return;
-+	printf("\tPeer ");
-+	for (i = 0; i < len; i++)
-+		printf("%02x", key[i]);
-+	printf(":\n");
-+}
-+
-+static void print_peer(const struct wireguard_wgpeer *peer)
-+{
-+	unsigned int i;
-+
-+	print_peer_header(peer);
-+	printf("\t\tData: rx: %llu / tx: %llu bytes\n",
-+	       peer->rx_bytes, peer->tx_bytes);
-+	printf("\t\tAllowed IPs:\n");
-+	for (i = 0; i < peer->_count.allowedips; i++)
-+		print_allowed_ip(&peer->allowedips[i]);
-+}
-+
-+static void build_request(struct wireguard_get_device_req *req, char *arg)
-+{
-+	char *endptr;
-+	int ifindex;
-+
-+	ifindex = strtol(arg, &endptr, 0);
-+	if (endptr != arg + strlen(arg) || errno != 0)
-+		ifindex = 0;
-+	if (ifindex > 0)
-+		wireguard_get_device_req_set_ifindex(req, ifindex);
-+	else
-+		wireguard_get_device_req_set_ifname(req, arg);
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	struct wireguard_get_device_list *devs;
-+	struct wireguard_get_device_req *req;
-+	struct ynl_sock *ys;
-+
-+	if (argc < 2) {
-+		fprintf(stderr, "usage: %s <ifindex|ifname>\n", argv[0]);
-+		return 1;
-+	}
-+
-+	req = wireguard_get_device_req_alloc();
-+	build_request(req, argv[1]);
-+
-+	ys = ynl_sock_create(&ynl_wireguard_family, NULL);
-+	if (!ys)
-+		return 2;
-+
-+	devs = wireguard_get_device_dump(ys, req);
-+	if (!devs)
-+		goto err_close;
-+
-+	ynl_dump_foreach(devs, d) {
-+		unsigned int i;
-+
-+		printf("Interface %d: %s\n", d->ifindex, d->ifname);
-+		for (i = 0; i < d->_count.peers; i++)
-+			print_peer(&d->peers[i]);
-+	}
-+	wireguard_get_device_list_free(devs);
-+	wireguard_get_device_req_free(req);
-+	ynl_sock_destroy(ys);
-+
-+	return 0;
-+
-+err_close:
-+	fprintf(stderr, "YNL (%d): %s\n", ys->err.code, ys->err.msg);
-+	wireguard_get_device_req_free(req);
-+	ynl_sock_destroy(ys);
-+	return 3;
-+}
--- 
-2.51.0
 
+the key takeaway here is we want to have the SAME lock used across different APIs.
+
+regmap is a way to do that.
+
+
+>
+>> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>> ---
+>>  drivers/reset/reset-imx8mp-audiomix.c | 91 +++++++++++++++++----------
+>>  1 file changed, 57 insertions(+), 34 deletions(-)
+>>
+>> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
+>> index e9643365a62c..3f6d11270918 100644
+>> --- a/drivers/reset/reset-imx8mp-audiomix.c
+>> +++ b/drivers/reset/reset-imx8mp-audiomix.c
+>> @@ -11,6 +11,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>>  #include <linux/of_address.h>
+>> +#include <linux/regmap.h>
+>>  #include <linux/reset-controller.h>
+>>
+>>  #define IMX8MP_AUDIOMIX_EARC_RESET_OFFSET	0x200
+>> @@ -42,8 +43,8 @@ static const struct imx8mp_reset_map reset_map[] = {
+>>
+>>  struct imx8mp_audiomix_reset {
+>>  	struct reset_controller_dev rcdev;
+>> -	spinlock_t lock; /* protect register read-modify-write cycle */
+>>  	void __iomem *base;
+>> +	struct regmap *regmap;
+>>  };
+>>
+>>  static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_controller_dev *rcdev)
+>> @@ -55,26 +56,15 @@ static int imx8mp_audiomix_update(struct reset_controller_dev *rcdev,
+>>  				  unsigned long id, bool assert)
+>>  {
+>>  	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
+>> -	void __iomem *reg_addr = priv->base;
+>> -	unsigned int mask, offset, active_low;
+>> -	unsigned long reg, flags;
+>> +	unsigned int mask, offset, active_low, shift, val;
+>>
+>>  	mask = reset_map[id].mask;
+>>  	offset = reset_map[id].offset;
+>>  	active_low = reset_map[id].active_low;
+>> +	shift = ffs(mask) - 1;
+>> +	val = (active_low ^ assert) << shift;
+>>
+>> -	spin_lock_irqsave(&priv->lock, flags);
+>> -
+>> -	reg = readl(reg_addr + offset);
+>> -	if (active_low ^ assert)
+>> -		reg |= mask;
+>> -	else
+>> -		reg &= ~mask;
+>> -	writel(reg, reg_addr + offset);
+>> -
+>> -	spin_unlock_irqrestore(&priv->lock, flags);
+>> -
+>> -	return 0;
+>> +	return regmap_update_bits(priv->regmap, offset, mask, val);
+>>  }
+>>
+>>  static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
+>> @@ -94,6 +84,50 @@ static const struct reset_control_ops imx8mp_audiomix_reset_ops = {
+>>  	.deassert = imx8mp_audiomix_reset_deassert,
+>>  };
+>>
+>> +static const struct regmap_config regmap_config = {
+>> +	.reg_bits = 32,
+>> +	.val_bits = 32,
+>> +	.reg_stride = 4,
+>> +};
+>> +
+>> +/* assumption: registered only if not using parent regmap */
+>> +static void imx8mp_audiomix_reset_iounmap(void *data)
+>> +{
+>> +	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(data);
+>> +
+>> +	iounmap(priv->base);
+>> +}
+>> +
+>> +/* assumption: dev_set_drvdata() is called before this */
+>> +static int imx8mp_audiomix_reset_get_regmap(struct device *dev)
+>> +{
+>> +	struct imx8mp_audiomix_reset *priv;
+>> +	int ret;
+>> +
+>> +	priv = dev_get_drvdata(dev);
+>> +
+>> +	/* try to use the parent's regmap */
+>> +	priv->regmap = dev_get_regmap(dev->parent, NULL);
+>> +	if (priv->regmap)
+>> +		return 0;
+>> +
+>> +	/* ... if that's not possible then initialize the regmap right now */
+>> +	priv->base = of_iomap(dev->parent->of_node, 0);
+> Not sure why need map parent devices's ioresource here. You'd better use
+> regmap_attach_dev() at parent devices, so dev_get_regmap() will get it.
+
+
+why would we want to force the parent device to use regmap if it doesn't need to?
+
+
+>
+> Frank
+>
+>> +	if (!priv->base)
+>> +		return dev_err_probe(dev, -ENOMEM, "failed to iomap address space\n");
+>> +
+>> +	ret = devm_add_action_or_reset(dev, imx8mp_audiomix_reset_iounmap, dev);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to register action\n");
+>> +
+>> +	priv->regmap = devm_regmap_init_mmio(dev, priv->base, &regmap_config);
+>> +	if (IS_ERR(priv->regmap))
+>> +		return dev_err_probe(dev, PTR_ERR(priv->regmap),
+>> +				     "failed to initialize regmap\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+>>  				       const struct auxiliary_device_id *id)
+>>  {
+>> @@ -105,36 +139,26 @@ static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
+>>  	if (!priv)
+>>  		return -ENOMEM;
+>>
+>> -	spin_lock_init(&priv->lock);
+>> -
+>>  	priv->rcdev.owner     = THIS_MODULE;
+>>  	priv->rcdev.nr_resets = ARRAY_SIZE(reset_map);
+>>  	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
+>>  	priv->rcdev.of_node   = dev->parent->of_node;
+>>  	priv->rcdev.dev	      = dev;
+>>  	priv->rcdev.of_reset_n_cells = 1;
+>> -	priv->base            = of_iomap(dev->parent->of_node, 0);
+>> -	if (!priv->base)
+>> -		return -ENOMEM;
+>>
+>> +	/* keep before call to imx8mp_audiomix_reset_init_regmap() */
+>>  	dev_set_drvdata(dev, priv);
+>>
+>> +	ret = imx8mp_audiomix_reset_get_regmap(dev);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to get regmap\n");
+>> +
+>>  	ret = devm_reset_controller_register(dev, &priv->rcdev);
+>>  	if (ret)
+>> -		goto out_unmap;
+>> +		return dev_err_probe(dev, ret,
+>> +				     "failed to register reset controller\n");
+>>
+>>  	return 0;
+>> -
+>> -out_unmap:
+>> -	iounmap(priv->base);
+>> -	return ret;
+>> -}
+>> -
+>> -static void imx8mp_audiomix_reset_remove(struct auxiliary_device *adev)
+>> -{
+>> -	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(&adev->dev);
+>> -
+>> -	iounmap(priv->base);
+>>  }
+>>
+>>  static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
+>> @@ -147,7 +171,6 @@ MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
+>>
+>>  static struct auxiliary_driver imx8mp_audiomix_reset_driver = {
+>>  	.probe		= imx8mp_audiomix_reset_probe,
+>> -	.remove		= imx8mp_audiomix_reset_remove,
+>>  	.id_table	= imx8mp_audiomix_reset_ids,
+>>  };
+>>
+>> --
+>> 2.43.0
+>>
 
