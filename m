@@ -1,129 +1,89 @@
-Return-Path: <linux-kernel+bounces-874975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 546C9C17ED3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:34:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C934C17EDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:34:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35A718887A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AAA3AC6CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE21927F00A;
-	Wed, 29 Oct 2025 01:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 656BC2DECA3;
+	Wed, 29 Oct 2025 01:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="BiChO3hh"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2CacSQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DBF6F2F2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B5D2D0637;
+	Wed, 29 Oct 2025 01:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761701564; cv=none; b=qR7fkpoHqNAC0kewNvcaC4ZVBWLJOfsP/HFGOZYPsghGV9O8k5vMN2j+Rxc7TQ8TVgm0fclPcWvU7ST5T+ozov9gVn2EVOLSIaV8dmNirKnpkouXOh2sAkY6EN25mnzRsEat1lSmFMa+iYfQ7G1+56B70KScSZF6ELRYeod0+y8=
+	t=1761701640; cv=none; b=YRvLjjpXdjyDkWgLBB+IIZXtv8AYamcGiaVwp5JN61GLpgQyeyZWeG4oxvDjxrZsGIfl+4Q9IEAFTVUtvxdQP849Ym+TDqLgv6I4sfEnfgRlIaq2bF8DajVxvYW86Nx58hg1bNvh21M6KkxoVz9M87m0cYvfUg4Q0WETxchg/Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761701564; c=relaxed/simple;
-	bh=7De9SBYm15KXwyrkKwlgtLCo2LaAcIHptYv1y34QZWo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OcIo0fEAaDRO7KlrqA2BDx5Oq8YTC6sITWsIb79XNC84bUsg2YKtleEH6II2UTtS7se6UYmnZlUwGKNrSM2spcW2ndvPZ18pUsTAh4LgOMRRtO0RCY2ZbceL5qSCJnNEKpVqxEBe9jG2X5hStlo7JebbuC3cqxH53X8Zi9rZL1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=BiChO3hh; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=a3RjBt8zeIPQKLHLasDxZWnu3ZJLAQippsYalBaaCdQ=;
-	b=BiChO3hhDBOjuIKhCpJghRePDqtttnYUvUpE52W8IFnSvPGwZhRJnTtdpVy0kOmulbf/qnd0D
-	nrBjV4OmRCd1q0MsXF6n5bSUS9osinJi8dQQl+cTt0JjmbtK/lkGco3ZCv22akfkjlI4lQkYxFm
-	+X0RQNoSUqwIZeQgzWscvZE=
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4cx8qb2VKxzmV6g;
-	Wed, 29 Oct 2025 09:32:11 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id F06FF1A0188;
-	Wed, 29 Oct 2025 09:32:39 +0800 (CST)
-Received: from [10.174.177.149] (10.174.177.149) by
- dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 09:32:39 +0800
-Message-ID: <19e22163-39b4-42f8-99b8-1be9ffb1589b@huawei.com>
-Date: Wed, 29 Oct 2025 09:32:38 +0800
+	s=arc-20240116; t=1761701640; c=relaxed/simple;
+	bh=z3Yc/tloRcuK+HMyEVQv+U3jCVDjfWF9XOBpQagP+cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KzLkxx8dVGWLz4CO2/83tiQpb0ap2OSOcSJJ94l3WeL7ExNhggunkMByOaKs8Uql2lLmqaxTPzcRu7SD6uOQrWPdZDnFsz0XHGddZwqFREsKgZNNpiHf8DIcfCwC9iTUwymWt06gSBv6+5lrUzZ3t0XXv6LY5Uhw/49iNpl9VTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2CacSQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA927C4CEE7;
+	Wed, 29 Oct 2025 01:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761701639;
+	bh=z3Yc/tloRcuK+HMyEVQv+U3jCVDjfWF9XOBpQagP+cI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=i2CacSQjHmj9Ut0QvjXn1yYD5TGTQrCJ7pqAe6TCS1ETgHaXGlSxkPdPXJENowIKr
+	 0dcWqbsoOMUnEU/I/CruVsiu1FngyDTvYg1X16idYC/1Zs+zy+SVhrgEe3k78xr5pA
+	 n7QZZPCDOwjpz9h+DjS1S8uEFVcNmIbOSYJRD/BA2OloR2NxGyUW01F57/MCKEW5a9
+	 bpQNcHPzyY7lIbPHuF2Ra5gUjlMSH29F+lI24DtTJLkpiWgvBjqg21XETQYbfePRvw
+	 N/q2GamWYah9nYQeCmC+MHDHZb9qHEGFecyQ9MMnrAcDfUTGTfZye0kTc6deTq4r76
+	 MiSZKe7WozKrw==
+Date: Tue, 28 Oct 2025 18:33:56 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au, dw@davidwei.uk, ap420073@gmail.com,
+ dtatulea@nvidia.com
+Subject: Re: [RFC mm v4 1/2] page_pool: check if nmdesc->pp is !NULL to
+ confirm its usage as pp for net_iov
+Message-ID: <20251028183356.29601348@kernel.org>
+In-Reply-To: <20251023074410.78650-2-byungchul@sk.com>
+References: <20251023074410.78650-1-byungchul@sk.com>
+	<20251023074410.78650-2-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/damon/stat: set last_refresh_jiffies to jiffies at
- startup
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-References: <20251028141915.49989-1-sj@kernel.org>
-From: Quanmin Yan <yanquanmin1@huawei.com>
-In-Reply-To: <20251028141915.49989-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-在 2025/10/28 22:19, SeongJae Park 写道:
+On Thu, 23 Oct 2025 16:44:09 +0900 Byungchul Park wrote:
+> As a preparation, the check for net_iov, that is not page-backed, should
+> avoid using ->pp_magic since net_iov doens't have to do with page type.
 
-> On Tue, 28 Oct 2025 14:19:27 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->
->> In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
->> avoid unnecessarily frequent stat update.
->>
->> On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
->> jiffies wrap bugs appear earlier. However, this causes time_before_eq()
->> in DAMON_STAT to unexpectedly return true during the first 5 minutes
->> after boot on 32-bit systems (see [1] for more explanation, which fixes
->> another jiffies-related issue in DAMON). As a result, DAMON_STAT does not
->> update any monitoring results during that period, which can be more
->> confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
->>
->> Fix it by setting last_refresh_jiffies to jiffies at startup.
-> Nice catch, thank you for this patch!
->
->> [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
->>
->> Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
->> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
->> ---
->>   mm/damon/stat.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/mm/damon/stat.c b/mm/damon/stat.c
->> index 6c4503d2aee3..6dc3e18de910 100644
->> --- a/mm/damon/stat.c
->> +++ b/mm/damon/stat.c
->> @@ -132,6 +132,9 @@ static int damon_stat_damon_call_fn(void *data)
->>   	struct damon_ctx *c = data;
->>   	static unsigned long last_refresh_jiffies;
->>   
->> +	if (unlikely(!last_refresh_jiffies))
->> +		last_refresh_jiffies = jiffies;
->> +
-> How about doing the initialization together with the declaration?  E.g.,
->
->   static int damon_stat_damon_call_fn(void *data)
->   {
->          struct damon_ctx *c = data;
-> -       static unsigned long last_refresh_jiffies;
-> +       static unsigned long last_refresh_jiffies = jiffies;
->
-Thank you for your suggestion. Well, I actually tried that before, but
-found that jiffies is not a compile-time constant,|it| is set at runtime,
-while static initializers must use constant expressions, that's why the
-current patch is modified this way.
+doesn't
 
+> Instead, nmdesc->pp can be used if a net_iov or its nmdesc belongs to a
+> page pool, by making sure nmdesc->pp is NULL otherwise.
 
-Thanks,
-Quanmin Yan
-
-[...]
-
+Please explain in the commit message why the new branch in
+netmem_is_pp() is necessary. We used to identify the pages based
+on PP_SIGNATURE, now we identify them based on page_type.
 
