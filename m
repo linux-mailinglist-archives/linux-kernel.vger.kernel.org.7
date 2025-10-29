@@ -1,133 +1,87 @@
-Return-Path: <linux-kernel+bounces-875481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36611C191B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:40:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97473C1924D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 783AD584D74
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:29:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44DDB584F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6BF319855;
-	Wed, 29 Oct 2025 08:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU7jCLzz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FECF314D24;
+	Wed, 29 Oct 2025 08:22:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E0A313263;
-	Wed, 29 Oct 2025 08:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AA92DF68
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761726082; cv=none; b=L+oPljixOsVTWOb8bPDdMfAlEV8YY5sJdKa3R9Wjb4GTb5yLoHwFGjcSAjIv5amfENSeJN82NxIqthihGq+v8Kps4cSCA5wx9KKQnTwvt4mRu1FhPFnqqkM678HjgmPtEpUKohKs0kfOlJre8+YrkhNYia1yEPmydeflcuEN/AQ=
+	t=1761726125; cv=none; b=sfNcQfJD/iaKmkanVLWhWH6tzIPUwN/JgWD31uGudDwmit8cglJRpvqc4L4AUi3KYAYCcki7eoPwoNVv3Fi1aXI8Wjsyk74i6yCzoHQeRyNm0Yue/ZSexLadxI3Cfw5NiW3ac+8WoabWS0u58crxhWvkUxl8/ZoXolzXN5DsYWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761726082; c=relaxed/simple;
-	bh=z3FbNoT4wr+RJowc2tlpdtzjI1lTrddQCo6j8dp1q78=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=INlBs4OFpMDSz8jxzrBhvn58D2zq27cZkFH2wzqYt+nTcSAubSSLoCYD0KFo8iGDBU9kb25Zoaweh73DPZs+uRFgHBD7VhQQ45tSkiyFwAiZEpXNd215WaVhhLwKigfmquwWyijXUlMTETLh0n6rukurwakXU5nUXaJVFQ3qlYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gU7jCLzz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0C7C4CEF7;
-	Wed, 29 Oct 2025 08:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761726081;
-	bh=z3FbNoT4wr+RJowc2tlpdtzjI1lTrddQCo6j8dp1q78=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=gU7jCLzzvpPizLZoai+7vNsuW+8DFXg+pwozGeUwkCNSNrD1zqeEC5/XBstLeHr+9
-	 Uu/tI7Yrm5en2Hj0h+p6FyxLas3IcdRZam08vuIzZNOVoipIeYkly2TW+f+QAbQWb7
-	 u1oMC8p4lp42Nm4tzrdBsCA2G2jT5L+H/LRUCZyBzzZCo9Cye+XO5jWhpd5GiOOnqL
-	 hiA0XmR/z5gEuM/aXuOXnMck9VdFubeMqbrSKEwPixBYlMX4CZFIyLyB3pddVDf2ky
-	 L6P4WKB/7oHKaHvSapB2YNwTlYAEPGvnq9M5p9Hqu+5cHwUXliNFCwsQgF2J99eh5K
-	 eCBHFwo/8kXTA==
-Message-ID: <b319c2ca-72e6-4a11-a9c5-7ff78ab94cc7@kernel.org>
-Date: Wed, 29 Oct 2025 09:21:16 +0100
+	s=arc-20240116; t=1761726125; c=relaxed/simple;
+	bh=hGnLMO4Ejfe2ROb3dj9LkULwUqjgwn6DokHUIBIwEaI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=W74NQI14k8it8W8klDjFmZQO1F2tdgXqsydUX0OVsi1yuM6WS7qHE45XHQ91i+4uvvUdkzYqJ+k6f0A1hpJZkocyvmuo2EX/8mNE6RGAHE7hFtsU7e+YRnnNWw3Mhs6fVFYtx5YjxLeBM+amRxPOp43S1RSwGgsiyaP7CLB9KSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c684035eso8819875ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:22:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761726123; x=1762330923;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fsL5p8dpWlBLgJ5DSEyO2TC332KM5dBqXBVJ3uDpJ9Y=;
+        b=t493G0FE0VQzTSmDHKETp5TxSKZNJrxKIkf7LzoERh/x6WjgyF5vjPNWXjM3yu5Uew
+         GUqxBKUNjT+PFEd2y2LFFIS2SKVWWx2qhCb6Bmt5Rsaa6DFNgFmea0EkjVCSReTuVCBH
+         5P/LYBatqiK9Qm6fJX17fn24yEyfIaY5O6JHbfy1nOD5qdywevDA3hFg+wgbX0xdPxbL
+         eCgNEFvbf0P/rgWpB8AnBQPwecYb6A7w9Zl/ZJbFTv0ELNoOIcvKGrH4nGVy8k1GDoTQ
+         bV8AB3aJvWoz2Ba114Dq92+iMX4CHwGOPcWuJdJEq3b45hEntz69og+0BtKLS+xPBBGg
+         6Yjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI2ecbSDkoILZvf6kXB667FS5bBy1o02ZN/BfYHatiaG28Qavj/e4NXrqRFe5VKtv2bAfDaPmTeIxmTIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyksia6ZagTGFTvA1cTniozHG+7HiZP/1gAq3vq/pL+1YCdH5jY
+	DQBbTdQODOiC/1DRxNKL8B+Lsr2Qu8X9CoTh3Cbzyqz8NhuLrTJtDM/KcNjcpR36c2094khNckv
+	G8vAD8RKG1waEeyNvhPdQxtOkVhjjly3wfyeiPeCVZlPirZgn2eGuD+XrwZ0=
+X-Google-Smtp-Source: AGHT+IG0K/QjEf+FKduqoOaTZLipgca/lZQnE2YMVgqGlt3bTriUxz/OStrtDeyISdl0soyZzCgdb3nC2CioUzZchTnJzTyuCuh9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND v10 00/12] Enable jpeg enc & dec multi-hardwares for
- MT8196
-To: Kyrie Wu <kyrie.wu@mediatek.com>, Hans Verkuil
- <hverkuil-cisco@xs4all.nl>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20251029081717.29551-1-kyrie.wu@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251029081717.29551-1-kyrie.wu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:b2a:b0:430:b2a8:a9eb with SMTP id
+ e9e14a558f8ab-432f8d9e806mr27050455ab.1.1761726123599; Wed, 29 Oct 2025
+ 01:22:03 -0700 (PDT)
+Date: Wed, 29 Oct 2025 01:22:03 -0700
+In-Reply-To: <20251029062548.aHv48%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6901ceab.050a0220.3344a1.0416.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_log_needs_flush (2)
+From: syzbot <syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 29/10/2025 09:17, Kyrie Wu wrote:
-> This series have the follow changing:
-> Firstly fix some bugs, including resolution change handleing, stop
-> streaming sw flow, fix buffer layout and clock setting to support multi-hw
-> jpeg working and others.
-> Secondly add mt8196 jpegdec and jpegenc compatible to support MT8196
-> kernel driver.
-> Lastly, Add smmu setting to support smmu and iommu at the same time.
-> 
-> This series has been tested with MT8196 tast test.
-> Encoding and decoding worked for this chip.
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
+Tested-by: syzbot+c24237f0eee59c0c2abb@syzkaller.appspotmail.com
 
-No, don't do this. You just sent v10. It's a huge patchset, don't resend
- immediately without any reason. That's just cluttering our mailboxes.
-Allow people to actually review your code.
+Tested on:
 
-Best regards,
-Krzysztof
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=1482bd42580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1c4111dd2cd8811f
+dashboard link: https://syzkaller.appspot.com/bug?extid=c24237f0eee59c0c2abb
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14059f34580000
+
+Note: testing is done by a robot and is best-effort only.
 
