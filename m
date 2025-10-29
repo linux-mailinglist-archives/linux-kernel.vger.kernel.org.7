@@ -1,95 +1,58 @@
-Return-Path: <linux-kernel+bounces-876925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8046C1CC9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:34:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79BE9C1CE1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:05:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D928234C5DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:34:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD294E471D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C172320A0F;
-	Wed, 29 Oct 2025 18:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D663596FF;
+	Wed, 29 Oct 2025 19:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoorhfRj"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="rpS5djc1"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECBB2F744B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE1358D27;
+	Wed, 29 Oct 2025 19:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761762867; cv=none; b=Ky5tdbPTTbE8jzRXIZmYUg2ekGeHHF6mvzN5gqH64PWE3vRLLL8T2QBkaKXtT03gCfXZHbLxUV8VHPpECkCfWQlRdodu/IRRLeLRCdOjZ2XeEygvM0Al5JsFsCZGxmT0CjS/XlzNDYSVUuC20YdBcU6/ozJ8MTLo8+Hs2QETd1o=
+	t=1761764583; cv=none; b=lTzAsv0WLkULXpMJQ3zYx4J1mmeMF3f9udFzwUsxg3TbenbO/6sBAJY3Ps7Cjm/I5AFkg88eFZPLHlCRrEQnFuXj6ujt4V4XZwQU+y6Z3AQlxOqFIUHtm0pKbhqqAafbGI8U9EUCBvN/+adcOsJS38vcIB4WJkQPvnJ021G1J/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761762867; c=relaxed/simple;
-	bh=CTWegixHFEa5eJOgjs271DCyYwGiTYFeBEQBky5Cs5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cyWXta5wL5qNs2F+dbBVmMHgINvOchhInRREdvjKi/Dv7W/6XdGJhYqqlVazcRIUrhuZ6r1hNFOYBt9TKJquA9U9qMO505QOEQDQcb/6mUk0fM0i+ungz7fFTfFujOKvvnXQ/HXoqhglrRheoIBfdgjRgphYUJ9tmWJ+5+BomrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoorhfRj; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2907948c1d2so1434105ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:34:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761762865; x=1762367665; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7ogeoHQ0O1BVIxTR+8ZrFN7NDholX1XeAgqEssh3smo=;
-        b=aoorhfRjrfo2xVbmWP4+R92Lxv95ViIUjXT3CnDE5dyVRwihzvRpHjnIcrgIbrd25k
-         0T7TRRZI1C2anRVGtQlWcjw5R2ejT5ZlzUd0VsPfIMA6bsIx3p10o9j3JuSLPuW3dIKJ
-         zUTVWKt49kLDmLvB8ria0EZ96iBe0e6UJMGchL+pUVs4tWY8RWUIowRxv+W7v5+h/2NC
-         JnCVBfkqDr6WGpJ1m1bfCzsD+fqvf+yWsUwCst9FL2jGZhONCTi/0qIIOaMys9vgS3fa
-         wBZNwbl8HM2m5GNeVoimc14BwmmUiqsgTXfeGfG4xaptRUXLHvbXRLCMjU2EqezrfmXa
-         crDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761762865; x=1762367665;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7ogeoHQ0O1BVIxTR+8ZrFN7NDholX1XeAgqEssh3smo=;
-        b=VZaOLaNdhpxtrXzgaXnykBtaD2FV9PyhwovMtNdknOwRwTPzUDkU9qdnUMY5iO6+Ul
-         88ddwHpDQh4dww2+KB27Kzay7+ZaHvVZUotv2WQru9BKWib7TM856cKR99VmPBrPB1pN
-         fO2EAQnDRTgDJA60oSG6izXPi8SSjJiMZB1aFPjVjDWXjfgznZha9qqTwzX/8w94V3Z9
-         E5t8TwcLbiLAriyvL4E3rytb+UAOPbS/cufMP9jpNoVf4gUruFDtg7nkGfxjjYUfneBr
-         JYWXpkZszK39pX18mq1gG8hUMl/uGfBRD75T0sjgXh8rt972uXkHq4ijxANCon2R5yzP
-         bxSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvh0IXfH8zCZwCAI0kmxvfLB0emy18cX8/zRhYWzjNlrlm5zyR9adLCSRcVp2ecoh7WAYZdythnGrKec=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmHK6DjmuOooCNZOA1dLNMB5A2ZRkHJn5dHDvM7l7K4MUb/FEz
-	voXG+u9LcJeMeQUpgHGnemZugVAbjTLNwWhfI+QYFxGSXBsJrVigipg/
-X-Gm-Gg: ASbGncuEWD/UahYs2oyMfTkCgJIEDSlVgcySRz+jw8dxl28/EJ80TZmkUxH8RZLGfEZ
-	rxC+P9/CXujl8RdUqTfdm0Oo+nyKxDJ/fUV0+GEg1Ru+ALFaADP725CRSz99R6vWzLeftjfHsxN
-	jcbcLu5hc0SX1inbx/7obLQBfEOE5q42uVQy/A4Zin31sQoh7CYf6BFFAkUl+nSU6IbKX+neCi8
-	Pe+6mHg5dRecjR/cnbYUEP59QMlF6kYFcUm0xp0JR6UT8MnCMMWYiCIXGb7bBZEOTd4643IVs5M
-	OIdLNReKWYVOzBLPkl80Kuoi6xXaq05qS99HcVPdQbhXgI9V3izfPxl1UDMiiP5qJpSHKbpcZZ6
-	CVDB34qPibTvGGhSFxGjHEJydSsMvV97pDWSnzTnOYkVZ6QkWrU5y7R4w4rCul99cZHsiq4LP76
-	B/wGS1jvE=
-X-Google-Smtp-Source: AGHT+IEEht2FlqLLG0Ynfa5FSTjLG86LfIAz4K2RirDJOlW5Gbt1L9iZ3dBFembId9gkTaOOHsrmdA==
-X-Received: by 2002:a17:902:d512:b0:294:ccc6:cd2c with SMTP id d9443c01a7336-294dee491f3mr44845335ad.22.1761762865379;
-        Wed, 29 Oct 2025 11:34:25 -0700 (PDT)
-Received: from LilGuy ([2409:40c2:1057:4837:724a:2122:38a7:2755])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-29498e42afdsm156921855ad.99.2025.10.29.11.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 11:34:24 -0700 (PDT)
-From: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>
-To: bagasdotme@gmail.com
-Cc: corbet@lwn.net,
-	david.hunter.linux@gmail.com,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1761764583; c=relaxed/simple;
+	bh=pWofwh7qGFgN1Qd0RhW6fTC+Rfko4QJuxhesX3mqfGk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JxaEk/rBACUEVwfAhGwqfoulxHub6v9NSQrrjUgmTPnjhz7ItxeJ481pL3IRFiAhhS3lnQfdsqc0T/vsZyQwPuH4FUTMJUKPtpWAR7XrRBpsmWduMLjJKL/Bnlx/w1KSIJID8eNS6g2RgIVWzK/MB9wJNOFoCQOyhFIF6x3y6O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=rpS5djc1; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from debian.intra.ispras.ru (unknown [10.10.165.6])
+	by mail.ispras.ru (Postfix) with ESMTPSA id 43AB74076729;
+	Wed, 29 Oct 2025 19:02:56 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 43AB74076729
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1761764576;
+	bh=TiAGTa2EXLg8eiwEDFIdBzkh3CwFSjxdkK/+re2kcEc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rpS5djc15ChD4rD8EdLChF3HshRTQflqo56q+8Dre1t1avVVez2e85YFkQuvfEilK
+	 U/Wv9CFek7Sca+akKIBhZVM39m4QFRyVpPwscvVODRMY57lOY40dEH0dkIM+U36Dmq
+	 vDK6JNBe1lXiaW3WrveqnkNMC+a7Ej7ddhtte9Pw=
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Bitterblue Smith <rtl8821cerfe2@gmail.com>
+Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
+	Zong-Zhe Yang <kevin_yang@realtek.com>,
+	Po-Hao Huang <phhuang@realtek.com>,
+	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael@kernel.org,
-	skhan@linuxfoundation.org,
-	swarajgaikwad1925@gmail.com,
-	viresh.kumar@linaro.org
-Subject: Re: [PATCH] Documentation: pm: fix duplicate hyperlink target errors
-Date: Thu, 30 Oct 2025 00:04:08 +0000
-Message-ID: <20251030000408.44745-1-swarajgaikwad1925@gmail.com>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <aQHyhU78m-9RPQ8q@archie.me>
-References: <aQHyhU78m-9RPQ8q@archie.me>
+	lvc-project@linuxtesting.org
+Subject: [PATCH rtw-next v4 00/10] wifi: rtw89: improvements for USB part
+Date: Wed, 29 Oct 2025 22:02:28 +0300
+Message-ID: <20251029190241.1023856-1-pchelkin@ispras.ru>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,20 +61,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi Bagas,
+The first two patches concern memory leak issues found during testing.
 
-Thanks for reviewing!
+The third and the fourth one do some extra small changes.
 
-Here are the versions from my environment where the warnings appear:
+The other ones implement TX completion functionality missing for the USB
+part of rtw89 driver, suggested by Bitterblue Smith [1].  This will allow
+handling TX wait skbs and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS
+correctly.
 
-  sphinx-build 8.2.3
-  Docutils 0.22.2, Python 3.13.7, on linux)
+rtw89 has several ways of handling TX status report events.  The first one
+is based on RPP feature which is used by PCIe HCI.  The other one depends
+on firmware sending a corresponding C2H message, quite similar to what
+rtw88 has.  RTL8851BU vendor driver [2] was taken for reference.
 
-So it seems the issue shows up with docutils 0.22.2 but not with 0.21.2.
+[1]: https://lore.kernel.org/linux-wireless/0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com/
+[2]: https://github.com/fofajardo/rtl8851bu.git
 
-Thanks again for confirming the diff looks good!
+Series has been tested to work with RTL8851BU (USB) for TX report
+functionality - I've been able to test only V0 format of C2H message, and
+RTL8852BE (PCIe) devices for other things (mainly that the changes have
+not unexpectedly influenced th PCIe part).
 
-Best regards,
-Swaraj
+Changelog.
+
+v4: - add new 7/10 patch with TX URBs anchor based on previous feedback
+    - further changelog below --- in the patches
+
+v3: https://lore.kernel.org/linux-wireless/20251017100658.66581-1-pchelkin@ispras.ru/
+    - add new 6/9 and 8/9 patches based on previous feedback
+    - further changelog below --- in the patches
+
+v2: https://lore.kernel.org/linux-wireless/20251002200857.657747-1-pchelkin@ispras.ru/
+    - add new 3/7 and 4/7 patches prepared due feedback to previous comments
+      or developed in process
+    - further changelog below --- in the patches
+
+v1: https://lore.kernel.org/linux-wireless/20250920132614.277719-1-pchelkin@ispras.ru/
+
+Fedor Pchelkin (9):
+  wifi: rtw89: usb: use common error path for skbs in
+    rtw89_usb_rx_handler()
+  wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
+  wifi: rtw89: usb: use ieee80211_free_txskb() where appropriate
+  wifi: rtw89: refine rtw89_core_tx_wait_complete()
+  wifi: rtw89: implement C2H TX report handler
+  wifi: rtw89: usb: anchor TX URBs
+  wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
+  wifi: rtw89: provide TX reports for management frames
+  wifi: rtw89: process TX wait skbs for USB via C2H handler
+
+Ping-Ke Shih (1):
+  wifi: rtw89: fill TX descriptor of FWCMD in shortcut
+
+ drivers/net/wireless/realtek/rtw89/core.c | 61 ++++++++++-----
+ drivers/net/wireless/realtek/rtw89/core.h | 44 ++++++++---
+ drivers/net/wireless/realtek/rtw89/fw.c   |  4 +-
+ drivers/net/wireless/realtek/rtw89/fw.h   | 41 ++++++++++
+ drivers/net/wireless/realtek/rtw89/mac.c  | 72 +++++++++++++++++
+ drivers/net/wireless/realtek/rtw89/mac.h  | 95 +++++++++++++++++++++++
+ drivers/net/wireless/realtek/rtw89/pci.c  |  2 +-
+ drivers/net/wireless/realtek/rtw89/pci.h  |  4 -
+ drivers/net/wireless/realtek/rtw89/txrx.h |  6 +-
+ drivers/net/wireless/realtek/rtw89/usb.c  | 68 +++++++++++++---
+ drivers/net/wireless/realtek/rtw89/usb.h  |  1 +
+ 11 files changed, 350 insertions(+), 48 deletions(-)
+
+-- 
+2.51.0
 
 
