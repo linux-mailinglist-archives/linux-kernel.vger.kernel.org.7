@@ -1,131 +1,110 @@
-Return-Path: <linux-kernel+bounces-876274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F01C1B13B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:06:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C905C1B7D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:59:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499401887BB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:57:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09C105C6BA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0952BE035;
-	Wed, 29 Oct 2025 13:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Afb8UI02"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACE02E0B44;
+	Wed, 29 Oct 2025 14:07:28 +0000 (UTC)
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD4624BD0C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E5C2E0402
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745802; cv=none; b=fvooiD3MLNgYlv/PL+XXm5cE2jtth3X9HgMeN/BBg6IF8FVjTb2ehlLJZksv65zV1bbX7Cy850uJftz5x4HcOfGnlKcZEyKUFbnp4mbJJ+Dlbfu8s+UXgkwK2SWWOkU2+BDwsYDV/bFYssoEfSLrPbo3neBlO7ac2cbTEOhX1nM=
+	t=1761746848; cv=none; b=Dzy0NEWXtZ/nh9/ohQtXnhtiJVSvSjEns8U+FPDSx86H7APO7bQzkbleJyh8H2K+Vjt4Bm/XZ75KT5XmzZGSAZ2A9cBc0zsKGDGVmEN7GXLiHRsDGSP68/EbgRUC/nMSHh+QFRLdo/S/wfgc8KU6UclwadvflDThO/V5HfybBqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745802; c=relaxed/simple;
-	bh=m5z8JwAcfPmz681g9ABLx9yKpNSDTqrw6F26lbhDvRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pB15/+R482zJoV6Vmp8j/9nHHYnBLG1JGjqMlZ1Jhrs7/D9SVP0OyjUqdd7mEahyVqOa0IKv4/sdtfRl5BGJFBebqmP/AibFk7s7rQbmA2njJI9jCqQnjVyXWPZk33XYg4irJGdOnfC2xjEHNYHlmtnxGNXoJyCmBtB2LNbVlm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Afb8UI02; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b50206773adso209878666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761745799; x=1762350599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XHRvKX7a1plwcuYKpnQYNjnuqWx3QMHmBPMlGSav5BA=;
-        b=Afb8UI02AXrYVevWsAtuzoS7GiUcBDBvlbZ+CojX7oWf/w2ZNKOkEZEZEeClAP6IRR
-         rIIPb0F160BD8pVIghA40fY99xPcKlU8Oa/EKu+IeCiPxqnsknPOt8yhybfsC2s3dIw8
-         iVGZhUk/mU0kCL/I6tlqRQ1I2yFXEHvFEZUdrKoxOSSXpPEMCZzwDxZgbR+4LqZgWvsP
-         IqW00AXXnl3bYa2cOBwlMlPzVv3njnZaL+tWlKDBUMMmmGcF+AqXZ1WWZOAIcf/DZBoi
-         fa+dOiafFd9seuRMa1YYhzGBarptxNHkma8ZaKP8kf+LvuMc0YiXFKC8H+2j7pADimtY
-         lkMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761745799; x=1762350599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XHRvKX7a1plwcuYKpnQYNjnuqWx3QMHmBPMlGSav5BA=;
-        b=aC1LWOLvnv5JKqLJQ0JsWJveZxyigjU83P0EyKrNkP882ldWlLgzU8AbbObyQ5juuo
-         Anyqlt/Zd5dguPowvRQ+/p1C0DT/KDYM7DTwuOJLuiZuxFNer4RdQOBI6+AiwKb72yrJ
-         5IAnQDSJb17U5jjoQYskRLlIcy7mrLDOJTF7y5ZaNYkPQ3Qu7JKh7nuNTx16qvkDgG89
-         hI0fqrjQCeRx+HB0KTrQ3kZr5kr6No0XT3oXhwXrjmgMapVCV2WZ+68+N782Wpz2fo9X
-         Sq8lIO6kRlsr9Zvj4m+F3oiepP8KUgTKfWiPns5FseCW0AHTaC++Nou3gcD2H95jbbnz
-         iw/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXwMFP7tG9Ck+3z5kraok+uM5SM1ydgMxtWJYIKsbaAbSluIzIujsc0HpK/4SWcah1S2zvIwD0QjhvcYFU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK5sh/vw8UHxMljtAhtXYjiacZvxm7uEP3B5s61LFCtDvlkIq8
-	UR4PK5DtbrVjYGxgz+p+tKkLjaIwrp1VoW2J4U25ys8lKvbw17sFGP28
-X-Gm-Gg: ASbGncszzihWE+ZqA3AHl8Qw7p7O9kKPCSmKyyI1d1J7dnaOvj6t6g4aaFTF0F9tlcn
-	ha8GqhahMjy6ZAExq/LAT9I7TE2nG//ywpLJ4RLK1gvE4BzaIRhLYgxF+AuYnWEThvs6btvUGs2
-	TeeBhz390TxlR6+TxsvTXJGtASl5rNdEXU1mR8VpV7tpy+dS8szwTTywTivnHDcQX7aCu2p3/f8
-	IUNIAlSJqLQklnhPrQ67/SLvvNMpzuglbX9hz+pmlGTvMe659rvlbkEHfua1gAB6o3djUX7j/sf
-	Wk8BtvnJiI8uK5j0zVfAocrgfAdpWAgkrkrtxxx1ZfzVdt0ppa7FK9NN4yrSVAXCUugIIm0ZZDJ
-	sFkcISNuR/jrJCqLTfdzRfxyha0NrJgyHOVzdC2MJsiMREADdnAoomrkJmb88z5sYvmoidiW2Nt
-	CGLCyTsXyZZ51O1pD8bEtJ9XaSoEpBOy4naFqhyEV2BC2wdyeb
-X-Google-Smtp-Source: AGHT+IEisyenenOnF/O/4pE9L/Z9/7BlvbLNLGDTC1ejEMocq+xGj3sGbfBlGXhWWmAIhGAmK+J0OA==
-X-Received: by 2002:a17:907:7213:b0:b3f:f6d:1d9e with SMTP id a640c23a62f3a-b6dbbe71b02mr842226166b.6.1761745799422;
-        Wed, 29 Oct 2025 06:49:59 -0700 (PDT)
-Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6dad195456sm900898166b.72.2025.10.29.06.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:49:58 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] fs: touch up predicts in putname()
-Date: Wed, 29 Oct 2025 14:49:52 +0100
-Message-ID: <20251029134952.658450-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761746848; c=relaxed/simple;
+	bh=a53+V3uaK6I4AEhPDfDelsj7DwEolLCX0yrz9pu12RM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FEXGVZEPRSBYf9QWUtEQfUvnfem8P/YhBRJk0duCxGwc3DBZmpwikXoWGfJ9IKJIdNndMOGeEva7pihMhbwOghQUJJqPMM64N9qHkmDaxWrczLLNqHe/nyP36AngjLfX+4aKBsUFG4cx4vfvYWZC1tcOXgdf2zdNgKs8Qb+zCBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4cxTDL1QMfz9X7;
+	Wed, 29 Oct 2025 14:51:14 +0100 (CET)
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4cxTDK1V4Rz5F0;
+	Wed, 29 Oct 2025 14:51:13 +0100 (CET)
+From: Quentin Schulz <foss+kernel@0leil.net>
+Date: Wed, 29 Oct 2025 14:50:59 +0100
+Subject: [PATCH] arm64: dts: rockchip: include rk3399-base instead of
+ rk3399 in rk3399-op1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-rk3399-op1-include-v1-1-2472ee60e7f8@cherry.de>
+X-B4-Tracking: v=1; b=H4sIAMIbAmkC/x3MSwqAMAwA0atI1gaaVoV4FXHhJ2pQqrQognh3i
+ 8u3mHkgSlCJUGcPBLk06u4TKM9gWDo/C+qYDNbYkoxlDKtzzLgfhOqH7RwFe0fUF0IVG4YUHkE
+ mvf9p077vB4K2Eq9kAAAA
+X-Change-ID: 20251029-rk3399-op1-include-b311b4e16909
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Dragan Simic <dsimic@manjaro.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Quentin Schulz <quentin.schulz@cherry.de>, stable@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-Infomaniak-Routing: alpha
 
-1. we already expect the refcount is 1.
-2. path creation predicts name == iname
+From: Quentin Schulz <quentin.schulz@cherry.de>
 
-I verified this straightens out the asm, no functional changes.
+In commit 296602b8e5f7 ("arm64: dts: rockchip: Move RK3399 OPPs to dtsi
+files for SoC variants"), everything shared between variants of RK3399
+was put into rk3399-base.dtsi and the rest in variant-specific DTSI,
+such as rk3399-t, rk3399-op1, rk3399, etc.
+Therefore, the variant-specific DTSI should include rk3399-base.dtsi and
+not another variant's DTSI.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+rk3399-op1 wrongly includes rk3399 (a variant) DTSI instead of
+rk3399-base DTSI, let's fix this oversight by including the intended
+DTSI.
+
+Fortunately, this had no impact on the resulting DTB since all nodes
+were named the same and all node properties were overridden in
+rk3399-op1.dtsi. This was checked by doing a checksum of rk3399-op1 DTBs
+before and after this commit.
+
+No intended change in behavior.
+
+Fixes: 296602b8e5f7 ("arm64: dts: rockchip: Move RK3399 OPPs to dtsi files for SoC variants")
+Cc: stable@vger.kernel.org
+Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
+ arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-random annoyance i noticed while profiling
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+index c4f4f1ff6117b..9da6fd82e46b2 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-op1.dtsi
+@@ -3,7 +3,7 @@
+  * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
+  */
+ 
+-#include "rk3399.dtsi"
++#include "rk3399-base.dtsi"
+ 
+ / {
+ 	cluster0_opp: opp-table-0 {
 
- fs/namei.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+change-id: 20251029-rk3399-op1-include-b311b4e16909
 
-diff --git a/fs/namei.c b/fs/namei.c
-index ba29ec7b67c5..4692f25e7cd9 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -282,7 +282,7 @@ void putname(struct filename *name)
- 		return;
- 
- 	refcnt = atomic_read(&name->refcnt);
--	if (refcnt != 1) {
-+	if (unlikely(refcnt != 1)) {
- 		if (WARN_ON_ONCE(!refcnt))
- 			return;
- 
-@@ -290,7 +290,7 @@ void putname(struct filename *name)
- 			return;
- 	}
- 
--	if (name->name != name->iname) {
-+	if (unlikely(name->name != name->iname)) {
- 		__putname(name->name);
- 		kfree(name);
- 	} else
+Best regards,
 -- 
-2.34.1
+Quentin Schulz <quentin.schulz@cherry.de>
 
 
