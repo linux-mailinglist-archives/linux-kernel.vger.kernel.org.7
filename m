@@ -1,267 +1,288 @@
-Return-Path: <linux-kernel+bounces-876400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48D1C1B835
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:01:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72393C1B658
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1A83C4EE72B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4206B1883ED3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB07234D4F1;
-	Wed, 29 Oct 2025 14:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F99A34FF7C;
+	Wed, 29 Oct 2025 14:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lzyL6J/r"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy2ejHyb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXvv7lfk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Dy2ejHyb";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YXvv7lfk"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5D134AB06;
-	Wed, 29 Oct 2025 14:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A93EF2D7392
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748669; cv=none; b=LsF1jUxxHkeYwdTvTASrolHxCKEkE2QdTDWkmJM4o0lhBp/Ft456nyJpj4pFBgF3JsO7vQX15JaQhxRXpcCY/H+vbOPyybWx5qPEL//Ud4dsUiDxRY1LoXDozQAvN5hn1+FwA/1bemJiFTOizdLhWm6b/9oQIVui4yhfT0+XuzI=
+	t=1761748703; cv=none; b=AQo9/1HswmWL2EJmyfKOcxR35u0HmJLoYLnNF5sEhYg9uMAwATGE4hh3w8O+QAOzZADTRdVwjo0Z3YiSelgxYQUowY5Y8GJmwYifiK5/mI8fFb8mOxr36UY8YmM9ffcIUn+GzRMywAlBXgrjgAwRdDqdU4BH2UGq6FAZ6s/h52E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748669; c=relaxed/simple;
-	bh=xrzdaraOFExxLukUGdDstkMZ2KqagA/b+HcZMmpJXPU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jezf4K8iHDi+IkuCrMnL7uCq+w9ceo6C9jBTkQzonyYX0NTZ1WyWe/Hl+AYJgT9CkcxRUq+xOdryQKnM97vgTqBX7LeKawO9TtR30i706PB25d7SoIynOFH7wFx1eA7QG4AGtL8dTxF1wyKjRHf5Z1kpkHJIZ0b3Zcm9qavLpDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lzyL6J/r; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 53462C0DA86;
-	Wed, 29 Oct 2025 14:37:26 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id AB19B606E8;
-	Wed, 29 Oct 2025 14:37:46 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 81C54117F813D;
-	Wed, 29 Oct 2025 15:37:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761748665; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=z9Dd9IU6DX4wrDs84ZKPS92OQlwhgVAYGOu5dRcVDJU=;
-	b=lzyL6J/rpydJo98TsRXgfxoYR3Core4zBppBXy5dQGgCtpAFLdNX2bMZIeytP9LxjFtcpq
-	6YZSi0ZesEQ2CqSwHX44MzYRO6sywsAkhyBuFoAzL+NsOGuupn9Oacl8aMmn7VH1sHivCa
-	HVJoHlyQ67om0Ysl/VbwtLN7AxHVM8Ek+foeJkun8HwZ5WvPmJbgH3vmgdWBpqpQkmeLn+
-	BIfzrdEi8RwOSFpsI5FCn/PBcjQp5ozgKYqyK8rXdGC0T6U6zBzNBhgGoU2wJpHsANfGA4
-	gwlFN21CwGCnoHn05oGF2tL9oAELHB4Umd825KHYf1LMcrNVRSwL15VzTd9GrA==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Wed, 29 Oct 2025 15:37:08 +0100
-Subject: [PATCH RESEND v2 31/32] drm/vkms: Allow to hot-add connectors
+	s=arc-20240116; t=1761748703; c=relaxed/simple;
+	bh=+OYNezwCdHPcIa2xj8N5yM4i1P7ax/j/IBNi13xhreE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aU3WyS+WqlnXK0W1teu3uQDU7xMv6SW/nGeYYs24Z4Bp4yP50Gv+6No43U19MobA9N67nTG2pKk8OoCBOvj/XABGADE9Cs/0K1hbZmmH8ohUdNiBeomDop0Hqf6EIVxHhnxR2Z0QkaEyZdKL2qwk5vE+eiCGyW6Z6ZNU0BVscZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy2ejHyb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXvv7lfk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Dy2ejHyb; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YXvv7lfk; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B80E020E00;
+	Wed, 29 Oct 2025 14:38:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761748698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
+	b=Dy2ejHybghJItGmopa/mI7O5bjUrZCtn3b4fnZGRLGrPLEOkqsmOrS5cP0XTNuPIWJaCQr
+	yPGkp+x0d9V4weD10d9dD5TuxNIxhCR0zxzJZp+8Dm+W/inaVh+TXmqekiOf5DWHR/y6ui
+	zIUvY2G25Azrbf2zHT4q8LcEg5VZuGg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761748698;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
+	b=YXvv7lfku3lTexPm4eW8ZyAx/WioeWafv3duPsNvEUqN1pgAIKXLHSx5HQH1JkQo+myXA9
+	2ul1Eue4yN0YgrAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Dy2ejHyb;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=YXvv7lfk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1761748698; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
+	b=Dy2ejHybghJItGmopa/mI7O5bjUrZCtn3b4fnZGRLGrPLEOkqsmOrS5cP0XTNuPIWJaCQr
+	yPGkp+x0d9V4weD10d9dD5TuxNIxhCR0zxzJZp+8Dm+W/inaVh+TXmqekiOf5DWHR/y6ui
+	zIUvY2G25Azrbf2zHT4q8LcEg5VZuGg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1761748698;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/w3MRB+TOS2yBG8/nTaTk+4AfwEGJiuVEcv9DVs4O0w=;
+	b=YXvv7lfku3lTexPm4eW8ZyAx/WioeWafv3duPsNvEUqN1pgAIKXLHSx5HQH1JkQo+myXA9
+	2ul1Eue4yN0YgrAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9980F1349D;
+	Wed, 29 Oct 2025 14:38:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TG6wJNomAmldPgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 14:38:18 +0000
+Message-ID: <0f630d2a-3057-49f7-a505-f16866e1ed08@suse.cz>
+Date: Wed, 29 Oct 2025 15:38:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251029-vkms-all-config-v2-31-a49a2d4cba26@bootlin.com>
-References: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
-In-Reply-To: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
-To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, jose.exposito89@gmail.com, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com, 
- airlied@gmail.com, thomas.petazzoni@bootlin.com, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5808;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=xrzdaraOFExxLukUGdDstkMZ2KqagA/b+HcZMmpJXPU=;
- b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ+QghrFilKMCZFYcpyamJr0m3kZTyYOOqm3
- 1Bi8wtvk5SJAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImfgAKCRAgrS7GWxAs
- 4rwcEADX8ko2qVQYN222//f88abW8+XGCX9zshE0H6hcocPra9HuorrVImCWM8cxentS8x0Ur8X
- RAAWJYgZZxxWqE8gaimxVIRND/IZIP8jD4nf5BjZPSZfWmXByoW1hFtzWDT03ROH8c2aR602rcn
- nF3BXWANtLLIck3zzyZjCWQVZUdtNCXNFHNtHE8zL14FWanByKMPol63laQzS26d94umOV9Dt/q
- 4HKEgQaiTs+gpv3+32SRsbr7ujk+gHrAQpoOd9uoKKj/Dz4T7AFdQMPrjfdBltZIqyJVrEasXGo
- mT4nd2SqY5f6mDt6kcqnDiLpFOkW5JZEmdTVTLr6QwLvTxC1QsdqxhTCbEPeEJD4DvDIHpiaDSF
- EBwHxqtfTazIlmvFZ0smpXwWRa1Gk6ywt/T70q5Zk24qeuceVa0BJdXcJL5NYAgP8ZXk5gD2hoy
- BBeVLo9BPnNmOLQWyB5nVQ8X/nyyp+dsuKpmgNmdeb49yrK0shQVTWx01Ec4isVArELC2DZxqa6
- AUnzhxQ59ID4BEzAKxIM3jsJnjpgUvDX8s3XKUvU/0n6uA+55LYybkRF1UsaQzZTLXHubntgFlc
- Gv2HK61aNBCgvMqjhQvmZf3wlKAHYn/yIn+EZzy5hYaezrqYE/D88M1oWbDdP82ed5Cx1uwe1VB
- iqxsZGBwdzAduUw==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 01/19] slab: move kfence_alloc() out of internal bulk
+ alloc
+Content-Language: en-US
+To: Marco Elver <elver@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ bpf@vger.kernel.org, kasan-dev@googlegroups.com,
+ Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>
+References: <20251023-sheaves-for-all-v1-0-6ffa2c9941c0@suse.cz>
+ <20251023-sheaves-for-all-v1-1-6ffa2c9941c0@suse.cz>
+ <CANpmjNM06dVYKrraAb-XfF02u8+Jnh-rA5rhCEws4XLqVxdfWg@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <CANpmjNM06dVYKrraAb-XfF02u8+Jnh-rA5rhCEws4XLqVxdfWg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B80E020E00
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-In order to allow creating dynamic connector, add the required
-infrastructure in vkms_connector.
+On 10/23/25 17:20, Marco Elver wrote:
+> On Thu, 23 Oct 2025 at 15:53, Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> SLUB's internal bulk allocation __kmem_cache_alloc_bulk() can currently
+>> allocate some objects from KFENCE, i.e. when refilling a sheaf. It works
+>> but it's conceptually the wrong layer, as KFENCE allocations should only
+>> happen when objects are actually handed out from slab to its users.
+>>
+>> Currently for sheaf-enabled caches, slab_alloc_node() can return KFENCE
+>> object via kfence_alloc(), but also via alloc_from_pcs() when a sheaf
+>> was refilled with KFENCE objects. Continuing like this would also
+>> complicate the upcoming sheaf refill changes.
+>>
+>> Thus remove KFENCE allocation from __kmem_cache_alloc_bulk() and move it
+>> to the places that return slab objects to users. slab_alloc_node() is
+>> already covered (see above). Add kfence_alloc() to
+>> kmem_cache_alloc_from_sheaf() to handle KFENCE allocations from
+>> prefilled sheafs, with a comment that the caller should not expect the
+>> sheaf size to decrease after every allocation because of this
+>> possibility.
+>>
+>> For kmem_cache_alloc_bulk() implement a different strategy to handle
+>> KFENCE upfront and rely on internal batched operations afterwards.
+>> Assume there will be at most once KFENCE allocation per bulk allocation
+>> and then assign its index in the array of objects randomly.
+>>
+>> Cc: Alexander Potapenko <glider@google.com>
+>> Cc: Marco Elver <elver@google.com>
+>> Cc: Dmitry Vyukov <dvyukov@google.com>
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> ---
+>> @@ -7457,6 +7458,20 @@ int kmem_cache_alloc_bulk_noprof(struct kmem_cache *s, gfp_t flags, size_t size,
+>>         if (unlikely(!s))
+>>                 return 0;
+>>
+>> +       /*
+>> +        * to make things simpler, only assume at most once kfence allocated
+>> +        * object per bulk allocation and choose its index randomly
+>> +        */
 
-Co-developed-by: José Expósito <jose.exposito89@gmail.com>
-Signed-off-by: José Expósito <jose.exposito89@gmail.com>
-[Louis Chauvet: use drm_atomic_helper_connector_reset instead of
-drm_mode_config_reset because connector is not yet registered]
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_connector.c | 81 +++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/vkms/vkms_connector.h | 32 ++++++++++++++
- drivers/gpu/drm/vkms/vkms_output.c    |  9 ++++
- 3 files changed, 122 insertions(+)
+Here's a comment...
 
-diff --git a/drivers/gpu/drm/vkms/vkms_connector.c b/drivers/gpu/drm/vkms/vkms_connector.c
-index 2c5f04af8784..bd0e368d5598 100644
---- a/drivers/gpu/drm/vkms/vkms_connector.c
-+++ b/drivers/gpu/drm/vkms/vkms_connector.c
-@@ -161,9 +161,90 @@ struct vkms_connector *vkms_connector_init_static(struct vkms_device *vkmsdev,
- 	return connector;
- }
- 
-+static void vkms_connector_dynamic_destroy(struct drm_connector *connector)
-+{
-+	struct drm_device *dev = connector->dev;
-+	struct vkms_connector *vkms_connector;
-+
-+	drm_connector_cleanup(connector);
-+
-+	vkms_connector = drm_connector_to_vkms_connector(connector);
-+	drmm_kfree(dev, vkms_connector);
-+}
-+
-+static const struct drm_connector_funcs vkms_dynamic_connector_funcs = {
-+	.fill_modes = drm_helper_probe_single_connector_modes,
-+	.reset = drm_atomic_helper_connector_reset,
-+	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
-+	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-+	.destroy = vkms_connector_dynamic_destroy,
-+	.detect = vkms_connector_detect,
-+};
-+
- void vkms_trigger_connector_hotplug(struct vkms_device *vkmsdev)
- {
- 	struct drm_device *dev = &vkmsdev->drm;
- 
- 	drm_kms_helper_hotplug_event(dev);
- }
-+
-+struct vkms_connector *vkms_connector_hot_add(struct vkms_device *vkmsdev,
-+					      struct vkms_config_connector *connector_cfg)
-+{
-+	struct vkms_config_encoder *encoder_cfg;
-+	struct vkms_connector *connector;
-+	int ret;
-+	unsigned long idx = 0;
-+
-+	connector = drmm_kzalloc(&vkmsdev->drm, sizeof(*connector), GFP_KERNEL);
-+	if (IS_ERR(connector))
-+		return connector;
-+	ret = drm_connector_dynamic_init(&vkmsdev->drm,
-+					 &connector->base,
-+					 &vkms_dynamic_connector_funcs,
-+					 connector_cfg->type,
-+					 NULL);
-+	if (ret)
-+		return ERR_PTR(ret);
-+	drm_connector_helper_add(&connector->base, &vkms_conn_helper_funcs);
-+
-+	vkms_config_connector_for_each_possible_encoder(connector_cfg, idx, encoder_cfg) {
-+		ret = drm_connector_attach_encoder(&connector->base,
-+						   encoder_cfg->encoder);
-+		if (ret)
-+			return ERR_PTR(ret);
-+	}
-+
-+	drm_atomic_helper_connector_reset(&connector->base);
-+
-+	vkms_connector_init(vkmsdev, connector, connector_cfg);
-+
-+	ret = drm_connector_dynamic_register(&connector->base);
-+	if (ret)
-+		return ERR_PTR(ret);
-+
-+	return connector;
-+}
-+
-+void vkms_connector_hot_remove(struct vkms_device *vkmsdev,
-+			       struct vkms_connector *connector)
-+{
-+	drm_connector_unregister(&connector->base);
-+	drm_mode_config_reset(&vkmsdev->drm);
-+	drm_connector_put(&connector->base);
-+}
-+
-+int vkms_connector_hot_attach_encoder(struct vkms_device *vkmsdev,
-+				      struct vkms_connector *connector,
-+				      struct drm_encoder *encoder)
-+{
-+	int ret;
-+
-+	ret = drm_connector_attach_encoder(&connector->base, encoder);
-+	if (ret)
-+		return ret;
-+
-+	drm_mode_config_reset(&vkmsdev->drm);
-+
-+	return ret;
-+}
-diff --git a/drivers/gpu/drm/vkms/vkms_connector.h b/drivers/gpu/drm/vkms/vkms_connector.h
-index 85f9082c710e..f53e3f85c684 100644
---- a/drivers/gpu/drm/vkms/vkms_connector.h
-+++ b/drivers/gpu/drm/vkms/vkms_connector.h
-@@ -34,4 +34,36 @@ struct vkms_connector *vkms_connector_init_static(struct vkms_device *vkmsdev,
-  */
- void vkms_trigger_connector_hotplug(struct vkms_device *vkmsdev);
- 
-+/**
-+ * vkms_connector_hot_add() - Create a connector after the device is created
-+ * @vkmsdev: Device to hot-add the connector to
-+ * @connector_cfg: Connector's configuration
-+ *
-+ * Returns:
-+ * The connector or an error on failure.
-+ */
-+struct vkms_connector *vkms_connector_hot_add(struct vkms_device *vkmsdev,
-+					      struct vkms_config_connector *connector_cfg);
-+
-+/**
-+ * vkms_connector_hot_remove() - Remove a connector after a device is created
-+ * @connector: The connector to hot-remove
-+ */
-+void vkms_connector_hot_remove(struct vkms_device *vkmsdev,
-+			       struct vkms_connector *connector);
-+
-+/**
-+ * vkms_connector_hot_attach_encoder() - Attach a connector to a encoder after
-+ * the device is created.
-+ * @vkmsdev: Device containing the connector and the encoder
-+ * @connector: Connector to attach to @encoder
-+ * @encoder: Target encoder
-+ *
-+ * Returns:
-+ * 0 on success or an error on failure.
-+ */
-+int vkms_connector_hot_attach_encoder(struct vkms_device *vkmsdev,
-+				      struct vkms_connector *connector,
-+				      struct drm_encoder *encoder);
-+
- #endif /* _VKMS_CONNECTOR_H_ */
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index 44f8f53c9194..56c9c0b56151 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -116,5 +116,14 @@ int vkms_output_init(struct vkms_device *vkmsdev)
- 
- 	drm_mode_config_reset(dev);
- 
-+	vkms_config_for_each_connector_dynamic(vkmsdev->config, connector_cfg) {
-+		if (connector_cfg->enabled) {
-+			connector_cfg->connector = vkms_connector_hot_add(vkmsdev, connector_cfg);
-+
-+			if (IS_ERR(connector_cfg->connector))
-+				return PTR_ERR(connector_cfg->connector);
-+		}
-+	}
-+
- 	return 0;
- }
+>> +       kfence_obj = kfence_alloc(s, s->object_size, flags);
+>> +
+>> +       if (unlikely(kfence_obj)) {
+>> +               if (unlikely(size == 1)) {
+>> +                       p[0] = kfence_obj;
+>> +                       goto out;
+>> +               }
+>> +               size--;
+>> +       }
+>> +
+>>         if (s->cpu_sheaves)
+>>                 i = alloc_from_pcs_bulk(s, size, p);
+>>
+>> @@ -7468,10 +7483,23 @@ int kmem_cache_alloc_bulk_noprof(struct kmem_cache *s, gfp_t flags, size_t size,
+>>                 if (unlikely(__kmem_cache_alloc_bulk(s, flags, size - i, p + i) == 0)) {
+>>                         if (i > 0)
+>>                                 __kmem_cache_free_bulk(s, i, p);
+>> +                       if (kfence_obj)
+>> +                               __kfence_free(kfence_obj);
+>>                         return 0;
+>>                 }
+>>         }
+>>
+>> +       if (unlikely(kfence_obj)) {
+> 
+> Might be nice to briefly write a comment here in code as well instead
+> of having to dig through the commit logs.
 
--- 
-2.51.0
+... is the one above enough? The commit log doesn't have much more on this
+aspect. Or what would you add?
+
+> The tests still pass? (CONFIG_KFENCE_KUNIT_TEST=y)
+
+They do.
+
+Thanks,
+Vlastimil
+
+>> +               int idx = get_random_u32_below(size + 1);
+>> +
+>> +               if (idx != size)
+>> +                       p[size] = p[idx];
+>> +               p[idx] = kfence_obj;
+>> +
+>> +               size++;
+>> +       }
+>> +
+>> +out:
+>>         /*
+>>          * memcg and kmem_cache debug support and memory initialization.
+>>          * Done outside of the IRQ disabled fastpath loop.
+>>
+>> --
+>> 2.51.1
 
 
