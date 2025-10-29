@@ -1,226 +1,204 @@
-Return-Path: <linux-kernel+bounces-875392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C01C18DFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:11:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D6493C1902E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0112A1C60BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:06:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395C91AA0D3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC9631197E;
-	Wed, 29 Oct 2025 08:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297F6318125;
+	Wed, 29 Oct 2025 08:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="POB69esF"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IJdOyt9F";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VWD2m9k7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDA92EAB6E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644E6317711
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761725137; cv=none; b=tXBDRqeWEbQhYAgK/UHGhYQzbdn2KXkgDE/1AWEpF6wgFdB+5NMtCt594iOjyvwbLfA2HNrcdK3XH90ZrooTD6/+MS6/VvwjRO2wdjT4M/6k2mw/AjKeIQgoNMiccYhXOcp3KbELcdzS0A82iEIndELRjEP06XRL3xqfE1/C7c8=
+	t=1761725783; cv=none; b=aYs6qm5dlb5KTFxvdJaY1CHDOcTNrtph5PNo0LC4GXVl+IIzdKIOjtt+8bs+ZqBYpG44Fypjk1cBTlfE/qWkLan0L6ym5DwTBmrBKzT1+1/QHjsEqDHtRD9RUCqx1Rkgclv5rRkQkPg3EbkNMRKVoPgxSbF7gkxge/Kit4pbOkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761725137; c=relaxed/simple;
-	bh=WBNJOMS80alY5EU3GdzRZQbQnfDjSSqeOBTVcZ31p/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tfql0v9Mo83UuIu9zc8y7SfAvndS41zFW4YeSu8ahL222kLssuXJ10VJmkiDRxTlTOYlQfKNpOmEkwlT/csN//l4WYFo7Ay8CJCa0qfezdvnUNhfCTcYGMFpBd8erkHt5N08b6qaxpNOROjZlzj7PmFA/3FefVDcnbsk9PIiQoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=POB69esF; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8edf2f49-54f6-4604-8d01-42751234bee9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761725127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yk4PUhjFL395TmYOv7gltb3HHECw/EBab++L+Zsd2s8=;
-	b=POB69esFKG9kb3n4mSAV3U7Ka6U9jKsTmiynTZND0fdm2hrV6tVNyeIb094iW12aUZujcS
-	ylMz9tnF41HneC7z9bYAyXQrHBjjjpAHrjeEDn+JmZDTUagUtNklDvY/fNbEsXOcB4KJi6
-	k9MDji9FBdRnuSToM6Y1FHFq9d1uLPE=
-Date: Wed, 29 Oct 2025 16:05:16 +0800
+	s=arc-20240116; t=1761725783; c=relaxed/simple;
+	bh=KLTyHWEAcaKr1eRQGtyWJm7kWu7wVUNzKX0WRgsTt1s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ddh9oGzuLuzi5XnQhT88HMChXr04DA/8trK2Km79ggLeNxhiM1eOYv8b+F9/dK4gvysRUNsEO3Ld+MaO0n6f2pgXrx7cwvgskGWbCV9eWG/eRAjbUQz6slSECG38Bd5xSIt+KVY5evURcaubmuYDrM6mRgqE/h+72H0mpJrsovw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IJdOyt9F; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VWD2m9k7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T4utOY3692109
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=QeivkgIAz76HiBHfRH/41C
+	LBq7zxQHuMJPrMhMpbui8=; b=IJdOyt9FNkI52GhAL7ksgUSuZ9Y5RyhtC55q8x
+	J050JEEMA44qPATGIDdmgc8CL7WWlPjrpibwguqTV/tKb0cQM+H5omnDKGUw0ySV
+	+o0wEifCR4yHksAydoOcWT+Qg/KVwgjipZMA7a8EA4qq18BmDKBI4nANkzM+IrOo
+	HlWzKLysbJ5kTc2qSIRDZjH+MmofV6R+IIbo12fg/xVnu0kmBGqAf44YYzzTlotI
+	K7dWDAjqgYCg2KBWwfynIEUTdxCUQevOZ2gcdbjqnro/Ek320+mgTALEzMA+AF85
+	yB+j4vfxqE4g2Lh9CNIQlggrQAp13v3q1NgvWx86vnaSdtZw==
+Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com [209.85.217.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a2hr9j-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:16:19 +0000 (GMT)
+Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-5db56fb3fbcso9120835137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:16:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761725779; x=1762330579; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeivkgIAz76HiBHfRH/41CLBq7zxQHuMJPrMhMpbui8=;
+        b=VWD2m9k76ppkhKhqcbj6zoxFJ/O0DD1d46/Khn5MZjGnNlP0pmQ86NN0myBdNv/JUT
+         Vjb9ahySgQQrJtU77/QtZP88vy36ltU2O3ddEZN+y+mCTg3PYMBSmuF5PbDUA1kCVKa4
+         Ysb/D9hbNZTUY+nxFbAG8sMXP7xYLUIJ9YgXkyVgfoeL2dZ35lpy5YLrnFD8xiyZEC7H
+         80TRPlLKXW6i+vmXRTpQJ6MGk9AwrbhmogPgAeOUEIybruHe1dYJG9TmQwmwEUX3UUgo
+         lH1dJsfGjZHday+8kUbThQFRxNZ98QzYaLLLOhdtBfJps4UsbPg57mABMZ76wzTQETUn
+         oCEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761725779; x=1762330579;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QeivkgIAz76HiBHfRH/41CLBq7zxQHuMJPrMhMpbui8=;
+        b=qJlRH4+fFXIc7yreJG+nTD6PgZlxAHKhYT322BvrqA9ohB5lDoi5RQmdoLlRnke6Nk
+         4SYT/dy6A9byLpZYaBERIG4Jl0fRNuSECVcPj5T+oZn+poriFHcMERX2ysesTaigB2Gc
+         dKkNuL0vP6ASrfyeyyvtlEVtvY/f0nxFdkxYLSekOVK8BUu35dBbmuze1L1TEsQXbBnY
+         VEhXZ0mDqfa0bEuX2OMqM/T6/w7mgUijm0X9w2m2iD8xcE0L7OOkpVKtYWX71EoGY7Gz
+         AqtS1lB16wBmbfrPwP2xmIE+ZqJiW7Jj6SnN3GZMAQloiSBzPSDCeLc7G8aMACvZivu4
+         2nhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZEuMYOdGGR3n6P3FpTM+zMV2M2P0EVd6yugKhDXcvZ83uST4gwf6ECZ7ZIvlGRx3TYgtRP2jwADKkDDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMT15VeCWX6OrtAjWDmVnNNd5lEdgMbHfVlDR9067ZbwbEcaT1
+	XZIOVU24sYnyMMgwfY+6pLHBPCpMQlzUn3oEr7JgdnEzAEnsr0QyHprl1AtiRCdRx/ZUxTNA8h0
+	LdssRd7lflilNm/5wZV0stpeEP3zhyLRAU+eaNYJw//IxgafSMpsmsFdUgB+STZexc/c=
+X-Gm-Gg: ASbGncsfhT9XgLvxqp6a00iFe/UIkfUI4lm24b0OX7BZuFqv2loRz+6PB70zsWK+AMT
+	68iJ/cABU4dBERDZ+5XsHsD1DVnBDW72ZoZkKuDc6xxusjU9qkPr6g3/LVikGOjfBNRW/ynnLO6
+	u/ERtjVIraE1k8ola4fAWML0n/q6iAbb68C0sdsXIFsC5XvC6N0c86P+o1k25VuskG90X4wESKA
+	eSjyMM6geJFXtqIKkgxYYM9F171oGTMGSWGdQ0oDifZA1Yko5dONPSOTIflZ83B21NxRrXY6dBT
+	mgcrvvVB42/ramf1VT8WY0FhIHF/0yszGDO8/wJh3BTEPRNVr2fyjMI0PMK7yFoWHbTJYxzF8kM
+	FJ6O5bbbQNgqUawhQvvkVms3EDzIA/YZqlItIE8Vt5fjrp8W3aA==
+X-Received: by 2002:a17:902:ecc8:b0:269:8072:5be7 with SMTP id d9443c01a7336-294deef6753mr23722335ad.56.1761725145780;
+        Wed, 29 Oct 2025 01:05:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG/y7bkWhIxx0Myxzh6vjq+isdNvogeuTT3oJcV1MrMZQLM6S5Py7etz8cDRf4QLE50KCO0ZQ==
+X-Received: by 2002:a17:902:ecc8:b0:269:8072:5be7 with SMTP id d9443c01a7336-294deef6753mr23721835ad.56.1761725145134;
+        Wed, 29 Oct 2025 01:05:45 -0700 (PDT)
+Received: from hu-jingyw-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498f0be0esm141754705ad.96.2025.10.29.01.05.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 01:05:44 -0700 (PDT)
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Subject: [PATCH v2 0/7] Add initial remoteproc support for Kaanapali and
+ Glymur SoCs
+Date: Wed, 29 Oct 2025 01:05:38 -0700
+Message-Id: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v1 00/26] Eliminate Dying Memory Cgroup
-To: Michal Hocko <mhocko@suse.com>
-Cc: hannes@cmpxchg.org, hughd@google.com, roman.gushchin@linux.dev,
- shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
- lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com,
- imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
- axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
- <aQHIDWDx3puT5XZd@tiehlicka>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Qi Zheng <qi.zheng@linux.dev>
-In-Reply-To: <aQHIDWDx3puT5XZd@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+X-B4-Tracking: v=1; b=H4sIANLKAWkC/12NzQ6CMBAGX4X0bEm7ID+efA/DoS2LNEpbu0g0h
+ He3cPSyySTfzqyMMFokdslWFnGxZL1LAKeMmVG5O3LbJ2Yg4CwFtPzhAo84+RlD9IaboZFlXRS
+ yx4qlpxBxsJ9DeOsSa0XIdVTOjLsmKWCfjZZmH79HdpH7+CiIFsr/wiK54JWUeqg1NgW0V0+Uv
+ 97qafw05emwbtu2HzgamczKAAAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>
+Cc: aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Sibi Sankar <sibi.sankar@oss.qualcomm.com>,
+        Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761725143; l=2358;
+ i=jingyi.wang@oss.qualcomm.com; s=20250911; h=from:subject:message-id;
+ bh=KLTyHWEAcaKr1eRQGtyWJm7kWu7wVUNzKX0WRgsTt1s=;
+ b=faSqcdKYBrQNp77AXE7+l4Bwfer/H+ghqklHKylwMz6VlE3VL3AsVkgHEKNACI2O7MKpdBu8J
+ y5N7wBgwkC3DIFWxw465Pjo7iEC2LV6lBuvQeTCakPPVGfL3DP9y1zH
+X-Developer-Key: i=jingyi.wang@oss.qualcomm.com; a=ed25519;
+ pk=PSoHZ6KbUss3IW8FPRVMHMK0Jkkr/jV347mBYJO3iLo=
+X-Proofpoint-GUID: JpUTuH0Cy4T9dBBFLo9jqNS6Z4DKgCnt
+X-Proofpoint-ORIG-GUID: JpUTuH0Cy4T9dBBFLo9jqNS6Z4DKgCnt
+X-Authority-Analysis: v=2.4 cv=PcvyRyhd c=1 sm=1 tr=0 ts=6901cd53 cx=c_pps
+ a=N1BjEkVkxJi3uNfLdpvX3g==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=kDz7l3ViJ1xZ-f_3I1MA:9 a=QEXdDO2ut3YA:10 a=crWF4MFLhNY0qMRaF8an:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA1OSBTYWx0ZWRfX7KBL4r3I/I0M
+ CPAFn2O7FbDRonk69aovU5B1glUaaL1+FWDr4ORUCGK8raos7YTqqQAgv+sN2oL29KkeUqNuQAL
+ fWK9EbKzMyip/wltmWQ315qrFx6iG70FZOI9y2sx33J4zisoLMQo6Vazle5T2WGrJHoICNq0cdp
+ 9ckaNhdKGZ0XhJPYslTR5FQq3rD0HzIzeJ/tgjj1c7rYlrWrYOSWImfFDSCJH4jwKMAKZJLKxNT
+ DC3t0SGtMjpTdrXmDVeQr0wvx/GAK7eo0j+Ralqdg0mPWcEAQUBXaa0/bui6tkXTSkVJUrf6sLh
+ +9ElLdUxGd2rLKfvGSOFGagd3qeBl0xvqRKa2KzerYpokvVgrhPD+aS6bi0KemIUHAxWFwWIuRW
+ xDB2KIPb93tcaa46ZrAy5QjrsIrvTQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_03,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 clxscore=1015 spamscore=0 adultscore=0 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290059
 
-Hi Michal,
+Add initial support for remoteprocs including ADSP and CDSP aon Qualcomm
+Kaanapali and Glymur platforms which are compatible with ealier Platforms
+with minor difference. And add initial support for SoC Control Processor
+(SoCCP) which is loaded by  bootloader. PAS loader will check the state
+of the subsystem, and set the status "attached" if ping the subsystem
+successfully.
 
-On 10/29/25 3:53 PM, Michal Hocko wrote:
-> On Tue 28-10-25 21:58:13, Qi Zheng wrote:
->> From: Qi Zheng <zhengqi.arch@bytedance.com>
->>
->> Hi all,
->>
->> This series aims to eliminate the problem of dying memory cgroup. It completes
->> the adaptation to the MGLRU scenarios based on the Muchun Song's patchset[1].
-> 
-> I high level summary and main design decisions should be describe in the
-> cover letter.
+Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+---
+Changes in v2:
+- Drop MPSS change
+- pick Glymur changes from https://lore.kernel.org/linux-arm-msm/20250924183726.509202-1-sibi.sankar@oss.qualcomm.com
+- Drop redundant adsp bindings - Dmitry
+- Clarify Kaanapali CDSP compatible in commit msg - Krzysztof
+- include pas-common.yaml in soccp yaml and extend the common part - Krzysztof
+- Clear early_boot flag in the adsp stop callback - Dmitry
+- Use .mbn in soccp driver node - Konrad
+- Link to v1: https://lore.kernel.org/r/20250924-knp-remoteproc-v1-0-611bf7be8329@oss.qualcomm.com
 
-Got it. Will add it in the next version.
+---
+Gokul krishna Krishnakumar (1):
+      remoteproc: qcom: pas: Add late attach support for subsystems
 
-I've pasted the contents of Muchun Song's cover letter below:
+Jingyi Wang (4):
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali ADSP
+      dt-bindings: remoteproc: qcom,sm8550-pas: Add Kaanapali CDSP
+      dt-bindings: remoteproc: qcom,pas: Document pas for SoCCP on Kaanapali and Glymur platforms
+      remoteproc: qcom_q6v5_pas: Add SoCCP node on Kaanapali
 
-```
-## Introduction
+Sibi Sankar (2):
+      dt-bindings: remoteproc: qcom,sm8550-pas: Document Glymur ADSP
+      dt-bindings: remoteproc: qcom,sm8550-pas: Document Glymur CDSP
 
-This patchset is intended to transfer the LRU pages to the object cgroup
-without holding a reference to the original memory cgroup in order to
-address the issue of the dying memory cgroup. A consensus has already been
-reached regarding this approach recently [1].
+ .../remoteproc/qcom,kaanapali-soccp-pas.yaml       | 134 +++++++++++++++++++++
+ .../bindings/remoteproc/qcom,pas-common.yaml       |  83 +++++++++----
+ .../bindings/remoteproc/qcom,sm8550-pas.yaml       |  26 +++-
+ drivers/remoteproc/qcom_q6v5.c                     |  89 +++++++++++++-
+ drivers/remoteproc/qcom_q6v5.h                     |  14 ++-
+ drivers/remoteproc/qcom_q6v5_adsp.c                |   2 +-
+ drivers/remoteproc/qcom_q6v5_mss.c                 |   2 +-
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  81 ++++++++++++-
+ 8 files changed, 402 insertions(+), 29 deletions(-)
+---
+base-commit: aaa9c3550b60d6259d6ea8b1175ade8d1242444e
+change-id: 20251029-knp-remoteproc-cf8147331de6
 
-## Background
-
-The issue of a dying memory cgroup refers to a situation where a memory
-cgroup is no longer being used by users, but memory (the metadata
-associated with memory cgroups) remains allocated to it. This situation
-may potentially result in memory leaks or inefficiencies in memory
-reclamation and has persisted as an issue for several years. Any memory
-allocation that endures longer than the lifespan (from the users'
-perspective) of a memory cgroup can lead to the issue of dying memory
-cgroup. We have exerted greater efforts to tackle this problem by
-introducing the infrastructure of object cgroup [2].
-
-Presently, numerous types of objects (slab objects, non-slab kernel
-allocations, per-CPU objects) are charged to the object cgroup without
-holding a reference to the original memory cgroup. The final allocations
-for LRU pages (anonymous pages and file pages) are charged at allocation
-time and continues to hold a reference to the original memory cgroup
-until reclaimed.
-
-File pages are more complex than anonymous pages as they can be shared
-among different memory cgroups and may persist beyond the lifespan of
-the memory cgroup. The long-term pinning of file pages to memory cgroups
-is a widespread issue that causes recurring problems in practical
-scenarios [3]. File pages remain unreclaimed for extended periods.
-Additionally, they are accessed by successive instances (second, third,
-fourth, etc.) of the same job, which is restarted into a new cgroup each
-time. As a result, unreclaimable dying memory cgroups accumulate,
-leading to memory wastage and significantly reducing the efficiency
-of page reclamation.
-
-## Fundamentals
-
-A folio will no longer pin its corresponding memory cgroup. It is necessary
-to ensure that the memory cgroup or the lruvec associated with the memory
-cgroup is not released when a user obtains a pointer to the memory cgroup
-or lruvec returned by folio_memcg() or folio_lruvec(). Users are required
-to hold the RCU read lock or acquire a reference to the memory cgroup
-associated with the folio to prevent its release if they are not concerned
-about the binding stability between the folio and its corresponding memory
-cgroup. However, some users of folio_lruvec() (i.e., the lruvec lock)
-desire a stable binding between the folio and its corresponding memory
-cgroup. An approach is needed to ensure the stability of the binding while
-the lruvec lock is held, and to detect the situation of holding the
-incorrect lruvec lock when there is a race condition during memory cgroup
-reparenting. The following four steps are taken to achieve these goals.
-
-1. The first step  to be taken is to identify all users of both functions
-    (folio_memcg() and folio_lruvec()) who are not concerned about binding
-    stability and implement appropriate measures (such as holding a RCU read
-    lock or temporarily obtaining a reference to the memory cgroup for a
-    brief period) to prevent the release of the memory cgroup.
-
-2. Secondly, the following refactoring of folio_lruvec_lock() demonstrates
-    how to ensure the binding stability from the user's perspective of
-    folio_lruvec().
-
-    struct lruvec *folio_lruvec_lock(struct folio *folio)
-    {
-            struct lruvec *lruvec;
-
-            rcu_read_lock();
-    retry:
-            lruvec = folio_lruvec(folio);
-            spin_lock(&lruvec->lru_lock);
-            if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
-                    spin_unlock(&lruvec->lru_lock);
-                    goto retry;
-            }
-
-            return lruvec;
-    }
-
-    From the perspective of memory cgroup removal, the entire reparenting
-    process (altering the binding relationship between folio and its memory
-    cgroup and moving the LRU lists to its parental memory cgroup) should be
-    carried out under both the lruvec lock of the memory cgroup being 
-removed
-    and the lruvec lock of its parent.
-
-3. Thirdly, another lock that requires the same approach is the split-queue
-    lock of THP.
-
-4. Finally, transfer the LRU pages to the object cgroup without holding a
-    reference to the original memory cgroup.
-```
-
-And the details of the adaptation are below:
-
-```
-Similar to traditional LRU folios, in order to solve the dying memcg
-problem, we also need to reparenting MGLRU folios to the parent memcg when
-memcg offline.
-
-However, there are the following challenges:
-
-1. Each lruvec has between MIN_NR_GENS and MAX_NR_GENS generations, the
-    number of generations of the parent and child memcg may be different,
-    so we cannot simply transfer MGLRU folios in the child memcg to the
-    parent memcg as we did for traditional LRU folios.
-2. The generation information is stored in folio->flags, but we cannot
-    traverse these folios while holding the lru lock, otherwise it may
-    cause softlockup.
-3. In walk_update_folio(), the gen of folio and corresponding lru size
-    may be updated, but the folio is not immediately moved to the
-    corresponding lru list. Therefore, there may be folios of different
-    generations on an LRU list.
-4. In lru_gen_del_folio(), the generation to which the folio belongs is
-    found based on the generation information in folio->flags, and the
-    corresponding LRU size will be updated. Therefore, we need to update
-    the lru size correctly during reparenting, otherwise the lru size may
-    be updated incorrectly in lru_gen_del_folio().
-
-Finally, this patch chose a compromise method, which is to splice the lru
-list in the child memcg to the lru list of the same generation in the
-parent memcg during reparenting. And in order to ensure that the parent
-memcg has the same generation, we need to increase the generations in the
-parent memcg to the MAX_NR_GENS before reparenting.
-
-Of course, the same generation has different meanings in the parent and
-child memcg, this will cause confusion in the hot and cold information of
-folios. But other than that, this method is simple enough, the lru size
-is correct, and there is no need to consider some concurrency issues (such
-as lru_gen_del_folio()).
-```
-
-Thanks,
-Qi
-
-> 
-> Thanks!
+Best regards,
+-- 
+Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 
 
