@@ -1,163 +1,110 @@
-Return-Path: <linux-kernel+bounces-876748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD80C1C7F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:38:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7C4C1C5D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:09:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BB81642C42
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14386432F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207334AB05;
-	Wed, 29 Oct 2025 16:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020462F0676;
+	Wed, 29 Oct 2025 16:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iPkU9AQ6"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W1nadL5U"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5189F31E0EF
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B5B2F3C39
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761755884; cv=none; b=EcpSU9ds98YxDDMAMvVirivAsR2X/oJWhOOM1j6CsQx19WbXrdFeucxTDj3DdyHclzMzWE1xcR0I+gAuo/giwBqMP5JFyJvlUUQ/Rql1qJIchMGZ7vSoXeGR7494AoHiKL6ZxoHT31jOOE1RSUnf3w7GTcxb6Hm5Zv9pUgKn+Ac=
+	t=1761755907; cv=none; b=k//l5gHYfctcHbDfwO0TPnsoBCYQ58eiSqH33joTWcW31wbllToUR2ab5qmgM2B4UDrSFVgKMe+fGUQtF2a0afTEj4Vm8wWIhybe0fdL0hm2DYw4GDemLAHrnrghDF7tZje/N8lNpF8JURcRSCQy76VzfksqODJ6N03ZSccgA7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761755884; c=relaxed/simple;
-	bh=mlipImmHMA+gUQirrassIMMrc6gdMm3abdf1zY6CT7M=;
+	s=arc-20240116; t=1761755907; c=relaxed/simple;
+	bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sBC6+FQ3ZoKZ1BncHjamyqM57h6XbJ0BWj0RlW78iwkOlKFcc4bl0IsGTOPt5XcsTLYsIue1ESJApM2h/BkBTQ19msJHMseZq7kQHuevaB3naWh3rNq43BvZeZwiGRdbqj44o/qKvuME0dMlCb0JlNHbVYttnvmowEflQnMqaaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iPkU9AQ6; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-63c2b48c201so11741a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:38:02 -0700 (PDT)
+	 To:Cc:Content-Type; b=kJ6fNmiQBf1K2rOrMhRgoEib3BkXttmpn7JdjXX6W2uxpPjg/a19LEOB/C3VbaGjeelU6BPzv81XM4zwTVBhs5sUkbXESQGuZk9/dzXnQLU2c4+UFWjrR3zBL4uNDjgTq6vJy0sY8vI3NlvdCxdrr3L1sKnqNrvFhi8adu5FGes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W1nadL5U; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-427091cd4fdso30557f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761755881; x=1762360681; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761755904; x=1762360704; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yDIJ8tol892ULVaHDJQvBrvWCdj4ospSO0ksso+IQTY=;
-        b=iPkU9AQ6fYcburL7CERfBfsPkjSUL/rq6U4a1T8CULZZi0mNKFNS6VLk52ngwGB5UA
-         GgH5bV6sXy+rNFS0LDbvTB+ir687axxPl5DkMS4YIunWigBCDeK/dpIA3mm2TXa3ZYUw
-         ZCGpx9cpzV8SmWK1g3oXNc41gZv9OywBnEkrQDqP2pTfKyqzd5KvCscviX8KtEqHQpEF
-         lPnJ/uEiD/aZG5yAznydCr9ZTPc038tUuYBn2Z4vHDWyNtdfURAOxjh7Lvc94w43yV3J
-         7QZD1mM9L/xNgp/puWDRvVtXuA3gDxqGWeQz2wZsUsNrdS3zjObbx7xudIGl5/R9VkkT
-         YdLg==
+        bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
+        b=W1nadL5U2bSeY+TcybSfsiTmgoOo1IBL3eWyzAmk+ejKJLex8rTwklOpr5Wp6tbIF7
+         vlCCnk9+GP9GAVg6ht+UoYBWX7I9eKQR6e+Jwh78ZZKd7W860tD3onMfHsE984SionrB
+         aHU+/2Irpe7vs+rq1CaWv3kMktI99CgtgB7vpKQx/25dRFefirSHj4bGdQFtStBr/aCK
+         /luzX45L1aDfa8+Gs5PzSfj67m58UpTCvyN0WBUpc6rHg5+ueLKSqBegSV92jrpsUexs
+         zffEuiqF+t+IPqoWUEdYAJnU76BdL4/Vr0xXp42MHCyoy3hWuKPemWM7vXYwE6hN48wX
+         6zjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761755881; x=1762360681;
+        d=1e100.net; s=20230601; t=1761755904; x=1762360704;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yDIJ8tol892ULVaHDJQvBrvWCdj4ospSO0ksso+IQTY=;
-        b=rfQiMDHBYvmmORoe/SnIhnUM3xkrl+Ecn2DK1bfZIcQ+e+JmhSOWPmIeOrrs50zxQJ
-         4VR2VITvedWAateCT69AqpoXt+69DY7bK1z572UAdOvKF1Mue7IiyrQd8quNK14JIxYp
-         zXG9uDfOu7ehOP8u1bZFZ5fsr2bxCt+yXNvrlUi5RWFgi/3dSxuOntYhERvRhWRuBlzE
-         4BSobOF413ABa3C9XAcxyZ62PjIJwnONdyhtQ0smgwEcSvFvx+/adGmV+XziOKK9bnQ8
-         YFMGhOKQfLtVoGeAvuKUqSE1x2XpwHZdDl3HfcAB8duQWPqgKCA8VrjpTZO90ZR8wZ0s
-         0Z4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXkYtJAJDYTXsodUg1GdUNnf0QCbTEa71t1hkxNYcWTHBcYXP57kSqsedqqnzIi0pSgDDGoxBaUuvguhqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNfl954cTOshEI/QbGN8Y/eioJbK162wVGE1CPQGz714oiEjyZ
-	yTGamJy6UEKMu6z1TYlldJhQRg6HfDTQOXTYkhd18cAqML2T4WJKcy/SnoZma746GSWmVNmnFXV
-	sms31EivfPLqDmeTiHC+XKm5ORU/Y2kLR/A+5ChEr
-X-Gm-Gg: ASbGnctHGo14m/ndPP1hI7yDo+z+Zm7qFdDei3XTAz632SiKOcDYJEinSSHRK9aOMIk
-	I/frKS35o45zkxTsgsbpHeHiMAF2ctwiPcC2r6ueMvPcysY0nGJS9qf1GayHBU4zBJuLa7Umsdd
-	XQkd2M0YWx9mGz3rhojRnIdR1el4lUcgtnBPZ0TVsPGuI114nQsccnfOPPSVe1cCJayx2kLgAC7
-	tSnUm386pPdD+nNhh36Sa6Xu0+YzKfVuIAMteWspr/X31xz6yVCr4YkJCTWMioJmEb65Q==
-X-Google-Smtp-Source: AGHT+IFfZzU2MThWZ5FgRnQl6W4DTilzVkUssFqzAnqhMoG9aNNRDttn+vvJvii8lde8hiLSpJv9QKk+lpt2Wo/wJkg=
-X-Received: by 2002:aa7:d40b:0:b0:63c:2b0f:ced1 with SMTP id
- 4fb4d7f45d1cf-640452ca7eemr93256a12.5.1761755880509; Wed, 29 Oct 2025
- 09:38:00 -0700 (PDT)
+        bh=Jwdv6/9meoYUWvOfN7SO9jrpugknEVlmkhDpfiFHKn8=;
+        b=ITJ/hRbx3L26pGUt/EKjR8SsD6MWXhJXiT70jXcaB/CX+n+ohsEX4YyB0lpgLTLo5k
+         hg9FeRwgO/tkiFWNjgdvA6EOvNCLQA7wuEKArYa+phjyWt0PU1ZbI9V9PfmH+KCa2QQ6
+         3g3iSa8HIHjXZFXZkfhQuX0Zg0mqw/GU1BsFwogM7zBbl/6kzUQcxBIkTT894tUQMOxc
+         4VfK0bhw6OT0bOocvmnvgVwh8s2Q3snPQZ4bTuKeN/tuDhk0yMpG7MK214qONLzIqqPI
+         km3Bm4MRJ+aswCYIdolFt/DWY4IQbZ1ZBxG92j6bx2y2AiEgxVoLZDrSTakHBCM+rVNI
+         YtcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUoYw4OPw6PWWQzxo0P3ALYvpP+QJrEx/kjPeWoAWCY8TBRtQAevktCp1Dx7n90AlB0TnlQcUcLl5S468E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1OJPBJytaz3IIn4b/HD8k2NyiYEWwZB4vpyv/Jz2q74hD+db5
+	JcjUd2be7jewDVdUq4KMFRXOjci/u+BoCTEUGk0fHfBWdGpwG0UKqCzGZmT2nkJ0yAL0CFV/clu
+	e3C8GWoNJJUdVxi747rbesceR+t6Op9w=
+X-Gm-Gg: ASbGncuAZPCFVK4kWfFNORBd8o+z8zaVBSvwaCTa4kCnEXRsHiZw+Zzk80KC7ykAWdO
+	whpcAvV4JiCAzU1qLQ3cEufP7wonyixRDLp0Mk+NlOfI2odZ1DvcHPNNk857gh1hQPMKzsFn/n5
+	m2hj3FSJUSBGXcLP9SDzNQej2/wAo5R/08BBgIgdk07zBNxAiNhQaRzSYANEmIEL/yxRtXf10+7
+	PQGi/SwJLNAzSZNjsaBnqEA7UnPkIQkXy0/vev9HaXRDcQaPzx9Qn5ZZ/lFTUKBuIEu13HkeS6J
+	2KOeEaeX4RL/bHjbLS0feRLbPXsz
+X-Google-Smtp-Source: AGHT+IHOKbYQRjb7noEtg9viqdiV0KOSoE8fwPGm5DiruA+2k83MA/tyzn39j/Xj8DclgnRtviyPtE2Cakz8DDAsYdo=
+X-Received: by 2002:a05:6000:144d:b0:429:8b44:57b7 with SMTP id
+ ffacd0b85a97d-429aefca83emr2893529f8f.51.1761755903765; Wed, 29 Oct 2025
+ 09:38:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aQDOpeQIU1G4nA1F@hoboy.vegasvil.org> <20251028155318.2537122-1-kuniyu@google.com>
- <20251028161309.596beef2@kernel.org> <cd154e3c-0cac-4ead-a3d0-39dc617efa74@linux.dev>
- <CAAVpQUCYFoKhUn1MU47koeyhD6roCS0YpOFwEikKgj4Z_2M=YQ@mail.gmail.com> <9e1ccd0f-ecb6-438e-9763-5ba04bce5928@linux.dev>
-In-Reply-To: <9e1ccd0f-ecb6-438e-9763-5ba04bce5928@linux.dev>
-From: Tim Hostetler <thostet@google.com>
-Date: Wed, 29 Oct 2025 09:37:46 -0700
-X-Gm-Features: AWmQ_bmvtcCMHLAXSsrPNMniUXWYjF6o64mntG7qoIE2p1jGOb47Q3oJQkgZ4nY
-Message-ID: <CAByH8UvEjnh2P5UQUuVw4G0JBkJoRLfZmmS6UbbUsA7htGqbwQ@mail.gmail.com>
-Subject: Re: [PATCH] ptp: guard ptp_clock_gettime() if neither gettimex64 nor
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Kuniyuki Iwashima <kuniyu@google.com>, Jakub Kicinski <kuba@kernel.org>, richardcochran@gmail.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	junjie.cao@intel.com, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20251026154000.34151-1-leon.hwang@linux.dev> <176167501101.2338015.15567107608462065375.git-patchwork-notify@kernel.org>
+ <CAEf4BzbTJCUx0D=zjx6+5m5iiGhwLzaP94hnw36ZMDHAf4-U_w@mail.gmail.com> <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
+In-Reply-To: <23eddad8-aae3-44ce-948a-f3a8808c1e24@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 29 Oct 2025 09:38:12 -0700
+X-Gm-Features: AWmQ_blZBI4M6hqka-WDWjrJS6mwNo50xI2IEFe-TA0xh4CdlMem_GYEsm3tD7A
+Message-ID: <CAADnVQJHAxKmhDdJ_SkgHMf3adiS8MmD5MJCfiFfxU+8peT9-Q@mail.gmail.com>
+Subject: Re: [PATCH bpf v3 0/4] bpf: Free special fields when update hash and
+ local storage maps
+To: Leon Hwang <leon.hwang@linux.dev>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, patchwork-bot+netdevbpf@kernel.org, 
+	Menglong Dong <menglong8.dong@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-patches-bot@fb.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 28, 2025 at 4:57=E2=80=AFPM Vadim Fedorenko
-<vadim.fedorenko@linux.dev> wrote:
+On Tue, Oct 28, 2025 at 11:50=E2=80=AFPM Leon Hwang <leon.hwang@linux.dev> =
+wrote:
 >
-> On 28.10.2025 23:54, Kuniyuki Iwashima wrote:
-> > On Tue, Oct 28, 2025 at 4:45=E2=80=AFPM Vadim Fedorenko
-> > <vadim.fedorenko@linux.dev> wrote:
-> >>
-> >> On 28.10.2025 23:13, Jakub Kicinski wrote:
-> >>> On Tue, 28 Oct 2025 15:51:50 +0000 Kuniyuki Iwashima wrote:
-> >>>> From: Richard Cochran <richardcochran@gmail.com>
-> >>>> Date: Tue, 28 Oct 2025 07:09:41 -0700
-> >>>>> On Tue, Oct 28, 2025 at 05:51:43PM +0800, Junjie Cao wrote:
-> >>>>>> Syzbot reports a NULL function pointer call on arm64 when
-> >>>>>> ptp_clock_gettime() falls back to ->gettime64() and the driver pro=
-vides
-> >>>>>> neither ->gettimex64() nor ->gettime64(). This leads to a crash in=
- the
-> >>>>>> posix clock gettime path.
-> >>>>>
-> >>>>> Drivers must provide a gettime method.
-> >>>>>
-> >>>>> If they do not, then that is a bug in the driver.
-> >>>>
-> >>>> AFAICT, only GVE does not have gettime() and settime(), and
-> >>>> Tim (CCed) was preparing a fix and mostly ready to post it.
-> >>>
-> >>> cc: Vadim who promised me a PTP driver test :) Let's make sure we
-> >>> tickle gettime/setting in that test..
-> >>
-> >> Heh, call gettime/settime is easy. But in case of absence of these cal=
-lbacks
-> >> the kernel will crash - not sure we can gather good signal in such cas=
-e?
-> >
-> > At least we could catch it on NIPA.
-> >
-> > but I suggested Tim adding WARN_ON_ONCE(!info->gettime64 &&
-> > !info-> getimex64) in ptp_clock_register() so that a developer can
-> > notice that even while loading a buggy module.
 >
-> Yeah, that looks like a solution
+> Right, this is the classic NMI vs spinlock deadlock:
 
-Yes, I was actually going to post the fix to gve today (I'll still do
-that as ptp_clock_gettime() is not the only function to assume a
-gettime64 or gettimex64 implementation) and shortly after posting
-Kuniyuki's suggested fix to ptp_clock_register() as such:
+Leon,
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index ef020599b771..f2d9cf4a455e 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -325,6 +325,9 @@ struct ptp_clock *ptp_clock_register(struct
-ptp_clock_info *info,
-        if (info->n_alarm > PTP_MAX_ALARMS)
-                return ERR_PTR(-EINVAL);
-
-+       if (WARN_ON_ONCE(!info->gettimex64 && !info->gettime64))
-+               return ERR_PTR(-EINVAL);
-+
-        /* Initialize a clock structure. */
-        ptp =3D kzalloc(sizeof(struct ptp_clock), GFP_KERNEL);
-        if (!ptp) {
---
-
-I also have a similar patch for checking for settime64's function pointer.
-
-But I have no objections to Junjie posting a v2 in this manner instead
-of waiting for me.
+please stop copy pasting what AI told you.
+I'd rather see a human with typos and grammar mistakes.
 
