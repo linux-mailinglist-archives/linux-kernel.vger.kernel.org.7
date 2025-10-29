@@ -1,149 +1,155 @@
-Return-Path: <linux-kernel+bounces-875573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8411C19583
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:18:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294ECC19540
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CCAE5028D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE821B26979
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A944320A31;
-	Wed, 29 Oct 2025 09:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0623A320A0D;
+	Wed, 29 Oct 2025 09:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9fxux5x"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PCwb6lrj";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="VqeFxpYa"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6116F31E115
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4EFD2F0C7A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761729174; cv=none; b=XikY6/ohixIV/HahLBAp9CLCNhe0Q263D6/NsNbK9wuDoRaEGhHpKdGpQHwKo/RyUx93wRU/BcF5gO8pfKEAOO0KpjkxiNqpW7KtzsovTCB7V8oNr+8NFuLPr1/50IdlejtJfW4whEor1rHUg9WciWeCJT/P32ShIexqGuq3jBM=
+	t=1761729251; cv=none; b=MQim3o2iL0PhBcZuRXwtlQz7Td9+bxX1NdqljS07I3OMtIkQtGDeF2jtjNQq7Q3gs5GhQbyagreLGhXeZnD5K+6HUTtjenPRMCHIOse7KVuzPnaijOvnsQIHBhzZ4VJaicBc2RIedOm38DcWDHZJmuaLOnmw9z9vA1UrmPKeI+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761729174; c=relaxed/simple;
-	bh=krm2oZWHXNyj2OY+480XxIMsziVCbnpUlmwLuLmd8oo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=W6dGsn4TgoaoMh+nWC2Iu9BRcu6PAzxa8t/4UfTfNorAT4WDlQI7xJJj4th/A6+3/golKWBsdXkjr2Bl9JCe391Kb5vyidTpSgVE9PQuR/3PRViL9xNKr6JP4HwwIgspEnzHizMCxYlZpPWacTJ/1W+TUd3r7zZYPJhFm2Rmdrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9fxux5x; arc=none smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63e255e9a20so7573358d50.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:12:53 -0700 (PDT)
+	s=arc-20240116; t=1761729251; c=relaxed/simple;
+	bh=aUPFdpL33uES8kTlkAkCNzAAjB0JCnykVwWBibXh6+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JHgvz5NXxx12VmA4Yb/RIBlOvAzKBw/powfyTo/7M8SJE9strJEuL2w27WOfOhyAmNp5Ha9c2gIcxg5+occ49Ua0HjSSfp9xjc+o2A6C3xgetcs/h5DqwUNa0PCdwxejuOs5ChI24PkKrsQgbFCpOvizd2kTKrk+14E/AmaZ8HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PCwb6lrj; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=VqeFxpYa; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T93BeN4155409
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:14:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	M0KeIVlGq15MElBeP8pO+CyR7dQzEqnN82GDubcNW74=; b=PCwb6lrjAp82TKWt
+	H7sHwkFxeWhxoFzpTJjhjHDzacnvukYjohz+s6EjnXEja1tPY/AG5KyzNf4Fuyma
+	ptiqwkQfvXd77RU3MbEZ1UA3QBId8/QMiDDAfk5izyuiNX5e+IFbiwRiACosVuDt
+	2vkCogNPy49GCyqz5qTV6H2U5LmYm+aQfhOOB/tqPzy8s+18li4TLVNL+bBi3d+d
+	96IGLAztTcMZ0CdXm3Dd0inlWISTiEkDLO2RxHC9OiuIXbtRa1hhE9b/9S3BD4YI
+	yQTJHbgAOhBNXyyOrPrrmc8brycbDMrcmrBg3Bm7UoTj27TlBN5hrOJygdtdWmWk
+	A0i4tw==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3fy0r16p-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:14:08 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-87bd2dececeso27928606d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:14:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761729172; x=1762333972; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BBqHz8cFPV9OUQwbjare8Pel7U5XHqHAeYtuall28CQ=;
-        b=s9fxux5xToO1bCeLUpuISSCurSMgPO2RGN/AEZghDTZsuKHjzlebAInKnXS1ejB6AD
-         Ho9stdAb5AnLmJlVlrdjUomZ8XqQtfP1evsGC3o9Ux6JWh0PWXPfBUyqX8PmvSI0U73K
-         EiunpJooJaHg69dVaTB3oNN0nkzlc7m1YWgGdVdMEABR8itBHWTQvIhdg5EdURgIzYbc
-         rxJKUtUiswTTpJU309W+A4qiPhpVsrSAr6hf5Dfec1F/PMwn/gZe2GsXexrIJpMy7HzO
-         8RBvD3DwYME7i3PeKI3rTmkzHibTLdvOreYDIUJ3Xiq1B/9VHD9qeIR/5Y3O0xT4E6QG
-         MUog==
+        d=oss.qualcomm.com; s=google; t=1761729248; x=1762334048; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M0KeIVlGq15MElBeP8pO+CyR7dQzEqnN82GDubcNW74=;
+        b=VqeFxpYaiW7jSZifvAKa9c8vb0vuXAI53eqBs4VcYCkmFxZgzWIsQY75PdHfmPuaRo
+         VyvL1oLCDdkS9K5EuobpERX66GctODp5XH66FV6Pt/yPOteIOK/HSG5qeGUugJEYo7gX
+         xKjG1rPVaN5PgyIiASOh6oDVOyMlk8vVKcDJxKbF2MeiHrvhsdVUpPBDFF8kZ70QhAEb
+         YP7zCVaHAv8DSdTnRItMiSpP9Hvbw4m4IbfiICqTbbJ8ONcItqwksvK0T0N2eTDvEgky
+         6LfeF+rrhFbNOO2sQXf+WgjaJFsOcgBaS5KhRn7K6zwCMuabtYhvgxVVMstzhd6BTTyI
+         n5hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761729172; x=1762333972;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BBqHz8cFPV9OUQwbjare8Pel7U5XHqHAeYtuall28CQ=;
-        b=lRcBv6knVw1gJc9TfdZuPFyWqiwpYzweczlVlDRQVM3NcA2CzEg+kSloE6Gi1JKSLV
-         bDCkva6oJiMy9zxvqeUqaLxDZCOOSX6RH3z7QU3J1nWhHnU51gM3oDYo758ippcT09r3
-         T304sBQELLH8+u8Tt9T0xSTC7fInAuJ8fvt2EwZAB8BZUZxE4kKwMOo608fCRgMM7Klz
-         sjLWDFh/OXo9kHLaeGrK6DJ+vYm1k6ilcd+yuE6/vemAnBe0AxctL/0hyJOdEDVx/H9y
-         Oxk5Az+ZtQaUG9XkDeIq8CizsNDCXWcPeCnq2exHohocrWWhLjSWIr9IaqZlo9/gVZwG
-         5Tsg==
-X-Forwarded-Encrypted: i=1; AJvYcCUS/qaQ4HpRpwHtEDgMaAlkz4UPHclgiJRlKiVpmpRLIvyjSGROdvlwTSAcPHO5D9tQ4isYD2d/dcCxY6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWtTeIrga8qntWqRXGO/C4ib29/ZWs+CT2RH6s0EMQij3ALFCR
-	+t+GsW5W7DIvU5gF3G5bMsAfNWXWOJawCxfNI6mcXmCC4uwf94bNgAFkw1juKYHl/2Dx8mWT/b1
-	nx/lANw==
-X-Gm-Gg: ASbGncsWqtU7eTdeBXoRDH/d4UWk95aXEQpYr8Oepea57UPtQp8SQJioQ+0Q+sL6/q8
-	RenVsVKNOCMDlbbJU8wlI4nRYwW9gyeGg2+8HnyZrESwSf8Y/Vkwj2YvpY2ARbz2eBWEfI6vN7M
-	ro4N3zCsn37OJi/Ry2Mt+cibQE8SRcRoPuRQlfev27aOVU7CJq9EVFdcpA1P+suINGNWuZpYVBC
-	q4La576nFi0XvbhLTs3JfWl93WyFgf69jTHW06zFJWTvVLrCZAqd6sPCZjvDa3RGuAAITkOgohd
-	vFNpydZB4mLg6o8lrVbLigs9J/W+4qQPb/RdsvYlXAFATLx73sloE15wLbpnV343JKsvYtKJq6w
-	Gm/zHCC/D1PB55VLSvi/OZms/t72hBadQSNBfQWVfi9tLSI6lUprhMTSwAEvMecID1BVtkItlcT
-	TOqZNd67WyxqOyjP7G8clBp15sIE73zU5GNiR0n1uTEsRwfhW6sqNcV7pUAz4x
-X-Google-Smtp-Source: AGHT+IEUyMs7bw/KHzPZ51AbmO3wPAApjy9icdxMigxwWyr9bCi7kzw4YLn0xUhUa4b2Nc69MgGvKQ==
-X-Received: by 2002:a53:cdcc:0:b0:63e:187b:f383 with SMTP id 956f58d0204a3-63f76dced0dmr1569801d50.52.1761729172087;
-        Wed, 29 Oct 2025 02:12:52 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed198ef9sm34560117b3.24.2025.10.29.02.12.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 02:12:51 -0700 (PDT)
-Date: Wed, 29 Oct 2025 02:12:48 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
-    Alexander Viro <viro@zeniv.linux.org.uk>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
-    Johannes Weiner <hannes@cmpxchg.org>, 
-    Shakeel Butt <shakeel.butt@linux.dev>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
-    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
-In-Reply-To: <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
-Message-ID: <eaa8023f-f3e1-239d-a020-52f50df873e7@google.com>
-References: <20251023093251.54146-1-kirill@shutemov.name> <20251023093251.54146-3-kirill@shutemov.name> <9c7ae4c5-cc63-f11f-c5b0-5d539df153e1@google.com> <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
+        d=1e100.net; s=20230601; t=1761729248; x=1762334048;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M0KeIVlGq15MElBeP8pO+CyR7dQzEqnN82GDubcNW74=;
+        b=MYCw83ZoYkZDVYMG7ss78cd85LOVwN1oc805pKrKUx6iGL3Ws4p9VlKpSb4nZ+B1Bu
+         c3mNXfT16UkP/kKkLAf2YG3aCFyLJOU58FyliSBfrp6DxH3qB/yLhrHw0IQRCE7S+tG9
+         WT2K/bTquZ8JSpV5OUpCF0uaP4wSQW+5+Y8+FIl+kgBeHk+NdHh/KikNrFAbsokVwnYS
+         JaNG7l8rmDkCvdBaIJrk/PlcM4J/DhU99iRj7rAWVbxmKLJE9JyCBUat1pdObBGkRqcI
+         crzCGcGyd9SUIXRIhIz+cbEtGVHZXNa4D+ja7bMThlxxSi/EsFbCBnvUEE6xapLO9BwZ
+         VMbA==
+X-Forwarded-Encrypted: i=1; AJvYcCXl07TeKdoCG2KdFDYUQF9mhNIWhc/tUVObp5UrzE9YG2nZJZvkTSYCVDDD20klfJ64c74fuXdAv4MMnm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxduM1fzjh+Qyp16h1KetNODXQQ+NJeViO6TMQ0i0r/lfBzpPyZ
+	C/ANKdVjaSNyXz8ZGOWuheFhJuGiss/38LTwIDXPFevIEDo4oOZyBye7Bd37J0HlwDAQkKgekb5
+	bagj+JhyZG6dMKhOLSF8SzyRPGUx58sot83kA33cuX7+DpNWvpZy97XwGkv6hqJosqxE=
+X-Gm-Gg: ASbGncvOk9fIhLIeVKA5x2DlJVxiuU2UlcWfuiYgHPV7S2oSNWpgTcfH+Nqpv/eZRIF
+	L3BxNnd5udpdHXisVDZTNESSNuZheFF+IgWq/9nJLejLhRCVTyuu2yhk6iEYLSBgF6yLiZzG/KH
+	g79lx89bFH2fPjN/YjqEk85k6CtzKr6+/LGlijG3HTT3dQljCJrj7YJKW+Jd0HmP3hkTE7neKPJ
+	DmZsH7g7bvCthCAWw2nrITCrUADsiqhPNtntNVLLwWwnSU5AB2TTvVDtLzpRzysbmgSnyUGnDxr
+	KCUgH6l/kGRwj42o9wNYYHFm9dQWxldwBxn2Q/pG7WQ4Al5vaV4EofcLRe00UX5QDRt+KfIUWBO
+	KdG9RuQ3LZ1dWEqYY40zo5z76FQuQsP81Ffe6kYUQBOe7NG/6EOg/5wjv
+X-Received: by 2002:a05:6214:20a8:b0:70d:e7e1:840f with SMTP id 6a1803df08f44-88009bc1287mr16767236d6.3.1761729248148;
+        Wed, 29 Oct 2025 02:14:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFedfub9hPMXqka5Omkn6HWRz5eWUuH5SfzNJk+9Zb78dwYmTiFm8qVdmrVCzSFnA0a2DyWig==
+X-Received: by 2002:a05:6214:20a8:b0:70d:e7e1:840f with SMTP id 6a1803df08f44-88009bc1287mr16767066d6.3.1761729247648;
+        Wed, 29 Oct 2025 02:14:07 -0700 (PDT)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85338663sm1360523266b.17.2025.10.29.02.14.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 02:14:07 -0700 (PDT)
+Message-ID: <f062bc4f-828a-4a91-9257-1b1164f6df28@oss.qualcomm.com>
+Date: Wed, 29 Oct 2025 10:14:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: qcom: smem: fix hwspinlock resource leak in probe
+ error paths
+To: Haotian Zhang <vulab@iscas.ac.cn>, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251029022733.255-1-vulab@iscas.ac.cn>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251029022733.255-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=VJLQXtPX c=1 sm=1 tr=0 ts=6901dae0 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=JRTpi7JZ6PypFw4hOZ4A:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-GUID: tPM_HBSLVwipogmF-poTOGgOstA107xn
+X-Proofpoint-ORIG-GUID: tPM_HBSLVwipogmF-poTOGgOstA107xn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA2OCBTYWx0ZWRfX6aMDjCbfp9EX
+ p5Dp2a7SHL+xg0mYx8zMLeOoj5fcfASvprqUL3PBxHxoAKw19BdPE1BdN+Zoqdi6k2Usbdk0sPo
+ eWdrvIreu8zWqq8XpWwmc13ebNPnqCeLV+GkHKFU+rY6B7RRpvcAMziPmQ77jlpFSs2vlg5Hj7S
+ UH+uAafEunTEwrysCRFP8IyQhcjw/GZG2plmXbdNAWeXiVdHMnAs4X4av7LCxR5Tf9X/qDk1XHQ
+ HeTmk39xEcUyJXcsom7rs7SxYyazhDJgxYJeyqX0LwHj12WVIe0F0XX9PuOoYuP7yv3US81HdCA
+ da2y8QcA/X0KYfLrnG0md9aUKPaEtAo1EAQ3bASdfxid+tZ4P2r/SxVYcmn9d34RzS+3DjTaFQm
+ hfQmcR3WodQHN2jSFFPEp6cEqDcAlA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_04,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 lowpriorityscore=0 spamscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 bulkscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290068
 
-On Mon, 27 Oct 2025, Kiryl Shutsemau wrote:
-> On Mon, Oct 27, 2025 at 03:10:29AM -0700, Hugh Dickins wrote:
-...
+On 10/29/25 3:27 AM, Haotian Zhang wrote:
+> The hwspinlock acquired via hwspin_lock_request_specific() is not
+> released on several error paths. This results in resource leakage
+> when probe fails.
 > 
-> > Aside from shmem/tmpfs, it does seem to me that this patch is
-> > doing more work than it needs to (but how many lines of source
-> > do we want to add to avoid doing work in the failed split case?):
-> > 
-> > The intent is to enable SIGBUS beyond EOF: but the changes are
-> > being applied unnecessarily to hole-punch in addition to truncation.
+> Switch to devm_hwspin_lock_request_specific() to automatically
+> handle cleanup on probe failure. Remove the manual hwspin_lock_free()
+> in qcom_smem_remove() as devm handles it automatically.
 > 
-> I am not sure much it should apply to hole-punch. Filesystem folks talk
-> about writing to a folio beyond round_up(i_size, PAGE_SIZE) being
-> problematic for correctness. I have no clue if the same applies to
-> writing to hole-punched parts of the folio.
-> 
-> Dave, any comments?
-> 
-> Hm. But if it is problematic it has be caught on fault. We don't do
-> this. It will be silently mapped.
+> Fixes: 20bb6c9de1b7 ("soc: qcom: smem: map only partitions used by local HOST")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
 
-There are strict rules about what happens beyond i_size, hence this
-patch.  But hole-punch has no persistent "i_size" to define it, and
-silently remapping in a fresh zeroed page is the correct behaviour.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-So the patch is making more work than is needed for hole-punch.
-
-But I am thinking there of the view from above, from userspace.
-If I think of the view from below, from the filesystem, then I'm
-not at all sure how a filesystem is expected to deal with a failed
-folio_split - and that goes beyond this patch, and therefore I
-don't think it should concern you in this patch.
-
-If a filesystem is asked to punch a hole, but mm cannot split the
-folio which covers that hole, then page cache and filesystem are
-left out of synch?  And if filesystem thinks one block has been
-freed, and it's the last block in that filesystem, and it's then
-given out to someone else, then our unsplit folio hides an ENOSPC?
-
-Maybe this has all been well thought out, and each large folio
-filesystem deals with it appropriately somehow; but I wouldn't
-know, since a tmpfs is simply backed by its page cache.
-
-Hugh
+Konrad
 
