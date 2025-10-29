@@ -1,195 +1,104 @@
-Return-Path: <linux-kernel+bounces-876058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4657AC1A894
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:10:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAB7CC1A8B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B2B1881841
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:03:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D124858147C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D8A28C5AA;
-	Wed, 29 Oct 2025 12:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FC4284B25;
+	Wed, 29 Oct 2025 12:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C1aIR7DH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osTOBNJc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E53F23C513;
-	Wed, 29 Oct 2025 12:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8509278E63;
+	Wed, 29 Oct 2025 12:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742174; cv=none; b=lzxKwrieLLJMhpNDMnMn0DLUzU1A9wNKESrUzvJctUZjmc2Kh6PDfjXHBG7HBN4d3lPIxwXIEIs1YTNr1BMzpvalQHs0WCCbx7aNc3VslxHPwYwzrQoL0aGIQ61U9HbXqJuKbPqgItSLT7FUt2WgZqMHbz2LepFItDZSo1sov8o=
+	t=1761742166; cv=none; b=KmcCz6eVmfWODeiGGm8JrwMp3OyU0lr2Sql8+fya1sQ4eFgAcLDB/zq3gde15HWYJwVz9dCvL/eCtMIzEAcg4B6P9e4HUNhQKGq42O7D8GY04v+8JftMKmXw++QlpEapTDQpyN8upNT/SNxZp9jVDW9kj9OnQpJAt3MDqOhvviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742174; c=relaxed/simple;
-	bh=HhgfBkD9obpAIcb9cqabm6VDny1KY5DjLfeLlwP3zn8=;
+	s=arc-20240116; t=1761742166; c=relaxed/simple;
+	bh=ZEXPdBOJMbforEZ+mDk0Bgiyc2yv4NHYDWhiTE/bkJU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETbhd6O2RTLtNotGQgx+ocE1tb6GabyKa3t+lRh4zvH046s9pIrIx2SdmH+vdoY7Mnv9Rym6xel0euu8/salZDvDyume1PhdQIq9vQJqNwYH1tjdEcQDaEFFZ18DpN/BLdXp0pGejvLZ+wtaOFvPNSbkBnTYpcxOqTh+udpAh3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C1aIR7DH; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761742173; x=1793278173;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HhgfBkD9obpAIcb9cqabm6VDny1KY5DjLfeLlwP3zn8=;
-  b=C1aIR7DHxu8Eh3+/uCeHrY7G532NU1ChgMilSncM7TEJkqph2UN82/J/
-   IsmESV+ansmaKp6ajfqHTzfVEedSN07FtGqgCPHFruDOfowpNLEt883RF
-   rOY3SWFWhv4rgeNTQZ39rd2fdh9W3/L9ENfzy25FPLXWleBSk4KTOXKae
-   gUehIxLvc87PZBB81rEilqlWlaOMBJyLu7v3kECY2MUnGaEZbYEelLIso
-   rQhbfdWLuuK+S3QVyHZOlswQ8SRU/Inot8gX4ekCgqYh90Pmu6lD1hMiX
-   pdO1imua7//Z0iVNukYReIEIJgqBcK4gKhljZTYz8S+K7VmP5jaZVKhfn
-   A==;
-X-CSE-ConnectionGUID: m5j8P544RmOKrgwQjDwNiw==
-X-CSE-MsgGUID: NFpR1vwJQEC+Tewq+c1qiQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="74537535"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="74537535"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 05:49:32 -0700
-X-CSE-ConnectionGUID: BTudI+XZSJ6yLF1pYV4s4g==
-X-CSE-MsgGUID: aMahW1C5SBuCuOV8RwHDrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="185353090"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 29 Oct 2025 05:49:29 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vE5cF-000KbL-0J;
-	Wed, 29 Oct 2025 12:49:27 +0000
-Date: Wed, 29 Oct 2025 20:49:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>,
-	sudip.mukherjee@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	teddy.wang@siliconmotion.com, gregkh@linuxfoundation.org,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Cristian Del Gobbo <cristiandelgobbo87@gmail.com>,
-	Dan Carpenter <error27@gmail.com>
-Subject: Re: [PATCH v2] staging: sm750fb: style fixes: align call and split
- chained assignment
-Message-ID: <202510292010.GP8WnOne-lkp@intel.com>
-References: <20251029022002.5812-1-cristiandelgobbo87@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VcAjn5Wp3R0XIA3DKcbL0X8zVjqYnPzwk8ttdntEf/IIaZ7exzjlbGUBp9/p/imtgvI/6FfwB72UIH2yuoWxX0KeLdXBuWAOQafkYzWqoVQmtTJkG1iOcKfbxoUP0ayk27HbBKr57fUQQZimHlJuCHhsIm6+y2h7U6kqtunUI4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osTOBNJc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F8E1C4CEF7;
+	Wed, 29 Oct 2025 12:49:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761742166;
+	bh=ZEXPdBOJMbforEZ+mDk0Bgiyc2yv4NHYDWhiTE/bkJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=osTOBNJc9DnNCgA2Hu4DOJoP1ZYe3nL+NST3o60P3bsku2UsroZfk16bk0IV7ptDl
+	 nz2CJROIns9dKVNZm8AIF+UqFycbtTCeAWpgZzO9xwi6ZRF064eOp4xaBu9NlRnrqm
+	 yD6ZvK6p5zfVXQz0rqClyvHOS9iDR3/2xChknLHlZvme0n6BXA9lcaaPihtlfDyOr+
+	 NHwnr0QgMSYSATYIyUhzoQxSdECJ3PKa4Nd2h6xCQ1suXZl83JH0XOaPJgbMNs2xyL
+	 i/DJSxLOEajktOp6njOxYfMpFPz1N+p8Wn+7z0MwMZACxAfntsF97/GpMH6uYIdxi0
+	 OUnVp2/zeBeZg==
+Date: Wed, 29 Oct 2025 13:49:19 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	mmaurer@google.com, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 1/8] rust: fs: add file::Offset type alias
+Message-ID: <20251029-orgel-eishockey-44848cc46a6d@brauner>
+References: <20251020222722.240473-1-dakr@kernel.org>
+ <20251020222722.240473-2-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251029022002.5812-1-cristiandelgobbo87@gmail.com>
+In-Reply-To: <20251020222722.240473-2-dakr@kernel.org>
 
-Hi Cristian,
+On Tue, Oct 21, 2025 at 12:26:13AM +0200, Danilo Krummrich wrote:
+> Add a type alias for file offsets, i.e. bindings::loff_t. Trying to
+> avoid using raw bindings types, this seems to be the better alternative
+> compared to just using i64.
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+> Al, Christian: If you are okay with the patch, kindly provide an ACK, so I can
+> take it through the driver-core tree.
+> ---
 
-kernel test robot noticed the following build errors:
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
-[auto build test ERROR on staging/staging-testing]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Cristian-Del-Gobbo/staging-sm750fb-style-fixes-align-call-and-split-chained-assignment/20251029-102311
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20251029022002.5812-1-cristiandelgobbo87%40gmail.com
-patch subject: [PATCH v2] staging: sm750fb: style fixes: align call and split chained assignment
-config: powerpc64-randconfig-002-20251029 (https://download.01.org/0day-ci/archive/20251029/202510292010.GP8WnOne-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510292010.GP8WnOne-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510292010.GP8WnOne-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/staging/sm750fb/sm750.c:541:3: error: expected expression
-     541 |                 int y = (red * 77 + green * 151 + blue * 28) >> 8;
-         |                 ^
-   drivers/staging/sm750fb/sm750.c:543:3: warning: misleading indentation; statement is not part of the previous 'if' [-Wmisleading-indentation]
-     543 |                 red = y;
-         |                 ^
-   drivers/staging/sm750fb/sm750.c:540:2: note: previous statement is here
-     540 |         if (info->var.grayscale)
-         |         ^
->> drivers/staging/sm750fb/sm750.c:543:9: error: use of undeclared identifier 'y'
-     543 |                 red = y;
-         |                       ^
-   drivers/staging/sm750fb/sm750.c:544:11: error: use of undeclared identifier 'y'
-     544 |                 green = y;
-         |                         ^
-   drivers/staging/sm750fb/sm750.c:545:10: error: use of undeclared identifier 'y'
-     545 |                 blue = y;
-         |                        ^
-   1 warning and 4 errors generated.
-
-
-vim +/y +543 drivers/staging/sm750fb/sm750.c
-
-   517	
-   518	static int lynxfb_ops_setcolreg(unsigned int regno,
-   519					unsigned int red,
-   520					unsigned int green,
-   521					unsigned int blue,
-   522					unsigned int transp,
-   523					struct fb_info *info)
-   524	{
-   525		struct lynxfb_par *par;
-   526		struct lynxfb_crtc *crtc;
-   527		struct fb_var_screeninfo *var;
-   528		int ret;
-   529	
-   530		par = info->par;
-   531		crtc = &par->crtc;
-   532		var = &info->var;
-   533		ret = 0;
-   534	
-   535		if (regno > 256) {
-   536			pr_err("regno = %d\n", regno);
-   537			return -EINVAL;
-   538		}
-   539	
-   540		if (info->var.grayscale)
-   541			int y = (red * 77 + green * 151 + blue * 28) >> 8;
-   542	
- > 543			red = y;
-   544			green = y;
-   545			blue = y;
-   546	
-   547		if (var->bits_per_pixel == 8 &&
-   548		    info->fix.visual == FB_VISUAL_PSEUDOCOLOR) {
-   549			red >>= 8;
-   550			green >>= 8;
-   551			blue >>= 8;
-   552			ret = hw_sm750_set_col_reg(crtc, regno, red, green, blue);
-   553			goto exit;
-   554		}
-   555	
-   556		if (info->fix.visual == FB_VISUAL_TRUECOLOR && regno < 256) {
-   557			u32 val;
-   558	
-   559			if (var->bits_per_pixel == 16 ||
-   560			    var->bits_per_pixel == 32 ||
-   561			    var->bits_per_pixel == 24) {
-   562				val = chan_to_field(red, &var->red);
-   563				val |= chan_to_field(green, &var->green);
-   564				val |= chan_to_field(blue, &var->blue);
-   565				par->pseudo_palette[regno] = val;
-   566				goto exit;
-   567			}
-   568		}
-   569	
-   570		ret = -EINVAL;
-   571	
-   572	exit:
-   573		return ret;
-   574	}
-   575	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  rust/kernel/fs/file.rs | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/rust/kernel/fs/file.rs b/rust/kernel/fs/file.rs
+> index cf06e73a6da0..021a6800b46c 100644
+> --- a/rust/kernel/fs/file.rs
+> +++ b/rust/kernel/fs/file.rs
+> @@ -17,6 +17,11 @@
+>  };
+>  use core::ptr;
+>  
+> +/// Primitive type representing the offset within a [`File`].
+> +///
+> +/// Type alias for `bindings::loff_t`.
+> +pub type Offset = bindings::loff_t;
+> +
+>  /// Flags associated with a [`File`].
+>  pub mod flags {
+>      /// File is opened in append mode.
+> -- 
+> 2.51.0
+> 
 
