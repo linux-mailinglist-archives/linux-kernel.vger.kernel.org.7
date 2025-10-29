@@ -1,154 +1,419 @@
-Return-Path: <linux-kernel+bounces-876115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2890C1AAE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92AABC1AA0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:23:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5174586398
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:15:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F4724F0CC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEA634405E;
-	Wed, 29 Oct 2025 13:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5151933B6E9;
+	Wed, 29 Oct 2025 13:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wSayh/xO"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ArgqquwN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8c7ARD/J"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFDC33F383
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A474A3385B8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743352; cv=none; b=cCJ8syRpE/KPHwuRUDgevjRPUNbychb37lUv2i7hfBnF7WMjLW876PCm1QfP8N6R1vfl2bbwwRZfKXNmGMPeYKj7JlmfEA7t8M6qUkGs713gKjqaz/XLBRvFEeREPTIZ/KckOqpYTdOvCG4zjHYsZZlKfPkRreRJL/oXQ6VsZ98=
+	t=1761743343; cv=none; b=hhTu5XWPmzGMS7WPpI8AF9khM+FU1JO/SPzX03sG3QZtsYLnwGhBnpcdVTFCwK8EqI1OvkfUKSdpl7WVncafiwGF3KoKnjryOejrqAgPM3vFoQXv4XeHNi8L6nE8rwYPHzHeEBZgihOhENZMOZmz+3Qpray8O7RRn0hsrsYobw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743352; c=relaxed/simple;
-	bh=fyeNQjPbHba2zQACV1XwHgrmcj9u7mbSw/E0lwVQwQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPL8QACd96YAkL8LTfXXsc22B6lY55a3QEA29NJQ/NdhYCM+DOy7qu6yIuIMEHsGDxk686jGHVS3uTVLDBJz/7wwMLHJbFQTYVNkj0rCvdvpxNOFBq/ynSmlzds8BFjHFeaXBYRrzi2jNCS0aODIfv7xLMyTri8OJevYwhYXSq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wSayh/xO; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-591c98ebe90so7189054e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:09:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761743347; x=1762348147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cpAhRZEcISe/L4obGO6K/aBf0H3CSDRAh1WJSbvQ7BI=;
-        b=wSayh/xOnAy3dXi4ntAukqEAHjvP9ucW73ZNIZyHbw2cHQsLL1Szf+DGPNGYsn58u6
-         J0lwB0G/6WXg8TK1O1xAu8Frak99gd/QnbDsG5k9aR5NWpMNTDbuTL7oxRWZPWpRSOFx
-         xVvP+51Ubm/kNNqZYitAOZdba2XhAhmt56BKrWjh3RH4FNJICFR+nON5Pti46FzTT5X3
-         V25xSseaffbJRROIyrMREOd1AAqVkx51lYyblWTF4trc7wR1xEMOfoXA5rLlso0sYxnx
-         sgyo4EO5o2qzKCCrqcLaGoGl+Pw64TwIG1bOSVwYd4/QlwFZqZYmuo7DnuaZmUHhVtZr
-         9GHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761743347; x=1762348147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cpAhRZEcISe/L4obGO6K/aBf0H3CSDRAh1WJSbvQ7BI=;
-        b=B+rjehYD9ph8NmYUl2R/BoBpMxo8hcqciZHKwHZJ/TXzAaA547KqWIs8NVEJG+1AzH
-         0KQjoXgzWCA2f1jKRtBeFTzPFVy5Vb/CyfpniwUI3WiHvX88elCC62Nqc4JhWZYgwQYN
-         fYrEHbKch6xuh3DqhoSHWxH82hsSexjNIzjf9YxN0duNjvB297GMR8Q/iILIHa0cWYIf
-         y77ugRHYq4x9baggRRrGW37RDZRcNBJdOfXmEMkDYIJwVtIIiPvIMgOX+Hv3a73aN3Zs
-         GkclzxUyLQkRsYgC+SijMNP9fW85oA6pOdwcW9lAP37xXiHmIkTm5sVQXfglVxiJq5dH
-         j0ag==
-X-Forwarded-Encrypted: i=1; AJvYcCU/1z83Gyv000K5kf+C8A1K7gOdnZUP3bQ6NNvPtq0nL3VjIXN1kji+h84odk5mM+XIw138FkSpuL/XxCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkfLl6XqldnJrupG1lVgnnOKJXuVU6Gr2XW+i8zI7g0jQ/URHX
-	+iXcUUyl/zxyXiZ1tWz44mValZrbcXul0QtuZhtzb947cCQrv9wwZiNm35uXgD5x6l0zg8CbjrT
-	Ya0mLniXIjdNtCKFpUIXaUOSgGxSStbH7OAup1L2EfQ==
-X-Gm-Gg: ASbGncvPfjeQjuj4wdRJXPAszwRTSyHX/fKuRrrBJcZ/B+S2CHAR2CuBVlsuDV99H33
-	CI4e3kVDm4LMNHBawkYxADN5qwVhH87OM+R7oOdEtJXHNggaloICb3nGjhuAVyU8ItNCTY9yZnL
-	gEoOxY+SAq6vF3pfpMU6BpnrownO9SNNXsKfe3QAno1zdPXERxP+MKAlBdA+Aroyk7/DRyEUhzO
-	0eoYKOGZ/1esgwaXxQ8Yz4MPqoXr1dklQS1fWxl3OBiCO4ppkc1byLUA7Ak
-X-Google-Smtp-Source: AGHT+IHoNXhvs7nAEQT1Pr7YoG6bCNTomzDjqEik5GRK5GTNnbmdXX4kn01zdcQcoosBSkAxyYQ6vANHvlPp3vj1L2g=
-X-Received: by 2002:a05:6512:3a8a:b0:592:f449:cbae with SMTP id
- 2adb3069b0e04-594128617a3mr1173473e87.11.1761743347041; Wed, 29 Oct 2025
- 06:09:07 -0700 (PDT)
+	s=arc-20240116; t=1761743343; c=relaxed/simple;
+	bh=M2XuuFitjSiNoyPDTzSXGyelSysnnWvMU1HzrT6LiW8=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=E9BtBuHfIkSf1O5PVFOoWV5Vpm7+5CIJA/5bIcQ7tRoaZVsgg/kgPTFDVob8L/bxcyJ5aVrZrF9vOqzdWeKmnUOQ226D/iuan3s0X+iuDC2oUNbpG72fXo+gPuvnqj7BdTsSZjDmhgSzJGzNGXyvSAaqXJttmRR4c16jzUyIoWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ArgqquwN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8c7ARD/J; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20251029124515.403226292@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761743338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=xclOb7JWox40GBOI3KJFjoF2MoNjklsPPUBd3JUdB6A=;
+	b=ArgqquwNd6whY8p0TOlJIBV2Q9qrm28rfDsyQ6pn0+/SVd7ED3ZCdHtVRo93gzOqLa8V4v
+	I6T84w2aP0UMwi64ZROK4rmGxgQR2kt5WZslDAghYaGLUvLf0yvEuh2J/hG1Ly98uhLcua
+	mYlP+6nF1d6ppKH0l+vUACEMLh5iWsdIWIsXHZKsvZ8bdlI6oGlLhCyMzKAm0/m6acpqcn
+	YpBkT8tw8ZKBBNWY/NLQteZ+/wcbEbIoReVHmMdQG+tmwCOmfC8rs+zMYa+a2zSYHe7ryc
+	sFsxuARHTDKI92vmSD/ypI5B/AswDMgKgI5WzSoWxl+MEwiwTii+pcJvKEGo1Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761743338;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=xclOb7JWox40GBOI3KJFjoF2MoNjklsPPUBd3JUdB6A=;
+	b=8c7ARD/JMUZ3Q+3NGVbOeWkL4O7IPFBor7rA+BBpnlzVbWMjEgSM26nSgrLSF9wCw0WWrU
+	UKqJgEHe5QOgkUAw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Gabriele Monaco <gmonaco@redhat.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Michael Jeanson <mjeanson@efficios.com>,
+ Jens Axboe <axboe@kernel.dk>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Florian Weimer <fweimer@redhat.com>,
+ Tim Chen <tim.c.chen@intel.com>,
+ Yury Norov <yury.norov@gmail.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: [patch V3 02/20] sched/mmcid: Use proper data structures
+References: <20251029123717.886619142@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <a5957c4f83724d4f32527fb892fc340af4eeddde.1761564043.git.mazziesaccount@gmail.com>
- <CACRpkdYEUdJRvNPKhxx7orYHH3OE6BXXjrG9JVJo5MDHGKE88A@mail.gmail.com> <8b5dbbf6-bbde-4015-b0d1-12d6ec770ceb@gmail.com>
-In-Reply-To: <8b5dbbf6-bbde-4015-b0d1-12d6ec770ceb@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Oct 2025 14:08:55 +0100
-X-Gm-Features: AWmQ_bmctKf4r03BFEQZEB7--T8kdCIHNsOEFNutvbq6JrwVjRi4Ptn1KMtyXrQ
-Message-ID: <CACRpkdaK52wY7MYhnqCqzOAFVu2V=NejDTjAAhkxhf9rmrV8iA@mail.gmail.com>
-Subject: Re: [PATCH v2 04/15] dt-bindings: mfd: ROHM BD72720
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 14:08:57 +0100 (CET)
 
-On Wed, Oct 29, 2025 at 1:30=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
-> On 28/10/2025 00:42, Linus Walleij wrote:
-> > Hi Matti,
-> >
-> > thanks for your patch!
-> >
-> > On Mon, Oct 27, 2025 at 12:45=E2=80=AFPM Matti Vaittinen
-> > <mazziesaccount@gmail.com> wrote:
-> >
-> >> +  rohm,clkout-open-drain:
-> >> +    description: clk32kout mode. Set to 1 for "open-drain" or 0 for "=
-cmos".
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >> +    minimum: 0
-> >> +    maximum: 1
-> >
-> > I think CMOS is the same as "push-pull" ( I could be wrong, but I think=
- I've
-> > seen that before) so I would probably try to use the pin config standar=
-d
-> > names as strings here but I'm not sure.
-> >
-> > rohm,clkout-bias-open-drain;
-> > rohm,clkout-bias-push-pull;
-> >
-> > Mutually exclusive.
-> >
-> > Or maybe use the pattern from rohm,pin-dvs0
-> > with string enumerators?
-> >
-> > rohm,clkout-bias =3D "open-drain";
-> > rohm,clkout-bias =3D "push-pull";
-> >
->
-> Hmm. I kind of agree with you. Still, the way it was done in this patch
-> is used by the other existing ROHM PMICs (bd71815, bd71828, bd71879). I
-> am kind of reluctant to support another way in the same driver - and I
-> am also reluctant to change the existing bindings as that sounds a bit
-> like asking for a nose-bleed :) (I've in the past worked with some
-> devices which didn't update the device-trees when kernel was updated...)
->
-> Do you think you could live with using this existing convention? :)
+Having a lot of CID functionality specific members in struct task_struct
+and struct mm_struct is not really making the code easier to read.
 
-Yeah if there are precedents, either we can reuse that or we need to
-change them all, and that invariably involves deprecation and re-implementi=
-ng
-the parsing in several drivers in that case, which is annoying and
-takes time.
+Encapsulate the CID specific parts in data structures and keep them
+seperate from the stuff they are embedded in.
 
-It's fine with me to keep like this.
+No functional change.
 
-Yours,
-Linus Walleij
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ include/linux/mm_types.h   |   56 +++++++++++----------------------------------
+ include/linux/rseq_types.h |   42 +++++++++++++++++++++++++++++++++
+ include/linux/sched.h      |   11 +-------
+ init/init_task.c           |    3 ++
+ kernel/fork.c              |    6 ++--
+ kernel/sched/core.c        |   16 ++++++------
+ kernel/sched/sched.h       |   26 ++++++++++----------
+ 7 files changed, 85 insertions(+), 75 deletions(-)
+
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -20,6 +20,7 @@
+ #include <linux/seqlock.h>
+ #include <linux/percpu_counter.h>
+ #include <linux/types.h>
++#include <linux/rseq_types.h>
+ #include <linux/bitmap.h>
+ 
+ #include <asm/mmu.h>
+@@ -922,10 +923,6 @@ struct vm_area_struct {
+ #define vma_policy(vma) NULL
+ #endif
+ 
+-struct mm_cid {
+-	unsigned int cid;
+-};
+-
+ /*
+  * Opaque type representing current mm_struct flag state. Must be accessed via
+  * mm_flags_xxx() helper functions.
+@@ -987,30 +984,9 @@ struct mm_struct {
+ 		 */
+ 		atomic_t mm_users;
+ 
+-#ifdef CONFIG_SCHED_MM_CID
+-		/**
+-		 * @pcpu_cid: Per-cpu current cid.
+-		 *
+-		 * Keep track of the currently allocated mm_cid for each cpu.
+-		 * The per-cpu mm_cid values are serialized by their respective
+-		 * runqueue locks.
+-		 */
+-		struct mm_cid __percpu *pcpu_cid;
+-		/**
+-		 * @nr_cpus_allowed: Number of CPUs allowed for mm.
+-		 *
+-		 * Number of CPUs allowed in the union of all mm's
+-		 * threads allowed CPUs.
+-		 */
+-		unsigned int nr_cpus_allowed;
+-		/**
+-		 * @cpus_allowed_lock: Lock protecting mm cpus_allowed.
+-		 *
+-		 * Provide mutual exclusion for mm cpus_allowed and
+-		 * mm nr_cpus_allowed updates.
+-		 */
+-		raw_spinlock_t cpus_allowed_lock;
+-#endif
++		/* MM CID related storage */
++		struct mm_mm_cid mm_cid;
++
+ #ifdef CONFIG_MMU
+ 		atomic_long_t pgtables_bytes;	/* size of all page tables */
+ #endif
+@@ -1352,9 +1328,6 @@ static inline void vma_iter_init(struct
+ }
+ 
+ #ifdef CONFIG_SCHED_MM_CID
+-
+-#define	MM_CID_UNSET	(~0U)
+-
+ /*
+  * mm_cpus_allowed: Union of all mm's threads allowed CPUs.
+  */
+@@ -1383,20 +1356,20 @@ static inline void mm_init_cid(struct mm
+ 	int i;
+ 
+ 	for_each_possible_cpu(i) {
+-		struct mm_cid *pcpu_cid = per_cpu_ptr(mm->pcpu_cid, i);
++		struct mm_cid_pcpu *pcpu = per_cpu_ptr(mm->mm_cid.pcpu, i);
+ 
+-		pcpu_cid->cid = MM_CID_UNSET;
++		pcpu->cid = MM_CID_UNSET;
+ 	}
+-	mm->nr_cpus_allowed = p->nr_cpus_allowed;
+-	raw_spin_lock_init(&mm->cpus_allowed_lock);
++	mm->mm_cid.nr_cpus_allowed = p->nr_cpus_allowed;
++	raw_spin_lock_init(&mm->mm_cid.lock);
+ 	cpumask_copy(mm_cpus_allowed(mm), &p->cpus_mask);
+ 	cpumask_clear(mm_cidmask(mm));
+ }
+ 
+ static inline int mm_alloc_cid_noprof(struct mm_struct *mm, struct task_struct *p)
+ {
+-	mm->pcpu_cid = alloc_percpu_noprof(struct mm_cid);
+-	if (!mm->pcpu_cid)
++	mm->mm_cid.pcpu = alloc_percpu_noprof(struct mm_cid_pcpu);
++	if (!mm->mm_cid.pcpu)
+ 		return -ENOMEM;
+ 	mm_init_cid(mm, p);
+ 	return 0;
+@@ -1405,8 +1378,8 @@ static inline int mm_alloc_cid_noprof(st
+ 
+ static inline void mm_destroy_cid(struct mm_struct *mm)
+ {
+-	free_percpu(mm->pcpu_cid);
+-	mm->pcpu_cid = NULL;
++	free_percpu(mm->mm_cid.pcpu);
++	mm->mm_cid.pcpu = NULL;
+ }
+ 
+ static inline unsigned int mm_cid_size(void)
+@@ -1421,10 +1394,9 @@ static inline void mm_set_cpus_allowed(s
+ 	if (!mm)
+ 		return;
+ 	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
+-	raw_spin_lock(&mm->cpus_allowed_lock);
++	guard(raw_spinlock)(&mm->mm_cid.lock);
+ 	cpumask_or(mm_allowed, mm_allowed, cpumask);
+-	WRITE_ONCE(mm->nr_cpus_allowed, cpumask_weight(mm_allowed));
+-	raw_spin_unlock(&mm->cpus_allowed_lock);
++	WRITE_ONCE(mm->mm_cid.nr_cpus_allowed, cpumask_weight(mm_allowed));
+ }
+ #else /* CONFIG_SCHED_MM_CID */
+ static inline void mm_init_cid(struct mm_struct *mm, struct task_struct *p) { }
+--- a/include/linux/rseq_types.h
++++ b/include/linux/rseq_types.h
+@@ -90,4 +90,46 @@ struct rseq_data {
+ struct rseq_data { };
+ #endif /* !CONFIG_RSEQ */
+ 
++#ifdef CONFIG_SCHED_MM_CID
++
++#define MM_CID_UNSET	(~0U)
++
++/**
++ * struct sched_mm_cid - Storage for per task MM CID data
++ * @active:	MM CID is active for the task
++ * @cid:	The CID associated to the task
++ * @last_cid:	The last CID associated to the task
++ */
++struct sched_mm_cid {
++	unsigned int		active;
++	unsigned int		cid;
++	unsigned int		last_cid;
++};
++
++/**
++ * struct mm_cid_pcpu - Storage for per CPU MM_CID data
++ * @cid:	The CID associated to the CPU
++ */
++struct mm_cid_pcpu {
++	unsigned int	cid;
++};
++
++/**
++ * struct mm_mm_cid - Storage for per MM CID data
++ * @pcpu:		Per CPU storage for CIDs associated to a CPU
++ * @nr_cpus_allowed:	The number of CPUs in the per MM allowed CPUs map. The map
++ *			is growth only.
++ * @lock:		Spinlock to protect all fields except @pcpu. It also protects
++ *			the MM cid cpumask and the MM cidmask bitmap.
++ */
++struct mm_mm_cid {
++	struct mm_cid_pcpu	__percpu *pcpu;
++	unsigned int		nr_cpus_allowed;
++	raw_spinlock_t		lock;
++};
++#else /* CONFIG_SCHED_MM_CID */
++struct mm_mm_cid { };
++struct sched_mm_cid { };
++#endif /* !CONFIG_SCHED_MM_CID */
++
+ #endif
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1407,14 +1407,7 @@ struct task_struct {
+ #endif /* CONFIG_NUMA_BALANCING */
+ 
+ 	struct rseq_data		rseq;
+-
+-#ifdef CONFIG_SCHED_MM_CID
+-	int				mm_cid;		/* Current cid in mm */
+-	int				last_mm_cid;	/* Most recent cid in mm */
+-	int				migrate_from_cpu;
+-	int				mm_cid_active;	/* Whether cid bitmap is active */
+-	struct callback_head		cid_work;
+-#endif
++	struct sched_mm_cid		mm_cid;
+ 
+ 	struct tlbflush_unmap_batch	tlb_ubc;
+ 
+@@ -2308,7 +2301,7 @@ void sched_mm_cid_fork(struct task_struc
+ void sched_mm_cid_exit_signals(struct task_struct *t);
+ static inline int task_mm_cid(struct task_struct *t)
+ {
+-	return t->mm_cid;
++	return t->mm_cid.cid;
+ }
+ #else
+ static inline void sched_mm_cid_before_execve(struct task_struct *t) { }
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -223,6 +223,9 @@ struct task_struct init_task __aligned(L
+ #ifdef CONFIG_SECCOMP_FILTER
+ 	.seccomp	= { .filter_count = ATOMIC_INIT(0) },
+ #endif
++#ifdef CONFIG_SCHED_MM_CID
++	.mm_cid		= { .cid = MM_CID_UNSET, },
++#endif
+ };
+ EXPORT_SYMBOL(init_task);
+ 
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -955,9 +955,9 @@ static struct task_struct *dup_task_stru
+ #endif
+ 
+ #ifdef CONFIG_SCHED_MM_CID
+-	tsk->mm_cid = MM_CID_UNSET;
+-	tsk->last_mm_cid = MM_CID_UNSET;
+-	tsk->mm_cid_active = 0;
++	tsk->mm_cid.cid = MM_CID_UNSET;
++	tsk->mm_cid.last_cid = MM_CID_UNSET;
++	tsk->mm_cid.active = 0;
+ #endif
+ 	return tsk;
+ 
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -10379,14 +10379,14 @@ void sched_mm_cid_exit_signals(struct ta
+ {
+ 	struct mm_struct *mm = t->mm;
+ 
+-	if (!mm || !t->mm_cid_active)
++	if (!mm || !t->mm_cid.active)
+ 		return;
+ 
+ 	guard(preempt)();
+-	t->mm_cid_active = 0;
+-	if (t->mm_cid != MM_CID_UNSET) {
+-		cpumask_clear_cpu(t->mm_cid, mm_cidmask(mm));
+-		t->mm_cid = MM_CID_UNSET;
++	t->mm_cid.active = 0;
++	if (t->mm_cid.cid != MM_CID_UNSET) {
++		cpumask_clear_cpu(t->mm_cid.cid, mm_cidmask(mm));
++		t->mm_cid.cid = MM_CID_UNSET;
+ 	}
+ }
+ 
+@@ -10405,14 +10405,14 @@ void sched_mm_cid_after_execve(struct ta
+ 		return;
+ 
+ 	guard(preempt)();
+-	t->mm_cid_active = 1;
++	t->mm_cid.active = 1;
+ 	mm_cid_select(t);
+ }
+ 
+ void sched_mm_cid_fork(struct task_struct *t)
+ {
+-	WARN_ON_ONCE(!t->mm || t->mm_cid != MM_CID_UNSET);
+-	t->mm_cid_active = 1;
++	WARN_ON_ONCE(!t->mm || t->mm_cid.cid != MM_CID_UNSET);
++	t->mm_cid.active = 1;
+ }
+ #endif /* CONFIG_SCHED_MM_CID */
+ 
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3548,8 +3548,8 @@ static inline void init_sched_mm_cid(str
+ 		return;
+ 
+ 	/* Preset last_mm_cid */
+-	max_cid = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users));
+-	t->last_mm_cid = max_cid - 1;
++	max_cid = min_t(int, READ_ONCE(mm->mm_cid.nr_cpus_allowed), atomic_read(&mm->mm_users));
++	t->mm_cid.last_cid = max_cid - 1;
+ }
+ 
+ static inline bool __mm_cid_get(struct task_struct *t, unsigned int cid, unsigned int max_cids)
+@@ -3560,8 +3560,8 @@ static inline bool __mm_cid_get(struct t
+ 		return false;
+ 	if (cpumask_test_and_set_cpu(cid, mm_cidmask(mm)))
+ 		return false;
+-	t->mm_cid = t->last_mm_cid = cid;
+-	__this_cpu_write(mm->pcpu_cid->cid, cid);
++	t->mm_cid.cid = t->mm_cid.last_cid = cid;
++	__this_cpu_write(mm->mm_cid.pcpu->cid, cid);
+ 	return true;
+ }
+ 
+@@ -3570,14 +3570,14 @@ static inline bool mm_cid_get(struct tas
+ 	struct mm_struct *mm = t->mm;
+ 	unsigned int max_cids;
+ 
+-	max_cids = min_t(int, READ_ONCE(mm->nr_cpus_allowed), atomic_read(&mm->mm_users));
++	max_cids = min_t(int, READ_ONCE(mm->mm_cid.nr_cpus_allowed), atomic_read(&mm->mm_users));
+ 
+ 	/* Try to reuse the last CID of this task */
+-	if (__mm_cid_get(t, t->last_mm_cid, max_cids))
++	if (__mm_cid_get(t, t->mm_cid.last_cid, max_cids))
+ 		return true;
+ 
+ 	/* Try to reuse the last CID of this mm on this CPU */
+-	if (__mm_cid_get(t, __this_cpu_read(mm->pcpu_cid->cid), max_cids))
++	if (__mm_cid_get(t, __this_cpu_read(mm->mm_cid.pcpu->cid), max_cids))
+ 		return true;
+ 
+ 	/* Try the first zero bit in the cidmask. */
+@@ -3600,15 +3600,15 @@ static inline void mm_cid_select(struct
+ 
+ static inline void switch_mm_cid(struct task_struct *prev, struct task_struct *next)
+ {
+-	if (prev->mm_cid_active) {
+-		if (prev->mm_cid != MM_CID_UNSET)
+-			cpumask_clear_cpu(prev->mm_cid, mm_cidmask(prev->mm));
+-		prev->mm_cid = MM_CID_UNSET;
++	if (prev->mm_cid.active) {
++		if (prev->mm_cid.cid != MM_CID_UNSET)
++			cpumask_clear_cpu(prev->mm_cid.cid, mm_cidmask(prev->mm));
++		prev->mm_cid.cid = MM_CID_UNSET;
+ 	}
+ 
+-	if (next->mm_cid_active) {
++	if (next->mm_cid.active) {
+ 		mm_cid_select(next);
+-		rseq_sched_set_task_mm_cid(next, next->mm_cid);
++		rseq_sched_set_task_mm_cid(next, next->mm_cid.cid);
+ 	}
+ }
+ 
+
 
