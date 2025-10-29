@@ -1,161 +1,157 @@
-Return-Path: <linux-kernel+bounces-876504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5B0C1BE26
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:59:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440B1C1C211
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:37:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F21ED621D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:22:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C4F626C4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634FA2F6912;
-	Wed, 29 Oct 2025 15:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3544A2ECD39;
+	Wed, 29 Oct 2025 15:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YnQ4QDm4"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TxSnS6CL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BBD2F6586
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F7D72F12A0;
+	Wed, 29 Oct 2025 15:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751353; cv=none; b=XBym1Fq7ZNTs3Bb81aJcN0CWDyiRZ/+yiUAjkLZQi4+nss/IH06FmWjx54dQBTqvZ3kEkr9zbpjSS32GgbQf2TvH1973MBwuyjDH2cwBjYpLga37GrbOv41vd9+1fQGd5N4moq42Wa/KEJn8U5Ba0GNQGJq4JXAf8T4H2Mt5yh4=
+	t=1761751178; cv=none; b=WKC5LkXnfiju9jUi2axMs6aMC4bV8FwOhfZGkwyRhgbBYwSoRWfy+XiQ+xuBYxuCQKw5/Dx3GPHPK4IMTJTIVlU2IX156RnDIIMQK+Hv2nou32Qt7Nz2U8eEmJGanMzK0nG1RlTz0IFWAcC+XWpMwSRsEHuDW8i0WcWljM5P6pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751353; c=relaxed/simple;
-	bh=11FNa9hRxY9q6VNcHFKBCxHVTPbRkIjJRhlYDfn68F8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TXV0a6G6QkuHKoS37HYiEKhoMjpm/MVFYPXg/JFKsXPc8ZNlQRo34/RoL4IFKbpOAhw4pQLasxvlNS4Z1/Apc8j7R/v3CNEBRaY86SZuE4fU2uQZ/qwJ7w6UIM5s5hrnwL/O0a89Wlj+aA+FrEDdOEgpAQwSGxlo764zdk2dZew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YnQ4QDm4; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47710acf715so20065215e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:22:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761751349; x=1762356149; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RgvI9i23i4mdlSoAheXdfqs7QJnRizC8cln8vFVeJNE=;
-        b=YnQ4QDm49rHsjjRWPXitIFJ3YOsCHlEhNlG6bXU02+Y2aVIpzdTSZDGivd2XTauY71
-         QpIcg5kJ5P6hNlMFANbaoyiKXrT/dZUFQKOrQttIMyu/zTPcjeMOeSvugqru6L2JQ5Qv
-         A6cdFJ0j/IESLYTrCFnd+6wfasbKBe4WmLoeJmLYpwn9nUYZE1yHVou6+kqpwL7HWKqb
-         5y2+eWPR3OptYRm6tsrff78/NKX0IttrSgi9A8iOxwtULeXF6Mse6w9mssFKzxBieEdk
-         nB5gff160JD3DZASSoubzT/QEvsr5Uw2OECYtrI0ATQ8NcyYV3QXg7+eJzMBqoaloVHW
-         ndAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761751349; x=1762356149;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RgvI9i23i4mdlSoAheXdfqs7QJnRizC8cln8vFVeJNE=;
-        b=TJZGFUu75sELEI+TlGB1YdSjim0Ih4002fDkoYkG4i2ecUJLo53EbsXwwExSAxsp/g
-         PqbECa9fJ/jiBYpEN2FV7sTtT8/vHlZ20177sKQJ0wi6E1uePCWt08USFKDWeX3V++aD
-         4C1LzRrYOOTsZFTaOkm7U16p0DTtYKCuaviib41dfUH8iRbVeyj6ekDSVBotT5QupbwA
-         RsgSdM7m9pNdaapDwuPbxbaUIAlG23SenqGUfVKLz5uxDyJ0BtsB7laGQPinfQz3UH7D
-         CAhz+4cj9LNF5BXzoVsRAhSxjPXdBddyT9hKfv3XhqF4ACLcn9wiPqAiX7QU7SGIQ222
-         RM1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVIezS51t6kuNdXpRqpgBhUeyRivSlehS/swK6w7BknUGqiQWuwSlzmWzDxphywazD+WtJF/+U+3u+L5DI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7FyZmcGhAtO9WOwhW/jbee2yQQSzSiki+hO3jKxIACi4XH8na
-	h+EqvMtGs2nq6qAVLeeWNMlLkWrS2hV3rU1wQCZTglZg7mXInHeetrRPkdvyx7aciDc=
-X-Gm-Gg: ASbGncsd5rvNLZosVsJyJqp9KKUWNYvlrfTh0X4o5qDqZcJ0p4oXQQtxNxvpuzNVB/Q
-	MDt6yLb3QZ1R+a3pqxMhOA5MjmDPqCgZwIbFNmVJeJEPLd8At3hp04g8ER7s/xxPuWu1oyIkgeJ
-	+ucstBwY94Q02rQ6Z26tEnw6cj7VI6iE1Rh7b9VHJJ2bHwUbR4z+AlIkg23t1cYllPuX3EfcX/7
-	bcaHtgAe7tM78S4iMlcd3aPF1KDl3LwW4La+vlRR1cIU0AkEjRgUrpUUL/vQC5qKmiU3XOTfvZw
-	hrVw7G/aSQbm6MUGZbtqmKQTNG3UZ9ih2mnYE1e4G8YpeVIqt8MpSfjrhZCOHHpbS6PKhMhWXDx
-	Z67XdFmP7+eBDT5WBIlqiwUptxf5Ij9OejF4TTiIqqXUmAsrOMx+VQY8ie1b/6lgC3WQblqycoh
-	dU/PtZS7UbyXKh95/wqOHb2rh4GKLPQ4fR58gVmEEGfKoTHe108f2Jj1ZSUdG/lczLyg==
-X-Google-Smtp-Source: AGHT+IFKP5qIRi1ZWE8elUAKIHMoGp81B6aQV7TyWuqhzeC/2P2PWE6cOGnUmt16+9z1GXYauzy+WA==
-X-Received: by 2002:a05:600c:871b:b0:477:fcb:226b with SMTP id 5b1f17b1804b1-477256e79e4mr6749795e9.2.1761751348481;
-        Wed, 29 Oct 2025 08:22:28 -0700 (PDT)
-Received: from ?IPV6:2a02:2f04:6302:7900:aafe:5712:6974:4a42? ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3aae1fsm52099385e9.12.2025.10.29.08.22.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 08:22:27 -0700 (PDT)
-Message-ID: <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
-Date: Wed, 29 Oct 2025 17:22:26 +0200
+	s=arc-20240116; t=1761751178; c=relaxed/simple;
+	bh=3JfNQo+M21Fj37FKvWiKjtWeQMPxwV5uRtgj06oRTOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c/q0dYkgroUAVRKliR6t2d0cgUPk8Na1G6oTqEIt2l++hcJW2FplscfzLQY9CV/pqBEuiMyZLajXAkH3A6rw4orjBnWW5B0VKnQZwNeueINsP5eMoE8f0zFkr7uye7vhL4dRJAy+fjZ0D1RngM705+hNL9Xsv7C2yy9NNLx8qD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TxSnS6CL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02710C4CEF8;
+	Wed, 29 Oct 2025 15:19:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761751178;
+	bh=3JfNQo+M21Fj37FKvWiKjtWeQMPxwV5uRtgj06oRTOY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TxSnS6CLDVT3HGmhCi2XCkNvUYVYsXFLCfPyA5iC3ve1K2ILlAI9zXpbobFdPM70V
+	 eDa6kXgPAd8yRd6YeaLV2lQSqVtC794EwQ76A9dowTcCEyj+0UfDx9owtblAeoUGdf
+	 xqTWuE7Tqfs3tt8tcV/PGTJYIWfJeXwNXpziA6AyMspEVQm1f+FraChVQ4WK1yL7ey
+	 jqChgdvXpj/zdeYEbO+c1n9zTYtG3P4k0kmpreLqoEJTo9jUdbC9+Ckuo1ap86eN+2
+	 9Udd0z0aIoGKQ9bWHjTRvwVUsHD3vZGKtGBZeE+rQKQEJnzsQkm2vAZGWExm4+NKhb
+	 Lv8pEVDnQNJOw==
+Date: Wed, 29 Oct 2025 10:22:41 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: george.moussalem@outlook.com
+Cc: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Baruch Siach <baruch@tkos.co.il>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Devi Priya <quic_devipriy@quicinc.com>, Baruch Siach <baruch.siach@siklu.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v18 1/6] dt-bindings: pwm: add IPQ6018 binding
+Message-ID: <gkvbziqeae53bunqd556r4swaye4s4lcnwthryouynwfwqrnsi@6o4cjgxiwxco>
+References: <20251029-ipq-pwm-v18-0-edbef8efbb8e@outlook.com>
+ <20251029-ipq-pwm-v18-1-edbef8efbb8e@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
-To: Mark Brown <broonie@kernel.org>
-Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
- tiwai@suse.com, biju.das.jz@bp.renesas.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
- <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
- <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-ipq-pwm-v18-1-edbef8efbb8e@outlook.com>
 
-Hi, Mark,
-
-On 10/29/25 16:37, Mark Brown wrote:
-> On Wed, Oct 29, 2025 at 04:11:33PM +0200, Claudiu wrote:
+On Wed, Oct 29, 2025 at 12:36:57PM +0400, George Moussalem via B4 Relay wrote:
+> From: Devi Priya <quic_devipriy@quicinc.com>
 > 
->> Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
->> and snd_soc_pm_ops is associated with the soc_driver (defined in
->> sound/soc/soc-core.c), and there is no parent-child relationship between
->> the soc_driver and the DA7213 codec driver, the power management subsystem
->> does not enforce a specific suspend/resume order between the DA7213 driver
->> and the soc_driver.
+> DT binding for the PWM block in Qualcomm IPQ6018 SoC.
+> [George: added compatibles for IPQ5018, IPQ5332, and IPQ9574]
 > 
-> The theory here is that the power management core uses the device
-> instantiation order for both suspend and resume (reversed on suspend) so
-> the fact that we use probe deferral to make sure that the card
-> components are ready should ensure that the card suspends before
-> anything in the card.  If that is no longer the case then we need to
-> ensure that all drivers have system PM ops which trigger the card, this
-> won't be a driver specific issue.
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Co-developed-by: Baruch Siach <baruch.siach@siklu.com>
+> Signed-off-by: Baruch Siach <baruch.siach@siklu.com>
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
 
-I also saw the behavior described in this commit with the rz-ssi.c driver as 
-well. The fix there was commit c1b0f5183a44 ("ASoC: renesas: rz-ssi: Use 
-NOIRQ_SYSTEM_SLEEP_PM_OPS()").
+This is where we expect the [George: ...] comment.
 
-In case of this this codec, I saw the code in da7213_runtime_resume() and 
-soc_resume_deferred() racing each other on system resume.
+I'll leave it up to Uwe to determine if he'd like you to resubmit this
+or not though...
 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+
+I think this patch looks good now.
+
+Thank you,
+Bjorn
+
+> ---
+>  .../devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml  | 51 ++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
 > 
->>   static int da7213_runtime_resume(struct device *dev)
->>   {
->>   	struct da7213_priv *da7213 = dev_get_drvdata(dev);
->> -	int ret;
->>   
->> -	ret = regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
->> -	if (ret < 0)
->> -		return ret;
->> -	regcache_cache_only(da7213->regmap, false);
->> -	return regcache_sync(da7213->regmap);
->> +	return regulator_bulk_enable(DA7213_NUM_SUPPLIES, da7213->supplies);
->>   }
+> diff --git a/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml b/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ca8e916f03276e93d755d574e2567b0e4b86a8ce
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/qcom,ipq6018-pwm.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/qcom,ipq6018-pwm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm IPQ6018 PWM controller
+> +
+> +maintainers:
+> +  - George Moussalem <george.moussalem@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - qcom,ipq5018-pwm
+> +              - qcom,ipq5332-pwm
+> +              - qcom,ipq9574-pwm
+> +          - const: qcom,ipq6018-pwm
+> +      - const: qcom,ipq6018-pwm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  "#pwm-cells":
+> +    const: 2
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - "#pwm-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-ipq6018.h>
+> +
+> +    pwm: pwm@1941010 {
+> +        compatible = "qcom,ipq6018-pwm";
+> +        reg = <0x01941010 0x20>;
+> +        clocks = <&gcc GCC_ADSS_PWM_CLK>;
+> +        assigned-clocks = <&gcc GCC_ADSS_PWM_CLK>;
+> +        assigned-clock-rates = <100000000>;
+> +        #pwm-cells = <2>;
+> +    };
 > 
-> This seems obviously buggy, we just power on the device and don't sync
-> the register state.  
-
-You're right! I'll revisit this.
-
-> If the device actually lost power during a runtime
-> suspend then we'll end up having a bad time.  There was also no mention
-> of runtime PM in the patch description...
-
-I had no issues with runtime PM, but only with suspend to RAM, when this 
-function was called though
-struct dev_pm_ops::resume = pm_runtime_force_resume().
-
-Would keeping the regcache_cache_only() + regcache_sync() here along with 
-populating the struct snd_soc_component_driver::{suspend, resume} be an 
-acceptable solution for you? I think that will work as well.
-
-Thank you for your review,
-Claudiu
+> -- 
+> 2.51.1
+> 
+> 
 
