@@ -1,143 +1,88 @@
-Return-Path: <linux-kernel+bounces-875381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10D7C18DD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:10:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B24C18D8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5233BA4CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4115A1C80F16
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:04:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95183126C9;
-	Wed, 29 Oct 2025 08:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTdddj1w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A0E3126C0;
+	Wed, 29 Oct 2025 08:03:10 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139572F5467;
-	Wed, 29 Oct 2025 08:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A872BD5A1
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761724958; cv=none; b=JikbLTJcF8r3IvHbOLJ4IcFRuj5IAb9FBEfNHZN5rPnHPnotUm14xEFe7S+oGtMo16q456D45vjH/c8caiQNNL7ZDEzVj3lK7QYDnaOCAp5Bjeh/uz4TWJgZAXcq7PXd9T/c+Gy0X6k7iiaN7mGo5ZBTONkZVtUnFDj6Ahx+sHA=
+	t=1761724989; cv=none; b=a3zLDAWLUS8BrmWjqkWJBFHfBFl16/x0FfWdcJoOdmHKFDCwtwSJZKcgffQmXgP9cWfCWK5TdWUWU+RZ6vzEnC72yv7s8etL0b0Vt8HkuDoPFh2/CEXWKuPVgHyqiL1dHBqR6i665qK4HUr401SLeEXBiP423fMRNrDTmBzYbQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761724958; c=relaxed/simple;
-	bh=yf+G5AErUda0Z+VPEMG2Ofs2O84E/hbHN8GasEG5CvQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n5DdT9xpzzmm5t4mkRm49Tt+OtsDIlY1LYCNUeYgedU8txWc0y94LB+gtz8Nbx4IzjzQ3LSLEGHbnDGRV6UexDPUXnddP2IRB/OcwRONhk9OsMRanWVIKaoVMW2jp9s0qENEcrG8EmZk7FrbL8XVqSLmlDOHA/I1GMkWtyMTprY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTdddj1w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D6CCC4CEF7;
-	Wed, 29 Oct 2025 08:02:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761724957;
-	bh=yf+G5AErUda0Z+VPEMG2Ofs2O84E/hbHN8GasEG5CvQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pTdddj1wlAAk2Mx/SYAcxo0P7/m0qdHqtjSxziwt5WH89CC3viuDPXTYZzEJ3LFgC
-	 7zRYMpvmxt2SfxwMPrqaNefTlJH0y5KblxfJL+QcPUDm3k3YHk4XZM9+polQFGu4Sk
-	 xwq5cWRvYqutbiE6Wg8bG7p02ERkKA6dHmKVoQ4BR+7nSDvcVJ87kdK+j6DqCI7+ej
-	 pKn2ACwNT1+hE0vT3Bok7QRUw1i65bw4/SDPsPovppm6HA8vwADzmIXOr0f51aF5Ly
-	 9qgxLjT8Aeu2afFLsl7ouN+SU53jUiiWz8qa4yK2ms1xOqgXLoTWu4XqfFdWxrsqkS
-	 PKZIU0N/KrsMA==
-Message-ID: <773fc27f-1e83-4fcf-bb1a-be45c0630004@kernel.org>
-Date: Wed, 29 Oct 2025 09:02:33 +0100
+	s=arc-20240116; t=1761724989; c=relaxed/simple;
+	bh=TJ3ijOMYsovYWj2x8PDeGndAwDv7wazLL+PEAm3T8gM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mywql9jxzhzzFnrj7pdUcov6w51YZAJ4PVZjWDNt9YbYA7F8MH3fxhfG6RpqaeD1Kvb7baErNMno6z4Na4293XgsxlMFLU+GF3IAErWTyLCDE+5gLLoRZjLoGCiO9a/FJ1zd6YJeGEeq9VHiHwt9s7hVP098iNCn05cNPuvDt1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945c705df24so87571239f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:03:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761724985; x=1762329785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wv0RiS1HVl3pb+BPuaV/WfQyuYTaUJ3Em23uQSBdCjI=;
+        b=sQ4yg0/JGdBqpavrOkydmJDOPAfvjz5Hd2CT3pb4Mk+HRBMWfp3nfOgT2Lpp3lYKVT
+         2aDqX9MlVFeu9K7gvCSZX92qFimyUqJnH20pNok6fuzUL6qKHnpL8LVOdDfCV7VUJb4C
+         nTL3RomtPdGaoIGclNDI5lg8rNEEdxVKFevi59bt9zXT2PgGSgradcZ1WeBrEeXk1yIx
+         hs6S+RJF+IO47h9WSdLcpUaoiv0xtDCSK9Yhc8HDzt1OdBypuiTUDH2Q5ojczzgLX3fp
+         0ATKx+u/lskWfohO7IwcJP4Y5OMzqeRs2ZoZim3e6r/FSjCuLawuOgIjgYHuzbjcjuak
+         ZffA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw/p2wqIw3c2iER8akU8f0DBjBlBsf4ondoY0HMs2oJQKJc/VZLdpV2fPcth/zHcopQbMtPIut/oKL4E8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+8PzNwcakwdNyg/Gj4t05Fvl+LOhVyIoWCRIGvHRVLMQrtZKh
+	oZQtCEnsjjwDCMofu8SjE6mzi+KKuGEEugMXEzVymVFRHjMQPzXhX/BSaPYhsx3GtKqYOfr7sEA
+	zXjVV6VFJEjuGS+wZAgA8oBgHS2RtzAkU9AWpfFgaRBj7YQWyxI3DyCryCn0=
+X-Google-Smtp-Source: AGHT+IFT+wp5y3T+cA07De2wBQ8PF8pLvOlSqRnWLX2dafxiFvMBca6PK5dyGQD0V8+cNHhr5yZwotAssAk252iX7qUjEPwgqKTA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/3] arm64: dts: qcom: sm8750: Add USB support for
- SM8750 MTP platform
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20251024151521.2365845-1-krishna.kurapati@oss.qualcomm.com>
- <20251024151521.2365845-3-krishna.kurapati@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251024151521.2365845-3-krishna.kurapati@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:17c9:b0:42f:8bdd:6e9c with SMTP id
+ e9e14a558f8ab-432f8e532e5mr27409095ab.14.1761724985180; Wed, 29 Oct 2025
+ 01:03:05 -0700 (PDT)
+Date: Wed, 29 Oct 2025 01:03:05 -0700
+In-Reply-To: <20251029062549.LY59_%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6901ca39.050a0220.32483.0203.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
+ (2)
+From: syzbot <syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/10/2025 17:15, Krishna Kurapati wrote:
-> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> 
-> Enable USB support on SM8750 MTP variants.  The current definition will
-> start the USB controller in peripheral mode by default until
-> dependencies are added, such as USB role detection.
-> 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> [Konrad: Provided diff to flatten USB node on MTP]
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-> index 3bbb53b7c71f..1b526d96fba8 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
-> @@ -1200,3 +1200,25 @@ &ufs_mem_hc {
->  
->  	status = "okay";
->  };
-> +
-> +&usb_1 {
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Still wrongly ordered. Please follow DTS coding style.
+Reported-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
+Tested-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
 
-Best regards,
-Krzysztof
+Tested on:
+
+commit:         8e6e2188 Linux 6.1.157
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=12aff614580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c404ae8bce817b30
+dashboard link: https://syzkaller.appspot.com/bug?extid=ded9116588a7b73c34bc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1763dfe2580000
+
+Note: testing is done by a robot and is best-effort only.
 
