@@ -1,150 +1,87 @@
-Return-Path: <linux-kernel+bounces-875097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77B2BC18375
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:59:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF763C18378
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 653374E6570
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:59:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 260F134E570
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4972D8DBD;
-	Wed, 29 Oct 2025 03:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="eCUKUI6/"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E52E251795;
+	Wed, 29 Oct 2025 04:00:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89052EBBB0;
-	Wed, 29 Oct 2025 03:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AD42F12C6
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761710359; cv=none; b=BshCTiP5E2zPLRNjcjWNWOrpDmymeFACbmtSrRY9RE6u40HrOIAISOhFXvnM3Cwj7b9Qg8aPO51CDJFZ6MEepJVFZTL7FCV2dEvfICAW0L4+PmFwDt6iV5kgvbOsA773NobPHrWPhfMyc1U0D4A6ChJ/yl5kratp6GkaA5QVNzk=
+	t=1761710404; cv=none; b=W1jt3sQjBLVxEqmeq+d0zJTETkdDRz+X6rsJC0IoOuZkorMYlcyYgWd/IcKLUWXeXRYWtLcVn3ImlR1+jMlmB9RjduHiIfHFgu7Tv+WJqOhOKYQwhc/t7hhEwQ9Fjk5oAytFRrn2WGJ9VQSfB8stRdXbMD+gNVQksFyzNKA0k+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761710359; c=relaxed/simple;
-	bh=L9YPOc5/22eujfuGoDgpu42AiuHjAc0Bz/qDHhn1kHo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=dnWSBwUEDfDJnZk3jFzdJwmILopISdfx6aGO5hq4mF1430ASYueWb+rUI1zaZZPocVqEpeGyz/lLiJjaWqrPW36x+g+eXoodS2Ol1L0jWcm8nbHYp94qIzi7Iq5wOZ70woj2HGd+urQjgpqDxJBvW2tGUqCl0Wy984WC560avFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=eCUKUI6/; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=YZ+v2V2HXO6fEBeqBbs+msJfMB5CADuyB6hkvZ2bvZY=;
-	b=eCUKUI6/NwtRM/E7RQR1yQobi7ENuTPHsrj3A3FPHcQn8L15fPvRu5QG5s02vQFZIrhbnP8NK
-	GHj8jBBRlpNGJCJ9BEfD26rbz7PUiQME3JulKOlKSWuCjzYDEPQlTGeE5kyz7IwYG4A8fOs0msq
-	vQd8oEKetNi+ne/lVOlKb7E=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cxD3d2KzbzpStg;
-	Wed, 29 Oct 2025 11:57:49 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 840941402CD;
-	Wed, 29 Oct 2025 11:59:07 +0800 (CST)
-Received: from [10.174.178.24] (10.174.178.24) by
- kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 11:59:05 +0800
-Message-ID: <8134b0ec-1c0a-1a3a-b3df-3c620490fa9b@huawei.com>
-Date: Wed, 29 Oct 2025 11:59:04 +0800
+	s=arc-20240116; t=1761710404; c=relaxed/simple;
+	bh=JNY4x/j31TcTSEB0lLqIWRe3c/NRRySg6Qg7ilc0EYQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=kEQ1/QnWmJXnNFsZ9XvBhlALP9NgxMCaFbX+6oz+ww7/2rou0wrqxmvnukwf03rmwDrNN4gc/g6d3tfLu0/AmBlUlcS3U0icA+1/7ID/D2zpQuMYwPe7avi08EtO23sFPS2jHNFj8i46mxjfmEpHe/NMe9MRL1o016OAycr6mAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430d4a4dec5so259726555ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:00:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761710402; x=1762315202;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQXQ9QElYYkqaDpuZFh6tli+ro7wkq8ZwfLbX9XY2uU=;
+        b=gPEBnXZKIiYsTk5BKX9AOEVEJkOctCYrv9MOfpjvEob4aDZoq5AcoWLqKyOyBIqP89
+         jZU6utn6jKXERV4uFXMiFrOTKxWwpXMybw1qAPHcygF6fGAREBNWYDZ4hiKKanTNFYTn
+         TFVYmcM1hfo+4sNPZ51nbkk6djvAK4xTQB0zBi8PUDGSl9lQghlJUCtBRuJXwfc/igjO
+         3CmvByNIrzFmdgFMuGiI7Z5if+fD0UUGbm8vPMzzuTsbiPREthqYeAMaLVQDBV/M5hsS
+         hm9SKsaFnaYsWDLtitk/0lkRnpjOG1btzUznNZrhZ1gmXJoAByM59cJ3SSpb/3nXxhDT
+         ceFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmo5jPnQRiNIrHw8wolCwPY3ePrdpFlJOQAVvWivY2ZrWYs5impDZ1+3meOpPEaBPDO2VFgXhT2SroCoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQcrBP9+MULA33wFyOzUxbQxUx6LsTNZ2KgrVqqEMB4Z6i/Msl
+	oUCOVhgP3w584X88A9Nu7xj2aDwxPGegas4J1PsLKDSVnOsCjbxrdgXBQKv76cPd5hgldvHkKfx
+	5Wg0HOzkDkEMWYBwN8ZkLmh8E6Aw3pFpE4evets3ywV6L9rfNeKWgz0gePos=
+X-Google-Smtp-Source: AGHT+IG/aAgzNPHbIV10GKXCeMaIylhQdo0xwzUqsxsaU7Hi+vbosc2nrPp0hBT13HJb3XKSCbZSktARLJ9KBzRp4oDukDADB0b+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH mpam mpam/snapshot/v6.14-rc1] arm64/mpam: Fix MBWU monitor
- overflow handling
-Content-Language: en-US
-From: Zeng Heng <zengheng4@huawei.com>
-To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
-CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
-	<baolin.wang@linux.alibaba.com>, <bobo.shaobowang@huawei.com>,
-	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
-	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
-	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
-	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
-	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
-	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>, <wangkefeng.wang@huawei.com>,
-	<sunnanyong@huawei.com>
-References: <20251017185645.26604-25-james.morse@arm.com>
- <20251022133913.629859-1-zengheng4@huawei.com>
- <8e22c81e-5e78-41e0-a81e-0f9826e5edf0@arm.com>
- <1c037f72-485a-567b-bf8f-489255330de8@huawei.com>
- <56f7f2df-fd94-48c8-aaa0-97a71b3108cf@arm.com>
- <d2aa99f8-dbdc-dc13-1ba3-0e273913221f@huawei.com>
-In-Reply-To: <d2aa99f8-dbdc-dc13-1ba3-0e273913221f@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+X-Received: by 2002:a05:6e02:4515:10b0:432:fbfc:554f with SMTP id
+ e9e14a558f8ab-432fbfc5939mr2540485ab.17.1761710402497; Tue, 28 Oct 2025
+ 21:00:02 -0700 (PDT)
+Date: Tue, 28 Oct 2025 21:00:02 -0700
+In-Reply-To: <aQGA0rVKnoH3PDXh@Bertha>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69019142.050a0220.3344a1.0401.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_write_inode
+From: syzbot <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
+To: contact@gvernon.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Ben,
+Hello,
 
-On 2025/10/29 10:49, Zeng Heng wrote:
-> Hi Ben,
-> 
-> On 2025/10/29 0:01, Ben Horgan wrote:
->> Hi Zeng,
->>
->> On 10/25/25 10:01, Zeng Heng wrote:
->>> Hi Ben,
->>>
->>> On 2025/10/23 0:17, Ben Horgan wrote:
->>>
->>>>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
->>>>> ---
->>>>>    drivers/resctrl/mpam_devices.c | 8 +++++---
->>>>>    1 file changed, 5 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/
->>>>> mpam_devices.c
->>>>> index 0dd048279e02..06f3ec9887d2 100644
->>>>> --- a/drivers/resctrl/mpam_devices.c
->>>>> +++ b/drivers/resctrl/mpam_devices.c
->>>>> @@ -1101,7 +1101,8 @@ static void __ris_msmon_read(void *arg)
->>>>>        clean_msmon_ctl_val(&cur_ctl);
->>>>>        gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
->>>>>        config_mismatch = cur_flt != flt_val ||
->>>>> -              cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
->>>>> +             (cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS) !=
->>>>> +             (ctl_val | MSMON_CFG_x_CTL_EN);
->>>>
->>>> This only considers 31 bit counters. I would expect any change here to
->>>> consider all lengths of counter.
->>>
->>> Sorry, regardless of whether the counter is 32-bit or 64-bit, the
->>> config_mismatch logic should be handled the same way here. Am I
->>> wrong?
->>
->> Yes, they should be handled the same way. However, the overflow status
->> bit for long counters is MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L.
->>
->> I now see that the existing code in the series has this covered.
->> Both the overflow bits are masked out in clean_msmon_ctl_val(). No need
->> for any additional masking.
->>
-> 
-> Yes, I’ve seen the usage, except that clearing the overflow bit in the
-> register is missing.
-> 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Please disregard my previous mail... :)
+Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
+Tested-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
 
-Exactly, thanks for the review. I'll fold the fixes into v2 of the
-patch.
+Tested on:
 
+commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13836704580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1009f614580000
 
-Best Regards,
-Zeng Heng
+Note: testing is done by a robot and is best-effort only.
 
