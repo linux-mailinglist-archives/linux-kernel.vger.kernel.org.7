@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-876967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79BE9C1CE1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:05:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9EEC1CE24
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD294E471D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1CE4E1F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24D663596FF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A871A359F93;
 	Wed, 29 Oct 2025 19:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="rpS5djc1"
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="O9+u1rCJ"
 Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADE1358D27;
-	Wed, 29 Oct 2025 19:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460023590AB;
+	Wed, 29 Oct 2025 19:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764583; cv=none; b=lTzAsv0WLkULXpMJQ3zYx4J1mmeMF3f9udFzwUsxg3TbenbO/6sBAJY3Ps7Cjm/I5AFkg88eFZPLHlCRrEQnFuXj6ujt4V4XZwQU+y6Z3AQlxOqFIUHtm0pKbhqqAafbGI8U9EUCBvN/+adcOsJS38vcIB4WJkQPvnJ021G1J/E=
+	t=1761764584; cv=none; b=O5QvTqRgConAoHS7xG+RsyMyz3W2Y6RdSbALOBa9MWtiLD7BIJjGuL/MRQzK1S9XJwNOC26TT17kX0nlg4VmhtLo5vHGlz9N2JZID5Z5KoX9MV53ZrFt0PLcgtPsSLU9PeQ74u4lSIHC58IfDLOhngqa3/amAAZyW0PstlxXCjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764583; c=relaxed/simple;
-	bh=pWofwh7qGFgN1Qd0RhW6fTC+Rfko4QJuxhesX3mqfGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JxaEk/rBACUEVwfAhGwqfoulxHub6v9NSQrrjUgmTPnjhz7ItxeJ481pL3IRFiAhhS3lnQfdsqc0T/vsZyQwPuH4FUTMJUKPtpWAR7XrRBpsmWduMLjJKL/Bnlx/w1KSIJID8eNS6g2RgIVWzK/MB9wJNOFoCQOyhFIF6x3y6O0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=rpS5djc1; arc=none smtp.client-ip=83.149.199.84
+	s=arc-20240116; t=1761764584; c=relaxed/simple;
+	bh=1FtZW4U1ojwEyztWuRwA0Bae7MsM11HBqcUXmyFU5Ps=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Pnhev9jWP9oE4I8Yu1f2XdtHez79tdHoqMJF9Cso3JWCrTcsQf0kELEWJn7ikMCx1FzguBydU2DW+vfHQsEwj03oSRmKCgPFSptXjxQXdaZFLD93lFsVcSXS8UHnxWy97P2mK8P27GBcpPTmdEtQTn0lnkz0+jvH8/eG5XsLPSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=O9+u1rCJ; arc=none smtp.client-ip=83.149.199.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Received: from debian.intra.ispras.ru (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 43AB74076729;
-	Wed, 29 Oct 2025 19:02:56 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 43AB74076729
+	by mail.ispras.ru (Postfix) with ESMTPSA id 58D0D40777A0;
+	Wed, 29 Oct 2025 19:02:58 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 58D0D40777A0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1761764576;
-	bh=TiAGTa2EXLg8eiwEDFIdBzkh3CwFSjxdkK/+re2kcEc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rpS5djc15ChD4rD8EdLChF3HshRTQflqo56q+8Dre1t1avVVez2e85YFkQuvfEilK
-	 U/Wv9CFek7Sca+akKIBhZVM39m4QFRyVpPwscvVODRMY57lOY40dEH0dkIM+U36Dmq
-	 vDK6JNBe1lXiaW3WrveqnkNMC+a7Ej7ddhtte9Pw=
+	s=default; t=1761764578;
+	bh=OfAgYaOUI1AFIjwkIwYHMJ5+77hecm5s5YXZ1vh9cCE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=O9+u1rCJS1rgqa1mCKytKYlzWq+fvWNitjDFaXHJYHus+tz62Vv50OKFZppIZRHUe
+	 WYaUnSiilORgv+ljNbDubL/L0HTaLuGAufcQpYDLaAjb9jDN0UvQEtIWlegloX1TIY
+	 Pd6NDkemgArPILXoMbMCy1OEFPNKbcsEG9kHnMX0=
 From: Fedor Pchelkin <pchelkin@ispras.ru>
 To: Ping-Ke Shih <pkshih@realtek.com>,
 	Bitterblue Smith <rtl8821cerfe2@gmail.com>
@@ -49,10 +50,12 @@ Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
 	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	lvc-project@linuxtesting.org
-Subject: [PATCH rtw-next v4 00/10] wifi: rtw89: improvements for USB part
-Date: Wed, 29 Oct 2025 22:02:28 +0300
-Message-ID: <20251029190241.1023856-1-pchelkin@ispras.ru>
+Subject: [PATCH rtw-next v4 02/10] wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
+Date: Wed, 29 Oct 2025 22:02:30 +0300
+Message-ID: <20251029190241.1023856-3-pchelkin@ispras.ru>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251029190241.1023856-1-pchelkin@ispras.ru>
+References: <20251029190241.1023856-1-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,72 +64,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The first two patches concern memory leak issues found during testing.
+When there is an attempt to write data and RTW89_FLAG_UNPLUGGED is set,
+this means device is disconnected and no urb is submitted.  Return
+appropriate error code to the caller to properly free the allocated
+resources.
 
-The third and the fourth one do some extra small changes.
+Found by Linux Verification Center (linuxtesting.org).
 
-The other ones implement TX completion functionality missing for the USB
-part of rtw89 driver, suggested by Bitterblue Smith [1].  This will allow
-handling TX wait skbs and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS
-correctly.
+Fixes: 2135c28be6a8 ("wifi: rtw89: Add usb.{c,h}")
+Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
+---
+ drivers/net/wireless/realtek/rtw89/usb.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-rtw89 has several ways of handling TX status report events.  The first one
-is based on RPP feature which is used by PCIe HCI.  The other one depends
-on firmware sending a corresponding C2H message, quite similar to what
-rtw88 has.  RTL8851BU vendor driver [2] was taken for reference.
-
-[1]: https://lore.kernel.org/linux-wireless/0cb4d19b-94c7-450e-ac56-8b0d4a1d889f@gmail.com/
-[2]: https://github.com/fofajardo/rtl8851bu.git
-
-Series has been tested to work with RTL8851BU (USB) for TX report
-functionality - I've been able to test only V0 format of C2H message, and
-RTL8852BE (PCIe) devices for other things (mainly that the changes have
-not unexpectedly influenced th PCIe part).
-
-Changelog.
-
-v4: - add new 7/10 patch with TX URBs anchor based on previous feedback
-    - further changelog below --- in the patches
-
-v3: https://lore.kernel.org/linux-wireless/20251017100658.66581-1-pchelkin@ispras.ru/
-    - add new 6/9 and 8/9 patches based on previous feedback
-    - further changelog below --- in the patches
-
-v2: https://lore.kernel.org/linux-wireless/20251002200857.657747-1-pchelkin@ispras.ru/
-    - add new 3/7 and 4/7 patches prepared due feedback to previous comments
-      or developed in process
-    - further changelog below --- in the patches
-
-v1: https://lore.kernel.org/linux-wireless/20250920132614.277719-1-pchelkin@ispras.ru/
-
-Fedor Pchelkin (9):
-  wifi: rtw89: usb: use common error path for skbs in
-    rtw89_usb_rx_handler()
-  wifi: rtw89: usb: fix leak in rtw89_usb_write_port()
-  wifi: rtw89: usb: use ieee80211_free_txskb() where appropriate
-  wifi: rtw89: refine rtw89_core_tx_wait_complete()
-  wifi: rtw89: implement C2H TX report handler
-  wifi: rtw89: usb: anchor TX URBs
-  wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-  wifi: rtw89: provide TX reports for management frames
-  wifi: rtw89: process TX wait skbs for USB via C2H handler
-
-Ping-Ke Shih (1):
-  wifi: rtw89: fill TX descriptor of FWCMD in shortcut
-
- drivers/net/wireless/realtek/rtw89/core.c | 61 ++++++++++-----
- drivers/net/wireless/realtek/rtw89/core.h | 44 ++++++++---
- drivers/net/wireless/realtek/rtw89/fw.c   |  4 +-
- drivers/net/wireless/realtek/rtw89/fw.h   | 41 ++++++++++
- drivers/net/wireless/realtek/rtw89/mac.c  | 72 +++++++++++++++++
- drivers/net/wireless/realtek/rtw89/mac.h  | 95 +++++++++++++++++++++++
- drivers/net/wireless/realtek/rtw89/pci.c  |  2 +-
- drivers/net/wireless/realtek/rtw89/pci.h  |  4 -
- drivers/net/wireless/realtek/rtw89/txrx.h |  6 +-
- drivers/net/wireless/realtek/rtw89/usb.c  | 68 +++++++++++++---
- drivers/net/wireless/realtek/rtw89/usb.h  |  1 +
- 11 files changed, 350 insertions(+), 48 deletions(-)
-
+diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wireless/realtek/rtw89/usb.c
+index 15fba22b4f5d..1d9760e5eae7 100644
+--- a/drivers/net/wireless/realtek/rtw89/usb.c
++++ b/drivers/net/wireless/realtek/rtw89/usb.c
+@@ -256,7 +256,7 @@ static int rtw89_usb_write_port(struct rtw89_dev *rtwdev, u8 ch_dma,
+ 	int ret;
+ 
+ 	if (test_bit(RTW89_FLAG_UNPLUGGED, rtwdev->flags))
+-		return 0;
++		return -ENODEV;
+ 
+ 	urb = usb_alloc_urb(0, GFP_ATOMIC);
+ 	if (!urb)
+@@ -305,8 +305,9 @@ static void rtw89_usb_ops_tx_kick_off(struct rtw89_dev *rtwdev, u8 txch)
+ 		ret = rtw89_usb_write_port(rtwdev, txch, skb->data, skb->len,
+ 					   txcb);
+ 		if (ret) {
+-			rtw89_err(rtwdev, "write port txch %d failed: %d\n",
+-				  txch, ret);
++			if (ret != -ENODEV)
++				rtw89_err(rtwdev, "write port txch %d failed: %d\n",
++					  txch, ret);
+ 
+ 			skb_dequeue(&txcb->tx_ack_queue);
+ 			kfree(txcb);
 -- 
 2.51.0
 
