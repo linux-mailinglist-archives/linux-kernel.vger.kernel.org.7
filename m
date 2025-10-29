@@ -1,353 +1,207 @@
-Return-Path: <linux-kernel+bounces-876417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6D2C1BA53
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:27:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D300C1BB6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9133F588568
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:49:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54C9F5A166B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A146355818;
-	Wed, 29 Oct 2025 14:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5592D7DDF;
+	Wed, 29 Oct 2025 14:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVLv5Oyi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUCG2dgA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C934E3358C8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C11433F388;
+	Wed, 29 Oct 2025 14:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748844; cv=none; b=n+3y50b+h2WJoTWecjKcU9yUTWRpTrOmnM/jh50/wKqf6zIbRvzYWqcttTHE6mOMzJWXIEVPIO5t9Uvj4RemPwo+WQ7MOf2JnDgLTUjyFvkOxY5ZW1qGAAth/HYR5h1hwDXiC12iFpzeCMBquox1PLS8uDsc+KPGfAfsaRkNSew=
+	t=1761749022; cv=none; b=TKZQyAPh1+1Ua0HWGbGp8ZTnpnDZzZ83OFd9z+if7g+INVHv9j0NzIFA5JryKtmdx5Hbc/QJNXfVlHtiyOypoS+gqzGkKRyArWyXg6zt0mgl5JuBaGwCcMqBDkIl7/k0qkooaaLHEcb97a/g0BHNTbn8Xc7uRzW1CE9lRLU2GEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748844; c=relaxed/simple;
-	bh=2Srbg2Kj4p1NwOSAgbIL8bzgeOl+TxsgknPmAtyuzig=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=ePsHE0N3DnRfcjlSFgpcp7jcC6pmvPbO82ji4Z/aQDGsxG5LKgQ8Y/Cvcxt5qklvjVIqztkcv6iWFRLoZ8IGVI+5LlaSt9Fjjf7EEBy7IfmAgUChB8u+CVFbBsJjK0/3dIG1XAcwC0Zi7/9cSt6zovFyGoWmWZM1Kg+1yKFCsGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVLv5Oyi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998FAC4CEFD;
-	Wed, 29 Oct 2025 14:40:44 +0000 (UTC)
+	s=arc-20240116; t=1761749022; c=relaxed/simple;
+	bh=7aIwRuIOpA2NvB46ZJFZlfxwwf5CrcEct874eSGcgUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeHbIi50/Kkh6Oz+6E01yUZxOy+zXb6REEKD6dNKH2xAaZ/i3SOcrx5BHFVg9KU1U3NucQlLMzGh7xQf6Ycpb3mUl+AWssNACFjxBzhjOj0s+YF59Mq+iqD6Takyose0maU7BNomhEpP+OJ/qBc8SsziPnJm1veAqnQPRYzpjqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUCG2dgA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F0FC116C6;
+	Wed, 29 Oct 2025 14:43:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761748844;
-	bh=2Srbg2Kj4p1NwOSAgbIL8bzgeOl+TxsgknPmAtyuzig=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=UVLv5Oyi/ih3t7g5Q2wvyaW9PvPreQgH+2J0gdIGiBIXVu6Z3yvI5ar7Mdq4LYCMm
-	 9V/0cIeu558/YJR5xvySm8tSPlL/B1pKwk1nAuHGK7p47JyV3DmvruT3B6wgprOvnJ
-	 b1Mwd0u1w9Kr3WwR3ZgpUzh9yAOq91+A+ORXFIHIUjsb1QFFjgvx0EOJABnWikI4mh
-	 ZxSP3fZCPIXWvCRvFIchexU6rsQcrkCl8D5L9CBTlnzyHJMFOCIeX5d/7DW7Iuetyr
-	 +itDSGZgHoO8lCEpUhBNLqNLSFHr07Bl/3GQhcPfeKa61UDVnKRhpEZL2oBihTzwdH
-	 kFPvqoylozpHw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1vE7Mb-000000052zC-1rdY;
-	Wed, 29 Oct 2025 10:41:25 -0400
-Message-ID: <20251029144125.295040814@kernel.org>
-User-Agent: quilt/0.68
-Date: Wed, 29 Oct 2025 10:40:52 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>,
- Tom Zanussi <zanussi@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Ian Rogers <irogers@google.com>,
- Douglas Raillard <douglas.raillard@arm.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Jiri Olsa <jolsa@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Ingo Molnar <mingo@redhat.com>
-Subject: [for-next][PATCH 11/13] tracing: Add parsing of flags to the sys_enter_openat trace event
-References: <20251029144041.475297995@kernel.org>
+	s=k20201202; t=1761749021;
+	bh=7aIwRuIOpA2NvB46ZJFZlfxwwf5CrcEct874eSGcgUE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nUCG2dgAAGxavtrh6AFskbiNPy7Opyv54fNrY/+gU0ZaTvBrd+ZtUjFEd4lc5Qbk/
+	 srjLlCZcD6v3yy00NaOnMM6kO85tayYB85zgXeLHHSpevQ6O2DGvXlTZcGF+ktUVor
+	 G0oJOc1gayru+VczSM4ZiddijK6BzGtNWVQ5cxsRUBBCvQgzVaswHsRgcDYtOKLawP
+	 at5sw+sOWuAecSORYOvFAW4sokeUujaDbydmhkXBgd33S7RBrbM2DgiSBbVNPSePhZ
+	 OnukuKbisUVQxThAKHPJxURwRslfcZUKDhTxzc0zF6/DUihlPrLIr5qeFFcPt3CXjz
+	 R9KUmZIa60r5g==
+Message-ID: <5137cd11-004c-43ed-8bbb-646beb105844@kernel.org>
+Date: Wed, 29 Oct 2025 15:43:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] wifi: ath11k: add multipd support for QCN6122
+To: george.moussalem@outlook.com, Johannes Berg <johannes@sipsolutions.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+ ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
+ <20251029-ath11k-qcn6122-v1-5-58ed68eba333@outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251029-ath11k-qcn6122-v1-5-58ed68eba333@outlook.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On 29/10/2025 15:26, George Moussalem via B4 Relay wrote:
+> From: George Moussalem <george.moussalem@outlook.com>
+> 
+> IPQ5018/QCN6122 platforms use multi PD (protection domains) to avoid
+> having one instance of the running Q6 firmware crashing resulting in
+> crashing the others.
+> 
+> The IPQ5018 platform can have up to two QCN6122 wifi chips.
+> To differentiate the two, the PD instance number (1 or 2) is added to
+> the QMI service instance ID, which the QCN6122 firmware also expects.
+> IPQ5018 internal wifi is always the first PD while QCN6122 cards must be
+> second or third.
+> 
+> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
+> ---
+> See below patch for more info:
+> https://lore.kernel.org/all/20231110091939.3025413-1-quic_mmanikan@quicinc.com/
 
-Add some logic to give the openat system call trace event a bit more human
-readable information:
+I don't see any common part with that. Your bindings are completely
+different and while PD was justified there, there is no such
+justification here. Neither in the bindings.
 
-   syscalls:sys_enter_openat: dfd: 0xffffff9c, filename: 0x7f0053dc121c "/etc/ld.so.cache", flags: O_RDONLY|O_CLOEXEC, mode: 0000
+> ---
+>  drivers/net/wireless/ath/ath11k/ahb.c  | 31 +++++++++++++++++++++++++++++++
+>  drivers/net/wireless/ath/ath11k/core.h |  4 ++++
+>  drivers/net/wireless/ath/ath11k/pci.c  |  1 +
+>  3 files changed, 36 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
+> index 7b267dd62e964b2c4d6c3bbe016abd1ad0297219..820a383e88caf125892176e421b0121fed7e7055 100644
+> --- a/drivers/net/wireless/ath/ath11k/ahb.c
+> +++ b/drivers/net/wireless/ath/ath11k/ahb.c
+> @@ -429,6 +429,7 @@ static void ath11k_ahb_init_qmi_ce_config(struct ath11k_base *ab)
+>  	cfg->svc_to_ce_map_len = ab->hw_params.svc_to_ce_map_len;
+>  	cfg->svc_to_ce_map = ab->hw_params.svc_to_ce_map;
+>  	ab->qmi.service_ins_id = ab->hw_params.qmi_service_ins_id;
+> +	ab->qmi.service_ins_id += ab->userpd_id;
+>  }
+>  
+>  static void ath11k_ahb_free_ext_irq(struct ath11k_base *ab)
+> @@ -1101,6 +1102,28 @@ static int ath11k_ahb_fw_resources_init(struct ath11k_base *ab)
+>  	return ret;
+>  }
+>  
+> +static int ath11k_get_userpd_id(struct device *dev, int *userpd)
+> +{
+> +	int ret, userpd_id;
+> +
+> +	ret = of_property_read_u32(dev->of_node, "qcom,userpd", &userpd_id);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (userpd_id) {
+> +	case 2:
+> +		*userpd = ATH11K_QCN6122_USERPD_2;
+> +		break;
+> +	case 3:
+> +		*userpd = ATH11K_QCN6122_USERPD_3;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static int ath11k_ahb_fw_resource_deinit(struct ath11k_base *ab)
+>  {
+>  	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
+> @@ -1142,6 +1165,7 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
+>  	const struct ath11k_hif_ops *hif_ops;
+>  	const struct ath11k_pci_ops *pci_ops;
+>  	enum ath11k_hw_rev hw_rev;
+> +	int userpd_id = 0;
+>  	int ret;
+>  
+>  	hw_rev = (uintptr_t)device_get_match_data(&pdev->dev);
+> @@ -1160,6 +1184,12 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
+>  	case ATH11K_HW_QCN6122_HW10:
+>  		hif_ops = &ath11k_ahb_hif_ops_qcn6122;
+>  		pci_ops = &ath11k_ahb_pci_ops_wcn6750;
+> +		ret = ath11k_get_userpd_id(&pdev->dev, &userpd_id);
+> +		if (ret) {
+> +			dev_err(&pdev->dev, "failed to get userpd: %d\n", ret);
+> +			return ret;
+> +		}
+> +		dev_info(&pdev->dev, "multi-pd architecture - userpd: %d\n", userpd_id);
 
-The above is output from "perf script" and now shows the flags used by the
-openat system call.
+This does not look like useful printk message. Drivers should be silent
+on success:
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/coding-style.rst#L913
+https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/debugging/driver_development_debugging_guide.rst#L79
 
-Since the output from tracing is in the kernel, it can also remove the
-mode field when not used (when flags does not contain O_CREATE|O_TMPFILE)
+>  		break;
+>  	default:
 
-   touch-1185    [002] ...1.  1291.690154: sys_openat(dfd: 4294967196, filename: 139785545139344 "/usr/lib/locale/locale-archive", flags: O_RDONLY|O_CLOEXEC)
-   touch-1185    [002] ...1.  1291.690504: sys_openat(dfd: 18446744073709551516, filename: 140733603151330 "/tmp/x", flags: O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, mode: 0666)
-
-As system calls have a fixed ABI, their trace events can be extended. This
-currently only updates the openat system call, but others may be extended
-in the future.
-
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Takaya Saeki <takayas@google.com>
-Cc: Tom Zanussi <zanussi@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Douglas Raillard <douglas.raillard@arm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Link: https://lore.kernel.org/20251028231148.763161484@kernel.org
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_syscalls.c | 192 ++++++++++++++++++++++++++++++++--
- 1 file changed, 182 insertions(+), 10 deletions(-)
-
-diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
-index 2d1307f13e13..47d9771e8f7c 100644
---- a/kernel/trace/trace_syscalls.c
-+++ b/kernel/trace/trace_syscalls.c
-@@ -127,6 +127,116 @@ const char *get_syscall_name(int syscall)
- /* Added to user strings or arrays when max limit is reached */
- #define EXTRA "..."
- 
-+static void get_dynamic_len_ptr(struct syscall_trace_enter *trace,
-+				struct syscall_metadata *entry,
-+				int *offset_p, int *len_p, unsigned char **ptr_p)
-+{
-+	unsigned char *ptr;
-+	int offset = *offset_p;
-+	int val;
-+
-+	/* This arg points to a user space string */
-+	ptr = (void *)trace->args + sizeof(long) * entry->nb_args + offset;
-+	val = *(int *)ptr;
-+
-+	/* The value is a dynamic string (len << 16 | offset) */
-+	ptr = (void *)trace + (val & 0xffff);
-+	*len_p = val >> 16;
-+	offset += 4;
-+
-+	*ptr_p = ptr;
-+	*offset_p = offset;
-+}
-+
-+static enum print_line_t
-+sys_enter_openat_print(struct syscall_trace_enter *trace, struct syscall_metadata *entry,
-+		       struct trace_seq *s, struct trace_event *event)
-+{
-+	unsigned char *ptr;
-+	int offset = 0;
-+	int bits, len;
-+	bool done = false;
-+	static const struct trace_print_flags __flags[] =
-+		{
-+			{ O_TMPFILE, "O_TMPFILE" },
-+			{ O_WRONLY, "O_WRONLY" },
-+			{ O_RDWR, "O_RDWR" },
-+			{ O_CREAT, "O_CREAT" },
-+			{ O_EXCL, "O_EXCL" },
-+			{ O_NOCTTY, "O_NOCTTY" },
-+			{ O_TRUNC, "O_TRUNC" },
-+			{ O_APPEND, "O_APPEND" },
-+			{ O_NONBLOCK, "O_NONBLOCK" },
-+			{ O_DSYNC, "O_DSYNC" },
-+			{ O_DIRECT, "O_DIRECT" },
-+			{ O_LARGEFILE, "O_LARGEFILE" },
-+			{ O_DIRECTORY, "O_DIRECTORY" },
-+			{ O_NOFOLLOW, "O_NOFOLLOW" },
-+			{ O_NOATIME, "O_NOATIME" },
-+			{ O_CLOEXEC, "O_CLOEXEC" },
-+			{ -1, NULL }
-+		};
-+
-+	trace_seq_printf(s, "%s(", entry->name);
-+
-+	for (int i = 0; !done && i < entry->nb_args; i++) {
-+
-+		if (trace_seq_has_overflowed(s))
-+			goto end;
-+
-+		if (i)
-+			trace_seq_puts(s, ", ");
-+
-+		switch (i) {
-+		case 2:
-+			bits = trace->args[2];
-+
-+			trace_seq_puts(s, "flags: ");
-+
-+			/* No need to show mode when not creating the file */
-+			if (!(bits & (O_CREAT|O_TMPFILE)))
-+				done = true;
-+
-+			if (!(bits & O_ACCMODE)) {
-+				if (!bits) {
-+					trace_seq_puts(s, "O_RDONLY");
-+					continue;
-+				}
-+				trace_seq_puts(s, "O_RDONLY|");
-+			}
-+
-+			trace_print_flags_seq(s, "|", bits, __flags);
-+			/*
-+			 * trace_print_flags_seq() adds a '\0' to the
-+			 * buffer, but this needs to append more to the seq.
-+			 */
-+			if (!trace_seq_has_overflowed(s))
-+				trace_seq_pop(s);
-+
-+			continue;
-+		case 3:
-+			trace_seq_printf(s, "%s: 0%03o", entry->args[i],
-+					 (unsigned int)trace->args[i]);
-+			continue;
-+		}
-+
-+		trace_seq_printf(s, "%s: %lu", entry->args[i],
-+				 trace->args[i]);
-+
-+		if (!(BIT(i) & entry->user_mask))
-+			continue;
-+
-+		get_dynamic_len_ptr(trace, entry, &offset, &len, &ptr);
-+		trace_seq_printf(s, " \"%.*s\"", len, ptr);
-+	}
-+
-+	trace_seq_putc(s, ')');
-+end:
-+	trace_seq_putc(s, '\n');
-+
-+	return trace_handle_return(s);
-+}
-+
- static enum print_line_t
- print_syscall_enter(struct trace_iterator *iter, int flags,
- 		    struct trace_event *event)
-@@ -152,6 +262,15 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 		goto end;
- 	}
- 
-+	switch (entry->syscall_nr) {
-+	case __NR_openat:
-+		if (!tr || !(tr->trace_flags & TRACE_ITER_VERBOSE))
-+			return sys_enter_openat_print(trace, entry, s, event);
-+		break;
-+	default:
-+		break;
-+	}
-+
- 	trace_seq_printf(s, "%s(", entry->name);
- 
- 	for (i = 0; i < entry->nb_args; i++) {
-@@ -179,14 +298,7 @@ print_syscall_enter(struct trace_iterator *iter, int flags,
- 		if (!(BIT(i) & entry->user_mask))
- 			continue;
- 
--		/* This arg points to a user space string */
--		ptr = (void *)trace->args + sizeof(long) * entry->nb_args + offset;
--		val = *(int *)ptr;
--
--		/* The value is a dynamic string (len << 16 | offset) */
--		ptr = (void *)ent + (val & 0xffff);
--		len = val >> 16;
--		offset += 4;
-+		get_dynamic_len_ptr(trace, entry, &offset, &len, &ptr);
- 
- 		if (entry->user_arg_size < 0 || entry->user_arg_is_str) {
- 			trace_seq_printf(s, " \"%.*s\"", len, ptr);
-@@ -269,6 +381,62 @@ print_syscall_exit(struct trace_iterator *iter, int flags,
- 	.size = sizeof(_type), .align = __alignof__(_type),		\
- 	.is_signed = is_signed_type(_type), .filter_type = FILTER_OTHER }
- 
-+/* When len=0, we just calculate the needed length */
-+#define LEN_OR_ZERO (len ? len - pos : 0)
-+
-+static int __init
-+sys_enter_openat_print_fmt(struct syscall_metadata *entry, char *buf, int len)
-+{
-+	int pos = 0;
-+
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"\"dfd: 0x%%08lx, filename: 0x%%08lx \\\"%%s\\\", flags: %%s%%s, mode: 0%%03o\",");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" ((unsigned long)(REC->dfd)),");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" ((unsigned long)(REC->filename)),");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" __get_str(__filename_val),");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" (REC->flags & ~3) && !(REC->flags & 3) ? \"O_RDONLY|\" : \"\", ");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" REC->flags ? __print_flags(REC->flags, \"|\", ");
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_WRONLY\" }, ", O_WRONLY);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_RDWR\" }, ", O_RDWR);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_CREAT\" }, ", O_CREAT);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_EXCL\" }, ", O_EXCL);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_NOCTTY\" }, ", O_NOCTTY);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_TRUNC\" }, ", O_TRUNC);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_APPEND\" }, ", O_APPEND);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_NONBLOCK\" }, ", O_NONBLOCK);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_DSYNC\" }, ", O_DSYNC);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_DIRECT\" }, ", O_DIRECT);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_LARGEFILE\" }, ", O_LARGEFILE);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_DIRECTORY\" }, ", O_DIRECTORY);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_NOFOLLOW\" }, ", O_NOFOLLOW);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_NOATIME\" }, ", O_NOATIME);
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			"{ 0x%x, \"O_CLOEXEC\" }) : \"O_RDONLY\", ", O_CLOEXEC);
-+
-+	pos += snprintf(buf + pos, LEN_OR_ZERO,
-+			" ((unsigned long)(REC->mode))");
-+	return pos;
-+}
-+
- static int __init
- __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
- {
-@@ -276,8 +444,12 @@ __set_enter_print_fmt(struct syscall_metadata *entry, char *buf, int len)
- 	int i;
- 	int pos = 0;
- 
--	/* When len=0, we just calculate the needed length */
--#define LEN_OR_ZERO (len ? len - pos : 0)
-+	switch (entry->syscall_nr) {
-+	case __NR_openat:
-+		return sys_enter_openat_print_fmt(entry, buf, len);
-+	default:
-+		break;
-+	}
- 
- 	pos += snprintf(buf + pos, LEN_OR_ZERO, "\"");
- 	for (i = 0; i < entry->nb_args; i++) {
--- 
-2.51.0
-
-
+Best regards,
+Krzysztof
 
