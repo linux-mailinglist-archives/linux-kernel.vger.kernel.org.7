@@ -1,150 +1,223 @@
-Return-Path: <linux-kernel+bounces-875207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F911C1879D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:33:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E45C18728
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:27:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4045B5657DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97EE14071BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FC130276E;
-	Wed, 29 Oct 2025 06:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26F830BB87;
+	Wed, 29 Oct 2025 06:24:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PxiiTm6r"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I8sSS6go"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9882E3B16
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6966421579F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761719060; cv=none; b=RFzBx9PluCm4ufjR+AKSOh2wgObF5JNhYq54m2jdZMUPxiMs/aWVt5nATfPQz6sGiUjuUYPJ+n9A3j+T5L8swoIbsx1cjlAvna7+4U4xeNirwTys5HVqm230yQTG2J1nKP76DyCdexOaByLkqs0LJT5qIGdJx2VHo027ELXcBsg=
+	t=1761719076; cv=none; b=ogpRcUF7Z0uh5Q29MZnXquosJoYqtLSQo9yF+WcI4L+MdfAWY/FgEQiQQLnVojD/BVYf+kterUteSTB6pkF0YsMAiTmsXtL1aguAHtqBi74vjkK0+fyfRsl3nzBR3d5GkV9UphNEQSIvOk41Bq3EFLkudBnSIujUOW3k4d9iE60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761719060; c=relaxed/simple;
-	bh=BS78qzLC6Pbc2ow6QJKzzu9seEeWMo56OC/LqYiyfNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KHxUgwrPYwaqPgbSLtxrOfOdxaQ7MpcJg/nLlEIbGnrHym/uwpN9jC9pY78sG2H4MYWrR0wvVv39fJbrm0ttIzOI+DuHB3nlVJYqBGMfqYw3PzXMKZgx7LllN8Y/s8ERdxgQI8XmYyViGVkJdAHaeyliqunU60mopxERaZRP0rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PxiiTm6r; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1761719076; c=relaxed/simple;
+	bh=saMIAuaUr2iahmAKw8KQxtdH1W9X5Rw7dMdMV2NiCQc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wv5d51qxmagGsdmJdUukluxs1LnRpn2tIz7O2q+9VQPOWOCEe45ICqeri0+W7h8fxe6BRXry/AsF4IbZgnUFBwWA9o6DL9aKUjP/Qje7FX8tRS3RDZLvAsHpTe1WYO+CzAa1T8i7nyj5exSMCQLorq0iR1SX0Tq04PBKv7C6bPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I8sSS6go; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5930f751531so1921696e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:24:17 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b6d4e44c54aso1179049566b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 23:24:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761719056; x=1762323856; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/E+ZryNph3yMx+vi8h4RvFoOJ/BdFIb+DDgg5r/sdBI=;
-        b=PxiiTm6r6JbM70EsM8ypn0+FtMMn5Z79R/9YpBWR+cdjhNJ9+3rUweHD1mlFX5Sd9s
-         lp+Daj9mwvauPzQ92WpQJqbILWq/c+BvFYAs64TWW+AXi19j+0BD3a2e/mjsBSqk12lI
-         9z+VJ5E3I82crdKpzvoFaIdWitAPPjI/8E26+n7Xrhec5iuDVQHLXfksfj/QxcsSRWOa
-         02lwWT4NhaYkn4Rw7W4bPWePQasO5Hyjrdj1qx5kcyzRxa+KfJSCl51SBRs9JWz6Ri46
-         QW6toLKlmGwf90kfcOOPV7fzP+CEuSH/HS6O0Sue8LWRsLkBOph7SDtpGXLec3+GjPQM
-         u+Hg==
+        d=gmail.com; s=20230601; t=1761719073; x=1762323873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=br982OtNpb98PdeBYhrJLVyrR7luvRLBafDbJi6d/xo=;
+        b=I8sSS6goZ8FSycX/dcIr1kPt/Jw1JCbgXWTJBSuZcNogSkxWEmeTFTF9s9CnraKTIM
+         orTHFF60zXJcSJzKbX/mMptBW0bOM2ysGfBkrVgIRn8SACzmaxf6xwyZoaW1AnLWzQ+o
+         lakwHytDs/MzXrqhPC4ISTjep/sPlW328amRoyCVIado0lOskUCLY6nETcBZJ5jOsOlf
+         TqqCCO/ZrATvF5qirRVyfGo8G6ABXRca/cnWGzD985lvXTwMtqJT1RKzixFbgioni/8y
+         DSqZ35M1dxXwD4MXNoEx0AtvDmsz5Hu+829/gy7fElJ/wRBnPzg5S82IPbBfA5CNSlHL
+         MuXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761719056; x=1762323856;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/E+ZryNph3yMx+vi8h4RvFoOJ/BdFIb+DDgg5r/sdBI=;
-        b=cslUhLJ/K8SLutAA2qEcQ0tOy5Gv3NlfHBecj1f6PCDgYh1vse4XJ3tD/o8/V5A5VR
-         IfLZ/BQalZjJX5t8KheeFEBC3Yn80dic/kv9nBz667eY1rgHmmxKFpPNVvbscuxgxUCO
-         STRmgOZD6Ci8gQcwk0j5trgjff8PulSNBq3j348rDXmt3/EV1D+pmmuAB8EwnIVSVZLm
-         5ZGXTm/iMsAqdDnneRu45MZzgI2NdyjyJUBMVDh9Z0An5eO1nrKAjIju4HST6PIFJ1Of
-         xJjQY3YAWng0a74AV9L89BZMH+zkG70ygHlgN9rga9zZ2KcRRT3ZKQ8Rh9BdSePc+Rea
-         qs0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCkB+bibn1JztfHQpHiCjMa0wTxd1zGWI7UuEoOUmTfcTXspC3VGkZvGDtqQl8kSS+GElNisGTYUFdwqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8MgWA2jY80Zf/HV+brErX0O2tv48/iS6Tyu6It7LJK4PFSJ7+
-	NU5JTDIKae1W/mAU2q2Mn8L2A6Va6XEghMQtYGpg0NgDQmfp7x3kiT/F
-X-Gm-Gg: ASbGncscXluwM/LCInFZTvba01lG/8MgNBozK926NNJL+6kcf2kLjNDv/XWyJ7WPjEs
-	yCBpkZ4GNlqGN0MFJYqbhLL/0qsWh2kHLq5tAE7x8K/zN7wTjjmbuiLLLBu+BS08v9cOT1E4Jvw
-	sok7UaCFbdQbdMlFtc5CApap24KBIlGconQ9Dtz2g+w5ZkM17r00Mh0ffCsh+15PQs9vzc3NEBK
-	Ng1ZegyNAG/W9Goo3GJdG2wG7e82uOpAJnvq53Ra5CikUfCdzAdgQrU+hQnEsAGfHITeGvbF7rW
-	nmBJ0205bREUmJAVJUsqwxRa2iobNXomIuNctfZDYHpAsfZUJuQdNxk7Cb7ZwehXO78qIqHHKVf
-	PtbmmLYPAUH93XxH/bsZxuFp40IWhydqKJf2+c3FFdr0fHsdHIyWgGW4dlBzOpk32VR82hct58f
-	pUSuUIabhpHQvMaXvx8zotT8nxnv4lzBwixbVjiIxbv1OD7jtNvto7uiFryA==
-X-Google-Smtp-Source: AGHT+IG8NXe1EdGhVyolwk15yW6Efwh7ekc//1eGyM0sEnTM8+C2jzj6xxj8v4NnHT31PN5hE1LQpQ==
-X-Received: by 2002:a05:6512:104c:b0:591:c6c0:9af2 with SMTP id 2adb3069b0e04-59412a0cb9fmr596126e87.54.1761719055744;
-        Tue, 28 Oct 2025 23:24:15 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f60ca4sm3577871e87.62.2025.10.28.23.24.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Oct 2025 23:24:15 -0700 (PDT)
-Message-ID: <3d58eb1e-7889-48c3-980b-bd2a98368a3e@gmail.com>
-Date: Wed, 29 Oct 2025 08:24:14 +0200
+        d=1e100.net; s=20230601; t=1761719073; x=1762323873;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=br982OtNpb98PdeBYhrJLVyrR7luvRLBafDbJi6d/xo=;
+        b=oGhdYXfUZxHN4DiGbdU+pX/fnH4uiKLZDFNk/DL67/gcL84/8DcWxPyS/VVeCSQ3At
+         4g1Vq++pdor2sHwJQKTpN6YA9mg/JsGrshGGOfUJ6FbrxOE/oXq4jnVt3new7QzG3A3j
+         AQo9Trxh+Ow+vtnOIYyJUzfk0ZUnbKdiY14WgwAOG7Em9KTTxnbvpZcBwCoUBZ1T3csx
+         Ntopi6XzrML+tqNBEPBDHVb8q5WTUVuzWUKochKbkkIbaV6iaLWVQqaxy0jJBUwUrL5o
+         ii0nNjzklBEkSjO8FdrJtxwWMVUP1XkUnpgU18KsnhOKsJIcqUXLMSxW9lYfgkH5CJHN
+         vjLg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzWGEbBtGu3FTOSLyN9gJIA2dOjmFYFnoFZQydOrzEL9g04AGdtkzfmmJ0hVpBiJ/zFZjwxK6xdrW5iLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5O2pkoXI1uGceMb+dOoPgge3WojsZAew9LAOyj7m8wi8m58Mh
+	VSeNQpSBZjy3kK59bkt6tiepEHoBoNaAwJiACT/7LKmTn7b1PLghBD55YHEM+dE2pv9PJQalFoj
+	L6ldiz2EXajMnZFfkI9d0Uyy9f7Qibyg=
+X-Gm-Gg: ASbGncvNgIwSFtSaQhPPFPwEFzpD8HfBI4lTuARtniXKjSLRQit6Ge/IHypRww38T04
+	tnRXuDTld88Cwhnllk3jgY2Zdg+GW7HGXNCuv5fezsulWITg0hbFN2Gy1C1TZG+YNTHVYSUhMjN
+	NQX4+GUsSraFH2+mdOU94ape8ig7KwsoNgiDmpiX+BeFo1XC/pMq1E9K5wgfo/0r2MXwKWn0ZQi
+	66W1UZc9SiwSiuaolMKMRGOWqqv8Hk09DCTienQ+Wd9CgRO8NSv25+aTTo=
+X-Google-Smtp-Source: AGHT+IHyfp+TmtXxz/OYls2Ipv0mWC+Ecb2/8nvbOahETXIdxr4t72mAdvqkoOAyhDhf4ehMvRZYQA65me6ij1Ptm9w=
+X-Received: by 2002:a17:907:3c96:b0:b40:8954:a8bf with SMTP id
+ a640c23a62f3a-b703d2ccb40mr176983466b.2.1761719072619; Tue, 28 Oct 2025
+ 23:24:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
- <20251029-adamant-mamba-of-patience-cddb65@kuoka>
- <b30eed8e-c8f8-4077-9e6a-0217c5827981@kernel.org>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <b30eed8e-c8f8-4077-9e6a-0217c5827981@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20251027145602.199154-1-linux.amoon@gmail.com>
+ <20251027145602.199154-2-linux.amoon@gmail.com> <4fe0ccf9-8866-443a-8083-4a2af7035ee6@rock-chips.com>
+ <CANAwSgRXcg4tO00SNu77EKdp6Ay6X7+_f-ZoHxgkv1himxdi0Q@mail.gmail.com> <3fcd5562-a367-41e9-8bff-51e5990145e2@rock-chips.com>
+In-Reply-To: <3fcd5562-a367-41e9-8bff-51e5990145e2@rock-chips.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 29 Oct 2025 11:54:16 +0530
+X-Gm-Features: AWmQ_bkHYm5QH-5Y_pmEaKy-mXRgDSlraZJjP-ybL_6P_hostigu_T7ZdM_pHso
+Message-ID: <CANAwSgQ4HH=16Gn45XP3+jr+V+PrDhh8fC1Ek0jzrbMnhXo9fw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for resource cleanup
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Niklas Cassel <cassel@kernel.org>, Hans Zhang <18255117159@163.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/10/2025 08:17, Krzysztof Kozlowski wrote:
-> On 29/10/2025 07:03, Krzysztof Kozlowski wrote:
->> On Mon, Oct 27, 2025 at 01:45:05PM +0200, Matti Vaittinen wrote:
->>> Some of the chargers for lithium-ion batteries use a trickle-charging as
->>> a first charging phase for very empty batteries, to "wake-up" the battery.
->>
->> In the few cases I was dealing with charging circuits, trickle charging
->> was used in context of top-off charging, so when battery is 100%. It's
->> also documented at Wiki like that:
->> https://en.wikipedia.org/wiki/Trickle_charging
->>
->>> Trickle-charging is a low current, constant current phase. After the
->>> voltage of the very empty battery has reached an upper limit for
->>> trickle charging, the pre-charge phase is started with a higher current.
->>>
->>> Allow defining the upper limit for trickle charging voltage, after which
->>> the charging should be changed to the pre-charging.
->>
->> pre-charging is the trickle charging, no? Or you want to say that
->> trickle-charging is pre-pre-charging? But then what is pre-charging in
->> this binding?
-> 
-> 
-> Now I see that you added initial trickle-charging in commit
-> e3420b49949c79d6182dd8128fa7a3958da01b07. I looked at TI chargers for
-> LiIon/LiPo batteries and few popular models use the same meaning/cycles
-> as you here. Probably in LiIon/LiPo you cannot or should not use trickle
-> for top-off charging (CV phase).
-> 
-> For NiMh these TI chargers use term "Trickle Maintenance Charge" (e.g.
-> bq24400), so in separate or this patch please also clarify the
-> description of properties that this is trickle-charging for LiIon/LiPo
-> batteries, so the pre-pre charging.
+Hi Shawn,
 
-Right. I'll try improving the description. Thanks!
+On Wed, 29 Oct 2025 at 05:58, Shawn Lin <shawn.lin@rock-chips.com> wrote:
+>
+>
+> =E5=9C=A8 2025/10/28 =E6=98=9F=E6=9C=9F=E4=BA=8C 17:34, Anand Moon =E5=86=
+=99=E9=81=93:
+> > Hi Shawn,
+> >
+> > Thanks for your review comments.
+> >
+> > On Tue, 28 Oct 2025 at 05:56, Shawn Lin <shawn.lin@rock-chips.com> wrot=
+e:
+> >>
+> >> =E5=9C=A8 2025/10/27 =E6=98=9F=E6=9C=9F=E4=B8=80 22:55, Anand Moon =E5=
+=86=99=E9=81=93:
+> >>> Introduce a .remove() callback to the Rockchip DesignWare PCIe
+> >>> controller driver to ensure proper resource deinitialization during
+> >>> device removal. This includes disabling clocks and deinitializing the
+> >>> PCIe PHY.
+> >>>
+> >>> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> >>> ---
+> >>>    drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
+> >>>    1 file changed, 11 insertions(+)
+> >>>
+> >>> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/=
+pci/controller/dwc/pcie-dw-rockchip.c
+> >>> index 87dd2dd188b4..b878ae8e2b3e 100644
+> >>> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> >>> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+> >>> @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_d=
+evice *pdev)
+> >>>        return ret;
+> >>>    }
+> >>>
+> >>> +static void rockchip_pcie_remove(struct platform_device *pdev)
+> >>> +{
+> >>> +     struct device *dev =3D &pdev->dev;
+> >>> +     struct rockchip_pcie *rockchip =3D dev_get_drvdata(dev);
+> >>> +
+> >>> +     /* Perform other cleanups as necessary */
+> >>> +     clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> >>> +     rockchip_pcie_phy_deinit(rockchip);
+> >>> +}
+> >>
+> >> Thanks for the patch.
+> >>
+> >> Dou you need to call dw_pcie_host_deinit()?
+> > I feel the rockchip_pcie_phy_deinit will power off the phy
+> >> And I think you should also try to mask PCIE_CLIENT_INTR_MASK_MISC and
+> >> remove the irq domain as well.
+> >>
+> >> if (rockchip->irq_domain) {
+> >>          int virq, j;
+> >>          for (j =3D 0; j < PCI_NUM_INTX; j++) {
+> >>                  virq =3D irq_find_mapping(rockchip->irq_domain, j);
+> >>                  if (virq > 0)
+> >>                          irq_dispose_mapping(virq);
+> >>           }
+> >>          irq_set_chained_handler_and_data(rockchip->irq, NULL, NULL);
+> >>          irq_domain_remove(rockchip->irq_domain);
+> >> }
+> >>
+> > I have implemented resource cleanup in rockchip_pcie_remove,
+> > which is invoked when the system is shutting down.
+> > Your feedback on the updated code is welcome.
+> >
+> > static void rockchip_pcie_remove(struct platform_device *pdev)
+> > {
+> >          struct device *dev =3D &pdev->dev;
+> >          struct rockchip_pcie *rockchip =3D dev_get_drvdata(dev);
+> >          int irq;
+> >
+> >          irq =3D of_irq_get_byname(dev->of_node, "legacy");
+> >          if (irq < 0)
+> >                  return;
+> >
+> >          /* Perform other cleanups as necessary */
+> >          /* clear up INTR staatus register */
+> >          rockchip_pcie_writel_apb(rockchip, 0xffffffff,
+> >                                   PCIE_CLIENT_INTR_STATUS_MISC);
+> >          if (rockchip->irq_domain) {
+> >                  int virq, j;
+> >                  for (j =3D 0; j < PCI_NUM_INTX; j++) {
+> >                          virq =3D irq_find_mapping(rockchip->irq_domain=
+, j);
+> >                          if (virq > 0)
+> >                                  irq_dispose_mapping(virq);
+> >                  }
+> >                  irq_set_chained_handler_and_data(irq, NULL, NULL);
+> >                  irq_domain_remove(rockchip->irq_domain);
+> >          }
+> >
+> >          clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
+> >          /* poweroff the phy */
+> >          rockchip_pcie_phy_deinit(rockchip);
+> >          /* release the reset */
+>
+> release? Or "reset the controller"?
+>
+Ok, I will fix this.
+> >          reset_control_assert(rockchip->rst);
+> >          pm_runtime_put_sync(dev);
+> >          pm_runtime_disable(dev);
+> >          pm_runtime_no_callbacks(dev);
+> > }
+> >
+> >> Another thin I noticed is should we call pm_runtime_* here for hope th=
+at
+> >> genpd could be powered donw once removed?
+> >>
+> > I could not find 'genpd' (power domain) used in the PCIe driver
+> > If we have an example to use genpd I will update this.
+>  > > I am also looking into adding NOIRQ_SYSTEM_SLEEP_PM_OPS
+>
+> That sounds good, you can pick up my patch[1] if you'd like to continue
+> addressing the comments that I haven't had time to think more.
+>
+> [1] https://www.spinics.net/lists/linux-pci/msg171846.html
+>
+Ok, thanks. I will carefully study and address the comments.
 
-> 
-> Best regards,
-> Krzysztof
-
+Thanks
+-Anand
 
