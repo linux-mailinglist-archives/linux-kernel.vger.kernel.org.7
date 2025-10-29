@@ -1,78 +1,79 @@
-Return-Path: <linux-kernel+bounces-875879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B884C1A065
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:30:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD37C1A111
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CAA5643FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:27:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C07C5647F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64268333720;
-	Wed, 29 Oct 2025 11:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7F03346BE;
+	Wed, 29 Oct 2025 11:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="em1SahIN"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="bIj6YdJy"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE903321D6
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC643346BD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761737235; cv=none; b=JOFCMrQL9Qtd5nbkVhWHqLzMVFKWFdN7FGY6v/rwHNTKPIFsO7KsaAa4XMdGIFTxvSlBx2IPBc36ENxCE3WszN2qDeA5hph6+k/A5W1Vhd51GyKDyA/EKZT4W5DAG3Q1aSPMpAQ+XcqLRN/uAC8oxo8CLvkdSS+IZDtfr8w6paU=
+	t=1761737241; cv=none; b=lFPh7+bPsnNHkeaZ+fnwXT5sDe14/2VMkhMJcterBpHUYwhw3StvR/q23H3AqEwi5e86s1HcWp2M3lVqaucw4+L2XX1oUzyASQqBm7e9b1JVIzDIFP2w5XCKE+ZgJglanu+q+sYHY0F6FqTQZttDlDaDeyL4FLRMloVi8klt9fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761737235; c=relaxed/simple;
-	bh=TlIOJZgzYRa0uSdvlZ7h4NFliLwrLJg52Wgu33BrOfs=;
+	s=arc-20240116; t=1761737241; c=relaxed/simple;
+	bh=3k4eu6bu2FqRegq68CTBi09f2mevDFi0nw5dHF0KKDk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ks1YZtnVyaN3sGr1CBi93eeHdz/vxzr1Y38oQyjU3ChR4lhL6WUA5ArME7GXvStdHr2pSVCENzN/bTSCZjNZmADBk/v0ZB78ER+XW4poua3mPxGgEOki0rA0QkFzjc5lmstPyZ1J0us9vrV8QgJGDHg/VsKMotnD5RxXE2t/gdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=em1SahIN; arc=none smtp.client-ip=209.85.216.51
+	 MIME-Version; b=RtlXTpTo8gqtkZN3/cufsYnfYUkOcm1d2dD84OBbGSixz7OBQMPGZ8ySjLexo7VAFYgxPpXV+aOuvN7ns1MIFMflirId+PSnpyyVBiiz+8crt+vqHK172h7ED+FjXG6kZ2pF6VPkb/7U1cjsO08H+yGPnDEw3wA8Qke/xk2iXfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=bIj6YdJy; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-330b4739538so7178302a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:27:13 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-33badfbbc48so9042628a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:27:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1761737233; x=1762342033; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1761737239; x=1762342039; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EFXZa2m3ScC7B7xgAgov/Ch2E5BoKfJoACxjrPDC6sE=;
-        b=em1SahINqI9aligF0Gu6ZxnaWEOy3AyeSt/BH5otjJ5N6Guxb7T15aPyvpikXyvIOB
-         PAeaK7x1ebaA5l0tbRtFEaG7oXzbwrNdWN8v2fHuDlqgAvP689okJocJHrhvo1A+O8yQ
-         T/oV5Gv+Ciu7mu/HNX2mwh7t1eLXVArP4yCkOSvDVyNtyQD0hi/CCWueL+EcFMWvTIeo
-         WdQtEdz5iUmh3hXRi/sXCIAAxSuajDs6gBPT3Bv7V8xCgC5GV2eNvJnqQoMeaBFRlsWM
-         6U2wnjBM7fkqNILfUm/hlm1nJcseJ7oEcaXv8QY/7XZpEavz1infr969bu7OPiCyWGU8
-         VkzA==
+        bh=CjTmNoD235Z0Q+UTnvL+T6Jk9tiw9Xtbmp+pbEirE4Q=;
+        b=bIj6YdJyEvkwKDBetosLgBeCt45p3L0tgSGwDD+ZQi68I92SvNAaB0ufF2WJnsNoA7
+         MRPCIfmWhm4DpZMUp6H+HrwA20J3HILEMjSkvem5aZZVkqIGyD7PTouaGUDqqFRKwNCj
+         XTpv7R02xxQf7aoIgHvuOYyga1LiO79ki/MAQ9MnXCknBaMeaVWtlR6wP37ESCxbjugm
+         Pa8AQsCGS4i+praZfZgXP6Tgv55xznDbjgO4uQ0jXVmLTqYUdhp0QE3Xcx65YASwHhK/
+         ICdXQvz/z/iZ93hDbzkbUN3mnBIILO8STRGfpjiPjCjHyDXl6qybhIBuJB54zE7iPR4r
+         eAIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761737233; x=1762342033;
+        d=1e100.net; s=20230601; t=1761737239; x=1762342039;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EFXZa2m3ScC7B7xgAgov/Ch2E5BoKfJoACxjrPDC6sE=;
-        b=B5/3T00++v4P/srDEH+oqaJ4MOzNqASak+9j+wcr/rXGjPZJN7ESuB0ZcBiHd1imjA
-         14TeiwpjOBhKYLugrdkp/bxFb3gwEcaM1wjx9wkVVHSTEM1XEWR0Jdn2SB71C8lbGdm8
-         SJ2OO4RhVC5bdkou+jt8sg3FRZk3DMBQzQbCAYoFKo/r1bn4DQL79ciO5A8dJnrdnFL4
-         gesiqP/Qan1QAENDWMsmNpwx60AYTOWXTOr92PDCL+3WPXmDGyrCrz/wFtsbx5eGaYqD
-         qq8/P708RqV131Kkpkx6y2GtWXOn1mytFypH+yYGhlDcICb6mdpM/NSWWbx4ifWsxdCb
-         DYAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQqwsHsFgMSi4iABmTqkdUNkFfAGLz9K6GN7zg6gmwOX7XWEGj6y/2ar2sQnbZRUbnktQQkEkRTaU7ka0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSyo4RgNaXHT04quyL1O/DAOT0Vo9DKjjYot88VXxK99BLz98o
-	l3tpvFxqmG7RwirHz3FqUyRAlfslZi/hbhslMxmTr/taXoKEpJnTpM+Lh4XjG0UxEJs=
-X-Gm-Gg: ASbGncvTDza0SxT87/6ndbPwb/HsrEizrNGHqBH0ZCwwpL8NsPcTmZkhW36yvn9Pb+Y
-	VrPDngegr1YNcRoplBRELaHYU1MDR0C8lxkfbhUJqqBpuKUCq73lGfOwpG+zSiCS2BJgpum0P/7
-	qBvmPz89Di4AA9yNI7IyERz3BrZSB6/19deiJNunn6KxYePBq0T9LB3O3wco61wpOoLmxkhiU2d
-	qaWd8BbnaaGr/r/gsZywtXnaXQrzJma2YWqxB7ffpqZJ+kkF/oyAly/AhD8jr1L9etxio488DSj
-	Udp7AetZPTvKBxgO36cKevR6yfpVKaftbRJRFpeNOAbjJgh2WTBVRjHiq2HrYbRzQsWtUqH475a
-	dRWcOmowKRk8CIajIGII+lZ4tlZpfYSVAEVt7wzZSHgpB7LkThKoQU9C5iECosZDXqnzJX97X8K
-	yIbOd+kGLh83SemFuRI5HlrJgIA1sk
-X-Google-Smtp-Source: AGHT+IFGkvDWy4UC3Hg/jmsLKRMLWCVuS3Q0brKoM+EvGQYG5cGXwRa91mgG3g+8I8GSaWTf36w5eA==
-X-Received: by 2002:a17:90b:4a11:b0:330:6c5a:4af4 with SMTP id 98e67ed59e1d1-3403a29bc2cmr3385152a91.35.1761737233246;
-        Wed, 29 Oct 2025 04:27:13 -0700 (PDT)
+        bh=CjTmNoD235Z0Q+UTnvL+T6Jk9tiw9Xtbmp+pbEirE4Q=;
+        b=fkatbQk90swYfxmPkPKNQN4z2DKSDuvkF6PWKzBcLW39nafScGRVqa637s6xTLEKzb
+         ShdfGGbzR4aWN6tXkDCGshASLMYgSVBT6X07RnSkftepubNxjYPu2NJh3TNxkRTIven5
+         /6S/EbP9G1bQysi+z5Swltm6DBvjFw64ym1ZNhUOURj1cdbF/TC3HSTPvySqRqrvR/ef
+         cNtOOQ8yBowfNCPHj0XShribd3UDCBbhY2SdPZIXy7FbYLHmoAKvCbyc+OVya8qaeVgu
+         JxicYOXfHlBh/R3uvLaEOS01K7oZdFpRpe/b0gYrYA5TVQIS506Ix6KoRYLKDC5bMVMw
+         4aXg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4Dm2xXwwVfQUbQRzwBD3n25yjvby75FchBJfZyZ7aa92MzFa3peCE0IBmcJtiRTcbGMIIAK+KJUOyHzI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDK942Bki6TJ0ex/fFODOVErzct02gMMfeTbOftlSYuYPU0+ji
+	zDSybWmXB2sO5LzNwH4sdmZmilQZXs7jGJ2dzT3jnBWDxhOcIt0g+8HMCnxgZ0fBTgmafDvK+kL
+	8vt5Ms0zyoQ==
+X-Gm-Gg: ASbGncuCnMVtT6ueVcc8AoUbvxJ3KgfpXkQube69v7RiGKWw9WZNQnbKIZK0fMdoUkr
+	aR27gipYyi74ojdg6CNEBy8/80fVE+KKUDjqAGQoRTIjNuCAjQX53kpVINptSZ9J3LlK5K+Oh/k
+	i3E8szbH4jPtiUG+HPInEUjxQjxCRuy3qlTr0mOVQs2WjayQ+EFgnaHp+TnR4wbuFZl1zn3Wo3N
+	BYGLsGmY8uXAW9mS1sE3m+mtA0cAjiHOibMsJ3p396qBnHN2U8BqbFUHpNqOHVbc/qVI03yYpgd
+	e1jNE9Ctw0OQ7x4ZXebt/OWPn2ecKMQ9H47WVa20nsY4f7Y0d47MMuRW5HDVVQGv0cwLehB/yyD
+	kMYZOQ12milIywL5EtCGx5/oyQgHz7Bt9cnNO0cN5SQuYLQSnIP0oZxJylKVjXH9sP/3z/M2S2s
+	skqDqIWTPoX5SHLZc1UpjRu5tFCFS2
+X-Google-Smtp-Source: AGHT+IGV9vVH8+hlZLrwbCF6EeuF04kV3fpI5UDP/oNNvPeA5hF+38GHsytRURBATavrU36r7KMQfg==
+X-Received: by 2002:a17:90b:384d:b0:339:d03e:2a11 with SMTP id 98e67ed59e1d1-3403a15844cmr2891587a91.14.1761737238675;
+        Wed, 29 Oct 2025 04:27:18 -0700 (PDT)
 Received: from ventana-desktop.localhost ([2405:201:d019:c0ce:f7f5:7789:48e5:c03f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm15316918a91.16.2025.10.29.04.27.08
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm15316918a91.16.2025.10.29.04.27.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 04:27:13 -0700 (PDT)
+        Wed, 29 Oct 2025 04:27:18 -0700 (PDT)
 From: Himanshu Chauhan <hchauhan@ventanamicro.com>
 To: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -91,9 +92,9 @@ Cc: paul.walmsley@sifive.com,
 	sunilvl@ventanamicro.com,
 	apatel@ventanamicro.com,
 	Himanshu Chauhan <hchauhan@ventanamicro.com>
-Subject: [RFC PATCH v2 02/10] riscv: Define arch_apei_get_mem_attribute for RISC-V
-Date: Wed, 29 Oct 2025 16:56:40 +0530
-Message-ID: <20251029112649.3811657-3-hchauhan@ventanamicro.com>
+Subject: [RFC PATCH v2 03/10] acpi: Introduce SSE in HEST notification types
+Date: Wed, 29 Oct 2025 16:56:41 +0530
+Message-ID: <20251029112649.3811657-4-hchauhan@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
 References: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
@@ -105,46 +106,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-ghes_map function uses arch_apei_get_mem_attribute to get the
-protection bits for a given physical address. These protection
-bits are then used to map the physical address.
+Introduce a new HEST notification type for RISC-V SSE events.
+The GHES entry's notification structure contains the notification
+to be used for a given error source. For error sources delivering
+events over SSE, it should contain the new SSE notification type.
 
 Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
 ---
- arch/riscv/include/asm/acpi.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ include/acpi/actbl1.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/include/asm/acpi.h b/arch/riscv/include/asm/acpi.h
-index 6e13695120bc..0c599452ef48 100644
---- a/arch/riscv/include/asm/acpi.h
-+++ b/arch/riscv/include/asm/acpi.h
-@@ -27,6 +27,26 @@ extern int acpi_disabled;
- extern int acpi_noirq;
- extern int acpi_pci_disabled;
+diff --git a/include/acpi/actbl1.h b/include/acpi/actbl1.h
+index 7f35eb0e8458..20b490227398 100644
+--- a/include/acpi/actbl1.h
++++ b/include/acpi/actbl1.h
+@@ -1535,7 +1535,8 @@ enum acpi_hest_notify_types {
+ 	ACPI_HEST_NOTIFY_SEI = 9,	/* ACPI 6.1 */
+ 	ACPI_HEST_NOTIFY_GSIV = 10,	/* ACPI 6.1 */
+ 	ACPI_HEST_NOTIFY_SOFTWARE_DELEGATED = 11,	/* ACPI 6.2 */
+-	ACPI_HEST_NOTIFY_RESERVED = 12	/* 12 and greater are reserved */
++	ACPI_HEST_NOTIFY_SSE = 12, /* RISCV SSE */
++	ACPI_HEST_NOTIFY_RESERVED = 13	/* 13 and greater are reserved */
+ };
  
-+#ifdef	CONFIG_ACPI_APEI
-+/*
-+ * acpi_disable_cmcff is used in drivers/acpi/apei/hest.c for disabling
-+ * IA-32 Architecture Corrected Machine Check (CMC) Firmware-First mode
-+ * with a kernel command line parameter "acpi=nocmcoff". But we don't
-+ * have this IA-32 specific feature on ARM64, this definition is only
-+ * for compatibility.
-+ */
-+#define acpi_disable_cmcff 1
-+static inline pgprot_t arch_apei_get_mem_attribute(phys_addr_t addr)
-+{
-+	/*
-+	 * Until we have a way to look for EFI memory attributes.
-+	 */
-+	return PAGE_KERNEL;
-+}
-+#else /* CONFIG_ACPI_APEI */
-+#define acpi_disable_cmcff 0
-+#endif /* !CONFIG_ACPI_APEI */
-+
- static inline void disable_acpi(void)
- {
- 	acpi_disabled = 1;
+ /* Values for config_write_enable bitfield above */
 -- 
 2.43.0
 
