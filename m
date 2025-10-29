@@ -1,108 +1,152 @@
-Return-Path: <linux-kernel+bounces-876452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7BF2C1B925
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:13:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C30B2C1B9E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50FE66540F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 553CB584963
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B922F60A3;
-	Wed, 29 Oct 2025 14:53:40 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C38325738;
+	Wed, 29 Oct 2025 14:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qnE0C8Eh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DDD2F7465
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029472C3277
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749620; cv=none; b=ZJbC9EfdqfQi2wlkdNcnXLbEuKx9xdEg1EY/0SD5A3H0b/Q604kU1USvbtRti4loBGGgVDZA6+AAPftY8+2Fz5X5JcIXk8A1vn+nAA7OaOJsc0+l9eF0IkLZq/r+mXnibcY0ax3K4eOlKO7/xdItRY8bObKLvuKcV+D0JG7to4A=
+	t=1761749721; cv=none; b=hsBbuxRKIAXEfZNtwJwGEhClaHOwI6IY3Ko+0Hz9QJiP+DfiCmIw/ksBsMvOfcIQQUaBlYes/L1YHzywy0xqEcutE6Mcwlo+RV5sY2rm0+zO5o939GQj/qy0FRZc7Cg8G+M6Q3wM3chVAekMHeAhf+nDvDwccMPUNqa97A0vM1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749620; c=relaxed/simple;
-	bh=lRTzqMm3C1CC3agOInFaKAmL647Ck5UdtxGzBQeuq/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMNWLkT0XGgXLaSbM9zvq43vrT3WJbzzQ91Mz6zeUunh7bsHpntI+Lh9aFSWrHNqoV5eyxs+H7keB57BdGMNnzXDDeSdzIu5yK/TsYbkJHZYr3SZOjgBesWeyNKFTBlOHfFOwVetLfL3kKfk1nZ4mGYhc6dfaB4fFiJ8j6yR34Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-89019079fbeso2667782241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:53:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749617; x=1762354417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PQw8srW8sZp+NW7sFJ0wHastT8WjOnxgYbS0cHBnNRA=;
-        b=j8WoZg+Sgoytlxl8oNMPaoiptutzWla7nUBc/7urT0rXrsImNulnLEdv2GhrBJ49NG
-         Ysf6ytdpmohbNac8G1vgqP9wcwe95cLtu6Xnux68dDNmUVLFHqXb0ElpK9LykUMS3ydX
-         0uJJvJPBEuzK9RUxUf5LRZA5/gPwVYy7nnLCSQxKAPeDT4V3A4FpE/IBL3UcnbUt/ZgF
-         PTj6m045kvEaU5ZkFWwITPtM44MKqj7xXdUz5OcP6CUfvcq8L5+T1IZjVWYQjmp6ox2i
-         KLBRlevlj3WI0KYiqlLxLms/4D9ToUpuxrph2w48uKapDt6ZClwoSQA0xewTIaDxiL4T
-         2Iig==
-X-Forwarded-Encrypted: i=1; AJvYcCXHD/RCWAHOjmcGYfIHSmfIRlQ21KsFJapzMyl9kkv0zCRYZYNsLqx9IMWL+vzv6AWQFY/vYrUD77DSvw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbAssdNlTgT+lt9jJbrCC3XUHth7tAuSJq8Z/yEmUemS19DPhv
-	w/jZrQI81Y93PXpqUWOnVUKw/YGWtIWuFAx/uqv6lZJwPGq8JmWIBZMICQXgYbYS
-X-Gm-Gg: ASbGncsL7xSeK1/2P1i2Yr3qGYM5yLImIiSftwsUa8TgIPEu5H93keaNM6DJAPHI/yU
-	+63wBqsF/YRI5HuRoGZHMaMYOvpuDm1J8ZK45Vry2BVB3Pcq218bpqh8IIlydmfyW8n8ipaiJl0
-	mXOpJliL7wbuTqTdum2xo2sd4YclNgwqfmLKuQN2SIPoLoEGdlhKyPuRwdL3l6JCWVEogPyNsco
-	kWsA/yl+2U8ly0WXfPa4Yocc/fZb1z788zrh13YVuwMXYuVQiFGYjhAFLaD2AI2WImc4ljDpc4a
-	7VUeYQJxrx4g9gn0QpCCNmr7q+2NgIGasrIPq06LETNbu9i4VTlL4kiXYEo3kAOXebJmGKty77A
-	JydWUMNEC2+1LPRyRhm+EpbcoDUxjRidx5bE0Y4bSN5+bqPeeMTuVEQD5gJciNJfiIigxjYIUqm
-	vur8B1Oq6j7OLv2tEvsLA64SlVlYrtNLL6oD61BZ6v4cMdXD3qJmLs
-X-Google-Smtp-Source: AGHT+IGiZj2bq3/Q+wSAhoH0g6pk92OJGFNB8RoEmkzXergY3tOAWOa85pU44Ta/2RFm1tgPRuyKSA==
-X-Received: by 2002:a05:6102:dcc:b0:5db:37d4:3625 with SMTP id ada2fe7eead31-5db906baf73mr1065555137.34.1761749617489;
-        Wed, 29 Oct 2025 07:53:37 -0700 (PDT)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-934c4098721sm5283329241.12.2025.10.29.07.53.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:53:36 -0700 (PDT)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-5d6266f1a33so4635067137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:53:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVytC6V+H9e9068SYwBmcCQgnkRt0ZB5HmIouA7ryYF8UyNue9Al+s0q28XuQ2N9vkb0PLFgDAN3yYSQ3c=@vger.kernel.org
-X-Received: by 2002:a05:6102:1491:b0:5d6:6ce:9675 with SMTP id
- ada2fe7eead31-5db906e35a5mr890070137.40.1761749616368; Wed, 29 Oct 2025
- 07:53:36 -0700 (PDT)
+	s=arc-20240116; t=1761749721; c=relaxed/simple;
+	bh=ZWlywKbxPtxI/X8cmcuuLQ4tkLG0DqW8vNF0jsT0UcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rkj7adbMUJ0DdGpEE9T7FIDt3FSC5P8cXIBR4FCII3jyA/Oye7jmsoQt8qLZOOlgVIBmYSBfIPsUP+4IAmWzyqZckSC7oEDKWZlNtqEaSI9EDl6XHxw0K2RB8NDiFJY8BReRlxd0EcZNcJpsZCxi1HfvYJjae4Xj0DP5YlhKdHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qnE0C8Eh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=eQacS9QMYE7r7UxW5Hbt1tuV7oN84m94ni3qJwW6oQM=; b=qnE0C8EhnGCqp9ZEkTolWcVnBT
+	Pcv1cv2gMwyrTzkFRbDvG5V3TjFUNoir+Hv55kCenlvitcllLy75MX5mTf5Mt43WKHJI0pMBMBUO+
+	M0oaU23dPihbIN8A7dUskJ93EoGzNX39kS4tBag5JtNZ9b9sWlvxgDsCWk94w9vOLZMzoMBG0x72k
+	M3n36li9/JH+0P1FFD5WR3ku2+R4UnHhZ6UAjE7TgcoXABsFnsUGx8ykl9oXoKgARGai2mwy3TxDM
+	xl5ZN+3K6/gWehB+mY23PePYxYOsGcFvIhDuPLPoJ4gKvfe3nUYd4PqwBzM+uT5csGgZExHA2RV0L
+	2MNDjHRw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE6iF-000000073km-1sAN;
+	Wed, 29 Oct 2025 13:59:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id A9847300323; Wed, 29 Oct 2025 15:55:13 +0100 (CET)
+Date: Wed, 29 Oct 2025 15:55:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] sched/stats: Optimize /proc/schedstat printing
+Message-ID: <20251029145513.GO3245006@noisy.programming.kicks-ass.net>
+References: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
+ <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
+ <aQIoySXrIVcKXXGS@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org> <20251027211249.95826-5-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20251027211249.95826-5-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:53:25 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWpkbFGFuYA5qxohU_P5trfdrR8=OE4bOFZusuax_4M5w@mail.gmail.com>
-X-Gm-Features: AWmQ_bnTzLRSdC_rJSCH1WOHi3pChMPMBglo5qebVwVc_9tsiGfE_PRGste6mmI
-Message-ID: <CAMuHMdWpkbFGFuYA5qxohU_P5trfdrR8=OE4bOFZusuax_4M5w@mail.gmail.com>
-Subject: Re: [PATCH 5/5] arm64: dts: renesas: r8a77961-salvator-xs: Enable GPU support
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aQIoySXrIVcKXXGS@shell.ilvokhin.com>
 
-On Mon, 27 Oct 2025 at 22:13, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Enable GPU on Salvator-X 2nd version with R-Car M3-W+.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+On Wed, Oct 29, 2025 at 02:46:33PM +0000, Dmitry Ilvokhin wrote:
+> On Wed, Oct 29, 2025 at 03:07:55PM +0100, Peter Zijlstra wrote:
+> > On Wed, Oct 29, 2025 at 01:07:15PM +0000, Dmitry Ilvokhin wrote:
+> > > Function seq_printf supports rich format string for decimals printing,
+> > > but there is no need for it in /proc/schedstat, since majority of the
+> > > data is space separared decimals. Use seq_put_decimal_ull instead as
+> > > faster alternative.
+> > > 
+> > > Performance counter stats (truncated) for sh -c 'cat /proc/schedstat >
+> > > /dev/null' before and after applying the patch from machine with 72 CPUs
+> > > are below.
+> > > 
+> > > Before:
+> > > 
+> > >       2.94 msec task-clock               #    0.820 CPUs utilized
+> > >          1      context-switches         #  340.551 /sec
+> > >          0      cpu-migrations           #    0.000 /sec
+> > >        340      page-faults              #  115.787 K/sec
+> > > 10,327,200      instructions             #    1.89  insn per cycle
+> > >                                          #    0.10  stalled cycles per insn
+> > >  5,458,307      cycles                   #    1.859 GHz
+> > >  1,052,733      stalled-cycles-frontend  #   19.29% frontend cycles idle
+> > >  2,066,321      branches                 #  703.687 M/sec
+> > >     25,621      branch-misses            #    1.24% of all branches
+> > > 
+> > > 0.00357974 +- 0.00000209 seconds time elapsed  ( +-  0.06% )
+> > > 
+> > > After:
+> > > 
+> > >       2.50 msec task-clock              #    0.785 CPUs utilized
+> > >          1      context-switches        #  399.780 /sec
+> > >          0      cpu-migrations          #    0.000 /sec
+> > >        340      page-faults             #  135.925 K/sec
+> > >  7,371,867      instructions            #    1.59  insn per cycle
+> > >                                         #    0.13  stalled cycles per insn
+> > >  4,647,053      cycles                  #    1.858 GHz
+> > >    986,487      stalled-cycles-frontend #   21.23% frontend cycles idle
+> > >  1,591,374      branches                #  636.199 M/sec
+> > >     28,973      branch-misses           #    1.82% of all branches
+> > > 
+> > > 0.00318461 +- 0.00000295 seconds time elapsed  ( +-  0.09% )
+> > > 
+> > > This is ~11% (relative) improvement in time elapsed.
+> > 
+> > Yeah, but who cares? Why do we want less obvious code for a silly stats
+> > file?
+> 
+> Thanks for the feedback, Peter.
+> 
+> Fair point that /proc/schedstat isn’t a hot path in the kernel itself,
+> but it is a hot path for monitoring software (Prometheus for example).
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Aliens! I like Xenomorphs :-) But I doubt that's what you're talking
+about.
 
-Gr{oetje,eeting}s,
+> In large fleets, these files are polled periodically (often every few
+> seconds) on every machine. The cumulative overhead adds up quickly
+> across thousands of nodes, so reducing the cost of generating these
+> stats does have a measurable operational impact. With the ongoing trend
+> toward higher core counts per machine, this cost becomes even more
+> noticeable over time.
+> 
+> I've tried to keep the code as readable as possible, but I understand if
+> you think an ~11% improvement isn't worth the added complexity. If you
+> have suggestions for making the code cleaner or the intent clearer, I’d
+> be happy to rework it.
 
-                        Geert
+What are they doing this for? I would much rather rework all this such
+that all the schedstat crap becomes tracepoints and all the existing
+cruft optional consumers of that.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Like I argued here:
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+  https://lkml.kernel.org/r/20250703141800.GX1613200@noisy.programming.kicks-ass.net
+
+Then people can consume them however makes most sense, ideally with a
+binary interface if it is high bandwidth.
 
