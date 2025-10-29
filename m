@@ -1,276 +1,130 @@
-Return-Path: <linux-kernel+bounces-875625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49753C196C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:42:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE463C1976F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0BA19C17CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:43:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBD3B584222
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2124432C31D;
-	Wed, 29 Oct 2025 09:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B99C313526;
+	Wed, 29 Oct 2025 09:41:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3sTXMxsI";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qu2A8dkh"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yq8P9rOT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE96223DF6;
-	Wed, 29 Oct 2025 09:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8612E2512FC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:41:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761730857; cv=none; b=HXqi5u1xCQbJ1ujpBS6JHGeGNLFFU6S2thNC0HnXd/gVyYg77Pv8gmNy+4/klBF07IsdJW0DdvKw3rMAyzCPDwOvP3I/ZtqYV1bjCQcdrLHrW7Lcoag3x2ACXjktLkO4z0X1TaHiq3NxET6R1v4kK8V78ANMGf7LJQnTIJX1WBc=
+	t=1761730886; cv=none; b=JphhT9zuS+dU6c1EM56eW/AnQ/qAjSZBnj8c15jKkjlF5WM16DthdNAPLS9lTVpBz4YpbKGBymDLF570t4lqsZSkFN2ZTdKVpjgUUnO77f+tzE0f98moyaiFqct5152NOdVHOwZH8OLdsXD5SqNQUYHPkKrkrguFqEe49ahjaIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761730857; c=relaxed/simple;
-	bh=u+zy8gS8LtPNCO8qdvvpzDPNEtqY0yPY4jb12c6HQVQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gRY2/U7MdYQ/2OLEmyFk48UUWUrmFNHI9qZRZpQDHiJsDhTWVrCxkLe6tUqEif3tdc6K53ldDYBRa+/nkmi7FhL0dR9ls/MtqREZckkDXfu0qGAiLpke3YzoMNdFHMErA3SqAw5sl7u15UFFBQIe+x/A+v3HsG1sgoMg2tpNjDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3sTXMxsI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qu2A8dkh; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761730853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFO/V4h4fszx7JmKEX4+pQ6W25t5QSCTuaQ3p7c5bTk=;
-	b=3sTXMxsIKprUjnsDC66p+RBYJd9y6TZ1M3AyJLTlStJ+fElxuoiyQSYqwAmRVPl9VCYYPv
-	e8LoYCTUGlmJz3YFZqzz44NvoEOGiy/HMpmKljmKvp24Xo/prnzqfa7/3zvwo9yekzvhre
-	yYozK/wb82vBfLPgjnmd5TLh17uFgGvr/0Gqkf1SgjaUWdbprblGt269I+L1TvWs7Gayln
-	Iwd81TagqU8MwWufrGABN3adYripPGFZF4G9Zur3J4UTbrqOMQwefmFc0M5wmTe/7FOd9B
-	W/+bAHiStdDK9PNOl3peIdUp5EXACfesjCznurUapyJ3iIjnSjUcdIuZbtYeNg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761730853;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EFO/V4h4fszx7JmKEX4+pQ6W25t5QSCTuaQ3p7c5bTk=;
-	b=Qu2A8dkhT2JhVGdB5ITQtPpq5eKRqmyaPGfzBMENu1kheISQNRLH52GqMZHNnXGu4rwWXY
-	EQqPF2Atk1+ec1Dg==
-To: Yann Ylavic <ylavic.dev@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, kernel test robot <lkp@intel.com>,
- Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- linuxppc-dev@lists.ozlabs.org, Paul
- Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, Heiko Carstens <hca@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, linux-s390@vger.kernel.org, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>, David Laight <david.laight.linux@gmail.com>,
- Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix
- <nicolas.palix@imag.fr>, Peter Zijlstra <peterz@infradead.org>, Darren
- Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
- =?utf-8?Q?Andr=C3=A9?=
- Almeida <andrealmeid@igalia.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan
- Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: [patch V6 02/12] uaccess: Provide ASM GOTO safe wrappers for
- unsafe_*_user()
-In-Reply-To: <87jz0fuinj.ffs@tglx>
-References: <20251027083700.573016505@linutronix.de>
- <20251027083745.231716098@linutronix.de>
- <CAKQ1sVO9YmWqo2uzk7NbssgWuwnQ-o4Yf2+bCP8UmHAU3u8KmQ@mail.gmail.com>
- <87jz0fuinj.ffs@tglx>
-Date: Wed, 29 Oct 2025 10:40:52 +0100
-Message-ID: <877bweujtn.ffs@tglx>
+	s=arc-20240116; t=1761730886; c=relaxed/simple;
+	bh=USrNmdE74cIwX8ZXj65xooCod66cGcvkOUom+iY60+A=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=olpD1lA+sy9e77FrPXlGVUlnGJxl3b6rjtdGZYkh9BXt0fhWScKvTlX26rd93homnuu1aNfN1VrhH3yYrvb5UGqV8cLJpIOGM1bzvY/OOInRQkzN+cZ4Ho1U4/rFfLAArmunfHyZ/6ZTHg0ymbdHeX4tY8sN8cXaSwpP97TSPdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yq8P9rOT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 569E1C4CEF7;
+	Wed, 29 Oct 2025 09:41:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761730886;
+	bh=USrNmdE74cIwX8ZXj65xooCod66cGcvkOUom+iY60+A=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Yq8P9rOTFDHjPDEPj1psPbSTT3Ba5xQSP0kQLGWobfXC8QIbi3Z3U7XIVF2ufHdzY
+	 5OVRY3p6fxDxhmiw/bE3nPlLjxNjK/p6q2oCYRY7oGgvU/nWPDT08IdwQkSC3UIM+o
+	 MiLBnsU2qEpnyFICMjXHbASxJUUg7I4WaLqLIwm3B+73fklRhQeK60vJy0SJ9EA0Wm
+	 R1rJiQLLGJmAqw/3HUBsFNzWvPxYlO7lUg31kT+B8/hM5jFbiIKajs8NsBhdp5gAGE
+	 sJ9GZLpTsRySIcBW15XJGHAWoPHLxstCwmGnvoqDmcNJGlTvIVIOlK+nNvOJi99vPg
+	 /lejVudM8N0hQ==
+Message-ID: <45823945-2ea3-4ec6-9b07-686814f38567@kernel.org>
+Date: Wed, 29 Oct 2025 17:41:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net,
+ Yongpeng Yang <yangyongpeng@xiaomi.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to access i_size w/ i_size_read()
+To: Yongpeng Yang <yangyongpeng.storage@gmail.com>, jaegeuk@kernel.org
+References: <20251029063105.989253-1-chao@kernel.org>
+ <f9cf5992-0357-4702-be73-881c9997929d@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <f9cf5992-0357-4702-be73-881c9997929d@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-ASM GOTO is miscompiled by GCC when it is used inside a auto cleanup scope:
+On 10/29/25 16:09, Yongpeng Yang wrote:
+> On 10/29/25 14:31, Chao Yu via Linux-f2fs-devel wrote:
+>> It recommends to use i_size_{read,write}() to access and update i_size,
+>> otherwise, we may get wrong tearing value due to high 32-bits value
+>> and low 32-bits value of i_size field are not updated atomically in
+>> 32-bits archicture machine.
+>>
+>> Signed-off-by: Chao Yu <chao@kernel.org>
+>> ---
+>>   include/trace/events/f2fs.h | 8 ++++----
+>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+>> index edbbd869078f..e1fae78d64a5 100644
+>> --- a/include/trace/events/f2fs.h
+>> +++ b/include/trace/events/f2fs.h
+>> @@ -204,7 +204,7 @@ DECLARE_EVENT_CLASS(f2fs__inode,
+>>           __entry->pino    = F2FS_I(inode)->i_pino;
+>>           __entry->mode    = inode->i_mode;
+>>           __entry->nlink    = inode->i_nlink;
+>> -        __entry->size    = inode->i_size;
+>> +        __entry->size    = i_size_read(inode);
+>>           __entry->blocks    = inode->i_blocks;
+>>           __entry->advise    = F2FS_I(inode)->i_advise;
+>>       ),
+>> @@ -353,7 +353,7 @@ TRACE_EVENT(f2fs_unlink_enter,
+>>       TP_fast_assign(
+>>           __entry->dev    = dir->i_sb->s_dev;
+>>           __entry->ino    = dir->i_ino;
+>> -        __entry->size    = dir->i_size;
+>> +        __entry->size    = i_size_read(dir);
+>>           __entry->blocks    = dir->i_blocks;
+>>           __assign_str(name);
+>>       ),
+>> @@ -433,7 +433,7 @@ DECLARE_EVENT_CLASS(f2fs__truncate_op,
+>>       TP_fast_assign(
+>>           __entry->dev    = inode->i_sb->s_dev;
+>>           __entry->ino    = inode->i_ino;
+>> -        __entry->size    = inode->i_size;
+>> +        __entry->size    = i_size_read(inode);
+>>           __entry->blocks    = inode->i_blocks;
+>>           __entry->from    = from;
+>>       ),
+>> @@ -1006,7 +1006,7 @@ TRACE_EVENT(f2fs_fallocate,
+>>           __entry->mode    = mode;
+>>           __entry->offset    = offset;
+>>           __entry->len    = len;
+>> -        __entry->size    = inode->i_size;
+>> +        __entry->size    = i_size_read(inode);
+>>           __entry->blocks = inode->i_blocks;
+>>           __entry->ret    = ret;
+>>       ),
+> 
+> inode->i_size usage in fs/f2fs/ also needs to be updated. For example in f2fs_need_verity(), which may not protected by inode_lock.
 
-bool foo(u32 __user *p, u32 val)
-{
-	scoped_guard(pagefault)
-		unsafe_put_user(val, p, efault);
-	return true;
-efault:
-	return false;
-}
+Accessing i_size directly in f2fs_need_verity() should be fine? Because fsverity
+actived inode should be readonly.
 
- e80:	e8 00 00 00 00       	call   e85 <foo+0x5>
- e85:	65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
- e8d:	83 80 04 14 00 00 01 	addl   $0x1,0x1404(%rax)   // pf_disable++
- e94:	89 37                	mov    %esi,(%rdi)
- e96:	83 a8 04 14 00 00 01 	subl   $0x1,0x1404(%rax)   // pf_disable--
- e9d:	b8 01 00 00 00       	mov    $0x1,%eax           // success
- ea2:	e9 00 00 00 00       	jmp    ea7 <foo+0x27>      // ret
- ea7:	31 c0                	xor    %eax,%eax           // fail
- ea9:	e9 00 00 00 00       	jmp    eae <foo+0x2e>      // ret
+Do you see any other cases which are not covered by inode_lock()?
 
-which is broken as it leaks the pagefault disable counter on failure.
+Thanks,
 
-Clang at least fails the build.
+> 
+> Yongpeng,
 
-Linus suggested to add a local label into the macro scope and let that
-jump to the actual caller supplied error label.
-
-       	__label__ local_label;                                  \
-        arch_unsafe_get_user(x, ptr, local_label);              \
-	if (0) {                                                \
-	local_label:                                            \
-		goto label;                                     \
-
-That works for both GCC and clang.
-
-clang:
-
- c80:	0f 1f 44 00 00       	   nopl   0x0(%rax,%rax,1)	
- c85:	65 48 8b 0c 25 00 00 00 00 mov    %gs:0x0,%rcx
- c8e:	ff 81 04 14 00 00    	   incl   0x1404(%rcx)	   // pf_disable++
- c94:	31 c0                	   xor    %eax,%eax        // set retval to false
- c96:	89 37                      mov    %esi,(%rdi)      // write
- c98:	b0 01                	   mov    $0x1,%al         // set retval to true
- c9a:	ff 89 04 14 00 00    	   decl   0x1404(%rcx)     // pf_disable--
- ca0:	2e e9 00 00 00 00    	   cs jmp ca6 <foo+0x26>   // ret
-
-The exception table entry points correctly to c9a
-
-GCC:
-
- f70:   e8 00 00 00 00          call   f75 <baz+0x5>
- f75:   65 48 8b 05 00 00 00 00 mov    %gs:0x0(%rip),%rax
- f7d:   83 80 04 14 00 00 01    addl   $0x1,0x1404(%rax)  // pf_disable++
- f84:   8b 17                   mov    (%rdi),%edx
- f86:   89 16                   mov    %edx,(%rsi)
- f88:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
- f8f:   b8 01 00 00 00          mov    $0x1,%eax         // success
- f94:   e9 00 00 00 00          jmp    f99 <baz+0x29>    // ret
- f99:   83 a8 04 14 00 00 01    subl   $0x1,0x1404(%rax) // pf_disable--
- fa0:   31 c0                   xor    %eax,%eax         // fail
- fa2:   e9 00 00 00 00          jmp    fa7 <baz+0x37>    // ret
-
-The exception table entry points correctly to f99
-
-So both compilers optimize out the extra goto and emit correct and
-efficient code.
-
-Provide a generic wrapper to do that to avoid modifying all the affected
-architecture specific implementation with that workaround.
-
-The only change required for architectures is to rename unsafe_*_user() to
-arch_unsafe_*_user(). That's done in subsequent changes.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V5a: Use put in __put_kernel_nofault() - Yann
----
- include/linux/uaccess.h |   72 +++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 68 insertions(+), 4 deletions(-)
-
---- a/include/linux/uaccess.h
-+++ b/include/linux/uaccess.h
-@@ -518,7 +518,34 @@ long strncpy_from_user_nofault(char *dst
- 		long count);
- long strnlen_user_nofault(const void __user *unsafe_addr, long count);
- 
--#ifndef __get_kernel_nofault
-+#ifdef arch_get_kernel_nofault
-+/*
-+ * Wrap the architecture implementation so that @label can be outside of a
-+ * cleanup() scope. A regular C goto works correctly, but ASM goto does
-+ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-+ */
-+#define __get_kernel_nofault(dst, src, type, label)		\
-+do {								\
-+	__label__ local_label;					\
-+	arch_get_kernel_nofault(dst, src, type, local_label);	\
-+	if (0) {						\
-+	local_label:						\
-+		goto label;					\
-+	}							\
-+} while (0)
-+
-+#define __put_kernel_nofault(dst, src, type, label)		\
-+do {								\
-+	__label__ local_label;					\
-+	arch_put_kernel_nofault(dst, src, type, local_label);	\
-+	if (0) {						\
-+	local_label:						\
-+		goto label;					\
-+	}							\
-+} while (0)
-+
-+#elif !defined(__get_kernel_nofault) /* arch_get_kernel_nofault */
-+
- #define __get_kernel_nofault(dst, src, type, label)	\
- do {							\
- 	type __user *p = (type __force __user *)(src);	\
-@@ -535,7 +562,8 @@ do {							\
- 	if (__put_user(data, p))			\
- 		goto label;				\
- } while (0)
--#endif
-+
-+#endif  /* !__get_kernel_nofault */
- 
- /**
-  * get_kernel_nofault(): safely attempt to read from a location
-@@ -549,7 +577,42 @@ do {							\
- 	copy_from_kernel_nofault(&(val), __gk_ptr, sizeof(val));\
- })
- 
--#ifndef user_access_begin
-+#ifdef user_access_begin
-+
-+#ifdef arch_unsafe_get_user
-+/*
-+ * Wrap the architecture implementation so that @label can be outside of a
-+ * cleanup() scope. A regular C goto works correctly, but ASM goto does
-+ * not. Clang rejects such an attempt, but GCC silently emits buggy code.
-+ *
-+ * Some architectures use internal local labels already, but this extra
-+ * indirection here is harmless because the compiler optimizes it out
-+ * completely in any case. This construct just ensures that the ASM GOTO
-+ * target is always in the local scope. The C goto 'label' works correct
-+ * when leaving a cleanup() scope.
-+ */
-+#define unsafe_get_user(x, ptr, label)			\
-+do {							\
-+	__label__ local_label;				\
-+	arch_unsafe_get_user(x, ptr, local_label);	\
-+	if (0) {					\
-+	local_label:					\
-+		goto label;				\
-+	}						\
-+} while (0)
-+
-+#define unsafe_put_user(x, ptr, label)			\
-+do {							\
-+	__label__ local_label;				\
-+	arch_unsafe_put_user(x, ptr, local_label);	\
-+	if (0) {					\
-+	local_label:					\
-+		goto label;				\
-+	}						\
-+} while (0)
-+#endif /* arch_unsafe_get_user */
-+
-+#else /* user_access_begin */
- #define user_access_begin(ptr,len) access_ok(ptr, len)
- #define user_access_end() do { } while (0)
- #define unsafe_op_wrap(op, err) do { if (unlikely(op)) goto err; } while (0)
-@@ -559,7 +622,8 @@ do {							\
- #define unsafe_copy_from_user(d,s,l,e) unsafe_op_wrap(__copy_from_user(d,s,l),e)
- static inline unsigned long user_access_save(void) { return 0UL; }
- static inline void user_access_restore(unsigned long flags) { }
--#endif
-+#endif /* !user_access_begin */
-+
- #ifndef user_write_access_begin
- #define user_write_access_begin user_access_begin
- #define user_write_access_end user_access_end
 
