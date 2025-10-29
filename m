@@ -1,111 +1,150 @@
-Return-Path: <linux-kernel+bounces-875095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37E38C1835D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:54:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B2BC18375
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:59:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E41ED4E495A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:54:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 653374E6570
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C732F12BE;
-	Wed, 29 Oct 2025 03:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4972D8DBD;
+	Wed, 29 Oct 2025 03:59:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FI0Hi7Ga"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="eCUKUI6/"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15792EDD50
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89052EBBB0;
+	Wed, 29 Oct 2025 03:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761710064; cv=none; b=UbBpTqAENZn8X/8P55tumA5/rv308rjvpqYrdoY9Z4S0P4nl6GHwq4mMi0u8r2sj0nG6Zz3FRS2QdaLzh/bYpWcZsiou7LQZLX0ae5+mHDEhw++MtYmFYNUR3mla/StGJ0KXQZmL5CqoxUbVzkGOWFON/AmvNv1Anse5K8xB3mY=
+	t=1761710359; cv=none; b=BshCTiP5E2zPLRNjcjWNWOrpDmymeFACbmtSrRY9RE6u40HrOIAISOhFXvnM3Cwj7b9Qg8aPO51CDJFZ6MEepJVFZTL7FCV2dEvfICAW0L4+PmFwDt6iV5kgvbOsA773NobPHrWPhfMyc1U0D4A6ChJ/yl5kratp6GkaA5QVNzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761710064; c=relaxed/simple;
-	bh=HYJAyXlItEtkjmzWIn0q9UI8lYNLf+o5ecD9Qg13pjo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RWedFFgFa+d+NjxA+JL86vdKlr7oyU6/yLZMua/Lcm6fZEt1ou/Q0l9uH84QfWvRBh6lqESNP4q7YEX5lOU1w5n5BGRUTZYqYlrPi+PkxFKX2wCaPHB+ol0O6JROFSLv5hNY9cRWIMUmTu9UHquzft0T+uGbbIuaYjdiQGqgA48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FI0Hi7Ga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D5FBC116C6
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761710064;
-	bh=HYJAyXlItEtkjmzWIn0q9UI8lYNLf+o5ecD9Qg13pjo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FI0Hi7GapxlzHXfbyzhWVYjl9yWgO+dAl4IKfLskzmXxwsCnormdDUjeNFQ++uy/4
-	 TKgdoXlw4a8tnsEUHt6ZkzL4ZYt4UKbflkn7qhlGNCU1urtfmZO0ErY+qw8mNa/A8A
-	 bZ5/B0048JY1PoghtE6RtOPVYUH91Tx9eyFKbw22cgNytXK4GsjvHX36pJ1QwfPDiu
-	 a+4+eWBJd/dkqrv6lrajnPbo9lyq0sY6uM0sUS8beqPfkzCr5opYc6RONmu1AkXiuQ
-	 l0CLrpQo5mh7PNyk0TEDt1fbSK996aYQEZUetVQU9YdzZbZp/9JA+qmsW+VUFVTof0
-	 DMBOn5GBvRBZA==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b6d402422c2so1578039166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:54:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW2sqhlOCiHjMBIU+o4G7QFIlWdTTxReGR/k4mlG7DG644aFctg5M7B14coDSWqdCYOPKrstX9DJbsS8Qo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFgm8XsVMDhHWNKauaJ91xPSBgYCjtgxI4eriAvWBG2ZN6mi3i
-	rxUjnJTsJMBnJHQQl0zW20oc/b+xTDQYVHOaejDa9L8OVgB6x6BiVlZ0qLSRAXw6Dj4qUtVCkCi
-	nvP+bdUAp1MQPjspuGzQZ1y5SRmIwzak=
-X-Google-Smtp-Source: AGHT+IH1Ig8uBUA62ai5XaFqh72uxSbyVoSyAQJE4SoR1FB1FHmF36cUsplWrbcT/C2WQNvbzYtHWrnCxFTRxV4ocxo=
-X-Received: by 2002:a17:907:5c9:b0:b6d:2d06:bd82 with SMTP id
- a640c23a62f3a-b703d2dae2amr143507366b.25.1761710063009; Tue, 28 Oct 2025
- 20:54:23 -0700 (PDT)
+	s=arc-20240116; t=1761710359; c=relaxed/simple;
+	bh=L9YPOc5/22eujfuGoDgpu42AiuHjAc0Bz/qDHhn1kHo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=dnWSBwUEDfDJnZk3jFzdJwmILopISdfx6aGO5hq4mF1430ASYueWb+rUI1zaZZPocVqEpeGyz/lLiJjaWqrPW36x+g+eXoodS2Ol1L0jWcm8nbHYp94qIzi7Iq5wOZ70woj2HGd+urQjgpqDxJBvW2tGUqCl0Wy984WC560avFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=eCUKUI6/; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=YZ+v2V2HXO6fEBeqBbs+msJfMB5CADuyB6hkvZ2bvZY=;
+	b=eCUKUI6/NwtRM/E7RQR1yQobi7ENuTPHsrj3A3FPHcQn8L15fPvRu5QG5s02vQFZIrhbnP8NK
+	GHj8jBBRlpNGJCJ9BEfD26rbz7PUiQME3JulKOlKSWuCjzYDEPQlTGeE5kyz7IwYG4A8fOs0msq
+	vQd8oEKetNi+ne/lVOlKb7E=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cxD3d2KzbzpStg;
+	Wed, 29 Oct 2025 11:57:49 +0800 (CST)
+Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
+	by mail.maildlp.com (Postfix) with ESMTPS id 840941402CD;
+	Wed, 29 Oct 2025 11:59:07 +0800 (CST)
+Received: from [10.174.178.24] (10.174.178.24) by
+ kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 29 Oct 2025 11:59:05 +0800
+Message-ID: <8134b0ec-1c0a-1a3a-b3df-3c620490fa9b@huawei.com>
+Date: Wed, 29 Oct 2025 11:59:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027071316.3468472-1-chenxiaosong.chenxiaosong@linux.dev> <20251027072206.3468578-5-chenxiaosong.chenxiaosong@linux.dev>
-In-Reply-To: <20251027072206.3468578-5-chenxiaosong.chenxiaosong@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Wed, 29 Oct 2025 12:54:10 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-KaTt1Y5gcsrWU9jrQNmyNcsmBy-XOht7L-xE=s8as7g@mail.gmail.com>
-X-Gm-Features: AWmQ_bk1nzJ2ub4Y_TsifrvNWzStjgZ9baMyQE0dxpr4OIb-4PG9GqNh8QaFbTY
-Message-ID: <CAKYAXd-KaTt1Y5gcsrWU9jrQNmyNcsmBy-XOht7L-xE=s8as7g@mail.gmail.com>
-Subject: Re: [PATCH v4 19/24] smb/server: remove create_durable_reconn_req
-To: chenxiaosong.chenxiaosong@linux.dev
-Cc: sfrench@samba.org, smfrench@gmail.com, linkinjeon@samba.org, 
-	christophe.jaillet@wanadoo.fr, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ChenXiaoSong <chenxiaosong@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH mpam mpam/snapshot/v6.14-rc1] arm64/mpam: Fix MBWU monitor
+ overflow handling
+Content-Language: en-US
+From: Zeng Heng <zengheng4@huawei.com>
+To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
+CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
+	<baolin.wang@linux.alibaba.com>, <bobo.shaobowang@huawei.com>,
+	<carl@os.amperecomputing.com>, <catalin.marinas@arm.com>, <dakr@kernel.org>,
+	<dave.martin@arm.com>, <david@redhat.com>, <dfustini@baylibre.com>,
+	<fenghuay@nvidia.com>, <gregkh@linuxfoundation.org>, <gshan@redhat.com>,
+	<guohanjun@huawei.com>, <jeremy.linton@arm.com>,
+	<jonathan.cameron@huawei.com>, <kobak@nvidia.com>, <lcherian@marvell.com>,
+	<lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
+	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
+	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
+	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
+	<xhao@linux.alibaba.com>, <wangkefeng.wang@huawei.com>,
+	<sunnanyong@huawei.com>
+References: <20251017185645.26604-25-james.morse@arm.com>
+ <20251022133913.629859-1-zengheng4@huawei.com>
+ <8e22c81e-5e78-41e0-a81e-0f9826e5edf0@arm.com>
+ <1c037f72-485a-567b-bf8f-489255330de8@huawei.com>
+ <56f7f2df-fd94-48c8-aaa0-97a71b3108cf@arm.com>
+ <d2aa99f8-dbdc-dc13-1ba3-0e273913221f@huawei.com>
+In-Reply-To: <d2aa99f8-dbdc-dc13-1ba3-0e273913221f@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemf100008.china.huawei.com (7.202.181.222)
 
-On Mon, Oct 27, 2025 at 4:23=E2=80=AFPM <chenxiaosong.chenxiaosong@linux.de=
-v> wrote:
->
-> From: ChenXiaoSong <chenxiaosong@kylinos.cn>
->
-> The fields in struct create_durable_reconn_req and struct create_durable
-> are exactly the same.
->
-> Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
-> ---
->  fs/smb/server/smb2pdu.c |  6 +++---
->  fs/smb/server/smb2pdu.h | 12 ------------
->  2 files changed, 3 insertions(+), 15 deletions(-)
->
-> diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
-> index 6b3503c7bfaa..3e8344fa163b 100644
-> --- a/fs/smb/server/smb2pdu.c
-> +++ b/fs/smb/server/smb2pdu.c
-> @@ -2766,7 +2766,7 @@ static int parse_durable_handle_context(struct ksmb=
-d_work *work,
->                 }
->                 case DURABLE_RECONN:
->                 {
-> -                       struct create_durable_reconn_req *recon;
-> +                       struct create_durable *recon;
->
->                         if (dh_info->type =3D=3D DURABLE_RECONN_V2 ||
->                             dh_info->type =3D=3D DURABLE_REQ_V2) {
-> @@ -2776,12 +2776,12 @@ static int parse_durable_handle_context(struct ks=
-mbd_work *work,
->
->                         if (le16_to_cpu(context->DataOffset) +
->                                 le32_to_cpu(context->DataLength) <
-> -                           sizeof(struct create_durable_reconn_req)) {
-> +                           sizeof(struct create_durable)) {
-Please check the specification, Which structure name is correct?
-thanks.
+Hi Ben,
+
+On 2025/10/29 10:49, Zeng Heng wrote:
+> Hi Ben,
+> 
+> On 2025/10/29 0:01, Ben Horgan wrote:
+>> Hi Zeng,
+>>
+>> On 10/25/25 10:01, Zeng Heng wrote:
+>>> Hi Ben,
+>>>
+>>> On 2025/10/23 0:17, Ben Horgan wrote:
+>>>
+>>>>> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+>>>>> ---
+>>>>>    drivers/resctrl/mpam_devices.c | 8 +++++---
+>>>>>    1 file changed, 5 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/
+>>>>> mpam_devices.c
+>>>>> index 0dd048279e02..06f3ec9887d2 100644
+>>>>> --- a/drivers/resctrl/mpam_devices.c
+>>>>> +++ b/drivers/resctrl/mpam_devices.c
+>>>>> @@ -1101,7 +1101,8 @@ static void __ris_msmon_read(void *arg)
+>>>>>        clean_msmon_ctl_val(&cur_ctl);
+>>>>>        gen_msmon_ctl_flt_vals(m, &ctl_val, &flt_val);
+>>>>>        config_mismatch = cur_flt != flt_val ||
+>>>>> -              cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
+>>>>> +             (cur_ctl & ~MSMON_CFG_x_CTL_OFLOW_STATUS) !=
+>>>>> +             (ctl_val | MSMON_CFG_x_CTL_EN);
+>>>>
+>>>> This only considers 31 bit counters. I would expect any change here to
+>>>> consider all lengths of counter.
+>>>
+>>> Sorry, regardless of whether the counter is 32-bit or 64-bit, the
+>>> config_mismatch logic should be handled the same way here. Am I
+>>> wrong?
+>>
+>> Yes, they should be handled the same way. However, the overflow status
+>> bit for long counters is MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L.
+>>
+>> I now see that the existing code in the series has this covered.
+>> Both the overflow bits are masked out in clean_msmon_ctl_val(). No need
+>> for any additional masking.
+>>
+> 
+> Yes, I’ve seen the usage, except that clearing the overflow bit in the
+> register is missing.
+> 
+
+Please disregard my previous mail... :)
+
+Exactly, thanks for the review. I'll fold the fixes into v2 of the
+patch.
+
+
+Best Regards,
+Zeng Heng
 
