@@ -1,137 +1,348 @@
-Return-Path: <linux-kernel+bounces-876941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1469AC1CD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:46:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FDDC1CD15
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:45:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F441890704
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:46:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EA004E0622
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB6F35772F;
-	Wed, 29 Oct 2025 18:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qd16Sndz"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB323563FE;
+	Wed, 29 Oct 2025 18:45:11 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7F535772B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9953563F3;
+	Wed, 29 Oct 2025 18:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761763568; cv=none; b=mpNJ+joWTNw5VH1TGkwkVbyqAk25qFvFZl/5dXxMtghpx00IpmscCGtD3zVUtY/XmT/fU1Pf+kF2CNZHBDr/xyr2hXeqOI2vr01JlUmCrpJ5/kewawi8LVx9JMK43pUSR73YAuyq8P2+B/ZSeD5p+dwkgr+rkRMHew5lzP0INkQ=
+	t=1761763510; cv=none; b=r8L74rvqibM2K5bk481sk+Jjdb3sjcA9j69zApdPBTv079Kym/rYqcaZcTXewGXRCaYf1nfOslIkL5D7yh0PwiNSlEQ7Xq00m+7u00rBKkbbxlcIwpyiC2qEtRuBCtFLfnTu8R1AZ034SAwP/1sst0c5T4F+EuGhlXozcbJ+lLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761763568; c=relaxed/simple;
-	bh=OrWlJ6JZLo/BrlSCnylCjyhXG4lAUpfhVMbOLTF90HI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HhmOQ5RIiwTYHg4aY8QsSu8ZUeH6BQyP2OvmrPJLRvcOrznX5BvyfqJa9Q3IxchwBHyWNSLXd4PY08JQgsUZ3C6TULB2wUCEe8qrlB5a7pIXzbyY5yDpnaSsXqSPr9JP67PQRndRgh6ZU5eyO+GWwSW42JK/Zm7HY2cnljq97gA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qd16Sndz; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-592f4e622c6so14380e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761763559; x=1762368359; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VWrPcr+YHQwlDYGWW/C60xpax+dwnoF3boq6mvUGiOQ=;
-        b=Qd16Sndztk8IIVz1rCM7JHnkKcdoEtitrpyjt883YBevgoMP4CS/Pl3sRifi/FLUxV
-         CKkVhBmAXCwlVdveB2cnGchhM57qldVOiABHaDNa7PR611LnGN6HWIOzVQrD7nj+6ls/
-         g520fcSyWC8wp1YfbtOLkYAqKBxhiF1PO+UYAVlq6YvxYmWLuzj9davXzPgYNfs8YsRB
-         r4wJEXhFvcgcIO1rSqoFT71szRljIjsIvuCA5JRng/Xu2jI4yWOujerYmChLGdibdicv
-         Szs9svoflbXABPwaparVy/Yp/cFY1DgVb5Q83Edur26ntyrlFBTJHoGlz6rltvlx4oC1
-         64ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761763559; x=1762368359;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VWrPcr+YHQwlDYGWW/C60xpax+dwnoF3boq6mvUGiOQ=;
-        b=Bdl5UaqpcuaCGdkROY+52iMHLwxAclLdv0gakJ8YoiOF6unsSc2mKFH6wnemsJ9qwg
-         SWLacS+3ZBMVR3LK+eJOixh1o8FduhhdOEyeWn/TKUAkpq/2s4/iyhumhrCNr6aiIPm4
-         OOZIJKUQyO2x0bL6LjWX8m6f9NNypQbDwUUtKHZmdds5LfmjWqojbFYD3o+CwpXRt/iz
-         04pD6WKySC7RIGRH73qSsrBpYwuZrcy5zTpN1AMVYWem2U+4PO3B8D6fvHhgICKmd8EQ
-         llnE1ftSTGl4ipncHCp+lvAT8ek25LoBFZS56GFofAq8881lXVeHQ0lF1B3UOMtjfVtC
-         JYjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWp3jYjqHbEvAd1M42UHi825bHvgt5qMuHm2pMm+f8V/Dy7jbwSOgzieZx1MgTSIgC7mtuOupbEVjavUFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhSbzLhKWw/rP05lGMKduekSBSd0Rd8jcyOAU/LvweIaz8GerE
-	GyqdzNQINOCRfGcEC1dhZvC7d4TdNmzeBbodJZJzogqr/s6pTU8kNbla
-X-Gm-Gg: ASbGncvAIcIhAWaVEhwtpJeUKOEYgyKFv8nB2pMt0pVymiyVe6sQkuYHDAWmPj+ahTk
-	JOJB7eXiPutEhE2XwAhBWQSi0v+ou+E/aV6DnkFW9hvshnVBKhGbo0iS7VT+0ttWGXKJVL7S4o9
-	+8dEYTa6pLOdaO10C8KNnf/3PZ5Kr5tl3siKs+NNfNewP/6Y+4tuQGou3YG/2unJ++y11MdPKQr
-	R5+a/p2yqvJ50BDFFkCwnzJtRzv/9yp4Pht2+OKuagzPxm3YLsx1uaSVCAKwCsfOdpt4uVT9PdY
-	pHbR2WwKCoFKPzWBKOzR5Kb/hLP4JKLRVwxo7EDDXG1cD3PxtNLqF9AljW2Lq9V+CquKqXH1rq5
-	xCkd3pVLHm33ucjRg1XCM2r6jsME8yGWwWbz9tIkvaAItrvljYxowJx3Y5Tok/Pp6696NZuAELf
-	y0bFZncw==
-X-Google-Smtp-Source: AGHT+IGuEzsNziCkBkpixVM7TgXRYPDuuncHpPEAXKQDJA0pf9GlMeK+fWS7c2BxL9a+qZkeWch5IQ==
-X-Received: by 2002:a05:6512:2246:b0:579:2ddf:996d with SMTP id 2adb3069b0e04-5941286a767mr855964e87.3.1761763558572;
-        Wed, 29 Oct 2025 11:45:58 -0700 (PDT)
-Received: from [10.214.35.248] ([80.93.240.68])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-59301f5098bsm4044641e87.40.2025.10.29.11.45.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 11:45:51 -0700 (PDT)
-Message-ID: <c8f89f0a-a327-441e-9bd6-17523c5fa65c@gmail.com>
-Date: Wed, 29 Oct 2025 19:45:32 +0100
+	s=arc-20240116; t=1761763510; c=relaxed/simple;
+	bh=S35Fm961GY2YlSo8uAUGRL5gwuLjqeaZeUi+ydZ6nRE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EyarhpXqZZHkwzk0nZTz68TNoC1dUMatpX3C2NRbe/MlspI5wyYzDKc++4dqFLMkpWxydOFGLePMEDf3F+ldcSeYgTASaeGZqVj6bWbXCW+FvbxeHAnppbT5+PDVAAFHCdWRVCC+9nWPEe6HjSeBWxu3Xu11bd2aK+IGIqb62uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 39E041608C8;
+	Wed, 29 Oct 2025 18:45:00 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf12.hostedemail.com (Postfix) with ESMTPA id 8881018;
+	Wed, 29 Oct 2025 18:44:57 +0000 (UTC)
+Date: Wed, 29 Oct 2025 14:45:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Prakash Sangappa
+ <prakash.sangappa@oracle.com>, Madadi Vineeth Reddy
+ <vineethr@linux.ibm.com>, K Prateek Nayak <kprateek.nayak@amd.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann
+ <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [patch V3 08/12] rseq: Implement time slice extension
+ enforcement timer
+Message-ID: <20251029144538.5eb5c772@gandalf.local.home>
+In-Reply-To: <20251029130403.923191772@linutronix.de>
+References: <20251029125514.496134233@linutronix.de>
+	<20251029130403.923191772@linutronix.de>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH V3 6/7] mm/slab: save memory by allocating slabobj_ext
- array from leftover
-To: Harry Yoo <harry.yoo@oracle.com>, akpm@linux-foundation.org,
- vbabka@suse.cz
-Cc: andreyknvl@gmail.com, cl@linux.com, dvyukov@google.com,
- glider@google.com, hannes@cmpxchg.org, linux-mm@kvack.org,
- mhocko@kernel.org, muchun.song@linux.dev, rientjes@google.com,
- roman.gushchin@linux.dev, shakeel.butt@linux.dev, surenb@google.com,
- vincenzo.frascino@arm.com, yeoreum.yun@arm.com, tytso@mit.edu,
- adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251027122847.320924-1-harry.yoo@oracle.com>
- <20251027122847.320924-7-harry.yoo@oracle.com>
-Content-Language: en-US
-From: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-In-Reply-To: <20251027122847.320924-7-harry.yoo@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ptwwk4m8hbhzsxqoo5cwfwd4cz7ghnc3
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 8881018
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19JDM0v7jHtUmDmJ4SLbqYwfkLUzOp4lIs=
+X-HE-Tag: 1761763497-913457
+X-HE-Meta: U2FsdGVkX1+LpLZQLCQRUd8UBz/WIsR4X+8kjxCCHNCLpDg8Ev6f+AXGW/EGJGlFpw7aPAmHGOy7hpv6R/FqtK7+7U3YRJAVeKqz1cfQBmyAoaGBmhG7s4ZiPIcqb7qNex/VaCEX1sTNfkL0uik+2LPnsu0wY5QD9/J8Sop2BqB5BFTxXj6tHWu0SAWr/4SIEOvBfLc623Mej8HTGGzb/YKLy30zLIJlmo9x6kpVcdRqNQU2zBmDFsatH904udUqn/yVuPsnogXtcVwCpJ4seJerK/TaYB7LA26QEypxMB6aVNNAhnG3mtX31JKtYlm0
 
+On Wed, 29 Oct 2025 14:22:26 +0100 (CET)
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-
-On 10/27/25 1:28 PM, Harry Yoo wrote:
-
->  
-> +#ifdef CONFIG_SLAB_OBJ_EXT
+> --- a/include/linux/rseq_entry.h
+> +++ b/include/linux/rseq_entry.h
+> @@ -86,8 +86,24 @@ static __always_inline bool rseq_slice_e
+>  {
+>  	return static_branch_likely(&rseq_slice_extension_key);
+>  }
 > +
-> +/*
-> + * Check if memory cgroup or memory allocation profiling is enabled.
-> + * If enabled, SLUB tries to reduce memory overhead of accounting
-> + * slab objects. If neither is enabled when this function is called,
-> + * the optimization is simply skipped to avoid affecting caches that do not
-> + * need slabobj_ext metadata.
-> + *
-> + * However, this may disable optimization when memory cgroup or memory
-> + * allocation profiling is used, but slabs are created too early
-> + * even before those subsystems are initialized.
-> + */
-> +static inline bool need_slab_obj_exts(struct kmem_cache *s)
+> +extern unsigned int rseq_slice_ext_nsecs;
+> +bool __rseq_arm_slice_extension_timer(void);
+> +
+> +static __always_inline bool rseq_arm_slice_extension_timer(void)
 > +{
-> +	if (!mem_cgroup_disabled() && (s->flags & SLAB_ACCOUNT))
-
-Shouldn't this be !memcg_kmem_online() check?
-In case of disabled kmem accounting via 'cgroup.memory=nokmem'
-
-> +		return true;
+> +	if (!rseq_slice_extension_enabled())
+> +		return false;
 > +
-> +	if (mem_alloc_profiling_enabled())
-> +		return true;
+> +	if (likely(!current->rseq.slice.state.granted))
+> +		return false;
 > +
+> +	return __rseq_arm_slice_extension_timer();
+> +}
+> +
+>  #else /* CONFIG_RSEQ_SLICE_EXTENSION */
+>  static inline bool rseq_slice_extension_enabled(void) { return false; }
+> +static inline bool rseq_arm_slice_extension_timer(void) { return false; }
+>  #endif /* !CONFIG_RSEQ_SLICE_EXTENSION */
+>  
+>  bool rseq_debug_update_user_cs(struct task_struct *t, struct pt_regs *regs, unsigned long csaddr);
+> @@ -542,17 +558,19 @@ static __always_inline void clear_tif_rs
+>  static __always_inline bool
+>  rseq_exit_to_user_mode_restart(struct pt_regs *regs, unsigned long ti_work)
+>  {
+> -	if (likely(!test_tif_rseq(ti_work)))
+> -		return false;
+> -
+> -	if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
+> -		current->rseq.event.slowpath = true;
+> -		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+> -		return true;
+> +	if (unlikely(test_tif_rseq(ti_work))) {
+> +		if (unlikely(__rseq_exit_to_user_mode_restart(regs))) {
+> +			current->rseq.event.slowpath = true;
+> +			set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+> +			return true;
+
+Just to make sure I understand this. By setting TIF_NOTIFY_RESUME and
+returning true it can still comeback to set the timer?
+
+I guess this also begs the question of if user space can use both the
+restartable sequences at the same time as requesting an extended time slice?
+
+> +		}
+> +		clear_tif_rseq();
+>  	}
+> -
+> -	clear_tif_rseq();
+> -	return false;
+> +	/*
+> +	 * Arm the slice extension timer if nothing to do anymore and the
+> +	 * task really goes out to user space.
+> +	 */
+> +	return rseq_arm_slice_extension_timer();
+>  }
+>  
+>  #endif /* CONFIG_GENERIC_ENTRY */
+> --- a/include/linux/rseq_types.h
+> +++ b/include/linux/rseq_types.h
+> @@ -89,9 +89,11 @@ union rseq_slice_state {
+>  /**
+>   * struct rseq_slice - Status information for rseq time slice extension
+>   * @state:	Time slice extension state
+> + * @expires:	The time when a grant expires
+>   */
+>  struct rseq_slice {
+>  	union rseq_slice_state	state;
+> +	u64			expires;
+>  };
+>  
+>  /**
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -71,6 +71,8 @@
+>  #define RSEQ_BUILD_SLOW_PATH
+>  
+>  #include <linux/debugfs.h>
+> +#include <linux/hrtimer.h>
+> +#include <linux/percpu.h>
+>  #include <linux/prctl.h>
+>  #include <linux/ratelimit.h>
+>  #include <linux/rseq_entry.h>
+> @@ -499,8 +501,78 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
+>  }
+>  
+>  #ifdef CONFIG_RSEQ_SLICE_EXTENSION
+> +struct slice_timer {
+> +	struct hrtimer	timer;
+> +	void		*cookie;
+> +};
+> +
+> +unsigned int rseq_slice_ext_nsecs __read_mostly = 30 * NSEC_PER_USEC;
+> +static DEFINE_PER_CPU(struct slice_timer, slice_timer);
+>  DEFINE_STATIC_KEY_TRUE(rseq_slice_extension_key);
+>  
+> +static enum hrtimer_restart rseq_slice_expired(struct hrtimer *tmr)
+> +{
+> +	struct slice_timer *st = container_of(tmr, struct slice_timer, timer);
+> +
+> +	if (st->cookie == current && current->rseq.slice.state.granted) {
+> +		rseq_stat_inc(rseq_stats.s_expired);
+> +		set_need_resched_current();
+> +	}
+> +	return HRTIMER_NORESTART;
+> +}
+> +
+> +bool __rseq_arm_slice_extension_timer(void)
+> +{
+> +	struct slice_timer *st = this_cpu_ptr(&slice_timer);
+> +	struct task_struct *curr = current;
+> +
+> +	lockdep_assert_irqs_disabled();
+> +
+> +	/*
+> +	 * This check prevents that a granted time slice extension exceeds
+
+           This check prevents a granted time slice ...
+
+> +	 * the maximum scheduling latency when the grant expired before
+> +	 * going out to user space. Don't bother to clear the grant here,
+> +	 * it will be cleaned up automatically before going out to user
+> +	 * space.
+> +	 */
+> +	if ((unlikely(curr->rseq.slice.expires < ktime_get_mono_fast_ns()))) {
+> +		set_need_resched_current();
+> +		return true;
+> +	}
+> +
+> +	/*
+> +	 * Store the task pointer as a cookie for comparison in the timer
+> +	 * function. This is safe as the timer is CPU local and cannot be
+> +	 * in the expiry function at this point.
+> +	 */
+
+I'm just curious in this scenario:
+
+  1) Task A requests an extension and is granted.
+      st->cookie = Task A
+      hrtimer_start();
+
+  2) Before getting back to user space, a RT kernel thread wakes up and
+     preempts Task A. Does this clear the timer?
+
+  3) RT kernel thread finishes but then schedules Task B within the expiry.
+
+  4) Task B requests an extension (assuming it had a short time slice that
+     allowed it to end before the expiry of the original timer).
+
+I guess it doesn't matter that st->cookie = Task B, as Task A was already
+scheduled out. But would calling hrtimer_start() on an existing timer cause
+any issue?
+
+I guess it doesn't matter as it looks like the code in hrtimer_start() does
+indeed remove an existing timer.
+
+> +	st->cookie = curr;
+> +	hrtimer_start(&st->timer, curr->rseq.slice.expires, HRTIMER_MODE_ABS_PINNED_HARD);
+> +	/* Arm the syscall entry work */
+> +	set_task_syscall_work(curr, SYSCALL_RSEQ_SLICE);
 > +	return false;
 > +}
 > +
+> +static void rseq_cancel_slice_extension_timer(void)
+> +{
+> +	struct slice_timer *st = this_cpu_ptr(&slice_timer);
+> +
+> +	/*
+> +	 * st->cookie can be safely read as preemption is disabled and the
+> +	 * timer is CPU local.
+> +	 *
+> +	 * As this is most probably the first expiring timer, the cancel is
+
+           As this is probably the first ...
+
+> +	 * expensive as it has to reprogram the hardware, but that's less
+> +	 * expensive than going through a full hrtimer_interrupt() cycle
+> +	 * for nothing.
+> +	 *
+> +	 * hrtimer_try_to_cancel() is sufficient here as the timer is CPU
+> +	 * local and once the hrtimer code disabled interrupts the timer
+> +	 * callback cannot be running.
+> +	 */
+> +	if (st->cookie == current)
+> +		hrtimer_try_to_cancel(&st->timer);
+
+If the above scenario did happen, the timer will go off as
+st->cookie == current would likely be false?
+
+Hmm, if it does go off and the task did schedule back in, would it get its
+need_resched set? This is a very unlikely scenario thus I guess it doesn't
+really matter.
+
+I'm just thinking about corner cases and how it could affect this code and
+possibly cause noticeable issues.
+
+-- Steve
+
+
+> +}
+> +
+>  static inline void rseq_slice_set_need_resched(struct task_struct *curr)
+>  {
+>  	/*
+> @@ -558,10 +630,11 @@ void rseq_syscall_enter_work(long syscal
+>  	rseq_stat_inc(rseq_stats.s_yielded);
+>  
+>  	/*
+> -	 * Required to make set_tsk_need_resched() correct on PREEMPT[RT]
+> -	 * kernels.
+> +	 * Required to stabilize the per CPU timer pointer and to make
+> +	 * set_tsk_need_resched() correct on PREEMPT[RT] kernels.
+>  	 */
+>  	scoped_guard(preempt) {
+> +		rseq_cancel_slice_extension_timer();
+>  		/*
+>  		 * Now that preemption is disabled, quickly check whether
+>  		 * the task was already rescheduled before arriving here.
+> @@ -652,6 +725,31 @@ SYSCALL_DEFINE0(rseq_slice_yield)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_SYSCTL
+> +static const unsigned int rseq_slice_ext_nsecs_min = 10 * NSEC_PER_USEC;
+> +static const unsigned int rseq_slice_ext_nsecs_max = 50 * NSEC_PER_USEC;
+> +
+> +static const struct ctl_table rseq_slice_ext_sysctl[] = {
+> +	{
+> +		.procname	= "rseq_slice_extension_nsec",
+> +		.data		= &rseq_slice_ext_nsecs,
+> +		.maxlen		= sizeof(unsigned int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_douintvec_minmax,
+> +		.extra1		= (unsigned int *)&rseq_slice_ext_nsecs_min,
+> +		.extra2		= (unsigned int *)&rseq_slice_ext_nsecs_max,
+> +	},
+> +};
+> +
+> +static void rseq_slice_sysctl_init(void)
+> +{
+> +	if (rseq_slice_extension_enabled())
+> +		register_sysctl_init("kernel", rseq_slice_ext_sysctl);
+> +}
+> +#else /* CONFIG_SYSCTL */
+> +static inline void rseq_slice_sysctl_init(void) { }
+> +#endif  /* !CONFIG_SYSCTL */
+> +
+>  static int __init rseq_slice_cmdline(char *str)
+>  {
+>  	bool on;
+> @@ -664,4 +762,17 @@ static int __init rseq_slice_cmdline(cha
+>  	return 1;
+>  }
+>  __setup("rseq_slice_ext=", rseq_slice_cmdline);
+> +
+> +static int __init rseq_slice_init(void)
+> +{
+> +	unsigned int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		hrtimer_setup(per_cpu_ptr(&slice_timer.timer, cpu), rseq_slice_expired,
+> +			      CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED_HARD);
+> +	}
+> +	rseq_slice_sysctl_init();
+> +	return 0;
+> +}
+> +device_initcall(rseq_slice_init);
+>  #endif /* CONFIG_RSEQ_SLICE_EXTENSION */
+
 
