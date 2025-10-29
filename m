@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-876879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA4EC1CA12
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:58:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B818C1CA6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4B0B334C77E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:58:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 883B44E3179
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9659C3563EA;
-	Wed, 29 Oct 2025 17:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96F4354AD0;
+	Wed, 29 Oct 2025 17:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A+G8aKZK"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nc370OoA"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8A355806;
-	Wed, 29 Oct 2025 17:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665BA30BF75
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760631; cv=none; b=j52E+OdY6LnqbZeKak4qSJrvg6h24LrAjU41PHcGG/JiOg2Pya543OELDRq7KZMIhyL/A9Tz8RCs5bkU03mt6uTGzVpJNN5p3z3xIrTqSfx8DaMVMqVvY5FD109cb+yDSFwibtZYpFAX6GWp21x9n9UbhLyiniIcZ90efUkXxeg=
+	t=1761760656; cv=none; b=pr/HTHoRKjJ29yn1ps5SjdmPqGI55r8AcvYhrHEVlDKDfuiAJQxaPL8cP0c3+WAzf/YN1kR03CFoCpjyMHAZTmiIlWd01LHUDvNbVKt8OkeVzAEYhuWLYb1kgKfpKgwx21C5AHQfrGYx+wAJYcw+ND5wWirB94loA+LmWjUIX7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760631; c=relaxed/simple;
-	bh=k13cNh78f2SsMWLEgXiABWQ57IKXd/nXYc2niTuOENU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J5hql5ibmFQfy7pPnGggJ771o+kQOzRaEQULKyQg9yFcNUGZ0VkRFK3JKQ2agAdOzMGXW9SthEa8LIA1v9D/KwLLqCAGm8KdEwJhmUrZnEbH5rLOu8DLScQNbfx3/0c30ZWkqF5tKLorhXD7pHtR1wabWEW3Vlqc6rRtv0Ae778=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A+G8aKZK; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1761760623;
-	bh=k13cNh78f2SsMWLEgXiABWQ57IKXd/nXYc2niTuOENU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=A+G8aKZKZoQJhZ2r63Er3ESTCLUAGWRbu7+BKxqLwWR0cSy96jDfCG5znd3fuZaWU
-	 NRBYQGFqEgC/on9T1UBI2dye05RJfIBTwEBQnaPP5bdX7s5ZoMjuHuk31IWe1zINUP
-	 uSwAtzqLcHK7nBDEn6LNxOCl5uno8VBYoRa95eKW//Vd8tbz2IQkSmnp419BQYml65
-	 LpfQ90LWjvzU8uYz7BZxkzzlD9znooaPA9fl4GzGC8ywJ3MefFCmx7pK48bHcXm2y+
-	 Fuv2P7tYn0p+NAyd+PwHlX1ahZvY8riZy9vSJcfxCNzHvKyVRl+a6v5og9fZ6I8TEu
-	 sAFp6GOhYyU7w==
-Received: from jupiter.universe (dyndsl-091-248-085-053.ewe-ip-backbone.de [91.248.85.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E9D8F17E141E;
-	Wed, 29 Oct 2025 18:57:02 +0100 (CET)
-Received: by jupiter.universe (Postfix, from userid 1000)
-	id 2622C480067; Wed, 29 Oct 2025 18:57:02 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Wed, 29 Oct 2025 18:56:48 +0100
-Subject: [PATCH v4 9/9] PCI: dwc: support missing PCIe device on resume
+	s=arc-20240116; t=1761760656; c=relaxed/simple;
+	bh=q4G6Z3tmtUPTA3pyRliiBAglQ+ctalR59e9PIQK8Jjo=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jciVVs+lxEE7ux9UQNJAGDg975ugXYq2jeQXGZWPyYWvLNPx7WLydbWDR6ZGoHFyQF2M+WhwXgj49Ls1cPGQnBzjV6tqBdFRKUuHb9fTYjAufHK8jweYKHKQvTWLXuTGdgxZD/tiUuUlRNQKG3794KZjDSO+u5Cg175wVnbQDI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nc370OoA; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso126590f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761760652; x=1762365452; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PizgSZp8pst5R3ZXKOAFmbyk/ir0h79jwp+tXy3J6Ik=;
+        b=nc370OoA8Etny9+1rEHQdT+97Sbzy08s3SQlNgyg371QPQzEqIuYwCRRbfiOvjuaeL
+         jge5/UGYoGBtyu+G7/DW3ePimY/b75tJ0uelpgfhPYnqV8BwVfeMupSq709tE2E1C4gG
+         SpxfjZsFI/seImUp4D/ad7ISRTpPrO+ZbccLqSHi/d3kogW1RYss+Qcfsv9lgKoA1KBZ
+         1Bk0z7CGZlAKFi5V/g4VNPfY4cMWUxYMS+eGYHbP6/Nc4jOSjeDW4oAPmMPDbcu+DMH3
+         gKOORB9WCdwqq5W1idvthDJGbGEnLSiOzst7BUsw1IurKqRsOk4mU29L8lBFEkOBboUC
+         saUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761760652; x=1762365452;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PizgSZp8pst5R3ZXKOAFmbyk/ir0h79jwp+tXy3J6Ik=;
+        b=vpeJqkDpJNQPkxsBlM2jyO1Y9p1akrzzK4hY2d7WraXO6ZBpXMcznIBnRgQoNWKzIY
+         s0L8KWJiw2vKFA+D5HEovCY3EiYrhpinbd0ChNDgkJD0x5QHImpIy1LOX4F29qI2c+ip
+         +6Bi0SNdi6OIHQg4VTM0lhurAqc/8FU/d2ZhWSWD4vH7nrDq750T0zjspm3seEh+MQRz
+         OOKTwVtYvnbISPPWOtuCru0ufPX8CwBkt60N10XIB46wfGIsuaFMYzz51vz8pveRt/vd
+         Udx35UI94JbhULadlA7JxZWcjtR7RpVo6mHvieYS7L5Sws5XPLij+n5oe9jNxbFYAXiY
+         OMqA==
+X-Forwarded-Encrypted: i=1; AJvYcCWT3VrCf1i3qBThBA7HY0FUdXMQZk4PSKcpP0YtMoJHYNtnaIhxNDXeMEAUIro5csgETcayYmkdVTqGjiI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPw8pdCPZJcEUmhl2jxJZo/t5ggqYT3EsjbFS8Cm9qzhY9/RDA
+	sHxiDX483JAuEBTqLUrCS/w3/OzYUyNvsW3ptOwinfuhbQxCIZgf35SYjbNuiQ==
+X-Gm-Gg: ASbGncvtkYjYs856BqNme38dttb4kQzBdwChpitQnfqADUGwUWIazyH8+KbAFWobJBr
+	MNKQZ4Pauy70f0WJIeW8qBnjtY3Gx4WXnKcX2kxV2iwHk7QXvCAUQ3rK2FX3/SM6csm0QAcp/Eg
+	6UUNzMkWCL7H49e4kG1au1I+lL2TCpqytRnL1vdwd8fv9ixov1tZ7ym3mOfWv2jUqBAD5kVHUMW
+	jsUNaiWC/Mb+mYgGolpy1M7f9mfk3IowRzaq1PxFth0ilXidHWhrhYbgm3nLHjiOJYvWzJZWh3n
+	gCxNfpXWpXS6XJbMGlTVECyqncEgfEeUbwuL67f58O75n6/JuDc0E/IdFWmL4PEqSTqUEscTlqy
+	W0B3jXjEvgcyhxftE03CCN308i4JtyC5qVnuUnW5uwfRq5VVsGWWM66Hq2O1OT8IiqoBMmHxu3P
+	coHvxDV7kIX3Uws9AhywAuUDm1udX6Cw==
+X-Google-Smtp-Source: AGHT+IE5Q6T9pvLvPyRy7McqkUhSQviQSdOilTp+2soA933WphNo3Q/lSUJ5/V5yEcSVBOx/08pMRQ==
+X-Received: by 2002:a5d:5f90:0:b0:3e8:f67:894a with SMTP id ffacd0b85a97d-429aef715f6mr4386949f8f.5.1761760652309;
+        Wed, 29 Oct 2025 10:57:32 -0700 (PDT)
+Received: from Ansuel-XPS24 (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm27520132f8f.38.2025.10.29.10.57.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 10:57:31 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scripts: add tracepoint-update to .gitignore
+Date: Wed, 29 Oct 2025 18:57:18 +0100
+Message-ID: <20251029175720.12998-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-rockchip-pcie-system-suspend-v4-9-ce2e1b0692d2@collabora.com>
-References: <20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com>
-In-Reply-To: <20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
- Philipp Zabel <p.zabel@pengutronix.de>, Jingoo Han <jingoohan1@gmail.com>, 
- Shawn Lin <shawn.lin@rock-chips.com>
-Cc: linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1357;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=k13cNh78f2SsMWLEgXiABWQ57IKXd/nXYc2niTuOENU=;
- b=owJ4nAFtApL9kA0DAAoB2O7X88g7+poByyZiAGkCVW7puYacCmFgJdWTqKj+Qh5jDC97SrAtp
- xZ17UhDM6EmyokCMwQAAQoAHRYhBO9mDQdGP4tyanlUE9ju1/PIO/qaBQJpAlVuAAoJENju1/PI
- O/qaeDsQAIIP71M1+TU3X3W6kWf7SlBQNcLuJtFUeN1eHFEH+QCIrjX8BolGbKr6yU4V916Ex5z
- zfdhyQXlMFVwpeODkmuT/6x143JVegZBHAborr80gBcFhxgve8zlHpGs54xc/b6fooU1j6m2eh0
- t6N2nwuqu4iX47PL48Aol7Nb5vQ8L16XfyvbapDlLfb/7dZ93bYD+xeO2qlSHGWND2EmUkWpQd1
- Wi73+1UjZSM0JGeXPcfZSLm2MbSjdQ6sFUyNKdOTDldDzJ/bJwbUCxBhwRU8wKz+quUDY/woo3m
- kPz9+RHL0/kFp52rfcl4gQdlHw9AUJv35af3Ii45liecfNansATiiriipmh9Tf93CbiXUmZLy8k
- kKYD+i4OBdYExn6cjEWnVkDCsRdlFpiefVUUic0fA/RhGML33KGoT5W/o/Ie8Bw++jgatGqHbzL
- wZdZqilIX5FrBohby7gsBwfpI8MYCdec4ywdGeGRWFZJZCi37wwA5vrJ0vPWsqjAniBNZzDpTb9
- IpncuzihfoqHsPmz2DJqNayvvurRNQZiy/7WjKWXnGtOPRiLVL3ROJsCaqQxLjUiCtNt2LqMBMI
- II9Pp5I6X10hfdAERoaZqG2DgQq+LM2tsd0CyU2LQhapp1A/LQvycTDbo2LIkjvRgij8o5ofIiO
- 7RowZ/MZ6hJFmXmdjiZwuPw==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+Content-Transfer-Encoding: 8bit
 
-When dw_pcie_resume_noirq() is called for a PCIe root complex for a PCIe
-slot with no device plugged on Rockchip RK3576, dw_pcie_wait_for_link()
-will return -ETIMEDOUT. During probe time this does not happen, since
-the platform sets 'use_linkup_irq'.
+New tracepoint-update tool is not ignored from git when built.
 
-This adds the same logic from dw_pcie_host_init() to the PM resume
-function to avoid the problem.
+Add it to scripts .gitignore to prevent including files in commits by
+mistake (for use that have the bad habits of using git add .).
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Fixes: e30f8e61e251 ("tracing: Add a tracepoint verification check at build time")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 ---
- drivers/pci/controller/dwc/pcie-designware-host.c | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+ scripts/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index e92513c5bda5..f25f1c136900 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -1215,9 +1215,16 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
- 	if (ret)
- 		return ret;
- 
--	ret = dw_pcie_wait_for_link(pci);
--	if (ret)
--		return ret;
-+	/*
-+	 * Note: Skip the link up delay only when a Link Up IRQ is present.
-+	 * If there is no Link Up IRQ, we should not bypass the delay
-+	 * because that would require users to manually rescan for devices.
-+	 */
-+	if (!pci->pp.use_linkup_irq) {
-+		ret = dw_pcie_wait_for_link(pci);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return ret;
- }
-
+diff --git a/scripts/.gitignore b/scripts/.gitignore
+index c2ef68848da5..4215c2208f7e 100644
+--- a/scripts/.gitignore
++++ b/scripts/.gitignore
+@@ -11,4 +11,5 @@
+ /sign-file
+ /sorttable
+ /target.json
++/tracepoint-update
+ /unifdef
 -- 
 2.51.0
 
