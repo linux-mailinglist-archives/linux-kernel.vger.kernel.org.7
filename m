@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-875993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 662C9C1A663
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:53:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2511DC1A660
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:53:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7138560A94
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DC0E586DBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C6D32720D;
-	Wed, 29 Oct 2025 12:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D59329389;
+	Wed, 29 Oct 2025 12:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qDjk5PFV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QJ42iSYi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F043271F1;
-	Wed, 29 Oct 2025 12:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4017A329391;
+	Wed, 29 Oct 2025 12:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740712; cv=none; b=VsocierDxJxQ/8z/UO+jmWLaIHgHjp32oGY06UvkD4mhhkVWmMRKqQ3RWw+F1HGII1di4n2L++iT2/6+uo4e4XOndQ0GoniCJRz0LY+MtuK6p43Q4lI5TufFa2tyPmYh6vAHNVSUBT2EdgU/326HrquO72sAqFuC/N1QiRl4Wf4=
+	t=1761740722; cv=none; b=JCV2O2lC+BRfIQdjzQf2EAhBphltzoCgLaBvyXAiNmV3RYTc4jc0Old4NUvR/uVzSI5V53XxTJUWgVx2x8Nl03RNYrjXbXh7c+qNAiXY9QEZaGEPDSrOFMtESGnBt27EqcVYdS7f0cxesAQIzMTnrHs3QOGxlozLch21UegjuMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740712; c=relaxed/simple;
-	bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
+	s=arc-20240116; t=1761740722; c=relaxed/simple;
+	bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=AOvmL7ZDKwyla4PKHkmaVxgRqE8nIw1XQmUjxlRWVQzRSWMA6xPOASPQSDASx2KqcAWUUyN8iIgwxmY7gUry9iRadk8UYfnnqD2PuXcj/03l7t/Pz9+8+W27lmi3ZLASWIvsnKoSKDguvX8RCLPEqLz+y45QtM54K9Nlt1mtWjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qDjk5PFV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CA4C116B1;
-	Wed, 29 Oct 2025 12:25:07 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=KEWBdAXAhwS8GTQHATO3V+ABmgWZmXndotZVel6aBAXduTswGmor7e7jq6kts9kzSZ+eMwFy5HvH6EsrxyqEur3kA3ycowb24gYt9bd396qsqUM7U+mL6c1g7MXg0qMR/jEvlBecQnkqIUHLyHskWn+ANTagel2/NnBulKQaE5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QJ42iSYi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94822C4CEFD;
+	Wed, 29 Oct 2025 12:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761740712;
-	bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
+	s=k20201202; t=1761740722;
+	bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=qDjk5PFVNfVA7t/elYjPCBRbnMisSHODB3s6btyV0MEPeA9POvC9wIWuXEFWT5zXC
-	 uXIu80qEG4OShSIS2aiz7EDV7otagu5YpwkHRvDeFCKlJqS/1GkXmbYmm7/uaeS9K5
-	 eKY9BHaIrcxRR2+9DQlJXDeug8Q1L9oI3rPE/tzrwE+L1FK6Bq6JtJAPgmEEGqM4fa
-	 FCMohp7sNNx7RnprZC70f5IN0aqR7irFyZj6ei1mPync8Gu/HWA8FxgtBoDPCbrkV1
-	 ipqbmFSZpjw+uks/ZqhIItmjsGP4M2S4TxrI+s49Iw/kzht2hTtjF9IKSEPmeW5yvM
-	 hPtWftx2PRAQw==
+	b=QJ42iSYiEc0/SyvSVlMLEFslZsDmPFkoufbTXhoF8eA1/9D3aerbubBsP7uwRRQTj
+	 ijj4DpmiN1CrJs58YtxNOexc9bBbTbEUOWoXLREV3paCtBOtfU8VsfRKB0yCLW+Hlm
+	 ZJ2XEorkEUzezWDkqDi5J4WK+IsdWxWfJWD9pJzP39I+BMb1aHRh4H+VZUuy7yr+62
+	 /XJoyPpMMtLtmekHz2DBC8NQjvzoao0P7juPfC9BbzSfoBvfkSm0u4WhSffniub+1L
+	 0drIWd5BM7rBQYxNxYjE6tCpo1gyKeD1Adki6AY2cGzEYJq8rxjTSfRY9ZPuLTTeZ2
+	 us23UfdlMp5kg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 29 Oct 2025 13:21:07 +0100
-Subject: [PATCH v4 54/72] selftests/namespaces: seventh listns() permission
- test
+Date: Wed, 29 Oct 2025 13:21:09 +0100
+Subject: [PATCH v4 56/72] selftests/namespaces: second inactive namespace
+ resurrection test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-work-namespace-nstree-listns-v4-54-2e6f823ebdc0@kernel.org>
+Message-Id: <20251029-work-namespace-nstree-listns-v4-56-2e6f823ebdc0@kernel.org>
 References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 In-Reply-To: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
@@ -69,136 +69,156 @@ Cc: Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>,
  netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3491; i=brauner@kernel.org;
- h=from:subject:message-id; bh=lxk3HyfGnG2LzFtd9uD08385YY9HWIbP9txgILZ5aFQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfX7Tmg+K9CYf3z6lpqDzw2NlFRXG01TZ+rX8tuRN
- v/2uQTDjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgJtsz8iwK2Px0hvrWW6dfc4f
- ftTzroR5jkjVzc3JYVtubvvuL7rdkeGfmmRz7ByLzIM/+Tm8flvVVVyW52ebfFlnc6an3SNv11R
- WAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4149; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=M5JYL/ItXnif2Vw7+GSIT6vFRcZ0KyLdqVkykps56SU=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQysfUbrJ9/6Vgc76cNQlJ1u7707VtZsk97wYKImLCiF
+ d56/5zYO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyUIuR4cCMs8nh2nov4u78
+ EtqVHFjQ+3H6761crjE9+5qPL4oM38zIsP5/wvqSpG97G63clD/fk/vrdu1zxHRuhyDLz96hUg+
+ 42AA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Test that dropping CAP_SYS_ADMIN restricts what we can see.
+Test that socket file descriptors keep network namespaces active. Create
+a network namespace, create a socket in it, then exit the namespace. The
+namespace should remain active while the socket FD is held.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- .../selftests/namespaces/listns_permissions_test.c | 108 +++++++++++++++++++++
- 1 file changed, 108 insertions(+)
+ .../testing/selftests/namespaces/siocgskns_test.c  | 126 +++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
 
-diff --git a/tools/testing/selftests/namespaces/listns_permissions_test.c b/tools/testing/selftests/namespaces/listns_permissions_test.c
-index 9aa06ff76333..82d818751a5f 100644
---- a/tools/testing/selftests/namespaces/listns_permissions_test.c
-+++ b/tools/testing/selftests/namespaces/listns_permissions_test.c
-@@ -648,4 +648,112 @@ TEST(listns_cap_sys_admin_inside_userns)
- 	TH_LOG("Process can see user namespace it has CAP_SYS_ADMIN inside of");
+diff --git a/tools/testing/selftests/namespaces/siocgskns_test.c b/tools/testing/selftests/namespaces/siocgskns_test.c
+index 0c9098624cd4..0ad5e39b7e16 100644
+--- a/tools/testing/selftests/namespaces/siocgskns_test.c
++++ b/tools/testing/selftests/namespaces/siocgskns_test.c
+@@ -69,4 +69,130 @@ TEST(siocgskns_basic)
+ 	close(current_netns_fd);
  }
  
 +/*
-+ * Test that dropping CAP_SYS_ADMIN restricts what we can see.
++ * Test that socket file descriptors keep network namespaces active.
++ * Create a network namespace, create a socket in it, then exit the namespace.
++ * The namespace should remain active while the socket FD is held.
 + */
-+TEST(listns_drop_cap_sys_admin)
++TEST(siocgskns_keeps_netns_active)
 +{
-+	cap_t caps;
-+	cap_value_t cap_list[1] = { CAP_SYS_ADMIN };
-+
-+	/* This test needs to start with CAP_SYS_ADMIN */
-+	caps = cap_get_proc();
-+	if (!caps) {
-+		SKIP(return, "Cannot get capabilities");
-+	}
-+
-+	cap_flag_value_t cap_val;
-+	if (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &cap_val) < 0) {
-+		cap_free(caps);
-+		SKIP(return, "Cannot check CAP_SYS_ADMIN");
-+	}
-+
-+	if (cap_val != CAP_SET) {
-+		cap_free(caps);
-+		SKIP(return, "Test needs CAP_SYS_ADMIN to start");
-+	}
-+	cap_free(caps);
-+
-+	int pipefd[2];
++	int sock_fd, netns_fd, test_fd;
++	int ipc_sockets[2];
 +	pid_t pid;
 +	int status;
-+	bool correct;
-+	ssize_t count_before, count_after;
++	struct stat st;
 +
-+	ASSERT_EQ(pipe(pipefd), 0);
++	EXPECT_EQ(socketpair(AF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets), 0);
 +
 +	pid = fork();
 +	ASSERT_GE(pid, 0);
 +
 +	if (pid == 0) {
-+		struct ns_id_req req = {
-+			.size = sizeof(req),
-+			.spare = 0,
-+			.ns_id = 0,
-+			.ns_type = CLONE_NEWNET,
-+			.spare2 = 0,
-+			.user_ns_id = LISTNS_CURRENT_USER,
-+		};
-+		__u64 ns_ids_before[100];
-+		ssize_t count_before;
-+		__u64 ns_ids_after[100];
-+		ssize_t count_after;
-+		bool correct;
++		/* Child: create new netns and socket */
++		close(ipc_sockets[0]);
 +
-+		close(pipefd[0]);
-+
-+		/* Create user namespace */
-+		if (setup_userns() < 0) {
-+			close(pipefd[1]);
++		if (unshare(CLONE_NEWNET) < 0) {
++			TH_LOG("unshare(CLONE_NEWNET) failed: %s", strerror(errno));
++			close(ipc_sockets[1]);
 +			exit(1);
 +		}
 +
-+		/* Count namespaces with CAP_SYS_ADMIN */
-+		count_before = sys_listns(&req, ns_ids_before, ARRAY_SIZE(ns_ids_before), 0);
-+
-+		/* Drop CAP_SYS_ADMIN */
-+		caps = cap_get_proc();
-+		if (caps) {
-+			cap_set_flag(caps, CAP_EFFECTIVE, 1, cap_list, CAP_CLEAR);
-+			cap_set_flag(caps, CAP_PERMITTED, 1, cap_list, CAP_CLEAR);
-+			cap_set_proc(caps);
-+			cap_free(caps);
++		/* Create a socket in the new network namespace */
++		sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
++		if (sock_fd < 0) {
++			TH_LOG("socket() failed: %s", strerror(errno));
++			close(ipc_sockets[1]);
++			exit(1);
 +		}
 +
-+		/* Ensure we can't regain the capability */
-+		prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++		/* Send socket FD to parent via SCM_RIGHTS */
++		struct msghdr msg = {0};
++		struct iovec iov = {0};
++		char buf[1] = {'X'};
++		char cmsg_buf[CMSG_SPACE(sizeof(int))];
 +
-+		/* Count namespaces without CAP_SYS_ADMIN */
-+		count_after = sys_listns(&req, ns_ids_after, ARRAY_SIZE(ns_ids_after), 0);
++		iov.iov_base = buf;
++		iov.iov_len = 1;
++		msg.msg_iov = &iov;
++		msg.msg_iovlen = 1;
++		msg.msg_control = cmsg_buf;
++		msg.msg_controllen = sizeof(cmsg_buf);
 +
-+		/* Without CAP_SYS_ADMIN, we should see same or fewer namespaces */
-+		correct = (count_after <= count_before);
++		struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++		cmsg->cmsg_level = SOL_SOCKET;
++		cmsg->cmsg_type = SCM_RIGHTS;
++		cmsg->cmsg_len = CMSG_LEN(sizeof(int));
++		memcpy(CMSG_DATA(cmsg), &sock_fd, sizeof(int));
 +
-+		write(pipefd[1], &correct, sizeof(correct));
-+		write(pipefd[1], &count_before, sizeof(count_before));
-+		write(pipefd[1], &count_after, sizeof(count_after));
-+		close(pipefd[1]);
++		if (sendmsg(ipc_sockets[1], &msg, 0) < 0) {
++			close(sock_fd);
++			close(ipc_sockets[1]);
++			exit(1);
++		}
++
++		close(sock_fd);
++		close(ipc_sockets[1]);
 +		exit(0);
 +	}
 +
-+	/* Parent */
-+	close(pipefd[1]);
++	/* Parent: receive socket FD */
++	close(ipc_sockets[1]);
 +
-+	correct = false;
-+	count_before = 0;
-+	count_after = 0;
-+	read(pipefd[0], &correct, sizeof(correct));
-+	read(pipefd[0], &count_before, sizeof(count_before));
-+	read(pipefd[0], &count_after, sizeof(count_after));
-+	close(pipefd[0]);
++	struct msghdr msg = {0};
++	struct iovec iov = {0};
++	char buf[1];
++	char cmsg_buf[CMSG_SPACE(sizeof(int))];
 +
++	iov.iov_base = buf;
++	iov.iov_len = 1;
++	msg.msg_iov = &iov;
++	msg.msg_iovlen = 1;
++	msg.msg_control = cmsg_buf;
++	msg.msg_controllen = sizeof(cmsg_buf);
++
++	ssize_t n = recvmsg(ipc_sockets[0], &msg, 0);
++	close(ipc_sockets[0]);
++	ASSERT_EQ(n, 1);
++
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++	ASSERT_NE(cmsg, NULL);
++	ASSERT_EQ(cmsg->cmsg_type, SCM_RIGHTS);
++
++	memcpy(&sock_fd, CMSG_DATA(cmsg), sizeof(int));
++
++	/* Wait for child to exit */
 +	waitpid(pid, &status, 0);
 +	ASSERT_TRUE(WIFEXITED(status));
-+	ASSERT_EQ(WEXITSTATUS(status), 0);
++	if (WEXITSTATUS(status) != 0)
++		SKIP(close(sock_fd); return, "Child failed to create namespace");
 +
-+	ASSERT_TRUE(correct);
-+	TH_LOG("With CAP_SYS_ADMIN: %zd namespaces, without: %zd namespaces",
-+			count_before, count_after);
++	/* Get network namespace from socket */
++	netns_fd = ioctl(sock_fd, SIOCGSKNS);
++	if (netns_fd < 0) {
++		close(sock_fd);
++		if (errno == ENOTTY || errno == EINVAL)
++			SKIP(return, "SIOCGSKNS not supported");
++		ASSERT_GE(netns_fd, 0);
++	}
++
++	ASSERT_EQ(fstat(netns_fd, &st), 0);
++
++	/*
++	 * Namespace should still be active because socket FD keeps it alive.
++	 * Try to access it via /proc/self/fd/<fd>.
++	 */
++	char path[64];
++	snprintf(path, sizeof(path), "/proc/self/fd/%d", netns_fd);
++	test_fd = open(path, O_RDONLY);
++	ASSERT_GE(test_fd, 0);
++	close(test_fd);
++	close(netns_fd);
++
++	/* Close socket - namespace should become inactive */
++	close(sock_fd);
++
++	/* Try SIOCGSKNS again - should fail since socket is closed */
++	ASSERT_LT(ioctl(sock_fd, SIOCGSKNS), 0);
 +}
 +
  TEST_HARNESS_MAIN
