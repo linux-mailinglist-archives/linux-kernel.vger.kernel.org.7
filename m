@@ -1,333 +1,167 @@
-Return-Path: <linux-kernel+bounces-875066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0424CC181E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11FB5C181E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D76CE400620
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DA34010E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD682F12C0;
-	Wed, 29 Oct 2025 03:03:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7C02ED870;
+	Wed, 29 Oct 2025 03:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jFcI9027"
-Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010007.outbound.protection.outlook.com [52.101.56.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2CN8BPn"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8F02ED858;
-	Wed, 29 Oct 2025 03:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761707023; cv=fail; b=lcZuCNc5k53Xwt/PT7e4aIsJWpJe73wvvBDKpipiFKSbsvFt6kmveKey6mAsqlCqnIo/x8Fgn9oVIviLyVKy16zy7vffxnrTFeykCTr5zgH0qFOIAb3nXF1wb2QSryp04I0cMs1aa1bAoQUR9E7DWxghq/1LrMUjYii+WAFn1Hs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761707023; c=relaxed/simple;
-	bh=npj0ZPc/3X9sjuhbmiPNE+L+Febgxmf0IXe6UBoF+kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oMSoqxTpUiumO1vKPiJQajBu5mEbwccF7ZpRUgMalVqdDkUrLTlMaXWTuV+kuwmwjYaSJV+6Idz2arZaMKftKGtvtS5dVUaPySl4CUUYZulWGSvisSDdaSw2Eu6J5tlayHFvjM8L9NK2BReonKemI+os3H/sIjzQrPvhsN+QnCk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jFcI9027; arc=fail smtp.client-ip=52.101.56.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RRbFyacQbi3TG3VAeFrZxG2FJAgXxttdjEgUC5G/RGMiv3eVUejirEHDVsIdGtN5NJA8ulxcdngMHr8+eAQcU5tvPG5zqOyIQdYsXgHWA5pwJnAslk6+jLAo7UEpmNk/Ji+CPkAuQ9LT+t2x5f/YCo3yKu+yz5xBa+RNAC5zGYRSjTozFoEzohvD02o1eAOncWIkaypmQGmJ6SWCzigHZoi1uFulkZUY7sEVe4Z15wwC2Up7cyTwO1u3gSzOgbROZ/rhq/BZ+lo4e0+DNrhl7qDKEGyRHXGd2PJY+sbRoNda0Af83HYP0wXd0kinoplNTnmMkuUApigfxzSfq1ijjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4JuyjEvWygAvsvjMgfFdAI6kVWxfLxZHSn2Ljau6Atw=;
- b=KuNyLGHa/t/iEFoyZpxlD00SyjCk46v79PH9gp4lkrdi7IPzQz5wbnN5ZUJ+3nIlAmXh3rKxxPRAI8oMECY87oRKdNJ+DgvhPuAWHYw/MJ2FwGjbph8lWl73jsuqL8FTqsfiVO5o2nMwxVYnr+Iu+CWVXX/zUTVUI49IqHAolItTWHBWKNyuDlOeNPhvJo3PeQXK9lWD+ZDNSU/EG4yEdHQv0+lUt36UooyA8yY430IgyrkkBdh4lmTh2p9mIu6zc5mepH+rLwTaOc3Hiv9WEyBxgPDjEn3IwEiL1+1iKT2P59W3fUwfpknsU0PQK7wui2EGlAjAb43zKGTnZt4ELA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4JuyjEvWygAvsvjMgfFdAI6kVWxfLxZHSn2Ljau6Atw=;
- b=jFcI9027UlVfp2AfdWlwhF6/BvP31ZUhNiSvg/BWHaNVjlaXIdQF5AktV5kOUmlzRBlIxfGCm/iYW3AcWSwqvTzqgWs8mw23w1oHjCYj4lk1Xlnn7cO53Vxp/JqaGc9jUycv9ntMpcYyRtEFKEz5OjqKZ4IJhKWDnkbmn5cmSFmUkhCJeABW8HJydi7Aod+fQj97sBRQ0uDaKizjp9l7+Uoz7+94RM4lE+0InSMCE0d87K8K9o74LBIkYzrms3c3aKmYkgzTMX8ykb3PL/TGDaNE5XgWWOTjI2SweUNDosIeY0yyxQyKKukjehf6sAdCjnhbrQ7qfECGXN6V1G1jEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by CH2PR12MB4263.namprd12.prod.outlook.com (2603:10b6:610:a6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 03:03:35 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.011; Wed, 29 Oct 2025
- 03:03:35 +0000
-From: John Hubbard <jhubbard@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Edwin Peer <epeer@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen GPUs
-Date: Tue, 28 Oct 2025 20:03:32 -0700
-Message-ID: <20251029030332.514358-3-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251029030332.514358-1-jhubbard@nvidia.com>
-References: <20251029030332.514358-1-jhubbard@nvidia.com>
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR03CA0029.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::39) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3FE2ED858
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761707037; cv=none; b=ailHknDCGrXgDkqMqGymrijDVVUMHT3czOgsa008ibrpWdCxvVhtBZC90UAVev0J2Jy/qKsRjO4aA0+RB0WMaiRmvm7bg41qX0omAL3KhaXJLRwoqq/0vTYdgfpzyzyIAucg+eRS5M4oYRbRHJFXiWF5wijirABJ+jHHfzk9Wm8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761707037; c=relaxed/simple;
+	bh=/Qk8PMHP4+FapWuHqJbINkiDONl0t8szjkv4nlvTxXc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYH3sq41KugOLFNm/a1LCSnFBY58ly8M/0BY35dBzdNrkJ9SOjQOKWiUyKp51/kL1uy2tOuIPdO7zaI1U0hTHASO9dg90CZQSjB0JwlR761HFEgxZQAq+8NTscB7YXj7cZ/6o94NqRo4I3L9r/EZQFkt/SGf5oEyI7Z2Nd3latg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k2CN8BPn; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4eb9fa69fb8so55465841cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:03:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761707034; x=1762311834; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K5IcEnHZoC7+7r2CTBEYXEkgFoGQnDrtNgYAFEBdR6Q=;
+        b=k2CN8BPnZA5PIAhjCeAcHZI+JZM5bK5bv85xzYnF55BjdvTapbyFuVhnfr/vcUnd/X
+         ZgUFH32QVt066a0thd8NpUgAAZMN1risuCUEJ5VsdbEDMp8TKIofZo4PPSH9QfixHd91
+         BONbg8y1nPIpKmLY14sTes38+T4LAcT3RmRfT8hDDNGpk4j/MWGN/pzfEVp/Q5vHK/gP
+         dNR32vCq+ZtyRG9uftR89Z8MMAQsPohK/iH0pQMTjvVSRmubff+f5+lVrQ/fHXQ6UQ8o
+         OGuNwmxplbDUj4kapyK1G3FthOyyB+OySriAwUCT84r/fTOUXyAjcz+387TdqBQhid87
+         qMkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761707034; x=1762311834;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K5IcEnHZoC7+7r2CTBEYXEkgFoGQnDrtNgYAFEBdR6Q=;
+        b=XVDW8Gjj0W3KPKQ7tjTCbQm2JUA7XRo8GSkBJd25m6GoIbqM0wM0/YwQsm4sMCwqAv
+         CoXd9gdCC8SgogQe8mKuZbQBmRdV4fla7N5DRVxkmkaItTvZydP7ZkIcHK5EtC2gsjB8
+         VLN/ybTKC8t3fDX03s5EFu6EleVzjeIMpY9/E9sVMAon9xhtQ6Uso9KxETnAmMFOh6oI
+         6bGmRqKOkUUCYnrimMorkP9CGOU1f4vDskTEAMX80mA6T0tWaow0nT7GBqEpLFTlxmcf
+         rvEJnupmfa4Pi2jjCf4D/9SmQ8LnCduF2t1j+KbWMaED55bYkBI5JBE3Tm4KpGaOWja/
+         ge8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQTgsvMAiRFI+j3jBfBAgN6IohX3shfSgMAv0BSwW5tbMObIoaeKzGQGZ/a7US4u6QD9KazEyzwq1ACfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFGOKG4zI8JdiwB6PrC0l945FQhndVeNB2lVXSQZLCuwrr8MQo
+	H5DpMKw8S+b64GQOUQax3mzp0A3559QEm1IXRLNQUEkjbjDF3M+aGRFa
+X-Gm-Gg: ASbGncsDrHmc0D6kNmXwtlKy+pu+TqgElFTGUr2wBjjN1KnN/OBfKnzHBiy24hil1Bo
+	ZuYdcxHK55wdjRo37nErjclirO+WSiGtluThkz/ih/pAE/LgUro4Dh8Bu5rKv38wAtF+Xd0dtFK
+	KMBZsf+ZT1fP1FsZArcFsChef9AiLn0paNpPXYzP6AAMt5C19JKJ0nm57lMnnbS4qGGR+S0yvvr
+	5Lkd+J0hkvqz15uwB2Ie0ZyXniMxMPeZIYpxatHfuW8D5DZG/QrC9lPM/vNtk+ZAtV4DFRq8W5r
+	0DqR7qRQ7W2C5U7LO3FdB+RRoQYAEOKku/adIIUfZx/fmDoNFJdnjV4VgYg1IxN5kThESCx/2jh
+	sCr3pQeQ0wtAdNDTUW2Q08mivrDTTEd14q/l+ehxdbFqCcj3C40FMFuD/GKPf5Gl9y69gUv1TfY
+	g=
+X-Google-Smtp-Source: AGHT+IGn2yY7zgfs78ubfoXvJ06VhUkyVxJ/ldXNh2L/51YFEepFFBNff1jL42/SFQQHpekm3bsxHw==
+X-Received: by 2002:a05:622a:1105:b0:4eb:7807:1816 with SMTP id d75a77b69052e-4ed15b5ab08mr18021921cf.35.1761707034388;
+        Tue, 28 Oct 2025 20:03:54 -0700 (PDT)
+Received: from sam-fedora ([142.182.130.176])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f254a6461sm1001074485a.30.2025.10.28.20.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 20:03:53 -0700 (PDT)
+Date: Tue, 28 Oct 2025 23:03:50 -0400
+From: Samuel Kayode <samkay014@gmail.com>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: linux-s390@vger.kernel.org, open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>,
+	Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
+	Samuel Kayode <samkay014@gmail.com>,
+	Jerome Oufella <jerome.oufella@savoirfairelinux.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Frank Li <Frank.Li@nxp.com>, Sean Nyekjaer <sean@geanix.com>,
+	Lee Jones <lee@kernel.org>, Heiko Carstens <hca@linux.ibm.com>
+Subject: Re: next-20251027: s390: pf1550-onkey.c:154:12: error:
+ 'pf1550_onkey_resume' defined but not used [-Werror=unused-function]
+Message-ID: <aQGEFr9aXB69_Eei@sam-fedora>
+References: <CA+G9fYsL+w_XaOPaBaN5xMr6Ssrq_hh2_g8AgNxNmu0jCpjwxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|CH2PR12MB4263:EE_
-X-MS-Office365-Filtering-Correlation-Id: 19e64fff-a2ec-4350-33db-08de1697c040
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ceShknxy2t+/QKh0kM1rH0Xvctiyeqyiom7ER+I1JWWW9SHJeiz5Q3cKqZJL?=
- =?us-ascii?Q?xuicz8Jlz8Aoz66TxdFdR8Qr7ezYr0THWYgWvZNL7xaTPUqgfwg3hL+4K0dR?=
- =?us-ascii?Q?u+bkxzJ60j68FPLuyuhsHx7E20uw1Xb3FsKEd/O8TaBP7d9UDV+gKGeTGWTO?=
- =?us-ascii?Q?It2eBuhBWWWDEuZvoQlXn1yjEZT6AViS6KIcJAtWSGQZOiQAZzj/igYElL19?=
- =?us-ascii?Q?sXWiy1x1dI2y55fK/NbmCkXensvlYKkWC3cQDnY9fvfra3hP/bEQnb0g4x/b?=
- =?us-ascii?Q?k0hvxemLitHc/2BOhHJ8I9mqMTPP0htlAjiHPpajzhpENleOyJ5LjLw3mP3L?=
- =?us-ascii?Q?dlMzkOKUVbDw9GauEl1igD3X0qcaLu6BPm0/dAnLsbuAqXsh5YctWsN+J3/D?=
- =?us-ascii?Q?0OBmIZW/TB1dlbcsuUfNuxLgwgtcHYaIq/ZRiv1yoP6I0G7EBSydYy0sFfQz?=
- =?us-ascii?Q?APn20bjWz3OED1cvpe9R4sBsJbs/sSesezSKFPqRKHliUkxivJrtcNZbru1Q?=
- =?us-ascii?Q?wUMtqsm6XTOCuSyzZ+xpmFGXvN1wVbBeDDzC9p0DBd1jA6PdfaPqpbH70HrZ?=
- =?us-ascii?Q?r8wmGthZR28zSrVnTvbb1732HHAVtMtq2CiFfIhZ9pD/mI46Wf7rwKoFHH2d?=
- =?us-ascii?Q?rSepxrBrjaWQzKdz+F6kT/gN//fPYGfSvy+BKD2L2e03cSvVCs5jKDz+Qi5Q?=
- =?us-ascii?Q?0Zpt/7VwrrQAwoGMezA/9Kp3uF4FcMld8nrJy218+hLLmVk5LQObhniBDY7R?=
- =?us-ascii?Q?MVxSECjhaxPObk1NebSz4rW+8HxHidfsmc93Df3lDt/VtLfdrymqKvvs4bkV?=
- =?us-ascii?Q?hq8vrQJWIqETpm9wqrkcKSQ6EdLoKrd+oCDIfkX2BWoAIFQXme0Ij13CG/xK?=
- =?us-ascii?Q?/DkjE34uuNRha0BmFirHXpgjTouboaqyjWa/EXrOIQ0wntC1o2jL9rLhgD2e?=
- =?us-ascii?Q?taLWdQhfiKtRqiF7GOc+p8GCl5SjrOGHuFr/5euQKEviyb+FOtwf+ie2Boik?=
- =?us-ascii?Q?WMsWErwJhZGmfP5Rky/jdV/tys7HZGrhSUv55EyGjfXDXa1RIbm7EXBP3BZd?=
- =?us-ascii?Q?G9D2mCxmELdSz9HfjoQk8QXEqIq1uTEr4MZk3sG6xrOahg2qlRfpymdSDDo4?=
- =?us-ascii?Q?odPAXHJ3Nbuzz3jD/74yt2q1FpjupSBTlcRUtMxYPqG/KaygNqNxrKWHIiwR?=
- =?us-ascii?Q?mHfoMGOxODQ04wajnzOYQ/Aa0JHlif49mwvOIbmvKz0f6ZJ4hhgzIorD7EfH?=
- =?us-ascii?Q?YuzCBah+4F+o66woDbQGh4WWM1QnyFIu7QIrbnM76zAORiXK1KiARZh+Y3DE?=
- =?us-ascii?Q?dB5SYC1G65P0Pt2Xc43lxPTT7EJBH4sIv+U5MA0DxszgGTgPswvd97PPaaL/?=
- =?us-ascii?Q?zcoLJG5KWQs4x6u0GsFrEIV/pWLybKcRBRhgreQpVSEN81eh5+e/xtHasX7p?=
- =?us-ascii?Q?8eDRR+crU3RzdclFW2G8sLpFHYx8eRe4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?njiEj1eAL10J/zBoQtPZSDrZMWc49PLqCFrJ1I9EA7SESsXijgWKFkKTEhFG?=
- =?us-ascii?Q?f0RdnEpri1ZVs85r7Mn+2YmGg2SeRTxqMBsR3SMFtZOqaL8+OVVO/WOFrGue?=
- =?us-ascii?Q?GfvcUlJDlqye61Olboicgp1EeLKbl9nJigde61nIGGs2q+c/B5Xv9sitILW7?=
- =?us-ascii?Q?DsADpV3MwT4GRWOiQssMHLhwyhPxHBnxybmrOFMfdTGhFt+QStrm4X8+wlSE?=
- =?us-ascii?Q?YZfwJK4uAbk5IgK6wx+5t5gEH5ePCjlsyh0MpS1xGSDMmbWaahhK77bK7MBw?=
- =?us-ascii?Q?h6g3EH8yjwIkgeXhzju1lAltBmnt7rOC0gv3nw1lZqfuplrBCB0e52xnEvvn?=
- =?us-ascii?Q?C3bFwvbCXsMgxu3bHRPaCB8mweGTze7W0N0XaULON1o3vEuReTrgq9R5O1OR?=
- =?us-ascii?Q?N/nAepzZ/7OU+9qvU3Iwp5N8G1Bnsq2RMKjopXEr22Kv/mMXla2mpwhCn57r?=
- =?us-ascii?Q?IlnDq/IrW0+arM/IEcDlB2p3a8TigPzvouuyJYC8yA+fSal2Xy9iS4cOze+K?=
- =?us-ascii?Q?2IfoJS4hrCosD4j+uPKxHxj4ItZP8KzQpOk1wDFN/ChnZC+7MKW+9uz6Z5FW?=
- =?us-ascii?Q?rwFydXXHPEjaU6VhXJCg8iDsj2fQ2+Lvnv4NPwR1AIhXc3wZ8hAGyN37rjEB?=
- =?us-ascii?Q?hRjmPOCV74JrQwNPdwEqF2er8CQBUCR8jur/BWQEjk2aU3j8Z9ii/fDE2oLt?=
- =?us-ascii?Q?k3lsI3nhhiID6941KgIMeNhQREyIDk3vGYOPEfvKegA3zzDtzLQtP2MmYTLK?=
- =?us-ascii?Q?eTB1uJbPFGxNA+fnJ/zgS9ESMwzShLNcsQY21xxYoqUe9DdSC/es2QnFcCVZ?=
- =?us-ascii?Q?Gi2Smi88jfL36jat+5F1mBqQN32V8wNdrLPYBwKF0yrCYieFNhILOyiVY4nt?=
- =?us-ascii?Q?Eoi7/HJ+egtH1nPCYubSkyl11FutrYNSNmhNWU84H7dRUjZhqJQgxdYLyzV0?=
- =?us-ascii?Q?LMhrv3ZFbPfz+lXCxIghdflrZm4hS9npNBAh6XQbby9N+VXf8jqgib9bFAd5?=
- =?us-ascii?Q?m3xYE2nyqXQgFL71YIfhMS/HMnuOtHAIiGamHRtmp4Khtf1eCEIocXPFLebv?=
- =?us-ascii?Q?E0SYS2pwQLZE9WyWg79lM668jeKsTruuhb5XqbWAXYL7OcFY47al5WvEPuXi?=
- =?us-ascii?Q?1vDN0Wr+kP1DFPVk+NU+nBmV+tisoncuDmbQJPLUBREuyGWk77wDafpiQGYj?=
- =?us-ascii?Q?C6IOHutbPJTO1wuNluecqSJAM2th1XIyLd88SSSnrSc1JJhctJgVwZ602qbS?=
- =?us-ascii?Q?b/0hQVZaYU0GbwRB3/xQsD9N0ObU5Rj/lOjMaPPH5p0W/dX1ZjAlL6lIzhku?=
- =?us-ascii?Q?0cyOgk/j8FQ1obeKQJ7yyjAUDT2n3ddQ3lhbUBR1dFhgY05uBmCxfbmPrX/3?=
- =?us-ascii?Q?17wTKhWhfAUElxiSGgEyUKK//Sn2ueXwOYXepDYkjdTrwrdz9wgMGpVYoACa?=
- =?us-ascii?Q?PoQPEZvGJ/pwLbKYwORiNdOlR21ltEtbveeq1iJqHq+lUJdf67tl9agEQiaa?=
- =?us-ascii?Q?3NtHqcfMbvOBecp095kyIQNcEmi3LhYraCW1izS42UH4Zxb/mucbUbVKhwnx?=
- =?us-ascii?Q?QP6rCsv4Um8L5Q0oiHKzuh++Lcfq0lmVbcUZ/Upv?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 19e64fff-a2ec-4350-33db-08de1697c040
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 03:03:35.5685
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BeXNUfz0gspju9fyIs9/YwLhuFf7VYomTclMSBfbK1eNSA+jWA3zrJMnbaCrd1vDqShQiXrvE2P8WtQ7U/giLw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4263
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+G9fYsL+w_XaOPaBaN5xMr6Ssrq_hh2_g8AgNxNmu0jCpjwxg@mail.gmail.com>
 
-NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
-architecture and revision details, and will instead use NV_PMC_BOOT_42
-in the future. NV_PMC_BOOT_0 will be zeroed out.
+Hi,
 
-Change the selection logic in Nova so that it will claim Turing and
-later GPUs. This will work for the foreseeable future, without any
-further code changes here, because all NVIDIA GPUs are considered, from
-the oldest supported on Linux (NV04), through the future GPUs.
+fix is at
+https://lore.kernel.org/r/20251028-pf1550-v1-1-c50fae56b9b1@gmail.com
 
-Add some comment documentation to explain, chronologically, how boot0
-and boot42 change with the GPU eras, and how that affects the selection
-logic.
+Thanks for reporting
+Sam
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- drivers/gpu/nova-core/gpu.rs  | 72 +++++++++++++++++++++++++++++++----
- drivers/gpu/nova-core/regs.rs | 27 +++++++++++++
- 2 files changed, 92 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index 6f1486d4e9c6..6762493206ec 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -134,6 +134,34 @@ pub(crate) struct Revision {
-     minor: u8,
- }
- 
-+impl TryFrom<regs::NV_PMC_BOOT_0> for Spec {
-+    type Error = Error;
-+
-+    fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Self> {
-+        Ok(Self {
-+            chipset: boot0.chipset()?,
-+            revision: Revision {
-+                major: boot0.major_revision(),
-+                minor: boot0.minor_revision(),
-+            },
-+        })
-+    }
-+}
-+
-+impl TryFrom<regs::NV_PMC_BOOT_42> for Spec {
-+    type Error = Error;
-+
-+    fn try_from(boot42: regs::NV_PMC_BOOT_42) -> Result<Self> {
-+        Ok(Self {
-+            chipset: boot42.chipset()?,
-+            revision: Revision {
-+                major: boot42.major_revision(),
-+                minor: boot42.minor_revision(),
-+            },
-+        })
-+    }
-+}
-+
- impl fmt::Display for Revision {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         write!(f, "{:x}.{:x}", self.major, self.minor)
-@@ -151,13 +179,43 @@ impl Spec {
-     fn new(bar: &Bar0) -> Result<Spec> {
-         let boot0 = regs::NV_PMC_BOOT_0::read(bar);
- 
--        Ok(Self {
--            chipset: boot0.chipset()?,
--            revision: Revision {
--                major: boot0.major_revision(),
--                minor: boot0.minor_revision(),
--            },
--        })
-+        // "next-gen" GPUs (some time after Blackwell) will zero out boot0, and put the architecture
-+        // details in boot42 instead. Avoid reading boot42 unless we are in that case.
-+        let boot42 = if boot0.is_next_gen() {
-+            Some(regs::NV_PMC_BOOT_42::read(bar))
-+        } else {
-+            None
-+        };
-+
-+        // Some brief notes about boot0 and boot42, in chronological order:
-+        //
-+        // NV04 through Volta:
-+        //
-+        //    Not supported by Nova. boot0 is necessary and sufficient to identify these GPUs.
-+        //    boot42 may not even exist on some of these GPUs.boot42
-+        //
-+        // Turing through Blackwell:
-+        //
-+        //     Supported by both Nouveau and Nova. boot0 is still necessary and sufficient to
-+        //     identify these GPUs. boot42 exists on these GPUs but we don't need to use it.
-+        //
-+        // Future "next-gen" GPUs:
-+        //
-+        //    Only supported by Nova. boot42 has the architecture details, boot0 is zeroed out.
-+
-+        // NV04, the very first NVIDIA GPU to be supported on Linux, is identified by a specific bit
-+        // pattern in boot0. Although Nova does not support NV04 (see above), it is possible to
-+        // confuse NV04 with a "next-gen" GPU. Therefore, return early if we specifically detect
-+        // NV04, thus simplifying the remaining selection logic.
-+        if boot0.is_nv04() {
-+            Err(ENODEV)?
-+        }
-+
-+        // Now that we know it is something more recent than NV04, use boot42 if we previously
-+        // determined that boot42 was both valid and relevant, and boot0 otherwise.
-+        boot42
-+            .map(Spec::try_from)
-+            .unwrap_or_else(|| Spec::try_from(boot0))
-     }
- }
- 
-diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-index 206dab2e1335..ed3a2c39edbc 100644
---- a/drivers/gpu/nova-core/regs.rs
-+++ b/drivers/gpu/nova-core/regs.rs
-@@ -25,6 +25,18 @@
- });
- 
- impl NV_PMC_BOOT_0 {
-+    pub(crate) fn is_nv04(self) -> bool {
-+        // The very first supported GPU was NV04, and it is identified by a specific bit pattern in
-+        // boot0. This provides a way to check for that, which in turn is required in order to avoid
-+        // confusing future "next-gen" GPUs with NV04.
-+        self.architecture_0() == 0 && (self.0 & 0xff00fff0) == 0x20004000
-+    }
-+
-+    pub(crate) fn is_next_gen(self) -> bool {
-+        // "next-gen" GPUs (some time after Blackwell) will set `architecture_0` to 0, and put the
-+        // architecture details in boot42 instead.
-+        self.architecture_0() == 0 && !self.is_nv04()
-+    }
-     /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
-     pub(crate) fn architecture(self) -> Result<Architecture> {
-         Architecture::try_from(
-@@ -43,6 +55,21 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
-     }
- }
- 
-+register!(NV_PMC_BOOT_42 @ 0x00000108, "Extended architecture information" {
-+    7:0     implementation as u8, "Implementation version of the architecture";
-+    15:8    architecture as u8, "Architecture value";
-+    19:16   minor_revision as u8, "Minor revision of the chip";
-+    23:20   major_revision as u8, "Major revision of the chip";
-+});
-+
-+impl NV_PMC_BOOT_42 {
-+    pub(crate) fn chipset(self) -> Result<Chipset> {
-+        let arch = Architecture::try_from(self.architecture())?;
-+        let chipset_value = ((arch as u32) << 8) | u32::from(self.implementation());
-+        Chipset::try_from(chipset_value)
-+    }
-+}
-+
- // PBUS
- 
- register!(NV_PBUS_SW_SCRATCH @ 0x00001400[64]  {});
--- 
-2.51.2
-
+On Mon, Oct 27, 2025 at 02:26:37PM +0530, Naresh Kamboju wrote:
+> The following S390 allyesconfig build regressions noticed on the
+> Linux next-20251027 tag with gcc-14.
+> 
+> * S390, build
+>   - gcc-14-allyesconfig
+> 
+> First seen on next-20251027
+> Good: next-20251024
+> Bad: next-20251027
+> 
+> Regression Analysis:
+> - New regression? yes
+> - Reproducibility? yes
+> 
+> Build regression: next-20251027: pf1550-onkey.c:154:12: error:
+> 'pf1550_onkey_resume' defined but not used [-Werror=unused-function]
+> 
+> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ## Build error
+> drivers/input/misc/pf1550-onkey.c:154:12: error: 'pf1550_onkey_resume'
+> defined but not used [-Werror=unused-function]
+>   154 | static int pf1550_onkey_resume(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~
+> drivers/input/misc/pf1550-onkey.c:133:12: error:
+> 'pf1550_onkey_suspend' defined but not used [-Werror=unused-function]
+>   133 | static int pf1550_onkey_suspend(struct device *dev)
+>       |            ^~~~~~~~~~~~~~~~~~~~
+> cc1: all warnings being treated as errors
+> make[6]: *** [/builds/linux/scripts/Makefile.build:287:
+> drivers/input/misc/pf1550-onkey.o] Error 1
+> 
+> 
+> ## Source
+> * Kernel version: 6.18.0-rc2-next-20251027
+> * Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+> * Git describe: next-20251027
+> * Git commit: 8fec172c82c2b5f6f8e47ab837c1dc91ee3d1b87
+> * Architectures: S390
+> * Toolchains: gcc-14
+> * Kconfigs: allyesconfig
+> 
+> ## Build
+> * Test log:  https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/build.log
+> * Test details:
+> https://regressions.linaro.org/lkft/linux-next-master/next-20251027/log-parser-build-kernel/gcc-compiler-_drivers_input_misc_pf-onkey_c_error_pf_onkey_resume_defined_but_not_used/
+> * Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o
+> * Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/
+> * Kernel config:
+> https://storage.tuxsuite.com/public/linaro/lkft/builds/34dKrowtK5wNPnem1T5LSEjjq5o/config
+> 
+> --
+> Linaro LKFT
 
