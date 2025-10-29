@@ -1,144 +1,200 @@
-Return-Path: <linux-kernel+bounces-875331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16EA1C18B08
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:30:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A73FC18AFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4A0964FBFE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0073B6650
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6617130F950;
-	Wed, 29 Oct 2025 07:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D1C2EC087;
+	Wed, 29 Oct 2025 07:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Z5FUXwDN"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="TsE+egRA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="buCsAW9t"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389B928A3EF;
-	Wed, 29 Oct 2025 07:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE4D28695;
+	Wed, 29 Oct 2025 07:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722910; cv=none; b=MEbJKQfzbTzcGxRrTW2ko06I3+Y7Z0nvTmyJYQ08Dc87YK5do9bvNaz1+u7Fkrt2ZwifPdwgSjY2iP6rYkHLJhigHoFDNkr2TNtb51PO8U55AyD5h5rc0gXyvq+DxRZRhtPcZusQkrvUdr3Lv9ogjRANLfVossoZZUmrOpwPwcI=
+	t=1761722797; cv=none; b=TodE0ASUGyvHC6JlkhurkqmEs85r5WHuuJx8cPfzhL6zdpFyHCqu4ZaWcyIvlw4w7VSeA6FbkHT1mpmgdAbrD9KpeA0NHj5MHpUPuniJutBuJ3Cpz4XKD1+XmJrchxt8CbknE/ErnUshsDIagkXkzllEn236VF6oBc69CZFHki0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722910; c=relaxed/simple;
-	bh=yxETgaEVL24wQO0PvJWn2aHDzqmEPcI1ly/KfqUGQ9U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DT41//OGl4jWfkR1LaF0PYwDrQLxS9VceKY03mjtFU324c3Zmb2Gt9NqmHNAkc/qMM01Qs5PMRD5SVfOrhFjEcqwE9ZG2GscyIB6NMzcVrs7f/eRFj12H/zNrlGYOOIe0sgR8Nn2DRcNLY3Vuhivs8HK1fkUujM3txAAz/cAKMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Z5FUXwDN; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761722909; x=1793258909;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=yxETgaEVL24wQO0PvJWn2aHDzqmEPcI1ly/KfqUGQ9U=;
-  b=Z5FUXwDNlySNWuijFMzkgIwCSYleQ+taEonuWDsCPRDqDMsRZxPQl15N
-   ++BCLm+nOjKYQ2x9NQc/Su9/HCr/mUoEjEzvLM0b0ScRiH1R8FawUBIiD
-   NRySVhCIATAjFsE7r7VcYpAeoSoOdnW/t1sg25cxboNPzf9Z00Xd8qnkI
-   6LNbAoHYajMrIMmS1F7NIYmKLldYcQdizzJGI1Go3yHkomwuHU++GR/eY
-   v4BhNtSEezFbASjA1KT20Ox1sadYf+8XqfGVAeqalS7eyMvul0B0XHnQP
-   ODFhVQ1QPlcvjWLIbcK3LmosmdGI0s+121GYm9nEpAy3rA++00Zc9ikI8
-   w==;
-X-CSE-ConnectionGUID: lh0mYcbFSl+9cvidjQy/DA==
-X-CSE-MsgGUID: 755eDHn8Q2Wup5k4y3w1aQ==
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="215747488"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Oct 2025 00:28:24 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 00:28:17 -0700
-Received: from DEN-DL-M31836.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.58 via Frontend Transport; Wed, 29 Oct 2025 00:28:15 -0700
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Horatiu Vultur
-	<horatiu.vultur@microchip.com>
-Subject: [PATCH net v2 2/2] net: phy: micrel: lan8842 errata
-Date: Wed, 29 Oct 2025 08:24:56 +0100
-Message-ID: <20251029072456.392969-3-horatiu.vultur@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251029072456.392969-1-horatiu.vultur@microchip.com>
-References: <20251029072456.392969-1-horatiu.vultur@microchip.com>
+	s=arc-20240116; t=1761722797; c=relaxed/simple;
+	bh=KPjSUTxyohRs/1Ui+XaXLCsytke6zciENE3R5NXQmio=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=nQGmfGpqXE4IbZoGPVxeuSrCaTMBbU3Csd5b0vXmERFeLOBWt3yzlPnQLz38gIx3eW+XBheGbGGqg8DHalwX4rtm3VtC6bxH/dHj4Xwrg3UacX18cGhrymX26PoK2FhfPQMWBrxGzcVlJmH41OwKKxD3F0RuAxJ/iWDlWQzlV8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=TsE+egRA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=buCsAW9t; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7F356EC02AE;
+	Wed, 29 Oct 2025 03:26:34 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-04.internal (MEProxy); Wed, 29 Oct 2025 03:26:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1761722794;
+	 x=1761809194; bh=HL4fT/7Pst+EfkWdbuJ+fjqkNVyr3cJdgOgkyt71Afs=; b=
+	TsE+egRAXaQBIxVtjjN73Rj3ClHl9oxqOMclN2UuaUPOqICef3WlHjzVkoPkP26i
+	6S07NpewUn14LKjz/knOQA4IPC3FO9rFGLEro/u7EWHATZtuA09YT/SGCAlHkSmh
+	PzpoJsW2sGQYsFlZ4ikrMDJR+7LqxKoJ/v1aPpI1EHzLgbkfPTMB6O39qBz1KHv+
+	ptxWi0kbx+eWKenyJCOlM0cKKv4WPYcIpHQc9gFL+rhOmKrs4ORfGsXzZTjL9Dkj
+	RIl4Is/trtRxorXiQp3PGObelWQXNcib1tdW883YrDPH1DCvKchp/A+TxYuaIrvZ
+	6wjM5j5Wwg7CnZNPTZbTvg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761722794; x=
+	1761809194; bh=HL4fT/7Pst+EfkWdbuJ+fjqkNVyr3cJdgOgkyt71Afs=; b=b
+	uCsAW9t/9gdk3Zy52sXZvDD7pXH2XsqFW99aqUm2QzoL+VJUvhQHyzSRJwwSTX0w
+	dQ3iHNFx/MYMni8nuiOEG39me/i7EU6sNa7ai7hRXVRVxtA5ZYKL3ydiYkM/Dc8E
+	Orfqd49nh50reQicPAFJBs1lIkOyvO5lHut1Z1M0qJDp3Rxag2JtgcKGqNGh4rDR
+	12eUjydkKhvn//KTEobrB796qaJO+KlstPDOuLPte3iS7bbidy5wRJZ+Aq5hCPhj
+	6FF6eyixu4I3uEtOZM2nc3/lDj+lX2lYjOvq9DTj1NFsdxSUDUOEy3Rx28eDe+YP
+	PZ/wHj70FV2tjyhGXVO0Q==
+X-ME-Sender: <xms:p8EBaavqJ0QQ4LJo-rhQsWncvD6kEVTVV4rmvyBorYbJi2ZZA_WoBg>
+    <xme:p8EBaaRgB11oP8RMGDqRz83ry0S21PwUM7rCozkf1UFLjQeQYeu4wz8WJAWiTRJve
+    k9Jk8da1H7YYXAMXwecEt-kENWouf2s7N24_5Is_v-LY_sgVze9MXM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieefuddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdegpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrghssegrrhhmrdgtohhmpdhrtg
+    hpthhtohepsghmtgdqshifsegrshhpvggvughtvggthhdrtghomhdprhgtphhtthhopehr
+    higrnhgptghhvghnsegrshhpvggvughtvggthhdrtghomhdprhgtphhtthhopehprhgrsg
+    hhrghkrghrrdhmrghhrgguvghvqdhlrggurdhrjhessghprdhrvghnvghsrghsrdgtohhm
+    pdhrtghpthhtoheprghnughrvgifsegtohguvggtohhnshhtrhhutghtrdgtohhmrdgruh
+    dprhgtphhtthhopehjkhestghouggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghp
+    thhtohepnhhfrhgrphhrrgguohestgholhhlrggsohhrrgdrtghomhdprhgtphhtthhope
+    hjohgvlhesjhhmshdrihgurdgruhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:p8EBaYFzyY_GprhtuwuqqyoQGyXV2LxZTR_c6AbyWPVI9ohsqpYnXA>
+    <xmx:p8EBaROTWrCGhVE_WWzbSpg7rrjo7od7fRzKFUsvlIBN9LhKPMpGTw>
+    <xmx:p8EBafe3D93GA74moCEijH_lAR59ecXpZKMWzZFAUSpvEgFT8KDxAA>
+    <xmx:p8EBaWT1XfDyaIxoSFMXQslzpL37DWn7iZpL0U4ZpMTutgT1TyZBiA>
+    <xmx:qsEBadd_JnlZak_WFppPr5HmGeD3gT7u-9W5pyEPYgCtBu2nPWMjPsTC>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 81F87700063; Wed, 29 Oct 2025 03:26:31 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: AMptcG-LwCSF
+Date: Wed, 29 Oct 2025 08:26:11 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ryan Chen" <ryan_chen@aspeedtech.com>, "Andrew Lunn" <andrew@lunn.ch>
+Cc: BMC-SW <BMC-SW@aspeedtech.com>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Joel Stanley" <joel@jms.id.au>,
+ "Andrew Jeffery" <andrew@codeconstruct.com.au>,
+ "Jeremy Kerr" <jk@codeconstruct.com.au>, "Lee Jones" <lee@kernel.org>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>,
+ "Bjorn Andersson" <bjorn.andersson@oss.qualcomm.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Nishanth Menon" <nm@ti.com>,
+ =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>,
+ "Taniya Das" <quic_tdas@quicinc.com>, "Lad,
+ Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
+ "Eric Biggers" <ebiggers@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Message-Id: <7c0c966b-c45f-47ad-9243-b945036a9bd2@app.fastmail.com>
+In-Reply-To: 
+ <TY2PPF5CB9A1BE665D988A413B8BCD5CA27F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+References: <20251022070543.1169173-1-ryan_chen@aspeedtech.com>
+ <20251022070543.1169173-5-ryan_chen@aspeedtech.com>
+ <b5441728-06a7-44ea-8876-3a9fc3cf55be@app.fastmail.com>
+ <TY2PPF5CB9A1BE626A2F0F6307461D8F64BF2F0A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <6a97fbb4-19c2-4ffa-9c73-26aea02c27e4@app.fastmail.com>
+ <TY2PPF5CB9A1BE6CF8336D211641A18E2DEF2F1A@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <71df9bdf-53b2-45e2-a9e3-5b00a556f957@lunn.ch>
+ <TY2PPF5CB9A1BE6F3E95C7FD61CF4F90ECAF2FEA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <fdbc471f-514e-4521-b7a1-dcf6127d64ff@lunn.ch>
+ <TY2PPF5CB9A1BE6DD93D0F397C961D5CB5AF2FCA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+ <01573262-69a8-44cf-ae02-2e9842c59dde@lunn.ch>
+ <TY2PPF5CB9A1BE665D988A413B8BCD5CA27F2FAA@TY2PPF5CB9A1BE6.apcprd06.prod.outlook.com>
+Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device tree
 Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Add errata for lan8842. The errata document can be found here [1].
-This is fixing the module 7 ("1000BASE-T PMA EEE TX wake PHY-side shorted
-center taps")
+On Wed, Oct 29, 2025, at 03:31, Ryan Chen wrote:
+>> Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700 SoC device
+>> tree
+>> 
+>> On Mon, Oct 27, 2025 at 02:42:01AM +0000, Ryan Chen wrote:
+>> > > Subject: Re: [PATCH v6 4/6] arm64: dts: aspeed: Add initial AST2700
+>> > > SoC device tree
+>> > >
+>> > > > SoC0, referred to as the CPU die, contains a dual-core Cortex-A35
+>> > > > cluster and two Cortex-M4 cores, along with its own clock/reset
+>> > > > domains and high-speed peripheral set.
+>> > >
+>> > > > SoC1, referred to as the I/O die, contains the Boot MCU and its
+>> > > > own clock/reset domains and low-speed peripheral set, and is
+>> > > > responsible for system boot and control functions.
+>> > >
+>> > > So is the same .dtsi file shared by both systems?
+>> >
+>> > This .dtsi represents the Cortex-A35 view only and is not shared with
+>> > the Cortex-M4 or the Boot MCU side, since they are separate 32-bit and
+>> > 64-bit systems running independent firmware.
+>> 
+>> DT describes the hardware. The .dtsi file could be shared, you just need
+>> different status = <>; lines in the dtb blob.
+>
+> Could you please share an example of a .dtsi that is shared between
+> different CPU architectures?
 
-[1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
+I can think of three that are shared between arm and riscv, with both
+able to boot Linux using a variation of the same device tree, with
+the .dtsi file being included from the respective other side:
 
-Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
-Signed-off-by: Horatiu Vultur <horatiu.vultur@microchip.com>
----
- drivers/net/phy/micrel.c | 23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+arch/riscv/boot/dts/renesas/r9a07g043f.dtsi
+arch/arm/boot/dts/allwinner/sun8i-t113s.dtsi
+arch/arm64/boot/dts/sophgo/sg2000.dtsi
 
-diff --git a/drivers/net/phy/micrel.c b/drivers/net/phy/micrel.c
-index 4b526587093c6..d063e77f07f81 100644
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -2835,6 +2835,13 @@ static int ksz886x_cable_test_get_status(struct phy_device *phydev,
-  */
- #define LAN8814_PAGE_PCS_DIGITAL 2
- 
-+/**
-+ * LAN8814_PAGE_EEE - Selects Extended Page 3.
-+ *
-+ * This page contains EEE registers
-+ */
-+#define LAN8814_PAGE_EEE 3
-+
- /**
-  * LAN8814_PAGE_COMMON_REGS - Selects Extended Page 4.
-  *
-@@ -5952,6 +5959,9 @@ static int lan8842_probe(struct phy_device *phydev)
- 
- #define LAN8814_POWER_MGMT_VAL5		LAN8814_POWER_MGMT_B_C_D
- 
-+#define LAN8814_EEE_WAKE_TX_TIMER			0x0e
-+#define LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL		0x1f
-+
- static int lan8842_erratas(struct phy_device *phydev)
- {
- 	int ret;
-@@ -6023,9 +6033,16 @@ static int lan8842_erratas(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
--	return lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
--				     LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
--				     LAN8814_POWER_MGMT_VAL4);
-+	ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-+				    LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
-+				    LAN8814_POWER_MGMT_VAL4);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Refresh time Waketx timer */
-+	return lanphy_write_page_reg(phydev, LAN8814_PAGE_EEE,
-+				     LAN8814_EEE_WAKE_TX_TIMER,
-+				     LAN8814_EEE_WAKE_TX_TIMER_MAX_VAL);
- }
- 
- static int lan8842_config_init(struct phy_device *phydev)
--- 
-2.34.1
+All of these however use the same basic physical address layout
+as seen from the two CPUs, with only the set of on-chip devices
+being slightly different, such as using the native irqchip
+instance per CPU.
 
+> In the AST2700 design, even though we have both Cortex-A35 (64-bit)
+> and Cortex-M4 (32-bit) cores, each runs in a distinct address space
+> and sees a different memory map.
+
+This is similar to the Cortex-M4 on i.MX7D. This is supported by
+the Linux code, but I don't see the corresponding dts file for it now,
+it may have never been merged.
+
+If you want to share the devicetree source files but have different
+physical addresses, you'll need to set up 'ranges' properties in
+the top-level .dtsi files that map the child buses into the CPU space
+as needed. arch/arm64/boot/dts/apple/t6002.dtsi has a rather
+sophisticated way of doing this where &die0 and &die1 set up the
+ranges for including the same child die multiple times at different
+addresses. You should be able to use similar method but make it
+a lot simpler for your case.
+
+      Arnd
 
