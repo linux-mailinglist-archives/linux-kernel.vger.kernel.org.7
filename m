@@ -1,97 +1,273 @@
-Return-Path: <linux-kernel+bounces-876926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5BDC1CCA9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:34:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53894C1CCAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 07B7534C8C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:34:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31E0A4E0FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 172B13563D7;
-	Wed, 29 Oct 2025 18:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95B41346E64;
+	Wed, 29 Oct 2025 18:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="zGNlhVLI"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQZ78YJs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1F23563C1;
-	Wed, 29 Oct 2025 18:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04012F6190;
+	Wed, 29 Oct 2025 18:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761762888; cv=none; b=AoFTx4uhnGatHGj3Aqba4c/BPPcS0OpzxZqHhAQ4TBogLZFb4zKesBBJguiEC1GplEIRjYFEHrXyUMuKoaj6IPXeiXgDtC7UdBPNak2kxKV4wUnow+yJcW+NFcMHKS7wxwNZ6kZ1AZEv4bomIkj+RC9LPOFA/qfU/o1PTTlcI8U=
+	t=1761762926; cv=none; b=qYg2YgxXv1PwptITQUcK4sxyGCRHfyi0d5h5xPw5ho33/7Hk13eBvMxFgkuGX0XFoJouD7nHiB3liHp9MJucHe8eHc36kCkjKf2U7GVxeXak5kgF2kcEx+CvRuNMDyUh/6gCpMRqubKZXhfjmJH8HvJnc34xqWaWJOp3IZeZ6kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761762888; c=relaxed/simple;
-	bh=ZeT7Owxzy+wHd5v/L+u3VJAUyhrgBzMBG6B/UwT0TKg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nYY1lVGGgTwM+eseEM57hBSwE8fAvrDTP5pr+mm1g8PorOrgvKOWmaPvshe+Q0itq5mzHbLbGJ0R3n7Qj0FEwX3JHa0QQt5Jq/AmdohRCMqGEiZwItFVxMTpfO3yNJa1qt6Mlr9WNdwQNrgOgj7A5q3wmTyVXqh2omqxtWHo3OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=zGNlhVLI; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=rPA5zYsG/tWVAFiEKuWztdoSVMBIPULj9uPWMdi3d2E=;
-	b=zGNlhVLIf/x8aC6ttfUj5NAB+UYv4xQo1T71neC0+wg1M8fTzTFLyRKQCeG7pPD1YE7Umbwte
-	f3Ey0RZiAh4RjFzNftjLoWX7HYoNKVcplGStCS9VHGywzzeMWvWkh4upvZ25lp7HkwN0G97sCst
-	l3iWC+Hl5KeRHiPlcfQ7Kqo=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.32])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cxbWG5FCpz1P7HW;
-	Thu, 30 Oct 2025 02:34:34 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cxbVL4CqzzHnGdq;
-	Wed, 29 Oct 2025 18:33:46 +0000 (UTC)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 95B22140276;
-	Thu, 30 Oct 2025 02:34:39 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
- 2025 18:34:38 +0000
-Date: Wed, 29 Oct 2025 18:34:37 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
-	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
-	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
-	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
-	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 07/12] coco: host: arm64: Add helper to stop
- and tear down an RMM pdev
-Message-ID: <20251029183437.0000661f@huawei.com>
-In-Reply-To: <20251027095602.1154418-8-aneesh.kumar@kernel.org>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
-	<20251027095602.1154418-8-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761762926; c=relaxed/simple;
+	bh=YqYFEM6sU+bVnLh0MCyQQXAhE49af6qZDocNaiAryLs=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=uhb6Afr5e8d8Zgl0uSdC8aI1OpamiV8wXTJ2cJOaXUD+OJ99wOPLlJT7nelO5QR0AQyCEcHWqyZRmwPnjM87IUkKLnskKzWIlegqe9uVj20PvNZhxaOTzDCmVSIWcgqiKaG0ySwPZvToSEt/EbmbbPZm0PcOrsABgaLxCh7lgAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rQZ78YJs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED39C4CEF7;
+	Wed, 29 Oct 2025 18:35:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761762926;
+	bh=YqYFEM6sU+bVnLh0MCyQQXAhE49af6qZDocNaiAryLs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rQZ78YJs5MlhgbzYsiaS2cNk0NCgJHmzItXQs1WX9ETnrSyeo/Sau0O70UAzqbeM+
+	 8Op8DQgYZAFpB4iNEGHvkrFcxM//+aA3AjAl2tpvHoSm3XyY3XFD+eQTA2sdxzVFo1
+	 wBLzaqCKSBF8p86qXaLqBuRx+5TZfGoI4mjAlBceKenqN2l0fBGcZgKgB21V/CZHsR
+	 RgYD60X6tnszok9quI71YoPH7FTIynYbYRcut6Hym6quTmRuTYRctEJqVulhl5K0jU
+	 Fg53sJgXxVxQ0qo3fXlQDXkCzrWmA/a+YTukCQRcfpP55H3As8gSoe5QgkOqndJ9nH
+	 2J0MMvtHVoqGw==
+Date: Wed, 29 Oct 2025 08:35:25 -1000
+Message-ID: <33d319a7063f59638ae1be709f4e10e9@kernel.org>
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.19] sched_ext/tools: Restore backward compat with v6.12 kernels
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Mon, 27 Oct 2025 15:25:57 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+Commit 111a79800aed ("tools/sched_ext: Strip compatibility macros for
+cgroup and dispatch APIs") removed the compat layer for v6.12-v6.13 kfunc
+renaming, but v6.12 is the current LTS kernel and will remain supported
+through 2026. Restore backward compatibility so schedulers built with v6.19+
+headers can run on v6.12 kernels.
 
-Repeat the main bit of the title here.
+The restored compat differs from the original in two ways:
 
-> - describe the RMI_PDEV_STOP/RMI_PDEV_DESTROY SMC IDs and provide
->   wrappers in rmi_cmds.h
-> - implement pdev_stop_and_destroy() so the host driver stops the pdev,
->   waits for it to reach RMI_PDEV_STOPPED, destroys it, frees auxiliary
->   granules, and drops the delegated page
-> 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+1. Uses ___new/___old suffixes instead of ___compat for clarity. The new
+   macros check for v6.13+ names (scx_bpf_dsq_move*), fall back to v6.12
+   names (scx_bpf_dispatch_from_dsq*, scx_bpf_consume), then return safe
+   no-ops for missing symbols.
 
+2. Integrates with the args-struct-packing changes added in c0d630ba347c
+   ("sched_ext: Wrap kfunc args in struct to prepare for aux__prog").
+   scx_bpf_dsq_insert_vtime() now tries __scx_bpf_dsq_insert_vtime (args
+   struct), then scx_bpf_dsq_insert_vtime___compat (v6.13-v6.18), then
+   scx_bpf_dispatch_vtime___compat (pre-v6.13).
 
+Forward compatibility is not restored - binaries built against v6.13 or
+earlier headers won't run on v6.19+ kernels, as the old kfunc names are not
+exported. This is acceptable since the priority is new binaries running on
+older kernels.
+
+Also add missing compat checks for ops.cgroup_set_bandwidth() (added v6.17)
+and ops.cgroup_set_idle() (added v6.19). These need to be NULLed out in
+userspace on older kernels.
+
+Reported-by: Andrea Righi <arighi@nvidia.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+ tools/sched_ext/include/scx/common.bpf.h |    6 --
+ tools/sched_ext/include/scx/compat.bpf.h |   81 ++++++++++++++++++++++++++++++-
+ tools/sched_ext/include/scx/compat.h     |   14 +++++
+ 3 files changed, 93 insertions(+), 8 deletions(-)
+
+--- a/tools/sched_ext/include/scx/common.bpf.h
++++ b/tools/sched_ext/include/scx/common.bpf.h
+@@ -65,11 +65,6 @@ s32 __scx_bpf_select_cpu_and(struct task
+ bool __scx_bpf_dsq_insert_vtime(struct task_struct *p, struct scx_bpf_dsq_insert_vtime_args *args) __ksym __weak;
+ u32 scx_bpf_dispatch_nr_slots(void) __ksym;
+ void scx_bpf_dispatch_cancel(void) __ksym;
+-bool scx_bpf_dsq_move_to_local(u64 dsq_id) __ksym __weak;
+-void scx_bpf_dsq_move_set_slice(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
+-void scx_bpf_dsq_move_set_vtime(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
+-bool scx_bpf_dsq_move(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
+-bool scx_bpf_dsq_move_vtime(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
+ void scx_bpf_kick_cpu(s32 cpu, u64 flags) __ksym;
+ s32 scx_bpf_dsq_nr_queued(u64 dsq_id) __ksym;
+ void scx_bpf_destroy_dsq(u64 dsq_id) __ksym;
+@@ -104,7 +99,6 @@ s32 scx_bpf_task_cpu(const struct task_s
+ struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+ struct rq *scx_bpf_locked_rq(void) __ksym;
+ struct task_struct *scx_bpf_cpu_curr(s32 cpu) __ksym __weak;
+-struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
+ u64 scx_bpf_now(void) __ksym __weak;
+ void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
+ 
+--- a/tools/sched_ext/include/scx/compat.bpf.h
++++ b/tools/sched_ext/include/scx/compat.bpf.h
+@@ -15,6 +15,68 @@
+ 	__ret;									\
+ })
+ 
++/* v6.12: 819513666966 ("sched_ext: Add cgroup support") */
++struct cgroup *scx_bpf_task_cgroup___new(struct task_struct *p) __ksym __weak;
++
++#define scx_bpf_task_cgroup(p)							\
++	(bpf_ksym_exists(scx_bpf_task_cgroup___new) ?				\
++	 scx_bpf_task_cgroup___new((p)) : NULL)
++
++/*
++ * v6.13: The verb `dispatch` was too overloaded and confusing. kfuncs are
++ * renamed to unload the verb.
++ *
++ * Build error is triggered if old names are used. New binaries work with both
++ * new and old names. The compat macros will be removed on v6.15 release.
++ *
++ * scx_bpf_dispatch_from_dsq() and friends were added during v6.12 by
++ * 4c30f5ce4f7a ("sched_ext: Implement scx_bpf_dispatch[_vtime]_from_dsq()").
++ */
++bool scx_bpf_dsq_move_to_local___new(u64 dsq_id) __ksym __weak;
++void scx_bpf_dsq_move_set_slice___new(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
++void scx_bpf_dsq_move_set_vtime___new(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
++bool scx_bpf_dsq_move___new(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
++bool scx_bpf_dsq_move_vtime___new(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
++
++bool scx_bpf_consume___old(u64 dsq_id) __ksym __weak;
++void scx_bpf_dispatch_from_dsq_set_slice___old(struct bpf_iter_scx_dsq *it__iter, u64 slice) __ksym __weak;
++void scx_bpf_dispatch_from_dsq_set_vtime___old(struct bpf_iter_scx_dsq *it__iter, u64 vtime) __ksym __weak;
++bool scx_bpf_dispatch_from_dsq___old(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
++bool scx_bpf_dispatch_vtime_from_dsq___old(struct bpf_iter_scx_dsq *it__iter, struct task_struct *p, u64 dsq_id, u64 enq_flags) __ksym __weak;
++
++#define scx_bpf_dsq_move_to_local(dsq_id)					\
++	(bpf_ksym_exists(scx_bpf_dsq_move_to_local___new) ?			\
++	 scx_bpf_dsq_move_to_local___new((dsq_id)) :				\
++	 scx_bpf_consume___old((dsq_id)))
++
++#define scx_bpf_dsq_move_set_slice(it__iter, slice)				\
++	(bpf_ksym_exists(scx_bpf_dsq_move_set_slice___new) ?			\
++	 scx_bpf_dsq_move_set_slice___new((it__iter), (slice)) :		\
++	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_slice___old) ?		\
++	  scx_bpf_dispatch_from_dsq_set_slice___old((it__iter), (slice)) :	\
++	  (void)0))
++
++#define scx_bpf_dsq_move_set_vtime(it__iter, vtime)				\
++	(bpf_ksym_exists(scx_bpf_dsq_move_set_vtime___new) ?			\
++	 scx_bpf_dsq_move_set_vtime___new((it__iter), (vtime)) :		\
++	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq_set_vtime___old) ?		\
++	  scx_bpf_dispatch_from_dsq_set_vtime___old((it__iter), (vtime)) :	\
++	  (void)0))
++
++#define scx_bpf_dsq_move(it__iter, p, dsq_id, enq_flags)			\
++	(bpf_ksym_exists(scx_bpf_dsq_move___new) ?				\
++	 scx_bpf_dsq_move___new((it__iter), (p), (dsq_id), (enq_flags)) :	\
++	 (bpf_ksym_exists(scx_bpf_dispatch_from_dsq___old) ?			\
++	  scx_bpf_dispatch_from_dsq___old((it__iter), (p), (dsq_id), (enq_flags)) : \
++	  false))
++
++#define scx_bpf_dsq_move_vtime(it__iter, p, dsq_id, enq_flags)			\
++	(bpf_ksym_exists(scx_bpf_dsq_move_vtime___new) ?			\
++	 scx_bpf_dsq_move_vtime___new((it__iter), (p), (dsq_id), (enq_flags)) : \
++	 (bpf_ksym_exists(scx_bpf_dispatch_vtime_from_dsq___old) ?		\
++	  scx_bpf_dispatch_vtime_from_dsq___old((it__iter), (p), (dsq_id), (enq_flags)) : \
++	  false))
++
+ /*
+  * v6.15: 950ad93df2fc ("bpf: add kfunc for populating cpumask bits")
+  *
+@@ -166,12 +228,16 @@ static inline struct task_struct *__COMP
+  * replaced with variants that pack scalar arguments in a struct. Wrappers are
+  * provided to maintain source compatibility.
+  *
++ * v6.13: scx_bpf_dsq_insert_vtime() renaming is also handled here. See the
++ * block on dispatch renaming above for more details.
++ *
+  * The kernel will carry the compat variants until v6.23 to maintain binary
+  * compatibility. After v6.23 release, remove the compat handling and move the
+  * wrappers to common.bpf.h.
+  */
+ s32 scx_bpf_select_cpu_and___compat(struct task_struct *p, s32 prev_cpu, u64 wake_flags,
+ 				    const struct cpumask *cpus_allowed, u64 flags) __ksym __weak;
++void scx_bpf_dispatch_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
+ void scx_bpf_dsq_insert_vtime___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 vtime, u64 enq_flags) __ksym __weak;
+ 
+ /**
+@@ -227,10 +293,14 @@ scx_bpf_dsq_insert_vtime(struct task_str
+ 		};
+ 
+ 		return __scx_bpf_dsq_insert_vtime(p, &args);
+-	} else {
++	} else if (bpf_ksym_exists(scx_bpf_dsq_insert_vtime___compat)) {
+ 		scx_bpf_dsq_insert_vtime___compat(p, dsq_id, slice, vtime,
+ 						  enq_flags);
+ 		return true;
++	} else {
++		scx_bpf_dispatch_vtime___compat(p, dsq_id, slice, vtime,
++						enq_flags);
++		return true;
+ 	}
+ }
+ 
+@@ -239,18 +309,25 @@ scx_bpf_dsq_insert_vtime(struct task_str
+  * scx_bpf_dsq_insert() decl to common.bpf.h and drop compat helper after v6.22.
+  * The extra ___compat suffix is to work around libbpf not ignoring __SUFFIX on
+  * kernel side. The entire suffix can be dropped later.
++ *
++ * v6.13: scx_bpf_dsq_insert() renaming is also handled here. See the block on
++ * dispatch renaming above for more details.
+  */
+ bool scx_bpf_dsq_insert___v2___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+ void scx_bpf_dsq_insert___v1(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
++void scx_bpf_dispatch___compat(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags) __ksym __weak;
+ 
+ static inline bool
+ scx_bpf_dsq_insert(struct task_struct *p, u64 dsq_id, u64 slice, u64 enq_flags)
+ {
+ 	if (bpf_ksym_exists(scx_bpf_dsq_insert___v2___compat)) {
+ 		return scx_bpf_dsq_insert___v2___compat(p, dsq_id, slice, enq_flags);
+-	} else {
++	} else if (bpf_ksym_exists(scx_bpf_dsq_insert___v1)) {
+ 		scx_bpf_dsq_insert___v1(p, dsq_id, slice, enq_flags);
+ 		return true;
++	} else {
++		scx_bpf_dispatch___compat(p, dsq_id, slice, enq_flags);
++		return true;
+ 	}
+ }
+ 
+--- a/tools/sched_ext/include/scx/compat.h
++++ b/tools/sched_ext/include/scx/compat.h
+@@ -151,6 +151,10 @@ static inline long scx_hotplug_seq(void)
+  *
+  * ec7e3b0463e1 ("implement-ops") in https://github.com/sched-ext/sched_ext is
+  * the current minimum required kernel version.
++ *
++ * COMPAT:
++ * - v6.17: ops.cgroup_set_bandwidth()
++ * - v6.19: ops.cgroup_set_idle()
+  */
+ #define SCX_OPS_OPEN(__ops_name, __scx_name) ({					\
+ 	struct __scx_name *__skel;						\
+@@ -162,6 +166,16 @@ static inline long scx_hotplug_seq(void)
+ 	SCX_BUG_ON(!__skel, "Could not open " #__scx_name);			\
+ 	__skel->struct_ops.__ops_name->hotplug_seq = scx_hotplug_seq();		\
+ 	SCX_ENUM_INIT(__skel);							\
++	if (__skel->struct_ops.__ops_name->cgroup_set_bandwidth &&		\
++	    !__COMPAT_struct_has_field("sched_ext_ops", "cgroup_set_bandwidth")) { \
++		fprintf(stderr, "WARNING: kernel doesn't support ops.cgroup_set_bandwidth()\n"); \
++		__skel->struct_ops.__ops_name->cgroup_set_bandwidth = NULL;	\
++	}									\
++	if (__skel->struct_ops.__ops_name->cgroup_set_idle &&			\
++	    !__COMPAT_struct_has_field("sched_ext_ops", "cgroup_set_idle")) { \
++		fprintf(stderr, "WARNING: kernel doesn't support ops.cgroup_set_idle()\n"); \
++		__skel->struct_ops.__ops_name->cgroup_set_idle = NULL;	\
++	}									\
+ 	__skel; 								\
+ })
+ 
 
