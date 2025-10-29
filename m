@@ -1,126 +1,134 @@
-Return-Path: <linux-kernel+bounces-876497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85EFC1BABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:31:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB74C1BB10
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7FB9E5A5AEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640726463BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E4D2EDD50;
-	Wed, 29 Oct 2025 15:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B422F7466;
+	Wed, 29 Oct 2025 15:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGlaV1NL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="juJXgbCr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9485C2EC0B5;
-	Wed, 29 Oct 2025 15:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1ED238171;
+	Wed, 29 Oct 2025 15:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751189; cv=none; b=bdExmnuSqgJE3LDhjJuSBt3U/AtIE2NYTxirveunrS8Gp3zhJ4sSWjLDAfIoHaxe8YoYBUbIyiuYu4BHwP0hFBjgh1N3tdckiO6t3Ld+rmbZ8ycDuSeiJZfHekcXWUkiKBChBFfPw8bOB7NBz9XmvKgbEvalsYiktygn7zGlJ6I=
+	t=1761751231; cv=none; b=lbuzP+YUU2tFVYKSQdZzLAmTKY7+pNiw2A1ydKqNwVGAFd/2/Q0ATUTJt4HK2DPmng5XEH2Z9ZC7KLsY4iso9RdQHHyzCXlnN+uAcZCSnloGD42hX6jl/GKlS6V9NvUpjtEPeO8PEVfZNCUb64Hw9XNbPp5E5FT5cfqVo1ucv6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751189; c=relaxed/simple;
-	bh=qbQeMVbo3l/1GuPlXKkSxZu63+LRj3CaWonnsm1omOI=;
+	s=arc-20240116; t=1761751231; c=relaxed/simple;
+	bh=7OWp2ScUfhqZU9A50Wt+cYv1ErJkgPklB83W1yD4iF8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh+B06jMwwe2ciduXW85azqVDxJX1WFwypan9zkJXMgzkuKZnYcBPuxmoESe+bbFO589JDa9fOximm0tcwr6T0n7PUS4Sw+YSwkrZ7QGdlBLbMLk0Q5NQid5DanR/KOgYBXjanZ26iTelk/finVFe2p1bmBro1JJcdpdGdWk3fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGlaV1NL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27021C4CEF7;
-	Wed, 29 Oct 2025 15:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761751188;
-	bh=qbQeMVbo3l/1GuPlXKkSxZu63+LRj3CaWonnsm1omOI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WGlaV1NLoi8Trlg7yWiQ4wTETMtoEv8SYUn51u6cYoJZDz1zsKrhloR22pgobKrtL
-	 gZme/C19Cq/w9BkaBXGaAhYFqPphMZEox3vaLKF/hKQGrj4C7ktY+hd8iTjBNJWQ8U
-	 ak4QYOswrIHVC7pytc+ndXaQFAEwMC1IZhPkQb4MlD6/yerKL8saSrBcz2K6QIBpG2
-	 yd6Qxr0fqSIldgKyCk7PlcKquqckQ1AqLRnJDekHy8IDrnxAAcfXnqzaBg2yyt5KYa
-	 nw6r6bx6jLEVJYKq8PfrrYB31z6oaeIvZv3nHtF/Y+oQXsGMMwgyqBtBJSCMTSF85x
-	 CXeoVFZdWVrdA==
-Date: Wed, 29 Oct 2025 08:19:47 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=D7UtVP1sbIRJnqO+gZk1QgftfZEKBrLer8KkEKE9q68RIPFr18R6CloOqQAJ1HrYdYdm02efMIYIE575NlFwLbwuj5CrYINLzGWuNqZLxrv7Ugw6wVzrX4+0I6iHhiC1kKxNggkjv0cZkf13bLFJaAiwQ/kxk/uWEDS/c8SiVCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=juJXgbCr; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761751230; x=1793287230;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=7OWp2ScUfhqZU9A50Wt+cYv1ErJkgPklB83W1yD4iF8=;
+  b=juJXgbCriOtK/ST0MNjcITR6Cp7gpQ0WPmifVaEIZ2FL/r9We8HVDbL1
+   8DW4xtfvemFW7CLcwjwHvb7zy8pnbkAt/Tf+MSdDl7TS0KN4iRB6TgpKP
+   kN6AuIH1zj3lyrqzAN2RGDu2bW8+wG4/1Gpow5PvgPlYzUc9n4MCtABzc
+   wC2nzLKtqvnL1SacDbBCKYXIF2wH9iKIiUK25phkf1GA17m4AfWZBR3k3
+   EHw/qVYHAGxvvh7ZEaJwjDOn2kLfH/8KT48KOC6fhRycA4kuBO0a8yeuR
+   ZPhWjRYePtllDpBuVmKImxUpfv5MCfrTHSH64Bh6BeY2LLTePMu3jylvq
+   Q==;
+X-CSE-ConnectionGUID: E4QTq+vnT1mGe8vtNhhlCw==
+X-CSE-MsgGUID: hs6zWDhRQuiBiczQnBTy1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64025882"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="64025882"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:20:30 -0700
+X-CSE-ConnectionGUID: lpbA3I83RZCijO/yTOTvwA==
+X-CSE-MsgGUID: eIGWGTVoQSOrBFIKrbjnuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="189759224"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:20:22 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vE7yF-00000003eP3-38Lg;
+	Wed, 29 Oct 2025 17:20:19 +0200
+Date: Wed, 29 Oct 2025 17:20:19 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
-Message-ID: <20251029151947.GM6174@frogsfrogsfrogs>
-References: <20251023093251.54146-1-kirill@shutemov.name>
- <20251023093251.54146-3-kirill@shutemov.name>
- <9c7ae4c5-cc63-f11f-c5b0-5d539df153e1@google.com>
- <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
- <eaa8023f-f3e1-239d-a020-52f50df873e7@google.com>
- <xsjoxeleyacvqxmxmrw6dxzvo7ilfo7uuvlyli5kohfy4ay6uh@hsrz5jtkgpzp>
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 01/10] string: provide strends()
+Message-ID: <aQIws1zwi96r4bUQ@smile.fi.intel.com>
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
+ <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org>
+ <aQH9gE_fB119CW3l@smile.fi.intel.com>
+ <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <xsjoxeleyacvqxmxmrw6dxzvo7ilfo7uuvlyli5kohfy4ay6uh@hsrz5jtkgpzp>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Wed, Oct 29, 2025 at 10:21:53AM +0000, Kiryl Shutsemau wrote:
-> On Wed, Oct 29, 2025 at 02:12:48AM -0700, Hugh Dickins wrote:
-> > On Mon, 27 Oct 2025, Kiryl Shutsemau wrote:
-> > > On Mon, Oct 27, 2025 at 03:10:29AM -0700, Hugh Dickins wrote:
-> > ...
-> > > 
-> > > > Aside from shmem/tmpfs, it does seem to me that this patch is
-> > > > doing more work than it needs to (but how many lines of source
-> > > > do we want to add to avoid doing work in the failed split case?):
-> > > > 
-> > > > The intent is to enable SIGBUS beyond EOF: but the changes are
-> > > > being applied unnecessarily to hole-punch in addition to truncation.
-> > > 
-> > > I am not sure much it should apply to hole-punch. Filesystem folks talk
-> > > about writing to a folio beyond round_up(i_size, PAGE_SIZE) being
-> > > problematic for correctness. I have no clue if the same applies to
-> > > writing to hole-punched parts of the folio.
-> > > 
-> > > Dave, any comments?
-> > > 
-> > > Hm. But if it is problematic it has be caught on fault. We don't do
-> > > this. It will be silently mapped.
-> > 
-> > There are strict rules about what happens beyond i_size, hence this
-> > patch.  But hole-punch has no persistent "i_size" to define it, and
-> > silently remapping in a fresh zeroed page is the correct behaviour.
+On Wed, Oct 29, 2025 at 01:36:55PM +0100, Bartosz Golaszewski wrote:
+> On Wed, Oct 29, 2025 at 12:42 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Wed, Oct 29, 2025 at 12:20:37PM +0100, Bartosz Golaszewski wrote:
+
+...
+
+> > Can you rather re-use strcmp_suffix() from drivers/of/property.c?
 > 
-> I missed that we seems to be issuing vm_ops->page_mkwrite() on remaping
-> the page, so it is not completely silent for filesystem and can do its
-> thing to re-allocate metadata (or whatever) after hole-punch.
-> 
-> So, I see unmap on punch-hole being justified.
+> I think that strends() and its boolean return value are a bit more
+> intuitive to use than strcmp_suffix() and its integer return value,
+> the meaning of which you typically have to look-up to figure out. If
+> there are no objections, I'd like to keep it and - when it's upstream
+> - convert property.c to using it instead. Also: the name
+> strcmp_suffix() could use some improvement, seeing how I wasn't able
+> to find it, even though I looked hard across the kernel source, while
+> I easily stumbled upon a similar implementation of strends() already
+> existing in dtc sources.
 
-Most hole punching implementations in filesystems will take i_rwsem and
-mmap_invalidate lock, flush the range to disk and unmap the pagecache
-for all the fsblocks around that range, and only then update the file
-space mappings.  If the unmap fails because a PMD couldn't be split,
-then we'll just return that error to userspace and they can decide what
-to do when fallocate() fails.
+I fine as long as the replacement (deduplication) change is provided.
 
---D
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> -- 
->   Kiryl Shutsemau / Kirill A. Shutemov
-> 
+
 
