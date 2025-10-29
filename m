@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-876051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6662BC1A83D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:07:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19043C1A870
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9ED41A21310
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:01:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A4D78561C38
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A1F32570E;
-	Wed, 29 Oct 2025 12:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872063271F1;
+	Wed, 29 Oct 2025 12:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="c9N0ESm+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RZKycbMe"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0400E325707;
-	Wed, 29 Oct 2025 12:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E053271E1
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761741825; cv=none; b=pDZbDyU6+UBARPaNgc8iSYs3yG2OMR8wSwjau5qf0OR4cTa/7BrAwpBUFalu8tHyOO9hKwfH+WiBTEKev7biKTgCOgQwQsd7PB0mh3IzSLWMS9vZ7cOnxH4ZNoaxh5P06rtUXaYEdvkn0elB4UhVtUqaTenNzJqaQy9lGbgspKw=
+	t=1761741906; cv=none; b=PWkX9SSEdJlES9NfWvLZyK+/gqkQgTum/287QcC2cFtl6WfGdMujkyamlfYMBDqB2NHGoJ6FcwSjmqEZdr/Zo8Riznj4B+ifJCSZyz3BWxeOPj1cCracebFyOwme9JCGG4N73Q4TmA6nTBUa5y6IRkzWWzwcTNT5sJrvmhe5GWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761741825; c=relaxed/simple;
-	bh=xjTYlHSWXTWoCijJGLjK9QiJe5bufWepStum4iDnqh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpP7gEtD9vmhC6fExSJ2CVp6X7PvdQmwyFbGyidMl2Gkr+ek4DaHw2T5n+IsWRxWH4B9J2q5L4TlJx9ei+vxZyYZH3fKxypEO3b6rn26yoUYHiPvXL4vXITFe6bQEWEKAEnojQKJIWtNBtMBwrKWaYhaWIKF+wZFB+VY+twNzr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=c9N0ESm+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=VlAt1oZk8nm2vtQPIGdWXb+UoZtSzZo8u38Fv13CbRE=; b=c9N0ESm+76Fatt5yai+/2552dG
-	BP1NG9QFVNEDsWdabe9uoX0LGUBig3WbZApaoqlcQajcGCy14/JLg7R1iD8jnSYxs1JOzpSyQUQjh
-	HXeon1P8u/frEGf1nZDs17xKLRzPdRQIlVUOViUV2IzCOJzkdm1rulGMbgi4FgXL4QCw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vE5WW-00CP3n-G5; Wed, 29 Oct 2025 13:43:32 +0100
-Date: Wed, 29 Oct 2025 13:43:32 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Buday Csaba <buday.csaba@prolan.hu>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 0/4] net: mdio: implement optional PHY reset
- before MDIO access
-Message-ID: <23c1bed1-3f95-48b9-8ff0-71696bdcd62b@lunn.ch>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
+	s=arc-20240116; t=1761741906; c=relaxed/simple;
+	bh=Lis8XgSRnA5YJBARphY+01JX7JiGiM3xwyWmHXnsc2M=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=FIla0Cd5iXd4creTePeLvEsa30mTxFI0pkDKinnR5wAeda8QL+QrFVvXRMdvtEMxHq8KO6m1Do3PWGY+xoANHdS+wJbErT0Qhccab2aO+hEfJqeEHklyThxSrPK7sY1xuQWBxhiAHn5X/W9SgL5Yx4wQRzeDVdPKZcLeY6NOdHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RZKycbMe; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4298da9effcso5039526f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761741902; x=1762346702; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H9cuzKWbb4KNIohtS4TrqwKkjylaSR6bB/ye8dvPygA=;
+        b=RZKycbMe3C+Kh9HpXsB4fVWevZ/7JW6+SiqRzzH/rg/bNezYJomocEzcib1HS+RwLn
+         CVmCFkRer0fjN4vSsZ466D+LsQNo+hIaVsC0faj+O/m3w3DGl/1hSNEVi/BEgUyWu4jk
+         c1phhCfFYLmzidKxDPmOGawLhtY79iLRlKhjBwnyrPasH7i1z71G49JCBGVYb5dmeBP7
+         Y1GHydTnNjiZn99is49dCz2pHL1uaesbICRK0WZppFClxast0sAiknLafL72rIZEJryT
+         Pf3c3aw5VA5AefIuGxlBfhra8BAWHUaUmyCHMX2Laa04JXXV+qQh5S99HFfeqnlszc/i
+         l8Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761741902; x=1762346702;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H9cuzKWbb4KNIohtS4TrqwKkjylaSR6bB/ye8dvPygA=;
+        b=JwtrDiuxxMEM56MfrmiGwY8a2dpxaPbXdQ99Q1uPKVaRo+ERYqZll795EeKz+c5Ute
+         pv5v+LWmwz2YLAS0pcyLv99CbabUlQt6Nf2QExBb0SCGGJhzvfjFXaPxt7A+WCN0bdGF
+         DZiG32CO9iLR1+6pmnYvEbNdDlvkuTi24r0W6R2JHMlTiYjMBIB83HOnjBZWLqza43N8
+         k8ImQkK1IH/56dsdwynvv0w1qhN+haj3LgeNlfkko3Mrgk8se21F1EYeQBiqqb0pp84w
+         7FDt9M0l6d8dk3ugk1vO1OKBc1Gnv1yPyO50pGqnTZUwVtJ+5aqtTODs9dvYqLDkjiEE
+         nYEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjyI2G02hlJY41uGet5v4Rl03DJg6KDpD7E3L7ztEqz+uEZVulExh9DA0k/YrHYSO/6DW4qmiWyAF/2ro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNCwkMpEHS3maMBe3J3p5mdTnqijwYmtVjph7Mw96Xr9cLsTNl
+	/CYxf+jBerpNa00oSIoaw6q7f/imPi+RTa09TdGzyvr2snzZ3DyQzKKXSUsFK1ObNT6norsnqlD
+	N9gLxIX78OfPiTmb7sw==
+X-Google-Smtp-Source: AGHT+IF6tS2K+sHdcmYL2m3Gzf5P+hOD9oht3waH8CGyonRKx29wIX6mnYWr9P3YR2G4rkduuBWQ0BGNCYQ/n6g=
+X-Received: from wmbgx3.prod.google.com ([2002:a05:600c:8583:b0:475:dca0:4de3])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:820c:b0:477:e70:592b with SMTP id 5b1f17b1804b1-4771e16e792mr30523355e9.2.1761741902165;
+ Wed, 29 Oct 2025 05:45:02 -0700 (PDT)
+Date: Wed, 29 Oct 2025 12:45:01 +0000
+In-Reply-To: <20251029073344.349341-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1761732347.git.buday.csaba@prolan.hu>
+Mime-Version: 1.0
+References: <20251029073344.349341-1-ojeda@kernel.org>
+Message-ID: <aQIMTQZK49B1FbTA@google.com>
+Subject: Re: [PATCH] rust: condvar: fix broken intra-doc link
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 29, 2025 at 11:23:40AM +0100, Buday Csaba wrote:
-> Some Ethernet PHY devices require a hard reset before any MDIO access can
-> be safely performed. This includes the auto-detection of the PHY ID, which
-> is necessary to bind the correct driver to the device.
+On Wed, Oct 29, 2025 at 08:33:44AM +0100, Miguel Ojeda wrote:
+> The future move of pin-init to `syn` uncovers the following broken
+> intra-doc link:
+> 
+>     error: unresolved link to `crate::pin_init`
+>       --> rust/kernel/sync/condvar.rs:39:40
+>        |
+>     39 | /// instances is with the [`pin_init`](crate::pin_init!) and [`new_condvar`] macros.
+>        |                                        ^^^^^^^^^^^^^^^^ no item named `pin_init` in module `kernel`
+>        |
+>        = note: `-D rustdoc::broken-intra-doc-links` implied by `-D warnings`
+>        = help: to override `-D warnings` add `#[allow(rustdoc::broken_intra_doc_links)]`
+> 
+> Currently, when rendered, the link points to a literal `crate::pin_init!`
+> URL.
+> 
+> Thus fix it.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 129e97be8e28 ("rust: pin-init: fix documentation links")
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-nitpicking a bit, but this last part is not strictly correct. You can
-also bind the correct driver to the PHY using a compatible. So it is
-not 'necessary'. It is maybe the preferred way to do it, although the
-DT Maintainers my disagree and say compatible is the preferred way.
-
-> The kernel currently does not provide a way to assert the reset before
-> reading the ID, making these devices usable only when the ID is hardcoded
-> in the Device Tree 'compatible' string.
-
-Which is what you say here.
-
-> (One notable exception is the FEC driver and its now deprecated
-> `phy-reset-gpios` property).
-
-> This patchset implements an optional reset before reading of the PHY ID
-> register, allowing such PHYs to be used with auto-detected ID. The reset
-> is only asserted when the current logic fails to detect the ID, ensuring
-> compatibility with existing systems.
-
-O.K, that is new.
-
-One of the arguments raised against making this more complex is that
-next somebody will want to add clock support. And should that be
-enabled before or after the reset? And then regulators, and what order
-should that be done in? The core cannot answer these questions, only
-the driver can. The compatible should be used to get the driver loaded
-and then it can enable these resources in the correct order.
-
-I will look at the patches anyway.
-
-  Andrew
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
