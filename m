@@ -1,111 +1,147 @@
-Return-Path: <linux-kernel+bounces-877286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA02BC1DAF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:23:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DBEC1DAF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:25:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABB144E12E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:23:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0951897DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D4930F804;
-	Wed, 29 Oct 2025 23:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9E930C378;
+	Wed, 29 Oct 2025 23:25:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2objD2q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PMbAGOsR"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E02F2DCBFB;
-	Wed, 29 Oct 2025 23:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A63309EF8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761780205; cv=none; b=gOperVMqtwQZTHHnn+Cz+tnadOOFbyGSHD6N3xd0UoELdf4DIVajiHqOBPJM3SSNwvdEoZq3/2+bbbZJ1G39tiNUw+agmJfeaf2xyR8EGJp7lyN4L5ezoYummd0ODq9Wn036kuPrIdHJdg6+LIzWjW9HLj1aZFhuGnUi72i3dg4=
+	t=1761780320; cv=none; b=f77G5NvL86lkPxQz/tu/a6TbRo8UrV5UhSFKHqwYAuvcOtSdTyLlo2Uphy89liruVB4hV5hu5Gs1zvnm+bZ3xJMlw70NcbVt14U4LG+ME0shWE1Af1sjgxTCgrlEUZ0uM0tqn3o+PfyHdhfVcuxHtMHusMtUZ2VFmdkFYjwfgnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761780205; c=relaxed/simple;
-	bh=c/sTjrq+R9ZaCsBuwnVAqRM5QZJaaojvFV/fjYuoNGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=VdtZCaETpQ/ERTLlFXfiB+nI6iBpxKF3fg9gG/j6j16Py1ESpZEQuiDwFXYq/8M+/NHRyup5v2jx4J1fwDMncMk2NExp/a9DTa1pdJwN0l1ILzzU3QXyp8pt3zgT3TugH3a400jlNziwWADsOBVWntEF3ztornUF02YmY/MQhMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2objD2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63756C4CEF7;
-	Wed, 29 Oct 2025 23:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761780204;
-	bh=c/sTjrq+R9ZaCsBuwnVAqRM5QZJaaojvFV/fjYuoNGs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=n2objD2qH1724Re0HCcuSPzk1/aNZVzfB4rKes83yRy/4rJohBGae/kHc+PLNJvjV
-	 QBTxxd59XiSacPcC9e9vKkErhlnbtauqS0N72jpQVM/VTIQbEF86KdpGEJYHZISUP6
-	 QISwHziNuIX/hA89l85FIfTqm1eWnehJzN1rzajfoPG7iX03hdyVfyBH52teHRldKR
-	 3CLD4dsQxbEJYCAP5ZRHxB0s26dczjgfbkc8nTvRX6bM4f26UEmZa/dMolb6gd5qGi
-	 fV1nyrJC/Yz/7LmuZaZHktINivzgbUlnPppJMuO6jWq2S6DNM1DvCn8k5jdM/8gcje
-	 JgPdL1iICbtxA==
-Date: Wed, 29 Oct 2025 18:23:23 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	chaitanya chundru <quic_krichai@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, quic_vbadigan@quicnic.com,
-	amitk@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, jorge.ramirez@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v7 0/8] PCI: Enable Power and configure the TC9563 PCIe
- switch
-Message-ID: <20251029232323.GA1602660@bhelgaas>
+	s=arc-20240116; t=1761780320; c=relaxed/simple;
+	bh=n5GkqOKzhAD8zOeLMH8ojG/+XoJtlxzlllPxY8XCgCk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bBkILh+6a1VC0w4sNGkcmDZ4iiYJo28sCIrE3T1VqF/Biv7SDADcpFrTxjP/UjLcfZGL/QMxovYy9++eFQ07VakOFFqN3d+4n+RU+A0o9dj6S+KtdCw+fte71NhYqwdjYA3tJDGpkDwzo1iiEFcfZFygbuIM9aljpNn3VrWJ948=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PMbAGOsR; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-b4539dddd99so106923666b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761780316; x=1762385116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A3epzZnxmPN8tHOsM2+QpxO5JfuLDi/llITGwEkkd/U=;
+        b=PMbAGOsR+O9DltqV2n+WyZgGfXVhSdo5ci5Oj1gvPikXX76q5p3f4ggeNATPSYjGKU
+         AneWmmttgas6H9M4D1OPhIkbi/6CLBT5qotHNaFFr+5tGMxJQMkp9kY4ebkSAe159HJ/
+         cUkAV5vhBdZZFW5bA/xBSWArHz3mUp2Lxgqzw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761780316; x=1762385116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A3epzZnxmPN8tHOsM2+QpxO5JfuLDi/llITGwEkkd/U=;
+        b=Rved4dHotTcDJD5WU6WJd5l/n1fnv6nqnHpc4nDunfr7GJO3vALd4SAxdlkfQd6iu0
+         I+cVHNDaAZSjQrtlUThyas/fRl4/S/ySgZeMxxnZW5tLuQq2wW/lYP/k+HSXFiwFYlmV
+         jiO+gQQdBrer/mvcZMapSvQCkI5apyByRTK9LB9LDIjRwhlM9wJOxawzyu/9q19zf34V
+         yCKasKvN+OnhDid+VLlmwcrqWWXeVs2UENBgrmtEaHbpy+82L2ei1XBjMjKjCHPi2SF2
+         HU/ivPKLyKXLLdorW/8jNcO7OKo6o5hC8aSu9T3oPCyaRYd5lh/8JpwwQtAJt7C3Iuk8
+         5+zQ==
+X-Gm-Message-State: AOJu0Ywt6XCob7HBLqRhR1MuJdH0DrlE6JOV9RZEZg0Z735R+1h+RkTb
+	i//+6qTbw5RxAiI0ADa5JJ1EjWcGD0iUybktovLHs/c3b06AClfb0cIDSw/dxPPrmI8yaNylaAP
+	lMz9k2Q==
+X-Gm-Gg: ASbGncvo35VXTTxjP1wuvx9NPt7QOZClhpv2Rb1rOyU6csElUM6NcHemPwt3nzm/6bX
+	NMvygq2ejTg7Dk9QquBnJfdZgFojNE4LfHAp59DqG9dXay+kkGkkT2zutVw0sviNQ8mXQ4DBizS
+	QrZySnphzhuPnqT3iso/3agUjf6ucPtPqYt5bvtDP1OJf/y8xkUoBz4lkfRzG8bvZnRxBIBoMl4
+	6LmkR14YD8i0zNYMd/70/mtu1v0t5zMrEpaxRsQdJtVmEYIranaNv6Ap6dqE0bFkqI8Ns2OM47Y
+	+jtGDxj/A/BZhgPeW2YSThlO7CCho7GtyGUv8IYgIBWpLpx1GQCSh5Tk/OFV3oMkiWo6DXQoMb0
+	pP6L31Sfz6TBF7dbdsxHoZXaonroL5rC4udOKb15hG09zX0JujjTMqtfSxVBkDcDkVMd5n0qlPF
+	2XiuhQsGru3PWEHbmBTax15ASnBMwu2+NR7bPZRwg=
+X-Google-Smtp-Source: AGHT+IHXF8kKw7D3OCxwQE7/cbN28d1okbGr7wJriebWc9vtCu4B3NN84eLIY7LHAdtu4srjXdoNQw==
+X-Received: by 2002:a17:907:7286:b0:b3a:7af8:c4a2 with SMTP id a640c23a62f3a-b703d2e2094mr528502566b.10.1761780315685;
+        Wed, 29 Oct 2025 16:25:15 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7058770e28sm36287566b.13.2025.10.29.16.25.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 16:25:14 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso89233566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:25:14 -0700 (PDT)
+X-Received: by 2002:a17:906:71cd:b0:b6d:505e:3d99 with SMTP id
+ a640c23a62f3a-b703d2e21eamr369434466b.12.1761780314255; Wed, 29 Oct 2025
+ 16:25:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-qps615_v4_1-v7-0-68426de5844a@oss.qualcomm.com>
+References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
+ <20251029081048.162374-3-ajye_huang@compal.corp-partner.google.com>
+In-Reply-To: <20251029081048.162374-3-ajye_huang@compal.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 29 Oct 2025 16:25:02 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WbR0u_a7S1pcL-6C+sj9Kt=GOLUwJmwt8ANJbyV4JYFQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bmyGhK2APErFjpEf3hMjvCxrILRsCTTYr0jINqS6mb0sq-aCKx063lDV7Y
+Message-ID: <CAD=FV=WbR0u_a7S1pcL-6C+sj9Kt=GOLUwJmwt8ANJbyV4JYFQ@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] drm/panel-edp: Modify LQ116M1JW10 panel's bpc to 6
+To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, jazhan@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 04:59:53PM +0530, Krishna Chaitanya Chundru wrote:
-> TC9563 is the PCIe switch which has one upstream and three downstream
-> ports. To one of the downstream ports ethernet MAC is connected as endpoint
-> device. Other two downstream ports are supposed to connect to external
-> device. One Host can connect to TC956x by upstream port.
-> 
-> TC9563 switch power is controlled by the GPIO's. After powering on
-> the switch will immediately participate in the link training. if the
-> host is also ready by that time PCIe link will established. 
-> 
-> The TC9563 needs to configured certain parameters like de-emphasis,
-> disable unused port etc before link is established.
-> 
-> As the controller starts link training before the probe of pwrctl driver,
-> the PCIe link may come up as soon as we power on the switch. Due to this
-> configuring the switch itself through i2c will not have any effect as
-> this configuration needs to done before link training. To avoid this
-> introduce two functions in pci_ops to start_link() & stop_link() which
-> will disable the link training if the PCIe link is not up yet.
-> 
-> This series depends on the https://lore.kernel.org/all/20250124101038.3871768-3-krishna.chundru@oss.qualcomm.com/
+Hi,
 
-What does this series apply to?  It doesn't apply cleanly to v6.18-rc1
-(the normal base for topic branches) or v6.18-rc3 or pci/next.
+On Wed, Oct 29, 2025 at 1:11=E2=80=AFAM Ajye Huang
+<ajye_huang@compal.corp-partner.google.com> wrote:
+>
+> The link training is failed when bpc value is 8.
+> It sure seems like the panel simply doesn't like 8bpp,
+> Changing the bpc to 6 allows link training to succeed.
+>
+> The 8bpc log shows that link training failed.
+> 6bpc
+> ----
+> rate_mhz: 1620
+> valid rates: 30
+> bit_rate_khz: 2399760, dp_rate_mhz: 1500, ti_sn_bridge_calc_min_dp_rate_i=
+dx return: 1
+>
+> 8bpc
+> ----
+> rate_mhz: 2160
+> valid rates: 30
+> bit_rate_khz: 3199680, dp_rate_mhz: 2000, ti_sn_bridge_calc_min_dp_rate_i=
+dx return: 2
+> Link training failed, link is off.
+> Disable the PLL if we failed.
 
-I tried first applying the patches from
-https://lore.kernel.org/all/20250124101038.3871768-3-krishna.chundru@oss.qualcomm.com/,
-but those don't apply to -rc1 or -rc3 either.
+Though I always appreciate details about the debugging that was done,
+I suspect that most people reading this won't really understand unless
+you give them the context that you are using the ti-sn65dsi86 bridge
+chip and that you are printing out values related to bridge training.
 
-Bjorn
+I would also note that, to me, the more important test was confirming
+that even when you pick the same "rate_mhz" for 6bpc and 8bpc that
+6bpc works and 8bpc doesn't work.
+
+
+> Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+> ---
+>  drivers/gpu/drm/panel/panel-edp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Unless folks end up preferring EDID_QUIRK_FORCE_6BPC:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
