@@ -1,190 +1,125 @@
-Return-Path: <linux-kernel+bounces-875784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16FF9C19D15
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:44:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FCB2C19D3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A6E1CC2FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561B61AA7DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1E3314D2;
-	Wed, 29 Oct 2025 10:27:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE17331A7E;
+	Wed, 29 Oct 2025 10:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Dg/ag7QC"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bg2j4d8B"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCC2E0418
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9424A253F07
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733656; cv=none; b=VnkCVX2DtCKZcyusMQ88m2shDwF4LUs2JM9juhsmUXDyHt+j034vxlD3FjeCxblSKdqdRdTLmoacKqkfwOhEGwkFSF3PHMFu3s/bn7iJgeheSucl/4mcoGepSoFxTm72whk3X0/C8KTpQtX2Frv1ZEu76/SC8SqXqR0BES2n6RE=
+	t=1761733807; cv=none; b=VVS7r6Pxt0JLHAXxDPYqKB7xmD5GLZTTyajAVfJ66CL2KJ3bsZ5b8Rl3ec3vrv1xikF7bZ6epCMTkB06HvtRKcWRs5jdN6i2XlVEQMaddBziKvb25ZZcHOioacbbx4tGs3kmgu34x7R1fHj1Hcul6BJeP/Ebe7dzMM89cgjaxUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733656; c=relaxed/simple;
-	bh=3wZ1AtNcLaqnW/LsJGF0b9O1btUD0rIr+5C9+r+Gpd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2hC35aztsjQYRAhwnJ7f/Fbou3yjWGedITV8CkaC7KATof5cf24o/OGld5jbSGdr7YZB3cInliDSZ1zhGGerP7NHMgCi57WYNhwIzmf3n2QCfulY8ytEgXM4Mn+p9BTRALZCmKzU8emYqRHeDXgo4DxshKrY/KNoPDizdAJ1ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Dg/ag7QC; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so41405e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:27:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761733651; x=1762338451; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=51XkTbr+6yxRjDoZdk3XOJ3OIVOjmWe3fG1xSTac55Y=;
-        b=Dg/ag7QCyXgAYsyxuSowEUiJaRhXjCxtWnRAB0n0bpxxAHetkiVdf8tGFCEBcQgf3i
-         Rx7JubFcTkOiKCtJSnMa53/eRBO/Y10iBumMn+qMZ+HqMR4TJawGLtcI5+GklYmy5ZGf
-         ZpnWMgWEbqiXqJqsKIaud9Tq/o6f3/+Gtv6nxyiNAuPMZ7Uz7aE7e+RjyabPGXnQDQ0E
-         rbNioREUFB6ITiVj+kecA8TaobqFAomQ9mb5zZtw2we9YN6rZlersTUFJMz6fIgFp1Un
-         gC+l11gLVdy1ZRzXT+jNpV6MVibtSDUEzbCqrOyw6qWQJKDztTGritgTV5KmLRQq3Ey9
-         HnXQ==
+	s=arc-20240116; t=1761733807; c=relaxed/simple;
+	bh=1xvw6jnS9dphQU0A+xYtPnJM0bu8KsBQ5+TFi+aJW9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fov5hSJkBB6l4ebkDTT49yv0GfLiUl69pilP/1fYs/k5bSvpldDTVMBcoVVw+2ZL+pM4zCMNiYOZ1olAvMUWloefSfl1HuX607MthireYl0hHbWSKyGDNbrL6xuf92HSzUB7jwYXx6sXc3kvRAOT2y+RuVJpwll5GVtuYsaD5o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bg2j4d8B; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761733800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xOr0TIPF44tJyJqYfe12OzLBv1F0AjLtcIhaWVvzF8I=;
+	b=bg2j4d8BwlIJ7hz2S7ZGWCDqje5f8Uylf5BHjCzcsFDW1PAXPIzDd3MXJp4yd1pRtzcqnQ
+	+lgEFW4YkSyRU0+vcJyONW1vhGNDQthRwGeTO/v2vD+BgfjFECX9/qZJSG6tjqb3VSvqbN
+	dwmAvj/vK6TGIFi2pOj7GlNIiRWSUZc=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199--kpaMqTvOKGeapelDXMIeQ-1; Wed, 29 Oct 2025 06:29:59 -0400
+X-MC-Unique: -kpaMqTvOKGeapelDXMIeQ-1
+X-Mimecast-MFC-AGG-ID: -kpaMqTvOKGeapelDXMIeQ_1761733797
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-333f8f1d00aso35876531fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:29:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761733651; x=1762338451;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=51XkTbr+6yxRjDoZdk3XOJ3OIVOjmWe3fG1xSTac55Y=;
-        b=A3dcZUqIg/TTBGScKvI0zMWT78r1gb5MCDoVgk5FGtOo4SSlkBZZTC4KMBDeFWyk0P
-         aUuvMFqFfx327sDMQC6wxQ0rPX691gyDX3X84EMPDGcPijijc8Jvpo/XWH/sj7MCuh5z
-         Ew9RUdMbg/x2vvENhwagg9r8AngniGe/vbiO/TXvaaGmURtCkHrwDpa3KfrPAezQsGCW
-         pVokfmII3hLqYa9BGQhC5tmMkHuRAxR5ZKCM0coqPTFE/GMC5D4Hns9W84qUkLhix+/K
-         yFygIWYvE7fJKA9kPaxCjqWL6Ks7+Ld1WqxXnwnJ6+EsNa+22WOya+is6QlxGeAoD07U
-         GW8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2vTVf1FcWyYWUwYUEiav6aPaV2LwUM4zAcFipI4xyADoqRgFFqyrhXfJRNOpPfgmOx4xsv34kDwx6pKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyvq+DGbKxXNGAjmWVKwU9XoxZHmlkvlgDZ85lDAYKRbW6OR5YZ
-	nTEwPvJdNV6841qu47J5EYiQ3yYd6u9yZ6+NmvsXSuSrb57v7tncvfdA4/N8bjMHyw==
-X-Gm-Gg: ASbGncubxDi4W9wECFcmsijb3QTHi9xGFXetei69nngtSCNsbBlJPuhTEq2FLGfq8xa
-	+s2aWOl3P8lZrXexuwjeaLFcbNkacggq/JdpT6zdSnOQNgnmiNmjpJ5o8oqGO6uKQauhkfD4TAF
-	cvKRRNMe3YwQqv3hJFOJS3kxRaHNl8EUnN06jKGdTCSoRLKFMQPJDAxGGqWnsA2m/5svdOLlYyG
-	PSKEYMug5mUz3zrQVu+L5MgrLXvfPceI938j8xVqKRVUBNrTSqVFAikNct/CEyucM9uDOGDGFmh
-	iIBjj1gzqHIg/9M7VAoPFFvQGWl4nUB38K7iSunlqsVVFl9m3RR0l+NmvqhL7O/PDFLJwIDAmtc
-	6XkWhwXcJdPvzWfo23c/wT6C+Meb44xCFYcEcD85RzLwsJZvvq++o1XsvCO0JahsLw9/T/djopZ
-	FxLbhiWPoGKTATmFeELodmxEeVKqxKDwsiOUeqEXIpU9t1WQPg3LSt3eyZig==
-X-Google-Smtp-Source: AGHT+IFpaQKCalYnjuLKmUHFSWvCchMH8++STvYUFO8XIcwGgMjADJ7NW+YIN5UXP+K6GoePivht9A==
-X-Received: by 2002:a05:600c:245:b0:45f:2e6d:c9ee with SMTP id 5b1f17b1804b1-47721016cc6mr823485e9.6.1761733651168;
-        Wed, 29 Oct 2025 03:27:31 -0700 (PDT)
-Received: from google.com (177.112.205.35.bc.googleusercontent.com. [35.205.112.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952b7a94sm30414651f8f.5.2025.10.29.03.27.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 03:27:30 -0700 (PDT)
-Date: Wed, 29 Oct 2025 10:27:27 +0000
-From: Sebastian Ene <sebastianene@google.com>
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, will@kernel.org,
-	catalin.marinas@arm.com, suzuki.poulose@arm.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, joey.gouly@arm.com, ayrton@google.com,
-	yuzenghui@huawei.com, qperret@google.com, kernel-team@android.com
-Subject: Re: [PATCH] KVM: arm64: Check the untrusted offset in FF-A memory
- share
-Message-ID: <aQHsD0MnZYSTDOf8@google.com>
-References: <20251017075710.2605118-1-sebastianene@google.com>
- <aPj2hTXbGUseUqhE@google.com>
+        d=1e100.net; s=20230601; t=1761733797; x=1762338597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xOr0TIPF44tJyJqYfe12OzLBv1F0AjLtcIhaWVvzF8I=;
+        b=p2futo27Uhuzl5MLwuFH4jw3kwEBoBUfTShaIYDyF5beKE1DLqYCM9Jl0Gb8niE0lV
+         TtjcH0MaQuvTDFD4Uzdy58r9GkmF6jdysmSlFkL4gOrZ3EwgpbS+fgy/DoAGKNML9x5R
+         rrHpNH0iL8P2pgoNszFXo1oQVrqTDDJdiXzOzjBJHUKL2qHO5IWRdrLA1LlIPFjShMKK
+         SQD7Ou7E7oXiPiDe8CjyVsqtUyTikEPuf6VxChEUKvfnMGPt51G5lyx3UpFHOBR1Lw1z
+         ok/HLCkpsz8yJUhpaxc02KY4vhAuZ6OSlR/5ALRXvND/2WZPPV4rQygQt0g/zv8X03TY
+         33Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeUfGCzYIVRCh5QIPYrAv0epiSe6JfF6wN3INyo3iWauKabcjAu8OqnFEE/xKfWnGaihaKSMNPFB07d1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnZVbv4VXCSESkxMkHSQ3KHn1TdsHcVanOggOnQRiES5PKe7Sb
+	IXsuP8iwsX27B8+2RQUxlXxe2kybTIrjvNpAtI9df6sCEY4UoNreD6EhWQp57OS+IXgnSa2dmzt
+	OM2IUyjiLq3n060TJ7cAqM0kEBSbRbAq/GJvY8khRJ4p6OTldXn9OukUFhwrvxRcrq/BkQOdrP2
+	3ENCOvtgsEco4xDqJ4OhF+YpOHJeVR4678LDJxQAFA
+X-Gm-Gg: ASbGncu3eQVXins73zfikfSOH+kIi6KQT9fN9/RYX896jHfXaKMrWlahhfr+RZO9R/z
+	U+viGxm/VO5n8Otd/4b+gxF6cgPlwTXmDXZ1T/gk8c6QHmfgv0wNjxbpArlxZ6M9fFz52QINeBt
+	WN7f+iKzJxPrehL6+LBcDbh90GSI+HN+3NbpRoq4yLL/ozEzXmTGVAAict1ti+sVUJbCN/N7gHU
+	9OXKo8Yc8kckg==
+X-Received: by 2002:a2e:a912:0:b0:372:88fa:b680 with SMTP id 38308e7fff4ca-37a023fe4dbmr7196311fa.29.1761733797419;
+        Wed, 29 Oct 2025 03:29:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEmI7OhiZ1DaoF0/cxs1ZCK1+ak753Z2dzk11glrhPicvhcrDjwhlHyltg40JzvHXiomdTvuMbjo4fn2pfDVs=
+X-Received: by 2002:a2e:a912:0:b0:372:88fa:b680 with SMTP id
+ 38308e7fff4ca-37a023fe4dbmr7196171fa.29.1761733796930; Wed, 29 Oct 2025
+ 03:29:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aPj2hTXbGUseUqhE@google.com>
+References: <20251002123553.389467-1-costa.shul@redhat.com>
+In-Reply-To: <20251002123553.389467-1-costa.shul@redhat.com>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Wed, 29 Oct 2025 11:29:45 +0100
+X-Gm-Features: AWmQ_bmTMI8Oo-s2wgCfKYhoIUrQHQvFY47fFfRRzWpWMdM4FSdSOWEtRJKcdR0
+Message-ID: <CAP4=nvQbr5Adrk6_TDLge0TfqOwOhE9Q4iRzCqQKpwx29d_QHA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] tools/rtla: Add for_each_monitored_cpu() helper
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Crystal Wood <crwood@redhat.com>, 
+	John Kacur <jkacur@redhat.com>, Eder Zulian <ezulian@redhat.com>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 22, 2025 at 04:21:41PM +0100, Vincent Donnefort wrote:
-> On Fri, Oct 17, 2025 at 07:57:10AM +0000, Sebastian Ene wrote:
-> > Verify the offset to prevent OOB access in the hypervisor
-> 
-> I believe that would be just a read, so probably it would be difficult to use
-> this to compromise anything, except crashing the system?
+=C4=8Dt 2. 10. 2025 v 14:36 odes=C3=ADlatel Costa Shulyupin
+<costa.shul@redhat.com> napsal:
+>
+> The rtla tools have many instances of iterating over CPUs while
+> checking if they are monitored.
+>
+> Add a for_each_monitored_cpu() helper macro to make the code
+> more readable and reduce code duplication.
+>
 
-The simplest way is to crash the system but a more advanced one might
-lead to a confused deputy attack:
+Yeah this iteration is repeated many times.
 
-1. Use the original bug to trigger the overflow of the offset variable
-which bypasses this check:
-https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/kvm/hyp/nvhe/ffa.c#L519
+> Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+> ---
+>  tools/tracing/rtla/src/common.h        |  4 ++++
+>  tools/tracing/rtla/src/osnoise_hist.c  | 28 ++++++----------------
+>  tools/tracing/rtla/src/osnoise_top.c   |  4 +---
+>  tools/tracing/rtla/src/timerlat.c      |  9 ++------
+>  tools/tracing/rtla/src/timerlat_hist.c | 32 +++++++-------------------
+>  tools/tracing/rtla/src/timerlat_top.c  |  4 +---
+>  6 files changed, 23 insertions(+), 58 deletions(-)
+>
 
-2. Use the host_share_hyp from the host to create a mapping in the hyp
-address space so that : reg from reg = (void *)buf + offset; points to
-memory mapped in the hyp address space & controlled from the host.
+Reviewed-by: Tomas Glozar <tglozar@redhat.com>
 
-3. Make the __ffa_host_share_ranges fail (since we control the content of
-the reg) to trigger the recovery mechanism for __ffa_host_unshare_ranges
-(https://elixir.bootlin.com/linux/v6.18-rc2/source/arch/arm64/kvm/hyp/nvhe/ffa.c#L392)
-and replace the content of the reg with pages that we want to remove the
-host stage-2 FF-A annotation from.
+Tomas
 
-With step(3) we can remove the host stage-2 FF-A annotation from pages
-without having to invoke the FF-A reclaim mechanism. This allows a
-confused deputy attack because the pages can be given to another entity
-after the annotation is removed (eg. given to a protected VM).
-
-> 
-> > FF-A buffer in case an untrusted large enough value
-> > [U32_MAX - sizeof(struct ffa_composite_mem_region) + 1, U32_MAX]
-> > is set from the host kernel.
-> > 
-> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > ---
-> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > index 4e16f9b96f63..58b7d0c477d7 100644
-> > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> > @@ -479,7 +479,7 @@ static void __do_ffa_mem_xfer(const u64 func_id,
-> >  	struct ffa_mem_region_attributes *ep_mem_access;
-> >  	struct ffa_composite_mem_region *reg;
-> >  	struct ffa_mem_region *buf;
-> > -	u32 offset, nr_ranges;
-> > +	u32 offset, nr_ranges, checked_offset;
-> >  	int ret = 0;
-> >  
-> >  	if (addr_mbz || npages_mbz || fraglen > len ||
-> > @@ -516,7 +516,12 @@ static void __do_ffa_mem_xfer(const u64 func_id,
-> >  		goto out_unlock;
-> >  	}
-> >  
-> > -	if (fraglen < offset + sizeof(struct ffa_composite_mem_region)) {
-> > +	if (check_add_overflow(offset, sizeof(struct ffa_composite_mem_region), &checked_offset)) {
-> > +		ret = FFA_RET_INVALID_PARAMETERS;
-> > +		goto out_unlock;
-> > +	}
-> > +
-> > +	if (fraglen < checked_offset) {
-> >  		ret = FFA_RET_INVALID_PARAMETERS;
-> >  		goto out_unlock;
-> >  
-> 
-> Perhaps this could be easier to reason about by moving this check with the nr_ranges?
-
-I found it a bit more clear to use the helper on the offset variable, I
-would like to keep it in this way if you are ok with this.
-
-
-> 
->         reg = (void *)buf + offset;
->         if ((void *)reg->constituents > (void *)buf + fraglen) {
->                 ret = FFA_RET_INVALID_PARAMETERS;
->                 goto out_unlock;
->         }
->  
->         nr_ranges = ((void *)buf + fraglen) - (void *)reg->constituents;
->         if (nr_ranges % sizeof(reg->constituents[0])) {
->                 ret = FFA_RET_INVALID_PARAMETERS;
-> 
-
-Thanks,
-Sebastian
-
-> }
-> > -- 
-> > 2.51.0.858.gf9c4a03a3a-goog
-> > 
 
