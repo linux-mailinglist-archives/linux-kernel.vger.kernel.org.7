@@ -1,299 +1,195 @@
-Return-Path: <linux-kernel+bounces-875710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C82C19AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:23:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C1D3C19AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC477463D5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:21:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED8D2465017
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643E42FF661;
-	Wed, 29 Oct 2025 10:21:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6878A30AD0A;
+	Wed, 29 Oct 2025 10:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="Y7jyWP2w"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="LdvT8yD5"
+Received: from mail-m15593.qiye.163.com (mail-m15593.qiye.163.com [101.71.155.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D925D7081E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE2F306D26;
+	Wed, 29 Oct 2025 10:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733270; cv=none; b=rIAjVH7I3AQe+EnOWpKKE9LNujHcKparbFQYuvafRX1JSRaDfH7Xd8EDY1iLfG08QqM2Ye33vsLCk5Ft3WU26Ptxe3CFrcTLxeqYQ+AYwRLcpmYtBMTZ4h9gcHTe6+izxjloCP9oE6IvGLlNB8FoxapvI6zDixJ3cZtmEpHTOw8=
+	t=1761733285; cv=none; b=gacOKQOZrScHUeAoXWKHcwK/yTQ9BmvBoaC7rHVPjyuPPZfoGoIAw3lhSN7KeFYRM8So+yqxRtv3N/xad3imWnoMlLLJyaUMK5pfJMU4Q8c6+gUxw5jCL7mpLwTKIK3eye1dOXT5YwuGaxBMqAY5BMq7TsD9hfH2gdoNJZ/UcMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733270; c=relaxed/simple;
-	bh=dY4q8YkbiAgjzKiEsiASrXojI4Al4U1XdOPWUwH7wwg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I+vDFN5lDvH8e+Z3r2ZNTjHvY4VpeCuFJUHRr2d3V696K0WhNAjmhnXRSGGgk3nIlBBWFXfyswLL51zY/8TiMw43/M6pP1DUTUWfpb9imfTfVyjQ+IPXB7JzNoPR389Lq1jIXApPn4Y+EGERqGMaCDWyOye0P0CIU+ghpy09DOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=Y7jyWP2w; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7a23208a0c2so5466104b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:21:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1761733267; x=1762338067; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HbulqRf/JzdfAl/dtv+qftIvyvV8wiDVdKN2RHYy4TQ=;
-        b=Y7jyWP2w71F6U7E40iH6TwrqZJ9SpKzBaiTTDR7tz0WgNCy58k6NyUs2mNgWEQH4qD
-         q1pnSengwQ+QSnRFJmx5YJ1J1sw8Ur2c1JxvEHxq/8XeclgO/hgsdtu/8jwm5HYa7jT1
-         CTHTSGpK3N9jwJWZbzXySdpqKxPvHN5y72i8PMQP9d7UkOkdm8ofpahtrLQH4A8yv/pL
-         FUecIMEncs9gs+WDZQVcpZIBT7VZNkxdM8Dqk7jT0xmnlwraNIqNEhUCMluU28ZTYpro
-         ilcIoAUR+IE+Ycex3wcdBrccs3q2V00N2Q4qBYp7R4a4PZEERQpfztD0LKxoxGwWdzz8
-         2noA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761733267; x=1762338067;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HbulqRf/JzdfAl/dtv+qftIvyvV8wiDVdKN2RHYy4TQ=;
-        b=qb7ipE8ETyQQLVfUPXScJ+yBDrE8Hfeq76rSlfWOUl85EXI1cCK1kX2d5+Sursdo3R
-         iNOQGG8YiKlV2JR8Oup2F33kYd+5iAXRqnANL1moKlfge9NqXZwPNrPw9EWL4GdAQ0Oc
-         iI5lJZQ95O9HFTE0OSXOOWI79yYOSxHz7GhpE/iahl26hIHEStlSKkSB/qt0ZHLC/Qs8
-         6P29hrRusPf2NeW66uP7BgJw2HYzBt/qyK/APVR3vxWaf7FbS1e1WvlOgW8kjchSmdGp
-         4hi4/Fc/P53J+6AhZqPgUR4/M+wlYFhmH92rlWcQg7nD1Jh7CEP1OPJkBr4Bzivj1Fj9
-         wsTg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpoTTDe4u7hR63BErtzlx7fDPjDtVnx1CSJjJgGU9mCrlNoj2wHES4iJavf94XzWGZ1mfdfKVfZJRFTPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya62/q9QoV1zTd3PW+SmGozF94JPg4gvCPFGrQnksma2JxeCJ+
-	TtqrC4crcteSe9kWvBeUafofC+VxCNNH8Zti1kdde5TiI/gtfLeG0S2bD7o4e0xBBfg=
-X-Gm-Gg: ASbGnctTVCvk9ooaVzdcQaqc2DMq5sCM9Lnjx+7khnQnAeFKAGQcpjU90PwVwihVn4o
-	kxS8uKS+Fcb7dnqj+vyYhrGKFPJP77cehpst59jH+JrB1FW4IxZu0vLoA8awl/3OytXRAh7EZuD
-	TVI0wcDGt7TstrVTX1IU/ZXlZX9un6DQKp0tSXrgQmax3TJXD0LrOmY6dFCot+mpah+KyJkQADD
-	dW4hTdXbDGXHTpJFVEj8DBsA/L1kJOCtddSFqtA2F4LW+6ee8hF5hERfTcrzpR2Cue7R+qd1Mpv
-	8h7o755RQHVWSapbKyNIsottTMTQjWLTA68n5hImyePuTESLEyV29AcALx2McftmSCbwM/UYNV0
-	1r2feuUVVIZgSLXkTSPt8tZxa3cjUn1ZrrZK6tS2awZ4bYNPGc383jig2Ru2zo+smFg6fAxxS0I
-	6evgagWp8lpa/IID2ty7MFxH0W
-X-Google-Smtp-Source: AGHT+IHL0MICP1K9H4r8j+kOSzogqVuiVQjNGs4tt84n15SY6d/K/p8SfQsZ4RZjWKksxhhmDOquvA==
-X-Received: by 2002:a05:6a00:2da5:b0:77f:4f3f:bfda with SMTP id d2e1a72fcca58-7a4e53f14dcmr2854006b3a.31.1761733267109;
-        Wed, 29 Oct 2025 03:21:07 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:3fc9:8c3c:5030:1b20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a414034661sm14888261b3a.26.2025.10.29.03.21.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 03:21:06 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: 409411716@gms.tku.edu.tw
-Cc: akpm@linux-foundation.org,
-	axboe@kernel.dk,
-	ceph-devel@vger.kernel.org,
-	ebiggers@kernel.org,
-	hch@lst.de,
-	home7438072@gmail.com,
-	idryomov@gmail.com,
-	jaegeuk@kernel.org,
-	kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	sagi@grimberg.me,
-	tytso@mit.edu,
-	visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: [PATCH v4 3/6] lib/base64: rework encode/decode for speed and stricter validation
-Date: Wed, 29 Oct 2025 18:21:00 +0800
-Message-Id: <20251029102100.543446-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+	s=arc-20240116; t=1761733285; c=relaxed/simple;
+	bh=xan45q1JM6Gb5j/2aza7gSh19s2fc7Pzx2s1vX4Banc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CFiriYcsDMO1sW8ctnjA/l3OctwYJ7JICHhDp/rWoUpOMNI77DLjobRtfOpp9Iy3deLNSZ5V2vHf4oyYi00j/inOKde0gLvPJAFxXauWv4kVGkfOIIMgrUMKrmW1YbW7w0ASwB8Z9ww9sM0yjJFbvmEvMmrtU1vsGGGKcCKh3UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=LdvT8yD5; arc=none smtp.client-ip=101.71.155.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 27a20e337;
+	Wed, 29 Oct 2025 18:21:09 +0800 (GMT+08:00)
+Message-ID: <cc8b583a-77ec-4a7f-97cc-2d148f7fee9f@rock-chips.com>
+Date: Wed, 29 Oct 2025 18:21:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 10/10] arm64: dts: rockchip: rk3399-evb-ind: Add
+ support for DisplayPort
+To: Peter Chen <hzpeterchen@gmail.com>, Chaoyi Chen <kernel@airkyi.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-11-kernel@airkyi.com>
+ <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <CAL411-o6mF71oBeRsJ-OPZNbLegn4iJ_ELN9xVdppTM3ssUPOw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a2f7c571703abkunmeb663c22345d26
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGhkeGlYYQh9NGEtMSx4dQhlWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=LdvT8yD55DgQk4sSKILpIpTMXTznVSncF63l6VkUkbyLicwzodkCBt91xnRXJAz6qAqJzyDEiy1ZOtqF1gWvG+5YfYbEXIgUeJHQ1NXAoz4QIXjvKBF5G6COWnbG0/O9NjxQJZ7SzaH6qSjtRb0zw7ZkPku5KSQcFgmMTSj/5MY=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=2y//5yz0cKqyDq/eGQvh7lZNErNDwqj5oCuOmDJhx+0=;
+	h=date:mime-version:subject:message-id:from;
 
-The old base64 implementation relied on a bit-accumulator loop, which was
-slow for larger inputs and too permissive in validation. It would accept
-extra '=', missing '=', or even '=' appearing in the middle of the input,
-allowing malformed strings to pass. This patch reworks the internals to
-improve performance and enforce stricter validation.
+Hi Peter,
 
-Changes:
- - Encoder:
-   * Process input in 3-byte blocks, mapping 24 bits into four 6-bit
-     symbols, avoiding bit-by-bit shifting and reducing loop iterations.
-   * Handle the final 1-2 leftover bytes explicitly and emit '=' only when
-     requested.
- - Decoder:
-   * Based on the reverse lookup tables from the previous patch, decode
-     input in 4-character groups.
-   * Each group is looked up directly, converted into numeric values, and
-     combined into 3 output bytes.
-   * Explicitly handle padded and unpadded forms:
-      - With padding: input length must be a multiple of 4, and '=' is
-        allowed only in the last two positions. Reject stray or early '='.
-      - Without padding: validate tail lengths (2 or 3 chars) and require
-        unused low bits to be zero.
-   * Removed the bit-accumulator style loop to reduce loop iterations.
+On 10/29/2025 5:45 PM, Peter Chen wrote:
+>> +&i2c4 {
+>> +       i2c-scl-rising-time-ns = <475>;
+>> +       i2c-scl-falling-time-ns = <26>;
+>> +       status = "okay";
+>> +
+>> +       usbc0: typec-portc@22 {
+>> +               compatible = "fcs,fusb302";
+>> +               reg = <0x22>;
+>> +               interrupt-parent = <&gpio1>;
+>> +               interrupts = <RK_PA2 IRQ_TYPE_LEVEL_LOW>;
+>> +               pinctrl-names = "default";
+>> +               pinctrl-0 = <&usbc0_int>;
+>> +               vbus-supply = <&vbus_typec>;
+>> +
+>> +               usb_con: connector {
+>> +                       compatible = "usb-c-connector";
+>> +                       label = "USB-C";
+>> +                       data-role = "dual";
+>> +                       power-role = "dual";
+>> +                       try-power-role = "sink";
+>> +                       op-sink-microwatt = <1000000>;
+>> +                       sink-pdos =
+>> +                               <PDO_FIXED(5000, 2500, PDO_FIXED_USB_COMM)>;
+>> +                       source-pdos =
+>> +                               <PDO_FIXED(5000, 1500, PDO_FIXED_USB_COMM)>;
+>> +
+>> +                       altmodes {
+>> +                               displayport {
+>> +                                       svid = /bits/ 16 <0xff01>;
+>> +                                       vdo = <0x00001c46>;
+>> +                               };
+>> +                       };
+>> +
+>> +                       ports {
+>> +                               #address-cells = <1>;
+>> +                               #size-cells = <0>;
+>> +
+>> +                               port@0 {
+>> +                                       reg = <0>;
+>> +
+>> +                                       usbc_hs: endpoint {
+>> +                                               remote-endpoint = <&u2phy0_typec_hs>;
+>> +                                       };
+>> +                               };
+>> +
+> Why USB2 PHY needs to be notified for Type-C connection?
 
-Performance (x86_64, Intel Core i7-10700 @ 2.90GHz, avg over 1000 runs,
-KUnit):
+I think the USB-connector binding require a port@0 for High Speed.  So I filled in USB2 PHY here. And I have looked up boards with the same usage, and some of the results are as follows:
 
-Encode:
-  64B   ~90ns   -> ~32ns   (~2.8x)
-  1KB  ~1332ns  -> ~510ns  (~2.6x)
+- rk3399-firefly.dts
 
-Decode:
-  64B  ~1530ns  -> ~35ns   (~43.7x)
-  1KB ~27726ns  -> ~530ns  (~52.3x)
+- rk3399-pinebook-pro.dts
 
-Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
-Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
-Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
----
- lib/base64.c | 110 ++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 69 insertions(+), 41 deletions(-)
+- rk3399-eaidk-610.dts
 
-diff --git a/lib/base64.c b/lib/base64.c
-index 8a0d28908..bcdbd411d 100644
---- a/lib/base64.c
-+++ b/lib/base64.c
-@@ -51,28 +51,38 @@ static const s8 base64_rev_maps[][256] = {
- int base64_encode(const u8 *src, int srclen, char *dst, bool padding, enum base64_variant variant)
- {
- 	u32 ac = 0;
--	int bits = 0;
--	int i;
- 	char *cp = dst;
- 	const char *base64_table = base64_tables[variant];
- 
--	for (i = 0; i < srclen; i++) {
--		ac = (ac << 8) | src[i];
--		bits += 8;
--		do {
--			bits -= 6;
--			*cp++ = base64_table[(ac >> bits) & 0x3f];
--		} while (bits >= 6);
--	}
--	if (bits) {
--		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
--		bits -= 6;
-+	while (srclen >= 3) {
-+		ac = (u32)src[0] << 16 | (u32)src[1] << 8 | (u32)src[2];
-+		*cp++ = base64_table[ac >> 18];
-+		*cp++ = base64_table[(ac >> 12) & 0x3f];
-+		*cp++ = base64_table[(ac >> 6) & 0x3f];
-+		*cp++ = base64_table[ac & 0x3f];
-+
-+		src += 3;
-+		srclen -= 3;
- 	}
--	if (padding) {
--		while (bits < 0) {
-+
-+	switch (srclen) {
-+	case 2:
-+		ac = (u32)src[0] << 16 | (u32)src[1] << 8;
-+		*cp++ = base64_table[ac >> 18];
-+		*cp++ = base64_table[(ac >> 12) & 0x3f];
-+		*cp++ = base64_table[(ac >> 6) & 0x3f];
-+		if (padding)
-+			*cp++ = '=';
-+		break;
-+	case 1:
-+		ac = (u32)src[0] << 16;
-+		*cp++ = base64_table[ac >> 18];
-+		*cp++ = base64_table[(ac >> 12) & 0x3f];
-+		if (padding) {
-+			*cp++ = '=';
- 			*cp++ = '=';
--			bits += 2;
- 		}
-+		break;
- 	}
- 	return cp - dst;
- }
-@@ -88,41 +98,59 @@ EXPORT_SYMBOL_GPL(base64_encode);
-  *
-  * Decodes a string using the selected Base64 variant.
-  *
-- * This implementation hasn't been optimized for performance.
-- *
-  * Return: the length of the resulting decoded binary data in bytes,
-  *	   or -1 if the string isn't a valid Base64 string.
-  */
- int base64_decode(const char *src, int srclen, u8 *dst, bool padding, enum base64_variant variant)
- {
--	u32 ac = 0;
--	int bits = 0;
--	int i;
- 	u8 *bp = dst;
--	s8 ch;
-+	s8 input[4];
-+	s32 val;
-+	const u8 *s = (const u8 *)src;
-+	const s8 *base64_rev_tables = base64_rev_maps[variant];
- 
--	for (i = 0; i < srclen; i++) {
--		if (padding) {
--			if (src[i] == '=') {
--				ac = (ac << 6);
--				bits += 6;
--				if (bits >= 8)
--					bits -= 8;
--				continue;
--			}
--		}
--		ch = base64_rev_maps[variant][(u8)src[i]];
--		if (ch == -1)
--			return -1;
--		ac = (ac << 6) | ch;
--		bits += 6;
--		if (bits >= 8) {
--			bits -= 8;
--			*bp++ = (u8)(ac >> bits);
-+	while (srclen >= 4) {
-+		input[0] = base64_rev_tables[s[0]];
-+		input[1] = base64_rev_tables[s[1]];
-+		input[2] = base64_rev_tables[s[2]];
-+		input[3] = base64_rev_tables[s[3]];
-+
-+		val = input[0] << 18 | input[1] << 12 | input[2] << 6 | input[3];
-+
-+		if (unlikely(val < 0)) {
-+			if (!padding || srclen != 4 || s[3] != '=')
-+				return -1;
-+			padding = 0;
-+			srclen = s[2] == '=' ? 2 : 3;
-+			break;
- 		}
-+
-+		*bp++ = val >> 16;
-+		*bp++ = val >> 8;
-+		*bp++ = val;
-+
-+		s += 4;
-+		srclen -= 4;
- 	}
--	if (ac & ((1 << bits) - 1))
-+
-+	if (likely(!srclen))
-+		return bp - dst;
-+	if (padding || srclen == 1)
- 		return -1;
-+
-+	val = (base64_rev_tables[s[0]] << 12) | (base64_rev_tables[s[1]] << 6);
-+	*bp++ = val >> 10;
-+
-+	if (srclen == 2) {
-+		if (val & 0x800003ff)
-+			return -1;
-+	} else {
-+		val |= base64_rev_tables[s[2]];
-+		if (val & 0x80000003)
-+			return -1;
-+		*bp++ = val >> 2;
-+	}
- 	return bp - dst;
- }
- EXPORT_SYMBOL_GPL(base64_decode);
-+
+
+>
+>> +                               port@1 {
+>> +                                       reg = <1>;
+>> +
+>> +                                       usbc_ss: endpoint {
+>> +                                               remote-endpoint = <&tcphy0_typec_ss>;
+>> +                                       };
+>> +                               };
+>> +
+>> +                               port@2 {
+>> +                                       reg = <2>;
+>> +
+>> +                                       usbc_dp: endpoint {
+>> +                                               remote-endpoint = <&tcphy0_typec_dp>;
+>> +                                       };
+>> +                               };
+>> +                       };
+>> +               };
+>> +       };
+>> +};
+>> +
+> .....
+>>   &u2phy0 {
+>>          status = "okay";
+>> +
+>> +       port {
+>> +               u2phy0_typec_hs: endpoint {
+>> +                       remote-endpoint = <&usbc_hs>;
+>> +               };
+>> +       };
+>>   };
+>>
+> There is no switch and mux, how to co-work with Type-C?
+
+I checked the phy-rockchip-inno-usb2.c but did not find any switch or mux. Does this mean that we need to implement them? Thank you.
+
+
+>
+> Best regards,
+> Peter
+>
+>
 -- 
-2.34.1
+Best,
+Chaoyi
 
 
