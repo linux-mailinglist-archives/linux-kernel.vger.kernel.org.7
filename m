@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-877196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EA00C1D689
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:18:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D85C1D677
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:18:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53E5A189C473
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8661E189ACC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A29931A549;
-	Wed, 29 Oct 2025 21:18:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7C03191DC;
+	Wed, 29 Oct 2025 21:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="OrXIMLKk"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oz2iWWUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A129331985D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D8D2F12BB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761772696; cv=none; b=qeP4eIhHdgLNQkIX2LmzAjoZIWEIJikWdcKXGcSjaLh9r7+JA79NA9wjXAMMqXgQIEa+vI1YYqwNy+aMdVeY7u47fF126yxyABtVDpjNx18Fu0mjbHjwTiqU3QkAUuViAaMGlyYT6s1x4IjoDMZsSStAxK7pPE/4uG5g7txAmg8=
+	t=1761772692; cv=none; b=hy532ozjBx7EgaJR16RBTHajRZllQD94O1MquUKSLBRWNIpsMjl2RqmPyf5YMvqMtOIjWOOxUi8iU8lhSZdNkJ9TGn0PrN9W3V5BYwNjAbx+CBJUf8Q8H9p2jDYYxX7iFZSM0EByc9gEhsdN35pVe1uIvSgVyCNSOGZBeiHkGZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761772696; c=relaxed/simple;
-	bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
+	s=arc-20240116; t=1761772692; c=relaxed/simple;
+	bh=cuFb2Bmsds1bYdOqwF51q8ehVD++6Lbcv+GiUD2iDHY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ByHxztHTRb+iKX9xwlfVS+QntF7mFMJjVm62hOqDCkYgJmEusRzwPxoe7J5gxcabU56p5L+gxpj52/1i2Ll8++4P8BpsnZAKuJxOiSLCHFHUwPqciJnnUm8Qz7MzwR+XBzcBbecOZCF/2JLVM3tF+x7HaBUlcBjDBuHEUMJ2zLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=OrXIMLKk; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b4736e043f9so61104566b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:18:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1761772693; x=1762377493; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
-        b=OrXIMLKkrp7DfkKf8u5C371FaFZkrQnQpAtJ1FNMIk1D4mU4QcnKvL7dcxblcbfQnS
-         UMXdkavb/z2j9k9Ut7V0md2e+izDzctO7rasupE/dMr3NFmxXlxHPFv7XGElk30pyf+n
-         /CnkKAOldLUP9HfUHGiC7OK+FYVWIodeoqTTZDu514FANVQ3kv7HLKGRbKf68egNqmNu
-         cd+RWoHY6rh5fUoUT51ht2UvIiimO19Jb1psh1ftMrb7zNeSxGVrulB9+fAQAnEngObK
-         80bRf16Nze9ejWTWOsjsAFiSsAahUzmcX43wAnMli6sXPCsMuNn0V4g+G8ljys477+Cy
-         ZguQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761772693; x=1762377493;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yx7YCqrIwLLNoev+bUFlTb0b8ZV7lL4i+OuQquokGLc=;
-        b=RhXcx7nx8GdHAyDA2HfcA7aw8KPz39HkJu/f8n/j8XCKorKv9N1+XNCdzcc7qiQD6A
-         fds0v4ASKmjbwPynyq7XfvQG9myHIFK4k42RnJ29xnVbJGh7XojeMZU5omw7N2ucsxOy
-         ctYof79u7BmjBpCT43iDdPwVuhGlDM4cwmDHIwOhPDdNfdmXgRgfUqIOdYmMzTaKQRnz
-         IhrUjiHwwjGI6G4D0hsL+ds9YrYHL3CPqSpskYBQr2pIOvNu/jRy17LTXGIlC3Os0k18
-         to27zWgYDRBhhiNfxi9vrD57FM6Bs+VM1YJaAYAB+bVsY7QbVr6f80u0FmhEMy+hWPqv
-         Hs2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWX8HUbjD42cmVFym8Bi3ZCStq110vMakUceV4yHZTRbDp5VI+AynGubXjxRTPINJvO3VYUYPYay3E9yLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/kiWq4MbETTB0buwwAFtXMkWQsetuEHvDD41e2SQRq3CBQ1AK
-	LFgzrZV7TQSAAVksfWAWXLdGuUZbFhm1wkdM7FOlRdXxjGwQmML6WnVrVIFtWD7AjOkG/VjgrPi
-	q76EhCLkSrin3yPOmM6k7YsHPpMjLgkaAeW3dOCYP9w==
-X-Gm-Gg: ASbGnct7YPH0mK83QC5I5oL5x9DV4HyU84l8g9SVbJ802qY6K2aro10ejVGkX6qjL2H
-	A78Cwtrw9lX3f6TYN8ElP6Zy519nbAaIZ7hOjVj1RVwgTjIEqbB2ScWgHnECQdCLwYpWSB1Ri7g
-	bELpRY/jadvZSjhAa10YrpLfSifcwUAgLDiheNJYeWF4lEdmZIPdG2y3RGvuCB2v6AEpz3ZVc6A
-	v3Yd062BEyEUzZyLCTZWt3XDHkTLr0S9txAcLHpgU1ivH/EbLVkbJcJNA==
-X-Google-Smtp-Source: AGHT+IFiSSmBV0jU0Ss8+B5QBA6lJtv5vF8blJP/ha+JWFJmpNgyZxdpZA+HlfE38+Jb0bhjX5O65LmIxIHlrRfKiu4=
-X-Received: by 2002:a17:907:9721:b0:b3f:f207:b755 with SMTP id
- a640c23a62f3a-b7053b2a721mr51136966b.6.1761772692799; Wed, 29 Oct 2025
- 14:18:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=JA46xcw22LI2h9nRkUOOy7eeMQAJn6Q7cV/iWHMw9UidL2NsihLUXz4tHl9MvoQ3F1HbHqXnLr6kUCevxiSqtNohyLiX8wXaKkeYH8P/5Qf7TtYJ6qm+oI569hzycwW1LRTELnv/wVK9e4DS/rrZ5ittplcMqyodEnRAA3oMFcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oz2iWWUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B33C4CEFB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761772692;
+	bh=cuFb2Bmsds1bYdOqwF51q8ehVD++6Lbcv+GiUD2iDHY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Oz2iWWUE7hccwyVGlEF3r6UTArZdg3Xoc4kGN6SnOifGAXUy5nnqNQpdT1ZZYdhNH
+	 n7+ARHzP8KA+6dSTBrMwfQ0nsRTVRfgWX7NvskV9ShfYoZTTn+3YYQSL4Z/fb6cJ0O
+	 mhQ3UVOvBzUkbS5ndtq3H6f+lDO+qhoUVWMZImaARjltrf1JStNbt2/uBOET8EGvHv
+	 qyzDnipgv3z2ZnOVqbqM/5SH0DTN/Ompe0TdBSDrfcDV1Eui4DfmOQxfNr5nNaUwph
+	 kxVRN5GyKlndyD7SYqPlKuvEWIEHdYQaW9aSOxcoEfounAFW5HAnpa+bo6pDMsQydH
+	 7iZ7rqV3LttIw==
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-8801e4da400so233306d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:18:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXhJ8bkyGs78Bp30X0aDEJsQLCYK7QZy8JfdDXWfPFjK0lfplCnI9XqEdBDohzNiTFouc/JpCASjJzhxI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW03QxniLlUz7v3E/0vdDizwvxKmdGqvO35+FH/Gman8IjUO+/
+	xqitV7HWH+wQ79njhi0Sw7bVKn3HuwM2RD4PDUy01veQ4w+sO/wmmIzjr4EsnqWltmuwoxSHdd+
+	140Zrthup6aovmSIGpBx7cHtcXVqE6Uw=
+X-Google-Smtp-Source: AGHT+IGqt5WH9bVZjwQ7L0MKNy5u5e+ux4TrQuXYXpXYL2H3wSTNJxaAS/0+3Z8ip9WwmuFtQYIJYHWO7C9BhxfqNAU=
+X-Received: by 2002:a05:6214:d81:b0:87f:fc07:c51d with SMTP id
+ 6a1803df08f44-88009c13947mr49538016d6.64.1761772691101; Wed, 29 Oct 2025
+ 14:18:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250929010321.3462457-1-pasha.tatashin@soleen.com>
- <20250929010321.3462457-15-pasha.tatashin@soleen.com> <mafs0tszhcyrw.fsf@kernel.org>
- <CA+CK2bBVSX26TKwgLkXCDop5u3e9McH3sQMascT47ZwwrwraOw@mail.gmail.com> <CALzav=frK48c1=nsbVJ4EvqqOqr33pUArP4G17su0hxOYveALw@mail.gmail.com>
-In-Reply-To: <CALzav=frK48c1=nsbVJ4EvqqOqr33pUArP4G17su0hxOYveALw@mail.gmail.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 29 Oct 2025 17:17:35 -0400
-X-Gm-Features: AWmQ_bn6VS1Xxu1QPUMyT4niSsaGvQIJZtr8QMKM1ksd66d84DVSx7b_KujGEQk
-Message-ID: <CA+CK2bDUDryK6xZt5u-cMv+eR8ZWC82Phu9F2fS8DMnac5ritg@mail.gmail.com>
-Subject: Re: [PATCH v4 14/30] liveupdate: luo_session: Add ioctls for file
- preservation and state management
-To: David Matlack <dmatlack@google.com>
-Cc: Pratyush Yadav <pratyush@kernel.org>, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, rientjes@google.com, corbet@lwn.net, 
-	rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, 
-	ojeda@kernel.org, aliceryhl@google.com, masahiroy@kernel.org, 
-	akpm@linux-foundation.org, tj@kernel.org, yoann.congal@smile.fr, 
-	mmaurer@google.com, roman.gushchin@linux.dev, chenridong@huawei.com, 
-	axboe@kernel.dk, mark.rutland@arm.com, jannh@google.com, 
-	vincent.guittot@linaro.org, hannes@cmpxchg.org, dan.j.williams@intel.com, 
-	david@redhat.com, joel.granados@kernel.org, rostedt@goodmis.org, 
-	anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn, 
-	linux@weissschuh.net, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-mm@kvack.org, gregkh@linuxfoundation.org, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, dakr@kernel.org, 
-	bartosz.golaszewski@linaro.org, cw00.choi@samsung.com, 
-	myungjoo.ham@samsung.com, yesanishhere@gmail.com, Jonathan.Cameron@huawei.com, 
-	quic_zijuhu@quicinc.com, aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, lennart@poettering.net, brauner@kernel.org, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, 
-	ajayachandra@nvidia.com, jgg@nvidia.com, parav@nvidia.com, leonro@nvidia.com, 
-	witu@nvidia.com, hughd@google.com, skhawaja@google.com, chrisl@kernel.org, 
-	steven.sistare@oracle.com
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <20251027231727.472628-3-roman.gushchin@linux.dev> <aQJZgd8-xXpK-Af8@slm.duckdns.org>
+ <87ldkte9pr.fsf@linux.dev> <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+In-Reply-To: <aQJ61wC0mvzc7qIU@slm.duckdns.org>
+From: Song Liu <song@kernel.org>
+Date: Wed, 29 Oct 2025 14:18:00 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
+X-Gm-Features: AWmQ_bkkCVXDFm03jUeATippuBWXlsBI6kcPhGNhj9qa68CaimgckVtdqRiaqvA
+Message-ID: <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
+To: Tejun Heo <tj@kernel.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 5:13=E2=80=AFPM David Matlack <dmatlack@google.com>=
- wrote:
->
-> On Wed, Oct 29, 2025 at 1:13=E2=80=AFPM Pasha Tatashin
-> <pasha.tatashin@soleen.com> wrote:
->
-> > Simplified uAPI Proposal
-> > The simplest uAPI would look like this:
-> > IOCTLs on /dev/liveupdate (to create and retrieve session FDs):
-> > LIVEUPDATE_IOCTL_CREATE_SESSION
-> > LIVEUPDATE_IOCTL_RETRIEVE_SESSION
->
-> > - If everything succeeds, the session becomes an empty "outgoing"
-> > session. It can then be closed and discarded or reused for the next
-> > live update by preserving new FDs into it.
->
-> I think it would be useful to cleanly separate incoming and outgoing
-> sessions. The only way to get an outgoing session is with
-> LIVEUPDATE_IOCTL_CREATE_SESSION. Incoming sessions can be retrieved
-> with LIVEUPDATE_IOCTL_RETRIEVE_SESSION.
->
-> It is fine and expected for incoming and outgoing sessions to have the
-> same name. But they are different sessions. This way, the kernel can
-> easily keep track of incoming and outgoing sessions separately, and
-> there is not need to "transition" and session from incoming to
-> outgoing.
+Hi Tejun,
 
-Yes, good idea, I was thinking of recycling finished and empty
-sessions, but it will only add complications.
+On Wed, Oct 29, 2025 at 1:36=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> On Wed, Oct 29, 2025 at 01:25:52PM -0700, Roman Gushchin wrote:
+> > > BTW, for sched_ext sub-sched support, I'm just adding cgroup_id to
+> > > struct_ops, which seems to work fine. It'd be nice to align on the sa=
+me
+> > > approach. What are the benefits of doing this through fd?
+> >
+> > Then you can attach a single struct ops to multiple cgroups (or Idk
+> > sockets or processes or some other objects in the future).
+> > And IMO it's just a more generic solution.
+>
+> I'm not very convinced that sharing a single struct_ops instance across
+> multiple cgroups would be all that useful. If you map this to normal
+> userspace programs, a given struct_ops instance is package of code and al=
+l
+> the global data (maps). ie. it's not like running the same program multip=
+le
+> times against different targets. It's more akin to running a single progr=
+am
+> instance which can handle multiple targets.
+>
+> Maybe that's useful in some cases, but that program would have to explici=
+tly
+> distinguish the cgroups that it's attached to. I have a hard time imagini=
+ng
+> use cases where a single struct_ops has to service multiple disjoint cgro=
+ups
+> in the hierarchy and it ends up stepping outside of the usual operation
+> model of cgroups - commonality being expressed through the hierarchical
+> structure.
 
-Pasha
+How about we pass a pointer to mem_cgroup (and/or related pointers)
+to all the callbacks in the struct_ops? AFAICT, in-kernel _ops structures l=
+ike
+struct file_operations and struct tcp_congestion_ops use this method. And
+we can actually implement struct tcp_congestion_ops in BPF. With the
+struct tcp_congestion_ops model, the struct_ops map and the struct_ops
+link are both shared among multiple instances (sockets).
+
+With this model, the system admin with root access can load a bunch of
+available oom handlers, and users in their container can pick a preferred
+oom handler for the sub cgroup. AFAICT, the users in the container can
+pick the proper OOM handler without CAP_BPF. Does this sound useful
+for some cases?
+
+Thanks,
+Song
 
