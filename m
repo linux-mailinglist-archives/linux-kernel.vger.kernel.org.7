@@ -1,106 +1,87 @@
-Return-Path: <linux-kernel+bounces-876487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41279C1C259
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:39:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC09C1BE44
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6964A4655D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:12:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 793FC5A77D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD7237A3AF;
-	Wed, 29 Oct 2025 15:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HLt0YjKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102122EA178;
+	Wed, 29 Oct 2025 15:13:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAA22E0901;
-	Wed, 29 Oct 2025 15:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C352E284B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750721; cv=none; b=DgL1GI+JbTL4LhueTrobvHFj8iZtutj9ghJMQ7u4yXk2mTQSyZtZUHu7aFCdMXz4i2p7pYKAairD0RIRElXEbiLAD0zEdo9BybxyV8m6wad0ftk7WWAOBDt5bgJGepaecrBT/I6IJlzusZJdWQqQO59IsAboqDTrl6mflI7TmsE=
+	t=1761750784; cv=none; b=f30Sc1oJjBPq5rH6PryVWXWO3jx4JYzPgf+sxico0IWUvWqVb9sqFh2onxqAHez9U9ubOqRB/peIA/cwaHRXIwPl0IBZHkVpaxI9LMZkvYGvzD23+b9C2LjsbEzeURyMurnG57bxi+nJfC7dfJbaI4C1JsoYbKz27To4+B703JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750721; c=relaxed/simple;
-	bh=p8U6eXtI/y0u8cy9tTh7hEYJQEBjW65osHVr+rdqzWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZLSnMF/9Q6CC+c4gZ/L9XvYeitrxAvGukt3X5IyYVMk777rKJUzkASA3pkF9SiQ6Hq9UxO6ACjCkFQu5CkVEfLVMdWLHdOeJTQ/GW3Ji25WII+WimYPej2/DoM+uR7R+8MP442psWnMjrMeCj67uz9iG+A2xXcKtFIVfgs1CPvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HLt0YjKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD200C4CEF8;
-	Wed, 29 Oct 2025 15:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761750720;
-	bh=p8U6eXtI/y0u8cy9tTh7hEYJQEBjW65osHVr+rdqzWg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HLt0YjKmQFILafJC1zKCzuWAUUICI6A6dIdS2d466CrL7PEQdgF4YdrDAew6Pvj9B
-	 lZ80XrAO/w4o/fBxWPzU5c+Zz3LQiQBhpDsbSHtzrCjCmZ6mWQTi09aicjZ4jHcI30
-	 ffvkOncJJqck/hJC0P5cWSBMWUntfvmnTzp6GMAweZ4vp7Mnax+Aeu036V3THPBRbs
-	 qn0QpmUnZ1QSSV6uWgQgP0uc7PT5QMq9Ct4llmFNCeADlC72LjAZiIero7T9DDeGoj
-	 0RtrmQhQ9juf4Rj2yA8KWP964OAU56VU6Yi33fMpoBxK8HLiOHg4XTrERvuEr3Jwg2
-	 NK7tR5ihak31w==
-Date: Wed, 29 Oct 2025 05:11:58 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: David Vernet <void@manifault.com>,
-	Andrea Righi <andrea.righi@linux.dev>,
-	Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org,
-	sched-ext@lists.linux.dev, Wen-Fang Liu <liuwenfang@honor.com>
-Subject: Re: [PATCH v2 3/3] sched_ext: Allow scx_bpf_reenqueue_local() to be
- called from anywhere
-Message-ID: <aQIuvlNSUAEGISl6@slm.duckdns.org>
-References: <20251025001849.1915635-1-tj@kernel.org>
- <20251025001849.1915635-4-tj@kernel.org>
- <aP-3vOtH9Dyg_R9w@slm.duckdns.org>
- <20251029104546.GI3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761750784; c=relaxed/simple;
+	bh=zsPdesw4+1YPzuYKkwCg6SdyObmLk/tm4svboZLOPVI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=blC1ntY+6BHXHb8QaGAsGQtq1mmCptbIMfygSEfRGTkwIHR8eqOYgZlyGXETrZxy73ko8ZRxz/oVe/WNAgurA0aX8nPnx95eW9M0cXHwQNeL0S9ysd2L3+UJGKWZh3iINBYk2TTOMmByQ40+K51fvBEeZwCvK6bjYsDXGCFFsl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-945ab8d3d0bso399419839f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:13:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761750782; x=1762355582;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h4Q7V8r9QGYS/xTeyzhRieq3ZgCpn516qiFjijI1kVc=;
+        b=imGd5R+S8z6oYLzqrQLXf07mrMexqNgLNH2Kwu9/vG3Rg62rsePeULVMRwqQBY+G4P
+         Pjm9AppakE4Mu9HnWJUgg/7k254WOqxJFSttP+rrrEuw09g//UuwLDCbrz2Jny2M0WHX
+         f67cD6KU7Fe8cXSDDwLvMkazTpqOJZTFwwn0kJ1b69GTlclmDdbqVWw3eoPm73v/fvIA
+         mQztZKhyMssBkQ7UAUIvunWIW1TezLE8x4coH3cWpVcWU3FzQm5sqTtlHSMeF2zoa/GY
+         mdLU1nArIOj4s1iSPiVqdP2Wg91Epcy13AUXuZ2wrC5a7v9xolt0hR4MgwEgwfUqru9O
+         ZEmA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCjiCuKoaxGxXyCA1iyweS5hxkB3CSTWg/kNz0eWoJuG2Kz64SuxfitVZh2B6qDNq5IWpHuJRVCkCkf9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0mximhzofFd9t/KsA4nhOL2plSxATeYEGX3s1z0t+7NTGaZBi
+	xNTj54IdNdpaE6MP23z6ywvCUVqnfCt/9fYJbkn8erggNvHoPwjf3/9Le1eWA1zaPAOABj8jSjX
+	PmF7kF7yGG1qeivDiRbS7X2Y5UVPBx/PvqEU+mb8RKIb7u73Iubt1A2zM6vM=
+X-Google-Smtp-Source: AGHT+IE4qg6Lpifyp9eopJcsmZTNj8RqrEZGEycp0BGWjApnKa38JxHcNZXov/k7TFDjtL/zeTbKvhXQRAHLIY/VnatqulXNMnuh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029104546.GI3419281@noisy.programming.kicks-ass.net>
+X-Received: by 2002:a05:6e02:3004:b0:42d:7dea:1e04 with SMTP id
+ e9e14a558f8ab-432f904464amr39509555ab.25.1761750782266; Wed, 29 Oct 2025
+ 08:13:02 -0700 (PDT)
+Date: Wed, 29 Oct 2025 08:13:02 -0700
+In-Reply-To: <20251029062550.DPi_g%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69022efe.050a0220.32483.0212.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_commit_truncate
+From: syzbot <syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
-On Wed, Oct 29, 2025 at 11:45:46AM +0100, Peter Zijlstra wrote:
-> On Mon, Oct 27, 2025 at 08:19:40AM -1000, Tejun Heo wrote:
-> > The ops.cpu_acquire/release() callbacks are broken - they miss events under
-> > multiple conditions and can't be fixed without adding global sched core hooks
-> > that sched maintainers don't want.
-> 
-> I think I'll object to that statement just a wee bit. I think we can
-> make it work -- just not with the things proposed earlier.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Sure, I'll massage it a bit before committing.
+Reported-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
+Tested-by: syzbot+c16daba279a1161acfb0@syzkaller.appspotmail.com
 
-> Anyway, if you want to reduce the sched_ext interface and remove
-> cpu_acquire/release entirely, this is fine too.
-> 
-> I might still do that wakeup_preempt() change if I can merge / replace
-> the queue_mask RETRY_TASK logic -- I have vague memories the RT people
-> also wanted something like this a while ago and it isn't that big of a
-> change.
+Tested on:
 
-Yeah, being able to create some kind of interlocking from ttwu to pick_task
-is something generally useful, I think, even if I don't use it right now.
+commit:         f6e38ae6 Linux 6.1.158
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.1.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=178a4fe2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7417700edc6ec0a0
+dashboard link: https://syzkaller.appspot.com/bug?extid=c16daba279a1161acfb0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15983e7c580000
 
-> 6.23 is a long time, can't we throw this out quicker? This thing wasn't
-> supposed to be an ABI after all. A 1 release cycle seems fine to me ;-)
-
-We've been discussing about compat policy lately and I think what we landed
-on was maintaining compatibility, when reasonably possible, over one LTS
-release + a couple non-LTS releases, which comes out to ~1.5 to 2 years.
-That seems to give most people enough sliding room while not choking us with
-too much compat overhead. This is a bit more work but it is actually
-surprisingly not that painful with all the BPF compat features, and seems to
-hit a reasonable balance.
-
-Thanks.
-
--- 
-tejun
+Note: testing is done by a robot and is best-effort only.
 
