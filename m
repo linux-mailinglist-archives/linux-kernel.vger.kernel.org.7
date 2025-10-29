@@ -1,87 +1,229 @@
-Return-Path: <linux-kernel+bounces-876804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7A1C1C7AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 757FDC1C99D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5703D5826E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D779623B86
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC74E34AB06;
-	Wed, 29 Oct 2025 17:12:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35C534B41C;
+	Wed, 29 Oct 2025 17:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dx+aVWw+"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1700234AB12
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBD1325710
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761757924; cv=none; b=Hro1RYS+8MfLb/5eE5lMaC1sEJzZSOhmjc0xCWDyBcbkaKchcX08FgW2nv8cunpA+CnSCkYCeOHjPSc7WwXUmamaY5oYhy/41gDI2k21eUPw9nBspYbuZ3AdoHuHMuXrf6fjBhT3xjMXBdTU+u0hqOGWuIaWORL3coRx8N5J0lM=
+	t=1761757954; cv=none; b=SxEeE9cSs2S5Z9qrgO4/HQbWAThBPL61lHrnJM8EBLqzgcthjG3u7neDBk82tN3SFTjhol8N1duL9sbqr+ZjYnJ+iF8GNmJnx1W6bVVlHtsat3wzpWQ15iEu5pQ96CkuuZ34IVW44uAjiwm9ez0KwecNFG7qssizpXNQJ2aQiZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761757924; c=relaxed/simple;
-	bh=LLI9Yc/5PylDKmnFXxl/RUIyH+Qewg4oeZGyh+FD4hQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mmVv2WkuuO8fsZgZ/X9a0kauijwTHX9LdvoKpcXmeQ76fALRWySvdNzpQZq/cBv0SBNDU1jWPxc2JlvgRJ1W2xVXVCXNHXIfulTnZMyBq/tW7QteaYQkwnrP/9t3j7r5w7UqhT0HMHRWXMYPi2lGWiDxf8AxSeIAxVe8ptSLI+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-94389ae547cso11648539f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:12:02 -0700 (PDT)
+	s=arc-20240116; t=1761757954; c=relaxed/simple;
+	bh=eOLXBtbMM5UAZSF7rSO/n12cHSatk8np+La0omC0gQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PxNb+cusn0Dduqg7D3ukfLypJa0mRmQ+u9F3tYWf4miWz4L82reCfXc1wvx+B555z1A72s5K79yst8i0iGTypnISroNZRaNxuA2rGcMjujCz0JdIPEDzxLLPOFb+eR5aO4WGqmSlBKiDIO/tcJxJz14MTgTDhGO3Fu53CZa1bcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dx+aVWw+; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781997d195aso113839b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:12:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761757953; x=1762362753; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PnKpCH58GdNF1l2XFRSs1X37/8N+qbe+dP+a5Rvfzi8=;
+        b=Dx+aVWw+nh5g/sN7104gwgOt0diZz49p1d5D+aqpEk34WmOQ+xYzp/7C9bqLuN96bv
+         J+7R4CQ4WNVtsz4DFg2ng4IHGr3WvLy4vaVjZ6rMLB2OZ81n3cSZX+TPma3q9EjEA460
+         x/PU+GYfQdoyKbvM9McD5eyhkhB2kdJ0IwO9tyJt1wBGA9sAAt3Pt6/Skz8RBnXDWe7a
+         ExXn6wh9Sdz5oKT3I9OfhSK3uH5WtCC4ZwkVF77PMowmRyukM4kJkwAtiDKP0jEFfWmO
+         cUHO484IpnrBEnHr/jer8kDcXXTuD3XUOkmxHIMkuhBM0Vd9ZaiIjCZHh/tq+H0zk+en
+         vMuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761757922; x=1762362722;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uiqjft2r6zNLuSdN7NRRYGNuHbmCMPA+2iq1zWhMGcU=;
-        b=oTHRDA/0pqfc/qiFUi0XnZvf2RXlxqxwpbykEENWWkiDOX6iU5K98hc4woCF0Y8gNt
-         S/n7RBQh5Kt028cFxIgE0mD8oR6banE7OeA1XaTZiSxow1rOz9+Bsf4TV+SibBmusAUJ
-         M432uUASFNoyPSY3oBlCsjfLxBkcDiiFnNvSeZXcmWuKgCKjATDhlNcdtAF2a8yoklW4
-         i4boI+xkPa0+MGq3BJTub/6Vsn/mmX8pNp1PksOIwcS+TMxf/7hFBl9EyOjA2+Ee4kzE
-         yB8nZUvahN5zcuUEBXJCB6igVFP31P0nzKAs03/1TJXX+GtM/uGFCi6ouITtsZXCbUU/
-         RGvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzPaPuke2dHXD5IB/iL1FnaVgMui4X65kHwYni5UxtNgkWxwdFgNw+++gCozXHGZ+BWhg0K5JjFHP1FjI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznSk1oIBdBM1rKkAdCsfY2CsgB3Sh1S64VF/oA4d8xxutMUnl6
-	oPnwvAfcXnPaFxUGw54gAZcl4IgfgwXETdExyAhYcDFI+zE+g6MfauXSnI1Olem1T1rW+DHkTHi
-	UuiuAz4Od4EVy0TsHBGv6U2pR5gUxxLGLlEVrvLXHBrGJlIejOUhJk0GHEuE=
-X-Google-Smtp-Source: AGHT+IFVGWhk4uNuq/3XSr2HmsTKn5LODCeLBH6XGXHRcYkXEMP7JELHoB/KmwKV/iNtHfluoy9qCfkKgvdGa6NILIQg7YNEKktQ
+        d=1e100.net; s=20230601; t=1761757953; x=1762362753;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PnKpCH58GdNF1l2XFRSs1X37/8N+qbe+dP+a5Rvfzi8=;
+        b=ZTLnnx+fNP5/Jg/MvHEyREKoV3MGnLAvzNsqKFCv+BeRFMY1qgxkYlCqy2aOLfWXnU
+         o0ln1MvSGtnvaCTvmeDpqfDDkTQA0ZwmEpJBx35nTByAuKQSSTY6btuwKXJO54wemYqL
+         RFxR98a3sOE+bbIppyPCA8fMpQ5Yxagu8nvor5gYqgE/G724P5oy5apYZ63nwa520Ydp
+         twIpWyCFHPqYk+826Je9DQng8bfQX5PG8+Ghfgdk26sG0u5q/TzspcVVhv/D4FycBqvd
+         9+VU0+RzgWv3XjMbwKvK6DJJVHUYSKZh9z6u3wCkHJC2FmRQM9gQbCuvHyRGjQNkmRHM
+         v28Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVJGNfU+UkM+VEoNIGtSPLnGQwCUy3mxxo4OZRUVFH/h82Y3jmwk83adhywLUMbdVWYakeM8cOBHDxrBr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaebtP7bDiHrvnkgHJM6R9x+Iu93HHUW9dNMnfXGXqeSF5t81W
+	01LuYipFILYarD1uH/MvqdcEDT7dHmQ/wYhwwy38SCdCunZa6MJbHyG6
+X-Gm-Gg: ASbGnctLi5uJz+kjvckSQZwbwYOO1Miq32iRhhM518J7pavd+07jjY4i0ki4lVdD0w6
+	RVFow9dMw/ZRfFrHB2LfkWyDvdtsqvksPur3JEVmx2cS5Ro6KLql0Xc4fHu7rrMaG60NYRIfajf
+	XCCmS0R4x5+rISaJeKeaa/RqQh0cAzvKqGrGmrbx/Jgw4iolNdu8NnmQ97qdXJdBMOddpg6knpU
+	hbIj1DgiF24EJHLAA76DDf5RTzfCoTLm2Bj0I/oMONIa5UB48TbfARU1jvRnM/KEcFTf3Lm/ury
+	jYYLMzNyEVcnYnSfvFlYwYqatBOIv1gve+7dGemWtygEI6h6fHzQtjzkjD6ABtEoVq38FCjv4bq
+	nlDs075UK/5OJQJaZP8+zqB18vnbf6xkod7eIdRNeVUfrF1K0SJ0+Jpztl3BKDihzoPjYoIHopX
+	a30yVR9N4fOA==
+X-Google-Smtp-Source: AGHT+IHQMbLbWUPCYW1JGa0pgg6AYFvnsbZAHjKMpoS0KlUCa9pQd5ShhIa2kP6pC0CtsHA0HZU9Dw==
+X-Received: by 2002:a05:6a00:c86:b0:781:2272:b704 with SMTP id d2e1a72fcca58-7a4e290d787mr4710460b3a.5.1761757952487;
+        Wed, 29 Oct 2025 10:12:32 -0700 (PDT)
+Received: from localhost ([2804:30c:1653:6900:3b53:af9d:48d6:f107])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7a414065418sm16047441b3a.41.2025.10.29.10.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 10:12:31 -0700 (PDT)
+Date: Wed, 29 Oct 2025 14:13:43 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+	andy@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: mpl3115: add threshold events support
+Message-ID: <aQJLR-DrdVRQ3dc1@debian-BULLSEYE-live-builder-AMD64>
+References: <20251028213351.77368-1-apokusinski01@gmail.com>
+ <20251028213351.77368-3-apokusinski01@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2409:b0:432:109d:cb12 with SMTP id
- e9e14a558f8ab-432f9073efemr47555025ab.28.1761757922110; Wed, 29 Oct 2025
- 10:12:02 -0700 (PDT)
-Date: Wed, 29 Oct 2025 10:12:02 -0700
-In-Reply-To: <CAPqLRf0faZTieiVe_6XuJdhR7A02Uv6xjO2adVRUqwRLaWK29Q@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69024ae2.050a0220.3344a1.042c.GAE@google.com>
-Subject: Re: [syzbot] [ntfs3?] KMSAN: uninit-value in bcmp (3)
-From: syzbot <syzbot+0399100e525dd9696764@syzkaller.appspotmail.com>
-To: kubik.bartlomiej@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028213351.77368-3-apokusinski01@gmail.com>
 
-Hello,
+...
+> +static int mpl3115_read_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	u8 int_en_mask;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		int_en_mask = MPL3115_CTRL4_INT_EN_PTH;
+> +		break;
+Usual convention in IIO drivers is to return early whenever possible
+		return !!(data->ctrl_reg4 & MPL3115_CTRL4_INT_EN_PTH);
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> +	case IIO_TEMP:
+> +		int_en_mask = MPL3115_CTRL4_INT_EN_TTH;
+> +		break;
+same here
+		return !!(data->ctrl_reg4 & MPL3115_CTRL4_INT_EN_TTH);
 
-Reported-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
-Tested-by: syzbot+0399100e525dd9696764@syzkaller.appspotmail.com
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return !!(data->ctrl_reg4 & int_en_mask);
+> +}
+> +
+...
+> +static int mpl3115_read_thresh(struct iio_dev *indio_dev,
+> +			       const struct iio_chan_spec *chan,
+> +			       enum iio_event_type type,
+> +			       enum iio_event_direction dir,
+> +			       enum iio_event_info info,
+> +			       int *val, int *val2)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	int ret, press_pa;
+> +	__be16 tmp;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		ret = i2c_smbus_read_i2c_block_data(data->client,
+> +						    MPL3115_PRESS_TGT, 2,
+> +						    (u8 *) &tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/**
+> +		 * Target value for the pressure is
+> +		 * 16-bit unsigned value in 2 Pa units
+> +		 */
+> +		press_pa = be16_to_cpu(tmp) << 1;
+> +		*val = press_pa / KILO;
+> +		*val2 = (press_pa % KILO) * MILLI;
+> +
+> +		return IIO_VAL_INT_PLUS_MICRO;
 
-Tested on:
+Looks like this is intended to provide the value in kilopascal. Though, as
+specified by pressure_raw ABI [1], we only get to kilopascal after applying
+channel _offset and _scale. So, this would have to use _input ABI [2], or
+provide a value that can be scaled to kilopascal.
+If I'm not missing anything, 
 
-commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10264fe2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c95b0be0c2d0972f
-dashboard link: https://syzkaller.appspot.com/bug?extid=0399100e525dd9696764
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16913e7c580000
+		*val = be16_to_cpu(tmp) << 1;
+		return IIO_VAL_INT;
 
-Note: testing is done by a robot and is best-effort only.
+would comply with the _raw ABI.
+
+[1]: https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/Documentation/ABI/testing/sysfs-bus-iio?h=testing#n397
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/tree/Documentation/ABI/testing/sysfs-bus-iio?h=testing#n1061
+
+> +	case IIO_TEMP:
+> +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* Target value for the temperature is 8-bit 2's complement */
+> +		*val = sign_extend32(ret, 7);
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mpl3115_write_thresh(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				enum iio_event_info info,
+> +				int val, int val2)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	u8 tmp[2];
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		val = (val * KILO + val2 / MILLI) >> 1;
+same here. You seem to want to use the _input ABI.
+Or, if you chose to use the _raw ABI, take the raw threshold value
+		val = val >> 1;
+		if (val < 0 || val > 0xffff)
+			return -EINVAL;
+...
+
+Might also use a local variable to hold the adjusted val >> 1 pressure threshold.
+
+You may also add docs for those. e.g.
+What:		/sys/.../iio:deviceX/events/in_pressure_thresh_rising_en
+and
+What:		/sys/.../events/in_pressure_raw_thresh_rising_value
+to ABI documentation.
+The ABI doc would probably be best appreciated in a separate patch.
+
+> +
+> +		if (val < 0 || val > 0xffff)
+> +			return -EINVAL;
+> +
+> +		tmp[0] = FIELD_GET(GENMASK(15, 8), val);
+> +		tmp[1] = FIELD_GET(GENMASK(7, 0), val);
+> +
+> +		return i2c_smbus_write_i2c_block_data(data->client,
+> +						      MPL3115_PRESS_TGT, 2, tmp);
+
+With best regards,
+Marcelo
 
