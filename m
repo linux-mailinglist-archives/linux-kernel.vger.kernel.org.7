@@ -1,88 +1,160 @@
-Return-Path: <linux-kernel+bounces-875111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 096F7C183B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:24:12 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A811C183B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:26:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 644F435137E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:24:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1025E3513E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A63F2F5A01;
-	Wed, 29 Oct 2025 04:24:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDAF42F5A07;
+	Wed, 29 Oct 2025 04:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgRjpogV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBC025FA29
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B902F549E
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761711845; cv=none; b=hbm+VUqZlwu8/FasIzUfRAWa9vCVRm02GclM7LM9y7YuwA1cZC33NinvjSCBw8TaaT8nTMgq1RrfTCH45VSBC4/w4T2Q4LbuKfShwijm3SvPqRfHGNGOz6y8QysJGKJIv5rBk+mwW4g1N2nAxUOX9IrCcHRiOuXNXrI7SO8YXH8=
+	t=1761711994; cv=none; b=k1kgYms6v68JfNOyddipp+R6sS5HdlF0FeByGg5k5hYjIS3fbRKi2idIeTWh9weZg6RNzDQvLFGim8sMYGz03CwgyuFap3E21mEc7rfNCruUznDLGjm3YKZBi36luOALFq906Q26PRM6UjLtyPTowlNc44/ddvIvvXMTSkmfF40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761711845; c=relaxed/simple;
-	bh=UbvujcQMZ8LUmiFNvZwfWb8fqF93TIdoQTs+9b/gwnc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NYLOdoT9PgtZENJpmxaCz5H6+aSIPs5TZbdfBnIlyZ+FgH+VTvazE8ujQRffuYlzrd3fozWe7gr57iU2nSXRPgPVojdpe1fgwrDk6bbYzjiNZ2lxcgA2QD7fpgG6vpBpmNqec0yOe39lnN9t+eTnyl3tsp+cScKYZrXgXiupbKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c684035eso7435995ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 21:24:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761711843; x=1762316643;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=k0+bcIjSuIlbcfy+h7iYgchQvQ3SGlGN19/Nz1UJTv8=;
-        b=pAQWWQo2AkYvySTAc5GMP5zvatA5o4BARH2NLuB2ZN7XWmcvdTHK2BVeig+xay1wmq
-         dUYJHCcfPUKgFEOoBmIQuEKyCBI2kbrhY7fUSsAazHzui+YlCL5OVgJU4KJJmuFsHOHZ
-         zHC4XV09b6qL2gypK/JI9mE5Do7LQnft7es5REPesaCY+GbQWtZlwiZ2R1nBv3Qwfvhk
-         9RINhPWaLUZ9VM2zxnRLie5TTBQ8pw0rkGN5wO8c0/KB8h2Ck5tH44VJXE2/TrWqUD3P
-         baKfAEKDhuk40k94oSyXttZqpvbXdIhhTpT/Hv3vgUNYDJSWc8iPiRwh2yNa8xuTlUku
-         4W+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWGnKqTzH6MTv6kAdkHA+LZBVZU/xX/gBKhtjI5UytpKzmFcukCQawOjf2FwPgMgSAIPZ1REfBNMvWJemE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyduHzw8mWFNdtAmfhA1VcCTd93T59rUgUC/gnM8fKMgXwLbtIo
-	MsyVwWe+js9xrpS4Hmaq3rYjnHt3DNzRyy6MHO2vPlHVYq6DzeDpa7JkXBqDdaxBV+fWX6YqF5s
-	MsAWGoBczqkJYMScRrYCDY2QSSrpfOedTIcxxICus30u3jCOTq5MCJqK/ggM=
-X-Google-Smtp-Source: AGHT+IF3TNOw+Nfh8K2sRqUOacvr45PJS8UO8XrlU1lvB3SVDr1gDkQvmq8ypL6ncttVjKbqGTngtKtZCMNEtJfeKWTMMgS20zBJ
+	s=arc-20240116; t=1761711994; c=relaxed/simple;
+	bh=pNrkVZRg0qtgUOiit6EQFAAv9auGuKi23YsrTYy0s+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIwy4H+fvVKLT05v/o9kWgKLX759CNzEO5n4BTMsr4VvnnTM9XuwoN8kPchlzpuBYiQ7lv6D+/aoT/jtv/zz++PwLb4C8u5moClv+Oi4Vs859y7ZIWcwW50k6BzUwRwCM1wdaejonwp9hTDRcWhjJyGjpq2kDPu/N5ney6ocjdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgRjpogV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F561C4CEF7;
+	Wed, 29 Oct 2025 04:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761711993;
+	bh=pNrkVZRg0qtgUOiit6EQFAAv9auGuKi23YsrTYy0s+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OgRjpogVTcQB5uIUkngmqJrKUREu27UwjCGfWj9EqxnCWz4+6uYJn/YOM1C3lTNvY
+	 YYdp5rjFoUTgyaLzH13AQjjAXuslgnCBpYdnnxmWnbMzJ8ZljIr7Eeq2s9lou89a+G
+	 Q8QL9YY5jxQ0zetYJiVSfVZJDWiBkqCy9pguXk+20k+vf0ygAcKNa0B2WWxMDd2YDA
+	 +oD4lLqeysMTNYEr/pzh1InWsydeR9Whe0yxoDRjLBxCv9HUFxg6Lf9GZ+hAgP9n2J
+	 W1eYT8j16Xb6bGRGclP2sd5BHD2ex+YLx0xyjus/NMh12/6lCVdMaXbnbsHleqaLTN
+	 APi9oHqALojCw==
+Date: Wed, 29 Oct 2025 04:26:31 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Yongpeng Yang <yangyongpeng.storage@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Yongpeng Yang <yangyongpeng@xiaomi.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: add fadvise tracepoint
+Message-ID: <aQGXd0lI5MeHyGbX@google.com>
+References: <20251028195444.3181203-1-jaegeuk@kernel.org>
+ <81602674-b9f4-4ab2-91f5-0afc762e7cc6@kernel.org>
+ <7040b501-6e25-42da-bda0-a15614a80d5d@gmail.com>
+ <490569af-8e87-4cea-81dc-3bc9f59aa2b4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1949:b0:431:da98:3519 with SMTP id
- e9e14a558f8ab-432f8c55920mr25195695ab.0.1761711843444; Tue, 28 Oct 2025
- 21:24:03 -0700 (PDT)
-Date: Tue, 28 Oct 2025 21:24:03 -0700
-In-Reply-To: <tencent_EFA7FBC6CC92D88645C98F6EEB2EC04C8706@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690196e3.050a0220.32483.01e7.GAE@google.com>
-Subject: Re: [syzbot] [nilfs?] WARNING: ODEBUG bug in nilfs_detach_log_writer (2)
-From: syzbot <syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <490569af-8e87-4cea-81dc-3bc9f59aa2b4@kernel.org>
 
-Hello,
+On 10/29, Chao Yu wrote:
+> On 10/29/25 11:13, Yongpeng Yang wrote:
+> > On 10/29/25 10:06, Chao Yu via Linux-f2fs-devel wrote:
+> >> On 10/29/25 03:54, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> >>> This adds a tracepoint in the fadvise call path.
+> >>>
+> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> >>> ---
+> >>>   fs/f2fs/file.c              |  2 ++
+> >>>   include/trace/events/f2fs.h | 32 ++++++++++++++++++++++++++++++++
+> >>>   2 files changed, 34 insertions(+)
+> >>>
+> >>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> >>> index 6d42e2d28861..4a81089c5df3 100644
+> >>> --- a/fs/f2fs/file.c
+> >>> +++ b/fs/f2fs/file.c
+> >>> @@ -5288,6 +5288,8 @@ static int f2fs_file_fadvise(struct file *filp, loff_t offset, loff_t len,
+> >>>       struct inode *inode = file_inode(filp);
+> >>>       int err;
+> >>>   +    trace_f2fs_fadvise(inode, offset, len, advice);
+> >>> +
+> >>>       if (advice == POSIX_FADV_SEQUENTIAL) {
+> >>>           if (S_ISFIFO(inode->i_mode))
+> >>>               return -ESPIPE;
+> >>> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> >>> index edbbd869078f..b7f5317b5980 100644
+> >>> --- a/include/trace/events/f2fs.h
+> >>> +++ b/include/trace/events/f2fs.h
+> >>> @@ -586,6 +586,38 @@ TRACE_EVENT(f2fs_file_write_iter,
+> >>>           __entry->ret)
+> >>>   );
+> >>>   +TRACE_EVENT(f2fs_fadvise,
+> >>> +
+> >>> +    TP_PROTO(struct inode *inode, loff_t offset, loff_t len, int advice),
+> >>> +
+> >>> +    TP_ARGS(inode, offset, len, advice),
+> >>> +
+> >>> +    TP_STRUCT__entry(
+> >>> +        __field(dev_t,    dev)
+> >>> +        __field(ino_t,    ino)
+> >>> +        __field(loff_t, size)
+> >>> +        __field(loff_t,    offset)
+> >>> +        __field(loff_t,    len)
+> >>> +        __field(int,    advice)
+> >>> +    ),
+> >>> +
+> >>> +    TP_fast_assign(
+> >>> +        __entry->dev    = inode->i_sb->s_dev;
+> >>> +        __entry->ino    = inode->i_ino;
+> >>> +        __entry->size    = inode->i_size;
+> >>
+> >> __entry->size = i_size_read(inode)?
+> >>
+> >> Thanks,
+> >>
+> > The other "__entry->size = inode->i_size;" in include/trace/events/f2fs.h also need to be updated?
+> 
+> Yeah, Yongpeng, I noticed that and fixed them right after reply:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/chao/linux.git/commit/?h=bugfix/common&id=ffd21bf791143957f6ff1fc14d7dbd6e8466b320
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Please post the above patch separately. :)
 
-Reported-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
-Tested-by: syzbot+24d8b70f039151f65590@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         b98c94ee arm64: mte: Do not warn if the page is alread..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11a09c92580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=158bd6857eb7a550
-dashboard link: https://syzkaller.appspot.com/bug?extid=24d8b70f039151f65590
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=128b8fe2580000
-
-Note: testing is done by a robot and is best-effort only.
+> 
+> Thanks for your reminder. :)
+> 
+> Thanks,
+> 
+> > 
+> >>> +        __entry->offset    = offset;
+> >>> +        __entry->len    = len;
+> >>> +        __entry->advice    = advice;
+> >>> +    ),
+> >>> +
+> >>> +    TP_printk("dev = (%d,%d), ino = %lu, i_size = %lld offset:%llu, len:%llu, advise:%d",
+> >>> +        show_dev_ino(__entry),
+> >>> +        (unsigned long long)__entry->size,
+> >>> +        __entry->offset,
+> >>> +        __entry->len,
+> >>> +        __entry->advice)
+> >>> +);
+> >>> +
+> >>>   TRACE_EVENT(f2fs_map_blocks,
+> >>>       TP_PROTO(struct inode *inode, struct f2fs_map_blocks *map, int flag,
+> >>>            int ret),
+> >>
+> >>
+> >>
+> >> _______________________________________________
+> >> Linux-f2fs-devel mailing list
+> >> Linux-f2fs-devel@lists.sourceforge.net
+> >> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+> > 
 
