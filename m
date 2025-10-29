@@ -1,84 +1,123 @@
-Return-Path: <linux-kernel+bounces-877236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7404FC1D851
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:53:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2DEC1D863
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:54:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DE8406918
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76849421E60
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CA22E3B08;
-	Wed, 29 Oct 2025 21:53:04 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA712EC56D;
+	Wed, 29 Oct 2025 21:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="csOcxHFR"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390E62DCF78
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD732DF6F8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774784; cv=none; b=D/joTQIeZpiWzRcQrGemHcSaid2qXgchRl7fAJ4srRbTEpdcfVolBIi7t3zKFISpoe6SBBmZx65oGyUyDomv/mG0sWfFK2LCzq4Wl2oc0yH65MRXj0d21vnOL6uxcA4mgvMiFIeKkjtski3TMPIO0/2pCZmnFSD8bQEHdS3TXbo=
+	t=1761774840; cv=none; b=s7FsaISBh/+MMxpmNQpXdy0h3UYrsn9ZeZn/pbChFzYJalAQWyvIifCs0lTXFiafw0iSU7S/O/E5KMviM0Ila2DtHjMktKO00pXWDDDIcyT6A4OZmoiqSM9SEubEhH3T6Vr3QqmM4vQ1nBLVk7aQRfPbLAFvrDxRC+v2fTirLdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774784; c=relaxed/simple;
-	bh=Z+xHVRWF0/gxljkCTQbxJVwpt2KlRU5mRFICb1g2xk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IGZ+HeaVFTNrtyDflxZ5SqSQU3+YvDdz42109ShIAztTK0PVc8R0rmGzACJ/JKiSEbUePJypmkZ0ymApYDVsDHRYQ2bxnUkWoYvRdy2RFpV58K+CGzLBfma/u766JY4fdPAi0MtZJ5coPl+wqfswKE04KS4RKVCHiUGheamij6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id B43CDBC243;
-	Wed, 29 Oct 2025 21:52:54 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 8A88A20026;
-	Wed, 29 Oct 2025 21:52:52 +0000 (UTC)
-Date: Wed, 29 Oct 2025 17:53:33 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson
- <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, Sean
- Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
-Subject: Re: [patch V6 19/31] rseq: Provide and use rseq_update_user_cs()
-Message-ID: <20251029175333.399525bb@gandalf.local.home>
-In-Reply-To: <871pmlv2x6.ffs@tglx>
-References: <20251027084220.785525188@linutronix.de>
-	<20251027084307.151465632@linutronix.de>
-	<20251029120405.569f9376@gandalf.local.home>
-	<871pmlv2x6.ffs@tglx>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761774840; c=relaxed/simple;
+	bh=pRbBQ8z+sVjizpZCWo5hT/mNnyCZzi3jD4cZdQbYlrk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AoTO8FzA2fIc5P/KIFoR4FagUu7HEHB55YVphO7o1JT+k+80gL9UdlRYG6+k4a8ISMMI4K5AGI4/9tigHO0nz/oS6cIb43BlEDpWPCAHdcemOi+biDpcdp1T1v4gg+EzjLBfMfJrolSFTcoNCEsi6LW8gIufGJKy3AjA+6rcCm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=csOcxHFR; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761774826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pRbBQ8z+sVjizpZCWo5hT/mNnyCZzi3jD4cZdQbYlrk=;
+	b=csOcxHFRJMKoqy3bgapanUAkcjC8JMzxMX/V6v8WjihxeU45lzMu454aITCt7yS/w57B40
+	6C/Th57sjWmYDj42CsxxgzABtVElBGYig2qHIacSpSCzNNU5MPWom2nD/vFeNo2jJL/fI1
+	R0rwHvH1fMX8QhZftw1demdPjuW9x6I=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Song Liu <song@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
+ <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
+ Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
+ Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
+  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
+ <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
+ to cgroups
+In-Reply-To: <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
+	(Song Liu's message of "Wed, 29 Oct 2025 14:18:00 -0700")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-3-roman.gushchin@linux.dev>
+	<aQJZgd8-xXpK-Af8@slm.duckdns.org> <87ldkte9pr.fsf@linux.dev>
+	<aQJ61wC0mvzc7qIU@slm.duckdns.org>
+	<CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
+Date: Wed, 29 Oct 2025 14:53:39 -0700
+Message-ID: <871pmle5ng.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: bpmc9fgf153he1qx5izuufppj7ycnyzp
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8A88A20026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19LX/NQ0mlmCaoXcxz2uQJHkCgpEoxXV9s=
-X-HE-Tag: 1761774772-131689
-X-HE-Meta: U2FsdGVkX1/Niq6k+mVkffjz6qKXuMJmrTAZSCQTNUhKM+apDjScmFvkdvnm1ObpuPluZYS3sKsiSkdPHYeLy0NEhp7vgVnVYSyBrSguD2ajjK+6JTrcZN0ehs4QgDhuP+cziOlSp5ymcV1+H2JtmmpbSQHb0fuFTmgiUW7YfR6jwoUOzbRgJBe1W4SUAB/T4U0mD+DZ3qT2RpWuxE/9waBiQL/jnr1fij+9omzSSVDa5vupflQGj0CMZ9elmc8bF2KPwsbTTM0wv2pHwW1B3Zrclr4GY2mwLJTK5TGI4P4HTyL8AjbIhvqsf6KqYkHT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 29 Oct 2025 22:00:37 +0100
-Thomas Gleixner <tglx@linutronix.de> wrote:
+Song Liu <song@kernel.org> writes:
 
-> > Or am I missing something?  
-> 
-> Yes. None of this is compiled at all when CONFIG_RSEQ=n.
-> 
-> When CONFIG_RSEQ=y then the slowpath muck is compiled into kernel/rseq.c
-> because that file defines RSEQ_BUILD_SLOW_PATH.
+> Hi Tejun,
+>
+> On Wed, Oct 29, 2025 at 1:36=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>>
+>> On Wed, Oct 29, 2025 at 01:25:52PM -0700, Roman Gushchin wrote:
+>> > > BTW, for sched_ext sub-sched support, I'm just adding cgroup_id to
+>> > > struct_ops, which seems to work fine. It'd be nice to align on the s=
+ame
+>> > > approach. What are the benefits of doing this through fd?
+>> >
+>> > Then you can attach a single struct ops to multiple cgroups (or Idk
+>> > sockets or processes or some other objects in the future).
+>> > And IMO it's just a more generic solution.
+>>
+>> I'm not very convinced that sharing a single struct_ops instance across
+>> multiple cgroups would be all that useful. If you map this to normal
+>> userspace programs, a given struct_ops instance is package of code and a=
+ll
+>> the global data (maps). ie. it's not like running the same program multi=
+ple
+>> times against different targets. It's more akin to running a single prog=
+ram
+>> instance which can handle multiple targets.
+>>
+>> Maybe that's useful in some cases, but that program would have to explic=
+itly
+>> distinguish the cgroups that it's attached to. I have a hard time imagin=
+ing
+>> use cases where a single struct_ops has to service multiple disjoint cgr=
+oups
+>> in the hierarchy and it ends up stepping outside of the usual operation
+>> model of cgroups - commonality being expressed through the hierarchical
+>> structure.
+>
+> How about we pass a pointer to mem_cgroup (and/or related pointers)
+> to all the callbacks in the struct_ops? AFAICT, in-kernel _ops structures=
+ like
+> struct file_operations and struct tcp_congestion_ops use this method. And
+> we can actually implement struct tcp_congestion_ops in BPF. With the
+> struct tcp_congestion_ops model, the struct_ops map and the struct_ops
+> link are both shared among multiple instances (sockets).
 
-What I was missing was that the code was in a header file.
-
-I mistook it as being part of rseq.c and not living in
-include/linux/rseq_entry.h :-p
-
--- Steve
++1 to this.
+I agree it might be debatable when it comes to cgroups, but when it comes to
+sockets or similar objects, having a separate struct ops per object
+isn't really an option.
 
