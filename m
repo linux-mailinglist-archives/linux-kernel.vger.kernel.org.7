@@ -1,140 +1,116 @@
-Return-Path: <linux-kernel+bounces-876313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390E3C1B70E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:55:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A7AC1B298
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BF575A8284
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3F01C263CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382A028C5AA;
-	Wed, 29 Oct 2025 14:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A22DAFCA;
+	Wed, 29 Oct 2025 14:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="VMBlA123"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lFZNSCVs"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D4725785A;
-	Wed, 29 Oct 2025 14:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72F228B4F0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746843; cv=none; b=sQd+eQnzb/BEJTlcDJQfDIxzN2XFSvztWhyP9FJPl7yPypTwkCxNS3D6ywpqdIArnlp/jtZInD3I5t7vM2KlM27e1qzpesxfAGPnWLpxdgaEpUUuJ6HwU8afKypueIkKxD5sY6aibfATiYv0PeGoDuP6kkLPb/RF2mEFshnGoK4=
+	t=1761746892; cv=none; b=Kwp8SFbQUzWIreRwsPQigrWHFDD1et58Q2sNsfFilLXUoJt+C2Hf4Y/+r0E9lD+v/kA0esEkRN+nUoL43cfoATQJOq4BJjPgi7nEbpZ+RJe5SAEuY1Al1Un46npY6MZKiILTtY2zvCRDodlks1Lwao8qEquK84b3kY0NANe/yTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746843; c=relaxed/simple;
-	bh=jbDiRc1txlZTTk//UC1k3FW4pC0DVEyDhtcenS6QTzU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bkllNIFWieXV5qX7WMvYC9aQByp+xIX6Ag6jE6NFavcJGxWHQHVA35z4wXOWkBjppfggBkq5oAFr2w6qOnIXxDqGbPRY1nvhzzO8d8FlghGeRnEmzJh7nJNOFcXcbmzPfAakiHK5uGtnpaLMXICQE260P1m9FrM/0wDxhn0Im84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=VMBlA123; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+	s=arc-20240116; t=1761746892; c=relaxed/simple;
+	bh=vgplDEI2cURAK710QiiFa6EaaEVkPFraJNb6vsw3aEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPTEAXimSgrIbRskUBCV40n+h/qtyQJuxzKdfDT7zRzOXmV5KJoGOmuPA5gej9HKhlU2E/cIll1LOgWpVLDdivbkI5ILdshWiC0RUKrLqKJ8JMk+IMKwdIOdz94d3BlBpVtpaAUiboHxRuU/ayf9Kqh5G/Fg/7CCXRBO7/XmQ4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lFZNSCVs; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=jbDiRc1txlZTTk//UC1k3FW4pC0DVEyDhtcenS6QTzU=;
-	t=1761746841; x=1762956441; b=VMBlA123oYDK6lnjS3/iOydwhEBhwAbGjDABq1MXLNLkVhX
-	i1C1XzHUmg3JumW6kuyvgYXnlKLq3fKX/zzKkFCNEZBzFUpi1kxq65iwg5oOhhipUwoooEr3pW2Pv
-	nyUVMn6N9QqjqPdyrWpEJyhBen1qHmQ6Qv8Z0/ZjMO26jI1UVSKVffgi0wjCwf8q7t82mEVoevCkd
-	Ier5OEwm7kJX/Kekr2AhT7waitdg3Tqr8+Ouz6PjN+vCkxZhF7SPG3Vkba+hb0Ov7qnbyh8irp9SS
-	J0C9l79vPNMUzFTV/W4qweSXz5Dm81+aS8ck46OWscqRdcdV1DpdbOWBC8+RTIfw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <benjamin@sipsolutions.net>)
-	id 1vE6pV-0000000EkWX-0O7N;
-	Wed, 29 Oct 2025 15:07:13 +0100
-Message-ID: <516b490d30be6d0676ffe3be5942954bc3c08a39.camel@sipsolutions.net>
-Subject: Re: [PATCH v3 09/12] um: use nolibc for the --showconfig
- implementation
-From: Benjamin Berg <benjamin@sipsolutions.net>
-To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: linux-um@lists.infradead.org, Willy Tarreau <w@1wt.eu>, 
-	linux-kselftest@vger.kernel.org, kernel test robot <lkp@intel.com>, Arnaldo
- Carvalho de Melo	 <acme@redhat.com>, oe-kbuild-all@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Date: Wed, 29 Oct 2025 15:07:12 +0100
-In-Reply-To: <99359472-8b1e-4d51-adb8-5b16f1f90a9f@weissschuh.net>
-References: <aNaNtI+mbyc4zgFy@rli9-mobl>
-	 <99359472-8b1e-4d51-adb8-5b16f1f90a9f@weissschuh.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=eyTFgjCtlAFz41bPRe0AiqKzbpcg+fQtnl2er0W0fDo=; b=lFZNSCVsF/nT0Mw0/1NSmt4zHJ
+	agMu3urzhT27A34Oc8B8VpZgZ8NDuO+EXNuHMycdlqoSccEUdOnoxY7QaGC7kSP89RE+TLWmTZL3J
+	bZl9XyoxzOwJCFboBBeWdlxa01sEPPmUQbzy4eI03qScbnNFTzO2qhQt5suZaUgVP0rNJ1tprClTH
+	szayLs4jsfyFhrKNxtu5H8GdjEXE42m5f2sAU73aC3JpSaq6jxERKBa/D56iMEqfGifR4sVGMla01
+	3PPdiw2/zIdSYbPllCN6jgVF2a811bJYzLbQ53d9OKI1pyzqYUuEQFIOzCUD/GWbIQi1LEOfDJFPC
+	0R/uOtyQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE5yT-00000006wGy-0URG;
+	Wed, 29 Oct 2025 13:12:28 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1A62D300289; Wed, 29 Oct 2025 15:07:55 +0100 (CET)
+Date: Wed, 29 Oct 2025 15:07:55 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dmitry Ilvokhin <d@ilvokhin.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] sched/stats: Optimize /proc/schedstat printing
+Message-ID: <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
+References: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
 
-Hi Thomas,
+On Wed, Oct 29, 2025 at 01:07:15PM +0000, Dmitry Ilvokhin wrote:
+> Function seq_printf supports rich format string for decimals printing,
+> but there is no need for it in /proc/schedstat, since majority of the
+> data is space separared decimals. Use seq_put_decimal_ull instead as
+> faster alternative.
+> 
+> Performance counter stats (truncated) for sh -c 'cat /proc/schedstat >
+> /dev/null' before and after applying the patch from machine with 72 CPUs
+> are below.
+> 
+> Before:
+> 
+>       2.94 msec task-clock               #    0.820 CPUs utilized
+>          1      context-switches         #  340.551 /sec
+>          0      cpu-migrations           #    0.000 /sec
+>        340      page-faults              #  115.787 K/sec
+> 10,327,200      instructions             #    1.89  insn per cycle
+>                                          #    0.10  stalled cycles per insn
+>  5,458,307      cycles                   #    1.859 GHz
+>  1,052,733      stalled-cycles-frontend  #   19.29% frontend cycles idle
+>  2,066,321      branches                 #  703.687 M/sec
+>     25,621      branch-misses            #    1.24% of all branches
+> 
+> 0.00357974 +- 0.00000209 seconds time elapsed  ( +-  0.06% )
+> 
+> After:
+> 
+>       2.50 msec task-clock              #    0.785 CPUs utilized
+>          1      context-switches        #  399.780 /sec
+>          0      cpu-migrations          #    0.000 /sec
+>        340      page-faults             #  135.925 K/sec
+>  7,371,867      instructions            #    1.59  insn per cycle
+>                                         #    0.13  stalled cycles per insn
+>  4,647,053      cycles                  #    1.858 GHz
+>    986,487      stalled-cycles-frontend #   21.23% frontend cycles idle
+>  1,591,374      branches                #  636.199 M/sec
+>     28,973      branch-misses           #    1.82% of all branches
+> 
+> 0.00318461 +- 0.00000295 seconds time elapsed  ( +-  0.09% )
+> 
+> This is ~11% (relative) improvement in time elapsed.
 
-On Mon, 2025-10-20 at 17:21 +0300, Thomas Wei=C3=9Fschuh wrote:
-> Hi Benjamin,
->=20
-> Sep 26, 2025 15:57:43 kernel test robot <lkp@intel.com>:
->=20
-> > kernel test robot noticed the following build warnings:
-> >=20
-> > [auto build test WARNING on uml/next]
-> > [also build test WARNING on uml/fixes shuah-kselftest/next shuah-
-> > kselftest/fixes linus/master v6.17-rc7 next-20250925]
-> > [If your patch is applied to the wrong git tree, kindly drop us a
-> > note.
-> > And when submitting patch, we suggest to use '--base' as documented
-> > in
-> > https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> >=20
-> > url:=C2=A0=C2=A0=C2=A0
-> > https://github.com/intel-lab-lkp/linux/commits/Benjamin-Berg/tools-comp=
-iler-h-fix-__used-definition/20250924-222547
-> > base:=C2=A0=C2=A0
-> > https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux=C2=A0next
-> > patch link:=C2=A0=C2=A0=C2=A0
-> > https://lore.kernel.org/r/20250924142059.527768-10-benjamin%40sipsoluti=
-ons.net
-> > patch subject: [PATCH v3 09/12] um: use nolibc for the --showconfig
-> > implementation
-> > :::::: branch date: 2 days ago
-> > :::::: commit date: 2 days ago
-> > config: um-randconfig-r111-20250926
-> > (https://download.01.org/0day-ci/archive/20250926/202509261452.g5pe
-> > aXCc-lkp@intel.com/config)
-> > compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-> > reproduce (this is a W=3D1 build):
-> > (https://download.01.org/0day-ci/archive/20250926/202509261452.g5pe
-> > aXCc-lkp@intel.com/reproduce)
-> >=20
-> > If you fix the issue in a separate patch/commit (i.e. not just a
-> > new version of
-> > the same patch/commit), kindly add following tags
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes:
-> > > https://lore.kernel.org/r/202509261452.g5peaXCc-lkp@intel.com/
-> >=20
-> > sparse warnings: (new ones prefixed by >>)
-> > =C2=A0=C2=A0 command-line: note: in included file (through
-> > tools/include/nolibc/nolibc.h, tools/include/nolibc/stddef.h,
-> > arch/um/include/shared/user.h, builtin):
-> > > > tools/include/nolibc/sys.h:109:29: sparse: sparse: Using plain
-> > > > integer as NULL pointer
-> > =C2=A0=C2=A0unistd.h:70:30: sparse: sparse: Using plain integer as NULL
-> > pointer
-> > =C2=A0=C2=A0 tools/include/nolibc/unistd.h:70:33: sparse: sparse: Using=
- plain
-> > integer as NULL pointer
->=20
-> Do you intend to work on your UML with nolibc patches this cycle?
-> If not I would fix these sparse warnings in the nolibc tree and also
-> apply your nolibc patches.
-
-We are not in a hurry for the UML part and while it shouldn't be too
-much work, I obviously didn't get around to it in the last week.
-
-So, feel free to pull the patches in via your tree. Then I'll submit
-the UML part again in the next cycle.
-
-Benjamin
+Yeah, but who cares? Why do we want less obvious code for a silly stats
+file?
 
