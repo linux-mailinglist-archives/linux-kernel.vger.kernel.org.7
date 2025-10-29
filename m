@@ -1,103 +1,195 @@
-Return-Path: <linux-kernel+bounces-876974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E975C1CE27
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:05:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F687C1CE3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3B33BE3DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:05:10 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A98E434C30E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C0D35BDD4;
-	Wed, 29 Oct 2025 19:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400EA358D07;
+	Wed, 29 Oct 2025 19:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="ZFQNmgMV"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pR7s+4cs"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C614359FB7;
-	Wed, 29 Oct 2025 19:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9484E33A036
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764589; cv=none; b=Rok9a1LH5pIPyLqIdbq8igVTXbYe8AFgaRp+wQ2zdx8310oi4AohHGaCv1snn9k4wFxmW428QrxcT2aIPOIiqpImFUgdO4LQOz0WycgUGf+pDnhG6Pj5jxGHmaj/3CjzZqFMfNiRQT5i/RH0GG6OZGLdmNtMTkCdBL+jsCh4GBk=
+	t=1761764619; cv=none; b=FhqxHmPUPxDKGeNZ3Zxjog3ea28epyVfWMZwDIvRuAZSXeYw6ACZaVbryZVfRkxOJnEbqrGlBImcKcARsP5taArkjyadgYqUxuvi91gaZFVqbzLPHSkeRHXe26BfjfIMr2Fep3vK1efZPUy5DvlyYmLl+FfhqtFLCkT58TRR97o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764589; c=relaxed/simple;
-	bh=8dIjjojbITvqNbsg3XwjMkl/uvpHaxTiczOpOe5mnTo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DjIjdDoOD6Sw5jNZ4Q4dogBh+OgMMq9v3PQ6bYY3kARYEvifQnVLedRWsQ22Q3VIKt1XsXl4B62lOhggPA5mP/1RtUuL7XFZi5g8Voq2mPJFrZKOS6r0fioJtVjnuWvL3ZsOyMAxsuSDxmUNN1U4FO5QGcD7vjQLpCVEkjUUJkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=ZFQNmgMV; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from debian.intra.ispras.ru (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 0CFF740777B7;
-	Wed, 29 Oct 2025 19:03:02 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 0CFF740777B7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1761764582;
-	bh=BWZ2dTTCVzN7XXif7Kg6X0B6A96hrFAgIhH5o4emZ7o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZFQNmgMVjP9By+1F07/iUYMl6nMsfN3sniibjMVt1tdNnDhk7wQmvtQUemMYGGJgt
-	 bMxhG0njH0L3UVfME78bOBhWR31OMZaqi3GPm0a+dvAorF2JV/X4BTYIenVvi22zyt
-	 S0cz+mqOiCMKbSIic6nGPW8zfHoiW6DhmMcExt8Y=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Ping-Ke Shih <pkshih@realtek.com>,
-	Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Zong-Zhe Yang <kevin_yang@realtek.com>,
-	Po-Hao Huang <phhuang@realtek.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH rtw-next v4 09/10] wifi: rtw89: provide TX reports for management frames
-Date: Wed, 29 Oct 2025 22:02:37 +0300
-Message-ID: <20251029190241.1023856-10-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251029190241.1023856-1-pchelkin@ispras.ru>
-References: <20251029190241.1023856-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1761764619; c=relaxed/simple;
+	bh=ayz5uJhUWek64cO1TfANoi2EbNkkgYCklsEjCvThEwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFIXfKAGUyycfVzwsYZUUwvxZfQptB8mW5nEcgFVZFQhioFXSyL5DFTHUQfcGRGic2rSguErx7BLz99P76ZpVnoxIDw9+lktYFgwTDcRBPqCo5pq+N5mTKfFyuLJPBVgyifZtVsKYJkGAG7eS5VSNsKgGVK2P16YlF2s2qxBphE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pR7s+4cs; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b3c2db014easo46578066b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761764616; x=1762369416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mMbXoANbxtJaPshR9Dxm5UKMGamPxpzGctgh5KcznPU=;
+        b=pR7s+4csT0Krx+MIucU++jucYQhwF8BR4TSNmDlgFr1L2ZtyUccjyQtRgYfcfAFUjN
+         ows+TpWZBP2ILHXvq8ut6whNFbElcAgphk7dl7ZowluMF7aqwYr0SCw1ZzjBaGG4B2dQ
+         5IQkFxs46EuMMkgius0iebc/PH2bygKVPHwp0PaVhWfe7Wm+woxNI5woOu3dZogf1s0m
+         Jxfwm/KEykGx4IlZe9oLkBVlTnrHJCdpuy3DlsCwPINT4aMF34umLQYQQnLSsSz5jY9K
+         PB+gR2PTbLulFNgtDFd4nqlC4xvdVg+97bVZCyjm8EKTWiCYooS890yKhWL6pnifq0ok
+         wATg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761764616; x=1762369416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mMbXoANbxtJaPshR9Dxm5UKMGamPxpzGctgh5KcznPU=;
+        b=Zs5S+FnYk31IdFQ7TNBHi6pg/jNNr/4StLqKmVDbjxil7klugfKZVCu28g3JePaCqe
+         XY8VStQ9HcUKgOrP0CCwsYA8IPtqWq9Tk/I3rT8WCq12ERmSDcROANQOGkCsQPsrpYdI
+         i0322bSHHkfHRVYfPpVgLURF13c9aQnI39tOep/aMLSWg1MARmgEqUVVLBC0OOx/PZzM
+         Tx7n4Kd+yf9JSvLo7LfO5agDlXZPcW1P4TmIrN0HJpWBNYDM3ePyxbGaE3PYIACYwkxE
+         RYou8L/LNj9PAMQ9VAF/CrhXwC0r7ERP1PwQ3PJHXo2nGwDRos3xSKZmbtsq4AfNGBmS
+         IsjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWy+n6k6i5QfHNer0/KS9m2dxhuNkRZwwHHEGr0EBNkC1+8+TlwpFX40x+eJJiwmbZFHvtcvEIoRJjiYu8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6xPZLT4Wrhjfma99N6VznYtWD9ILAHRTp+V6JaoITQ5FRkGjG
+	mcd5mdgkEdEFJweTRcGLB5DYURuztuJokcGZxrfcVCpr8rie+OLFlEyVpvFttMlrIskGxVHocc5
+	vmskohgxl2kxRnbXHft+eQc2298xWrRfRNy9i5e8k
+X-Gm-Gg: ASbGncvRVRwYhe3uic9o4Jap/eeIYAaT06RF3mP+P2TO5beXKcaVPfTNsnwWvO8hOBx
+	2TBD3uiHxlm+Db0VTWYRH5rFME+oiq+llAH7Al0PdLB8ul5dRkZkKkxRWGNonp8br9MjQJ9gt8U
+	yvk2meQVi3xOlEiOp0bD8QLMLb7xSkyn5cHOyN8ssArUM5FQd193NA76e4GThQhT9cRYKx1+eo8
+	maTKr7g2c31WQxSO11vmtub9uUEHCe/LsN1fXh0+kxOjGsAuGkmrfXM/o9ywHBgkU7wsWhHmShr
+	eT76nv5jO7ULw64rxW1ySxab
+X-Google-Smtp-Source: AGHT+IHfciFTAoDkjpZYU12r/OGQA3CcjFHDRIHS9vPorWUYQf+f9y/eBGvAocvloUc+tpJPBBnlYyO8NS5eEoCs9PI=
+X-Received: by 2002:a17:907:26c3:b0:b6d:c7e0:9da6 with SMTP id
+ a640c23a62f3a-b703d31ffd6mr454751366b.16.1761764615731; Wed, 29 Oct 2025
+ 12:03:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAG2KctoJ+1x61KNmDj_52J1_Y3vyox7UNceFw6_WtbRMA_1vYA@mail.gmail.com>
+ <20251022223218.8664-1-hdanton@sina.com>
+In-Reply-To: <20251022223218.8664-1-hdanton@sina.com>
+From: Samuel Wu <wusamuel@google.com>
+Date: Wed, 29 Oct 2025 12:03:22 -0700
+X-Gm-Features: AWmQ_bnM1ll6As3Oe3-EnkwU_1r2qyB_MB-idXfls2oX12W7nVYN07mZwD0v-6g
+Message-ID: <CAG2Kcto4XPWMqf_ALZht9wivKki7bNKgCwijLruTsj8CDHaCgA@mail.gmail.com>
+Subject: Re: [PATCH v5] PM: Support aborting sleep during filesystem sync
+To: Hillf Danton <hdanton@sina.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In order to provide TX reports for the management queue rtw89 should
-configure the firmware.  Do this with SET_CMC_TBL_MGQ_RPT_EN() for the
-WiFi6 chips and with CCTLINFO_G7_W0_MGQ_RPT_EN flag for the WiFi7 ones.
+On Wed, Oct 22, 2025 at 3:32=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
+te:
+>
+> On Wed, 22 Oct 2025 11:41:37 -0700 Samuel Wu wrote:
+> > On Tue, Oct 21, 2025 at 6:16=E2=80=AFPM Hillf Danton <hdanton@sina.com>=
+ wrote:
+> > > On Tue, 21 Oct 2025 13:13:39 -0700 Samuel Wu wrote:
+> > > > On Fri, Oct 17, 2025 at 5:17=E2=80=AFPM Hillf Danton <hdanton@sina.=
+com> wrote:
+> > > > > On Fri, 17 Oct 2025 23:39:06 +0000 Samuel Wu wrote:
+> > > > > > +/**
+> > > > > > + * pm_sleep_fs_sync - Trigger fs_sync with ability to abort
+> > > > > > + *
+> > > > > > + * Return 0 on successful file system sync, otherwise returns =
+-EBUSY if file
+> > > > > > + * system sync was aborted.
+> > > > > > + */
+> > > > > > +int pm_sleep_fs_sync(void)
+> > > > > > +{
+> > > > > > +     bool need_pm_sleep_fs_sync_requeue;
+> > > > > > +     unsigned long flags;
+> > > > > > +
+> > > > > > +     do {
+> > > > > > +             spin_lock_irqsave(&pm_sleep_fs_sync_lock, flags);
+> > > > > > +             reinit_completion(&pm_sleep_fs_sync_complete);
+> > > > >
+> > > > > Given difficulty following up here, can you specify why reinit is=
+ needed?
+> > > >
+> > > > There are two possibilities that make reinit_completion() necessary=
+:
+> > > > 1. Suspend abort triggers completion, but is canceled before
+> > > > pm_wakeup_pending(), so need reinit to restart the
+> > > > wait_for_completion() process.
+> > > > 2. Handling back-to-back suspend attempts: after a subsequent suspe=
+nd
+> > > > attempt finishes waiting for a previous suspend's fs_sync to finish=
+,
+> > > > we need the reinit to start the wait_for_completion() process of th=
+e
+> > > > subsequent suspend's fs_sync.
+> > > >
+> > > If 1. and 2. matches the comment for wait_for_completion() below,
+> > >
+> > >         static DECLARE_COMPLETION(foo);
+> > >
+> > >         waiter          waker1          waker2
+> > >         ---             ---             ---
+> > >         for (;;) {
+> > >           reinit_completion(&foo)
+> > >           do anything
+> > >           wait_for_completion(&foo)
+> > >                         do bar1         do bar2
+> > >                         complete(&foo)  complete(&foo)
+> > >           if (end)
+> > >                 break;
+> > >         }
+> > >
+> > > the chance for reinit to drop one wakeup is not zero.
+> > > If drop makes sense, for what do you wait after receiving two wakeups=
+?
+> > >
+> >
+> > If I understand correctly, you are referring to the case where
+> > multiple wakers trigger wait_for_complete() simultaneously, hence
+> > having at least one waker's complete() being ignored?
+> >
+> > If so, I see two possibilities with multiple wakers:
+> > 1. fs_sync finishing + suspend abort1 + ... + suspend abortN
+> > 2. suspend abort1 + ... + suspend abortN
+> >
+> > Simplifying, if two wakers come in simultaneously, while one of the
+> > wakers may have its complete() ignored, the state of that waker is
+> > still checked after wait_for_completion(), with
+> > if(pm_wakeup_pending()) and while(need_pm_sleep_fs_sync_requeue) for
+> > suspend aborts and fs_sync finishing respectively.
+> >
+> Note one of the two wakeups may come after the two checks.
+>
+>        reinit_completion(&foo)
+>        do anything
+>        wait_for_completion(&foo)
+>                 complete(&foo) from waker1
+>        check1
+>        check2
+>                 complete(&foo) from waker2 // dropped by reinit
+>
 
-Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
-Acked-by: Ping-Ke Shih <pkshih@realtek.com>
----
- drivers/net/wireless/realtek/rtw89/fw.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thank you Hillf for the foresight and feedback! I'm thinking v6 needs
+this structure to address that scenario:
 
-diff --git a/drivers/net/wireless/realtek/rtw89/fw.c b/drivers/net/wireless/realtek/rtw89/fw.c
-index cb431c8a65ac..96f0463e66d6 100644
---- a/drivers/net/wireless/realtek/rtw89/fw.c
-+++ b/drivers/net/wireless/realtek/rtw89/fw.c
-@@ -3165,6 +3165,7 @@ int rtw89_fw_h2c_default_cmac_tbl(struct rtw89_dev *rtwdev,
- 		SET_CMC_TBL_ANTSEL_C(skb->data, 0);
- 		SET_CMC_TBL_ANTSEL_D(skb->data, 0);
- 	}
-+	SET_CMC_TBL_MGQ_RPT_EN(skb->data, rtwdev->hci.tx_rpt_enabled);
- 	SET_CMC_TBL_DOPPLER_CTRL(skb->data, 0);
- 	SET_CMC_TBL_TXPWR_TOLERENCE(skb->data, 0);
- 	if (rtwvif_link->net_type == RTW89_NET_TYPE_AP_MODE)
-@@ -3210,7 +3211,8 @@ int rtw89_fw_h2c_default_cmac_tbl_g7(struct rtw89_dev *rtwdev,
- 	h2c->c0 = le32_encode_bits(mac_id, CCTLINFO_G7_C0_MACID) |
- 		  le32_encode_bits(1, CCTLINFO_G7_C0_OP);
- 
--	h2c->w0 = le32_encode_bits(4, CCTLINFO_G7_W0_DATARATE);
-+	h2c->w0 = le32_encode_bits(4, CCTLINFO_G7_W0_DATARATE) |
-+		  le32_encode_bits(rtwdev->hci.tx_rpt_enabled, CCTLINFO_G7_W0_MGQ_RPT_EN);
- 	h2c->m0 = cpu_to_le32(CCTLINFO_G7_W0_ALL);
- 
- 	h2c->w1 = le32_encode_bits(4, CCTLINFO_G7_W1_DATA_RTY_LOWEST_RATE) |
--- 
-2.51.0
-
+lock
+do
+        reinit_completion
+        // bookkeeping, queue fs_sync
+        unlock
+        wait_for_completion
+        lock
+        checks
+while
+unlock
 
