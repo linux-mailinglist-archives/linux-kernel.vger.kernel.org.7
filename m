@@ -1,160 +1,126 @@
-Return-Path: <linux-kernel+bounces-876517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B92C1BE45
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13532C1BDBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD2645A2851
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:29:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5DFC15A8D7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924E832AAC1;
-	Wed, 29 Oct 2025 15:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5BD1329C52;
+	Wed, 29 Oct 2025 15:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QgjFDuIi"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Qgvfddvi"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF7C2144D7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5367A3271E7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751752; cv=none; b=CNofEgmdYVb0Hw4yWqyb2213K3XwFKQgv38P6rSs0wRTFMRTS3SHzZUws3qrG0dE9n02J7oeRJ+hohp6ajmA3+60sXWNhzZVD6qKTY3xROh70t5EO++/kwjMjfBWzlfUro1pWNJqsp2sEZVst5O3Ea8BD2mcrAwsqQnc6fkT7Ik=
+	t=1761751761; cv=none; b=o6WND3r+u44gnlFrS3CgQQPwmZW5IFCMtX3WChiF46GBgYFGSfktLlcjC/copBsPOnp6edxbNYac0g/99edMyCjp6gbgj3HucdY7lIk9chG5lPgvJUjzihM/vFYspmIW3GTONUa/orq62wdU2jQg7gzi1kfAQEu+EWEa8FMh31I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751752; c=relaxed/simple;
-	bh=WtXohkJCbWS4jbO4cmof6PHddRZcBco3Bznw9PsDWdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NjWnn/1UaPYdshkPzV+4lC7IM5QLAi4KuzNZo1sb0c4cDHTaR4SmVoxq/3my0Zes1hKZ68qjpecXBSYPGHOX4QW1Pr6Y/JSbekHMG0J27zvSwEyc4mJeUU8BGA+b59BxTzfEgkmUBxCNoRmSlRNXflWpR6tdpsD3qub/+zVob7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QgjFDuIi; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c44ea68f6so12926a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:29:10 -0700 (PDT)
+	s=arc-20240116; t=1761751761; c=relaxed/simple;
+	bh=TmGjDwl2biFKFoDG5SxYDx3zPkhg2VZY+lBriMDwGx0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTerltXzj7ghn3OCEDhnfupsX6tsKMwBR9gXWNcGuq4bVeKyStVC9VTrKVdU/Eg0VljBT/ZBe3eYPgvGxIveR6xUYK8hm1vkI1HAa9aMHVyZDZcpki3Ch4KzFYMrRfEVou48ss9MeqG7XaIbyDmkTngoFnPg6tsButnSmnZdLtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Qgvfddvi; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-426fd62bfeaso3573654f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761751749; x=1762356549; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f625dWb+wusHB9zK0OBpFfEoYrOJJpBna/xRpvKUY48=;
-        b=QgjFDuIinkogf9UkGuZSA0+qfhSDPx19+sh/JFBQrzCWijQQEkenLcC8xfSnNWzqni
-         O08RYSZ7CQSzYayVtRETABaC2DUgxycjk13UbBTR6m80yFosjVi831+2Nfj28jBxYXxY
-         WzHIdll/P9WP2cSmnff+AAs1ygDpKPEn7i2OvRyZqWSGyy571cam7rjR7jya28xfplpc
-         /V7Whimxrba1gqUW2HjjnBHupHL10nHOFd6k9C/Mbv3BC/BEE/f3ejNbPBkrUNOSg39n
-         f07f6/BtmO5Li9tyfpY/aGGNU0u77Lag2wkJR4jr0GHFhCiYLovOlzKcWICpG+rUlGBP
-         KB4Q==
+        d=tuxon.dev; s=google; t=1761751758; x=1762356558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ctrvyyDmJlg0kkSAOlpyChaeCX1qtmxwTU/oEiWOUXQ=;
+        b=QgvfddviuL4U1MV5cXmGqID6ZQRTMgk/pKJAyTedB4yKgt/5I7fYI3uX2K28xRIB1f
+         niJcAZwrL8bGENW0ANzIaHDk6lt7dEYnHlidgcroyHA5fvQPekk7AUVysieHtMK29Mfy
+         nbwyR790XFJp3ZQK1xKKIY1IpWQq2TsTgtJUNbtY9+JdEoUwPUz2IDOFLVP/Kvu1rNOh
+         /Xr/XrD3Q3QHDgHwF0MVAFuVK9oiiZWAcI9t/oM9LAOfGhiBNE4ock+UeXE4t0Sr/ZHL
+         MQsOzXr3W/C7B9HqiV1HKo6+ItlZlJSkLZzgClPUyqfGkUpXBBMeOeaUsvEfzzS57SIG
+         9/7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761751749; x=1762356549;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f625dWb+wusHB9zK0OBpFfEoYrOJJpBna/xRpvKUY48=;
-        b=SQKFCAnldbHjk/uovOGIwcQpClpBjnzsvJV+LLFvmjDdjqU1NXbRcRTMmf5SZH6SJB
-         bHj9RbWI9Z8tmteUkvlBw2FUBSRg0DXm6qFCbSw0MuTm+nK/vtkfunseeen5UPSHrLbF
-         ZljGs+SqkpR9bTQOtiJlaI9cJDNjT846Hxv557HA0LWiRDnU4gFJYvQpE0vgiPH3mnV3
-         8P/SRyLLQi4iW+SXWaW8lqT1EUe/ZddU/QNJMzqUSTB6oh5oKjFDjhU9eXNsVNMpwtYW
-         4fNAwWEQfSPn1i7pvrV/6E/MsUJY8hSioxESoEYbLenorZkWEDTeat6gGcXzdz/YppPr
-         kRLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Msvg73zGvzE/QLt+DOFsiORFSU+EdUFwspRG5AHUmAMZPC2m50LPngCNeEb0oiRwAK80OEiIvCWX3KQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6y3pwUOESbtd1EHqNR1qj/xuzSAN98eVgcSKN0u5NZvwM58CD
-	GLr9CUJfBtqcy6spxHryA2WMn1q5aNevFUDCI1JwwIfsu7KkqNJcnv9TcfZQL3+wQZ6VoRsdObb
-	L+kYJwmXmwWUGMABIWhUrKvUwV0KAFb+ZKpjwibk8
-X-Gm-Gg: ASbGnctYmHXN/c4tSJlRfgwpJkceGyXzPEW6M/GRUL4Y/xRyy4oTN6XBLxkS+zfbJGB
-	lPrbdvKrKtWx+SWFR4YuOxGT5ZV2y8jaSf50RkvczTzq1FaOrlJVY/LE7EBq12chw2WjAzfODzw
-	sftqdqSIOfFumVg66EfNzNhL8LUkJrxxdf6svdkUxw/WiaT6HsxVYYq8NIQLIjWpw1EbxvIXkC2
-	YHgSHuqRHXei4d29nWb343X2tvXwZniSdDIa/kTdfbEyQWDpqgx/37PqQ5uTB3pC6Nta3SG8EN3
-	SZ7yG/m5XQ8aOA4=
-X-Google-Smtp-Source: AGHT+IGJr15cLDbC+fbHSXbTnzvTz28tTliyWmFftwEcXMbXCQuxnWdN03oQ6RERl24adkiisnp+L7hn3wCKpUANYfE=
-X-Received: by 2002:a05:6402:713:b0:63e:11ae:ff2e with SMTP id
- 4fb4d7f45d1cf-6404519b54emr90964a12.3.1761751749371; Wed, 29 Oct 2025
- 08:29:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761751758; x=1762356558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ctrvyyDmJlg0kkSAOlpyChaeCX1qtmxwTU/oEiWOUXQ=;
+        b=mIdFPT36MxRhnLgrFL2xjMuVvzC2yzdCgG91XuhY4RzmN+G/l9gJTqkTnESeYmQNed
+         7yUCsvF0/HZwEVtRHFEM8r7rfbLO5NDAP9Zikh16xzQxMJp7sr/1bM+J9wjwpYPJ7y+Z
+         W4r0S6k6Wlo+DI6wY+kegO2DYklkUmN5XtiU7+4Y2+lpGWltege+OLD11Zwr2D6tIQvQ
+         ZmwIJmzRk0a5gYKzCkWLuRPPk6rj2MrMF96ymy6uullOZwExDIfMQGjypdSezRVaygrv
+         4SJUUz1jNRD+aY92zd7pFiH9MWOQze4datUarOFXKOHVOGJXAHDAbtSeHdZ24FNFHKgt
+         16lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqTiGgVs/59fkYc0j0rtrCZjLPe2mUd/nS5c5DnBU+1VCvt+eZCjG+0tznQjZQYD4yReZo9Zmb6Kz1jTM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvZ1wo/DDTXTDiZzyllZEZsqIy7Knj+GURatvpOH6/gB+Z6iGd
+	lcW+20zeQdqbG9uQU1tr1Pz76LQ4D5Tte5Kf/NvM6DiBlCd1Jocpumeq40EHBnbyuu4=
+X-Gm-Gg: ASbGncvny63x5Xyjli4A5CYOk4dswXFszi0rtctmeGJCvMxebB21qbDqFnosTvNF+ZQ
+	YnrI2ArymHezXS+oOh6IbXAPG78CmKoG72CucPriqToKL1Z3/8vSREuO8L01nnReIxhh50uG0Fz
+	NY1GVB2wiaT15jPnZ7xYU3v1Dl6AREiuUqxi86x0MA27E2Sj8McbttBSaBtuZG4HX94g/hMR0o/
+	Go+6S33TdERfYp+OUzSMlKilycvauEfn2r/xTqld1J5d6gzTDSoBYxmRzRW2o30a0S5z3D7Gtm2
+	nuLLLOoe9XeXwFqhe0rD+BaDuEQ5FcsQ+/aRJw68ALm4Orv1MAH/DkLhe+7bpX86AnzDmG03KXc
+	Lb6ZPvmscqL5VcOxxr7GY5k+MREL2TnTKX6fiTHobbcMs1HJPxdPxFW0gjFxTMTxWJBdcvuXvtW
+	1qfwfrqBIOJPgJxT02MHL8kHpL6xtwYqIYXFGiBu6NxvylJTFKctm2NvworDn7owL6sw==
+X-Google-Smtp-Source: AGHT+IGzKqIEUwGf7yC1EsnKLvYTprAHG5oxW1NDlfiVKv2vlfeP0rhWW9WukDhz1d/BkHuM2+I88A==
+X-Received: by 2002:a05:6000:1787:b0:40f:5eb7:f24a with SMTP id ffacd0b85a97d-429aef77707mr2833160f8f.12.1761751757674;
+        Wed, 29 Oct 2025 08:29:17 -0700 (PDT)
+Received: from ?IPV6:2a02:2f04:6302:7900:aafe:5712:6974:4a42? ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cb55asm26959094f8f.17.2025.10.29.08.29.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 08:29:17 -0700 (PDT)
+Message-ID: <9d254e18-2e2f-49ce-b785-ef0f16117550@tuxon.dev>
+Date: Wed, 29 Oct 2025 17:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027122847.320924-1-harry.yoo@oracle.com> <20251027122847.320924-6-harry.yoo@oracle.com>
- <CAJuCfpG=Lb4WhYuPkSpdNO4Ehtjm1YcEEK0OM=3g9i=LxmpHSQ@mail.gmail.com> <aQHLDTwwEuswvNWv@hyeyoo>
-In-Reply-To: <aQHLDTwwEuswvNWv@hyeyoo>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 29 Oct 2025 08:28:56 -0700
-X-Gm-Features: AWmQ_bmezBnR6pc25_StLvVfGCVbr2qQzQa79QlxZjsxwYQHjSt8eI_UKHmKW6w
-Message-ID: <CAJuCfpERqLpAkbK-+X32s9o2udOfLtqeoU5=9BykbucFePv7Ww@mail.gmail.com>
-Subject: Re: [RFC PATCH V3 5/7] mm/memcontrol,alloc_tag: handle slabobj_ext
- access under KASAN poison
-To: Harry Yoo <harry.yoo@oracle.com>
-Cc: akpm@linux-foundation.org, vbabka@suse.cz, andreyknvl@gmail.com, 
-	cl@linux.com, dvyukov@google.com, glider@google.com, hannes@cmpxchg.org, 
-	linux-mm@kvack.org, mhocko@kernel.org, muchun.song@linux.dev, 
-	rientjes@google.com, roman.gushchin@linux.dev, ryabinin.a.a@gmail.com, 
-	shakeel.butt@linux.dev, vincenzo.frascino@arm.com, yeoreum.yun@arm.com, 
-	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
+To: Mark Brown <broonie@kernel.org>
+Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
+ tiwai@suse.com, biju.das.jz@bp.renesas.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
+ <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
+ <84aabf5e-c782-4e40-8e34-c8e7101188fb@sirena.org.uk>
+Content-Language: en-US
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <84aabf5e-c782-4e40-8e34-c8e7101188fb@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 1:06=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
-ote:
->
-> On Tue, Oct 28, 2025 at 04:03:22PM -0700, Suren Baghdasaryan wrote:
-> > On Mon, Oct 27, 2025 at 5:29=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com=
-> wrote:
-> > >
-> > > In the near future, slabobj_ext may reside outside the allocated slab
-> > > object range within a slab, which could be reported as an out-of-boun=
-ds
-> > > access by KASAN. To prevent false positives, explicitly disable KASAN
-> > > and KMSAN checks when accessing slabobj_ext.
-> >
-> > Hmm. This is fragile IMO. Every time someone accesses slabobj_ext they
-> > should remember to call
-> > metadata_access_enable/metadata_access_disable.
->
-> Good point!
->
-> > Have you considered replacing slab_obj_ext() function with
-> > get_slab_obj_ext()/put_slab_obj_ext()? get_slab_obj_ext() can call
-> > metadata_access_enable() and return slabobj_ext as it does today.
-> > put_slab_obj_ext() will simple call metadata_access_disable(). WDYT?
->
-> I did think about it, and I thought introducing get and put helpers
-> may be misunderstood as doing some kind of reference counting...
 
-Maybe there are better names but get/put I think are appropriate here.
-get_cpu_ptr()/put_cpu_ptr() example is very similar to this.
 
->
-> but yeah probably I'm being too paranoid and
-> I'll try this and document that
->
-> 1) the user needs to use get and put pair to access slabobj_ext
->    metadata, and
->
-> 2) calling get and put pair multiple times has no effect.
+On 10/29/25 16:37, Mark Brown wrote:
+> On Wed, Oct 29, 2025 at 04:11:33PM +0200, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Since snd_soc_suspend() is invoked through snd_soc_pm_ops->suspend(),
+>> and snd_soc_pm_ops is associated with the soc_driver (defined in
+>> sound/soc/soc-core.c), and there is no parent-child relationship between
+>> the soc_driver and the DA7213 codec driver, the power management subsystem
+>> does not enforce a specific suspend/resume order between the DA7213 driver
+>> and the soc_driver.
+> 
+> Oh, also:
+> 
+> Please submit patches using subject lines reflecting the style for the
+> subsystem, this makes it easier for people to identify relevant patches.
+> Look at what existing commits in the area you're changing are doing and
+> make sure your subject lines visually resemble what they're doing.
+> There's no need to resubmit to fix this alone.
 
-Yes, I think this would be less error-prone.
+I messed this up. I'll be more careful next time.
 
->
-> > > While an alternative approach could be to unpoison slabobj_ext,
-> > > out-of-bounds accesses outside the slab allocator are generally more
-> > > common.
-> > >
-> > > Move metadata_access_enable()/disable() helpers to mm/slab.h so that
-> > > it can be used outside mm/slub.c. Wrap accesses to slabobj_ext metada=
-ta
-> > > in memcg and alloc_tag code with these helpers.
-> > >
-> > > Call kasan_reset_tag() in slab_obj_ext() before returning the address=
- to
-> > > prevent SW or HW tag-based KASAN from reporting false positives.
-> > >
-> > > Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
-> > > Signed-off-by: Harry Yoo <harry.yoo@oracle.com>
-> > > ---
->
-> --
-> Cheers,
-> Harry / Hyeonggon
+Thank you,
+Claudiu
 
