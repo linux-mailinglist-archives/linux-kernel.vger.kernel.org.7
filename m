@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-877275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1E9C1DA17
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:58:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9008C1DA22
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55991891D94
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A44E188F31E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B832E6CB4;
-	Wed, 29 Oct 2025 22:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A642E7182;
+	Wed, 29 Oct 2025 23:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ln3Tvmi+"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JboSAFnd"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C072E54DE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 22:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6015230BE9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761778690; cv=none; b=QFUebyIG3otd05j8oMEqwusZdRScaMa4tv6QKQXBiWVoO+X3yjbLdBPqhOItkNqKP4aII31i+PvEmb6qk6YTuXaoI8NzeBpmvpA/uvdHzK5EcHtKge3LWxExbmBGFfSHvnQCruKlLFAFUQvcNRn6WUpNrQy0AeVZTZw0dzSCnU4=
+	t=1761778828; cv=none; b=Hxzm1V7lqwIWOBwRHTDTFFGekngzixr1E5XbtcvqxnimXZfXWuxL/I+E2tF2NKYPlOzIFwhYnWfi9hwtKsveU4eIyLOEJlgXPpCPEPozGaguIOBOMVxhGZniuYAFXF5ZdE6xocTARd41A0ifGR21RQ5SScARO/AUgN+8pMxCChU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761778690; c=relaxed/simple;
-	bh=R35boBO97p0Y3sowS7PP3Y56OecWAH0OL9cqtC4OFZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2WFWlVICLX52nAqdaKWgd3C2ZzbyENfAD7/MM//TNzUgfa12P8TZbEztuTbHxq6++vfZ6SdQBCiOGWwcsUs4rbQNUxYOimModF3nRtx7lv8ZlkA3YHGOVAOZ5VeVJcHzJa8qEMgxOox3daB1w8CILQYPRJYNyVsHPuaKvVXZ4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ln3Tvmi+; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3c2c748bc8so56152766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:58:07 -0700 (PDT)
+	s=arc-20240116; t=1761778828; c=relaxed/simple;
+	bh=CiI5Nn3m3g4rYOkdtlhfN/EsnGcr6LlTcetEUgKPJfY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=pNnsvvuR9f8SsOlA2TUDi9Lir1/bKD02ZhO07RdPMToAdzaEpe5tH/Dsr6BE6ISyAoIDQMIxnfV1t8x51TN/IacirkMQyPq0dezerVDEXSntUBkexw+fhJU0V3c0Ult6q748PkH+P9blcjuyXZ6NkOhOQv+AuaMU2RSOsTHwfcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JboSAFnd; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso302548a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:00:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761778686; x=1762383486; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xYrvBEQFYhC2vv51UNS1Ho/nte1oyOBTb9uNU2WpKKM=;
-        b=Ln3Tvmi+rcFMT0Zlgaie9zQohn9ADtBg0EKc9Is8Vqjuh8XrvT3VfOfvyd/vgmr7rN
-         cjGI0iF4oiXuS6ryqkq0hu7j95BwRN/S2TdthDzXO5GhWfAkSr56jkH5gHxDUPBYpZ5t
-         diP0ZtRZ5v1xw5kUlDUV/yk2aeX55o/CBm6UjVISIADi3ZV1aqk0z5ypia97F/DQud+D
-         HapFWil3JkjA8B3GSgN1hUHj4JTA7KvNwusgSOelRjPnT1wf/bvCNu1+rzdyCK+5dG82
-         EUGz8kQvcr+FNW+9QZNMc7aKJxxCsSK5BRLEposn65sjK04ZUCmaHPsf2iBAxFAA2dNR
-         69LQ==
+        d=google.com; s=20230601; t=1761778826; x=1762383626; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9ixBsj91glcxroJP2Rf1HQlKO0xZv2gSTaOETVHtQw=;
+        b=JboSAFnd9dktDVxOOlBulPwwWbc6pgvFObSP9+N3D/onGHMkn+3xE/Q49KrYFchhbv
+         Gt9+idwC6givZSZg9CiCxCJOxxupZ8YHktX48P8LDldLR4LXo66xl/GWlPI2AE0SgT3e
+         AXCFPLKrk6GSuwAwX08cXy3xqBIKe3u6OTnu6LMYZeyCsLiG1LCRdiNdx6azujzWRTjU
+         KmqTXsin7X0HBdgqhCxiTjGDm20oCAVweP+XYqW/4K2w6h4L1ZiASKrDU0NLPD8RKWvN
+         Gie5rahbDn7LS5kOTi6e0+t1vRovdUcMDGngFZJKDNnmn+m63SCullFdniBzffLjHcQM
+         fR4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761778686; x=1762383486;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xYrvBEQFYhC2vv51UNS1Ho/nte1oyOBTb9uNU2WpKKM=;
-        b=upmSRfAScE87E+vqPjyzpWtZpYcPVP9VB89XSI3hvtD8uuRU4Eu4VerlVqk8gSHni9
-         qmaa/M1SL2CEtuswJBlOrj4vLFjmK5V/kJOvz4qUOHSOfK9J/N4HQ3Pq9vpM8rV/cKSW
-         cAWfrilHGn7woU+Dzgfx40IB4szn8qsb0YXEcXwYCr0iOYiBCZiL6FOfByG0rHw2mre6
-         lQvHq9NUNMazrNBiRcBD9rOz5IiLInb7nqi/HhSUzw0PMmH/vq/GzrNOI+ZkfQqQ8epw
-         VQlURLo6hW2wov5AGzPdhHo4BTceUElzqSIlfCrmLirhgewZW61pYeAqdVeX+AHIagPW
-         3eig==
-X-Forwarded-Encrypted: i=1; AJvYcCWW9JlRKR0rvOAMApd9MBEg/ASHCvchE3NspxOJnWNKeirpkcMgUOa5P7CMA3Arh3bw3Rv8LgiiYlC0/A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+MvTPOVROgQX/B5+alHYbINxr1yucJdyLBd8m31LBMQQ5Z9cF
-	HxO8sKn/9AaQYBLeS/2i6dn1wUCP1KGB0k+b1fKvdHj+7O2W6j0+dF6xY7cpcvgU
-X-Gm-Gg: ASbGncvjr4dlmrEJCa82xyKjj/5UPDF8bltlSAsMo47cFlKMHETSQ55pEh4QKNI6uOY
-	0NgRGYkU3nqRMVBhVN9gurIEFFuLKuNyX87hFStVpr1Va+aNVJH+YtB834PtO+tmzsy+C21t/k3
-	2JMcHcP/SIkmFSU9yYzMH8fD0xEIXcgbS1/3HQ8DuLlnvyGKTMQsRMLdS2PbkGib2CKTiev/G5r
-	ZkiRD+gjKzsr1uwok5DjUhZLpAaSmAPJi1QaeqAtOpswnx0FWCUyoIBqE3vl+ii8N9yQBDuShyp
-	czC7Wox4onHk38dvY1or5J8m1U/oFEe7xd3fzMZ+NegW5MVm8AbpenyeS931Nn/HVifj7Ae7g/l
-	/AxN2YXJZWl77ddC9ZM4GO02wfeiawJ7G3TBjRwnKaV7vN5I/2XU+5UpZMqi3rKhepKuj/GbyTG
-	gU
-X-Google-Smtp-Source: AGHT+IG4M+TrFZ+WvBWMivsgusTfxTkskwi+ZZSO0k5cw5412piiRHZ3q1efPw/ibuWapgCjmuNcfg==
-X-Received: by 2002:a17:907:7211:b0:b40:6e13:1a7f with SMTP id a640c23a62f3a-b703d38ca50mr510498066b.27.1761778685725;
-        Wed, 29 Oct 2025 15:58:05 -0700 (PDT)
-Received: from eray-kasa.. ([2a02:4e0:2d02:232:b56b:334e:6279:ccaa])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85309074sm1559094666b.2.2025.10.29.15.58.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 15:58:05 -0700 (PDT)
-From: Ahmet Eray Karadag <eraykrdg1@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com
-Cc: ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	david.hunter.linux@gmail.com,
-	skhan@linuxfoundation.org,
-	Ahmet Eray Karadag <eraykrdg1@gmail.com>,
-	syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com,
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Subject: [RFC RFT PATCH] ocfs2: Mark inode bad upon validation failure during read
-Date: Thu, 30 Oct 2025 01:57:49 +0300
-Message-ID: <20251029225748.11361-2-eraykrdg1@gmail.com>
+        d=1e100.net; s=20230601; t=1761778826; x=1762383626;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9ixBsj91glcxroJP2Rf1HQlKO0xZv2gSTaOETVHtQw=;
+        b=kd/lpyNb0N1Dtc7Mjes/bPW9+mukT1BTXcAQwQ+HTWFkPJ56ab8B7v7NrsJMnf03ny
+         iZ4y2Wyo+T8U9aBstPPkF4WHRxxeOOOywocBrkcoYY3rdWMCseaVHWIWIlmygLgYrU6H
+         5XaR6doyxY9pvaHwV3rKNj+WKTDJoXJdOsshwLMGkksiSsTZ2yA2EKyVdeMLKF1/YuO1
+         1pLf/5Jj4LBymqt/haFIYNzXM0Dk2V1GpFsPX8NcRD+PjzSXmXCtzjAZkEYHGx3c47jJ
+         4SiFQzmjw0FJVtZ0RbzExdP8UqHrnyDBgU6/J1HTrUKCM6cc5dx5pjGXz1KWNdksLF5+
+         2eDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVvReYyc40oduwDOj4nfXiDsoXxJyWTgg7CjJcc6Rl8fvQHie1THG2ZRRS9hZrXd87bDV3VRghU2AcvDyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRW0QDpWaqWq5BR2w3mLiLlRaEsiLfXspk3+EYt7F2M1sDxVgz
+	zMdSls8wlPVot2RgUjWr8oX4sWxNlddnHxKb2LS0+ovEYfdbl2N8T/XjWphT6iddJlQWKgsQBFK
+	tQAoGag==
+X-Google-Smtp-Source: AGHT+IFs6NM2xgQel/cu5JnoaHPVb6EDk919Fxynofiz29lgkoJxWfP5QqyKPuANosTJ1r3A01CgINrEjRQ=
+X-Received: from pjvn22.prod.google.com ([2002:a17:90a:de96:b0:33b:a0ae:940])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:56c7:b0:32e:a10b:ce33
+ with SMTP id 98e67ed59e1d1-3403a299e57mr5756186a91.21.1761778826096; Wed, 29
+ Oct 2025 16:00:26 -0700 (PDT)
+Date: Wed, 29 Oct 2025 16:00:24 -0700
+In-Reply-To: <2e0e538e-99f0-4828-bdd3-fda7ad3794c3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251029194829.F79F929D@davehans-spike.ostc.intel.com>
+ <20251029194831.6819B2E7@davehans-spike.ostc.intel.com> <6bfe570e35364bd121b648fe8475f705666183d6.camel@intel.com>
+ <2e0e538e-99f0-4828-bdd3-fda7ad3794c3@intel.com>
+Message-ID: <aQKciMQG9y-szKUm@google.com>
+Subject: Re: [PATCH 1/2] x86/virt/tdx: Remove __user annotation from kernel pointer
+From: Sean Christopherson <seanjc@google.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"kas@kernel.org" <kas@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com" <mingo@redhat.com>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "x86@kernel.org" <x86@kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Potentially triggered by sequences like buffered writes followed by
-open(O_DIRECT), can result in an invalid on-disk inode block 
-(e.g., bad signature). OCFS2 detects this corruption when reading the
-inode block via ocfs2_validate_inode_block(), logs "Invalid dinode",
-and often switches the filesystem to read-only mode.
+On Wed, Oct 29, 2025, Dave Hansen wrote:
+> On 10/29/25 14:06, Edgecombe, Rick P wrote:
+> > For the KVM side of tdx, the commits are getting prefixed with "KVM: TDX: ", and
+> > "x86/virt/tdx" is being used arch/x86/virt/vmx/tdx/tdx.c. It's probably not too
+> > late to adopt the one true naming scheme. I don't have a strong preference
+> > except some consistency and that the maintainers agree :)
+> 
+> Yeah, I just picked one. I honestly don't care what we do in the end.
 
-Currently, the function reading the inode block (ocfs2_read_inode_block_full())
-fails to call make_bad_inode() upon detecting the validation error.
-Because the in-memory inode is not marked bad, subsequent operations
-(like ftruncate) proceed erroneously. They eventually reach code
-(e.g., ocfs2_truncate_file()) that compares the inconsistent
-in-memory size (38639) against the invalid/stale on-disk size (0), leading
-to kernel crashes via BUG_ON.
+I do.  Being able to quickly determine if something touches KVM is valuable.  TDX
+blurs the line since much of the code is split across KVM and x86/virt, but I
+still find value in differentiating when possible.
 
-Fix this by calling make_bad_inode(inode) within the error handling path of
-ocfs2_read_inode_block_full() immediately after a block read or validation
-error occurs. This ensures VFS is properly notified about the
-corrupt inode at the point of detection. Marking the inode bad  allows VFS
-to correctly fail subsequent operations targeting this inode early,
-preventing kernel panics caused by operating on known inconsistent inode states.
+> I was also probably just going to send these in the tip/x86/tdx branch unless
+> anyone screams, so I did it the tip-ish way.
 
-[RFC]: While this patch prevents the kernel crash triggered by the reproducer,
-feedback is requested on whether ocfs2_read_inode_block_full() is the most
-appropriate layer to call make_bad_inode(). Should this check perhaps reside
-within the caller or should the error propagation be handled differently?:
-Input on the best practice for handling this specific VFS inconsistency
-within OCFS2 would be appreciated.
+But this doesn't have anything to do with what tree the patches get routed through.
+Scopes are always about what files/content is changing.
 
-Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
-Co-developed-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Albin Babu Varghese <albinbabuvarghese20@gmail.com>
-Signed-off-by: Ahmet Eray Karadag <eraykrdg1@gmail.com>
----
- fs/ocfs2/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/fs/ocfs2/inode.c b/fs/ocfs2/inode.c
-index fcc89856ab95..415ad29ec758 100644
---- a/fs/ocfs2/inode.c
-+++ b/fs/ocfs2/inode.c
-@@ -1690,6 +1690,8 @@ int ocfs2_read_inode_block_full(struct inode *inode, struct buffer_head **bh,
- 	rc = ocfs2_read_blocks(INODE_CACHE(inode), OCFS2_I(inode)->ip_blkno,
- 			       1, &tmp, flags, ocfs2_validate_inode_block);
- 
-+	if (rc < 0)
-+		make_bad_inode(inode);
- 	/* If ocfs2_read_blocks() got us a new bh, pass it up. */
- 	if (!rc && !*bh)
- 		*bh = tmp;
--- 
-2.43.0
-
+I also don't undertand why you would take these through tip.  They only touch
+KVM (which is annoying hard to see since there's no shortlog in the cover letter).
+Sure, they're minor changes and _probably_ won't conflict with anything, but again
+I don't see how that matters.  These are clearly KVM patches.
 
