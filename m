@@ -1,273 +1,443 @@
-Return-Path: <linux-kernel+bounces-876079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1243C1A902
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:53 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BC2C1A830
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:07:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C682567A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:07:31 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7557E35935C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FD478F29;
-	Wed, 29 Oct 2025 12:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2044E223DE8;
+	Wed, 29 Oct 2025 12:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b="QQ/4RhAF";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=valla.it header.i=@valla.it header.b="DdRe5bk6"
-Received: from delivery.antispam.mailspamprotection.com (delivery.antispam.mailspamprotection.com [185.56.87.10])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="gtzejsd5"
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com [113.46.200.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C99528642D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.56.87.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742750; cv=pass; b=IMB6ekLuy86LKcpq69+xE2RQH8ySftxX2qHMEegUkKYz3lmNPBRxbc8XF3O8Cs+eHm1MDLagCdtrxa/VEsBCg1pHiGvA6Ib6gM5pGRMzkx13pzUTjwKCPyY922wo6Q+/ZNlXLUxhqAQqktD8pvCijV+IV43K+uqqdHVa7DmhCS0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742750; c=relaxed/simple;
-	bh=qqXZpmRAdwZJbQzpBZ9hVLXtxfiYzD2nZK2ZSYHeI54=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KkjlrJCRkJAn7Nk+AfSAnfZKHN9FM+8oGEYFr6nOivlEAlaAvKMTNZMS+yWs2bdZATkJhze6O8KTXBhfb8WKEmvd+XWZqqgdWQzzJ2nf32QKJBcrLaqPee1qhoD206v261jbe4qA11enETWSn0cnHoZoQUo7CZrm8w++wzy8tOo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it; spf=pass smtp.mailfrom=valla.it; dkim=pass (1024-bit key) header.d=antispam.mailspamprotection.com header.i=@antispam.mailspamprotection.com header.b=QQ/4RhAF; dkim=pass (1024-bit key) header.d=valla.it header.i=@valla.it header.b=DdRe5bk6; arc=pass smtp.client-ip=185.56.87.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=valla.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valla.it
-ARC-Seal: i=1; cv=none; a=rsa-sha256; d=outgoing.instance-europe-west4-h8q8.prod.antispam.mailspamprotection.com; s=arckey; t=1761742748;
-	 b=iguoyQFoogZ0e7B72MoS9ciJyyPNpwwgLW2xR7V9pIlF/K3KR25qAJt8pRSG/ORjqKo2DMbqa1
-	  88Og8AC1or33PaiRzTpnpodwYDLkciQMo9WhJ2i8PIAU+wY8Vt2iG0Pz8cfw9zUkTdIkpGSfSG
-	  CmaBH4UQjOnvyHo1zPBVZk1vZypajiyQEQtJrxl0X05UjYJgccedwyWF0D+t2Sl3S9/OeUL9gC
-	  g+iAKMD3pcEB/w5Jp8l6vWg7p++wV+IT1uRTa55YLY/f3zWq3cy1jijnIKEQXa5hIMDPb8KjJm
-	  9SN/RFvwKGi6meCfWw3/BkvzsliQCYRSw9f4yrYW6JOIew==;
-ARC-Authentication-Results: i=1; outgoing.instance-europe-west4-h8q8.prod.antispam.mailspamprotection.com; smtp.remote-ip=35.214.173.214;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=outgoing.instance-europe-west4-h8q8.prod.antispam.mailspamprotection.com; s=arckey; t=1761742748;
-	bh=qqXZpmRAdwZJbQzpBZ9hVLXtxfiYzD2nZK2ZSYHeI54=;
-	h=Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:
-	  To:From:DKIM-Signature:DKIM-Signature;
-	b=cGBeq4Uy+WOAH6A/GdwFwB9l0ffR2/HD9XRsQ+tObFOI42ldb+xIhplTwtCVS8EkLfvL2SUWyZ
-	  jVaRZt0QMmr9IJ0rJYSJ3Zfs5JpcX11oBTkN+BbQQkIpjqobEDCaVjV5pvA/Veb2xFqczvHtNl
-	  ah5Bx81skjc63gg3x+sh6lFAvO186k5TLu7+I2ayQ0Jv3gWimoCJKOn8U+WhdjWzpZmi4D8HdW
-	  z8SuGWVXm26l8cyPwyBzSAXsHDnze4wy5jdlqGSuJzLPgPsTMZLhRc+yBFHgf/2xMNXmY/ZzSS
-	  BYRjWPMQOpRWpcWUQzZqQ3mJgOG4xX4aC/ERkffgPVf3YQ==;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=antispam.mailspamprotection.com; s=default; h=CFBL-Feedback-ID:CFBL-Address
-	:Content-Type:MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:
-	List-Unsubscribe:Content-Transfer-Encoding;
-	bh=3oSppA+afvyqUxNHhPIkWdr61ZGsrwZwGDBFFJQIi6Q=; b=QQ/4RhAF13tVg8cBIoUNhCwEPQ
-	Iy07DD4HCahmPeb51u2EcDsbAf9U7kjJqwUMNtKOt2vUYuR+GAE2EYCVJXtV6/XdC6EBphq/1nNZ6
-	+xdPHg8utqTbxqkw5nI58n5mTAPBacG4rp+slxiUJEyjoQIs8hV6GRNIIg2P37myR8YA=;
-Received: from 214.173.214.35.bc.googleusercontent.com ([35.214.173.214] helo=esm19.siteground.biz)
-	by instance-europe-west4-h8q8.prod.antispam.mailspamprotection.com with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vE5lX-0000000DiyE-1wMJ
-	for linux-kernel@vger.kernel.org;
-	Wed, 29 Oct 2025 12:59:05 +0000
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=valla.it;
-	s=default; h=Date:Subject:Cc:To:From:list-help:list-unsubscribe:
-	list-subscribe:list-post:list-owner:list-archive;
-	bh=3oSppA+afvyqUxNHhPIkWdr61ZGsrwZwGDBFFJQIi6Q=; b=DdRe5bk6zHEGKn06FFuSn8vLai
-	gOfhjPA/iOu0RxB4imGfGZyjzmqBZzS8mNaAiMMhNRUVBJdllLCWS4IHvuzCSBzbNl2XBRlejr2dm
-	awE0AYwn5f4hU+XkXqwGN00y4MdlnIhla834mpoOz7TaYBCtVykxqVSAn07lTJRGK1FI=;
-Received: from [95.75.8.65] (port=19426 helo=fedora.localnet)
-	by esm19.siteground.biz with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <francesco@valla.it>)
-	id 1vE5l0-00000000CSz-20fj;
-	Wed, 29 Oct 2025 12:58:30 +0000
-From: Francesco Valla <francesco@valla.it>
-To: imx@lists.linux.dev, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: dri-devel@lists.freedesktop.org, Liu Ying <victor.liu@nxp.com>,
- Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/9] drm/bridge: fsl-ldb: Get the next non-panel bridge
-Date: Wed, 29 Oct 2025 13:58:14 +0100
-Message-ID: <2192154.9o76ZdvQCi@fedora>
-In-Reply-To: <20250911-dcif-upstreaming-v5-2-a1e8dab8ae40@oss.nxp.com>
-References:
- <20250911-dcif-upstreaming-v5-0-a1e8dab8ae40@oss.nxp.com>
- <20250911-dcif-upstreaming-v5-2-a1e8dab8ae40@oss.nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1306C248891
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.219
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761742724; cv=none; b=r9UCUEvMunH/ublVXdIjgkKeyOBS0lZlN+A9P8nt2mXHr8kMbbRvGXwS0n1Wza38JYuPSq5ZCVrZXVsZV3zcH6qgF4xZ8A8r4uZFAmfbJrcc59Wkqn2b3vWU1jzO4r/NCI4w8miCjpJYMPW0lORKp/ONw37gbaVsE6lEf/xot+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761742724; c=relaxed/simple;
+	bh=3OUFHALSNxajFQbORCsRI5sfbIW/vjZgu5p/1taJmNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IH24QDNKSr0F9ka2bKkKU9P3t8S0SOHYWLb1rgYpqh3Q9cwz1OWICAhV3p7g2Bp4yKXesubWvVONOsV6cGdS6Cge5HnSbTVt0bI5EKSK8XptLq9UhfLnbWYWWXpyPISCSPUI1wMZZ0r7fh9zig5o7WCvNrvBnCZ+sG3S3wGT1Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=gtzejsd5; arc=none smtp.client-ip=113.46.200.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=9BzrX0O8ESOuDbM3g5UW8lKiQkiSPq85xOnGilDOBH8=;
+	b=gtzejsd53Nce94Gss1t9gNzIPSDEv/UkXA1fRz0NbsMPhIQ0iR/3+xbRO/nyDf6l0vH+VMaSy
+	Zr3uprDBDKeVBq/jXtdck37Bg9YpxKyOyrWh1wq2rRTDMI4OHPfUQS34LsdED6J5nc/aoFcXRp0
+	Z6inYuM07ouKE5Z1Zu4I80Q=
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4cxS351y9mz1prLt;
+	Wed, 29 Oct 2025 20:58:09 +0800 (CST)
+Received: from kwepemr500015.china.huawei.com (unknown [7.202.195.162])
+	by mail.maildlp.com (Postfix) with ESMTPS id A0C181402DF;
+	Wed, 29 Oct 2025 20:58:38 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemr500015.china.huawei.com (7.202.195.162) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 29 Oct 2025 20:58:38 +0800
+Message-ID: <1137d069-6f19-471e-ac4d-ae5d9ee8407f@huawei.com>
+Date: Wed, 29 Oct 2025 20:58:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2765006.vuYhMxLoTh";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - esm19.siteground.biz
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - valla.it
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-SGantispam-id: db48996b8cdd53a1528b9dd9605700b0
-AntiSpam-DLS: false
-AntiSpam-DLSP: 
-AntiSpam-DLSRS: 
-AntiSpam-TS: 1.0
-CFBL-Address: feedback@antispam.mailspamprotection.com; report=arf
-CFBL-Feedback-ID: 1vE5lX-0000000DiyE-1wMJ-feedback@antispam.mailspamprotection.com
-Authentication-Results: outgoing.instance-europe-west4-h8q8.prod.antispam.mailspamprotection.com;
-	iprev=pass (214.173.214.35.bc.googleusercontent.com) smtp.remote-ip=35.214.173.214;
-	auth=pass (LOGIN) smtp.auth=esm19.siteground.biz;
-	dkim=pass header.d=valla.it header.s=default header.a=rsa-sha256;
-	arc=none
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 0/7] erofs: inode page cache share feature
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, <chao@kernel.org>,
+	<brauner@kernel.org>, <hongzhen@linux.alibaba.com>
+CC: <linux-erofs@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+References: <20251021104815.70662-1-lihongbo22@huawei.com>
+ <6f4086fd-97de-49d4-8de8-424eaa4fdba5@linux.alibaba.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <6f4086fd-97de-49d4-8de8-424eaa4fdba5@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemr500015.china.huawei.com (7.202.195.162)
 
---nextPart2765006.vuYhMxLoTh
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Francesco Valla <francesco@valla.it>
-Date: Wed, 29 Oct 2025 13:58:14 +0100
-Message-ID: <2192154.9o76ZdvQCi@fedora>
-In-Reply-To: <20250911-dcif-upstreaming-v5-2-a1e8dab8ae40@oss.nxp.com>
-MIME-Version: 1.0
+Hi Xiang,
 
-Hi,
-
-On Thursday, 11 September 2025 at 13:37:02 Laurentiu Palcu <laurentiu.palcu@oss.nxp.com> wrote:
-> From: Liu Ying <victor.liu@nxp.com>
+On 2025/10/21 21:04, Gao Xiang wrote:
+> Hi Hongbo,
 > 
-> The next bridge in bridge chain could be a panel bridge or a non-panel
-> bridge.  Use devm_drm_of_get_bridge() to replace the combination
-> function calls of of_drm_find_panel() and devm_drm_panel_bridge_add()
-> to get either a panel bridge or a non-panel bridge, instead of getting
-> a panel bridge only.
+> On 2025/10/21 18:48, Hongbo Li wrote:
+>> Enabling page cahe sharing in container scenarios has become increasingly
+>> crucial, as it can significantly reduce memory usage. In previous 
+>> efforts,
+>> Hongzhen has done substantial work to push this feature into the EROFS
+>> mainline. Due to other commitments, he hasn't been able to continue his
+>> work recently, and I'm very pleased to build upon his work and continue
+>> to refine this implementation.
+>>
+>> This is a forward-port of Hongzhen's original erofs shared pagecache
+>> posted a half yeas ago at (the latest):
+>> https://lore.kernel.org/all/20250301145002.2420830-1-hongzhen@linux.alibaba.com/T/#u
+>>
+>> In addition to the forward-port, I have also fixed a couple bugs and
+>> some minor cleanup during the migration.
+>>
+>> Notes: Currently, only compilation tests and basic function have been
+>> verified. Validation for the shared page cache feature is pending until
+>> the erofs-utils tool is complete.
+>>
+>> (A recap of Hongzhen's original cover letter is below, edited slightly
+>> for this serise:)
 > 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/gpu/drm/bridge/fsl-ldb.c | 31 +++++++++++--------------------
->  1 file changed, 11 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
-> index 5c3cf37200bcee1db285c97e2b463c9355ee6acb..665053d0cb79d2b4f50e69c397863ab024553867 100644
-> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
-> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
-> @@ -15,7 +15,6 @@
->  #include <drm/drm_atomic_helper.h>
->  #include <drm/drm_bridge.h>
->  #include <drm/drm_of.h>
-> -#include <drm/drm_panel.h>
->  
->  #define LDB_CTRL_CH0_ENABLE			BIT(0)
->  #define LDB_CTRL_CH0_DI_SELECT			BIT(1)
-> @@ -86,7 +85,7 @@ static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
->  struct fsl_ldb {
->  	struct device *dev;
->  	struct drm_bridge bridge;
-> -	struct drm_bridge *panel_bridge;
-> +	struct drm_bridge *next_bridge;
->  	struct clk *clk;
->  	struct regmap *regmap;
->  	const struct fsl_ldb_devdata *devdata;
-> @@ -118,7 +117,7 @@ static int fsl_ldb_attach(struct drm_bridge *bridge,
->  {
->  	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
->  
-> -	return drm_bridge_attach(encoder, fsl_ldb->panel_bridge,
-> +	return drm_bridge_attach(encoder, fsl_ldb->next_bridge,
->  				 bridge, flags);
->  }
->  
-> @@ -292,9 +291,7 @@ static const struct drm_bridge_funcs funcs = {
->  static int fsl_ldb_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> -	struct device_node *panel_node;
->  	struct device_node *remote1, *remote2;
-> -	struct drm_panel *panel;
->  	struct fsl_ldb *fsl_ldb;
->  	int dual_link;
->  
-> @@ -317,33 +314,27 @@ static int fsl_ldb_probe(struct platform_device *pdev)
->  	if (IS_ERR(fsl_ldb->regmap))
->  		return PTR_ERR(fsl_ldb->regmap);
->  
-> -	/* Locate the remote ports and the panel node */
-> +	/* Locate the remote ports. */
->  	remote1 = of_graph_get_remote_node(dev->of_node, 1, 0);
->  	remote2 = of_graph_get_remote_node(dev->of_node, 2, 0);
->  	fsl_ldb->ch0_enabled = (remote1 != NULL);
->  	fsl_ldb->ch1_enabled = (remote2 != NULL);
-> -	panel_node = of_node_get(remote1 ? remote1 : remote2);
->  	of_node_put(remote1);
->  	of_node_put(remote2);
->  
-> -	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled) {
-> -		of_node_put(panel_node);
-> -		return dev_err_probe(dev, -ENXIO, "No panel node found");
-> -	}
-> +	if (!fsl_ldb->ch0_enabled && !fsl_ldb->ch1_enabled)
-> +		return dev_err_probe(dev, -ENXIO, "No next bridge node found");
->  
->  	dev_dbg(dev, "Using %s\n",
->  		fsl_ldb_is_dual(fsl_ldb) ? "dual-link mode" :
->  		fsl_ldb->ch0_enabled ? "channel 0" : "channel 1");
->  
-> -	panel = of_drm_find_panel(panel_node);
-> -	of_node_put(panel_node);
-> -	if (IS_ERR(panel))
-> -		return PTR_ERR(panel);
-> -
-> -	fsl_ldb->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> -	if (IS_ERR(fsl_ldb->panel_bridge))
-> -		return PTR_ERR(fsl_ldb->panel_bridge);
-> -
-> +	fsl_ldb->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node,
-> +						      fsl_ldb->ch0_enabled ? 1 : 2,
-> +						      0);
-> +	if (IS_ERR(fsl_ldb->next_bridge))
-> +		return dev_err_probe(dev, PTR_ERR(fsl_ldb->next_bridge),
-> +				     "failed to get next bridge\n");
->  
->  	if (fsl_ldb_is_dual(fsl_ldb)) {
->  		struct device_node *port1, *port2;
-> 
+> I'm still left behind of this (currently heavily working on erofs-utils
+> and containerd), but could we have a workable erofs-utils implementation
+> first?
 > 
 
-Reviewed-by: Francesco Valla <francesco@valla.it>
+Understood, I will implement a simple debug version first and will send 
+the revised code later to address the noted issues.
 
-This is also required to complete support for some of the i.MX8MP
-platforms for which a DTS already exists, as well as for upcoming i.MX93
-work (see [2]).
+Thanks,
+Hongbo
 
-[1] https://elixir.bootlin.com/linux/v6.17.5/source/arch/arm64/boot/dts/freescale/imx8mp-evk-lvds0-imx-dlvds-hdmi-channel0.dtso
-[2] https://lore.kernel.org/all/20251028-imx93_ldb_bridge-v1-1-fca2e7d60e0a@valla.it/
-
-
-Thank you!
-
-Francesco
-
-
---nextPart2765006.vuYhMxLoTh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRUrtjevJ039mawAeLir2xSXEi5AAUCaQIPZgAKCRDir2xSXEi5
-AMbCAP42EvVfJ0roztG8NupiiGaTkb86WaCv99Prrby9Vkr0SwD+K9vUyxfRtmxI
-8VKWhxQWZp0tPzFGBEz88OWVOOp7fAU=
-=BQyw
------END PGP SIGNATURE-----
-
---nextPart2765006.vuYhMxLoTh--
-
-
-
+> Also, Amir's previous suggestion needs to be resolved too..
+> https://lore.kernel.org/r/CAOQ4uxjFcw7+w4jfjRKZRDitaXmgK1WhFbidPUFjXFt_6Kew5A@mail.gmail.com
+> 
+> Finally, thanks for remaining Hongzhen's email (but he was already
+> left, thanks for remaining our credits).
+> 
+> Thanks,
+> Gao Xiang
+> 
+> 
+>>
+>> Background
+>> ==============
+>> Currently, reading files with different paths (or names) but the same
+>> content can consume multiple copies of the page cache, even if the
+>> content of these caches is identical. For example, reading identical
+>> files (e.g., *.so files) from two different minor versions of container
+>> images can result in multiple copies of the same page cache, since
+>> different containers have different mount points. Therefore, sharing
+>> the page cache for files with the same content can save memory.
+>>
+>> Proposal
+>> ==============
+>>
+>> 1. determining file identity
+>> ----------------------------
+>> First, a way needs to be found to check whether the content of two files
+>> is the same. Here, the xattr values associated with the file
+>> fingerprints are assessed for consistency. When creating the EROFS
+>> image, users can specify the name of the xattr for file fingerprints,
+>> and the corresponding name will be stored in the packfile. The on-disk
+>> `ishare_key_start` indicates the offset of the xattr's name within the
+>> packfile:
+>>
+>> ```
+>> struct erofs_super_block {
+>>     __le32 build_time;      /* seconds added to epoch for mkfs time */
+>>     __le64 rootnid_8b;      /* (48BIT on) nid of root directory */
+>> -    __le64 reserved2;
+>> +    __le32 ishare_key_start;        /* start of ishare key */
+>> +    __le32 reserved2;
+>>     __le64 metabox_nid;     /* (METABOX on) nid of the metabox inode */
+>>     __le64 reserved3;       /* [align to extslot 1] */
+>> };
+>> ```
+>>
+>> For example, users can specify the first long prefix as the name for the
+>> file fingerprint as follows:
+>>
+>> ```
+>> mkfs.erofs  --ishare_key=trusted.erofs.fingerprint  erofs.img ./dir
+>> ```
+>>
+>> In this way, `trusted.erofs.fingerprint` serves as the name of the xattr
+>> for the file fingerprint. The relevant patches for erofs-utils will be
+>> released later.
+>>
+>> At the same time, for security reasons, this patch series only shares
+>> files within the same domain, which is achieved by adding
+>> "-o domain_id=xxxx" during the mounting process:
+>>
+>> ```
+>> mount -t erofs -o domain_id=xxx erofs.img /mnt
+>> ```
+>>
+>> If no domain ID is specified, it will fall back to the non-page cache
+>> sharing mode.
+>>
+>> 2. whose page cache is shared?
+>> ------------------------------
+>>
+>> 2.1. share the page cache of inode_A or inode_B
+>> -----------------------------------------------
+>> For example, we can share the page cache of inode_A, referred to as
+>> PGCache_A. When reading file B, we read the contents from PGCache_A to
+>> achieve memory savings. Furthermore, if we need to read another file C
+>> with the same content, we will still read from PGCache_A. In this way,
+>> we fulfill multiple read requests with just a single page cache.
+>>
+>> 2.2. share the de-duplicated inode's page cache
+>> -----------------------------------------------
+>> Unlike in 2.1, we allocate an internal deduplicated inode and use its
+>> page cache as shared. Reads for files with identical content will
+>> ultimately be routed to the page cache of the deduplicated inode. In
+>> this way, a single page cache satisfies multiple read requests for
+>> different files with the same contents.
+>>
+>> 2.3. discussion of the two solutions
+>> -----------------------------------------------
+>> Although the solution in 2.1 allows for page cache sharing, it has
+>> inherent drawbacks. The creation and destruction of inode nodes in the
+>> file system mean that when inode_A is destroyed, PGCache_A is also
+>> released. Consequently, if we need to read the file content afterward,
+>> we must retrieve the data from the disk again. This conflicts with the
+>> design philosophy of page cache (caching contents from the disk).
+>>
+>> Therefore, I choose to implement the solution in 2.2, which is to
+>> allocate an internal deduplicated inode and use its page cache as
+>> shared.
+>>
+>> 3. Implementation
+>> ==================
+>>
+>> 3.1. file open & close
+>> ----------------------
+>> When the file is opened, the ->private_data field of file A or file B is
+>> set to point to an internal deduplicated file. When the actual read
+>> occurs, the page cache of this deduplicated file will be accessed.
+>>
+>> When the file is opened, if the corresponding erofs inode is newly
+>> created, then perform the following actions:
+>> 1. add the erofs inode to the backing list of the deduplicated inode;
+>> 2. increase the reference count of the deduplicated inode.
+>>
+>> The purpose of step 1 above is to ensure that when a real I/O operation
+>> occurs, the deduplicated inode can locate one of the disk devices
+>> (as the deduplicated inode itself is not bound to a specific device).
+>> Step 2 is for managing the lifecycle of the deduplicated inode.
+>>
+>> When the erofs inode is destroyed, the opposite actions mentioned above
+>> will be taken.
+>>
+>> 3.2. file reading
+>> -----------------
+>> Assuming the deduplication inode's page cache is PGCache_dedup, there
+>> are two possible scenarios when reading a file:
+>> 1) the content being read is already present in PGCache_dedup;
+>> 2) the content being read is not present in PGCache_dedup.
+>>
+>> In the second scenario, it involves the iomap operation to read from the
+>> disk.
+>>
+>> 3.2.1. reading existing data in PGCache_dedup
+>> -------------------------------------------
+>> In this case, the overall read flowchart is as follows (take ksys_read()
+>> for example):
+>>
+>>           ksys_read
+>>               │
+>>               │
+>>               ▼
+>>              ...
+>>               │
+>>               │
+>>               ▼
+>> erofs_ishare_file_read_iter (switch to backing deduplicated file)
+>>               │
+>>               │
+>>               ▼
+>>
+>>   read PGCache_dedup & return
+>>
+>> At this point, the content in PGCache_dedup will be read directly and
+>> returned.
+>>
+>> 3.2.2 reading non-existent content in PGCache_dedup
+>> ---------------------------------------------------
+>> In this case, disk I/O operations will be involved. Taking the reading
+>> of an uncompressed file as an example, here is the reading process:
+>>
+>>           ksys_read
+>>               │
+>>               │
+>>               ▼
+>>              ...
+>>               │
+>>               │
+>>               ▼
+>> erofs_ishare_file_read_iter (switch to backing deduplicated file)
+>>               │
+>>               │
+>>               ▼
+>>              ... (allocate pages)
+>>               │
+>>               │
+>>               ▼
+>> erofs_read_folio/erofs_readahead
+>>               │
+>>               │
+>>               ▼
+>>              ... (iomap)
+>>               │
+>>               │
+>>               ▼
+>>          erofs_iomap_begin
+>>               │
+>>               │
+>>               ▼
+>>              ...
+>>
+>> Iomap and the layers below will involve disk I/O operations. As
+>> described in 3.1, the deduplicated inode itself is not bound to a
+>> specific device. The deduplicated inode will select an erofs inode from
+>> the backing list (by default, the first one) to complete the
+>> corresponding iomap operation.
+>>
+>> 3.2.3 optimized inode selection
+>> -------------------------------
+>> The inode selection method described in 3.2.2 may select an "inactive"
+>> inode. An inactive inode indicates that there may have been no read
+>> operations on the inode's device for a long time, and there is a high
+>> likelihood that the device may be unmounted. In this case, unmounting
+>> the device may experience a slight delay due to other read requests
+>> being routed to that device. Therefore, we need to select some "active"
+>> inodes for the iomap operation.
+>>
+>> To achieve optimized inode selection, an additional `processing` list
+>> has been added. At the beginning of erofs_{read_folio,readahead}(), the
+>> corresponding erofs inode will be added to the `processing` list
+>> (because they are active). And it is removed at the end of
+>> erofs_{read_folio,readahead}(). In erofs_iomap_begin(), the selected
+>> erofs inode's count is incremented, and in erofs_iomap_end(), the count
+>> is decremented.
+>>
+>> In this way, even after the erofs inode is removed from the `processing`
+>> list, the increment in the reference count can ensure the integrity of
+>> the data reading process. This is somewhat similar to RCU (not exactly
+>> the same, but similar).
+>>
+>> 3.3. release page cache
+>> -----------------------
+>> Similar to overlayfs, when dropping the page cache via .fadvise, erofs
+>> locates the deduplicated file and applies vfs_fadvise to that specific
+>> file.
+>>
+>> Effect
+>> ==================
+>> I conducted experiments on two aspects across two different minor
+>> versions of container images:
+>>
+>> 1. reading all files in two different minor versions of container images
+>>
+>> 2. run workloads or use the default entrypoint within the containers^[1]
+>>
+>> Below is the memory usage for reading all files in two different minor
+>> versions of container images:
+>>
+>> +-------------------+------------------+-------------+---------------+
+>> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+>> |                   |                  |             | Reduction (%) |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     241     |       -       |
+>> |       redis       +------------------+-------------+---------------+
+>> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     872     |       -       |
+>> |      postgres     +------------------+-------------+---------------+
+>> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     2771    |       -       |
+>> |     tensorflow    +------------------+-------------+---------------+
+>> |  2.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     926     |       -       |
+>> |       mysql       +------------------+-------------+---------------+
+>> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     390     |       -       |
+>> |       nginx       +------------------+-------------+---------------+
+>> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |       tomcat      |        No        |     924     |       -       |
+>> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+>> |                   |        Yes       |     474     |      49%      |
+>> +-------------------+------------------+-------------+---------------+
+>>
+>> Additionally, the table below shows the runtime memory usage of the
+>> container:
+>>
+>> +-------------------+------------------+-------------+---------------+
+>> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+>> |                   |                  |             | Reduction (%) |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     34.9    |       -       |
+>> |       redis       +------------------+-------------+---------------+
+>> |   7.2.4 & 7.2.5   |        Yes       |     33.6    |       4%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |    149.1    |       -       |
+>> |      postgres     +------------------+-------------+---------------+
+>> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |    1027.9   |       -       |
+>> |     tensorflow    +------------------+-------------+---------------+
+>> |  2.11.0 & 2.11.1  |        Yes       |    934.3    |      10%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |    155.0    |       -       |
+>> |       mysql       +------------------+-------------+---------------+
+>> |  8.0.11 & 8.0.12  |        Yes       |    139.1    |      11%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |                   |        No        |     25.4    |       -       |
+>> |       nginx       +------------------+-------------+---------------+
+>> |   7.2.4 & 7.2.5   |        Yes       |     18.8    |      26%      |
+>> +-------------------+------------------+-------------+---------------+
+>> |       tomcat      |        No        |     186     |       -       |
+>> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+>> |                   |        Yes       |      99     |      47%      |
+>> +-------------------+------------------+-------------+---------------+
+>>
+>> It can be observed that when reading all the files in the image, the
+>> reduced memory usage varies from 16% to 49%, depending on the specific
+>> image. Additionally, the container's runtime memory usage reduction
+>> ranges from 4% to 47%.
+>>
+>> [1] Below are the workload for these images:
+>>        - redis: redis-benchmark
+>>        - postgres: sysbench
+>>        - tensorflow: app.py of tensorflow.python.platform
+>>        - mysql: sysbench
+>>        - nginx: wrk
+>>        - tomcat: default entrypoint
+>>
+>> The patch in this version has made the following changes compared to
+>> the previous versionv(patch v5):
+>>
+>> - support user-defined fingerprint name;
+>> - support domain-specific page cache share;
+>> - adjusted the code style;
+>> - adjustments in code implementation, etc.
+>>
+>> v5: 
+>> https://lore.kernel.org/all/20250105151208.3797385-1-hongzhen@linux.alibaba.com/
+>> v4: 
+>> https://lore.kernel.org/all/20240902110620.2202586-1-hongzhen@linux.alibaba.com/
+>> v3: 
+>> https://lore.kernel.org/all/20240828111959.3677011-1-hongzhen@linux.alibaba.com/
+>> v2: 
+>> https://lore.kernel.org/all/20240731080704.678259-1-hongzhen@linux.alibaba.com/
+>> v1: 
+>> https://lore.kernel.org/all/20240722065355.1396365-1-hongzhen@linux.alibaba.com/
+>>
+> 
 
