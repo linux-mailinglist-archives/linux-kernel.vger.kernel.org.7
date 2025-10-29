@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-877043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50BAC1D0CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:49:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E25CC1D0E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E698B426C96
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:49:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7701A4E0190
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE4535A94C;
-	Wed, 29 Oct 2025 19:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBB135A139;
+	Wed, 29 Oct 2025 19:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kEYFrZTB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eBTsrI1y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE5535A152;
-	Wed, 29 Oct 2025 19:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0822D3237;
+	Wed, 29 Oct 2025 19:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761767316; cv=none; b=kKokHtmuq2EjV7yb/YdniA0Oi69eMVORiGGO1YMLOn309LgdwKS1qaPRXNEGQ+niatt/kVjSH8IcCmJnH8MYFUpVac1VJR6h5GVZHcJ4VnpDPcYis5l6OeK0Fg/RjgeKDQLDCmbIxK3x+keOe7HmFHyFZuLMR2gYh3eyaQuLqE8=
+	t=1761767374; cv=none; b=QHtKg7/jMZOQBaePHWezY95v4rhepiA+pXaYCfBuTexZp3w94p4hVBDzeiwjzG3JR8ha1QdIbzuSqerIk7YljON8jZxT2mVlHeZijikinJMQNUuJs/x6SeKZ2rxqXZlNx41fQ5yqlNWC+QjKfSrq0nJErwwM6C+BsMr7EC6m/SA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761767316; c=relaxed/simple;
-	bh=kbxokVom77TxD0XZvHYT3zU97pIM2xz5qGfZI3N3A/g=;
-	h=Subject:To:Cc:From:Date:References:In-Reply-To:Message-Id; b=Bwcebe53PVx6sKCUunkvZ1Po6YrUl/C+3KO1a3IYbavumgKF/C0s5HFxevJ+17ZSkPvTyj9Q4Kx/fYdOIE7ke1Q61jY98gBA0dI85AhPJIr7noHe46qBRHtJvgjwHEB9xPDdll4L0wlEb3VKeyPA9BZsV1jldiSmKCAB8mfOAqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kEYFrZTB; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761767315; x=1793303315;
-  h=subject:to:cc:from:date:references:in-reply-to:
-   message-id;
-  bh=kbxokVom77TxD0XZvHYT3zU97pIM2xz5qGfZI3N3A/g=;
-  b=kEYFrZTBJfslZAa+BVoBJi22aQKYQmxLQWxFo/buivS1ZEan8rP6qnRx
-   sxJn+YsJW5mjzyPJq1vSFCYFh36sOWxqhCyCQHUPONk+dLmjEbtn8R1Sw
-   ZSnQ4IFEKvEmL8x5+Nz1J4oXbZU+kbnq4y1PxrF69cn98iPfmG4wBra8f
-   e8GeuzZ8Og8Aq4Z02ryqgWZsAh2yYbcIKzaLkzknt1H2PGMUYd0yXE7Ch
-   C154ZT3aYbUtCkbCEef6OllD7mgw5SQIN+Lzu+0vBnN4Aqevbj3UIZpVJ
-   L8Y56W/4Hgoj7tZO4SzIYNe5sjuJqWPIs+wuRiMJadXrfvfJhFvXkwj70
-   w==;
-X-CSE-ConnectionGUID: N5x7wBx9RJO6e7zsGsK40Q==
-X-CSE-MsgGUID: qzO7W9hIS0CLfHzgGOa9/w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="66516736"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="66516736"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 12:48:34 -0700
-X-CSE-ConnectionGUID: HjafAFvfTvKn3A+bYU81ZA==
-X-CSE-MsgGUID: k+90iyK5QROiFxD5DP/7iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="186500562"
-Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Oct 2025 12:48:34 -0700
-Subject: [PATCH 2/2] x86/virt/tdx: Fix sparse warnings from using 0 for NULL
-To: linux-kernel@vger.kernel.org
-Cc: Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
-From: Dave Hansen <dave.hansen@linux.intel.com>
-Date: Wed, 29 Oct 2025 12:48:33 -0700
-References: <20251029194829.F79F929D@davehans-spike.ostc.intel.com>
-In-Reply-To: <20251029194829.F79F929D@davehans-spike.ostc.intel.com>
-Message-Id: <20251029194833.A20A7907@davehans-spike.ostc.intel.com>
+	s=arc-20240116; t=1761767374; c=relaxed/simple;
+	bh=cgW3eaNa1qTxN0mCfqwnT+I4/Tb+epp984COA7HO+0E=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=bvUgq/vXIEaVyZvthtAYEesm7S1PCnWcGH5abvcUXcoozKXTIi2GPtmC5PsPbA/C+dSRybZ+8HTXqmwpqA+bmzxnMQ2PKEYn7i3xeEiinY3hy89Y52h5NOMyOpEbMLdg9GJhazc38c+L9d9+NwwyJ/MPH59yJdhNziYuHjQ+Gko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eBTsrI1y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 596C6C4CEF7;
+	Wed, 29 Oct 2025 19:49:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761767373;
+	bh=cgW3eaNa1qTxN0mCfqwnT+I4/Tb+epp984COA7HO+0E=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=eBTsrI1yyG/5IEBOvpulu2NhU99j0sEVLtdj8hbSkWDsiMAYCUJg4ULJKi8yRVk2D
+	 wnHzaS7GDiEDzkSeW8qzXfrjrf989UcPqwvuaanih9J1yswudljclqy7geLsKf27bi
+	 YJoEWXmdeqGFcMNpKog7EeL7YdvNghoVk48LDUuX0jg5hFhMVmwz1zfsLtdJwjIiZb
+	 N16/SJNKr+BN3tcnk9I6U1MYcvl+CE5qvdrkf3mIYhNnXNr3OGCUMAJ/qbNU2Xn8rf
+	 zONEsmd/lUy/EASyRwrpv0g5Jk+xl47waAewpAD/v+28gBwn06vC0MiSxxfZymkPl4
+	 p2SzxTBjr8gRg==
+Date: Wed, 29 Oct 2025 14:49:32 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Andrew Jeffery <andrew@codeconstruct.com.au>, 
+ linux-arm-kernel@lists.infradead.org, Guenter Roeck <linux@roeck-us.net>, 
+ linux-aspeed@lists.ozlabs.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-hwmon@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Joel Stanley <joel@jms.id.au>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+In-Reply-To: <20251029185448.2121857-1-robh@kernel.org>
+References: <20251029185448.2121857-1-robh@kernel.org>
+Message-Id: <176176737216.2539117.14470144508390937372.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: hwmon: Convert aspeed,ast2400-pwm-tacho
+ to DT schema
 
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+On Wed, 29 Oct 2025 13:54:47 -0500, Rob Herring (Arm) wrote:
+> Convert the ASpeed fan controller binding to DT schema format.
+> 
+> The '#cooling-cells' value used is 1 rather than 2. '#size-cells' is 0
+> rather 1.
+> 
+> Some users define more that 8 fan nodes where 2 fans share a PWM. The
+> driver seems to let the 2nd fan just overwrite the 1st one. That also
+> creates some addressing errors in the DT (duplicate addresses and wrong
+> unit-addresses).
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../hwmon/aspeed,ast2400-pwm-tacho.yaml       | 105 ++++++++++++++++++
+>  .../bindings/hwmon/aspeed-pwm-tacho.txt       |  73 ------------
+>  2 files changed, 105 insertions(+), 73 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
+> 
 
-sparse moans:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-	... arch/x86/kvm/vmx/tdx.c:859:38: warning: Using plain integer as NULL pointer
+yamllint warnings/errors:
 
-for several TDX pointer initializations. While I love a good ptr=0
-now and then, it's good to have quiet sparse builds.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.example.dtb: fan-controller@1e786000 (aspeed,ast2500-pwm-tacho): #cooling-cells: 2 was expected
+	from schema $id: http://devicetree.org/schemas/thermal/thermal-cooling-devices.yaml
 
-Fix the sites up.
+doc reference errors (make refcheckdocs):
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Kirill A. Shutemov" <kas@kernel.org>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251029185448.2121857-1-robh@kernel.org
 
- b/arch/x86/kvm/vmx/tdx.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-diff -puN arch/x86/kvm/vmx/tdx.c~tdx-sparse-fix-1 arch/x86/kvm/vmx/tdx.c
---- a/arch/x86/kvm/vmx/tdx.c~tdx-sparse-fix-1	2025-10-29 12:10:11.114466713 -0700
-+++ b/arch/x86/kvm/vmx/tdx.c	2025-10-29 12:10:11.119467274 -0700
-@@ -856,7 +856,7 @@ void tdx_vcpu_free(struct kvm_vcpu *vcpu
- 	}
- 	if (tdx->vp.tdvpr_page) {
- 		tdx_reclaim_control_page(tdx->vp.tdvpr_page);
--		tdx->vp.tdvpr_page = 0;
-+		tdx->vp.tdvpr_page = NULL;
- 		tdx->vp.tdvpr_pa = 0;
- 	}
- 
-@@ -2642,7 +2642,7 @@ free_tdcs:
- free_tdr:
- 	if (tdr_page)
- 		__free_page(tdr_page);
--	kvm_tdx->td.tdr_page = 0;
-+	kvm_tdx->td.tdr_page = NULL;
- 
- free_hkid:
- 	tdx_hkid_free(kvm_tdx);
-@@ -3016,7 +3016,7 @@ free_tdcx:
- free_tdvpr:
- 	if (tdx->vp.tdvpr_page)
- 		__free_page(tdx->vp.tdvpr_page);
--	tdx->vp.tdvpr_page = 0;
-+	tdx->vp.tdvpr_page = NULL;
- 	tdx->vp.tdvpr_pa = 0;
- 
- 	return ret;
-_
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
