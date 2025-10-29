@@ -1,87 +1,117 @@
-Return-Path: <linux-kernel+bounces-875804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBC2C19DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:50:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DFA7C19D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A2118913B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:43:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3AA8934DB0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E26331A5D;
-	Wed, 29 Oct 2025 10:39:12 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88BE334681;
+	Wed, 29 Oct 2025 10:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cCXLWuOm"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639892ECD36
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FEF3321D4;
+	Wed, 29 Oct 2025 10:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734352; cv=none; b=uir5LJeVlVgBEfqqTPqw3YLyRfJJQrmWqT9tXGSpkgAtElOxoJF4UVdotKcA90jmWYetkwPe4y+JYq76qj5Dc4H2YqrlS3DGuysCWGDUMBGYTj7h7JUincBuv0DhjnQBKHYCq+TtRwn2nReurNdjoa5vo/dOUyaw59yZIlELEf0=
+	t=1761734386; cv=none; b=Hdxn2Qz9XviQS76fWRx5CEr/fxPEgR5QlVLWFFp/NgadLRuCRvFuOqvjEurPUjiXH//rpn9kUn8QaqyTxUb2polYKFVuwYiY93gxFDubTL2x+n+T7gY5jiWHqpt9+1HqcmPhPYw6TBWWDgX20LqQaKwK2BeVugHzquih48y/SMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734352; c=relaxed/simple;
-	bh=gKfbYjTwWEnD5qGvZ+jAX359lz2zBiSd9drhDidcSCc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PoCdtLXg3+tDVuX1q0wo2zFIyhH9ByWWoRj2JfcybdNExgkILORvN2eutVTnLq/TN6LNZuRWnhC5tWPqR6kGxf5yb92jdWqfU/vu7p4iVwIH3zEjv7hIhWJjQWJxgCuCyLtmIvy8/U1LUDbOIpDZXBSXnfZdRsFr54EJeir3r9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940e33d65b8so2077041639f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:39:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761734345; x=1762339145;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J8mx8oCUH+ytt7ZmKuXC0ixGuKT18ZqjQQQSKfrYqrM=;
-        b=w7O1m6YMCMA43AJjOGIl/yhZKyeCiFU2jkSbcOdB2UpxVbd1X0dEiz5Qg3nSaWoAjo
-         qVo5vRLCW6u24sbdv+6zQzh3+DnsZvxE5/7ux1jzYt/5AJF84XVe9nDOdPUFjAeD8skD
-         n1I4KnMf8iTjcfu3EPNIUUyTJkzuela2C/F4BF103Dl+JDSdCQEpPqafNJFqv3KITd0t
-         87gfgUTbl+KifeyR4B6e1OUBtC1hEuAGyKG6rIr8UAaJmEB8aMmMJGfrVtA/6BJ+Xg3h
-         5z7oObrkSLeYlsOYd2jJljCXkhuI5ezOXG7kaaaFSpdpmNrf1/1kVhHbGGslD6To4P+t
-         qjhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5G7YZtTAP1CSFD6kH8l7gEsXBzrbs91Xzw+6h2zDTuZ7tFYy2dx4JFAsUZJT2kjSUY6rTcvrIMSvdSXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqOpEzMxJJHF6gbvN/mVLi7wbMvVIgmSz8Iu5PdUsc1v1aCHxK
-	QR/9pv07A4/XFtRnNoOoFhcgvs3UiXw2A5lkboe+T0WspXoM4SG8nATMTOFApCDCf4o3boNS1zo
-	PlW7Gr/PZVKPEfYX18XRog4CmM3xmRheIOMo+84aKygEicCICKf1HOfqOYIk=
-X-Google-Smtp-Source: AGHT+IH8dB+yTuxZJRlHXY7yRtE5WM3nMqo6+tzpv6ZLS5w4U6lZtiGKp18fZc47U+0SR68nHXfjJJys2QNYqOwqp5LJnL+7YDvP
+	s=arc-20240116; t=1761734386; c=relaxed/simple;
+	bh=fQ1ZZOwoZHcyHhHjmvXHNheScD5+PKiSXtlfj+ifs1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfWWnpA8qnV+emlcvfwDdCoBmm8pRfSHTTwcweD/RIbq2SaMDeFg6qGdGoJXvlZf7MTh9CaBSRdYD1yzdABK6t0xNO6IXkHhmYFrzc5gyKaaYc/DSQWczGnfuYf261Xk/BasMJmiGOjLHtSWHpoR0CFmOkQFCJmVLEXo2slKUu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cCXLWuOm; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 9C8A14E413BB;
+	Wed, 29 Oct 2025 10:39:41 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 71CBB606E8;
+	Wed, 29 Oct 2025 10:39:41 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 09BDF117F2875;
+	Wed, 29 Oct 2025 11:39:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761734380; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=kZUu6u0wS/jzGzdskNddkgJJVZ/zUOBXcp7YDEWrGzU=;
+	b=cCXLWuOmhtnXCME378SD2JQmZ9xc/7GArt0Ev2MulE9BiAetQ/bWt8OiSIJ/dP2joCxafq
+	89QX752TatfoKXx1MAhJW0iDyT+24HvM09VK8OEXdell//K7pNrTIWAwuC3UXRBBe8KpVk
+	lW1fVwyOm0w2wMNqpRhfeAdmqKBZh4A7cMWyVJll59MmzTGpxrQ2j/9RgAFHnn/ceslGhW
+	eq91FHU0eO265JvjO+phla676d+wiYJ2w6TOQ3HYQTmEKd2MSVEiYqhzJMIMKFWHDBVydH
+	2BclGKojql2K0e0UVKHoDTz6quFI/UL3VLtaV36g0Vvxe87dpaf411rPignZWw==
+Date: Wed, 29 Oct 2025 11:39:38 +0100
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Esben Haabendal <esben@geanix.com>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] rtc: tps6586x: Fix initial enable_irq/disable_irq
+ balance
+Message-ID: <2025102910393819d18ad0@mail.local>
+References: <20250516-rtc-uie-irq-fixes-v2-0-3de8e530a39e@geanix.com>
+ <20250516-rtc-uie-irq-fixes-v2-4-3de8e530a39e@geanix.com>
+ <0aae5643-9276-4280-8b1e-27b8fe73fe99@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2613:b0:430:9707:ef2f with SMTP id
- e9e14a558f8ab-432f9044a0emr29363915ab.25.1761734345645; Wed, 29 Oct 2025
- 03:39:05 -0700 (PDT)
-Date: Wed, 29 Oct 2025 03:39:05 -0700
-In-Reply-To: <CADfthj20y6KMBwQg-kT=be30X7hMOE7rPaS6OiDVLXDPgBub5g@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901eec9.a70a0220.5b2ed.0013.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_truncate_file
-From: syzbot <syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com>
-To: albinbabuvarghese20@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0aae5643-9276-4280-8b1e-27b8fe73fe99@nvidia.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+On 29/10/2025 09:20:17+0000, Jon Hunter wrote:
+> Hi Esben,
+> 
+> On 16/05/2025 08:23, Esben Haabendal wrote:
+> > Interrupts are automatically enabled when requested, so we need to
+> > initialize irq_en accordingly to avoid causing an unbalanced enable
+> > warning.
+> > 
+> > Signed-off-by: Esben Haabendal <esben@geanix.com>
+> > ---
+> >   drivers/rtc/rtc-tps6586x.c | 1 +
+> >   1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
+> > index 54c8429b16bfcc692b1f4d5404f0c42f720e93b4..76ecf7b798f0de22aa89a552a263b473ab3065ef 100644
+> > --- a/drivers/rtc/rtc-tps6586x.c
+> > +++ b/drivers/rtc/rtc-tps6586x.c
+> > @@ -258,6 +258,7 @@ static int tps6586x_rtc_probe(struct platform_device *pdev)
+> >   	irq_set_status_flags(rtc->irq, IRQ_NOAUTOEN);
+> > +	rtc->irq_en = true;
+> >   	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
+> >   				tps6586x_rtc_irq,
+> >   				IRQF_ONESHOT,
+> > 
+> 
+> I have bisected a suspend regression on one of our Tegra20 boards (that uses
+> this driver) and bisect is pointing to this commit. Reverting this commit
+> fixes the problem.
+> 
+> Looking at the above I see that the flag IRQ_NOAUTOEN is being set and so
+> now with your change we never enable the interrupt. Hence, the wake-ups are
+> now broken and suspend testing fails. So it would seem best to revert this.
+> 
+> BTW, I looked at the change to the CPCAP driver and that driver actively
+> disables the IRQ after requesting it and so I am wondering if that will also
+> have alarm issues? I don't have a board with CPCAP to test.
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+That's right, I guess you can send reverts.
 
-Reported-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
-Tested-by: syzbot+b93b65ee321c97861072@syzkaller.appspotmail.com
 
-Tested on:
-
-commit:         e53642b8 Merge tag 'v6.18-rc3-smb-server-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1258232f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9dd0e4f446d638a
-dashboard link: https://syzkaller.appspot.com/bug?extid=b93b65ee321c97861072
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1287f614580000
-
-Note: testing is done by a robot and is best-effort only.
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
