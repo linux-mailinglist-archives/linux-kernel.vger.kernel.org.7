@@ -1,61 +1,75 @@
-Return-Path: <linux-kernel+bounces-875189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F073C186B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:20:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B296C18704
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:26:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 952573AB9E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:20:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4E5C24F0062
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89600305948;
-	Wed, 29 Oct 2025 06:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B93303C9D;
+	Wed, 29 Oct 2025 06:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WW2j3Lpl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RC0wbfCU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79E73090D7;
-	Wed, 29 Oct 2025 06:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038812E2DD4;
+	Wed, 29 Oct 2025 06:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761718764; cv=none; b=uArzMtG+FpJV4hxT7Px8zAT5CQsBMIYZNAALLNwvis26E67kO+dGuqqVYE5W1id8NupcxrTrzQZY9OqBB9oBbRxauWHpdrPDwZbSPaXo11jmDRZb+6h3ndqxKJjs7zuenbWEVSfcrWbnlYetbvjrvB4HFzWa5omxfa/mpvY8a2g=
+	t=1761718914; cv=none; b=hcVocdvg/aq+0bJbqujD41GKeWbozkamEWi/8/mgT+DNar20MGimhvqsvSVuUuc7wLO9lD8D+WaQqEfI7L8mPdr2HS1GskgJW/8kZs6T2CSoFQcGrLDIhXcwTmCox2i23dt4izHOERFOogNGCIw/ptGL4ITJoEw7pHC8cLDehDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761718764; c=relaxed/simple;
-	bh=dki8nbEv4ptLcRQV89oVJKBG9e0Mf4cnUWQSzd2iXDo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=csYX8MoTiOp6kY71SGljxwLqteN7x5+Nifcd7S1aouI8kdqkSWKpvnVDNKbVyKYVWO80mwfHiliro2Vq/W7FNn35meEP0ekv4ij2M/awMkun6aGFpGxxoi4d9odK3wsRc0RWEOCGxEfejo8nToF5X/z7PeNLPdqVtfj3QKrmOyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WW2j3Lpl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37238C4CEFB;
-	Wed, 29 Oct 2025 06:19:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761718764;
-	bh=dki8nbEv4ptLcRQV89oVJKBG9e0Mf4cnUWQSzd2iXDo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WW2j3Lpl0ywQwK42Njugukie2hynAJSok5DBhtbtB8DV3MGgSvGbya6NQVSTaLWxJ
-	 1u6USythLZvxCXW2kTVyXrO3Mlw669uh3BD2SnCTWP+K45WeXlmT/8yIUEZORz0j+R
-	 eOoCtozhoFksLgauzWXw2gyupxM46le70Qq/K3o+dpbvy60KkCt4cjMzBnZ0ZvRKRi
-	 jfxoTPk3LwRXG8+0haeaDnGfpI2MAs5EcvsCyMFCW3bZ9uzygWQ02XFwNfLitN3k3/
-	 Trr8BM7VQmqW5vNUZtBEcip7lltZBZqFZ0JQSlpXpjqEF49AHjrW3DvhyGob5lFLF0
-	 jEzXOApas9BaQ==
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>,
-	Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>
-Cc: Dan Schatzberg <dschatzberg@meta.com>,
-	Peter Zijlstra <peterz@infradead.org>,
+	s=arc-20240116; t=1761718914; c=relaxed/simple;
+	bh=OAF9chqVI/ExFVA4c+U/+XKU8ecrmHEIjqni0wf3qgM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jRNpH8//l2c7uQwq8kiaiwt/DvVZPOYWygUeSuj1dy8mSEgvpNo64icnCPp1hrZGXQSWyVn4Jj2OBgviBPw+v3WqePRuYSMhB9zOw7P9ipYhup9Oqjpb7cMqRlguDnjCW0VXjAGU/kGABJwacfqcImFzPkZv7D5PnW9J4ceZmo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RC0wbfCU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761718913; x=1793254913;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=OAF9chqVI/ExFVA4c+U/+XKU8ecrmHEIjqni0wf3qgM=;
+  b=RC0wbfCU10FmhPUguCYQGkf2ncVr2t6sXKkOngVf8AJk3vNlwUQbaX/7
+   P8FOApDlvWXmK6uJq0axbvx6SuvErOp/y7iFrIa1tIV4Y3q5dfd5LmjXB
+   9uVt4QgpC1OHlu0xLCJ3uLgF265Zh9m5ocWW7cuXfDwN2XoQgcOW0oc1H
+   3whkGNPmUC2Kr6cbNZeESZF3zhnq9INp5PjCQACQBSUxOCX+rsicRqvMR
+   AxrKfgzi8FyL61iR4ssX3l8kQv3uFBW9TRqwOIWccm70C0GUdG0Zz1ifU
+   EUorrYugvhSMJso4uIsHJzMSdw5B/Jy06Ii5jw9I6hE8FJJbBaI4Vrwx6
+   A==;
+X-CSE-ConnectionGUID: HOIDWUlUSk6Y67m994rnqw==
+X-CSE-MsgGUID: iiHC5OrARw2UGDU5YPr7bg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="66446269"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="66446269"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 23:21:52 -0700
+X-CSE-ConnectionGUID: rzws3n1bTta1Fiwq/DMGvw==
+X-CSE-MsgGUID: 0WuFWV5LRuGbJ5UtQJBmcw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="185201098"
+Received: from jraag-z790m-itx-wifi.iind.intel.com ([10.190.239.23])
+  by orviesa009.jf.intel.com with ESMTP; 28 Oct 2025 23:21:49 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: hansg@kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	andriy.shevchenko@linux.intel.com,
+	linus.walleij@linaro.org,
+	brgl@bgdev.pl
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev,
-	Tejun Heo <tj@kernel.org>
-Subject: [PATCH 4/4] sched_ext: Fix cgroup exit ordering by moving sched_ext_free() to finish_task_switch()
-Date: Tue, 28 Oct 2025 20:19:18 -1000
-Message-ID: <20251029061918.4179554-5-tj@kernel.org>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251029061918.4179554-1-tj@kernel.org>
-References: <20251029061918.4179554-1-tj@kernel.org>
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v1 0/2] Introduce Intel Elkhart Lake PSE I/O
+Date: Wed, 29 Oct 2025 11:50:48 +0530
+Message-Id: <20251029062050.4160517-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,107 +78,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-sched_ext_free() was called from __put_task_struct() when the last reference
-to the task is dropped, which could be long after the task has finished
-running. This causes cgroup-related problems:
+This series adds Intel Elkhart Lake PSE I/O driver which enumerates the
+PCI parent device and splits two child I/O devices (GPIO and Timed I/O
+which are available as a single PCI function through shared MMIO) to their
+respective I/O drivers.
 
-- ops.task_init() can be called on a cgroup which didn't get ops.cgroup_init()'d
-  during scheduler load.
+In spirit, it is a continuation of PSE TIO series[1] which received
+objection from Greg for abusing platform device and has now been reworked
+to use auxiliary device instead.
 
-- ops.cgroup_exit() could be called before ops.exit_task() is called on all
-  member tasks, leading to incorrect exit ordering.
+Currently TIO driver[2] falls under PPS subsystem supporting generator
+functionality and will be coming up in a separate follow-up series for
+its independent design changes as per below roadmap.
 
-Fix by moving it to finish_task_switch() to be called right after the final
-context switch away from the dying task, matching when sched_class->task_dead()
-is called. Rename it to sched_ext_dead() to match the new calling context.
+=> Extend TIO driver[2] to support PPS client functionality.
+=> Develop a PPS common driver which hooks to both generator and client
+   counterparts.
+=> Develop an auxiliary glue driver for PPS common driver.
 
-By calling sched_ext_dead() before cgroup_task_dead(), we ensure that:
+[1] https://lore.kernel.org/r/20250307052231.551737-1-raag.jadav@intel.com
+[2] https://lore.kernel.org/r/20250219040618.70962-1-subramanian.mohan@intel.com
 
-- Tasks visible on scx_tasks list have valid cgroups during scheduler load,
-  as cgroup_mutex prevents cgroup destruction while the task is still linked.
+Raag Jadav (2):
+  platform/x86/intel: Introduce Intel Elkhart Lake PSE I/O
+  gpio: elkhartlake: Convert to auxiliary driver
 
-- All member tasks have ops.exit_task() called and are removed from scx_tasks
-  before the cgroup can be destroyed and trigger ops.cgroup_exit().
+ MAINTAINERS                             |   7 ++
+ drivers/gpio/Kconfig                    |   2 +-
+ drivers/gpio/gpio-elkhartlake.c         |  34 +++----
+ drivers/platform/x86/intel/Kconfig      |  13 +++
+ drivers/platform/x86/intel/Makefile     |   1 +
+ drivers/platform/x86/intel/ehl_pse_io.c | 128 ++++++++++++++++++++++++
+ include/linux/ehl_pse_io_aux.h          |  30 ++++++
+ 7 files changed, 196 insertions(+), 19 deletions(-)
+ create mode 100644 drivers/platform/x86/intel/ehl_pse_io.c
+ create mode 100644 include/linux/ehl_pse_io_aux.h
 
-This fix is made possible by the cgroup_task_dead() split in the previous patch.
-
-This also makes more sense resource-wise as there's no point in keeping
-scheduler side resources around for dead tasks.
-
-Reported-by: Dan Schatzberg <dschatzberg@meta.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
- include/linux/sched/ext.h | 4 ++--
- kernel/fork.c             | 1 -
- kernel/sched/core.c       | 6 ++++++
- kernel/sched/ext.c        | 2 +-
- 4 files changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/include/linux/sched/ext.h b/include/linux/sched/ext.h
-index d82b7a9b0658..d7dd77be571f 100644
---- a/include/linux/sched/ext.h
-+++ b/include/linux/sched/ext.h
-@@ -207,14 +207,14 @@ struct sched_ext_entity {
- 	struct list_head	tasks_node;
- };
- 
--void sched_ext_free(struct task_struct *p);
-+void sched_ext_dead(struct task_struct *p);
- void print_scx_info(const char *log_lvl, struct task_struct *p);
- void scx_softlockup(u32 dur_s);
- bool scx_rcu_cpu_stall(void);
- 
- #else	/* !CONFIG_SCHED_CLASS_EXT */
- 
--static inline void sched_ext_free(struct task_struct *p) {}
-+static inline void sched_ext_dead(struct task_struct *p) {}
- static inline void print_scx_info(const char *log_lvl, struct task_struct *p) {}
- static inline void scx_softlockup(u32 dur_s) {}
- static inline bool scx_rcu_cpu_stall(void) { return false; }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 960c39c9c264..5ae37909a813 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -736,7 +736,6 @@ void __put_task_struct(struct task_struct *tsk)
- 	WARN_ON(tsk == current);
- 
- 	unwind_task_free(tsk);
--	sched_ext_free(tsk);
- 	io_uring_free(tsk);
- 	cgroup_task_free(tsk);
- 	task_numa_free(tsk, true);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 40f12e37f60f..d4dbffb27a66 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5222,6 +5222,12 @@ static struct rq *finish_task_switch(struct task_struct *prev)
- 		if (prev->sched_class->task_dead)
- 			prev->sched_class->task_dead(prev);
- 
-+		/*
-+		 * sched_ext_dead() must come before cgroup_task_dead() to
-+		 * prevent cgroups from being removed while its member tasks are
-+		 * visible to SCX schedulers.
-+		 */
-+		sched_ext_dead(prev);
- 		cgroup_task_dead(prev);
- 
- 		/* Task is done with its stack. */
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 2b0e88206d07..840bc76210c8 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2926,7 +2926,7 @@ void scx_cancel_fork(struct task_struct *p)
- 	percpu_up_read(&scx_fork_rwsem);
- }
- 
--void sched_ext_free(struct task_struct *p)
-+void sched_ext_dead(struct task_struct *p)
- {
- 	unsigned long flags;
- 
 -- 
-2.51.1
+2.34.1
 
 
