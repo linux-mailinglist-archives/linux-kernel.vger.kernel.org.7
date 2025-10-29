@@ -1,140 +1,96 @@
-Return-Path: <linux-kernel+bounces-875372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB24C18D06
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:59:20 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA963C18DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5994E3ADC81
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:56:29 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 848133548A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310C831076A;
-	Wed, 29 Oct 2025 07:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="34+pqqiA"
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32092313263;
+	Wed, 29 Oct 2025 08:06:20 +0000 (UTC)
+Received: from sonata.ens-lyon.org (sonata.ens-lyon.org [140.77.166.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2B253B71;
-	Wed, 29 Oct 2025 07:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9AD31B137
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.77.166.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761724581; cv=none; b=Da5pvXBM6b28iUKBfM8bHWxcDTvtP5ml0AfpszLO3SQmTTYJ2o1DgTpKj8wOq3TkDBaBz0pqAWUqA7UEPtXHKcpWIneTRNZ/JUe4o59TJUeGV1f5Njn8uJgVHSYljEcjuKDj83JZ6Seo8yeviPtsbGKkLrtNkZ07gRQgpc9jXjg=
+	t=1761725179; cv=none; b=E8DddRGN4KPITc8PlyIATJ51DITSzliCjs8WaYSn7UhfKUMG0waM1RcyH3gCOV/DRHa/BBNyFMfDxn6gTpFat+FjKyXJcIzZ3BCn8AQ0BXexU+/1oX/eSZyuke2LzMBsHh/drMfi/hE7yXb/MbFf6fDa8E/efm3YbsrpyBFsDOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761724581; c=relaxed/simple;
-	bh=yq5i/1jdK4GAdk/5gCKcUxzz6h9TQBP5e3VMa+tJ48c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jYjLMCE13cEGQcWPPRdczCwjhbY6UgBY8Sji3B9l5sfIN+m4ykzT28+mv4MVkfKEE+FWCZsnjlsgzQjh5PTbpneD41Fn5FrEmx/zPEW72PaOh3LTqBTJDVCdSuRxBp3/iFBQfKIcucWpYUAXc+66+PuatCRAm4EoxkNKPhexowo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=34+pqqiA; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=vuHKXm+OhQijHCGxbJTJ7gKVGu/cyR9t2WAMa/3qIME=;
-	b=34+pqqiAaUgpKjc0zQxXqV5Ay+UUIAS5jzBDK/oAvbWPu2Bp347b/gH29D8uVWd9xBPWVjC+1
-	hVVt0oGQXvWfZ/QkLnPzub9kgOsrIqZ1DCIfwKFG7+zaeUE4kFvK/ZCie55YGmCeiwqXuDfJFcT
-	W3rf4E+rGPYpl9u+5qeCpjk=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4cxKL01jyFz12LFQ;
-	Wed, 29 Oct 2025 15:55:36 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7E08F180B5A;
-	Wed, 29 Oct 2025 15:56:13 +0800 (CST)
-Received: from [10.174.177.19] (10.174.177.19) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 15:56:12 +0800
-Message-ID: <0feb2a87-b93d-4a99-9180-03a9ccab562e@huawei.com>
-Date: Wed, 29 Oct 2025 15:56:11 +0800
+	s=arc-20240116; t=1761725179; c=relaxed/simple;
+	bh=eNjQcFAeEfWwk1uuUNhaCjr8n5IvcNmOte9M46Xneq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sB+xphARiIHzvLGWrJ4r3GnWcEUjSl2JpoSMZzFgz/MxEnbe8SmkL7QUT3rivBtqXdJJzeIu/OiOm0XUygySrB3LJilu2j/Ox7YniPs8vdb5V0QJXct/Sf67UiOzyg/Qt9/XMQUuZHJrHwiDXaN7d3TfLS21Rw/I/ZX4dhB5Bv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org; arc=none smtp.client-ip=140.77.166.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ens-lyon.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bounce.ens-lyon.org
+Received: from localhost (localhost [127.0.0.1])
+	by sonata.ens-lyon.org (Postfix) with ESMTP id 071F6A1C18;
+	Wed, 29 Oct 2025 08:56:22 +0100 (CET)
+Received: from sonata.ens-lyon.org ([127.0.0.1])
+	by localhost (sonata.ens-lyon.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id MyoH-mr6tvXg; Wed, 29 Oct 2025 08:56:21 +0100 (CET)
+Received: from begin (aamiens-653-1-40-48.w83-192.abo.wanadoo.fr [83.192.199.48])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by sonata.ens-lyon.org (Postfix) with ESMTPSA id 6DA61A1C0D;
+	Wed, 29 Oct 2025 08:56:21 +0100 (CET)
+Received: from samy by begin with local (Exim 4.98.2)
+	(envelope-from <samuel.thibault@ens-lyon.org>)
+	id 1vE12a-00000009aGe-3kj4;
+	Wed, 29 Oct 2025 08:56:20 +0100
+Date: Wed, 29 Oct 2025 08:56:20 +0100
+From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+To: Bo Liu <liubo03@inspur.com>
+Cc: w.d.hubbs@gmail.com, chris@the-brannons.com, kirk@reisers.ca,
+	speakup@linux-speakup.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Accessiblity: speakup_soft: Fix double word in comments
+Message-ID: <aQHIpJ1XiMfDzhMs@begin>
+Mail-Followup-To: Samuel Thibault <samuel.thibault@ens-lyon.org>,
+	Bo Liu <liubo03@inspur.com>, w.d.hubbs@gmail.com,
+	chris@the-brannons.com, kirk@reisers.ca, speakup@linux-speakup.org,
+	linux-kernel@vger.kernel.org
+References: <20251029071629.17705-1-liubo03@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-coalesce.sh fail by
- installing ethtool-common.sh
-To: Simon Horman <horms@kernel.org>
-CC: <kuba@kernel.org>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
-	<acardace@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
-References: <20251027043007.1315917-1-wangliang74@huawei.com>
- <aQD52zzmW1YDC1iH@horms.kernel.org>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aQD52zzmW1YDC1iH@horms.kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029071629.17705-1-liubo03@inspur.com>
+Organization: I am not organized
 
+Bo Liu, le mer. 29 oct. 2025 15:16:29 +0800, a ecrit:
+> Remove the repeated word "the" in comments.
+> 
+> Signed-off-by: Bo Liu <liubo03@inspur.com>
 
-在 2025/10/29 1:14, Simon Horman 写道:
-> On Mon, Oct 27, 2025 at 12:30:07PM +0800, Wang Liang wrote:
->> The script "ethtool-common.sh" is not installed in INSTALL_PATH, and
->> triggers some errors when I try to run the test
->> 'drivers/net/netdevsim/ethtool-coalesce.sh':
->>
->>    TAP version 13
->>    1..1
->>    # timeout set to 600
->>    # selftests: drivers/net/netdevsim: ethtool-coalesce.sh
->>    # ./ethtool-coalesce.sh: line 4: ethtool-common.sh: No such file or directory
->>    # ./ethtool-coalesce.sh: line 25: make_netdev: command not found
->>    # ethtool: bad command line argument(s)
->>    # ./ethtool-coalesce.sh: line 124: check: command not found
->>    # ./ethtool-coalesce.sh: line 126: [: -eq: unary operator expected
->>    # FAILED /0 checks
->>    not ok 1 selftests: drivers/net/netdevsim: ethtool-coalesce.sh # exit=1
->>
->> Install this file to avoid this error. After this patch:
->>
->>    TAP version 13
->>    1..1
->>    # timeout set to 600
->>    # selftests: drivers/net/netdevsim: ethtool-coalesce.sh
->>    # PASSED all 22 checks
->>    ok 1 selftests: drivers/net/netdevsim: ethtool-coalesce.sh
->>
->> Fixes: fbb8531e58bd ("selftests: extract common functions in ethtool-common.sh")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   tools/testing/selftests/drivers/net/netdevsim/Makefile | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/tools/testing/selftests/drivers/net/netdevsim/Makefile b/tools/testing/selftests/drivers/net/netdevsim/Makefile
->> index daf51113c827..653141a654a0 100644
->> --- a/tools/testing/selftests/drivers/net/netdevsim/Makefile
->> +++ b/tools/testing/selftests/drivers/net/netdevsim/Makefile
->> @@ -20,4 +20,6 @@ TEST_PROGS := \
->>   	udp_tunnel_nic.sh \
->>   # end of TEST_PROGS
->>   
->> +TEST_FILES := ethtool-common.sh
->> +
->>   include ../../../lib.mk
-> Hi Wang Liang,
->
-> As per commit f07f91a36090 ("selftests: net: unify the Makefile formats")
-> I think the desired format is as follows (completely untested!):
->
-> TEST_FILES := \
-> 	ethtool-common.sh \
-> # end of TEST_PROGS
+Reviewed-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
 
-
-Thanks for the reminder!
-
-I will correct it, and send v2 later.
-
-------
-Best regards
-Wang Liang
-
->
+> ---
+>  drivers/accessibility/speakup/speakup_soft.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/accessibility/speakup/speakup_soft.c b/drivers/accessibility/speakup/speakup_soft.c
+> index 6d446824677b..6549bfb96e7f 100644
+> --- a/drivers/accessibility/speakup/speakup_soft.c
+> +++ b/drivers/accessibility/speakup/speakup_soft.c
+> @@ -446,7 +446,7 @@ static int softsynth_adjust(struct spk_synth *synth, struct st_var_header *var)
+>  	if (var->var_id != PUNC_LEVEL)
+>  		return 0;
+>  
+> -	/* We want to set the the speech synthesis punctuation level
+> +	/* We want to set the speech synthesis punctuation level
+>  	 * accordingly, so it properly tunes speaking A_PUNC characters */
+>  	var_data = var->data;
+>  	if (!var_data)
+> -- 
+> 2.31.1
 
