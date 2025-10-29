@@ -1,139 +1,176 @@
-Return-Path: <linux-kernel+bounces-876502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65DADC1BAE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:33:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08F10C1C29B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0490C58623F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFCE0647A18
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1010238171;
-	Wed, 29 Oct 2025 15:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE432FF661;
+	Wed, 29 Oct 2025 15:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IW+X0DpF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hQT4rKcI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36F1C5D44;
-	Wed, 29 Oct 2025 15:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEFA2DEA8C;
+	Wed, 29 Oct 2025 15:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751298; cv=none; b=qEITy7ZzH9Bc835QDfJeuFGDGUKeNQn+AI9iUBrk9ydY2JK3OzjHD+qWf+9MAvTY5qKzJkqd5s0cNSO7IVJTYHPyyDOlYgByfEyaFnMoC8GijJQ4BTSHFKTC2XVZIv4h0Q5NpKdhvXNbpPePGaoY5W96Pq9eFRcs2uGXjPe7X6M=
+	t=1761751340; cv=none; b=l20i7vCen1gQJ2ez2PInXOsPQNH4RnoQSg81/6aEMqAaDkNaatu4v/luzTmp3iBkjaMDzrw2G0ouXNjQdmHnJ6e0hy0q9I/Ym8VuOoUieSJ5WlUS/EDDfXxrSUP6AC/U7ksgDDvALh98foqcPcP6qkdQjdn8r+iG1IcxuE6o1jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751298; c=relaxed/simple;
-	bh=i8zZ/Az2AU7gAws4QhPWy+UIC3UsU5SjQYR63Fz7QG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ppiybPDcKDWjNlWyr1XV1S7PRy4OEdFdtRbSs+wayPslqe80hKRpnSlQT2FSqbKT728mlviXf70Dwt6e4GY5GzyO9yLUTkgErXlDlp+ZYbsyA6tz5xpUwIxyP5+lqhuQksWfFUZ/i1cooSfomf0WlhxCHyQaaSkJrFycMPlLjdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IW+X0DpF; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761751297; x=1793287297;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=i8zZ/Az2AU7gAws4QhPWy+UIC3UsU5SjQYR63Fz7QG4=;
-  b=IW+X0DpFZBYVBDDuMggBGs+UQJY8+49YM7BPmzlgf3R4Du80+CnZHA1V
-   /MknELQZeXcg0A7pJjrYWsf33zg96IzmzA5tTnj6B5BQXkzIEXTI0OHLz
-   9ctjy5F74DYukZl9+Y/5B3OiaUM/D8Sw2NNKKQWPXQXb2pRFKxuxGU5/w
-   MBxL6Vq0FNCDiHX0KzUzri20e5qvy5eqSmeD6Q5ADTsuMb/q1mNifC0c/
-   9cCBNkN/QayLXabx53NiVJZleUBwpOPab5jtoTqGSax8bFy5r5nkuUA0j
-   1OilmOPameQstHHA6+dXmZvwg3kyy3VBl2tXLSKGXT5uGqXqv872PHmLL
-   g==;
-X-CSE-ConnectionGUID: Ldf6sa7ORr2OfFo5apCJMA==
-X-CSE-MsgGUID: YxtL4VCvQ96h3fnF66X2dg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63785032"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="63785032"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:21:36 -0700
-X-CSE-ConnectionGUID: VsQXzBaVQf6rqhBeifR3xg==
-X-CSE-MsgGUID: tGWyFCvWRma3haaaGIshVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="216557885"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:21:30 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vE7zL-00000003ePq-2SlB;
-	Wed, 29 Oct 2025 17:21:27 +0200
-Date: Wed, 29 Oct 2025 17:21:27 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 10/10] regulator: make the subsystem aware of shared
- GPIOs
-Message-ID: <aQIw97qdO43NXHWi@smile.fi.intel.com>
-References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
- <20251029-gpio-shared-v3-10-71c568acf47c@linaro.org>
- <aQIAXO1hUrw4Yp9V@smile.fi.intel.com>
- <CAMRc=McT+HinKvajHmBYPcQKoboapAf2E3ErJSP=2jXW9B0omA@mail.gmail.com>
+	s=arc-20240116; t=1761751340; c=relaxed/simple;
+	bh=kd0zFIWO1a/ARX+pL8vZNG00zHaMnbNJfmTVzScY8gE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AylSGm9yGioL9V5eap1LbrAym4/jONsfkzSMIkp3k0aQ+BJ8vcXYnq8Gvybe6P/9X2RWXPwJpqKn6tv0pcxH5TG5xLk21OAWztpUFwncdWMLVwL2CV58DJOc13zQattklrH1GinM7FLVkL20oo+TPy6Vh67C9I9f2Ncl0RJPBLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hQT4rKcI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC0BC4CEF7;
+	Wed, 29 Oct 2025 15:22:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761751339;
+	bh=kd0zFIWO1a/ARX+pL8vZNG00zHaMnbNJfmTVzScY8gE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hQT4rKcIemHJK22zWFEwiDApN9/S2TEiX+n+AqwBXYxcQ2phgcyyI/8T0vBedx0uZ
+	 nXoSZ8jLCP1wVwxpkHfu6nVzrIx3dQ7l4U3eELOf9xAF0//G9SKfKol6fPRvzElXS4
+	 phb/wdAbG83NAPEKsnosEGiIy3vmzB28khPLeeRS0HA/PoPJlKmmDvR1oYVqEJdpXz
+	 We1SCmtGZ3RZQPGtds837QlPK1PYwJ0B24SGJ2wVC0yh7Jj39do0wl8Ig8oEuJ6lff
+	 N3DnOfcTtoIMpjlgc5qcZTxm5xTYLOWF+Fh9g4tP+qnIJx8yzXRe6H3JFpu3y4ZPl5
+	 xZHqUAOvwrwZw==
+Message-ID: <4dd9d86f-7c20-40fa-838c-b7634bbebf9a@kernel.org>
+Date: Wed, 29 Oct 2025 10:22:18 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=McT+HinKvajHmBYPcQKoboapAf2E3ErJSP=2jXW9B0omA@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] PM: sleep: Allow pm_restrict_gfp_mask() stacking
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linux PM <linux-pm@vger.kernel.org>
+Cc: Askar Safin <safinaskar@gmail.com>, LKML <linux-kernel@vger.kernel.org>
+References: <5935682.DvuYhMxLoT@rafael.j.wysocki>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <5935682.DvuYhMxLoT@rafael.j.wysocki>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 01:41:10PM +0100, Bartosz Golaszewski wrote:
-> On Wed, Oct 29, 2025 at 12:54 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Wed, Oct 29, 2025 at 12:20:46PM +0100, Bartosz Golaszewski wrote:
-> > >
-> > > GPIOLIB is now aware of shared GPIOs and - for platforms where access to
-> > > such pins is managed internally - we don't need to keep track of the
-> > > enable count.
-> > >
-> > > Once all users in the kernel switch to using the new mechanism, we'll be
-> > > able to drop the internal counting of users from the regulator code.
-> >
-> > I am wondering if you took into account the layering violation (or others
-> > put it as "transferring of ownership") in the regulator core for the platform
-> > based GPIO regulators? This popped up during the discussion of
-> > https://lore.kernel.org/platform-driver-x86/20251024050537.92440-1-qiuwenbo@gnome.org/
+On 10/28/25 3:52 PM, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> I am aware of this weird ownership transfer in regulator but these
-> changes don't affect it. The layering is still being violated though.
+> Allow pm_restrict_gfp_mask() to be called many times in a row to avoid
+> issues with calling dpm_suspend_start() when the GFP mask has been
+> already restricted.
 > 
-> This should be fixed and I've looked into it but it's not trivial so
-> it's another big rework for the future.
+> Only the first invocation of pm_restrict_gfp_mask() will actually
+> restrict the GFP mask and the subsequent calls will warn if there is
+> a mismatch between the expected allowed GFP mask and the actual one.
+> 
+> Moreover, if pm_restrict_gfp_mask() is called many times in a row,
+> pm_restore_gfp_mask() needs to be called matching number of times in
+> a row to actually restore the GFP mask.  Calling it when the GFP mask
+> has not been restricted will cause it to warn.
+> 
+> This is necessary for the GFP mask restriction starting in
+> hibernation_snapshot() to continue throughout the entire hibernation
+> flow until it completes or it is aborted (either by a wakeup event or
+> by an error).
+> 
+> Fixes: 449c9c02537a1 ("PM: hibernate: Restrict GFP mask in hibernation_snapshot()")
+> Fixes: 469d80a3712c ("PM: hibernate: Fix hybrid-sleep")
+> Reported-by: Askar Safin <safinaskar@gmail.com>
+> Closes: https://lore.kernel.org/linux-pm/20251025050812.421905-1-safinaskar@gmail.com/
+> Link: https://lore.kernel.org/linux-pm/20251028111730.2261404-1-safinaskar@gmail.com/
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-OK, thanks for clarifications!
+Great idea.  Looks good to me, and it passes the S4 tests on my side.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
+Tested-by: Mario Limonciello (AMD) <superm1@kernel.org>
 
+> ---
+> 
+> This supersedes
+> 
+> https://lore.kernel.org/linux-pm/20251026033115.436448-1-superm1@kernel.org/
+> 
+> as it allows the GFP mask to be restricted across the entire hibernation path.
+> 
+> ---
+>   kernel/power/hibernate.c |    4 ----
+>   kernel/power/main.c      |   22 +++++++++++++++++-----
+>   2 files changed, 17 insertions(+), 9 deletions(-)
+> 
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -706,7 +706,6 @@ static void power_down(void)
+>   
+>   #ifdef CONFIG_SUSPEND
+>   	if (hibernation_mode == HIBERNATION_SUSPEND) {
+> -		pm_restore_gfp_mask();
+>   		error = suspend_devices_and_enter(mem_sleep_current);
+>   		if (!error)
+>   			goto exit;
+> @@ -746,9 +745,6 @@ static void power_down(void)
+>   		cpu_relax();
+>   
+>   exit:
+> -	/* Match the pm_restore_gfp_mask() call in hibernate(). */
+> -	pm_restrict_gfp_mask();
+> -
+>   	/* Restore swap signature. */
+>   	error = swsusp_unmark();
+>   	if (error)
+> --- a/kernel/power/main.c
+> +++ b/kernel/power/main.c
+> @@ -31,23 +31,35 @@
+>    * held, unless the suspend/hibernate code is guaranteed not to run in parallel
+>    * with that modification).
+>    */
+> +static unsigned int saved_gfp_count;
+>   static gfp_t saved_gfp_mask;
+>   
+>   void pm_restore_gfp_mask(void)
+>   {
+>   	WARN_ON(!mutex_is_locked(&system_transition_mutex));
+> -	if (saved_gfp_mask) {
+> -		gfp_allowed_mask = saved_gfp_mask;
+> -		saved_gfp_mask = 0;
+> -	}
+> +
+> +	if (WARN_ON(!saved_gfp_count) || --saved_gfp_count)
+> +		return;
+> +
+> +	gfp_allowed_mask = saved_gfp_mask;
+> +	saved_gfp_mask = 0;
+> +
+> +	pm_pr_dbg("GFP mask restored\n");
+>   }
+>   
+>   void pm_restrict_gfp_mask(void)
+>   {
+>   	WARN_ON(!mutex_is_locked(&system_transition_mutex));
+> -	WARN_ON(saved_gfp_mask);
+> +
+> +	if (saved_gfp_count++) {
+> +		WARN_ON((saved_gfp_mask & ~(__GFP_IO | __GFP_FS)) != gfp_allowed_mask);
+> +		return;
+> +	}
+> +
+>   	saved_gfp_mask = gfp_allowed_mask;
+>   	gfp_allowed_mask &= ~(__GFP_IO | __GFP_FS);
+> +
+> +	pm_pr_dbg("GFP mask restricted\n");
+>   }
+>   
+>   unsigned int lock_system_sleep(void)
+> 
+> 
+> 
 
 
