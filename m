@@ -1,82 +1,81 @@
-Return-Path: <linux-kernel+bounces-876619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A013CC1BE32
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:00:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C7C1C312
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D80DD189E799
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 94D265A52EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8103491D6;
-	Wed, 29 Oct 2025 15:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8D934B41C;
+	Wed, 29 Oct 2025 15:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kihRZnoc"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWAkDcQA"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8595033A01E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A15334B42B
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753559; cv=none; b=DRJtjZAUNDTEpc2m8NTpI2P/9nSgug+eAwbskeMX2i2VCmfz09sMX/BDTM6JwDLZlYmQxdC3GDkKngawS1X3+UMITc3NHAHhYb2uoUEk/RGiQG/IScTamlVkBmJAul70oHO94QYD7Y1d+jZ105s8WZ+IFD/LZ1Wfe5JX7c62sj0=
+	t=1761753563; cv=none; b=Y10EXmAhH9rEWIxDfuyCO8f45kvafvwj3PTz6tFzN2YTvpfZ/8s6cMvOP4UCnFsz8ls3kQWEgQNsclUmWBhpFlmg/oQHMDd7FWVmntDu1SgXDRLk1pdqfxPRI5di6st5WQH9kQMmIV60gPgoPIieZYWZS72UEJ7AHBxUOKIWToY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753559; c=relaxed/simple;
-	bh=zJznav8+/tOGs8R4Q/7+iRpOZtTAakwuGpzIz4iTHL8=;
+	s=arc-20240116; t=1761753563; c=relaxed/simple;
+	bh=Y/8DN/bVrI1N0QSXJW/59K8K2Df8jsrwORtU+9uAPmE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O83H60nrWMZaP+LLbZStDNgYFBLi8yoV7YXk95oA1yvHWni5cxhfkcK+edjTiJ3AUoj4iL4fIHGLFSAShNV9pAt9wO5F9eXmiHlYFkYAWt6PXCg3OUle0YtKAPA9tzkSI0LKQDfKhAkeqPmU1Q3EOdO56EvAxYjwDHJ7uTZVq64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kihRZnoc; arc=none smtp.client-ip=209.85.216.50
+	 In-Reply-To:To:Cc; b=q3Nks/hRWTEAG6ROReh9I68b/69NyuoMegTNRlFsrSaNEbiFHbd0KniVMuhivJWOjDA3tYtxiUQZWUYeRIZ2eG18IQvL5ubk2PR4rZQRatguvABzAr4suW0Ojt3CzkgLKYtd6UV1DCnLc/M2lge0/rNmzbNOlTBXtNVA4sB86vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DWAkDcQA; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33bbc4e81dfso97122a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:59:17 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-34029c5beabso89487a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761753557; x=1762358357; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761753561; x=1762358361; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7sAbt8Aq11hD5HKF7vZsq1nYOhoSCTs6kYCBAgTfydA=;
-        b=kihRZnoco38POIF6SoHj5zL4x5NrRylcWxbGQBVc5FvciLtEfVO1HEHI+SfG6+J6sS
-         AYv1bfR6RjEJvz3L5zfCuRvEnxmIXxN4+nCWdFjjoAUH1CnZEGHF1m+Ib6bm5Ur6hB/E
-         WiuPU1hD/8P9Kac9Snq6PejYKcRu+88Ov0VzkNda2uP4z643CiEP1+yQgvBjunoDY58W
-         w7gBmQxLeJoF7KbQ6DaEly50wU4b70eOZokIphm+w5v7rtTif4D1mV9FbabUR8mCUjvQ
-         zlf8t/88yiOGExQYnx2Z01IOZtCD21eQ85Lk9RVpjuCSWvwVRLnIfPz3QgIBEb1R+kg9
-         Qq7w==
+        bh=ndK9rgLMnW0lXi4W8q46Dx/IRDzQ0optlFYL4qNTikM=;
+        b=DWAkDcQAQJ37dTyCuA70uJMwJlo+V5ZUDe4FJ+oB0zCcbzdcvXwgc5rTqOqpqu8qkO
+         8lJc72jGDG8az0L47RBpyT4DKXrm0hUAbU2xa/JQxqoKuo4JFBK0F8KZnyOdjhi7niiH
+         Q2XmBvDcXcIwJM5NjcBj2YOKwwHwZIcTjTkf0ZhA/EjoPEslwV+0Rxy4bri73R1+dmHh
+         K2NiDZIW4RRBhg503h7kRqUuSOswdBH5zN8H6hup9usyLHauDWHp5R1Bw5NfYhEPPuv6
+         XooiW/3xSxur3xk4f+T7KB3wvtfRx+BTxhdsS7gBktefNWrVPLNUdp6j4BkRWOBh3p/9
+         qDgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761753557; x=1762358357;
+        d=1e100.net; s=20230601; t=1761753561; x=1762358361;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7sAbt8Aq11hD5HKF7vZsq1nYOhoSCTs6kYCBAgTfydA=;
-        b=gsKsYkZ6WmQ1uWjbZsH2eEFoyGwf8QelWbxER46Dt94NLKyLlliSDy5kNOBSlGTZY4
-         Hnlp0NLMATNoqs++t62j6H3XmGNE58jmMxJjpY+kTUp14uoz860cDEFZXDe7Up34Mknj
-         kGBLzygAz2dijb+sBhnP/uHWZ9v2Kn5miHXd2lvjBRgVKtHZrKf7Bbz+WIaqWEwFMm1j
-         OieNf5+XUk1oldSJCquqICXX8f9nFEo+prE+E7zLUjrT7HLp+CMaCSOuDlV8LXFeGujU
-         xMHwM8u1nmdquxzCoFcaU/yv45PpIFeUxerijk3s2rPnzGU5QVuuiedJNAI2W9ncJ9fO
-         yBpw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5wy5NIwQGn1mLqBsX2Ixz+ougmBdVxvSzLnkxDGx/H3yrmxlZU9nUWwC2g/larFwW9l7kUciVRw+JY04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrDbbiqHk5W/dJvXm6tkdf9SZCei83y3iWFvGq3kD/HpvzuS1Z
-	TCUzfvzadozXtxrTKcFpKDEMdfAKs6ZMBGs7bjGB3NyztF/JY8i6jMww
-X-Gm-Gg: ASbGncsws7gfPfGENB3kKNLZd/aih8eiWr/9oqnbPDsqZ1UOXqPP9W6rLVGl6XSKEzX
-	S7MU3cOjqC2VBCQQMYm1w6ojgdwBaZZoTtJ4cW5DeIqDau5stCju02otdYJhYrSLLnmIO6g7uUZ
-	QWmMqoCQOGM6jonXm6siITpXPzcVjIPMzXM4mZuEGXjEYWbXG1TWrAvt0EdtnlX1gZ0C7sGGVse
-	Vk/OLwPRNC43HCLfzmr8MRHUatpwKKPd1G5nK7fd2QUz1U7zY2OiUlCzL9trZ+FZ63B+0MeuNGw
-	0fdPWWJ2/bcaO7rQ2WDpDVrAMnxwRaqpwuoisVJs73qQJfYWMMZ6OE80H0goMTacUKxSsOQkIj9
-	CEBpQCiSg3cKxsfpYMWqzXuuTMhQsRU1B6RJENmQzFdgBSrLXIND+P8pX+rA0SZ9aeI62zq8YID
-	QhJg+n8/tTZ5bIdHNg5i6Q
-X-Google-Smtp-Source: AGHT+IFcx/tNH+mGfenFLGtMHSLOQFDVYtyEct3+kZwXnL2FV+gWAZHMp+QdJZXOLxNVix81OWQEkA==
-X-Received: by 2002:a17:90b:3c4f:b0:32e:5cba:ae26 with SMTP id 98e67ed59e1d1-3403a282201mr4126488a91.23.1761753556776;
-        Wed, 29 Oct 2025 08:59:16 -0700 (PDT)
+        bh=ndK9rgLMnW0lXi4W8q46Dx/IRDzQ0optlFYL4qNTikM=;
+        b=pbXZca9c3ehUkGpMEPvaKQg2JO+dT2oequBV16UVy2M9vPWuFZ311uIKkQ6yqw0609
+         gFAaUYt9x1TugYMYKFivlsFysj3De6EILxnb82hRbfSG6S1uHqwCrEI1y8hACJNAeLdg
+         qv+ZdQHTQ3RNpWKnu7rBv9k5WlcHZF/rrnZXmwYt8mnGszBMUh6ReK6fV0p/egvhLjcS
+         CmJKXcfT76CIEh0mQHJL14ZgfH/iTXBmAs8+1NML0JlljzDzIXe8x86LY4BD8e0z8dcy
+         1HkqZRR3Nj8iFx5mZABEql0GcPkOvHGFS97BDiije0S16lqnckc4TJAPVlZyMT9WqTkz
+         zKvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+OlgxfZBbWFkGDbI6gAZSXYg0Q9RLjFGg4GzlwSwncZDcBl1wuXXJeIlkfZO47bsED/ZYv6K2h++fpE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvuoKdocTR0Yhm0zRJ1yPdDRrEJo6Tsn+otvaQnh0Ioe5/cAG6
+	ALIZt/6Eav2GfldidneNoBsne4Buu8tB2TIL/yNc++d3rDSFb6BuGgZh
+X-Gm-Gg: ASbGnctrmrhuJW1Q9DCmXgUqO2+5taiF58pdzM4d3/EFmCJPFLmcJwu3H8iOFela69k
+	dTi7IEmvMT9/Le4NXrN6zTIKdE120ZqgqAfi3q/0OS8HtqQwGd3SaL9TTg8uWb6Jjl8gCeUWiGw
+	ng7pE3JjgXmy1gPVOaFTNUb/IAr2r9gpTYxCHuGu93TMzwzqhERfipv1j7ywBuQBwt32zHVkLau
+	9onj/2NF/XWMMjRVIe7kvZyO+XyycWR+oTzqa6S1lh+KveaT2pxn7Rlv0n8tCsDULT59Rp+eEhs
+	guN7lrbWO+/+WU+Sa7u7zolLoYwZgkM+z+4ihTEvIRU7CTexGhSyQnb9UvSa+8m3PeetkesfaZU
+	sosxtgD/UR2mBrrwKRTx8IiOvaW0lmfMUkejUoex7KmVpz/kxz1QQrrZUUZWwZHDvxYEwGeBA+n
+	ks4bj1Jr23CFrMlsQ9WPJS
+X-Google-Smtp-Source: AGHT+IFLkRpwM32hzKfCMcykzpH7VmCSQ2IyTOtMyj93WrL2JrbkqW/t9fuG8FuM15oE3b/6CKBLRw==
+X-Received: by 2002:a17:90b:288b:b0:338:3156:fc43 with SMTP id 98e67ed59e1d1-3403a15ab0emr4047870a91.11.1761753561487;
+        Wed, 29 Oct 2025 08:59:21 -0700 (PDT)
 Received: from [127.0.0.1] ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e95aasm16087366a91.8.2025.10.29.08.59.12
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e95aasm16087366a91.8.2025.10.29.08.59.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 08:59:16 -0700 (PDT)
+        Wed, 29 Oct 2025 08:59:21 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
-Date: Wed, 29 Oct 2025 23:58:30 +0800
-Subject: [PATCH 04/19] mm, swap: always try to free swap cache for
- SWP_SYNCHRONOUS_IO devices
+Date: Wed, 29 Oct 2025 23:58:31 +0800
+Subject: [PATCH 05/19] mm, swap: simplify the code and reduce indention
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-swap-table-p2-v1-4-3d43f3b6ec32@tencent.com>
+Message-Id: <20251029-swap-table-p2-v1-5-3d43f3b6ec32@tencent.com>
 References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
 In-Reply-To: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
 To: linux-mm@kvack.org
@@ -104,62 +103,135 @@ X-Mailer: b4 0.14.3
 
 From: Kairui Song <kasong@tencent.com>
 
-Now SWP_SYNCHRONOUS_IO devices are also using swap cache. One side
-effect is that a folio may stay in swap cache for a longer time due to
-lazy freeing (vm_swap_full()). This can help save some CPU / IO if folios
-are being swapped out very frequently right after swapin, hence improving
-the performance. But the long pinning of swap slots also increases the
-fragmentation rate of the swap device significantly, and currently,
-all in-tree SWP_SYNCHRONOUS_IO devices are RAM disks, so it also
-causes the backing memory to be pinned, increasing the memory pressure.
+Now swap cache is always used, multiple swap cache checks are no longer
+useful, remove them and reduce the code indention.
 
-So drop the swap cache immediately for SWP_SYNCHRONOUS_IO devices
-after swapin finishes. Swap cache has served its role as a
-synchronization layer to prevent any parallel swapin from wasting
-CPU or memory allocation, and the redundant IO is not a major concern
-for SWP_SYNCHRONOUS_IO devices.
+No behavior change.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
 ---
- mm/memory.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ mm/memory.c | 89 +++++++++++++++++++++++++++++--------------------------------
+ 1 file changed, 43 insertions(+), 46 deletions(-)
 
 diff --git a/mm/memory.c b/mm/memory.c
-index 9a43d4811781..78457347ae60 100644
+index 78457347ae60..6c5cd86c4a66 100644
 --- a/mm/memory.c
 +++ b/mm/memory.c
-@@ -4359,12 +4359,21 @@ static vm_fault_t remove_device_exclusive_entry(struct vm_fault *vmf)
- 	return 0;
- }
+@@ -4763,55 +4763,52 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 		goto out_release;
  
--static inline bool should_try_to_free_swap(struct folio *folio,
-+static inline bool should_try_to_free_swap(struct swap_info_struct *si,
-+					   struct folio *folio,
- 					   struct vm_area_struct *vma,
- 					   unsigned int fault_flags)
- {
- 	if (!folio_test_swapcache(folio))
- 		return false;
+ 	page = folio_file_page(folio, swp_offset(entry));
+-	if (swapcache) {
+-		/*
+-		 * Make sure folio_free_swap() or swapoff did not release the
+-		 * swapcache from under us.  The page pin, and pte_same test
+-		 * below, are not enough to exclude that.  Even if it is still
+-		 * swapcache, we need to check that the page's swap has not
+-		 * changed.
+-		 */
+-		if (unlikely(!folio_matches_swap_entry(folio, entry)))
+-			goto out_page;
+-
+-		if (unlikely(PageHWPoison(page))) {
+-			/*
+-			 * hwpoisoned dirty swapcache pages are kept for killing
+-			 * owner processes (which may be unknown at hwpoison time)
+-			 */
+-			ret = VM_FAULT_HWPOISON;
+-			goto out_page;
+-		}
+-
+-		/*
+-		 * KSM sometimes has to copy on read faults, for example, if
+-		 * folio->index of non-ksm folios would be nonlinear inside the
+-		 * anon VMA -- the ksm flag is lost on actual swapout.
+-		 */
+-		folio = ksm_might_need_to_copy(folio, vma, vmf->address);
+-		if (unlikely(!folio)) {
+-			ret = VM_FAULT_OOM;
+-			folio = swapcache;
+-			goto out_page;
+-		} else if (unlikely(folio == ERR_PTR(-EHWPOISON))) {
+-			ret = VM_FAULT_HWPOISON;
+-			folio = swapcache;
+-			goto out_page;
+-		}
+-		if (folio != swapcache)
+-			page = folio_page(folio, 0);
 +	/*
-+	 * Try to free swap cache for SWP_SYNCHRONOUS_IO devices.
-+	 * Redundant IO is unlikely to be an issue for them, but a
-+	 * slot being pinned by swap cache may cause more fragmentation
-+	 * and delayed freeing of swap metadata.
++	 * Make sure folio_free_swap() or swapoff did not release the
++	 * swapcache from under us.  The page pin, and pte_same test
++	 * below, are not enough to exclude that.  Even if it is still
++	 * swapcache, we need to check that the page's swap has not
++	 * changed.
 +	 */
-+	if (data_race(si->flags & SWP_SYNCHRONOUS_IO))
-+		return true;
- 	if (mem_cgroup_swap_full(folio) || (vma->vm_flags & VM_LOCKED) ||
- 	    folio_test_mlocked(folio))
- 		return true;
-@@ -4935,7 +4944,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	 * yet.
- 	 */
- 	swap_free_nr(entry, nr_pages);
--	if (should_try_to_free_swap(folio, vma, vmf->flags))
-+	if (should_try_to_free_swap(si, folio, vma, vmf->flags))
- 		folio_free_swap(folio);
++	if (unlikely(!folio_matches_swap_entry(folio, entry)))
++		goto out_page;
  
- 	add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
++	if (unlikely(PageHWPoison(page))) {
+ 		/*
+-		 * If we want to map a page that's in the swapcache writable, we
+-		 * have to detect via the refcount if we're really the exclusive
+-		 * owner. Try removing the extra reference from the local LRU
+-		 * caches if required.
++		 * hwpoisoned dirty swapcache pages are kept for killing
++		 * owner processes (which may be unknown at hwpoison time)
+ 		 */
+-		if ((vmf->flags & FAULT_FLAG_WRITE) && folio == swapcache &&
+-		    !folio_test_ksm(folio) && !folio_test_lru(folio))
+-			lru_add_drain();
++		ret = VM_FAULT_HWPOISON;
++		goto out_page;
+ 	}
+ 
++	/*
++	 * KSM sometimes has to copy on read faults, for example, if
++	 * folio->index of non-ksm folios would be nonlinear inside the
++	 * anon VMA -- the ksm flag is lost on actual swapout.
++	 */
++	folio = ksm_might_need_to_copy(folio, vma, vmf->address);
++	if (unlikely(!folio)) {
++		ret = VM_FAULT_OOM;
++		folio = swapcache;
++		goto out_page;
++	} else if (unlikely(folio == ERR_PTR(-EHWPOISON))) {
++		ret = VM_FAULT_HWPOISON;
++		folio = swapcache;
++		goto out_page;
++	} else if (folio != swapcache)
++		page = folio_page(folio, 0);
++
++	/*
++	 * If we want to map a page that's in the swapcache writable, we
++	 * have to detect via the refcount if we're really the exclusive
++	 * owner. Try removing the extra reference from the local LRU
++	 * caches if required.
++	 */
++	if ((vmf->flags & FAULT_FLAG_WRITE) &&
++	    !folio_test_ksm(folio) && !folio_test_lru(folio))
++		lru_add_drain();
++
+ 	folio_throttle_swaprate(folio, GFP_KERNEL);
+ 
+ 	/*
+@@ -5001,7 +4998,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 			pte, pte, nr_pages);
+ 
+ 	folio_unlock(folio);
+-	if (folio != swapcache && swapcache) {
++	if (unlikely(folio != swapcache)) {
+ 		/*
+ 		 * Hold the lock to avoid the swap entry to be reused
+ 		 * until we take the PT lock for the pte_same() check
+@@ -5039,7 +5036,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	folio_unlock(folio);
+ out_release:
+ 	folio_put(folio);
+-	if (folio != swapcache && swapcache) {
++	if (folio != swapcache) {
+ 		folio_unlock(swapcache);
+ 		folio_put(swapcache);
+ 	}
 
 -- 
 2.51.1
