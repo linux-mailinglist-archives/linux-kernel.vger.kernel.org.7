@@ -1,156 +1,125 @@
-Return-Path: <linux-kernel+bounces-877062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39B49C1D16E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:58:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30340C1D1FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:04:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DB1514E3241
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:57:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95754260F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FCC835A955;
-	Wed, 29 Oct 2025 19:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4F530E0EF;
+	Wed, 29 Oct 2025 20:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sRKiGKE4"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C+/q/EKq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB77C35A945
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E2324C076
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761767810; cv=none; b=Ue8lPkVZtoEn14moOy1BXoSqcDIN1XcLwJWs/JaTQvM6bex13c6SFDlg4hPOTo0KchbPMWSq0pbtHw1biTti61sQJ1YZQ+B28JZp8rrLoxgqgZvP6BklSkwAArPzvznNaSvILDFMKjEFLaZ6dAMRaihzf48biTpSywlmOViib7U=
+	t=1761768117; cv=none; b=G00Breq/0HORtXnaH7An8bKwir2xIwcmN/GhAvBiSJZsZrd6NIX+sT8jwmw1XvjMWNVv6XilT7FGclz15EtREEB5hEDKkBJi+LmEyc4/rapVfgbt/HsLzEdLoeB1KyyVg4lCZC/2c+CWOtOfjLWuZkDGkSb6P/+ELqzzDKNlRzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761767810; c=relaxed/simple;
-	bh=qSqfO4GaIrR27fhgavCPzsBAMespcHyDtewzg+16dug=;
+	s=arc-20240116; t=1761768117; c=relaxed/simple;
+	bh=nZH8k01WM1ZD2QNw1i3V/qcFjBnvGzd/8+qBO/Q6O30=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fVUBbtrirUPLSjfLjnmmYkzyL/T/eteSXInHMLRGUHN8ouiYTY6Cr+EK05wrw/yOVwU9huELcGSVx0+iTJuhWIMpiokyE2kcSmwjxgeL3qT7EIqrR1L69Pvl3P/WpAyNKmtdu1EcO8cgZL0Ytq1KTrS6XH6i5Rz1xLXEHDS+7vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sRKiGKE4; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1ac9d14e-4250-480c-b863-410be78ac6c6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761767797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=riRSf2R7xwaw3JNPyjOIY32N5sQTM0xVxav/eTpQzBA=;
-	b=sRKiGKE4PQuJxGC2AJi8XPaHhTU2mGX0xKY+eLSHxCSe/WQZYH6hqCf/wAY7KnIu10ZbYg
-	msvX550/fwGxa8JxO1t91w1jLjM/mysf5/i9IMwD0iOAnwE5CsOalsYN9/Jg5Xc1900cnt
-	cHBhB5PR8WGWB5uZa3y+KySLeK91gwc=
-Date: Wed, 29 Oct 2025 12:56:28 -0700
+	 In-Reply-To:Content-Type; b=Qs6/PZR4588R1bSNYKiKl/Ml5Y6H3efgvYObParfR7BFpp/9bnrSSF38xPbvW5xuKSe9irXsGN1gdk4+lKSuKdrJniiiRibyZy1LCpGR439yEbmEYhU9iZP5LtKVJE0+R8cyf/0Om78ESTndTcnGlXefPDMn1ZhVwrkL1VkUYbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C+/q/EKq; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761768116; x=1793304116;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=nZH8k01WM1ZD2QNw1i3V/qcFjBnvGzd/8+qBO/Q6O30=;
+  b=C+/q/EKqwgVh7KPQYHK9ntKClV1K4OPxQ8W/rg7JdMAkEFp7Ha7mfETv
+   NtTOhsbiURjS9B8oaFtcZtu1GmOaj03/mJlms/PlvbZZMlmflQAH2M3c3
+   sOmGZ1TiHOzAEQyYqX1airmV1L1AHowPpXd+4KTrZZq2yPOAuz9plvrkU
+   OAE3BvuLbrC25jbOi8rw5YZpnZx7VsIgMzzHwGdcsvQJD8zcFQGzFgKSQ
+   9GGDw99PxVYesBrRA/jgM8DVezaqXRCW9S60XAVbtqndJCzDMSptEj/pV
+   hL1jh2rjJhhMiRO++jgbTlawFOjkwBw0g5Pq/VF08eZt99PwLbfaIT89K
+   Q==;
+X-CSE-ConnectionGUID: Brt7+d/vSACiXDeDJIEw2Q==
+X-CSE-MsgGUID: M7uHIFqlQyOR/XcmBX/p1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="63936878"
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="63936878"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 13:01:55 -0700
+X-CSE-ConnectionGUID: fF+KWoEfRmG05aLCyMW3hg==
+X-CSE-MsgGUID: oeLCM16MQgy8fJPLkQg0NQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
+   d="scan'208";a="185637674"
+Received: from kwachows-mobl.ger.corp.intel.com (HELO [10.94.253.106]) ([10.94.253.106])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 13:01:52 -0700
+Message-ID: <f18e26c0-f4f3-4221-ba92-218698ec088e@linux.intel.com>
+Date: Wed, 29 Oct 2025 21:01:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next v3 3/4] selftests/bpf: integrate
- test_tc_tunnel.sh tests into test_progs
-To: =?UTF-8?Q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?=
- <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>,
- ebpf@linuxfoundation.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Bastien Curutchet <bastien.curutchet@bootlin.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
- <20251027-tc_tunnel-v3-3-505c12019f9d@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] accel/ivpu: replace use of system_unbound_wq with
+ system_dfl_wq
+To: Marco Crivellari <marco.crivellari@suse.com>,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Michal Hocko <mhocko@suse.com>,
+ Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>
+References: <20251029165642.364488-1-marco.crivellari@suse.com>
+ <20251029165642.364488-2-marco.crivellari@suse.com>
 Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20251027-tc_tunnel-v3-3-505c12019f9d@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+From: Karol Wachowski <karol.wachowski@linux.intel.com>
+Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173, 80-298
+ Gdansk - KRS 101882 - NIP 957-07-52-316
+In-Reply-To: <20251029165642.364488-2-marco.crivellari@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/27/25 7:51 AM, Alexis Lothoré (eBPF Foundation) wrote:
-> +static int run_server(struct subtest_cfg *cfg)
-> +{
-> +	struct nstoken *nstoken = open_netns(SERVER_NS);
-
-It is unlikely but still better to check for open_netns failure. Just in 
-case that the network changes/traffic is accidentally done in the 
-original netns. There are a few netns switching in the test. Please 
-followup.
-
-> +	int family = cfg->ipproto == 6 ? AF_INET6 : AF_INET;
-> +
-> +	cfg->server_fd = start_reuseport_server(family, SOCK_STREAM,
-> +						cfg->server_addr, TEST_PORT,
-> +						TIMEOUT_MS, 1);
-
-Why reuseport is needed? Does it have issue in bind() to the same 
-ip/port in the later sub-test?
-> +	close_netns(nstoken);
-> +	if (!ASSERT_NEQ(cfg->server_fd, NULL, "start server"))
-
-I changed the check to ASSERT_OK_PTR. Also two other similar 
-ASSERT_[N]EQ(..., NULL, ...) usages.
-> +		return -1;
-> +
-> +	return 0;
-> +}
-> +
-> +static void stop_server(struct subtest_cfg *cfg)
-> +{
-> +	close(*cfg->server_fd);
-
-NULL check on cfg->server_fd is needed during the error path of 
-run_test(). cfg->server_fd is leaked also. I changed it to 
-free_fds(cfg->server_fd, 1) instead.
-
-> +	cfg->server_fd = NULL;
-
-I don't think cfg will be reused, so I skip this NULL assignment.
-
-> +}
-> +
-> +static int check_server_rx_data(struct subtest_cfg *cfg,
-> +				struct connection *conn, int len)
-> +{
-> +	int err;
-> +
-> +	memset(rx_buffer, 0, BUFFER_LEN);
-> +	err = recv(conn->server_fd, rx_buffer, len, 0);
-> +	if (!ASSERT_EQ(err, len, "check rx data len"))
-> +		return 1;
-> +	if (!ASSERT_MEMEQ(tx_buffer, rx_buffer, len, "check received data"))
-> +		return 1;
-> +	return 0;
-> +}
-> +
-> +static struct connection *connect_client_to_server(struct subtest_cfg *cfg)
-> +{
-> +	struct network_helper_opts opts = {.timeout_ms = 500};
-> +	int family = cfg->ipproto == 6 ? AF_INET6 : AF_INET;
-> +	struct connection *conn = NULL;
-> +	int client_fd, server_fd;
-> +
-> +	conn = malloc(sizeof(struct connection));
-> +	if (!conn)
-> +		return conn;
-> +
-> +	client_fd = connect_to_addr_str(family, SOCK_STREAM, cfg->server_addr,
-> +					TEST_PORT, &opts);
-> +
-> +	if (client_fd < 0) {
-> +		free(conn);
-> +		return NULL;
-> +	}
-> +
-> +	server_fd = accept(*cfg->server_fd, NULL, NULL);
-> +	if (server_fd < 0) {
-
-Fixed the client_fd leak.
-Applied. Thanks.
-
+On 10/29/2025 5:56 PM, Marco Crivellari wrote:
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>
+> This lack of consistency cannot be addressed without refactoring the API.
+>
+> system_unbound_wq should be the default workqueue so as not to enforce
+> locality constraints for random work whenever it's not required.
+>
+> Adding system_dfl_wq to encourage its use when unbound work should be used.
+>
+> The old system_unbound_wq will be kept for a few release cycles.
+>
+> Suggested-by: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+> ---
+>  drivers/accel/ivpu/ivpu_pm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/accel/ivpu/ivpu_pm.c b/drivers/accel/ivpu/ivpu_pm.c
+> index 475ddc94f1cf..ffa2ba7cafe2 100644
+> --- a/drivers/accel/ivpu/ivpu_pm.c
+> +++ b/drivers/accel/ivpu/ivpu_pm.c
+> @@ -186,7 +186,7 @@ void ivpu_pm_trigger_recovery(struct ivpu_device *vdev, const char *reason)
+>  	if (atomic_cmpxchg(&vdev->pm->reset_pending, 0, 1) == 0) {
+>  		ivpu_hw_diagnose_failure(vdev);
+>  		ivpu_hw_irq_disable(vdev); /* Disable IRQ early to protect from IRQ storm */
+> -		queue_work(system_unbound_wq, &vdev->pm->recovery_work);
+> +		queue_work(system_dfl_wq, &vdev->pm->recovery_work);
+>  	}
+>  }
+Reviewed-by: Karol Wachowski <karol.wachowski@linux.intel.com>
+>  
 
