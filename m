@@ -1,184 +1,119 @@
-Return-Path: <linux-kernel+bounces-876899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E19EC1CAE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:08:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D38FAC1CBAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CDE2D4E5A4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197CA5847D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A806730B528;
-	Wed, 29 Oct 2025 18:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74368302CDE;
+	Wed, 29 Oct 2025 18:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CzK6rvVX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZ0+Sibf"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6474C253B4C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7FE2857C1
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761124; cv=none; b=gmAnhMODida8ojNwnNQFrrVVM2HMu2lb7Eag1D7NrHrrZgv4dXeMnnkZj8UBlITEICXI2/T7mUbxjdaiCqAKnMd6x4tdo9ZdKH/wEJ/NWMOyRKssehtxZBmyIF2ywCzmhHLpmycFxnVpeGwMOobNvJ2xYwtyx15sCIQRyUf8WO8=
+	t=1761761164; cv=none; b=HIsz6w984woedFgOTJoGEkkcgT4tSmKq+BBgC7K39SAvWpTDXUr6kd7iFUfgXe6t6pTonQb9SKFwZT56cqoFwjwB4t7LRvlOnFR5+tuzJEt9XeSEeA8J5kIl0wBqS71jbXpsRXY8M845pN7zaBT7cWTGcEItKzeA+TzIj57gpnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761124; c=relaxed/simple;
-	bh=aab43vnKM1ss0I9X3ZkZ8BKt0Ft4cLo8wB19nB+wzAE=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ki2uu7jmZGphh6TdFaK8VmgA0jRo5b7r9DDEHUUlKaU4Ha5xc0uXH0itknWtdgJeJ5+VhD8sB6FpCevgVNUVpBehdc3eu3zJj5RYJ1iAfkCTEAJ4+GytDLho0Gd91wf3+i0YBfdDQMOAcYvWD3Zszv0sdFOIzu1J//WEDGuQPSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CzK6rvVX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761761122;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lNxXxUzXoqQQT9w5Yf9S20ddLNixsnFzdxWTN/CN8Uk=;
-	b=CzK6rvVXkHLPs7sH+Hs7gaX+eOZgHfh505gYz7jLU19UnA6WTL5TNrE/vVDQwDy+Gg3b+w
-	o+RaIoH53mI6VMFQfViqwYhri6xex71+J3fg2vyXMdasWSkM4QVvk0avDOzjcliKUeeadE
-	OOLOTjlM3EoGxJBgSowNNFQtBRMBYOc=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-37-vBYTX7fCNf-3kddto8LL8A-1; Wed, 29 Oct 2025 14:05:21 -0400
-X-MC-Unique: vBYTX7fCNf-3kddto8LL8A-1
-X-Mimecast-MFC-AGG-ID: vBYTX7fCNf-3kddto8LL8A_1761761120
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-8a6fc271d46so28653685a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:05:21 -0700 (PDT)
+	s=arc-20240116; t=1761761164; c=relaxed/simple;
+	bh=kplIUKQ4OLgy88xSCJhh6Z2cBiPvKdIuelt/3TESWTQ=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQ8lnw+GDd+CT/gnjvIgJYhxsl3Kw226Rupk0Px7lXhBWLLeR2yNMwmOEbHTX09QGoRvAEHPvbhneycn9mrGgdAQvVGDcrFU2EjQoGLFaltgqdkk7ZedvQ4U6Xi6mwQz1crCbMsuq66K35oujrc0znR+rkLatZz6HHXmex0GMpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZ0+Sibf; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so784885e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:06:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761761161; x=1762365961; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=upVtUj4xcxhyMWz4iSku+76WitkTabZ9SQQIiAxfkXw=;
+        b=PZ0+Sibf6HdvgO5hsMUizbneX5PEHYxlbnRohZm0dH1PrWbS2fRdylJN2CWKuJ9TV6
+         34CgfC69CQ84Ii1GuiSTH542YebKHCRbhpQZKxh6mzrilWXxxr8xkXXgMnoz09JxILs8
+         s7L5F8InzzRPHLL55rpau9b0B+qOvRMuVuyvie/BLzdGZte6ft+Zie3PXYft3FgIR2Ix
+         XSNUKpU+SFl0ic4v8CCRUXMBbczlyLYj0FQvAzrThmkkPNXunEkkVuytOD6yZ4Pd0fu3
+         BWJAT7ph2GDz0Xl4fr8For57tnnnoJeGYCckIHqJ+u6xdQuBtpHHLnHDO/W1xV1hvGUo
+         lrQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761761120; x=1762365920;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNxXxUzXoqQQT9w5Yf9S20ddLNixsnFzdxWTN/CN8Uk=;
-        b=qXdYtd7eBFAj4fwvWcGLGf/rP5xJ76wrTrs5ZdZTZsK/kgLl4bZ6JFDLb0qndOJg77
-         ySnDnyVRthq1ECnCEgkUd83CmaRq+dM723BRFSSvyl4K+ipOGp64QEcEz99T+HNXGxuI
-         Nx7bZ5ttWP4jICEsNMJQbiFV+pJBNHTzx7VrsHm90jX8L7dLrQYQvG+k5HfKfbhewimQ
-         ERZndtjbimBLLPyQ2a8YM3hFuTtttBtHJEv1EzRYF7cvWp+e5QZyQyNnuIpQ84BbSz1a
-         WXGKg1asAD1yGWqxAgdm7kQBPTsv3wtJxlvfH9BhTaGDFJrm/7IJpDIGz3F6+D5MUXuL
-         YpHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUk08vWS+iQjgM/if8chFpLQ4OJDJHJAv8JIELQZkHzjI6z/xhFHLL57pjoakCCLo/hZwiXYlXlkarmjfs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzngCjDliFNq/KFKt5pV/jDVmmG/1MZlNjul0P2qqgb2rJAra0W
-	yx1HFAjyAoTI1wK6V27uGRMZMq+2sAA4YRihmuwHX7MtZcruH/HZOzjyGWaHFDqIXe3ffIVCK7R
-	vxOlurhXxUwVHu4/OvKE3PIoRl/H9lJntnu/9MLsV0Pf+vY2XXxzUNVaD0e1KcQMz9A==
-X-Gm-Gg: ASbGncs6XxdpQ/qHk1WJ7rtEFrki3RGMTj6QMnHARXmcv+DjBNQvygQhtJgKgEBQgCO
-	RV1nfh2BkFz5prZmY2U+SV0qj++CWUE4IGmgXqZi4OCnOQkRLzQFFfy8LMs2Qf7rWFk0hpCxWHe
-	WRPdbs8R3Z5GUZ/XdWQndhZGUr6iNEfIAPucMXL1OrqYGcegHRpdqYljxBCUSac9XH1b1CqHH6X
-	nU8u55rldNG611farcBJmy7uXrGX4qgNmSF30cf3jDl+EmKqptusCYOXzl8oHHXS7ENTIfTUGWm
-	t8ogo0W5GO7V2Vz2LlbKMj38BWYfO//GkqaXZ63Au71Gbu47m0/X2/VfZH2ccHK7yixopZgbarm
-	hmZqcvWO3nIStfEJq8wFe36OXsJbM1Cn35YPzY2PU2EdO+g==
-X-Received: by 2002:a05:620a:29cd:b0:8a6:92d1:2db5 with SMTP id af79cd13be357-8a8e473a6e6mr573641485a.24.1761761120411;
-        Wed, 29 Oct 2025 11:05:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEE6iTF4BqCkm725oJpB//2W/KjYfs5LBPrMdbtexGrXjP/dhJ17Z6sn/BKCKYXRH3K32fmkA==
-X-Received: by 2002:a05:620a:29cd:b0:8a6:92d1:2db5 with SMTP id af79cd13be357-8a8e473a6e6mr573635985a.24.1761761119960;
-        Wed, 29 Oct 2025 11:05:19 -0700 (PDT)
-Received: from ?IPV6:2601:188:c102:b180:1f8b:71d0:77b1:1f6e? ([2601:188:c102:b180:1f8b:71d0:77b1:1f6e])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f2421f6a5sm1111574885a.5.2025.10.29.11.05.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 11:05:19 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <7821fb40-5082-4d11-b539-4c5abc2e572c@redhat.com>
-Date: Wed, 29 Oct 2025 14:05:17 -0400
+        d=1e100.net; s=20230601; t=1761761161; x=1762365961;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=upVtUj4xcxhyMWz4iSku+76WitkTabZ9SQQIiAxfkXw=;
+        b=MRM2Lcbd/xqOuCegVbCWDR4gyeyLWXt1G2wPGibyYN71qBtmn7hTcDWLMUez1OGpQS
+         zGia4YQjUXhfG9g6jLarRzo0WWQE2zwHxXsvUIF+yrjaZmHIBHZOO4fRm0YKyog53Vkw
+         SG7vY0Ue0og2CfJtMKnW94ns6IWTQpFThUH2AV8fX9YSHf7QFBqYM/kayjyFTxsi4RGs
+         t6QEMFzpzwipP3G204G/VD06WrtATANhTqIHF3ramch8eAJrtuwoyqVVdGz4YDoZYJTv
+         L6kYzGAw1h7VPryU1jLKzIKa8ndy01JrfDgNQGmoJFUP2MJaGmxiI52ADc+/pNLPTXYt
+         8UxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvU8NSwwjidfjyediM19j6fEn29A/tS1VgvoHUJT3vqJXeAEWpM7yR54kK2wxHtiRV7GgWFmBKipg1hmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ/L48bJVE1t79GhRKaOJ9095mRI1eIMCmMsPMtdbY6g+fvsjd
+	v1Up5M2Ieaw4i/ANFhKRzpj3MwSLTgNSTF9PN0I1OlJCC/mdPrdZE9CD
+X-Gm-Gg: ASbGncsq7KV+Zd5fwf8U7ShvTnlUnPGr8+6byezdH7rcxl2o7lPwjBgkW4oR8wbOwzk
+	RnGoR/9Q2I5OKl0VzFhN5GKvwMfQKha6RgS7JDqjFtWPnldsIggjPeEsQD1/ecYuvuCIPm4u4ap
+	esNY/KpEieINSyWY2cebUK0UqvwgLa8o5ldYPQyrjuHM3YVV4CMBBnLRunje9jWOuBUZ42LtSwY
+	/OKJHM96vJ7JjOwc9N0urJ2kYbUS/F/3AXdtN0RkKVTZcbEJvG89dV/yelR1iEAl727tW5zm4kW
+	d62KaaVPXYd9yXzFpJAHOT7rRZ6mDCV3gGwzuG+QQslLPOhjzbLWCgWk3gjoXrFajGj21tWnqPG
+	bSQ9uPjEjVETnhchO0oSjVLHEJFhfZscl3yH+eHGplupwpu8jwzpY8E1+hNXbdYDMvjBaXDxBVj
+	RhMQIkHOcR4GwTgRVKubtEF11RxTvw
+X-Google-Smtp-Source: AGHT+IHSma8oLj5Qa0sgTTL+xwY1TOAdclau3FGvNloE87sNG47vd222H4EzfvepAYTAqjHp0F+8Bw==
+X-Received: by 2002:a05:600c:a08b:b0:471:95a:60b1 with SMTP id 5b1f17b1804b1-4771e1e2d65mr41964075e9.32.1761761161409;
+        Wed, 29 Oct 2025 11:06:01 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e387a14sm58442235e9.3.2025.10.29.11.06.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 11:06:00 -0700 (PDT)
+Message-ID: <69025788.050a0220.36a6a0.16d2@mx.google.com>
+X-Google-Original-Message-ID: <aQJXgyFkZYSNS_Ld@Ansuel-XPS.>
+Date: Wed, 29 Oct 2025 19:05:55 +0100
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH] scripts: add tracepoint-update to .gitignore
+References: <20251029175720.12998-1-ansuelsmth@gmail.com>
+ <20251029140353.58a4d6dd@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/33] cpuset: Remove cpuset_cpu_is_isolated()
-To: Frederic Weisbecker <frederic@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Danilo Krummrich
- <dakr@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ingo Molnar <mingo@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>,
- Lai Jiangshan <jiangshanlai@gmail.com>,
- Marco Crivellari <marco.crivellari@suse.com>, Michal Hocko
- <mhocko@suse.com>, Muchun Song <muchun.song@linux.dev>,
- Paolo Abeni <pabeni@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Phil Auld <pauld@redhat.com>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Simon Horman <horms@kernel.org>,
- Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>,
- cgroups@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-block@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20251013203146.10162-1-frederic@kernel.org>
- <20251013203146.10162-19-frederic@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20251013203146.10162-19-frederic@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029140353.58a4d6dd@gandalf.local.home>
 
-On 10/13/25 4:31 PM, Frederic Weisbecker wrote:
-> The set of cpuset isolated CPUs is now included in HK_TYPE_DOMAIN
-> housekeeping cpumask. There is no usecase left interested in just
-> checking what is isolated by cpuset and not by the isolcpus= kernel
-> boot parameter.
->
-> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-> ---
->   include/linux/cpuset.h          |  6 ------
->   include/linux/sched/isolation.h |  3 +--
->   kernel/cgroup/cpuset.c          | 12 ------------
->   3 files changed, 1 insertion(+), 20 deletions(-)
->
-> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> index 051d36fec578..a10775a4f702 100644
-> --- a/include/linux/cpuset.h
-> +++ b/include/linux/cpuset.h
-> @@ -78,7 +78,6 @@ extern void cpuset_lock(void);
->   extern void cpuset_unlock(void);
->   extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
->   extern bool cpuset_cpus_allowed_fallback(struct task_struct *p);
-> -extern bool cpuset_cpu_is_isolated(int cpu);
->   extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
->   #define cpuset_current_mems_allowed (current->mems_allowed)
->   void cpuset_init_current_mems_allowed(void);
-> @@ -208,11 +207,6 @@ static inline bool cpuset_cpus_allowed_fallback(struct task_struct *p)
->   	return false;
->   }
->   
-> -static inline bool cpuset_cpu_is_isolated(int cpu)
-> -{
-> -	return false;
-> -}
-> -
->   static inline nodemask_t cpuset_mems_allowed(struct task_struct *p)
->   {
->   	return node_possible_map;
-> diff --git a/include/linux/sched/isolation.h b/include/linux/sched/isolation.h
-> index 94d5c835121b..0f50c152cf68 100644
-> --- a/include/linux/sched/isolation.h
-> +++ b/include/linux/sched/isolation.h
-> @@ -76,8 +76,7 @@ static inline bool housekeeping_cpu(int cpu, enum hk_type type)
->   static inline bool cpu_is_isolated(int cpu)
->   {
->   	return !housekeeping_test_cpu(cpu, HK_TYPE_DOMAIN) ||
-> -	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK) ||
-> -	       cpuset_cpu_is_isolated(cpu);
-> +	       !housekeeping_test_cpu(cpu, HK_TYPE_TICK);
->   }
->   
+On Wed, Oct 29, 2025 at 02:03:53PM -0400, Steven Rostedt wrote:
+> On Wed, 29 Oct 2025 18:57:18 +0100
+> Christian Marangi <ansuelsmth@gmail.com> wrote:
+> 
+> > New tracepoint-update tool is not ignored from git when built.
+> > 
+> > Add it to scripts .gitignore to prevent including files in commits by
+> > mistake (for use that have the bad habits of using git add .).
+> 
+> Bartosz beat you to it:
+> 
+>   https://lore.kernel.org/all/20251029120709.24669-1-brgl@bgdev.pl/
+> 
+> I already applied the patch and pushed it to my for-next branch. It will
+> likely be in linux-next by tomorrow.
+> 
+> -- Steve
 
-You can also remove the "<linux/cpuset.h>" include from isolation.h 
-which was added by commit 3232e7aad11e5 ("cgroup/cpuset: Include 
-isolated cpuset CPUs in cpu_is_isolated() check") which introduces 
-cpuset_cpu_is_isolated().
+Ah! Well was too slow :D
 
-Cheers,
-Longman
-
-
+-- 
+	Ansuel
 
