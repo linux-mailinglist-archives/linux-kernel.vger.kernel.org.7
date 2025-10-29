@@ -1,157 +1,276 @@
-Return-Path: <linux-kernel+bounces-876950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFB8C1CD56
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:54:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2CDAC1CD66
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B1B4E0800
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C5234038C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE789357A38;
-	Wed, 29 Oct 2025 18:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6D6357739;
+	Wed, 29 Oct 2025 18:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEsbGL2Q"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVS4zzVo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EF32F5478
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3156357710;
+	Wed, 29 Oct 2025 18:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764075; cv=none; b=CqUXgf0qUAkZ74FYmskgQYJWvb1MXNngi8z5S7jK/Sjc/zg1Tt4KUoYWWhgM7r4RBg3NmbGO4ijZdAdu41Wvls2F/+SiGQPonWdugjUBwKWz0Dzo1tgaBrHXa9Oh9Af7h3n4Qbm8RQ1vS5l1ZXF17K6myQjDO9l5j1AYp3mFzNU=
+	t=1761764095; cv=none; b=IxyGrAS/qUiKSjg7UyXbCjoP+VppbsOWsZCCcoeWTKg++paWV7Lw9ibN5bfu3bnBF7LRwJwys0fVcQgyXN+66075M8PtM/7mJM7bu4e9LbEtxe9R2IYiDAKAZoVotpAzyHzmafYTjLaSXs0hXe/qzsCbXVbo+TaFG8GMNJWc9GM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764075; c=relaxed/simple;
-	bh=tfrrqiHlm+2CRiFs/ycrLpo5VsMmuPxIYN2ybQlzcdY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kxiXsDlDDdsmguvVqTGOJZ5GTbY8yZ712uYBy2uByDjf5u1gWmhJHODPfBbTeyx+w9CQbIGkaC9TbXuhBStkpIsFKyCGEzws124qac7LNWY7Yh0SKhgHDALDxeEN+Yc4UAWWbVk+sPtF7aHvmuAsHuo2L9cJklQ0J+sBfT0bUVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEsbGL2Q; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-421851bcb25so100088f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:54:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761764072; x=1762368872; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=roxFu9ym+QUdO36nnH4tAkn59H/+sYMPT1Nh/9cDSsE=;
-        b=NEsbGL2Q0saxaA4dUzrXfAgbNiTZ0MHxUHGzcCYzwLVwnKTHZJEhfTTxGfy6kFLeDt
-         7JiQ4XcfpgfmB+hYjDbq4Vw0seCjDmG0Wpa8BvON/9mXeBXRZWVe6O2CXJG11ILUUHKw
-         MgKCf/4ibNfabDKoxbnGPYhx92Irv1m8b8Q00gtPtN20nOf3jTrhsYwCQtgZmQdfEYGx
-         4cv7WZjZliCzOXGLQpLvoskM5nX5sk9c/TCqJqAvaH0XXoV6MiXzYJR3S+PzZzeN3xEP
-         SRb2HrbjiBLkS20Z9tY4zAbLoLyEKM+L/rPozjxfZy5qxDlNkBYGfS2XSB0tuoO5MCRl
-         WaFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761764072; x=1762368872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=roxFu9ym+QUdO36nnH4tAkn59H/+sYMPT1Nh/9cDSsE=;
-        b=NHP6x2SeSTMszDBUAxcURwIXXiBq738r9ukHmjVPfbwnPEtvyAq/yAI7zlPZsxaKwd
-         4m2t15PxToTwBJBy0aegRPI0d2nNp7fRM9uV67eh/bsfF6vDuyZnEDZw5YZq66IM6IWf
-         3FBJ47HVCR/xCKrkZR5oxRSNe6N0wjlOU9rNIsdwlk6EjwQCji7Py4k2ar2oyHu67YeQ
-         mrFT+2TzkbT1FSmngvWC9o1NgAmo+XBB2cGuv9c7qqadcR6TgfevFGc7rLKbbfGJhJTL
-         LBE3SBSC6QodfVEthrRCDUhTY3944980Sgp/yYhk56VkB2WijZWP5e7pHBjmhZqxyd/b
-         lGaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXauh6fU85BxwmKhuW2G9aFb/g7ZajW9HUiAGvrw2dieb9Mj12x8v95p/LCJYxVgzaCN1mbSCQ3wPjDfNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/DduCBa1iwbjVpyZEz/sftSaJG8M/vLmPEMF/C/9EOl/MaJet
-	pIuKY9TAsd/gOlo7LFziNKjrmR2bTgSblVw2ExeYl050Fnh1xpNGAAk1s+OVBPFseGEz3CmyqC4
-	Q+TCgg2fCXPCb1KQZtmBZ+WA5ueQfIrQ=
-X-Gm-Gg: ASbGnctET5UHNc+FyLN4kMiT+jWfPiKUtB+xDs3HzFoAiEoJk112SZiKqNSQH1n8hJP
-	Cy9Uwwz+qJvKF4jsGMFnJk188h5ltVAnWCKrhdLciwrwWyNZbpLSzY/pX/AN5j7b2sT+xy0PXk5
-	w9xN2Aqji03x87x/O09A34W+EImQTfKGp7qyPpIG0UTZPI8oNr4YSx28M2HRtwe6W+pS3bWT1xs
-	iBxjwJDAPVuXQb4INZHqGcl+7LZt3sc9WH3weS+1hLm7a36kOu7/y0B30RuEMdSF8nwDFpBYov1
-	h6uGjub4USa1YzI4h4UrycpD9VFj
-X-Google-Smtp-Source: AGHT+IFxIb7bNC1qwVAw0u5ykRrFlzlmlmI3GOlPxtbfY1thoEM0CrkK6Ie988xkFO1EgUD8c/G7q6CFgK/yrR8Vvkk=
-X-Received: by 2002:a05:6000:4028:b0:427:e1bf:13db with SMTP id
- ffacd0b85a97d-429b4c9dea4mr497598f8f.54.1761764071322; Wed, 29 Oct 2025
- 11:54:31 -0700 (PDT)
+	s=arc-20240116; t=1761764095; c=relaxed/simple;
+	bh=Ux2ENO/i6V+guiQo5qhqzoW+zBs4ctUVICsR7hoAkmM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iUlXq4GdNLnJLVkWvpULDqDvpDdyez4k0w3XpTNfwZAk82v5JbB9XFHy1U5+Mx1r0LbUYm4AuxwnlKU6qS2AlTYWSobLsTPdqrItb9XuHp1ZAPJZS1Ld5G1X3w6SqjaBpQ+zYwnXJAowIGIp2LRcA9QeQLpZa2jGyPn3rjrdn0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVS4zzVo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7164C4CEF8;
+	Wed, 29 Oct 2025 18:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761764095;
+	bh=Ux2ENO/i6V+guiQo5qhqzoW+zBs4ctUVICsR7hoAkmM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sVS4zzVoWEbn3QNcolgohy69sS19mV2rlckr+Nb1zlcn94jHeFxnwQuWxg2DHk6BR
+	 igkJp82NMhShSfHOAPUq24eD+mGpH0QvxJv5r2lWjm9GKBe3az64cj9fhB0eZGaidy
+	 GtcLGhr4poM+za/wWzkLrP2at6lO0Bhu58WHOlV5yNHL7cswjeNgNX3vOkTdBy11BH
+	 Ax2+WrZY59Ww4m0riErBCGxbdr7U53xiZeruL+TohdZjmleelKKid3663ihTaWc/NG
+	 rHGxe2y6yJMfGcbI6AGlNEtck/TQC+G2RhMfqKzDX1qVj1LKBNW/oR+U+dQTVXGUbX
+	 aBEXlLI3AR2jQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Guenter Roeck <linux@roeck-us.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: hwmon: Convert aspeed,ast2400-pwm-tacho to DT schema
+Date: Wed, 29 Oct 2025 13:54:47 -0500
+Message-ID: <20251029185448.2121857-1-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 29 Oct 2025 11:54:20 -0700
-X-Gm-Features: AWmQ_bmBJf_PxnDtsc_z2JtFmdbUNa75aAnfXrHEJ4pN3hlfPLu31Ua4sAtQpOE
-Message-ID: <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v6 00/15] selftests/bpf: Integrate test_xsk.c to
- test_progs framework
-To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
-	Magnus Karlsson <magnus.karlsson@intel.com>, 
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
-	Alexis Lothore <alexis.lothore@bootlin.com>, Network Development <netdev@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 6:52=E2=80=AFAM Bastien Curutchet (eBPF Foundation)
-<bastien.curutchet@bootlin.com> wrote:
->
-> Hi all,
->
-> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
-> are defined in xksxceiver.c. Since this script is used to test real
-> hardware, the goal here is to leave it as it is, and only integrate the
-> tests that run on veth peers into the test_progs framework.
->
-> I've looked into what could improve the speed in the CI:
-> - some tests are skipped when run on veth peers in a VM (because they
->   rely on huge page allocation or HW rings). This skipping logic still
->   takes some time and can be easily avoided.
-> - the TEARDOWN test is quite long (several seconds on its own) because
->   it runs the same test 10 times in a row to ensure the teardown process
->   works properly
->
-> With theses tests fully skipped in the CI and the veth setup done only
-> once for each mode (DRV / SKB), the execution time is reduced to about 5
-> seconds on my setup.
-> ```
-> $ tools/testing/selftests/bpf/vmtest.sh -d $HOME/ebpf/output-regular/ -- =
-time ./test_progs -t xsk
-> [...]
-> real    0m 5.04s
-> user    0m 0.38s
-> sys     0m 1.61s
+Convert the ASpeed fan controller binding to DT schema format.
 
-This is fine. I see
-Summary: 2/48 PASSED, 0 SKIPPED, 0 FAILED
+The '#cooling-cells' value used is 1 rather than 2. '#size-cells' is 0
+rather 1.
 
-real    0m8.165s
-user    0m1.795s
-sys     0m4.740s
+Some users define more that 8 fan nodes where 2 fans share a PWM. The
+driver seems to let the 2nd fan just overwrite the 1st one. That also
+creates some addressing errors in the DT (duplicate addresses and wrong
+unit-addresses).
 
-on debug kernel with kasan which is ok.
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../hwmon/aspeed,ast2400-pwm-tacho.yaml       | 105 ++++++++++++++++++
+ .../bindings/hwmon/aspeed-pwm-tacho.txt       |  73 ------------
+ 2 files changed, 105 insertions(+), 73 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
+ delete mode 100644 Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
 
-But it conflicts with itself :(
+diff --git a/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml b/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
+new file mode 100644
+index 000000000000..018249f97a5d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/aspeed,ast2400-pwm-tacho.yaml
+@@ -0,0 +1,105 @@
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/aspeed,ast2400-pwm-tacho.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ASPEED AST2400/AST2500 PWM and Fan Tacho controller
++
++maintainers:
++  - Joel Stanley <joel@jms.id.au>
++  - Andrew Jeffery <andrew@codeconstruct.com.au>
++
++description: >
++  The ASPEED PWM controller can support upto 8 PWM outputs. The ASPEED Fan Tacho
++  controller can support upto 16 Fan tachometer inputs.
++
++  There can be up to 8 fans supported. Each fan can have 1 PWM output and
++  1-2 Fan tach inputs.
++
++properties:
++  compatible:
++    enum:
++      - aspeed,ast2400-pwm-tacho
++      - aspeed,ast2500-pwm-tacho
++
++  reg:
++    maxItems: 1
++
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  '#cooling-cells':
++    const: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++patternProperties:
++  '^fan@[0-7]$':
++    description: Fan subnode
++    type: object
++    additionalProperties: false
++
++    properties:
++      reg:
++        description: PWM source port index (0 = PWM A, ..., 7 = PWM H)
++        maximum: 7
++
++      cooling-levels:
++        description: PWM duty cycle values for cooling states
++        $ref: /schemas/types.yaml#/definitions/uint8-array
++        minItems: 1
++        maxItems: 16  # Should be enough
++
++      aspeed,fan-tach-ch:
++        description: Fan tachometer input channel
++        $ref: /schemas/types.yaml#/definitions/uint8-array
++        minItems: 1
++        maxItems: 2
++        items:
++          maximum: 15
++
++    required:
++      - reg
++      - aspeed,fan-tach-ch
++
++required:
++  - compatible
++  - reg
++  - '#address-cells'
++  - '#size-cells'
++  - clocks
++  - resets
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/aspeed-clock.h>
++
++    fan-controller@1e786000 {
++        compatible = "aspeed,ast2500-pwm-tacho";
++        reg = <0x1e786000 0x1000>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++        #cooling-cells = <1>;
++        clocks = <&syscon ASPEED_CLK_APB>;
++        resets = <&syscon ASPEED_RESET_PWM>;
++
++        fan@0 {
++            reg = <0x00>;
++            cooling-levels = /bits/ 8 <125 151 177 203 229 255>;
++            aspeed,fan-tach-ch = /bits/ 8 <0x00>;
++        };
++
++        fan@1 {
++            reg = <0x01>;
++            aspeed,fan-tach-ch = /bits/ 8 <0x01 0x02>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt b/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
+deleted file mode 100644
+index 8645cd3b867a..000000000000
+--- a/Documentation/devicetree/bindings/hwmon/aspeed-pwm-tacho.txt
++++ /dev/null
+@@ -1,73 +0,0 @@
+-ASPEED AST2400/AST2500 PWM and Fan Tacho controller device driver
+-
+-The ASPEED PWM controller can support upto 8 PWM outputs. The ASPEED Fan Tacho
+-controller can support upto 16 Fan tachometer inputs.
+-
+-There can be upto 8 fans supported. Each fan can have one PWM output and
+-one/two Fan tach inputs.
+-
+-Required properties for pwm-tacho node:
+-- #address-cells : should be 1.
+-
+-- #size-cells : should be 1.
+-
+-- #cooling-cells: should be 2.
+-
+-- reg : address and length of the register set for the device.
+-
+-- pinctrl-names : a pinctrl state named "default" must be defined.
+-
+-- pinctrl-0 : phandle referencing pin configuration of the PWM ports.
+-
+-- compatible : should be "aspeed,ast2400-pwm-tacho" for AST2400 and
+-	       "aspeed,ast2500-pwm-tacho" for AST2500.
+-
+-- clocks : phandle to clock provider with the clock number in the second cell
+-
+-- resets : phandle to reset controller with the reset number in the second cell
+-
+-fan subnode format:
+-===================
+-Under fan subnode there can upto 8 child nodes, with each child node
+-representing a fan. If there are 8 fans each fan can have one PWM port and
+-one/two Fan tach inputs.
+-For PWM port can be configured cooling-levels to create cooling device.
+-Cooling device could be bound to a thermal zone for the thermal control.
+-
+-Required properties for each child node:
+-- reg : should specify PWM source port.
+-	integer value in the range 0 to 7 with 0 indicating PWM port A and
+-	7 indicating PWM port H.
+-
+-- cooling-levels: PWM duty cycle values in a range from 0 to 255
+-                  which correspond to thermal cooling states.
+-
+-- aspeed,fan-tach-ch : should specify the Fan tach input channel.
+-                integer value in the range 0 through 15, with 0 indicating
+-		Fan tach channel 0 and 15 indicating Fan tach channel 15.
+-		At least one Fan tach input channel is required.
+-
+-Examples:
+-
+-pwm_tacho: pwmtachocontroller@1e786000 {
+-	#address-cells = <1>;
+-	#size-cells = <1>;
+-	#cooling-cells = <2>;
+-	reg = <0x1E786000 0x1000>;
+-	compatible = "aspeed,ast2500-pwm-tacho";
+-	clocks = <&syscon ASPEED_CLK_APB>;
+-	resets = <&syscon ASPEED_RESET_PWM>;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&pinctrl_pwm0_default &pinctrl_pwm1_default>;
+-
+-	fan@0 {
+-		reg = <0x00>;
+-		cooling-levels = /bits/ 8 <125 151 177 203 229 255>;
+-		aspeed,fan-tach-ch = /bits/ 8 <0x00>;
+-	};
+-
+-	fan@1 {
+-		reg = <0x01>;
+-		aspeed,fan-tach-ch = /bits/ 8 <0x01 0x02>;
+-	};
+-};
+-- 
+2.51.0
 
-$ test_progs -j -t xsk
-
-All error logs:
-setup_veth:FAIL:ip link add veth0 numtxqueues 4 numrxqueues 4 type
-veth peer name veth1 numtxqueues 4 numrxqueues 4 unexpected error: 512
-(errno 2)
-test_xsk_drv:FAIL:setup veth unexpected error: -1 (errno 2)
-#664     xsk_drv:FAIL
-Summary: 1/24 PASSED, 0 SKIPPED, 1 FAILED
-
-Pls fix the parallel run and not by adding "_serial", of course.
-
-pw-bot: cr
 
