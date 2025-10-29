@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-876345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E4ADC1B3D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:34:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 67EF3C1B3EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760C11B229A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:27:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32F931B20343
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D633A29AB1D;
-	Wed, 29 Oct 2025 14:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6DB286D7B;
+	Wed, 29 Oct 2025 14:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDvjonVW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtnLJZah"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395F626E719
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DC626C39F;
+	Wed, 29 Oct 2025 14:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747986; cv=none; b=UhDVgnVtASutnAmrVVykBpBGsB6J25PJQRY0DOVNp4+6DKxyVyv5RQhsN08ubwASnGe8qeDnv5xukn2cmBPOKfsrfEbrkAzmcZTHJhslrEeZBQTWbRpqyyXJCDqmCA6f2iCQBvGtNff6RAnfsdeDi8P87d3jTDWpT54XDAzC28A=
+	t=1761747953; cv=none; b=DsDp0M1uypvLrEbynzel9FYeRkdFL1cphSXBXdGPT2DlgkDfbdZXmo6QpyMKT/njuQ+o26KDqQkowU9K7DTz5J0GyuH2SSPRb4qjxPdZU0eIiXelrqXWUjhzL3vMImXK/N8iFZbxY1IjMlIl+5bDFafnSg/bCqucpZrnpZWKHEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747986; c=relaxed/simple;
-	bh=deFMZQXNY8fLOTRmMsgqeUpBMjR1GPSusJKEB2KZqZg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HvL9iQSnIzYF4irn9QmvmZVOddUOVRnzIhBsasI0bqyEyBxxauwqeN0SB/MBtXGt8vDLuVTXaJKfSbSxp0aG01HnSwoeFh1KFicEKZums6orwPBmZuGO1TEzars/Uu2Og5SPlc0lRdKc+Jk1I/kUqs395GPRabPyWVBrUhUElEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HDvjonVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF205C19421
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:26:25 +0000 (UTC)
+	s=arc-20240116; t=1761747953; c=relaxed/simple;
+	bh=eX4MwDdVNFiSJIUIDmCiZKp9nu2G7K/VXocP8qjTRlw=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=k51XZIZXEFlnu7PQKtXgNFl83Zd5pd5C4a+PmvY7HNgaFwVz/YUHjkmNEI+sZe2AEPg8BAz6mD10tnZ12luGwYnvYpAfTzrBb621hgTTgRa11SCcHlhKdYQhg03SSt8HSJBRFm1DC9jNCTwRMpIuK9MwQNuUEI7UACkpbA/IyIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtnLJZah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74334C4CEF7;
+	Wed, 29 Oct 2025 14:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761747985;
-	bh=deFMZQXNY8fLOTRmMsgqeUpBMjR1GPSusJKEB2KZqZg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HDvjonVW3y52MO5l9LcJGfcIzDHlrYpReo/+R+YmWkfQkczPAlj3cHhKwvrTw6s92
-	 mXXjiDGDc5rDrjOG1sRuotntAK80LIVSU082OmDEsrJ8vcsDzGNXX4dP1kPUH8DSnA
-	 CSo0tD39o89iYeccOHLm0fkUakyUOkmUvxbtA4ZYG0JVuji1Fm/MV54TVTIXBNaYQf
-	 yKlEqP0iQQmt5UMldwvcCN63qIwH5rqGvrbdd6sP0Cxn/b5XhHnbcmtP9G1bjfc/TG
-	 mqPX1i1dsokmuVJ0xhgov6wVVqCRqBGbS0cLuu9WyHlZnJmuFLDHY68A2oQyzmTDqV
-	 67MrYhYPv/y9A==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-362e291924aso60343091fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:26:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWljAgBPhbJyN+JsZis50jLWYxqB9dJaqOHyJ2MFxTKjwnNJr7vJzjtsey0mrWB40vvlDEs6Bmjc+ov1yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeanXXxZunWebNJupUF5GhK9beP4vBgjOsvf6knFEpgKgs8sot
-	rVihtWGkWIB3+kXdE2FJ03/DqCKsLECDUjClCJ1WnBxIEyGNbgCg6FTJhnxuKiKw6TpbV2KOCxy
-	XPFzj6blV1vVjYo5HPBqAadA9CJHUo6s=
-X-Google-Smtp-Source: AGHT+IHtLPnk0JPcDIdcJGoxq1gKZPYo4bxdkb3wqnmpt7pouFgu14zB6uLReROjFscAOSMw0bvQHWgOcApBd3m3W5A=
-X-Received: by 2002:a2e:a98d:0:b0:378:e84c:d159 with SMTP id
- 38308e7fff4ca-37a023b0513mr11407331fa.5.1761747984618; Wed, 29 Oct 2025
- 07:26:24 -0700 (PDT)
+	s=k20201202; t=1761747953;
+	bh=eX4MwDdVNFiSJIUIDmCiZKp9nu2G7K/VXocP8qjTRlw=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=rtnLJZah0zkZY3E6GlkRXjyP9ZgcQTQOeXraInstDmxh/JWMNN1qhZVMoM6uCAAjl
+	 zwnFSbvoj5xyi84d88E3+p6/xWog3LorSHHeLWlKN8lpJe7uU00/Lsm4BvqtavBPR6
+	 idp/kNGr3VGLyq7WkqDSwI/aHNXl9LVD9chEboM+4MfCY4jvsFBSENBiDP9eS3gMk8
+	 XM4c4tD5euqtU9yxPlz8avj5nAB5iUbBpKEVt8dI4drAott6zUS+M/1XoXP2QcoLdH
+	 4Ik8K5o6zXtoIpVG2sPIqqVjbCSaLn3VBHPzluBYNwC41G/Xv0YBbXvej8uT8OqO0x
+	 gNDJBviXt7ulw==
+Content-Type: multipart/mixed; boundary="===============7495328656080687778=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-opp-simpler-code-v2-1-44230ed00fd8@kernel.org>
- <gjlcd7nrmipdpim4dr2kfrk5mleo2yt2btwbhxdflzfcpckjjl@fieqlaavqja2> <CAJ-ks9=QNo670XQ11TsDMorgsRz4g1VhX_9qVUf8Za3Q44Jh7g@mail.gmail.com>
-In-Reply-To: <CAJ-ks9=QNo670XQ11TsDMorgsRz4g1VhX_9qVUf8Za3Q44Jh7g@mail.gmail.com>
-From: Tamir Duberstein <tamird@kernel.org>
-Date: Wed, 29 Oct 2025 10:25:48 -0400
-X-Gmail-Original-Message-ID: <CAJ-ks9nP6sWg4sR33caTDs3rr7Qkv=fg0LQQ4eCpjKA7VPF=mA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkcBbckDOJo8gs6NJc7cFiyvba2tnkwitSB4WrtxXYEDF5uJbanvPwcfrE
-Message-ID: <CAJ-ks9nP6sWg4sR33caTDs3rr7Qkv=fg0LQQ4eCpjKA7VPF=mA@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: opp: simplify callers of `to_c_str_array`
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-pm@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <b13f0f29e5f3308b5b2d973237634a7a7ec7c7be034227a633d6e49ed9f657cd@mail.kernel.org>
+In-Reply-To: <20251029-xsk-v6-12-5a63a64dff98@bootlin.com>
+References: <20251029-xsk-v6-12-5a63a64dff98@bootlin.com>
+Subject: Re: [PATCH bpf-next v6 12/15] selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+From: bot+bpf-ci@kernel.org
+To: bastien.curutchet@bootlin.com,bjorn@kernel.org,magnus.karlsson@intel.com,maciej.fijalkowski@intel.com,jonathan.lemon@gmail.com,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,mykolal@fb.com,shuah@kernel.org,davem@davemloft.net,kuba@kernel.org,hawk@kernel.org
+Cc: thomas.petazzoni@bootlin.com,alexis.lothore@bootlin.com,netdev@vger.kernel.org,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org,bastien.curutchet@bootlin.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Wed, 29 Oct 2025 14:25:50 +0000 (UTC)
 
-On Wed, Oct 29, 2025 at 10:24=E2=80=AFAM Tamir Duberstein <tamird@kernel.or=
-g> wrote:
->
-> On Thu, Oct 23, 2025 at 11:23=E2=80=AFAM Viresh Kumar <viresh.kumar@linar=
-o.org> wrote:
-> >
-> > On 23-10-25, 09:59, Tamir Duberstein wrote:
-> > > Use `Option` combinators to make this a bit less noisy.
-> > >
-> > > Wrap the `dev_pm_opp_set_config` operation in a closure and use type
-> > > ascription to leverage the compiler to check for use after free.
-> > >
-> > > Signed-off-by: Tamir Duberstein <tamird@kernel.org>
-> > > ---
-> > > Note: this diff is much smaller with whitespace suppressed (`-w`).
-> > >
-> > > An alternative approach to compiler checking for UAF that doesn't cha=
-nge
-> > > indentation is to add `drop((self, clk_names, regulator_names))` afte=
-r
-> > > `let ret =3D ...;` but that felt more prone to becoming out of date i=
-f
-> > > more owned data needed to be added to the function scope.
-> > > ---
-> > > Changes in v2:
-> > > - Avoid use after free; add compiler checking. (Thanks Viresh!)
-> > > - Link to v1: https://patch.msgid.link/20251020-opp-simpler-code-v1-1=
--04f7f447712f@kernel.org
-> > > ---
-> > >  rust/kernel/opp.rs | 112 +++++++++++++++++++++++++++----------------=
-----------
-> > >  1 file changed, 58 insertions(+), 54 deletions(-)
-> >
-> > Thanks, tested this and it works.
-> >
-> > Lets see if someone has any more inputs, otherwise I can apply it.
->
-> Thanks for testing! Doesn't look like anyone has opinions. Good to go?
+--===============7495328656080687778==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Ah I see you've already applied it. Thanks!
+
+```
+commit 5ed620bf5df1b2a38af461580d5207eadf5c552e
+Author: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+
+selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+
+This changes __testapp_validate_traffic() to return TEST_FAILURE instead
+of calling exit_with_error(), and adds cleanup for sockets and umem
+before returning on pthread_barrier_destroy() failure.
+
+> diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
+> index 2c392d5b9..18a6ce648 100644
+> --- a/tools/testing/selftests/bpf/test_xsk.c
+> +++ b/tools/testing/selftests/bpf/test_xsk.c
+> @@ -1772,12 +1772,12 @@ static int __testapp_validate_traffic(struct test_spec *test, struct ifobject *i
+>  	err = test_spec_set_mtu(test, test->mtu);
+>  	if (err) {
+>  		ksft_print_msg("Error, could not set mtu.\n");
+> -		exit_with_error(err);
+> +		return TEST_FAILURE;
+>  	}
+>
+>  	if (ifobj2) {
+>  		if (pthread_barrier_init(&barr, NULL, 2))
+> -			exit_with_error(errno);
+> +			return TEST_FAILURE;
+>  		pkt_stream_reset(ifobj2->xsk->pkt_stream);
+>  	}
+>
+
+[ ... ]
+
+> @@ -1791,8 +1791,11 @@ static int __testapp_validate_traffic(struct test_spec *test, struct ifobject *i
+>
+>  	if (ifobj2) {
+>  		pthread_barrier_wait(&barr);
+> -		if (pthread_barrier_destroy(&barr))
+> -			exit_with_error(errno);
+> +		if (pthread_barrier_destroy(&barr)) {
+> +			clean_sockets(test, ifobj1);
+> +			clean_umem(test, ifobj1, NULL);
+> +			return TEST_FAILURE;
+> +		}
+>
+>  		/*Spawn TX thread */
+>  		pthread_create(&t1, NULL, ifobj2->func_ptr, test);
+
+In __testapp_validate_traffic(), thread t0 is created via pthread_create()
+before the barrier operations. If pthread_barrier_destroy() fails, can this
+leak thread t0?
+
+The pthread_create(&t0, ...) happens earlier in the function. The normal
+execution paths handle t0 via pthread_kill() or pthread_join(), but when
+pthread_barrier_destroy() fails, the new error path calls clean_sockets()
+and clean_umem() but never joins or kills t0 before returning TEST_FAILURE.
+
+The commit message says "Release the resource of the 1st thread if a
+failure happens between its creation and the creation of the second
+thread", but the code only releases sockets and umem.
+
+
+```
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+In-Reply-To-Subject: `selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails`
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18910697393
+
+--===============7495328656080687778==--
 
