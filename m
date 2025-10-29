@@ -1,225 +1,117 @@
-Return-Path: <linux-kernel+bounces-876088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46F98C1A87F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:09:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8FEC1A96A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E6AAA345DF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686601A21400
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657482609D0;
-	Wed, 29 Oct 2025 13:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF1D32572F;
+	Wed, 29 Oct 2025 13:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="no2fmUgY"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="U1YiPXJ0"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D1425D202
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC4432571A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742946; cv=none; b=h2YLRzXdqu70V9iESbB1+W2DGCIQLjsUSkp9+yIjIjgCRPTekFSLikwb4HSlacHzhwpEW2C2OpETGLWhElW8SQnXy3dQPSpf1XyrBPvfg3wEMU87QtEiNultq7Zd1uKRd8FTjAkVd73f7TpVphMsQEG1nCOYjGnQgZ7R4IMqxn0=
+	t=1761742876; cv=none; b=kzhJRYw6f0xH77k8+m35zrjjC1Cx4kUhj1MF1AXNLMysJpA9tn/NTw8qyS2c/KsDwVh7FPJx6g65ZWtmZnK32e9OdFVvIGI+WBYVLfqb/756VVHhAweaSO8Nr3ZoFCmheQMOhxEuygTl7eJ+i9736/fdJorXSbTgS5j9835a1FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742946; c=relaxed/simple;
-	bh=HRdO7MdJRobaZKmUsL//qKJQTht4NErHFXPuLq0qGRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cabjV+1iQf540H/Uz16nRdYG/+0qaOFj6XBBnUboaMwMF3N1LN2EAUMH9jBZjIQ2BBWtEN1FgLBBEj+xCkpiO3MhM1oZY4eZn8Zb3oTV0ntMqNWrxglQSG5aIwcMF7T/GfNvdAI1WO8QMafeIi89cJdTr69p8xh69RtTAeuGxSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=no2fmUgY; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761742941;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YAq3INe12Qw+gzRxHTWU4Dgdppult/h5wygimdsq9m4=;
-	b=no2fmUgYfYs7Duxc5wHzfq/KX/lEwAlZbtmN0fLiZ8MkomeJAQEf6XoEgYr8r+X2+DchcI
-	Db2dxHWsyl9XY/VtPTuEjylfx/GzMyW1l9dS5o3fSGrmW3J1wHiENXk67TIqPb4RXGUFPu
-	yBQOk5Q5bpILNrhRC39opMq5gaXKN5w=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: David Laight <david.laight.linux@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Huisong Li <lihuisong@huawei.com>,
-	Akira Shimahara <akira215corp@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] w1: therm: Fix off-by-one buffer overflow in alarms_store
-Date: Wed, 29 Oct 2025 14:00:42 +0100
-Message-ID: <20251029130045.70127-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761742876; c=relaxed/simple;
+	bh=+p+VvNckarVASnJXjTVrkxxDDckYCgPyzbagx3UZjQA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=CforYR+HMgkOTza5yCRDtOhb8/epXJ1pU4oUqGbtHGTiuq8CMIEp0xoDOFbGKusfSWfMRwVcxjEFNDaW1Zj9fm4mCDZe44HhDULHcuESW36eKCj00d+9qyz8lgjxiaoca/9W1eB6VrVX+sV1N+NhR8zxJE2rd78E58OcVH77ubs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=U1YiPXJ0; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20251029130113epoutp03aa55147d47b1c6f93a42e230661d2c20~y988fW9Oz0833208332epoutp03N
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:01:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20251029130113epoutp03aa55147d47b1c6f93a42e230661d2c20~y988fW9Oz0833208332epoutp03N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1761742873;
+	bh=mhdCUOJguwRxW0Me6zDM1dADDQ0Txm6u4urbm0RY+sY=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=U1YiPXJ0Mvk/SQhYUXIekTxhFpOPW3XHKJY9iDWCJ99NuahwfRvQ5dH38KN9foMF1
+	 sHiIPtW3jhXHrk9rji9fSxmC9hp5S1uUlUltkUsSA33INpjqDz+Xp6kPigzxcBM20F
+	 EYss5SPUWfbrjIqEk32m1jwkSYslVWeBSw+dK800=
+Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20251029130112epcas5p196a19b1861a9fb5ad13d06e4e0c79662~y987osXKe2737327373epcas5p18;
+	Wed, 29 Oct 2025 13:01:12 +0000 (GMT)
+Received: from epcas5p2.samsung.com (unknown [182.195.38.94]) by
+	epsnrtp04.localdomain (Postfix) with ESMTP id 4cxS6b2JrSz6B9m6; Wed, 29 Oct
+	2025 13:01:11 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897~y985uqZvX0109501095epcas5p2n;
+	Wed, 29 Oct 2025 13:01:10 +0000 (GMT)
+Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20251029130057epsmtip131d105497324d9ff01d56fa0a3a647df~y98tmANYd0989609896epsmtip1A;
+	Wed, 29 Oct 2025 13:00:57 +0000 (GMT)
+From: Ravi Patel <ravi.patel@samsung.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
+	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
+	cw00.choi@samsung.com
+Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
+	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
+	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
+	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
+	swathi.ks@samsung.com, kenkim@coasia.com
+Subject: [PATCH v2 4/4] dt-bindings: samsung: exynos-pmu: Add compatible for
+ ARTPEC-9 SoC
+Date: Wed, 29 Oct 2025 18:30:47 +0530
+Message-Id: <20251029130047.42499-1-ravi.patel@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-CMS-MailID: 20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-541,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897
+References: <CGME20251029130110epcas5p2aaf9d262f327286bbc7b550c09589897@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The sysfs buffer passed to alarms_store() is allocated with 'size + 1'
-bytes and a NUL terminator is appended. However, the 'size' argument
-does not account for this extra byte. The original code then allocated
-'size' bytes and used strcpy() to copy 'buf', which always writes one
-byte past the allocated buffer since strcpy() copies until the NUL
-terminator at index 'size'.
+From: SungMin Park <smn1196@coasia.com>
 
-Fix this by parsing the 'buf' parameter directly using simple_strtol()
-without allocating any intermediate memory or string copying. This
-removes the overflow while simplifying the code.
+Add Axis ARTPEC-9 pmu compatible to the bindings documentation.
+It reuses the older samsung,exynos7-pmu design.
 
-Cc: stable@vger.kernel.org
-Fixes: e2c94d6f5720 ("w1_therm: adding alarm sysfs entry")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: SungMin Park <smn1196@coasia.com>
+Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 ---
-Compile-tested only.
+ Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-- Fix buffer overflow instead of truncating the copy using strscpy()
-- Parse buffer directly using simple_strtol() as suggested by David
-- Update patch subject and description
-- Link to v1: https://lore.kernel.org/lkml/20251017170047.114224-2-thorsten.blum@linux.dev/
----
- drivers/w1/slaves/w1_therm.c | 98 ++++++++++++------------------------
- 1 file changed, 33 insertions(+), 65 deletions(-)
-
-diff --git a/drivers/w1/slaves/w1_therm.c b/drivers/w1/slaves/w1_therm.c
-index 9ccedb3264fb..046fa682d57d 100644
---- a/drivers/w1/slaves/w1_therm.c
-+++ b/drivers/w1/slaves/w1_therm.c
-@@ -1836,59 +1836,32 @@ static ssize_t alarms_store(struct device *device,
- 	struct w1_slave *sl = dev_to_w1_slave(device);
- 	struct therm_info info;
- 	u8 new_config_register[3];	/* array of data to be written */
--	int temp, ret;
--	char *token = NULL;
-+	long temp;
-+	int ret;
- 	s8 tl, th;	/* 1 byte per value + temp ring order */
--	char *p_args, *orig;
-+	const char *p = buf;
-+	char *endp;
- 
--	p_args = orig = kmalloc(size, GFP_KERNEL);
--	/* Safe string copys as buf is const */
--	if (!p_args) {
--		dev_warn(device,
--			"%s: error unable to allocate memory %d\n",
--			__func__, -ENOMEM);
--		return size;
-+	temp = simple_strtol(p, &endp, 10);
-+	if (p == endp || *endp != ' ') {
-+		dev_info(device, "%s: error parsing args %d\n",
-+			 __func__, -EINVAL);
-+		goto err;
- 	}
--	strcpy(p_args, buf);
--
--	/* Split string using space char */
--	token = strsep(&p_args, " ");
--
--	if (!token)	{
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, -EINVAL);
--		goto free_m;
--	}
--
--	/* Convert 1st entry to int */
--	ret = kstrtoint (token, 10, &temp);
--	if (ret) {
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, ret);
--		goto free_m;
--	}
--
-+	/* Cast to short to eliminate out of range values */
- 	tl = int_to_short(temp);
- 
--	/* Split string using space char */
--	token = strsep(&p_args, " ");
--	if (!token)	{
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, -EINVAL);
--		goto free_m;
--	}
--	/* Convert 2nd entry to int */
--	ret = kstrtoint (token, 10, &temp);
--	if (ret) {
--		dev_info(device,
--			"%s: error parsing args %d\n", __func__, ret);
--		goto free_m;
-+	p = endp + 1;
-+	temp = simple_strtol(p, &endp, 10);
-+	if (p == endp) {
-+		dev_info(device, "%s: error parsing args %d\n",
-+			 __func__, -EINVAL);
-+		goto err;
- 	}
--
--	/* Prepare to cast to short by eliminating out of range values */
-+	/* Cast to short to eliminate out of range values */
- 	th = int_to_short(temp);
- 
--	/* Reorder if required th and tl */
-+	/* Reorder if required */
- 	if (tl > th)
- 		swap(tl, th);
- 
-@@ -1897,35 +1870,30 @@ static ssize_t alarms_store(struct device *device,
- 	 * (th : byte 2 - tl: byte 3)
- 	 */
- 	ret = read_scratchpad(sl, &info);
--	if (!ret) {
--		new_config_register[0] = th;	/* Byte 2 */
--		new_config_register[1] = tl;	/* Byte 3 */
--		new_config_register[2] = info.rom[4];/* Byte 4 */
--	} else {
--		dev_info(device,
--			"%s: error reading from the slave device %d\n",
--			__func__, ret);
--		goto free_m;
-+	if (ret) {
-+		dev_info(device, "%s: error reading from the slave device %d\n",
-+			 __func__, ret);
-+		goto err;
- 	}
-+	new_config_register[0] = th;		/* Byte 2 */
-+	new_config_register[1] = tl;		/* Byte 3 */
-+	new_config_register[2] = info.rom[4];	/* Byte 4 */
- 
- 	/* Write data in the device RAM */
- 	if (!SLAVE_SPECIFIC_FUNC(sl)) {
--		dev_info(device,
--			"%s: Device not supported by the driver %d\n",
--			__func__, -ENODEV);
--		goto free_m;
-+		dev_info(device, "%s: Device not supported by the driver %d\n",
-+			 __func__, -ENODEV);
-+		goto err;
- 	}
- 
- 	ret = SLAVE_SPECIFIC_FUNC(sl)->write_data(sl, new_config_register);
--	if (ret)
--		dev_info(device,
--			"%s: error writing to the slave device %d\n",
-+	if (ret) {
-+		dev_info(device, "%s: error writing to the slave device %d\n",
- 			__func__, ret);
-+		goto err;
-+	}
- 
--free_m:
--	/* free allocated memory */
--	kfree(orig);
--
-+err:
- 	return size;
- }
- 
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+index be1441193fee..9d3e8e9817fb 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-pmu.yaml
+@@ -52,6 +52,7 @@ properties:
+           - const: syscon
+       - items:
+           - enum:
++              - axis,artpec9-pmu
+               - samsung,exynos2200-pmu
+               - samsung,exynos7870-pmu
+               - samsung,exynos7885-pmu
 -- 
-2.51.0
+2.17.1
 
 
