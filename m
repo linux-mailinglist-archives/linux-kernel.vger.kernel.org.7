@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-877237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D2DEC1D863
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF94C1D86F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76849421E60
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E75EC424719
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA712EC56D;
-	Wed, 29 Oct 2025 21:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1B52F5467;
+	Wed, 29 Oct 2025 21:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="csOcxHFR"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="o9cQesmw"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD732DF6F8
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3BA2EBB84
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774840; cv=none; b=s7FsaISBh/+MMxpmNQpXdy0h3UYrsn9ZeZn/pbChFzYJalAQWyvIifCs0lTXFiafw0iSU7S/O/E5KMviM0Ila2DtHjMktKO00pXWDDDIcyT6A4OZmoiqSM9SEubEhH3T6Vr3QqmM4vQ1nBLVk7aQRfPbLAFvrDxRC+v2fTirLdQ=
+	t=1761774871; cv=none; b=UZ6pk542uTs2pW62PhRDgxTkP7gfwH9tCHrR3zWP+FP0O9zaNL66Oh+YEfeZbHw5kBGEncwrIc27JmCSp8/2aj6N3wktuqU48Y2FOWMBgjMT5yA8US+PiKHTyNo1goQVBGQD5UwwqO1iIqnDhGJmFJST45YQ3ssHfNObdhaKgq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774840; c=relaxed/simple;
-	bh=pRbBQ8z+sVjizpZCWo5hT/mNnyCZzi3jD4cZdQbYlrk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=AoTO8FzA2fIc5P/KIFoR4FagUu7HEHB55YVphO7o1JT+k+80gL9UdlRYG6+k4a8ISMMI4K5AGI4/9tigHO0nz/oS6cIb43BlEDpWPCAHdcemOi+biDpcdp1T1v4gg+EzjLBfMfJrolSFTcoNCEsi6LW8gIufGJKy3AjA+6rcCm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=csOcxHFR; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761774826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pRbBQ8z+sVjizpZCWo5hT/mNnyCZzi3jD4cZdQbYlrk=;
-	b=csOcxHFRJMKoqy3bgapanUAkcjC8JMzxMX/V6v8WjihxeU45lzMu454aITCt7yS/w57B40
-	6C/Th57sjWmYDj42CsxxgzABtVElBGYig2qHIacSpSCzNNU5MPWom2nD/vFeNo2jJL/fI1
-	R0rwHvH1fMX8QhZftw1demdPjuW9x6I=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Song Liu <song@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
-  Suren Baghdasaryan <surenb@google.com>,  Michal Hocko
- <mhocko@kernel.org>,  Shakeel Butt <shakeel.butt@linux.dev>,  Johannes
- Weiner <hannes@cmpxchg.org>,  Andrii Nakryiko <andrii@kernel.org>,  JP
- Kobryn <inwardvessel@gmail.com>,  linux-mm@kvack.org,
-  cgroups@vger.kernel.org,  bpf@vger.kernel.org,  Martin KaFai Lau
- <martin.lau@kernel.org>,  Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops
- to cgroups
-In-Reply-To: <CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
-	(Song Liu's message of "Wed, 29 Oct 2025 14:18:00 -0700")
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
-	<20251027231727.472628-3-roman.gushchin@linux.dev>
-	<aQJZgd8-xXpK-Af8@slm.duckdns.org> <87ldkte9pr.fsf@linux.dev>
-	<aQJ61wC0mvzc7qIU@slm.duckdns.org>
-	<CAHzjS_vhk6RM6pkfKNrDNeEC=eObofL=f9FZ51tyqrFFz9tn1w@mail.gmail.com>
-Date: Wed, 29 Oct 2025 14:53:39 -0700
-Message-ID: <871pmle5ng.fsf@linux.dev>
+	s=arc-20240116; t=1761774871; c=relaxed/simple;
+	bh=cIwGmoG6KP+sY1YSTmMMxTqL53Jo8SKq/654DLCBB+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRObLWW6fv3puxZY1Gh1JpO7wCB3K2txEYS6fRGS0XPEJMo62SOSHgDi20nHhs0DZCsDRlvPPr2ca4tkkcjfRlg1RqSA5WFd0Y+nCdpFFMWHgvufryzkNakbRWMF9x81pZUjECKgyEbNMNJ/ots18GO/UZbna9wyMq4lMQdOf14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=o9cQesmw; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-8a2eb837c91so25081485a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1761774869; x=1762379669; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lau32vXxFs5By0zcyxNZ3NthUAuasdtB8eW1riZ0p7g=;
+        b=o9cQesmwplCNn52/m3jiDMjyLi4L2bfgHH1dL19oak5IKT307Lhqu4CE8yBlWc/auZ
+         dsjNUyjrBN/AxrhXBpBYqDRE4EipC/r7/d9QQfQuy8jmSwEWVslo10gHIcjULuA7WhFq
+         955ZmpbVdaDKw+6xR42FqtZfwDvHBdsVxa5qRVytwdU+75ClmRj3SK7rMKM5B2/r5gRv
+         Uz1bdcVDbDdgFf7mPSXdbdwjRWRkoejz4fAMV1qrOCTy0+RKhWuu9/w7NgjzHoKmOkJ7
+         CtdBIBarjPsISp1+KVbNSZKqkJcvlEmGSHoUENZwnZPOUrS1XNraZ6oZJMYVYjwMMPlD
+         wBnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761774869; x=1762379669;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lau32vXxFs5By0zcyxNZ3NthUAuasdtB8eW1riZ0p7g=;
+        b=S2dlll5t0nh76lWPd/drFtF4yntJ0AwL6lgBKfCFscSkSzycDhPtnUyNcj6YYAOKky
+         /O6XPthwdJ2Z4RwGpFljJYwZ6MYvJsUmBrxZZuIoh0we4RacHJi4lwySg/aLaGfb5LVk
+         PCZYJcFpYnZHSKtyOR220hZS/V6TLHOJ29jfgjESu5Evp5urbc1Ej2LbZ4Y8SlQl6ZR8
+         RvafCfxu40oQ3IZFUBp80k/A47kNrvNudZ5G+rOiEqCxaGslESVAw79I9oiL7uOnPzWO
+         bGsglHY89TDVUJe/wcoR6CPpbgsNyHvoU3k/ItpGyeT/3DHGnlTaEZnS8dHFU3ZQFFFp
+         bqPg==
+X-Gm-Message-State: AOJu0YzXmbdblSKz8k3pGsUtl69XtBCOJFFOflt1RTqaeqEEMrvwExCj
+	I2SIw0rSC58ILZksusPvNeNYMOJo7QIXRIowYybOxHL/a1PibH7HvLP0qElHEzIFkw==
+X-Gm-Gg: ASbGncta4Tt72OKIqFmmS77ByicDqe+I82GAIW3xKeWId25/Y510unuFjL9es3qG9fb
+	SPINp1+ypONuCZuzJuC1wtRrR2GIsf/2F8Oi5uYlpOy2Xu5tz15SEQ5EB4nrTmlTroLaofzChc/
+	jYhcP09b5/sqlAN48KI4pQPT8UoL6PWHlZRA4VBwPhEdq5IfuH0OUeyN8QdeQEXkjjKpSgy3bUO
+	lNlNGcpJTlF4sD1DzMKIqIPSRFu4mX6Ka+89HyU4Ied5cCoqF44s9bDVBJwiRwULqBZU3u92wID
+	IiPfAvi2mVO1Xms6J2Yn61xt66aPXOr8S3TCCXkH/Uum7FlEIsDkCgN3f9AJRi9fY29i7ksJ34u
+	oD55eMTQ2tidmx+ALidtdMladpBRQdgTvtu5b6sAi9gjBOnwPWA3r5agOQ9GJ8TIB98mU+UEENp
+	f7DtO2z4dLSAxn
+X-Google-Smtp-Source: AGHT+IFhpGghbcCzXrdXqfDNrNwYDxBhx91ExXwPj2DoT8qHmF03AdvGiT0F44YF42NAfT9ELHtvoQ==
+X-Received: by 2002:a05:620a:31aa:b0:892:63c8:2861 with SMTP id af79cd13be357-8a8edcffa9bmr699189085a.40.1761774868744;
+        Wed, 29 Oct 2025 14:54:28 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:d03:1700::ba76])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f25e8685fsm1135234785a.50.2025.10.29.14.54.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 14:54:28 -0700 (PDT)
+Date: Wed, 29 Oct 2025 17:54:25 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Desnes Nunes <desnesn@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Subject: Re: [PATCH 2/2] usb: storage: rearrange triple nested CSW data phase
+ check
+Message-ID: <27c07b90-f4ef-462b-8b6d-46afd4301912@rowland.harvard.edu>
+References: <20251029191414.410442-1-desnesn@redhat.com>
+ <20251029191414.410442-3-desnesn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029191414.410442-3-desnesn@redhat.com>
 
-Song Liu <song@kernel.org> writes:
+On Wed, Oct 29, 2025 at 04:14:14PM -0300, Desnes Nunes wrote:
+> This rearranges the triple nested CSW data phase if clause, in order to
+> make usb_stor_Bulk_transport() code more readlable. No functional change.
+> 
+> Signed-off-by: Desnes Nunes <desnesn@redhat.com>
+> ---
+>  drivers/usb/storage/transport.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/usb/storage/transport.c b/drivers/usb/storage/transport.c
+> index 96b81cf6adc7..3f2e1df5ad1e 100644
+> --- a/drivers/usb/storage/transport.c
+> +++ b/drivers/usb/storage/transport.c
+> @@ -1188,18 +1188,17 @@ int usb_stor_Bulk_transport(struct scsi_cmnd *srb, struct us_data *us)
+>  		 * check whether it really is a CSW.
+>  		 */
+>  		if (result == USB_STOR_XFER_SHORT &&
+> -				srb->sc_data_direction == DMA_FROM_DEVICE &&
+> -				transfer_length - scsi_get_resid(srb) ==
+> -					US_BULK_CS_WRAP_LEN) {
+> +		    srb->sc_data_direction == DMA_FROM_DEVICE &&
+> +		    transfer_length - scsi_get_resid(srb) == US_BULK_CS_WRAP_LEN) {
 
-> Hi Tejun,
->
-> On Wed, Oct 29, 2025 at 1:36=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->>
->> On Wed, Oct 29, 2025 at 01:25:52PM -0700, Roman Gushchin wrote:
->> > > BTW, for sched_ext sub-sched support, I'm just adding cgroup_id to
->> > > struct_ops, which seems to work fine. It'd be nice to align on the s=
-ame
->> > > approach. What are the benefits of doing this through fd?
->> >
->> > Then you can attach a single struct ops to multiple cgroups (or Idk
->> > sockets or processes or some other objects in the future).
->> > And IMO it's just a more generic solution.
->>
->> I'm not very convinced that sharing a single struct_ops instance across
->> multiple cgroups would be all that useful. If you map this to normal
->> userspace programs, a given struct_ops instance is package of code and a=
-ll
->> the global data (maps). ie. it's not like running the same program multi=
-ple
->> times against different targets. It's more akin to running a single prog=
-ram
->> instance which can handle multiple targets.
->>
->> Maybe that's useful in some cases, but that program would have to explic=
-itly
->> distinguish the cgroups that it's attached to. I have a hard time imagin=
-ing
->> use cases where a single struct_ops has to service multiple disjoint cgr=
-oups
->> in the hierarchy and it ends up stepping outside of the usual operation
->> model of cgroups - commonality being expressed through the hierarchical
->> structure.
->
-> How about we pass a pointer to mem_cgroup (and/or related pointers)
-> to all the callbacks in the struct_ops? AFAICT, in-kernel _ops structures=
- like
-> struct file_operations and struct tcp_congestion_ops use this method. And
-> we can actually implement struct tcp_congestion_ops in BPF. With the
-> struct tcp_congestion_ops model, the struct_ops map and the struct_ops
-> link are both shared among multiple instances (sockets).
+This change has nothing to do with the subject of the patch.  Please 
+leave the code the way it was.
 
-+1 to this.
-I agree it might be debatable when it comes to cgroups, but when it comes to
-sockets or similar objects, having a separate struct ops per object
-isn't really an option.
+>  			struct scatterlist *sg = NULL;
+> -			unsigned int offset = 0;
+> -
+> -			if (usb_stor_access_xfer_buf((unsigned char *) bcs,
+> -					US_BULK_CS_WRAP_LEN, srb, &sg,
+> -					&offset, FROM_XFER_BUF) ==
+> -						US_BULK_CS_WRAP_LEN &&
+> -					bcs->Signature ==
+> -						cpu_to_le32(US_BULK_CS_SIGN)) {
+> +			unsigned int offset = 0, buflen = 0;
+
+It seems silly to initialize buflen to 0 when the very next statement is 
+going to overwrite that value.
+
+Also, "buflen" is not a good name for this variable, because the 
+variable does not contain the length of a buffer.  Rather, it will 
+contain the amount of data that got transferred by the 
+usb_stor_access_xfer_buf() routine.  The following "if" statement then 
+tests whether that amount is equal to the buffer length.
+
+Alan Stern
+
+> +
+> +			buflen = usb_stor_access_xfer_buf((unsigned char *) bcs,
+> +						US_BULK_CS_WRAP_LEN, srb, &sg,
+> +						&offset, FROM_XFER_BUF);
+> +
+> +			if (buflen == US_BULK_CS_WRAP_LEN &&
+> +			    bcs->Signature == cpu_to_le32(US_BULK_CS_SIGN)) {
+>  				unsigned char buf[US_BULK_CS_WRAP_LEN];
+>  
+>  				sg = NULL;
+> -- 
+> 2.50.1
+> 
 
