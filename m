@@ -1,273 +1,129 @@
-Return-Path: <linux-kernel+bounces-875326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17694C18B5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:32:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942BEC18AF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB791CC0D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:26:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 267D93A6925
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D5F2E975A;
-	Wed, 29 Oct 2025 07:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4A430FC25;
+	Wed, 29 Oct 2025 07:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="X8waRzy9";
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="TCJlTfKX"
-Received: from esa13.fujitsucc.c3s2.iphmx.com (esa13.fujitsucc.c3s2.iphmx.com [68.232.156.96])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="Ualg0jDe"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A2E1C861D;
-	Wed, 29 Oct 2025 07:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.156.96
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722748; cv=fail; b=KsSfpINs6N0/6QFFHSRHaE/5UYOqYbosgjGilMKop2i/PaXJkaW9rKQCDh6z3LnxYMsQiwT6APqQBNWj5Sgwyr4E24n8xk+tykRjcbFUPdt9gQ7qvcjtdCQNaORFLmnhmB2zGg9Ob3BE2zAJCi8R9vQcCi1Lru6IRk/jINzexCs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722748; c=relaxed/simple;
-	bh=p9coGN6pOnR+VLLxOi20k7hlVVaJHihD6BeKmvoJzvM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GafOBVcblcfYJBqwXDqF7wUCB3O3wLXa4TzXKGdSBH6pUUByyvFqL/qjXYpqcrVr3OSfrZp2EqOSEAQn48IlTb3cOiCEgKzJijXXv4hjcIIYBsH5elQyc160EsSV/U5LiUuVXUfW2ZP81qZqeAIM4Sr6gUIA+nfOEihHSUgVWyU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=X8waRzy9; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=TCJlTfKX; arc=fail smtp.client-ip=68.232.156.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1761722746; x=1793258746;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=p9coGN6pOnR+VLLxOi20k7hlVVaJHihD6BeKmvoJzvM=;
-  b=X8waRzy9r8WTwMhv5Q4Uvdpd5qvl1uE/BzP42h3uhG/AXKFYch7Z7RJ/
-   ggRhiGoeRjl6zeVE4eovIqFjYdkOHEmko4KkmgYm4Ubs29yjt/FlE2yf1
-   P5oBjJrRd8S+8VjpXNAe9QSzgOVx0s8niaAH7aFFaVkhgiN/51YkJeY0N
-   xLY89tepRx1ECIt8VBs7o9sJA9kwL3mTuBv+JdobT0ivPD8CXQjMSl1tx
-   p+45iW3+C/L9F6ePCX15BSYKfHNyGBBJnJim99BUI4U0VJ4Z5GSapvukE
-   5PNj8PFXLPJyYEVdnnPL1hY+TB3zTAmr3JLiM23mIegA+7Y+GvMrinXek
-   g==;
-X-CSE-ConnectionGUID: uFkatHXLSpyT9Cd9W6udBQ==
-X-CSE-MsgGUID: dT8uuIx/TC+fpDNUEfS1KA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="171924083"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754924400"; 
-   d="scan'208";a="171924083"
-Received: from mail-japanwestazon11011045.outbound.protection.outlook.com (HELO OS0P286CU010.outbound.protection.outlook.com) ([40.107.74.45])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 16:24:24 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hqfU6JVWK87YFtZP8k/WdfasfG8weI8STT04rTvmdU0/Im+D4CrijD399ao+Yo76Mjd2jtncxHOXlu9hW6REOLDxyUd4rNLktgEqiZgfWsExRv/VOIfoIsfWFKxLv0xbM1RebPhrOZrYOCkYevWUA6QPdyvsIk8vbtyu/u2/EG+2YdoA1pjUP4fkFG+xl6QsYYlxyqgOO5CQOs8OlVDGC5ZnbumzCM0qb4Zd4bt4iAhQ9KTQV5zv1AjV5etpfgzQ8AEEO3FTtMaWrLhM9gRiPpzUEcUonVaUmbFEjqKwVJ9/OlospoOqOPAF2QSKozWmZ4o2WjxtgVXIi5yvZTum6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nMNjL1LLbp3shUgElMFttHTPhCLXpivJX797As2fbeY=;
- b=LGFemNTIOyoW7pH8Ed6UwDjUxbzMElM9mqN0qiuCS6lWcCQ4pjOuHdqJJ2dzFVn2lxsSVMY0pXe2vLeL/cs3zN/cE9DuM2LBs66zvO/pUR+gfvClpxQiGnp2iTrJHcOfk5vhGIr33JL9uTnWt+CStdsJkmts0aSSzxy07rkgFBAi5u/yaL4Wr29WWyZvnw75ugfPIBlU0WpZSL3fO6Z9G8RQOaLoTVWSfJcKEyT2Bm/heN4U/2fSOMYGgtUubaEtSr46uqFJbN+JKCyh30uybHvfpLPT4bUyDWa/ftuZemN0hh91k1fODCF8tFXmVEjdNykJzm2VNws5BG3tWtrzLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nMNjL1LLbp3shUgElMFttHTPhCLXpivJX797As2fbeY=;
- b=TCJlTfKXCdJra3kIC/eIUvfAaZsRj5P5Y06TOfK9nQubQtFhQVyjtk7iNFsoUPu7UakqL7xkHdM341pthENbr6qEpiKM7h4t51gGcidkLfan8Cxkh1ZaNyWsouDShDm2oM79WnTcpqUMO3ELS9ftFcolENSd5XzktdptW3nq8bf4NwqAAKimX89DIq+tJKLSsWziXbePI4j2wemHB38BANgJHlAc1Mvsavbr4zTQoza0j4/+rrMHbAQg85XvKhGSbi+N19nE8vyRO8A6RYMNX8dwMvMeqDy/hlxZjEPZFHFka7GzOrIZWnys9vQ70rDsUm0aQIsUWos7t6yoUmdl/w==
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
- by OS9PR01MB14270.jpnprd01.prod.outlook.com (2603:1096:604:360::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 07:24:20 +0000
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 07:24:20 +0000
-From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
-To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>
-CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
-	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
-	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
-	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
-	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
-	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
-	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
-	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
-	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
-	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
-	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
-	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
-	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Jeremy
- Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, Lecopzer Chen
-	<lecopzerc@nvidia.com>, Ben Horgan <ben.horgan@arm.com>
-Subject: RE: [PATCH v3 10/29] arm_mpam: Add cpuhp callbacks to probe MSC
- hardware
-Thread-Topic: [PATCH v3 10/29] arm_mpam: Add cpuhp callbacks to probe MSC
- hardware
-Thread-Index: AQHcP5f45PPQxKcOh0GOW5Sghg6mmbTYyqRg
-Date: Wed, 29 Oct 2025 07:24:20 +0000
-Message-ID:
- <OSZPR01MB87982433DCC67E55C90297F28BFAA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-11-james.morse@arm.com>
-In-Reply-To: <20251017185645.26604-11-james.morse@arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=33f60ece-9bf0-4dc2-ba9e-d0967a870547;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-10-29T07:23:25Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|OS9PR01MB14270:EE_
-x-ms-office365-filtering-correlation-id: b8a0e5f7-8a39-47a1-d017-08de16bc2d44
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016|1580799027|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?MUVlbTlNb1BPQ0F0aVdub3lXZWU1cWJ4SUxMRWk0b010QnJySDF2VU9Z?=
- =?iso-2022-jp?B?YkxaREdmNzJRTG9EQ2JYOXlkYlBWSDhUaFdIbTNPTkxUSGk1YWNhUUp6?=
- =?iso-2022-jp?B?N0drTTdNVVRvOGdSVkQyUTIxdEpLK21iamRVSGtLL3NleGs0YlY1ekEv?=
- =?iso-2022-jp?B?MTZsUk85aHJuVWFGVFlMQ21LaVVQTGQzZ1RkQzBGejUvZmE3cTFPTE5k?=
- =?iso-2022-jp?B?dlNQdjhsbUx3WXd4ZFU0TmpvNndqdytlL1I0WmN0LzNZaVJCb2xPLzhl?=
- =?iso-2022-jp?B?UG1IS3NDR2VjUnNHWVJzSjNDT203ZWRZMU1Ia2NsYk50aTFBQ1pScVFL?=
- =?iso-2022-jp?B?eXBLekZuOXEvOU9TZC9vSjgxRHpCcTZaRzNIYXV6d0ltbmlsQUhaQVEz?=
- =?iso-2022-jp?B?NXF4b1Q2aUkycWRPZDFzdG00SVMzWGN4dUtzSk42aGs5bkYvTU9VdGNN?=
- =?iso-2022-jp?B?TVJGT0I1dEpQZVFPaDBDV3BTazZLU09VM2Q4YktReUFYRkNCVjBoMlY0?=
- =?iso-2022-jp?B?QmRDS3hIbXdDRTlZVXJLVG50dDN6UmpyK0J3TFFleXM0VFZlOGpyUmdX?=
- =?iso-2022-jp?B?KzVMK3RTZkFCcUt4UFR4YnN6a0ZXS3FFT0ZqVzM2bWVRM3Vycmk3a2xx?=
- =?iso-2022-jp?B?ZzZablRpbGllNWF5MFRhKzkwK2FYR2pRdUdneXdiMzZWNWJ5KzdxelUz?=
- =?iso-2022-jp?B?aG1oZE8yWHo2eXZzbVdBQk0zdmViTXlycnZxeWt0Z2FVbFhMRU5Pbjlr?=
- =?iso-2022-jp?B?MVphMURiYkswQ29VZUFMM2YzeEN2eHljZkR6cW4vZ2tLdGxaUEhXUGta?=
- =?iso-2022-jp?B?OTlnWjBPYUsyVmdab0hCUys0NFBBbWpoZTFCUnM4TFFjTWo4enNGeG5s?=
- =?iso-2022-jp?B?ZG9BQk90dFhVdTBSS1lXdEJUN2RFNGFjK0syaEd5RGI5cDYwRUNEblY3?=
- =?iso-2022-jp?B?a1NrMzVmUHBhZlNIY1I0NVltYjJXYm9tOTdNSUorc2RFbVVpRVFwMTJj?=
- =?iso-2022-jp?B?OE1hZUJycWdCQlNVU0ZTQTJVVnFPWnA0QkNFaUplOFlyd21tMzkrcWRF?=
- =?iso-2022-jp?B?UEVTZm9QclpNSmlpMm45cDgzcXFBc1BCQTNwU1JIU09YZWFFOEZwMTJT?=
- =?iso-2022-jp?B?RXBLeEZ4amg5b3BBczN0N3JaTG15UHhVV0VMVEZHdDJQM3BDTTExWk9D?=
- =?iso-2022-jp?B?eDZzMTBvTlRGbURtd3lvK01DYlh4Ly9sMlVCLzZ4cTd4cmtFK1lQVWow?=
- =?iso-2022-jp?B?RVFZTDcwTmI3VnRKdUY2YnNLUGh6RWNOemZOUWxPUjFWUGlrenhWWUV3?=
- =?iso-2022-jp?B?UmN6SGttSzc3SWR2TDNyeGdMQnBLSW1FS1JXWU9jd21ZSDEyTEU3U0hG?=
- =?iso-2022-jp?B?TGx6RDQ4bkJRd3VFcmdPRnRxaUZBWi9WTG83eFdWSTdIRm9pYlhZQ2hi?=
- =?iso-2022-jp?B?WDUybEJKRFY2UzVMb0hFbm5sMHlMUmU1SWZFOHBRajRUSG9McEU0Wms0?=
- =?iso-2022-jp?B?R2d0RFI2TDFYOHExRm5tZjlJT21uaFoxa0JFeGNUeVZkTlNQUjJEUXc2?=
- =?iso-2022-jp?B?d29tMCsvZnh0ZFR4UmhKaHR6d1JuZ3V1eUlqWk5PaURzTHdNT1hzcVlV?=
- =?iso-2022-jp?B?WEpoNFZDRW5LQ2lDMm54VUxCM2FnR2NXK3E0Q3NWMkdvQkVwRzBJU2w2?=
- =?iso-2022-jp?B?eFp0TU9GS1BkbnNXbWNOSElJTTI5V2UyVzh2R09FbXRVdi9vUXVlUVhk?=
- =?iso-2022-jp?B?OW9qOEdRcW10N0lyS1BVL3RYdk41dHRlcFkyb1E5ZmNPLzZHTGlJSUg2?=
- =?iso-2022-jp?B?ZFhEaU9oTndnZDI1UjhGWUdrcUl6SHErRzU1NTZZZ0FVZmE2aVZaNGxU?=
- =?iso-2022-jp?B?Nmg5ZVhMUURHUDVodWpWL2UvMWtBeGF3TUMzZTdBd1hXMVhmOFM3MUxj?=
- =?iso-2022-jp?B?UDlHaktTZlE0WHd6UjY2U0R5L2VKdmF5MzNvNW90VUs3UUZ0M3M5ZTgw?=
- =?iso-2022-jp?B?NWxSckk5Y2ZKNEFIYUNxZTBwOVRIZFhwYWFneXZreWRpZjlyZnVzaTMz?=
- =?iso-2022-jp?B?WHE4S2RiNVdCL2FSTVdqUkRBM044eGtOdFFQRXBFRE5jcTRmZGZxckRu?=
- =?iso-2022-jp?B?aGFvaEpxcmxrQytyWmUzcUp6K0c1SHQzcllEWHJTVmVuZzFHd0VaMS9S?=
- =?iso-2022-jp?B?U0htMzZrTDdST1V5NWVndjNteWZzamZ4RzZ5K3QrWmJCd09mc2tjcWpB?=
- =?iso-2022-jp?B?a0NhQT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(1580799027)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?bkdDWUU4ZWhWcmoxbmdHQjJubExMZitZL2JZaFFHQ0V6akFFUHUzelJz?=
- =?iso-2022-jp?B?OFBuOGc4SFB1UXVLbjRRLzNtOTlYc1NmRlAyZFBYTGRmVUpjOHFqb2Jt?=
- =?iso-2022-jp?B?ZG9Oa0hPWVZhenN4bG8zcllKYWdPaTNqTmdxU3BxYlNRVGhMU1JodVpy?=
- =?iso-2022-jp?B?R29ZSDlSODlaWGlTNmZodnFXSUdFY2RSdUZuUWNSYWRLcjNwM0dCWElo?=
- =?iso-2022-jp?B?M1NnaU50TXlCV1JMMjhjcWhyb1ZFSUpEcU5GQWRUSityMHl1bi9hMUlM?=
- =?iso-2022-jp?B?MHZFOFpUVjhNL1VManVhbHRsTm9seStRYzVwVDNjMFNjeE1rczlIZHdC?=
- =?iso-2022-jp?B?WFF1UUtwMVFTNW4vTmtQS0ZoZVdMZG8xNStxNzBPMitYYTlaQW52WjRR?=
- =?iso-2022-jp?B?ZGI0WDRQdmhGTHRrTzRFTDBDSGkyekFRQnRxZWh6ZGh4NTBITXlHS3lZ?=
- =?iso-2022-jp?B?YzVRMlA2WWJmRlhUUE9sYW5JRjc1TVBMOTIwWjl4VlpMSWNUZHBxWUNI?=
- =?iso-2022-jp?B?SFN2V2ErTHpFM3ltU0NWQ3g2TGRKMjc1M2lkLzllZGp1am0zS21DNWdV?=
- =?iso-2022-jp?B?NFdaMnRkRTdicXhkRUpMcGgvZURFKzRxUitkbDl1ZGEraE9lajdrTk40?=
- =?iso-2022-jp?B?RWdNU1l2RXRiVVNzRWVsbnlwU043Uzd3TUFndUp3cGtoZFJ1b2phVEVT?=
- =?iso-2022-jp?B?RENDWDU3LzN0d0FmVmNjU0lNbWhSZCtqL1R3ZStQNHQ0ZTd3WjRVaWtq?=
- =?iso-2022-jp?B?NmxhZW9qUDFQeEVYQXd2cHc0TlU4QW5WRFhjM1ZTV1JPUnozNWIwdnB0?=
- =?iso-2022-jp?B?NUpFYlpKTmVQck9HRm0vL2ZLMFFmNTJob1BzR2NpMktkV3VNRW0rQStV?=
- =?iso-2022-jp?B?eUtPcHpJaXZEN3BMUnplNXBwV0REZ2hIeFNwb214dFFkQlJiaDRkMUZL?=
- =?iso-2022-jp?B?K2xaZVN3VDRQb0RiNkhIbXliekkyaGdFTFZKRWJiVDZFTUYwY2tKMUU1?=
- =?iso-2022-jp?B?K3ZXY3B2aVRYYmJlVU11V1lORWJzKzhVd3NOd1ZCY1VVRFRhTnlNb0tn?=
- =?iso-2022-jp?B?Mnh6cFlpdXNBcGhTSTJ4TXBoMDNqaFJOKzRlL29IR2dGT0RabHltMGN3?=
- =?iso-2022-jp?B?NUZ4ZXljaS9SdTZBaExaSGxkUSs4Z3ZWYlJPQVd3cWd0UWIvNkdOZEor?=
- =?iso-2022-jp?B?emkvVG1oSTlKaDhyMmxMekNXeUxaREVkK3paUW0rTWxnMXpwMGwyRzlp?=
- =?iso-2022-jp?B?ZEgzL0Nxa1JIb1dkYjBnVk52U29kWUY3TmFKcjNrVHJPTmd0aXg5Vnp5?=
- =?iso-2022-jp?B?SVVPNnc1cU1oT0dFT254YzJrUWtVMFRvbEJ0R2xQZ2syZWVvcnh1L1hu?=
- =?iso-2022-jp?B?WTBrQlptOU13SlowaVM5RWQxRzNVaU9HcDcwa3NCZHBhSmRxZ0tzZmk5?=
- =?iso-2022-jp?B?bTdjL3YxcWI3NU1aTTNQNXBIbUY4dVU3VStJeCtzZG5PK2JHR05IRUZz?=
- =?iso-2022-jp?B?RzFEc2hndWZCaUlPcHVqSzgyejZDM1o0dVV2b2FieGhRaGgzZUpmT09h?=
- =?iso-2022-jp?B?eGtVS1JCM3FwQkFva2V4WGd5Rk1pMFNIVmNmaWNoQ1pscTdTN1cyNDAz?=
- =?iso-2022-jp?B?SDlONGVlSmU5TzIzakY2Nmt2aUV1UlZ1TjR4M09LUzU4bUpwYWdDQTh4?=
- =?iso-2022-jp?B?eHFyWjBjSVd6VFN0MngwWDduSWJCazZwVzF2eUtXNlpYV2RaN3ZlUHdC?=
- =?iso-2022-jp?B?RzE0VDJQZUZvbkNRaTJzUHdNdElpTjRNblkxZW9ROUVxN284Y3BvTWcv?=
- =?iso-2022-jp?B?Y1hIZU40aDZZR1A5MlVVdnpsRUxWTkVXSTlYTWxOTXFHRFB5YjZDb2hI?=
- =?iso-2022-jp?B?bkJmbjZDa2RRd09PeHpKQ1V0SHlZZWFmeFJHQW1mZ1dESEJBWkNQMjd0?=
- =?iso-2022-jp?B?aVVNazEzSUloZUhmdTBmdVZ3elJmKzlzbmRNQmFOSDkxWXZBWG02dHVa?=
- =?iso-2022-jp?B?cHZvNVFaZitpdDFKdm0xSVk5dGNkVkN5aG8xMEsxSEpGYXpqNEJ5UEdj?=
- =?iso-2022-jp?B?UjFTMzZJRHgyc1NQZ2JNMHlHMGVYTmJrWks3TUhaTTc3a2RzQU43OGxa?=
- =?iso-2022-jp?B?dG8vTXFLcDRyYzJrL3pUQ2xqc1g5VkZjQkMxS0VzUURJVk81ZHhTQm1j?=
- =?iso-2022-jp?B?Ni92Zm5zajhlc0xDZVlDSVRYUEJkNldGQWN1cXdQZjdHVHg2dUVCUWFs?=
- =?iso-2022-jp?B?cnZXbnA0b2Y2anRBdGRLSUljWDNPV3g2d1FlMnJ6MFp2U1ZVeThYTEhB?=
- =?iso-2022-jp?B?L2NxYTZER0J1V2dJQ2pZdmdZMHJ0QzRMZ3c9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234252F6187;
+	Wed, 29 Oct 2025 07:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761722681; cv=none; b=uarQQUUdWe3Gbyy7HUbasULupgPt7NMqEEyFgwD/YiDXLnQEGolrb7qmuek/LY/ghzw0db9dFyJkObARuhbcsO16Wvgtcoo350fhHWEZshOoSpDQf2D0wZB8g+JZyzzZ/5mOPlRdK0RNsKJVejhfkqAblXCTBeEVOWQrcNFp9RU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761722681; c=relaxed/simple;
+	bh=0GWIkJWV64B/4sVqOqYffExzCyyC5rCoFh2TvigNj/U=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cZZOKJYlIeVJX2VrwjhjeHNON+4QewCo+OT9JEDb0Cc69QjIdfEeDywppZsKhBIaNcnJHcmG3TDQX/obcvPMsNhLi+3w1YQ22QqW9yh9+S8E8b12xKyKVAN/2KGcx0H/0McdEcSwxeE6WZmwd9vCzehUzC98co2BC/Ks5XULTVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=Ualg0jDe; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 6DA5EA0439;
+	Wed, 29 Oct 2025 08:24:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-type:content-type:date:from:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=mail; bh=DeVVNyLNqKE4Ecf5DaOa6ywawPCDzZ6btyldSlmyF/k=; b=
+	Ualg0jDe4fxNSM08c+2QhvPK2q6/qHw0TScNmS87UiMOCnFj2ME2dT/uab0+Wiba
+	bkV0txAlmnUHKNBWv2tzWWZ7I8kVBV93B6jfhL14pdrfXGMYebO8GA0WDjitLb9F
+	KldrZKxW2q2JhYUgi6Hqp/D5wC6hDLgxxsrBUXdsa3iA0LzfKPChwvdNNSDGMjZt
+	W7jzlvtnWh3tDoxTWi9LbGfhp5iCSg5/mXlzOz+Y8doKf3GYS9Qpbqz4fCazFCZZ
+	nDTzysxggkJvVA43BP+jvsbTg9RhFfNIDhr3I7Es58ClvbosihjIXfLbbhD44CmD
+	PQGko4GmU1mryNcJnc3BcFGHfeklBFd2h7r62i55ZVdsJJF/pyCvG049+sRg8z/Q
+	fzg25CmsBnAb7Y3hhAdtd76PXwFJ0XCShvsyy8H4vyczEmVWe1yZAQWHBkpwch0b
+	PJTTlrutC09uGRdBRywbNxcGw7eSZrVdiPNvgB1FDAPr2+SPXTNo/shlUgCZc3lp
+	NJwgwJd9E9rrcnItdMgfimB1v17e/KszQLM5EUll53xYKLC0nA5Hn2/4MujYFQEb
+	2h7zDhZdn3a4RWWTn6F6pc5kdHaM3/60NJfsdHRkxvKx7Gwq5rEXg/20+4MCszkS
+	27+K1vd5I+x2QtxJHQaX48ou5kmgS0dFTV9d5AALHXY=
+Date: Wed, 29 Oct 2025 08:24:26 +0100
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	<pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 4/4] net: mdio: reset PHY before attempting
+ to access registers in fwnode_mdiobus_register_phy
+Message-ID: <aQHBKitU6Gyjk37e@debianbuilder>
+References: <cover.1761124022.git.buday.csaba@prolan.hu>
+ <bebbaef2c6801f6973ea00500a594ed934e40e47.1761124022.git.buday.csaba@prolan.hu>
+ <20251028182605.06840664@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	xIFO9sMzASA6aTzU1IbB7CioZtRmJ2iRLXAiVewPVar8zVDWNNs1CYHNEFHV8eVz2DbOUkwoY52n4isZRZs4gLDXGjENwcEj/fhBIfXGDdHQvMqgWaWk8PWYVggNnh/fSNI9UuDJdHJ0xarK9LWvvS4/aheQZJ13HGRcJpDzkNsPjZER5AelPD/jv7XUX9deIypD6Ne/FkMlpW3dzx5hwh6/FJyosRzZAPUNhbKHrL0qxFJCITLlrHIrcPfWsf0MgNrjla+QNsbxe27Z5IcQ5b2GcEhWUNGDWHHkuNTgj0QEQSgRcYsZKiNB0uHkZaJWS5lrLmJMdDKv+UM3nnlQc2vSLB6H+CbDezWvFbGjlvmd5k+nLAEop9fJCThHKqn3pu0pEsm8bs9mU8TPBmBM96uckXnacIy/bvFCWxfML1YneGx/0YQ7Xu/n560R0gNd+KiYkf7oqwQnR2QmlnbJvNYHIX2u0ppcxYNUcY6CZ/NK9B3/stTLxv95pmOvYpCO+h2KO7EwB1UVyoqTlZxPe7wd/L2ZZBbtwMD00529yhEI1ovm/0uobe3Ws0Y9UNz1Va9VlbhTSy+MFPO2OnAw4WhK1/f3aYSXbMictP8+YmwRJoaBtnfebEHVssVfBiRx
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8a0e5f7-8a39-47a1-d017-08de16bc2d44
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 07:24:20.1615
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q1nuZ7Loml60XlzFN0gPufHtRx6InCPQEztdwEDDx5YFEm+fI4M7or8/zXN0duby9kR1a94t6UIpEG6oq56QhVBNpTTqdu6dNM4OrA93vdM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB14270
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251028182605.06840664@kernel.org>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761722666;VERSION=8000;MC=3785898708;ID=145001;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155F677066
 
-> Because an MSC can only by accessed from the CPUs in its cpu-affinity set=
- we
-> need to be running on one of those CPUs to probe the MSC hardware.
->=20
-> Do this work in the cpuhp callback. Probing the hardware will only happen
-> before MPAM is enabled, walk all the MSCs and probe those we can reach th=
-at
-> haven't already been probed as each CPU's online call is made.
->=20
-> This adds the low-level MSC register accessors.
->=20
-> Once all MSCs reported by the firmware have been probed from a CPU in the=
-ir
-> respective cpu-affinity set, the probe-time cpuhp callbacks are replaced.=
-  The
-> replacement callbacks will ultimately need to handle save/restore of the
-> runtime MSC state across power transitions, but for now there is nothing =
-to do
-> in them: so do nothing.
->=20
-> The architecture's context switch code will be enabled by a static-key, t=
-his can
-> be set by mpam_enable(), but must be done from process context, not a cpu=
-hp
-> callback because both take the cpuhp lock.
-> Whenever a new MSC has been probed, the mpam_enable() work is scheduled
-> to test if all the MSCs have been probed. If probing fails, mpam_disable(=
-) is
-> scheduled to unregister the cpuhp callbacks and free memory.
->=20
-> CC: Lecopzer Chen <lecopzerc@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+On Tue, Oct 28, 2025 at 06:26:05PM -0700, Jakub Kicinski wrote:
+> On Wed, 22 Oct 2025 11:08:53 +0200 Buday Csaba wrote:
+> > +/* Hard-reset a PHY before registration */
+> > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
+> > +			    struct fwnode_handle *phy_node)
+> > +{
+> > +	struct mdio_device *tmpdev;
+> > +	int err;
+> > +
+> > +	tmpdev = mdio_device_create(bus, addr);
+> > +	if (IS_ERR(tmpdev))
+> > +		return PTR_ERR(tmpdev);
+> > +
+> > +	fwnode_handle_get(phy_node);
+> > +	device_set_node(&tmpdev->dev, phy_node);
+> > +	err = mdio_device_register_reset(tmpdev);
+> > +	if (err) {
+> > +		mdio_device_free(tmpdev);
+> > +		return err;
+> 
+> Should we worry about -EPROBE_DEFER on any of the error paths here?
+> If not maybe consider making this function void? We can add errors
+> back if the caller starts to care.
 
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+That is a very valid point, thanks! I think I can handle that correctly,
+by propagating that (or any other) error codes to the caller of
+fwnode_mdiobus_register_phy(). fwnode_reset_phy() does nothing that
+would not be expected to occur during the normal registration, so if
+it fails here, it would fail later as well.
+
+> 
+> > +	}
+> > +
+> > +	if (mdio_device_has_reset(tmpdev)) {
+> > +		dev_info(&bus->dev,
+> > +			 "PHY device at address %d not detected, resetting PHY.",
+> > +			 addr);
+> 
+> IDK if this is still strictly necessary but I guess \n at the end of
+> the info msg would be idiomatic
+> 
+
+I will separate the error message to another patch, then the maintainers
+can decide wheter to merge it or not.
+
+Thanks for the feedback!
+I should be able to send v5 soon.
+
+Csaba
+
 
