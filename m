@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-875420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50875C18E8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:15:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0FDC19118
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id F0705354F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:15:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BBA3B98D9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6EC3176E8;
-	Wed, 29 Oct 2025 08:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0963191C6;
+	Wed, 29 Oct 2025 08:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="MX1GDYUj"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b="j809uwdQ"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258DF27F00A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4677D31076A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761725465; cv=none; b=d/wVRj9/gPBAAm37KtdI38yOTUqnmg5vzFun20tr0zDOppn6JzOMt5/8A5fU6EAeXfqGr3Rrf+iNV9Y8pLNBROMiwbg0xhI3Uv3Teimhx9ZYxzAsVRWPykeDyBDirdwD+A18aUWRjD9RmNH9SMcDUxN6ejJ9FAMisikM+/NrMj4=
+	t=1761725480; cv=none; b=qFpSM/1opcqhM2uc4iPysaxeuxGkUz6ck3GsTfElJ1gdM8OE1vm3jfhqfGXXWN+n+Q0Ecc/pKr2thG6rVc19AzcpEA7SY7QztP6Wg4yw1tKUzqJKRapCRHQuBP9COE8QAAuD0TXWtdDb16udlQu5xSNANa4MEjJNT+l7uW1QbMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761725465; c=relaxed/simple;
-	bh=kHatVRxxPPICyZtcpOwFhGHqwfnRHosqeh1btz/QO64=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cqTu2zLuqO68AMxhZ4JidkrF/6omCqsbDGJB7nfeQvpupzpgDCFjBQ+7oefK85T3KLVqcvK/yE4K4rPy5vRbvualR6QeBJPQXKLgO3+WKKc4WO2kzSwUUKeNQWuh54++rUJklta9khwvh2P9NSnGLaH6iaOTSmMcdCPiiuirT30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=MX1GDYUj; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1761725480; c=relaxed/simple;
+	bh=giZlxB/y1esW0KSceZAKpr2ebJTr4TN9pxOQBz199Ek=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=AE8xZ3DBHzVVHj+oOqbsh88uSHGYeNbhrbK2L6iusnMHgu1qOFFjdaZUGJ4qbH0mHgp8HPhbkgLIP3GBqwQOflXD6GILDj34iIfIqQDmaC7uEDpdIeT8tDApM8KQVUUeCd85aP2SyzRCX6CYI4DpRUSSpjaqWa+ib5ERimIF85k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com; spf=pass smtp.mailfrom=compal.corp-partner.google.com; dkim=pass (2048-bit key) header.d=compal-corp-partner-google-com.20230601.gappssmtp.com header.i=@compal-corp-partner-google-com.20230601.gappssmtp.com header.b=j809uwdQ; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=compal.corp-partner.google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=compal.corp-partner.google.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-781997d195aso4981101b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:11:01 -0700 (PDT)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-290dc630a07so50080315ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761725461; x=1762330261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W4TBb1NGZPBKZvsq9zfR8xwiZbK0RiAI4Eb+zjEMiJg=;
-        b=MX1GDYUjR3NDHYCT5x53mmU39eMI8KeOmEBntilyPbAstahvwKD8ixFlgtsXNqhZnd
-         VLHjEH6sl5NaAqULwsKgkzCsm9ZEaVX89I5rAiMixEbuI/64d5ecPZSfWVBbMagh0hwJ
-         L6/NIicf/Yf+5UYZ9PGsKTDMbFTKjjZlLrrE0AdDGz3MnmRA0ZlUGaYmmF/cOpw9rjMM
-         q6Pw3PBanpKLyRYOPivAidRE5TJclb8zLoVk1l8i5MsiuCuVJsVETBxGSJiHgsATszBa
-         qP1lAVmKT7Cp5fxeyDq5Q1q6U78cpKs/hF0NYaQ3d1+UHa9OWFkjX5qaCG+3xSWXyRBa
-         Y05w==
+        d=compal-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1761725478; x=1762330278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cy9XTv2i4jQBLP7k+Sr4EyrGNjL9Wpf6xvz0spYyufM=;
+        b=j809uwdQGy1tW+FjAk8rTUo5OEWdkBcxA74XWoMc7p6ewaMVUYf7SmupXpTV3/7111
+         zvXU+ZvAkpVHUUmYPvI8krdDYD0FtizABxhLNTJtQxJbaetNBeCquKhYzl4sVLyZti1W
+         Loau9uQoCgmacZpo6bzro4AIrvAwGxa0FFxFcEXbtqHq9CDguuQ1aWMamZedxAX0Tl1u
+         4z+WQAz0KDrqu+V8BvPklsReKHGoApONjki0RNnViegcN4kAkQ9ONBzh/K8YTX5sIXt4
+         ekU03BToCcYQsuEjSZ3to9NSlnwpD9RoH+CYt0rqy6BqvrpBZvygIHiwBDVCLP8OH9T1
+         U1+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761725461; x=1762330261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W4TBb1NGZPBKZvsq9zfR8xwiZbK0RiAI4Eb+zjEMiJg=;
-        b=iAWLNxe1RkxOHvuweBxKPtavGUGoxXYPksJYWmZD5XFJ77DLtoRZAPPVokJDWAoFuO
-         PItjqkGKyc5rx8g+PMqAg5V4cztcFB+ca22fGM6PQ2rypsvFs+tHNr+nrSqVnIypXhmq
-         IoZZ9e5rsM2HieRMaKHoqfNGM5nTo8SrFeT3cV//0UhnyyIBUzkhvbagZEcDbG66UsFD
-         TQAdl64iTGuGBAhvZSUUHuDqcaodcYJIBOgOWILn388q/hCLHf2RCd/+VLHHaH3/qogQ
-         gGJtqIfe02XQMoaO8BXvd5qsJqXlIWKfh2/k5mUpgNO5u+zjaIiPWGh+oyz8Zi6o+cV0
-         YKeA==
-X-Gm-Message-State: AOJu0YwLnnA0rtvekeGfLAiv4rC4QSp9oZO0219ykUX3a3edm1z5F7kA
-	LjT5LbBDUzk7ErehIJQbv2czmjPNCfqTCOB+oEJ+yPTRqfvG4YrJveQ5BSyF2vkZV97p9WATXwV
-	HuZkez7pO6A==
-X-Gm-Gg: ASbGncu07nHyaezEr7NjIWW6iegwurwjvGKtl51FdK8sr07D47kJoY6BJMK5KO5cork
-	g5N+s03f+xYDCnkllW2PaNxa918/4kf04gW05eoLBdq8TIhd9/UArEraq7fpea/MU7B+PPsyzJA
-	ELYcAywopZ9RMlkLI2gCEuHR+wJQUyk+dWqSV+UpZ/95bSDRmUlhWjBPO+wktTCe34iOVFkYj77
-	KDdPNOD/MPHBVI+qUn117//Q+WWX6vmZ2zd4T6alPCff7po585OxgoLM/y/tCoBRx0M+4UsYawG
-	AKm7sGuRrv4+vsI466/K30HqryknvlUW07dcL7gjCE7rGNQATfylcCdRb94rbhYftw2/rLmN8FI
-	q9mfGcp0WT6XkDnWTVxApCaax/sc5Caye3MR4Fxn/Q6jrBzk3jYlGfy2UwNv/ILSb6v2418/4iI
-	HjkGOpprDGRUTMFsJFAHoeiip/qSmb6zhVLOWjPumdo9tdciCWl1AD/cXSqx1pyL8zVHuUMhCni
-	umcF7H8Kg1wQujNtmUJ/UCB
-X-Google-Smtp-Source: AGHT+IEcVGsW+DQZ98CiBxU6KG24EXGungrAvTUljhmtkrrdGkEJqJ2HiPOwNRPACMFE5LCNKepWsg==
-X-Received: by 2002:a17:902:ea08:b0:250:643e:c947 with SMTP id d9443c01a7336-294deec67femr26359755ad.28.1761725461243;
-        Wed, 29 Oct 2025 01:11:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761725478; x=1762330278;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cy9XTv2i4jQBLP7k+Sr4EyrGNjL9Wpf6xvz0spYyufM=;
+        b=b8Xazn33ct5wV7oNj/NLe2OSozYqMIObGLP68REavy61N23N2Jaywr5SiCCCO5vkT5
+         OK6ipEZnDi/jLCckGGkp65m4pHFIqHSGSfHhf0R2OE8LDp99V4Pyh/4/gQKFw4ggWm6w
+         TOSPE6Z2tV+As6uLGbyatO4F56Tu+GvkN5VxVzdYY6tFMo6R6ISHZUWwhls9Q0y7QTbe
+         o38b1AHKRMomnfenIFliV1yP0M1GiaU4YUbKeWaLVYLAvw0HZwLdIIp1x6/OWdlsO4Zx
+         aZbVriF7o5077ap15EBWTTHIuvi6SyMYJsB1RhYZf7JmPGEDN8UxigXsaojQTNIKKIAp
+         svww==
+X-Gm-Message-State: AOJu0YzKOtMrXoXlCI5KvDkRIQMhoK9ALeOFCpL9UxnhNaxovYmgWLkj
+	2SErKWWcF2R9IQ4okWnkKSr9IcU+4+I5RCAO3ME1sTtMi5cybCKCuvjyuWBT+LRo+qVzgmXE/We
+	DKq5PD5rl6w==
+X-Gm-Gg: ASbGncu/VoNRLPxlANrQIXqqDnMFjMU4AinWmR9QmTdw+sNWxYopz8NWsVkkOJnTv7M
+	WZit+ZXJPofrjVK26mkHRHRiDItq/DrVB9ooii4g5vz/y4JTi2hBkIiOSKo88iSPCgktSSN/CRQ
+	3WcotvHAu/Xj6fxAnmTLK+zFAhrCfxJHpvAVSPrAwiN9rVA2Dd4bEqJqXBDUFVMS/EFsSo2R71M
+	GFfA0/csekWCv5y0l2ulka6KXPK49xclQ8vIMJaQnc8W3vjuXpIWpK6kbEVXiuwZ0LNKkjdl/JF
+	J0v9BIpmJw6onc7TN18qI7ubupoEfI7/Ru89fqktOnM0YgbNijCvIxrgipLaWbDesERTLpFBaKl
+	J2tB+SHH5e61zL61iLtLUhSHjbtN6rd5/sLe7NrywWfJe8uHedm9kS5K+gj2Mz1SAePN518yB/P
+	dmSaVt7T75Lv9EIuCC4qQSZEr1hnZa8PyM5Vurw7yHyqUTS2ked5GN6VGUjVUdmnu9Nu3Ec4bW+
+	GI/g/QDMOwPGSDNboJmacEq
+X-Google-Smtp-Source: AGHT+IE47ekKNBF9kXK/AfwFXT2q/NNP+Zhgqx+yPTGDTly8eePWmvpucVyygnjntJlajk3c9jzzuA==
+X-Received: by 2002:a17:902:ea0d:b0:254:70cb:5b36 with SMTP id d9443c01a7336-294dedd0e80mr20877055ad.8.1761725478290;
+        Wed, 29 Oct 2025 01:11:18 -0700 (PDT)
 Received: from ajye-OMEN-by-HP-Laptop-S.compal.com (61-219-175-100.hinet-ip.hinet.net. [61.219.175.100])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d23226sm143988155ad.49.2025.10.29.01.10.58
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d23226sm143988155ad.49.2025.10.29.01.11.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 01:11:00 -0700 (PDT)
+        Wed, 29 Oct 2025 01:11:17 -0700 (PDT)
 From: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
 To: linux-kernel@vger.kernel.org
 Cc: Douglas Anderson <dianders@chromium.org>,
@@ -85,10 +87,12 @@ Cc: Douglas Anderson <dianders@chromium.org>,
 	dri-devel@lists.freedesktop.org,
 	Ajye Huang <ajye_huang@compal.corp-partner.google.com>,
 	jazhan@google.com
-Subject: [PATCH v1 0/2] Add EDP_PANEL_ENTRY3 to override bpc
-Date: Wed, 29 Oct 2025 16:10:46 +0800
-Message-Id: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
+Subject: [PATCH v1 1/2] drm/panel-edp: Add override bpc quirk for generic edp
+Date: Wed, 29 Oct 2025 16:10:47 +0800
+Message-Id: <20251029081048.162374-2-ajye_huang@compal.corp-partner.google.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
+References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,19 +101,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-v1:
-- EDP_PANEL_ENTRY3: 
-  - "override_bpc" is used for override the value of panel's bpc.
+Adding override bpc to EDP_PANEL_ENTRY3 quirk.
 
-Thanks for the review!
+Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+---
+ drivers/gpu/drm/panel/panel-edp.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Ajye Huang (2):
-  drm/panel-edp: Add override bpc quirk for generic edp
-  drm/panel-edp: Modify LQ116M1JW10 panel's bpc to 6
-
- drivers/gpu/drm/panel/panel-edp.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
+diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
+index 944c7c70de55..da3e8f223ec3 100644
+--- a/drivers/gpu/drm/panel/panel-edp.c
++++ b/drivers/gpu/drm/panel/panel-edp.c
+@@ -218,6 +218,9 @@ struct edp_panel_entry {
+ 
+ 	/** @override_edid_mode: Override the mode obtained by edid. */
+ 	const struct drm_display_mode *override_edid_mode;
++
++	/** @override_bpc: Override the Bits per color obtained by edid. */
++	unsigned int override_bpc;
+ };
+ 
+ struct panel_edp {
+@@ -586,6 +589,9 @@ static int panel_edp_get_modes(struct drm_panel *panel,
+ 	bool has_override_edid_mode = p->detected_panel &&
+ 				      p->detected_panel != ERR_PTR(-EINVAL) &&
+ 				      p->detected_panel->override_edid_mode;
++	bool has_override_bpc = p->detected_panel &&
++				      p->detected_panel != ERR_PTR(-EINVAL) &&
++				      p->detected_panel->override_bpc;
+ 
+ 	/* probe EDID if a DDC bus is available */
+ 	if (p->ddc) {
+@@ -611,6 +617,9 @@ static int panel_edp_get_modes(struct drm_panel *panel,
+ 			} else {
+ 				num += drm_edid_connector_add_modes(connector);
+ 			}
++
++			if (has_override_bpc)
++				connector->display_info.bpc = p->detected_panel->override_bpc;
+ 		}
+ 
+ 		pm_runtime_mark_last_busy(panel->dev);
+@@ -1871,6 +1880,17 @@ static const struct panel_delay delay_80_500_e50_d50 = {
+ 	.override_edid_mode = _mode \
+ }
+ 
++#define EDP_PANEL_ENTRY3(vend_chr_0, vend_chr_1, vend_chr_2, product_id, _delay, _name, _bpc) \
++{ \
++	.ident = { \
++		.name = _name, \
++		.panel_id = drm_edid_encode_panel_id(vend_chr_0, vend_chr_1, vend_chr_2, \
++						     product_id), \
++	}, \
++	.delay = _delay, \
++	.override_bpc = _bpc \
++}
++
+ /*
+  * This table is used to figure out power sequencing delays for panels that
+  * are detected by EDID. Entries here may point to entries in the
 -- 
 2.25.1
 
