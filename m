@@ -1,559 +1,184 @@
-Return-Path: <linux-kernel+bounces-876081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0405AC1A939
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:00 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93011C1A912
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537B91AA0EBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B4DA586091
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C629637A3B0;
-	Wed, 29 Oct 2025 13:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA001F0E39;
+	Wed, 29 Oct 2025 12:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KWwLZh34"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bmrs+KJG"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B0228C99
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5603228C99
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742802; cv=none; b=WBjS5hw+G4yK5B1GhCsm1aQd+yrkZL0uuv2z0xeOagHXRXbMhsI/4s0qBbuI61xRWwXtc+WZPQOCT/opeh94xbhzv6QWWzIzB3SBveYxd2xvjgRSWqeA9qoIpJlhkcrP0FQEhPX5P7gSOlvP4MnmtlSejd9s7EH3vgTf2NEFweg=
+	t=1761742785; cv=none; b=g1hRyRP60CHp+f5wGiP67ascx6ZYhXRnZvaA3zOb2aNCTpvej1Xp/d+l9OcvR8XIhfow4F1IsIt6YqVaEHqLIzHHDBj9Klex8jJPiosOt7ha3M+dAze0dv65vcx0+wRRsJJ3etFzkKwFHkc41RbNpX6R25FOzx+lz213nKq4his=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742802; c=relaxed/simple;
-	bh=wQSd47TgFpgU0WslxV8kopKNw/S6+IbSE/2n+ho5r4g=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=f7h18opNDAs0Y07y/DXFmJXD+s9AjyNUv9i7m6TeQfpGiwlKmWhH7TbNSx0+SO1wuFz3Nq5XaQQLExCAATUUlm96mAy2YyUB2ojdFRoFlx2jfrsir1hcRaNy5V676Mj5tATcee84zdS9tpbM1dgs89mj4sisKZ7Fg53wpWwE2iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KWwLZh34; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20251029125958epoutp04580305f39dfcf62f0cf4a435aa045dae~y972vndDR0591705917epoutp04e
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:59:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20251029125958epoutp04580305f39dfcf62f0cf4a435aa045dae~y972vndDR0591705917epoutp04e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1761742798;
-	bh=/Rg447nv4jG7ZTaZ3yR+37uySv7fYSYGLbahg4p5atw=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=KWwLZh34ITlFKDfm15ckNQzqgQeuL4uoT305VZHOZXt9c+Rh7w6DVJBHCZ58KM3Fn
-	 +p9rhcaKdErfAe4Z+Xy7ZvOcRSOrrNQvSFLoci9/UN/VCNQs5KQsGy/MM/cwTkQDGv
-	 wGsG3Za8k7OuDJsvng7hv+WKrRSu4fCNGZCraC8Q=
-Received: from epsnrtp02.localdomain (unknown [182.195.42.154]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
-	20251029125957epcas5p45a2618cc34abf33c1a1aed13de41a7ee~y9714fZFw0337603376epcas5p4n;
-	Wed, 29 Oct 2025 12:59:57 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.95]) by
-	epsnrtp02.localdomain (Postfix) with ESMTP id 4cxS583Phtz2SSKZ; Wed, 29 Oct
-	2025 12:59:56 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b~y970N6Nn52434424344epcas5p2I;
-	Wed, 29 Oct 2025 12:59:55 +0000 (GMT)
-Received: from Jaguar.samsungds.net (unknown [107.109.115.6]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20251029125941epsmtip2e6e2867e049bc84527036b7dbb53b7b3~y97nNjiRN0547705477epsmtip2b;
-	Wed, 29 Oct 2025 12:59:40 +0000 (GMT)
-From: Ravi Patel <ravi.patel@samsung.com>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	jesper.nilsson@axis.com, lars.persson@axis.com, mturquette@baylibre.com,
-	sboyd@kernel.org, alim.akhtar@samsung.com, s.nawrocki@samsung.com,
-	cw00.choi@samsung.com
-Cc: ravi.patel@samsung.com, ksk4725@coasia.com, smn1196@coasia.com,
-	linux-arm-kernel@axis.com, krzk@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	pjsin865@coasia.com, gwk1013@coasia.com, bread@coasia.com,
-	jspark@coasia.com, limjh0823@coasia.com, lightwise@coasia.com,
-	hgkim05@coasia.com, mingyoungbo@coasia.com, shradha.t@samsung.com,
-	swathi.ks@samsung.com, kenkim@coasia.com
-Subject: [PATCH v2 1/4] dt-bindings: clock: Add ARTPEC-9 clock controller
-Date: Wed, 29 Oct 2025 18:29:29 +0530
-Message-Id: <20251029125929.40560-1-ravi.patel@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-CMS-MailID: 20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b
-References: <CGME20251029125955epcas5p2fc7a5a15e4b23b544bcb4cf9a2695c4b@epcas5p2.samsung.com>
+	s=arc-20240116; t=1761742785; c=relaxed/simple;
+	bh=cZUqEi7ArJBgqnrq/LGfj3bUXfY69RvPu1cvwBiVCak=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Ww2DwFAFxxVdCEYK5HEprnPgOyFGpVQXdhLVkXSAFbpd89MJsYZStYbOoZshTk6DoX7PL/QzuU+pCRbX2D7OmjcCOtR47RbDcnFd86FrYbWYG5keQISDNVPRu98TOcJYqvRyOaEoBt3J0qEBXXBrdn8wzsz56kC1MEwJ8A9xDPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bmrs+KJG; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-4270a61ec48so5984530f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:59:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761742782; x=1762347582; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvcZ242I0xNV0Bj8P2kxRpXu3YYgCUlfHC5XSdPNaN0=;
+        b=Bmrs+KJGpZa4aRNYwF4tRU2pbINS1yxabO0L36mrLHRQcM7y823X047mv+4lH2uhIP
+         KpUyJGNS5SxrvRzQAs6AwdP8OKq5JwBtMwKtMD+KsBkakcp/GrU9ssK+8w9On1IJVI97
+         3qYTF4s5fRVPXFe85bNPVBTRxggroBVIxausqXfZGYbu8YkNjrTyzC2csBL/gFVQSxUh
+         YnLQAO2XVcKFVnOrccVADIob3k3A9pLF6T626b11yIxGnNzoMrkY6x+pFou35KjqmM9n
+         Teo6y/tNdpcn3DPBbIi2jj1KIcVuUY/mpowzuGEDHl2QRgNQyh5i54yoUt7KZ0TESpo+
+         kF7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761742782; x=1762347582;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wvcZ242I0xNV0Bj8P2kxRpXu3YYgCUlfHC5XSdPNaN0=;
+        b=MC01+7UG5i3s2ek7JDvQf96D9VBZ9oR5+qv1OEWIY6Cd292NPZcLwj0fCgQOF47hOo
+         DcAnKi5qwAAH82tPjT5KMKZDm6tupAzmAxzImkx4riIcZiQW1zAUdvl7SLY8T8d64Che
+         l87XwYoCR7dFLDvr+Rh/bjNZyQPMQkUQ5wdKXi3qpl+NszIbmsk/jW8LmpV3Q0SkkrX5
+         Ncy29KgMix5FeLqzf7OneJLtAOQIylPZ8uyud8MykJVMwcrll4gMWqtGSPqz5eY/+AsH
+         fGfsWq/qKV/2OGzsFb+Ne2IvQn8Zcr1sCvHdevPQ1RsT0icGfMKAWdH2lrnleueFj7SK
+         2taA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmzgXNpRZe0h0SAxFglCJZc/g+GNPdSraVNVC3roiLND26O3ecNNt5x0KDQePFa6H6diX+hrYnL0YYkPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqkH/XoWyjSoQ11/ubCfabEyjh3OpweYF08Q9X2zSDW2xCZY3H
+	xB3O+bOBK0afeykCN5VDyX6z2qQ8DB/QPL0xRtNe8lBn4+gBVed1JqtLnL1GjmKW4n30UEBf6wf
+	s1hd/eq40EvlotfgUpg==
+X-Google-Smtp-Source: AGHT+IFnbvPlsvZotzy1WsN3Ocy8uT6OxjkU13FGbFqNo33aQaiOVG8eFJ1A1TVPzk6tojTsAQa4tCIT+M/iM9c=
+X-Received: from wmvz2.prod.google.com ([2002:a05:600d:6282:b0:477:d21:4a92])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:26d2:b0:429:91ca:70f1 with SMTP id ffacd0b85a97d-429aefccf44mr2238605f8f.57.1761742782357;
+ Wed, 29 Oct 2025 05:59:42 -0700 (PDT)
+Date: Wed, 29 Oct 2025 12:59:41 +0000
+In-Reply-To: <20251020223516.241050-3-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+Mime-Version: 1.0
+References: <20251020223516.241050-1-dakr@kernel.org> <20251020223516.241050-3-dakr@kernel.org>
+Message-ID: <aQIPvaFJIXySV-Q5@google.com>
+Subject: Re: [PATCH 2/8] rust: device: introduce Device::drvdata()
+From: Alice Ryhl <aliceryhl@google.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	kwilczynski@kernel.org, david.m.ertman@intel.com, ira.weiny@intel.com, 
+	leon@kernel.org, acourbot@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	pcolberg@redhat.com, rust-for-linux@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-From: GyoungBo Min <mingyoungbo@coasia.com>
+On Tue, Oct 21, 2025 at 12:34:24AM +0200, Danilo Krummrich wrote:
+> In C dev_get_drvdata() has specific requirements under which it is valid
+> to access the returned pointer. That is, drivers have to ensure that
+> 
+>   (1) for the duration the returned pointer is accessed the driver is
+>       bound and remains to be bound to the corresponding device,
+> 
+>   (2) the returned void * is treated according to the driver's private
+>       data type, i.e. according to what has been passed to
+>       dev_set_drvdata().
+> 
+> In Rust, (1) can be ensured by simply requiring the Bound device
+> context, i.e. provide the drvdata() method for Device<Bound> only.
+> 
+> For (2) we would usually make the device type generic over the driver
+> type, e.g. Device<T: Driver>, where <T as Driver>::Data is the type of
+> the driver's private data.
+> 
+> However, a device does not have a driver type known at compile time and
+> may be bound to multiple drivers throughout its lifetime.
+> 
+> Hence, in order to be able to provide a safe accessor for the driver's
+> device private data, we have to do the type check on runtime.
+> 
+> This is achieved by letting a driver assert the expected type, which is
+> then compared to a type hash stored in struct device_private when
+> dev_set_drvdata() is called.
+> 
+> Example:
+> 
+> 	// `dev` is a `&Device<Bound>`.
+> 	let data = dev.drvdata::<SampleDriver>()?;
+> 
+> There are two aspects to note:
+> 
+>   (1) Technically, the same check could be achieved by comparing the
+>       struct device_driver pointer of struct device with the struct
+>       device_driver pointer of the driver struct (e.g. struct
+>       pci_driver).
+> 
+>       However, this would - in addition the pointer comparison - require
+>       to tie back the private driver data type to the struct
+>       device_driver pointer of the driver struct to prove correctness.
+> 
+>       Besides that, accessing the driver struct (stored in the module
+>       structure) isn't trivial and would result into horrible code and
+>       API ergonomics.
+> 
+>   (2) Having a direct accessor to the driver's private data is not
+>       commonly required (at least in Rust): Bus callback methods already
+>       provide access to the driver's device private data through a &self
+>       argument, while other driver entry points such as IRQs,
+>       workqueues, timers, IOCTLs, etc. have their own private data with
+>       separate ownership and lifetime.
+> 
+>       In other words, a driver's device private data is only relevant
+>       for driver model contexts (such a file private is only relevant
+>       for file contexts).
+> 
+> Having that said, the motivation for accessing the driver's device
+> private data with Device<Bound>::drvdata() are interactions between
+> drivers. For instance, when an auxiliary driver calls back into its
+> parent, the parent has to be capable to derive its private data from the
+> corresponding device (i.e. the parent of the auxiliary device).
+> 
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Add dt-schema for Axis ARTPEC-9 SoC clock controller.
+Are you going to open that docs PR to the Rust compiler about the size
+of TypeID that we talked about? :)
 
-The Clock Management Unit (CMU) has a top-level block CMU_CMU
-which generates clocks for other blocks.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Add device-tree binding definitions for following CMU blocks:
-- CMU_CMU
-- CMU_BUS
-- CMU_CORE
-- CMU_CPUCL
-- CMU_FSYS0
-- CMU_FSYS1
-- CMU_IMEM
-- CMU_PERI
+> +// Compile-time checks.
+> +const _: () = {
+> +    // Assert that we can `read()` / `write()` a `TypeId` instance from / into `struct driver_type`.
+> +    static_assert!(core::mem::size_of::<bindings::driver_type>() == core::mem::size_of::<TypeId>());
+> +};
 
-Signed-off-by: GyoungBo Min <mingyoungbo@coasia.com>
-Reviewed-by: Kyunghwan Kim <kenkim@coasia.com>
-Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/clock/axis,artpec9-clock.yaml    | 232 ++++++++++++++++++
- include/dt-bindings/clock/axis,artpec9-clk.h  | 195 +++++++++++++++
- 2 files changed, 427 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
- create mode 100644 include/dt-bindings/clock/axis,artpec9-clk.h
+You don't need the "const _: ()" part. See the definition of
+static_assert! to see why.
 
-diff --git a/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml b/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
-new file mode 100644
-index 000000000000..63442b91e7ac
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/axis,artpec9-clock.yaml
-@@ -0,0 +1,232 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/axis,artpec9-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Axis ARTPEC-9 SoC clock controller
-+
-+maintainers:
-+  - Jesper Nilsson <jesper.nilsson@axis.com>
-+
-+description: |
-+  ARTPEC-9 clock controller is comprised of several CMU (Clock Management Unit)
-+  units, generating clocks for different domains. Those CMU units are modeled
-+  as separate device tree nodes, and might depend on each other.
-+  The root clock in that root tree is an external clock: OSCCLK (25 MHz).
-+  This external clock must be defined as a fixed-rate clock in dts.
-+
-+  CMU_CMU is a top-level CMU, where all base clocks are prepared using PLLs and
-+  dividers, all other clocks of function blocks (other CMUs) are usually
-+  derived from CMU_CMU.
-+
-+  Each clock is assigned an identifier and client nodes can use this identifier
-+  to specify the clock which they consume. All clocks available for usage
-+  in clock consumer nodes are defined as preprocessor macros in
-+  'include/dt-bindings/clock/axis,artpec9-clk.h' header.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - axis,artpec9-cmu-cmu
-+      - axis,artpec9-cmu-bus
-+      - axis,artpec9-cmu-core
-+      - axis,artpec9-cmu-cpucl
-+      - axis,artpec9-cmu-fsys0
-+      - axis,artpec9-cmu-fsys1
-+      - axis,artpec9-cmu-imem
-+      - axis,artpec9-cmu-peri
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 5
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#clock-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - "#clock-cells"
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-cmu
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-bus
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_BUS bus clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: bus
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-core
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_CORE main clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: main
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-cpucl
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_CPUCL switch clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: switch
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-fsys0
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_FSYS0 bus clock (from CMU_CMU)
-+            - description: CMU_FSYS0 IP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: bus
-+            - const: ip
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-fsys1
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_FSYS1 scan0 clock (from CMU_CMU)
-+            - description: CMU_FSYS1 scan1 clock (from CMU_CMU)
-+            - description: CMU_FSYS1 bus clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: scan0
-+            - const: scan1
-+            - const: bus
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-imem
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_IMEM ACLK clock (from CMU_CMU)
-+            - description: CMU_IMEM CA5 clock (from CMU_CMU)
-+            - description: CMU_IMEM JPEG clock (from CMU_CMU)
-+            - description: CMU_IMEM SSS clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: aclk
-+            - const: ca5
-+            - const: jpeg
-+            - const: sss
-+
-+  - if:
-+      properties:
-+        compatible:
-+          const: axis,artpec9-cmu-peri
-+
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: External reference clock (25 MHz)
-+            - description: CMU_PERI IP clock (from CMU_CMU)
-+            - description: CMU_PERI DISP clock (from CMU_CMU)
-+
-+        clock-names:
-+          items:
-+            - const: fin_pll
-+            - const: ip
-+            - const: disp
-+
-+additionalProperties: false
-+
-+examples:
-+  # Clock controller node for CMU_FSYS1
-+  - |
-+    #include <dt-bindings/clock/axis,artpec9-clk.h>
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        cmu_fsys1: clock-controller@14c10000 {
-+            compatible = "axis,artpec9-cmu-fsys1";
-+            reg = <0x0 0x14c10000 0x0 0x4000>;
-+            #clock-cells = <1>;
-+            clocks = <&fin_pll>,
-+                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_SCAN0>,
-+                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_SCAN1>,
-+                     <&cmu_cmu CLK_DOUT_CMU_FSYS1_BUS>;
-+            clock-names = "fin_pll", "scan0", "scan1", "bus";
-+        };
-+    };
-+...
-diff --git a/include/dt-bindings/clock/axis,artpec9-clk.h b/include/dt-bindings/clock/axis,artpec9-clk.h
-new file mode 100644
-index 000000000000..c6787be8d686
---- /dev/null
-+++ b/include/dt-bindings/clock/axis,artpec9-clk.h
-@@ -0,0 +1,195 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright (c) 2025 Samsung Electronics Co., Ltd.
-+ *             https://www.samsung.com
-+ * Copyright (c) 2025  Axis Communications AB.
-+ *             https://www.axis.com
-+ *
-+ * Device Tree binding constants for ARTPEC-9 clock controller.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_ARTPEC9_H
-+#define _DT_BINDINGS_CLOCK_ARTPEC9_H
-+
-+/* CMU_CMU */
-+#define CLK_FOUT_SHARED0_PLL						1
-+#define CLK_DOUT_SHARED0_DIV2						2
-+#define CLK_DOUT_SHARED0_DIV3						3
-+#define CLK_DOUT_SHARED0_DIV4						4
-+#define CLK_FOUT_SHARED1_PLL						5
-+#define CLK_DOUT_SHARED1_DIV2						6
-+#define CLK_DOUT_SHARED1_DIV3						7
-+#define CLK_DOUT_SHARED1_DIV4						8
-+#define CLK_FOUT_AUDIO_PLL						9
-+#define CLK_DOUT_CMU_ADD						10
-+#define CLK_DOUT_CMU_BUS						11
-+#define CLK_DOUT_CMU_CDC_CORE						12
-+#define CLK_DOUT_CMU_CORE_MAIN						13
-+#define CLK_DOUT_CMU_CPUCL_SWITCH					14
-+#define CLK_DOUT_CMU_DLP_CORE						15
-+#define CLK_DOUT_CMU_FSYS0_BUS						16
-+#define CLK_DOUT_CMU_FSYS0_IP						17
-+#define CLK_DOUT_CMU_FSYS1_BUS						18
-+#define CLK_DOUT_CMU_FSYS1_SCAN0					19
-+#define CLK_DOUT_CMU_FSYS1_SCAN1					20
-+#define CLK_DOUT_CMU_GPU_3D						21
-+#define CLK_DOUT_CMU_GPU_2D						22
-+#define CLK_DOUT_CMU_IMEM_ACLK						23
-+#define CLK_DOUT_CMU_IMEM_CA5						24
-+#define CLK_DOUT_CMU_IMEM_JPEG						25
-+#define CLK_DOUT_CMU_IMEM_SSS						26
-+#define CLK_DOUT_CMU_IPA_CORE						27
-+#define CLK_DOUT_CMU_LCPU						28
-+#define CLK_DOUT_CMU_MIF_SWITCH						29
-+#define CLK_DOUT_CMU_MIF_BUSP						30
-+#define CLK_DOUT_CMU_PERI_DISP						31
-+#define CLK_DOUT_CMU_PERI_IP						32
-+#define CLK_DOUT_CMU_RSP_CORE						33
-+#define CLK_DOUT_CMU_TRFM						34
-+#define CLK_DOUT_CMU_VIO_CORE_L						35
-+#define CLK_DOUT_CMU_VIO_CORE						36
-+#define CLK_DOUT_CMU_VIP0						37
-+#define CLK_DOUT_CMU_VIP1						38
-+#define CLK_DOUT_CMU_VPP_CORE						39
-+#define CLK_DOUT_CMU_VIO_AUDIO						40
-+
-+/* CMU_BUS */
-+#define CLK_MOUT_BUS_ACLK_USER						1
-+
-+/* CMU_CORE */
-+#define CLK_MOUT_CORE_ACLK_USER						1
-+
-+/* CMU_CPUCL */
-+#define CLK_FOUT_CPUCL_PLL0						1
-+#define CLK_MOUT_CPUCL_PLL0						2
-+#define CLK_FOUT_CPUCL_PLL1						3
-+#define CLK_MOUT_CPUCL_PLL_SCU						4
-+#define CLK_MOUT_CPUCL_SWITCH_SCU_USER					5
-+#define CLK_MOUT_CPUCL_SWITCH_USER					6
-+#define CLK_DOUT_CPUCL_CPU						7
-+#define CLK_DOUT_CPUCL_CLUSTER_PERIPHCLK				8
-+#define CLK_DOUT_CPUCL_CLUSTER_GICCLK					9
-+#define CLK_DOUT_CPUCL_CLUSTER_PCLK					10
-+#define CLK_DOUT_CPUCL_CMUREF						11
-+#define CLK_DOUT_CPUCL_CLUSTER_ATCLK					12
-+#define CLK_DOUT_CPUCL_CLUSTER_SCU					13
-+#define CLK_DOUT_CPUCL_DBG						14
-+#define CLK_GOUT_CPUCL_SHORTSTOP					15
-+#define CLK_GOUT_CPUCL_CLUSTER_CPU					16
-+#define CLK_GOUT_CPUCL_CSSYS_IPCLKPORT_ATCLK				17
-+#define CLK_GOUT_CPUCL_CSSYS_IPCLKPORT_PCLKDBG				18
-+
-+/* CMU_FSYS0 */
-+#define CLK_MOUT_FSYS0_BUS_USER						1
-+#define CLK_MOUT_FSYS0_IP_USER						2
-+#define CLK_MOUT_FSYS0_MAIN_USER					3
-+#define CLK_DOUT_FSYS0_125						4
-+#define CLK_DOUT_FSYS0_ADC						5
-+#define CLK_DOUT_FSYS0_BUS_300						6
-+#define CLK_DOUT_FSYS0_EQOS0						7
-+#define CLK_DOUT_FSYS0_EQOS1						8
-+#define CLK_DOUT_FSYS0_MMC_CARD0					9
-+#define CLK_DOUT_FSYS0_MMC_CARD1					10
-+#define CLK_DOUT_FSYS0_MMC_CARD2					11
-+#define CLK_DOUT_FSYS0_QSPI						12
-+#define CLK_DOUT_FSYS0_SFMC_NAND					13
-+#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_ACLK_I			14
-+#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_CLK_CSR_I			15
-+#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_I_RGMII_PHASE_CLK_250	16
-+#define CLK_GOUT_FSYS0_EQOS_TOP0_IPCLKPORT_I_RGMII_TXCLK		17
-+#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_I_RGMII_PHASE_CLK_250	18
-+#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_I_RGMII_TXCLK		19
-+#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_ACLK_I			20
-+#define CLK_GOUT_FSYS0_EQOS_TOP1_IPCLKPORT_CLK_CSR_I			21
-+#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_APB_S_PCLK			22
-+#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_CORE_CLK			23
-+#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_DMA_CLK				24
-+#define CLK_GOUT_FSYS0_I3C0_IPCLKPORT_I_HDR_TX_CLK			25
-+#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_APB_S_PCLK			26
-+#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_CORE_CLK			27
-+#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_DMA_CLK				28
-+#define CLK_GOUT_FSYS0_I3C1_IPCLKPORT_I_HDR_TX_CLK			29
-+#define CLK_GOUT_FSYS0_MMC0_IPCLKPORT_SDCLKIN				30
-+#define CLK_GOUT_FSYS0_MMC1_IPCLKPORT_SDCLKIN				31
-+#define CLK_GOUT_FSYS0_MMC2_IPCLKPORT_SDCLKIN				32
-+#define CLK_GOUT_FSYS0_QSPI_IPCLKPORT_HCLK				33
-+#define CLK_GOUT_FSYS0_QSPI_IPCLKPORT_SSI_CLK				34
-+#define CLK_GOUT_FSYS0_SFMC_IPCLKPORT_I_ACLK_NAND			35
-+#define CLK_GOUT_FSYS0_I2C0_IPCLKPORT_I_PCLK				36
-+#define CLK_GOUT_FSYS0_I2C1_IPCLKPORT_I_PCLK				37
-+#define CLK_GOUT_FSYS0_MMC0_IPCLKPORT_I_ACLK				38
-+#define CLK_GOUT_FSYS0_MMC1_IPCLKPORT_I_ACLK				39
-+#define CLK_GOUT_FSYS0_MMC2_IPCLKPORT_I_ACLK				40
-+#define CLK_GOUT_FSYS0_PWM_IPCLKPORT_I_PCLK_S0				41
-+
-+/* CMU_FSYS1 */
-+#define CLK_FOUT_FSYS1_PLL						1
-+#define CLK_MOUT_FSYS1_SCAN0_USER					2
-+#define CLK_MOUT_FSYS1_SCAN1_USER					3
-+#define CLK_MOUT_FSYS1_BUS_USER						4
-+#define CLK_DOUT_FSYS1_200						5
-+#define CLK_DOUT_FSYS1_BUS_300						6
-+#define CLK_DOUT_FSYS1_OTP_MEM						7
-+#define CLK_DOUT_FSYS1_PCIE_PHY_REFCLK_SYSPLL				8
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_PHY_APB2CR_PCLK_100		9
-+#define CLK_GOUT_FSYS1_UART0_PCLK					10
-+#define CLK_GOUT_FSYS1_UART0_SCLK_UART					11
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_PHY_APB2CR_PCLK_300		12
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_DBI_ACLK_SOC		13
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_MSTR_ACLK_SOC		14
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X1_SLV_ACLK_SOC		15
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_DBI_ACLK_SOC		16
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_MSTR_ACLK_SOC		17
-+#define CLK_GOUT_FSYS1_IPCLKPORT_PCIE_SUB_CON_X2_SLV_ACLK_SOC		18
-+#define CLK_GOUT_FSYS1_USB20DRD_IPCLKPORT_ACLK_PHYCTRL_20		19
-+#define CLK_GOUT_FSYS1_USB20DRD_IPCLKPORT_BUS_CLK_EARLY			20
-+#define CLK_GOUT_FSYS1_XHB_AHBBR_FSYS1_IPCLKPORT_CLK			21
-+#define CLK_GOUT_FSYS1_XHB_USB_IPCLKPORT_CLK				22
-+
-+/* CMU_IMEM */
-+#define CLK_MOUT_IMEM_ACLK_USER						1
-+#define CLK_MOUT_IMEM_CA5_USER						2
-+#define CLK_MOUT_IMEM_SSS_USER						3
-+#define CLK_MOUT_IMEM_JPEG_USER						4
-+#define CLK_DOUT_IMEM_PCLK						5
-+#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_ATCLK				6
-+#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_CLKIN				7
-+#define CLK_GOUT_IMEM_CA5_0_IPCLKPORT_PCLK_DBG				8
-+#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_ATCLK				9
-+#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_CLKIN				10
-+#define CLK_GOUT_IMEM_CA5_1_IPCLKPORT_PCLK_DBG				11
-+#define CLK_GOUT_IMEM_MCT0_PCLK						12
-+#define CLK_GOUT_IMEM_MCT1_PCLK						13
-+#define CLK_GOUT_IMEM_MCT2_PCLK						14
-+#define CLK_GOUT_IMEM_MCT3_PCLK						15
-+#define CLK_GOUT_IMEM_PCLK_TMU0_APBIF					16
-+
-+/* CMU_PERI */
-+#define CLK_MOUT_PERI_IP_USER						1
-+#define CLK_MOUT_PERI_DISP_USER						2
-+#define CLK_DOUT_PERI_125						3
-+#define CLK_DOUT_PERI_PCLK						4
-+#define CLK_DOUT_PERI_SPI						5
-+#define CLK_DOUT_PERI_UART1						6
-+#define CLK_DOUT_PERI_UART2						7
-+#define CLK_GOUT_PERI_DMA4DSIM_IPCLKPORT_CLK_APB_CLK			8
-+#define CLK_GOUT_PERI_DMA4DSIM_IPCLKPORT_CLK_AXI_CLK			9
-+#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_APB_S_PCLK			10
-+#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_CORE_CLK				11
-+#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_DMA_CLK				12
-+#define CLK_GOUT_PERI_I3C2_IPCLKPORT_I_HDR_TX_CLK			13
-+#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_APB_S_PCLK			14
-+#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_CORE_CLK				15
-+#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_DMA_CLK				16
-+#define CLK_GOUT_PERI_I3C3_IPCLKPORT_I_HDR_TX_CLK			17
-+#define CLK_GOUT_PERI_APB_ASYNC_DSIM_IPCLKPORT_PCLKS			18
-+#define CLK_GOUT_PERI_I2C2_IPCLKPORT_I_PCLK				19
-+#define CLK_GOUT_PERI_I2C3_IPCLKPORT_I_PCLK				20
-+#define CLK_GOUT_PERI_SPI0_PCLK						21
-+#define CLK_GOUT_PERI_SPI0_SCLK_SPI					22
-+#define CLK_GOUT_PERI_UART1_PCLK					23
-+#define CLK_GOUT_PERI_UART1_SCLK_UART					24
-+#define CLK_GOUT_PERI_UART2_PCLK					25
-+#define CLK_GOUT_PERI_UART2_SCLK_UART					26
-+
-+#endif /* _DT_BINDINGS_CLOCK_ARTPEC9_H */
--- 
-2.17.1
+Also, I would not require equality. The Rust team did not think that it
+would ever increase in size, but it may decrease.
 
+>  /// The core representation of a device in the kernel's driver model.
+>  ///
+>  /// This structure represents the Rust abstraction for a C `struct device`. A [`Device`] can either
+> @@ -198,12 +204,29 @@ pub unsafe fn as_bound(&self) -> &Device<Bound> {
+>  }
+>  
+>  impl Device<CoreInternal> {
+> +    fn type_id_store<T: 'static>(&self) {
+
+This name isn't great. How about "set_type_id()" instead?
+
+Alice 
 
