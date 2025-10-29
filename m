@@ -1,157 +1,177 @@
-Return-Path: <linux-kernel+bounces-875019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32AFCC18079
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:15:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52120C1807C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A58F1A602DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:15:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A9C794EF92A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C22F1F790F;
-	Wed, 29 Oct 2025 02:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F3B1AA1D2;
+	Wed, 29 Oct 2025 02:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="faZ2750Z"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gFZ45Y6v"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F62189906
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934AF126BF7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761704124; cv=none; b=hFbFrTnDqqIgYtm7Z4hAyFnGznKT1c4n9FOWfx+3Era5iI6sTlHmwedvszW246JP0kUipGXLbD9PEbI2eWD47EULteMi7tIIRLZj0MEDdLNmzQUEGLbjQEbIJmFsBVOfqLq4d66VgOKxfTYVd5JtUSnl9wiGWODuiNzLgMSxmxo=
+	t=1761704164; cv=none; b=IjetfowNnXqFf+Fg39zycrd1FsU6A8mWqyVrPARFIpJUycAEUwSwDyRyzfyJBAj8FbvH5x7nyWQxGKTDHcHHOlcnxK+J9A3Sw0CmQGYgVjPItOQdy90maeX3L7XhvS9cEZ6sNAsgsA1qiJspJz7vJPtsjuBmzWeH2RAq5N0qDZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761704124; c=relaxed/simple;
-	bh=CEvAhyPYCG+T++r8yJdAAsbzjdXegc+nM5rNng/jC1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ftpnn06ZwMfJ7FPl1+WPKYIKI6X5k0SSxuisyZqOHm0IAfKDUxHJ+NUNDJ39Z+7V45yMWlrwOFhawCwJZgK9Ppg97SPj7dSZj7g22fxoksl8U6AiUT8tkp5Rm1/tlkmHh/ZOTYd49zemR/96Ts0X8XgOpaoTk0fuXnt2uidwriw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=faZ2750Z; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-7a4176547bfso3608958b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:15:21 -0700 (PDT)
+	s=arc-20240116; t=1761704164; c=relaxed/simple;
+	bh=ARyRKLgC7kM5VyifivsbzBjR6gWaQK88f59a3fGCDUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g1Oyu1If7LIRAaFIwGuwh0ogV7ZBoRsKDXGtkM+BoecZ1qPrYMAK395ZipR6ZXCRcJB705Jzbm9kbUdo6/ZW3FUjbdk52npcqWbtb/VBpz6sOJGWfZ9KhApD4NObe0V1zxB2vUTrU7KN3GR4QV1uJ5JxoGnTkHETQf5618dtZ0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gFZ45Y6v; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso6011972a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:16:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761704121; x=1762308921; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ktlh/43BHkPq4CFdjDK0hsgcK6sJG2dQbSUlBR4d9/E=;
-        b=faZ2750Zrl+eNv3NGWVEaGwepo6Zkz4kH2odDlkpwNMF9pJDYkx3DC666E4WWeCqY7
-         CMzxrs00jWOJyeoYLi5SlTpjAw+ji2QH0SiG2YkfjGM5IbA/fdC68WORkSRRbQINHPRd
-         JRzOek2lFeRKJgWRwBtGEGQ2mrrQOjrv25NDjWEVn8VzKGEjIzM6QDKV/IrJc0YkAOAS
-         jC5TALIDom5EX54a/hrkHf0s1dUvL7YyrFcFMmL+rH45AxnSB47LwgSJg2pi/uW2RsIC
-         Zf8Ue7ZWRrz3v5FVHUBBe3KMLI3FUAy++EDIHou9a8zcXqS5Da6IsMD1vfgLmAbl0ZIE
-         pL0Q==
+        d=paul-moore.com; s=google; t=1761704161; x=1762308961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1Z4i/cJ7TwXS62lu0Ks328mnczTfLqwKUI5pI9nPizQ=;
+        b=gFZ45Y6v/mRgNboJAhrG9nlibg80iyBZI5Vux9ggMKTBadMMNNMOLfyXhy2BJ0SYdJ
+         nzq8ula7aM0QUfHgiqgeBDJTFSU8Njf8HbvjbQ2FHBCRYaFFvzHnT++umdEoxCG4t1Ta
+         gBSYxl88SoYH8PF6sFnV2lNseNSw3txnpHc/QjwT7xNntStjMdKrr4qSoKw4CC60QhzY
+         I4EeyCSKOMqEhRVb5soPBcwm2mDKc3Rhhw34+TGMVB28mHL7QMSk5/xXPIkcisT3JrjC
+         APVP23ptF6pAF5laa53MUse2WAC8MPX96zgcGDmkx8IRlAOZE3a3GbuNJ8cwhBbxWQso
+         KWqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761704121; x=1762308921;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ktlh/43BHkPq4CFdjDK0hsgcK6sJG2dQbSUlBR4d9/E=;
-        b=frpPg2gYz6q9eukpkdkuxYFIgTUIvVGeK2zJirxcPeYuS6DdJVD2DIPxnTSmdTChVD
-         4cy8lvZQ5fZRlIzBBkFubJGPrSSNHbkLa4kMHmrOpvZBZS5u16d0xiCN3I3Dv8FIP4L9
-         8vKuZe7BBcA4NhqZPqRgO4FVopg4Ao5MP7Yy9N6M8GUmwEFncR+ahUZcce5mopBJKz63
-         BmGct2uj7jf1JhXwA9miyfHnhx/7TNY9RU7ZqneMa08IJjhqB0Kr18+I0c4zxaqpF3FK
-         2GAIoCUcpXCKU7Dxc6Ex/4T5VoOh5KTWODQKb141DMjukg5pFlrXGi0b1H9FeOC4xaNM
-         0bVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaw2HwgI4Rjq3NGec2XhsJS4kJPuUerULiIcoLe5fOx37N20Scgmjhd0dryBmp5ClYSiLBC0pSuGPUoqU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFiyv5+elz03msKlWnBch2bfAUQMAgahp6U1NEO7HHmWZbieLm
-	ck90wDMvyzSbR9tB/SzGoTBXMRJO2fLMwy0VU4j1nqeIdACT9V2udRDb
-X-Gm-Gg: ASbGncvP7NmaxRJ3kT3o/MY7AevmaDWqIfHnn39aQmhYoScR3c6LVE9rBkCEyCL97Tc
-	sV8M3pI0v7Jc16S7sggOPSTsF41MOCdFVyktj0trekN/Rh+7vZoJ7Nl5f7Jwt8odRBh2o51sgpA
-	TkA1n/f/vIwX+9O7a9FBGP4sAx7cAMCEl5bQn3me0ak7rVEqUqlaA9eKgHXN5UziJOb5YFbFvYd
-	oeKzn2esS3NN2kMV7d+v389CSb6VQo4iJSvHFtG8aFRjTJMQnbKYimZVjypBHk32QXc35qTwtUo
-	568ZT7d2wOO5S1YFE3VpuivPNJxtIQOkV6/B91q4Mm1Rhzd5UUwCc1ZHPlOABljUNxmyYWqiAlz
-	+XoXrxLaRgZjAtTVVV2q7zeqIZteOwxyv1ZqVifEYyjqMq76dh7qtEw3SDpjMJIm+9Muz47LfYY
-	vl
-X-Google-Smtp-Source: AGHT+IH/g79Ujfibd+JTMvUkBpYFAQJiqZkOLBJGhObxS6FSqfhAX6RVRxRENNGWr6hg43128FBG8Q==
-X-Received: by 2002:a05:6a20:7d8b:b0:344:a607:5548 with SMTP id adf61e73a8af0-346558e31a1mr1592301637.58.1761704120749;
-        Tue, 28 Oct 2025 19:15:20 -0700 (PDT)
-Received: from 7950hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b712d024aaasm12124442a12.26.2025.10.28.19.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Oct 2025 19:15:20 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org
-Cc: rostedt@goodmis.org,
-	jolsa@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	jiang.biao@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: fprobe: use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-Date: Wed, 29 Oct 2025 10:15:14 +0800
-Message-ID: <20251029021514.25076-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.51.1
+        d=1e100.net; s=20230601; t=1761704161; x=1762308961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Z4i/cJ7TwXS62lu0Ks328mnczTfLqwKUI5pI9nPizQ=;
+        b=TSBrOiDb/9tDbl9ds5pc/Hq45yO0VRamWcEOZcpjyY/hK/3Q6dhJ42XfTLZJ7ckuAD
+         qNSILOWMzMN+kTkJzw/76MCju6rZdTj5xLmuEAi7OmDEWhc+K2H1XbJYhtWxIK81fE2L
+         kQ5adzhcSHTTa1eGSoYKZYHtenhfzJ2KrMSJhL3iwX0u6koKdITphgwjVJSgbO+dhZGG
+         x2vtfBZyq8hIGXngiJs+3I4AkQmmEblgdX1TK8oUL1gQD8a+VbumW/PbqZ+Rc4WwnjdT
+         nFP7g1eDVZcWQpiJNc9zB+vnyvOjUDXl/7Z7tLBtIjPp78YMVqAfIFOITXXMbC5F44ls
+         /Nkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWpVFqL6Jf5PmBI/HHQ/5/t/A2QKK1yolZyi/ty5l0ZymwoTna3UXlkdqlucfqWPUtIzV6DLPjiDB4QIFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9FRCRDkRfebfKDSmg889IwVdfAfe40dY37lNVmtbHhpfHp5a5
+	7IDSGGhRG6taI7kPpFNEcoaBR+Hiq/UxDGJmKngKWnDOufBuT1q40+kAzlvBthM02/QIE9DiuMN
+	lyNGSVXdgrutvDzSotkgpQOVUOcjEG5GqUkasJ7wdAKkYdKTrW5cfFA==
+X-Gm-Gg: ASbGncveJooTCyrdFj/5R3sLA33f4F91aXlG2LF2vvxMNQgdrStNZJuEZctEcsNjofy
+	l4+3vZOVT/3E/U0FL9FLPLvcO/Jh6VSmgmqY7tewBxXRy3gLsSUuk9vk7t04xreSl7AMphhT+6F
+	3VXoQRalm/2v2LUufM+lH2ELyxoiTlx7TP2H6zH1sk0AGdIUzcCgoippcGa7/QfL8eSMbKL3FCb
+	s+GnHYzu2wHj716hgs1G5Y0zpRLbZX1JkyEeui7BGI++spYRTZURs+8Vppj
+X-Google-Smtp-Source: AGHT+IFabcSQt9M5y3fDoD8jUgMf2MuJyHJOnxcYAyMVXS602xVGJ3Z8xp1XeyY5yCpZHLL7Cj9naoT5kL+P9mGfQFk=
+X-Received: by 2002:a17:90b:3ec4:b0:33b:b020:5968 with SMTP id
+ 98e67ed59e1d1-3403a2a2304mr1604393a91.21.1761704160714; Tue, 28 Oct 2025
+ 19:16:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251029005448.495880-1-isaacmanjarres@google.com>
+ <CAHC9VhRp0QTAZqux8JbL1JUfLxMV9G22Q0rKZ5fQL2C_8mod_Q@mail.gmail.com> <CABfwK109-4zzBUiQRdNg1re0dQ+dRdau=OXNFhtNsUc6YAEyBA@mail.gmail.com>
+In-Reply-To: <CABfwK109-4zzBUiQRdNg1re0dQ+dRdau=OXNFhtNsUc6YAEyBA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 28 Oct 2025 22:15:49 -0400
+X-Gm-Features: AWmQ_bn2NEgqJH0AOdinubhn7W0GHQ1zBXnZ6Q4GwY2tvpXHzRyHYLGZOuaAuRw
+Message-ID: <CAHC9VhTF646GKPVQjS+bvdws2c8DjdR3jRX4Hc-vUjiF-b0mLA@mail.gmail.com>
+Subject: Re: [PATCH v1] audit: Improve path logging for unlinked files
+To: Isaac Manjarres <isaacmanjarres@google.com>
+Cc: Eric Paris <eparis@redhat.com>, surenb@google.com, aliceryhl@google.com, 
+	tweek@google.com, kernel-team@android.com, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For now, we will use ftrace for the fprobe if fp->exit_handler not exists
-and CONFIG_DYNAMIC_FTRACE_WITH_REGS is enabled.
+On Tue, Oct 28, 2025 at 9:22=E2=80=AFPM Isaac Manjarres
+<isaacmanjarres@google.com> wrote:
+> On Tue, Oct 28, 2025 at 6:09=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Tue, Oct 28, 2025 at 8:54=E2=80=AFPM Isaac J. Manjarres
+> > <isaacmanjarres@google.com> wrote:
+> > >
+> > > When logging the path associated with a denial, the path is scanned
+> > > to ensure that it does not contain control characters, unprintable
+> > > characters, double quote marks, or spaces. If it does, the hexadecima=
+l
+> > > representation of the path is emitted.
+> > >
+> > > This can make debugging difficult in scenarios where the file name th=
+at
+> > > was given to the file does not contain any of those characters,
+> > > but the hexadecimal representation of the path is still emitted when =
+a
+> > > denial occurs because the file is unlinked.
+> > >
+> > > For example, suppose a memfd is created with the name "MemoryHeapBase=
+".
+> > > Memfds are unlinked, so when a denial related to that memfd is
+> > > encountered, and the the path name for it is obtained via d_path(), t=
+he
+> > > name will be: "/memfd:MemoryHeapBase (deleted)". Since the name has a
+> > > space, the audit logic will just print the hexadecimal representation
+> > > instead of the name:
+> > >
+> > > type=3D1400 audit(0.0:319): avc:  denied  { read write } for
+> > > path=3D2F6D656D66643A4D656D6F72794865617042617365202864656C6574656429
+> > > dev=3D"tmpfs" ino=3D75 scontext=3Du:r:audioserver:s0
+> > > tcontext=3Du:object_r:system_server:s0 tclass=3Dmemfd_file permissive=
+=3D0
+> > >
+> > > To improve debuggability of denials related to unlinked files, check
+> > > if the " (deleted)" suffix is detected in a path name and remove it
+> > > if so. This allows the actual filename to be validated and emitted
+> > > if appropriate, making denials easier to read and more actionable:
+> > >
+> > > type=3D1400 audit(0.0:254): avc:  denied  { read write } for
+> > > path=3D"/memfd:MemoryHeapBase" dev=3D"tmpfs" ino=3D67
+> > > scontext=3Du:r:audioserver:s0 tcontext=3Du:object_r:system_server:s0
+> > > tclass=3Dmemfd_file permissive=3D0
+> > >
+> > > Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+> > > ---
+> > >  kernel/audit.c | 16 ++++++++++++++--
+> > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> >
+> > I'd prefer not to add any additional string processing to the audit hot=
+ path.
+>
+> Hi Paul,
+>
+> Thank you for taking the time to look through the patch. Would it help
+> if I could
+> optimize the logic to scan for the " (deleted)" string from the end of
+> the string
+> so that the search is bounded by at most 10 characters? I can also switch=
+ to
+> calling audit_log_n_untrustedstring() instead to avoid another call to st=
+rlen().
+>
+> If not, do you have any other suggestions to help make this improvement?
 
-However, CONFIG_DYNAMIC_FTRACE_WITH_REGS is not supported by some arch,
-such as arm. What we need in the fprobe is the function arguments, so we
-can use ftrace for fprobe if CONFIG_DYNAMIC_FTRACE_WITH_ARGS is enabled.
+Since we don't know the length of the path string, I'm not sure
+starting the search from the end would be a significant improvement as
+you would still need to traverse the string to find the end, and then
+do the search.  It is possible that searching from the end may be
+slower than searching from the front, although as you point out, some
+of this work could be reused through the use of
+audit_log_n_untrustedstring().
 
-Therefore, use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_REGS or
-CONFIG_DYNAMIC_FTRACE_WITH_ARGS enabled.
+However, we're still doing string processing/searching in a critical
+path.  Audit is already suffering from far too much string processing
+and I'm *extremely* hesitant to add any more unless there simply is no
+other way.  As this is a "nice to have" sort of thing, and not a
+critical bug fix, I'd strongly prefer not to do the extra work here.
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- kernel/trace/fprobe.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+As far as other suggestions are concerned, nothing comes immediately
+to mind, I'm sorry.
 
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index ecd623eef68b..9fad0569f521 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -254,7 +254,11 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
- 	return ret;
- }
- 
--#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-+#if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-+#define FPROBE_USE_FTRACE
-+#endif
-+
-+#ifdef FPROBE_USE_FTRACE
- /* ftrace_ops callback, this processes fprobes which have only entry_handler. */
- static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
- 	struct ftrace_ops *ops, struct ftrace_regs *fregs)
-@@ -295,7 +299,7 @@ NOKPROBE_SYMBOL(fprobe_ftrace_entry);
- 
- static struct ftrace_ops fprobe_ftrace_ops = {
- 	.func	= fprobe_ftrace_entry,
--	.flags	= FTRACE_OPS_FL_SAVE_REGS,
-+	.flags	= FTRACE_OPS_FL_SAVE_ARGS,
- };
- static int fprobe_ftrace_active;
- 
-@@ -349,7 +353,7 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
- {
- 	return false;
- }
--#endif
-+#endif /* !FPROBE_USE_FTRACE */
- 
- /* fgraph_ops callback, this processes fprobes which have exit_handler. */
- static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-@@ -599,7 +603,7 @@ static int fprobe_module_callback(struct notifier_block *nb,
- 	if (alist.index > 0) {
- 		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
- 				      alist.addrs, alist.index, 1, 0);
--#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-+#ifdef FPROBE_USE_FTRACE
- 		ftrace_set_filter_ips(&fprobe_ftrace_ops,
- 				      alist.addrs, alist.index, 1, 0);
- #endif
--- 
-2.51.1
-
+--
+paul-moore.com
 
