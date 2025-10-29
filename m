@@ -1,257 +1,166 @@
-Return-Path: <linux-kernel+bounces-876298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BD67C1B2B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:22:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604A6C1B510
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:43:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFE61AA5606
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:06:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EDDEA5C55A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A4F2EBB96;
-	Wed, 29 Oct 2025 13:56:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FFC35580B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499142D8780;
+	Wed, 29 Oct 2025 13:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="rCVx1NtM"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593AC2E7BCA;
+	Wed, 29 Oct 2025 13:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746172; cv=none; b=f8mQIFZ0dIp1FfTTYQ8spf4nSdgo7t+LKF6qmcA1npHlqvo2QCH+WSghZwF3C6fTgAPSVHZlHA2FLWm1kfvkMz+HGbrTCkTF9uNN3aKzbpo5OIXa2hzD5WxwfoyQJUSnU/2zc8qvtgCpy0I1ZxWvsQ8ycnWegi2C7VLSIvFbElc=
+	t=1761746206; cv=none; b=dcugAXY4UKnY0uKGQIWagbnci7jTRJuHuQOcoDCimzNWN8C3xEvpQXdA6tAheZjkRKeT5SxY5MvmyndIsTInmeSgNFz5mOaGpMrtaieCAyMcWayRhbYjinPI4ML+cQbG7f7e99YnzVTpkoLPAyji9CgCtXskXuCgRo60gdcOJSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746172; c=relaxed/simple;
-	bh=KubnLurAppQNnPOcx/MIihZ9+VYxUP4oaCZb0K//AZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiaW0KDgIdLyc0+SMgRff+XrQcbTMw4iDXPS6OHkX/r6WXqHjRIc5H7Vm+x04DK1u7x8N8cebBm/EQrLOqd9yrGvA9lpBLJpaMvYxnr86AvYOxQKNhvZtSpKxJZ2QDZ2EFyLG/7ieuSzv0Pbp6IKglVX0TOK6Z1czwrMIbP6gbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A1A6C1C2B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:01 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3CA2E3F66E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:09 -0700 (PDT)
-Date: Wed, 29 Oct 2025 13:55:43 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: Rob Herring <robh@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v8 1/5] dt-bindings: gpu: mali-valhall-csf: add
- mediatek,mt8196-mali variant
-Message-ID: <aQIc39c8MvU37G_q@e110455-lin.cambridge.arm.com>
-References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
- <6599426.lOV4Wx5bFT@workhorse>
- <aQFoKoWIlf7xPzZX@e110455-lin.cambridge.arm.com>
- <3127655.ElGaqSPkdT@workhorse>
+	s=arc-20240116; t=1761746206; c=relaxed/simple;
+	bh=4RLicWUzROreXSiry1Kw0DsHvkQc08OmEX4o7YAnHdg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iLzeD9CKXHHbWTZZz2+LiMzWUwxabI3iREEhdRbhPcdYz2fwRo7jqC0gHwh+I1j1j0ZKPFslcGKA0VZ4ipRCeiCUwz9BdZCrzRFPaI1iRM/ESNU7FSV2YTO1ZGrvJXLw0qMKTmrCQdIBWZMLPxIiswAUbXl6ttN/3LaTyg6tZKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=rCVx1NtM; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=0Ckgyx24GYTCXQtBdsGVpDpore92ssMOiJZhEkw6Qgg=; t=1761746204;
+	x=1762178204; b=rCVx1NtMp9IBgp1emIF7P/56JMKI38TrgTGjX9UZitYDl9usEcDeqfH7Hhrvg
+	L9rtL/MFxy3p2KpSFdLd8DICIe7r/WlJYCe0ugXAmJkjjzF7w21oujmHKCeN/3qHICfPWZ+K4YzQ3
+	c58yVNla4CQsJiuk/wCQmFtzSpR9Vv4T2JH2CU0MhtQ1iPRot5ABUgCdL6nuDv7D6ukyFCD+lAIaS
+	vfFslLPnUBT5FFNqoFXa7H6RTRDXmFRATD8FhIY4io0zHxV3mxfoMDnoYIayCXKFn9KSk3vJ4WV0O
+	FAqYl8kUlz5VImrWgXb15b4AUegLXkBKAtb6b07Tx3GkKxsqgw==;
+Received: from [2a02:8108:8984:1d00:a0cf:1912:4be:477f]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128)
+	id 1vE6fE-00CQIn-0S;
+	Wed, 29 Oct 2025 14:56:36 +0100
+Message-ID: <16cd7071-3c19-4e32-ba11-ce0856a6f2f8@leemhuis.info>
+Date: Wed, 29 Oct 2025 14:56:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3127655.ElGaqSPkdT@workhorse>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] kernel-chktaint: add reporting for tainted modules
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+References: <20251029043901.10755-1-rdunlap@infradead.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: de-DE, en-US
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 MEK4
+In-Reply-To: <20251029043901.10755-1-rdunlap@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1761746204;99646ccc;
+X-HE-SMSGID: 1vE6fE-00CQIn-0S
 
-On Wed, Oct 29, 2025 at 02:42:35PM +0100, Nicolas Frattaroli wrote:
-> On Wednesday, 29 October 2025 02:04:42 Central European Standard Time Liviu Dudau wrote:
-> > On Tue, Oct 28, 2025 at 09:51:43PM +0100, Nicolas Frattaroli wrote:
-> > > On Tuesday, 28 October 2025 18:12:35 Central European Standard Time Liviu Dudau wrote:
-> > > > On Fri, Oct 17, 2025 at 05:31:08PM +0200, Nicolas Frattaroli wrote:
-> > > > > The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
-> > > > > control the power and frequency of the GPU. This is modelled as a power
-> > > > > domain and clock provider.
-> > > > > 
-> > > > > It lets us omit the OPP tables from the device tree, as those can now be
-> > > > > enumerated at runtime from the MCU.
-> > > > > 
-> > > > > Add the necessary schema logic to handle what this SoC expects in terms
-> > > > > of clocks and power-domains.
-> > > > > 
-> > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > > > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-> > > > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > > > > ---
-> > > > >  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 37 +++++++++++++++++++++-
-> > > > >  1 file changed, 36 insertions(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> > > > > index 613040fdb444..860691ce985e 100644
-> > > > > --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> > > > > @@ -45,7 +45,9 @@ properties:
-> > > > >      minItems: 1
-> > > > >      items:
-> > > > >        - const: core
-> > > > > -      - const: coregroup
-> > > > > +      - enum:
-> > > > > +          - coregroup
-> > > > > +          - stacks
-> > > > >        - const: stacks
-> > > > 
-> > > > I'm not sure how to parse this part of the change. We're overwriting the property
-> > > > for mt8196-mali anyway so why do we need this? And if we do, should 'stacks'
-> > > > still remain as a const?
-> > > 
-> > > The properties section outside of the if branches outside here
-> > > specifies a pattern of properties that matches for all devices.
-> > > 
-> > > In this case, I changed it so that the second clock-names item
-> > > may either be "coregroup" or "stacks".
-> > 
-> > Why would we want to do that for non-MT8196 devices? It doesn't make sense to me.
-> > The overwrite in the if branch should be enough to give you want you want (i.e.
-> > core followed by stacks and only that).
+On 10/29/25 05:39, Randy Dunlap wrote:
+> Check all loaded modules and report any that have their 'taint'
+> flags set along with a count of all tainted modules.
+> The tainted module output format is:
+>  * <module_name> (<taint_flags>)
 > 
-> I built my understanding of why on the same reason of why we specify
-> a minItems of 1 but require it to be 3 in the if branch of the only
-> other compatible (rk3588): it describes what may be found in those
-> properties, not what is required by the specific compatible preceding
-> the generic valhall compatible. arm,mali-valhall-csf is currently
-> not described as a compatible that's allowed to appear stand-alone
-> without some other compatible before it to specify further which SoC
-> it's on, so it really just is whatever RK3588 needs vs. whatever
-> MT8196 needs at the moment.
+> Example output:
 > 
-> Arguably though, there's no functional difference here, and I'm not
-> aware on any rules regarding this. My change may be problematic
-> however, because of the whole double stacks thing.
+> Kernel is "tainted" for the following reasons:
+>  * externally-built ('out-of-tree') module was loaded  (#12)
+>  * unsigned module was loaded (#13)
+> Raw taint value as int/string: 12288/'G           OE      '
+> 
+> Modules tainted: 1
+>  * dump_test (OE)
 
-I think I'm saying the same thing. The "arm,mali-valhall-csf" is the most general
-compatible string and defines the common denominator if not overwritten. I'm
-not expecting anyone to use just that string for a compatible, but downstream
-we have additional compatible strings that don't have to update the schema at all.
-rk3588 has a specific setup that requires 3 clocks so you cannot have any optional,
-that's why it is overwriting the minItems. Your whole double stack thing is
-actually not needed if all you do is overwrite in the MT8196 case the clock
-names and maxItems to only need two clocks.
+Great. Now I wonder if the "1" really is needed, but whatever. I only
+mentioned that because something else came to my mind:
 
-> 
-> > > Yes, the third "stacks"
-> > > remains, though if you wanted to be extra precise you could
-> > > then specify in the non-MT8196 cases that we should not have
-> > > stacks followed by stacks, but I'd wager some checker for
-> > > duplicate names may already catch that.
-> > > 
-> > > However, I don't think it's a big enough deal to reroll this
-> > > series again.
-> > 
-> > I'm not asking you to re-roll the series but if you agree to drop that
-> > part I can make the edit when merging it.
-> 
-> If the other DT maintainers (especially Rob who gave it his R-b)
-> are okay with dropping it, then yes please do.
+The script can be called with a positive integer as parameter to decode
+a value you retrieved from /proc/sys/kernel/tainted on another system.
+Then the module check likely should be omitted. 
 
-Rob, do you agree with dropping the change in the generic bindings?
+[...] 
+> +echo "Raw taint value as int/string: $taint/'$out'"
+> +
+> +# report on any tainted loadable modules
+> +[ -r /sys/module/ ] && cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0
 
-Best regards,
-Liviu
+Maybe by replacing that line with something like this (untested;
+not even sure if the foo && bar && baz || foobar really works):
 
-> 
-> Kind regards,
-> Nicolas Frattaroli
-> 
-> > 
-> > Best regards,
-> > Liviu
-> > 
-> > > 
-> > > Kind regards,
-> > > Nicolas Frattaroli
-> > > 
-> > > > 
-> > > > Best regards,
-> > > > Liviu
-> > > > 
-> > > > >  
-> > > > >    mali-supply: true
-> > > > > @@ -110,6 +112,27 @@ allOf:
-> > > > >          power-domain-names: false
-> > > > >        required:
-> > > > >          - mali-supply
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        compatible:
-> > > > > +          contains:
-> > > > > +            const: mediatek,mt8196-mali
-> > > > > +    then:
-> > > > > +      properties:
-> > > > > +        mali-supply: false
-> > > > > +        sram-supply: false
-> > > > > +        operating-points-v2: false
-> > > > > +        power-domains:
-> > > > > +          maxItems: 1
-> > > > > +        power-domain-names: false
-> > > > > +        clocks:
-> > > > > +          maxItems: 2
-> > > > > +        clock-names:
-> > > > > +          items:
-> > > > > +            - const: core
-> > > > > +            - const: stacks
-> > > > > +      required:
-> > > > > +        - power-domains
-> > > > >  
-> > > > >  examples:
-> > > > >    - |
-> > > > > @@ -145,5 +168,17 @@ examples:
-> > > > >              };
-> > > > >          };
-> > > > >      };
-> > > > > +  - |
-> > > > > +    gpu@48000000 {
-> > > > > +        compatible = "mediatek,mt8196-mali", "arm,mali-valhall-csf";
-> > > > > +        reg = <0x48000000 0x480000>;
-> > > > > +        clocks = <&gpufreq 0>, <&gpufreq 1>;
-> > > > > +        clock-names = "core", "stacks";
-> > > > > +        interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
-> > > > > +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
-> > > > > +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
-> > > > > +        interrupt-names = "job", "mmu", "gpu";
-> > > > > +        power-domains = <&gpufreq>;
-> > > > > +    };
-> > > > >  
-> > > > >  ...
-> > > > > 
-> > > > 
-> > > > 
-> > > 
-> > > 
-> > > 
-> > > 
-> > 
-> > 
-> 
-> 
-> 
+[ $1 -eq 0 ] && [ -r /sys/module/ ] && cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0  
+> +if [ $cnt -ne 0 ]; then
+> +	echo
+> +	echo "Modules tainted: $cnt"
+> +	for dir in `ls /sys/module` ; do
+> +		if [ -r /sys/module/$dir/taint ]; then
+> +			modtnt=`cat /sys/module/$dir/taint`
+> +			[ "$modtnt" = "" ] || echo " * $dir ($modtnt)"
+> +		fi
+> +	done
+> +fi
+> +
+> +echo
+>  echo "For a more detailed explanation of the various taint flags see"
+>  echo " Documentation/admin-guide/tainted-kernels.rst in the Linux kernel sources"
+>  echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
+> -echo "Raw taint value as int/string: $taint/'$out'"
+>  #EOF#
 > 
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+
+
 
