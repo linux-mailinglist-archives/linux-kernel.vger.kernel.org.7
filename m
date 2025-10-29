@@ -1,184 +1,136 @@
-Return-Path: <linux-kernel+bounces-874947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C507DC17AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:57:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C5AC17B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:59:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4AD764F9EB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:56:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B32188B437
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 00:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66302D7DC8;
-	Wed, 29 Oct 2025 00:56:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E347D2D7DCA;
+	Wed, 29 Oct 2025 00:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UrYDOyka"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KGcbP/Ui"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96AE2D8388
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E7277C9E;
+	Wed, 29 Oct 2025 00:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761699389; cv=none; b=XXBhvFLXIZZ9WwFez18O5vuUksOgMX2h+Pp5jrL7xXLBPBH7cTuKWZDI5yqBtAdXaOeMKq5YhaDZX+h+ytqlG9l5pA6lD5TTYAwg0SLkb6EKmQeKHfMFR8TF7KhJENNAJXBP+KbFVUvks/omKOTLEV8Xhs4TmSBv9dk3N6FiYb8=
+	t=1761699552; cv=none; b=BoVWzvlLGIg5hWdgwEnVdgobVlAsxOtseKFc0KnRC6rNmkZ1vFVvpl/BYOMdZ5t3eELRo3hpQo4Gc4V8HTt2AzARN9yqOgi8FxMqFBDzv3609HbBqFccPh4oGySbVi+d9Z0NyXXT62p2itg33kld2yC4qlVpDPI/J2/f6ZhGz2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761699389; c=relaxed/simple;
-	bh=h/EPR5R47qLSS906RL+S0spd7IC9iAe0ya9Jgl77/eI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=FZTX2u8m8oxz2nHk/j2H262lif9H8HhfN3bT/S1wCwxEYfWjvCtyTUuIBi0MTBZeuKJgWNOrKHyLGap9+rSEmCmAd0LJjX+enRv/k7R9aPDqXPemQ/ha8UBC1uWgMaZlvw3RQ0Ks1v4jtDkbpH8+rJW3oQIW9ITVVlRC7SSY/z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UrYDOyka; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-33bcb7796d4so6319164a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 17:56:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761699387; x=1762304187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=upoMfybmbc/1ds2YKNLV5b3LJhcfmEcs/moGK/drz3I=;
-        b=UrYDOykaW8na5cogsHnKsdYb1Ja9H6S3aP0ELPKKjkjOTWtRT0Iv5gAgCxgHvshHGi
-         f5Qh5ROUaleL0B5TOAhqz/Br8JYvzHkeX+XQknxmOpMssqDkdB9BANDQl5zQU24/IQ/9
-         9AeXHpMXzitvTDx7NHUrEdPT9B8uYdrH42z1EoR2vl6p5zmK+Ug9urUclQ6Wj78LCJIU
-         YagZn+egLimkdF5/q59L6yquVUHWEdvNYGcVLX77xKfkODIp6ZoKPNTPhLVXnk0o6S9D
-         yCVr475nDAm3JzlA8Vf2cm1pkfjcPgi0p0wc9R/QKirdqMFv0YpSxZ3qi/laYyovDBS9
-         eIVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761699387; x=1762304187;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=upoMfybmbc/1ds2YKNLV5b3LJhcfmEcs/moGK/drz3I=;
-        b=lBAzGxulEKAXff3XPPokYXUtByu5h3Hxh5zRKjZXRLSQveb0PNUPC9EEeohs7PbrGZ
-         9LY26Ju0FnjNlHhj5QdcmcPi+WuNuTZ2mq4ceMlAkmTvUUUsdXSaKxYlklXEIKPqe31i
-         JjBQ0UJB+JT3jXCXYfQtYmZuUiwpJcsZgu+HYfJqzfgAaUIhOYmrKhYoQT580Upfp914
-         /a+0DHbXZRSRk8/nRF7gngLp9GBAuqwBV79CBUSa7ii8Wj1T1NEtf5k7sv0M8DX5/g4H
-         1LKWNuh3lkofQF6zUT3abHLpVdciKhamTY3JUDHrLAVI3qfvoewc3M8hSP33APXPnn9R
-         wxkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXK3eYbZB00MzmhMOwM4x7fvkgK96yX3zidxQS/6cHKE/HJykN1Xf3yf2JkA6bJEZaftobFY/mav94ecU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyR45dCd1nqrutOptRTZW7hCqN7VxmZzucQFqht2xKU3vsOAjbA
-	O+GENcqOMLfBYUgswnNFCEIVFg59VUv6+bBXilqAVpZcXHYU9rXZk13In0vrAYyYP5IWt7XHNAz
-	Komm+nQ==
-X-Google-Smtp-Source: AGHT+IF+uxnoaodwmY/BiGEU5Z7mQidEmCh9G0+H4xmKLgoqPmRen8KmIjN2RVaOC05lHdTEPvjF5gcEGj4=
-X-Received: from pjha4.prod.google.com ([2002:a17:90a:4804:b0:33b:cf89:6fe6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:57c4:b0:33b:c995:5d92
- with SMTP id 98e67ed59e1d1-3403a2aab6dmr1121219a91.32.1761699387051; Tue, 28
- Oct 2025 17:56:27 -0700 (PDT)
-Date: Tue, 28 Oct 2025 17:56:25 -0700
-In-Reply-To: <CAAYXXYyVC0Sm+1PBw=xoYNDV7aa54c_6KTGjMdwVaBAJOd8Hpw@mail.gmail.com>
+	s=arc-20240116; t=1761699552; c=relaxed/simple;
+	bh=L1fwkKyfGCopimO2KT6ZjVWg4mk91IJv4XRwdhvRqpk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjqdLZ/d8nNoY0RbAY0Hr1ANsM+X9cd5nbr7OWMhLRUALMNjirrzOhjQhHyQnwTR5U/Y1I/kh370gOOohodjS2S/cNiqu1yR8pfBVMsdG2rmbU4fiYgeQV+n+HuD0fHRaHbmSvA71wyxnjfxaBu3O6Edb/yrbHR/ZHzSbkRni2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KGcbP/Ui; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761699551; x=1793235551;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L1fwkKyfGCopimO2KT6ZjVWg4mk91IJv4XRwdhvRqpk=;
+  b=KGcbP/Ui9AJUd5sYSh9O7CSeBm6GylszWXYjoCXSWMNkyTaqgJF+bo81
+   HrdJ2on47MhtA137MGBTrj+gWf6fTm3YAmJMR9QpuCx1vo1FZYKsW26+h
+   T9yDPNumdWCQ4Tof8y9cL39nzM8Z5oCp1Re/ifWdoyYJG6QGGY8SzVYWv
+   83dPQxTlb/qo9Pz7QbocPc+nL2Xp460fhO1erWyB8bISKY7wEHEOErqkN
+   BVM/h8sFJpWWKsaeVW3ebyXP55dRw0pwTBiCb0qY7PJla3FfjLBhzSR2w
+   LMs9ccZ5bxNDMVcruWGP9opRGkH+HC2uR1iP9MzfhtKXT5dkemGalSQ+/
+   Q==;
+X-CSE-ConnectionGUID: EeZumeyvRneK6bGFcehd9g==
+X-CSE-MsgGUID: hbtp6LSjS8mG8I8GUjKKlw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="75260111"
+X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
+   d="scan'208";a="75260111"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2025 17:59:10 -0700
+X-CSE-ConnectionGUID: dXL4dUxQTLy/VrcE6UDrBA==
+X-CSE-MsgGUID: Y4zkv6KLQZ+6jtEdLHrAng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,262,1754982000"; 
+   d="scan'208";a="185391143"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 28 Oct 2025 17:59:06 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vDuWT-000JyH-23;
+	Wed, 29 Oct 2025 00:58:54 +0000
+Date: Wed, 29 Oct 2025 08:57:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Jacopo Mondi <jacopo@jmondi.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	David Plowman <david.plowman@raspberrypi.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Peter Robinson <pbrobinson@gmail.com>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	"Ivan T. Ivanov" <iivanov@suse.de>,
+	Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: Re: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance failure
+ subscribing to events
+Message-ID: <202510290816.8EQhDjD8-lkp@intel.com>
+References: <20251028-b4-rpi-ov5647-v1-4-098413454f5e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <10786082-94e0-454e-a581-7778b3a22e26@intel.com>
- <CAGtprH8AbW4P2t-wHVcTdfLwf3SJK5mxP1CbsMHTgMYEpLiWjQ@mail.gmail.com>
- <68fc2af6305be_10e210029@dwillia2-mobl4.notmuch> <CAGtprH8-UGFkh4NmuY1ETPYmg7Uk+bm24Er2PPxf8tUOSR_byQ@mail.gmail.com>
- <68fe92d8eef5f_10e210057@dwillia2-mobl4.notmuch> <CAGtprH8g5212M26HPneyaHPq8VKS=x4TU4Q4vbDZqt_gYLO=TA@mail.gmail.com>
- <68ffbfb53f8b5_10e210078@dwillia2-mobl4.notmuch> <CAGtprH-rv9T1ano+ti=3eU4FO2APCOcR06buPALggAwUnka3Dg@mail.gmail.com>
- <690026ac52509_10e2100cd@dwillia2-mobl4.notmuch> <CAAYXXYyVC0Sm+1PBw=xoYNDV7aa54c_6KTGjMdwVaBAJOd8Hpw@mail.gmail.com>
-Message-ID: <aQFmOZCdw64z14cJ@google.com>
-Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
-From: Sean Christopherson <seanjc@google.com>
-To: Erdem Aktas <erdemaktas@google.com>
-Cc: dan.j.williams@intel.com, Vishal Annapurve <vannapurve@google.com>, 
-	Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Elena Reshetova <elena.reshetova@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, "yilun.xu@linux.intel.com" <yilun.xu@linux.intel.com>, 
-	"sagis@google.com" <sagis@google.com>, "paulmck@kernel.org" <paulmck@kernel.org>, 
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028-b4-rpi-ov5647-v1-4-098413454f5e@ideasonboard.com>
 
-On Tue, Oct 28, 2025, Erdem Aktas wrote:
-> On Mon, Oct 27, 2025 at 7:14=E2=80=AFPM <dan.j.williams@intel.com> wrote:
-> >
-> > Vishal Annapurve wrote:
-> > [..]
-> > > Problem 2 should be solved in the TDX module as it is the state owner
-> > > and should be given a chance to ensure that nothing else can affect
-> > > it's state. Kernel is just opting-in to toggle the already provided
-> > > TDX module ABI. I don't think this is adding complexity to the kernel=
-.
-> >
-> > It makes the interface hard to reason about, that is complexity.
->=20
-> Could you clarify what you mean here? What interface do you need to
-> reason about? TDX module has a feature as described in its spec, this
-> is nothing to do with the kernel. Kernel executes the TDH.SYS.SHUTDOWN
-> and if it fails, it will return the error code back to the user space.
-> There is nothing here to reason about and it is not clear how it is
-> adding the complexity to the kernel.
+Hi Jai,
 
-Userspace needs to reason about error codes and potential sources of those =
-error
-codes.  That said, I agree that having the kernel set AVOID_COMPAT_SENSITIV=
-E by
-default (I vote for setting it unconditionally), doesn't add meaningful
-complexity; the kernel would just need to document that the update mechanis=
-m can
-return -EBUSY (or whatever), and why/when.
+kernel test robot noticed the following build warnings:
 
-For me, that seems far less daunting/complex than attempting to document wh=
-at all
-can go wrong if the kernel _doesn't_ set AVOID_COMPAT_SENSITIVE.  Because I=
-MO,
-regardless of whether or not the kernel sets AVOID_COMPAT_SENSITIVE, the ke=
-rnel
-is making a decision and defining behavior, and that behavior needs to be
-documented.  If AVOID_COMPAT_SENSITIVE didn't exist, then I would agree thi=
-s is
-purely a userspace vs. TDX-Module problem, but it does exist, and not setti=
-ng the
-flag defines ABI just as much as setting the flag does.
+[auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
 
-The failure mode also matters, a lot.  "Sorry dear customer, we corrupted y=
-our VM"
-is very, very different than "A handful of machines in our fleet haven't co=
-mpleted
-an (optional?) update".
+url:    https://github.com/intel-lab-lkp/linux/commits/Jai-Luthra/media-i2c-ov5647-Parse-and-register-properties/20251028-153619
+base:   3a8660878839faadb4f1a6dd72c3179c1df56787
+patch link:    https://lore.kernel.org/r/20251028-b4-rpi-ov5647-v1-4-098413454f5e%40ideasonboard.com
+patch subject: [PATCH 04/13] media: i2c: ov5647: Fix v4l2-compliance failure subscribing to events
+config: sparc64-randconfig-r134-20251029 (https://download.01.org/0day-ci/archive/20251029/202510290816.8EQhDjD8-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251029/202510290816.8EQhDjD8-lkp@intel.com/reproduce)
 
-> > Consider an urgent case where update is more important than the
-> > consistency of ongoing builds. The kernel's job is its own self
-> > consistency and security model, when that remains in tact root is
-> > allowed to make informed decisions.
-> >
-> The whole update is initiated by the userspace, imo, it is not the
-> kernel's job to decide what to do.=20
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510290816.8EQhDjD8-lkp@intel.com/
 
-I think you and Dan are in violent agreement.  I _think_ what Dan is saying=
- that
-the kernel needs to protect itself, e.g. by rejecting an update if the kern=
-el knows
-the system is in a bad state.  But other than that, userspace can do whatev=
-er.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/media/i2c/ov5647.c:870:10: sparse: sparse: Initializer entry defined twice
+   drivers/media/i2c/ov5647.c:876:10: sparse:   also defined here
 
-AFAICT, the only disagreement is whether or not to set AVOID_COMPAT_SENSITI=
-VE.
+vim +870 drivers/media/i2c/ov5647.c
 
-> It should try to update the TDX module and return error code back to the
-> userspace if it fails.
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  867  
+c9a05cece64c60 Jacopo Mondi    2020-11-19  868  /* Subdev core operations registration */
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  869  static const struct v4l2_subdev_core_ops ov5647_subdev_core_ops = {
+dc3373081396f5 Jacopo Mondi    2020-11-19 @870  	.subscribe_event	= v4l2_ctrl_subdev_subscribe_event,
+dc3373081396f5 Jacopo Mondi    2020-11-19  871  	.unsubscribe_event	= v4l2_event_subdev_unsubscribe,
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  872  #ifdef CONFIG_VIDEO_ADV_DEBUG
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  873  	.g_register		= ov5647_sensor_get_register,
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  874  	.s_register		= ov5647_sensor_set_register,
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  875  #endif
+d812c6225cf5be David Plowman   2025-10-28  876  	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+d812c6225cf5be David Plowman   2025-10-28  877  	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  878  };
+3c2472a3c54895 Ramiro Oliveira 2017-03-22  879  
 
-+1.  Unless there's a wrinkle I'm missing, failing with -EBUSY seems like t=
-he
-obvious choice.
-=20
-> > You might say, well add a --force option for that, and that is also
-> > userspace prerogative to perform otherwise destructive operations with
-> > the degrees of freedom the kernel allows.
->=20
-> IMO, It is something userspace should decide, kernel's job is to
-> provide the necessary interface about it.
-
-I disagree, I don't think userspace should even get the option.  IMO, not s=
-etting
-AVOID_COMPAT_SENSITIVE is all kinds of crazy.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
