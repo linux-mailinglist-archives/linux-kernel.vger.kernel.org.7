@@ -1,49 +1,84 @@
-Return-Path: <linux-kernel+bounces-877036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37ACC1D093
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:40:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A11C1D0A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C11634C7E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:40:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 404C44E05AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD19F35970F;
-	Wed, 29 Oct 2025 19:40:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B86F359FB2;
+	Wed, 29 Oct 2025 19:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bdpYQXSk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="gvuq8XCA";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GJ7Zg+pG"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A555345754;
-	Wed, 29 Oct 2025 19:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5530929CE9;
+	Wed, 29 Oct 2025 19:42:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761766834; cv=none; b=QjdFXdFDuk0gdlxkzsQ8LKHAgjqNRB7zHiCpiDfBHlHD7cDydGl+tQfP4ZDX8noNescDS8egAqefRWrRX7m2ffn8OlNx94Awu2Ku3wzDVxP3MMxyiUNBgVIO1nM1C0vhzJgUqAoTltFRgNqOmSTIZHlX9gPnhpiWSvwW/OlJ2fc=
+	t=1761766940; cv=none; b=uBX6PMyD6ME4aeqLOVdeFxPoKGWPSasD2EFbiQsk98dKwK7ZvTDJniGrebQUvON2CARXQBDcZdY4VCRx0wYwY6ONGexHrkI2I/31v6rrqUrA24m3Lh4HKCkxfKj9EemKrWSb5qH5nB+viLtUddpG+ISi6sP9XsS8XyNeKBR2k4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761766834; c=relaxed/simple;
-	bh=FPNNebRY/3BNB37M1f3dFBO6d/6gfDm+j/J2gEeRKSY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=a8R6foMSL8bogokmDUszsKi62sYwAibuT2XnVRLH0zLD659L3h8aA16VP8A43PAgCoj5+Wh70FN35oapUB8sNIMMPTyrls/RcT3oCVgx0+ABxxAwKzTBi096+nZ6exc2Goa5knjCohoSJF2cTFsYnX+DUglw4JumJRRIfcianSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bdpYQXSk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B91DC4CEF7;
-	Wed, 29 Oct 2025 19:40:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761766833;
-	bh=FPNNebRY/3BNB37M1f3dFBO6d/6gfDm+j/J2gEeRKSY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=bdpYQXSku1I5U5dOpYSUf+MtX0juFsvN0DaXvnrfTHgoUl9qWBpj1X0vsaaH6Jzbp
-	 JuRPlrlmLa74u1UcyoA7V8Sqfo7iHyP709ctNgntgXdT6uDODagH5NCfMsUT8idsp1
-	 KEGNUZ/kO4xtAM5qm9jEwEV3U9w3EbBZtG0y2Ep7F1yVXr/Dg6Lr2X+g0hyZuOZ4i7
-	 pY16AHHuPThfBUUHQnQZtvK4Atp0lFMxo0boccJ1L/4eQ/PfQ0pecyh+mplv0ukH39
-	 +iT2BkXICq9ExqR7FyLUySkcBRJQiMWQ45qOt7n+3Bwtc/3xW96Y0Yh3HboahAOtxP
-	 jaFj6v8aJZqTg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EBE283A549BD;
-	Wed, 29 Oct 2025 19:40:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1761766940; c=relaxed/simple;
+	bh=s9UDdg7rkftnp+QP61iD1TIGrCcsmMleZXA0PojaHCQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TDT/PblGthn6+zFzpswxHK5nVaeEI1anEwSO2yE+33lgQgP/lgURkVCj1+1uVUTagIBNffki9tXte7D6LffSUyPXY9vd6dAMbjx5eqgc3R8ubBlaDbdmmzYIn2ZBAQ1cQzAd1l2bkXSn4kjW/M7E3gkO1IWw0EtQ9Q3TzBEMTWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=gvuq8XCA; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GJ7Zg+pG; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4cxd1P38TMz9tgK;
+	Wed, 29 Oct 2025 20:42:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761766937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+ZThYyYJOwM1+BCwYF269VW+S6XvWye2pxq2VEf4UAc=;
+	b=gvuq8XCAtRlAYCrGtrF0P3P4PuyPupf//+PO2Gh/loOUKusWFp25p97d9qa/CHgivoj0/8
+	lKTxEYA4IurN8FN4mBhHVgU1UIydM4XYxQgoP//LrHuQITdrasMOwqvrLaaAl/pefbZzyJ
+	KXWoiw+5tMrCuxmybTs3GTdmWDc2wBy5GsxYtqUCv6fMQNdr1j8ORgoP7UZAiaC2Jvxtzx
+	lkrgLILhJ+XPoJGbs1MBLDmAIoRJaa7I1hlpJYfSmUYULLkS3bbbnzp9m4Ys07//7VXg6I
+	688qlqUvNoWjVCzHKYoPO7M9vbrnlea/f/ieNi4jM3dEZDhy8YTmrWEP2/d4rg==
+Authentication-Results: outgoing_mbo_mout;
+	dkim=pass header.d=mailbox.org header.s=mail20150812 header.b=GJ7Zg+pG;
+	spf=pass (outgoing_mbo_mout: domain of marek.vasut+renesas@mailbox.org designates 2001:67c:2050:b231:465::102 as permitted sender) smtp.mailfrom=marek.vasut+renesas@mailbox.org
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761766935;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+ZThYyYJOwM1+BCwYF269VW+S6XvWye2pxq2VEf4UAc=;
+	b=GJ7Zg+pGDiNcyur0EutixwUf5F6DbfSIxNmPr92Om9wa7utudBIRTeNuZ1Ga8CHrpqXdFt
+	aI6c0sdRgtPfxb1iH0Gb15QFoZjo/wbRQwdWLaQ/HelFmxHJEQZxlUMo2LofbpOYe+v1AZ
+	+fPscTdBoco3KY9rxo69hU2fSHY3gaj0hSyo9dKGwgEQgPSuc/x6DKfUT3RJurbvqonfvT
+	4P8VIN0sOqv9ptvSj8FsH9lIaprRR/KEZYll3cohxdU/IWH05PmUoWJStAcNtg5n6z6Kmk
+	QyyZe2wmssur4nF4dEBvH12XKv1Dso67l8AIeYcr+nHUnmHn4QlCrDVoi/mzgA==
+To: devicetree@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Airlie <airlied@gmail.com>,
+	Frank Binns <frank.binns@imgtec.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Simona Vetter <simona@ffwll.ch>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: gpu: img,powervr-rogue: Drop duplicate newline
+Date: Wed, 29 Oct 2025 20:42:02 +0100
+Message-ID: <20251029194210.129326-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,53 +86,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v3 0/4] selftests/bpf: convert test_tc_tunnel.sh
- to test_progs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <176176681076.3187348.7903797974082135104.git-patchwork-notify@kernel.org>
-Date: Wed, 29 Oct 2025 19:40:10 +0000
-References: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
-In-Reply-To: <20251027-tc_tunnel-v3-0-505c12019f9d@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29_=3Calexis=2Elothore=40bo?=@codeaurora.org,
-	=?utf-8?q?otlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, shuah@kernel.org,
- ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
- bastien.curutchet@bootlin.com, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-MBO-RS-ID: d99c324eee434e72efc
+X-MBO-RS-META: fm4bxq96txzbruo1s1tkytmibwba6nsp
+X-Rspamd-Queue-Id: 4cxd1P38TMz9tgK
 
-Hello:
+Fix the following DT schema check warning:
 
-This series was applied to bpf/bpf-next.git (master)
-by Martin KaFai Lau <martin.lau@kernel.org>:
+./Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml:103:1: [warning] too many blank lines (2 > 1) (empty-lines)
 
-On Mon, 27 Oct 2025 15:51:52 +0100 you wrote:
-> Hello,
-> this is the v3 of test_tc_tunnel conversion into test_progs framework.
-> This new revision:
-> - fixes a few issues spotted by the bot reviewer
-> - removes any test ensuring connection failure (and so depending on a
->   timout) to keep the execution time reasonable
-> 
-> [...]
+One newline is enough. No functional change.
 
-Here is the summary with links:
-  - [bpf-next,v3,1/4] selftests/bpf: add tc helpers
-    https://git.kernel.org/bpf/bpf-next/c/1d5137c8d1ac
-  - [bpf-next,v3,2/4] selftests/bpf: make test_tc_tunnel.bpf.c compatible with big endian platforms
-    https://git.kernel.org/bpf/bpf-next/c/86433db93256
-  - [bpf-next,v3,3/4] selftests/bpf: integrate test_tc_tunnel.sh tests into test_progs
-    https://git.kernel.org/bpf/bpf-next/c/8517b1abe5ea
-  - [bpf-next,v3,4/4] selftests/bpf: remove test_tc_tunnel.sh
-    https://git.kernel.org/bpf/bpf-next/c/5d3591607da2
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Frank Binns <frank.binns@imgtec.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: Matt Coster <matt.coster@imgtec.com>
+Cc: Maxime Ripard <mripard@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: devicetree@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+---
+ Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-You are awesome, thank you!
+diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+index aa8b2069cc24b..a7ca6d3fdf10a 100644
+--- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
++++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+@@ -100,7 +100,6 @@ allOf:
+         clocks:
+           maxItems: 1
+ 
+-
+   - if:
+       properties:
+         compatible:
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.51.0
 
 
