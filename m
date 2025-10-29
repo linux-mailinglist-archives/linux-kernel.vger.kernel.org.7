@@ -1,280 +1,124 @@
-Return-Path: <linux-kernel+bounces-876913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E1EC1CBE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:19:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13F1C1CC29
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21919188EBD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:18:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17EC73A54D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F97333F361;
-	Wed, 29 Oct 2025 18:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CF235580A;
+	Wed, 29 Oct 2025 18:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0YOxZiZE"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kAFJf5qQ"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0BD2F90F0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD645225397
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761871; cv=none; b=OT/EglpPqhv2bdQ5lbnh5tCBGBLFtHT0TMt4zKd+Z7EVQOAjGUizKGz9TenVtv2GKaT946CmcASMRjKdAzEngbiZItIiMXVH7vTmNWro63br72X87JtcceAItdb/P+Mt2hldEfMQFRq/ZVUXdlBDiLEWCV+5F/8GP3G4FRKbIa0=
+	t=1761761934; cv=none; b=qFHdboickwaoOcgP/+dcZVDNrbxoQzcI9SkI+aYYTSls8fiIP0QXCTlEISXPzDQTDbzGbp7MtynELkFzepOIsZ7IFCrzcLvq6otwoQTO58pOp22CbAdTwAuDdt8gxIWUCR7VuWSC57/wxv1GLgDWFOt7qqlIQIIdKhBdjAKtrN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761871; c=relaxed/simple;
-	bh=Ndg9d0oKkSFgdvQMGvjrvdyHRAlA5FSaaumNxXj8HOg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Zvp6RsNCf5Tap/xjztK0cYfB5Pbch+ChLZgx52nJPskBYeHchoq82C7w9lpFz8y3K7M6mQw+mt6sKbA3Ll5hjmnBIOOiR7hjNGGgo/TTYiub0wA4JckV7ebJPFuOR3/jMwqgO5Exf7e2nbDgous+7pYM0/gJOqjXNYyA5SfACso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0YOxZiZE; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-893c373500cso22352985a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:17:48 -0700 (PDT)
+	s=arc-20240116; t=1761761934; c=relaxed/simple;
+	bh=P60WA2IekOhXcaoabZ29P77AB+IQvR9LQbwR2bw+CmU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sIMfZInX807JLLqaja2AMZPHkU6fm+k0nYJNJxA5bq5fwh6hByEJLmfMp1nftU5P95eOGVSC23CosvMQzohVw4XZpnVJpXxTC0uUaMqvJwTSLSY7PONUm2JVFoYdTEuFVA1mpyNSD6buSp9efAEBuBp1f9CdVcxb2bnwSJTmv80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kAFJf5qQ; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b8b33cdf470so7813a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:18:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761761868; x=1762366668; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8t71JUrOcZIaMdBQxtkmzGKl/EzuPds3aBqzKQJUf5E=;
-        b=0YOxZiZEaTossHTUFgYKc7hrldb/4MZL4QLl8f/sdhtM93r92GqlxuVHVFbula+0nC
-         v8TLtX5VNAgLjHQfRzQDKabSSPuCnkLWN4UpFLlM4/HXDZ0kQqmlgUnVYsQOdGiqDpyS
-         KbTEO7C6BVO/HuRveEBY7RkDSYmC/ABCsOGHSDrAcXGU9DIUqrDnV/lxn7feffZ4a4aa
-         LgECqACkDMmwQTpuDFIkNviludc9OtOsrpGJmg8F1RAdWhcAkybOstKzGcAlHojCwFJV
-         XvXesWN9/EPniIIhW9BVR519RmLi6M4EnrWczgDZM0/iexD3Yaz76/KMuWxiXxVkRLvk
-         9hAw==
+        d=gmail.com; s=20230601; t=1761761932; x=1762366732; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qGHEJFApFyOFo7pmpc4STS/EO5YU8lCBDcbtrWvNjWI=;
+        b=kAFJf5qQ9N8bj9qZPJ0oD1LZuAiZP4KNXsrDyLaemTocyfNeFeiiwHTMBwC43xDzSP
+         THvqcijF97GKepMiXmAVOaR4ReD8Rijxueb4wudo1Zkk5fNE5SWIv7jD2mXRsfaF4qA1
+         5/JyfJK11UONsuHdQEraHR6bVl+tc7WcjYWW94euCBDQjV8Ooy1AauU9e0BlCUIz2S+Q
+         UC4dNMP6/wfS5BdU0qyNWWPG4Xq53b5PoCOvXcGF584FNaIBCTL4hPiC8c7tbo/5vsMF
+         chdBHQHpgzwOgIQd20E8O9humhBMCJSh1CANi8sqLtDWfEkPMu32nZqte7xzBuTPLctl
+         JeNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761761868; x=1762366668;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8t71JUrOcZIaMdBQxtkmzGKl/EzuPds3aBqzKQJUf5E=;
-        b=Vzd61gvZa2Hh3LWK0LltI066ync+EehN10fen8cNV+vMhiTRANF66Ee3/fLiS7wqN6
-         wp1BxPFHC1TjX288Z2pYtJG9lMKVBn4C3oCiGXfJSaJ1BBeUsVOey9P0r+kDNdDeO4W/
-         ORbJf6Fbv5reJEVAacVliG0vVeOQ7qyj5Le4qhVD/ZXzlZJ5GN2nkKDNgcFxAxMtnyNK
-         dcIYzHRAYHo7PozCtr9ZjP0iBPw9C7+oNAcQ2hM+MJU4rjidIC/vP8tV5Jstobq8Eqjr
-         0/5mKbNJe8ckJEo0rA8VewMa0i3EQ4Tzz9azlXoK9Ug+L6GMYJuzwzdOi+MbZ4P1ue/c
-         LYNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWmUTaZLaCFthuMN/R1eD+4YCkh2HP9TUJuC07sJ8bPpM/EOT/sWdxS6g9JuAIeKknjyILQuuLszAEgiGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj4QcDQCL61LK/lGOJF3RBLVCFtdaACKX98yglwbRJeCND+WoN
-	B4qnfYph0+dG6W7q4fnL1wEmlTF6u9SCAq3G8u/k6dQp/uUw5AeJxkHEKodDRDrM/tA=
-X-Gm-Gg: ASbGncv0wa37POLBgJvJBqfxy1gLfIhyWQ+YYlnH6UNvez0yC/diS9PoEKewiaLfHIK
-	MGG6zmE+jYp87LdybT5Budxj6w+7lkd9qZTEio1aS1vSAcswXQ6YfLk7AAhQQNZcXPIp0MdEFtH
-	s+b/iajZdSexQUUvjbilL+c50EnFgDPoaTPWf+pk49D0js7Zwk4k64IzmdRY/hk7xPmOqqloJAZ
-	SoSoVvsA/XkpcxzYJcZy6ZNOYZdR/wtDwKLntBBYbtY5lZKbShSbbf5sBBBeC/FHymuuvffJA1/
-	0eE9cR5s9FIGj6JCA/sesmVxLpAMTDy9r6rdqzwFpyVlCZVa0bXatecqgU+y6zyN3TTv0w+Dfl6
-	P5PGoS8UL03fR6pryEkxdJNxZfN/Ky6ZQkgFTsFwW+OIswNkKqpY664FyPUh3eZ6KfZezvK//Un
-	dzr2mUoY6ESxGOtR9lAiXDXRwQTfBbjw==
-X-Google-Smtp-Source: AGHT+IGsKApRMXbtpSbik0j8aCCOmtn0qUVkDynogS1Sux0c0crZY/kuP7sKAf4rDZCZSY1Zmx3QEw==
-X-Received: by 2002:a05:620a:29c6:b0:857:7b07:3af0 with SMTP id af79cd13be357-8aa2b111350mr83967985a.24.1761761867723;
-        Wed, 29 Oct 2025 11:17:47 -0700 (PDT)
-Received: from xanadu (modemcable048.4-80-70.mc.videotron.ca. [70.80.4.48])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-89f261747efsm1077467385a.55.2025.10.29.11.17.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 11:17:47 -0700 (PDT)
-Date: Wed, 29 Oct 2025 14:17:45 -0400 (EDT)
-From: Nicolas Pitre <npitre@baylibre.com>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
-    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
-    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 4/9] lib: Add mul_u64_add_u64_div_u64() and
- mul_u64_u64_div_u64_roundup()
-In-Reply-To: <20251029173828.3682-5-david.laight.linux@gmail.com>
-Message-ID: <q72q16nr-q934-s4ss-s5n1-6581769pq65r@onlyvoer.pbz>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-5-david.laight.linux@gmail.com>
+        d=1e100.net; s=20230601; t=1761761932; x=1762366732;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qGHEJFApFyOFo7pmpc4STS/EO5YU8lCBDcbtrWvNjWI=;
+        b=UYGpOTSQkxbsGO7v3qDpQcHKf51ipYOkyTJptHi1O52zmmfdxMmztHC+kn1MIRdMsr
+         fr+oQdslZvioVndRNPTDdKu2tzI6cNQTITYR9gu2NlP0gpqrykOyBGC8lCK15G2c8tvs
+         v/oaFRZFgJ91YUbx1YxFRx8Z+62TE4erJDP8CwNym77sgdSvyOioJmUt/3yZxJ66JIci
+         2K2ih9+EwN2sKo9wuo0M/94oEwaDW42n2nHDWGRQRgj0qQ7wo+r41sUUkyksS57hSlla
+         Te8fgCJz+U3NwqkWRXzoacIllYYV8rULUry9UyuqHjVTvRZ04K6EcvUxcV8WsPOoDLsj
+         Zk3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2sUdz2yC5lCm5BGbFoORLakpNNlNvSTrTZveIwWRyDBeuxtGtOt9n6NPR0BK1OLGmGJvpv3cEZy4wN1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz90udbGrhT6bSV1koMBjGuXgpOxN0vmb58JSUPU7pILMkWWn95
+	+n6epdy7uuG94fThHY/i3/ZcOjqKXC77f0TkZZY7fHa+tt0HoWdKiGGuClqjVsFACVrooE+qKQH
+	eWFzI2fm7Z9VeZtMQsuDboSRACOu3iec=
+X-Gm-Gg: ASbGncsd15LoVbYOx/3Q4v6DGqzyl572jk0tyFvoBPs3oOyog914QsACddqbO8rR9N9
+	Emz+9UbyOOeZ0bWM/0Rfk09DuDrPdj0sbrgrMOf0icrq5ZDcvebRN+7+DsFb1hVXfgj9Uw/vuKO
+	58iGGvWQc8Elrl87ADRREmgbBKlsprdNpdPTA8oD/K1G2QFQHPzz9jXZWLoQvNnmh2PHuEA6PsN
+	UNab7vDAGEKkNlUINQwvxLSs4FpJl0YO4s8nDdKM2eifTqCTKZj7/I01C5aUw6AzQNPqFNk35qk
+	806QBFVBT7b6CS76lr0lKDJdeZAqT6JqCglZ/E7myxSsVwCVy+I/bpVgXRQEVdBbExH8HWi0N5h
+	bb4pBdiSKQseylg==
+X-Google-Smtp-Source: AGHT+IEUmxwJv4cATlvHI24p6sTswb9GOB92tay5pdawn1K9j7QGYDSkyOSrQLmeFPpDeZNCF+IzUDuiQtDiWnxBse8=
+X-Received: by 2002:a17:902:ea05:b0:290:af0d:9381 with SMTP id
+ d9443c01a7336-294deec2ed0mr25872405ad.7.1761761931934; Wed, 29 Oct 2025
+ 11:18:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <CGME20251028122315eucas1p159b65037cf6f3f710c1917e2464399b5@eucas1p1.samsung.com>
+ <20251028-pwm_fixes-v1-0-25a532d31998@samsung.com> <2dedlnknikkrwg5f6ocuvjrogdjuqyg4sg6zkkao4w4yyvvsje@dkt7rco3fen3>
+In-Reply-To: <2dedlnknikkrwg5f6ocuvjrogdjuqyg4sg6zkkao4w4yyvvsje@dkt7rco3fen3>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 29 Oct 2025 19:18:39 +0100
+X-Gm-Features: AWmQ_bloR4yaxCgQSRgH9rsP_79aHVebA5y_V5RdiMta-mOKTPlfL_2N2hFhhSs
+Message-ID: <CANiq72n8QvygNsdHjaMgYrXiErT82BkWm1XMkc3eUZB1Xy_uAQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Introduce import_ns support for Rust
+To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Michal Wilczynski <m.wilczynski@samsung.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 29 Oct 2025, David Laight wrote:
+On Wed, Oct 29, 2025 at 11:04=E2=80=AFAM Uwe Kleine-K=C3=B6nig <ukleinek@ke=
+rnel.org> wrote:
+>
+> If you could mention the command that makes this warning visible, I'd be
+> glad to add that to my repertoire of build checks.
 
-> The existing mul_u64_u64_div_u64() rounds down, a 'rounding up'
-> variant needs 'divisor - 1' adding in between the multiply and
-> divide so cannot easily be done by a caller.
-> 
-> Add mul_u64_add_u64_div_u64(a, b, c, d) that calculates (a * b + c)/d
-> and implement the 'round down' and 'round up' using it.
-> 
-> Update the x86-64 asm to optimise for 'c' being a constant zero.
-> 
-> Add kerndoc definitions for all three functions.
-> 
-> Signed-off-by: David Laight <david.laight.linux@gmail.com>
+Yeah, please do!
 
-Reviewed-by: Nicolas Pitre <npitre@baylibre.com>
+I do my best to keep even linux-next and stable kernels Clippy clean
+as much as possible, so it would be nice to have that Clippy fix added
+to -next soon.
 
+I have other steps that maintainers/contributors should run here:
 
-> ---
-> 
-> Changes for v2 (formally patch 1/3):
-> - Reinstate the early call to div64_u64() on 32bit when 'c' is zero.
->   Although I'm not convinced the path is common enough to be worth
->   the two ilog2() calls.
-> 
-> Changes for v3 (formally patch 3/4):
-> - The early call to div64_u64() has been removed by patch 3.
->   Pretty much guaranteed to be a pessimisation.
-> 
-> Changes for v4:
-> - For x86-64 split the multiply, add and divide into three asm blocks.
->   (gcc makes a pigs breakfast of (u128)a * b + c)
-> - Change the kerndoc since divide by zero will (probably) fault.
-> 
->  arch/x86/include/asm/div64.h | 20 +++++++++------
->  include/linux/math64.h       | 48 +++++++++++++++++++++++++++++++++++-
->  lib/math/div64.c             | 14 ++++++-----
->  3 files changed, 67 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/div64.h b/arch/x86/include/asm/div64.h
-> index 9931e4c7d73f..cabdc2d5a68f 100644
-> --- a/arch/x86/include/asm/div64.h
-> +++ b/arch/x86/include/asm/div64.h
-> @@ -84,21 +84,25 @@ static inline u64 mul_u32_u32(u32 a, u32 b)
->   * Will generate an #DE when the result doesn't fit u64, could fix with an
->   * __ex_table[] entry when it becomes an issue.
->   */
-> -static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
-> +static inline u64 mul_u64_add_u64_div_u64(u64 rax, u64 mul, u64 add, u64 div)
->  {
-> -	u64 q;
-> +	u64 rdx;
->  
-> -	asm ("mulq %2; divq %3" : "=a" (q)
-> -				: "a" (a), "rm" (mul), "rm" (div)
-> -				: "rdx");
-> +	asm ("mulq %[mul]" : "+a" (rax), "=d" (rdx) : [mul] "rm" (mul));
->  
-> -	return q;
-> +	if (statically_true(add))
-> +		asm ("addq %[add], %[lo]; adcq $0, %[hi]" :
-> +			[lo] "+r" (rax), [hi] "+r" (rdx) : [add] "irm" (add));
-> +
-> +	asm ("divq %[div]" : "+a" (rax), "+d" (rdx) : [div] "rm" (div));
-> +
-> +	return rax;
->  }
-> -#define mul_u64_u64_div_u64 mul_u64_u64_div_u64
-> +#define mul_u64_add_u64_div_u64 mul_u64_add_u64_div_u64
->  
->  static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 div)
->  {
-> -	return mul_u64_u64_div_u64(a, mul, div);
-> +	return mul_u64_add_u64_div_u64(a, mul, 0, div);
->  }
->  #define mul_u64_u32_div	mul_u64_u32_div
->  
-> diff --git a/include/linux/math64.h b/include/linux/math64.h
-> index 6aaccc1626ab..e889d850b7f1 100644
-> --- a/include/linux/math64.h
-> +++ b/include/linux/math64.h
-> @@ -282,7 +282,53 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
->  }
->  #endif /* mul_u64_u32_div */
->  
-> -u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div);
-> +/**
-> + * mul_u64_add_u64_div_u64 - unsigned 64bit multiply, add, and divide
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @c: unsigned 64bit addend
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * add a third value and then divide by a fourth.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: (@a * @b + @c) / @d
-> + */
-> +u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d);
-> +
-> +/**
-> + * mul_u64_u64_div_u64 - unsigned 64bit multiply and divide
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * and then divide by a third value.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: @a * @b / @d
-> + */
-> +#define mul_u64_u64_div_u64(a, b, d) mul_u64_add_u64_div_u64(a, b, 0, d)
-> +
-> +/**
-> + * mul_u64_u64_div_u64_roundup - unsigned 64bit multiply and divide rounded up
-> + * @a: first unsigned 64bit multiplicand
-> + * @b: second unsigned 64bit multiplicand
-> + * @d: unsigned 64bit divisor
-> + *
-> + * Multiply two 64bit values together to generate a 128bit product
-> + * and then divide and round up.
-> + * The Generic code divides by 0 if @d is zero and returns ~0 on overflow.
-> + * Architecture specific code may trap on zero or overflow.
-> + *
-> + * Return: (@a * @b + @d - 1) / @d
-> + */
-> +#define mul_u64_u64_div_u64_roundup(a, b, d) \
-> +	({ u64 _tmp = (d); mul_u64_add_u64_div_u64(a, b, _tmp - 1, _tmp); })
-> +
->  
->  /**
->   * DIV64_U64_ROUND_UP - unsigned 64bit divide with 64bit divisor rounded up
-> diff --git a/lib/math/div64.c b/lib/math/div64.c
-> index 7158d141b6e9..25295daebde9 100644
-> --- a/lib/math/div64.c
-> +++ b/lib/math/div64.c
-> @@ -183,13 +183,13 @@ u32 iter_div_u64_rem(u64 dividend, u32 divisor, u64 *remainder)
->  }
->  EXPORT_SYMBOL(iter_div_u64_rem);
->  
-> -#ifndef mul_u64_u64_div_u64
-> -u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> +#ifndef mul_u64_add_u64_div_u64
-> +u64 mul_u64_add_u64_div_u64(u64 a, u64 b, u64 c, u64 d)
->  {
->  #if defined(__SIZEOF_INT128__)
->  
->  	/* native 64x64=128 bits multiplication */
-> -	u128 prod = (u128)a * b;
-> +	u128 prod = (u128)a * b + c;
->  	u64 n_lo = prod, n_hi = prod >> 64;
->  
->  #else
-> @@ -198,8 +198,10 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
->  	u32 a_lo = a, a_hi = a >> 32, b_lo = b, b_hi = b >> 32;
->  	u64 x, y, z;
->  
-> -	x = (u64)a_lo * b_lo;
-> -	y = (u64)a_lo * b_hi + (u32)(x >> 32);
-> +	/* Since (x-1)(x-1) + 2(x-1) == x.x - 1 two u32 can be added to a u64 */
-> +	x = (u64)a_lo * b_lo + (u32)c;
-> +	y = (u64)a_lo * b_hi + (u32)(c >> 32);
-> +	y += (u32)(x >> 32);
->  	z = (u64)a_hi * b_hi + (u32)(y >> 32);
->  	y = (u64)a_hi * b_lo + (u32)y;
->  	z += (u32)(y >> 32);
-> @@ -265,5 +267,5 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
->  
->  	return res;
->  }
-> -EXPORT_SYMBOL(mul_u64_u64_div_u64);
-> +EXPORT_SYMBOL(mul_u64_add_u64_div_u64);
->  #endif
-> -- 
-> 2.39.5
-> 
-> 
+    https://rust-for-linux.com/contributing#submit-checklist-addendum
+
+Essentially / most importantly: `rustfmt`, `rustdoc` and `CLIPPY=3D1`.
+
+I am sending a couple fixes for those.
+
+Thanks!
+
+Cheers,
+Miguel
 
