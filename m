@@ -1,65 +1,116 @@
-Return-Path: <linux-kernel+bounces-877127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AF5C1D44A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:46:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2E2C1D465
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E033B070A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83CE6188D03F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF782C375E;
-	Wed, 29 Oct 2025 20:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2622EAB6E;
+	Wed, 29 Oct 2025 20:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIAl34wu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SugRS20W"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B81B3923;
-	Wed, 29 Oct 2025 20:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C77217C9E;
+	Wed, 29 Oct 2025 20:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770771; cv=none; b=m636VSek5bxiGjuWYDPeqeu1Ud1G/YKKsV42pi9vtC8W2hnsFJbodRJd3UEMR7lKZcjDAUIzTU8/WKZUz/L0T3WsbBdKIzrfygTxjrhKBSDu4+AK9Qle2UKsDbVCZP0yQrFWkwlIUHAxhVc83p33IXgta+mdzxBxWMKmMTUfJg4=
+	t=1761770824; cv=none; b=sJUbG2pmqovciCfA8yt8LqCFQvkoDtB/UjyjzqIgGC4OqNBvLVaAhE/o02AKEKT/EReR3NqlElQHKzCaubpfgeys3PSZ62S65NGM+zDTm6t8VpbgK5KnTLWjSGZ+7zPwbNGIwwY22hNh/IoMR+Uy+fDrufH4pPis4MURL6/vl0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770771; c=relaxed/simple;
-	bh=ddXQqh+x+Kwhy4WZ/KiwyJzyhhYJujXrSFpF1btAfxo=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References; b=eBBBBXNe0qdemDzbQrzrWsVVwf7TOdjq34BUZFpSKKXwLGyV/O3LWsu+Eo8XrcliiJVs7X5VIqNQ7NVGzHNHptVq9is1feaTXLEHPyTdhgHQ7S/I4eXn44XL9bukoYAFvFGZ7LUfJ+fwWFA2Y9eP49zaw0DovxLCCPjizOWoXLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIAl34wu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA20C4CEFB;
-	Wed, 29 Oct 2025 20:46:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761770770;
-	bh=ddXQqh+x+Kwhy4WZ/KiwyJzyhhYJujXrSFpF1btAfxo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AIAl34wu9WmP4CMpqpDbWdQ+8vXWhibFwvWgVb2OC04yRaSA1UG05ngrjdPOPSeJj
-	 zQDJwXJO+m/sEdihfzH8Sjk+YnOWIHGE6gJDfq3PClfsmqoxhv8IkIniBL+DJpqFuX
-	 cRdUPweJxYWpbzf+ASr9+vwqcizCuj/Efzi2p2VyMhngZghXc8/cYoRZKkWGNOhsSg
-	 eJRCHlv33bmnvSOogriGi3a4Q9c8tH6k+KM6U54/98ljLFzJAFhNKeZwszQswBgICf
-	 P21+rUXuas2jx1Wdr+8W1CKINyjkNJ00JuHOW5bA4LFtbt/u1XbhLCcw6TygqBdz3r
-	 QjE+Jc9XDrJSQ==
-Date: Wed, 29 Oct 2025 10:46:09 -1000
-Message-ID: <0bac90274a876d04c27cdd366c336768@kernel.org>
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH sched_ext/for-6.19] sched_ext/tools: Restore backward compat with v6.12 kernels
-In-Reply-To: <33d319a7063f59638ae1be709f4e10e9@kernel.org>
-References: <33d319a7063f59638ae1be709f4e10e9@kernel.org>
+	s=arc-20240116; t=1761770824; c=relaxed/simple;
+	bh=VJGqQzTDo9Sp7KcgGW1VLDVh6Hi/PZ49l1ZtrEFkyAo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B/xw4c3D4TD5S1r0EZFd1HgpNiTdCx82ksSOAkj03i4EwdZFFXij+UgSYaJ3UqpKIMS07IjxGZ72pw7SY1e4h5gd008FsAnbRfG3HHaDstOQrI9thlYe0Du6jAMv8W31ANlPXWa6hm1Rp3oKmR64ExhxF78NkAh1of1RzDjcoEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SugRS20W; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=KbzEQPQ7kx91QGnRL/4388CWT4PPp+gawvJUD4Jm2kU=; b=SugRS20WChZfAtTZjpuRdylNg6
+	6nZWoE8q22Uo5jqx5LnqPPJQ7kGguzrD/dKzB3NWXxVoWNqp5we0rOPC1SCr43Rlo48JmbDE/j9Lj
+	88CUr7uKN47muJ1qF739WFvul9ejGPV3MeVXnj6wN+yGA2IBwqcol3gWRkudxTlATCZ4iSfgBKEQx
+	r0b/nb6r3w9MrJWm4MljvyMh6CGZJcjXFU9vXEvqAAQRayMq+IDW71jq4Bl3tRuz0yXlVwfdLfx4q
+	zAb5YIp5C3UdeGyM/QTPJmevfqEsTYcE35Ub+qShegEssviSqUPEPHTnm/kiWODHnGSQuFYP1HRUi
+	pcMcWsMQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vED4M-00000002qZX-2oLP;
+	Wed, 29 Oct 2025 20:46:58 +0000
+Message-ID: <0b5feeb5-87b6-4f26-b9df-a23159b977e7@infradead.org>
+Date: Wed, 29 Oct 2025 13:46:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/5] docs: admin-guide: gpio: rpmsg: gpio over rpmsg
+ bus
+To: Shenwei Wang <shenwei.wang@nxp.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+ linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, imx@lists.linux.dev, linux-imx@nxp.com
+References: <20251029195619.152869-1-shenwei.wang@nxp.com>
+ <20251029195619.152869-4-shenwei.wang@nxp.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251029195619.152869-4-shenwei.wang@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Applied to sched_ext/for-6.19 with the following comment lines removed as
-they were from earlier and no longer apply:
+Hi--
 
- * Build error is triggered if old names are used. New binaries work with both
- * new and old names. The compat macros will be removed on v6.15 release.
+On 10/29/25 12:56 PM, Shenwei Wang wrote:
+> Describes the gpio rpmsg transport protocol over the rpmsg bus between
+> the cores.
+> 
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>  Documentation/admin-guide/gpio/gpio-rpmsg.rst | 202 ++++++++++++++++++
+>  Documentation/admin-guide/gpio/index.rst      |   1 +
+>  2 files changed, 203 insertions(+)
+>  create mode 100644 Documentation/admin-guide/gpio/gpio-rpmsg.rst
+> 
+
+I don't think this should be in admin-guide/gpio/.
+How about in driver-api/gpio/?
+That may not be perfect either, but transport protocols are not
+typically admin material AFAIK.
+
+> diff --git a/Documentation/admin-guide/gpio/index.rst b/Documentation/admin-guide/gpio/index.rst
+> index 712f379731cb..9c8f4441038a 100644
+> --- a/Documentation/admin-guide/gpio/index.rst
+> +++ b/Documentation/admin-guide/gpio/index.rst
+> @@ -9,6 +9,7 @@ GPIO
+>  
+>      Character Device Userspace API <../../userspace-api/gpio/chardev>
+>      gpio-aggregator
+> +    gpio-rpmsg
+>      gpio-sim
+>      gpio-virtuser
+>      Obsolete APIs <obsolete>
+If someone thinks that it should be in admin-guide/,please explain why.
 
 Thanks.
---
-tejun
+-- 
+~Randy
+
 
