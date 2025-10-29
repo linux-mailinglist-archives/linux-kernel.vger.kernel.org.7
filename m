@@ -1,93 +1,53 @@
-Return-Path: <linux-kernel+bounces-876331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A192C1B8F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:10:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6BD2C1BA64
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D45563615
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792C4583AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A8526B761;
-	Wed, 29 Oct 2025 14:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976AC2857C1;
+	Wed, 29 Oct 2025 14:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="e4qAsRXa"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wXnpmLP0"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F8D1C2BD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6130E27AC31
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747649; cv=none; b=mtS2QmkdBl9q/5oTseQhIa4ThECpTcUxHDhgXMFAkbDKPzNE4qbBOy1qckYmPb+mLjvPbImcL1u9us6AZ/0KKWRwO9SmKsz2pnK6XBf2uOpMZl16Xs7e9hgzabKjvAEuFkjdiwN1vkX1J7TyiUrhr1mlB8f30OvTKGS27f08Pu4=
+	t=1761747911; cv=none; b=gcSab7yOEyu/rCZ4bS9IleI6YNx3DEHEtqa5mmECMmWR6Ek4oy4m0cTrPMfQw7rj9rEBn27dP3JbK5Ts8GR2IF82NwoS2FnarGWVyVOP3lyfoChYKMi7KwvXojHpkPO5dJwD812YQSbIsDnwqZGPaC/jwrzVRXBJM5qpUc/Za4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747649; c=relaxed/simple;
-	bh=am0/YbY3X+EDDZcjCgeLwrDMLb2LpBxcjmr3MpjYeF4=;
+	s=arc-20240116; t=1761747911; c=relaxed/simple;
+	bh=EqIuTc40Ga8aNytkZYOXWNdARKNEeSz0SVU+6y/6Ap4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ie5tA0DIXgyHJ8T+ZCglMYg1MtYqu8ZEEnVSoMSSUjsCZGjC0er9UUGVKneKeVz2tkVz9CP5WlKmK+V1Y/LRZcZgPYqKmU6skakJ7/PpGK2dITNlAIB7tX006vG1E3e3Cgg+vDv5FyblcPYJ8FdO6OcW8iSFFp3PHWeAZwSA32o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=e4qAsRXa; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4711810948aso55200065e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:20:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1761747645; x=1762352445; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxBr6UEJhfUdxptPH87yDMGfOKWl61gBXcrB5pzrHm8=;
-        b=e4qAsRXaZCN0Ac957vNDchZDWjuVxpaJLnRYPl+nNoiy10L0woLP3nsMf2HqatRMTf
-         4yxKeUg/oDlk++HNyvAw3tDqui8UMe7vm/yLSUA5RPhm3XIs+TJ8WJ9LhrN6NSoGVA4B
-         uBYyiaNFqnCYFmgIzqu0+kW+gS0HXQvrO+Oj5hLJb5n+8GPeyuzFsQkcAfWYd2N9zioF
-         Bn5Cf38/ITDlzCB+teSgsbPIEu4lAhRjkHzcCqa+bWPFfVRvvomfoL2Ztj6bc+uFkzmG
-         Ttt//U3awXwdxpFkE6JliMARy8fAnEf3AW7BywgR+D7FNYhTotOaUu6eKcv0RE1BCL+2
-         3VPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761747645; x=1762352445;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fxBr6UEJhfUdxptPH87yDMGfOKWl61gBXcrB5pzrHm8=;
-        b=Lc+hCR0yjGhyKVls62tH/4WBQKncmTfczZOf4ThapZ91bGPVhUa72IlgqDzhFwnwCp
-         8sJccjvoYB4VFbwb2CUP2w2T+4YUcVl6ncohk0keAE47hO/Om8SwVjoWgyNiJwFlwoYt
-         E9yxvJLSGTcS2obkRL+azOfZ2NOavLMlgBQSgPdm1PYVpiQTJwQGnSNhODCcbMBuOAJi
-         oBH0e3NDlxpaOGbFqWW0n2TzaPXMLLtQQBVFXgxlYH2GDBQ0hwyhLYa0uN26qTX74y2v
-         pqeCrczQ+alL0ege/ebABBYR/H2ulbO2xNX+kMHSq6gI5Hg4DU8L8Mf0l8fowNiy4NP9
-         K1oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUr7uG2jYIWiKaHPU/mhmBF/nECcCPAUZtZ58lX4rI4SrOcd2BxqTxPxBMbecBDI3KCkQw8g9aQRKRGydE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk1+Ejy+WWT9rdgbGzmvMvb18Gxb0z0Yho/iNQU6ZsEBKxg/46
-	gW1s5TnWouoVCdUnI27bX3lPbQ/C/L3Pav4cNYI9s0e7CeWXz+drGaNKYyrqQRIen9s=
-X-Gm-Gg: ASbGncsbwD4CfElgOSnoSTvVUE53UAn0xpPPmNqI4GOUUKZ/+UGeQtqg9vUp3RTtM92
-	WB7aNO4FMiGYjlgvLGhK2tmOErZaV/SoBo8mBAmCkqDfVnyDoPOVifM7SPlfC2QhbfkW/5I7LWL
-	68UfXaNuQORJhbZ5teuxjawvMS8LughUheOnOgVU6FQyiGciRjcts2+BhPn380WOTWGQMK4EpW4
-	HUHo9fgdtFbcpplh2oCjYZCb8teHfWizRWpJt7yb7BWAJXVoBWocJbFSSpLkxTWDiZk0YFOgGsq
-	LpHNQNymjpBZLVX/SLAxX+Jx+X6lCHALptNrEMEINAM6ETxrUo0MyanNegRWcLSz5JYYiVNVDhJ
-	36KgZuuCQHjLxOW5mgAuZ1reuHCxRNwVaUEbvWaWU5ShkGGxUMfy0+H16lJeTI8qlyzkvheyamc
-	yzEv8bNRyqzUQauHcyOO716370FZo=
-X-Google-Smtp-Source: AGHT+IHoQJVW3GVryEUbRFPGpnxQkJbTH7OhYAuA7LrZ0+OT2N5eQIcCT1zPMqYvJ4arflxQltQRlg==
-X-Received: by 2002:a05:6000:2001:b0:428:55c3:ced6 with SMTP id ffacd0b85a97d-429aef82eadmr2390550f8f.18.1761747644972;
-        Wed, 29 Oct 2025 07:20:44 -0700 (PDT)
-Received: from jiri-mlt.client.nvidia.com ([140.209.217.211])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cbb20sm26388404f8f.18.2025.10.29.07.20.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 07:20:44 -0700 (PDT)
-Date: Wed, 29 Oct 2025 15:20:41 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>, 
-	Prathosh Satish <Prathosh.Satish@microchip.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>, Jonathan Corbet <corbet@lwn.net>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Donald Hunter <donald.hunter@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/2] dpll: add phase-adjust-gran pin attribute
-Message-ID: <jgebk37r4xs6w4526hjc5u6r7oudanb5ce7v4xlaw2tcswtycx@cvmxkwxvkpek>
-References: <20251024144927.587097-1-ivecera@redhat.com>
- <20251024144927.587097-2-ivecera@redhat.com>
- <20251028183919.785258a9@kernel.org>
- <b3f45ab3-348b-4e3e-95af-5dc16bb1be96@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbaR5fjb+NHvI1ltHCZ6Ttp1X1rJn2uldN5P49dL11Qs5PZZcwFbELH2nxc+Lu0pBoAzQC/8h2xXY6gfNGuNPGyr39hDQ2Ppjmyqfn8hCrBzFmpCH0WWFk3zUmpzkxADxO8rbsQnJmmrCYHEWxXa7qPuMooSwQa2jQdyGdjXs8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wXnpmLP0; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 29 Oct 2025 14:24:34 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761747896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=voX1IkfxOsRbEdnFfs0CHPgg1gOl+sXcGlirOmKQbR4=;
+	b=wXnpmLP0HDEQyb/8xevKV/G/apWSCxt94HkKwhsZMljCznz/fG3j+SPLlFa2nDBo6S3+VI
+	iMZYwDTiSFZxQykMbZW263Iy16EtqzYhzQS+zgFrBLzvgHmruHCFqlZ8iIQ11qfgsXbIWX
+	ge3/b08bk33L8FmHe2Tb7NBM3izn5Y4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/23] Extend test coverage for nested SVM
+Message-ID: <6upf6dputsb3w56my62xvgdxbk27qlurn5egtkejc2m6mmcxpr@qevtkb6o32zh>
+References: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,71 +56,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b3f45ab3-348b-4e3e-95af-5dc16bb1be96@redhat.com>
+In-Reply-To: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Wed, Oct 29, 2025 at 08:44:52AM +0100, ivecera@redhat.com wrote:
->Hi Kuba,
->
->On 10/29/25 2:39 AM, Jakub Kicinski wrote:
->> On Fri, 24 Oct 2025 16:49:26 +0200 Ivan Vecera wrote:
->> > +      -
->> > +        name: phase-adjust-gran
->> > +        type: s32
->> > +        doc: |
->> > +          Granularity of phase adjustment, in picoseconds. The value of
->> > +          phase adjustment must be a multiple of this granularity.
->> 
->> Do we need this to be signed?
->> 
->To have it unsigned brings a need to use explicit type casting in the core
->and driver's code. The phase adjustment can be both positive and
->negative it has to be signed. The granularity specifies that adjustment
->has to be multiple of granularity value so the core checks for zero
->remainder (this patch) and the driver converts the given adjustment
->value using division by the granularity.
->
->If we would have phase-adjust-gran and corresponding structure fields
->defined as u32 then we have to explicitly cast the granularity to s32
->because for:
+On Tue, Oct 21, 2025 at 07:47:13AM +0000, Yosry Ahmed wrote:
+> There are multiple selftests exercising nested VMX that are not specific
+> to VMX (at least not anymore). Extend their coverage to nested SVM.
+> 
+> This version is significantly different (and longer) than v1 [1], mainly
+> due to the change of direction to reuse __virt_pg_map() for nested EPT/NPT
+> mappings instead of extending the existing nested EPT infrastructure. It
+> also has a lot more fixups and cleanups.
+> 
+> This series depends on two other series:
+> - "KVM: SVM: GIF and EFER.SVME are independent" [2]
+> - "KVM: selftests: Add test of SET_NESTED_STATE with 48-bit L2 on 57-bit L1" [3]
+> 
+> The dependency on the former is because set_nested_state_test is now
+> also a regression test for that fix. The dependency on the latter is
+> purely to avoid conflicts.
+> 
+> The patch ordering is not perfect, I did some cleanups toward the end
+> that arguably should have been moved to the beginning, but I had to stop
+> rebasing and send the patches out at some point:
+> 
+> Block #1 (patch 1 to patch 7):
+> - Direct successors to the first 6 patches in v1, addressing review
+>   comments from Jim and collecting his review tags. These patch extend 5
+>   of the nVMX tests to cover nSVM.
+> 
+> Block #2 (patch 8 to patch 11):
+> - Miscellaneous fixups and cleanups.
+> 
+> Block #3 (patch 11 to patch 17):
+> - Moving nested EPT mapping functions to use __virt_pg_map(), patches 11
+>   to 15 do the prep work, and patch 16 does the switch. Patch 17 is a
+>   minor cleanup on top (which arguably fits better in block #2).
+> 
+> Block #4 (patch 18 to 23):
+> - Patches 18 to 22 are prep work to generalize the nested EPT mapping
+>   code to work with nested NPT, and patch 23 finally extends the nested
+>   dirty logging test to work with nSVM using the nested NPT
+>   infrastructure. Patch 19 is admittedly an imposter in this block and
+>   should have been in block #2.
 
-I prefer cast. The uapi should be clear. There is not point of having
-negative granularity.
+Hi Sean,
 
+Any thoughts on the current version? Is this what you had in mind for
+reusing __virt_pg_map()?
 
->
-><snip>
->s32 phase_adjust, remainder;
->u32 phase_gran = 1000;
->
->phase_adjust = 5000;
->remainder = phase_adjust % phase_gran;
->/* remainder = 0 -> OK for positive adjust */
->
->phase_adjust = -5000;
->remainder = phase_adjust % phase_gran;
->/* remainder = 296
-> * Wrong for negative adjustment because phase_adjust is casted to u32
-> * prior division -> 2^32 - 5000 = 4294962296.
-> * 4294962296 % 1000 = 296
-> */
->
-> remainder = phase_adjust % (s32)phase_gran;
-> /* remainder = 0
->  * Now OK because phase_adjust remains to be s32
->  */
-></snip>
->
->Similarly for division in the driver code if the granularity would be
->u32.
->
->So I have proposed phase adjustment granularity to be s32 to avoid these
->explicit type castings and potential bugs in drivers.
-
-Cast in dpll core, no?
-
-
->
->Thanks,
->Ivan
->
+> 
+> [1]https://lore.kernel.org/kvm/20251001145816.1414855-1-yosry.ahmed@linux.dev/
+> [2]https://lore.kernel.org/kvm/20251009223153.3344555-1-jmattson@google.com/
+> [3]https://lore.kernel.org/kvm/20250917215031.2567566-1-jmattson@google.com/
+> 
+> Yosry Ahmed (23):
+>   KVM: selftests: Minor improvements to asserts in
+>     test_vmx_nested_state()
+>   KVM: selftests: Extend vmx_set_nested_state_test to cover SVM
+>   KVM: selftests: Extend vmx_close_while_nested_test to cover SVM
+>   KVM: selftests: Extend vmx_nested_tsc_scaling_test to cover SVM
+>   KVM: selftests: Move nested invalid CR3 check to its own test
+>   KVM: selftests: Extend nested_invalid_cr3_test to cover SVM
+>   KVM: selftests: Extend vmx_tsc_adjust_test to cover SVM
+>   KVM: selftests: Stop hardcoding PAGE_SIZE in x86 selftests
+>   KVM: selftests: Remove the unused argument to prepare_eptp()
+>   KVM: selftests: Stop using __virt_pg_map() directly in tests
+>   KVM: selftests: Make sure vm->vpages_mapped is always up-to-date
+>   KVM: selftests: Parameterize the PTE bitmasks for virt mapping
+>     functions
+>   KVM: selftests: Pass the root GPA into virt_get_pte()
+>   KVM: selftests: Pass the root GPA into __virt_pg_map()
+>   KVM: selftests: Stop setting AD bits on nested EPTs on creation
+>   KVM: selftests: Use __virt_pg_map() for nested EPTs
+>   KVM: selftests: Kill eptPageTablePointer
+>   KVM: selftests: Generalize nested mapping functions
+>   KVM: selftests: Move nested MMU mapping functions outside of vmx.c
+>   KVM: selftests: Stop passing a memslot to nested_map_memslot()
+>   KVM: selftests: Allow kvm_cpu_has_ept() to be called on AMD CPUs
+>   KVM: selftests: Set the user bit on nested MMU PTEs
+>   KVM: selftests: Extend vmx_dirty_log_test to cover SVM
+> 
+>  tools/testing/selftests/kvm/Makefile.kvm      |  11 +-
+>  .../testing/selftests/kvm/include/kvm_util.h  |   1 +
+>  .../selftests/kvm/include/x86/processor.h     |  34 ++-
+>  .../selftests/kvm/include/x86/svm_util.h      |   8 +
+>  tools/testing/selftests/kvm/include/x86/vmx.h |  15 +-
+>  tools/testing/selftests/kvm/lib/kvm_util.c    |   3 -
+>  .../testing/selftests/kvm/lib/x86/memstress.c |   6 +-
+>  .../testing/selftests/kvm/lib/x86/processor.c | 184 +++++++++++---
+>  tools/testing/selftests/kvm/lib/x86/svm.c     |  19 ++
+>  tools/testing/selftests/kvm/lib/x86/vmx.c     | 232 +++---------------
+>  tools/testing/selftests/kvm/mmu_stress_test.c |   6 +-
+>  ...ested_test.c => close_while_nested_test.c} |  42 +++-
+>  .../selftests/kvm/x86/hyperv_features.c       |   2 +-
+>  tools/testing/selftests/kvm/x86/hyperv_ipi.c  |  18 +-
+>  .../selftests/kvm/x86/hyperv_tlb_flush.c      |   2 +-
+>  ...rty_log_test.c => nested_dirty_log_test.c} | 102 +++++---
+>  .../kvm/x86/nested_invalid_cr3_test.c         | 118 +++++++++
+>  ...adjust_test.c => nested_tsc_adjust_test.c} |  79 +++---
+>  ...aling_test.c => nested_tsc_scaling_test.c} |  48 +++-
+>  ...d_state_test.c => set_nested_state_test.c} | 135 +++++++++-
+>  .../selftests/kvm/x86/sev_smoke_test.c        |   2 +-
+>  tools/testing/selftests/kvm/x86/state_test.c  |   2 +-
+>  .../selftests/kvm/x86/userspace_io_test.c     |   2 +-
+>  23 files changed, 695 insertions(+), 376 deletions(-)
+>  rename tools/testing/selftests/kvm/x86/{vmx_close_while_nested_test.c => close_while_nested_test.c} (64%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_dirty_log_test.c => nested_dirty_log_test.c} (57%)
+>  create mode 100644 tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c
+>  rename tools/testing/selftests/kvm/x86/{vmx_tsc_adjust_test.c => nested_tsc_adjust_test.c} (61%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_nested_tsc_scaling_test.c => nested_tsc_scaling_test.c} (83%)
+>  rename tools/testing/selftests/kvm/x86/{vmx_set_nested_state_test.c => set_nested_state_test.c} (67%)
+> 
+> -- 
+> 2.51.0.869.ge66316f041-goog
+> 
 
