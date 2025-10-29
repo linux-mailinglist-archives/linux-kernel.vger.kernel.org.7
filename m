@@ -1,106 +1,102 @@
-Return-Path: <linux-kernel+bounces-877250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0552DC1D908
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:08:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213D6C1D923
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7EBB4E37E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:08:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31C141897D06
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F3B3191C6;
-	Wed, 29 Oct 2025 22:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D9F31AF2E;
+	Wed, 29 Oct 2025 22:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="lhbf5xPG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gv00wGDL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9E3314D2F;
-	Wed, 29 Oct 2025 22:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C196D2F99B8;
+	Wed, 29 Oct 2025 22:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761775690; cv=none; b=nOJuZWevX3nyaFrkds2IsaJ3+zt2bTAeoR6jdpc568Z9jyEl4iYRKkhbXta+p556kOmc3SBMEO5+0r2zCXGk3Je/QIKjvvFhuWm64hH16tBXEdITAN0DN5XUVWf4ZEwfha7tr6R+USWyrmr4bCC4tdWzKWL4pQs4KSVc3eYuaZ8=
+	t=1761776005; cv=none; b=SvyKuzrn+03d8S2FpFYxvqJbgY3+fZ2S25nf5973YCEfFlglQ+RVS9Zx86Yy8X3QlCEFEJQfGWlXRlmHTqHLpkgC1ZW323uJmwtvchJ6RWUT0gUr86bbTsLbmFDHIMazXcV+COchi7qx7g8JSBaRO4NFLNcrnnQgyGFb3biWApw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761775690; c=relaxed/simple;
-	bh=PCMUQE0BW2QoEo1rc9q0qVRgJ7LwUgidps/XqX0NgMs=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=o20ETxqvzB7K4wc4//MRwYZ0iCDAr520AEZOcSWrEpY5+EMLfNDSvVoInEsh1cBmXGoC6ezOG+mKHl4r4hcnl7OBxLIuMPVRsmJYJ+TddENo2qdNe3nmr1B2tTOGzjgIfJ4hk9Isv1N8ren/gwOrG+wwo2oVmO8LWbFA/v5jXrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=lhbf5xPG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F3B9C4CEF7;
-	Wed, 29 Oct 2025 22:08:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761775690;
-	bh=PCMUQE0BW2QoEo1rc9q0qVRgJ7LwUgidps/XqX0NgMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lhbf5xPG+TbHCIl7DykXGj8gTac6GbCqNpXa1cRwVKEwgahz2Xm/rL9q7pwxoGeN2
-	 1+wl3Z2jRhboHibxncTbneKp8ycFKVUwsFckuGoRJXy20OgJHVd2/6hhEFlSIa5KAz
-	 7Pt61sgYPDT+ud4PyWxwBjwCBaxoEAqXXSB8nXj0=
-Date: Wed, 29 Oct 2025 15:08:06 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Maciej Wieczor-Retman <m.wieczorretman@pm.me>
-Cc: xin@zytor.com, peterz@infradead.org, kaleshsingh@google.com,
- kbingham@kernel.org, nathan@kernel.org, ryabinin.a.a@gmail.com,
- dave.hansen@linux.intel.com, bp@alien8.de, morbo@google.com,
- jeremy.linton@arm.com, smostafa@google.com, kees@kernel.org,
- baohua@kernel.org, vbabka@suse.cz, justinstitt@google.com,
- wangkefeng.wang@huawei.com, leitao@debian.org, jan.kiszka@siemens.com,
- fujita.tomonori@gmail.com, hpa@zytor.com, urezki@gmail.com,
- ubizjak@gmail.com, ada.coupriediaz@arm.com,
- nick.desaulniers+lkml@gmail.com, ojeda@kernel.org, brgerst@gmail.com,
- elver@google.com, pankaj.gupta@amd.com, glider@google.com,
- mark.rutland@arm.com, trintaeoitogc@gmail.com, jpoimboe@kernel.org,
- thuth@redhat.com, pasha.tatashin@soleen.com, dvyukov@google.com,
- jhubbard@nvidia.com, catalin.marinas@arm.com, yeoreum.yun@arm.com,
- mhocko@suse.com, lorenzo.stoakes@oracle.com, samuel.holland@sifive.com,
- vincenzo.frascino@arm.com, bigeasy@linutronix.de, surenb@google.com,
- ardb@kernel.org, Liam.Howlett@oracle.com, nicolas.schier@linux.dev,
- ziy@nvidia.com, kas@kernel.org, tglx@linutronix.de, mingo@redhat.com,
- broonie@kernel.org, corbet@lwn.net, andreyknvl@gmail.com,
- maciej.wieczor-retman@intel.com, david@redhat.com, maz@kernel.org,
- rppt@kernel.org, will@kernel.org, luto@kernel.org,
- kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- linux-kbuild@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 00/18] kasan: x86: arm64: KASAN tag-based mode for
- x86
-Message-Id: <20251029150806.e001a669d9dad6ff9167c1f0@linux-foundation.org>
-In-Reply-To: <cover.1761763681.git.m.wieczorretman@pm.me>
-References: <cover.1761763681.git.m.wieczorretman@pm.me>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761776005; c=relaxed/simple;
+	bh=jsSZeTCPBNkK9Hu5Z3S/rZjdNPkj8Zq1Kblcr1QvrJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EC+gF0QMeH5Vu3QnwVRYMufQ9x6FJZYuaFySQudi9yCjlWx8FlJYKtO5yiWXwPE9OvcFiO/v5XEY9Xc2LiDg5QKyx68fK0wA6e1wB5ADyTS0rj8KttgPRMiHtmNirk3JDkXCjD+W5wXcpcnOKgJ8KBxhoc6sRAH7xINZKFzNrps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gv00wGDL; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761776004; x=1793312004;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jsSZeTCPBNkK9Hu5Z3S/rZjdNPkj8Zq1Kblcr1QvrJs=;
+  b=gv00wGDLMl5UP1EyFnqOMJdea03BQSr6UstfQP0bY/3HMOKvdAvwPpxf
+   MggDxO9d8VK9+8ngHUQ2PF2//zbRVzcQ8BpIbPvpRp6dAXiNs6tvCbfEH
+   kRrO4jUBwT1wFReB4VLhmFI+Up/cUD+XCNKyIq5QWtoA3tWf5ESlZKuzI
+   yRO9ehGDMEHxWDAK7AbSug/iUhBcbnzEyBlJBtO9RTIjdxYxQLa1Ar7GQ
+   eYntyaE1taT7tbSzWpIBhnn9xuLU8FDk1CyJwEipf0JklRfoHgllC9ztB
+   Xpb1B2QcdbzxBRKteuYpU/OxVJDpryP7J4Wu7rDpdtMOV9PEhT2VmUjue
+   A==;
+X-CSE-ConnectionGUID: ywkw25sISXaIFE3YzAeIeQ==
+X-CSE-MsgGUID: hbvItdWnTjyyokuUPUIxag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="66526599"
+X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
+   d="scan'208";a="66526599"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 15:13:23 -0700
+X-CSE-ConnectionGUID: uHerNb3CQ3qL1i/8dqgszw==
+X-CSE-MsgGUID: /vnnliYDR9K6wnAwMrcXyQ==
+X-ExtLoop1: 1
+Received: from vverma7-desk1.amr.corp.intel.com (HELO desk) ([10.124.223.151])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 15:13:22 -0700
+Date: Wed, 29 Oct 2025 15:13:16 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Tao Zhang <tao1.zhang@intel.com>, Jim Mattson <jmattson@google.com>,
+	Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH 1/3] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
+Message-ID: <20251029221316.clb4nadv4uac52es@desk>
+References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
+ <20251029-verw-vm-v1-1-babf9b961519@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-verw-vm-v1-1-babf9b961519@linux.intel.com>
 
-On Wed, 29 Oct 2025 19:05:27 +0000 Maciej Wieczor-Retman <m.wieczorretman@pm.me> wrote:
+On Wed, Oct 29, 2025 at 02:26:28PM -0700, Pawan Gupta wrote:
+> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> index bc255d709d8a16ae22b5bc401965d209a89a8692..0dd23beae207795484150698d1674dc4044cc520 100644
+> --- a/arch/x86/kvm/vmx/vmenter.S
+> +++ b/arch/x86/kvm/vmx/vmenter.S
+> @@ -161,7 +161,8 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+>  
+>  	/* Clobbers EFLAGS.ZF */
+> -	CLEAR_CPU_BUFFERS
+> +	VM_CLEAR_CPU_BUFFERS
+> +.Lskip_clear_cpu_buffers:
 
-> The patchset aims to add a KASAN tag-based mode for the x86 architecture
-> with the help of the new CPU feature called Linear Address Masking
-> (LAM). Main improvement introduced by the series is 2x lower memory
-> usage compared to KASAN's generic mode, the only currently available
-> mode on x86. The tag based mode may also find errors that the generic
-> mode couldn't because of differences in how these modes operate.
+Agh, this label belongs to patch 3/3.
 
-Thanks.  Quite a lot of these patches aren't showing signs of review at
-this time, so I'll skip v6 for now.
-
-However patches 1&2 are fixes that have cc:stable.  It's best to
-separate these out from the overall add-a-feature series please - their
-path-to-mainline will be quite different.
-
-I grabbed just those two patches for some testing, however their
-changelogging isn't fully appropriate.  Can I ask that you resend these
-as a two-patch series after updating the changelogs to clearly describe
-the userspace-visible effects of the flaws which the patches fix?
-
-This is to help -stable maintainers understand why we're proposing the
-backports and it is to help people to predict whether these fixes might
-address an issue which they or their customers are experiencing.
+>  	/* Check EFLAGS.CF from the VMX_RUN_VMRESUME bit test above. */
+>  	jnc .Lvmlaunch
 
