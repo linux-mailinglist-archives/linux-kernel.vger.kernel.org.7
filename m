@@ -1,189 +1,199 @@
-Return-Path: <linux-kernel+bounces-876294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ACECC1B240
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:18:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BFDC1B1B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9991B228FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14446E101D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3C51C84A1;
-	Wed, 29 Oct 2025 13:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A3D2D1319;
+	Wed, 29 Oct 2025 13:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GipmGrKT"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="I7Uy3BYV"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9F821ADCB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FD62C08AC;
+	Wed, 29 Oct 2025 13:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746160; cv=none; b=j73+KtMuUpOWVEao51F4gv7sO3FRtfG+CCHcBl7frBHy6fDjmfVyDAiH9ZxIJVHuK7/wOJ/4c94ox6n9lojJSUdvqeEs/flgg7uG9nMtOQXxShTPXA9KyPAYJgTyUnsQSO8/PyMrAfZs7TFk4RZ9tCac+ixB3rQDRuc3YY6aJ3U=
+	t=1761745956; cv=none; b=GERQDCXGu+LzADEpAXjSdvIF1GDsh02KTX8zM64hQHnlg8PFal7tuppNebrXaAwIRhNwdpnMDIjUSfBn5ABftgA99KrYzk5XYAU2kzx6ydCpSpBBYWK3ci74gjgc1ObfykkfIa9iCjl+h9kLehmmoFtWIcbEn465xS2KlMvMT+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746160; c=relaxed/simple;
-	bh=sHPEcCDYogiAcXc5LYqps5Dm5uc9aiRfkvHMbT9kJm4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mTreKqkdM0H4PVP9NVLqiR0O8FR8zySlfLYC6BznB9IkfW+rdBkwHWNnW6WmQwhwfesFdxRLDrn2Gq/NQhscPX37GidR3nsEiLiXoCkZWYDGWXiTor+5g9dJB5bLPQE6ETwQYtHss6J9gqXAoOxDXq+Qjp6ZWkjWPRM4l4d+Zcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GipmGrKT; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b6d3effe106so1613192166b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761746157; x=1762350957; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=t3O1Iu/ksHRGyZsz6LMTY3M2UTA+pLqkjIUkkgFcc18=;
-        b=GipmGrKTbokji/z//tbAN+Td6HP2NlQqf+jhZoVmiCL97kSldcR6fTl9AuIYi9m0Po
-         r5A4hSB1Gl12gsOkJfHouAOGdiFaNSDq0VOyi/FICuU4m14hclwb4mSowK9tyXwHtaVW
-         BgSsFH3bBXHZI+elsJDCG5INH7AWiy7KzyPobXDw0iXjW7aQo36HBDtKp2jPSxb4fuUQ
-         LkYQeUNMqGsjy4prx5iRnNWTlzBFnORsFQzoNFp5gDeUE8TDsxBono3SZ+l17RbNSV9p
-         yds05VIxpsKCQO8ZGvTikeqruqoWa7V+FR7RaGhfkJALkr7n64vVxnnFF2rfJHvvtpcz
-         9p6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746157; x=1762350957;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t3O1Iu/ksHRGyZsz6LMTY3M2UTA+pLqkjIUkkgFcc18=;
-        b=PpAzOlxDPrwM0Ykx+SXXurO5zMzdpgDkwBpbDZnYiYlotG0TZ1bJEu4PoF2nvigO1f
-         S+aOVElOyXECYwAqSH6tEA34684Ab5d4xp877BztuzIhuyJCZ9xbMIxnhHtZOMJWZl51
-         pfX4oIo3OIAqlkS0qfCv7DGpGK7LDYc8t2RIgncCgDUC8zKcsbU+jKUY+7jdqv4rwU7V
-         lSTIn4bq51xme5xDVlKd5iW0918lkEr0LNmjkwEW+MrQCIBXnrDyk3bbXdMgAf1PuGwW
-         CdqS+7cni4Xvgb8uO7Svl2vTgs85GqylqXft+4XRxHFs5/NczaVDF8j9n9fARm6Skxla
-         7pZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvgL3rcD17mBmIKuSTKc4Fx3gnTNd1Os3i92Of1xdSs3Rr/UUDTkd/dh6W7Z2Bu3Y+3XZOfJLmv5TeQs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiCbmlGDMaMZr5/bEgsnpGcS+oKVXVSX7JkaxWfg9LFaAgSZvT
-	Ice1w6r218voxom2fIn4cOi99y9Sja2JYBxbBcP5ML1H7qaTltu/FXDn
-X-Gm-Gg: ASbGncsqyXnwgRrDYcNN6jmmdOMWwgE4MOZiKnXeMKtyjJyQQ0/BYY4hrk4Qck7Bef7
-	gI4E2DcRxPdsTbn5oD0VjNvsSI0Lv/aBMfKERNtyMnAi4YS7QaJ+y1E3Dlw75nLE0QG5DhOuHLK
-	60f/x25ObFqcg+9xSEZZTH2uWusUUXnCkc/FSZNuLAK8uaItFWcGfT7MjWCl0AIhaqaO4LCucz4
-	7WRbS23wgZtl9C8NM4kqfA6L6Vc9R/g8zAtBh0K65ltyEXS/cm4u/6ynbYO3cnXrwAl2eWhmxzt
-	i48887BvJn9xnJyzYl1fiQEZ35Gh1GL95L6KrnRyVbbQmwbkf4TEgLaC1gTiO4IxdOzYDv/YD5c
-	Gx2jPoUgBMvoTixXBFUqyOBQDnow5A803y9iGs7OzaEXfvLdB+6/yyMOuhPevgFAZTYLmdv3YVx
-	JegADaUbEwIBRZJ7kfzZ8ZYEtdDQ==
-X-Google-Smtp-Source: AGHT+IG3fjXdxPy5yprhsiCpSi+P154WFnEbny0GwxKhkE7eZydOCcZ5Zo9k8sLJC5ZAu8sCW+HiNg==
-X-Received: by 2002:a17:906:ee8b:b0:b45:913d:f523 with SMTP id a640c23a62f3a-b703d2fe6ffmr341163266b.18.1761746157108;
-        Wed, 29 Oct 2025 06:55:57 -0700 (PDT)
-Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8534d99dsm1444960766b.21.2025.10.29.06.55.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:55:56 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v3 0/8] Add support for i.MX8ULP's SIM LPAV
-Date: Wed, 29 Oct 2025 06:52:21 -0700
-Message-ID: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761745956; c=relaxed/simple;
+	bh=rW3784dFwWK1ESSqmaBPg+kT0mzp+FqU2lvt8I3dmu4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t2xfanb/gYIS4cGbu0hLYa37OKNHNinACbPBjsD272g03icRfpNUeLmMYIrs12SoZMOvzE/Tw0/zyNZUeFUhlionbdQnht22oUuGYZk7TXYpqO/t55ac57w6jOyDOglpLbTMmZiKvQThelAVI3WLHBPoYbWthumMLRbjFZPBVXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=I7Uy3BYV; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8727C1A1748;
+	Wed, 29 Oct 2025 13:52:32 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 5778F606E8;
+	Wed, 29 Oct 2025 13:52:32 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A263117F80EE;
+	Wed, 29 Oct 2025 14:52:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761745951; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=rhH66cXrlh+mBW9/j7oTqaX5K/p8LcUvQAyFmm6+5Q8=;
+	b=I7Uy3BYV/Ou2rYMnDh1/hbLmhYDx1/ph/I5ohpr9w/G0N3i9SxBnYKHMBHwx5cfopu9avr
+	Xq3vg2TbT0osKF5zTEKv82/yopurT8c8NTcGNl/ijT9MJskiz9eOawGpq0Pq4yFzU9rI+v
+	95y+tRGSQQOkhp8Z6SgnFCzD7LrS2aZZ9YRuIQnHyCM439BGEAIvP6n3Paw1kNDrRgwBuX
+	Dx6a91hs0BOhslhMx3KBN7LLeWLo8NH/9Yykcb0tqO5FFOsRnHdwcLiUeLNIZsMtOYwDmO
+	+myXpz7eDahFuhdLvKc/qx6zu76DMar/M9ciSClSYcpff5ALg6ZgMPOBv3tj8Q==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Subject: [PATCH bpf-next v6 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+Date: Wed, 29 Oct 2025 14:52:21 +0100
+Message-Id: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABUcAmkC/23NwU7DMAyA4VeZciYoseOk2Yn3QByW1GUR0ExNV
+ RVNfXeiFMHEOFr29/sqCk+JizgermLiJZWUxzrYh4OI59P4yjL1dRaggBToTq7lTao4eMXeUa+
+ NqJeXiYe0tsqzCJdBjrzO4qVuzqnMefps+UW3fSuhxlZatFTSoTMO/Mlj8E8h5/k9jY8xf7TCA
+ r/KK9gVVKVdtGioJ9B0r/BWmV1hVZGxA0bUpvtHmRsF38pUBYrJEbrQOXuv6Edppe2uqCprIXr
+ i0Cn159e2bV+O8hcnegEAAA==
+X-Change-ID: 20250218-xsk-0cf90e975d14
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Hi all,
 
-The LPAV System Integration Module (SIM) is an IP found inside i.MX8ULP's
-LPAV subsystem, which offers clock gating, reset line
-assertion/de-assertion, and various other misc. options.
+The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+are defined in xksxceiver.c. Since this script is used to test real
+hardware, the goal here is to leave it as it is, and only integrate the
+tests that run on veth peers into the test_progs framework.
 
-This series adds support for the IP by introducing a new clock HW provider
-driver and by modifying i.MX8MP's AUDIOMIX block control reset driver to
-allow it to be used for i.MX8ULP's SIM LPAV as well.
+I've looked into what could improve the speed in the CI:
+- some tests are skipped when run on veth peers in a VM (because they
+  rely on huge page allocation or HW rings). This skipping logic still
+  takes some time and can be easily avoided.
+- the TEARDOWN test is quite long (several seconds on its own) because
+  it runs the same test 10 times in a row to ensure the teardown process
+  works properly
 
-This series is a spin-off from [1].
+With theses tests fully skipped in the CI and the veth setup done only
+once for each mode (DRV / SKB), the execution time is reduced to about 5
+seconds on my setup.
+```
+$ tools/testing/selftests/bpf/vmtest.sh -d $HOME/ebpf/output-regular/ -- time ./test_progs -t xsk
+[...]
+real    0m 5.04s
+user    0m 0.38s
+sys     0m 1.61s
+```
 
-[1]: https://lore.kernel.org/lkml/20240922174225.75948-1-laurentiumihalcea111@gmail.com/
+It still feels a bit long, but there are 24 tests run in both DRV and
+SKB modes which means around 100ms for each one. I'm not sure I can make
+it much faster without randomizing the tests so that not all of them run
+in every CI execution.
 
+PATCH 1 extracts test_xsk[.c/.h] from xskxceiver[.c/.h] to make the
+tests available to test_progs.
+PATCH 2 to 7 fix small issues in the current test
+PATCH 8 to 13 handle all errors to release resources instead of calling
+exit() when any error occurs.
+PATCH 14 isolates the tests that won't fit in the CI
+PATCH 15 integrates the CI tests to the test_progs framework
+
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 ---
-Changes in v3:
+Changes in v6:
+- Setup veth peer once for each mode instead of once for each substest
+- Rename the 'flaky' table 'skip-ci' table and move the automatically
+  skipped and the longest tests into it
+- Link to v5: https://lore.kernel.org/r/20251016-xsk-v5-0-662c95eb8005@bootlin.com
 
-* rename "lpav_bus", "hifi_core", and "hifi_plat" to "bus", "core", "plat"
-* don't assign the "name" field of "struct clk_parent_data". Previously, we
-  were assigning the local parent name to this field, which wouldn't have
-  worked anyways if, for whatever reason, the fallback mechanism would kick in.
-* replace the whole auxiliary reset driver creation chunk by
-  a single devm_auxiliary_device_create() call.
-* replace the "shift" field from "struct imx8mp_reset_map" with the usage of
-  ffs()
-* shorten commit description for patch 6
-* cast "id->driver_data" to "void *" instead of the previous
-  "const struct imx8mp_reset_info *", which makes the line shorter.
-* open question resulting from Peng Fan's comment on V2: how to access
-  interconnect QoS registers? do we need to model the sim_lpav as an
-  interconnect provider as well or is it fine to have another interconnect
-  provider that references the sim_lpav node and accesses its registers
-  via regmap (dev_get_regmap(), specifically, NOT syscon).
-* link to v2: https://lore.kernel.org/lkml/20251017112025.11997-1-laurentiumihalcea111@gmail.com/
+Changes in v5:
+- Rebase on latest bpf-next_base
+- Move XDP_ADJUST_TAIL_SHRINK_MULTI_BUFF to the flaky table
+- Add Maciej's reviewed-by
+- Link to v4: https://lore.kernel.org/r/20250924-xsk-v4-0-20e57537b876@bootlin.com
+
+Changes in v4:
+- Fix test_xsk.sh's summary report.
+- Merge PATCH 11 & 12 together, otherwise PATCH 11 fails to build.
+- Split old PATCH 3 in two patches. The first one fixes
+  testapp_stats_rx_dropped(), the second one fixes
+  testapp_xdp_shared_umem(). The unecessary frees (in
+  testapp_stats_rx_full() and testapp_stats_fill_empty() are removed)
+- Link to v3: https://lore.kernel.org/r/20250904-xsk-v3-0-ce382e331485@bootlin.com
+
+Changes in v3:
+- Rebase on latest bpf-next_base to integrate commit c9110e6f7237 ("selftests/bpf:
+Fix count write in testapp_xdp_metadata_copy()").
+- Move XDP_METADATA_COPY_* tests from flaky-tests to nominal tests
+- Link to v2: https://lore.kernel.org/r/20250902-xsk-v2-0-17c6345d5215@bootlin.com
 
 Changes in v2:
+- Rebase on the latest bpf-next_base and integrate the newly added tests
+  to the work (adjust_tail* and tx_queue_consumer tests)
+- Re-order patches to split xkxceiver sooner.
+- Fix the bug reported by Maciej.
+- Fix verbose mode in test_xsk.sh by keeping kselftest (remove PATCH 1,
+  7 and 8)
+- Link to v1: https://lore.kernel.org/r/20250313-xsk-v1-0-7374729a93b9@bootlin.com
 
-* drop redundant description for "#clock-cells"/"#reset-cells" properties
-  from binding
-* make "mux-controller" and "#reset-cells" properties mandatory
-* add "mux-controller" child to binding example node
-* drop the compatiblity with syscon - this was never actually needed and
-  it was done to allow using "mmio-mux", which requires a syscon parent
-* modify the auxiliary reset driver to use regmap - this will allow the
-  mux controller, clock control and reset control APIs to use the same
-  spinlock.
-* rename "imx8ulp-reset-sim-lpav.h" to "fsl,imx8ulp-sim-lpav.h"
-* drop the "IMX8ULP_CLK_SIM_LPAV_END" macro, which doesn't belong to the
-  binding headers
-* fix the values of "IMX8MP_AUDIOMIX_EARC_RESET_MASK" and
-  "IMX8MP_AUDIOMIX_EARC_PHY_RESET_MASK", which were previously incorrect
-* drop redundant macros from auxiliary reset driver - replace their
-  occurrences with their values
-* squash the binding-related macro additions into the binding patch
-* add mux-controller child node to the sim_lpav node
-* make the "gates" array static
-* link to v1: https://lore.kernel.org/lkml/20250804155407.285353-1-laurentiumihalcea111@gmail.com/
 ---
+Bastien Curutchet (eBPF Foundation) (15):
+      selftests/bpf: test_xsk: Split xskxceiver
+      selftests/bpf: test_xsk: Initialize bitmap before use
+      selftests/bpf: test_xsk: Fix __testapp_validate_traffic()'s return value
+      selftests/bpf: test_xsk: fix memory leak in testapp_stats_rx_dropped()
+      selftests/bpf: test_xsk: fix memory leak in testapp_xdp_shared_umem()
+      selftests/bpf: test_xsk: Wrap test clean-up in functions
+      selftests/bpf: test_xsk: Release resources when swap fails
+      selftests/bpf: test_xsk: Add return value to init_iface()
+      selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+      selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+      selftests/bpf: test_xsk: Don't exit immediately when workers fail
+      selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+      selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+      selftests/bpf: test_xsk: Isolate non-CI tests
+      selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
 
-Laurentiu Mihalcea (8):
-  reset: imx8mp-audiomix: Fix bad mask values
-  dt-bindings: clock: document 8ULP's SIM LPAV
-  clk: imx: add driver for imx8ulp's sim lpav
-  reset: imx8mp-audiomix: Drop unneeded macros
-  reset: imx8mp-audiomix: Switch to using regmap API
-  reset: imx8mp-audiomix: Extend the driver usage
-  reset: imx8mp-audiomix: Support i.MX8ULP SIM LPAV
-  arm64: dts: imx8ulp: add sim lpav node
+ tools/testing/selftests/bpf/Makefile              |   11 +-
+ tools/testing/selftests/bpf/prog_tests/test_xsk.c | 2595 ++++++++++++++++++++
+ tools/testing/selftests/bpf/prog_tests/test_xsk.h |  298 +++
+ tools/testing/selftests/bpf/prog_tests/xsk.c      |  151 ++
+ tools/testing/selftests/bpf/xskxceiver.c          | 2696 +--------------------
+ tools/testing/selftests/bpf/xskxceiver.h          |  156 --
+ 6 files changed, 3183 insertions(+), 2724 deletions(-)
+---
+base-commit: 4481a8590725400f37d3015f0ee0d53a2cdc1bd6
+change-id: 20250218-xsk-0cf90e975d14
 
- .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  |  72 ++++++++
- arch/arm64/boot/dts/freescale/imx8ulp.dtsi    |  17 ++
- drivers/clk/imx/Makefile                      |   1 +
- drivers/clk/imx/clk-imx8ulp-sim-lpav.c        | 160 +++++++++++++++++
- drivers/reset/reset-imx8mp-audiomix.c         | 164 +++++++++++++-----
- include/dt-bindings/clock/imx8ulp-clock.h     |   5 +
- .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  |  16 ++
- 7 files changed, 392 insertions(+), 43 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
- create mode 100644 drivers/clk/imx/clk-imx8ulp-sim-lpav.c
- create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
-
+Best regards,
 -- 
-2.43.0
+Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
 
