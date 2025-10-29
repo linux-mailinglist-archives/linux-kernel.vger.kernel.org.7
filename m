@@ -1,237 +1,183 @@
-Return-Path: <linux-kernel+bounces-875154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87764C18517
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:44:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F95DC1852F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:44:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CAA7B50292D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:42:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21DDD504907
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 995DD30B528;
-	Wed, 29 Oct 2025 05:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6762F83BB;
+	Wed, 29 Oct 2025 05:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cx3NmWig"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="MU4iDMhR";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="MNIwgJPf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9772F619F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C102D3EF5
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761716087; cv=none; b=dbZ4jHFm8BvawggMr3+uHXmq6lga/EAu0F4LgcGwv9CwpHYf29o/yOl6JttSHJp1GWHXRaHZEjkn5w88i5uK2IzriKw8z8h2SRwp5Hor/kCmYkHi9DeuhLVEhJHNSq5yYlVzp7Woy3Ze3Y+DfPloL5qMkymtbschsJ//M3e1JjQ=
+	t=1761716575; cv=none; b=usXHz2wO1k0qrmBMOsH8JJwalRkkUp/qrXqwi6Z3Wves7NWIGK8vHxS9f3mF08QIvRXHPeA+SsRQ5u/PWhrx8vzVQcYpMUVGzn57y01gWmTCRI77c5B8zvfeQJCWUyVV+TrVJN9ZI+6qW5ur1ZMNRztBztdPHEl5TBAp1EPhusU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761716087; c=relaxed/simple;
-	bh=cXBb0FpLHE2+FneP8Fo+45jo0Wy454pCH8ScJIJcmqA=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=iezpiFlHz/fMylmZC8CDJfcsWAtnzPXVgf8cJy1TPia1BZO30cHXYOMCk58TagKWWTvXkvrDjXRJpmPJkINJuaaEMef8asbsZgM6y5aK5L3OCgxLbvy9ZNTioWUEM/ow51ECbgPbinAKla2xmkhhFYEPNxybhfQQiXu3yeBbs+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cx3NmWig; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-339b704e2e3so6216171a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:45 -0700 (PDT)
+	s=arc-20240116; t=1761716575; c=relaxed/simple;
+	bh=Hq8XQ7WLCASzgS3W4PqiVhut8mCz2MvByqRttaBS+zI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HUjZ9n9m/k7sXfyEX2MqbJ3cTN3sj83IRLv92TwaKEaLt6+FSqi3oJV0lF5U4DCqjOBSGW1tdIbpxR2TiOuSXsVQnx/nrwnSJQ+dbRRnHh+U78T8J7AQdkAr6vICHDQXKSuMLu+1Z2dEe605SDijVkNdULZWPiBd+bYeDP5o+T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=MU4iDMhR; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=MNIwgJPf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59T4v5op3755485
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:42:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D3bKb0RDe7sqcKTtSK80VBkKPBG6lWJuxoKADwOVxbA=; b=MU4iDMhRdB5gEpoU
+	+Zp/rE6ISERvIz42qDt+G461liT+E0ZZsQG2ahU7C/pB3Tsxmq0I+bgEbtZFbCtW
+	88tzkOm/7fJSKQc0mtSTOZXt9pG+egYpSosl4TDFJho8DV9TUwreDBl35WZcPuNM
+	PtNuVO+WxiGXJrz0gZqD0puGbPRsovLl4RtUpDNIEk5d1OMpX8d29pJuX7B2luXK
+	KsOvw+kEvVjocmHouSOl0tiPvHRTM8vVL4Wykob0Km7hXxiACy3oIN6wQtXxXtzC
+	z2D7wN1KL0D4AM1WYFcBf/9HUcIRBFzKh3HCi+UnfhMqV9aL0H8Uj5lT2Q/Tq+Md
+	Ea5+Bw==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a0habj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:42:53 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2924b3b9d47so60898075ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:42:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761716085; x=1762320885; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+        d=oss.qualcomm.com; s=google; t=1761716572; x=1762321372; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gC3uJBytFjGETcDOSgD3LOM/9/gCLbGFWg1YShV84iU=;
-        b=cx3NmWigG++FEG+yZxZLKwDkLaP9dRHHR+Uif9tw5qQq1g8R2ON2Jryv3wDAi+hrpo
-         zQwE6o/7E9HMCyKy4w32R4VuX/daoUOqIZMhBD+Fft2zd+Fqd7KZtVHcpf+vl+lXtYR0
-         jvoCVXJkdLMmp988WFnz/P4idsG+0E09LrZA0oMYUDEWLbY9UXFGqqQw8HLCpRUUGFVc
-         +tQieKwFUAh9kk2touFuVeivz6yBFb/xntiV8mEew0wmlAiUG+Brd0WI6KB7JGUAMtUs
-         Spg9zOa8Uxwjv120gqFXfMw72nAMnKroCGx32gAtwnAillCR+ohfW/wJWNdTvNHcVxJ+
-         4rMw==
+        bh=D3bKb0RDe7sqcKTtSK80VBkKPBG6lWJuxoKADwOVxbA=;
+        b=MNIwgJPfnWISd6Ss4T8KCFu6QLph2vMHI2PMMZChFpuGVbknH0ygVVw0AMDDVb3D84
+         PDcXFyCoS+Zks4MiKXBKqcbTdf7IyIbqKmdQUlMn0+3P7qEn2VTd9J6TTxCX43icHvCH
+         LMxU4RMc5/vScmz2YwmoyUyuKWCYuSnlznVCm7xU9OgK9iv1VwEgiLL9+K9aKQcExzAW
+         TMBDNklV0yhgk6hG2CdUojGwqWvfmli300TsHLsy4gCNjyOA5zTuJPQ86eN8wWaV6oAl
+         2YZnzabFedMLDWsuEdSuZGeYIkZoHNTAufHCuMJWrawA1zhJTDbsGoKk7Qkm0t1vsc0a
+         StZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761716085; x=1762320885;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1761716572; x=1762321372;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC3uJBytFjGETcDOSgD3LOM/9/gCLbGFWg1YShV84iU=;
-        b=pO/qJMv2G1+xt4Oa2jlrhhmLUghd9rrcTPdfS11Zt3S628J3uXFlgdo5WPAGfMjb7Z
-         Lu5INmnX9RhQB0SAutWbZOr006QlrobwoHmzPLRe6IzE+kwRDIRUBzTT0MWN0knTiPK8
-         D9TGWuGbhfSYSgXry5vvD41IBn4ZPe1NUctQWkLcD/CTu13oehE7GpjmLpuPYdXpC1tf
-         8kVoLkIsA+G9S9aWp2SBZw+u4GPYh6PiU4xfKJoTKb0x2upHBYqK1eeCIWgdYnWvNcZ1
-         Zp8uD//puUZWUaLp4f19pFDue9lzs2GOhdnu/EKm+B7z2uCUWUlJZGgmdfkp+gZynFtz
-         ieRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQy3Elz9nmx+s+zcfqt4MCLBH6NSD6zUI4HyXcwFYg+Zg40jYu/FmLxsdov2R3FIsL1JUWdZ5dE5eZluA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLUmoKR1M79PFd5BFZ/Z5bu4XKAGXDz+rukGTTSqHRp3zOyYO9
-	j1xQKNh/BDaKVwPGC6qel990MY6qqsr1qy3sRVtrifV9+i9EFyzd54yXCdfWMjFOb4IV4hEBHwM
-	dcmPM20H1Xg==
-X-Google-Smtp-Source: AGHT+IHyABFgO5ifFMRWloVxbgKF6DgOKTCx7hX5z8zDswf1AZ0hIWHCguMLeQj+zWYBmU7ntB23e4WGxRng
-X-Received: from pjob9.prod.google.com ([2002:a17:90a:8c89:b0:33b:8aa1:75ed])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2e4b:b0:33b:bf8d:6172
- with SMTP id 98e67ed59e1d1-3403a305995mr1671076a91.34.1761716085290; Tue, 28
- Oct 2025 22:34:45 -0700 (PDT)
-Date: Tue, 28 Oct 2025 22:34:13 -0700
-In-Reply-To: <20251029053413.355154-1-irogers@google.com>
+        bh=D3bKb0RDe7sqcKTtSK80VBkKPBG6lWJuxoKADwOVxbA=;
+        b=JuSaFvOr5k775C4Qnpy7XQRnFcgeDQ9v0+vfQZ0rHsAT5adwMQ9ggPc5BoUPdGCknD
+         UBvJ5bxlOBXse8p0wE4PcE74x0BKBujK7hBTj0ktvjI1/j/05VYhC5chs9U74dtzOUA7
+         aU29l/eqdSSaxye/E23yqS6dD2FjsFDBPbtJ4fFAo8SavxQ3iilv9htszAsQcl4Ju9pC
+         LRmyPWV5dPfGVyxFtgZEC3PE2i9rWJMp77s9DwNrd/L487XEv/VO92AuIqQ7HD44tQMt
+         FBqtzUp9kxYUhbrA/cqt7+P2fQMJECmYyTy08s7jWiTX2pXGniY1uPu2MatBnxVKcV70
+         qodA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9dLatx6yTryzuA3LNK34LdstRu1sD+8GWoSKsawrDAtK9PMHVgvmehYpT6FHejVpJuxsFlkWiFp8RAAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFd8nHongBTMutG5INAsxM/noAfPBnYm48/dDe3Y6SX1j12eVl
+	8OoFkvBbkirId/ivWzOEW69eyZyeoVhVMOa+mRqClpy3/A+Q3j0QpTZtXAzYFSYEpMyLy6FVcPt
+	QKPIInr0Its8Fp4t6LoD9gias8eZj5D/ixVcwdYOdZ/zY8fKPS5sqZlJzdKQNkXIbvYk=
+X-Gm-Gg: ASbGncti44S5rw1vvCZXlKVYb/3qrKR4KjtLW6NGDFe8fRp+fJfQWaTz5wf2avetIAp
+	pe4SiPpY2Wz/pZNBW+Cdv5zaiacnV1N+GUAacXLN4VFhKG3n7I9jlcuvNvQZ4fOcmwrI0xKEUi2
+	V2tweP6RcXuYTUyK9HTmpNJSD4jFulD6hGn8vmytZASuk5GBBNfO2vrwert+AlepoGbZx5vN6Wc
+	OCR0PuWmj2wF9zJHHPhYLfqnWV90MmLe6dJKxSpCGOgZb7JYhQKTwtdNe3JSlB0032NL27LQLGB
+	+NMnR/jheMjxSp8Za2G0MZnnct72gUSTA71Ym6Qryi5Zto58t03v5fLSPQ7x5Llpl3WbBYFbWqL
+	Ndf2Uz+i4ys+1pFVfamusGiF3/cQySYSX/gt+8xrwvheGtgQr5ncFA1xMIeU=
+X-Received: by 2002:a17:902:cec6:b0:26e:e6ab:66fe with SMTP id d9443c01a7336-294dedd1f75mr20591255ad.5.1761716572206;
+        Tue, 28 Oct 2025 22:42:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF0J62yU+cW/tUQvL7VRAYtrnfeGLHRB6xGqt8DJOtnOMkh89UIRroDUUeQ58BKxUmHrLwaFw==
+X-Received: by 2002:a17:902:cec6:b0:26e:e6ab:66fe with SMTP id d9443c01a7336-294dedd1f75mr20591015ad.5.1761716571699;
+        Tue, 28 Oct 2025 22:42:51 -0700 (PDT)
+Received: from [10.133.33.214] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf4b17sm140263785ad.5.2025.10.28.22.42.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 22:42:51 -0700 (PDT)
+Message-ID: <a1b02978-8c6b-4480-b2cb-305865ddb7a4@oss.qualcomm.com>
+Date: Wed, 29 Oct 2025 13:42:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251029053413.355154-1-irogers@google.com>
-X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251029053413.355154-16-irogers@google.com>
-Subject: [RFC PATCH v1 15/15] perf mem-phys-addr.py: Port to standalone
- application from perf script
-From: Ian Rogers <irogers@google.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
-	James Clark <james.clark@linaro.org>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Athira Rajeev <atrajeev@linux.ibm.com>, 
-	Howard Chu <howardchu95@gmail.com>, Song Liu <song@kernel.org>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Zhongqiu Han <quic_zhonhan@quicinc.com>, Blake Jones <blakejones@google.com>, 
-	Anubhav Shelat <ashelat@redhat.com>, Chun-Tse Shao <ctshao@google.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>, Gautam Menghani <gautam@linux.ibm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Yang Li <yang.lee@linux.alibaba.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: media: camss: Add
+ qcom,kaanapali-camss binding
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
+        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com,
+        Jingyi Wang <jingyi.wang@oss.qualcomm.com>,
+        Atiya Kailany <atiya.kailany@oss.qualcomm.com>
+References: <20251023-add-support-for-camss-on-kaanapali-v3-0-02abc9a107bf@oss.qualcomm.com>
+ <20251023-add-support-for-camss-on-kaanapali-v3-2-02abc9a107bf@oss.qualcomm.com>
+ <20251028-wonderful-olive-muskox-77f98d@kuoka>
+ <84ae4280-d0f0-42a2-acfd-e85e0263be1d@kernel.org>
+Content-Language: en-US
+From: Hangxiang Ma <hangxiang.ma@oss.qualcomm.com>
+In-Reply-To: <84ae4280-d0f0-42a2-acfd-e85e0263be1d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=HvZ72kTS c=1 sm=1 tr=0 ts=6901a95d cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=P-IC7800AAAA:8 a=FnPmbW6RWPOSwBWwTPYA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-GUID: u0qSGc72PKUxj63sqf20YJlnP3i_LkF_
+X-Proofpoint-ORIG-GUID: u0qSGc72PKUxj63sqf20YJlnP3i_LkF_
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDA0MSBTYWx0ZWRfX8XnjkgFlSfJX
+ BrP1pENWxN95Py89S4xn8IDGJ1bwS1+ApTnNw5TZ/Fyo2bk6UgAFls+m17nPR27cRp0losXb379
+ 4XdWSVosjZECRuhdmWzOViZ/+Ueeqi2TmvW73i1a/bSw+2dKvlD12mhUdLoivnHuYNfTYSnWln6
+ CbX/Q8ERvFS8iV48iwMKQl2H2CzX9tcysTEUKfn4hM9dgWV2au6/Zq2ax5zjetC9P/feYLc5OGi
+ ThVLDevGHNfm+5/ICKqT/9PJq2UmrgHUGYUg7XW89WWJtQEs/lM4flycVW2xAKukqJfuxQJF3L+
+ 8UVidm+JKnp54YnmKu+Rj5C7aaabTx6wBH7+9h8tJXWA89IZZFtKGFqWwWlg30vdXjkGwphmSnS
+ Tzs0yvebxnKTcRukp5ca7ufJ4K9Kog==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_02,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290041
 
-Give an example of using the perf python session API to load a
-perf.data file and perform the behavior of
-tools/perf/scripts/python/mem-phys-addr.py.
+On 10/28/2025 4:10 PM, Krzysztof Kozlowski wrote:
+> On 28/10/2025 09:09, Krzysztof Kozlowski wrote:
+>> On Thu, Oct 23, 2025 at 02:14:34AM -0700, Hangxiang Ma wrote:
+>>> Add bindings for qcom,kaanapali-camss in order to support the camera
+>>
+>> What is qcom,kaanapali-camss? Sounds like a compatible and you cannot
+>> add bindings for a compatible. Instead add bindings for hardware, so
+>> explain here hardware.
+>>
+>> You could easily use `git log` to see how such commits are written
+>> instead of pasting here your downstream practice.
+>>
+> 
+> 
+> And of course standard comment:
+> 
+> A nit, subject: drop second/last, redundant "binding". The "dt-bindings"
+> prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> 
+> 
+> Best regards,
+> Krzysztof
+Will address other comments and follow this standard in next revision.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/python/mem-phys-addr.py | 117 +++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
- create mode 100644 tools/perf/python/mem-phys-addr.py
-
-diff --git a/tools/perf/python/mem-phys-addr.py b/tools/perf/python/mem-phys-addr.py
-new file mode 100644
-index 000000000000..32bb63598239
---- /dev/null
-+++ b/tools/perf/python/mem-phys-addr.py
-@@ -0,0 +1,117 @@
-+# mem-phys-addr.py: Resolve physical address samples
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Copyright (c) 2018, Intel Corporation.
-+
-+import bisect
-+import collections
-+import os
-+import perf
-+import re
-+import sys
-+from dataclasses import dataclass
-+from typing import (Dict, Optional)
-+
-+@dataclass(frozen=True)
-+class IomemEntry:
-+    """Read from a line in /proc/iomem"""
-+    begin: int
-+    end: int
-+    indent: int
-+    label: str
-+
-+# Physical memory layout from /proc/iomem. Key is the indent and then
-+# a list of ranges.
-+iomem: Dict[int, list[IomemEntry]] = collections.defaultdict(list)
-+# Child nodes from the iomem parent.
-+children: Dict[IomemEntry, set[IomemEntry]] = collections.defaultdict(set)
-+# Maximum indent seen before an entry in the iomem file.
-+max_indent: int = 0
-+# Count for each range of memory.
-+load_mem_type_cnt: Dict[IomemEntry, int] = collections.Counter()
-+# Perf event name set from the first sample in the data.
-+event_name: Optional[str] = None
-+
-+def parse_iomem():
-+    """Populate iomem from /proc/iomem file"""
-+    global iomem
-+    global max_indent
-+    global children
-+    with open('/proc/iomem', 'r', encoding='ascii') as f:
-+        for line in f:
-+            indent = 0
-+            while line[indent] == ' ':
-+                indent += 1
-+            if indent > max_indent:
-+                max_indent = indent
-+            m = re.split('-|:', line, maxsplit=2)
-+            begin = int(m[0], 16)
-+            end = int(m[1], 16)
-+            label = m[2].strip()
-+            entry = IomemEntry(begin, end, indent, label)
-+            # Before adding entry, search for a parent node using its begin.
-+            if indent > 0:
-+                parent = find_memory_type(begin)
-+                assert parent, f"Given indent expected a parent for {label}"
-+                children[parent].add(entry)
-+            iomem[indent].append(entry)
-+
-+def find_memory_type(phys_addr) -> Optional[IomemEntry]:
-+    """Search iomem for the range containing phys_addr with the maximum indent"""
-+    for i in range(max_indent, -1, -1):
-+        if i not in iomem:
-+            continue
-+        position = bisect.bisect_right(iomem[i], phys_addr,
-+                                       key=lambda entry: entry.begin)
-+        if position is None:
-+            continue
-+        iomem_entry = iomem[i][position-1]
-+        if  iomem_entry.begin <= phys_addr <= iomem_entry.end:
-+            return iomem_entry
-+    print(f"Didn't find {phys_addr}")
-+    return None
-+
-+def print_memory_type():
-+    print(f"Event: {event_name}")
-+    print(f"{'Memory type':<40}  {'count':>10}  {'percentage':>10}")
-+    print(f"{'-' * 40:<40}  {'-' * 10:>10}  {'-' * 10:>10}")
-+    total = sum(load_mem_type_cnt.values())
-+    # Add count from children into the parent.
-+    for i in range(max_indent, -1, -1):
-+        if i not in iomem:
-+            continue
-+        for entry in iomem[i]:
-+            global children
-+            for child in children[entry]:
-+                if load_mem_type_cnt[child] > 0:
-+                    load_mem_type_cnt[entry] += load_mem_type_cnt[child]
-+
-+    def print_entries(entries):
-+        """Print counts from parents down to their children"""
-+        global children
-+        for entry in sorted(entries,
-+                            key = lambda entry: load_mem_type_cnt[entry],
-+                            reverse = True):
-+            count = load_mem_type_cnt[entry]
-+            if count > 0:
-+                mem_type = ' ' * entry.indent + f"{entry.begin:x}-{entry.end:x} : {entry.label}"
-+                percent = 100 * count / total
-+                print(f"{mem_type:<40}  {count:>10}  {percent:>10.1f}")
-+                print_entries(children[entry])
-+
-+    print_entries(iomem[0])
-+
-+if __name__ == "__main__":
-+    def process_event(sample):
-+        phys_addr  = sample.sample_phys_addr
-+        entry = find_memory_type(phys_addr)
-+        if entry:
-+            load_mem_type_cnt[entry] += 1
-+
-+            global event_name
-+            if event_name is None:
-+                event_name  = str(sample.evsel)
-+
-+    parse_iomem()
-+    perf.session(perf.data("perf.data"), sample=process_event).process_events()
-+    print_memory_type()
--- 
-2.51.1.851.g4ebd6896fd-goog
-
+Hangxiang
 
