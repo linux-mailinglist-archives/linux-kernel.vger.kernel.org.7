@@ -1,256 +1,303 @@
-Return-Path: <linux-kernel+bounces-875642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87924C19781
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:49:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F428C197A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:50:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 14F84354639
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:49:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E807019C5421
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A640D3002C1;
-	Wed, 29 Oct 2025 09:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EAF328B48;
+	Wed, 29 Oct 2025 09:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=karo-electronics.de header.i=@karo-electronics.de header.b="TDtzJGR8"
-Received: from dd54918.kasserver.com (dd54918.kasserver.com [85.13.167.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yY9e/Y8Z"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azon11010055.outbound.protection.outlook.com [52.101.56.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225582E22BE;
-	Wed, 29 Oct 2025 09:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.167.58
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731331; cv=none; b=MpfBa0gk+jShdhnKL9N8bi6+Dok501mkiske1kL87kVbIVd/SIHFD5YCYdVY3lQmgoUHC4rVXMSvpsggpmwQGjB5LnRIHFkYJAiN2HoQAEfCE17AZ4XUdI5fsXdhx8M3ws7ULLxp9Ihar7qy2ZYCz9cRaxNR3v91j7xCI6BQrXs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731331; c=relaxed/simple;
-	bh=qZdOrwnhHhmvKW1sM3Zp3iwo7hcAfqJiRVXLnAoXGP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DGRWPQblbHdeuPDBZaDte0T/hzmAixNS0/QvI2VTmUfkRDATqd/QFVfLO8okTHPrD34hVpkEKfDizwkJbUAn22cnG8gJYqw6iKPRVWL8ncKOsq5UHvm5yysqJRzPnXqogX9h5TmEgoplXZMUI5dsciQX6aLSe4imJKtJKPy6x08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=KARO-electronics.de; spf=pass smtp.mailfrom=KARO-electronics.de; dkim=pass (2048-bit key) header.d=karo-electronics.de header.i=@karo-electronics.de header.b=TDtzJGR8; arc=none smtp.client-ip=85.13.167.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=KARO-electronics.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=KARO-electronics.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=karo-electronics.de;
-	s=kas202509031142; t=1761731319;
-	bh=04PcYjGelANUAIc65GQpYCVFC3ej9UoaMVRsOSXvgHc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TDtzJGR86gROx3Pc4Z2qYEJ32hS8ZvtuFzlUGHL57qkvnbaQzRfu6RmoW6ogL08lb
-	 AWZMvIYcbK1500vunWsfatyVMYzSWVi+D8brEp+su26RUqgYpl5RMLhKtxIwxE+6ue
-	 53GjmTbvpBDVlIktDcjnXme6rfTwJNoVErVKHoEta+XjNxlv4JHe/19m1CBbSp3tDB
-	 EbwpeGj7KA3yUvDdKCN5NXYhyImyMYafQbKM3zOOljzxl1SafL1kgf3Krinncnvdyp
-	 lO7US+ZMjxNPW4h7YOSxJyAcq/W051Jz9QTgo4AUSOQqRPLgGuyRPjJB7SZmsr6ZNJ
-	 Lib7yMYp/ccsg==
-Received: from karo-electronics.de (unknown [89.1.81.74])
-	by dd54918.kasserver.com (Postfix) with ESMTPSA id 55BA9772C365;
-	Wed, 29 Oct 2025 10:48:39 +0100 (CET)
-Date: Wed, 29 Oct 2025 10:48:38 +0100
-From: Lothar =?UTF-8?B?V2HDn21hbm4=?= <LW@KARO-electronics.de>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Maud Spierings <maudspierings@gocontroll.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/5] arm64: dts: freescale: add Ka-Ro Electronics
- tx8m-1610 COM
-Message-ID: <20251029104838.44c5adcf@karo-electronics.de>
-In-Reply-To: <4a47b9b5-f482-41b6-a441-7728572c5a0c@gmail.com>
-References: <20251022-mini_iv-v2-0-20af8f9aac14@gocontroll.com>
-	<20251022-mini_iv-v2-3-20af8f9aac14@gocontroll.com>
-	<a7012995-c2a8-48a3-abe1-5c227272f21c@gmail.com>
-	<65202d1f-6c4f-4d4e-9fef-85cfb74ec768@gocontroll.com>
-	<938f85b0-4c9b-463a-960a-f5f4e4092480@gocontroll.com>
-	<20251029081138.2161a92a@karo-electronics.de>
-	<4a47b9b5-f482-41b6-a441-7728572c5a0c@gmail.com>
-Organization: Ka-Ro electronics GmbH
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238232E172D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.56.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761731336; cv=fail; b=LjsRYq0cwKgZcEeWMRQzvN9aT04YxZXHLdxK/Sw9oSR9gPwLO9ZWn8Bjg99M0t/ZZq/aiSNdYPtF6fnyIDKl9iImPFC44O8e6kYqPisWyJkngktKd7GqapOnP2vhnt8ZBWUapgOPllUAaNXb0OQOyaviJZXKz1r8BESGm7MJyyI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761731336; c=relaxed/simple;
+	bh=8YqP1PhO/LHu6RXYLnOpr1MfpaJP6NzJGGpdbEvbDps=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LNIOcVdWasa9ubYpBxi/g9uS8Zv8dAGWIJUZjoVgT/r6CmqA3Zk/wmFdsQ6BDKOe9fgCe/T7e1WHF16OTR7SKAGMp90yqgr3YsW5QRepZRZKjL6xqru2n6ko5YmdSUrj8d+v9KNxhusvMFPTe5wkqpNWudaeuF/y5TU2WozeWqc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yY9e/Y8Z; arc=fail smtp.client-ip=52.101.56.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RiBH+PJ80YLlB3MKPQg7lDqfcqDqpfTr6TdzNJKhhX1R5S7yZGc4dKiI/jJOpFl5+gPBwpekduVCMITjhlNJCzFZpDNKWnCPdpqx0LghnNaVvKsDvfNFmVy+fbaaRt67r1IfpSvOXc5LrCIF22+lQKfsD07/o3yt8uzMYS0eCrtVtaThH6UF6fsWjxxb1n4XJXO79hJFz6kG+nUzbQDkZtAnZt6z0IBORNe6xgGlrxgZPx1cfAQTci4M29y9PYT0ZYaJjlYg59bVjDrzx7hYlTP3qjgUCRbwq3O59rMM8v95FDWyK94PocrvZHuJ3uBq5WtHcSPtQ9F7RNMZI55aRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EtapmJYt6usC9rmgqSZuUfh1PDXSj9FORrZ/LVQ3AYM=;
+ b=vxFbDSrOKFMVmoRpOfT+Tfqf4RVkgOSaIR6U2pVK6mHmrNKSfjWMXue2nit6fIIF0rJNLbYAXtfpuDDpe+tqyaCGkGvNgGkbDlsyAXVWw7OEkXjTn3PoYtXL3BKSk5vCsKi0RaqKNjtzAqXHIDwTh8Bz2QV/VMO8znpu6t+Uw1rmFinI4iz8pDQG5NJqtXc4udw9X1lrtQH8WBaj+1Wx6ev0FitEfXKVoWH1HFMANa1IgIstPKGrAbxvmvqnW1U9VQ2U14YtPCLRbjC9msCjGRQGmDWJqc/0znEDhiFphL1s+4WZ8dQJWFQ1FaY/ooZzSFQB1db3i5gUGnk06crpAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EtapmJYt6usC9rmgqSZuUfh1PDXSj9FORrZ/LVQ3AYM=;
+ b=yY9e/Y8Zwobcxhi9YnQPfE/0BN8+2heRQwQxUQV66XFPNLuqYej+5g3eDLhGLJoctU6EvedGkMido9ITX5yG2ZIR34RZPZBxTQ24bTy04kQ7gUtlJAqo3x8Py4MQULQuxnxN5/f2m4V+oxZwao8NVcjOcS50i4zs8yQamE3183k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by PH7PR12MB8778.namprd12.prod.outlook.com (2603:10b6:510:26b::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
+ 2025 09:48:50 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 09:48:50 +0000
+Message-ID: <9565366c-6821-4767-bcfc-079378fb4348@amd.com>
+Date: Wed, 29 Oct 2025 10:48:43 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/3] workqueue: Add an interface to taint workqueue
+ lockdep with reclaim
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, jiangshanlai@gmail.com, tj@kernel.org,
+ simona.vetter@ffwll.ch, pstanner@redhat.com, dakr@kernel.org
+References: <20251021213952.746900-1-matthew.brost@intel.com>
+ <20251021213952.746900-2-matthew.brost@intel.com>
+ <2e1e9d6f-4f9e-49f7-90f0-6759c260701f@amd.com>
+ <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <aQEkq7DYy5/AaJ4R@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR2P281CA0052.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:93::15) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spamd-Bar: +
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH7PR12MB8778:EE_
+X-MS-Office365-Filtering-Correlation-Id: fd17c2d6-3994-415f-4feb-08de16d05cd6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QzNObDhjaWxCUkZBemJlVGp4bjhsaTlsUEJKU0M4UzBLS2t1VU1VNGxsVmha?=
+ =?utf-8?B?b0dZa3ZzTDIyc25kWkJ1ZHpRTHMxcDVOUXpRaXJSajlKYXhKK1pydHZvL1k2?=
+ =?utf-8?B?ZWNqdFZuekRIODZib1gzbHhFUG1VMGJTNzJueGRaUkVRdFFsejVkeTc2eUcr?=
+ =?utf-8?B?d0c3c3c5ZjBmK1ZjUm8yYzBsS1hlcGtBNFVvMUJyUTFPVUt3VTNIL05uSVlw?=
+ =?utf-8?B?dHo5OGk4bitUazR0UmgrbGlMSDRIeld6Q241VDd5dmdrSmZMeTEwTVhPejNj?=
+ =?utf-8?B?VFgrNFBaNlB2U2dpL0p4d0xsMWhmcDFQOCtkOCtqYUNKeG16MXpnOU5MV2Ji?=
+ =?utf-8?B?cFN2ZzREalp0OE0zTWdjeFk0QlpOM0M1M1hWS3lsVWpKUXMwVy9ENDc0Q1dK?=
+ =?utf-8?B?N2hEWE9sTm1IZWVRWWRML0o5MWY0QXFSdjQ4blVLTUUrU3BnWnNVU28rS1lm?=
+ =?utf-8?B?Nk4zcnZMVDdoT1FTeVU3TmVjOEVJNE9BRUgvUjkyRFozUmxVZVhzazZ2ZDFq?=
+ =?utf-8?B?b1NiK1FwWi85NHZCb0o4Z2ZLWG1qbTFGYmVZMytaZWZLTUlBSXg0L243Uncr?=
+ =?utf-8?B?Vnd1QUxWeERlN1IycGFXbWEveGswcjE4OHlIV2ZSaEF1d0psK1pldGQ4SDIw?=
+ =?utf-8?B?WTZzeWNibEQxMk9qaXFLOGg4ZUlrZllLdWhYVndBKzhyUFhyTU5SOXQzNkRa?=
+ =?utf-8?B?QjJjQjdVemFlMmd2SWRabTdHS3ptZkR0eVRSZHVTcUg3NWJ0L1FJUUF0bzdr?=
+ =?utf-8?B?dlNjMzFVeUtPdElYbEd2V3EzcnJWNkJiSndVR0ZHUzdYRE1tNTZ5TGt6MkVm?=
+ =?utf-8?B?ZzBRd3JKd3YwajBneWxsaGhXRXg3eXZ1M2xFRGZHWW1JbnNkM2k4elFYTWsx?=
+ =?utf-8?B?dWhrV2tLK0piWU53cWgxaGVJd0ZqNXdUazVPMllTQmpybXppajYyeVZZWkJj?=
+ =?utf-8?B?cmQxejd6NzUvMnlxS1FLdVREd2pmWlp2OWhHMXZwQWg0N1dlRU1Oc1c3dVBR?=
+ =?utf-8?B?SGpxNlF5cVpQajE4Mk1hSDZMY1ZheHlEdzNhZE9xUHlRVEh3M0orR1BjZm5L?=
+ =?utf-8?B?NVZDMWlya3RVSlpiM1F0aGlEUGtjejNyZ3AvdE4yK2NpZit0cnhTUEJGeGJu?=
+ =?utf-8?B?emdQbUdIcFBtSXRJN0tHZWljYXVuZmhkZW91WjVqTzVQM25kMlNFL0ZscXB3?=
+ =?utf-8?B?bUpZRVVWV1hYbHdhc1NPQ2dVZGFVSEdCSEdZNGd3a0FPQXpQclhnaC9EeTlX?=
+ =?utf-8?B?bDF6dVlWaDUrWEhJVmxteFpIYnNHOE1yUk04SE1WcWFSU2o4R3dJRHp3VU9w?=
+ =?utf-8?B?NG0wdnA0STZDaU55ZHcwSHlPZjFSbUd3UE0xOGkwQ3FWeEVhb0ZWT2pDWUtJ?=
+ =?utf-8?B?UGM0cjBHRHk4VTUzcHJpS0ZZMWo2OWxMWDM5aHlvckJkdDhLUjZzUnNpVUxy?=
+ =?utf-8?B?R0lZU1ZHZW5tRjFJUzhra3VQdXNXYmJoSU8xM1NkUlVTdm1WUlRqMTFWNVZC?=
+ =?utf-8?B?c3I3R3R1ZzM5MXJJQU1Td28raXNMSk1zWVN2Q0NvM1YyTFZ0d1gxck11cXh5?=
+ =?utf-8?B?bnZLVkdBQWhjQ1l5WFVQZWt5V2JzN2wrRGlhVE1aUXBpNGFQaUxWdmhlaEZF?=
+ =?utf-8?B?TEpobTc1OUhvY0FMcURSZUxrdzZFTjc5OGJJUmtHc0hldjlhcWRRSlZHc1F0?=
+ =?utf-8?B?YmJjYVQ4V1pXbjZOYnhFeDZ1MXNOZDRldFUxRjJZZTI5TVFYT3Mvdlo2RmUy?=
+ =?utf-8?B?L3hZR2FTekF1c0E0ZVAxaDdQeW5oUzNocEdOZ2JnWDNVbkYxeThOS3N1dlNN?=
+ =?utf-8?B?QnN1d0E4MXorTGp3VHJ2QkxNVTdwbXl5SCtRSWZna1NGMUdnckZIdXZGczUy?=
+ =?utf-8?B?dDEyb0l2bWdSMlNQOXRUa2tlSjEwbWluSWttWGZXeVo1eHc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ym5BYVRpL1FiOTZ5cHV2NGdEdi9ncCtCVDJXdDFiZkZkS1dLWlNsRlBXbVFh?=
+ =?utf-8?B?TS9KcGtkREJBdGJNRnlnc282MzQyRDhxTWlrSWFZam53anhNV1Rid2czcDg5?=
+ =?utf-8?B?ZkRvYnp0cXV3SW5UVWZhZUxTOEFtWG1ROTFtQVo0N2lwdzVPY2ZrYjF4Mllt?=
+ =?utf-8?B?bVlBN0hmMjhnd2dnd01GWDhpUWlzMTJnaTczaE1qcDFrTkVFVUNZOUV6QlVP?=
+ =?utf-8?B?RVFqUzQxcjg2Zk5XYk1qZmxRSzRVanJHeFRTMzhsYzVmUWJPVUFrWFg5WHRu?=
+ =?utf-8?B?SWhUVXJUbS82Tm9QSk0rVXBlQlFPWHU3UzNFeWJtenNMT0RnOW4zeWZ4ZWRX?=
+ =?utf-8?B?WVRIeWtCb25VQ0dlTzFUc2Zrck5INWZjSHc2WUo3Tk5WL0JBVSs1Y1g2Z0E0?=
+ =?utf-8?B?NzJySGlpYjZlS1h4MGpJeWJwSldrOHFQT1NjcDhUYXFwOCtXV2lQK29hb0ZU?=
+ =?utf-8?B?Um9heWZHS1o0UVVGdG5JOXpZaEw0K1N5ODgzMWJIdDhoQnlyYXhhUFVqNTBI?=
+ =?utf-8?B?RHZBRlovYWhIcTNQRllaQndkZXN1dk5NOVdQR1YvemZkMklEM3A4UUtKTWIv?=
+ =?utf-8?B?bVRQV3JtY2dTNmRmTnpEdnFOQVZXMERybjlKNElBU3FtU1BJYzYrQUFrbUhR?=
+ =?utf-8?B?TzFXRkZ6eGw5REtwbG9TRTJraEtlTUhaeXBUb3FoNHlTOFZJYkhoSDNEYWsy?=
+ =?utf-8?B?b0pOdTZIMXJTZS9qQTgzRE9pSDkvWFViOEJEZ1ZxRGF5enJ0SzVMLzVzd3ZG?=
+ =?utf-8?B?dTQ3dEREODVVZFU1c3JMNTZhbGF0dVp3NmIxRWJ2Tm5MWkMwQnNmM3h4TjUw?=
+ =?utf-8?B?TVVmWGg3SWhuNm90Y0pJUlk0UUtjSVd6L2JRODFsUy9Yb3hjeUtlZU9xSm5l?=
+ =?utf-8?B?RjVFbWk4NkRESGxhSVFKbFNyamRxL3V6Vy9HUTFsR290NDQ2blZJdkhGNHlr?=
+ =?utf-8?B?NUY4WmVKU25lVzh4YlJrc2dqdXYrV0syOVVKbExMVWNwZVRTdkZKS0prOE0w?=
+ =?utf-8?B?TTRhb3ErWnBTYVJ3emZuTmIzSzBXRTNFR1RLbzJUc0UxZlpOeE1XQnlyLzNS?=
+ =?utf-8?B?dXRYSlI0RjdpeTBONWxJNjQ3NFZzR1BCNVYxZUJ6eTBFdGJyWW1jOUwvMGo4?=
+ =?utf-8?B?QWZPbmUvT2RrSUhzZ2s4ekFtRzVGdWR1dUtHd0IvbjZuY2I1d3dyOTd0OXk1?=
+ =?utf-8?B?SXdoZTN5Z1gzYkJhVWkyWlFXbVkxdVg4WjFEKzc3V29Oam1sOEkxWTh6ZDBj?=
+ =?utf-8?B?RmdGSXVtWks3QlNPTk1Sa25MN3g2bTJwekxERWRINnZwZnhVNkNpZWwxbCsv?=
+ =?utf-8?B?L0RubEhXT3NQZ1l0MVkvcmozZ2JCUE1pOVlyN2JqcE0rSnJ6NU44NFNSRHUv?=
+ =?utf-8?B?YktMSWpjcXJpRVBOYWp1V251TEI1S3Noa1p1YiszMXdncU9Kd01lQ2gzck5k?=
+ =?utf-8?B?UWk4RzlWays1TEtVbURCTU1NM2NXdDlBUFhSK3JDMmJyN0JKRksyUlVaNWFW?=
+ =?utf-8?B?c21WNGlKMnZrais2SHFIakI1ZFpzcm1YVVMxcjR1aERaL0xIMHptdnUxZG9Z?=
+ =?utf-8?B?ZTBJOUNuUVI3LzBIbHdiRWlOYXpMNVJqSGtsQWx1NkhoZjZ1cC9oRWYzaG5w?=
+ =?utf-8?B?YUdhWXJZRW5oZjMvR2tsTGF3cnFMeVZnd2ZxbFFLTU9WWEgrSkt3ZlQySDB5?=
+ =?utf-8?B?VngvM1VMNFlqOXFwak5jNTFJb256OS80SHo0cTdjeWs4aG9MSmRnblh5VVB4?=
+ =?utf-8?B?bDVQWiszbWpDQ1F5cHpxWDZibFR1NkdSVm1OS3BMdk5kWC9sVktNNVkwcGI5?=
+ =?utf-8?B?V0tMRE5nZTZBeVF0MzBtQ3RjT0M3c2tWZ3VaSFhUcGlGZ2pSTXhUcGJoWllC?=
+ =?utf-8?B?S0hzZGZTTHROSVFXTkNQWWJmY3FBZTZoV0QvenZVZkRnTDlYY1VGbGc5aW9p?=
+ =?utf-8?B?TU9XY1JwMloxeml6akhlUys4WThmZ0ZNRmhTUnBJTWhLV1puTkVud1RXM3BQ?=
+ =?utf-8?B?V1lDcXdPSk4yV01wYndaclpIRUtyL01BRm1TZy83WGRBSTZzMlJQTGdhQUp4?=
+ =?utf-8?B?MDUxTHZZeUlnanBLODgxMXhSMWhwTjNvd2ZZaWlQc1Yyc1ZpLzY5SUMvTFhL?=
+ =?utf-8?Q?S3WoBHh0Rf3mXVwk6Q700ktC1?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd17c2d6-3994-415f-4feb-08de16d05cd6
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 09:48:50.1403
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qwlYQy22Xnl6uyB/DGEJEab2jRyWw4dTOvsoQWWpVFyl7SZGSHJrKnM3KNbtFYNM
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8778
 
-Hi,
+On 10/28/25 21:16, Matthew Brost wrote:
+> On Tue, Oct 28, 2025 at 10:32:54AM +0100, Christian König wrote:
+>> On 10/21/25 23:39, Matthew Brost wrote:
+>>> Drivers often use workqueues that are in the reclaim path (e.g., DRM
+>>> scheduler workqueues). It is useful to teach lockdep that memory cannot
+>>> be allocated on these workqueues. Add an interface to taint workqueue
+>>> lockdep with reclaim.
+>>
+>> Oh that is so wonderfully evil. I'm absolutely in favor of doing this.
+>>
+>> But can't we check for the existing WQ_MEM_RECLAIM flag in the workqueue handling instead?
+>>
+> 
+> Tejun suggested tying the lockdep annotation to WQ_MEM_RECLAIM, but the
+> entire kernel explodes because many workqueues throughout Linux don’t
+> adhere to this rule. Here's a link to my latest reply to Tejun [1].
+> 
+> [1] https://patchwork.freedesktop.org/patch/682494/?series=156284&rev=1#comment_1255380 
 
-On Wed, 29 Oct 2025 10:42:17 +0200 Matti Vaittinen wrote:
-> On 29/10/2025 09:11, Lothar Wa=C3=9Fmann wrote:
-> > Hi,
-> >=20
-> > On Tue, 28 Oct 2025 14:10:04 +0100 Maud Spierings wrote: =20
-> >> On 10/28/25 13:42, Maud Spierings wrote: =20
-> >>> On 10/28/25 13:15, Matti Vaittinen wrote: =20
-> > [...] =20
-> >>>> Could/Should this be described using the:
-> >>>> 'rohm,feedback-pull-up-r1-ohms' and
-> >>>> 'rohm,feedback-pull-up-r2-ohms'? If I understand the comment
-> >>>> correctly, that might allow the driver to be able to use correctly
-> >>>> scaled voltages.
-> >>>>
-> >>>> https://elixir.bootlin.com/linux/v6.18-rc1/source/Documentation/
-> >>>> devicetree/bindings/regulator/rohm,bd71837-regulator.yaml#L108
-> >>>>    =20
-> >>>
-> >>> Ah I didn't know those existed, should've checked the bindings in more
-> >>> detail, thanks for the hint!
-> >>>
-> >>> I will have to investigate this carefully, since I don't have access =
-to
-> >>> the actual design of the COM, so I don't know exactly what is there.
-> >>>     =20
-> >>
-> >> So I am not yet entirely sure if this works out, I used the calculation
-> >> in the driver:
-> >>
-> >> /*
-> >>    * Setups where regulator (especially the buck8) output voltage is s=
-caled
-> >>    * by adding external connection where some other regulator output is
-> >> connected
-> >>    * to feedback-pin (over suitable resistors) is getting popular amon=
-gst
-> >> users
-> >>    * of BD71837. (This allows for example scaling down the buck8 volta=
-ges
-> >> to suit
-> >>    * lover GPU voltages for projects where buck8 is (ab)used to supply=
- power
-> >>    * for GPU. Additionally some setups do allow DVS for buck8 but as t=
-his do
-> >>    * produce voltage spikes the HW must be evaluated to be able to
-> >> survive this
-> >>    * - hence I keep the DVS disabled for non DVS bucks by default. I
-> >> don't want
-> >>    * to help you burn your proto board)
-> >>    *
-> >>    * So we allow describing this external connection from DT and scale=
- the
-> >>    * voltages accordingly. This is what the connection should look lik=
-e:
-> >>    *
-> >>    * |------------|
-> >>    * |	buck 8  |-------+----->Vout
-> >>    * |		|	|
-> >>    * |------------|	|
-> >>    *	| FB pin	|
-> >>    *	|		|
-> >>    *	+-------+--R2---+
-> >>    *		|
-> >>    *		R1
-> >>    *		|
-> >>    *	V FB-pull-up
-> >>    *
-> >>    *	Here the buck output is sifted according to formula:
-> >>    *
-> >>    * Vout_o =3D Vo - (Vpu - Vo)*R2/R1
-> >>    * Linear_step =3D step_orig*(R1+R2)/R1
-> >>    *
-> >>    * where:
-> >>    * Vout_o is adjusted voltage output at vsel reg value 0
-> >>    * Vo is original voltage output at vsel reg value 0
-> >>    * Vpu is the pull-up voltage V FB-pull-up in the picture
-> >>    * R1 and R2 are resistor values.
-> >>    *
-> >>    * As a real world example for buck8 and a specific GPU:
-> >>    * VLDO =3D 1.6V (used as FB-pull-up)
-> >>    * R1 =3D 1000ohms
-> >>    * R2 =3D 150ohms
-> >>    * VSEL 0x0 =3D> 0.8V =E2=80=93 (VLDO =E2=80=93 0.8) * R2 / R1 =3D 0=
-.68V
-> >>    * Linear Step =3D 10mV * (R1 + R2) / R1 =3D 11.5mV
-> >>    */
-> >>
-> >> Because I do not know the pull up voltage, and I am not sure if it is a
-> >> pull up.
-> >>
-> >> So:
-> >> Vout_o =3D 1.35V
-> >> Vo =3D 1.1V
-> >> Vpu =3D unknown
-> >> R2 =3D 499 Ohm
-> >> R1 =3D 2200 Ohm
-> >> Gives:
-> >> Vpu =3D ~0V
-> >>
-> >> And:
-> >> Vout_o =3D 1.35V
-> >> Vo =3D 1.1V
-> >> Vpu =3D unknown
-> >> R2 =3D 2200 Ohm
-> >> R1 =3D 499 Ohm
-> >> Gives:
-> >> Vpu =3D ~1.04V
-> >>
-> >> I am not quite sure which resistor is R1 and which is R2 but having
-> >> there be a pull down to 0V seems the most logical answer?
-> >>
-> >> I am adding Lothar from Ka-Ro to the CC maybe he can shed some light on
-> >> this setup.
-> >> =20
-> > R2 is connected to GND, so Vpu =3D 0.
-> > With:
-> > 	regulator-min-microvolt =3D <1350000>;
-> > 	regulator-max-microvolt =3D <1350000>;
-> > 	rohm,fb-pull-up-microvolt =3D <0>;
-> > 	rohm,feedback-pull-up-r1-ohms =3D <2200>;
-> > 	rohm,feedback-pull-up-r2-ohms =3D <499>;
-> > the correct voltage should be produced on the BUCK8 output, but a quick
-> > test with these parameters led to:
-> > |failed to get the current voltage: -EINVAL
-> > |bd718xx-pmic bd71847-pmic.3.auto: error -EINVAL: failed to register bu=
-ck6 regulator
-> > |bd718xx-pmic: probe of bd71847-pmic.3.auto failed with error -22
-> >=20
-> > Apparently noone has ever tested this feature in real life. =20
->=20
-> Thanks for trying it out Lothar. I am positive this was tested - but=20
-> probably the use-case has been using a pull-up. I assume having the zero=
-=20
-> pull-up voltage causes the driver to calculate some bogus values. I=20
-> think fixing the computation in the driver might not be that big of a=20
-> task(?) The benefit of doing it would be that the correct voltages would=
-=20
-> be calculated by the driver.
->=20
-> If real voltages aren't matching what is calculated by the driver, then=20
-> the voltages requested by regulator consumers will cause wrong voltages=20
-> to be applied. Debug interfaces will also show wrong voltages, and the=20
-> safety limits set in the device-tree will not be really respected.
->=20
-> I think this would be well worth fixing.
->=20
-Before doing the real-life test I did the same calculation that's done
-in the driver to be sure that it will generate the correct values:
-bc 1.07.1
-Copyright 1991-1994, 1997, 1998, 2000, 2004, 2006, 2008, 2012-2017 Free Sof=
-tware Foundation, Inc.
-This is free software with ABSOLUTELY NO WARRANTY.
-For details type `warranty'.=20
-fb_uv=3D0
-r1=3D2200
-r2=3D499
-min=3D800000
-step=3D10000
-# default voltage without divider
-min+30*step
-1100000
-min=3Dmin-(fb_uv-min)*r2/r1
-step=3Dstep*(r1+r2)/r1
-min
-981454
-step
-12268
-# default voltage with divider
-min+30*step
-1349494
+Sorry my fault, I hadn't read up to the latest discussion when I wrote the mail.
 
-Probably we need to use this value rather than the nominal 135000 as
-the target voltage in the DTB.
+My educated guess is that a lot of wq just set WQ_MEM_RECLAIM to be guaranteed to to start even under memory pressure.
 
+So yeah probably best to keep your approach here for now and somebody from core MM should take a look at cleaning it up later on.
+>> Additional to that we should also make sure that the same wq is used for timeout and free and that this wq is single threaded *and* has the WQ_MEM_RECLAIM flag set.
+>>
+> 
+> Currently, free runs on the same work queue as run_job. We could look
+> into moving it to a separate queue, but that’s a separate issue.
 
-Lothar Wa=C3=9Fmann
+We really need to make sure the free and timeout wq are the same and single threaded.
+
+The hack the scheduler currently does with removing and re-inserting the job on a timeout is something we should really try to fix.
+
+> IIRC the workqueue_struct is private and so we can't fish that out in
+> the DRM scheduler without adding helpers to workqueue layer. Ofc we
+> could do that too if you think this would be helpful.
+
+I might be wrong, but IIRC there was a helper to get the flags from the wq.
+
+That should be enough to test if it is single threaded or not.
+
+> 
+>> Otherwise we run into the same lifetime issue with the job and memory reclaim during device reset as well.
+>>
+> 
+> My patches in this series taint the submit_wq and timeout_wq in the DRM
+> scheduler [2]. I have a solid understanding of reclaim rules, and this
+> change helped uncover some convoluted cases in Xe—specifically in our
+> device reset code involving power management and reclaim [3]. So I can
+> confirm this has been quite helpful.
+
+Yeah, completely agree. We most likely have quite a bunch of issues in our reset code path as well.
+
+Regards,
+Christian.
+
+> 
+> Matt
+> 
+> [2] https://patchwork.freedesktop.org/patch/682496/?series=156284&rev=1
+> [3] https://patchwork.freedesktop.org/series/156292/
+> 
+>> Regards,
+>> Christian.
+>>
+>>>
+>>> Cc: Tejun Heo <tj@kernel.org>
+>>> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
+>>> ---
+>>>  include/linux/workqueue.h | 19 +++++++++++++++++++
+>>>  kernel/workqueue.c        |  9 +++++++++
+>>>  2 files changed, 28 insertions(+)
+>>>
+>>> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+>>> index dabc351cc127..954c7eb7e225 100644
+>>> --- a/include/linux/workqueue.h
+>>> +++ b/include/linux/workqueue.h
+>>> @@ -553,6 +553,25 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+>>>  						1, lockdep_map, ##args))
+>>>  #endif
+>>>  
+>>> +
+>>> +#ifdef CONFIG_LOCKDEP
+>>> +/**
+>>> + * taint_reclaim_workqueue - taint workqueue lockdep map with reclaim
+>>> + * @wq: workqueue to taint with reclaim
+>>> + * gfp: gfp taint
+>>> + *
+>>> + * Drivers often use workqueues that are in the reclaim path (e.g., DRM
+>>> + * scheduler workqueues). It is useful to teach lockdep that memory cannot be
+>>> + * allocated on these workqueues.
+>>> + */
+>>> +extern void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp);
+>>> +#else
+>>> +static inline void taint_reclaim_workqueue(struct workqueue_struct *wq,
+>>> +					   gfp_t gfp)
+>>> +{
+>>> +}
+>>> +#endif
+>>> +
+>>>  /**
+>>>   * alloc_ordered_workqueue - allocate an ordered workqueue
+>>>   * @fmt: printf format for the name of the workqueue
+>>> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+>>> index 45320e27a16c..fea410c20b71 100644
+>>> --- a/kernel/workqueue.c
+>>> +++ b/kernel/workqueue.c
+>>> @@ -5846,6 +5846,15 @@ alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags,
+>>>  	return wq;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(alloc_workqueue_lockdep_map);
+>>> +
+>>> +void taint_reclaim_workqueue(struct workqueue_struct *wq, gfp_t gfp)
+>>> +{
+>>> +	fs_reclaim_acquire(gfp);
+>>> +	lock_map_acquire(wq->lockdep_map);
+>>> +	lock_map_release(wq->lockdep_map);
+>>> +	fs_reclaim_release(gfp);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(taint_reclaim_workqueue);
+>>>  #endif
+>>>  
+>>>  static bool pwq_busy(struct pool_workqueue *pwq)
+>>
+
 
