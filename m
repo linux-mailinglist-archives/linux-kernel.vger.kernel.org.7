@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-876714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D96C1C132
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:29:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A21CC1C183
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 111261A24A07
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:26:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 179405A2468
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F723570A9;
-	Wed, 29 Oct 2025 16:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FC0357A36;
+	Wed, 29 Oct 2025 16:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mdfZYLqo"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ACILWPv2"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914923559C4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68483570A3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754906; cv=none; b=QjIM95DoljM8iyUXIhbbVvC0t82urxUJKW+CeplIInL7fKZ7ebTWes4XEbsQTYt9gwyoGpxFvcekAAW8cKSSwhDCiFH1vX7kZ4tE87eeU5bsAEofx3UWHPBTYNtQURikg1CIFY3DJ4YMUe7R+cNGoAt/OoDP7udUeg7/nhXnVEE=
+	t=1761754910; cv=none; b=iXivEbK1jbsTtQDZlnMy9+kCqtWWIrDxOx9JZU8EgJO7oAv+41d/5zCI2MdnUarEonyKFgfZYYgMOl2BbpHOFCEdMirpoN18miuxVjhPJSZvldA1YxTip9Bxs4Nf8QsvnwLXkSrDe93UezNjvWHJteelwm61OSFbvtitWn+wUhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754906; c=relaxed/simple;
-	bh=ag8fjtURW9GliF7naWMqy38kzou/iSU65C4OXVMIasg=;
+	s=arc-20240116; t=1761754910; c=relaxed/simple;
+	bh=JiFS0CexxBfh1T3Xu534A0j8kEAr954jKVs6ltTpUC4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BoCD2FqfYkUaR+fSqO9S7AKPu+TS10/ef9D5D5ZLIPF+AribZt81WjqXMBtkREE7aGiR7hkgg0X7T2YRO7HFJ5pkOEE8CzQvp79QlZ2N5wgAdCCu4RxXLopffkb913TaK6o57FcHghegGvpV2QVHisoTH6VRgrTpNSQItcWloSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mdfZYLqo; arc=none smtp.client-ip=198.175.65.12
+	 MIME-Version; b=rqh4JYRzSP9+jaUy2CtMIt29Kl1B5kaJ1fmskd6T1vdPAziwLJ0jU3NKaze6Tn9//lq8DKbw70CpHnF53l+rh7dARsRulb8fjAFuZrRS8/OqiP64nB2hMhZzpPXFBVTlIV+09EoeMpYBhjq/B8hq5UtxiYq13eojsXgaggTdu0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ACILWPv2; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761754904; x=1793290904;
+  t=1761754907; x=1793290907;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ag8fjtURW9GliF7naWMqy38kzou/iSU65C4OXVMIasg=;
-  b=mdfZYLqop/5NM0x2iQIHt3tCwUv5bbnaGgjD/fasphl3aOxLXbDWoH5M
-   u4SD2G6Hza3054W2Ecx6hS9FsEkRMJ/ORQizClF+IE3GFpCMAnGLN/z23
-   mC26jFarPV9eEE0pODszkqirDFgiCm+0r1tkGknEf6Og0JMI6X6JzkGuW
-   wAoU5pp4KUpwTPaZiV1gBEtda0TaaC64c7wV2y0K+LBKsS8B8GVLVoZE0
-   Y8l2ERYzKs3qdWT7cvYywL9sZmOm/XpSpiArwsDOHyBCIs+h4Z4EyxDdW
-   tsIAYcXtvIgH1bt8hybPHnSEL9kpWKKnaOR+udchN8cwGuoB03eV/s+XR
-   w==;
-X-CSE-ConnectionGUID: I4xE5uBUSimwgd/iMdzzug==
-X-CSE-MsgGUID: boCEUA2NRKaInieLWG/OWQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75331039"
+  bh=JiFS0CexxBfh1T3Xu534A0j8kEAr954jKVs6ltTpUC4=;
+  b=ACILWPv2bdmw6lRld74fMFdMwhZbDtkr0uG/qd6h6mpZN2myb53h6ox2
+   Zt7zwm5rcy3WMmv3aveTsJvY+cNRRtEBrCcOav0hACQ5xkKGkfSC46Ygj
+   Oets4dHhm0R92dF+1r/sQp2dqKMg8gFRPSyfa081uvotvR6aPUJkgKVln
+   qi2r9OCoYQxhlnQjzoHPF2WhxpVjqOhaKQDgmc8zXX3t0EHqysiSMUizQ
+   QZWRVM8fALLCvYMaH4koJMrDGgGj2a/VyYNmWB7mmE7WKVvPbE8QYGAMA
+   eQvdLVqxC4Ra1fQ0PtCpuUU4GcfZx3x6pBNr+GM9phjuycntK7Nhj0tGw
+   Q==;
+X-CSE-ConnectionGUID: PqBMl812Qq+MYZm2zbICYw==
+X-CSE-MsgGUID: pRmmuaroSamCPBhF6oQwFg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="75331045"
 X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="75331039"
+   d="scan'208";a="75331045"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:34 -0700
-X-CSE-ConnectionGUID: 6UQCyTBoTdOsYdReRA8tUA==
-X-CSE-MsgGUID: ayghP97tTDeeyFHRFF0oog==
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:35 -0700
+X-CSE-ConnectionGUID: Svxtl1g7Q1+oMS5l0fC99Q==
+X-CSE-MsgGUID: P2PXqnESQ/y3aUR7Zo7zlA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="184901392"
+   d="scan'208";a="184901409"
 Received: from mgerlach-mobl1.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.223.146])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:34 -0700
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 09:21:35 -0700
 From: Tony Luck <tony.luck@intel.com>
 To: Fenghua Yu <fenghuay@nvidia.com>,
 	Reinette Chatre <reinette.chatre@intel.com>,
@@ -71,9 +71,9 @@ Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
 	patches@lists.linux.dev,
 	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v13 24/32] x86/resctrl: Add energy/perf choices to rdt boot option
-Date: Wed, 29 Oct 2025 09:21:07 -0700
-Message-ID: <20251029162118.40604-25-tony.luck@intel.com>
+Subject: [PATCH v13 28/32] fs/resctrl: Move RMID initialization to first mount
+Date: Wed, 29 Oct 2025 09:21:11 -0700
+Message-ID: <20251029162118.40604-29-tony.luck@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251029162118.40604-1-tony.luck@intel.com>
 References: <20251029162118.40604-1-tony.luck@intel.com>
@@ -85,112 +85,176 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Legacy resctrl features are enumerated by X86_FEATURE_* flags. These
-may be overridden by quirks to disable features in the case of errata.
-Users can use kernel command line options to either disable a feature,
-or to force enable a feature that was disabled by a quirk.
+L3 monitor features are enumerated during resctrl initialization
+and rmid_ptrs[] that tracks all RMIDs and depends on the
+number of supported RMIDs is allocated during this time.
 
-Provide similar functionality for hardware features that do not have an
-X86_FEATURE_* flag.  Unlike other features that are tied to X86_FEATURE_*
-flags, these must be queried by name. Add rdt_is_feature_enabled()
-to check whether quirks or kernel command line have disabled a feature.
+Telemetry monitor features are enumerated during first resctrl mount and
+may support a different number of RMIDs compared to L3 monitor features.
 
-Users may force a feature to be disabled. E.g. "rdt=!perf" will ensure
-that none of the perf telemetry events are enabled.
+Delay allocation and initialization of rmid_ptrs[] until first mount.
+Since the number of RMIDs cannot change on later mounts, keep the same
+set of rmid_ptrs[] until resctrl_exit(). This is required because the
+limbo handler keeps running after resctrl is unmounted and needs
+to access rmid_ptrs[] as it keeps tracking busy RMIDs after unmount.
 
-Resctrl architecture code may disable a feature that does not provide
-full functionality. Users may override that decision.  E.g. "rdt=energy"
-will enable any available energy telemetry events even if they do not
-provide full functionality.
+Rename routines to match what they now do:
+dom_data_init() -> setup_rmid_lru_list()
+dom_data_exit() -> free_rmid_lru_list()
 
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 ---
- .../admin-guide/kernel-parameters.txt         |  2 +-
- arch/x86/kernel/cpu/resctrl/internal.h        |  2 ++
- arch/x86/kernel/cpu/resctrl/core.c            | 29 +++++++++++++++++++
- 3 files changed, 32 insertions(+), 1 deletion(-)
+ fs/resctrl/internal.h |  4 ++++
+ fs/resctrl/monitor.c  | 54 ++++++++++++++++++++-----------------------
+ fs/resctrl/rdtgroup.c |  5 ++++
+ 3 files changed, 34 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 6c42061ca20e..bb8f5d73ebf8 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -6207,7 +6207,7 @@
- 	rdt=		[HW,X86,RDT]
- 			Turn on/off individual RDT features. List is:
- 			cmt, mbmtotal, mbmlocal, l3cat, l3cdp, l2cat, l2cdp,
--			mba, smba, bmec, abmc.
-+			mba, smba, bmec, abmc, energy, perf.
- 			E.g. to turn on cmt and turn off mba use:
- 				rdt=cmt,!mba
+diff --git a/fs/resctrl/internal.h b/fs/resctrl/internal.h
+index 46fd648a2961..0dd89d3fa31a 100644
+--- a/fs/resctrl/internal.h
++++ b/fs/resctrl/internal.h
+@@ -369,6 +369,10 @@ int closids_supported(void);
  
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index b920f54f8736..e3710b9f993e 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -225,6 +225,8 @@ void __init intel_rdt_mbm_apply_quirk(void);
- void rdt_domain_reconfigure_cdp(struct rdt_resource *r);
- void resctrl_arch_mbm_cntr_assign_set_one(struct rdt_resource *r);
+ void closid_free(int closid);
  
-+bool rdt_is_feature_enabled(char *name);
++int setup_rmid_lru_list(void);
 +
- #ifdef CONFIG_X86_CPU_RESCTRL_INTEL_AET
- bool intel_aet_get_events(void);
- void __exit intel_aet_exit(void);
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index ba1ddc2eec15..7013911d3575 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -772,6 +772,8 @@ enum {
- 	RDT_FLAG_SMBA,
- 	RDT_FLAG_BMEC,
- 	RDT_FLAG_ABMC,
-+	RDT_FLAG_ENERGY,
-+	RDT_FLAG_PERF,
- };
++void free_rmid_lru_list(void);
++
+ int alloc_rmid(u32 closid);
  
- #define RDT_OPT(idx, n, f)	\
-@@ -798,6 +800,8 @@ static struct rdt_options rdt_options[]  __ro_after_init = {
- 	RDT_OPT(RDT_FLAG_SMBA,	    "smba",	X86_FEATURE_SMBA),
- 	RDT_OPT(RDT_FLAG_BMEC,	    "bmec",	X86_FEATURE_BMEC),
- 	RDT_OPT(RDT_FLAG_ABMC,	    "abmc",	X86_FEATURE_ABMC),
-+	RDT_OPT(RDT_FLAG_ENERGY,    "energy",	0),
-+	RDT_OPT(RDT_FLAG_PERF,	    "perf",	0),
- };
- #define NUM_RDT_OPTIONS ARRAY_SIZE(rdt_options)
- 
-@@ -847,6 +851,31 @@ bool rdt_cpu_has(int flag)
- 	return ret;
+ void free_rmid(u32 closid, u32 rmid);
+diff --git a/fs/resctrl/monitor.c b/fs/resctrl/monitor.c
+index 9f5097a4be82..448f490ba344 100644
+--- a/fs/resctrl/monitor.c
++++ b/fs/resctrl/monitor.c
+@@ -890,20 +890,29 @@ void mbm_setup_overflow_handler(struct rdt_l3_mon_domain *dom, unsigned long del
+ 		schedule_delayed_work_on(cpu, &dom->mbm_over, delay);
  }
  
-+/*
-+ * Hardware features that do not have X86_FEATURE_* bits. There is no
-+ * "hardware does not support this at all" case. Assume that the caller
-+ * has already determined that hardware support is present and just needs
-+ * to check if the feature has been disabled by a quirk that has not been
-+ * overridden by a command line option.
-+ */
-+bool rdt_is_feature_enabled(char *name)
-+{
-+	struct rdt_options *o;
-+	bool ret = true;
-+
-+	for (o = rdt_options; o < &rdt_options[NUM_RDT_OPTIONS]; o++) {
-+		if (!strcmp(name, o->name)) {
-+			if (o->force_off)
-+				ret = false;
-+			if (o->force_on)
-+				ret = true;
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- bool resctrl_arch_is_evt_configurable(enum resctrl_event_id evt)
+-static int dom_data_init(struct rdt_resource *r)
++int setup_rmid_lru_list(void)
  {
- 	if (!rdt_cpu_has(X86_FEATURE_BMEC))
+-	u32 idx_limit = resctrl_arch_system_num_rmid_idx();
+ 	struct rmid_entry *entry = NULL;
+-	int err = 0, i;
++	u32 idx_limit;
+ 	u32 idx;
++	int i;
+ 
+-	mutex_lock(&rdtgroup_mutex);
++	if (!resctrl_arch_mon_capable())
++		return 0;
+ 
++	/*
++	 * Called on every mount, but the number of RMIDs cannot change
++	 * after the first mount, so keep using the same set of rmid_ptrs[]
++	 * until resctrl_exit(). Note that the limbo handler continues to
++	 * access rmid_ptrs[] after resctrl is unmounted.
++	 */
++	if (rmid_ptrs)
++		return 0;
++
++	idx_limit = resctrl_arch_system_num_rmid_idx();
+ 	rmid_ptrs = kcalloc(idx_limit, sizeof(struct rmid_entry), GFP_KERNEL);
+-	if (!rmid_ptrs) {
+-		err = -ENOMEM;
+-		goto out_unlock;
+-	}
++	if (!rmid_ptrs)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < idx_limit; i++) {
+ 		entry = &rmid_ptrs[i];
+@@ -916,30 +925,24 @@ static int dom_data_init(struct rdt_resource *r)
+ 	/*
+ 	 * RESCTRL_RESERVED_CLOSID and RESCTRL_RESERVED_RMID are special and
+ 	 * are always allocated. These are used for the rdtgroup_default
+-	 * control group, which will be setup later in resctrl_init().
++	 * control group, which was setup earlier in rdtgroup_setup_default().
+ 	 */
+ 	idx = resctrl_arch_rmid_idx_encode(RESCTRL_RESERVED_CLOSID,
+ 					   RESCTRL_RESERVED_RMID);
+ 	entry = __rmid_entry(idx);
+ 	list_del(&entry->list);
+ 
+-out_unlock:
+-	mutex_unlock(&rdtgroup_mutex);
+-
+-	return err;
++	return 0;
+ }
+ 
+-static void dom_data_exit(struct rdt_resource *r)
++void free_rmid_lru_list(void)
+ {
+-	mutex_lock(&rdtgroup_mutex);
+-
+-	if (!r->mon_capable)
+-		goto out_unlock;
++	if (!resctrl_arch_mon_capable())
++		return;
+ 
++	mutex_lock(&rdtgroup_mutex);
+ 	kfree(rmid_ptrs);
+ 	rmid_ptrs = NULL;
+-
+-out_unlock:
+ 	mutex_unlock(&rdtgroup_mutex);
+ }
+ 
+@@ -1815,7 +1818,8 @@ static void closid_num_dirty_rmid_free(void)
+  * resctrl_l3_mon_resource_init() - Initialise global monitoring structures.
+  *
+  * Allocate and initialise global monitor resources that do not belong to a
+- * specific domain. i.e. the rmid_ptrs[] used for the limbo and free lists.
++ * specific domain. i.e. the closid_num_dirty_rmid[] used to find the CLOSID
++ * with the cleanest set of RMIDs.
+  * Called once during boot after the struct rdt_resource's have been configured
+  * but before the filesystem is mounted.
+  * Resctrl's cpuhp callbacks may be called before this point to bring a domain
+@@ -1835,12 +1839,6 @@ int resctrl_l3_mon_resource_init(void)
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = dom_data_init(r);
+-	if (ret) {
+-		closid_num_dirty_rmid_free();
+-		return ret;
+-	}
+-
+ 	if (resctrl_arch_is_evt_configurable(QOS_L3_MBM_TOTAL_EVENT_ID)) {
+ 		mon_event_all[QOS_L3_MBM_TOTAL_EVENT_ID].configurable = true;
+ 		resctrl_file_fflags_init("mbm_total_bytes_config",
+@@ -1887,6 +1885,4 @@ void resctrl_l3_mon_resource_exit(void)
+ 		return;
+ 
+ 	closid_num_dirty_rmid_free();
+-
+-	dom_data_exit(r);
+ }
+diff --git a/fs/resctrl/rdtgroup.c b/fs/resctrl/rdtgroup.c
+index 15b2765898d6..17f5b986f210 100644
+--- a/fs/resctrl/rdtgroup.c
++++ b/fs/resctrl/rdtgroup.c
+@@ -2734,6 +2734,10 @@ static int rdt_get_tree(struct fs_context *fc)
+ 		goto out;
+ 	}
+ 
++	ret = setup_rmid_lru_list();
++	if (ret)
++		goto out;
++
+ 	ret = rdtgroup_setup_root(ctx);
+ 	if (ret)
+ 		goto out;
+@@ -4586,4 +4590,5 @@ void resctrl_exit(void)
+ 	 */
+ 
+ 	resctrl_l3_mon_resource_exit();
++	free_rmid_lru_list();
+ }
 -- 
 2.51.0
 
