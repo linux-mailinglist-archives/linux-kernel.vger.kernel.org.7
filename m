@@ -1,139 +1,129 @@
-Return-Path: <linux-kernel+bounces-876332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E97C1B851
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:03:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F347C1B79D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E59905A20ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E035823A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FAF26B761;
-	Wed, 29 Oct 2025 14:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF01271454;
+	Wed, 29 Oct 2025 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4UXe+eGl"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPmuKBsz"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E220025F98E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E32E826A0DB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747686; cv=none; b=EHuWPqp6JHoFlQ2+lNSoqs+lJ6vCF80XlFanHFsnkUSupzmauw78UEzNE9IfVK7/Hf7Tf2Z/md9j8rj3UNr72cesm74xKVuBU9pFwFNLaB5EFJSTtdZnNCrURFnTeItC5FO0+NweT3ISxUKb93HPVG488sGUHsM6lzFdxindMxs=
+	t=1761747710; cv=none; b=gglEFphmYLmbgtrabqjJ4HvD5btaOUj+W6KKKSQUJtfXzbyaHXdb/+UYN0dEQSiRD7r28DsXv34hBwNPhBggq8PMLSqhoCoT7Gma0QUzDpH0Md79ESAAiqV/0RzTxyf1X6i6B+pIiCz8txDGWfWl0okf6T0hmoWm9YoBTLJcI0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747686; c=relaxed/simple;
-	bh=93Vtiw986HP5Zw70geHWmY/TgmlDxs9RMiLH5inaSP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5szFqXwGWhjceXVWHFE5i32Vx3XskFq98RzRslYs2YZ0MnO/LZ3OqmQskGwoC0hsiUNGUHOFeqREfBXwqTBTqQx83q4JSU1FvP1YMpDp/4dz1U93OZa5T39SNpd2IArNinwLr8SkVRqOnL3SlK33x3dHp6TknB+aE/Fr6hk17w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4UXe+eGl; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4770d4df4deso54525e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:21:24 -0700 (PDT)
+	s=arc-20240116; t=1761747710; c=relaxed/simple;
+	bh=W2MmcX2vCweI9Q0W0BLZEPy3CkT01KpRkvvdhb0j4RU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZmVwMqNDK9PiG5q5QMCm7gWnr8zSw7Avcxn0l/XmrFRDN3CwDW686PbkqIKzB0EwUEYQ3buhXkftt0XGCYT8nSFWbP803BtH+6aqNKnvtjfDhdRuB1WjuHuqwOI4JTEE062lDRdvOrLCAogphmFJu/v49MuoWOUlvl9/KwwM8Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iPmuKBsz; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-57f0aa38aadso9232253e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:21:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761747683; x=1762352483; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3v3m7+iEHWRkLzDZ7+GIqu0uQ7bsmsqb2voqo0NHPtI=;
-        b=4UXe+eGlgjwrb6pWQzf5Cry18615hGIrwbyGNkPv2JWHb2AIeki8CriGH3CaH4ZRBE
-         Sd7aZ0IDQLQaNS493HGb5PsGcG85bbQAUb9Lx/+8qGYoXn8m7a8EP7+xIU+Efc+QazzC
-         pmkigCyDIyurIj4tBxCxa14Yie1uusFzEd6bRuG614utJDFbAieks2Wws1DoXFQrk/2s
-         adM15VrSkimAw7+LZfPkT4XgOoGg/802NJ577rhKeY4cqz+OYZucW9aRHz8tRQkw3hNY
-         Xa9MurOw4ThLROtp1K3mLZilsH0Clk0bvVjw5A+bZl5BHJP3S8fk+H3F8mGn7XRfAzXt
-         fPtA==
+        d=linaro.org; s=google; t=1761747705; x=1762352505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVuX2dWoAgb7QHLLOTB16BwhmwEzZ8jO6zQdan0Y+2I=;
+        b=iPmuKBszqzRuJQbXmV7ZqrHkGQ7zzFPI5fCiy2pzoDtPjlRPUxn/iBGENRd/ptR9K7
+         3VBKIZJP1O0yUFj7/fCcbOwJ6Jrfg+aPV8Qe6xEI+yJbt3zW5MFm2vbkHPWUEusZbsG9
+         9pDt6yHUt7It5usEE7V6f8zm2g/wPOsuVhT8wJtzZZCpNR5pe56ZlKHI8y6UiF8K+aW0
+         6QnQ2mRi0kkStXvJzZuY7GofiTxN0n9PLm4/uCs5Swf6Aq4grVIHoojnEHTsOwvkPK9h
+         byUFAKzmTHWTLC+KE+CJwCtlAzXP6ZbY547Jy05lqxEPqw1USDxJedUjrktORkWq++Nc
+         KPLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761747683; x=1762352483;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3v3m7+iEHWRkLzDZ7+GIqu0uQ7bsmsqb2voqo0NHPtI=;
-        b=PQVrMdFaWurXTg5Si2vW7ZdXYPQOJGKgFkaOyyh781UVzYC3OLDVjBl1QoC3Kr81Oy
-         +iqR2dh8UuEScT4DlOVV6vx/KjQeaoX443AYwbZ794BKKxv8cjXz2YiKdouQj1FhTLhU
-         wlBoTGR9wpYmpIg18bNnKRhAugd1D9xG9hDoo7uZoGRxB/dnDCjKKTtWCV0ARScrRgeB
-         80VwvBx7/8FjRKsc2VdVu7NWf/1ZbHUNxcxSC6plvMQCUDbTw0gbFit+LtSru7ECH9jl
-         iu/VojAK9aQEcmbE/J4F2aJ0ZX56MPJmnDHSHqTud+YUb+h0wyfGojQFO1LufKFVWV+o
-         L++A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqwjq42E69qE9O5Nhv/MwhpuP+M9uYSvH1FjF53fhVgkODoTQuIBtlR8zaW4atNPpvRyTHTZb0/iIv+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRDKBkO39Wxeuj9bCJJKRuxUmEFNDO6eO09YYQ4Hn0lguT5w75
-	geHLE34YTrVs1pw6uOoBj3RlDzM++C/zbLpZazYSIbC3KFTPQaY4iEspCZ//pdthPw==
-X-Gm-Gg: ASbGnctp6H0xajnpxfbnBH+BOxStyr1nu6IP9hByytEJKrgMRlCmRDpzM6+GlgthAy1
-	7XMKxhIT4xeEgO7ULTckq8aLGTe3mkgZbu+kIDDHId4uBN0iGhZ2zV80XAbqNq+jQe2i/OzaTJw
-	3YkHNa5N3lb/kFAnd/ZusXc/+V7XJMcxjgIvezBBgpiMI/USvzMsXbsvxZIh6U0FRXUZQqPs06M
-	Me0ZZIWvWNtuqx0rP7TY/487opykIt1Tr5IAdghkZ8+1jOxV1tLhrIvVCn918bF5MyWSus33BFD
-	0QzjPbRHqLXHM6o6I8P3j5kIX0SNA1ZuhbhXWPdnTn9sQQZPi47w4GKKM9vu1C9VRiZq3FIinXj
-	4aKTCz7Fc1/LGBagOjC+zMR02HobP/ZnKRJN8wd4a5CzFjzgXQAInrhmIZ4pmq4LvS1l/vCS2pH
-	vDoO6O8RJK6sKRWGK8IYwqXGq/cvI/HtAFGAjDdArVNUuTv8GL3Q==
-X-Google-Smtp-Source: AGHT+IF0QvVp/pMidwWCYmRvRc3ULDAawDYrzzkZVMrjVXmcSM5ssLIvciM67QH/jAt5xWVHGKoIQg==
-X-Received: by 2002:a05:600c:a00d:b0:477:2205:df3d with SMTP id 5b1f17b1804b1-4772205e0abmr1513845e9.6.1761747683131;
-        Wed, 29 Oct 2025 07:21:23 -0700 (PDT)
-Received: from google.com (54.140.140.34.bc.googleusercontent.com. [34.140.140.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-475ddad455fsm123107015e9.2.2025.10.29.07.21.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 07:21:22 -0700 (PDT)
-Date: Wed, 29 Oct 2025 14:21:19 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: =?iso-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>
-Cc: linux-mm@kvack.org, iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, corbet@lwn.net, will@kernel.org,
-	robin.murphy@arm.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	surenb@google.com, mhocko@suse.com, jackmanb@google.com,
-	hannes@cmpxchg.org, ziy@nvidia.com, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
-	rppt@kernel.org
-Subject: Re: [RFC PATCH 1/4] drivers/iommu: Add page_ext for
- IOMMU_DEBUG_PAGEALLOC
-Message-ID: <aQIi3-l7juuwLZzs@google.com>
-References: <20251003173229.1533640-1-smostafa@google.com>
- <20251003173229.1533640-2-smostafa@google.com>
- <uwznrzdsbfpbalzf5jxxpguf2ykslphfs47u7gf66ssiwzpqju@dh7nw3van6sr>
+        d=1e100.net; s=20230601; t=1761747705; x=1762352505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LVuX2dWoAgb7QHLLOTB16BwhmwEzZ8jO6zQdan0Y+2I=;
+        b=qs93a3f85h/57YqcQ5B8tfxM58kdksrK33SVfFO9S+nZJrXmm1h7GB5Q83cfBpC7Ee
+         b7EfD7yRryfMDSp43PUVyLAHTBV6gQ6WiP9l+nv9YlbkHp4gZPKEHJp+RVIK1KpACl7v
+         7TJ70IzjCKmDUSdERVYn8r5/N0wQz99bkGdJSeUVl3UFril26V6hRdh43Wm8CE1OFf+p
+         YG8K1b1DVrEprBk4mI72nx0kL/kn112dicAYn+sHviAlNrNFVXQ2o81dsfEfFcl90H/Z
+         Joo521OwX+F/7Cp+VTE1iZ11We3rc+psEjqFKWVUdp2ffu6Ie6MuhnLnjCKFBObYSxNn
+         2jaA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEOrPiOk5OlYOu7kBsz87DLZf+RvgzpbefGyipdnssaRJGC9Jznt1t7MQsGT5OZgfOIPzPT24y+zlr0pI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwxETcD4joulVAMnK+3ajkZiOEkQ5h1Du7lR2g3qL8MzWQw+TW
+	aTtRF+PRvmGFYH+4TdMw/7hn6NKMRxThGnwz72/LkqEtJTDJLHmu0TvoY00Blvzc8x2Gcs+ueiq
+	Lex3EraGsMoGT4nqRsW+41euZSqFkmEE0EWxWXCU6bw==
+X-Gm-Gg: ASbGncvNQJ+zch+dj+Bl+TnF0Fzwgsmebj5TRA3VX3LcHZl3Ex8zudKgo/4l4GR5+CD
+	tkuGw1JuvxgWfi9yyNRGFGy+l3lhOMbJ95Ds8RYHlOjClxP3daH/AGowaiCryBtO/IuiToihfEi
+	uUJYS+3GfzBfvltfKfvkRX4kqKUQHqMN0C8iyGVPNofkE1jIbhnchV8AjZCTMLK8O0SvBsTKu4I
+	rXPjfRY80KP0lRAMlLTIfpr0J2QEoJ/NbYKBGPiuatBpsTyrwCupBdfAdpZ
+X-Google-Smtp-Source: AGHT+IH/WV9TTRDue/YlQPKqZJ/rOmSLCumqELYgQ//HXfU7luOPdKKEVQrj3vn51BUY/zZkRojEs9B5VMPxZwJpOnE=
+X-Received: by 2002:a05:6512:238f:b0:592:f814:3852 with SMTP id
+ 2adb3069b0e04-594128b7bd8mr1157709e87.20.1761747703432; Wed, 29 Oct 2025
+ 07:21:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <uwznrzdsbfpbalzf5jxxpguf2ykslphfs47u7gf66ssiwzpqju@dh7nw3van6sr>
+References: <cover.1761588465.git.geert+renesas@glider.be> <ac3e718c5de6a23375055dd3c2e4ed6daf7542d5.1761588465.git.geert+renesas@glider.be>
+In-Reply-To: <ac3e718c5de6a23375055dd3c2e4ed6daf7542d5.1761588465.git.geert+renesas@glider.be>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 29 Oct 2025 15:21:32 +0100
+X-Gm-Features: AWmQ_bn0qj1HdhGI-E5owVSGvqmNxBgXc48MF5-9CHRtkVWKXcvNelNuCdps5kE
+Message-ID: <CACRpkdYMv+R-NJ5R4+UyhK1+DJia0z72kZgt45+0eubXMuGpEw@mail.gmail.com>
+Subject: Re: [PATCH v5 18/23] pinctrl: ma35: Convert to common
+ field_{get,prep}() helpers
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 12:42:09PM +0100, Jörg Rödel wrote:
-> On Fri, Oct 03, 2025 at 05:32:26PM +0000, Mostafa Saleh wrote:
-> > +config IOMMU_DEBUG_PAGEALLOC
-> > +	bool "Debug page memory allocations against IOMMU"
-> > +	depends on DEBUG_PAGEALLOC && IOMMU_API && PAGE_EXTENSION
-> > +	help
-> > +		This config checks when a page is freed by the kernel
-> > +		it's not mapped in any IOMMU domain. It can help with
-> > +		debugging use-after-free from driver doing DMA.
-> > +		This santaizer can have false-negative cases where some
-> > +		problems won't be detected.
-> > +		Expect overhead when enabling this + enabling the kernel
-> > +		command line iommu.debug_pagealloc.
-> > +
-> > +		If unsure, say N here.
-> 
-> Expected indentation here is <tab><space><space> and not <tab><tab>.
+On Mon, Oct 27, 2025 at 7:44=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 
-My bad, I will fix it in v2.
+> Drop the driver-specific field_get() and field_prep() macros, in favor
+> of the globally available variants from <linux/bitfield.h>.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v5:
+>   - Extracted from "bitfield: Add non-constant field_{prep,get}()
+>     helpers".
 
-> 
-> > --- /dev/null
-> > +++ b/drivers/iommu/iommu-debug.c
-> 
-> Is there a plan for this file to contain more than page-alloc debugging? If
-> not, it should get a more specific name, like iommu-debug-pagealloc.c or
-> similar.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
+I guess this needs to go with the rest of the patches?
 
-I have no solid plans for other features, but I was hoping to build on top
-of that in the future, but for now we can make it “iommu-debug-pagealloc.c”
-
-Thanks,
-Mostafa
-
-> 
+Yours,
+Linus Walleij
 
