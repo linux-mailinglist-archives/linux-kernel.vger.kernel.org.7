@@ -1,136 +1,140 @@
-Return-Path: <linux-kernel+bounces-876326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E9C1B331
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:28:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC205C1B2F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:25:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5EA1AA49C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE5D1A27DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8495F25A65B;
-	Wed, 29 Oct 2025 14:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6732A25A655;
+	Wed, 29 Oct 2025 14:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hMxSONcS"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OJjMxP6I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D88254AE1;
-	Wed, 29 Oct 2025 14:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAD225229C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747332; cv=none; b=VQffQ4xEPlN4HYY8kge84OH3RdqbV6u/Gz0z8Pwuzgyir15z1mkjthz5VbpbbznSWOoGH89Xj6QWPuQa+kTZ4FTKXcNe3otN8Zlc0y+tPlE6QXs4sl/Yq7OQtast5L1RwMDa0X3Kzjk5eoznZW7GqVprIL3TsjxG72LqxJgsOUU=
+	t=1761747372; cv=none; b=D2fVcGLpDPAxYKnpd11gVUr2PwBDJSmokjC2l1VoBdjiOkVxQA7UQVXoxXcM6PYB9zwdqq8x8J9lveN0sHScjV7hIysYEn/EdMisPt6H3RQTitW8ynWN4BQFFyT81RRzz0cnxWTKEC2Z6dV04/R9PDLq+geczvAi1yrGpSTiqPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747332; c=relaxed/simple;
-	bh=RZm6bZIS4bNLDUlPnk4g887+82E7lvxrRpfpy6mBLtE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8PRAas1J5Ah9hjVeTjSTJMp/8vZV7f1j6ea/oMYJRZKF5kaCtoEENgljAPK8dPEghItFef167xarFWo6xi6waIY9wJ06pDCIsez/RTUkJXt3q69yrQV2G0O6dzLk42NTugiaEZPMtvJWKsy35MlezMMC7BqjcHrr3dXqGt94Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hMxSONcS; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 2CD66A103D;
-	Wed, 29 Oct 2025 15:15:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-type:content-type:date:from:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=mail; bh=S6KdbNwAQ7YpbZD9A84wYipdmyYEdIHycsiERqFOZJc=; b=
-	hMxSONcS++SGDe0QWqHBdwTHBHSJ0/QPvJguHK3Chras0irk42VtLSKpYYMxJXpt
-	BbrEhVf42ipJSHJdtCdc55vm9eyHKPHVo/sWfHviBtGtqJ/rqFeo2/CsSLTd5aHB
-	RlJRdnCik1WOu62Wi0+udkzydUGIQZpXwIq1NWKkUnueBAyvaLN9IeCPZIkU0IUe
-	mP2ofuTmwGC3T9oFwcV+4OS+opkEvntKr+/LS+58WWiJMedZJjKnPTZ25OF2yZSq
-	AKPRoG0L3pXL5JhA5P6B/7yAqiwlaNJeD1ZoMER9ol/0f4Q3XhRG435NCOktKy//
-	xCNwGWUPmWKNrUzJ1VAay1BQIRL5HAWe/DF1n25pElNE5YJyJbg/AtoBpOIowCkx
-	ibLpmoI+RZlHYMyHdBNAytwcONMnSHOOrXDh2X7RQCvWs6ThzBSiLqVaLkWzGO3f
-	3u6a+b4K382OlLzSoNOufJ2SAKHu8Y9Ft7RW5rsZOg1QD/rTjcTzbh8JYF8/ixHB
-	m+/P7ww0NtOI867MoS3wIvHZKmoXqdaWk/kz2H3hiHNbiZ938TiGB8WQoL0XdnP4
-	8i7ksBTgBCxk4t7YJpPw3obPnuBIb1z9q5htPUYDl6V3mnOPpyCJpUI3gK8fj1mL
-	4uWE9jfrfQRWvXma+utowZ0Q5yH+lJyj8JrUtXZ/7EA=
-Date: Wed, 29 Oct 2025 15:15:27 +0100
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Heiner Kallweit <hkallweit1@gmail.com>, Russell King
-	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 3/4] net: mdio: reset PHY before attempting
- to access registers in fwnode_mdiobus_register_phy
-Message-ID: <aQIhf3dXOxS4vd2W@debianbuilder>
-References: <cover.1761732347.git.buday.csaba@prolan.hu>
- <5f8d93021a7aa6eeb4fb67ab27ddc7de9101c59f.1761732347.git.buday.csaba@prolan.hu>
- <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
+	s=arc-20240116; t=1761747372; c=relaxed/simple;
+	bh=8p5qzn5lsjro6ecyrajsLYnqkz4JpIKQTGIKLB0bxno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DWsu4eXvL8xGGDu76qgkmS86a8X8x9JYdVRc83OG75YwDkwLhL/yvggxUF4WrIdz4NobTzAFrbgVOnxJshzSZanTyrhzvVOVKiM8o5Uzj/5dgFlBXWOuX9OapuUS2rZoI9EsCAXNqKFN9St78gYWsO152PBQtUFG1KTMgvKXQQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OJjMxP6I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402B7C4CEFF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761747372;
+	bh=8p5qzn5lsjro6ecyrajsLYnqkz4JpIKQTGIKLB0bxno=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OJjMxP6IwoKCGacSgRL4QW2fdPx5GViCAibFG1eB4z0jhcV6B1aC7o0RtzfSDLeBh
+	 TX82KVkgDRpsJdUM1tBUkYZGznNwBxIoJe9zgWqYjbLFrdYZP2MOpQqINGllnvUsMB
+	 aMdxJoGaDM7SU1H4/cekAaZtxXv9wsKmm2SzaLChIuu1J9zAxx72B8BBD+29ypnWoe
+	 inH443ETBqX+uBW/KhdROcbY/dGwOywYFt6MaxM8GxaRQ/mXVE27Rr7aphwJxMXp35
+	 UY+Mdhwl5OVhQ1LXuAGOfJb+lrgphfIVKt0bHXC8rJTkAiqMzx1kUoqnaaDDsqbsvh
+	 HLk03LeXC/dzQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-592f7e50da2so1338781e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:16:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaR8Z8zrQ3oMi+y/ACb/UkHkHGkKtfoJtZ5gVcRIstXZ6Qj4wK6uAphe1ddqksLrmKzIs7JRwuKJSrKKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE6xKI/M5Mk45m9UKwiYPOp1I1a5UYl5ngAE0VudP41WJTR0QW
+	qQ5uTIfKSjgVw3o41L7QuxBBMvpo1nSodzJD9i+ogqjPeCWrQuTdcZYLFlGd1lPxYmSV+SMU0D4
+	IrxmJrVi1ReVL+8PsecFGjLAgc5oaIVI=
+X-Google-Smtp-Source: AGHT+IEzWgdNj4Bs2eCcMWiSr9KjTK5w+8iRiC5xWh9ohGIX6Rk16IJVlTtZlJ9iC+OCfdlfG1EIrEfOnjygVEO23AI=
+X-Received: by 2002:a05:6512:110e:b0:592:f098:f38a with SMTP id
+ 2adb3069b0e04-59412cb34a6mr1099049e87.20.1761747370603; Wed, 29 Oct 2025
+ 07:16:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761747327;VERSION=8000;MC=1979873367;ID=153868;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F677362
+References: <20251023082129.75612-1-maqianga@uniontech.com>
+ <CAMj1kXHs3vC4TEWg1ogG=N8Dd5L0rkQ=qAFLWKiAA5yi_He3GA@mail.gmail.com>
+ <10D9A93B0633E6BE+75720e07-b39d-452c-952e-41f8ab6aad94@uniontech.com>
+ <CAMj1kXHQ6WQWfbkMP4JUk=nKwSt7CovY25RC4JA0ZM7vRWu6dA@mail.gmail.com> <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
+In-Reply-To: <9F7F632B7963434F+abad2548-a90d-4448-ae79-dd4bf637ee6e@uniontech.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Wed, 29 Oct 2025 15:15:59 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkPBgz5qsoTj4IvJC_wLSrwQLJE6QkYE7qxmwFvIEBZJRA3qMEx45Je13s
+Message-ID: <CAMj1kXHu5ABgxKsc_gg1j=pWMz6DbWoqv=qAAjx-5CiSF2PAiQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM/efi: Remove duplicate permission settings
+To: Qiang Ma <maqianga@uniontech.com>
+Cc: linux@armlinux.org.uk, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 02:20:14PM +0100, Andrew Lunn wrote:
-> > +/* Hard-reset a PHY before registration */
-> > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
-> > +			    struct fwnode_handle *phy_node)
-> > +{
-> > +	struct mdio_device *tmpdev;
-> > +	int rc;
-> > +
-> > +	tmpdev = mdio_device_create(bus, addr);
-> > +	if (IS_ERR(tmpdev))
-> > +		return PTR_ERR(tmpdev);
-> > +
-> > +	fwnode_handle_get(phy_node);
-> 
-> You add a _get() here. Where is the corresponding _put()?
-
-When mdio_device_free() is called, it eventually invokes
-mdio_device_release(). There is the corresponding _put(), that will
-release the reference. I also verified this with a stack trace.
-
-> 
-> Also, fwnode_handle_get() returns a handle. Why do you throw it away?
-> What is the point of this get?
+On Wed, 29 Oct 2025 at 10:55, Qiang Ma <maqianga@uniontech.com> wrote:
+>
+>
+> =E5=9C=A8 2025/10/28 21:42, Ard Biesheuvel =E5=86=99=E9=81=93:
+> > On Mon, 27 Oct 2025 at 04:46, Qiang Ma <maqianga@uniontech.com> wrote:
+> >>
+> >> =E5=9C=A8 2025/10/23 16:30, Ard Biesheuvel =E5=86=99=E9=81=93:
+> >>> On Thu, 23 Oct 2025 at 10:22, Qiang Ma <maqianga@uniontech.com> wrote=
+:
+> >>>> In the efi_virtmap_init(), permission settings have been applied:
+> >>>>
+> >>>> static bool __init efi_virtmap_init(void)
+> >>>> {
+> >>>>           ...
+> >>>>           for_each_efi_memory_desc(md)
+> >>>>                   ...
+> >>>>                   efi_create_mapping(&efi_mm, md);
+> >>>>           ...
+> >>>>           efi_memattr_apply_permissions(&efi_mm, efi_set_mapping_per=
+missions);
+> >>>>           ...
+> >>>> }
+> >>>>
+> >>>> Therefore, there is no need to apply it again in the efi_create_mapp=
+ing().
+> >>>>
+> >>>> Fixes: 9fc68b717c24 ("ARM/efi: Apply strict permissions for UEFI Run=
+time Services regions")
+> >>>>
+> >>>> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+> >>> No, efi_memattr_apply_permissions() uses the /optional/ memory
+> >>> attributes table, whereas efi_create_mapping() uses the permission
+> >>> attributes in the EFI memory map. The memory attributes table is
+> >>> optional, in which case any RO/XP attributes from the memory map
+> >>> should be used.
+> >>>
+> >> I see.
+> >>
+> >> Then, can it be modified like this?
+> > No
+> >
+> >> --- a/arch/arm/kernel/efi.c
+> >> +++ b/arch/arm/kernel/efi.c
+> >> @@ -65,16 +65,13 @@ int __init efi_create_mapping(struct mm_struct *mm=
+,
+> >> efi_memory_desc_t *md)
+> >>                   desc.type =3D MT_MEMORY_RWX_NONCACHED;
+> >>           else if (md->attribute & EFI_MEMORY_WC)
+> >>                   desc.type =3D MT_DEVICE_WC;
+> >> +       else if (md->attribute & (EFI_MEMORY_RO | EFI_MEMORY_XP))
+> > This will be true for RO, XP or RO+XP.
+> >
+> >> +               desc.type =3D MT_MEMORY_RO;
+> > This will apply RO permissions even to XP regions, which need to be wri=
+table.
+> >
+> Thanks for your review.
+> I see.
+>
+> I can introduce a new type MT_MEMORY_RO_XP, to describe RO+XP,
+> and then we can use the RO+XP attribute to implement memory mapping.
 >
 
-I copied this initialization stub from of_mdiobus_register_device()
-in of_mdio.c. The same pattern is used there:
-
-	fwnode_handle_get(fwnode);
-	device_set_node(&mdiodev->dev, fwnode);
-
-It is kind of awkward that we need to half-establish a device, just
-to assert the reset, but I could not think of any better solution, that
-does not lead to a large amount of code duplication.
-
-> > +	device_set_node(&tmpdev->dev, phy_node);
-> > +	rc = mdio_device_register_reset(tmpdev);
-> > +	if (rc) {
-> > +		mdio_device_free(tmpdev);
-> > +		return rc;
-> > +	}
-> > +
-> > +	mdio_device_reset(tmpdev, 1);
-> > +	mdio_device_reset(tmpdev, 0);
-> > +
-> > +	mdio_device_unregister_reset(tmpdev);
-> > +	mdio_device_free(tmpdev);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> 
-> 	Andrew
-> 
-
-Csaba
-
+Why? The current code is working fine, no?
 
