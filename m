@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-876971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE4FC1CE3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:06:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B92C1CE48
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:06:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622FB1A22270
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:05:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9EF1D4E2E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6796335A12D;
-	Wed, 29 Oct 2025 19:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FC035A15B;
+	Wed, 29 Oct 2025 19:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="OkS/PAF7"
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="e682F4O5"
 Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C76A359FB8;
-	Wed, 29 Oct 2025 19:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A3F359F82;
+	Wed, 29 Oct 2025 19:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764587; cv=none; b=lG5f7nIifWhoOFSfdllT7yRcIlqZaasTDpR7/pwcP9PDPQzX/yspTpwdoXOqhIBMzenSUD014tOveA0hXOzY5ys858ZVyeZ8X3mWYjy2LCJkd5kzXO/UscZJec7UCfFcVoMbHyVmGSguorqDQrkTsKSlk9z+AvlUJNM8y7wfJMQ=
+	t=1761764586; cv=none; b=HJwydAKpOlV/nt+OAwcMTuyRb8l5pQg2kWAbWy6lCYZ66A1NNimoiIzIjC0WMYjGWDd1V3BeKEFd/MmkI8RZ8odnlsTm85i6MOwNfWUxjhdJU0Q0Upjy/cmOz1E8/eHFbBcOQodTA0PllcB8OP0tIk9pCW4ULmwBU1hLTeR5Jm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764587; c=relaxed/simple;
-	bh=/qWMK8vpdTizLzGRvoCNpBH5BD+N40jnSQGbpSIPulc=;
+	s=arc-20240116; t=1761764586; c=relaxed/simple;
+	bh=4dtliad1hDVDUDG9X7pXCghu4QfFymCPJNzSElZI5EY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ALsnchk/u0qNV+ph15ze07x812SYxSmbpFyNssopUQ/NObvdDxe1AlT7qFefRltluOK3YlVYLppYScGLDJ8TgyyEmP8QXV0Uca1djtdfaQifkVdL630+/wxRHvJhAI+1UqCm258hqghwnm9IKyjB4FeIiHUVMQGbLmek1w9c01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=OkS/PAF7; arc=none smtp.client-ip=83.149.199.84
+	 MIME-Version; b=uvw4DoDWksdahG/CbgMFr9TTDLUhOiq91zNkgb9r0e3cYKi/Ve83EcqkTYMeOMLhZvRwMgp8/tAIZ4nDp/VlHWHFQTRSNqTrQkfn7rGt05ELF0c2DT9fcpKupMEBVeCa7tX0IJSZJRAsKKvngDrAoVg1vtNDuHmdNFl2Sc2IlfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=e682F4O5; arc=none smtp.client-ip=83.149.199.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
 Received: from debian.intra.ispras.ru (unknown [10.10.165.6])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 8551340777B0;
+	by mail.ispras.ru (Postfix) with ESMTPSA id 015F840777B1;
 	Wed, 29 Oct 2025 19:03:00 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 8551340777B0
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 015F840777B1
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1761764580;
-	bh=0L2eoPc/YQNOVXtDGM+uLLtk7qXUJPSHRMSid7VBzr8=;
+	s=default; t=1761764581;
+	bh=anMhG7Ma5+cYRiOaaeXJ2RVavZMucYrc2CMe9I9gcgo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OkS/PAF7u+Dj1wqrksjICazynsJITNqKbdwKt1PimmY7IOH+cxXKFG5BVJwPNPdqF
-	 8dfYeeOpdvc3RvSglxQW1rfJsnuF3Wh5vtmkmoX5UGz4huXPA+XLzkcayikI3OdLLN
-	 Q2DBl0HuUnAgIgWuvzdRgtLqcKycKnOW/xfckHO4=
+	b=e682F4O5MvqfueHwl6NsUq2V9XhTfwz1i8nkd1UXmjEr+l1Ql7w8+aruIgwyk99n1
+	 Qng+2MTSrd/DW7u+vUrkfhtl/sdZCr6QFDb1al+JZ3DVKlcQGRR+dWZsDdF+q0efBU
+	 tYDjOOHwV+pGCTQKlokHMBmzaj//Sk2zUmlNMYWk=
 From: Fedor Pchelkin <pchelkin@ispras.ru>
 To: Ping-Ke Shih <pkshih@realtek.com>,
 	Bitterblue Smith <rtl8821cerfe2@gmail.com>
@@ -50,9 +50,9 @@ Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
 	linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	lvc-project@linuxtesting.org
-Subject: [PATCH rtw-next v4 06/10] wifi: rtw89: fill TX descriptor of FWCMD in shortcut
-Date: Wed, 29 Oct 2025 22:02:34 +0300
-Message-ID: <20251029190241.1023856-7-pchelkin@ispras.ru>
+Subject: [PATCH rtw-next v4 07/10] wifi: rtw89: usb: anchor TX URBs
+Date: Wed, 29 Oct 2025 22:02:35 +0300
+Message-ID: <20251029190241.1023856-8-pchelkin@ispras.ru>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251029190241.1023856-1-pchelkin@ispras.ru>
 References: <20251029190241.1023856-1-pchelkin@ispras.ru>
@@ -64,78 +64,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Ping-Ke Shih <pkshih@realtek.com>
+During HCI reset all pending TX URBs should be canceled.  Use anchor to
+keep track of them and have an ability to cancel them synchronously.
 
-TX type FWCMD is used to download firmware and send H2C commands, and
-it only fill few fields of TX description, such as desc_info->pkt_size.
-Therefore, early return the TX type FWCMD.
+Note however that canceling RX URBs can't be done here in
+rtw89_usb_ops_reset() as it breaks driver initialization.
 
-Signed-off-by: Ping-Ke Shih <pkshih@realtek.com>
+Found by Linux Verification Center (linuxtesting.org).
+
 Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 ---
- drivers/net/wireless/realtek/rtw89/core.c | 26 ++++++++++++-----------
- 1 file changed, 14 insertions(+), 12 deletions(-)
+ drivers/net/wireless/realtek/rtw89/usb.c | 24 ++++++++++++++++++++----
+ drivers/net/wireless/realtek/rtw89/usb.h |  1 +
+ 2 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/realtek/rtw89/core.c b/drivers/net/wireless/realtek/rtw89/core.c
-index 8d73d9d9c15b..c069bde8b44e 100644
---- a/drivers/net/wireless/realtek/rtw89/core.c
-+++ b/drivers/net/wireless/realtek/rtw89/core.c
-@@ -1087,32 +1087,35 @@ rtw89_core_tx_update_desc_info(struct rtw89_dev *rtwdev,
- 	struct ieee80211_tx_info *info = IEEE80211_SKB_CB(skb);
- 	struct ieee80211_hdr *hdr = (void *)skb->data;
- 	struct rtw89_addr_cam_entry *addr_cam;
--	enum rtw89_core_tx_type tx_type;
- 	enum btc_pkt_type pkt_type;
- 	bool upd_wlan_hdr = false;
- 	bool is_bmc;
- 	u16 seq;
+diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wireless/realtek/rtw89/usb.c
+index 93dc4e91c1d4..c359b469aabe 100644
+--- a/drivers/net/wireless/realtek/rtw89/usb.c
++++ b/drivers/net/wireless/realtek/rtw89/usb.c
+@@ -242,7 +242,6 @@ static void rtw89_usb_write_port_complete(struct urb *urb)
+ 	}
  
-+	desc_info->pkt_size = skb->len;
+ 	kfree(txcb);
+-	usb_free_urb(urb);
+ }
+ 
+ static int rtw89_usb_write_port(struct rtw89_dev *rtwdev, u8 ch_dma,
+@@ -267,10 +266,17 @@ static int rtw89_usb_write_port(struct rtw89_dev *rtwdev, u8 ch_dma,
+ 	usb_fill_bulk_urb(urb, usbd, pipe, data, len,
+ 			  rtw89_usb_write_port_complete, context);
+ 	urb->transfer_flags |= URB_ZERO_PACKET;
+-	ret = usb_submit_urb(urb, GFP_ATOMIC);
++	usb_anchor_urb(urb, &rtwusb->tx_submitted);
+ 
++	ret = usb_submit_urb(urb, GFP_ATOMIC);
+ 	if (ret)
+-		usb_free_urb(urb);
++		usb_unanchor_urb(urb);
 +
-+	if (unlikely(tx_req->tx_type == RTW89_CORE_TX_TYPE_FWCMD)) {
-+		rtw89_core_tx_update_h2c_info(rtwdev, tx_req);
-+		return;
-+	}
-+
-+	tx_req->tx_type = rtw89_core_get_tx_type(rtwdev, skb);
-+
- 	if (tx_req->sta)
- 		desc_info->mlo = tx_req->sta->mlo;
- 	else if (tx_req->vif)
- 		desc_info->mlo = ieee80211_vif_is_mld(tx_req->vif);
++	/* release our reference to this URB, USB core will eventually free it
++	 * on its own after the completion callback finishes (or URB is
++	 * immediately freed here if its submission has failed)
++	 */
++	usb_free_urb(urb);
  
- 	seq = (le16_to_cpu(hdr->seq_ctrl) & IEEE80211_SCTL_SEQ) >> 4;
--	if (tx_req->tx_type != RTW89_CORE_TX_TYPE_FWCMD) {
--		tx_type = rtw89_core_get_tx_type(rtwdev, skb);
--		tx_req->tx_type = tx_type;
-+	addr_cam = rtw89_get_addr_cam_of(tx_req->rtwvif_link,
-+					 tx_req->rtwsta_link);
-+	if (addr_cam->valid && desc_info->mlo)
-+		upd_wlan_hdr = true;
- 
--		addr_cam = rtw89_get_addr_cam_of(tx_req->rtwvif_link,
--						 tx_req->rtwsta_link);
--		if (addr_cam->valid && desc_info->mlo)
--			upd_wlan_hdr = true;
--	}
- 	is_bmc = (is_broadcast_ether_addr(hdr->addr1) ||
- 		  is_multicast_ether_addr(hdr->addr1));
- 
- 	desc_info->seq = seq;
--	desc_info->pkt_size = skb->len;
- 	desc_info->is_bmc = is_bmc;
- 	desc_info->wd_page = true;
- 	desc_info->hiq = info->flags & IEEE80211_TX_CTL_SEND_AFTER_DTIM;
-@@ -1129,8 +1132,7 @@ rtw89_core_tx_update_desc_info(struct rtw89_dev *rtwdev,
- 		rtw89_core_tx_update_ampdu_info(rtwdev, tx_req, pkt_type);
- 		rtw89_core_tx_update_llc_hdr(rtwdev, desc_info, skb);
- 		break;
--	case RTW89_CORE_TX_TYPE_FWCMD:
--		rtw89_core_tx_update_h2c_info(rtwdev, tx_req);
-+	default:
- 		break;
+ 	if (ret == -ENODEV)
+ 		set_bit(RTW89_FLAG_UNPLUGGED, rtwdev->flags);
+@@ -577,6 +583,11 @@ static void rtw89_usb_cancel_rx_bufs(struct rtw89_usb *rtwusb)
  	}
  }
+ 
++static void rtw89_usb_cancel_tx_bufs(struct rtw89_usb *rtwusb)
++{
++	usb_kill_anchored_urbs(&rtwusb->tx_submitted);
++}
++
+ static void rtw89_usb_free_rx_bufs(struct rtw89_usb *rtwusb)
+ {
+ 	struct rtw89_usb_rx_ctrl_block *rxcb;
+@@ -678,7 +689,9 @@ static void rtw89_usb_deinit_tx(struct rtw89_dev *rtwdev)
+ 
+ static void rtw89_usb_ops_reset(struct rtw89_dev *rtwdev)
+ {
+-	/* TODO: anything to do here? */
++	struct rtw89_usb *rtwusb = rtw89_usb_priv(rtwdev);
++
++	rtw89_usb_cancel_tx_bufs(rtwusb);
+ }
+ 
+ static int rtw89_usb_ops_start(struct rtw89_dev *rtwdev)
+@@ -911,6 +924,8 @@ static int rtw89_usb_intf_init(struct rtw89_dev *rtwdev,
+ 	struct rtw89_usb *rtwusb = rtw89_usb_priv(rtwdev);
+ 	int ret;
+ 
++	init_usb_anchor(&rtwusb->tx_submitted);
++
+ 	ret = rtw89_usb_parse(rtwdev, intf);
+ 	if (ret)
+ 		return ret;
+@@ -1036,6 +1051,7 @@ void rtw89_usb_disconnect(struct usb_interface *intf)
+ 	rtwusb = rtw89_usb_priv(rtwdev);
+ 
+ 	rtw89_usb_cancel_rx_bufs(rtwusb);
++	rtw89_usb_cancel_tx_bufs(rtwusb);
+ 
+ 	rtw89_core_unregister(rtwdev);
+ 	rtw89_core_deinit(rtwdev);
+diff --git a/drivers/net/wireless/realtek/rtw89/usb.h b/drivers/net/wireless/realtek/rtw89/usb.h
+index c1b4bfa20979..320002c1df42 100644
+--- a/drivers/net/wireless/realtek/rtw89/usb.h
++++ b/drivers/net/wireless/realtek/rtw89/usb.h
+@@ -49,6 +49,7 @@ struct rtw89_usb {
+ 	struct sk_buff_head rx_free_queue;
+ 	struct work_struct rx_work;
+ 	struct work_struct rx_urb_work;
++	struct usb_anchor tx_submitted;
+ 
+ 	struct sk_buff_head tx_queue[RTW89_TXCH_NUM];
+ };
 -- 
 2.51.0
 
