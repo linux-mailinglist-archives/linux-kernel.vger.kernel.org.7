@@ -1,110 +1,230 @@
-Return-Path: <linux-kernel+bounces-875305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9995C18A6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:19:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66664C18A81
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8FE54E6CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:19:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4DFA04E8049
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FE83112AD;
-	Wed, 29 Oct 2025 07:16:48 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7935030F929;
+	Wed, 29 Oct 2025 07:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lvhtFQ4g"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCAA30E82B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:16:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232B730F937
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722208; cv=none; b=MnGMH/ZsfzQmcZy5AXYJcRykOPFKk9iOKq5smq43Jcbs0yGN9MXdUBxjD3IPLC9waPDHRVXOba9Z/hD56dgmU7gJwRhV3QfKdy1JKLNOvj+bGAuppY6Z+cnapu2WQIbX2QP82c1/r5QGTT34RIMlsKKq25+V9h6S79gwTRp2t7s=
+	t=1761722273; cv=none; b=Q74ZG9uiDMQpiL6/u1fjupuL32F2YPxCM+4QuFI0QzV7Mkce74slc8+4pkBm7LNstOAsmCEF3MixWBLE/WTRz/ruBhuCqsky62rt+DY4jOTAOgdlH80oh9QHYYt+h44NbUu7axcMZ9YMnA1L4BejJveh2Lr3X24J5mESGIcaCeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722208; c=relaxed/simple;
-	bh=mg9rW5YybuFCwFgED3s/yW/Cb0Tm4ADzukKVUuMGIQk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WF3GalgK4NEae13b157+3LmUUydVKhdkuoh7lNBvJuUPJKDWKzHETuhta7FzEirmuOMst6j1PgJ9OAdMFqzTaEtcqk3w86BeLiNlAL5gtffEZghmH0WQ+ONYthCM0zfFAewPIuCVIk/pYOVINozii2D+aGlWKucpiYftBcXOib0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201620.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202510291516302169;
-        Wed, 29 Oct 2025 15:16:30 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Wed, 29 Oct 2025 15:16:31 +0800
-Received: from inspur.com (10.100.2.113) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Wed, 29 Oct 2025 15:16:31 +0800
-Received: from localhost.localdomain.com (unknown [10.94.19.60])
-	by app9 (Coremail) with SMTP id cQJkCsDwSHlOvwFpVTgHAA--.5675S2;
-	Wed, 29 Oct 2025 15:16:31 +0800 (CST)
-From: Bo Liu <liubo03@inspur.com>
-To: <w.d.hubbs@gmail.com>, <chris@the-brannons.com>, <kirk@reisers.ca>,
-	<samuel.thibault@ens-lyon.org>
-CC: <speakup@linux-speakup.org>, <linux-kernel@vger.kernel.org>, Bo Liu
-	<liubo03@inspur.com>
-Subject: [PATCH] Accessiblity: speakup_soft: Fix double word in comments
-Date: Wed, 29 Oct 2025 15:16:29 +0800
-Message-ID: <20251029071629.17705-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761722273; c=relaxed/simple;
+	bh=ykaaT6YbiADc9d9+kOXprtiOstIf3n6+rKFwjMr8+qw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Brxk/SO14J+Q5Tq7uADZvdCIQgpx5eEsB01n5nz/xwvtw6Og4KQIGKq/ST5VCIVexlScl3sDNQP7xJrWBLJ5jdo7nC1554VnGcFtVmYJAYQToSF3keqtRI5crDLfpAGyRv+YcPFqiODg2G2vy8rDgB405MVsl6X9ma5B0ABovZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lvhtFQ4g; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-27d4d6b7ab5so103507395ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:17:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761722271; x=1762327071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EuUZCRhhNRXWt6XeO4ZvYFEtD1drRmJ0SlQlWn1fteY=;
+        b=lvhtFQ4g7ZMWarCf6bjSLKN4afTlOomZGbOSgsOAoithWqH9N2S/a6Ri+MrNJyBj87
+         1oZU8J/1rA6NBwNHYOXcl7gMe5srUGJRrzYCybQ9hsaBqZGb+2BqYmko6UmhKDiV55md
+         6QQon3ZB8Kx52kUyXz8CdCfW+QTbXv6W9F1JaJZ6eMYlkL5xxnPjj/puQKTE1ctp6cdo
+         9iNm5NTQADu4Hj7owcV5TVa/MiXvBjmeXLCXQXeK8WoZ/eMBs/QfzY26w6WyJNRwYfrI
+         jILMigW7+hRSYDWGXH8QxOAF8YsCBPWjYdhbWp3srfYJRg+iFsV587AGlhYq0a9GgU5S
+         mRaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761722271; x=1762327071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EuUZCRhhNRXWt6XeO4ZvYFEtD1drRmJ0SlQlWn1fteY=;
+        b=kY2IE1a1aAPlxt/AWss7giAfwAlU/NJ8JZqtO2jBs4bVs3qnqLo8k4xgmVUhJY3PxG
+         cZNibntPuRIfW+DAMHL+yb/UvG+R6J0DvzK5WgqYcfN5gy6waKa8ODle8hrsyDes49rU
+         kzsHHeo4hWNuHRRzeJR57OYl+idFs0z3+15Q3rM0rdYPDoE79vsbu3hxRiETrli4vLDn
+         wdTCK+fLFovfIcVdVLltF6ENz6jX5/sfMZbIWLup+sMtYaHE0UPtd/BgciwO8a80yE9s
+         ujTb3keelYREBKdAYOvZlYRYdDIJ0Z8FsNrcUs65PIBSuNHisuABBluHNz1XYUGg2VT6
+         zoOg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgWgn1UGCF7VXwV+PeytZ0h56RmLnrG2wAgCktnNaOS+ZH08Z6kMxxFhmh/yCbth7HRF8dMzoeWEpvx0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFr3JLqSxo5ErXZn0RuiM2dUA1+2YuWZJds4Lsln3/zn+WyELw
+	eIDc/b4C4PX5JZY9eEUkR2uuNpbuuWU5+IcAvIbgDDO+xyr+vZU9KMiiYi054hl85Vf5EBpnlRC
+	N5Vhbcj/BKPNNGWMum2i5Lya5XTE5aE6aXmfqxbJT+Q==
+X-Gm-Gg: ASbGncu0YsYEVvhwt22cFINhgRQDKNQBtAiq4SsU/4N+5xr2ucSIhYkK8fcFSzCRUmj
+	tgYg7GmU5S+P2xQs45xyjMgsYiHTCQimPhYAmntYssDXnOneyBBJv8KmKoF6mTS2wMaBQrlOe0z
+	XJAN/DcbAVHkLeF5vvz0s++6UUssg4P9Fn27ktZkddBv/Smvn+5fVkFuqfvao8mFvckQYcAL9TG
+	R6QXBBRbA+M6BWo+MdSNvlNgUmFs7l1KRJO2Gc67f1/Nue2+LjHXh2KAus/E0L1rT8R47EUdAXs
+	0ENMs0QGHA8CNULLa/m2Vz7MdyQRGLYJJRCQa2UKQXkQGJW35w==
+X-Google-Smtp-Source: AGHT+IEvVzT4l6WFVgzJ3FSYoGb6uLgtVt2W5+fZOIl+K9OXMvI8F6nvkIt0kMi83P4QMS0RYXvro6p5vHwDzAUVI2I=
+X-Received: by 2002:a17:903:18d:b0:293:623:3262 with SMTP id
+ d9443c01a7336-294deec517fmr29410295ad.36.1761722271261; Wed, 29 Oct 2025
+ 00:17:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: cQJkCsDwSHlOvwFpVTgHAA--.5675S2
-X-Coremail-Antispam: 1UD129KBjvdXoWruw4DZF17WF18uw1fAw17GFg_yoWfXrb_Ca
-	47Can7Jw15CaykKFnru3WavFy3Kw409rn3ZFsagF93Cw1fXF45JF4kZr45urnrGw4xG3yS
-	yF1kt3ZxAw12qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbV8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
-	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
-	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
-	DU0xZFpf9x0JUvg4fUUUUU=
-X-CM-SenderInfo: xolxu0iqt6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?lP6CiWLVRuiwy3Lqe5bb/wL3YD0Z3+qys2oM3YyJaJDj+48qHwuUARU7xYOAI0q1Re
-	KIpSUJw1l9uuIZu3aTmRbkRE1t64R219fJMxPZFuCSaG1Tie7FPIg2ZrFnj2byLPgBcgtG
-	3laTFx1GhazC5gRBQJk=
-Content-Type: text/plain
-tUid: 202510291516313e6a65ea56c1cafe5cf06482fd7a8bb8
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+References: <20251028092823.507383588@linuxfoundation.org>
+In-Reply-To: <20251028092823.507383588@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 29 Oct 2025 12:47:38 +0530
+X-Gm-Features: AWmQ_bkhsv_CfXE6-NmxcSUE1G28maRQK_zSuM7gYEAFQhEmOG1vtJliOgdNvmk
+Message-ID: <CA+G9fYvNF1b+5u_ppt+9K4wDD_hNLNfDn9x5V+KnuR1BXDzG_A@mail.gmail.com>
+Subject: Re: [PATCH 5.15 000/117] 5.15.196-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
+	achill@achill.org, sr@sladewatkins.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove the repeated word "the" in comments.
+On Tue, 28 Oct 2025 at 14:59, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.196 release.
+> There are 117 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 30 Oct 2025 09:28:07 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.196-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- drivers/accessibility/speakup/speakup_soft.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/accessibility/speakup/speakup_soft.c b/drivers/accessibility/speakup/speakup_soft.c
-index 6d446824677b..6549bfb96e7f 100644
---- a/drivers/accessibility/speakup/speakup_soft.c
-+++ b/drivers/accessibility/speakup/speakup_soft.c
-@@ -446,7 +446,7 @@ static int softsynth_adjust(struct spk_synth *synth, struct st_var_header *var)
- 	if (var->var_id != PUNC_LEVEL)
- 		return 0;
- 
--	/* We want to set the the speech synthesis punctuation level
-+	/* We want to set the speech synthesis punctuation level
- 	 * accordingly, so it properly tunes speaking A_PUNC characters */
- 	var_data = var->data;
- 	if (!var_data)
--- 
-2.31.1
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 5.15.196-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 59a59821e6b5c0c51b329271616457c39cccc07e
+* git describe: v5.15.195-118-g59a59821e6b5
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.195-118-g59a59821e6b5
+
+## Test Regressions (compared to v5.15.194-277-g06cf22cc87e0)
+
+## Metric Regressions (compared to v5.15.194-277-g06cf22cc87e0)
+
+## Test Fixes (compared to v5.15.194-277-g06cf22cc87e0)
+
+## Metric Fixes (compared to v5.15.194-277-g06cf22cc87e0)
+
+## Test result summary
+total: 62494, pass: 51282, fail: 2472, skip: 8394, xfail: 346
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 101 total, 101 passed, 0 failed
+* arm64: 28 total, 27 passed, 1 failed
+* i386: 18 total, 18 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 22 total, 22 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 24 total, 24 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-futex
+* kselftest-intel_pstate
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-mincore
+* kselftest-mm
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* lava
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
