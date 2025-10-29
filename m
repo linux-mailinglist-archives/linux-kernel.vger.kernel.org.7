@@ -1,190 +1,116 @@
-Return-Path: <linux-kernel+bounces-875101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E93C18384
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:04:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9187C18351
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D683A109B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:02:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63871A28216
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDF42F0692;
-	Wed, 29 Oct 2025 04:01:55 +0000 (UTC)
-Received: from wxsgout04.xfusion.com (wxsgout03.xfusion.com [36.139.52.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDFB2ED871;
+	Wed, 29 Oct 2025 03:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ruwh5fMt"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2921B13AD26
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=36.139.52.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57E91E5B70
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761710514; cv=none; b=ZpxTqxXLT4VQFsIjTH5LZp5PPx1y9r4Rh3usJyEhjZbspdwr8C+tbcBveAzJGKNrU1qXvtUTbH80/PVw7w4AEOw/uyBlTruHzk7yYydML/rIDlOevJ7cyQcV4i1DHAGGE7AfSTdbZPIr/SDeRUvcfqAKhLoRGnMWQPDSGPqox2M=
+	t=1761709856; cv=none; b=X63uiCYwe+qGUdHMah8n1082H3ZJkqoC+7mvlO17LCenSOGMLRXATreHJYz0CVqOnN8vqriPuGHnE8+71+x2WbcPfxia/P3gQzWq778f0mayUzHFPL/JG2FR/szR2svXaW0PeTmC5WtAZ+wDo2W0llwSL4l6GcJwImEgEge8Muw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761710514; c=relaxed/simple;
-	bh=BcRZ6hb4eWUgJMud/DQ/wdKbE9i3yZNlpMW21cd/wUg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SBh5DpWPZTBRb1u+CK0LmyQiimdeglDrTrgGbqPqWgVanKCVdhkPBB1Z/CiUGgES4YISNWjuHCYFlJkgXX2PWHE6GQcBzJt+8NDBAViNCJ6T0NMyPFVCEwxOuFHkb9MsxTsvYKsXY2Uycml0BCsS/MCjLdMIGMqPt2ogtX1eNJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com; spf=pass smtp.mailfrom=xfusion.com; arc=none smtp.client-ip=36.139.52.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=xfusion.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xfusion.com
-Received: from wuxpheds03048.xfusion.com (unknown [10.32.143.30])
-	by wxsgout04.xfusion.com (SkyGuard) with ESMTPS id 4cxCny5MCSzB90fq;
-	Wed, 29 Oct 2025 11:45:58 +0800 (CST)
-Received: from DESKTOP-Q8I2N5U.xfusion.com (10.82.130.100) by
- wuxpheds03048.xfusion.com (10.32.143.30) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_RSA_WITH_AES_128_CBC_SHA256) id 15.2.2562.20;
- Wed, 29 Oct 2025 11:46:32 +0800
-From: shechenglong <shechenglong@xfusion.com>
-To: <mark.rutland@arm.com>, <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<stone.xulei@xfusion.com>, <chenjialong@xfusion.com>,
-	<yuxiating@xfusion.com>, shechenglong <shechenglong@xfusion.com>
-Subject: [PATCH v2 2/2] cpu: fix hard lockup triggered by printk calls within  scheduling context
-Date: Wed, 29 Oct 2025 11:45:54 +0800
-Message-ID: <20251029034554.1839-3-shechenglong@xfusion.com>
-X-Mailer: git-send-email 2.37.1.windows.1
-In-Reply-To: <20251029034554.1839-1-shechenglong@xfusion.com>
-References: <20250918064907.1832-1-shechenglong@xfusion.com>
- <20251029034554.1839-1-shechenglong@xfusion.com>
+	s=arc-20240116; t=1761709856; c=relaxed/simple;
+	bh=0urVjLPblmbyfH3k+nYsPPTQ1W0iGRpAerhpnJQVNk4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tpqzgGLMKSM1/VO8mORDfFhFU3O/sCL8c1IjNycr9xfoCUIzN0Qru9mGN0IpJ6Can0qawn/tVb9TpC5YxbEsmeGkLHKAhVLOKeHuIKIA5ho2xeXfZp5h3Xb0RcbidjJC+8LW2WpEenylBLBF0msGkNu7sIv6JL29oDU8nD2fJDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ruwh5fMt; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-781010ff051so4598245b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761709854; x=1762314654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AwXYnLHll3c3mFZvlPqkbYLfqdqUZDaPqK+rO8VMv3A=;
+        b=Ruwh5fMt9qhl3PVrfIp30BE/tWjW5UsloTttLEZzRztJ05tEp4Rir7XPNTqZwswpHC
+         B4V5ZRQRUrFaO09Vx7An12Ycg1E4LNrSATONP9ef3PHTz0L0FaRGX/ZtveVE/d+fwHPP
+         D2f+Maxidhub49W+wKwasInwpqJ1vCKx/gUiSrIjW1yd+UPrY6ZFgPk65yihAUi9Ozuw
+         rWpCZRkY571+V1/Sg56CQWbBt+/ChpS2jHVi6BEHBh1poiZUKWmMLTaKrZvwvXfVPrtq
+         cwqbFISw66j9Z5Bd4s1NHPnlDTjMqAOq1u7jPdqIBW/FLJhZl9X6JocgOix4xv8PZoyc
+         568Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761709854; x=1762314654;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AwXYnLHll3c3mFZvlPqkbYLfqdqUZDaPqK+rO8VMv3A=;
+        b=XVuPyS5bS3WH1momZ3CmZ91aw9ZDQiN9UFGG0gnwn3fXDiktl0KLFGsreqRn8tA5Fv
+         me61BTHfS94uWcYjhc7pHKakKM70eLMu3jEmZPexXSVsd09z4+5HACh3cmedErGDn0gr
+         X1GWFmiKEAagbi+3NITsV8rNu9pztChMBay8wGGXS+TK0r1rqNN1NaxlutT2k++3uhyG
+         qClBDmNf7+0U7RJOZpaMourLD+ANBLO2P6qfeoQc8rEe+qwW/xtIQPiQC3MbycgAPy4j
+         A1njp7DrpaSfrQ2wFlUdTIW7khBUJ+V7Znr70qdP0Vd45YAZ4H/GEmrYlXPdbPWQxXBD
+         1HPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcKhuCFm2LCwXpifFHdJ1k6Y3vP076Cf3iybV9fQDZLX9W4a9Nr6AoFPNUo2lIkOFltfdW/CoycnH0h3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNNCnHul2lssV9uIkAhqvEfG3C1zyKgXGBqVCB3QU3zyF8Fbt5
+	mpLQ79guQ8oifnpZlJlg/ZZ22Ke6wMncLUvRlvrjEeMJUNlAd/K1Rl7+
+X-Gm-Gg: ASbGncu/GAg8R5DsXoo6ZuLr0aRlpibUykINwLmuyjknCwfdNUsQVB4HepKWsnQN1c1
+	ueDr4agBezKuUkrlaDtHalQPwbyR5Giabmw6cHX/iHVruh1+F980rU9/h0nizEWFKuEH4OGtpvK
+	9z+a8UfmZxwQZCUBcnEujN/UG+yK7ylLJke3P7y/nWbsKBsoCtncZ8VC95htQqg7dxqOMf5Zar1
+	Q4maM66uqsWS4LWZLYRlCRrDzivVvEu/W3sPVtrzgYecbY1anuE1EcQVCv1fxGGbfkGea0OgnsU
+	YZB3h5F35SsN3PBbCjbd2aSyTRn1d6eellHkzBL2rFs9YvCkvbM/Q46IzdMdoO29G36upWRaqui
+	hajGg1P/vfWzzFhonwmZMTCsnmgGHdzs3QFc6piltDsJ4658oNnadgrGbLo8eBSSL9BgJ8bJznq
+	5ap+qJA48gGYYjRHXyCEH1NDnLsarbXXlR3QyWfZCIa7K7g4g=
+X-Google-Smtp-Source: AGHT+IFZ2qDHNmI7HmZ3mZKfX113/QMKS8CLQWPjt/c9Tp5sY2iiMASjmfmEkRs+NEYMQl7jQAycFQ==
+X-Received: by 2002:a05:6a20:3d10:b0:341:5e2:d354 with SMTP id adf61e73a8af0-3465323c289mr1608663637.37.1761709853972;
+        Tue, 28 Oct 2025 20:50:53 -0700 (PDT)
+Received: from ?IPV6:2601:1c0:5780:9200:5568:45f7:ec26:fe8? ([2601:1c0:5780:9200:5568:45f7:ec26:fe8])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b71268bdd50sm12423966a12.0.2025.10.28.20.50.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 28 Oct 2025 20:50:53 -0700 (PDT)
+Message-ID: <e4882d15-1ba1-4521-ab52-365eeb7f77b6@gmail.com>
+Date: Tue, 28 Oct 2025 20:50:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-X-ClientProxiedBy: wuxpheds03046.xfusion.com (10.32.128.186) To
- wuxpheds03048.xfusion.com (10.32.143.30)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/vblank: Increase timeout in drm_wait_one_vblank()
+To: Thomas Zimmermann <tzimmermann@suse.de>,
+ maarten.lankhorst@linux.intel.com, maxime.ripard@kernel.org,
+ airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ syzbot+147ba789658184f0ce04@syzkaller.appspotmail.com
+References: <20251028034337.6341-1-chintanlike@gmail.com>
+ <2dae83e3-6fee-4e66-964e-c7baf46eecd8@suse.de>
+Content-Language: en-US
+From: Chintan Patel <chintanlike@gmail.com>
+In-Reply-To: <2dae83e3-6fee-4e66-964e-c7baf46eecd8@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-relocate the printk() calls from spectre_v4_mitigations_off() and=0D
-spectre_v2_mitigations_off() into setup_system_capabilities() function,=0D
-preventing hard lockups that occur when printk() is invoked from scheduler =
-context.=0D
-=0D
-Link: https://patchwork.kernel.org/project/linux-arm-kernel/patch/202509180=
-64907.1832-1-shechenglong@xfusion.com/=0D
-Suggested-by: Mark Rutland <mark.rutland@arm.com>=0D
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>=0D
-Suggested-by: Will Deacon <will@kernel.org>=0D
-Signed-off-by: shechenglong <shechenglong@xfusion.com>=0D
----=0D
- arch/arm64/include/asm/spectre.h |  2 ++=0D
- arch/arm64/kernel/cpufeature.c   |  7 ++++++-=0D
- arch/arm64/kernel/proton-pack.c  | 28 ++++++++++++++--------------=0D
- 3 files changed, 22 insertions(+), 15 deletions(-)=0D
-=0D
-diff --git a/arch/arm64/include/asm/spectre.h b/arch/arm64/include/asm/spec=
-tre.h=0D
-index 8fef12626090..f244b52fb123 100644=0D
---- a/arch/arm64/include/asm/spectre.h=0D
-+++ b/arch/arm64/include/asm/spectre.h=0D
-@@ -118,5 +118,7 @@ void spectre_bhb_patch_wa3(struct alt_instr *alt,=0D
- void spectre_bhb_patch_clearbhb(struct alt_instr *alt,=0D
-                                __le32 *origptr, __le32 *updptr, int nr_ins=
-t);=0D
-=0D
-+void spectre_print_disabled_mitigations(void);=0D
-+=0D
- #endif /* __ASSEMBLY__ */=0D
- #endif /* __ASM_SPECTRE_H */=0D
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.=
-c=0D
-index 5ed401ff79e3..6836e314fd30 100644=0D
---- a/arch/arm64/kernel/cpufeature.c=0D
-+++ b/arch/arm64/kernel/cpufeature.c=0D
-@@ -94,7 +94,7 @@=0D
- #include <asm/traps.h>=0D
- #include <asm/vectors.h>=0D
- #include <asm/virt.h>=0D
--=0D
-+#include <asm/spectre.h>=0D
- /* Kernel representation of AT_HWCAP and AT_HWCAP2 */=0D
- static DECLARE_BITMAP(elf_hwcap, MAX_CPU_FEATURES) __read_mostly;=0D
-=0D
-@@ -3875,6 +3875,11 @@ static void __init setup_system_capabilities(void)=0D
-         */=0D
-        if (system_uses_ttbr0_pan())=0D
-                pr_info("emulated: Privileged Access Never (PAN) using TTBR=
-0_EL1 switching\n");=0D
-+=0D
-+       /*=0D
-+        * Report Spectre mitigations status.=0D
-+        */=0D
-+       spectre_print_disabled_mitigations();=0D
- }=0D
-=0D
- void __init setup_system_features(void)=0D
-diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pac=
-k.c=0D
-index d833b7c1bba8..386f986e6b5d 100644=0D
---- a/arch/arm64/kernel/proton-pack.c=0D
-+++ b/arch/arm64/kernel/proton-pack.c=0D
-@@ -91,12 +91,7 @@ early_param("nospectre_v2", parse_spectre_v2_param);=0D
-=0D
- static bool spectre_v2_mitigations_off(void)=0D
- {=0D
--       bool ret =3D __nospectre_v2 || cpu_mitigations_off();=0D
--=0D
--       if (ret)=0D
--               pr_info_once("spectre-v2 mitigation disabled by command lin=
-e option\n");=0D
--=0D
--       return ret;=0D
-+       return __nospectre_v2 || cpu_mitigations_off();=0D
- }=0D
-=0D
- static const char *get_bhb_affected_string(enum mitigation_state bhb_state=
-)=0D
-@@ -421,13 +416,8 @@ early_param("ssbd", parse_spectre_v4_param);=0D
-  */=0D
- static bool spectre_v4_mitigations_off(void)=0D
- {=0D
--       bool ret =3D cpu_mitigations_off() ||=0D
-+       return cpu_mitigations_off() ||=0D
-                   __spectre_v4_policy =3D=3D SPECTRE_V4_POLICY_MITIGATION_=
-DISABLED;=0D
--=0D
--       if (ret)=0D
--               pr_info_once("spectre-v4 mitigation disabled by command-lin=
-e option\n");=0D
--=0D
--       return ret;=0D
- }=0D
-=0D
- /* Do we need to toggle the mitigation state on entry to/exit from the ker=
-nel? */=0D
-@@ -1042,8 +1032,6 @@ void spectre_bhb_enable_mitigation(const struct arm64=
-_cpu_capabilities *entry)=0D
-=0D
-        if (arm64_get_spectre_v2_state() =3D=3D SPECTRE_VULNERABLE) {=0D
-                /* No point mitigating Spectre-BHB alone. */=0D
--       } else if (cpu_mitigations_off() || __nospectre_bhb) {=0D
--               pr_info_once("spectre-bhb mitigation disabled by command li=
-ne option\n");=0D
-        } else if (supports_ecbhb(SCOPE_LOCAL_CPU)) {=0D
-                state =3D SPECTRE_MITIGATED;=0D
-                set_bit(BHB_HW, &system_bhb_mitigations);=0D
-@@ -1197,3 +1185,15 @@ void unpriv_ebpf_notify(int new_state)=0D
-                pr_err("WARNING: %s", EBPF_WARN);=0D
- }=0D
- #endif=0D
-+=0D
-+void spectre_print_disabled_mitigations(void)=0D
-+{=0D
-+       if (spectre_v2_mitigations_off())=0D
-+               pr_info("spectre-v2 mitigation disabled by command-line opt=
-ion\n");=0D
-+=0D
-+       if (spectre_v4_mitigations_off())=0D
-+               pr_info("spectre-v4 mitigation disabled by command-line opt=
-ion\n");=0D
-+=0D
-+       if (__nospectre_bhb || cpu_mitigations_off())=0D
-+               pr_info("spectre-bhb mitigation disabled by command-line op=
-tion\n");=0D
-+}=0D
---=0D
-2.33.0=0D
+
+
+On 10/28/25 10:14, Thomas Zimmermann wrote:
+> 
+> 
+> Am 28.10.25 um 04:43 schrieb Chintan Patel:
+>> Currently, wait_event_timeout() in drm_wait_one_vblank() uses a 100ms
+>> timeout. Under heavy scheduling pressure or rare delayed vblank
+>> handling, this can trigger WARNs unnecessarily.
+>>
+>> Increase the timeout to 1000ms to reduce spurious WARNs, while still
+>> catching genuine issues.
+> 
+> Thanks a lot.
+> 
+
+Appreciate your guidance !
 
