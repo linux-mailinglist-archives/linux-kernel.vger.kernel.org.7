@@ -1,60 +1,49 @@
-Return-Path: <linux-kernel+bounces-874986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-874988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 587E6C17F27
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:44:34 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E74B8C17F33
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B52D34E2E79
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:44:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B643C4E288C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 01:50:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 779802E6CDA;
-	Wed, 29 Oct 2025 01:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384D726FD9A;
+	Wed, 29 Oct 2025 01:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YNccw/Br"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ne1cCEip"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1CF2E2DFB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 01:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9252823EA80;
+	Wed, 29 Oct 2025 01:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761702266; cv=none; b=LQ4o4RMMwD36FV01POPHKCcOuNVJglOhGinvQXvpXy7CiD6KbI0CcrURpA7IoUFSk8jogDmNJXBYMBMLSny/eKmjuWqs7JC3SXs6PPoQQ3mSdOqb3vCmLNjXOOBGxm8cNphTHbsD8bjCYh6rO8VUQDLo46z3UUmnd4btAL9Wvw0=
+	t=1761702628; cv=none; b=jOkI0PgypnfsjBQDhDEX5F85QqEe2b1fLMTrctoiu6lcb0sUQgf8lT+6MWCeFf9fMLr/nTtorYyQQhnXdL86ujRUlPfbrYC3vROS3XfGltXyZgosfCxP38abdAmjPnCICFVxRXNIUyr5F/v7abx8dByryw3oKcEP1wN/kZGjLyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761702266; c=relaxed/simple;
-	bh=9FQqxzQaeW5MFmh0zozjU7zxq/0jRrA2zdyVnI5HQ2M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YkD3wbO5KbS3P9f2DNG7Oq0arokIUVV0e3I++md6IMZ3c3HF7oj24hbYA02TEGR5AgLgzOXx/7h9kk3gTTjiFlxCFEQ0H/5u7C1LeObL4KBBOTo3vXFHt/WIMqhtQRr5Lh8jtvzY/OfhsOX+gmKNR9r3rQTYKX4sAnnIPlQKZ1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YNccw/Br; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761702260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aM/F09QVx4GPfPIsMF79qJ9NKFno9SfH3yZf/+Wb3Q4=;
-	b=YNccw/Brrj60Ymznhn+quzxsoksok+V00LoQGOyoH4Q+qtEC4B97JrnW1LVOha4EqiDScG
-	1MVaXdaSs4/R7NQO5tEvxYNdP9zpKJ/mPP1+IU0mbH6fnOHXni5Db0Gb4Lc4vWLTiopCiX
-	JZzA/4kwYSLhZy5w8E9niBLNXtimJMg=
-From: Hao Ge <hao.ge@linux.dev>
-To: Vlastimil Babka <vbabka@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Hao Ge <gehao@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] codetag: debug: handle existing CODETAG_EMPTY in mark_objexts_empty for slabobj_ext
-Date: Wed, 29 Oct 2025 09:43:17 +0800
-Message-Id: <20251029014317.1533488-1-hao.ge@linux.dev>
+	s=arc-20240116; t=1761702628; c=relaxed/simple;
+	bh=PrFpem88thZ1FyySuV2SW8jpYJdU9Lr9HVBDbg1CIgg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=aWCHYubQ8vZIIKSr3jQbRcyjGbePIp1ciycrrO/AyfpCdNbf53yecI5z7RPspNo9rjxpfH49pCO9VjUsM03OAhOeJzB1SgJ6LFZV/fiTAfBYka+CO+MYh+24KDnYN/Gfm6dHPN41LPscfmNzgKnoPUFkzeQuJ+9TmBvpUqbamto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ne1cCEip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29225C4CEE7;
+	Wed, 29 Oct 2025 01:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761702628;
+	bh=PrFpem88thZ1FyySuV2SW8jpYJdU9Lr9HVBDbg1CIgg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ne1cCEipfCdUez5VRONhZnYhk0+G65QYMnwF6bOUStn+eAMA0uhx/DkmianBFVonm
+	 tGb+XM54RpbTVj+rnvM9FQhsAaPYdVCjMGSyJw2eXjk3NBPMlzNMrKmq0eespqZX/v
+	 0kbmbvW4BhBo4ykpTjCnU/nhr3rzlRJzsbsbYaF+9r+hi7QmjQSjjkn0FiDcCoHrgG
+	 NjxxmJYsg6M2oPFE95b1zjIhEqTOEkcflCVvF6fCaF+VdP999Qq/NhTEwsTj+aqrh9
+	 hyCABCbkPYHHsuBlcXGFYxh/vKKlPyyvXYojsc8M8gp2U39UlYgXqoC3OWXY8frB8W
+	 EHP3fKX9FGPbA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEDA39FEB71;
+	Wed, 29 Oct 2025 01:50:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,55 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Subject: Re: [PATCH net v4] net: cxgb4/ch_ipsec: fix potential use-after-free
+ in
+ ch_ipsec_xfrm_add_state() callback
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176170260575.2460121.12269249531898370369.git-patchwork-notify@kernel.org>
+Date: Wed, 29 Oct 2025 01:50:05 +0000
+References: <20251024161304.724436-1-Pavel.Zhigulin@kaspersky.com>
+In-Reply-To: <20251024161304.724436-1-Pavel.Zhigulin@kaspersky.com>
+To: Pavel Zhigulin <Pavel.Zhigulin@kaspersky.com>
+Cc: kuba@kernel.org, pabeni@redhat.com, yanjun.zhu@linux.dev,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ leon@kernel.org, steffen.klassert@secunet.com, cratiu@nvidia.com,
+ ayush.sawal@chelsio.com, harsh@chelsio.com, atul.gupta@chelsio.com,
+ herbert@gondor.apana.org.au, ganeshgr@chelsio.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
 
-From: Hao Ge <gehao@kylinos.cn>
+Hello:
 
-When alloc_slab_obj_exts() fails and then later succeeds in allocating
-a slab extension vector, it calls handle_failed_objexts_alloc() to
-mark all objects in the vector as empty. As a result all objects in
-this slab (slabA) will have their extensions set to CODETAG_EMPTY.
-Later on if this slabA is used to allocate a slabobj_ext vector for
-another slab (slabB), we end up with the slabB->obj_exts pointing to a
-slabobj_ext vector that itself has a non-NULL slabobj_ext equal to
-CODETAG_EMPTY. When slabB gets freed, free_slab_obj_exts() is called
-to free slabB->obj_exts vector. free_slab_obj_exts() calls
-mark_objexts_empty(slabB->obj_exts) which will generate a warning
-because it expects slabobj_ext vectors to have a NULL obj_ext, not
-CODETAG_EMPTY.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Modify mark_objexts_empty() to skip the warning and setting the
-obj_ext value if it's already set to CODETAG_EMPTY.
+On Fri, 24 Oct 2025 19:13:02 +0300 you wrote:
+> In ch_ipsec_xfrm_add_state() there is not check of try_module_get
+> return value. It is very unlikely, but try_module_get() could return
+> false value, which could cause use-after-free error.
+> Conditions: The module count must be zero, and a module unload in
+> progress. The thread doing the unload is blocked somewhere.
+> Another thread makes a callback into the module for some request
+> that (for instance) would need to create a kernel thread.
+> It tries to get a reference for the thread.
+> So try_module_get(THIS_MODULE) is the right call - and will fail here.
+> 
+> [...]
 
-Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mark failed slab_ext allocations")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hao Ge <gehao@kylinos.cn>
----
-v2: Update the commit message and code comments for greater accuracy,
-    incorporating Suren's suggestions.
-    Thanks for Suren's help.
----
- mm/slub.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Here is the summary with links:
+  - [net,v4] net: cxgb4/ch_ipsec: fix potential use-after-free in ch_ipsec_xfrm_add_state() callback
+    https://git.kernel.org/netdev/net/c/d8d2b1f81530
 
-diff --git a/mm/slub.c b/mm/slub.c
-index d4367f25b20d..589c596163c4 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -2046,7 +2046,11 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
- 	if (slab_exts) {
- 		unsigned int offs = obj_to_index(obj_exts_slab->slab_cache,
- 						 obj_exts_slab, obj_exts);
--		/* codetag should be NULL */
-+
-+		if (unlikely(is_codetag_empty(&slab_exts[offs].ref)))
-+			return;
-+
-+		/* codetag should be NULL here */
- 		WARN_ON(slab_exts[offs].ref.ct);
- 		set_codetag_empty(&slab_exts[offs].ref);
- 	}
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
