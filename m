@@ -1,53 +1,51 @@
-Return-Path: <linux-kernel+bounces-875700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF06C19A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:17:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E42DAC19A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 493104280FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:16:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D38564F13CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:17:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23112F12A0;
-	Wed, 29 Oct 2025 10:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEBA2F0C68;
+	Wed, 29 Oct 2025 10:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Da+TSplu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OYPOHMqt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098972E9ED8;
-	Wed, 29 Oct 2025 10:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59271E766E;
+	Wed, 29 Oct 2025 10:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761732999; cv=none; b=HQ69itpQppiBc/djIp/kUumeh1CT1kxaOPCjoHn8U6j0yZ1wx3Yjf0eY5Fz4Zk8dqhT1N45ZVUE5Q6YsVCxuUTlbLbpq86eBfnPFEoQ53z6j9/cvIU6ZRvjUXsjqZeSCB9pE7bcexMtoIQYFQI2xfryldFLU4xZbb197jpV8m+U=
+	t=1761733038; cv=none; b=fhQFubQ/Whtc6MkbdwBCKxMd8if7RJOd4eRqCqhjwuGe3lwLKDGhcH77v9PSe4EM6tmYmeb4fPgG5KziCM9ijVwQw1PQMEh64S5j4F5hlXeYvVZf9fskj6tfw709PbLHrPugkL1RwHEAG0pCxEv2kkqXDs25lzzFNIwBsB8A77M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761732999; c=relaxed/simple;
-	bh=PqWMb0OTtldGprN90pxvWtXUmUfGOi4866Reg1Uxjzo=;
+	s=arc-20240116; t=1761733038; c=relaxed/simple;
+	bh=LByAXLZ9ll/ixgdmWs87gLszdmGDNLHhwbBIKEopj/U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJlRWknnE4RiFKxjhALM6Fn7ax4pg8Ov64UIAU8KIi6zbZKu3gMykgYdTrwq3f4XALAXUKdVx3IfI5eaBfQC32B+od3Lcd8acQguxOY19EYxflQU+5GgJAVOEqn26bkCnmWX5K1GWelHfNh6IXzNQ9m2OEe9zTirsRXk10F3ycg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Da+TSplu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF482C4CEF7;
-	Wed, 29 Oct 2025 10:16:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=heHbfjz74qXqFyaMOw1ajkVG7i2mHOzc9seduvzrQ1YuxQd29qR6CKElzTNAWBXkYsUg2mWbgD0oHpM9cl9TkkuJ4zQsCer0s5oig8KVSvyr8rcvFjLCoksXQXVnZJD1O8X2+wU/bZkrHDK1358oPXugPItowyLWcc5ZKekz4gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OYPOHMqt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70A04C4CEF7;
+	Wed, 29 Oct 2025 10:17:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761732997;
-	bh=PqWMb0OTtldGprN90pxvWtXUmUfGOi4866Reg1Uxjzo=;
+	s=korg; t=1761733038;
+	bh=LByAXLZ9ll/ixgdmWs87gLszdmGDNLHhwbBIKEopj/U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Da+TSpluoosJta1j32p74f6RANfZSjjNy0/y6ka3tbRW2dpYG5/2kiG3+asxhoW+t
-	 lKL6957DZqBHsFO1sKdzLhkpgFP3IcDnDG/hC+2VnUCsaSiEpT4lm+C0wPyibxd8f9
-	 DA41FJX+mVA41JSEy8Qc2Y6qZ3xs54Wb+f3OBF+0=
-Date: Wed, 29 Oct 2025 11:16:32 +0100
+	b=OYPOHMqt0YYSrDAC6pql5TZ/fDIPxKboiqxD8+fvq7qR8xl9H1ajp2WN75nJH+WKC
+	 bMc+naCctmVuFB9JimG8t3J/kDEBBl8EBraXFGj6UWAN5XXNe+cqurF8rCl1mFzKJ2
+	 kNQ2NQPVpklaimtMv0SdP1P0ZStyxwQtbeUnZd7E=
+Date: Wed, 29 Oct 2025 11:17:12 +0100
 From: Greg KH <gregkh@linuxfoundation.org>
-To: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
-Cc: sudip.mukherjee@gmail.com, teddy.wang@siliconmotion.com,
-	linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@oracle.com>
-Subject: Re: [PATCH v2] staging: sm750fb: style fixes: align call and split
- chained assignment
-Message-ID: <2025102946-thickness-audacious-5c22@gregkh>
-References: <20251029021449.5420-1-cristiandelgobbo87@gmail.com>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: jirislaby@kernel.org, ychuang3@nuvoton.com, schung@nuvoton.com,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: ma35d1: Fix resource leaks on driver removal
+Message-ID: <2025102900-rebound-semicolon-0d98@gregkh>
+References: <20251029080039.1010-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,30 +54,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029021449.5420-1-cristiandelgobbo87@gmail.com>
+In-Reply-To: <20251029080039.1010-1-vulab@iscas.ac.cn>
 
-On Wed, Oct 29, 2025 at 03:14:49AM +0100, Cristian Del Gobbo wrote:
-> - Drop previous change that made g_fbmode[] elements const (broke build).
-> - Align the continued arguments of sm750_hw_cursor_set_size() with the
->   opening parenthesis.
-> - Replace a chained assignment of red/green/blue with a temporary
->   variable to satisfy checkpatch and improve readability.
+On Wed, Oct 29, 2025 at 04:00:39PM +0800, Haotian Zhang wrote:
+> The driver fails to release resources acquired during probe. It calls
+> of_clk_get() to obtain the clock reference but never calls clk_put()
+> in the remove path, leaking the clock reference count. Similarly, it
+> calls ioremap() to map UART registers but never calls iounmap() during
+> removal, leaking the I/O memory mapping.
 > 
-> No functional change intended.
+> Switch to devm_clk_get() for automatic clock resource management and
+> add iounmap() call in ma35d1serial_remove() to properly release the
+> memory mapping.
 > 
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> 
-> Signed-off-by: Cristian Del Gobbo <cristiandelgobbo87@gmail.com>
+> Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
 > ---
->  drivers/staging/sm750fb/sm750.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
+>  drivers/tty/serial/ma35d1_serial.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 
-On top of what Dan said, I see 4 different copies of this patch in my
-inbox, which one is the correct one?  Please make it easy for
-maintainers to know what patch to review, we get 1000+ emails a day to
-deal with and have no short term memory :)
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
