@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-876441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D4BC1B7FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3115FC1B804
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3955E188D2AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:55:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730EC188F3BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4AF3358AC;
-	Wed, 29 Oct 2025 14:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0156C2C234F;
+	Wed, 29 Oct 2025 14:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlja5Mq4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="idCc6kMJ"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D748A2FDC5D;
-	Wed, 29 Oct 2025 14:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9652334C10
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:49:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749347; cv=none; b=jzGBiDs4CJYsnGmHG0a9eMBjO+vAg9A8tfI8Rb7WDw1lVuVBj/XAZ2U3eBazDglORs8Cs2iSowBISCyy60prMdfVRLz/a02p4Lm5oEgLlN+Ozn1DuVIA03T7CwR+eFRKAEU3swZily9tJQfSjR3SmAq6kO8QFioWGeS2u7cAHf0=
+	t=1761749360; cv=none; b=ZZ5vHnx8fI9sA4HOhu6GOFECLaVlYyuF4FnJxMH+P7pWS105KQrIfOsQ6Hq88A4ucvkB2aM4aF023w035rD4oZd/Van6CAROgD3jKp6+Vi15xjMuuH0BIRTSm2Q0M4wi8C64+auUn6ZJAkAgsyedABBCWNoyE6D5yH3OnGYgrpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749347; c=relaxed/simple;
-	bh=HxTqJgI/0X/CEmspyZav8h3FXPWX3qB1qsKFzsoN4as=;
+	s=arc-20240116; t=1761749360; c=relaxed/simple;
+	bh=LVDOSOST8u4Nfu2BG/Iq7jmE5BNR05dhwuHtLdykbwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYu099VPX9kg+ssE1FryC8Ij4MEKVQ3MMQKmk2jZMqQQk+18WfXRWH2y/XrUbpbvEf6N0FFYtwcbnPLFdBw9QuCqD4cU+WTrS5fai+uzxA6EUoq55GrNLvZkSvleVWQawSJyG1wQk+CsHB6GSQWfMqgm7+VL1Kf6Z2bIwfg0n38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlja5Mq4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA588C4CEF7;
-	Wed, 29 Oct 2025 14:49:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761749346;
-	bh=HxTqJgI/0X/CEmspyZav8h3FXPWX3qB1qsKFzsoN4as=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tlja5Mq4eRWp697QA/xQ+7a9KJbcnrMdob9cxsXt9OIQA755+bFzbNzRv16bZ4K7i
-	 B9LDftZXKO7gStpMqGdXCVrWsVQ+ROKQ4K+QvkxPz38VTj++u90ce6yRHNCsPSi5pD
-	 v/JhE3LMKbYoWFWsQEzSVXb3Hm7XB2z8+8xOj7ZC7Xvnlx4rEDqU8ejlyTgLe/T9R2
-	 3vUJArOhgOLb46RZqe+pCWQx7olKyL6EJb+OqaocNuhbMh3d/KGFm/ek9z7wlrO99H
-	 rF7V3yVMeDSwqgzEw1be+gsJR70/J/KwRrqpNcrj62az9WVQF5F5bIT1qWPQ84EK24
-	 yw1IH2IxbPQpw==
-Date: Wed, 29 Oct 2025 15:49:03 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
-	x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Jason Baron <jbaron@akamai.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>,
-	Jann Horn <jannh@google.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	Yair Podemsky <ypodemsk@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Daniel Wagner <dwagner@suse.de>, Petr Tesarik <ptesarik@suse.com>
-Subject: Re: [RFC PATCH v6 27/29] x86/mm/pti: Implement a TLB flush
- immediately after a switch to kernel CR3
-Message-ID: <aQIpXyX-z8ltB1i5@localhost.localdomain>
-References: <20251010153839.151763-1-vschneid@redhat.com>
- <20251010153839.151763-28-vschneid@redhat.com>
- <aQDoVAs5UZwQo-ds@localhost.localdomain>
- <xhsmh3472qah4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <aQHtBudA4aw4a3gT@localhost.localdomain>
- <xhsmhwm4dpzh4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dE6U7jM8wsA47t3YUNp+aHFk/ez5uruYjYevuRxIg+hzvj9z/76DOe/CQnfsjv9ZKvoVo1Q/KzNrzn7qf2X20FPYFuzgEfagjnl2dxGOE/+RQXhwMR4EJYveDGx9YjcQ1n5FCZdkvTAoOw+mvcr1LGU/V6ltfKNolz8xOgfd2RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=idCc6kMJ; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4eba6e28d06so34074451cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:49:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1761749358; x=1762354158; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iISKP7x3UPKOETShrQK/0bkxS6KgyI1/wrp9P7Ly+SE=;
+        b=idCc6kMJ5OX2/loi33NjmQq+oQFKDCXy2peS591P3/xWxnLGHtK9i2J6d6lW+KSqrK
+         RZsz4Rs+LMwEmf3SwWFLRL4YAheXxt9wuF0Ev4J4r11OpITLaF/FvDzeVNR2eNYUxgnE
+         uPBlBdQH9wiGuV6lfnIhRY4qCBGILQlOYHd4BfSKPYS8vVmzm8mtYUT7XEZpEP7VfTUO
+         QhJNCLXTsLMCDhjQlcG1fL8FXEolxPeSGvR+uZvQNTvXz+u36Eejr6RHUP6OASuBt2Sn
+         Ynyg1MqvJ9tiT8lJtCiYMYc6iAQQuqX2u4GLa7Nm9uI9jQmLhxg8Up5ivZydC1SQ5R8P
+         BOpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761749358; x=1762354158;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iISKP7x3UPKOETShrQK/0bkxS6KgyI1/wrp9P7Ly+SE=;
+        b=o2gLJ7qslQ/7zRncJE9U5gcY0Xo0PluOItTBBob20Uq3q9+FjzWg0Dk0dnOuAkYgQx
+         yAOvNz4DhWxBLr+vRfc8wkyPp2eS0OGdQazZr79bQXYTeNf42b1G7m7YU9lsHijJoHlB
+         xzp/Ee3VyxZwM6asjNpDbiZ8HjZitn65Ku9XMjtAnFPrV4ESw7ZXa23dJ9zDihNwcb3t
+         IvsOpAePpLXuf6/29re/nYhvmYlz59mQzV5sIuZFvBjcK3unTr6GAvnELLuO6NmQ7Z2Z
+         szx4XqS/V81xmjednmPs4jDiPCwlq73SrtDWYByCt+tWGpg2VKH6Ty0svNwCKqnTNLDu
+         R0Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUYqcLbAJz3aO9abX+xgqYWQHo0gmfHqw4b+dkB+Hp4EsbUOVCmHof9YkpDLWIT3PabnoNb6EMBYZACELo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoloEZyTfry3g9jRNzu1wW7GQPwcs9tQCe0l8EmwVjGBnNaJP3
+	90OwdQoSt4PMej02JVTR3hdfAzSw0pF4oeBN8FyZwEzo259WVqpjLafy7o8Q+drrCYg=
+X-Gm-Gg: ASbGncvJ4vcovmX757erkdiiLyIezDLIlJaq2vvBCqN9ZqKOP/JsA2VbphCiq00lpyU
+	GFhPRzeLok/GhRPFBlKQoPYR9L9P7DXJ6Ww0qwB/jyXWaSTN/4hr0x7Di/5LHtrLJvL62RDELT3
+	+DRmT0ApLGIGEBKJ8ZCJjvOAKqvG4rWnAFQbihhD5JZqab0zl0czaDQca5bQmuPxd58mvJAIrI1
+	WnCqfBkMCCWM7dRA+je2XNGo9V7jnOmNWF2VwcCrVgjxwzlarrsJcz1bZNzdo4gy8x0bgsaWN/6
+	Tuks5IQ/1PjaUgkv8nP+VuJRvCaS9SmKnSxvE1XUvC/l3yCXQ5MMEfYGfq/qr0ue8/OhV/AWtWH
+	PBnQXTyaZETvOmPcWfnAzijpoKQDHBJUbs6ZAuNgI9TVbCFN7DpgXVGHXEwcVWnyJd8NkgmmNdj
+	ssUsvlx1a6ULDJj7bhgEZL6Y1ZumrDGcTeNtD6H0AITyCrOg==
+X-Google-Smtp-Source: AGHT+IGAAbKXStPcrBPkR96V/nrI2ZGs71F29pgPwstoIUUELR36JYOQngJk/QufJryI6FDa/XMxXQ==
+X-Received: by 2002:ac8:7fd3:0:b0:4eb:a0aa:28e with SMTP id d75a77b69052e-4ed15c98020mr39171771cf.64.1761749357598;
+        Wed, 29 Oct 2025 07:49:17 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4eba3830f16sm94694131cf.22.2025.10.29.07.49.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 07:49:16 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1vE7UC-00000004fDD-1zy2;
+	Wed, 29 Oct 2025 11:49:16 -0300
+Date: Wed, 29 Oct 2025 11:49:16 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Shuai Xue <xueshuai@linux.alibaba.com>
+Cc: iommu@lists.linux.dev, kevin.tian@intel.com, joro@8bytes.org,
+	will@kernel.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iommu: iommufd: Explicitly check for VM_PFNMAP in
+ iommufd_ioas_map
+Message-ID: <20251029144916.GO760669@ziepe.ca>
+References: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
+ <20251029133434.GL760669@ziepe.ca>
+ <a63db6a8-e9d8-4f79-8212-8710ce2e60f4@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <xhsmhwm4dpzh4.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+In-Reply-To: <a63db6a8-e9d8-4f79-8212-8710ce2e60f4@linux.alibaba.com>
 
-Le Wed, Oct 29, 2025 at 03:13:59PM +0100, Valentin Schneider a écrit :
-> On 29/10/25 11:31, Frederic Weisbecker wrote:
-> > Le Wed, Oct 29, 2025 at 11:16:23AM +0100, Valentin Schneider a écrit :
-> >> On 28/10/25 16:59, Frederic Weisbecker wrote:
-> >> > Le Fri, Oct 10, 2025 at 05:38:37PM +0200, Valentin Schneider a écrit :
-> >> >> @@ -171,8 +172,27 @@ For 32-bit we have the following conventions - kernel is built with
-> >> >>      andq    $(~PTI_USER_PGTABLE_AND_PCID_MASK), \reg
-> >> >>  .endm
-> >> >>
-> >> >> -.macro COALESCE_TLBI
-> >> >> +.macro COALESCE_TLBI scratch_reg:req
-> >> >>  #ifdef CONFIG_COALESCE_TLBI
-> >> >> +	/* No point in doing this for housekeeping CPUs */
-> >> >> +	movslq  PER_CPU_VAR(cpu_number), \scratch_reg
-> >> >> +	bt	\scratch_reg, tick_nohz_full_mask(%rip)
-> >> >> +	jnc	.Lend_tlbi_\@
-> >> >
-> >> > I assume it's not possible to have a static call/branch to
-> >> > take care of all this ?
-> >> >
-> >>
-> >> I think technically yes, but that would have to be a per-cpu patchable
-> >> location, which would mean something like each CPU having its own copy of
-> >> that text page... Unless there's some existing way to statically optimize
-> >>
-> >>   if (cpumask_test_cpu(smp_processor_id(), mask))
-> >>
-> >> where @mask is a boot-time constant (i.e. the nohz_full mask).
-> >
-> > Or just check housekeeping_overriden static key before everything. This one is
-> > enabled only if either nohz_full, isolcpus or cpuset isolated partition (well,
-> > it's on the way for the last one) are running, but those are all niche, which
-> > means you spare 99.999% kernel usecases.
-> >
-> 
-> Oh right, if NOHZ_FULL is actually in use.
-> 
-> Yeah that housekeeping key could do since, at least for the cmdline
-> approach, it's set during start_kernel(). I need to have a think about the
-> runtime cpuset case.
+On Wed, Oct 29, 2025 at 10:44:31PM +0800, Shuai Xue wrote:
 
-You can ignore the runtime thing and simply check the static key before reading
-the housekeeping mask. For now nohz_full is only enabled by cmdline.
+> We run different VMMs (QEMU, Kata Containers) to meet diverse business
+> requirements, while our production environment deploys various evolving
+> kernel versions. Additionally, we are migrating from VFIO Type 1 to
+> IOMMUFD. Although IOMMUFD claims to provide compatible
+> iommufd_vfio_ioctl APIs, these APIs are not fully compatible in
+> practice. 
 
-> Given we have ALTERNATIVE's in there I assume something like a
-> boot-time-driven static key could do, but I haven't found out yet if and
-> how that can be shoved in an ASM file.
+Well, it aims to, but we are not there yet. Hopefully in the coming
+months the MMIO to VFIO will be supported in type 1 emulation as well.
 
-Right, I thought I had seen static keys in ASM already but I can't find it
-anymore. arch/x86/include/asm/jump_label.h is full of reusable magic
-though.
+But broadly the EFAULT return here always means the underlying VMA is
+incompatible with IOMMUFD, I'm not sure there is that much value in
+further determining why exactly it is incompatible.
 
-Thanks.
+> Aha, I see. Thank you for pointing out this issue. The check indeed
+> needs to be more comprehensive. Do you mind use pin_user_pages() as a
+> precheck?
 
--- 
-Frederic Weisbecker
-SUSE Labs
+I mean we already call pin_user_pages deep inside the mapping code and
+propogate whatever error code it gives back up to userspace. If it
+gives a more specific code then it will be returned naturally, no need
+to change iommufd at all.
+
+Jason
 
