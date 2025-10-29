@@ -1,229 +1,241 @@
-Return-Path: <linux-kernel+bounces-876357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A9EC1B9E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D664C1B977
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 641716418D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:30:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4534E5A643B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7112D3220;
-	Wed, 29 Oct 2025 14:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86FF22D6E42;
+	Wed, 29 Oct 2025 14:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTXKct5T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o/DE+Sv7"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010039.outbound.protection.outlook.com [52.101.85.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C3B288C3D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748114; cv=none; b=fGom+o9B37LENMCAMX5GubvoAOgLix65GFAMib0gssrMZ+muJBtJ4eiJzevKjufb+5nPJZnYst3s6J+099nqFNclt4CGF9xgyivh0dyvmPeePDVMvFt9+sRJ6qpvVSw2g1k/vrTpQs3yAg4wnYeec6L2gehm4FAqwwk95xcDYRw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748114; c=relaxed/simple;
-	bh=ycvf+w2/mE/h70FPsnRAceCWxI81fhZqTWfT4beEqSQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S2Y8Xs0DAxJDYovr0NHMUfb6RapkBOhIdiH2usMeMOTFxSaNxRnBJyBOnEVTEBRtgkxGwbv7mZa6Nx6u1MgIZLJ0Hj6q46UC2Skwcdx+HXuinUQ9ykQ5E6VA04mcC+sItiiYFNhnsq6/kgIPOFssDHrEQQsstXjfsk0vCOMiPU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTXKct5T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C14AAC116C6
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761748113;
-	bh=ycvf+w2/mE/h70FPsnRAceCWxI81fhZqTWfT4beEqSQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fTXKct5Tr2OCcU7ojjD51pRyEUrXc+9BpzAI8O3q13A5PKttXUox/d92JvMblaF++
-	 /yI6seIlXdbbtxweiU8FU2zXD6g2+TAEMGTxx7YIW0m9s7XAWMtvtaDPSmGYbg4Fw3
-	 jJKitfK2viCKcOsyImlNwg1BVMQI5tpe+GluYKdvcjhkizVnOukzJfzjjOI9R3osj5
-	 RPJRMPJu2JsmuopW3JGTNaFBBeUGyBQPNk4ERIrEB/rrged4XbJAO+Wha5tG4k+IIQ
-	 TE7V5fNUArewtl25kBLnHdJkHN2RcgUiGw76Qo/riB6Nuh6bEEkjC6n8Q5gtyx3Ys7
-	 qLg30sfeoB2Lw==
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-654ef376363so2399289eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:28:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj3aB26rMlpxIuE23eM94pO7/ljuWi/TZcowXReUFbWMdiRRQEfjma/b4kF11mGTxSBV0/0bobIjMWwNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9LUvT2zCrXYKDTHQdcuGtj2Sc5lyvFsSSOGMnIKXjfJJMT0Ds
-	MytvwFvBEjjDniJNnpXMRMaDBfY1ibtPCBu10gvTomnKCRn0ftvdEisW6llRSMQluolu/U2faVy
-	qJJqXGHeDNAZ9puoCHzVS4qrD0d4O1kI=
-X-Google-Smtp-Source: AGHT+IEbUd+JQ5DjQ2Y6NcLaDkmrtcoQ7Y649VF2s/mqXuH/MYD5YaA1OxjGFB3FBRuaAt9mj2Gb7FORgEwULlV/4P8=
-X-Received: by 2002:a05:6820:603:b0:64e:822b:e6de with SMTP id
- 006d021491bc7-65677f12406mr1360346eaf.7.1761748112978; Wed, 29 Oct 2025
- 07:28:32 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8BC8288C3D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761748131; cv=fail; b=XLdCnhYxSdnmn8NlJ6X8L1PoHHtmgbp6F660uvQ+wIS36hMOzJu9NGgmcxPixhUOlzLPkqTUVEZw4iLx1SQ/X9p+c1CC1gW+IJce7Qyngo123q1YTua7ICo4P2MAs97ysAs+rGVtU9pMdaCl0VlxydGMqv6VE0+rXu0VqQ5diTQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761748131; c=relaxed/simple;
+	bh=SGsD2kCnCNoFkRd2jkBpg05MTXuNWNljT5tubB2lzTA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=JSzaZh07R6XBrTG6AKkhTRuSdhVzUIDyJWIW2WVEFsmNLiLfeP5CLI73Au4bLis+QIoCxx5y7FG/LkqTYlCmT1Ed/knLlmq637tXPgYxpEtY77JzKW/DVpesRolQkFzJEpcoN4AWSD1OTbNMAKsJRFzN49uU5RNb3V5+fDLecxk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o/DE+Sv7; arc=fail smtp.client-ip=52.101.85.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SLyn/UU9syZgFUWwKqCdQuc/T82/giEY+JNM6MYg2qsUCSvISozhWMYlReajUmpBW5b9wPAZN1dH8378GfUBgLqvVpiiOPZYKw7+c7IMUMqogpZJuDFjwkoKUM4rOi/WPfu8fXcgJxr+yZkTC63Ggxko7tW6X9FUcCXuk5qAreGzm4C71i6PG7TqMNjzve6AvehB+Ngs8kjz+7+oQ74uQ/drpE1T/QTShQiHF0uNib9zv89NwB6cjO01ErSIl0a57gd99ENY9P83hb2R2P5ZMaFnjpHK5+R1sXz6P/vjZSb+MRUfMBTwzCIpc3x6+Wa6dlIamrEE1YIEJtQSv3qFDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Qhlatm+/MRTVUJSrWHwhF0QmU8uDODbz0QPczJS2jhw=;
+ b=blRPLB3+Fin4lPWW7A75GfZvDE42WPEQhSsSlHmUzf0KedU7lx4+zcXOWGKiZBhi2RvDH0YdUTS7VrY/S8jDy3lBTk2PmdjPbNo92f/e7B7WDPDnIV3Zkkx/rFn/8sZ188QvpLZFKTVjuh/RTzbEGqb8NPNM1D1aY4dgcUC0Y51HIbDAP0TEyKx3T0gI9a7UviXbvDQcOzR72r5hPWAafjGE0fmJAmMa4DFxUdDXA5r8WMibzSsCySwViHk0HV5WD8yoSHVLcTgRrmaQUQFOZYQDRs7XHilL8H6GIY2s3W79NSOfbEY+wk2RE146E/dJNcKbH7srk3q2tXJBxd+8bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Qhlatm+/MRTVUJSrWHwhF0QmU8uDODbz0QPczJS2jhw=;
+ b=o/DE+Sv79N446jwhzl76autzBmfEmlGtMdSi7aDcHg5vqudaNfFWUiOfjh6yU2IaTsAizfpIGGjKGdJ2EgxK03+q+mNB9yMLmQ5N+UeU6NKylv0y/BTYVhvN9+oQ+r6/DuitaDzJazZGFEtq+EIBPumF2RxUi0D96w1gEmMKGQM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by BY5PR12MB4275.namprd12.prod.outlook.com (2603:10b6:a03:20a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.12; Wed, 29 Oct
+ 2025 14:28:46 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9253.017; Wed, 29 Oct 2025
+ 14:28:46 +0000
+Message-ID: <ecdd1f2d-7192-4fce-9fb7-854cdfe2ab88@amd.com>
+Date: Wed, 29 Oct 2025 09:28:37 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] accel/amdxdna: Fix incorrect command state for timed out
+ job
+To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
+ quic_jhugo@quicinc.com, maciej.falkowski@linux.intel.com,
+ dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
+References: <20251028175452.2329497-1-lizhi.hou@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20251028175452.2329497-1-lizhi.hou@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA1P222CA0063.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:806:2c1::12) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251016151929.75863-1-ulf.hansson@linaro.org>
- <20251016151929.75863-2-ulf.hansson@linaro.org> <20251029081014.443psmqznd2pqm4i@lcpd911>
-In-Reply-To: <20251029081014.443psmqznd2pqm4i@lcpd911>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Oct 2025 15:28:22 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkIRMLKAw2hRsQOICKn11WWYrSkSN53qmpIka5w-KJlYGIgupNtIdm9ew8
-Message-ID: <CAJZ5v0gcRQgj-3Yve_3OMsRJppdVmtWpBq51H5dk3JgTvSGLZw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] PM: QoS: Introduce a CPU system-wakeup QoS limit
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Kevin Hilman <khilman@baylibre.com>, Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
-	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|BY5PR12MB4275:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c03a46e-392f-471f-1584-08de16f777da
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cEJYdmV0YUlLRlYzWlR5a200SDlsVFd5TU5sU1FubFFaV3JRdGpQMU4wRzBD?=
+ =?utf-8?B?ZTZuNkI4NWJMeUZ5cEVOOWloRjh6ZndpOXhoUGVldy90Wnd1OUduWlpUbjgz?=
+ =?utf-8?B?aFR0NnBVeHZveGgxNUhxcFRFRXFibllUYjM5WEZLV2QzSllMUzVJaUI3dGU5?=
+ =?utf-8?B?Nml3enNlelFBN1RNNTE4MzR4eEIxQ1IxUkwvRzN6Kzgva3NsRnZySUFYWlBy?=
+ =?utf-8?B?dmMySWVXYkJ2REkyRjBjOElUSmE2N3pGcndCa1JsUjUyalVqT1cyRHErdnZw?=
+ =?utf-8?B?MVIyY1hkY3U0ZlVsMjcxMmYwS0g2dktWd01TNU5CeDFGRU9Sb2NzMWI3MjJE?=
+ =?utf-8?B?UzB0TnE1M2NybWMyL0JsRGZWNkZQOVhuRE5EUG5vdHRMOEwweUY3S3FQTk1v?=
+ =?utf-8?B?WGc3VHpuRVJSQzdvLy9tWTNoZHRWWE9HZ09YYXhYU3oyL1VlWVljNlBQOGxV?=
+ =?utf-8?B?cnNjME05Zk1RMHNLUWNEbjZpS2huWVRIOVpqak9kL2oxbTZ4SlpLSlBIUFhK?=
+ =?utf-8?B?U3dQcnQ2cUNEM042dThwNGZoZWxDNnFrTHBjaUVJUWI3OXdjU3dqRVYwVmZK?=
+ =?utf-8?B?U3Q3T1JDbGszTWwzMTR5aXBjSGRPdjUzYk1hdUVGblM1WEtVaGtLblkyV2t1?=
+ =?utf-8?B?a1o5NVFtNTlDOGFFdXdqN2Z5SUx5UG54OWhORFI4TDJRcHQ4WER0MFNjVjVw?=
+ =?utf-8?B?aUttQnVoVmFCaURSVGFZMWpoT25oWU9tL09vVmw0aWVtMmlzUFlHOEkyNVZG?=
+ =?utf-8?B?TzZvemNUNmJXL1N5QWN0aERjek5JSGdvMGwvRGF2TFpoU1B0R1o1Z1Myb2Y5?=
+ =?utf-8?B?dnhwcTExTFkwb2pObmlZWExqV3V0UzVlaDdTbXNzZ3FaRm55UEY5WjVCR1RX?=
+ =?utf-8?B?SUg4MGJONktGN0szNXh3T3ZvRjc3WnlPamhCWjNmUUhKU2cvQnpKajhCRUdV?=
+ =?utf-8?B?NW1YQXByYTlySktqMFpuS3lrZDk0VGtGeXdZVjVPbFB2SkN5aFZEekVtM1o4?=
+ =?utf-8?B?QzNCNkJEUDBvV1lnMVlGL0tWYWs2cFRwYmFJTE5LTmNUUThSb1dkTk9GK0Qz?=
+ =?utf-8?B?Sk5aTFdOcGNzWXF5SGRYSU1odzBvV3pPZWNtNXVZUDJxWFBXYlpwOGtmZHpp?=
+ =?utf-8?B?OFFOSmxkTXpPS0ZkQXVhckxnUWF6M0paTGdaT1A2Um5ZMGtPOFdnSlhFRE9R?=
+ =?utf-8?B?VURodFpKS3FBTUI3enJsKzlxcmVtMFZFTVAySjZybHZvcFpTQlpPQ2FHV2da?=
+ =?utf-8?B?S0R0d2cyVVk5TVRhWVVMdlpDYUxyamY2cTE1S1FYcW5GQ0JaWC9IYkQxaXVR?=
+ =?utf-8?B?WVdvQU4zR2VoeUh0dG9WeEZYd21hR1djQnNuaGl4eEdsMUl0UlhLV1dPSDE0?=
+ =?utf-8?B?dVlraExzWUdsNjFTcGc4NlFkZzVsOVdIUEd2QVVYc2syMEFSWGo0NWp6NUVD?=
+ =?utf-8?B?Q1VvNFp0amZad3BkUGE0L0hWNFBTTG02Ty9jZnBtSTZIQk9zZ1c4K1l0b3ZM?=
+ =?utf-8?B?MnlTeXpMV3FUT0hONmtHZTFmUTZSTU1qQUliNEk4Z1QvM1hXN3NFVEFGTkN6?=
+ =?utf-8?B?VEFqWjJyNUMxRG1HVDJISEtJU1hpMU1MQTJ0cytFMHppdlkzNE5BWkdVN1l2?=
+ =?utf-8?B?dk5SKzF1SjE1TGdTdll3MVhUYU1odElJWWhtZjJqUXozUnowb3NZbHlhbFJJ?=
+ =?utf-8?B?TUF0end4ZE04U2tmeEJETzNFREl4cnNoUmI0ZElWWWRlQ3NzOTJCTFozMDBT?=
+ =?utf-8?B?ZFFWaXlFcTQ1NnpWMVZCdEQwMnZVeFF0eGdQRERXZmxXTkttRlBRT2RveG83?=
+ =?utf-8?B?cXlHeEFuSVQvVElGeEdiQzd4bnpielV6MWdyc2o2NThTd1pvRzN4K1l2N3Jh?=
+ =?utf-8?B?N2lBQjltQXpMVGc3OURCVVpwOThLeGNwc2NqQTN0YVBCZjQyVzQwcWRBTG9u?=
+ =?utf-8?Q?gmAW5jr8AIjJKahJPsbV28RM1FKz0b2O?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cVp1UXc2UDNzdFlkb094eG1IMnpWVGc3M1piUmllYyt5bnVYL1F0azVsdlFW?=
+ =?utf-8?B?RVByWExTeVpOMXIrTGh1dktwell2aWFhRUloQkhMV3lmYU9XdktpRkN0YVVJ?=
+ =?utf-8?B?NUZJQmhMQ0d0NHlDWWpQeUxCVkNod1lUSHFSTDhWMlErRWgzS1dxeU93ZkhX?=
+ =?utf-8?B?MFpyVnhoNzZuOFFRejZpL2E3WFAveTltNjVXTUNLNXU5cEFMTzdCYk4remdH?=
+ =?utf-8?B?cGt2K1hWYk5lU2lLSmg4Y3M0ampFOCtldEM0MjlLNTVRNEVUQ2g1SHZaSVh0?=
+ =?utf-8?B?MUNYNG1FUi9WZXlYeGJGcVAxSGxkcm1kQktWdXc3RTBwTXk0eVo4Z012cVYz?=
+ =?utf-8?B?VWNpay9nS0loVXRUVWZhT3VRWmFIc1N1U2grcUlUUExtWU9vZ0M5WUx3b1pP?=
+ =?utf-8?B?YUQraXA1SEllNVpyQ21KNzZoWFpQMnVvUE42Z0tVWHFFQ1NnTGl4ZktHSndi?=
+ =?utf-8?B?WTBLWWo3elFKTkFTVEpBK3N0OEVKK09UMUhISk5RU0RkSUZqK2ZaMmlFZndy?=
+ =?utf-8?B?UDM5MWZEblhsdXJkZkFsenNBRkJZTCtBdXM1TGhCQUk5OGFBRFk3anVyWnVx?=
+ =?utf-8?B?MGFzUlY0U05OZlpqcERvN1VwNTMxQWpXbWdZNjhpZFVNZUtDNjFXc3VrQmVa?=
+ =?utf-8?B?blhqRGdhZ2NiRXNZM1Erb0NBWmUzV0lMSE9scHdmL3BXbnhXcnpyVkNpTmlN?=
+ =?utf-8?B?L215NU1EVnNIbHhNL1VEcUUxZkt4OWtwKzBZYTkxYmRkQ3hDTXNyMXhSTlNJ?=
+ =?utf-8?B?ZnJhR1ZPK2c1eFFnemFRc1lFbGE1emVoOEZwMU8yRy9BallYb1d5M25VcHlW?=
+ =?utf-8?B?bmNZM2UwYVptL2ZTcWNTTldEZTExejM0M0xRZVdOSm1MZHpRejBBSTdmWVdu?=
+ =?utf-8?B?M0JHMEFBNC9XaHNKaTJrTitpUVBuQ2hPc2F5R01IU3p5RDBIQ2Vud2xFNHY2?=
+ =?utf-8?B?ZlpESW5YL1VZVGdBSVJhdVFySTgrVEhKdjBILy9tbnRqak94dmcwM1YvNzVL?=
+ =?utf-8?B?T2ZMWTJlanY4dTVZcWtUUHRZZHNFRE5scXpPZEtxaWU1UGtCc1pzS0hQSHpk?=
+ =?utf-8?B?VGJoRkdvZVMyaXUySXVaSWorY2dBSTAvVjRYMjVMajNCWlMxZFp4UG50eVV2?=
+ =?utf-8?B?VnhOTTYrcFJINFlhc0ZSN1Y3cmUvVGluQU5vMFAxY0NlL2ppNnZNc08xMHlx?=
+ =?utf-8?B?eS91bjVkT1JsMjFjYklmNlJnU3pYeC9la2FBc3haTWp1ZDBYYlhVQ2Z0UXNG?=
+ =?utf-8?B?cURUZTBDUFF4VmZmdWdmM2FGUXhqVXNFcmlmN1R5ejg1MmhIVndMQXB4Z09r?=
+ =?utf-8?B?cHhGdDlWZzVqY0xwVDllalcxT3FQeDNxaVVidnlpdzRHVU9VZlkyYlo0dS9Q?=
+ =?utf-8?B?eStDdHpLYUhSS3k1M3RzN3RwdlBsOWRlNUc3NWFhait3d2JMS2d5ekkzZStM?=
+ =?utf-8?B?bjdabWJRV3NhQmVHVHRPUGtsQ2tBdGZrYVVlNis3SXVVTDd3QXVaVFUwM2Vm?=
+ =?utf-8?B?SVNjZDVsNVJzWkc3YjRkWWNvdlMya2V3K0pKVkxRYVBOanJYalIxVm1QMXFu?=
+ =?utf-8?B?S1RRSjl1VWNQdi9YNHFqdFhoWExRWWlhclVWMFROdGtjR0V0dnJ1TXdEbkor?=
+ =?utf-8?B?N2xueng5THNlWXZxMWtERG9GVDYyL2VBaXNTZkJFT041elErKy9aZEZPaGN6?=
+ =?utf-8?B?M3d5cXlsYzc5WGRJV1E0NlphRG1CVk5EYkZyQVdHZy9abHNMVmNNb0kzRkl2?=
+ =?utf-8?B?MSt0dkpjZkxHY1MwUDlWZWZkZ3d2NG9pbUthMllCQW1hS0RXQnRGVHFpQ3pQ?=
+ =?utf-8?B?U0swdXBDc1dHU1dIajJPdGdIU0VjOWJJdkpjY3NXa3d2VEE4THRkcXhJTzNt?=
+ =?utf-8?B?UTlmQVcyeFpYTXI5MDc3V1NXVFhiQ1pDKzVITVlRTC9xMXBNVjBuTkRNdmgw?=
+ =?utf-8?B?ekRyOXRkcEE0MVVuUFBGQ0ZxbjFockROTkgyWVR6OGkvc08rOGF6dWVOWVBk?=
+ =?utf-8?B?Sk16ZGUrNmxPNndQdkNKZEtrK1FjQnRwTzcxSjdnbmU5eER6Skk4UmZ3VVhX?=
+ =?utf-8?B?NUN4TzlGaUhhaUgxckllNHBaVSt4YVlFVUVSSkFkVjNXR3RjeHQrOHNaZXNS?=
+ =?utf-8?Q?XZhQeN9kEqPed26bx4gG+lTR8?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c03a46e-392f-471f-1584-08de16f777da
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 14:28:45.8951
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OjcNJQ5J8wNaLBT8q5DcKAePZasOr0LdjEpJBFGa3RO7TRdXi5K0ADG3lMODqljv62h7sMOHb+Y0cAUOikRKFA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4275
 
-On Wed, Oct 29, 2025 at 9:10=E2=80=AFAM Dhruva Gole <d-gole@ti.com> wrote:
->
-> Hi Ulf,
->
-> On Oct 16, 2025 at 17:19:21 +0200, Ulf Hansson wrote:
-> > Some platforms supports multiple low-power states for CPUs that can be =
-used
-> > when entering system-wide suspend. Currently we are always selecting th=
-e
-> > deepest possible state for the CPUs, which can break the system-wakeup
-> > latency constraint that may be required for some use-cases.
-> >
-> > Let's take the first step towards addressing this problem, by introduci=
-ng
-> > an interface for user-space, that allows us to specify the CPU
-> > system-wakeup QoS limit. Subsequent changes will start taking into acco=
-unt
-> > the new QoS limit.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >
-> > Changes in v2:
-> >       - Renamings to reflect the QoS are limited to CPUs.
-> >       - Move code inside "CONFIG_CPU_IDLE".
-> >
-> > ---
-> >  include/linux/pm_qos.h |   5 ++
-> >  kernel/power/qos.c     | 102 +++++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 107 insertions(+)
-> >
-> > diff --git a/include/linux/pm_qos.h b/include/linux/pm_qos.h
-> > index 4a69d4af3ff8..bf7524d38933 100644
-> > --- a/include/linux/pm_qos.h
-> > +++ b/include/linux/pm_qos.h
-> > @@ -149,6 +149,7 @@ bool cpu_latency_qos_request_active(struct pm_qos_r=
-equest *req);
-> >  void cpu_latency_qos_add_request(struct pm_qos_request *req, s32 value=
-);
-> >  void cpu_latency_qos_update_request(struct pm_qos_request *req, s32 ne=
-w_value);
-> >  void cpu_latency_qos_remove_request(struct pm_qos_request *req);
-> > +s32 cpu_wakeup_latency_qos_limit(void);
-> >  #else
-> >  static inline s32 cpu_latency_qos_limit(void) { return INT_MAX; }
-> >  static inline bool cpu_latency_qos_request_active(struct pm_qos_reques=
-t *req)
-> > @@ -160,6 +161,10 @@ static inline void cpu_latency_qos_add_request(str=
-uct pm_qos_request *req,
-> >  static inline void cpu_latency_qos_update_request(struct pm_qos_reques=
-t *req,
-> >                                                 s32 new_value) {}
-> >  static inline void cpu_latency_qos_remove_request(struct pm_qos_reques=
-t *req) {}
-> > +static inline s32 cpu_wakeup_latency_qos_limit(void)
-> > +{
-> > +     return PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
-> > +}
-> >  #endif
-> >
-> >  #ifdef CONFIG_PM
-> > diff --git a/kernel/power/qos.c b/kernel/power/qos.c
-> > index 4244b069442e..8c024d7dc43e 100644
-> > --- a/kernel/power/qos.c
-> > +++ b/kernel/power/qos.c
-> > @@ -415,6 +415,103 @@ static struct miscdevice cpu_latency_qos_miscdev =
-=3D {
-> >       .fops =3D &cpu_latency_qos_fops,
-> >  };
-> >
-> > +/* The CPU system wakeup latency QoS. */
-> > +static struct pm_qos_constraints cpu_wakeup_latency_constraints =3D {
-> > +     .list =3D PLIST_HEAD_INIT(cpu_wakeup_latency_constraints.list),
-> > +     .target_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > +     .default_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > +     .no_constraint_value =3D PM_QOS_RESUME_LATENCY_NO_CONSTRAINT,
-> > +     .type =3D PM_QOS_MIN,
-> > +};
-> > +
-> > +/**
-> > + * cpu_wakeup_latency_qos_limit - Current CPU system wakeup latency Qo=
-S limit.
-> > + *
-> > + * Returns the current CPU system wakeup latency QoS limit that may ha=
-ve been
-> > + * requested by user-space.
-> > + */
-> > +s32 cpu_wakeup_latency_qos_limit(void)
-> > +{
-> > +     return pm_qos_read_value(&cpu_wakeup_latency_constraints);
-> > +}
-> > +
-> > +static int cpu_wakeup_latency_qos_open(struct inode *inode, struct fil=
-e *filp)
-> > +{
-> > +     struct pm_qos_request *req;
-> > +
-> > +     req =3D kzalloc(sizeof(*req), GFP_KERNEL);
-> > +     if (!req)
-> > +             return -ENOMEM;
-> > +
-> > +     req->qos =3D &cpu_wakeup_latency_constraints;
-> > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_ADD_REQ,
-> > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
-> > +     filp->private_data =3D req;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int cpu_wakeup_latency_qos_release(struct inode *inode,
-> > +                                       struct file *filp)
-> > +{
-> > +     struct pm_qos_request *req =3D filp->private_data;
-> > +
-> > +     filp->private_data =3D NULL;
-> > +     pm_qos_update_target(req->qos, &req->node, PM_QOS_REMOVE_REQ,
-> > +                          PM_QOS_RESUME_LATENCY_NO_CONSTRAINT);
->
-> Please excuse the delay in reviewing these patches,
-> I was wondering why we have decided here in release to reset the
-> constraints set by a user. For eg. even when I was testing the previous
-> revision locally I'd just commented out this release hook, since I
-> wanted to be able to just echo 0xABCD into /dev/cpu_wakeup_latency...
+On 10/28/25 12:54 PM, Lizhi Hou wrote:
+> When a command times out, mark it as ERT_CMD_STATE_TIMEOUT. Any other
+> commands that are canceled due to this timeout should be marked as
+> ERT_CMD_STATE_ABORT.
+> 
+> Fixes: aac243092b70 ("accel/amdxdna: Add command execution")
+> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> ---
+>   drivers/accel/amdxdna/aie2_ctx.c    | 12 ++++++++++--
+>   drivers/accel/amdxdna/amdxdna_ctx.h |  1 +
+>   2 files changed, 11 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
+> index c6c473c78352..958a64bb5251 100644
+> --- a/drivers/accel/amdxdna/aie2_ctx.c
+> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+> @@ -204,10 +204,12 @@ aie2_sched_resp_handler(void *handle, void __iomem *data, size_t size)
+>   
+>   	cmd_abo = job->cmd_bo;
+>   
+> -	if (unlikely(!data))
+> +	if (unlikely(job->job_timeout)) {
+> +		amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_TIMEOUT);
+>   		goto out;
+> +	}
+>   
+> -	if (unlikely(size != sizeof(u32))) {
+> +	if (unlikely(!data) || unlikely(size != sizeof(u32))) {
+>   		amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_ABORT);
+>   		ret = -EINVAL;
+>   		goto out;
+> @@ -258,6 +260,11 @@ aie2_sched_cmdlist_resp_handler(void *handle, void __iomem *data, size_t size)
+>   	int ret = 0;
+>   
+>   	cmd_abo = job->cmd_bo;
+> +	if (unlikely(job->job_timeout)) {
+> +		amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_TIMEOUT);
 
-If you want "fire and forget", that would be a different interface.
-Device special files are not for that.
+Don't you need to set ret here?
 
-Cleaning up after closing a file descriptor is a safety measure and
-CPU wakeup latency constraints are a big deal.  Leaving leftover ones
-behind dead processes is not a good idea.
+> +		goto out;
+> +	}
+> +
+>   	if (unlikely(!data) || unlikely(size != sizeof(u32) * 3)) {
+>   		amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_ABORT);
+>   		ret = -EINVAL;
+> @@ -370,6 +377,7 @@ aie2_sched_job_timedout(struct drm_sched_job *sched_job)
+>   
+>   	xdna = hwctx->client->xdna;
+>   	trace_xdna_job(sched_job, hwctx->name, "job timedout", job->seq);
+> +	job->job_timeout = true;
+>   	mutex_lock(&xdna->dev_lock);
+>   	aie2_hwctx_stop(xdna, hwctx, sched_job);
+>   
+> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
+> index cbe60efbe60b..919c654dfea6 100644
+> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
+> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
+> @@ -116,6 +116,7 @@ struct amdxdna_sched_job {
+>   	/* user can wait on this fence */
+>   	struct dma_fence	*out_fence;
+>   	bool			job_done;
+> +	bool			job_timeout;
+>   	u64			seq;
+>   	struct amdxdna_drv_cmd	*drv_cmd;
+>   	struct amdxdna_gem_obj	*cmd_bo;
 
-> It seems an overkill to me that a userspace program be required to hold
-> open this file just to make sure the constraints are honoured for the
-> lifetime of the device. We should definitely give the freedom to just be
-> able to echo and also be able to cat and read back from the same place
-> about the latency constraint being set.
-
-So you'd want a sysfs attribute here, but that has its own issues (the
-last writer "wins", so if there are multiple users of it with
-different needs in user space, things get tricky).
-
-> One other thing on my mind is - and probably unrelated to this specific
-> series, but I think we must have some sysfs entry either appear in
-> /sys/.../cpu0/cpuidle or s2idle/ where we can show next feesible s2idle
-> state that the governor has chosen to enter based on the value set in
-> cpu_wakeup_latency.
-
-Exit latency values for all states are exposed via sysfs.  Since
-s2idle always uses the deepest state it can use, it is quite
-straightforward to figure out which of them will be used going
-forward, given a specific latency constraint.
 
