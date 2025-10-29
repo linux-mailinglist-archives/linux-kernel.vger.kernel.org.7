@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-875557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926BDC194B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:07:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6582C19525
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:13:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18392585CEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:55:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 98E67505D50
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E44C231DDB8;
-	Wed, 29 Oct 2025 08:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E7531E0E4;
+	Wed, 29 Oct 2025 08:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEV4PnwV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bezlEPpR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6B3126A1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84C91DF271
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761728095; cv=none; b=l2l6HjjfaPGqG+edPfCe6Yc115IUGp5qPZ3tspLNMAdiLaDAADJkVT62yqsa6vHxQFuwMJs84rGp45GvEOwkXRy+PiMaTYTo4/zwA51oaxQssqYVixXQBF8CKTtHRc4QsVlAUyXup626aHkNMxcBIhhMLurKP+X+TKoJ2Wmgu+w=
+	t=1761728124; cv=none; b=l0fZEJhh4X1va0irUccs2K9qg3vGdQd8qv9RfAGUneg2jQddqOf1xlId8UPPSPYmNuAu25ARFBm/kpzy/VmpI52Guxjx62Gvkf+XmCU//v2opmtEFzPmpxp+Gb+iQJwMEj2sGyVj4SKDa+TLKbqX1LXc/tqZlg2BBHrKY2ZJ4uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761728095; c=relaxed/simple;
-	bh=Dy4WiiEp2hDTLOfWgfOlVvW3TTdWJu7jpfAlJ8GtIl8=;
-	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=rsB3QkQ9EVkrrnUyOEWI0TQk7ZQ1FhamdHOxJ63IhxtG8b7HTR/r7R6g3ra0lVFErREzrIxBZxCzTiFjXbeNUjuQXsFaA7/hMGGSZW2ruIT682gHSfCaBiim5G4mc4/LulkghDuD+f9t1TAVX63vcqEp+r5rHpFfjLWnbSesQlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEV4PnwV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C5F4C4CEF7;
-	Wed, 29 Oct 2025 08:54:53 +0000 (UTC)
+	s=arc-20240116; t=1761728124; c=relaxed/simple;
+	bh=phEg2pXqRD3Io5OWcNnG6saaAlBTyp0EzBzi9+EOrK0=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=LhloJsrezfHsekSL65bpRhpdAp1YpnqcqfjiNFy/ZT8SUIEhDGp+DNPkw7plwn/n5lEZjZvX0+XompoOfDgufLJFWiOCjcb+FYVEZdtAh0edlM7j/+Ceir8jBG6L0FiLY10oW4Bb8VSiclE2Ljt6t/aWre++y1YHHtenL2EgNb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bezlEPpR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5435C4CEF7;
+	Wed, 29 Oct 2025 08:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761728094;
-	bh=Dy4WiiEp2hDTLOfWgfOlVvW3TTdWJu7jpfAlJ8GtIl8=;
+	s=k20201202; t=1761728124;
+	bh=phEg2pXqRD3Io5OWcNnG6saaAlBTyp0EzBzi9+EOrK0=;
 	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
-	b=WEV4PnwVugjI4eYTb5D3Xn5Z4SpWwhIIgtQ6bhBAO5Gg+jfKiUPa6QqTDBVz2RpRk
-	 kKbesQHYBsFKN3TodcNKNGbZ5TtT+qvKc/PDikJ6NLVp+eSB4YWfLPu5hei1tBbkVu
-	 KsiIYA2AbjSgTgwKdUo46yC63JIcaEfkHZSoDNnQQqyfbRxdjaAHDMBiX8IoUs83ln
-	 E/I8fAxI66UjB3g1xEz/e3+S921y55JmfwSU8n2lUjThdw95a/zd0XnjEKJ3PP5o2c
-	 Z6TuDl1jusd6p/YiCR9aqvNO3uLyvOcvAsmp/0t7vm9/A8WkM9plbb6odoVrl2bdoI
-	 QIcQLK4QqmxXQ==
-Message-ID: <312c3226cd0581d00b39db8daea69417@kernel.org>
-Date: Wed, 29 Oct 2025 08:54:51 +0000
+	b=bezlEPpRBkgqkc10mB7ahmvPgLeCkHYle2USV/V0UykGaC6vHavgDhl/tslGl4m6N
+	 wX0l2QxaAyfoLf3oCNEyNGaonRbOeRfVTbTHMVaMCeiX6PSsawdp6zC11ksjyM2WbN
+	 lRYF/JsHo7IvMp6CYqdYtqfDE9X7MCQaSQEQjZ6LM29P+vEeyVLvvKdYzZhyEM1kKd
+	 Xh+tXYLJjeBaNJNWiE4X4HMTVEvrY724HGD3XOj7tTM0bavnt5Z8nT+lW88JRjpOME
+	 DHAzcPHyjHDz3O/VgQgyWRrlpNCSCtCkqOuNiByEg0w7QH75+0AL+ogMfc9Qsb4muv
+	 7gAjUZa5FMGNg==
+Message-ID: <0c0b84319f96b5d2a32bbae473e5758e@kernel.org>
+Date: Wed, 29 Oct 2025 08:55:20 +0000
 From: "Maxime Ripard" <mripard@kernel.org>
 To: "Luca Ceresoli" <luca.ceresoli@bootlin.com>
-Subject: Re: [PATCH v3 3/7] drm/bridge: drm_bridge_attach: lock the encoder
- chain mutex during insertion
-In-Reply-To: <20251009-drm-bridge-alloc-encoder-chain-mutex-v3-3-c90ed744efec@bootlin.com>
-References: <20251009-drm-bridge-alloc-encoder-chain-mutex-v3-3-c90ed744efec@bootlin.com>
+Subject: Re: [PATCH v3 7/7] drm/bridge: prevent encoder chain changes in
+ pre_enable/post_disable
+In-Reply-To: <20251009-drm-bridge-alloc-encoder-chain-mutex-v3-7-c90ed744efec@bootlin.com>
+References: <20251009-drm-bridge-alloc-encoder-chain-mutex-v3-7-c90ed744efec@bootlin.com>
 Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, "Andrzej
  Hajda" <andrzej.hajda@intel.com>, "David Airlie" <airlied@gmail.com>, "Hui
  Pu" <Hui.Pu@gehealthcare.com>, "Jernej Skrabec" <jernej.skrabec@gmail.com>, "Jonas
@@ -62,12 +62,12 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-On Thu, 9 Oct 2025 13:38:58 +0200, Luca Ceresoli wrote:
-> drm_bridge_attach() modifies the encoder bridge chain, so take a mutex
-> around such operations to allow users of the chain to protect themselves
-> from chain modifications while iterating.
+On Thu, 9 Oct 2025 13:39:02 +0200, Luca Ceresoli wrote:
+> Take the encoder chain mutex while iterating over the encoder chain in
+> drm_atomic_bridge_chain_pre_enable() and
+> drm_atomic_bridge_chain_post_disable() to ensure the lists won't change
+> while being inspected.
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 > 
 > [ ... ]
 
