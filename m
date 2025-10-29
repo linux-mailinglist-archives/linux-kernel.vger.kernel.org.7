@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-876827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2DFC1C754
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:34:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B54C1C7D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC7CE34B6BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:34:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89BDC4E350C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43388351FA1;
-	Wed, 29 Oct 2025 17:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8A1A351FC1;
+	Wed, 29 Oct 2025 17:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKJO92+c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOYx8S1r"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE4B34FF4E;
-	Wed, 29 Oct 2025 17:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14CD2EF662;
+	Wed, 29 Oct 2025 17:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761759232; cv=none; b=jw5MDLdeqEB0ykjjNar4q8WpbI/vfxuqMx0eYNst/nkTjg91ZOBzoZv2/tAql64+dNBbCJzfH/+CZrrknbEcTg5f1c+yxEAV/8DMjDdxB9fvBKuYDfTe91XwKwXQc0j120Wb7KnlLmfMhkEeXmKOTDdbrgNl8eObVxafRRf9fm4=
+	t=1761759271; cv=none; b=FGuWrRGd4nMRgyA4hOteIWN3KYLNuNPtrt9JdKcEOG/vPut4pzhPYzFCL8SKGG3K/v5AGipb7hJFIrtNzrb/xRFGwMeWho3MfogBJsJ6JGZ+o91kY7uqIjgYDSJgn98PD3TNV2W3Mq8TNSSQoGPePbcBiLnlZLnrEtEXsbfd4IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761759232; c=relaxed/simple;
-	bh=655Qm1zghE7kR+ommrUMLIsCzPbYJTWpOLztSRFlFN8=;
+	s=arc-20240116; t=1761759271; c=relaxed/simple;
+	bh=cQ6u8qLg9RAS3sQx0DZqTPCs2pfg037ebM1hlPoMVXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lXBMXHZvw3zoVQca0N+xhGM2PIG3rQwN1Usj4nXIOqzI9pJWtDpYNRa1ttN4+MT0HBK3q3UppXRpjybW5gYdaqTINbo/1ZoLEgJqrTxIIGQ9scpHVsAoA6ItVZe9KbqbkyQQKjgEE5BlEiAveS5tBUASNJxG9S7WM6/sqhVgb/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKJO92+c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 814A9C4CEF8;
-	Wed, 29 Oct 2025 17:33:50 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lQ42OKdX2YGK3Fqla5TtbNeBGWGuvwKamvXh//0nFDGGjS67ovO+oNhQtrJXlTp/sn0a4cJ9Q4Ea6AhABi3NZZ/QXbjJvvCj241eB7OiYtRcaOAHQyMtAKiPaoPQv8QmF+NjBfklm3ewIhTSSV7fFfTTIh3/A4Y7hWH8256VMIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOYx8S1r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1F1EC4CEF7;
+	Wed, 29 Oct 2025 17:34:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761759232;
-	bh=655Qm1zghE7kR+ommrUMLIsCzPbYJTWpOLztSRFlFN8=;
+	s=k20201202; t=1761759270;
+	bh=cQ6u8qLg9RAS3sQx0DZqTPCs2pfg037ebM1hlPoMVXs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QKJO92+cq1qPa3UJvnYzoK7NbmS0XK2eVnSUE5RtP2bllNcEGnkOjBVnXTgqECnTI
-	 Gxfzb5P9REVV8qsE3vkPD/m61uX8C4+JXnzcyTvOrtGHisB5sye64Y/WhyNfJFgLaz
-	 lz/RdZS3UR6S6lihCkzcbZhstijznfrIbLCmN3Cvx2QSwWHBM2QVAGyx5m99xfcg3a
-	 ea89CBq19BSkoxP3yotmAkANcOQe/FvfNHKBN+H1QjDSGiB/MB11Wd/kXGCl59dk40
-	 9jStJg6QcV1JLKUFWr19R5EutJeSYSh7s4MxGDGaXEXigHJItYjMUHaxoobrcYfCWp
-	 TvY4yFQKoD8+A==
-Date: Wed, 29 Oct 2025 17:33:48 +0000
+	b=EOYx8S1rgIjusrjqz5VxUMOjhk3aNW3LmV8MgkEo9Y9VNnbrIfBVxoYuTwPg0nHtL
+	 mcCUbVOpfKeEC1cN2axA3/YfwSHw1NIqe+l2nK9wdbUGlODAR5j0KGXqdlUsCcKo07
+	 XCEA1Sj+AH3NDzVhiD/KqQZnOFBZHietE9xwzC47GnjefybvJdeFi2qNXV2PR3moN6
+	 JuIWWbFOA95vl2vJtR9ZATQvdc/V691BkICvNgzU5sjWx/dpSRdnpb/uThT8ht6YzC
+	 tgn1SCfDnm6Inqnf3/WDDK/5H0WPp64DjCCwtyPt4eJAvSv7otHsWS2HNvgyyBd+mc
+	 zqMge5B1EBpoA==
+Date: Wed, 29 Oct 2025 17:34:25 +0000
 From: Conor Dooley <conor@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: introduce no-auto-mmio
- property for syscons
-Message-ID: <20251029-ambiance-snooper-43dc00dcee68@spud>
-References: <cover.1761753288.git.dan.carpenter@linaro.org>
- <230cf12861a4f0b9effc72522444d3e28c1de2c9.1761753288.git.dan.carpenter@linaro.org>
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Zhiyong Tao <zhiyong.tao@mediatek.com>, kernel@collabora.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: iio: adc: Add compatible for MT8189 SoC
+Message-ID: <20251029-gamma-unmixable-05a8c5dc0960@spud>
+References: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,67 +65,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZqvK64s1Y52gkgpz"
+	protocol="application/pgp-signature"; boundary="kATwFr4KYeHZakeU"
 Content-Disposition: inline
-In-Reply-To: <230cf12861a4f0b9effc72522444d3e28c1de2c9.1761753288.git.dan.carpenter@linaro.org>
+In-Reply-To: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
 
 
---ZqvK64s1Y52gkgpz
+--kATwFr4KYeHZakeU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 08:27:05PM +0300, Dan Carpenter wrote:
-> Generally, syscons are created automatically and accessed direclty via
-> MMIO however sometimes syscons might only be accessible from the secure
-> partition or through SCMI etc.  Introduce the no-auto-mmio property to
-> tell the operating system that the syscon needs to be handled manually.
-
-"System controller node represents a register region containing a set
-of miscellaneous registers."
-
-If this isn't actually a register region, but is instead an interface
-provided by SCMI or whatever "secure partition" is (optee?), why is the
-syscon compatible being used for the device in the first place?
-
-Cheers,
-Conor.
-
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+On Wed, Oct 29, 2025 at 03:52:53PM +0100, Louis-Alexis Eyraud wrote:
+> Add compatible string for MT8189 SoC.
+> The AUXADC IP in this chip is fully compatible with the one found in
+> MT8173 SoC.
 >=20
-> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Document=
-ation/devicetree/bindings/mfd/syscon.yaml
-> index 657c38175fba..a0ad12ae0bee 100644
-> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> @@ -245,6 +245,10 @@ properties:
->    resets:
->      maxItems: 1
-> =20
-> +  no-auto-mmio:
-> +    type: boolean
-> +    description: Prevents the syscon from being created automatically
-> +
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.51.0
->=20
+> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
---ZqvK64s1Y52gkgpz
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
+
+--kATwFr4KYeHZakeU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJP/AAKCRB4tDGHoIJi
-0hI1AQDFYHdDflBdSUuSVwpprYoijqQftJFl+1trKx0ZwumahAEA2PUMhd44uvdk
-Aq43laZ2VCzBECPTaog69xYYAPFwtw0=
-=0Jsq
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJQIQAKCRB4tDGHoIJi
+0laNAP9C38Qssv8uwb97bAU24YVQ1YwFUV2QSTpsq2dvEnILjgD/ZpYNtjV63fqu
+FACQa0/m0zVdoiWZl+u4KK02fETcsAA=
+=yxko
 -----END PGP SIGNATURE-----
 
---ZqvK64s1Y52gkgpz--
+--kATwFr4KYeHZakeU--
 
