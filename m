@@ -1,248 +1,285 @@
-Return-Path: <linux-kernel+bounces-875293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E886C18A20
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:16:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6BAC18A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7013352C06
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E81844266EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6357130F543;
-	Wed, 29 Oct 2025 07:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0A730F958;
+	Wed, 29 Oct 2025 07:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="vk1qG1bT";
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="WPZTd8Fv"
-Received: from esa12.fujitsucc.c3s2.iphmx.com (esa12.fujitsucc.c3s2.iphmx.com [216.71.156.125])
+	dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b="YG0AUP52"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9769C30FF23;
-	Wed, 29 Oct 2025 07:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.156.125
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761722152; cv=fail; b=SJpi2MP6x/LzTbMG9ASNrcs65eHYp2kZrzpgz7ZIjIfYxnvjUVT5fvFEyO7/VCS+r6H7ECsVWteD4FUN8/rNEsfvlK94giHz3T+ChSHKmMsZbSMi3jQxRpzbVafXixqeVrIHV5v+HJYm8rshIEBuZ6aVup9KmOoY01TSJeoTsGY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761722152; c=relaxed/simple;
-	bh=Niilj11AgSaH/anbz4Ekr1Udp5mbV4aLNHKwVq7Xjuk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=RaTh3yfPQJjdYjPFwlMY8BjD35YJqWJSC6hq0yssH+9Y7Gnl/n+TsR9ux8hixnqB+6Yz730mMMZK5nP1iEMQVPm2hk21PeyyCCA5t4xLfSJgcYUGv/P6qqShH/DV8187Usdw7/TgGR+9aBi1XPtcRtziGmKY0ERYMIOV4Lm7dbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=vk1qG1bT; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=WPZTd8Fv; arc=fail smtp.client-ip=216.71.156.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
-  t=1761722150; x=1793258150;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Niilj11AgSaH/anbz4Ekr1Udp5mbV4aLNHKwVq7Xjuk=;
-  b=vk1qG1bTMbQUcm41AoNR59uTJQxBTnIbel0FuA6eb7rSE1PfnE4Ct36Y
-   XHET551H3kfS03IOe0L27t/0+9NmnSz7EDUVAHBfRFBpZ0NLYiI3tN3Di
-   gR1PUiAvQWJwKTH40s50OJcCn7Toanf4xmBNhxD2pL9l5WEC8pvpTM/2o
-   qOkRO3Q3BJkIal/RE395Owk4ENQj8Fb8B7kqGilpT5zBPpexfMYmJML5s
-   uBU6d41N0lyqPTYFUJEJ2Tq0/7bK1gEN2i05bQkKx5fkUJ5BxV7KQaV4B
-   CkRVylvDUem4Rrbtzc+qN2x9B5AtbbEVo2Cm4VA2tXGRLuJR99r+7WtnK
-   w==;
-X-CSE-ConnectionGUID: ItLX4NPlTHuVqL4PvGZ8nA==
-X-CSE-MsgGUID: IbphtP5fR2qCmNSbndxN1Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="172424963"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754924400"; 
-   d="scan'208";a="172424963"
-Received: from mail-japaneastazon11010068.outbound.protection.outlook.com (HELO TY3P286CU002.outbound.protection.outlook.com) ([52.101.229.68])
-  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 16:14:29 +0900
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HZg1CDKGeFJpR+cs/UCKabz1HqU47f7M8q3X1ir/Z6HZZRym3b0RvNXIHKwCg2AcNaRduY6AV30CbPKzToI01wvwql0yO93vnY8wcGLv5XHw4pvViwVrtD5yiDIzD+zTHZRg0ClAJFZ4DflnoGt5C6I0hrrWJPKVreKYAiDJmynyNe21qBrr8eqISkPypeVx1Ie7fIOJ2PJhdqmVs584Wt8+bJ/rdDta4MYMrcYaNcJE4Qj8ezPqSL3/t3/COT0p/J3jrxYhbDpzwQLLzc7TvS9gZEilCmTigPaQMmlxuPDxeR6d6lJqiGH32YqMqmvWSE/YK4X1+EicTGzAoKKrJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Niilj11AgSaH/anbz4Ekr1Udp5mbV4aLNHKwVq7Xjuk=;
- b=UgsOFOZAXO0Ux67kXZ2Wa8uS04UiL+VaihM+pmD7DZJiHgVH8P27UBBMCFHy7dIKL1q8U+SdqeZ3HL+2CpwlGyE4UyVk1DVK4mkWU6BMo/Ja0MYL0xB8dtA0UIPpKaQ2C5MdCcVpa3NaZv9pLijtc3p8telZBh4g9tTsHCAs0AJ/SP9V/PXBCQNzyng4R+zUnZVLReuMvu4Wn6HZVSK7JTMzTDC4YAkeI6LuC6EnFO76TJcrFumo6Jm9IPCU39rhuiY/uqOeNXo6wU9ohIPFn+KVKddBCTYN9u2VH+lq9nq1dlh/Wj84bHckHpeFcGWDIPF82tslkecZ67hv8eXqtQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
- dkim=pass header.d=fujitsu.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Niilj11AgSaH/anbz4Ekr1Udp5mbV4aLNHKwVq7Xjuk=;
- b=WPZTd8FvbOPxjgC/jdcGHpvQJNkHwN5f50b/XPhygttmw/ynV5y21DjOT4R5F+NbMNSd0QpEdgbvJ3hxXb9knk0uuUcAnfQKr4ihdgOSGnEP6z9TAbeuHD5WbSpCYKtCQgvDjXa3726jzxFVxCbvdXEMUlgKnqIR84mvPCn4SUTQUDfNnsV2obVZm7eISnzIjCSq0Wo72IuaCuwDHkjZobsfOMMgcyTN2/rNUx4JVq027PDpkeKFXS5515uJa4aqFN+VCpl3SEgKLApVsbq+VI4uMak10+FdzR8rtEg1BKjcW9QvJP+M74KyKz2v+nQFpfKIdB6ED95VFuHgnWF5yQ==
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com (2603:1096:604:15f::6)
- by OSZPR01MB7771.jpnprd01.prod.outlook.com (2603:1096:604:1b3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 07:14:25 +0000
-Received: from OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa]) by OSZPR01MB8798.jpnprd01.prod.outlook.com
- ([fe80::e366:d390:4474:8cfa%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 07:14:25 +0000
-From: "Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>
-To: 'James Morse' <james.morse@arm.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>
-CC: D Scott Phillips OS <scott@os.amperecomputing.com>,
-	"carl@os.amperecomputing.com" <carl@os.amperecomputing.com>,
-	"lcherian@marvell.com" <lcherian@marvell.com>, "bobo.shaobowang@huawei.com"
-	<bobo.shaobowang@huawei.com>, "baolin.wang@linux.alibaba.com"
-	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
-	<xhao@linux.alibaba.com>, "peternewman@google.com" <peternewman@google.com>,
-	"dfustini@baylibre.com" <dfustini@baylibre.com>, "amitsinght@marvell.com"
-	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Dave Martin
-	<dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker Donthineni
-	<sdonthineni@nvidia.com>, "fenghuay@nvidia.com" <fenghuay@nvidia.com>,
-	"baisheng.gao@unisoc.com" <baisheng.gao@unisoc.com>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, Rob Herring <robh@kernel.org>, Rohit Mathew
-	<rohit.mathew@arm.com>, Rafael Wysocki <rafael@kernel.org>, Len Brown
-	<lenb@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
-	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, Jeremy
- Linton <jeremy.linton@arm.com>, Gavin Shan <gshan@redhat.com>, Fenghua Yu
-	<fenghuay@nvdia.com>
-Subject: RE: [PATCH v3 27/29] arm_mpam: Add helper to reset saved mbwu state
-Thread-Topic: [PATCH v3 27/29] arm_mpam: Add helper to reset saved mbwu state
-Thread-Index: AQHcP5gv8/ngEQ+7AEiD2geJNmENQ7TYx/tQ
-Date: Wed, 29 Oct 2025 07:14:25 +0000
-Message-ID:
- <OSZPR01MB87980291BB01FFD5479B91258BFAA@OSZPR01MB8798.jpnprd01.prod.outlook.com>
-References: <20251017185645.26604-1-james.morse@arm.com>
- <20251017185645.26604-28-james.morse@arm.com>
-In-Reply-To: <20251017185645.26604-28-james.morse@arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ActionId=ca28984a-40d6-4981-b81b-6f0760468676;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_ContentBits=0;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Enabled=true;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Method=Standard;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Name=FUJITSU-RESTRICTED?;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SetDate=2025-10-29T07:13:54Z;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_a7295cc1-d279-42ac-ab4d-3b0f4fece050_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=fujitsu.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OSZPR01MB8798:EE_|OSZPR01MB7771:EE_
-x-ms-office365-filtering-correlation-id: 9075c7b4-7acc-43ba-f81d-08de16bacaf3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|1580799027|38070700021;
-x-microsoft-antispam-message-info:
- =?iso-2022-jp?B?b1VCN0JvQ0VIRlo1Tkx5enl6ejNoQisxWFBTRW4rdkl1a3RNaHlMK1Vu?=
- =?iso-2022-jp?B?Qk16VmI0Tk5QaC9RQzJxbXdsanNUcnRMQzRkZW1mU3ErZGwxUWZISlFs?=
- =?iso-2022-jp?B?YTJmbHhNZUNuaGxTeWgyRGNhN2NGY2FKNVFiNGhjYmpVY3ZqMTVteGlS?=
- =?iso-2022-jp?B?V2FKRjRIQUExZW11K1VTZ1RpeU56dFBqeGg5WG5OK2hPQi9LUVRDckI3?=
- =?iso-2022-jp?B?c1J4ZTBFTys2Y0piajBvVmZ1czJRYXRoK3llSXJ2d1JLa0NHaWZjd3p1?=
- =?iso-2022-jp?B?ODdaRDVNODFFTlUzVHRjc2pNYnBFRmNrNkUrWmJuSHVQTGk3RWFjRDlq?=
- =?iso-2022-jp?B?N2JLU1N6N2NKT2J4alJHaHZKaW81bThERmtjemNZQXJXMit4NURjY0Jk?=
- =?iso-2022-jp?B?V2xoUy9sV013ck9PUGhNb3l1Wm9PaVpXamFpTWNGejlMb0FjR29lQUc0?=
- =?iso-2022-jp?B?eDR6QVdYbFFBb0tXM2YvMUZKTlEvcXBhdGlSM0d3TmR5Q0tINi9CQmVZ?=
- =?iso-2022-jp?B?QVVWbE5hanYya01Ca0JFa2dtODBzOUpoMVBvbXErRFczOWZnalVGYnF4?=
- =?iso-2022-jp?B?OUpGVE02alNlSUg0RXI1TVJ1ZEQ3QU42Zmx6NnNVaGlOclJ2amc1d0JM?=
- =?iso-2022-jp?B?MERsU3FwUXFWOW9QUjZRQXhzdHorQ2wzTVp3QzFwVTl3SVM1V0F2b1Nn?=
- =?iso-2022-jp?B?emZFREJicXlEbkhvWWpkL3JoWEpBdGo3S29RYy9qeHFwb2dwUUdxS2NU?=
- =?iso-2022-jp?B?djFUOFlBRzNLcElsT0U2cGFJRGYvTkNKTzFlazNueGkrZW81bVg4VFNB?=
- =?iso-2022-jp?B?UFl0TzFReGt2clRRdHpGcGZQVGhmL29ldWM0aGtJYUNzMDVLeXZ5V1J6?=
- =?iso-2022-jp?B?MzZOTjU2ZlpEMkp2amRxcTR4dDJ6dXo5TnBpVzRLR2Vla0lwS1dIaW1G?=
- =?iso-2022-jp?B?YnIwZzBYbEZ2Wjl1Vkg0eiswbjB0NUpWNWJjSDV0UHlQL0p4QzN4N1BY?=
- =?iso-2022-jp?B?NUxzSS9Jak85aUhnZHVpaWVnRkFCclBJYzM2NS9IS055RVd5U1M2NlVv?=
- =?iso-2022-jp?B?dDBFUHg4ODBzd3Byd2dMeU93Tk9XcFhXVUpTSnRrck9DTEVORlNkK0c5?=
- =?iso-2022-jp?B?NjhFbFJHR3Q1N2R2UHNoSGVUSnlJZndUOUVEOWdJUW1zSmM0ZzRubzdB?=
- =?iso-2022-jp?B?eFczUEVZdlduKzBvaHh5d1hSaDhxcUlPNDZYaU80YlYxVEYzaXJCcE95?=
- =?iso-2022-jp?B?OExwY1BSZkQzb05kUkhlTjRFenBNM3FuVFQ0c2dnMTJZQUc4a25IMVZ2?=
- =?iso-2022-jp?B?bC82WVNodmY3NS9QNHlmbGd2Vk52VGxNb2xKUUlwaWpHaXNyS1I5MEhq?=
- =?iso-2022-jp?B?Q1RmcmNVV0crZDFFMWZPa21zYTJ3djRxdm8xSE5mcVNUMERQMmZqa3RL?=
- =?iso-2022-jp?B?czlHVC9PdFlORXVPbmdSeUVseUtBdksxSEFDTU5xL0wrdXpCa3BtbDF1?=
- =?iso-2022-jp?B?czJSQ0xJMHk4TXNWQml3a3NQb1VTT05Kb0RTSktMUzNWelRoZmVWSlB1?=
- =?iso-2022-jp?B?NU1pbStsalh3TDRCNGxvNFZveG5IcDNQMFFvV00zcCtpZVE2K2VTNXdz?=
- =?iso-2022-jp?B?TVlXdDNkcVZkcEtuZ2hncTFJMzB6ZzNLTStkRnRQUlZZallCMC9scGpz?=
- =?iso-2022-jp?B?MGIvbUZuOWNsWXFqaHMvN2VLeUxtazhHcThkMFdMVmVWZ3dWNkpHWjJS?=
- =?iso-2022-jp?B?azFIdWZnTy9xSVpwR2o5MGF1UCsyN0FRRVhNTVZvcHh6VnJrMnhoQjIv?=
- =?iso-2022-jp?B?TldSbitWRFZNaEFUL1RkM3Uxa0RsQ3ZGN0xRWjVrOGhoY2wrbW0wTmhL?=
- =?iso-2022-jp?B?V1diU2dzQWRaOTcyRHRYSm54R01UV1F2aE1wS0lPUDJLaENkK2dYT1d3?=
- =?iso-2022-jp?B?TDRCYm1KTFJjUVczaHJvSURCVHkzK0JVMEhSWmduR1QrTnNmQlNBRXpj?=
- =?iso-2022-jp?B?d2NwU1NVNHRMd2VUN2pzbmNlKzZNTWtzUkNubHZMQ0E3OHozQU1Bd2M0?=
- =?iso-2022-jp?B?UDRtRlNDWVZXdXlIQlRycVhsYUNHSG1hdWo5QWNKOTEyVm5GVldhK0ox?=
- =?iso-2022-jp?B?VnVBSGhlRFBVaUxma1llcS9WR2JuTVlpbkh0bTJ0S0V5UnlkQUJaOUpv?=
- =?iso-2022-jp?B?aFltOEJ1QWNSMnMrNlpBTHhvSFlzUG1kMmlseFN2cWhOeS9rN3dCNm4z?=
- =?iso-2022-jp?B?bFZwUT09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSZPR01MB8798.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(1580799027)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-2022-jp?B?V3pNbStQdW9sT0tvblVHMTFhVmE0cWV5YUZ4KzZGVDZ0TkdUQ2lnWUo5?=
- =?iso-2022-jp?B?L0JBQXArY2FJQTJHTTUwRGU5VTlOQWlSQlhCVUZNYm16ZWI1cEp3ZUxL?=
- =?iso-2022-jp?B?U2NzQVVYay9Gc3BzbTI1NzNtZmRiZHhIUklsb1NyRTN6dTdYVXY2MEVT?=
- =?iso-2022-jp?B?OFhMQXhJUnZ0QTdMMEFmaUE2Q3AzaVU5S0hPRjdxZzM0MERMSEEwOFJ2?=
- =?iso-2022-jp?B?bnZ0aFFQQU02VjNwZUFhbk1udExoNlRCWWpqTUtwVEF3bGdaUmFuR1R1?=
- =?iso-2022-jp?B?ekNVMEMxUkxBaERuV3pEOFNZV0NSM0NtMUxGOENUcUR6WWhGQzkwR1cv?=
- =?iso-2022-jp?B?Z0RZczdBcnZ6ekpDblEvbEFmVkIwS1VLTGx5TGJibERhUnVPRTNwaVZi?=
- =?iso-2022-jp?B?eXljOG9yK0h2K0VCVUZiWDM0Z3NSRmNLUGVoVVdoVlFHQXNJQ3hxS1I2?=
- =?iso-2022-jp?B?N2xGU0NsRks3eVNZTXpKdjArQjZiVXR3TGFBZE4wUnQrMEk0NG9pcHZI?=
- =?iso-2022-jp?B?cUVKa0ZTelczOTZUblY5WWE5VWt0a2FEQzR2QUFrMk56UElzVHYvZGx1?=
- =?iso-2022-jp?B?ZFBuK0YzVGVUTTF5N3I2MHhQbzJ0ZjBWVGVSRXdTSjhWUnBCdjc1U2Zk?=
- =?iso-2022-jp?B?QlowZnh2cFhRTHk5eUlTcFk2QWI0OXBRTEhMK0Z1REpPZFB6ZE84anh3?=
- =?iso-2022-jp?B?S05NbEN1b3dwemF2VkNFYng2OVlIc0xzQzhtTWk3bUhkelZJUnBQdGtD?=
- =?iso-2022-jp?B?Ums4dkppK0FqZjFOTmFCMWNFeGFPYmFxRGZ2T0pWTUFIVVQzUFY0MEVE?=
- =?iso-2022-jp?B?R1FrL1RTcGRZam9uR3lpMEYwb1AyYmRtcGlrU2p3ckR5a0ZtUVFUWTVY?=
- =?iso-2022-jp?B?ZEM1NW42bXVzd3ZFZFRoRFRjYi85Ny80WGc0d0hKVFVMWnRhSDQ2SGNY?=
- =?iso-2022-jp?B?bVZvT3EzZ2xjL0dMK0pYOGh1c3hXcVV4cHU3aUVwWi9iajgydGtiZzB2?=
- =?iso-2022-jp?B?QmNOL3ArTWlhdk5aUkZKTzkvMTU0a25LNC9taldLM0R1OEx3b0hGblJL?=
- =?iso-2022-jp?B?cmNFbkRSUXhzRk5vM3ZpK0lRVkQwOXZFWkRlc2pyOFZmZVlmZ2tDTmZT?=
- =?iso-2022-jp?B?WGl1dXVsZVkzc2tYMjZjQm82dnJ3b2dWOG9QaW9PUk1kM3Qrb2Q4QUMy?=
- =?iso-2022-jp?B?U0ppSzJaVlNkUzZTVWxwdFdSTlZjcWFBS3k3dFB1NktpeVJubDlYaWNI?=
- =?iso-2022-jp?B?dzY5MFVCRmQybDhPTFlOMEJjWWxsamNnMlB5UGMycXA3OGtVU3dTODVK?=
- =?iso-2022-jp?B?NzZreGtZc3ZZeUlZL2s3MUllcFlkdEIyM0ZMc1BYRFR4Z1BNUnhSTm1p?=
- =?iso-2022-jp?B?Y2tqNDRpUTFlczJ4L1kybW1lb2FJeFRUa216OGxEeFVDMDV3dnZWQ2dp?=
- =?iso-2022-jp?B?SWdrdE1VT2RCY0pEYXNvVkxidHVSci92QzBNV1g1WU9Dc2gyWHRVNmEv?=
- =?iso-2022-jp?B?RDNpajhWaWJDWFNMRVZub1ZNSHRvclJqVWtKM2V0RkNPQW1yRUQ1NmlX?=
- =?iso-2022-jp?B?RGVrQUhJbTZaR3JwT1crUjRtNDdVcVRlME9uMEp5VFZPZFpzb0ZyNjYz?=
- =?iso-2022-jp?B?L2NKQ3ozYVVZMzVOUFlXS1RodDZrMmpyZVFyTHdSOTZuckt6dHZkTElj?=
- =?iso-2022-jp?B?dUxZdHlhVTJtVVBPTVhaUllrR2QrZnB3TWVEM1B0WEtUQzE3TlAwZE5y?=
- =?iso-2022-jp?B?UEpKODRaaUFtZDljV2dzQlEyZU5hR0pFcHJBZGc0RjZWMjIyS2hVRnFJ?=
- =?iso-2022-jp?B?NUFzbDgra1VObkhyTnJTL0NDcWtocTY5NTBNcytZKzk2OFhjQmFSai82?=
- =?iso-2022-jp?B?OWFJQjF1SU5MeFdyY0ZDMlNjYzNhNHd2cktmdXluOTFNVjN6TWF5VWFZ?=
- =?iso-2022-jp?B?dWRvR3RlT2t1WFNjUERSM0dpdTBTeDkrd3YwVCt5L0czYmlDd1pmZ1c3?=
- =?iso-2022-jp?B?RHllZVYyVmhmTWx5RG1RZ3JsZ25BbTBYbWpqT1NrV2RlYld0YXArYTRI?=
- =?iso-2022-jp?B?L3VGL3lnaGlBL0U1UlFlUEl5cTFCZVhKOTVkTCs4Mm14YlpBa0ExNlhW?=
- =?iso-2022-jp?B?YnFLbW1qOXN2Sm5yaEVDRkk0WnJHczY4ZlJaUXpTVHhudFBQMzBSYVF6?=
- =?iso-2022-jp?B?cEcza205TFoxSG5EV3ByekN4ZjdBT0d0MThYV3YyNVRFY2N4VzU4cld6?=
- =?iso-2022-jp?B?Ris0ZTc1Tzd1bmovMmZ1WTRabHR2a2NhZVRYVmFwTHVWYzZrU2V3dkox?=
- =?iso-2022-jp?B?QXUyVlV4MkNrOXBWdWhPTEJ1am53cHdxQWc9PQ==?=
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D32239591
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761722177; cv=none; b=GhC0DignKzEKQ6ZtJ9TpvLeEiN4Oje3TedSbZDsQa7ganXb4HpMyE/rzz38Jf9SWMc/l3315oUf9/JPY+5VcAQ1G4zb/dUOhJqaOGI/sfnRdd+E93Toz7IsW/Qk+NAxX30HR5ZM/wcSpwClji7SkDZZgdcqAt56N5V8LMyYlnyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761722177; c=relaxed/simple;
+	bh=GYIuLXqZf240u12ydTOg+OVzJwqUwtS9FXkBF5P/lQs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ODAfoqTap+b5Kf9MVw3LvbdZUR8YoWPDbv/LP45npCvqhqI3pY5WhPNkro/c7qc1Wdejy5Mzd7KMssKxkUd+IqbX79FMjq8ci1ocnyFv6I/6d7DzB/kM/z8E1JuYv0nrpYA5ov5IMbrlT1BpqxV5YvhLh8VZciMtYWmC8BZv3Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com; spf=pass smtp.mailfrom=airkyi.com; dkim=pass (1024-bit key) header.d=airkyi.com header.i=@airkyi.com header.b=YG0AUP52; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=airkyi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=airkyi.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=airkyi.com;
+	s=altu2504; t=1761722087;
+	bh=vUs9PR5MkDE2TnuVElj67uBgDlTWsKMlCHyA7Lz2m9s=;
+	h=From:To:Subject:Date:Message-Id;
+	b=YG0AUP52HbPjERGqi6nMhygpUAEh3/O5yinerUKTztg/x94Fr8mviOSjtagDq+ON8
+	 MMnKQ/aiqCdHhrBbvv9jF1b9+xj+81jDaj0h0hIhV7pxplFgrDIHh1eT3cAsCFc5x/
+	 6mpsWBinD3l/V/+JH35DUZGprTRospvpKA4hizjE=
+X-QQ-mid: zesmtpsz6t1761722083t694185fa
+X-QQ-Originating-IP: 5iuWasjHrqOKTZt0yGG1gdnMzF9J085MTFN9CJrLEEA=
+Received: from DESKTOP-8BT1A2O.localdomain ( [58.22.7.114])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 29 Oct 2025 15:14:40 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 18349792753202563132
+From: Chaoyi Chen <kernel@airkyi.com>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v8 00/10] Add Type-C DP support for RK3399 EVB IND board
+Date: Wed, 29 Oct 2025 15:14:25 +0800
+Message-Id: <20251029071435.88-1-kernel@airkyi.com>
+X-Mailer: git-send-email 2.17.1
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:airkyi.com:qybglogicsvrsz:qybglogicsvrsz4a-0
+X-QQ-XMAILINFO: M0/UNHhZ6hMGyYMrPCp2SIx207KrtDNRYw8VCj411KagG5pk6HKwg+Cq
+	hrP6t+q2ctk7ETtpobDQDRnPeqab7dZVCAkhABmBHo7yI895TsLT7YgFfJT2DViqMtCGDa2
+	bN75iiJDv6m4NQZyPWHZitSRNnV+UPxSu34j7vmxCXSRPeJ+zJtJghrAVajvqnCEpCFnevp
+	ngwN/AnNYm4+BpDKXygz/b2sCW1K5n4cO/U5kmlVNwkUTJl9qbsSWblmefRHvMacpklLy6d
+	Q5bGYlKj6PXbYKiQbXH8s5GajN9jx7+v28nX4SF/0aCIaAfbbuM2u5n4MNFFXpqGceYEr6p
+	2KZleVtD9lEM1G34rijRMT8C88rPHLwBycI8DihmsH/IwTZ/XAEYsonZbtrLykSOUzsb9to
+	BrUtNG65kSYgNigsb2s1Da2EBauceNiHFUWmLF+lgUA53qfsnp7txXYEEQxtACJm2Xa9x2h
+	pfr4eAOFXaJ6+hhQj9iapDR0w537b9HazQ98BugMzcRJpFqyGB+nd31uEB/IIgN52ArAhTY
+	NcV/MJ0n210GQ17h0jMfCFHw1nuQ1zuHv6hX0z1zlAPfM3hTDqf9iZGaacz0CV5uaoRciSm
+	LHwfkRrqtxvFVYTgg/Of2wozOpItxa4A621c2OaLdx7xght+0qYL49BgvJ8elTqW0CSVsOx
+	HStmUkSalCfO3zBnuEksA56JH/E+my+DgRsWd4cJSLXGycs1qI0xKFw4uWHsm3fXDU/Tu1M
+	UX7bLtGmXCnX7Ir/m8RlLJVcqmO0eiaL9BASIrzS+40kXpAWU7EU3J/sDWQx9Ig3dpkMTsh
+	S9ARCqL0ErRJgbq094XCEAVpfr7ZqSQG8Lw0e8EdOERWzHvYet1R1aU14l2herMzuVMtwK7
+	WcKXY/F6KLii9/EN+4IRqYJCgZIhEfE6RfwBrBl0ZsXw+wXMm4Xmn0AS278VonROmbM14Ge
+	26a2r5q0j3gx6EB0lwqPfPDMfZ/j9QFYFm+3s0skdfTVpT3+npy8FVJoG
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	7+Z6BWgmwl94s3x5lJb4ULJ8jpAJtJTXiAx+DWTUuvnDs3zJqfewq69ZpAKBjW8CM1iBaCZpSrrhl1X6g6uB2ScD84TIWNrx0uBUIII62qCNQpPmVYD4pMWh948oMJxpoEbbzYcCYXGVqgICssMz/RUVcfx3Kn/w+l1Psf1hK72rhBHcUHzlHHq5B1H9h0atjlyusIktgifTvLJOvE2wyBaqbYPLHlmuFs9Hni4xk450SiCZdHsUntqM+P2tbtGXkIOORr3+uivE+7x4Kl1zCGpWJC7CJz8HA9J1YStOojdGgi2CeTMZLBO44q21ekkV7QiEUteC8IufWyccRjp2YZERxiGGDjfpF+ED74gLBjFE/adlRSWtMGgxq3rMOMFMiUx/OmpxVQcXrMd8N002ierFgzQPY5CkXTAVNNpREo7XAptzjYPr9MwKScpI8sp/jetcyNQsqRDTmA3LSQTVP/ER9c+n4DhtojpiqMQmhgqv8pbuiuFxifEgOeoI2J/OdD4vHzggL/Oh1sUMBJcKCokPCChueZDd5tul8oeldlEMmQufJSp+e+KEs3AVmrSR6+OYTXMlt/0h+5tWboQfNoEZ8v+incOTINEDimr7UUr+47JjJrOMr/QLhpiviGFC
-X-OriginatorOrg: fujitsu.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSZPR01MB8798.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9075c7b4-7acc-43ba-f81d-08de16bacaf3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2025 07:14:25.7350
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 0q0JJHqlR6/iEdOhTZTNTGSDtFDd5q6n88kP4x/LlOxEzjubtq75XT0ShIbu1DtU+Ns15u99GpqKZuhN5FBlI1M8CdDKFuUv0taaB/Nm7M8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSZPR01MB7771
 
-> resctrl expects to reset the bandwidth counters when the filesystem is
-> mounted.
->=20
-> To allow this, add a helper that clears the saved mbwu state. Instead of =
-cross
-> calling to each CPU that can access the component MSC to write to the cou=
-nter,
-> set a flag that causes it to be zero'd on the the next read. This is easi=
-ly done by
-> forcing a configuration update.
->=20
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Fenghua Yu <fenghuay@nvdia.com>
-> Tested-by: Fenghua Yu <fenghuay@nvidia.com>
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 
-Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+This series focuses on adding Type-C DP support for USBDP PHY and DP
+driver. The USBDP PHY and DP will perceive the changes in cable status
+based on the USB PD and Type-C state machines provided by TCPM. Before
+this, the USBDP PHY and DP controller of RK3399 sensed cable state
+changes through extcon, and devices such as the RK3399 Gru-Chromebook
+rely on them. This series should not break them.
+
+====
+1. DisplayPort HPD status notify
+
+Before v7, I implemented a variety of DP HPD status notify. However,
+they all had various problems and it was difficult to become a generic
+solution.
+
+Under the guidance of Heikki and Dmitry, a decoupled notification
+method between the TypeC and DRM subsystems was introduced in v7.
+First, a notification is sent when TypeC registers a new altmode.
+Then, a generic DP AUX HPD bridge is implemented on the DRM side.
+
+That makes it redundant for each Type-C controller driver to implement
+a similar DP AUX HPD bridge in embedded scenarios.
+
+====
+2. Altmode switching and orientation switching for USBDP PHY
+
+For USB Type-C interfaces, an external Type-C controller chip assists
+by detecting cable attachment, determining plug orientation, and
+reporting USB PD message. The USB/DP combo PHY supports software
+configurable pin mapping and DisplayPort lane assignment. Based on
+these message, the combo PHY can perform both altmode switching and
+orientation switching via software.
+
+The RK3399 EVB IND board has a Type-C interface DisplayPort. It use
+fusb302 chip as Type-C controller. The connection diagram is shown below:
+
+fusb302 chip +---> USB2.0 PHY ----> DWC3 USB controller
+             |
+             +---> USB/DP PHY0 +--> CDN-DP controller
+                               |
+                               +--> DWC3 USB controller
+
+====
+3. Multiple bridge model for RK3399 CDN-DP
+
+The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+the CDN-DP can be switched to output to one of the PHYs.
+
+USB/DP PHY0 ---+
+               | <----> CDN-DP controller
+USB/DP PHY1 ---+
+
+In previous versions, if both PHY ports were connected to DP,
+the CDN-DP driver would select the first PHY port for output.
+
+On Dmitry's suggestion, we introduced a multi-bridge model to support
+flexible selection of the output PHY port. For each PHY port, a
+separate encoder and bridge are registered.
+
+The change is based on the DRM AUX HPD bridge, rather than the
+extcon approach. This requires the DT to correctly describe the
+connections between the first bridge in bridge chain and DP
+controller. And Once the first bridge is obtained, we can get the
+last bridge corresponding to the USB-C connector, and then set the
+DRM connector's fwnode to the corresponding one to enable HPD
+notification.
+
+====
+Patch1 add notifier functions for Type-C core.
+Patch2 export all Type-C device types for identification.
+Patch3 add generic USB Type-C DP HPD bridge.
+Patch4 add new Type-C mode switch for RK3399 USBDP phy binding.
+Patch5 add typec_mux and typec_switch for RK3399 USBDP PHY.
+Patch6 add DRM AUX bridge support for RK3399 USBDP PHY.
+Patch7 drops CDN-DP's extcon dependency when Type-C is present.
+Patch8 add multiple bridges to support PHY port selection.
+Patch9 add missing dp_out port for RK3399 CDN-DP.
+Patch10 add Type-C DP support for RK3399 EVB IND board.
+
+Changes in v8:
+- Link to V7: https://lore.kernel.org/all/20251023033009.90-1-kernel@airkyi.com/
+- Export all typec device types for identification.
+- Merge generic DP HPD bridge into one module.
+- Fix coding style.
+
+Changes in v7:
+- Link to V6: https://lore.kernel.org/all/20251016022741.91-1-kernel@airkyi.com/
+- Add notifier functions for Type-C core.
+- Add generic USB Type-C DP HPD bridge.
+
+Changes in v6:
+- Link to V5: https://lore.kernel.org/all/20251011033233.97-1-kernel@airkyi.com/
+- Fix depend in Kconfig.
+- Check DP svid in tcphy_typec_mux_set().
+- Remove mode setting in tcphy_orien_sw_set().
+- Rename some variable names.
+- Attach the DP bridge to the next bridge.
+
+Changes in v5:
+- Link to V4: https://lore.kernel.org/all/20250922012039.323-1-kernel@airkyi.com/
+- Remove the calls related to `drm_aux_hpd_bridge_notify()`.
+- Place the helper functions in the same compilation unit.
+- Add more comments about parent device.
+- Add DRM AUX bridge support for RK3399 USBDP PHY
+- By parsing the HPD bridge chain, set the connector's of_node to the
+of_node corresponding to the USB-C connector.
+- Return EDID cache when other port is already enabled.
+
+Changes in v4:
+- Link to V3: https://lore.kernel.org/all/20250729090032.97-1-kernel@airkyi.com/
+- Add default HPD device for DisplayPort altmode.
+- Introduce multiple bridges for CDN-DP.
+- ...
+
+Changes in v3:
+- Link to V2: https://lore.kernel.org/all/20250718062619.99-1-kernel@airkyi.com/
+- Add more descriptions to clarify the role of the PHY in switching.
+- Fix wrong vdo value.
+- Fix port node in usb-c-connector.
+
+Changes in v2:
+- Link to V1: https://lore.kernel.org/all/20250715112456.101-1-kernel@airkyi.com/
+- Reuse dp-port/usb3-port in rk3399-typec-phy binding.
+- Fix compile error when CONFIG_TYPEC is not enabled.
+- Notify DP HPD state by USB/DP PHY.
+- Ignore duplicate HPD events.
+- Add endpoint to link DP PHY and DP controller.
+- Fix devicetree coding style.
+
+Chaoyi Chen (10):
+  usb: typec: Add notifier functions
+  usb: typec: Export all typec device types
+  drm/bridge: Implement generic USB Type-C DP HPD bridge
+  dt-bindings: phy: rockchip: rk3399-typec-phy: Support mode-switch
+  phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
+  phy: rockchip: phy-rockchip-typec: Add DRM AUX bridge
+  drm/rockchip: cdn-dp: Support handle lane info without extcon
+  drm/rockchip: cdn-dp: Add multiple bridges to support PHY port
+    selection
+  arm64: dts: rockchip: Add missing dp_out port for RK3399 CDN-DP
+  arm64: dts: rockchip: rk3399-evb-ind: Add support for DisplayPort
+
+ .../phy/rockchip,rk3399-typec-phy.yaml        |   6 +
+ arch/arm64/boot/dts/rockchip/rk3399-base.dtsi |  10 +-
+ .../boot/dts/rockchip/rk3399-evb-ind.dts      | 146 ++++++
+ drivers/gpu/drm/bridge/Kconfig                |   5 +-
+ drivers/gpu/drm/bridge/Makefile               |   8 +-
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c       |  23 +-
+ drivers/gpu/drm/bridge/aux-hpd-bridge.h       |  13 +
+ .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  |  47 ++
+ drivers/gpu/drm/rockchip/cdn-dp-core.c        | 354 ++++++++++++---
+ drivers/gpu/drm/rockchip/cdn-dp-core.h        |  24 +-
+ drivers/phy/rockchip/Kconfig                  |   3 +
+ drivers/phy/rockchip/phy-rockchip-typec.c     | 420 +++++++++++++++++-
+ drivers/usb/typec/Makefile                    |   2 +-
+ drivers/usb/typec/bus.h                       |   2 +
+ drivers/usb/typec/class.c                     |   7 +
+ drivers/usb/typec/class.h                     |  10 -
+ drivers/usb/typec/notify.c                    |  24 +
+ include/linux/usb/typec.h                     |  10 +
+ include/linux/usb/typec_notify.h              |  16 +
+ 19 files changed, 1034 insertions(+), 96 deletions(-)
+ create mode 100644 drivers/gpu/drm/bridge/aux-hpd-bridge.h
+ create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+ create mode 100644 drivers/usb/typec/notify.c
+ create mode 100644 include/linux/usb/typec_notify.h
+
+-- 
+2.49.0
+
 
