@@ -1,87 +1,105 @@
-Return-Path: <linux-kernel+bounces-876682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A963C1C03C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:19:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5CCEC1C1EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697F319C2089
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:16:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5439E5C487F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89350312822;
-	Wed, 29 Oct 2025 16:15:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B5533A02D;
+	Wed, 29 Oct 2025 16:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UC9ND6H1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BEB345754
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6E22D3EF6;
+	Wed, 29 Oct 2025 16:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754507; cv=none; b=SvnDYlE9rnS9A7vRt+4y0byxDCVOsD5insZBXMnGhEtPFRvtCQIxyPkSxT/6DHv392OU8sqWI6VVYOIHn/f+B3bZ9H7bxIVw90yApYBpVmNHppJM3CGZ5fNeshFZy4YeusOLxc9V1YHG6kXJeC4ZyGFH2yGGbnR9DXY4Q5oDU1c=
+	t=1761754341; cv=none; b=KHUeE5Afpz1hdXnkCVdrvYDNgd1HpTUuRdOHZLXYVCcPGIqxVLL45Cm8RFrXty+H/x3qhIGuypQEkjCpReuvwDj+1Hvozu/VP03rGqIbEjIqKViJytdSM/XyiPwFXEHhh4niWafCpe/edm0EXBIdTToqzQSMaLJtQldT4AM4Jsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754507; c=relaxed/simple;
-	bh=XLJBCvfnU/2+fQa40bmCPt+xP96A+sxD8DPQAK7qr5A=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mVwvRY3+bIVk2eRQdCnYY892bEmd8qsO6GueFrgEZIxYhBZ0mLL4K0X65SYuGNBQ0qul3M5vCB4KAxZnWAn0k2M/R6kjI/WopWKhWaIRbWByXXIeb6vSbXUC5Su1e79pRs8Qh5REQGUy+th6rMGj2QPCoBcYxddcMYuTzWDCIMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c9176acaso1135685ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761754504; x=1762359304;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wbRZdr1gB7riUGYFIHvlkpAaC2FFLvU2w3RLVOpncNM=;
-        b=DiubnFZ/HK5yvint3u7h+sWX6RT/smBD7VNh4ncbi5G8tUPkhLeTrMNoCMv/cfYLvB
-         d33tdccUReRlgqFwXUAqosBC4h6rIVoonAd1/zYEO6OVcAiZraRQY49P186BamtvP1bv
-         MrieOGG7WtNThmlGCIlHfrNIFx5/YQXKGYDtZuNVJEu8s1j/82OmxWoA0PEeHFK1bApY
-         XpJBRKPgEAxg2DltLPpmEGgb/1enJNMLJzRI3C6fUxw49d3IBj+eu4RIxZH2bvJnVAPt
-         eVx+SKjeecv3L098vJybMZ9j4t7IofHniJ0ElOvPbTOOV85sTXb39YpDzQ+DCZ8cnat3
-         DbyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAdAzvDfDh8+ce6t+30vMFjpz7zUFvazKbzsXhHoIkz/XMZi+maNMsYLLjYxg09UcwmZ8Kok6Cg8ou9xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnRR4RqyxTnRMFWTNr35ipqQsA/+zxyElzM5jyBgYMrds2Ixen
-	LqA/CsbwFPL8Iy93THxDXTP+yXbhKNQCJA+ZlXeZRFqHhfI2UZg7yd5sj+doTaJGpyz4he1s2al
-	9LzmxIplS0oS+3jETKTc2ljTvXtHP1mNZlWo0sDdTTfFVdcfjXeI8cFwJ/GI=
-X-Google-Smtp-Source: AGHT+IGIMr00ayiB6Zl6Egd8G/U5/gZVE8ZQADzywLeF8ddkpGFsbRyrSAMnj8bxahcDDkntQa6t+N43yNxVuhdRhnHSb4QVaY2m
+	s=arc-20240116; t=1761754341; c=relaxed/simple;
+	bh=OiHeyOB5BxQZi5pzwSbzaZYMVNw95ZMmtCxK/6h1kAk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjYZ7ur/pREjtO7XaSILrVeAquTS4IXt8roQvZtCHTJ+JYHPWpVuDBC0+kSmEqmS5WaWu5SEWH5qBPhhio1gmgQmUhu/qgJCNlgfxjiE8dNTETsyfKyOXAccE35B0NTTM8csw1432I+BcMLQnqHKZS4wdXjZ3PCp/ApBwtQLyp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UC9ND6H1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9C47C4CEF7;
+	Wed, 29 Oct 2025 16:12:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761754340;
+	bh=OiHeyOB5BxQZi5pzwSbzaZYMVNw95ZMmtCxK/6h1kAk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UC9ND6H1E6ZGEId8P98ZrE79+fb++RvGPSrWhvzSD9YTD0v1rVcitkYtvc3T+ROWL
+	 ftAEbRap9WJmDVMwecg80NXAatnN3VanEEED6mcD+BBqyR+dI6cbRPEEuTvchTxdPQ
+	 tYY1wEISxXLUmSUHAYmSu3NQMEahHXDHmNhQiiw6dKgrrfy15gNadHb+Na+sh1KFXo
+	 Q9WeCcQ2SYTOMGWIsSUwShUniTzV6O83mjNMnI4CoiaCtWg1SaN/MqRvjy9E+0OWTg
+	 LVU4zEr9lt+8brgrHd5Rzqga8t3epmBIqY0FPzhS1kfpEyAVfM9xMdOGAQtMnQMT/T
+	 QQkxLR+1f4ReA==
+Date: Wed, 29 Oct 2025 11:15:24 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
+	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: mailbox: qcom: Add IPCC support for
+ Kaanapali Platform
+Message-ID: <l6ja2uni4grnhicis3xksmco65l5axodwg6umpomhkssuc4ja5@zy33evwbv3zy>
+References: <20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com>
+ <20251029-knp-ipcc-v2-1-8ba303ab82de@oss.qualcomm.com>
+ <k2wgpzkfklso42nsd6w527gqiadgdb235kzmvgk4wy27vievir@vlyxti5y7yan>
+ <cdfde03c-0fa1-4142-87b6-7c023e0b5c0d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180e:b0:430:db6d:30f8 with SMTP id
- e9e14a558f8ab-433011d47e2mr2592545ab.4.1761754503761; Wed, 29 Oct 2025
- 09:15:03 -0700 (PDT)
-Date: Wed, 29 Oct 2025 09:15:03 -0700
-In-Reply-To: <20251029062741.5wX4O%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69023d87.050a0220.32483.0213.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate (2)
-From: syzbot <syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cdfde03c-0fa1-4142-87b6-7c023e0b5c0d@kernel.org>
 
-Hello,
+On Wed, Oct 29, 2025 at 04:47:17PM +0100, Krzysztof Kozlowski wrote:
+> On 29/10/2025 16:16, Bjorn Andersson wrote:
+> > On Wed, Oct 29, 2025 at 01:15:09AM -0700, Jingyi Wang wrote:
+> >> Add the physical client ids and binding for Kaanapali platform. Physical
+> >> client IDs instead of virtual client IDs are used for qcom new platforms
+> >> in the Inter Process Communication Controller (IPCC) driver as virtual to
+> >> physical mapping logic is removed in HW.
+> > 
+> > Happy to see the description of what changed wrt physical vs virtual
+> > client IDs, but you're leaving the task of figuring out how this
+> > explanation is applicable to the imagination of the reader.
+> > 
+> > Nobody knows that the values in dt-bindings/mailbox/qcom-ipcc.h are
+> > "virtual client IDs", so it's not clear that you're trying to provide an
+> > explanation to why a new, platform-specific, header file is needed here.
+> > 
+> > 
+> 
+> 
+> Physical or virtual, standard expectation is that they are used by the
+> driver. This does not happen here, so what do they exactly represent?
+> Which part of SW ABI?
+> 
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I was under the impression that they would be used only in DeviceTree
+source, and the driver simply uses the values it reads at runtime.
 
-Reported-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
-Tested-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
+But perhaps my memory is failing me, it's been a while since we
+discussed this internally. Either way, the commit message should
+document this, so I don't have to remember...
 
-Tested on:
+Regards,
+Bjorn
 
-commit:         4408a3d6 Linux 6.12.56
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=14310e14580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
-dashboard link: https://syzkaller.appspot.com/bug?extid=7aef76bdb53b83d62a9e
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11db6fe2580000
-
-Note: testing is done by a robot and is best-effort only.
+> Best regards,
+> Krzysztof
 
