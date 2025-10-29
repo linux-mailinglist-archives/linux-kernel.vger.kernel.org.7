@@ -1,182 +1,98 @@
-Return-Path: <linux-kernel+bounces-877179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21569C1D617
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:09:42 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AA0C1D580
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B6704E60BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:08:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C124F34D035
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4354831A061;
-	Wed, 29 Oct 2025 21:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 690D8316911;
+	Wed, 29 Oct 2025 21:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OkNFSSjW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sXPTQ6NN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A2B320CD6;
-	Wed, 29 Oct 2025 21:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4329241695
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761771979; cv=none; b=q6sh9Zpq6bO80KzgBtCUpmR5V32ehb/Tgf0julnhs5Uq+pEzqkQ4bEM01Pn1pBcp+bjz0sqvTdZSed8Fp1PAPLNO+7PgT2nhKXcUTomPr69Hr+dJhvfWQH54D6wr9fZ3dz4CkGAzIG5AqcDmqqqP/FlznZAsaUoHpPZAv7Y5KjA=
+	t=1761771876; cv=none; b=TKCBXfCvWGpn9h2hm2BlajFxTx/rxEUfGIppRc1UUFeRh3kDYHZ1kgiaRHGkecnegp32ukX6aGCfh6V2ghT6H5d3rKoTR+HPf30rwKtswfVcziXw2Py44sjvq0P1oj4jY6zzeiVm8YcrMfTrcRgjpuk77FBMJJp2UJRYHUd/ViQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761771979; c=relaxed/simple;
-	bh=Np5CMFbWfUmbU6MayjZ40pxjcZnyi9oeks/j+smFIbo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UxfMikhN5zJ+5bkMPaocslvTYFDqsxvdlbx3EeboTb6iSe3WUc8qSXq4p7WftutoIdPEERu0Ytm1FAVKYfUAVaFrZPqdXV+SunaDdQqd6RYlqaVFJeYXDGt45G8H2G0CG+ThiSNTA5izwhLUoqhtomlkwTTK2BLTVkAIhDbB9aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OkNFSSjW; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761771978; x=1793307978;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Np5CMFbWfUmbU6MayjZ40pxjcZnyi9oeks/j+smFIbo=;
-  b=OkNFSSjWU5/kAdKnvf6VcexPVvKd8c1x8IaYy65x74JcKpAu/c0LHtGU
-   jOAZ+uWlJsyksipomavlXUlGXByn3NGtakCEKojIbBDKBoewJSuiap4KW
-   MWzzSMNjdSo6aAN9xi1oyqP5LK+Lmglqta6Db05npUsgmZz6LtEHcdu5Q
-   QUawcDnv8hultVtZuwh/WJMab8n+q11zvsrB7IO8bLOmyV8ZyCwQPBhy3
-   aNSFFPwTXlJNga5E5oCN+E9mV5ERT/c84DWgKnTXXzahCAxvzEc9TowQr
-   p2gsdaXkKCD4k7g2bDsrbl14wlcfsN1B/+iTL/ojCi7WOx842AHbFilZH
-   Q==;
-X-CSE-ConnectionGUID: 9prTzSlOS1+C5aakqn1MAw==
-X-CSE-MsgGUID: 0yND17ZeSRC2/VOi+EPefQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64002745"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="64002745"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 14:06:16 -0700
-X-CSE-ConnectionGUID: hzvYjJXbTG6vTHQfvsUQgA==
-X-CSE-MsgGUID: cmBIxFr2RDCHUhRKjX2Oog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="216432021"
-Received: from sohilmeh.sc.intel.com ([172.25.103.65])
-  by orviesa002.jf.intel.com with ESMTP; 29 Oct 2025 14:06:16 -0700
-From: Sohil Mehta <sohil.mehta@intel.com>
-To: x86@kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Kirill A . Shutemov" <kas@kernel.org>,
-	Sohil Mehta <sohil.mehta@intel.com>,
-	Xin Li <xin@zytor.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Sean Christopherson <seanjc@google.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU initialization
-Date: Wed, 29 Oct 2025 14:03:10 -0700
-Message-ID: <20251029210310.1155449-10-sohil.mehta@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251029210310.1155449-1-sohil.mehta@intel.com>
-References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+	s=arc-20240116; t=1761771876; c=relaxed/simple;
+	bh=IeQrdhbzJtSGHs4OR0fhELCzRR7fb17Ll03UxCVXOf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dp9zY1tme6BeNrSTxigzNUL52U53qMUpFsY4P1bBflvJW1Y8g6uAUvvOo1QVOu07euzj74jcqaD1IoMly1CFNrfs163OVKZMYUeeYbxCDMiP8SAbjf3t9Qq/bavdQjsifq8KY6gItCbg2qToeNgLHT+L5iWui3+1xeXtgG8/jGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sXPTQ6NN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54A67C4CEFF
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761771876;
+	bh=IeQrdhbzJtSGHs4OR0fhELCzRR7fb17Ll03UxCVXOf8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sXPTQ6NNfN9LetKeBdJ4sOKxVBj1JnrICO57BRnyzpnOMSb8/f0Rs4pO4m4c0IwXw
+	 kLhIPCj/l4G4Zt1Zq2LC09krLSQBhMVdt35eYTS9eiwNNCqygO03elPHDbu97vyNjj
+	 Bt+dTTGcvx0Eup5gFYbg3DV14axVEhms9uICsONWcPS8BLPDlVDLJ3cpnVeWNz32z2
+	 zoWWUBZSqn0Z8Y8dnZTnyOS0DN6ZL0s1ruZuJYQEtIgbFQVKFP9kSa2TXPLxZHjA7n
+	 REfez8IDzuewVKhuCitUWJA6vpx7RRt7eMhXmitFlH9BXmf/EmYd7eysALggY3vVR2
+	 EtQDbaGuUftmQ==
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-87fbc6d98a9so3126516d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:04:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpKS0RLrIHvvXwUhQjT00EEJ4bhCzcOdpEz6FwAlrZojPSpx9q5e2WjwAESPnTxmIxyuzfH2ZFoIAd45c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYcuH90w8OH1eG+AUrA7lUjjeWxTR2hl+5lD00/YPgtDSpPZYJ
+	kOY6pTaiI4dPBpWBSK45oFkvBblF7Tr8G6pyPb3SEhixfvJUvl6JwdebC464XslEGVP0v9yNALa
+	LsENE9XZc2TdohKLMN5oowbqPOyB/4ZM=
+X-Google-Smtp-Source: AGHT+IEqf3PIOchyUqoLcawfwjWZmR/KgFNBHjNgX4VqoOPf6lJnxW+Lti6nor6ugzHgDbmIf5F9oXMuNctmihwhxfM=
+X-Received: by 2002:a05:6214:487:b0:775:1d3:d07f with SMTP id
+ 6a1803df08f44-8801b0c5fbemr13858946d6.11.1761771875408; Wed, 29 Oct 2025
+ 14:04:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-3-roman.gushchin@linux.dev>
+In-Reply-To: <20251027231727.472628-3-roman.gushchin@linux.dev>
+From: Song Liu <song@kernel.org>
+Date: Wed, 29 Oct 2025 14:04:24 -0700
+X-Gmail-Original-Message-ID: <CAHzjS_uagf3G4hAcJK0QWao88a4sRzXjdkQGgRMH8RZYd_C4Cw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmwLAYqjY6FqVrt95b3pom6p-BA2r_4lSQbeFy3VWdjR4QavcuPY05pP8A
+Message-ID: <CAHzjS_uagf3G4hAcJK0QWao88a4sRzXjdkQGgRMH8RZYd_C4Cw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linear Address Space Separation (LASS) mitigates a class of side-channel
-attacks that rely on speculative access across the user/kernel boundary.
+On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
+x.dev> wrote:
+>
+> When a struct ops is being attached and a bpf link is created,
+> allow to pass a cgroup fd using bpf attr, so that struct ops
+> can be attached to a cgroup instead of globally.
+>
+> Attached struct ops doesn't hold a reference to the cgroup,
+> only preserves cgroup id.
 
-Enable LASS by default if the platform supports it. While at it, remove
-the comment above the SMAP/SMEP/UMIP/LASS setup instead of updating it,
-as the whole sequence is quite self-explanatory.
+With the current model, when a cgroup is freed, the bpf link still
+holds a reference to the struct_ops. Can we make the cgroup to hold
+a reference to the struct_ops, so that the struct_ops is freed
+automatically when the cgroup is freed?
 
-The legacy vsyscall page is mapped at 0xffffffffff60?000. Prior to LASS,
-vsyscall page accesses would always generate a #PF. The kernel emulates
-the accesses in the #PF handler and returns the appropriate values to
-userspace.
+I think the downside is that we will need an API to remove/change
+per cgroup OOM handler.
 
-With LASS, these accesses are intercepted before the paging structures
-are traversed triggering a #GP instead of a #PF. To avoid breaking user
-applications, equivalent emulation support is required in the #GP
-handler. However, the #GP provides limited error information compared to
-the #PF, making the emulation more complex.
-
-For now, keep it simple and disable LASS if vsyscall emulation is
-compiled in. This restricts LASS usability to newer environments where
-legacy vsyscalls are absolutely not needed. In future, LASS support can
-be expanded by enhancing the #GP handler.
-
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
----
-v11:
- - Disable LASS if vsyscall emulation support is compiled in.
- - Drop Rick's review tag because of the new changes.
-
-v10
- - No change.
----
- arch/x86/kernel/cpu/common.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index c7d3512914ca..71e89859dfb4 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -401,6 +401,25 @@ static __always_inline void setup_umip(struct cpuinfo_x86 *c)
- 	cr4_clear_bits(X86_CR4_UMIP);
- }
- 
-+static __always_inline void setup_lass(struct cpuinfo_x86 *c)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_LASS)) {
-+		/*
-+		 * Legacy vsyscall page access causes a #GP when LASS is
-+		 * active. However, vsyscall emulation isn't supported
-+		 * with #GP. To avoid breaking userspace, disable LASS
-+		 * if the emulation code is compiled in.
-+		 */
-+		if (IS_ENABLED(CONFIG_X86_VSYSCALL_EMULATION)) {
-+			pr_info_once("x86/cpu: Disabling LASS due to CONFIG_X86_VSYSCALL_EMULATION=y\n");
-+			setup_clear_cpu_cap(X86_FEATURE_LASS);
-+			return;
-+		}
-+
-+		cr4_set_bits(X86_CR4_LASS);
-+	}
-+}
-+
- /* These bits should not change their value after CPU init is finished. */
- static const unsigned long cr4_pinned_mask = X86_CR4_SMEP | X86_CR4_SMAP | X86_CR4_UMIP |
- 					     X86_CR4_FSGSBASE | X86_CR4_CET | X86_CR4_FRED;
-@@ -2011,10 +2030,10 @@ static void identify_cpu(struct cpuinfo_x86 *c)
- 	/* Disable the PN if appropriate */
- 	squash_the_stupid_serial_number(c);
- 
--	/* Set up SMEP/SMAP/UMIP */
- 	setup_smep(c);
- 	setup_smap(c);
- 	setup_umip(c);
-+	setup_lass(c);
- 
- 	/* Enable FSGSBASE instructions if available. */
- 	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
--- 
-2.43.0
-
+Thanks,
+Song
 
