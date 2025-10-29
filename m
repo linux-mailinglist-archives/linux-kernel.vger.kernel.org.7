@@ -1,270 +1,182 @@
-Return-Path: <linux-kernel+bounces-876903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01EBC1CAD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:07:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B5DC1CBD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6529C34CD40
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:07:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FEA621969
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E02773E5;
-	Wed, 29 Oct 2025 18:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060623491F5;
+	Wed, 29 Oct 2025 18:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4q/lDtQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqAQ1zUg"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702BE246BB9;
-	Wed, 29 Oct 2025 18:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2292773CC
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761247; cv=none; b=Q0om8PvvSSQ+QInh2dDKe4IFDKmGAQu9jOnr9xQMJse08wlOK6OR9AV0cSYpDA4QoZZkxBgI5uu5P9Ok47nglSXM8WT3n4WkIq7iF4B7BfAxzIM5XnLUkk8uQrVeiWQSXbqdDVRQ2Uy94x/N+undkrpJKihekSwXZSKO2KV4vsg=
+	t=1761761272; cv=none; b=lqFCpXmxxrqBHaFoZrb6kiHq8aZKqCA1cKDlkSUXYqDKRRe+QTN+6E+zO/mA1GBOkelm+k5rVvEJa56NOy476lY6IlJ8A2IkdxWy4zipOHyLuBxVppnY71+czG13bn7J0B/Jgmy2HWIrTm7y3hjkDp+0HL9Z1/xvjCRyZQ5aCuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761247; c=relaxed/simple;
-	bh=HOvHrd9lTlExQNxMx+bs7lEVd82AgmD5uhqp7QkEUdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MWHzLEPQXYrDLNeIhc2MEdxt2ZFZa4dxlcgaCSdPGHAb3IgBKmroDl72St6WRb73yuATGmbm9Cm2Gz/c9aLeVjG2jE+RGS5kLC+czthehQ9Ynw+19ZAiuF7mVi4mu6JaZ+CffO/7SlJhtdrVPwFtLmc4sr3Xiza58xHww3kD+BA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4q/lDtQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D15C4CEF7;
-	Wed, 29 Oct 2025 18:07:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761761246;
-	bh=HOvHrd9lTlExQNxMx+bs7lEVd82AgmD5uhqp7QkEUdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X4q/lDtQpA2b2W99z9QNzL38dlSOCO1t6RvlIzLwq7zlhayOqakk9R0+/0d8tjPPZ
-	 YSmZcay+0TvIe5sLPWqHMXVhMz9cNpcLMNDI0TyB5EmmPPZjzlrWpxmV3LXcB6mKBr
-	 ek4FLQYqJirLYxiMdtCqmE+qcrtrpXza0Sz/O1r8z9zb9ykUK2x4Gm4Ga9pssIbJ/m
-	 1r+fE3IbvooxK8LvD95nlxLT5bidqE346ZtRYrEyy/EqpLaViNsesDZ9dsMFvqCnZ/
-	 cJd3VJTafiD0dJU18sZDBGsQM2URy9M/duSwaqMg0wdlSzREQU8TPgdA5OXgNdv/58
-	 cI4Mphoh1SnHg==
-Date: Wed, 29 Oct 2025 18:07:22 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/4] dt-bindings: phy: Add documentation for Airoha
- AN7581 USB PHY
-Message-ID: <20251029-mutual-scotch-7ca52e17da69@spud>
-References: <20251029173713.7670-1-ansuelsmth@gmail.com>
- <20251029173713.7670-3-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1761761272; c=relaxed/simple;
+	bh=UJ2DT1Tiu56DrBbBEh0/iWktyI9wRry2MbdlaBokZTE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHb8EThReRnaauOAUBkA7vG8uGhgQZmb7ioL+w/zhhOvCSRwcsmW0bvsqAs+iFp7dzUJMhfQb4WerWoKz2t4N625biriOScWWZTg795/etUMJrftmTfQADonXgTw4rIwjKBTPfubH2Swgj+H2I625a1LQsKaDAp/imnP8DosWYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CqAQ1zUg; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475db4ad7e4so547665e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:07:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761761269; x=1762366069; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KNwV3kIKfmFe80QZSUe0lDX9k4qYiLpxE6LgR+ZybE0=;
+        b=CqAQ1zUg817oJVlpv8g7bs+xLpZr/PYk2oyKhaAk4ZnalmPieNUfbH6dKT909FfWuf
+         XX8A1l7w1D6Hat46MfThWR8pNXrwcym/ZwPZ3qUKAFMXkem4q/88Ld+UByPbGq2CDZRc
+         bVE7e8fLorKjRahTDdrwGuXbZXytuz05ppYQPLKc3gYUrh7w2GsUkj2z2VrDa+sS1TkS
+         qbsz7RRcxnaXuJixKqDCy8rLqmI1BF/N664ZHWEbqLz6blZ/B/Os4m7ty/GiJRyyBHRV
+         Pvu8USwttJdSrVXi216QHNyoddQ8ZtJkCMJzjlYMXr69McKB6HcClGN2RSxn2ymsA/zg
+         QK0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761761269; x=1762366069;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KNwV3kIKfmFe80QZSUe0lDX9k4qYiLpxE6LgR+ZybE0=;
+        b=JH8WGftUAZ0BnvJP3KtM15nFbXhErcgpz1b44MLo9WqFwJEJaif9Y0ViCjarlUJo0L
+         UnQ4DehIHK/ukJlw5/ZusZsUK1ZzfUaCvKqNQq0t3nLAH1No8GakQpNuywRSITooZAGK
+         7t91m6pZsUAnulRu/9F9TEIqkOhinFmIri6MwsXdTCdGUZ/5zU/gNnlZa3vXoGqI2kD2
+         kO+vcpg07cj4MuSshjaJJJ+dwachHhmYuB+U5/v9AfM0ocPhbJm7AulXgnql0HHEGabp
+         qu1udi/UhOvTCAeXU41KVEK9njC3spvC8TMVT9woAZrqai7g3RRlUZnN4cCwvxvFYkjX
+         M7mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/pD/UcM4eg+Opx2p8Xn+2u2AYg51EQEBAd+Waf6l73ik+LLVq6jQIlgOMR3tnxsjzJaA8JFA3fAhJoLg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkEUH9AJu2t4So8hDUQIIGOHsibkk3RVICx9IlUP4VskrffDL5
+	dIsYvgeQOz8MG2QMBcAyhiPBN++Grz5wXuKwM0EECI1o37La8LqOYRKHQEjdUIFftY0=
+X-Gm-Gg: ASbGnct0bxAXhp/GbfH64xDEdtoWBcvZj39q+HzISFQNK7HHlNjMhSXedbm4FHFd70i
+	gtuUAxIuke7pRP73n7CR+x3rbbuLJJMGe/rIL/xErn35CPolnDznafnNsVkq61C49DcwU4WIuXb
+	flwcEmNYhRFJxVM+oEsYW7N4tT7RhpzQ7XCPnBjnC5MFI3+AI9bD/qxILB9i9iDUt2mc1gbIGqA
+	hpz/5oOj5dt7uRp2X9G00zMcCyn3lQ89Up+aQeskC9gFu9GHqAZhkf8N+rJaC8Y0QGtnZX7ewKP
+	oQGZRHKtT070J20olaT2Ni/2MgsKW4jrIZFjaRE6ZX+pirXL/BJmc7mZI/UoIOe+MvI4ANz99OH
+	8ggRralp4JOCr3slIc3/u3DZEQFbQJjNqdeHeW7HnlfBqf8CLu2GLRhIysBAyCyGssFJan7rjnL
+	ZU0IDT2kTtRv+A1MEgrWv4
+X-Google-Smtp-Source: AGHT+IEtMPjVh9Zcm+7C9F/ERY97bz/iXjm8g8W+QKNDx62F94FG9cv5Huxi+liF2AyMpIvvFbv2hA==
+X-Received: by 2002:a05:600c:4707:b0:475:dd04:128a with SMTP id 5b1f17b1804b1-4771e1e10b2mr35660565e9.31.1761761268523;
+        Wed, 29 Oct 2025 11:07:48 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47718427409sm49662015e9.1.2025.10.29.11.07.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 11:07:48 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Date: Wed, 29 Oct 2025 19:07:42 +0100
+Subject: [PATCH] i2c: qcom-geni: make sure I2C hub controllers can't use SE
+ DMA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Z7BQNDIzoaCE66cj"
-Content-Disposition: inline
-In-Reply-To: <20251029173713.7670-3-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAO1XAmkC/x3NQQqDMBBG4avIrPtDMhBNe5XSRYyjzsJEkrYI4
+ t0buvw2751UpahUenQnFflq1Zwa7K2juIa0CHRqJjbsrOE73nnXiLr5wxkskhTKEetnRMqYtgD
+ vLbuhD72LI7XMXmTW4794vq7rB/dzaxxyAAAA
+X-Change-ID: 20251029-topic-sm8x50-geni-i2c-hub-no-dma-8812576a65cb
+To: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
+ Andi Shyti <andi.shyti@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ Wolfram Sang <wsa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2132;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=UJ2DT1Tiu56DrBbBEh0/iWktyI9wRry2MbdlaBokZTE=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBpAlfz8LKSj8+mAZ1QksgODZDbo1w7yGU4iVg2tYA9
+ VBEcFOKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaQJX8wAKCRB33NvayMhJ0S2wD/
+ sFxj0QkeV/duZgx4BgvFB456VI+EtWZMBJ3QVO9ZgwzJOGzQJplBMPxpyNBxWiRt1hSl5e/nOBUmXE
+ R/tv8d5Na4+kXHgxezaH2dDB9hBVX8+7mKi6KJtH4KQChVQ5fsEwqPVeO6/dg5DTELvu6mDm+O3OF9
+ Kzn2e3FgP2wbPrGCao5up8PR/wRUCP6zAbdYCWgf+D54nNkdZqLW90pRZxk8FGSPIW4AmSOs15Cc2R
+ Te996h007PCHLoEEfRf0bAt5lweueUCL/vnRMNIArrJ2noAoclVA7YJ5NyRaJtJ1+p3DDzVAVbCgPT
+ QxLDlvYyzc10fmx9aGlhqpRKmmrFjrI4RSO0swEpScsFdOGdnplAWs2lOKxKRhu3V65e5gIu0jNlBW
+ keYbmpfQZ+vvPBlPwzL6AK3KDHuAEaRniwekbixKVm62NNXHPwyz3sBPnoNnsfI5qIP31l3I9/3cLR
+ m/ywztQaFH3AWrdoSzWJrQkJueG2NgK7JveuZjlM4W0efx0ps8OIMbRnBcCg0k436Yt8tUspx8KZzw
+ qVetRqhHG/LSK4XVa5fceQfGqVhLkJ+/8INRV4Mxji7EqSg63no5xELxabQZTg2RHF4edYk1rOSQrZ
+ LmS4OPAo0UyyWqA3ZZ1hx2RX6tFe5s7yybh4qXJjkw0WzLOo2OswA6dki/aQ==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
+The I2C Hub controller is a simpler GENI I2C variant that doesn't
+support DMA at all, add a no_dma flag to make sure it nevers selects
+the SE DMA mode with mappable 32bytes long transfers.
 
---Z7BQNDIzoaCE66cj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: cacd9643eca7 ("i2c: qcom-geni: add support for I2C Master Hub variant")
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+ drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-On Wed, Oct 29, 2025 at 06:37:10PM +0100, Christian Marangi wrote:
-> Add documentation for Airoha AN7581 USB PHY that describe the USB PHY
-> for the USB controller.
->=20
-> Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
-> always supported. The USB 3.0 mode is optional and depends on the Serdes
-> mode currently configured on the system for the relevant USB port.
->=20
-> The first USB port on the SoC can be both used for USB 3.0 operation or
-> Ethernet (HSGMII).
-> The second USB port on the SoC can be both used for USB 3.0 operation or
-> for an additional PCIe line.
->=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->=20
-> For DT maintainers, in v2 there were some comments, hope the new
-> description and names of the property better clarify the usage and
-> why they are needed.
->=20
->  .../bindings/phy/airoha,an7581-usb-phy.yaml   | 76 +++++++++++++++++++
->  MAINTAINERS                                   |  7 ++
->  .../dt-bindings/phy/airoha,an7581-usb-phy.h   | 11 +++
->  3 files changed, 94 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-u=
-sb-phy.yaml
->  create mode 100644 include/dt-bindings/phy/airoha,an7581-usb-phy.h
->=20
-> diff --git a/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.=
-yaml b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
-> new file mode 100644
-> index 000000000000..5106685c124d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/airoha,an7581-usb-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Airoha AN7581 SoC USB PHY
-> +
-> +maintainers:
-> +  - Christian Marangi <ansuelsmth@gmail.com>
-> +
-> +description: >
-> +  The Airoha AN7581 SoC USB PHY describes the USB PHY for the USB contro=
-ller.
-> +
-> +  Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
-> +  always supported. The USB 3.0 mode is optional and depends on the Serd=
-es
-> +  mode currently configured on the system for the relevant USB port.
-> +
-> +  The first USB port on the SoC can be both used for USB 3.0 operation or
-> +  Ethernet (HSGMII).
-> +  The second USB port on the SoC can be both used for USB 3.0 operation =
-or
-> +  for an additional PCIe line.
-> +
-> +properties:
-> +  compatible:
-> +    const: airoha,an7581-usb-phy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  airoha,usb2-monitor-clk-sel:
-> +    description: Describe what oscillator across the available 4
-> +      should be selected for USB 2.0 Slew Rate calibration.
+diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+index 43fdd89b8beb..bfb352b04902 100644
+--- a/drivers/i2c/busses/i2c-qcom-geni.c
++++ b/drivers/i2c/busses/i2c-qcom-geni.c
+@@ -97,6 +97,7 @@ struct geni_i2c_dev {
+ 	dma_addr_t dma_addr;
+ 	struct dma_chan *tx_c;
+ 	struct dma_chan *rx_c;
++	bool no_dma;
+ 	bool gpi_mode;
+ 	bool abort_done;
+ };
+@@ -425,7 +426,7 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+ 	size_t len = msg->len;
+ 	struct i2c_msg *cur;
+ 
+-	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
++	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
+ 	if (dma_buf)
+ 		geni_se_select_mode(se, GENI_SE_DMA);
+ 	else
+@@ -464,7 +465,7 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
+ 	size_t len = msg->len;
+ 	struct i2c_msg *cur;
+ 
+-	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
++	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
+ 	if (dma_buf)
+ 		geni_se_select_mode(se, GENI_SE_DMA);
+ 	else
+@@ -880,10 +881,12 @@ static int geni_i2c_probe(struct platform_device *pdev)
+ 		goto err_resources;
+ 	}
+ 
+-	if (desc && desc->no_dma_support)
++	if (desc && desc->no_dma_support) {
+ 		fifo_disable = false;
+-	else
++		gi2c->no_dma = true;
++	} else {
+ 		fifo_disable = readl_relaxed(gi2c->se.base + GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
++	}
+ 
+ 	if (fifo_disable) {
+ 		/* FIFO is disabled, so we can only use GPI DMA */
 
-Why's this being set in dt? What actually determines what oscillator
-should be used? Do they have different performance characteristics?
-How is someone meant to know which one to use?
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251029-topic-sm8x50-geni-i2c-hub-no-dma-8812576a65cb
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-> +
-> +  airoha,usb3-serdes:
-> +    description: Describe what Serdes line is attached to the USB 3.0 po=
-rt.
-> +      Can be either Serdes USB1 or Serdes USB2.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [2, 3]
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
 
-This is confusing. Why 2 and 3 for usb1 and usb2? What even is the
-mapping? Is it 2:1/3:2 or 2:2/3:1?
-
-> +
-> +  airoha,scu:
-> +    description: Phandle to the SCU syscon to configure the Serdes line.
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +  '#phy-cells':
-> +    description: Describe if the referred PHY is the USB 2.0 PHY or USB =
-3.0 PHY.
-> +    const: 1
-
-Which is which here?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - airoha,usb2-monitor-clk-sel
-> +  - airoha,usb3-serdes
-> +  - airoha,scu
-> +  - '#phy-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/phy/airoha,an7581-usb-phy.h>
-> +    #include <dt-bindings/soc/airoha,scu-ssr.h>
-> +
-> +    phy@1fac0000 {
-> +        compatible =3D "airoha,an7581-usb-phy";
-> +        reg =3D <0x1fac0000 0x10000>;
-> +
-> +        airoha,usb2-monitor-clk-sel =3D <AIROHA_USB2_MONCLK_SEL1>;
-> +        airoha,usb3-serdes =3D <AIROHA_SCU_SERDES_USB1>;
-> +        airoha,scu =3D <&scu>;
-> +
-> +        #phy-cells =3D <1>;
-> +    };
-> +
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8085fdca7bcd..af23c590bbc6 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -763,6 +763,13 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
->  F:	drivers/spi/spi-airoha-snfi.c
-> =20
-> +AIROHA USB PHY DRIVER
-> +M:	Christian Marangi <ansuelsmth@gmail.com>
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
-> +F:	include/dt-bindings/phy/airoha,an7581-usb-phy.h
-> +
->  AIRSPY MEDIA DRIVER
->  L:	linux-media@vger.kernel.org
->  S:	Orphan
-> diff --git a/include/dt-bindings/phy/airoha,an7581-usb-phy.h b/include/dt=
--bindings/phy/airoha,an7581-usb-phy.h
-> new file mode 100644
-> index 000000000000..efbb0ae75e3a
-> --- /dev/null
-> +++ b/include/dt-bindings/phy/airoha,an7581-usb-phy.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> +
-> +#ifndef _DT_BINDINGS_AIROHA_AN7581_USB_PHY_H_
-> +#define _DT_BINDINGS_AIROHA_AN7581_USB_PHY_H_
-> +
-> +#define AIROHA_USB2_MONCLK_SEL0                 0
-> +#define AIROHA_USB2_MONCLK_SEL1                 1
-> +#define AIROHA_USB2_MONCLK_SEL2                 2
-> +#define AIROHA_USB2_MONCLK_SEL3                 3
-
-These definitions seem completely pointless. The property is called
-"airoha,usb2-monitor-clk-sel" so any use will look like
-"airoha,usb2-monitor-clk-sel =3D <3>;"
-That's more informative than the define is, since it doesn't even
-truncate "monitor". I'd just delete this header entirely and use the
-number. If you want the define in the driver to avoid magic numbers,
-just define it in the driver.
-
-pw-bot: changes-requested
-
-Cheers,
-Conor.
-
-> +
-> +#endif
-> --=20
-> 2.51.0
->=20
-
---Z7BQNDIzoaCE66cj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJX2gAKCRB4tDGHoIJi
-0jsDAQDITrn7gsppDeHnAxbwqv7YYEnEDsZJ/nPYsQk3xGv+mwEAi/4/ynU5ENSf
-0DpmF4S9GFe864MRVZI5RN5s6C21pQQ=
-=kyYV
------END PGP SIGNATURE-----
-
---Z7BQNDIzoaCE66cj--
 
