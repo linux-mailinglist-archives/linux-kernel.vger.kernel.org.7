@@ -1,178 +1,188 @@
-Return-Path: <linux-kernel+bounces-876861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A34C1C92F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:50:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BD20C1CA36
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 12D0D4E4624
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2800A584EC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7104D350298;
-	Wed, 29 Oct 2025 17:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A6334D92D;
+	Wed, 29 Oct 2025 17:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K22XA1Hj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBBijb++"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AE42F60AC;
-	Wed, 29 Oct 2025 17:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0102F8BEE;
+	Wed, 29 Oct 2025 17:48:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760016; cv=none; b=WpxLa0NE/VdgKIpTEzMfrS7caNQ0OpnYWvXhxC6k6fVioUa++bLLLc4hzij4jf65llZePZW48tq+ZaUR/9IreRIVIEPVvdyea4lV6BkdHe/okn+G93aK3reUtV9sjtK1k5COHj2sGjmQaNpzAiuURd/YoGHwu9d8v6PhhVDdOhc=
+	t=1761760094; cv=none; b=SWe86erTTp/vp+ViMs1lIh5qJv9ASx1b60ph6xpqmBhGASq7EuprRpMYmkCPbJWV0LhyE2Qk627FkJZPyxL/8DZxZlOZVUr6EbBforFyCg3n/gNNNwF7h8VH0eY+6abKUWwf5l80jqlgocsxSv87AFeySuM4ffvFXwL7XWKotVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760016; c=relaxed/simple;
-	bh=KsXdySkGiHmSzsuy7Pi+sVL7aoIePP+MEpnzF2GEcmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NqhaS9F9UI678ciFff1q1qBvGV5IS1IvZUUzYQYhpW/HrrDfr1L4zXEKV+dxL3quK5mqmxOGQdw+fcdT6aj+D6XRlygdFIlUbf9OLEwyMQHGneI/0yETh11OMk4+Cv1AiK5N4WdZstpHYapMFIz0Quch12Kxg5G0GMTYUqfPcSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K22XA1Hj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 202B1C4CEF7;
-	Wed, 29 Oct 2025 17:46:56 +0000 (UTC)
+	s=arc-20240116; t=1761760094; c=relaxed/simple;
+	bh=gmuvfAv/HRo9/GwGj6MrrNns2n4S/yptkDh+ez1A/BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0RfxrPh28QY6ckcIyXAsQcs2eH3YXzzN8NrFHA7XQdiyyx2HxSR20HF6ZnezOe0/Ex9XZIWYXKKP39k/6sGS2vUbz3cRA2K/IzaxxrP4sPmdup9p7iJEmbcp/cE/Gjznl+kNEPf2O8gkUDeT168yRi8GrlASa4Pm+znKVzI85c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBBijb++; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F30CCC4CEF7;
+	Wed, 29 Oct 2025 17:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761760016;
-	bh=KsXdySkGiHmSzsuy7Pi+sVL7aoIePP+MEpnzF2GEcmA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=K22XA1Hjw8uOX95mhKKhhconnRdms2qQD/Nbq0dqkODo/qoasd98i4iGIns2To5K7
-	 9LCQCwxZ++SdZB2vSAuCJYW4paAjVRKTA4iWkPcqn9ss6ygExiQXqHziIwzmyr+rkW
-	 +lIxJgcLxAivPEpWGXWHSqI8/7xdlQzr7QsViTjJuJzP8+wsaPDKG5m+0ZtIalIr/k
-	 OungqAalRYCEVyKSHVo57GafE546/x+UVS5pGNUIRUiKo7vIQBPHzK6tyDCTfyy+Hp
-	 yAXyomKjaPtaqAImWTBqtWHwQxnW7/jlC878FpiIrVJhNq87HlEksKBMqgKgcyoNJG
-	 qk2DTbEtU/sOQ==
-Date: Wed, 29 Oct 2025 12:46:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, x86@kernel.org,
+	s=k20201202; t=1761760093;
+	bh=gmuvfAv/HRo9/GwGj6MrrNns2n4S/yptkDh+ez1A/BA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CBBijb++94bBV+SfzKmrzvQHpsG2lpDu/Ezjq70clIZUkpYOKyA3Ucnx/leoM5EHN
+	 0vXvguO7ibhtHZLH86g0kSFNkQZT9uaU20GSzB2vxK/IXScQJAd5bkuFyS0vB3RkJC
+	 VKVwWVMYHbebGpxW5XkPxlzp+aMbXYTZFtjXsWiPm1fYv+oxg/mTiTWhEUejdTuXR5
+	 fkMwGORoAbO+FwFdJTrr0e3nHQxK8nR+uJJ6rwrxJ/aw8vmy3INxHi1PGcv9bXRzv0
+	 aqz46WoMgdfBdP7BBSOkD7beU9vqkIjYrknRILy5C0BYsQpZteiEB5ol1CsYdWhOrL
+	 GvA5x2rdvnZMg==
+Date: Wed, 29 Oct 2025 17:48:08 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Elaine Zhang <zhangqing@rock-chips.com>
+Cc: mkl@pengutronix.de, kernel@pengutronix.de, mailhol.vincent@wanadoo.fr,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	heiko@sntech.de, cl@rock-chips.com, linux-can@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-mips@vger.kernel.org,
-	loongarch@lists.linux.dev, linuxppc-dev@lists.ozlabs.org,
-	linux-sh@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] MIPS: PCI: Use contextual data instead of global
- variable
-Message-ID: <20251029174654.GA1571737@bhelgaas>
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v8 1/4] dt-bindings: can: rockchip_canfd: add rk3576 CAN
+ controller
+Message-ID: <20251029-unreal-heroics-6e56a89e34d0@spud>
+References: <20251029032302.1238973-1-zhangqing@rock-chips.com>
+ <20251029032302.1238973-2-zhangqing@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="01IpGdZZ9oQxgRWr"
+Content-Disposition: inline
+In-Reply-To: <20251029032302.1238973-2-zhangqing@rock-chips.com>
+
+
+--01IpGdZZ9oQxgRWr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029163336.2785270-3-thierry.reding@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 05:33:31PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> Pass the driver-specific data via the syscore struct and use it in the
-> syscore ops.
-
-Would be nice to include the "instead of global variable" part here so
-the commit log includes the benefit and can stand alone even without
-the subject.
-
-Awesome to get rid of another global variable!  More comments below.
-
-> +++ b/arch/mips/pci/pci-alchemy.c
-> @@ -33,6 +33,7 @@
->  
->  struct alchemy_pci_context {
->  	struct pci_controller alchemy_pci_ctrl; /* leave as first member! */
-> +	struct syscore syscore;
->  	void __iomem *regs;			/* ctrl base */
->  	/* tools for wired entry for config space access */
->  	unsigned long last_elo0;
-> @@ -46,12 +47,6 @@ struct alchemy_pci_context {
->  	int (*board_pci_idsel)(unsigned int devsel, int assert);
->  };
->  
-> -/* for syscore_ops. There's only one PCI controller on Alchemy chips, so this
-> - * should suffice for now.
-> - */
-> -static struct alchemy_pci_context *__alchemy_pci_ctx;
+On Wed, Oct 29, 2025 at 11:22:59AM +0800, Elaine Zhang wrote:
+> Add documentation for the rockchip rk3576 CAN controller.
+>=20
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> ---
+>  .../net/can/rockchip,rk3568v2-canfd.yaml      | 52 +++++++++++++++++--
+>  1 file changed, 48 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-=
+canfd.yaml b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-ca=
+nfd.yaml
+> index a077c0330013..30782218728e 100644
+> --- a/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
+aml
+> +++ b/Documentation/devicetree/bindings/net/can/rockchip,rk3568v2-canfd.y=
+aml
+> @@ -10,13 +10,12 @@ title:
+>  maintainers:
+>    - Marc Kleine-Budde <mkl@pengutronix.de>
+> =20
+> -allOf:
+> -  - $ref: can-controller.yaml#
 > -
-> -
->  /* IO/MEM resources for PCI. Keep the memres in sync with fixup_bigphys_addr
->   * in arch/mips/alchemy/common/setup.c
->   */
-> @@ -306,9 +301,7 @@ static int alchemy_pci_def_idsel(unsigned int devsel, int assert)
->  /* save PCI controller register contents. */
->  static int alchemy_pci_suspend(void *data)
->  {
-> -	struct alchemy_pci_context *ctx = __alchemy_pci_ctx;
-> -	if (!ctx)
-> -		return 0;
-> +	struct alchemy_pci_context *ctx = data;
->  
->  	ctx->pm[0]  = __raw_readl(ctx->regs + PCI_REG_CMEM);
->  	ctx->pm[1]  = __raw_readl(ctx->regs + PCI_REG_CONFIG) & 0x0009ffff;
-> @@ -328,9 +321,7 @@ static int alchemy_pci_suspend(void *data)
->  
->  static void alchemy_pci_resume(void *data)
->  {
-> -	struct alchemy_pci_context *ctx = __alchemy_pci_ctx;
-> -	if (!ctx)
-> -		return;
-> +	struct alchemy_pci_context *ctx = data;
->  
->  	__raw_writel(ctx->pm[0],  ctx->regs + PCI_REG_CMEM);
->  	__raw_writel(ctx->pm[2],  ctx->regs + PCI_REG_B2BMASK_CCH);
-> @@ -359,10 +350,6 @@ static const struct syscore_ops alchemy_pci_syscore_ops = {
->  	.resume = alchemy_pci_resume,
->  };
->  
-> -static struct syscore alchemy_pci_syscore = {
-> -	.ops = &alchemy_pci_syscore_ops,
-> -};
-> -
->  static int alchemy_pci_probe(struct platform_device *pdev)
->  {
->  	struct alchemy_pci_platdata *pd = pdev->dev.platform_data;
-> @@ -480,9 +467,10 @@ static int alchemy_pci_probe(struct platform_device *pdev)
->  	__raw_writel(val, ctx->regs + PCI_REG_CONFIG);
->  	wmb();
->  
-> -	__alchemy_pci_ctx = ctx;
->  	platform_set_drvdata(pdev, ctx);
-> -	register_syscore(&alchemy_pci_syscore);
-> +	ctx->syscore.ops = &alchemy_pci_syscore_ops;
-> +	ctx->syscore.data = ctx;
-> +	register_syscore(&ctx->syscore);
+>  properties:
+>    compatible:
+>      oneOf:
+> -      - const: rockchip,rk3568v2-canfd
+> +      - enum:
+> +          - rockchip,rk3568v2-canfd
+> +          - rockchip,rk3576-can
+>        - items:
+>            - const: rockchip,rk3568v3-canfd
+>            - const: rockchip,rk3568v2-canfd
+> @@ -43,6 +42,33 @@ properties:
+>        - const: core
+>        - const: apb
+> =20
+> +  dmas:
+> +    maxItems: 1
+> +
+> +  dma-names:
+> +    items:
+> +      - const: rx
+> +
+> +allOf:
+> +  - $ref: can-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: rockchip,rk3576-can
+> +    then:
+> +      properties:
+> +        dmas:
+> +          minItems: 1
+> +          maxItems: 2
+> +        dma-names:
+> +          minItems: 1
+> +          maxItems: 2
 
-As far as I can tell, the only use of syscore in this driver is for
-suspend/resume.
+This looks wrong. You have one dma, but you're setting maxItems to 2.
+Seems fine otherwise.
+pw-bot: changes-requested
 
-This is a regular platform_device driver, so instead of syscore, I
-think it should use generic power management like other PCI host
-controller drivers do, something like this:
 
-  static int alchemy_pci_suspend_noirq(struct device *dev)
-  ...
+Cheers,
+Conor.
 
-  static int alchemy_pci_resume_noirq(struct device *dev)
-  ...
+> +    else:
+> +      properties:
+> +        dmas: false
+> +        dma-names: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -72,3 +98,21 @@ examples:
+>              reset-names =3D "core", "apb";
+>          };
+>      };
+> +
+> +  - |
+> +    soc {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +
+> +        can@2ac00000 {
+> +            compatible =3D "rockchip,rk3576-can";
+> +            reg =3D <0x0 0x2ac00000 0x0 0x1000>;
+> +            interrupts =3D <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
+> +            clocks =3D <&cru CLK_CAN0>, <&cru PCLK_CAN0>;
+> +            clock-names =3D "baud", "pclk";
+> +            resets =3D <&cru SRST_CAN0>, <&cru SRST_P_CAN0>;
+> +            reset-names =3D "core", "apb";
+> +            dmas =3D <&dmac0 20>;
+> +            dma-names =3D "rx";
+> +        };
+> +    };
+> --=20
+> 2.34.1
+>=20
 
-  static DEFINE_NOIRQ_DEV_PM_OPS(alchemy_pci_pm_ops,
-                                 alchemy_pci_suspend_noirq,
-                                 alchemy_pci_resume_noirq);
+--01IpGdZZ9oQxgRWr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  static struct platform_driver alchemy_pcictl_driver = {
-          .probe          = alchemy_pci_probe,
-          .driver = {
-                  .name   = "alchemy-pci",
-                  .pm     = pm_sleep_ptr(&alchemy_pci_pm_ops),
-          },
-  };
+-----BEGIN PGP SIGNATURE-----
 
-Here's a sample in another driver:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/controller/cadence/pci-j721e.c?id=v6.17#n663
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJTWAAKCRB4tDGHoIJi
+0qVhAPsG3U2zIV2IEhCQGMbLtQJNoGSUmzb6yyOYDB/ZsqWM9gD/UvCgdautseC1
+gMmchbJQAcHxrEqzZGxopx+iLXenaQ8=
+=an9+
+-----END PGP SIGNATURE-----
 
->  	register_pci_controller(&ctx->alchemy_pci_ctrl);
->  
->  	dev_info(&pdev->dev, "PCI controller at %ld MHz\n",
-> -- 
-> 2.51.0
-> 
+--01IpGdZZ9oQxgRWr--
 
