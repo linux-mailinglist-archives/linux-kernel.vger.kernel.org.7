@@ -1,199 +1,259 @@
-Return-Path: <linux-kernel+bounces-875820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DEAC19E2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:55:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4586FC19E3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C37189D83F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:49:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3035919C0286
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C632FA0ED;
-	Wed, 29 Oct 2025 10:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612562DC76B;
+	Wed, 29 Oct 2025 10:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w/p5NH8H"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012029.outbound.protection.outlook.com [52.101.48.29])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="A7uXjzai"
+Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6EA23D7D4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.29
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761734944; cv=fail; b=WQcRRc7tQFXJnvEpqdVXosZe2jBX3v6J/EL1TR/hPHAbJEgVt7Jwy8Qwd31Nm4b3iTS45q4TCc5OJ7CQDXddhNTesbsnfjS/FlaVmNu9mVhXfZoq8pGhKXzGBiYy3mluRT9duEva7HpLAro5g9p5f3NrF6eIAghCmXTXUFmvX90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761734944; c=relaxed/simple;
-	bh=oO5kZmNCbxGqkcrWGyuLxAmcRPjjDHA1da7S39Iep8k=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rpyDzxM4ob0VbL2CeuDvs+o+jkcEfpWCTZ1/QielldJoRllGSRIIO0hY+Ns8pJQ7teqCHeFNiH55rFS0MFR2ie6urGHq5P/hzZh8HGqmOgLt/4Adyu5ndx7dS5m5ooOK15rP7k4oE71oEiP9Bq4H56OElBrusRn+uZZ/os0Dp/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w/p5NH8H; arc=fail smtp.client-ip=52.101.48.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bN0rXr4QRbfHEfuz+SrWPWUhIpvbOvTHSq5QDoKXeJUYwC/hino3DkzrTMvp4eKL+WOMcdShLn7RSXOvl/DsGDSYT2OzgNyCTkOWssD0RCjH1zFQ/SgAdrjSvAdz18CQWVA7Hy79afk7rlz8cMQ7Jt4J3xjum1hBms31MdvfzVELzX99F9OeVknLNl2W4ZgEaqjBLSlnzqDHjWlpCMehrcyyiqpBfoAgL297Y2JA7goR9t8PlbHtObG+enHf7mwI07qTLS65+csFDpUeq4b9r/4r84XLaYyGfn0+VqLgxH4iNP0kq4qKuJv/f4xpcK78OP6SVm104iMh0lzaPRk03w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OUJ67cCPk5sZoLpEe3bmyQC5q2yhCwznil5zsptCAeE=;
- b=qwPQeCz8IuHDmfoaP007wpowhNO0ODwOxt+oWkpjKBEYhKThKUaJL3IrDRBD6e1SxgqRtsOoIpLcYyceeaVd4NIEJyE8S8B9OnB+AWrRiAXafo5Xa/QWjs9IkAZ/uvOngiyfQ9m8RujRzo8ft5HcoDCR6XOmmWh6mMwfW1Wlop7TOFfjKKGH3Y8w5B7uMJyNOYj6iTw7kUNArJRZeFHG99ZMoqWHxN/4KhwMSolyv4tptaqBpLV8CSQcSsIJUOAByo9p7+B1zAggD7kruGpZEKmpscUU+fpNFdAXg5+w9Zxalr+ciaA7w5gWgOFgkBetIfWE3ouYaQg2AH6dvJ1DAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OUJ67cCPk5sZoLpEe3bmyQC5q2yhCwznil5zsptCAeE=;
- b=w/p5NH8Hlw7q4tAZ3cXtfSJ1KELvIQTla6qKJigfAU7qERl2rep6TC4pbe0ub75kXEN5vUK+bX/RE7TzjIS0thwg5gbd65ZrF4vCtgaMDk6UL7WRubeh0Z+N8NoyL/OfTMxwULgKVoTmCXIHreEvf0lxvh1xNaLqvBd2+lum6vc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- CH0PR12MB8506.namprd12.prod.outlook.com (2603:10b6:610:18a::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.13; Wed, 29 Oct 2025 10:49:01 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%7]) with mapi id 15.20.9253.018; Wed, 29 Oct 2025
- 10:49:01 +0000
-Message-ID: <4571f444-01ca-45e4-8465-745e16c1b73d@amd.com>
-Date: Wed, 29 Oct 2025 16:18:53 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/amd: Enhance "Completion-wait Time-out" error
- message
-To: =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-Cc: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>,
- will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org, suravee.suthikulpanit@amd.com,
- Santosh.Shukla@amd.com
-References: <20251016150809.5465-1-dheerajkumar.srivastava@amd.com>
- <tgugv7ebuxtnp6ou5jnt7od7jmccsipblqityiinhkgratosu6@bxsr73hpiiny>
- <01c81b5e-d6a3-41fa-9758-37661e115483@amd.com>
- <5uof463yi5zq6y3rsjqdifktvqxe4ctb63koz4qgbwvjgiudlg@qtjxrrymt3mj>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <5uof463yi5zq6y3rsjqdifktvqxe4ctb63koz4qgbwvjgiudlg@qtjxrrymt3mj>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BMXPR01CA0076.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::16) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E078724293C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761734993; cv=none; b=T6YrZBMOPU0wQTkmH+2LAP+7ZRYm8d7pX9rjdg3ml9F+UDRHPouGwaYvfFRlsj3cV94RDXjvXI+v7CKFPkj3OTDRVMUNgk1xTReEQKIuEpAd28Y2HNb/tPZ8IG5WiPew124P1Bqo3qA+4C16wreCImG5vQDAiBHoGhHHnEhlgoQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761734993; c=relaxed/simple;
+	bh=IIq44rl+mr1Wp82ZrLo2CH1EDvG0+UdDllQ256vRX90=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kuSC92yxjJoO+VUZMPprU4cX62POdZKBvQY73vohfNVc9lLhLV1HWVzm6H7fx+9IvLMt7mNn3LmblWv4LrGM0NIHqY8yqrs6FTMFIHK5dTPwmsq1o9eOrGIeCxFTG7swLib/RsCfQFIrT6+FPXNZKruuliJwA3OCbdEoLrbLFqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=A7uXjzai; arc=none smtp.client-ip=37.27.248.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay10 (localhost.localdomain [127.0.0.1])
+	by relay10.grserver.gr (Proxmox) with ESMTP id 2522E425FD
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:49:49 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay10.grserver.gr (Proxmox) with ESMTPS id 09BF542609
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:49:48 +0200 (EET)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 2B738200B37
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:49:47 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761734987;
+	bh=YzboKqHz4MGEBiI9ZGSTeK6nDzkE1Vet4xctU+oGO+4=;
+	h=Received:From:Subject:To;
+	b=A7uXjzai5S7jnzmuF4L0XuuBD3YTjfXWv/4vvmOaNlOFhk0Uy/HDwPR37KEcbZNJX
+	 /HzqKDVNq96o/9jQicVz4OEky4yrlMxXPPmoWmIsTaT/f22F3bDDKJ4WPIrfynXbCs
+	 AIo6Y1HHX9htAUs1C4JTfaOg64FgfctT1AVjwKUcOwBmBtAfzq3WMSg0BysMzno6q8
+	 xkjpTPt8FenzmqgEPKnnKgdIvRVYdzSJdL09rKz+Pr2F6Wd6+b0+s2ypxUqgnyHQpp
+	 eZ4mDgu0tz/5Eponi7BzAN5Xv/RetEcxGbRQB3ertwzf2YFnfSgCs5n5uGAHSn4dcI
+	 UX0yvOkNkVw4g==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.174) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f174.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f174.google.com with SMTP id
+ 38308e7fff4ca-378cfbf83f2so75656421fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Wed, 29 Oct 2025 03:49:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWHe0jD+gk1JJGjM57MSVr8aMHAF2IPiP0W4OxSSJ51o76u0BH8kRZj5EpEGypbRVPpATtp2AXDef0cF8M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfPNf82sTPMJf8psa9KcyOLuHAsbgSzz5u6jQKeU+XT6wmpjtL
+	C3jCxqvRSSdrRv7kNKcKGU8NkJv5FYiWPI7nHg1fLctbB+vC/hlzsDefuzmiN5PN9cQUQc9v1vD
+	Ih2Vha8XSZPYgmnF4U/jMJZcXBmRShaY=
+X-Google-Smtp-Source: 
+ AGHT+IGLkcBo2YE6+nk2WVHAihUx5ZgzY8UsQ5edI3i6F2uozYbRe/gYLNU+toxWgQnXlgZRb69N90edzuvtETqFAmY=
+X-Received: by 2002:a2e:b894:0:b0:375:d1e4:21e1 with SMTP id
+ 38308e7fff4ca-37a0537809bmr7537381fa.42.1761734986535; Wed, 29 Oct 2025
+ 03:49:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|CH0PR12MB8506:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2007b60d-6579-4764-d505-08de16d8c4f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VXJWcVVSWk5FRSsvSjg2MGpPNC9jTGJJMm91TTNFd3ZTMUVRb2hrUU9EOW8r?=
- =?utf-8?B?WGIyK01VTkZJTG9RYTVubU45UG1iQkVqM1NXdnJsR2tKOGVsaDZxTnFLWHlD?=
- =?utf-8?B?d25MYk01ZkFxSW9FZ2hwYmhOMDNweFV4TFFSMm55eGJsQ2UxQk9oeWVBQkNu?=
- =?utf-8?B?emZMYjVzcU9zVUZEWjNaRkJObHJpSWN2WmxER2RXQ0ZtODRZQlpKa01kRFcz?=
- =?utf-8?B?eWFKYWVDUTFwRW5uVmdGU2JGNDJ5czg4RjBBUHNyNUxhaHBPNFR2ZUMyK2Vq?=
- =?utf-8?B?U05EYkwrS29yc05veGNKR1YwVHYyWG1ZTFBvbFdMNEE3aDRDTzc1WXRheUJk?=
- =?utf-8?B?ZlZoaFZvMGFJOWh0bExoaEgvSW9JZXdDWk9JUHo4ZmdmU2VDQ2xFbTg1bmVE?=
- =?utf-8?B?QUxvWWtZM3prWmFnM2dVUVBXL1VLSVRMOU5RTjZwWmJNMGZWSUxlUjYxRmhP?=
- =?utf-8?B?QW5xQ29oNmdqK3VqcXhIbVdKd3VnTlpnUVRoSERyQ3NMUFAxaDdGTXJQcnJp?=
- =?utf-8?B?SkZiSzk1RU1LRjJ1RTlKQVBSSVk2NVFLSlFpZ1ZpWlpmWUFUZDBhZFJiWjZE?=
- =?utf-8?B?Y3lMQm9YelBzd0hXMUpUbkU1Ty9zYVl0Um1YakVwZENXWk1ma25vUFZRUmtk?=
- =?utf-8?B?YnZia2p1RGtNelU0SnorNC8zQTB6bkZKSysycFM0d0ViOGpFNlp1YmQrdmdH?=
- =?utf-8?B?ZmJwb1FMVGs4MHdEbzlOM3Z0MmpPWXRaK1dCbjZ1Vjc0Tmc3ODArTFpqc0Ix?=
- =?utf-8?B?ZEdFL3M2bDZTck8xYkdMTGZ2T2hhaDg0SGxLNzh2dURzTWpra2ViRFB1MU01?=
- =?utf-8?B?L2R3aFR0TWFYdHovYTFsc3JmdUZ6aWwxdWx6ZklBZkxpeWZselpXM0lvMVpZ?=
- =?utf-8?B?UGt5Yi9xQWVCQ1AwblRrSXFrTHc0VnZJaG1STEMvZHFCS0ZNQVJwREIyekJ4?=
- =?utf-8?B?Nk8zRndQSlQyb01RamZCZFZkdURhMTB4QzQ2SlVnUENVWnJ5TlNWZkFYK2Rm?=
- =?utf-8?B?Z2VnTmNHRDRQRVJDL1MyaUJFKzh5SnJqODdiR1BSU250SUVlSUdiSlRNSEpl?=
- =?utf-8?B?RzZNZGpzZjViN3dGRHliVmNpaHpDZnJEVWpjaUMyMGp0c1JsZ3UyamQxL0JG?=
- =?utf-8?B?RzAyZXhrVEc2bzVjcW4ybHBBVGZyYzVKLzBqWmNiVjh2MnNaSVZnb1FTd2Nx?=
- =?utf-8?B?bVN5a2NZYUtrcm45VmE4Y21yV3N6SklwYlFLcUQyekFQS1ZPSDFJY0JBUDdn?=
- =?utf-8?B?QURacWhMcnNGdzl1SUhta1FraGtuSERKOTZlZmROT0RDLzhZcUk1anRNR284?=
- =?utf-8?B?NmFWODE2SG55UFhIY1pDSWRvQlA0MWF6d2JYUFk0NXEwdFNaNjdHSXRqbUJZ?=
- =?utf-8?B?K0RhTDZzalFqQnF6WlQzNWIxQ3ArMDZsK0srZCtNeVBQSXNGdW1FYTYzT3FI?=
- =?utf-8?B?S3pQS3ZDdTFUMUVmdWNZdDRBUTRWNHkvMUlhVGQvWit5TktNdEJRRDBTVlRj?=
- =?utf-8?B?cUJ3aTFscTN1cHRZUnBVOXJWWUp0UVQ1THpOSTQ4bjdNVW1ZYzVJdmljZmhT?=
- =?utf-8?B?N0NhR2xidW9lMjh4Rmg3RGJXVnhsMDZnWFo2QkwxbHBacGcwM1A2TExiWDZ0?=
- =?utf-8?B?dlJwN0p0ZkprK3pJa3EvcXg5Qnlrb0oyY2gyL1Q5Ymo5N1pxbnlpOVdJWkFK?=
- =?utf-8?B?N2lEVnp6YjVEMHlVd2YvYUtWSXFob3NEejVDYjdHT3d3V1BWODAxNmYzeDh3?=
- =?utf-8?B?Wjdud2xTZy9iZytTNnFub0JhVHVHNFBoRDNHTjRuQW84SFVrSFdpLzZnbFFi?=
- =?utf-8?B?TENtaXpwMk5jbTZQZjRZcERuSWZ1c0ZPdno4WHAyN0VjeHFMN2FhS1Z5TU5x?=
- =?utf-8?B?UXBlZUdrcFdENGhFMmtHK3ZhUWlkSUtFOG1QNU1yQStOQVBoZUZydXIrbVM1?=
- =?utf-8?Q?CjzVun+2B9wuEW82Lxbz1yOuDhppguDa?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bWFxNXVuWEh2RlhjaTJGTzFZbVZJM3ZLN3lzQTlyUy9UYi9JSmFOaGRuSGFR?=
- =?utf-8?B?a0ZSV2FYKzI2VG5wbG9xZitOanYxZ1N4Tk1ScWhoR3k3MlY4TFNSQlV4cERJ?=
- =?utf-8?B?ZzZNSlFYNmtCTDVrbDBlRGdDbGhzdXVmT1M5OThDOHJXL1gzbU1zbzZjSEd1?=
- =?utf-8?B?MFV2VnhKelN3SnpFb1hsZ2Y5MDB6NTk1bUF5Q2ZIODM5ZU54T0g1Ti9xbXZs?=
- =?utf-8?B?Y0JsbHpzbHBSN0JDQXRLc29FYm1SY1JkYWFlK2c2em9FRUpvMFNMU1JMcGRp?=
- =?utf-8?B?VlB6RkRJcWxndGNIcEVtNlVHZTE1YXprS0l0RlpKaG43cGlSSVpsdjdkZWd0?=
- =?utf-8?B?S2U0ZXZ6Yng2THNPUFo0Q3lmaEpHeEpjUUNoaXNHNzBDK0dnMGdpbTQ1RzN0?=
- =?utf-8?B?Q3ZCNi9TUVdGaFJrWlFFUkNqVXhMdWk5ZUNtRE1pMTJIUVFTRzdPZjV6YXJr?=
- =?utf-8?B?blhaR1J1RnErMXI0NEtiOVA1UDB0a0F4OW1aaTFPaytwS3hoS2x6cC9yMFZC?=
- =?utf-8?B?dUZZN3VqangvalRIZE9zb3VDY1Y3QTZ4YVRuazRHOUFmUDNGb3BlaHR3TVFO?=
- =?utf-8?B?MWw1OEtWOHM2dmNJUjNzamMwNGYweUt0NUpWL2FIZmxFSW9Tc2pFbWs2MmV4?=
- =?utf-8?B?RThuamhMaE9GeUhvRitnS2JFdWczWFhxcXp3ckdobUpldG4vZHd4dlhxR0Vx?=
- =?utf-8?B?S3hVOG9iaUR5RmUzZGNuVHVvbjdKMnFDVVkxWEdlTTJhdzZNOXdqWmR2R1NY?=
- =?utf-8?B?Z3Q2QS9iaDgrZjNwNlVabVpUSWU3Mkh5VzlUeVB3SGh3VmtjTE9VOXRvb1Vn?=
- =?utf-8?B?NHB2S0xUSzd1Kzd0T0ttL3BqMkpRZFcyMFhvR0pvcXN0TTNEclUzNGlhTzAw?=
- =?utf-8?B?WEwwVnRFajJiWWVBWG1SZEszYlVPbGlEZXpWdTNwY3lZSTFZT1VUeUdwTVRv?=
- =?utf-8?B?eXpyOEpOSjR6VUFMcnRTSXh3VzQzWXVjNWgrTXRXbGZURCtBN05VUE1mRS83?=
- =?utf-8?B?VjZHMFNhRUNhRy9ocURuR2h6SjJiQ2IybEs4cFBRd2o3QlhIMEJIYWJUZ1lj?=
- =?utf-8?B?dGxrRDRZcWlVVEQ4RFJNSENCOHJDZ040QlhMejh3MTBlaXp4UGRHQTB0RVY5?=
- =?utf-8?B?NERCd1NIVCtjU0JHM2x1TVdoNGM0YkMxd1lGRTJ5TkE3clphMXc2ZHU3ZHFz?=
- =?utf-8?B?WGQ3MTRMdEJjdzhFU0w3clRvUEtZWStkYlZRQmROK0RzaHZ2aGhjTStJZVdo?=
- =?utf-8?B?RUo1b0hpblpVUldsZGxOdFNxblcwRW1hWGFpSEhjMFZYdHkyRDJZVG04T29M?=
- =?utf-8?B?TW1KWE1IMzIwV0pJSGRldmFRVCtHZG1HZGxucXljNnlmTS9YWUF6UEdlMnNW?=
- =?utf-8?B?bEg3TE1SVjM5dzdwY0RWa3FKVk5pNS9PbjYzejkxN2xnbEJOd2VRZS8vcU8r?=
- =?utf-8?B?eDJFTExRcHlZNFkrRmM4dXd5MUkzNVJtR0JmQXljVTdXLzcxT1FvQTJDNXNx?=
- =?utf-8?B?NzY1ODVlN2pZS09HeUxIb2FZejZMRWYzQS93NXNiSkVrVE1kOExqWmovdVZr?=
- =?utf-8?B?cUVtdDU0anluNXl4S1U1T0RodEJha1UxTkZsYTZoV0p1SmlLS2R5ZElHWUpT?=
- =?utf-8?B?Qks1T1JnbmkraVZvMDk2UEVjeHF0QStnemE4SHhwVlAybkFtOERoUjFKRHZz?=
- =?utf-8?B?NkhodlNGVlF3RXlCTjFlVzVaYU51a0ZPbFJIRHBNbE5UQ0hQNHRGNWxIZUVl?=
- =?utf-8?B?MWpNanRFUmxIeTFYZURCZkhnazRUM3RhQloxZmQzSU1oMW1NNHRwRnFSb2FP?=
- =?utf-8?B?R2J0WFdXNGk5S0NsS1BxUzBHK1R5aE9sZUIvWERSZ1lHNld2ZTV0b0t4T3g1?=
- =?utf-8?B?Sllxa1FxRGR2bUFxem1iU0MyK2tOWGwvTjNwaFFGM3NhMi85MEZ2WUN6RkRD?=
- =?utf-8?B?SDZKUjVjUGhSQjdmUG9YRFJTT0dmTFVpNDZ5WFlyQlBZRnBnSjBuOEFrcHdh?=
- =?utf-8?B?SklGZk5VZW1VVSthbVNwL0JzekN6Q3V6R3g2Uk90VUFEdDMrckJnNXBSa1pv?=
- =?utf-8?B?L08zWXp4Zy9sdG0rdHRTcjU2L3MzTi9RdDlBNmtBRE80bmk1WVNPUFVYNzJT?=
- =?utf-8?Q?RKdbSylBZLbFbEXPaeoXFFAXr?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2007b60d-6579-4764-d505-08de16d8c4f5
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 10:49:01.0092
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /ZOhAvcEFW6v6rfTO1j7Ta9cXxoi1dcRfw5memFeiVBXf82cKgXlBjDiTumI2cKclE00YgdXo5TeMfXb9bqZFQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8506
+References: <20251015084414.1391595-1-lkml@antheas.dev>
+ <20251015084414.1391595-7-lkml@antheas.dev>
+ <38a49942-58d3-49cf-90d7-1af570918ae5@kernel.org>
+ <CAGwozwEmjms0H=GPbevuOjJfed6x69wmg8E9begBhUKbF8B2AQ@mail.gmail.com>
+ <000cd38e-7052-4987-b5bc-b8de176363cf@kernel.org>
+ <CAGwozwFDsn0xm_mG4ypEym=K8c81qqi=qtJL=06nP6SzdFaFoQ@mail.gmail.com>
+ <b98a8486-e90a-4bd5-b3a7-3b2ba1b16398@kernel.org>
+ <CAGwozwHa3GSNGyRRp4=bR+Wsy2VLgwAbSmcdWb2=5rEyi7jdQw@mail.gmail.com>
+ <8f7c2544-2b9d-4997-942a-5bd3ea72e3a3@roeck-us.net>
+In-Reply-To: <8f7c2544-2b9d-4997-942a-5bd3ea72e3a3@roeck-us.net>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Wed, 29 Oct 2025 11:49:35 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFNMC+g00LhR+tPsLWPLOiYh0NA0p9yawcunVaMKsNXXw@mail.gmail.com>
+X-Gm-Features: AWmQ_bliZI2wVWuas-TjaUUj25C4sBY23d8b5zBjs37RXuHeg5KuBtzdh6q0BdQ
+Message-ID: 
+ <CAGwozwFNMC+g00LhR+tPsLWPLOiYh0NA0p9yawcunVaMKsNXXw@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] platform/x86: ayaneo-ec: Add suspend hook
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>,
+ platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176173498742.2957317.2546813290021562062@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
+On Wed, 29 Oct 2025 at 11:22, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On 10/29/25 01:48, Antheas Kapenekakis wrote:
+> > On Wed, 29 Oct 2025 at 04:36, Mario Limonciello (AMD) (kernel.org)
+> > <superm1@kernel.org> wrote:
+> >>
+> >>
+> >>
+> >> On 10/28/2025 4:39 PM, Antheas Kapenekakis wrote:
+> >>> On Tue, 28 Oct 2025 at 22:21, Mario Limonciello <superm1@kernel.org> wrote:
+> >>>>
+> >>>> On 10/28/25 3:34 PM, Antheas Kapenekakis wrote:
+> >>>>>>> The fan speed is also lost during hibernation, but since hibernation
+> >>>>>>> failures are common with this class of devices
+> >>>> Why are hibernation failures more common in this class of device than
+> >>>> anything else?  The hibernation flow is nearly all done in Linux driver
+> >>>> code (with the exception of ACPI calls that move devices into D3 and out
+> >>>> of D0).
+> >>>
+> >>> I should correct myself here and say hibernation in general in Linux
+> >>> leaves something to be desired.
+> >>>
+> >>> Until secure boot supports hibernation, that will be the case because
+> >>> not enough people use it.
+> >>
+> >> The upstream kernel has no tie between UEFI secure boot and hibernation.
+> >>    I think you're talking about some distro kernels that tie UEFI secure
+> >> boot to lockdown.  Lockdown does currently prohibit hibernation.
+> >>
+> >>>
+> >>> I have had it break for multiple reasons, not incl. the ones below and
+> >>> the ones we discussed last year where games are loaded.
+> >>>
+> >>> For a few months I fixed some of the bugs but it is not sustainable.
+> >>>
+> >>>> Perhaps you're seeing a manifestation of a general issue that we're
+> >>>> working on a solution for here:
+> >>>>
+> >>>> https://lore.kernel.org/linux-pm/20251025050812.421905-1-safinaskar@gmail.com/
+> >>>>
+> >>>> https://lore.kernel.org/linux-pm/20251026033115.436448-1-superm1@kernel.org/
+> >>>>
+> >>>> https://lore.kernel.org/linux-pm/5935682.DvuYhMxLoT@rafael.j.wysocki/T/#u
+> >>>>
+> >>>> Or if you're on an older kernel and using hybrid sleep we had a generic
+> >>>> issue there as well which was fixed in 6.18-rc1.
+> >>>>
+> >>>> Nonetheless; don't make policy decisions based upon kernel bugs.  Fix
+> >>>> the kernel bugs.
+> >>>
+> >>> My problem is I cannot in good conscience restore a fan speed before
+> >>> the program responsible for it is guaranteed to thaw.
+> >>>
+> >>> The best solution I can come up with would be in freeze save if manual
+> >>> control is enabled, disable it, and then on resume set a flag that
+> >>> makes the first write to fan speed also set pwm to manual.
+> >>>
+> >>> This way suspend->hibernate flows, even if hibernation hangs when
+> >>> creating the image, at least have proper fan control because they are
+> >>> unattended, and resume hangs work similarly.
+> >>>
+> >>> Antheas
+> >>>
+> >>
+> >> This sounds like a workable approach for what I understand to be your
+> >> current design; but let me suggest some other ideas.
+> >>
+> >> What happens if you're running something big and the OOM comes and
+> >> whacks the process?  Now you don't have fan control running anymore.
+> >>
+> >> So I see two options to improve things.
+> >>
+> >> 1) You can have userspace send a "heartbeat" to kernel space.  This can
+> >> be as simple as a timestamp of reading a sysfs file.  If userspace
+> >> doesn't read the file in X ms then you turn off manual control.
+> >
+> > The OOT scenario is something I have not handled yet specifically, or
+> > have had happen.
+> >
+> > Systemd will restart the service in the case of OOT after 5 seconds
+> > and in the case of a crash there are multiple fallbacks to ensure the
+> > custom curve turns off.
+> >
+> > Most of the hibernation hangs that I have experienced happen before
+> > journalctl turns on, so I assumed that it's before userspace
+> > unfreezes. I am also not sure if restore() gets to run in those cases
+> > or not.
+> >
+> > Re: heart beat, read below.
+> >
+> >> 2) You move everything to a kthread.  Userspace can read some input
+> >> options or maybe pick a few curve settings, but leave all the important
+> >> logic in that kthread.
+> >
+> > I think this is what Luke tried to do with the Zotac Zone. But in the
+> > end, the kernel is limited to what calculations it can do, esp.
+> > floating point and what it can access, so you end up with a worse
+> > curve with limited extendability, and a driver specific ABI. And we
+> > also risk duplicating all of this code on hwmon drivers and making it
+> > harder to access.
+> >
+> > I think part of this reason is why the platform side of the Zotac
+> > stuff has not been upstreamed, even though the driver itself other
+> > than that is pretty straightforward with an established ABI by now.
+> > And it is also the reason we have not been able to add the module to
+> > Bazzite, because 1) we cannot validate the new fan curve calculations
+> > without a device and 2) they are worse that what we provide through
+> > userspace (a polynomial ramp-up which embeds hysteresis to avoid
+> > jittering, plus choice for both Edge and Tctl sensors).
+> >
+> > In summary, I think there would great potential for a common set of
+> > "hwmon" helpers that can use a temperature function and a speed set
+> > function to handle a basic multi-point curve for basic, e.g., udev
+> > use-cases. To that end, there could be a helper with a 5 second
+> > timeout that turns off the custom speed. But it would be good for that
+> > to be implemented globally, so it does not block device hw enablement.
+> >
+>
+> Maybe I misunderstand. If so, apologies.
+>
+> Thermal _control_ is what the thermal subsystem is for. hwmon is for
+> hardware monitoring, not control. You may do whatever you like
+> in platform drivers, including the duplication of termal subsystem
+> functionality, but please do not get hwmon involved. That includes
+> any kind of helpers to compute any kind of temperature curves.
 
+I have no preference for which subsystem these helpers are placed if
+implemented. But if thermal handlers are implemented they need to be
+global. This includes timeouts for manual control and basic fan curves
+(for which the ABI belongs to hwmon).
 
-On 10/29/2025 2:00 PM, Jörg Rödel wrote:
-> On Tue, Oct 28, 2025 at 02:45:16PM +0530, Vasant Hegde wrote:
->> We have debugfs support to extract entire command buffer. Also many cases once
->> we hit completion wait timeout, buffer won't progress.. and we will hit
->> completion wait repetitively. Hence in V2 he has removed printing entire command
->> buffer.
->>
->> Do you want to log entire buffer once to dmesg if amd_iommu_dump=1 ? (for first
->> completion wait timeout event).
-> 
-> I think there is some value in printing the command buffer contents at the
-> point in time when the timeout happens. When it is read later from debug-fs,
-> the state of the command buffer might already be different, making debugging
-> harder.
+I cannot make manufacturer specific workarounds for X platform 6 point
+curve because it was determined XYZ this and that, when the
+manufacturer provides direct control.
 
-Ack. if amd_iommu_dump=1 then we can log entire command buffer to dmesg once.
+Speaking of which, what is the policy for hwmon when it comes to
+settings after hibernation. I am being asked to add a restore hook for
+hwmon settings here, but other relevant drivers do not have it
+(asuswmi, gpdfan, oxpec), is a new requirement for hwmon?
 
+Antheas
 
--Vasant
+> Thanks,
+> Guenter
+>
+>
 
 
