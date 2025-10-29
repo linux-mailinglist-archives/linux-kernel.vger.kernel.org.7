@@ -1,192 +1,174 @@
-Return-Path: <linux-kernel+bounces-876954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50F8C1CD7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:56:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E378C1CD70
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69A1534BE33
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7281C1A20936
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2865280A5B;
-	Wed, 29 Oct 2025 18:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69439357729;
+	Wed, 29 Oct 2025 18:54:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="wik6Rjzf"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011011.outbound.protection.outlook.com [40.107.208.11])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CWWcT4WC"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C06E357738;
-	Wed, 29 Oct 2025 18:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764167; cv=fail; b=fz93+B6kC/fg/H1JwC568Uo2/H+r1YKFLexlT+oZZ+0WhaA0XCqFKMIoIm12UBve56xAs+VsFcH1O6NtZ2iGDVNv6bzNp5GEw6IdjgFYfQXlAUJQtCYI/Dk+F0hTzNZwhX+Y3qbrrazdneH/sTSUrNL8OsNXZ8mhl/H1R9ftDpg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764167; c=relaxed/simple;
-	bh=ZWtsT6XrgnfdkqUAk60oDi+7PnG6fv11BhpcjlPhal8=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n7KHJfEBoCygvZBSX4cS6lcnF2D4BYNuZJfgUjzxul4azUSVeeGfO01Uo193k2POIgvLp3v4sEiYXk+tsy9IeTem+RgtYIjQZfm/yiDby7bx8poIaS2+wfc9TkxDqqrZP9MMqOGtE9ARtJZBAaQpldItTCKMAMi1Rv2C4rHTTow=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=wik6Rjzf; arc=fail smtp.client-ip=40.107.208.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LSqg0bJL4imZ22gWNaSi/F5i5Cdnzn8U7fcQk2X/iOBBqYEUsm0GMaqNDOV/DrZTyhDorPv/lBJ7MM2H0GE0RTDVrt7LvTSBfizCq57s49sHgyuxETaGRF/Vqp3ZZpn97Nb12PvWPbZ17O52nEyD2y8nJ4uBtMM5tycKlOxgTo/lAc1tfmPzH9qUXHV31mFvFYnZR6piFG+PRL/LQvxeYmWD3mu6etmfDusuEFknQgGWPC+CbuaJVDdRzUhVO5I0xVwBB0B4hzwEWf7xIWXU1rGsjeYpU1Dx2fpfwUbU+Lg9GB8Di1SN3aTi/CVV/g3ZxoStLy94Ot3vAjW1kukuCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2dgSKI8yEg0n2Fa9dYg3cp72XL2ReQlw8zfkKAcQdB0=;
- b=hSluh3jC6eQbT2XwZESQeyuUk7lewdFLZ0LUSq2GP7eDvRs5eacApFYxfXe/uAq1r50UGJiR+KylR4Idw1sYZqgOEsqdPqAqDjXMNzzj5OhDW1ER+JgYX6BGOYq2+cfq6UvbbY5gkII1PmJ/3lV8hAQov1idFTx7xLkB4ONTwt3D4mbdMlrURthMbKvDYFnMVU5/zwISLzk/qFqxVRk0Sq+Wd5mS9kOs+THV0TXF0XUqmsR496E91Vrgk3G1rQkZpncAkiUcHAMBTD2mMs4IqfOzitK+ZmhmM1OD24t68hOI1ECQPLPHaKW7dSvJ6VI5qnieiNoV3IQa9pTF3scOrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
- dkim=pass header.d=altera.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2dgSKI8yEg0n2Fa9dYg3cp72XL2ReQlw8zfkKAcQdB0=;
- b=wik6RjzfAbBXFwfGowGL9kQjQKWCUniJroKgaiRRGwqz7eaX7xEkY8vIPU1kw3PppFE0vsoGtkhNZxA/Av8ZSwcRolV3e9Y7DmRPG4yPlvUr4wua534ximyKSiiiKL2EwoJ8aHffsGOkYRIlGPvl6x73Bbd1uOZitI/N0QQLlQcR3vG/axPvp3S8/QJS/4CQcG04xQUcJxiRRsADn7/ZixiifUUWBTNQq8Bg7Inl8z9vmdLGpds8v89gasOL35UA6q/JFo1M/EXDwBnnFSHZjQ3M3bFMuW1lB8cmLXferOXesR9iMp5sJOr4HVjvJQFsIM6T9o7FPldYfFSnxePysA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=altera.com;
-Received: from PH0PR03MB5893.namprd03.prod.outlook.com (2603:10b6:510:32::6)
- by SN7PR03MB7155.namprd03.prod.outlook.com (2603:10b6:806:359::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 18:56:02 +0000
-Received: from PH0PR03MB5893.namprd03.prod.outlook.com
- ([fe80::d003:bc08:7968:c605]) by PH0PR03MB5893.namprd03.prod.outlook.com
- ([fe80::d003:bc08:7968:c605%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 18:56:02 +0000
-From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
-To: Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
-Subject: [PATCH 1/1] fpga: altera-cvp: Limit driver registration to specific device ID
-Date: Thu, 30 Oct 2025 02:53:54 +0800
-Message-Id: <5a309582f52f1a8bb193b1a2fcf7a7d0ad9b3b27.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
-References: <cover.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: KL1PR01CA0010.apcprd01.prod.exchangelabs.com
- (2603:1096:820::22) To PH0PR03MB5893.namprd03.prod.outlook.com
- (2603:10b6:510:32::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB1346A09
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761764073; cv=none; b=PoVYxzQg1F8gST4bqYEe7J4MFA3CdU3QOsvGppwAk9q/SqF/wsYNiMFPqxSCGN4WAdNPq+wm1Ie5YAZg/o6TkSyuFbDoXkkHuYQwzd7scXtQb4qnB3LcS0bdCYUUfiTWm5qH8XJiDCTAdmabmbDnNx2dJ2ORmUvnwfeAqHws+OE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761764073; c=relaxed/simple;
+	bh=6TVk6+TU0bslC7OmscDtUb31DXjia0pUFqHx+EgaWw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ay7JYxxxsKFQOGZvrBlpDXr6OyS/iuOzadTxpo8p0+lik3x5bj2xvgyivilYDNGTqYmvSGDcWQamWAD8FUVRRzb9jNKw8EmnwgABMqiIyHVn9dzwCteYXKQMY9DERO+BR4uyUKm5g8uooQZwSe6XFIqKAt748cds4i8PCHXi04I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CWWcT4WC; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1761764056; x=1762368856; i=markus.elfring@web.de;
+	bh=6TVk6+TU0bslC7OmscDtUb31DXjia0pUFqHx+EgaWw0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=CWWcT4WCqGSjqrfpeT7eNqjjPT+iIaCv8MoPttAiOPmZYUneALfgC1ZhKxCJCA39
+	 qEOYIe95xwbe6gOqa5veD5SONT7+PeYn+fLsZYzw81FLefHYZXV5KpE2EAdvUgdLE
+	 Z9Wv/WYU++nux21K6C9uip1yI/SE9ohLlWcjv96vpAqO0hhWv8jHVTwtwXyW796zy
+	 kakId+PAmNG99J8slrtpyhy8MR7xGk7O959ZianyjUmk0RK1ftzvrPCyj545chF6Q
+	 4B57EHOpoexYi0qLHCLE3BYOYG45ozwXLoTerr+U2rVGgoqt9JKQxRZJBtTSBDq5Q
+	 2m0eikGRnz+2Fr2x0g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2gkf-1vHDa326X9-00BzMZ; Wed, 29
+ Oct 2025 19:54:16 +0100
+Message-ID: <80fe1dd3-7541-4629-a540-021603d1f150@web.de>
+Date: Wed, 29 Oct 2025 19:54:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR03MB5893:EE_|SN7PR03MB7155:EE_
-X-MS-Office365-Filtering-Correlation-Id: ead4b587-ec38-4023-eb3e-08de171ccdfd
-X-MS-Exchange-AtpMessageProperties: SA
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?r0i2NGq8jq+CGkAK+NHCZBjR0UmSsl3Sd5+Nx05e/qiGvsBSUDzSmFKYFVSj?=
- =?us-ascii?Q?NTa9ypxHqKL6u6XA5Pa9zv6AyrcjTCFaVXilNzMxGkjm2m/tVLRqUS2J96ZS?=
- =?us-ascii?Q?Ymf3DpaBW4KGzZhHLAtMIVz/x4gC4ecWbr9eSfwcuOPoJoDFnj0m+NFu1X1X?=
- =?us-ascii?Q?pccqxTHINgNGgfqhREVasDPRo/P3MHVCX0t0abBUEA3coPLtwTyM3jXvK1Pt?=
- =?us-ascii?Q?kiuP+qmgAaYWbldbHTyumvUsgugbTywSW5Lv3kSXrg7lA9RWG7Ckfx6dEOYN?=
- =?us-ascii?Q?P720nZCeFz5P2TJtiQ4Z2Sn64q+MG1Bb8d3WsqKXP/LmOfkX2Rsfd/Wwg/Jd?=
- =?us-ascii?Q?v5tXj3GcwnbD4sJW0AxGJcqW8eKIJo8cySHs+NWrzGfVWDzS7lWHinxXdpIq?=
- =?us-ascii?Q?gaqFU6nGoX2YuslrqgeDuOaLbiQtDCId/ftB98cx8p8/KTHt2xjFWMmt75qv?=
- =?us-ascii?Q?WkmCZqcyhwSRaS2/9TJs3IIsghoT2HVeWAjccuBPLtMIerqrK0bwtAqnDtSD?=
- =?us-ascii?Q?A4aP65whR+eP7hayZ4HZnIEazfdulfqC60GAmnk+BEenyB69ACoH6Lu11FZA?=
- =?us-ascii?Q?3kCD8qn/ymfE7zaRCA/tl/8rP4rmnLu9s/0q7TintmnxB2calBnloxIOE/HE?=
- =?us-ascii?Q?BRRoYf03Ojo9J74p2SDKCKcoCBgfdJw7MmTi8vawfYDW282Ui1AuqBIEAu2Z?=
- =?us-ascii?Q?V0GYLrjpwzCpr6tn7btM4fl+/fXBxSwbqa/R1hJJTbpJHkzDnFMHVj9FLrQK?=
- =?us-ascii?Q?6CeXvw2ToAEIjHvTC8LCf4HkVUGtej9Bgg7EqB1qVgJiFq4DUCG4cK4QkUg8?=
- =?us-ascii?Q?YpKgLg78BZt86uAtKpl7vmgcCgiqaLdC+F1jiR9YtWiQrRFfcqX8dV5JF552?=
- =?us-ascii?Q?LfEKV/+7AxkWwRLwW94jDAvgdEEZVyMBSZsXmjt0+TYcpimHe74PhTq/+zhF?=
- =?us-ascii?Q?lZ5L/Jno57LVsQgPLWbq0HgacdoCmLnSEkP/sl14LLWo4TJaYWqVnTGpPPuU?=
- =?us-ascii?Q?lRlt40xiicPiikx2P1M4tp1JwBYGPNO83jRLCVCP2UidYEhp2WJF4m8MFg5Q?=
- =?us-ascii?Q?rLL/oDbHkhGtsMsmn87L/B7hJo9YTv346x188kOCUAjrPKkoxGBLcAbzV54D?=
- =?us-ascii?Q?vzP64jg9xI6Ru2a6ArKi68fdpZcPo1za9ihJAeXgqrrM9/Tu0NG3iBgoFfz+?=
- =?us-ascii?Q?KAlFi5HUwc33pbfmM6zXWDbTaupVqP4qcnchFhADkX2pf5ufa0oi14rNcDRW?=
- =?us-ascii?Q?8ysiY2V1vDX0dn5JKXrkIaXLu2T3U9AybvAjvvSwwv1IZR9mOzmTtu3NnKTR?=
- =?us-ascii?Q?MjsMeFvJRGfaNt83zvLgPCCW4sBmm8+FjpW0MN7MNGe+lNN8aowhZ2eS/CL7?=
- =?us-ascii?Q?7wJzBN7tpaP9Y0XeCnzXYtIK4NSpUShb/Q8/usIZqyqLVxEpU6wnNNt0U3P5?=
- =?us-ascii?Q?wCJ/mvDZxe90MjgJL/HAByMlwYrjoXlZ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB5893.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?x87hIMw5mMChv7kuwINXNYwDKeErmq0QvwTaAELz+joGkgE8NPcjnKIZiZYf?=
- =?us-ascii?Q?WKjgRM2JZt425XwblFGLBGV8FRW5J/5gVtM3eISNdtPyVYSnXSqC7LOnwsHP?=
- =?us-ascii?Q?LNaIVW2ytzTh67KRO1qJZAdwRgamfCFSFiQC1y+62XCI98N6O7BBRfURv/9O?=
- =?us-ascii?Q?ztY+EF9zMihKYkpN2qqmHQalx4NN5zjJ1SKkakXlnvprKUkQLVKVHJGZ19rp?=
- =?us-ascii?Q?WESwC+prP07NcA+ksVaVpQ8AMBEa3f3qH/V7DModkX8iVZ/TpGAOuZlP6I4R?=
- =?us-ascii?Q?qiBXiHKlbD0Y/5fAuDM+XkIf+I28Hhz1KvKpw9Tk/3tu7ZFlJl73GJYyKYjN?=
- =?us-ascii?Q?rKTe0nhaHKvpWPtod6+95wg3pa9CobAxNQwa2txPvYGyXalEk2SdxGNPblPc?=
- =?us-ascii?Q?H6ISYnFVCQazoV9bagcGWIH7kyjBkpxC/UA3QFFVFH1bKScyBZN7yi2gvduV?=
- =?us-ascii?Q?F9x0ccM3/kmXLdBFc9wDDihlG1Sq9QcHFp0AbfLKGFpH5ZbhefT5YFJ8S6nl?=
- =?us-ascii?Q?mSNqPELdzczjRx6UML44QX4BzMkTqk4yNTIYe6s4G2GuDqFZmPUAphIFz3hc?=
- =?us-ascii?Q?IH2qNDuKizVnVY5gBV5di7gewNbo8ojF3HY/gTaJrYTw+4prSCSJJgyOKBhg?=
- =?us-ascii?Q?/k3GM8XS4cDGrkeayLjKq4YWL38cVUZFrmpgr40LJoHdlwBOfhAubRH91JSK?=
- =?us-ascii?Q?cQyfJTtHzcfE41jG6FaiUkzYvKsMsUSkMU4xz8QH2vTmDYNAJ626Gv7ZAvoQ?=
- =?us-ascii?Q?c2jkopgJ51DnEHSAExWhz8q91JnsixO0I5UshJ7mr5v0FxhPdXnYKFUT32Ee?=
- =?us-ascii?Q?ImXIxcuyLSss2Eb8d3mWVdDP3784EoV3kuiPz6FAPJxJZrkVp31uF9r+DPHr?=
- =?us-ascii?Q?PdlJxq/J/DzPfeldcLqfPpaOLvQTbXlmcDxSx2a/BrDERZcmprl5me5l1YG5?=
- =?us-ascii?Q?eYRmdbluYCIXgEbmbQpwHOdQ1OYGlLic/7HuarQt98wJHOP1L2YRnli1RdHv?=
- =?us-ascii?Q?E/iS0nqZq8uizgx9jOS0ewMbNrRPzo83GiQ6Fz54TqKkpekSgDthh2FWhxS8?=
- =?us-ascii?Q?WJeDff4zHlWAjnhvJ9HnqpYMPRE7NRTeyT6IgYNNdvk42ftUO/FwQW3Jbg0Q?=
- =?us-ascii?Q?vMtC46sxd6zSaO1oVncgafhhAQefltzcwLTLc5mm5zbJkQR9r8qYuGO1pqrY?=
- =?us-ascii?Q?EOVfH0TUU2Pr6Y41AwtVbztqAGdu6sGqhhQW/Uwe4wThU3EJQCc3ikoaq4PE?=
- =?us-ascii?Q?LLIVTW8rRll1pTUA6wjdzu8m7QiCO5D+x5IL1TZFZ/vgyKou1aP3l+P2/ohL?=
- =?us-ascii?Q?8/wkU8iBNGEcpoOpu1JCCI4yeXjTFZICUdPYZsjYzX0A1YYhxaoboWCQ8FaR?=
- =?us-ascii?Q?3sLBwXUDFQA8MGfD94uFb652H+mBTT3AK/2GHm7K6tj5lim4yuYwqQo8CXyK?=
- =?us-ascii?Q?0MdzlmOJ9QJTwiLq/y1FSzvTozXFxoAOBihs3IB9FgSw+XcVrvE88vh92/fr?=
- =?us-ascii?Q?sODFx/DhVvUZWf7gWJdDFCCjRVEJJy1LPGtLRSGBUdFYq3CLO3lorNSPhZUl?=
- =?us-ascii?Q?rmmivvl9D5idn3rtp9T6xSk2jq5VeaiayNCRgpN/YSfUaaiOOjYr0YAvgtmr?=
- =?us-ascii?Q?NvHunrjGFznB9zkdN2GOBXw=3D?=
-X-OriginatorOrg: altera.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ead4b587-ec38-4023-eb3e-08de171ccdfd
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB5893.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 18:56:02.1113
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: e50A43v6HUkg4LGsx+FWuPRHcCL8Y1CJ4IUqXf63AfsG/+t8eolcSKDCCxgxmCPxJQpuwAWtf4eaU2ckVQceyONvdiAttdoBl9DmpTHZNMvVsfeggUagVKlO6SZpDDVp
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR03MB7155
+User-Agent: Mozilla Thunderbird
+Subject: Re: accel/amdxdna: Fix incorrect command state for timed out job
+To: Lizhi Hou <lizhi.hou@amd.com>, dri-devel@lists.freedesktop.org,
+ Jeffrey Hugo <quic_jhugo@quicinc.com>,
+ Maciej Falkowski <maciej.falkowski@linux.intel.com>,
+ Oded Gabbay <ogabbay@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>, Max Zhen <max.zhen@amd.com>,
+ Sonal Santan <sonal.santan@amd.com>
+References: <20251028175452.2329497-1-lizhi.hou@amd.com>
+ <b7a2ac2a-53c3-49ce-862d-eaba86f0b298@web.de>
+ <605e6f4f-8e96-dbe4-d43d-16bcac63f94e@amd.com>
+ <3dd7e061-8e6f-4d3d-b56c-7005da8197f6@web.de>
+ <b2cf67a4-6795-d743-e90b-db10f636db2e@amd.com>
+ <6238912a-8733-4b2c-a155-82bb081e6063@web.de>
+ <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2jJ5bE0O9iVzpbcsUECZgwCwAbyQsP+8A7UmSGQGoBnn05oItRs
+ iwHG16Now69Njlv7dd/ziryrAuPMlPbFgPs6xFLdeN+u2m39QMSP3Jrhf6rm8wv88Dcd8mr
+ WKMunMGXLMJxicUck1Z72czOHV8+IPV44Z5APIK07w1hHJoeQyysi7DlfFgO8pcj9oInRSR
+ myodbWIV4op6QLvFE8zEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:X+Qh4MomW3Y=;5+698kBI7amT90j/py+w0kcTus5
+ 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
 
-From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
+>> https://elixir.bootlin.com/linux/v6.18-rc3/C/ident/amdxdna_cmd_set_stat=
+e
+>=20
+> Sure. amdxdna_cmd_set_state() updates the return code to command buffer.=
+ So application which issues the command will be able to get the return co=
+de.
+>=20
+> The function return value "ret" is used by mailbox receiving kernel thre=
+ad to deal with the error.
 
-The Altera CvP driver previously used PCI_ANY_ID, which caused it to
-bind to all PCIe devices with the Altera vendor ID. This led to
-incorrect driver association when multiple PCIe devices with different
-device IDs were present on the same platform.
+I miss a clearer answer for the indicated function call incidence.
 
-Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
-the driver only attaches to the intended device.
+Can it be helpful to determine the state value before it would be passed t=
+o a concrete call?
 
-Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
-Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
----
- drivers/fpga/altera-cvp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 5af0bd33890c..97e9d4d981ad 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- static void altera_cvp_remove(struct pci_dev *pdev);
- 
- static struct pci_device_id altera_cvp_id_tbl[] = {
--	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-+	{ PCI_VDEVICE(ALTERA, 0x00) },
- 	{ }
- };
- MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
--- 
-2.25.1
-
+Regards,
+Markus
 
