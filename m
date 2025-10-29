@@ -1,88 +1,119 @@
-Return-Path: <linux-kernel+bounces-875660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F17E5C19874
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:58:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA5BC19889
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:58:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CDDB188FD77
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:58:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0AD19C6F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6FE2BE647;
-	Wed, 29 Oct 2025 09:58:08 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E676326D50;
+	Wed, 29 Oct 2025 09:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZSjI1vja"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B035F2F6596
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FF3213E9F;
+	Wed, 29 Oct 2025 09:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761731888; cv=none; b=ebnU6SrBylDxeqAukWCPiNSHYHM9aMJlGgMqQTUSBz3CFDjfYihrFZzpyk4tDddYOIGnp+L9xF1EN7mLMGj1Jb9LARJihdFUakcf3qGzfDP0LUD73KKEglPivdNsz6CijCUbJIoJ+ejFQO3IGEus/jW279WVfwXhvgnK0oW7zwI=
+	t=1761731926; cv=none; b=p5EcpNml2QWOcghVjsJ5qisuzYHFLysbjoSf+sLGbfM5fAW/80xdTBm8cUmSgHgFwMKLcpj9IsD6T6hfLF3lNLL+ziGrNMX38wRByPgdAWnVzCUlgkrMvMdsFNpSBaY7cau4pujraWHeTnYX5lEb7po7B8b9AOstFmOkleN+rIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761731888; c=relaxed/simple;
-	bh=r4qFEAq7J5YHvhmOpm4fd1y5yaGFHbVbNRz7uHq8kzQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rivtqDpiw5GLI1HFH66r/+u6tpf4mOomM5Bb7vpclrjfmKosxIElyImAZdINpSxLY5Oq5O4gdNDsL7/h8lJSM+pJdeNz1fNuYS5sWYy2XrOgrAVoZBKXUuBs/w8dmxLfoPz4EMglPbQeRQiQYXHfs+A3IJsJPH1gqa9MMnXmhpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-432f8352633so33804455ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:58:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761731886; x=1762336686;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oRHOvailpAA6/Md5eJL8pCM3F84vwiR40q6xUc0fzcs=;
-        b=q7qp8kKGl3k0+8rJ42qlaH8819FACLnIre56jNwyzCVMDkSR45chf3PRqkX9TkAA6a
-         FD7Uq2vwSz/2avySbtt+bJOFR3Orllb6pXRPmJoNMWTOBR0Bmy5y0PqDHsLbn4fpMTBY
-         AnpOTcOMGz55o6QOdBvDglVtM4MrmXGxh3y84bJ0dKb6gpKwqOxqXq3f86uIlj8r56NK
-         7zPM3bgRhryhYbLug2HN3UEl1FL4ymv4/RaoO8BZsNra3U58q8ClmO+aB0J7+FN6rCCs
-         CU5wgV9m/zoN6d8zCZUqQBD8MzQMiDfmyONrpsS9XLJ48s1UiN9776WkdNQzaDiIgtVQ
-         MUbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIpH9CtKnEhXfQ8AUSUasHWPUfgkljpnvL3XaGrfAhcdGN4YwFj3pSpcaj13SgIjmX6bPiVU2O/cnnn+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNRgO97xAgcm7JwL+bRRHdUdCcLXNRkGdGn/M61jBjx9ZhjUjo
-	ujs/XXrQVkXK9xuvV1HQFoTT1baR1CiqlP+qEXRdcVUj0sCJJHH2akBahEelvG9RXq9gpXLQZpt
-	1c4C3IbNNWSysFpOuu8HjUBRCCfoUEhW3XDN9mHTWhoOVrm7UXiwQSUZbNgU=
-X-Google-Smtp-Source: AGHT+IEHzK3+YsZzY2zd2EIBuBkqe3V4/NOFULMeeE7wE6joJ9evstGilQAl9aRm2EA4UvmW+2mHn7+SP9hiPYIykHV9wbiFI6o0
+	s=arc-20240116; t=1761731926; c=relaxed/simple;
+	bh=Kq1eyyzWeTq2PGjeIgEd5N8sYVWegT3l4RTdVo9JeBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QECe++f/TiGvvrAzlxlWEtm05zM8mWU3TjoxVr9aGKMfonH9z9cRaSAWgPLndPBKp8rVLMAVDhbDq5T9WNjDQ4jZuQnYecsP4dlewHeVKzw7gPJasE9Vnf0fEUFHLpwhiklUDDkJG6Yu3VKrFUN8nY7yOQM0Ssh6b0hVA01mCxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZSjI1vja; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761731924; x=1793267924;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Kq1eyyzWeTq2PGjeIgEd5N8sYVWegT3l4RTdVo9JeBg=;
+  b=ZSjI1vjagfpuKCjNuM8n6qa8JjZ5dnjBQ7rt5x4QsLWfnuV63DlebSVG
+   Kk6Alzk3BbzJPmaSTyKbW3xnH2DIYUmeIL/7KhUVIFgTdIL/Z1Es04IK/
+   CKDu1NfMmZ3yj74H197dKs6p8dBMfmlKilnQdh4ZxndSWHadTavS8Qe7y
+   JTNKbPT6s1PCtBQ3kolFnZS85g2QMWYIp6oOambDV1QUxDMPAaFi/VfAY
+   wnydd5HpY+rj6EQrnP8RtuoHf0+T4XAkmCSpVxpfryHnc6XTHNGXrzqqM
+   aVaG8G2deVVjejX9vba8eizHM1y6XD2wrGJponoXwO82xP4/+9zT2cyrk
+   A==;
+X-CSE-ConnectionGUID: 3z28AHOqSMGWiLpeGxey5Q==
+X-CSE-MsgGUID: YO9CSnQPR9a5V5T13kerlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11586"; a="74446075"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="74446075"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 02:58:44 -0700
+X-CSE-ConnectionGUID: 4kioB4kiTv2895ziHEBokg==
+X-CSE-MsgGUID: nHQntyzQR9WoogTrM29snA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="189677442"
+Received: from haochenw-mobl1.ccr.corp.intel.com (HELO [10.238.3.228]) ([10.238.3.228])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 02:58:39 -0700
+Message-ID: <ef7801a3-d2c3-44da-b0da-d014bd7e3e8f@linux.intel.com>
+Date: Wed, 29 Oct 2025 17:58:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2162:b0:431:d83a:9ba with SMTP id
- e9e14a558f8ab-432f9045398mr28264185ab.26.1761731885941; Wed, 29 Oct 2025
- 02:58:05 -0700 (PDT)
-Date: Wed, 29 Oct 2025 02:58:05 -0700
-In-Reply-To: <20251029062743.MHMWb%dmantipov@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6901e52d.a70a0220.5b2ed.0012.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] general protection fault in ocfs2_prepare_dir_for_insert
- (2)
-From: syzbot <syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf/x86/intel: Add PMU support for WildcatLake
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250908061639.938105-1-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+On 9/8/2025 2:16 PM, Dapeng Mi wrote:
+> WildcatLake is a variant of PantherLake and shares same PMU features,
+> so directly reuse Pantherlake's code to enable PMU features for
+> WildcatLake.
+>
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  arch/x86/events/intel/core.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> index 28f5468a6ea3..fe65be0b9d9c 100644
+> --- a/arch/x86/events/intel/core.c
+> +++ b/arch/x86/events/intel/core.c
+> @@ -7596,6 +7596,7 @@ __init int intel_pmu_init(void)
+>  		break;
+>  
+>  	case INTEL_PANTHERLAKE_L:
+> +	case INTEL_WILDCATLAKE_L:
+>  		pr_cont("Pantherlake Hybrid events, ");
+>  		name = "pantherlake_hybrid";
+>  		goto lnl_common;
+>
+> base-commit: 16ed389227651330879e17bd83d43bd234006722
 
-Reported-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
-Tested-by: syzbot+ded9116588a7b73c34bc@syzkaller.appspotmail.com
+Hi Peter,
 
-Tested on:
+Wildcat Lake is a variant of Panther Lake, it shares same PMU capabilities
+with Panther Lake. Could you please review this small patch-set? If no
+issue, could you please merge this patch-set? Thanks.
 
-commit:         4fc43deb Linux 6.12.55
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a44bcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7ee22a53c27b385
-dashboard link: https://syzkaller.appspot.com/bug?extid=ded9116588a7b73c34bc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1394bd42580000
 
-Note: testing is done by a robot and is best-effort only.
 
