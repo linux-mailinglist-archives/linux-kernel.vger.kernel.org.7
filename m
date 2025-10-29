@@ -1,131 +1,87 @@
-Return-Path: <linux-kernel+bounces-876680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F386C1C360
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:47:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A963C1C03C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E5CF05C0D18
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:15:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697F319C2089
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:16:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB6F33F380;
-	Wed, 29 Oct 2025 16:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjE37pNN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89350312822;
+	Wed, 29 Oct 2025 16:15:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACD12ECE86;
-	Wed, 29 Oct 2025 16:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6BEB345754
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761754500; cv=none; b=g/VWG6+1pIIq89KorSbW6mRnHS+rFojA/GGZ5dUcPmY6xJYUvgtQwryVU9KeDX1BJviO0FHPgVe+g19UoEBlGJq7NSjw0cL1eJu3YBj7nDfLJetoZKcg/wKGOdszBqZsdSybnzj/n0KjPJ6yHJnqOQ2qVfyAGacRwZuS0EisxyI=
+	t=1761754507; cv=none; b=SvnDYlE9rnS9A7vRt+4y0byxDCVOsD5insZBXMnGhEtPFRvtCQIxyPkSxT/6DHv392OU8sqWI6VVYOIHn/f+B3bZ9H7bxIVw90yApYBpVmNHppJM3CGZ5fNeshFZy4YeusOLxc9V1YHG6kXJeC4ZyGFH2yGGbnR9DXY4Q5oDU1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761754500; c=relaxed/simple;
-	bh=MzDiNBwjOd5bG+qpBunqHUPL5TbDLkEqeHNOr5ncI3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KIZs+SS4rpvGAtrximgLZwMy3Pf1+tPfenLl49vM9sMw7i6EXaa/n1wKkIvNRbkUm/zBDwT9poLyxsc3DhE2TADlHOsI5iyaqaEEq+3SxlRi9Ztn3jwwsy/awY0wLaW3+yeYIbgqVpYEFOKS6CQ4UViCN5LV9bD/hArWKh/TJkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QjE37pNN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E76FC4CEF7;
-	Wed, 29 Oct 2025 16:14:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761754500;
-	bh=MzDiNBwjOd5bG+qpBunqHUPL5TbDLkEqeHNOr5ncI3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QjE37pNN/L94+0MLl21IS08uJ68If0bQz6Nldnoci1SWL74a5JkjwbGiXLqZBK6Cv
-	 3f77yW0B2+xKct/DP4OFLB6B/MDEmlMZJ/Im+RzJYLT7Kxdl4EoItpZcu9WEUPbjhx
-	 7wbSgeOp1IkG6gqY0wLC7QitMyN6pUXzJyty7urTyi/C/Tf0XE+Oqo0he9Es0uUo0J
-	 zycg7LRL6yN2spgA6gBOiOrBjQNRhTULUdvrG/w90LDoVakhV9uaEXZr7VTRwHwDNi
-	 KQUmoMx/Ltsm/rjj8vJLGIsdCh6fg0SSt8YuQMnKSHtniDuiP+KHFwPR4X8Tc4wyZ1
-	 CvdB7/RRxn4xg==
-Date: Wed, 29 Oct 2025 16:14:55 +0000
-From: Mark Brown <broonie@kernel.org>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: support.opensource@diasemi.com, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] ASoC: codecs: Use component driver suspend/resume
-Message-ID: <56911e0e-0f25-4134-92fd-f89cb47fd9b6@sirena.org.uk>
-References: <20251029141134.2556926-1-claudiu.beznea.uj@bp.renesas.com>
- <20251029141134.2556926-2-claudiu.beznea.uj@bp.renesas.com>
- <bdb14543-e611-42d0-a603-300c0ea17335@sirena.org.uk>
- <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
+	s=arc-20240116; t=1761754507; c=relaxed/simple;
+	bh=XLJBCvfnU/2+fQa40bmCPt+xP96A+sxD8DPQAK7qr5A=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mVwvRY3+bIVk2eRQdCnYY892bEmd8qsO6GueFrgEZIxYhBZ0mLL4K0X65SYuGNBQ0qul3M5vCB4KAxZnWAn0k2M/R6kjI/WopWKhWaIRbWByXXIeb6vSbXUC5Su1e79pRs8Qh5REQGUy+th6rMGj2QPCoBcYxddcMYuTzWDCIMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-430c9176acaso1135685ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761754504; x=1762359304;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wbRZdr1gB7riUGYFIHvlkpAaC2FFLvU2w3RLVOpncNM=;
+        b=DiubnFZ/HK5yvint3u7h+sWX6RT/smBD7VNh4ncbi5G8tUPkhLeTrMNoCMv/cfYLvB
+         d33tdccUReRlgqFwXUAqosBC4h6rIVoonAd1/zYEO6OVcAiZraRQY49P186BamtvP1bv
+         MrieOGG7WtNThmlGCIlHfrNIFx5/YQXKGYDtZuNVJEu8s1j/82OmxWoA0PEeHFK1bApY
+         XpJBRKPgEAxg2DltLPpmEGgb/1enJNMLJzRI3C6fUxw49d3IBj+eu4RIxZH2bvJnVAPt
+         eVx+SKjeecv3L098vJybMZ9j4t7IofHniJ0ElOvPbTOOV85sTXb39YpDzQ+DCZ8cnat3
+         DbyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAdAzvDfDh8+ce6t+30vMFjpz7zUFvazKbzsXhHoIkz/XMZi+maNMsYLLjYxg09UcwmZ8Kok6Cg8ou9xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnRR4RqyxTnRMFWTNr35ipqQsA/+zxyElzM5jyBgYMrds2Ixen
+	LqA/CsbwFPL8Iy93THxDXTP+yXbhKNQCJA+ZlXeZRFqHhfI2UZg7yd5sj+doTaJGpyz4he1s2al
+	9LzmxIplS0oS+3jETKTc2ljTvXtHP1mNZlWo0sDdTTfFVdcfjXeI8cFwJ/GI=
+X-Google-Smtp-Source: AGHT+IGIMr00ayiB6Zl6Egd8G/U5/gZVE8ZQADzywLeF8ddkpGFsbRyrSAMnj8bxahcDDkntQa6t+N43yNxVuhdRhnHSb4QVaY2m
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JpTtvZk+/JgRadlt"
-Content-Disposition: inline
-In-Reply-To: <70362ac1-244b-43c5-97cb-ebe8f5b90c3f@tuxon.dev>
-X-Cookie: Goes (Went) over like a lead balloon.
+X-Received: by 2002:a05:6e02:180e:b0:430:db6d:30f8 with SMTP id
+ e9e14a558f8ab-433011d47e2mr2592545ab.4.1761754503761; Wed, 29 Oct 2025
+ 09:15:03 -0700 (PDT)
+Date: Wed, 29 Oct 2025 09:15:03 -0700
+In-Reply-To: <20251029062741.5wX4O%dmantipov@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69023d87.050a0220.32483.0213.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_set_new_buffer_uptodate (2)
+From: syzbot <syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
---JpTtvZk+/JgRadlt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Wed, Oct 29, 2025 at 05:22:26PM +0200, claudiu beznea wrote:
-> On 10/29/25 16:37, Mark Brown wrote:
+Reported-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
+Tested-by: syzbot+7aef76bdb53b83d62a9e@syzkaller.appspotmail.com
 
-> > The theory here is that the power management core uses the device
-> > instantiation order for both suspend and resume (reversed on suspend) so
-> > the fact that we use probe deferral to make sure that the card
-> > components are ready should ensure that the card suspends before
-> > anything in the card.  If that is no longer the case then we need to
-> > ensure that all drivers have system PM ops which trigger the card, this
-> > won't be a driver specific issue.
+Tested on:
 
-> I also saw the behavior described in this commit with the rz-ssi.c driver as
-> well. The fix there was commit c1b0f5183a44 ("ASoC: renesas: rz-ssi: Use
-> NOIRQ_SYSTEM_SLEEP_PM_OPS()").
+commit:         4408a3d6 Linux 6.12.56
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git linux-6.12.y
+console output: https://syzkaller.appspot.com/x/log.txt?x=14310e14580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=52b41b67187b07bc
+dashboard link: https://syzkaller.appspot.com/bug?extid=7aef76bdb53b83d62a9e
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11db6fe2580000
 
-> In case of this this codec, I saw the code in da7213_runtime_resume() and
-> soc_resume_deferred() racing each other on system resume.
-
-So I guess we need the more general fix then, with everything calling
-into the core to suspend the cards.
-
-> > If the device actually lost power during a runtime
-> > suspend then we'll end up having a bad time.  There was also no mention
-> > of runtime PM in the patch description...
-
-> I had no issues with runtime PM, but only with suspend to RAM, when this
-> function was called though
-> struct dev_pm_ops::resume = pm_runtime_force_resume().
-
-Calling regulator_disable() doesn't guarantee the regulator will be
-disabled, the constraints or other devices can ensure that the device
-retains power so there's no effect on the actual hardware.
-
-> Would keeping the regcache_cache_only() + regcache_sync() here along with
-> populating the struct snd_soc_component_driver::{suspend, resume} be an
-> acceptable solution for you? I think that will work as well.
-
-I'm not sure what you're intending to populate the component with there.
-
---JpTtvZk+/JgRadlt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkCPX4ACgkQJNaLcl1U
-h9DVIAf/cAd0aKUG7ztZYiPY/cyhA7SyqjfnlvJMZkM4AqWOp+nc2Lq76IWOKckx
-esVqlDB71tZI+wtddbYyDVc8G4OQUAFnftjSyFl97/CYACADQ9FjUzWpUgbaUo0h
-9KbIQUFejzoao8zsg6jIfMgeh8F90M9JaxoMjNjpTfpLfpGw0XHGZZPfRq7z1v41
-B1Oxl52EIMC9enrkF8sKEOJ3WQwNK9w6XjAY9vctTbSgkAdb/twf0BQEmWOxcOkU
-U1zK/LTjNfbBtl3ZMhXcupoyLVBXOuYdNxT76ZH2ziGhB3hGvl6UYVorkXf9+kzY
-foTIXsTVHNwWQz6ZpmpwcgZmwCzIhw==
-=MYlh
------END PGP SIGNATURE-----
-
---JpTtvZk+/JgRadlt--
+Note: testing is done by a robot and is best-effort only.
 
