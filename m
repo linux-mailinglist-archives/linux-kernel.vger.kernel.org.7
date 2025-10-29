@@ -1,130 +1,167 @@
-Return-Path: <linux-kernel+bounces-876432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B221C1BD78
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:56:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37352C1B94C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF386661E38
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C17458174F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5CC2EBB90;
-	Wed, 29 Oct 2025 14:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514392FF661;
+	Wed, 29 Oct 2025 14:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="al12+fsj"
-Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WrHSavp/";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Km42uYIh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C0C19F12D
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141B6310624
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749201; cv=none; b=XnHAHtd7oT+SEC2YfYWe1KGZMPB+Jm6WMTXI3zF+Kq8nXtt543TIIyA9dtX1QQn8pBNIzOKCcI8/umKOxsZWDUyRsXL30h1zkWRsTduHoMvDznRoS7m+DpcoN44AcIX/G9Qw9as77nTeaazr4cWQKME2SSjHoMXlbWZii9xyvlc=
+	t=1761749214; cv=none; b=uKMU4r1+yG5GLoa5EICwzUWOX6/ef1Pegz4VjvkNs+RAaRuiRPMDrg5c02sFgg9oeapdA2rpwO7XGRiqa/fKH/w6xBW+ZcjlI70ikaA4jmSJnzsBWqDtkSuHH4Fky+hW+EJXeeUvcz3zk12NsyjxVjweT+fX6aEQrOd8LBGFq8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749201; c=relaxed/simple;
-	bh=ngJAnlOKqYRtbwucuVGSwMfSaWkoeSQJh2mut5Zoti0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/dQCF1QaIuaL64qMisAr5MYALlLJkT1PJxWe2pJ7SvtxYt1RfwfGVkXYG0lkW31f2FegqCRE8P4Efi/DHHT97FihXlBAlw9bY47vs09C7MDMUoPraKZMeiZ40G+N9ipDBVNfrqd9cc/6n7osgq2S4jC5Ogr1MvyGwHz4EEBVNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=al12+fsj; arc=none smtp.client-ip=178.62.254.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
-Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
-	(Authenticated sender: d@ilvokhin.com)
-	by mail.ilvokhin.com (Postfix) with ESMTPSA id 802649B0B6;
-	Wed, 29 Oct 2025 14:46:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
-	s=mail; t=1761749196;
-	bh=x+mUewU0uubR5x+mt98SMi5/L+FjReZ5CAZTwZR8n6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=al12+fsjNs19YkMdP1Ke4eqTcDWxXcn+DuxDw5ZTJcUw31UnLLYjJFJgZL5IOTTab
-	 XOOTiqS9IMy9O4LbjMJh5WwROzrxDvmXV6E3UZ2w32uuHDDYh/gQUrhJxy7hYeUkL6
-	 cf+iwydtdvxIsmel2OaWK+aBVmInnqPrTWFr65rM=
-Date: Wed, 29 Oct 2025 14:46:33 +0000
-From: Dmitry Ilvokhin <d@ilvokhin.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] sched/stats: Optimize /proc/schedstat printing
-Message-ID: <aQIoySXrIVcKXXGS@shell.ilvokhin.com>
-References: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
- <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761749214; c=relaxed/simple;
+	bh=WlLMZwo0H4Ep9SK9cIL4i/qaXEGNycF3lxaPWFNBL/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q8Uy7V3y7HEPqko8BhvamvRXrwtfb7T9CEm9V80Jouk283nvdwmHMf45IdRsAxxkipOV+8SIPu5mD+4tQPDt9LtQK7taIyPzErgFvI25Q+/cyQ4Mq2Lu+8HHZnp3gRaP7qf00L6r/GgZgqkY1WnvlYzXjwXLGlKqU9isXeidgCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WrHSavp/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Km42uYIh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59TDd3FJ569166
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=3VQByPyxhbQga8wEr4/BN3Sn+0fDUaknqZU
+	S5siW03Q=; b=WrHSavp/1SNze8CpBfqeOmlH3QWMaVVrl+7Nx6bSc70s8EZ7CJO
+	AlxJ8sUtKvserq6JFA7HqErfhMbdZJhYgnoBjN1ipHlHD/THcG9Lpi9WbzomEdz1
+	I8RL8zyFKl8dDdevs+IBsWmylI9aG57h/+mxtRo6d6kZ9olfJeFBLZWi5azLTqtd
+	b3hwm+vAPw6K5cAbjKTi6H0u0m/KUg3HN8byDv6XnaLk31zLx6lmu8MOGSfMbPyS
+	Ihi+gwhwHqowjofIKo1ymKzo3xsxkHyzKCcVIAt4KnW8MFtDzf0oVC7rWMAlrP+6
+	2G6cywUi56DSEKmqTTZsmmf0o2Ss8ZGcFaw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a3m0bg72y-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:51 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eb9e480c15so85938231cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761749211; x=1762354011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3VQByPyxhbQga8wEr4/BN3Sn+0fDUaknqZUS5siW03Q=;
+        b=Km42uYIhCt6crVJbqvZUFh48lJ0/BkYL1rui7XQ7XcZeuSD6l+6pj8j+0UWcoUrTOp
+         3FbZRgBLcZtVaVXLtXC4l0dLlMRunut2CSgVPSHt5G1WVkTjyr+B8+Vg/wGrOt8Yxhsv
+         zhZxHHgHx11ZWfDYZMngmF5ce4ZxnNGMXpqFqKjOe0Z3Fkb0a9AdrZeG2ABCzX/qNQtM
+         FLsDebHYELz2Q4bsNlQi1uWeqH/Qf/i6sInRAAwUiqCXELFOBOrk2BZoeBmlFVucmMWu
+         BEJrwOTz5nT52BPkJuF8w2U15dHmCQG0qo9zugR91CIiX2n36WUkW3fdND6lbjAsErBk
+         IRgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761749211; x=1762354011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3VQByPyxhbQga8wEr4/BN3Sn+0fDUaknqZUS5siW03Q=;
+        b=wpoO1c588JH02I3THTcAIvkrOmNO6zDc4gE4ZmGmVRxXbF3pAZaHb4GYBIRGGc16P/
+         57meWI4D3+4fkyz6z9JeGVUPJU8H++k04VcWJdFI5nGYCnYPdh6zufj0WZjaRNyvXgSr
+         XgiM6fUOlynRitdtYknEmuIUFkX8jgBopIzZ2n8BbBNKYWQm+/gkpb5JnbV2z9GYag7D
+         E39lKyC8GDjqa3zpNdk3dZUO5asUHEukfKPv087UzvFgqnGnXvEsgzWMvdw2yad+aKsf
+         iQeG4czpx6ZXVRIlykvE+4e+cwVXUwPdPf02INEFYZtQJk3ec8Fkp/7p/hFhVRpvEPu6
+         C7ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWvSXXzeAeffk2Pa1FehTSSu9neEOM+p3v+TjJ0/X4h0OOHV1MQvoBF2jEdTzRlrfC0xqtkt2LlrBgg1a0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/D3ye4ORcYsvHEXg+6a8cVE4NyxXAdCpJFR3hV/3A76th+hjk
+	JgJcL/QsAXekFFPhxMhLPisu2zTDWzU4FT5AcCf7qiTZdx64h54wcOJbJCoWa7pXA0AS10UuwI4
+	a8YnhtaFd7B02I6PRW3X8fVG9vtV1mSJMpYBopwCoSEmLfPepGeoWUkayiZ2DWuanpRQ=
+X-Gm-Gg: ASbGncsKozoN/55SiPp/YxTT9aBkRpWKUoYfvon7uLo2oOcksHEZb51ab1pq4va9YRS
+	/3SGhDGRU9nmV7k7OyZIQOfeN6cDHaB6hyxHP7NGGiuSeJH+CmVj6ui9L5FfwsYHSsjX9VlbLwy
+	G0FCZ3R5uLTr8+ifWRFylstD+mD9RUacMxsrIwFsVvmDt0buCZYX32NXrhHK7Gl8B0lNQHW4lan
+	KZzmTw4mSpz/fBB30lpa81i6Pfw5jDIhftZOl6EZZX/GncbFXoXOYClnnKunjCfR02Zstko65/1
+	xoTBiuHInmQhqSFFxA26nqFQyMnnKY76oQkbTCxXvsv0JgMh9+c7o/dnKR35wdgNe2pd/+dw3hq
+	q1UUIA9zc9opv
+X-Received: by 2002:a05:622a:8354:b0:4ec:f07c:3e85 with SMTP id d75a77b69052e-4ed1e4dde2fmr11330951cf.43.1761749210789;
+        Wed, 29 Oct 2025 07:46:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXErexYyuFdz0AmKoKmT2JVIOCX89erGQ023chN47ZncI2gn9SrZMs/CXgh80y8c6IyjAKUA==
+X-Received: by 2002:a05:622a:8354:b0:4ec:f07c:3e85 with SMTP id d75a77b69052e-4ed1e4dde2fmr11330681cf.43.1761749210348;
+        Wed, 29 Oct 2025 07:46:50 -0700 (PDT)
+Received: from debian ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e18bd9dsm51573075e9.3.2025.10.29.07.46.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 07:46:49 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+To: robh@kernel.org, broonie@kernel.org
+Cc: krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+        perex@perex.cz, tiwai@suse.com, srini@kernel.org,
+        linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Subject: [PATCH] ASoC: dt-bindings: pm4125-sdw: correct number of soundwire ports
+Date: Wed, 29 Oct 2025 14:46:36 +0000
+Message-ID: <20251029144636.357203-1-srinivas.kandagatla@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
+X-Proofpoint-ORIG-GUID: PRF2yPWEbngO3_zDUjrJTXKo6_4t3qaf
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDExNSBTYWx0ZWRfX9a0gWRIOpXYz
+ MWQvkg2YRZH+Evef+Jszw4QuXL2GlFyrkYQUNuo0oxpUb/WrRpjzcnERWz/LP5CTJEHAUjAdB4E
+ Ak+L0Yl8vZJwHdW0NLJsHBraPv3YcN3SVppm+QfJapUSFeY8kwqJYQhhyWUK8aLMbRVRC/GQpW1
+ rxKi96+tlBjVIwZbIZqyNboYYG8wvorcRndpkF4+sYmaDzB13qGrG8m5e6eYZdmbzJ+xwSDcCcZ
+ F513PDG2PuR5hul1J+t0nuGBzWHtgCZ5E+9zEq3Hk8isMRxkc0Sm66b7m/2jDfOLq4VRLpzrp+Y
+ tA5bRCBF3rH7oj9TpzeZLZD38O95zf4QHQxquzRtAigoqvTf4Ow4pkE9F1uJJOI9ETWEgV0Xz/e
+ TvOKd6u1ljPfv+3abZDPlwfhAVSIZQ==
+X-Proofpoint-GUID: PRF2yPWEbngO3_zDUjrJTXKo6_4t3qaf
+X-Authority-Analysis: v=2.4 cv=YLySCBGx c=1 sm=1 tr=0 ts=690228db cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=ZsC4DHZuhs/kKio7QBcDoQ==:17
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=sX3_Zgyp12BJ_7Xf3x0A:9 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-29_06,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 bulkscore=0 spamscore=0 malwarescore=0
+ adultscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290115
 
-On Wed, Oct 29, 2025 at 03:07:55PM +0100, Peter Zijlstra wrote:
-> On Wed, Oct 29, 2025 at 01:07:15PM +0000, Dmitry Ilvokhin wrote:
-> > Function seq_printf supports rich format string for decimals printing,
-> > but there is no need for it in /proc/schedstat, since majority of the
-> > data is space separared decimals. Use seq_put_decimal_ull instead as
-> > faster alternative.
-> > 
-> > Performance counter stats (truncated) for sh -c 'cat /proc/schedstat >
-> > /dev/null' before and after applying the patch from machine with 72 CPUs
-> > are below.
-> > 
-> > Before:
-> > 
-> >       2.94 msec task-clock               #    0.820 CPUs utilized
-> >          1      context-switches         #  340.551 /sec
-> >          0      cpu-migrations           #    0.000 /sec
-> >        340      page-faults              #  115.787 K/sec
-> > 10,327,200      instructions             #    1.89  insn per cycle
-> >                                          #    0.10  stalled cycles per insn
-> >  5,458,307      cycles                   #    1.859 GHz
-> >  1,052,733      stalled-cycles-frontend  #   19.29% frontend cycles idle
-> >  2,066,321      branches                 #  703.687 M/sec
-> >     25,621      branch-misses            #    1.24% of all branches
-> > 
-> > 0.00357974 +- 0.00000209 seconds time elapsed  ( +-  0.06% )
-> > 
-> > After:
-> > 
-> >       2.50 msec task-clock              #    0.785 CPUs utilized
-> >          1      context-switches        #  399.780 /sec
-> >          0      cpu-migrations          #    0.000 /sec
-> >        340      page-faults             #  135.925 K/sec
-> >  7,371,867      instructions            #    1.59  insn per cycle
-> >                                         #    0.13  stalled cycles per insn
-> >  4,647,053      cycles                  #    1.858 GHz
-> >    986,487      stalled-cycles-frontend #   21.23% frontend cycles idle
-> >  1,591,374      branches                #  636.199 M/sec
-> >     28,973      branch-misses           #    1.82% of all branches
-> > 
-> > 0.00318461 +- 0.00000295 seconds time elapsed  ( +-  0.09% )
-> > 
-> > This is ~11% (relative) improvement in time elapsed.
-> 
-> Yeah, but who cares? Why do we want less obvious code for a silly stats
-> file?
+For some reason we ended up limiting the number of soundwire ports to 2
+in the bindings, the actual codec supports 4 rx and 5 tx ports.
 
-Thanks for the feedback, Peter.
+Fixes: 88d0d17192c5 ("ASoC: dt-bindings: add bindings for pm4125 audio codec")
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+---
+ Documentation/devicetree/bindings/sound/qcom,pm4125-sdw.yaml | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Fair point that /proc/schedstat isn’t a hot path in the kernel itself,
-but it is a hot path for monitoring software (Prometheus for example).
-In large fleets, these files are polled periodically (often every few
-seconds) on every machine. The cumulative overhead adds up quickly
-across thousands of nodes, so reducing the cost of generating these
-stats does have a measurable operational impact. With the ongoing trend
-toward higher core counts per machine, this cost becomes even more
-noticeable over time.
+diff --git a/Documentation/devicetree/bindings/sound/qcom,pm4125-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,pm4125-sdw.yaml
+index 23624f32ac30..769e4cb5b99b 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,pm4125-sdw.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,pm4125-sdw.yaml
+@@ -32,7 +32,7 @@ properties:
+ 
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+     minItems: 2
+-    maxItems: 2
++    maxItems: 4
+     items:
+       enum: [1, 2, 3, 4]
+ 
+@@ -48,7 +48,7 @@ properties:
+ 
+     $ref: /schemas/types.yaml#/definitions/uint32-array
+     minItems: 2
+-    maxItems: 2
++    maxItems: 5
+     items:
+       enum: [1, 2, 3, 4, 5]
+ 
+-- 
+2.51.0
 
-I've tried to keep the code as readable as possible, but I understand if
-you think an ~11% improvement isn't worth the added complexity. If you
-have suggestions for making the code cleaner or the intent clearer, I’d
-be happy to rework it.
 
