@@ -1,116 +1,141 @@
-Return-Path: <linux-kernel+bounces-875921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8C0C1A232
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:08:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21386C1A251
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2ADD4EB2BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:07:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314FE1AA1EB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6878338F52;
-	Wed, 29 Oct 2025 12:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B943396E0;
+	Wed, 29 Oct 2025 12:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="qkcMBYK2"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCdfCEyk"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4247A31E0EF
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137D62D3A7C
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761739641; cv=none; b=QqobeYscOJ3Bb4JNY+031PHC1xr4CsGjsTCVlUHk2fndbuTpOJeEZpx3flu8fYdJJC6rpQTiOtwCAabPJ/yaAx2zDMPOLkTnZJ8YUh9mtV6fFcSob2rmiyEEqN0UYO1FmlHqpS8zJH9gtnSzFa4G5njZ/Wv6vaJERSOuPYjhW80=
+	t=1761739841; cv=none; b=RgIQ7CQGABaFvye77XkLc+sNQh0hXFd6f+tIXzmpoTaQazhHsWcGP9XhW6ahisj/8oFqIoNlepOav1MeVHv9kaWO6t3mUAZ7bS39LZZ1+MrWaWujUPnUpmCVzGnrVYIUm5HmE6zIh0A/sEgSVhcy0Gg7mvweMgNSnRoPhvwmHiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761739641; c=relaxed/simple;
-	bh=SXNlRJuMRztIhZArMNvfUXa4cbUPwsnfpPheprXZEo8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UdJLAVJGjrvvFi2ISIXsAOjeaiGm6SKx5BxnnLOTRnuX60CVaEEv91gyCWYCFMUPDVf0LeoxPR0FPYlypN3BLuIThGnYGP6qly7UlCqXkNq9n25Hp/3u6qVGv1/PEEFs/gMU4MbnmKnYYZQS/twYJG4lpfMw/6njbHDYLVd3wYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=qkcMBYK2; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-475dc6029b6so45416215e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:07:18 -0700 (PDT)
+	s=arc-20240116; t=1761739841; c=relaxed/simple;
+	bh=nmmmsqfKVAJAISlF0v0aoOiHV4ihW5X2wUL2HaVO778=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKXdpvccIajvQUjEl45mS0+Av1994QZurCuA/ijn/ljjiNDtjD64O9jjW5KkosMHnIVgP1vXtkT/cNsXa8W5rGQfqz4vo9VUiVIZb1HQr+tcmvEuO0M+EF47QUHVUsfrn8J5fdGwDoozITen7nAuSdLPiqV0HBpUYs/6whUij1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TCdfCEyk; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47112a73785so45703795e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761739637; x=1762344437; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yAOyQz1MXdK8SlnFu+v6U3hIYAUX7Z7s9vr2irumEk=;
-        b=qkcMBYK23u7/puNmCZmDcoEDquAyuIHh3U30HRHhyHael7bXnMJIHz5gOtO5qcIq6g
-         qOHanzfr/odCnSZFyd69qr2ci8IS2oF3lYyllCcHGogVGww2LacH9JVikZoLFF33WTA3
-         mKMZVtY5weImXTip7DntzYVvqeJEGpPN9TaJikaZL5dSzfxqYJWurdw11P80+kPjyova
-         YOKzNqItTRtfGqugTXhKIs0Msd3rZb7IcrhuwlP4s43yXLOAJSqypYn8sfKgQN4ibTWI
-         kqKNJgemwebDGV/L8lAfZJoGMiRAgdRHs/21GvZ4CzsSIgLyUdCHpQXlS42vl8dvLVM+
-         1RJg==
+        d=linaro.org; s=google; t=1761739837; x=1762344637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=d9+YREs/dwvkAURlYBalhERi7T5HA8/ejvJOwTN6088=;
+        b=TCdfCEykDlIyKPRaDyfq3dspvlguOsGDd2iM1TEE2w0+GReHGftA3RMZGpE0Xa+4CB
+         c0MiMOkirRDjEnG0jRpbokT9wDAgcRXV2wXxCf8jgrghxDE2/4Lb5lvCEF3SDgcoVzMV
+         ZlftlOOfvyGqPVj6IXkGpVu7LM7vXeki2RzUGsvbqicviUnBX6W0ni7u06RTs5DDSqRV
+         PjnP0+zC8ZH5gAQN4TT91SICU/tUA1Ytci0S/VxzYtP1gzJp2QVfuv7zvBfwt1cIFEy+
+         nEdXDKUU948rQren+hehbA/MMA7gvuHcDM7wXwg1wRA9dTHaQ/XhL3JAiJ5T707htePc
+         m3VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761739637; x=1762344437;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5yAOyQz1MXdK8SlnFu+v6U3hIYAUX7Z7s9vr2irumEk=;
-        b=Sg92P9AweiyeDc/uvV3BcmCECEXbVVuPdSq+jevnjnnyDNbP79gRaYYdkY1SZf/l8M
-         /18hmGHmzEatjU49L/PFPBS7I0folAr4R89bj/IvIZQY9naLeR6XI4GeoleI1JBwBFnV
-         ze1s6MJs01QVNCgKppV/lawWTiViiasY1wxH0H39mogRqJa+dHVRSSKpq4HqgBQXyaQ+
-         HDxJ48Lmm66bXnTxApw89SiS0bzT+R3KdyJQEJKP76JRfSMk/98ZbvYCUtm2LYkUfi50
-         CUD5YQli9zP4A6g6Pw6adK4tceIp8I4vlv8SFEeWWxDPQW/6A/8fIbGZLHPklaRNNNSv
-         ibDA==
-X-Gm-Message-State: AOJu0YyHsBXrTm1MXfL8CFzjyJAARoXxUOKsjp772UStTXciGWyeAx5/
-	nXv6N3EuOL9gte3rqE89FLVmfCFMEfwyeGLGW7EOHKSz+O2Fet2gT/WCswol02LZtzU=
-X-Gm-Gg: ASbGncsqhWlxXaxzduVh3nfHLziwkzUTrWdy9sobgB4eDSaJDDl/3NPkCv7LPEcGA99
-	a0upPRzjzQAeaX5AYZw/80zkVWVMVDP3/qgEiL//II4TDLzhcrpYoJhD+ePgrq2XakVy4veY9zp
-	ZaEmggykWz3PZGEXjAaBYD6gbC+DCDx03sMOcq/ChKtBixQ5apPgwwzc088ZqgWIuNtgoDPnZ/a
-	9xt/v01HtkCANeEa44XbhIThIpeV2Ce85Q6SoCWxbSwegiFUyBt0cnYRF0YCTelrs3xV2pOXC8c
-	dOmZF0ekK0GlXfaiIQw1PkKtBjCZgYcncOfi2/IkZ12rQi3tqAG5PcPfmVv6ibKIgcyYY8/3Xxy
-	E/nwDxJLAkBm1RdFQDfbqxtwkcbHnyZ0bTp5SFG0oKagt9UGQhJkitoZC2hkqvwnumi+tb3QTG5
-	p2xA==
-X-Google-Smtp-Source: AGHT+IF+rqdkcbqdL07Bdv5PZS79zbqhxFEVUuVUCse8w5ApqjU7mT/C6mHr1t+Lh8Kq12xoqKyMLw==
-X-Received: by 2002:a05:600c:a087:b0:476:a25f:6a4d with SMTP id 5b1f17b1804b1-4771e16e4bbmr22868315e9.1.1761739637426;
-        Wed, 29 Oct 2025 05:07:17 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69f2:5f2d:9ffc:a805])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952cbb2bsm26413764f8f.13.2025.10.29.05.07.16
+        d=1e100.net; s=20230601; t=1761739837; x=1762344637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d9+YREs/dwvkAURlYBalhERi7T5HA8/ejvJOwTN6088=;
+        b=ToqXdHxaDf6Phsz5zHDErktlwojm+Yv8oNF9Wvhlc9cwNrG01l0+cy6qney6hbgrwR
+         YhJvn0Fw/0/OFz/1cW4JT7gQrk0wYj6P9H21HYFSGR3Y2Xp21uKh43xGHlYFEaZxSdXO
+         BtvlmgF3Dw8qHQtldrzuMn1NRDR7ORjEMyCohbuLKf/dMTrPFzN9M/plvgulGWypi+Qh
+         BvAmHrXWGsP2QIas65Lo1sSGB7JOI955RyAoz6roTRpbPsAgQvFHPO5qMMtrEO/dAJ7l
+         T9E9YcqkYwI78opUrwW3m0k0Zrm0zh9IfZhtoWsivia7N5mKLMzRXAEsi7Xq3TIjZzwu
+         TbYg==
+X-Forwarded-Encrypted: i=1; AJvYcCVScEcqFYxi5ZwiNkVwnvr8UB8gDDHahZsJ1MdKCC3knuTeqP14mlx/YBbXO5maIiLjfBJmeuheL1DcuyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeOyFGR2Cqz+TjY1xNS2dQbvo66BTw/wW3T6G90+u3o29ZNUO6
+	WZzXdvVe8YbAy6e5UPQ3i8DUGl6bNZTnDfcsD8q1+KbNNlucBwjJ807YgsLxXmYevYs=
+X-Gm-Gg: ASbGncsafWPiLVxLni48TMBHvDM0TrBpFmLRFrp+NJORFuNQdkdwPSL2KktSO/EgqXq
+	YreDJnFmILKXVFuFPKd/Vp8SW4EcJoZ0AdtZVqc0BYEr026KloG7rw56nzN+VUQ09dsWB7LL+AT
+	cSnIsOzDS38w0K5qMldAADW4B8pfu6ADETMXKT67M6IEGer4dLXlCcfLdyDRzyznFzKgpLkbEuO
+	uvwQ8JV8mpPRTzSLUtaS/UEbNYjiRAxGwQIAigdFDMldUJqHObnU3AJlFCt1fOr3d53EOoloyUg
+	X3Y36a3xy8NR8uXkL7FBxTOe3JTaPmfo1m1qo1PKjRuXKWkFb9SXrGp7sQbZHtO2Xqwcj7AE47u
+	/C6LGB+3rKEJH1AEzfDrY+aKqyF6mv4zPPi1RdcR4z4b1HQpxfnE576x5tVwwKxY4iqKHZ3wjMd
+	x5To9v5PN5XCw5L/GO
+X-Google-Smtp-Source: AGHT+IGIDloDBN8XL8rmy10flsio+t482MTy1ZQ7mnd0IkV1PLp8bTgCqmolXedNqKzaaInabxjXJw==
+X-Received: by 2002:a05:600c:528b:b0:456:1b6f:c888 with SMTP id 5b1f17b1804b1-4771e3937a8mr26462945e9.23.1761739837097;
+        Wed, 29 Oct 2025 05:10:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4771e3b68fesm44788135e9.13.2025.10.29.05.10.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 05:07:16 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] scripts: add tracepoint-update to the list of ignores files
-Date: Wed, 29 Oct 2025 13:07:09 +0100
-Message-ID: <20251029120709.24669-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+        Wed, 29 Oct 2025 05:10:36 -0700 (PDT)
+Date: Wed, 29 Oct 2025 15:10:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Phil Elwell <phil@raspberrypi.com>, Umang Jain <uajain@igalia.com>
+Subject: Re: [PATCH v3 0/7] staging: Destage VCHIQ interface and MMAL
+Message-ID: <aQIEOJUHdVMriz7S@stanley.mountain>
+References: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+I did a review of some Smatch warnings.  These aren't published because
+they generate too many false positives.  Only number 3 and number 7
+are actual issues the rest are style nit-picks.
 
-The new program for removing unused tracepoints is not ignored as it
-should. Add it to the local .gitignore.
+1. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c:2728 vchiq_add_service_internal() info: returning a literal zero is cleaner
+s/return service;/return NULL;/
 
-Fixes: e30f8e61e251 ("tracing: Add a tracepoint verification check at build time")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- scripts/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+2. drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c:408 vchiq_shutdown() info: returning a literal zero is cleaner
+Delete the "ret" variable.
 
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index c2ef68848da5..4215c2208f7e 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -11,4 +11,5 @@
- /sign-file
- /sorttable
- /target.json
-+/tracepoint-update
- /unifdef
--- 
-2.48.1
+3. drivers/staging/vc04_services/bcm2835-camera/controls.c:198 ctrl_set_iso() warn: array off by one? 'iso_values[ctrl->val]'
+There seems to be a mixup between iso_qmenu[] and iso_values[].  The one
+is only used for ARRAY_SIZE() and the other is never checked for
+ARRAY_SIZE().
 
+4. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:337 buffer_cb() warn: can 'buf' even be NULL?
+Delete the NULL check.
+
+5. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:513 start_streaming() pedantic: propagate return from 'enable_camera' instead of returning '-EINVAL'
+-       if (enable_camera(dev) < 0) {
++       ret = enable_camera(dev);
++       if (ret) {
+                v4l2_err(&dev->v4l2_dev, "Failed to enable camera\n");
+-               return -EINVAL;
++               return ret;
+        }
+6. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:576 start_streaming() pedantic: propagate return from 'disable_camera' instead of returning '-EINVAL'
+Same.
+
+7. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidioc_querycap() error: uninitialized symbol 'major'.
+   drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:881 vidioc_querycap() error: uninitialized symbol 'minor'.
+No error checking on vchiq_mmal_version()
+
+8. drivers/staging/vc04_services/bcm2835-camera/bcm2835-camera.c:1276 mmal_setup_components() info: returning a literal zero is cleaner
+s/return ret;/return 0;/
+
+regards,
+dan carpenter
 
