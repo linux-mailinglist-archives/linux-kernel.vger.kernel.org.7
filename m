@@ -1,100 +1,60 @@
-Return-Path: <linux-kernel+bounces-876431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0064DC1BA34
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B221C1BD78
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94EFA661A80
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF386661E38
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:53:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAD62E5B36;
-	Wed, 29 Oct 2025 14:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5CC2EBB90;
+	Wed, 29 Oct 2025 14:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gUJrapaJ"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b="al12+fsj"
+Received: from mail.ilvokhin.com (mail.ilvokhin.com [178.62.254.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFE42E1C54
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C0C19F12D
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.62.254.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749194; cv=none; b=Ewhij6iOzpJ+hC11kmmk8yVrAC+l+En5J41tgk/Q7qWe4QlLFpJc+AusIau44FU0EcZHdYk74TPJBGIGYd6VATcMAkgsPNwgRQno62qZLTy+uB4Yy6EhjjR4y21Fih9aVjTwty7Y784W646zvEUCpsY04H0Y2PC559d6WOtRnto=
+	t=1761749201; cv=none; b=XnHAHtd7oT+SEC2YfYWe1KGZMPB+Jm6WMTXI3zF+Kq8nXtt543TIIyA9dtX1QQn8pBNIzOKCcI8/umKOxsZWDUyRsXL30h1zkWRsTduHoMvDznRoS7m+DpcoN44AcIX/G9Qw9as77nTeaazr4cWQKME2SSjHoMXlbWZii9xyvlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749194; c=relaxed/simple;
-	bh=6rF4GLL9pS4cU9IPxVuHd5pEMQDEExDlCv0e5ynD+ZU=;
+	s=arc-20240116; t=1761749201; c=relaxed/simple;
+	bh=ngJAnlOKqYRtbwucuVGSwMfSaWkoeSQJh2mut5Zoti0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpLv2Egc+uCeTnTho1rM80kl28MfUZeQYE11sk3oYBPVV9yuKiS0euJC+FILrGuSVasaNU2IcYKWrWy9ck3Yq9rCk8bqaNTshYfiQpLaHbQf//l/2lOV2uhpj1+Mmo9rk6UtGyxAOBmicmrm6n20VNZ1Mna8wCRZbn4NXoSh/HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gUJrapaJ; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-784826b775aso85895067b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761749192; x=1762353992; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0KB2TDOPveGK6lFN3Xm0rmM8VbnxKm93ZQZfT2ThEx4=;
-        b=gUJrapaJjSKV41XojQJDaby03HkTj1wsO+KNecxIzhAGfZ6k5iKWELdGVDS2dihYxS
-         vTCNgDMW6Poov491Q+59r6xEIsTG2HUGGU9cwrYm4lmMQaXyh4r1r9yzWyqGb9tlbyCF
-         8Yp+B9ldkyCzh89xD+D/MmSu3wyuyqIX/SFhWieQrYsspur4NIlaFHE2cTrf3JDuDrZw
-         M3SLOU/5uvpzUrJDPxtvnY3NHDieNZLXbr6XdsaVjWbfKyRGuQOTvAnWKh0aDIUBySvx
-         V6fhTw6kcyEQMqUaTU859Q+mEtYhb723rqVoDnS8BTRMAknN0+oqmNsRI4E4LpEJJjh1
-         6iLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749192; x=1762353992;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0KB2TDOPveGK6lFN3Xm0rmM8VbnxKm93ZQZfT2ThEx4=;
-        b=itsr7IrFH5E+PpQpqJiQMJlbZv/IBWYyAhoUFzdeLBFs0C7tCCSggnoK93cQkIPwJp
-         IhUS/ekgu+FZmfYzzzNqYXonDIfAZc3B27UjdOUqx8zOvYzS5tU0lJUciPnZTFnHdqkt
-         PmXQ+Xh+VN7DN64tnLRQP8VadO3rRUa0A2BLiJ0weE4D3P7g/LsBdhW7g0P/0p4On4r+
-         7IWJShyJCaMsD4s6j9pRridXsAiKWLcx1DrUjCfCvHlOmyAyonHzKcnghB7MZ0ifZmsJ
-         YDMEeLr9Pzi31TJhNwobV/zuWodmGrfExykObSCZQEQsMc+/INunnP3yBcB41scfyLmV
-         ynRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Vu0n4pzwHmFkvSwtnOcP9et4KPxx70jRHEGVzBEbS+yeLoG8qaglf8BSSLYwpTjitzRfKxpmkmLbyXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5R1wjrsnZOXd4DNi+aERTUPlXvE9Vo/cSX27eAyAULmjkuw3p
-	mhCwTAgu8toHvooN8ERev79CbIRrksXOwwqQd37hLzMhHZpURGYxCoIt
-X-Gm-Gg: ASbGncskmihuCW2wg4DkVl0eXajl0TvzX9LYnzkOEmVrb9RC3NLlD1rY/BMW4d8pq94
-	3Gs/tofNgGsME8hoQXgVlXKxrWnUfRuLtF3v0OW1nSN8LSSIT3iscFfQjuvOGFwUfI+wWwFoeQq
-	M9kULnpNw5kMJWbcBEb5Lz6MJptgqb9d4UfWCnM264NaSpQ7aXDrnpD++7SwzVDFuJdHBb7zAPR
-	FMkJcsql7SVl6LmlLiZ9GYP+pczgydGd2X16ym/urzSUBxCpz9dRVWa54UHeDU8HglFQJV3aggK
-	gxSfOxJQgOSVdkHU3esVaKi4RPwrz0mwJK8oqtydI8SrBqQm6PB4LcENgRVmEdgWwhU+OOEl847
-	KbNCMHV8rXFkd44jHJCyFIGv11V8mq6rCMpbs7ijCShH6UoZrP0gD+vDva04uw5Dq9nF+5/OwJs
-	SAS93D5c9s9VPpx/bXIZoWl7EP3Q2dLLGpN6Ow
-X-Google-Smtp-Source: AGHT+IEr0sIdLf9PssBrGinYWfeFT8qXFc+cSs4JUokXl/UIi8NX/JszZEzp0LPPd/6TpUd+ipCSMg==
-X-Received: by 2002:a05:690c:dc9:b0:785:f54a:99e6 with SMTP id 00721157ae682-78628f7a7dbmr32458397b3.32.1761749191693;
-        Wed, 29 Oct 2025 07:46:31 -0700 (PDT)
-Received: from devvm11784.nha0.facebook.com ([2a03:2880:25ff:4c::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-7862e389945sm4977587b3.57.2025.10.29.07.46.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 07:46:31 -0700 (PDT)
-Date: Wed, 29 Oct 2025 07:46:29 -0700
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Subject: Re: [PATCH net-next v5 3/4] net: devmem: use niov array for token
- management
-Message-ID: <aQIoxVO3oICd8U8Q@devvm11784.nha0.facebook.com>
-References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-3-47cb85f5259e@meta.com>
- <CAHS8izOKWxw=T8zk1jQL6sB8bTSK0HvNxnX=XXYLCAFtuiAwRw@mail.gmail.com>
- <aQEsYs5yJC7eXgKS@devvm11784.nha0.facebook.com>
- <CAHS8izOnir-YHPH+R0cQzu1i0HD2Z0csW6qUT8FFXh1PkmHabQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/dQCF1QaIuaL64qMisAr5MYALlLJkT1PJxWe2pJ7SvtxYt1RfwfGVkXYG0lkW31f2FegqCRE8P4Efi/DHHT97FihXlBAlw9bY47vs09C7MDMUoPraKZMeiZ40G+N9ipDBVNfrqd9cc/6n7osgq2S4jC5Ogr1MvyGwHz4EEBVNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com; spf=pass smtp.mailfrom=ilvokhin.com; dkim=pass (1024-bit key) header.d=ilvokhin.com header.i=@ilvokhin.com header.b=al12+fsj; arc=none smtp.client-ip=178.62.254.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ilvokhin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ilvokhin.com
+Received: from shell.ilvokhin.com (shell.ilvokhin.com [138.68.190.75])
+	(Authenticated sender: d@ilvokhin.com)
+	by mail.ilvokhin.com (Postfix) with ESMTPSA id 802649B0B6;
+	Wed, 29 Oct 2025 14:46:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ilvokhin.com;
+	s=mail; t=1761749196;
+	bh=x+mUewU0uubR5x+mt98SMi5/L+FjReZ5CAZTwZR8n6o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=al12+fsjNs19YkMdP1Ke4eqTcDWxXcn+DuxDw5ZTJcUw31UnLLYjJFJgZL5IOTTab
+	 XOOTiqS9IMy9O4LbjMJh5WwROzrxDvmXV6E3UZ2w32uuHDDYh/gQUrhJxy7hYeUkL6
+	 cf+iwydtdvxIsmel2OaWK+aBVmInnqPrTWFr65rM=
+Date: Wed, 29 Oct 2025 14:46:33 +0000
+From: Dmitry Ilvokhin <d@ilvokhin.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] sched/stats: Optimize /proc/schedstat printing
+Message-ID: <aQIoySXrIVcKXXGS@shell.ilvokhin.com>
+References: <aQIRg9EaBSX2rrGx@shell.ilvokhin.com>
+ <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,194 +64,67 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHS8izOnir-YHPH+R0cQzu1i0HD2Z0csW6qUT8FFXh1PkmHabQ@mail.gmail.com>
+In-Reply-To: <20251029140755.GF4067720@noisy.programming.kicks-ass.net>
 
-On Tue, Oct 28, 2025 at 07:04:15PM -0700, Mina Almasry wrote:
-> On Tue, Oct 28, 2025 at 1:49 PM Bobby Eshleman <bobbyeshleman@gmail.com> wrote:
-> ...
-> > > > @@ -307,6 +331,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
-> > > >                 goto err_free_chunks;
-> > > >
-> > > >         list_add(&binding->list, &priv->bindings);
-> > > > +       binding->autorelease = true;
-> > > >
-> > >
-> > > So autorelease is indeed a property of the binding. Not sure why a
-> > > copy exists in sk_devmem_info. Perf optimization to reduce pointer
-> > > chasing?
-> > >
-> >
-> > Just stale code from prior design... Originally, I was going to try to
-> > allow the autorelease == true case to be free of the
-> > one-binding-per-socket restriction, in which case sk_devmem_info.binding
-> > would be NULL (or otherwise meaningless). sk_devmem_info.autorelease
-> > allowed sock_devmem_dontneed to choose the right path even when
-> > sk_devmem_info.binding == NULL.
-> >
-> > ...but then I realized we still needed some restriction to avoid sockets
-> > from steering into different dmabufs with different autorelease configs,
-> > so kept the one-binding restriction for both modes. I abandoned the
-> > effort, but forgot to revert this change.
-> >
-> > Now I'm realizing that we could relax the restriction more though... We
-> > could allow sockets to steer into other bindings if they all have the
-> > same autorelease value? Then we could still use
-> > sk_devmem_info.binding->autorelease in the sock_devmem_dontneed path and
-> > relax the restriction to "steering must only be to bindings of the same
-> > autorelease mode"?
-> >
+On Wed, Oct 29, 2025 at 03:07:55PM +0100, Peter Zijlstra wrote:
+> On Wed, Oct 29, 2025 at 01:07:15PM +0000, Dmitry Ilvokhin wrote:
+> > Function seq_printf supports rich format string for decimals printing,
+> > but there is no need for it in /proc/schedstat, since majority of the
+> > data is space separared decimals. Use seq_put_decimal_ull instead as
+> > faster alternative.
+> > 
+> > Performance counter stats (truncated) for sh -c 'cat /proc/schedstat >
+> > /dev/null' before and after applying the patch from machine with 72 CPUs
+> > are below.
+> > 
+> > Before:
+> > 
+> >       2.94 msec task-clock               #    0.820 CPUs utilized
+> >          1      context-switches         #  340.551 /sec
+> >          0      cpu-migrations           #    0.000 /sec
+> >        340      page-faults              #  115.787 K/sec
+> > 10,327,200      instructions             #    1.89  insn per cycle
+> >                                          #    0.10  stalled cycles per insn
+> >  5,458,307      cycles                   #    1.859 GHz
+> >  1,052,733      stalled-cycles-frontend  #   19.29% frontend cycles idle
+> >  2,066,321      branches                 #  703.687 M/sec
+> >     25,621      branch-misses            #    1.24% of all branches
+> > 
+> > 0.00357974 +- 0.00000209 seconds time elapsed  ( +-  0.06% )
+> > 
+> > After:
+> > 
+> >       2.50 msec task-clock              #    0.785 CPUs utilized
+> >          1      context-switches        #  399.780 /sec
+> >          0      cpu-migrations          #    0.000 /sec
+> >        340      page-faults             #  135.925 K/sec
+> >  7,371,867      instructions            #    1.59  insn per cycle
+> >                                         #    0.13  stalled cycles per insn
+> >  4,647,053      cycles                  #    1.858 GHz
+> >    986,487      stalled-cycles-frontend #   21.23% frontend cycles idle
+> >  1,591,374      branches                #  636.199 M/sec
+> >     28,973      branch-misses           #    1.82% of all branches
+> > 
+> > 0.00318461 +- 0.00000295 seconds time elapsed  ( +-  0.09% )
+> > 
+> > This is ~11% (relative) improvement in time elapsed.
 > 
-> Hmpf. I indeed forgot to think thoroughly about the case where, for
-> some god-forsaken reason, we have bindings on the system with
-> different auto-release values.
-> 
-> But now that I think more, I don't fully grasp why that would be a
-> problem. I think we can make it all work by making autorelease a
-> property of the socket, not the binding:
-> 
-> So if sk->devmem_info.autorelease is on, in recevmsg we store the
-> token in the xarray and dontneed frees from the xarray (both can check
-> skb->devmem_info.autorelease).
-> 
-> If sk->devmem_info.autorelease is off, then in recvmsg we grab the
-> binding from sk->devmem_info.binding, and we do a uref inc and netmem
-> get ref, then in dontneed dec uref and napi_pp_put_page if necessary.
-> 
-> The side effect of that is that for the same binding, we may
-> simultaneously have refs in the sk->xarray and in the binding->uref,
-> because the data landing on the binding sometimes belonged to a socket
-> with sk->devmem_info.autorelease on or off, but I don't immediately
-> see why that would be a problem. The xarray refs would be removed on
-> socket close, the urefs would be freed on unbind.
-> 
-> Doesn't it all work? Or am I insane?
-> 
+> Yeah, but who cares? Why do we want less obvious code for a silly stats
+> file?
 
-No not insane. I think that works really well and will simplify things a
-lot. Let's give that a whirl for the next rev.
+Thanks for the feedback, Peter.
 
-[...]
+Fair point that /proc/schedstat isn’t a hot path in the kernel itself,
+but it is a hot path for monitoring software (Prometheus for example).
+In large fleets, these files are polled periodically (often every few
+seconds) on every machine. The cumulative overhead adds up quickly
+across thousands of nodes, so reducing the cost of generating these
+stats does have a measurable operational impact. With the ongoing trend
+toward higher core counts per machine, this cost becomes even more
+noticeable over time.
 
-> > > >
-> > > > +static noinline_for_stack int
-> > > > +sock_devmem_dontneed_manual_release(struct sock *sk, struct dmabuf_token *tokens,
-> > > > +                                   unsigned int num_tokens)
-> > > > +{
-> > > > +       unsigned int netmem_num = 0;
-> > > > +       int ret = 0, num_frags = 0;
-> > > > +       netmem_ref netmems[16];
-> > > > +       struct net_iov *niov;
-> > > > +       unsigned int i, j, k;
-> > > > +
-> > > > +       for (i = 0; i < num_tokens; i++) {
-> > > > +               for (j = 0; j < tokens[i].token_count; j++) {
-> > > > +                       struct net_iov *niov;
-> > > > +                       unsigned int token;
-> > > > +                       netmem_ref netmem;
-> > > > +
-> > > > +                       token = tokens[i].token_start + j;
-> > > > +                       if (token >= sk->sk_devmem_info.binding->dmabuf->size / PAGE_SIZE)
-> > > > +                               break;
-> > > > +
-> > >
-> > > This requires some thought. The correct thing to do here is EINVAL
-> > > without modifying the urefs at all I think. You may need an
-> > > input-verification loop. Breaking and returning success here is not
-> > > great, I think.
-> > >
-> >
-> > Should this also be changed for the other path as well? Right now if
-> > __xa_erase returns NULL (e.g., user passed in a bad token), then we hit
-> > "continue" and process the next token... eventually just returning the
-> > number of tokens that were successfully processed and omitting the wrong
-> > ones.
-> >
-> 
-> Ugh. I did not notice that :(
-> 
-> I guess the existing dontneed doesn't handle that well anyway. Lets
-> not fix too much in this series. It's fine to carry that behavior in
-> the new implementation and if anything improve this in a separate
-> patch (for me at least). It'd be a bit weird if the userspace is
-> sending us bad tokens anyway, in theory.
-> 
-
-Duly noted. I'll leave that for future work.
-
-[...]
-
-> > > >  static noinline_for_stack int
-> > > >  sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_token *tokens,
-> > > >                                  unsigned int num_tokens)
-> > > > @@ -1089,32 +1142,32 @@ sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_token *tokens,
-> > > >         int ret = 0, num_frags = 0;
-> > > >         netmem_ref netmems[16];
-> > > >
-> > > > -       xa_lock_bh(&sk->sk_user_frags);
-> > > > +       xa_lock_bh(&sk->sk_devmem_info.frags);
-> > > >         for (i = 0; i < num_tokens; i++) {
-> > > >                 for (j = 0; j < tokens[i].token_count; j++) {
-> > > >                         if (++num_frags > MAX_DONTNEED_FRAGS)
-> > > >                                 goto frag_limit_reached;
-> > > >
-> > > >                         netmem_ref netmem = (__force netmem_ref)__xa_erase(
-> > > > -                               &sk->sk_user_frags, tokens[i].token_start + j);
-> > > > +                               &sk->sk_devmem_info.frags, tokens[i].token_start + j);
-> > > >
-> > > >                         if (!netmem || WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
-> > > >                                 continue;
-> > > >
-> > > >                         netmems[netmem_num++] = netmem;
-> > > >                         if (netmem_num == ARRAY_SIZE(netmems)) {
-> > > > -                               xa_unlock_bh(&sk->sk_user_frags);
-> > > > +                               xa_unlock_bh(&sk->sk_devmem_info.frags);
-> > > >                                 for (k = 0; k < netmem_num; k++)
-> > > >                                         WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> > > >                                 netmem_num = 0;
-> > > > -                               xa_lock_bh(&sk->sk_user_frags);
-> > > > +                               xa_lock_bh(&sk->sk_devmem_info.frags);
-> > > >                         }
-> > > >                         ret++;
-> > > >                 }
-> > > >         }
-> > > >
-> > > >  frag_limit_reached:
-> > > > -       xa_unlock_bh(&sk->sk_user_frags);
-> > > > +       xa_unlock_bh(&sk->sk_devmem_info.frags);
-> > > >         for (k = 0; k < netmem_num; k++)
-> > > >                 WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> > > >
-> > > > @@ -1135,6 +1188,12 @@ sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
-> > > >             optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
-> > > >                 return -EINVAL;
-> > > >
-> > > > +       /* recvmsg() has never returned a token for this socket, which needs to
-> > > > +        * happen before we know if the dmabuf has autorelease set or not.
-> > > > +        */
-> > > > +       if (!sk->sk_devmem_info.binding)
-> > > > +               return -EINVAL;
-> > > > +
-> > >
-> > > Hmm. At first glance I don't think enforcing this condition if
-> > > binding->autorelease is necessary, no?
-> > >
-> > > If autorelease is on, then we track the tokens the old way, and we
-> > > don't need a binding, no? If it's off, then we need an associated
-> > > binding, to look up the urefs array.
-> > >
-> >
-> > We at least need the binding to know if binding->autorelease is on,
-> > since without that we don't know whether the tokens are in the xarray or
-> > binding->vec... but I guess we could also check if the xarray is
-> > non-empty and infer that autorelease == true from that?
-> >
-> 
-> I think as above, if autorelease is (only) a property of the sockets,
-> then the xarray path works without introducing the socket-to-binding
-> mapping restriction, yes?
-
-Indeed, makes sense!
-
-Best,
-Bobby
+I've tried to keep the code as readable as possible, but I understand if
+you think an ~11% improvement isn't worth the added complexity. If you
+have suggestions for making the code cleaner or the intent clearer, I’d
+be happy to rework it.
 
