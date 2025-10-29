@@ -1,241 +1,351 @@
-Return-Path: <linux-kernel+bounces-877277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1806BC1DA31
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:02:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0949C1DA3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5364D3499DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:02:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5B0A54E31C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353982DCF6F;
-	Wed, 29 Oct 2025 23:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844432E9733;
+	Wed, 29 Oct 2025 23:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a5gr0QeH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="DBrDY+0C"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861E71D5147;
-	Wed, 29 Oct 2025 23:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761778920; cv=fail; b=r8ty3Zvjsw22msT7D4suIGtXzlVVKfU7JXhFlPNoK+rFRe5Oqwj+VIcGqXR1PQoGB5c0nnkxFQ/Sy+7vSiH6zxWCI34m6nvg8C5i/OKpM9vHZvzlPSMoQCPN1FssUh8nLpVoYtSV2WDTLDyqHp/5kzyCpiLT8pkj5bgK4mhkOkI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761778920; c=relaxed/simple;
-	bh=HKb13JV0tG/aJDyMLY6jBsA9ebCrFqujdskaKtlRS1E=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=qz9A9ZYnQjC6X40i9p3VoHQHfg1m0DwIQl0osA8GBbE0sXAXsQHVRnNLyAf9w1wpIIbUV/p6NdkUcI2ERROq2RYHt38c1dTnI+8x6lx8exIN/gezBXx8tCBSHFtp0z/YOIMZHVsIyfpphFGonAqF4ESuRyHyPh7o0RzL8QrXvYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a5gr0QeH; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761778919; x=1793314919;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=HKb13JV0tG/aJDyMLY6jBsA9ebCrFqujdskaKtlRS1E=;
-  b=a5gr0QeHt8JtaSGPBxPRkdu1Mb63tCe13ADA4DBKI2Bjgw5WusRGgWqX
-   MwnPvMQz/0YMhwJbxUj3wrzP1+3adU+wpDXV1kSDrvyRxeNCq2mwC/eCp
-   Hgpv06YS/DyJpFthR4gZgdUTxgHFcv1utTPkpLY7Ajvn4UEkJ0AhjcC4d
-   KJ5HKeJAydGVKdI7mnluxhNpsYP8nPNGeHVcID204DKU9PClX8zh6Hg7J
-   v75B9JIiAkHL1HY52lB4x5YeEHT+CMiI4LQCGkqoUzSp0sobvtEa5lYNS
-   EO9iKHor7vCNBimhA3MwXVrJ9LpoKlN+yRcg+BNImIrdpWrk2YOl1qrS0
-   Q==;
-X-CSE-ConnectionGUID: XgESGgpOT3C+DPqFg1HCvA==
-X-CSE-MsgGUID: sGDJvzyMSvGN7tBSRpou1g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64062180"
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="64062180"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 16:01:58 -0700
-X-CSE-ConnectionGUID: VkUUlzi9QlCeMKwniwcghA==
-X-CSE-MsgGUID: PhomRnReTPaQqz+Je0EPCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,265,1754982000"; 
-   d="scan'208";a="185488733"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 16:01:58 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 16:01:57 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Wed, 29 Oct 2025 16:01:57 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.25) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Wed, 29 Oct 2025 16:01:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oYgN1VukQ17DAGIgBT2IX8a6Xj/bDpFftLMy6wBbLn5z2MT5dlw+jxCB7sGCUkOgTMTdz0X4Mf0bcAf6HsphND+xsvYzTqSlvd9qmSvjBS9UfL0Dn/EpAFpghmiXB8XFeE0gB1k0Fiabd3gN5C/G25WbaWJhDo85i1DTrS6p9v710syguf1+Ekimy13KGf4G4z7rBzfXidVSpQxPlA/CSA68ymWpHyhuJpF2lAgFGx1+8R2tTGuzwKNldG23ZElLeLVjEjGvKw2dVDttpRDrRtt6uiVtJzIPU61pn79MJezInAS24Rn5a0zqg5JHdylUoVk1WSQDMwRBCW9iO5NGOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SeTfzcRj95s3XyVBYZJ9ewr03d/VxMRSDb2SFBo4dGs=;
- b=wwpxAGZ9ft7wGJAQNihjU71YVzpupitN4nZvdKN9JqIWLq92h5MiAreDXAz27qah2I3VqB03MPY71XvrQObdgiq3nJcZd/k2L88tXz3I5ekaj2dnKWrQCydoEY0m4U4EyQmeERBiIdR9dNK3OMpdxxv3fk4fy/uvB+SP3TEbAUPvFso8IKL3wi05+vy5u4m7+acPDhLoWsHAEBJDs84A3DU+iCkMOiOjrpncAxQyUuL68vqjOqNaI91pblBA7hmQnW/b/3voDNvz/iQB7IgnZwxB2c/6o1lMUyHKp7Ap5tV4fXMZOuJmYY0lqVvIdQl9ySlGaqEex7UgVews4OwO9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB7566.namprd11.prod.outlook.com (2603:10b6:806:34d::7)
- by DS7PR11MB5965.namprd11.prod.outlook.com (2603:10b6:8:70::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 23:01:49 +0000
-Received: from SN7PR11MB7566.namprd11.prod.outlook.com
- ([fe80::2b7:f80e:ff6b:9a15]) by SN7PR11MB7566.namprd11.prod.outlook.com
- ([fe80::2b7:f80e:ff6b:9a15%5]) with mapi id 15.20.9228.015; Wed, 29 Oct 2025
- 23:01:49 +0000
-Message-ID: <c08af988-45c7-4b8d-a4b4-ffb20736e2be@intel.com>
-Date: Wed, 29 Oct 2025 16:01:46 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 12/23] KVM: selftests: Add helper to initialize TDX VM
-To: Ira Weiny <ira.weiny@intel.com>, Sagi Shahar <sagis@google.com>,
-	<linux-kselftest@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-	"Shuah Khan" <shuah@kernel.org>, Sean Christopherson <seanjc@google.com>,
-	"Ackerley Tng" <ackerleytng@google.com>, Ryan Afranji <afranji@google.com>,
-	Andrew Jones <ajones@ventanamicro.com>, Isaku Yamahata
-	<isaku.yamahata@intel.com>, "Erdem Aktas" <erdemaktas@google.com>, Rick
- Edgecombe <rick.p.edgecombe@intel.com>, Roger Wang <runanwang@google.com>,
-	Binbin Wu <binbin.wu@linux.intel.com>, Oliver Upton <oliver.upton@linux.dev>,
-	"Pratik R. Sampat" <pratikrajesh.sampat@amd.com>, Chao Gao
-	<chao.gao@intel.com>, Chenyi Qiang <chenyi.qiang@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>
-References: <20251028212052.200523-1-sagis@google.com>
- <20251028212052.200523-13-sagis@google.com>
- <6902844729ad2_21ab5210055@iweiny-mobl.notmuch>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <6902844729ad2_21ab5210055@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4P223CA0021.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:303:80::26) To SN7PR11MB7566.namprd11.prod.outlook.com
- (2603:10b6:806:34d::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537D02DCF6F;
+	Wed, 29 Oct 2025 23:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761779194; cv=none; b=nDeiYFzI/vfLtWzMox6EJ/6cCMBOt2xx7c0B1YY1hurrR/qUaM9ZVi3Na2owpO4wRSPlRSXmF2xRfFBsmhuJcEbELEV0AbJ6Ql6jAd+lic8tL3hjwmXe8M0ND3n4Wcnml2W6AywnXggCA0RWLhR//B8LAg0HeXOi0C8l2RsTIHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761779194; c=relaxed/simple;
+	bh=zAa+CjcMDRhasqtzeVnW3mRgvLBS/0WSyhxuM9wthDs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BpDZhWGrAlJf5255gnpQbvxZbYe3k6EaRyakZuhnr6OPGZK7i5QPNQWOPjy/9YEeZDIeI3PonlQ/P6BdkwYU46ox0/TEUnhVBBLLpzwBhy0UtSQOVP6nOiZdyiRNrZVUZiivRpdIO+TRtysra6FjlifTXKvZtE1q6o1StG4S51Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=DBrDY+0C; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3CFD497877B;
+	Thu, 30 Oct 2025 00:06:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1761779183; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=SbLoiFq6VBq33/XP4LigeDm2IzhoDT484/V3vb02oEQ=;
+	b=DBrDY+0C6aocls3rQk9m1kZA+8NQH40kO5zx1H1BtK0TPJ5fbO18yiskThb92x3BKy/TdC
+	7nB8R6Hb4L5vTaSduJFr8+HaXCUL528UU3iSWH/i3pMFkcu07UWLdisG7fCTQ1CEdEkbWA
+	HYCcZS6iX5Uvit19L6tdNGzEkQrTGdtQIcvlMbeoGwHg3tx8qIUg7C3A5j27jvZn5IPL1+
+	qotE+Q0EetpAFvatgmyHWVKIBxpa5IasDrUukvz+oXeWEL6xbfXR+WZ0Zyv01b9hEV6i3u
+	ndjQ6sDqZLzQ1LWLp5eZ7cfR6yzVrfttTDr4GX0k6cP3ZjDi/kcdXJZ0jkpQfQ==
+Message-ID: <67e2aee8-1ef9-4256-94ca-dbf42f62cbf7@cjdns.fr>
+Date: Thu, 30 Oct 2025 00:06:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB7566:EE_|DS7PR11MB5965:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40e9c6b7-aa0f-4349-038d-08de173f2475
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dzFhblcwRHB1RlgrUUxjWjc1VDFUUG8zQmRIanE2MnpUZWFHTG9ERm52ZFNM?=
- =?utf-8?B?S05TVE1XYlFrV2JKdTc1MGp5WjRWenQ4UkRwM0dDeVRJbFUvWENpanBsV3JO?=
- =?utf-8?B?ejZzYUFmU3JYRUJWMWZNS0ZFcENpSkVWeENZZm9pOFM0aStORHFrMzBvM0pu?=
- =?utf-8?B?TUxQTW5mOURERmw0RjBLUFNpSWFiOEl4NnRpVGVIanJyblYrU2ZIcnlQMUtL?=
- =?utf-8?B?cVJKeEg5S1ErdkZ4dGZDNklxTTBYVHlrWXRWSXUvMU9MekdJMm53MUVvejkv?=
- =?utf-8?B?VGNNcHRBQTltT1h3TExONjd5SnlhRHRsUHJCYXRPYXBWbmFUbEZlc2c4Tmph?=
- =?utf-8?B?V0Q5aVFFcXFaQ0NoRzQrZm5CY3YwTkFkKy8ySWxaeFZCYjBueGtmczVpMmtN?=
- =?utf-8?B?REw4QzJBbjFHdlhzLzRtU3IxZVNZeEJzZFVkMng5TVJWeDJmazZrRVNlZHV5?=
- =?utf-8?B?Y25UWTIrVm1EYTYvaGJ1Y1dQaUptLzJEVWd4WTRlb2M4YWxyOFpObG9ZT1Zu?=
- =?utf-8?B?cWJHS0JRbklVT3pZMFcvZDFwR1l3N2Y2UlY0elQzUDFCT0RhZjVWdmdiV285?=
- =?utf-8?B?dGUvbGRCSVZrZnFwWHlaNmplZm9COTFMUk1XSllkQ3JOVk4xL3NHbXNrZWNt?=
- =?utf-8?B?UFRCaktwY2pSR0NpYkYzeG1VMjhqTkpqV3BTS3RjYVFEb3BuUjFJQStvbm81?=
- =?utf-8?B?R0lGeE8waUpYTlF2RTlUUXFvZTg2RXFkcEhKZEtNaHBJbktzbE5sb1JaWTZI?=
- =?utf-8?B?TEdYbjMxNW1KNFpERFByL1Ard2xEbGFXY3h5a2VRZStOcHZ2UkJqNWJ4d09R?=
- =?utf-8?B?UGt4ZytaWGh0ZFA3dk9qSmpRdjhFdm50UHdIVDZJMFJvNmtTUFo5NXNvMkJY?=
- =?utf-8?B?Vkcrc0FidVlkMnVLOFF5N21ZZlY0bTRSbWJyeVd1VklPZFJCMG83bFhxNjlS?=
- =?utf-8?B?MDA3ckRFVlE5T3JERjR3SkcyLzU2QWVPV2UrNXNWVnRQQ25CY2piUUJHRWtU?=
- =?utf-8?B?cVpjUk9yZDUwZWR0cTVDRUpJS0l4TUJpbG03b2d3N0pBSStpM3M2S3J5QkV3?=
- =?utf-8?B?SE9nVlJmdnJpZnNoMTRxTGUrNkxFa3JzL3ZJSnlodlNJdThQaVpoZ1ZibU81?=
- =?utf-8?B?cjlpeFNPMzU4d1QyejdQSzJyK3JNYW43QnBydHJxZlVEcTNjTHVmdkplOE1R?=
- =?utf-8?B?c0xLS0lDaUc1ZjRxUHd3WlBGZS9vVGdiZ01BUmhsamtZUDdNVFI5cGoya2RP?=
- =?utf-8?B?R0lQVEl2a3MwbGhGZ3VkdEdhUnBteVNJMXYrajA5MW1sRkVYK3dpRW5xb0c4?=
- =?utf-8?B?bE1yeitTUTl2ajhaVVkyUEhFZXRqbWh1eXVDZ3hMRjR0ZGhFcUZ3ZzZFYzRo?=
- =?utf-8?B?S2xucm9uclBrL0dsQ2FIV0hmd1NFY3dKSjY3SHRJWUdGL01ieVBsZ1N2QU1I?=
- =?utf-8?B?ZDZZbm9TRmdBU1FBZVMrdW4rQnBrQ0hFUnFXd3JTRzRzMFZ5eERPQno3Z0lT?=
- =?utf-8?B?WDNwN1Iyb2twMmtSTUtaZjdiaXE1Mk9QMUdaQjlIa28wV2gwdllxZnVoRUNt?=
- =?utf-8?B?SUVvNmFqZFA1eG8zbmptdWgzVnZqYVVNWEk4UGZHM0tmRFlSbENsT1pxbWF1?=
- =?utf-8?B?ZjZlTXdsa2lwVjcrVkpzUzdGRGtVTHVocnlYUlVIbW5HMUdjcjlEMHh3Y0p0?=
- =?utf-8?B?ZnFnSjNYTUNtWG1DS0k1em1peSt6dU5MampOeUtnRkhYOXRmRXJvZ0cvS1NP?=
- =?utf-8?B?bDV2b1U5djhqUDIxRVZuc2phOTdBYlljblUvcHBhanUydWRSRCthcnAxL1Bu?=
- =?utf-8?B?TzRrR3ZLeSt0VnhjUC9tMGhVVjdjaU1FcGZCMUNQR0p2NThlbE10WmpQUTVB?=
- =?utf-8?B?NEg0alN0TzB1WVlpOGRkM2dlS1Y1U1g1dWRmOTgzSnhLenlJUUtIRFMxZUpJ?=
- =?utf-8?B?R1N4WFU2VEtXWkVraUxXRjYzU3dYc1QyUkt5elJWOGNHZGZ0T09pb1lhYWIr?=
- =?utf-8?Q?PRDn9sRcny6l/xvSDs2Hvj/UXB7cbE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7566.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YVRyUXp2Tk0xWGVKb1VRWFdYRU5TaFllSmxPUklISFJrdGRQNktYNkJOMk14?=
- =?utf-8?B?SWZwZmFDalh6U1JUZVkrOWJjSFluYkE2ZE95SDVQR09kWFBUU2Uwc2xBbUda?=
- =?utf-8?B?YUZmanBrV01Zb2NNT0p5aDJoM2QwbzF3OGFlcUZJa2l6a2lwazZ4ZmRqcm5V?=
- =?utf-8?B?MUp2enJ6VS9MOUx2QXVqazJseHBCeDRNdmdrckp4QWUvelpZekJUdVQ0emxa?=
- =?utf-8?B?clVYOE04dVJSQmxESWpIdjhWUEh2TTNiT1A1MERlaGVHVTVkV1JJdjJFcEh4?=
- =?utf-8?B?cmJHKzRHZm9aZFh2MitqMzlwa0JIWXFvR1JkaDh0YWkwYTY2bkdiZmdNbVdS?=
- =?utf-8?B?b0t2WGwyZ0cvbUM0UmhqeXhIVFNzMldqWUpKMExzVm53VEdiVnZQMHhEekhV?=
- =?utf-8?B?YlEzUkRYc010cnc0dTB0eDNkNWhyNFJRYXc5RkYxeFpvaFBWSVNJRTk3NEQw?=
- =?utf-8?B?M1BiUS90TGJYeE15U2dVNEVMQWxmREFsLzd6a0V6QkpwakxFMVBCWDRyemg5?=
- =?utf-8?B?RVA1Z1A2NXpuVTRtQVVnbW1FbzV2MmNjTWhKS1dNb1p0T204eEJIZVZYcnYy?=
- =?utf-8?B?VHd4Tmk5K1dyaFYvZDlheDNSUERYSGx1b0swdjVnU0JwTGpEeTlvdjFtZDVT?=
- =?utf-8?B?bWE0MWkweTNFQkpEanZTTlNRa0doK2ZKVko4dFhRTktzMUtsRTBjS1ljQXFJ?=
- =?utf-8?B?cnFkNnNZa3IrcEZDU0RSZ3k4dVd6Ly9QY1ZudFBvQnRRbUZ0bnNBOW5RTVRP?=
- =?utf-8?B?U2tuQmM2N0srZ0lsRWlDbmFYN0FJRGFyelgzRUJNLzExMU1zT05GYkVWU2JL?=
- =?utf-8?B?Q3hMbm5LSG8zbHZNVDUvWlQ5d3Erb2xrcUE4V24vNHQwRlRKL29tUVhxeHZG?=
- =?utf-8?B?RStYUTJDc0kwOTJCMXpDekl0WmFKdFNqVEx6Z1l0dytXMkVabzN6MXhWMUg1?=
- =?utf-8?B?RGlTSVBydjNWbkgrSGhqTlVLWmJNVXkzS2s2TUpTaTJYYXpFb0tZK0QzS0lw?=
- =?utf-8?B?MFBaM2FDSWxveW5wSktpbXJCT2p3YnlodjBEN0RtMkZZeWZ1RnlHUVR6ZXdF?=
- =?utf-8?B?a24xT2lNQlpReUdtWjVDNUpQVUFCQmxYRzd3WVNORG11T0drQlU4R3hHL1B6?=
- =?utf-8?B?clJxWUFZdGJsQlFIMjlEZGJJcUlMbUtzdENacGl3YWVOb0MwWUVLLzE0WHl6?=
- =?utf-8?B?NDR6d0lYVnlnay9wd1lDM0xJWWxOTzFBZ2xPc2hpOXpkVTY2R3VjeEVpWHdx?=
- =?utf-8?B?bkJ3b0UvMXJNYnY1bkl6RDhrV3pBZFRxZW8vME8yZ2hYTW1ZQytnYjlDYjdO?=
- =?utf-8?B?b1dvVVRtcHluUjNodS93UGhSdU9TdWJRWlNSZ1ZOOEtkdm5jUkpGcUlRaTJz?=
- =?utf-8?B?QUFnR251U1RETXdpc09FSlZnU3ZMS3A3MkVzKzQvUFM3dW1WUU8rNGpDZmRO?=
- =?utf-8?B?SCsxV0FsWVJUMzZnUUovbmwxWS9Rd3hwV003YVBlWHR2OVJFcG1KanZNMHgw?=
- =?utf-8?B?ZWZoR2lrTnBIWTUzTmlXbkNocnhFYVBqTDJWdUw0UkJ4SW1pSVA4UG9hRGx2?=
- =?utf-8?B?dU5OdFZiTXlqOUVIa3lFdmlMamttRU55d29odTNoOGxqWW1WaktsNE1SK2ZR?=
- =?utf-8?B?d3dhYXRBVXdkYTF4anp2WTRzUHJWdzQ0Nll1OXR0emRpbFA3ZWJEMTlmTys2?=
- =?utf-8?B?WGtnR2JsRGdCekE3eHhHMDFBSU5sWlNkcFhqNm1abXlYNmhvZ2syaGF5Q2Vt?=
- =?utf-8?B?LytqYTRQLzBKMWJ3YlVOWFgxejZqOE4vUnBKKzBEUTdmY2IvZjFobTBRL2xa?=
- =?utf-8?B?VEh1aEFrdm1PRTRSZXFLSWxuVitvL1FnOVp5d2dzWStoZHhtOURneEhVYVBl?=
- =?utf-8?B?bjNsNXVaZzN2RTNmb3BWR0s3STQwQ08zcG90U3VaMk5GNUdmVVBzdThheWtW?=
- =?utf-8?B?bW1RTHlKVys3bnlHTlJ4bkJNUXRzTWsvNFFqYjhualRUVmxYd25FNlRWS3JK?=
- =?utf-8?B?WWg2NzgrNEVXdi9DTXdWYmRqdVcwN25CTUN6eUJEYlpIN2g3RzJJM2IySTcy?=
- =?utf-8?B?dVdCSTVHSTlYczRKQUZEOElWOTl4TmtIQmd2K2x2ZFRETURhWkdBek9sTXgw?=
- =?utf-8?B?bGpoa3NsMUU1NG5BT2xFTysxT1NOb3ZwUFhidmVGRWlwNlNOTFllcllRb01G?=
- =?utf-8?B?aVE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40e9c6b7-aa0f-4349-038d-08de173f2475
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7566.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 23:01:49.6910
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zJqtuVJNHqgz5gKCutnOlEYr8gCf4y3N5rwMxNVDr0p6iPlZaj2Omokmy3jz/8fD7C8hxe85If73FqFyXo8Pk8nNepFCuJWapfUkb01rTwk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB5965
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big
+ Endian
+From: Caleb James DeLisle <cjd@cjdns.fr>
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>
+References: <20251027171759.1484844-1-cjd@cjdns.fr>
+ <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+ <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr>
+ <CAOiHx=nqWEdHEMf5immXO0VwyzDakDV9AMsoDETcJ0F4FqUt=w@mail.gmail.com>
+ <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
+ <CAOiHx=kfAwLzuoP2Y-AnGz4GysmszXq-f_et0rgd1j0thYv4Ew@mail.gmail.com>
+ <7865beac-cd03-4242-aab0-bbf05c60391a@cjdns.fr>
+Content-Language: en-US
+In-Reply-To: <7865beac-cd03-4242-aab0-bbf05c60391a@cjdns.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+On 29/10/2025 21:40, Caleb James DeLisle wrote:
+>
+> On 29/10/2025 21:12, Jonas Gorski wrote:
+>> On Wed, Oct 29, 2025 at 4:24 PM Caleb James DeLisle <cjd@cjdns.fr> 
+>> wrote:
+>>>
+>>> On 29/10/2025 10:15, Jonas Gorski wrote:
+>>>> On Tue, Oct 28, 2025 at 10:42 PM Caleb James DeLisle <cjd@cjdns.fr> 
+>>>> wrote:
+>>>>> On 28/10/2025 21:19, Jonas Gorski wrote:
+>>>>>> Hi,
+>>>>>>
+>>>>>> On Mon, Oct 27, 2025 at 6:19 PM Caleb James DeLisle 
+>>>>>> <cjd@cjdns.fr> wrote:
+>>>>>>> When on a Big Endian machine, PCI swaps words to/from LE when
+>>>>>>> reading/writing them. This presents a problem when we're trying
+>>>>>>> to copy an opaque byte array such as firmware or encryption key.
+>>>>>>>
+>>>>>>> Byte-swapping during copy results in two swaps, but solves the
+>>>>>>> problem.
+>>>>>>>
+>>>>>>> Fixes:
+>>>>>>> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+>>>>>>> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+>>>>>>> mt76x2e 0000:02:00.0: Build: 1
+>>>>>>> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+>>>>>>> mt76x2e 0000:02:00.0: Firmware failed to start
+>>>>>>> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with 
+>>>>>>> error -145
+>>>>>>>
+>>>>>>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+>>>>>>> ---
+>>>>>>>     drivers/net/wireless/mediatek/mt76/mmio.c | 34 
+>>>>>>> +++++++++++++++++++++++
+>>>>>>>     1 file changed, 34 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c 
+>>>>>>> b/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>>> index cd2e9737c3bf..776dbaacc8a3 100644
+>>>>>>> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>>> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>>> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev 
+>>>>>>> *dev, u32 offset, u32 mask, u32 val)
+>>>>>>>            return val;
+>>>>>>>     }
+>>>>>>>
+>>>>>>> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+>>>>>>> +                                         const u8 *src, int len)
+>>>>>>> +{
+>>>>>>> +       __le32 val;
+>>>>>>> +       int i = 0;
+>>>>>>> +
+>>>>>>> +       for (i = 0; i < ALIGN(len, 4); i += 4) {
+>>>>>>> +               memcpy(&val, src + i, sizeof(val));
+>>>>>>> +               writel(cpu_to_le32(val), dst + i);
+>>>>>>> +       }
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>     static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 
+>>>>>>> offset,
+>>>>>>>                                     const void *data, int len)
+>>>>>>>     {
+>>>>>>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+>>>>>>> + mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
+>>>>>>> +                                             len);
+>>>>>>> +               return;
+>>>>>>> +       }
+>>>>>>>            __iowrite32_copy(dev->mmio.regs + offset, data, 
+>>>>>>> DIV_ROUND_UP(len, 4));
+>>>>>> Maybe just replace this with memcpy_toio() which does no swapping at
+>>>>>> all instead of double swapping on BE?
+>>>>> I'm not that informed about how PCI works so I had to test to confirm
+>>>>> my understanding, but I can confirm that memcpy_toio() does not solve
+>>>>> the problem.
+>>>> Ah, right, I misread _iowrite32_copy() to do conversion to LE, but 
+>>>> it doesn't.
+>>>>
+>>>> What architecture is this you have? PowerPC? ARM? MIPS? 32 bit? 64 
+>>>> bit?
+>>>
+>>> MIPS32 (EcoNet EN751221 34Kc)
+>>>
+>>>
+>>>> So the differences I see are:
+>>>>
+>>>> 1. __iowrite32_copy() uses __raw_writel(), which has different memory
+>>>> semantics than writel()
+>>>> 2. __iowrite32_copy() assumed src is aligned to 32 bit, while you
+>>>> explicitly align it
+>>>> 3. memcpy_toio() will handle unaligned src properly, but does 64 bit
+>>>> accesses on 64 bit systems (and uses __raw* again).
+>>>>
+>>>> Is src aligned? If not, then the issue might be 2. And if your system
+>>>> is 64 bit, it would explain why 3 didn't help.
+>>>
+>>> I'm not a regular developer of mt76 so I wasn't sure if that was
+>>> guaranteed and I just wanted to code for safety.
+>>>
+>>> After reviewing the code, I see that there are a few places where
+>>> mt76_mmio_write_copy is being called with stack-allocated u8 arrays
+>>> so it's pretty clear to me that this is being treated as a memcpy-like
+>>> function and we should be handling unaligned inputs.
+>>>
+>>>
+>>>> As a first step you could try to replace the writel(cpu_to_le32(val)
+>>>> with a iowrite32be(val, ...) which should do the same except avoiding
+>>>> the doubled byte swapping. If that works, you can try to replace it
+>>> This works.
+>>>
+>>> These symbols are a bit of a nightmare to trace, so I ended up making
+>>> an .i file so I could confirm what's happening.
+>>>
+>>> iowrite32be() uses the version in iomap.c so I understand that's using
+>>> writel(swab32(val),port), so a writel with an unconditional byte swap.
+>>> writel() is more complicated, it's an inline function that is generated
+>>> in a rat's nest of preprocessor macros in mips/include/asm/io.h
+>>>
+>>> The preprocessed is this:
+>>>
+>>> __mem = (void *)((unsigned long)(mem)); __val = (val); if (sizeof(u32)
+>>> != sizeof(u64) || sizeof(u64) == sizeof(long)) { *__mem = __val;
+>>>
+>>> The source is this:
+>>>
+>>>       __mem = (void *)__swizzle_addr_##bwlq((unsigned long)(mem));    \
+>>>       __val = pfx##ioswab##bwlq(__mem, val);                \
+>>>       if (sizeof(type) != sizeof(u64) || sizeof(u64) == sizeof(long)) \
+>>>           *__mem = __val;                        \
+>>>
+>>> The line "pfx##ioswab##bwlq(__mem, val);" is ioswabl() and the source
+>>> of that explains the issue:
+>>>
+>>>    * Sane hardware offers swapping of PCI/ISA I/O space accesses in 
+>>> hardware;
+>>>    * less sane hardware forces software to fiddle with this...
+>>>
+>>> So this confirms my initial understanding, the PCI hardware is doing 
+>>> the
+>>> byte swapping unconditionally.
+>>>
+>>>
+>>>> with __raw_writel(), which then would make this the same as
+>>>> __iowrite32_copy, except making sure that src is aligned.
+>>>
+>>> This fails.
+>>>
+>>> Since I'm the maintainer of this SoC and it's still fairly new, I wrote
+>>> a trivial kmod to verify that unaligned access is not just silently
+>>> returning trash, it works as though it were aligned so alignment is
+>>> not the issue.
+>>>
+>>>
+>>>> Also you could replace your memcpy() with get_unaligned((u32 *)(src +
+>>>> i)); Should do the same but inline.
+>>> Good idea, I will do this.
+>>>>> The issue as I understand it is that rather than making every driver
+>>>>> carefully call cpu_to_le*() every MMIO write, someone decided to make
+>>>>> the PCI host bridge itself transparently byte-swap all MMIO on the
+>>>>> wire. Since most MMIO is hitting registers and most buffers are
+>>>>> transferred by DMA, for the most part everything works and nobody
+>>>>> notices.
+>>>>>
+>>>>> But in the rare case that we need to write a blob to MMIO, it gets
+>>>>> transparently swapped in hardware so you need to use cpu_to_le in 
+>>>>> that
+>>>>> case. Doing a search of ./drivers for write.*cpu_to_le I can see this
+>>>>> issue comes up a bit.
+>>>> Every (PCI) driver does conversion to LE implicitly by using
+>>>> writel/readl (or iowrite32/ioread32) etc do the conversion to/from LE.
+>>>> So writel(foo, dst )is a __raw_writel(cpu_to_le32(foo), dst) etc. PCI
+>>>> memory is assumed to be in LE. If you are on a little endian system,
+>>>> then no byte swapping happens, and on BE it will do byte swapping
+>>>> before writing the value.
+>>> Okay so it seems that in the case of MIPS, that's not always how it
+>>> works.
+>>>
+>>> https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6/arch/mips/include/asm/mach-generic/mangle-port.h#L17 
+>>>
+>>>
+>>> Since we don't know if the swap will happen in hardware or software
+>>> and (AFAIK) this is not a hot enough path that double-swapping will
+>>> have a notable performance penalty, I think the most sane thing to
+>>> do is use writel(cpu_to_le32()) and not care if it's swapped back
+>>> in the kernel or hardware.
+>> Oh, I think I see what it happening here. ECONET is a Big Endian MIPS
+>> platform, but does not select SWAP_IO_SPACE (most other BE platforms
+>> do).
+>>
+>> Does that mean the PCI space is swapped in hardware there?
+>>
+>> I guess that means that anything that uses __raw accessors to PCI
+>> space directly or indirectly is broken, as the raw data is now
+>> actually in the wrong order and needs to be swab'd.
+>>
+>> I don't know if it is a good idea to change this in __iowrite32_copy()
+>> / __ioread32_copy() (and other helpers), or if there are drivers that
+>> use it on non-PCI spaces and would be broken by that.
+>>
+>> If there is a way, I would suggest disabling hardware conversion and
+>> selecting SWAP_IO_SPACE, but that will affect a lot of your code that
+>> assumes that writel() etc don't convert to/from little endian.
+>
+>
+> I can look around in the hardware registers and see if I can shut it
+> off for EcoNet, but if you're saying MT76 should not support BE unless
+> they disable hardware swapping and use SWAP_IO_SPACE, that means the
+> majority of BE hardware on OpenWrt is not going to be supported. If
+> that's the decision then it at least warrants clear documentation.
+
+
+Update: I tested an MT7921 USB and it works fine with the patched
+driver, I checked the codepath and it is never used for USB anyway,
+it's only for PCI and mt7628-wmac, a direct-wired wlan on the MT7628
+which is Little Endian.
+
+Also there's no way I can switch this to use SWAP_IO_SPACE because it
+uses mtk-xhci for USB and that expects writel() to not swap bytes.
+
+I don't see why this patch should be controversial - it fixes a bug
+that breaks 6 OpenWrt platforms and there's no evidence that it breaks
+anything. Not only that but even if these platforms are considered low
+priority because Big Endian is a historical artifact, that's all the
+more reason why nobody should mind the addition of a cpu_to_le32()
+call which on Little Endian is a no-op.
+
+In any case, I would appreciate if you could look at my v2 because
+I switched to using (get|put)_unaligned_le32() which is much nicer.
+Thank you for the advice on that point.
+
+Thanks,
+
+Caleb
 
 
 
-On 10/29/25 2:16 PM, Ira Weiny wrote:
-> 
->> +
->> +#define vm_tdx_vm_ioctl(vm, cmd, flags, arg)				\
->> +({									\
->> +	int ret = __vm_tdx_vm_ioctl(vm, cmd, flags, arg);		\
->> +									\
->> +	__TEST_ASSERT_VM_VCPU_IOCTL(!ret, #cmd,	ret, vm);		\
->> +})
->> +
->> +#define __vm_tdx_vcpu_ioctl(vcpu, cmd, metadata, arg)			\
-> 
-> NIT: Why not just call 'metadata', 'flags'?
-> 
-
-Making this change would make the code easier to read by being consistent
-with caller here as well as with kernel terms. If making this change please
-consider its callers also, for example the "metadata" local variable of
-tdx_init_mem_region() introduced in patch #14. Naming it flags would then also
-be consistent with this change as well as how the flag is used in the kernel.
-
-Reinette
+>
+> Thanks,
+> Caleb
+>
+>
+> user@cjd-dev:~/en7526/openwrt$ find ./ -name 'config-6.12' | while 
+> read x; do grep -q 'CPU_BIG_ENDIAN=y' "$x" && ( grep -q 
+> 'SWAP_IO_SPACE=y' "$x" || echo "$x
+>  does not use SWAP_IO_SPACE" ) ; done
+> ./target/linux/apm821xx/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/realtek/rtl931x/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/realtek/rtl930x_nand/config-6.12 does not use 
+> SWAP_IO_SPACE
+> ./target/linux/realtek/rtl839x/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/realtek/rtl931x_nand/config-6.12 does not use 
+> SWAP_IO_SPACE
+> ./target/linux/realtek/rtl930x/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/realtek/rtl838x/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/ath79/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/octeon/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/ixp4xx/config-6.12 does not use SWAP_IO_SPACE
+> ./target/linux/econet/en751221/config-6.12 does not use SWAP_IO_SPACE
+> user@cjd-dev:~/en7526/openwrt$ find ./ -name 'config-6.12' | while 
+> read x; do grep -q 'CPU_BIG_ENDIAN=y' "$x" && ( grep -q 
+> 'SWAP_IO_SPACE=y' "$x" && echo "$x
+>  does use SWAP_IO_SPACE" ) ; done
+> ./target/linux/bmips/bcm6358/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/bmips/bcm6328/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/bmips/bcm6318/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/bmips/bcm6368/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/bmips/bcm6362/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/bmips/bcm63268/config-6.12 does use SWAP_IO_SPACE
+> ./target/linux/lantiq/config-6.12 does use SWAP_IO_SPACE
+> user@cjd-dev:~/en7526/openwrt$
+>
+>
+>>
+>> Best regards,
+>> Jonas
+>>
 
