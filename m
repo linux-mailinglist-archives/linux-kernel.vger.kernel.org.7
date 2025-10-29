@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-875466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B866C1935B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:52:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C338C19198
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3847646612A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:26:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B09895625C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936F0320CB6;
-	Wed, 29 Oct 2025 08:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40AB321442;
+	Wed, 29 Oct 2025 08:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eopABcWH"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012003.outbound.protection.outlook.com [52.101.48.3])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WBB6rQmg"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011033.outbound.protection.outlook.com [52.101.62.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0546F337107;
-	Wed, 29 Oct 2025 08:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB3331E11C;
+	Wed, 29 Oct 2025 08:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.33
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761725872; cv=fail; b=arBTg9lTpyZUfSr7hMaRkqff0pyPKl9IP2FOxOmgga2v2uvh8RWpXOULAb8AwPCS1c1GAG1Tz6iw/X9s8GTg543jma2Gl/MP0h/UMJ2iRCsvf+S+PHqJBLgqyWDoiLAdPx1G/UHA2JaZlgzk98vx1q66AREKICN2yiIQ5Bsd40s=
+	t=1761725883; cv=fail; b=tEeonEYRKOOMbTFjK871U7VhCPLZnvv40hCj6RIDdEz7700NJshOZ1q2077GML71duEZuXuMF1RSnyVaKkmU91YoFlnT2TDU6M7LVY5U7e39cDQBVxW9AvGlAz1F4tFBR+KFlc4i3tNUf62BKtBVLOAEo7UCUU2JO4xUME8zx4g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761725872; c=relaxed/simple;
-	bh=RAsEAkS96pILDb0Ks3XQ4ZKpqmwfD+9kV1XEf1IX0kY=;
+	s=arc-20240116; t=1761725883; c=relaxed/simple;
+	bh=JssHtsToHDox3rsA1kP1a5AYwLRJY7/SBArBhhnwo7k=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=gJuJHCiqtEGqGL7Mh3DcTaT5i8J+gCVb17hUWtAKecL5Milz9BRdJF9qFxfdMrNdSBLZnDDSTGXtrG4g2EpllqIMEM0jpz/R38b3742hUQXbZG4CLVzVjrRLIznEB06e3gP/Tys1bVP1oSjAKvQbfBb1gB4m2ztz/+1EDpD1gcQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eopABcWH; arc=fail smtp.client-ip=52.101.48.3
+	 To:Cc:MIME-Version; b=PTCHXxqiZM5oR5tQ9sgwCR6L//TMWcs1pZgeF6OD1EzA5rhcfumj7XOwFAyvV26PbOUwe74Wfst51SuUfCCXr3wknxkSIBxU//Z7gxa3M/okiZesWvG1a8od/koXX50iWOTYbG6w7flXaDArrDO+jDk0Vt5iGvZdGPk8G1a31FI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WBB6rQmg; arc=fail smtp.client-ip=52.101.62.33
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EESrtBZEvn0x5Rzj0eANwruddPtbUweQF1AJgZQDGPW70pUff0ZDbkGSQ7dV6Rsw7fe1nbX6O45VlGrojrbkV2o0KQWAIqvAyyDMmbFTdV70It8Lit/4H68imfMEYRkOkPN7a+CzJrKOK4tppoBc9WnAGYZfC8h0x6LeyLOXKf/D/UUlqCMOfxUr7QllaIWoqkeAAcc+PuL8BlEYAlzcLHhCKWkl9YI4yS2pJrifcGKuuzXWjIxhW7H5Ajg0VEulKZQbfci53JQoPa4rD7C76yX4o+MRaRmwIk4FLOgFWtzzQ1XpKUxUe89Yj7xK/aG8YTXLPWPSGDeg4SNrRwyERQ==
+ b=joWIucI9iddBw6VyJMZVVkAt6e4vktWIx16iE+eDkbdciVHOfbWmKBNkV/D1IKIfaKJVS72+Q0bc/V2uefcyBlD9tqpkCtPdOYdYxRlJA3BLOznlr9W8CilGPKuDgFPcPEGwQBvkvRwQiK4sWjgOJfuGdTBFfB12lHWmGwTkXVcTKLwvb6dr0TeMPcER3WUZu4UYhkYvoaQsPyXqF6f3vtZojC3MuzBK5xS9+/I/QeYJwkEe8VXabBgeEAu2rj8P5eS87ymSJywy2AGhnj26jxlNELxQiphs+LVpOINPG4KtMW6X7rbBiLsHwHD5cznOTz7f4C+eY9JvFPv8UeddxA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ugKPXflbbn9hsqjhj4vAv0p57KPB1H2+6a/m13JCOz4=;
- b=Y1ufgIfIgoMH4J3+XDLONVAZFp0oS8DiCyc3fRY6r5QzLTOneSBJJMj+lvCmvoZHIUTiZs4enAcg1UJ1TIAQapzJ/n3H06PwY30qMy+M+c1u0Qw6f7+Kz6/S0K7bxEs7xfNwgLDAmYX0Yxk1RQUQOrMA2szQHJ3YXnQffV5+IrIHOPFQokasXhDLVSvui+6N2MmcROIXtpH/tRtwy3aKSgwjouC40RJOoLy3n6QxfstRPxh5yGLH8t8FhouxoMraYHx/TDek8Q2LfF4QyNUnRUNgUMDR2yh7IIsO7geiHMyuFaeZTORpxgHjs84cpIaPQuig0nBBPhwp0Uel0gfXPQ==
+ bh=lTOeWkfEWgaEgmnWxQBiwuGTiMa0KISwtqPSPPi7J1g=;
+ b=CI5JaGMyq9t0Sit+T/p/tj1biUsNdEfyjlVlgwa63Fzmp0azjk264F/a80Zanfewbpc9VtjTOli6j1QSX4xlXbwY6vVdtZ+APIMgMO2JBrqf//DrEa+mZkitArTKNNff8fyP5qZxFAJAJRR+gV8GjvqLqcLuBBuWv7Zv2EPGHz69KqNNseN8awpH4x7i6lEM/E/ztXnWWDoV5rii/1OqYaHY7JUFCl1j81cUso9+Lw1V8cySgBSPxebx7KFONfWDXKD2OLZDlp0GXZM10ehIt1gAq3UZYSolo+MS/aVVnHUfrPEFsi7L47yKMVai6GwJeKkPq9a7q7+kPeD/SYf/Jw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ugKPXflbbn9hsqjhj4vAv0p57KPB1H2+6a/m13JCOz4=;
- b=eopABcWHazFa/e1gPqsGvA2/gpU+HLL3jchQfjvnq+O6ZkxdtQi95SgSO1NtEVcIjhKK20o+RoVdO5z7f6jcM7lyPajToqpbwWGqctPyWjZOwF8aOyg37r4OCQqmuv+SFm7cyY1WBlPmDQy4YJB0ESejZQSMhwp6ij00Q5EiqzdkkMZ1rq9sKM/LWA40IgubhljbbTLh6mXeh5pw+4JMnuxen5HvBpA+OB4ZWqVOaxvWQB2ET9UeBELKOBVpafDwRmBWnPb2dkfzRx3IwAyAS8rOfMqlXkXIJ15vsE+0dtiMzEjY4rls7/TdtXauYob4mBcy5kh7omfb/efTACFsjw==
+ bh=lTOeWkfEWgaEgmnWxQBiwuGTiMa0KISwtqPSPPi7J1g=;
+ b=WBB6rQmgR/xPTDFHSC9z/005oFFznGW1g9x6SuRJTC670OZwqrSab13luEZkjGFra4EmsMXO4zf/2YXZvK9ZFFigDczavmnL7Ic4L7bl4LUSWktEvikluz7KivIynpwJ1mV585EGlyWJGJD8Wk8IaDBWoXIuqNm6z+1oBhuPY18OJ0P8syPzm6PCBypLHOlPxfYBT2AucbJE9YCRDKOJJNDr2OvPkTt1tCQ7O0KlerH2uAEoBQ+ogrqUPALSvkKbx/huLSX1YIpbANdSxooxRIvXjoi1U6kQ2DwLVuLNLXPUvhIR+nWkpFLlIZKdn8k++S7Vi6FGqRDn2/ySgBOwTQ==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
  by SA3PR12MB8438.namprd12.prod.outlook.com (2603:10b6:806:2f6::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
- 2025 08:17:48 +0000
+ 2025 08:17:58 +0000
 Received: from MN2PR12MB3997.namprd12.prod.outlook.com
  ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
  ([fe80::d161:329:fdd3:e316%4]) with mapi id 15.20.9275.011; Wed, 29 Oct 2025
- 08:17:48 +0000
+ 08:17:58 +0000
 From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Wed, 29 Oct 2025 17:16:34 +0900
-Subject: [PATCH v7 07/14] gpu: nova-core: Add zeroable trait to bindings
+Date: Wed, 29 Oct 2025 17:16:35 +0900
+Subject: [PATCH v7 08/14] rust: enable slice_flatten feature and abstract
+ it through an extension trait
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-gsp_boot-v7-7-34227afad347@nvidia.com>
+Message-Id: <20251029-gsp_boot-v7-8-34227afad347@nvidia.com>
 References: <20251029-gsp_boot-v7-0-34227afad347@nvidia.com>
 In-Reply-To: <20251029-gsp_boot-v7-0-34227afad347@nvidia.com>
 To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
@@ -78,9 +79,9 @@ Cc: John Hubbard <jhubbard@nvidia.com>,
  dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  rust-for-linux@vger.kernel.org, Alexandre Courbot <acourbot@nvidia.com>
 X-Mailer: b4 0.14.3
-X-ClientProxiedBy: TYCP301CA0071.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::18) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+X-ClientProxiedBy: TY4P301CA0013.JPNP301.PROD.OUTLOOK.COM
+ (2603:1096:405:26f::19) To BY5PR12MB3986.namprd12.prod.outlook.com
+ (2603:10b6:a03:195::27)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,192 +90,249 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|SA3PR12MB8438:EE_
-X-MS-Office365-Filtering-Correlation-Id: 68746920-adc1-47f4-d491-08de16c3a5b0
+X-MS-Office365-Filtering-Correlation-Id: a710c16a-6eb2-423e-8af3-08de16c3aa65
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|10070799003|7416014|376014|366016|1800799024|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aTlqZ3VqUnptdUpmakdTMTNQWVVrbitmODhKbHpuUWN6S1pvWVFJUGxHSnRY?=
- =?utf-8?B?dkFtZnM0QWQwaTRMRWFxWndyS2lhbWh2V080OStQamZCRXVJbXFlZHdZb0lD?=
- =?utf-8?B?RDZUR05LaHdJZ2xXbTR2cFBKalZZT0FwRlpIdkZPRlNpbUJiT3RLenl0S05w?=
- =?utf-8?B?UksrbnBDOFBNUmM3WUVoVmxoZGtDQ1QvaEg3L0k4QmhlY3lGL0FNRnVvRUIv?=
- =?utf-8?B?RWNtaGk5Q1RXV0ZLVnZjS3lpaC9Ickk3L3F3dERIWWlwYzdjNEE3a0twNUZU?=
- =?utf-8?B?MUxTS3FFSkFlNHV4SWMrMVNLZ2Vua1NQNENMRzY0RnF4WUtYU2crVG9LZml1?=
- =?utf-8?B?WU1KZUY5eVhVbEFHR1pHd0x4TGYwODB0YzRvaDV4dkhPcUdsN1AxOHlFODFV?=
- =?utf-8?B?T2JrTHJNQ2w1U1FiZ0lhdmhOOEtQVk03MWlSUjM4SFNIdVpzbUZlTExkcGR3?=
- =?utf-8?B?SC9mZ3lhY3BwSW5MYklZQm84US9XSmREZE1LNUNwdWxCTXVML0VPV3RHTW81?=
- =?utf-8?B?NVZ3NGFsN21Ic3g4M3dKMVlZdy9vejcyV2xWOHFhS0l5dEpyY1Z4SzgvMC8v?=
- =?utf-8?B?QWV6YjQxTmFhWTZycjRGZEZTSDVXQm41Kzh6YWU2aTBvbks0Y3U4MlRTUWRX?=
- =?utf-8?B?RGlGQXh5TWJnOUk2V0YxNVQzaWVNbFRXTFNiTEFOSU9ydTcxWnZybHdrSWgz?=
- =?utf-8?B?U2krMzZuUTYwS1ZDUWd3WVBXdmMwYW9RdWRxRS9BNU1ZYVRtV2NKYmt3VUN6?=
- =?utf-8?B?ck54YWRINVl3WkJXQVBDTExPakxPUUtzd0tIRFhiM2tSY0xpL0tpbzNhSm1V?=
- =?utf-8?B?UjA0dWFLUElCc2pSRjJZNGRuQXhBbytnQjJmL20rdDdSQ1lKYm5KZUsxM0hw?=
- =?utf-8?B?NEVMUDZpRUcxRDE4ajgrY29xbXZtTERHQkhhNXF6ei9id3RHRUlzVlZIKy9Q?=
- =?utf-8?B?Skl4Y3RGVlNIZlk2UXpHNFJXM2dpYUF6T25HRnJVTm10blV5ZW12bk1HbThr?=
- =?utf-8?B?T3loOUlNaXVmUkc0WkZEVUE2RU9OVXQ3TFBNYXlCMVRXMVkxMG9kcWZMSE5O?=
- =?utf-8?B?WEZ0WWtKQmRKdGRvRG93VjFUSWd5eXlCc1F1bS9kRGtjaWh6eFdMeHR0SytT?=
- =?utf-8?B?dlZFVmlocFpBMTRaTC90MmVCQkhxaWRNSERHWkR5VUlFWWV3dmMwRzgyQ3JL?=
- =?utf-8?B?NUFxanRtc01yTE9zMWQvK1FwYUZMTEsrdld3eXc1UTFoY2xiY013L1pvQnJW?=
- =?utf-8?B?a0U1cFVHVzgrMVlac09MazN3blJ5U3BhQS9MZjJ6Qm9WeWh5cHVXOHJ2b2tO?=
- =?utf-8?B?ZXk2U1NBQllPM05ySkEwRFhsZnhVS1ovakl4RTJXWEpvU25tOHBjdzdsZzdJ?=
- =?utf-8?B?d3d6TnQ3bVpVR0U4ZlVmWklEaFgwUXVacXZSdUxzYXl2M1l2dEI1UGV6TC9a?=
- =?utf-8?B?VDdBeEsydUUvalI3cU1YK0FRWWtRYVo5aFowZnE0OGdxejdNVnNMSTlvWCtz?=
- =?utf-8?B?aE5xd2hsclNMeGtzQ2pWbVhDNHJqQUtyOGFLS1J0ZCtRbEVpaUJ2bzFLb2Z6?=
- =?utf-8?B?QkFYV1JJeldXRlV3dWFEcXV3b3JSMGRVNjlqcHo0dytvK0toSUVMcnN2cmNK?=
- =?utf-8?B?WWw5WjM2VEtNL2pVazlkL090bEdNd2xyYXhJWWJreHB2ejZodCtjTlJjM1ZD?=
- =?utf-8?B?U1dmY1pPdXJZQ09rZ1JxVjdiRE9zOWFXdEJPV1lyOEtPdUhWa2JEYjRhdUdh?=
- =?utf-8?B?cWZvdytOUzBJYlZHdXUrUHJWa1dtWkxyVkpZTGYrNGN2d1VMbEhvYUNhZEtW?=
- =?utf-8?B?VnFNTU1hQzFYMGc3RXJSNUZWSTJMQnVvOEZzRXEvZUFKcnI1STI2eVcwOEhY?=
- =?utf-8?B?cjNIVGZlRGIvUlZNY2cxRmp4VWpCTE9IamxWVGRkSmlDRU9BczZIR3VjNmtj?=
- =?utf-8?B?Z1FNR3dVa2hIOWllSm9HRllGdmdkT2JaVVpZamtVR21zREZhV2d4NXdZdzBX?=
- =?utf-8?Q?EcevRETD4mROUwvyu6Lp3f/CgM+u0w=3D?=
+	=?utf-8?B?TGg1WjlRRDN4QVhhZzMwUktIUXVYSm5iZmpkY1E5U3B3UEFzR1p6QnRuamV6?=
+ =?utf-8?B?T0ZnNUg5OUMyaDBkQlJiZEw5T2s5UUoxODhwOEtHM05neEwvbTYwUHJHS1Yx?=
+ =?utf-8?B?Nm5pWnRBMWk1TlRZbGM5c1kzamNRVXF1MVdab2s2VFpqeXFJZHlNODBzL2g0?=
+ =?utf-8?B?NHJWK1VqWm1XYjhRUDdQL2ttR2h5RE90VDd5ZnlRSXY4czJCaEtsa01SakRN?=
+ =?utf-8?B?TC9lSmtNbnZzYU5oNnd1cjQxUGR0VXZ6RnlRY0JRWUVtc1pmNjAvUVVUZm1z?=
+ =?utf-8?B?cmVsbWc5a3plM2ZCVmJLSkRxeGZCUHNnVG1OQk5vZWNCNEdTRXFLL1pxcGhr?=
+ =?utf-8?B?Skc5S0dqYU9weEM2ZThkQzhjZGUxVU5vZVRFWW1hOCt6RkJtdkowWGVZQ3Qv?=
+ =?utf-8?B?NEU4eVBBb2F2dElMcCtrTHBRMXA3RzFkVEdLclN6VmtMZ3FEYlRtWXZEc2Nl?=
+ =?utf-8?B?SjMrZ0pUVkdvTFZ5eHdRYTNRRnFaWlFZTnIzZTVWbWFrNitxZmN6TUN5OGtl?=
+ =?utf-8?B?V044MWpjUC9EVFdIdUYwZW95Tjl6SjFjSGE0NEd4R0w5b1d3eElMRDlOa2Z6?=
+ =?utf-8?B?dHdSby9BQ3BJcDVrb0QzbW1FaUVBOXJIb1pBUW1HWjBUaGIwZ2FCL2VkVGxp?=
+ =?utf-8?B?bWw5M3R5N2dBUk5jNU9UUXUxMjFZY1NjaElzN2JGYllZOGJLMitIZW54alRj?=
+ =?utf-8?B?WlJCem9LdlcwQVVNdFRJaVdpelZFNmoyQnZHNDhXWm5FRFROWjdmTTViaTJZ?=
+ =?utf-8?B?blNQRndRdDhCdUg5ejQwejFRbThJSFNDL0h1aHE3T1gyQTA1TWNsRzhqWUZM?=
+ =?utf-8?B?RUxLVHdNYlc2T01nV2l5SUI3TFlMVzVvakdOc3RIMnFKcmZLTjdRT2hnNTUw?=
+ =?utf-8?B?REs1ajM3WlFlWW9BT1AxOXV4R09XdDgybi93UHlHVUZ1NDRvWHE0WjhNZEMw?=
+ =?utf-8?B?WlJpRDdnTFJpeis0NU0raFV6UmJlRk5VZlVZWXl6NFFMMWVoTVJjN2Jxcms5?=
+ =?utf-8?B?SFBDL2ZJTkhLUENEbXVDTUVaMG1UQ3lhb1JlS09LQ2ZmZWN0ZC9sZmhoanIw?=
+ =?utf-8?B?WmFFUzhLZEhGdFV4SC9PdWJQMWZUOE51T2FZd1dVOStaNmo0M3RMV3RCY1hl?=
+ =?utf-8?B?L21RNjI0S3BIQnpqSCthZDBlVGlRMjFmbHdZNjNnRW1GRUs4ZEVFOExhSHFL?=
+ =?utf-8?B?SVJUS3pqRHFpUEhwQm5oUllRS2h3a21OMWN6aGJRNTQwazdsbmszTlZBNWlK?=
+ =?utf-8?B?Ti9kK29wTENkMDZ6VkMxeW1IdzRFTml0MWtuenNUM2dGSmZpRFZ2aDJJOTEz?=
+ =?utf-8?B?amdJdnhQMFZtZFRnVjBCcFNoaS9VWGRDcWJlZjJxcVp0M3kwSS9XMFJubDBl?=
+ =?utf-8?B?MXZlMUp4YVFkRUNQNHJ2VFVQbnZJekpkNkVHeVR0azNZWm8reTFzNTU0WXpC?=
+ =?utf-8?B?V0Jnc1hpQ2k5VlVOVklHLzlJVC9KOHY3N3VRdmJqS2JCeTlFZjdjV3BaOXh0?=
+ =?utf-8?B?OUNkNTNvQkRtZWxDYXpLMnFwZDdyRDcva2d6VGppdERXZzdaZHJ1OVowWHVO?=
+ =?utf-8?B?NEFEOEk3SmZGdlhJVkV0Zm1vbXVPd3BEejIwc2tBb2pJRjRzM1kvSFYwdW9Q?=
+ =?utf-8?B?dG1FYTl5dEV3R1k2WTF6b01lemIwMFA4TGswaGR4VWdYRkJleFBZbHQwK0Vh?=
+ =?utf-8?B?K2JvSGZOdTlJMC9LU09ERFUxUXhIa1JuQUVRVWhUZWQwbjd1VXoycVFSUEUr?=
+ =?utf-8?B?ZkRna0JjTWx6TXdIT2Z5czR1L1FiZXg0WTVGdDhEb0lBZUlHTUp4dXdjMEVy?=
+ =?utf-8?B?N1pPZWl6TUFGVVV1RG5NbEV1TVduYThsaC9sVUh6VWVDazZyRUVFbmN2U1RV?=
+ =?utf-8?B?eXE0THplOGlDS0ZlU3lUVTI1ZzZ1NmFLUEkyZDFQQ0h6OS9lYVpZbmxnWE5N?=
+ =?utf-8?B?VXpoR1o3N08wZ1Z0NkQrYzRpRTdPbWh1WUVCckZ5YXpXMmlDZUtuQ1hCVHp1?=
+ =?utf-8?B?VGV0dXppS0trUzlFQlpYckR6eUNEeU03Ny9GSXdjczJldUM2OVgrVXErMVZB?=
+ =?utf-8?Q?feDl5/?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aUw4aElLdDR0UjJ6U203U05vajE2V2d1elA0N0EvTCtraFFSLzRVbjVwN1VF?=
- =?utf-8?B?VG1ka0NJaGwvYzRQM2N4bzVncGhiQjQ0d091QTVZVi9JSVp3ek1jTE1LakI4?=
- =?utf-8?B?cVRoNEZRYWdnMlZQMlJvU3ZicXhUVUN3YkQvOGttTDJYbkI2bDJ2MGxDTHJx?=
- =?utf-8?B?NFVFNkZHV1NKb0p3bUZxT1BYc0gyWUlWUVdmb1ZockVpRldWN1E0TlJRcWNr?=
- =?utf-8?B?dmZwU3JmT1pISkl6dnhOMDd6ak9RUE10L2hDRzZmYXRKRjJwWnFpZmdZWkFP?=
- =?utf-8?B?VUJFQzhVeHV2Q3hVQllBZE92S0NiU1RnSzAwTFNlbnAzY2dKSTBjOWprT2VM?=
- =?utf-8?B?U09VdFY3cUgzMGJRZEZBZkpwbnZtVWVYMkhMTTJuUEJHTklhaHAyc3FkUGVx?=
- =?utf-8?B?VFhid09lK25neGt4QzdrZ1pobWs2bGtvSVFsck95aG9RYVhNYVM3ZktBVGkz?=
- =?utf-8?B?YkpCOWs2UVZ2aHZBN1c2R3BHRUo3Vk1EL1NLdUZMZmdkSTJCWkpCbXpmLzU5?=
- =?utf-8?B?ZWtCRW9JZkVCb1lRK3pQWVJvb2xsWUpqdEl1K0F1SWNMOFNoTTFMNTVMYW5a?=
- =?utf-8?B?Q3hEaG4yNkozb0Uwc2ZnMkZlWEhuTXQ1WVhoVzlrNmVDMklFcHFxTytGM0Iv?=
- =?utf-8?B?bzBLdHE1cm5WRGpROWVFTC9OTE5HRm9WYlp5VUdRR1V6WElNdWtmdzJaMzFj?=
- =?utf-8?B?UVZFNTZ2VHowQ1g5NHJURjVFSTJWcE5UTkl2cCs0b2I3ZzJmL1doTmE2WXFo?=
- =?utf-8?B?R3JBcXFjQWZkbTB5Q1U2T0ZkU1YwUHZIdkM0Ky80MkE4aVJHaS9KZS9qK2pQ?=
- =?utf-8?B?a0wrOVFISW1DSkVvcXA2ZkxPWHozU1ZFWk1QYjdONGx5NDNtZ1lXY1dKMmdB?=
- =?utf-8?B?VlhoYS93T3J2OHBmd2hHTEltd0huV0ZVNVlzMnZHN1pyclkrZFhrUjJnSFpm?=
- =?utf-8?B?cEpuL1pUVS9MM3B5cmowa0NGN2Q5TzZud0c4aEFrc3BLRk5ZaGliS2hueDBZ?=
- =?utf-8?B?UzlmdTBEMXRCWjk4cXVmSnQ0ZExqSUZRWjdKbXlENnpGeTBVL2g1Wk80RHdN?=
- =?utf-8?B?T1dNdnNPWmVDbEZEd0lpek00SDFrQ3pxR0RBOHU5SXZoNGVYYVRYeG9JRzNn?=
- =?utf-8?B?YmpsUFVaMHRDOEZaUHRnNEFvbTVXVTB5d08rNFljWjM1SUZiK0Z2Q0luL21y?=
- =?utf-8?B?dHlONWtSWi93cFhrRzhiNzY2c25JeEZQdFdndW1KYVY3Tk10a0dpU0dkWTFR?=
- =?utf-8?B?WEhHd3N4VTNmVDhtREJUdjFWK0F2YzdpNnRXMmJ4N3JhQWNDVjN2L2V4QUJS?=
- =?utf-8?B?SkZTL1p5R0ZoWFZySm43N00zSGdBZ0I3Ulh5TE9WL1RWUk1jcUZIR2FTamNF?=
- =?utf-8?B?QmFHMkRnNUUzbkNsaGY5NzVEUGlEWktTRlhLWGJITTdzdUYwNW1nYmV3ZTYy?=
- =?utf-8?B?bEs5SWZqL2VGWlZJdFRBNy9pZjk1cmVod0xtOHZBSUZNbjduTUkyMko0bnhU?=
- =?utf-8?B?WC9XQ3lxSldZcXhhekhFYjhJY25GdmdtNzBKakMycm10RnBXRnk0cTJtbmFm?=
- =?utf-8?B?RzJwYXZKT0JGd3hxUE1NRFV6S0wwRVpzTDlFQ3c1UkR4LzJxeCtydWc2cXd3?=
- =?utf-8?B?MDh3N2ZpTzBpcWJFSzRzYkFoSm1FOTJaUk56dWRBQWRqSWxEV2crSmRIbFY3?=
- =?utf-8?B?d2U2QlVUMGIxNmx6S1pMVFVTOE95aGNUNkJld3gzT1RIN1RFNmZYNzlaMmpS?=
- =?utf-8?B?aVZMcXNSRDhMUmdkN2R5NHB1dGgydk04SFpuWjY4Rk9hTUE0M2hQcUllZGV1?=
- =?utf-8?B?QnFzSDVMTk9sdVFBSzNPakJrQVNXNCtab2VuaXpCNS9lVWZEbGI2RmxwSUdH?=
- =?utf-8?B?ck16Wi9iSzI3a3JJVENxU1lkWmMzTHdoMGMyampWUS9WS2U0U2RpbnZvcEFF?=
- =?utf-8?B?YnR5SU10R2htZkRqVnFrWXFMVlBJczFkemwvVWMvWU80Z0Q3a0xNcFJiMUor?=
- =?utf-8?B?SGlnYi9HandKelJKK0hnc2RHWjlBY3lZek1BMW1aSndWKzlzRjg5US9pYkV4?=
- =?utf-8?B?RllRS2pSRjRxYjVDZWluTTdRcU9mRlh6QmpFcTlWaHB2akJwTi9haEdUNmdN?=
- =?utf-8?B?VTZEajM3UEthZU5rS3owSE8xU3MxdEYxajhzNW1EeU9rRUhrTFlyWTVzZklw?=
- =?utf-8?Q?axIolkaeGi5HVOlVteLr6II7UF8KMUHeDaOJKIz+s1aH?=
+	=?utf-8?B?OFB4Q1pYMmJleFhqM0daRm96cVl5NkovNm41enBwZm9Bbk9rdTBoTHNNM2tz?=
+ =?utf-8?B?SjZVaXBrYXNWQmh2Y0orT084NWg2ZzJjMlFYRVVaN2UxVlRjc0ZkWE5MaEtE?=
+ =?utf-8?B?dWJ4aUVrdnRZQVFETHV1N2QreEhEOElVN2k4OFYrZnJ2cUZBYTJTOUtabk9E?=
+ =?utf-8?B?KzZpbE9VMXl5VURKejl4MVlvQ3I1dWxuN21IQjViVmh3VDk3VWFvNDFQeG1O?=
+ =?utf-8?B?RWRkSkFJK3dvTWliYWUrcTJBVEVLa0ZJM1ZlRlhYWmFqNitLS0x2YUwrTmlq?=
+ =?utf-8?B?VkRKeldPMkJRbGw2WGpoYlBJMUQwTjY0c3pUNmVMdHJCNzlRRXVxdW84TCs0?=
+ =?utf-8?B?M2hLUVcyT0U0Ry9UNGZiSzdCM3d0a3p0VEdGajhRY2VhNnIyK0JPZm5SMzhC?=
+ =?utf-8?B?VXdaVTg2eEdDckJNZisxNjlnMTZ4dWxhb3RUNE9yVjQ3UEIwUThDVHVsdXUz?=
+ =?utf-8?B?d0FMZTRaRzVPTG50Q2I3N3pBeWRnMTR3TlNSZ1dRUWkwTlYraDBPYy9Walpy?=
+ =?utf-8?B?QndzVUxzOTQrL2ZqSThHZlpCL0dFdnRqQzYzb2xkRVlrelo0ZlBBTUZlKzNL?=
+ =?utf-8?B?dm1adEpidkxXZEIzb0lmUzRmRG9wZEh6QVBCWkVJRHZKVkk2NHhtS0hKcUhC?=
+ =?utf-8?B?Z0M2Vjg1cHFYR05tSG5qSXJadGV3dk9xZnNmSDBreVZnU3pZa0xmb1BOQ2Y0?=
+ =?utf-8?B?VkREemVPNW9qbFRXWldFa3cxYkt2emdCak9kQnZFVHByNytEazg1M1ZZQlZs?=
+ =?utf-8?B?VmNRcHVlaklyU2NKZExRYzFqNU5vY3NtbU1lcXFZQVdEaGZIcTgxanBEZjBJ?=
+ =?utf-8?B?OTlIWjZBdS9CTXlka29LZGFPMnE4QTdUWWxJcVBURlZSM0J0NGxmeC9zMkZs?=
+ =?utf-8?B?YldSNU9HaTJtS3hkakJVc0tmcHkwM28vcmQwVkFWSGFxSVlEZVRHYjVYTFJ0?=
+ =?utf-8?B?dWFqWEpnc0tNcXpQcFU1Ykh5TklOVHdQV1JPQzFjc2x1eXBybVpBZm5nREVY?=
+ =?utf-8?B?ZDNoQ1VQOTlnUkE4THJXb1JCMUFzTHdLTVQ1TDJxTzQ2bWhGN0tYWExjODQw?=
+ =?utf-8?B?NVZieXdMZisxSTZYdHJLbFBkL25xNkdsYkJnRzdEOWQrSTN2dkFIcVRGTEQr?=
+ =?utf-8?B?VDhEZ2xyQXBaSE1RZzRySjc5ZXFtdGJuUHRlZ0J4RDZ2bFUxZmVaRm4vR0la?=
+ =?utf-8?B?MUovdTltMXlUMzRtck9ISWZSZXRZajNabm9GTko1SkZtWW9XVmpjTHRWV0ky?=
+ =?utf-8?B?MW5WREcrOFhqSmwyQkUwNDdhcnVWRnJ6UWhLK0JUSlVma2N1NC9ZVjdYRE9W?=
+ =?utf-8?B?MDdQTjhrcVJ2a0ZrZ2FZOElwNlN4ZXN0ZDlwVzY0V2dDSTJuaUpTWTFua1Jx?=
+ =?utf-8?B?TzRadVpRc3JWdXpUMkNvbnk2Y1R2UzFFVTJLQ0JBSFdIMk54blJjZ1d2R2Ey?=
+ =?utf-8?B?Y1JEMW5UTHRYQW83akNLdFBZeUlpbGh2Mkw2RWdoMHhEMytxMjBWYTNHNlpa?=
+ =?utf-8?B?TElWMTN0WmJpWG8xSU9PTXl3ZTRWbnJaamllYndjbUVSNUxyb3ZEQ2kwdjlk?=
+ =?utf-8?B?Nk91dTBOMHNqU3g2OXg4ekdKSys2eDdjZVdkNGV4bkR4UjVCVHArK2VpeFY4?=
+ =?utf-8?B?YUtmRDR4VUJ5aHhLU0htMldJb3EySEh0dm5IcVVBTEI0eFFaTHpuVjBSaVkx?=
+ =?utf-8?B?SjdlVnVqS3c5ZGNCVTNPSnZhQUNqdnluMXZTcUZvYURrNnI3Rk11dGdXV3Fk?=
+ =?utf-8?B?TDdCa05ZSDFpQTliWHhGMEFJcXV4Y2p0YVNmN1Q0WnJKNzZ1ME5OYkxmRVpt?=
+ =?utf-8?B?UXIwVm9XVHVxcjRnZGNoVmd1by9mRXN5ZXJvREx2dXZIMlM0cmtScTNhN3I3?=
+ =?utf-8?B?YU5zb1dGSkxKbURpQ1huT21rdFd6aldiajVTMEZDUXBrVEw0NFFQbkZ0QzRQ?=
+ =?utf-8?B?V3VWdXh6MC9UM1hOMVF5WHpmdHZjUXVFWHVoMVNqeXl6UmdaeTBCMHY0eHIy?=
+ =?utf-8?B?cSs3bTdOSmczNTI1M0dRSkNsNFkrZFBEZTVmcmsxZzEzS1loTld1NFF4aGE5?=
+ =?utf-8?B?SHQ1VGxiMDBrQWZTMHYwZFZVUTlXSDBYQkxIUDdZd2hWNW5BTm02bUV2TEsz?=
+ =?utf-8?B?ODErTzl2dEJLdGdZdGxZekJETVlkVVovNlJjaEpIbVhKZm1rU2lTQVl2eEtK?=
+ =?utf-8?Q?CvhmDIVoNjpZE6Ny/rAEHL94tcsAXo8ArA+lduk8nXcv?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68746920-adc1-47f4-d491-08de16c3a5b0
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a710c16a-6eb2-423e-8af3-08de16c3aa65
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB3986.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 08:17:48.8808
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 08:17:58.0336
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: pNPdNim2sQPaPHyjBkFj9wxappx4MybzXqq7DTmQpKn3s8UytK5jgmVotRr1kCVJTKxpqG1rPhB12D1aIqVzjA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: dHKSH1jn38O+m2Lmo6Uv8/RmLREjphKSbtnYsGPYCbzUTwmnq2hEQ03qqp0dJ5Fiizw1+khwviizjeC4ME79xg==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8438
 
-From: Alistair Popple <apopple@nvidia.com>
+In Rust 1.80, the previously unstable `slice::flatten` family of methods
+have been stabilized and renamed to `as_flattened`.
 
-Derive the Zeroable trait for existing bindgen generated bindings. This
-is safe because all bindgen generated types are simple integer types for
-which any bit pattern, including all zeros, is valid.
+This creates an issue as we want to use `as_flattened`, but need to
+support the MSRV (which at the moment is Rust 1.78) where it is named
+`flatten`.
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
+Solve this by enabling the `slice_flatten` feature, and abstracting
+`as_flatten` behind an extension trait that calls the right method
+depending on the Rust version.
+
+This extension trait can be removed once the MSRV passes 1.80.
+
+Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+Link: https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/gpu/nova-core/gsp/fw/r570_144.rs          |  1 +
- drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs | 16 ++++++++--------
- 2 files changed, 9 insertions(+), 8 deletions(-)
+ init/Kconfig           |  3 +++
+ rust/kernel/lib.rs     |  4 ++++
+ rust/kernel/slice.rs   | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/Makefile.build |  3 ++-
+ 4 files changed, 72 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/nova-core/gsp/fw/r570_144.rs b/drivers/gpu/nova-core/gsp/fw/r570_144.rs
-index 82a973cd99c3..4f5c65ac1eb9 100644
---- a/drivers/gpu/nova-core/gsp/fw/r570_144.rs
-+++ b/drivers/gpu/nova-core/gsp/fw/r570_144.rs
-@@ -25,4 +25,5 @@
-     unsafe_op_in_unsafe_fn
- )]
- use kernel::ffi;
-+use kernel::prelude::Zeroable;
- include!("r570_144/bindings.rs");
-diff --git a/drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs b/drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs
-index 392b25dc6991..f7b38978c5f8 100644
---- a/drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs
-+++ b/drivers/gpu/nova-core/gsp/fw/r570_144/bindings.rs
-@@ -20,7 +20,7 @@
- pub type u32_ = __u32;
- pub type u64_ = __u64;
- #[repr(C)]
--#[derive(Copy, Clone)]
-+#[derive(Copy, Clone, Zeroable)]
- pub struct GspFwWprMeta {
-     pub magic: u64_,
-     pub revision: u64_,
-@@ -55,19 +55,19 @@ pub struct GspFwWprMeta {
-     pub verified: u64_,
- }
- #[repr(C)]
--#[derive(Copy, Clone)]
-+#[derive(Copy, Clone, Zeroable)]
- pub union GspFwWprMeta__bindgen_ty_1 {
-     pub __bindgen_anon_1: GspFwWprMeta__bindgen_ty_1__bindgen_ty_1,
-     pub __bindgen_anon_2: GspFwWprMeta__bindgen_ty_1__bindgen_ty_2,
- }
- #[repr(C)]
--#[derive(Debug, Default, Copy, Clone)]
-+#[derive(Debug, Default, Copy, Clone, Zeroable)]
- pub struct GspFwWprMeta__bindgen_ty_1__bindgen_ty_1 {
-     pub sysmemAddrOfSignature: u64_,
-     pub sizeOfSignature: u64_,
- }
- #[repr(C)]
--#[derive(Debug, Default, Copy, Clone)]
-+#[derive(Debug, Default, Copy, Clone, Zeroable)]
- pub struct GspFwWprMeta__bindgen_ty_1__bindgen_ty_2 {
-     pub gspFwHeapFreeListWprOffset: u32_,
-     pub unused0: u32_,
-@@ -83,13 +83,13 @@ fn default() -> Self {
-     }
- }
- #[repr(C)]
--#[derive(Copy, Clone)]
-+#[derive(Copy, Clone, Zeroable)]
- pub union GspFwWprMeta__bindgen_ty_2 {
-     pub __bindgen_anon_1: GspFwWprMeta__bindgen_ty_2__bindgen_ty_1,
-     pub __bindgen_anon_2: GspFwWprMeta__bindgen_ty_2__bindgen_ty_2,
- }
- #[repr(C)]
--#[derive(Debug, Default, Copy, Clone)]
-+#[derive(Debug, Default, Copy, Clone, Zeroable)]
- pub struct GspFwWprMeta__bindgen_ty_2__bindgen_ty_1 {
-     pub partitionRpcAddr: u64_,
-     pub partitionRpcRequestOffset: u16_,
-@@ -101,7 +101,7 @@ pub struct GspFwWprMeta__bindgen_ty_2__bindgen_ty_1 {
-     pub lsUcodeVersion: u32_,
- }
- #[repr(C)]
--#[derive(Debug, Default, Copy, Clone)]
-+#[derive(Debug, Default, Copy, Clone, Zeroable)]
- pub struct GspFwWprMeta__bindgen_ty_2__bindgen_ty_2 {
-     pub partitionRpcPadding: [u32_; 4usize],
-     pub sysmemAddrOfCrashReportQueue: u64_,
-@@ -136,7 +136,7 @@ fn default() -> Self {
- pub const LibosMemoryRegionLoc_LIBOS_MEMORY_REGION_LOC_FB: LibosMemoryRegionLoc = 2;
- pub type LibosMemoryRegionLoc = ffi::c_uint;
- #[repr(C)]
--#[derive(Debug, Default, Copy, Clone)]
-+#[derive(Debug, Default, Copy, Clone, Zeroable)]
- pub struct LibosMemoryRegionInitArgument {
-     pub id8: LibosAddress,
-     pub pa: LibosAddress,
+diff --git a/init/Kconfig b/init/Kconfig
+index cab3ad28ca49..7da93c9cccc3 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -147,6 +147,9 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
+ 	# https://github.com/llvm/llvm-project/pull/130661
+ 	def_bool LD_IS_BFD || LLD_VERSION >= 210000
+ 
++config RUSTC_HAS_SLICE_AS_FLATTENED
++	def_bool RUSTC_VERSION >= 108000
++
+ config RUSTC_HAS_COERCE_POINTEE
+ 	def_bool RUSTC_VERSION >= 108400
+ 
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index 3dd7bebe7888..2581a356d114 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -21,6 +21,9 @@
+ #![feature(inline_const)]
+ #![feature(pointer_is_aligned)]
+ //
++// Stable since Rust 1.80.0.
++#![feature(slice_flatten)]
++//
+ // Stable since Rust 1.81.0.
+ #![feature(lint_reasons)]
+ //
+@@ -128,6 +131,7 @@
+ pub mod security;
+ pub mod seq_file;
+ pub mod sizes;
++pub mod slice;
+ mod static_assert;
+ #[doc(hidden)]
+ pub mod std_vendor;
+diff --git a/rust/kernel/slice.rs b/rust/kernel/slice.rs
+new file mode 100644
+index 000000000000..7e837bec4bed
+--- /dev/null
++++ b/rust/kernel/slice.rs
+@@ -0,0 +1,63 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Additional (and temporary) slice helpers.
++
++/// Extension trait providing a portable version of [`as_flattened`] and
++/// [`as_flattened_mut`].
++///
++/// In Rust 1.80, the previously unstable `slice::flatten` family of methods
++/// have been stabilized and renamed from `flatten` to `as_flattened`.
++///
++/// This creates an issue for as long as the MSRV is < 1.80, as the same functionality is provided
++/// by different methods depending on the compiler version.
++///
++/// This extension trait solves this by abstracting `as_flatten` and calling the correct  method
++/// depending on the Rust version.
++///
++/// This trait can be removed once the MSRV passes 1.80.
++///
++/// [`as_flattened`]: slice::as_flattened
++/// [`as_flattened_mut`]: slice::as_flattened_mut
++pub trait AsFlattened<T> {
++    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
++    ///
++    /// This is an portable layer on top of [`as_flattened`]; see its documentation for details.
++    ///
++    /// [`as_flattened`]: slice::as_flattened
++    fn as_flattened_slice(&self) -> &[T];
++
++    /// Takes an `&mut [[T; N]]` and flattens it to a `&mut [T]`.
++    ///
++    /// This is an portable layer on top of [`as_flattened_mut`]; see its documentation for details.
++    ///
++    /// [`as_flattened_mut`]: slice::as_flattened_mut
++    fn as_flattened_slice_mut(&mut self) -> &mut [T];
++}
++
++impl<T, const N: usize> AsFlattened<T> for [[T; N]] {
++    #[allow(clippy::incompatible_msrv)]
++    fn as_flattened_slice(&self) -> &[T] {
++        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
++        {
++            self.flatten()
++        }
++
++        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
++        {
++            self.as_flattened()
++        }
++    }
++
++    #[allow(clippy::incompatible_msrv)]
++    fn as_flattened_slice_mut(&mut self) -> &mut [T] {
++        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
++        {
++            self.flatten_mut()
++        }
++
++        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
++        {
++            self.as_flattened_mut()
++        }
++    }
++}
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index d0ee33a487be..a84b9e3171a3 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -308,6 +308,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ 
+ # The features in this list are the ones allowed for non-`rust/` code.
+ #
++#   - Stable since Rust 1.80.0: `feature(slice_flatten)`.
+ #   - Stable since Rust 1.81.0: `feature(lint_reasons)`.
+ #   - Stable since Rust 1.82.0: `feature(asm_const)`,
+ #     `feature(offset_of_nested)`, `feature(raw_ref_op)`.
+@@ -317,7 +318,7 @@ $(obj)/%.lst: $(obj)/%.c FORCE
+ #
+ # Please see https://github.com/Rust-for-Linux/linux/issues/2 for details on
+ # the unstable features in use.
+-rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,offset_of_nested,raw_ref_op,used_with_arg
++rust_allowed_features := asm_const,asm_goto,arbitrary_self_types,lint_reasons,offset_of_nested,raw_ref_op,slice_flatten,used_with_arg
+ 
+ # `--out-dir` is required to avoid temporaries being created by `rustc` in the
+ # current working directory, which may be not accessible in the out-of-tree
 
 -- 
 2.51.0
