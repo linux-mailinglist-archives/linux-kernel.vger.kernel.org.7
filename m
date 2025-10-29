@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-876068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7403CC1A8E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:13:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E60C1A9FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:22:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E87585D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:04:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E7E5858A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF3D3358A9;
-	Wed, 29 Oct 2025 12:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFA933B6DB;
+	Wed, 29 Oct 2025 12:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CG+TiDH9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHEAk1qp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1833328E8;
-	Wed, 29 Oct 2025 12:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B7C33B6C6;
+	Wed, 29 Oct 2025 12:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761742474; cv=none; b=sMYFy6Pe70xZIrboF0Ni8bDxzN7n6H8D9haok0JLezX4znKGHGYIrezVjy1d3RJAGGQHraw6qF0NZZ9K/NRB+AVxA58PLgtC+Os+PaXAaY9KfIPInLnwk0xC2xDjL7/yzQo05ipDg74yC8FoKepzVqKheCcjD8tV8svNQd7KZKE=
+	t=1761742506; cv=none; b=JHess36fMOImz8HAcW0k4hh+5NUQmcxUWpxwpRnqsWOhTS7dk54vrRHTzcQi27evND/aK1cOYpeiy9qYNzI5fRwMj584iy1dUZr8dY0kVvLrAKOockb6q4o+Ze7c7niIW30VMejUXniNPza9+KUBNt6Uv8a9aNVCHzKt7mZhb+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761742474; c=relaxed/simple;
-	bh=ERdenaaSnCayj1jM0xEoP/ksydq7NeKvn4duQyaIA68=;
+	s=arc-20240116; t=1761742506; c=relaxed/simple;
+	bh=9XYrlklpk/Hc4NE8fb0wzosrDo4q6wloCH7mewEvvLs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceccZUrRaCvpoYVnnO4guT+Vi62uBWR9IQRCa3bOYP3MlwuG6V/AVefUMeYQEEGoOOPIahZXgt8WoE8IPYCL/k1Kwu8fzx1TfZjaaGaRc2NBvvNtUva4sKhii+GroVuwTDzD8oM6NemeNx4xC868gCacygDYHfkIZg1d/Hu1mP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CG+TiDH9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FC22C4CEF7;
-	Wed, 29 Oct 2025 12:54:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=oSiDwFwsI8QnTOYtLEyxRjpg/nNeVlbXiOD4EFlSVGxp3CbPXvDB2GPGFXf3Z234Ii4X2WHMKiJf6pQYSQ3HaX/DVB78fzzkfb19H/jd8cmww8s1nfbGd58ZCbQpSRHxIKfOVXteN1irWEBiJu++YB+PXHMDJ/BExxGm52Cwf/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHEAk1qp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E58C5C4CEF7;
+	Wed, 29 Oct 2025 12:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761742473;
-	bh=ERdenaaSnCayj1jM0xEoP/ksydq7NeKvn4duQyaIA68=;
+	s=k20201202; t=1761742503;
+	bh=9XYrlklpk/Hc4NE8fb0wzosrDo4q6wloCH7mewEvvLs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CG+TiDH9vGrRy+dyYgFaDqCLfCHqvH7YbbEpGB4Wyf1sfqV7Z72xZvLHkffLd2uin
-	 yRkW4y9wr6dcsSz2IXD+UhbcdQYbVmigc/lSyttE636E4xmsd81+TFdGtLgy18uNMq
-	 3P040ruFcjLA6waCPh/yOKM0ZKFgs/Bz5LteAXdIri9sarOU/pJVjqCNnCQS+8Qt7F
-	 8i3EaA0SU9esvTY3db6xHPuFGt4bS6T4/3N5Gg0ueJt6mQHvGgDUopWLmYvl8uwNRs
-	 Jcmg7njFZziQ00suGgN+EUSg84LwN3EMwaMfaDhoDK2ItrTLVNCkCbwJ58CoQogmoh
-	 v4h1uUFM1gJjw==
-Date: Wed, 29 Oct 2025 12:54:25 +0000
-From: Drew Fustini <fustini@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Michal Wilczynski <m.wilczynski@samsung.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
-	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
-Subject: Re: [PATCH v3 3/5] reset: th1520: Prepare for supporting multiple
- controllers
-Message-ID: <aQIOgbUf2IHoWCf2@gen8>
-References: <20251014131032.49616-1-ziyao@disroot.org>
- <20251014131032.49616-4-ziyao@disroot.org>
+	b=RHEAk1qpC+8HX5MR5u6QfDqE42C9CRG3RdDExDGZ4MvXBtfCQack36vPhGsV0uWD8
+	 /PO3hH+L7UCbhTUGFEZ/au20foGy/k1/DEfYmZMORmp9huDFcU1NIUj9rTvGtkWOSL
+	 9YswO2xZWuEfthP37KUCBpDyTbnVn4MdE8yfJ004bbmiJXqc2iJcsVptv+Cgpq5z9Z
+	 RSTlJkUaFeLaiRRdH2x47/NtNb7s2T3DeE2pGvNXBpUGyq5wsUipmzSLHPLQwNo7ai
+	 pXQVSImgqj4b0sNa6pGJ8oo3oR1nTU2bioIt6lLXGd5R5qaxgRFC6QhEYtE0lvvQEO
+	 rFS2UjqMrgbbQ==
+Date: Wed, 29 Oct 2025 13:54:59 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs: push list presence check into inode_io_list_del()
+Message-ID: <20251029-aufweichen-pechschwarz-7eba2f4f6ffb@brauner>
+References: <20251022143112.3303937-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251014131032.49616-4-ziyao@disroot.org>
+In-Reply-To: <20251022143112.3303937-1-mjguzik@gmail.com>
 
-On Tue, Oct 14, 2025 at 01:10:30PM +0000, Yao Zi wrote:
-> TH1520 SoC is divided into several subsystems, shipping distinct reset
-> controllers with similar control logic. Let's make reset signal mapping
-> a data structure specific to one compatible to prepare for introduction
-> of more reset controllers in the future.
+On Wed, Oct 22, 2025 at 04:31:11PM +0200, Mateusz Guzik wrote:
+> For consistency with sb routines.
 > 
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 > ---
->  drivers/reset/reset-th1520.c | 42 +++++++++++++++++++++++++-----------
->  1 file changed, 30 insertions(+), 12 deletions(-)
+
+Hm, what is this based on? It doesn't apply to vfs-6.19.inode at all.
+Could you please resend?
+
+>  fs/fs-writeback.c | 3 +++
+>  fs/inode.c        | 4 +---
+>  2 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/reset/reset-th1520.c b/drivers/reset/reset-th1520.c
-> index 14d964a9c6b6..2b65a95ed021 100644
-> --- a/drivers/reset/reset-th1520.c
-> +++ b/drivers/reset/reset-th1520.c
-[snip]
-> @@ -138,22 +147,31 @@ static int th1520_reset_probe(struct platform_device *pdev)
->  	if (IS_ERR(priv->map))
->  		return PTR_ERR(priv->map);
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index f784d8b09b04..5dccbe5fb09d 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1349,6 +1349,9 @@ void inode_io_list_del(struct inode *inode)
+>  {
+>  	struct bdi_writeback *wb;
 >  
-> -	/* Initialize GPU resets to asserted state */
-> -	ret = regmap_update_bits(priv->map, TH1520_GPU_RST_CFG,
-> -				 TH1520_GPU_RST_CFG_MASK, 0);
-> -	if (ret)
-> -		return ret;
-> +	if (of_device_is_compatible(dev->of_node, "thead,th1520-reset")) {
-
-Is there a reason that there is a now a conditional check for the
-compatible here?
-
-Thanks,
-Drew
+> +	if (list_empty(&inode->i_io_list))
+> +		return;
+> +
+>  	wb = inode_to_wb_and_lock_list(inode);
+>  	spin_lock(&inode->i_lock);
+>  
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 3153d725859c..274350095537 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -789,9 +789,7 @@ static void evict(struct inode *inode)
+>  	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
+>  	BUG_ON(!list_empty(&inode->i_lru));
+>  
+> -	if (!list_empty(&inode->i_io_list))
+> -		inode_io_list_del(inode);
+> -
+> +	inode_io_list_del(inode);
+>  	inode_sb_list_del(inode);
+>  
+>  	spin_lock(&inode->i_lock);
+> -- 
+> 2.34.1
+> 
 
