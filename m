@@ -1,90 +1,137 @@
-Return-Path: <linux-kernel+bounces-875906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB161C1A165
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:42:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8F2C1A189
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:44:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D25D51AA4468
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF0A3A7327
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE5A330337;
-	Wed, 29 Oct 2025 11:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CA4334C10;
+	Wed, 29 Oct 2025 11:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dwurp.de header.i=@dwurp.de header.b="RIWF8YjL"
-Received: from mail.dwurp.de (mail.dwurp.de [185.183.156.149])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FeQdr/1X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF2113FEE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.183.156.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99DB30BF53;
+	Wed, 29 Oct 2025 11:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761738030; cv=none; b=JVefaqRhFIYAnt8lUI02D9VP/B551mFRWZPgqFueuOJw5Ow6UkJ7LWKgKVLAVy8uyP+6xUnr85N0Zqm8wU2RsvGgyWPH1BUqSg4XAtDJOld7WEtj0Peo4obIuasjtzLgeo7TK84I0hv1nqvXK6nIY4fdg/kKzckfUk+uBdhTgks=
+	t=1761738125; cv=none; b=TXhPs8xlVUAojevDwpssgki/QEbrJqgANMskHtQGRQA0e0/PMSEQ+vNBSgBWxP3dt+X6X9cJ5mkfIQyAjNrxedi6eS0MD65StKFlDJtjR9gtReDDWvToDgbgkib+6V4HFtHkl3A7OmcZ/sFV7y3NnAFDpeTL5/f6b8WUEfx2iVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761738030; c=relaxed/simple;
-	bh=NADL9O7QZYjikNdqd/tNL7aiqcRd5E7uXw6TJiuHnDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4D37w/qfNWKMMQDv9oSz0bWjh4sEelXdqfZkEOp1ogMBKppkXkxj/C7UNGwrxYD8JzrBKEbV/t7gYa8ryJqTWb65YsjMobys3wVlJUlySw849EnpWHeAfWoV06Kj0iRQOla9yLe6P19Y7d9R/B25qeT5Sb9ebBAVsgbImbwo1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dwurp.de; spf=pass smtp.mailfrom=dwurp.de; dkim=pass (1024-bit key) header.d=dwurp.de header.i=@dwurp.de header.b=RIWF8YjL; arc=none smtp.client-ip=185.183.156.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dwurp.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dwurp.de
-Message-ID: <ffd5081c-2193-4ae2-9b2c-c32b276fe1d9@dwurp.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dwurp.de; s=mail;
-	t=1761738025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TTyQI4Tts9+775CKf5cVmQAALYTRwiiX2bdCP1i30PM=;
-	b=RIWF8YjLxwcXkhBKw+7pNZycLwm/ZZayfmE7J38UjnIz3a7T4yurK+pjTF3cy3whhqmnxp
-	TI4VjKPAKk/CS+1NbZETT3NUZDcFk3MM7CRIcVPinbfJZD5fvLRCccFszWc1Zd+zCV23D5
-	2IHO3pC2zWqUGvQ0qlkUoOZGeYGmkw4=
-Date: Wed, 29 Oct 2025 12:40:21 +0100
+	s=arc-20240116; t=1761738125; c=relaxed/simple;
+	bh=CWuanT4v89ELYuCd8YftnASQ94vUasO0QCGZu7kMtN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pO2CRi/a4d8ldFFd4PPFm8U7LYKO58sCYFHcosUiOPYR5Xkzz6s463Z3TQUKJWK/+IesUBcFOu53cRPgQ7RfaPNH+SFu19sTM5DPElsIGINNldq50HiyGbL7iatNMhSlsFDi3x6NQTdwEGqfGTs8gLFI9xdZZmHBMRnN5CKP5Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FeQdr/1X; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761738124; x=1793274124;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CWuanT4v89ELYuCd8YftnASQ94vUasO0QCGZu7kMtN0=;
+  b=FeQdr/1XArOu2pfSe+uusea5G6d+4zj25pfFxPMckNw264XlPadxuvka
+   +UTqpj3X37q1/hZvi2NhWO+T4bC/HRBfsai2++FTykXoHY/EquFEyuc38
+   EQK4v7Jo/nLiBJrLqQ/y2E+H9fm1HUe5RNoH2RdMd4/N5ywHyNVxTvg6U
+   6li110I7xc0jS9kgRmMkajzJDzr8Uh2q9pDthASxv4Ys21M7GQLjC7K3l
+   1jhlTLSEERgjYwaY8hD0/ad079ErlGTusJc5FvIaz1ZRTT4eqIFEpVvvP
+   OopJjqDx8X+e+5D4meI1HaE0mT4lRREnFMRhtPfLa2GhdPeYxrmDEN2UG
+   Q==;
+X-CSE-ConnectionGUID: i6O8d8mRSem569vz1pO6tg==
+X-CSE-MsgGUID: ufQTnPpWR0O6UGDmTgGrRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="51429798"
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="51429798"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:42:02 -0700
+X-CSE-ConnectionGUID: 4nHoIBj6QnSvV/LLtgGNBQ==
+X-CSE-MsgGUID: Tm0xW4g9SaCREL+ybcXZHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
+   d="scan'208";a="189702787"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 04:41:55 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vE4Yq-00000003bB9-1kAi;
+	Wed, 29 Oct 2025 13:41:52 +0200
+Date: Wed, 29 Oct 2025 13:41:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andy@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v3 01/10] string: provide strends()
+Message-ID: <aQH9gE_fB119CW3l@smile.fi.intel.com>
+References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
+ <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm/panel: kingdisplay-kd097d04: Disable EoTp
-To: Christoph Fritz <chf.fritz@googlemail.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <jesszhan0024@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251028214045.1944956-1-dev@dwurp.de>
- <aeee5f47ef2842fde66bc66fc598ee4f007fc1c2.camel@googlemail.com>
- <33e255dc-64f9-4e4f-82eb-6f5e9c1d63d4@dwurp.de>
- <5465f445fe9e230f1f37cbb22a97ff2b7c9c3d2e.camel@googlemail.com>
-Content-Language: en-US, de-DE
-From: Sebastian Fleer <dev@dwurp.de>
-In-Reply-To: <5465f445fe9e230f1f37cbb22a97ff2b7c9c3d2e.camel@googlemail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On 10/29/25 09:15, Christoph Fritz wrote:
-> It's not a workaround, it's the actual fix.
+On Wed, Oct 29, 2025 at 12:20:37PM +0100, Bartosz Golaszewski wrote:
 > 
->> However, I'm in favor of keeping the "Fixes:" line since using bisect,
->> commit d97e71e44937 ("drm/bridge: synopsys: dw-mipi-dsi: enable EoTp by
->> default") is found as the first commit that shows distorted output for
->> that panel.
-> Documentation states:
-> 
->   || A Fixes: tag indicates that the patch fixes a bug in a previous
->   || commit
-> 
-> You are quoting the wrong commit in your Fixes: tag.
+> Implement a function for checking if a string ends with a different
+> string and add its kunit test cases.
 
-OK, now I got it. I'll send v2 with Fixes: 2a994cbed6b2 ("drm/panel: Add 
-Kingdisplay KD097D04 panel driver").
+...
 
-Thank you for your guidance.
+> +/**
+> + * strends - Check if a string ends with another string.
+> + * @str - NULL-terminated string to check against @suffix
+> + * @suffix - NULL-terminated string defining the suffix to look for in @str
+> + *
+> + * Returns:
+> + * True if @str ends with @suffix. False in all other cases.
+> + */
+> +static inline bool strends(const char *str, const char *suffix)
+> +{
+> +	unsigned int str_len = strlen(str), suffix_len = strlen(suffix);
+> +
+> +	if (str_len < suffix_len)
+> +		return false;
+> +
+> +	return !(strcmp(str + str_len - suffix_len, suffix));
+> +}
 
-Best regards
-Sebastian
+Can you rather re-use strcmp_suffix() from drivers/of/property.c?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
