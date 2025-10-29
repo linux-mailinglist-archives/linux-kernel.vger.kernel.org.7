@@ -1,171 +1,72 @@
-Return-Path: <linux-kernel+bounces-875361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1E5C18C3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:48:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99636C18C25
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:47:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279631C27C20
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:47:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B1664036CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C353191BE;
-	Wed, 29 Oct 2025 07:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i3Rj+kGJ"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDF830FC33;
+	Wed, 29 Oct 2025 07:44:11 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0483191A2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0686A30CD84
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761723871; cv=none; b=sOFeZSKPJGbpund4jp9RcrXQDtlO/LkspRmsUG7aakgvk2f80ZFa4Bz7dRUBlPiLG4JSo2Xc5U7wTBr5m0uqLchUFLHWzcm0uFi9U3i4iMhGbOVhZLcp5xeTfMW9NDStWP3v8t5bA5K4ItyqxJaC+KjIyn9NftOzHxjexa7T708=
+	t=1761723851; cv=none; b=knS+wDy3G+0YmkLYzJmq4D8xqGmLwxeU+b+oQpi8cpj7M2AnUuHpxIb3aEz3Iy0twuInFDUrBSZtVFq3gn81ak5uTgYaRjb8a02PJ1d1BpkcckobMKFiAIVl7oXWvPhjs2Mt/GuwKRiVgNt2a41iG0E6RQaz3yUceUXjc/liCKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761723871; c=relaxed/simple;
-	bh=IYVuBBwaeQ1PBLKcrd5NHt65uFxyMucqOKrr61RZ2Wg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bFzPZvOaxF6vF+0I2AwKWJ1e/eE1bQAHiRTLRtC0UAM24NHbMe5qMvM50vIQ/NXj2IZl/1UfXij7GDLqWSEsxiaWJhuKhdMVbJXSURnK4Q9RzvVv4DacWjrVHHZNm9dtzgLiXAKDIukNFTqgCFVcwjcrWEStuJiHIJExLqFPc2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i3Rj+kGJ; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-427087fce27so901360f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761723868; x=1762328668; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=56Jo10Sia7JFeNP22R7+UWXRhqXjXhFECcRuC4d49m4=;
-        b=i3Rj+kGJXpTtZqwWmQdnqj2joE+I/V/4T7+TMwqynTKmAZ9gizkkT3N0p4p1qzAgcC
-         cojK2Zlmi0EU5DCcZBCdsXqHp3YJje3BKSxNBpoX1JJgimefxQf5+V6vmnYMIO4DSL8x
-         T9QoC1PY9z9Xd18tCnLPuaS+TnImfaytVtmFDw9QNsXBrHbmJXTUla2DspY/+c+AnzWV
-         EYBtv473pJadSVZOHLAwcoV2pdkZjXP4ct0NXKhoDclWTQvEwijVVqYE6rIwDgD/Y8p2
-         TYo0OoAhkTr0mchNFEMsT6iIiBHzX/hJCQaXrX/K9m1Y3u2CHmToJBN7c5UWtTDp3OCp
-         7QGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761723868; x=1762328668;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=56Jo10Sia7JFeNP22R7+UWXRhqXjXhFECcRuC4d49m4=;
-        b=QkSs8jN78mcxTZT6dBiZWAAfdvpSbgsCGGMDl+56UaeJgUGYFI5X1+TXtcxfcHqeP4
-         kpERvx2WeBsdhsQFZMz1B+NwTwP1P3Zw1UY6afhdTMwdVIaoFQAr+dMGVBJhadoxoR5k
-         slrHzcaP2GMN0mKVvlAv4wavb6sTNs+5gyNgMFezVp6bOYBdoOvXrI9efGAc/2quCGT1
-         k9yVNJSfrY6H0qCHJOww1B93ZO/IJxzsUuBi0JBqhEMbpIjfR0gagktZpkNVUvareqa8
-         j/J7jT3I7Tbz6z+gyEEcyXNcIUD+tMfS5GeovpmeqP/Z0jB4jTGi4Ap+lUyPdPvpOitf
-         qTjg==
-X-Gm-Message-State: AOJu0YwXoi3r/Qg+Z446TLfBeSFb+lmxF+Bhokz77xCBcNvF+Qq1xB/h
-	ZJrnwac/3CY0FNFsGh5VXzvxneKPdFFopXw5VQKMs03pFmgqOvCromkyOIE5vjqa3bY=
-X-Gm-Gg: ASbGnctCA9f/lDOOdg0l7YVPUm/d8DdB9q4gdL+gO6iog7vGuNjio0pF+ov3/NGb6WH
-	ijt5vjsmNgpfR1rF5ecaP9ppVBhroRU5d6ulxeCZ0mPyjRe/IPB0yBX5hxSsvCz0iHHniW03UJi
-	Yq0zgLz154T1YWDlhIJFOGsB42W8gKTOED3g7kyrcLzHOoAl9p5/A5jljNdpDpYLBDNxXZjb5+J
-	IHdBIvBnjbxrvtkkgWZ45IIjvwICbtv+TV79agjdLH68ZWYLGyu5gGV2lzo/dewPa/szlxAOTx5
-	WdXsbwvkyjNzOjHGvWmeKPHdz00DhQiml0LTMLlSMBsPgzjmdU8bVYIbUAs5cBipfVDcAbrXkLY
-	a4W3hpQozlz1Jy21FzUngER10nAMGL9nRsnhmoZFTjF2mx3/tw8Auwoq/omq70AH9MOPgcGmvm8
-	myhBMbBRVlflfXa0qb
-X-Google-Smtp-Source: AGHT+IHjedGJxFD7dLMl/rvsV3pkJFC7qhdSb+Sc4hQrT3n7oSY5Ppgz4lO64B98FeOT6QXtl65wew==
-X-Received: by 2002:a05:6000:4211:b0:429:8d46:fc5e with SMTP id ffacd0b85a97d-429aef890bcmr739869f8f.4.1761723867597;
-        Wed, 29 Oct 2025 00:44:27 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952d5c9dsm25861146f8f.26.2025.10.29.00.44.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 00:44:26 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 29 Oct 2025 08:44:01 +0100
-Subject: [PATCH v2 11/11] dt-bindings: bluetooth: qcom,wcn7850-bt:
- Deprecate old supplies
+	s=arc-20240116; t=1761723851; c=relaxed/simple;
+	bh=Cl6jeGaofwbmSJrbF75/Xe97g8hjhZXPSj2A7vSAlSQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HooBoyDnHhdWSRuWF6dns68BKFesXTmuzicYv3JyrNpqhURXMgVxT+KguZMYXXjpNFXVKDrkQT0/qGO+sr4+kzA60YyMY3B5U5WVI+6nFLsBKp4Y6ktdbQK9ArXETyid4AakuW0Bm1yyh5/6a7AR/8n+Jacujh6FGT71AE9sTFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 11554227A88; Wed, 29 Oct 2025 08:44:04 +0100 (CET)
+Date: Wed, 29 Oct 2025 08:44:03 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	John Meneghini <jmeneghi@redhat.com>,
+	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Daniel Wagner <dwagner@suse.de>
+Subject: Re: [PATCH] nvme: drop bogus nid quirk for multipath devices which
+ passed id test
+Message-ID: <20251029074403.GA30412@lst.de>
+References: <20251028-bogus-id-check-v1-1-c087a98b5466@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-dt-bindings-qcom-bluetooth-v2-11-dd8709501ea1@linaro.org>
-References: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
-In-Reply-To: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, 
- Rocky Liao <quic_rjliao@quicinc.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1724;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=IYVuBBwaeQ1PBLKcrd5NHt65uFxyMucqOKrr61RZ2Wg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpAcXJHi6PDpi9tcb/UVaQyeVu+F4p55yHQBxpa
- CHP1idfosuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQHFyQAKCRDBN2bmhouD
- 120fEACIQVZ32STXzRID4r+U1N+GviJ1fbhH3ZTYCf47w4G7D8J/IusF9rmaoqVN+JI4KvTiPSK
- erfG8OpgD1sXUwMe9RWRduwosqbAE499+yIGSZCnjTd66UoyDKi5St5Ww8BkclpGRVIyfRWm4Yp
- f+lRQQDQA7+50gkK8UH2sMsgiBDz6qDYakSmi8Swb+1lOAMoR/fYprYy5XWzLM2TX4uKZPemUdx
- Waldkm2wBIS2OB5XcNyYOyYpUM7lGqUWwpjjUwAHIQBAE2kJhHaw+CnH77XGxE2GJLoa99KJm0j
- fEyHbSWospV4yFiirEyDcUxq7hFL4pwDxAjI7DuihC0JfVML0SRPDePrbRal/EXhIFBeOHPyS0v
- K+gNk8ZH+HOhdr7F21azJrDY/6JQathhFiWnxBuigg9euNDVnvax3KsL+Lt2TtHuv5n6KssX4AX
- UFJ4Ms56rjda4GXAXAyVAH8zwvXtb7hIpkH76Du1q7bHJgVUQg3ylsfNgdx2E9YqPh0OmAWfsg/
- NwD+g2K/ZMFGQf3pMO5Odt8nudMn+xIRYRNJGQTMe0wC8TiB1sksT4AHMOZdOWWSi8J9+N1C3bw
- Dt1dej5woZ6nGPabHmxLdViwkim/QdUu/TbjdkVf8IyUhyzRuYeCbLxF4oWcWstWCvML+3AiivF
- TJTKoQZh7rreepQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251028-bogus-id-check-v1-1-c087a98b5466@kernel.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Commit bd3f305886ad ("dt-bindings: bluetooth: qualcomm: describe the
-inputs from PMU for wcn7850") changed the binding to new description
-with a Power Management Unit (PMU), thus certain power-controller
-properties are considered deprecated and are part of that PMUs binding.
+On Tue, Oct 28, 2025 at 01:54:56PM +0100, Daniel Wagner wrote:
+> Obviously, using the correct IDs is really hard. There are at least two devices
+> which share a the device id and one needs the bogus id workaround the other
+> doesn't.
+> 
+> We discussed the idea to pass through configuration from the kernel command line
+> at ALPSS. I am not sure, how far we got with this yet. What about something like
+> this here?
 
-Deprecate them to mark clearly that new PMU-based approach is preferred.
+The Intel devices are dual ported and multipath cabable, too.  Which
+isn't surprising at the dell one is just an OEM version of them.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml b/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-index bd628e48b4e1..8108ef83e99b 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/qcom,wcn7850-bt.yaml
-@@ -18,20 +18,24 @@ properties:
- 
-   enable-gpios:
-     maxItems: 1
-+    deprecated: true
- 
-   swctrl-gpios:
-     maxItems: 1
-     description: gpio specifier is used to find status
-                  of clock supply to SoC
-+    deprecated: true
- 
-   vddaon-supply:
-     description: VDD_AON supply regulator handle
- 
-   vdddig-supply:
-     description: VDD_DIG supply regulator handle
-+    deprecated: true
- 
-   vddio-supply:
-     description: VDD_IO supply regulator handle
-+    deprecated: true
- 
-   vddrfa0p8-supply:
-     description: VDD_RFA_0P8 supply regulator handle
-@@ -44,6 +48,7 @@ properties:
- 
-   vddrfa1p9-supply:
-     description: VDD_RFA_1P9 supply regulator handle
-+    deprecated: true
- 
-   vddrfacmn-supply:
-     description: VDD_RFA_CMN supply regulator handle
-
--- 
-2.48.1
+But more imporantly dropping the quirk for multipath devices is
+fundamentally the wrong thing to do, as we really need proper IDs for
+multipathing.  So just add another entry for the Dell device using
+the dell subvendor/subdevice id that does not have the quirk.
 
 
