@@ -1,52 +1,72 @@
-Return-Path: <linux-kernel+bounces-875847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C5CC19F20
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:15:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9D3C19F51
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27D61C208E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:15:18 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C09D356C3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7D132C320;
-	Wed, 29 Oct 2025 11:14:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E6E21B192
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68693126A2;
+	Wed, 29 Oct 2025 11:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TbEvKmKP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E732D949E;
+	Wed, 29 Oct 2025 11:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736467; cv=none; b=ZGYmZ0Hlc0EjXpM7GOlVHQFG9YWCSAm3a3Xe/+TOewLmf2atTeMaBPwTuItLbvcSHcNcEKpcYfFReZKuAyOGCBSpRknxi/iAcGPyVGplRHH7B274c4APooIbUEMKS5QHe6XRsjI/gVMPFYBzwZ6vrvss8w/JqUs6vDXBf5BmGnk=
+	t=1761736654; cv=none; b=WAnhbmfEn78wnZSG1OrO4m30hY2P4NXTw7PfbZaoQrH9/Y025aboVMvemv99dCrCNKz54XtTMRgoA8zTPs2J/O70qjeEw1+AENFyrUXP4hEVT0A24FNt0zQUwnhpkLBpNeD7S4PF20oG77J90bXSB43w7bASsoqdQCSyQw6fq5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736467; c=relaxed/simple;
-	bh=vRoXGz+VRKT5LTr5J4wU+aCmZ6BEFvX+kiigiwxOU5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TV0G9w5dKdC5OE5/e3P7MPmxSbYB3sERzW0DrHIg+fra5UMtZ3lmhP8xtmBhppmFLzmhHvexWMRDr3Q3JvndoWE0Zgabec8Q1m+rarOOWxWWWcPXOHOQZU1tUDSXZ7rCscg5WrJP0+igUcBqCkvfAQwQskvbbD+414FYOIhynmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8CE01655;
-	Wed, 29 Oct 2025 04:14:15 -0700 (PDT)
-Received: from e120398-lin.trondheim.arm.com (e120398-lin.trondheim.arm.com [10.40.16.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4E4323F673;
-	Wed, 29 Oct 2025 04:14:21 -0700 (PDT)
-From: Ketil Johnsen <ketil.johnsen@arm.com>
-To: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Ketil Johnsen <ketil.johnsen@arm.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/panthor: disable async work during unplug
-Date: Wed, 29 Oct 2025 12:14:10 +0100
-Message-ID: <20251029111412.924104-1-ketil.johnsen@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761736654; c=relaxed/simple;
+	bh=iWFRpQCS3Vj+W/GLm+z3aHxmknQWqjk80hKz3Z3Gg4E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=km3B4ITSfdgVkDzU7y9TAomAIbhi9qiLKSZ93KTC7gvPZbUnJw4uWdhsZco3yMP4Hpld16Z1mRJoBsDmMba5Iqwk05qXLBFu3z8dpjFhNYPdBnPAbROXoyA2vF0Mq9VRcXb85E3Qy3cZ0Pr1fYlXBGZkhfwBtRK4fBIaDlpHJuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TbEvKmKP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 970B0C4CEF7;
+	Wed, 29 Oct 2025 11:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761736653;
+	bh=iWFRpQCS3Vj+W/GLm+z3aHxmknQWqjk80hKz3Z3Gg4E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TbEvKmKPjOvV6IvbFv7ELvMDfpogiDNlSQh7++LoUTM5SKTGqODvd/o/UCodyCIBx
+	 CQDQ58VRUuN++fbkaXNumb1hTSVloPgVY1npKv/TbbVG/WX/f2WHGu6wjguhARmndu
+	 SdBOGoHfzq549r/P0B38x78KMK7HkATZrX+ksD7fHkKR+LJaGsDQ8KlktK1R+IsWk3
+	 bxWzzlcdy/9pytox/Bsl800zyHWTHTeKSmYPsE74Hwsh4X8YXFtl5vDI4jYQV7mXS2
+	 DEKSQRoHvmnBAKtAhwTN+ZYIWkTeAEGs/yd3a+dF6VRDC6n+M27TQvQWJ6HnCbZlRC
+	 stMZybETKhi2w==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: achill@achill.org,
+	akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	sr@sladewatkins.com,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.1 000/157] 6.1.158-rc1 review
+Date: Wed, 29 Oct 2025 12:15:16 +0100
+Message-ID: <20251029111516.695949-1-ojeda@kernel.org>
+In-Reply-To: <20251027183501.227243846@linuxfoundation.org>
+References: <20251027183501.227243846@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,71 +75,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A previous change, "drm/panthor: Fix UAF race between device unplug and
-FW event processing", fixes a real issue where new work was unexpectedly
-queued after cancellation. This was fixed by a disable instead.
+On Mon, 27 Oct 2025 19:34:21 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.158 release.
+> There are 157 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 29 Oct 2025 18:34:15 +0000.
+> Anything received after that time might be too late.
 
-Apply the same disable logic to other device level async work on device
-unplug as a precaution.
+Boot-tested under QEMU for Rust x86_64:
 
-Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
----
- drivers/gpu/drm/panthor/panthor_device.c | 2 +-
- drivers/gpu/drm/panthor/panthor_fw.c     | 2 +-
- drivers/gpu/drm/panthor/panthor_sched.c  | 5 ++---
- 3 files changed, 4 insertions(+), 5 deletions(-)
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-diff --git a/drivers/gpu/drm/panthor/panthor_device.c b/drivers/gpu/drm/panthor/panthor_device.c
-index 962a10e00848e..c4ae78545ef03 100644
---- a/drivers/gpu/drm/panthor/panthor_device.c
-+++ b/drivers/gpu/drm/panthor/panthor_device.c
-@@ -120,7 +120,7 @@ static void panthor_device_reset_cleanup(struct drm_device *ddev, void *data)
- {
- 	struct panthor_device *ptdev = container_of(ddev, struct panthor_device, base);
- 
--	cancel_work_sync(&ptdev->reset.work);
-+	disable_work_sync(&ptdev->reset.work);
- 	destroy_workqueue(ptdev->reset.wq);
- }
- 
-diff --git a/drivers/gpu/drm/panthor/panthor_fw.c b/drivers/gpu/drm/panthor/panthor_fw.c
-index 9bf06e55eaeea..ceb249da8b336 100644
---- a/drivers/gpu/drm/panthor/panthor_fw.c
-+++ b/drivers/gpu/drm/panthor/panthor_fw.c
-@@ -1162,7 +1162,7 @@ void panthor_fw_unplug(struct panthor_device *ptdev)
- {
- 	struct panthor_fw_section *section;
- 
--	cancel_delayed_work_sync(&ptdev->fw->watchdog.ping_work);
-+	disable_delayed_work_sync(&ptdev->fw->watchdog.ping_work);
- 
- 	if (!IS_ENABLED(CONFIG_PM) || pm_runtime_active(ptdev->base.dev)) {
- 		/* Make sure the IRQ handler cannot be called after that point. */
-diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-index b7595beaa0205..278434da8926d 100644
---- a/drivers/gpu/drm/panthor/panthor_sched.c
-+++ b/drivers/gpu/drm/panthor/panthor_sched.c
-@@ -3879,8 +3879,9 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
- {
- 	struct panthor_scheduler *sched = ptdev->scheduler;
- 
--	cancel_delayed_work_sync(&sched->tick_work);
-+	disable_delayed_work_sync(&sched->tick_work);
- 	disable_work_sync(&sched->fw_events_work);
-+	disable_work_sync(&sched->sync_upd_work);
- 
- 	mutex_lock(&sched->lock);
- 	if (sched->pm.has_ref) {
-@@ -3898,8 +3899,6 @@ static void panthor_sched_fini(struct drm_device *ddev, void *res)
- 	if (!sched || !sched->csg_slot_count)
- 		return;
- 
--	cancel_delayed_work_sync(&sched->tick_work);
--
- 	if (sched->wq)
- 		destroy_workqueue(sched->wq);
- 
--- 
-2.47.2
+Thanks!
 
+Cheers,
+Miguel
 
