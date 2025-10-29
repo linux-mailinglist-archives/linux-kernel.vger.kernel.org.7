@@ -1,427 +1,287 @@
-Return-Path: <linux-kernel+bounces-875009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 086DBC17FC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:04:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 510A9C18000
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BC1742019B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:04:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 104485041B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0002E3B08;
-	Wed, 29 Oct 2025 02:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5FB2E5D32;
+	Wed, 29 Oct 2025 02:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o8JVWXpv"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gi7/LrHo";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="FXX6QzTN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047FA2D063E
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B69E2E6CD7
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761703473; cv=none; b=Fjm8XXp4S9W076+9Ats/sbToJ6LLaffPGr280eZ4E3J401fJYXjIQc3nD/sPwHFLYnuKiZUvu+Kw3TZYip21v8iWN5pXxUhVy6PoWOyO3Vk+fptff7nhe3HuLd8vn5T2h/kTkBtoBCm/7a6O9JqMUOPEUmsAE0WWx6XOO/jCpXQ=
+	t=1761703530; cv=none; b=jlHt/zbN0XMWdRnTJ9h5hgk0EAkB1ZSdNojjJuWpG0TD7/pwIVnUtfDDZIOJ9EZEcmV9e30mDYidU/OTp/8Gsldb+U7dIH7zxC4NuQ0nCZAQ1ukq30hZD01QvyuXLsfA5GXbp7f0VEJU4gRO1CqAYixegLyswpAt6vPvwN6fdFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761703473; c=relaxed/simple;
-	bh=ic2o7D44v91Fm7913b+yMMXAS1NcU+UDnTWA88Wz5Zg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nrqDpVm5mTF2jCCT7rcmzJaewDrzJxqzMxd4n/xPB5kQQfDMPEuy1McHX31MkCXyEME9yL6mNysqRnbAvE+WdRclMNu/pDUqhUVnSPbOV8B0jyqJIrmNht/6/THywW636GmXWNtxWCN0a9ygf3DYtYcEvE3V0OReiSoPb5jksQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=o8JVWXpv; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-592f0dba1e6so3805e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:04:30 -0700 (PDT)
+	s=arc-20240116; t=1761703530; c=relaxed/simple;
+	bh=6q2qqDVYKO5ZY58yg/N5whpHCFf46CzxMfbKry30Kag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEVnJLcRAuLmbjGyYfBo0Nb648e+0EEJ/snR+9HT9tMpnHUy+JoCfi8szVEx4C+MjGDQAO+7FHTk580GOyxnLNkFKpa78uBe63WUa288U6Iljz9D2V6HyTD4Em2ZhPxkt1TKZNcB4EYA99cxlB9CAHX/4zlT9ltWy7ARg3NZ6Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gi7/LrHo; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=FXX6QzTN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59SJleuB2616644
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:05:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=oNYnTyhROEtSOeCA2ONPfk1z
+	k2xXS0IqmDQAJE9y2I8=; b=gi7/LrHoeAiQsPm9Ov/wB6nY1FRSi/Il3LJHMdth
+	McGeaav8atOxCK0TyTyVlqp/9x4KwHim/nqRAZzRj1HEv+oT8OW5pmm+P+sVcwrI
+	VCGnfCW3XhaE0kQalC6q/eVgw2Rq9oC33yL8pdwI+BHj0y4fGEmlqkaF5Pw2cOxF
+	gA+IkmL4zajq/2HU+SutIuFDEey8MeUy623VCPLohF+0DvyvFYwQVdvC3XbuK1dY
+	U56uLcoOqhNCAZQXB7G4q57Van1eWJxVmn84MX/3bkLtHhUjrI3skKJvSCe6GxJG
+	J6QtRqyk2+zNKfiiFtbxde2/VogKVKxNl8uWJJq6fAPvEA==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a34a0gtn5-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:05:28 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-797ab35807eso228856726d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761703469; x=1762308269; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kajl/psTwo1g51TJY+gh/9JVh7qFhmWY8O7ADxUSNL4=;
-        b=o8JVWXpv5AzRxkcmd5mz5OLE+9fR/MDq2JVtGQZ7cvlq1Ntvs85bV2gV74Bw+aSnea
-         r/gNPGbeDuSNvO5EDfKbTupyqyUAS1952znTZLVx+3d98RaYU2fS2yeSxJhELrY3lWx/
-         ODNhaAGbz+UjnYmgNg+6Qm2NETYhetZxJl1PeS8HHvMeOgnZzssAQSOY7SPCoaVIuiw4
-         HeHTgMQizJbTFE8CN+MI/JUmuLDoAeHPAlLlTs71wmD5OnrbCUrNythc6AJY4Fd56h3N
-         W+6AitCHFHTFu44VEPCLo+VZVQ5wBUNzN/RVJmuw6X8djZA3VNqEMdxYaW6hanPxWQQj
-         pnhg==
+        d=oss.qualcomm.com; s=google; t=1761703527; x=1762308327; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oNYnTyhROEtSOeCA2ONPfk1zk2xXS0IqmDQAJE9y2I8=;
+        b=FXX6QzTNI+W2QdYCBNlgIDiIB5kGMdNq+gnxRRndjNqQ8LT8k9ZryefXkCLKsWTsjn
+         9Krrz7oTLLPqtUqgIQWQDURRUPv/8/jCM1t6pwVgKlleGFD7pNlZ4Zg5NJmy0JgfUt7o
+         dYwT45rNiW3auTRmqWg3pW7cGR1TUP/1ez1YdgvpopG722QAgVM+ofcsG4uXqB3aNGsr
+         JSwVEvW0aVFJEJ/TPWe5odjAOMjGOEgml2yfP9BSQoB+dTaPE0DLfGEx2Ah1DVxDqvXN
+         Ji7x+oU64vmMCrzTdQVNPDWtim0LeoYZ+TYpPSFIPsGvEyWMiWQ7EbKEzltoXS1zeamy
+         xrWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761703469; x=1762308269;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kajl/psTwo1g51TJY+gh/9JVh7qFhmWY8O7ADxUSNL4=;
-        b=syOfsgGPeg06XUnIkHf6f0+LUGZKFrMC8kTRMyIv1Z3UeEcoFnl/ydhovBSvjzbfEB
-         NU5NWVmPMFxE20F8Qe/Mk0WsTtvsTqK2wo2FBmwUxhEBrfXYzJOtY3jmJR9VKFpwln38
-         6wpJOoxvUvgBBzZGpTHaDVgH2VvuhKsJyEV/q96hhp7j6GTdxkL4ZRGZoyVexOl0H9l7
-         jyBV//CQHtBju4gJij+32tXU91U3Ozums3nOrz86oHVi8QkcYxidWs0pkZzg/OJ3xH4B
-         CZMSp0bGjr7fLi/VWQfbAQmey24rR1hBmRvkXgBJGEfy5GEIMMnQIjd/aK2Eoc3n07J9
-         cJGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx1+XW5s8N+f7m3tG6tsKjh4Gb/96ANEdgDU+RwIvt08U8ue88BegWbHAM47p4yXle9Dwwmn723W3wCZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyymCF2uYPBMGKBUOENTScvBxBm1e4Kfx3kd/9qf8jr0EYOTQR5
-	L+zOswA8imqSIV+CsPZm9s2Nuaca9Tm+P+WuQ93tOPkikpcyghhNztm4OnR9gBjfY/yIZFt3XGj
-	w1cFHtAX7xU3IGr0bf0Jw/7vJrc9XmIYt33JtbhHI
-X-Gm-Gg: ASbGncveeylhn3tGTicQ1i/sJZlcGtkgpfELMofjWi0JyIcti5ThjMxCj6DiuPNi8ue
-	PVxN0ttXUIpNGo2Wrnb1Th1UXifYMFoFibRTfpeVMKFjqkSIPVvUwct4bkYZrVVj0v9lHUpRjxA
-	ecGdKUe27g2eF4FYD8aKCH+fNeqLacgV2+HptZuD3oo8xOHL71aF2nwnqtjk+56q/M+pJ3xI20G
-	JRGBNSZT73pvQzCdqzCdPQVPIJqdA0hTZ93LhM5H6h7PM/SkptRpDg9zSlqBWHI2InLdhhsEJJr
-	y0kGOg==
-X-Google-Smtp-Source: AGHT+IHKMV+AJY8Tb1LU+dA/Plrh7jg2FM20W+BAC6x22KvfJu0LccgTFCo8W+4hyXOzGtvDEYoQkgf67T6p75lMfXw=
-X-Received: by 2002:a05:6512:1343:b0:592:f589:b76e with SMTP id
- 2adb3069b0e04-594133fa923mr141781e87.5.1761703468844; Tue, 28 Oct 2025
- 19:04:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761703527; x=1762308327;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oNYnTyhROEtSOeCA2ONPfk1zk2xXS0IqmDQAJE9y2I8=;
+        b=ikeHXawRBev2d6GKMIaLNODNReM31/JFh1kDkSHCseuw0AiVHT5ZhaGa/3tIASl7YE
+         wdbk//nFZfQH8IQg7F1xDohoJ4Ov88FakkfCCGWJRsXRlbJFvnza0TIvh07fU7aW/DGV
+         mb0p0JEMv8rrCxpxCxht0RHBMHCYYOAIlGmpyTAsd58HWfkS+efvVUk+bNJSlznozBhP
+         MJB5puzAtIBs7h4VmksttycuJEJtlBCJzk7yH/UOF5c6FRRjjZAEeghUsJdGxQm1VI98
+         V0bXdrY0QSfZitxb9NQklw8RvbSemCHXh7TTL176NO0lyT+gzc8QU0QCTUX5puUp4oA3
+         PG1w==
+X-Forwarded-Encrypted: i=1; AJvYcCWtGVKKCilL7gob2yx8tXk9wLjXcMRlgH4cqg3GMgv2Pgr18jcN96qj8T17ahMM6nGQrquMPT9bTuVraU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAtK3hB6teZFMUjp0f9pUdv7RH7ZmlDcxNfQ/uWfGMm4V20KtR
+	Ij0HcK7Zq4FbadAXo2HrQ4p6Vn3coznN7DqLlRzj82r1gmP5Mmr4wzF9QnRfyV9m9lZdA+ERgMR
+	2pCKBmQMck2v+Ktbl9dcoV1jQvWZGGUhWs5vK1Nq7AiiztGAcRqluEiwagVUf8YVfKjI=
+X-Gm-Gg: ASbGncvjuwxzb40PTvqVzm1Ss2HX25UHKj2KkiHRUM5BR29Rxo1+z6K3xg1AXIuyEIq
+	kEeAwaHwoEe4xkx7TWjTOeycEkb9x0J5jBM5QMksupve7LLypcPdNWFXovpZz/t1Q1seWeV6NJu
+	nUR97w51Uo80s3n6de8czy8TGbRLCdOj+b5U8JcZw2xz9U8Y45g6QxSFF8/mMUDEBaUsVJvbLDz
+	xNpjNxjymYXtmC1jgYXfgxLsUA6gV8x4rStw+v0UmyZ2LDJGqy+RycPxz4Z1aI3x0W4nNYCUeRv
+	nO5lndYhJBDuU8ueCSisdT46G/7Xf8L+AfgAxTm0GYVppYkmZxAWS0DgMUO8+TCaYNPYWfMCvvB
+	m0wA506wVZka5rhvKim3GTn+djV+HmFsNRh0LwljtoJqPN0Cfu6KIh43Tn+nZuVMn
+X-Received: by 2002:a05:6214:1c47:b0:87d:c94a:17e1 with SMTP id 6a1803df08f44-88009c08041mr17921536d6.48.1761703527380;
+        Tue, 28 Oct 2025 19:05:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGumAqyzy6p7G2g0/1nCG8Lfj49elpmE29lrS0JJixqIdFWH3Cdjr565IB/rUF7KuDDpYUNRA==
+X-Received: by 2002:a05:6214:1c47:b0:87d:c94a:17e1 with SMTP id 6a1803df08f44-88009c08041mr17921186d6.48.1761703526864;
+        Tue, 28 Oct 2025 19:05:26 -0700 (PDT)
+Received: from yuanjiey.ap.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-87fc48a7467sm88752116d6.5.2025.10.28.19.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Oct 2025 19:05:26 -0700 (PDT)
+Date: Wed, 29 Oct 2025 10:05:15 +0800
+From: yuanjiey <yuanjie.yang@oss.qualcomm.com>
+To: Jessica Zhang <jesszhan0024@gmail.com>
+Cc: robin.clark@oss.qualcomm.com, lumag@kernel.org, abhinav.kumar@linux.dev,
+        sean@poorly.run, marijn.suijten@somainline.org, airlied@gmail.com,
+        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, quic_mkrishn@quicinc.com, jonathan@marek.ca,
+        quic_khsieh@quicinc.com, neil.armstrong@linaro.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tingwei.zhang@oss.qualcomm.com,
+        aiqun.yu@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com
+Subject: Re: [PATCH 03/12] drm/msm/dpu: Compatible with Kaanapali interrupt
+ register
+Message-ID: <aQF2WwriXy2yFzkv@yuanjiey.ap.qualcomm.com>
+References: <20251023075401.1148-1-yuanjie.yang@oss.qualcomm.com>
+ <20251023075401.1148-4-yuanjie.yang@oss.qualcomm.com>
+ <a4a7f1c9-1817-4092-9ab1-07209bb44125@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-0-47cb85f5259e@meta.com>
- <20251023-scratch-bobbyeshleman-devmem-tcp-token-upstream-v5-3-47cb85f5259e@meta.com>
- <CAHS8izOKWxw=T8zk1jQL6sB8bTSK0HvNxnX=XXYLCAFtuiAwRw@mail.gmail.com> <aQEsYs5yJC7eXgKS@devvm11784.nha0.facebook.com>
-In-Reply-To: <aQEsYs5yJC7eXgKS@devvm11784.nha0.facebook.com>
-From: Mina Almasry <almasrymina@google.com>
-Date: Tue, 28 Oct 2025 19:04:15 -0700
-X-Gm-Features: AWmQ_bmOjxhyou1022t3z0xWpcvMg2iM9V4h5pa8C_Qo4CzjM-0T66_LWxjniHs
-Message-ID: <CAHS8izOnir-YHPH+R0cQzu1i0HD2Z0csW6qUT8FFXh1PkmHabQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 3/4] net: devmem: use niov array for token management
-To: Bobby Eshleman <bobbyeshleman@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Kuniyuki Iwashima <kuniyu@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, David Ahern <dsahern@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bobby Eshleman <bobbyeshleman@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4a7f1c9-1817-4092-9ab1-07209bb44125@gmail.com>
+X-Authority-Analysis: v=2.4 cv=HvZ72kTS c=1 sm=1 tr=0 ts=69017668 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=wkyyw-Wu4EUB7OuTH_AA:9
+ a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22
+X-Proofpoint-GUID: vNvrTYxApgvGKUIeHrqRJ3I916emASGX
+X-Proofpoint-ORIG-GUID: vNvrTYxApgvGKUIeHrqRJ3I916emASGX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI5MDAxNCBTYWx0ZWRfX5oJXtYDDSbP4
+ OYWbW6XgLnnQGzBcGZSJj3he+Zr/jM+qpElpT6Mu/qWwoaM9d84XXS48uewGEr/N/v16h++E4m/
+ fLN0/PNlSFoBvsjK112vGpjCN0BDqFRBFIAC+5z3rkPjrsI0VVogqyd75eTymRS3rEkiSU36ibJ
+ y+/Lyww/tS29l4TUpcLo1SrEKlViSc2M4NikgHO+VLwkFofAhRG2uZvijnGiOP6kuOMTcVTQumz
+ JATBZZus6VcRdgZ/NCtehbHZ8dZhrPWZ6Ef4xup+xlZKXf7wap15U3ZlJVQSQQEdiAJR0AKPRQT
+ aB6NTJDSvAsrAeOCA+BTjg/U+TtMr8zN0nZ749tiCXM4iSm01zwOWoVXZA9JfYQ4j7MUrIt/t/Z
+ T24rPcL2DkWmdGSbPEGcgA/tlrnbvA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-10-29_01,2025-10-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 adultscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 bulkscore=0 spamscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510290014
 
-On Tue, Oct 28, 2025 at 1:49=E2=80=AFPM Bobby Eshleman <bobbyeshleman@gmail=
-.com> wrote:
-...
-> > > @@ -307,6 +331,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
-> > >                 goto err_free_chunks;
-> > >
-> > >         list_add(&binding->list, &priv->bindings);
-> > > +       binding->autorelease =3D true;
-> > >
-> >
-> > So autorelease is indeed a property of the binding. Not sure why a
-> > copy exists in sk_devmem_info. Perf optimization to reduce pointer
-> > chasing?
-> >
+On Mon, Oct 27, 2025 at 11:07:20PM -0700, Jessica Zhang wrote:
+> On 10/23/2025 12:53 AM, yuanjie yang wrote:
+> > From: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> 
+> Hi Yuanjie,
+> 
+> Can you reword the commit message title to be more clear on what this patch
+> *does*? "Compatible with Kaanapali interrupt register" is vague.
+> 
+> Something like "Add interrupt registers for DPU 13.x" is a complete sentence
+> and makes it clear that you're adding interrupt registers.
 >
-> Just stale code from prior design... Originally, I was going to try to
-> allow the autorelease =3D=3D true case to be free of the
-> one-binding-per-socket restriction, in which case sk_devmem_info.binding
-> would be NULL (or otherwise meaningless). sk_devmem_info.autorelease
-> allowed sock_devmem_dontneed to choose the right path even when
-> sk_devmem_info.binding =3D=3D NULL.
->
-> ...but then I realized we still needed some restriction to avoid sockets
-> from steering into different dmabufs with different autorelease configs,
-> so kept the one-binding restriction for both modes. I abandoned the
-> effort, but forgot to revert this change.
->
-> Now I'm realizing that we could relax the restriction more though... We
-> could allow sockets to steer into other bindings if they all have the
-> same autorelease value? Then we could still use
-> sk_devmem_info.binding->autorelease in the sock_devmem_dontneed path and
-> relax the restriction to "steering must only be to bindings of the same
-> autorelease mode"?
->
+Sure, will use "Add interrupt registers for DPU 13.x" for commit message.
 
-Hmpf. I indeed forgot to think thoroughly about the case where, for
-some god-forsaken reason, we have bindings on the system with
-different auto-release values.
-
-But now that I think more, I don't fully grasp why that would be a
-problem. I think we can make it all work by making autorelease a
-property of the socket, not the binding:
-
-So if sk->devmem_info.autorelease is on, in recevmsg we store the
-token in the xarray and dontneed frees from the xarray (both can check
-skb->devmem_info.autorelease).
-
-If sk->devmem_info.autorelease is off, then in recvmsg we grab the
-binding from sk->devmem_info.binding, and we do a uref inc and netmem
-get ref, then in dontneed dec uref and napi_pp_put_page if necessary.
-
-The side effect of that is that for the same binding, we may
-simultaneously have refs in the sk->xarray and in the binding->uref,
-because the data landing on the binding sometimes belonged to a socket
-with sk->devmem_info.autorelease on or off, but I don't immediately
-see why that would be a problem. The xarray refs would be removed on
-socket close, the urefs would be freed on unbind.
-
-Doesn't it all work? Or am I insane?
-
-> > I thought autorelease would be 'false' by default. I.e. the user gets
-> > better perf by default. Maybe this is flipped in the following patch I
-> > haven't opened yet.
-> >
->
-> That is right, it is in the next patch. I didn't want to change the
-> default without also adding the ability to revert back.
->
-> > >         return binding;
-> > >
-> > > diff --git a/net/core/devmem.h b/net/core/devmem.h
-> > > index 2ada54fb63d7..7662e9e42c35 100644
-> > > --- a/net/core/devmem.h
-> > > +++ b/net/core/devmem.h
-> > > @@ -61,11 +61,20 @@ struct net_devmem_dmabuf_binding {
-> > >
-> > >         /* Array of net_iov pointers for this binding, sorted by virt=
-ual
-> > >          * address. This array is convenient to map the virtual addre=
-sses to
-> > > -        * net_iovs in the TX path.
-> > > +        * net_iovs.
-> > >          */
-> > >         struct net_iov **vec;
-> > >
-> > >         struct work_struct unbind_w;
-> > > +
-> > > +       /* If true, outstanding tokens will be automatically released=
- upon each
-> > > +        * socket's close(2).
-> > > +        *
-> > > +        * If false, then sockets are responsible for releasing token=
-s before
-> > > +        * close(2). The kernel will only release lingering tokens wh=
-en the
-> > > +        * dmabuf is unbound.
-> > > +        */
-> >
-> > Needs devmem.rst doc update.
-> >
->
-> Will do.
->
-> > > +       bool autorelease;
-> > >  };
-> > >
-> > >  #if defined(CONFIG_NET_DEVMEM)
-> > > diff --git a/net/core/sock.c b/net/core/sock.c
-> > > index e7b378753763..595b5a858d03 100644
-> > > --- a/net/core/sock.c
-> > > +++ b/net/core/sock.c
-> > > @@ -87,6 +87,7 @@
-> > >
-> > >  #include <linux/unaligned.h>
-> > >  #include <linux/capability.h>
-> > > +#include <linux/dma-buf.h>
-> > >  #include <linux/errno.h>
-> > >  #include <linux/errqueue.h>
-> > >  #include <linux/types.h>
-> > > @@ -151,6 +152,7 @@
-> > >  #include <uapi/linux/pidfd.h>
-> > >
-> > >  #include "dev.h"
-> > > +#include "devmem.h"
-> > >
-> > >  static DEFINE_MUTEX(proto_list_mutex);
-> > >  static LIST_HEAD(proto_list);
-> > > @@ -1081,6 +1083,57 @@ static int sock_reserve_memory(struct sock *sk=
-, int bytes)
-> > >  #define MAX_DONTNEED_TOKENS 128
-> > >  #define MAX_DONTNEED_FRAGS 1024
-> > >
-> > > +static noinline_for_stack int
-> > > +sock_devmem_dontneed_manual_release(struct sock *sk, struct dmabuf_t=
-oken *tokens,
-> > > +                                   unsigned int num_tokens)
-> > > +{
-> > > +       unsigned int netmem_num =3D 0;
-> > > +       int ret =3D 0, num_frags =3D 0;
-> > > +       netmem_ref netmems[16];
-> > > +       struct net_iov *niov;
-> > > +       unsigned int i, j, k;
-> > > +
-> > > +       for (i =3D 0; i < num_tokens; i++) {
-> > > +               for (j =3D 0; j < tokens[i].token_count; j++) {
-> > > +                       struct net_iov *niov;
-> > > +                       unsigned int token;
-> > > +                       netmem_ref netmem;
-> > > +
-> > > +                       token =3D tokens[i].token_start + j;
-> > > +                       if (token >=3D sk->sk_devmem_info.binding->dm=
-abuf->size / PAGE_SIZE)
-> > > +                               break;
-> > > +
-> >
-> > This requires some thought. The correct thing to do here is EINVAL
-> > without modifying the urefs at all I think. You may need an
-> > input-verification loop. Breaking and returning success here is not
-> > great, I think.
-> >
->
-> Should this also be changed for the other path as well? Right now if
-> __xa_erase returns NULL (e.g., user passed in a bad token), then we hit
-> "continue" and process the next token... eventually just returning the
-> number of tokens that were successfully processed and omitting the wrong
-> ones.
->
-
-Ugh. I did not notice that :(
-
-I guess the existing dontneed doesn't handle that well anyway. Lets
-not fix too much in this series. It's fine to carry that behavior in
-the new implementation and if anything improve this in a separate
-patch (for me at least). It'd be a bit weird if the userspace is
-sending us bad tokens anyway, in theory.
-
-> > > +                       if (++num_frags > MAX_DONTNEED_FRAGS)
-> > > +                               goto frag_limit_reached;
-> > > +                       niov =3D sk->sk_devmem_info.binding->vec[toke=
-n];
-> > > +                       netmem =3D net_iov_to_netmem(niov);
-> > > +
-> > > +                       if (!netmem || WARN_ON_ONCE(!netmem_is_net_io=
-v(netmem)))
-> > > +                               continue;
-> > > +
-> >
-> > This check is extremely defensive. There is no way netmem is not a
-> > netiov (you just converted it). It's also very hard for it to be NULL.
-> > Remove maybe.
-> >
->
-> Removing sounds good to me.
->
-> > > +                       netmems[netmem_num++] =3D netmem;
-> > > +                       if (netmem_num =3D=3D ARRAY_SIZE(netmems)) {
-> > > +                               for (k =3D 0; k < netmem_num; k++) {
-> > > +                                       niov =3D netmem_to_net_iov(ne=
-tmems[k]);
-> >
-> > No need to upcast to netmem only to downcast here back to net_iov.
-> > Just keep it net_iov?
-> >
->
-> Sounds good.
->
-> > > +                                       if (atomic_dec_and_test(&niov=
-->uref))
-> > > +                                               WARN_ON_ONCE(!napi_pp=
-_put_page(netmems[k]));
-> >
-> > I see. So you're only only napi_pp_put_pageing the last uref dec, but
-> > why? How about you
->
-> Just to minimize cache bus noise from the extra atomic.
->
-> > > +                               }
-> > > +                               netmem_num =3D 0;
-> > > +                       }
-> >
-> > From a quick look, I don't think you need the netmems[] array or this
-> > inner loop.
-> >
-> > dontneed_autorelease is complicatingly written because it acquires a
-> > lock, and we wanted to minimize the lock acquire. You are acquiring no
-> > lock here. AFAICT you can just loop over the tokens and free all of
-> > them in one (nested) loop.
->
-> Oh good point. There is no need to batch at all here.
->
-> >
-> > > +                       ret++;
-> > > +               }
-> > > +       }
-> > > +
-> > > +frag_limit_reached:
-> > > +       for (k =3D 0; k < netmem_num; k++) {
-> > > +               niov =3D netmem_to_net_iov(netmems[k]);
-> > > +               if (atomic_dec_and_test(&niov->uref))
-> > > +                       WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> > > +       }
-> > > +
-> > > +       return ret;
-> > > +}
-> > > +
-> > >  static noinline_for_stack int
-> > >  sock_devmem_dontneed_autorelease(struct sock *sk, struct dmabuf_toke=
-n *tokens,
-> > >                                  unsigned int num_tokens)
-> > > @@ -1089,32 +1142,32 @@ sock_devmem_dontneed_autorelease(struct sock =
-*sk, struct dmabuf_token *tokens,
-> > >         int ret =3D 0, num_frags =3D 0;
-> > >         netmem_ref netmems[16];
-> > >
-> > > -       xa_lock_bh(&sk->sk_user_frags);
-> > > +       xa_lock_bh(&sk->sk_devmem_info.frags);
-> > >         for (i =3D 0; i < num_tokens; i++) {
-> > >                 for (j =3D 0; j < tokens[i].token_count; j++) {
-> > >                         if (++num_frags > MAX_DONTNEED_FRAGS)
-> > >                                 goto frag_limit_reached;
-> > >
-> > >                         netmem_ref netmem =3D (__force netmem_ref)__x=
-a_erase(
-> > > -                               &sk->sk_user_frags, tokens[i].token_s=
-tart + j);
-> > > +                               &sk->sk_devmem_info.frags, tokens[i].=
-token_start + j);
-> > >
-> > >                         if (!netmem || WARN_ON_ONCE(!netmem_is_net_io=
-v(netmem)))
-> > >                                 continue;
-> > >
-> > >                         netmems[netmem_num++] =3D netmem;
-> > >                         if (netmem_num =3D=3D ARRAY_SIZE(netmems)) {
-> > > -                               xa_unlock_bh(&sk->sk_user_frags);
-> > > +                               xa_unlock_bh(&sk->sk_devmem_info.frag=
-s);
-> > >                                 for (k =3D 0; k < netmem_num; k++)
-> > >                                         WARN_ON_ONCE(!napi_pp_put_pag=
-e(netmems[k]));
-> > >                                 netmem_num =3D 0;
-> > > -                               xa_lock_bh(&sk->sk_user_frags);
-> > > +                               xa_lock_bh(&sk->sk_devmem_info.frags)=
-;
-> > >                         }
-> > >                         ret++;
-> > >                 }
-> > >         }
-> > >
-> > >  frag_limit_reached:
-> > > -       xa_unlock_bh(&sk->sk_user_frags);
-> > > +       xa_unlock_bh(&sk->sk_devmem_info.frags);
-> > >         for (k =3D 0; k < netmem_num; k++)
-> > >                 WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
-> > >
-> > > @@ -1135,6 +1188,12 @@ sock_devmem_dontneed(struct sock *sk, sockptr_=
-t optval, unsigned int optlen)
-> > >             optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
-> > >                 return -EINVAL;
-> > >
-> > > +       /* recvmsg() has never returned a token for this socket, whic=
-h needs to
-> > > +        * happen before we know if the dmabuf has autorelease set or=
- not.
-> > > +        */
-> > > +       if (!sk->sk_devmem_info.binding)
-> > > +               return -EINVAL;
-> > > +
-> >
-> > Hmm. At first glance I don't think enforcing this condition if
-> > binding->autorelease is necessary, no?
-> >
-> > If autorelease is on, then we track the tokens the old way, and we
-> > don't need a binding, no? If it's off, then we need an associated
-> > binding, to look up the urefs array.
-> >
->
-> We at least need the binding to know if binding->autorelease is on,
-> since without that we don't know whether the tokens are in the xarray or
-> binding->vec... but I guess we could also check if the xarray is
-> non-empty and infer that autorelease =3D=3D true from that?
->
-
-I think as above, if autorelease is (only) a property of the sockets,
-then the xarray path works without introducing the socket-to-binding
-mapping restriction, yes?
-
---=20
 Thanks,
-Mina
+Yuanjie
+ 
+> Thanks,
+> 
+> Jessica Zhang
+> 
+> > 
+> > DPU version 13 introduces changes to the interrupt register
+> > layout. Update the driver to support these modifications for
+> > proper interrupt handling.
+> > 
+> > Signed-off-by: Yongxing Mou <yongxing.mou@oss.qualcomm.com>
+> > Signed-off-by: Yuanjie Yang <yuanjie.yang@oss.qualcomm.com>
+> > ---
+> >   .../gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c | 89 ++++++++++++++++++-
+> >   1 file changed, 88 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> > index 49bd77a755aa..8d265581f6ec 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_interrupts.c
+> > @@ -40,6 +40,15 @@
+> >   #define MDP_INTF_REV_7xxx_INTR_TEAR_STATUS(intf)	(MDP_INTF_REV_7xxx_TEAR_OFF(intf) + 0x004)
+> >   #define MDP_INTF_REV_7xxx_INTR_TEAR_CLEAR(intf)		(MDP_INTF_REV_7xxx_TEAR_OFF(intf) + 0x008)
+> > +#define MDP_INTF_REV_13xx_OFF(intf)			(0x18D000 + 0x1000 * (intf))
+> > +#define MDP_INTF_REV_13xx_INTR_EN(intf)			(MDP_INTF_REV_13xx_OFF(intf) + 0x1c0)
+> > +#define MDP_INTF_REV_13xx_INTR_STATUS(intf)		(MDP_INTF_REV_13xx_OFF(intf) + 0x1c4)
+> > +#define MDP_INTF_REV_13xx_INTR_CLEAR(intf)		(MDP_INTF_REV_13xx_OFF(intf) + 0x1c8)
+> > +#define MDP_INTF_REV_13xx_TEAR_OFF(intf)		(0x18D800 + 0x1000 * (intf))
+> > +#define MDP_INTF_REV_13xx_INTR_TEAR_EN(intf)		(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x000)
+> > +#define MDP_INTF_REV_13xx_INTR_TEAR_STATUS(intf)	(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x004)
+> > +#define MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(intf)		(MDP_INTF_REV_13xx_TEAR_OFF(intf) + 0x008)
+> > +
+> >   /**
+> >    * struct dpu_intr_reg - array of DPU register sets
+> >    * @clr_off:	offset to CLEAR reg
+> > @@ -199,6 +208,82 @@ static const struct dpu_intr_reg dpu_intr_set_7xxx[] = {
+> >   	},
+> >   };
+> > +/*
+> > + * dpu_intr_set_13xx -  List of DPU interrupt registers for DPU >= 13.0
+> > + */
+> > +static const struct dpu_intr_reg dpu_intr_set_13xx[] = {
+> > +	[MDP_SSPP_TOP0_INTR] = {
+> > +		INTR_CLEAR,
+> > +		INTR_EN,
+> > +		INTR_STATUS
+> > +	},
+> > +	[MDP_SSPP_TOP0_INTR2] = {
+> > +		INTR2_CLEAR,
+> > +		INTR2_EN,
+> > +		INTR2_STATUS
+> > +	},
+> > +	[MDP_SSPP_TOP0_HIST_INTR] = {
+> > +		HIST_INTR_CLEAR,
+> > +		HIST_INTR_EN,
+> > +		HIST_INTR_STATUS
+> > +	},
+> > +	[MDP_INTF0_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(0),
+> > +		MDP_INTF_REV_13xx_INTR_EN(0),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(0)
+> > +	},
+> > +	[MDP_INTF1_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(1),
+> > +		MDP_INTF_REV_13xx_INTR_EN(1),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(1)
+> > +	},
+> > +	[MDP_INTF1_TEAR_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(1),
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_EN(1),
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_STATUS(1)
+> > +	},
+> > +	[MDP_INTF2_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(2),
+> > +		MDP_INTF_REV_13xx_INTR_EN(2),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(2)
+> > +	},
+> > +	[MDP_INTF2_TEAR_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_CLEAR(2),
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_EN(2),
+> > +		MDP_INTF_REV_13xx_INTR_TEAR_STATUS(2)
+> > +	},
+> > +	[MDP_INTF3_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(3),
+> > +		MDP_INTF_REV_13xx_INTR_EN(3),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(3)
+> > +	},
+> > +	[MDP_INTF4_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(4),
+> > +		MDP_INTF_REV_13xx_INTR_EN(4),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(4)
+> > +	},
+> > +	[MDP_INTF5_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(5),
+> > +		MDP_INTF_REV_13xx_INTR_EN(5),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(5)
+> > +	},
+> > +	[MDP_INTF6_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(6),
+> > +		MDP_INTF_REV_13xx_INTR_EN(6),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(6)
+> > +	},
+> > +	[MDP_INTF7_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(7),
+> > +		MDP_INTF_REV_13xx_INTR_EN(7),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(7)
+> > +	},
+> > +	[MDP_INTF8_INTR] = {
+> > +		MDP_INTF_REV_13xx_INTR_CLEAR(8),
+> > +		MDP_INTF_REV_13xx_INTR_EN(8),
+> > +		MDP_INTF_REV_13xx_INTR_STATUS(8)
+> > +	},
+> > +};
+> > +
+> >   #define DPU_IRQ_MASK(irq_idx)	(BIT(DPU_IRQ_BIT(irq_idx)))
+> >   static inline bool dpu_core_irq_is_valid(unsigned int irq_idx)
+> > @@ -507,7 +592,9 @@ struct dpu_hw_intr *dpu_hw_intr_init(struct drm_device *dev,
+> >   	if (!intr)
+> >   		return ERR_PTR(-ENOMEM);
+> > -	if (m->mdss_ver->core_major_ver >= 7)
+> > +	if (m->mdss_ver->core_major_ver >= 13)
+> > +		intr->intr_set = dpu_intr_set_13xx;
+> > +	else if (m->mdss_ver->core_major_ver >= 7)
+> >   		intr->intr_set = dpu_intr_set_7xxx;
+> >   	else
+> >   		intr->intr_set = dpu_intr_set_legacy;
 
