@@ -1,268 +1,130 @@
-Return-Path: <linux-kernel+bounces-877214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C36FC1D749
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:33:09 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509D9C1D74C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277C03B955F
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:31:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 06A694E2C11
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52C872BCF4A;
-	Wed, 29 Oct 2025 21:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D038631986C;
+	Wed, 29 Oct 2025 21:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDtOAFjD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zk+WWgRL";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tDtOAFjD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zk+WWgRL"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aG682G4e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55EE2BE02A
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305102C15AF;
+	Wed, 29 Oct 2025 21:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761773497; cv=none; b=r2/XS+OnLD8VW8jUbIFtknGEu7QLGgGWXyAmgGkRS+Rcbv+J5Qn6G4jM1kbSerwmwu8faHzn+SHQG3yPshBx301051ye0oOaDRtB55VkPdIjrg1A0SAgtRkV9Xiw/ndFwI9UUQMyr+l4/oZw4Ze4FPdx2q1dZ3NyMVMOiKi+OjA=
+	t=1761773790; cv=none; b=UOIWU7cBVcnoa5Aj93E+oHdfsn7fuuo3PWpeHNw3LuWtSwhqHOW9CydFYrdTLsv2aCho43sgX8YJp0fpAlRwdAjo2LUoS1cNk3e8FtvaN3DFZXGpUTeAmJjhh7jcMOhhG9IX2BEZ5SMfYdr21IjvMeb65dsoeAvpCRp59Uno3vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761773497; c=relaxed/simple;
-	bh=VPQT6ceBtrjobGS/FwS7kafHnjdYIf8k6dDeyv59CH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rKVyznD7674qAmkdL2EtV9fdAQozIjmntTeNbiFHUePtAW7kkE3LHRpQEoIQc8F57+QUBDVdKJoEmb1hQJX66XPyIdwQmfIMISIcy9QGWtocMSQzm4wP54oo+WxrkujzMr4Ym0U5O8qqQppwgfawu+lhuUlgq8jocyDcORJw7Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tDtOAFjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zk+WWgRL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tDtOAFjD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zk+WWgRL; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A9F7220F8E;
-	Wed, 29 Oct 2025 21:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761773493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=teyx4ePeKu0+OEWBtNCRjoDpTuwA8U7pzqN5XpR9ge0=;
-	b=tDtOAFjDTC95aJlzqGCZtBDCTtXyDJDvNe7BSyhTXjfgS9Btwhzqa7HKZ/Uqi+TMvh5o1z
-	Ghzk6Zm0lhmtV19DKA+rmzV9URw18yPWMQfse+uk5ga12DB1G+JJWj5V0v57TbCvxEHjh9
-	9wZ9zKp4HW5g9M5jgzirPV8W1/Dafp4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761773493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=teyx4ePeKu0+OEWBtNCRjoDpTuwA8U7pzqN5XpR9ge0=;
-	b=zk+WWgRLOBTo1LBqsH/D5dTCiY158Xtq0oGg553QeFJVMavQRDywRGi0JG2L40PRJ3XMvC
-	byuLrBCPzTy2lnDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tDtOAFjD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zk+WWgRL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1761773493; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=teyx4ePeKu0+OEWBtNCRjoDpTuwA8U7pzqN5XpR9ge0=;
-	b=tDtOAFjDTC95aJlzqGCZtBDCTtXyDJDvNe7BSyhTXjfgS9Btwhzqa7HKZ/Uqi+TMvh5o1z
-	Ghzk6Zm0lhmtV19DKA+rmzV9URw18yPWMQfse+uk5ga12DB1G+JJWj5V0v57TbCvxEHjh9
-	9wZ9zKp4HW5g9M5jgzirPV8W1/Dafp4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1761773493;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=teyx4ePeKu0+OEWBtNCRjoDpTuwA8U7pzqN5XpR9ge0=;
-	b=zk+WWgRLOBTo1LBqsH/D5dTCiY158Xtq0oGg553QeFJVMavQRDywRGi0JG2L40PRJ3XMvC
-	byuLrBCPzTy2lnDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 881DB1396A;
-	Wed, 29 Oct 2025 21:31:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bKLiILWHAmkGTwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 29 Oct 2025 21:31:33 +0000
-Message-ID: <937b6cb3-27d5-4416-8152-df12b45979be@suse.cz>
-Date: Wed, 29 Oct 2025 22:31:33 +0100
+	s=arc-20240116; t=1761773790; c=relaxed/simple;
+	bh=SiQp/ENWkBUhBR+c2XqLQgeyJNHs792zr2aN4XdNGHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dPXVLtvU8jfohhFf3nm4gwcnZ6o2yf2cl8CuLEkGdsFspGi3eGM8pzr2eahDLdaKNAyhYjqf+k7tGQmP+a/EHAeQrbzDJEbDfQYQiksMREVVSILNWOH22oxnUmAfEI2shVFDEaUiCXEpDH+OkeONEaeGBZhvn/qQYYU9TW93USY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aG682G4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DE6EC4CEF7;
+	Wed, 29 Oct 2025 21:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761773789;
+	bh=SiQp/ENWkBUhBR+c2XqLQgeyJNHs792zr2aN4XdNGHE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aG682G4eIx2YeqDN/1oPrX6Dj4JDv2Zq4TRlmE4BDRS/AVIo4r2ZUTnTyaOF6Q5FW
+	 FGatbLm1AZsVzl4SKpo7n8H/kCnn5dmOs4iVBAxowhunzP1D8IqMUos7bXre+2TKHR
+	 LTD0NtXwzvsio8jdcOmJgoqfEtTNWO6ZD0eOODUFRs9bdE3tEGXsAywK7fqM5XY6Ot
+	 M0TjKi34Tawfrk7fRbQEHkWIDzr50GwofXzs2r6Rf1UoodVuuxceDVLzv7SneN1tBo
+	 TwthmEk28egzmGvujnyRm6Jj15APKMUSauN6KNGRgvtqbzbJayaUDbpGCXm3M92GLK
+	 JDcOXUo6bguNQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf: arm_pmuv3: Add new Cortex and C1 CPU PMUs
+Date: Wed, 29 Oct 2025 16:34:24 -0500
+Message-ID: <20251029213424.2951519-2-robh@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 10/19] slab: remove cpu (partial) slabs usage from
- allocation paths
-Content-Language: en-US
-To: Chris Mason <clm@meta.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
- bpf@vger.kernel.org, kasan-dev@googlegroups.com
-References: <20251024142927.780367-1-clm@meta.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20251024142927.780367-1-clm@meta.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: A9F7220F8E
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,gentwo.org,google.com,linux.dev,oracle.com,gmail.com,linutronix.de,kernel.org,kvack.org,vger.kernel.org,lists.linux.dev,googlegroups.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On 10/24/25 16:29, Chris Mason wrote:
->>  	else if (!spin_trylock_irqsave(&n->list_lock, flags))
->>  		return NULL;
->>  	list_for_each_entry_safe(slab, slab2, &n->partial, slab_list) {
->> +
->> +		unsigned long counters;
->> +		struct slab new;
->> +
->>  		if (!pfmemalloc_match(slab, pc->flags))
->>  			continue;
-> 
-> Can get_partial_node() return an uninitialized pointer? The variable
-> 'object' is declared but never initialized. If all slabs in the partial
-> list fail the pfmemalloc_match() check, the loop completes without
-> setting 'object', then returns it at the end of the function.
-> 
-> In the previous version, the equivalent 'partial' variable was explicitly
-> initialized to NULL. When all slabs were skipped, NULL was returned.
+Add CPU PMU compatible strings for Cortex-A320, Cortex-A520AE,
+Cortex-A720AE, and C1 Nano/Premium/Pro/Ultra.
 
-Indeed, this can happen. Thanks!
->>
->>  		if (IS_ENABLED(CONFIG_SLUB_TINY) || kmem_cache_debug(s)) {
->> -			void *object = alloc_single_from_partial(s, n, slab,
->> +			object = alloc_single_from_partial(s, n, slab,
->>  							pc->orig_size);
->> -			if (object) {
->> -				partial = slab;
->> -				pc->object = object;
->> +			if (object)
->>  				break;
->> -			}
->>  			continue;
->>  		}
->>
->> -		remove_partial(n, slab);
->> -
->> -		if (!partial) {
->> -			partial = slab;
->> -			stat(s, ALLOC_FROM_PARTIAL);
->> -
->> -			if ((slub_get_cpu_partial(s) == 0)) {
->> -				break;
->> -			}
->> -		} else {
->> -			put_cpu_partial(s, slab, 0);
->> -			stat(s, CPU_PARTIAL_NODE);
->> -
->> -			if (++partial_slabs > slub_get_cpu_partial(s) / 2) {
->> -				break;
->> -			}
->> -		}
->> +		/*
->> +		 * get a single object from the slab. This might race against
->> +		 * __slab_free(), which however has to take the list_lock if
->> +		 * it's about to make the slab fully free.
->> +		 */
->> +		do {
->> +			object = slab->freelist;
->> +			counters = slab->counters;
->> +			new.freelist = get_freepointer(s, object);
->> +			new.counters = counters;
->> +			new.inuse++;
->> +		} while (!__slab_update_freelist(s, slab,
->> +			object, counters,
->> +			new.freelist, new.counters,
->> +			"get_partial_node"));
->> +
->> +		if (!new.freelist)
->> +			remove_partial(n, slab);
->>  	}
->>  	spin_unlock_irqrestore(&n->list_lock, flags);
->> -	return partial;
->> +	return object;
->>  }
-> 
-> [ ... ]
-> 
-> 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+The bindings landed in 6.18, but I forgot the driver side needs 
+updating...
+
+ drivers/perf/arm_pmuv3.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+index 69c5cc8f5606..64457b7f4013 100644
+--- a/drivers/perf/arm_pmuv3.c
++++ b/drivers/perf/arm_pmuv3.c
+@@ -1465,6 +1465,10 @@ static int name##_pmu_init(struct arm_pmu *cpu_pmu)			\
+ 
+ PMUV3_INIT_SIMPLE(armv8_pmuv3)
+ 
++PMUV3_INIT_SIMPLE(armv8_c1_nano)
++PMUV3_INIT_SIMPLE(armv8_c1_premium)
++PMUV3_INIT_SIMPLE(armv8_c1_pro)
++PMUV3_INIT_SIMPLE(armv8_c1_ultra)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a34)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a55)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a65)
+@@ -1472,11 +1476,14 @@ PMUV3_INIT_SIMPLE(armv8_cortex_a75)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a76)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a77)
+ PMUV3_INIT_SIMPLE(armv8_cortex_a78)
++PMUV3_INIT_SIMPLE(armv9_cortex_a320)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a510)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a520)
++PMUV3_INIT_SIMPLE(armv9_cortex_a520ae)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a710)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a715)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a720)
++PMUV3_INIT_SIMPLE(armv9_cortex_a720ae)
+ PMUV3_INIT_SIMPLE(armv9_cortex_a725)
+ PMUV3_INIT_SIMPLE(armv8_cortex_x1)
+ PMUV3_INIT_SIMPLE(armv9_cortex_x2)
+@@ -1508,6 +1515,10 @@ PMUV3_INIT_MAP_EVENT(armv8_brcm_vulcan, armv8_vulcan_map_event)
+ 
+ static const struct of_device_id armv8_pmu_of_device_ids[] = {
+ 	{.compatible = "arm,armv8-pmuv3",	.data = armv8_pmuv3_pmu_init},
++	{.compatible = "arm,c1-nano-pmu",	.data = armv8_c1_nano_pmu_init},
++	{.compatible = "arm,c1-premium-pmu",	.data = armv8_c1_premium_pmu_init},
++	{.compatible = "arm,c1-pro-pmu",	.data = armv8_c1_pro_pmu_init},
++	{.compatible = "arm,c1-ultra-pmu",	.data = armv8_c1_ultra_pmu_init},
+ 	{.compatible = "arm,cortex-a34-pmu",	.data = armv8_cortex_a34_pmu_init},
+ 	{.compatible = "arm,cortex-a35-pmu",	.data = armv8_cortex_a35_pmu_init},
+ 	{.compatible = "arm,cortex-a53-pmu",	.data = armv8_cortex_a53_pmu_init},
+@@ -1520,11 +1531,14 @@ static const struct of_device_id armv8_pmu_of_device_ids[] = {
+ 	{.compatible = "arm,cortex-a76-pmu",	.data = armv8_cortex_a76_pmu_init},
+ 	{.compatible = "arm,cortex-a77-pmu",	.data = armv8_cortex_a77_pmu_init},
+ 	{.compatible = "arm,cortex-a78-pmu",	.data = armv8_cortex_a78_pmu_init},
++	{.compatible = "arm,cortex-a320-pmu",	.data = armv9_cortex_a320_pmu_init},
+ 	{.compatible = "arm,cortex-a510-pmu",	.data = armv9_cortex_a510_pmu_init},
+ 	{.compatible = "arm,cortex-a520-pmu",	.data = armv9_cortex_a520_pmu_init},
++	{.compatible = "arm,cortex-a520ae-pmu",	.data = armv9_cortex_a520ae_pmu_init},
+ 	{.compatible = "arm,cortex-a710-pmu",	.data = armv9_cortex_a710_pmu_init},
+ 	{.compatible = "arm,cortex-a715-pmu",	.data = armv9_cortex_a715_pmu_init},
+ 	{.compatible = "arm,cortex-a720-pmu",	.data = armv9_cortex_a720_pmu_init},
++	{.compatible = "arm,cortex-a720ae-pmu",	.data = armv9_cortex_a720ae_pmu_init},
+ 	{.compatible = "arm,cortex-a725-pmu",	.data = armv9_cortex_a725_pmu_init},
+ 	{.compatible = "arm,cortex-x1-pmu",	.data = armv8_cortex_x1_pmu_init},
+ 	{.compatible = "arm,cortex-x2-pmu",	.data = armv9_cortex_x2_pmu_init},
+-- 
+2.51.0
 
 
