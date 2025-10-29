@@ -1,201 +1,222 @@
-Return-Path: <linux-kernel+bounces-876612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01986C1BDD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:58:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 135BFC1BE65
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:02:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7A94434B21E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCE119C08AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5047F33A01E;
-	Wed, 29 Oct 2025 15:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15D6350297;
+	Wed, 29 Oct 2025 15:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqmZ+aMU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGWOPl/f"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7A9325737
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B432634FF69
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:59:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753525; cv=none; b=iBD7JyFmoIs2PZOhAX6WLgBsuB4vL1e7tocWlpziO5vkwSiogc7yA0XGWAs39ot573SRjNrIpKzqhs4qmu36fLQey/PKY87V/1LbfvPlLgomM0HAz42ruqF84k4Xfbt4YIcWDjZ/LuOziXchzLgUsmF82uvUaLnW2qP2F5rUEpY=
+	t=1761753592; cv=none; b=HH77Iq2AgIHQB3y5PdJJo8e5guF0RW6Z70CsxYcFMk1CO3AINLCwTO7bD3/NtTMiqMqPNvyDZi7g3cm1sWdwTXNHsUn+FjVhD0AOYiIflm7yY8EucqKFhGjB432QqNDeAHp+Dc6nGWL1PC852bAJ/YBYpw18qyMbcEJKusmtNTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753525; c=relaxed/simple;
-	bh=NaCyzM+HLSFiiHYiUXG9X/gGn5OsbOBRqHIFVU3rtKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZMzh2kSAThC+SRivKdBuluHX2IjTyjHiAFW+1w9en0CBq9U4QZzzZ1oviu4e7hb+Gz/HDL0nTLmdMH5NjVIwifGJ3FEj4uzuk4yZ6SU0ASYSvTxb3u3FIydJ5wdMC/XSTiZnqcbis0bTPWs8+8/RW77RKCoyCPXLEcOPLuG13FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqmZ+aMU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761753522;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=7MTuw2M4w+7icp1v9w2NHA+FuLFUpMlcJ3+bxm+0QA8=;
-	b=dqmZ+aMUiElh3jGjxsgftFWEY6lmFngKFFqSwNtFy3VYxh8R8oV8lZDhiu+uiX9H6NTdgN
-	qpkP3gqEsH//dQCevz0NDdUYosL+lyp5tpxfaBRVHYbZSPuen41y3AGyT+NxLmNoLHfoBL
-	TgvwMZ3bZILEUdjLrCD3v3cZ6lASTg4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-UTfvWt4uNUqA3AC1vFC8gg-1; Wed, 29 Oct 2025 11:58:40 -0400
-X-MC-Unique: UTfvWt4uNUqA3AC1vFC8gg-1
-X-Mimecast-MFC-AGG-ID: UTfvWt4uNUqA3AC1vFC8gg_1761753519
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-475e032d81bso35717785e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:58:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761753519; x=1762358319;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1761753592; c=relaxed/simple;
+	bh=3ptaXN+GAGoCho1TfU0eVUutT5FBhLQ1N3F5bH4ARsY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YSGRrUG49B+wGKUmPy+IJOsv23zn4/8HPEy2xvDaavNBiqySF3fSAw/O0zP0At5VW7esGMd9sngcH3mEDJ/zJ/8MVlHjNj3CYr4lImTJTgv0L6OcjwcU5/fo/9PwJcpIkxkE2jey2vKIb0BvsbcfnjaSqxjRkbMoQLHn5HayUEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fGWOPl/f; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-34029cd0cbdso84293a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:59:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761753590; x=1762358390; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=7MTuw2M4w+7icp1v9w2NHA+FuLFUpMlcJ3+bxm+0QA8=;
-        b=lq+aznbYEgLuhJh82lKLIPZSgP77mX9vw6nVgXOs5VwuXbEBiJzvomT+eCOTv2jHQt
-         ZQu1w9bvJ/X+XDT8YBYaEggbJ9D2FkgRNNxMglnpatOwVsfYyMOtdrEmxkB3w6y9IFk8
-         E04pbpjDNA6/FHLsWSOFFzNs1dcmh8yXrNgbnU3YEYsePAwXf+ZpwZdu8217j5txwey1
-         aQufhJQh5ibHTxzj2bx490z/WhZOSdq+saKpd0IuKrN6TIBfLHkRTGxReZFhcFJNPDRN
-         xfpzeGh0vm5PDhaSyoD34HibHcYI3WOLFI+3AtQ2Z76BowPxG6Ln86s4m5h9GHSeDfsZ
-         x28g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdCSV8suI/S2nffPshLfIkAKCi0Xo7zDbOvqgi0L8G/9BqzdaSC95laGnsKJRcXLonssdib3cl9SEmm70=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL626IGFXu8yiqEUGzRTQ/wPBJjGWouMiGZDAPZk60Wm8tgt6g
-	TCUO9tYg/ZMRC30A92BSvHeI9/qBeZozERhSwRT63KXPp2fDEcuPRonRm1p2p/Vte4xEprK4jia
-	qPwIgcOf4jlre21sVZmbKDQt682ApxOU8aDZOHNVaaCYu4kz+C1sQTG0tvtgPqSckpQ==
-X-Gm-Gg: ASbGncua7MlMnHAHzh9/+37y12eFGYDQ+AinSkCm3OLPVvFePgy0sAhiVdMeVV+505O
-	jsldLb6c44hmzue3LwYKVNc8r3TyMkqcfeqbBpI8AmXT+Mrr2S0zo2oSxXGKx8u7+adZgS7aby/
-	jpwH3p9AAgvnXodesCEmogNOPPEX1Nqql/T2OrfeOqBHd4JUy7WweFoiNbC7iJ3p/HV7jaxXgd7
-	Ia4xippCZfkY/dxFR21NyMHPnSOa9oFjELfhz+TzvzP/Tp5okppHuKrucNm2+/Hc+IL6cQuqd1R
-	2gWstAKF4eeW10LCziHJhPJhldLaQrmPK7XCLr33GtEHQ5s8O9RQpOwXqf0ejSGA94CZ3kBNRYh
-	foOAMhRMqEH4llS9xe3xLJw==
-X-Received: by 2002:a05:600c:a087:b0:477:58:7cf4 with SMTP id 5b1f17b1804b1-4771e16e3a3mr32441735e9.4.1761753519397;
-        Wed, 29 Oct 2025 08:58:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBUfbQXjSUBfZ5yGMdw13PwBGP5RPGg4Gjem7sfzzIH+QoMvfQEwhbQ98KDi2IbIS3+g/TEQ==
-X-Received: by 2002:a05:600c:a087:b0:477:58:7cf4 with SMTP id 5b1f17b1804b1-4771e16e3a3mr32441575e9.4.1761753518936;
-        Wed, 29 Oct 2025 08:58:38 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952df682sm26817699f8f.43.2025.10.29.08.58.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 08:58:38 -0700 (PDT)
-Message-ID: <b13bf4ce-a6fb-491e-a8c7-ecce0d4d87d2@redhat.com>
-Date: Wed, 29 Oct 2025 16:58:37 +0100
+        bh=hEBe93+AqDqbmzUn4tECC01fE40N0PwOlnrL0O+c5gY=;
+        b=fGWOPl/fFTEnj35SGpei98lgx5vkrhaylfXEqvKBflfbgchru3ENfNXjwwrC68qyDW
+         Q7+I8JZ/NO3aaCq4BKuvKypgP9NDrzDp5PuwKlpEoJaqPMXQ5YaETe8KB0m32hgH55c2
+         dYSOn68GnK2w2+Fk1Q1skVn5qkfmo8fGWCmTIzQ29RwMgwzpR51t/n9Ij30NrgfFUZm1
+         KZH9wkrfLRtGwwMnB7aqzxKjNr4O7dwd1lqHF9Id9kkdkNZqHkXKP7/HG6ONiYRuG0MD
+         72l2q3hYtGqqOu2o0mGlVuTPuZUwz1oefFGwc9Rsi12Z507wHNM0ZnBNuHqisIPp8Sr8
+         ayEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761753590; x=1762358390;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hEBe93+AqDqbmzUn4tECC01fE40N0PwOlnrL0O+c5gY=;
+        b=UDwtTfg8w3dTMLDMNaiHWg4Z2kTUxG8QPKye4wj9xP8qGDOYw2ZBaLiw4GpE8upWur
+         qANoQSklS3kvyRB6P+yf3IM3A+i73ZxnMvFTuvN00n1ohMmOBmFSKxQce8s8aZNeRDym
+         DxeE258l2/l+rG5Yq1jLp+gpuNDK+NnHmm1tqpez61FAVr5RNHmshQc+cEDiQpQ17Vwj
+         vR3ZeJmbjk4l0ePgtQ/IRk+aVhgw6W7rkpj0urxNdCyM8UFw+FGyd8IXssZIx8uuh3fh
+         sfohCJVySnrCMZ9Hsrle9KBlS21xPcaur/dP8XyWg+kDa26I/juokTWBY8Q2HHpbHdNi
+         NYBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWZk7csop4A4YqfnkfJ0r6bVm9wPgiKFCIkPtxfZbde7jUZUVptiS7Y7kYQaQ/m0rmkMx5DBjH+oSEUTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa3ByE/XdJ6xY/MibZ/7eOCgx14TwlvG4iVRZWjWmQU3tpjsn+
+	l6+SQRaOqVip9oCwcXmNyshcYQ8ATQFqkTC3E2X9//gopTJqnm+e4hQL
+X-Gm-Gg: ASbGncuOB1kBabzye7+oW40sMp501Xm63F4JLWnllDVcz5xYxa1Mxczd/SUfavF68ZT
+	rwzbEr+0DTwmAQs1BjcFvzyRnd5rfrbtvbF5DMkiOWK5Qe/d+jaNYlKzQmj721BjGovurcfumfF
+	SgFKPKO1Rn1HcA/0NLzBEsNP63RRMYGMs/WaVLZi4mGCZWiUf+U4y4oVduh/Dqnp+nv3xO/zRsL
+	97Q33IsYRWb0rbklj7/oarIzyt+Tsgeq1aGdsNX6c1c8LLo6B/yCYEU8n/27q7yQ6fWIg9qIruY
+	vIyjjv3Cfu1B9zZ6ncoIjLs2xpaIOeSNwwFAnEdvtWFZDAOfnZCAnhF+JEZR3cUbF98CCf7kkNI
+	TpE0z3CPHWRDTIXKqvMABLzizyziXygoqVTKGFOiZVPPHhIstEoMzvuJsux0ZNbBOZpLXoo5jZu
+	COL01SSUyRZw==
+X-Google-Smtp-Source: AGHT+IE3wJlrEK8Y4HOI8VQFwkEg3x3geQZauMd9eO5Geg4rfGwAJlYNO9WbP0RB4Wfto3M74+vZpg==
+X-Received: by 2002:a17:90b:254b:b0:32b:9bec:158f with SMTP id 98e67ed59e1d1-3403a2f1625mr3442455a91.29.1761753589772;
+        Wed, 29 Oct 2025 08:59:49 -0700 (PDT)
+Received: from [127.0.0.1] ([101.32.222.185])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7e95aasm16087366a91.8.2025.10.29.08.59.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 08:59:49 -0700 (PDT)
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 29 Oct 2025 23:58:37 +0800
+Subject: [PATCH 11/19] mm, swap: split locked entry duplicating into a
+ standalone helper
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/mm_init: Fix hash table order logging in
- alloc_large_system_hash()
-To: Isaac Manjarres <isaacmanjarres@google.com>
-Cc: Mike Rapoport <rppt@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org,
- kernel-team@android.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20251028191020.413002-1-isaacmanjarres@google.com>
- <dcceca48-bbdc-4318-8c07-94bb7c2f75ff@redhat.com>
- <aQI3z0x0gZ3T1fij@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <aQI3z0x0gZ3T1fij@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-swap-table-p2-v1-11-3d43f3b6ec32@tencent.com>
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+In-Reply-To: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, 
+ Barry Song <baohua@kernel.org>, Chris Li <chrisl@kernel.org>, 
+ Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+ Yosry Ahmed <yosry.ahmed@linux.dev>, David Hildenbrand <david@redhat.com>, 
+ Youngjun Park <youngjun.park@lge.com>, Hugh Dickins <hughd@google.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ "Huang, Ying" <ying.huang@linux.alibaba.com>, 
+ Kemeng Shi <shikemeng@huaweicloud.com>, 
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
+X-Mailer: b4 0.14.3
 
-On 29.10.25 16:50, Isaac Manjarres wrote:
-> On Wed, Oct 29, 2025 at 11:03:18AM +0100, David Hildenbrand wrote:
->> On 28.10.25 20:10, Isaac J. Manjarres wrote:
->>> When emitting the order of the allocation for a hash table,
->>> alloc_large_system_hash() unconditionally subtracts PAGE_SHIFT from
->>> log base 2 of the allocation size. This is not correct if the
->>> allocation size is smaller than a page, and yields a negative value
->>> for the order as seen below:
->>>
->>> TCP established hash table entries: 32 (order: -4, 256 bytes, linear)
->>> TCP bind hash table entries: 32 (order: -2, 1024 bytes, linear)
->>>
->>> Use get_order() to compute the order when emitting the hash table
->>> information to correctly handle cases where the allocation size is
->>> smaller than a page:
->>>
->>> TCP established hash table entries: 32 (order: 0, 256 bytes, linear)
->>> TCP bind hash table entries: 32 (order: 0, 1024 bytes, linear)
->>>
->>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->>> Cc: stable@vger.kernel.org # v5.4+
->>
->> This is a pr_info(), why do you think this is stable material? Just curious,
->> intuitively I'd have said that it's not that critical.
->>
-> 
-> Hi David,
-> 
-> Thank you for taking the time to review this patch! I was just under the
-> impression that any bug--even those for informational logging--should be
-> sent to stable as well.
+From: Kairui Song <kasong@tencent.com>
 
-See https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+No feature change, split the common logic into a stand alone helper to
+be reused later.
 
-In particular:
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
+ mm/swapfile.c | 62 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 31 insertions(+), 31 deletions(-)
 
-"
-It fixes a problem like an oops, a hang, data corruption, a real 
-security issue, a hardware quirk, a build error (but not for things 
-marked CONFIG_BROKEN), or some “oh, that’s not good” issue.
-
-Serious issues as reported by a user of a distribution kernel may also 
-be considered if they fix a notable performance or interactivity issue. ...
-"
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index e4c521528817..56054af12afd 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3646,26 +3646,14 @@ void si_swapinfo(struct sysinfo *val)
+  * - swap-cache reference is requested but the entry is not used. -> ENOENT
+  * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+  */
+-static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
++static int swap_dup_entries(struct swap_info_struct *si,
++			    struct swap_cluster_info *ci,
++			    unsigned long offset,
++			    unsigned char usage, int nr)
+ {
+-	struct swap_info_struct *si;
+-	struct swap_cluster_info *ci;
+-	unsigned long offset;
+-	unsigned char count;
+-	unsigned char has_cache;
+-	int err, i;
+-
+-	si = swap_entry_to_info(entry);
+-	if (WARN_ON_ONCE(!si)) {
+-		pr_err("%s%08lx\n", Bad_file, entry.val);
+-		return -EINVAL;
+-	}
+-
+-	offset = swp_offset(entry);
+-	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+-	ci = swap_cluster_lock(si, offset);
++	int i;
++	unsigned char count, has_cache;
+ 
+-	err = 0;
+ 	for (i = 0; i < nr; i++) {
+ 		count = si->swap_map[offset + i];
+ 
+@@ -3673,25 +3661,20 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
+ 		 * Allocator never allocates bad slots, and readahead is guarded
+ 		 * by swap_entry_swapped.
+ 		 */
+-		if (WARN_ON(swap_count(count) == SWAP_MAP_BAD)) {
+-			err = -ENOENT;
+-			goto unlock_out;
+-		}
++		if (WARN_ON(swap_count(count) == SWAP_MAP_BAD))
++			return -ENOENT;
+ 
+ 		has_cache = count & SWAP_HAS_CACHE;
+ 		count &= ~SWAP_HAS_CACHE;
+ 
+ 		if (!count && !has_cache) {
+-			err = -ENOENT;
++			return -ENOENT;
+ 		} else if (usage == SWAP_HAS_CACHE) {
+ 			if (has_cache)
+-				err = -EEXIST;
++				return -EEXIST;
+ 		} else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX) {
+-			err = -EINVAL;
++			return -EINVAL;
+ 		}
+-
+-		if (err)
+-			goto unlock_out;
+ 	}
+ 
+ 	for (i = 0; i < nr; i++) {
+@@ -3710,14 +3693,31 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
+ 			 * Don't need to rollback changes, because if
+ 			 * usage == 1, there must be nr == 1.
+ 			 */
+-			err = -ENOMEM;
+-			goto unlock_out;
++			return -ENOMEM;
+ 		}
+ 
+ 		WRITE_ONCE(si->swap_map[offset + i], count | has_cache);
+ 	}
+ 
+-unlock_out:
++	return 0;
++}
++
++static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
++{
++	int err;
++	struct swap_info_struct *si;
++	struct swap_cluster_info *ci;
++	unsigned long offset = swp_offset(entry);
++
++	si = swap_entry_to_info(entry);
++	if (WARN_ON_ONCE(!si)) {
++		pr_err("%s%08lx\n", Bad_file, entry.val);
++		return -EINVAL;
++	}
++
++	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
++	ci = swap_cluster_lock(si, offset);
++	err = swap_dup_entries(si, ci, offset, usage, nr);
+ 	swap_cluster_unlock(ci);
+ 	return err;
+ }
 
 -- 
-Cheers
-
-David / dhildenb
+2.51.1
 
 
