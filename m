@@ -1,119 +1,106 @@
-Return-Path: <linux-kernel+bounces-876636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFFBC1C5F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:10:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED94DC1C632
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:14:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B33A960139
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FCB9625A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086ED34CFDF;
-	Wed, 29 Oct 2025 16:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F1934575A;
+	Wed, 29 Oct 2025 16:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnpJGOIb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UMpmibOZ"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48243345754;
-	Wed, 29 Oct 2025 16:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40876329C52;
+	Wed, 29 Oct 2025 16:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761753662; cv=none; b=Nm+0ck8pCKgk5ECojZlap+79QfCcdpT8nli5vMy7GUbx18iOpECeEU0a/Peo3xyyfU+kS+uwOkUF9iAsM/hkth0jN4v5WM6i+1DqreVXVVfB067Hic64AOZulPvv4ru+U0jHDx2aVV1xPm7oXIxcF+zPc4sj/ixfNqLVB5DHpjs=
+	t=1761753891; cv=none; b=oBUmwA97mCBBCkXUArJ89LdsEhzZRvlYcqYJaR1364FSbqWJSxjCeX9/dIKS9VCjx6fJGZtFulN/W5rriP/wVV1bz+vjWDogZPmIDWMjQr4FW8JebdbzyEvEMHJPF5qX+EyBSNDAgggR+dpaWl0q6YzL4F/yAVlDg7At4jaNrnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761753662; c=relaxed/simple;
-	bh=5y2EenqzFLP9UzyCR6z3MZF4MozOljxHWjFYrZ0sBdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mntuBmY24tsaT4urrzYWm9ggqDZC+9Fvf01gJjCv4GtwralZOqYyAeAMJJKDAo4srQnp1Sjnyz+j8YkTwrXdJpKZGzJSqM7yEIeRDPqIOnJoaEpB7a/0o3HMjRkFo1uyUs/EUdKCoM+1juSLxP0Pwyq43pwk74bL0m5ZHnjemxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnpJGOIb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C17A2C4CEF7;
-	Wed, 29 Oct 2025 16:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761753661;
-	bh=5y2EenqzFLP9UzyCR6z3MZF4MozOljxHWjFYrZ0sBdQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GnpJGOIbMKJh+QWUSTx/ethUcpBWOw5qYqWckokxZzQnPgP6hRohI4cGfn7FsA172
-	 EUbl0S4GKRZ56nDsjtzTT19T2Nwk7U0980igwaTCPKdrg5Wybbww7cvpi32D/J6lDs
-	 Zdhc1NDXEViVpj06QbMCb7B2DvdDx5Ef3Djydf+9e0ddgHZIu4Y9EYf8AgK2rbxcrK
-	 dPEXFLiaiaaX0X1se/zfjkPWrdmiyh8di3LEnfv/2Z0AI2Y8ueLNYiaYj0Gy2iqEqX
-	 pFyjR2GGnHcOynwxqlfS3c973A38XWNFCcIRp2KrDfVbea28x+Z+X2RpNQcIQqzsk1
-	 H3LsSO4DrIPQA==
-Date: Wed, 29 Oct 2025 09:01:01 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: [PATCH 2/4] fs: return writeback errors for IOCB_DONTCACHE in
- generic_write_sync
-Message-ID: <20251029160101.GE3356773@frogsfrogsfrogs>
-References: <20251029071537.1127397-1-hch@lst.de>
- <20251029071537.1127397-3-hch@lst.de>
+	s=arc-20240116; t=1761753891; c=relaxed/simple;
+	bh=r6PgePP2Rqu6vrHoXQ9nozFvQmI3l341k8DeqfnpTLg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bpOAK4Z0RYK9gqyAOzcbzE79Q+D4QKOyzwMkA92p8bn+Un45Eq3VHGj9iMJkVBQsp5+Oaot62WyeV6LOpA/Jco3qjlEFtzEVIqvn7a0a5TaZ6Y93lRVsZdn2fe+TGHwJsfR5zS6m9Yk6DcYEKHeZuxuh10jaCyLcTWBI1OktjSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UMpmibOZ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1761753882;
+	bh=r6PgePP2Rqu6vrHoXQ9nozFvQmI3l341k8DeqfnpTLg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=UMpmibOZEkFmDdLZnqqGIlK8UvouoPyVRsNC0nKZx2Vjz85Xdth/J6n2cCUDBAege
+	 uFu3xM6yJL8KiwViFScqqJIIeXDj/BDlX9kEmcdy8imw+FlNeTNStfQ0aEnRvPpec1
+	 fBOstu7aI0cxDTjK4H+jnhIjrP/h2PHxXZSLaf+4=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Subject: [PATCH 00/12] tools/nolibc: always use 64-bit ino_t, off_t and
+ time-related types
+Date: Wed, 29 Oct 2025 17:02:50 +0100
+Message-Id: <20251029-nolibc-uapi-types-v1-0-e79de3b215d8@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029071537.1127397-3-hch@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKo6AmkC/x3MwQpAQBCA4VfRnE3NbEl5FTkwBlNa2y4ieXeb4
+ 3f4/weSRtMETfFA1NOSbT6DywJk6f2saGM2OHIVEzH6bbVB8OiD4X4HTchCtRuZJpEacheiTnb
+ 9z7Z73w+fuXscYwAAAA==
+X-Change-ID: 20251001-nolibc-uapi-types-1c072d10fcc7
+To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761753881; l=1657;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=r6PgePP2Rqu6vrHoXQ9nozFvQmI3l341k8DeqfnpTLg=;
+ b=MzZJYbAGKK/2BOgxXSfBehEFbHX5xuQAj7qzsdii8rSzxUwPK6Sv+bLkk2XdNJVEVyqcyaRIE
+ 4wfIFRj0KI+AE/FP/1CvNt1mI+KbNPKaPDhAjaCMYYA+T6bxxidb1pl
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, Oct 29, 2025 at 08:15:03AM +0100, Christoph Hellwig wrote:
-> Currently generic_write_sync only kicks of writeback for IOCB_DONTCACHE
-> writes, but never looks at the writeback errors.  When using
-> IOCB_DONTCACHE as a fallback for IOCB_DIRECT for devcies that require
+nolibc currently uses 32-bit types for various APIs. These are
+problematic as their reduced value range can lead to truncated values.
 
-                                                   devices
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Thomas Weißschuh (12):
+      tools/nolibc: use 64-bit ino_t
+      tools/nolibc: handle 64-bit off_t for llseek
+      tools/nolibc: prefer the llseek syscall
+      tools/nolibc: use 64-bit off_t
+      tools/nolibc: remove now superfluous overflow check in llseek
+      tools/nolibc: remove more __nolibc_enosys() fallbacks
+      tools/nolibc: prefer explicit 64-bit time-related system calls
+      tools/nolibc: gettimeofday(): avoid libgcc 64-bit divisions
+      tools/nolibc: use a custom struct timespec
+      tools/nolibc: always use 64-bit time types
+      selftests/nolibc: test compatibility of timespec and __kernel_timespec
+      tools/nolibc: remove time conversions
 
-> stable writes, this breaks a few xfstests test cases that expect instant
-> errors like removed devices to be directly propagated to the writer.
-> While I don't know of real applications that would expect this, trying to
-> keep the behavior as similar as possible sounds useful and can be
-> trivially done by checking for and returning writeback errors in
-> generic_write_sync.
+ tools/include/nolibc/arch-s390.h             |  3 +
+ tools/include/nolibc/poll.h                  | 12 ++--
+ tools/include/nolibc/std.h                   |  6 +-
+ tools/include/nolibc/sys.h                   | 21 +++---
+ tools/include/nolibc/sys/time.h              |  2 +-
+ tools/include/nolibc/sys/timerfd.h           | 20 +-----
+ tools/include/nolibc/time.h                  | 96 ++++++----------------------
+ tools/include/nolibc/types.h                 |  9 ++-
+ tools/testing/selftests/nolibc/nolibc-test.c | 18 ++++++
+ 9 files changed, 68 insertions(+), 119 deletions(-)
+---
+base-commit: 90ee85c0e1e4b5804ceebbd731653e10ef3849a6
+change-id: 20251001-nolibc-uapi-types-1c072d10fcc7
 
-Hum.  So we kick writeback but don't wait for any of it to start, and
-immediately sample wberr.  Does that mean that in the "bdev died" case,
-the newly initiated writeback will have failed so quickly that
-file_check_and_advance_wb_err will see that?  Or are we only reflecting
-past write failures back to userspace on the *second* write after the
-device dies?
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
 
-It would be helpful to know which fstests break, btw.
-
---D
-
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->  include/linux/fs.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 09b47effc55e..34a843cf4c1c 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3047,9 +3047,13 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
->  			return ret;
->  	} else if (iocb->ki_flags & IOCB_DONTCACHE) {
->  		struct address_space *mapping = iocb->ki_filp->f_mapping;
-> +		int err;
->  
->  		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos - count,
->  					      iocb->ki_pos - 1);
-> +		err = file_check_and_advance_wb_err(iocb->ki_filp);
-> +		if (err)
-> +			return err;
->  	}
->  
->  	return count;
-> -- 
-> 2.47.3
-> 
-> 
 
