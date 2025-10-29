@@ -1,154 +1,146 @@
-Return-Path: <linux-kernel+bounces-875079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBCDC182A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:24:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF7FC182EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 04:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A301C66236
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:23:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F6B24EB8B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9AE277C9B;
-	Wed, 29 Oct 2025 03:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35022ECD36;
+	Wed, 29 Oct 2025 03:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b74PWSCa"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Ls3Lksbn"
+Received: from mail-m32115.qiye.163.com (mail-m32115.qiye.163.com [220.197.32.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A41525D1F7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600C627D77D;
+	Wed, 29 Oct 2025 03:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761708185; cv=none; b=MoEllIHwqHJwh4MT8abFj4cPk9ImkpqVFJAxYI28GJ0gYfhQs86CY6Hey7mX6Z01MNyvXUQwhQ/PpELQtI9E3m4sObf4EUQ7vdV6efPBsOVHBAYydAwn1mRapZ3lxcR0rBrlOk4MNXgzyReNbdW//h4ostx0/7NANHl8zcfozVY=
+	t=1761708508; cv=none; b=X+RzG461/NTc9iR4OhsfiO2Zaxfm60uBCCT4zoX72tPgjiBg8bXSJv09TUPumZdCZDXw4ObQJjRqrR/jGWGAxIVR0m//jqSr1RyyFlXSFIIB5ASvnqO9SZb04NLhtr3AOT6paoukxGFNCAoileT7bf0rG7/oKVR9LzHdq9Juofw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761708185; c=relaxed/simple;
-	bh=dGq1aodl/1domVkCsoSU14DBsvKbYwzPwJTt+PqrCik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fo0TbndJj665jNEDdLYkv4uY37ygxHoNbLi+tqCJknQZt3RmcteRcqc4Wt/Dw8qLW+8zFlP92CQXONT1hCtYiB1qriMsfUh4KgkEeTER2HA0/5X88T1yUhmjlByq6wZ46l3fU91eXnvP2VRNESQtjJm/xo6CVe+H780IQveC+qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b74PWSCa; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4ecfafb92bcso137231cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 20:23:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761708183; x=1762312983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RZF5fZYNByvvmd5+XtP+S5jRgK5TgXHSEBZH9+I4nwY=;
-        b=b74PWSCaJLlBUief2fHCSmjBEWlhnP6b6cKQj6wyAKYYCYmbAhbB5c1XlNxj0zqLhS
-         FIuRzEBbtJ2L+DywfgJ/1IYZ+0bQOjdm/ssblk6yxeoeElo4v+FPCfqmozpoMbEFc1Vt
-         9Jv99fj2gdli+IUWOrqD4/3yor8f5gIbiEQded4Sox062S5RmymrFDeo/hcBuHQ12tVk
-         eHsQUYaFUMLhzvEwQTWwy9x/rce4O4pMUQmA+b3DUH7kN00uho8HGOe94s7WKvqC5Twx
-         dhrjq1EKIGcvC1PBwgcqupLt6BT6xkOFZRiMu9psSFXRzfFNjhc3/m3kdDTGIM95e0ni
-         i3yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761708183; x=1762312983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RZF5fZYNByvvmd5+XtP+S5jRgK5TgXHSEBZH9+I4nwY=;
-        b=A2lm5W6eLe3vyEU5Kv5f5M7v3zhekk/sYWRJCKse63XBRsoxWwk6+5Mva1wHBUtgp4
-         5DNTbFxorw5bZ/YAHE6DPIfyLWlJV/FH7UwWxsDDUuyVaCaAST8k+5R44Bu7Dc8B7vJj
-         iVKcIXYakMnEVqLHWcz9sZ1YdlSc73kVbxt1FeMcWjSWsEPihSD9T057MwIFnyqqnt5D
-         mozAHbDIxmh8NF4XC/VYNMTyZ1ync9pbOexaym08kojwE1sSUX65txDzXV0lz6Js/HYp
-         ywaz66HNMwhK9u+Hp4+sWVzvbMjNvgA/BkPu9+sCQ9jT1yhJfnuE2Bx60jNlSbDcgU0x
-         roSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT3yFs80fpQXkkbtET1DLGLMvTmI4a5xeilxgc6ZQ1U6OUQXuIHjF9hlN0YGp/SEzG514iiby5phLPDg4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznr0DkdOGLbdjKzhAF53l5CG9p/5pV1/YHoHylkzZP348wINON
-	m4Lu9Nhr6QQww+w+b4wT5G+fQb6MuS6PJqLeRULg053cgWcCEbokzR5mMX0HHb2UqKdylHrR2DY
-	qUpHEVAYMRLcFx4w1APHz4wWlWAOIEn+5SDg+tc46
-X-Gm-Gg: ASbGncs/0haUX3Cwd6zmWCyYsWXHc7d9cZGu1A41JTwN9Xm4Q6D+92EYMCCk0uycDrM
-	fcXwZVpGoOMbdRG4JaQAGvovvJPW/KHKW2lIUbTn/h3x1ocwTjoxrgEKcggwc+Bn37grxFP0ILP
-	6WXlrV8VMEPk//GmZWzZHFR9EZ/n7FnniQ5BIw67orAX8kXmkjru5avYsJ2GgIo68ytPT1EPasm
-	jr3tK5to1EWeZ7Um3pWcUw4vKFugRa4/udgCRmnm1qko3l01f/mSRXEQ4iY9HhpsrWy49i1ycu7
-	KOrd
-X-Google-Smtp-Source: AGHT+IFt0fdOZNflVxQJh5GQqXSyDE6yhX4j0HA2jB4qnG67bFoJTwJaZpXpVeBGRX36ahJHPN1YN0/KOLD2ewkP1+w=
-X-Received: by 2002:a05:622a:53c4:b0:4b0:f1f3:db94 with SMTP id
- d75a77b69052e-4ed16580052mr2297051cf.5.1761708182803; Tue, 28 Oct 2025
- 20:23:02 -0700 (PDT)
+	s=arc-20240116; t=1761708508; c=relaxed/simple;
+	bh=ous4ekECHCVh+bwS4QqLshbet6cQu7pTxp9rlTcxeGg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D8UCUI7r0wptqfbgOIiFEe755fG3yYmwhe0ODB2M7uZXZcANt9w557XAEH037uZDqCcUwV+u6Ed6eQClbfmQO8454MfsXBXFtsyudIZ/4UPH/JAuLu51MQHu2YLGgokdGywrT4YPCRoNPgeMeDXnEtRlCuz//D82SKO4YpvAiI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Ls3Lksbn; arc=none smtp.client-ip=220.197.32.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from rockchip.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 279245ee8;
+	Wed, 29 Oct 2025 11:23:04 +0800 (GMT+08:00)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: zhangqing@rock-chips.com,
+	mkl@pengutronix.de,
+	kernel@pengutronix.de,
+	mailhol.vincent@wanadoo.fr,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	cl@rock-chips.com
+Cc: linux-can@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v8 0/4] rockchip: add can for RK3576 Soc
+Date: Wed, 29 Oct 2025 11:22:58 +0800
+Message-Id: <20251029032302.1238973-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029014317.1533488-1-hao.ge@linux.dev>
-In-Reply-To: <20251029014317.1533488-1-hao.ge@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 28 Oct 2025 20:22:51 -0700
-X-Gm-Features: AWmQ_bnWQlp_hgmAQPXCvvIDSyvF6h29V3Rm7M2r8OKX5bFOVKkcR6boUbLHCuw
-Message-ID: <CAJuCfpG+bgLj6-GKNs7K0vRi7PsQvayTvwfyd+tFSnDY3muDGw@mail.gmail.com>
-Subject: Re: [PATCH v2] codetag: debug: handle existing CODETAG_EMPTY in
- mark_objexts_empty for slabobj_ext
-To: Hao Ge <hao.ge@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Hao Ge <gehao@kylinos.cn>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9a2dfd94c903a3kunm7a63a81221fa97
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGk4eGFZOGR1NTEMfGk9KTh5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Ls3LksbnYXmhl9tXfUdaMaCsM+8IBaYUCjoPlX6zN+hOaDQ4ygEmoiSvWKNTD+Z0fQ0786OyWnvAqLGnH4RmD2tR6Wut9VX0ugdox9uDVd3rEX8hJHL4rKLecqe0ZFurvtRBt7ywm+6nZLnf7isyOxSdSFmx5cmBAGMrIHlIm9Q=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=au2n4rrZx8SO4PVuqq8XAKDLJGp5zKXJpUNLmozR0c8=;
+	h=date:mime-version:subject:message-id:from;
 
-On Tue, Oct 28, 2025 at 6:44=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
->
-> From: Hao Ge <gehao@kylinos.cn>
->
-> When alloc_slab_obj_exts() fails and then later succeeds in allocating
-> a slab extension vector, it calls handle_failed_objexts_alloc() to
-> mark all objects in the vector as empty. As a result all objects in
-> this slab (slabA) will have their extensions set to CODETAG_EMPTY.
-> Later on if this slabA is used to allocate a slabobj_ext vector for
-> another slab (slabB), we end up with the slabB->obj_exts pointing to a
-> slabobj_ext vector that itself has a non-NULL slabobj_ext equal to
-> CODETAG_EMPTY. When slabB gets freed, free_slab_obj_exts() is called
-> to free slabB->obj_exts vector. free_slab_obj_exts() calls
-> mark_objexts_empty(slabB->obj_exts) which will generate a warning
-> because it expects slabobj_ext vectors to have a NULL obj_ext, not
-> CODETAG_EMPTY.
->
-> Modify mark_objexts_empty() to skip the warning and setting the
-> obj_ext value if it's already set to CODETAG_EMPTY.
->
-> Fixes: 09c46563ff6d ("codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mar=
-k failed slab_ext allocations")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+rk3576 can is a new controller,new register layout and Bit position
+definition:
+Support CAN protocol.
+Support Dma.
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+There are major differences from the previous rk3568.
+All errata on the rk3568 have been fixed and redesigned.
 
-> ---
-> v2: Update the commit message and code comments for greater accuracy,
->     incorporating Suren's suggestions.
->     Thanks for Suren's help.
-> ---
->  mm/slub.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index d4367f25b20d..589c596163c4 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -2046,7 +2046,11 @@ static inline void mark_objexts_empty(struct slabo=
-bj_ext *obj_exts)
->         if (slab_exts) {
->                 unsigned int offs =3D obj_to_index(obj_exts_slab->slab_ca=
-che,
->                                                  obj_exts_slab, obj_exts)=
-;
-> -               /* codetag should be NULL */
-> +
-> +               if (unlikely(is_codetag_empty(&slab_exts[offs].ref)))
-> +                       return;
-> +
-> +               /* codetag should be NULL here */
->                 WARN_ON(slab_exts[offs].ref.ct);
->                 set_codetag_empty(&slab_exts[offs].ref);
->         }
-> --
-> 2.25.1
->
->
+RK3576 CANFD requires authorization and permission. The software
+code is not open by default and needs to be authorized separately.
+
+Change in V8:
+[PATCH v8 1/4]: Drop CANFD, correction format warning.
+[PATCH v8 2/4]: Drop fifo_setup of rkcanfd_devtype_data.
+[PATCH v8 3/4]: Drop CANFD.
+[PATCH v8 4/4]: Drop CANFD.
+
+Change in V7:
+[PATCH v7 1/4]: Correction format warning.
+[PATCH v7 2/4]: No change.
+[PATCH v7 3/4]: Correct the writing of some registers and
+                correct the annotations.
+[PATCH v7 4/4]: Optimize the structure parameters and
+                ensure error handling.
+
+Change in V6:
+[PATCH v6 1/4]: Fix dma is support only for rk3576.
+[PATCH v6 2/4]: Fix the compilation warning.
+[PATCH v6 3/4]: Fix the compilation warning.
+[PATCH v6 4/4]: Fix the compilation warning.
+
+Change in V5:
+[PATCH v5 1/4]: Add rk3576 canfd to rockchip,rk3568v2-canfd.yaml, remove
+                rockchip,rk3576-canfd.yaml
+[PATCH v5 2/4]: Encapsulate some hardware operation functions into
+                rkcanfd_devtype_data to provide differentiated
+                implementations for different models
+                (such as RK3568v2/v3)..
+[PATCH v5 3/4]: Add rk3576 canfd,fix the register naming rule,
+                Delete the variables used by rockchip itself.
+[PATCH v5 4/4]: Fix .h sorting.
+
+
+Change in V4:
+[PATCH v4 1/3]: Correct the format and add explanations.
+[PATCH v4 2/3]: No change.
+[PATCH v4 3/3]: No change.
+
+Change in V3:
+[PATCH v3 1/3]: Add documentation for the rk3576 CAN-FD.
+[PATCH v3 2/3]: Adjust the differentiated code section and
+                add dma function.
+[PATCH v3 3/3]: Remove dma, no use dma by default.
+
+Change in V2:
+[PATCH v2 1/2]: remove rk3576_canfd.c, use the rockchip_canfd driver
+[PATCH v2 2/2]: code style.
+
+Elaine Zhang (4):
+  dt-bindings: can: rockchip_canfd: add rk3576 CAN controller
+  net: can: rockchip: Refactor the rkcanfd_devtype_data structure
+  net: can: rockchip: add can for RK3576 Soc
+  net: can: rockchip: support dma for rk3576 rx
+
+ .../net/can/rockchip,rk3568v2-canfd.yaml      |  52 +-
+ .../net/can/rockchip/rockchip_canfd-core.c    | 581 ++++++++++++++++--
+ drivers/net/can/rockchip/rockchip_canfd-rx.c  | 212 +++++++
+ drivers/net/can/rockchip/rockchip_canfd-tx.c  |  20 +
+ drivers/net/can/rockchip/rockchip_canfd.h     | 277 +++++++++
+ 5 files changed, 1094 insertions(+), 48 deletions(-)
+
+-- 
+2.34.1
+
 
