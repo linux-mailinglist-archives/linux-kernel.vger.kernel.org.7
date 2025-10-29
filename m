@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-876942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC67C1CD24
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:46:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AAAC1CD2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7357934B964
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18494188D051
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A20357733;
-	Wed, 29 Oct 2025 18:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8923570D3;
+	Wed, 29 Oct 2025 18:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p1K8PFzo"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vyqGUxnW"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C6935772C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA80135770A
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761763580; cv=none; b=fD4gokck8pnBC+z1KTF2Lw6B0eo/QfadUbaZVokEtSePdVX2MzDB+oVX+T/qLll9srL8y1z4OUWIwMuhlz4hiNb5s6jop53vD7UN/pj9eVbuB8WtdnjkrOvTfCgYRI5ZOtyEP6wCeofWDh+Tt9RXY2HPNKvlBH7rogO0kWNXPks=
+	t=1761763590; cv=none; b=FQUhpK7ryJx3SYEjZcjMpU0lAENKdvr+2VuRwr6fm4QAdZCveapmypkrEMRqtIaYE2XExbdCr+SDxKXUWYMYd12JNzzluScVmJvywHEg3kjp50MjgpfaAPfgiIEC9SNeMtstJpNz82JlWHxcMAIiOOLnpMjYJLRWDbRnoZY5zBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761763580; c=relaxed/simple;
-	bh=Hz1cW695wARv+9NNwYgilEM99jI1ucwDgTbPkgMEw+4=;
+	s=arc-20240116; t=1761763590; c=relaxed/simple;
+	bh=U62r/fOtJQtPieiV20zK2df1a6i4gyeJChvtG9Zp0uE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kqUenzITpr4KDYYYj4N/ge8RNtV5ZjtviOff0a0j7HFfJtD/1FXmT8POM3waOhmLXe3Gzhxa8giMWBMcd6SpC9gL8JxXUy5PGIdYm8FTap0a991HhRYpgQumS0dXCrTIoPBuw/Fsu5jDHCJ1qeYzLWZRZ4qEnofmTPflNvu7qsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p1K8PFzo; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=Nmp/tNTKykvD4P4yfQ9gWqsxduDL7FBHHP2CekIMIey+WYmFLxs72BugPECpAiAbUmmhiRFe/pJuyOhFkWguJxRp+M054slwON6unKmP1Nx34WCCfWZya8IFC9o1id+g66l4zmuknfAtHCNkYFsg4ICXRQAe+zTriOwkoh9RzDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vyqGUxnW; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--joshwash.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b62ebb4e7c7so56589a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:46:18 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77f610f7325so183858b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:46:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761763578; x=1762368378; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761763586; x=1762368386; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9IwTcakLAgrwbK0/rUiOaLMeUNE4P+aCL2i5ar5nog=;
-        b=p1K8PFzoXzpg+fN1+poLJELtDyA07pofMtNaKHDS2A0ndVF1X4s0eFOYuSUKABY8a6
-         1LQZ6AwlYsHbA9yQP19lGhqYG7YL4vEgCIA572XD7DV3hQGCTrTg1ObgsgojU7046Uvm
-         zVPVBpog6+lWUtB2R1wLAdZKgaza5DhyrOpAIYY2uob2TYPkGisN/YTTDakOtlTZuDa2
-         AwkgQKiizjokL8ZXJjJ2ivbvkP2VRb9NKecT8nLyrXIBuUXpBPe6sZlcI+LXpJcCOZNK
-         MQgDs7utbsQ4Rwd8gWjtDJB4aqdYU5I8ZkT6fifXsozPDkE4AUeanMN9Zfq3dwKbuypS
-         V4uA==
+        bh=hwXxkHaUQ2Itwxa70IRVOY6FUcTZ8h4FSg8gJ3GP+iY=;
+        b=vyqGUxnWSfuM6gNzvCAUPRSEhIZ+wcLCbHMjIT+8BdsbnzqEfSkEW/QR7gCEL9xAzU
+         ublzSeVhH6CLlfGowrVegJnFDLzwqkyJUbLyPtc+B4LLW02oqNqgg58aQzIo8WQQLDk7
+         SpMbhb+JZcLVBee9WXeghSSfmjwtamEjt95PlWGWz0E+8ZWCkZdbgIPZUIVBIBnSBWIV
+         mSDXqQq6qlyj9021Y/ndN5P1xtNXksbVqAcFBs0XNTeUXNCkeGoYhV7wVIp276dGC4LO
+         M3twMhi0l9qYHXl6+wGvU8/RjCqym4+TWlhVIexXw8/Qx65l343Jaoqkat4N25QNPFWQ
+         zy1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761763578; x=1762368378;
+        d=1e100.net; s=20230601; t=1761763586; x=1762368386;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9IwTcakLAgrwbK0/rUiOaLMeUNE4P+aCL2i5ar5nog=;
-        b=Hpp8Iaiu8ZBrePXJDiELPyzUeaIqn7UM+6MiB6rZ96PpODbz4pZzJ4gQSd+vYGCpT4
-         8h75ncLFzJ9vOhJxM9LMlcDSWKWZff/RyoW7bFaS+KCrEkS7OJDof8XNEOPC0tKZDzMA
-         NAiNXuzhvTN+DUpmWacrOHrmYnLMk7ESbhrFGsU3DTJPHWn22wDeih5yoOFFF32tZnt9
-         YzRgiUBsXI4D04G6FUsy0Og6NOhfAaBiVQUG1g/qFypzTDNqfdsoTW6vL1ZfM8tR6La6
-         44PquLTBQPFGi0b/XHCVHrbLHdc2q2xy0RrstEzq37lSgYnLLq4ZxpBMiQierCFS++oo
-         UKVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYciIcHnPLNTY6Lwt3NfAZnWMmEgeO2jDz/+r8vJGgmh/IWoASd6XtrE0rsGVyw/S8JPi6AYQ4Z7pa6HE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM1xHU6n11U+YNrfcSk1a/tSlVkKut0OP1qbdcmFDS9Jxka5ZH
-	7ruqH6MrOqf3bCKxAbjfJY95dTQnyyyF00gXXJtunYMmnPqY4YSz0/TXNhWwQB+wy00dF4afFaz
-	kAW3sKMF4vkubnw==
-X-Google-Smtp-Source: AGHT+IGBXn4UqDJBhNJF8Mu8AdNxT3YMrXSar3uJxtmQPCtoodVpYeYO9PeH5wdj9Ndf9qskRirxlFt7PN8v7g==
-X-Received: from pfbbk13.prod.google.com ([2002:aa7:830d:0:b0:7a4:f01a:8bee])
+        bh=hwXxkHaUQ2Itwxa70IRVOY6FUcTZ8h4FSg8gJ3GP+iY=;
+        b=w32eJplbumFvyPcwhZmgzRsxOqPtIoaIHKFalWlhdLY0f39z1Uhera0A4K70UU7hBu
+         t+bE9p3ypFVZp/NnNdC5/L5/7AhW1VJaok8y2TdlBSA+WXUXLNhEp9fRhUeCgIDhcWwZ
+         UyjDIoJDJjnpMkDDSl07if1/o9x8u1YpL4fesvTBys/tUWrEkLKQkPLIs3xIK++SMw1T
+         AfSfRgeMCGbk6yJXxr33QyTz8hFiba/O7/fsGdZHBz8eAxPcy23Mgufw6i9RLmcUnTEt
+         xjlrj42Wlbpdnx0spA5ehg62NHfg8Qo7Bj6cluThJHuMaezAVOzTSzHFeqRrVp81nRdT
+         jL3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUVMiqwxvkiK+lyhHqsbz5z/ZIxntshhpF9BxqoaAhujNaOOusy/oTF2DfR+inEM+msrkCV+/ZcYayzyGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxabUw/MM+2NoK/FX8c57hwhuvvlkWSvMlTcYfWwyJdahtQF8hA
+	vsGxONVJU+nJMjMUtc2up2KC0Rt72yuyYD2ZOjWucLLTfsntqz8w0udKYnzwoY9ydnN1I9wpvPN
+	C3pnHmQvjmzfyjA==
+X-Google-Smtp-Source: AGHT+IEb8imeJZc3wTyKz41hV95DU4DMFq/L+E+K9W8WpFaQM2j7DiK2tfOxXrcoiZMttlqmrXtWeGjhIqlpIQ==
+X-Received: from pgbfq12.prod.google.com ([2002:a05:6a02:298c:b0:b63:7a61:419c])
  (user=joshwash job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:1584:b0:2f6:cabe:a7c5 with SMTP id adf61e73a8af0-346531469acmr4427423637.34.1761763577596;
- Wed, 29 Oct 2025 11:46:17 -0700 (PDT)
-Date: Wed, 29 Oct 2025 11:45:39 -0700
+ 2002:a05:6a20:12c9:b0:334:a9b0:1c87 with SMTP id adf61e73a8af0-3465250ee69mr5270481637.1.1761763585755;
+ Wed, 29 Oct 2025 11:46:25 -0700 (PDT)
+Date: Wed, 29 Oct 2025 11:45:40 -0700
 In-Reply-To: <20251029184555.3852952-1-joshwash@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,49 +73,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251029184555.3852952-1-joshwash@google.com>
 X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
-Message-ID: <20251029184555.3852952-2-joshwash@google.com>
-Subject: [PATCH net 1/2] gve: Implement gettimex64 with -EOPNOTSUPP
+Message-ID: <20251029184555.3852952-3-joshwash@google.com>
+Subject: [PATCH net 2/2] gve: Implement settime64 with -EOPNOTSUPP
 From: Joshua Washington <joshwash@google.com>
 To: netdev@vger.kernel.org
 Cc: Tim Hostetler <thostet@google.com>, Richard Cochran <richardcochran@gmail.com>, 
-	syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com, 
-	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Joshua Washington <joshwash@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	syzbot+a546141ca6d53b90aba3@syzkaller.appspotmail.com, 
+	Kuniyuki Iwashima <kuniyu@google.com>, Joshua Washington <joshwash@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
 	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Ziwei Xiao <ziweixiao@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Kevin Yang <yyd@google.com>, 
+	Kevin Yang <yyd@google.com>, Willem de Bruijn <willemb@google.com>, 
 	open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
 From: Tim Hostetler <thostet@google.com>
 
-gve implemented a ptp_clock for sole use of do_aux_work at this time.
-ptp_clock_gettime() and ptp_sys_offset() assume every ptp_clock has
-implemented either gettimex64 or gettime64. Stub gettimex64 and return
--EOPNOTSUPP to prevent NULL dereferencing.
+ptp_clock_settime() assumes every ptp_clock has implemented settime64().
+Stub it with -EOPNOTSUPP to prevent a NULL dereference.
 
 Fixes: acd16380523b ("gve: Add initial PTP device support")
-Reported-by: syzbot+c8c0e7ccabd456541612@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c8c0e7ccabd456541612
+Reported-by: syzbot+a546141ca6d53b90aba3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=a546141ca6d53b90aba3
 Signed-off-by: Tim Hostetler <thostet@google.com>
-Reviewed-by: Harshitha Ramamurthy <hramamurthy@google.com>
 Reviewed-by: Kuniyuki Iwashima <kuniyu@google.com>
 Signed-off-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/ethernet/google/gve/gve_ptp.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/net/ethernet/google/gve/gve_ptp.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/net/ethernet/google/gve/gve_ptp.c b/drivers/net/ethernet/google/gve/gve_ptp.c
-index e96247c9d68d..19ae699d4b18 100644
+index 19ae699d4b18..a384a9ed4914 100644
 --- a/drivers/net/ethernet/google/gve/gve_ptp.c
 +++ b/drivers/net/ethernet/google/gve/gve_ptp.c
-@@ -26,6 +26,13 @@ int gve_clock_nic_ts_read(struct gve_priv *priv)
- 	return 0;
+@@ -33,6 +33,12 @@ static int gve_ptp_gettimex64(struct ptp_clock_info *info,
+ 	return -EOPNOTSUPP;
  }
  
-+static int gve_ptp_gettimex64(struct ptp_clock_info *info,
-+			      struct timespec64 *ts,
-+			      struct ptp_system_timestamp *sts)
++static int gve_ptp_settime64(struct ptp_clock_info *info,
++			     const struct timespec64 *ts)
 +{
 +	return -EOPNOTSUPP;
 +}
@@ -123,11 +119,11 @@ index e96247c9d68d..19ae699d4b18 100644
  static long gve_ptp_do_aux_work(struct ptp_clock_info *info)
  {
  	const struct gve_ptp *ptp = container_of(info, struct gve_ptp, info);
-@@ -47,6 +54,7 @@ static long gve_ptp_do_aux_work(struct ptp_clock_info *info)
- static const struct ptp_clock_info gve_ptp_caps = {
+@@ -55,6 +61,7 @@ static const struct ptp_clock_info gve_ptp_caps = {
  	.owner          = THIS_MODULE,
  	.name		= "gve clock",
-+	.gettimex64	= gve_ptp_gettimex64,
+ 	.gettimex64	= gve_ptp_gettimex64,
++	.settime64	= gve_ptp_settime64,
  	.do_aux_work	= gve_ptp_do_aux_work,
  };
  
