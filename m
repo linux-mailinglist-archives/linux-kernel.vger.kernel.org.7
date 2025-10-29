@@ -1,122 +1,105 @@
-Return-Path: <linux-kernel+bounces-876485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65A9C1BC03
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:44:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C62CC1BC0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0090F568492
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:10:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6FA815A2D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031F52E03FE;
-	Wed, 29 Oct 2025 15:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9E42E3AE9;
+	Wed, 29 Oct 2025 15:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajVPy/mi"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iXlPihwQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="195qSjd7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A425E2E7167
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BD92E0901;
+	Wed, 29 Oct 2025 15:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750591; cv=none; b=KL4fxIpUE3G9qcS6NJyZpwuTXoxRy9X2FnENRBLVEdpzkpskoRQboa8RTkhopzQCeiyhrPAspC9n7tqYH7CRgCT13iG8WTq6d7k1UQ+864M73rPmCsznxbZ1sv2X948ZsS9gwFxiJja71Puqh4ganWGJkXr3IDMDMfV3o+TulHs=
+	t=1761750660; cv=none; b=B7Iw217KUxfTO72UVLqwujMQF2TWzcFbXzWjEtuwPCekFwVgGWxnl61dD9b0E4UsPacS1VnZ85+UcwQ8t2ySh1c0oDYySF+pophfgTYQCABt0QgD7K4VpbNh3msJeWh4cc6gOcSOJ/FnbSKt/2mEKBjvdnTYYOzTAA8dYQ4SOlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750591; c=relaxed/simple;
-	bh=YBhgAHGodR8EuFBvP8khTpZ+VNH91RtX+JHBou6tB+8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k/tEILYZjMCXY7xCCNL4Eimw4wnSNsOfJbFqu56FlK0/X9T7SlnFS31hiDPfbp/fzTUHgSWinn2dbBXZvXm15ayqUDoVCoGEe/BsO2Wgu/zgNu6d8J46KY6gnp89AX3DLzGHbGBo3wQJrhLuuTh1Nvt3GEqYceDO3JPjCtrtSbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ajVPy/mi; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b4736e043f9so1302431466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:09:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761750588; x=1762355388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SJ45qfcg/AiWri4WRgxlSUGeApHftRNlJg58Vjygo7Q=;
-        b=ajVPy/miGko4rGC6NuX7xxLXhhcF36T3tAWgGw46uxjJMUZvA4UgHBF40BHV1O5IKo
-         w8btbox2In3dZCBpPsoi/julv2n+9f8vy2Ljj8rwx9wqNtMjJKDR+03OAPULmMEkaARH
-         FQT0virGAqSiE7sYQmGD2YZPHyOSOjlxDrjRMcs+RXHhjBtnQI1c9vB7Xwolw50mJDZU
-         NiLuQzu95mJ5cMV2S4kTnKAOQaq2X+pkB7ktlsriyd3UMJ3StmiNb6qLVH5JBBGo2d73
-         X1BRcNjZq+bYo4NYjQc1CvmTEiYVfb8phJQLaDZ/9IeNvyNS/MgjeSGIFzx7kjjCgdYe
-         /IhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761750588; x=1762355388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SJ45qfcg/AiWri4WRgxlSUGeApHftRNlJg58Vjygo7Q=;
-        b=CH9EuTy8/K8OOWfGiRj26OulnYXsg2BopH6tQC+tQZLuN4zswVE7QPxRXpAeWHYUoN
-         7L1Y3QRKbZ4DkoSbRIqNEY4w62SN7TDtbtu2QeBVSmN/v8C0r6Ye7PuL5k1vMFIFS5jB
-         Qthc6kRUEw4t92mJ1OUL5qzhzqCYeeK8OjAby3zPASzbTB1uNhpUTYlOlDZixH4lhBSP
-         Xcpyr0o60cZh9QV3Q7PGkaN5ymNEK/8ziAmYucHTxSzKxy4l5w37gY2/AADy69eVGZ5p
-         ZkB4UyiCTGmvKfkAYLTqc2kbgSEzNtXvaYfp71yquCtaFjkgP5O+/0mDPXuLFS9cSyjW
-         C4hA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY9J8GWr+IRgabmam0e5Q67BB35RwL+pOyNwiw/FUu67e2SRdPt9DBYCCW42RcrpF1o7+mYLiGj0Y6kEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNd7e4aDZGTqy9WYxyukz1rASQDABA4OAtns1o/0J6c80J4sjb
-	2I5rudYGFeEn4+2avVu/7yHUI4mAfJ1F9xedDtwjwspwJEc4lqM9DocQ
-X-Gm-Gg: ASbGnct1YsFdhffOftBTu2EaNNF9ytASgSFAo0soUoRWlhgvJnKZHMxkMgSIu4gLrn4
-	pe9zTI6a11h3j4OkSUv2+mUG7bxQVe/ob9Ody4Bos6zkLsaxdymlNovLWMO+hELwJdqMU+woe5I
-	WWjWyIsMW0XzYTiNlEZEpDvb1mYs/LK2t5tHqVJGZAZ0EpMrfcPGGzOBMqzBpqySBvoEJUnrqWE
-	Be8xrgqrcNryGJrO9XU/1Aich9IXNpqgVhu9PdoICG3Rm9dE+MpfgyJx80ZxVzc025Vh+BV2MDQ
-	PwXtgB7QyjYmuaojc0Vyo5DdDgIB9Tp0QzHWKsagdDO4J7eelasLQFn1ZbrBd9RAjPhWft69zGF
-	EXG5HpkHZdnDJwXHy34db4Dpw59+EukiueE+r+Lk9lmpiGH1d3HE3iMuetfcQ0S+SDWzmCldC3k
-	1X+oBF6gEOi79wFQe1WlI002LWPuzgNKcSQLZ4iy8zpW9w9M3b4l70WKWN3EBYZRvg8YG6
-X-Google-Smtp-Source: AGHT+IHDlTb5X7VV5e2XjFqocJOsF7vLRX65oGQx9zCAKTcQ+9IOyOUoUo5S/+LU/FJ3oKPg1ypHaw==
-X-Received: by 2002:a17:907:7b85:b0:b46:6718:3f1d with SMTP id a640c23a62f3a-b703d4571f5mr331200366b.38.1761750587895;
-        Wed, 29 Oct 2025 08:09:47 -0700 (PDT)
-Received: from localhost (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b6d8530905dsm1451781666b.6.2025.10.29.08.09.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 08:09:46 -0700 (PDT)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Cc: Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] macintosh/via-pmu-backlight: Include uapi/linux/fb.h
-Date: Wed, 29 Oct 2025 16:09:40 +0100
-Message-ID: <20251029150940.2523328-3-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251029150940.2523328-1-thierry.reding@gmail.com>
-References: <20251029150940.2523328-1-thierry.reding@gmail.com>
+	s=arc-20240116; t=1761750660; c=relaxed/simple;
+	bh=sAv1z1FgZI5xEbZMpuf1SeLtdIlGbwOrSChKTjqrO4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cWetpCp4ATUrf4mpkQ7UM/kmPpbA/OtpAz4eUMUZOy8EQ0UbvM5EMm+/Em1pcLVTS7cWae3OLz/vp/MO5rfG8tWZWqEy4mMMzaFn8XjMITa6V/v7UKVAebKG1z3A6JghWkGMe+6XvfXW52loixUAWMPcWxO6j9UfQez0bZi7mrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iXlPihwQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=195qSjd7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 29 Oct 2025 16:10:55 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761750656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lc3orl+6C4wXnR7bqU7PuJ/5Qcp1MmFzz8u4/5D8yFQ=;
+	b=iXlPihwQwKdKVlWTaeY1e9XWLmIzLWoVB4Cu8lRBZkWrv57wnynUT7O/IRYuYkgguJIWFe
+	B3dErPgcZcoV+NOgUnu/ZEGyFvJXkMyWSNGFQUj10+akh+8S36Vvf+HdtbhOmXBDjV5dGF
+	IIjKq/AVdjy2iIOv5EUXiPic86GuxWjVsgYAFhJz7DfH2Z6AVSKoVYbVZe8+Q7JTE+AnfI
+	h3HiO1AZBkno6buUFVUJhYZHyDJZ/UZPw2x0MoBisSY/BCErCNnorY79GB/O7FoLqNRVUq
+	kIrlsP7R8p5oqfcBkYc/rv1PcR+DJetLkYXBQE8xIyktE7uCweAlUG4u1UWe9Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761750656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lc3orl+6C4wXnR7bqU7PuJ/5Qcp1MmFzz8u4/5D8yFQ=;
+	b=195qSjd7J0TZl5Ns3PzXRbF5K8Z3NLL/WPo5wQY2oKV96hWiTkETaujqR2f9yIE6mK9iD1
+	1de1cmk6Huz9FxAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Prakash Sangappa <prakash.sangappa@oracle.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org
+Subject: Re: [patch V3 00/12] rseq: Implement time slice extension mechanism
+Message-ID: <20251029151055.SA-WMUQ_@linutronix.de>
+References: <20251029125514.496134233@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251029125514.496134233@linutronix.de>
 
-From: Thierry Reding <treding@nvidia.com>
+On 2025-10-29 14:22:11 [+0100], Thomas Gleixner wrote:
+> Changes vs. V2:
+>=20
+>    - Rebase on the newest RSEQ and uaccess changes
+=E2=80=A6
+> and in git:
+>=20
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/cid
+>=20
+> For your convenience all of it is also available as a conglomerate from
+> git:
+>=20
+>     git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/sli=
+ce
 
-This makes available several of the constants used in this driver.
+rseq/slice is older than rseq/cid. rseq/slice has the
+__put_kernel_nofault typo. rseq/cid looks correct.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/macintosh/via-pmu-backlight.c | 1 +
- 1 file changed, 1 insertion(+)
+> Thanks,
+>=20
+> 	tglx
 
-diff --git a/drivers/macintosh/via-pmu-backlight.c b/drivers/macintosh/via-pmu-backlight.c
-index 26bd9ed5e664..aef8930a505b 100644
---- a/drivers/macintosh/via-pmu-backlight.c
-+++ b/drivers/macintosh/via-pmu-backlight.c
-@@ -13,6 +13,7 @@
- #include <linux/backlight.h>
- #include <linux/pmu.h>
- #include <asm/backlight.h>
-+#include <uapi/linux/fb.h>
- 
- #define MAX_PMU_LEVEL 0xFF
- 
--- 
-2.51.0
-
+Sebastian
 
