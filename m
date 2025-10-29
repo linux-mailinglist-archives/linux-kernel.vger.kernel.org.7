@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-876347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D8C1B623
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:49:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19F43C1B886
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 33D465C1942
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2446275AF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6932DA75B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F792DBF5B;
 	Wed, 29 Oct 2025 14:26:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SJyg0WvW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmK7uQDz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415D2BE7C2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42B52BF01D;
 	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748000; cv=none; b=V7wA6Fop0rtfO4PbnqERxq/DrUIDTICwr+7y6VMQ1R9qJx/iughLdC0FoxRJk3YziETOXJeG14wXl34WAoMLadaY05ZhIQZLzU1cn6CFvfWe3n0rx08hnUB+0SdigyI+mlcHjFutqJOekODJhSbp26FTwMDN3dG1ObKK5CvmfgY=
+	t=1761748000; cv=none; b=LaZb+AFqhr6QhkKwMBdQ/Lusi5IHMQNZ6SB2tMeUNrlEW52lfVBcJcthKHCN1mR9OMPeRwDsVKjnhtCParpYEgBAOkryPE1aOQzXK/NfDK7mkolknj08DoqHwQeYWsUOtpcZd6vED/r5Edr+pCEeqKayDXLsJjbkyqIthUMXkuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761748000; c=relaxed/simple;
-	bh=mItrEmeR9FU3VM2ptXFfKvshAvAcV9+BLLTvG3OGXks=;
+	bh=W5IhVZX+lFdfsONd0QZSdbYGapL1pgYTOaMok8jmlw0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CHpE7VbFYbTFT1qlGf1jrjUqHAqP9Qhht3LnECbcov1fZU0Oagy7qYxevyvfepnVWkMPqhTuFzSzdr7wEUGTLQgoKCzNHi3shTGmVQsqxJg45Yx+3QcQ+Y7ok6Y+iAaB/U0m6aNbGL0SUwMYJ9EAqCw6qSXqWw1LTlTpPYEXl6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SJyg0WvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 71245C116D0;
+	 In-Reply-To:To:Cc; b=L/WMq9ConJPcoc/7QmNkkJKdy9vwmfvlfMBJl7kzGA2KHSmP81BaBvsKRx5nCS4ZlYILd0cKjgiliYEtKGkkehgN8aS5W91mgwdq3rcLAX6wrxH07BOBuoSTVH40dNke/GJOpZPnNBFpiBT66GTqwDy726oupY4jpxrkq2fuYa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmK7uQDz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 88C4CC4CEF8;
 	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761748000;
-	bh=mItrEmeR9FU3VM2ptXFfKvshAvAcV9+BLLTvG3OGXks=;
+	bh=W5IhVZX+lFdfsONd0QZSdbYGapL1pgYTOaMok8jmlw0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=SJyg0WvWtx67Cjh+ZefA1l69/7T9iwBn9QnmnLTQCZIAyWhsDACzhLsr4I1UIXWEs
-	 sxoMEPuvLhY/2tg5QgkBqlNotG9DM9z9YXBu+ccELW/2dNOeGpJMKwcsnHKEZRu2H8
-	 bryuYAfrQv4Hnf+vy6AsPNHehtMuQKO7XjkKIRfAJFQzP9QL7tp9FHRqShtoR+0TzQ
-	 f65Rbh2UFhuRKkiJ/57gZwuOJBYSNRD01aLhrv7SVti4MBMpAgMitv9FLq92iu+g0i
-	 iIeQKVoA4NaQ8xz1RuxrYUTH4OYcOPBqtSGDZC8gPvNFWqlp6kP74I+EZO8EiQU7X9
-	 CcuBa7zZXyYEg==
+	b=qmK7uQDzoNsK7Rid9yt+MNp4gI0D1XYki7p/mbLxrXqfYFfWs5yxj2UXcgF4VBaU0
+	 dvF+axJdf5Vwqhl79iyEM4gGc5QR571+vYFixZd3jaYCGlB3mR3adsY2r9J9IKRuT0
+	 5AilOHdiyoEqYRzmHVZ05qGPG12Xpc/imeclSvTI3GzKbuvU59+bPqjVHyaWxcJ/ii
+	 2yVzUCqTuw5xXzOzTYyU/SAyAXUgajcZVvN40bGqUjQFXOw6Bf5i2r9ZEpIfqdL712
+	 +n9qLF2GmSKz0P7Ccct/n+mQlqY9NghcM+pVWeOKIMb+ZRKp4QOusITDBp5ArVujDe
+	 Psq6YyDkbODvQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B2DDCCF9F6;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8F0CCF9F0;
 	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
 From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 29 Oct 2025 18:26:23 +0400
-Subject: [PATCH 2/6] wifi: ath11k: add hw params for QCN6122
+Date: Wed, 29 Oct 2025 18:26:25 +0400
+Subject: [PATCH 4/6] wifi: ath11k: update hif and pci ops for QCN6122
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-ath11k-qcn6122-v1-2-58ed68eba333@outlook.com>
+Message-Id: <20251029-ath11k-qcn6122-v1-4-58ed68eba333@outlook.com>
 References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
 In-Reply-To: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
 To: Johannes Berg <johannes@sipsolutions.net>, 
@@ -64,11 +64,11 @@ Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
  ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
  George Moussalem <george.moussalem@outlook.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761747997; l=4833;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761747997; l=4454;
  i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=336+JRp6PC1s0koOSi14k/NRUhAY+mOyBfj5s8eLX8o=;
- b=Y08LUfTlUvGw10fN0S/pS3+157GXIWOr8HGsSX5NmErFynLJxOd4MCO0DqxDIRAMUox5IVfTn
- +C2CxiOa616CGcViwJTkqWJ69Ikj1KMOdjb7nS90S5gaLrByptYjRKO
+ bh=VlBalx5CHHfhBt2bUbYow2vSFYMGLxLRZDITHsN4nSw=;
+ b=hbNtn/9yXJydn9STDqZjWFGK9LIN/4TraKsdaQFpvjGtqWG6nGdSndOMZF/hd+JPmLHcByl9p
+ +33Pyd4TvNNBF44Fcm6EsPHsMxzADK0wItvC2l7wiaNlrgPlhcZszG1
 X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
  pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
 X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
@@ -78,133 +78,115 @@ Reply-To: george.moussalem@outlook.com
 
 From: George Moussalem <george.moussalem@outlook.com>
 
-Add QCN6122 platform support.
-
-QCN6122 is a PCIe based solution that is attached to and enumerated
-by the WPSS (Wireless Processor SubSystem) Q6 processor.
-
-Though it is a PCIe device, since it is not attached to APSS processor
-(Application Processor SubSystem), APSS will be unaware of such a decice
-so it is registered to the APSS processor as a platform device (AHB).
-Because of this hybrid nature, it is called as a hybrid bus device.
-
-QCN6122 is similar to WCN6750 and follows the same codepath as for
-WCN6750 though it does not support shadow regs.
+Add HIF and PCI ops for QCN6122. QCN6122 by default uses DP window 3.
+However, this is configurable, so let's introduce a function to do that
+and follow the existing register access code for (hybrid) AHB devices
+and use DP window 1.
 
 Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- drivers/net/wireless/ath/ath11k/core.c | 67 ++++++++++++++++++++++++++++++++++
- drivers/net/wireless/ath/ath11k/core.h |  1 +
- drivers/net/wireless/ath/ath11k/qmi.h  |  3 +-
- 3 files changed, 70 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath11k/ahb.c | 34 ++++++++++++++++++++++++++++++++++
+ drivers/net/wireless/ath/ath11k/hif.h |  9 +++++++++
+ drivers/net/wireless/ath/ath11k/qmi.c |  2 ++
+ 3 files changed, 45 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath11k/core.c b/drivers/net/wireless/ath/ath11k/core.c
-index 2810752260f2f7eee226f88d5aea7cdabe7e9ed4..401b843402c6cca0e7fdd61e68b57fa6d5a6ae7e 100644
---- a/drivers/net/wireless/ath/ath11k/core.c
-+++ b/drivers/net/wireless/ath/ath11k/core.c
-@@ -907,6 +907,73 @@ static const struct ath11k_hw_params ath11k_hw_params[] = {
- 		.support_dual_stations = true,
- 		.pdev_suspend = false,
- 	},
-+	{
-+		.hw_rev = ATH11K_HW_QCN6122_HW10,
-+		.name = "qcn6122 hw1.0",
-+		.fw = {
-+			.dir = "QCN6122/hw1.0",
-+			.board_size = 256 * 1024,
-+			.cal_offset = 128 * 1024,
-+		},
-+		.hal_params = &ath11k_hw_hal_params_ipq8074,
-+		.max_radios = MAX_RADIOS_5018,
-+		.bdf_addr = 0x4D200000,
-+		.hw_ops = &ipq5018_ops,
-+		.hal_desc_sz = sizeof(struct hal_rx_desc_qcn9074),
-+		.qmi_service_ins_id = ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_QCN6122,
-+		.interface_modes = BIT(NL80211_IFTYPE_STATION) |
-+					BIT(NL80211_IFTYPE_AP) |
-+					BIT(NL80211_IFTYPE_MESH_POINT),
-+		.spectral = {
-+			.fft_sz = 2,
-+			.fft_pad_sz = 0,
-+			.summary_pad_sz = 16,
-+			.fft_hdr_len = 24,
-+			.max_fft_bins = 1024,
-+		},
-+		.internal_sleep_clock = false,
-+		.regs = &wcn6750_regs,
-+		.credit_flow = false,
-+		.max_tx_ring = 1,
-+		.supports_monitor = true,
-+		.supports_shadow_regs = false,
-+		.idle_ps = false,
-+		.supports_suspend = false,
-+		.host_ce_config = ath11k_host_ce_config_qcn9074,
-+		.ce_count = CE_CNT_5018,
-+		.target_ce_config = ath11k_target_ce_config_wlan_ipq5018,
-+		.target_ce_count = TARGET_CE_CNT_5018,
-+		.svc_to_ce_map = ath11k_target_service_to_ce_map_wlan_ipq5018,
-+		.svc_to_ce_map_len = SVC_CE_MAP_LEN_5018,
-+		.single_pdev_only = false,
-+		.rxdma1_enable = true,
-+		.num_rxdma_per_pdev = RXDMA_PER_PDEV_5018,
-+		.rx_mac_buf_ring = false,
-+		.vdev_start_delay = false,
-+		.htt_peer_map_v2 = true,
-+		.coldboot_cal_mm = false,
-+		.coldboot_cal_ftm = false,
-+		.cbcal_restart_fw = true,
-+		.fix_l1ss = true,
-+		.alloc_cacheable_memory = true,
-+		.m3_fw_support = false,
-+		.fixed_bdf_addr = true,
-+		.fixed_mem_region = true,
-+		.static_window_map = true,
-+		.hybrid_bus_type = true,
-+		.fw_mem_mode = 1,
-+		.supports_sta_ps = false,
-+		.dbr_debug_support = true,
-+		.bios_sar_capa = NULL,
-+		.fixed_fw_mem = false,
-+		.support_off_channel_tx = false,
-+		.tcl_ring_retry = true,
-+		.tx_ring_size = DP_TCL_DATA_RING_SIZE,
-+		.smp2p_wow_exit = false,
-+		.support_fw_mac_sequence = false,
-+		.support_dual_stations = false,
-+		.pdev_suspend = false,
-+	},
+diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
+index 8dfe9b40c12626649639fc1dd9da0e5e0c2dcaf1..7b267dd62e964b2c4d6c3bbe016abd1ad0297219 100644
+--- a/drivers/net/wireless/ath/ath11k/ahb.c
++++ b/drivers/net/wireless/ath/ath11k/ahb.c
+@@ -762,6 +762,18 @@ static int ath11k_ahb_hif_resume(struct ath11k_base *ab)
+ 	return 0;
+ }
+ 
++static void ath11k_ahb_config_static_window_qcn6122(struct ath11k_base *ab)
++{
++	u32 umac_window = FIELD_GET(ATH11K_PCI_WINDOW_VALUE_MASK, HAL_SEQ_WCSS_UMAC_OFFSET);
++	u32 ce_window = FIELD_GET(ATH11K_PCI_WINDOW_VALUE_MASK, HAL_CE_WFSS_CE_REG_BASE);
++	u32 window;
++
++	window = (umac_window) | (ce_window << 6);
++
++	iowrite32(ATH11K_PCI_WINDOW_ENABLE_BIT | window,
++		  ab->mem + ATH11K_PCI_WINDOW_REG_ADDRESS);
++}
++
+ static const struct ath11k_hif_ops ath11k_ahb_hif_ops_ipq8074 = {
+ 	.start = ath11k_ahb_start,
+ 	.stop = ath11k_ahb_stop,
+@@ -794,6 +806,24 @@ static const struct ath11k_hif_ops ath11k_ahb_hif_ops_wcn6750 = {
+ 	.ce_irq_disable = ath11k_pci_disable_ce_irqs_except_wake_irq,
  };
  
- static const struct dmi_system_id ath11k_pm_quirk_table[] = {
-diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-index e8780b05ce11e39bdd93dd02d39812be90689b40..afc591f9608f48506bf19851169828c519661d72 100644
---- a/drivers/net/wireless/ath/ath11k/core.h
-+++ b/drivers/net/wireless/ath/ath11k/core.h
-@@ -152,6 +152,7 @@ enum ath11k_hw_rev {
- 	ATH11K_HW_IPQ5018_HW10,
- 	ATH11K_HW_QCA2066_HW21,
- 	ATH11K_HW_QCA6698AQ_HW21,
-+	ATH11K_HW_QCN6122_HW10,
++static const struct ath11k_hif_ops ath11k_ahb_hif_ops_qcn6122 = {
++	.start = ath11k_pcic_start,
++	.stop = ath11k_pcic_stop,
++	.read32 = ath11k_pcic_read32,
++	.write32 = ath11k_pcic_write32,
++	.read = NULL,
++	.irq_enable = ath11k_pcic_ext_irq_enable,
++	.irq_disable = ath11k_pcic_ext_irq_disable,
++	.get_msi_address =  ath11k_pcic_get_msi_address,
++	.get_user_msi_vector = ath11k_pcic_get_user_msi_assignment,
++	.map_service_to_pipe = ath11k_pcic_map_service_to_pipe,
++	.power_down = ath11k_ahb_power_down,
++	.power_up = ath11k_ahb_power_up,
++	.ce_irq_enable = ath11k_pci_enable_ce_irqs_except_wake_irq,
++	.ce_irq_disable = ath11k_pci_disable_ce_irqs_except_wake_irq,
++	.config_static_window = ath11k_ahb_config_static_window_qcn6122,
++};
++
+ static int ath11k_core_get_rproc(struct ath11k_base *ab)
+ {
+ 	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
+@@ -1127,6 +1157,10 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
+ 		hif_ops = &ath11k_ahb_hif_ops_wcn6750;
+ 		pci_ops = &ath11k_ahb_pci_ops_wcn6750;
+ 		break;
++	case ATH11K_HW_QCN6122_HW10:
++		hif_ops = &ath11k_ahb_hif_ops_qcn6122;
++		pci_ops = &ath11k_ahb_pci_ops_wcn6750;
++		break;
+ 	default:
+ 		dev_err(&pdev->dev, "unsupported device type %d\n", hw_rev);
+ 		return -EOPNOTSUPP;
+diff --git a/drivers/net/wireless/ath/ath11k/hif.h b/drivers/net/wireless/ath/ath11k/hif.h
+index cd9c4b838246815ecb2a10784732c009a5423b6e..e4c1ad4d8ffc7627f6b3c384d64cb71b82451639 100644
+--- a/drivers/net/wireless/ath/ath11k/hif.h
++++ b/drivers/net/wireless/ath/ath11k/hif.h
+@@ -32,6 +32,7 @@ struct ath11k_hif_ops {
+ 	void (*ce_irq_disable)(struct ath11k_base *ab);
+ 	void (*get_ce_msi_idx)(struct ath11k_base *ab, u32 ce_id, u32 *msi_idx);
+ 	void (*coredump_download)(struct ath11k_base *ab);
++	void (*config_static_window)(struct ath11k_base *ab);
  };
  
- enum ath11k_firmware_mode {
-diff --git a/drivers/net/wireless/ath/ath11k/qmi.h b/drivers/net/wireless/ath/ath11k/qmi.h
-index 7968ab122b65dc28a44eca7b34904f55f717f586..f6014b9662dbe5f4cfc6a2af7010938cad454267 100644
---- a/drivers/net/wireless/ath/ath11k/qmi.h
-+++ b/drivers/net/wireless/ath/ath11k/qmi.h
-@@ -22,10 +22,11 @@
- #define ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_IPQ8074	0x02
- #define ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_QCN9074	0x07
- #define ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_WCN6750	0x03
-+#define ATH11K_QMI_WLFW_SERVICE_INS_ID_V01_QCN6122	0x40
- #define ATH11K_QMI_WLANFW_MAX_TIMESTAMP_LEN_V01	32
- #define ATH11K_QMI_RESP_LEN_MAX			8192
- #define ATH11K_QMI_WLANFW_MAX_NUM_MEM_SEG_V01	52
--#define ATH11K_QMI_CALDB_SIZE			0x480000
-+#define ATH11K_QMI_CALDB_SIZE			0x500000
- #define ATH11K_QMI_BDF_EXT_STR_LENGTH		0x20
- #define ATH11K_QMI_FW_MEM_REQ_SEGMENT_CNT	5
+ static inline void ath11k_hif_ce_irq_enable(struct ath11k_base *ab)
+@@ -159,4 +160,12 @@ static inline void ath11k_hif_coredump_download(struct ath11k_base *ab)
+ 		ab->hif.ops->coredump_download(ab);
+ }
  
++static inline void ath11k_hif_config_static_window(struct ath11k_base *ab)
++{
++	if (!ab->hw_params.static_window_map || !ab->hif.ops->config_static_window)
++		return;
++
++	ab->hif.ops->config_static_window(ab);
++}
++
+ #endif /* _HIF_H_ */
+diff --git a/drivers/net/wireless/ath/ath11k/qmi.c b/drivers/net/wireless/ath/ath11k/qmi.c
+index aea56c38bf8f38982532fc90de25582c26ba4393..613e8c56978fe5af8f9b1b24c1b46efbc0bf2cb7 100644
+--- a/drivers/net/wireless/ath/ath11k/qmi.c
++++ b/drivers/net/wireless/ath/ath11k/qmi.c
+@@ -2190,6 +2190,8 @@ static int ath11k_qmi_request_device_info(struct ath11k_base *ab)
+ 	if (!ab->hw_params.ce_remap)
+ 		ab->mem_ce = ab->mem;
+ 
++	ath11k_hif_config_static_window(ab);
++
+ 	return 0;
+ out:
+ 	return ret;
 
 -- 
 2.51.1
