@@ -1,338 +1,192 @@
-Return-Path: <linux-kernel+bounces-876948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8073C1CD69
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E50F8C1CD7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:56:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1570189F15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 69A1534BE33
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BD1357725;
-	Wed, 29 Oct 2025 18:53:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2865280A5B;
+	Wed, 29 Oct 2025 18:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="aRcttS/R"
-Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
+	dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b="wik6Rjzf"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011011.outbound.protection.outlook.com [40.107.208.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938CB3563E3;
-	Wed, 29 Oct 2025 18:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764036; cv=none; b=iGYYNBaEuHMtux4oXVgmXJT8ZFCgPs+inXva7ZfJhyevc+rA2KcsgzvX4mh3gBXy8CC4WdnO44CETiQc1C6768XpC2WcedyLPlGb2KJgpWpHsA/4zxp6PKsMmKY7kFg/liQMp4CBsqmTOFH3eWhLcdNu4WvlUNVTVpbQI5m726k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764036; c=relaxed/simple;
-	bh=QYApO3MfS9J0LIrWE7POhwN4+UJMBTuGqjI7z0wBsB0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=er5qdnOPcSb4kZvff9rAIP/Gb0mTVKkNWmxSD+Kddkiwn9rTxqcSvayvQyC58BYssq2lX/zLmotyrz8Spa6uPXHRSmN+EiDCmVuNXRWwhXssWEnW2e7K3pKo2cVWHwWOINkMFuuV52FWvGZc/bTNJLnexWzgAxPM86AZAGS8pEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=aRcttS/R; arc=none smtp.client-ip=119.8.177.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=kHa9VxLTKrpVmQMTd3u1VXcvIkYKv0AO/Hnmqp/OGho=;
-	b=aRcttS/RbiKAHRyXy99ro1Dg7gdjRzL8w03c0sjJg49oVWGQ55XjOu2wdqm1WLB9Q+w6Cdzly
-	x3qmsDeZtSk41EsGoza0PisB8QuGLa42M/wTQNd6E7xLaSVb5lcrEry7DmiVu6lgXHMxmH5lllS
-	6q9zh0GKJ93m6LC5zlDjMf0=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.32])
-	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4cxbwY0mJBzMlQs;
-	Thu, 30 Oct 2025 02:53:00 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4cxbwM4jNHzHnGct;
-	Wed, 29 Oct 2025 18:52:51 +0000 (UTC)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8455F1402EF;
-	Thu, 30 Oct 2025 02:53:44 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
- 2025 18:53:43 +0000
-Date: Wed, 29 Oct 2025 18:53:42 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
-	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
-	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
-	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
-	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [PATCH RESEND v2 12/12] coco: host: arm64: Register device
- public key with RMM
-Message-ID: <20251029185342.00001dc2@huawei.com>
-In-Reply-To: <20251027095602.1154418-13-aneesh.kumar@kernel.org>
-References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
-	<20251027095602.1154418-13-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C06E357738;
+	Wed, 29 Oct 2025 18:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761764167; cv=fail; b=fz93+B6kC/fg/H1JwC568Uo2/H+r1YKFLexlT+oZZ+0WhaA0XCqFKMIoIm12UBve56xAs+VsFcH1O6NtZ2iGDVNv6bzNp5GEw6IdjgFYfQXlAUJQtCYI/Dk+F0hTzNZwhX+Y3qbrrazdneH/sTSUrNL8OsNXZ8mhl/H1R9ftDpg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761764167; c=relaxed/simple;
+	bh=ZWtsT6XrgnfdkqUAk60oDi+7PnG6fv11BhpcjlPhal8=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=n7KHJfEBoCygvZBSX4cS6lcnF2D4BYNuZJfgUjzxul4azUSVeeGfO01Uo193k2POIgvLp3v4sEiYXk+tsy9IeTem+RgtYIjQZfm/yiDby7bx8poIaS2+wfc9TkxDqqrZP9MMqOGtE9ARtJZBAaQpldItTCKMAMi1Rv2C4rHTTow=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com; spf=pass smtp.mailfrom=altera.com; dkim=pass (2048-bit key) header.d=altera.com header.i=@altera.com header.b=wik6Rjzf; arc=fail smtp.client-ip=40.107.208.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=altera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LSqg0bJL4imZ22gWNaSi/F5i5Cdnzn8U7fcQk2X/iOBBqYEUsm0GMaqNDOV/DrZTyhDorPv/lBJ7MM2H0GE0RTDVrt7LvTSBfizCq57s49sHgyuxETaGRF/Vqp3ZZpn97Nb12PvWPbZ17O52nEyD2y8nJ4uBtMM5tycKlOxgTo/lAc1tfmPzH9qUXHV31mFvFYnZR6piFG+PRL/LQvxeYmWD3mu6etmfDusuEFknQgGWPC+CbuaJVDdRzUhVO5I0xVwBB0B4hzwEWf7xIWXU1rGsjeYpU1Dx2fpfwUbU+Lg9GB8Di1SN3aTi/CVV/g3ZxoStLy94Ot3vAjW1kukuCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2dgSKI8yEg0n2Fa9dYg3cp72XL2ReQlw8zfkKAcQdB0=;
+ b=hSluh3jC6eQbT2XwZESQeyuUk7lewdFLZ0LUSq2GP7eDvRs5eacApFYxfXe/uAq1r50UGJiR+KylR4Idw1sYZqgOEsqdPqAqDjXMNzzj5OhDW1ER+JgYX6BGOYq2+cfq6UvbbY5gkII1PmJ/3lV8hAQov1idFTx7xLkB4ONTwt3D4mbdMlrURthMbKvDYFnMVU5/zwISLzk/qFqxVRk0Sq+Wd5mS9kOs+THV0TXF0XUqmsR496E91Vrgk3G1rQkZpncAkiUcHAMBTD2mMs4IqfOzitK+ZmhmM1OD24t68hOI1ECQPLPHaKW7dSvJ6VI5qnieiNoV3IQa9pTF3scOrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=altera.com; dmarc=pass action=none header.from=altera.com;
+ dkim=pass header.d=altera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=altera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2dgSKI8yEg0n2Fa9dYg3cp72XL2ReQlw8zfkKAcQdB0=;
+ b=wik6RjzfAbBXFwfGowGL9kQjQKWCUniJroKgaiRRGwqz7eaX7xEkY8vIPU1kw3PppFE0vsoGtkhNZxA/Av8ZSwcRolV3e9Y7DmRPG4yPlvUr4wua534ximyKSiiiKL2EwoJ8aHffsGOkYRIlGPvl6x73Bbd1uOZitI/N0QQLlQcR3vG/axPvp3S8/QJS/4CQcG04xQUcJxiRRsADn7/ZixiifUUWBTNQq8Bg7Inl8z9vmdLGpds8v89gasOL35UA6q/JFo1M/EXDwBnnFSHZjQ3M3bFMuW1lB8cmLXferOXesR9iMp5sJOr4HVjvJQFsIM6T9o7FPldYfFSnxePysA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=altera.com;
+Received: from PH0PR03MB5893.namprd03.prod.outlook.com (2603:10b6:510:32::6)
+ by SN7PR03MB7155.namprd03.prod.outlook.com (2603:10b6:806:359::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 18:56:02 +0000
+Received: from PH0PR03MB5893.namprd03.prod.outlook.com
+ ([fe80::d003:bc08:7968:c605]) by PH0PR03MB5893.namprd03.prod.outlook.com
+ ([fe80::d003:bc08:7968:c605%6]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
+ 18:56:02 +0000
+From: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
+To: Moritz Fischer <mdf@kernel.org>,
+	Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>,
+	linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
+Subject: [PATCH 1/1] fpga: altera-cvp: Limit driver registration to specific device ID
+Date: Thu, 30 Oct 2025 02:53:54 +0800
+Message-Id: <5a309582f52f1a8bb193b1a2fcf7a7d0ad9b3b27.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
+References: <cover.1761722521.git.kuhanh.murugasen.krishnan@altera.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: KL1PR01CA0010.apcprd01.prod.exchangelabs.com
+ (2603:1096:820::22) To PH0PR03MB5893.namprd03.prod.outlook.com
+ (2603:10b6:510:32::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR03MB5893:EE_|SN7PR03MB7155:EE_
+X-MS-Office365-Filtering-Correlation-Id: ead4b587-ec38-4023-eb3e-08de171ccdfd
+X-MS-Exchange-AtpMessageProperties: SA
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?r0i2NGq8jq+CGkAK+NHCZBjR0UmSsl3Sd5+Nx05e/qiGvsBSUDzSmFKYFVSj?=
+ =?us-ascii?Q?NTa9ypxHqKL6u6XA5Pa9zv6AyrcjTCFaVXilNzMxGkjm2m/tVLRqUS2J96ZS?=
+ =?us-ascii?Q?Ymf3DpaBW4KGzZhHLAtMIVz/x4gC4ecWbr9eSfwcuOPoJoDFnj0m+NFu1X1X?=
+ =?us-ascii?Q?pccqxTHINgNGgfqhREVasDPRo/P3MHVCX0t0abBUEA3coPLtwTyM3jXvK1Pt?=
+ =?us-ascii?Q?kiuP+qmgAaYWbldbHTyumvUsgugbTywSW5Lv3kSXrg7lA9RWG7Ckfx6dEOYN?=
+ =?us-ascii?Q?P720nZCeFz5P2TJtiQ4Z2Sn64q+MG1Bb8d3WsqKXP/LmOfkX2Rsfd/Wwg/Jd?=
+ =?us-ascii?Q?v5tXj3GcwnbD4sJW0AxGJcqW8eKIJo8cySHs+NWrzGfVWDzS7lWHinxXdpIq?=
+ =?us-ascii?Q?gaqFU6nGoX2YuslrqgeDuOaLbiQtDCId/ftB98cx8p8/KTHt2xjFWMmt75qv?=
+ =?us-ascii?Q?WkmCZqcyhwSRaS2/9TJs3IIsghoT2HVeWAjccuBPLtMIerqrK0bwtAqnDtSD?=
+ =?us-ascii?Q?A4aP65whR+eP7hayZ4HZnIEazfdulfqC60GAmnk+BEenyB69ACoH6Lu11FZA?=
+ =?us-ascii?Q?3kCD8qn/ymfE7zaRCA/tl/8rP4rmnLu9s/0q7TintmnxB2calBnloxIOE/HE?=
+ =?us-ascii?Q?BRRoYf03Ojo9J74p2SDKCKcoCBgfdJw7MmTi8vawfYDW282Ui1AuqBIEAu2Z?=
+ =?us-ascii?Q?V0GYLrjpwzCpr6tn7btM4fl+/fXBxSwbqa/R1hJJTbpJHkzDnFMHVj9FLrQK?=
+ =?us-ascii?Q?6CeXvw2ToAEIjHvTC8LCf4HkVUGtej9Bgg7EqB1qVgJiFq4DUCG4cK4QkUg8?=
+ =?us-ascii?Q?YpKgLg78BZt86uAtKpl7vmgcCgiqaLdC+F1jiR9YtWiQrRFfcqX8dV5JF552?=
+ =?us-ascii?Q?LfEKV/+7AxkWwRLwW94jDAvgdEEZVyMBSZsXmjt0+TYcpimHe74PhTq/+zhF?=
+ =?us-ascii?Q?lZ5L/Jno57LVsQgPLWbq0HgacdoCmLnSEkP/sl14LLWo4TJaYWqVnTGpPPuU?=
+ =?us-ascii?Q?lRlt40xiicPiikx2P1M4tp1JwBYGPNO83jRLCVCP2UidYEhp2WJF4m8MFg5Q?=
+ =?us-ascii?Q?rLL/oDbHkhGtsMsmn87L/B7hJo9YTv346x188kOCUAjrPKkoxGBLcAbzV54D?=
+ =?us-ascii?Q?vzP64jg9xI6Ru2a6ArKi68fdpZcPo1za9ihJAeXgqrrM9/Tu0NG3iBgoFfz+?=
+ =?us-ascii?Q?KAlFi5HUwc33pbfmM6zXWDbTaupVqP4qcnchFhADkX2pf5ufa0oi14rNcDRW?=
+ =?us-ascii?Q?8ysiY2V1vDX0dn5JKXrkIaXLu2T3U9AybvAjvvSwwv1IZR9mOzmTtu3NnKTR?=
+ =?us-ascii?Q?MjsMeFvJRGfaNt83zvLgPCCW4sBmm8+FjpW0MN7MNGe+lNN8aowhZ2eS/CL7?=
+ =?us-ascii?Q?7wJzBN7tpaP9Y0XeCnzXYtIK4NSpUShb/Q8/usIZqyqLVxEpU6wnNNt0U3P5?=
+ =?us-ascii?Q?wCJ/mvDZxe90MjgJL/HAByMlwYrjoXlZ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR03MB5893.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?x87hIMw5mMChv7kuwINXNYwDKeErmq0QvwTaAELz+joGkgE8NPcjnKIZiZYf?=
+ =?us-ascii?Q?WKjgRM2JZt425XwblFGLBGV8FRW5J/5gVtM3eISNdtPyVYSnXSqC7LOnwsHP?=
+ =?us-ascii?Q?LNaIVW2ytzTh67KRO1qJZAdwRgamfCFSFiQC1y+62XCI98N6O7BBRfURv/9O?=
+ =?us-ascii?Q?ztY+EF9zMihKYkpN2qqmHQalx4NN5zjJ1SKkakXlnvprKUkQLVKVHJGZ19rp?=
+ =?us-ascii?Q?WESwC+prP07NcA+ksVaVpQ8AMBEa3f3qH/V7DModkX8iVZ/TpGAOuZlP6I4R?=
+ =?us-ascii?Q?qiBXiHKlbD0Y/5fAuDM+XkIf+I28Hhz1KvKpw9Tk/3tu7ZFlJl73GJYyKYjN?=
+ =?us-ascii?Q?rKTe0nhaHKvpWPtod6+95wg3pa9CobAxNQwa2txPvYGyXalEk2SdxGNPblPc?=
+ =?us-ascii?Q?H6ISYnFVCQazoV9bagcGWIH7kyjBkpxC/UA3QFFVFH1bKScyBZN7yi2gvduV?=
+ =?us-ascii?Q?F9x0ccM3/kmXLdBFc9wDDihlG1Sq9QcHFp0AbfLKGFpH5ZbhefT5YFJ8S6nl?=
+ =?us-ascii?Q?mSNqPELdzczjRx6UML44QX4BzMkTqk4yNTIYe6s4G2GuDqFZmPUAphIFz3hc?=
+ =?us-ascii?Q?IH2qNDuKizVnVY5gBV5di7gewNbo8ojF3HY/gTaJrYTw+4prSCSJJgyOKBhg?=
+ =?us-ascii?Q?/k3GM8XS4cDGrkeayLjKq4YWL38cVUZFrmpgr40LJoHdlwBOfhAubRH91JSK?=
+ =?us-ascii?Q?cQyfJTtHzcfE41jG6FaiUkzYvKsMsUSkMU4xz8QH2vTmDYNAJ626Gv7ZAvoQ?=
+ =?us-ascii?Q?c2jkopgJ51DnEHSAExWhz8q91JnsixO0I5UshJ7mr5v0FxhPdXnYKFUT32Ee?=
+ =?us-ascii?Q?ImXIxcuyLSss2Eb8d3mWVdDP3784EoV3kuiPz6FAPJxJZrkVp31uF9r+DPHr?=
+ =?us-ascii?Q?PdlJxq/J/DzPfeldcLqfPpaOLvQTbXlmcDxSx2a/BrDERZcmprl5me5l1YG5?=
+ =?us-ascii?Q?eYRmdbluYCIXgEbmbQpwHOdQ1OYGlLic/7HuarQt98wJHOP1L2YRnli1RdHv?=
+ =?us-ascii?Q?E/iS0nqZq8uizgx9jOS0ewMbNrRPzo83GiQ6Fz54TqKkpekSgDthh2FWhxS8?=
+ =?us-ascii?Q?WJeDff4zHlWAjnhvJ9HnqpYMPRE7NRTeyT6IgYNNdvk42ftUO/FwQW3Jbg0Q?=
+ =?us-ascii?Q?vMtC46sxd6zSaO1oVncgafhhAQefltzcwLTLc5mm5zbJkQR9r8qYuGO1pqrY?=
+ =?us-ascii?Q?EOVfH0TUU2Pr6Y41AwtVbztqAGdu6sGqhhQW/Uwe4wThU3EJQCc3ikoaq4PE?=
+ =?us-ascii?Q?LLIVTW8rRll1pTUA6wjdzu8m7QiCO5D+x5IL1TZFZ/vgyKou1aP3l+P2/ohL?=
+ =?us-ascii?Q?8/wkU8iBNGEcpoOpu1JCCI4yeXjTFZICUdPYZsjYzX0A1YYhxaoboWCQ8FaR?=
+ =?us-ascii?Q?3sLBwXUDFQA8MGfD94uFb652H+mBTT3AK/2GHm7K6tj5lim4yuYwqQo8CXyK?=
+ =?us-ascii?Q?0MdzlmOJ9QJTwiLq/y1FSzvTozXFxoAOBihs3IB9FgSw+XcVrvE88vh92/fr?=
+ =?us-ascii?Q?sODFx/DhVvUZWf7gWJdDFCCjRVEJJy1LPGtLRSGBUdFYq3CLO3lorNSPhZUl?=
+ =?us-ascii?Q?rmmivvl9D5idn3rtp9T6xSk2jq5VeaiayNCRgpN/YSfUaaiOOjYr0YAvgtmr?=
+ =?us-ascii?Q?NvHunrjGFznB9zkdN2GOBXw=3D?=
+X-OriginatorOrg: altera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ead4b587-ec38-4023-eb3e-08de171ccdfd
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR03MB5893.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 18:56:02.1113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: fbd72e03-d4a5-4110-adce-614d51f2077a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e50A43v6HUkg4LGsx+FWuPRHcCL8Y1CJ4IUqXf63AfsG/+t8eolcSKDCCxgxmCPxJQpuwAWtf4eaU2ckVQceyONvdiAttdoBl9DmpTHZNMvVsfeggUagVKlO6SZpDDVp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR03MB7155
 
-On Mon, 27 Oct 2025 15:26:02 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
 
-> - Introduce the SMC_RMI_PDEV_SET_PUBKEY helper and the associated struct
-> rmi_public_key_params so the host can hand the device=E2=80=99s public ke=
-y to
-> the RMM.
->=20
-> - Parse the certificate chain cached during IDE setup, extract the final
-> certificate=E2=80=99s public key, and recognise RSA-3072, ECDSA-P256, and
-> ECDSA-P384 keys before calling into the RMM.
->=20
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+The Altera CvP driver previously used PCI_ANY_ID, which caused it to
+bind to all PCIe devices with the Altera vendor ID. This led to
+incorrect driver association when multiple PCIe devices with different
+device IDs were present on the same platform.
 
-Various comments inline.
+Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
+the driver only attaches to the intended device.
 
-Overall this patch set seems to be coming together nicely to me.
+Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
+Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
+---
+ drivers/fpga/altera-cvp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonathan
-
-> diff --git a/drivers/virt/coco/arm-cca-host/rmi-da.c b/drivers/virt/coco/=
-arm-cca-host/rmi-da.c
-> index 644609618a7a..c9780ca64c17 100644
-> --- a/drivers/virt/coco/arm-cca-host/rmi-da.c
-> +++ b/drivers/virt/coco/arm-cca-host/rmi-da.c
-> @@ -8,6 +8,9 @@
->  #include <linux/pci-doe.h>
->  #include <linux/delay.h>
->  #include <asm/rmi_cmds.h>
-> +#include <crypto/internal/rsa.h>
-> +#include <keys/asymmetric-type.h>
-> +#include <keys/x509-parser.h>
-> =20
->  #include "rmi-da.h"
-> =20
-> @@ -361,6 +364,146 @@ static int do_pdev_communicate(struct pci_tsm *tsm,=
- enum rmi_pdev_state target_s
->  	return do_dev_communicate(PDEV_COMMUNICATE, tsm, target_state, RMI_PDEV=
-_ERROR);
->  }
-> =20
-> +static int parse_certificate_chain(struct pci_tsm *tsm)
-> +{
-> +	struct cca_host_pf0_dsc *pf0_dsc;
-> +	unsigned int chain_size;
-> +	unsigned int offset =3D 0;
-> +	u8 *chain_data;
-> +
-> +	pf0_dsc =3D to_cca_pf0_dsc(tsm->pdev);
-> +
-> +	/* If device communication didn't results in certificate caching. */
-> +	if (!pf0_dsc->cert_chain.cache || !pf0_dsc->cert_chain.cache->offset)
-> +		return -EINVAL;
-> +
-> +	chain_size =3D pf0_dsc->cert_chain.cache->offset;
-> +	chain_data =3D pf0_dsc->cert_chain.cache->buf;
-> +
-> +	while (offset < chain_size) {
-> +		ssize_t cert_len =3D
-> +			x509_get_certificate_length(chain_data + offset,
-> +						    chain_size - offset);
-> +		if (cert_len < 0)
-> +			return cert_len;
-> +
-> +		struct x509_certificate *cert __free(x509_free_certificate) =3D
-> +			x509_cert_parse(chain_data + offset, cert_len);
-> +
-> +		if (IS_ERR(cert)) {
-> +			pci_warn(tsm->pdev, "parsing of certificate chain not successful\n");
-> +			return PTR_ERR(cert);
-> +		}
-> +
-> +		/* The key in the last cert in the chain is used */
-> +		if (offset + cert_len =3D=3D chain_size) {
-> +			pf0_dsc->cert_chain.public_key =3D kzalloc(cert->pub->keylen, GFP_KER=
-NEL);
-I'd use a local variable for this + __free(kfree)
-Then assign with no_free_ptr()
-> +			if (!pf0_dsc->cert_chain.public_key)
-> +				return -ENOMEM;
-> +
-> +			if (!strcmp("ecdsa-nist-p256", cert->pub->pkey_algo)) {
-> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_ECDSA_P256;
-> +			} else if (!strcmp("ecdsa-nist-p384", cert->pub->pkey_algo)) {
-> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_ECDSA_P384;
-> +			} else if (!strcmp("rsa", cert->pub->pkey_algo)) {
-> +				pf0_dsc->rmi_signature_algorithm =3D RMI_SIG_RSASSA_3072;
-> +			} else {
-> +				kfree(pf0_dsc->cert_chain.public_key);
-> +				pf0_dsc->cert_chain.public_key =3D NULL;
-Set it only when succeeded (local variable until then).=20
-> +				return -ENXIO;
-> +			}
-> +			memcpy(pf0_dsc->cert_chain.public_key, cert->pub->key, cert->pub->key=
-len);
-> +			pf0_dsc->cert_chain.public_key_size =3D cert->pub->keylen;
-I think at this point we know we are at end of cert chain?  Break would mak=
-e that obvious.
-
-> +		}
-> +
-> +		offset +=3D cert_len;
-> +	}
-> +
-> +	pf0_dsc->cert_chain.valid =3D true;
-> +	return 0;
-> +}
-> +
-> +DEFINE_FREE(free_page, unsigned long, if (_T) free_page(_T))
-
-Fully agree with Jason on this one. If it make sense
-belongs in appropriate header.
-I'm a bit bothered by types though as the parameter is IIRC an unsigned lon=
-g.
-
-Might need some wrappers to deal with casting.  To me feels likely
-to be controversial so pitch it separately from this series.
-
-If you want a define free here create a local helper function tightly
-scoped to the type you use it for below.
-
-Or just wrap up the guts of the code in a helper function and
-unconditionally free it the old fashioned way.
-
-
-> +static int pdev_set_public_key(struct pci_tsm *tsm)
-> +{
-> +	unsigned long expected_key_len;
-> +	struct cca_host_pf0_dsc *pf0_dsc;
-> +	int ret;
-> +
-> +	pf0_dsc =3D to_cca_pf0_dsc(tsm->pdev);
-> +	/* Check that all the necessary information was captured from communica=
-tion */
-> +	if (!pf0_dsc->cert_chain.valid)
-> +		return -EINVAL;
-> +
-> +	struct rmi_public_key_params *key_params __free(free_page) =3D
-> +		(struct rmi_public_key_params *)get_zeroed_page(GFP_KERNEL);
-> +	if (!key_params)
-> +		return -ENOMEM;
-> +
-> +	key_params->rmi_signature_algorithm =3D pf0_dsc->rmi_signature_algorith=
-m;
-> +
-> +	switch (key_params->rmi_signature_algorithm) {
-> +	case RMI_SIG_ECDSA_P384:
-> +	{
-> +		expected_key_len =3D 97;
-That feels like it should be a define somewhere.
-> +
-> +		if (pf0_dsc->cert_chain.public_key_size !=3D expected_key_len)
-> +			return -EINVAL;
-> +
-> +		key_params->public_key_len =3D pf0_dsc->cert_chain.public_key_size;
-> +		memcpy(key_params->public_key,
-> +		       pf0_dsc->cert_chain.public_key,
-> +		       pf0_dsc->cert_chain.public_key_size);
-> +		key_params->metadata_len =3D 0;
-> +		break;
-> +	}
-> +	case RMI_SIG_ECDSA_P256:
-> +	{
-> +		expected_key_len =3D 65;
-Same with this constant.
-
-> +
-> +		if (pf0_dsc->cert_chain.public_key_size !=3D expected_key_len)
-> +			return -EINVAL;
-> +
-> +		key_params->public_key_len =3D pf0_dsc->cert_chain.public_key_size;
-> +		memcpy(key_params->public_key,
-> +		       pf0_dsc->cert_chain.public_key,
-> +		       pf0_dsc->cert_chain.public_key_size);
-> +		key_params->metadata_len =3D 0;
-> +		break;
-> +	}
-> +	case RMI_SIG_RSASSA_3072:
-> +	{
-> +		struct rsa_key rsa_key =3D {0};
-> +
-> +		expected_key_len =3D 385;
-And this one ;)
-> +		int ret_rsa_parse =3D rsa_parse_pub_key(&rsa_key,
-> +						      pf0_dsc->cert_chain.public_key,
-> +						      pf0_dsc->cert_chain.public_key_size);
-Don't mix declarations and code except for cleanup.h stuff.
-
-> +		/* This also checks the key_len */
-> +		if (ret_rsa_parse)
-> +			return ret_rsa_parse;
-> +		/*
-> +		 * exponent is usually 65537 (size =3D 24bits) but in rare cases
-> +		 * the size can be as large as the modulus
-> +		 */
-> +		if (rsa_key.e_sz > expected_key_len)
-> +			return -EINVAL;
-> +
-> +		key_params->public_key_len =3D rsa_key.n_sz;
-> +		key_params->metadata_len =3D rsa_key.e_sz;
-> +		memcpy(key_params->public_key, rsa_key.n, rsa_key.n_sz);
-> +		memcpy(key_params->metadata, rsa_key.e, rsa_key.e_sz);
-> +		break;
-> +	}
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret =3D rmi_pdev_set_pubkey(virt_to_phys(pf0_dsc->rmm_pdev),
-> +				  virt_to_phys(key_params));
-> +	return ret;
-
-return rmi_pdev_set_pubkey();
-
-> +}
-> +
->  void pdev_communicate_work(struct work_struct *work)
->  {
->  	unsigned long state;
-> @@ -410,7 +553,28 @@ static int submit_pdev_comm_work(struct pci_dev *pde=
-v, int target_state)
-> =20
->  int pdev_ide_setup(struct pci_dev *pdev)
->  {
-> -	return submit_pdev_comm_work(pdev, RMI_PDEV_NEEDS_KEY);
-> +	int ret;
-> +
-> +	ret =3D submit_pdev_comm_work(pdev, RMI_PDEV_NEEDS_KEY);
-> +	if (ret)
-> +		return ret;
-> +	/*
-> +	 * we now have certificate chain in dsm->cert_chain. Parse
-
-Wrap at 80 chars. This is a bit short.
-
-> +	 * that and set the pubkey.
-> +	 */
-> +	ret =3D parse_certificate_chain(pdev->tsm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D pdev_set_public_key(pdev->tsm);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D submit_pdev_comm_work(pdev, RMI_PDEV_READY);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-	return submit_pdev_comm_work(...)
-
->  }
-
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 5af0bd33890c..97e9d4d981ad 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ static void altera_cvp_remove(struct pci_dev *pdev);
+ 
+ static struct pci_device_id altera_cvp_id_tbl[] = {
+-	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
++	{ PCI_VDEVICE(ALTERA, 0x00) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
+-- 
+2.25.1
 
 
