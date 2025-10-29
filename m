@@ -1,103 +1,98 @@
-Return-Path: <linux-kernel+bounces-877045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8937C1D0F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:50:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A39DC1D102
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D11407BEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:50:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40314188A023
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118FC35A146;
-	Wed, 29 Oct 2025 19:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F8835A14A;
+	Wed, 29 Oct 2025 19:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IaH0WiB+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTp7dWOY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340363596EB;
-	Wed, 29 Oct 2025 19:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E00719CD03
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 19:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761767425; cv=none; b=lq160BUIh/Od9M8cmFk+KFq0uwQn1lkmNawbLcue/W429MOX4TLm6uIHQcBWW4G3dhDQnu3u9vkfL/zpD5saAnLX4D1pLEb5T0McWsSkqjO58vkB8A/3kZtJk3hrXdf/lhUIwZngybpFqgfZu8+OWhWR+Y6PwYZ6PVsMD9O0+dw=
+	t=1761767675; cv=none; b=alHdOZPtE633famqHuP0NWTUJg8rM7Q0npulhbdslN4jxLU6dxVJ9X96NeUN8VGlVCsfUIzparTexXjc/LzURwfzRY1EKRYHMgXllOxlwK/pXJT2FXUAV01Mwu3znWy/y8bHmRuGFO0UQXtDKGQC343zWMr3+d4PbzmKhDndeA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761767425; c=relaxed/simple;
-	bh=x2OAfwS5H+/pyr4WR+Khtf97dsVmyBOZ4UxVwpJdZjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lgwpfCKlA51ewHVnqTVmsk1UFWfsG1+Zk91lKZN7CTh5/nmU1sx2QpbB/suqQcYvXHopnniD4WVRQ/d4TLjE8jeJlvyk9xwlwY6zuFTNfqMs0QMA5a7N46+dRm47+xwpxNHlDggNjVJmi9iFOS3KCz8/97EQBD9Fe7rKI+G2WN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IaH0WiB+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=ywMRa9td/qLYvz0QLFt/dHlJeUkQz4iWrYlNlCayuSE=; b=IaH0WiB+Bb8bae/n25tIQisGQE
-	EwhH0nUvAY0WF68tV+bqAjeM5vt1+TFM+p9SWhDN7SSKHd71InQaX+spzoIsKsfRnYzLiPymBfv8b
-	G0YUSVRmmHR72tbVjz7S1JCp1h94cR+krcxjkfnjWvoj0qzTCwutfhbayHRtPzVCrp4DBQP6QMP7E
-	/5l7sL8Z4TbLmfGLBzrYSVUcbZopibwGw10l95Xv2hyvw2OljCjZDfVaA7JzI0kxcTG+eF758lStl
-	ZwIQstpTPU88RRMUCb5P0e0hsxC1roRLf9JTHYYZ9gSRvYXs7n8ZIZ62F6HWHDjILexzwXgNL7cbg
-	SLWmox1g==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vECBX-00000002fGY-0vOJ;
-	Wed, 29 Oct 2025 19:50:19 +0000
-Message-ID: <6c273611-e815-4a4a-822d-f6e55cec3810@infradead.org>
-Date: Wed, 29 Oct 2025 12:50:18 -0700
+	s=arc-20240116; t=1761767675; c=relaxed/simple;
+	bh=Q9R5oNlw9Jij7yT3x7DTQ90PV5QkxPmK5VlOiupsNdY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ERkB56oYmME27xxfGWsLHldIn0DVvLw5Z8/TwzmC2nrAru52azkSPF0swy3fboZFCXeqUdvSnhnyK3N8bQc8d9YC7UPjydDADHdqIpFIiImzZty9DEMXoPLmvj4TDZM7mGUSeKaqWmXbjfHFpJ0fMCTB+Xg8dVx8Tq22DL3HzrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTp7dWOY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FE0C4CEF7;
+	Wed, 29 Oct 2025 19:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761767674;
+	bh=Q9R5oNlw9Jij7yT3x7DTQ90PV5QkxPmK5VlOiupsNdY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oTp7dWOYg5dFtx4zwjonZca3Z0BqB3uGM1DTydU4M7n/mSoitt+3diQEkHg6EGscF
+	 zYxu4C6TJlpyFlY+eCWFsw4VlpukMO4+u9qFjn1OYOFk8nlyXgU9I1EUBs7OsWbEcm
+	 ZoRbKiTidAnseUQQjDu6r/rBNp3GbIt3OY0f+P7UGPhejfMKVniVKywnWNXZwh+Pd0
+	 EOd6BnqHIziZk74j+vfVvCeUT1coUVHf9F/Wz1fJdTwTS/WdJ7cIyl1A4NYBE+JjHk
+	 KEVRSUU6IGzb0qFxsx8mePf+2EvefpjwQ4OdOF5OuPeUN6W7Ud5RaCjaTOjb3thYLG
+	 jnEC2+wAq4BXg==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH] objtool: Fix skip_alt_group() for non-alternative STAC/CLAC
+Date: Wed, 29 Oct 2025 12:54:08 -0700
+Message-ID: <3d22415f7b8e06a64e0873b21f48389290eeaa49.1761767616.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm: introduce VM_MAYBE_GUARD and make visible for
- guard regions
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Hildenbrand <david@redhat.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Andrei Vagin <avagin@gmail.com>
-References: <cover.1761756437.git.lorenzo.stoakes@oracle.com>
- <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <7de40603015dee82970f5d37332a6d5af7532063.1761756437.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+If an insn->alt points to a STAC/CLAC instruction, skip_alt_group()
+assumes it's part of an alternative ("alt group") as opposed to some
+other kind of "alt" such as an exception fixup.
 
-On 10/29/25 9:50 AM, Lorenzo Stoakes wrote:
+While that assumption may hold true in the current code base, Linus has
+an out-of-tree patch which breaks that assumption by replacing the
+STAC/CLAC alternatives with raw STAC/CLAC instructions.
 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4c3a7e09a159..a2c79ee43d68 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1478,6 +1478,10 @@ vma_needs_copy(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
->  	if (src_vma->anon_vma)
->  		return true;
->  
-> +	/* Guard regions have momdified page tables that require copying. */
+Make skip_alt_group() more robust by making sure it's actually an alt
+group before continuing.
 
-	                      modified
+Fixes: 2d12c6fb7875 ("objtool: Remove ANNOTATE_IGNORE_ALTERNATIVE from CLAC/STAC")
+Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+Closes: https://lore.kernel.org/CAHk-=wi6goUT36sR8GE47_P-aVrd5g38=VTRHpktWARbyE-0ow@mail.gmail.com
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+---
+ tools/objtool/check.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-> +	if (src_vma->vm_flags & VM_MAYBE_GUARD)
-> +		return true;
-> +
->  	/*
->  	 * Don't copy ptes where a page fault will fill them correctly.  Fork
->  	 * becomes much lighter when there are big shared or private readonly
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 620854fdaaf63..9004fbc067693 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3516,8 +3516,11 @@ static bool skip_alt_group(struct instruction *insn)
+ {
+ 	struct instruction *alt_insn = insn->alts ? insn->alts->insn : NULL;
+ 
++	if (!insn->alt_group)
++		return false;
++
+ 	/* ANNOTATE_IGNORE_ALTERNATIVE */
+-	if (insn->alt_group && insn->alt_group->ignore)
++	if (insn->alt_group->ignore)
+ 		return true;
+ 
+ 	/*
 -- 
-~Randy
+2.51.0
 
 
