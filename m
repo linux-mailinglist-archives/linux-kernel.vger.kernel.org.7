@@ -1,156 +1,215 @@
-Return-Path: <linux-kernel+bounces-876480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C343EC1BBA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08325C1B9E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B402F5E3EB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:09:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 160935E415E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:09:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAE42E0B59;
-	Wed, 29 Oct 2025 15:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E12E8E14;
+	Wed, 29 Oct 2025 15:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CR4ItZ9n"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="f8G+Bnj/"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011061.outbound.protection.outlook.com [52.101.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0D72DE70B
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750536; cv=none; b=dGHKTjBWPROgStCC1zCkbsWRDYjP6QUjBk1fiYqOfOZMpfru3R9zWjmuiQtOprSb14rmvrV2MSTMNFcvaESuqArQqEKFRmN6zubJ72YyxchwgDNPlPYjIrWUmHfPVF6D44558mAZbeIlEAGO16wjTvD2h9mhSFaNwixrg/s/jw4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750536; c=relaxed/simple;
-	bh=pB94C7kPrYSAxlvhyehWFWqV6sR9eKAIcw2W2uEuiRw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=npllONyNnqxLv6tzKzXIYahPJ3aSbcwVIClE7hwXpscingdyjlemIVdBU3mOXi87/29JGszcSa7JdULtdJifLBEiT9vCXicgigC7VuHZJpsJojGmNJuqi7SQxQV2d9jjkPln58hhr9DnS/I1KMfIxi3gfx2OQ8y7dGwLhaBxGRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CR4ItZ9n; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-637e9f9f9fbso13459039a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761750533; x=1762355333; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CWh76PP8SfKKjG0pMeYPtMLj4ZkKRRhoTpYTJJfEHZs=;
-        b=CR4ItZ9nFZ+utiN7AkC7jW5orQBrF1NkzuNeG113Y6WYgA1bqZUXaDL3kjbUbPNmYB
-         GZdNy6i+EboUw87FJAqUXM/ky7yYTBW+/qX1nLHWcp9eIgTca8/O+/8I5+MIrD7umSoc
-         8H1zsFrS2/kwRWt4ZxWnKUjmPxPlZYw+SFAh0Idlh+GRVLEdLMaYqsZQnGT8OMdVpnu5
-         S6O3SnG1YLpnLq14vWJzpzJqMqqLqYDZNwgg1eEfoksWZy+8/1nA2i9YS9huLSNYNJV6
-         nCpfrYN2gmF1uy8R49cA6Hg4xMjd2M7dcDj8P+M5FCz7vgT98dw45uTilfUgdBniY6Jw
-         fGgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761750533; x=1762355333;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CWh76PP8SfKKjG0pMeYPtMLj4ZkKRRhoTpYTJJfEHZs=;
-        b=CKNThifIqpqSx1Ta2KF0eYRmp4IDN3kaBjliYfyRPkMIF3O8eKbiGkJncX1igK2CSC
-         qSFd7NBP8SOh8YwH3rZfhZ4+zN2BTitS6ZjyC2QnHwBNgIFuWu1DpHXajqhOKp6DQbim
-         rr4zGObCTT/UkCUff+q6h/zyDirnri7i0lS6YPq80zwHGK6GMNjyu1CvhF99ZQ3zR9lR
-         1o6D15Hf5koJ4mJq3sTmnfxV6kGIGxXnOGqKWTOt2Lxn7mZNilnXeO/6FlQZV5Fut3+0
-         S9HuxZ8qyAV9S5P4qZ8Xf/LhjZGccNqvptHW8a7XgSTgCYFziU7BqsFLlwcWtfTOG8Ft
-         C6lQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdMPSg6JsOMajb7pj3en6awC8UVMqMCy9HJ+8AYwKS+yP6go67Kru4zni0Ql9qWj7qjGGLg5074ZAwhXc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUARRC5yR/HhBYStQoAyKpdUH6nMesXodbSqk+tyRej41Qj0vt
-	vLaZ4SxGqpq+OktxPNTdG9ELQsc/eiI38RvtQWKx3GC3R97SC5xJ5czPHD8K9m0OZ+LxVY8nOQA
-	tbVC1eAiFkCEtJUc8x9802wrYWTDpr1o=
-X-Gm-Gg: ASbGncsRAnnTtoZWcQUcXpQuFzHPdxBeenAe8SmS6kbzo/QrXB+/0T+AR5CTP96wupZ
-	V04u1J3e76AfCPhjAiSgb/S/bGqIe3HkI+v25aZVqh/gh2yM6PK2vY7b1yalXN8gpL/Zjd7kctW
-	GM8DlPKkJuKfixqAWB8K2bH8Lidj0HWqJLrTQhsayOE4rP3I3RPLYwa4n2yMmfcSgqT9UTvNHRU
-	BD2ht04BB91BQmjEYEUuYFRuakjqJEWvfoCeDfLs7uHiBPc6D5eGRKQ+Qea24TRv9VSsa42ladU
-	WUmAWX2jVQ7y5+ZQrzMSS9wxbg==
-X-Google-Smtp-Source: AGHT+IEXSkBuzSyvc9QTdpw+t/LbyAMbPQDaHOlChqWwbq247x3QM//46PQpilrawaF80E+nqaix/QeMVOudWanVNt8=
-X-Received: by 2002:a05:6402:1ed3:b0:63c:33f8:f05e with SMTP id
- 4fb4d7f45d1cf-64044251d98mr2597431a12.22.1761750532597; Wed, 29 Oct 2025
- 08:08:52 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C078A2E1C7A;
+	Wed, 29 Oct 2025 15:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761750544; cv=fail; b=Jk745XHT3G8ZeM/A/gKo3079mx58oUfawKXywKgiSJw0JjQqPKSBHeZsX0RaWC3Y0fzhhffh1McDxSmvGZEPbN3n7eeRmYDIKwXpzCysd23JtrhS8ggAm6fRx1bYt1kBsaFMEUGbDlTMSGzY7a3759kmFZletNxQw2Ps3uh5pFs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761750544; c=relaxed/simple;
+	bh=TZKtFH+GKz2/KAOePQ8CJlDJT1lTM7mhaT8oS91WyAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=A8HiNIgtkosSwd4K7j+1gFKzVnyV6DoDz7ZkOtXm9iRA7ymtBI6ZihpfoRWKf/5HaH4DB7U0YUUUlyf54IUG6aPHfEmAfPMczKJE2Qi3hQ0gEKtvhN2wOzZL21CWtf6MF7mAXtOJ6HhrVqtJfl6wHRq5pEkv+l5l7ZpY1w5Z3PI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=f8G+Bnj/; arc=fail smtp.client-ip=52.101.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a5KzfjoVai5dZVbrrEmuk7Rzo1PSAelBz57nt+5JWX3wt+WBSZeHmNyIEssgjkLLBENxFSxs9vIK8do77vrA8rtLpB79RMSi0bTJA5JWoYEHlVBetzBdVehUyRVc9IRI71wuUMkHr6DSR1vWIn2lz1KUEDiuoDRjPt3Wu0C7awjugvcru25qGMtQnozpIDZg3PgJiKTfuAlUCVxcfVVHRbrXergwJjsedToiXajUeT43/BLQE6KxlQn7oodTkVFX6PtrRGDl4nKkz4le07/Z1UeZlDeONhTn72P6qHTSNB4znZc3KcDLhTXxuNr/2c4ZJPnhLgBRndlJ5HSEs/TgZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=02Ft7G2kcdSoT2PFNxsHl466m/xqJ/yNmQW+10xJMEE=;
+ b=Ci8rNiKo6BVsBBsp+NwPPPEyd77S56LbXjta20yMM1oFzgQfCJUeXVWf9/gFeYDI05BAQAI238HjEFC5UgEcd5qUFqibV3u/P0RCzoynVnkqfAHTI4AaUKsZJfxZ8mAKuDOvllR9bRUur4LWguke4Y1+mBHwAxfPtyyRxelOT/grg12oh901OYL4FJxSHaPBU1QnIN9Fp5z7aVxqfbPqMNhIhZJOva3153XZiXf8F1AxPTyP0NKnvCrAmY7IOfpq4UvAVw1wmZLcbcQRNy9krhMKllZWt77aLpKwx69UVmJ7jkRf2yC9y0dZ81Br+L0uCbeEZUVa0Gm3vO7Z9rpp9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.195) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=02Ft7G2kcdSoT2PFNxsHl466m/xqJ/yNmQW+10xJMEE=;
+ b=f8G+Bnj/oycyfUBUIzG8a9kLNaIrjYqzFHh/wOGQv6LdxO/0yot06frZipGd77eK0p2aGBZXUl2lK8bLmuhMFJvIHvVOj2+vFpsWHuFAZboDU+8zePOuPJb+TPcXx8OxvkPiUoqmrlgI8CmmwE0ab85qUw38YhZFYzoimSZFD9A=
+Received: from MW4PR04CA0244.namprd04.prod.outlook.com (2603:10b6:303:88::9)
+ by CO6PR10MB5570.namprd10.prod.outlook.com (2603:10b6:303:145::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 15:09:00 +0000
+Received: from SJ5PEPF000001CD.namprd05.prod.outlook.com
+ (2603:10b6:303:88:cafe::ce) by MW4PR04CA0244.outlook.office365.com
+ (2603:10b6:303:88::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9253.19 via Frontend Transport; Wed,
+ 29 Oct 2025 15:08:57 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.195)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.195 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.195; helo=lewvzet201.ext.ti.com; pr=C
+Received: from lewvzet201.ext.ti.com (198.47.23.195) by
+ SJ5PEPF000001CD.mail.protection.outlook.com (10.167.242.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 15:08:57 +0000
+Received: from DLEE207.ent.ti.com (157.170.170.95) by lewvzet201.ext.ti.com
+ (10.4.14.104) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 10:08:43 -0500
+Received: from DLEE204.ent.ti.com (157.170.170.84) by DLEE207.ent.ti.com
+ (157.170.170.95) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 10:08:43 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE204.ent.ti.com
+ (157.170.170.84) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 29 Oct 2025 10:08:43 -0500
+Received: from [10.247.30.235] (lt5cg2132ltw.dhcp.ti.com [10.247.30.235])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59TF8hsx024198;
+	Wed, 29 Oct 2025 10:08:43 -0500
+Message-ID: <cfa3360c-1ad2-4e3b-a67b-259110d194e3@ti.com>
+Date: Wed, 29 Oct 2025 10:08:43 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029135538.658951-1-mjguzik@gmail.com>
-In-Reply-To: <20251029135538.658951-1-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 29 Oct 2025 16:08:40 +0100
-X-Gm-Features: AWmQ_bl2NSRme7C9fCgHqa9CUb0wHphZYvyxaW8JRN8tVXA4dZUYtnKuH3PY_1c
-Message-ID: <CAGudoHF4i7m=aMGhC-8gcOo9m82VyLaawP73Y-8wdwgVqg0Wcg@mail.gmail.com>
-Subject: Re: [WIP RFC PATCH] fs: hide names_cachep behind runtime_const machinery
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] media: chips-media: wave5: Fix conditional in
+ start_streaming
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>, Nas Chung
+	<nas.chung@chipsnmedia.com>, Jackson Lee <jackson.lee@chipsnmedia.com>,
+	"Mauro Carvalho Chehab" <mchehab@kernel.org>, <linux-media@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Darren Etheridge <detheridge@ti.com>
+References: <20251021204618.2441939-1-b-brnich@ti.com>
+ <420ba3c838b7fe2a6f2414d09fe1226c581ca09d.camel@collabora.com>
+Content-Language: en-US
+From: Brandon Brnich <b-brnich@ti.com>
+In-Reply-To: <420ba3c838b7fe2a6f2414d09fe1226c581ca09d.camel@collabora.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CD:EE_|CO6PR10MB5570:EE_
+X-MS-Office365-Filtering-Correlation-Id: 81dcdef3-9517-414a-81e3-08de16fd156d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|34020700016|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZTBJRHgwVTZmZmxDL1NOemRUMXNtWjJncC9ja05JSFlLcXgwampJMWVkU2t4?=
+ =?utf-8?B?b09WWWFFMHpTMmNleU1zVkpJbldlclFwa251VUZxM0srN3ZDaTA4azFzdXBY?=
+ =?utf-8?B?dFNaY1dzUEVLZnZ1Q1F6bkZtOUt5Z01SeTl5WXU1RjRTeTRnaGF6Z3VlU01Z?=
+ =?utf-8?B?SG0yMGlXaWhqRHYvVHZSdUhLREd2dkxQM2VCZktITGNlc2hZYXRObTRDTUdB?=
+ =?utf-8?B?MUIyZzNkcSt0N3ZmbWNDZFhJVHVYWnlnNytuVFNRYysvRDVVN0lKbUEzWXJQ?=
+ =?utf-8?B?SFpNV3dYWVc2ZzUyU2JmSU5zRlpUL3lGSWhhWGhTOGE5S3VLbUlnTnVOL0sy?=
+ =?utf-8?B?ejVsd1Vrc3JmL0IyWHRBZGhtcENDbTFkZUpQNXZaVVJpNFhPRmlYWHgrWWVM?=
+ =?utf-8?B?L09vbjRQcC9sSUF4SjM2cGllNjVxM3JtT0JPTlNzQXVReXduS2d4SzdDcnJ2?=
+ =?utf-8?B?OTlrTUllK3ZjLzFYTUlHUjVHYmJ5RVFwenNsQWN1c3ZETmtYR3dQeU0zNS9T?=
+ =?utf-8?B?NVNueStFamJtaEVFL2ZSaERuRHJ4RmVTRXNnR0gxYjR0aVNwZGdTdU9WNmFN?=
+ =?utf-8?B?MWJaaHNTNzBKbktpSzMxM0pxd092T2NrRWc2YVdmSm4yK2M4ZWZoam5iYWlF?=
+ =?utf-8?B?aUVtY2hDQldwcDVoYzEvSkYwaHIwcTkxNVJVeXk2c2JVTWM2amxTbmhnU0hv?=
+ =?utf-8?B?WGZkWUdicXlzL1dPaHFtYVlFak5lVzRzMjZMZTJPUTlqd0VuR0RQbW1jdjBH?=
+ =?utf-8?B?ZlphY2JMWVRrQkdUYktnSWx3UVVCWU9ZbU9tOXNrbkU1YzdEV1VhVFI2cVpH?=
+ =?utf-8?B?WXMzQS9MYjlKcENSZm9lYUF6TWlQNUFnc01EcW9nRVExcnlucnVVYTFIN3la?=
+ =?utf-8?B?ajlaZURkeTM4N3NaenVWUVJpcnlDbGtuWGtwaTVGWkdvRFlKNXNDY2tFMUtz?=
+ =?utf-8?B?VmRqUm9MWUlkZFlEdzl2V1lWNjdMcjJGTWVKbzFjT1JxcWRKZjBDWWdzUzVz?=
+ =?utf-8?B?bXFORjFqeEVXb3JQa0E4Vkt1Vi93Z2pIVUI4M0UyNEhBbXZjckNaNkYzVkk1?=
+ =?utf-8?B?OERpMVdaQUhKYWxsTFdHc0JZT0UvWWZxZUozTnlpRVFuV3B6Z20vT2VsT1o3?=
+ =?utf-8?B?Y2J6OTQyWkF1K3BvNVFpMjcvaTYzNXZGZVlRdnEzeDB5V1RCVHJNeWpjak96?=
+ =?utf-8?B?eXJpUUFkM2hHVVlaR2s1RkVLVlY0RXZLQWN6VU13QUJCZTMydDZ2S05RU2k2?=
+ =?utf-8?B?ZDExNTNka25oekpWZm5IUlBhRjZtK0hmd29INWZ3NlQ5d1hTaVp3aDM2TTZu?=
+ =?utf-8?B?ditaN05Nay9MQi9RQU5MSWsrYlp5WFl1WE13VVkveHhyRjV0WHhlU1RhMTJa?=
+ =?utf-8?B?ZGgwODBCcndaSHBnRkJud0xpWXc3bzBOeDJEOHdKR29PdVYyZGI2RGNwQlpo?=
+ =?utf-8?B?TUE0amdiUFNsSm5VMDI1dmV1RTEwY2dwdzEvWGREa1ZzQXlLY2F6UGZjVmxx?=
+ =?utf-8?B?aHQzLzVjaDhzRVBlMWpEY3JsR2pMTHJpdHlYb0lDODEzZUx4YURMNS9BUTJ6?=
+ =?utf-8?B?cTdHRzJzY0pjdndOOTRyVDl6dUVmbUg0dXdDY2hHMFZvSkdnVTFVUjd6c3Y1?=
+ =?utf-8?B?bEUzZm0wdHRPR2x3aXNFNDZBSytLQmR5cVJHWDBBYTlSWkhEc0ZyeVZmb3FJ?=
+ =?utf-8?B?YkdCSkZMNm9mYzNhdncwb0N3TUVsYTNaN0hVbUl6RDBSbld3b0krdUpjOHZa?=
+ =?utf-8?B?T1JMZlMyekRtVjJ1a0VQS1NCMFJBWFViSDI4Nk1UOHllYXYzTFNLZ3lTUGZa?=
+ =?utf-8?B?bFU4SUJpUU5XYUNmdFZpaS9RZ1RSWTArcGVkVTZ4VG9rQXduR09NOFBvZ0lo?=
+ =?utf-8?B?bXM0d0tKdFhWeHNML25pdjl1Z2FoZldZb0RXRHRwZ215MEY2aWxFSXc5dnpO?=
+ =?utf-8?B?TmtYZ3lnYXp6UmdQZjgva0NyK1h4c0F6cCs3eXMxMzdUK0ZCRkJISHNIVkV0?=
+ =?utf-8?B?bkd1ZjVnOWZ3RGdYNnUvM2gzT05XelQ5OTZkQ2kwb3hlN0JlSFRCRVJsbEd6?=
+ =?utf-8?B?cGtIR3prR2FLb2pRZG5hVFFIeDNwSkRmTG1JMnFoWkJhSjJZUzBwNFBhT3N3?=
+ =?utf-8?Q?mrRY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.195;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet201.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(34020700016)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:08:57.4551
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81dcdef3-9517-414a-81e3-08de16fd156d
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.195];Helo=[lewvzet201.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CD.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5570
 
-On Wed, Oct 29, 2025 at 2:55=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->
-> All path lookups end up allocating and freeing a buffer. The namei cache
-> is created and at boot time and remains constant, meaning there is no
-> reason to spend a cacheline to load the pointer.
->
-> I verified this boots on x86-64.
->
-> The problem is that when building I get the following:
-> ld: warning: orphan section `runtime_ptr_names_cachep' from `vmlinux.o' b=
-eing placed in section `runtime_ptr_names_cachep'
->
-> I don't know what's up with that yet, but I will sort it out. Before I
-> put any effort into it I need to know if the idea looks fine.
->
+Hi Nicolas,
 
-The good news is that Pedro Falcato stepped in and found a spot I
-failed to add the var to, this clears up the warning.
+On 10/28/2025 11:42 AM, Nicolas Dufresne wrote:
+> Le mardi 21 octobre 2025 à 15:46 -0500, Brandon Brnich a écrit :
+>> When STREAMON(CAP) is called after STREAMON(OUT), the driver was failing to
+>> switch states from VPU_INST_STATE_OPEN to VPU_INST_STATE_INIT_SEQ and
+>> VPU_INST_STATE_PIC_RUN because the capture queue streaming boolean had not
+>> yet been set to true. This led to a hang in the encoder since the state
+>> was stuck in VPU_INST_STATE_OPEN. During the second call to
+>> start_streaming, the sequence initialization and frame buffer allocation
+>> should occur.
+>>
+>> Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+> 
+> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
 
-However, after further testing I found that kernel modules are not
-being patched. I'll be sending a v2 with some more commentary.
+I just saw I received a messaged from the CI bot on an alignment error 
+on my conditional statement below. Would you like me to submit a v3 or 
+will this be fixed up before being pulled to media tree? I can submit a 
+new version today if required.
 
-> ---
->  fs/dcache.c        | 1 +
->  include/linux/fs.h | 5 +++--
->  2 files changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/dcache.c b/fs/dcache.c
-> index 035cccbc9276..786d09798313 100644
-> --- a/fs/dcache.c
-> +++ b/fs/dcache.c
-> @@ -3265,6 +3265,7 @@ void __init vfs_caches_init(void)
->  {
->         names_cachep =3D kmem_cache_create_usercopy("names_cache", PATH_M=
-AX, 0,
->                         SLAB_HWCACHE_ALIGN|SLAB_PANIC, 0, PATH_MAX, NULL)=
-;
-> +       runtime_const_init(ptr, names_cachep);
->
->         dcache_init();
->         inode_init();
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 68c4a59ec8fb..08ea27340309 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2960,8 +2960,9 @@ extern void __init vfs_caches_init(void);
->
->  extern struct kmem_cache *names_cachep;
->
-> -#define __getname()            kmem_cache_alloc(names_cachep, GFP_KERNEL=
-)
-> -#define __putname(name)                kmem_cache_free(names_cachep, (vo=
-id *)(name))
-> +#define __const_names_cachep   runtime_const_ptr(names_cachep)
-> +#define __getname()            kmem_cache_alloc(__const_names_cachep, GF=
-P_KERNEL)
-> +#define __putname(name)                kmem_cache_free(__const_names_cac=
-hep, (void *)(name))
->
->  extern struct super_block *blockdev_superblock;
->  static inline bool sb_is_blkdev_sb(struct super_block *sb)
-> --
-> 2.34.1
->
+Best,
+Brandon
+
+> 
+>> ---
+>>   drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> index 1978551a28fa..0a2eab372913 100644
+>> --- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> +++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
+>> @@ -1367,7 +1367,8 @@ static int wave5_vpu_enc_start_streaming(struct
+>> vb2_queue *q, unsigned int count
+>>   		if (ret)
+>>   			goto return_buffers;
+>>   	}
+>> -	if (inst->state == VPU_INST_STATE_OPEN && m2m_ctx-
+>>> cap_q_ctx.q.streaming) {
+>> +	if (inst->state == VPU_INST_STATE_OPEN && (m2m_ctx-
+>>> cap_q_ctx.q.streaming ||
+>> +		q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)) {
+>>   		ret = initialize_sequence(inst);
+>>   		if (ret) {
+>>   			dev_warn(inst->dev->dev, "Sequence not found: %d\n",
+>> ret);
+
 
