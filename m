@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-876325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3299C1B78D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:58:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E3E9C1B331
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:28:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A2A565A24
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:15:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA5EA1AA49C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8DE265623;
-	Wed, 29 Oct 2025 14:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8495F25A65B;
+	Wed, 29 Oct 2025 14:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P2g8vCBS"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="hMxSONcS"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E58625B687
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:15:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D88254AE1;
+	Wed, 29 Oct 2025 14:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747316; cv=none; b=PY9iFblTECFRuCigEn1NvQCE9kRoONzu07aWR0tC4yPo3FT523tbjslKDkiMIqGpm6H80ZLiQYmW4ncUmArju4WxJ+kwTPysRzL4KTCj6ayPiW6uUi+QsA7H0OJ6DoYPmdcpyGeNZWIugmGrrEXYOLlwSFAZjccoedaV2X+P+AQ=
+	t=1761747332; cv=none; b=VQffQ4xEPlN4HYY8kge84OH3RdqbV6u/Gz0z8Pwuzgyir15z1mkjthz5VbpbbznSWOoGH89Xj6QWPuQa+kTZ4FTKXcNe3otN8Zlc0y+tPlE6QXs4sl/Yq7OQtast5L1RwMDa0X3Kzjk5eoznZW7GqVprIL3TsjxG72LqxJgsOUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747316; c=relaxed/simple;
-	bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MqAqgc/vpCortbcwwEVANzlazREfcbL+2eWSVvf1ReFdSJlbWCi/d3tQYMtwvd0SEFyEN3QT1CcKLeI29/SHATcjlJKMB2KMLAyUQy1bz4wHW6kM2TgCCTeFsABqLImvBLLbZLnxEnwdCU8Ft61kfwKlrf9Pt/6A3qxQca6uaVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P2g8vCBS; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-591c98ebe90so7276217e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761747312; x=1762352112; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
-        b=P2g8vCBSKm9qQSx8QMCRipO+Xunm+j0kPjkxsG64Pa2AOUwbg8kkHaKAGR0ysqs4ZE
-         7nCpNOO4ghqFN+9+aZtZvEolZbEwDWhY72CBEXuKZuzIe0kcLpkrDGivAWWaJt/cjixC
-         ChVGaU/exsl35QMJWjWHqe8BgtmKJTK0NMiFpH2nW91PFrzqGRYdkjTWIq65qchYOGQD
-         hVihrAC+CEAHE/utWhWqNk6lzGVoNW/3hlKFs1oUxQAU+mAzk8o8epDhvTu4zMsPmzNA
-         qrPd4IcYiE8TK7qOQa6pyi5mP84Nx8R5M3toFhZ9450iSivFZQrPlt6lnKZd98d8Zpbo
-         DFSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761747312; x=1762352112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JnGN5D18R/9fVPC4aATiOOBzgu+WBuLqDytyaFyTYec=;
-        b=Be0ZlGJ7Oo2wROoH8NgS/wUQT9wMS3TDeBIvAJdKQbqlIw9jz9afA/qUuLcHsczgGC
-         GQjAlVRs4aWBUFHVQ/XZjg2Sd27wYOf8/W2EK06wwM5I/GbeNqeGMaKGfT0owU5G1fK+
-         LWN1xcettxjUcK3So1/lw948NbsMCbX8t9qjMRXlhMnXO7FxAFvCf2koYcZh+uZaDO4y
-         fu0tHkUQx0ZTMMwBhZnkykU1mJvvUuhvTRjBWWqrd1h9+ysQYC1A+2bve7eGWopLoDzb
-         vUSEasm+KuO8JhlsJsOG+onM7nt8bHioJZzH2ceaLrFsHtEQwoP3Ih1OkZZtVIsBn3cp
-         YKtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhyyYTgJY2CIkISkgRg5+z8oCK+1LXEvmRkij7TqlTyzn4egaJPoJBwIimlSxLcaiVNkMzD5naZbsprss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyudzFEnrZ/7gM10VSZffwWTfr9btbaa9g6rqU59NiRksB8oFJn
-	gBM6+kON5CUs9iCKV2gdQT1ofrCrOHnVXX6PIBk83YIJxpOkLKDIwz/cu3MWDVM27pzXf5Hnrfk
-	dBfETtRnMcOEDljqFGtCix2p+EW3ORkNDNi0x5XpbWQ2QcXV1Whxj
-X-Gm-Gg: ASbGncs1rV5Kq7JhpFD64wyQU+1XNujFRbRISLwrJpgFQ+hHD5P4dAyzxX7AxQpaslJ
-	fu/l26xedur+jQOXdCuOnHZQfEO8xfKPY4Lk0jaG+z341o7JD6scFBuDG1F+4W8WGFn011m1Fkh
-	tp2EKpahTOENJ/SdyDCC95BTINOdW77h8Ycsvyr1Gv5bmVQ7r9EU/LXCue797/tM0frH/HVqQkd
-	hFyF24QyWuZ9gRDpJ9b+iLNoi0F+aGegcME0Htf7LguBSSX7PE7FBJ8ELxPEWsleIXnIWwZKWay
-	PVhzVw==
-X-Google-Smtp-Source: AGHT+IFHbNWWVxA87snhrR4IbvJu5TGV5/GUfJgAIFivqMT+b8PLCXPg6xBSIPiXG/dy8RZjJuiqgOtncZYWj0XE3mk=
-X-Received: by 2002:a05:6512:4027:b0:579:fbe5:447b with SMTP id
- 2adb3069b0e04-59412877a64mr997730e87.25.1761747312519; Wed, 29 Oct 2025
- 07:15:12 -0700 (PDT)
+	s=arc-20240116; t=1761747332; c=relaxed/simple;
+	bh=RZm6bZIS4bNLDUlPnk4g887+82E7lvxrRpfpy6mBLtE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y8PRAas1J5Ah9hjVeTjSTJMp/8vZV7f1j6ea/oMYJRZKF5kaCtoEENgljAPK8dPEghItFef167xarFWo6xi6waIY9wJ06pDCIsez/RTUkJXt3q69yrQV2G0O6dzLk42NTugiaEZPMtvJWKsy35MlezMMC7BqjcHrr3dXqGt94Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=hMxSONcS; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 2CD66A103D;
+	Wed, 29 Oct 2025 15:15:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-type:content-type:date:from:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=mail; bh=S6KdbNwAQ7YpbZD9A84wYipdmyYEdIHycsiERqFOZJc=; b=
+	hMxSONcS++SGDe0QWqHBdwTHBHSJ0/QPvJguHK3Chras0irk42VtLSKpYYMxJXpt
+	BbrEhVf42ipJSHJdtCdc55vm9eyHKPHVo/sWfHviBtGtqJ/rqFeo2/CsSLTd5aHB
+	RlJRdnCik1WOu62Wi0+udkzydUGIQZpXwIq1NWKkUnueBAyvaLN9IeCPZIkU0IUe
+	mP2ofuTmwGC3T9oFwcV+4OS+opkEvntKr+/LS+58WWiJMedZJjKnPTZ25OF2yZSq
+	AKPRoG0L3pXL5JhA5P6B/7yAqiwlaNJeD1ZoMER9ol/0f4Q3XhRG435NCOktKy//
+	xCNwGWUPmWKNrUzJ1VAay1BQIRL5HAWe/DF1n25pElNE5YJyJbg/AtoBpOIowCkx
+	ibLpmoI+RZlHYMyHdBNAytwcONMnSHOOrXDh2X7RQCvWs6ThzBSiLqVaLkWzGO3f
+	3u6a+b4K382OlLzSoNOufJ2SAKHu8Y9Ft7RW5rsZOg1QD/rTjcTzbh8JYF8/ixHB
+	m+/P7ww0NtOI867MoS3wIvHZKmoXqdaWk/kz2H3hiHNbiZ938TiGB8WQoL0XdnP4
+	8i7ksBTgBCxk4t7YJpPw3obPnuBIb1z9q5htPUYDl6V3mnOPpyCJpUI3gK8fj1mL
+	4uWE9jfrfQRWvXma+utowZ0Q5yH+lJyj8JrUtXZ/7EA=
+Date: Wed, 29 Oct 2025 15:15:27 +0100
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 3/4] net: mdio: reset PHY before attempting
+ to access registers in fwnode_mdiobus_register_phy
+Message-ID: <aQIhf3dXOxS4vd2W@debianbuilder>
+References: <cover.1761732347.git.buday.csaba@prolan.hu>
+ <5f8d93021a7aa6eeb4fb67ab27ddc7de9101c59f.1761732347.git.buday.csaba@prolan.hu>
+ <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027123601.77216-1-herve.codina@bootlin.com>
-In-Reply-To: <20251027123601.77216-1-herve.codina@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 29 Oct 2025 15:14:59 +0100
-X-Gm-Features: AWmQ_bnA7g7AcaUJgpDisQ6qYyEHOuq4LuFcqR2x-CFiQFCGVVARLA-FUYgDIHk
-Message-ID: <CACRpkdZMj84AJu1ZgDLin1Ef1JaBRHsevB2auTFvn4h3M66yGw@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] gpio: renesas: Add support for GPIO and related
- interrupts in RZ/N1 SoC
-To: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Hoan Tran <hoan@os.amperecomputing.com>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Saravana Kannan <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, 
-	Phil Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <e61e1c1c-083b-472f-8edd-b16832ca578e@lunn.ch>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761747327;VERSION=8000;MC=1979873367;ID=153868;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155F677362
 
-On Mon, Oct 27, 2025 at 1:36=E2=80=AFPM Herve Codina (Schneider Electric)
-<herve.codina@bootlin.com> wrote:
+On Wed, Oct 29, 2025 at 02:20:14PM +0100, Andrew Lunn wrote:
+> > +/* Hard-reset a PHY before registration */
+> > +static int fwnode_reset_phy(struct mii_bus *bus, u32 addr,
+> > +			    struct fwnode_handle *phy_node)
+> > +{
+> > +	struct mdio_device *tmpdev;
+> > +	int rc;
+> > +
+> > +	tmpdev = mdio_device_create(bus, addr);
+> > +	if (IS_ERR(tmpdev))
+> > +		return PTR_ERR(tmpdev);
+> > +
+> > +	fwnode_handle_get(phy_node);
+> 
+> You add a _get() here. Where is the corresponding _put()?
 
-> This series adds support for GPIO and GPIO IRQ mux available in the
-> RZ/N1 SoCs.
+When mdio_device_free() is called, it eventually invokes
+mdio_device_release(). There is the corresponding _put(), that will
+release the reference. I also verified this with a stack trace.
 
-I think I sent some review tag at some point?
+> 
+> Also, fwnode_handle_get() returns a handle. Why do you throw it away?
+> What is the point of this get?
+>
 
-Anyways, here is another one:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+I copied this initialization stub from of_mdiobus_register_device()
+in of_mdio.c. The same pattern is used there:
 
-Yours,
-Linus Walleij
+	fwnode_handle_get(fwnode);
+	device_set_node(&mdiodev->dev, fwnode);
+
+It is kind of awkward that we need to half-establish a device, just
+to assert the reset, but I could not think of any better solution, that
+does not lead to a large amount of code duplication.
+
+> > +	device_set_node(&tmpdev->dev, phy_node);
+> > +	rc = mdio_device_register_reset(tmpdev);
+> > +	if (rc) {
+> > +		mdio_device_free(tmpdev);
+> > +		return rc;
+> > +	}
+> > +
+> > +	mdio_device_reset(tmpdev, 1);
+> > +	mdio_device_reset(tmpdev, 0);
+> > +
+> > +	mdio_device_unregister_reset(tmpdev);
+> > +	mdio_device_free(tmpdev);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> 	Andrew
+> 
+
+Csaba
+
 
