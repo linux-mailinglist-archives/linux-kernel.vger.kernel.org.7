@@ -1,134 +1,84 @@
-Return-Path: <linux-kernel+bounces-877235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F068C1D845
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:52:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7404FC1D851
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 16A304E3712
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74DE8406918
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663EC26AA94;
-	Wed, 29 Oct 2025 21:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EdWGTwUf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CA22E3B08;
+	Wed, 29 Oct 2025 21:53:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B632299A8F;
-	Wed, 29 Oct 2025 21:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390E62DCF78
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761774727; cv=none; b=gnGOjkc9+RGaN+3k6MQSBwN5SIk8dbXkeN9PJ6tVVv3QVKhOYt0d0jn7I1jsG+CrFGuzJPqoVChAl9DUagkl9EGoxlHGyGexQxBJAyqLvAH5O/1KJi99ixgNs9dhz0APTAVbTyAeACa3xWy3Mat+NYoewvDauJ0zvvv6h/ygS/M=
+	t=1761774784; cv=none; b=D/joTQIeZpiWzRcQrGemHcSaid2qXgchRl7fAJ4srRbTEpdcfVolBIi7t3zKFISpoe6SBBmZx65oGyUyDomv/mG0sWfFK2LCzq4Wl2oc0yH65MRXj0d21vnOL6uxcA4mgvMiFIeKkjtski3TMPIO0/2pCZmnFSD8bQEHdS3TXbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761774727; c=relaxed/simple;
-	bh=FLS8RyiGm0u2wczORyexcBCuRP8pAa4MB0CjK9Bw1pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BetCpgwS6oV4a0IW8wW1moICXci3bUxpvX01oQFsWPJvF0k0TZX+Sf4ZnHmy2wHHvpQmAHZ5Pc26oKk86P29b3sHs1o/7TcQh4YH4L5B4Ioli2jlV5ol93pSxwYzkzLNalD3lW7hFPKKBHEsmbDj7Rp7IeVlTvqw/V4iz3Ocp88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EdWGTwUf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761774720;
-	bh=YTY23PpFudMI3M3HdegKuqvRuIxptco4kHRxtOA/Iow=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EdWGTwUf3shaV/AnBFR3aIToUPJuGTeG9n1ZKJk/+g4yYw+6MVSieZf0ZaGCnkFSm
-	 y4XDMC7CSMNLOBxkQXNeidjcuRk32Gd+I9MUGPPImHvL1TYAmxtTY7+C335rcRH7TD
-	 G5Ni76+7W4RlzJM+6HpIhlUDks4Z5yH48/wEfaEwN85zereu/ZcUOSuviHJcaLdTiZ
-	 wKao9RB3QZcvDhm4SruoY+CSrBffuYrXyXv/3vVfAEMR6qFVATzj6dJEkyy4CEJqky
-	 Y9zx2zyz4OnW98JKZAwc3chP1kkDsk0N0MoFxNFbfw1y28czgqZejNV2hft56JavSK
-	 2IJOEIj8E5QTA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cxgv44c19z4w2B;
-	Thu, 30 Oct 2025 08:52:00 +1100 (AEDT)
-Date: Thu, 30 Oct 2025 08:51:46 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Alex Shi <alexs@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the jc_docs tree
-Message-ID: <20251030085146.37ab6bd4@canb.auug.org.au>
+	s=arc-20240116; t=1761774784; c=relaxed/simple;
+	bh=Z+xHVRWF0/gxljkCTQbxJVwpt2KlRU5mRFICb1g2xk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IGZ+HeaVFTNrtyDflxZ5SqSQU3+YvDdz42109ShIAztTK0PVc8R0rmGzACJ/JKiSEbUePJypmkZ0ymApYDVsDHRYQ2bxnUkWoYvRdy2RFpV58K+CGzLBfma/u766JY4fdPAi0MtZJ5coPl+wqfswKE04KS4RKVCHiUGheamij6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id B43CDBC243;
+	Wed, 29 Oct 2025 21:52:54 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id 8A88A20026;
+	Wed, 29 Oct 2025 21:52:52 +0000 (UTC)
+Date: Wed, 29 Oct 2025 17:53:33 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson
+ <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>
+Subject: Re: [patch V6 19/31] rseq: Provide and use rseq_update_user_cs()
+Message-ID: <20251029175333.399525bb@gandalf.local.home>
+In-Reply-To: <871pmlv2x6.ffs@tglx>
+References: <20251027084220.785525188@linutronix.de>
+	<20251027084307.151465632@linutronix.de>
+	<20251029120405.569f9376@gandalf.local.home>
+	<871pmlv2x6.ffs@tglx>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pcVQcAoYVK/VWzca5yVN6p2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/pcVQcAoYVK/VWzca5yVN6p2
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: bpmc9fgf153he1qx5izuufppj7ycnyzp
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 8A88A20026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19LX/NQ0mlmCaoXcxz2uQJHkCgpEoxXV9s=
+X-HE-Tag: 1761774772-131689
+X-HE-Meta: U2FsdGVkX1/Niq6k+mVkffjz6qKXuMJmrTAZSCQTNUhKM+apDjScmFvkdvnm1ObpuPluZYS3sKsiSkdPHYeLy0NEhp7vgVnVYSyBrSguD2ajjK+6JTrcZN0ehs4QgDhuP+cziOlSp5ymcV1+H2JtmmpbSQHb0fuFTmgiUW7YfR6jwoUOzbRgJBe1W4SUAB/T4U0mD+DZ3qT2RpWuxE/9waBiQL/jnr1fij+9omzSSVDa5vupflQGj0CMZ9elmc8bF2KPwsbTTM0wv2pHwW1B3Zrclr4GY2mwLJTK5TGI4P4HTyL8AjbIhvqsf6KqYkHT
 
-Hi all,
+On Wed, 29 Oct 2025 22:00:37 +0100
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-Commits
+> > Or am I missing something?  
+> 
+> Yes. None of this is compiled at all when CONFIG_RSEQ=n.
+> 
+> When CONFIG_RSEQ=y then the slowpath muck is compiled into kernel/rseq.c
+> because that file defines RSEQ_BUILD_SLOW_PATH.
 
-  564f84128bd2 ("docs/zh_CN: Add translation of rust/testing.rst")
-  6d4a6d623098 ("docs/zh_CN: Add secrets coco Chinese translation")
-  344657696e9a ("docs/zh_CN: Add sd-parameters.rst translation")
-  989a716b1677 ("docs/zh_CN: Add link_power_management_policy.rst translati=
-on")
-  6c07193cb80f ("docs/zh_CN: Add scsi-parameters.rst translation")
-  cfd923323d14 ("docs/zh_CN: Add scsi_eh.rst translation")
-  da6572ec7105 ("docs/zh_CN: Add scsi_mid_low_api.rst translation")
-  16dfba1581b5 ("docs/zh_CN: Add scsi.rst translation")
-  9162cb790b42 ("docs/zh_CN: Add scsi/index.rst translation")
-  fe67964dd6e2 ("docs/zh_CN: Update Rust index translation and add referenc=
-e label")
-  1e108599ebfe ("docs/zh_CN: Add security SCTP Chinese translation")
-  b12bb7728152 ("Docs/zh_CN: Translate timestamping.rst to Simplified Chine=
-se")
-  4d926084ce6d ("docs/zh_CN: Add security lsm-development Chinese translati=
-on")
-  6d624576ca3f ("Docs/zh_CN: fix the format of proofreader")
-  25cf7924b579 ("Docs/zh_CN: align title underline for ubifs.rst")
-  e3f873992cc4 ("Docs/zh_CN: add fixed format for the header of gfs2-glocks=
-.rst")
-  37b1e0d4ab11 ("docs/zh_CN: Add security ipe Chinese translation")
-  ab530c5fca9b ("Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chine=
-se")
-  d3e7609c6e5e ("Docs/zh_CN: Translate skbuff.rst to Simplified Chinese")
-  6d35e61606d0 ("Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chine=
-se")
-  0694113d49b5 ("Docs/zh_CN: Translate inotify.rst to Simplified Chinese")
-  f4121e639fd3 ("Docs/zh_CN: Translate dnotify.rst to Simplified Chinese")
-  250fc3d68a90 ("Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chines=
-e")
-  a502ffe48523 ("Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chine=
-se")
-  46ea6a90b59d ("Docs/zh_CN: Translate gfs2.rst to Simplified Chinese")
-  e0bb4c3524df ("Docs/zh_CN: Translate ubifs-authentication.rst to Simplifi=
-ed Chinese")
-  fe460c3ec8b1 ("Docs/zh_CN: Translate ubifs.rst to Simplified Chinese")
+What I was missing was that the code was in a header file.
 
-are missing a Signed-off-by from their committers.
+I mistook it as being part of rseq.c and not living in
+include/linux/rseq_entry.h :-p
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/pcVQcAoYVK/VWzca5yVN6p2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkCjHIACgkQAVBC80lX
-0GyDgAf9E1T7UmhECxjpyZ4JaTZW9GKiD2fasDteSj5l+uLPxlx9p0uoq1Nejtqj
-TOm4bExwhTzNzE3aAV9nBw4qOGoJ3qsyZ0qIIpJNshUetOaLrzDYyXPDyJBSP2Vv
-duSYyPW2ILKNYhyfOOpfLb3afnY+Lzk85PUVaT3p3L9IwU9hl96p3qoEMAWj/XWZ
-VSWHwBWS0S8Mq6SyFRyN6pj6K07SGByT4lQVNdmyDsIh4pHiajK0SKcuZroPYke3
-X53gu0HSazAJcNpprh5mHCBsYibgZUTFH/6PjMSln7c4+RBV6o0CyOgdEd2Lsf2C
-Phs3eUWOLBJhPUKgFutUTc8HvWBZng==
-=+40m
------END PGP SIGNATURE-----
-
---Sig_/pcVQcAoYVK/VWzca5yVN6p2--
+-- Steve
 
