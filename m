@@ -1,134 +1,170 @@
-Return-Path: <linux-kernel+bounces-876498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB74C1BB10
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:34:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE7BC1BDC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:58:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 640726463BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:20:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F45C1250
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B422F7466;
-	Wed, 29 Oct 2025 15:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4100830C60F;
+	Wed, 29 Oct 2025 15:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="juJXgbCr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="T22IUOzV"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1ED238171;
-	Wed, 29 Oct 2025 15:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E072F6912
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761751231; cv=none; b=lbuzP+YUU2tFVYKSQdZzLAmTKY7+pNiw2A1ydKqNwVGAFd/2/Q0ATUTJt4HK2DPmng5XEH2Z9ZC7KLsY4iso9RdQHHyzCXlnN+uAcZCSnloGD42hX6jl/GKlS6V9NvUpjtEPeO8PEVfZNCUb64Hw9XNbPp5E5FT5cfqVo1ucv6s=
+	t=1761751247; cv=none; b=Z5xXdG9b9inymXsjO5XlIJyIj+fhesB1b2dXssa4+Ly4jj5RmDe5BLufE6DeBTLfj+n0hpuiZD7j96Q2BEIF+g0Wj3FGYKjMclBCTjs/MgJXhVBpCccVkOsZu23O71H1X1SJ5pK8sGPJh4Irg9KrISUF8ioqefaBDZUh1FwPlYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761751231; c=relaxed/simple;
-	bh=7OWp2ScUfhqZU9A50Wt+cYv1ErJkgPklB83W1yD4iF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D7UtVP1sbIRJnqO+gZk1QgftfZEKBrLer8KkEKE9q68RIPFr18R6CloOqQAJ1HrYdYdm02efMIYIE575NlFwLbwuj5CrYINLzGWuNqZLxrv7Ugw6wVzrX4+0I6iHhiC1kKxNggkjv0cZkf13bLFJaAiwQ/kxk/uWEDS/c8SiVCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=juJXgbCr; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761751230; x=1793287230;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=7OWp2ScUfhqZU9A50Wt+cYv1ErJkgPklB83W1yD4iF8=;
-  b=juJXgbCriOtK/ST0MNjcITR6Cp7gpQ0WPmifVaEIZ2FL/r9We8HVDbL1
-   8DW4xtfvemFW7CLcwjwHvb7zy8pnbkAt/Tf+MSdDl7TS0KN4iRB6TgpKP
-   kN6AuIH1zj3lyrqzAN2RGDu2bW8+wG4/1Gpow5PvgPlYzUc9n4MCtABzc
-   wC2nzLKtqvnL1SacDbBCKYXIF2wH9iKIiUK25phkf1GA17m4AfWZBR3k3
-   EHw/qVYHAGxvvh7ZEaJwjDOn2kLfH/8KT48KOC6fhRycA4kuBO0a8yeuR
-   ZPhWjRYePtllDpBuVmKImxUpfv5MCfrTHSH64Bh6BeY2LLTePMu3jylvq
-   Q==;
-X-CSE-ConnectionGUID: E4QTq+vnT1mGe8vtNhhlCw==
-X-CSE-MsgGUID: hs6zWDhRQuiBiczQnBTy1w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11597"; a="64025882"
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="64025882"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:20:30 -0700
-X-CSE-ConnectionGUID: lpbA3I83RZCijO/yTOTvwA==
-X-CSE-MsgGUID: eIGWGTVoQSOrBFIKrbjnuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,264,1754982000"; 
-   d="scan'208";a="189759224"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO ashevche-desk.local) ([10.245.244.248])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 08:20:22 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vE7yF-00000003eP3-38Lg;
-	Wed, 29 Oct 2025 17:20:19 +0200
-Date: Wed, 29 Oct 2025 17:20:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Kees Cook <kees@kernel.org>, Mika Westerberg <westeri@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Alexey Klimov <alexey.klimov@linaro.org>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v3 01/10] string: provide strends()
-Message-ID: <aQIws1zwi96r4bUQ@smile.fi.intel.com>
-References: <20251029-gpio-shared-v3-0-71c568acf47c@linaro.org>
- <20251029-gpio-shared-v3-1-71c568acf47c@linaro.org>
- <aQH9gE_fB119CW3l@smile.fi.intel.com>
- <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
+	s=arc-20240116; t=1761751247; c=relaxed/simple;
+	bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CWMno6Xpo6pwXxPq+2Wz/+0YNtjTAn7LSykLrlQjWaZ40KhNfXKfEXxyrKYl7LqK0blOOu0N9N+9cA1CA6by94mM9zXHNbx/XlG8bIRO9ceqIuACKckyuyFT6zw9cMCH69YOUI1qJ1v/kpt9HleDrzaqc9Hc1DuzfZlcmWcrczo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=T22IUOzV; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1761751242;
+	bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=T22IUOzV/MsCEGMHkrD5VbnbP7/xZR0Rk4JduAqAJb4uU0gEjZFI2KHDMheeadKy0
+	 Gdp9NkeTyt2rl8pGUK+7AkOLJ2Jfbjoo6+WS4/Dw8afsrRkykPM2aDi5ERJvghF5vu
+	 xS8cB3U7TAcDC1gWg2n3zGdCsRmJxb2MjLtDlnPg=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Wed, 29 Oct 2025 16:20:34 +0100
+Subject: [PATCH] LoongArch: ptrace: Use UAPI types in UAPI header
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MdKfXJx-cxNr1uOCkifD6YVE2t5w4hkuYy7jcnidiid2Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Message-Id: <20251029-loongarch-uapi-ptrace-types-v1-1-5c84855a348d@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAMEwAmkC/x3MQQqEMAwAwK9IzgZqocr6FdlDiVEDS1tSV5Ti3
+ y0e5zIFMqtwhrEpoHxIlhgqurYB2nxYGWWuBmus64z94C/GsHqlDf8+CaZdPTHuV+KMhhz1g+u
+ XgQ3UISkvcr779L3vB4uWWa5tAAAA
+X-Change-ID: 20251029-loongarch-uapi-ptrace-types-0c5c6756f7e0
+To: Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761751240; l=2467;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=HsqIx8+IJ0E/PCaCWQFdxj3WXjldedE9WdTaVKu8Mzs=;
+ b=iRGJc3xKWpH8P8tHfaNUxQgjaPLqEMXyIUdYMwkHmnUIDlVkOxJKQd8MbhR2Pb4O9f7J3yvU8
+ qCeHgSmlM/5BoDUlgE1aB0wVgdYcHKtrv01J4B/PlkUphgBZ54+WYqc
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Wed, Oct 29, 2025 at 01:36:55PM +0100, Bartosz Golaszewski wrote:
-> On Wed, Oct 29, 2025 at 12:42 PM Andy Shevchenko
-> <andriy.shevchenko@intel.com> wrote:
-> > On Wed, Oct 29, 2025 at 12:20:37PM +0100, Bartosz Golaszewski wrote:
+The kernel UAPI headers already contain fixed-width integer types,
+there is no need to rely on libc types. There may not be a libc
+available or it may not provide <stdint.h>, like for example on nolibc.
 
-...
+This also aligns the header with the rest of the LoongArch UAPI headers.
 
-> > Can you rather re-use strcmp_suffix() from drivers/of/property.c?
-> 
-> I think that strends() and its boolean return value are a bit more
-> intuitive to use than strcmp_suffix() and its integer return value,
-> the meaning of which you typically have to look-up to figure out. If
-> there are no objections, I'd like to keep it and - when it's upstream
-> - convert property.c to using it instead. Also: the name
-> strcmp_suffix() could use some improvement, seeing how I wasn't able
-> to find it, even though I looked hard across the kernel source, while
-> I easily stumbled upon a similar implementation of strends() already
-> existing in dtc sources.
+Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+I'd like to take this through the nolibc tree, as this currently breaks
+the upcoming nolibc ptrace support.
+---
+ arch/loongarch/include/uapi/asm/ptrace.h | 40 ++++++++++++++------------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
 
-I fine as long as the replacement (deduplication) change is provided.
+diff --git a/arch/loongarch/include/uapi/asm/ptrace.h b/arch/loongarch/include/uapi/asm/ptrace.h
+index aafb3cd9e943..215e0f9e8aa3 100644
+--- a/arch/loongarch/include/uapi/asm/ptrace.h
++++ b/arch/loongarch/include/uapi/asm/ptrace.h
+@@ -10,10 +10,6 @@
+ 
+ #include <linux/types.h>
+ 
+-#ifndef __KERNEL__
+-#include <stdint.h>
+-#endif
+-
+ /*
+  * For PTRACE_{POKE,PEEK}USR. 0 - 31 are GPRs,
+  * 32 is syscall's original ARG0, 33 is PC, 34 is BADVADDR.
+@@ -41,44 +37,44 @@ struct user_pt_regs {
+ } __attribute__((aligned(8)));
+ 
+ struct user_fp_state {
+-	uint64_t fpr[32];
+-	uint64_t fcc;
+-	uint32_t fcsr;
++	__u64 fpr[32];
++	__u64 fcc;
++	__u32 fcsr;
+ };
+ 
+ struct user_lsx_state {
+ 	/* 32 registers, 128 bits width per register. */
+-	uint64_t vregs[32*2];
++	__u64 vregs[32*2];
+ };
+ 
+ struct user_lasx_state {
+ 	/* 32 registers, 256 bits width per register. */
+-	uint64_t vregs[32*4];
++	__u64 vregs[32*4];
+ };
+ 
+ struct user_lbt_state {
+-	uint64_t scr[4];
+-	uint32_t eflags;
+-	uint32_t ftop;
++	__u64 scr[4];
++	__u32 eflags;
++	__u32 ftop;
+ };
+ 
+ struct user_watch_state {
+-	uint64_t dbg_info;
++	__u64 dbg_info;
+ 	struct {
+-		uint64_t    addr;
+-		uint64_t    mask;
+-		uint32_t    ctrl;
+-		uint32_t    pad;
++		__u64    addr;
++		__u64    mask;
++		__u32    ctrl;
++		__u32    pad;
+ 	} dbg_regs[8];
+ };
+ 
+ struct user_watch_state_v2 {
+-	uint64_t dbg_info;
++	__u64 dbg_info;
+ 	struct {
+-		uint64_t    addr;
+-		uint64_t    mask;
+-		uint32_t    ctrl;
+-		uint32_t    pad;
++		__u64    addr;
++		__u64    mask;
++		__u32    ctrl;
++		__u32    pad;
+ 	} dbg_regs[14];
+ };
+ 
 
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251029-loongarch-uapi-ptrace-types-0c5c6756f7e0
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Thomas Weißschuh <linux@weissschuh.net>
 
 
