@@ -1,182 +1,89 @@
-Return-Path: <linux-kernel+bounces-876904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B5DC1CBD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:19:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57700C1CB42
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44FEA621969
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:08:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DC3FC4E14C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060623491F5;
-	Wed, 29 Oct 2025 18:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB79355045;
+	Wed, 29 Oct 2025 18:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CqAQ1zUg"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0pR2af2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2292773CC
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D0F30F804;
+	Wed, 29 Oct 2025 18:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761272; cv=none; b=lqFCpXmxxrqBHaFoZrb6kiHq8aZKqCA1cKDlkSUXYqDKRRe+QTN+6E+zO/mA1GBOkelm+k5rVvEJa56NOy476lY6IlJ8A2IkdxWy4zipOHyLuBxVppnY71+czG13bn7J0B/Jgmy2HWIrTm7y3hjkDp+0HL9Z1/xvjCRyZQ5aCuM=
+	t=1761761434; cv=none; b=Uy4HwYdeSfY4mnjlAbnwHD7Ws2HHeFtJzEDOnjf7wSzwLqr4UMgJG77EuUkYkQaR/juX5Bub4oOSxMuEvN5NwHqrZK+HBlGSZcKzcGvigqzH3YIqytlFLFhKl3///VKuZ6AWEFxesAU36xWoII22gBGHXCyvHg4lXrGK9z/wezM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761272; c=relaxed/simple;
-	bh=UJ2DT1Tiu56DrBbBEh0/iWktyI9wRry2MbdlaBokZTE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QHb8EThReRnaauOAUBkA7vG8uGhgQZmb7ioL+w/zhhOvCSRwcsmW0bvsqAs+iFp7dzUJMhfQb4WerWoKz2t4N625biriOScWWZTg795/etUMJrftmTfQADonXgTw4rIwjKBTPfubH2Swgj+H2I625a1LQsKaDAp/imnP8DosWYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CqAQ1zUg; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475db4ad7e4so547665e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:07:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761761269; x=1762366069; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KNwV3kIKfmFe80QZSUe0lDX9k4qYiLpxE6LgR+ZybE0=;
-        b=CqAQ1zUg817oJVlpv8g7bs+xLpZr/PYk2oyKhaAk4ZnalmPieNUfbH6dKT909FfWuf
-         XX8A1l7w1D6Hat46MfThWR8pNXrwcym/ZwPZ3qUKAFMXkem4q/88Ld+UByPbGq2CDZRc
-         bVE7e8fLorKjRahTDdrwGuXbZXytuz05ppYQPLKc3gYUrh7w2GsUkj2z2VrDa+sS1TkS
-         qbsz7RRcxnaXuJixKqDCy8rLqmI1BF/N664ZHWEbqLz6blZ/B/Os4m7ty/GiJRyyBHRV
-         Pvu8USwttJdSrVXi216QHNyoddQ8ZtJkCMJzjlYMXr69McKB6HcClGN2RSxn2ymsA/zg
-         QK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761761269; x=1762366069;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KNwV3kIKfmFe80QZSUe0lDX9k4qYiLpxE6LgR+ZybE0=;
-        b=JH8WGftUAZ0BnvJP3KtM15nFbXhErcgpz1b44MLo9WqFwJEJaif9Y0ViCjarlUJo0L
-         UnQ4DehIHK/ukJlw5/ZusZsUK1ZzfUaCvKqNQq0t3nLAH1No8GakQpNuywRSITooZAGK
-         7t91m6pZsUAnulRu/9F9TEIqkOhinFmIri6MwsXdTCdGUZ/5zU/gNnlZa3vXoGqI2kD2
-         kO+vcpg07cj4MuSshjaJJJ+dwachHhmYuB+U5/v9AfM0ocPhbJm7AulXgnql0HHEGabp
-         qu1udi/UhOvTCAeXU41KVEK9njC3spvC8TMVT9woAZrqai7g3RRlUZnN4cCwvxvFYkjX
-         M7mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/pD/UcM4eg+Opx2p8Xn+2u2AYg51EQEBAd+Waf6l73ik+LLVq6jQIlgOMR3tnxsjzJaA8JFA3fAhJoLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkEUH9AJu2t4So8hDUQIIGOHsibkk3RVICx9IlUP4VskrffDL5
-	dIsYvgeQOz8MG2QMBcAyhiPBN++Grz5wXuKwM0EECI1o37La8LqOYRKHQEjdUIFftY0=
-X-Gm-Gg: ASbGnct0bxAXhp/GbfH64xDEdtoWBcvZj39q+HzISFQNK7HHlNjMhSXedbm4FHFd70i
-	gtuUAxIuke7pRP73n7CR+x3rbbuLJJMGe/rIL/xErn35CPolnDznafnNsVkq61C49DcwU4WIuXb
-	flwcEmNYhRFJxVM+oEsYW7N4tT7RhpzQ7XCPnBjnC5MFI3+AI9bD/qxILB9i9iDUt2mc1gbIGqA
-	hpz/5oOj5dt7uRp2X9G00zMcCyn3lQ89Up+aQeskC9gFu9GHqAZhkf8N+rJaC8Y0QGtnZX7ewKP
-	oQGZRHKtT070J20olaT2Ni/2MgsKW4jrIZFjaRE6ZX+pirXL/BJmc7mZI/UoIOe+MvI4ANz99OH
-	8ggRralp4JOCr3slIc3/u3DZEQFbQJjNqdeHeW7HnlfBqf8CLu2GLRhIysBAyCyGssFJan7rjnL
-	ZU0IDT2kTtRv+A1MEgrWv4
-X-Google-Smtp-Source: AGHT+IEtMPjVh9Zcm+7C9F/ERY97bz/iXjm8g8W+QKNDx62F94FG9cv5Huxi+liF2AyMpIvvFbv2hA==
-X-Received: by 2002:a05:600c:4707:b0:475:dd04:128a with SMTP id 5b1f17b1804b1-4771e1e10b2mr35660565e9.31.1761761268523;
-        Wed, 29 Oct 2025 11:07:48 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47718427409sm49662015e9.1.2025.10.29.11.07.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 11:07:48 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 29 Oct 2025 19:07:42 +0100
-Subject: [PATCH] i2c: qcom-geni: make sure I2C hub controllers can't use SE
- DMA
+	s=arc-20240116; t=1761761434; c=relaxed/simple;
+	bh=74+OE1xL32AvuQq0dCzthnLOebJGx9aO7I8+OqhTme8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SHci+uf1LdHZI9mIewMNgU0phuzxkuut1oyHSw3TFXSTw3vFsx+AfH8W8eGU8wjceioFt5jHeeniavSEJ5s9n8O2XfLbA5QxmV5AQSMam5pQJqDJ5ZjJsFR+YLxZ9kzBaxGkJ3VxqvFi5w7q6ecI5oQ3MIKYagECvNzE6xeiIF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0pR2af2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC30EC4CEF7;
+	Wed, 29 Oct 2025 18:10:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761761433;
+	bh=74+OE1xL32AvuQq0dCzthnLOebJGx9aO7I8+OqhTme8=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=l0pR2af2+eTNjUNeK/+V70j4UcNIyzTxBB6UzatnxTQxP3m5FLTvcRUwFT7Ctg9Fu
+	 CwWeH1YHUai8aC6GF76VT1dC1l3ZiY1FC7C5dXvcUjivP4xkb7GiCyRRDjRGyVkpEk
+	 4IGn8beCrZuxOoCoQI2zVR8+QvGqQrcM753kMIEwgyEJ12pECqu9QK/r6+JyPrGQhb
+	 U6xGVGE3PVLYoh/SaJHTT+CLU7opohH4jvtoUR0vU5+PNcoZpLF/AEQAMrqzqKjuc3
+	 nRa//LA4UsHIWZFwgx2iprmGnuUZfItHocV5Lse9k+ioEJRj/wXy7LglfgBLdSbMnf
+	 Moieps/F1a+cw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-topic-sm8x50-geni-i2c-hub-no-dma-v1-1-5e264258a5bd@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAO1XAmkC/x3NQQqDMBBG4avIrPtDMhBNe5XSRYyjzsJEkrYI4
- t0buvw2751UpahUenQnFflq1Zwa7K2juIa0CHRqJjbsrOE73nnXiLr5wxkskhTKEetnRMqYtgD
- vLbuhD72LI7XMXmTW4794vq7rB/dzaxxyAAAA
-X-Change-ID: 20251029-topic-sm8x50-geni-i2c-hub-no-dma-8812576a65cb
-To: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>, 
- Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>, 
- Andi Shyti <andi.shyti@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Wolfram Sang <wsa@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
- Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2132;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=UJ2DT1Tiu56DrBbBEh0/iWktyI9wRry2MbdlaBokZTE=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBpAlfz8LKSj8+mAZ1QksgODZDbo1w7yGU4iVg2tYA9
- VBEcFOKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCaQJX8wAKCRB33NvayMhJ0S2wD/
- sFxj0QkeV/duZgx4BgvFB456VI+EtWZMBJ3QVO9ZgwzJOGzQJplBMPxpyNBxWiRt1hSl5e/nOBUmXE
- R/tv8d5Na4+kXHgxezaH2dDB9hBVX8+7mKi6KJtH4KQChVQ5fsEwqPVeO6/dg5DTELvu6mDm+O3OF9
- Kzn2e3FgP2wbPrGCao5up8PR/wRUCP6zAbdYCWgf+D54nNkdZqLW90pRZxk8FGSPIW4AmSOs15Cc2R
- Te996h007PCHLoEEfRf0bAt5lweueUCL/vnRMNIArrJ2noAoclVA7YJ5NyRaJtJ1+p3DDzVAVbCgPT
- QxLDlvYyzc10fmx9aGlhqpRKmmrFjrI4RSO0swEpScsFdOGdnplAWs2lOKxKRhu3V65e5gIu0jNlBW
- keYbmpfQZ+vvPBlPwzL6AK3KDHuAEaRniwekbixKVm62NNXHPwyz3sBPnoNnsfI5qIP31l3I9/3cLR
- m/ywztQaFH3AWrdoSzWJrQkJueG2NgK7JveuZjlM4W0efx0ps8OIMbRnBcCg0k436Yt8tUspx8KZzw
- qVetRqhHG/LSK4XVa5fceQfGqVhLkJ+/8INRV4Mxji7EqSg63no5xELxabQZTg2RHF4edYk1rOSQrZ
- LmS4OPAo0UyyWqA3ZZ1hx2RX6tFe5s7yybh4qXJjkw0WzLOo2OswA6dki/aQ==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 29 Oct 2025 19:10:27 +0100
+Message-Id: <DDV0AYWXTCL5.2QDTJI55Q87CJ@kernel.org>
+Subject: Re: [PATCH 0/8] Device::drvdata() and driver/driver interaction
+ (auxiliary)
+Cc: <rust-for-linux@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+ <bhelgaas@google.com>, <kwilczynski@kernel.org>,
+ <david.m.ertman@intel.com>, <ira.weiny@intel.com>, <leon@kernel.org>,
+ <acourbot@nvidia.com>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <pcolberg@redhat.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20251020223516.241050-1-dakr@kernel.org>
+In-Reply-To: <20251020223516.241050-1-dakr@kernel.org>
 
-The I2C Hub controller is a simpler GENI I2C variant that doesn't
-support DMA at all, add a no_dma flag to make sure it nevers selects
-the SE DMA mode with mappable 32bytes long transfers.
+On Tue Oct 21, 2025 at 12:34 AM CEST, Danilo Krummrich wrote:
 
-Fixes: cacd9643eca7 ("i2c: qcom-geni: add support for I2C Master Hub variant")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/i2c/busses/i2c-qcom-geni.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+Applied to driver-core-testing, thanks!
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 43fdd89b8beb..bfb352b04902 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -97,6 +97,7 @@ struct geni_i2c_dev {
- 	dma_addr_t dma_addr;
- 	struct dma_chan *tx_c;
- 	struct dma_chan *rx_c;
-+	bool no_dma;
- 	bool gpi_mode;
- 	bool abort_done;
- };
-@@ -425,7 +426,7 @@ static int geni_i2c_rx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	size_t len = msg->len;
- 	struct i2c_msg *cur;
- 
--	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
- 	if (dma_buf)
- 		geni_se_select_mode(se, GENI_SE_DMA);
- 	else
-@@ -464,7 +465,7 @@ static int geni_i2c_tx_one_msg(struct geni_i2c_dev *gi2c, struct i2c_msg *msg,
- 	size_t len = msg->len;
- 	struct i2c_msg *cur;
- 
--	dma_buf = i2c_get_dma_safe_msg_buf(msg, 32);
-+	dma_buf = gi2c->no_dma ? NULL : i2c_get_dma_safe_msg_buf(msg, 32);
- 	if (dma_buf)
- 		geni_se_select_mode(se, GENI_SE_DMA);
- 	else
-@@ -880,10 +881,12 @@ static int geni_i2c_probe(struct platform_device *pdev)
- 		goto err_resources;
- 	}
- 
--	if (desc && desc->no_dma_support)
-+	if (desc && desc->no_dma_support) {
- 		fifo_disable = false;
--	else
-+		gi2c->no_dma = true;
-+	} else {
- 		fifo_disable = readl_relaxed(gi2c->se.base + GENI_IF_DISABLE_RO) & FIFO_IF_DISABLE;
-+	}
- 
- 	if (fifo_disable) {
- 		/* FIFO is disabled, so we can only use GPI DMA */
+> Danilo Krummrich (8):
+>   rust: device: narrow the generic of drvdata_obtain()
+>   rust: device: introduce Device::drvdata()
 
----
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-change-id: 20251029-topic-sm8x50-geni-i2c-hub-no-dma-8812576a65cb
+    [ * Remove unnecessary `const _: ()` block,
+      * rename type_id_{store,match}() to {set,match}_type_id(),
+      * assert size_of::<bindings::driver_type>() >=3D size_of::<TypeId>(),
+      * add missing check in case Device::drvdata() is called from probe().
 
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
+      - Danilo ]
 
+>   rust: auxiliary: consider auxiliary devices always have a parent
+>   rust: auxiliary: unregister on parent device unbind
+>   rust: auxiliary: move parent() to impl Device
+>   rust: auxiliary: implement parent() for Device<Bound>
+>   samples: rust: auxiliary: misc cleanup of ParentDriver::connect()
+>   samples: rust: auxiliary: illustrate driver interaction
 
