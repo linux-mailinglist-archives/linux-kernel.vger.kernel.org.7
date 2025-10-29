@@ -1,174 +1,157 @@
-Return-Path: <linux-kernel+bounces-876949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E378C1CD70
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:55:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFB8C1CD56
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7281C1A20936
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:55:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74B1B4E0800
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69439357729;
-	Wed, 29 Oct 2025 18:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE789357A38;
+	Wed, 29 Oct 2025 18:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CWWcT4WC"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NEsbGL2Q"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAB1346A09
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EF32F5478
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761764073; cv=none; b=PoVYxzQg1F8gST4bqYEe7J4MFA3CdU3QOsvGppwAk9q/SqF/wsYNiMFPqxSCGN4WAdNPq+wm1Ie5YAZg/o6TkSyuFbDoXkkHuYQwzd7scXtQb4qnB3LcS0bdCYUUfiTWm5qH8XJiDCTAdmabmbDnNx2dJ2ORmUvnwfeAqHws+OE=
+	t=1761764075; cv=none; b=CqUXgf0qUAkZ74FYmskgQYJWvb1MXNngi8z5S7jK/Sjc/zg1Tt4KUoYWWhgM7r4RBg3NmbGO4ijZdAdu41Wvls2F/+SiGQPonWdugjUBwKWz0Dzo1tgaBrHXa9Oh9Af7h3n4Qbm8RQ1vS5l1ZXF17K6myQjDO9l5j1AYp3mFzNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761764073; c=relaxed/simple;
-	bh=6TVk6+TU0bslC7OmscDtUb31DXjia0pUFqHx+EgaWw0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ay7JYxxxsKFQOGZvrBlpDXr6OyS/iuOzadTxpo8p0+lik3x5bj2xvgyivilYDNGTqYmvSGDcWQamWAD8FUVRRzb9jNKw8EmnwgABMqiIyHVn9dzwCteYXKQMY9DERO+BR4uyUKm5g8uooQZwSe6XFIqKAt748cds4i8PCHXi04I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CWWcT4WC; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1761764056; x=1762368856; i=markus.elfring@web.de;
-	bh=6TVk6+TU0bslC7OmscDtUb31DXjia0pUFqHx+EgaWw0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CWWcT4WCqGSjqrfpeT7eNqjjPT+iIaCv8MoPttAiOPmZYUneALfgC1ZhKxCJCA39
-	 qEOYIe95xwbe6gOqa5veD5SONT7+PeYn+fLsZYzw81FLefHYZXV5KpE2EAdvUgdLE
-	 Z9Wv/WYU++nux21K6C9uip1yI/SE9ohLlWcjv96vpAqO0hhWv8jHVTwtwXyW796zy
-	 kakId+PAmNG99J8slrtpyhy8MR7xGk7O959ZianyjUmk0RK1ftzvrPCyj545chF6Q
-	 4B57EHOpoexYi0qLHCLE3BYOYG45ozwXLoTerr+U2rVGgoqt9JKQxRZJBtTSBDq5Q
-	 2m0eikGRnz+2Fr2x0g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.249]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M2gkf-1vHDa326X9-00BzMZ; Wed, 29
- Oct 2025 19:54:16 +0100
-Message-ID: <80fe1dd3-7541-4629-a540-021603d1f150@web.de>
-Date: Wed, 29 Oct 2025 19:54:14 +0100
+	s=arc-20240116; t=1761764075; c=relaxed/simple;
+	bh=tfrrqiHlm+2CRiFs/ycrLpo5VsMmuPxIYN2ybQlzcdY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kxiXsDlDDdsmguvVqTGOJZ5GTbY8yZ712uYBy2uByDjf5u1gWmhJHODPfBbTeyx+w9CQbIGkaC9TbXuhBStkpIsFKyCGEzws124qac7LNWY7Yh0SKhgHDALDxeEN+Yc4UAWWbVk+sPtF7aHvmuAsHuo2L9cJklQ0J+sBfT0bUVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NEsbGL2Q; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-421851bcb25so100088f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761764072; x=1762368872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=roxFu9ym+QUdO36nnH4tAkn59H/+sYMPT1Nh/9cDSsE=;
+        b=NEsbGL2Q0saxaA4dUzrXfAgbNiTZ0MHxUHGzcCYzwLVwnKTHZJEhfTTxGfy6kFLeDt
+         7JiQ4XcfpgfmB+hYjDbq4Vw0seCjDmG0Wpa8BvON/9mXeBXRZWVe6O2CXJG11ILUUHKw
+         MgKCf/4ibNfabDKoxbnGPYhx92Irv1m8b8Q00gtPtN20nOf3jTrhsYwCQtgZmQdfEYGx
+         4cv7WZjZliCzOXGLQpLvoskM5nX5sk9c/TCqJqAvaH0XXoV6MiXzYJR3S+PzZzeN3xEP
+         SRb2HrbjiBLkS20Z9tY4zAbLoLyEKM+L/rPozjxfZy5qxDlNkBYGfS2XSB0tuoO5MCRl
+         WaFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761764072; x=1762368872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=roxFu9ym+QUdO36nnH4tAkn59H/+sYMPT1Nh/9cDSsE=;
+        b=NHP6x2SeSTMszDBUAxcURwIXXiBq738r9ukHmjVPfbwnPEtvyAq/yAI7zlPZsxaKwd
+         4m2t15PxToTwBJBy0aegRPI0d2nNp7fRM9uV67eh/bsfF6vDuyZnEDZw5YZq66IM6IWf
+         3FBJ47HVCR/xCKrkZR5oxRSNe6N0wjlOU9rNIsdwlk6EjwQCji7Py4k2ar2oyHu67YeQ
+         mrFT+2TzkbT1FSmngvWC9o1NgAmo+XBB2cGuv9c7qqadcR6TgfevFGc7rLKbbfGJhJTL
+         LBE3SBSC6QodfVEthrRCDUhTY3944980Sgp/yYhk56VkB2WijZWP5e7pHBjmhZqxyd/b
+         lGaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXauh6fU85BxwmKhuW2G9aFb/g7ZajW9HUiAGvrw2dieb9Mj12x8v95p/LCJYxVgzaCN1mbSCQ3wPjDfNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/DduCBa1iwbjVpyZEz/sftSaJG8M/vLmPEMF/C/9EOl/MaJet
+	pIuKY9TAsd/gOlo7LFziNKjrmR2bTgSblVw2ExeYl050Fnh1xpNGAAk1s+OVBPFseGEz3CmyqC4
+	Q+TCgg2fCXPCb1KQZtmBZ+WA5ueQfIrQ=
+X-Gm-Gg: ASbGnctET5UHNc+FyLN4kMiT+jWfPiKUtB+xDs3HzFoAiEoJk112SZiKqNSQH1n8hJP
+	Cy9Uwwz+qJvKF4jsGMFnJk188h5ltVAnWCKrhdLciwrwWyNZbpLSzY/pX/AN5j7b2sT+xy0PXk5
+	w9xN2Aqji03x87x/O09A34W+EImQTfKGp7qyPpIG0UTZPI8oNr4YSx28M2HRtwe6W+pS3bWT1xs
+	iBxjwJDAPVuXQb4INZHqGcl+7LZt3sc9WH3weS+1hLm7a36kOu7/y0B30RuEMdSF8nwDFpBYov1
+	h6uGjub4USa1YzI4h4UrycpD9VFj
+X-Google-Smtp-Source: AGHT+IFxIb7bNC1qwVAw0u5ykRrFlzlmlmI3GOlPxtbfY1thoEM0CrkK6Ie988xkFO1EgUD8c/G7q6CFgK/yrR8Vvkk=
+X-Received: by 2002:a05:6000:4028:b0:427:e1bf:13db with SMTP id
+ ffacd0b85a97d-429b4c9dea4mr497598f8f.54.1761764071322; Wed, 29 Oct 2025
+ 11:54:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: accel/amdxdna: Fix incorrect command state for timed out job
-To: Lizhi Hou <lizhi.hou@amd.com>, dri-devel@lists.freedesktop.org,
- Jeffrey Hugo <quic_jhugo@quicinc.com>,
- Maciej Falkowski <maciej.falkowski@linux.intel.com>,
- Oded Gabbay <ogabbay@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>, Max Zhen <max.zhen@amd.com>,
- Sonal Santan <sonal.santan@amd.com>
-References: <20251028175452.2329497-1-lizhi.hou@amd.com>
- <b7a2ac2a-53c3-49ce-862d-eaba86f0b298@web.de>
- <605e6f4f-8e96-dbe4-d43d-16bcac63f94e@amd.com>
- <3dd7e061-8e6f-4d3d-b56c-7005da8197f6@web.de>
- <b2cf67a4-6795-d743-e90b-db10f636db2e@amd.com>
- <6238912a-8733-4b2c-a155-82bb081e6063@web.de>
- <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <e4c8b7be-588d-b0b7-00ca-e60cbde034a6@amd.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
+In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 29 Oct 2025 11:54:20 -0700
+X-Gm-Features: AWmQ_bmBJf_PxnDtsc_z2JtFmdbUNa75aAnfXrHEJ4pN3hlfPLu31Ua4sAtQpOE
+Message-ID: <CAADnVQ+ESBTW-+NOQ55HXLwODFZa+uHWzMpPAq1FfjPP4otH_A@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v6 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+To: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Cc: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Jonathan Lemon <jonathan.lemon@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Alexis Lothore <alexis.lothore@bootlin.com>, Network Development <netdev@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:2jJ5bE0O9iVzpbcsUECZgwCwAbyQsP+8A7UmSGQGoBnn05oItRs
- iwHG16Now69Njlv7dd/ziryrAuPMlPbFgPs6xFLdeN+u2m39QMSP3Jrhf6rm8wv88Dcd8mr
- WKMunMGXLMJxicUck1Z72czOHV8+IPV44Z5APIK07w1hHJoeQyysi7DlfFgO8pcj9oInRSR
- myodbWIV4op6QLvFE8zEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:X+Qh4MomW3Y=;5+698kBI7amT90j/py+w0kcTus5
- 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
 
->> https://elixir.bootlin.com/linux/v6.18-rc3/C/ident/amdxdna_cmd_set_stat=
-e
->=20
-> Sure. amdxdna_cmd_set_state() updates the return code to command buffer.=
- So application which issues the command will be able to get the return co=
-de.
->=20
-> The function return value "ret" is used by mailbox receiving kernel thre=
-ad to deal with the error.
+On Wed, Oct 29, 2025 at 6:52=E2=80=AFAM Bastien Curutchet (eBPF Foundation)
+<bastien.curutchet@bootlin.com> wrote:
+>
+> Hi all,
+>
+> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+> are defined in xksxceiver.c. Since this script is used to test real
+> hardware, the goal here is to leave it as it is, and only integrate the
+> tests that run on veth peers into the test_progs framework.
+>
+> I've looked into what could improve the speed in the CI:
+> - some tests are skipped when run on veth peers in a VM (because they
+>   rely on huge page allocation or HW rings). This skipping logic still
+>   takes some time and can be easily avoided.
+> - the TEARDOWN test is quite long (several seconds on its own) because
+>   it runs the same test 10 times in a row to ensure the teardown process
+>   works properly
+>
+> With theses tests fully skipped in the CI and the veth setup done only
+> once for each mode (DRV / SKB), the execution time is reduced to about 5
+> seconds on my setup.
+> ```
+> $ tools/testing/selftests/bpf/vmtest.sh -d $HOME/ebpf/output-regular/ -- =
+time ./test_progs -t xsk
+> [...]
+> real    0m 5.04s
+> user    0m 0.38s
+> sys     0m 1.61s
 
-I miss a clearer answer for the indicated function call incidence.
+This is fine. I see
+Summary: 2/48 PASSED, 0 SKIPPED, 0 FAILED
 
-Can it be helpful to determine the state value before it would be passed t=
-o a concrete call?
+real    0m8.165s
+user    0m1.795s
+sys     0m4.740s
 
-Regards,
-Markus
+on debug kernel with kasan which is ok.
+
+But it conflicts with itself :(
+
+$ test_progs -j -t xsk
+
+All error logs:
+setup_veth:FAIL:ip link add veth0 numtxqueues 4 numrxqueues 4 type
+veth peer name veth1 numtxqueues 4 numrxqueues 4 unexpected error: 512
+(errno 2)
+test_xsk_drv:FAIL:setup veth unexpected error: -1 (errno 2)
+#664     xsk_drv:FAIL
+Summary: 1/24 PASSED, 0 SKIPPED, 1 FAILED
+
+Pls fix the parallel run and not by adding "_serial", of course.
+
+pw-bot: cr
 
