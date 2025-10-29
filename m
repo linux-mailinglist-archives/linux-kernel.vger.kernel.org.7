@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-876113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25D4C1A9FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:22:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0322C1B1AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:12:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA8CB1A65028
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034D464117A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC7C33B6FE;
-	Wed, 29 Oct 2025 13:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA653446BC;
+	Wed, 29 Oct 2025 13:09:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ey8kSpsi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="acunwll1"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pVFLiyVp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+eNE0K/P"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0042A33F368
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173C533F384
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743351; cv=none; b=Xkl23p0XUys1FYpLsdRUeZlvSd419HSv/enJFrmTbny10n9IsElv4fyu6aPpzrt+hQymwkjbbpK0STpsYoYDwAFOcRD1Z3UYRPsbgUKdZUfEGqCwfFcviTcfm0e9nkVOgY0gfg+dHck3Bn+1mWYWkPXaUOeqaCo+QSXszXSao88=
+	t=1761743353; cv=none; b=KiEuL7NyiMbP5AdlIPFrlIUZV4Nfi9LZGK1Ym5KItpId/2+9QwwP3XJl0k66vSdvhC/LXNhrAxCrP3FkUBHsboUkiEUySe4WrWr4T57taEtVZmzk4BdrfsRzeZ25eoasetSENRd84ibUd9bYTgw78/tm1q8VxdpiaDG9UdGJiOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743351; c=relaxed/simple;
-	bh=DiZ01Gqp4aHjSx6CqIg0HfmaghchtrKTzkUvQvy8JGk=;
+	s=arc-20240116; t=1761743353; c=relaxed/simple;
+	bh=TldL7Db1J/HaEX++FVXGtQ+JtGKYs0HViJN+biox+Ug=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=kj8VxtGi5a5IjYrUGI3e+lyHyLVdSHwMne52sqmoGv26TuCkRRSdu0EtwfgJQuLKJneasc7NVSCJMfnLno5U6T42vI677xgTwyYWt/ZLKuzaeOy8Ze5KuQ9p6+I3DDPKYVZR4bDzdckOBCJoTQLFcds0KE889GlM0NOc2du9wiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ey8kSpsi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=acunwll1; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=Q+UKw3RpInTYV2+Knve+NrRIe7GqLoBS6PxIKdaAz+Do60vDfS7VYKCJ2ymWcWBA4qgtPLKc6AXtjVJG9H/DYDaYuuk0PbliAVsZ80wXOJnvzeVdg+59CmXrjFrZHEfTB95mlznY03lWDk3ZFO1pHIVGVtJd3u7hsoIbUvGnQfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pVFLiyVp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+eNE0K/P; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251029124515.655228863@linutronix.de>
+Message-ID: <20251029124515.717519165@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761743345;
+	s=2020; t=1761743347;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=hYzkxR86oLHC+c7l/D54HB2S4Pb9hocjhqj7Jxo0NFU=;
-	b=Ey8kSpsiPB93tayUDwc0hJFaLUWl/gQkxSFhRfcm4zqWVdZCvHNe009KKuB7jsRFfycB3r
-	EWKEd4Rl/QYuAeH9tBO8F3548y5xlBWm7Q3Tp/eNvoMN159Ok4xpMbArrJKCadGuQOBQ+F
-	rFgkGpcs0JiqGcrQcL8ESQFFpininpxDPqxWnB4KaIDXcqPhIEvRtZYJtUmnO9wk9o4snd
-	XmCISxIHS6TePe1lt6zx/YqBIro5pEHc8PW00g96SRy/UCGDMfdbidpg62C1Ymm9MDHXbO
-	wrkCi7ZW9ZPMAJrF+RwBQEWiBp9basebYOoSRM39KyJdX/EyLL8iVajXEfDk7w==
+	 references:references; bh=mm1ssWuK6jNAmDTlM3vCwu4rXAH21gvCFv0vnZH2Au0=;
+	b=pVFLiyVpPRMHZuhnRvh4w8DFUIG6m6xJzwcVskM/Z7JZ/dnwHtCbC3fB1T0ZIHWcQ8EEIg
+	VM+Rk4WVEXnl/M1X7/IfJPo+GYCbyhmw3jD9WirNlalYo8nFd8t7FkYQfkclcs8qJNW5SL
+	vvTyqYN11WgVEWuIUsFmiDlorZfGp3kU8OjlAy22/4UC0Ggng0vBiR2yPCwFbisGSdXG4+
+	LXgb6RfPX1yeL46fPXmQhmr7Mrs9HAp8xHmk6KrzkKJ95jKc0Qe+uXDC8A9Jqutz3qKLfH
+	edYpW4vsT9lA4xWaQCASaRUtIQozR9YBa4xG6GOCEM3SMiEmukC9zU0zNZr7vA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761743345;
+	s=2020e; t=1761743347;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=hYzkxR86oLHC+c7l/D54HB2S4Pb9hocjhqj7Jxo0NFU=;
-	b=acunwll1LOyldpemOUQnCoEDjtGY587yofytjYw73XQAfVmn3Q3YYvTnjb0SADsK4jw8YB
-	bTay3gaCtoGa6ICg==
+	 references:references; bh=mm1ssWuK6jNAmDTlM3vCwu4rXAH21gvCFv0vnZH2Au0=;
+	b=+eNE0K/PyCA9ZLtGx/nZOiXci8D5S2lShN9xD5EC16+Wn7BrUSTncSVhOpX9B4uHk56MwC
+	UtMTQg4oWfBDSiDw==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -62,8 +62,7 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Tim Chen <tim.c.chen@intel.com>,
  Yury Norov <yury.norov@gmail.com>,
  Shrikanth Hegde <sshegde@linux.ibm.com>
-Subject: [patch V3 06/20] sched/mmcid: Prevent pointless work in
- mm_update_cpus_allowed()
+Subject: [patch V3 07/20] cpumask: Introduce cpumask_weighted_or()
 References: <20251029123717.886619142@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -72,64 +71,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 14:09:05 +0100 (CET)
+Date: Wed, 29 Oct 2025 14:09:07 +0100 (CET)
 
-mm_update_cpus_allowed() is not required to be invoked for affinity changes
-due to migrate_disable() and migrate_enable().
+CID management OR's two cpumasks and then calculates the weight on the
+result. That's inefficient as that has to walk the same stuff twice. As
+this is done with runqueue lock held, there is a real benefit of speeding
+this up. Depending on the system this results in 10-20% less cycles spent
+with runqueue lock held for a 4K cpumask.
 
-migrate_disable() restricts the task temporarily to a CPU on which the task
-was already allowed to run, so nothing changes. migrate_enable() restores
-the actual task affinity mask.
-
-If that mask changed between migrate_disable() and migrate_enable() then
-that change was already accounted for.
-
-Move the invocation to the proper place to avoid that.
+Provide cpumask_weighted_or() and the corresponding bitmap functions which
+return the weight of the OR result right away.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
-V2: Remove the nr_cpu_ids optimization which does not really work - PeterZ
+V3: Rename again - Yury
+V2: Rename and use the BITMAP_WEIGHT() macro - Yury
 ---
- kernel/sched/core.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ include/linux/bitmap.h  |   15 +++++++++++++++
+ include/linux/cpumask.h |   16 ++++++++++++++++
+ lib/bitmap.c            |    6 ++++++
+ 3 files changed, 37 insertions(+)
 
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2684,6 +2684,7 @@ void set_cpus_allowed_common(struct task
- 
- 	cpumask_copy(&p->cpus_mask, ctx->new_mask);
- 	p->nr_cpus_allowed = cpumask_weight(ctx->new_mask);
-+	mm_update_cpus_allowed(p->mm, ctx->new_mask);
- 
- 	/*
- 	 * Swap in a new user_cpus_ptr if SCA_USER flag set
-@@ -2730,7 +2731,6 @@ static void
- 		put_prev_task(rq, p);
- 
- 	p->sched_class->set_cpus_allowed(p, ctx);
--	mm_update_cpus_allowed(p->mm, ctx->new_mask);
- 
- 	if (queued)
- 		enqueue_task(rq, p, ENQUEUE_RESTORE | ENQUEUE_NOCLOCK);
-@@ -10374,12 +10374,17 @@ void call_trace_sched_update_nr_running(
-  */
- static inline void mm_update_cpus_allowed(struct mm_struct *mm, const struct cpumask *affmsk)
- {
--	struct cpumask *mm_allowed = mm_cpus_allowed(mm);
-+	struct cpumask *mm_allowed;
- 
- 	if (!mm)
- 		return;
--	/* The mm_cpus_allowed is the union of each thread allowed CPUs masks. */
-+
-+	/*
-+	 * mm::mm_cid::mm_cpus_allowed is the superset of each threads
-+	 * allowed CPUs mask which means it can only grow.
-+	 */
- 	guard(raw_spinlock)(&mm->mm_cid.lock);
-+	mm_allowed = mm_cpus_allowed(mm);
- 	cpumask_or(mm_allowed, mm_allowed, affmsk);
- 	WRITE_ONCE(mm->mm_cid.nr_cpus_allowed, cpumask_weight(mm_allowed));
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -45,6 +45,7 @@ struct device;
+  *  bitmap_copy(dst, src, nbits)                *dst = *src
+  *  bitmap_and(dst, src1, src2, nbits)          *dst = *src1 & *src2
+  *  bitmap_or(dst, src1, src2, nbits)           *dst = *src1 | *src2
++ *  bitmap_weighted_or(dst, src1, src2, nbits)	*dst = *src1 | *src2. Returns Hamming Weight of dst
+  *  bitmap_xor(dst, src1, src2, nbits)          *dst = *src1 ^ *src2
+  *  bitmap_andnot(dst, src1, src2, nbits)       *dst = *src1 & ~(*src2)
+  *  bitmap_complement(dst, src, nbits)          *dst = ~(*src)
+@@ -165,6 +166,8 @@ bool __bitmap_and(unsigned long *dst, co
+ 		 const unsigned long *bitmap2, unsigned int nbits);
+ void __bitmap_or(unsigned long *dst, const unsigned long *bitmap1,
+ 		 const unsigned long *bitmap2, unsigned int nbits);
++unsigned int __bitmap_weighted_or(unsigned long *dst, const unsigned long *bitmap1,
++				  const unsigned long *bitmap2, unsigned int nbits);
+ void __bitmap_xor(unsigned long *dst, const unsigned long *bitmap1,
+ 		  const unsigned long *bitmap2, unsigned int nbits);
+ bool __bitmap_andnot(unsigned long *dst, const unsigned long *bitmap1,
+@@ -338,6 +341,18 @@ void bitmap_or(unsigned long *dst, const
  }
+ 
+ static __always_inline
++unsigned int bitmap_weighted_or(unsigned long *dst, const unsigned long *src1,
++				const unsigned long *src2, unsigned int nbits)
++{
++	if (small_const_nbits(nbits)) {
++		*dst = *src1 | *src2;
++		return hweight_long(*dst & BITMAP_LAST_WORD_MASK(nbits));
++	} else {
++		return __bitmap_weighted_or(dst, src1, src2, nbits);
++	}
++}
++
++static __always_inline
+ void bitmap_xor(unsigned long *dst, const unsigned long *src1,
+ 		const unsigned long *src2, unsigned int nbits)
+ {
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -729,6 +729,22 @@ void cpumask_or(struct cpumask *dstp, co
+ }
+ 
+ /**
++ * cpumask_weighted_or - *dstp = *src1p | *src2p and return the weight of the result
++ * @dstp: the cpumask result
++ * @src1p: the first input
++ * @src2p: the second input
++ *
++ * Return: The number of bits set in the resulting cpumask @dstp
++ */
++static __always_inline
++unsigned int cpumask_weighted_or(struct cpumask *dstp, const struct cpumask *src1p,
++				 const struct cpumask *src2p)
++{
++	return bitmap_weighted_or(cpumask_bits(dstp), cpumask_bits(src1p),
++				  cpumask_bits(src2p), small_cpumask_bits);
++}
++
++/**
+  * cpumask_xor - *dstp = *src1p ^ *src2p
+  * @dstp: the cpumask result
+  * @src1p: the first input
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -355,6 +355,12 @@ unsigned int __bitmap_weight_andnot(cons
+ }
+ EXPORT_SYMBOL(__bitmap_weight_andnot);
+ 
++unsigned int __bitmap_weighted_or(unsigned long *dst, const unsigned long *bitmap1,
++				  const unsigned long *bitmap2, unsigned int bits)
++{
++	return BITMAP_WEIGHT(({dst[idx] = bitmap1[idx] | bitmap2[idx]; dst[idx]; }), bits);
++}
++
+ void __bitmap_set(unsigned long *map, unsigned int start, int len)
+ {
+ 	unsigned long *p = map + BIT_WORD(start);
 
 
