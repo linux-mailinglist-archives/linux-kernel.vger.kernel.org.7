@@ -1,119 +1,270 @@
-Return-Path: <linux-kernel+bounces-876900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D38FAC1CBAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:16:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E01EBC1CAD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 197CA5847D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:07 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6529C34CD40
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74368302CDE;
-	Wed, 29 Oct 2025 18:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357E02773E5;
+	Wed, 29 Oct 2025 18:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZ0+Sibf"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4q/lDtQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7FE2857C1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702BE246BB9;
+	Wed, 29 Oct 2025 18:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761761164; cv=none; b=HIsz6w984woedFgOTJoGEkkcgT4tSmKq+BBgC7K39SAvWpTDXUr6kd7iFUfgXe6t6pTonQb9SKFwZT56cqoFwjwB4t7LRvlOnFR5+tuzJEt9XeSEeA8J5kIl0wBqS71jbXpsRXY8M845pN7zaBT7cWTGcEItKzeA+TzIj57gpnw=
+	t=1761761247; cv=none; b=Q0om8PvvSSQ+QInh2dDKe4IFDKmGAQu9jOnr9xQMJse08wlOK6OR9AV0cSYpDA4QoZZkxBgI5uu5P9Ok47nglSXM8WT3n4WkIq7iF4B7BfAxzIM5XnLUkk8uQrVeiWQSXbqdDVRQ2Uy94x/N+undkrpJKihekSwXZSKO2KV4vsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761761164; c=relaxed/simple;
-	bh=kplIUKQ4OLgy88xSCJhh6Z2cBiPvKdIuelt/3TESWTQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQ8lnw+GDd+CT/gnjvIgJYhxsl3Kw226Rupk0Px7lXhBWLLeR2yNMwmOEbHTX09QGoRvAEHPvbhneycn9mrGgdAQvVGDcrFU2EjQoGLFaltgqdkk7ZedvQ4U6Xi6mwQz1crCbMsuq66K35oujrc0znR+rkLatZz6HHXmex0GMpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PZ0+Sibf; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so784885e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:06:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761761161; x=1762365961; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=upVtUj4xcxhyMWz4iSku+76WitkTabZ9SQQIiAxfkXw=;
-        b=PZ0+Sibf6HdvgO5hsMUizbneX5PEHYxlbnRohZm0dH1PrWbS2fRdylJN2CWKuJ9TV6
-         34CgfC69CQ84Ii1GuiSTH542YebKHCRbhpQZKxh6mzrilWXxxr8xkXXgMnoz09JxILs8
-         s7L5F8InzzRPHLL55rpau9b0B+qOvRMuVuyvie/BLzdGZte6ft+Zie3PXYft3FgIR2Ix
-         XSNUKpU+SFl0ic4v8CCRUXMBbczlyLYj0FQvAzrThmkkPNXunEkkVuytOD6yZ4Pd0fu3
-         BWJAT7ph2GDz0Xl4fr8For57tnnnoJeGYCckIHqJ+u6xdQuBtpHHLnHDO/W1xV1hvGUo
-         lrQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761761161; x=1762365961;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=upVtUj4xcxhyMWz4iSku+76WitkTabZ9SQQIiAxfkXw=;
-        b=MRM2Lcbd/xqOuCegVbCWDR4gyeyLWXt1G2wPGibyYN71qBtmn7hTcDWLMUez1OGpQS
-         zGia4YQjUXhfG9g6jLarRzo0WWQE2zwHxXsvUIF+yrjaZmHIBHZOO4fRm0YKyog53Vkw
-         SG7vY0Ue0og2CfJtMKnW94ns6IWTQpFThUH2AV8fX9YSHf7QFBqYM/kayjyFTxsi4RGs
-         t6QEMFzpzwipP3G204G/VD06WrtATANhTqIHF3ramch8eAJrtuwoyqVVdGz4YDoZYJTv
-         L6kYzGAw1h7VPryU1jLKzIKa8ndy01JrfDgNQGmoJFUP2MJaGmxiI52ADc+/pNLPTXYt
-         8UxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvU8NSwwjidfjyediM19j6fEn29A/tS1VgvoHUJT3vqJXeAEWpM7yR54kK2wxHtiRV7GgWFmBKipg1hmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ/L48bJVE1t79GhRKaOJ9095mRI1eIMCmMsPMtdbY6g+fvsjd
-	v1Up5M2Ieaw4i/ANFhKRzpj3MwSLTgNSTF9PN0I1OlJCC/mdPrdZE9CD
-X-Gm-Gg: ASbGncsq7KV+Zd5fwf8U7ShvTnlUnPGr8+6byezdH7rcxl2o7lPwjBgkW4oR8wbOwzk
-	RnGoR/9Q2I5OKl0VzFhN5GKvwMfQKha6RgS7JDqjFtWPnldsIggjPeEsQD1/ecYuvuCIPm4u4ap
-	esNY/KpEieINSyWY2cebUK0UqvwgLa8o5ldYPQyrjuHM3YVV4CMBBnLRunje9jWOuBUZ42LtSwY
-	/OKJHM96vJ7JjOwc9N0urJ2kYbUS/F/3AXdtN0RkKVTZcbEJvG89dV/yelR1iEAl727tW5zm4kW
-	d62KaaVPXYd9yXzFpJAHOT7rRZ6mDCV3gGwzuG+QQslLPOhjzbLWCgWk3gjoXrFajGj21tWnqPG
-	bSQ9uPjEjVETnhchO0oSjVLHEJFhfZscl3yH+eHGplupwpu8jwzpY8E1+hNXbdYDMvjBaXDxBVj
-	RhMQIkHOcR4GwTgRVKubtEF11RxTvw
-X-Google-Smtp-Source: AGHT+IHSma8oLj5Qa0sgTTL+xwY1TOAdclau3FGvNloE87sNG47vd222H4EzfvepAYTAqjHp0F+8Bw==
-X-Received: by 2002:a05:600c:a08b:b0:471:95a:60b1 with SMTP id 5b1f17b1804b1-4771e1e2d65mr41964075e9.32.1761761161409;
-        Wed, 29 Oct 2025 11:06:01 -0700 (PDT)
-Received: from Ansuel-XPS. (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e387a14sm58442235e9.3.2025.10.29.11.06.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 11:06:00 -0700 (PDT)
-Message-ID: <69025788.050a0220.36a6a0.16d2@mx.google.com>
-X-Google-Original-Message-ID: <aQJXgyFkZYSNS_Ld@Ansuel-XPS.>
-Date: Wed, 29 Oct 2025 19:05:55 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	linux-kernel@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: Re: [PATCH] scripts: add tracepoint-update to .gitignore
-References: <20251029175720.12998-1-ansuelsmth@gmail.com>
- <20251029140353.58a4d6dd@gandalf.local.home>
+	s=arc-20240116; t=1761761247; c=relaxed/simple;
+	bh=HOvHrd9lTlExQNxMx+bs7lEVd82AgmD5uhqp7QkEUdA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MWHzLEPQXYrDLNeIhc2MEdxt2ZFZa4dxlcgaCSdPGHAb3IgBKmroDl72St6WRb73yuATGmbm9Cm2Gz/c9aLeVjG2jE+RGS5kLC+czthehQ9Ynw+19ZAiuF7mVi4mu6JaZ+CffO/7SlJhtdrVPwFtLmc4sr3Xiza58xHww3kD+BA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4q/lDtQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2D15C4CEF7;
+	Wed, 29 Oct 2025 18:07:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761761246;
+	bh=HOvHrd9lTlExQNxMx+bs7lEVd82AgmD5uhqp7QkEUdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X4q/lDtQpA2b2W99z9QNzL38dlSOCO1t6RvlIzLwq7zlhayOqakk9R0+/0d8tjPPZ
+	 YSmZcay+0TvIe5sLPWqHMXVhMz9cNpcLMNDI0TyB5EmmPPZjzlrWpxmV3LXcB6mKBr
+	 ek4FLQYqJirLYxiMdtCqmE+qcrtrpXza0Sz/O1r8z9zb9ykUK2x4Gm4Ga9pssIbJ/m
+	 1r+fE3IbvooxK8LvD95nlxLT5bidqE346ZtRYrEyy/EqpLaViNsesDZ9dsMFvqCnZ/
+	 cJd3VJTafiD0dJU18sZDBGsQM2URy9M/duSwaqMg0wdlSzREQU8TPgdA5OXgNdv/58
+	 cI4Mphoh1SnHg==
+Date: Wed, 29 Oct 2025 18:07:22 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] dt-bindings: phy: Add documentation for Airoha
+ AN7581 USB PHY
+Message-ID: <20251029-mutual-scotch-7ca52e17da69@spud>
+References: <20251029173713.7670-1-ansuelsmth@gmail.com>
+ <20251029173713.7670-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Z7BQNDIzoaCE66cj"
+Content-Disposition: inline
+In-Reply-To: <20251029173713.7670-3-ansuelsmth@gmail.com>
+
+
+--Z7BQNDIzoaCE66cj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029140353.58a4d6dd@gandalf.local.home>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 02:03:53PM -0400, Steven Rostedt wrote:
-> On Wed, 29 Oct 2025 18:57:18 +0100
-> Christian Marangi <ansuelsmth@gmail.com> wrote:
-> 
-> > New tracepoint-update tool is not ignored from git when built.
-> > 
-> > Add it to scripts .gitignore to prevent including files in commits by
-> > mistake (for use that have the bad habits of using git add .).
-> 
-> Bartosz beat you to it:
-> 
->   https://lore.kernel.org/all/20251029120709.24669-1-brgl@bgdev.pl/
-> 
-> I already applied the patch and pushed it to my for-next branch. It will
-> likely be in linux-next by tomorrow.
-> 
-> -- Steve
+On Wed, Oct 29, 2025 at 06:37:10PM +0100, Christian Marangi wrote:
+> Add documentation for Airoha AN7581 USB PHY that describe the USB PHY
+> for the USB controller.
+>=20
+> Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
+> always supported. The USB 3.0 mode is optional and depends on the Serdes
+> mode currently configured on the system for the relevant USB port.
+>=20
+> The first USB port on the SoC can be both used for USB 3.0 operation or
+> Ethernet (HSGMII).
+> The second USB port on the SoC can be both used for USB 3.0 operation or
+> for an additional PCIe line.
+>=20
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>=20
+> For DT maintainers, in v2 there were some comments, hope the new
+> description and names of the property better clarify the usage and
+> why they are needed.
+>=20
+>  .../bindings/phy/airoha,an7581-usb-phy.yaml   | 76 +++++++++++++++++++
+>  MAINTAINERS                                   |  7 ++
+>  .../dt-bindings/phy/airoha,an7581-usb-phy.h   | 11 +++
+>  3 files changed, 94 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/airoha,an7581-u=
+sb-phy.yaml
+>  create mode 100644 include/dt-bindings/phy/airoha,an7581-usb-phy.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.=
+yaml b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+> new file mode 100644
+> index 000000000000..5106685c124d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/airoha,an7581-usb-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN7581 SoC USB PHY
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: >
+> +  The Airoha AN7581 SoC USB PHY describes the USB PHY for the USB contro=
+ller.
+> +
+> +  Airoha AN7581 SoC support a maximum of 2 USB port. The USB 2.0 mode is
+> +  always supported. The USB 3.0 mode is optional and depends on the Serd=
+es
+> +  mode currently configured on the system for the relevant USB port.
+> +
+> +  The first USB port on the SoC can be both used for USB 3.0 operation or
+> +  Ethernet (HSGMII).
+> +  The second USB port on the SoC can be both used for USB 3.0 operation =
+or
+> +  for an additional PCIe line.
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,an7581-usb-phy
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  airoha,usb2-monitor-clk-sel:
+> +    description: Describe what oscillator across the available 4
+> +      should be selected for USB 2.0 Slew Rate calibration.
 
-Ah! Well was too slow :D
+Why's this being set in dt? What actually determines what oscillator
+should be used? Do they have different performance characteristics?
+How is someone meant to know which one to use?
 
--- 
-	Ansuel
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 1, 2, 3]
+> +
+> +  airoha,usb3-serdes:
+> +    description: Describe what Serdes line is attached to the USB 3.0 po=
+rt.
+> +      Can be either Serdes USB1 or Serdes USB2.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [2, 3]
+
+This is confusing. Why 2 and 3 for usb1 and usb2? What even is the
+mapping? Is it 2:1/3:2 or 2:2/3:1?
+
+> +
+> +  airoha,scu:
+> +    description: Phandle to the SCU syscon to configure the Serdes line.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  '#phy-cells':
+> +    description: Describe if the referred PHY is the USB 2.0 PHY or USB =
+3.0 PHY.
+> +    const: 1
+
+Which is which here?
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - airoha,usb2-monitor-clk-sel
+> +  - airoha,usb3-serdes
+> +  - airoha,scu
+> +  - '#phy-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/phy/airoha,an7581-usb-phy.h>
+> +    #include <dt-bindings/soc/airoha,scu-ssr.h>
+> +
+> +    phy@1fac0000 {
+> +        compatible =3D "airoha,an7581-usb-phy";
+> +        reg =3D <0x1fac0000 0x10000>;
+> +
+> +        airoha,usb2-monitor-clk-sel =3D <AIROHA_USB2_MONCLK_SEL1>;
+> +        airoha,usb3-serdes =3D <AIROHA_SCU_SERDES_USB1>;
+> +        airoha,scu =3D <&scu>;
+> +
+> +        #phy-cells =3D <1>;
+> +    };
+> +
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8085fdca7bcd..af23c590bbc6 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -763,6 +763,13 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/spi/airoha,en7581-snand.yaml
+>  F:	drivers/spi/spi-airoha-snfi.c
+> =20
+> +AIROHA USB PHY DRIVER
+> +M:	Christian Marangi <ansuelsmth@gmail.com>
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/phy/airoha,an7581-usb-phy.yaml
+> +F:	include/dt-bindings/phy/airoha,an7581-usb-phy.h
+> +
+>  AIRSPY MEDIA DRIVER
+>  L:	linux-media@vger.kernel.org
+>  S:	Orphan
+> diff --git a/include/dt-bindings/phy/airoha,an7581-usb-phy.h b/include/dt=
+-bindings/phy/airoha,an7581-usb-phy.h
+> new file mode 100644
+> index 000000000000..efbb0ae75e3a
+> --- /dev/null
+> +++ b/include/dt-bindings/phy/airoha,an7581-usb-phy.h
+> @@ -0,0 +1,11 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +
+> +#ifndef _DT_BINDINGS_AIROHA_AN7581_USB_PHY_H_
+> +#define _DT_BINDINGS_AIROHA_AN7581_USB_PHY_H_
+> +
+> +#define AIROHA_USB2_MONCLK_SEL0                 0
+> +#define AIROHA_USB2_MONCLK_SEL1                 1
+> +#define AIROHA_USB2_MONCLK_SEL2                 2
+> +#define AIROHA_USB2_MONCLK_SEL3                 3
+
+These definitions seem completely pointless. The property is called
+"airoha,usb2-monitor-clk-sel" so any use will look like
+"airoha,usb2-monitor-clk-sel =3D <3>;"
+That's more informative than the define is, since it doesn't even
+truncate "monitor". I'd just delete this header entirely and use the
+number. If you want the define in the driver to avoid magic numbers,
+just define it in the driver.
+
+pw-bot: changes-requested
+
+Cheers,
+Conor.
+
+> +
+> +#endif
+> --=20
+> 2.51.0
+>=20
+
+--Z7BQNDIzoaCE66cj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJX2gAKCRB4tDGHoIJi
+0jsDAQDITrn7gsppDeHnAxbwqv7YYEnEDsZJ/nPYsQk3xGv+mwEAi/4/ynU5ENSf
+0DpmF4S9GFe864MRVZI5RN5s6C21pQQ=
+=kyYV
+-----END PGP SIGNATURE-----
+
+--Z7BQNDIzoaCE66cj--
 
