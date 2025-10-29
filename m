@@ -1,174 +1,193 @@
-Return-Path: <linux-kernel+bounces-876340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BD2C1BA64
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:28:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A13C1BA9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:30:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792C4583AB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:25:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA057624069
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976AC2857C1;
-	Wed, 29 Oct 2025 14:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4629B2BD001;
+	Wed, 29 Oct 2025 14:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wXnpmLP0"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyzeamCx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6130E27AC31
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87EAE279DAD;
+	Wed, 29 Oct 2025 14:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761747911; cv=none; b=gcSab7yOEyu/rCZ4bS9IleI6YNx3DEHEtqa5mmECMmWR6Ek4oy4m0cTrPMfQw7rj9rEBn27dP3JbK5Ts8GR2IF82NwoS2FnarGWVyVOP3lyfoChYKMi7KwvXojHpkPO5dJwD812YQSbIsDnwqZGPaC/jwrzVRXBJM5qpUc/Za4w=
+	t=1761747957; cv=none; b=tCGMkbH0V0IzXg8+zcI+mHjnpq8xeqGpJ98gAiCPd5hYKIW09Mf20hzyUKHFLOSZoIdSeiiEdXuvBz3GyuBjdSLBs4xRpxXWK0S4N9PLbalSOkMzTMutdeP/VFGdUPAbqaJWWzqM9lOSdwcdqx+W52VfaUa6ESQ3/S+dN/lnftk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761747911; c=relaxed/simple;
-	bh=EqIuTc40Ga8aNytkZYOXWNdARKNEeSz0SVU+6y/6Ap4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cbaR5fjb+NHvI1ltHCZ6Ttp1X1rJn2uldN5P49dL11Qs5PZZcwFbELH2nxc+Lu0pBoAzQC/8h2xXY6gfNGuNPGyr39hDQ2Ppjmyqfn8hCrBzFmpCH0WWFk3zUmpzkxADxO8rbsQnJmmrCYHEWxXa7qPuMooSwQa2jQdyGdjXs8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wXnpmLP0; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 29 Oct 2025 14:24:34 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761747896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=voX1IkfxOsRbEdnFfs0CHPgg1gOl+sXcGlirOmKQbR4=;
-	b=wXnpmLP0HDEQyb/8xevKV/G/apWSCxt94HkKwhsZMljCznz/fG3j+SPLlFa2nDBo6S3+VI
-	iMZYwDTiSFZxQykMbZW263Iy16EtqzYhzQS+zgFrBLzvgHmruHCFqlZ8iIQ11qfgsXbIWX
-	ge3/b08bk33L8FmHe2Tb7NBM3izn5Y4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Jim Mattson <jmattson@google.com>, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/23] Extend test coverage for nested SVM
-Message-ID: <6upf6dputsb3w56my62xvgdxbk27qlurn5egtkejc2m6mmcxpr@qevtkb6o32zh>
-References: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1761747957; c=relaxed/simple;
+	bh=/+m6iaLC0y8uWmkcCY6x46zjKoMEvP59Em2DnUNlUQQ=;
+	h=Content-Type:MIME-Version:Message-Id:In-Reply-To:References:
+	 Subject:From:To:Cc:Date; b=diA7VjPN++5vTwB68fQ9EfJuG5a5cuUzKZqkwu1/XX9TQ0y1PPnp+UKVIHa2TuofyXycddgTOwk02NA9RI+s64kHhU1wFppl6KqAyCj1mfgJFbmbdSc/fyj310GEVMtq7yERC07f9hrxIfQCj4IKHKFzbpt6tPVAbX1Obp/kwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyzeamCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5AEAC4CEF8;
+	Wed, 29 Oct 2025 14:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761747957;
+	bh=/+m6iaLC0y8uWmkcCY6x46zjKoMEvP59Em2DnUNlUQQ=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+	b=tyzeamCxzKQNjRoRx/GdN3bKl+3qM4dQEvmBtQC9RnsBFsXj+OmD29nwII9XnqHHS
+	 yp4CVGDsaxCKMYQbhRcdjjzWfmzs2aszsf/DSeQUoqIqftsQ6LCGdQiVwcbpx4p6Vh
+	 +4iu2EorZg668PD06pWjAmISJoPmG73YPbc4lZNhmkobdgjdii5pYAfGeENbiyNBsj
+	 c8JyOVD78DBgAf0RYVCyuAvRH8zoUWsUfcNLZuT8sbNH4WGqNaHT9xHbSKCGobzECi
+	 mor1Fg+QN/K51Q4Ki0r6X546M5fM12Oqo9VClqs08BWs6KaaYaBKHDOTcqIHI9V70S
+	 1eUYT3bn41r7w==
+Content-Type: multipart/mixed; boundary="===============3524767868395641498=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251021074736.1324328-1-yosry.ahmed@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+Message-Id: <5c1c4101d42cc486366273556492d9be559f521d16629bbcd6b3adc6a4b746f0@mail.kernel.org>
+In-Reply-To: <20251029-xsk-v6-11-5a63a64dff98@bootlin.com>
+References: <20251029-xsk-v6-11-5a63a64dff98@bootlin.com>
+Subject: Re: [PATCH bpf-next v6 11/15] selftests/bpf: test_xsk: Don't exit immediately when workers fail
+From: bot+bpf-ci@kernel.org
+To: bastien.curutchet@bootlin.com,bjorn@kernel.org,magnus.karlsson@intel.com,maciej.fijalkowski@intel.com,jonathan.lemon@gmail.com,ast@kernel.org,daniel@iogearbox.net,andrii@kernel.org,martin.lau@linux.dev,eddyz87@gmail.com,song@kernel.org,yonghong.song@linux.dev,john.fastabend@gmail.com,kpsingh@kernel.org,sdf@fomichev.me,haoluo@google.com,jolsa@kernel.org,mykolal@fb.com,shuah@kernel.org,davem@davemloft.net,kuba@kernel.org,hawk@kernel.org
+Cc: thomas.petazzoni@bootlin.com,alexis.lothore@bootlin.com,netdev@vger.kernel.org,bpf@vger.kernel.org,linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org,bastien.curutchet@bootlin.com,ast@kernel.org,andrii@kernel.org,daniel@iogearbox.net,martin.lau@kernel.org,eddyz87@gmail.com,yonghong.song@linux.dev,clm@meta.com,ihor.solodrai@linux.dev
+Date: Wed, 29 Oct 2025 14:25:54 +0000 (UTC)
 
-On Tue, Oct 21, 2025 at 07:47:13AM +0000, Yosry Ahmed wrote:
-> There are multiple selftests exercising nested VMX that are not specific
-> to VMX (at least not anymore). Extend their coverage to nested SVM.
-> 
-> This version is significantly different (and longer) than v1 [1], mainly
-> due to the change of direction to reuse __virt_pg_map() for nested EPT/NPT
-> mappings instead of extending the existing nested EPT infrastructure. It
-> also has a lot more fixups and cleanups.
-> 
-> This series depends on two other series:
-> - "KVM: SVM: GIF and EFER.SVME are independent" [2]
-> - "KVM: selftests: Add test of SET_NESTED_STATE with 48-bit L2 on 57-bit L1" [3]
-> 
-> The dependency on the former is because set_nested_state_test is now
-> also a regression test for that fix. The dependency on the latter is
-> purely to avoid conflicts.
-> 
-> The patch ordering is not perfect, I did some cleanups toward the end
-> that arguably should have been moved to the beginning, but I had to stop
-> rebasing and send the patches out at some point:
-> 
-> Block #1 (patch 1 to patch 7):
-> - Direct successors to the first 6 patches in v1, addressing review
->   comments from Jim and collecting his review tags. These patch extend 5
->   of the nVMX tests to cover nSVM.
-> 
-> Block #2 (patch 8 to patch 11):
-> - Miscellaneous fixups and cleanups.
-> 
-> Block #3 (patch 11 to patch 17):
-> - Moving nested EPT mapping functions to use __virt_pg_map(), patches 11
->   to 15 do the prep work, and patch 16 does the switch. Patch 17 is a
->   minor cleanup on top (which arguably fits better in block #2).
-> 
-> Block #4 (patch 18 to 23):
-> - Patches 18 to 22 are prep work to generalize the nested EPT mapping
->   code to work with nested NPT, and patch 23 finally extends the nested
->   dirty logging test to work with nSVM using the nested NPT
->   infrastructure. Patch 19 is admittedly an imposter in this block and
->   should have been in block #2.
+--===============3524767868395641498==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-Hi Sean,
 
-Any thoughts on the current version? Is this what you had in mind for
-reusing __virt_pg_map()?
+```
+commit f89231e503dc0b97c81f4bb32d28532fb3471acd
+Author: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 
-> 
-> [1]https://lore.kernel.org/kvm/20251001145816.1414855-1-yosry.ahmed@linux.dev/
-> [2]https://lore.kernel.org/kvm/20251009223153.3344555-1-jmattson@google.com/
-> [3]https://lore.kernel.org/kvm/20250917215031.2567566-1-jmattson@google.com/
-> 
-> Yosry Ahmed (23):
->   KVM: selftests: Minor improvements to asserts in
->     test_vmx_nested_state()
->   KVM: selftests: Extend vmx_set_nested_state_test to cover SVM
->   KVM: selftests: Extend vmx_close_while_nested_test to cover SVM
->   KVM: selftests: Extend vmx_nested_tsc_scaling_test to cover SVM
->   KVM: selftests: Move nested invalid CR3 check to its own test
->   KVM: selftests: Extend nested_invalid_cr3_test to cover SVM
->   KVM: selftests: Extend vmx_tsc_adjust_test to cover SVM
->   KVM: selftests: Stop hardcoding PAGE_SIZE in x86 selftests
->   KVM: selftests: Remove the unused argument to prepare_eptp()
->   KVM: selftests: Stop using __virt_pg_map() directly in tests
->   KVM: selftests: Make sure vm->vpages_mapped is always up-to-date
->   KVM: selftests: Parameterize the PTE bitmasks for virt mapping
->     functions
->   KVM: selftests: Pass the root GPA into virt_get_pte()
->   KVM: selftests: Pass the root GPA into __virt_pg_map()
->   KVM: selftests: Stop setting AD bits on nested EPTs on creation
->   KVM: selftests: Use __virt_pg_map() for nested EPTs
->   KVM: selftests: Kill eptPageTablePointer
->   KVM: selftests: Generalize nested mapping functions
->   KVM: selftests: Move nested MMU mapping functions outside of vmx.c
->   KVM: selftests: Stop passing a memslot to nested_map_memslot()
->   KVM: selftests: Allow kvm_cpu_has_ept() to be called on AMD CPUs
->   KVM: selftests: Set the user bit on nested MMU PTEs
->   KVM: selftests: Extend vmx_dirty_log_test to cover SVM
-> 
->  tools/testing/selftests/kvm/Makefile.kvm      |  11 +-
->  .../testing/selftests/kvm/include/kvm_util.h  |   1 +
->  .../selftests/kvm/include/x86/processor.h     |  34 ++-
->  .../selftests/kvm/include/x86/svm_util.h      |   8 +
->  tools/testing/selftests/kvm/include/x86/vmx.h |  15 +-
->  tools/testing/selftests/kvm/lib/kvm_util.c    |   3 -
->  .../testing/selftests/kvm/lib/x86/memstress.c |   6 +-
->  .../testing/selftests/kvm/lib/x86/processor.c | 184 +++++++++++---
->  tools/testing/selftests/kvm/lib/x86/svm.c     |  19 ++
->  tools/testing/selftests/kvm/lib/x86/vmx.c     | 232 +++---------------
->  tools/testing/selftests/kvm/mmu_stress_test.c |   6 +-
->  ...ested_test.c => close_while_nested_test.c} |  42 +++-
->  .../selftests/kvm/x86/hyperv_features.c       |   2 +-
->  tools/testing/selftests/kvm/x86/hyperv_ipi.c  |  18 +-
->  .../selftests/kvm/x86/hyperv_tlb_flush.c      |   2 +-
->  ...rty_log_test.c => nested_dirty_log_test.c} | 102 +++++---
->  .../kvm/x86/nested_invalid_cr3_test.c         | 118 +++++++++
->  ...adjust_test.c => nested_tsc_adjust_test.c} |  79 +++---
->  ...aling_test.c => nested_tsc_scaling_test.c} |  48 +++-
->  ...d_state_test.c => set_nested_state_test.c} | 135 +++++++++-
->  .../selftests/kvm/x86/sev_smoke_test.c        |   2 +-
->  tools/testing/selftests/kvm/x86/state_test.c  |   2 +-
->  .../selftests/kvm/x86/userspace_io_test.c     |   2 +-
->  23 files changed, 695 insertions(+), 376 deletions(-)
->  rename tools/testing/selftests/kvm/x86/{vmx_close_while_nested_test.c => close_while_nested_test.c} (64%)
->  rename tools/testing/selftests/kvm/x86/{vmx_dirty_log_test.c => nested_dirty_log_test.c} (57%)
->  create mode 100644 tools/testing/selftests/kvm/x86/nested_invalid_cr3_test.c
->  rename tools/testing/selftests/kvm/x86/{vmx_tsc_adjust_test.c => nested_tsc_adjust_test.c} (61%)
->  rename tools/testing/selftests/kvm/x86/{vmx_nested_tsc_scaling_test.c => nested_tsc_scaling_test.c} (83%)
->  rename tools/testing/selftests/kvm/x86/{vmx_set_nested_state_test.c => set_nested_state_test.c} (67%)
-> 
-> -- 
-> 2.51.0.869.ge66316f041-goog
-> 
+selftests/bpf: test_xsk: Don't exit immediately when workers fail
+
+This commit converts the test program from using exit_with_error()
+(which immediately terminates) to proper error propagation through
+return values. This allows the test suite to continue running after
+failures.
+
+> diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
+> index 2c955e109..2c392d5b9 100644
+> --- a/tools/testing/selftests/bpf/test_xsk.c
+> +++ b/tools/testing/selftests/bpf/test_xsk.c
+
+[ ... ]
+
+> @@ -759,7 +761,7 @@ static bool is_metadata_correct(struct pkt *pkt, void *buffer, u64 addr)
+>  	return true;
+>  }
+>
+> -static bool is_adjust_tail_supported(struct xsk_xdp_progs *skel_rx)
+> +static int is_adjust_tail_supported(struct xsk_xdp_progs *skel_rx, bool *supported)
+>  {
+>  	struct bpf_map *data_map;
+>  	int adjust_value = 0;
+> @@ -769,19 +771,21 @@ static bool is_adjust_tail_supported(struct xsk_xdp_progs *skel_rx)
+>  	data_map = bpf_object__find_map_by_name(skel_rx->obj, "xsk_xdp_.bss");
+>  	if (!data_map || !bpf_map__is_internal(data_map)) {
+>  		ksft_print_msg("Error: could not find bss section of XDP program\n");
+> -		exit_with_error(errno);
+> +		return -EINVAL;
+>  	}
+>
+>  	ret = bpf_map_lookup_elem(bpf_map__fd(data_map), &key, &adjust_value);
+>  	if (ret) {
+>  		ksft_print_msg("Error: bpf_map_lookup_elem failed with error %d\n", ret);
+> -		exit_with_error(errno);
+> +		return ret;
+>  	}
+>
+>  	/* Set the 'adjust_value' variable to -EOPNOTSUPP in the XDP program if the adjust_tail
+>  	 * helper is not supported. Skip the adjust_tail test case in this scenario.
+>  	 */
+> -	return adjust_value != -EOPNOTSUPP;
+> +	*supported = adjust_value != -EOPNOTSUPP;
+> +
+> +	return 0;
+>  }
+
+[ ... ]
+
+> @@ -1584,29 +1614,41 @@ void *worker_testapp_validate_rx(void *arg)
+>  	int err;
+>
+>  	if (test->current_step == 1) {
+> -		thread_common_ops(test, ifobject);
+> +		err = thread_common_ops(test, ifobject);
+>  	} else {
+>  		xsk_clear_xskmap(ifobject->xskmap);
+>  		err = xsk_update_xskmap(ifobject->xskmap, ifobject->xsk->xsk, 0);
+> -		if (err) {
+> +		if (err)
+>  			ksft_print_msg("Error: Failed to update xskmap, error %s\n",
+>  				       strerror(-err));
+> -			exit_with_error(-err);
+> -		}
+>  	}
+>
+>  	pthread_barrier_wait(&barr);
+>
+> +	/* We leave only now in case of error to avoid getting stuck in the barrier */
+> +	if (err) {
+> +		test->fail = true;
+> +		pthread_exit(NULL);
+> +	}
+> +
+>  	err = receive_pkts(test);
+>
+>  	if (!err && ifobject->validation_func)
+>  		err = ifobject->validation_func(ifobject);
+>
+>  	if (err) {
+> -		if (test->adjust_tail && !is_adjust_tail_supported(ifobject->xdp_progs))
+> -			test->adjust_tail_support = false;
+> -		else
+> +		if (!test->adjust_tail) {
+>  			test->fail = true;
+> +		} else {
+> +			bool supported;
+> +
+> +			if (is_adjust_tail_supported(ifobject->xdp_progs, &supported))
+> +				test->fail = true;
+> +			if (!supported)
+> +				test->adjust_tail_support = false;
+> +			else
+> +				test->fail = true;
+> +		}
+>  	}
+
+Can the 'supported' variable be read uninitialized here? When
+is_adjust_tail_supported() returns an error (non-zero), it doesn't
+write to the *supported output parameter. The function returns early
+from either the data_map check or bpf_map_lookup_elem() failure without
+setting *supported. Then the code unconditionally checks "if (!supported)"
+which would read uninitialized stack memory.
+
+The control flow is:
+  is_adjust_tail_supported() returns error
+  -> test->fail = true is set
+  -> execution continues to "if (!supported)"
+  -> reads uninitialized 'supported' variable
+
+Should this be structured with an else clause to only check 'supported'
+when is_adjust_tail_supported() returns success?
+
+
+```
+
+---
+AI reviewed your patch. Please fix the bug or email reply why it's not a bug.
+See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/README.md
+
+In-Reply-To-Subject: `selftests/bpf: test_xsk: Don't exit immediately when workers fail`
+CI run summary: https://github.com/kernel-patches/bpf/actions/runs/18910697393
+
+--===============3524767868395641498==--
 
