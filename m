@@ -1,152 +1,137 @@
-Return-Path: <linux-kernel+bounces-875007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC32C17FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C3C17FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 03:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B80F4FF8F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:03:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 85F39506D62
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 02:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4652EA17E;
-	Wed, 29 Oct 2025 02:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A4C2E8E03;
+	Wed, 29 Oct 2025 02:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ykAmuVZh"
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com [113.46.200.216])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5KMMGIh"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28EE2E92D1
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F3F184
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761703386; cv=none; b=talr1UzClRn7+1Ku+jukJtNEpOP3dPCbj53T4ky5zDzmCiRHE/yf3c7mW5LhtxopdkThnVEk+kJJkSpy3mnZ/cOHXw9FATdtY/JjTr0/qpBz2WtC36nVSNIHpCJKBCdyfYqZLTS7tVYdKcFLWUf4mSOdVHa7oEmmxrwLoTWZV7M=
+	t=1761703420; cv=none; b=YjegpqJ5yiU1XFBwTKKsCYF0DUvjAQcPRbZxDVO9+T0+UZqDHojAyb1F2ojXfM5kypanMeSqebiMVn48ViZKlx2XsAaeBpBhHU3/XKmaHdigam8TYlsFe4JFWiH/oT8GQOyv9GLZngMhoOrYxgViZjClZ7SXKVKD8ZMbeqswVlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761703386; c=relaxed/simple;
-	bh=g/fvQ8NZZJPX0GUAoJn3gUUXjyoM7DA3e77ObOIxp70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FJswLzDcxdqoyyEPUGAsVmJQdENh7F091VpU7mMA1vB2JRC/speu7HKbhNEWQzPyWLeS8pl8/tpn4p9efM73uJRGaVtIeF+uVkdh1h6+UQApsqYrIWJPRxgEAHtdgd/+tE0IgZk/hBgJx0xeCHjEnY8LfKW8aMb1/JgO1lHEaMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ykAmuVZh; arc=none smtp.client-ip=113.46.200.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=+eK4vDSuRTOhJF4MJ84IKuDsgIzYi81R9gWmu7j/t3U=;
-	b=ykAmuVZhMSyM5Iky45LoxzvpXZJ3wHa2hOshvGtKHvA2nQyir2aHEYnSo1IehVSuXBgb7m4Ew
-	QChnPxMkYaJStFl+t5lShcqGvdSKsYce4XNF/VuOJiWpx+jtbDPn8J7Q/MpQDTjS9JWZWFPh1Eb
-	4cm+bG+sHj81lHDuPuyQGjQ=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cx9Tx4Cxsz1T4HJ;
-	Wed, 29 Oct 2025 10:01:57 +0800 (CST)
-Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0E4F6180B67;
-	Wed, 29 Oct 2025 10:03:01 +0800 (CST)
-Received: from [10.174.177.149] (10.174.177.149) by
- dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 29 Oct 2025 10:03:00 +0800
-Message-ID: <75364faa-4cce-4e0b-ae43-dc725e6918da@huawei.com>
-Date: Wed, 29 Oct 2025 10:02:59 +0800
+	s=arc-20240116; t=1761703420; c=relaxed/simple;
+	bh=JFOCaSvR9HzklXLPUtzvfEm1Y+lbkrlwxkaLN+QNHOU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iooVLp7UTs+rgwrGsbyi9ccnNX60lL7wiRoK3T/4dj+ilr1ZQeldjit6xn8E78cpgTSYFCo7vxpxduiptNuhBkJntWws/qGI/fd7TPuQxR7a9zKBvBojt9+V8hXus3F2+d4mtrB049qFu2U1G2S5enTNcMEdArWxXDnkdAfeBzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5KMMGIh; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-63c3d7e2217so12542469a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 19:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761703417; x=1762308217; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=awmgrMSZ0vViyGclR/UImdV+loGp8m8sh9JoAmi4oAo=;
+        b=i5KMMGIhzPgOmvcLTOFkKG4QxkrCPDYRP7GlM0aoyK43pRU0MjgJ5HxGzBO8VTOEq6
+         ZuIHx577Ksdad6/T4hivGlKP6XKkp6Ybdvt7uKZnip7sqZ2EGugZux9/2s54GE5271yP
+         P5zA0Wnwh2Ap40VVn5jPkDgZcn/jfNvIM+Qb9KpHCdwafW4p4VP4MIodLHzPUTkdRkRi
+         rqsOz6QulNwLT+TINgThyA/zOEmJ9/zPiekJNhwVY9MOTlGnHtvX4bgJj5+Ezcw0a4+t
+         JyU/FZ5FLCFhoDDMSrOQmG7hWeiLgJnDcEYtvbTNjwUS9VbfuSIHgk5Pz271IOV7qM5r
+         AJzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761703417; x=1762308217;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=awmgrMSZ0vViyGclR/UImdV+loGp8m8sh9JoAmi4oAo=;
+        b=aLLSmqMlD+XpIDCubim2n8SGaNg/cgIUsT4icbi5RR3ILh7vCx0pPIw6p1JFi4m5Hp
+         34lHRWEA0MgTdlmMXwTOFjW42ShVfUpxiC2vJ66aFYR2EJuTOmPJq9+rPma5iblw5DVR
+         E9T9YcFAV/bUHhNJfsE+1YWoFtKkDnrrsXEIF3oBPamRlUcf/ny7+QJnJgtInVl98cTH
+         yKTNfH1htv4A+f1IK+HJNtYHPacIe+VMhNj2j3E/7HlL4ZLpD4/DPrrW/9IbqUMbMcNL
+         BzfSqT1SJiw1O2xBZXGW5R4Kh27Lp8OIGkxlVkYZcveNKW6IqNQmZCHj1qv51QyjeC2V
+         kPfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPJ4R+lV03ae4v4Z2RAY2FCj0t+JUNlk2Fp4Xbhq+K8wgYq8TtBnsIAQY5fkLSx4KrZjWoqyWucGwwZNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH62d4uYKf0KoUGNk5RojRGGa2emPsKeo4gRTZushZZZ6A5P+N
+	eOKZfZSwbjhdBGzzVRSS66Ursw+t3VIq4KJgNh7+jo77G0tjXVNWolpqgMdMX6OdKDf2SdKA5I8
+	AoeZqOKurcgFzKPrt1BUly1uzuNXgmOA=
+X-Gm-Gg: ASbGncuBcYuO6c2gkBI3JWXxMBWUkWHK7d7So0CKFwlccYRwBgZlqEK6e1gcvVW1qQJ
+	mIARhqRde1Ne5k0QtwoiDKMKzJEdqVB2g6Rx47F1rzg4dMhwFBbFvJxVexBAwg/EfmKfXSm1Mxf
+	Kft0h4k20v/YBQJLhIDt8X8du5I07bkhmr4cIqm0Ia1WW6jCU9+w9R1D3/TVFqrAOhOIDZL/VTt
+	TCpgtvVGBqKaD53QQTemf3octeQs+AZngE50o2h/RhZHzPaq536pGxYgclOaA==
+X-Google-Smtp-Source: AGHT+IGMS6zqF6H66s7KZSVmBsiUMKOOrcvuSGjOFHawQAv1CeRDU0yVsTSKeSmBTJm021t3hQm9EyWHD5qsCyDVX94=
+X-Received: by 2002:a05:6402:1d52:b0:63c:25fb:19ea with SMTP id
+ 4fb4d7f45d1cf-6404425e7b2mr908786a12.18.1761703416465; Tue, 28 Oct 2025
+ 19:03:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/damon/stat: set last_refresh_jiffies to jiffies at
- startup
-To: SeongJae Park <sj@kernel.org>
-CC: <akpm@linux-foundation.org>, <damon@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<wangkefeng.wang@huawei.com>, <zuoze1@huawei.com>
-References: <20251029013038.66625-1-sj@kernel.org>
-From: Quanmin Yan <yanquanmin1@huawei.com>
-In-Reply-To: <20251029013038.66625-1-sj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf200018.china.huawei.com (7.185.36.31)
+References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
+ <20251027135423.3098490-4-dolinux.peng@gmail.com> <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
+In-Reply-To: <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 29 Oct 2025 10:03:24 +0800
+X-Gm-Features: AWmQ_blQc9lLP9vviKdBhFkt4OLa0RP_uBRK-fZh8MjADvNSmr-b3VVUIG7Z0GM
+Message-ID: <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
+ verification and binary search
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 29, 2025 at 2:40=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
+com> wrote:
+> >
+> > The previous commit implemented BTF sorting verification and binary
+> > search algorithm in libbpf. This patch enables this functionality in
+> > the kernel.
+> >
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Alan Maguire <alan.maguire@oracle.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > ---
+> > v2->v3:
+> > - Include btf_sort.c directly in btf.c to reduce function call overhead
+> > ---
+> >  kernel/bpf/btf.c | 34 ++++++++++++++++++----------------
+> >  1 file changed, 18 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> > index 0de8fc8a0e0b..df258815a6ca 100644
+> > --- a/kernel/bpf/btf.c
+> > +++ b/kernel/bpf/btf.c
+> > @@ -33,6 +33,7 @@
+> >  #include <net/sock.h>
+> >  #include <net/xdp.h>
+> >  #include "../tools/lib/bpf/relo_core.h"
+> > +#include "../tools/lib/bpf/btf_sort.h"
+>
+> I don't believe in code reuse for the sake of code reuse. This code
+> sharing just makes everything more entangled and complicated.
+> Reimplementing binary search is totally fine, IMO.
 
-在 2025/10/29 9:30, SeongJae Park 写道:
-> On Tue, 28 Oct 2025 07:32:49 -0700 SeongJae Park <sj@kernel.org> wrote:
->
->> On Tue, 28 Oct 2025 07:19:14 -0700 SeongJae Park <sj@kernel.org> wrote:
->>
->>> On Tue, 28 Oct 2025 14:19:27 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
->>>
->>>> In DAMON_STAT's damon_stat_damon_call_fn(), time_before_eq() is used to
->>>> avoid unnecessarily frequent stat update.
->>>>
->>>> On 32-bit systems, the kernel initializes jiffies to "-5 minutes" to make
->>>> jiffies wrap bugs appear earlier. However, this causes time_before_eq()
->>>> in DAMON_STAT to unexpectedly return true during the first 5 minutes
->>>> after boot on 32-bit systems (see [1] for more explanation, which fixes
->>>> another jiffies-related issue in DAMON). As a result, DAMON_STAT does not
->>>> update any monitoring results during that period, which can be more
->>>> confusing when DAMON_STAT_ENABLED_DEFAULT is enabled.
->>>>
->>>> Fix it by setting last_refresh_jiffies to jiffies at startup.
->>> Nice catch, thank you for this patch!
->>>
->>>> [1] https://lkml.kernel.org/r/20250822025057.1740854-1-ekffu200098@gmail.com
->>>>
->>>> Fixes: fabdd1e911da ("mm/damon/stat: calculate and expose estimated memory bandwidth")
->>>> Signed-off-by: Quanmin Yan <yanquanmin1@huawei.com>
->>>> ---
->>>>   mm/damon/stat.c | 3 +++
->>>>   1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/mm/damon/stat.c b/mm/damon/stat.c
->>>> index 6c4503d2aee3..6dc3e18de910 100644
->>>> --- a/mm/damon/stat.c
->>>> +++ b/mm/damon/stat.c
->>>> @@ -132,6 +132,9 @@ static int damon_stat_damon_call_fn(void *data)
->>>>   	struct damon_ctx *c = data;
->>>>   	static unsigned long last_refresh_jiffies;
->>>>   
->>>> +	if (unlikely(!last_refresh_jiffies))
->>>> +		last_refresh_jiffies = jiffies;
->>>> +
->>> How about doing the initialization together with the declaration?  E.g.,
->>>
->>>   static int damon_stat_damon_call_fn(void *data)
->>>   {
->>>          struct damon_ctx *c = data;
->>> -       static unsigned long last_refresh_jiffies;
->>> +       static unsigned long last_refresh_jiffies = jiffies;
-> Please ignore the above suggestion.  It will even not build, like below...
->
-> .../mm/damon/stat.c: In function ‘damon_stat_damon_call_fn’:
-> .../mm/damon/stat.c:133:53: error: initializer element is not constant
->    133 |         static unsigned long last_refresh_jiffies = jiffies;
->        |                                                     ^~~~~~~
->
->> Actually, a similar issue can happen again if DAMON_STAT is stopped and
->> restarted by user.  That is, if user stops DAMON_STAT just after
->> last_refresh_jiffies is updated, and restart it after 5 seconds or more, the
->> time_before_eq() on damon_call_fn() will return true, so stat updates will
->> happen earlier than expected.  Shouldn't be a real problem, but better to avoid
->> if possible.
->>
->> How about making last_refresh_jiffies a global variable and initialize it on
->> damon_stat_start()?  To avoid unnecessary name conflicts, the variable name
->> would also better to be changed, e.g., damon_stat_last_refresh_jiffies.
-> But, please consider the above one.
->
-> And I just realized a similar issue exist for next_update_jiffies in
-> mm/damon/sysfs.c file.  Please feel free to send a patch for that if you
-> willing to.
->
-OK, I’ll review all these issues and send a new patch set once everything
-is ready.🙂
+Thanks. Would you be open to the approach from v2, where we place
+the common code in btf_sort.c and compile it separately rather than
+including it directly?
 
-Thanks,
-Quanmin Yan
-
-[...]
-
+>
+> [...]
 
