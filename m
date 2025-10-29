@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-875170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FE2C18601
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:03:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 972CDC1862E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8C67D4E2D4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:03:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 627BA4E030D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8B02FD7AD;
-	Wed, 29 Oct 2025 06:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2B2260587;
+	Wed, 29 Oct 2025 06:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVp8mbJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="PdGLUKNs"
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA25229B2E;
-	Wed, 29 Oct 2025 06:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF8E1F4606
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761717785; cv=none; b=lWPj2iT2xVG9hfwKznvWqMMFbcZyl+QjwPLOO0KgjmHqbvnqruf4Db5A5BL62XqRqyCES8Y54KjztaVdwIykx0YbT8wzp0gaA4KFKxWwGHGfYJdNael8gNh6Q+KBC8NqOXGd8qrMgCzOqPHd9xgQRqo22B5VcdWBgqSJMooidJ4=
+	t=1761718212; cv=none; b=auaI4Fda/S3Y7vDBXYvcBfEv2EQHJ1FGLRHAmUI8MZMkS+ogknkUTHPy5UJs38UujT7CFhLiAz80FchGEI8dOzybN5IJee/WHL+e6PCsWAt11mAJTMG0FF/fGg0yG1ROBS7IXPEBGCvySGPJKWlqzm7Bv/y37nTtawa1BD68zCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761717785; c=relaxed/simple;
-	bh=YrHXSkSziP250cVRScq0phJVMi2r3oBtH0D/zUlpBuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tppksPYV6dUIjrIaWEOvHd8JKSz4XaBqTeEN0/IV6VNXiDqBaa7mQ0ZJ5tuFY/k+JdF16Is7K5NFjlUomN6Fgmy57NKt5+IPfBjCDEJjGZd9U/HrmqScbIpDn+fNV+SOtRumQlAy0BtoSF/VJKRwzOvVyQjjlOVzBxjF0HmXQjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVp8mbJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04849C4CEF7;
-	Wed, 29 Oct 2025 06:03:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761717785;
-	bh=YrHXSkSziP250cVRScq0phJVMi2r3oBtH0D/zUlpBuo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XVp8mbJ+f1AtJM7ysqo48j/jMtEJGVLZ3OCElTVXnsOlhlWDFU29YM4/4SZjtN5r4
-	 T/Hj4DbRRVO71H4yIaZpgpNwoWEfN/MQ2lU2qflBqvePiFKnJruIcyqv73CxnglftJ
-	 y04Zkqi5qCXuxVoC6r4qDnl30bAij2NoXzmrgfkP+Xk9g4+m5hVebK540ljoAsf1GH
-	 bowdD/Ip6rq9Cbz6GcdbyRowL4Da3GTvNByAeyjaZfQl1ukT2IUofkigJCCfqlsx5J
-	 MRzttXvdsA5qjqrwiS6ECbL3RXL7RIAajDLtq3/jWOPUnjyoKmyqVZuBZuLhyJTk15
-	 Wa/8WDnbnb+gQ==
-Date: Wed, 29 Oct 2025 07:03:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
-Message-ID: <20251029-adamant-mamba-of-patience-cddb65@kuoka>
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
+	s=arc-20240116; t=1761718212; c=relaxed/simple;
+	bh=Ngpp/8zqk6wsUmyWsqLDW5fqczuYCzv6VpOD7jIY1VU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=NE8iLIIXmqJIsg2KWL8ubnzLtc3oFd3GjRGIMkugjW4VA1EHuCWNxueoFE2vALPBbd96fohDEg0Ubsckh08V6pD4NbB3fSsdANe7yP2gJIFg79AqEXgBu4aUQDcopLUgRSEFgYSUV0n7ntRyLBS1vrBg3gPNL4HrASxtSYPUNks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=PdGLUKNs; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1761718203; bh=6c8StLamAGsCUDoOBRH7WQVE6j2s07lODsxk15SlgYk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=PdGLUKNsPHBNrov73l00XB8ZrihXw2RD3HbSsoR9jDPLzfuds4IhvkYLhmb6dF99m
+	 eA6eRsqcfzYtQWq9z/kKkruZzu+/SLrjdsPALvfuAu69oqhtcHymO1cW9FZGW5Yl6s
+	 VJfMAOBG01LG9rOL4zmVc2/b/2jby78xc33NsTa4=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id F816820; Wed, 29 Oct 2025 14:03:56 +0800
+X-QQ-mid: xmsmtpt1761717836t9qfhq75p
+Message-ID: <tencent_BEE7F906E552D68657C9B7EECC6ED7CC9206@qq.com>
+X-QQ-XMAILINFO: NC4p7XQIBeahnOTSVw3pb/XvCB73hmNxwHgUbc7eK/8IfLBC9TxesWiaUpWaKK
+	 MwIunf00sbB9//PLtnlzCBMDE7Y90wNUXn/jGaPlCBvN4ik2+B13HvHErb6mQaHsBSLs+Cu4XMPL
+	 72fo9iYxxEAReHVDa9yOwNbNUE5qpA1N89UZSgHYmcC1yXhLTAY7BAIeT84tBRQ29SW+PZzzFEMU
+	 Mv7nJ0Fc4B6l+AxRSfTtdQpsCpXVPb+Yg+nypj8glaGZw2m6pE4/ZbFWYUnuEpwLC+YsKY5Yo7t8
+	 IqS8vmOkMrEefhDPk0qGzffwXt1C01/qcO++VX70Ed4iFAbjAk53NU5K8pZjVIc27j8bj1ejWB+S
+	 gOUdCpyLlLiqDzzhVhUHfHSVEamzVoveMecoAnFA+Bo4nYWsRCpaHQPZ5m56VEywNOPY4eUu16SE
+	 6BgDaQKLK8Mb85S/vKFplcIY0dALuuTAi7JWE9J+yvoGt1sKNKf6yTzjcgSZLrYcslqaeQizr/bJ
+	 mx7xCB3/+4aCcp1IhYu9lOe+YGFWt7xd/Hd5YH1hEDlcvhAXbE577+hZvdizUNZb+eXjtWw2s/RI
+	 qTZo3NSTdphZOoZFP+3iaw+1BSbJnv50f3bmwXRVzqfkO28QyCDD6VwZ80iLg9p+F82PEdTpi2ye
+	 xlwFCTFWapLrxFTgKC8H4JI+ikNhLF0JqgVWJtHrOM6aG5mMrFQ7leRIFnwQfdqCSJhQlAd3Hjrz
+	 mJJILSdVojia3wecOo4NKyq+Stm57OQ9dmJM96cc13yAa+K4s7xUII89xg5isb8oq2yRiDhlLPH6
+	 t+B8vdukj0g5O8s8aMwyIfG9FXsYqnxgkugUvDjNVRPtNVUh8W7RIKvd++R9S+SGhCY1xg2nnTMQ
+	 8j+PtEgiuhYOHbTw2bkHyYArI+uuT234cfzEwZGZIJIXdXRYX3A8JwZ76ZneOFsUT1bSNg4ONxAn
+	 6tK3Yu1fVJiMd4Q51meQeEHoFFHiKcqiYxaOmBqSQCg6BDLHTQK+8QywH+Q0RwbzKHFZr2L7rDv+
+	 YYBVZbdddmscABYPhG
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+cc433e4cd6d54736bf80@syzkaller.appspotmail.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH next] ntfs3: Remove redundant nls free
+Date: Wed, 29 Oct 2025 14:03:57 +0800
+X-OQ-MSGID: <20251029060356.3366094-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <69015bf1.050a0220.3344a1.03f7.GAE@google.com>
+References: <69015bf1.050a0220.3344a1.03f7.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 01:45:05PM +0200, Matti Vaittinen wrote:
-> Some of the chargers for lithium-ion batteries use a trickle-charging as
-> a first charging phase for very empty batteries, to "wake-up" the battery.
+Using unload_nls() is sufficient for nls.
 
-In the few cases I was dealing with charging circuits, trickle charging
-was used in context of top-off charging, so when battery is 100%. It's
-also documented at Wiki like that:
-https://en.wikipedia.org/wiki/Trickle_charging
+syzbot reported:
+WARNING: mm/slub.c:6752 at free_large_kmalloc+0x15c/0x1f0 mm/slub.c:6752, CPU#1: syz-executor/5939
+Call Trace:
+ ntfs_put_super+0x15b/0x1b0 fs/ntfs3/super.c:708
+ generic_shutdown_super+0x135/0x2c0 fs/super.c:642
+ kill_block_super+0x44/0x90 fs/super.c:1722
+ ntfs3_kill_sb+0x44/0x1b0 fs/ntfs3/super.c:1847
 
-> Trickle-charging is a low current, constant current phase. After the
-> voltage of the very empty battery has reached an upper limit for
-> trickle charging, the pre-charge phase is started with a higher current.
-> 
-> Allow defining the upper limit for trickle charging voltage, after which
-> the charging should be changed to the pre-charging.
+Reported-by: syzbot+cc433e4cd6d54736bf80@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=cc433e4cd6d54736bf80
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/ntfs3/super.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-pre-charging is the trickle charging, no? Or you want to say that
-trickle-charging is pre-pre-charging? But then what is pre-charging in
-this binding?
-
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> ---
-> Revision history:
->  RFCv1 =>:
->  - No changes
-> ---
->  Documentation/devicetree/bindings/power/supply/battery.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/battery.yaml b/Documentation/devicetree/bindings/power/supply/battery.yaml
-> index 491488e7b970..66bed24b3dee 100644
-> --- a/Documentation/devicetree/bindings/power/supply/battery.yaml
-> +++ b/Documentation/devicetree/bindings/power/supply/battery.yaml
-> @@ -66,6 +66,9 @@ properties:
->    trickle-charge-current-microamp:
->      description: current for trickle-charge phase
->  
-> +  tricklecharge-upper-limit-microvolt:
-
-Please keep existing format, look three lines above. trickle-charge-....
-
-But I believe this is wrong. Trickle charging does not switch to
-anything more, there is no fast charging after trickle. You have some
-sort of pre-pre-charging, which is just pre-charging.
-
-Best regards,
-Krzysztof
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index aae1f32f4dab..02b03d810dcf 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -705,7 +705,6 @@ static void ntfs_put_super(struct super_block *sb)
+ 
+ 	if (sbi->options) {
+ 		unload_nls(sbi->options->nls);
+-		kfree(sbi->options->nls);
+ 		kfree(sbi->options);
+ 		sbi->options = NULL;
+ 	}
+-- 
+2.43.0
 
 
