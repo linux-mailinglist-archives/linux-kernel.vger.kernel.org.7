@@ -1,255 +1,83 @@
-Return-Path: <linux-kernel+bounces-876020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE535C1A91E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E85C1A8A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054DE5862C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:53:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 563AC568108
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E37351FD7;
-	Wed, 29 Oct 2025 12:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC39923D290;
+	Wed, 29 Oct 2025 12:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ypmVihT+"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sFnF7gfN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430CC345736
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F2A223DC0
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761740937; cv=none; b=taVCk+6cBYdzGgbaXb4eJP9TUIxnvfeYoNCbzx89+qPlcu7EcK97syQ56fSSJS1OsuJs14W3+OtSD/d3UVupA9fHHhsFKRRqrsYBTLH0OAPHWd8dgAr+MWFGl4EuenOV2EpRrvA7B7UtlzGO1QeLVhmXQsP/g7l6qptg2rn8ges=
+	t=1761741062; cv=none; b=PnRO04DaXz7gIy2fe9NmQ4EPIaldhB/I45gXg9MVXjWhIAuBh+5Vx9lKZUZ2I+5yDmDlOOgwzqvz1cwG4L29cChoPg1LzkZMlWJmvRW2wFD1Pobs8e26tIHLSR3UQyzUl06IG8XFT0mm0BtBeDOZQodcAiKvhdfKYGATGCOLgZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761740937; c=relaxed/simple;
-	bh=r4EN4cUQhmdttwT8J7A/ALIumhx3T83c2IIKI9j+cTk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BMFDRV6rj23pkmulDk/YkBM+lEXOqLsJpF85FG54jjSfesfInp48JM+Q5Eg9x8iZR8+lbRAHXSD/R7AAoAXEQghQKmF5r/wuel4hUvT8cxR3dP/fGTHHbVw7tdChMKSAXnuoq5N8MSbC5xh3Dbnsk2H9ZMcMZsKx1Ue73DyILBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ypmVihT+; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-475dc6029b6so45742875e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:28:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761740933; x=1762345733; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n0T7W22CJyD3WK78vbrBChBctKIHWzgfiMVfymB9+2M=;
-        b=ypmVihT+i3Lws/bpouqKIY7pAphwoJm6zjvzC0GtgcY3I1D8xjuE1s1u/umO8W/FDy
-         zyu2uU++Ku8FU9Z5Zdac+fMIzFrrNiB4TltgoE7mMvi6BCZJOyOn29qpbwM5waRAibkb
-         /LAn+oZEjO6KHh2ahkk+l5axFwnfAQmaTGVM0nLnwqpUTWTfgxNc9z5kiOGAVk1+hTZI
-         S/AJ5p3Ga4qmow+l74piRC9q7FDzCg7mNHwoxyzgmOn+NKiXvq6fsvU1RAA4jVv0yJOC
-         JdDQkaPgoUwkWwZgzcPk8t6V0WqYz4jNAYfe+Ve4rW9ybykv2CDjQdfMclp/pKvnbUs+
-         NnmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761740933; x=1762345733;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n0T7W22CJyD3WK78vbrBChBctKIHWzgfiMVfymB9+2M=;
-        b=BfcMZH/FZDw8dvMPCOHRDzZWQB87oInf3wSmLohGblY5AGiZSUJewGGXakhcl3agqR
-         6/pLY3rNM0ZoznQg+qlcGZBIUNRf71txuXUWv5mcgP3oTu+jLi3V04yoIwsEM4iMJyBb
-         f2ALmUqiNCERZjXB0V37bRjC12SFMwcBdhxnujohxSgk/PP/rfbPZJ1A2JCL42DVj9CJ
-         aEmdBq64i8XA/59yWEFOYvWWfiALewPbG66v0jKrwBdKlcPWsYCg6XZF6LjU+CvCzYcr
-         UUlgCDw/wHcJ11tdVKvPCtbdIhad72e849D4eoLGeRUoyCYCLOmEPaEkwpUdFDqVdBWH
-         XW6w==
-X-Forwarded-Encrypted: i=1; AJvYcCWiGWum8O8Vq7sbgTnDFtC5Sw+svtC2YJ56Fp/rodZw4xIFNGNi8QC70+4DPRvkN8xlWRXr1h10PTz+jUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHK/KUdkvljTg3g9EzfsKeJrXDyOFx01G/Q9ZBx9k8ap49pfhC
-	q90LeFPtanKjYl8lDAExZjvC4EkwAOkFSEplBA27eQcuzdml0PnMZCqiPX/+1cfjmGg=
-X-Gm-Gg: ASbGncurbzbwAv09LxS1D7ULgn0WHoSqPArxx08MHMC2w0QN2yjosVsPRHSpXqvfSoS
-	dC3vz/nWQVi3UeSKtwU7q1X4gPAg5uoua245b5xEO+ykoDM5wyo/6ziCTw3WnP9WnRN4acznrFT
-	9pyVXmwdA5CZmCWp8nemIurexJg6fn82MxIGoLcekMakY7CBchWYHFoqRDuRSwSIFmzsb+0x96E
-	CQOIu8yHAcheJ1ZkXFfarKr5s/NMva0yaXdeJCoeuftPEFk8ObfKXWmZRp6+mjsKNpJ3mwu9foA
-	mzHGKnN88nZs5aFzPojRFfqNsEEzwLAvyehSGyXwfUYvQbzNgyX+LA2SjEErvgl1SQSMl4nb/S1
-	LlC3EnPWQ1fR6FcB5b0/mMyJhr7iZ0PVisYNivv98QeaYC4cb3YaQnCQRWZoXRr1JEX6AHQ==
-X-Google-Smtp-Source: AGHT+IHhGdiwetSWYDCCixJ+vXAkD6pjOHz9Dc9Qp9sQJVBipevjCg8vZIWpzFdaT96sDMNDQxJ+4Q==
-X-Received: by 2002:a05:600c:3b07:b0:475:dba3:9ca with SMTP id 5b1f17b1804b1-4771e1f59ccmr23510325e9.39.1761740933570;
-        Wed, 29 Oct 2025 05:28:53 -0700 (PDT)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:69f2:5f2d:9ffc:a805])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3a88fdsm52775545e9.10.2025.10.29.05.28.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 05:28:52 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 29 Oct 2025 13:28:37 +0100
-Subject: [PATCH v3 03/10] software node: allow referencing firmware nodes
+	s=arc-20240116; t=1761741062; c=relaxed/simple;
+	bh=0wU33jQD//uWKiP7ZOKBsLlRKigCgGy8GmSwIy9R/bA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gn6CfgF44Y9LcbAowX2E77QwjxCvkG7Ly90mzslZmoLS9jOpbvv8yAA1Kjv1CFqsqMhh7J6daA0EUts+lyXVfsXZI8NiEaaFwtWFzI+ENh60bZRqZHNcEWVsbMTDgGx11mbOy/Dj93Ngt076leee5GdeNk5BiDTs+7Wrdtpu9Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sFnF7gfN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83B78C4CEF7;
+	Wed, 29 Oct 2025 12:30:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761741060;
+	bh=0wU33jQD//uWKiP7ZOKBsLlRKigCgGy8GmSwIy9R/bA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=sFnF7gfN9Urn2PNYTabLD4IPQmkzzbeR9H4/ZQtF+3inRjmiloOcfOy6UKk+cXkSq
+	 HHKvtOr1beNoieNKQ78BYmqGSykvosbLYiiwIckG4ur2pbosY3aWNyh/sO1XRWuuvG
+	 gd++NoMp4TdEAmlrJB6OVylFFaDmbWNJBwxkV9qmvTifdpR2GGLnEWsvBtRK0AsGOT
+	 hA88lWazy/emr44iKmQqAi4tTno01ZiEECF4pprliPSRITqvJO+Kg0Ia1FBXlNeSL6
+	 aawfFxyzlDUXtGj4NfmH/Sn2aVfuozHnBhWE/zk7BCEyQHCZe7HaSaVhvzgl/xea2o
+	 QYySxE1uyRa6A==
+From: Borislav Petkov <bp@kernel.org>
+To: X86 ML <x86@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>
+Subject: [PATCH] x86/CPU/AMD: Extend Zen6 model range
+Date: Wed, 29 Oct 2025 13:30:56 +0100
+Message-ID: <20251029123056.19987-1-bp@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
-References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
-In-Reply-To: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4794;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=724+EoY2pKjkgvf7fb+DRalEW8uhDizNctnroZBQlZ4=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpAgh96TGxDUekua45vs7lzh2KmmmRwVQUE2tlz
- 0DVF0IlogGJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQIIfQAKCRARpy6gFHHX
- cnmcD/sEumUlXRnqDNWZNKosIV9jDSGycAi8t907Lrlyl3V39+GQnbcUw10omO1ndr5KTRWZUX+
- xvnl8mPxq+Yjw3z9R8YJqOnhGSqAdjdVhjQnmS6qAiqdCmTGb/2c9DnLGKeLydAuxFDBsT8YVkm
- dXhyMPUDAuHxDdxsIwOy0DPQqMnsRK4vs8Ox1uYG14j25bNBXckHo/nLwrfpeEDKKrPSIv/LVA9
- g2T2l96Q8wmt2sq+21+s27v1otcBseNCJQf8d8k0z3oux/AFN8dztvYLZLmoc505/r+eTJZ/SQy
- NGxNNxTbKdf74hUY/0B+/sqS81m0SROQcSk2wesW1RfK/YgXoeHUwx/Nn8SmP9QNqkYbZUnjivZ
- aYgFLbloXqgamxQsAWfAah950FPvHfFS8FKM93O8MMkvo+R94F9Vv8kt1aEtlteumYiYbF8sqL3
- Z1SYZUmlmsq2xgQpw0Niqbsw1hzwwyYHs87PusP4BppeOcCayAXEf5ZZOzpfAR0I1FU7r/1gDfI
- DXcm+hpol/fkCNTy5eLEAii93Joh2z2evOaQlznmEErYAJKFjSrfWMwr+ruhytvRMH0KioKQ92z
- l6JBhjkRKomZEJOk10TZNO//2cGyohXZUcS5zRimO79QWygw+WxPCjWIYUMFvjRNCpk9qmwmnqt
- EaQIJoJydIjzagQ==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
 
-At the moment software nodes can only reference other software nodes.
-This is a limitation for devices created, for instance, on the auxiliary
-bus with a dynamic software node attached which cannot reference devices
-the firmware node of which is "real" (as an OF node or otherwise).
+Add some more Zen6 models.
 
-Make it possible for a software node to reference all firmware nodes in
-addition to static software nodes. To that end: add a second pointer to
-struct software_node_ref_args of type struct fwnode_handle. The core
-swnode code will first check the swnode pointer and if it's NULL, it
-will assume the fwnode pointer should be set. Rework the helper macros
-and deprecate the existing ones whose names don't indicate the reference
-type.
-
-Software node graphs remain the same, as in: the remote endpoints still
-have to be software nodes.
-
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
 ---
- drivers/base/swnode.c    | 13 +++++++++++--
- include/linux/property.h | 38 +++++++++++++++++++++++++++++++-------
- 2 files changed, 42 insertions(+), 9 deletions(-)
+ arch/x86/kernel/cpu/amd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index b7c3926b67be72671ba4e4c442b3acca80688cf7..8601d1612be31febb6abbbe1fb35228499480c56 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -535,7 +535,13 @@ software_node_get_reference_args(const struct fwnode_handle *fwnode,
- 	ref_array = prop->pointer;
- 	ref = &ref_array[index];
- 
--	refnode = software_node_fwnode(ref->node);
-+	if (ref->swnode)
-+		refnode = software_node_fwnode(ref->swnode);
-+	else if (ref->fwnode)
-+		refnode = ref->fwnode;
-+	else
-+		return -EINVAL;
-+
- 	if (!refnode)
- 		return -ENOENT;
- 
-@@ -634,7 +640,10 @@ software_node_graph_get_remote_endpoint(const struct fwnode_handle *fwnode)
- 
- 	ref = prop->pointer;
- 
--	return software_node_get(software_node_fwnode(ref[0].node));
-+	if (!ref->swnode)
-+		return NULL;
-+
-+	return software_node_get(software_node_fwnode(ref[0].swnode));
- }
- 
- static struct fwnode_handle *
-diff --git a/include/linux/property.h b/include/linux/property.h
-index 50b26589dd70d1756f3b8644255c24a011e2617c..66640b3a4cba21e65e562694691f18ecb2aeae18 100644
---- a/include/linux/property.h
-+++ b/include/linux/property.h
-@@ -355,23 +355,35 @@ struct software_node;
- 
- /**
-  * struct software_node_ref_args - Reference property with additional arguments
-- * @node: Reference to a software node
-+ * @swnode: Reference to a software node
-+ * @fwnode: Alternative reference to a firmware node handle
-  * @nargs: Number of elements in @args array
-  * @args: Integer arguments
-  */
- struct software_node_ref_args {
--	const struct software_node *node;
-+	const struct software_node *swnode;
-+	struct fwnode_handle *fwnode;
- 	unsigned int nargs;
- 	u64 args[NR_FWNODE_REFERENCE_ARGS];
- };
- 
--#define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
-+#define __SOFTWARE_NODE_REF(_ref, _node, ...)			\
- (const struct software_node_ref_args) {				\
--	.node = _ref_,						\
-+	._node = _ref,						\
- 	.nargs = COUNT_ARGS(__VA_ARGS__),			\
- 	.args = { __VA_ARGS__ },				\
- }
- 
-+#define SOFTWARE_NODE_REF_SWNODE(_ref, ...)			\
-+	__SOFTWARE_NODE_REF(_ref, swnode, __VA_ARGS__)
-+
-+#define SOFTWARE_NODE_REF_FWNODE(_ref, ...)			\
-+	__SOFTWARE_NODE_REF(_ref, fwnode, __VA_ARGS__)
-+
-+/* DEPRECATED, use SOFTWARE_NODE_REF_SWNODE() instead. */
-+#define SOFTWARE_NODE_REFERENCE(_ref, ...)			\
-+	SOFTWARE_NODE_REF_SWNODE(_ref, __VA_ARGS__)
-+
- /**
-  * struct property_entry - "Built-in" device property representation.
-  * @name: Name of the property.
-@@ -463,14 +475,26 @@ struct property_entry {
- #define PROPERTY_ENTRY_STRING(_name_, _val_)				\
- 	__PROPERTY_ENTRY_ELEMENT(_name_, str, STRING, _val_)
- 
--#define PROPERTY_ENTRY_REF(_name_, _ref_, ...)				\
-+#define __PROPERTY_ENTRY_REF(_type, _name, _ref, ...)			\
- (struct property_entry) {						\
--	.name = _name_,							\
-+	.name = _name,							\
- 	.length = sizeof(struct software_node_ref_args),		\
- 	.type = DEV_PROP_REF,						\
--	{ .pointer = &SOFTWARE_NODE_REFERENCE(_ref_, ##__VA_ARGS__), },	\
-+	{ .pointer = &_type(_ref, ##__VA_ARGS__), },			\
- }
- 
-+#define PROPERTY_ENTRY_REF_SWNODE(_name, _ref, ...)			\
-+	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_SWNODE,			\
-+			     _name, _ref, __VA_ARGS__)
-+
-+#define PROPERTY_ENTRY_REF_FWNODE(_name, _ref, ...)			\
-+	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_FWNODE,			\
-+			    _name, _ref, __VA_ARGS__)
-+
-+/* DEPRECATED, use PROPERTY_ENTRY_REF_SWNODE() instead. */
-+#define PROPERTY_ENTRY_REF(_name, _ref, ...)				\
-+	PROPERTY_ENTRY_REF_SWNODE(_name, _ref, __VA_ARGS__)
-+
- #define PROPERTY_ENTRY_BOOL(_name_)		\
- (struct property_entry) {			\
- 	.name = _name_,				\
-
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index bc29be670a2a..8e36964a7721 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -516,7 +516,7 @@ static void bsp_init_amd(struct cpuinfo_x86 *c)
+ 			setup_force_cpu_cap(X86_FEATURE_ZEN5);
+ 			break;
+ 		case 0x50 ... 0x5f:
+-		case 0x90 ... 0xaf:
++		case 0x80 ... 0xaf:
+ 		case 0xc0 ... 0xcf:
+ 			setup_force_cpu_cap(X86_FEATURE_ZEN6);
+ 			break;
 -- 
-2.48.1
+2.51.0
 
 
