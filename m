@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-875145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4146DC184E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:36:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2042C184E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7AF775024FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:34:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C7F35503CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8E92F8BEE;
-	Wed, 29 Oct 2025 05:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3FCC3019C5;
+	Wed, 29 Oct 2025 05:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nbw3OGJo"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XJmP08vb"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D102F12C7
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782EA2FFFAB
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761716071; cv=none; b=uGscmwjtLQRaIL2xnSSVQrlXFhlleAyvgAtLfn+JYbW0pfWeCC1VzQI8Qyr0jhZnnDw0vvxgR/j+8dbqwVVbgebUowYxLZM9OtnynrpCCPvqxfM/mO535gBpo8qlnSmZGjguhDnZlL0wsqwjvVPs6avnDKWgn9euqR3VD2sQo+4=
+	t=1761716073; cv=none; b=I0akQcH9Fk88Gmy11Ck/ZcWk/faq8SgERdPNa3gVhEb3PgMeXVYGh6bXQtl7+RHSSz0I4bMTkoyWSw+oU8/P65zw4QHg3gqBNO6LAA6HvBfF6kgjmofMyOWhOLHZMX3pKucYBQX9j9AdbfHhEybc8PDnoL9hilBcGaU6NgFMNwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761716071; c=relaxed/simple;
-	bh=KYZYhoiep3KHKYom3Zxs1sXwmI85jni0UlVUbeI2XEA=;
+	s=arc-20240116; t=1761716073; c=relaxed/simple;
+	bh=nxogn7CzCOcaoMnM/yWVx3HVxrL+JJuNtx6lpItOEXE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=R7gRaEHjlwXI+GsifVep+pL5ngtwCIQOxP5VIij3M0uHVoV8Wx7RQ97ekUs1jT684ERTuedDPCjSRT7EIhPjsCXu9BBzjnIz7/AndIhsD3igYHn95KfWpT/yb2SXShqHNeTonPNbvheZFkvpB48sBavfukzD3Yd9Yjrt7chCfak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nbw3OGJo; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=ScenFU4ulTzLjRNZY88XGb5IcZ+QGqIBzIk/MCDoI+pZ9YdPSn7g23AvtNaFISgE5Gjsm+cu+GIRSoFbNpliHqiR3O5C7A7kpHt6zdW0eRtr6cEes/wO9WPqIudHwHZ2h6gpMYzLHvciokyQq43YGxQwMPXCcZYTCuFq4J06gb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XJmP08vb; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-294880e7ca4so120509085ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:29 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-33bbbb41a84so14927592a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761716069; x=1762320869; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1761716071; x=1762320871; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=pW3iPoPH/G2JC3s4g+WDYgzHzmDlxJjv1jy/9KHXcKA=;
-        b=Nbw3OGJo+rnt48QSyZgtHZkbDavdtp9pHR8BGGvWAV/+9xfD9Hp0ZVkMN8P2ltWOaz
-         hficBc5jdLiDC3bU1JYwVaYGttw++/B9Sfk2Jur+2t3D+Fcf7MhMYghWAv0dUeaTojWW
-         hzsybNWwuK3exBurgQtqjtS2HwyJM0Z48O+VTnTQom3zcWbF1gaur0V9pS8ctRapcK7M
-         I+nxrvbkkY1qZIq8oVjvF6G64xdKYdJ7idselo5T0kfGN6KcnoZ7QCWwH3DugrCek2V4
-         EDE25r3CXzVr0NUbR0ZAB0UQlYKR03CAI9l6KYqwsOIjDpKApgcy1PzOThs9ZpuCjHEC
-         f/7Q==
+        bh=P/m+GGJEX4XS9igs9SnnZKBVhxyHpjFasFgfyaBk6K8=;
+        b=XJmP08vbE3WlHd+L5ja0CmJMQii/AfjZfocrQ1yI9wgTjYH0ZPYK03M3ICiW47+wXN
+         ySdQ+jNn4mTDsIkQBFWlghZ+R8nhnjyZrMOh+BBAJRICO61opn65ZLXDSv9eqAN8NT/K
+         m1m9QU7Il1Nxsc3k2Y7c7vj2B7z7twG6cAV5rRrwDt5jOm2KgZ5giZ/1P6z2SJmAet31
+         QqONK1zGG1j9PPRVQwlx3+Jadg9dDwxORxh4tyOPGxLYGLAk/iRLSMMR8ijW1+hZZpc0
+         hOyWqlJP3ZvfRJrSmQJNyFYgs6xVZuZWjB3ZpwuuDxCVIjZG9DHpjjjYcHTgdB41viP9
+         VCTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761716069; x=1762320869;
+        d=1e100.net; s=20230601; t=1761716071; x=1762320871;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pW3iPoPH/G2JC3s4g+WDYgzHzmDlxJjv1jy/9KHXcKA=;
-        b=KbRtPnXR892tJggR1DQvM/1ucExrgwoXh6M4UkV2WM5s+2f9eu/Ves+jBfGm9WnIQi
-         hnXphLTQwvPFdq4ZwxOcL6FFivWUvW0vzwRbldn+wAI9GRvn2+l9Fs6oi4iduhDMHe5A
-         aukl264oBsjg0pVdfsETVeaMPe972Dsr5W3YTea8hiLEzo1WV3p5KDm/OW4kgjVaPtDF
-         E3tdeM59/UL4jUuHKVgdsP7RDlB8Xii4JjFjrB+l4DHAn+fCWrK/u3qnAHMyPCNtYryU
-         dKqu44IwVqzNEdxgFtWZsfnMtIzfh515sA/4+roZ44JOWPxjgGyjku3zf9d/X0TrnoB3
-         FcTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrS1YmSJhWd0X5l6mJ/aMf50MyugUZT5nAMh8k9yfUCg3NwfeJNYEizpPQ6f8318n2Es6siaYJ/+QpVo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+Fj24FLj9Q/D58kaoe0Y5/Xb3WChDnQpSpi5b0tvOtvnqxtV
-	nMKZWh4hNcWwfbAtnfOy2T36dIyV1SxAS5iHBuGocA1Ss0HxS9VPB6RTy4W8hzUjCQ2N6ywnLLS
-	fz9KYVh0Sjg==
-X-Google-Smtp-Source: AGHT+IHkOM4Uz1plX/1V7B8s2UzjmVdM7pC7uU+GhzKDrWisEtFUM/NjdRl5/HzXEOoYBKFOyAOC0WdbgzoV
-X-Received: from pldu20.prod.google.com ([2002:a17:903:1094:b0:290:ab6a:13c3])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1585:b0:26f:7db2:3e1e
- with SMTP id d9443c01a7336-294deeed0d9mr22357265ad.47.1761716069136; Tue, 28
- Oct 2025 22:34:29 -0700 (PDT)
-Date: Tue, 28 Oct 2025 22:34:04 -0700
+        bh=P/m+GGJEX4XS9igs9SnnZKBVhxyHpjFasFgfyaBk6K8=;
+        b=hctxsO9UPOgj9jG7rQtR91ZWXABIAHLFHzYfx9CDR/GVu1V9QYX827mJgVSMIZ/KSk
+         LSkfuG8DOXSv3AwUa8Bh1TOIb5Ifi6bbfEB2IlkMHR1QOh4ry1WTfIyDEXHjez6GRo7s
+         V1cJglWdsB51FAlarPOKxwF0sPxOW0zErdtS8dJnQeDtA7TY+iqEdXfPY6H/YEhYApK0
+         h0EqRmCescKkScA/WEL1RNHI5v/iHuYr7EWa18QQnE59jMRkg3dxZD06f3dAvD6w9UpH
+         fV0qvufKp8iWJCohaS7gRvsJszScoX/x4Xljvz2O/lpMqEvNRkxorPAkt9A+mUQAYj31
+         x2mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPgIqbh2CKbvewyRSDj++qpjA4baW+mCaz0Qrxw28ihR9cfuRMKZpxHUUegim3Z4dRcVMgaOCUOfpglbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Q6T1+xb6qtq7efEi4RxlJXYnpSQMOIROqbiAnV8cRqoPbPx6
+	5m3+SIEUCLV5soagify09K3/eiTgg9oi73WfiYGWKBhI8Z+SMQR2tTZEnAXK/SaF+qHu7MBEjzj
+	St8FXWJB5AQ==
+X-Google-Smtp-Source: AGHT+IFa/+7mOOLGV31OTSxrEinUSkkcBJPH0/NM79JpffezlY8J1bwcb9IheSMk05AgTiw07XZTVKFycJDn
+X-Received: from plhc9.prod.google.com ([2002:a17:903:2349:b0:288:e43f:73ce])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2348:b0:25d:37fc:32df
+ with SMTP id d9443c01a7336-294deedb5c6mr21426035ad.47.1761716070749; Tue, 28
+ Oct 2025 22:34:30 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:34:05 -0700
 In-Reply-To: <20251029053413.355154-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251029053413.355154-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251029053413.355154-7-irogers@google.com>
-Subject: [RFC PATCH v1 06/15] perf python: Add add missed explicit dependencies
+Message-ID: <20251029053413.355154-8-irogers@google.com>
+Subject: [RFC PATCH v1 07/15] perf evsel/evlist: Avoid unnecessary #includes
 From: Ian Rogers <irogers@google.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
 	James Clark <james.clark@linaro.org>, John Garry <john.g.garry@oracle.com>, 
@@ -97,26 +97,100 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org
 	Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Fix missing #include of pmus.h found while cleaning the evsel/evlist
-header files.
+Use forward declarations and remove unnecessary #includes in evsel.h
+and evlist.h. Sort the forward declaration.s
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/python.c | 1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/evlist.h | 16 +++++++++-------
+ tools/perf/util/evsel.h  | 19 ++++++++++---------
+ 2 files changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index fa5e4270d182..0366142184d8 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -15,6 +15,7 @@
+diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+index 5e71e3dc6042..61acbb10d9a5 100644
+--- a/tools/perf/util/evlist.h
++++ b/tools/perf/util/evlist.h
+@@ -2,28 +2,30 @@
+ #ifndef __PERF_EVLIST_H
+ #define __PERF_EVLIST_H 1
+ 
++#include <pthread.h>
++#include <signal.h>
++#include <unistd.h>
++
+ #include <linux/compiler.h>
+ #include <linux/kernel.h>
+-#include <linux/refcount.h>
+ #include <linux/list.h>
++#include <linux/refcount.h>
+ #include <api/fd/array.h>
+ #include <internal/evlist.h>
+-#include <internal/evsel.h>
+ #include <perf/evlist.h>
++
+ #include "events_stats.h"
  #include "evsel.h"
- #include "event.h"
- #include "expr.h"
-+#include "pmus.h"
- #include "print_binary.h"
- #include "record.h"
- #include "strbuf.h"
+ #include "rblist.h"
+-#include <pthread.h>
+-#include <signal.h>
+-#include <unistd.h>
+ 
+-struct pollfd;
+-struct thread_map;
++struct evsel;
+ struct perf_cpu_map;
+ struct perf_stat_config;
++struct pollfd;
+ struct record_opts;
+ struct strbuf;
+ struct target;
++struct thread_map;
+ 
+ /*
+  * State machine of bkw_mmap_state:
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index f8de0f9a719b..f4540920604e 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -2,28 +2,29 @@
+ #ifndef __PERF_EVSEL_H
+ #define __PERF_EVSEL_H 1
+ 
+-#include <linux/list.h>
+ #include <stdbool.h>
+ #include <sys/types.h>
++
++#include <internal/evsel.h>
++#include <linux/list.h>
+ #include <linux/perf_event.h>
+ #include <linux/types.h>
+-#include <internal/evsel.h>
+ #include <perf/evsel.h>
++
+ #include "symbol_conf.h"
+-#include "pmus.h"
+-#include "pmu.h"
+ 
++struct bperf_follower_bpf;
++struct bperf_leader_bpf;
++struct bpf_counter_ops;
+ struct bpf_object;
+ struct cgroup;
++struct hashmap;
+ struct perf_counts;
++struct perf_pmu;
+ struct perf_stat_config;
+ struct perf_stat_evsel;
+-union perf_event;
+-struct bpf_counter_ops;
+ struct target;
+-struct hashmap;
+-struct bperf_leader_bpf;
+-struct bperf_follower_bpf;
++union perf_event;
+ 
+ typedef int (evsel__sb_cb_t)(union perf_event *event, void *data);
+ 
 -- 
 2.51.1.851.g4ebd6896fd-goog
 
