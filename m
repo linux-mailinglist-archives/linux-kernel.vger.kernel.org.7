@@ -1,359 +1,238 @@
-Return-Path: <linux-kernel+bounces-876171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FE8C1B43C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:37:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D862C1AC0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE32E622CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:28:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B4BF5A0402
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E0433B6DE;
-	Wed, 29 Oct 2025 13:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ip9Z7zyt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y8nSbdO8"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37430258CE5;
+	Wed, 29 Oct 2025 13:23:22 +0000 (UTC)
+Received: from localhost.localdomain (unknown [147.136.157.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A963491FC;
-	Wed, 29 Oct 2025 13:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80062139CE;
+	Wed, 29 Oct 2025 13:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=147.136.157.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744159; cv=none; b=PQLbEC1tgs/vkGDAMn8Q5PJgRXXQA7lRukC1gZZNxA+jCpoQigxkofZCKZxeR8abe4JCctRPz3nZzMisQJTE9S7O9Zv2ky1trY/pLSSBzHuvRoJHYGCEt33BB1xcLCIf4yC8w/FqOKgLcSo8lnX5bDY3fqyoq+s15GlWAOsAj9M=
+	t=1761744201; cv=none; b=bD88G4KXyAxddKx1SxVooGVvbNqpIbh66MX1kNOiS/VkMJFVoEFyfyFLGl5wqB4YIEREICI6lg41GlklDLP2nUk3OhsWcH547CaYj3+2PuxTTDaDqLLEvXn38Qw8FXGEJ4r9FnnKm5Ww44s1e8gMucM1PSl19BB5LoqIiwJfQrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744159; c=relaxed/simple;
-	bh=06ISzQNgJLjVggBFt8HttartK0B8H+jc0eI02K8krU0=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=lTLhiyJieXVkAzcSwxqh4l8+wh94f9imsc9kw+8WrvpGxbcs7K+A6k2GaBGUqwC0LfVofoEDeLgI7rfwg6eNUJco1riR0y2NFIxaJz8JybfTNnD70fRjPyCiRvNaGY1/NOhwS1plEYfjmGKBCgWbGRKLRy7RDofT0dQzMf5NPxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ip9Z7zyt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y8nSbdO8; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20251029130404.178482110@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761744155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=dcLOQpuYAiP8UwPR9j6QkSdUC70FGf3yGYPnlF6MyzM=;
-	b=Ip9Z7zythanZ8S1phguwtZ75lnQCs+pt9v1obBHxalcs7nSJ3DXgTiSYSdmLNGeekQvbIL
-	rJsBo4AE55NgLg6oA267LMWYTBpMba+9cVNhsSrIVeVIgfQAqo+KxTf9t0B8tjekV78vIs
-	6jNIL2Wzh3eaQzrSjPQXUgoc33TXC9z4RCMu0kRsz0li8WXDK+kXPI0YmLR7b7gaeHHkvg
-	lLyQ0PFXZqfE4NryPv2W2kDc6rBgKGiiu6ZxA871+RNqQDekaAqodkvBqhRlbEdRYXK0Fe
-	RzyNASTv+kGzvi5+9Buo/hXxhODQYKttXv01aYbkKE9UGbbpA9jsJ4VDo6Q3ag==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761744155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=dcLOQpuYAiP8UwPR9j6QkSdUC70FGf3yGYPnlF6MyzM=;
-	b=Y8nSbdO8gv7Ko3XSDctFQVpa58fXhLM7clRzn4Ydx+vX2ef+IC6DYicBWPWRecgpkX/IjB
-	bzDRD5gMn17p+8DQ==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Prakash Sangappa <prakash.sangappa@oracle.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org
-Subject: [patch V3 12/12] selftests/rseq: Implement time slice extension test
-References: <20251029125514.496134233@linutronix.de>
+	s=arc-20240116; t=1761744201; c=relaxed/simple;
+	bh=pchtt63Oh3F2HNObMqsCdLZ8QHoH/Yw2B2nuwJg8ogw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bhYN8eZkSShuhX7e0xjZPKg5MjOObLSpD01JQ59DBMa4TXcjvRDrXa8qYg/WRzS6lG8gRO+K6juevPOvCeg0x3AzFBPuvapYzq4QiIcGU8GaxkjCFLyPP5m6rJs08M9sXX06TYbDYR9A/CAP/Mq68F0Ek5GwBeYDFtEj2SfAZPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=none smtp.mailfrom=localhost.localdomain; arc=none smtp.client-ip=147.136.157.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=localhost.localdomain
+Received: by localhost.localdomain (Postfix, from userid 1007)
+	id C6E1F8B2A0E; Wed, 29 Oct 2025 21:23:11 +0800 (+08)
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: linux-kernel@vger.kernel.org
+Cc: Jiayuan Chen <jiayuan.chen@linux.dev>,
+	Jiayuan Chen <jiayuan.chen@shopee.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Libo Chen <libo.chen@oracle.com>,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v1] sched/numa: Add tracepoint to track NUMA migration cost
+Date: Wed, 29 Oct 2025 21:22:55 +0800
+Message-ID: <20251029132300.23519-1-jiayuan.chen@linux.dev>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 29 Oct 2025 14:22:34 +0100 (CET)
+Content-Transfer-Encoding: 8bit
 
-Provide an initial test case to evaluate the functionality. This needs to be
-extended to cover the ABI violations and expose the race condition between
-observing granted and arriving in rseq_slice_yield().
+From: Jiayuan Chen <jiayuan.chen@shopee.com>
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+In systems with multiple NUMA nodes, memory imbalance between nodes often
+occurs.  To address this, we typically tune parameters like scan_size_mb or
+scan_period_{min,max}_ms to allow processes to migrate pages between NUMA
+nodes.
+
+Currently, the migration task task_numa_work() holds the mmap_lock during
+the entire migration process, which can significantly impact process
+performance, especially for memory operations. This patch introduces a new
+tracepoint that records the migration duration, along with the number of
+scanned pages and migrated pages. These metrics can be used to calculate
+efficiency metrics similar to %vmeff in 'sar -B'.
+
+These metrics help evaluate whether the adjusted NUMA balancing parameters
+are properly tuned.
+
+Here's an example bpftrace script:
+```bash
+
+bpftrace -e '
+tracepoint:sched:sched_numa_balance_start
+{
+    @start_time[cpu] = nsecs;
+}
+
+tracepoint:sched:sched_numa_balance_end {
+    if (@start_time[cpu] > 0) {
+        $cost = nsecs - @start_time[cpu];
+        printf("task '%s' migrate cost %lu, scanned %lu, migrated %lu\n",
+               args.comm, $cost, args.scanned, args.migrated);
+    }
+}
+'
+```
+Sample output:
+Attaching 2 probes...
+task 'rs:main Q:Reg' migrate cost 5584655, scanned 24516, migrated 22373
+task 'systemd-journal' migrate cost 123191, scanned 6308, migrated 0
+task 'wrk' migrate cost 894026, scanned 5842, migrated 5841
+
+Signed-off-by: Jiayuan Chen <jiayuan.chen@shopee.com>
 ---
- tools/testing/selftests/rseq/.gitignore   |    1 
- tools/testing/selftests/rseq/Makefile     |    5 
- tools/testing/selftests/rseq/rseq-abi.h   |   27 ++++
- tools/testing/selftests/rseq/slice_test.c |  198 ++++++++++++++++++++++++++++++
- 4 files changed, 230 insertions(+), 1 deletion(-)
+ include/trace/events/sched.h | 60 ++++++++++++++++++++++++++++++++++++
+ kernel/sched/fair.c          | 14 +++++++--
+ 2 files changed, 72 insertions(+), 2 deletions(-)
 
---- a/tools/testing/selftests/rseq/.gitignore
-+++ b/tools/testing/selftests/rseq/.gitignore
-@@ -10,3 +10,4 @@ param_test_mm_cid
- param_test_mm_cid_benchmark
- param_test_mm_cid_compare_twice
- syscall_errors_test
-+slice_test
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -17,7 +17,7 @@ OVERRIDE_TARGETS = 1
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
- 		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice \
--		syscall_errors_test
-+		syscall_errors_test slice_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-@@ -59,3 +59,6 @@ include ../lib.mk
- $(OUTPUT)/syscall_errors_test: syscall_errors_test.c $(TEST_GEN_PROGS_EXTENDED) \
- 					rseq.h rseq-*.h
- 	$(CC) $(CFLAGS) $< $(LDLIBS) -lrseq -o $@
+diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+index 7b2645b50e78..e24bf700a614 100644
+--- a/include/trace/events/sched.h
++++ b/include/trace/events/sched.h
+@@ -804,6 +804,66 @@ TRACE_EVENT(sched_skip_cpuset_numa,
+ 		  __entry->ngid,
+ 		  MAX_NUMNODES, __entry->mem_allowed)
+ );
 +
-+$(OUTPUT)/slice_test: slice_test.c $(TEST_GEN_PROGS_EXTENDED) rseq.h rseq-*.h
-+	$(CC) $(CFLAGS) $< $(LDLIBS) -lrseq -o $@
---- a/tools/testing/selftests/rseq/rseq-abi.h
-+++ b/tools/testing/selftests/rseq/rseq-abi.h
-@@ -53,6 +53,27 @@ struct rseq_abi_cs {
- 	__u64 abort_ip;
- } __attribute__((aligned(4 * sizeof(__u64))));
- 
-+/**
-+ * rseq_slice_ctrl - Time slice extension control structure
-+ * @all:	Compound value
-+ * @request:	Request for a time slice extension
-+ * @granted:	Granted time slice extension
-+ *
-+ * @request is set by user space and can be cleared by user space or kernel
-+ * space.  @granted is set and cleared by the kernel and must only be read
-+ * by user space.
-+ */
-+struct rseq_slice_ctrl {
-+	union {
-+		__u32		all;
-+		struct {
-+			__u8	request;
-+			__u8	granted;
-+			__u16	__reserved;
-+		};
-+	};
-+};
++TRACE_EVENT(sched_numa_balance_start,
 +
++	TP_PROTO(struct task_struct *tsk),
++
++	TP_ARGS(tsk),
++
++	TP_STRUCT__entry(
++		__array(char,	comm, TASK_COMM_LEN)
++		__field(pid_t,	pid)
++		__field(pid_t,	tgid)
++		__field(pid_t,	ngid)
++	),
++
++	TP_fast_assign(
++		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
++		__entry->pid		 = task_pid_nr(tsk);
++		__entry->tgid		 = task_tgid_nr(tsk);
++		__entry->ngid		 = task_numa_group_id(tsk);
++	),
++
++	TP_printk("comm=%s pid=%d tgid=%d ngid=%d",
++		  __entry->comm,
++		  __entry->pid,
++		  __entry->tgid,
++		  __entry->ngid)
++);
++
++TRACE_EVENT(sched_numa_balance_end,
++
++	TP_PROTO(struct task_struct *tsk, unsigned long scanned, unsigned long migrated),
++
++	TP_ARGS(tsk, scanned, migrated),
++
++	TP_STRUCT__entry(
++		__array(char,		comm, TASK_COMM_LEN)
++		__field(pid_t,		pid)
++		__field(pid_t,		tgid)
++		__field(pid_t,		ngid)
++		__field(unsigned long,	migrated)
++		__field(unsigned long,	scanned)
++	),
++
++	TP_fast_assign(
++		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
++		__entry->pid		 = task_pid_nr(tsk);
++		__entry->tgid		 = task_tgid_nr(tsk);
++		__entry->ngid		 = task_numa_group_id(tsk);
++		__entry->migrated	 = migrated;
++		__entry->scanned	 = scanned;
++	),
++
++	TP_printk("comm=%s pid=%d tgid=%d ngid=%d scanned=%lu migrated=%lu",
++		  __entry->comm,
++		  __entry->pid,
++		  __entry->tgid,
++		  __entry->ngid,
++		  __entry->scanned,
++		  __entry->migrated)
++);
+ #endif /* CONFIG_NUMA_BALANCING */
+ 
  /*
-  * struct rseq_abi is aligned on 4 * 8 bytes to ensure it is always
-  * contained within a single cache-line.
-@@ -165,6 +186,12 @@ struct rseq_abi {
- 	__u32 mm_cid;
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 25970dbbb279..173c9c8397e2 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3294,6 +3294,9 @@ static void task_numa_work(struct callback_head *work)
+ 	struct vm_area_struct *vma;
+ 	unsigned long start, end;
+ 	unsigned long nr_pte_updates = 0;
++	unsigned long nr_scanned = 0;
++	unsigned long total_migrated = 0;
++	unsigned long total_scanned = 0;
+ 	long pages, virtpages;
+ 	struct vma_iterator vmi;
+ 	bool vma_pids_skipped;
+@@ -3359,6 +3362,7 @@ static void task_numa_work(struct callback_head *work)
+ 	if (!mmap_read_trylock(mm))
+ 		return;
+ 
++	trace_sched_numa_balance_start(p);
+ 	/*
+ 	 * VMAs are skipped if the current PID has not trapped a fault within
+ 	 * the VMA recently. Allow scanning to be forced if there is no
+@@ -3477,6 +3481,10 @@ static void task_numa_work(struct callback_head *work)
+ 			end = min(end, vma->vm_end);
+ 			nr_pte_updates = change_prot_numa(vma, start, end);
+ 
++			nr_scanned = (end - start) >> PAGE_SHIFT;
++			total_migrated += nr_pte_updates;
++			total_scanned += nr_scanned;
++
+ 			/*
+ 			 * Try to scan sysctl_numa_balancing_size worth of
+ 			 * hpages that have at least one present PTE that
+@@ -3486,8 +3494,8 @@ static void task_numa_work(struct callback_head *work)
+ 			 * areas faster.
+ 			 */
+ 			if (nr_pte_updates)
+-				pages -= (end - start) >> PAGE_SHIFT;
+-			virtpages -= (end - start) >> PAGE_SHIFT;
++				pages -= nr_scanned;
++			virtpages -= nr_scanned;
+ 
+ 			start = end;
+ 			if (pages <= 0 || virtpages <= 0)
+@@ -3528,6 +3536,8 @@ static void task_numa_work(struct callback_head *work)
+ 		mm->numa_scan_offset = start;
+ 	else
+ 		reset_ptenuma_scan(p);
++
++	trace_sched_numa_balance_end(p, total_scanned, total_migrated);
+ 	mmap_read_unlock(mm);
  
  	/*
-+	 * Time slice extension control structure. CPU local updates from
-+	 * kernel and user space.
-+	 */
-+	struct rseq_slice_ctrl slice_ctrl;
-+
-+	/*
- 	 * Flexible array member at end of structure, after last feature field.
- 	 */
- 	char end[];
---- /dev/null
-+++ b/tools/testing/selftests/rseq/slice_test.c
-@@ -0,0 +1,198 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+#define _GNU_SOURCE
-+#include <assert.h>
-+#include <pthread.h>
-+#include <sched.h>
-+#include <signal.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <syscall.h>
-+#include <unistd.h>
-+
-+#include <linux/prctl.h>
-+#include <sys/prctl.h>
-+#include <sys/time.h>
-+
-+#include "rseq.h"
-+
-+#include "../kselftest_harness.h"
-+
-+#ifndef __NR_rseq_slice_yield
-+# define __NR_rseq_slice_yield	470
-+#endif
-+
-+#define BITS_PER_INT	32
-+#define BITS_PER_BYTE	8
-+
-+#ifndef PR_RSEQ_SLICE_EXTENSION
-+# define PR_RSEQ_SLICE_EXTENSION		79
-+#  define PR_RSEQ_SLICE_EXTENSION_GET		1
-+#  define PR_RSEQ_SLICE_EXTENSION_SET		2
-+#  define PR_RSEQ_SLICE_EXT_ENABLE		0x01
-+#endif
-+
-+#ifndef RSEQ_SLICE_EXT_REQUEST_BIT
-+# define RSEQ_SLICE_EXT_REQUEST_BIT	0
-+# define RSEQ_SLICE_EXT_GRANTED_BIT	1
-+#endif
-+
-+#ifndef asm_inline
-+# define asm_inline	asm __inline
-+#endif
-+
-+#define NSEC_PER_SEC	1000000000L
-+#define NSEC_PER_USEC	      1000L
-+
-+struct noise_params {
-+	int	noise_nsecs;
-+	int	sleep_nsecs;
-+	int	run;
-+};
-+
-+FIXTURE(slice_ext)
-+{
-+	pthread_t		noise_thread;
-+	struct noise_params	noise_params;
-+};
-+
-+FIXTURE_VARIANT(slice_ext)
-+{
-+	int64_t	total_nsecs;
-+	int	slice_nsecs;
-+	int	noise_nsecs;
-+	int	sleep_nsecs;
-+};
-+
-+FIXTURE_VARIANT_ADD(slice_ext, n2_2_50)
-+{
-+	.total_nsecs	=  5 * NSEC_PER_SEC,
-+	.slice_nsecs	=  2 * NSEC_PER_USEC,
-+	.noise_nsecs    =  2 * NSEC_PER_USEC,
-+	.sleep_nsecs	= 50 * NSEC_PER_USEC,
-+};
-+
-+FIXTURE_VARIANT_ADD(slice_ext, n50_2_50)
-+{
-+	.total_nsecs	=  5 * NSEC_PER_SEC,
-+	.slice_nsecs	= 50 * NSEC_PER_USEC,
-+	.noise_nsecs    =  2 * NSEC_PER_USEC,
-+	.sleep_nsecs	= 50 * NSEC_PER_USEC,
-+};
-+
-+static inline bool elapsed(struct timespec *start, struct timespec *now,
-+			   int64_t span)
-+{
-+	int64_t delta = now->tv_sec - start->tv_sec;
-+
-+	delta *= NSEC_PER_SEC;
-+	delta += now->tv_nsec - start->tv_nsec;
-+	return delta >= span;
-+}
-+
-+static void *noise_thread(void *arg)
-+{
-+	struct noise_params *p = arg;
-+
-+	while (RSEQ_READ_ONCE(p->run)) {
-+		struct timespec ts_start, ts_now;
-+
-+		clock_gettime(CLOCK_MONOTONIC, &ts_start);
-+		do {
-+			clock_gettime(CLOCK_MONOTONIC, &ts_now);
-+		} while (!elapsed(&ts_start, &ts_now, p->noise_nsecs));
-+
-+		ts_start.tv_sec = 0;
-+		ts_start.tv_nsec = p->sleep_nsecs;
-+		clock_nanosleep(CLOCK_MONOTONIC, 0, &ts_start, NULL);
-+	}
-+	return NULL;
-+}
-+
-+FIXTURE_SETUP(slice_ext)
-+{
-+	cpu_set_t affinity;
-+
-+	ASSERT_EQ(sched_getaffinity(0, sizeof(affinity), &affinity), 0);
-+
-+	/* Pin it on a single CPU. Avoid CPU 0 */
-+	for (int i = 1; i < CPU_SETSIZE; i++) {
-+		if (!CPU_ISSET(i, &affinity))
-+			continue;
-+
-+		CPU_ZERO(&affinity);
-+		CPU_SET(i, &affinity);
-+		ASSERT_EQ(sched_setaffinity(0, sizeof(affinity), &affinity), 0);
-+		break;
-+	}
-+
-+	ASSERT_EQ(rseq_register_current_thread(), 0);
-+
-+	ASSERT_EQ(prctl(PR_RSEQ_SLICE_EXTENSION, PR_RSEQ_SLICE_EXTENSION_SET,
-+			PR_RSEQ_SLICE_EXT_ENABLE, 0, 0), 0);
-+
-+	self->noise_params.noise_nsecs = variant->noise_nsecs;
-+	self->noise_params.sleep_nsecs = variant->sleep_nsecs;
-+	self->noise_params.run = 1;
-+
-+	ASSERT_EQ(pthread_create(&self->noise_thread, NULL, noise_thread, &self->noise_params), 0);
-+}
-+
-+FIXTURE_TEARDOWN(slice_ext)
-+{
-+	self->noise_params.run = 0;
-+	pthread_join(self->noise_thread, NULL);
-+}
-+
-+TEST_F(slice_ext, slice_test)
-+{
-+	unsigned long success = 0, yielded = 0, scheduled = 0, raced = 0;
-+	struct rseq_abi *rs = rseq_get_abi();
-+	struct timespec ts_start, ts_now;
-+
-+	ASSERT_NE(rs, NULL);
-+
-+	clock_gettime(CLOCK_MONOTONIC, &ts_start);
-+	do {
-+		struct timespec ts_cs;
-+		bool req = false;
-+
-+		clock_gettime(CLOCK_MONOTONIC, &ts_cs);
-+
-+		RSEQ_WRITE_ONCE(rs->slice_ctrl.request, 1);
-+		do {
-+			clock_gettime(CLOCK_MONOTONIC, &ts_now);
-+		} while (!elapsed(&ts_cs, &ts_now, variant->slice_nsecs));
-+
-+		/*
-+		 * request can be cleared unconditionally, but for making
-+		 * the stats work this is actually checking it first
-+		 */
-+		if (RSEQ_READ_ONCE(rs->slice_ctrl.request)) {
-+			RSEQ_WRITE_ONCE(rs->slice_ctrl.request, 0);
-+			/* Race between check and clear! */
-+			req = true;
-+			success++;
-+		}
-+
-+		if (RSEQ_READ_ONCE(rs->slice_ctrl.granted)) {
-+			/* The above raced against a late grant */
-+			if (req)
-+				success--;
-+			yielded++;
-+			if (!syscall(__NR_rseq_slice_yield))
-+				raced++;
-+		} else {
-+			if (!req)
-+				scheduled++;
-+		}
-+
-+		clock_gettime(CLOCK_MONOTONIC, &ts_now);
-+	} while (!elapsed(&ts_start, &ts_now, variant->total_nsecs));
-+
-+	printf("# Success   %12ld\n", success);
-+	printf("# Yielded   %12ld\n", yielded);
-+	printf("# Scheduled %12ld\n", scheduled);
-+	printf("# Raced     %12ld\n", raced);
-+}
-+
-+TEST_HARNESS_MAIN
+-- 
+2.43.0
 
 
