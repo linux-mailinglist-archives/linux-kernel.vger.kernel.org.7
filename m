@@ -1,197 +1,444 @@
-Return-Path: <linux-kernel+bounces-875670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5165C19901
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:04:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50573C1990D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:04:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3EB34037E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:03:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 354CC189579C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04AD52DEA7D;
-	Wed, 29 Oct 2025 10:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B9A2E2EEE;
+	Wed, 29 Oct 2025 10:03:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LeS+GpQo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbxMR4RC"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA10B2D876F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D424F2E03F3
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761732207; cv=none; b=S/z/OZv5NwJ7PRkOkT555xH3rwvwLpoM+nE4xynPJG9I7OFsvSScNNsTBiO8a+bJhEVpUkq3aMDhNa2HP+PJ715Fq8f9kJIO4tG7/GIolLiXBkoKNLLvvBslGsWmZ34RNMdnpxbVOQMgzoVE+B+nsHcYNwO5m33zZsfB7anXvIo=
+	t=1761732212; cv=none; b=uhQPQgsUtFyOB78mskrVMmlTG0YtpKM2taRrzQV20KRDGGVPQFC4Se09v2g5JGTQiFbjRFTZefGHC3ItNnR+0//tNbw27A/YGkBDy3jJEBcug916Gf23qUMWZUpm5LuS0Y0ArNWLkglu7iM1XAtfkfKpYQ8d5QVeUqExtwtJK0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761732207; c=relaxed/simple;
-	bh=aNI4Q5ZW/abRhSnDZb4svhcnT03dJkbRYwV210Vr3L0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z1Z37vOfboOWyaZMwBpxymR5v5FLfZ8XEPuuBz1F9Aiv3L3p61G98HXe8nVPHeydfPbybHMQCwZ2hn5Xr7IQfxPS7UFMfrPBqOFpgdwD79d882rJcjOOSdz9mu60FsnaPumSivjjQGcutaxH4VK/6N9z/waqUSTKwUR5Oy76iJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LeS+GpQo; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761732203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=y/FcJHpggx8mhqHuRDKjQ5iwsuQXd8X9W9pn2zrK9qs=;
-	b=LeS+GpQozp4hBQwePWRYw1enw4D+tqkAsx6M9OcBZi805+qyHiaOJpERwp5h/UJjhgT4qs
-	ncL9IpLgJe/nEJtkwnjVsvaQW7fde1R/6nON7GTvfD/yYELEJls1OscAmXtMrZ8Rn0vDT7
-	crl5iR8pcZ3ZTZsS5oEA8DXu4+/VefE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-397-dketHJvHPG-wRRt--n-VNA-1; Wed, 29 Oct 2025 06:03:22 -0400
-X-MC-Unique: dketHJvHPG-wRRt--n-VNA-1
-X-Mimecast-MFC-AGG-ID: dketHJvHPG-wRRt--n-VNA_1761732201
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-427015f62a7so3302569f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:03:22 -0700 (PDT)
+	s=arc-20240116; t=1761732212; c=relaxed/simple;
+	bh=UVRDOeQgKcr9b6LJu4VzYAD/JqJBw03qzojZxXH3Ihw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NZ3Oq3cs90llqojIL6C5ZiRVycbKDwkk84plSPDuK/ifImyQVe0UzCUpUZu09LiBxUy1dIWmzE1bpCEaObrFx2WaiCI5K7Xlogi5QO+7LLxEn5kPs6tXJyZ3jR7snoXOnDmpugPl9yNOcm4rwwmgjU5aJuOVZxwahw5+7vuKIHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UbxMR4RC; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b6d855ca585so436552466b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:03:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761732208; x=1762337008; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0cEGv0RnIftICWm/FSKpecjERqPae7dLf0QdnQJ2BYw=;
+        b=UbxMR4RCngewqdBm7kTFKVbYiMyu5/4jwikGpVpZnXcFMpoO2WubKwCIqq4RmfThpq
+         O0t/zcWKy/1H4nAuQjEFCRen5oA7h1geYZzsD9ROzj4VNF41Xth7x9qKUXejl0Hg4zlD
+         qNNtu9owxust/zeiHlO0HMsUtf411gmZyhDnWzxTfFbD5ZhSr+1B4xN50mX18OonYeD6
+         8AbLANjwhCxhAMz2amoaESJktBJGMHlbdXeEgX9hwnomdl/CDaHgflBBfpxbYNddi7qP
+         b2JQGu2RS0q/n+9pQS3m1YbsG6Nf0EcGApN3ndnVp7TaVO+6jpqWezyu2Ug6XYUA1qwK
+         AKyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761732201; x=1762337001;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y/FcJHpggx8mhqHuRDKjQ5iwsuQXd8X9W9pn2zrK9qs=;
-        b=FPaeRh9QacpuRn6PkIaswcjV9KgFUkYYi6YmSVzljPlJIx/K3C5bfQ2IIOEHJ4aN0O
-         Ap9xQJb63pjBSgSnd9J//MCywBlLPxgHQnrLiRkyJZMCkYAKpRVY2jIiX1KepUAyNYTH
-         aeuM89YrPoMD1muhMHQ4GWw3fzUi+LmiyWOyub6RzcccXRGjjJ0e6iH+N6Hzt9QviMEn
-         Dos0bbuVmsnIMMKUrVKt+5x4UdXqus5cblrq+yiAJU/1IoBtzbn2is7Vp25DiAXjhOv1
-         HbCUCYDHYoHi/9vg7uu9niNCP1j7gJNEC56na7RQUD6T+OGp9tzl7t8RvAn7gTlJn1PZ
-         8ZXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVANew8N5MEMq8uPtoyb+Hpa9xLapAjxnWak/o3ybLQcNlq2BKF8fHAJBytjRcAoC5JbN28fpkNb/JpJJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrN3jlP0O7edTD/l1k1YDiKSYv3NmKCNaSoRPC3egBrqI2b5Ul
-	yIXqMUfCFHhzfgh60oFaU6x0tlZBUd6I50KFCnVVnspy40Ss8ERZQmbsoF4sMpr4NPOa+VAWt3w
-	T7D1nm2Qo79vLEQaF5y7/m8uPhP6LLWj+eiKj3xUrBdcl8YXmIKCdn0YU3avpwI4ltA==
-X-Gm-Gg: ASbGncufMZ0o/kzuhAzyKX509pMpzm5QD4jtMHxLsio52OdOp7bkrMC/dogvzqstYca
-	E0D++cpP+I/+4KpwixviHdMS7FMf1iHxHMBPxq0KOjFoZVknOqAPmDyNAl+FugEr0Rup2gxs/GN
-	BwDzpPbRADZpeVphvFWxcQuScMcHAjElBP7Ci0JLpofrqvO6TqRQS9qsDAgGXQmQaTeNe+N51xS
-	DJBCc3Vlxp+FT21MwTn3XZxeK/0rAThyuJu7ip0fjAcJq8H2GyH8oISVqHQimD/SOdqXHcwpR3M
-	0ZQbpXjUxPyn9aVyNFNH+zsHGLUuGWc98SjkwspzkpgRdbDPMkDVI1NCoWPQ+IGLRBJjQGDtdDQ
-	ri6FQ+jdG9uWGZX28ebTpKQ==
-X-Received: by 2002:a05:6000:401e:b0:429:66bf:1463 with SMTP id ffacd0b85a97d-429aefcf5a7mr1864158f8f.44.1761732201079;
-        Wed, 29 Oct 2025 03:03:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhljWIvbjQXrTT0ZcTSN+ZEGtAmVQa0mTp2gcq9/yltWmwcEjiu9nE5kn8XdaFT0qYfkxXUw==
-X-Received: by 2002:a05:6000:401e:b0:429:66bf:1463 with SMTP id ffacd0b85a97d-429aefcf5a7mr1864123f8f.44.1761732200603;
-        Wed, 29 Oct 2025 03:03:20 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952db964sm25517336f8f.33.2025.10.29.03.03.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 03:03:20 -0700 (PDT)
-Message-ID: <dcceca48-bbdc-4318-8c07-94bb7c2f75ff@redhat.com>
-Date: Wed, 29 Oct 2025 11:03:18 +0100
+        d=1e100.net; s=20230601; t=1761732208; x=1762337008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0cEGv0RnIftICWm/FSKpecjERqPae7dLf0QdnQJ2BYw=;
+        b=EOAIYufcIlGpniGxqEn0P704PZrl7HZHuR3CpDadAeQfUXSSPI4oPyiTaz2qUYmpFU
+         8R5I9cad+EVCbtZ6aZXY2Z2YoaRqLt8UUNLGjd8vLruIoL1YkyhODzkVEnG31cYkXQUF
+         Wpq6XazuBRp7eCx1LTJMtLAwcn3nrpLpt5xngoa9NmPNsnooiJthP5NtKZ6Q2yytp1Y5
+         uOV48q1mawScmVsVASkT1WneYILBvJasdUHULQMogsCjtUl+VKsyNT/itqJ8bhma46cD
+         zcinO/GK4Ydqlh4TC5aLh9U5Smavh/SJri9sBYKliz4VhvICjX6vcIYE6yR2XuwkWFyu
+         8lrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGNKbK/gndsRsFVaTQk7t9QORyIXEra3mifTz+L6UkZEdSk7HUpANoU0ji/FtByUMqc1GUxLh9MZNj5Xg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgAX8XwJuWmMFp0C6ZOeh6Vx1qhv/ZyK6uMS0L8TT4b5CYDLtX
+	UhiMuROeN0PHq70ElXoQtx69C44W4fUZCrY//tCdnvDjrqmw5R3HCBngJuGx2y2sQ2c=
+X-Gm-Gg: ASbGncunzfYe9RcykxiWaCBodUx25EBe2G5ZJwL3buMNPcr4lZok+1LU5Zn1Gg3o8Dc
+	AV+gnSi6/EFMTZU5XtXbUlUgIEYS7R2dR18FV/yMaeZ2YWpC3IrqOYub0vLV5uyivVsGf2Lai1k
+	jhvTwKQXoOuz7aLvrI0rNYTh5olGlb2soBkpOGj6UmG1VvxqHdN/esixySuVqN3SD9cLNyonsDs
+	91QBefY+to5zQ2FOXJcGHxKiG3J4sc4yGpWHbqs4HNorlJiKR+/jiqLXd8XBL3BgUUQGSfzsYnB
+	WSOpbUvDPiUtji+HRFz+gK3/kmoUXcKAmYEuBveY8PtJ3ecPgT4nRsSjUzHs41m9od0s/UvN8QT
+	iRKJqizaxhvkJg9Mmzl42Tc0FY60TnGEystGlXbncXlRSBZQfe9XmGtKmx7ieq7GiX6kdHhKMrV
+	QCSGqJsbbahA==
+X-Google-Smtp-Source: AGHT+IHFzLwaqOnyJGkhp/psGz8VH0+Q6czWdoBVT9wpWu1bvQewMlpduy1cao9apOJESZ1xcdQ4WA==
+X-Received: by 2002:a17:907:d7cb:b0:b46:8bad:6981 with SMTP id a640c23a62f3a-b703d311dcemr216583666b.20.1761732207912;
+        Wed, 29 Oct 2025 03:03:27 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:a2ca:bc3c:840b:5ffd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d85398444sm1361336566b.35.2025.10.29.03.03.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 03:03:27 -0700 (PDT)
+Date: Wed, 29 Oct 2025 11:03:22 +0100
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>, aiqun.yu@oss.qualcomm.com,
+	tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+	yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+Subject: Re: [PATCH v2 4/7] remoteproc: qcom: pas: Add late attach support
+ for subsystems
+Message-ID: <aQHmanEiWmEac7aV@linaro.org>
+References: <20251029-knp-remoteproc-v2-0-6c81993b52ea@oss.qualcomm.com>
+ <20251029-knp-remoteproc-v2-4-6c81993b52ea@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/mm_init: Fix hash table order logging in
- alloc_large_system_hash()
-To: "Isaac J. Manjarres" <isaacmanjarres@google.com>,
- Mike Rapoport <rppt@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org, kernel-team@android.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20251028191020.413002-1-isaacmanjarres@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251028191020.413002-1-isaacmanjarres@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029-knp-remoteproc-v2-4-6c81993b52ea@oss.qualcomm.com>
 
-On 28.10.25 20:10, Isaac J. Manjarres wrote:
-> When emitting the order of the allocation for a hash table,
-> alloc_large_system_hash() unconditionally subtracts PAGE_SHIFT from
-> log base 2 of the allocation size. This is not correct if the
-> allocation size is smaller than a page, and yields a negative value
-> for the order as seen below:
+On Wed, Oct 29, 2025 at 01:05:42AM -0700, Jingyi Wang wrote:
+> From: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
 > 
-> TCP established hash table entries: 32 (order: -4, 256 bytes, linear)
-> TCP bind hash table entries: 32 (order: -2, 1024 bytes, linear)
+> Subsystems can be brought out of reset by entities such as
+> bootloaders. Before attaching such subsystems, it is important to
+> check the state of the subsystem. This patch adds support to attach
+> to a subsystem by ensuring that the subsystem is in a sane state by
+> reading SMP2P bits and pinging the subsystem.
 > 
-> Use get_order() to compute the order when emitting the hash table
-> information to correctly handle cases where the allocation size is
-> smaller than a page:
-> 
-> TCP established hash table entries: 32 (order: 0, 256 bytes, linear)
-> TCP bind hash table entries: 32 (order: 0, 1024 bytes, linear)
-> 
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Cc: stable@vger.kernel.org # v5.4+
-
-This is a pr_info(), why do you think this is stable material? Just 
-curious, intuitively I'd have said that it's not that critical.
-
-> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+> Signed-off-by: Gokul krishna Krishnakumar <Gokul.krishnakumar@oss.qualcomm>
+> Co-developed-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
 > ---
->   mm/mm_init.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/remoteproc/qcom_q6v5.c      | 89 ++++++++++++++++++++++++++++++++++++-
+>  drivers/remoteproc/qcom_q6v5.h      | 14 +++++-
+>  drivers/remoteproc/qcom_q6v5_adsp.c |  2 +-
+>  drivers/remoteproc/qcom_q6v5_mss.c  |  2 +-
+>  drivers/remoteproc/qcom_q6v5_pas.c  | 63 +++++++++++++++++++++++++-
+>  5 files changed, 165 insertions(+), 5 deletions(-)
 > 
-> diff --git a/mm/mm_init.c b/mm/mm_init.c
-> index 3db2dea7db4c..7712d887b696 100644
-> --- a/mm/mm_init.c
-> +++ b/mm/mm_init.c
-> @@ -2469,7 +2469,7 @@ void *__init alloc_large_system_hash(const char *tablename,
->   		panic("Failed to allocate %s hash table\n", tablename);
->   
->   	pr_info("%s hash table entries: %ld (order: %d, %lu bytes, %s)\n",
-> -		tablename, 1UL << log2qty, ilog2(size) - PAGE_SHIFT, size,
-> +		tablename, 1UL << log2qty, get_order(size), size,
+> diff --git a/drivers/remoteproc/qcom_q6v5.c b/drivers/remoteproc/qcom_q6v5.c
+> index 58d5b85e58cd..4ce9e43fc5c7 100644
+> --- a/drivers/remoteproc/qcom_q6v5.c
+> +++ b/drivers/remoteproc/qcom_q6v5.c
+> [...]
+> @@ -234,6 +246,77 @@ unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5)
+>  }
+>  EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>  
+> +static irqreturn_t q6v5_pong_interrupt(int irq, void *data)
+> +{
+> +	struct qcom_q6v5 *q6v5 = data;
+> +
+> +	complete(&q6v5->ping_done);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5)
+> +{
+> +	int ret;
+> +	int ping_failed = 0;
+> +
+> +	reinit_completion(&q6v5->ping_done);
+> +
+> +	/* Set master kernel Ping bit */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state,
+> +					  BIT(q6v5->ping_bit), BIT(q6v5->ping_bit));
+> +	if (ret) {
+> +		dev_err(q6v5->dev, "Failed to update ping bits\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = wait_for_completion_timeout(&q6v5->ping_done, msecs_to_jiffies(PING_TIMEOUT));
+> +	if (!ret) {
+> +		ping_failed = -ETIMEDOUT;
+> +		dev_err(q6v5->dev, "Failed to get back pong\n");
+> +	}
+> +
+> +	/* Clear ping bit master kernel */
+> +	ret = qcom_smem_state_update_bits(q6v5->ping_state, BIT(q6v5->ping_bit), 0);
+> +	if (ret) {
+> +		pr_err("Failed to clear master kernel bits\n");
 
-So in case it's smaller than a page we now correctly return "0".
+dev_err()?
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+> +		return ret;
+> +	}
+> +
+> +	if (ping_failed)
+> +		return ping_failed;
 
--- 
-Cheers
+Could just "return ping_failed;" directly.
 
-David / dhildenb
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem);
+> +
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev)
+> +{
+> +	int ret = -ENODEV;
+> +
+> +	q6v5->ping_state = devm_qcom_smem_state_get(&pdev->dev, "ping", &q6v5->ping_bit);
+> +	if (IS_ERR(q6v5->ping_state)) {
+> +		dev_err(&pdev->dev, "failed to acquire smem state %ld\n",
+> +			PTR_ERR(q6v5->ping_state));
+> +		return ret;
 
+return PTR_ERR(q6v5->ping_state)?
+
+> +	}
+> +
+> +	q6v5->pong_irq = platform_get_irq_byname(pdev, "pong");
+> +	if (q6v5->pong_irq < 0)
+> +		return q6v5->pong_irq;
+> +
+> +	ret = devm_request_threaded_irq(&pdev->dev, q6v5->pong_irq, NULL,
+> +					q6v5_pong_interrupt, IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+> +					"q6v5 pong", q6v5);
+> +	if (ret)
+> +		dev_err(&pdev->dev, "failed to acquire pong IRQ\n");
+> +
+> +	init_completion(&q6v5->ping_done);
+
+It would be better to have init_completion() before requesting the
+interrupt, to guarantee that complete(&q6v5->ping_done); cannot happen
+before the completion struct is initialized.
+
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(qcom_q6v5_ping_subsystem_init);
+> +
+>  /**
+>   * qcom_q6v5_init() - initializer of the q6v5 common struct
+>   * @q6v5:	handle to be initialized
+> @@ -247,7 +330,7 @@ EXPORT_SYMBOL_GPL(qcom_q6v5_panic);
+>   */
+>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  		   struct rproc *rproc, int crash_reason, const char *load_state,
+> -		   void (*handover)(struct qcom_q6v5 *q6v5))
+> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5))
+>  {
+>  	int ret;
+>  
+> @@ -255,10 +338,14 @@ int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  	q6v5->dev = &pdev->dev;
+>  	q6v5->crash_reason = crash_reason;
+>  	q6v5->handover = handover;
+> +	q6v5->early_boot = early_boot;
+>  
+>  	init_completion(&q6v5->start_done);
+>  	init_completion(&q6v5->stop_done);
+>  
+> +	if (early_boot)
+> +		init_completion(&q6v5->subsys_booted);
+> +
+>  	q6v5->wdog_irq = platform_get_irq_byname(pdev, "wdog");
+>  	if (q6v5->wdog_irq < 0)
+>  		return q6v5->wdog_irq;
+> diff --git a/drivers/remoteproc/qcom_q6v5.h b/drivers/remoteproc/qcom_q6v5.h
+> index 5a859c41896e..8a227bf70d7e 100644
+> --- a/drivers/remoteproc/qcom_q6v5.h
+> +++ b/drivers/remoteproc/qcom_q6v5.h
+> @@ -12,27 +12,35 @@ struct rproc;
+>  struct qcom_smem_state;
+>  struct qcom_sysmon;
+>  
+> +#define PING_TIMEOUT 500 /* in milliseconds */
+> +#define PING_TEST_WAIT 500 /* in milliseconds */
+
+Why is this defined in the shared header rather than the C file that
+uses this?
+
+PING_TEST_WAIT looks unused.
+
+> +
+>  struct qcom_q6v5 {
+>  	struct device *dev;
+>  	struct rproc *rproc;
+>  
+>  	struct qcom_smem_state *state;
+> +	struct qcom_smem_state *ping_state;
+>  	struct qmp *qmp;
+>  
+>  	struct icc_path *path;
+>  
+>  	unsigned stop_bit;
+> +	unsigned int ping_bit;
+>  
+>  	int wdog_irq;
+>  	int fatal_irq;
+>  	int ready_irq;
+>  	int handover_irq;
+>  	int stop_irq;
+> +	int pong_irq;
+>  
+>  	bool handover_issued;
+>  
+>  	struct completion start_done;
+>  	struct completion stop_done;
+> +	struct completion subsys_booted;
+> +	struct completion ping_done;
+>  
+>  	int crash_reason;
+>  
+> @@ -40,11 +48,13 @@ struct qcom_q6v5 {
+>  
+>  	const char *load_state;
+>  	void (*handover)(struct qcom_q6v5 *q6v5);
+> +
+> +	bool early_boot;
+>  };
+>  
+>  int qcom_q6v5_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev,
+>  		   struct rproc *rproc, int crash_reason, const char *load_state,
+> -		   void (*handover)(struct qcom_q6v5 *q6v5));
+> +		   bool early_boot, void (*handover)(struct qcom_q6v5 *q6v5));
+>  void qcom_q6v5_deinit(struct qcom_q6v5 *q6v5);
+>  
+>  int qcom_q6v5_prepare(struct qcom_q6v5 *q6v5);
+> @@ -52,5 +62,7 @@ int qcom_q6v5_unprepare(struct qcom_q6v5 *q6v5);
+>  int qcom_q6v5_request_stop(struct qcom_q6v5 *q6v5, struct qcom_sysmon *sysmon);
+>  int qcom_q6v5_wait_for_start(struct qcom_q6v5 *q6v5, int timeout);
+>  unsigned long qcom_q6v5_panic(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem(struct qcom_q6v5 *q6v5);
+> +int qcom_q6v5_ping_subsystem_init(struct qcom_q6v5 *q6v5, struct platform_device *pdev);
+>  
+>  #endif
+> [...]
+> diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> index 158bcd6cc85c..b667c11aadb5 100644
+> --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> @@ -35,6 +35,8 @@
+>  
+>  #define MAX_ASSIGN_COUNT 3
+>  
+> +#define EARLY_BOOT_RETRY_INTERVAL_MS 5000
+> +
+>  struct qcom_pas_data {
+>  	int crash_reason_smem;
+>  	const char *firmware_name;
+> @@ -59,6 +61,7 @@ struct qcom_pas_data {
+>  	int region_assign_count;
+>  	bool region_assign_shared;
+>  	int region_assign_vmid;
+> +	bool early_boot;
+>  };
+>  
+>  struct qcom_pas {
+> @@ -409,6 +412,8 @@ static int qcom_pas_stop(struct rproc *rproc)
+>  	if (pas->smem_host_id)
+>  		ret = qcom_smem_bust_hwspin_lock_by_host(pas->smem_host_id);
+>  
+> +	pas->q6v5.early_boot = false;
+> +
+>  	return ret;
+>  }
+>  
+> @@ -434,6 +439,51 @@ static unsigned long qcom_pas_panic(struct rproc *rproc)
+>  	return qcom_q6v5_panic(&pas->q6v5);
+>  }
+>  
+> +static int qcom_pas_attach(struct rproc *rproc)
+> +{
+> +	int ret;
+> +	struct qcom_pas *adsp = rproc->priv;
+> +	bool ready_state;
+> +	bool crash_state;
+> +
+> +	if (!adsp->q6v5.early_boot)
+> +		return -EINVAL;
+> +
+> +	ret = irq_get_irqchip_state(adsp->q6v5.fatal_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &crash_state);
+> +
+> +	if (crash_state) {
+
+crash_state will be uninitialized if irq_get_irqchip_state() returns an
+error.
+
+> +		dev_err(adsp->dev, "Sub system has crashed before driver probe\n");
+> +		adsp->rproc->state = RPROC_CRASHED;
+> +		return -EINVAL;
+
+Ok, so the subsystem has crashed. Now what? We probably want to restart
+it, but I don't think anyone will handle the RPROC_CRASHED state you are
+setting here.
+
+I think it would make more sense to call rproc_report_crash() here. This
+will set RPROC_CRASHED for you and trigger recovery. I'm not sure if
+this works properly in RPROC_DETACHED state, please test to make sure
+that works as intended.
+
+> +	}
+> +
+> +	ret = irq_get_irqchip_state(adsp->q6v5.ready_irq,
+> +				    IRQCHIP_STATE_LINE_LEVEL, &ready_state);
+> +
+> +	if (ready_state) {
+> +		dev_info(adsp->dev, "Sub system has boot-up before driver probe\n");
+
+This message feels redundant, dmesg already shows a different message
+for "attaching" vs "booting" a remoteproc.
+
+> +		adsp->rproc->state = RPROC_DETACHED;
+
+What is the point of this assignment? You have already set this state
+inside qcom_pas_probe().
+
+> +	} else {
+> +		ret = wait_for_completion_timeout(&adsp->q6v5.subsys_booted,
+> +						  msecs_to_jiffies(EARLY_BOOT_RETRY_INTERVAL_MS));
+> +		if (!ret) {
+> +			dev_err(adsp->dev, "Timeout on waiting for subsystem interrupt\n");
+> +			return -ETIMEDOUT;
+> +		}
+
+This looks like you want to handle the case where the remoteproc is
+still booting while this code is running (i.e. it has not finished
+booting yet by signaling the ready state). Is this situation actually
+possible with the current firmware design?
+
+I don't see how this would reliably work in practice. If firmware boots
+a remoteproc early it should wait until:
+
+ - Handover is signaled, to ensure the proxy votes are kept
+ - Ready is signaled, to ensure the metadata region remains reserved
+
+None of this is guaranteed if the firmware gives up control to Linux
+before waiting for the signals.
+
+I would suggest dropping all the code related to handling the late
+"subsys_booted" completion. If this is needed, can you explain when
+exactly this situation happens and how you guarantee reliable startup of
+the remoteproc?
+
+> +	}
+> +
+> +	ret = qcom_q6v5_ping_subsystem(&adsp->q6v5);
+> +	if (ret) {
+> +		dev_err(adsp->dev, "Failed to ping subsystem, assuming device crashed\n");
+> +		rproc->state = RPROC_CRASHED;
+> +		return ret;
+> +	}
+> +
+> +	adsp->q6v5.running = true;
+
+You should probably also set q6v5->handover_issued = true;, otherwise
+qcom_pas_stop() will later drop all the handover votes that you have
+never made. This will break all the reference counting.
+
+Overall, this patch feels quite fragile in the current state. Please
+make sure you carefully consider all side effects and new edge cases
+introduced by your changes.
+
+Thanks,
+Stephan
 
