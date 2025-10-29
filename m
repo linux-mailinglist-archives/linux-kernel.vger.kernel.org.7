@@ -1,167 +1,137 @@
-Return-Path: <linux-kernel+bounces-875364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A991C18CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:54:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95EADC18C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 08:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FE94632B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D38D42675B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4142A312817;
-	Wed, 29 Oct 2025 07:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377633054D8;
+	Wed, 29 Oct 2025 07:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Zy4ci/sX"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EGIyhXmR"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E232731280F
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414212FB08F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761723914; cv=none; b=gzRD/hm8m53zrFtm7RCw/Fii245n8R8rw8jSt+/c9GmtLdRGEs2itUXuohz5X8VffBhxd20D0agQ7kQfEgxxmAwHgMDY4+iSegdTGbTk9HYh4hcvWQfc9JzIhMzn4AhQWLtHJLSZo4Zbqr1UGmBAoC6V37qQrj3eYFfu/yUBmSo=
+	t=1761724077; cv=none; b=oGWUDwF7OSTAlEzct1/TBqE0d41PPohl8X+e3NixXoz9aAk0Vt7mdCAT79P0auKcxEzIkWdBI8HWfV6WjNwIZdFMHXKbPWXGLgKEmHj1UzkbxA9oWOlYn639S+t5cLMW7edQNGr28JA21qPRgz43xcMW8bP2ZYJyfPBjns8pXx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761723914; c=relaxed/simple;
-	bh=nupMpTFNJdrOKFXcnzX4Ka6UC6P0ZafbVuM4eL0r1zI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OrKDYStVGTZL/vx/tHc3nAPkQNv4bYxtAZqzpsXxucdGCQ/dwkCJAoz2FwLT03NUXqn8kVqm+RO2cUED1sXFw8VXnkAO+DaFJyIuAtJrh6dV5kW93QGdmtX/XpCkxGJq4dvfpqJ3tnPP8fNQ+8s+Tk27GHMimdVC60fAQbCR1SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Zy4ci/sX; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42855f80f01so999101f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:45:12 -0700 (PDT)
+	s=arc-20240116; t=1761724077; c=relaxed/simple;
+	bh=vgS5Mv2an7aW8L2hop7Xh6r0KWmtXcOo0+xl9hewdoo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ArrHjLWrOIMM5OjxPYTCfmOTXlh92Ve8ovCfbpAt6nqXlk4DqBQ9WtEQb+mD7ItgPksMU5VKdWeGOnDMXbKUyiEw2Vq3+Hl7jVnaFPPZi8az/ss4QtejpbBKAh7h2ZFb1ZeRb4/CaBZwYPRb2p6W0/iK5lEOLs+ql7h19wvEiPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EGIyhXmR; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a26ea3bf76so9146159b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 00:47:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761723911; x=1762328711; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJv7mp1wZUS03IAanLVQjgY4bE3/XwXpGLcEtczECl4=;
-        b=Zy4ci/sXWfNKU8+aMTeKnNmJ/JtUJP+01yQuxdy4ceH8ajeR/5I10M0OpreyJO1dBh
-         QdcLK+75kAcSjFMNEM3gt3SVU0/01GUM/z5/Em/xLW8eQr/3lRMgxexIOdRkDROxRyJG
-         vSBAfz7jxSTMlY7p6XzpO96gFs9yryjJn9tMu1U/0BQt1fUNu5ko2aKTw023cbq+12bX
-         NeaYpyDBQ8OlDw4HXmdchwbx93Dp9ifQtOK/X3pidITAL2UiFC0CdqTgh4+yBmEkSXEV
-         mMlyung3yDYK8ENxWlujbOI18BiFOeYHtry2imo3WKcIz8ddIqcVjok+PX+RkStA6ule
-         zsSA==
+        d=gmail.com; s=20230601; t=1761724075; x=1762328875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q30GbqlTwe2nQMX4UB7blFcjur++GRluVV4AWK8Q6Ek=;
+        b=EGIyhXmR6beY7fmK664Aa5uFl8nBOaEstHj+1FEqaWRiVxX3hipJxLOa8bRfNmnmHq
+         scI3I34+CqMKezwK8LNBTefOm0+2Sg0z7r8HYRAFaSXpP7gQsMBg4+m9lb3AjSBawi1V
+         SqFddqL9Z9IWhuzCSRddXmAhM/hDwstBZDnKqrI7b5ZZC+ZcPuMGMqnIvyW0fIf1O14B
+         SUDcOzIyBEZGJX5kkEo/RE6ojiMuDHhCLCV7MjVKl4MN+biFc7E36COE3vurmaKg8O3k
+         mKJipqz0CjFXVtpx/yTJd07nPjbyFIfBPIE6gGYTPmqF2HOK7Mf2Kje0GC8VW0mPS/67
+         Gzhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761723911; x=1762328711;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1761724075; x=1762328875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yJv7mp1wZUS03IAanLVQjgY4bE3/XwXpGLcEtczECl4=;
-        b=tXlkiybHP7FwyLKEn/iRh6Ueq1Xdxx6CSFDtLE1ngUsPmcY/tfXJunSB13Pr8ZInxS
-         DqiDv6kMwyZlg0c/R6dlP/ZYfECxx2gEuYQPb/ZOinTM+9Rnw3gT+al1e4NWd3VuOy2E
-         WIUWDEY97PuT5dDQlwsJlUe0I306ubCMyixEwAOPOBJJDYblqyl27aYDZUTQuQtozcJk
-         vOf1jCzWeo7pR0h2qWIqxIu3pJmZ1L/Arru78AxtPvQSd/d5LwnqUpTsGtRgZCZiE7i2
-         CwwkCdQVJBKzIg2qsk0ER7u+zUrADaYc9F5Mkwu2XY2LXHr5NAQkhDSl/ce4tYBFKCnd
-         O/NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYq+p0tVmJWfpEhyA5oWnFpzWRfxo2aMttARyr9hKoNc5GEBdco6esdVH2XqUKK0WA8Bcn0pvXoU8yvvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQHhw3tAtwgNAwlIlrltRzgnVCc6jenwYKpGqaRZnO969iM0TU
-	OrEP5wsyrR7JGP8KJu46gwOYw6224kroQTsFebqpZI19YX6xEf/aCqllU8B2vd04zXw=
-X-Gm-Gg: ASbGncu69JxGEvN8ZOXwxKFfbi8UQPBfEv+AbDVWcml7C3d9JBlxVDRBnQ2BOz/b7or
-	qJ9acTfvZseOCnjuzqVDgoA2AKW+ezbRJEexwS8S0gHDWprN5wZs4Jvbas4ZsxnwK340QAX7Knu
-	eyepDi8d3ifX6NEIhz2kqTDXztU1CmTY95tkVtaU64xVLKwPbhFpBCmsvGLoFOCEoHcFaxB/DoA
-	ww1t6TzHkv3FCryQtO//aj02WP2WhOBs3AUtWumSPQbHE/n6QdL1lqADltgfhpx/FYlW10wKUKZ
-	vI1mSIauna3x0fqNx/UzBgbdIgz5fp08o+DUFC+hnqCLAChMOyoa6yEhsRCTzlpGjDtpBM58NeY
-	T+S9KYZqcJ8OAoj135lPYLClyDg3+oNB/DqB5s7HhG7aKAlZLyCNQmrgojmdEL4n4BoUITg9sQV
-	EEHT1lwwb3DVoaioN9QEaR
-X-Google-Smtp-Source: AGHT+IHLOaU9p+zg4Ic0wTFLQbsuw2vHNf/XZJ+1t79FATXoY+Zp0zdszPcD39UPCYJgFJS8ah5ceQ==
-X-Received: by 2002:a05:600c:4f81:b0:46e:5cb5:8ca2 with SMTP id 5b1f17b1804b1-4771e1744e7mr10248755e9.2.1761723911144;
-        Wed, 29 Oct 2025 00:45:11 -0700 (PDT)
-Received: from [192.168.1.29] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47718b66df1sm40196535e9.0.2025.10.29.00.45.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 00:45:10 -0700 (PDT)
-Message-ID: <f2117bbe-89d4-49a8-9e5f-5dc975f9bc13@linaro.org>
-Date: Wed, 29 Oct 2025 08:45:09 +0100
+        bh=q30GbqlTwe2nQMX4UB7blFcjur++GRluVV4AWK8Q6Ek=;
+        b=wZxq3ne5SXydxfXDsQOzXuR/t6DXXoX1AudHTqUXXNFfqrgyKuL73G1kgw4Qd/897h
+         dhERFyOt7pEK89OsuvlrsGwTpGc7opVlPaPBEDqEa1lcG1eVY2bY9o7wFJGCGMHEcnRG
+         2TIxxlm5DcQSSAt9meVefWwXGoAPhhh1OIKplBJzPqRyTLkuSQ7iYj4u2geWdeGqwIk9
+         HgR87CQqj9MaLSWXrXxtsyVnlXJKRm9w0koGvZ9s3KfO5AyBMT4efOaSKbIw5LxY628V
+         j5ORQRTkZrWsYVyJxkbgC7HzOUS6ktJrLDY1oy2JrVaPapIg8LAhB9aaxrO11CZwJ3hj
+         spAw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4HKakEgPGLWNaewNMBdqv6UGSZ7qBXHCGuNglef+e7lNy5JxNmFwim3MyJhRvgQUsSUHg4kib3DH5MYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWfbr/gr/ZLyVEDnFyAvqGCYUALCTkKPq1YPBi+PeXVYo3tD6G
+	djCxJMh6A0FEp3nKVTtzSBREcaEFeE598hmxTzKWCGIVBDxETzDEWppP
+X-Gm-Gg: ASbGncvQHRmEhKphcbiaMT/pzr4lzCVfXkxZ0ZFOde5fwzzDLkZSTibkg3sM7ZuMzwZ
+	OsftTqbvYNwYtCXnye8ZK1tmw16D0GMnCAo1MDpu0cL/ZCiXF3pV1mnI0ewr0ndpAUUqmiCqggG
+	gpK1x106guZB/VjVGN979A6Fyy4aKzv8DuuxEMfvVe2lIafnndsmp7+rFjiligpbmDCt0RO2zi1
+	k4TgeacExLKN6mFiypLQzcjvClwArxWKnjb1XNU3WLpuNVJtA6YnzoWKic9q+YRee/onV6denVU
+	QOxm4Weaj5hir/JhrW71jEVoy/2KqSnVUkjSfl6oXlNokdC1zielU1JBrYjloKd7TzqpyCazQk5
+	VovJrQPEzMbQUBn4Xd6VBtkmTlf8yACm6K+462reaT3I99u7notXXc6NIpwamG5Dp3Ma/XoACdx
+	P4cwewPrxOuUXpmW/H5e58aA==
+X-Google-Smtp-Source: AGHT+IFuC13ebf9tUyrUJPnxA/BVzsjUbwXpoTRR8n0eYfWFABlmJzwguFPrChLih2199JwTZmChYQ==
+X-Received: by 2002:a62:e90c:0:b0:77f:50df:df36 with SMTP id d2e1a72fcca58-7a4e4c1ce32mr2077224b3a.18.1761724075412;
+        Wed, 29 Oct 2025 00:47:55 -0700 (PDT)
+Received: from localhost.localdomain ([124.77.218.104])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a41408c4dfsm14201813b3a.65.2025.10.29.00.47.50
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 29 Oct 2025 00:47:55 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Wadim Egorov <w.egorov@phytec.de>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/bridge: sii902x: Fix device node reference leak sii902x_probe
+Date: Wed, 29 Oct 2025 15:47:36 +0800
+Message-Id: <20251029074737.18282-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/WIP 1/4] arm64: dts: qcom: sm8750: Add display (MDSS)
- with Display CC
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jessica Zhang <jesszhan@quicinc.com>,
- Abhinav Kumar <abhinavk@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250424-sm8750-display-dts-v1-0-6fb22ca95f38@linaro.org>
- <20250424-sm8750-display-dts-v1-1-6fb22ca95f38@linaro.org>
- <nwyrhupbrqrh6q5yvk6egtm3whi5h6xslhzio4g7f7l7yjx7c3@atl4bbk5f4vb>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- 2+47PN9NZAOyb771QoVr8A==
-In-Reply-To: <nwyrhupbrqrh6q5yvk6egtm3whi5h6xslhzio4g7f7l7yjx7c3@atl4bbk5f4vb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 08:40, Abel Vesa wrote:
-> On 25-04-24 15:04:25, Krzysztof Kozlowski wrote:
+of_graph_get_endpoint_by_regs() gets a reference to the endpoint node
+to read the "bus-width" property but fails to call of_node_put()
+to release the reference, causing a reference count leak.
 
-That's April
+Add the missing of_node_put() call to fix this.
 
-...
+Found via static analysis and code review.
 
->> +
->> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DPTX0_AUX_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
->> +					 <&dispcc DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-> 
-> No PIXEL1_CLK ?
-Why are you reviewing this one?
+Fixes: d284ccd8588c ("drm/bridge: sii902x: Set input bus format based on bus-width")
+Cc: stable@vger.kernel.org
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/gpu/drm/bridge/sii902x.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
+index d537b1d036fb..3a247ac3c7dd 100644
+--- a/drivers/gpu/drm/bridge/sii902x.c
++++ b/drivers/gpu/drm/bridge/sii902x.c
+@@ -1189,8 +1189,10 @@ static int sii902x_probe(struct i2c_client *client)
+ 
+ 	sii902x->bus_width = 24;
+ 	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 0, -1);
+-	if (endpoint)
++	if (endpoint) {
+ 		of_property_read_u32(endpoint, "bus-width", &sii902x->bus_width);
++		of_node_put(endpoint);
++	}
+ 
+ 	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, 1, -1);
+ 	if (endpoint) {
+-- 
+2.39.5 (Apple Git-154)
+
 
