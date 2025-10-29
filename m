@@ -1,137 +1,107 @@
-Return-Path: <linux-kernel+bounces-876351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F64C1BA25
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:25:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33EECC1B8B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEB24663BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:28:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D5E0A5C396D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F45F3081C6;
-	Wed, 29 Oct 2025 14:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4kvwU8P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E9673358AC;
+	Wed, 29 Oct 2025 14:27:05 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C342C028D;
-	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC516279DAD;
+	Wed, 29 Oct 2025 14:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748001; cv=none; b=BLdnB9ktGwuyL1g74zcebPPRVcwoQbGSNjrNfOI2Q0H7Q5utVsOpqMRAqpomR9xUtzw+EPeHXXRv9aRoroOF9FyCXX1Wm0Nj5/KVafRpHFvK25ZqWO1GoONIB2aheD60e6o47QWIGayQRi5qFYJaVyValXBP/MnnNHSs09MHHUI=
+	t=1761748025; cv=none; b=buSD8RU7NOoTosvszDJMKnOQuyHmGXdEb+dBS6qD7ptFWdgjxjPkH6MT5IIhyz1VRjwo2eksidtpu/fMFJuF5fUTgI53TJyRmNnGwlmGLEwf/Y1sLTrGnmSXL4My6ysDRtuSD1YstnZ8dt7yxd6tx9JADPte/3t5t0TW8GIGQoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748001; c=relaxed/simple;
-	bh=VZqF9VrAmlHotZC3esggL8Hr1cnKxgb531ArBlobfaA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KR9R0/FIAcHd9aBES5fTyUsPMZbDtuwc2J5BsYZCqvOxXMKWpNwkC/m0oaaOsQVXkXoWxlcc3IAAPVkbqbpJOYsxsSIf/v/ZW89FiE9x8Q1qaXAJGPPTb8SOFs++kB3Ye6DyHj1yzkmcoxcNacWdJmIZp49pV+TjNqztgb6Q0A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4kvwU8P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A5F2BC116C6;
-	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761748000;
-	bh=VZqF9VrAmlHotZC3esggL8Hr1cnKxgb531ArBlobfaA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=p4kvwU8PXGIa7diweVJjDvIyEOAl2NEL2Yg6t1WtZBlb975WYqMYBMUOFLw1ps+HP
-	 jYZqyxfUSTeYEbUf/14hLDl+ceNvugPIDDeXSohWTJ33JMSPvxZOxScW1IEWJkoJh9
-	 y/JcjTBDdWPyxZmUWsCn4xSo2gJXGamyucg+OgxSKwScN4uG8C2Lm7+sm4VvexwMsI
-	 uM3DTTohKBVzTSuBjMqS5aa7PQEMhvjuDtT8ixSYS3J6mn+gkfwhBHC9vOxAQBViDX
-	 nvi8SXfyDoJD+c+y37S3cqMyEHynugZ9ZK04ImiOJH6PAplRVmNvxqrSWYAuB7rps7
-	 gMD4uZxfry7UQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ADC4CCF9F6;
-	Wed, 29 Oct 2025 14:26:40 +0000 (UTC)
-From: George Moussalem via B4 Relay <devnull+george.moussalem.outlook.com@kernel.org>
-Date: Wed, 29 Oct 2025 18:26:27 +0400
-Subject: [PATCH 6/6] wifi: ath11k: add QCN6122 device support
+	s=arc-20240116; t=1761748025; c=relaxed/simple;
+	bh=dbygQzHttqjNpSjAjnD19UM0SjBDk0tlkiBX6toMasA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=VuoU09bVl8ra+F9OVq11snhpUrpLahp06OPMyZZYAwgM5ED/8JRFfBsJX5+Q0g0XQJQz6CCwjeT+8+1Df/mzPRms5tcHH4LSJ1puvGIcgXSxIHFlMNY8gCu5f0Zy0aNWvFPTcYBAm7nQSrLTs9+RTUpAswTfJm8YJDWC48yHDeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [10.101.2.66] (ip-217-65-134-37.ptr.icomera.net [217.65.134.37])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id AAFAD6020D324;
+	Wed, 29 Oct 2025 15:26:44 +0100 (CET)
+Message-ID: <ff745987-6e62-40e2-b2c1-ed35c0b9ffe4@molgen.mpg.de>
+Date: Wed, 29 Oct 2025 14:26:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Bluetooth: MAINTAINERS: Add Bartosz Golaszewski as
+ Qualcomm hci_qca maintainer
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Marcel Holtmann
+ <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20251028155320.135347-3-krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251029-ath11k-qcn6122-v1-6-58ed68eba333@outlook.com>
-References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
-In-Reply-To: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
-To: Johannes Berg <johannes@sipsolutions.net>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org, 
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org, 
- George Moussalem <george.moussalem@outlook.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761747997; l=1944;
- i=george.moussalem@outlook.com; s=20250321; h=from:subject:message-id;
- bh=MO7KsMfpzKHk3Kbh2D8damE6MIZVTsMgz25SICdrEDs=;
- b=K3qK5c3f0lBX0CW0vl5IFl9pODMBfTzS0f2OsZsmCjYeksCdtIJiyhhes4SZWzKIzw18NU6EC
- egExsLPJIhlDMg0OgQbszxEu05a3cT04hTUgeQbovPISaaGNStZjFGi
-X-Developer-Key: i=george.moussalem@outlook.com; a=ed25519;
- pk=/PuRTSI9iYiHwcc6Nrde8qF4ZDhJBlUgpHdhsIjnqIk=
-X-Endpoint-Received: by B4 Relay for george.moussalem@outlook.com/20250321
- with auth_id=364
-X-Original-From: George Moussalem <george.moussalem@outlook.com>
-Reply-To: george.moussalem@outlook.com
 
-From: George Moussalem <george.moussalem@outlook.com>
-
-Add support for QCN6122 wifi.
-STA, AP, and MESH modes are supported.
-
-Tested on: Linksys MX2000, Linksys MX6200, and GLiNET B3000 access
-points for prolonged duration tests spanning multiple days with multiple
-clients connected with firmware:
-WLAN.HK.2.7.0.1-01744-QCAHKSWPL_SILICONZ-1
-
-Although QCN6122 is a PCIe device, it is an IPQ5018 SoC specific
-solution and uses shared IPQ5018/QCN6122 firmware.
-
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
----
- drivers/net/wireless/ath/ath11k/ahb.c  | 3 +++
- drivers/net/wireless/ath/ath11k/pcic.c | 9 +++++++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
-index 820a383e88caf125892176e421b0121fed7e7055..6747fcdbf9a777d4214b9ef751dac2774a80c0ff 100644
---- a/drivers/net/wireless/ath/ath11k/ahb.c
-+++ b/drivers/net/wireless/ath/ath11k/ahb.c
-@@ -37,6 +37,9 @@ static const struct of_device_id ath11k_ahb_of_match[] = {
- 	{ .compatible = "qcom,ipq5018-wifi",
- 	  .data = (void *)ATH11K_HW_IPQ5018_HW10,
- 	},
-+	{ .compatible = "qcom,qcn6122-wifi",
-+	  .data = (void *)ATH11K_HW_QCN6122_HW10,
-+	},
- 	{ }
- };
- 
-diff --git a/drivers/net/wireless/ath/ath11k/pcic.c b/drivers/net/wireless/ath/ath11k/pcic.c
-index fc6e7da05c6028e30facf10d38a55f614067e44b..ac1e156ab3e0f0c47de1eb1ac5afea21addfd739 100644
---- a/drivers/net/wireless/ath/ath11k/pcic.c
-+++ b/drivers/net/wireless/ath/ath11k/pcic.c
-@@ -139,6 +139,15 @@ static const struct ath11k_msi_config ath11k_msi_config[] = {
- 		},
- 		.hw_rev = ATH11K_HW_QCA6698AQ_HW21,
- 	},
-+	{
-+		.total_vectors = 13,
-+		.total_users = 2,
-+		.users = (struct ath11k_msi_user[]) {
-+			{ .name = "CE", .num_vectors = 5, .base_vector = 0 },
-+			{ .name = "DP", .num_vectors = 8, .base_vector = 5 },
-+		},
-+		.hw_rev = ATH11K_HW_QCN6122_HW10,
-+	},
- };
- 
- int ath11k_pcic_init_msi_config(struct ath11k_base *ab)
-
--- 
-2.51.1
+Dear Krzysztof,
 
 
+Thank you for your patch.
+
+Am 28.10.25 um 16:53 schrieb Krzysztof Kozlowski:
+> There are no dedicated maintainers of Qualcomm hci_qca Bluetooth
+> drivers, but there should be, because these are actively used on many
+> old and new platforms.  Bartosz Golaszewski agreed to take care of this
+> code.
+> 
+> Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+> Cc: Marcel Holtmann <marcel@holtmann.org>
+> Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+> Link: https://lore.kernel.org/r/CAMRc=MdqAATOcDPhd=u0vOb8nLxSRd7N8rLGLO8F5Ywq3+=JCw@mail.gmail.com/
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> Don't orphan, add Bartosz.
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8abdc0e50699..8a2c5fb0ba55 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -21145,6 +21145,7 @@ F:	Documentation/devicetree/bindings/net/qcom,bam-dmux.yaml
+>   F:	drivers/net/wwan/qcom_bam_dmux.c
+>   
+>   QUALCOMM BLUETOOTH DRIVER
+> +M:	Bartosz Golaszewski <brgl@bgdev.pl>
+>   L:	linux-arm-msm@vger.kernel.org
+>   S:	Maintained
+>   F:	drivers/bluetooth/btqca.[ch]
+
+Bartosz, thank you for stepping up!
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
