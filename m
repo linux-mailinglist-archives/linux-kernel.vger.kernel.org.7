@@ -1,108 +1,117 @@
-Return-Path: <linux-kernel+bounces-876447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 860A6C1B832
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:01:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164D6C1B768
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:57:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31CC18926EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:57:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B50EA34A76C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5662C0296;
-	Wed, 29 Oct 2025 14:52:54 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FAC733B6E7;
+	Wed, 29 Oct 2025 14:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MTnCWUVI"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1B024DCFD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7DE2BEC30;
+	Wed, 29 Oct 2025 14:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749573; cv=none; b=m+sf5psqpKMI7KtatRYuWlp003SaW1s8Lwset3IcRL5x0nFd69ulVNj6EIxYMHKkSBORgxf5raRmQ+fyzr4L4NpBBCR3fvh7/mle2rHy2yl9yuVFbruf6zrNeVQY/4yn+FYx4x0RDEwKn7GLydaeW1KnrseqIN085HC4haadgAE=
+	t=1761749589; cv=none; b=PTB7nk1a38ut8DeRwEZmivS5pkIh5zmkn32qKCNIYQ5hCPbgfvcbqzibVPySRfF198ABbT5R8HHpjeR6vat6RsWa9we72ymulvDpd3Ssmpvs4iKYFNysd551VmKsvpwMfElCIQfnE4xThsoPASfDpz4+phxkmioH6gGG4EGrYp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749573; c=relaxed/simple;
-	bh=9zqV6jhB56NFXTaKlUcgOIVmNv3vcWwq2ciUZhAwPaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hOv04mTBSBgugh9z1DYK5ncCaXKS1VCQy2Mfl2IXr87TTU9Bh3xNDxAl0WSgSoIgH+ilPc8PgIsFDFPFlIVZbnWg93q0zVZRopWSRITAlaAiW1Q+Wp9DJw8L8eNJv+/eTFrJd/q6A/lyGD2CjM75FhkV3f4LpxcOi5PYSADDMiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5563c36f5dfso900688e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761749571; x=1762354371;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iQvv7exwOArMoYZGDke0hdGiWbyAHG9S2KTmO/d6Kf0=;
-        b=B06lH+X321jZKnsriX8fOQwHCW6GPc/cHSpCenlf5efcS9aDNgOPiWRH8WyJefoBMB
-         C55vhFsPe3dlhn5IbtFhFd3lozvPV6m75avvVS3UV3+GoYKE3rAFfYKxR2PotMUOS1rG
-         sifJn+gteHur7qheLgZZDsNm6UrgrJvbvbCleWF7VoqZboJYL7zIBOWk4wQ5PDcy6xks
-         Ww12vP7XgpZIMsyX6RSPa6F1Q1xWGsY+pZ6Gy52ZAVkBdQP41+X0rDhYtydAhk+phk4+
-         W0oRqg7OvaNprMVcIq1oCKPbbCZ2yNQr79x0YUMEx60fDmLC9lW2p9xHVbllyUW0fxVh
-         Tr4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW4wdnaS9Du7e+ZzFwmNLMMUTUrkkzyKWtb24H2AIcdV6Y5/4fggiQbWMfEtGLjD6yMnYqCsfnA9TkhXP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLEdlQFRe/UOwFjJbipLkyczaI2DCFh+xTX+9/l0+/pS7KEFVv
-	tHQPf4hkd8h8tzgG3/m4vAoxona9nR1QwUfTL5umC5oAJcoHSdFkgZqw+DSqKUsk
-X-Gm-Gg: ASbGncvd7Gk4sFUDe2IVR4fkJ+WOs0LfXK83tMABbApiD6d5crb6QJYhRQC9jwyi3pQ
-	Qbku8WE+Q4IyhOedU/KGPvDuOUN/5ZY5kjlyClbNcrqUGD0pvhVnxiuQvxClqZpGHGDHKBZbOog
-	7si0sjo5HxqL3eFwbHs6lsyy5SMbVpU/KbaDIxRbPc0PkZYe1WbUpBAw70tVGxhUsdCjS6zf+tB
-	gvVexvbGmeYEdLy4gbkTaDg73RjGgfPzSPj7EWFt0HCq6sQYfEUSq5RRFDEUUp/pAp6mjMDGZEV
-	HSZK2F/TFGsGaM19bAAV7zi/7MCt5cylLwRYZ4kzuBuLycl1ILy6Xe/hiVLdf12FEr9u2L0SWzB
-	w/dhvZke9A24TEhHWq1w7SnNKMqhM9xm6erF4R0Dw5DZ2U88fPoxq3AsP7vkGCQpYGt0a9toefM
-	xwUcXhf0V4+R4rtivvR2gw9lv1uTqRNL4eyqEojlseDCCRceFnoqno
-X-Google-Smtp-Source: AGHT+IG0gacISQOwQrXnVKvfcqIyagj7VU3DAXWy+WiOpDLZp9vJdM/oI+fEwy6EVamCZCylcQqB4w==
-X-Received: by 2002:a05:6122:614a:b0:53b:1998:dbf5 with SMTP id 71dfb90a1353d-558140a5a3dmr853150e0c.1.1761749570842;
-        Wed, 29 Oct 2025 07:52:50 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-557ddac1836sm5404810e0c.3.2025.10.29.07.52.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 07:52:50 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-59a8c1eb90cso4357251137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 07:52:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWknNaUCg060d67i1vKBKj89MrEHPrpYr8tvt2XoWWeuEO0vtlaD2Gj8Hjmya079NJTQT99W4sUuT01QXg=@vger.kernel.org
-X-Received: by 2002:a05:6102:1624:b0:5d5:d1ba:439b with SMTP id
- ada2fe7eead31-5db905d8f89mr990736137.11.1761749569699; Wed, 29 Oct 2025
- 07:52:49 -0700 (PDT)
+	s=arc-20240116; t=1761749589; c=relaxed/simple;
+	bh=N6uMqjuiISTOWC7xpwd26uYXqqmjP9OurvhshEZsv3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=qkdIgx8GWQ6ES7i7oeuIBbgW4n5WtwU+i4TMCJromrjcoeqYi8AD8I7DBFQ3cuSlmcySiry3AxzPCJoAEOPz6wmCm/PYhDyDf/Wucptt3IqUs0zegGq1nn06yB0sO/dj7DMGhH0a1LQFMAt3DAUuoljmAHDn3Nd4QBG4a+q7z54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MTnCWUVI; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761749585;
+	bh=N6uMqjuiISTOWC7xpwd26uYXqqmjP9OurvhshEZsv3s=;
+	h=From:Date:Subject:To:Cc:From;
+	b=MTnCWUVIZZoLoLMUjShhq8WfeteVxk53b8MtdCO/RuaHHHwwbPVsprs3iphiRon9f
+	 i3wnUDQDufMa7SIFA9FnJbbf2pfX8mAROh0/n6jGryZYgPpAoc6Qcb4Uqw924UrMbt
+	 csfoHWmzQPBgHv+oOijFX5uceXKiZxowHYHGA2+cNlgITkSlWeDOUH6pqWPdXHaf82
+	 Yv86sXEv++OHoGIK9G2CEr+sbEN3P3Jjzlbc7GHBdYjnjwuH2ktRVbFTVBrTxVcqgA
+	 9zTQ4wKO3qMTtqVyreZOHoDPTHNvTTIuUETLdBfx9JHsdhVfwjLJIXqjDeV4iv8fHv
+	 kfnRBfbS6VUZw==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 325C517E12D5;
+	Wed, 29 Oct 2025 15:53:05 +0100 (CET)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Wed, 29 Oct 2025 15:52:53 +0100
+Subject: [PATCH] dt-bindings: iio: adc: Add compatible for MT8189 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027211249.95826-1-marek.vasut+renesas@mailbox.org> <20251027211249.95826-3-marek.vasut+renesas@mailbox.org>
-In-Reply-To: <20251027211249.95826-3-marek.vasut+renesas@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 Oct 2025 15:52:38 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV_9nSn1M8MA3K_trWW2niB21Tj3+VSQgg0zrNOd166iA@mail.gmail.com>
-X-Gm-Features: AWmQ_bmu-VsyNsgrWByxIwZ6BxxZOq0ku33A5vZwj4heK_7OuwvDxVVNAt1ifsw
-Message-ID: <CAMuHMdV_9nSn1M8MA3K_trWW2niB21Tj3+VSQgg0zrNOd166iA@mail.gmail.com>
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a77960-salvator-xs: Enable GPU support
-To: Marek Vasut <marek.vasut+renesas@mailbox.org>
-Cc: linux-arm-kernel@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAEQqAmkC/zWNQQ7CIBBFr0Jm7SSAGqFXMV1QGOssoArUkDS9u
+ 8TG5fvJf2+DQpmpwCA2yPThwkvqoE4C/NOlmZBDZ9BSX5XUFmM1ylgMFSdOgdNc0K3NBY/GumB
+ Jups5X6D/X5ke3H7u+3hwpvfaE/UYYXKF0C8xch1Eolbxn4Fx37+5ZLO9nAAAAA==
+X-Change-ID: 20251029-mt8189-dt-bindings-auxadc-89ad9e0a7834
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Zhiyong Tao <zhiyong.tao@mediatek.com>
+Cc: kernel@collabora.com, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761749585; l=1241;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=N6uMqjuiISTOWC7xpwd26uYXqqmjP9OurvhshEZsv3s=;
+ b=Oicll2/zjt262uSpgPWCOKPgyQiMpk6vchlAy9c5/PYkfYrtCokj1Yu4U0np4tZKQMgwvgHA/
+ debgLh2k2e1BoaX6NH9qSgaQZk5VbTgAzovLXnicuABrQR9Dv0xjjYu
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-On Mon, 27 Oct 2025 at 22:13, Marek Vasut
-<marek.vasut+renesas@mailbox.org> wrote:
-> Enable GPU on Salvator-X 2nd version with R-Car M3-W.
->
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+Add compatible string for MT8189 SoC.
+The AUXADC IP in this chip is fully compatible with the one found in
+MT8173 SoC.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+ Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gr{oetje,eeting}s,
+diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+index 14363389f30aef85c596251fca0fe800200e2b41..d9e825e5054fe51c4010fc8a97af05c7639d4753 100644
+--- a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
+@@ -42,6 +42,7 @@ properties:
+               - mediatek,mt8183-auxadc
+               - mediatek,mt8186-auxadc
+               - mediatek,mt8188-auxadc
++              - mediatek,mt8189-auxadc
+               - mediatek,mt8195-auxadc
+               - mediatek,mt8516-auxadc
+           - const: mediatek,mt8173-auxadc
 
-                        Geert
+---
+base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
+change-id: 20251029-mt8189-dt-bindings-auxadc-89ad9e0a7834
 
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
