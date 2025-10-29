@@ -1,104 +1,141 @@
-Return-Path: <linux-kernel+bounces-876106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0FDC1A9BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:20:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EC0C1AB43
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:31:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B43750837D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E18628520
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42383358D2;
-	Wed, 29 Oct 2025 13:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053FC329383;
+	Wed, 29 Oct 2025 13:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="pk9g9oaS"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="jk5xCZs2"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D9329397
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:08:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761743337; cv=none; b=GhRA2nxRDKL4861ebcz/DfDwyVLmvNzJ9CIyPzLLtXLeX9o/2mHeM9OUa9QVeiiVt/RVRs0/fwWdXxe+VOuOctNn8KuCzAdpzGzteVG1EQxP+qP2qP5sskupq1neAiRVo+NawcUTF52XGt1FHFMdYDNIOwJurbSAJsLUUBhbx/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761743337; c=relaxed/simple;
-	bh=Z55s3i9xSKU27fw2ODBvX6XiH5+LNXp+zms/8kq1IqE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BZbktU84JTWC3KjJJ79zUtytQJOFHCzcmcJorZhaONdCrRN1FjyV3IxOQjN7y+P2FgeHrfmA1NqSl6QQzf2RR5yTG9wqBQFO4UXLoqdRQkNnoBRr46hEDmfeaxI4PYTQ6gEh+kEt9jsCtUiaGkhAMyzjv25QA8WnrfYLG54uV68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=pk9g9oaS; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 683688aab4c811f0ae1e63ff8927bad3-20251029
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=5rqruaBGbdBage9RelMNC/uGmvBCpu4gWGsl5QOYqT0=;
-	b=pk9g9oaSYj3I+TOZUiQQGGHiCWJRB61dGuuMc0yCvDer0LubkfUzbbDEGLelDX7P58QHftHW/ISbCMet9wVF4uL8mNn0DAoGqPcmwh5mMoelcPNs6BkTL3I/uPZOsrmwO0xlGKvbOsCS0kKK100+Er44P9SZROenVmEp3q8hsfE=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:752901ef-bde3-4493-a0e1-379b11936704,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:70fcb118-3399-4579-97ab-008f994989ea,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
-	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 683688aab4c811f0ae1e63ff8927bad3-20251029
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <sirius.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 274325936; Wed, 29 Oct 2025 21:08:48 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 29 Oct 2025 21:08:45 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Wed, 29 Oct 2025 21:08:45 +0800
-From: Sirius Wang <sirius.wang@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Sean Wang <sean.wang@mediatek.com>
-CC: <wenst@chromium.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, <jh.hsu@mediatek.com>,
-	Sirius Wang <sirius.wang@mediatek.com>
-Subject: [PATCH] soc: mediatek: mtk-socinfo: Add extra entry for MT8189
-Date: Wed, 29 Oct 2025 21:08:34 +0800
-Message-ID: <20251029130842.32633-1-sirius.wang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4F2325709;
+	Wed, 29 Oct 2025 13:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761743332; cv=pass; b=sYRcpMbN1iWfynIIZBig3w5F0OS9cmoJCcNm19qg0UY0l18W/5qm9CJZc7CUNU/PSRBXXv3Ld4sw2WHqoj5uku4UwAhcX6QEzvmKKUfzXCnXf6wfyfmfjTPyOzDJJpqsv/HAynRi+OUxuFv9eHtXftd4JJdqWkgOCZaMYYXWzRQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761743332; c=relaxed/simple;
+	bh=GbgKFbM23FJf40EYp3wxJOdmysbQkt83nRPhacGu1eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M4OKU1ZBtS4AeQq/JKkeOMm5owun848jpz1HJGOuBGHOu5X6OGOuOwbYOHs4G3srn9hMpgeH49Bj5J/kC8klFX3zrxABL9b7IHl/ePuPGKoN7p7fr3sJZACg0ZtIPj4jdVO7wGXGy/CX61NpACbRa5JkltsPL3nNn9VqF3WBCls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=jk5xCZs2; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from hillosipuli.retiisi.eu (91-158-51-183.elisa-laajakaista.fi [91.158.51.183])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sailus)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4cxSH81sV3z49Q8y;
+	Wed, 29 Oct 2025 15:08:36 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1761743318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fpXvJaxUezX/qrHlm1Wc2qpJNkfgp6lz8sBDtu/HNk=;
+	b=jk5xCZs2MhJ6YV0WbgnrB6KrYUYYgRll8qz+FZ0cYkqAiYwipqdWCnAi6lyXbGAZcJXqkE
+	KzDf7WdkZ4Iil8qEkO9Rz/rPuLBO6YvqlFb56rpGJMSJq+/15HEcSsgVSBnaQewQF6j/YD
+	9Vs2D2q2ZrW4d9BFtKP7GhX41Z0ogUZ3jDjgyeZGOV5w7qhB4VQOATBWZxVgKuEqDCRbbr
+	v/YbFWdKeJw2aelyObzMQcIhHElcISRvozrd/pMfl2NAWfFn06fZvCFmg48TdXV1myVQsD
+	Z2rU78zR5OPZvPkt/jnSj3MPAbvf62u7dQn4Jcq3iEY8Hu6LQy5PPOhZX1T8xQ==
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1761743318; a=rsa-sha256;
+	cv=none;
+	b=tp2biwcG6TD4/1R1UJK1dPWB2mg9cHYaQB4U6s/t9jQe6+JFUsF4XZJblE6aur/0DJZcwm
+	sxHFlwGztav721qoQBihahfdm/bprdIKl0SsWrzjp4p2vC768v7P6WcZX8iPqlEg9PTpoe
+	AdnWDL/aA779EiDbvnxlFXmArGpmdeoC20MUXO8YP/GNZTN090o8SfrfT8oJjMQYnI2rgw
+	QjuIwNcT1W6Zw5HV6w67EFWLpNrgr6FxjQddSzH4aMhF0MCDivo54T4BcOw90I/ov+WEhf
+	rPwboAeQbaeJQUckruhackPuZIzNAououq6TDhhZR3kAA/8Uh5FRR6q60M2mgQ==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1761743318;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9fpXvJaxUezX/qrHlm1Wc2qpJNkfgp6lz8sBDtu/HNk=;
+	b=ZvkgpX/FQ74zH8z7fM/WHCxsFU2vxWamDQJB/eW9eTWdtg1Psy+HGlAbjiCL0YMI4te1Td
+	bgPPKLFWpKUpicreBmdu8Q42vBg+DsQm9nbe36xlwTxxtenKkyvDdmIsOIvVAX5Tj1bWjW
+	NHqvQoEGys9BagIJhTLOr90fNNaodI+5ZIPvTuJYyzNRcteEGqVIlaY/ptmbb0PNMLPP4I
+	jUdut+KtbNgnKmFmqfDwxDUjmqNQjujY3sbIe2lQhng9SOJocg6gIYnkn2pP6AREw74YJ6
+	3dko+PeZACZS5t4NZa8q+Z0d8qWegf7KCwZp7CmDpwOawFYioXLbd8y1XknteA==
+Received: from valkosipuli.retiisi.eu (valkosipuli.local [192.168.4.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id B6E39634C50;
+	Wed, 29 Oct 2025 15:08:35 +0200 (EET)
+Date: Wed, 29 Oct 2025 15:08:35 +0200
+From: Sakari Ailus <sakari.ailus@iki.fi>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Eugen Hristev <eugen.hristev@linaro.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alice Yuan <alice.yuan@nxp.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 03/31] media: v4l2-common: Add helper function
+ media_bus_fmt_to_csi2_(bpp|dt)()
+Message-ID: <aQIR03RD0BekWkmX@valkosipuli.retiisi.eu>
+References: <20250821-95_cam-v3-0-c9286fbb34b9@nxp.com>
+ <20250821-95_cam-v3-3-c9286fbb34b9@nxp.com>
+ <aP81s4FDhj0-3WFh@valkosipuli.retiisi.eu>
+ <aP+isGnWmJ4tLXcs@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aP+isGnWmJ4tLXcs@lizhi-Precision-Tower-5810>
 
-The MT8189 has a different socinfo match for MT8189 SoC
-(commercial name Kompanio 540), so add it the driver.
+Hi Frank,
 
-Signed-off-by: Sirius Wang <sirius.wang@mediatek.com>
----
- drivers/soc/mediatek/mtk-socinfo.c | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon, Oct 27, 2025 at 12:49:52PM -0400, Frank Li wrote:
+> On Mon, Oct 27, 2025 at 11:04:51AM +0200, Sakari Ailus wrote:
+> > > +/* DT value ref to MIPI Camera Serial Interface 2 Spec Ver4.1 section 9.4 */
+> >
+> > I'm not sure if I'd add such a reference here. At least it shouldn't be in
+> > this patch.
+> 
+> Still not in v6.18-rc3. I add comments in this patch because try to add
+> media_bus_fmt_to_csi2_dt().
+> 
+> If dt define is not standard, media_bus_fmt_to_csi2_dt() don't make sense.
+> the difference vendor choose difference dt values.
+> 
+> I am fine create patch for it before this one.
 
-diff --git a/drivers/soc/mediatek/mtk-socinfo.c b/drivers/soc/mediatek/mtk-socinfo.c
-index c697a0398d91..32153c122416 100644
---- a/drivers/soc/mediatek/mtk-socinfo.c
-+++ b/drivers/soc/mediatek/mtk-socinfo.c
-@@ -50,6 +50,8 @@ static struct socinfo_data socinfo_data_table[] = {
- 	MTK_SOCINFO_ENTRY("MT8186T", "MT8186TV/AZA", "Kompanio 528", 0x81862001, CELL_NOT_USED),
- 	MTK_SOCINFO_ENTRY("MT8188", "MT8188GV/AZA", "Kompanio 838", 0x81880000, 0x00000010),
- 	MTK_SOCINFO_ENTRY("MT8188", "MT8188GV/HZA", "Kompanio 838", 0x81880000, 0x00000011),
-+	MTK_SOCINFO_ENTRY("MT8189", "MT8189GV/AZA", "Kompanio 540", 0x81890000, 0x00000020),
-+	MTK_SOCINFO_ENTRY("MT8189", "MT8189HV/AZA", "Kompanio 540", 0x81890000, 0x00000021),
- 	MTK_SOCINFO_ENTRY("MT8192", "MT8192V/AZA", "Kompanio 820", 0x00001100, 0x00040080),
- 	MTK_SOCINFO_ENTRY("MT8192T", "MT8192V/ATZA", "Kompanio 828", 0x00000100, 0x000400C0),
- 	MTK_SOCINFO_ENTRY("MT8195", "MT8195GV/EZA", "Kompanio 1200", 0x81950300, CELL_NOT_USED),
+Sounds good to me.
+
 -- 
-2.45.2
-
+Sakari Ailus
 
