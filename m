@@ -1,130 +1,201 @@
-Return-Path: <linux-kernel+bounces-876364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F3CCC1BAFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:33:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D93C1BA3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899FB5870F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C45DD58312B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A63289378;
-	Wed, 29 Oct 2025 14:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB95C2857EF;
+	Wed, 29 Oct 2025 14:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VG80Au/z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BVEpfGO8"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7323189B84;
-	Wed, 29 Oct 2025 14:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2749E19D08F;
+	Wed, 29 Oct 2025 14:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761748411; cv=none; b=E8zUdmjzakxuJNf9Jwy7jlr+kxnsxe7WzWpDq92smPUMZNQygg4ZucAdXuuqxZgzUiq4czfweXGg1pWS6M0oiTFd9oobPlcBO5UjIGKA+CEJjZbDq3pNaDzgQl9ScvPBw2xeHXbWIPl4qUcT0Jd48E+Tyg19UyrC/6004VkpVGQ=
+	t=1761748616; cv=none; b=sUoiqqaLbQKz+2Zi39zS8s5m9gUKGL+Wb1xAVovPq2SJSeYqPTV1u+tZkQ6bTRDh70GVaErt2vjXekP70fr5Y8HZhd3S81Ue7UjHEb5HZYXmHzcF+/O+NDjTs/T+UVUXv9BsV2UxsREFhoa+SPBH23BwHYbBeKQFNQbDQsgVQ4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761748411; c=relaxed/simple;
-	bh=KBexipZinacsmi51W/An1mVKtsS6DoAr0PqX5xgZB5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rtpqpX7BaKb7HT8a5dO8Piz19SVvUxrH8eHNIc5InFRyG1opr1Gdzt4OlEXEKi0qfsG5Xc6cBO30aQ7iiGU+LfhqtGy+49ZSClodfUESEYV/qJHvblZW47PF5V4l81C5f+oeKn5UX9me0S6vdNQ/hmlAn6VjzJk4vUrPgXT/SX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VG80Au/z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0001EC4CEF7;
-	Wed, 29 Oct 2025 14:33:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761748411;
-	bh=KBexipZinacsmi51W/An1mVKtsS6DoAr0PqX5xgZB5s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VG80Au/zpuSHRueSTHUFZR/1bZL28JCayNjHxCoG26OBnSuxkV80upA4J5ugWGUkD
-	 4dwRjt6wHcHp7yYiwSODIz4aLnKfk/Dfoen8JzMwDOn9eT/lYp6hy1r1fF+P/u/CVV
-	 xvP8po+84ATTQC37CgGJYpcITqmDvO5+bpCFbpf0MfiXpqvuoMyBnukdKBCsFJL3I3
-	 uC2ZPKbEoL3KExRBwmCI3SEA/M62j3zozMnHCOHYtP/5lHqEekiAQk6bTowalGH8am
-	 k+sftZ6uNO0ao3kOp3YxVZuuTjKhk30F9y4D6GGJo/mlutf1OsJkvJXk4IkILsqdWP
-	 HmT+WlrES4uQg==
-Message-ID: <59ab13be-f72d-4567-a512-15b2c0be5ff4@kernel.org>
-Date: Wed, 29 Oct 2025 15:33:27 +0100
+	s=arc-20240116; t=1761748616; c=relaxed/simple;
+	bh=8k4lHzLT7neM0g0BzvOZmUmEADE2dPgk8M+AIwdzG0s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NLfBQYv93jzdry3T2uiFNzC3GKUVwu5eKLMHqZoCYwBDAkl0rcidX2AybJZH66fkaz2jKWP5UsaU+G4uyochiYVS9V/KUGFh360lvbgCsYJHNmrQWNVqtNZEg1QC6NzuOeTlOJL9wqMNs7VNxTwUWxgf5BMffpQFiwS51W8OR/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BVEpfGO8; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 1145FC0DA83;
+	Wed, 29 Oct 2025 14:36:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 44034606E8;
+	Wed, 29 Oct 2025 14:36:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A8108102F24F9;
+	Wed, 29 Oct 2025 15:36:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761748610; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=jmYUv2V00UoCMYbVhUgMXX8GG9XVWU7wTruT7EINe3I=;
+	b=BVEpfGO8UFCpwaijw+FPufnafc1ANbfwMLb9V1FKdLUtqeiOylZYCo2fezC/KCivbabqgn
+	/inS9Qaz9jKwINYN53it+6w8GNobhKXQutndQg6z5v18hy67Fx2n1DWIrPoB+Lq72DJ1LM
+	RDS/mIadFYJD7SdBXnWe2eWtEqGLkPAK9WsMFF7biE6xdVbjImUQUZsyaazkhhDGtK9XVN
+	kQPxmC252LnpXEwhpLrwcBGqwr2XG7XszunUyUzYLX+z4eLKAkoGjaBZk1SdW9y2UM300N
+	VpAfFrNo3ngNpRMz9Rw6rquwNwltwZOAAnIedyrwtoLG0Yk+y4BkplFdrKNUlw==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH RESEND v2 00/32] VKMS: Introduce multiple configFS
+ attributes
+Date: Wed, 29 Oct 2025 15:36:37 +0100
+Message-Id: <20251029-vkms-all-config-v2-0-a49a2d4cba26@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/6] wifi: ath11k: add hw ring mask for QCN6122
-To: george.moussalem@outlook.com, Johannes Berg <johannes@sipsolutions.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
- <20251029-ath11k-qcn6122-v1-3-58ed68eba333@outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251029-ath11k-qcn6122-v1-3-58ed68eba333@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, jose.exposito89@gmail.com, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: victoria@system76.com, sebastian.wick@redhat.com, victoria@system76.com, 
+ airlied@gmail.com, thomas.petazzoni@bootlin.com, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5317;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=8k4lHzLT7neM0g0BzvOZmUmEADE2dPgk8M+AIwdzG0s=;
+ b=owEBbQKS/ZANAwAKASCtLsZbECziAcsmYgBpAiZ6heT2hcGYscwlgCl5EEIjMrJRz6q2Jm3PK
+ XwDX7iSAd6JAjMEAAEKAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaQImegAKCRAgrS7GWxAs
+ 4l7SD/9Blfc5w1B/UdufZVV8UmNkFROrrwX2c6584IO9UVmLLjjYBYVWM8PclIo5Cp5U21PJHgJ
+ gRk0mijM+7idSrIkTvJR6PY4M5x26JN1UtYzU5eXDqPBqr7J+ConaVBOCBAuspWWb1lWrjj6Lsh
+ L7K2mSo4ldOuwMclzTEQ+1sC+ChgMMKq/XYE5DJfJlmzUFAL5jdZ1knmlB1+3s+J58Y4hPtt27Y
+ gBZsG4A8zj8riM1TlSRs7+gZ54vNst5GXDpl89wOTXzk8/e8XNMSrfczRRhW5jXyo/Wnw/oYYDK
+ thoJv30bs3kFjx88OmuH/eeZ+6iYV/1/iYVDjo8ZRcgG/5/gZvcCC4BwR376vjPFFObgbZ3+qkX
+ 33kf15n44VvdGDAYA3gyu8R3ZuxqqqoQAghhpvDlOQwONAIcNwCmzxNffcERVMwOPLaITQngb0G
+ wH/1B3H/EzPtzQBV8fj38rBl96uZgHa20JnJ1iJAe8P66mbjWw9p6TEFsJcvKAk/Ukkkel9/XIb
+ 7PXgs77C4/qHca0LtZPukhFuVFS1fvg5o6nWyYtMgJWdXjEayAZEgdGI1tolpMx5TEBYNO98ukM
+ BZytMoifdl+9aWjXjqJiQ3Fu9X9cTXpf/8BCn8ALbmc9jerB9t7444QstYA2LW0ymoWQn2Uts6j
+ JbrF1a6aOg2EVpg==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 29/10/2025 15:26, George Moussalem via B4 Relay wrote:
-> +};
-> +
->  /* Target firmware's Copy Engine configuration for IPQ5018 */
->  const struct ce_pipe_config ath11k_target_ce_config_wlan_ipq5018[] = {
->  	/* CE0: host->target HTC control and raw streams */
-> diff --git a/drivers/net/wireless/ath/ath11k/hw.h b/drivers/net/wireless/ath/ath11k/hw.h
-> index 52d9f4c13b1366f2339b8900cf9db91e6ff1bcff..e7220c46de10c378ea5b452d78f921054ff54e54 100644
-> --- a/drivers/net/wireless/ath/ath11k/hw.h
-> +++ b/drivers/net/wireless/ath/ath11k/hw.h
-> @@ -285,6 +285,7 @@ extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_ipq8074;
->  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qca6390;
->  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qcn9074;
->  extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_wcn6750;
-> +extern const struct ath11k_hw_ring_mask ath11k_hw_ring_mask_qcn6122;
+VKMS have a wide range of options. The aim of this series is to introduce
+many configfs attribute so VKMS can be used to test a wide range of
+configurations.
 
-Why are you breaking the order in every such list? Keep it
-alphabetically sorted.
+PATCH 1,7,10,13,23 are to expose human readable strings from drm core
+PATCH 2-4 are to expose human readable plane type in debugfs
+PATCH 5,6 plane attribute
+PATCH 8,9 plane rotation
+PATCH 11,12 plane color encoding
+PATCH 14,15 plane color range
+PATCH 16,17 plane format
+PATCH 18 properly use zpos
+PATCH 19,20 plane zpos
+PATCH 21,22 connector type
+PATCH 24,25 connector supported colorspace
+PATCH 26,27 connector EDID
+PATCH 28,29 preparatory work for dynamic connectors
+PATCH 30,31 dynamic connectors
+
+PS: Each pair of config/configfs patch are independant. I could
+technically create ≈10 different series, but there will be a lot of
+(trivial) conflicts between them. I will be happy to reordoer, split and
+partially apply this series to help the review process.
+
+PPS: Resend because it was rejected by dri-devel
+
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+Changes in v2:
+- PATCH 1: reorder includes (José)
+- PATCH 2: use name property instead of folder name (José)
+- PATCH 3: Fix default rotations (José)
+- PATCH 3,5,7,12: Add tests and extract validation for planes (José)
+- PATCH 3,5: Do not create color range/encoding properties if not set
+- PATCH 5,6,7,8: Set plural form for vkms_config_plane fields (José)
+- PATCH 4,6,8,13: Remove checking for default in supported (José)
+- PATCH 9: Add break in vkms_config_plane_add_format (José)
+- PATCH 12: fix zpos_enabled typo (José)
+- PATCH 13: fix documentation (José)
+- Add debug display (José)
+- PATCH 20: use drmm_kzalloc instead of kzalloc (José)
+- PATCH 22: simplify the code (José)
+- Link to v1: https://lore.kernel.org/r/20251018-vkms-all-config-v1-0-a7760755d92d@bootlin.com
+
+---
+Louis Chauvet (32):
+      drm/drm_mode_config: Add helper to get plane type name
+      drm/vkms: Explicitly display plane type
+      drm/vkms: Use enabled/disabled instead of 1/0 for debug
+      drm/vkms: Explicitly display connector status
+      drm/vkms: Introduce config for plane name
+      drm/vkms: Introduce configfs for plane name
+      drm/blend: Get a rotation name from it's bitfield
+      drm/vkms: Introduce config for plane rotation
+      drm/vkms: Introduce configfs for plane rotation
+      drm/drm_color_mgmt: Expose drm_get_color_encoding_name
+      drm/vkms: Introduce config for plane color encoding
+      drm/vkms: Introduce configfs for plane color encoding
+      drm/drm_color_mgmt: Expose drm_get_color_range_name
+      drm/vkms: Introduce config for plane color range
+      drm/vkms: Introduce configfs for plane color range
+      drm/vkms: Introduce config for plane format
+      drm/vkms: Introduce configfs for plane format
+      drm/vkms: Properly render plane using their zpos
+      drm/vkms: Introduce config for plane zpos property
+      drm/vkms: Introduce configfs for plane zpos property
+      drm/vkms: Introduce config for connector type
+      drm/vkms: Introduce configfs for connector type
+      drm/connector: Export drm_get_colorspace_name
+      drm/vkms: Introduce config for connector supported colorspace
+      drm/vkms: Introduce configfs for connector supported colorspace
+      drm/vkms: Introduce config for connector EDID
+      drm/vkms: Introduce configfs for connector EDID
+      drm/vkms: Store the enabled/disabled status for connector
+      drm/vkms: Rename vkms_connector_init to vkms_connector_init_static
+      drm/vkms: Extract common code for connector initialization
+      drm/vkms: Allow to hot-add connectors
+      drm/vkms: Introduce configfs for dynamic connector creation
+
+ Documentation/gpu/vkms.rst                      |  45 +-
+ drivers/gpu/drm/drm_blend.c                     |  35 +-
+ drivers/gpu/drm/drm_color_mgmt.c                |   4 +-
+ drivers/gpu/drm/drm_connector.c                 |   1 +
+ drivers/gpu/drm/drm_crtc_internal.h             |   6 -
+ drivers/gpu/drm/drm_mode_config.c               |  13 +
+ drivers/gpu/drm/vkms/tests/Makefile             |   1 +
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c   | 247 +++++++
+ drivers/gpu/drm/vkms/tests/vkms_configfs_test.c | 102 +++
+ drivers/gpu/drm/vkms/vkms_config.c              | 333 ++++++++-
+ drivers/gpu/drm/vkms/vkms_config.h              | 577 +++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.c            | 939 +++++++++++++++++++++++-
+ drivers/gpu/drm/vkms/vkms_configfs.h            |   6 +
+ drivers/gpu/drm/vkms/vkms_connector.c           | 168 ++++-
+ drivers/gpu/drm/vkms/vkms_connector.h           |  38 +-
+ drivers/gpu/drm/vkms/vkms_crtc.c                |  11 +-
+ drivers/gpu/drm/vkms/vkms_drv.h                 |   5 +-
+ drivers/gpu/drm/vkms/vkms_output.c              |  19 +-
+ drivers/gpu/drm/vkms/vkms_plane.c               |  79 +-
+ include/drm/drm_blend.h                         |   2 +
+ include/drm/drm_color_mgmt.h                    |   3 +
+ include/drm/drm_mode_config.h                   |   3 +
+ 22 files changed, 2534 insertions(+), 103 deletions(-)
+---
+base-commit: 57fe8285dc4764171fa9eb1f153cae3bb313d6fc
+change-id: 20251017-vkms-all-config-bd0c2a01846f
 
 Best regards,
-Krzysztof
+-- 
+Louis Chauvet <louis.chauvet@bootlin.com>
+
 
