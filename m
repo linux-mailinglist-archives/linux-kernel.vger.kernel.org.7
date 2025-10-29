@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-876268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27742C1B602
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC515C1B3A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:32:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D44CB663BFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:55:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 657D06E0093
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27CA2D3732;
-	Wed, 29 Oct 2025 13:44:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE162DAFCA;
+	Wed, 29 Oct 2025 13:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QLYfDHhi"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mEBS/OCd"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43E6335BA
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F792D8780
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745471; cv=none; b=lgemXhjhAP/4fwoW0Y0GJiA+chSmNV31H5VvzdslvdbJKFHwUKafEotmkClsMR9TpKRL6hBdNZKkqETTN12YP2XJfD+M2NbmlZNTb11D3AUnIAxQH/20OWBW9JEkRt1EhohI9wMUOEyRXpsabnhnk73T2WxgSijpahGAk3zRuHA=
+	t=1761745628; cv=none; b=DVdJXUrpGApa9z91r0rPYfXqFAdQxUpHa59ih0nQAW8q/FWEy74hwCG379G1SmSb5Pwp6OGihA4kwO/9dlHCXgy7/tsqHu2+MHroYoVod+C/HhLdB0uJ2J5/uNIyTzTe8mehLcsprar+lG/yDdcuAX5g088vdqjYXEbYutTBW3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745471; c=relaxed/simple;
-	bh=akTAlOlvCXgUUeWkN15YYuyCcdmX6JZE7gXZRKSDbwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GT5WTzKS4/DZsApKsfoEbgxt0cohCaSxWbuQiG0EYiwwk5JJY7wh1NeYq2aXy/gbiBimsYDq1UnTo6xlIFyeLllzleOwK2oL9MlZmO8Tdkocj8MhLTtAwRiqA+JPGPpKVjEirpdOyObPM0F2UegwB7hB/VMDmxOkdTrSDxF4lj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QLYfDHhi; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-940d25b807bso305222839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:44:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1761745469; x=1762350269; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zdhm4zDRyUmcL/+bkn0abpwAMWivZMM0K7ilDnHJ6Z8=;
-        b=QLYfDHhi5p+4MJ3s42KwufjiLMyEPRiywAqZhkzFNaatH+elh7n4qWz34qwXtkgOk+
-         jCeZnBmMM58OfFdksdU3PSK9qlrZhIJkZbgP2/7TBZaWdY2Oyp2c+TqUBax0rmGqoE+v
-         SDdHqjv4fcbr9uLHCFzGcG++spQypPQAP1WQs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761745469; x=1762350269;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zdhm4zDRyUmcL/+bkn0abpwAMWivZMM0K7ilDnHJ6Z8=;
-        b=tiF3X6CZT7VPD6ZDJXlSlJaHKTAAdNZEoFqk1Qf9+NZOtfGQpP3xcuPrdnN9uZ1fq9
-         Gk0cdx009K22dQD9TT+orfk5UaLDIJzuLXQnOTZuEFzEuZjcWGMKpN+G1wBZFdNBBgXe
-         0Ef35xnawsF+pU96PLsj6gWx72An9Hjfdi58i5cCUV9VcXx2gIcsuG5TGcChMYDx184A
-         /3J08VmKOEQVyKjxw+z8tGLySONTdkQDdcQRWba3sAZEqdRwGhOSF2h0ll5ozeUXfRQP
-         jCb/IfCWPtCZ56eq7Q2tzuPTYTMrQTf8d+x5RkODBagyiPuSFt53HWbUBgXUojWnwnTB
-         N6+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU833AQ4Wy+9S7n9JDQwQAPLcdfj2WE5R4AbBmGzrYXlc5d1fLbh6m02/yDjBjVYJAz3F9wXSlU0q3nEsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXOmW0bO+9PQj+a2P7WtsCP/FJWisZAUsaYn5bwpywXylEu+21
-	MOAnFnxDd2wSUOQDBDLY/xQHhE93V48fKSbeY1oRKiBCMjJddX+WCbLkSsLGreK+i6Y=
-X-Gm-Gg: ASbGncvs+czPZogD9D9j6C+5S6CunLsECzPbNMdCLOyCWWfh8bwO7V7euiGCrj5oPat
-	BkuJTfKeZEwFhL9fOT51vfepAQ8Ik5d3gGYIcU0d/cQI5+S+lZWvw73kvM52lkD5Eg9HYLOU6tD
-	C01tls84f0V93YuCqOM8jU+XRhx4pqAB73fuxILbk9kbny0iFKUleB3RikmUQ3eFMLGbe1eEyVs
-	KqQnZ5xy+kMWp2SUu1HhM/jq+djErQiSU+OiVdx39Xx4w3soBOFk43kN7XM/60JW/ulBhAaTsjk
-	2QyHmhL/UISRBR+umHmUgh+t8kfK2yfRihYq12DgWSZd6Bkhxv7TmveV90Ov7/YXfu9ZBpXtKSD
-	wdA8gzJo98kp2QLYzQszgWg1OUREXglMxLNPgOzHS3CXJAzo+SOyJ7imyGM1Qqpj+NqtU3WjE4U
-	f2AohmhvL4LN0j
-X-Google-Smtp-Source: AGHT+IHLYcDl503ydPp3Vo6nK53Sk01A2+YXNVgZQH4qpA8YmD8SAR5tkVmYDEsWC24bVzDxjEr3wQ==
-X-Received: by 2002:a05:6602:148a:b0:945:b86b:d810 with SMTP id ca18e2360f4ac-945c988a604mr450513439f.16.1761745468759;
-        Wed, 29 Oct 2025 06:44:28 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-94359f316basm466022139f.19.2025.10.29.06.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Oct 2025 06:44:28 -0700 (PDT)
-Message-ID: <e7fbebca-ffe6-409c-bd52-848cc2a3ad27@linuxfoundation.org>
-Date: Wed, 29 Oct 2025 07:44:27 -0600
+	s=arc-20240116; t=1761745628; c=relaxed/simple;
+	bh=FtGL6BrEe7pDieRhJuh9tsTJUGfEYnMY7qjoVKYV4Xs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oW+1XcDvKYwEb6yKUtrZNKUXtELxJqHU+j7tbNFjym2xOAX5YjU8or0DHkHyxaxeGfk09BKqrZ3scuS4JjUkPnfMcRa3IbjIMB3zMV8+KyWzEVUa/xjM8cRUT1ZVUuWovfcC1GY0WWJDDlZloqK4jMy9GTeoTk+aXYrbzRIxZSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mEBS/OCd; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761745622;
+	bh=FtGL6BrEe7pDieRhJuh9tsTJUGfEYnMY7qjoVKYV4Xs=;
+	h=From:Date:Subject:To:Cc:From;
+	b=mEBS/OCd6+czSbU6MfkLaxnvg5HB/ZP8tfOySjoSQRx7oW/DrF8RKppXelv6vvwzL
+	 oNde605UdshGGj3IMvONoZI0Ux/7Z16qZtZcdSklRmd1ABCwkQtJhJISOZQ5R9oTgB
+	 bexGd9auLlTo6wZerFq4fJdbBHEnCvnEKfp6Hc3d4meeFt1nn7Q+bqUWzrpd1hk3U+
+	 c6TfkQjqrQeIu6NeKiIPdUCid2dbyIsVySNfEEwBVvNr/r6tKxsrKXtjU/vQW+hgVG
+	 iy/LvlSAWGywDTLneKSar/kNqcKRe3dwJNCAko1wEraVvV+lwgjoY6dI4IGk+yzV6b
+	 786rOvlU5Hkdg==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3179817E12D5;
+	Wed, 29 Oct 2025 14:47:02 +0100 (CET)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Wed, 29 Oct 2025 14:46:43 +0100
+Subject: [PATCH] soc: mediatek: mtk-socinfo: Add entry for MT8391AV/AZA
+ Genio 720
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Update KUnit email address for Rae Moar
-To: David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
-Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
- kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20251028194010.519411-1-rmoar@google.com>
- <CABVgOSkxLKkT7+sa53x4dUsCiG3m=uGmrd9ko3GwjnwGPmonfQ@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CABVgOSkxLKkT7+sa53x4dUsCiG3m=uGmrd9ko3GwjnwGPmonfQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-mtk-socinfo-mt8391-v1-1-61412dcd9938@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAMIaAmkC/zWMQQrDIBBFryKz7oBaIjVXKVlYM7ZDUVs1JRBy9
+ 0pDd/99eG+DSoWpwig2KPThyjl1UCcB/uHSnZDnzqClHpTUFmN7Ys2eU8h9X85WoTbSkfXeBKO
+ gi69Cgddf9DodXOi99HY7Tri5SuhzjNxGkWht+O/DtO9flhuDxZUAAAA=
+X-Change-ID: 20251029-mtk-socinfo-mt8391-260ae9cc6f61
+To: Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761745622; l=1281;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=FtGL6BrEe7pDieRhJuh9tsTJUGfEYnMY7qjoVKYV4Xs=;
+ b=zvrumaYasVrWd2Rjr0Owt3Swl5wyMzZhnnRllIfhdZGv6sG/Lm651b6aOn6iMJYDWvcHnyhZ9
+ PNZkjFi2CNsDL63RZYuvBwK3tjZ2NNJ3jD21Hb/x/g9qGz6r9viLaHP
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-On 10/29/25 01:18, David Gow wrote:
-> On Wed, 29 Oct 2025 at 03:40, Rae Moar <rmoar@google.com> wrote:
->>
->> Update Rae's email address for the KUnit entry. Also add an entry to
->> .mailmap to map former google email to current gmail address.
->>
->> Signed-off-by: Rae Moar <rmoar@google.com>
->> ---
->> I am leaving Google and am going through and cleaning up my @google.com
->> address in the relevant places. Note that Friday, November 7 2025 is my
->> last day at Google after which I will lose access to this email account
->> so any future updates or comments after Friday will come from my
->> @gmail.com account.
->>
-> 
-> Thanks very much, Rae! Best of luck!
-> 
-> Reviewed-by: David Gow <davidgow@google.com>
+Add an entry for the MT8391 SoC with commercial name Genio 720.
 
-Thank you Rae and best of luck. I will apply and send it up this week
-with kunit fixes update
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+ drivers/soc/mediatek/mtk-socinfo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
--- Shuah
+diff --git a/drivers/soc/mediatek/mtk-socinfo.c b/drivers/soc/mediatek/mtk-socinfo.c
+index c697a0398d917c0944661a75667824369373ba2c..44a21e91d159b93ed1540b5754f5512d2d9c3fc0 100644
+--- a/drivers/soc/mediatek/mtk-socinfo.c
++++ b/drivers/soc/mediatek/mtk-socinfo.c
+@@ -58,6 +58,7 @@ static struct socinfo_data socinfo_data_table[] = {
+ 	MTK_SOCINFO_ENTRY("MT8195", "MT8195TV/EHZA", "Kompanio 1380", 0x81950404, CELL_NOT_USED),
+ 	MTK_SOCINFO_ENTRY("MT8370", "MT8370AV/AZA", "Genio 510", 0x83700000, 0x00000081),
+ 	MTK_SOCINFO_ENTRY("MT8390", "MT8390AV/AZA", "Genio 700", 0x83900000, 0x00000080),
++	MTK_SOCINFO_ENTRY("MT8391", "MT8391AV/AZA", "Genio 720", 0x83910000, 0x00000080),
+ 	MTK_SOCINFO_ENTRY("MT8395", "MT8395AV/ZA", "Genio 1200", 0x83950100, CELL_NOT_USED),
+ 	MTK_SOCINFO_ENTRY("MT8395", "MT8395AV/ZA", "Genio 1200", 0x83950800, CELL_NOT_USED),
+ };
+
+---
+base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
+change-id: 20251029-mtk-socinfo-mt8391-260ae9cc6f61
+
+Best regards,
+-- 
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+
 
