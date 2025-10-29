@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-875881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000CDC1A0B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:32:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B10FC1A09F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DC4A564A5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:28:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCBFC464004
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E92334C27;
-	Wed, 29 Oct 2025 11:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F998335091;
+	Wed, 29 Oct 2025 11:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Vkte4XJH"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WTi4wd3o"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A1032F765
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01E32F765
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761737246; cv=none; b=Qmd2ce8Z/x/3d9gI9OdQ1qLPGlaTc19WZJec+J/aTkBXVhA/G5tLjtTZMVy1iZU8NBQcv1HYCk6R7oeT12T/W5B581cyuX+30NbU4CkSpc5fnJVepfAZYXZqn0Y3zv3vpDCM58eF20/XOQnZ3mOk63jvg1395o7CAATVFtEX8KE=
+	t=1761737251; cv=none; b=nVHiJeFc05TuOpIcjCNh1mWc/aTNaWfJMin2kMNKXbuwbbzQRLbi+FmNwwx4twVEIhnGts24zVjGP/t1W9fC/5wlLTfdWzh3vFY5P1H8ExLgLCRzpq29XxpSacxhgDh93cGxYB9rjCHAiXYsx/dAE+IYD0QRj8TgA+QHqUueZ98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761737246; c=relaxed/simple;
-	bh=fk1jo/sIeI52ZoZ8R5y44DiLeZbX3mH6843B2DjcmcE=;
+	s=arc-20240116; t=1761737251; c=relaxed/simple;
+	bh=TSz747FjNEhM7uf1XzqCJ/IKzP85Xywzfa1M0ZRoX+4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GmYxhcIrVeQ+zUYDUC67GSelUWe9+EuwVkiVV7yCcYGgWeqBHIuZkUhZFNUiY9ieKMAQDhOKiUQgtRF3va/hr/EV/SkWLOs7bgjScnJzBo6H6HtKJan5PK8qQJ2Hiz/bisTvUtPylfNHY1gzmcTeVqoRyElZ1+z/phMmhq+7PMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Vkte4XJH; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=JTccwmaoVY0X9p1hYNXAxnKTWSfdw2xsC1cG26YYshA1uQEcOzrDUUuWWOjzU4+PGqBkLam9sFccAvGv31Dx2NS15w7D8XPehaBgj0DI7ZAwuotDCK5lJGhJI3NWz5JYO/3EWZHGEjAUk5HCnAZeMgYxqI4B+YMHVQIUnS5ft+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WTi4wd3o; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so6648035a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:27:24 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-781010ff051so4875452b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:27:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1761737244; x=1762342044; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1761737249; x=1762342049; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eVrGZiCOO3VoWU6as4Ya4YNojK7gFL/5DgKPuB9HXfo=;
-        b=Vkte4XJHdQ7ORuA8Lc1UhIpabVmbOk2guYMjbsJD+e4TKmOwbkVTqBOodEFa1kzeb3
-         i5pY/z+AiUiY5c94cjBf90bRiI59wOaKUqb5Yl2s8rbGoIGxXAKOE+s82JBB6vcrdvL6
-         mrd5NU5a6p9oqTVAo++He+73fovBhqeWxWL9TR6mJIRQ7KQ5UVSOXkvvyyolFOIMUg7Y
-         DiBOOvK66RVcgmAZ6FTDdOBDbfZxY9wnabxor9cl2hOJue5wmpzMi28ZR9R2AHzd6J81
-         FD2h+v5Q6zcQKLCNb5YBSnFIqOmv+1JEjj1Whs7Cdr8Uo6Sq0O6A7U5A/UYKd5c8N5Pu
-         piDw==
+        bh=/hiwSqBhR1Qws96GQdbU4nAKreYqDyRXg+IAoSlhXoM=;
+        b=WTi4wd3oXOxF8q1Jd84m90kQ33Jx02mWFL06AgA/izDdMv0Wgd7ehAWAQuteldL+nM
+         wOVL63CdMbIZ+63TaJH08k0SPDLF1j/zbgMEYA6Lr4Carul3Vkn+vghCZEquZ5S55fba
+         xpwTanLyB1ge2YZSiltHVjk27vyCC5uRhvLVg683NZTFXJ7lyfluZfS33LHyC8oMq8K3
+         w53Dt570zmJTchho7PdkgUGjHk6Hc8aZ8glzvYaN9bQyV/c4NZv0deviZyX0MumrDzgX
+         VHoiqlC9nVqpJ8w9rQsRx+jqdAWBljXFQ0bj0HKI1T2VyL46qR8ptlGORZfgvQfU0UqH
+         N/Dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761737244; x=1762342044;
+        d=1e100.net; s=20230601; t=1761737249; x=1762342049;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eVrGZiCOO3VoWU6as4Ya4YNojK7gFL/5DgKPuB9HXfo=;
-        b=PaEcIHD7qUQWpv+rGV8+Gd8x8hhXxgeZJOkyNDCf7W/Pryz5grIrbq66RlQCw29E8n
-         DJ6AYN7vZ5WxFl0QJA3jtK6TATnITCmQMlCb1SrYwmV/M7zTsj2223BP24Qxpq/vLzaj
-         wbd8S9aANyMAVFdzYCcXYdZZLUOGIc3jEcxuMJLEdqz5Qz+qH2GwtkQ40Eq82ccGmQaf
-         kt1IfXViPpNaGICvGBmTqmFcZ11lMLGi253GAhzNInXXsIzm4/j3/H3UeoRARn2Ik2SB
-         q7XJKyxIQLWh2GKE85m9ChZvBABjhmFiHfjRvzUaHTG84VSJthHCR6YqgYPzK8pLehEa
-         JqNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ8pnWk3++orsn6L0IS9e/At07XU0j6+n+0Hq62BCFI8qzhpAXSexJd+M5QSEUzl0y8b8y+UEbhOF/CEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWSCd80c+tLn+D1cLlDY2YNF+4cuDj6dCJPwBPy6WX5bWOXtIP
-	mpelgOP4KmJR2024cIYB35gtabzXzL3TL+w3Uun0zWZGLosiYE2O+L74LYH+3UsgTqs=
-X-Gm-Gg: ASbGncuQEN6CceeuWTr7KDR4A8d3Xw633ChmYJuBsG5HMhOG7t1sFy3qSxmSd/YuEG7
-	JpzP9ny5/koMHbTyK0FF08GyQpt/yVlvZGKV7vt7lWsgPmUb0CmU8Ni2aL/f8eILNxDb9L4cycj
-	v0BE1LSa+n6N26nMZuwkSDT37Qf0Z65s49Lh5wBVc/7Iw+OD8JD9DBbBzkNmccPKW/L6VKQO4jJ
-	n8huk7YqZmQp4DuwVJV9LhcDBrz5ZGwqG1ryclfrExiTZpjvbJ1TwBsBIGzE/Ngp7gHAmO+ZyRD
-	flOAfquaHFgUn2Cu4V5TptGd99L8KwPCu2Pm9AsrGtN7jek1Q3fjbvtynqL8th7ZhoXRDcbCnCd
-	3ttMeowcKI/9tY4/ybXlZzFxpJc6aWO5n81G894i8qX10pXM7w19PCpMifit1olCGTcCI5rJm1t
-	hAtslXhYod5M7EucLn49G8Nh4qN4rr
-X-Google-Smtp-Source: AGHT+IEs0ZClHYQ32GXBT6VvX4hdE/vTZzW0dkqblsfwRDrg9bIgaJQ8u6BnX6Q+OdRAzRPJ5EziSQ==
-X-Received: by 2002:a17:90b:4d0b:b0:33d:a0fd:257b with SMTP id 98e67ed59e1d1-3403a2fe511mr2861483a91.36.1761737243889;
-        Wed, 29 Oct 2025 04:27:23 -0700 (PDT)
+        bh=/hiwSqBhR1Qws96GQdbU4nAKreYqDyRXg+IAoSlhXoM=;
+        b=Ui++9J5J5MG3eTAYsr11d/5LWaZ6b661v+Vmx/CMIXLkct+hwG8sUSAIsSr0KxdLBE
+         uw9OwQByTG60631VONGy2prIbkyhIxvVDkWVoEMRLkM5tZAhm89Pg0it7OGExQSOe5JR
+         YBFTJN5sTHrPJFevhRfUNURftM/nN1GVSnmLjRNMXLqKesuuWt3VGB6Dr4QG/mDY5cDd
+         A/LmnpelpLfgo3+tArA3YWnFA4i3PioOQ46P6oUNmIxatNqAIWpA9XD1UTarvDIo9+5y
+         077TGTsECmkqVz8UxGf8jvXFTqyRbtB5ynj3GeO+nvQckGgncj2zoOyMsp/El/Z43Slk
+         t1gA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2IzUnWzHnnsoy40+DuCbmBPHfRpPHpoSr/13Jta6htUOlHr31Yg4bv5688ztNDayULC5KL2w7x5s3+LQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIeyfMK7N+NF666PmV0InxYMQgNXbJo+/2yr+COoBCMRShjdxO
+	TckrX98rPcsI5zoupSQlCa6HYo9fW8/YBzoteAFSSp164Bwg8CioYtH3lhxkiJNNwQ8=
+X-Gm-Gg: ASbGncu5VAj2f9lxdeY1yTX2JjVCRKZhiRebX4fZeDtpbnSMgZliUGMwcMVeanM1kZ5
+	EWuIAUqo9LiZVMTwwZ+x24rhbX5hD1LrqQ1XiQEVWB4EEDVH7Uym2CToKmLS0g2SSkVX2P7j2wt
+	YTQAzCIU2Hub14jfzbqfcqVXiipL4h13J/ksSV2/5Yz3OXc2Ey+k/rri6g1GRVovDzWkS8ks1ps
+	kqcs9OMA/eFUWVHIk9jcFu1XdjbtRYPwlE7yBFF5YvSKD997d97cqQ0byf4lb7PUdc64BSBsvps
+	RJYeSl9pSjFD6TWc/PraI4pHMlVRWKFXV17Yo5Jm8rE58s4/4aU20VWt+oZ5aRPuWQQFBXI5g7w
+	vD0ZCqWpXBAte/Vml2K6Jbs84IejRqLFMQ+q2rSxSv5vZkYeT6hDRy59yYne71hvcdWcI5S5xq1
+	JZJyrx5A7YH60tgJqfdY3cdjOCSSlI
+X-Google-Smtp-Source: AGHT+IHs9/yah7+LL8dEcqJhQQLW+XK5ngSWHXrirtA5CcwyDvBqFPLqGRdj2uDT9wLcliFabWN9TQ==
+X-Received: by 2002:a05:6a20:4328:b0:341:ea4:b977 with SMTP id adf61e73a8af0-3465381d8f4mr2997177637.44.1761737249215;
+        Wed, 29 Oct 2025 04:27:29 -0700 (PDT)
 Received: from ventana-desktop.localhost ([2405:201:d019:c0ce:f7f5:7789:48e5:c03f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm15316918a91.16.2025.10.29.04.27.19
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-33fed7f6040sm15316918a91.16.2025.10.29.04.27.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 04:27:23 -0700 (PDT)
+        Wed, 29 Oct 2025 04:27:28 -0700 (PDT)
 From: Himanshu Chauhan <hchauhan@ventanamicro.com>
 To: linux-riscv@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
@@ -91,9 +91,9 @@ Cc: paul.walmsley@sifive.com,
 	sunilvl@ventanamicro.com,
 	apatel@ventanamicro.com,
 	Himanshu Chauhan <hchauhan@ventanamicro.com>
-Subject: [RFC PATCH v2 04/10] riscv: Add fixmap indices for GHES IRQ and SSE contexts
-Date: Wed, 29 Oct 2025 16:56:42 +0530
-Message-ID: <20251029112649.3811657-5-hchauhan@ventanamicro.com>
+Subject: [RFC PATCH v2 05/10] riscv: conditionally compile GHES NMI spool function
+Date: Wed, 29 Oct 2025 16:56:43 +0530
+Message-ID: <20251029112649.3811657-6-hchauhan@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
 References: <20251029112649.3811657-1-hchauhan@ventanamicro.com>
@@ -105,33 +105,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-GHES error handling requires fixmap entries for IRQ notifications.
-Add fixmap indices for IRQ, SSE Low and High priority notifications.
+Compile ghes_in_nmi_spool_from_list only when NMI and SEA
+is enabled. Otherwise compilation fails with "defined but
+not used" error.
 
 Signed-off-by: Himanshu Chauhan <hchauhan@ventanamicro.com>
 ---
- arch/riscv/include/asm/fixmap.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/acpi/apei/ghes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/riscv/include/asm/fixmap.h b/arch/riscv/include/asm/fixmap.h
-index 0a55099bb734..e874fd952286 100644
---- a/arch/riscv/include/asm/fixmap.h
-+++ b/arch/riscv/include/asm/fixmap.h
-@@ -38,6 +38,14 @@ enum fixed_addresses {
- 	FIX_TEXT_POKE0,
- 	FIX_EARLYCON_MEM_BASE,
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 97ee19f2cae0..f2cbd7414faf 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1356,6 +1356,7 @@ static int ghes_in_nmi_queue_one_entry(struct ghes *ghes,
+ 	return rc;
+ }
  
-+#ifdef CONFIG_ACPI_APEI_GHES
-+	/* Used for GHES mapping from assorted contexts */
-+	FIX_APEI_GHES_IRQ,
-+#ifdef CONFIG_RISCV_SBI_SSE
-+	FIX_APEI_GHES_SSE_LOW_PRIORITY,
-+	FIX_APEI_GHES_SSE_HIGH_PRIORITY,
-+#endif /* CONFIG_RISCV_SBI_SSE */
-+#endif /* CONFIG_ACPI_APEI_GHES */
- 	__end_of_permanent_fixed_addresses,
- 	/*
- 	 * Temporary boot-time mappings, used by early_ioremap(),
++#if defined(CONFIG_HAVE_ACPI_APEI_NMI) || defined(CONFIG_ACPI_APEI_SEA)
+ static int ghes_in_nmi_spool_from_list(struct list_head *rcu_list,
+ 				       enum fixed_addresses fixmap_idx)
+ {
+@@ -1374,6 +1375,7 @@ static int ghes_in_nmi_spool_from_list(struct list_head *rcu_list,
+ 
+ 	return ret;
+ }
++#endif
+ 
+ #ifdef CONFIG_ACPI_APEI_SEA
+ static LIST_HEAD(ghes_sea);
 -- 
 2.43.0
 
