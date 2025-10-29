@@ -1,47 +1,45 @@
-Return-Path: <linux-kernel+bounces-876425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D300C1BB6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:39:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50489C1BCBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54C9F5A166B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA90660A30
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5592D7DDF;
-	Wed, 29 Oct 2025 14:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94452DAFAB;
+	Wed, 29 Oct 2025 14:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUCG2dgA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="vO9eJtLd"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C11433F388;
-	Wed, 29 Oct 2025 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8492D94B4
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761749022; cv=none; b=TKZQyAPh1+1Ua0HWGbGp8ZTnpnDZzZ83OFd9z+if7g+INVHv9j0NzIFA5JryKtmdx5Hbc/QJNXfVlHtiyOypoS+gqzGkKRyArWyXg6zt0mgl5JuBaGwCcMqBDkIl7/k0qkooaaLHEcb97a/g0BHNTbn8Xc7uRzW1CE9lRLU2GEg=
+	t=1761749084; cv=none; b=f+rJi/70txGIsGMLeFh97wXeu8QoHuYvaW+0/tA4yKDZjSqoEk2SlQNPjXr8/oO3aOAiPqk+lDQ/NFZeF9HoeCMzUelGiIz7IxIiTZZ6wIEdo+8QzeBMEhTupcodG8G2wUmdxB+dYcYR4AyFnRsKJxCMbKPOjHMzHoOVtzR0qJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761749022; c=relaxed/simple;
-	bh=7aIwRuIOpA2NvB46ZJFZlfxwwf5CrcEct874eSGcgUE=;
+	s=arc-20240116; t=1761749084; c=relaxed/simple;
+	bh=KbzdHXEbVlDlQVEHVqxCj8rf4GQt2DPt4Mr2sPu2bWY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MeHbIi50/Kkh6Oz+6E01yUZxOy+zXb6REEKD6dNKH2xAaZ/i3SOcrx5BHFVg9KU1U3NucQlLMzGh7xQf6Ycpb3mUl+AWssNACFjxBzhjOj0s+YF59Mq+iqD6Takyose0maU7BNomhEpP+OJ/qBc8SsziPnJm1veAqnQPRYzpjqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUCG2dgA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F0FC116C6;
-	Wed, 29 Oct 2025 14:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761749021;
-	bh=7aIwRuIOpA2NvB46ZJFZlfxwwf5CrcEct874eSGcgUE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nUCG2dgAAGxavtrh6AFskbiNPy7Opyv54fNrY/+gU0ZaTvBrd+ZtUjFEd4lc5Qbk/
-	 srjLlCZcD6v3yy00NaOnMM6kO85tayYB85zgXeLHHSpevQ6O2DGvXlTZcGF+ktUVor
-	 G0oJOc1gayru+VczSM4ZiddijK6BzGtNWVQ5cxsRUBBCvQgzVaswHsRgcDYtOKLawP
-	 at5sw+sOWuAecSORYOvFAW4sokeUujaDbydmhkXBgd33S7RBrbM2DgiSBbVNPSePhZ
-	 OnukuKbisUVQxThAKHPJxURwRslfcZUKDhTxzc0zF6/DUihlPrLIr5qeFFcPt3CXjz
-	 R9KUmZIa60r5g==
-Message-ID: <5137cd11-004c-43ed-8bbb-646beb105844@kernel.org>
-Date: Wed, 29 Oct 2025 15:43:37 +0100
+	 In-Reply-To:Content-Type; b=p1xhbTIWU2EeXkr1VfUIF58G8LH9jGAtZfbecVsDWPm5WUgTxqzJqle8aGXqqacuVvO5jnd/ORK2cqNIEs0/0lCvvkqQbwUIpLTTlUit9a/3cZ2umyp0nUa9I4xfHoF3tPAIbH80lAgd548XnuZQhc9ZduIxvo5ChvDDxfUfk8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=vO9eJtLd; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761749077; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=3zGx80a4YZeGrER8I7XszlHOAinQWCndn8ZE8cKElfg=;
+	b=vO9eJtLdM2DfgsWd0dwpEL8k2bwAr9VYpy5nwUeElwe8J23kcxAqKYUOw9XAAvrF0dPsn8V97X4fPCnAtPpFpAev6fmnulafGxi5EqK9BrsQNC+SZ38ERFXWPs/X4CJbex0DtJifEnvs/QZ1/h5mW6mrhkOVQx1BTrH5K2NI9UI=
+Received: from 30.246.176.102(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrGMq3h_1761749076 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 29 Oct 2025 22:44:37 +0800
+Message-ID: <a63db6a8-e9d8-4f79-8212-8710ce2e60f4@linux.alibaba.com>
+Date: Wed, 29 Oct 2025 22:44:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,159 +47,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] wifi: ath11k: add multipd support for QCN6122
-To: george.moussalem@outlook.com, Johannes Berg <johannes@sipsolutions.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
-Cc: linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- ath11k@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251029-ath11k-qcn6122-v1-0-58ed68eba333@outlook.com>
- <20251029-ath11k-qcn6122-v1-5-58ed68eba333@outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251029-ath11k-qcn6122-v1-5-58ed68eba333@outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] iommu: iommufd: Explicitly check for VM_PFNMAP in
+ iommufd_ioas_map
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, kevin.tian@intel.com, joro@8bytes.org,
+ will@kernel.org, robin.murphy@arm.com, linux-kernel@vger.kernel.org
+References: <20251029125226.81949-1-xueshuai@linux.alibaba.com>
+ <20251029133434.GL760669@ziepe.ca>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20251029133434.GL760669@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 15:26, George Moussalem via B4 Relay wrote:
-> From: George Moussalem <george.moussalem@outlook.com>
+
+
+在 2025/10/29 21:34, Jason Gunthorpe 写道:
+> On Wed, Oct 29, 2025 at 08:52:26PM +0800, Shuai Xue wrote:
+>> The iommufd_ioas_map function currently returns -EFAULT when attempting
+>> to map VM_PFNMAP VMAs because pin_user_pages_fast() cannot handle such
+>> mappings. This error code is misleading and does not accurately reflect
+>> the nature of the failure.
+
+Hi, Jason,
+
 > 
-> IPQ5018/QCN6122 platforms use multi PD (protection domains) to avoid
-> having one instance of the running Q6 firmware crashing resulting in
-> crashing the others.
+> Sure, but why do you care? Userspace should know not to do this based
+> on how it created the mmaps, not rely on errnos to figure it out after
+> the fact.
+
+We run different VMMs (QEMU, Kata Containers) to meet diverse business
+requirements, while our production environment deploys various evolving
+kernel versions. Additionally, we are migrating from VFIO Type 1 to
+IOMMUFD. Although IOMMUFD claims to provide compatible
+iommufd_vfio_ioctl APIs, these APIs are not fully compatible in
+practice. For example, with VFIO_IOMMU_MAP_DMA, iommufd_vfio_map_dma
+doesn't support MMIO mapping, and we can only rely on the implicit
+EFAULT error from pin_user_pages_fast(). (I initially considered adding
+explicit checks in iommufd_vfio_map_dma, but I noticed you plan to add
+dma_buf support there.)
+
+While we certainly aim for a seamless migration from VFIO Type 1 to
+IOMMUFD, as you know, this isn't always feasible.
+
+For GPU-related issues encountered in production, the debugging path is
+quite long - from business teams to virtualization teams, and finally to
+our kernel team.
+
+Therefore, having explicit checks with deterministic error codes
+returned to userspace would be greatly appreciated.
+
 > 
-> The IPQ5018 platform can have up to two QCN6122 wifi chips.
-> To differentiate the two, the PD instance number (1 or 2) is added to
-> the QMI service instance ID, which the QCN6122 firmware also expects.
-> IPQ5018 internal wifi is always the first PD while QCN6122 cards must be
-> second or third.
+>> +static bool iommufd_check_vm_pfnmap(unsigned long vaddr)
+>> +{
+>> +	struct mm_struct *mm = current->mm;
+>> +	struct vm_area_struct *vma;
+>> +	bool ret = false;
+>> +
+>> +	mmap_read_lock(mm);
+>> +	vaddr = untagged_addr_remote(mm, vaddr);
+>> +	vma = vma_lookup(mm, vaddr);
+>> +	if (vma && vma->vm_flags & VM_PFNMAP)
+>> +		ret = true;
+>> +	mmap_read_unlock(mm);
 > 
-> Signed-off-by: George Moussalem <george.moussalem@outlook.com>
-> ---
-> See below patch for more info:
-> https://lore.kernel.org/all/20231110091939.3025413-1-quic_mmanikan@quicinc.com/
-
-I don't see any common part with that. Your bindings are completely
-different and while PD was justified there, there is no such
-justification here. Neither in the bindings.
-
-> ---
->  drivers/net/wireless/ath/ath11k/ahb.c  | 31 +++++++++++++++++++++++++++++++
->  drivers/net/wireless/ath/ath11k/core.h |  4 ++++
->  drivers/net/wireless/ath/ath11k/pci.c  |  1 +
->  3 files changed, 36 insertions(+)
+> This isn't really sufficient, the range can span multiple VMAs and you
+> can hit special PTEs in PFNMAPs, or you can hit P2P struct pages in
+> fully normal VMAs.
 > 
-> diff --git a/drivers/net/wireless/ath/ath11k/ahb.c b/drivers/net/wireless/ath/ath11k/ahb.c
-> index 7b267dd62e964b2c4d6c3bbe016abd1ad0297219..820a383e88caf125892176e421b0121fed7e7055 100644
-> --- a/drivers/net/wireless/ath/ath11k/ahb.c
-> +++ b/drivers/net/wireless/ath/ath11k/ahb.c
-> @@ -429,6 +429,7 @@ static void ath11k_ahb_init_qmi_ce_config(struct ath11k_base *ab)
->  	cfg->svc_to_ce_map_len = ab->hw_params.svc_to_ce_map_len;
->  	cfg->svc_to_ce_map = ab->hw_params.svc_to_ce_map;
->  	ab->qmi.service_ins_id = ab->hw_params.qmi_service_ins_id;
-> +	ab->qmi.service_ins_id += ab->userpd_id;
->  }
->  
->  static void ath11k_ahb_free_ext_irq(struct ath11k_base *ab)
-> @@ -1101,6 +1102,28 @@ static int ath11k_ahb_fw_resources_init(struct ath11k_base *ab)
->  	return ret;
->  }
->  
-> +static int ath11k_get_userpd_id(struct device *dev, int *userpd)
-> +{
-> +	int ret, userpd_id;
-> +
-> +	ret = of_property_read_u32(dev->of_node, "qcom,userpd", &userpd_id);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	switch (userpd_id) {
-> +	case 2:
-> +		*userpd = ATH11K_QCN6122_USERPD_2;
-> +		break;
-> +	case 3:
-> +		*userpd = ATH11K_QCN6122_USERPD_3;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +	return 0;
-> +}
-> +
->  static int ath11k_ahb_fw_resource_deinit(struct ath11k_base *ab)
->  {
->  	struct ath11k_ahb *ab_ahb = ath11k_ahb_priv(ab);
-> @@ -1142,6 +1165,7 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
->  	const struct ath11k_hif_ops *hif_ops;
->  	const struct ath11k_pci_ops *pci_ops;
->  	enum ath11k_hw_rev hw_rev;
-> +	int userpd_id = 0;
->  	int ret;
->  
->  	hw_rev = (uintptr_t)device_get_match_data(&pdev->dev);
-> @@ -1160,6 +1184,12 @@ static int ath11k_ahb_probe(struct platform_device *pdev)
->  	case ATH11K_HW_QCN6122_HW10:
->  		hif_ops = &ath11k_ahb_hif_ops_qcn6122;
->  		pci_ops = &ath11k_ahb_pci_ops_wcn6750;
-> +		ret = ath11k_get_userpd_id(&pdev->dev, &userpd_id);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "failed to get userpd: %d\n", ret);
-> +			return ret;
-> +		}
-> +		dev_info(&pdev->dev, "multi-pd architecture - userpd: %d\n", userpd_id);
+> I think if you really want this errno distinction it should come from
+> pin_user_pages() directly as only it knows the reason it didn't work.
+> 
 
-This does not look like useful printk message. Drivers should be silent
-on success:
-https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/coding-style.rst#L913
-https://elixir.bootlin.com/linux/v6.15-rc7/source/Documentation/process/debugging/driver_development_debugging_guide.rst#L79
+Aha, I see. Thank you for pointing out this issue. The check indeed
+needs to be more comprehensive. Do you mind use pin_user_pages() as a
+precheck?
 
->  		break;
->  	default:
+Thanks for quick reply.
 
-Best regards,
-Krzysztof
+Best Regards,
+Shuai
 
