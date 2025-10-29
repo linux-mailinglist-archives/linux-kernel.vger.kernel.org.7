@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-876812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36629C1C6A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:23:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B654C1C8CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4C424E4D9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:20:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340EB565F53
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703523314BC;
-	Wed, 29 Oct 2025 17:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DC833B6E7;
+	Wed, 29 Oct 2025 17:23:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="af158orq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="F6GhY1KP"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31E02E1EE1;
-	Wed, 29 Oct 2025 17:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F7FF34C149;
+	Wed, 29 Oct 2025 17:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761758410; cv=none; b=QjAXlo5xLcPlZ0WhCS98dT48m/yniZJghhNizdBxG+yjTs8w8tGitRTVnLTlQz/brRYBpaPtNy9ZZk1QcQwOZLoz2DSTsQRGqh9tR4J3/ESHBrtoZznPf3ukwybGC5y2bv/N2lJalj9kDiTXhFrwSOx2/9Lqs4Pc3I5T/TyOZcw=
+	t=1761758608; cv=none; b=TNCQZWq4mGQ3nctt/wCRJH6B66sI58u7b71+7lJsW8etXjAl4/qR/ozyUOBUPC20TwFTG5zVvGfKOAuDLh/NolKfmGz5LPuLll5LVHyXPRjATZX8dNZ3zq4TF7uyoDRYs0ZOlKoVf+tQCWcPpyLlIPsPav8qC5zbNLz5djmRmoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761758410; c=relaxed/simple;
-	bh=lTMac6CsiekTI7w6uSR1FvLqh4nJy2pX5IdyFvnRlqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tu0HRCi7MH3ueGGvwy0K/7QpcVdjP6HI/9VKsAVogGKDpMdEznCY+N91qh4STdbkdctF5Jc0YhRMQGiwddFJy+qDz//BkV7CgVL0GYl7q7qrBG4zwAmaqgVWeontt8wD8V6T08naHDiN6AZRsjdmpZHc3Eonxdh1vrUWMjJEwIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=af158orq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51E9AC4CEF7;
-	Wed, 29 Oct 2025 17:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761758410;
-	bh=lTMac6CsiekTI7w6uSR1FvLqh4nJy2pX5IdyFvnRlqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=af158orqR+nr83LSSnFCHt7LK2bG3UaN7ci13A/m/B72uo4kmmmGc1pMdCqYaMmJf
-	 TSbdFE5zdSvUAF8SgwTUiwg6WfttvmdhykK04g3kinQgi3rZ7WGqtLZ2nWnda8OAQg
-	 PX7BH/5Ek65kSCNdjcclMyU1E/kM68pL7zhrZtfLKSFXY1/MboelkmV+kdwIi+oQmk
-	 hIbzbTp+2XOFiav58XT0+t6scOv+hMfk5Q/WrfNmG3B/s2XTz27vmpv/YmvKd695bd
-	 ADqLwm/k18MItRcVgYQeYzLkcKuSiyWEhWDj/JHAZnvnMwATdcLurW+9fIMl8hkXn2
-	 OWmPt5axG+81A==
-Date: Wed, 29 Oct 2025 12:23:14 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jingyi Wang <jingyi.wang@oss.qualcomm.com>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com, 
-	trilok.soni@oss.qualcomm.com, yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Sibi Sankar <sibi.sankar@oss.qualcomm.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: mailbox: qcom: Add IPCC support for
- Glymur Platform
-Message-ID: <qyfxtoe7ixko7k5whtzjpkynwpeqxzb2sgwq7y4y3kstblapz5@ggny5uq7qv6s>
-References: <20251029-knp-ipcc-v2-0-8ba303ab82de@oss.qualcomm.com>
- <20251029-knp-ipcc-v2-2-8ba303ab82de@oss.qualcomm.com>
- <67038d9f-7c6c-4bb3-ba64-b06816b76be7@kernel.org>
+	s=arc-20240116; t=1761758608; c=relaxed/simple;
+	bh=TLZS5iTR0nmWjmQ1xgbEvSHLn1neH58TN+5Cy5M470c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eTL8rzVWf1vvObmN52Ns0SYLlrE7hqY4Jq5sgIg7cvgXO6DGqVG0Sazl8LqJYzqJ/0iaE/ldaqGAaPPGXeuZzXEe1gs2kpq6xeM5tG1XVF2RxK78WnDWiLK8sh3JQKgPrjwRkdypfzanlhRZvAg4dTg6OBbw+WR5ez/o/coas7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=F6GhY1KP; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=2jlL734Abw0X8N3EaXZAPcb2LloMs29df+lu4QReEx4=; b=F6GhY1KPNHCHCD1glPD35shlTU
+	UV6Hy+Jvz0StieysZLFc/PEgydhnKwF1wqtmYDLql+HmILnyWGseg2Emkq7+qw7a0eDWa1FH96kcm
+	4GYve75ENlEJ7+Po2x0VVD68U6jKUBARDa2PH7/TkMsdM4WSKJXgcyb0rL4aWhQ7Tu5K7Umc3Kv3W
+	RlWmB3yyxFgFMqlcOBTg8eyTTiz5Ip0SikLN8Urbv88Gyojmz4BA48L5K130sofajbkUyOfGPcC27
+	uLhOByLHGzv/9uKVkH6/8HO4aeZRXWerlv9EvncD8OwFUii6enNBqx4YhnnK3DqMRK5SWQGTcpRga
+	vFLB3DsQ==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vE9tK-00000002Bea-28rC;
+	Wed, 29 Oct 2025 17:23:22 +0000
+Message-ID: <6204274d-a6b7-4e37-8e5c-deb1caa98317@infradead.org>
+Date: Wed, 29 Oct 2025 10:23:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67038d9f-7c6c-4bb3-ba64-b06816b76be7@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch V3 03/12] rseq: Provide static branch for time slice
+ extensions
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20251029125514.496134233@linutronix.de>
+ <20251029130403.606732100@linutronix.de>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251029130403.606732100@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 29, 2025 at 04:49:30PM +0100, Krzysztof Kozlowski wrote:
-> On 29/10/2025 09:15, Jingyi Wang wrote:
-> > diff --git a/include/dt-bindings/mailbox/qcom,glymur-ipcc.h b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
-> > new file mode 100644
-> > index 000000000000..3ab8189974a5
-> > --- /dev/null
-> > +++ b/include/dt-bindings/mailbox/qcom,glymur-ipcc.h
-> > @@ -0,0 +1,68 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
-> > +/*
-> > + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> > + */
-> > +
-> > +#ifndef __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
-> > +#define __DT_BINDINGS_MAILBOX_IPCC_GLYMUR_H
-> > +
-> > +/* Glymur physical client IDs */
-> > +#define IPCC_MPROC_AOP			0
+
+
+On 10/29/25 6:22 AM, Thomas Gleixner wrote:
+> Guard the time slice extension functionality with a static key, which can
+> be disabled on the kernel command line.
 > 
-> 
-> Here the same - not used by Linux.
-
-How is this different from e.g.:
-
-include/dt-bindings/interrupt-controller/arm-gic.h:#define GIC_SPI 0
-
-Perhaps I'm misunderstanding what you're saying here.
-
-> Don't add these, they are really not
-> necessary and they are not helping anyhow. For longer explanation see 2
-> year thread for PMIC ADC v7.
-> 
-
-I'm sorry, I'm not able to wrangle a lore query for this, can you please
-provide a link?
-
-> Or provide explanation in terms what Linux interface you are binding
-> here (please focus on Linux or other SW).
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> ---
+> V3: Document command line parameter - Sebastian
+> V2: Return 1 from __setup() - Prateek
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |    5 +++++
+>  include/linux/rseq_entry.h                      |   11 +++++++++++
+>  kernel/rseq.c                                   |   17 +++++++++++++++++
+>  3 files changed, 33 insertions(+)
 > 
 
-Don't we use include/dt-bindings to define hardware constants for use in
-dt source as well? Has this changed?
 
-Regards,
-Bjorn
 
-> Best regards,
-> Krzysztof
-> 
+> --- a/kernel/rseq.c
+> +++ b/kernel/rseq.c
+> @@ -484,3 +484,20 @@ SYSCALL_DEFINE4(rseq, struct rseq __user
+>  efault:
+>  	return -EFAULT;
+>  }
+> +
+> +#ifdef CONFIG_RSEQ_SLICE_EXTENSION
+> +DEFINE_STATIC_KEY_TRUE(rseq_slice_extension_key);
+> +
+> +static int __init rseq_slice_cmdline(char *str)
+> +{
+> +	bool on;
+> +
+> +	if (kstrtobool(str, &on))
+> +		return -EINVAL;
+
+The norm for __setup function returns is:
+
+		return 0;	/* param not handled - will be added to ENV */
+or
+		return 1;	/* param is handled (anything non-zero) */
+
+
+Anything non-zero means param is handled, so maybe -EINVAL is OK here,
+since return 0 means that the string is added to init's environment.
+
+If the parsing function recognizes the cmdline option string
+(rseq_slice_ext) but the value is invalid, it should pr_error()
+or something like that but still return 1; (IMHO).
+No need to have "rseq_slice_ext=foo" added to init's ENV.
+
+So return -EINVAL is like return 1 in this case.
+IOW it works as needed.  :)
+
+> +
+> +	if (!on)
+> +		static_branch_disable(&rseq_slice_extension_key);
+> +	return 1;
+> +}
+> +__setup("rseq_slice_ext=", rseq_slice_cmdline);
+> +#endif /* CONFIG_RSEQ_SLICE_EXTENSION */
+
+-- 
+~Randy
+
 
