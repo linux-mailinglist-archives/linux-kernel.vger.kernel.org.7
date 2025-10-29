@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-875184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E25DC186BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:20:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD565C186D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 07:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1371D505CAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:18:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 91A374FA430
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497FB305057;
-	Wed, 29 Oct 2025 06:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B895302150;
+	Wed, 29 Oct 2025 06:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fPYf3h62"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgBVHq6f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F207F50F;
-	Wed, 29 Oct 2025 06:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C41E2F9D88;
+	Wed, 29 Oct 2025 06:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761718647; cv=none; b=MClisvuwDFRMtcBGL7mOasAAEkbNINMX2MsV3vJUzjmmQ73ey8RnbNVQx/0HDmrl2AXbyBT/GJAJq4CfvWFjhgSL98qpeens32LFqAwez7ekF/YMjidohacftA7kyJWqWtC7vndj5MWxQOkwbOPrpHE0ZTSzAWBcqxtoql0D75I=
+	t=1761718760; cv=none; b=o/DaP1JDymrpGMgsyxwNSqGg1ojvq6jqmbIyQKZpbSpgAiUPKmxZa12RFS+7Dppo83VSusYs4dX4fXHmgadYdMTB9l3FuIZlXV38UE/vVc2JFqCm4nEYs7PbRgASnPWwZ5KD934gWMLtbLEJVoEYXJ5jf+ppbSeLovVT0oUy2WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761718647; c=relaxed/simple;
-	bh=zevlYuJVtJmxSv+AqIyuWxXGW6MxwboAX71gP0JuUKk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DftSaAEZnCBHdUM40abm8AUxhzO5TguscI/NGRrgqLrmi7sn2eIh3Z2zo6UIPMKmKIPlkvSmNiQt9tLVUMtvGgOckWmOQMvgA+EkBaShuj4vWU8eM4YnY2tXBx0GjM693MPNXOAT+99OE7fvFq5vEUu0eHSQF5Irh5oVhODznj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fPYf3h62; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183DEC4CEF7;
-	Wed, 29 Oct 2025 06:17:21 +0000 (UTC)
+	s=arc-20240116; t=1761718760; c=relaxed/simple;
+	bh=HPV6sOpBQAfE4Ue/L/fxbs1a18Xiw9Af+NS/cSFNbc0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VbL4Amsr/Z1IQ9rVvnP8V7zNSrgm8uWLmtwXN7vNMFXmjj5DNo2nshqG3YcGh9f6hYUeyZuc30tTdj6GILcSL/Zn6UDX/OSRv0KT+3REuUOv3roQzCnpLMBBrb+DJgrxa4UxlleMP15S7MG2g25PcZLqCzh/TnpXpgJwYE56O0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgBVHq6f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D78F9C4CEFB;
+	Wed, 29 Oct 2025 06:19:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761718646;
-	bh=zevlYuJVtJmxSv+AqIyuWxXGW6MxwboAX71gP0JuUKk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=fPYf3h62SwTnTOGmE0GMx3saPu0+iHyq/eonH5cEmcFhBMkHv+fjut/T130sFDBk4
-	 Az1v75fxjFLiBp3pw5e+WY2IYTu7Zk0zLHtg9Phr6WPlegaqK0d+qp0QpYb+e2L1F2
-	 JS8/xYZ3l1WnQF7jBUXhEvyKRaa1HrjNRZc7Blpvy3nc1hYYbNOWAbZj60D+WgiZmq
-	 HITVF9BGgMv+yaCxVGJXfapYaefEevKmm8S0p0yJlF0Wz6Dou6Rlc8JcbKQAuu2tnA
-	 wNnMg4PR1mm7SM4cAHRl9N6YgCSFVjTF56xItkoA2YtXgusdWS7+D1h0yEBRMqjR9a
-	 D2g3VsRzOeDMg==
-Message-ID: <b30eed8e-c8f8-4077-9e6a-0217c5827981@kernel.org>
-Date: Wed, 29 Oct 2025 07:17:20 +0100
+	s=k20201202; t=1761718760;
+	bh=HPV6sOpBQAfE4Ue/L/fxbs1a18Xiw9Af+NS/cSFNbc0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tgBVHq6fA7uZ5cwFLqKC8DAmTVW0AWoz1X4MhyDD1X9etbrMdfJDmbvRynqt+3JHB
+	 WD0uIxuwpkVnERYuyG7+gSfmz7FXFzli9kq4JDMxOEDuMxkavNNJJtFlxY4OsGWAwO
+	 bUe2cdT0Xqj6c1NkHrcyD/ttgL88V6ZHLIz7mCDkPnsCJlKFtiwHTul6KRMqvoO94J
+	 j8rW1sGkIOA4+dO0JtWDJzC/uEtIJPdkI0X/H+llOF/wKLmb7pao/MLwMeQaWp/8An
+	 OXs9YmLE6c7D917/Q+9NuDII3bVqhoWJiyYrm5lqHiXEP3TA5CSBPse1lBKpe7e45U
+	 mevkc25WvyeoQ==
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: Dan Schatzberg <dschatzberg@meta.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev,
+	Tejun Heo <tj@kernel.org>
+Subject: [PATCHSET cgroup/for-6.19] cgroup: Fix task exit ordering
+Date: Tue, 28 Oct 2025 20:19:14 -1000
+Message-ID: <20251029061918.4179554-1-tj@kernel.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/15] dt-bindings: Add trickle-charge upper limit
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sebastian Reichel <sre@kernel.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Andreas Kemnade <andreas@kemnade.info>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-rtc@vger.kernel.org
-References: <cover.1761564043.git.mazziesaccount@gmail.com>
- <b13b733e7e0fba05652f49f727412fed9e0ceb02.1761564043.git.mazziesaccount@gmail.com>
- <20251029-adamant-mamba-of-patience-cddb65@kuoka>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20251029-adamant-mamba-of-patience-cddb65@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 29/10/2025 07:03, Krzysztof Kozlowski wrote:
-> On Mon, Oct 27, 2025 at 01:45:05PM +0200, Matti Vaittinen wrote:
->> Some of the chargers for lithium-ion batteries use a trickle-charging as
->> a first charging phase for very empty batteries, to "wake-up" the battery.
-> 
-> In the few cases I was dealing with charging circuits, trickle charging
-> was used in context of top-off charging, so when battery is 100%. It's
-> also documented at Wiki like that:
-> https://en.wikipedia.org/wiki/Trickle_charging
-> 
->> Trickle-charging is a low current, constant current phase. After the
->> voltage of the very empty battery has reached an upper limit for
->> trickle charging, the pre-charge phase is started with a higher current.
->>
->> Allow defining the upper limit for trickle charging voltage, after which
->> the charging should be changed to the pre-charging.
-> 
-> pre-charging is the trickle charging, no? Or you want to say that
-> trickle-charging is pre-pre-charging? But then what is pre-charging in
-> this binding?
+Hello,
 
+This series fixes a cgroup task exit ordering issue that is generally
+suboptimal for all cgroup controllers and has caused real breakage for
+sched_ext schedulers.
 
-Now I see that you added initial trickle-charging in commit
-e3420b49949c79d6182dd8128fa7a3958da01b07. I looked at TI chargers for
-LiIon/LiPo batteries and few popular models use the same meaning/cycles
-as you here. Probably in LiIon/LiPo you cannot or should not use trickle
-for top-off charging (CV phase).
+Currently, when a task exits, cgroup_task_exit() in do_exit() immediately
+unlinks the task from its cgroup via css_set_move_task(). From the cgroup's
+perspective, the task is now gone. If this makes the cgroup empty, it can be
+destroyed, triggering ->css_offline() callbacks that notify controllers the
+cgroup is going offline resource-wise.
 
-For NiMh these TI chargers use term "Trickle Maintenance Charge" (e.g.
-bq24400), so in separate or this patch please also clarify the
-description of properties that this is trickle-charging for LiIon/LiPo
-batteries, so the pre-pre charging.
+However, the exiting task continues to run, perform memory operations, and
+schedule until the final context switch in finish_task_switch(). This creates
+a problematic window where controllers are told a cgroup is offline while
+resource activities are still occurring in it. While this hasn't broken
+existing controllers, it's clearly suboptimal and has caused real breakage
+for sched_ext schedulers.
 
-Best regards,
-Krzysztof
+The sched_ext breakage manifests in two ways:
+
+1. When a sched_ext scheduler is loaded, it walks all tasks and calls
+   ops.init_task() on each. For tasks in a cgroup, it first ensures the
+   cgroup has been initialized via ops.cgroup_init(). However, if the task
+   is in the dying state (still running but already unlinked from its
+   cgroup), the cgroup may already be offline. This results in
+   ops.init_task() being called on a cgroup that never received
+   ops.cgroup_init(), breaking the initialization invariant.
+
+   This broke the scx_mitosis scheduler with errors like "cgrp_ctx lookup
+   failed for cgid 3869" where the BPF program couldn't find cgroup context
+   that was never created. See: https://github.com/sched-ext/scx/issues/2846
+
+2. Because sched_ext_free() was called from __put_task_struct() (which can
+   happen long after the task stops running), ops.cgroup_exit() could be
+   called before ops.exit_task() was called on all member tasks, violating
+   the expected ordering where all tasks exit before their cgroup does.
+
+The fix defers the cgroup unlinking from do_exit() to finish_task_switch(),
+ensuring the task remains linked to its cgroup until it's truly done running.
+For sched_ext specifically, we also move the cleanup earlier to
+finish_task_switch() to ensure proper ordering with cgroup operations.
+
+This adds two new calls to finish_task_switch() that operate on the dead task
+after the final switch: cgroup_task_dead() and sched_ext_dead(). It may make
+sense to factor these into a helper function located in kernel/exit.c if this
+pattern continues to grow.
+
+Patch 0004 changes sched_ext and can be applied to sched_ext/for-6.19 after
+pulling cgroup/for-6.19. Alternatively, would it be easier for some or all of
+this series to go through the tip tree?
+
+Based on cgroup/for-6.19 (d5cf4d34a333).
+
+ 0001 cgroup: Rename cgroup lifecycle hooks to cgroup_task_*()
+ 0002 cgroup: Move dying_tasks cleanup from cgroup_task_release() to cgroup_task_free()
+ 0003 cgroup: Defer task cgroup unlink until after the task is done switching out
+ 0004 sched_ext: Fix cgroup exit ordering by moving sched_ext_free() to finish_task_switch()
+
+Git tree: git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git cgroup-fix-exit-ordering
+
+ include/linux/cgroup.h    | 14 ++++++++------
+ include/linux/sched/ext.h |  4 ++--
+ kernel/cgroup/cgroup.c    | 39 +++++++++++++++++++++++----------------
+ kernel/exit.c             |  4 ++--
+ kernel/fork.c             |  3 +--
+ kernel/sched/autogroup.c  |  4 ++--
+ kernel/sched/core.c       |  8 ++++++++
+ kernel/sched/ext.c        |  2 +-
+ 8 files changed, 47 insertions(+), 31 deletions(-)
+
+--
+tejun
 
