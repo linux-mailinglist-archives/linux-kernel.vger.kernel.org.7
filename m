@@ -1,110 +1,155 @@
-Return-Path: <linux-kernel+bounces-876751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E406C1C496
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:56:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0458AC1C37E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7286A5A4EF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CE8188B6F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1438F343D89;
-	Wed, 29 Oct 2025 16:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7FD34F24D;
+	Wed, 29 Oct 2025 16:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOw+60y5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="SXRlpokc"
+Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717093358BB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71163446B5;
+	Wed, 29 Oct 2025 16:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761755933; cv=none; b=pQUgAtr2YkowFLnjMawHv4TX0XFyG6wQm79sNCIfUTDomidslVar1REhn0rZVn2j+eF5KT67uhhx6wSv825j2OAWQNL+I4fOuohiTsDrb138g+Pm7tnd38oBsbWPBCD9GFcGUBfGuJWfk4uHm6SU28GZUtDey+95SepANPRPluE=
+	t=1761755966; cv=none; b=bDXXkQE4FtKUdfp5tALFX15uyV0eJMNu0fcv+OK/u6kNqZSO8WPRqd73QSL0lLJ4pIWsPhRS5TATGo1e7hwSjogGIqo3c5l1LtQnIvPYsXsyjP2tS/P4dR+X4smww6snmWkGDvGomwx6DnMxZqeOvx2OOoHQAZGdJt6dKKWeDts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761755933; c=relaxed/simple;
-	bh=JzF4xXvjF4bM00J3P3bfsQf+HnmAoBbcubTCtVQ0mVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SP0ZH7IDBWJDP9h5qUZ7ey/lM3wZrU21azQZvjNQIV3yVLYuxGkoZpZPHBmA7TqAM2wzZDCIup7NI2CGD3x3bqHVWR52yPRmbKHJ6aqNUjiqmyyG6N9Y/Bl4Fpo5uChOBe9aV2w/G2G+jbqsYUhI7n12/9S2uI5JcvhlNOfIfII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOw+60y5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0351FC4CEF7;
-	Wed, 29 Oct 2025 16:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761755932;
-	bh=JzF4xXvjF4bM00J3P3bfsQf+HnmAoBbcubTCtVQ0mVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HOw+60y5wQLxea2WHve3tJ+LC9YD9G+8rFGXTkAivVue7AXQXFhwpsbS4lTNXD+a6
-	 Twaq14+wy50hgH62Eh2gLnV0GaEkQn2ddWlKwLjmybkcTMd/QgZwoKxSmBhycFfoj8
-	 hMTCKCCtoZZdvxMA3NqCX8nR8KhIN9W2zUnXEtE6eOqw3i9XPHEpzRVUSqGlmxQF9j
-	 jAzJyjjFFQN0pGCpfB0oW8T/zpycs8VEtTPWnBievBKfAFuoCEZ66ash1iZlZcnysc
-	 jd8qqbwqy2u6Uo0Am3T6nQadxriGsnwUwtMU1YacpJMMgbl9kZQOxEI7Vbwtlns/Ou
-	 sal1yyalkEMOA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1vE9CN-000000007JD-1mOD;
-	Wed, 29 Oct 2025 17:38:59 +0100
-Date: Wed, 29 Oct 2025 17:38:59 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Gal Pressman <gal@nvidia.com>
-Cc: Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	Jakub Kicinski <kuba@kernel.org>, Alexei Lazar <alazar@nvidia.com>,
-	Simon Horman <horms@kernel.org>, cocci@inria.fr,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "scripts/coccinelle: Find PTR_ERR() to %pe
- candidates"
-Message-ID: <aQJDIz-8Ow0OmczH@hovoldconsulting.com>
-References: <20251029132922.17329-1-johan@kernel.org>
- <826f2fdb-bad8-44f4-8c8e-9353c3de73cd@nvidia.com>
+	s=arc-20240116; t=1761755966; c=relaxed/simple;
+	bh=R/XBmN72AWlHH+5TUzfXRncpX7TfMzhwtGlEAzMthFM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GTyHyhjxdLZBZJnDSBNTHkCDRkyOHTnuGMhmdnepqGrH1Zv+x+r5yM8tFLfSyLl8VA0nJOXhq/Z2JiZ76G+0vQPSU/xM8pLlzjfKws4IqqilSeOyjz8D53W4sPQuG3+3XJlQEsKVZRSWi1Pz2amjMGhAG7STAur8E9/xJB3ELj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=SXRlpokc; arc=none smtp.client-ip=119.8.177.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=gDpScrLfjAz7w+zkzftTI0/uhsgvu01n2ST4dvnPHU8=;
+	b=SXRlpokc2MEHJiX0Rtds4jw/vMLytQ6GUp3bv0CSgY2ffj7vjFrxeD2BA6gMXiBHY+hqdikFO
+	U/dxGGlQrxQffWcY8kCK4IK6NWsYFhptAC9zTfmftGLvwFXSbM9OXD9ZJy3UaxeM6pKmwagH144
+	oG/gDSdIwlvCCCrP0HS53+g=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.36])
+	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4cxXy03dZXz1P6jy;
+	Thu, 30 Oct 2025 00:39:04 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cxXw24PPRz6L4sK;
+	Thu, 30 Oct 2025 00:37:22 +0800 (CST)
+Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4FABB1401DC;
+	Thu, 30 Oct 2025 00:39:09 +0800 (CST)
+Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
+ (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 29 Oct
+ 2025 16:39:08 +0000
+Date: Wed, 29 Oct 2025 16:39:06 +0000
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<dan.j.williams@intel.com>, <aik@amd.com>, <lukas@wunner.de>, Samuel Ortiz
+	<sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe
+	<jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven Price
+	<steven.price@arm.com>, Bjorn Helgaas <helgaas@kernel.org>, Catalin Marinas
+	<catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>, Will Deacon
+	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH RESEND v2 01/12] KVM: arm64: RMI: Export
+ kvm_has_da_feature
+Message-ID: <20251029163906.000041e2@huawei.com>
+In-Reply-To: <20251027095602.1154418-2-aneesh.kumar@kernel.org>
+References: <20251027095602.1154418-1-aneesh.kumar@kernel.org>
+	<20251027095602.1154418-2-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <826f2fdb-bad8-44f4-8c8e-9353c3de73cd@nvidia.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ dubpeml100005.china.huawei.com (7.214.146.113)
 
-On Wed, Oct 29, 2025 at 03:59:50PM +0200, Gal Pressman wrote:
-> On 29/10/2025 15:29, Johan Hovold wrote:
-> > This reverts commit 57c49d2355729c12475554b4c51dbf830b02d08d.
-> > 
-> > Using "%pe" to print errnos is in no way mandated and a driver authors
-> > may chose not to use it, for example, for consistency reasons.
-> > 
-> > Drop the recently added cocci script that has gotten the build bots to
-> > send warning emails about perfectly valid code and which will likely
-> > only result in churn and inconsistency.
-> > 
-> > Link: https://lore.kernel.org/all/aQHi4nUfIlcN1ac6@hovoldconsulting.com/
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
+On Mon, 27 Oct 2025 15:25:51 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+
+Hi Aneesh,
+
+Great to see this support - this review might be a little superficial as
+I think it's first time I've looked at this and I'll be getting my head around
+it whilst reviewing.
+
+Small process thing:
+Always include a stand alone description in here.  Some git clients
+don't put the patch title near the commit text. Add something like
+
+Export kvm_has_da_feature() for use in later patches.
+
+> This will be used in later patches
+Patch title made me think this was exporting something that already existed.
+Probably better to say  Add kvm_has_da_feature() helper for use in later patches
+or something like that.
+
 > 
-> The test by no means mandates authors to use %pe, as the output says:
-> WARNING: Consider using %pe to print PTR_ERR()
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_rmi.h | 1 +
+>  arch/arm64/include/asm/rmi_smc.h | 1 +
+>  arch/arm64/kvm/rmi.c             | 6 ++++++
+>  3 files changed, 8 insertions(+)
 > 
-> "Consider" :).
+> diff --git a/arch/arm64/include/asm/kvm_rmi.h b/arch/arm64/include/asm/kvm_rmi.h
+> index 1b2cdaac6c50..a967061af6ed 100644
+> --- a/arch/arm64/include/asm/kvm_rmi.h
+> +++ b/arch/arm64/include/asm/kvm_rmi.h
+> @@ -90,6 +90,7 @@ u32 kvm_realm_ipa_limit(void);
+>  u32 kvm_realm_vgic_nr_lr(void);
+>  u8 kvm_realm_max_pmu_counters(void);
+>  unsigned int kvm_realm_sve_max_vl(void);
+> +bool kvm_has_da_feature(void);
+>  
+>  u64 kvm_realm_reset_id_aa64dfr0_el1(const struct kvm_vcpu *vcpu, u64 val);
+>  
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> index 1000368f1bca..2ea657a87402 100644
+> --- a/arch/arm64/include/asm/rmi_smc.h
+> +++ b/arch/arm64/include/asm/rmi_smc.h
+> @@ -87,6 +87,7 @@ enum rmi_ripas {
+>  #define RMI_FEATURE_REGISTER_0_GICV3_NUM_LRS	GENMASK(37, 34)
+>  #define RMI_FEATURE_REGISTER_0_MAX_RECS_ORDER	GENMASK(41, 38)
+>  #define RMI_FEATURE_REGISTER_0_Reserved		GENMASK(63, 42)
+> +#define RMI_FEATURE_REGISTER_0_DA		BIT(42)
 
-Right, but it's preceded by a big "WARNING".
+Guess you want to be updating Reserved as seems bit 42 isn't any more.
 
-> I would consider it best practice to use it, and a few drivers were
-> converted thanks to this test.
+>  
+>  #define RMI_REALM_PARAM_FLAG_LPA2		BIT(0)
+>  #define RMI_REALM_PARAM_FLAG_SVE		BIT(1)
+> diff --git a/arch/arm64/kvm/rmi.c b/arch/arm64/kvm/rmi.c
+> index 478a73e0b35a..08f3d2362dfd 100644
+> --- a/arch/arm64/kvm/rmi.c
+> +++ b/arch/arm64/kvm/rmi.c
+> @@ -1738,6 +1738,12 @@ int kvm_init_realm_vm(struct kvm *kvm)
+>  	return 0;
+>  }
+>  
+> +bool kvm_has_da_feature(void)
+> +{
+> +	return rmi_has_feature(RMI_FEATURE_REGISTER_0_DA);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_has_da_feature);
+> +
+>  void kvm_init_rmi(void)
+>  {
+>  	/* Only 4k page size on the host is supported */
 
-Unlike the rest of the misc cocci scripts I skimmed, this one does not
-guard against any bugs. Instead it's pushing for a subjective style
-preference, which is just going to result in churn when the clean up
-crew starts sending mindless conversions of individual printks.
-
-By all means, use %pe for your drivers, but it should not be forced
-upon the rest of us this way.
-
-> If the issue is with automatic build bots, then maybe this test should
-> be excluded from them, rather than deleted?
-
-It's both; it's the noise the new warnings generate but also the coming
-flood up patches to "fix" them. There are already some 40 commits or so
-in linux-next referencing this script.
-
-Johan
 
