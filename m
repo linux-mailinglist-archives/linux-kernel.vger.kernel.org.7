@@ -1,117 +1,102 @@
-Return-Path: <linux-kernel+bounces-876889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CFFBC1CAB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:05:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8FC8C1CABE
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 640E24E65D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:01:26 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 660E134CC5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680BD354AD8;
-	Wed, 29 Oct 2025 18:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D2430B528;
+	Wed, 29 Oct 2025 18:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgJGfjhJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J3ZNnEW/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF4A31E0E4
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF743246BB9
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760872; cv=none; b=M4upVkogQel1ZAHzPTEtk9Rp5EP9qaW3qkl68+UN0nwdhXNATmC0v8MxCyAfaHlXXqyieLRXeBnnlpXFli4UY0M7C5cwPohll8PbxCIx8pNP0Y+jnPsqAcN7mDwBfVWHQEp9d/HyRy5kKUasrx7zfteEjShGuXXEaKWj11JIYME=
+	t=1761761194; cv=none; b=bNGZONuMud4R3b8p70fcaXNQ55g8L/ekSUa3hBUNvDOkfnup2ZeubyQnh+xOLH/ZtlC6y/up4kU8GM3B2+3Vuxe+P8qdE1YIwTTzdJatF65b1bX5eLp3n9F+foOMiEg7Lb0e3mxBFAKD9yXYWJiDY48KCnnjZR68dIjcXQgMOuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760872; c=relaxed/simple;
-	bh=JkICoGulKusPgrOc+3fQ7LIX9fdSC22eFlUBUNRokJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MtyHf9IMfaLs0j0Udns+MxBlTrc//N/E4CAMMGRuPRtGphGkTKhPQYNcKoonTNeNPZqjOFSJHJktrHqrueWerGvN1ekr8/+VWGSU0lrl0X/Nmmh71TCCvKG5t/8Yu1hpgLb+R9qIvtdYw5xPm2DDEltXsiRUJSV9ny65a/V2GMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgJGfjhJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B4B0C16AAE
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 18:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761760872;
-	bh=JkICoGulKusPgrOc+3fQ7LIX9fdSC22eFlUBUNRokJk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NgJGfjhJaNs4l82+eMSh2r1EAx9uk5HPJAyypHw9PeFAnh2Pd/T9Ut6BEUZDAxvMW
-	 C51qBFa5otR/uKQ7dcLeycr0Ay+T0GY6ye9UTaCGCjrJu/lkMmwtbaJOSfdo3XJHd1
-	 ObCh5UYVDwzRvT+NLz+PqSgB5CBSK1564+6og8MbDc86VgxBGBy1xAjPIcIDlPsT0u
-	 hW5hzztdbZa2bABOBiKSqpn0d4KBxiMJThHlo5sPOMM2g34vAqpZgX63HfzlaZ4nN2
-	 H0VO0XKTKApg1SgG+qo2ojtqWg35sQ3GMu5U4W5++yNuGiU1RZ3tsm73dC8fHRQsUt
-	 ASSg8KjoiFbFg==
-Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-5db1e29edbcso135653137.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:01:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXF430X448hZE6q3AxBrAA47+kLn7BBSqStiwMB98yBYpXPNIayuzW+jDDaLzWU182hvMIIoBnh14N/hQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+JdZhSTHwfgCcoyzUVTqxRlZYSSu5z7ji6eMo34bwyVf3uMAr
-	eob3OKZ4/qpvcM+47vMi+qFeFj5TScsnYyKTgVMLszy3qsZXBBGGZ7kk/2gzKcKYKEZN6SBrjvW
-	D2FC1b0BYqcShDMMRPG07QXVQVC2nABU=
-X-Google-Smtp-Source: AGHT+IGGluDTc586NCbCdlpQu935QL/Y8fXJ0sSPv0be/Dt3sEhhVMZJsoK1V7je9HKakunNObg8WJdRv0NwLivAn6M=
-X-Received: by 2002:a05:6102:2c06:b0:5d6:6e6:e097 with SMTP id
- ada2fe7eead31-5db906819d1mr1467428137.33.1761760871248; Wed, 29 Oct 2025
- 11:01:11 -0700 (PDT)
+	s=arc-20240116; t=1761761194; c=relaxed/simple;
+	bh=9b8fa0Z4aKyzjlBhpiWw7f1pqpaADXZXoSC2CTbbwjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FeSz4K3WwXmvwHWxbMO2jFO2d5e5IVe3fj0neCcUII1pXuq3OJbFzjGdP1VZ667NXo5KG6vkgodm9iamiyN15ODoRQJaSiefRGUN9NippEhJ6bbwlWSF0sa5Sz5o3e75nTzOhRiZIAKTFqm+RaaqJo7oPYNJPjd0WWFneEw14C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J3ZNnEW/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761761192;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5ZfLqAcbRHxrnYziCYWRvgm+ru2d0JIR1i0V2VmmB+Y=;
+	b=J3ZNnEW/MOuFjXjBTC1G1JUFxlMdGjdFl4OR9fUmjAfz8KkTOQqC5z9pIlKP76+XaVS+vL
+	s35Dey56eFUaRtVh0YBvJpOPma6xvkvavkDkS+74f09oXLVkFgz4XaYoKzY43JYh/HjWfx
+	YsFXLJHaLOshzI6BBtTvHAkGA/9DH8E=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-WIyi2CbMOkqzfQvzj0zY-Q-1; Wed,
+ 29 Oct 2025 14:06:28 -0400
+X-MC-Unique: WIyi2CbMOkqzfQvzj0zY-Q-1
+X-Mimecast-MFC-AGG-ID: WIyi2CbMOkqzfQvzj0zY-Q_1761761187
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E502180737E;
+	Wed, 29 Oct 2025 18:06:27 +0000 (UTC)
+Received: from tpad.localdomain (unknown [10.96.133.6])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9E4C330001A2;
+	Wed, 29 Oct 2025 18:06:26 +0000 (UTC)
+Received: by tpad.localdomain (Postfix, from userid 1000)
+	id AA35940504A61; Wed, 29 Oct 2025 15:01:50 -0300 (-03)
+Date: Wed, 29 Oct 2025 15:01:50 -0300
+From: Marcelo Tosatti <mtosatti@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/idle: disable tick in idle=poll idle entry
+Message-ID: <aQJWjteaSaaC1dnU@tpad>
+References: <aQJWWIDMMUxqDxnR@tpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027231727.472628-1-roman.gushchin@linux.dev> <20251027231727.472628-3-roman.gushchin@linux.dev>
-In-Reply-To: <20251027231727.472628-3-roman.gushchin@linux.dev>
-From: Song Liu <song@kernel.org>
-Date: Wed, 29 Oct 2025 11:01:00 -0700
-X-Gmail-Original-Message-ID: <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-X-Gm-Features: AWmQ_bmAg580HVj5YBdyFsS189BaIn-vGa9b15QV_82EsPqPQmTP0zb5M7q-qAQ
-Message-ID: <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
-Subject: Re: [PATCH v2 02/23] bpf: initial support for attaching struct ops to cgroups
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, bpf@vger.kernel.org, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Song Liu <song@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQJWWIDMMUxqDxnR@tpad>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon, Oct 27, 2025 at 4:17=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
-[...]
->  struct bpf_struct_ops_value {
->         struct bpf_struct_ops_common_value common;
-> @@ -1359,6 +1360,18 @@ int bpf_struct_ops_link_create(union bpf_attr *att=
-r)
->         }
->         bpf_link_init(&link->link, BPF_LINK_TYPE_STRUCT_OPS, &bpf_struct_=
-ops_map_lops, NULL,
->                       attr->link_create.attach_type);
-> +#ifdef CONFIG_CGROUPS
-> +       if (attr->link_create.cgroup.relative_fd) {
-> +               struct cgroup *cgrp;
-> +
-> +               cgrp =3D cgroup_get_from_fd(attr->link_create.cgroup.rela=
-tive_fd);
+On Wed, Oct 29, 2025 at 03:00:56PM -0300, Marcelo Tosatti wrote:
+> 
+> Commit a5183862e76fdc25f36b39c2489b816a5c66e2e5 
+> ("tick/nohz: Conditionally restart tick on idle exit") allows
+> a nohz_full CPU to enter idle and return from it with the 
+> scheduler tick disabled (since the tick might be undesired noise).
+> 
+> The idle=poll case still unconditionally restarts the tick when entering
+> idle.
+> 
+> To reduce the noise for that case as well, stop the tick when entering
+> idle, for the idle=poll case.
+> 
+> Change tick_nohz_full_kick_cpu to set NEED_RESCHED bit, to handle the
+> case where a new timer is added from an interrupt. This breaks out of
+> cpu_idle_poll and rearms the timer if necessary.
 
-We should use "target_fd" here, not relative_fd.
+Frederic,
 
-Also, 0 is a valid fd, so we cannot use target_fd =3D=3D 0 to attach to
-global memcg.
+As a reminder, this is the original patch and discussion:
 
-Thanks,
-Song
+https://patchew.org/linux/ZIEqlkIASx2F2DRF@tpad/
 
-> +               if (IS_ERR(cgrp))
-> +                       return PTR_ERR(cgrp);
-> +
-> +               link->cgroup_id =3D cgroup_id(cgrp);
-> +               cgroup_put(cgrp);
-> +       }
-> +#endif /* CONFIG_CGROUPS */
->
->         err =3D bpf_link_prime(&link->link, &link_primer);
->         if (err)
-> --
-> 2.51.0
->
+
 
