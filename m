@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-877167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1E5C1D5C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D273C1D5DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C20C4E3F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:06:09 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FCC14E4B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E6C31984C;
-	Wed, 29 Oct 2025 21:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AA731A541;
+	Wed, 29 Oct 2025 21:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dsnfyfkg"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M9s/o95e"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C019E3161AD
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B4A3176E8
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 21:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761771942; cv=none; b=QOrlQOmmHlPok2XgPxpICl1K7rfiLclD0UuyVRZmrX7GqLtYr05v62KlYqc/298Yl345IWrJk02KzOIwYy6NMAAzEYCcKPLsH856Wv+tSHvc0eopEqfdjMBJfY8FbtvaCsolue5kLC16+gy3GgRHF2erd3X1sJqZXVbjw+kzDoU=
+	t=1761771943; cv=none; b=RGnBvCj6RoS1oQJqq51PVdIkFDZautKexr0piyDdw+hg7as64uI+GA1BjRKEnB3ndhN1NhlGYMq9YQGcr0C51V/RJeeYyqwSWQ/QHvSoBCeTR1LZAg8J7nXk63hH2f0J0DY6vFxoloDywCcaR68BQ3HT8H3bTQC+ep9kHdS0cHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761771942; c=relaxed/simple;
-	bh=uJ4ecdVVM1k105aqK4/ui370dV5EO8SGRN7iga9es04=;
+	s=arc-20240116; t=1761771943; c=relaxed/simple;
+	bh=8iIOGkEFW1qaDegyO15xpvKqYCrTt/4At+UcpwC4JVs=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jvLl46VAmdJnbKgJg2jtNhsnH4nnZZEN176VDOd6kgOyRzzznUseyiQFlJS4i7DoA2JSmuG1uCzaMh5VNXwD+e1GVuHS8H9uWUnL33Rg2H4KENdEdbZHDBFDjBMoAWUlR4I442cUxYGotUTYO661AniZC2/VvvyeYJLYwyf46jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dsnfyfkg; arc=none smtp.client-ip=209.85.221.46
+	 MIME-Version:Content-Type; b=RKB05mUuf7l126Q6Bx8FDwVrSU/laY3mwqw31UQUpYJ8YWeSzXzfvbU2AG48vfpdQDWb+nCuuwjhiiCpdEzUlcf1Vr9axXipHOSMzjYsMNZ8Hz+MYBlj79CN7ykbraIxVvKIJIAskPRuP6sjha5l00CjfNhLUJ7HHvw8b1xVFaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M9s/o95e; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ee64bc6b90so248669f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:05:40 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3ecde0be34eso1001860f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 14:05:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761771939; x=1762376739; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761771940; x=1762376740; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XTofcu4fJBU+wnClkDXXNYpcQQPdGA2T8MS/AzVhf3s=;
-        b=Dsnfyfkg4xL6d6DSAhhfHSv4KYz4hFnbrq5NMal/+uaWk9U9ukZO7JYTGiil9UgM29
-         RCmw/yKXUZxGoI5bqawjfSqN5CRthAXPevvkpq4zmaR9Z+1sksAGmdim9g6fLXbsa3OT
-         HayslZDB4G3EECYnrqmg/KIOXm5Q0koa8EP/eCLKHWXeL7QLPKAdb4DjbD/+/N3IMIYz
-         zC5TAPTAi/3dLMSwE05CR957L2426KHpShQU5jc7DWXyrZxHx+G/qOjlnqqdgsGvO8Sn
-         d99dqTjpJPHSP0hO4Hz2EANFDBPAAebFAT8gtYxeDDqf7vImFbSuNf/u11OXJLeQj+BP
-         b1vg==
+        bh=dp/uSNyKeZVNzX/sxeqr4hGjK3rcULOo3zDuh2qi5pU=;
+        b=M9s/o95el01lV3G8wcs053nsZitf3QxBL0EzOWf99SZcJFLPco5wV/LVaWrdbvKGv/
+         WN5HeFZIOFli+wpnkGKXO0d8r+R57Jtp3k0Z4ec/zOwqCLhsr3ye7LB+bPvPfXNZ7Aqk
+         /S55vXjt7PsZxzS2wpWHz0bH0mLTe49jfLUMSU8OoZXUVAeb/8LEPzY/VtWkjmgQ1lVo
+         W428Ku9mt1dQzdMr1coSKX4VVkkyjHk320PL89hTGxqffkRK3Zt1jBKp95/1vgkZCxUp
+         ftbthQXEy0NJkD3TD80WXc32uy9pdowuTzpRrXGIvXboso6ApnywF7L35StKTVgrkPrg
+         kDEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761771939; x=1762376739;
+        d=1e100.net; s=20230601; t=1761771940; x=1762376740;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XTofcu4fJBU+wnClkDXXNYpcQQPdGA2T8MS/AzVhf3s=;
-        b=O9gTPUd6HwWQQctnGsB6uMCHJN9P1oO3DYjqlzFfwOHJA3ngE5aXVj9EnKIen7FdbK
-         HiS4CkzJ+GfCSjx/HcCQ1fWHE8qplbhEWben2EEkkyQbs6z+yZKd6QjCZX74laYTrLkb
-         0uIhzePM1l9Ss4XNGmMdJIR2GgGCx/vh/LmA6Os7MKGiQIDoHQzcO3eyeMsonKGPDD+f
-         2gvyLdDMPVPaXBTTkBYKxYBze6can2UT4SVqd4UY+9GWgs3C/7I/JRKLAokTbN/gSCuR
-         7ddXso0ce7RD+iIU6k/rkR6mP7dZR/EfdVFnpK3TIt0HaQ97D3VnxhM8Jv+3gnRQeYYI
-         gKoA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/H5mqA7IihEgDu9PszvsJafT6iiA2iL8a3DyUrda9OFj6c7WVgfucnR7A1gNwHkeamHJr7hV6BUB9lVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLLWdoqwKotCCCFeQ2ZOzjeSMba6L8iKC/iOm/GswnBDxiTk3e
-	PO6qnJOjV7RTwrqHt7BHeGoIfjJPRP+teTb5x6+8GeR2qZk8t8gWb7IScl3kEz5mgYo=
-X-Gm-Gg: ASbGncul4vT/0JOKUtL0wlqicKbjXcVn43rd8MB1z8xSErSIv9aN5KcJFI4iajDCQP2
-	YVJWhK/TXD6duckQFU4G5IglelcQpeP+/YrO8I60Vx1dKlhWb6X245wxI3dced8cowaxbm1G4Z6
-	mzo1W5oVnjCDINJSgDAJnHITdXw5XoC0Dhd8h2fMSeJ/Ibwu2omMDmDkfuFSQN3ItrElRiBwtwu
-	cUPlgKwFu61ljmxrUrvj7EkfcZ1UvZ+f1TOeEa4/sWfXErQO/YAwSn7VSnndR3STkr118Vj3daa
-	TQcmHHqA+ouT8T6WOj15jnJaZzaqUBIPqMF8BZ5ITF5cJDNzP5fP8ttJa6yOHweIoLsabLGepG1
-	3G8qKVLAl66cFaiY6OwpEYWv1KHVfrdIYHWnm23+5ReGv02wIdurR4Vg7yBHrFHJtkA4FvUzFPi
-	nOBHwM/6+nNQgKpMUDunH7/pFK74x8uiM=
-X-Google-Smtp-Source: AGHT+IEXesMK4yi3aw7WNkX0LUl8o2qwDZkqC9YReAIB/Znsz0lE3UE+zV3f3Lh5yILl8ityWjzuTw==
-X-Received: by 2002:a05:6000:24c1:b0:427:492:79cd with SMTP id ffacd0b85a97d-429aefd6a64mr3010887f8f.41.1761771938978;
-        Wed, 29 Oct 2025 14:05:38 -0700 (PDT)
+        bh=dp/uSNyKeZVNzX/sxeqr4hGjK3rcULOo3zDuh2qi5pU=;
+        b=C8EiYDn++RiQM9LUxefJP34mALOR2eByRS7CRxbyjOi3vnQMNVK9+NZzoU6Ccm++zE
+         /oy+H3tmitTDcoefs2G0DhqVUZFON/qHcsbJM24/SEVYn3B6AxRWWztT9LbGTr/gVG7v
+         N8cOFt+ftiQsNryUTOscZivmlTI25S/rQHlQRdgfiLALs196/bC0eJnEgOHo8MpcXpgh
+         agZbelmCyPcqX8dLVI0c1rhinRluktXgF9Gqu8QVB6NdY3AFmU6lDyZpOQJeulmpUqdv
+         iUZ/ajXE/IsuAIFXz/vZauJ5LgyzuS0DpQmdY7MD6yFCPn3C9ajMwYgGfUQIbjDPwRAt
+         y8eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuul1pxO7M66XCJS+1oowMSAEy88YJA1NNvaCojBo+Avx4g/vE6jDmlqXqo3lHzg9L4tnF8lMQ9goIhJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtqbFWGqBCzxgZ88UdH+GNU8PPl7ZGM6B1623kmq2m8qz5mhN8
+	zk6+453VwD/dZDk9RUvIdtmnTraI1tMfjZgioIcPMEsNzvpwqQUPPBYOzpUS8b29rR0=
+X-Gm-Gg: ASbGncu/tgrj4fh07kOKUK4YQ3I77rjdU3GcNAWTWcl7m4fPqImiVKvIfxh9a1CbK4d
+	LkyokMz5k7eZ9svkp/YHTGL1KsfhdjnBBx8FsWMVh0yu8fquQWoCwnEq8SGbbRf0EuUKwPjZ683
+	oFZYnaKwHMLOt09O79D9MON883EShbmSuvhz/FDuNfBJN7NSA0AYP69SSv5oQUqw4xTLpBnLiQV
+	jGcNxQ5KDyLjx9jgwtgkbNp1PPiB5c5AWer1BzR3ovo99b6ZVs/GV0HJTUna9PhbfStSrQPKhbh
+	gO7wpqJr8ORy0xke1Lne4+5n91ZD4qPp3pKPA2J5Mb4PhNRJPr3kkX9ZtIJ4GkOx/Ftwg+jh9ld
+	+keB5f9btKYulHG3lBD3Bv+Ie6FDSc920Lpo/hikzoWBoLb5ieG2o3JXBBMfEl8adrzQ6ksFNRT
+	cWWYpEQgIfc8cnAgnksecQ
+X-Google-Smtp-Source: AGHT+IHHUJuep9vUZ0J1lsKWcApbeF6pJYJ0OqFJ1EzP3xpMcStMDlbBzS8uE2XDGHUoQdaeRIr5og==
+X-Received: by 2002:a05:6000:402b:b0:3d3:b30:4cf2 with SMTP id ffacd0b85a97d-429b4c4bf46mr877008f8f.19.1761771939864;
+        Wed, 29 Oct 2025 14:05:39 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:3d9:2080:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de971sm27815109f8f.39.2025.10.29.14.05.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429952de971sm27815109f8f.39.2025.10.29.14.05.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 14:05:38 -0700 (PDT)
+        Wed, 29 Oct 2025 14:05:39 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jessica Zhang <jesszhan0024@gmail.com>, 
+To: devicetree@vger.kernel.org, 
+ Marek Vasut <marek.vasut+renesas@mailbox.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>, Abel Vesa <abel.vesa@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251028-drm-panel-samsung-add-atna60cl08-v1-1-73123789fcdb@linaro.org>
-References: <20251028-drm-panel-samsung-add-atna60cl08-v1-1-73123789fcdb@linaro.org>
-Subject: Re: [PATCH] dt-bindings: display: panel: samsung,atna33xc20:
- Document ATNA60CL08
-Message-Id: <176177193834.2073083.4758126268960108187.b4-ty@linaro.org>
-Date: Wed, 29 Oct 2025 22:05:38 +0100
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Robert Foss <rfoss@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, 
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20251029200519.214548-1-marek.vasut+renesas@mailbox.org>
+References: <20251029200519.214548-1-marek.vasut+renesas@mailbox.org>
+Subject: Re: [PATCH] dt-bindings: display: bridge: renesas,dsi-csi2-tx:
+ Align panel example with ili9881c binding
+Message-Id: <176177193908.2073083.2063773161714746895.b4-ty@linaro.org>
+Date: Wed, 29 Oct 2025 22:05:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,28 +107,24 @@ X-Mailer: b4 0.14.3
 
 Hi,
 
-On Tue, 28 Oct 2025 14:22:48 +0200, Abel Vesa wrote:
-> The Samsung ATNA40CT06 panel is a 16" AMOLED eDP panel. It is similar to
-> the ATNA33XC20 except that it is larger and has a different resolution.
-> It is found on Qualcomm Glymur CRD platform.
+On Wed, 29 Oct 2025 21:04:48 +0100, Marek Vasut wrote:
+> Update the panel example in this DT schema to match requirements in binding
+> display/panel/ilitek,ili9881c.yaml . This fixes the following schema check
+> warnings:
 > 
-> Raw panel edid:
-> 
-> 00 ff ff ff ff ff ff 00 4c 83 a6 41 00 00 00 00
-> 00 20 01 04 b5 22 16 78 03 0b d1 af 51 3d b6 23
-> 0b 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-> 01 01 01 01 01 01 cb fe 40 64 b0 08 18 70 20 08
-> 88 00 58 d7 10 00 00 1b cb fe 40 64 b0 08 c8 7a
-> 20 08 88 00 58 d7 10 00 00 1b 00 00 00 fd 00 30
-> 78 da da 42 01 00 00 00 00 00 00 00 00 00 00 02
-> 00 00 00 00 19 96 c8 46 1c 5e c8 00 00 00 01 4c
+> "
+> /tmp/dtx/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.example.dtb: panel@0 (raspberrypi,dsi-7inch): compatible: ['raspberrypi,dsi-7inch'] is too short
+>         from schema $id: http://devicetree.org/schemas/display/panel/ilitek,ili9881c.yaml
+> /tmp/dtx/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.example.dtb: panel@0 (raspberrypi,dsi-7inch): 'power-supply' is a required property
+>         from schema $id: http://devicetree.org/schemas/display/panel/ilitek,ili9881c.yaml
+> "
 > 
 > [...]
 
 Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-[1/1] dt-bindings: display: panel: samsung,atna33xc20: Document ATNA60CL08
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/2a6550191adfa20c6f63044531fe21202cfa03e0
+[1/1] dt-bindings: display: bridge: renesas,dsi-csi2-tx: Align panel example with ili9881c binding
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/cf4ec6212f3ab705b05de0519ae7acb55061fb31
 
 -- 
 Neil
