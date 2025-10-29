@@ -1,241 +1,123 @@
-Return-Path: <linux-kernel+bounces-876296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72A57C1B1E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:15:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D39EC1B2F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACB2F1C21E86
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:05:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2E6A55A3876
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E4355811;
-	Wed, 29 Oct 2025 13:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8883376BA;
+	Wed, 29 Oct 2025 13:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUvmwQig"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nwfJGB0l"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9810277818
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CFE2C08AC;
+	Wed, 29 Oct 2025 13:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761746167; cv=none; b=Ovkn3ZMn1HGOWAZf9cnEIhBQDfcsRDZmoB11LwCeBCiIUd+rXhsahnsLL+x0gylWTzaSCDlca7qsZZVSg+DALks6p1vl/cbRlw1yuaAfttXj7Rl7btaDKa2J0DVg2qKsnYx+ZeQNOYumIqvkhlZPdmgVOnbOnOHGIJMmvmDHVdE=
+	t=1761745962; cv=none; b=U+YAJs3BZrADnykOXrz8Qj+2l4c3jdmhb4I2GxnxzB+d30Wn+xbchYACvtJRicLKISXrtDKcaJZX9TdtA/1OJRsOYYq3qsM5TVdP+7p21ZAXoX34cTKMOySA9MKchG4oSRAx3AugTFJIJ+RKTr9swEvPNtgvo5anLb2velYh4/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761746167; c=relaxed/simple;
-	bh=NlDVT84FRw/2mXN8rUhepff7GU8/kbx+go4sEcGg10w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IqatsswCAKexMZJQYcyvV4J15zC4U2j6aQ/ZDeuVyYmOmmgTjJiYdZq8hZP95wFjbiSyZKPyS+yoQEYLVGN9vbmXZWbTYEAkeTvlV/MHN7kWhYH7/lTiygC4/I6Y10Or1iDf6/hWZMZfE8thKCrSwrRxjxCgIm9adDn84QV8izw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUvmwQig; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b70406feed3so80805666b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761746164; x=1762350964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=63ONXHD7xxtFJR0GpIWYvdgt2ZZqq/c+9blnPN26amc=;
-        b=JUvmwQig0QMMPmB9vK03RxTn3ZE2+uVje0SQ8kLE0k+3CnuQ30FcHY0hA2CEAp7MJv
-         Zmp5cVtp+PCzIbI4bG+ticjWg2wfJrs3AbDsYcEbJ39F4wdoEpq3uF20u1x/8CcSqC7l
-         6ersAjZh+uXXg23LYCU9xA9cLtYECINXMB8738A6Oc2yIqxPH/Xlyq3WeadeBR+coT7l
-         MpUDVGndh7FDT7k7ZxoanBO0GvDbrEgmXLMsu3ghPptWTBkRvKKt3T4SyVKjEsXkCNrx
-         IiWGAaDN2hjpWGQAQqFcrv7y9BlKqLLmU3yP972FAGNsfr3Xe58sF3quSCHvFutgiuv/
-         v49g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761746164; x=1762350964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=63ONXHD7xxtFJR0GpIWYvdgt2ZZqq/c+9blnPN26amc=;
-        b=oAvwxUg2/nQyAjD7CTgY6ZI5AmqwQfRKiOSvPfn+QP6wB67rNqzm08xIMqn3io1eWu
-         jfEHTsVoIH/2wsKPQKVyw5d78l6DHIQ4STQOW4la+fQxqvh+YL80olpn3hwtjkZNSrKL
-         3oWgvB2bbYDGud/sKS2dIiA4w+qxQbDJ5lsMBqusxOnrX93iRIwRPrmS7p5zCFRO/Za6
-         C70RV8WVfjVzg9TY2fmxZkV1W9WZFQ/OXbzh/xPr4nDkquq3JRC9nl+nTQ8Q9GNsT0Sz
-         e+fagXTojsPCTeb/4zYxIevF/1f3zmQR1tj3OUwqbbbpPdchS9H5LUWOkdEgc2mZRS5C
-         rnzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsBxyM+sT0lwCtDzFeHV1+flQ8yBUkRO0aEq/2PO++gRLLGNj1VHn7Rw6s58ee61Td+PQeSZSlLK+wL+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZS/nXZlRMS3ghnknDqA2upoXu7ULm+Bd+aEaPUCnLOGXR/Gko
-	70j4OybLbU43iJgBfHNMIVHE6kxvI6I+r+vg3C2oJQV/WC4hKYLrJNnY
-X-Gm-Gg: ASbGncvr1pYlEBGtLjlmyBasHagdqqqWHjKf5bMsRB8fq7q2EtupxR4/kUfv4b3/Oif
-	Gyz0zegNLiCdu1eZW4rWoMVNFhKYz/Wta88/ruULmL0e3WTuHLBOX9eChizG7f8bQsTOUH7Aexs
-	49G9AvTpx0vaoJJWr79AGEMBSI9x+NqyVHwfbjIvuiln+qJuUK8RDIBNoTcfSRBMDT+J62TH2Ik
-	l7rhjbnjbOwjN9+8sKNDVo7jDv3lRpqYRCcN9k+XfpaleiFvxkQVeEvvcpqRjw4mrgrVseCNx7l
-	iHREfJMj9W+zztbNsWSZL0tTNUsYVjehRPx0xEArn1Ja2NOowVIfEPIMHEDPjTRD6BpotVMiJUv
-	gh30bfH0jgnytpqRzdczvrbeDbYrGgdV6UAn1iMtuTy+Qpdv4i47yaVXucyy4AZH3enkdk3Hr0C
-	UMsSIufwUemoy3WTXakiXb5eegZw==
-X-Google-Smtp-Source: AGHT+IHH54LZbYTOXZg7mV9ntZU3iJVYCB8V/9k7x05K1JXFlb07Aw0IydcZp3Dr0TOMorMdCHGUFg==
-X-Received: by 2002:a17:906:f58f:b0:b3d:b8c3:768d with SMTP id a640c23a62f3a-b703d2cc2c0mr267175966b.7.1761746163828;
-        Wed, 29 Oct 2025 06:56:03 -0700 (PDT)
-Received: from SMW024614.wbi.nxp.com ([128.77.115.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d8534d99dsm1444960766b.21.2025.10.29.06.56.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:56:03 -0700 (PDT)
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-To: Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: [PATCH v3 2/8] dt-bindings: clock: document 8ULP's SIM LPAV
-Date: Wed, 29 Oct 2025 06:52:23 -0700
-Message-ID: <20251029135229.890-3-laurentiumihalcea111@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
-References: <20251029135229.890-1-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1761745962; c=relaxed/simple;
+	bh=GRf5pO09B51DGf/8JXpqDGryXFdVf0zOZoy017qnk0k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=jJis4Rco5NkXW4+kieCH5x0UpM+02pOU1dCbTgc7MRkoI58t6f6CysxE1rcEjbv9c5Yfu2kleaYH9HVqnQR3yVykAT85H2SH2BCk1cvfgzCwkRudBF3RApzn8MUu5aaZx/SvU0/+WJ9/+q5f+9x8dAhraBL6CCPpdZpeT0PTlp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nwfJGB0l; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id CD128C0DBC0;
+	Wed, 29 Oct 2025 13:52:18 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 2EFEF606E8;
+	Wed, 29 Oct 2025 13:52:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id ED4CF117F80EE;
+	Wed, 29 Oct 2025 14:52:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761745957; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NTnD8CdkarTrhlGO770hkduquLn2c0s6l4SlOEHonts=;
+	b=nwfJGB0lHlUUTDVGvowrkVJbf5tdr97UKfuR0E05nNmJ+gf9C/v3kCrRZmZlaf02jJHMZ8
+	caAFVZopuorlqWxahHNPaeBOwcIm0K025l57xpmLE27LWHll14KF/LfH5FNDz1ncWixQAA
+	3NbifugIjlaHN9nGWAcJL/Zauv7vC5erDdj71kJmsineg3viuUenB46IMpWt0ylghdsds8
+	uLEb5fNIW12RQDD88j4rTJYA5p3yNdddSK+witkvsPZ0sHBhC4ovIUlGNz/ghshOP8k/8V
+	BeiDgCDeh4FlGNuQKkUcLIZtj1YFA1wSFaimxoSnYvWfPBw9zPeO/tQ8dbNocA==
+From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+Date: Wed, 29 Oct 2025 14:52:23 +0100
+Subject: [PATCH bpf-next v6 02/15] selftests/bpf: test_xsk: Initialize
+ bitmap before use
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-xsk-v6-2-5a63a64dff98@bootlin.com>
+References: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
+In-Reply-To: <20251029-xsk-v6-0-5a63a64dff98@bootlin.com>
+To: =?utf-8?q?Bj=C3=B6rn_T=C3=B6pel?= <bjorn@kernel.org>, 
+ Magnus Karlsson <magnus.karlsson@intel.com>, 
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>, 
+ Jonathan Lemon <jonathan.lemon@gmail.com>, 
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, 
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
+ Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+bitmap is used before being initialized.
 
-Add documentation for i.MX8ULP's SIM LPAV module.
+Initialize it to zero before using it.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+Reviewed-by: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
+Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
 ---
- .../bindings/clock/fsl,imx8ulp-sim-lpav.yaml  | 72 +++++++++++++++++++
- include/dt-bindings/clock/imx8ulp-clock.h     |  5 ++
- .../dt-bindings/reset/fsl,imx8ulp-sim-lpav.h  | 16 +++++
- 3 files changed, 93 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
- create mode 100644 include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
+ tools/testing/selftests/bpf/test_xsk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
-new file mode 100644
-index 000000000000..662e07528d76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,imx8ulp-sim-lpav.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/fsl,imx8ulp-sim-lpav.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP i.MX8ULP LPAV System Integration Module (SIM)
-+
-+maintainers:
-+  - Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-+
-+description:
-+  The i.MX8ULP LPAV subsystem contains a block control module known as
-+  SIM LPAV, which offers functionalities such as clock gating or reset
-+  line assertion/de-assertion.
-+
-+properties:
-+  compatible:
-+    const: fsl,imx8ulp-sim-lpav
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 3
-+
-+  clock-names:
-+    items:
-+      - const: bus
-+      - const: core
-+      - const: plat
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  '#reset-cells':
-+    const: 1
-+
-+  mux-controller:
-+    $ref: /schemas/mux/reg-mux.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#reset-cells'
-+  - mux-controller
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/imx8ulp-clock.h>
-+
-+    clock-controller@2da50000 {
-+        compatible = "fsl,imx8ulp-sim-lpav";
-+        reg = <0x2da50000 0x10000>;
-+        clocks = <&cgc2 IMX8ULP_CLK_LPAV_BUS_DIV>,
-+                 <&cgc2 IMX8ULP_CLK_HIFI_DIVCORE>,
-+                 <&cgc2 IMX8ULP_CLK_HIFI_DIVPLAT>;
-+        clock-names = "bus", "core", "plat";
-+        #clock-cells = <1>;
-+        #reset-cells = <1>;
-+
-+        mux-controller {
-+            compatible = "reg-mux";
-+            #mux-control-cells = <1>;
-+            mux-reg-masks = <0x8 0x00000200>;
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/imx8ulp-clock.h b/include/dt-bindings/clock/imx8ulp-clock.h
-index 827404fadf5c..c62d84d093a9 100644
---- a/include/dt-bindings/clock/imx8ulp-clock.h
-+++ b/include/dt-bindings/clock/imx8ulp-clock.h
-@@ -255,4 +255,9 @@
+diff --git a/tools/testing/selftests/bpf/test_xsk.c b/tools/testing/selftests/bpf/test_xsk.c
+index 02250f29f9946d1ca701e30a900617056d91587b..679491b6b9dd80ccb2b92729141fb8715b874c6d 100644
+--- a/tools/testing/selftests/bpf/test_xsk.c
++++ b/tools/testing/selftests/bpf/test_xsk.c
+@@ -1069,6 +1069,8 @@ static int receive_pkts(struct test_spec *test)
+ 	u32 sock_num = 0;
+ 	int res, ret;
  
- #define IMX8ULP_CLK_PCC5_END		56
++	bitmap_zero(bitmap, test->nb_sockets);
++
+ 	ret = gettimeofday(&tv_now, NULL);
+ 	if (ret)
+ 		exit_with_error(errno);
+@@ -1259,6 +1261,8 @@ static int send_pkts(struct test_spec *test, struct ifobject *ifobject)
+ 	DECLARE_BITMAP(bitmap, test->nb_sockets);
+ 	u32 i, ret;
  
-+/* LPAV SIM */
-+#define IMX8ULP_CLK_SIM_LPAV_HIFI_CORE		0
-+#define IMX8ULP_CLK_SIM_LPAV_HIFI_PBCLK		1
-+#define IMX8ULP_CLK_SIM_LPAV_HIFI_PLAT		2
++	bitmap_zero(bitmap, test->nb_sockets);
 +
- #endif
-diff --git a/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
-new file mode 100644
-index 000000000000..adf95bb26d21
---- /dev/null
-+++ b/include/dt-bindings/reset/fsl,imx8ulp-sim-lpav.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Copyright 2025 NXP
-+ */
-+
-+#ifndef DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
-+#define DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H
-+
-+#define IMX8ULP_SIM_LPAV_HIFI4_DSP_DBG_RST	0
-+#define IMX8ULP_SIM_LPAV_HIFI4_DSP_RST		1
-+#define IMX8ULP_SIM_LPAV_HIFI4_DSP_STALL	2
-+#define IMX8ULP_SIM_LPAV_DSI_RST_BYTE_N		3
-+#define IMX8ULP_SIM_LPAV_DSI_RST_ESC_N		4
-+#define IMX8ULP_SIM_LPAV_DSI_RST_DPI_N		5
-+
-+#endif /* DT_BINDING_RESET_IMX8ULP_SIM_LPAV_H */
+ 	while (!(all_packets_sent(test, bitmap))) {
+ 		for (i = 0; i < test->nb_sockets; i++) {
+ 			struct pkt_stream *pkt_stream;
+
 -- 
-2.43.0
+2.51.0
 
 
