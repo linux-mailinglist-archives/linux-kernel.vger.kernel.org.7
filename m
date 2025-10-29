@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-877284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61AEC1DACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:18:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FFAC1DAE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 30 Oct 2025 00:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A4044E5B10
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:17:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8861F4E1CD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8B02F3C0E;
-	Wed, 29 Oct 2025 23:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A823002BB;
+	Wed, 29 Oct 2025 23:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bFPw5cOc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WL5C5TJc"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969AE222562;
-	Wed, 29 Oct 2025 23:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D5D2F5478
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 23:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761779860; cv=none; b=FA/FOamV9zRNqZ5orkWPW0dOS9VJ00U6B4V/OShzGYRnQxEI5MXQNAC4RrLvh7o7p226R3pPHcear0KoRCG0cPl18bwb+KoBGs5BTbx72QzNxTgWVKFqkbtmYvviSBkahcwtg1MZFdP9an9bz68k2aRM98eBW6gFwkkFl8vbWuQ=
+	t=1761780076; cv=none; b=Q4o3IEPBRbecXMGUSmZEBAVzPQ906c7Sy+Gn3VsGQDgfhX4AsuWTvrq+yci7Yb191lId40X3cBvMOADMn/E2xDdk12HPfW3yJKBYPUpmFpnIwVTo8xt06RziLRlCQx9MdCyT5clC5qMnlKMXuWwjk3mp/dq4t8Jj703FmUiwzq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761779860; c=relaxed/simple;
-	bh=aFz6dNrVlKIsZLpN20nJ2pqC29DlAbSGUScdk1UfEz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=l9cOzqGPx6c5qqNPgFrmmLdTMxLnWUMtrXIBtM7p7tj4hTaW6Us8yGtgry8tNmTW1c9TPSYfSon2XRO5Rk311WAuZwjMIHX2LUAobuRlGLBMgwU9yZH+9+yBfew0RxJHdI4cQWDOf5/O5R3ToRZVI7f9SvOkMVW6TrSFBPYUCus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bFPw5cOc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 126F7C4CEF7;
-	Wed, 29 Oct 2025 23:17:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761779860;
-	bh=aFz6dNrVlKIsZLpN20nJ2pqC29DlAbSGUScdk1UfEz8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bFPw5cOcCeFltvMCeaFuRH9GwUMurde5R12RYt+oJg3qbctMpxuK5FXdcZ6ygBwLS
-	 9VDIdDWrNlpnvsTL+FeMImz7l6LF3AGWv9MC2RM7YeV3NyuTmVaYowz2oFdvIAa6Q0
-	 Gqqnm60U7PCSxtUKbus8yFgeae/L7bVwy2gs+dPXFROrxO9dHFZW4dYvhI9GacMf4d
-	 4YGszKJGMSs6hWZHUNq9qFaYSsAfKWnRiWMTAlHIy0NksgYmzmchkRna1ba62HWwqE
-	 b3lUz9uzLuOYisZfBFpOSuGv48ZaQTEUOy7ZGVyJ5dhWiIFMi6HZS23JUd9eyyrROP
-	 I9Ui74I1Y8SCg==
-Date: Wed, 29 Oct 2025 18:17:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Shawn Lin <shawn.lin@rock-chips.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v4 9/9] PCI: dwc: support missing PCIe device on resume
-Message-ID: <20251029231738.GA1601908@bhelgaas>
+	s=arc-20240116; t=1761780076; c=relaxed/simple;
+	bh=cDDkPJ7F9tdZVaQUuqF8+zownvCRgI5zNRVsWqM9mfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=h74jYo2ZEEOvOczHDHgAQDK3+juCrwqBRqygQTqDvCQdzFg5R+CFtjmVD5B3iTQPvzyZ2JHfDypdSg4Qo/dHYq59DY0U3NUIqHL/GLd65yWZHI2wFFASeuzWzNE3TN+wiETO+yadU53UjOEkeazsX2l3t7P9VJwwohSnhUg1xQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WL5C5TJc; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b6d5c59f2b6so104364566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1761780065; x=1762384865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKw67xewyEQ2RYEG8QR7XxorPa9DhZO3u8V3evRxitc=;
+        b=WL5C5TJcgiiEz+Uh47dbIbBzVFU5PocBi48D8UItMqwO/ib+WEkX99TPwFqgfkNc5b
+         CLyASbhwdcJNkC97w0GipHhui933Lyep5T1xxdYqtleYBGWvKcakQfLseEtM5hozD2H/
+         AkMjDuOMjxmhSounNgbx0vJaPWhBzNj5tB5Zo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761780065; x=1762384865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKw67xewyEQ2RYEG8QR7XxorPa9DhZO3u8V3evRxitc=;
+        b=rZ+v7fXfql83VkrIBCPkt5xBgQo998cjtD2e+rIlqkpFzWetv7JJPZ/C/fbC8JACul
+         If7YC+2RkOAE8KCIn90CyLlKFH5k9p7sAbfici/G5jYFMl4xj+ahyTOqWX4TwegkwnWe
+         IjceWjg/YPUgir/4OZsx8GS0tqGgG22+cqT1A0ccxaztkAkKOqP4U+sMLeFo4k00/uu3
+         /C4Cirgr3x9E57JW/dM9stMaXApFvOWkfJqE2WE+JJ7wDZceCNo9Wepzuwak2WT1M2b0
+         Q2Srt2qQbHJ0KWd/SyowvlibooTDClolGzsPUuBep6v4dgTURf+XfXxiuhOfbXwEm1Vs
+         hgyA==
+X-Gm-Message-State: AOJu0YyMGmPyt1Ko0744Jvd1JDgRVLF4Em24IDmYVt4v6k9drRabVRah
+	97CVnhCvP7e2PVkmqwXn/UreepRaX2362teP3zCGhJPqwISm2vdnqA7gU4W010qODakHYiagGJ+
+	TgkZnEw==
+X-Gm-Gg: ASbGncts8jrMJ7TKWKI6DMLExwOIuAiDodXQQjqLjlu8dNhh/DuSwCksYRa5AcAaMuh
+	Tq6bUHIRlIwcS6s+BDa91+Vqss97dDktnnwVsKrmoZRNN/01DKUqXG4k3Ahsgomrz3FUaUBrq8t
+	5a07gt28TkFbI4TtvJrG4eULNV3C4VBOtW0PXrt4gEcBWiuyl4lIlFk3jSP2ov/UZjhY5+d/Hs0
+	qBkwEDvQxocXWcsZupzXftFDr9QUMAOLRChi8/B0psuF7x7asZM6rA6cWJvBN+KsAnSPRGiucKj
+	qiN09SaxFkqPeqv15d5eI9KtBuAr+KeI1eVbx1uBKtKZthWDqUTrhaHd23jazgIWyrOHxJiTqSr
+	A2vuw1dz6rcM7fhbWg0JVAqklqOVjO2wS/mWrW8k2RLBhhMn29ZR7iDykN5bcUCwbk9XCvXZVCJ
+	5S+wOHEuYukY/5gEav/Yx7taiFlofdrqlvhMRaSt0=
+X-Google-Smtp-Source: AGHT+IFvBrfxwQu2p1JLj7wdP61sopBMHsjdNfE0Wk0p4TskiZiMKSqDVuOO+fcnSpMJjbHHaWZQAA==
+X-Received: by 2002:a17:907:807:b0:b6d:3fc9:e60a with SMTP id a640c23a62f3a-b703d314ae9mr454383766b.19.1761780065387;
+        Wed, 29 Oct 2025 16:21:05 -0700 (PDT)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b6d853f9a0fsm1553450966b.50.2025.10.29.16.21.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 Oct 2025 16:21:03 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b3e7cc84b82so96827566b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 16:21:03 -0700 (PDT)
+X-Received: by 2002:a17:906:f588:b0:b4a:d60d:fb68 with SMTP id
+ a640c23a62f3a-b703d2dc0acmr408681866b.6.1761780062930; Wed, 29 Oct 2025
+ 16:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-rockchip-pcie-system-suspend-v4-9-ce2e1b0692d2@collabora.com>
+References: <20251029081048.162374-1-ajye_huang@compal.corp-partner.google.com>
+ <20251029081048.162374-2-ajye_huang@compal.corp-partner.google.com>
+In-Reply-To: <20251029081048.162374-2-ajye_huang@compal.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 29 Oct 2025 16:20:51 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=X9hUxsrJ6o5yP0-bprfKgyQzZJnQRwQVYRo6G0yKWhCg@mail.gmail.com>
+X-Gm-Features: AWmQ_bnALe5cE6UL5BlZi69GWxwTwFqhUHYXfwWWJkf3C1AVS9gQ6kR_yZsS7Ms
+Message-ID: <CAD=FV=X9hUxsrJ6o5yP0-bprfKgyQzZJnQRwQVYRo6G0yKWhCg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] drm/panel-edp: Add override bpc quirk for generic edp
+To: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <jesszhan0024@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org, jazhan@google.com, 
+	Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 29, 2025 at 06:56:48PM +0100, Sebastian Reichel wrote:
-> When dw_pcie_resume_noirq() is called for a PCIe root complex for a PCIe
-> slot with no device plugged on Rockchip RK3576, dw_pcie_wait_for_link()
-> will return -ETIMEDOUT. During probe time this does not happen, since
-> the platform sets 'use_linkup_irq'.
-> 
-> This adds the same logic from dw_pcie_host_init() to the PM resume
-> function to avoid the problem.
+Hi,
 
-s/PCI: dwc: support/PCI: dwc: Support/  (in subject; capitalize first word)
-s/This adds/Add/
-
-Can you mention 8d3bf19f1b58 ("PCI: dwc: Don't wait for link up if
-driver can detect Link Up event") here?  I think that's what added the
-similar probe-time code.
-
-I see you did copy the comment from 8d3bf19f1b58, thanks for that!
-
-Maybe also word your subject and commit log along the same lines so
-the two commits are easier to connect to each other.
-
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Wed, Oct 29, 2025 at 1:11=E2=80=AFAM Ajye Huang
+<ajye_huang@compal.corp-partner.google.com> wrote:
+>
+> Adding override bpc to EDP_PANEL_ENTRY3 quirk.
+>
+> Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
 > ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 13 ++++++++++---
->  1 file changed, 10 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index e92513c5bda5..f25f1c136900 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -1215,9 +1215,16 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
->  	if (ret)
->  		return ret;
->  
-> -	ret = dw_pcie_wait_for_link(pci);
-> -	if (ret)
-> -		return ret;
-> +	/*
-> +	 * Note: Skip the link up delay only when a Link Up IRQ is present.
-> +	 * If there is no Link Up IRQ, we should not bypass the delay
-> +	 * because that would require users to manually rescan for devices.
-> +	 */
-> +	if (!pci->pp.use_linkup_irq) {
-> +		ret = dw_pcie_wait_for_link(pci);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	return ret;
->  }
-> 
-> -- 
-> 2.51.0
-> 
+>  drivers/gpu/drm/panel/panel-edp.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+
+This seems OK to me. I'd be OK with:
+
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+
+
+I think you could alternatively add a EDID_QUIRK_FORCE_6BPC quirk for
+this panel in "drivers/gpu/drm/drm_edid.c", though I haven't tested
+it. That _might_ be a better solution? Maybe Jani or someone else CCed
+would have an opinion.
+
+At first I was thinking that the quirks in "drm_edid.c" were probably
+just for "DP" display, but then I just realized that they probably
+also are for "eDP" panels. Specifically I think Intel hardware doesn't
+use panel-edp.c so I think the only place quirks could get applied (if
+an eDP panel was also used on Intel hardware) was from "drm_edid.c".
+
+Any chance you could confirm if EDID_QUIRK_FORCE_6BPC works for you?
+
+Does anyone else CCed have an opinion of which they like better?
+
+-Doug
 
