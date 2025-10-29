@@ -1,565 +1,226 @@
-Return-Path: <linux-kernel+bounces-875916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE2DC1A1D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:51:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60175C1A1C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BCF51886D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:51:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 74A4F4EAA49
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E54338F5D;
-	Wed, 29 Oct 2025 11:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D114337BB2;
+	Wed, 29 Oct 2025 11:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O80e/tCm"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nwx8NcEa"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5F63375B9
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8DD2DE71D;
+	Wed, 29 Oct 2025 11:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761738675; cv=none; b=mqMSiht31TT1IOJQCQsC5ywD260KBElg5cafUR2qUJokt94FzvNrAl9fUtGaj3HaRV+eKDv3+XD/pru1IKPFXp1AO+ap9B7mLrr83Y3MJnKKDc4PijaHhlCVku2H7EnWxpu85pJeyxayaU94ltVpz7dQ4Ux4ahdv6hlLRgMqnio=
+	t=1761738657; cv=none; b=lfhEEYDPIbijMe8IblwnWfVjpAEYLnmVkNF84e7VDZ7tBUS0pBBcZG4sgvSA0qi8jrr/gxXYOvyc/XjwRUBofQPz45i0QUzV0+KkhvvCd6i9TMGy62jj1k3h0Fj98NiCKGVM3H8Irz8QSpnTJwSWK5UpyXQ58c9vK/P1Wftpyz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761738675; c=relaxed/simple;
-	bh=sQSvCc+stRawyQCe28tVgqjb9XQM8BEV450CLz359gM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sweWIK3/AWLqaKojxGrcFVO82oXKFKKBf4wQcemtv8CYIujEnVjX7aqB6E6BKIqTWUXfmxlUChq177ijUbeQVGZasw/JtTP/n7REmWHpshfE7gFdw/GHAPF3v58T3djdj7JwK7qIkpQh3NPfvSGBLucFEbasc6mIrc/gS97uoMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O80e/tCm; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-63c09ff13aeso12409390a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761738671; x=1762343471; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6PmxXZLeWMcLI527g8jLuWPGtFvEcXvUEe7TnxQd8UI=;
-        b=O80e/tCm6+Iat8kAqUO18bZedek439vALlI22gIe+yJlliP+ULIePafq5C+cICvVHI
-         i3J141tK2p5XqA/zUYmGU1xd65djsLQVkF/T2Y9olvkuVemCnCMgmPPC5HZ8qNEj9mnm
-         8v7By0MDj3KVPZunHBgtSYNcg21xZO/Gbg+R4YdOIv0Aimoc9OfwLLZSp+NrJk005s86
-         ivGR/04m+ReFF3chCNv9Oj0+Mn7ABXbCJf21OoIKIoXQiWiULihs4dyBVmyjozPiPHZX
-         y9Wt8T83MDWuEO/p8XgL0nNVp5iqI8gnHX7rGbAdMfqCuVx/t9g0OTs8H21w8wXbRfci
-         /fhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761738671; x=1762343471;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6PmxXZLeWMcLI527g8jLuWPGtFvEcXvUEe7TnxQd8UI=;
-        b=RUdH0kUVkUq1PTQi2LFpoiFXYo3tlfCSxFez7BCHS2P7mUjgl2EdUKvoNiBvWSjUJT
-         1Op6KNfBmTd5oMWTAOIslUV+lvd88cfZ9SDSHuC+qjI4w9m18Kt/OjxF3wQe0E5lfEzg
-         7h0l2bLGv8aZs8QokesXDNc/WWZXpoYC9hHOxR20/K+mw5V1Or7IslKaqzCiSL5diA/R
-         o6Dx21QUicoSIZYknG57LjeeurPu+i4OM29Z78acGLgi3JuwHbF8+tnt/laKEyQXhDnZ
-         uaeItPSlOumZx+xJ8H8rx3Og3kmVM/Hql5z/1664E84uRr2UiL+ih5IcKzXGoono7tOQ
-         Xarg==
-X-Forwarded-Encrypted: i=1; AJvYcCVySP/oEI3rwXvaFxuQCWt1W7s/7NBgNVUicbKZZaJ78aslCRBEfq0VqQz3BXyRse8kMv1jJBdhvDFwGSM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLS4KlxixBkVMxM8Z+GCNA8WyMFHzqWPANfJxBnuBI27nFz+Tb
-	udyYWFzkCi0obdvXGGFfmIq7ijswJnC5GF0QX3shnv9npgf4Zwb3r3qZNngHHMG4dUEgTn60i/0
-	A6Tp2xeamrIB9ycwhNtbgEfEHsIGgdEM=
-X-Gm-Gg: ASbGnctJCQx02/j8bGjmn7Tg5TDkBL1R5PoJ3clUCWS556441GondskhToZQ4OaErTc
-	h9Q4rxUUwsB1nRXrJ4mOiUMEf1SSvMTc7YyAIYoUsWS8WQScArd8ukZ725NNZqzuamxzWxNkAlZ
-	gSdIef4uQmhggJsIUr50er3HxoerUGQY1lg19dAht7gd7j0bfONWp4F/cWVH2fe4q2C+WSOkMzA
-	zr2T4t/bsQ6Oj/5cgHoLUVt+CJTEt0r4tIeGHADguPULjivjer6uDKqnxOGz0/6Dxdl+FY=
-X-Google-Smtp-Source: AGHT+IG9L5a0r/NdoAT1ohIBYjXSvm6NtF9CNaPrbz2JKpE2fMKa/uar54tyDQwfdBSdEpNrfQnRUbFFbJSiFt8W4EQ=
-X-Received: by 2002:a05:6402:1452:b0:63b:f22d:9254 with SMTP id
- 4fb4d7f45d1cf-64044399015mr2070280a12.23.1761738671158; Wed, 29 Oct 2025
- 04:51:11 -0700 (PDT)
+	s=arc-20240116; t=1761738657; c=relaxed/simple;
+	bh=aWBg/5FAXfkDx0QZCOU/nqj2uohrdhR0Ob7qiD0W2wE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fmvWd2X/yibCWEkXd9lfkWpJFbjxj5Z+JTLGaNQQ8ZtOYyD+CrzglIamVCiIXRtxM6WcCxbQ38RF57whQrcq+H279NO0bJBugF/eEBb4p+zAwQf3T5vaAhlbEdaEdrkIdr1TGbpUat4jFZEdKmT8XzMqh4TNvEYPXOM0iPsXheI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nwx8NcEa; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761738653;
+	bh=aWBg/5FAXfkDx0QZCOU/nqj2uohrdhR0Ob7qiD0W2wE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nwx8NcEajHmNE7tE6vwMx7cecLGrrCBRulGwKWaSxaQYJprJ9yS6aYFgdBc71EgHD
+	 MFS6PIcS+SYMmlNWDNk0m1HvAHoyYYk4PZ5uIQUd4k159MpxarJL5/s2BWqTquJe8S
+	 kXyrhuCtJmxyZG5SwiZ+vmuw/pWqfeYM1WVeEoWenQ2VPWkdYRmQhRbE6rbeRIfee2
+	 P11j7XIBntKdBaSVNpV4KOIWSW91TF1CccQc0Vgmy8n6NYnQ2JG1Bw7xVHdxs3xf95
+	 /hJZRgwbfZOYF3qljCDP5FaTaYC7Ni9mccFe5hRCJmpwFSOK2G8uSBzJZW16nZn7sv
+	 V94AelF4TZxNA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2BA4D17E1315;
+	Wed, 29 Oct 2025 12:50:53 +0100 (CET)
+Message-ID: <2cb49197-6588-4e89-8b37-29477bfc7e98@collabora.com>
+Date: Wed, 29 Oct 2025 12:50:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251026123923.1531727-1-caojunjie650@gmail.com>
- <20251026123923.1531727-3-caojunjie650@gmail.com> <aQDDjzl65dMZEnwM@aspen.lan>
-In-Reply-To: <aQDDjzl65dMZEnwM@aspen.lan>
-From: Junjie Cao <caojunjie650@gmail.com>
-Date: Wed, 29 Oct 2025 19:49:35 +0800
-X-Gm-Features: AWmQ_bkmVwrubVSK9QRHrpoai2PlgXID_3JWsZtl1cctLfRNPfV3c2wXTnhUYhg
-Message-ID: <CAK6c68h3Mc0=JbbbVAmo_cYeOR_T-_rRy5EacgYQh7HgQZOPBg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] backlight: aw99706: Add support for Awinic AW99706 backlight
-To: Daniel Thompson <danielt@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
-	Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/10] SPMI: Implement sub-devices and migrate drivers
+To: sboyd@kernel.org
+Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
+ andy@kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+ srini@kernel.org, vkoul@kernel.org, kishon@kernel.org, sre@kernel.org,
+ krzysztof.kozlowski@linaro.org, u.kleine-koenig@baylibre.com,
+ linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
+ casey.connolly@linaro.org
+References: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251021083219.17382-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 28, 2025 at 9:21=E2=80=AFPM Daniel Thompson <danielt@kernel.org=
-> wrote:
->
-> On Sun, Oct 26, 2025 at 08:39:23PM +0800, Junjie Cao wrote:
-> > Add support for Awinic AW99706 backlight, which can be found in
-> > tablet and notebook backlight, one case is the Lenovo Legion Y700
-> > Gen4. This driver refers to the official datasheets and android
-> > driver, they can be found in [1].
-> >
-> > [1] https://www.awinic.com/en/productDetail/AW99706QNR
-> >
-> > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> > ---
-> > diff --git a/drivers/video/backlight/aw99706.c b/drivers/video/backligh=
-t/aw99706.c
-> > new file mode 100644
-> > index 000000000..8dafdea45
-> > --- /dev/null
-> > +++ b/drivers/video/backlight/aw99706.c
-> > @@ -0,0 +1,503 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * aw99706 - Backlight driver for the AWINIC AW99706
-> > + *
-> > + * Copyright (C) 2025 Junjie Cao <caojunjie650@gmail.com>
-> > + * Copyright (C) 2025 Pengyu Luo <mitltlatltl@gmail.com>
-> > + *
-> > + * Based on vendor driver:
-> > + * Copyright (c) 2023 AWINIC Technology CO., LTD
-> > + */
-> > +
-> > +#include <linux/backlight.h>
-> > +#include <linux/bitfield.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/gpio.h>
-> > +#include <linux/i2c.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#define AW99706_MAX_BRT_LVL          4095
-> > +#define AW99706_REG_MAX                      0x1F
-> > +#define AW99706_ID                   0x07
-> > +
-> > +/* registers list */
-> > +#define AW99706_CFG0_REG                     0x00
-> > +#define AW99706_DIM_MODE_MASK                        GENMASK(1, 0)
-> > +
-> > +#define AW99706_CFG1_REG                     0x01
-> > +#define AW99706_SW_FREQ_MASK                 GENMASK(3, 0)
-> > +#define AW99706_SW_ILMT_MASK                 GENMASK(5, 4)
-> > +
-> > +#define AW99706_CFG2_REG                     0x02
-> > +#define AW99706_ILED_MAX_MASK                        GENMASK(6, 0)
-> > +#define AW99706_UVLOSEL_MASK                 BIT(7)
-> > +
-> > +#define AW99706_CFG3_REG                     0x03
-> > +#define AW99706_CFG4_REG                     0x04
-> > +#define AW99706_BRT_MSB_MASK                 GENMASK(3, 0)
-> > +
-> > +#define AW99706_CFG5_REG                     0x05
-> > +#define AW99706_BRT_LSB_MASK                 GENMASK(7, 0)
-> > +
-> > +#define AW99706_CFG6_REG                     0x06
-> > +#define AW99706_FADE_TIME_MASK                       GENMASK(2, 0)
-> > +#define AW99706_SLOPE_TIME_MASK                      GENMASK(5, 3)
-> > +#define AW99706_RAMP_CTL_MASK                        GENMASK(7, 6)
-> > +
-> > +#define AW99706_CFG7_REG                     0x07
-> > +#define AW99706_BRT_MODE_MASK                        GENMASK(1, 0)
-> > +
-> > +#define AW99706_CFG8_REG                     0x08
-> > +#define AW99706_ONOFF_TIME_MASK                      GENMASK(2, 0)
-> > +
-> > +#define AW99706_CFG9_REG                     0x09
-> > +#define AW99706_CFGA_REG                     0x0A
-> > +#define AW99706_CFGB_REG                     0x0B
-> > +#define AW99706_CFGC_REG                     0x0C
-> > +#define AW99706_CFGD_REG                     0x0D
-> > +#define AW99706_FLAG_REG                     0x10
-> > +#define AW99706_BACKLIGHT_EN_MASK            BIT(7)
-> > +
-> > +#define AW99706_CHIPID_REG                   0x11
-> > +#define AW99706_LED_OPEN_FLAG_REG            0x12
-> > +#define AW99706_LED_SHORT_FLAG_REG           0x13
-> > +#define AW99706_MTPLDOSEL_REG                        0x1E
-> > +#define AW99706_MTPRUN_REG                   0x1F
-> > +
-> > +#define RESV 0
-> > +
-> > +/* Boost switching frequency table, in kHz */
-> > +static const u32 aw99706_sw_freq_tbl[] =3D {
-> > +     RESV, RESV, RESV, RESV, 300, 400, 500, 600,
-> > +     660, 750, 850, 1000, 1200, 1330, 1500, 1700
-> > +};
-> > +
-> > +/* Switching current limitation table, in mA */
-> > +static const u32 aw99706_sw_ilmt_tbl[] =3D {
-> > +     1500, 2000, 2500, 3000
-> > +};
-> > +
-> > +/* ULVO threshold table, in mV */
-> > +static const u32 aw99706_ulvo_thres_tbl[] =3D {
-> > +     2200, 5000
-> > +};
-> > +
-> > +/* Fade In/Out time table, in us */
-> > +static const u32 aw99706_fade_time_tbl[] =3D {
-> > +     8, 16, 32, 64, 128, 256, 512, 1024
-> > +};
-> > +
-> > +/* Slope time table, in ms */
-> > +static const u32 aw99706_slopetime_tbl[] =3D {
-> > +     8, 24, 48, 96, 200, 300, 400, 500
-> > +};
-> > +
-> > +/* Turn on/off time table, in ns */
-> > +static const u32 aw99706_onoff_time_tbl[] =3D {
-> > +     RESV, 250, 500, 1000, 2000, 4000, 8000, 16000
-> > +};
-> > +
-> > +struct aw99706_device {
-> > +     struct i2c_client *client;
-> > +     struct device *dev;
-> > +     struct regmap *regmap;
-> > +     struct backlight_device *bl_dev;
-> > +     struct gpio_desc *hwen_gpio;
-> > +     bool bl_enable;
-> > +};
-> > +
-> > +enum reg_access {
-> > +     REG_NONE_ACCESS =3D 0,
-> > +     REG_RD_ACCESS   =3D 1,
-> > +     REG_WR_ACCESS   =3D 2,
-> > +};
-> > +
-> > +struct aw99706_reg {
-> > +     u8 defval;
-> > +     u8 access;
-> > +};
-> > +
-> > +const struct aw99706_reg aw99706_regs[AW99706_REG_MAX + 1] =3D {
-> > +     [AW99706_CFG0_REG]              =3D {0x65, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG1_REG]              =3D {0x39, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG2_REG]              =3D {0x1e, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG3_REG]              =3D {0x04, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG4_REG]              =3D {0x00, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG5_REG]              =3D {0x00, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG6_REG]              =3D {0xa9, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG7_REG]              =3D {0x04, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG8_REG]              =3D {0x0c, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFG9_REG]              =3D {0x4b, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFGA_REG]              =3D {0x72, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFGB_REG]              =3D {0x01, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFGC_REG]              =3D {0x6c, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_CFGD_REG]              =3D {0xfe, REG_RD_ACCESS | REG_WR=
-_ACCESS},
-> > +     [AW99706_FLAG_REG]              =3D {0x00, REG_RD_ACCESS},
-> > +     [AW99706_CHIPID_REG]            =3D {AW99706_ID, REG_RD_ACCESS},
-> > +     [AW99706_LED_OPEN_FLAG_REG]     =3D {0x00, REG_RD_ACCESS},
-> > +     [AW99706_LED_SHORT_FLAG_REG]    =3D {0x00, REG_RD_ACCESS},
-> > +
-> > +     /*
-> > +      * Write bit is dropped here, writing BIT(0) to MTPLDOSEL will un=
-lock
-> > +      * Multi-time Programmable (MTP).
-> > +      */
-> > +     [AW99706_MTPLDOSEL_REG]         =3D {0x00, REG_RD_ACCESS},
-> > +     [AW99706_MTPRUN_REG]            =3D {0x00, REG_NONE_ACCESS},
-> > +};
-> > +
-> > +static bool aw99706_readable_reg(struct device *dev, unsigned int reg)
-> > +{
-> > +     return aw99706_regs[reg].access & REG_RD_ACCESS;
-> > +}
-> > +
-> > +static bool aw99706_writeable_reg(struct device *dev, unsigned int reg=
-)
-> > +{
-> > +     return aw99706_regs[reg].access & REG_WR_ACCESS;
-> > +}
-> > +
-> > +static inline int aw99706_i2c_read(struct aw99706_device *aw, u8 reg,
-> > +                                unsigned int *val)
-> > +{
-> > +     return regmap_read(aw->regmap, reg, val);
-> > +}
-> > +
-> > +static inline int aw99706_i2c_write(struct aw99706_device *aw, u8 reg,=
- u8 val)
-> > +{
-> > +     return regmap_write(aw->regmap, reg, val);
-> > +}
-> > +
-> > +static inline int aw99706_i2c_update_bits(struct aw99706_device *aw, u=
-8 reg,
-> > +                                       u8 mask, u8 val)
-> > +{
-> > +     return regmap_update_bits(aw->regmap, reg, mask, val);
-> > +}
-> > +
-> > +struct aw99706_dt_prop {
-> > +     const char * const name;
-> > +     const u32 * const lookup_tbl;
-> > +     u8 tbl_size;
-> > +     u8 reg;
-> > +     u8 mask;
-> > +     u8 val;
-> > +     u32 raw_val;
-> > +};
-> > +
-> > +static struct aw99706_dt_prop aw99706_dt_props[] =3D {
-> > +     {
-> > +             "awinic,dim-mode", NULL,
-> > +             0,
-> > +             AW99706_CFG0_REG, AW99706_DIM_MODE_MASK
-> > +     },
-> > +     {
-> > +             "awinic,sw-freq", aw99706_sw_freq_tbl,
-> > +             ARRAY_SIZE(aw99706_sw_freq_tbl),
-> > +             AW99706_CFG1_REG, AW99706_SW_FREQ_MASK
-> > +     },
-> > +     {
-> > +             "awinic,sw-ilmt", aw99706_sw_ilmt_tbl,
-> > +             ARRAY_SIZE(aw99706_sw_ilmt_tbl),
-> > +             AW99706_CFG1_REG, AW99706_SW_ILMT_MASK
-> > +     },
-> > +     {
-> > +             "awinic,iled-max", NULL,
-> > +             0,
-> > +             AW99706_CFG2_REG, AW99706_ILED_MAX_MASK
-> > +
-> > +     },
-> > +     {
-> > +             "awinic,uvlo-thres", aw99706_ulvo_thres_tbl,
-> > +             ARRAY_SIZE(aw99706_ulvo_thres_tbl),
-> > +             AW99706_CFG2_REG, AW99706_UVLOSEL_MASK
-> > +     },
-> > +     {
-> > +             "awinic,fade-time", aw99706_fade_time_tbl,
-> > +             ARRAY_SIZE(aw99706_fade_time_tbl),
-> > +             AW99706_CFG6_REG, AW99706_FADE_TIME_MASK
-> > +     },
-> > +     {
-> > +             "awinic,slope-time", aw99706_slopetime_tbl,
-> > +             ARRAY_SIZE(aw99706_slopetime_tbl),
-> > +             AW99706_CFG6_REG, AW99706_SLOPE_TIME_MASK
-> > +     },
-> > +     {
-> > +             "awinic,ramp-ctl", NULL,
-> > +             0,
-> > +             AW99706_CFG6_REG, AW99706_RAMP_CTL_MASK
-> > +     },
-> > +     {
-> > +             "awinic,brt-mode", NULL,
-> > +             0,
-> > +             AW99706_CFG7_REG, AW99706_BRT_MODE_MASK
-> > +     },
-> > +     {
-> > +             "awinic,onoff-time", aw99706_onoff_time_tbl,
-> > +             ARRAY_SIZE(aw99706_onoff_time_tbl),
-> > +             AW99706_CFG8_REG, AW99706_ONOFF_TIME_MASK
-> > +     },
-> > +};
-> > +
-> > +static int aw99706_lookup(const u32 * const tbl, int size, u32 val)
-> > +{
-> > +     int i;
-> > +
-> > +     for (i =3D 0; i < size; i++)
-> > +             if (tbl[i] =3D=3D val)
-> > +                     return i;
-> > +
-> > +     return -1;
-> > +}
-> > +
-> > +static inline void aw99706_prop_set_default(struct aw99706_dt_prop *pr=
-op)
-> > +{
-> > +     prop->val =3D prop->mask & aw99706_regs[prop->reg].defval;
->
-> Why included the default value in the register descriptions?
->
-> defval is only used to provide values for missing DT properties so using
-> the raw register values is cryptic and hard to read.
->
-> Including a default value in the aw99706_dt_props table instead would be
-> much more readable (because the defaults could use the same units at the
-> device tree).
->
+Il 21/10/25 10:32, AngeloGioacchino Del Regno ha scritto:
+> Changes in v7:
+>   - Added commit to cleanup redundant dev_name() in the pre-existing
+>     spmi_device_add() function
+>   - Added commit removing unneeded goto and improving spmi_device_add()
+>     readability by returning error in error path, and explicitly zero
+>     for success at the end.
 
-Agree, I will include the default values in the aw99706_dt_props table.
+Any further comments on this series?
+Any chance we can get it picked in this merge window please?
 
->
-> > +}
-> > +
-> > +static void aw99706_dt_property_convert(struct aw99706_dt_prop *prop)
-> > +{
-> > +     unsigned int val, shift;
-> > +
-> > +     if (prop->lookup_tbl) {
-> > +             val =3D aw99706_lookup(prop->lookup_tbl, prop->tbl_size,
-> > +                                  prop->raw_val);
-> > +             if (val < 0) {
-> > +                     aw99706_prop_set_default(prop);
->
-> This should not happen silently.
->
-> If the DT has provided an invalid value then we be issuing *at minimum*
-> a message at warning level or above. Many drivers will simply refuse to
-> probe when the DT is broken.
->
+Please note that this series either needs two cycles or an immutable branch
+because of the driver migration commits.
 
-Indeed, I missed it.
+Thanks,
+Angelo
 
->
-> > +                     return;
-> > +             }
-> > +
-> > +     } else {
-> > +             val =3D prop->raw_val;
-> > +     }
-> > +
-> > +     shift =3D ffs(prop->mask) - 1;
-> > +     val <<=3D shift;
-> > +     prop->val =3D prop->mask & val;
-> > +}
-> > +
-> > +static void aw99706_dt_parse(struct aw99706_device *aw)
-> > +{
-> > +     struct aw99706_dt_prop *prop;
-> > +     int ret, i;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
-> > +             prop =3D &aw99706_dt_props[i];
-> > +             ret =3D device_property_read_u32(aw->dev, prop->name,
-> > +                                            &prop->raw_val);
-> > +             if (ret < 0) {
-> > +                     dev_warn(aw->dev, "Missing property %s: %d\n",
-> > +                              prop->name, ret);
->
-> Why is there a warning when an optional property is not present. A DT
-> not including an optional property needs no message at all.
->
+> 
+> Changes in v6:
+>   - Added commit to convert spmi.c to %pe error format and used
+>     %pe error format in spmi_subdevice code as wanted by Uwe Kleine-Konig
+> 
+> Changes in v5:
+>   - Changed dev_err to dev_err_probe in qcom-spmi-sdam (and done
+>     that even though I disagree - because I wanted this series to
+>     *exclusively* introduce the minimum required changes to
+>     migrate to the new API, but okay, whatever....!);
+>   - Added missing REGMAP dependency in Kconfig for qcom-spmi-sdam,
+>     phy-qcom-eusb2-repeater and qcom-coincell to resolve build
+>     issues when the already allowed COMPILE_TEST is enabled
+>     as pointed out by the test robot's randconfig builds.
+> 
+> Changes in v4:
+>   - Added selection of REGMAP_SPMI in Kconfig for qcom-coincell and
+>     for phy-qcom-eusb2-repeater to resolve undefined references when
+>     compiled with some randconfig
+> 
+> Changes in v3:
+>   - Fixed importing "SPMI" namespace in spmi-devres.c
+>   - Removed all instances of defensive programming, as pointed out by
+>     jic23 and Sebastian
+>   - Removed explicit casting as pointed out by jic23
+>   - Moved ida_free call to spmi_subdev_release() and simplified error
+>     handling in spmi_subdevice_alloc_and_add() as pointed out by jic23
+> 
+> Changes in v2:
+>   - Fixed missing `sparent` initialization in phy-qcom-eusb2-repeater
+>   - Changed val_bits to 8 in all Qualcomm drivers to ensure
+>     compatibility as suggested by Casey
+>   - Added struct device pointer in all conversion commits as suggested
+>     by Andy
+>   - Exported newly introduced functions with a new "SPMI" namespace
+>     and imported the same in all converted drivers as suggested by Andy
+>   - Added missing error checking for dev_set_name() call in spmi.c
+>     as suggested by Andy
+>   - Added comma to last entry of regmap_config as suggested by Andy
+> 
+> While adding support for newer MediaTek platforms, featuring complex
+> SPMI PMICs, I've seen that those SPMI-connected chips are internally
+> divided in various IP blocks, reachable in specific contiguous address
+> ranges... more or less like a MMIO, but over a slow SPMI bus instead.
+> 
+> I recalled that Qualcomm had something similar... and upon checking a
+> couple of devicetrees, yeah - indeed it's the same over there.
+> 
+> What I've seen then is a common pattern of reading the "reg" property
+> from devicetree in a struct member and then either
+>   A. Wrapping regmap_{read/write/etc}() calls in a function that adds
+>      the register base with "base + ..register", like it's done with
+>      writel()/readl() calls; or
+>   B. Doing the same as A. but without wrapper functions.
+> 
+> Even though that works just fine, in my opinion it's wrong.
+> 
+> The regmap API is way more complex than MMIO-only readl()/writel()
+> functions for multiple reasons (including supporting multiple busses
+> like SPMI, of course) - but everyone seemed to forget that regmap
+> can manage register base offsets transparently and automatically in
+> its API functions by simply adding a `reg_base` to the regmap_config
+> structure, which is used for initializing a `struct regmap`.
+> 
+> So, here we go: this series implements the software concept of an SPMI
+> Sub-Device (which, well, also reflects how Qualcomm and MediaTek's
+> actual hardware is laid out anyway).
+> 
+>                 SPMI Controller
+>                       |                ______
+>                       |               /       Sub-Device 1
+>                       V              /
+>                SPMI Device (PMIC) ----------- Sub-Device 2
+>                                      \
+>                                       \______ Sub-Device 3
+> 
+> As per this implementation, an SPMI Sub-Device can be allocated/created
+> and added in any driver that implements a... well.. subdevice (!) with
+> an SPMI "main" device as its parent: this allows to create and finally
+> to correctly configure a regmap that is specific to the sub-device,
+> operating on its specific address range and reading, and writing, to
+> its registers with the regmap API taking care of adding the base address
+> of a sub-device's registers as per regmap API design.
+> 
+> All of the SPMI Sub-Devices are therefore added as children of the SPMI
+> Device (usually a PMIC), as communication depends on the PMIC's SPMI bus
+> to be available (and the PMIC to be up and running, of course).
+> 
+> Summarizing the dependency chain (which is obvious to whoever knows what
+> is going on with Qualcomm and/or MediaTek SPMI PMICs):
+>      "SPMI Sub-Device x...N" are children "SPMI Device"
+>      "SPMI Device" is a child of "SPMI Controller"
+> 
+> (that was just another way to say the same thing as the graph above anyway).
+> 
+> Along with the new SPMI Sub-Device registration functions, I have also
+> performed a conversion of some Qualcomm SPMI drivers and only where the
+> actual conversion was trivial.
+> 
+> I haven't included any conversion of more complex Qualcomm SPMI drivers
+> because I don't have the required bandwidth to do so (and besides, I think,
+> but haven't exactly verified, that some of those require SoCs that I don't
+> have for testing anyway).
+> 
+> AngeloGioacchino Del Regno (10):
+>    spmi: Print error status with %pe format
+>    spmi: Remove redundant dev_name() print in spmi_device_add()
+>    spmi: Remove unneeded goto in spmi_device_add() error path
+>    spmi: Implement spmi_subdevice_alloc_and_add() and devm variant
+>    nvmem: qcom-spmi-sdam: Migrate to devm_spmi_subdevice_alloc_and_add()
+>    power: reset: qcom-pon: Migrate to devm_spmi_subdevice_alloc_and_add()
+>    phy: qualcomm: eusb2-repeater: Migrate to
+>      devm_spmi_subdevice_alloc_and_add()
+>    misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+>    iio: adc: qcom-spmi-iadc: Migrate to
+>      devm_spmi_subdevice_alloc_and_add()
+>    iio: adc: qcom-spmi-iadc: Remove regmap R/W wrapper functions
+> 
+>   drivers/iio/adc/qcom-spmi-iadc.c              | 109 ++++++++----------
+>   drivers/misc/Kconfig                          |   2 +
+>   drivers/misc/qcom-coincell.c                  |  38 ++++--
+>   drivers/nvmem/Kconfig                         |   1 +
+>   drivers/nvmem/qcom-spmi-sdam.c                |  36 ++++--
+>   drivers/phy/qualcomm/Kconfig                  |   2 +
+>   .../phy/qualcomm/phy-qcom-eusb2-repeater.c    |  53 ++++++---
+>   drivers/power/reset/qcom-pon.c                |  34 ++++--
+>   drivers/spmi/spmi-devres.c                    |  24 ++++
+>   drivers/spmi/spmi.c                           |  95 +++++++++++++--
+>   include/linux/spmi.h                          |  16 +++
+>   11 files changed, 289 insertions(+), 121 deletions(-)
+> 
 
-They are mandatory in the downstream, and providing all properties is
-difficult sometimes, so I set a default value if one is missing. But
-one device may use a configuration different from the component
-vendor's. These default values may be not optimal, so I issue a
-warning for property missing. (I forgot to address it)
 
->
-> > +
-> > +                     aw99706_prop_set_default(prop);
-> > +             } else {
-> > +                     aw99706_dt_property_convert(prop);
-> > +             }
-> > +     }
-> > +
-> > +     /* This property requires a long linear array, using formula for =
-now */
-> > +     aw99706_dt_props[3].val =3D (aw99706_dt_props[3].raw_val - 5000) =
-/ 500;
->
-> Using a formula is fine, but I don't like doing it retrospectively.
-> Hard coding the 3 makes maintenance difficult and we end up making the
-> whole of aw99706_dt_props writeable just so we can store raw_val once!
->
-> Much better, IMHO, to embed a function pointer into the table and make
-> the whole table const. The function pointer can be
-> aw99706_dt_property_convert() in most cases (although rename it
-> `aw99706_dt_property_lookup_from_table() ) and can implement any
-> formula you need.
->
-
-Helpful opinion. I will do this in next version.
-
->
-> > +}
-> > +
-> > +static int aw99706_hw_init(struct aw99706_device *aw)
-> > +{
-> > +     int ret, i;
-> > +
-> > +     gpiod_set_value_cansleep(aw->hwen_gpio, 1);
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
-> > +             ret =3D aw99706_i2c_update_bits(aw, aw99706_dt_props[i].r=
-eg,
-> > +                                           aw99706_dt_props[i].mask,
-> > +                                           aw99706_dt_props[i].val);
-> > +             if (ret < 0) {
-> > +                     dev_err(aw->dev, "Failed to write init data %d\n"=
-, ret);
-> > +                     return ret;
-> > +             }
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int aw99706_bl_enable(struct aw99706_device *aw, bool en)
-> > +{
-> > +     int ret;
-> > +     u8 val;
-> > +
-> > +     FIELD_MODIFY(AW99706_BACKLIGHT_EN_MASK, &val, en);
-> > +     ret =3D aw99706_i2c_update_bits(aw, AW99706_CFGD_REG,
-> > +                                   AW99706_BACKLIGHT_EN_MASK, val);
-> > +     if (ret)
-> > +             dev_err(aw->dev, "Failed to enable backlight!\n");
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int aw99706_backlight_switch(struct aw99706_device *aw, u32 brt=
-_lvl)
-> > +{
-> > +     bool bl_enable_now =3D !!brt_lvl;
-> > +     int ret =3D 0;
-> > +
-> > +     if (aw->bl_enable !=3D bl_enable_now) {
-> > +             aw->bl_enable =3D bl_enable_now;
-> > +             ret =3D aw99706_bl_enable(aw, bl_enable_now);
-> > +     }
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static int aw99706_update_brightness(struct aw99706_device *aw, u32 br=
-t_lvl)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D aw99706_i2c_write(aw, AW99706_CFG4_REG,
-> > +                             (brt_lvl >> 8) & AW99706_BRT_MSB_MASK);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret =3D aw99706_i2c_write(aw, AW99706_CFG5_REG,
-> > +                             brt_lvl & AW99706_BRT_LSB_MASK);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return aw99706_backlight_switch(aw, brt_lvl);
->
-> I'm not sure there is much benefit pushing this out into a seperate
-> function. Merge this inline.
->
-> > +}
->
-
-I see.
-
-Regards,
-Junjie
 
