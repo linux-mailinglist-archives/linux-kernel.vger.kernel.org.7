@@ -1,337 +1,113 @@
-Return-Path: <linux-kernel+bounces-876177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46892C1ACA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:39:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAD1C1AE90
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A8295A4CBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3EF7627605
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E064271454;
-	Wed, 29 Oct 2025 13:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8066829AB00;
+	Wed, 29 Oct 2025 13:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhw7d2a9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TUPCO2I/"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 558F3246BB9;
-	Wed, 29 Oct 2025 13:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4890299AB1;
+	Wed, 29 Oct 2025 13:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761744316; cv=none; b=cF5Mgm1DSZW6+eTX9+8Stur5XbXg9H9gIoCV/lIRknZWi2kpIfdeBENdwRe5d//gpvtug6gkoTcUaGfb6czc8opAGH06di8JhoudeRPQIFCp3jJXiBUwc5iF+Meg276g9Qfh9butqbgXJx9XdBS67UiG18HOY2Yg6Gy6z/APHn0=
+	t=1761744377; cv=none; b=iTj3Y2/ehpQnD47YJVc8YZTp0ts26pQeWlBvARgBTRV/EzsLmX1BZeC1N/GTh6oTaWcNiM9gijMaHA/nglw5IrH6rPaTrK6tkJsC/Hs5e5iL+2laBi5dAR8eeaGGSFElBW6v+7HVPqWQ1wz6Z0SrCbWf4zhtaF/nlCEJOBIOSfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761744316; c=relaxed/simple;
-	bh=katCKghEuzzRWiPDmJ5bO5CV0MVd38Dh62WCeKmWr7w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H7wjxJ7jwLaoP8h7gdX68Wpkow3/FrI+Fxn/aeH7pJE5Pbc2yEga2fk+ex8emdSPSPNQWV1VYHEFYPB3ckGkSDZcmyj8nhDM3yqEumc1/vNEJPfeMf3cgw1Dn8+SsxyqeUF+BDafwC9clGuA48tVQ5ObZzE/ik5OiFF2n3Zx0XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hhw7d2a9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDE1C4CEFD;
-	Wed, 29 Oct 2025 13:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761744316;
-	bh=katCKghEuzzRWiPDmJ5bO5CV0MVd38Dh62WCeKmWr7w=;
-	h=Date:From:To:Cc:Subject:From;
-	b=hhw7d2a9ofDEwPVU/V0JIPzIgEECf0GgZwhzXbYOiE65r817fRNHqU23j8grjvO0b
-	 qnom/K8ho87H1m5G8DTx/A0UpGq4nY+soswIVv1x4AV4UXGDhXsmWvQ4EZnJFDLjcj
-	 1jNKP8Cud8CP5aRANCjFs67AJGDDJnlH9IFnkn9+zRKraiaSGcFbdC5OcqBgb4/OcG
-	 UKIoD115eHkHgCXjCcNHIoV6vD2McB6NTs3TsQjO0TtGR/DmK5vm8lTB9yj0g2+mn4
-	 nHDCFoNy4VfXHJptnpQsq84gQ6DvcQO7NQmkDQlbJVr70Kd92SNrDc7nOzf8XvKTDo
-	 AiC9ZKVCX45ew==
-Date: Wed, 29 Oct 2025 14:24:59 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
-Subject: man-pages-6.16 released
-Message-ID: <5cy4sb3beseqeehhva5r5f5ji3ofvotzobqcp3634k3lqeeoqi@nxf5gxvdifcn>
+	s=arc-20240116; t=1761744377; c=relaxed/simple;
+	bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ToaowA3u7h/5SkbxW4rA5j7l5T8oRlCL21se38p1gOBvTR+Y049G2n4vL9u+JY8LXzQhVsHyuDQZRTk2cjWcB/ELuOfUt1rKFupeDKM22f1qCQgHptEMLKSv/Q4rxqWdP4oQIqXYR18kDxm7V0Uoac1XugwxzDho6gf5O/Okf2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TUPCO2I/; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1761744373;
+	bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=TUPCO2I/RFRnEZZh/BwABQNzIDTNAUn3iwfxUR2lpw5jKamLKdHYzJScfCsCcY0WI
+	 rN1VZGXNXPAfQ7AoYpAxFcXLO9Ss3nM8JNXwKwTOPIPYmFx6f/1wSod+wmw+xndtLs
+	 PC2elcimt/evu+6MNZPGuUmBp/brN8efDNZW5M964naogHwbH5pdtVUQr7qjeT9Hmt
+	 KJPF20zTzkhSS/OOM2oUOJMcLVYn6uf2GQZ+G2dYL4ylZyeLhMjSwP2HfQ3Lyc0vCs
+	 v0bkzsUo3f4Pi3mXwnoXnCn/TT1sS9VYpulbofCtj4tEXi1O6irFpJbAhHk0icnPd6
+	 tbofaAJGYvfiA==
+Received: from yukiji.home (amontpellier-657-1-116-247.w83-113.abo.wanadoo.fr [83.113.51.247])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laeyraud)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5B47717E1315;
+	Wed, 29 Oct 2025 14:26:13 +0100 (CET)
+From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Date: Wed, 29 Oct 2025 14:25:57 +0100
+Subject: [PATCH] dt-bindings: soc: mediatek: pwrap: Add compatible for
+ MT8189 SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="c3bbmtjujgvpbaml"
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-mt8189-dt-bindings-pwrap-v1-1-d52b1aa5f5a4@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAOQVAmkC/zWNQQ7CIBBFr0Jm7SRANZZexXRBYayzgCKgNml6d
+ 4mNy/eT/94GhTJTgUFskOnNhZfYQJ0EuIeNMyH7xqClviipDYbaq96grzhx9BzngumTbcLOWXO
+ dzt530kK7p0x3Xn/q23hwpuerFeoxwmQLoVtC4DqISGvFfwXGff8CmCRP3ZsAAAA=
+X-Change-ID: 20251029-mt8189-dt-bindings-pwrap-3ca97b4dd30a
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Flora Fu <flora.fu@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761744373; l=1112;
+ i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
+ bh=CKjKWDSuFg61Q3UumaNfQrY9nYh58Mn1xSRT4RFKlfA=;
+ b=PtEPwukhbAFkJ1aMh8EEF3ugB3jaEJ4wWeZDUZrrokc4K8A1lDjWI7mN8u+mjQOC4B7Yp0IOO
+ kKwUOLl9c1qBKgycdo89Rk988sOGKJJ7Ikrs7b4OvBInzxKh2jnGWvl
+X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
+ pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
+Add compatible string for the PWRAP block on MT8189 SoC, which is
+compatible with the one used on MT8195.
 
---c3bbmtjujgvpbaml
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: linux-man@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
-Subject: man-pages-6.16 released
-Message-ID: <5cy4sb3beseqeehhva5r5f5ji3ofvotzobqcp3634k3lqeeoqi@nxf5gxvdifcn>
-MIME-Version: 1.0
+Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+---
+ Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Gidday!
+diff --git a/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml b/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
+index 54c0cd64d3094648844fa7b9fff44649a72ec021..e7c4a3984c601f36858908c1d974e7d5f3587838 100644
+--- a/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
++++ b/Documentation/devicetree/bindings/soc/mediatek/mediatek,pwrap.yaml
+@@ -52,6 +52,7 @@ properties:
+       - items:
+           - enum:
+               - mediatek,mt8188-pwrap
++              - mediatek,mt8189-pwrap
+           - const: mediatek,mt8195-pwrap
+           - const: syscon
+ 
 
-I'm proud to announce:
+---
+base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
+change-id: 20251029-mt8189-dt-bindings-pwrap-3ca97b4dd30a
 
-	man-pages-6.16 - manual pages for GNU/Linux
+Best regards,
+-- 
+Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
 
-Tarball download:
-<https://www.kernel.org/pub/linux/docs/man-pages/>
-Git repository:
-<https://git.kernel.org/cgit/docs/man-pages/man-pages.git/>
-Online PDF book:
-<https://www.kernel.org/pub/linux/docs/man-pages/book/>
-
-Thanks to all the contributors to this release (in BCC)!
-And thanks to our sponsors!
-
-	-  Adfinis		<https://adfinis.com/>
-	-  Google		<https://opensource.google/>
-	-  Hudson River Trading	<https://www.hudsonrivertrading.com/>
-	-  Meta			<https://www.meta.com/>
-	-  Red Hat		<https://www.redhat.com/>
-
-(The list of sponsors will change soon, as we're in talks for renewing
- sponsors.  If any company would like to sponsor the project, it would
- be a great moment to manifest.)
-
-You are receiving this message either because:
-
-        a)  (BCC) You contributed to this release.
-
-        b)  You are subscribed to <linux-man@vger.kernel.org>,
-            <linux-kernel@vger.kernel.org>, or
-            <libc-alpha@sourceware.org>.
-
-        c)  (BCC) I have information (possibly inaccurate) that you are
-            the maintainer of a translation of the manual pages, or are
-            the maintainer of the manual pages set in a particular
-            distribution, or have expressed interest in helping with
-            man-pages maintenance, or have otherwise expressed interest
-            in being notified about man-pages releases.
-            If you don't want to receive such messages from me, or you
-            know of some other translator or maintainer who may want to
-            receive such notifications, send me a message.
-            If you want to be added to this list (which I store
-            encrypted), send me a message.
-
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D NEWS =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-This release adds two build dependencies:
-
--  awk/awk
--  pcre2-utils/pcre2grep
-
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Linux Software=
- Map =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-
-Begin4
-Title:          Linux man-pages
-Version:        6.16
-Entered-date:   2025-10-29
-Description:    Manual pages for GNU/Linux.  This package contains
-                manual pages for sections 2, 3, 4, 5, and 7, and
-                subsections of those.  Only a few pages are provided in
-                sections 1, 6, and 8, and none in 9.
-Keywords:       man pages
-Maintained-by:  Alejandro Colomar <alx@kernel.org>
-Primary-site:   http://www.kernel.org/pub/linux/docs/man-pages
-                2.7M  man-pages-6.16.tar.gz
-Copying-policy: several; the pages are all freely distributable as long as
-                nroff source is provided
-End
-
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D Changes in man=
--pages-6.16 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-Released: 2025-10-29, Aldaya
-
-
-New and rewritten pages
------------------------
-
-man2/
-	fsconfig.2
-	fsmount.2
-	fsopen.2
-	fspick.2
-	move_mount.2
-	open_tree.2
-
-man2const/
-	PR_FUTEX_HASH_GET_SLOTS.2const
-	PR_FUTEX_HASH_SET_SLOTS.2const
-
-man2type/
-	mount_attr.2type			(split from mount_setattr(2))
-
-man3/
-	_Fork.3
-	countof.3
-	memeq.3
-	streq.3
-
-
-Newly documented interfaces in existing pages
----------------------------------------------
-
-man2/
-	mount_setattr.2
-		glibc wrapper
-
-	pidfd_open.2
-		PIDFD_THREAD
-
-	pidfd_send_signal.2
-		PIDFD_SIGNAL_THREAD
-		PIDFD_SIGNAL_THREAD_GROUP
-		PIDFD_SIGNAL_PROCESS_GROUP
-
-	quotactl.2
-		quotactl_fd(2)
-
-	readv.2
-		RWF_DONTCACHE
-
-	sigaction.2
-		SI_ASYNCNL
-		FPE_FLTUNK
-		FPE_CONDTRAP
-		SEGV_ACCADI
-		SEGV_ADIDERR
-		SEGV_ADIPERR
-		SEGV_MTEAERR
-		SEGV_MTESERR
-		SEGV_CPERR
-		TRAP_UNK
-		TRAP_PERF
-		SYS_USER_DISPATCH
-		EMT_TAGOVF
-
-man3/
-	abs.3
-		umaxabs(3)
-
-	opendir.3
-		ENAMETOOLONG
-
-man7/
-	operator.7
-		(type){}
-		alignof
-		_Countof
-
-	rtnetlink.7
-		RTAX_UNSPEC
-		RTAX_LOCK
-		RTAX_MTU
-		RTAX_WINDOW
-		RTAX_RTT
-		RTAX_RTTVAR
-		RTAX_SSTHRESH
-		RTAX_CWND
-		RTAX_ADVMSS
-		RTAX_REORDERING
-		RTAX_HOPLIMIT
-		RTAX_INITCWND
-		RTAX_FEATURES
-		RTAX_RTO_MIN
-		RTAX_INITRWND
-		RTAX_QUICKACK
-		RTAX_CC_ALGO
-		RTAX_FASTOPEN_NO_COOKIE
-
-	sched.7
-		CONFIG_PREEMPT
-		CONFIG_PREEMPT_LAZY
-
-	tcp.7
-		TCP_SAVE_SYN
-		TCP_SAVED_SYN
-
-
-New and changed links
----------------------
-
-man2/
-	open_tree_attr.2			(open_tree(2))
-	quotactl_fd.2				(quotactl(2))
-man3/
-	umaxabs.3				(abs(3))
-
-
-Global changes
---------------
-
--  man/
-   -  Update documentation for POSIX.1-2024 (still more work to do).
-   -  SYNOPSIS: Use GNU forward-declarations of parameters for sizes of
-      array parameters.
-   -  Improve style of source code for tbl(1) tables.
-   -  man2/: Use the common name 'fd' instead of 'fildes'.
-   -  Use semantic newlines.
-   -  EXAMPLES
-      -  Use err(3) and errc(3bsd) instead of similar macros.
-      -  Fix includes (thanks to iwyu(1)).
-      -  Use NITEMS() consistently.
-      -  Don't name unused parameters.
--  share/mk/
-   -  Add support for the chapter man3attr.
-   -  help: Document the usual targets.
-   -  lint-man-blank: Add target to lint about blank lines.
-   -  lint-man-ws: Diagnose spurious use of white space.
-   -  lint-man-quote: Diagnose an unmatched quote.
-   -  lint-man-poems: Diagnose (lack of) semantic newlines.
-   -  lint-man-dash: Diagnose unescaped dashes
-   -  Merge handling of man(7) and mdoc(7) pages.
-   -  lint, build, check: Move exceptions to separate files.
-   -  Remove unused variables.
-   -  Unify local variable names.
-   -  Silence diagnostics about unnamed parameters.
-   -  configure/build-depends/:
-      -  Add awk/awk.
-      -  Add pcre2-utils/pcre2grep.
-
-
-Changes to individual files
----------------------------
-
--  src/bin/
-   -  sortman(1): Fix order of intro(*) pages for subsections.
-   -  diffman-git(1): Show sections as hunk context.
-
-The manual pages and other files in the repository have been improved
-beyond what this changelog covers.  To learn more about changes applied
-to individual pages, or the authors of changes, use git(1).
-
---=20
-<https://www.alejandro-colomar.es>
-Use port 80 (that is, <...:80/>).
-
---c3bbmtjujgvpbaml
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmkCFasACgkQ64mZXMKQ
-wqmBtRAAsHe6jbrxZSgaP2zT0yESE6S2wrGb4Q1cVd5iE+OwAnvsfQsarLxBshNI
-X3R7joraZunvb84E5rBud+y1MIoo6EzvaxzqBmW/Ftr1+68BMb2eDW+jBiDZWwes
-J4HdYFMRJx1CIj5oGGYZJCZMEmWgovNo5REqxW6kQnSt2o+4CaS41ysBoIpWamoF
-IkhLhp7V1kuRyUIaumiZ/Fhl8g73kTZ0Xxuelj1ta943Tkna6RlvcOUaOgdhFpNy
-o/DahzyVRzfUzaBbSsqTZM57p2LQIFh+KMDY3q/YWq0d0AqtoGrxOZUso8SW3a5W
-hW4c71gxuk8xxiTvrCcb3lZosdcqbEsMUfwF6NDh9qHEq+21BIiHUeDb4N7NAx4p
-PPkgx29N6PKCQxz+go9OMi90n+MS+SW02oi0ZCOAhmIsZWKO/c64DILftvZouZET
-wKyo/PigRQWnkP0PeKX/Ord5KotrjADIAhOAY7BhXcEKm1KCdEa6k8bmJeDSKpMe
-mXIEjtkwB9KAqX8/tqqQCylMOZ362f3v2xAYHzFR517ynjvndLWGotJyL7IEob5f
-aonR6Y/GEuIZFpZf3i1fZgTvjsuU8Eep7TwlGPt4amWiJ/2Pb6/MLJNJjGctgn0m
-A4r7sRDRKn6dYcv0oWxtY6/UbQ41P/+TDQHrfaPcO0jS9pFU+ZU=
-=vNjb
------END PGP SIGNATURE-----
-
---c3bbmtjujgvpbaml--
 
