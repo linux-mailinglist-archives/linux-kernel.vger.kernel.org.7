@@ -1,85 +1,102 @@
-Return-Path: <linux-kernel+bounces-875781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BDEFC19D1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:44:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150E5C19AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:24:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B111561B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:37:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10C774FE919
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E078A301027;
-	Wed, 29 Oct 2025 10:25:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E722FFDEB;
+	Wed, 29 Oct 2025 10:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X6ek95aL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="1SPYfW5y"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAF4359FBD;
-	Wed, 29 Oct 2025 10:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB9A2FBE01
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761733512; cv=none; b=jH34mHxZNKislcdE6Krb6PsgwLIpjAr4o3Vbuv/09FfpjhvIFPh20hFcREEerORm44D6zMNkAnzZRzABdDgKswK8tTf8PRz8lfGSVLArj+C3uhXWnf42+fI/hA27AqchReqct+mv1422sVvs0QbCC0uUrvu8C+1fYz5jS6CxSWs=
+	t=1761733306; cv=none; b=at4mMfOx00P6WBC6REdVOkXs0MMBJKsqN3ZCDs4/MFs6E95PXe3xniGKkc4n9inh4Di8bzDER225lSUkxfob11z9cW6b0ll4KFyzqrxJqdYCYtF10iYOUEvus9PMH+WPNFxy8BFDcOGniZMcCIkemU/DAFBmIYypLze5o3lrK6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761733512; c=relaxed/simple;
-	bh=b00xQst6nrwrN3Jq6hQot0Q99rOLgUDKri1bVzxSqTc=;
+	s=arc-20240116; t=1761733306; c=relaxed/simple;
+	bh=SQqzGjAx1hI7hCbHqZs+c8TXQffbLrD+ZEO8KPw3bvU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rXwUEvLyAhyR9syNzNvGR6RE6b2HghgrggudTEEKc2k/JlAm7VuHDHFnkH6egySvqhs7jX2deAzxd8OwVm8yuNQB0Z4F56bocUvXKd6s9h0wJiGGuC+Gt2arMhmmRUy2QOfUdEmy9CqDPDW/PkQiydxIOcyCwoafabKwaU+4+do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X6ek95aL; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761733510; x=1793269510;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=b00xQst6nrwrN3Jq6hQot0Q99rOLgUDKri1bVzxSqTc=;
-  b=X6ek95aLNvsubhrXGaVN94jW2unjF0XqGNRTW9Npxz6wck1ir3ve4khm
-   UAXakipX2aNmI9BCf5G2cljziGZ044yNcyRVGEtgh6nN2uIpNOov1AnKP
-   MfzhIeYucMCb08DHRmmdlFbyEV1AXam2K06/tjDSi8wh3K5Gnkdq4oIlP
-   EQxfbgcWcYAlRf83lfhb7Eqx2h83PV9xkhNq6BP/ES0eAn81y7QrO3Ygg
-   O1F50lHd5DgQrxeTQo//p5LJvljr8iwiqCbPiNGjqAjrzFFFZF/0cbJhC
-   pciC65BPbx2G2+vm6vhh5eIsmWMg/i/E5QY8ssS16ecSur62bvd7ypGXs
-   w==;
-X-CSE-ConnectionGUID: ZikI/mGdRO6vk6vz48hS1Q==
-X-CSE-MsgGUID: JSrAwcApR3KTkgeSTIWuyg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11596"; a="63891078"
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="63891078"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2025 03:25:10 -0700
-X-CSE-ConnectionGUID: BEa/klD8RsCo+N7BqCeOJQ==
-X-CSE-MsgGUID: 1aJ5BgnNQBykeo7u/fZSCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,263,1754982000"; 
-   d="scan'208";a="185963532"
-Received: from spr.sh.intel.com ([10.112.229.196])
-  by fmviesa008.fm.intel.com with ESMTP; 29 Oct 2025 03:25:06 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Zide Chen <zide.chen@intel.com>,
-	Falcon Thomas <thomas.falcon@intel.com>,
-	Xudong Hao <xudong.hao@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v9 12/12] perf/x86/intel: Add counter group support for arch-PEBS
-Date: Wed, 29 Oct 2025 18:21:36 +0800
-Message-Id: <20251029102136.61364-13-dapeng1.mi@linux.intel.com>
+	 MIME-Version; b=CgMQZvDZNqP7cO/RSGuMwo8TtD2mi4XRH4RZKeNMAf5KXwxQn16SmwKUUbzZ82VL7j1uPepWeKgHWRbhd1nv43H+VE49+HQvbDueezGnfxOxepGrbu1Kuh+YFAQkQoORmnLkXG2JicXCgNqLCSl8d2H2FTsJOQC7pYEryrwVA0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=1SPYfW5y; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b550eff972eso4696831a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 03:21:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1761733304; x=1762338104; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BlnFareBsbb11YH09aBxV9jcp59svMC58VGTOIUCegI=;
+        b=1SPYfW5yxKv7ED7XbKbJKAu/qqZIJiL1jZClPDQWkabPSqIdTYjT1LCvAOP4wMbBgp
+         hw0FePBfHEgTcVJeHkvLohqZVWBdTz2nK8GxzPYnjaS18JAxz5ztAUA/A+Fyx7HeHjkD
+         vDgKtEZxKmvADTR/28I+V+AEt+HuBGVdOeD/8E4+b6d5I281QZd8pMEMZlz0fGd9lHz7
+         d1PiSHWOCOgHb79Vnd8tmTCZO1PorDwIx238JcRmoUwX55LTBkL+RTQ2on8IWkwaFo8J
+         UWndWlpWno1LONAN48xzzs58zfLUQVEALbWXbvlJD/r9fHSeMZ6ibz3QOBwNE5eJ9GAQ
+         XvuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761733304; x=1762338104;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BlnFareBsbb11YH09aBxV9jcp59svMC58VGTOIUCegI=;
+        b=Yj8Za9bsxRi0ipNYIFxUP3tbfUeD01cqaQPOnFINges3MqqEugV0+X8ApGkAyWjCp8
+         5wQLgiCYklhLFG8BBJt/Gd6NYFH9AlDQ5/gdkFLGBv0yvDiCEqUMWa4Qlo8w7YAc46/B
+         umakdwpy9BUdFf2GV6YAPfzcTsFq4AuQAN+4MDHeLVbMWYE4olBz543koruOzp3EyWeI
+         p0Dl2QBlTwekqENX+TCwz2suAJUs8GVlLstGxlclLr3+nGFmWS3C9gZ4xvXqmmitPwzB
+         y/ih9euhWg+iUhr8pwRpxremSTSX+710hgsmaMvoLxPFSdXmF3PY/75yJ8WvnOtA3h2R
+         R50g==
+X-Forwarded-Encrypted: i=1; AJvYcCXnuaSJduYgq6Hn4yZgCl9BVhM7iWUnyGHhMnH/E2TZbnd1gUZGCR7CqdrK7OZnCmBahWU8wFQbIvxQSV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzp5rioiV2lw6MzN+Sp0QDx83RV44qEQN5bixdp339puB092BVe
+	dlLA4AZdA6uWER+jRIBDsxAzx66lvM4WSY0g9eJiq1sq2dW8DnygQ8vJZ0XvHM7w/+0=
+X-Gm-Gg: ASbGncuK47eits7ghnAunN1hKzOvmZzsZVgTJYbQAbAzeHtKxpp3su5D175n7OYjbZI
+	AsKGXAmpj2EYOmjsSt3cM4w4ssWDmyUI1QO+uK4jcpi6MYYluxaLLmOmHSrtivSwxORGBMlEq3H
+	y3kav9q5EQ4PaGluwyfTBMRTR1jculZIK2/Jmt+2A/Am1y2Po/2sggZOvhrhCcoHNWOQmc1SmKz
+	y5gTGqOPgHSrRcGAtLH19h9NymJT/R8grPtRlcNhKOIPKcrfsOUfBt34FqpzMMLjpSi4LOcWOl9
+	g3yVjZgCiRm124v242FZIHmREvfBmCkVzEmw+gaDzDTzx+aIGrHtJwKTJddUh4AV3sm04D/ApT4
+	I+vAaoa39k5R8Tna6T2V73lcZnNiowA/Mr4GAQPsk6pz6goI+h6mr7sxP1vFBTTOjVKNRUSABzE
+	RSMONjXRch5Yma16tAK6d65xUN
+X-Google-Smtp-Source: AGHT+IGM6v5wwL0QkZAKN6UIiQju9YhkO8h6NCZdmJ7iG19cg1e2QNUJaBTWOg7ESy9etZho85VIOA==
+X-Received: by 2002:a17:903:42cc:b0:275:81ca:2c5 with SMTP id d9443c01a7336-294def2fe9amr24144575ad.59.1761733304103;
+        Wed, 29 Oct 2025 03:21:44 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:3fc9:8c3c:5030:1b20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498cf4b17sm149959545ad.5.2025.10.29.03.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 03:21:43 -0700 (PDT)
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: 409411716@gms.tku.edu.tw
+Cc: akpm@linux-foundation.org,
+	axboe@kernel.dk,
+	ceph-devel@vger.kernel.org,
+	ebiggers@kernel.org,
+	hch@lst.de,
+	home7438072@gmail.com,
+	idryomov@gmail.com,
+	jaegeuk@kernel.org,
+	kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	sagi@grimberg.me,
+	tytso@mit.edu,
+	visitorckw@gmail.com,
+	xiubli@redhat.com
+Subject: [PATCH v4 5/6] fscrypt: replace local base64url helpers with lib/base64
+Date: Wed, 29 Oct 2025 18:21:38 +0800
+Message-Id: <20251029102138.543870-1-409411716@gms.tku.edu.tw>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
-References: <20251029102136.61364-1-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,227 +105,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Base on previous adaptive PEBS counter snapshot support, add counter
-group support for architectural PEBS. Since arch-PEBS shares same
-counter group layout with adaptive PEBS, directly reuse
-__setup_pebs_counter_group() helper to process arch-PEBS counter group.
+Replace the base64url encoding and decoding functions in fscrypt with the
+generic base64_encode() and base64_decode() helpers from lib/base64.
 
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+This removes the custom implementation in fscrypt, reduces code
+duplication, and relies on the shared Base64 implementation in lib.
+The helpers preserve RFC 4648-compliant URL-safe Base64 encoding without
+padding, so there are no functional changes.
+
+This change also improves performance: encoding is about 2.7x faster and
+decoding achieves 43-52x speedups compared to the previous implementation.
+
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
 ---
- arch/x86/events/intel/core.c      | 38 ++++++++++++++++++++++++++++---
- arch/x86/events/intel/ds.c        | 29 ++++++++++++++++++++---
- arch/x86/include/asm/msr-index.h  |  6 +++++
- arch/x86/include/asm/perf_event.h | 13 ++++++++---
- 4 files changed, 77 insertions(+), 9 deletions(-)
+ fs/crypto/fname.c | 89 ++++-------------------------------------------
+ 1 file changed, 6 insertions(+), 83 deletions(-)
 
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 75cba28b86d5..cb64018321dd 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3014,6 +3014,17 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
+diff --git a/fs/crypto/fname.c b/fs/crypto/fname.c
+index f9f6713e1..dcf7cff70 100644
+--- a/fs/crypto/fname.c
++++ b/fs/crypto/fname.c
+@@ -17,6 +17,7 @@
+ #include <linux/export.h>
+ #include <linux/namei.h>
+ #include <linux/scatterlist.h>
++#include <linux/base64.h>
  
- 			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
- 				ext |= ARCH_PEBS_LBR & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_GP & cap.caps;
-+
-+			if (pebs_data_cfg &
-+			    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT))
-+				ext |= ARCH_PEBS_CNTR_FIXED & cap.caps;
-+
-+			if (pebs_data_cfg & PEBS_DATACFG_METRICS)
-+				ext |= ARCH_PEBS_CNTR_METRICS & cap.caps;
- 		}
+ #include "fscrypt_private.h"
  
- 		if (cpuc->n_pebs == cpuc->n_large_pebs)
-@@ -3038,6 +3049,9 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
- 		}
- 	}
+@@ -72,7 +73,7 @@ struct fscrypt_nokey_name {
  
-+	if (is_pebs_counter_event_group(event))
-+		ext |= ARCH_PEBS_CNTR_ALLOW;
-+
- 	if (cpuc->cfg_c_val[hwc->idx] != ext)
- 		__intel_pmu_update_event_ext(hwc->idx, ext);
- }
-@@ -4323,6 +4337,20 @@ static bool intel_pmu_is_acr_group(struct perf_event *event)
- 	return false;
- }
+ /* Encoded size of max-size no-key name */
+ #define FSCRYPT_NOKEY_NAME_MAX_ENCODED \
+-		FSCRYPT_BASE64URL_CHARS(FSCRYPT_NOKEY_NAME_MAX)
++		BASE64_CHARS(FSCRYPT_NOKEY_NAME_MAX)
  
-+static inline bool intel_pmu_has_pebs_counter_group(struct pmu *pmu)
-+{
-+	u64 caps;
-+
-+	if (x86_pmu.intel_cap.pebs_format >= 6 && x86_pmu.intel_cap.pebs_baseline)
-+		return true;
-+
-+	caps = hybrid(pmu, arch_pebs_cap).caps;
-+	if (x86_pmu.arch_pebs && (caps & ARCH_PEBS_CNTR_MASK))
-+		return true;
-+
-+	return false;
-+}
-+
- static inline void intel_pmu_set_acr_cntr_constr(struct perf_event *event,
- 						 u64 *cause_mask, int *num)
+ static inline bool fscrypt_is_dot_dotdot(const struct qstr *str)
  {
-@@ -4471,8 +4499,7 @@ static int intel_pmu_hw_config(struct perf_event *event)
- 	}
- 
- 	if ((event->attr.sample_type & PERF_SAMPLE_READ) &&
--	    (x86_pmu.intel_cap.pebs_format >= 6) &&
--	    x86_pmu.intel_cap.pebs_baseline &&
-+	    intel_pmu_has_pebs_counter_group(event->pmu) &&
- 	    is_sampling_event(event) &&
- 	    event->attr.precise_ip)
- 		event->group_leader->hw.flags |= PERF_X86_EVENT_PEBS_CNTR;
-@@ -5420,6 +5447,8 @@ static inline void __intel_update_large_pebs_flags(struct pmu *pmu)
- 	x86_pmu.large_pebs_flags |= PERF_SAMPLE_TIME;
- 	if (caps & ARCH_PEBS_LBR)
- 		x86_pmu.large_pebs_flags |= PERF_SAMPLE_BRANCH_STACK;
-+	if (caps & ARCH_PEBS_CNTR_MASK)
-+		x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
- 
- 	if (!(caps & ARCH_PEBS_AUX))
- 		x86_pmu.large_pebs_flags &= ~PERF_SAMPLE_DATA_SRC;
-@@ -7134,8 +7163,11 @@ __init int intel_pmu_init(void)
- 	 * Many features on and after V6 require dynamic constraint,
- 	 * e.g., Arch PEBS, ACR.
- 	 */
--	if (version >= 6)
-+	if (version >= 6) {
- 		x86_pmu.flags |= PMU_FL_DYN_CONSTRAINT;
-+		x86_pmu.late_setup = intel_pmu_late_setup;
-+	}
-+
- 	/*
- 	 * Install the hw-cache-events table:
- 	 */
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index c66e9b562de3..c93bf971d97b 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1530,13 +1530,20 @@ pebs_update_state(bool needed_cb, struct cpu_hw_events *cpuc,
- 
- u64 intel_get_arch_pebs_data_config(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	u64 pebs_data_cfg = 0;
-+	u64 cntr_mask;
- 
- 	if (WARN_ON(event->hw.idx < 0 || event->hw.idx >= X86_PMC_IDX_MAX))
- 		return 0;
- 
- 	pebs_data_cfg |= pebs_update_adaptive_cfg(event);
- 
-+	cntr_mask = (PEBS_DATACFG_CNTR_MASK << PEBS_DATACFG_CNTR_SHIFT) |
-+		    (PEBS_DATACFG_FIX_MASK << PEBS_DATACFG_FIX_SHIFT) |
-+		    PEBS_DATACFG_CNTR | PEBS_DATACFG_METRICS;
-+	pebs_data_cfg |= cpuc->pebs_data_cfg & cntr_mask;
-+
- 	return pebs_data_cfg;
+@@ -163,84 +164,6 @@ static int fname_decrypt(const struct inode *inode,
+ 	return 0;
  }
  
-@@ -2444,6 +2451,24 @@ static void setup_arch_pebs_sample_data(struct perf_event *event,
- 		}
+-static const char base64url_table[65] =
+-	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+-
+-#define FSCRYPT_BASE64URL_CHARS(nbytes)	DIV_ROUND_UP((nbytes) * 4, 3)
+-
+-/**
+- * fscrypt_base64url_encode() - base64url-encode some binary data
+- * @src: the binary data to encode
+- * @srclen: the length of @src in bytes
+- * @dst: (output) the base64url-encoded string.  Not NUL-terminated.
+- *
+- * Encodes data using base64url encoding, i.e. the "Base 64 Encoding with URL
+- * and Filename Safe Alphabet" specified by RFC 4648.  '='-padding isn't used,
+- * as it's unneeded and not required by the RFC.  base64url is used instead of
+- * base64 to avoid the '/' character, which isn't allowed in filenames.
+- *
+- * Return: the length of the resulting base64url-encoded string in bytes.
+- *	   This will be equal to FSCRYPT_BASE64URL_CHARS(srclen).
+- */
+-static int fscrypt_base64url_encode(const u8 *src, int srclen, char *dst)
+-{
+-	u32 ac = 0;
+-	int bits = 0;
+-	int i;
+-	char *cp = dst;
+-
+-	for (i = 0; i < srclen; i++) {
+-		ac = (ac << 8) | src[i];
+-		bits += 8;
+-		do {
+-			bits -= 6;
+-			*cp++ = base64url_table[(ac >> bits) & 0x3f];
+-		} while (bits >= 6);
+-	}
+-	if (bits)
+-		*cp++ = base64url_table[(ac << (6 - bits)) & 0x3f];
+-	return cp - dst;
+-}
+-
+-/**
+- * fscrypt_base64url_decode() - base64url-decode a string
+- * @src: the string to decode.  Doesn't need to be NUL-terminated.
+- * @srclen: the length of @src in bytes
+- * @dst: (output) the decoded binary data
+- *
+- * Decodes a string using base64url encoding, i.e. the "Base 64 Encoding with
+- * URL and Filename Safe Alphabet" specified by RFC 4648.  '='-padding isn't
+- * accepted, nor are non-encoding characters such as whitespace.
+- *
+- * This implementation hasn't been optimized for performance.
+- *
+- * Return: the length of the resulting decoded binary data in bytes,
+- *	   or -1 if the string isn't a valid base64url string.
+- */
+-static int fscrypt_base64url_decode(const char *src, int srclen, u8 *dst)
+-{
+-	u32 ac = 0;
+-	int bits = 0;
+-	int i;
+-	u8 *bp = dst;
+-
+-	for (i = 0; i < srclen; i++) {
+-		const char *p = strchr(base64url_table, src[i]);
+-
+-		if (p == NULL || src[i] == 0)
+-			return -1;
+-		ac = (ac << 6) | (p - base64url_table);
+-		bits += 6;
+-		if (bits >= 8) {
+-			bits -= 8;
+-			*bp++ = (u8)(ac >> bits);
+-		}
+-	}
+-	if (ac & ((1 << bits) - 1))
+-		return -1;
+-	return bp - dst;
+-}
+-
+ bool __fscrypt_fname_encrypted_size(const union fscrypt_policy *policy,
+ 				    u32 orig_len, u32 max_len,
+ 				    u32 *encrypted_len_ret)
+@@ -387,8 +310,8 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ 		       nokey_name.sha256);
+ 		size = FSCRYPT_NOKEY_NAME_MAX;
  	}
+-	oname->len = fscrypt_base64url_encode((const u8 *)&nokey_name, size,
+-					      oname->name);
++	oname->len = base64_encode((const u8 *)&nokey_name, size,
++				   oname->name, false, BASE64_URLSAFE);
+ 	return 0;
+ }
+ EXPORT_SYMBOL(fscrypt_fname_disk_to_usr);
+@@ -467,8 +390,8 @@ int fscrypt_setup_filename(struct inode *dir, const struct qstr *iname,
+ 	if (fname->crypto_buf.name == NULL)
+ 		return -ENOMEM;
  
-+	if (header->cntr) {
-+		struct arch_pebs_cntr_header *cntr = next_record;
-+		unsigned int nr;
-+
-+		next_record += sizeof(struct arch_pebs_cntr_header);
-+
-+		if (is_pebs_counter_event_group(event)) {
-+			__setup_pebs_counter_group(cpuc, event,
-+				(struct pebs_cntr_header *)cntr, next_record);
-+			data->sample_flags |= PERF_SAMPLE_READ;
-+		}
-+
-+		nr = hweight32(cntr->cntr) + hweight32(cntr->fixed);
-+		if (cntr->metrics == INTEL_CNTR_METRICS)
-+			nr += 2;
-+		next_record += nr * sizeof(u64);
-+	}
-+
- 	/* Parse followed fragments if there are. */
- 	if (arch_pebs_record_continued(header)) {
- 		at = at + header->size;
-@@ -3094,10 +3119,8 @@ static void __init intel_ds_pebs_init(void)
- 			break;
- 
- 		case 6:
--			if (x86_pmu.intel_cap.pebs_baseline) {
-+			if (x86_pmu.intel_cap.pebs_baseline)
- 				x86_pmu.large_pebs_flags |= PERF_SAMPLE_READ;
--				x86_pmu.late_setup = intel_pmu_late_setup;
--			}
- 			fallthrough;
- 		case 5:
- 			x86_pmu.pebs_ept = 1;
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index f1ef9ac38bfb..65cc528fbad8 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -334,12 +334,18 @@
- #define ARCH_PEBS_INDEX_WR_SHIFT	4
- 
- #define ARCH_PEBS_RELOAD		0xffffffff
-+#define ARCH_PEBS_CNTR_ALLOW		BIT_ULL(35)
-+#define ARCH_PEBS_CNTR_GP		BIT_ULL(36)
-+#define ARCH_PEBS_CNTR_FIXED		BIT_ULL(37)
-+#define ARCH_PEBS_CNTR_METRICS		BIT_ULL(38)
- #define ARCH_PEBS_LBR_SHIFT		40
- #define ARCH_PEBS_LBR			(0x3ull << ARCH_PEBS_LBR_SHIFT)
- #define ARCH_PEBS_VECR_XMM		BIT_ULL(49)
- #define ARCH_PEBS_GPR			BIT_ULL(61)
- #define ARCH_PEBS_AUX			BIT_ULL(62)
- #define ARCH_PEBS_EN			BIT_ULL(63)
-+#define ARCH_PEBS_CNTR_MASK		(ARCH_PEBS_CNTR_GP | ARCH_PEBS_CNTR_FIXED | \
-+					 ARCH_PEBS_CNTR_METRICS)
- 
- #define MSR_IA32_RTIT_CTL		0x00000570
- #define RTIT_CTL_TRACEEN		BIT(0)
-diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
-index 3b3848f0d339..7276ba70c88a 100644
---- a/arch/x86/include/asm/perf_event.h
-+++ b/arch/x86/include/asm/perf_event.h
-@@ -141,16 +141,16 @@
- #define ARCH_PERFMON_EVENTS_COUNT			7
- 
- #define PEBS_DATACFG_MEMINFO	BIT_ULL(0)
--#define PEBS_DATACFG_GP	BIT_ULL(1)
-+#define PEBS_DATACFG_GP		BIT_ULL(1)
- #define PEBS_DATACFG_XMMS	BIT_ULL(2)
- #define PEBS_DATACFG_LBRS	BIT_ULL(3)
--#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR	BIT_ULL(4)
-+#define PEBS_DATACFG_METRICS	BIT_ULL(5)
-+#define PEBS_DATACFG_LBR_SHIFT	24
- #define PEBS_DATACFG_CNTR_SHIFT	32
- #define PEBS_DATACFG_CNTR_MASK	GENMASK_ULL(15, 0)
- #define PEBS_DATACFG_FIX_SHIFT	48
- #define PEBS_DATACFG_FIX_MASK	GENMASK_ULL(7, 0)
--#define PEBS_DATACFG_METRICS	BIT_ULL(5)
- 
- /* Steal the highest bit of pebs_data_cfg for SW usage */
- #define PEBS_UPDATE_DS_SW	BIT_ULL(63)
-@@ -603,6 +603,13 @@ struct arch_pebs_lbr_header {
- 	u64 ler_info;
- };
- 
-+struct arch_pebs_cntr_header {
-+	u32 cntr;
-+	u32 fixed;
-+	u32 metrics;
-+	u32 reserved;
-+};
-+
- /*
-  * AMD Extended Performance Monitoring and Debug cpuid feature detection
-  */
+-	ret = fscrypt_base64url_decode(iname->name, iname->len,
+-				       fname->crypto_buf.name);
++	ret = base64_decode(iname->name, iname->len,
++			    fname->crypto_buf.name, false, BASE64_URLSAFE);
+ 	if (ret < (int)offsetof(struct fscrypt_nokey_name, bytes[1]) ||
+ 	    (ret > offsetof(struct fscrypt_nokey_name, sha256) &&
+ 	     ret != FSCRYPT_NOKEY_NAME_MAX)) {
 -- 
 2.34.1
 
