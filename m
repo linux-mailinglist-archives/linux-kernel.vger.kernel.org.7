@@ -1,199 +1,273 @@
-Return-Path: <linux-kernel+bounces-876576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B54C1C650
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:16:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC41BC1C59C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 18:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15693624FFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:48:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A67801A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2EB33F38B;
-	Wed, 29 Oct 2025 15:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A972347BB4;
+	Wed, 29 Oct 2025 15:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="ReYWCsOD"
-Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020115.outbound.protection.outlook.com [52.101.189.115])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I4+Lt2oE"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D4233B6F2
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761752730; cv=fail; b=qOz0L3r/9nn9l9PEDdsLDsf72mCRSGUGW+WQfZybehQA6QyBCCDx+uJq6EBtZI4DrBEsjEZrh43htodE5sb6dnfqQrLNMpfdBBCdO6D2I+lsXOiTqehNWJ9BADCfn+erz/cAbdsVw+FwCGLsSSmR23FYOKE9016Kj6xKG+Pg3+Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761752730; c=relaxed/simple;
-	bh=+sQNsFJDpuLj8PznT810Fgs1wcztiwJTz6rOb9vy5TI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DPDU3lZ2RvckmRAoi1Z2oemMY7yOpX+PPqTB0xS0x97LLnIyphcZsOXTERlSv4dR1RXCVQm/gSiZPgmio5TldFIz8hDloiNeJ9kr9eGwOIDiE0r5eX5bNxI5mYipHVJwx9gUiG735RzUaBYxugMstsHGl2MG/woSfLK7ddbal3Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=ReYWCsOD; arc=fail smtp.client-ip=52.101.189.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lnAlw7llNw71wO35S1Ddqikdv3XVJPTgbdFEPn7GliJgiNIdmtDZOSn1QZXKxtadrU3Cb8wknSgGWdlJRrMr2Om7BVxp9YBurQEm0nkiRDsqKtkmFVfUmw/QqHd2DZZ7kDqjoogD/X0IBEGdoXY6CJhivPAq6ZE6lhTqcPzeEJZ+uGij1ocdv4rcx/X2nvF4bF9gvO88aaWpSNfsRnERodrggR9I6NL3gAs3KvOalgOmdijPAbiaqAx8EYr8Vmt0ex3E7iolsw86OqZo91a5evyqR8pgbHDDv0zBKLlF/d7r9hMNWIcCnGvqs7PjDc64dHq0aoNY4UhnZNcxmZHqOg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FxlWx0chW/xrb3Sn4Q1XaMkow0EvaaEadspyHU41mQY=;
- b=eUbmUTFlVimmVG5EqGnT5V/4xBniScLNHgCkfrGteRScJ5ZW6JlMsLwPePB3vkmbDqgpFB95gY0w5f0awPYW4QWDvK105JAA7ittof9f8X2ONZnTmj4/6vUmq+j0zcrQlOChFI5MpYGb5+bDQaChzxk36HKJNpl75TJ+milSMNUddLeV8EUhcjeyH95i8a7hmAfFyiTo0VAqsMdqGuEci0HZI2WmuKxIbHwkmo2aHB1P3Mnb15nuezUssKWT7atshBdSI9W+aipkcjTrbpA68daVYo+T7aMcwqOeJHUG1YmLM/hg6ikH74URFDUwjf14ZdmJlrLHx3R+H3DYMjzc5Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FxlWx0chW/xrb3Sn4Q1XaMkow0EvaaEadspyHU41mQY=;
- b=ReYWCsODSZgIBrx6U/Z1Zb2LGeSaRFqY9fNEXwDy2yQjC+xZa4eGM4ha4c1DGWbc9EG30UE3BmKEY25Z3zReVRYT/AwKYZ98Yuw22F2UFS3lopHCkTLKaUFqSgm7xeUbbTi1gjLZGDDAzczPqY6/lufGIrZe2fhshBpH7nH9623DP+SnJM46ucZEhUO3spHQtHns0S5mwmP0DSme92F14KsIahcQn0948TZawCxXlBg2/R9eOm+oeYA4vLYVvJcmQUyvPQZJbZWb+/AluBJx0I5PRmWiXbQy+sZRtO6BvB3QwEWv3fCIH9LcKtoyuZJCfubay+S7ly7IatPSMXvzCA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT2PR01MB8438.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:b5::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Wed, 29 Oct
- 2025 15:45:22 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.013; Wed, 29 Oct 2025
- 15:45:22 +0000
-Message-ID: <9c0c4bef-1b56-49db-b9cc-953e26572fd6@efficios.com>
-Date: Wed, 29 Oct 2025 11:45:21 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 06/20] sched/mmcid: Prevent pointless work in
- mm_update_cpus_allowed()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
- Gabriele Monaco <gmonaco@redhat.com>, Michael Jeanson
- <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
- Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
- Yury Norov <yury.norov@gmail.com>, Shrikanth Hegde <sshegde@linux.ibm.com>
-References: <20251029123717.886619142@linutronix.de>
- <20251029124515.655228863@linutronix.de>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20251029124515.655228863@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YT4PR01CA0106.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:d7::12) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F0334886F
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 15:46:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761752810; cv=none; b=m+ENehOSmTCH+W/1mh0HGoWajqkrCQUfVja/cLLHAMgu+maWD4S3qo4wPFz0Rq4bCfYz1cq8IwhQP/AMPGS1pfU00yCIL0PIlAkfAz2ECH9BBEL8kDDRVdXTOwxiryHUa/VcZB8dFoLBC36jcKp1NLGWjZCzhmUiOMWPcTwq6nY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761752810; c=relaxed/simple;
+	bh=HCAve+/meC9Wab9CoQxypeNR03XvBSi8OfLDRXMNQeE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=bnDgJAa378+DXjqt5SmnvZBl4uLTvS/3EpwfX6+vJGY8KTKCsaXPLJmN8gNPI+s/u1RMapCfrqXWdIPDDqdxEdi1pvLPEyQiyS5AcATDpvfsWYGMZSUVwkEklLN5JokQvaoX2D5NnXkM28YcOpk7aOt/krC0baBdW0YKG/v8mhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I4+Lt2oE; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-475e01db75aso33912055e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 08:46:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761752806; x=1762357606; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=503A5zbvnWzbfI+gim0EXQRVNQ1ZkO34HFUXzTRqSG8=;
+        b=I4+Lt2oE/T9wr+/kijSDFazAqM3WRPTSV4eGcoUlbYNBzPtT4cCPmMruB47R7+qTnm
+         8pgBXFiXONSmAgpelbgi1zebE3OlXsJvUl3NLPhEIZjnrrA/e2dezi3/APKEiXhVp/SP
+         iqa82LKhPXOVKC2puJWPUIMc7uS3fRiTGXNe2fkZ8cycMWFbu+mgRYO+PFUPzFK4MmtQ
+         wR6VW8+z6IWd7CC6pPq4tPs69PV8rNIuLCUPdSBi0d7UNAu9mbry2+v5U4avN+L6ji88
+         RkPvFKClW4j/ZF17LJBeJ7BPO29/MJBaqmbPOUe+tEFOwcbkAsxWl58yXotretGInSXM
+         bKdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761752806; x=1762357606;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=503A5zbvnWzbfI+gim0EXQRVNQ1ZkO34HFUXzTRqSG8=;
+        b=LuiQa0Zrridkp3bZt46B4Kx7ko54l4iRCwGgpmAS16d8S4JUR60SQESHduKEG72ws3
+         pse3G3f2lwaRtOzV5Jw3qkFf4Vbz/6WsvhWbBKim6LvYYrTvdiYn8mGmBx6wyAr8Z+GE
+         oSRh/ry0J0k/qWw2LhODs1vOyYOd3VXm0O6MRVYLoW16Wz1vkCtIoJgPDvVVrPA1MX9g
+         tAu8Xuk9wmIRB4lfpXiZb4tJWDhEm7Fqk3qcCmHdqbTeq+1fedMrnpJHSJZ9wOOA9Hy2
+         MS219Xsiws4e8Z/4Q6Bzwm0VN8leME0XhGWbIafDsAsN8/d0VL8oO2gAL0B/gl6TcYM3
+         w1JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNtW/ld6nvK9Yx9002eb0L4Z2BsC7CAAenAREzfGA1HVBhKWuLWUqTOTrjZ0XFnJtJHtBQCGBh44sG/qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX4T8Y3OP6MQJR9AE+ON4UgQewgwjUwdA/Nfxv3kHpM92wC/F3
+	RfvyD10sfwmKCIxvAd0oKMapJLa6W2x3gM6Xz7TznTz0LzYXde0KW3J7eS3Xd7qw6gw=
+X-Gm-Gg: ASbGnctXyiLoOFgf1nFgr1rzEOzZ5tHv1+GN4acIzAR2UhWMruRDQQkM2n88HzgbHxU
+	KPUtylTjLSV3pieMd9jvRchDDjXgkbrrvMSChMdEfFBGX9wSq8mY6STyYWr6IPVDZF3GA2pZXL6
+	dnM9l6Ob3JHpywhSgbiJYD3BcpsbXpsvvLXe1SoydGUvQZGlNBhQpiynrQ9mMYlOKUGnVnuZTIy
+	WH/Lc2Nq8XzmndpLYQXDoYNuuQqQs0nIqvBVye+/fEDCNkB60SADp/3ss98EoTpRAtGJtW64fnB
+	PEwvz2ffwSk6HIX1DvTKMbNdkTIVYfF8oWyJOwH49EhvZRUGhrn0dXQmBt0pnMVu7ilzwL+/n2A
+	Y5xUMMmklS36QG5vTCberIaeg5s+nQs+ktw+2+vBTvEus3m4K2MCLAXFzz/ULtVYO+k5Jgm/7M+
+	K9pWUyUXQwJg==
+X-Google-Smtp-Source: AGHT+IFxMszeTbt26+vm2qf8PR51SToHcyHX6Al+xszsdOkaF3Bhz+urG9unl5uk6WFwad6ovDkqAQ==
+X-Received: by 2002:a05:600c:502b:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-4771e3b8637mr30603445e9.33.1761752806069;
+        Wed, 29 Oct 2025 08:46:46 -0700 (PDT)
+Received: from ho-tower-lan.lan ([185.48.77.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e3b9994sm53745535e9.16.2025.10.29.08.46.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 08:46:45 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+Date: Wed, 29 Oct 2025 15:46:05 +0000
+Subject: [PATCH v9 5/5] perf docs: arm-spe: Document new SPE filtering
+ features
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB8438:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9748d3f0-8caa-4d38-c54e-08de17022b80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cjY2YkEwZnRKeGVzVnQ3ZStVYWc4d2ZScTliV2tmQ3VHQVlVZDBQV1ZxQUI0?=
- =?utf-8?B?MVNhczJMbm5MbE1OMFNiR0MydzZhMEZxeFZhT1g3RmsxM1NRY0F1T24rMlJL?=
- =?utf-8?B?c2lhTUNVVk9XbVhEallCaCs5b1ZGUGpkYWxrREg4RWtmaFF4K2VoRFljUTM1?=
- =?utf-8?B?RUUvL3VtaWpoSjloTlRmQ2dYTlhBWUwrVUw1VVN1cDd1Yk9TaWg1WWdzR3Zh?=
- =?utf-8?B?SlhHdVF5emdEZ3NvaTd0amFhMW92QTUwalVWQlRzemhTT3g4dTVZRkYvdld4?=
- =?utf-8?B?Y09iblY2VEg5T1lhL2ExeGdPVC9DWTV6a3lRcm9VeHJoZ3RTQXZIWFJSZUl2?=
- =?utf-8?B?UlFDMnNkUThUbXJYVCtKVnJoYlBSdmJoTmc1aHJnNWQ4RnBpQlZQL0w2ZldR?=
- =?utf-8?B?L2xxd2l4OFpXUVVHMk1Gb2Nud0hkMk5hOTZ5WGx0NmFvVndOa3NpaEZLQ2JP?=
- =?utf-8?B?cVFjQXg1STNmZjJOSVNzK3owQUJKZ2xrd1pwa3FGZVFudUtIbEM3NHduSmxs?=
- =?utf-8?B?NUNXaHBPOFZZY09HeGdyMklnRHhvd0s1Z01xak10QWdzZFpRTTdCL0dXNm1u?=
- =?utf-8?B?blYwbEl0ZGtmQVZWL1BlMHBIODA5M2VGSjBtSXRkeHVZN0tQNmNvN1lpREtx?=
- =?utf-8?B?SDVwR1pSVXc3LzNvM1VFSU1qR1lycG1zRG54bEdRRDRnMXh3NWgwR2NKRUtw?=
- =?utf-8?B?MmFnMDVKQVBqL0s0ek5OZGlWcE1oVC9sMzZkUk1vS3lhcll3MExpTE9CMVk5?=
- =?utf-8?B?ZTNtdzlsTlVnZlovM3NxZmRQSzhGVEZaTDVJeWxJSXpSd01oU0tWdkRzQ3hs?=
- =?utf-8?B?bncwOG1YSmZHMnd1WWNMeG11ODFQeU9KaE9MZk9zaVZvSnVBdDU4STlyS085?=
- =?utf-8?B?WGhXdXRIMnEweXhWSG1FbHNVc0FSZEVSN09NRkVlMmY1S1JBTGljT2xuYUFS?=
- =?utf-8?B?NlNqcUsvOEtXMFhXdWNrZTRMNFFBU1BTOW1jcVZOUlhBNU1EdmNuQXRSR3pL?=
- =?utf-8?B?V2h5QXpyNDFRNGpkcVMvcENNVEtjQmVNV3NsZ2ZTQ0s1M0YzVmhXOVJGRXA0?=
- =?utf-8?B?Z1ZmL3VzZjU3cUlFS1Rmc3dGKzVVS1VqdFZyVjdTRDBoNExFTFNTZWMwMlJE?=
- =?utf-8?B?VVV5eWc5QlQxTjU0NWdhZlQ2T3NpYW5aUXAyWUVpRVNXbzRwalR4ZjZaeGlH?=
- =?utf-8?B?WjR6V2VFTHVGTHluWTl5VTh4M2FicXhrVUJHVXlhRlVwZHV3S1pTcnR5Vy92?=
- =?utf-8?B?d2dmeEl3MHozelZVVUc0R05mSmpNV1F6Y3RGZzYzekRWakNadFBScEJVemhL?=
- =?utf-8?B?aDloV1VkVlpuQUxjR1luaHJFdzRIVWNvYXpORSt4TFMvMnc0OUlwekFvNy9i?=
- =?utf-8?B?ZVB1VzVRTG5QRHVrYXkyQVg1cDE3TUVZTFlsMXdScXJER0ZDS0FYZzhBSXpo?=
- =?utf-8?B?ZnlUOUlhMzdsN1dWOE9WVjVjcStEV3FYcjFRczRHUVc5Sm54YXNOREtJYVFR?=
- =?utf-8?B?R05jYUcwTHBJZFlxY3lVMmNocjFjd3MxSVRlL0xTVkc3UXc3VE5pVk1pM2lz?=
- =?utf-8?B?Q2U4RlJtSUNJTEZyNUh0ZmdIUHlFUzBCSEFCa2l3SlNzdTFmOHROeFl5NEZY?=
- =?utf-8?B?c1BQRklqOTdFRWlBcklsS2tpVWg0QUlpN0NkNThGalAxMmdhaTZ6NE83ZVYz?=
- =?utf-8?B?QTBjMVFObFlTdkhiYUVYVmxQZEd5VkdPcnkzM3NOWFAvdlF3QU10c0xzVDN1?=
- =?utf-8?B?UjdOR0gwNlpvd0sxSUlOWGVlSE5HaWU5ZFhQY2NRRlhCdmQyS2htc0t0dEh5?=
- =?utf-8?B?MDd1bTZ3ZWxNU3IwWnJHYWxhd0ZCR1dPV0JZRlZwKy9rVkMrM0Z3czlKclJi?=
- =?utf-8?B?SlFUU052aHdiS1ppeXZkT21JOWZ4bUU4cXdQcXRZeVVEeHc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q2IxMGUxNkFZdCt0ZzdGbGR2M0s3STQrTDlzRUZ3MnQ1TGNKRC9wTUhDNTBy?=
- =?utf-8?B?RzBMc0dhME1yWG11UzMzSU13UHRISlZjYkFrYk5IZ24vVmpvNkd0WkY1bXJt?=
- =?utf-8?B?NnRDb0xxS2MwZVZLY2xlSkVuSDlaT1VrQzFQVzJmZ3hKMFdOQklIS3pmcXVy?=
- =?utf-8?B?REJxYjhWRWdpelRjUUgydWk5VTBjN040azR1T0NVd25qZERWSWpYWmxER2FC?=
- =?utf-8?B?VUNSQzhHVndheW5WNGZvUi90Ulc5akNRVWdLN3pvMnZibXlnQUtyY2M1TVFm?=
- =?utf-8?B?M1VHVFJwcitQa1lxWGRQdU1lOTMwM1dNcE51MnVtRHU1RFdHM2VGNE92SW1S?=
- =?utf-8?B?aW9IZjdtSUVHekVzVXdVanRGdm9yemI0RWozUlpsdXZ2UlozVDlQb0RTRjBP?=
- =?utf-8?B?K3Z1dmEyT1ZQcTdQWFlqSHVlMmxndkFwSk9tSUt0Z0JWWmpNU3NCbWFMRVZ5?=
- =?utf-8?B?ak5sUkl1SEJteTVmM09uSEFLNHBPanlMYWx0NXAxTHNOWloycW96cjd1LzNM?=
- =?utf-8?B?c1BPckUyTStJbkpWTFppSWpra2YrM0tIV200QW5OK1NHUUkrWUY5aVhnOVk5?=
- =?utf-8?B?a3BpU1hqV0lWeTRsRGhSaU9HMHpNVlFZRjIwT3NNYVpPRU1MZjlnRlg0UktN?=
- =?utf-8?B?VmVsdS9lNWlaQmxWTTljQlo1eGwwRWhVSFZqd3lpeGFSSW1JQWZOZWtPb1Y1?=
- =?utf-8?B?TUlYWXJaVDR4eHp4Mlg4TldOdnlLbWUrOTJlNzZhbDJhMGpGT0o1RW9xS3hW?=
- =?utf-8?B?SzZlbVdBNnhyeDIyVVkyelVQdS9ZU2lkZlhrY3Jsd3V4RXk0ODBBNm9GcjZ6?=
- =?utf-8?B?QW5iNGZmZEtZaGJIWjdUL3lOS09UMlpZNmo2OUJCaVc2cDdrd0NveGtMbHFE?=
- =?utf-8?B?K3A3OXp0aDFtbWY4TGloRTl4NlFvQ3YyamhKRTNvQm1ZMFFKZUhTOHozT1Vk?=
- =?utf-8?B?UXNjYThXRERqNGxhWmhyZ1dmajZ2M1kxcVNqNC9JQ3ZuOXBqU2E0a2NZZFh3?=
- =?utf-8?B?MjdCaDZWNklUMElmWjJ4YTRRb2tkOGJwKy9PMGp1THljUmVvVU1LRENaNUVV?=
- =?utf-8?B?SzN6dHZMWTl6R0hBNVRETy9HYjlramJMUkhnMXBmaTRmOTZPS1NMTFVnalB2?=
- =?utf-8?B?aTJmVlVmbnVIT092TEl1UFVFcVdNVHVaT283WDgwWHlqVkFrTERodUQ1bXFG?=
- =?utf-8?B?MW9IRVR4bkxvZHhQbE04ZmF5S3BQNmJFZTNyWFZYTDRNVTNMSnpVckJDMjhH?=
- =?utf-8?B?ZHdkT3A5UHhRZHFrTTJzUERxNkxuODYvOFFRSkFsa3NiZWNWVmt0OE9zdi9u?=
- =?utf-8?B?Y3ZLeFZ4bzlBTGJwKzNGbVFUZUhPZERXVzNoVFl0ZmxFRnVoYU95UzV6YS8y?=
- =?utf-8?B?ZndUTnhwRmJoNnhIZmxRRDBLVXN3YnB1TlhlMG95SDNFY0F5U0poSEwycDNO?=
- =?utf-8?B?MUhwZGI2cGtkb0RoaDhVKzM0d1RZM2QraldRem9jMzdEM2NlNENiTXlQZkRs?=
- =?utf-8?B?bE1UQmR6b3VCVXk1SzZjTDlmdWhwWkgyZ0dBZytNZFhjZkhyeWxXK3hnQjZh?=
- =?utf-8?B?NzN2a3ZETjNlWXZlVERySUhDSEllUTN6c0prNkhjdmo1MjlTUmRsVFVHaXdq?=
- =?utf-8?B?TFRucVEyM3lkQ2c1V0FJUXEzdGhlcFVISEQxK29JcmJJWVZQTktJbTVaQmJs?=
- =?utf-8?B?Z3lSUHdCVzFZUjFFZGVxVE43WWFzTmlLU2M4cjd4RnZGdXRaMUZvNjIyL1pQ?=
- =?utf-8?B?QVBTYVIzanVPWWFYdFNyeWpRNVdyWDE2KzlGN1pJOU9HbTNleTBnRFFZZWVQ?=
- =?utf-8?B?U1ozODlES1lxSFVZTjB2T3Nhakc1Vzl3V1BsT3UvWWI2c1Fyc2xNbEFMd0po?=
- =?utf-8?B?QVdkdFdzcVg4bGFJTGtoRGQxWHNORkxpeENuMkg2MXhjMWxvTnJ2aGJQVURh?=
- =?utf-8?B?SUxXN25sUmwrQWpTSmMzUUhmUmluVW5yUHVQdTFRdFE1RUVzdHlUN29aN05v?=
- =?utf-8?B?bmUzaUx3SklGQUM0dFBvQVlsVXJTVEFFYTJDYnJCT1Q2VUp6ZG9meXRnU0xa?=
- =?utf-8?B?VmFDYVlCdDNNRWlneGg1YlZyVVg2SHBYcWlSUTBuYm9vWldQekdNUERhZm0w?=
- =?utf-8?B?c29mMHVKbUVPbGVWMmlCRmRzY1Bjbk5CcVAwbmlTd3RKTmhjNDVnK0I0Smds?=
- =?utf-8?Q?v7Yc0stmfe+/RNsKFXq12XY=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9748d3f0-8caa-4d38-c54e-08de17022b80
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:45:22.4607
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XKHnhfRbh6XQx7QDFBHVNi8kFTf7m2V7Sifvrk9basr4rBjkwYH1svhooatVQ0tEfQcGzDE+YqMAl2hzLl1LyjwB5Qi09neZ5F+9AOYd658=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB8438
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251029-james-perf-feat_spe_eft-v9-5-d22536b9cf94@linaro.org>
+References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
+In-Reply-To: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Zenghui Yu <yuzenghui@huawei.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, James Clark <james.clark@linaro.org>
+X-Mailer: b4 0.14.0
 
-On 2025-10-29 09:09, Thomas Gleixner wrote:
-> mm_update_cpus_allowed() is not required to be invoked for affinity changes
-> due to migrate_disable() and migrate_enable().
-> 
-> migrate_disable() restricts the task temporarily to a CPU on which the task
-> was already allowed to run, so nothing changes. migrate_enable() restores
-> the actual task affinity mask.
-> 
-> If that mask changed between migrate_disable() and migrate_enable() then
-> that change was already accounted for.
-> 
-> Move the invocation to the proper place to avoid that.
+FEAT_SPE_EFT and FEAT_SPE_FDS etc have new user facing format attributes
+so document them. Also document existing 'event_filter' bits that were
+missing from the doc and the fact that latency values are stored in the
+weight field.
 
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reviewed-by: Leo Yan <leo.yan@arm.com>
+Tested-by: Leo Yan <leo.yan@arm.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ tools/perf/Documentation/perf-arm-spe.txt | 104 +++++++++++++++++++++++++++---
+ 1 file changed, 95 insertions(+), 9 deletions(-)
+
+diff --git a/tools/perf/Documentation/perf-arm-spe.txt b/tools/perf/Documentation/perf-arm-spe.txt
+index cda8dd47fc4d..8b02e5b983fa 100644
+--- a/tools/perf/Documentation/perf-arm-spe.txt
++++ b/tools/perf/Documentation/perf-arm-spe.txt
+@@ -141,27 +141,65 @@ Config parameters
+ These are placed between the // in the event and comma separated. For example '-e
+ arm_spe/load_filter=1,min_latency=10/'
+ 
+-  branch_filter=1     - collect branches only (PMSFCR.B)
+-  event_filter=<mask> - filter on specific events (PMSEVFR) - see bitfield description below
++  event_filter=<mask> - logical AND filter on specific events (PMSEVFR) - see bitfield description below
++  inv_event_filter=<mask> - logical OR to filter out specific events (PMSNEVFR, FEAT_SPEv1p2) - see bitfield description below
+   jitter=1            - use jitter to avoid resonance when sampling (PMSIRR.RND)
+-  load_filter=1       - collect loads only (PMSFCR.LD)
+   min_latency=<n>     - collect only samples with this latency or higher* (PMSLATFR)
+   pa_enable=1         - collect physical address (as well as VA) of loads/stores (PMSCR.PA) - requires privilege
+   pct_enable=1        - collect physical timestamp instead of virtual timestamp (PMSCR.PCT) - requires privilege
+-  store_filter=1      - collect stores only (PMSFCR.ST)
+   ts_enable=1         - enable timestamping with value of generic timer (PMSCR.TS)
+   discard=1           - enable SPE PMU events but don't collect sample data - see 'Discard mode' (PMBLIMITR.FM = DISCARD)
++  inv_data_src_filter=<mask> - mask to filter from 0-63 possible data sources (PMSDSFR, FEAT_SPE_FDS) - See 'Data source filtering'
+ 
+ +++*+++ Latency is the total latency from the point at which sampling started on that instruction, rather
+ than only the execution latency.
+ 
+-Only some events can be filtered on; these include:
+-
+-  bit 1     - instruction retired (i.e. omit speculative instructions)
++Only some events can be filtered on using 'event_filter' bits. The overall
++filter is the logical AND of these bits, for example if bits 3 and 5 are set
++only samples that have both 'L1D cache refill' AND 'TLB walk' are recorded. When
++FEAT_SPEv1p2 is implemented 'inv_event_filter' can also be used to exclude
++events that have any (OR) of the filter's bits set. For example setting bits 3
++and 5 in 'inv_event_filter' will exclude any events that are either L1D cache
++refill OR TLB walk. If the same bit is set in both filters it's UNPREDICTABLE
++whether the sample is included or excluded. Filter bits for both event_filter
++and inv_event_filter are:
++
++  bit 1     - Instruction retired (i.e. omit speculative instructions)
++  bit 2     - L1D access (FEAT_SPEv1p4)
+   bit 3     - L1D refill
++  bit 4     - TLB access (FEAT_SPEv1p4)
+   bit 5     - TLB refill
+-  bit 7     - mispredict
+-  bit 11    - misaligned access
++  bit 6     - Not taken event (FEAT_SPEv1p2)
++  bit 7     - Mispredict
++  bit 8     - Last level cache access (FEAT_SPEv1p4)
++  bit 9     - Last level cache miss (FEAT_SPEv1p4)
++  bit 10    - Remote access (FEAT_SPEv1p4)
++  bit 11    - Misaligned access (FEAT_SPEv1p1)
++  bit 12-15 - IMPLEMENTATION DEFINED events (when implemented)
++  bit 16    - Transaction (FEAT_TME)
++  bit 17    - Partial or empty SME or SVE predicate (FEAT_SPEv1p1)
++  bit 18    - Empty SME or SVE predicate (FEAT_SPEv1p1)
++  bit 19    - L2D access (FEAT_SPEv1p4)
++  bit 20    - L2D miss (FEAT_SPEv1p4)
++  bit 21    - Cache data modified (FEAT_SPEv1p4)
++  bit 22    - Recently fetched (FEAT_SPEv1p4)
++  bit 23    - Data snooped (FEAT_SPEv1p4)
++  bit 24    - Streaming SVE mode event (when FEAT_SPE_SME is implemented), or
++              IMPLEMENTATION DEFINED event 24 (when implemented, only versions
++              less than FEAT_SPEv1p4)
++  bit 25    - SMCU or external coprocessor operation event when FEAT_SPE_SME is
++              implemented, or IMPLEMENTATION DEFINED event 25 (when implemented,
++              only versions less than FEAT_SPEv1p4)
++  bit 26-31 - IMPLEMENTATION DEFINED events (only versions less than FEAT_SPEv1p4)
++  bit 48-63 - IMPLEMENTATION DEFINED events (when implemented)
++
++For IMPLEMENTATION DEFINED bits, refer to the CPU TRM if these bits are
++implemented.
++
++The driver will reject events if requested filter bits require unimplemented SPE
++versions, but will not reject filter bits for unimplemented IMPDEF bits or when
++their related feature is not present (e.g. SME). For example, if FEAT_SPEv1p2 is
++not implemented, filtering on "Not taken event" (bit 6) will be rejected.
+ 
+ So to sample just retired instructions:
+ 
+@@ -171,6 +209,31 @@ or just mispredicted branches:
+ 
+   perf record -e arm_spe/event_filter=0x80/ -- ./mybench
+ 
++When set, the following filters can be used to select samples that match any of
++the operation types (OR filtering). If only one is set then only samples of that
++type are collected:
++
++  branch_filter=1     - Collect branches (PMSFCR.B)
++  load_filter=1       - Collect loads (PMSFCR.LD)
++  store_filter=1      - Collect stores (PMSFCR.ST)
++
++When extended filtering is supported (FEAT_SPE_EFT), SIMD and float
++pointer operations can also be selected:
++
++  simd_filter=1         - Collect SIMD loads, stores and operations (PMSFCR.SIMD)
++  float_filter=1        - Collect floating point loads, stores and operations (PMSFCR.FP)
++
++When extended filtering is supported (FEAT_SPE_EFT), operation type filters can
++be changed to AND using _mask fields. For example samples could be selected if
++they are store AND SIMD by setting 'store_filter=1,simd_filter=1,
++store_filter_mask=1,simd_filter_mask=1'. The new masks are as follows:
++
++  branch_filter_mask=1  - Change branch filter behavior from OR to AND (PMSFCR.Bm)
++  load_filter_mask=1    - Change load filter behavior from OR to AND (PMSFCR.LDm)
++  store_filter_mask=1   - Change store filter behavior from OR to AND (PMSFCR.STm)
++  simd_filter_mask=1    - Change SIMD filter behavior from OR to AND (PMSFCR.SIMDm)
++  float_filter_mask=1   - Change floating point filter behavior from OR to AND (PMSFCR.FPm)
++
+ Viewing the data
+ ~~~~~~~~~~~~~~~~~
+ 
+@@ -210,6 +273,10 @@ Memory access details are also stored on the samples and this can be viewed with
+ 
+   perf report --mem-mode
+ 
++The latency value from the SPE sample is stored in the 'weight' field of the
++Perf samples and can be displayed in Perf script and report outputs by enabling
++its display from the command line.
++
+ Common errors
+ ~~~~~~~~~~~~~
+ 
+@@ -253,6 +320,25 @@ to minimize output. Then run perf stat:
+   perf record -e arm_spe/discard/ -a -N -B --no-bpf-event -o - > /dev/null &
+   perf stat -e SAMPLE_FEED_LD
+ 
++Data source filtering
++~~~~~~~~~~~~~~~~~~~~~
++
++When FEAT_SPE_FDS is present, 'inv_data_src_filter' can be used as a mask to
++filter on a subset (0 - 63) of possible data source IDs. The full range of data
++sources is 0 - 65535 although these are unlikely to be used in practice. Data
++sources are IMPDEF so refer to the TRM for the mappings. Each bit N of the
++filter maps to data source N. The filter is an OR of all the bits, and the value
++provided inv_data_src_filter is inverted before writing to PMSDSFR_EL1 so that
++set bits exclude that data source and cleared bits include that data source.
++Therefore the default value of 0 is equivalent to no filtering (all data sources
++included).
++
++For example, to include only data sources 0 and 3, clear bits 0 and 3
++(0xFFFFFFFFFFFFFFF6)
++
++When 'inv_data_src_filter' is set to 0xFFFFFFFFFFFFFFFF, any samples with any
++data source set are excluded.
++
+ SEE ALSO
+ --------
+ 
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.34.1
+
 
