@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-875139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA9DC184C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:34:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0AB3C184C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:34:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E1C23BE4DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E77E40090E
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEA02E3B08;
-	Wed, 29 Oct 2025 05:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0DF2F12C7;
+	Wed, 29 Oct 2025 05:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUgmMN2t"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gpCqOpLJ"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400172DCC17
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0902B2F5318
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761716060; cv=none; b=KaPMX3JiM/rtnE8SqGsQeIjyelgK+L03WGj02TileOa1ww7CRKANCZo3JD0FoGeeMhzO/9IRNfWAAEneDZcjGVYkIAD6r6rdzJkBoguXFqE/FFdKSXCpR6iUAnK3/HOFwAK4xJ0i7KvXGrbH1x8oOwm1PJNuhTVwKey6NrOWpVM=
+	t=1761716063; cv=none; b=huL0Q21rVUsdb/6H9LYbVWiVqIdhAcA0n85D5W3jEFOoKtXj8RdsMtVq+Xo90/qqDxtZrQhLlxaYqWa1zgsruz0I8GuzX4t8Ws6adCem54LdnrvevpYtmolNdzOUOlKTMRNulYJikKyI8i6xADKLr1NoLqmalyJO4NQABx+hKBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761716060; c=relaxed/simple;
-	bh=NJ+hTolWc4xkY7BMglYVo4imVv7Wplrz6gOXCSJq2Ds=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=dvs8586PrlprjWK1xTnrUCvD4Ki5XFzk96shefa2p6AzXFVTy585j4/e4156b+JnC14WFXIf2HIIgldowJv4LbSHeB6U2Huh8JZGoWL2HAjG3eQe3dOkH7giqOTKjVs7QYAXGTUffvYS+9XZgNnKzvp+rS6dSsFYoEZzab1U2G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUgmMN2t; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1761716063; c=relaxed/simple;
+	bh=542/UtxOs4wTeyeK/jKTiKMC3a0OqaamQ7WTLZorbXg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=XupUaioS9dbo1HZZ2FQm8zs3vFxOOLy5pH3aPmTlBQS7m1PbO++J6IUnqWgpK1c7OrNG3BcFBPzCR7CN9nUPZoKWuILqR8Frr9r3WkFE4xFKV7fHDDUcjeSo5wM+XfvtJmwj8Zn1Zvz22/8jcE7zN8MDIVYEutkhJNTe11bThW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gpCqOpLJ; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eddb7e714so5642501a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:19 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b55283ff3fcso4341998a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761716059; x=1762320859; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EskCADth3YkVR5hqBOBJMx3UfzeP9v/HlYYqFyqmjNg=;
-        b=VUgmMN2tb2M6ZCpc4JwlUMmLEVha2ZCABlkGmSOOAVyHXxMKcOTHv79LSLvl0yD6Ac
-         U+1WchxrTnA2YoeXCaHE+zEPKMmUn4vz8MPg7mBMqUAjWdrLDG7JecvtG3+z1+o/JWpx
-         fooXXC+11/ZXbEDwj81zwx8FNa06p3fhB71J2P0/kKJ5DkA39RsiyEpLWwyJWPm1eYRw
-         CukP6u2xfJ1EXMV0yHJwKKyy47r8lU961qibzJB5rk32BCZnXqKmOTXlIyjnAWSBcUX6
-         ROsqZlyQWEMr6hlXOj6rxkCKlNgWQxGIv5ODI8Hgj+fE9AtCAgzNY+xGEoJUmXvwmTdd
-         EtLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761716059; x=1762320859;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1761716060; x=1762320860; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EskCADth3YkVR5hqBOBJMx3UfzeP9v/HlYYqFyqmjNg=;
-        b=WN7G3zkRrz++iFWbzG7asEChw4txjf12RdPCtfT+w9NWBZk7gIP+pgV+Dfao48drD3
-         L7Z4TNYYQcoRADUWifNkaVbp+q0UutEsDdRJ/BOvZadwGSy0ePzhPqypaeqX8K6mbVPz
-         DaR4K8ajMyPfMyzboC/T+rvOoHZL2KrLNLB1j3TAzJi8tV1lhPPv5AL6EJ9++GWBEmiw
-         Uj5x9aB/myNigE+rO7irBSlTKj+LHaswzvyA1cM4CSCM1p5LjkHqhcDZ3bsgOZQDevPi
-         Y60bgSekf4jsEogfL6jMjvhlHGpbuBqLHYis0qYSt4RtmhGylZZUuy4N7R/N8jhCOrjF
-         WmDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMrk5qSbgh1NBx2qtE+G6exZ6eF+B8ZMFb280jGRVRpqJdZJzgbuN3hguP2kSyC0m43uPzNM/zH0eXxtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLRosGlE+9JyV9R5IBiukJVDDe//uF/1wM4aMIy3ro4Y/RJse5
-	jJGQNLLlWohcOYgdSzV6sJUMrRNb+XTwyI86bIO0jck123rz09cAepgHLUbZWSuHjcQnfO6wldP
-	VV0TsPmzjqw==
-X-Google-Smtp-Source: AGHT+IFPNXoSGhjR7OA9Vl3X20TTJL+tNHDOIMRqTV+avvu9i2EoGYohtUBzaMR+zCMk/654e3znpCZDBHZq
-X-Received: from pjtf19.prod.google.com ([2002:a17:90a:c293:b0:33b:da89:9788])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38cb:b0:32e:389b:8762
- with SMTP id 98e67ed59e1d1-3403a0d852fmr1778390a91.0.1761716058566; Tue, 28
- Oct 2025 22:34:18 -0700 (PDT)
-Date: Tue, 28 Oct 2025 22:33:58 -0700
+        bh=PT/10oAHeoVqquR7dMAlDMAandjm5/1/h+dRRja64wk=;
+        b=gpCqOpLJptVWtCUgVey71DcqCGHQWN7wb82UQ5cHe18jAMpRiMmX0of2pj9S/XmPza
+         2TRouYgtzcytfbuatUNkPYvURB2dxEdAAtMCdqRGPXehjhTmUPTG86LdW0zcuw3x/uD0
+         adWPdOWwCnK3TB6tkQ/JoV6DhJLTEtkuUClcLWPqBOgSZuUWg3n3xEu1pAyLiu7nbBk+
+         QqXuZeiMY57zIPGXYPciNJ3QS+KAynH4vqlo0d8osltWPUQy4eW2jkoABQCFriox8yj3
+         HIhhKaEJ8TLN7+IDAUMgrqM8tb2OAXO5M/8f0QiVSj4XDANoudlneSKrQGRlwQtDprzm
+         8hmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761716060; x=1762320860;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PT/10oAHeoVqquR7dMAlDMAandjm5/1/h+dRRja64wk=;
+        b=MvYGExbfQf0QDoNpg4jSOtQrJ+H5lI8XNPD4fk8EluNGO9quoNND1U8W+5FI/KTf7R
+         Jue+aMp6xaE7pyEm9uB//Ll5qlm6YsnfpbTWI2OXintlQInE0k8detCRT2hxgCiGyDHy
+         8KYE7MVqhBFnGRx2SiBsC/Cu/diTBstsylnbWBdjccSpI0I5Je63rtAnw90IilwzR+7L
+         wYct+K3yi1Ph/M9KmnAT+n83CEuSIKf57q5Z9ulg/d/oPmQGhEUzOQLA3C3rWYa3zS76
+         IQYM4jkh3Mjjfgz6NpPfHeqWfru82LyZkhlZ+nhbSPYbltZG7C7kN/mTOcals0FQlhbE
+         ynSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUg1GDmYDoInDhUFm03AZI2OoDnNLKo7ftupJVUl+w42tpP7aRJUnU4sd32aFzFmyBSZFbIX4jUIGkrEZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAe01VlD1fGGFEPS+4QaFVv7UhVW0/xiVUqN++GRPeryW1xZme
+	RKzGjHU7Ru/KYHDaUH7RwVWidHuXbDnP2cKa6Bx06851XwNVIaV0o34CQH5joimq0TT3bO4wNvW
+	7+bWU91VKJg==
+X-Google-Smtp-Source: AGHT+IGOe4Pb1dCo9z9D62bEWfA3YaPeeB5O76SErHIJqTUTT/xA1otwE4sp5XQBWkdyM57M1KRXD8ZAbEho
+X-Received: from pjbbf19.prod.google.com ([2002:a17:90b:b13:b0:330:8c66:4984])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:48c4:b0:32e:59ef:f403
+ with SMTP id 98e67ed59e1d1-3403a2973a4mr2030947a91.17.1761716060242; Tue, 28
+ Oct 2025 22:34:20 -0700 (PDT)
+Date: Tue, 28 Oct 2025 22:33:59 -0700
+In-Reply-To: <20251029053413.355154-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251029053413.355154-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.1.851.g4ebd6896fd-goog
-Message-ID: <20251029053413.355154-1-irogers@google.com>
-Subject: [RFC PATCH v1 00/15] Addition of session API to python module
+Message-ID: <20251029053413.355154-2-irogers@google.com>
+Subject: [RFC PATCH v1 01/15] perf arch arm: Sort includes and add missed
+ explicit dependencies
 From: Ian Rogers <irogers@google.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
 	James Clark <james.clark@linaro.org>, John Garry <john.g.garry@oracle.com>, 
@@ -94,163 +98,66 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org
 	Andi Kleen <ak@linux.intel.com>, Weilin Wang <weilin.wang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-The perf script command uses a session with process_events to call
-through to the python process_events function. The event is turned
-into a python dictionary, whether the entries are used or not, adding
-overhead. To avoid the overhead, add a session API abstraction and
-pass callbacks that can be used to perform the existing perf script
-functions. The implementation is incomplete in this RFC.
+Fix missing #includes found while cleaning the evsel/evlist header
+files. Sort the remaining header files for consistency with the rest
+of the code.
 
-In this series the mem-phys-addr.py command is ported from perf script
-to using the session API. The performance before and after is:
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/arch/arm/util/cs-etm.c | 22 +++++++++++-----------
+ 1 file changed, 11 insertions(+), 11 deletions(-)
 
-Before:
-```
-$ perf mem record -a sleep 1
-$ time perf script tools/perf/scripts/python/mem-phys-addr.py
-Event: cpu_core/mem-loads-aux/
-Memory type                                    count  percentage
- ---------------------------------------  ----------  ----------
-0-fff : Reserved                                3217       100.0
-
-real    0m3.754s
-user    0m0.023s
-sys     0m0.018s
-```
-
-After:
-```
-$ PYTHONPATH=/tmp/perf/python time python3 tools/perf/python/mem-phys-addr.py
-Event: evsel(cpu_core/mem-loads-aux/)
-Memory type                                    count  percentage
- ---------------------------------------  ----------  ----------
-0-fff : Reserved                                3217       100.0
-
-real    0m0.106s
-user    0m0.021s
-sys     0m0.020s
-```
-
-So a roughly 35x speedup, but it maybe that some of that is one time
-start-up overhead of libpython which wouldn't be present for larger
-perf.data files.
-
-Before porting all the script commands and adding things like
-callchain support to the python module, I wanted to get feedback. One
-thing that particularly simplifies the series is adding reference
-counts to evsel and evlist to avoid copying/cloning evsels created by
-the session API when loading a perf.data file.
-
-The approach of moving away from libpython and scripts was most
-recently discussed as a topic in:
-https://lore.kernel.org/lkml/CAP-5=fWDqE8SYfOLZkg_0=4Ayx6E7O+h7uUp4NDeCFkiN4b7-w@mail.gmail.com/
-
-When creating the python wrapper some house keeping was done around
-includes and perf_data's encapsulation.
-
-The perf script callbacks differ from those in perf_tool, for example,
-stat is the perf_tool callback is for a stat event while the scripting
-ops combine things and have a stat callback associated with
-stat_round. Should the session API match the tool or the script API?
-The former feels better for long term, while the latter could simplify
-porting perf scripts.
-
-Ian Rogers (15):
-  perf arch arm: Sort includes and add missed explicit dependencies
-  perf arch x86: Sort includes and add missed explicit dependencies
-  perf tests: Sort includes and add missed explicit dependencies
-  perf script: Sort includes and add missed explicit dependencies
-  perf util: Sort includes and add missed explicit dependencies
-  perf python: Add add missed explicit dependencies
-  perf evsel/evlist: Avoid unnecessary #includes
-  perf maps: Move getting debug_file to verbose path
-  perf data: Clean up use_stdio and structures
-  perf python: Add wrapper for perf_data file abstraction
-  perf python: Add python session abstraction wrapping perf's session
-  perf evlist: Add reference count
-  perf evsel: Add reference count
-  perf python: Add access to evsel and phys_addr in event
-  perf mem-phys-addr.py: Port to standalone application from perf script
-
- tools/perf/arch/arm/util/cs-etm.c           |  22 +-
- tools/perf/arch/x86/tests/hybrid.c          |   2 +-
- tools/perf/arch/x86/tests/topdown.c         |   2 +-
- tools/perf/arch/x86/util/intel-bts.c        |  14 +-
- tools/perf/arch/x86/util/intel-pt.c         |  31 +-
- tools/perf/arch/x86/util/iostat.c           |   2 +-
- tools/perf/bench/evlist-open-close.c        |  18 +-
- tools/perf/builtin-ftrace.c                 |   8 +-
- tools/perf/builtin-inject.c                 |   7 +-
- tools/perf/builtin-kvm.c                    |   4 +-
- tools/perf/builtin-lock.c                   |   2 +-
- tools/perf/builtin-record.c                 |  14 +-
- tools/perf/builtin-script.c                 | 109 ++--
- tools/perf/builtin-stat.c                   |   8 +-
- tools/perf/builtin-top.c                    |  52 +-
- tools/perf/builtin-trace.c                  |  38 +-
- tools/perf/python/mem-phys-addr.py          | 117 ++++
- tools/perf/tests/backward-ring-buffer.c     |  18 +-
- tools/perf/tests/code-reading.c             |   4 +-
- tools/perf/tests/event-times.c              |   4 +-
- tools/perf/tests/event_update.c             |   2 +-
- tools/perf/tests/evsel-roundtrip-name.c     |   8 +-
- tools/perf/tests/evsel-tp-sched.c           |   4 +-
- tools/perf/tests/expand-cgroup.c            |   8 +-
- tools/perf/tests/hists_cumulate.c           |   2 +-
- tools/perf/tests/hists_filter.c             |   2 +-
- tools/perf/tests/hists_link.c               |   2 +-
- tools/perf/tests/hists_output.c             |   2 +-
- tools/perf/tests/hwmon_pmu.c                |  14 +-
- tools/perf/tests/keep-tracking.c            |   2 +-
- tools/perf/tests/mmap-basic.c               |  31 +-
- tools/perf/tests/openat-syscall-all-cpus.c  |   6 +-
- tools/perf/tests/openat-syscall-tp-fields.c |  18 +-
- tools/perf/tests/openat-syscall.c           |   6 +-
- tools/perf/tests/parse-events.c             |   4 +-
- tools/perf/tests/parse-metric.c             |   4 +-
- tools/perf/tests/parse-no-sample-id-all.c   |   2 +-
- tools/perf/tests/perf-record.c              |  18 +-
- tools/perf/tests/perf-time-to-tsc.c         |   2 +-
- tools/perf/tests/pfm.c                      |   4 +-
- tools/perf/tests/pmu-events.c               |   6 +-
- tools/perf/tests/pmu.c                      |   2 +-
- tools/perf/tests/sw-clock.c                 |  14 +-
- tools/perf/tests/switch-tracking.c          |   2 +-
- tools/perf/tests/task-exit.c                |  14 +-
- tools/perf/tests/tool_pmu.c                 |   2 +-
- tools/perf/tests/topology.c                 |   5 +-
- tools/perf/util/bpf_counter_cgroup.c        |   2 +-
- tools/perf/util/bpf_off_cpu.c               |  28 +-
- tools/perf/util/bpf_trace_augment.c         |   7 +-
- tools/perf/util/cgroup.c                    |   6 +-
- tools/perf/util/data-convert-bt.c           |   2 +-
- tools/perf/util/data.c                      |  81 ++-
- tools/perf/util/data.h                      |  52 +-
- tools/perf/util/evlist.c                    | 100 ++--
- tools/perf/util/evlist.h                    |  23 +-
- tools/perf/util/evsel.c                     | 103 ++--
- tools/perf/util/evsel.h                     |  30 +-
- tools/perf/util/expr.c                      |   2 +-
- tools/perf/util/header.c                    |  12 +-
- tools/perf/util/map.h                       |   6 +-
- tools/perf/util/maps.c                      |   9 +-
- tools/perf/util/metricgroup.c               |   6 +-
- tools/perf/util/parse-events.c              |   4 +-
- tools/perf/util/parse-events.y              |   2 +-
- tools/perf/util/perf_api_probe.c            |  19 +-
- tools/perf/util/pfm.c                       |   2 +-
- tools/perf/util/print-events.c              |   2 +-
- tools/perf/util/print_insn.h                |   5 +-
- tools/perf/util/python.c                    | 584 +++++++++++++++-----
- tools/perf/util/record.c                    |   2 +-
- tools/perf/util/s390-sample-raw.c           |  15 +-
- tools/perf/util/session.c                   |   4 +-
- tools/perf/util/sideband_evlist.c           |  16 +-
- tools/perf/util/stat-shadow.c               |   1 +
- tools/perf/util/stat.c                      |  15 +-
- 76 files changed, 1152 insertions(+), 650 deletions(-)
- create mode 100644 tools/perf/python/mem-phys-addr.py
-
+diff --git a/tools/perf/arch/arm/util/cs-etm.c b/tools/perf/arch/arm/util/cs-etm.c
+index ea891d12f8f4..a0086ca8385b 100644
+--- a/tools/perf/arch/arm/util/cs-etm.c
++++ b/tools/perf/arch/arm/util/cs-etm.c
+@@ -3,10 +3,14 @@
+  * Copyright(C) 2015 Linaro Limited. All rights reserved.
+  * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
+  */
++#include <errno.h>
++#include <stdlib.h>
++#include <sys/stat.h>
+ 
+ #include <api/fs/fs.h>
+-#include <linux/bits.h>
++#include <internal/lib.h> // page_size
+ #include <linux/bitops.h>
++#include <linux/bits.h>
+ #include <linux/compiler.h>
+ #include <linux/coresight-pmu.h>
+ #include <linux/kernel.h>
+@@ -15,24 +19,20 @@
+ #include <linux/types.h>
+ #include <linux/zalloc.h>
+ 
+-#include "cs-etm.h"
+-#include "../../../util/debug.h"
+-#include "../../../util/record.h"
+ #include "../../../util/auxtrace.h"
+ #include "../../../util/cpumap.h"
++#include "../../../util/cs-etm.h"
++#include "../../../util/debug.h"
+ #include "../../../util/event.h"
+ #include "../../../util/evlist.h"
+ #include "../../../util/evsel.h"
+-#include "../../../util/perf_api_probe.h"
+ #include "../../../util/evsel_config.h"
++#include "../../../util/perf_api_probe.h"
++#include "../../../util/pmu.h"
+ #include "../../../util/pmus.h"
+-#include "../../../util/cs-etm.h"
+-#include <internal/lib.h> // page_size
++#include "../../../util/record.h"
+ #include "../../../util/session.h"
+-
+-#include <errno.h>
+-#include <stdlib.h>
+-#include <sys/stat.h>
++#include "cs-etm.h"
+ 
+ struct cs_etm_recording {
+ 	struct auxtrace_record	itr;
 -- 
 2.51.1.851.g4ebd6896fd-goog
 
