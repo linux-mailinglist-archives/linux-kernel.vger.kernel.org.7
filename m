@@ -1,130 +1,227 @@
-Return-Path: <linux-kernel+bounces-876463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A16DAC1BC79
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 16:48:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3539EC1C28C
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:41:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 71D645C4F80
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:01:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6905758717B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2092D7DD2;
-	Wed, 29 Oct 2025 15:00:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9EC52E284B;
+	Wed, 29 Oct 2025 15:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFTsa/97"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TmXlY2BB"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azhn15012012.outbound.protection.outlook.com [52.102.136.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75862D321D;
-	Wed, 29 Oct 2025 15:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761750039; cv=none; b=WImWKyRO59Cpqx8YxMyCTWqZ78tYecL2so/paEVKe2IJdeYlrDksWlQfDWgn9auBwk+LTheMkA15FLKD+6IXSfURTVJzlD35xTcjJUn+3dbTNAlGZ5c9DRaVIPs4Dn63LBDUNXk1umjkwt/WdS3FuR1vEj9PVWhzkEH9rCu3VAo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761750039; c=relaxed/simple;
-	bh=Vqgk0q/9I+K4kV+nPb7zauXw84aV4k0RxA8xUqhhwcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VXyn9pWQvaCnQVDQrkNTD5V1ODBMA59hMmKEBXB/a4tWisG2KQDLhtbOO3SzaZ2G+F/bt9Bwf3sptP3R5aXDKqWPz6CPO66yNg1FE3fdD3tsYtY0k+P4XQ6e42TnWrMDVhagd7QbCqqkv5WvarLI9aHqSINQ4TXZrCpQsdAofYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFTsa/97; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A74EC4CEFF;
-	Wed, 29 Oct 2025 15:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761750039;
-	bh=Vqgk0q/9I+K4kV+nPb7zauXw84aV4k0RxA8xUqhhwcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFTsa/97cp8o6vJDDxG/cn4xto3mSaC8nwV8ywmQbVD8+T3Ppvx2fHtUDOjBQu1vV
-	 edP/zWqvgXuVt6OChdo4le1paCPWjAXCXLrDhBIRF0dhqhBG66Jm6gh6dWzl3VulPO
-	 HqMz1o9LAccG3g6922L0DWjyF7A/K0znpDdIrvdiEejpShvfavj5xEDMPsUPgBXQTG
-	 gLBcbx5D8JVr4xu0Ht1/WxW/Pc8U2ve5AIoYIt2QN0irT/2REvbk9bNEXMG8uJhYhw
-	 kRxIm3HcIg2Q2XMTtuUOSpBdNABPTjUPAWFpvMHvCTxWt1c20vjPsd7K3X3MAs/MW+
-	 UhuogNMtu0tQw==
-Date: Wed, 29 Oct 2025 10:03:42 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>, Rocky Liao <quic_rjliao@quicinc.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] Bluetooth: dt-bindings: qualcomm: Split binding
-Message-ID: <uanegg6ni2xwgstf4nrlejkeseztxdl7vkd6rjk3nu7h7gelbn@ga3tqjgp33bt>
-References: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080DA328622;
+	Wed, 29 Oct 2025 15:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.136.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761750431; cv=fail; b=AkWvS277SCyzmQwzby9g8lRIIUgbbJubfKxR3K83+4IixtpMJPS9APdVTl8q8U5tJKzkXYVgrFm8a2Ip55bV/G+n6EnD+KJUzZR1e9Rg0h/8X1Hle5QIzajIRJF8uf/G44tbAxb4yITrKbN1C3uIisDe63SMP+XaAUzKMr6saiY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761750431; c=relaxed/simple;
+	bh=mG1/T9VCufKTawEyGwzhdt9v/KLawSPnlCXtf3huGTc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=StL34yHurZwCHKylJW83DeBFn+VVXRkgwk0d3f5jmte8EPAraRroQpL887rxe7EcrcVNXtgtPUIUgEFz3qrVedL6im+2ppsQIYqM2hCfNOWlkvu6gWYh43cetURJnQKkpyaPUVPrTcgsd0ue3FC7hrHit+YHKotqHO6aS39JOXM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TmXlY2BB; arc=fail smtp.client-ip=52.102.136.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jc9+4oxQcnFu/Y0jw9qM3h5hkQTt9WHRjZiIo5PBEm5cSaG0//rCJ7MzHL9cktXgxuX7qGJF7bbiv2N+UeHHT5S4srQuqKiCr7oHTl6VOvoc4GBmqqWfJJqDUx9bC1nwBO5FCZzmN0V3DlOVdSD13bg04KAWZ21V4T4wfLKmg+lbQbdsgvJjLoRTH9Bs9Zpp5YHISoF5bf8fsffYMVCiH01MbRBTIlEXnbUD05GTLskOxce2CLQcA6ci19IiZMV6qPTG49ypdvVDXETW1neE6Ki0ptvEumN74WAJP0o1D11o/lwgmVcC93Dvh7NbeyIlXl/e7CA9ZL5YyDaKK35YiQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RiG2b7Kfz0cHZ9ztLIYTq6TX6wTyAXjHpMA/+QKcph4=;
+ b=OdHlFf4jUj9h4f2+zOrsmdLmXO2adFhoBNLY/Kq8PRwpMdBgt35iwsl5aDYR+4wlcficGFw7hCJuJGJY4D+nhZJe0iSJuu4Irnj+SjfMr4fntLJMuQLbxZU7gXe2TvHRiE7/uO0uRRt9cydTMDAOzaPChU08eQdQAes/HaGMskfr4q/JclzSHBKy9yjbjw7uz1n0cMJJ126HDt71Y1tyeOLTTi13zqY4ut43GP7yLOBpYBuL9C8qjL0JTNv1VCSXWTt/D/NFxzfKTmvoLgyZsHZ//oyEi1LUxQ3OyzpW7c4FmjNp14RpScy5nxk+t2y0Rvee22OowjYyiqn96ifwhw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=ideasonboard.com smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RiG2b7Kfz0cHZ9ztLIYTq6TX6wTyAXjHpMA/+QKcph4=;
+ b=TmXlY2BBl/pxTya5CyMrfVIxYDZ8283sIQxc23l/eyS/nfS+GVGLzlsLW17uqJ2lYVcqP+0WD5EKOR35bhtXn+wm0AN1CYg7aow3RdJIpcZUk4SYoYjXBtyWOZg8OxPw+MlfHphOKO+LHBlb8wnpbTH3+qvu3KY4ZS2Obiq7Gas=
+Received: from BN9PR03CA0044.namprd03.prod.outlook.com (2603:10b6:408:fb::19)
+ by DM3PPFC3D93F6EF.namprd10.prod.outlook.com (2603:10b6:f:fc00::c49) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Wed, 29 Oct
+ 2025 15:06:56 +0000
+Received: from BN1PEPF00004684.namprd03.prod.outlook.com (2603:10b6:408:fb::4)
+ by BN9PR03CA0044.outlook.office365.com (2603:10b6:408:fb::19) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.13
+ via Frontend Transport; Wed, 29 Oct 2025 15:06:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ BN1PEPF00004684.mail.protection.outlook.com (10.167.243.90) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.10 via Frontend Transport; Wed, 29 Oct 2025 15:06:55 +0000
+Received: from DFLE215.ent.ti.com (10.64.6.73) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 10:06:44 -0500
+Received: from DFLE210.ent.ti.com (10.64.6.68) by DFLE215.ent.ti.com
+ (10.64.6.73) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 29 Oct
+ 2025 10:06:44 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE210.ent.ti.com
+ (10.64.6.68) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Wed, 29 Oct 2025 10:06:44 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 59TF6iGe022430;
+	Wed, 29 Oct 2025 10:06:44 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Simona Vetter <simona@ffwll.ch>, David Airlie <airlied@gmail.com>, "Thomas
+ Zimmermann" <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, Jernej Skrabec
+	<jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, Laurent Pinchart
+	<Laurent.pinchart@ideasonboard.com>, Robert Foss <rfoss@kernel.org>, "Andrzej
+ Hajda" <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Phong LE <ple@baylibre.com>, Dmitry <dmitry.baryshkov@oss.qualcomm.com>
+CC: Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<dri-devel@lists.freedesktop.org>, Robert Nelson <robertcnelson@gmail.com>,
+	Jason Kridner <jkridner@beagleboard.org>, Andrew Davis <afd@ti.com>, Tomi V
+	<tomi.valkeinen@ideasonboard.com>, Devarsh <devarsht@ti.com>, Nishanth Menon
+	<nm@ti.com>
+Subject: [PATCH V6 0/5] drm/bridge: it66121: Add initial it66122 support
+Date: Wed, 29 Oct 2025 10:06:31 -0500
+Message-ID: <20251029150636.3118628-1-nm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-dt-bindings-qcom-bluetooth-v2-0-dd8709501ea1@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004684:EE_|DM3PPFC3D93F6EF:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1d6d973-fb4e-4bf9-e8fe-08de16fccc7d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|34020700016|36860700013|1800799024|921020|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hKw8SzcCO2zGD9hA3G/FrRuoXlLaEiNrXFyyP1bD0b+G/rxt3sG1uu42rerj?=
+ =?us-ascii?Q?7UZ3BwrQjCxmImGEto4KRHbu4uSd2rJdtuo1Zn+zS0+4KxVoR8G37f25t1nh?=
+ =?us-ascii?Q?VBSYyA5grJNqRnmxKU4TTKc1Rnj5vIHC8ji+sKsBwpSYE52mpBg08YKPXr+s?=
+ =?us-ascii?Q?OpQ1Qzsvt6t4CRbrvKtrnWucrvMYBe3EvP3BytsQ4wWNN6SPMT30IWH8SNOM?=
+ =?us-ascii?Q?FvEoAsM6zHYhXdxvZcH2G8PFXHA7w0k8+TH8JxhvI7+lhhyDBeemKwpCuti4?=
+ =?us-ascii?Q?Rh0WiyRPjB8OXTW7VeOcFvH/PH2FZI+RVAsFnjPlEif/xGX2W/avVUsRbYow?=
+ =?us-ascii?Q?jLh2pi71mgD9ReqIftF/Yhcflx/kQ6W6GjsXF09zgv5Wc1zWMEvAeJAQVJ88?=
+ =?us-ascii?Q?1pNXDtM5CrRr32ZGJ7bClBNQtXPAh9OcFoL4BFUtf7raY2ot1pK8vM565/s6?=
+ =?us-ascii?Q?GS6Z7MbchAKCoR3/FG1NST00avFVkUBay7eXfHfUhQwMML1lfTGG+jTW2gsK?=
+ =?us-ascii?Q?Kkaq7vxNJF+fAtG+KH7wiEqsrSi5b9IVpo3QngBZkX5o1TWVT9LSpSMsTbTG?=
+ =?us-ascii?Q?X7TmNhN4WwQsLgem+OSKr62AsyFV86eJem9B59RezIlqLWDbZ27iyMAL1Iqh?=
+ =?us-ascii?Q?xZxiCUQ9VzqVAKkEFjez3lFxWjx8ueNdGuCly699eY3sRZwMwbDWzVgLKaLR?=
+ =?us-ascii?Q?F9dTrqnSRAWKeQKpDiAO6aFb8zOhDZjWwEFIRZIKpN8izZFqLXEVGHRiRgcq?=
+ =?us-ascii?Q?9Hb663b8MY3jdM9XppIOmt50PrMJ8epFEkzoOqCj1IAyFGf8mCg5vLG5/tqt?=
+ =?us-ascii?Q?sVlinlC4cwA/clAvRx1fn1lPOaHQQHSpm6ro8WDx5M4dO6TbsOUtOB0KwFqQ?=
+ =?us-ascii?Q?AXzOGtAjKtchZsTBbQtV9kmneXMfRCvv/vp6qrAauN9wKnwePd2c8iXi/wHy?=
+ =?us-ascii?Q?JpTydZJKAtnx0HUusLQi0ruofIxxHWIqnEYoOFrbpXZ4POM/oyn47tvZ6/mG?=
+ =?us-ascii?Q?UO2V80Jk7zZTLMku/azTSBsqOScaEvNvUJelQK5rAhBVWLCNNApITGjhlIgs?=
+ =?us-ascii?Q?MIJf5nWoC264NDG1zgpOsffD/SdvMo2vXKOnyLEB5+zUIeHbd5ChEuYSH9sA?=
+ =?us-ascii?Q?mkMxfkLYRn7phkmGMt45uYjejLSraiVCO0VVwf+R27Pi3oslVGERbYndpE0M?=
+ =?us-ascii?Q?pq+U5H4Ph0PGg4FkByj6BhSeaitSxRPF36kCnLtOlAt+sE2UJ8xPyOK9lfKI?=
+ =?us-ascii?Q?1jxPsXdoggb7J53obJuqGzfUmQxa3JsiE3pHbicMsrEvDsKwZX3+VeIRUG8i?=
+ =?us-ascii?Q?vev7tRpsrjzWB4gACLfS4mLwup++O4/RKqFXiZCx1QRvIQYjioDWWSyKoGFX?=
+ =?us-ascii?Q?rv/1BgV0VLv2KCOOY4JipI6ke1lP/eQgQkg6CGS03KnSXcujGMJLi8hFf5li?=
+ =?us-ascii?Q?OgWoLcXQeiBz6ru5PbkMVKsPGIpxZHsaIhXNdEOPX/x3dwppnhDkAoan+9Cm?=
+ =?us-ascii?Q?/RqpzaD9foQ/ju4/DR9Tk3D0Qd7trECnOokScCMkcfsL9B4P9iqbkDh2lylL?=
+ =?us-ascii?Q?DANoDrVCZnZUe5tWFoVY/UJE3YH+F8gyTR9lKqW8?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(34020700016)(36860700013)(1800799024)(921020)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2025 15:06:55.0786
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1d6d973-fb4e-4bf9-e8fe-08de16fccc7d
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004684.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPFC3D93F6EF
 
-On Wed, Oct 29, 2025 at 08:43:50AM +0100, Krzysztof Kozlowski wrote:
-> Changes in v2:
-> - Drop in few commits the properties (supplies) from
->   qualcomm-bluetooth.yaml which are not used by devices left there,
->   instead of removing them in final patch (qcom,wcn7850-bt).
-> - Fix dt_binding_check error - missing gpio.h header in the example.
-> - Drop maintainers update - split into separate patch.
-> - Add also Bartosz as maintainer of two bindings because he was working
->   with these in the past.
-> - Link to v1: https://patch.msgid.link/20251028-dt-bindings-qcom-bluetooth-v1-0-524a978e3cda@linaro.org
-> 
-> One big Qualcomm Bluetooth schema is hardly manageable: it lists all
-> possible properties (19 supplies).  Split qcom,qca6390-bt to separate
-> bindings, so device schema will be easier to read/maintain and list only
-> relevant properties.
-> 
-> What's more it messes up old (pre-PMU) and new (post-PMU) description in
-> one place adding to the total mess.
-> 
+Hi,
 
-Very nice to see this cleaned up.
+Add initial support for IT66122, which seems to be compatible to it66121
+but probably has additional functionality.
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+BeagleY-AI uses this it66122 as the old part is no longer in production
+as far as I understand.
 
-Regards,
-Bjorn
+Now, BeaglePlay uses it66121 at the moment, but at some point, it might
+end up flipping over to the new part. Additionally, it also looks like
+Revision D of BeagleBone Black switched over to it66122 as well.
 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (11):
->       dt-bindings: bluetooth: qcom,qca2066-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,qca9377-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,qca6390-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn3950-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn3990-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn6750-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn6750-bt: Deprecate old supplies
->       dt-bindings: bluetooth: qcom,wcn6855-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn6855-bt: Deprecate old supplies
->       dt-bindings: bluetooth: qcom,wcn7850-bt: Split to separate schema
->       dt-bindings: bluetooth: qcom,wcn7850-bt: Deprecate old supplies
-> 
->  .../net/bluetooth/qcom,bluetooth-common.yaml       |  25 ++
->  .../bindings/net/bluetooth/qcom,qca2066-bt.yaml    |  49 ++++
->  .../bindings/net/bluetooth/qcom,qca6390-bt.yaml    |  64 +++++
->  .../bindings/net/bluetooth/qcom,qca9377-bt.yaml    |  58 +++++
->  .../bindings/net/bluetooth/qcom,wcn3950-bt.yaml    |  67 ++++++
->  .../bindings/net/bluetooth/qcom,wcn3990-bt.yaml    |  66 ++++++
->  .../bindings/net/bluetooth/qcom,wcn6750-bt.yaml    |  91 ++++++++
->  .../bindings/net/bluetooth/qcom,wcn6855-bt.yaml    |  99 ++++++++
->  .../bindings/net/bluetooth/qcom,wcn7850-bt.yaml    |  94 ++++++++
->  .../bindings/net/bluetooth/qualcomm-bluetooth.yaml | 259 ---------------------
->  MAINTAINERS                                        |   1 +
->  11 files changed, 614 insertions(+), 259 deletions(-)
-> ---
-> base-commit: c9d6ae701ace298035b6529eb10083d356cf2ae7
-> change-id: 20251028-dt-bindings-qcom-bluetooth-9af415056c1c
-> 
-> Best regards,
-> -- 
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> 
+Series is based on next-20250827
+
+Bootlog: BeaglePlay: https://gist.github.com/nmenon/65afb917ee1818979d338cf25732a920
+
+Changes in V6:
+* Picked up Tomi's ack
+* Rebased on next-20251029
+
+Changes in V5:
+* Switched over to ARRAY_SIZE
+* Picked up Andrew's Reviewed-by
+
+Changes in V4:
+* Added patch to sort the compatibles alpha-numerically
+* vid/pid lookup is done without using the match_data.
+* picked reviews
+
+Changes in V3:
+Based on Tomi's and Devarsh's reviews, and searching online (and failing
+to find) for a public data sheet, I have refactored the series to:
+a) Detect the ID by matching vid/pid
+b) Introduce it66122 basic support which seems to work based on
+   empirical testing evidence on BeagleY-AI. This allows incremental
+   patches in the future by someone who might have access to the data
+   sheet to add additional features for the chip.
+c) Irritated by checkpatch --strict warnings, added a patch to fix
+   existing warnings as part of this series, but it could probably go
+   in independent of everything else.
+d) Stopped claiming it66122 is drop in replacement of it66121 :)
+
+Changes in V2:
+* Picked up Krystoff's binding ack
+* Switched over to a vid/pid list
+
+V5: https://lore.kernel.org/all/20250827202354.2017972-1-nm@ti.com/
+V4: https://lore.kernel.org/all/20250819130807.3322536-1-nm@ti.com/
+V3: https://lore.kernel.org/all/20250815034105.1276548-1-nm@ti.com/
+V2: https://lore.kernel.org/all/20250813204106.580141-1-nm@ti.com/
+V1: https://lore.kernel.org/all/20250813190835.344563-1-nm@ti.com/
+
+
+Nishanth Menon (5):
+  dt-bindings: display: bridge: it66121: Add compatible string for
+    IT66122
+  drm/bridge: it66121: Drop ftrace like dev_dbg() prints
+  drm/bridge: it66121: Sort the compatibles
+  drm/bridge: it66121: Use vid/pid to detect the type of chip
+  drm/bridge: it66121: Add minimal it66122 support
+
+ .../bindings/display/bridge/ite,it66121.yaml  |  1 +
+ drivers/gpu/drm/bridge/ite-it66121.c          | 68 +++++++++----------
+ 2 files changed, 34 insertions(+), 35 deletions(-)
+
+-- 
+2.47.0
+
 
