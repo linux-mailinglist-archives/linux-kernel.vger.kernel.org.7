@@ -1,179 +1,304 @@
-Return-Path: <linux-kernel+bounces-877119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14BFC1D3E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:40:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E477DC1D3EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 21:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C8D118931F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:40:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86F894E23BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 20:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 692533559FB;
-	Wed, 29 Oct 2025 20:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C234C359FAF;
+	Wed, 29 Oct 2025 20:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO+G0kcb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b="W/+YhFfU"
+Received: from mail.cjdns.fr (mail.cjdns.fr [5.135.140.105])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE2BE3559E0
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A437318124;
+	Wed, 29 Oct 2025 20:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.135.140.105
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761770423; cv=none; b=D1CoVMnBVCJqkfC543dsHqWjOr90bj8m0g5mbZzgqgv5F2i5bEUJVdu32/Quwx5EiU2fRRSTsPmf+WqaEv3sA2rn2xGJWnRnhjtf3G4VKMQrDez61r0gVrC4vZV4OXsr0IW38zNLR6INs4vdyz9+jdtjgscteri+mJHN3nYFKUg=
+	t=1761770452; cv=none; b=cTsaBirJKlwj4FWihNWMGfikkYZ6ukjJfeAYjD1UtihNf40eJczD1JND3YFFryRQDOqnrnLzKKtCMyPDMp6qf9AmGyEk6cP9F5cp4/zASafTfxzMAkDDnIxabaP9WF9nm2NG7HX5yvVys/hafykF3FtZdKEuOiOzT9Lxh2gIrQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761770423; c=relaxed/simple;
-	bh=ns4b6aM37ZgOxDoSOaW+r8bQOQRHH+MqybA/pg189gM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cEQYlbOH7SvV8OxZHqrpIgrS+QUs7wie88FaRRrK+Vk3RHP7wfeB5QUPBVWGdCAFpZCjrPXuPRL3Li2f9dJvh/FAMrfiXrpUrY7CFsVIOR8x8hFafUqUDgQn+6YeSF/EtjrAFAEDAF/XSDiHlvN3rSgDowAeWPNxV73A0YMkZts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nO+G0kcb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52D1EC4CEFB
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 20:40:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761770423;
-	bh=ns4b6aM37ZgOxDoSOaW+r8bQOQRHH+MqybA/pg189gM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nO+G0kcbM7pNCV0+74zGKKhYXh12qoB3q0zZmRBWcYbpkgzrJfDHLPwweS33YDqtH
-	 4fLk99/ctjqqTJFXzdR7IR24tezAvcNATOb9PV3teZreG47IbvhRaWfoQDb6+NMWpx
-	 Rl7todaGEC1nCqhTTfkTN6JenHoNvynolojOHGLMoBgtA3031Kr6uG3J7EpQv6DnPb
-	 5VS+dQtY6Q1ZY6bHCzvnCVblIZqSPtpoTFCg7U/wldYh0H0O8ZYn14VxGLsS6hhENW
-	 FCB5FYBkJtUXPT78XUAn4s6kzVKmGxMiCbJiFNVtKh4lLgdEmlNkez3epdQigRZl6I
-	 p1B6Ikr30M6PA==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-65682227f37so78869eaf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:40:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVyWWLRGicx/LyvXcoF0i/SNxhDhBJf1hrJ6XIo6u2nR28xG1JxLizBarPv9gEzU0qIsuJeC7bOqvJeC6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm8cGRaYww7oNUjItsV1GVnsI3TV7SkOziPZyAn0QR15zz3lga
-	blRXsR45c2sP5xZqnrvDEx4ZBNoTgG/0LXHu10o8xKgkpWc/mqlNxAG4W+KYZfIObPZUTmec5nW
-	NaCyGgqqeuo8ZNICk8JACIVhf+2auzYc=
-X-Google-Smtp-Source: AGHT+IGkw0errFUiWgHSegfRuc0UV+uiohV9K9kD6XTBbEYcHl6IYdAr8WV+LfSRejWvHXoyL9ZP+xb3OppXM4LdNZ0=
-X-Received: by 2002:a05:6820:161e:b0:653:827d:1abb with SMTP id
- 006d021491bc7-65677e52479mr1754431eaf.2.1761770422550; Wed, 29 Oct 2025
- 13:40:22 -0700 (PDT)
+	s=arc-20240116; t=1761770452; c=relaxed/simple;
+	bh=svjdsyydQwmZ5nzXmso01jmqDdZ8/F0fBACrpiwUtns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HJr3rNHeGAEs1xhOk9vIBCbOH62V8XOpqDqZ3dVr18VRboE/sm5PtHoejQ47m+GDI4zQJOHYly2y50DFe4uKlbw+3ee8UIMsWQ/VGfB6Wy82GJUzrnLr0MC3sSFdq297X5+BMACWqnuGTbArWeIZxXvbhd1fOi2AD6A/+lQ+b6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr; spf=none smtp.mailfrom=cjdns.fr; dkim=pass (2048-bit key) header.d=cjdns.fr header.i=@cjdns.fr header.b=W/+YhFfU; arc=none smtp.client-ip=5.135.140.105
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cjdns.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cjdns.fr
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3BC8097743A;
+	Wed, 29 Oct 2025 21:40:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cjdns.fr; s=dkim;
+	t=1761770447; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=+kDStLF1T0fG1rK0mH3pE3M1UcqFPJrbWW0y886WCl8=;
+	b=W/+YhFfUqoxRXWIQWoxS6Dmq0pM3gNodPdexHi/aIthBbKxBLFgXENcoiKuV520+RoQNqZ
+	HUszlsmSa2PGUGa4jKv6b6EId78d3kYweFsndGry7ta9ynfStdqHP5zr3PFyzYV73tMP57
+	zoDUVPCUsthIfEJqqizc0xFbCvoz6jFSuV9QVPLRSJ2+5YoKQNLEipCtjk7oLGFnRZWPFM
+	W5CObxGuh086BlA7FrvTXAUEnlITmDwzQfeNhqEMzhZYtmbkL8IaH/w3bngfmmWOKIwcgw
+	Jm0b1u6face8QBekgiKiiEcc9+GqF0ph0DmvTmnS7psH4jpu3OTmHUn8x6HR9w==
+Message-ID: <7865beac-cd03-4242-aab0-bbf05c60391a@cjdns.fr>
+Date: Wed, 29 Oct 2025 21:40:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029134737.42229-1-swarajgaikwad1925@gmail.com>
- <aQHyhU78m-9RPQ8q@archie.me> <81b03d82-6dc7-4af1-bca1-3632e1a0b4c0@infradead.org>
-In-Reply-To: <81b03d82-6dc7-4af1-bca1-3632e1a0b4c0@infradead.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 29 Oct 2025 21:40:11 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0g_v+21S=vq-B9H-vvyYRJjBUtc8fW2MSoP1JvQd9xsWw@mail.gmail.com>
-X-Gm-Features: AWmQ_bnS4mODpTkuRjShVDMELlV7btLcndAf7AWIMblYKgESQ_nlIvEOpV4S5lI
-Message-ID: <CAJZ5v0g_v+21S=vq-B9H-vvyYRJjBUtc8fW2MSoP1JvQd9xsWw@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: pm: fix duplicate hyperlink target errors
-To: Randy Dunlap <rdunlap@infradead.org>, Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Swaraj Gaikwad <swarajgaikwad1925@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Jonathan Corbet <corbet@lwn.net>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	skhan@linuxfoundation.org, david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big
+ Endian
+To: Jonas Gorski <jonas.gorski@gmail.com>
+Cc: nbd@nbd.name, lorenzo@kernel.org, ryder.lee@mediatek.com,
+ shayne.chen@mediatek.com, sean.wang@mediatek.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, linux-wireless@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>
+References: <20251027171759.1484844-1-cjd@cjdns.fr>
+ <CAOiHx=nSEP=4s2xZuPtLEO43YDbkNEYzw6V11JbXG0H2iPn7Ag@mail.gmail.com>
+ <096509d1-4af8-4abc-8068-ca27d8ef601e@cjdns.fr>
+ <CAOiHx=nqWEdHEMf5immXO0VwyzDakDV9AMsoDETcJ0F4FqUt=w@mail.gmail.com>
+ <4d5fe35f-6841-4b73-9c8c-a1f3bce886c8@cjdns.fr>
+ <CAOiHx=kfAwLzuoP2Y-AnGz4GysmszXq-f_et0rgd1j0thYv4Ew@mail.gmail.com>
+Content-Language: en-US
+From: Caleb James DeLisle <cjd@cjdns.fr>
+In-Reply-To: <CAOiHx=kfAwLzuoP2Y-AnGz4GysmszXq-f_et0rgd1j0thYv4Ew@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Oct 29, 2025 at 6:01=E2=80=AFPM Randy Dunlap <rdunlap@infradead.org=
-> wrote:
->
->
->
-> On 10/29/25 3:55 AM, Bagas Sanjaya wrote:
-> > On Wed, Oct 29, 2025 at 01:47:37PM +0000, Swaraj Gaikwad wrote:
-> >> Fix reST warnings in
-> >> Documentation/admin-guide/pm/intel_pstate.rst caused by missing explic=
-it
-> >> hyperlink labels for section titles.
-> >>
-> >> Before this change, the following errors were printed during
-> >> `make htmldocs`:
-> >>
-> >>   Documentation/admin-guide/pm/intel_pstate.rst:401:
-> >>     ERROR: Indirect hyperlink target (id=3D"id6") refers to target
-> >>     "passive mode", which is a duplicate, and cannot be used as a
-> >>     unique reference.
-> >>   Documentation/admin-guide/pm/intel_pstate.rst:517:
-> >>     ERROR: Indirect hyperlink target (id=3D"id9") refers to target
-> >>     "active mode", which is a duplicate, and cannot be used as a
-> >>     unique reference.
-> >>   Documentation/admin-guide/pm/intel_pstate.rst:611:
-> >>     ERROR: Indirect hyperlink target (id=3D"id15") refers to target
-> >>     "global attributes", which is a duplicate, and cannot be used as
-> >>     a unique reference.
-> >>   ERROR: Duplicate target name, cannot be used as a unique reference:
-> >>   "passive mode", "active mode", "global attributes".
-> >
-> > Hmm... I don't see these warnings when I build htmldocs by:
-> >
-> >   $ make SPHINXOPTS=3D'-j 1' htmldocs
-> >
-> > My environment uses docutils 0.21.2 and Sphinx 8.2.3, though. What are =
-yours?
->
->
-> I do see the warnings and this patch fixes them in my testing.
->
-> Acked-by: Randy Dunlap <rdunlap@infradead.org>
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
->
-> docutils-3.13 (Docutils 0.22.2, Python 3.13.9, on linux)
-> sphinx-build 8.2.3
->
-> >> diff --git a/Documentation/admin-guide/pm/intel_pstate.rst b/Documenta=
-tion/admin-guide/pm/intel_pstate.rst
-> >> index 26e702c7016e..9cdd9dad6516 100644
-> >> --- a/Documentation/admin-guide/pm/intel_pstate.rst
-> >> +++ b/Documentation/admin-guide/pm/intel_pstate.rst
-> >> @@ -62,6 +62,8 @@ a certain performance scaling algorithm.  Which of t=
-hem will be in effect
-> >>  depends on what kernel command line options are used and on the capab=
-ilities of
-> >>  the processor.
-> >>
-> >> +.. _Active Mode:
-> >> +
-> >>  Active Mode
-> >>  -----------
-> >>
-> >> @@ -94,6 +96,8 @@ Which of the P-state selection algorithms is used by=
- default depends on the
-> >>  Namely, if that option is set, the ``performance`` algorithm will be =
-used by
-> >>  default, and the other one will be used by default if it is not set.
-> >>
-> >> +.. _Active Mode With HWP:
-> >> +
-> >>  Active Mode With HWP
-> >>  ~~~~~~~~~~~~~~~~~~~~
-> >>
-> >> @@ -192,6 +196,8 @@ This is the default P-state selection algorithm if=
- the
-> >>  :c:macro:`CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE` kernel configurati=
-on option
-> >>  is not set.
-> >>
-> >> +.. _Passive Mode:
-> >> +
-> >>  Passive Mode
-> >>  ------------
-> >>
-> >> @@ -432,6 +438,8 @@ the ``energy_model`` directory in ``debugfs`` (typ=
-lically mounted on
-> >>  User Space Interface in ``sysfs``
-> >>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> +.. _Global Attributes:
-> >> +
-> >>  Global Attributes
-> >>  -----------------
-> >>
-> >>
-> >
-> > The diff LGTM, nevertheless.
-> >
-> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Applied as 6.19 material, thanks!
+On 29/10/2025 21:12, Jonas Gorski wrote:
+> On Wed, Oct 29, 2025 at 4:24 PM Caleb James DeLisle <cjd@cjdns.fr> wrote:
+>>
+>> On 29/10/2025 10:15, Jonas Gorski wrote:
+>>> On Tue, Oct 28, 2025 at 10:42 PM Caleb James DeLisle <cjd@cjdns.fr> wrote:
+>>>> On 28/10/2025 21:19, Jonas Gorski wrote:
+>>>>> Hi,
+>>>>>
+>>>>> On Mon, Oct 27, 2025 at 6:19 PM Caleb James DeLisle <cjd@cjdns.fr> wrote:
+>>>>>> When on a Big Endian machine, PCI swaps words to/from LE when
+>>>>>> reading/writing them. This presents a problem when we're trying
+>>>>>> to copy an opaque byte array such as firmware or encryption key.
+>>>>>>
+>>>>>> Byte-swapping during copy results in two swaps, but solves the
+>>>>>> problem.
+>>>>>>
+>>>>>> Fixes:
+>>>>>> mt76x2e 0000:02:00.0: ROM patch build: 20141115060606a
+>>>>>> mt76x2e 0000:02:00.0: Firmware Version: 0.0.00
+>>>>>> mt76x2e 0000:02:00.0: Build: 1
+>>>>>> mt76x2e 0000:02:00.0: Build Time: 201607111443____
+>>>>>> mt76x2e 0000:02:00.0: Firmware failed to start
+>>>>>> mt76x2e 0000:02:00.0: probe with driver mt76x2e failed with error -145
+>>>>>>
+>>>>>> Signed-off-by: Caleb James DeLisle <cjd@cjdns.fr>
+>>>>>> ---
+>>>>>>     drivers/net/wireless/mediatek/mt76/mmio.c | 34 +++++++++++++++++++++++
+>>>>>>     1 file changed, 34 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/net/wireless/mediatek/mt76/mmio.c b/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>> index cd2e9737c3bf..776dbaacc8a3 100644
+>>>>>> --- a/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>> +++ b/drivers/net/wireless/mediatek/mt76/mmio.c
+>>>>>> @@ -30,15 +30,49 @@ static u32 mt76_mmio_rmw(struct mt76_dev *dev, u32 offset, u32 mask, u32 val)
+>>>>>>            return val;
+>>>>>>     }
+>>>>>>
+>>>>>> +static void mt76_mmio_write_copy_portable(void __iomem *dst,
+>>>>>> +                                         const u8 *src, int len)
+>>>>>> +{
+>>>>>> +       __le32 val;
+>>>>>> +       int i = 0;
+>>>>>> +
+>>>>>> +       for (i = 0; i < ALIGN(len, 4); i += 4) {
+>>>>>> +               memcpy(&val, src + i, sizeof(val));
+>>>>>> +               writel(cpu_to_le32(val), dst + i);
+>>>>>> +       }
+>>>>>> +}
+>>>>>> +
+>>>>>>     static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+>>>>>>                                     const void *data, int len)
+>>>>>>     {
+>>>>>> +       if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+>>>>>> +               mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
+>>>>>> +                                             len);
+>>>>>> +               return;
+>>>>>> +       }
+>>>>>>            __iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len, 4));
+>>>>> Maybe just replace this with memcpy_toio() which does no swapping at
+>>>>> all instead of double swapping on BE?
+>>>> I'm not that informed about how PCI works so I had to test to confirm
+>>>> my understanding, but I can confirm that memcpy_toio() does not solve
+>>>> the problem.
+>>> Ah, right, I misread _iowrite32_copy() to do conversion to LE, but it doesn't.
+>>>
+>>> What architecture is this you have? PowerPC? ARM? MIPS? 32 bit? 64 bit?
+>>
+>> MIPS32 (EcoNet EN751221 34Kc)
+>>
+>>
+>>> So the differences I see are:
+>>>
+>>> 1. __iowrite32_copy() uses __raw_writel(), which has different memory
+>>> semantics than writel()
+>>> 2. __iowrite32_copy() assumed src is aligned to 32 bit, while you
+>>> explicitly align it
+>>> 3. memcpy_toio() will handle unaligned src properly, but does 64 bit
+>>> accesses on 64 bit systems (and uses __raw* again).
+>>>
+>>> Is src aligned? If not, then the issue might be 2. And if your system
+>>> is 64 bit, it would explain why 3 didn't help.
+>>
+>> I'm not a regular developer of mt76 so I wasn't sure if that was
+>> guaranteed and I just wanted to code for safety.
+>>
+>> After reviewing the code, I see that there are a few places where
+>> mt76_mmio_write_copy is being called with stack-allocated u8 arrays
+>> so it's pretty clear to me that this is being treated as a memcpy-like
+>> function and we should be handling unaligned inputs.
+>>
+>>
+>>> As a first step you could try to replace the writel(cpu_to_le32(val)
+>>> with a iowrite32be(val, ...) which should do the same except avoiding
+>>> the doubled byte swapping. If that works, you can try to replace it
+>> This works.
+>>
+>> These symbols are a bit of a nightmare to trace, so I ended up making
+>> an .i file so I could confirm what's happening.
+>>
+>> iowrite32be() uses the version in iomap.c so I understand that's using
+>> writel(swab32(val),port), so a writel with an unconditional byte swap.
+>> writel() is more complicated, it's an inline function that is generated
+>> in a rat's nest of preprocessor macros in mips/include/asm/io.h
+>>
+>> The preprocessed is this:
+>>
+>> __mem = (void *)((unsigned long)(mem)); __val = (val); if (sizeof(u32)
+>> != sizeof(u64) || sizeof(u64) == sizeof(long)) { *__mem = __val;
+>>
+>> The source is this:
+>>
+>>       __mem = (void *)__swizzle_addr_##bwlq((unsigned long)(mem));    \
+>>       __val = pfx##ioswab##bwlq(__mem, val);                \
+>>       if (sizeof(type) != sizeof(u64) || sizeof(u64) == sizeof(long)) \
+>>           *__mem = __val;                        \
+>>
+>> The line "pfx##ioswab##bwlq(__mem, val);" is ioswabl() and the source
+>> of that explains the issue:
+>>
+>>    * Sane hardware offers swapping of PCI/ISA I/O space accesses in hardware;
+>>    * less sane hardware forces software to fiddle with this...
+>>
+>> So this confirms my initial understanding, the PCI hardware is doing the
+>> byte swapping unconditionally.
+>>
+>>
+>>> with __raw_writel(), which then would make this the same as
+>>> __iowrite32_copy, except making sure that src is aligned.
+>>
+>> This fails.
+>>
+>> Since I'm the maintainer of this SoC and it's still fairly new, I wrote
+>> a trivial kmod to verify that unaligned access is not just silently
+>> returning trash, it works as though it were aligned so alignment is
+>> not the issue.
+>>
+>>
+>>> Also you could replace your memcpy() with get_unaligned((u32 *)(src +
+>>> i)); Should do the same but inline.
+>> Good idea, I will do this.
+>>>> The issue as I understand it is that rather than making every driver
+>>>> carefully call cpu_to_le*() every MMIO write, someone decided to make
+>>>> the PCI host bridge itself transparently byte-swap all MMIO on the
+>>>> wire. Since most MMIO is hitting registers and most buffers are
+>>>> transferred by DMA, for the most part everything works and nobody
+>>>> notices.
+>>>>
+>>>> But in the rare case that we need to write a blob to MMIO, it gets
+>>>> transparently swapped in hardware so you need to use cpu_to_le in that
+>>>> case. Doing a search of ./drivers for write.*cpu_to_le I can see this
+>>>> issue comes up a bit.
+>>> Every (PCI) driver does conversion to LE implicitly by using
+>>> writel/readl (or iowrite32/ioread32) etc do the conversion to/from LE.
+>>> So writel(foo, dst )is a __raw_writel(cpu_to_le32(foo), dst) etc. PCI
+>>> memory is assumed to be in LE. If you are on a little endian system,
+>>> then no byte swapping happens, and on BE it will do byte swapping
+>>> before writing the value.
+>> Okay so it seems that in the case of MIPS, that's not always how it
+>> works.
+>>
+>> https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6/arch/mips/include/asm/mach-generic/mangle-port.h#L17
+>>
+>> Since we don't know if the swap will happen in hardware or software
+>> and (AFAIK) this is not a hot enough path that double-swapping will
+>> have a notable performance penalty, I think the most sane thing to
+>> do is use writel(cpu_to_le32()) and not care if it's swapped back
+>> in the kernel or hardware.
+> Oh, I think I see what it happening here. ECONET is a Big Endian MIPS
+> platform, but does not select SWAP_IO_SPACE (most other BE platforms
+> do).
+>
+> Does that mean the PCI space is swapped in hardware there?
+>
+> I guess that means that anything that uses __raw accessors to PCI
+> space directly or indirectly is broken, as the raw data is now
+> actually in the wrong order and needs to be swab'd.
+>
+> I don't know if it is a good idea to change this in __iowrite32_copy()
+> / __ioread32_copy() (and other helpers), or if there are drivers that
+> use it on non-PCI spaces and would be broken by that.
+>
+> If there is a way, I would suggest disabling hardware conversion and
+> selecting SWAP_IO_SPACE, but that will affect a lot of your code that
+> assumes that writel() etc don't convert to/from little endian.
+
+
+I can look around in the hardware registers and see if I can shut it
+off for EcoNet, but if you're saying MT76 should not support BE unless
+they disable hardware swapping and use SWAP_IO_SPACE, that means the
+majority of BE hardware on OpenWrt is not going to be supported. If
+that's the decision then it at least warrants clear documentation.
+
+Thanks,
+Caleb
+
+
+user@cjd-dev:~/en7526/openwrt$ find ./ -name 'config-6.12' | while read 
+x; do grep -q 'CPU_BIG_ENDIAN=y' "$x" && ( grep -q 'SWAP_IO_SPACE=y' 
+"$x" || echo "$x
+  does not use SWAP_IO_SPACE" ) ; done
+./target/linux/apm821xx/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl931x/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl930x_nand/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl839x/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl931x_nand/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl930x/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/realtek/rtl838x/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/ath79/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/octeon/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/ixp4xx/config-6.12 does not use SWAP_IO_SPACE
+./target/linux/econet/en751221/config-6.12 does not use SWAP_IO_SPACE
+user@cjd-dev:~/en7526/openwrt$ find ./ -name 'config-6.12' | while read 
+x; do grep -q 'CPU_BIG_ENDIAN=y' "$x" && ( grep -q 'SWAP_IO_SPACE=y' 
+"$x" && echo "$x
+  does use SWAP_IO_SPACE" ) ; done
+./target/linux/bmips/bcm6358/config-6.12 does use SWAP_IO_SPACE
+./target/linux/bmips/bcm6328/config-6.12 does use SWAP_IO_SPACE
+./target/linux/bmips/bcm6318/config-6.12 does use SWAP_IO_SPACE
+./target/linux/bmips/bcm6368/config-6.12 does use SWAP_IO_SPACE
+./target/linux/bmips/bcm6362/config-6.12 does use SWAP_IO_SPACE
+./target/linux/bmips/bcm63268/config-6.12 does use SWAP_IO_SPACE
+./target/linux/lantiq/config-6.12 does use SWAP_IO_SPACE
+user@cjd-dev:~/en7526/openwrt$
+
+
+>
+> Best regards,
+> Jonas
+>
 
