@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-876235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90FE1C1B2BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 15:22:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1EAC1AE3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:47:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 618CE5839E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:46:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6688234F49B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 13:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F06A344025;
-	Wed, 29 Oct 2025 13:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07C8D3491F4;
+	Wed, 29 Oct 2025 13:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="J1yE8NdV"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="a0JFJJ9n"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A810E34403C
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB5A3469E4
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 13:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761745046; cv=none; b=aJ70TZs34Z9gShOI6WLvCyT4zqYZ3ajVq+9sB8klgaaiwuoyVdhSowwf4Vvuqu+7cIN94UUcFY5ht8EOgPNB0OrwuN3jI1Ab/sIP2aTu1U5cvkcajpRDbTXnpaA0RWubdKYdV2RnV23f8kZ1FkRLdFFr7Psv6Qfg989wqUNNREE=
+	t=1761745050; cv=none; b=OEvvlYlUMRVouEzaWSWBn0A3MNQWUhx2p5uJ4ZI2qMxLo1Xb2ZpxidKcjybNfILnopk+ZYN0WPm0B1aIGwpD87Zfq/YGMzEhmACk3uF+utlW25SR4/pYWH6hCs/N3FkzL1boAwsulxVfbu1n5JpvZ65X3FSOeNQKmA79izreK2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761745046; c=relaxed/simple;
-	bh=y2VZitFnyMAF//3DV85VW65rpuPKMJsAdCQOFBOrAC4=;
+	s=arc-20240116; t=1761745050; c=relaxed/simple;
+	bh=GZ10kK+pYLUSiMaANpNaBmHbt+19wn5/MQvWC5jgaQU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZNHe9xj15P0HVmHvBDK5PvuK/WI6Z3HARWJQLenf3wqQ/EFWlOLTrKuYvXH+gBtSzuZYNt/CFG+BxCQTV/lCQc50lyuN1rdBlqlqIv7KiA3spSuttth1r6Fr/xu5k99TRx0NYNhGvvOQuLJnGP8GAVihB2+8hyyd9W1z+T/A7Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=J1yE8NdV; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=Qyi7c7EIuz4CEr57ckmd4zS3+laBVPLlZ9wQa3fC3AzyK+UnGyjN8bFqY0PwHFBxKdkbVtlolQ7UBRzn+t6fB8T+Znav+ck6e2C5k36PHCqcl0TdTFMAiRYcs9+jamX8sJlpZFPos3gQ4gciAh+SyS89531bfCmkayb6VIuxe8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=a0JFJJ9n; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4771b03267bso13184205e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:37:24 -0700 (PDT)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-475dae5d473so45223265e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 06:37:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761745043; x=1762349843; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1761745046; x=1762349846; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tOnem/V6StYdNJ3QFm03HAZO72OKwXmNpP2fQEiuLYs=;
-        b=J1yE8NdVVxnSRGckz2Yny1mfGibiEP+oiu2cfizae5Uyp+G/j5XyZNW30A7CxkudKY
-         sLPY2YSpA2FAnp9EyF/4beH9IJezyhleOPQkvqFwzafm1Y6qpHlalR+P19LtUNhrM5R6
-         n1A4eR0HP4rk6r9y1efIwXn1wPcIWNW4j6StoLY2ZNt4oqBOCncipOkkfLNpBo7Ud++n
-         pI05vL3TTq5kxPmAEi8VmTEy2qYKdylY5i/CdqNghiaX/AafimoVeVwBfz0hS8v5ruCS
-         1gRJF7mO4A3K05NIsk0SUVHmlbyFCKgAcN1Xy2NjjApKP+dxZVIx2gnD+7AnSnBq6iA4
-         4QeA==
+        bh=US6TL4WKOMJYPiF+qfjdrtMs7INfn6qweemcxJelWcY=;
+        b=a0JFJJ9nJIw5ExDu00WgC5AVmKvQoezQe5B5Tj/XTdMsCpN2bkIpayke9NZCMmLoWJ
+         LM0E0BY/nyUcoiN6nniVYJjPtiFypCYZtnkmKbpJ7rPOEZPxI2ASOsMCsU8nycyQZNpO
+         g5GQC5/Vw+eRI78sYt2pQ1Hpry7yeBljNcsIi1UcJD6fTFV7eFH53XDlFm0PgQIxUW/j
+         U8Bg8dLBEcZVgFLqHlyt+qeLjFJr4FjljmSS2hw4dRY2H9cxd8lRXJIhPkAObqMYefuv
+         gVNG2ptY7QxmuS3u0Lv12/vNMs4W60jE5qjkF9NF2wwJra6QltjtfWh+jRlF4a/RMnKU
+         JZaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761745043; x=1762349843;
+        d=1e100.net; s=20230601; t=1761745046; x=1762349846;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tOnem/V6StYdNJ3QFm03HAZO72OKwXmNpP2fQEiuLYs=;
-        b=vt5ExrVNhN8rNMCilATH1jx/4GXNF+yv9p4AaYTpSHdWC7Woz7JOgxvC5bbFT3NQQ/
-         yAr5N3uY/J63EpJehA584pCGbO5lw+NTU5ic/VhkR1UWSEGDVSEFgJA+iXUhOsEJhR0v
-         Sb28fOhGONUxZb5EsJT13sJKr7JE6oxJqj0XOs82+NdeuyZSp5c+JQOvwGNLZOtG6Ibo
-         dGUf4obpH4lMFqAWhc9pVx1KvOJx68nnxKcVI013SzhfYnmcqZl6V012VzUjIxd8foLv
-         vZGJZgDG9qOvquM/jccfFcV8q02OBAHnH1cDBmSdCYwnJ29Sd0bhjUw8MWlpLq5tsjgL
-         qatQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8tOK+JvG2awyaIY0Tzy94ItilR2HU5VaKsnUWdWroNRjVfB6MFWyPA14cGSFTGqofjovUh34s54qGJ0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKyLljBUD0t8qwXRbCrS7ooCHLQhSYZdXPproGiTQLWl8m36dh
-	XdFYggm8o6SUHviDwTApg4jpyDDRoAhBiyMKtvTcs91BNcLg8ahT0KvVBwrxyQseuR0=
-X-Gm-Gg: ASbGncupuqoG1dY4naFuhzPWXiTMOjHcd4VnADdM1klKTAgypvUKdW0fMvlillwF8Mg
-	meZ7/L0LqyCqaproQ8pXjqu4/TNrYkN8Wk29uO/zmbtnJmeSev+zZj7A3shWga4K6/8WKrznTU8
-	/zXOMh0Wrlyr4pnVIBTDozkOMpHtC/SFPdi5fgiN5o//6lfNlBNCme5k8t1skB7muReD85FWDu4
-	OEWG9P/t8nGrvokLFLAw6/5eQTXa380dCph/KU6/7UXKesD5Nzcc/3mG/SGxJXTPDx9lEH9gYU2
-	l4uoYxwX7GfZDumoKoKSHSy6yC6cWRjJ5W5162YRedMrTKaO7tTWBXyte8C79SZC1y/nZ16Qkjc
-	/QdsBEENcUFVexQPwCTux0yMbGdinYDJBncc18W7XVffEpRDDOzJ5xlFQwdMbvuT+kL8M05lRev
-	vJWB5bgN5la2qSobnxT4Yhw/vb2m4MKVWWxCDXPmWSF1ylN834H3B1AyNsna0G
-X-Google-Smtp-Source: AGHT+IEethgYpnTg2jwlRdzgRC4JyZTZPECc8AeE2OGI9lXyIkOPLHAAxhLEM8L7qMUf94wAFDN46A==
-X-Received: by 2002:a05:600c:b85:b0:46e:39da:1195 with SMTP id 5b1f17b1804b1-4771e16e3d2mr26860635e9.3.1761745042854;
-        Wed, 29 Oct 2025 06:37:22 -0700 (PDT)
+        bh=US6TL4WKOMJYPiF+qfjdrtMs7INfn6qweemcxJelWcY=;
+        b=KG3DhqbgF6/D788CcOx0GwnWbe+9/i+qPF/4jt/SO/Mk+IDoUoHUdTVTNRtB0XMryg
+         hCfpqRJvkKMB4kAiyYJpUDpgYKsVmc1iAWP0QDJXT7zzntucQp//AKZ2ZAGvsNlIwCYK
+         Wb/JiLtBdeyGbVUWk/Wt+sUhVlotqx520PqBhw+PfxJ/UT8bl2b+dGup+WGiHBB9YWT0
+         +7QWspow7YPrNW7u/3RnQUiso3f0qxmhZewnZSu+6tkisJLVSIoD1NUdUOBJPrw+eC53
+         Fm9DLl2RKkIYfTni3NZdc2jMAIX85R8DhQ5E/l2pTI1dkQ/bYz/BWXDywptcfZyrZ6GV
+         0rlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+wx9qKpkjdniNagHzv7TaC4Dh+ByXSlLMEez8661fzGD+5Haxy46QU6XkkuaodikvfGLGqm+UsI6vwQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeRfdANzrjHhcmNLBdZaAJp8r7XoJ+LBZklq2zlA0izJgtMeDm
+	SKWKZqP4TIFfplm/2kh3RTeQfDanrPy0Nf65IWZj39l3JL1Stz6ZdJpMj7tdrMFB5RY=
+X-Gm-Gg: ASbGncsdYCMOLVXpOZ5KgGItk0B5UtnDBLFB6ftQQ6SsAIoIO8LmWGMs0dqzEsZFKSj
+	o0Tv/1MJCAfYaOj9wArM2QlPnMsHNJEbnGMbBeBfpFOUppLGYQLEe3Mt+ULeP/uaeb41ef6+tKt
+	TelBkftX7PkXfLKer/Q2eLLmksBqibwdS5A0KrtsOadxylm29xFBO5WvgK/E6jAXw9WaQzlLJ8q
+	7GyYCOda3QInJVOQMg4geCxwGGTyC/PWicqS34kY+C4Z+m3c078ih0B0bP03DIYM59IKr8M7nG/
+	YdiDDsYSWhKi34Ix25BHH/ilguIHrUYef8choDm5y3f86IpIUIsmNCcjDGOvnfzsGFbnDMN8a/n
+	oNOHbCzPuL5+8aGggKbuTZf+15ssllrVBg8jsRYAGUxndmftd7KsmgIqtBMa+1NrAN4XSCqL1vN
+	IEo8na2muuZzvcRH2N4fF9qi3l5iubVkMOUyA6AaUBC1swD9xRzgUA0iROH6ZA
+X-Google-Smtp-Source: AGHT+IEtPz0Owa/uEAi7Mu4+EoNUOeaQ///6DG4yCtEM4dUCCiUVnDE6W6H21Mp9cuh5kJvNRIk1EQ==
+X-Received: by 2002:a05:600c:4e56:b0:475:dd59:d8da with SMTP id 5b1f17b1804b1-4771e3ccf23mr25357735e9.40.1761745046169;
+        Wed, 29 Oct 2025 06:37:26 -0700 (PDT)
 Received: from claudiu-TUXEDO-InfinityBook-Pro-AMD-Gen9.. ([2a02:2f04:6302:7900:aafe:5712:6974:4a42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e22280fsm49774795e9.14.2025.10.29.06.37.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e22280fsm49774795e9.14.2025.10.29.06.37.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 06:37:22 -0700 (PDT)
+        Wed, 29 Oct 2025 06:37:25 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: lpieralisi@kernel.org,
@@ -90,11 +90,10 @@ Cc: claudiu.beznea@tuxon.dev,
 	linux-renesas-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v6 3/6] arm64: dts: renesas: r9a08g045: Add PCIe node
-Date: Wed, 29 Oct 2025 15:36:50 +0200
-Message-ID: <20251029133653.2437024-4-claudiu.beznea.uj@bp.renesas.com>
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v6 4/6] arm64: dts: renesas: rzg3s-smarc-som: Add PCIe reference clock
+Date: Wed, 29 Oct 2025 15:36:51 +0200
+Message-ID: <20251029133653.2437024-5-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251029133653.2437024-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20251029133653.2437024-1-claudiu.beznea.uj@bp.renesas.com>
@@ -108,119 +107,40 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The RZ/G3S SoC has a variant (R9A08G045S33) which supports PCIe. Add the
-PCIe node.
+Versa3 clock generator available on RZ/G3S SMARC Module provides the
+reference clock for SoC PCIe interface. Update the device tree to reflect
+this connection.
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v6:
-- dropped max-link-speed
+- collected tags
 
 Changes in v5:
-- updated the last part of ranges and dma-ranges
-- collected tags
+- this patch is the result of dropping the updates to dma-ranges for
+  secure area and keeping only the remaining bits
 
-Changes in v4:
-- moved the node to r9a08g045.dtsi
-- dropped the "s33" from the compatible string
-- added port node
-- re-ordered properties to have them grouped together
+ arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Changes in v3:
-- collected tags
-- changed the ranges flags
-
-Changes in v2:
-- updated the dma-ranges to reflect the SoC capability; added a
-  comment about it.
-- updated clock-names, interrupt names
-- dropped legacy-interrupt-controller node
-- added interrupt-controller property
-- moved renesas,sysc at the end of the node to comply with
-  DT coding style
-
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 65 ++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index dd9c9c33d9d6..251335749247 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -727,6 +727,71 @@ eth1: ethernet@11c40000 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+index 6f25ab617982..982f17aafbc5 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+@@ -168,6 +168,11 @@ a0 80 30 30 9c
+ 	};
+ };
  
-+		pcie: pcie@11e40000 {
-+			compatible = "renesas,r9a08g045-pcie";
-+			reg = <0 0x11e40000 0 0x10000>;
-+			ranges = <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>;
-+			/* Map all possible DRAM ranges (4 GB). */
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 1 0x00000000>;
-+			bus-range = <0x0 0xff>;
-+			interrupts = <GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 404 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 405 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 409 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 410 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "serr", "serr_cor", "serr_nonfatal",
-+					  "serr_fatal", "axi_err", "inta",
-+					  "intb", "intc", "intd", "msi",
-+					  "link_bandwidth", "pm_pme", "dma",
-+					  "pcie_evt", "msg", "all";
-+			#interrupt-cells = <1>;
-+			interrupt-controller;
-+			interrupt-map-mask = <0 0 0 7>;
-+			interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INTA */
-+					<0 0 0 2 &pcie 0 0 0 1>, /* INTB */
-+					<0 0 0 3 &pcie 0 0 0 2>, /* INTC */
-+					<0 0 0 4 &pcie 0 0 0 3>; /* INTD */
-+			clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
-+				 <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
-+			clock-names = "aclk", "pm";
-+			resets = <&cpg R9A08G045_PCI_ARESETN>,
-+				 <&cpg R9A08G045_PCI_RST_B>,
-+				 <&cpg R9A08G045_PCI_RST_GP_B>,
-+				 <&cpg R9A08G045_PCI_RST_PS_B>,
-+				 <&cpg R9A08G045_PCI_RST_RSM_B>,
-+				 <&cpg R9A08G045_PCI_RST_CFG_B>,
-+				 <&cpg R9A08G045_PCI_RST_LOAD_B>;
-+			reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
-+				      "rst_rsm_b", "rst_cfg_b", "rst_load_b";
-+			power-domains = <&cpg>;
-+			device_type = "pci";
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			renesas,sysc = <&sysc>;
-+			status = "disabled";
++&pcie_port0 {
++	clocks = <&versa3 5>;
++	clock-names = "ref";
++};
 +
-+			pcie_port0: pcie@0,0 {
-+				reg = <0x0 0x0 0x0 0x0 0x0>;
-+				ranges;
-+				device_type = "pci";
-+				vendor-id = <0x1912>;
-+				device-id = <0x0033>;
-+				#address-cells = <3>;
-+				#size-cells = <2>;
-+			};
-+		};
-+
- 		gic: interrupt-controller@12400000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
+ #if SW_CONFIG2 == SW_ON
+ /* SD0 slot */
+ &sdhi0 {
 -- 
 2.43.0
 
