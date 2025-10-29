@@ -1,116 +1,222 @@
-Return-Path: <linux-kernel+bounces-876883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B818C1CA6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77968C1CA87
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 19:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 883B44E3179
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:58:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2A86C4EBEC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 17:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96F4354AD0;
-	Wed, 29 Oct 2025 17:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED4D2D5940;
+	Wed, 29 Oct 2025 17:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nc370OoA"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MW48nfcn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665BA30BF75
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 17:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2395333F394;
+	Wed, 29 Oct 2025 17:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761760656; cv=none; b=pr/HTHoRKjJ29yn1ps5SjdmPqGI55r8AcvYhrHEVlDKDfuiAJQxaPL8cP0c3+WAzf/YN1kR03CFoCpjyMHAZTmiIlWd01LHUDvNbVKt8OkeVzAEYhuWLYb1kgKfpKgwx21C5AHQfrGYx+wAJYcw+ND5wWirB94loA+LmWjUIX7w=
+	t=1761760734; cv=none; b=Rm4Qw004WKuTTY1qOQMTGrB29lEJh1bvFbqY4RQOrzY6zUMPD6I/xEjAEENvK5VBRqDrtd99RNOlqsreXy/uD3EETjfKK0k9ioE3OJLUqlZ1F5u8tNYjS8JtM5tptVXcRElHKVrst2Toh1aVm01pxrM0R2BZSpYUYC9KJRRVqeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761760656; c=relaxed/simple;
-	bh=q4G6Z3tmtUPTA3pyRliiBAglQ+ctalR59e9PIQK8Jjo=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jciVVs+lxEE7ux9UQNJAGDg975ugXYq2jeQXGZWPyYWvLNPx7WLydbWDR6ZGoHFyQF2M+WhwXgj49Ls1cPGQnBzjV6tqBdFRKUuHb9fTYjAufHK8jweYKHKQvTWLXuTGdgxZD/tiUuUlRNQKG3794KZjDSO+u5Cg175wVnbQDI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nc370OoA; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3ee15b5435bso126590f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 10:57:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761760652; x=1762365452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PizgSZp8pst5R3ZXKOAFmbyk/ir0h79jwp+tXy3J6Ik=;
-        b=nc370OoA8Etny9+1rEHQdT+97Sbzy08s3SQlNgyg371QPQzEqIuYwCRRbfiOvjuaeL
-         jge5/UGYoGBtyu+G7/DW3ePimY/b75tJ0uelpgfhPYnqV8BwVfeMupSq709tE2E1C4gG
-         SpxfjZsFI/seImUp4D/ad7ISRTpPrO+ZbccLqSHi/d3kogW1RYss+Qcfsv9lgKoA1KBZ
-         1Bk0z7CGZlAKFi5V/g4VNPfY4cMWUxYMS+eGYHbP6/Nc4jOSjeDW4oAPmMPDbcu+DMH3
-         gKOORB9WCdwqq5W1idvthDJGbGEnLSiOzst7BUsw1IurKqRsOk4mU29L8lBFEkOBboUC
-         saUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761760652; x=1762365452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PizgSZp8pst5R3ZXKOAFmbyk/ir0h79jwp+tXy3J6Ik=;
-        b=vpeJqkDpJNQPkxsBlM2jyO1Y9p1akrzzK4hY2d7WraXO6ZBpXMcznIBnRgQoNWKzIY
-         s0L8KWJiw2vKFA+D5HEovCY3EiYrhpinbd0ChNDgkJD0x5QHImpIy1LOX4F29qI2c+ip
-         +6Bi0SNdi6OIHQg4VTM0lhurAqc/8FU/d2ZhWSWD4vH7nrDq750T0zjspm3seEh+MQRz
-         OOKTwVtYvnbISPPWOtuCru0ufPX8CwBkt60N10XIB46wfGIsuaFMYzz51vz8pveRt/vd
-         Udx35UI94JbhULadlA7JxZWcjtR7RpVo6mHvieYS7L5Sws5XPLij+n5oe9jNxbFYAXiY
-         OMqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWT3VrCf1i3qBThBA7HY0FUdXMQZk4PSKcpP0YtMoJHYNtnaIhxNDXeMEAUIro5csgETcayYmkdVTqGjiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPw8pdCPZJcEUmhl2jxJZo/t5ggqYT3EsjbFS8Cm9qzhY9/RDA
-	sHxiDX483JAuEBTqLUrCS/w3/OzYUyNvsW3ptOwinfuhbQxCIZgf35SYjbNuiQ==
-X-Gm-Gg: ASbGncvtkYjYs856BqNme38dttb4kQzBdwChpitQnfqADUGwUWIazyH8+KbAFWobJBr
-	MNKQZ4Pauy70f0WJIeW8qBnjtY3Gx4WXnKcX2kxV2iwHk7QXvCAUQ3rK2FX3/SM6csm0QAcp/Eg
-	6UUNzMkWCL7H49e4kG1au1I+lL2TCpqytRnL1vdwd8fv9ixov1tZ7ym3mOfWv2jUqBAD5kVHUMW
-	jsUNaiWC/Mb+mYgGolpy1M7f9mfk3IowRzaq1PxFth0ilXidHWhrhYbgm3nLHjiOJYvWzJZWh3n
-	gCxNfpXWpXS6XJbMGlTVECyqncEgfEeUbwuL67f58O75n6/JuDc0E/IdFWmL4PEqSTqUEscTlqy
-	W0B3jXjEvgcyhxftE03CCN308i4JtyC5qVnuUnW5uwfRq5VVsGWWM66Hq2O1OT8IiqoBMmHxu3P
-	coHvxDV7kIX3Uws9AhywAuUDm1udX6Cw==
-X-Google-Smtp-Source: AGHT+IE5Q6T9pvLvPyRy7McqkUhSQviQSdOilTp+2soA933WphNo3Q/lSUJ5/V5yEcSVBOx/08pMRQ==
-X-Received: by 2002:a5d:5f90:0:b0:3e8:f67:894a with SMTP id ffacd0b85a97d-429aef715f6mr4386949f8f.5.1761760652309;
-        Wed, 29 Oct 2025 10:57:32 -0700 (PDT)
-Received: from Ansuel-XPS24 (93-34-90-37.ip49.fastwebnet.it. [93.34.90.37])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429952de5f9sm27520132f8f.38.2025.10.29.10.57.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 10:57:31 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts: add tracepoint-update to .gitignore
-Date: Wed, 29 Oct 2025 18:57:18 +0100
-Message-ID: <20251029175720.12998-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1761760734; c=relaxed/simple;
+	bh=ZTqNfE12/OY2hJBlOM+SDakOKIOgcInVy8P7IwXldec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TeIPspRRhu6/RxK2p7y2kuRKfYlvU4R/ZwFW+zwA2aYQgHYOLJNTDZK8Xg3aQKkDm0o36lq5VWtJmb8OlXR+0M9OeKHNtdm7P50AP0krFJVwbHfoAkormsDImurY1JO4DX7ANigsjX/k9d9Rthw6RTj8ZsFnvD2gRBdNadoxj1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MW48nfcn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C137DC4CEF7;
+	Wed, 29 Oct 2025 17:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761760733;
+	bh=ZTqNfE12/OY2hJBlOM+SDakOKIOgcInVy8P7IwXldec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MW48nfcnhyPke7+bwVWNs4hq0w1hddXCPFQBiJGapm/WvzmP90voWL2BCmSFCVz9Q
+	 kJ7nfZH0bmYJUy9xLw+A72lHekoe+TqVkhIhFrg74+PtBufx+GCF1e1nuNR2W9mRw2
+	 n/SNJ7loGvcQdkpKVoYrCnZhu0qKWHM1toNSznvV4J4R3aDuKZPQAkZy9ifJcDcHGb
+	 oj/6X25NOIE/IRJI3OTS7nb4IDQuVFAbLb1lvdxG60eF5MNFMqUF26S2Gt+QsOV8fY
+	 fgLr+kB9wbO0lOpChRjhJC3WNA0PUBSPrUUDmeLhtR4xMnHWqEI00CwG4EJ/2h7dL8
+	 fvCXCGW9Api7Q==
+Date: Wed, 29 Oct 2025 17:58:48 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+Cc: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-spi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 11/14] dt-bindings: spi: renesas,rzv2h-rspi: document
+ RZ/T2H and RZ/N2H
+Message-ID: <20251029-relieving-prude-c097e63f368e@spud>
+References: <20251028133151.1487327-1-cosmin-gabriel.tanislav.xa@renesas.com>
+ <20251028133151.1487327-12-cosmin-gabriel.tanislav.xa@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="FWiBg5MDrLC1yaeJ"
+Content-Disposition: inline
+In-Reply-To: <20251028133151.1487327-12-cosmin-gabriel.tanislav.xa@renesas.com>
 
-New tracepoint-update tool is not ignored from git when built.
 
-Add it to scripts .gitignore to prevent including files in commits by
-mistake (for use that have the bad habits of using git add .).
+--FWiBg5MDrLC1yaeJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: e30f8e61e251 ("tracing: Add a tracepoint verification check at build time")
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- scripts/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Oct 28, 2025 at 03:31:42PM +0200, Cosmin Tanislav wrote:
+> The Renesas RZ/T2H (R9A09G077) and RZ/N2H (R9A09G087) SoCs have four SPI
+> peripherals.
+>=20
+> Compared to the previously supported RZ/V2H, these SoCs have a smaller
+> FIFO, no resets, and only two clocks: PCLKSPIn and PCLK. PCLKSPIn,
+> being the clock from which the SPI transfer clock is generated, is the
+> equivalent of the TCLK from V2H.
+>=20
+> Document them, and use RZ/T2H as a fallback for RZ/N2H as the SPIs are
+> entirely compatible.
+>=20
+> Signed-off-by: Cosmin Tanislav <cosmin-gabriel.tanislav.xa@renesas.com>
+> Reviewed-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> ---
+>  .../bindings/spi/renesas,rzv2h-rspi.yaml      | 62 ++++++++++++++++---
+>  1 file changed, 52 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yam=
+l b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> index ab27fefc3c3a..65ba120a6b23 100644
+> --- a/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
+> @@ -9,12 +9,15 @@ title: Renesas RZ/V2H(P) Renesas Serial Peripheral Inte=
+rface (RSPI)
+>  maintainers:
+>    - Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+> =20
+> -allOf:
+> -  - $ref: spi-controller.yaml#
+> -
+>  properties:
+>    compatible:
+> -    const: renesas,r9a09g057-rspi # RZ/V2H(P)
+> +    oneOf:
+> +      - enum:
+> +          - renesas,r9a09g057-rspi # RZ/V2H(P)
+> +          - renesas,r9a09g077-rspi # RZ/T2H
+> +      - items:
+> +          - const: renesas,r9a09g087-rspi # RZ/N2H
+> +          - const: renesas,r9a09g077-rspi # RZ/T2H
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -36,13 +39,12 @@ properties:
+>        - const: tx
+> =20
+>    clocks:
+> +    minItems: 2
+>      maxItems: 3
+> =20
+>    clock-names:
+> -    items:
+> -      - const: pclk
+> -      - const: pclk_sfr
+> -      - const: tclk
+> +    minItems: 2
+> +    maxItems: 3
+> =20
+>    resets:
+>      maxItems: 2
+> @@ -62,12 +64,52 @@ required:
+>    - interrupt-names
+>    - clocks
+>    - clock-names
+> -  - resets
+> -  - reset-names
+>    - power-domains
+>    - '#address-cells'
+>    - '#size-cells'
+> =20
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g057-rspi
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +          maxItems: 3
+> +
+> +        clock-names:
+> +          items:
+> +            - const: pclk
+> +            - const: pclk_sfr
+> +            - const: tclk
+> +
+> +      required:
+> +        - resets
+> +        - reset-names
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - renesas,r9a09g077-rspi
+> +              - renesas,r9a09g087-rspi
 
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index c2ef68848da5..4215c2208f7e 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -11,4 +11,5 @@
- /sign-file
- /sorttable
- /target.json
-+/tracepoint-update
- /unifdef
--- 
-2.51.0
+Do these platforms have optional resets? If they do not, please add
+"resets: false" & "reset-names: false" below. If they do have optional
+resets,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+pw-bot: not-applicable
+If they don't, you can apply the tag when you add the ": false"s.
 
+Cheers,
+Conor.
+
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 2
+> +          maxItems: 2
+> +
+> +        clock-names:
+> +          items:
+> +            - const: pclk
+> +            - const: pclkspi
+> +
+>  unevaluatedProperties: false
+> =20
+>  examples:
+> --=20
+> 2.51.1
+>=20
+
+--FWiBg5MDrLC1yaeJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQJV2AAKCRB4tDGHoIJi
+0nFGAQDSmQ4OK0aex2kkGKOPqcTZtWEKmOCHzGqia+7z1QcHGgD/VQwGjfiKeEGv
+C0Sz7D4lzzgi1XrCQm0Ulwe35AHLLgY=
+=LqV+
+-----END PGP SIGNATURE-----
+
+--FWiBg5MDrLC1yaeJ--
 
