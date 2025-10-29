@@ -1,2117 +1,668 @@
-Return-Path: <linux-kernel+bounces-875125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F46C18455
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:04:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED1BC1845B
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 06:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA4A3AC984
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:02:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A1C1B4E95ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 05:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E227C17A2E8;
-	Wed, 29 Oct 2025 05:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD5D2F6579;
+	Wed, 29 Oct 2025 05:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qqF3hSk0"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95AC1F12E0;
-	Wed, 29 Oct 2025 05:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIlxOBWP"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246C62882A1
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761714133; cv=none; b=qUWwgkdf3EZJ9QLyBdK1LW0AIG6zmAJKRAmvhXqEIk9SO5yRIqadALkSzUT0lY/o0g9gXttyHa+KnHjFQgHMws/Gi5Ot7b3s8UYlKSffZ0wYmR9FXMajG6nX60NjPZl+udQlFHTSQwyutywJxll8HuKMAqKXDc7GqaYRr8CzUKk=
+	t=1761714277; cv=none; b=Ow8D+qD3i+rlnI4LObhbfJFZ2HRbOa0B6dSQdw4QAORDAT6Yr6ZrlqVL4pmdw/RuAS40N/bvsAJdVVwZoQX/YwTR7oVdXLfua6W43+QLbDnQnVmRyWPqVDgcIsLPD35NCNBrji6HzBxsLD7U9OprLrZIO/YFVGcj14IuNytzzJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761714133; c=relaxed/simple;
-	bh=17pZdl+hJ2sbnbhdQ+lETqhkan42kKX/ps9JpMh6JQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lQLOfGKVtUAhAbFkoMJb27DGyOtJwMh2aY0LwcxhponSbm++z+1KwvfKchP3Gu3bcvdOVfdWQCKhQ9qlJlVmV13FDeEi+VwprGZO5SIgCtjCSQzUW4lOXpsQdnce3FuHfgLMFsBGc2CFhfmHrvMCHZjFEBN9fKD4+7tfRkEHz0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qqF3hSk0; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from CPC-namja-1AYIP.redmond.corp.microsoft.com (unknown [4.213.232.42])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 30E9D211E323;
-	Tue, 28 Oct 2025 22:01:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 30E9D211E323
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1761714126;
-	bh=LY97rth87JPMzlsmHJI2tHkRi9RXbbNoE5iyshgeVBA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qqF3hSk0olRmct0MR/uslwoBWDncBuNZ5vyMRjC0xUcAfbV88xQ7Vpmtqh/wY8kPJ
-	 7yiw8Zm2kA3KwBYgZV0QvQCOswo7lNaEdvSBpb0rK72BOoa2BFHhF4gIgMzeC8dcce
-	 I927l1L982wY8CcRrjYpqIHtLtiGqf7gZikTxF40=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Mukesh Rathor <mrathor@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Naman Jain <namjain@linux.microsoft.com>,
-	Nuno Das Neves <nunodasneves@linux.microsoft.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>,
-	ALOK TIWARI <alok.a.tiwari@oracle.com>
-Subject: [PATCH v10 2/2] Drivers: hv: Introduce mshv_vtl driver
-Date: Wed, 29 Oct 2025 05:01:39 +0000
-Message-ID: <20251029050139.46545-3-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251029050139.46545-1-namjain@linux.microsoft.com>
-References: <20251029050139.46545-1-namjain@linux.microsoft.com>
+	s=arc-20240116; t=1761714277; c=relaxed/simple;
+	bh=uUMjKQd1nrUi8O/tjDJIsP49/XT1Fe5H5AwXoJVbfjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CYmJ5m+RC0ZHNBZCVG52l1DChULpZcyJYstlRUvgkPT/NjPN57VoG6Wg3pZhK6tQ/ugAcfdQcHpCFSbJzAbKrJlhjSt5pNeQchS8PgOWXt9hzMRoukOb1IC93XLZ2chKmanjlSvXSCzbF/vf34fzgEjTYz+T/FljXIvSpCyvBMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIlxOBWP; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b70406feed3so83429266b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 28 Oct 2025 22:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761714272; x=1762319072; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vgfDUzdG5W6T8jK17/beJCx0BfwfHWG0x2BFbH1rXQA=;
+        b=IIlxOBWPIC3uF3werTbV6j1JiPNv6t+HMPQkcoC9BZ4AhGeOSv6KOuLuiAb9ZUh1+M
+         eqedQW5vu2u07Een26vSfEZCnTHI+LF/nkkRwDG1yXsgDPvpRdniEu+Dhw22y2tAgqp/
+         CxUf3rHlQ58pMBwQxMHvtAn7qJucShQdRBkEnCigS9hX4VQBfmF6y75elS74ZSy2TR1k
+         kuCxu867l0gNbj64VIA223ZGf+Pfki2LprFUPpnzS7Mfs3i+z5s4j+6bSGkyUD9LGwS/
+         v9cHajMnv4zmGguZgCQjRWmbpf7RuFRS9bYJWljvsgPDyeQo+4ccHRdKWRX45SlfwdYi
+         piPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761714272; x=1762319072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vgfDUzdG5W6T8jK17/beJCx0BfwfHWG0x2BFbH1rXQA=;
+        b=IQIzGUxwDOq6bbkiHeK4hl98RWOJIAs+X5qpjbZK+YflThpPC1jySgZVDdqB/KS1KD
+         LTapi7Uoiahrv/IcVvnaCwEH3nuPsD8OvE9B4jVLYqv8i4vtbOs+9a4LKXdnJErh5SMz
+         n/MK9CVvs3QOg2wjKlvZJ0QH8Raety8hcaJZsD1H7K+ZlqVptNax5VzGFN5I/I5GDew/
+         qUdYANqHmZt+boltw34uzsTr0PVPiX7HTkDdch9DyACRwp/+52Ni64W9ngP6CtOJMYfF
+         bHvKiSG4qpaIcTN6+UCuCdWHuLI99NA7r+D2rj/riVvITRNkZfLbXpKNh5QQ2u2yZH72
+         e7tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUia3jNSEmwSXA1KzuLaXUBLyzmXsshBwqf2m0K/YSwD9AgmWs4pktOgT5sIhYzcBdV6EzAIQrU/W4suoY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxZ3Gr7YMFwgvBsTXkNgHcIzsebxF+TTFotnGM2JQ7samGrIX7
+	2fVrWsSPTx6rrWX+PgxruEGqDK5tzDhTo45kxfTJKF/bS0Vd9RGZKBYV+QqchPhluxw7p1+VyFK
+	ZOnrlv2+4RaFQgsNDKrUP+9BaGG8kWXY=
+X-Gm-Gg: ASbGncuOQS5za/Wp6G031ypNtZzTrOEodf6nJ8ijJ0zHU+K8Fjy19J61lLMg71hJS/c
+	z5BnByhGEc3tIWdHZuoNqax8EqH9pICo6AAC2OTok1QejzYU03q7XFaIh3RMWh8K87lA7Tr23pk
+	KfCJ7HTygPf3ULAzn6M2VIlIayiJLrEgVFd7UnYnyDiV3Cdf6qlGibAnDwj/ntBMwKF2+KrqJuX
+	BTdVK1D8kNT+H9EyUEIT3N8Hn+9CzlKGI9w82SRPqOi9BJBU9duXhGdKjUFhQ==
+X-Google-Smtp-Source: AGHT+IGtf2mvPt1zHXOCTQN2kA6uPHYPIk/PSDkri1uGTVEGlimrmvlhMVnvFMqkX4sof8I3CnxNW3z7Fhubf5cXBJk=
+X-Received: by 2002:a05:6402:2347:b0:63b:ed9c:dd0e with SMTP id
+ 4fb4d7f45d1cf-64044380ee1mr1085214a12.33.1761714272173; Tue, 28 Oct 2025
+ 22:04:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
+ <20251027135423.3098490-2-dolinux.peng@gmail.com> <CAEf4BzZXVARn5_-3eMmPupU-gun7p3VX-VuCVOuHBC0o0L-Pjg@mail.gmail.com>
+In-Reply-To: <CAEf4BzZXVARn5_-3eMmPupU-gun7p3VX-VuCVOuHBC0o0L-Pjg@mail.gmail.com>
+From: Donglin Peng <dolinux.peng@gmail.com>
+Date: Wed, 29 Oct 2025 13:04:20 +0800
+X-Gm-Features: AWmQ_bk235WkiUHpG6Ys6yUj08lpcXzcjhrRTYwKLTDr-3l7gRegbj6yb63Y_nE
+Message-ID: <CAErzpms3cyc0urFkZ3dPYR9UwL=3393qLh0PTZvcGhF2GXSrww@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 1/3] btf: implement BTF type sorting for
+ accelerated lookups
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
+	pengdonglin <pengdonglin@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Provide an interface for Virtual Machine Monitor like OpenVMM and its
-use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
-Expose devices and support IOCTLs for features like VTL creation,
-VTL0 memory management, context switch, making hypercalls,
-mapping VTL0 address space to VTL2 userspace, getting new VMBus
-messages and channel events in VTL2 etc.
+On Wed, Oct 29, 2025 at 2:38=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gmail.=
+com> wrote:
+> >
+> > This patch introduces a new libbpf interface btf__permute() to reorgani=
+ze
+> > BTF types according to a provided mapping. The BTF lookup mechanism is
+> > enhanced with binary search capability, significantly improving lookup
+> > performance for large type sets.
+> >
+> > The pahole tool can invoke this interface with a sorted type ID array,
+> > enabling binary search in both user space and kernel. To share core log=
+ic
+> > between kernel and libbpf, common sorting functionality is implemented
+> > in a new btf_sort.c source file.
+> >
+> > Cc: Eduard Zingerman <eddyz87@gmail.com>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> > Cc: Alan Maguire <alan.maguire@oracle.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
+> > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+> > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
+> > ---
+> > v2->v3:
+> > - Remove sorting logic from libbpf and provide a generic btf__permute()=
+ interface
+> > - Remove the search direction patch since sorted lookup provides suffic=
+ient performance
+> >   and changing search order could cause conflicts between BTF and base =
+BTF
+> > - Include btf_sort.c directly in btf.c to reduce function call overhead
+> > ---
+> >  tools/lib/bpf/btf.c            | 262 ++++++++++++++++++++++++++++++---
+> >  tools/lib/bpf/btf.h            |  17 +++
+> >  tools/lib/bpf/btf_sort.c       | 174 ++++++++++++++++++++++
+> >  tools/lib/bpf/btf_sort.h       |  11 ++
+> >  tools/lib/bpf/libbpf.map       |   6 +
+> >  tools/lib/bpf/libbpf_version.h |   2 +-
+> >  6 files changed, 447 insertions(+), 25 deletions(-)
+> >  create mode 100644 tools/lib/bpf/btf_sort.c
+> >  create mode 100644 tools/lib/bpf/btf_sort.h
+> >
+>
+> This looks a bit over-engineered, let's try to simplify and have more
+> succinct implementation
 
-Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
----
- arch/x86/hyperv/Makefile           |   10 +-
- arch/x86/hyperv/hv_vtl.c           |   43 +
- arch/x86/hyperv/mshv-asm-offsets.c |   37 +
- arch/x86/hyperv/mshv_vtl_asm.S     |   98 ++
- arch/x86/include/asm/mshyperv.h    |   34 +
- drivers/hv/Kconfig                 |   26 +-
- drivers/hv/Makefile                |    7 +-
- drivers/hv/mshv_vtl.h              |   25 +
- drivers/hv/mshv_vtl_main.c         | 1392 ++++++++++++++++++++++++++++
- include/hyperv/hvgdk_mini.h        |  106 +++
- include/uapi/linux/mshv.h          |   80 ++
- 11 files changed, 1855 insertions(+), 3 deletions(-)
- create mode 100644 arch/x86/hyperv/mshv-asm-offsets.c
- create mode 100644 arch/x86/hyperv/mshv_vtl_asm.S
- create mode 100644 drivers/hv/mshv_vtl.h
- create mode 100644 drivers/hv/mshv_vtl_main.c
+Thanks, I will simplify it.
 
-diff --git a/arch/x86/hyperv/Makefile b/arch/x86/hyperv/Makefile
-index 6f5d97cddd80..56292102af62 100644
---- a/arch/x86/hyperv/Makefile
-+++ b/arch/x86/hyperv/Makefile
-@@ -1,7 +1,12 @@
- # SPDX-License-Identifier: GPL-2.0-only
- obj-y			:= hv_init.o mmu.o nested.o irqdomain.o ivm.o
- obj-$(CONFIG_X86_64)	+= hv_apic.o
--obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o
-+obj-$(CONFIG_HYPERV_VTL_MODE)	+= hv_vtl.o mshv_vtl_asm.o
-+
-+$(obj)/mshv_vtl_asm.o: $(obj)/mshv-asm-offsets.h
-+
-+$(obj)/mshv-asm-offsets.h: $(obj)/mshv-asm-offsets.s FORCE
-+	$(call filechk,offsets,__MSHV_ASM_OFFSETS_H__)
- 
- ifdef CONFIG_X86_64
- obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+= hv_spinlock.o
-@@ -12,3 +17,6 @@ obj-$(CONFIG_PARAVIRT_SPINLOCKS)	+= hv_spinlock.o
-   obj-$(CONFIG_CRASH_DUMP)      += hv_crash.o hv_trampoline.o
-  endif
- endif
-+
-+targets += mshv-asm-offsets.s
-+clean-files += mshv-asm-offsets.h
-diff --git a/arch/x86/hyperv/hv_vtl.c b/arch/x86/hyperv/hv_vtl.c
-index 042e8712d8de..dba27e1bcc10 100644
---- a/arch/x86/hyperv/hv_vtl.c
-+++ b/arch/x86/hyperv/hv_vtl.c
-@@ -9,12 +9,16 @@
- #include <asm/apic.h>
- #include <asm/boot.h>
- #include <asm/desc.h>
-+#include <asm/fpu/api.h>
-+#include <asm/fpu/types.h>
- #include <asm/i8259.h>
- #include <asm/mshyperv.h>
- #include <asm/msr.h>
- #include <asm/realmode.h>
- #include <asm/reboot.h>
-+#include <asm/smap.h>
- #include <../kernel/smpboot.h>
-+#include "../../kernel/fpu/legacy.h"
- 
- extern struct boot_params boot_params;
- static struct real_mode_header hv_vtl_real_mode_header;
-@@ -249,3 +253,42 @@ int __init hv_vtl_early_init(void)
- 
- 	return 0;
- }
-+
-+DEFINE_STATIC_CALL_NULL(__mshv_vtl_return_hypercall, void (*)(void));
-+
-+noinstr void mshv_vtl_return_hypercall(void)
-+{
-+	asm volatile ("call " STATIC_CALL_TRAMP_STR(__mshv_vtl_return_hypercall));
-+}
-+
-+/*
-+ * ASM_CALL_CONSTRAINT is intentionally not used in above asm block before making a call to
-+ * __mshv_vtl_return_hypercall, to avoid rbp clobbering before actual VTL return happens.
-+ * This however leads to objtool complain about "call without frame pointer save/setup".
-+ * To ignore that warning, and inform objtool about this non-standard function,
-+ * STACK_FRAME_NON_STANDARD_FP is used.
-+ */
-+STACK_FRAME_NON_STANDARD_FP(mshv_vtl_return_hypercall);
-+
-+void mshv_vtl_return_call_init(u64 vtl_return_offset)
-+{
-+	static_call_update(__mshv_vtl_return_hypercall,
-+			   (void *)((u8 *)hv_hypercall_pg + vtl_return_offset));
-+}
-+EXPORT_SYMBOL(mshv_vtl_return_call_init);
-+
-+void mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0)
-+{
-+	struct hv_vp_assist_page *hvp;
-+
-+	hvp = hv_vp_assist_page[smp_processor_id()];
-+	hvp->vtl_ret_x64rax = vtl0->rax;
-+	hvp->vtl_ret_x64rcx = vtl0->rcx;
-+
-+	kernel_fpu_begin_mask(0);
-+	fxrstor(&vtl0->fx_state);
-+	__mshv_vtl_return_call(vtl0);
-+	fxsave(&vtl0->fx_state);
-+	kernel_fpu_end();
-+}
-+EXPORT_SYMBOL(mshv_vtl_return_call);
-diff --git a/arch/x86/hyperv/mshv-asm-offsets.c b/arch/x86/hyperv/mshv-asm-offsets.c
-new file mode 100644
-index 000000000000..882c1db6df16
---- /dev/null
-+++ b/arch/x86/hyperv/mshv-asm-offsets.c
-@@ -0,0 +1,37 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Generate definitions needed by assembly language modules.
-+ * This code generates raw asm output which is post-processed to extract
-+ * and format the required data.
-+ *
-+ * Copyright (c) 2025, Microsoft Corporation.
-+ *
-+ * Author:
-+ *   Naman Jain <namjain@microsoft.com>
-+ */
-+#define COMPILE_OFFSETS
-+
-+#include <linux/kbuild.h>
-+#include <asm/mshyperv.h>
-+
-+static void __used common(void)
-+{
-+	if (IS_ENABLED(CONFIG_HYPERV_VTL_MODE)) {
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rax, mshv_vtl_cpu_context, rax);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rcx, mshv_vtl_cpu_context, rcx);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rdx, mshv_vtl_cpu_context, rdx);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rbx, mshv_vtl_cpu_context, rbx);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rbp, mshv_vtl_cpu_context, rbp);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rsi, mshv_vtl_cpu_context, rsi);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_rdi, mshv_vtl_cpu_context, rdi);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r8,  mshv_vtl_cpu_context, r8);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r9,  mshv_vtl_cpu_context, r9);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r10, mshv_vtl_cpu_context, r10);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r11, mshv_vtl_cpu_context, r11);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r12, mshv_vtl_cpu_context, r12);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r13, mshv_vtl_cpu_context, r13);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r14, mshv_vtl_cpu_context, r14);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_r15, mshv_vtl_cpu_context, r15);
-+		OFFSET(MSHV_VTL_CPU_CONTEXT_cr2, mshv_vtl_cpu_context, cr2);
-+	}
-+}
-diff --git a/arch/x86/hyperv/mshv_vtl_asm.S b/arch/x86/hyperv/mshv_vtl_asm.S
-new file mode 100644
-index 000000000000..5f4b511749f8
---- /dev/null
-+++ b/arch/x86/hyperv/mshv_vtl_asm.S
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Assembly level code for mshv_vtl VTL transition
-+ *
-+ * Copyright (c) 2025, Microsoft Corporation.
-+ *
-+ * Author:
-+ *   Naman Jain <namjain@microsoft.com>
-+ */
-+
-+#include <linux/linkage.h>
-+#include <asm/asm.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/frame.h>
-+#include "mshv-asm-offsets.h"
-+
-+	.text
-+	.section .noinstr.text, "ax"
-+/*
-+ * void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0)
-+ */
-+SYM_FUNC_START(__mshv_vtl_return_call)
-+	/* Push callee save registers */
-+	pushq %rbp
-+	mov %rsp, %rbp
-+	pushq %r12
-+	pushq %r13
-+	pushq %r14
-+	pushq %r15
-+	pushq %rbx
-+
-+	/* register switch to VTL0 clobbers all registers except rax/rcx */
-+	mov %_ASM_ARG1, %rax
-+
-+	/* grab rbx/rbp/rsi/rdi/r8-r15 */
-+	mov MSHV_VTL_CPU_CONTEXT_rbx(%rax), %rbx
-+	mov MSHV_VTL_CPU_CONTEXT_rbp(%rax), %rbp
-+	mov MSHV_VTL_CPU_CONTEXT_rsi(%rax), %rsi
-+	mov MSHV_VTL_CPU_CONTEXT_rdi(%rax), %rdi
-+	mov MSHV_VTL_CPU_CONTEXT_r8(%rax), %r8
-+	mov MSHV_VTL_CPU_CONTEXT_r9(%rax), %r9
-+	mov MSHV_VTL_CPU_CONTEXT_r10(%rax), %r10
-+	mov MSHV_VTL_CPU_CONTEXT_r11(%rax), %r11
-+	mov MSHV_VTL_CPU_CONTEXT_r12(%rax), %r12
-+	mov MSHV_VTL_CPU_CONTEXT_r13(%rax), %r13
-+	mov MSHV_VTL_CPU_CONTEXT_r14(%rax), %r14
-+	mov MSHV_VTL_CPU_CONTEXT_r15(%rax), %r15
-+
-+	mov MSHV_VTL_CPU_CONTEXT_cr2(%rax), %rdx
-+	mov %rdx, %cr2
-+	mov MSHV_VTL_CPU_CONTEXT_rdx(%rax), %rdx
-+
-+	/* stash host registers on stack */
-+	pushq %rax
-+	pushq %rcx
-+
-+	xor %ecx, %ecx
-+
-+	/* make a hypercall to switch VTL */
-+	call mshv_vtl_return_hypercall
-+
-+	/* stash guest registers on stack, restore saved host copies */
-+	pushq %rax
-+	pushq %rcx
-+	mov 16(%rsp), %rcx
-+	mov 24(%rsp), %rax
-+
-+	mov %rdx, MSHV_VTL_CPU_CONTEXT_rdx(%rax)
-+	mov %cr2, %rdx
-+	mov %rdx, MSHV_VTL_CPU_CONTEXT_cr2(%rax)
-+	pop MSHV_VTL_CPU_CONTEXT_rcx(%rax)
-+	pop MSHV_VTL_CPU_CONTEXT_rax(%rax)
-+	add $16, %rsp
-+
-+	/* save rbx/rbp/rsi/rdi/r8-r15 */
-+	mov %rbx, MSHV_VTL_CPU_CONTEXT_rbx(%rax)
-+	mov %rbp, MSHV_VTL_CPU_CONTEXT_rbp(%rax)
-+	mov %rsi, MSHV_VTL_CPU_CONTEXT_rsi(%rax)
-+	mov %rdi, MSHV_VTL_CPU_CONTEXT_rdi(%rax)
-+	mov %r8,  MSHV_VTL_CPU_CONTEXT_r8(%rax)
-+	mov %r9,  MSHV_VTL_CPU_CONTEXT_r9(%rax)
-+	mov %r10, MSHV_VTL_CPU_CONTEXT_r10(%rax)
-+	mov %r11, MSHV_VTL_CPU_CONTEXT_r11(%rax)
-+	mov %r12, MSHV_VTL_CPU_CONTEXT_r12(%rax)
-+	mov %r13, MSHV_VTL_CPU_CONTEXT_r13(%rax)
-+	mov %r14, MSHV_VTL_CPU_CONTEXT_r14(%rax)
-+	mov %r15, MSHV_VTL_CPU_CONTEXT_r15(%rax)
-+
-+	/* pop callee-save registers r12-r15, rbx */
-+	pop %rbx
-+	pop %r15
-+	pop %r14
-+	pop %r13
-+	pop %r12
-+
-+	pop %rbp
-+	RET
-+SYM_FUNC_END(__mshv_vtl_return_call)
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index 1342d55c2545..10037125099a 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -11,6 +11,7 @@
- #include <asm/paravirt.h>
- #include <asm/msr.h>
- #include <hyperv/hvhdk.h>
-+#include <asm/fpu/types.h>
- 
- /*
-  * Hyper-V always provides a single IO-APIC at this MMIO address.
-@@ -269,13 +270,46 @@ static inline u64 hv_get_non_nested_msr(unsigned int reg) { return 0; }
- static inline int hv_apicid_to_vp_index(u32 apic_id) { return -EINVAL; }
- #endif /* CONFIG_HYPERV */
- 
-+struct mshv_vtl_cpu_context {
-+	union {
-+		struct {
-+			u64 rax;
-+			u64 rcx;
-+			u64 rdx;
-+			u64 rbx;
-+			u64 cr2;
-+			u64 rbp;
-+			u64 rsi;
-+			u64 rdi;
-+			u64 r8;
-+			u64 r9;
-+			u64 r10;
-+			u64 r11;
-+			u64 r12;
-+			u64 r13;
-+			u64 r14;
-+			u64 r15;
-+		};
-+		u64 gp_regs[16];
-+	};
-+
-+	struct fxregs_state fx_state;
-+};
- 
- #ifdef CONFIG_HYPERV_VTL_MODE
- void __init hv_vtl_init_platform(void);
- int __init hv_vtl_early_init(void);
-+void mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0);
-+void mshv_vtl_return_call_init(u64 vtl_return_offset);
-+void mshv_vtl_return_hypercall(void);
-+void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0);
- #else
- static inline void __init hv_vtl_init_platform(void) {}
- static inline int __init hv_vtl_early_init(void) { return 0; }
-+static inline void mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0) {}
-+static inline void mshv_vtl_return_call_init(u64 vtl_return_offset) {}
-+static inline void mshv_vtl_return_hypercall(void) {}
-+static inline void __mshv_vtl_return_call(struct mshv_vtl_cpu_context *vtl0) {}
- #endif
- 
- #include <asm-generic/mshyperv.h>
-diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
-index 0b8c391a0342..cca2ae463128 100644
---- a/drivers/hv/Kconfig
-+++ b/drivers/hv/Kconfig
-@@ -17,7 +17,8 @@ config HYPERV
- 
- config HYPERV_VTL_MODE
- 	bool "Enable Linux to boot in VTL context"
--	depends on (X86_64 || ARM64) && HYPERV
-+	depends on (X86_64 && HAVE_STATIC_CALL) || ARM64
-+	depends on HYPERV
- 	depends on SMP
- 	default n
- 	help
-@@ -82,4 +83,27 @@ config MSHV_ROOT
- 
- 	  If unsure, say N.
- 
-+config MSHV_VTL
-+	tristate "Microsoft Hyper-V VTL driver"
-+	depends on X86_64 && HYPERV_VTL_MODE
-+	# Mapping VTL0 memory to a userspace process in VTL2 is supported in OpenHCL.
-+	# VTL2 for OpenHCL makes use of Huge Pages to improve performance on VMs,
-+	# specially with large memory requirements.
-+	depends on TRANSPARENT_HUGEPAGE
-+	# MTRRs are controlled by VTL0, and are not specific to individual VTLs.
-+	# Therefore, do not attempt to access or modify MTRRs here.
-+	depends on !MTRR
-+	select CPUMASK_OFFSTACK
-+	select VIRT_XFER_TO_GUEST_WORK
-+	default n
-+	help
-+	  Select this option to enable Hyper-V VTL driver support.
-+	  This driver provides interfaces for Virtual Machine Manager (VMM) running in VTL2
-+	  userspace to create VTLs and partitions, setup and manage VTL0 memory and
-+	  allow userspace to make direct hypercalls. This also allows to map VTL0's address
-+	  space to a usermode process in VTL2 and supports getting new VMBus messages and channel
-+	  events in VTL2.
-+
-+	  If unsure, say N.
-+
- endmenu
-diff --git a/drivers/hv/Makefile b/drivers/hv/Makefile
-index 1a1677bf4dac..58b8d07639f3 100644
---- a/drivers/hv/Makefile
-+++ b/drivers/hv/Makefile
-@@ -3,6 +3,7 @@ obj-$(CONFIG_HYPERV_VMBUS)	+= hv_vmbus.o
- obj-$(CONFIG_HYPERV_UTILS)	+= hv_utils.o
- obj-$(CONFIG_HYPERV_BALLOON)	+= hv_balloon.o
- obj-$(CONFIG_MSHV_ROOT)		+= mshv_root.o
-+obj-$(CONFIG_MSHV_VTL)          += mshv_vtl.o
- 
- CFLAGS_hv_trace.o = -I$(src)
- CFLAGS_hv_balloon.o = -I$(src)
-@@ -14,7 +15,11 @@ hv_vmbus-$(CONFIG_HYPERV_TESTING)	+= hv_debugfs.o
- hv_utils-y := hv_util.o hv_kvp.o hv_snapshot.o hv_utils_transport.o
- mshv_root-y := mshv_root_main.o mshv_synic.o mshv_eventfd.o mshv_irq.o \
- 	       mshv_root_hv_call.o mshv_portid_table.o
-+mshv_vtl-y := mshv_vtl_main.o
- 
- # Code that must be built-in
- obj-$(CONFIG_HYPERV) += hv_common.o
--obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o mshv_common.o
-+obj-$(subst m,y,$(CONFIG_MSHV_ROOT)) += hv_proc.o
-+ifneq ($(CONFIG_MSHV_ROOT) $(CONFIG_MSHV_VTL),)
-+	obj-y += mshv_common.o
-+endif
-diff --git a/drivers/hv/mshv_vtl.h b/drivers/hv/mshv_vtl.h
-new file mode 100644
-index 000000000000..a6eea52f7aa2
---- /dev/null
-+++ b/drivers/hv/mshv_vtl.h
-@@ -0,0 +1,25 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _MSHV_VTL_H
-+#define _MSHV_VTL_H
-+
-+#include <linux/mshv.h>
-+#include <linux/types.h>
-+
-+struct mshv_vtl_run {
-+	u32 cancel;
-+	u32 vtl_ret_action_size;
-+	u32 pad[2];
-+	char exit_message[MSHV_MAX_RUN_MSG_SIZE];
-+	union {
-+		struct mshv_vtl_cpu_context cpu_context;
-+
-+		/*
-+		 * Reserving room for the cpu context to grow and to maintain compatibility
-+		 * with user mode.
-+		 */
-+		char reserved[1024];
-+	};
-+	char vtl_ret_actions[MSHV_MAX_RUN_MSG_SIZE];
-+};
-+
-+#endif /* _MSHV_VTL_H */
-diff --git a/drivers/hv/mshv_vtl_main.c b/drivers/hv/mshv_vtl_main.c
-new file mode 100644
-index 000000000000..2cebe9de5a5a
---- /dev/null
-+++ b/drivers/hv/mshv_vtl_main.c
-@@ -0,0 +1,1392 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2023, Microsoft Corporation.
-+ *
-+ * Author:
-+ *   Roman Kisel <romank@linux.microsoft.com>
-+ *   Saurabh Sengar <ssengar@linux.microsoft.com>
-+ *   Naman Jain <namjain@linux.microsoft.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/miscdevice.h>
-+#include <linux/anon_inodes.h>
-+#include <linux/cpuhotplug.h>
-+#include <linux/count_zeros.h>
-+#include <linux/entry-virt.h>
-+#include <linux/eventfd.h>
-+#include <linux/poll.h>
-+#include <linux/file.h>
-+#include <linux/vmalloc.h>
-+#include <asm/debugreg.h>
-+#include <asm/mshyperv.h>
-+#include <trace/events/ipi.h>
-+#include <uapi/asm/mtrr.h>
-+#include <uapi/linux/mshv.h>
-+#include <hyperv/hvhdk.h>
-+
-+#include "../../kernel/fpu/legacy.h"
-+#include "mshv.h"
-+#include "mshv_vtl.h"
-+#include "hyperv_vmbus.h"
-+
-+MODULE_AUTHOR("Microsoft");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("Microsoft Hyper-V VTL Driver");
-+
-+#define MSHV_ENTRY_REASON_LOWER_VTL_CALL     0x1
-+#define MSHV_ENTRY_REASON_INTERRUPT          0x2
-+#define MSHV_ENTRY_REASON_INTERCEPT          0x3
-+
-+#define MSHV_REAL_OFF_SHIFT	16
-+#define MSHV_PG_OFF_CPU_MASK	(BIT_ULL(MSHV_REAL_OFF_SHIFT) - 1)
-+#define MSHV_RUN_PAGE_OFFSET	0
-+#define MSHV_REG_PAGE_OFFSET	1
-+#define VTL2_VMBUS_SINT_INDEX	7
-+
-+static struct device *mem_dev;
-+
-+static struct tasklet_struct msg_dpc;
-+static wait_queue_head_t fd_wait_queue;
-+static bool has_message;
-+static struct eventfd_ctx *flag_eventfds[HV_EVENT_FLAGS_COUNT];
-+static DEFINE_MUTEX(flag_lock);
-+static bool __read_mostly mshv_has_reg_page;
-+
-+/* hvcall code is of type u16, allocate a bitmap of size (1 << 16) to accommodate it */
-+#define MAX_BITMAP_SIZE ((U16_MAX + 1) / 8)
-+
-+struct mshv_vtl_hvcall_fd {
-+	u8 allow_bitmap[MAX_BITMAP_SIZE];
-+	bool allow_map_initialized;
-+	/*
-+	 * Used to protect hvcall setup in IOCTLs
-+	 */
-+	struct mutex init_mutex;
-+	struct miscdevice *dev;
-+};
-+
-+struct mshv_vtl_poll_file {
-+	struct file *file;
-+	wait_queue_entry_t wait;
-+	wait_queue_head_t *wqh;
-+	poll_table pt;
-+	int cpu;
-+};
-+
-+struct mshv_vtl {
-+	struct device *module_dev;
-+	u64 id;
-+};
-+
-+struct mshv_vtl_per_cpu {
-+	struct mshv_vtl_run *run;
-+	struct page *reg_page;
-+};
-+
-+/* SYNIC_OVERLAY_PAGE_MSR - internal, identical to hv_synic_simp */
-+union hv_synic_overlay_page_msr {
-+	u64 as_uint64;
-+	struct {
-+		u64 enabled: 1;
-+		u64 reserved: 11;
-+		u64 pfn: 52;
-+	} __packed;
-+};
-+
-+static struct mutex mshv_vtl_poll_file_lock;
-+static union hv_register_vsm_page_offsets mshv_vsm_page_offsets;
-+static union hv_register_vsm_capabilities mshv_vsm_capabilities;
-+
-+static DEFINE_PER_CPU(struct mshv_vtl_poll_file, mshv_vtl_poll_file);
-+static DEFINE_PER_CPU(unsigned long long, num_vtl0_transitions);
-+static DEFINE_PER_CPU(struct mshv_vtl_per_cpu, mshv_vtl_per_cpu);
-+
-+static const union hv_input_vtl input_vtl_zero;
-+static const union hv_input_vtl input_vtl_normal = {
-+	.use_target_vtl = 1,
-+};
-+
-+static const struct file_operations mshv_vtl_fops;
-+
-+static long
-+mshv_ioctl_create_vtl(void __user *user_arg, struct device *module_dev)
-+{
-+	struct mshv_vtl *vtl;
-+	struct file *file;
-+	int fd;
-+
-+	vtl = kzalloc(sizeof(*vtl), GFP_KERNEL);
-+	if (!vtl)
-+		return -ENOMEM;
-+
-+	fd = get_unused_fd_flags(O_CLOEXEC);
-+	if (fd < 0) {
-+		kfree(vtl);
-+		return fd;
-+	}
-+	file = anon_inode_getfile("mshv_vtl", &mshv_vtl_fops,
-+				  vtl, O_RDWR);
-+	if (IS_ERR(file)) {
-+		kfree(vtl);
-+		return PTR_ERR(file);
-+	}
-+	vtl->module_dev = module_dev;
-+	fd_install(fd, file);
-+
-+	return fd;
-+}
-+
-+static long
-+mshv_ioctl_check_extension(void __user *user_arg)
-+{
-+	u32 arg;
-+
-+	if (copy_from_user(&arg, user_arg, sizeof(arg)))
-+		return -EFAULT;
-+
-+	switch (arg) {
-+	case MSHV_CAP_CORE_API_STABLE:
-+		return 0;
-+	case MSHV_CAP_REGISTER_PAGE:
-+		return mshv_has_reg_page;
-+	case MSHV_CAP_VTL_RETURN_ACTION:
-+		return mshv_vsm_capabilities.return_action_available;
-+	case MSHV_CAP_DR6_SHARED:
-+		return mshv_vsm_capabilities.dr6_shared;
-+	}
-+
-+	return -EOPNOTSUPP;
-+}
-+
-+static long
-+mshv_dev_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
-+{
-+	struct miscdevice *misc = filp->private_data;
-+
-+	switch (ioctl) {
-+	case MSHV_CHECK_EXTENSION:
-+		return mshv_ioctl_check_extension((void __user *)arg);
-+	case MSHV_CREATE_VTL:
-+		return mshv_ioctl_create_vtl((void __user *)arg, misc->this_device);
-+	}
-+
-+	return -ENOTTY;
-+}
-+
-+static const struct file_operations mshv_dev_fops = {
-+	.owner		= THIS_MODULE,
-+	.unlocked_ioctl	= mshv_dev_ioctl,
-+	.llseek		= noop_llseek,
-+};
-+
-+static struct miscdevice mshv_dev = {
-+	.minor = MISC_DYNAMIC_MINOR,
-+	.name = "mshv",
-+	.fops = &mshv_dev_fops,
-+	.mode = 0600,
-+};
-+
-+static struct mshv_vtl_run *mshv_vtl_this_run(void)
-+{
-+	return *this_cpu_ptr(&mshv_vtl_per_cpu.run);
-+}
-+
-+static struct mshv_vtl_run *mshv_vtl_cpu_run(int cpu)
-+{
-+	return *per_cpu_ptr(&mshv_vtl_per_cpu.run, cpu);
-+}
-+
-+static struct page *mshv_vtl_cpu_reg_page(int cpu)
-+{
-+	return *per_cpu_ptr(&mshv_vtl_per_cpu.reg_page, cpu);
-+}
-+
-+static void mshv_vtl_configure_reg_page(struct mshv_vtl_per_cpu *per_cpu)
-+{
-+	struct hv_register_assoc reg_assoc = {};
-+	union hv_synic_overlay_page_msr overlay = {};
-+	struct page *reg_page;
-+
-+	reg_page = alloc_page(GFP_KERNEL | __GFP_ZERO | __GFP_RETRY_MAYFAIL);
-+	if (!reg_page) {
-+		WARN(1, "failed to allocate register page\n");
-+		return;
-+	}
-+
-+	overlay.enabled = 1;
-+	overlay.pfn = page_to_hvpfn(reg_page);
-+	reg_assoc.name = HV_X64_REGISTER_REG_PAGE;
-+	reg_assoc.value.reg64 = overlay.as_uint64;
-+
-+	if (hv_call_set_vp_registers(HV_VP_INDEX_SELF, HV_PARTITION_ID_SELF,
-+				     1, input_vtl_zero, &reg_assoc)) {
-+		WARN(1, "failed to setup register page\n");
-+		__free_page(reg_page);
-+		return;
-+	}
-+
-+	per_cpu->reg_page = reg_page;
-+	mshv_has_reg_page = true;
-+}
-+
-+static void mshv_vtl_synic_enable_regs(unsigned int cpu)
-+{
-+	union hv_synic_sint sint;
-+
-+	sint.as_uint64 = 0;
-+	sint.vector = HYPERVISOR_CALLBACK_VECTOR;
-+	sint.masked = false;
-+	sint.auto_eoi = hv_recommend_using_aeoi();
-+
-+	/* Enable intercepts */
-+	if (!mshv_vsm_capabilities.intercept_page_available)
-+		hv_set_msr(HV_MSR_SINT0 + HV_SYNIC_INTERCEPTION_SINT_INDEX,
-+			   sint.as_uint64);
-+
-+	/* VTL2 Host VSP SINT is (un)masked when the user mode requests that */
-+}
-+
-+static int mshv_vtl_get_vsm_regs(void)
-+{
-+	struct hv_register_assoc registers[2];
-+	int ret, count = 2;
-+
-+	registers[0].name = HV_REGISTER_VSM_CODE_PAGE_OFFSETS;
-+	registers[1].name = HV_REGISTER_VSM_CAPABILITIES;
-+
-+	ret = hv_call_get_vp_registers(HV_VP_INDEX_SELF, HV_PARTITION_ID_SELF,
-+				       count, input_vtl_zero, registers);
-+	if (ret)
-+		return ret;
-+
-+	mshv_vsm_page_offsets.as_uint64 = registers[0].value.reg64;
-+	mshv_vsm_capabilities.as_uint64 = registers[1].value.reg64;
-+
-+	return ret;
-+}
-+
-+static int mshv_vtl_configure_vsm_partition(struct device *dev)
-+{
-+	union hv_register_vsm_partition_config config;
-+	struct hv_register_assoc reg_assoc;
-+
-+	config.as_uint64 = 0;
-+	config.default_vtl_protection_mask = HV_MAP_GPA_PERMISSIONS_MASK;
-+	config.enable_vtl_protection = 1;
-+	config.zero_memory_on_reset = 1;
-+	config.intercept_vp_startup = 1;
-+	config.intercept_cpuid_unimplemented = 1;
-+
-+	if (mshv_vsm_capabilities.intercept_page_available) {
-+		dev_dbg(dev, "using intercept page\n");
-+		config.intercept_page = 1;
-+	}
-+
-+	reg_assoc.name = HV_REGISTER_VSM_PARTITION_CONFIG;
-+	reg_assoc.value.reg64 = config.as_uint64;
-+
-+	return hv_call_set_vp_registers(HV_VP_INDEX_SELF, HV_PARTITION_ID_SELF,
-+				       1, input_vtl_zero, &reg_assoc);
-+}
-+
-+static void mshv_vtl_vmbus_isr(void)
-+{
-+	struct hv_per_cpu_context *per_cpu;
-+	struct hv_message *msg;
-+	u32 message_type;
-+	union hv_synic_event_flags *event_flags;
-+	struct eventfd_ctx *eventfd;
-+	u16 i;
-+
-+	per_cpu = this_cpu_ptr(hv_context.cpu_context);
-+	if (smp_processor_id() == 0) {
-+		msg = (struct hv_message *)per_cpu->hyp_synic_message_page + VTL2_VMBUS_SINT_INDEX;
-+		message_type = READ_ONCE(msg->header.message_type);
-+		if (message_type != HVMSG_NONE)
-+			tasklet_schedule(&msg_dpc);
-+	}
-+
-+	event_flags = (union hv_synic_event_flags *)per_cpu->hyp_synic_event_page +
-+			VTL2_VMBUS_SINT_INDEX;
-+	for_each_set_bit(i, event_flags->flags, HV_EVENT_FLAGS_COUNT) {
-+		if (!sync_test_and_clear_bit(i, event_flags->flags))
-+			continue;
-+		rcu_read_lock();
-+		eventfd = READ_ONCE(flag_eventfds[i]);
-+		if (eventfd)
-+			eventfd_signal(eventfd);
-+		rcu_read_unlock();
-+	}
-+
-+	vmbus_isr();
-+}
-+
-+static int mshv_vtl_alloc_context(unsigned int cpu)
-+{
-+	struct mshv_vtl_per_cpu *per_cpu = this_cpu_ptr(&mshv_vtl_per_cpu);
-+
-+	per_cpu->run = (struct mshv_vtl_run *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!per_cpu->run)
-+		return -ENOMEM;
-+
-+	if (mshv_vsm_capabilities.intercept_page_available)
-+		mshv_vtl_configure_reg_page(per_cpu);
-+
-+	mshv_vtl_synic_enable_regs(cpu);
-+
-+	return 0;
-+}
-+
-+static int mshv_vtl_cpuhp_online;
-+
-+static int hv_vtl_setup_synic(void)
-+{
-+	int ret;
-+
-+	/* Use our isr to first filter out packets destined for userspace */
-+	hv_setup_vmbus_handler(mshv_vtl_vmbus_isr);
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hyperv/vtl:online",
-+				mshv_vtl_alloc_context, NULL);
-+	if (ret < 0) {
-+		hv_setup_vmbus_handler(vmbus_isr);
-+		return ret;
-+	}
-+
-+	mshv_vtl_cpuhp_online = ret;
-+
-+	return 0;
-+}
-+
-+static void hv_vtl_remove_synic(void)
-+{
-+	cpuhp_remove_state(mshv_vtl_cpuhp_online);
-+	hv_setup_vmbus_handler(vmbus_isr);
-+}
-+
-+static int vtl_get_vp_register(struct hv_register_assoc *reg)
-+{
-+	return hv_call_get_vp_registers(HV_VP_INDEX_SELF, HV_PARTITION_ID_SELF,
-+					1, input_vtl_normal, reg);
-+}
-+
-+static int vtl_set_vp_register(struct hv_register_assoc *reg)
-+{
-+	return hv_call_set_vp_registers(HV_VP_INDEX_SELF, HV_PARTITION_ID_SELF,
-+					1, input_vtl_normal, reg);
-+}
-+
-+static int mshv_vtl_ioctl_add_vtl0_mem(struct mshv_vtl *vtl, void __user *arg)
-+{
-+	struct mshv_vtl_ram_disposition vtl0_mem;
-+	struct dev_pagemap *pgmap;
-+	void *addr;
-+
-+	if (copy_from_user(&vtl0_mem, arg, sizeof(vtl0_mem)))
-+		return -EFAULT;
-+	/* vtl0_mem.last_pfn is excluded in the pagemap range for VTL0 as per design */
-+	if (vtl0_mem.last_pfn <= vtl0_mem.start_pfn) {
-+		dev_err(vtl->module_dev, "range start pfn (%llx) > end pfn (%llx)\n",
-+			vtl0_mem.start_pfn, vtl0_mem.last_pfn);
-+		return -EFAULT;
-+	}
-+
-+	pgmap = kzalloc(sizeof(*pgmap), GFP_KERNEL);
-+	if (!pgmap)
-+		return -ENOMEM;
-+
-+	pgmap->ranges[0].start = PFN_PHYS(vtl0_mem.start_pfn);
-+	pgmap->ranges[0].end = PFN_PHYS(vtl0_mem.last_pfn) - 1;
-+	pgmap->nr_range = 1;
-+	pgmap->type = MEMORY_DEVICE_GENERIC;
-+
-+	/*
-+	 * Determine the highest page order that can be used for the given memory range.
-+	 * This works best when the range is aligned; i.e. both the start and the length.
-+	 */
-+	pgmap->vmemmap_shift = count_trailing_zeros(vtl0_mem.start_pfn | vtl0_mem.last_pfn);
-+	dev_dbg(vtl->module_dev,
-+		"Add VTL0 memory: start: 0x%llx, end_pfn: 0x%llx, page order: %lu\n",
-+		vtl0_mem.start_pfn, vtl0_mem.last_pfn, pgmap->vmemmap_shift);
-+
-+	addr = devm_memremap_pages(mem_dev, pgmap);
-+	if (IS_ERR(addr)) {
-+		dev_err(vtl->module_dev, "devm_memremap_pages error: %ld\n", PTR_ERR(addr));
-+		kfree(pgmap);
-+		return -EFAULT;
-+	}
-+
-+	/* Don't free pgmap, since it has to stick around until the memory
-+	 * is unmapped, which will never happen as there is no scenario
-+	 * where VTL0 can be released/shutdown without bringing down VTL2.
-+	 */
-+	return 0;
-+}
-+
-+static void mshv_vtl_cancel(int cpu)
-+{
-+	int here = get_cpu();
-+
-+	if (here != cpu) {
-+		if (!xchg_relaxed(&mshv_vtl_cpu_run(cpu)->cancel, 1))
-+			smp_send_reschedule(cpu);
-+	} else {
-+		WRITE_ONCE(mshv_vtl_this_run()->cancel, 1);
-+	}
-+	put_cpu();
-+}
-+
-+static int mshv_vtl_poll_file_wake(wait_queue_entry_t *wait, unsigned int mode, int sync, void *key)
-+{
-+	struct mshv_vtl_poll_file *poll_file = container_of(wait, struct mshv_vtl_poll_file, wait);
-+
-+	mshv_vtl_cancel(poll_file->cpu);
-+
-+	return 0;
-+}
-+
-+static void mshv_vtl_ptable_queue_proc(struct file *file, wait_queue_head_t *wqh, poll_table *pt)
-+{
-+	struct mshv_vtl_poll_file *poll_file = container_of(pt, struct mshv_vtl_poll_file, pt);
-+
-+	WARN_ON(poll_file->wqh);
-+	poll_file->wqh = wqh;
-+	add_wait_queue(wqh, &poll_file->wait);
-+}
-+
-+static int mshv_vtl_ioctl_set_poll_file(struct mshv_vtl_set_poll_file __user *user_input)
-+{
-+	struct file *file, *old_file;
-+	struct mshv_vtl_poll_file *poll_file;
-+	struct mshv_vtl_set_poll_file input;
-+
-+	if (copy_from_user(&input, user_input, sizeof(input)))
-+		return -EFAULT;
-+
-+	if (input.cpu >= num_possible_cpus() || !cpu_online(input.cpu))
-+		return -EINVAL;
-+	/*
-+	 * CPU Hotplug is not supported in VTL2 in OpenHCL, where this kernel driver exists.
-+	 * CPU is expected to remain online after above cpu_online() check.
-+	 */
-+
-+	file = NULL;
-+	file = fget(input.fd);
-+	if (!file)
-+		return -EBADFD;
-+
-+	poll_file = per_cpu_ptr(&mshv_vtl_poll_file, READ_ONCE(input.cpu));
-+	if (!poll_file)
-+		return -EINVAL;
-+
-+	mutex_lock(&mshv_vtl_poll_file_lock);
-+
-+	if (poll_file->wqh)
-+		remove_wait_queue(poll_file->wqh, &poll_file->wait);
-+	poll_file->wqh = NULL;
-+
-+	old_file = poll_file->file;
-+	poll_file->file = file;
-+	poll_file->cpu = input.cpu;
-+
-+	if (file) {
-+		init_waitqueue_func_entry(&poll_file->wait, mshv_vtl_poll_file_wake);
-+		init_poll_funcptr(&poll_file->pt, mshv_vtl_ptable_queue_proc);
-+		vfs_poll(file, &poll_file->pt);
-+	}
-+
-+	mutex_unlock(&mshv_vtl_poll_file_lock);
-+
-+	if (old_file)
-+		fput(old_file);
-+
-+	return 0;
-+}
-+
-+/* Static table mapping register names to their corresponding actions */
-+static const struct {
-+	enum hv_register_name reg_name;
-+	int debug_reg_num;  /* -1 if not a debug register */
-+	u32 msr_addr;       /* 0 if not an MSR */
-+} reg_table[] = {
-+	/* Debug registers */
-+	{HV_X64_REGISTER_DR0, 0, 0},
-+	{HV_X64_REGISTER_DR1, 1, 0},
-+	{HV_X64_REGISTER_DR2, 2, 0},
-+	{HV_X64_REGISTER_DR3, 3, 0},
-+	{HV_X64_REGISTER_DR6, 6, 0},
-+	/* MTRR MSRs */
-+	{HV_X64_REGISTER_MSR_MTRR_CAP, -1, MSR_MTRRcap},
-+	{HV_X64_REGISTER_MSR_MTRR_DEF_TYPE, -1, MSR_MTRRdefType},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE0, -1, MTRRphysBase_MSR(0)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE1, -1, MTRRphysBase_MSR(1)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE2, -1, MTRRphysBase_MSR(2)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE3, -1, MTRRphysBase_MSR(3)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE4, -1, MTRRphysBase_MSR(4)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE5, -1, MTRRphysBase_MSR(5)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE6, -1, MTRRphysBase_MSR(6)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE7, -1, MTRRphysBase_MSR(7)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE8, -1, MTRRphysBase_MSR(8)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASE9, -1, MTRRphysBase_MSR(9)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEA, -1, MTRRphysBase_MSR(0xa)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEB, -1, MTRRphysBase_MSR(0xb)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEC, -1, MTRRphysBase_MSR(0xc)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASED, -1, MTRRphysBase_MSR(0xd)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEE, -1, MTRRphysBase_MSR(0xe)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_BASEF, -1, MTRRphysBase_MSR(0xf)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK0, -1, MTRRphysMask_MSR(0)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK1, -1, MTRRphysMask_MSR(1)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK2, -1, MTRRphysMask_MSR(2)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK3, -1, MTRRphysMask_MSR(3)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK4, -1, MTRRphysMask_MSR(4)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK5, -1, MTRRphysMask_MSR(5)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK6, -1, MTRRphysMask_MSR(6)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK7, -1, MTRRphysMask_MSR(7)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK8, -1, MTRRphysMask_MSR(8)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASK9, -1, MTRRphysMask_MSR(9)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKA, -1, MTRRphysMask_MSR(0xa)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKB, -1, MTRRphysMask_MSR(0xb)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKC, -1, MTRRphysMask_MSR(0xc)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKD, -1, MTRRphysMask_MSR(0xd)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKE, -1, MTRRphysMask_MSR(0xe)},
-+	{HV_X64_REGISTER_MSR_MTRR_PHYS_MASKF, -1, MTRRphysMask_MSR(0xf)},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX64K00000, -1, MSR_MTRRfix64K_00000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX16K80000, -1, MSR_MTRRfix16K_80000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX16KA0000, -1, MSR_MTRRfix16K_A0000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KC0000, -1, MSR_MTRRfix4K_C0000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KC8000, -1, MSR_MTRRfix4K_C8000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KD0000, -1, MSR_MTRRfix4K_D0000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KD8000, -1, MSR_MTRRfix4K_D8000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KE0000, -1, MSR_MTRRfix4K_E0000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KE8000, -1, MSR_MTRRfix4K_E8000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KF0000, -1, MSR_MTRRfix4K_F0000},
-+	{HV_X64_REGISTER_MSR_MTRR_FIX4KF8000, -1, MSR_MTRRfix4K_F8000},
-+};
-+
-+static int mshv_vtl_get_set_reg(struct hv_register_assoc *regs, bool set)
-+{
-+	u64 *reg64;
-+	enum hv_register_name gpr_name;
-+	int i;
-+
-+	gpr_name = regs->name;
-+	reg64 = &regs->value.reg64;
-+
-+	/* Search for the register in the table */
-+	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
-+		if (reg_table[i].reg_name != gpr_name)
-+			continue;
-+		if (reg_table[i].debug_reg_num != -1) {
-+			/* Handle debug registers */
-+			if (gpr_name == HV_X64_REGISTER_DR6 &&
-+			    !mshv_vsm_capabilities.dr6_shared)
-+				goto hypercall;
-+			if (set)
-+				native_set_debugreg(reg_table[i].debug_reg_num, *reg64);
-+			else
-+				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
-+		} else {
-+			/* Handle MSRs */
-+			if (set)
-+				wrmsrl(reg_table[i].msr_addr, *reg64);
-+			else
-+				rdmsrl(reg_table[i].msr_addr, *reg64);
-+		}
-+		return 0;
-+	}
-+
-+hypercall:
-+	return 1;
-+}
-+
-+static void mshv_vtl_return(struct mshv_vtl_cpu_context *vtl0)
-+{
-+	struct hv_vp_assist_page *hvp;
-+
-+	hvp = hv_vp_assist_page[smp_processor_id()];
-+
-+	/*
-+	 * Process signal event direct set in the run page, if any.
-+	 */
-+	if (mshv_vsm_capabilities.return_action_available) {
-+		u32 offset = READ_ONCE(mshv_vtl_this_run()->vtl_ret_action_size);
-+
-+		WRITE_ONCE(mshv_vtl_this_run()->vtl_ret_action_size, 0);
-+
-+		/*
-+		 * Hypervisor will take care of clearing out the actions
-+		 * set in the assist page.
-+		 */
-+		memcpy(hvp->vtl_ret_actions,
-+		       mshv_vtl_this_run()->vtl_ret_actions,
-+		       min_t(u32, offset, sizeof(hvp->vtl_ret_actions)));
-+	}
-+
-+	mshv_vtl_return_call(vtl0);
-+}
-+
-+static bool mshv_vtl_process_intercept(void)
-+{
-+	struct hv_per_cpu_context *mshv_cpu;
-+	void *synic_message_page;
-+	struct hv_message *msg;
-+	u32 message_type;
-+
-+	mshv_cpu = this_cpu_ptr(hv_context.cpu_context);
-+	synic_message_page = mshv_cpu->hyp_synic_message_page;
-+	if (unlikely(!synic_message_page))
-+		return true;
-+
-+	msg = (struct hv_message *)synic_message_page + HV_SYNIC_INTERCEPTION_SINT_INDEX;
-+	message_type = READ_ONCE(msg->header.message_type);
-+	if (message_type == HVMSG_NONE)
-+		return true;
-+
-+	memcpy(mshv_vtl_this_run()->exit_message, msg, sizeof(*msg));
-+	vmbus_signal_eom(msg, message_type);
-+
-+	return false;
-+}
-+
-+static int mshv_vtl_ioctl_return_to_lower_vtl(void)
-+{
-+	preempt_disable();
-+	for (;;) {
-+		unsigned long irq_flags;
-+		struct hv_vp_assist_page *hvp;
-+		int ret;
-+
-+		if (__xfer_to_guest_mode_work_pending()) {
-+			preempt_enable();
-+			ret = xfer_to_guest_mode_handle_work();
-+			if (ret)
-+				return ret;
-+			preempt_disable();
-+		}
-+
-+		local_irq_save(irq_flags);
-+		if (READ_ONCE(mshv_vtl_this_run()->cancel)) {
-+			local_irq_restore(irq_flags);
-+			preempt_enable();
-+			return -EINTR;
-+		}
-+
-+		mshv_vtl_return(&mshv_vtl_this_run()->cpu_context);
-+		local_irq_restore(irq_flags);
-+
-+		hvp = hv_vp_assist_page[smp_processor_id()];
-+		this_cpu_inc(num_vtl0_transitions);
-+		switch (hvp->vtl_entry_reason) {
-+		case MSHV_ENTRY_REASON_INTERRUPT:
-+			if (!mshv_vsm_capabilities.intercept_page_available &&
-+			    likely(!mshv_vtl_process_intercept()))
-+				goto done;
-+			break;
-+
-+		case MSHV_ENTRY_REASON_INTERCEPT:
-+			WARN_ON(!mshv_vsm_capabilities.intercept_page_available);
-+			memcpy(mshv_vtl_this_run()->exit_message, hvp->intercept_message,
-+			       sizeof(hvp->intercept_message));
-+			goto done;
-+
-+		default:
-+			panic("unknown entry reason: %d", hvp->vtl_entry_reason);
-+		}
-+	}
-+
-+done:
-+	preempt_enable();
-+
-+	return 0;
-+}
-+
-+static long
-+mshv_vtl_ioctl_get_regs(void __user *user_args)
-+{
-+	struct mshv_vp_registers args;
-+	struct hv_register_assoc reg;
-+	long ret;
-+
-+	if (copy_from_user(&args, user_args, sizeof(args)))
-+		return -EFAULT;
-+
-+	/*  This IOCTL supports processing only one register at a time. */
-+	if (args.count != 1)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&reg, (void __user *)args.regs_ptr,
-+			   sizeof(reg)))
-+		return -EFAULT;
-+
-+	ret = mshv_vtl_get_set_reg(&reg, false);
-+	if (!ret)
-+		goto copy_args; /* No need of hypercall */
-+	ret = vtl_get_vp_register(&reg);
-+	if (ret)
-+		return ret;
-+
-+copy_args:
-+	if (copy_to_user((void __user *)args.regs_ptr, &reg, sizeof(reg)))
-+		ret = -EFAULT;
-+
-+	return ret;
-+}
-+
-+static long
-+mshv_vtl_ioctl_set_regs(void __user *user_args)
-+{
-+	struct mshv_vp_registers args;
-+	struct hv_register_assoc reg;
-+	long ret;
-+
-+	if (copy_from_user(&args, user_args, sizeof(args)))
-+		return -EFAULT;
-+
-+	/*  This IOCTL supports processing only one register at a time. */
-+	if (args.count != 1)
-+		return -EINVAL;
-+
-+	if (copy_from_user(&reg, (void __user *)args.regs_ptr, sizeof(reg)))
-+		return -EFAULT;
-+
-+	ret = mshv_vtl_get_set_reg(&reg, true);
-+	if (!ret)
-+		return ret; /* No need of hypercall */
-+	ret = vtl_set_vp_register(&reg);
-+
-+	return ret;
-+}
-+
-+static long
-+mshv_vtl_ioctl(struct file *filp, unsigned int ioctl, unsigned long arg)
-+{
-+	long ret;
-+	struct mshv_vtl *vtl = filp->private_data;
-+
-+	switch (ioctl) {
-+	case MSHV_SET_POLL_FILE:
-+		ret = mshv_vtl_ioctl_set_poll_file((struct mshv_vtl_set_poll_file __user *)arg);
-+		break;
-+	case MSHV_GET_VP_REGISTERS:
-+		ret = mshv_vtl_ioctl_get_regs((void __user *)arg);
-+		break;
-+	case MSHV_SET_VP_REGISTERS:
-+		ret = mshv_vtl_ioctl_set_regs((void __user *)arg);
-+		break;
-+	case MSHV_RETURN_TO_LOWER_VTL:
-+		ret = mshv_vtl_ioctl_return_to_lower_vtl();
-+		break;
-+	case MSHV_ADD_VTL0_MEMORY:
-+		ret = mshv_vtl_ioctl_add_vtl0_mem(vtl, (void __user *)arg);
-+		break;
-+	default:
-+		dev_err(vtl->module_dev, "invalid vtl ioctl: %#x\n", ioctl);
-+		ret = -ENOTTY;
-+	}
-+
-+	return ret;
-+}
-+
-+static vm_fault_t mshv_vtl_fault(struct vm_fault *vmf)
-+{
-+	struct page *page;
-+	int cpu = vmf->pgoff & MSHV_PG_OFF_CPU_MASK;
-+	int real_off = vmf->pgoff >> MSHV_REAL_OFF_SHIFT;
-+
-+	if (!cpu_online(cpu))
-+		return VM_FAULT_SIGBUS;
-+	/*
-+	 * CPU Hotplug is not supported in VTL2 in OpenHCL, where this kernel driver exists.
-+	 * CPU is expected to remain online after above cpu_online() check.
-+	 */
-+
-+	if (real_off == MSHV_RUN_PAGE_OFFSET) {
-+		page = virt_to_page(mshv_vtl_cpu_run(cpu));
-+	} else if (real_off == MSHV_REG_PAGE_OFFSET) {
-+		if (!mshv_has_reg_page)
-+			return VM_FAULT_SIGBUS;
-+		page = mshv_vtl_cpu_reg_page(cpu);
-+	} else {
-+		return VM_FAULT_NOPAGE;
-+	}
-+
-+	get_page(page);
-+	vmf->page = page;
-+
-+	return 0;
-+}
-+
-+static const struct vm_operations_struct mshv_vtl_vm_ops = {
-+	.fault = mshv_vtl_fault,
-+};
-+
-+static int mshv_vtl_mmap(struct file *filp, struct vm_area_struct *vma)
-+{
-+	vma->vm_ops = &mshv_vtl_vm_ops;
-+
-+	return 0;
-+}
-+
-+static int mshv_vtl_release(struct inode *inode, struct file *filp)
-+{
-+	struct mshv_vtl *vtl = filp->private_data;
-+
-+	kfree(vtl);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations mshv_vtl_fops = {
-+	.owner = THIS_MODULE,
-+	.unlocked_ioctl = mshv_vtl_ioctl,
-+	.release = mshv_vtl_release,
-+	.mmap = mshv_vtl_mmap,
-+};
-+
-+static void mshv_vtl_synic_mask_vmbus_sint(const u8 *mask)
-+{
-+	union hv_synic_sint sint;
-+
-+	sint.as_uint64 = 0;
-+	sint.vector = HYPERVISOR_CALLBACK_VECTOR;
-+	sint.masked = (*mask != 0);
-+	sint.auto_eoi = hv_recommend_using_aeoi();
-+
-+	hv_set_msr(HV_MSR_SINT0 + VTL2_VMBUS_SINT_INDEX,
-+		   sint.as_uint64);
-+
-+	if (!sint.masked)
-+		pr_debug("%s: Unmasking VTL2 VMBUS SINT on VP %d\n", __func__, smp_processor_id());
-+	else
-+		pr_debug("%s: Masking VTL2 VMBUS SINT on VP %d\n", __func__, smp_processor_id());
-+}
-+
-+static void mshv_vtl_read_remote(void *buffer)
-+{
-+	struct hv_per_cpu_context *mshv_cpu = this_cpu_ptr(hv_context.cpu_context);
-+	struct hv_message *msg = (struct hv_message *)mshv_cpu->hyp_synic_message_page +
-+					VTL2_VMBUS_SINT_INDEX;
-+	u32 message_type = READ_ONCE(msg->header.message_type);
-+
-+	WRITE_ONCE(has_message, false);
-+	if (message_type == HVMSG_NONE)
-+		return;
-+
-+	memcpy(buffer, msg, sizeof(*msg));
-+	vmbus_signal_eom(msg, message_type);
-+}
-+
-+static bool vtl_synic_mask_vmbus_sint_masked = true;
-+
-+static ssize_t mshv_vtl_sint_read(struct file *filp, char __user *arg, size_t size, loff_t *offset)
-+{
-+	struct hv_message msg = {};
-+	int ret;
-+
-+	if (size < sizeof(msg))
-+		return -EINVAL;
-+
-+	for (;;) {
-+		smp_call_function_single(VMBUS_CONNECT_CPU, mshv_vtl_read_remote, &msg, true);
-+		if (msg.header.message_type != HVMSG_NONE)
-+			break;
-+
-+		if (READ_ONCE(vtl_synic_mask_vmbus_sint_masked))
-+			return 0; /* EOF */
-+
-+		if (filp->f_flags & O_NONBLOCK)
-+			return -EAGAIN;
-+
-+		ret = wait_event_interruptible(fd_wait_queue,
-+					       READ_ONCE(has_message) ||
-+						READ_ONCE(vtl_synic_mask_vmbus_sint_masked));
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (copy_to_user(arg, &msg, sizeof(msg)))
-+		return -EFAULT;
-+
-+	return sizeof(msg);
-+}
-+
-+static __poll_t mshv_vtl_sint_poll(struct file *filp, poll_table *wait)
-+{
-+	__poll_t mask = 0;
-+
-+	poll_wait(filp, &fd_wait_queue, wait);
-+	if (READ_ONCE(has_message) || READ_ONCE(vtl_synic_mask_vmbus_sint_masked))
-+		mask |= EPOLLIN | EPOLLRDNORM;
-+
-+	return mask;
-+}
-+
-+static void mshv_vtl_sint_on_msg_dpc(unsigned long data)
-+{
-+	WRITE_ONCE(has_message, true);
-+	wake_up_interruptible_poll(&fd_wait_queue, EPOLLIN);
-+}
-+
-+static int mshv_vtl_sint_ioctl_post_msg(struct mshv_vtl_sint_post_msg __user *arg)
-+{
-+	struct mshv_vtl_sint_post_msg message;
-+	u8 payload[HV_MESSAGE_PAYLOAD_BYTE_COUNT];
-+
-+	if (copy_from_user(&message, arg, sizeof(message)))
-+		return -EFAULT;
-+	if (message.payload_size > HV_MESSAGE_PAYLOAD_BYTE_COUNT)
-+		return -EINVAL;
-+	if (copy_from_user(payload, (void __user *)message.payload_ptr,
-+			   message.payload_size))
-+		return -EFAULT;
-+
-+	return hv_post_message((union hv_connection_id)message.connection_id,
-+			       message.message_type, (void *)payload,
-+			       message.payload_size);
-+}
-+
-+static int mshv_vtl_sint_ioctl_signal_event(struct mshv_vtl_signal_event __user *arg)
-+{
-+	u64 input, status;
-+	struct mshv_vtl_signal_event signal_event;
-+
-+	if (copy_from_user(&signal_event, arg, sizeof(signal_event)))
-+		return -EFAULT;
-+
-+	input = signal_event.connection_id | ((u64)signal_event.flag << 32);
-+
-+	status = hv_do_fast_hypercall8(HVCALL_SIGNAL_EVENT, input);
-+
-+	return hv_result_to_errno(status);
-+}
-+
-+static int mshv_vtl_sint_ioctl_set_eventfd(struct mshv_vtl_set_eventfd __user *arg)
-+{
-+	struct mshv_vtl_set_eventfd set_eventfd;
-+	struct eventfd_ctx *eventfd, *old_eventfd;
-+
-+	if (copy_from_user(&set_eventfd, arg, sizeof(set_eventfd)))
-+		return -EFAULT;
-+	if (set_eventfd.flag >= HV_EVENT_FLAGS_COUNT)
-+		return -EINVAL;
-+
-+	eventfd = NULL;
-+	if (set_eventfd.fd >= 0) {
-+		eventfd = eventfd_ctx_fdget(set_eventfd.fd);
-+		if (IS_ERR(eventfd))
-+			return PTR_ERR(eventfd);
-+	}
-+
-+	guard(mutex)(&flag_lock);
-+	old_eventfd = READ_ONCE(flag_eventfds[set_eventfd.flag]);
-+	WRITE_ONCE(flag_eventfds[set_eventfd.flag], eventfd);
-+
-+	if (old_eventfd) {
-+		synchronize_rcu();
-+		eventfd_ctx_put(old_eventfd);
-+	}
-+
-+	return 0;
-+}
-+
-+static int mshv_vtl_sint_ioctl_pause_msg_stream(struct mshv_sint_mask __user *arg)
-+{
-+	static DEFINE_MUTEX(vtl2_vmbus_sint_mask_mutex);
-+	struct mshv_sint_mask mask;
-+
-+	if (copy_from_user(&mask, arg, sizeof(mask)))
-+		return -EFAULT;
-+	guard(mutex)(&vtl2_vmbus_sint_mask_mutex);
-+	on_each_cpu((smp_call_func_t)mshv_vtl_synic_mask_vmbus_sint, &mask.mask, 1);
-+	WRITE_ONCE(vtl_synic_mask_vmbus_sint_masked, mask.mask != 0);
-+	if (mask.mask)
-+		wake_up_interruptible_poll(&fd_wait_queue, EPOLLIN);
-+
-+	return 0;
-+}
-+
-+static long mshv_vtl_sint_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
-+{
-+	switch (cmd) {
-+	case MSHV_SINT_POST_MESSAGE:
-+		return mshv_vtl_sint_ioctl_post_msg((struct mshv_vtl_sint_post_msg __user *)arg);
-+	case MSHV_SINT_SIGNAL_EVENT:
-+		return mshv_vtl_sint_ioctl_signal_event((struct mshv_vtl_signal_event __user *)arg);
-+	case MSHV_SINT_SET_EVENTFD:
-+		return mshv_vtl_sint_ioctl_set_eventfd((struct mshv_vtl_set_eventfd __user *)arg);
-+	case MSHV_SINT_PAUSE_MESSAGE_STREAM:
-+		return mshv_vtl_sint_ioctl_pause_msg_stream((struct mshv_sint_mask __user *)arg);
-+	default:
-+		return -ENOIOCTLCMD;
-+	}
-+}
-+
-+static const struct file_operations mshv_vtl_sint_ops = {
-+	.owner = THIS_MODULE,
-+	.read = mshv_vtl_sint_read,
-+	.poll = mshv_vtl_sint_poll,
-+	.unlocked_ioctl = mshv_vtl_sint_ioctl,
-+};
-+
-+static struct miscdevice mshv_vtl_sint_dev = {
-+	.name = "mshv_sint",
-+	.fops = &mshv_vtl_sint_ops,
-+	.mode = 0600,
-+	.minor = MISC_DYNAMIC_MINOR,
-+};
-+
-+static int mshv_vtl_hvcall_dev_open(struct inode *node, struct file *f)
-+{
-+	struct miscdevice *dev = f->private_data;
-+	struct mshv_vtl_hvcall_fd *fd;
-+
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	fd = vzalloc(sizeof(*fd));
-+	if (!fd)
-+		return -ENOMEM;
-+	fd->dev = dev;
-+	f->private_data = fd;
-+	mutex_init(&fd->init_mutex);
-+
-+	return 0;
-+}
-+
-+static int mshv_vtl_hvcall_dev_release(struct inode *node, struct file *f)
-+{
-+	struct mshv_vtl_hvcall_fd *fd;
-+
-+	fd = f->private_data;
-+	if (fd) {
-+		vfree(fd);
-+		f->private_data = NULL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int mshv_vtl_hvcall_do_setup(struct mshv_vtl_hvcall_fd *fd,
-+				    struct mshv_vtl_hvcall_setup __user *hvcall_setup_user)
-+{
-+	struct mshv_vtl_hvcall_setup hvcall_setup;
-+
-+	guard(mutex)(&fd->init_mutex);
-+
-+	if (fd->allow_map_initialized) {
-+		dev_err(fd->dev->this_device,
-+			"Hypercall allow map has already been set, pid %d\n",
-+			current->pid);
-+		return -EINVAL;
-+	}
-+
-+	if (copy_from_user(&hvcall_setup, hvcall_setup_user,
-+			   sizeof(struct mshv_vtl_hvcall_setup))) {
-+		return -EFAULT;
-+	}
-+	if (hvcall_setup.bitmap_array_size > ARRAY_SIZE(fd->allow_bitmap))
-+		return -EINVAL;
-+
-+	if (copy_from_user(&fd->allow_bitmap,
-+			   (void __user *)hvcall_setup.allow_bitmap_ptr,
-+			   hvcall_setup.bitmap_array_size)) {
-+		return -EFAULT;
-+	}
-+
-+	dev_info(fd->dev->this_device, "Hypercall allow map has been set, pid %d\n",
-+		 current->pid);
-+	fd->allow_map_initialized = true;
-+	return 0;
-+}
-+
-+static bool mshv_vtl_hvcall_is_allowed(struct mshv_vtl_hvcall_fd *fd, u16 call_code)
-+{
-+	return test_bit(call_code, (unsigned long *)fd->allow_bitmap);
-+}
-+
-+static int mshv_vtl_hvcall_call(struct mshv_vtl_hvcall_fd *fd,
-+				struct mshv_vtl_hvcall __user *hvcall_user)
-+{
-+	struct mshv_vtl_hvcall hvcall;
-+	void *in, *out;
-+	int ret;
-+
-+	if (copy_from_user(&hvcall, hvcall_user, sizeof(struct mshv_vtl_hvcall)))
-+		return -EFAULT;
-+	if (hvcall.input_size > HV_HYP_PAGE_SIZE)
-+		return -EINVAL;
-+	if (hvcall.output_size > HV_HYP_PAGE_SIZE)
-+		return -EINVAL;
-+
-+	/*
-+	 * By default, all hypercalls are not allowed.
-+	 * The user mode code has to set up the allow bitmap once.
-+	 */
-+
-+	if (!mshv_vtl_hvcall_is_allowed(fd, hvcall.control & 0xFFFF)) {
-+		dev_err(fd->dev->this_device,
-+			"Hypercall with control data %#llx isn't allowed\n",
-+			hvcall.control);
-+		return -EPERM;
-+	}
-+
-+	/*
-+	 * This may create a problem for Confidential VM (CVM) usecase where we need to use
-+	 * Hyper-V driver allocated per-cpu input and output pages (hyperv_pcpu_input_arg and
-+	 * hyperv_pcpu_output_arg) for making a hypervisor call.
-+	 *
-+	 * TODO: Take care of this when CVM support is added.
-+	 */
-+	in = (void *)__get_free_page(GFP_KERNEL);
-+	out = (void *)__get_free_page(GFP_KERNEL);
-+
-+	if (copy_from_user(in, (void __user *)hvcall.input_ptr, hvcall.input_size)) {
-+		ret = -EFAULT;
-+		goto free_pages;
-+	}
-+
-+	hvcall.status = hv_do_hypercall(hvcall.control, in, out);
-+
-+	if (copy_to_user((void __user *)hvcall.output_ptr, out, hvcall.output_size)) {
-+		ret = -EFAULT;
-+		goto free_pages;
-+	}
-+	ret = put_user(hvcall.status, &hvcall_user->status);
-+free_pages:
-+	free_page((unsigned long)in);
-+	free_page((unsigned long)out);
-+
-+	return ret;
-+}
-+
-+static long mshv_vtl_hvcall_dev_ioctl(struct file *f, unsigned int cmd, unsigned long arg)
-+{
-+	struct mshv_vtl_hvcall_fd *fd = f->private_data;
-+
-+	switch (cmd) {
-+	case MSHV_HVCALL_SETUP:
-+		return mshv_vtl_hvcall_do_setup(fd, (struct mshv_vtl_hvcall_setup __user *)arg);
-+	case MSHV_HVCALL:
-+		return mshv_vtl_hvcall_call(fd, (struct mshv_vtl_hvcall __user *)arg);
-+	default:
-+		break;
-+	}
-+
-+	return -ENOIOCTLCMD;
-+}
-+
-+static const struct file_operations mshv_vtl_hvcall_dev_file_ops = {
-+	.owner = THIS_MODULE,
-+	.open = mshv_vtl_hvcall_dev_open,
-+	.release = mshv_vtl_hvcall_dev_release,
-+	.unlocked_ioctl = mshv_vtl_hvcall_dev_ioctl,
-+};
-+
-+static struct miscdevice mshv_vtl_hvcall_dev = {
-+	.name = "mshv_hvcall",
-+	.nodename = "mshv_hvcall",
-+	.fops = &mshv_vtl_hvcall_dev_file_ops,
-+	.mode = 0600,
-+	.minor = MISC_DYNAMIC_MINOR,
-+};
-+
-+static int mshv_vtl_low_open(struct inode *inodep, struct file *filp)
-+{
-+	pid_t pid = task_pid_vnr(current);
-+	uid_t uid = current_uid().val;
-+	int ret = 0;
-+
-+	pr_debug("%s: Opening VTL low, task group %d, uid %d\n", __func__, pid, uid);
-+
-+	if (capable(CAP_SYS_ADMIN)) {
-+		filp->private_data = inodep;
-+	} else {
-+		pr_err("%s: VTL low open failed: CAP_SYS_ADMIN required. task group %d, uid %d",
-+		       __func__, pid, uid);
-+		ret = -EPERM;
-+	}
-+
-+	return ret;
-+}
-+
-+static bool can_fault(struct vm_fault *vmf, unsigned long size, unsigned long *pfn)
-+{
-+	unsigned long mask = size - 1;
-+	unsigned long start = vmf->address & ~mask;
-+	unsigned long end = start + size;
-+	bool is_valid;
-+
-+	is_valid = (vmf->address & mask) == ((vmf->pgoff << PAGE_SHIFT) & mask) &&
-+		start >= vmf->vma->vm_start &&
-+		end <= vmf->vma->vm_end;
-+
-+	if (is_valid)
-+		*pfn = vmf->pgoff & ~(mask >> PAGE_SHIFT);
-+
-+	return is_valid;
-+}
-+
-+static vm_fault_t mshv_vtl_low_huge_fault(struct vm_fault *vmf, unsigned int order)
-+{
-+	unsigned long pfn = vmf->pgoff;
-+	vm_fault_t ret = VM_FAULT_FALLBACK;
-+
-+	switch (order) {
-+	case 0:
-+		return vmf_insert_mixed(vmf->vma, vmf->address, pfn);
-+
-+	case PMD_ORDER:
-+		if (can_fault(vmf, PMD_SIZE, &pfn))
-+			ret = vmf_insert_pfn_pmd(vmf, pfn, vmf->flags & FAULT_FLAG_WRITE);
-+		return ret;
-+
-+	case PUD_ORDER:
-+		if (can_fault(vmf, PUD_SIZE, &pfn))
-+			ret = vmf_insert_pfn_pud(vmf, pfn, vmf->flags & FAULT_FLAG_WRITE);
-+		return ret;
-+
-+	default:
-+		return VM_FAULT_SIGBUS;
-+	}
-+}
-+
-+static vm_fault_t mshv_vtl_low_fault(struct vm_fault *vmf)
-+{
-+	return mshv_vtl_low_huge_fault(vmf, 0);
-+}
-+
-+static const struct vm_operations_struct mshv_vtl_low_vm_ops = {
-+	.fault = mshv_vtl_low_fault,
-+	.huge_fault = mshv_vtl_low_huge_fault,
-+};
-+
-+static int mshv_vtl_low_mmap(struct file *filp, struct vm_area_struct *vma)
-+{
-+	vma->vm_ops = &mshv_vtl_low_vm_ops;
-+	vm_flags_set(vma, VM_HUGEPAGE | VM_MIXEDMAP);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations mshv_vtl_low_file_ops = {
-+	.owner		= THIS_MODULE,
-+	.open		= mshv_vtl_low_open,
-+	.mmap		= mshv_vtl_low_mmap,
-+};
-+
-+static struct miscdevice mshv_vtl_low = {
-+	.name = "mshv_vtl_low",
-+	.nodename = "mshv_vtl_low",
-+	.fops = &mshv_vtl_low_file_ops,
-+	.mode = 0600,
-+	.minor = MISC_DYNAMIC_MINOR,
-+};
-+
-+static int __init mshv_vtl_init(void)
-+{
-+	int ret;
-+	struct device *dev = mshv_dev.this_device;
-+
-+	/*
-+	 * This creates /dev/mshv which provides functionality to create VTLs and partitions.
-+	 */
-+	ret = misc_register(&mshv_dev);
-+	if (ret) {
-+		dev_err(dev, "mshv device register failed: %d\n", ret);
-+		goto free_dev;
-+	}
-+
-+	tasklet_init(&msg_dpc, mshv_vtl_sint_on_msg_dpc, 0);
-+	init_waitqueue_head(&fd_wait_queue);
-+
-+	if (mshv_vtl_get_vsm_regs()) {
-+		dev_emerg(dev, "Unable to get VSM capabilities !!\n");
-+		ret = -ENODEV;
-+		goto free_dev;
-+	}
-+	if (mshv_vtl_configure_vsm_partition(dev)) {
-+		dev_emerg(dev, "VSM configuration failed !!\n");
-+		ret = -ENODEV;
-+		goto free_dev;
-+	}
-+
-+	mshv_vtl_return_call_init(mshv_vsm_page_offsets.vtl_return_offset);
-+	ret = hv_vtl_setup_synic();
-+	if (ret)
-+		goto free_dev;
-+
-+	/*
-+	 * mshv_sint device adds VMBus relay ioctl support.
-+	 * This provides a channel for VTL0 to communicate with VTL2.
-+	 */
-+	ret = misc_register(&mshv_vtl_sint_dev);
-+	if (ret)
-+		goto free_synic;
-+
-+	/*
-+	 * mshv_hvcall device adds interface to enable userspace for direct hypercalls support.
-+	 */
-+	ret = misc_register(&mshv_vtl_hvcall_dev);
-+	if (ret)
-+		goto free_sint;
-+
-+	/*
-+	 * mshv_vtl_low device is used to map VTL0 address space to a user-mode process in VTL2.
-+	 * It implements mmap() to allow a user-mode process in VTL2 to map to the address of VTL0.
-+	 */
-+	ret = misc_register(&mshv_vtl_low);
-+	if (ret)
-+		goto free_hvcall;
-+
-+	/*
-+	 * "mshv vtl mem dev" device is later used to setup VTL0 memory.
-+	 */
-+	mem_dev = kzalloc(sizeof(*mem_dev), GFP_KERNEL);
-+	if (!mem_dev) {
-+		ret = -ENOMEM;
-+		goto free_low;
-+	}
-+
-+	mutex_init(&mshv_vtl_poll_file_lock);
-+
-+	device_initialize(mem_dev);
-+	dev_set_name(mem_dev, "mshv vtl mem dev");
-+	ret = device_add(mem_dev);
-+	if (ret) {
-+		dev_err(dev, "mshv vtl mem dev add: %d\n", ret);
-+		goto free_mem;
-+	}
-+
-+	return 0;
-+
-+free_mem:
-+	kfree(mem_dev);
-+free_low:
-+	misc_deregister(&mshv_vtl_low);
-+free_hvcall:
-+	misc_deregister(&mshv_vtl_hvcall_dev);
-+free_sint:
-+	misc_deregister(&mshv_vtl_sint_dev);
-+free_synic:
-+	hv_vtl_remove_synic();
-+free_dev:
-+	misc_deregister(&mshv_dev);
-+
-+	return ret;
-+}
-+
-+static void __exit mshv_vtl_exit(void)
-+{
-+	device_del(mem_dev);
-+	kfree(mem_dev);
-+	misc_deregister(&mshv_vtl_low);
-+	misc_deregister(&mshv_vtl_hvcall_dev);
-+	misc_deregister(&mshv_vtl_sint_dev);
-+	hv_vtl_remove_synic();
-+	misc_deregister(&mshv_dev);
-+}
-+
-+module_init(mshv_vtl_init);
-+module_exit(mshv_vtl_exit);
-diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
-index 7499a679e60a..1d5ce11be8b6 100644
---- a/include/hyperv/hvgdk_mini.h
-+++ b/include/hyperv/hvgdk_mini.h
-@@ -885,6 +885,48 @@ struct hv_get_vp_from_apic_id_in {
- 	u32 apic_ids[];
- } __packed;
- 
-+union hv_register_vsm_partition_config {
-+	u64 as_uint64;
-+	struct {
-+		u64 enable_vtl_protection : 1;
-+		u64 default_vtl_protection_mask : 4;
-+		u64 zero_memory_on_reset : 1;
-+		u64 deny_lower_vtl_startup : 1;
-+		u64 intercept_acceptance : 1;
-+		u64 intercept_enable_vtl_protection : 1;
-+		u64 intercept_vp_startup : 1;
-+		u64 intercept_cpuid_unimplemented : 1;
-+		u64 intercept_unrecoverable_exception : 1;
-+		u64 intercept_page : 1;
-+		u64 mbz : 51;
-+	} __packed;
-+};
-+
-+union hv_register_vsm_capabilities {
-+	u64 as_uint64;
-+	struct {
-+		u64 dr6_shared: 1;
-+		u64 mbec_vtl_mask: 16;
-+		u64 deny_lower_vtl_startup: 1;
-+		u64 supervisor_shadow_stack: 1;
-+		u64 hardware_hvpt_available: 1;
-+		u64 software_hvpt_available: 1;
-+		u64 hardware_hvpt_range_bits: 6;
-+		u64 intercept_page_available: 1;
-+		u64 return_action_available: 1;
-+		u64 reserved: 35;
-+	} __packed;
-+};
-+
-+union hv_register_vsm_page_offsets {
-+	struct {
-+		u64 vtl_call_offset : 12;
-+		u64 vtl_return_offset : 12;
-+		u64 reserved_mbz : 40;
-+	} __packed;
-+	u64 as_uint64;
-+};
-+
- struct hv_nested_enlightenments_control {
- 	struct {
- 		u32 directhypercall : 1;
-@@ -1007,6 +1049,70 @@ enum hv_register_name {
- 
- 	/* VSM */
- 	HV_REGISTER_VSM_VP_STATUS				= 0x000D0003,
-+
-+	/* Synthetic VSM registers */
-+	HV_REGISTER_VSM_CODE_PAGE_OFFSETS	= 0x000D0002,
-+	HV_REGISTER_VSM_CAPABILITIES		= 0x000D0006,
-+	HV_REGISTER_VSM_PARTITION_CONFIG	= 0x000D0007,
-+
-+#if defined(CONFIG_X86)
-+	/* X64 Debug Registers */
-+	HV_X64_REGISTER_DR0	= 0x00050000,
-+	HV_X64_REGISTER_DR1	= 0x00050001,
-+	HV_X64_REGISTER_DR2	= 0x00050002,
-+	HV_X64_REGISTER_DR3	= 0x00050003,
-+	HV_X64_REGISTER_DR6	= 0x00050004,
-+	HV_X64_REGISTER_DR7	= 0x00050005,
-+
-+	/* X64 Cache control MSRs */
-+	HV_X64_REGISTER_MSR_MTRR_CAP		= 0x0008000D,
-+	HV_X64_REGISTER_MSR_MTRR_DEF_TYPE	= 0x0008000E,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE0	= 0x00080010,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE1	= 0x00080011,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE2	= 0x00080012,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE3	= 0x00080013,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE4	= 0x00080014,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE5	= 0x00080015,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE6	= 0x00080016,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE7	= 0x00080017,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE8	= 0x00080018,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASE9	= 0x00080019,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASEA	= 0x0008001A,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASEB	= 0x0008001B,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASEC	= 0x0008001C,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASED	= 0x0008001D,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASEE	= 0x0008001E,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_BASEF	= 0x0008001F,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK0	= 0x00080040,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK1	= 0x00080041,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK2	= 0x00080042,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK3	= 0x00080043,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK4	= 0x00080044,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK5	= 0x00080045,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK6	= 0x00080046,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK7	= 0x00080047,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK8	= 0x00080048,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASK9	= 0x00080049,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKA	= 0x0008004A,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKB	= 0x0008004B,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKC	= 0x0008004C,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKD	= 0x0008004D,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKE	= 0x0008004E,
-+	HV_X64_REGISTER_MSR_MTRR_PHYS_MASKF	= 0x0008004F,
-+	HV_X64_REGISTER_MSR_MTRR_FIX64K00000	= 0x00080070,
-+	HV_X64_REGISTER_MSR_MTRR_FIX16K80000	= 0x00080071,
-+	HV_X64_REGISTER_MSR_MTRR_FIX16KA0000	= 0x00080072,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KC0000	= 0x00080073,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KC8000	= 0x00080074,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KD0000	= 0x00080075,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KD8000	= 0x00080076,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KE0000	= 0x00080077,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KE8000	= 0x00080078,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KF0000	= 0x00080079,
-+	HV_X64_REGISTER_MSR_MTRR_FIX4KF8000	= 0x0008007A,
-+
-+	HV_X64_REGISTER_REG_PAGE	= 0x0009001C,
-+#endif
- };
- 
- /*
-diff --git a/include/uapi/linux/mshv.h b/include/uapi/linux/mshv.h
-index 876bfe4e4227..ee10e21e1a11 100644
---- a/include/uapi/linux/mshv.h
-+++ b/include/uapi/linux/mshv.h
-@@ -288,4 +288,84 @@ struct mshv_get_set_vp_state {
-  * #define MSHV_ROOT_HVCALL			_IOWR(MSHV_IOCTL, 0x07, struct mshv_root_hvcall)
-  */
- 
-+/* Structure definitions, macros and IOCTLs for mshv_vtl */
-+
-+#define MSHV_CAP_CORE_API_STABLE        0x0
-+#define MSHV_CAP_REGISTER_PAGE          0x1
-+#define MSHV_CAP_VTL_RETURN_ACTION      0x2
-+#define MSHV_CAP_DR6_SHARED             0x3
-+#define MSHV_MAX_RUN_MSG_SIZE                256
-+
-+struct mshv_vp_registers {
-+	__u32 count;	/* supports only 1 register at a time */
-+	__u32 reserved; /* Reserved for alignment or future use */
-+	__u64 regs_ptr;	/* pointer to struct hv_register_assoc */
-+};
-+
-+struct mshv_vtl_set_eventfd {
-+	__s32 fd;
-+	__u32 flag;
-+};
-+
-+struct mshv_vtl_signal_event {
-+	__u32 connection_id;
-+	__u32 flag;
-+};
-+
-+struct mshv_vtl_sint_post_msg {
-+	__u64 message_type;
-+	__u32 connection_id;
-+	__u32 payload_size; /* Must not exceed HV_MESSAGE_PAYLOAD_BYTE_COUNT */
-+	__u64 payload_ptr; /* pointer to message payload (bytes) */
-+};
-+
-+struct mshv_vtl_ram_disposition {
-+	__u64 start_pfn;
-+	__u64 last_pfn;
-+};
-+
-+struct mshv_vtl_set_poll_file {
-+	__u32 cpu;
-+	__u32 fd;
-+};
-+
-+struct mshv_vtl_hvcall_setup {
-+	__u64 bitmap_array_size; /* stores number of bytes */
-+	__u64 allow_bitmap_ptr;
-+};
-+
-+struct mshv_vtl_hvcall {
-+	__u64 control;      /* Hypercall control code */
-+	__u64 input_size;   /* Size of the input data */
-+	__u64 input_ptr;    /* Pointer to the input struct */
-+	__u64 status;       /* Status of the hypercall (output) */
-+	__u64 output_size;  /* Size of the output data */
-+	__u64 output_ptr;   /* Pointer to the output struct */
-+};
-+
-+struct mshv_sint_mask {
-+	__u8 mask;
-+	__u8 reserved[7];
-+};
-+
-+/* /dev/mshv device IOCTL */
-+#define MSHV_CHECK_EXTENSION    _IOW(MSHV_IOCTL, 0x00, __u32)
-+
-+/* vtl device */
-+#define MSHV_CREATE_VTL			_IOR(MSHV_IOCTL, 0x1D, char)
-+#define MSHV_ADD_VTL0_MEMORY	_IOW(MSHV_IOCTL, 0x21, struct mshv_vtl_ram_disposition)
-+#define MSHV_SET_POLL_FILE		_IOW(MSHV_IOCTL, 0x25, struct mshv_vtl_set_poll_file)
-+#define MSHV_RETURN_TO_LOWER_VTL	_IO(MSHV_IOCTL, 0x27)
-+#define MSHV_GET_VP_REGISTERS		_IOWR(MSHV_IOCTL, 0x05, struct mshv_vp_registers)
-+#define MSHV_SET_VP_REGISTERS		_IOW(MSHV_IOCTL, 0x06, struct mshv_vp_registers)
-+
-+/* VMBus device IOCTLs */
-+#define MSHV_SINT_SIGNAL_EVENT    _IOW(MSHV_IOCTL, 0x22, struct mshv_vtl_signal_event)
-+#define MSHV_SINT_POST_MESSAGE    _IOW(MSHV_IOCTL, 0x23, struct mshv_vtl_sint_post_msg)
-+#define MSHV_SINT_SET_EVENTFD     _IOW(MSHV_IOCTL, 0x24, struct mshv_vtl_set_eventfd)
-+#define MSHV_SINT_PAUSE_MESSAGE_STREAM     _IOW(MSHV_IOCTL, 0x25, struct mshv_sint_mask)
-+
-+/* hv_hvcall device */
-+#define MSHV_HVCALL_SETUP        _IOW(MSHV_IOCTL, 0x1E, struct mshv_vtl_hvcall_setup)
-+#define MSHV_HVCALL              _IOWR(MSHV_IOCTL, 0x1F, struct mshv_vtl_hvcall)
- #endif
--- 
-2.43.0
+>
+> pw-bot: cr
+>
+> > diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
+> > index 18907f0fcf9f..d20bf81a21ce 100644
+> > --- a/tools/lib/bpf/btf.c
+> > +++ b/tools/lib/bpf/btf.c
+> > @@ -23,6 +23,7 @@
+> >  #include "libbpf_internal.h"
+> >  #include "hashmap.h"
+> >  #include "strset.h"
+> > +#include "btf_sort.h"
+> >
+> >  #define BTF_MAX_NR_TYPES 0x7fffffffU
+> >  #define BTF_MAX_STR_OFFSET 0x7fffffffU
+> > @@ -92,6 +93,12 @@ struct btf {
+> >          *   - for split BTF counts number of types added on top of bas=
+e BTF.
+> >          */
+> >         __u32 nr_types;
+> > +       /* number of sorted and named types in this BTF instance:
+> > +        *   - doesn't include special [0] void type;
+> > +        *   - for split BTF counts number of sorted and named types ad=
+ded on
+> > +        *     top of base BTF.
+> > +        */
+> > +       __u32 nr_sorted_types;
+> >         /* if not NULL, points to the base BTF on top of which the curr=
+ent
+> >          * split BTF is based
+> >          */
+> > @@ -624,6 +631,11 @@ const struct btf *btf__base_btf(const struct btf *=
+btf)
+> >         return btf->base_btf;
+> >  }
+> >
+> > +__u32 btf__start_id(const struct btf *btf)
+> > +{
+> > +       return btf->start_id;
+> > +}
+>
+> this can already be determined using btf__base_btf() (and then getting
+> its btf__type_cnt()), but I guess I don't mind having a small
 
+Yes, you're right. The calculation is sufficient:
+- If base_btf is NULL, start_id =3D 1
+- If base_btf is not NULL, start_id =3D btf__type_cnt(base_btf)
+
+> dedicated API for this. But please add it as a separate patch
+>
+> > +
+> >  /* internal helper returning non-const pointer to a type */
+> >  struct btf_type *btf_type_by_id(const struct btf *btf, __u32 type_id)
+> >  {
+> > @@ -915,38 +927,16 @@ __s32 btf__find_by_name(const struct btf *btf, co=
+nst char *type_name)
+> >         return libbpf_err(-ENOENT);
+> >  }
+> >
+> > -static __s32 btf_find_by_name_kind(const struct btf *btf, int start_id=
+,
+> > -                                  const char *type_name, __u32 kind)
+> > -{
+> > -       __u32 i, nr_types =3D btf__type_cnt(btf);
+> > -
+> > -       if (kind =3D=3D BTF_KIND_UNKN || !strcmp(type_name, "void"))
+> > -               return 0;
+> > -
+> > -       for (i =3D start_id; i < nr_types; i++) {
+> > -               const struct btf_type *t =3D btf__type_by_id(btf, i);
+> > -               const char *name;
+> > -
+> > -               if (btf_kind(t) !=3D kind)
+> > -                       continue;
+> > -               name =3D btf__name_by_offset(btf, t->name_off);
+> > -               if (name && !strcmp(type_name, name))
+> > -                       return i;
+> > -       }
+> > -
+> > -       return libbpf_err(-ENOENT);
+> > -}
+> > -
+> >  __s32 btf__find_by_name_kind_own(const struct btf *btf, const char *ty=
+pe_name,
+> >                                  __u32 kind)
+> >  {
+> > -       return btf_find_by_name_kind(btf, btf->start_id, type_name, kin=
+d);
+> > +       return _btf_find_by_name_kind(btf, btf->start_id, type_name, ki=
+nd);
+> >  }
+> >
+> >  __s32 btf__find_by_name_kind(const struct btf *btf, const char *type_n=
+ame,
+> >                              __u32 kind)
+> >  {
+> > -       return btf_find_by_name_kind(btf, 1, type_name, kind);
+> > +       return _btf_find_by_name_kind(btf, 1, type_name, kind);
+>
+> nit: please avoid using underscore-prefixed names
+
+Thanks. I will fix it in the next version.
+
+>
+> >  }
+> >
+> >  static bool btf_is_modifiable(const struct btf *btf)
+> > @@ -1091,6 +1081,7 @@ static struct btf *btf_new(const void *data, __u3=
+2 size, struct btf *base_btf, b
+> >         err =3D err ?: btf_sanity_check(btf);
+> >         if (err)
+> >                 goto done;
+> > +       btf_check_sorted(btf, btf->start_id);
+>
+> let's do this lazily when we actually need to search by name, that
+> will also work better with invalidation (currently you don't recheck
+> sortedness after invalidation)
+
+Thanks. I'll defer the call to btf_check_sorted until the first invocation =
+of
+btf__find_by_name_kind.
+
+>
+> [...]
+>
+> > +/*
+> > + * Permute BTF types in-place using the ID mapping from btf_permute_op=
+ts->ids.
+> > + * After permutation, all type ID references are updated to reflect th=
+e new
+> > + * ordering. If a struct btf_ext (representing '.BTF.ext' section) is =
+provided,
+> > + * type ID references within the BTF extension data are also updated.
+> > + */
+>
+> See how we provide doc comment for public APIs and do the same with btf__=
+permute
+
+Thanks, I will fix it in the next version.
+
+>
+> > +int btf__permute(struct btf *btf, const struct btf_permute_opts *opts)
+>
+> id map array is mandatory parameter which will always be specified,
+> make it a fixed argument. We use opts for something that's optional
+> and/or infrequently used. btf_ext being part of opts makes total
+> sense, though.
+
+Thanks, I will fix it in the next version, like:
+
+int btf__permute(struct btf *btf, __u32 *id_map, const struct
+btf_permute_opts *opts)
+
+>
+> > +{
+> > +       struct btf_permute *p;
+> > +       int err =3D 0;
+> > +
+> > +       if (!OPTS_VALID(opts, btf_permute_opts))
+> > +               return libbpf_err(-EINVAL);
+> > +
+> > +       p =3D btf_permute_new(btf, opts);
+> > +       if (!p) {
+> > +               pr_debug("btf_permute_new failed: %ld\n", PTR_ERR(p));
+> > +               return libbpf_err(-EINVAL);
+> > +       }
+> > +
+> > +       if (btf_ensure_modifiable(btf)) {
+> > +               err =3D -ENOMEM;
+> > +               goto done;
+> > +       }
+> > +
+> > +       err =3D btf_permute_shuffle_types(p);
+> > +       if (err < 0) {
+> > +               pr_debug("btf_permute_shuffle_types failed: %s\n", errs=
+tr(err));
+> > +               goto done;
+> > +       }
+> > +       err =3D btf_permute_remap_types(p);
+>
+> can't we remap IDs as we shuffle and move types around? I'm not sure
+
+This approach appears infeasible, as it necessitates first generating a
+complete type ID mapping (similar to btf_dedup's hypot_map) to translate
+original IDs to new IDs for all referenced types, followed by executing the
+remapping phase.
+
+> we need entire struct btf_permute to keep track of all of this, this
+> can be a local state in a single function
+
+Thank you. I think that a btf_permute function may be necessary. As Eduard
+suggested, we can generalize btf_dedup_remap_types into a reusable function=
+,
+which would require a dedicated structure to encapsulate all necessary
+parameters.
+
+>
+> > +       if (err) {
+> > +               pr_debug("btf_permute_remap_types failed: %s\n", errstr=
+(err));
+> > +               goto done;
+> > +       }
+> > +
+> > +done:
+> > +       btf_permute_free(p);
+> > +       return libbpf_err(err);
+> > +}
+> > +
+>
+> [...]
+>
+> > +/*
+> > + * Shuffle BTF types.
+> > + *
+> > + * Rearranges types according to the permutation map in p->ids. The p-=
+>map
+> > + * array stores the mapping from original type IDs to new shuffled IDs=
+,
+> > + * which is used in the next phase to update type references.
+> > + */
+> > +static int btf_permute_shuffle_types(struct btf_permute *p)
+> > +{
+> > +       struct btf *btf =3D p->btf;
+> > +       const struct btf_type *t;
+> > +       __u32 *new_offs =3D NULL;
+> > +       void *l, *new_types =3D NULL;
+> > +       int i, id, len, err;
+> > +
+> > +       new_offs =3D calloc(btf->nr_types, sizeof(*new_offs));
+> > +       new_types =3D calloc(btf->hdr->type_len, 1);
+> > +       if (!new_types || !new_offs) {
+> > +               err =3D -ENOMEM;
+> > +               goto out_err;
+> > +       }
+> > +
+> > +       l =3D new_types;
+>
+> What does "l" refer to in this name? It rings no bells for me...
+
+Would the name "nt" be acceptable?
+
+>
+> > +       for (i =3D 0; i < btf->nr_types; i++) {
+>
+> this won't work with split BTF, no?
+
+The `ids` array in `btf_permute` stores type IDs for split BTF.
+Local testing confirms that kernel module BTF is properly
+pre-sorted during build using a patched pahole version.
+
+Example usage in pahole:
+
+static int btf_encoder__sort(struct btf *btf)
+{
+       LIBBPF_OPTS(btf_permute_opts, opts);
+       int start_id =3D btf__start_id(btf);
+       int nr_types =3D btf__type_cnt(btf) - start_id;
+       __u32 *permute_ids;
+       int i, id, err =3D 0;
+
+       if (nr_types < 2)
+               return 0;
+
+       permute_ids =3D calloc(nr_types, sizeof(*permute_ids));
+       if (!permute_ids) {
+               err =3D -ENOMEM;
+               goto out_free;
+       }
+
+       for (i =3D 0, id =3D start_id; i < nr_types; i++, id++)
+               permute_ids[i] =3D id;
+
+       qsort_r(permute_ids, nr_types, sizeof(*permute_ids),
+               cmp_types_kinds_names, btf);
+
+       opts.ids =3D permute_ids;
+       err =3D btf__permute(btf, &opts);
+       if (err)
+               goto out_free;
+
+out_free:
+       if (permute_ids)
+               free(permute_ids);
+       return err;
+}
+
+>
+> > +               id =3D p->ids[i];
+> > +               t =3D btf__type_by_id(btf, id);
+> > +               len =3D btf_type_size(t);
+> > +               memcpy(l, t, len);
+> > +               new_offs[i] =3D l - new_types;
+> > +               p->map[id - btf->start_id] =3D btf->start_id + i;
+> > +               l +=3D len;
+> > +       }
+> > +
+> > +       free(btf->types_data);
+> > +       free(btf->type_offs);
+> > +       btf->types_data =3D new_types;
+> > +       btf->type_offs =3D new_offs;
+> > +       return 0;
+> > +
+>
+> [...]
+>
+> > diff --git a/tools/lib/bpf/btf_sort.c b/tools/lib/bpf/btf_sort.c
+> > new file mode 100644
+> > index 000000000000..553c5f5e61bd
+> > --- /dev/null
+> > +++ b/tools/lib/bpf/btf_sort.c
+>
+> why does this have to be a separate file? can't it be part of btf.c?
+
+Thanks. The kernel can leverage existing common infrastructure, similar to
+the approach used in bpf_relocate.c. If this shared approach isn't acceptab=
+le,
+I'm prepared to implement separate versions for both libbpf and the kernel.
+
+https://lore.kernel.org/all/34a168e2-204d-47e2-9923-82d8ad645273@oracle.com=
+/#t
+https://lore.kernel.org/all/7f770a27-6ca6-463f-9145-5c795e0b3f40@oracle.com=
+/
+
+>
+> > @@ -0,0 +1,174 @@
+> > +// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
+> > +/* Copyright (c) 2025 Xiaomi */
+> > +
+> > +#ifndef _GNU_SOURCE
+> > +#define _GNU_SOURCE
+> > +#endif
+> > +
+> > +#ifdef __KERNEL__
+> > +
+> > +#define btf_type_by_id                         (struct btf_type *)btf_=
+type_by_id
+> > +#define btf__str_by_offset                     btf_str_by_offset
+> > +#define btf__type_cnt                          btf_nr_types
+> > +#define btf__start_id                          btf_start_id
+> > +#define libbpf_err(x)                          x
+> > +
+> > +#else
+> > +
+> > +#define notrace
+> > +
+> > +#endif /* __KERNEL__ */
+> > +
+> > +/*
+> > + * Skip the sorted check if the number of BTF types is below this thre=
+shold.
+> > + * The value 4 is chosen based on the theoretical break-even point whe=
+re
+> > + * linear search (N/2) and binary search (LOG2(N)) require approximate=
+ly
+> > + * the same number of comparisons.
+> > + */
+> > +#define BTF_CHECK_SORT_THRESHOLD  4
+>
+> I agree with Eduard, it seems like an overkill. For small BTFs this
+> all doesn't matter anyways.
+
+Thanks, I will remove it in the next  version.
+
+>
+> > +
+> > +struct btf;
+> > +
+> > +static int cmp_btf_kind_name(int ka, const char *na, int kb, const cha=
+r *nb)
+> > +{
+> > +       return (ka - kb) ?: strcmp(na, nb);
+> > +}
+> > +
+> > +/*
+> > + * Sort BTF types by kind and name in ascending order, placing named t=
+ypes
+> > + * before anonymous ones.
+> > + */
+> > +static int btf_compare_type_kinds_names(const void *a, const void *b, =
+void *priv)
+> > +{
+> > +       struct btf *btf =3D (struct btf *)priv;
+> > +       struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
+> > +       struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
+> > +       const char *na, *nb;
+> > +       bool anon_a, anon_b;
+> > +       int ka, kb;
+> > +
+> > +       na =3D btf__str_by_offset(btf, ta->name_off);
+> > +       nb =3D btf__str_by_offset(btf, tb->name_off);
+> > +       anon_a =3D str_is_empty(na);
+> > +       anon_b =3D str_is_empty(nb);
+> > +
+> > +       /* ta w/o name is greater than tb */
+> > +       if (anon_a && !anon_b)
+> > +               return 1;
+> > +       /* tb w/o name is smaller than ta */
+> > +       if (!anon_a && anon_b)
+> > +               return -1;
+> > +
+> > +       ka =3D btf_kind(ta);
+> > +       kb =3D btf_kind(tb);
+> > +
+> > +       if (anon_a && anon_b)
+> > +               return ka - kb;
+> > +
+> > +       return cmp_btf_kind_name(ka, na, kb, nb);
+> > +}
+>
+> I think we should keep it simple and only use sorted-by-name property.
+> Within the same name, we can just search linearly for necessary kind.
+
+This approach is feasible, though it may introduce some overhead in the sea=
+rch
+function. I previously implemented a hybrid method that first sorts
+types by name
+and then combines binary search with linear search for handling collisions.
+
+https://lore.kernel.org/all/20240608140835.965949-1-dolinux.peng@gmail.com/
+
+id =3D btf_find_by_name_bsearch(btf, name, &start, &end);
+if (id > 0) {
+    while (start <=3D end) {
+        t =3D btf_type_by_id(btf, start);
+        if (BTF_INFO_KIND(t->info) =3D=3D kind)
+            return start;
+        start++;
+        }
+}
+
+Could this be acceptable?
+
+>
+> > +
+> > +static __s32 notrace __btf_find_by_name_kind(const struct btf *btf, in=
+t start_id,
+> > +                                  const char *type_name, __u32 kind)
+> > +{
+> > +       const struct btf_type *t;
+> > +       const char *tname;
+> > +       int err =3D -ENOENT;
+> > +
+> > +       if (!btf)
+> > +               goto out;
+> > +
+> > +       if (start_id < btf__start_id(btf)) {
+> > +               err =3D __btf_find_by_name_kind(btf->base_btf, start_id=
+, type_name, kind);
+> > +               if (err =3D=3D -ENOENT)
+> > +                       start_id =3D btf__start_id(btf);
+> > +       }
+> > +
+> > +       if (err =3D=3D -ENOENT) {
+> > +               if (btf->nr_sorted_types) {
+> > +                       /* binary search */
+> > +                       __s32 start, end, mid, found =3D -1;
+> > +                       int ret;
+> > +
+> > +                       start =3D start_id;
+> > +                       end =3D start + btf->nr_sorted_types - 1;
+> > +                       /* found the leftmost btf_type that matches */
+> > +                       while(start <=3D end) {
+> > +                               mid =3D start + (end - start) / 2;
+>
+> nit: binary search is, IMO, where succinct names like "l", "r", "m"
+> are good and actually help keeping algorithm code more succinct
+> without making it more obscure
+
+Thanks, I will fix it in the next version.
+
+>
+> > +                               t =3D btf_type_by_id(btf, mid);
+> > +                               tname =3D btf__str_by_offset(btf, t->na=
+me_off);
+> > +                               ret =3D cmp_btf_kind_name(BTF_INFO_KIND=
+(t->info), tname,
+> > +                                                       kind, type_name=
+);
+> > +                               if (ret < 0)
+> > +                                       start =3D mid + 1;
+> > +                               else {
+> > +                                       if (ret =3D=3D 0)
+> > +                                               found =3D mid;
+> > +                                       end =3D mid - 1;
+> > +                               }
+> > +                       }
+> > +
+> > +                       if (found !=3D -1)
+> > +                               return found;
+>
+> please check find_linfo() in kernel/bpf/log.c for a very succinct
+> implementation of binary search where we look not for exact match, but
+> rather leftmost or rightmost element satisfying some condition.
+> find_linfo() is actually looking for leftmost element (despite what
+> comment says :) ), so I think can be followed very closely.
+
+Thank you for the suggestion. If we sort types solely by name as proposed,
+we would need to first identify the leftmost and rightmost bounds of the
+matching name range (similar to find_linfo's approach), then perform a
+linear search within that range to find the first type with a matching kind=
+.
+
+>
+> > +               } else {
+> > +                       /* linear search */
+> > +                       __u32 i, total;
+> > +
+> > +                       total =3D btf__type_cnt(btf);
+> > +                       for (i =3D start_id; i < total; i++) {
+> > +                               t =3D btf_type_by_id(btf, i);
+> > +                               if (btf_kind(t) !=3D kind)
+> > +                                       continue;
+> > +
+> > +                               tname =3D btf__str_by_offset(btf, t->na=
+me_off);
+> > +                               if (tname && !strcmp(tname, type_name))
+> > +                                       return i;
+> > +                       }
+> > +               }
+> > +       }
+> > +
+>
+> [...]
 
