@@ -1,145 +1,149 @@
-Return-Path: <linux-kernel+bounces-875572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E88D3C19522
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:13:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8411C19583
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 10:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5101AA6444
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:12:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5CCAE5028D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 09:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30FEF31E0E1;
-	Wed, 29 Oct 2025 09:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A944320A31;
+	Wed, 29 Oct 2025 09:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="sNZQQqO3"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s9fxux5x"
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19677311C31
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6116F31E115
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 09:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761729107; cv=none; b=YUBz0U0j24olo2kozuGyG5DY+sq2qtYYfbIaye+Q44OcGvDRo8WYj+vCPxbVmw2NKwhcXuE+8xRDuYwfy4FYcrozGI8svo0IrBq8MJRThWLHQi6Ru8M99dAOhw/LEggMWIR92w+G0/KiyE3+qZy88UcYQ7J+kYBHT3WchQnMmJU=
+	t=1761729174; cv=none; b=XikY6/ohixIV/HahLBAp9CLCNhe0Q263D6/NsNbK9wuDoRaEGhHpKdGpQHwKo/RyUx93wRU/BcF5gO8pfKEAOO0KpjkxiNqpW7KtzsovTCB7V8oNr+8NFuLPr1/50IdlejtJfW4whEor1rHUg9WciWeCJT/P32ShIexqGuq3jBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761729107; c=relaxed/simple;
-	bh=v1RlcqU+jzCZ92shMGmfN/CxGCYCmXWYYW9AKLagie8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TiFjX1MloXADG6wLk4+xpmqhVBkWPYQ/QtZ8jQI6j+cTbYxWwgQ0fHjATq6qZEqjqda8OmdagwQCvWP6SBIKb6RmCWijyKIz02iryQ+OzspSqHX5e941hIDamIZ/OmotVdAbNozvPrOdTewGm8FVEf763X1SZErHLv41Lw0DviA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=sNZQQqO3; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-42557c5cedcso4375074f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:11:42 -0700 (PDT)
+	s=arc-20240116; t=1761729174; c=relaxed/simple;
+	bh=krm2oZWHXNyj2OY+480XxIMsziVCbnpUlmwLuLmd8oo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=W6dGsn4TgoaoMh+nWC2Iu9BRcu6PAzxa8t/4UfTfNorAT4WDlQI7xJJj4th/A6+3/golKWBsdXkjr2Bl9JCe391Kb5vyidTpSgVE9PQuR/3PRViL9xNKr6JP4HwwIgspEnzHizMCxYlZpPWacTJ/1W+TUd3r7zZYPJhFm2Rmdrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s9fxux5x; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63e255e9a20so7573358d50.0
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 02:12:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761729101; x=1762333901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7yTOb0DBw1VbIj1gPXYjKXMO6PHiSPU/ZLQwHA7s8I=;
-        b=sNZQQqO3F+ZglloCZfPP7PJSzuKSGkq/5reOBp4lTzUfGKROViFmtSNMGUXDkZ1Wbs
-         D4skoB2nrt2Saw6qShitrbOBQdSb+D1YhKY6mYrgv0qyegvdUMgKNViKoo/S3wObOzAh
-         A//GOEsFBto6G5XacRjnl9HHlQSV9xAvcT8xSxmeVj7dq2uct6EoHBfuK8hYGlAGU662
-         iN30hLCbHYT4iOJCO2iqe7e+jQNt8+TXK3yOl0vI2ZkDsi5iyTnUQRUo2Z3n6/15AmYH
-         o31mRk2BBCh5Jy1clUSpB3mavkn8Nae9tKu8Uki4YzBADLYf/c0mSzGqGcV58fKf+qi7
-         YQTQ==
+        d=google.com; s=20230601; t=1761729172; x=1762333972; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBqHz8cFPV9OUQwbjare8Pel7U5XHqHAeYtuall28CQ=;
+        b=s9fxux5xToO1bCeLUpuISSCurSMgPO2RGN/AEZghDTZsuKHjzlebAInKnXS1ejB6AD
+         Ho9stdAb5AnLmJlVlrdjUomZ8XqQtfP1evsGC3o9Ux6JWh0PWXPfBUyqX8PmvSI0U73K
+         EiunpJooJaHg69dVaTB3oNN0nkzlc7m1YWgGdVdMEABR8itBHWTQvIhdg5EdURgIzYbc
+         rxJKUtUiswTTpJU309W+A4qiPhpVsrSAr6hf5Dfec1F/PMwn/gZe2GsXexrIJpMy7HzO
+         8RBvD3DwYME7i3PeKI3rTmkzHibTLdvOreYDIUJ3Xiq1B/9VHD9qeIR/5Y3O0xT4E6QG
+         MUog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761729101; x=1762333901;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=h7yTOb0DBw1VbIj1gPXYjKXMO6PHiSPU/ZLQwHA7s8I=;
-        b=Sxz+DaaxPWjwtUtI7ADHDXiFjBkZzf88zndMJsbdGBm7h+Fzi4nHwmFdbOwFvgvGsw
-         66UZrFkipgEuvdlJb6Cn1PNUEnaORsCQOv0cO4akRih5vP7qsW2DJD16cWKmsFvCujFw
-         N4fM9I7T3tKCSJ8RArpAb21FCHy/WHugyX1Ci4IUBhBq6uTaew0tkNMC02VX1jczEhh1
-         CGRqBj9mpj45tkVmJDvm1MnLVJrPuqyu/DprDt46qiQaBGv5iuoanjt9OmwFy7sRmHFZ
-         jwtCyqK/iWW2zpQfKfGhqHtjpOkS/b36iIE+CgWRacd4FBgazxiTAZzhVBJa+8zjGNIo
-         5qXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9J+GLbwa8HcbpRla790NGPcM37Zo5EmBSL0evRwy19k7/yh1I7heus/XkxoaXQPbbfLeEcMqaffUfdhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlCSlJHmWC6pG/IE6iCleParsH94MK+i3aGyI889fbFJfUkWhQ
-	bbq556GlWmKvEu5WgO5k+1RtbqpxOt/QNX1RAmcET2npTS8Xr2deEGlWL0nWE2bs09E=
-X-Gm-Gg: ASbGncvyxJ/mfxI02cyulibnEJE4/v5pAdaFSbhxlbbl2dvades4NW6EbLP+04EfbD+
-	jdptdtDtQJCaAuGbPm7GHhpCPAxZBYRWK5URKI6kYk8OP07mqRWD3yFrXMWdrVK1sk3kILkSTYY
-	R8EBr4XrjWPYzWBkGmBObZF3vPMy/g1+tMYe+o1XMxAmCWQ5kg9a6b6fOF7KQMVxUKwLAjNo5TP
-	F9li5bt5kzcp0HtLvaPzL8xDHAhD4yOFbG4jEMdQSrX9NS/XaRaLd/6s3cH+XoXWVCe2A3IPQ3g
-	CtlKRQkXszP3Ldj5oJzfG8x+xgbj8q7RltE48DU6QqBiP+qd9WLy58764BYj30Jx3BNMixmdLzX
-	r2lQ2vJ5gJb2As/sLoWIElGCKrnS/u7C9QZFws73TI2Y/QsTLMrMU1K5glW7o0pyYZIKqEBZMjV
-	01IKQ3wGCcLhA=
-X-Google-Smtp-Source: AGHT+IGDyulGoYcyx6jU9Pxepcswwi8toc9gOJoAK0Kv095CCsZqF5B43vi69L++DfHx0JIkYMss0g==
-X-Received: by 2002:a05:6000:2c05:b0:428:55c3:cea8 with SMTP id ffacd0b85a97d-429aefca395mr1382550f8f.50.1761729100844;
-        Wed, 29 Oct 2025 02:11:40 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:69f2:5f2d:9ffc:a805])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4771e196b27sm39871275e9.8.2025.10.29.02.11.40
+        d=1e100.net; s=20230601; t=1761729172; x=1762333972;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BBqHz8cFPV9OUQwbjare8Pel7U5XHqHAeYtuall28CQ=;
+        b=lRcBv6knVw1gJc9TfdZuPFyWqiwpYzweczlVlDRQVM3NcA2CzEg+kSloE6Gi1JKSLV
+         bDCkva6oJiMy9zxvqeUqaLxDZCOOSX6RH3z7QU3J1nWhHnU51gM3oDYo758ippcT09r3
+         T304sBQELLH8+u8Tt9T0xSTC7fInAuJ8fvt2EwZAB8BZUZxE4kKwMOo608fCRgMM7Klz
+         sjLWDFh/OXo9kHLaeGrK6DJ+vYm1k6ilcd+yuE6/vemAnBe0AxctL/0hyJOdEDVx/H9y
+         Oxk5Az+ZtQaUG9XkDeIq8CizsNDCXWcPeCnq2exHohocrWWhLjSWIr9IaqZlo9/gVZwG
+         5Tsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUS/qaQ4HpRpwHtEDgMaAlkz4UPHclgiJRlKiVpmpRLIvyjSGROdvlwTSAcPHO5D9tQ4isYD2d/dcCxY6Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWtTeIrga8qntWqRXGO/C4ib29/ZWs+CT2RH6s0EMQij3ALFCR
+	+t+GsW5W7DIvU5gF3G5bMsAfNWXWOJawCxfNI6mcXmCC4uwf94bNgAFkw1juKYHl/2Dx8mWT/b1
+	nx/lANw==
+X-Gm-Gg: ASbGncsWqtU7eTdeBXoRDH/d4UWk95aXEQpYr8Oepea57UPtQp8SQJioQ+0Q+sL6/q8
+	RenVsVKNOCMDlbbJU8wlI4nRYwW9gyeGg2+8HnyZrESwSf8Y/Vkwj2YvpY2ARbz2eBWEfI6vN7M
+	ro4N3zCsn37OJi/Ry2Mt+cibQE8SRcRoPuRQlfev27aOVU7CJq9EVFdcpA1P+suINGNWuZpYVBC
+	q4La576nFi0XvbhLTs3JfWl93WyFgf69jTHW06zFJWTvVLrCZAqd6sPCZjvDa3RGuAAITkOgohd
+	vFNpydZB4mLg6o8lrVbLigs9J/W+4qQPb/RdsvYlXAFATLx73sloE15wLbpnV343JKsvYtKJq6w
+	Gm/zHCC/D1PB55VLSvi/OZms/t72hBadQSNBfQWVfi9tLSI6lUprhMTSwAEvMecID1BVtkItlcT
+	TOqZNd67WyxqOyjP7G8clBp15sIE73zU5GNiR0n1uTEsRwfhW6sqNcV7pUAz4x
+X-Google-Smtp-Source: AGHT+IEUyMs7bw/KHzPZ51AbmO3wPAApjy9icdxMigxwWyr9bCi7kzw4YLn0xUhUa4b2Nc69MgGvKQ==
+X-Received: by 2002:a53:cdcc:0:b0:63e:187b:f383 with SMTP id 956f58d0204a3-63f76dced0dmr1569801d50.52.1761729172087;
+        Wed, 29 Oct 2025 02:12:52 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-785ed198ef9sm34560117b3.24.2025.10.29.02.12.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Oct 2025 02:11:40 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] gpio: mm-lantiq: update kernel docs
-Date: Wed, 29 Oct 2025 10:11:38 +0100
-Message-ID: <20251029091138.7995-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+        Wed, 29 Oct 2025 02:12:51 -0700 (PDT)
+Date: Wed, 29 Oct 2025 02:12:48 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+    Alexander Viro <viro@zeniv.linux.org.uk>, 
+    Christian Brauner <brauner@kernel.org>, 
+    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+    Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+    Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+    Rik van Riel <riel@surriel.com>, Harry Yoo <harry.yoo@oracle.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Shakeel Butt <shakeel.butt@linux.dev>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/2] mm/truncate: Unmap large folio on split failure
+In-Reply-To: <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
+Message-ID: <eaa8023f-f3e1-239d-a020-52f50df873e7@google.com>
+References: <20251023093251.54146-1-kirill@shutemov.name> <20251023093251.54146-3-kirill@shutemov.name> <9c7ae4c5-cc63-f11f-c5b0-5d539df153e1@google.com> <qte6322kbhn3xydiukyitgn73lbepaqlhqq43mdwhyycgdeuho@5b6wty5mcclt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Mon, 27 Oct 2025, Kiryl Shutsemau wrote:
+> On Mon, Oct 27, 2025 at 03:10:29AM -0700, Hugh Dickins wrote:
+...
+> 
+> > Aside from shmem/tmpfs, it does seem to me that this patch is
+> > doing more work than it needs to (but how many lines of source
+> > do we want to add to avoid doing work in the failed split case?):
+> > 
+> > The intent is to enable SIGBUS beyond EOF: but the changes are
+> > being applied unnecessarily to hole-punch in addition to truncation.
+> 
+> I am not sure much it should apply to hole-punch. Filesystem folks talk
+> about writing to a folio beyond round_up(i_size, PAGE_SIZE) being
+> problematic for correctness. I have no clue if the same applies to
+> writing to hole-punched parts of the folio.
+> 
+> Dave, any comments?
+> 
+> Hm. But if it is problematic it has be caught on fault. We don't do
+> this. It will be silently mapped.
 
-Update kernel docs which are now outdated following the conversion to
-using the modern GPIO provider API.
+There are strict rules about what happens beyond i_size, hence this
+patch.  But hole-punch has no persistent "i_size" to define it, and
+silently remapping in a fresh zeroed page is the correct behaviour.
 
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Fixes: 8d0d46da40c8 ("gpio: mm-lantiq: Drop legacy-of-mm-gpiochip.h header from GPIO driver")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510290348.IpSNHCxr-lkp@intel.com/
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-mm-lantiq.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+So the patch is making more work than is needed for hole-punch.
 
-diff --git a/drivers/gpio/gpio-mm-lantiq.c b/drivers/gpio/gpio-mm-lantiq.c
-index 3d2e24d61475..1bd98c50a459 100644
---- a/drivers/gpio/gpio-mm-lantiq.c
-+++ b/drivers/gpio/gpio-mm-lantiq.c
-@@ -52,8 +52,8 @@ static void ltq_mm_apply(struct ltq_mm *chip)
- /**
-  * ltq_mm_set() - gpio_chip->set - set gpios.
-  * @gc:     Pointer to gpio_chip device structure.
-- * @gpio:   GPIO signal number.
-- * @val:    Value to be written to specified signal.
-+ * @offset: GPIO signal number.
-+ * @value:  Value to be written to specified signal.
-  *
-  * Set the shadow value and call ltq_mm_apply. Always returns 0.
-  */
-@@ -73,8 +73,8 @@ static int ltq_mm_set(struct gpio_chip *gc, unsigned int offset, int value)
- /**
-  * ltq_mm_dir_out() - gpio_chip->dir_out - set gpio direction.
-  * @gc:     Pointer to gpio_chip device structure.
-- * @gpio:   GPIO signal number.
-- * @val:    Value to be written to specified signal.
-+ * @offset: GPIO signal number.
-+ * @value:  Value to be written to specified signal.
-  *
-  * Same as ltq_mm_set, always returns 0.
-  */
-@@ -85,7 +85,7 @@ static int ltq_mm_dir_out(struct gpio_chip *gc, unsigned offset, int value)
- 
- /**
-  * ltq_mm_save_regs() - Set initial values of GPIO pins
-- * @mm_gc: pointer to memory mapped GPIO chip structure
-+ * @chip: Pointer to our private data structure.
-  */
- static void ltq_mm_save_regs(struct ltq_mm *chip)
- {
--- 
-2.48.1
+But I am thinking there of the view from above, from userspace.
+If I think of the view from below, from the filesystem, then I'm
+not at all sure how a filesystem is expected to deal with a failed
+folio_split - and that goes beyond this patch, and therefore I
+don't think it should concern you in this patch.
 
+If a filesystem is asked to punch a hole, but mm cannot split the
+folio which covers that hole, then page cache and filesystem are
+left out of synch?  And if filesystem thinks one block has been
+freed, and it's the last block in that filesystem, and it's then
+given out to someone else, then our unsplit folio hides an ENOSPC?
+
+Maybe this has all been well thought out, and each large folio
+filesystem deals with it appropriately somehow; but I wouldn't
+know, since a tmpfs is simply backed by its page cache.
+
+Hugh
 
