@@ -1,122 +1,402 @@
-Return-Path: <linux-kernel+bounces-875872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-875873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB28C1A04D
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:30:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DDEC1A017
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:28:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4465622A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:24:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15C8562CB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 11:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502AE32E121;
-	Wed, 29 Oct 2025 11:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF572331A50;
+	Wed, 29 Oct 2025 11:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dxt7xc37"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOSbnBH/"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5D2E2EFC
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15B732E732
+	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 11:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761736936; cv=none; b=jKQZvnRU/fEVEGvqJfiL0+sQYjX/vWDomRACLl3zKsTZYiYlt6RHOXcRA+HW2fNKWoGP5396huyvHtaverrFNFmAg6G1EQTxNs+RvW7G16O5eSKaaBBbffv4KawtDx0NX5iDZQYFrEJiceb5XMZ1nbIieewb2ALUjq4OLOVaT9I=
+	t=1761736998; cv=none; b=UvCVy2hKEog9EZdqh5eohH/Bg6Oj81M5p88JS/3DxY9xkjoN+S1i2yvk4ufvEnljJAXrqORHm3bTs2KnbS3X8nY02aGdqeS8FgpIDfqYzmwU2raGgcLVqLggFPJ3c0I/O17UmQFU2ufDPU6cJZWEQUQDmPU3nsHCmsCZU3pnkgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761736936; c=relaxed/simple;
-	bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9fPxJd//iv4JTBqBW02SiX3JSVzyir2BSN/l30qWbG+/RUHelNi0wyxbah5cQrc0R4HejdtPVKKAcBUDZCKfJJGoxMqYDFk0768Z9dk2Ij0LSi7NdrQ477UFRFS+UEKkQo8ybWK4AhdN3qmgEXRALGG5RbdHZ5cFTsq+Kvp1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dxt7xc37; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1761736998; c=relaxed/simple;
+	bh=hUb4P4wv8KFRJLK/g/PAsO4/t1ouR6XU7JBRir9zC40=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ksjJiwhChSne2NHQ1wRWlBIFc10fYshnCzElj2f48ajonxqDufb3VBUsJX4gOy7l3dntFyGcyWefvHc9KAVsoL1PRRISf1MhhuL1IQiI24f9s0frqrwa7JaJkI16VRtTt5H3U9esAK4YJtstrDxUBGR45GH6ncJMozND8pRe5+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOSbnBH/; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-59052926cf9so3193568e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:22:14 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-290ab379d48so67056325ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 04:23:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761736933; x=1762341733; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
-        b=dxt7xc376bmsPY89zw356rMpGf4Vyp0Axzh+cK6h/NKDJpjxbfQxwtd+sg40RTRd9Z
-         Wh9y8IOvu79rKshKWXK/QkzdYlJK2Ducb8646aR4zb1CQqp2bkKFnf7toFACkhUB+7sT
-         b8gF1a0ehaGjU4qh1wHX3MZ/pbBaMQ9S7fQXwmaj/gwZx0iC7j/AQVA0tSdHZiV+b/q5
-         pAidlLMkSmAVPJQFSxWGa2KynKvd1C3Hhan+Fk2fYLImQvfxkduOggdyzxjVu12dFX+3
-         u2ZNEkb5Z4Mr5QMRCvvuDAwsVuBm4eJYiZXdUqfuauxAf9i/cX7b52flY386SnyKeLLb
-         VZ9Q==
+        d=gmail.com; s=20230601; t=1761736995; x=1762341795; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Zuystu9GulO54e6npNFQXXlVugB7eTqYzuLiqHTFZ30=;
+        b=BOSbnBH/C/SMvYCVoJBW/OB5k7XMCTPNAz3j5P74Ze65cwHUFnu6AS5IU8PadBecSn
+         9xLadGOsEQEW4UbL81hPqFlLcPt2mnnJWW7cxXrjqJM8O4/xH5jhUmOV0AneHO2GKpKE
+         RSbstal3MKRFAdNug1bcMFar16AuZDVqzjmqmjy/6AHmxC5yEI2CSRoQUceIVIhn5Tw6
+         q53SRBVL4rqQ6torJR+ALmB/+ZRpv5L2bG5dFoSRkAVoQvKy1I6PYrfU/4gJLifCyAR0
+         1rmSrmnyDDHq9/8xZtSclskfIL829sUuk9ZmO6YzKPLmHmFv3df4phmKTh4XOO84JpvN
+         zbcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761736933; x=1762341733;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EDUtqO8PePY47rqraTgqQcnx+NDx1LFP7gvDlG+r7fU=;
-        b=xIs8ocKNDTN5dLbYnkFCokNDABv9TrElmkneNj0fEySf9OBimmbiHnk+rZss33tNAT
-         KDHF32ON2Wd3gcVMIkjbn1jDzW6k+VZ1QsnFC2KftgQvnzWB0d+aU5aJsbfsGxB50omv
-         YLQMep4MAzLjJo+qK5iqietFnKTy0Haoo4A0g6/bNVm4+One/ho34naesfnH/mdAVdMz
-         G4hj/w217aOvBFtgScSt69mYI37B9j3FBzmgcm5rHtWaCwF3gEA1VJ+5imMHpeiKJBcc
-         JXFCEFl+qjUJNT0R3gZ5UsZDiqmLQrfl2OYu4u2qg1SIVA/oSGMG7OdhUUQPEvN3lVDO
-         hNOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGTukEfrTd8tUe3W2TyuPF4Ct/WXw8LaV08ylTPK4ZW4mkl15cLpGpeKhZoAKz172r6lz7zAoTVVelJiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw18ZtawXXuabLrquOB9t4xE+2ohnHj/sPDRaYNTC+pHATPT8Bg
-	ObB7ghteHcbULXoodX7oRyJ7aBhN/7GKRHcHeprg9vI/2ZQA95x5/j7ct6hpWMSj4A5a9t24mHF
-	GJg7k5bRRn7WzO3UmOMFG+Pr+YOKOios=
-X-Gm-Gg: ASbGncuzJ5L45g00u0HxIdhlM6cZE5CAawnRG28WrI/6oSoqRTQb+aMoYVyRu3gYYmO
-	y0R0T27c6r6okgha9vGLz1f/Iyvoix7b49Pt+PD43M3XztSwDsNYMMZnONs6BkoyAhSdpaLWLjV
-	7JVOkWJRlYlc9RLL1W5IGV7Q2kA7hUw5AaOGKUw6vfD701g/NqWz/UWvxxAIydOzRnRyToO9oCj
-	NIIEa8b64GM8JEXNzjT7hw62gpGA+kwLde0Dr1EVjZ6vj0CnjeDX4MF0bk3Hztif6DjgYzTX75W
-	u3OnRkgrXmec1va4+X1x4MIE2btfAstS/lOu7A==
-X-Google-Smtp-Source: AGHT+IHc4LI3CCYCeXedzWEMPrCQwraenU/iOkhCterIRDyKhtcKSuDxLJCCmfvBj668P02zxck5F1RCdCRawh/y0mQ=
-X-Received: by 2002:a05:6512:6c9:b0:560:8b86:75d9 with SMTP id
- 2adb3069b0e04-59412a3d1femr855771e87.14.1761736932471; Wed, 29 Oct 2025
- 04:22:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761736995; x=1762341795;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zuystu9GulO54e6npNFQXXlVugB7eTqYzuLiqHTFZ30=;
+        b=U2wCBVU/RC4XUzPK3HkWU+PCGEVttgVy58MZ74Z7MakR4uh+ukvfe2bdQ872MRjktr
+         ZC1K6ssn39qR7vDZIZk9R7GWNXansA/azQ0SvaQ2P6Eo3984kbQIuoVhObTw5FcFKa66
+         PBA4X0JH5SLnnV2Yq6zJbOa98liZCYWJ9aampgytm+ngV3EkkrU3ckZYNzFK9qcqbw4R
+         i3JrJycvzmAsDbZIQ4e4znG6v31EKoo+q+scKm715XSkJ9TKHH/P9FuoGgU8r49W23d5
+         J89PTDVXOJXmhlZFI/hxmYq3KbCgwfUURPF3uakykxKDimQA3FopmcIVbUN9tG2Co+gV
+         wkKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUA7Z6eaCnrE3ZwqjF+fvU9s9DE0LRYX+xSsKs2FTHwW/OY5lG/qpoptrHcSJt1zX6wkgqE8kFnREfnzME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDzRvr8EFSx0abn8UkLqE8k0cBLkzyEF+RaeGdaZf9S0Wecgn4
+	KxRryGpzTe+7m66yq3s3xO0UHBE5o9kdWdNMOoOyk9iTRVk7x8QE0PoP
+X-Gm-Gg: ASbGncusrDzabnEOwCwJlV7r0gcEmdkDhyyYCEo2/Xt8PYg7PQRCPnn3fqsXAssAU7X
+	qHSLipv2X8H3eZe3WNzZ/r6DG5zvQf0pBlRi2t7k1kwiZ2bRdJb0+dKLmFFGD+LEfU0CtOjh2AG
+	78+76jxdiBkLgf+tIB8O1QJr9KAZ0EfZDIPKBPSiE+zxikk5t6eKofp/vENiKRiZkZDa++83t/h
+	eLtATbJysWBNF9iXB9alNRTs7qggNNm3VpF7xD1kdP60xYD3PapqDdzJKjykj1pwl8BSK1qdvyf
+	OiOwW9RgJPIWQ0CJVL1fK+kIsiJcot66pKUuUhiEgG/mEH6gcrS3XjxrZyGxvv+wMoxsr3cXA1f
+	pXuw2AH38Edawmv6kKSf1eb4USYV/Rebspydti5YbXd/8Vf8R03hFLzcxyMu2EqlTUy13ivZrzg
+	h+2S4UwKACbaGZNaMo
+X-Google-Smtp-Source: AGHT+IHoU9SVnBfeLodYo2Q2PFksEn9S/kqKrsqAqP+7hTB8BlCbI0yXHBbzjvJ60TnIJ44djQPBzw==
+X-Received: by 2002:a17:903:178b:b0:269:b65a:cbb2 with SMTP id d9443c01a7336-294def46d00mr32412325ad.47.1761736994592;
+        Wed, 29 Oct 2025 04:23:14 -0700 (PDT)
+Received: from chandna.localdomain ([106.222.230.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29498d40ac9sm150046245ad.71.2025.10.29.04.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Oct 2025 04:23:13 -0700 (PDT)
+Date: Wed, 29 Oct 2025 16:52:58 +0530
+From: Sahil Chandna <chandna.sahil@gmail.com>
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com,
+	andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, listout@listout.xyz,
+	martin.lau@linux.dev, netdev@vger.kernel.org, sdf@fomichev.me,
+	song@kernel.org, syzkaller-bugs@googlegroups.com,
+	linux-rt-devel@lists.linux.dev, bigeasy@linutronix.de
+Subject: Re: [syzbot] [bpf?] WARNING in bpf_bprintf_prepare (3)
+Message-ID: <aQH5EtKBbklfH0Wq@chandna.localdomain>
+References: <68f6a4c8.050a0220.1be48.0011.GAE@google.com>
+ <14371cf8-e49a-4c68-b763-fa7563a9c764@linux.dev>
+ <aPklOxw0W-xUbMEI@chandna.localdomain>
+ <8dd359dd-b42f-4676-bb94-07288b38fac1@linux.dev>
+ <aP5_JbddrpnDs-WN@chandna.localdomain>
+ <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029075117.104758-1-hsukrut3@gmail.com> <aQHMvdQXD4eRvPSV@smile.fi.intel.com>
-In-Reply-To: <aQHMvdQXD4eRvPSV@smile.fi.intel.com>
-From: sukrut heroorkar <hsukrut3@gmail.com>
-Date: Wed, 29 Oct 2025 16:52:00 +0530
-X-Gm-Features: AWmQ_blOcs28nOwA4mRzZbzsddmE8hj5NWFZNo5p4Pwmd7EkxFCZpTsV9vvv3Oc
-Message-ID: <CAHCkknoUyV3erQa2QJUY_MzPXuybQMv1neXJQJsZFS8epsyBiA@mail.gmail.com>
-Subject: Re: [PATCH] iio: backend: document @chan in iio_backend_oversampling_ratio_set
- kernel-doc comment
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Nuno Sa <nuno.sa@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	Andy Shevchenko <andy@kernel.org>, Pop Ioan Daniel <pop.ioan-daniel@analog.com>, 
-	"open list:IIO BACKEND FRAMEWORK" <linux-iio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	shuah@kernel.org, david.hunter.linux@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <95e1fd95-896f-4d33-956f-a0ef0e0f152c@linux.dev>
 
-On Wed, Oct 29, 2025 at 1:43=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@intel.com> wrote:
+On Mon, Oct 27, 2025 at 08:45:25PM -0700, Yonghong Song wrote:
 >
-> On Wed, Oct 29, 2025 at 01:21:16PM +0530, Sukrut Heroorkar wrote:
-> > Buidling with W=3D1 reports:
-> > Warning: drivers/iio/industrialio-backend.c:727 function parameter 'cha=
-n'
-> > not described in 'iio_backend_oversampling_ratio_set'
-> >
-> > The @chan parameter was added when iio_backend_oversampling_ratio_set()=
- was
-> > updated so the contexts could specify the channel, but the parameter wa=
-s
-> > never documented. Document @chan to silence this warning.
 >
-> There is already more comprehensive patch available:
-> https://lore.kernel.org/linux-iio/20251028093326.1087660-1-kriish.sharma2=
-006@gmail.com/
-Thanks for the update, Andy.
+>On 10/26/25 1:05 PM, Sahil Chandna wrote:
+>>On Wed, Oct 22, 2025 at 12:56:25PM -0700, Yonghong Song wrote:
+>>>
+>>>
+>>>On 10/22/25 11:40 AM, Sahil Chandna wrote:
+>>>>On Wed, Oct 22, 2025 at 09:57:22AM -0700, Yonghong Song wrote:
+>>>>>
+>>>>>
+>>>>>On 10/20/25 2:08 PM, syzbot wrote:
+>>>>>>Hello,
+>>>>>>
+>>>>>>syzbot found the following issue on:
+>>>>>>
+>>>>>>HEAD commit:    a1e83d4c0361 selftests/bpf: Fix redefinition 
+>>>>>>of 'off' as d..
+>>>>>>git tree:       bpf
+>>>>>>console output: 
+>>>>>>https://syzkaller.appspot.com/x/log.txt?x=12d21de2580000
+>>>>>>kernel config: 
+>>>>>>https://syzkaller.appspot.com/x/.config?x=9ad7b090a18654a7
+>>>>>>dashboard link: 
+>>>>>>https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb
+>>>>>>compiler:       Debian clang version 20.1.8 
+>>>>>>(++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), 
+>>>>>>Debian LLD 20.1.8
+>>>>>>syz repro: https://syzkaller.appspot.com/x/repro.syz?x=160cf542580000
+>>>>>>C reproducer: 
+>>>>>>https://syzkaller.appspot.com/x/repro.c?x=128d5c58580000
+>>>>>>
+>>>>>>Downloadable assets:
+>>>>>>disk image: https://storage.googleapis.com/syzbot-assets/2f6a7a0cd1b7/disk-a1e83d4c.raw.xz
+>>>>>>vmlinux: https://storage.googleapis.com/syzbot-assets/873984cfc71e/vmlinux-a1e83d4c.xz
+>>>>>>kernel image: https://storage.googleapis.com/syzbot-assets/16711d84070c/bzImage-a1e83d4c.xz
+>>>>>>
+>>>>>>The issue was bisected to:
+>>>>>>
+>>>>>>commit 7c33e97a6ef5d84e98b892c3e00c6d1678d20395
+>>>>>>Author: Sahil Chandna <chandna.sahil@gmail.com>
+>>>>>>Date:   Tue Oct 14 18:56:35 2025 +0000
+>>>>>>
+>>>>>>    bpf: Do not disable preemption in bpf_test_run().
+>>>>>>
+>>>>>>bisection log: 
+>>>>>>https://syzkaller.appspot.com/x/bisect.txt?x=172fe492580000
+>>>>>>final oops: 
+>>>>>>https://syzkaller.appspot.com/x/report.txt?x=14afe492580000
+>>>>>>console output: 
+>>>>>>https://syzkaller.appspot.com/x/log.txt?x=10afe492580000
+>>>>>>
+>>>>>>IMPORTANT: if you fix the issue, please add the following 
+>>>>>>tag to the commit:
+>>>>>>Reported-by: syzbot+b0cff308140f79a9c4cb@syzkaller.appspotmail.com
+>>>>>>Fixes: 7c33e97a6ef5 ("bpf: Do not disable preemption in 
+>>>>>>bpf_test_run().")
+>>>>>>
+>>>>>>------------[ cut here ]------------
+>>>>>>WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
+>>>>>>bpf_try_get_buffers kernel/bpf/helpers.c:781 [inline]
+>>>>>>WARNING: CPU: 1 PID: 6145 at kernel/bpf/helpers.c:781 
+>>>>>>bpf_bprintf_prepare+0x12cf/0x13a0 kernel/bpf/helpers.c:834
+>>>>>
+>>>>>Okay, the warning is due to the following WARN_ON_ONCE:
+>>>>>
+>>>>>static DEFINE_PER_CPU(struct 
+>>>>>bpf_bprintf_buffers[MAX_BPRINTF_NEST_LEVEL], 
+>>>>>bpf_bprintf_bufs);
+>>>>>static DEFINE_PER_CPU(int, bpf_bprintf_nest_level);
+>>>>>
+>>>>>int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
+>>>>>{
+>>>>>       int nest_level;
+>>>>>
+>>>>>       nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
+>>>>>       if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
+>>>>>               this_cpu_dec(bpf_bprintf_nest_level);
+>>>>>               return -EBUSY;
+>>>>>       }
+>>>>>       *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
+>>>>>
+>>>>>       return 0;
+>>>>>}
+>>>>>
+>>>>>Basically without preempt disable, at process level, it is possible
+>>>>>more than one process may trying to take bpf_bprintf_buffers.
+>>>>>Adding softirq and nmi, it is totally likely to have more than 3
+>>>>>level for buffers. Also, more than one process with 
+>>>>>bpf_bprintf_buffers
+>>>>>will cause problem in releasing buffers, so we need to have
+>>>>>preempt_disable surrounding bpf_try_get_buffers() and
+>>>>>bpf_put_buffers().
+>>>>Right, but using preempt_disable() may impact builds with
+>>>>CONFIG_PREEMPT_RT=y, similar to bug[1]? Do you think 
+>>>>local_lock() could be used here
+>>>
+>>>We should be okay. for all the kfuncs/helpers I mentioned below,
+>>>with the help of AI, I didn't find any spin_lock in the code path
+>>>and all these helpers although they try to *print* some contents,
+>>>but the kfuncs/helpers itself is only to deal with buffers and
+>>>actual print will happen asynchronously.
+>>>
+>>>>as nest level is per cpu variable and local lock semantics can work
+>>>>for both RT and non rt builds ?
+>>>
+>>>I am not sure about local_lock() in RT as for RT, local_lock() could
+>>>be nested and the release may not in proper order. See
+>>> https://www.kernel.org/doc/html/v5.8/locking/locktypes.html
+>>>
+>>> local_lock is not suitable to protect against preemption or 
+>>>interrupts on a
+>>> PREEMPT_RT kernel due to the PREEMPT_RT specific spinlock_t semantics.
+>>>
+>>>So I suggest to stick to preempt_disable/enable approach.
+>>>
+>>>>>
+>>>>>There are some kfuncs/helpers need such preempt_disable
+>>>>>protection, e.g. bpf_stream_printk, bpf_snprintf,
+>>>>>bpf_trace_printk, bpf_trace_vprintk, bpf_seq_printf.
+>>>>>But please double check.
+>>>>>
+>>>>Sure, thanks!
+>>
+>>Since these helpers eventually call bpf_bprintf_prepare(),
+>>I figured adding protection around bpf_try_get_buffers(),
+>>which triggers the original warning, should be sufficient.
+>>I tried a few approaches to address the warning as below :
+>>
+>>1. preempt_disable() / preempt_enable() around bpf_prog_run_pin_on_cpu()
+>>diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+>>index 1b61bb25ba0e..6a128179a26f 100644
+>>--- a/net/core/flow_dissector.c
+>>+++ b/net/core/flow_dissector.c
+>>@@ -1021,7 +1021,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
+>>struct bpf_flow_dissector *ctx,
+>>               (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
+>>      flow_keys->flags = flags;
+>>
+>>+    preempt_disable();
+>>      result = bpf_prog_run_pin_on_cpu(prog, ctx);
+>>+    preempt_enable();
+>>
+>>      flow_keys->nhoff = clamp_t(u16, flow_keys->nhoff, nhoff, hlen);
+>>      flow_keys->thoff = clamp_t(u16, flow_keys->thoff,
+>>This fixes the original WARN_ON in both PREEMPT_FULL and RT builds.
+>>However, when tested with the syz reproducer of the original bug [1], it
+>>still triggers the expected 
+>>DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt)) warning from 
+>>__local_bh_disable_ip(), due to the preempt_disable() interacting 
+>>with RT spinlock semantics.
+>>[1] [https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
+>>So this approach avoids the buffer nesting issue, but re-introduces 
+>>the following issue:
+>>[  363.968103][T21257] 
+>>DEBUG_LOCKS_WARN_ON(this_cpu_read(softirq_ctrl.cnt))
+>>[  363.968922][T21257] WARNING: CPU: 0 PID: 21257 at 
+>>kernel/softirq.c:176 __local_bh_disable_ip+0x3d9/0x540
+>>[  363.969046][T21257] Modules linked in:
+>>[  363.969176][T21257] Call Trace:
+>>[  363.969181][T21257]  <TASK>
+>>[  363.969186][T21257]  ? __local_bh_disable_ip+0xa1/0x540
+>>[  363.969197][T21257]  ? sock_map_delete_elem+0xa2/0x170
+>>[  363.969209][T21257]  ? preempt_schedule_common+0x83/0xd0
+>>[  363.969252][T21257]  ? rt_spin_unlock+0x161/0x200
+>>[  363.969269][T21257]  sock_map_delete_elem+0xaf/0x170
+>>[  363.969280][T21257]  bpf_prog_464bc2be3fc7c272+0x43/0x47
+>>[  363.969289][T21257]  bpf_flow_dissect+0x22b/0x750
+>>[  363.969299][T21257] bpf_prog_test_run_flow_dissector+0x37c/0x5c0
+>>
+>>2. preempt_disable() inside bpf_try_get_buffers() and bpf_put_buffers()
+>>
+>>diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+>>index 8eb117c52817..bc8630833a94 100644
+>>--- a/kernel/bpf/helpers.c
+>>+++ b/kernel/bpf/helpers.c
+>>@@ -777,12 +777,14 @@ int bpf_try_get_buffers(struct 
+>>bpf_bprintf_buffers **bufs)
+>> {
+>>        int nest_level;
+>>
+>>+       preempt_disable();
+>>        nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
+>>        if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
+>>                this_cpu_dec(bpf_bprintf_nest_level);
+>>                return -EBUSY;
+>>        }
+>>        *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
+>>+       preempt_enable();
+>>
+>>        return 0;
+>> }
+>>@@ -791,7 +793,10 @@ void bpf_put_buffers(void)
+>> {
+>>        if (WARN_ON_ONCE(this_cpu_read(bpf_bprintf_nest_level) == 0))
+>>                return;
+>>+
+>>+       preempt_disable();
+>>        this_cpu_dec(bpf_bprintf_nest_level);
+>>+       preempt_enable();
+>> }
+>>This *still* reproduces the original syz issue, so the protection 
+>>needs to be placed around the entire program run, not inside the 
+>>helper itself as
+>>in above experiment.
+>
+>This does not work. See my earlier suggestions.
+>
+>>Basically without preempt disable, at process level, it is possible
+>>more than one process may trying to take bpf_bprintf_buffers.
+>>Adding softirq and nmi, it is totally likely to have more than 3
+>>level for buffers. Also, more than one process with bpf_bprintf_buffers
+>>will cause problem in releasing buffers, so we need to have
+>>preempt_disable surrounding bpf_try_get_buffers() and
+>>bpf_put_buffers().
+>
+>That is,
+>  preempt_disable();
+>  ...
+>  bpf_try_get_buffers()
+>  ...
+>  bpf_put_buffers()
+>  ...
+>  preempt_enable();
+>
+>>
+>>3. Using a per-CPU local_lock
+>>Finally, I tested with a per-CPU local_lock around 
+>>bpf_prog_run_pin_on_cpu():
+>>+struct bpf_cpu_lock {
+>>+    local_lock_t lock;
+>>+};
+>>+
+>>+static DEFINE_PER_CPU(struct bpf_cpu_lock, bpf_cpu_lock) = {
+>>+    .lock = INIT_LOCAL_LOCK(),
+>>+};
+>>@@ -1021,7 +1030,9 @@ u32 bpf_flow_dissect(struct bpf_prog *prog, 
+>>struct bpf_flow_dissector *ctx,
+>>                     (int)FLOW_DISSECTOR_F_STOP_AT_ENCAP);
+>>        flow_keys->flags = flags;
+>>
+>>+       local_lock(&bpf_cpu_lock.lock);
+>>        result = bpf_prog_run_pin_on_cpu(prog, ctx);
+>>+       local_unlock(&bpf_cpu_lock.lock);
+>>
+>>This approach avoid the warning on both RT and non-RT builds, with 
+>>both the syz reproducer. The intention of introducing the per-CPU 
+>>local_lock is to maintain consistent per-CPU execution semantics 
+>>between RT and non-RT kernels.
+>>On non-RT builds, local_lock maps to preempt_disable()/enable(),
+>>which provides the same semantics as before.
+>>On RT builds, it maps to an RT-safe per-CPU spinlock, avoiding the
+>>softirq_ctrl.cnt issue.
+>
+>This should work, but local lock disable interrupts which could have
+>negative side effects on the system. We don't want this.
+>That is the reason we have 3 nested level for bpf_bprintf_buffers.
+>
+>Please try my above preempt_disalbe/enable() solution.
+>
+I tried following patch with reproducer from both syzbot [1] and [2]
+and issue *did not reproduce* with them.
+
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 8eb117c52817..4be6dde89d39 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -777,9 +777,11 @@ int bpf_try_get_buffers(struct bpf_bprintf_buffers **bufs)
+  {
+         int nest_level;
+
++       preempt_disable();
+         nest_level = this_cpu_inc_return(bpf_bprintf_nest_level);
+         if (WARN_ON_ONCE(nest_level > MAX_BPRINTF_NEST_LEVEL)) {
+                 this_cpu_dec(bpf_bprintf_nest_level);
++               preempt_enable();
+                 return -EBUSY;
+         }
+         *bufs = this_cpu_ptr(&bpf_bprintf_bufs[nest_level - 1]);
+@@ -792,6 +794,7 @@ void bpf_put_buffers(void)
+         if (WARN_ON_ONCE(this_cpu_read(bpf_bprintf_nest_level) == 0))
+                 return;
+         this_cpu_dec(bpf_bprintf_nest_level);
++       preempt_enable();
+  }
+
+[1] https://syzkaller.appspot.com/bug?extid=1f1fbecb9413cdbfbef8
+[2] https://syzkaller.appspot.com/bug?extid=b0cff308140f79a9c4cb 
+
+>>
+>>Let me know if you’d like me to run some more experiments on this.
+>
+Shall I submit a patch with your suggested changes ?
+
 Regards,
-Sukurt Heroorkar
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+Sahil
 
