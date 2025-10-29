@@ -1,112 +1,103 @@
-Return-Path: <linux-kernel+bounces-877255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-877257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDC81C1D948
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:23:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B56C1D957
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 23:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89FAF4E0EF2
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:23:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F33F1893FB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 22:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D5431961E;
-	Wed, 29 Oct 2025 22:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70B231AF1E;
+	Wed, 29 Oct 2025 22:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="V4INLZaB"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+mUQNyU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A8B2DC32E;
-	Wed, 29 Oct 2025 22:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D3E20010A;
+	Wed, 29 Oct 2025 22:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761776582; cv=none; b=j5nyZLm3vleCkrFnlTXt2cGzCnqWU/XD7f6FwEeSTtf2sbEA6I4KbfpnKWDDTc+SXpBYu4QAhUw1+z82BxgY98FkGIN/OVwZeFXA4gxIlcxWiPszwSYFEsTteAHN90/INAPKzSwB/ejJkLsmIlT1E5HpjUeImK1TGNXVSRkzEsY=
+	t=1761776710; cv=none; b=JePHbgiMuXwHMg1zZijjnKJ8awrSCtpqUJObcMYgEyo1CjVhGrJPkb2Rl1jph7EjruxuTxr4FZBsZ82aLWdsUMhzbmnlxCZB/FDIxlnKnjUcu5smDCC4iFu8PNsDUSrrnmt65YQUvTaGzX8S6fayd6u5FlKA9+CaYTaUGbI1XyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761776582; c=relaxed/simple;
-	bh=/JJ4eWhU2NJtysIL6pvhPHf/EaOJKo1ecN2UGEuYUF4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bfnFh/f+uWhR3ZQ5DkmoeLq3oyEMR7w7EXCmRzuIucAA70H63fWpyu+pSTz+P+QDHoC0Yieo4ypjItUjo18UaopnwXAgMTgXywI0ZxDhHrkUUyYlv4l+vJLSMceepwgB6rH6wakXN2BEZisHeQNT6vyPLYMBJ9dBFkkBcHtpfLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=V4INLZaB; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D147A40AED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1761776574; bh=HvWY8jWznZyhCYX572LrF/H6qVaifHtnmvXlLo5QC6I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=V4INLZaBkGdxmwR4wMmyYAn3wEFzK/gG4lEyhXfIGpzaa/zireEy4R+fBdkk54iJv
-	 qn9VDfJb4jFzZskcKbGentpeMif8YD8l5G3CQUPtg3k9JMYwmfP/uEt+ECoTHZACN8
-	 ndgUPJDpsJuTrVMlns3qPObGhgcu/iGUX7FJtkLCKgZNENRfpPqTDERF0q1sulGIeM
-	 HQL3dgqKTDI2H9a2yiEWzkZB6iiNGurtSRwuWC5bn8ONeC5nP0T3dEZ7DVL2F+s7WF
-	 OKV7hRDMyPjkulF+369HzZrMHLyCoiE48Z9WuCkAT5lUW+4wg/1UbRnO6CVHXcxP2j
-	 Mw3i8dhk2f3NA==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id D147A40AED;
-	Wed, 29 Oct 2025 22:22:53 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Alex Shi <alexs@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the jc_docs tree
-In-Reply-To: <20251030085146.37ab6bd4@canb.auug.org.au>
-References: <20251030085146.37ab6bd4@canb.auug.org.au>
-Date: Wed, 29 Oct 2025 16:22:53 -0600
-Message-ID: <87ecqlny9u.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1761776710; c=relaxed/simple;
+	bh=sqvfi/doKW71ktQYpInEihkU2K+gkdzBjz9/lAlE59k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cmJYa1XcHGf8o+z1XRrV7KTm/pOJEoz3R6ilzVaKOpa22zryTCK4NrGb0Y4CZYcuf4ZP6lCoDNXctRJnAs3f1FU0fbcoofdzTOCy5HQHiLGLxg/UxINN9qI9PPE8G24jk2COqKvh8wVtMt4COBryt2cG5b2wqtevFV/bvVz69Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+mUQNyU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C12DCC4CEF7;
+	Wed, 29 Oct 2025 22:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761776708;
+	bh=sqvfi/doKW71ktQYpInEihkU2K+gkdzBjz9/lAlE59k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d+mUQNyUwZcCuR4LY2Eb5uQYQsXxzWjtLpGeDw3/tvYm+N/N2B7O2AU7ev9fLXQNK
+	 bozrXEA9n2lRo3ylRAzvFDNtrOIiVlCrU0YfyHzHgHIj7EnS6EVCsE8L2e5a2Fk8j/
+	 RDsBLu3lheyolvbPIZTlMVGq11tKGa+m5QShVWiud6G31E6r2OQJ+7gMuD/z6HVm1e
+	 NIiyY89aOtpHfNE0ohhiOabkvWkdsQOEjbzBlxGkrrt5C5vSORUNmdJdFedWneqpex
+	 +DApzaU16P7eAExvj1Es2JQ4LQb1nJ5lhK1IVrElcnp3KT+2rbj9GWuneWjtFmfTd8
+	 EGQawCQwRXoqA==
+Date: Wed, 29 Oct 2025 23:25:04 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>
+Subject: Re: [PATCH] fs/pipe: stop duplicating union pipe_index declaration
+Message-ID: <20251029-wobei-rezept-bd53e76bb05b@brauner>
+References: <20251023082142.2104456-1-linux@rasmusvillemoes.dk>
+ <20251029-redezeit-reitz-1fa3f3b4e171@brauner>
+ <20251029173828.GA1669504@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251029173828.GA1669504@ax162>
 
-Stephen Rothwell <sfr@canb.auug.org.au> writes:
+On Wed, Oct 29, 2025 at 10:38:28AM -0700, Nathan Chancellor wrote:
+> Hi Christian,
+> 
+> On Wed, Oct 29, 2025 at 02:41:06PM +0100, Christian Brauner wrote:
+> > On Thu, 23 Oct 2025 10:21:42 +0200, Rasmus Villemoes wrote:
+> > > Now that we build with -fms-extensions, union pipe_index can be
+> > > included as an anonymous member in struct pipe_inode_info, avoiding
+> > > the duplication.
+> > > 
+> > > 
+> > 
+> > Applied to the vfs-6.19.misc branch of the vfs/vfs.git tree.
+> > Patches in the vfs-6.19.misc branch should appear in linux-next soon.
+> > 
+> > Please report any outstanding bugs that were missed during review in a
+> > new review to the original patch series allowing us to drop it.
+> > 
+> > It's encouraged to provide Acked-bys and Reviewed-bys even though the
+> > patch has now been applied. If possible patch trailers will be updated.
+> > 
+> > Note that commit hashes shown below are subject to change due to rebase,
+> > trailer updates or similar. If in doubt, please check the listed branch.
+> > 
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs-6.19.misc
+> > 
+> > [1/1] fs/pipe: stop duplicating union pipe_index declaration
+> >       https://git.kernel.org/vfs/vfs/c/ade24f8214fe
+> 
+> As you may have noticed since I do not actually see this pushed, this
+> change requires the '-fms-extensions' change that we are carrying in the
+> kbuild tree for 6.19.
+> 
+>   https://git.kernel.org/kbuild/c/778740ee2d00e5c04d0c8ffd9c3beea89b1ec554
 
-> Hi all,
->
-> Commits
->
->   564f84128bd2 ("docs/zh_CN: Add translation of rust/testing.rst")
->   6d4a6d623098 ("docs/zh_CN: Add secrets coco Chinese translation")
->   344657696e9a ("docs/zh_CN: Add sd-parameters.rst translation")
->   989a716b1677 ("docs/zh_CN: Add link_power_management_policy.rst translation")
->   6c07193cb80f ("docs/zh_CN: Add scsi-parameters.rst translation")
->   cfd923323d14 ("docs/zh_CN: Add scsi_eh.rst translation")
->   da6572ec7105 ("docs/zh_CN: Add scsi_mid_low_api.rst translation")
->   16dfba1581b5 ("docs/zh_CN: Add scsi.rst translation")
->   9162cb790b42 ("docs/zh_CN: Add scsi/index.rst translation")
->   fe67964dd6e2 ("docs/zh_CN: Update Rust index translation and add reference label")
->   1e108599ebfe ("docs/zh_CN: Add security SCTP Chinese translation")
->   b12bb7728152 ("Docs/zh_CN: Translate timestamping.rst to Simplified Chinese")
->   4d926084ce6d ("docs/zh_CN: Add security lsm-development Chinese translation")
->   6d624576ca3f ("Docs/zh_CN: fix the format of proofreader")
->   25cf7924b579 ("Docs/zh_CN: align title underline for ubifs.rst")
->   e3f873992cc4 ("Docs/zh_CN: add fixed format for the header of gfs2-glocks.rst")
->   37b1e0d4ab11 ("docs/zh_CN: Add security ipe Chinese translation")
->   ab530c5fca9b ("Docs/zh_CN: Translate generic-hdlc.rst to Simplified Chinese")
->   d3e7609c6e5e ("Docs/zh_CN: Translate skbuff.rst to Simplified Chinese")
->   6d35e61606d0 ("Docs/zh_CN: Translate mptcp-sysctl.rst to Simplified Chinese")
->   0694113d49b5 ("Docs/zh_CN: Translate inotify.rst to Simplified Chinese")
->   f4121e639fd3 ("Docs/zh_CN: Translate dnotify.rst to Simplified Chinese")
->   250fc3d68a90 ("Docs/zh_CN: Translate gfs2-glocks.rst to Simplified Chinese")
->   a502ffe48523 ("Docs/zh_CN: Translate gfs2-uevents.rst to Simplified Chinese")
->   46ea6a90b59d ("Docs/zh_CN: Translate gfs2.rst to Simplified Chinese")
->   e0bb4c3524df ("Docs/zh_CN: Translate ubifs-authentication.rst to Simplified Chinese")
->   fe460c3ec8b1 ("Docs/zh_CN: Translate ubifs.rst to Simplified Chinese")
->
-> are missing a Signed-off-by from their committers.
-
-Argh.  Thanks for the heads-up.
-
-Alex, I have dropped the Chinese pull from docs-next ... needless to
-say, you need to pay attention to details like this if I am to be able
-to pull your tree.  Please fix these up, and we'll try again.
-
-Thanks,
-
-jon
+Meh, I thought it was already enabled.
+Are you pushing this as a new feature for v6.19 or is Linus ok with
+enabling this still during v6.18?
 
