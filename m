@@ -1,145 +1,90 @@
-Return-Path: <linux-kernel+bounces-876033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-876034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB62C1A7B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:03:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11890C1A7A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 14:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 01E9D5670DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:56:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 55A274FB47A
+	for <lists+linux-kernel@lfdr.de>; Wed, 29 Oct 2025 12:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBEB03385B8;
-	Wed, 29 Oct 2025 12:34:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19E6346E51;
+	Wed, 29 Oct 2025 12:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlTsM2Mb"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAoZkdnD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8538A33A026
-	for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 12:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4077337A3DD;
+	Wed, 29 Oct 2025 12:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761741282; cv=none; b=JsIOS+yyylKeHrdWdstvHHt8NvuaPlp6WydZVWU8CfVydANJ4ohQyu28bUO01V3zgO4QW11erqJV5z6zvuJhnd3PPBT2ibb+E4/Q9M2hW/ErugU2In/a61HEynspRc1kGuDGfbh82jwPqpbSO7Mdsq8nzbbirHjyQdgnU2LpDI8=
+	t=1761741285; cv=none; b=MS2tjgz/pC2vezDnGF2twTjftO5uxwLnDYVmFGAFJ8rMEMZC138355YNlUIMVYSqIforzwASe+uQkc3UWyef80DbmUvMeNGHXRPpOfqFaqwqPGOl/VH6aVs+/+XS3JoZkCa55ecFXdi0ZDRyVVGERenIborRHAfvMRJB5AZBlpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761741282; c=relaxed/simple;
-	bh=MXV1J4/+oon+M/oX4IvFjQMNXVSF1SduLg0p6csa7Sk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NNIZHkwT4GWhlt6x8nlh7et2hjNyWAL5dlc3tOLtk3FHniCr3K9ZR6wboEy7LzQiiMSmraD8Fm3kx+PPcY/XupMP6rmGvMMwbDgfdmzYthNNR9StaQTYogTbKIA1bIHMRMhSqkEmaEG9APmkWmr3ioqs2x3oCTyPjkCnM0QqEvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlTsM2Mb; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-781997d195aso5170577b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 29 Oct 2025 05:34:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761741280; x=1762346080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mLbzXZCnL4JaNq6mgAHYUsHmpe2Hmi5djVf9Q/V9xNE=;
-        b=YlTsM2MbR9EeECgQHr8kew7suP6O6K5qbkyH953T16wNEaAsdkyw1xC3Qah/vaKFRS
-         uyPRip5w2rqcd2yRBia98hutLBpQ0PoSOSbX2UQlPjIxdVqEmmiTypqaHR3QZfZcVuwe
-         vAuJXF2j2MdlZBTDnjwpkdSO1u8/bGYFnd6r33yMgFJ+IOAtSkQ0W9NwmMMb5bPwKUBq
-         Ap1FFQc7VYsoTNNoajcmeNrfIMhaCeJTUUD/C471jonCD8/nFIunNDJDGKS78SBH409u
-         FhD/HFFeo6UV4Mn5UUGVXE2OBYn4VhrcDp68yTn4zObfEj7XVy9V4FB3P5eS+Yi6rE9a
-         g9yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761741280; x=1762346080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mLbzXZCnL4JaNq6mgAHYUsHmpe2Hmi5djVf9Q/V9xNE=;
-        b=bWaCI8BmdzCqPdPpyPgZ/Ds3mJsuKrfxYqzQbiXBf04PCr9ChpHuwPyLTLkoiKTuLK
-         5rI/y3H3lv82hImH8whT1rgLswY1vkOVgkImlDeskXpREWJCx+UVjcjeOwMu5iGbOJrZ
-         T8SC+/JgAxve21mSN5P3Nv+6LPJb6wOKh2nxDQcsUewYpUl+TpDpTA9F8DZsrsWc/kwI
-         3GHu2t+YvEI0IpzZ9q/5KRQDdMwJt+WaM0MlDkkSrN2EvFC4Ivm8zujfQ1gWN9W1hwr7
-         itrgy11WPQBmQpOy5WucVwVn3mMv1xMxBAdZgkWBPGx7jFlergaejgm4MdLXicJAjRlq
-         8WvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVusOKfbMEICMGMR8KuBvarGCE2L8aUw5HgHP1j+E5VYkiNNrIQaIr32dSG7Rv2kNm0FJoR69dDkd/KS/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxYNILjoO8eR1G9RgTLOyVc3MBDW2umrKaKcTEr7egoFpRfAC/
-	IKFxJpo8+pyf3I4BJED+beez+RblBgzacKqK8c7UPlCmxlykAihrO8kR
-X-Gm-Gg: ASbGncvUFJq8DPCownA/EjnHAUAnrEJWsHxo+Z7ByVRU3O5pGK4AXwBeJqKErEhrmTr
-	l+vUqgt/FB7wTBqnZyhDDLNpRMcEozM+PGkbCTYRM7O6rN2fYyeJ7ywuZOX2+g5NVA3AaqMC7n+
-	BEReQT1kNMY+qqusBLoBCH0uO4Kt0E1NUPboTJMh5CzYZquAcSbtljF93rokTWPANeH970ONPSX
-	PyaFdH3cSjGYt6HN0IgvL5iOHOMI+TC5E48j9MRtSpx0u/SPb9RyoYhwOdTALoMFoj+sqseLhHZ
-	xp1LjnjLeOsROz5p+K2yBMiiYTWqR8Aniyd9VD3gdmU7JRfb+A30dhEy0oVFnj6QbXYckWql94r
-	xM865/kX6PhoWXeu50RmcPk5hR0dcN/n07HXnwtFTG/WtQPG4kL0K1iTKIWx2Lq9rdUulgWMSmj
-	aWuJzBNSFhk5BdmUPNnJRY6A==
-X-Google-Smtp-Source: AGHT+IF5zDqYY2uyyaccHKjplnekkK2/6d+ShgjS5kIKOgPfbgi53OKTaTURa3EPvj0xY3duZVdWCQ==
-X-Received: by 2002:a05:6a00:b51:b0:7a2:7458:7fc8 with SMTP id d2e1a72fcca58-7a4e2dfbfc0mr3441055b3a.13.1761741279605;
-        Wed, 29 Oct 2025 05:34:39 -0700 (PDT)
-Received: from localhost.localdomain ([124.77.218.104])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a414087cdbsm15206397b3a.64.2025.10.29.05.34.36
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 29 Oct 2025 05:34:39 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com,
-	stable@vger.kernel.org
-Subject: [PATCH] dma: qcom: gpi: Fix memory leak in gpi_peripheral_config()
-Date: Wed, 29 Oct 2025 20:34:19 +0800
-Message-Id: <20251029123421.91973-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1761741285; c=relaxed/simple;
+	bh=wCMm5SMLDdbe9NGRhjkjnjQ3ipki5USRE6K4jHu3HZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7zIm1VxlgXSWDIzNOVTIveRdoMnXEPlUaBHmvJDSTVeyee30XTc8AFwnf9fs9nXdDs62nJtSVRmDPoUVKYR8Pi2ClBHwDSItBWUsh2C8l/l1DvqAIzF665Up7pjXEMdPBfIBi5Dq/kVxxRcYG/lPiaWCAtlijBrPnHldfCyG3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAoZkdnD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B31C3C4CEF7;
+	Wed, 29 Oct 2025 12:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761741284;
+	bh=wCMm5SMLDdbe9NGRhjkjnjQ3ipki5USRE6K4jHu3HZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RAoZkdnDmGj3UyvKdz6+m9HHFwbxnJj2IVJ8/pmiqDkA1pdcx7bSjLZsgRSfT+CQG
+	 p/dtNIbPQoOukYZ1NwnGe5ble2MK9Q0ggUt25EejCyGs3fhNqM8FOgNGiVEHcSZCUC
+	 cQbaNn9y0uI2JjZ+82xdL2LTev2Pi/S+dD8EUCU5HzWzvieHXUb5Sv98vPnifX3CeM
+	 2i3DRAtYIRzcv4p5XErrinObDzOE1OfbgAA25sUAq/BxNWnG/Pwo3q0AJtWvByA+08
+	 +Ev561SFthENk989DpbA0eMqEHeza3hEvbrMF5lD2lS85dVGbKDgvHtiDNpRsAcRyr
+	 wd8aeTiGVloPg==
+Date: Wed, 29 Oct 2025 12:34:36 +0000
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Michal Wilczynski <m.wilczynski@samsung.com>,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Icenowy Zheng <uwu@icenowy.me>,
+	Han Gao <rabenda.cn@gmail.com>, Han Gao <gaohan@iscas.ac.cn>
+Subject: Re: [PATCH v3 1/5] dt-bindings: reset: thead,th1520-reset: Remove
+ non-VO-subsystem resets
+Message-ID: <aQIJ3Ei9lziyQc8s@gen8>
+References: <20251014131032.49616-1-ziyao@disroot.org>
+ <20251014131032.49616-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251014131032.49616-2-ziyao@disroot.org>
 
-Fix a memory leak in gpi_peripheral_config() where the original memory
-pointed to by gchan->config could be lost if krealloc() fails.
+On Tue, Oct 14, 2025 at 01:10:28PM +0000, Yao Zi wrote:
+> Registers in control of TH1520_RESET_ID_{NPU,WDT0,WDT1} belong to AP
+> reset controller, not the VO one which is documented as
+> "thead,th1520-reset" and is the only reset controller supported for
+> TH1520 for now.
+> 
+> Let's remove the IDs, leaving them to be implemented by AP-subsystem
+> reset controller in the future.
+> 
+> Fixes: 30e7573babdc ("dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  include/dt-bindings/reset/thead,th1520-reset.h | 3 ---
+>  1 file changed, 3 deletions(-)
 
-The issue occurs when:
-1. gchan->config points to previously allocated memory
-2. krealloc() fails and returns NULL
-3. The function directly assigns NULL to gchan->config, losing the
-   reference to the original memory
-4. The original memory becomes unreachable and cannot be freed
-
-Fix this by using a temporary variable to hold the krealloc() result
-and only updating gchan->config when the allocation succeeds.
-
-Found via static analysis and code review.
-
-Fixes: 5d0c3533a19f ("dmaengine: qcom: Add GPI dma driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- drivers/dma/qcom/gpi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
-index 8e87738086b2..8908b7c71900 100644
---- a/drivers/dma/qcom/gpi.c
-+++ b/drivers/dma/qcom/gpi.c
-@@ -1605,14 +1605,16 @@ static int
- gpi_peripheral_config(struct dma_chan *chan, struct dma_slave_config *config)
- {
- 	struct gchan *gchan = to_gchan(chan);
-+	void *new_config;
- 
- 	if (!config->peripheral_config)
- 		return -EINVAL;
- 
--	gchan->config = krealloc(gchan->config, config->peripheral_size, GFP_NOWAIT);
--	if (!gchan->config)
-+	new_config = krealloc(gchan->config, config->peripheral_size, GFP_NOWAIT);
-+	if (!new_config)
- 		return -ENOMEM;
- 
-+	gchan->config = new_config;
- 	memcpy(gchan->config, config->peripheral_config, config->peripheral_size);
- 
- 	return 0;
--- 
-2.39.5 (Apple Git-154)
-
+Reviewed-by: Drew Fustini <fustini@kernel.org>
 
